@@ -64,16 +64,34 @@
     "main:080bf674": "battle/runtime/reserved_no_op_c.c",
     "main:080c2a08": "battle/runtime/reserved_no_op_a.c",
     "main:080f2eb8": "graphics/color/reserved_no_op.c",
-    "resource_387:02000d04": "overlays/actor_depth_effect/configure_actor_eight_at_depth.c",
+    "resource_387:02000d04": {
+      "name": "Overlay387_ConfigureActorEightAtDepth",
+      "source": "overlays/actor_depth_effect/configure_actor_eight_at_depth.c"
+    },
     "resource_382:02001754": {
       "name": "SceneEffect_UpdateMotionWithDamping",
       "source": "overlays/scene_script/scene_382.c"
     },
-    "resource_39d:020008cc": "overlays/actor_search/find_nearest_f2_actor.c",
-    "resource_378:020032a8": "overlays/actor_facing/is_actor_facing_inward.c",
-    "resource_3ca:0200004c": "overlays/scene_audio/play_workspace_cue_and_clear_palette_zero.c",
-    "resource_376:02000088": "overlays/scaled_motion/advance_position_scale_and_velocity.c",
-    "resource_377:02000088": "overlays/facing_target_scene/get_script_data.c",
+    "resource_39d:020008cc": {
+      "name": "FindNearestF2Actor",
+      "source": "overlays/actor_search/find_nearest_f2_actor.c"
+    },
+    "resource_378:020032a8": {
+      "name": "IsActorFacingInward",
+      "source": "overlays/actor_facing/is_actor_facing_inward.c"
+    },
+    "resource_3ca:0200004c": {
+      "name": "PlayWorkspaceCueAndClearPaletteZero",
+      "source": "overlays/scene_audio/play_workspace_cue_and_clear_palette_zero.c"
+    },
+    "resource_376:02000088": {
+      "name": "AdvancePositionScaleAndVelocity",
+      "source": "overlays/scaled_motion/advance_position_scale_and_velocity.c"
+    },
+    "resource_377:02000088": {
+      "name": "FacingTargetScene_GetScriptData",
+      "source": "overlays/facing_target_scene/get_script_data.c"
+    },
     "resource_379:02000030": {
       "name": "ConditionalSceneSetup_GetScriptData",
       "source": "overlays/scene_script/scene_379.c"
@@ -102,7 +120,10 @@
       "name": "SceneEffect_RotateRecord",
       "source": "overlays/scene_script/scene_38a.c"
     },
-    "resource_3be:02000d18": "overlays/staged_actor_pair_scene/get_message_data.c",
+    "resource_3be:02000d18": {
+      "name": "StagedActorPairScene_GetMessageData",
+      "source": "overlays/staged_actor_pair_scene/get_message_data.c"
+    },
     "resource_3ce:02000228": {
       "name": "CommandTable_NoOpCallback",
       "source": "overlays/scene_script/scene_3ce.c"
@@ -128,7 +149,10 @@
     },
     "main:08002f4c": "data/packed_table/adjust_marked_offsets.c",
     "main:08096c24": "resource/table/count_free_blocks.c",
-    "main:0800a97c": "resource/decompress_lz.c",
+    "main:0800a97c": {
+      "name": "Resource_DecompressLz",
+      "source": "resource/decompress_lz.c"
+    },
     "main:0800b8ac": "resource/metadata/register.c",
     "main:0800b93c": "resource/metadata/unregister.c",
     "main:08077330": "trade/get_offer_state.c",
@@ -153,7 +177,10 @@
     },
     "main:0807808c": "owner/refresh_active_ratios.c",
     "main:0807822c": "owner/recalculate_ratios.c",
-    "main:08078144": "owner/refresh_ratios_on_flag.c",
+    "main:08078144": {
+      "name": "Owner_RefreshRatiosOnFlag",
+      "source": "owner/refresh_ratios_on_flag.c"
+    },
     "main:080782a0": "owner/update_ratio_pair.c",
     "main:080783a4": "owner/adjust_first_value.c",
     "main:080783dc": "owner/adjust_second_value.c",
@@ -470,7 +497,10 @@
     "main:08006f6c": "save/run_erase_verifier.c",
     "main:08006af8": "save/wait_for_flash_write.c",
     "main:08006c24": "save/verify_flash.c",
-    "main:08026e80": "link/update_session_countdown.c",
+    "main:08026e80": {
+      "name": "UpdateLinkSessionCountdown",
+      "source": "link/update_session_countdown.c"
+    },
     "main:0801e7c0": "ui/text/draw_character.c",
     "main:08017dd4": "ui/text/format_number.c",
     "main:0801e858": "ui/text/draw_string.c",
@@ -621,27 +651,51 @@
     "main:080fb73c": "audio/music/track/set_tone_release.c",
     "main:080fb750": "audio/music/track/set_pseudo_echo_volume.c",
     "main:080fb75c": "audio/music/track/set_pseudo_echo_length.c",
-    "main:08096810": "battle/effects/run_effect.c",
+    "main:08096810": {
+      "name": "RunBattleEffect",
+      "source": "battle/effects/run_effect.c"
+    },
     "main:0808df1c": {
       "name": "BattleEffect_SelectNearbyTargetObject"
     },
     "main:08097b70": "battle/effects/item_break/update_fragment.c",
-    "main:0809802c": "battle/effects/item_break/run_item_break_sequence.c",
+    "main:0809802c": {
+      "name": "BattleEffect_RunItemBreakSequence",
+      "source": "battle/effects/item_break/run_item_break_sequence.c"
+    },
     "main:08098070": "battle/effects/item_break/start.c",
     "main:08098a84": "battle/effects/item_break/spawn_mode_3.c",
     "main:0809a3c4": "battle/effects/item_break/spawn_mode_1.c",
-    "main:080984c0": "battle/effects/scene_transition/reset.c",
-    "main:080985a8": "battle/effects/burst_particles/run_main_object.c",
+    "main:080984c0": {
+      "name": "ResetSceneTransitionEffect",
+      "source": "battle/effects/scene_transition/reset.c"
+    },
+    "main:080985a8": {
+      "name": "RunBurstParticleMainObject",
+      "source": "battle/effects/burst_particles/run_main_object.c"
+    },
     "main:08098698": {
       "name": "BattleEffect_SpawnBurstParticleField"
     },
-    "main:080985fc": "battle/effects/burst_particles/run.c",
-    "main:08099018": "battle/effects/orbiting_particles/update_main.c",
+    "main:080985fc": {
+      "name": "RunBurstParticleEffect",
+      "source": "battle/effects/burst_particles/run.c"
+    },
+    "main:08099018": {
+      "name": "UpdateOrbitingParticleMain",
+      "source": "battle/effects/orbiting_particles/update_main.c"
+    },
     "main:08099040": "battle/effects/orbiting_particles/update_fade.c",
     "main:08099070": "battle/effects/orbiting_particles/update_orbit_left.c",
     "main:080990cc": "battle/effects/orbiting_particles/update_orbit_right.c",
-    "main:08099128": "battle/effects/orbiting_particles/start.c",
-    "main:08099160": "battle/effects/orbiting_particles/run.c",
+    "main:08099128": {
+      "name": "StartOrbitingParticleEffect",
+      "source": "battle/effects/orbiting_particles/start.c"
+    },
+    "main:08099160": {
+      "name": "RunOrbitingParticleEffect",
+      "source": "battle/effects/orbiting_particles/run.c"
+    },
     "main:0808eee4": "battle/effects/random_particle/emit.c",
     "main:0808ef70": {
       "name": "BattleEffect_StartRandomParticleEmitter",
@@ -779,7 +833,10 @@
     "main:080f94c8": "audio/command/set_pitch_and_update_frequency.c",
     "main:080f950c": "audio/command/set_volume.c",
     "main:080f9570": "audio/command/update_toggle_mask.c",
-    "main:080f9a30": "audio/cgb/unlink_channel.c",
+    "main:080f9a30": {
+      "name": "CgbChannel_Unlink",
+      "source": "audio/cgb/unlink_channel.c"
+    },
     "main:080fb790": "audio/dummy_callback.c",
     "main:080b5e14": "party/update_name_entries.c",
     "main:080b26c8": "field/event_table/get_row_limit.c",
@@ -807,7 +864,10 @@
     },
     "main:080c1df4": "battle/summon/take_charge.c",
     "main:080c1ebc": "battle/summon/release_charge.c",
-    "main:080c1fa8": "battle/formation/select_random_available_member.c",
+    "main:080c1fa8": {
+      "name": "BattleFormation_SelectRandomAvailableMember",
+      "source": "battle/formation/select_random_available_member.c"
+    },
     "main:080b2f4c": "battle/effects/radial/update_motion.c",
     "main:0801c7fc": "object/collect_resources.c",
     "main:080798e0": "owner/build_digit_tiles.c",
@@ -828,7 +888,10 @@
     "main:08091c1c": "inventory/try_add_and_return_owner.c",
     "main:08093054": "battle/event_runtime/process_action.c",
     "main:080a9e34": "item/prepare_use_palette.c",
-    "main:080a9e48": "item/use.c",
+    "main:080a9e48": {
+      "name": "Item_Use",
+      "source": "item/use.c"
+    },
     "main:080b0694": "node_chain/get_node_at_index.c",
     "main:080b7b30": "battle/motion/release_battle_object_records.c",
     "main:080babdc": "battle/motion/run_value_sequence.c",
@@ -836,7 +899,10 @@
       "name": "BattlePresentation_SetActorRecordMode",
       "source": "battle/presentation/set_actor_record_mode.c"
     },
-    "main:080c10e8": "battle/presentation/set_actor_modes.c",
+    "main:080c10e8": {
+      "name": "set_actor_modes",
+      "source": "battle/presentation/set_actor_modes.c"
+    },
     "main:080bace8": "battle/motion/initialize_actor_records.c",
     "main:080b7e04": "battle/motion/reset_motion_record_group.c",
     "main:080b7e24": "battle/motion/reset_battle_object_record_groups.c",
@@ -854,7 +920,10 @@
       "source": "menu/build_localized_pattern_tiles.c"
     },
     "main:080a9dc4": "character_menu/update_selection_icons.c",
-    "main:080b7424": "battle/summon/layout_positions.c",
+    "main:080b7424": {
+      "name": "LayoutSummonPositions",
+      "source": "battle/summon/layout_positions.c"
+    },
     "main:080b7514": "battle/summon/find_available_slot.c",
     "main:080b6cdc": "battle/summon/class_is_valid.c",
     "main:080e7320": "battle/effects/runtime/initialize_default_mode.c",
@@ -935,12 +1004,30 @@
     "main:0808f140": "effect_runtime/run_rising_object_sequence.c",
     "main:080aac84": "graphics/palette/adjust_bank.c",
     "main:080a7380": "menu/open_character_selector.c",
-    "main:080a7f44": "menu/character_selector/move_entry.c",
-    "main:080aa448": "item/play_use_animation.c",
-    "main:080aa460": "ability/play_use_animation.c",
-    "main:080ae778": "djinn/check_turn_balance.c",
-    "main:080ae7fc": "djinn/count_turns.c",
-    "main:080ba584": "battle/run_simple_presentation.c",
+    "main:080a7f44": {
+      "name": "CharacterSelector_MoveEntry",
+      "source": "menu/character_selector/move_entry.c"
+    },
+    "main:080aa448": {
+      "name": "Item_PlayUseAnimation",
+      "source": "item/play_use_animation.c"
+    },
+    "main:080aa460": {
+      "name": "Ability_PlayUseAnimation",
+      "source": "ability/play_use_animation.c"
+    },
+    "main:080ae778": {
+      "name": "CheckDjinnTurnBalance",
+      "source": "djinn/check_turn_balance.c"
+    },
+    "main:080ae7fc": {
+      "name": "CountDjinnTurns",
+      "source": "djinn/count_turns.c"
+    },
+    "main:080ba584": {
+      "name": "RunSimpleBattlePresentation",
+      "source": "battle/run_simple_presentation.c"
+    },
     "main:080b7dd0": "battle/motion/get_battle_object_slot.c",
     "main:080b7e60": "battle/motion/activate_battle_object_slot.c",
     "main:080b7f70": "battle/motion/get_motion_record.c",
@@ -962,35 +1049,122 @@
     "main:080b6378": "battle/party/assign_member_slots.c",
     "main:080b6b40": "battle/party/list_living_units.c",
     "main:080b6ae0": "battle/party/list_present_enemies.c",
-    "main:080d8948": "battle/effects/series_a/mode_0.c",
-    "main:080d8954": "battle/effects/series_a/mode_1.c",
-    "main:080d8960": "battle/effects/series_a/mode_2.c",
-    "main:080d896c": "battle/effects/series_a/mode_3_or_4.c",
-    "main:080d8988": "battle/effects/series_a/mode_4.c",
-    "main:080d8994": "battle/effects/series_a/mode_5.c",
-    "main:080d89a0": "battle/effects/series_a/mode_6.c",
-    "main:080d9194": "battle/effects/series_b/mode_0.c",
-    "main:080d91a0": "battle/effects/series_b/mode_1.c",
-    "main:080d91ac": "battle/effects/series_b/mode_2.c",
-    "main:080d91b8": "battle/effects/series_b/mode_3.c",
-    "main:080d91c4": "battle/effects/series_b/mode_5.c",
-    "main:080d91d0": "battle/effects/series_b/mode_4.c",
-    "main:080d9ab8": "battle/effects/palette_ramp/mode_0.c",
-    "main:080d9ac4": "battle/effects/palette_ramp/mode_1.c",
-    "main:080d9ad0": "battle/effects/palette_ramp/mode_2.c",
-    "main:080d9adc": "battle/effects/palette_ramp/mode_3.c",
-    "main:080da24c": "battle/effects/common/build_centered_index_list.c",
-    "main:080db6c8": "battle/effects/particle_field/mode_1.c",
-    "main:080db6d4": "battle/effects/particle_field/mode_0.c",
-    "main:080dbb24": "battle/effects/common/spawn_objects.c",
-    "main:080dbb98": "battle/effects/common/no_effect.c",
-    "main:080dbbdc": "battle/effects/series_i/mode_0.c",
-    "main:080dbbe8": "battle/effects/series_i/mode_2.c",
-    "main:080dbbf4": "battle/effects/series_i/mode_6.c",
-    "main:080dbc00": "battle/effects/series_i/mode_3.c",
-    "main:080dbc0c": "battle/effects/series_i/mode_5.c",
-    "main:080dbc18": "battle/effects/series_i/mode_7.c",
-    "main:080dbc24": "battle/effects/series_i/mode_4.c",
+    "main:080d8948": {
+      "name": "BattleEffectA0",
+      "source": "battle/effects/series_a/mode_0.c"
+    },
+    "main:080d8954": {
+      "name": "BattleEffectA1",
+      "source": "battle/effects/series_a/mode_1.c"
+    },
+    "main:080d8960": {
+      "name": "BattleEffectA2",
+      "source": "battle/effects/series_a/mode_2.c"
+    },
+    "main:080d896c": {
+      "name": "BattleEffectA3Or4",
+      "source": "battle/effects/series_a/mode_3_or_4.c"
+    },
+    "main:080d8988": {
+      "name": "BattleEffectA4",
+      "source": "battle/effects/series_a/mode_4.c"
+    },
+    "main:080d8994": {
+      "name": "BattleEffectA5",
+      "source": "battle/effects/series_a/mode_5.c"
+    },
+    "main:080d89a0": {
+      "name": "BattleEffectA6",
+      "source": "battle/effects/series_a/mode_6.c"
+    },
+    "main:080d9194": {
+      "name": "BattleEffectB0",
+      "source": "battle/effects/series_b/mode_0.c"
+    },
+    "main:080d91a0": {
+      "name": "BattleEffectB1",
+      "source": "battle/effects/series_b/mode_1.c"
+    },
+    "main:080d91ac": {
+      "name": "BattleEffectB2",
+      "source": "battle/effects/series_b/mode_2.c"
+    },
+    "main:080d91b8": {
+      "name": "BattleEffectB3",
+      "source": "battle/effects/series_b/mode_3.c"
+    },
+    "main:080d91c4": {
+      "name": "BattleEffectB5",
+      "source": "battle/effects/series_b/mode_5.c"
+    },
+    "main:080d91d0": {
+      "name": "BattleEffectB4",
+      "source": "battle/effects/series_b/mode_4.c"
+    },
+    "main:080d9ab8": {
+      "name": "RunPaletteRampEffectMode0",
+      "source": "battle/effects/palette_ramp/mode_0.c"
+    },
+    "main:080d9ac4": {
+      "name": "RunPaletteRampEffectMode1",
+      "source": "battle/effects/palette_ramp/mode_1.c"
+    },
+    "main:080d9ad0": {
+      "name": "RunPaletteRampEffectMode2",
+      "source": "battle/effects/palette_ramp/mode_2.c"
+    },
+    "main:080d9adc": {
+      "name": "RunPaletteRampEffectMode3",
+      "source": "battle/effects/palette_ramp/mode_3.c"
+    },
+    "main:080da24c": {
+      "name": "BuildCenteredIndexList",
+      "source": "battle/effects/common/build_centered_index_list.c"
+    },
+    "main:080db6c8": {
+      "name": "RunParticleFieldEffectMode1",
+      "source": "battle/effects/particle_field/mode_1.c"
+    },
+    "main:080db6d4": {
+      "name": "RunParticleFieldEffectMode0",
+      "source": "battle/effects/particle_field/mode_0.c"
+    },
+    "main:080dbb24": {
+      "name": "SpawnBattleEffectObjects",
+      "source": "battle/effects/common/spawn_objects.c"
+    },
+    "main:080dbb98": {
+      "name": "NoBattleEffect",
+      "source": "battle/effects/common/no_effect.c"
+    },
+    "main:080dbbdc": {
+      "name": "BattleEffectI0",
+      "source": "battle/effects/series_i/mode_0.c"
+    },
+    "main:080dbbe8": {
+      "name": "BattleEffectI2",
+      "source": "battle/effects/series_i/mode_2.c"
+    },
+    "main:080dbbf4": {
+      "name": "BattleEffectI6",
+      "source": "battle/effects/series_i/mode_6.c"
+    },
+    "main:080dbc00": {
+      "name": "BattleEffectI3",
+      "source": "battle/effects/series_i/mode_3.c"
+    },
+    "main:080dbc0c": {
+      "name": "BattleEffectI5",
+      "source": "battle/effects/series_i/mode_5.c"
+    },
+    "main:080dbc18": {
+      "name": "BattleEffectI7",
+      "source": "battle/effects/series_i/mode_7.c"
+    },
+    "main:080dbc24": {
+      "name": "BattleEffectI4",
+      "source": "battle/effects/series_i/mode_4.c"
+    },
     "main:08078414": "item/get_definition.c",
     "main:08079bc4": "battle/random_16.c",
     "main:08079be8": "battle/random_percent.c",
@@ -1204,7 +1378,10 @@
     "resource_371:020037d8": "event/story/complete_actor_98.c",
     "resource_371:02003fb4": "event/story/effects/animate_vertical_positive.c",
     "resource_371:02004004": "event/story/effects/animate_vertical_negative.c",
-    "resource_372:02003e18": "overlays/actor_presentation/select_actor_twenty_seven_state.c",
+    "resource_372:02003e18": {
+      "name": "ActorPresentation_SelectActorTwentySevenState",
+      "source": "overlays/actor_presentation/select_actor_twenty_seven_state.c"
+    },
     "resource_373:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
     "resource_373:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
     "resource_373:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
@@ -1224,29 +1401,83 @@
     "resource_373:020057fc": "effect/staged_actor_scene/spawn_rising_dust_burst.c",
     "resource_373:020058f0": "effect/staged_actor_scene/update_particle_position.c",
     "resource_373:02005a08": "effect/staged_actor_scene/play_step_sound.c",
-    "resource_373:02005b48": "overlays/orbiting_effect/initialize_staged_actor_scene_orbiting_effect.c",
+    "resource_373:02005b48": {
+      "name": "InitializeStagedActorSceneOrbitingEffect",
+      "source": "overlays/orbiting_effect/initialize_staged_actor_scene_orbiting_effect.c"
+    },
     "resource_373:02005cc4": "effect/staged_actor_scene/animate_vertical_positive.c",
     "resource_373:02005d14": "effect/staged_actor_scene/animate_vertical_negative.c",
     "resource_374:02000030": "object/facing/update_toward_target.c",
     "resource_374:0200239c": "effect/vertical_motion/animate_positive.c",
     "resource_374:020023ec": "effect/vertical_motion/animate_negative.c",
-    "resource_37a:02000030": "map/locations/sol_shinden/get_script_data.c",
-    "resource_37a:02000038": "map/locations/sol_shinden/get_initial_state.c",
-    "resource_37a:0200003c": "map/locations/sol_shinden/get_message_data.c",
-    "resource_37a:02000044": "map/locations/sol_shinden/get_actor_data.c",
-    "resource_37a:0200004c": "map/locations/sol_shinden/get_effect_data.c",
-    "resource_37a:0200022c": "map/locations/sol_shinden/clear_backdrop.c",
-    "resource_37a:02000238": "map/locations/sol_shinden/set_light_group_1.c",
-    "resource_37a:020002cc": "map/locations/sol_shinden/set_light_group_2.c",
-    "resource_37a:02000360": "map/locations/sol_shinden/set_light_group_3.c",
-    "resource_37a:020003f4": "map/locations/sol_shinden/set_light_group_4.c",
-    "resource_37a:02000c00": "map/locations/sol_shinden/update_trap_actor.c",
-    "resource_37a:02000d9c": "map/locations/sol_shinden/update_light_1.c",
-    "resource_37a:02000ef8": "map/locations/sol_shinden/update_light_2.c",
-    "resource_37a:0200101c": "map/locations/sol_shinden/update_light_3.c",
-    "resource_37a:02001140": "map/locations/sol_shinden/update_light_4.c",
-    "resource_37a:020025b0": "map/locations/sol_shinden/check_all_lights.c",
-    "resource_37a:020025fc": "map/locations/sol_shinden/set_actor_step.c",
+    "resource_37a:02000030": {
+      "name": "GetSolShindenScriptData",
+      "source": "map/locations/sol_shinden/get_script_data.c"
+    },
+    "resource_37a:02000038": {
+      "name": "GetSolShindenInitialState",
+      "source": "map/locations/sol_shinden/get_initial_state.c"
+    },
+    "resource_37a:0200003c": {
+      "name": "GetSolShindenMessageData",
+      "source": "map/locations/sol_shinden/get_message_data.c"
+    },
+    "resource_37a:02000044": {
+      "name": "GetSolShindenActorData",
+      "source": "map/locations/sol_shinden/get_actor_data.c"
+    },
+    "resource_37a:0200004c": {
+      "name": "GetSolShindenEffectData",
+      "source": "map/locations/sol_shinden/get_effect_data.c"
+    },
+    "resource_37a:0200022c": {
+      "name": "ClearSolShindenBackdrop",
+      "source": "map/locations/sol_shinden/clear_backdrop.c"
+    },
+    "resource_37a:02000238": {
+      "name": "SetStatueLightGroup1",
+      "source": "map/locations/sol_shinden/set_light_group_1.c"
+    },
+    "resource_37a:020002cc": {
+      "name": "SetStatueLightGroup2",
+      "source": "map/locations/sol_shinden/set_light_group_2.c"
+    },
+    "resource_37a:02000360": {
+      "name": "SetStatueLightGroup3",
+      "source": "map/locations/sol_shinden/set_light_group_3.c"
+    },
+    "resource_37a:020003f4": {
+      "name": "SetStatueLightGroup4",
+      "source": "map/locations/sol_shinden/set_light_group_4.c"
+    },
+    "resource_37a:02000c00": {
+      "name": "UpdateStatueTrapActor",
+      "source": "map/locations/sol_shinden/update_trap_actor.c"
+    },
+    "resource_37a:02000d9c": {
+      "name": "UpdateStatueLight1",
+      "source": "map/locations/sol_shinden/update_light_1.c"
+    },
+    "resource_37a:02000ef8": {
+      "name": "UpdateStatueLight2",
+      "source": "map/locations/sol_shinden/update_light_2.c"
+    },
+    "resource_37a:0200101c": {
+      "name": "UpdateStatueLight3",
+      "source": "map/locations/sol_shinden/update_light_3.c"
+    },
+    "resource_37a:02001140": {
+      "name": "UpdateStatueLight4",
+      "source": "map/locations/sol_shinden/update_light_4.c"
+    },
+    "resource_37a:020025b0": {
+      "name": "CheckAllStatueLights",
+      "source": "map/locations/sol_shinden/check_all_lights.c"
+    },
+    "resource_37a:020025fc": {
+      "name": "SetSolShindenActorStep",
+      "source": "map/locations/sol_shinden/set_actor_step.c"
+    },
     "resource_382:02000030": {
       "name": "SceneEffect_SetEffectRecordMode",
       "source": "overlays/scene_script/scene_382.c"
@@ -1304,15 +1535,36 @@
       "source": "overlays/scene_script/scene_382.c"
     },
     "resource_385:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_385:0200013c": "overlays/actor_movement_effect/spawn_configured_effect.c",
-    "resource_385:02000314": "overlays/shared/calculate_fixed_point_position_distance.c",
-    "resource_385:02000400": "overlays/actor_movement_effect/update_actor_proximity.c",
+    "resource_385:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/actor_movement_effect/spawn_configured_effect.c"
+    },
+    "resource_385:02000314": {
+      "name": "CalculateFixedPointPositionDistance",
+      "source": "overlays/shared/calculate_fixed_point_position_distance.c"
+    },
+    "resource_385:02000400": {
+      "name": "UpdateActorProximity",
+      "source": "overlays/actor_movement_effect/update_actor_proximity.c"
+    },
     "resource_385:02000970": "overlays/actor_movement_effect/move_actor_and_wait.c",
-    "resource_385:02000b40": "overlays/actor_presentation/setup_actor_zero_for_scene_eight.c",
-    "resource_385:02000b9c": "overlays/actor_presentation/setup_actor_zero_for_scene_nine.c",
-    "resource_385:02000cc8": "overlays/actor_presentation/setup_actor_zero_for_scene_twelve.c",
+    "resource_385:02000b40": {
+      "name": "ActorPresentation_SetupActorZeroForSceneEight",
+      "source": "overlays/actor_presentation/setup_actor_zero_for_scene_eight.c"
+    },
+    "resource_385:02000b9c": {
+      "name": "ActorPresentation_SetupActorZeroForSceneNine",
+      "source": "overlays/actor_presentation/setup_actor_zero_for_scene_nine.c"
+    },
+    "resource_385:02000cc8": {
+      "name": "ActorPresentation_SetupActorZeroForSceneTwelve",
+      "source": "overlays/actor_presentation/setup_actor_zero_for_scene_twelve.c"
+    },
     "resource_387:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_387:0200013c": "overlays/actor_depth_effect/spawn_configured_effect.c",
+    "resource_387:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/actor_depth_effect/spawn_configured_effect.c"
+    },
     "resource_389:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
     "resource_389:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
     "resource_389:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
@@ -1324,7 +1576,10 @@
       "name": "SceneEffect_SpawnConfiguredEffect",
       "source": "overlays/scene_script/scene_38a.c"
     },
-    "resource_38e:02000974": "overlays/orbiting_effect/initialize_orbiting_scene_entity.c",
+    "resource_38e:02000974": {
+      "name": "InitializeOrbitingSceneEntity",
+      "source": "overlays/orbiting_effect/initialize_orbiting_scene_entity.c"
+    },
     "resource_391:02000030": {
       "name": "CalculateFixedPointPositionDistance",
       "source": "overlays/scene_script/scene_391.c"
@@ -1382,13 +1637,25 @@
     "resource_395:02001768": "overlays/palette_scene/adjust_palette_window.c",
     "resource_395:020017d0": "overlays/palette_scene/adjust_rgb555_color.c",
     "resource_396:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_396:0200013c": "overlays/effect_motion_spawn/spawn_configured_effect.c",
+    "resource_396:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/effect_motion_spawn/spawn_configured_effect.c"
+    },
     "resource_396:0200185c": "overlays/effect_motion_spawn/advance_effect_motion.c",
-    "resource_39b:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_39b:0200013c": "overlays/staged_actor_effect_sequence/spawn_configured_effect.c",
+    "resource_39b:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "overlays/shared/set_effect_record_mode.c"
+    },
+    "resource_39b:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/staged_actor_effect_sequence/spawn_configured_effect.c"
+    },
     "resource_39b:02000314": "overlays/shared/calculate_position_distance.c",
     "resource_39b:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
-    "resource_39b:020003a8": "overlays/staged_actor_effect_sequence/advance_staged_actor_pair.c",
+    "resource_39b:020003a8": {
+      "name": "AdvanceStagedActorPair",
+      "source": "overlays/staged_actor_effect_sequence/advance_staged_actor_pair.c"
+    },
     "resource_39b:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
     "resource_39b:0200058c": "overlays/staged_actor_effect_sequence/stop_blocked_actor_motion.c",
     "resource_39b:02000758": "overlays/staged_actor_effect_sequence/find_clear_actor_position.c",
@@ -1402,11 +1669,23 @@
     "resource_39c:0200058c": "overlays/story_effect_sequence/stop_blocked_actor_motion.c",
     "resource_39c:02000758": "overlays/story_effect_sequence/find_clear_actor_position.c",
     "resource_39c:02004f90": "overlays/story_effect_sequence/set_record_table_value.c",
-    "resource_39d:02000890": "overlays/fixed_point_distance/measure_position_distance_variant_a.c",
-    "resource_39e:02000030": "overlays/effect/set_mode.c",
+    "resource_39d:02000890": {
+      "name": "MeasureFixedPointPositionDistance",
+      "source": "overlays/fixed_point_distance/measure_position_distance_variant_a.c"
+    },
+    "resource_39e:02000030": {
+      "name": "SetEffectMode",
+      "source": "overlays/effect/set_mode.c"
+    },
     "resource_39e:02000048": "overlays/effect/new.c",
-    "resource_39e:020000a0": "overlays/effect/new_flip.c",
-    "resource_39e:0200013c": "overlays/effect/spawn.c",
+    "resource_39e:020000a0": {
+      "name": "NewFlippedEffectObject",
+      "source": "overlays/effect/new_flip.c"
+    },
+    "resource_39e:0200013c": {
+      "name": "SpawnEffect",
+      "source": "overlays/effect/spawn.c"
+    },
     "resource_39e:02000314": {
       "name": "StopXianActor",
       "source": "map/locations/xian/stop_actor.c"
@@ -1431,7 +1710,10 @@
     "resource_39f:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
     "resource_39f:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
     "resource_39f:02002ba4": "overlays/orbiting_effect/update_orbiting_effect.c",
-    "resource_39f:02002c0c": "overlays/orbiting_effect/initialize_orbiting_effect.c",
+    "resource_39f:02002c0c": {
+      "name": "InitializeOrbitingEffect",
+      "source": "overlays/orbiting_effect/initialize_orbiting_effect.c"
+    },
     "resource_3a0:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_3a0:02000048": "overlays/scene_effect_sequence/spawn_primary_effect.c",
     "resource_3a0:020000a0": "overlays/scene_effect_sequence/spawn_secondary_effect.c",
@@ -1450,25 +1732,43 @@
     "resource_3a0:02000e4c": "overlays/scene_effect_sequence/dispatch_scene_step.c",
     "resource_3a0:02001140": "overlays/scene_effect_sequence/get_tertiary_scene_data.c",
     "resource_3a5:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_3a5:02000e00": "overlays/shared/calculate_planar_distance.c",
+    "resource_3a5:02000e00": {
+      "name": "CalculatePlanarDistance",
+      "source": "overlays/shared/calculate_planar_distance.c"
+    },
     "resource_3a6:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_3a6:0200013c": "overlays/staged_actor_pair/spawn_configured_effect.c",
+    "resource_3a6:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/staged_actor_pair/spawn_configured_effect.c"
+    },
     "resource_3a6:02000314": "overlays/shared/calculate_position_distance.c",
     "resource_3a6:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
-    "resource_3a6:020003a8": "overlays/staged_actor_pair/advance_staged_actor_pair.c",
+    "resource_3a6:020003a8": {
+      "name": "AdvanceStagedActorPair",
+      "source": "overlays/staged_actor_pair/advance_staged_actor_pair.c"
+    },
     "resource_3a6:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
     "resource_3a6:0200058c": "overlays/staged_actor_pair/stop_blocked_actor_motion.c",
     "resource_3a6:02000758": "overlays/staged_actor_pair/find_clear_actor_position.c",
-    "resource_3a6:02000d80": "overlays/scene_data/select_scene_data_by_state.c",
+    "resource_3a6:02000d80": {
+      "name": "SelectSceneDataByState",
+      "source": "overlays/scene_data/select_scene_data_by_state.c"
+    },
     "resource_3a6:020017d8": "overlays/staged_actor_pair/position_actor_pair.c",
-    "resource_3a7:02000334": "overlays/actor_position/is_actor_9_at_tile_15_54.c",
+    "resource_3a7:02000334": {
+      "name": "IsActor9AtTile15x54",
+      "source": "overlays/actor_position/is_actor_9_at_tile_15_54.c"
+    },
     "resource_3a8:02000aac": {
       "name": "FieldScene_RunStagedGroupSequence"
     },
     "resource_3a8:020026c0": {
       "name": "FieldScene_RunSecondaryGroupSequence"
     },
-    "resource_3a8:02003a3c": "overlays/orbiting_effect/initialize_orbiting_render_effect.c",
+    "resource_3a8:02003a3c": {
+      "name": "InitializeOrbitingRenderEffect",
+      "source": "overlays/orbiting_effect/initialize_orbiting_render_effect.c"
+    },
     "resource_3af:02002618": {
       "name": "FieldScene_ConfigureActorGroup"
     },
@@ -1481,89 +1781,317 @@
       "source": "overlays/scene_primary_script/run_scene_3af_configure_three_actors.c"
     },
     "resource_3ab:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_3ab:0200013c": "overlays/orbiting_effect_spawn/spawn_configured_effect.c",
+    "resource_3ab:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/orbiting_effect_spawn/spawn_configured_effect.c"
+    },
     "resource_3ab:020017d8": "overlays/orbiting_effect_spawn/update_orbiting_effect.c",
-    "resource_3ab:02001840": "overlays/orbiting_effect/initialize_spawned_orbiting_effect.c",
+    "resource_3ab:02001840": {
+      "name": "InitializeSpawnedOrbitingEffect",
+      "source": "overlays/orbiting_effect/initialize_spawned_orbiting_effect.c"
+    },
     "resource_3b2:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
     "resource_3b2:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_3b2:020000c4": "map/locations/heidia/prologue/advance_staged_actor_pair.c",
+    "resource_3b2:020000c4": {
+      "name": "AdvanceStagedActorPair",
+      "source": "map/locations/heidia/prologue/advance_staged_actor_pair.c"
+    },
     "resource_3b2:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
-    "resource_3b2:020002a8": "map/locations/heidia/prologue/stop_blocked_actor_motion.c",
-    "resource_3b2:02000474": "map/locations/heidia/prologue/find_clear_actor_position.c",
-    "resource_3b2:020009dc": "map/locations/heidia/prologue/set_effect_owner_mode.c",
-    "resource_3b2:020009f4": "map/locations/heidia/prologue/spawn_mode_14_effect.c",
-    "resource_3b2:02000a4c": "map/locations/heidia/prologue/spawn_mode_15_effect.c",
-    "resource_3b2:02000ae8": "map/locations/heidia/prologue/spawn_configured_scene_effect.c",
-    "resource_3b2:02000cc0": "map/locations/heidia/prologue/no_op_effect_callback.c",
-    "resource_3b2:02000cc4": "map/locations/heidia/prologue/select_primary_scene_data.c",
-    "resource_3b2:02000d3c": "map/locations/heidia/prologue/get_empty_scene_data.c",
-    "resource_3b2:02000d40": "map/locations/heidia/prologue/get_default_scene_data.c",
-    "resource_3b2:02000d48": "map/locations/heidia/prologue/select_secondary_scene_data.c",
-    "resource_3b2:02000da4": "map/locations/heidia/prologue/advance_effect_motion.c",
-    "resource_3b2:02000e00": "map/locations/heidia/prologue/spawn_radial_effect_burst.c",
-    "resource_3b2:02000e88": "map/locations/heidia/prologue/initialize_prologue_scene_state.c",
-    "resource_3b2:02000ec4": "map/locations/heidia/prologue/select_tertiary_scene_data.c",
-    "resource_3b2:02000f3c": "map/locations/heidia/prologue/start_scripted_scene_message.c",
-    "resource_3b2:02001374": "map/locations/heidia/prologue/run_prologue_scene_setup.c",
-    "resource_3b2:0200138c": "map/locations/heidia/prologue/start_scene_script_37.c",
-    "resource_3b2:02001508": "map/locations/heidia/prologue/configure_scene_actor_11.c",
-    "resource_3b2:02001548": "map/locations/heidia/prologue/configure_scene_actor_12.c",
-    "resource_3b2:0200158c": "map/locations/heidia/prologue/configure_scene_actor_13.c",
-    "resource_3b2:020015d0": "map/locations/heidia/prologue/configure_scene_actor_14.c",
-    "resource_3b2:02001624": "map/locations/heidia/prologue/show_forget_everything_message.c",
-    "resource_3b2:0200164c": "map/locations/heidia/prologue/show_help_you_forget_message.c",
-    "resource_3b2:0200165c": "map/locations/heidia/prologue/show_damaged_door_message.c",
-    "resource_3b2:0200166c": "map/locations/heidia/prologue/show_save_my_life_message.c",
-    "resource_3b2:02001740": "map/locations/heidia/prologue/run_scene_vector_transition.c",
-    "resource_3b2:02001774": "map/locations/heidia/prologue/position_scene_actor_pair.c",
-    "resource_3b2:0200185c": "map/locations/heidia/prologue/mark_grid_left_of_scene_actor.c",
-    "resource_3b2:020018b0": "map/locations/heidia/prologue/mark_grid_above_scene_actor.c",
-    "resource_3b2:02001904": "map/locations/heidia/prologue/set_scene_actor_modes.c",
-    "resource_3b2:0200191c": "map/locations/heidia/prologue/initialize_escape_scene_actors.c",
-    "resource_3b2:020019b4": "map/locations/heidia/prologue/activate_scene_actor_8.c",
-    "resource_3b2:020019c0": "map/locations/heidia/prologue/activate_scene_actor_10.c",
-    "resource_3b2:020019cc": "map/locations/heidia/prologue/activate_scene_actor_11.c",
-    "resource_3b2:020019d8": "map/locations/heidia/prologue/activate_scene_actor_12.c",
-    "resource_3b2:020019e4": "map/locations/heidia/prologue/activate_scene_actor_13.c",
-    "resource_3b2:020019f0": "map/locations/heidia/prologue/activate_scene_actor_15.c",
-    "resource_3b2:020019fc": "map/locations/heidia/prologue/activate_scene_actor_17.c",
-    "resource_3b2:02001a08": "map/locations/heidia/prologue/activate_scene_actor_18.c",
-    "resource_3b2:02001a14": "map/locations/heidia/prologue/activate_scene_actor_9.c",
-    "resource_3b2:02001a20": "map/locations/heidia/prologue/activate_scene_actor_19.c",
-    "resource_3b2:02001a2c": "map/locations/heidia/prologue/activate_scene_actor_14.c",
-    "resource_3b2:02001a38": "map/locations/heidia/prologue/activate_scene_actor_16.c",
-    "resource_3b2:02001a44": "map/locations/heidia/prologue/try_push_blocking_scene_actor.c",
-    "resource_3b2:02001b14": "map/locations/heidia/prologue/check_actor_path_south.c",
-    "resource_3b2:02001b40": "map/locations/heidia/prologue/check_actor_path_north.c",
-    "resource_3b2:02001b68": "map/locations/heidia/prologue/check_actor_path_west.c",
-    "resource_3b2:02001b94": "map/locations/heidia/prologue/check_actor_path_east.c",
-    "resource_3b2:02001bbc": "map/locations/heidia/prologue/update_escape_route_for_actor_positions.c",
-    "resource_3b2:02001c84": "map/locations/heidia/prologue/update_actor_8_return_route.c",
-    "resource_3b2:02001d2c": "map/locations/heidia/prologue/update_actor_10_retreat_route.c",
-    "resource_3b2:02001de0": "map/locations/heidia/prologue/update_actor_10_advance_route.c",
-    "resource_3b2:02001e5c": "map/locations/heidia/prologue/update_actor_11_west_route.c",
-    "resource_3b2:02001ef4": "map/locations/heidia/prologue/update_actor_11_east_route.c",
-    "resource_3b2:02001f78": "map/locations/heidia/prologue/update_actor_12_west_route.c",
-    "resource_3b2:02002004": "map/locations/heidia/prologue/update_actor_12_east_route.c",
-    "resource_3b2:02002080": "map/locations/heidia/prologue/update_actor_13_west_route.c",
-    "resource_3b2:0200216c": "map/locations/heidia/prologue/update_actor_13_east_route.c",
-    "resource_3b2:02002200": "map/locations/heidia/prologue/update_actor_15_west_route.c",
-    "resource_3b2:020022c8": "map/locations/heidia/prologue/update_actor_15_east_route.c",
-    "resource_3b2:020023c4": "map/locations/heidia/prologue/update_actor_17_south_route.c",
-    "resource_3b2:02002450": "map/locations/heidia/prologue/update_actor_17_north_route.c",
-    "resource_3b2:020025f0": "map/locations/heidia/prologue/advance_actor_18_along_escape_route.c",
-    "resource_3b2:02002848": "map/locations/heidia/prologue/advance_actor_9_along_escape_route.c",
-    "resource_3b2:02002b80": "map/locations/heidia/prologue/retreat_actor_14_along_escape_route.c",
-    "resource_3b2:02002c4c": "map/locations/heidia/prologue/advance_actor_14_along_escape_route.c",
-    "resource_3b2:02002d0c": "map/locations/heidia/prologue/retreat_actor_16_along_escape_route.c",
-    "resource_3b2:02002dd0": "map/locations/heidia/prologue/advance_actor_16_along_escape_route.c",
-    "resource_3b2:02002e70": "map/locations/heidia/prologue/update_swaying_scene_object.c",
-    "resource_3b2:02002ed8": "overlays/orbiting_effect/initialize_swaying_scene_object.c",
+    "resource_3b2:020002a8": {
+      "name": "StopBlockedActorMotion",
+      "source": "map/locations/heidia/prologue/stop_blocked_actor_motion.c"
+    },
+    "resource_3b2:02000474": {
+      "name": "FindClearActorPosition",
+      "source": "map/locations/heidia/prologue/find_clear_actor_position.c"
+    },
+    "resource_3b2:020009dc": {
+      "name": "SetEffectOwnerMode",
+      "source": "map/locations/heidia/prologue/set_effect_owner_mode.c"
+    },
+    "resource_3b2:020009f4": {
+      "name": "SpawnMode14Effect",
+      "source": "map/locations/heidia/prologue/spawn_mode_14_effect.c"
+    },
+    "resource_3b2:02000a4c": {
+      "name": "SpawnMode15Effect",
+      "source": "map/locations/heidia/prologue/spawn_mode_15_effect.c"
+    },
+    "resource_3b2:02000ae8": {
+      "name": "SpawnConfiguredSceneEffect",
+      "source": "map/locations/heidia/prologue/spawn_configured_scene_effect.c"
+    },
+    "resource_3b2:02000cc0": {
+      "name": "NoOpEffectCallback",
+      "source": "map/locations/heidia/prologue/no_op_effect_callback.c"
+    },
+    "resource_3b2:02000cc4": {
+      "name": "SelectPrimarySceneData",
+      "source": "map/locations/heidia/prologue/select_primary_scene_data.c"
+    },
+    "resource_3b2:02000d3c": {
+      "name": "GetEmptySceneData",
+      "source": "map/locations/heidia/prologue/get_empty_scene_data.c"
+    },
+    "resource_3b2:02000d40": {
+      "name": "GetDefaultSceneData",
+      "source": "map/locations/heidia/prologue/get_default_scene_data.c"
+    },
+    "resource_3b2:02000d48": {
+      "name": "SelectSecondarySceneData",
+      "source": "map/locations/heidia/prologue/select_secondary_scene_data.c"
+    },
+    "resource_3b2:02000da4": {
+      "name": "AdvanceEffectMotion",
+      "source": "map/locations/heidia/prologue/advance_effect_motion.c"
+    },
+    "resource_3b2:02000e00": {
+      "name": "SpawnRadialEffectBurst",
+      "source": "map/locations/heidia/prologue/spawn_radial_effect_burst.c"
+    },
+    "resource_3b2:02000e88": {
+      "name": "InitializePrologueSceneState",
+      "source": "map/locations/heidia/prologue/initialize_prologue_scene_state.c"
+    },
+    "resource_3b2:02000ec4": {
+      "name": "SelectTertiarySceneData",
+      "source": "map/locations/heidia/prologue/select_tertiary_scene_data.c"
+    },
+    "resource_3b2:02000f3c": {
+      "name": "StartScriptedSceneMessage",
+      "source": "map/locations/heidia/prologue/start_scripted_scene_message.c"
+    },
+    "resource_3b2:02001374": {
+      "name": "RunPrologueSceneSetup",
+      "source": "map/locations/heidia/prologue/run_prologue_scene_setup.c"
+    },
+    "resource_3b2:0200138c": {
+      "name": "StartSceneScript37",
+      "source": "map/locations/heidia/prologue/start_scene_script_37.c"
+    },
+    "resource_3b2:02001508": {
+      "name": "ConfigureSceneActor11",
+      "source": "map/locations/heidia/prologue/configure_scene_actor_11.c"
+    },
+    "resource_3b2:02001548": {
+      "name": "ConfigureSceneActor12",
+      "source": "map/locations/heidia/prologue/configure_scene_actor_12.c"
+    },
+    "resource_3b2:0200158c": {
+      "name": "ConfigureSceneActor13",
+      "source": "map/locations/heidia/prologue/configure_scene_actor_13.c"
+    },
+    "resource_3b2:020015d0": {
+      "name": "ConfigureSceneActor14",
+      "source": "map/locations/heidia/prologue/configure_scene_actor_14.c"
+    },
+    "resource_3b2:02001624": {
+      "name": "ShowForgetEverythingMessage",
+      "source": "map/locations/heidia/prologue/show_forget_everything_message.c"
+    },
+    "resource_3b2:0200164c": {
+      "name": "ShowHelpYouForgetMessage",
+      "source": "map/locations/heidia/prologue/show_help_you_forget_message.c"
+    },
+    "resource_3b2:0200165c": {
+      "name": "ShowDamagedDoorMessage",
+      "source": "map/locations/heidia/prologue/show_damaged_door_message.c"
+    },
+    "resource_3b2:0200166c": {
+      "name": "ShowSaveMyLifeMessage",
+      "source": "map/locations/heidia/prologue/show_save_my_life_message.c"
+    },
+    "resource_3b2:02001740": {
+      "name": "RunSceneVectorTransition",
+      "source": "map/locations/heidia/prologue/run_scene_vector_transition.c"
+    },
+    "resource_3b2:02001774": {
+      "name": "PositionSceneActorPair",
+      "source": "map/locations/heidia/prologue/position_scene_actor_pair.c"
+    },
+    "resource_3b2:0200185c": {
+      "name": "MarkGridLeftOfSceneActor",
+      "source": "map/locations/heidia/prologue/mark_grid_left_of_scene_actor.c"
+    },
+    "resource_3b2:020018b0": {
+      "name": "MarkGridAboveSceneActor",
+      "source": "map/locations/heidia/prologue/mark_grid_above_scene_actor.c"
+    },
+    "resource_3b2:02001904": {
+      "name": "SetSceneActorModes",
+      "source": "map/locations/heidia/prologue/set_scene_actor_modes.c"
+    },
+    "resource_3b2:0200191c": {
+      "name": "InitializeEscapeSceneActors",
+      "source": "map/locations/heidia/prologue/initialize_escape_scene_actors.c"
+    },
+    "resource_3b2:020019b4": {
+      "name": "ActivateSceneActor8",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_8.c"
+    },
+    "resource_3b2:020019c0": {
+      "name": "ActivateSceneActor10",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_10.c"
+    },
+    "resource_3b2:020019cc": {
+      "name": "ActivateSceneActor11",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_11.c"
+    },
+    "resource_3b2:020019d8": {
+      "name": "ActivateSceneActor12",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_12.c"
+    },
+    "resource_3b2:020019e4": {
+      "name": "ActivateSceneActor13",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_13.c"
+    },
+    "resource_3b2:020019f0": {
+      "name": "ActivateSceneActor15",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_15.c"
+    },
+    "resource_3b2:020019fc": {
+      "name": "ActivateSceneActor17",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_17.c"
+    },
+    "resource_3b2:02001a08": {
+      "name": "ActivateSceneActor18",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_18.c"
+    },
+    "resource_3b2:02001a14": {
+      "name": "ActivateSceneActor9",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_9.c"
+    },
+    "resource_3b2:02001a20": {
+      "name": "ActivateSceneActor19",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_19.c"
+    },
+    "resource_3b2:02001a2c": {
+      "name": "ActivateSceneActor14",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_14.c"
+    },
+    "resource_3b2:02001a38": {
+      "name": "ActivateSceneActor16",
+      "source": "map/locations/heidia/prologue/activate_scene_actor_16.c"
+    },
+    "resource_3b2:02001a44": {
+      "name": "TryPushBlockingSceneActor",
+      "source": "map/locations/heidia/prologue/try_push_blocking_scene_actor.c"
+    },
+    "resource_3b2:02001b14": {
+      "name": "CheckActorPathSouth",
+      "source": "map/locations/heidia/prologue/check_actor_path_south.c"
+    },
+    "resource_3b2:02001b40": {
+      "name": "CheckActorPathNorth",
+      "source": "map/locations/heidia/prologue/check_actor_path_north.c"
+    },
+    "resource_3b2:02001b68": {
+      "name": "CheckActorPathWest",
+      "source": "map/locations/heidia/prologue/check_actor_path_west.c"
+    },
+    "resource_3b2:02001b94": {
+      "name": "CheckActorPathEast",
+      "source": "map/locations/heidia/prologue/check_actor_path_east.c"
+    },
+    "resource_3b2:02001bbc": {
+      "name": "UpdateEscapeRouteForActorPositions",
+      "source": "map/locations/heidia/prologue/update_escape_route_for_actor_positions.c"
+    },
+    "resource_3b2:02001c84": {
+      "name": "UpdateActor8ReturnRoute",
+      "source": "map/locations/heidia/prologue/update_actor_8_return_route.c"
+    },
+    "resource_3b2:02001d2c": {
+      "name": "UpdateActor10RetreatRoute",
+      "source": "map/locations/heidia/prologue/update_actor_10_retreat_route.c"
+    },
+    "resource_3b2:02001de0": {
+      "name": "UpdateActor10AdvanceRoute",
+      "source": "map/locations/heidia/prologue/update_actor_10_advance_route.c"
+    },
+    "resource_3b2:02001e5c": {
+      "name": "UpdateActor11WestRoute",
+      "source": "map/locations/heidia/prologue/update_actor_11_west_route.c"
+    },
+    "resource_3b2:02001ef4": {
+      "name": "UpdateActor11EastRoute",
+      "source": "map/locations/heidia/prologue/update_actor_11_east_route.c"
+    },
+    "resource_3b2:02001f78": {
+      "name": "UpdateActor12WestRoute",
+      "source": "map/locations/heidia/prologue/update_actor_12_west_route.c"
+    },
+    "resource_3b2:02002004": {
+      "name": "UpdateActor12EastRoute",
+      "source": "map/locations/heidia/prologue/update_actor_12_east_route.c"
+    },
+    "resource_3b2:02002080": {
+      "name": "UpdateActor13WestRoute",
+      "source": "map/locations/heidia/prologue/update_actor_13_west_route.c"
+    },
+    "resource_3b2:0200216c": {
+      "name": "UpdateActor13EastRoute",
+      "source": "map/locations/heidia/prologue/update_actor_13_east_route.c"
+    },
+    "resource_3b2:02002200": {
+      "name": "UpdateActor15WestRoute",
+      "source": "map/locations/heidia/prologue/update_actor_15_west_route.c"
+    },
+    "resource_3b2:020022c8": {
+      "name": "UpdateActor15EastRoute",
+      "source": "map/locations/heidia/prologue/update_actor_15_east_route.c"
+    },
+    "resource_3b2:020023c4": {
+      "name": "UpdateActor17SouthRoute",
+      "source": "map/locations/heidia/prologue/update_actor_17_south_route.c"
+    },
+    "resource_3b2:02002450": {
+      "name": "UpdateActor17NorthRoute",
+      "source": "map/locations/heidia/prologue/update_actor_17_north_route.c"
+    },
+    "resource_3b2:020025f0": {
+      "name": "AdvanceActor18AlongEscapeRoute",
+      "source": "map/locations/heidia/prologue/advance_actor_18_along_escape_route.c"
+    },
+    "resource_3b2:02002848": {
+      "name": "AdvanceActor9AlongEscapeRoute",
+      "source": "map/locations/heidia/prologue/advance_actor_9_along_escape_route.c"
+    },
+    "resource_3b2:02002b80": {
+      "name": "RetreatActor14AlongEscapeRoute",
+      "source": "map/locations/heidia/prologue/retreat_actor_14_along_escape_route.c"
+    },
+    "resource_3b2:02002c4c": {
+      "name": "AdvanceActor14AlongEscapeRoute",
+      "source": "map/locations/heidia/prologue/advance_actor_14_along_escape_route.c"
+    },
+    "resource_3b2:02002d0c": {
+      "name": "RetreatActor16AlongEscapeRoute",
+      "source": "map/locations/heidia/prologue/retreat_actor_16_along_escape_route.c"
+    },
+    "resource_3b2:02002dd0": {
+      "name": "AdvanceActor16AlongEscapeRoute",
+      "source": "map/locations/heidia/prologue/advance_actor_16_along_escape_route.c"
+    },
+    "resource_3b2:02002e70": {
+      "name": "UpdateSwayingSceneObject",
+      "source": "map/locations/heidia/prologue/update_swaying_scene_object.c"
+    },
+    "resource_3b2:02002ed8": {
+      "name": "InitializeSwayingSceneObject",
+      "source": "overlays/orbiting_effect/initialize_swaying_scene_object.c"
+    },
     "resource_3b3:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_3b3:0200013c": "overlays/staged_actor_navigation/spawn_configured_effect.c",
+    "resource_3b3:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/staged_actor_navigation/spawn_configured_effect.c"
+    },
     "resource_3b3:02000314": "overlays/shared/calculate_position_distance.c",
     "resource_3b3:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
-    "resource_3b3:020003a8": "overlays/staged_actor_navigation/advance_staged_actor_pair.c",
+    "resource_3b3:020003a8": {
+      "name": "AdvanceStagedActorPair",
+      "source": "overlays/staged_actor_navigation/advance_staged_actor_pair.c"
+    },
     "resource_3b3:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
     "resource_3b3:0200058c": "overlays/staged_actor_navigation/stop_blocked_actor_motion.c",
     "resource_3b3:02000758": "overlays/staged_actor_navigation/find_clear_actor_position.c",
@@ -1593,7 +2121,10 @@
     "resource_3bc:02000404": "map/locations/colosso/log_rolling_stage/configure_secondary_object_set.c",
     "resource_3bc:0200057c": "map/locations/colosso/log_rolling_stage/run_setup_completion_hooks.c",
     "resource_3bc:0200058c": "map/locations/colosso/log_rolling_stage/configure_actor_thirteen.c",
-    "resource_3bc:020005d0": "map/locations/colosso/log_rolling_stage/noop_setup_hook.c",
+    "resource_3bc:020005d0": {
+      "name": "ColossoLogRollingStage_NoopSetupHook",
+      "source": "map/locations/colosso/log_rolling_stage/noop_setup_hook.c"
+    },
     "resource_3bc:020005d4": "map/locations/colosso/log_rolling_stage/run_setup_hook.c",
     "resource_3bc:020005e0": "map/locations/colosso/log_rolling_stage/activate_clear_obstacle_actors.c",
     "resource_3bc:02000658": "map/locations/colosso/log_rolling_stage/show_actor_position_message.c",
@@ -1604,7 +2135,10 @@
     "resource_3bc:02000a84": "map/locations/colosso/log_rolling_stage/wait_for_scene_event_task.c",
     "resource_3bc:02000ad4": "map/locations/colosso/log_rolling_stage/offset_active_actor.c",
     "resource_3bc:02000b30": "map/locations/colosso/log_rolling_stage/clamp_and_offset_active_actor.c",
-    "resource_3bc:02000ba0": "map/locations/colosso/log_rolling_stage/noop_scene_event_hook.c",
+    "resource_3bc:02000ba0": {
+      "name": "ColossoLogRollingStage_NoopSceneEventHook",
+      "source": "map/locations/colosso/log_rolling_stage/noop_scene_event_hook.c"
+    },
     "resource_3bc:02000d70": "map/locations/colosso/log_rolling_stage/run_scene_event_if_ready.c",
     "resource_3bc:02000d84": "map/locations/colosso/log_rolling_stage/finish_or_continue_scene_event.c",
     "resource_3bc:02000d9c": "map/locations/colosso/log_rolling_stage/get_scene_event_state.c",
@@ -1629,8 +2163,14 @@
     "resource_3bc:02003b18": "map/locations/colosso/log_rolling_stage/stop_palette_task.c",
     "resource_3bc:02003b40": "map/locations/colosso/log_rolling_stage/position_scaled_object.c",
     "resource_3bc:02003b80": "map/locations/colosso/log_rolling_stage/spawn_positioned_object.c",
-    "resource_3bc:02003c94": "overlays/shared/write_u32_as_hex.c",
-    "resource_3bc:02003cc0": "map/locations/colosso/log_rolling_stage/noop_scene_hook.c",
+    "resource_3bc:02003c94": {
+      "name": "WriteU32AsHex",
+      "source": "overlays/shared/write_u32_as_hex.c"
+    },
+    "resource_3bc:02003cc0": {
+      "name": "ColossoLogRollingStage_NoopSceneHook",
+      "source": "map/locations/colosso/log_rolling_stage/noop_scene_hook.c"
+    },
     "resource_3bc:02003cc4": "map/locations/colosso/log_rolling_stage/set_balance_state_ready.c",
     "resource_3bc:02003cd0": "map/locations/colosso/log_rolling_stage/wait_for_balance_state.c",
     "resource_3bc:02003cf4": "map/locations/colosso/log_rolling_stage/spawn_random_scene_effect.c",
@@ -1639,7 +2179,10 @@
     "resource_3bc:02004494": "map/locations/colosso/log_rolling_stage/setup_scene_descriptor.c",
     "resource_3bc:0200457c": "map/locations/colosso/log_rolling_stage/initialize_scene_control.c",
     "resource_3bc:020045d0": "map/locations/colosso/log_rolling_stage/set_scene_control_value.c",
-    "resource_3bc:020045e0": "overlays/shared/find_actor_at_whole_tile_position.c",
+    "resource_3bc:020045e0": {
+      "name": "FindActorAtWholeTilePosition",
+      "source": "overlays/shared/find_actor_at_whole_tile_position.c"
+    },
     "resource_3bc:02004628": "map/locations/colosso/log_rolling_stage/push_staged_actor.c",
     "resource_3bc:02004790": "map/locations/colosso/log_rolling_stage/find_actor_ahead.c",
     "resource_3bd:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
@@ -1657,114 +2200,414 @@
     "resource_3be:02000758": "overlays/staged_actor_pair_scene/find_clear_actor_position.c",
     "resource_3be:02000cc0": "overlays/staged_actor_pair_scene/get_scene_variant_data.c",
     "resource_3be:02000d14": "overlays/staged_actor_pair_scene/get_initial_scene_value.c",
-    "resource_3be:02000f44": "overlays/staged_actor_pair_scene/run_actor_eleven_recovery_scene.c",
-    "resource_3be:02001040": "overlays/staged_actor_pair_scene/select_actor_nine_script.c",
+    "resource_3be:02000f44": {
+      "name": "ActorPresentation_RunActorElevenRecoveryScene",
+      "source": "overlays/staged_actor_pair_scene/run_actor_eleven_recovery_scene.c"
+    },
+    "resource_3be:02001040": {
+      "name": "ActorPresentation_SelectActorNineScript",
+      "source": "overlays/staged_actor_pair_scene/select_actor_nine_script.c"
+    },
     "resource_3be:020010f0": "overlays/staged_actor_pair_scene/run_scene_step.c",
-    "resource_3be:020010fc": "overlays/staged_actor_pair_scene/run_actor_eight_threshold_scene.c",
+    "resource_3be:020010fc": {
+      "name": "ActorPresentation_RunActorEightThresholdScene",
+      "source": "overlays/staged_actor_pair_scene/run_actor_eight_threshold_scene.c"
+    },
     "resource_3be:02001148": "overlays/staged_actor_pair_scene/run_scene_update.c",
-    "resource_3be:020011c4": "overlays/staged_actor_pair_scene/noop_actor_callback.c",
+    "resource_3be:020011c4": {
+      "name": "StagedActorPairScene_NoopActorCallback",
+      "source": "overlays/staged_actor_pair_scene/noop_actor_callback.c"
+    },
     "resource_3be:020011c8": "overlays/staged_actor_pair_scene/rotate_actor_part.c",
     "resource_3be:020011d8": "overlays/staged_actor_pair_scene/wait_for_height.c",
-    "resource_3be:02001380": "overlays/staged_actor_pair_scene/noop_scene_callback.c",
+    "resource_3be:02001380": {
+      "name": "StagedActorPairScene_NoopSceneCallback",
+      "source": "overlays/staged_actor_pair_scene/noop_scene_callback.c"
+    },
     "resource_3be:02001384": "overlays/staged_actor_pair_scene/run_actor_twelve_command.c",
-    "resource_3bf:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
+    "resource_3bf:02000030": {
+      "name": "CalculateFixedPointPositionDistance",
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
+    },
     "resource_3bf:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_3bf:020000c4": "map/locations/heidia/village/advance_staged_actor_pair.c",
+    "resource_3bf:020000c4": {
+      "name": "AdvanceStagedActorPair",
+      "source": "map/locations/heidia/village/advance_staged_actor_pair.c"
+    },
     "resource_3bf:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
-    "resource_3bf:020002a8": "map/locations/heidia/village/stop_blocked_actor_motion.c",
-    "resource_3bf:02000474": "map/locations/heidia/village/find_clear_actor_position.c",
-    "resource_3bf:020009dc": "map/locations/heidia/village/select_primary_scene_data.c",
-    "resource_3bf:02000a30": "map/locations/heidia/village/get_empty_scene_data.c",
-    "resource_3bf:02000a34": "map/locations/heidia/village/select_secondary_scene_data.c",
-    "resource_3bf:02000a80": "map/locations/heidia/village/select_tertiary_scene_data.c",
-    "resource_3bf:02000af8": "map/locations/heidia/village/select_quaternary_scene_data.c",
-    "resource_3bf:02000b4c": "map/locations/heidia/village/configure_scene_actor_12.c",
-    "resource_3bf:02000ba0": "map/locations/heidia/village/run_scene_object_setup.c",
-    "resource_3bf:02000c90": "map/locations/heidia/village/place_scene_object_pair_from_table_a.c",
-    "resource_3bf:02000e30": "map/locations/heidia/village/place_scene_object_pair_from_table_b.c",
-    "resource_3bf:02000ee0": "map/locations/heidia/village/place_scene_object_pair_from_table_c.c",
-    "resource_3bf:02000f94": "map/locations/heidia/village/show_locked_door_message_once.c",
-    "resource_3bf:02000fb4": "map/locations/heidia/village/show_locked_door_message.c",
-    "resource_3bf:02000fc8": "map/locations/heidia/village/show_gerald_dont_message.c",
-    "resource_3bf:02000fe4": "map/locations/heidia/village/show_that_was_exciting_message.c",
-    "resource_3bf:02001000": "map/locations/heidia/village/show_sorry_i_scared_you_message.c",
-    "resource_3bf:0200101c": "map/locations/heidia/village/show_well_message.c",
-    "resource_3bf:02001038": "map/locations/heidia/village/try_start_actor_interaction.c",
-    "resource_3bf:02001098": "map/locations/heidia/village/no_op_scene_callback_a.c",
-    "resource_3bf:0200109c": "map/locations/heidia/village/no_op_scene_callback_b.c",
-    "resource_3bf:020010a0": "map/locations/heidia/village/no_op_scene_callback_c.c",
-    "resource_3bf:020010a4": "map/locations/heidia/village/no_op_scene_callback_d.c",
-    "resource_3bf:020010a8": "map/locations/heidia/village/start_dora_house_accident_scene.c",
-    "resource_3bf:02001108": "map/locations/heidia/village/is_player_in_accident_trigger_area.c",
-    "resource_3bf:020012e0": "map/locations/heidia/village/configure_scene_actor_9.c",
-    "resource_3bf:02001324": "map/locations/heidia/village/are_scene_actors_in_passing_lane.c",
-    "resource_3bf:020014bc": "map/locations/heidia/village/activate_scene_actor_17.c",
-    "resource_3bf:020014cc": "map/locations/heidia/village/is_player_in_secondary_trigger_area.c",
-    "resource_3bf:02001650": "map/locations/heidia/village/activate_scene_actor_18.c",
-    "resource_3bf:02001660": "map/locations/heidia/village/is_player_outside_scene_rectangle.c",
-    "resource_3bf:02001708": "map/locations/heidia/village/run_actor_17_scene_step.c",
-    "resource_3bf:02001718": "map/locations/heidia/village/trigger_scene_stage_95_from_actor_12.c",
-    "resource_3bf:0200181c": "map/locations/heidia/village/is_scene_actor_vertically_near_player.c",
-    "resource_3bf:02001880": "map/locations/heidia/village/is_scene_actor_horizontally_near_player.c",
-    "resource_3bf:020018e4": "map/locations/heidia/village/is_actor_interaction_available.c",
-    "resource_3bf:02001918": "map/locations/heidia/village/is_scene_actor_within_four_steps.c",
-    "resource_3bf:02001980": "map/locations/heidia/village/is_scene_actor_within_trigger_box.c",
-    "resource_3bf:020019e8": "map/locations/heidia/village/trigger_scene_41_at_village_path.c",
-    "resource_3bf:02001a44": "map/locations/heidia/village/trigger_scene_40_at_village_path.c",
-    "resource_3bf:02001ab0": "map/locations/heidia/village/run_actor_9_scripted_sequence.c",
-    "resource_3bf:02001b24": "map/locations/heidia/village/run_actor_scripted_sequence_a.c",
-    "resource_3bf:02001be4": "map/locations/heidia/village/turn_actor_to_scene_direction.c",
-    "resource_3bf:02001c4c": "map/locations/heidia/village/run_actor_scripted_sequence_b.c",
-    "resource_3bf:02001ca4": "map/locations/heidia/village/run_actor_scripted_sequence_c.c",
-    "resource_3bf:02001d60": "map/locations/heidia/village/run_actor_scripted_sequence_d.c",
-    "resource_3bf:02001dc4": "map/locations/heidia/village/inspect_ordinary_object.c",
-    "resource_3bf:02001e2c": "map/locations/heidia/village/inspect_empty_chest.c",
-    "resource_3bf:020020cc": "map/locations/heidia/village/inspect_empty_scene_object.c",
-    "resource_3bf:02002134": "map/locations/heidia/village/run_actor_12_interaction_sequence.c",
-    "resource_3bf:0200226c": "map/locations/heidia/village/configure_interaction_region_a.c",
-    "resource_3bf:020022a0": "map/locations/heidia/village/configure_interaction_region_b.c",
-    "resource_3bf:020022d4": "map/locations/heidia/village/configure_interaction_region_c.c",
-    "resource_3bf:02002410": "map/locations/heidia/village/configure_primary_interaction_regions.c",
-    "resource_3bf:02002468": "map/locations/heidia/village/configure_secondary_interaction_regions.c",
-    "resource_3bf:020024c0": "map/locations/heidia/village/inspect_wardrobe.c",
-    "resource_3bf:020024e4": "map/locations/heidia/village/inspect_firewood.c",
-    "resource_3bf:02002504": "map/locations/heidia/village/inspect_books.c",
-    "resource_3bf:02002528": "map/locations/heidia/village/no_op_interaction_callback.c",
-    "resource_3bf:02004928": "map/locations/heidia/village/select_actor_25_scene_variant.c",
-    "resource_3bf:02004964": "map/locations/heidia/village/select_actor_24_scene_variant.c",
-    "resource_3bf:02004b68": "map/locations/heidia/village/configure_scene_actor_26.c",
-    "resource_3bf:02004b84": "map/locations/heidia/village/configure_scene_actor_14.c",
-    "resource_3bf:02004ba4": "map/locations/heidia/village/configure_scene_actor_13.c",
-    "resource_3bf:02004bc4": "map/locations/heidia/village/configure_scene_actor_12_variant.c",
-    "resource_3bf:02004be4": "map/locations/heidia/village/configure_scene_actor_18.c",
-    "resource_3bf:02004d0c": "map/locations/heidia/village/finish_actor_20_scene_sequence.c",
-    "resource_3bf:02004d4c": "map/locations/heidia/village/no_op_actor_callback.c",
-    "resource_3bf:02004d50": "map/locations/heidia/village/configure_actor_13_interaction.c",
-    "resource_3bf:02004d88": "map/locations/heidia/village/configure_actor_13_scene_resource.c",
-    "resource_3bf:02005470": "map/locations/heidia/village/activate_three_actor_group_from_flags.c",
-    "resource_3bf:020054b0": "map/locations/heidia/village/activate_two_actor_group_from_flags.c",
-    "resource_3bf:020054dc": "map/locations/heidia/village/activate_second_three_actor_group_from_flags.c",
-    "resource_3bf:02005520": "map/locations/heidia/village/activate_five_actor_group_from_flags.c",
-    "resource_3bf:02005a40": "runtime/soft_float/add_soft_double.c",
-    "resource_3bf:02005a78": "runtime/soft_float/subtract_soft_double.c",
-    "resource_3bf:02005ab8": "runtime/soft_float/get_status_storage.c",
-    "resource_3bf:02005ac0": "runtime/soft_float/record_a_is_nan.c",
-    "resource_3bf:02005ad0": "runtime/soft_float/record_a_is_infinity.c",
-    "resource_3bf:02005ae0": "runtime/soft_float/record_a_is_zero.c",
-    "resource_3bf:02005af0": "runtime/soft_float/signed_int_to_soft_double.c",
-    "resource_3bf:02005b6c": "runtime/soft_float/soft_double_to_signed_int.c",
-    "resource_3bf:02005bd8": "runtime/soft_float/record_b_is_nan.c",
-    "resource_3bf:02005be8": "runtime/soft_float/record_b_is_infinity.c",
-    "resource_3bf:02005bf8": "runtime/soft_float/record_b_is_zero.c",
-    "resource_3bf:02005c08": "runtime/soft_float/logical_shift_right_64.c",
-    "resource_3bf:02005c38": "runtime/soft_float/pack_soft_double.c",
-    "resource_3bf:02005dd4": "runtime/soft_float/record_c_is_nan.c",
-    "resource_3bf:02005de4": "runtime/soft_float/record_c_is_infinity.c",
-    "resource_3bf:02005df4": "runtime/soft_float/record_c_is_zero.c",
-    "resource_3bf:02005e04": "runtime/soft_float/unpack_soft_double.c",
+    "resource_3bf:020002a8": {
+      "name": "StopBlockedActorMotion",
+      "source": "map/locations/heidia/village/stop_blocked_actor_motion.c"
+    },
+    "resource_3bf:02000474": {
+      "name": "FindClearActorPosition",
+      "source": "map/locations/heidia/village/find_clear_actor_position.c"
+    },
+    "resource_3bf:020009dc": {
+      "name": "SelectPrimarySceneData",
+      "source": "map/locations/heidia/village/select_primary_scene_data.c"
+    },
+    "resource_3bf:02000a30": {
+      "name": "GetEmptySceneData",
+      "source": "map/locations/heidia/village/get_empty_scene_data.c"
+    },
+    "resource_3bf:02000a34": {
+      "name": "SelectSecondarySceneData",
+      "source": "map/locations/heidia/village/select_secondary_scene_data.c"
+    },
+    "resource_3bf:02000a80": {
+      "name": "SelectTertiarySceneData",
+      "source": "map/locations/heidia/village/select_tertiary_scene_data.c"
+    },
+    "resource_3bf:02000af8": {
+      "name": "SelectQuaternarySceneData",
+      "source": "map/locations/heidia/village/select_quaternary_scene_data.c"
+    },
+    "resource_3bf:02000b4c": {
+      "name": "ConfigureSceneActor12",
+      "source": "map/locations/heidia/village/configure_scene_actor_12.c"
+    },
+    "resource_3bf:02000ba0": {
+      "name": "RunSceneObjectSetup",
+      "source": "map/locations/heidia/village/run_scene_object_setup.c"
+    },
+    "resource_3bf:02000c90": {
+      "name": "PlaceSceneObjectPairFromTableA",
+      "source": "map/locations/heidia/village/place_scene_object_pair_from_table_a.c"
+    },
+    "resource_3bf:02000e30": {
+      "name": "PlaceSceneObjectPairFromTableB",
+      "source": "map/locations/heidia/village/place_scene_object_pair_from_table_b.c"
+    },
+    "resource_3bf:02000ee0": {
+      "name": "PlaceSceneObjectPairFromTableC",
+      "source": "map/locations/heidia/village/place_scene_object_pair_from_table_c.c"
+    },
+    "resource_3bf:02000f94": {
+      "name": "ShowLockedDoorMessageOnce",
+      "source": "map/locations/heidia/village/show_locked_door_message_once.c"
+    },
+    "resource_3bf:02000fb4": {
+      "name": "ShowLockedDoorMessage",
+      "source": "map/locations/heidia/village/show_locked_door_message.c"
+    },
+    "resource_3bf:02000fc8": {
+      "name": "ShowGeraldDontMessage",
+      "source": "map/locations/heidia/village/show_gerald_dont_message.c"
+    },
+    "resource_3bf:02000fe4": {
+      "name": "ShowThatWasExcitingMessage",
+      "source": "map/locations/heidia/village/show_that_was_exciting_message.c"
+    },
+    "resource_3bf:02001000": {
+      "name": "ShowSorryIScaredYouMessage",
+      "source": "map/locations/heidia/village/show_sorry_i_scared_you_message.c"
+    },
+    "resource_3bf:0200101c": {
+      "name": "ShowWellMessage",
+      "source": "map/locations/heidia/village/show_well_message.c"
+    },
+    "resource_3bf:02001038": {
+      "name": "TryStartActorInteraction",
+      "source": "map/locations/heidia/village/try_start_actor_interaction.c"
+    },
+    "resource_3bf:02001098": {
+      "name": "NoOpSceneCallbackA",
+      "source": "map/locations/heidia/village/no_op_scene_callback_a.c"
+    },
+    "resource_3bf:0200109c": {
+      "name": "NoOpSceneCallbackB",
+      "source": "map/locations/heidia/village/no_op_scene_callback_b.c"
+    },
+    "resource_3bf:020010a0": {
+      "name": "NoOpSceneCallbackC",
+      "source": "map/locations/heidia/village/no_op_scene_callback_c.c"
+    },
+    "resource_3bf:020010a4": {
+      "name": "NoOpSceneCallbackD",
+      "source": "map/locations/heidia/village/no_op_scene_callback_d.c"
+    },
+    "resource_3bf:020010a8": {
+      "name": "StartDoraHouseAccidentScene",
+      "source": "map/locations/heidia/village/start_dora_house_accident_scene.c"
+    },
+    "resource_3bf:02001108": {
+      "name": "IsPlayerInAccidentTriggerArea",
+      "source": "map/locations/heidia/village/is_player_in_accident_trigger_area.c"
+    },
+    "resource_3bf:020012e0": {
+      "name": "ConfigureSceneActor9",
+      "source": "map/locations/heidia/village/configure_scene_actor_9.c"
+    },
+    "resource_3bf:02001324": {
+      "name": "AreSceneActorsInPassingLane",
+      "source": "map/locations/heidia/village/are_scene_actors_in_passing_lane.c"
+    },
+    "resource_3bf:020014bc": {
+      "name": "ActivateSceneActor17",
+      "source": "map/locations/heidia/village/activate_scene_actor_17.c"
+    },
+    "resource_3bf:020014cc": {
+      "name": "IsPlayerInSecondaryTriggerArea",
+      "source": "map/locations/heidia/village/is_player_in_secondary_trigger_area.c"
+    },
+    "resource_3bf:02001650": {
+      "name": "ActivateSceneActor18",
+      "source": "map/locations/heidia/village/activate_scene_actor_18.c"
+    },
+    "resource_3bf:02001660": {
+      "name": "IsPlayerOutsideSceneRectangle",
+      "source": "map/locations/heidia/village/is_player_outside_scene_rectangle.c"
+    },
+    "resource_3bf:02001708": {
+      "name": "RunActor17SceneStep",
+      "source": "map/locations/heidia/village/run_actor_17_scene_step.c"
+    },
+    "resource_3bf:02001718": {
+      "name": "TriggerSceneStage95FromActor12",
+      "source": "map/locations/heidia/village/trigger_scene_stage_95_from_actor_12.c"
+    },
+    "resource_3bf:0200181c": {
+      "name": "IsSceneActorVerticallyNearPlayer",
+      "source": "map/locations/heidia/village/is_scene_actor_vertically_near_player.c"
+    },
+    "resource_3bf:02001880": {
+      "name": "IsSceneActorHorizontallyNearPlayer",
+      "source": "map/locations/heidia/village/is_scene_actor_horizontally_near_player.c"
+    },
+    "resource_3bf:020018e4": {
+      "name": "IsActorInteractionAvailable",
+      "source": "map/locations/heidia/village/is_actor_interaction_available.c"
+    },
+    "resource_3bf:02001918": {
+      "name": "IsSceneActorWithinFourSteps",
+      "source": "map/locations/heidia/village/is_scene_actor_within_four_steps.c"
+    },
+    "resource_3bf:02001980": {
+      "name": "IsSceneActorWithinTriggerBox",
+      "source": "map/locations/heidia/village/is_scene_actor_within_trigger_box.c"
+    },
+    "resource_3bf:020019e8": {
+      "name": "TriggerScene41AtVillagePath",
+      "source": "map/locations/heidia/village/trigger_scene_41_at_village_path.c"
+    },
+    "resource_3bf:02001a44": {
+      "name": "TriggerScene40AtVillagePath",
+      "source": "map/locations/heidia/village/trigger_scene_40_at_village_path.c"
+    },
+    "resource_3bf:02001ab0": {
+      "name": "RunActor9ScriptedSequence",
+      "source": "map/locations/heidia/village/run_actor_9_scripted_sequence.c"
+    },
+    "resource_3bf:02001b24": {
+      "name": "RunActorScriptedSequenceA",
+      "source": "map/locations/heidia/village/run_actor_scripted_sequence_a.c"
+    },
+    "resource_3bf:02001be4": {
+      "name": "TurnActorToSceneDirection",
+      "source": "map/locations/heidia/village/turn_actor_to_scene_direction.c"
+    },
+    "resource_3bf:02001c4c": {
+      "name": "RunActorScriptedSequenceB",
+      "source": "map/locations/heidia/village/run_actor_scripted_sequence_b.c"
+    },
+    "resource_3bf:02001ca4": {
+      "name": "RunActorScriptedSequenceC",
+      "source": "map/locations/heidia/village/run_actor_scripted_sequence_c.c"
+    },
+    "resource_3bf:02001d60": {
+      "name": "RunActorScriptedSequenceD",
+      "source": "map/locations/heidia/village/run_actor_scripted_sequence_d.c"
+    },
+    "resource_3bf:02001dc4": {
+      "name": "InspectOrdinaryObject",
+      "source": "map/locations/heidia/village/inspect_ordinary_object.c"
+    },
+    "resource_3bf:02001e2c": {
+      "name": "InspectEmptyChest",
+      "source": "map/locations/heidia/village/inspect_empty_chest.c"
+    },
+    "resource_3bf:020020cc": {
+      "name": "InspectEmptySceneObject",
+      "source": "map/locations/heidia/village/inspect_empty_scene_object.c"
+    },
+    "resource_3bf:02002134": {
+      "name": "RunActor12InteractionSequence",
+      "source": "map/locations/heidia/village/run_actor_12_interaction_sequence.c"
+    },
+    "resource_3bf:0200226c": {
+      "name": "ConfigureInteractionRegionA",
+      "source": "map/locations/heidia/village/configure_interaction_region_a.c"
+    },
+    "resource_3bf:020022a0": {
+      "name": "ConfigureInteractionRegionB",
+      "source": "map/locations/heidia/village/configure_interaction_region_b.c"
+    },
+    "resource_3bf:020022d4": {
+      "name": "ConfigureInteractionRegionC",
+      "source": "map/locations/heidia/village/configure_interaction_region_c.c"
+    },
+    "resource_3bf:02002410": {
+      "name": "ConfigurePrimaryInteractionRegions",
+      "source": "map/locations/heidia/village/configure_primary_interaction_regions.c"
+    },
+    "resource_3bf:02002468": {
+      "name": "ConfigureSecondaryInteractionRegions",
+      "source": "map/locations/heidia/village/configure_secondary_interaction_regions.c"
+    },
+    "resource_3bf:020024c0": {
+      "name": "InspectWardrobe",
+      "source": "map/locations/heidia/village/inspect_wardrobe.c"
+    },
+    "resource_3bf:020024e4": {
+      "name": "InspectFirewood",
+      "source": "map/locations/heidia/village/inspect_firewood.c"
+    },
+    "resource_3bf:02002504": {
+      "name": "InspectBooks",
+      "source": "map/locations/heidia/village/inspect_books.c"
+    },
+    "resource_3bf:02002528": {
+      "name": "NoOpInteractionCallback",
+      "source": "map/locations/heidia/village/no_op_interaction_callback.c"
+    },
+    "resource_3bf:02004928": {
+      "name": "SelectActor25SceneVariant",
+      "source": "map/locations/heidia/village/select_actor_25_scene_variant.c"
+    },
+    "resource_3bf:02004964": {
+      "name": "SelectActor24SceneVariant",
+      "source": "map/locations/heidia/village/select_actor_24_scene_variant.c"
+    },
+    "resource_3bf:02004b68": {
+      "name": "ConfigureSceneActor26",
+      "source": "map/locations/heidia/village/configure_scene_actor_26.c"
+    },
+    "resource_3bf:02004b84": {
+      "name": "ConfigureSceneActor14",
+      "source": "map/locations/heidia/village/configure_scene_actor_14.c"
+    },
+    "resource_3bf:02004ba4": {
+      "name": "ConfigureSceneActor13",
+      "source": "map/locations/heidia/village/configure_scene_actor_13.c"
+    },
+    "resource_3bf:02004bc4": {
+      "name": "ConfigureSceneActor12Variant",
+      "source": "map/locations/heidia/village/configure_scene_actor_12_variant.c"
+    },
+    "resource_3bf:02004be4": {
+      "name": "ConfigureSceneActor18",
+      "source": "map/locations/heidia/village/configure_scene_actor_18.c"
+    },
+    "resource_3bf:02004d0c": {
+      "name": "FinishActor20SceneSequence",
+      "source": "map/locations/heidia/village/finish_actor_20_scene_sequence.c"
+    },
+    "resource_3bf:02004d4c": {
+      "name": "NoOpActorCallback",
+      "source": "map/locations/heidia/village/no_op_actor_callback.c"
+    },
+    "resource_3bf:02004d50": {
+      "name": "ConfigureActor13Interaction",
+      "source": "map/locations/heidia/village/configure_actor_13_interaction.c"
+    },
+    "resource_3bf:02004d88": {
+      "name": "ConfigureActor13SceneResource",
+      "source": "map/locations/heidia/village/configure_actor_13_scene_resource.c"
+    },
+    "resource_3bf:02005470": {
+      "name": "ActivateThreeActorGroupFromFlags",
+      "source": "map/locations/heidia/village/activate_three_actor_group_from_flags.c"
+    },
+    "resource_3bf:020054b0": {
+      "name": "ActivateTwoActorGroupFromFlags",
+      "source": "map/locations/heidia/village/activate_two_actor_group_from_flags.c"
+    },
+    "resource_3bf:020054dc": {
+      "name": "ActivateSecondThreeActorGroupFromFlags",
+      "source": "map/locations/heidia/village/activate_second_three_actor_group_from_flags.c"
+    },
+    "resource_3bf:02005520": {
+      "name": "ActivateFiveActorGroupFromFlags",
+      "source": "map/locations/heidia/village/activate_five_actor_group_from_flags.c"
+    },
+    "resource_3bf:02005a40": {
+      "name": "AddSoftDouble",
+      "source": "runtime/soft_float/add_soft_double.c"
+    },
+    "resource_3bf:02005a78": {
+      "name": "SubtractSoftDouble",
+      "source": "runtime/soft_float/subtract_soft_double.c"
+    },
+    "resource_3bf:02005ab8": {
+      "name": "GetSoftFloatStatusStorage",
+      "source": "runtime/soft_float/get_status_storage.c"
+    },
+    "resource_3bf:02005ac0": {
+      "name": "SoftFloatRecordAIsNaN",
+      "source": "runtime/soft_float/record_a_is_nan.c"
+    },
+    "resource_3bf:02005ad0": {
+      "name": "SoftFloatRecordAIsInfinity",
+      "source": "runtime/soft_float/record_a_is_infinity.c"
+    },
+    "resource_3bf:02005ae0": {
+      "name": "SoftFloatRecordAIsZero",
+      "source": "runtime/soft_float/record_a_is_zero.c"
+    },
+    "resource_3bf:02005af0": {
+      "name": "SignedIntToSoftDouble",
+      "source": "runtime/soft_float/signed_int_to_soft_double.c"
+    },
+    "resource_3bf:02005b6c": {
+      "name": "SoftDoubleToSignedInt",
+      "source": "runtime/soft_float/soft_double_to_signed_int.c"
+    },
+    "resource_3bf:02005bd8": {
+      "name": "SoftFloatRecordBIsNaN",
+      "source": "runtime/soft_float/record_b_is_nan.c"
+    },
+    "resource_3bf:02005be8": {
+      "name": "SoftFloatRecordBIsInfinity",
+      "source": "runtime/soft_float/record_b_is_infinity.c"
+    },
+    "resource_3bf:02005bf8": {
+      "name": "SoftFloatRecordBIsZero",
+      "source": "runtime/soft_float/record_b_is_zero.c"
+    },
+    "resource_3bf:02005c08": {
+      "name": "LogicalShiftRight64",
+      "source": "runtime/soft_float/logical_shift_right_64.c"
+    },
+    "resource_3bf:02005c38": {
+      "name": "PackSoftDouble",
+      "source": "runtime/soft_float/pack_soft_double.c"
+    },
+    "resource_3bf:02005dd4": {
+      "name": "SoftFloatRecordCIsNaN",
+      "source": "runtime/soft_float/record_c_is_nan.c"
+    },
+    "resource_3bf:02005de4": {
+      "name": "SoftFloatRecordCIsInfinity",
+      "source": "runtime/soft_float/record_c_is_infinity.c"
+    },
+    "resource_3bf:02005df4": {
+      "name": "SoftFloatRecordCIsZero",
+      "source": "runtime/soft_float/record_c_is_zero.c"
+    },
+    "resource_3bf:02005e04": {
+      "name": "UnpackSoftDouble",
+      "source": "runtime/soft_float/unpack_soft_double.c"
+    },
     "resource_3c0:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_3c0:02000ce4": "overlays/encounter_palette/pulse.c",
-    "resource_3c0:0200013c": "overlays/selected_actor_effect/spawn_configured_effect.c",
+    "resource_3c0:02000ce4": {
+      "name": "EncounterPalette_Pulse",
+      "source": "overlays/encounter_palette/pulse.c"
+    },
+    "resource_3c0:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "overlays/selected_actor_effect/spawn_configured_effect.c"
+    },
     "resource_3c0:02000400": "overlays/selected_actor_effect/sync_selected_actor_progress.c",
     "resource_3c4:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
     "resource_3c4:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
@@ -1775,7 +2618,10 @@
     "resource_3c5:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
     "resource_3c5:02000cf0": "overlays/effect_motion_variant_b/advance_effect_motion.c",
     "resource_3c8:0200096c": "overlays/effect_motion_variant_c/advance_effect_motion.c",
-    "resource_3c9:02000480": "overlays/fixed_point_distance/measure_position_distance_variant_b.c",
+    "resource_3c9:02000480": {
+      "name": "MeasureFixedPointPositionDistance",
+      "source": "overlays/fixed_point_distance/measure_position_distance_variant_b.c"
+    },
     "resource_381:02000f28": "runtime/callbacks/no_op_callback_a.c",
     "resource_381:02000f2c": "runtime/callbacks/no_op_callback_b.c",
     "resource_387:020004cc": "runtime/callbacks/no_op_callback_c.c",
@@ -3732,7 +4578,10 @@
       "name": "Battle_SetRuntimeFlagBit0",
       "source": "battle/event_runtime/set_runtime_flag_bit0.c"
     },
-    "main:080bb938": "battle/event_runtime/dispatch_queued_events.c",
+    "main:080bb938": {
+      "name": "BattleEvent_DispatchQueued",
+      "source": "battle/event_runtime/dispatch_queued_events.c"
+    },
     "main:080bbabc": "battle/event/push.c",
     "main:080bbae8": "battle/effects/can_affect_defeated_unit.c",
     "main:080bd3c8": {
@@ -5291,7 +6140,10 @@
       "name": "SceneState_ApplyPlacementResult",
       "source": "overlays/state_update/apply_placement_result.c"
     },
-    "resource_3b3:020015cc": "overlays/coordinate_preset/copy_and_offset_coordinates.c",
+    "resource_3b3:020015cc": {
+      "name": "CopyAndOffsetCoordinatePreset",
+      "source": "overlays/coordinate_preset/copy_and_offset_coordinates.c"
+    },
     "resource_39a:02000e90": {
       "name": "FieldScene_SetActor9Values1And2",
       "source": "overlays/scene_primary_script/set_actor_9_values_1_and_2.c"
@@ -6140,7 +6992,10 @@
       "name": "SceneState_ApplyRectAndSend303",
       "source": "overlays/state_update/apply_rect_and_send_303.c"
     },
-    "resource_3b4:020018c0": "overlays/display/set_blend_alpha_coefficients.c",
+    "resource_3b4:020018c0": {
+      "name": "SetBlendAlphaCoefficients",
+      "source": "overlays/display/set_blend_alpha_coefficients.c"
+    },
     "resource_3b4:020018d0": {
       "name": "SceneEffect_SetBlendAlpha0607",
       "source": "overlays/display/set_blend_alpha_0607.c"
@@ -8457,7 +9312,10 @@
       "name": "FieldScene_DispatchByFacing",
       "source": "map/locations/xian/dispatch_by_facing.c"
     },
-    "resource_39a:02001050": "overlays/dialogue_layout/configure_group_one.c",
+    "resource_39a:02001050": {
+      "name": "DialogueLayout_ConfigureGroupOne",
+      "source": "overlays/dialogue_layout/configure_group_one.c"
+    },
     "resource_371:020006b4": {
       "name": "SceneState_ApplyFlag85aBranch",
       "source": "overlays/state_update/apply_flag_85a_branch_371.c"
@@ -9091,7 +9949,10 @@
       "name": "SceneData_ReturnZero",
       "source": "overlays/scene_script/scene_3a9.c"
     },
-    "resource_39a:02001154": "overlays/dialogue_layout/configure_group_two.c",
+    "resource_39a:02001154": {
+      "name": "DialogueLayout_ConfigureGroupTwo",
+      "source": "overlays/dialogue_layout/configure_group_two.c"
+    },
     "resource_3c0:02000048": {
       "name": "OverlayObject_CreateAndInitialize",
       "source": "overlays/overlay_object/create_and_initialize_3c0.c"
@@ -9843,7 +10704,10 @@
       "name": "SceneActor_SetActors19To22HeightByFrameParity",
       "source": "overlays/scene_script/scene_38f.c"
     },
-    "resource_380:0200013c": "overlays/configurable_effect_spawn/spawn_configured_effect.c",
+    "resource_380:0200013c": {
+      "name": "Overlay380_SpawnConfiguredEffect",
+      "source": "overlays/configurable_effect_spawn/spawn_configured_effect.c"
+    },
     "resource_3c9:02000714": {
       "name": "SceneData_GetTableE6ec",
       "source": "overlays/scene_data/get_table_e6ec.c"
@@ -10931,7 +11795,10 @@
       "name": "SceneData_ReturnZero",
       "source": "overlays/scene_script/scene_388.c"
     },
-    "resource_39a:020012cc": "overlays/dialogue_layout/configure_group_three.c",
+    "resource_39a:020012cc": {
+      "name": "DialogueLayout_ConfigureGroupThree",
+      "source": "overlays/dialogue_layout/configure_group_three.c"
+    },
     "resource_3b1:02005780": {
       "name": "FieldScene_RunActors24And25SetupWithValue92a",
       "source": "overlays/scene_setup/run_actors_24_and_25_setup_92a_3b1.c"
@@ -11937,15 +12804,30 @@
       "name": "SceneEffect_StepEllipseOrbit",
       "source": "overlays/orbiting_effect/step_ellipse_orbit_378.c"
     },
-    "resource_3a7:02001158": "runtime/soft_float/add_parts.c",
+    "resource_3a7:02001158": {
+      "name": "AddSoftFloatParts",
+      "source": "runtime/soft_float/add_parts.c"
+    },
     "resource_398:020004b4": {
       "name": "RunGuardedSceneSetup",
       "source": "overlays/scene_script/scene_398.c"
     },
-    "resource_3ba:02001c7c": "overlays/party/run_party_count_interaction.c",
-    "resource_3bb:02001f14": "overlays/party/run_party_count_interaction_copy_a.c",
-    "resource_3bc:020029ac": "overlays/party/run_party_count_interaction_copy_b.c",
-    "resource_3bf:020057ec": "runtime/soft_float/add_parts_copy.c",
+    "resource_3ba:02001c7c": {
+      "name": "RunPartyCountInteraction",
+      "source": "overlays/party/run_party_count_interaction.c"
+    },
+    "resource_3bb:02001f14": {
+      "name": "RunPartyCountInteractionCopyA",
+      "source": "overlays/party/run_party_count_interaction_copy_a.c"
+    },
+    "resource_3bc:020029ac": {
+      "name": "RunPartyCountInteractionCopyB",
+      "source": "overlays/party/run_party_count_interaction_copy_b.c"
+    },
+    "resource_3bf:020057ec": {
+      "name": "AddSoftFloatParts",
+      "source": "runtime/soft_float/add_parts_copy.c"
+    },
     "main:08000770": {
       "name": "IwramIrqMain"
     },
@@ -12006,7 +12888,10 @@
     "main:0809ae64": {
       "name": "RunBattleEffect13"
     },
-    "main:0809b208": "battle/effects/run_effect15.c",
+    "main:0809b208": {
+      "name": "RunBattleEffect15",
+      "source": "battle/effects/run_effect15.c"
+    },
     "main:0809b7e4": {
       "name": "LiteralPool_0809b7e4"
     },
@@ -12019,7 +12904,10 @@
     "main:080bb65c": {
       "name": "BattlePresentation_WaitForAdvance"
     },
-    "main:08092f84": "battle/presentation/run_action_and_wait.c",
+    "main:08092f84": {
+      "name": "BattleEvent_RunActionAndWait",
+      "source": "battle/presentation/run_action_and_wait.c"
+    },
     "main:080a1a40": {
       "name": "BattleEffect_PositionSprite"
     },
@@ -12372,15 +13260,30 @@
     "resource_3af:02001db0": {
       "name": "RunEventScript01"
     },
-    "resource_389:02000b6c": "overlays/actor_position/configure_scene_for_actor_eight_column.c",
-    "resource_3b1:02000284": "overlays/actor_effect_motion/update_actor_nine_effect_mode.c",
-    "resource_3b1:02001144": "overlays/actor_search/find_actor_near_position.c",
-    "resource_3b1:020048ac": "overlays/scene_motion/configure_scene_motion_flags.c",
+    "resource_389:02000b6c": {
+      "name": "ConfigureSceneForActorEightColumn",
+      "source": "overlays/actor_position/configure_scene_for_actor_eight_column.c"
+    },
+    "resource_3b1:02000284": {
+      "name": "UpdateActorNineEffectMode",
+      "source": "overlays/actor_effect_motion/update_actor_nine_effect_mode.c"
+    },
+    "resource_3b1:02001144": {
+      "name": "FindActorNearPosition",
+      "source": "overlays/actor_search/find_actor_near_position.c"
+    },
+    "resource_3b1:020048ac": {
+      "name": "ConfigureSceneMotionFlags",
+      "source": "overlays/scene_motion/configure_scene_motion_flags.c"
+    },
     "resource_3b1:02005ca4": {
       "name": "RunActorsEightAndNineMapEvent",
       "source": "overlays/actor_presentation/run_actors_eight_and_nine_map_event.c"
     },
-    "resource_3c9:02000518": "overlays/actor_motion/initialize_actor_zero_motion.c",
+    "resource_3c9:02000518": {
+      "name": "InitializeActorZeroMotion",
+      "source": "overlays/actor_motion/initialize_actor_zero_motion.c"
+    },
     "resource_3b8:020006dc": {
       "name": "RunEventScript01"
     },

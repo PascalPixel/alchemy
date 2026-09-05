@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene3bf_02000f30 Func_02000dcc
+#define FieldScene_RunScene3bfSequenceD Func_02000dcc
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -22,7 +22,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void FieldScene_RunScene3bf_02000f30(void)
+void FieldScene_RunScene3bfSequenceD(void)
 {
     u8 *p5;
     s16 field;

@@ -14838,6 +14838,10 @@
     "main:08012e28": {
       "name": "Battle_PlaceActorsByFormationKind",
       "source": "battle/placement/place_actors_by_formation_kind.c"
+    },
+    "main:080a602c": {
+      "name": "PsynergyMenu_SelectPartySlot",
+      "source": "psynergy_menu/select_party_slot.c"
     }
   }
 }

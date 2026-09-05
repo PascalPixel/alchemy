@@ -21,7 +21,6 @@ void Func_020077e6(void);
 void Func_020077ce(s32);
 
 #define RunActor12InteractionSequence Func_02002134
-
 void RunActor12InteractionSequence(void)
 {
     Func_02007768();

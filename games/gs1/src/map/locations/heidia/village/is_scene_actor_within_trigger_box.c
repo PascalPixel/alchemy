@@ -11,7 +11,6 @@ SceneActor *Func_02006fd4(void);
 SceneActor *Func_020070da(void);
 
 #define IsSceneActorWithinTriggerBox Func_02001980
-
 s32 IsSceneActorWithinTriggerBox(void)
 {
     SceneActor *scene_actor = Func_02006fd4();

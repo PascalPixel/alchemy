@@ -41,7 +41,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 /* Sets up the opening sequence: two calls with fixed argument pairs, a
  * write to the scene work record, and two more calls with fixed args. */
-void Func_020019a4(void)
+void FieldScene_RunOpeningSequenceHead(void)
 {
     ObjectMotion_SetSpeedParameters_1(0, 32768, 16384); /* object_id 0, speed_limit 32768, acceleration 16384 */
     ObjectMotion_ResetAndSetPositionInMode2_1(0, 728, 408); /* object_id 0, x 728, z 408 */

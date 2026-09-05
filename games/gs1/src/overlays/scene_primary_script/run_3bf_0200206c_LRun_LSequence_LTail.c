@@ -44,8 +44,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-
-void Func_0200206c(void)
+void FieldScene_RunSequenceTail(void)
 {
     BattleRuntime_Reset_1();
     ObjectMotion_SetHorizontalPositionWithTerrain_1(12, 45088768, 5767168); /* object_id 12, x, z */

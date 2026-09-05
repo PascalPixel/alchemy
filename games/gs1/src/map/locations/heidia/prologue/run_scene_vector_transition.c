@@ -15,7 +15,6 @@ extern void Func_02001d6e(struct V6 arg0);
 extern void Func_020047e2(void);
 
 #define RunSceneVectorTransition Func_02001740
-
 void RunSceneVectorTransition(void) {
     struct V6 transition;
 

@@ -8,7 +8,6 @@ s32 Func_0200aaa8(s32);
 void Func_02006382(s32);
 
 #define ActivateThreeActorGroupFromFlags Func_02005470
-
 void ActivateThreeActorGroupFromFlags(void)
 {
     if (Func_0200aa86(0x35a)) {

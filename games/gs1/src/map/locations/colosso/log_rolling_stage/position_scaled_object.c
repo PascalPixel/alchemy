@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 typedef struct ScaledStageObject {
     u8 pad00[12];
     s32 y;                      /* +12 */

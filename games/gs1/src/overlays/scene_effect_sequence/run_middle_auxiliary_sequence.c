@@ -50,7 +50,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Func_020003b0(s32 a)
+void RunMiddleAuxiliarySequence(s32 a)
 {
     u8 *obj;
     u8 *q;

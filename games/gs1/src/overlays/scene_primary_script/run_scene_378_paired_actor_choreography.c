@@ -527,7 +527,7 @@ void FieldScene_RunPairedActorChoreography(void)
     {
         u8 *record = Scene_GetRecord_5(1);
         u8 value = *(volatile u8 *)&record[90];
-    
+
         record[90] = (u8)(value | 1);
     }
     ObjectMotion_Launch_1(1, 2, 0);
@@ -611,7 +611,7 @@ void FieldScene_RunPairedActorChoreography(void)
     {
         u8 *record = Scene_GetRecord_6(8); /* main:0808a080 */
         s32 shown = 1;
-    
+
         *(volatile u16 *)(record + 100) = shown;
     }
     record = Scene_GetRecord_7(8); /* main:0808a080 */
@@ -619,7 +619,7 @@ void FieldScene_RunPairedActorChoreography(void)
     {
         u8 *record = Scene_GetRecord_8(12); /* main:0808a080 */
         s32 shown = 1;
-    
+
         *(volatile u16 *)(record + 100) = shown;
     }
     record = Scene_GetRecord_9(12); /* main:0808a080 */

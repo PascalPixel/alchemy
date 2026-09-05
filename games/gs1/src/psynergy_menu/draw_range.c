@@ -1,5 +1,4 @@
 #include "types.h"
-
 #define UiWindow_SetTilemapEntryFar Func_08015280
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);

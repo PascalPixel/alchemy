@@ -192,7 +192,7 @@ void FieldScene_RunScene38b_02000584(void)
             {
                 u8 *record = Func_020018c2(14);
                 u8 value = *(volatile u8 *)&record[90];
-            
+
                 record[90] = (u8)(value | 1);
             }
             Func_020018b0(20);

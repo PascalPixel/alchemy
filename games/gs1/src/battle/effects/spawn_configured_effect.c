@@ -1,6 +1,5 @@
 #include "types.h"
 
-
 struct BattleEffectSprite {
     u8 reserved00[9];
     u8 flags9;

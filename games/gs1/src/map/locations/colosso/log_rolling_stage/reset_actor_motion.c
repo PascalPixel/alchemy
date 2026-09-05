@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 u8 *Func_020082f8();           /* scene-record accessor, established (veneer to Scene_GetRecord) */
 void Func_020081e6();          /* unestablished */
 

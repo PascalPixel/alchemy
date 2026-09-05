@@ -11,6 +11,7 @@ extern s32 Func_02002602(SoftFloatRecord *record);
 extern s32 Func_0200260c(SoftFloatRecord *record);
 extern s32 Func_02002632(SoftFloatRecord *record);
 
+#define AddSoftFloatParts Func_02001158
 #define SoftFloatLeftIsNaN Func_0200259a
 #define SoftFloatRightIsNaN Func_020025a8
 #define SoftFloatLeftIsInfinity Func_020025c2
@@ -20,8 +21,6 @@ extern s32 Func_02002632(SoftFloatRecord *record);
 #define SoftFloatRightIsZero Func_02002602
 #define SoftFloatLeftIsZeroWithRightZero Func_0200260c
 #define SoftFloatLeftIsZero Func_02002632
-#define AddSoftFloatParts Func_02001158
-
 SoftFloatRecord *AddSoftFloatParts(SoftFloatRecord *left,
                                    SoftFloatRecord *right,
                                    SoftFloatRecord *result)

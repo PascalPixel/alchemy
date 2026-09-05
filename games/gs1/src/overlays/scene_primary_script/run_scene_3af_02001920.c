@@ -67,14 +67,14 @@ void FieldScene_RunScene3af_02001920(void)
     record = Func_02005c64(22);
     {
         s32 shown = 0;
-    
+
         *(volatile u16 *)((s32)record + 6) = shown;
     }
     Call2(Func_02005c88, 22, 0x200c980);
     {
         u8 *record = Func_02005c76(21);
         u8 value = *(volatile u8 *)&record[89];
-    
+
         record[89] = (u8)(value | 128);
     }
     Call3(Func_02005c9a, 21, 0xcccc, 0x6666);

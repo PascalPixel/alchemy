@@ -45,8 +45,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-
-void Func_02000fbc(void)
+void FieldScene_RunPrimarySequenceSecond(void)
 {
     Audio_PlayCue_1(158);
     Call3(Func_02006ef8, (s32)&Value_0200f55a, 35, 74); /* main:08009178 */

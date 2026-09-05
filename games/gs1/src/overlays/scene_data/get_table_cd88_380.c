@@ -1,0 +1,9 @@
+#include "types.h"
+
+#define SceneData_GetTableCd88 Func_0200036c
+extern s32 Data_0200cd88[];
+
+s32 *SceneData_GetTableCd88(void)
+{
+    return Data_0200cd88;
+}

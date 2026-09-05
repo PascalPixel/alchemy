@@ -1,5 +1,5 @@
-#define NoOpInteractionCallback Func_02002528
 
+#define NoOpInteractionCallback Func_02002528
 void NoOpInteractionCallback(void)
 {
 }

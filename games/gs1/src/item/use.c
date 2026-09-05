@@ -28,7 +28,6 @@ u32 Func_080a3ddc(struct ItemOwner *, u16 *, s32);
 s32 Func_080a9f10(s32, s32, s32, s32);
 
 #define Item_Use Func_080a9e48
-
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
     struct ItemUseWork *work;

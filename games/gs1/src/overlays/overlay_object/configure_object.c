@@ -4,9 +4,9 @@
 void Func_02004e8c(void *, s32);
 void Func_02004f8c(void *, s32);
 
+#define ConfigureOverlayObject Func_02000030
 #define RunOverlayObjectCommand0 Func_02004e8c
 #define RunOverlayObjectCommand1 Func_02004f8c
-#define ConfigureOverlayObject Func_02000030
 
 void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter) {
     object->unknown_55 = 0;

@@ -3,7 +3,6 @@
 typedef s32 (*IwramSqrt)(s32);
 
 #define CalculatePlanarDistance Func_02000e00
-
 s32 CalculatePlanarDistance(s32 *position_a, s32 *position_b)
 {
     s32 dx = (*position_b++ - *position_a++) >> 16;

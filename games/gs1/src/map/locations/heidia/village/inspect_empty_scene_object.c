@@ -13,7 +13,6 @@ void Func_02007752(void);
 void Func_02007738(s32);
 
 #define InspectEmptySceneObject Func_020020cc
-
 void InspectEmptySceneObject(void)
 {
     Func_0200777c(0, 1);

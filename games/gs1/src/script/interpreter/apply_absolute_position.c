@@ -1,0 +1,23 @@
+#include "object_commands.h"
+#include "script_interpreter.h"
+
+#define Script_ApplyAbsolutePosition Func_0800da18
+
+s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
+{
+    s32 first;
+    s32 second;
+    s32 third;
+    const s32 *argument;
+
+    argument = interpreter->script + interpreter->cursor;
+    argument++;
+    first = *argument;
+    argument++;
+    second = *argument;
+    argument++;
+    third = *argument;
+    Func_0800d14c(interpreter, first, second, third);
+    interpreter->cursor = (u16)interpreter->cursor + 4;
+    return 1;
+}

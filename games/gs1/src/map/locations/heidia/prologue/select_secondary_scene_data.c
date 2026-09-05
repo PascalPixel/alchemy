@@ -11,7 +11,6 @@ extern u8 Data_0200b850[];
 extern u8 Data_0200b5f8[];
 
 #define SelectSecondarySceneData Func_02000d48
-
 s32 SelectSecondarySceneData(void) {
     s16 v = Data_02000240[224];
 

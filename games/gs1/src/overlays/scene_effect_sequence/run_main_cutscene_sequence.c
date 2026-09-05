@@ -2,7 +2,6 @@
 
 #define FieldScene_RunMainCutsceneSequence Func_02002014
 
-
 void Func_020063fe();
 void Func_02006420();
 void Func_02006426();
@@ -844,7 +843,6 @@ static __inline__ __attribute__((always_inline)) void follow_record(
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 
-
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -865,7 +863,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-void Func_02002014(void)
+void FieldScene_RunMainCutsceneSequence(void)
 {
     s32 carry;
     s16 *position;

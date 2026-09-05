@@ -49,12 +49,11 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-
 /* Sets step 188, then runs a pair of 6-argument setup calls for indices 0
  * and 2 sharing the same trailing four values, followed by a pair of
  * 3-argument calls sharing the same leading two arguments, and a closing
  * 1-argument call. */
-void Func_02000780(void)
+void FieldScene_RunSupplementalSequenceTwo(void)
 {
     Audio_PlayCue_1(188);
     Call6(Func_02002dde, 0, 63, 51, 8, 2, 2);

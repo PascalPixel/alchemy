@@ -5,8 +5,8 @@
 
 #include "../main/0808e23c.c"
 #include "../main/0808e4b4.c"
-#include "../../../src/unidentified/main/battle/battle_owner_23.c"
+#include "../../../src/battle/effects/execute_packed_ability_effect.c"
 #include "../main/0808e680.c"
-#include "../../../src/unidentified/main/runtime/runtime_owner_207.c"
-#include "../../../src/unidentified/main/runtime/runtime_owner_135.c"
+#include "../../../src/battle/effects/has_matching_event5.c"
+#include "../../../src/battle/effects/has_trigger.c"
 #include "../../../src/object/motion/snap_to_terrain.c"

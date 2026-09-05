@@ -8,7 +8,6 @@ extern void Func_02004658(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void Func_02004676(s32 arg0);
 
 #define ConfigureSceneActor14 Func_020015d0
-
 void ConfigureSceneActor14(s32 actor_id) {
     s32 a = 0x900000;
     s32 b = 0x1400000;

@@ -9,7 +9,6 @@ s32 *Func_02002642();
 void Func_0200265e();
 
 #define ActorPresentation_RunActorEightThresholdScene Func_020010fc
-
 void ActorPresentation_RunActorEightThresholdScene(void)
 {
     Func_02002638(8);

@@ -18,7 +18,6 @@ extern void Func_020054d4(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void Func_020054e4(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 #define UpdateActor17NorthRoute Func_02002450
-
 void UpdateActor17NorthRoute(void) {
     s32 x = Func_020054e0(17)->f08 >> 20;
     s32 y = Func_020054ea(17)->f10 >> 20;

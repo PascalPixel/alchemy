@@ -1,7 +1,6 @@
 #include "types.h"
 
 #define BattleEvent_RunActionAndWait Func_08092f84
-
 extern volatile u32 Data_03001ae8;
 
 void BattleEvent_RunActionAndWait(s32 action)

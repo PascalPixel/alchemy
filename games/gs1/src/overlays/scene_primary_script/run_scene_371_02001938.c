@@ -76,7 +76,7 @@ void FieldScene_RunScene371_02001938(void)
     Call3(Func_02005ca2, 8, 0x9999, 0x4ccc);
     {
         s32 shown = 0;
-    
+
         *(u16 *)(rec7 + 100) = shown;
     }
     Func_02005cb8(8, 0x200d158);

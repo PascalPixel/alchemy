@@ -29,11 +29,10 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-
 /* Two six-argument calls whose first and fifth arguments repeat the same id
  * (8 and 49 respectively), followed by four three-argument calls each keyed
  * by an id with a trailing pair of values (-1, -1 or 0, 0). */
-void Func_02002040(void)
+void FieldScene_RunLateSequenceSecond(void)
 {
     Call6(Func_020050f2, 8, 113, 1, 1, 8, 49);
     Call6(Func_02005104, 49, 107, 1, 1, 49, 43);

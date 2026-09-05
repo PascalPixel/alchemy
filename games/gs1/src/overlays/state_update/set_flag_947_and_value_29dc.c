@@ -1,0 +1,17 @@
+#include "types.h"
+
+#define SceneState_SetFlag947AndValue29dc Func_02000f00
+
+/* Complete paired scene-resource enable wrapper through its two-word pool. */
+
+extern void Func_02001fec(void);
+extern void Func_02001fbc(s32 resource, s32 enabled);
+extern void Func_02001fc4(s32 resource, s32 enabled);
+extern void Func_02002008(void);
+void SceneState_SetFlag947AndValue29dc(void)
+{
+    Func_02001fec();
+    Func_02001fbc(0x947, 1);
+    Func_02001fc4(0x29dc, 1);
+    Func_02002008();
+}

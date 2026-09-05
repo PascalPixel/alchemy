@@ -1,0 +1,31 @@
+#include "types.h"
+
+#define Menu_ClearSecondObjectRowAndScheduleUpdate Func_08020088
+
+extern u8 *Data_03001f2c;
+void ScheduleCallback(s32);
+void Func_080200cc(void);
+void Func_08009038(void *);
+
+void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
+{
+    u8 *base = Data_03001f2c;
+    s32 offset = 137;
+    s32 zero;
+    s32 count;
+
+    ScheduleCallback((s32)Func_080200cc);
+    zero = 0;
+    offset *= 4;
+    count = 3;
+    do {
+        void *entry = *(void **)(offset + (unsigned int)base);
+
+        if (entry != 0) {
+            Func_08009038(entry);
+            *(s32 *)(offset + (unsigned int)base) = zero;
+        }
+        count--;
+        offset += 4;
+    } while (count >= 0);
+}

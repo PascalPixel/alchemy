@@ -452,7 +452,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* Runs the full scene sequence for entities 0, 1, 5 and 8: per-entity setup,
  * a shared movement/pose pass, a branch on one entity's saved state, and a
  * closing pass over the same four entities. */
-void Func_02000f8c(void)
+void FieldScene_RunFourEntitySequence(void)
 {
     u8 *record;
 
@@ -648,4 +648,3 @@ void Func_02000f8c(void)
     GameFlag_Clear_1(0x12f);
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }
-

@@ -93,21 +93,9 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
     (
         "darwin-arm64",
         &[
-            "dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a",
-            // Source-unchanged 640614e rebuild after cleanup; agscc reproduced,
-            // while old_agbcc's metadata-only variant passed its smoke compile.
-            "633678adb3c1ceae5b69b4a604724593bf198c216289c85f55109e473737b088",
-            // Source-unchanged bcfb458 rebuild; two stage runs reproduced it,
-            // then `make full-rom-check` proved it before pinning.
-            "0c4cd3bbbb475245ec9ab5c9bada68f99ff4f2f6dec751c5c287731e9dbeaea8",
-            // Source-unchanged bcfb458 rebuild after an accidental make clean
-            // wiped dist; agscc reproduced its approved digest exactly, this
-            // one reproduced across two stage runs, then `make full-rom-check`
-            // proved it before pinning.
-            "52f71341c3a221baef0d8777cd833da9fcc24dfd1203b9fc861ec5b37eadcf9c",
-            // Source-unchanged rebuild after the GS2-only agscc route was
-            // staged; old_agbcc is independent of that route.
-            "e96081ac46e9b800659cbcc677fc389afaedc2851215d91e05a2d8158453e3b2",
+            // Stock pret/agbcc da598c1: 300 identical objects across twelve
+            // editions; all 4,178 claimed GS1 EN bytes independently linked.
+            "1b871e9350265d6a530f26d6149818e3294a8b0231a574960226e506a7a5e677",
         ],
     ),
     ("darwin-x64", &[]),

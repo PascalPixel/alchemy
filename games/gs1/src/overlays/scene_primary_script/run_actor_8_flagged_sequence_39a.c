@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor8FlaggedSequence Func_02000464
-
 extern void Func_0200287a(s32);
 extern s32 Func_02002788(s32);
 extern void Func_020005fe(s32, s32, s32);

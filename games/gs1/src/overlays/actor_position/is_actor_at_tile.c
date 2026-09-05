@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_IsActorAtTile Func_02001be8
 #define NULL ((void *)0)
 
 s32 *Func_0200405c(s32);

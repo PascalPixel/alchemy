@@ -11,8 +11,6 @@ static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
     Func_02001ba0(actor, horizontal, vertical);
 }
 
-#define PlaceActorAndSetSceneDelay Func_02000a80
-
 void PlaceActorAndSetSceneDelay(s32 x, s32 y, s32 delay)
 {
     s32 zero = 0;

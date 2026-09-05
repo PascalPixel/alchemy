@@ -1,4 +1,3 @@
-#define FieldScene_RunTransitionOrFallback Func_02001528
 /* Begin a scene, attempt the forward transition, and fall back to pushing the
  * obstructing actor when the transition cannot run.  Complete 28-byte owner
  * from the prologue at 0x02001528 through return/alignment at 0x02001543. */

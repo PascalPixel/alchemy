@@ -1,10 +1,4 @@
-#define SceneData_GetTableaa58 Func_0200032c
 
-#define SceneData_GetTableaa14 Func_02000324
-
-#define SceneData_GetTablea9d4 Func_0200031c
-
-#define SceneData_GetTablea5cc Func_02000314
 /* Contiguous unnamed leaf-owner run for resource_396. */
 
 /* Return the overlay's first persistent workspace block. */

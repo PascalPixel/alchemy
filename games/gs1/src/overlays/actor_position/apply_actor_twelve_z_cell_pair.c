@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ApplyActorTwelveZCellPair Func_02001af4
 #define NULL ((void *)0)
 
 s32 *Func_02003f68(s32);

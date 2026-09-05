@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_InitSlotsEightToNineteen Func_02003284
-
 extern u8 *Func_02007596(s32);
 extern u8 *Func_020075a2(s32);
 extern u8 *Func_020075ac(s32);

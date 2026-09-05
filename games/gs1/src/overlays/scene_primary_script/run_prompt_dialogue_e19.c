@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunPromptDialogueE19 Func_020000bc
-
 extern u8 Value_00000e19;
 extern void Func_02001a2a(s32);
 extern s32 Func_02001a3a(s32, s32);

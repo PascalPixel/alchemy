@@ -5,8 +5,6 @@ extern u8 Value_0000003c;
 extern u8 Data_0200c7a8[];
 extern u8 Data_0200c838[];
 
-#define GetXianScriptData Func_0200034c
-
 s32 GetXianScriptData(void)
 {
     if (Data_02000240[224] == (s32)&Value_0000003c) {

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_InitSlots10To15AndStartTask Func_02000c08
-
 s32 *Func_02001d42();
 void Func_02001cf8();
 void Func_02001cb6();

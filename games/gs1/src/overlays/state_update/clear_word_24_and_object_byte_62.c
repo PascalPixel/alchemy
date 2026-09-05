@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ClearWord24AndObjectByte62 Func_0200209c
-
 /*
  * Resource 3b3 unindexed helper at 0x0200209c (28 bytes incl. pool,
  * 1 call).

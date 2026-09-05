@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneAudio_PlayCue183EverySixtyTicks Func_02002eec
-
 /*
  * resource_3a4 owner at 0x02002eec, 36 bytes: a per-frame tick that
  * counts to sixty and fires one presentation call, then rewinds itself.

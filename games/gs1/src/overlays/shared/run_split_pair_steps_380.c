@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSplitPairSteps Func_02004248
-
 /*
  * resource_380 owner at 0x02004248, 24 bytes including the trailing
  * alignment halfword: the overlay's 97x-called workhorse turns out to

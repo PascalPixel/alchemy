@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLine1CB0ForActor13 Func_0200056c
-
 /*
  * Complete actor-13 dialogue wrapper through its one-word pool.
  *

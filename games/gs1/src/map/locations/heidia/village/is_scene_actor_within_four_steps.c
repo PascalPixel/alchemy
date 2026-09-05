@@ -10,7 +10,6 @@ typedef struct SceneActor {
 SceneActor *Func_02006f6c(void);
 SceneActor *Func_02006f74(s32);
 
-#define IsSceneActorWithinFourSteps Func_02001918
 s32 IsSceneActorWithinFourSteps(void)
 {
     SceneActor *scene_actor = Func_02006f6c();

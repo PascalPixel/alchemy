@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetMode3AndFlagBit1 Func_02000b68
-
 extern u8 *Func_0200210e(s32);
 extern u8 *Func_02002116(s32);
 extern void Func_0200208c(u8 *, s32);

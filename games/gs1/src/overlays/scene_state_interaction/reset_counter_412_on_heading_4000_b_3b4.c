@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ResetCounter412OnHeading4000B Func_02001120
-
 extern u8 *Data_03001ebc;
 
 extern void Func_020021de(s32);

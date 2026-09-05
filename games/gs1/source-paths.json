@@ -1388,10 +1388,22 @@
     "resource_373:020000c4": "map/shared/staged_actor_scene/advance_staged_actor_pair.c",
     "resource_373:020002a8": "map/shared/staged_actor_scene/stop_blocked_actor_motion.c",
     "resource_373:02000474": "map/shared/staged_actor_scene/find_clear_actor_position.c",
-    "resource_373:020009dc": "map/shared/staged_actor_scene/select_primary_scene_data.c",
-    "resource_373:020009e4": "map/shared/staged_actor_scene/get_empty_scene_data.c",
-    "resource_373:020009e8": "map/shared/staged_actor_scene/select_secondary_scene_data.c",
-    "resource_373:020009f0": "map/shared/staged_actor_scene/select_tertiary_scene_data.c",
+    "resource_373:020009dc": {
+      "name": "MapStagedScene_SelectPrimaryData",
+      "source": "map/shared/staged_actor_scene/select_primary_scene_data.c"
+    },
+    "resource_373:020009e4": {
+      "name": "MapStagedScene_GetEmptyData",
+      "source": "map/shared/staged_actor_scene/get_empty_scene_data.c"
+    },
+    "resource_373:020009e8": {
+      "name": "MapStagedScene_SelectSecondaryData",
+      "source": "map/shared/staged_actor_scene/select_secondary_scene_data.c"
+    },
+    "resource_373:020009f0": {
+      "name": "MapStagedScene_SelectTertiaryData",
+      "source": "map/shared/staged_actor_scene/select_tertiary_scene_data.c"
+    },
     "resource_373:02000aa4": "map/shared/staged_actor_scene/select_quaternary_scene_data.c",
     "resource_373:02005610": {
       "source": "runtime/geometry/measure_fixed_point_distance.c",
@@ -1405,8 +1417,14 @@
       "name": "InitializeStagedActorSceneOrbitingEffect",
       "source": "overlays/orbiting_effect/initialize_staged_actor_scene_orbiting_effect.c"
     },
-    "resource_373:02005cc4": "effect/staged_actor_scene/animate_vertical_positive.c",
-    "resource_373:02005d14": "effect/staged_actor_scene/animate_vertical_negative.c",
+    "resource_373:02005cc4": {
+      "name": "Effect_AnimateVerticalPositive",
+      "source": "effect/staged_actor_scene/animate_vertical_positive.c"
+    },
+    "resource_373:02005d14": {
+      "name": "Effect_AnimateVerticalNegative",
+      "source": "effect/staged_actor_scene/animate_vertical_negative.c"
+    },
     "resource_374:02000030": "object/facing/update_toward_target.c",
     "resource_374:0200239c": "effect/vertical_motion/animate_positive.c",
     "resource_374:020023ec": "effect/vertical_motion/animate_negative.c",
@@ -5452,7 +5470,7 @@
       "source": "overlays/scene_data/get_table_8c50.c"
     },
     "resource_37c:02000044": {
-      "name": "unnamed_run_097",
+      "name": "SceneData_GetSecondaryTable37c",
       "source": "overlays/state_update/overlay_37c.c"
     },
     "resource_3cb:0200003c": {
@@ -8241,7 +8259,7 @@
       "source": "overlays/scene_script/scene_379.c"
     },
     "resource_37c:0200004c": {
-      "name": "unnamed_run_097",
+      "name": "SceneData_GetTertiaryTable37c",
       "source": "overlays/state_update/overlay_37c.c"
     },
     "resource_383:020007ec": {
@@ -9565,7 +9583,7 @@
       "source": "overlays/state_update/apply_four_rects_and_set_actor_8_byte_85.c"
     },
     "resource_37c:0200003c": {
-      "name": "unnamed_run_097",
+      "name": "SceneData_GetPrimaryTable37c",
       "source": "overlays/state_update/overlay_37c.c"
     },
     "resource_397:020001bc": {
@@ -12944,7 +12962,7 @@
       "name": "BattleLink_ResetTransferState"
     },
     "main:0808fe38": {
-      "name": "DisplayTransition_InitializeState"
+      "name": "DisplayTransition_InitializeBattleEffectState"
     },
     "main:0808fecc": {
       "name": "DisplayTransition_AllocateAndClearState"
@@ -15184,10 +15202,10 @@
       "source": "overlays/scene_primary_script/run_scene_382_020004a0.c"
     },
     "resource_371:02000c28": {
-      "name": "RunEventScript01"
+      "name": "RunEventScript01Second"
     },
     "resource_380:0200178c": {
-      "name": "RunEventScript01"
+      "name": "RunEventScript01Second"
     },
     "resource_371:02000a8c": {
       "name": "RunEventScript01",
@@ -15198,7 +15216,7 @@
       "source": "overlays/event_script/run_event_script_01_380_02001450.c"
     },
     "resource_395:02000488": {
-      "name": "RunEventScript01"
+      "name": "RunEventScript01Second"
     },
     "resource_395:020002ec": {
       "name": "RunEventScript01",

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor20BranchScene Func_02000550
-
 extern s32 Func_02002784();
 extern s32 Func_0200276a();
 extern s32 Func_02002864();

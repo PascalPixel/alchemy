@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorElevenFlaggedSteps Func_02000b04
-
 /*
  * Resource 39a overlay scene step at 0x02000b04.
  *

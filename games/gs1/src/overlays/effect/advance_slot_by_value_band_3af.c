@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_AdvanceSlotByValueBand Func_02003558
-
 extern void Func_02007902(s32, s32);
 extern void Func_02007922(s32, s32);
 extern void Func_02007936(s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunPrimarySequenceHead Func_0200101c
-
 s32 Func_02003456();
 void Func_0200347e();
 void Func_0200349c();

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define AddSoftDouble Func_020013ac
-
 /*
  * resource_3a7 soft-float double addition at 0x020013ac.
  *

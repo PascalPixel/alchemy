@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunSlotStepOnOddFrames Func_02003f88
-
 extern volatile s32 Data_03001e40;
 
 extern s32 Func_0200811c(s32, s32);

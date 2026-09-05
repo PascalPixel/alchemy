@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnKind285AtRandomChance Func_02002fc4
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

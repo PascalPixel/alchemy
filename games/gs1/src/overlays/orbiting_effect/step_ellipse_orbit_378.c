@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_StepEllipseOrbit Func_020026f0
-
 /*
  * Resource 378 orbit step at 0x020026f0 (94 bytes, 2 calls).
  *

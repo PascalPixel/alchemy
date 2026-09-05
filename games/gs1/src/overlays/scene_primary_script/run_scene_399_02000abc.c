@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunScene399_02000abc Func_02000abc
-
 s32 Func_02002cea();
 void Func_02002d04();
 s32 Func_02002d0a();

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StoreTable96adToWork Func_020016c8
-
 extern void Func_02003a78(s32, s32);
 extern void Func_02003a8c(s32, s32);
 extern void Func_02003aac(void);

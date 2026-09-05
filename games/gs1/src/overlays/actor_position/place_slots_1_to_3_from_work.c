@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PlaceSlots1To3FromWork Func_02001898
-
 extern s32 Func_02005508(s32);
 extern s32 Func_02005512(s32);
 extern void Func_020055b8(s32, s32, s32);

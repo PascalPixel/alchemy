@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CopyActor8PositionWhenAtRow10 Func_02000fe8
-
 typedef struct Record {
     s32 pad0;
     s32 pad4;

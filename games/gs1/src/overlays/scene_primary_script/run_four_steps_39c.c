@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFourSteps Func_02001bd8
-
 extern void Func_02007690(void);
 extern void Func_02001f88(void);
 extern void Func_020076a0(void);

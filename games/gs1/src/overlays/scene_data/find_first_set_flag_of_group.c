@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_FindFirstSetFlagOfGroup Func_02003150
-
 extern s32 Func_0200744e(s32);
 
 s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)

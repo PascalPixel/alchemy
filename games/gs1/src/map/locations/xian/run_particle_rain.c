@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunParticleRain Func_020041ec
-
 extern u8 *Func_02008606(s32 id);
 extern u8 *Func_0200863a(s32 id);
 extern u8 *Func_02008648(s32 id);

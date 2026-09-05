@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunBranchedSteps2006 Func_02000348
-
 extern u8 Value_00002006;
 extern u8 Value_00000105;
 

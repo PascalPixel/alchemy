@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFlag815Branch Func_020008f0
 #define NULL ((void *)0)
 
 s32 Func_02002f6a(s32);

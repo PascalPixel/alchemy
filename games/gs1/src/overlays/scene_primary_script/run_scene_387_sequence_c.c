@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunScene387SequenceC Func_020003d0
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
@@ -62,7 +60,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-
 void FieldScene_RunScene387SequenceC(void)
 {
     s32 record;
@@ -81,4 +78,3 @@ void FieldScene_RunScene387SequenceC(void)
         Call1(Func_02001536, 0x863);
     }
 }
-

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_BuildDescriptorAndInstallTask Func_020039fc
-
 /* STILL-OPEN: adopt --where differing_bytes=35/232. alchemist.ts exhausted
  * (tiers: original-order, unaligned; 43 licensed compiles tried, no
  * improving move found). overlay_mode_cohort singles sweep: no config

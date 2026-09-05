@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_BranchOnActorZeroFacing Func_020019cc
-
 struct Slot {
     u16 f00;
     u16 f02;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyPair12And21 Func_02000cc0
-
 /*
  * resource_39c owner at 0x02000cc0, 16 bytes: invoke one fixed two-value
  * setup call with 12 and 21.

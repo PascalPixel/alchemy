@@ -1,20 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTable9090ByFlag96f Func_02000a54
-
-#define SceneState_ApplyCounter16cThenCall7b Func_0200021c
-
-#define FieldScene_RunActorCueBranch Func_020001d4
-
-#define SceneData_SelectTable8e08ByFlag96f Func_02000048
-
-#define SceneData_GetTable8dd4 Func_02000040
-
-#define SceneData_GetTable8da4 Func_02000038
-
-#define SceneData_GetScriptTable Func_02000030
-
-#define FieldScene_RunPrimaryScript Func_02000240
 #define GameFlag_Set_1(a0) Value1(Func_02000d84, a0)
 #define GameFlag_IsSet_1(a0) Value1(Func_02000d82, a0)
 #define Audio_PlayCue_1(a0) Value1(Func_02000e8e, a0)

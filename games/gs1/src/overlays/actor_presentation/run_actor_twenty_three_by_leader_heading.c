@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorTwentyThreeByLeaderHeading Func_020003d8
-
 struct Obj {
     u8 filler00[6];
     u16 f06;

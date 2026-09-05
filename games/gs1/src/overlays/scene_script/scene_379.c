@@ -1,13 +1,5 @@
 #include "types.h"
 
-#define ConditionalSceneSetup_GetScriptData Func_02000030
-#define ConditionalSceneSetup_GetInitialState Func_02000038
-#define ConditionalSceneSetup_GetMessageData Func_0200003c
-#define ConditionalSceneSetup_GetActorData Func_02000044
-#define ConditionalSceneSetup_GetEffectData Func_0200004c
-#define ConditionalSceneSetup_InitForScene15 Func_02000054
-#define RunEventScript01 Func_02000074
-
 extern s16 Data_02000240[];
 extern u8 Data_02008cb4[];
 extern u8 Data_03001ebc[];

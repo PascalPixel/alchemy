@@ -8,8 +8,6 @@
  */
 #include "types.h"
 
-#define OverlayObject_PrepareSpawnedObject Func_020009f4
-
 u8 *Func_0200373a(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003788(u8 *obj, s32 mode);
 void Func_02003860(u8 *obj, s32 mode);

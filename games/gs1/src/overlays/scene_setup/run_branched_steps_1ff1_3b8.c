@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunBranchedSteps1FF1 Func_020000c8
-
 extern u8 Value_00001ff1;
 extern void Func_0200456a(s32);
 extern s32 Func_0200457a(s32, s32);

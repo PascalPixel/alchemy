@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_RotatePaletteEntries40To47 Func_02002648
-
 /*
  * resource_39c palette-rotation owner at 0x02002648, complete 60-byte span
  * through its four-word pool. Once every eight frames, rotate the eight

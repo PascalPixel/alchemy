@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_StoreRecord2Field12 Func_02000414
-
 typedef struct {
     u8 filler0[12];
     s32 unk12;

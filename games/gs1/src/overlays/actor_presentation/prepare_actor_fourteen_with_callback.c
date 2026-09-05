@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_PrepareActorFourteenWithCallback Func_020010b8
-
 /*
  * resource_3a2 owner at 0x020010b8, 140 bytes.  Complete owner:
  * `push {r5, r6, lr}` / `sub sp,#8` prologue at 0x020010b8 and the interworking

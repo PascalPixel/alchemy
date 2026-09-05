@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_RotatePaletteEntries97To103 Func_02002dcc
-
 /* Rotate seven adjacent palette entries once every eight frames. */
 void SceneEffect_RotatePaletteEntries97To103(void)
 {

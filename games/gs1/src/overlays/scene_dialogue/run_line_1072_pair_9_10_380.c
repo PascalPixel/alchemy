@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunLine1072WithPair9And10 Func_020027cc
-
 /*
  * resource_380 owner at 0x020027cc, 32 bytes: a second talk handler for
  * actor 9, and the odd member of this overlay's published-callback bank.

@@ -4,8 +4,6 @@
 
 s32 Func_020064e6(u8 *o);
 
-#define StagedActor_SetAngleByKind Func_020000b0
-
 s32 StagedActor_SetAngleByKind(u8 *o) {
     u32 v = (u32)(Func_020064e6(o) << 6) >> 16;
 
@@ -21,8 +19,6 @@ s32 StagedActor_SetAngleByKind(u8 *o) {
 
 #include "types.h"
 
-#define StagedActor_AdvanceCounter98 Func_020000d8
-
 void StagedActor_AdvanceCounter98(u8 *o) {
     u8 *p = o + 98;
     s32 n = *p + 1;
@@ -34,8 +30,6 @@ void StagedActor_AdvanceCounter98(u8 *o) {
 }
 
 #include "types.h"
-
-#define StagedActor_CountdownUntilPositionUnset Func_020000fc
 
 s32 StagedActor_CountdownUntilPositionUnset(u8 *o) {
     s32 n = *(s32 *)(o + 76);

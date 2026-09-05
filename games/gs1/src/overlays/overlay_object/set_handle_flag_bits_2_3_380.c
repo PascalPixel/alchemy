@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetHandleFlagBits2And3 Func_02000030
-
 typedef struct {
     u8 pad[9];
     u8 f0 : 2;

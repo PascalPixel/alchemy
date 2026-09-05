@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UseActorNinePositionWithYOffset Func_020022c4
-
 extern s32 *Func_02007d9e(s32);
 extern u32 Func_02007c64(void);
 extern void Func_02005e06(s32, s32, s32);

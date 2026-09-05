@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetField54 Func_02000e44
-
 extern u8 *Func_02002786(s32);
 
 void OverlayObject_SetField54(s32 arg0, s32 arg1)

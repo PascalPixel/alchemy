@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_PumpUntilSlotsFree Func_02004328
-
 /*
  * resource_380 owner at 0x02004328, 148 bytes: a drain-until-room
  * pump.  Saves the s16 counter at Data_03001ebc+472 (the same +472

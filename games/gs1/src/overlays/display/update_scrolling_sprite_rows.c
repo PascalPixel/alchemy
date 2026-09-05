@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateScrollingSpriteRows Func_02000eb0
 #define NULL ((void *)0)
 
 struct Ent {

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_PassWorkHalfword16C Func_02000964
-
 extern u8 *Data_03001ebc;
 
 extern void Func_020017aa(s32);

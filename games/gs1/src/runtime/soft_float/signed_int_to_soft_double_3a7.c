@@ -9,8 +9,6 @@
  */
 #include "types.h"
 
-#define SignedIntToSoftDouble Func_0200145c
-
 /*
  * Resource 3bf signed-integer to soft-float conversion at 0x02005af0.
  *

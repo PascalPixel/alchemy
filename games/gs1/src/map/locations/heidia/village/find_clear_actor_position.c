@@ -22,7 +22,6 @@ extern s32 Data_0200ded8[];
 Obj *Func_020007de(s32 *, s32 *, Req *);
 s32 Func_02005b3c(Obj *, s32 *);
 
-#define FindClearActorPosition Func_02000474
 s32 FindClearActorPosition(Req *request)
 {
     s32 out;

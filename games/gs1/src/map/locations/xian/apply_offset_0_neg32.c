@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ApplyOffset0Neg32 Func_0200265c
-
 extern void Func_02004cf2(s32 arg0, s32 arg1);
 
 void FieldScene_ApplyOffset0Neg32(void)

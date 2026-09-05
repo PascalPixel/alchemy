@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_PlaceActorTwelveAtTile20And12 Func_020026b8
-
 extern s32 *Func_02005510();
 extern void Func_020054cc();
 

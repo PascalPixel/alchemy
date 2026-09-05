@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableBySceneId Func_02002f8c
-
 extern u8 Data_02000240[];
 extern u8 Data_0200ee44[];
 extern u8 Data_0200f120[];

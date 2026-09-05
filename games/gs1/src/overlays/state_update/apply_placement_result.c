@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyPlacementResult Func_02001544
-
 typedef struct {
     s32 v[6];
 } PlacementResult;

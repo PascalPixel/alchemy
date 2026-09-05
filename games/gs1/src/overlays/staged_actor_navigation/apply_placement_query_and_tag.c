@@ -9,8 +9,6 @@
  */
 #include "types.h"
 
-#define SceneActor_ApplyPlacementQueryAndTag Func_02000ec8
-
 /*
  * Resource 3b3 unindexed helper at 0x02000ec8 (144 bytes, 14 calls).
  * Converted from a parked scope note and drafted alongside its sibling

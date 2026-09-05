@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSequenceTail Func_0200206c
-
 void Func_020076a0();
 void Func_020076f8();
 void Func_0200771e();

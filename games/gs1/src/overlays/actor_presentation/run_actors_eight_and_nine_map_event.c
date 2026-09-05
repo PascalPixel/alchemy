@@ -17,8 +17,6 @@ static __inline__ void SetDirection(s32 actor, s32 direction, s32 duration)
     Func_0200c2b8(actor, direction, duration);
 }
 
-#define RunActorsEightAndNineMapEvent Func_02005ca4
-
 void RunActorsEightAndNineMapEvent(void)
 {
     Func_0200c170();

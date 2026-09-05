@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SwapSlotPairByRank Func_02000f10
-
 struct Slot02000f10 {
     u8 head[8];
     s32 x;

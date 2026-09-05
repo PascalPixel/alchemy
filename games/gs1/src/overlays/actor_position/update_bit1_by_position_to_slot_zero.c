@@ -7,8 +7,6 @@
  */
 #include "types.h"
 
-#define SceneActor_UpdateBit1ByPositionToSlotZero Func_020020b8
-
 u8 *Func_02004bdc(s32 slot);
 
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_ConfigureActorTwentyAndFlag200 Func_0200170c
-
 extern void Func_02004858(s32, s32);
 extern void Func_02004878(s32, s32);
 extern void Func_02004868(s32, s32);

@@ -1,4 +1,3 @@
-#define FieldScene_RunTwoCallSequence Func_02000d48
 extern void Func_02000e10(void);
 extern void Func_02001a48(void);
 

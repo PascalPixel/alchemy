@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSupplementalSequenceTwo Func_02000420
-
 /* Runs a linear setup sequence once two prior gate checks both pass;
  * either gate failing skips the whole sequence. Every step below is an
  * opaque call into other overlay code, so only the gate values and the

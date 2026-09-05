@@ -15,8 +15,6 @@
  */
 #include "types.h"
 
-#define FieldScene_PlaceAndPinSlots10And11 Func_02002410
-
 typedef struct Slot_02002410 {
     s32 pad0;
     s32 pad4;

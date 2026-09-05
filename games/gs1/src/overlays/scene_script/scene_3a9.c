@@ -2,26 +2,6 @@
 
 #include "resource_3a9.h"
 
-#define SceneState_ClearSlotsBySubState Func_0200033c
-
-#define SceneState_SetRuntimeWord448To521 Func_02000308
-
-#define FieldScene_RunArrivalPlacement Func_02000240
-
-#define SceneDialogue_RunActor8FacingDialogue Func_020001fc
-
-#define SceneDialogue_RunActor8FlaggedDialogue Func_0200018c
-
-#define SceneDialogue_RunActor16Dialogue Func_0200016c
-
-#define SceneDialogue_RunActor12DialogueAndSetFlag910 Func_02000144
-
-#define SceneData_GetTable8728 Func_02000074
-
-#define SceneData_ReturnZero Func_02000070
-
-#define SceneData_SelectTableBySceneId Func_02000030
-
 typedef struct Placement {
     u32 destination;
     u16 x;

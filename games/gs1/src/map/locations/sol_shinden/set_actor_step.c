@@ -36,7 +36,6 @@
 extern void Func_02005068();
 extern void Func_02004fd6();
 
-#define SetSolShindenActorStep Func_020025fc
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
 {
     Func_02005068(actor_step, 0);

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ResetActor9AndDrawTiles Func_02000ca8
 struct Actor {
     u8 pad00[0x23];
     u8 field23;

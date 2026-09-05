@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateOnFrameBit1 Func_020022f8
 #define NULL ((void *)0)
 
 void Func_02004968(s32, s32);

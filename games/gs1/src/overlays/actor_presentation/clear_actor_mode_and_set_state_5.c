@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ClearActorModeAndSetState5 Func_0200300c
-
 extern u8 *Func_02007ebe(s32);
 extern void Func_02007e72(u8 *, s32);
 extern void Func_02007e0a(u8 *, s32);

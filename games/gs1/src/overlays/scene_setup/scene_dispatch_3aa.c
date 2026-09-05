@@ -8,8 +8,6 @@ extern u8 Value_00000067;
 
 extern void Func_020004ae(void);
 
-#define SceneState_SetWord448To209AndRun Func_02000230
-
 s32 SceneState_SetWord448To209AndRun(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 0x209;
@@ -20,8 +18,6 @@ s32 SceneState_SetWord448To209AndRun(void)
 }
 
 #include "types.h"
-
-#define FieldScene_DispatchSceneByIndex Func_02000264
 
 /*
  * resource_3aa owner at 0x02000264, 252 bytes: code 0x02000264-0x02000343 and

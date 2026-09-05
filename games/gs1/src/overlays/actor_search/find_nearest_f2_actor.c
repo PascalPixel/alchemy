@@ -10,7 +10,6 @@ typedef struct {
     ActorData *data;
 } Actor;
 
-#define FindNearestF2Actor Func_020008cc
 #define GetActor Func_02003fd0
 #define MeasurePositionDistance Func_02001196
 extern Actor *GetActor(s32 actor_id);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SpawnRandomizedParticle Func_020025b8
-
 extern u8 *Func_020069c4(s32 arg0);
 extern void Func_02006ac8(s32 id, s32 arg1);
 extern void Func_02006ad2(s32 id, s32 arg1);

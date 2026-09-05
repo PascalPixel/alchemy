@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFlagGatedActorEightSetup Func_02001858
-
 struct Obj {
     u8 filler00[6];
     u16 f06;

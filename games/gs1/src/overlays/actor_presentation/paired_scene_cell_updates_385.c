@@ -8,7 +8,6 @@ extern void Func_02001ede(s32 kind, s32 x, s32 enabled, s32 mode,
                           s32 v1, s32 v2);
 extern void Func_02001ee8(s32 kind, s32 first_x, s32 second_x, s32 value,
                           s32 first_mode, s32 second_mode);
-#define ActorPresentation_SetPairedSceneCells Func_02000e30
 void ActorPresentation_SetPairedSceneCells(void)
 {
     s32 v1 = 13;
@@ -33,8 +32,6 @@ extern void Func_02001f0e(s32 kind, s32 x, s32 enabled, s32 mode,
 extern void Func_02001f18(s32 kind, s32 first_x, s32 second_x, s32 value,
                           s32 first_mode, s32 second_mode);
 
-#define ActorPresentation_SetAlternatePairedSceneCells Func_02000e60
-
 void ActorPresentation_SetAlternatePairedSceneCells(void)
 {
     s32 v1 = 13;
@@ -45,8 +42,6 @@ void ActorPresentation_SetAlternatePairedSceneCells(void)
 }
 
 #include "types.h"
-
-#define FieldScene_RunActorEighteenDialogue Func_02000e90
 
 /*
  * Complete actor-18 dialogue/restoration scene.  If cue 231 remains available

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateObjectByFrameParity Func_02001544
-
 extern s32 Data_03001e40;
 
 extern void Func_02002e24(u8 *, s32);

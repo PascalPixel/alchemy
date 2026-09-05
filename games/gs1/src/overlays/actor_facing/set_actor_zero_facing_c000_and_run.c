@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetActorZeroFacingC000AndRun Func_02001990
-
 /*
  * Prepare the scene service selected by index zero, set its halfword at +6,
  * and run the four follow-up services in the order present in the overlay.

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_RunActorModeOneThenZero Func_020004b4
-
 /* Complete actor-mode scene wrapper through its return and alignment. */
 
 extern void Func_020015a2(void);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnObject222 Func_02002b58
-
 extern s32 Data_03001e40;
 extern s32 Data_0200d240[3];   /* image offset 0x5240 */
 

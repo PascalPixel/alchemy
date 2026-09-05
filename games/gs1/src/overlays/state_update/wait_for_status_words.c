@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_WaitForStatusWords Func_02000970
-
 /*
  * resource_3bb owner at 0x02000970, 64 bytes (0x02000970-0x020009af):
  * 54 bytes of code, two alignment bytes at 0x020009a6, and the two-word

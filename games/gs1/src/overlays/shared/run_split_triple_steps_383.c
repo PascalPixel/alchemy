@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSplitTripleSteps Func_0200460c
-
 extern void Func_02009418(s32, s32, s32);
 extern void Func_02009356(s32);
 

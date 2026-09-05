@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEightFacingDialogue Func_020032d0
-
 /* Close through scene 8 when facing inward; otherwise select the story line. */
 extern s32 Func_0200657c(void);
 extern void Func_02006a06(s32 scene);

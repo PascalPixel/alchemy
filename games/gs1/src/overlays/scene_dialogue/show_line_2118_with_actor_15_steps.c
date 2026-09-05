@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLine2118WithActor15Steps Func_0200050c
-
 extern void Func_02003104();
 extern void Func_020031aa();
 extern void Func_02002164();

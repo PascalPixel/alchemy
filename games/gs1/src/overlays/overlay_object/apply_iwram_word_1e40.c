@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ApplyIwramWord1e40 Func_0200434c
-
 extern s32 Func_02008998(s32, s32);
 extern void Func_02008a38(s32, s32);
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UpdateActorFourteenByDepth Func_02001090
-
 struct Actor {
     s32 f00;
     s32 f04;

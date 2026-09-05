@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorTwelveDialogue Func_020008cc
-
 extern void Func_020022b0(void);
 extern void Func_02002346(s32);
 /* Returns a value: the reference sets r1 before r0 at this site, which

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StartMarkerMove Func_02003024
-
 /* Start an interpolated marker move from the current position. */
 extern u16 Data_0200cc00;
 extern u16 Data_0200cca0;

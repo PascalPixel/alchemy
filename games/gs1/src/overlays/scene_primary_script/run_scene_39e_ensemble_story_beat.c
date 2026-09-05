@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunEnsembleStoryBeat Func_02001dbc
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 s32 Func_020061c6();

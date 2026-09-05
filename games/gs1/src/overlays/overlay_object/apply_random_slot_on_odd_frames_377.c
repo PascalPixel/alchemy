@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ApplyRandomSlotOnOddFrames Func_020015bc
-
 extern volatile s32 Data_03001e40;
 
 extern s32 Func_02002de0(s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectPlacementTableBySubstate Func_02000070
-
 /*
  * resource_378 owner at 0x02000070, 220 bytes: select this scene's placement
  * script from its stored sub-state.

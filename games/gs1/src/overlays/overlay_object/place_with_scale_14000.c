@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_PlaceWithScale14000 Func_02002e50
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

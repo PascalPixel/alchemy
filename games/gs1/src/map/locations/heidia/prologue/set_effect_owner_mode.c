@@ -8,7 +8,6 @@ struct Owner {
     u8 unk9_4 : 4;
 };
 
-#define SetEffectOwnerMode Func_020009dc
 void SetEffectOwnerMode(u8 *object, s32 mode)
 {
     struct Owner *owner = *(struct Owner **)(object + 80);

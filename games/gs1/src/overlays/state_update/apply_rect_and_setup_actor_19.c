@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectAndSetupActor19 Func_020005ec
-
 extern u8 *Func_02001724(s32);
 extern void Func_020016da(s32, s32, s32, s32, s32, s32);
 extern void Func_020016f6(u8 *, s32);

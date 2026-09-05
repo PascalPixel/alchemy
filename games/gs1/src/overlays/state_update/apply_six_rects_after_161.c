@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplySixRectsAfter161 Func_02001048
-
 extern void Func_02005ed4(s32);
 extern void Func_02005e98(s32, s32, s32, s32, s32, s32);
 extern void Func_02005e94(s32, s32, s32, s32, s32, s32);

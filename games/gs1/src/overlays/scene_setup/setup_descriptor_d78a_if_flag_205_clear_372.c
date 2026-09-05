@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetupDescriptorD78aIfFlag205Clear Func_020002e4
-
 extern s32 Func_020049c6(s32);
 extern void Func_02004ba8(s32);
 extern void Func_0200498a(u8 *, s32, s32);

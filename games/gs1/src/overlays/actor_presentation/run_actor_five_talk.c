@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorFiveTalk Func_020026e0
-
 /*
  * resource_380 owner at 0x020026e0, 108 bytes: the talk handler for
  * actor 5, and the twin of 0x02002674.

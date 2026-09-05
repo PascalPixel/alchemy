@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag300BranchDialogue Func_02000ee0
-
 s32 Func_02007388(s32 n);
 u8 *Func_020021cc(void);
 void Func_020073be(void);

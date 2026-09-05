@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorTwentyOneFlagBranch Func_02000448
-
 s32 Func_020012d8();        /* tests a flag id; nonzero when set */
 void Func_02001300();       /* opens a scripted sequence */
 void Func_0200138e();       /* queues a cue / script id */

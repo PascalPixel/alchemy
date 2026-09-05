@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor11Transition301 Func_020018f4
-
 /* Mirror the preceding transition on the negative grid axis, latch its event
  * flag, wait for the map update, and close on the paired sound cue. */
 extern void Func_02003656(s32 soundId);

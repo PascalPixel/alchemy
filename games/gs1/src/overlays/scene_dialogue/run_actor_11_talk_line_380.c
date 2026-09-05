@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor11TalkLine Func_0200276c
-
 /*
  * resource_380 owner at 0x0200276c, 32 bytes: the talk handler for
  * actor 11, one of four byte-identical 32-byte stubs in this

@@ -25,8 +25,6 @@
  */
 #include "types.h"
 
-#define SceneActor_MoveActorZeroToTarget Func_02000cd0
-
 typedef struct Actor_02000cd0 {
     u8 pad0[6];
     u16 tag;               /* +6  */

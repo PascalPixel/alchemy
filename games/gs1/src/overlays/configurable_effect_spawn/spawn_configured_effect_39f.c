@@ -1,5 +1,4 @@
 #define ConfigurableEffectDescriptors Data_0200b058
-#define SceneEffect_SpawnConfigured Func_02000ae8
 #define GetPrimaryEffectRecord Func_020038c6
 #define SpawnConfiguredEffectObject Func_02003864
 #define SetConfiguredEffectVariant Func_0200386e

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StoreValueToWorkspaceWord24WhenFlagged Func_0200170c
-
 extern u8 *Data_03001ee0;
 
 extern s32 Func_02003a6e(s32);

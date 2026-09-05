@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitHalfwordC6a6Once Func_02002bcc
-
 extern s16 Data_0200c6a6;
 
 extern s16 Func_02006816(void);

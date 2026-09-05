@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunFirstMatchingSlot Func_02005038
-
 /*
  * Resource 3b1 unindexed helper at 0x02005038 (48 bytes, 2 calls).
  *

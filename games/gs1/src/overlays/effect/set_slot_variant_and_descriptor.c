@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SetSlotVariantAndDescriptor Func_02001ea4
-
 struct Obj {
     u8 filler00[100];
     u16 f64;

@@ -2,10 +2,6 @@
 
 #include "types.h"
 
-#define SceneData_GetTable9488 Func_020004ec
-
-#define FieldScene_RunStepWithValue866 Func_020004d4
-
 /* resource_387 three-call story-flag wrapper at 0x020004d4. */
 
 extern void Func_02001604(void);

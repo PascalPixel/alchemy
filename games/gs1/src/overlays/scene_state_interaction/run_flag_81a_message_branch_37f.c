@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunFlag81aMessageBranch Func_02000200
-
 extern u8 *Data_03001ebc;
 
 extern void Func_02001db0(void);  /* import veneer -> Func_0808a018 */

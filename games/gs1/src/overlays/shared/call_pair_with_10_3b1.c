@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_CallPairWith10 Func_02004880
-
 /*
  * Resource 3b1 unindexed helper at 0x02004880 (16 bytes, 69 calls).
  *

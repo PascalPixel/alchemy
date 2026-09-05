@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_MarkSlot13AndSetFlag200 Func_02001984
-
 extern u8 *Func_02003ecc(s32);
 extern void Func_02003e7a(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_02003eec(s32);

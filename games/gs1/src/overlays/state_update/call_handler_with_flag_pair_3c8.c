@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_CallHandlerWithFlagPair Func_02004030
-
 struct Args_02004030 {
     s32 first;
     s32 unused;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorEightFollowupDialogue Func_020034a8
-
 /* Close scene 8 when facing inward; otherwise emit its conditional follow-up. */
 extern s32 Func_02006754(void);
 extern void Func_02006bde(s32 scene);

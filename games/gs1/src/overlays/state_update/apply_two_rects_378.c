@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyTwoRects Func_02003270
-
 extern void Func_020067fe(s32, s32, s32, s32, s32, s32);
 extern void Func_0200681a(s32, s32, s32, s32, s32, s32);
 extern void Func_020067c8(s32 frames);

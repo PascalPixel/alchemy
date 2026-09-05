@@ -7,8 +7,6 @@ extern void Func_02001ac2(s32);
 extern s32 Func_02001ad4(s32, s32);
 extern void Func_02001a90(void);
 
-#define SceneDialogue_RunMessage0e34 Func_02000154
-
 void SceneDialogue_RunMessage0e34(void)
 {
     Func_02001a74();
@@ -24,8 +22,6 @@ extern void Func_02001ae6(s32);
 extern s32 Func_02001af8(s32, s32);
 extern void Func_02001ab4(void);
 
-#define SceneDialogue_RunMessage0e35 Func_02000178
-
 void SceneDialogue_RunMessage0e35(void)
 {
     Func_02001a98();
@@ -38,16 +34,12 @@ void SceneDialogue_RunMessage0e35(void)
 
 extern void Func_02000a9a(s32);
 
-#define FieldScene_RunIndexedStep0 Func_0200019c
-
 void FieldScene_RunIndexedStep0(void)
 {
     Func_02000a9a(0);
 }
 
 #include "types.h"
-
-#define SceneData_SelectTable9e1cByState Func_020001a8
 
 extern s16 Data_02000240[];
 extern u8 Value_000000bd;

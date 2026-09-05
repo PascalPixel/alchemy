@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetWord1c0To209AndRun Func_020045cc
-
 extern void Func_0200947a(void);
 extern void Func_0200948e(void);
 extern void Func_02009324(s32);

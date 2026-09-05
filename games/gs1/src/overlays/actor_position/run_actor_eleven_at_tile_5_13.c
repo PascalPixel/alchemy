@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorElevenAtTile5And13 Func_02001420
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
 
 extern u8 *Func_02006efc(s32);

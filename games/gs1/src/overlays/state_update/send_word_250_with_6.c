@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SendWord250With6 Func_020002e8
-
 extern s16 Data_02000240[];
 
 extern void Func_020042aa(s32, s32, s32);

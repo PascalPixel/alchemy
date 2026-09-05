@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectsForActorsNineAndTen Func_020001a8
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ClearRecordZeroBit0At35 Func_020015f8
-
 extern s32 Func_0200521a(s32);
 
 void SceneState_ClearRecordZeroBit0At35(void) {

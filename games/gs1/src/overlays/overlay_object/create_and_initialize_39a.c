@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_CreateAndInitialize Func_02000ed8
-
 /*
  * resource_39a owner at 0x02000ed8, 88 bytes.
  *

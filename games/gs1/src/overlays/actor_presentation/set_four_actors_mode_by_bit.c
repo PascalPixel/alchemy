@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetFourActorsModeByBit Func_020020fc
-
 extern s32 Data_0200d7fc;
 extern s32 Func_02006840(s32);
 extern void Func_020041b6(s32, s32);

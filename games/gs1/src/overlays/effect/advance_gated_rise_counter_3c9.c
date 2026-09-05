@@ -6,8 +6,6 @@
  */
 #include "types.h"
 
-#define SceneEffect_AdvanceGatedRiseCounter Func_020059f0
-
 /*
  * resource_3c9 owner at 0x020059f0, 56 bytes: gated by a byte flag at
  * +99 on its single object argument -- when set, recomputes a

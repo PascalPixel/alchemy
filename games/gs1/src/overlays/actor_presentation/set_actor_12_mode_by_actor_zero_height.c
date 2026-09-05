@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetActor12ModeByActorZeroHeight Func_02003428
-
 /*
  * resource_3a4 owner at 0x02003428, 56 bytes: compare record 0's +12
  * field against a fixed threshold and take one of two branches, the

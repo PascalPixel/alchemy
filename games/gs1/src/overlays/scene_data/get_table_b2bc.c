@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_GetTableB2bc Func_02000074
-
 /*
  * resource_3b9 owner at 0x02000074, 8 bytes: `ldr r0, [pc, #0] / bx lr`
  * plus the one-word literal pool at 0x02000078 holding 0x0200b2bc.

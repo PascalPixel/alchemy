@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_BranchOnActorEightOrNineTile Func_0200110c
-
 extern s32 *Func_02003f62();
 extern s32 *Func_02003f6a();
 extern s32 *Func_02003f78();

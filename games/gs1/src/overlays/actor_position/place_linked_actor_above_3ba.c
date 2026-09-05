@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PlaceLinkedActorAbove Func_02003058
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

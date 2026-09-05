@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define StagedActor_PlaceAtObjectTenCell Func_02002498
-
 /*
  * Resource 3b3 unindexed helper at 0x02002498 (52 bytes, 1 call).
  *

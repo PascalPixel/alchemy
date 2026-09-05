@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_OscillateHeightBetweenLimits Func_02000514
-
 extern s32 Func_02004792(void);
 extern s32 Func_020047b0(void);
 

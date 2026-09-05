@@ -16,8 +16,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Func_02002702(actor, x, y);
 }
 
-#define ActorPresentation_RunActorNineThresholdScene Func_02001158
-
 void ActorPresentation_RunActorNineThresholdScene(void)
 {
     Func_0200267a();

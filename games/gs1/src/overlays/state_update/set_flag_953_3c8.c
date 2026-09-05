@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetFlag953 Func_02000f1c
-
 extern void Func_02005db4(void);
 extern void Func_02005d94(s32, s32);
 extern void Func_02005dc8(void);

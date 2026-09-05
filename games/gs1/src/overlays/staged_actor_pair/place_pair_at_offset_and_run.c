@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define StagedActor_PlacePairAtOffsetAndRun Func_0200033c
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

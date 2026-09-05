@@ -22,8 +22,6 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-#define SceneData_GetTable8dac Func_0200003c
-
 u8 *SceneData_GetTable8dac(void)
 {
     return (u8 *)0x02008dac;
@@ -35,8 +33,6 @@ u8 *SceneData_GetTable8dac(void)
 
 s32 Func_02000a14(s32);
 
-#define SceneData_SelectTable8e00ByFlag Func_02000044
-
 s32 SceneData_SelectTable8e00ByFlag(void) {
     if (Func_02000a14(0x950) != 0) {
         return 0x02009040;
@@ -45,8 +41,6 @@ s32 SceneData_SelectTable8e00ByFlag(void) {
 }
 
 #include "types.h"
-
-#define SceneData_SelectTable9310ByFlags Func_02000064
 
 extern u8 Data_020099d0[];
 extern u8 Data_02009670[];

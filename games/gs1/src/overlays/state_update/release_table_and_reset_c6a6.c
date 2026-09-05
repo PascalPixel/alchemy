@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ReleaseTableAndResetC6a6 Func_02002de8
-
 extern u8 Data_0200abed[];
 extern s16 Data_0200c6a6;
 

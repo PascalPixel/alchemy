@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSevenSceneChain Func_02000a64
-
 void Func_02005404(void);
 void Func_02001504(void);
 void Func_020017cc(void);

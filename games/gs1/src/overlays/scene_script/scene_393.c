@@ -1,28 +1,6 @@
 #include "types.h"
 
-#define SceneEffect_AdjustColorChannels Func_02000cf4
-
-#define SceneEffect_AdjustPaletteColors Func_02000c8c
-
-#define SceneData_GetTable9098 Func_02000bf0
-
-#define FieldScene_RunActorTenPlacementScene Func_020009f8
-
-#define MapStagedScene_SelectTertiaryData Func_020009f0
-
-#define MapStagedScene_SelectSecondaryData Func_020009e8
-
-#define MapStagedScene_GetEmptyData Func_020009e4
-
-#define MapStagedScene_SelectPrimaryData Func_020009dc
-
-#define SceneState_FillGridAttributeRectangle Func_02000244
-
-#define SceneActor_FindAtTileXZ Func_0200006c
-
-#define SceneActor_CalculateFixedPointDistance Func_02000030
 #define StagedActorStepTable Data_02008f10
-#define StagedActor_AdvancePair Func_020000c4
 #define GetStagedActor Func_02000f58
 #define FindNextStagedActor Func_02000176
 #define FindBlockingStagedActor Func_020001a2
@@ -38,14 +16,11 @@
 #define SetStagedActorTransition Func_02001050
 #define StagedActorDirectionSteps Data_02008f10
 #define StagedActorProbeValues Data_02008f50
-#define StagedActor_CheckProbe Func_020002a8
 #define FindStagedActorAtProbe Func_02000342
 #define CheckStagedActorProbePosition Func_0200116e
 #define TestActorPosition Func_020013a8
 #define ActorProbeOffsets Data_02008f68
 #define ActorSearchStep Data_02008f10
-#define StagedActor_FindClearPosition Func_02000474
-#define StagedActor_RunStepEffect Func_02000aac
 #define ResolveActorSearchContext Func_020007de
 #define GetStagedActorEffect Func_0200193e
 #define CanStartStagedActorEffect Func_02001916
@@ -66,9 +41,7 @@
 #define GetResource393Object Func_02001a38
 #define ApplyResource393Position Func_0200168a
 #define Resource393SharedWork Data_02000240
-#define SceneActor_ApplyOffsetObjectPosition Func_02000ba4
 #define SCENE_WORKSPACE (*(u8 **)0x03001ebc)
-#define SceneState_SetRuntimeWord448To516 Func_02000bf8
 #define RunSceneBeat10 Func_020014ce
 #define IsSceneFlag0201Set Func_02001a70
 #define GetSceneBeatSubject Func_02001aa2

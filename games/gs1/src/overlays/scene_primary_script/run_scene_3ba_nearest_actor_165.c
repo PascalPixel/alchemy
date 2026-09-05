@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunNearestActor165Scene Func_02001a28
-
 extern u8 *Data_03001ebc;
 extern s32 Data_02000240[];
 

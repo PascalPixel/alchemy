@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ApplyValueAndMatchingSlots Func_020020e8
-
 typedef struct Rec {
     u8 pad00[216];
     u16 fd8[15];

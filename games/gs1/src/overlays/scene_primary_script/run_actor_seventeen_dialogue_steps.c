@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorSeventeenDialogueSteps Func_020005f0
-
 extern void Func_020031e8();
 extern void Func_02003282();
 extern void Func_02003298();

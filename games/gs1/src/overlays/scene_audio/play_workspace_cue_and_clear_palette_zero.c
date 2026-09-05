@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define PlayWorkspaceCueAndClearPaletteZero Func_0200004c
 #define Audio_PlayCue Func_020014c2
 #define PALETTE ((volatile u16 *)0x05000000)
 

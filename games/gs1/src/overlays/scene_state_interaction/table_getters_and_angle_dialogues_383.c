@@ -30,30 +30,12 @@
  * 0 of 0 callees.
  */
 
-#define SceneData_GetTableD8f8 Func_02000030
-
 u8 *SceneData_GetTableD8f8(void)
 {
     return (u8 *)0x0200d8f8;
 }
 
 #include "types.h"
-
-#define FieldScene_RunActorTwentyThreeAngleDialogue Func_020001fc
-
-#define FieldScene_RunActorTwentyAngleDialogue Func_0200019c
-
-#define FieldScene_RunActorNineteenAngleDialogue Func_0200013c
-
-#define FieldScene_RunObjectTwentySixPositionCheck Func_020000fc
-
-#define ActorPresentation_SetSceneCellByAngle Func_02000080
-
-#define SceneData_SelectTableBySceneRange Func_02000048
-
-#define SceneData_GetTableDa80 Func_02000040
-
-#define SceneData_GetTableDa60 Func_02000038
 
 /*
  * resource_383 owner at 0x02000038, 8 bytes: `ldr r0, [pc, #0] / bx lr`

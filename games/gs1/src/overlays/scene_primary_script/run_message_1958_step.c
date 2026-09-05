@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunMessage1958Step Func_020000e8
-
 extern u8 *Data_03001ebc;
 
 extern void Func_020015dc(void);

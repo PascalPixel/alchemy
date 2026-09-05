@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor181Line916 Func_02001610
-
 extern u8 Data_0200b90d[];
 
 extern void Func_0200513a(s32);

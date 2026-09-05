@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FindAtTileXZ Func_02000d80
-
 extern u8 *Data_03001ebc;
 
 s32 *SceneActor_FindAtTileXZ(s32 x, s32 z) {

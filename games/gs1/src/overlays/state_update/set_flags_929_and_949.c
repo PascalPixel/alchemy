@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetFlags929And949 Func_020002e8
-
 extern void Func_02005030(void);
 extern void Func_02004fe8(s32, s32);
 extern void Func_02004ff0(s32, s32);

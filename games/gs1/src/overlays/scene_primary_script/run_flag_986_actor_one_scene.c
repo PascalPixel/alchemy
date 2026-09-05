@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag986ActorOneScene Func_020014f4
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

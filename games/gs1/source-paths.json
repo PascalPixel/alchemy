@@ -121,7 +121,8 @@
     "main:08003ed4": "resource/table/get_longest_free_block_run.c",
     "main:08002f40": "resource/get.c",
     "main:080a3ddc": {
-      "name": "InventoryMenu_CollectItems"
+      "name": "InventoryMenu_CollectItems",
+      "source": "inventory_menu/collect_items.c"
     },
     "main:080a7440": {
       "name": "CharacterSelector_Run"

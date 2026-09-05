@@ -3578,14 +3578,15 @@
     },
     {
       "overlay": "resource_39c",
-      "start": "0x020015e0",
+      "start": "0x020016c4",
       "end": "0x02001790",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete executable body accounts for 19 calls, 1 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39c:020015e0"
+        "games/gs1/recon/en/dossiers.json#resource_39c:020015e0",
+        "region split around the exact C owner at 0x020015e0..0x020016c4; the retained bytes after it keep their classification"
       ]
     },
     {
@@ -3622,18 +3623,6 @@
       "evidence": [
         "complete executable body accounts for 33 calls, 2 loop(s), 0 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_374:02000248"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000258",
-      "end": "0x020003bc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 32 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000258"
       ]
     },
     {
@@ -3736,14 +3725,12 @@
     {
       "overlay": "resource_3b5",
       "start": "0x02000726",
-      "end": "0x02000894",
-      "kind": "structured_scene_module",
+      "end": "0x02000728",
+      "kind": "alignment_padding",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "complete production body accounts for 42 calls, 0 loop(s), 5 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:02000726",
-        "region split around the exact C owner at 0x02000894..0x02000954; the retained bytes before it keep their classification"
+        "2 zero bytes of alignment padding before the exact owner at 0x02000728; no instructions"
       ]
     },
     {
@@ -3775,14 +3762,12 @@
     {
       "overlay": "resource_3c5",
       "start": "0x02000d4a",
-      "end": "0x02000eac",
-      "kind": "structured_scene_module",
+      "end": "0x02000d4c",
+      "kind": "alignment_padding",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "complete production body accounts for 49 calls, 1 loop(s), 20 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:02000d4a",
-        "region split around the exact C owner at 0x02000eac..0x02000f58; the retained bytes before it keep their classification"
+        "2 zero bytes of alignment padding before the exact owner at 0x02000d4c; no instructions"
       ]
     },
     {

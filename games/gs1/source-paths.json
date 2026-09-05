@@ -13011,9 +13011,6 @@
       "name": "FieldScene_RunOpeningAuxiliarySequence",
       "source": "overlays/scene_primary_script/run_scene_3be_opening_auxiliary_sequence.c"
     },
-    "resource_39c:020015e0": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence"
-    },
     "resource_3bc:02002330": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
       "source": "overlays/scene_primary_script/run_scene_3bc_opening_auxiliary_sequence.c"
@@ -13033,9 +13030,6 @@
       "name": "FieldScene_RunOpeningAuxiliarySequence"
     },
     "resource_374:02000248": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence"
-    },
-    "resource_37f:02000258": {
       "name": "FieldScene_RunOpeningAuxiliarySequence"
     },
     "resource_3af:02000a48": {
@@ -13094,18 +13088,12 @@
       "name": "FieldScene_RunSupplementalSequenceOne",
       "source": "overlays/scene_primary_script/run_scene_3bf_supplemental_sequence_one.c"
     },
-    "resource_3b5:02000726": {
-      "name": "FieldScene_RunSupplementalSequenceOne"
-    },
     "resource_3ab:0200049a": {
       "name": "FieldScene_RunSupplementalSequenceOne"
     },
     "resource_378:02000360": {
       "name": "FieldScene_RunSupplementalSequenceOne",
       "source": "overlays/scene_primary_script/run_scene_378_supplemental_sequence_one.c"
-    },
-    "resource_3c5:02000d4a": {
-      "name": "FieldScene_RunSupplementalSequenceOne"
     },
     "resource_381:020029a4": {
       "name": "FieldScene_RunSupplementalSequenceOne"
@@ -14722,6 +14710,22 @@
     "resource_39b:02000fd8": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
       "source": "overlays/scene_primary_script/run_scene_39b_supplemental_sequence_two.c"
+    },
+    "resource_37f:02000258": {
+      "name": "FieldScene_RunOpeningAuxiliarySequence",
+      "source": "overlays/scene_primary_script/run_scene_37f_opening_auxiliary_sequence.c"
+    },
+    "resource_39c:020015e0": {
+      "name": "FieldScene_RunOpeningAuxiliarySequence",
+      "source": "overlays/scene_primary_script/run_scene_39c_opening_auxiliary_sequence.c"
+    },
+    "resource_3b5:02000728": {
+      "name": "FieldScene_RunSupplementalSequenceOne",
+      "source": "overlays/scene_primary_script/run_scene_3b5_supplemental_sequence_one.c"
+    },
+    "resource_3c5:02000d4c": {
+      "name": "FieldScene_RunSupplementalSequenceOne",
+      "source": "overlays/scene_primary_script/run_scene_3c5_supplemental_sequence_one.c"
     }
   }
 }

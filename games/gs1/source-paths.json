@@ -14453,7 +14453,8 @@
       "name": "BattlePresentation_ConfigurePaletteFade"
     },
     "main:080c0cec": {
-      "name": "BattlePresentation_SetupTransitionScene"
+      "name": "BattlePresentation_SetupTransitionScene",
+      "source": "battle/presentation/setup_transition_scene.c"
     },
     "main:080be76c": {
       "name": "Region_080be76c"

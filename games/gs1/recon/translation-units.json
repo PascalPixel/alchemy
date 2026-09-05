@@ -1399,7 +1399,7 @@
         {
           "address": "0x0808e680",
           "extent": 748,
-          "state": "retained-assembly"
+          "state": "exact-c"
         },
         {
           "address": "0x0808e96c",

@@ -12857,9 +12857,6 @@
     "resource_37b:0200101a": {
       "name": "FieldScene_RunMiddleSequence"
     },
-    "resource_371:0200395c": {
-      "name": "FieldScene_RunLateSequence"
-    },
     "resource_39e:02000e94": {
       "name": "FieldScene_RunPrimarySequence"
     },
@@ -14821,6 +14818,14 @@
     "resource_389:02000ecc": {
       "name": "FieldScene_RunScene389SequenceB",
       "source": "overlays/scene_primary_script/run_scene_389_sequence_b.c"
+    },
+    "main:0800ff54": {
+      "name": "Map_RenderPaletteMappedBlock",
+      "source": "map/shared/render_palette_mapped_block.c"
+    },
+    "resource_371:0200395c": {
+      "name": "FieldScene_RunLateSequence",
+      "source": "overlays/scene_primary_script/run_scene_371_late_sequence.c"
     }
   }
 }

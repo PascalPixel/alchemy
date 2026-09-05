@@ -3225,18 +3225,6 @@
       ]
     },
     {
-      "overlay": "resource_3a8",
-      "start": "0x02001930",
-      "end": "0x02001e6c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 84 calls, 0 loop(s), 4 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a8:02001930"
-      ]
-    },
-    {
       "overlay": "resource_383",
       "start": "0x020019a2",
       "end": "0x020019a4",

@@ -2327,7 +2327,8 @@
       "source": "ui/runtime/init_free_list.c"
     },
     "main:08016178": {
-      "name": "UiWindow_EraseBorderRect"
+      "name": "UiWindow_EraseBorderRect",
+      "source": "ui/window/erase_border_rect.c"
     },
     "main:08016230": {
       "name": "UiWork_DrawByAttributes",

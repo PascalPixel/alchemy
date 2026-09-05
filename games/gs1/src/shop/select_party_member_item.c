@@ -22,7 +22,6 @@ s32 Func_080b362c(s32 unit_id);
 s32 Func_08077248(s32 unit_id);
 void Audio_PlayCue(s32 cue);
 
-#define Shop_SelectPartyMemberItem Func_080b3444
 
 /* Select a party member and then an item owned by that member. */
 s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
@@ -46,8 +45,8 @@ s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
         list_window,
         0,
         result);
-    cursor_anchor->unknown_00[4] = result;
     cursor_anchor->kind = 4;
+    cursor_anchor->unknown_00[4] = result;
     Func_080b0a20(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
@@ -84,7 +83,7 @@ s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
             *selected_unit = unit_id;
             *selected_item = item_slot;
             result = 0;
-            break;
+            goto done;
         }
 
         if ((INPUT_NEW_KEYS & 2) != 0) {
@@ -92,7 +91,7 @@ s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
             *selected_unit = -1;
             *selected_item = -1;
             result = -1;
-            break;
+            goto done;
         }
 
         if ((INPUT_REPEAT_KEYS & 0x20) != 0) {
@@ -107,6 +106,7 @@ s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
         }
     }
 
+done:
     Func_080a1030();
     UiWindow_Close(list_window, 2);
     UiWindow_Close(shop->item_window, 2);

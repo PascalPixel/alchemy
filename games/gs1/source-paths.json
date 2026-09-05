@@ -14372,7 +14372,8 @@
       "name": "BattleEffect_PositionSprite"
     },
     "main:0808e4b4": {
-      "name": "BattleEffect_FindMatchingEvent"
+      "name": "BattleEffect_FindMatchingEvent",
+      "source": "battle/effects/find_matching_event.c"
     },
     "main:0808e23c": {
       "name": "BattleCommand_ExecuteSelectedItem"

@@ -14851,6 +14851,10 @@
     "main:08096960": {
       "name": "BattleEffect_DispatchRequestKind",
       "source": "battle/effects/dispatch_request_kind.c"
+    },
+    "main:0801db70": {
+      "name": "Menu_RunWorkspaceSelectionLoop",
+      "source": "menu/run_workspace_selection_loop.c"
     }
   }
 }

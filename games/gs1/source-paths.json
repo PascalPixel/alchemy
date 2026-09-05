@@ -14850,7 +14850,8 @@
       "name": "RunAssetSelectionScreen"
     },
     "main:080b3444": {
-      "name": "Shop_SelectPartyMemberItem"
+      "name": "Shop_SelectPartyMemberItem",
+      "source": "shop/select_party_member_item.c"
     },
     "main:08004838": {
       "name": "PaletteDma_LoadBlock"
@@ -17232,6 +17233,10 @@
     "resource_3ba:02002844": {
       "name": "FieldScene_RunLateSequence",
       "source": "overlays/scene_primary_script/run_scene_3ba_late_sequence.c"
+    },
+    "main:080207c4": {
+      "name": "Save_WriteSelectedSlot",
+      "source": "save/write_selected_slot.c"
     }
   }
 }

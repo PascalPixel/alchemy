@@ -517,8 +517,12 @@
     "main:0808a8d0": "battle/effects/data/get_resource_group.c",
     "main:0808ab48": "battle/effects/data/load_resource_group.c",
     "main:0808adf0": "battle/effects/data/lookup_result.c",
-    "main:0808b05c": "battle/effects/data/get_weighted_result.c",
-    "main:0808b074": "battle/effects/data/get_phase_result.c",
+    "main:0808b05c": {
+      "name": "BattleEffect_GetWeightedResult"
+    },
+    "main:0808b074": {
+      "name": "BattleEffect_GetPhaseResult"
+    },
     "main:0808b2b0": "battle/effects/data/select_result_pointer.c",
     "main:0808b8e8": {
       "name": "BattleEffect_ClearOutOfBoundsObjects"
@@ -1103,7 +1107,8 @@
     "main:080a6874": "psynergy_menu/close_windows.c",
     "main:080a68a8": "psynergy_menu/draw_psynergy_icons.c",
     "main:080a68ec": {
-      "name": "PsynergyMenu_CollectActions"
+      "name": "PsynergyMenu_CollectActions",
+      "source": "psynergy_menu/collect_actions.c"
     },
     "main:080a6a00": "psynergy_menu/build_page_result.c",
     "main:080a735c": "psynergy_menu/is_action_restricted.c",
@@ -2937,14 +2942,13 @@
     },
     "main:0808b02c": {
       "name": "EffectRuntime_LookupByTableEntry",
-      "source": "effect_runtime/lookup_by_table_entry.c"
+      "source": "battle/effects/data/lookup_routines.c"
     },
     "main:0808b048": {
-      "name": "BattleEffect_ApplyLookupResult",
-      "source": "battle/effects/apply_lookup_result.c"
+      "name": "BattleEffect_ApplyLookupResult"
     },
     "main:0808b090": {
-      "name": "runtime_owner_285"
+      "name": "FieldScene_ResolveInteractionResult"
     },
     "main:0808b1d8": {
       "name": "Party_ResolveTablePair",

@@ -37,8 +37,9 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
             u32 column;
 
             if (base[RENDER_MENU_STATE_OFS] != 0) {
-                tile = 0xF07F;
-                if ((u32)(y + row) <= 16)
+                if ((u32)(y + row) > 16)
+                    tile = 0xF07F;
+                else
                     tile = 0xF000;
             }
             column = 0;

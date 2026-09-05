@@ -3625,18 +3625,6 @@
       ]
     },
     {
-      "overlay": "resource_3bc",
-      "start": "0x020004a4",
-      "end": "0x0200057c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 11 calls, 0 loop(s), 16 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3bc:020004a4"
-      ]
-    },
-    {
       "overlay": "resource_380",
       "start": "0x02004260",
       "end": "0x02004328",
@@ -3767,19 +3755,6 @@
       ]
     },
     {
-      "overlay": "resource_39f",
-      "start": "0x02001d04",
-      "end": "0x02001de0",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 33 calls, 0 loop(s), 11 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39f:02001c34",
-        "region split around the exact C owner at 0x02001c34..0x02001d04; the retained bytes after it keep their classification"
-      ]
-    },
-    {
       "overlay": "resource_3a8",
       "start": "0x02003766",
       "end": "0x02003864",
@@ -3790,19 +3765,6 @@
         "complete production body accounts for 24 calls, 0 loop(s), 23 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_3a8:02003766",
         "region split around the exact C owner at 0x02003864..0x0200390c; the retained bytes before it keep their classification"
-      ]
-    },
-    {
-      "overlay": "resource_3ab",
-      "start": "0x02000b6c",
-      "end": "0x02000c10",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 36 calls, 1 loop(s), 5 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ab:02000b6c",
-        "boundary corrected to the reviewed 164-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {

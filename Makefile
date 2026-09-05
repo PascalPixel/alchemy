@@ -445,16 +445,23 @@ standard-check:
 	@diff -u /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt
 	@printf 'compiler standard ok\n'
 
-COMPILER_UPSTREAM := 4087bd2bd7c064da935c2a1bf798b814a125eded
+AGSCC_UPSTREAM := 16c01e50c067d9bce4c1cc30e96d79ed9e72c2cc
+AGBCC_UPSTREAM := da598c1d918402c42c0c0d7128ba14567f3175e9
 OPTION_FILES := agscc/gcc/toplev.c agscc/gcc/flags.h \
-	agscc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
-	agbcc/gcc_arm/flags.h agbcc/gcc_arm/config/arm/arm.h
+    agscc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
+    agbcc/gcc_arm/flags.h agbcc/gcc_arm/config/arm/arm.h
+
+.PHONY: compilers
+compilers:
+	sh agscc/build.sh
+	$(MAKE) -C agbcc/gcc old -j1
 
 pristine-options-check:
-	@cd alchemy-gcc && set -e; for file in $(OPTION_FILES); do \
+	@set -e; for file in $(OPTION_FILES); do \
 		test -f "$$file" || { printf 'missing compiler option source: %s\n' "$$file"; exit 1; }; \
-		upstream_file=$$(printf '%s' "$$file" | sed 's#^agscc/#gs1cc/#'); \
-		git show $(COMPILER_UPSTREAM):$$upstream_file > /tmp/compiler-options-upstream.c; \
+		repo=$${file%%/*}; upstream_file=$${file#*/}; \
+		case "$$repo" in agscc) base=$(AGSCC_UPSTREAM);; agbcc) base=$(AGBCC_UPSTREAM);; esac; \
+		git -C "$$repo" show "$$base:$$upstream_file" > /tmp/compiler-options-upstream.c; \
 		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' \
 		  /tmp/compiler-options-upstream.c | sort -u > /tmp/compiler-options-stock.txt; \
 		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' $$file \

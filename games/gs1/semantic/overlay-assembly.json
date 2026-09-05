@@ -467,7 +467,7 @@
       "evidence": [
         "audited 3604-byte whole owner in games/gs1/semantic/regions.json",
         "23 direct bl targets inside the owner are independently reachable from the entry without taking a call edge; for example bl at 0x0200131a targets fallthrough-reachable 0x02001bc4",
-        "the approved Thumb direct-call patterns in alchemy-gcc/agscc/gcc/config/arm/arm.md accept SYMBOL_REF but not an intra-function LABEL_REF, and the ARM backend has no outlining pass",
+        "the approved Thumb direct-call patterns in agscc/gcc/config/arm/arm.md accept SYMBOL_REF but not an intra-function LABEL_REF, and the ARM backend has no outlining pass",
         "ordinary C cannot make one statement sequence both fallthrough code and a callable local subroutine",
         "byte-exact decoded-overlay assembly round trip"
       ]
@@ -3129,7 +3129,7 @@
       "evidence": [
         "complete audited 2968-byte retained module accounts for 243 calls, five loops, nine memory operations, and its production boundary",
         "direct bl at 0x020003c0 targets intra-owner 0x02000cba, which is also reached by ordinary fallthrough from 0x02000cb8 with live owner state",
-        "approved GCC 2.96 Thumb direct-call patterns at alchemy-gcc/agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
+        "approved GCC 2.96 Thumb direct-call patterns at agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
         "byte-exact decoded-overlay assembly round trip",
         "games/gs1/recon/en/dossiers.json#resource_3b7:020001d8"
       ]
@@ -3156,7 +3156,7 @@
       "evidence": [
         "complete audited 1352-byte retained module accounts for 137 calls, ten loops, and its production boundary",
         "six direct bl sites at 0x02001642 0x0200166a 0x0200167c 0x02001692 0x020016a4 and 0x020016ba target intra-owner blocks 0x0200187c 0x020018a4 0x020019de 0x020018cc 0x02001a06 and 0x020018f4 that are also reached by ordinary fallthrough with live owner state",
-        "approved GCC 2.96 Thumb direct-call patterns at alchemy-gcc/agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
+        "approved GCC 2.96 Thumb direct-call patterns at agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
         "byte-exact decoded-overlay assembly round trip",
         "games/gs1/recon/en/dossiers.json#resource_37a:02001510"
       ]
@@ -3206,7 +3206,7 @@
       "evidence": [
         "complete audited 1100-byte retained module accounts for 85 calls, one loop, 31 memory operations, and its production boundary",
         "direct bl sites at 0x02000f02 0x02000f1a 0x02000f3c and 0x02000f58 target intra-owner blocks 0x02001040 0x02001058 0x0200107a and 0x02001096 that are also reached by ordinary fallthrough with live owner state",
-        "approved GCC 2.96 Thumb direct-call patterns at alchemy-gcc/agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
+        "approved GCC 2.96 Thumb direct-call patterns at agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
         "byte-exact decoded-overlay assembly round trip",
         "games/gs1/recon/en/dossiers.json#resource_39e:02000e94"
       ]

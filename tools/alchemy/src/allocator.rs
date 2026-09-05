@@ -1,15 +1,4 @@
-//! Allocator lens: read GCC 2.96's own pass dumps instead of probing it.
-//!
-//!   alchemy inspect allocator <owner-hex> [candidate.c]
-//!
-//! Compiles the candidate with -da (no compiler change: the dump machinery
-//! ships in the staged cc1) and reports, per pseudo register: the source
-//! variable it carries, its creation order, class costs and preference from
-//! local alloc, its position in global alloc's ordering, its conflict set,
-//! and the hard register it received. Reload decisions and spill sites are
-//! listed with their insns. This replaces guessing with the allocator's own
-//! record: to move a value into a different register, change the property
-//! this report shows is decisive: order, preference, or a conflict edge.
+//! Read GCC's pass dumps: pseudo creation, costs, conflicts, allocation and reloads.
 
 use compiler_core::{
     routing::{cflags_for_target_source, CompilerTarget},
@@ -78,7 +67,7 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|e| e.to_string())?
         .keep();
     let src = repo.join(&source);
-    let bundle = repo.join("alchemy-gcc/dist");
+    let bundle = compiler_core::routing::bundle();
     let mut cpp = compiler_core::plan::direct_preprocessor_command(
         &src.to_string_lossy(),
         &work.join("in.i").to_string_lossy(),

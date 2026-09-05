@@ -10,6 +10,8 @@ const BLOCKED_EXTENSIONS: &[&str] = &[
 const BLOCKED_DIRECTORIES: &[&str] = &[
     ".cache",
     "alchemy-gcc",
+    "agbcc",
+    "agscc",
     "analysis",
     "build",
     "builds",

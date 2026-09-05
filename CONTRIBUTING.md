@@ -55,7 +55,12 @@ Never fill an unfinished build from the reference ROM.
 ## Setup
 
 Install Rust, Ninja, and `arm-none-eabi-binutils`. Put approved ROMs in ignored
-`roms/` and the approved compiler bundle in `alchemy-gcc/dist/`.
+`roms/` and the approved compiler bundle in `out/compilers/dist/`.
+Initialize the pinned `agbcc` and `agscc` submodules with
+`git submodule update --init`. `alchemy build compilers` builds both without
+replacing the approved bundle. `agbcc` comes directly from pret; `agscc` is
+the separately audited GCC 2.96 host port in PascalPixel/agscc. Compiler source
+history belongs to those repositories; Alchemy owns routing and verification.
 
 Configure the repository hooks once, then build the contributor host:
 
@@ -64,7 +69,7 @@ git config core.hooksPath .hooks
 cargo build --offline --release --manifest-path tools/alchemy/Cargo.toml
 ```
 
-Worktrees may symlink `roms/` and `alchemy-gcc/dist/` from the main checkout.
+Worktrees may symlink `roms/` and `out/compilers/dist/` from the main checkout.
 Do not run submodule commands from a worktree.
 
 ## Tooling index
@@ -259,7 +264,7 @@ owner.
 ## Read the compiler first
 
 The compiler is not a black box. GCC 2.96 is a small, 26-year-old program
-whose complete source sits in `alchemy-gcc/agscc`, and the staged `cc1`
+whose complete source sits in `agscc`, and the staged `cc1`
 ships GCC's own dump machinery: `-da` writes every pass — RTL generation,
 cse, combine, local and global allocation, reload, scheduling — for any
 function you compile. Every codegen decision this project fights is either

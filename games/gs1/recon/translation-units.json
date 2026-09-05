@@ -1592,7 +1592,7 @@
     {
       "id": "unnamed-leaf-run-010",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_010.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3a8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {},
@@ -1613,7 +1613,7 @@
     {
       "id": "unnamed-leaf-run-011",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_011.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_value_steps_3a8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {},
@@ -1634,7 +1634,7 @@
     {
       "id": "unnamed-leaf-run-012",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_012.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3c5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {},
@@ -1655,7 +1655,7 @@
     {
       "id": "unnamed-leaf-run-013",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_013.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c5_numbered_steps.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {},
@@ -1691,7 +1691,7 @@
     {
       "id": "unnamed-leaf-run-045",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_045.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3bd.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
@@ -1717,7 +1717,7 @@
     {
       "id": "unnamed-leaf-run-046",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_046.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_indexed_steps_3bd.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
@@ -1758,7 +1758,7 @@
     {
       "id": "unnamed-leaf-run-047",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_047.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3b4.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -1779,7 +1779,7 @@
     {
       "id": "unnamed-leaf-run-048",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_048.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_indexed_steps_3b4.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -1800,7 +1800,7 @@
     {
       "id": "unnamed-leaf-run-049",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_049.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b4_value_steps.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -1836,7 +1836,7 @@
     {
       "id": "unnamed-leaf-run-050",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_050.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_late_indexed_steps_3b4.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -1862,7 +1862,7 @@
     {
       "id": "unnamed-leaf-run-063",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_063.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3a5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a5",
       "absolute_symbols": {},
@@ -1883,7 +1883,7 @@
     {
       "id": "unnamed-leaf-run-064",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_064.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3a6.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {},
@@ -1904,7 +1904,7 @@
     {
       "id": "unnamed-leaf-run-065",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_065.c",
+      "source": "games/gs1/src/overlays/scene_setup/configure_scene_regions_3a6.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {},
@@ -1925,7 +1925,7 @@
     {
       "id": "unnamed-leaf-run-066",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_066.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3af.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {},
@@ -1951,7 +1951,7 @@
     {
       "id": "unnamed-leaf-run-068",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_068.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_scene_steps_38e.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38e",
       "absolute_symbols": {},
@@ -1992,7 +1992,7 @@
     {
       "id": "unnamed-leaf-run-069",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_069.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_376.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {},
@@ -2018,7 +2018,7 @@
     {
       "id": "unnamed-leaf-run-070",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_070.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_actor_messages_376.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {},
@@ -2044,7 +2044,7 @@
     {
       "id": "unnamed-leaf-run-071",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_071.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_late_actor_messages_376.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {},
@@ -2065,7 +2065,7 @@
     {
       "id": "unnamed-leaf-run-072",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_072.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_indexed_steps_376.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {},
@@ -2116,7 +2116,7 @@
     {
       "id": "unnamed-leaf-run-080",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_080.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3ad.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ad",
       "absolute_symbols": {},
@@ -2137,7 +2137,7 @@
     {
       "id": "unnamed-leaf-run-084",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_084.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3b8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {},
@@ -2163,7 +2163,7 @@
     {
       "id": "unnamed-leaf-run-085",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_085.c",
+      "source": "games/gs1/src/overlays/scene_setup/late_step_and_table_select_3b8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {},
@@ -2184,7 +2184,7 @@
     {
       "id": "unnamed-leaf-run-092",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_092.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_389.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {},
@@ -2215,7 +2215,7 @@
     {
       "id": "unnamed-leaf-run-099",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_099.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3b7.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b7",
       "absolute_symbols": {},
@@ -2236,7 +2236,7 @@
     {
       "id": "unnamed-leaf-run-100",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_100.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_scene_steps_3b7.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b7",
       "absolute_symbols": {},
@@ -2267,7 +2267,7 @@
     {
       "id": "unnamed-leaf-run-102",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_102.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3c8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c8",
       "absolute_symbols": {},
@@ -2288,7 +2288,7 @@
     {
       "id": "unnamed-leaf-run-107",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_107.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_396.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {},
@@ -2319,7 +2319,7 @@
     {
       "id": "unnamed-leaf-run-108",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_108.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_numbered_steps_396.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {},
@@ -2435,7 +2435,7 @@
     {
       "id": "unnamed-leaf-run-119",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_119.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3a2.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a2",
       "absolute_symbols": {},
@@ -2466,7 +2466,7 @@
     {
       "id": "unnamed-leaf-run-120",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_120.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_actor_messages_3a2.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a2",
       "absolute_symbols": {},
@@ -2487,7 +2487,7 @@
     {
       "id": "unnamed-leaf-run-121",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_121.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3b3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {},
@@ -2508,7 +2508,7 @@
     {
       "id": "unnamed-leaf-run-122",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_122.c",
+      "source": "games/gs1/src/overlays/actor_presentation/run_actor_steps_3b3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {},
@@ -2529,7 +2529,7 @@
     {
       "id": "unnamed-leaf-run-126",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_126.c",
+      "source": "games/gs1/src/overlays/conditional_scene_setup/run_guarded_steps_37b.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {},
@@ -2555,7 +2555,7 @@
     {
       "id": "unnamed-leaf-run-129",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_129.c",
+      "source": "games/gs1/src/overlays/scene_setup/select_table_and_actor_message_38d.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {},
@@ -2576,7 +2576,7 @@
     {
       "id": "unnamed-leaf-run-131",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_131.c",
+      "source": "games/gs1/src/overlays/conditional_scene_setup/run_flagged_steps_38d.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {},
@@ -2622,7 +2622,7 @@
     {
       "id": "unnamed-leaf-run-132",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_132.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_flagged_actor_messages_3b9.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b9",
       "absolute_symbols": {},
@@ -2643,7 +2643,7 @@
     {
       "id": "unnamed-leaf-run-133",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_133.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3b6.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b6",
       "absolute_symbols": {},
@@ -2669,7 +2669,7 @@
     {
       "id": "unnamed-leaf-run-134",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_134.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3b5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {},
@@ -2690,7 +2690,7 @@
     {
       "id": "unnamed-leaf-run-135",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_135.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_messages_3b5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {},
@@ -2711,7 +2711,7 @@
     {
       "id": "unnamed-leaf-run-136",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_136.c",
+      "source": "games/gs1/src/overlays/scene_setup/select_table_and_actor_messages_3b5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {},
@@ -2737,7 +2737,7 @@
     {
       "id": "unnamed-leaf-run-137",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_137.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_late_actor_messages_3b5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {},
@@ -2758,7 +2758,7 @@
     {
       "id": "unnamed-leaf-run-138",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_138.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3c0.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -2779,7 +2779,7 @@
     {
       "id": "unnamed-leaf-run-139",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_139.c",
+      "source": "games/gs1/src/overlays/actor_presentation/run_actor_steps_3c0.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -2815,7 +2815,7 @@
     {
       "id": "unnamed-leaf-run-140",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_140.c",
+      "source": "games/gs1/src/overlays/actor_presentation/run_late_actor_steps_3c0.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -2851,7 +2851,7 @@
     {
       "id": "unnamed-leaf-run-141",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_141.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_actor_messages_3ae.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {},
@@ -2872,7 +2872,7 @@
     {
       "id": "unnamed-leaf-run-142",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_142.c",
+      "source": "games/gs1/src/overlays/scene_dialogue/run_actor_messages_3a3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {},
@@ -2908,7 +2908,7 @@
     {
       "id": "unnamed-leaf-run-153",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_153.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_387.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_387",
       "absolute_symbols": {},
@@ -2939,7 +2939,7 @@
     {
       "id": "unnamed-leaf-run-154",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_154.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_step_and_table_accessor_387.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_387",
       "absolute_symbols": {},
@@ -2960,7 +2960,7 @@
     {
       "id": "unnamed-leaf-run-155",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_155.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_375.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {},
@@ -2986,7 +2986,7 @@
     {
       "id": "unnamed-leaf-run-156",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_156.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3ba.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {},
@@ -3007,7 +3007,7 @@
     {
       "id": "unnamed-leaf-run-157",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_157.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_branched_step_and_table_accessor_3ba.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {},
@@ -3028,7 +3028,7 @@
     {
       "id": "unnamed-leaf-run-158",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_158.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_39b.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {},
@@ -3064,7 +3064,7 @@
     {
       "id": "unnamed-leaf-run-159",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_159.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_indexed_steps_39b.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {},
@@ -3095,7 +3095,7 @@
     {
       "id": "unnamed-leaf-run-160",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_160.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_late_steps_39b.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {},
@@ -3116,7 +3116,7 @@
     {
       "id": "unnamed-leaf-run-161",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_161.c",
+      "source": "games/gs1/src/overlays/scene_setup/run_positioned_steps_3bb.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {},
@@ -3157,7 +3157,7 @@
     {
       "id": "unnamed-leaf-run-162",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_162.c",
+      "source": "games/gs1/src/map/locations/heidia/village_story/table_accessors.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39d",
       "absolute_symbols": {},
@@ -3183,7 +3183,7 @@
     {
       "id": "unnamed-leaf-run-163",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_163.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_3c9.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {},
@@ -3214,7 +3214,7 @@
     {
       "id": "unnamed-leaf-run-164",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_164.c",
+      "source": "games/gs1/src/overlays/scene_setup/scene_data_and_messages_3aa.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3aa",
       "absolute_symbols": {},
@@ -3260,7 +3260,7 @@
     {
       "id": "unnamed-leaf-run-167",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_167.c",
+      "source": "games/gs1/src/overlays/state_update/run_random_branches_381.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_381",
       "absolute_symbols": {},
@@ -3281,7 +3281,7 @@
     {
       "id": "unnamed-leaf-run-168",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_168.c",
+      "source": "games/gs1/src/overlays/state_update/run_parameterized_steps_381.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_381",
       "absolute_symbols": {},
@@ -3302,7 +3302,7 @@
     {
       "id": "unnamed-state-run-017",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_017.c",
+      "source": "games/gs1/src/overlays/scene_data/select_primary_table_3c3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c3",
       "absolute_symbols": {},
@@ -3323,7 +3323,7 @@
     {
       "id": "unnamed-state-run-018",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_018.c",
+      "source": "games/gs1/src/overlays/scene_data/select_secondary_tables_3c3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c3",
       "absolute_symbols": {},
@@ -3344,7 +3344,7 @@
     {
       "id": "unnamed-state-run-019",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_019.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/actor_nine_and_ten_scenes_3c3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c3",
       "absolute_symbols": {},
@@ -3365,7 +3365,7 @@
     {
       "id": "unnamed-state-run-062",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_062.c",
+      "source": "games/gs1/src/overlays/actor_presentation/paired_scene_cell_updates_385.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_385",
       "absolute_symbols": {},
@@ -3391,7 +3391,7 @@
     {
       "id": "unnamed-state-run-064",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_064.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/table_getters_and_angle_dialogues_383.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {},
@@ -3447,7 +3447,7 @@
     {
       "id": "unnamed-state-run-065",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_065.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/guarded_step_and_prompt_383.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {},
@@ -3468,7 +3468,7 @@
     {
       "id": "unnamed-state-run-066",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_066.c",
+      "source": "games/gs1/src/overlays/state_update/actor_state_match_and_position_flag_383.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {},
@@ -3489,7 +3489,7 @@
     {
       "id": "unnamed-state-run-085",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_085.c",
+      "source": "games/gs1/src/overlays/staged_actor/actor_eleven_marker_updates_3bd.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
@@ -3510,7 +3510,7 @@
     {
       "id": "unnamed-state-run-086",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_086.c",
+      "source": "games/gs1/src/overlays/effect/actor_row_and_effect_state_3bd.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
@@ -3531,7 +3531,7 @@
     {
       "id": "unnamed-state-run-102",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_102.c",
+      "source": "games/gs1/src/overlays/staged_actor/staged_actor_updates_3b1.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b1",
       "absolute_symbols": {},
@@ -3557,7 +3557,7 @@
     {
       "id": "unnamed-state-run-144",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_144.c",
+      "source": "games/gs1/src/overlays/overlay_object/turn_and_wait_for_height_387.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_387",
       "absolute_symbols": {},
@@ -3578,7 +3578,7 @@
     {
       "id": "unnamed-state-run-160",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_160.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/table_and_actor_eight_prompt_3a3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {},
@@ -3599,7 +3599,7 @@
     {
       "id": "unnamed-state-run-161",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_161.c",
+      "source": "games/gs1/src/overlays/state_update/flag_sync_and_dispatch_3a3.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {},
@@ -3620,7 +3620,7 @@
     {
       "id": "unnamed-state-run-167",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_167.c",
+      "source": "games/gs1/src/overlays/scene_setup/scene_dispatch_3aa.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3aa",
       "absolute_symbols": {},
@@ -3641,7 +3641,7 @@
     {
       "id": "unnamed-state-run-168",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_168.c",
+      "source": "games/gs1/src/overlays/scene_setup/actor_twenty_one_setup_374.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {},
@@ -3662,7 +3662,7 @@
     {
       "id": "unnamed-state-run-169",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_169.c",
+      "source": "games/gs1/src/overlays/effect/frame_bit_updates_374.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {},
@@ -3683,7 +3683,7 @@
     {
       "id": "unnamed-state-run-170",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_170.c",
+      "source": "games/gs1/src/overlays/state_update/set_work_and_flag_375.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {},
@@ -3745,7 +3745,7 @@
     {
       "id": "overlay-37d-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_37d.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_37d.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37d",
       "absolute_symbols": {},
@@ -3786,7 +3786,7 @@
     {
       "id": "overlay-37e-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_37e.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_37e.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37e",
       "absolute_symbols": {},
@@ -3827,7 +3827,7 @@
     {
       "id": "overlay-388-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_388.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_388.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_388",
       "absolute_symbols": {},
@@ -3868,7 +3868,7 @@
     {
       "id": "overlay-3ac-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3ac.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3ac.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ac",
       "absolute_symbols": {},
@@ -3969,7 +3969,7 @@
     {
       "id": "overlay-3c1-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3c1.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3c1.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c1",
       "absolute_symbols": {},
@@ -4035,7 +4035,7 @@
     {
       "id": "overlay-38c-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_38c.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_38c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38c",
       "absolute_symbols": {},
@@ -4146,7 +4146,7 @@
     {
       "id": "overlay-370-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_370.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_370.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_370",
       "absolute_symbols": {},
@@ -4187,7 +4187,7 @@
     {
       "id": "overlay-384-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_384.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_384.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_384",
       "absolute_symbols": {},
@@ -4263,7 +4263,7 @@
     {
       "id": "overlay-386-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_386.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_386.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_386",
       "absolute_symbols": {},
@@ -4389,7 +4389,7 @@
     {
       "id": "overlay-390-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_390.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_390.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_390",
       "absolute_symbols": {},
@@ -4455,7 +4455,7 @@
     {
       "id": "overlay-3a9-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3a9.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3a9.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a9",
       "absolute_symbols": {},
@@ -4516,7 +4516,7 @@
     {
       "id": "overlay-3c2-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3c2.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3c2.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c2",
       "absolute_symbols": {},
@@ -4567,7 +4567,7 @@
     {
       "id": "overlay-3c7-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3c7.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3c7.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c7",
       "absolute_symbols": {},
@@ -4633,7 +4633,7 @@
     {
       "id": "overlay-3cb-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3cb.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3cb.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cb",
       "absolute_symbols": {},
@@ -4709,7 +4709,7 @@
     {
       "id": "overlay-3cc-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3cc.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3cc.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cc",
       "absolute_symbols": {},
@@ -4770,7 +4770,7 @@
     {
       "id": "overlay-3cd-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3cd.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3cd.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cd",
       "absolute_symbols": {},
@@ -4856,7 +4856,7 @@
     {
       "id": "overlay-38f-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_38f.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_38f.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
       "absolute_symbols": {},
@@ -4982,7 +4982,7 @@
     {
       "id": "overlay-3a1-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3a1.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3a1.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a1",
       "absolute_symbols": {},
@@ -5083,7 +5083,7 @@
     {
       "id": "overlay-3ce-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3ce.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3ce.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ce",
       "absolute_symbols": {},
@@ -5244,7 +5244,7 @@
     {
       "id": "unnamed-leaf-run-034",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_034.c",
+      "source": "games/gs1/src/overlays/scene_data/table_accessors_391.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_391",
       "absolute_symbols": {},
@@ -5275,7 +5275,7 @@
     {
       "id": "overlay-3c6-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_3c6.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_3c6.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c6",
       "absolute_symbols": {},
@@ -5356,7 +5356,7 @@
     {
       "id": "overlay-393-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_393.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_393.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
       "absolute_symbols": {},
@@ -5452,7 +5452,7 @@
     {
       "id": "overlay-38a-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_38a.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_38a.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38a",
       "absolute_symbols": {},
@@ -5528,7 +5528,7 @@
     {
       "id": "overlay-394-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_394.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_394.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_394",
       "absolute_symbols": {},
@@ -5619,7 +5619,7 @@
     {
       "id": "overlay-397-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_397.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_397.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_397",
       "absolute_symbols": {},
@@ -5735,7 +5735,7 @@
     {
       "id": "overlay-382-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_382.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_382.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
       "absolute_symbols": {},
@@ -6051,7 +6051,7 @@
     {
       "id": "overlay-392-unit",
       "game": "gs1",
-      "source": "games/gs1/src/unidentified/overlays/units/overlay_392.c",
+      "source": "games/gs1/src/overlays/scene_script/scene_392.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
       "absolute_symbols": {},

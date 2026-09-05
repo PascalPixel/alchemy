@@ -1,0 +1,16 @@
+#include "types.h"
+
+#define SceneState_SetRuntimeWord448To521AndSend303 Func_02000ad4
+
+extern u8 *Data_03001ebc;
+
+extern void Func_02002048(s32);
+
+void SceneState_SetRuntimeWord448To521AndSend303(void)
+{
+    u8 *state = Data_03001ebc;
+    s32 *slot = (s32 *)(state + 0x1C0);
+
+    *slot = 0x209;
+    Func_02002048(0x12F);
+}

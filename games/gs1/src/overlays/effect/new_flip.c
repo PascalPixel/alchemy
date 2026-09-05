@@ -6,7 +6,6 @@ void Func_02004480(void *, s32);
 void Func_02004578(void *, s32);
 
 #define NewFlippedEffectObject Func_020000a0
-
 void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *result = Func_0200443e(arg3, arg0, arg1, arg2);

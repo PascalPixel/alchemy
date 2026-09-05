@@ -2,8 +2,8 @@
 
 #define FrameCounter (*(u32 *)0x03001e40)
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
-#define EncounterPalette_Pulse Func_02000ce4
 
+#define EncounterPalette_Pulse Func_02000ce4
 void EncounterPalette_Pulse(void)
 {
     u16 phase = FrameCounter & 63;

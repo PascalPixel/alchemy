@@ -6,7 +6,6 @@ s32 Func_0200aad8(s32);
 void Func_02006302(s32);
 
 #define ActivateTwoActorGroupFromFlags Func_020054b0
-
 void ActivateTwoActorGroupFromFlags(void)
 {
     if (Func_0200aac8(0x358)) {

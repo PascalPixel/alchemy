@@ -12,7 +12,6 @@ struct EffectWork {
 };
 
 #define SetEffectMode Func_02000030
-
 void SetEffectMode(struct EffectWork *work, u32 mode)
 {
     work->rec->f1 = mode;

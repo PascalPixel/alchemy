@@ -1,9 +1,0 @@
-#define TestActorPosition Func_020041b4
-#define ActorProbeOffsets Data_0200bf0c
-#define ActorSearchStep Data_0200beb4
-#include "find_clear_actor_position.h"
-
-s32 FindClearActorPosition(s32 *a)
-{
-#include "find_clear_actor_position_body.inc"
-}

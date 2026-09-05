@@ -78,7 +78,7 @@ void FieldScene_RunScene3b9_020023e0(void)
     record = Func_02005042(11);
     {
         s32 shown = 0;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     Func_0200515a();

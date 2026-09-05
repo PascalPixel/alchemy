@@ -515,7 +515,7 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 /* Runs one of two long fixed sequences (chosen by a status check), each
  * placing actors, panning/animating them, and running dialogue lines built
  * from a base text pointer plus a running line offset. */
-void Func_020027b0(void)
+void PlayStoryScene(void)
 {
     s32 text_line;
 

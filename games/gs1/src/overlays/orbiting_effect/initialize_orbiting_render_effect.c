@@ -7,7 +7,6 @@ extern void Func_02007694(s32);
 extern s32 Func_0200762c(u8, s32, u8 *);
 extern void Func_0200762a(s32);
 extern u8 Value_0200b9d5;
-
 #define GetOrbitingSceneObject Func_02007664
 #define NormalizeOrbitingSceneObject Func_0200762e
 #define IsGameFlagSet Func_02007664
@@ -15,9 +14,10 @@ extern u8 Value_0200b9d5;
 #define LoadEffectResource Func_02007694
 #define ConfigurePaletteTransfer Func_0200762c
 #define ReleaseEffectTransfer Func_0200762a
-#define UpdateOrbitingSceneObject Value_0200b9d5
-#define InitializeOrbitingRenderEffect Func_02003a3c
 
+#define UpdateOrbitingSceneObject Value_0200b9d5
+
+#define InitializeOrbitingRenderEffect Func_02003a3c
 void InitializeOrbitingRenderEffect(void)
 {
 #include "initialize_orbiting_scene_object_body.inc"

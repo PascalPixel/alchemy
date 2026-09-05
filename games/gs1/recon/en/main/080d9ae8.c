@@ -15,7 +15,7 @@
  * DrawRectangleFn conventions come from that evidence.
  *
  * Func_080cef64(flag, out_pair) is already adopted as
- * games/gs1/src/unidentified/main/runtime/runtime_owner_21.c: it
+ * games/gs1/src/battle/effects/fetch_rectangle_blitters.c: it
  * unconditionally writes two draw-callback words (the kind-46 and kind-47
  * allocator-cache slots) into out_pair.  The two `bl Func_080072f4` sites
  * below are `_call_via_r4` (games/gs1/asm/080072e4.s, N=4 slot) -- indirect

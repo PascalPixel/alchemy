@@ -4,10 +4,9 @@
 
 void *Item_GetData();
 s32 Func_080aa460(s32);
-#define Ability_PlayUseAnimation Func_080aa460
 
 #define Item_PlayUseAnimation Func_080aa448
-
+#define Ability_PlayUseAnimation Func_080aa460
 void Item_PlayUseAnimation(void)
 {
     Ability_PlayUseAnimation(0x3fff & FIELD(Item_GetData(), u16 *, 0x28));

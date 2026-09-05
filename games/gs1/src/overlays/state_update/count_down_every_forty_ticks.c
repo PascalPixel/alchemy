@@ -1,0 +1,18 @@
+#include "types.h"
+
+#define SceneState_CountDownEveryFortyTicks Func_02000168
+
+extern s32 Data_020097f4;
+extern s32 Data_020097f0;
+
+void SceneState_CountDownEveryFortyTicks(void) {
+    s32 n = Data_020097f4 + 1;
+
+    Data_020097f4 = n;
+    if (n == 40) {
+        if (Data_020097f0 > 4) {
+            Data_020097f0 -= 1;
+            Data_020097f4 = 0;
+        }
+    }
+}

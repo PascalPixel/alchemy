@@ -1,0 +1,22 @@
+#include "types.h"
+
+#define FieldScene_RunLine1528Sequence Func_02000b0c
+
+extern void Func_02004680(void);
+extern void Func_02004660(s32, s32);
+extern void Func_0200483e(s32);
+extern void Func_020015b6(void);
+extern void Func_020045a0(s32);
+extern void Func_02004844(void);
+extern void Func_020046a8(void);
+
+void FieldScene_RunLine1528Sequence(void)
+{
+    Func_02004680();
+    Func_02004660(0x1528, 1);
+    Func_0200483e(125);
+    Func_020015b6();
+    Func_020045a0(20);
+    Func_02004844();
+    Func_020046a8();
+}

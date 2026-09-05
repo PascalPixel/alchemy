@@ -1,0 +1,22 @@
+#include "types.h"
+
+#define SceneState_SetStateHalfword386To99WhenMatched Func_020019e0
+
+extern u8 *Data_03001ebc;
+extern s32 Data_02000240[];
+
+extern s32 Func_0200565e(s32);
+
+void SceneState_SetStateHalfword386To99WhenMatched(void)
+{
+    u8 *state = Data_03001ebc;
+    s32 sel = Data_02000240[125];
+
+    if (sel != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == sel
+        && Func_0200565e(321) != 0) {
+        u16 *p = (u16 *)(state + 386);
+        s32 val = 99;
+
+        *p = val;
+    }
+}

@@ -139,7 +139,7 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(rec4 + 12) = 0x200000;
     {
         s32 shown = 0x6000;
-    
+
         *(u16 *)(rec4 + 6) = shown;
     }
     Func_020090a2(rec4);
@@ -151,7 +151,7 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(record + 16) = 0xc00000;
     {
         s32 shown = 0xa000;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 12) = 0x200000;
@@ -163,7 +163,7 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(record + 8) = 0x1680000;
     {
         s32 shown = 0x2000;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 12) = 0x200000;
@@ -176,7 +176,7 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(record + 8) = 0x14e0000;
     {
         s32 shown = 0x8000;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 12) = 0x200000;

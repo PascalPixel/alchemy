@@ -6,7 +6,6 @@ extern s32 Data_0200b1b4[];
 extern s32 Data_0200b15c[];
 
 #define FindClearActorPosition Func_02000474
-
 s32 FindClearActorPosition(s32 *a)
 {
     s32 sel;

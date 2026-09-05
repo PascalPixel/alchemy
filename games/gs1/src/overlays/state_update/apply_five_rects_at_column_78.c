@@ -1,0 +1,23 @@
+#include "types.h"
+
+#define SceneState_ApplyFiveRectsAtColumn78 Func_02003950
+
+extern void Func_02007bfa(s32, s32, s32, s32, s32, s32);
+extern void Func_02007c0a(s32, s32, s32, s32, s32, s32);
+extern void Func_02007c1c(s32, s32, s32, s32, s32, s32);
+extern void Func_02007c2c(s32, s32, s32, s32, s32, s32);
+extern void Func_02007c48(s32, s32, s32, s32, s32, s32);
+
+void SceneState_ApplyFiveRectsAtColumn78(void)
+{
+    Func_02007bfa(78, 39, 78, 40, 5, 1);
+    Func_02007c0a(78, 39, 78, 41, 5, 1);
+    Func_02007c1c(78, 39, 79, 42, 4, 1);
+    Func_02007c2c(78, 39, 82, 43, 1, 1);
+    {
+        s32 x = 17;
+        s32 y = 40;
+
+        Func_02007c48(17, 38, 5, 2, x, y);
+    }
+}

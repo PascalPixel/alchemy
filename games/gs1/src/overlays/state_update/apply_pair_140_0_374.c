@@ -1,0 +1,10 @@
+#include "types.h"
+
+#define SceneState_ApplyPair140And0 Func_02002564
+#define NULL ((void *)0)
+
+void Func_02004d98(s32, s32);
+
+void SceneState_ApplyPair140And0(void) {
+    Func_02004d98(140, 0);
+}

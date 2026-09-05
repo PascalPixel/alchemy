@@ -120,7 +120,6 @@ void Func_0200a232();
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 
-
 static __inline__ void Call0(void (*f)())
 {
     f();

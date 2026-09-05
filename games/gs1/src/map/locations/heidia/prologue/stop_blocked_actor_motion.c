@@ -15,7 +15,6 @@ extern Ent *Func_02000342(Desc *, Ent *);
 extern s32 Func_02003352(Ent *, Desc *);
 
 #define StopBlockedActorMotion Func_020002a8
-
 s32 StopBlockedActorMotion(Ent *actor)
 {
     Desc destination;

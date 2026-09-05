@@ -11,7 +11,6 @@ SceneActor *Func_0200697a(s32);
 SceneActor *Func_02006982(s32);
 
 #define AreSceneActorsInPassingLane Func_02001324
-
 s32 AreSceneActorsInPassingLane(void)
 {
     SceneActor *player = Func_0200697a(0);

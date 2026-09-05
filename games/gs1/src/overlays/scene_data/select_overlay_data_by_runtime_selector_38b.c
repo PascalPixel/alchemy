@@ -1,0 +1,16 @@
+#define RuntimeSelectorTable Data_02000240
+#define PrimaryRuntimeSelector Value_0000001e
+#define SecondaryRuntimeSelector Value_00000023
+#define TertiaryRuntimeSelector Value_00000020
+#define PrimaryOverlayData Data_020091ec
+#define SecondaryOverlayData Data_0200930c
+#define TertiaryOverlayData Data_0200936c
+#define DefaultOverlayData Data_020091d4
+#define SceneData_SelectOverlayDataByRuntimeSelector Func_02000088
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectOverlayDataByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
+}

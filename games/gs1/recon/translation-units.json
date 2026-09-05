@@ -734,7 +734,7 @@
     {
       "id": "unit-0808b02c",
       "game": "gs1",
-      "source": "games/gs1/recon/en/units/unit-0808b02c.c",
+      "source": "games/gs1/src/battle/effects/data/lookup_routines.c",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -763,7 +763,7 @@
         {
           "address": "0x0808b090",
           "extent": 200,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

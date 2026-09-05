@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource_CopyFixedBlockA Func_08020b00
-
 s32 Resource_CopyData(s32, s32, s32);
 extern const u8 Data_080317e4[];
 

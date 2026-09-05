@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define GraphicsPalette_DecrementSelectionWrap Func_0801ce48
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void GraphicsPalette_DecrementSelectionWrap(void *base) {

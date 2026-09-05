@@ -26,8 +26,6 @@
  */
 #include "types.h"
 
-#define Ui_FillVramBlockPattern Func_08016738
-
 s32 Func_080072f0(s32, s32, s32, s32);
 volatile unsigned char Ui_FillVramBlockPattern(void)
 {

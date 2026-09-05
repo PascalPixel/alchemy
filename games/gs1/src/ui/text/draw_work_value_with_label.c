@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiText_DrawWorkValueWithLabel Func_080a23c0
-
 struct SharedWork080a23c0 {
     u8 padding_00[0x10];
     s32 resource;

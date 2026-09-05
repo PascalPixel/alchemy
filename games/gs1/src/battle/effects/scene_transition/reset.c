@@ -33,7 +33,6 @@ void Audio_PlayCue(s32 soundId);
 extern SceneTransitionContext *Data_03001f30;
 extern s32 Data_02000240[];
 
-#define ResetSceneTransitionEffect Func_080984c0
 void ResetSceneTransitionEffect(void)
 {
     SceneTransitionContext **globalSlot = &Data_03001f30;

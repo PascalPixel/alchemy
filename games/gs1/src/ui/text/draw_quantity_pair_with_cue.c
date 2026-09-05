@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiText_DrawQuantityPairWithCue Func_08091d94
-
 void Func_08077088(void);
 void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);

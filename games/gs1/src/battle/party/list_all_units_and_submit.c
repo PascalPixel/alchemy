@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleParty_ListAllUnitsAndSubmit Func_080b6cb0
-
 s32 Func_080b6c08(s32, void *);
 s32 Func_080b7b6c(void *, s32);
 

@@ -1,8 +1,6 @@
 #include "battle_runtime.h"
 #include "battle_types.h"
 
-#define BattleEffect_SelectLivingTargets Func_080d6750
-
 void Func_080b5010(s16 *targets, s32 mode);
 
 struct BattleEffectTargetArgument {

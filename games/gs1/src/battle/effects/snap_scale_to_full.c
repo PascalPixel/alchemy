@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_SnapScaleToFull Func_08098184
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_CommitPosition();

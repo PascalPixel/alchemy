@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiText_DrawNumberRightAlignedFar Func_080a14f0
-
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
 void Func_080150a8(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 

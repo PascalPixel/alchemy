@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiText_RenderGlyphTileAtWorkOffset Func_08017c1c
-
 struct Work_08017c1c {
     u8 pad_00[12];
     u16 x;

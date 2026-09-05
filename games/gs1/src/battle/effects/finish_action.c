@@ -1,7 +1,5 @@
 #include "event_runtime.h"
 
-#define BattleEffect_FinishAction Func_08091750
-
 extern struct EventValueWork Data_02000240;
 
 void ScheduleCallback(u32);

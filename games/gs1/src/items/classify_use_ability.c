@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Item_ClassifyUseAbility Func_08025180
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void *Item_GetData(s32);

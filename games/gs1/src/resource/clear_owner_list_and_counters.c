@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Resource_ClearOwnerListAndCounters Func_0801a778
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Resource_ClearOwnerListAndCounters(void) {

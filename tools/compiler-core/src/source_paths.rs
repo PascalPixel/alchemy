@@ -126,6 +126,8 @@ pub struct SourceFile {
 #[derive(Clone, Debug)]
 struct SourceRecord {
     name: String,
+    /// The register named this owner, rather than the file name standing in.
+    named: bool,
     path: Option<PathBuf>,
     call_via: Option<u32>,
 }
@@ -205,6 +207,7 @@ impl SourcePaths {
                     owner,
                     SourceRecord {
                         name,
+                        named: explicit_name.is_some(),
                         path: source.clone(),
                         call_via,
                     },
@@ -317,7 +320,7 @@ impl SourcePaths {
     pub fn symbol_bindings(&self, overlay: Option<&str>) -> String {
         let mut seen = BTreeMap::new();
         for (owner, record) in &self.records {
-            if owner.overlay_id().as_deref() != overlay {
+            if owner.overlay_id().as_deref() != overlay || !record.named {
                 continue;
             }
             seen.entry(record.name.as_str())

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiMessage_ShowResolvedAndRestoreState Func_080b2928
-
 s32 Func_0808a540(u16);
 void UiWork_FinalizePending(void);
 s32 Func_080b2884(s32 value);

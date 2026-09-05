@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Map_ClearLayerEntryFlag Func_080118a8
-
 extern u8 * volatile Data_03001e70;
 
 void Map_ClearLayerEntryFlag(u32 no)

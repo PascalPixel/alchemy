@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define UiWork_FinalizeSharedSlot Func_080174d8
-
 void UiWork_Finalize(struct Work *work, s32 release);
 
 void UiWork_FinalizeSharedSlot(void) {

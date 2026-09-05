@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_SetFields1ceAnd1d0 Func_08091f90
-
 struct SharedData_08091f90 {
     u8 data[0x1ce];
     u16 first;

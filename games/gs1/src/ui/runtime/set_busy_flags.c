@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWork_SetBusyFlags Func_08017620
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void UiWork_SetBusyFlags(s32 flags) {

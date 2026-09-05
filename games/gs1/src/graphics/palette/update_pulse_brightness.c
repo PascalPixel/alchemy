@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Palette_UpdatePulseBrightness Func_080b8f58
-
 s32 Func_0800231c(s32);
 s32 FixedPoint_Ratio(s32, s32);
 extern s32 Data_03001e40;

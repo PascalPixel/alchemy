@@ -2,8 +2,6 @@
 
 void Func_080ae7fc(s8 *);
 
-#define CheckDjinnTurnBalance Func_080ae778
-#define CountDjinnTurns Func_080ae7fc
 extern u8 *Data_03001f2c;
 
 s32 CheckDjinnTurnBalance(s32 from, s32 to)

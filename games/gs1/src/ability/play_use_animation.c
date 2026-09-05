@@ -5,7 +5,6 @@
 void *Ability_GetData();
 void Func_080a2438(s32);
 
-#define Ability_PlayUseAnimation Func_080aa460
 void Ability_PlayUseAnimation(void)
 {
     s32 animation_type;

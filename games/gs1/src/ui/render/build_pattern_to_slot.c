@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_BuildPatternToSlot Func_0801a2ec
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_08002dd8(s32);

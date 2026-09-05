@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define Menu_RunWorkspaceResultLoop Func_08029504
-
 #if defined(GS1_EDITION_DE)
 #define RESULT_CELL_ADDR 0x03001CD8
 #else

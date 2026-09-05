@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_AllocateSelectionWorkspace Func_0801c930
-
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Menu_AllocateSelectionWorkspace(void)
 {

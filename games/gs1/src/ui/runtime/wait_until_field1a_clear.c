@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWork_WaitUntilField1aClear Func_080163ec
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 WaitFrames(s32);

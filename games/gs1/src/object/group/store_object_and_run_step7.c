@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define ObjectGroup_StoreObjectAndRunStep7 Func_080e6948
-
 volatile int Func_080cd594(s32);
 s32 Func_080cdbc0();
 s32 Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define Menu_SelectTopEntry Func_08028920
-
 extern s8 Data_08037403[];
 extern s8 Data_080373f7[];
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Animation_SetStateField1dBit1 Func_0800c570
-
 struct Value_0800c570 {
     u8 padding[29];
     u8 unk_0 : 1;

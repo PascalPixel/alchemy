@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_InitTilemapAndFlushQueue Func_080d6960
-
 s32 Func_080cdb24(s32);
 s32 Func_080cdbc0();
 

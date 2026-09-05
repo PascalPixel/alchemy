@@ -1,7 +1,5 @@
 #include "game_flags.h"
 
-#define Party_SetFlag32AndRefreshMembers Func_08077f40
-
 s32 Func_08077428(s32);
 void Owner_RefreshDerivedData(s32 arg0);
 

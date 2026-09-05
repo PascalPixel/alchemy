@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleParty_IsUnitListed Func_080be070
-
 s32 Func_080b6c08(s32, u16 *);
 
 u32 BattleParty_IsUnitListed(u32 arg0)

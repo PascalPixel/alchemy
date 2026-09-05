@@ -1,6 +1,5 @@
 #include "audio_engine.h"
 
-#define CgbChannel_Unlink Func_080f9a30
 void CgbChannel_Unlink(struct CgbChannel *channel)
 {
     struct MusicTrackState *track = channel->track;

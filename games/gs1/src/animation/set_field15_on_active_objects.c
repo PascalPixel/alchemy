@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define AnimationObjects_SetField15OnActive Func_0800baf8
-
 void AnimationObjects_SetField15OnActive(u8 *grp, s32 val)
 {
     u8 n = grp[0x27];

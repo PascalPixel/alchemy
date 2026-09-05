@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_LerpThreeSamplesByRatio Func_08011d94
-
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 
 s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)

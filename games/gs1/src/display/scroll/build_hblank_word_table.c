@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define DisplayScroll_BuildHblankWordTable Func_080f037c
-
 extern u8 Value_00020002;
 
 void DisplayScroll_BuildHblankWordTable(u32 *arg0) {

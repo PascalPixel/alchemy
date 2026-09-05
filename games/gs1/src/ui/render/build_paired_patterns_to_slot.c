@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_BuildPairedPatternsToSlot Func_08019ee4
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 typedef struct {

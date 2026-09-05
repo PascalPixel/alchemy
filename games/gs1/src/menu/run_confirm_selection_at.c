@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_RunConfirmSelectionAt Func_08028e54
-
 extern u8 Data_00000024[];
 
 void *Func_080284dc(void);

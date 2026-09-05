@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_AdvanceObjectField6WithRamp Func_08095bac
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void BattleEffect_AdvanceObjectField6WithRamp(void *obj) {

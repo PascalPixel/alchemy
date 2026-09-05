@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_AdvanceScrollOnInterval Func_080c90e4
-
 struct Position {
     u8 unknown[4];
     u16 x;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SerialRuntime_DisableTransfer Func_08005e88
-
 void SerialRuntime_DisableTransfer(void)
 {
     s32 base;

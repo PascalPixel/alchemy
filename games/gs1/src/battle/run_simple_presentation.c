@@ -58,7 +58,6 @@ void Actor_ResetMotionAtAnchor(s32 id);
 void Func_080c9008(struct BattlePresentationWork *work);
 void Func_080bb938(void);
 
-#define RunSimpleBattlePresentation Func_080ba584
 s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags)
 {
     struct BattlePresentationWork work;

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-#define SaveState_LoadRecordIntoWork Func_080208e4
-
 struct State_080208e4 {
     u8 padding0[4];
     s32 value;

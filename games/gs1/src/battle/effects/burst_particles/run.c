@@ -19,7 +19,6 @@ void WaitFrames(u32);
 void BattleEffect_PrepareBufferInterpolation(void);
 extern const u8 Data_0809f11c[];
 
-#define RunBurstParticleEffect Func_080985fc
 void RunBurstParticleEffect(void)
 {
     u8 *state = Data_03001f30;

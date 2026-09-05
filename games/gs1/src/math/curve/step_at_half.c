@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_StepAtHalf Func_08011e50
-
 s32 Curve_StepAtHalf(const s8 *samples, u32 position)
 {
     s32 value;

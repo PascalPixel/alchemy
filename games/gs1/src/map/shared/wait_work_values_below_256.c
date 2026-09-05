@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Map_WaitWorkValuesBelow256 Func_08012350
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void WaitFrames(s32);

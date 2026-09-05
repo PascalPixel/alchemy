@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_AdvanceWorkspaceIndexModulo3 Func_0801ce6c
-
 void Menu_AdvanceWorkspaceIndexModulo3(void *arg0)
 {
   unsigned int zero;

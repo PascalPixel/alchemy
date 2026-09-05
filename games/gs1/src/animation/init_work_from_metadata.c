@@ -1,8 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-#define Animation_InitWorkFromMetadata Func_0800b868
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_0800b798(s32 arg0);

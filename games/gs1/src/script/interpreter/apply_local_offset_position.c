@@ -1,8 +1,6 @@
 #include "object_commands.h"
 #include "types.h"
 
-#define Script_ApplyLocalOffsetPosition Func_0800dac0
-
 s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
 {
     s32 offset[3];

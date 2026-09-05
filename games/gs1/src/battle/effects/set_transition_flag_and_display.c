@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define BattleEffect_SetTransitionFlagAndDisplay Func_080cdd14
-
 #if defined(GS1_EDITION_DE)
 #define TRANSITION_CELL_ADDR 0x03001F10
 #else

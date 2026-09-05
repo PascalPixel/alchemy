@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_DispatchByIdRange Func_080e3a3c
-
 void *Func_08002dd8(s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);

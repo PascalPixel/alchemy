@@ -1,7 +1,5 @@
 #include "event_runtime.h"
 
-#define Event_ClearStatus1c6 Func_08091df4
-
 u32 Func_080901c0(s32 first, s32 second);
 
 void Event_ClearStatus1c6(void)

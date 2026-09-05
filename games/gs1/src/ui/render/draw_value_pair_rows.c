@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_DrawValuePairRows Func_080a153c
-
 void Func_08015090(s32 image, s32 layer, s32 x, s32 y);
 void Func_08015098(s32 image, s32 layer, s32 x, s32 y);
 void Func_080a14f0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

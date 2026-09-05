@@ -1,7 +1,5 @@
 #include "object_runtime.h"
 
-#define Object_SetPositionAndResetMotion Func_0800d130
-
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {
     object->z = z;

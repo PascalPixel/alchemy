@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWindow_FillScreenBlockRect Func_0801ee68
-
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                    s32 value)
 {

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define DisplayBlend_EnableRunScript Func_08011ae0
-
 s32 Func_080042c8(u32 value);
 void DisplayBlend_RunScript(void);
 

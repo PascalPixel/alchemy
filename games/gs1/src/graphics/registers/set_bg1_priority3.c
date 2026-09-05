@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Graphics_SetBg1Priority3 Func_08021dfc
-
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 
 void Graphics_SetBg1Priority3(void)

@@ -1,8 +1,6 @@
 #include "object_commands.h"
 #include "script_object_runtime.h"
 
-#define Script_ApplyRelativePosition Func_0800da40
-
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
 {
     u8 *entry = (u8 *)(object->script + (s16)object->script_cursor);

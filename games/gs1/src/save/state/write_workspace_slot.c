@@ -36,8 +36,6 @@ struct Work_08005868 {
     s32 data;
 };
 
-#define SaveState_WriteWorkspaceSlot Func_08005868
-
 u32 SaveState_WriteWorkspaceSlot(code)
 u16 code;
 {

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Link_DrawShiftedTilePair Func_080219c8
-
 extern u8 Data_08037280[];
 
 void Func_08021950(void *, u8 *, s32, s32);

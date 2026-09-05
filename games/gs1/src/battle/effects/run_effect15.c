@@ -32,7 +32,6 @@ void Func_0809b0b0(void);
 void Func_0809b0dc(void);
 void Func_0809b11c(void);
 
-#define RunBattleEffect15 Func_0809b208
 void RunBattleEffect15(void)
 {
     u8 *scene = Data_03001f30;

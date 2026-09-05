@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-use thumb2c::owners::{self, first_error, score, score_extending, Module};
+use thumb2c::owners::{self, first_error, score, score_extending, Module, RegisteredOwner};
 use thumb2c::{lift_owner, tune};
 
 const USAGE: &str = "usage: lifter <command> [args]\n\
@@ -10,11 +10,22 @@ const USAGE: &str = "usage: lifter <command> [args]\n\
       lift, compile, and compare against the ROM bytes\n\
   tune  <overlay>:<addressHex> [--span BYTES] [--name NAME]\n\
       score, then try call respellings line by line and keep improvements\n\
-  batch [--kind WORD] [--limit N] [--all]\n\
+  batch [--kind WORD] [--limit N] [--all] [--owner-spans] [--sweep]\n\
       score every unregistered retained module (scene and script kinds)\n\
-  list  [--kind WORD] [--all]\n\
+  list  [--kind WORD] [--all] [--owner-spans]\n\
       print the retained modules the batch would visit\n\
-Candidates are written under out/lifter/.";
+Candidates are written under out/lifter/.\n\n\
+  --owner-spans   also score (list: also list) every registered owner\n\
+                  (regions.json manual_regions) whose start lies inside the\n\
+                  region, at that owner's own span, in addition to the\n\
+                  region-extent score. Skips owners already mapped to C.\n\
+                  Default behaviour is unchanged when this is absent. batch\n\
+                  and list only.\n\
+  --sweep         with --owner-spans on batch: also retry each owner-span\n\
+                  score with the span widened to the rest of the region, and\n\
+                  report the better of the two (a short registered span can\n\
+                  cut a function that really runs to the next owner or the\n\
+                  region end).";
 
 struct Options {
     positional: Vec<String>,
@@ -29,6 +40,8 @@ struct Options {
     source: Option<PathBuf>,
     only: Option<PathBuf>,
     jobs: Option<usize>,
+    owner_spans: bool,
+    sweep: bool,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
@@ -45,6 +58,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         source: None,
         only: None,
         jobs: None,
+        owner_spans: false,
+        sweep: false,
     };
     let mut iter = arguments.iter();
     while let Some(argument) = iter.next() {
@@ -77,6 +92,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 )
             }
             "--all" => options.all = true,
+            "--owner-spans" => options.owner_spans = true,
+            "--sweep" => options.sweep = true,
             "--path" => options.path = Some(value("--path")?),
             "--source" => options.source = Some(PathBuf::from(value("--source")?)),
             "--only" => options.only = Some(PathBuf::from(value("--only")?)),
@@ -371,9 +388,25 @@ fn selected(root: &Path, options: &Options) -> Result<Vec<Module>, String> {
     Ok(modules)
 }
 
+/// The registered owners (from `regions.json`) whose start lies inside `m`.
+fn owners_inside<'a>(m: &Module, registered: &'a [RegisteredOwner]) -> Vec<&'a RegisteredOwner> {
+    registered
+        .iter()
+        .filter(|o| o.overlay == m.overlay && o.entry >= m.entry && o.entry < m.entry + m.span)
+        .collect()
+}
+
 fn list(root: &Path, options: &Options) -> Result<(), String> {
+    let registered = if options.owner_spans {
+        owners::registered_owners(root)?
+    } else {
+        Vec::new()
+    };
     for m in selected(root, options)? {
         println!("{} {} {}", m.key(), m.span, m.kind);
+        for owner in owners_inside(&m, &registered) {
+            println!("  {} span={}", owner.key(), owner.span);
+        }
     }
     Ok(())
 }
@@ -462,6 +495,168 @@ fn batch_one(root: &Path, options: &Options, m: &Module) -> Outcome {
     }
 }
 
+/// True when a single-halfword length mismatch accounts for the entire
+/// difference: the shared prefix matches in full and the only differing
+/// offset is the boundary itself. In this domain that lone halfword is the
+/// trailing 0x0000 pad after `bx` that ELF `.size` counts but a tight
+/// registered span excludes (or the reverse) — not a real mismatch.
+fn trailing_pad(result: &owners::Score) -> bool {
+    result.differing == 1
+        && result.reference == result.candidate + 2
+        && result.report.contains("wrong_instructions=0")
+}
+
+/// One span's score, with the trailing-pad tolerance already applied.
+struct Scored {
+    raw: u32,
+    ranked: u32,
+    pad: bool,
+}
+
+fn describe(result: &owners::Score) -> Scored {
+    let pad = trailing_pad(result);
+    Scored {
+        raw: result.differing,
+        ranked: if pad { 0 } else { result.differing },
+        pad,
+    }
+}
+
+/// Renders one `Scored` as `{prefix}differing_halfwords=N[ {prefix}trailing_pad=1
+/// {prefix}raw_differing_halfwords=N]`, `prefix` distinguishing an owner-span
+/// score from its `--sweep` retry on the same line.
+fn format_scored(prefix: &str, s: &Scored) -> String {
+    let mut out = format!("{prefix}differing_halfwords={}", s.ranked);
+    if s.pad {
+        out.push_str(&format!(
+            " {prefix}trailing_pad=1 {prefix}raw_differing_halfwords={}",
+            s.raw
+        ));
+    }
+    out
+}
+
+/// One registered-owner span's batch result, ranking already applying the
+/// trailing-pad tolerance.
+enum OwnerOutcome {
+    Scored { ranked: u32 },
+    Failed,
+}
+
+/// Scores one registered owner against a region's draft at the owner's own
+/// span (`--owner-spans`), and optionally again at the rest of the region
+/// (`--sweep`) when the owner-span score is not exact — a short registered
+/// span can cut a function that really runs to the next owner or the region
+/// end.
+fn owner_span_one(
+    root: &Path,
+    options: &Options,
+    m: &Module,
+    path: &Path,
+    owner: &RegisteredOwner,
+) -> OwnerOutcome {
+    let owner_key = owner.key();
+    let result = match score(root, path, &owner_key, owner.span) {
+        Ok(result) => result,
+        Err(error) => {
+            let detail = first_error(&error).unwrap_or(error);
+            println!("{owner_key} span={} failed {}", owner.span, detail.trim());
+            return OwnerOutcome::Failed;
+        }
+    };
+    let scored = describe(&result);
+    let region_note = format!("(region {:08x} extent {})", m.entry, m.span);
+    let swept_span = m.entry + m.span - owner.entry;
+    let sweep = options.sweep && scored.ranked > 0 && swept_span != owner.span;
+    if !sweep {
+        println!(
+            "{owner_key} span={} {} {region_note}",
+            owner.span,
+            format_scored("", &scored)
+        );
+        return OwnerOutcome::Scored {
+            ranked: scored.ranked,
+        };
+    }
+    match score(root, path, &owner_key, swept_span) {
+        Ok(swept_result) => {
+            let swept = describe(&swept_result);
+            let best = if swept.ranked < scored.ranked {
+                "sweep"
+            } else {
+                "owner"
+            };
+            println!(
+                "{owner_key} span={} {} {region_note} sweep_span={swept_span} {} best={best}",
+                owner.span,
+                format_scored("", &scored),
+                format_scored("sweep_", &swept)
+            );
+            OwnerOutcome::Scored {
+                ranked: scored.ranked.min(swept.ranked),
+            }
+        }
+        Err(error) => {
+            let detail = first_error(&error).unwrap_or(error);
+            println!(
+                "{owner_key} span={} {} {region_note} sweep_span={swept_span} sweep_failed {}",
+                owner.span,
+                format_scored("", &scored),
+                detail.trim()
+            );
+            OwnerOutcome::Scored {
+                ranked: scored.ranked,
+            }
+        }
+    }
+}
+
+/// Runs the `--owner-spans` pass over every registered owner inside an
+/// already-scored (not failed) region, printing one row per owner and a
+/// summary tally.
+fn owner_spans_pass(root: &Path, options: &Options, modules: &[Module], outcomes: &[Outcome]) {
+    let registered = match owners::registered_owners(root) {
+        Ok(registered) => registered,
+        Err(error) => {
+            println!("owner-spans failed {error}");
+            return;
+        }
+    };
+    let mut jobs_list: Vec<(Module, RegisteredOwner)> = Vec::new();
+    for (m, outcome) in modules.iter().zip(outcomes) {
+        if matches!(outcome, Outcome::Failed) {
+            continue;
+        }
+        for owner in owners_inside(m, &registered) {
+            jobs_list.push((m.clone(), owner.clone()));
+        }
+    }
+    if jobs_list.is_empty() {
+        return;
+    }
+    let results = parallel(&jobs_list, jobs(options), |(m, owner)| {
+        match scratch_path(root, &m.key()) {
+            Ok(path) => owner_span_one(root, options, m, &path, owner),
+            Err(error) => {
+                println!("{} span={} failed {error}", owner.key(), owner.span);
+                OwnerOutcome::Failed
+            }
+        }
+    });
+    let (mut owner_exact, mut owner_differing, mut owner_failed) = (0, 0, 0);
+    for result in &results {
+        match result {
+            OwnerOutcome::Scored { ranked: 0 } => owner_exact += 1,
+            OwnerOutcome::Scored { .. } => owner_differing += 1,
+            OwnerOutcome::Failed => owner_failed += 1,
+        }
+    }
+    println!(
+        "owner_spans={} owner_exact={owner_exact} owner_differing={owner_differing} owner_failed={owner_failed}",
+        jobs_list.len()
+    );
+}
+
 fn batch(root: &Path, options: &Options) -> Result<(), String> {
     let modules = selected(root, options)?;
     let outcomes = parallel(&modules, jobs(options), |m| batch_one(root, options, m));
@@ -492,6 +687,9 @@ fn batch(root: &Path, options: &Options) -> Result<(), String> {
                 .collect::<Vec<_>>()
                 .join(" ")
         );
+    }
+    if options.owner_spans {
+        owner_spans_pass(root, options, &modules, &outcomes);
     }
     Ok(())
 }

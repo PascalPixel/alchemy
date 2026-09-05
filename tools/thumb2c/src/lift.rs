@@ -2569,6 +2569,26 @@ impl<'a> Lifter<'a> {
         i + 1
     }
 
+    /// Whether instruction `at` starts an epilogue that returns r0: frame
+    /// release and register pops, then the return address popped into r1
+    /// and `bx r1`.
+    fn epilogue_returns_r0(&self, at: usize) -> bool {
+        let mut k = at;
+        while let Some(x) = self.ins.get(k) {
+            match x.kind {
+                Kind::SpAdjust(_) => {}
+                Kind::Pop {
+                    pc: false,
+                    list: 0b10,
+                } => return matches!(self.ins.get(k + 1).map(|n| &n.kind), Some(Kind::Bx(1))),
+                Kind::Pop { pc: false, .. } => {}
+                _ => return false,
+            }
+            k += 1;
+        }
+        false
+    }
+
     /// Merges the register states of two paths meeting at instruction `at`.
     /// A register the paths leave with different values, and that is read
     /// again before it is written, is a variable the original assigned on
@@ -2606,11 +2626,36 @@ impl<'a> Lifter<'a> {
                 .is_some_and(|v| v.e.as_deref().is_some_and(|e| e.starts_with("@call:")))
         };
         let mut inserts: Vec<(usize, String)> = Vec::new();
+        let returning = self.epilogue_returns_r0(at);
         for r in 0..13u8 {
             let values: Vec<&Option<Val>> = paths.iter().map(|p| &p.0[r as usize]).collect();
             let first = values[0];
             if values.iter().all(|v| same_val(v, first)) {
                 self.regs[r as usize] = first.clone();
+                continue;
+            }
+            // Paths meeting at an epilogue that returns r0 each return their
+            // own value: every path but the last returns where it ends (a
+            // goto to the epilogue becomes the return itself), and the last
+            // path's value reaches the epilogue's return.
+            if r == 0 && returning && values.iter().all(|v| v.is_some()) {
+                let last = paths.len() - 1;
+                for (k, path) in paths.iter().enumerate().take(last) {
+                    let mut v = values[k].clone().expect("defined on every path");
+                    let text = if v.call_index().is_some() {
+                        self.ensure_result_var(&mut v)
+                    } else {
+                        self.fmt(&v)
+                    };
+                    let line = format!("{}return {text};", path.3);
+                    match self.out.get(path.2) {
+                        Some(existing) if existing.trim_start().starts_with("goto ") => {
+                            self.out[path.2] = line;
+                        }
+                        _ => inserts.push((path.2.min(self.out.len()), line)),
+                    }
+                }
+                self.regs[0] = values[last].clone();
                 continue;
             }
             // A register one path leaves undefined cannot be read after the

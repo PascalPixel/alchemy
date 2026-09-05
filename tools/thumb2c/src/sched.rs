@@ -308,6 +308,26 @@ fn observed(site: &Site) -> Vec<usize> {
     order
 }
 
+/// Whether the instructions after `at` are an epilogue that keeps r0 as the
+/// return value: frame release and register pops, then the return address
+/// popped into r1 and `bx r1`.
+fn returns_r0_after(ins: &[Ins], at: usize) -> bool {
+    let mut k = at + 1;
+    while let Some(x) = ins.get(k) {
+        match x.kind {
+            Kind::SpAdjust(_) => {}
+            Kind::Pop {
+                pc: false,
+                list: 0b10,
+            } => return matches!(ins.get(k + 1).map(|n| &n.kind), Some(Kind::Bx(1))),
+            Kind::Pop { pc: false, .. } => {}
+            _ => return false,
+        }
+        k += 1;
+    }
+    false
+}
+
 /// Infers which calls return a value: the set of `bl` instruction indices
 /// whose r0 set, rather than clobber, makes the predicted load order of
 /// every call in its block match the reference.
@@ -349,7 +369,8 @@ pub fn value_calls(ins: &[Ins]) -> Sites {
             }
         }
         let sites = sites_in(ins, start, end, &targets);
-        // A call whose result is read right after it returns a value.
+        // A call whose result is read right after it returns a value, as
+        // does the last call of a function whose epilogue returns r0.
         let mut value: Vec<bool> = sites
             .iter()
             .map(|site| {
@@ -361,6 +382,7 @@ pub fn value_calls(ins: &[Ins]) -> Sites {
                             Kind::Movs { rm: 0, .. } | Kind::MovHi { rm: 0, .. }
                         )
                     })
+                    || returns_r0_after(ins, site.at)
             })
             .collect();
         // Wrapper spelling by default; a direct call is inferred from its order.

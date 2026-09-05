@@ -17,11 +17,7 @@ pub fn entry(args: &[String]) -> ExitCode {
             build_claimed::cli::entry(&rest);
             ExitCode::SUCCESS
         }
-        "full" => match build_full::cli::run(&rest) {
-            0 => ExitCode::SUCCESS,
-            _ => ExitCode::FAILURE,
-        },
-        "rom" => match build_full::cli::run(&rest) {
+        "full" | "rom" => match build_full::cli::run(&rest) {
             0 => ExitCode::SUCCESS,
             _ => ExitCode::FAILURE,
         },

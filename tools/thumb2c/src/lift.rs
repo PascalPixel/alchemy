@@ -1061,6 +1061,11 @@ impl<'a> Lifter<'a> {
     }
 
     fn loop_at(&mut self, i: usize, from: usize, cond: Cond, end: usize) -> usize {
+        // The counted-loop spelling below assumes an unsigned ascending
+        // counter. Signed bounds must retain their entry value and updates.
+        if matches!(cond, Cond::Ge | Cond::Gt | Cond::Le | Cond::Lt) {
+            return self.do_while(i, from, cond, end);
+        }
         let Kind::CmpImm {
             rn: counter,
             imm: limit,
@@ -3413,6 +3418,20 @@ mod tests {
     fn arithmetic_flags_feed_the_branch() {
         let text = lifted(&[0x3801, 0xd100, 0x2000, 0x4770]);
         assert!(text.contains("if ((a0 - 1) == 0) {"), "{text}");
+    }
+
+    /// A signed countdown updated before a call still executes its first
+    /// iteration; it is not a zero-starting unsigned loop.
+    #[test]
+    fn signed_countdown_across_call_keeps_entry_and_update() {
+        let text = lifted(&[
+            0x2509, 0x2008, 0x3d01, 0xf000, 0xf810, 0x2d00, 0xdaf9, 0x4770,
+        ]);
+        assert!(text.contains("= 9;"), "{text}");
+        assert!(text.contains("do {"), "{text}");
+        assert!(text.contains("- 1"), "{text}");
+        assert!(text.contains(">= 0"), "{text}");
+        assert!(!text.contains("for (i = 0;"), "{text}");
     }
 
     /// `L: bl X; cmp r0, #0; bne cont; bl Y; b exit; cont: bl Z; adds r5, #1;

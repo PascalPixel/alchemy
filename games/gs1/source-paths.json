@@ -17246,6 +17246,10 @@
     "main:080292c4": {
       "name": "Menu_DrawFlagBitTable",
       "source": "menu/draw_flag_bit_table.c"
+    },
+    "main:080a5614": {
+      "name": "InventoryMenu_DrawItemDetailPage",
+      "source": "inventory_menu/draw_item_detail_page.c"
     }
   }
 }

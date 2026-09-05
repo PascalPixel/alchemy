@@ -13,7 +13,7 @@ struct SharedBundleLock {
 static SHARED_BUNDLE_LOCK: OnceLock<Result<SharedBundleLock>> = OnceLock::new();
 pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
     let result = SHARED_BUNDLE_LOCK.get_or_init(|| {
-        let path = bundle().join(".alchemy-gcc.lock");
+        let path = bundle().join(".compiler.lock");
         let file = OpenOptions::new()
             .create(true)
             .read(true)
@@ -117,12 +117,12 @@ pub fn host_key() -> Option<&'static str> {
     }
 }
 pub const UNSUPPORTED_HOST_MESSAGE: &str =
-    "alchemy-gcc supports darwin/linux on arm64/x86_64; this platform is none of those";
+    "compiler bundle supports darwin/linux on arm64/x86_64; this platform is none of those";
 pub fn host_admission_message(host: &str, what: &str) -> String {
     [
-        format!("alchemy-gcc has no approved {what} digests for host {host} yet."),
+        format!("compiler bundle has no approved {what} digests for host {host} yet."),
         "Admit this host: build and stage the committed compiler source".to_string(),
-        "(`make` in alchemy-gcc), run the full `make verify`, and pin".to_string(),
+        "(`alchemy build compilers`), run the full `make verify`, and pin".to_string(),
         "the digests from that green verify -- the same admission every listed".to_string(),
         "digest already passed.".to_string(),
     ]
@@ -201,7 +201,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     for (name, expected) in entries {
         let path = bundle_dir.join(name);
         let missing = format!(
-            "alchemy-gcc {} bundle is missing executable {name}",
+            "compiler {} bundle is missing executable {name}",
             target.as_str()
         );
         if executable_mode(&path) != Some(true) {
@@ -211,7 +211,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
         let actual = sha256::hex(&bytes);
         if !expected.contains(&actual.as_str()) {
             return Err(format!(
-                "alchemy-gcc {}/{name} has an unapproved digest",
+                "compiler {}/{name} has an unapproved digest",
                 target.as_str()
             ));
         }
@@ -228,7 +228,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     ])
     .map_err(|detail| {
         format!(
-            "alchemy-gcc {} smoke compile failed: {detail}",
+            "compiler {} smoke compile failed: {detail}",
             target.as_str()
         )
     })?;
@@ -242,7 +242,7 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     }
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     let driver = agbcc_driver();
-    let missing = "alchemy-gcc agbcc bundle is missing executable old_agbcc".to_string();
+    let missing = "compiler bundle agbcc bundle is missing executable old_agbcc".to_string();
     if executable_mode(&driver) != Some(true) {
         return Err(missing);
     }
@@ -253,7 +253,7 @@ pub fn validate_agbcc_bundle() -> Result<()> {
         return Err(host_admission_message(host, "agbcc/old_agbcc"));
     }
     if !expected.contains(&actual.as_str()) {
-        return Err("alchemy-gcc agbcc/old_agbcc has an unapproved digest".to_string());
+        return Err("compiler bundle agbcc/old_agbcc has an unapproved digest".to_string());
     }
     smoke(&[
         driver.to_string_lossy().into_owned(),
@@ -263,7 +263,7 @@ pub fn validate_agbcc_bundle() -> Result<()> {
         "-o".into(),
         "/dev/null".into(),
     ])
-    .map_err(|detail| format!("alchemy-gcc agbcc smoke compile failed: {detail}"))?;
+    .map_err(|detail| format!("compiler bundle agbcc smoke compile failed: {detail}"))?;
     cache_validation("agbcc");
     Ok(())
 }

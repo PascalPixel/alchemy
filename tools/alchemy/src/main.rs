@@ -27,7 +27,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   waves                 run prepared reconstruction cohorts\n\
   cross-edition         compare historical editions\n\
   dashboard             serve the local dashboard\n\
-  build                 build ROM stages (asm, claimed, full, rom, assets)\n\
+  build                 build compilers or ROM stages (asm, claimed, full, rom, assets)\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild and report ROM coverage\n\
   check                 run repository contract checks\n\

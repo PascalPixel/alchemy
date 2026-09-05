@@ -20,7 +20,7 @@ pub fn root() -> &'static Path {
     })
 }
 pub fn bundle() -> PathBuf {
-    root().join("alchemy-gcc").join("dist")
+    root().join("out/compilers/dist")
 }
 pub fn driver() -> PathBuf {
     bundle().join("xgcc")

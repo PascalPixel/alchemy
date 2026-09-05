@@ -237,7 +237,9 @@ fn split(source: &str, code: &str, name: &str) -> Mutations {
         .find_iter(&code[tail..])
         .map(|found| tail + found.start()..tail + found.end())
         .collect::<Vec<_>>();
-    if variable_uses(&code[declaration.start..], name) != 4 || uses.len() != 2 || !pure(expression)
+    if !diff::allocator::split_pointer_uses(&code[declaration.start..], name)
+        || uses.len() != 2
+        || !pure(expression)
     {
         return Err(format!(
             "split-lifetime repair found ambiguous uses of {name}"

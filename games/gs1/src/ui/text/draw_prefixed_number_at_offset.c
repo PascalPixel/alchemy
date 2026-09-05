@@ -15,17 +15,17 @@ void UiText_DrawPrefixedNumberAtOffset(
 {
     u8 formatted[16];
     s16 output[8];
-    u8 *formatted_text;
+    u8 *text;
     s32 index;
     u32 cell;
     u8 *base;
     s32 vram;
-    s32 source_address;
-    s32 destination_address;
+    s32 src;
+    s32 dst;
     s32 phase;
 
     base = Data_03001e8c;
-    formatted_text = Text_FormatNumber(formatted, value, 4);
+    text = Text_FormatNumber(formatted, value, 4);
     if (variant == 0) {
         output[0] = 0xf01d;
     } else {
@@ -33,7 +33,7 @@ void UiText_DrawPrefixedNumberAtOffset(
     }
     output[1] = 0xf01e;
     for (index = 0; index <= 4; index++) {
-        output[index + 2] = formatted_text[index];
+        output[index + 2] = text[index];
     }
     output[6] = 0;
 
@@ -42,13 +42,13 @@ void UiText_DrawPrefixedNumberAtOffset(
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
-        destination_address = vram + cell;
-        source_address = (s32)base + cell;
+        dst = vram + cell;
+        src = (s32)base + cell;
         phase = offset_x & 7;
         Func_0801de5c(
             output,
-            source_address,
-            destination_address,
+            src,
+            dst,
             phase);
     }
 }

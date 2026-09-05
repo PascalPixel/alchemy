@@ -1,6 +1,6 @@
 #include "game_flags.h"
 
-s32 GameFlag_Set(s32 flag)
+s32 GameFlag_SetBit(s32 flag)
 {
     s32 flag_mask;
     u8 *flag_bytes;

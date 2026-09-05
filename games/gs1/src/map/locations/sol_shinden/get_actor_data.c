@@ -36,7 +36,6 @@
  * is deliberately not named.
  */
 
-#define GetSolShindenActorData Func_02000044
 u8 *GetSolShindenActorData(void)
 {
     return (u8 *)0x0200ac14;

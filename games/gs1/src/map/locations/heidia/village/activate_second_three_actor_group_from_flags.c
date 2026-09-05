@@ -7,7 +7,6 @@ void Func_02006250(s32);
 s32 Func_0200ab12(s32);
 void Func_02006260(s32);
 
-#define ActivateSecondThreeActorGroupFromFlags Func_020054dc
 void ActivateSecondThreeActorGroupFromFlags(void)
 {
     if (Func_0200aaf2(0x355)) {

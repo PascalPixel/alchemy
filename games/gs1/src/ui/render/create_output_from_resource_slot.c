@@ -1,8 +1,6 @@
 #include "render_input.h"
 #include "types.h"
 
-#define Ui_CreateOutputFromResourceSlot Func_08022a38
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Resource_FindFreeSlot();

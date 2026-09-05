@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiText_DrawLocalizedResource80d Func_080270d8
-
 s32 Func_0801965c(s32, s16 *, s32);
 s32 Func_08017aa4(s16 *, s32, s32, s32);
 

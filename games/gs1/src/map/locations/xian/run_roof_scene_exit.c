@@ -25,7 +25,6 @@ extern void Func_02005012(s32 dialogueId);
 extern void Func_0200502c(s32 dialogueId);
 extern void Func_02005044(s32 slot, s32 a1);
 
-#define FieldScene_RunRoofSceneExit Func_02000afc
 #define OpenSceneExit Func_02004edc
 #define WaitSceneExitStep Func_02004e58
 #define ClearSceneExitGateAtEntry Func_02004f0a

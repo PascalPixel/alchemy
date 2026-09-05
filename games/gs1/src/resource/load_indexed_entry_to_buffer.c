@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource_LoadIndexedEntryToBuffer Func_08021b30
-
 s32 Func_08002dd8(s32);
 s32 Resource_GetBuffer(s32 index, s32 value);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlagGatedActorEightDialogue Func_02003518
-
 extern s32 Func_020071a8(s32 value);
 extern s32 Func_020071b2(s32 value);
 extern void Func_020071c4(s32 value);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_LinkActorZeroToWork24 Func_02002080
-
 u8 *Func_02004ba2();
 extern u8 *Data_03001ee0;
 

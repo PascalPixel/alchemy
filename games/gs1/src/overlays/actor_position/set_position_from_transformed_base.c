@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetPositionFromTransformedBase Func_02000f10
-
 extern u8 *Func_02004bfa(s32);
 extern void Func_02004b68(s32, s32, s32 *);
 

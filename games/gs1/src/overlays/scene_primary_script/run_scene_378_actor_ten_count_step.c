@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorTenCountStep Func_02000574
-
 /*
  * Resource 378 owner at 0x02000574 (88 bytes, through 0x020005cb).
  *

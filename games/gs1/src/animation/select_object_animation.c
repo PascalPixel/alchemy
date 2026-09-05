@@ -38,8 +38,6 @@ struct AnimationSetupState {
 
 extern struct AnimationMetadata *Func_08185000(s32 id);
 
-#define AnimationObjects_SelectAnimation Func_0800ba30
-
 s32 AnimationObjects_SelectAnimation(struct AnimationSetupState *state, s32 flags)
 {
     s32 high_bit;

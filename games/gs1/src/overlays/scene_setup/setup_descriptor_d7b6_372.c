@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetupDescriptorD7b6 Func_02000360
-
 extern void Func_02004c1a(s32);
 extern void Func_020049fc(void *, s32, s32);
 extern s32 Func_02004af0(s32, s32, s32);

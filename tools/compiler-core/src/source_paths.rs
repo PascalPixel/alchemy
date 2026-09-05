@@ -126,6 +126,8 @@ pub struct SourceFile {
 #[derive(Clone, Debug)]
 struct SourceRecord {
     name: String,
+    /// The register named this owner, rather than the file name standing in.
+    named: bool,
     path: Option<PathBuf>,
     call_via: Option<u32>,
 }
@@ -205,6 +207,7 @@ impl SourcePaths {
                     owner,
                     SourceRecord {
                         name,
+                        named: explicit_name.is_some(),
                         path: source.clone(),
                         call_via,
                     },
@@ -307,6 +310,30 @@ impl SourcePaths {
             }
         }
         exports
+    }
+    /// The register's name bindings for one image, as preprocessor input.
+    ///
+    /// Production sources spell the semantic name; the ABI alias belongs to
+    /// the register, not to the source. The build hands each translation
+    /// unit the bindings for its own image, so a rename is one register
+    /// edit and overlay images keep their independent name spaces.
+    pub fn symbol_bindings(&self, overlay: Option<&str>) -> String {
+        let mut seen = BTreeMap::new();
+        for (owner, record) in &self.records {
+            if owner.overlay_id().as_deref() != overlay || !record.named {
+                continue;
+            }
+            seen.entry(record.name.as_str())
+                .and_modify(|address| *address = None)
+                .or_insert(Some(owner.address_stem()));
+        }
+        let mut text = String::new();
+        for (name, address) in seen {
+            if let Some(address) = address {
+                text.push_str(&format!("#define {name} Func_{address}\n"));
+            }
+        }
+        text
     }
     pub fn registered_owners(&self) -> impl Iterator<Item = SourceOwner> + '_ {
         self.records.keys().copied()

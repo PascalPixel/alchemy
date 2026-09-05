@@ -7,8 +7,6 @@ extern void Func_02008398(s32, s32);
 extern void Func_020083a0(s32, s32);
 extern void Func_0200840c(void);
 
-#define FieldScene_RunStepWithValue29e0 Func_0200400c
-
 void FieldScene_RunStepWithValue29e0(void)
 {
     Func_020083f0();
@@ -18,8 +16,6 @@ void FieldScene_RunStepWithValue29e0(void)
 }
 
 #include "types.h"
-
-#define SceneData_SelectTableD004ByStateAndFlags Func_02004034
 
 extern s16 Data_02000240[];
 extern u8 Value_0000008b;

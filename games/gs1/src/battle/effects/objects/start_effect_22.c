@@ -1,4 +1,6 @@
 #include "types.h"
+
+#define BattleEffect_StartEffectObject22 Func_0808f1c0
 #define ObjectTable_Get Func_0808ba1c
 
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
@@ -43,7 +45,7 @@ void Func_08009080(struct EffectObject_0808f1c0 *object, s32 mode);
 void Func_080090d0(struct EffectObject_0808f1c0 *object);
 void EmitRandomParticleEffect(void);
 
-void Func_0808f1c0(s32 value, s32 flags)
+void BattleEffect_StartEffectObject22(s32 value, s32 flags)
 {
     struct EffectResource_0808f1c0 *resource =
         ObjectTable_Get(Data_02000240[125]);

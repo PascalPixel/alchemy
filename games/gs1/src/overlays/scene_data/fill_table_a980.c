@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneData_FillTableA980 Func_02001d14
 #define NULL ((void *)0)
 
 extern s32 Data_0200a980[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DrawTilesWhenCheckClear Func_02002ee4
-
 extern void Func_02007d7e(void);
 extern s32 Func_02003bb6(void);
 extern void Func_02007d3a(s32, s32, s32, s32, s32, s32);

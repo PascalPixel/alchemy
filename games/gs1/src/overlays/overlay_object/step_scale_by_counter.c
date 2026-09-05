@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_StepScaleByCounter Func_02000314
-
 typedef struct {
     u8 filler0[0x18];
     s32 unk18;

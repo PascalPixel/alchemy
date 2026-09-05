@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Owner_ScaleValueByOffsetCurve Func_08079c5c
-
 s32 Func_08079b24(s32, s32);
 s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 no, s32 multiplier)
 {

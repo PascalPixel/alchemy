@@ -37,7 +37,6 @@ struct Effect {
 /* Relocated IWRAM helper: turns a value and a duration into a per-frame step. */
 s32 Func_02003d76();
 
-#define AdvanceEffectMotion Func_02000da4
 void AdvanceEffectMotion(struct Effect *effect)
 {
     s32 velocity_z;

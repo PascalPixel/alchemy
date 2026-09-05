@@ -1,6 +1,8 @@
 #include "types.h"
 
-s32 Func_080bbae8(s32 effect)
+#define BattleEffect_CanAffectDefeatedUnit Func_080bbae8
+
+s32 BattleEffect_CanAffectDefeatedUnit(s32 effect)
 {
     switch (effect) {
     case 31:

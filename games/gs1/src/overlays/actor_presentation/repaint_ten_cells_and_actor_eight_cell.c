@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_RepaintTenCellsAndActorEightCell Func_02000cb4
-
 /*
  * Resource 38b collision-map repaint at 0x02000cb4 (92 bytes, 2 distinct
  * callees over 3 call sites).

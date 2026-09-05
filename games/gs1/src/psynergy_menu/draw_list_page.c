@@ -18,11 +18,6 @@ extern u8 Data_080af22c;
 #define ACT_ID_MASK 0x3fff
 #define OWNER_LEVEL_OFS 15
 #define OWNER_CLASS_MSG_OFS 0x129
-#define Menu_SetPageIcons Func_080a2324
-#define UiText_DrawStringAtOffsetFar Func_08015090
-#define UiText_DrawStringInWindowFar Func_08015098
-#define UiText_DrawNumberAtOffsetFar Func_080150a8
-#define PsynergyMenu_DrawRange Func_080a8cc0
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(
@@ -33,8 +28,6 @@ void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void PsynergyMenu_DrawRange(s32, s32, s32, s32, s32);
 u8 *Runtime_GetObject(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
-
-#define PsynergyMenu_DrawListPage Func_080a8f40
 
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)

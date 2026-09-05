@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnTwoRandomizedParticles Func_020006a0
-
 struct Object_020006a0 {
     u8 unknown_00[8];
     s32 x;

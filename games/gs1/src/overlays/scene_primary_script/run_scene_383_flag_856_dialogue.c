@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag856DialogueBranch Func_0200052c
-
 extern void Func_02005274(void);
 extern s32 Func_0200524a(s32);
 extern s32 Func_02005254(s32);

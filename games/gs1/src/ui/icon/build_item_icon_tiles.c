@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiIcon_BuildItemIconTiles Func_08019fcc
-
 typedef struct {
     u8 pad0[0x400];
     u8 f400;

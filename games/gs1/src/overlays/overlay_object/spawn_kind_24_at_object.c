@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SpawnKind24AtObject Func_02005158
-
 /*
  * resource_39c owner at 0x02005158, 88 bytes: spawn a secondary object from
  * three fields of the caller's object, initialise three of its own byte

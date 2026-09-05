@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePlacement_GetStepPair Func_080b7410
-
 /*
  * BattlePlacement_GetStepPair - read one signed (x, y) pair out of the fixed step table at
  * 0x080c2a62.

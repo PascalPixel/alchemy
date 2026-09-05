@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_UpdateSecondObjectRowPositions Func_080200cc
-
 struct Root_080200cc {
     u8 pad_000[548];
     void *objects[4];

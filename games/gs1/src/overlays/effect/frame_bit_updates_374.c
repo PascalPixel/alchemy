@@ -7,8 +7,6 @@ s32 Func_02004930(s32, s32);
 void Func_020049b0(s32, s32);
 void Func_020047a4(s32);
 
-#define SceneEffect_UpdateByFrameBits Func_02002334
-
 void SceneEffect_UpdateByFrameBits(s32 no) {
     volatile s32 *p = (volatile s32 *)0x03001e40;
     if ((*p & 1) != 0) {
@@ -22,7 +20,6 @@ void SceneEffect_UpdateByFrameBits(s32 no) {
 
 #include "types.h"
 
-#define SceneEffect_UpdateByFrameBit Func_02002370
 #define NULL ((void *)0)
 
 s32 Func_0200496c(s32, s32);

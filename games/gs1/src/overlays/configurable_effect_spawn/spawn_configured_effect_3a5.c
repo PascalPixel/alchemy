@@ -1,5 +1,4 @@
 #define EffectDescriptorTable Data_0200a120
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
 #define GetPartyEffect Func_02001ed2
 #define SpawnEffect Func_02001e80
 #define SetEffectVariant Func_02001e8a

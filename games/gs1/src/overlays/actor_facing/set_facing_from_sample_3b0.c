@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetFacingFromSample Func_0200007c
-
 /*
  * resource_3b0 owner at 0x0200007c, 38 bytes: a scripted per-object step that
  * turns the object to face one of two fixed angles when a sampled value picks

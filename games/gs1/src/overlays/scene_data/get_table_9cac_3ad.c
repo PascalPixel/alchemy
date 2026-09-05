@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_GetTable9CAC Func_0200003c
-
 /*
  * resource_3ad owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr`
  * plus the one-word literal pool at 0x02000040 holding 0x2009cac.

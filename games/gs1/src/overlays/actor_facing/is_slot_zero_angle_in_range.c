@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_IsSlotZeroAngleInRange Func_02000338
-
 struct Slot02000338 {
     u8 head[6];
     u16 angle;

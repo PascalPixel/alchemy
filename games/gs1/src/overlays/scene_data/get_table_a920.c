@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_GetTableA920 Func_02000094
-
 /*
  * resource_38d owner at 0x02000094, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
  * one-word literal pool at 0x2000098 holding 0x200a920.

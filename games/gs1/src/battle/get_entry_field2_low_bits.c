@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_GetEntryField2LowBits Func_080c23e8
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 extern u8 Data_080c7420[];

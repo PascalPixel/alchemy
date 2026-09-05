@@ -10,8 +10,6 @@ extern void Func_02002f58(s32 msg);
 extern void Func_02002f80(s32 id, s32 arg1);
 extern void Func_02002ecc(void);
 
-#define SceneDialogue_RunActor10MessageByFlag962 Func_020002a0
-
 void SceneDialogue_RunActor10MessageByFlag962(void)
 {
     Func_02002e98();
@@ -26,8 +24,6 @@ void SceneDialogue_RunActor10MessageByFlag962(void)
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor13MessageByFlag962 Func_020002e4
 
 extern void Func_02002edc(void);
 extern s32 Func_02002eaa(s32 flag);

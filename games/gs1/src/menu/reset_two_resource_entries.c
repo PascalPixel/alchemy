@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Menu_ResetTwoResourceEntries Func_080ae8dc
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Resource_ResetEntry(u16);

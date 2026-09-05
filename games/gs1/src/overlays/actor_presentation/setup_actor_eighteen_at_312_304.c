@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetupActorEighteenAt312_304 Func_02000af0
-
 /* Complete scene-variant six actor-zero setup wrapper through its pool. */
 extern const u8 Data_02009756[];
 

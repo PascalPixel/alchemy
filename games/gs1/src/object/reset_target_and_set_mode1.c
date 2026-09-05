@@ -1,8 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
 
-#define Object_ResetTargetAndSetMode1 Func_08092ab4
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_SetMode(void *, s32);

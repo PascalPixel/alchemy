@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEighteenConditionalScene Func_0200025c
-
 extern void Func_02004fa4(void);
 extern s32 Func_02004f98(void);
 extern s32 Func_0200504c(s32, s32);

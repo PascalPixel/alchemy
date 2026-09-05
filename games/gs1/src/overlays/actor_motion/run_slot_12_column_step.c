@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunSlot12ColumnStep Func_02001b1c
 #define NULL ((void *)0)
 
 s32 *Func_02003f90(s32);

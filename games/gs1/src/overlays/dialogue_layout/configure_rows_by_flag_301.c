@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define DialogueLayout_ConfigureRowsByFlag301 Func_02001770
-
 /*
  * resource_3a6 owner at 0x02001770, complete 104-byte span through its
  * one-word pool. It installs the common window rectangle, then selects one of

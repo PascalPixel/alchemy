@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWindow_CreateWithLayoutBounds Func_0801ef08
-
 struct Window {
     s32 handle;
     u16 left;

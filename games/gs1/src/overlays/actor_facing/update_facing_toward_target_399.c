@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateFacingTowardTarget Func_020000d8
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 

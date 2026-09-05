@@ -6,7 +6,6 @@
 #define SecondaryOverlayData Data_0200b9e8
 #define TertiaryOverlayData Data_0200bac0
 #define DefaultOverlayData Data_0200bc28
-#define SceneData_SelectTableB91cByRuntimeSelector Func_020027a0
 
 #include "select_overlay_data_by_runtime_selector.h"
 

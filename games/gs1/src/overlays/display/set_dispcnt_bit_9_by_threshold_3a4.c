@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetDispcntBit9ByThreshold Func_020006a0
-
 extern s32 Func_02004142(void);
 extern u16 Data_0200d238;
 

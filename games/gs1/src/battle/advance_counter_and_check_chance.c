@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_AdvanceCounterAndCheckChance Func_080bf4c4
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Runtime_GetObject(s32);

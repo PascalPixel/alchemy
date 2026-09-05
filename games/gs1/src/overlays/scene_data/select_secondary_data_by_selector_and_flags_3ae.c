@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectSecondaryDataBySelectorAndFlags Func_0200019c
-
 /*
  * Resource 3ae, owner at 0x0200019c (164 bytes including its 13-word pool at
  * 0x0200020c..0x0200023e).

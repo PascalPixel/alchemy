@@ -6,7 +6,6 @@ s32 Func_02004f78();
 s32 Func_02004f84();
 s32 Func_02004f90();
 
-#define CheckAllStatueLights Func_020025b0
 s32 CheckAllStatueLights(void)
 {
     s32 all_set = 1;

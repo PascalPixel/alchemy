@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag311DialogueBranch Func_02000920
-
 /*
  * Resource 39a overlay scene step at 0x02000920.
  *

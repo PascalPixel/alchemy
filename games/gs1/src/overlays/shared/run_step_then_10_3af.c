@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunStepThen10 Func_020039ec
-
 extern void Func_02007dae(s32, s32);
 extern void Func_02007cdc(s32);
 

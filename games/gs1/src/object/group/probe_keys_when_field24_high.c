@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define ObjectGroup_ProbeKeysWhenField24High Func_080e3a14
-
 void ObjectGroup_ProbeKeysWhenField24High(void)
 {
     u8 *state = *(u8 **)ADDR_03001EEC;

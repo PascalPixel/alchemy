@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StoreParamsAndInitTable Func_02002d28
-
 extern u8 Data_0200abed[];
 extern u16 Data_0200c7f4;
 extern u16 Data_0200c780;

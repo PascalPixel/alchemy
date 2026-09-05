@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_CallWhenCheck9_31_9 Func_02001574
 #define NULL ((void *)0)
 
 s32 Func_02003166(s32, s32, s32);

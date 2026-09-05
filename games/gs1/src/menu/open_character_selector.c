@@ -27,7 +27,7 @@ struct CharacterSelectorState {
     u8 padding218;
     u8 character_count;
     u8 padding21a[6];
-    u16 selector_flags;
+    u16 flags;
 };
 
 LAYOUT_OFFSET_GUARD(
@@ -53,7 +53,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     CharacterMenu080a7380_SelectorFlags,
     struct CharacterSelectorState,
-    selector_flags,
+    flags,
     0x220);
 
 extern struct MenuObjectControl *Data_03001e68;
@@ -92,7 +92,7 @@ s32 OpenCharacterSelector(void)
     state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < ROW_CNT; index++)
         state->row_positions[index] = 30;
-    state->selector_flags = 3;
+    state->flags = 3;
 
     result = Func_080a7440();
 

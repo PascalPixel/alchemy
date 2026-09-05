@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnAndBobWithActorZero Func_020005ec
-
 typedef struct {
     u8 filler0[0xc];
     s32 unk0c;

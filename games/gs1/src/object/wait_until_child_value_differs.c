@@ -1,8 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
 
-#define Object_WaitUntilChildValueDiffers Func_08091c44
-
 struct Child_08091c44 {
     u8 padding[36];
     u8 value;

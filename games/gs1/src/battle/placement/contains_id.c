@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePlacement_ContainsId Func_080b770c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 BattlePlacement_ContainsId(s16 *entries, s32 id) {

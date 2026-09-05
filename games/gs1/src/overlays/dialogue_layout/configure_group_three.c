@@ -48,7 +48,6 @@ void Func_02003884();
 s32 Func_0200388a();
 void Func_02003896();
 
-#define DialogueLayout_ConfigureGroupThree Func_020012cc
 void DialogueLayout_ConfigureGroupThree(void)
 {
     { s32 k5 = 12, k6 = 21; Func_020035d2(12, 3, 9, 16, k5, k6); }

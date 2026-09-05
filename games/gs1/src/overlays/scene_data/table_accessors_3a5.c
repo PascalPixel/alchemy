@@ -2,10 +2,6 @@
 
 #include "types.h"
 
-#define SceneData_GetTablea36c Func_02000414
-
-#define SceneData_ReturnZero Func_02000410
-
 s32 SceneData_ReturnZero(void)
 {
     return 0;

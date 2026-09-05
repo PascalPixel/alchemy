@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Object_ReplaceResourceEntry Func_08096c48
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Resource_ResetEntry(u32 index);

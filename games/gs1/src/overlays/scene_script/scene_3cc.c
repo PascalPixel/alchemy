@@ -5,26 +5,6 @@
 
 #include "resource_3cc.h"
 
-#define FieldScene_RunEmptyScene Func_020000b4
-
-#define SceneData_GetTable8264 Func_020000ac
-
-#define SceneState_ApplyValues11And3And0Then6c Func_02000094
-
-#define SceneState_ApplyValues10And2And0Then58 Func_0200007c
-
-#define SceneState_ApplyValues9And1And0Then44 Func_02000064
-
-#define SceneState_ApplyValues8And0And0Then30 Func_0200004c
-
-#define SceneData_GetTable81ec Func_02000044
-
-#define SceneData_GetTable81d8 Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetTable81a8 Func_02000030
-
 void Func_02000114(s32);
 void Func_02000116(s32, s32, s32);
 void Func_0200012c(s32);

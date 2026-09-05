@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_ApplyThreeValuesAndFinish Func_0200463c
-
 extern void Func_02009418(s32, s32, s32);
 extern void Func_0200942e(s32);
 extern void Func_0200938c(s32);

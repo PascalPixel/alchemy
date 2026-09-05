@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_RunSelectionForValue Func_0801c304
-
 struct State_0801c304 {
     u8 filler0[0x39e];
     u16 value;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectDataByRuntimeSelector Func_0200020c
-
 extern s16 Data_02000240[];
 extern u8 Value_0000004d;
 extern u8 Value_0000004f;

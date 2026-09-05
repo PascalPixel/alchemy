@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateArcOverAnchor Func_02004378
-
 typedef struct Obj {
     u8 pad00[8];
     s32 f08;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_AdvanceTenEntryTimers Func_02002ba0
-
 typedef struct {
     u8 filler0[12];
     s32 unkC;

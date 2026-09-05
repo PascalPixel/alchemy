@@ -54,32 +54,6 @@
 
 #include "resource_384.h"
 
-#define FieldScene_InitSceneStateByStep Func_020001e4
-
-#define FieldScene_RunClosingBeat Func_020001d0
-
-#define FieldScene_RunActor10Beat Func_020001b0
-
-#define FieldScene_RunActor9Beat Func_02000190
-
-#define FieldScene_RunActor8Beat Func_02000170
-
-#define FieldScene_RunActor10Intro Func_02000140
-
-#define FieldScene_RunActor9Intro Func_02000110
-
-#define FieldScene_RunActors8To10OpeningSequence Func_02000094
-
-#define SceneData_SelectSceneScriptByStep10 Func_0200006c
-
-#define SceneData_SelectActorTableByStep10 Func_02000044
-
-#define SceneData_GetMessageTable Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetScriptTable Func_02000030
-
 extern s16 Data_02000240[];
 extern u8 Data_0200835c[];
 extern u8 Data_020083bc[];

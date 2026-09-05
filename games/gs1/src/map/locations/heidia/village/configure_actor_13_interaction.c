@@ -7,7 +7,6 @@ void Func_0200a458(s32, s32);
 s32 Func_0200a36e(s32);
 void Func_0200a376(s32, s32);
 
-#define ConfigureActor13Interaction Func_02004d50
 void ConfigureActor13Interaction(void)
 {
     u8 *interaction_resources = &Value_0000256c;

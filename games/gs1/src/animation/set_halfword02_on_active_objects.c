@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define AnimationObjects_SetHalfword02OnActive Func_0800bacc
-
 s32 AnimationObjects_SetHalfword02OnActive(u8 *grp, s32 val)
 {
     u8 n = grp[0x27];

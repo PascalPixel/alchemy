@@ -4,7 +4,6 @@
 extern s32 Func_020012e6(s32 flag);
 
 /* Complete 80-byte three-flag table selector through its seven-word pool. */
-#define SceneData_SelectTable9c00ByFlags Func_02000140
 void *SceneData_SelectTable9c00ByFlags(void)
 {
     if (Func_020012ca(0x834) != 0)
@@ -32,7 +31,6 @@ extern void Func_020013de(s32 msg);
 extern void Func_020013d8(s32 actor, s32 target, s32 frames);
 extern s32 Func_02001410(s32 actor, s32 mode);
 extern void Func_02001354(void);
-#define SceneDialogue_RunActor15Message0f6d Func_02000190
 void SceneDialogue_RunActor15Message0f6d(void)
 {
     Func_02001330();
@@ -43,8 +41,6 @@ void SceneDialogue_RunActor15Message0f6d(void)
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor19Message0f73 Func_020001bc
 
 /* Complete 44-byte actor-19 scene owner through its one-word pool. */
 extern void Func_0200135c(void);

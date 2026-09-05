@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ForwardByRuntimeSelector Func_02002ce0
-
 /*
  * resource_3a4 owner at 0x02002ce0, 40 bytes: read the low three bits of
  * the runtime word at 0x03001e40 and, on exactly two of the eight

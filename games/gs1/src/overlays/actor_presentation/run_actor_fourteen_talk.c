@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorFourteenTalk Func_02000b28
-
 extern void Func_02006ae8(void);
 extern char Value_00000806;
 extern s32 Func_02006ace(s32);

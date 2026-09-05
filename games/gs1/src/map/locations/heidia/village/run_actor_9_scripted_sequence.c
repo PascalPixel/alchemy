@@ -15,7 +15,6 @@ void Func_02007200(s32, s32);
 void Func_02007266(s32);
 void Func_0200728a(void);
 
-#define RunActor9ScriptedSequence Func_02001ab0
 void RunActor9ScriptedSequence(void)
 {
     Func_020070e4();

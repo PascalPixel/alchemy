@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_IsActor10AtTile16x12 Func_02000458
-
 extern s32 *Func_0200158e(s32);
 
 s32 SceneActor_IsActor10AtTile16x12(void)

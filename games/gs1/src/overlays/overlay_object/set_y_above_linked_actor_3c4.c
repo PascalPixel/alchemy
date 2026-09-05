@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetYAboveLinkedActor Func_02001a98
-
 struct Actor {
     s32 f00;
     s32 f04;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnRandomizedParticle Func_02002230
-
 extern volatile s32 Data_03001e40;
 
 extern void Func_02004e02(s32 soundId);

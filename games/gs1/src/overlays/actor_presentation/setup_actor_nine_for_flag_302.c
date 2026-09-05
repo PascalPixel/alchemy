@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetupActorNineForFlag302 Func_02000314
-
 extern void Func_0200272a(s32);
 extern s32 Func_020004a6(s32, s32, s32);
 extern void Func_0200273c(s32);

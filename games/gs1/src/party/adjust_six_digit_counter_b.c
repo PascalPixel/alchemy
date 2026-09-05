@@ -1,8 +1,6 @@
 #include "global_progress.h"
 #include "types.h"
 
-#define Party_AdjustSixDigitCounterB Func_08079728
-
 s32 Party_AdjustSixDigitCounterB(s32 amount)
 {
     s32 value;

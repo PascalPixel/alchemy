@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SaveState_ConfirmAndProcessSelectedSlot Func_0801fb48
-
 extern u8 Value_00000014;
 extern u8 Value_00000017;
 

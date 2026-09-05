@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetRecordAngleFromHeading Func_02000f54
-
 typedef struct {
     u8 filler0[6];
     u16 unk6;

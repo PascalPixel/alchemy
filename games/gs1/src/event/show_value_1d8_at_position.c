@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Event_ShowValue1d8AtPosition Func_08093168
-
 struct State_08093168 {
     u8 padding[472];
     s16 counter;

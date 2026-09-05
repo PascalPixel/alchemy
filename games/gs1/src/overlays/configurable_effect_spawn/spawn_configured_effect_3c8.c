@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnConfigured Func_02000118
-
 /*
  * resource_39f owner at 0x02000ae8, 472 bytes: code 0x02000ae8-0x02000cb3 and
  * the three pool words 0x0200b058, 0x020080e1 and 0xffff0000 at

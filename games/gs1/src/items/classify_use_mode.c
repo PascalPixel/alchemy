@@ -7,8 +7,6 @@ s32 Func_0808a490(s32);
 void *Func_08077080(s32);
 s32 Func_08077218(s32, s32);
 
-#define Item_ClassifyUseMode Func_080a46b4
-
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
 {
     s32 masked = itemId;

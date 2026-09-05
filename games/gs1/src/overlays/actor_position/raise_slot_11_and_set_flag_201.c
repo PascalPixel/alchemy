@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RaiseSlot11AndSetFlag201 Func_020005fc
-
 extern s32 *Func_0200419c(s32);
 extern void Func_02004142(s32, s32, s32, s32, s32, s32);
 extern void Func_02004156(s32 *, s32);

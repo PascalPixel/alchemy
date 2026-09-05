@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Event_WaitForDisplayField358Clear Func_08093710
-
 s32 WaitFrames(s32);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Event_WaitForDisplayField358Clear(void)

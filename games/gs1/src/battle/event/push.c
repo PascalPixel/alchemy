@@ -1,7 +1,9 @@
 #include "battle_event.h"
 #include "global_cells.h"
 
-u32 Func_080bbabc(u32 opcode, u32 operand)
+#define BattleEvent_Push Func_080bbabc
+
+u32 BattleEvent_Push(u32 opcode, u32 operand)
 {
     u8 *base = *(u8 **)ADDR_03001E74;
     struct BattleEventQueue *queue =

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectAt32x78 Func_020024b0
-
 extern void Func_020052a6();
 
 void SceneState_ApplyRectAt32x78(void) {

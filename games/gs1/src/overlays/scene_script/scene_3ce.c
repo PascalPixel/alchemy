@@ -1,55 +1,5 @@
 #include "types.h"
 
-#define SceneState_GetFarResult2418 Func_0200117c
-
-#define SceneState_GetFarResult2384 Func_02001170
-
-#define FieldScene_AssignCodeSetBToSlots Func_02000f14
-
-#define SceneState_RunCall1c00 Func_02000f08
-
-#define FieldScene_AssignCodeSetAToSlots Func_02000bb8
-
-#define SceneData_GetTable9564 Func_0200023c
-
-#define SceneState_SetRecordFlag53 Func_0200022c
-
-#define SceneState_ApplyZero Func_0200021c
-
-#define SceneState_QueryTwoValues Func_02000208
-
-#define SceneState_NoOp Func_02000204
-
-#define SceneState_ApplyOne Func_020001f8
-
-#define SceneState_ApplyBlockDa2 Func_020001d8
-
-#define SceneState_ApplyBlockD77 Func_020001b8
-
-#define SceneState_ApplyBlockD4c Func_02000198
-
-#define SceneState_ApplyBlockD21 Func_02000180
-
-#define SceneState_ApplyBlockCf1 Func_02000160
-
-#define SceneState_ApplyBlockCc6 Func_02000148
-
-#define SceneState_ApplyBlockC9b Func_02000130
-
-#define SceneDialogue_ShowMessageAndWait Func_0200004c
-
-#define SceneData_GetTable93fc Func_02000044
-
-#define SceneData_GetTable93f8 Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetTable93c8 Func_02000030
-
-#define CommandTable_RunDirectionalInput Func_0200007c
-#define CommandTable_NoOpCallback Func_02000228
-#define FieldScene_ApplyTable9684ValueToFourSlots Func_02000244
-#define FieldScene_GrantItemListToSlots Func_0200029c
 #define UiText_DrawMessage_1(a0, a1) Call2(Func_02001454, a0, a1)
 #define Inventory_AddForOwner_1(a0, a1) Value2(Func_020014dc, a0, a1)
 #define Inventory_AddForOwner_2(a0, a1) Value2(Func_020014e4, a0, a1)
@@ -246,9 +196,6 @@
 #define BattleUnit_Recalculate_2(args...) Func_02001ad0(args)
 #define BattleUnit_Recalculate_3(args...) Func_02001ad6(args)
 #define BattleUnit_Recalculate_4(args...) Func_02001adc(args)
-#define CommandTable_ConfigureCommandGroups Func_020008c4
-#define FieldScene_ApplySlotOffsetsAndFlags Func_02000b10
-#define CommandTable_ConfigureCommandList Func_020010a8
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;

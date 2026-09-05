@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunForwardArcBurst Func_02000bf4
-
 u8 *Func_02005004();
 void Func_02004f56();
 s32 Func_02004f8c();

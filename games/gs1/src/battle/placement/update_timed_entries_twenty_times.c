@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePlacement_UpdateTimedEntriesTwentyTimes Func_080bf65c
-
 s32 Func_080bf5a8();
 
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void) {

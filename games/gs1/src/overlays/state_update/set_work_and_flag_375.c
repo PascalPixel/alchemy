@@ -12,8 +12,6 @@ extern void Func_02003440(s32);
 extern void Func_02003560(s32, s32);
 extern void Func_02003464(void);
 
-#define SceneState_SetWorkAndFlag87d Func_020019a4
-
 void SceneState_SetWorkAndFlag87d(void)
 {
     u8 *work;
@@ -31,8 +29,6 @@ void SceneState_SetWorkAndFlag87d(void)
 }
 
 #include "types.h"
-
-#define SceneState_SetWorkAndFlag87e Func_020019e8
 
 extern u8 *Data_03001ebc;
 

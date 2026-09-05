@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiText_GetWideStringWidth Func_08017a64
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 UiText_GetWideStringWidth(u16 *text) {

@@ -36,7 +36,6 @@
  * is deliberately not named.
  */
 
-#define GetSolShindenScriptData Func_02000030
 u8 *GetSolShindenScriptData(void)
 {
     return (u8 *)0x0200aafc;

@@ -1,8 +1,6 @@
 #include "owner_state.h"
 #include "types.h"
 
-#define Owner_GetValueIfLevelThresholdReached Func_080792c4
-
 struct Owner_080792c4 {
     u8 unknown_000[0x0f];
     u8 level;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ConfigureObject22WithResource17 Func_02004698
-
 extern u8 *Func_02009356(s32);
 extern u8 *Func_02009370(s32, s32);
 extern void Func_020093e0(s32);

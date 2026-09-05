@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetHalfword1000To9 Func_02002f94
-
 extern u16 Data_02001000;
 
 void SceneState_SetHalfword1000To9(void)

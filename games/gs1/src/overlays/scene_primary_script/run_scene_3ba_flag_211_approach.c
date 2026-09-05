@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag211ApproachScene Func_020030ac
-
 extern u8 Data_02000240[];
 
 s32 Func_02006d18();           /* veneer to GameFlag_IsSet */

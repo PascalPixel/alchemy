@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_Forward72b4 Func_020027ec
-
 /*
  * resource_380 owner at 0x020027ec, 12 bytes: a published callback that
  * forwards to a single imported function and nothing else.

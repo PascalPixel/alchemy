@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetSceneCellByFlag985 Func_0200246c
-
 extern s32 Func_0200528c();
 extern void Func_0200526c();
 extern void Func_02005282();

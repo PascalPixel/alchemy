@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateAnchoredRiseArc Func_02002e5c
-
 /* resource_381 owner at 0x02002e5c (82 bytes), the twin of resource_371:4004.
  * Ported from that byte-exact owner: same field layout, same two calls. */
 

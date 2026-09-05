@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_BuildFlaggedMapLayout Func_02000d30
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 void Func_02002686();

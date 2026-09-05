@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_RunObjectZeroColorSequence Func_02000754
-
 struct EffectObject {
     u8 filler00[0x30];
     s32 color;

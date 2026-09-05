@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_CountDownEveryFortyTicks Func_02000168
-
 extern s32 Data_020097f4;
 extern s32 Data_020097f0;
 

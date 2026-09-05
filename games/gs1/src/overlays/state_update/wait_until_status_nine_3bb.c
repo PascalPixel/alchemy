@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_WaitUntilStatusNine Func_02003238
-
 extern s16 Data_02001000;
 extern void Func_02006fe8(s32 arg0);
 

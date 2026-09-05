@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_CountEligibleUnits Func_080b280c
-
 extern u8 *Data_03001f2c;
 
 s32 Func_080b27b0(s32 selection, s32 variant);

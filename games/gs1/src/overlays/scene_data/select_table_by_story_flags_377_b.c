@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableByStoryFlagsB Func_02000160
-
 extern s16 Data_02000240[];
 
 /* One import, four call sites, four distinct veneer addresses. */

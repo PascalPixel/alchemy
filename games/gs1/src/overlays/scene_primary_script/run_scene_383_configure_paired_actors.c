@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ConfigurePairedActors Func_02001e80
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_000012a0[];

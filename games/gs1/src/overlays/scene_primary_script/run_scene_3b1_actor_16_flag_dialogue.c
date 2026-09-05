@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor16FlagDialogue Func_02001078
-
 /*
  * resource_3b1 owner at 0x02001078, 204 bytes.  The executable body starts
  * with `push {r5, lr}` and returns through `pop {r5} / pop {r0} / bx r0` at

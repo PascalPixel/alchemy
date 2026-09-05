@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunByActorDirectionAndFlags Func_020004dc
-
 /*
  * resource_376 owner at 0x020004dc, 128 bytes: choose the scene that follows
  * from actor zero's directional halfword and two story flags.

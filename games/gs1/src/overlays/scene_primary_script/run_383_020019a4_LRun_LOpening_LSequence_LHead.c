@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunOpeningSequenceHead Func_020019a4
-
 void Func_02006736();
 void Func_0200676c();
 void Func_02006846();

@@ -14,14 +14,11 @@ struct OwnerWork {
     u8 pad2[0xd8 - 60];
     u16 inventory[15];
 };
-#define Owner_RecalculateStats Func_08077428
 
 void Owner_RefreshDerivedData(s32 id);
 void Owner_RecalculateStats(s32 id);
 s32 FixedPoint_Ratio(s32, s32);
 s32 OwnerAction_Add(s32 id, s32 value);
-
-#define Party_ApplyStatePreset Func_08077f70
 
 void Party_ApplyStatePreset(void)
 {

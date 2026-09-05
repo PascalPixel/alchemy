@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Menu_ComputeEntryValues Func_080aaf58
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s16 Func_080ac8fc(void *, s32, s32);

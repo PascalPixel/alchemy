@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_RunTwelveModeMode2 Func_080ca5f4
-
 s32 Func_080ca60c(s32, s32);
 
 void BattleEffect_RunTwelveModeMode2(s32 arg0) {

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Runtime_BlankDisplayLoadValueAndRun Func_080f6008
-
 s32 Func_080f7460(void);
 s32 Audio_PlayCue(s32);
 s32 Runtime_BlankDisplayLoadValueAndRun(void)

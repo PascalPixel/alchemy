@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlagBranchedLayoutSteps Func_020015dc
-
 /*
  * Resource 39a overlay dialogue layout at 0x020015dc.
  *

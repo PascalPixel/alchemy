@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_BranchOnSlotZeroFacing Func_02000394
-
 struct Obj {
     u8 filler00[6];
     u16 f06;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateObjectOnOddFrames Func_02005c5c
-
 extern volatile u32 Data_03001e40;
 extern s32 Func_0200baf8(s32, s32);
 extern void Func_0200bbf0(s32, s32);

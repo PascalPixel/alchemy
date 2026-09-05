@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunWhenActor8AtTile10x23 Func_02001bf0
-
 extern s32 *Func_020076cc(s32);
 extern s32 *Func_020076de(s32);
 extern void Func_020076ce(void);

@@ -1,8 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-#define Ui_FindNextNumberWithMetadata Func_08012af8
-
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
     s32 value = start;

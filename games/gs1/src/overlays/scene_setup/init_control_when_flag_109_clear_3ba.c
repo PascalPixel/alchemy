@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitControlWhenFlag109Clear Func_0200384c
-
 typedef struct Ctl {
     s16 f0;
     s16 f2;

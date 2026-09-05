@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_CopyRecordField1ToSlots22And8 Func_020045b8
-
 typedef struct Ent {
     u8 pad00[9];
     u8 b01:2;

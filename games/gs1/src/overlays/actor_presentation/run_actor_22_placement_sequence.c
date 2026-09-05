@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunActor22PlacementSequence Func_02001a64
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

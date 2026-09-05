@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PlaceAtTileAndRunSteps Func_02002c1c
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

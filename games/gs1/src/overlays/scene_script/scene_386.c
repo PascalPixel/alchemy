@@ -1,51 +1,8 @@
 #include "types.h"
 
-#define SceneState_CheckPositionWindow Func_02000030
-#define FieldScene_RunActor16Sequence Func_0200011c
-#define FieldScene_RunActor18FlaggedSequence Func_02000204
 #define WORKSPACE (*(u8 **)0x03001ebc)
 
 #include "resource_386_state.h"
-
-#define OverlayObject_InitObject22 Func_02000570
-
-#define FieldScene_InitSceneStateByStep Func_020004e4
-
-#define SceneData_GetEffectTable Func_020004dc
-
-#define SceneDialogue_RunActor18FlaggedLine Func_020004a0
-
-#define FieldScene_RunActor22StepByPlace Func_02000458
-
-#define FieldScene_RunActor21StepByPlace Func_02000410
-
-#define FieldScene_RunActor20StepByPlace Func_020003c8
-
-#define FieldScene_RunActor19StepByPlace Func_02000380
-
-#define FieldScene_RunActor18ConditionalCue Func_02000338
-
-#define SceneActor_RunActor16StepWithFlag91 Func_020002fc
-
-#define SceneDialogue_RunActor23Line Func_020001e4
-
-#define SceneDialogue_RunActor16Line Func_020001c4
-
-#define SceneDialogue_RunActor12Line Func_020000fc
-
-#define SceneDialogue_RunActor11Line Func_020000dc
-
-#define SceneDialogue_RunActor9Line Func_020000bc
-
-#define SceneActor_RunActorStep Func_02000098
-
-#define SceneData_InitAndGetTable87f4 Func_02000080
-
-#define SceneData_GetMessageTable Func_02000078
-
-#define SceneData_ReturnZero Func_02000074
-
-#define SceneData_GetScriptTable Func_0200006c
 
 extern u8 Data_03001ebc[];
 extern s16 Data_02000240[];

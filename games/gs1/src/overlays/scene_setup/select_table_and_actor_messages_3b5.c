@@ -9,8 +9,6 @@ extern u8 Data_020094a8[];
 extern s32 Func_020011fc(s32);
 extern s32 Func_0200120a(s32);
 
-#define SceneData_SelectTable94a8ByFlags Func_020004b0
-
 u8 *SceneData_SelectTable94a8ByFlags(void)
 {
     if (Func_020011fc(0x950) != 0) {
@@ -29,8 +27,6 @@ extern void Func_020012e6(s32);
 extern s32 Func_0200130e(s32, s32);
 extern void Func_02001262(void);
 
-#define SceneDialogue_RunActor15Message1f92 Func_020004e8
-
 void SceneDialogue_RunActor15Message1f92(void)
 {
     Func_02001248();
@@ -40,8 +36,6 @@ void SceneDialogue_RunActor15Message1f92(void)
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor24Message1f9d Func_02000508
 
 extern void Func_02001268(void);
 extern void Func_02001306(s32);

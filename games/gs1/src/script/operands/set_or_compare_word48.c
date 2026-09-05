@@ -1,7 +1,5 @@
 #include "script_operands.h"
 
-#define Script_SetOrCompareWord48 Func_0800e548
-
 void Script_SetOrCompareWord48(struct ScriptOperands *state, s32 operation, s32 value) {
     s8 result;
 

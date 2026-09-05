@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorElevenPresentationBeat Func_02001244
-
 /*
  * resource_39f owner at 0x02001244, 228 bytes: code 0x02001244-0x02001315, an
  * alignment halfword at 0x02001316 and the four pool words 0x00000103,

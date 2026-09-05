@@ -42,7 +42,6 @@ s32 Func_0200ba4c(SoftFloatRecord *record);
 s32 Func_0200ba66(SoftFloatRecord *record);
 u64 Func_0200b8c2(u64 value, u32 count);
 
-#define PackSoftDouble Func_02005c38
 SoftDouble PackSoftDouble(SoftFloatRecord *src)
 {
     SoftDoubleUnion dst;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CopyActor8PositionWithFixedY Func_02000098
-
 struct Frame {
     s32 f00;
     s32 f04;

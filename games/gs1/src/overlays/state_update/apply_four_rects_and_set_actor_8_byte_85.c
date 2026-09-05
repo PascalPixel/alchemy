@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFourRectsAndSetActor8Byte85 Func_020019e8
-
 /* Four sites of one import, so four names. */
 extern void Func_02003ed6(s32, s32, s32, s32, s32, s32);
 extern void Func_02003ee8(s32, s32, s32, s32, s32, s32);

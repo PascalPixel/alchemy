@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor8FlagScene Func_020004d8
-
 /* Complete actor-8 flag-setting dialogue scene through its two-word pool. */
 
 extern void Func_020015c4(void);

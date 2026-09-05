@@ -49,7 +49,6 @@ static __inline__ void Call_02007388(s32 handle)
     Func_02007388(handle, 258, 60);
 }
 
-#define RunActorScriptedSequenceB Func_02001c4c
 void RunActorScriptedSequenceB(s32 handle)
 {
     u8 *id;

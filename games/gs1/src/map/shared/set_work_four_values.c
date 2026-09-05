@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Map_SetWorkFourValues Func_080935b0
-
 struct State_080935b0 {
     u8 filler0[0xEC];
     s32 first;

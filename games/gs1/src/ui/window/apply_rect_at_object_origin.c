@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWindow_ApplyRectAtObjectOrigin Func_080ab2ec
-
 void Func_080ab21c(s32 x, s32 y, s32 width, s32 height, u32 palette);
 void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 height, s32 palette)
 {

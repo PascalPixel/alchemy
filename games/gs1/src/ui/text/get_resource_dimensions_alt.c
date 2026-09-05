@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiText_GetResourceDimensionsAlt Func_080187fc
-
 extern s32 UiText_BuildRenderEntries(s32, s32);
 extern void Func_0801868c(s32, s32, s32, s32, s32, s32, s32);
 

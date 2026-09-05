@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define BattlePresentation_DrawTransitionRows Func_080c0228
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 Data_03001ef8[];
 

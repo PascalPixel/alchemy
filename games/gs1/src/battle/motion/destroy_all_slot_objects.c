@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleMotion_DestroyAllSlotObjects Func_080b7e7c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Object_Destroy(s32);

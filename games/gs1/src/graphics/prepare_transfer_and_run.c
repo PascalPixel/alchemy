@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Graphics_PrepareTransferAndRun Func_080051e8
-
 typedef void (*WorkFunc)(void *);
 
 void Func_08004fe4(void *, void *, void *);

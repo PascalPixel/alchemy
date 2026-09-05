@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetHeightAboveLinkedRecord Func_020022a4
-
 typedef struct {
     s16 filler0[50];
     s32 unk64;

@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_StepAtDifferencePosition Func_08011d60
-
 s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end)
 {
     s32 first;

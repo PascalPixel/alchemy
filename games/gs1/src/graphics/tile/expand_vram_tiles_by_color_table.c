@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Graphics_ExpandVramTilesByColorTable Func_08021a18
-
 extern u16 Data_06000600[];
 extern u16 Data_080372c0[];
 

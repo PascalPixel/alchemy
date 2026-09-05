@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWork_UpdateListTail Func_0801656c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void UiWork_UpdateListTail(s32 *list) {

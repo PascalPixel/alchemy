@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PlaceAtTile Func_02001938
 /* resource_3a6 owner at 0x02001938, 76 bytes.
  * Fetches a record for the caller's id and, when it exists, marks it and
  * writes two 20.12 fixed-point coordinates biased by half a unit. */

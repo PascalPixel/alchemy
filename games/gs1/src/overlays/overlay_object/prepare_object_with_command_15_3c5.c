@@ -9,8 +9,6 @@
  */
 #include "types.h"
 
-#define OverlayObject_PrepareObjectWithCommand15 Func_02000a4c
-
 u8 *Func_02003806(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003878(u8 *object, s32 mode);
 void Func_02003960(u8 *object, s32 mode);

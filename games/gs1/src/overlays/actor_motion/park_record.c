@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ParkRecord Func_02005688
-
 /*
  * resource_3c9 owner at 0x02005688, 24 bytes: a leaf that PARKS a
  * record -- it stamps the sentinel 0x80000000 into the three mirror

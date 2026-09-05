@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Lifted_02000bd0 Func_02000bd0
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];

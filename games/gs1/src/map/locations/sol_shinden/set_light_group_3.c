@@ -9,7 +9,6 @@ extern void Func_02002d50(s32, s32, s32, s32, s32, s32);
 extern s32 Func_02002d76(s32);
 extern void Func_02002d6e(s32, s32, s32, s32, s32, s32);
 
-#define SetStatueLightGroup3 Func_02000360
 void SetStatueLightGroup3(void)
 {
     if (Func_02002d1c(0x80b) != 0) {

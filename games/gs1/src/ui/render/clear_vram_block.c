@@ -26,8 +26,6 @@
  */
 #include "types.h"
 
-#define Ui_ClearVramBlock Func_0801671c
-
 s32 Func_080072f0(s32, s32, s32, s32);
 char Ui_ClearVramBlock(void)
 {

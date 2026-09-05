@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_PrepareObjectWithCommand15 Func_02000098
-
 void Func_020000f6(void *, s32);
 void *Func_02004e8e(s32, s32, s32, s32);
 

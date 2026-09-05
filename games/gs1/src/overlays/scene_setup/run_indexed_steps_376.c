@@ -1,18 +1,4 @@
-#define FieldScene_RunIndexedStep8 Func_0200035c
 
-#define FieldScene_RunIndexedStep7 Func_02000350
-
-#define FieldScene_RunIndexedStep6 Func_02000344
-
-#define FieldScene_RunIndexedStep5 Func_02000338
-
-#define FieldScene_RunIndexedStep4 Func_0200032c
-
-#define FieldScene_RunIndexedStep3 Func_02000320
-
-#define FieldScene_RunIndexedStep2 Func_02000314
-
-#define FieldScene_RunIndexedStep1 Func_02000308
 /* Contiguous unnamed leaf-owner run for resource_376. */
 
 /* Complete 12-byte wrapper for numbered scene 1. */

@@ -2,7 +2,6 @@
 
 typedef s32 (*IwramIntegerSquareRoot)(s32);
 
-#define MeasureFixedPointPositionDistance Func_02000890
 s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;

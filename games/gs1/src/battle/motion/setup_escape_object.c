@@ -1,8 +1,6 @@
 #include "types.h"
 #include "motion_object.h"
 
-#define BattleMotion_SetupEscapeObject Func_080b8064
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Object_SetMode(void *, s32);

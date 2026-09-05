@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_AdjustDebugValueWithButtons Func_080c0eec
-
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001b04;
 extern u8 * volatile Data_03001e74;

@@ -1,8 +1,6 @@
 #include "object_commands.h"
 #include "script_interpreter.h"
 
-#define Script_ApplyAbsolutePosition Func_0800da18
-
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
 {
     s32 first;

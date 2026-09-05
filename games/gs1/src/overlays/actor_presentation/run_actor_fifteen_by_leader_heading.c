@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorFifteenByLeaderHeading Func_020008e0
-
 struct Slot020008e0 {
     u8 head[6];
     u16 heading;

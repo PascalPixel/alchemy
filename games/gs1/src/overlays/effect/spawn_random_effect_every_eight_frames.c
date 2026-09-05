@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnRandomEffectEveryEightFrames Func_020022d8
-
 extern volatile s32 Data_03001e40;
 
 extern s32 Func_02004d4c(void);

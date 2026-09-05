@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunScene378SequenceB Func_020004e8
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
@@ -87,7 +85,6 @@ static __inline__ void bump_step(void)
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
 }
-
 
 void FieldScene_RunScene378SequenceB(void)
 {

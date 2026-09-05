@@ -26,8 +26,6 @@
  */
 #include "types.h"
 
-#define Graphics_ResetVramBlockAndReleaseHeapBlocks Func_080c16d0
-
 void Func_080072f0(u32, s32, s32, u32);
 void Func_08002dd8(s32);
 s32 ScheduleCallback(u32);

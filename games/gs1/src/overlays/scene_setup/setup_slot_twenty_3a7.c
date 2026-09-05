@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetupSlotTwenty Func_02000640
-
 extern u8 *Func_02001778(s32);
 extern void Func_0200172e(s32, s32, s32, s32, s32, s32);
 extern void Func_0200174a(u8 *, s32);

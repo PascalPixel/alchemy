@@ -5,7 +5,6 @@
 extern s32 FixedPoint_Ratio(s32, s32);
 extern const u8 Data_0807a828[];
 
-#define Owner_RefreshRatiosOnFlag Func_08078144
 void Owner_RefreshRatiosOnFlag(void)
 {
     s32 count;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_TrackOriginColumnForSlot Func_0200152c
-
 extern s16 Data_02000240[];
 extern s32 Data_0200af74[];
 

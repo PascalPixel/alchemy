@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UpdateObjectByCounterBits Func_02003f10
-
 extern s32 Data_03001e40;
 
 extern void Func_02008180(u8 *, s32);

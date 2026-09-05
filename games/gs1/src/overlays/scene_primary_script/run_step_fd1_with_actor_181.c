@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunStepFD1WithActor181 Func_020003c0
-
 extern void Func_02001da4(void);
 extern void Func_02001e0e(s32, s32, s32);
 extern void Func_02001d9c(s32);

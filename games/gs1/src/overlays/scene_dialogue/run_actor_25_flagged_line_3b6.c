@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor25FlaggedLine Func_0200085c
-
 extern void Func_02001240(void);
 extern s32 Func_0200122e(s32);
 extern void Func_020012a8(s32);

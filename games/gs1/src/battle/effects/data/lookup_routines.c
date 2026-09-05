@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define EffectRuntime_LookupByTableEntry Func_0808b02c
-
 extern u8 *Data_03001ebc;
 
 extern s32 Func_0808ae74();
@@ -13,7 +11,6 @@ s32 EffectRuntime_LookupByTableEntry(u32 index) {
     return Func_0808ae74(table[index]);
 }
 
-#define BattleEffect_ApplyLookupResult Func_0808b048
 
 s32 BattleEffect_LookupResult(void *);
 s32 Func_0808ae74(s32, s32);
@@ -49,7 +46,6 @@ unsigned char BattleEffect_GetPhaseResult(s32 phase_index)
       weighted_row, *((u16 *) (((u8 *) entry_address) + 2)));
 }
 
-#define FieldScene_ResolveInteractionResult Func_0808b090
 
 extern s16 Data_02000240[];
 

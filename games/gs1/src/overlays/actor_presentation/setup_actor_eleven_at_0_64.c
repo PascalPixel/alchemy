@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetupActorElevenAt0_64 Func_02000ca8
-
 extern void Func_020030be(s32);
 extern s32 Func_02000e38(s32, s32, s32);
 extern void Func_020030ce(s32);

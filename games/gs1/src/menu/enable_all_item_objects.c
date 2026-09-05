@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_EnableAllItemObjects Func_080ad69c
-
 /*
  * This owner's view of Data_03001f2c. 62 owners reach that global and declare
  * it eight different ways; this one needs an item table and a count, and claims

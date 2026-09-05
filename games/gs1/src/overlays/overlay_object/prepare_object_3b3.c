@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_PrepareObject Func_02000048
 #define NULL ((void *)0)
 
 void *Func_02002ace(s32, s32, s32, s32);

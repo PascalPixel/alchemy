@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunWhenActorZeroFacing4000 Func_02001000
 #define NULL ((void *)0)
 
 u16 *Func_02003472(s32);

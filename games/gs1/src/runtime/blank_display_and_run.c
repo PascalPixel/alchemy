@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_BlankDisplayAndRun Func_080f4008
-
 s32 Func_080f4168();
 s32 Audio_PlayCue(s32);
 

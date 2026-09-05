@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_PlaceAndPinSlots8To10 Func_020018f8
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

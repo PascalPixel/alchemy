@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_ClearChildValueOnMismatch Func_08096ab0
-
 struct Child_08096ab0 {
     u8 padding[91];
     u8 value;

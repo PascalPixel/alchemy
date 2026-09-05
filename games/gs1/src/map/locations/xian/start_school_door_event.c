@@ -24,8 +24,6 @@ static __inline__ void SetPosition(s32 actor, s32 horizontal, s32 vertical)
     Func_02006908(actor, horizontal, vertical);
 }
 
-#define StartSchoolDoorEvent Func_02002484
-
 void StartSchoolDoorEvent(void)
 {
     Func_02006864();

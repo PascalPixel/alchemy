@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_LoadEntryForKind Func_08021b80
-
 s32 Func_0801a4fc(u32, s32, s32 *, s32 *, s32, s32);
 s32 GameFlag_IsSet(s32);
 

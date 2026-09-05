@@ -5242,37 +5242,6 @@
       ]
     },
     {
-      "id": "unnamed-leaf-run-034",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_data/table_accessors_391.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_391",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02000a4c",
-          "extent": 8,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000a54",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000a58",
-          "extent": 8,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000a60",
-          "extent": 8,
-          "state": "exact-c"
-        }
-      ]
-    },
-    {
       "id": "overlay-3c6-unit",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene_script/scene_3c6.c",
@@ -6145,6 +6114,309 @@
         {
           "address": "0x02000cb4",
           "extent": 216,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "overlay-379-unit",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_script/scene_379.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_379",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000030",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000038",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200003c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000054",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000074",
+          "extent": 2628,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "overlay-391-unit",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_script/scene_391.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_391",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000030",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200006c",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020000c4",
+          "extent": 384,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000244",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002a8",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000474",
+          "extent": 404,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020009dc",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020009fc",
+          "extent": 78,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a4c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a54",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a58",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a60",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a68",
+          "extent": 178,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000b1c",
+          "extent": 248,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000c14",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000c60",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000c68",
+          "extent": 212,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002768",
+          "extent": 22,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002780",
+          "extent": 22,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002798",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020027c8",
+          "extent": 156,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002864",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200288c",
+          "extent": 232,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002ad8",
+          "extent": 172,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "overlay-398-unit",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_script/scene_398.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_398",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000030",
+          "extent": 14,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000040",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000094",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000098",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020000a0",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020000f4",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000148",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000168",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000188",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020001bc",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020001f0",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000280",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002ac",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002d8",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000424",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200044c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200045c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200046c",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020004b4",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020004e8",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020007c4",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020007f8",
+          "extent": 268,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000904",
+          "extent": 2,
           "state": "exact-c"
         }
       ]

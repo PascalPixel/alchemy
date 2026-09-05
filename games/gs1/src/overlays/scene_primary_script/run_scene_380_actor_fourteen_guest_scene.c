@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorFourteenGuestScene Func_02001d04
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_000010b6[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetActorsTwelveToEighteen Func_02002b1c
-
 extern void Func_020057b0();
 extern void Func_020057b8();
 extern void Func_020057c0();

@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_LerpThreeSamplesAtHalfB Func_08011ed0
-
 s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position)
 {
     s32 a;

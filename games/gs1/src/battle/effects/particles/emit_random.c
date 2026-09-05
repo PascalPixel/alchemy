@@ -19,8 +19,8 @@ extern char Value_001ffffe;
 
 void BattleEffect_EmitRandomParticle(void)
 {
-    register s32 relativeX;
-    register s32 relativeY;
+    register s32 rel_x;
+    register s32 rel_y;
     register s32 x_offset;
     register s32 y_offset;
     register s32 x_delta;
@@ -47,16 +47,16 @@ void BattleEffect_EmitRandomParticle(void)
 loop:
         x_offset = entry[6] << 20;
         x_delta = object_x - x_offset;
-        relativeX = x_delta + negative_center;
+        rel_x = x_delta + negative_center;
         y_offset = entry[7] << 20;
         y_delta = object_y - y_offset;
-        relativeY = y_delta + negative_center;
+        rel_y = y_delta + negative_center;
         if ((u32)(x_delta + 0x7FFFF) <= maximum &&
             (u32)(y_delta + 0x7FFFF) <= maximum) {
             FIELD(object, s32, 8) = x_offset + center;
             FIELD(object, s32, 0x10) = y_offset + center;
             RotateVectorByMagnitude(0x140000,
-                          (u16)ArcTan2(relativeY, relativeX),
+                          (u16)ArcTan2(rel_y, rel_x),
                           object + 8);
             FIELD(object, s32, 0x38) = 0x80000000;
             FIELD(object, s32, 0x3C) = 0x80000000;

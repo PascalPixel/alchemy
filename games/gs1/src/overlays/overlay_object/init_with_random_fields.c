@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_InitWithRandomFields Func_02000a84
-
 extern u8 *Func_02001cbe(void);
 extern void Func_02001d38(s32, s32);
 extern u32 Func_02001c64(void);

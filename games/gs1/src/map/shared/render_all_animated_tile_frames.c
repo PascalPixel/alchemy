@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Map_RenderAllAnimatedTileFrames Func_0800bf34
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Map_RenderAnimatedTileFrame(u8 *object, u32 pos);

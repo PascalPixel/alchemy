@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define UiWork_SetMenuBusy Func_080a2408
-
 extern u8 * volatile Data_03001e8c;
 
 void UiWork_SetMenuBusy(void)

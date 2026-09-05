@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_SetObjectFlag5bWhenMode3 Func_0808c44c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);

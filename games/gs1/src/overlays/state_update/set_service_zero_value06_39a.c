@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetServiceZeroValue06 Func_02000fcc
-
 /* Prepare service zero, set its +6 halfword, and run the follow-up sequence. */
 struct SceneService_02000fcc {
     u16 unknown00[3];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectAndSetActor8Byte35 Func_02001a70
-
 extern s32 Func_02003f5e(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_02003fcc(s32);
 

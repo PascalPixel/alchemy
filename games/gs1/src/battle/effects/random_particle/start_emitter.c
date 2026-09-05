@@ -45,10 +45,6 @@ struct EfxObj {
 extern u8 *Data_03001ebc;
 extern const u8 Data_0809e6c0[];
 extern const u8 Data_0809e87c[];
-#define Object_CreateFar Func_080090c8
-#define ItemIcon_LoadTilesFar Func_08015250
-#define VramBlock_LoadCached Func_08003fa4
-#define Runtime_ReleaseHeapBlock Func_08002dd8
 
 void RotateVectorByMagnitude(s32 mag, s32 ang, struct EfxPos *pos);
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -67,8 +63,6 @@ void BattleEffect_SpawnRandomParticleAtPosition(const void *src);
 #define ParticleData Data_0809e87c
 #define EfxPool (*(struct EfxObj **)((u8 *)&Data_03001ebc - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
-
-#define BattleEffect_StartRandomParticleEmitter Func_0808ef70
 
 struct EfxObj *BattleEffect_StartRandomParticleEmitter(s32 obj_id, s32 item)
 {

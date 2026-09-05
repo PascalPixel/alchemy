@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetFlag332AndDrawTiles Func_0200028c
-
 extern void Func_02004184(s32);
 extern u8 *Func_020041ea(s32);
 extern void Func_0200413c(s32, s32, s32, s32, s32, s32);

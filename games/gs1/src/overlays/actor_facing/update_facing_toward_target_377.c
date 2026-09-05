@@ -1,7 +1,6 @@
 #include "types.h"
 #include "facing_object.h"
 
-#define SceneActor_UpdateFacingTowardTarget Func_02000030
 #define NULL ((void *)0)
 
 s32 Func_0200186e(s32, s32);

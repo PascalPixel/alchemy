@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWork_ClearValueNameTables Func_080198dc
-
 void UiWork_ClearValueNameTables(void)
 {
     s32 no;

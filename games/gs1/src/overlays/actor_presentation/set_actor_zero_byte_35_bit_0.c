@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetActorZeroByte35Bit0 Func_020015e0
-
 extern s32 Func_02005202(s32);
 
 void SceneActor_SetActorZeroByte35Bit0(void) {

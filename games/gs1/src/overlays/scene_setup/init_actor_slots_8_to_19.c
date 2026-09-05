@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitActorSlots8To19 Func_02003710
-
 extern void Func_02006ab6(s32);
 extern s32 *Func_02007aac();
 extern void Func_02007ab6(s32, s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define DisplayScroll_StepPositionEveryFourFrames Func_080f03c0
-
 typedef struct {
     u16 unused[4];
     u16 first;

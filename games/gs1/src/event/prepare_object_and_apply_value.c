@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Event_PrepareObjectAndApplyValue Func_080917d0
-
 s32 Func_08015420(s32 event_id, s32 value);
 s32 Runtime_GetObject(void);
 s32 Func_08077150(s32 event_id);

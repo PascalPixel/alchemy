@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_MoveTo232_125AndFace4000 Func_02002820
-
 typedef struct {
     u8 filler0[6];
     u16 unk6;

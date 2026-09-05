@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSceneEntryHook Func_02001a0c
-
 /*
  * Resource 3ad, scene-entry hook at 0x02001a0c (200 bytes, 19 call sites).
  *

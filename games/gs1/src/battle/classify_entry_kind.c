@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_ClassifyEntryKind Func_0802706c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_080772b8(void *);

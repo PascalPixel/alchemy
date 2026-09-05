@@ -1,8 +1,6 @@
 #include "types.h"
 #include "battle_msg.h"
 
-#define BattlePresentation_ShowMessageWhenField38Positive Func_080b8888
-
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Runtime_GetObject(s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_DispatchByStatus448 Func_02001a14
-
 extern u8 Data_02000240[];
 extern u8 Value_0000008c;
 extern u8 Value_0000008e;

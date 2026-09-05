@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowMessages8fbAnd8fc Func_020002f8
-
 extern u8 *Data_03001ebc;
 
 extern void Func_02000c78(s32);

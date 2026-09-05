@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetModeByFrameBit1 Func_020042bc
-
 extern void Func_0200899c(s32, s32);
 extern void Func_020089a6(s32, s32);
 extern s32 Func_0200891e(s32, s32);

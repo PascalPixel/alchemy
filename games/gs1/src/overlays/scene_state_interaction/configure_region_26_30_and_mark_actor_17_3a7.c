@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ConfigureRegion26_30AndMarkActor17 Func_02000554
-
 extern u8 *Func_0200168c(s32);
 extern void Func_02001642(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_020016ac(s32);

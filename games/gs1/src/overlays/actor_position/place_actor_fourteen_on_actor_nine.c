@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_PlaceActorFourteenOnActorNine Func_02001e94
-
 struct Actor {
     s32 f00;
     s32 f04;

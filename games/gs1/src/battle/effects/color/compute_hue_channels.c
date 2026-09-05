@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_ComputeHueChannels Func_08097948
-
 s32 Func_080979a4(s32, s32, s32);
 
 void BattleEffect_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum) {

@@ -14,7 +14,6 @@ void Func_02005e8e();
 /* This overlay's transition starter at 0x02001774. */
 void Func_020045a2();
 
-#define AdvanceActor16AlongEscapeRoute Func_02002dd0
 void AdvanceActor16AlongEscapeRoute(void)
 {
     s32 column;

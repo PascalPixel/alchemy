@@ -1,8 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-#define SaveState_DeleteSelectedSlot Func_0801fc84
-
 extern u8 Value_0000000a;
 extern u8 Value_0000000d;
 extern u8 Value_00000016;

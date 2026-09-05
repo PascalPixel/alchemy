@@ -13,7 +13,6 @@ void Func_0200672e(s32, s32);
 void Func_0200670c(s32);
 void Func_0200679e(s32, s32, s32);
 
-#define StartDoraHouseAccidentScene Func_020010a8
 void StartDoraHouseAccidentScene(void)
 {
     Func_02006736(0, 0x108, 0x318);

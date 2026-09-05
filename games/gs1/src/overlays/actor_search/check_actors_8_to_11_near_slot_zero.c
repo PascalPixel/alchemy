@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CheckActors8To11NearSlotZero Func_020026b8
-
 typedef struct {
     u8 pad[9];
     u8 low : 2;

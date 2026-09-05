@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchBySceneId Func_0200164c
-
 extern s16 Data_02000240[];
 extern u8 Value_00000063;
 extern u8 Value_00000066;

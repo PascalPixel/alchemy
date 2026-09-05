@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectPairByFlag Func_020028dc
-
 extern void Func_02005d68(s32, s32, s32, s32, s32, s32);
 extern void Func_02005d7a(s32, s32, s32, s32, s32, s32);
 extern void Func_02005d8e(s32, s32, s32, s32, s32, s32);

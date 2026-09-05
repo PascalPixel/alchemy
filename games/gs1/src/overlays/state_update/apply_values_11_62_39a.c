@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyValues11And62 Func_02000040
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 

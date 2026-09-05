@@ -32,7 +32,7 @@ void BattleEffect_SpawnRandomParticleAtPosition(const struct Source_0808f28c *so
 {
     struct Values_0808f28c values;
     struct Object_0808f28c *object;
-    u32 firstRandom;
+    u32 rnd;
 
     if ((100 * Random16() >> 16) > 9)
         return;
@@ -40,8 +40,8 @@ void BattleEffect_SpawnRandomParticleAtPosition(const struct Source_0808f28c *so
     values.first = source->values.first;
     values.second = source->values.second;
     values.third = source->values.third;
-    firstRandom = Random16();
-    RotateVectorByMagnitude(firstRandom << 4, Random16(), &values);
+    rnd = Random16();
+    RotateVectorByMagnitude(rnd << 4, Random16(), &values);
     object = Object_Spawn(
         0x11D, values.first, values.second, values.third);
     if (object != 0) {

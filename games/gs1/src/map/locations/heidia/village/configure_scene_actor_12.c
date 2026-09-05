@@ -5,7 +5,6 @@ void Func_0200614c(s32, s32, s32, s32, s32, s32);
 u8 *Func_020061ca(s32);
 void Func_0200616e(u8 *, s32);
 
-#define ConfigureSceneActor12 Func_02000b4c
 void ConfigureSceneActor12(void)
 {
     s32 actor_slot = 15;

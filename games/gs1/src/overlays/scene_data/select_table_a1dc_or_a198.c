@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableA1DCOrA198 Func_02000094
-
 extern s32 Func_02001986(s32);
 
 s32 SceneData_SelectTableA1DCOrA198(void)

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ClearCurrentRecordAndReleaseTarget Func_02005578
-
 /*
  * resource_39c owner at 0x02005578, 72 bytes: clear the current-rec
  * flag word and, if the rec has a linked object, reset one of its

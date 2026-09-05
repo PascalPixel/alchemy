@@ -3,7 +3,6 @@
 void Func_02007852(s32, s32, s32, s32, s32, s32);
 void Func_0200786c(s32, s32, s32, s32, s32, s32);
 
-#define ConfigureInteractionRegionA Func_0200226c
 void ConfigureInteractionRegionA(void)
 {
     Func_02007852(2, 82, 1, 2, 21, 81);

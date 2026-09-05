@@ -1,7 +1,5 @@
 #include "object_runtime.h"
 
-#define Object_IsTargetUnset Func_0800ca98
-
 s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 {
     s32 first;

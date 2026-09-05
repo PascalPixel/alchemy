@@ -24,43 +24,42 @@ s32 BattlePresentation_BuildUnitEntries(
     u16 *excluded_units = Func_08004970(17);
     u16 *unit_ids = Func_08004970(9);
     s32 unit_count = Func_080b6b40(1, unit_ids);
-    s32 entry_count = 0;
     s32 excluded_count = 0;
+    s32 entry_count = 0;
     s32 unit_index;
 
     for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        u16 unit_id = unit_ids[unit_index];
-        u8 *unit = Func_08077008(unit_id);
-        s32 copy_count = unit[0x43];
+        u8 *unit = Func_08077008(unit_ids[unit_index]);
         s32 copy_index;
 
-        for (copy_index = 0; copy_index < copy_count; copy_index++) {
+        for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
             if (unit[0x13c] != 0 || (*(u32 *)(unit + 0x138) & 0xffffff00)) {
                 struct BattlePresentationUnitEntry *entry =
-                    &entries[entry_count++];
-                entry->unit_id = unit_id;
+                    &entries[entry_count];
+                entry->unit_id = unit_ids[unit_index];
                 entry->value = *(u16 *)(unit + 0x40);
                 entry->width = 8;
                 entry->mode = 0;
                 entry->height = 0x180;
+                entry_count++;
             } else {
-                excluded_units[excluded_count++] = unit_id;
+                excluded_units[excluded_count++] = unit_ids[unit_index];
             }
         }
     }
 
     {
-        s32 appended = Func_080151c0(
-            &entries[entry_count],
-            excluded_units,
-            excluded_count);
-        s32 result = -1;
+        s32 appended;
 
-        if (appended >= 0) {
-            result = entry_count + appended;
+        entries += entry_count;
+        appended = Func_080151c0(entries, excluded_units, excluded_count);
+        if (appended < 0) {
+            unit_count = -1;
+        } else {
+            unit_count = entry_count + appended;
         }
         Func_08002df0(unit_ids);
         Func_08002df0(excluded_units);
-        return result;
+        return unit_count;
     }
 }

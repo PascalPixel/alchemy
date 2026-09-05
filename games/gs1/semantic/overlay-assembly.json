@@ -3276,14 +3276,15 @@
     },
     {
       "overlay": "resource_3ba",
-      "start": "0x02002844",
+      "start": "0x02002910",
       "end": "0x02002bac",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 43 calls, 1 loop(s), 37 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ba:02002844"
+        "games/gs1/recon/en/dossiers.json#resource_3ba:02002844",
+        "region split around the exact C owner at 0x02002844..0x02002910; the retained bytes after it keep their classification"
       ]
     },
     {

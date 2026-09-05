@@ -7,7 +7,7 @@
  * selected_object, matching main:0808e23c's use of the same shared symbol. */
 
 u8 *Ability_GetData(s32);
-s32 Func_0808e4b4(s32, u16, void *);
+s32 Func_0808e4b4(s32, s32, void *);
 void Func_08096fb0(s32, s32);
 void BattleEffect_SetupObjectPair(s32, s32);
 s32 Func_08096b28(void *, s32, s32);

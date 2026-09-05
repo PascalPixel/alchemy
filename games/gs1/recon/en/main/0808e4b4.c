@@ -38,7 +38,7 @@ struct BattleEffectValueRecord {
  * narrower C type.
  */
 s32 BattleEffect_FindMatchingEvent(
-    s32 requested_flags, u16 group, void *result)
+    s32 requested_flags, s32 group, void *result)
 {
     struct BattleEffectRuntime *runtime =
         *(struct BattleEffectRuntime **)0x03001ebc;

@@ -3259,19 +3259,6 @@
       ]
     },
     {
-      "overlay": "resource_37b",
-      "start": "0x0200105c",
-      "end": "0x02001574",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 89 calls, 3 loop(s), 5 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_37b:0200101a",
-        "resource_37b:0200101c (64 bytes) is now exact C; the remainder of the scene module stays retained"
-      ]
-    },
-    {
       "overlay": "resource_371",
       "start": "0x0200395c",
       "end": "0x02003f10",
@@ -3600,18 +3587,6 @@
         "complete production body accounts for 40 calls, 1 loop(s), 0 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_3bc:02000ba2",
         "region split around the exact C owner at 0x02000ba4..0x02000c5c; the retained bytes after it keep their classification"
-      ]
-    },
-    {
-      "overlay": "resource_3b5",
-      "start": "0x020002f0",
-      "end": "0x020004b0",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 24 calls, 0 loop(s), 12 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:020002f0"
       ]
     },
     {

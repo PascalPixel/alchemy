@@ -17237,6 +17237,10 @@
     "main:080207c4": {
       "name": "Save_WriteSelectedSlot",
       "source": "save/write_selected_slot.c"
+    },
+    "main:080bad7c": {
+      "name": "BattleTarget_SelectRandomPosition",
+      "source": "battle/target/select_random_position.c"
     }
   }
 }

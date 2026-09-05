@@ -1,12 +1,5 @@
-//! Structural divergence decoder over disassembled instruction streams.
-//!
-//! The allocator decoder explains register-role residuals once the two
-//! instruction streams already align. This module reads the same
-//! `candidate.bin` / `reference.bin` pair when they do not align, names the
-//! control-flow divergence it can prove from branch structure alone, and
-//! proposes a catalogued repair only for the shapes the matching can search
-//! finitely. Everything else is reported as named evidence for the smart
-//! queue rather than guessed at.
+//! Branch-sequence evidence from candidate/reference disassembly.
+//! Only catalogued finite repairs are proposed; sequence equality is not CFG proof.
 
 use std::path::Path;
 
@@ -53,11 +46,8 @@ fn complement(op: &str) -> Option<&'static str> {
     })
 }
 
-/// The comparison branches whose spelling follows the compare's operand
-/// order. Mirroring `a < b` into `b > a` in the source exchanges exactly
-/// these pairs without touching behaviour. Complementary pairs (`beq`/`bne`,
-/// `bge`/`blt`) are a different situation — an inverted guard with swapped
-/// arms — and are reported as evidence, not repaired here.
+/// Operand-order mirrors, not complementary guards with swapped arms.
+/// For example, `a < b` and `b > a` exchange these pairs without changing behaviour.
 fn mirrorable(left: &str, right: &str) -> bool {
     matches!(
         (left, right),
@@ -286,10 +276,11 @@ fn compare(candidate: &[Branch], reference: &[Branch]) -> Vec<Divergence> {
     }
     if mirrors == 0 && other == 0 {
         findings.push(Divergence {
-            kind: "branch-structure-equal",
-            detail: "every conditional branch matches; the divergence is outside branch structure"
+            kind: "conditional-sequence-equal",
+            detail: "conditional opcodes and directions match; CFG equivalence is not established"
                 .into(),
-            advice: "inspect block contents rather than control flow",
+            advice:
+                "inspect branch destinations and block contents before choosing a source repair",
         });
     }
     findings
@@ -444,6 +435,19 @@ mod tests {
             op: op.into(),
             backward,
         }
+    }
+
+    #[test]
+    fn equal_conditions_do_not_prove_equal_destinations() {
+        let candidate = [branch(4, "beq", false)];
+        let mut reference = candidate.clone();
+        reference[0].target = 20;
+        let findings = compare(&candidate, &reference);
+        assert_eq!(findings[0].kind, "conditional-sequence-equal");
+        assert!(findings[0]
+            .detail
+            .contains("CFG equivalence is not established"));
+        assert!(plan(&findings).is_none());
     }
 
     #[test]

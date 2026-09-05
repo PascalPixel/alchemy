@@ -77,9 +77,6 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     .iter()
     .map(|s| (*s).to_string())
     .collect();
-    if target == CompilerTarget::Gs2 {
-        flags.push("-mthumb-inline-register-call".into());
-    }
     flags.push(include_flag(target));
     flags
 }
@@ -165,12 +162,12 @@ mod target_tests {
         assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
         assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
         assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
-        assert!(!gs1
-            .iter()
-            .any(|flag| flag == "-mthumb-inline-register-call"));
-        assert!(gs2
-            .iter()
-            .any(|flag| flag == "-mthumb-inline-register-call"));
+        assert_eq!(&gs1[..gs1.len() - 1], &gs2[..gs2.len() - 1]);
+        for flags in [&gs1, &gs2] {
+            assert!(!flags
+                .iter()
+                .any(|flag| flag == "-mthumb-inline-register-call"));
+        }
     }
     #[test]
     fn game_code_always_compiles_with_the_canonical_flags() {

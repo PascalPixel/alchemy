@@ -1,15 +1,7 @@
-use std::path::{Path, PathBuf};
+use compiler_core::routing::root;
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy overlay <adopt|park|audit|score|twins|disasm> [args]";
-
-fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("overlay is under tools")
-        .to_path_buf()
-}
 
 fn code(result: Result<i32, String>) -> ExitCode {
     match result {
@@ -29,12 +21,12 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "adopt" => code(overlay_adopt::run(&root(), rest)),
-        "park" => code(overlay_adopt::park::run(&root(), rest)),
-        "audit" => code(overlay_adopt::park::run_audit(&root(), rest)),
-        "score" => code(overlay_adopt::score::run(&root(), rest)),
+        "adopt" => code(overlay_adopt::run(root(), rest)),
+        "park" => code(overlay_adopt::park::run(root(), rest)),
+        "audit" => code(overlay_adopt::park::run_audit(root(), rest)),
+        "score" => code(overlay_adopt::score::run(root(), rest)),
         "disasm" => disassemble::cli::entry(rest),
-        "twins" => code(overlay_adopt::twins::run(&root(), rest)),
+        "twins" => code(overlay_adopt::twins::run(root(), rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

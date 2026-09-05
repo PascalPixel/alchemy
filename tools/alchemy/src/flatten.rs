@@ -58,6 +58,11 @@ pub fn entry(args: &[String]) -> ExitCode {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    const USAGE: &str = "usage: alchemy unit flatten <game> <resource_NNN> --id <unit-id> --path <src-relative .c> [--apply]";
+    if args == ["--help"] || args == ["-h"] {
+        println!("{USAGE}");
+        return Ok(());
+    }
     let apply = args.iter().any(|a| a == "--apply");
     let flag = |name: &str| {
         args.iter()
@@ -83,7 +88,7 @@ fn run(args: &[String]) -> Result<(), String> {
         flag("--id"),
         flag("--path"),
     ) else {
-        return Err("usage: alchemy unit flatten <game> <resource_NNN> --id <unit-id> --path <src-relative .c> [--apply]".into());
+        return Err(USAGE.into());
     };
     let root = std::env::current_dir().map_err(|e| e.to_string())?;
     let source_root = root.join("games").join(&game).join("src");

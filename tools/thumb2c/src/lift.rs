@@ -2035,30 +2035,22 @@ impl<'a> Lifter<'a> {
             },
             None => self.addr_expr(&base, i64::from(off), width),
         };
-        // A register still holding a lazy read of the location this store
-        // overwrites, and read again later, is captured first: the original
-        // read it before writing.
-        let mut captured: Option<String> = None;
+        // Capture live reads and expressions derived from the overwritten
+        // location before writing; each may hold a different old value.
         for r in 0..13usize {
             let Some(held) = self.regs[r].clone() else {
                 continue;
             };
-            if !held.mem || held.name.is_some() || self.fmt_raw(&held) != lhs {
+            let expression = self.fmt_raw(&held);
+            if held.name.is_some() || !expression.contains(&lhs) {
                 continue;
             }
-            if r as u8 == rd || !self.live_after(self.cursor + 1, self.ins.len(), r as u8) {
+            if !self.live_after(self.cursor + 1, self.ins.len(), r as u8) {
                 continue;
             }
-            let name = match &captured {
-                Some(name) => name.clone(),
-                None => {
-                    let name = format!("v{r}");
-                    push_unique(&mut self.consts, &name);
-                    self.emit(format!("{name} = {lhs};"));
-                    captured = Some(name.clone());
-                    name
-                }
-            };
+            let name = format!("v{r}");
+            push_unique(&mut self.consts, &name);
+            self.emit(format!("{name} = {expression};"));
             self.regs[r] = Some(Val::expr(name));
         }
         let rhs = self.fmt(&v);
@@ -3403,6 +3395,27 @@ mod tests {
         let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
         let ins = decode_window(&image, OVERLAY_BASE, image.len() as u32);
         lift(&ins).lines.join("\n")
+    }
+
+    #[test]
+    fn derived_queue_index_survives_count_store() {
+        // Load count, derive twice its old value, increment/store count,
+        // then use the old derived value at another destination.
+        let text = lifted(&[0x880a, 0x0053, 0x3201, 0x800a, 0x6003, 0x4770]);
+        let capture = text.find("v3 = ").expect(&text);
+        let update = text.find("+= 1;").expect(&text);
+        assert!(capture < update, "{text}");
+        assert!(text.contains("*(s32 *)(a0) = v3;"), "{text}");
+    }
+
+    #[test]
+    fn distinct_derived_values_get_distinct_captures() {
+        // r2=count+1 and r3=count*2 are both live after storing r2.
+        let text = lifted(&[0x880a, 0x0053, 0x3201, 0x800a, 0x6002, 0x6043, 0x4770]);
+        assert!(text.contains("v2 = "), "{text}");
+        assert!(text.contains("v3 = "), "{text}");
+        assert!(text.contains("*(s32 *)(a0) = v2;"), "{text}");
+        assert!(text.contains("*(s32 *)(a0 + 4) = v3;"), "{text}");
     }
 
     /// `ldr r0, [r1]; ldr r2, [r1, #4]; adds r0, r0, r2; str r0, [r1]; bx lr`

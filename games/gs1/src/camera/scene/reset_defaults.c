@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define Camera_ResetSceneDefaults Func_080f4028
+
 struct SceneCameraState {
     u8 filler0[12];
     s32 field0c;
@@ -42,7 +44,7 @@ void Func_08004c1c(s32);
 void Func_08004bd4(s32);
 void Func_08005258(u32, u32, u32);
 
-void Func_080f4028(void) {
+void Camera_ResetSceneDefaults(void) {
     struct SceneCameraState *state = Data_03001e80.state;
     struct SceneCameraTransfer local;
     u32 result;

@@ -1,4 +1,4 @@
 
-void NoBattleEffect(void)
+void BattleEffect_RunNoEffect(void)
 {
 }

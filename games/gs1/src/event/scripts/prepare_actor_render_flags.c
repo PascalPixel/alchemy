@@ -7,7 +7,7 @@ struct EventActor {
     u8 *render_state;
 };
 
-s32 prepare_event_actor_render_flags(struct EventActor *actor)
+s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
 {
     actor->flags &= ~1;
     actor->render_state[9] |= 0xc;

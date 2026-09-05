@@ -32,11 +32,11 @@ void BattleEffect_UpdateObjectVisibilityBounds(void)
         object = ObjectTable_Get(id);
 
         if (object != 0) {
-            s32 objectX = *(s32 *)(object + 8);
-            s32 objectY = *(s32 *)(object + 16);
+            s32 ox = *(s32 *)(object + 8);
+            s32 oy = *(s32 *)(object + 16);
 
-            if (objectX < left || objectX > right ||
-                objectY < top || objectY > bottom) {
+            if (ox < left || ox > right ||
+                oy < top || oy > bottom) {
                 *(u8 *)(object + 84) = 0;
             } else {
                 *(u8 *)(object + 84) = 1;

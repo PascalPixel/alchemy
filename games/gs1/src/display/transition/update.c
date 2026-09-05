@@ -54,7 +54,7 @@ extern s32 ScheduleCallback(void (*)(void));
 extern void Func_0800307c(s32, s32, s32);
 extern s32 Func_080072f0(s32, s32, s32, s32);
 
-void UpdateDisplayTransition(void)
+void DisplayTransition_Update(void)
 {
     struct DisplayTransitionState *state =
         *(struct DisplayTransitionState **)STATE_CELL_ADDR;
@@ -68,7 +68,7 @@ void UpdateDisplayTransition(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            ScheduleCallback(UpdateDisplayTransition);
+            ScheduleCallback(DisplayTransition_Update);
             Func_0800307c(1, 0, 0);
             return;
         } else {

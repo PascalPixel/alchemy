@@ -18,8 +18,8 @@ void UiText_DrawStringAtOffset(
     u8 *base;
     u32 cell;
     s32 vram;
-    s32 source_address;
-    s32 destination_address;
+    s32 src;
+    s32 dst;
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
@@ -40,13 +40,13 @@ void UiText_DrawStringAtOffset(
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
-        destination_address = vram + cell;
-        source_address = (s32)base + cell;
+        dst = vram + cell;
+        src = (s32)base + cell;
         phase = offset_x & 7;
         Func_0801de5c(
             buffer,
-            source_address,
-            destination_address,
+            src,
+            dst,
             phase);
         Func_08002df0(buffer);
     }

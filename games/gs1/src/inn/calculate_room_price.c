@@ -5,12 +5,12 @@ extern s8 Data_080b4ab6[];
 
 u8 *Runtime_GetObject(s32);
 
-s32 Inn_CalculateRoomPrice(s32 party_size_mode)
+s32 Inn_CalculateRoomPrice(s32 mode)
 {
     u8 *global = Data_03001f2c;
     u8 *base;
     s32 active = 0;
-    s32 factor = Data_080b4ab6[party_size_mode];
+    s32 factor = Data_080b4ab6[mode];
     s32 index = 0;
     s32 offset;
 

@@ -2,6 +2,6 @@
 
 s32 BattleEffectB(s32, s32);
 
-void BattleEffectB4(s32 effect) {
+void BattleEffect_RunSeriesBMode4(s32 effect) {
     BattleEffectB(effect, 4);
 }

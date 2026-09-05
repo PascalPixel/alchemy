@@ -1,8 +1,8 @@
 #include "types.h"
 
-s32 Graphics_ClampRgb555Component(s32 arg0)
+s32 Graphics_ClampRgb555Component(s32 val)
 {
-    if (arg0 > 31744)
-        arg0 = 31744;
-    return arg0;
+    if (val > 31744)
+        val = 31744;
+    return val;
 }

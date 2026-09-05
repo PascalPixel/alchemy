@@ -8,15 +8,15 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
     u8 *state;
     u8 *entries;
     u8 *entry;
-    u32 *countAddress;
+    u32 *count_p;
     u32 count;
     u32 offset;
 
     Trade_RemoveOffer(kind, first, second);
     state = Trade_GetOfferState(kind > 7);
     entries = state + 8;
-    countAddress = (u32 *)(state + 0x108);
-    count = *countAddress;
+    count_p = (u32 *)(state + 0x108);
+    count = *count_p;
     offset = count * 4;
     entries[offset] = first;
     count++;
@@ -24,6 +24,6 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
     entry[1] = second;
     entry[2] = kind;
     entry[3] = 0xFF;
-    *countAddress = count;
-    return countAddress;
+    *count_p = count;
+    return count_p;
 }

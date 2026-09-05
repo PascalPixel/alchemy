@@ -4,19 +4,19 @@
 
 void *RenderOutput_AcquireFree(void)
 {
-  void **free_output;
-  void *render_state;
+  void **p;
+  void *state;
   /* Detach and return the head of the free list. */
-  render_state = *((void **) ADDR_03001E8C);
-  free_output = *((void ***) (((u8 *) render_state) + RENDER_FREE_HEAD_OFS));
-  if (free_output != ((void *) 0))
+  state = *((void **) ADDR_03001E8C);
+  p = *((void ***) (((u8 *) state) + RENDER_FREE_HEAD_OFS));
+  if (p != ((void *) 0))
   {
-    if ((*free_output) == ((void *) 0))
+    if ((*p) == ((void *) 0))
     {
-      *((s32 *) (((u8 *) render_state) + RENDER_FREE_TAIL_OFS)) = (s32) (render_state + RENDER_FREE_HEAD_OFS);
+      *((s32 *) (((u8 *) state) + RENDER_FREE_TAIL_OFS)) = (s32) (state + RENDER_FREE_HEAD_OFS);
     }
-    *((void ***) (((u8 *) render_state) + RENDER_FREE_HEAD_OFS)) = *free_output;
-    *free_output = (void *) 0;
+    *((void ***) (((u8 *) state) + RENDER_FREE_HEAD_OFS)) = *p;
+    *p = (void *) 0;
   }
-  return free_output;
+  return p;
 }

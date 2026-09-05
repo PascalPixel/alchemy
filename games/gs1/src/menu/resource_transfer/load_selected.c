@@ -3,13 +3,13 @@
 
 struct SelectionNode_0801c188 {
     u8 padding_00[8];
-    u16 resource_index;
+    u16 no;
     u16 type;
 };
 
 struct TransferState_0801c188 {
     u8 padding_00[8];
-    u16 resource_index;
+    u16 no;
     u16 active;
     u16 handle;
     u16 transfer_id;
@@ -40,21 +40,21 @@ void Menu_LoadSelectedResource(void)
     struct SelectionNode_0801c188 *selection = Func_0801b36c(state);
     struct TransferState_0801c188 *transfer;
     struct ResourceBuffer_0801c188 *buffer;
-    u8 *resource_table;
+    u8 *tbl;
     void *resource;
-    s32 resource_index;
+    s32 no;
 
     if (selection->type != 1 && selection->type != 6)
         return;
 
     buffer = Runtime_AllocateHeapBlock(17, 0x608);
     transfer = (struct TransferState_0801c188 *)(state + 0x30C);
-    resource_index = selection->resource_index;
-    resource_table = GetResource((s32)&Value_000000f1);
+    no = selection->no;
+    tbl = GetResource((s32)&Value_000000f1);
     {
         void **destination = &buffer->resource;
-        resource = resource_table
-            + *(u16 *)(resource_table + selection->resource_index * 2);
+        resource = tbl
+            + *(u16 *)(tbl + selection->no * 2);
         *destination = resource;
     }
     Func_080053e8(resource, buffer);
@@ -64,7 +64,7 @@ void Menu_LoadSelectedResource(void)
     transfer->transfer_id =
         Resource_CopyData(transfer->handle, 0x400, buffer);
     transfer->active = 1;
-    transfer->resource_index = resource_index;
+    transfer->no = no;
     transfer->x = 40;
     transfer->y = 40;
     transfer->width = 240;

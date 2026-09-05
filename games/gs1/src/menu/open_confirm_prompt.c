@@ -47,9 +47,9 @@ void Func_0808a548(void);
 s32 Menu_OpenConfirmPrompt(void)
 {
     void *state = (void *)Runtime_AllocateHeapBlock(0x37, 0xa70);
-    s32 upper_flag_bits;
-    s32 unused_prompt_value;
-    s32 lower_flag_bits;
+    s32 high;
+    s32 unused;
+    s32 low;
     s32 result;
 
     Data_03001e68->suspended = 1;
@@ -63,13 +63,13 @@ s32 Menu_OpenConfirmPrompt(void)
     Func_08015418(0x06002500);
     Menu_CancelSoundReset();
     result = Func_080a5cc0(
-        &upper_flag_bits, &unused_prompt_value, &lower_flag_bits);
+        &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
         void *target = FIELD(&Data_03001e68, void *, 0x54);
         u16 flags;
         Ability_GetData(0x3fff & FIELD(state, u16, 0x178));
-        flags = (u16)(lower_flag_bits | (upper_flag_bits << 10));
+        flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }
     Func_08015278(FIELD(state, s32, 0x24));

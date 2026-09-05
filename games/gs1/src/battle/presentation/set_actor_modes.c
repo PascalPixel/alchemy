@@ -9,7 +9,7 @@ u32 Func_080b6c08(s32, s16 *);
 void Func_080c0f98(s32, s32);
 void Func_080c1054(void);
 
-void set_actor_modes(u16 *actors, s32 mode)
+void BattlePresentation_SetActorModes(u16 *actors, s32 mode)
 {
     s16 active_actors[14];
     u8 *battle = Data_03001e74;

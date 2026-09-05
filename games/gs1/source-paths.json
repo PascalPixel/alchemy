@@ -1,7 +1,10 @@
 {
   "format": 3,
   "owners": {
-    "main:0808f1c0": "battle/effects/objects/start_effect_22.c",
+    "main:0808f1c0": {
+      "name": "BattleEffect_StartEffectObject22",
+      "source": "battle/effects/objects/start_effect_22.c"
+    },
     "main:080113e4": {
       "name": "Map_UpdateCurrentTileBlock"
     },
@@ -12,24 +15,42 @@
       "name": "Menu_SelectQuantity",
       "source": "menu/select_quantity.c"
     },
-    "main:080a5b94": "menu/open_confirm_prompt.c",
+    "main:080a5b94": {
+      "name": "Menu_OpenConfirmPrompt",
+      "source": "menu/open_confirm_prompt.c"
+    },
     "main:080a5cc0": {
       "name": "Menu_ResolveSelectedAction"
     },
     "main:080a9f10": {
       "name": "BattleEffect_ApplyToTargets"
     },
-    "main:080d9fc8": "battle/effects/puff_arc/run.c",
-    "main:080ce85c": "battle/effects/member_orbit/run.c",
-    "main:080b211c": "shop/select_repair_item.c",
-    "main:080b362c": "shop/select_use_item.c",
+    "main:080d9fc8": {
+      "name": "BattleEffect_RunPuffArc",
+      "source": "battle/effects/puff_arc/run.c"
+    },
+    "main:080ce85c": {
+      "name": "BattleEffect_RunMemberOrbit",
+      "source": "battle/effects/member_orbit/run.c"
+    },
+    "main:080b211c": {
+      "name": "Shop_SelectRepairItem",
+      "source": "shop/select_repair_item.c"
+    },
+    "main:080b362c": {
+      "name": "Shop_SelectUseItem",
+      "source": "shop/select_use_item.c"
+    },
     "main:080b386c": {
       "name": "Shop_DrawUseItemDetails",
       "source": "shop/draw_use_item_details.c"
     },
     "main:08003008": "runtime/dispatch/reserved_no_op_f.c",
     "main:0800c0c4": "resource/table/reserved_no_op.c",
-    "main:0801a90c": "ui/render/reserved_work_no_op.c",
+    "main:0801a90c": {
+      "name": "UiWork_ReservedNoOp",
+      "source": "ui/render/reserved_work_no_op.c"
+    },
     "main:0801c9bc": "graphics/palette/reserved_no_op_a.c",
     "main:0801c9c0": "graphics/palette/reserved_no_op_b.c",
     "main:0801c9c4": "graphics/palette/reserved_no_op_c.c",
@@ -46,24 +67,48 @@
     "main:080f92fc": {
       "name": "AudioTest_RunParameterController"
     },
-    "main:0801e418": "ui/render/reserved_no_op.c",
-    "main:080294d0": "menu/reserved_no_op.c",
+    "main:0801e418": {
+      "name": "UiRender_ReservedNoOp",
+      "source": "ui/render/reserved_no_op.c"
+    },
+    "main:080294d0": {
+      "name": "Menu_ReservedNoOp",
+      "source": "menu/reserved_no_op.c"
+    },
     "main:08078228": "owner/reserved_no_op_a.c",
     "main:08079004": "owner/reserved_no_op_b.c",
     "main:080941dc": "object/effects/reserved_no_op.c",
     "main:08093e28": {
       "name": "FieldEffect_UpdateGridPlacement"
     },
-    "main:080a1bc8": "psynergy_menu/reserved_no_op.c",
+    "main:080a1bc8": {
+      "name": "PsynergyMenu_ReservedNoOp",
+      "source": "psynergy_menu/reserved_no_op.c"
+    },
     "main:080b5b14": "party/reserved_no_op.c",
     "main:080b6e7c": {
       "name": "Resource_FindFreeSlot"
     },
-    "main:080b83b0": "battle/motion/reserved_no_op.c",
-    "main:080b9b2c": "battle/runtime/reserved_no_op_b.c",
-    "main:080bf674": "battle/runtime/reserved_no_op_c.c",
-    "main:080c2a08": "battle/runtime/reserved_no_op_a.c",
-    "main:080f2eb8": "graphics/color/reserved_no_op.c",
+    "main:080b83b0": {
+      "name": "BattleMotion_ReservedNoOp83B0",
+      "source": "battle/motion/reserved_no_op.c"
+    },
+    "main:080b9b2c": {
+      "name": "BattleRuntime_ReservedNoOp9B2C",
+      "source": "battle/runtime/reserved_no_op_b.c"
+    },
+    "main:080bf674": {
+      "name": "BattleRuntime_ReservedNoOpF674",
+      "source": "battle/runtime/reserved_no_op_c.c"
+    },
+    "main:080c2a08": {
+      "name": "BattleRuntime_ReservedNoOp2A08",
+      "source": "battle/runtime/reserved_no_op_a.c"
+    },
+    "main:080f2eb8": {
+      "name": "Graphics_NoOpColor",
+      "source": "graphics/color/reserved_no_op.c"
+    },
     "resource_387:02000d04": {
       "name": "Overlay387_ConfigureActorEightAtDepth",
       "source": "overlays/actor_depth_effect/configure_actor_eight_at_depth.c"
@@ -147,7 +192,10 @@
     "main:080a7440": {
       "name": "CharacterSelector_Run"
     },
-    "main:08002f4c": "data/packed_table/adjust_marked_offsets.c",
+    "main:08002f4c": {
+      "name": "PackedTable_AdjustMarkedOffsets",
+      "source": "data/packed_table/adjust_marked_offsets.c"
+    },
     "main:08096c24": "resource/table/count_free_blocks.c",
     "main:0800a97c": {
       "name": "Resource_DecompressLz",
@@ -155,20 +203,59 @@
     },
     "main:0800b8ac": "resource/metadata/register.c",
     "main:0800b93c": "resource/metadata/unregister.c",
-    "main:08077330": "trade/get_offer_state.c",
-    "main:0807a0cc": "djinn/get_definition.c",
-    "main:0807a0f4": "djinn/add_to_least_loaded_owner.c",
-    "main:0807a1b4": "djinn/add_to_owner.c",
-    "main:0807a1f8": "trade/can_offer_djinn.c",
-    "main:0807a2bc": "djinn/is_active.c",
-    "main:0807a2e4": "djinn/activate.c",
-    "main:0807a350": "djinn/deactivate.c",
-    "main:0807a3a8": "trade/remove_offer.c",
-    "main:0807a458": "trade/add_offer.c",
-    "main:0807a498": "djinn/transfer.c",
-    "main:0807a550": "trade/count_pending_offers.c",
+    "main:08077330": {
+      "name": "Trade_GetOfferState",
+      "source": "trade/get_offer_state.c"
+    },
+    "main:0807a0cc": {
+      "name": "Djinn_GetDefinition",
+      "source": "djinn/get_definition.c"
+    },
+    "main:0807a0f4": {
+      "name": "Djinn_AddToLeastLoadedOwner",
+      "source": "djinn/add_to_least_loaded_owner.c"
+    },
+    "main:0807a1b4": {
+      "name": "Djinn_AddToOwner",
+      "source": "djinn/add_to_owner.c"
+    },
+    "main:0807a1f8": {
+      "name": "Trade_CanOfferDjinn",
+      "source": "trade/can_offer_djinn.c"
+    },
+    "main:0807a2bc": {
+      "name": "Djinn_IsActive",
+      "source": "djinn/is_active.c"
+    },
+    "main:0807a2e4": {
+      "name": "Djinn_Activate",
+      "source": "djinn/activate.c"
+    },
+    "main:0807a350": {
+      "name": "Djinn_Deactivate",
+      "source": "djinn/deactivate.c"
+    },
+    "main:0807a3a8": {
+      "name": "Trade_RemoveOffer",
+      "source": "trade/remove_offer.c"
+    },
+    "main:0807a458": {
+      "name": "Trade_AddOffer",
+      "source": "trade/add_offer.c"
+    },
+    "main:0807a498": {
+      "name": "Djinn_Transfer",
+      "source": "djinn/transfer.c"
+    },
+    "main:0807a550": {
+      "name": "Trade_CountPendingOffers",
+      "source": "trade/count_pending_offers.c"
+    },
     "main:0807a5bc": "party/sum_djinn_counts.c",
-    "main:0807a628": "inventory/add_and_equip.c",
+    "main:0807a628": {
+      "name": "Inventory_AddAndEquip",
+      "source": "inventory/add_and_equip.c"
+    },
     "main:08077348": "party/get_average_level.c",
     "main:080773d8": "owner/get_record.c",
     "main:08077f70": {
@@ -184,21 +271,48 @@
     "main:080782a0": "owner/update_ratio_pair.c",
     "main:080783a4": "owner/adjust_first_value.c",
     "main:080783dc": "owner/adjust_second_value.c",
-    "main:08077c10": "game_flags/refresh_lure_cap.c",
+    "main:08077c10": {
+      "name": "GameFlag_RefreshLureCap",
+      "source": "game_flags/refresh_lure_cap.c"
+    },
     "main:08077cb8": "runtime/get_build_stamp_time.c",
     "main:08079008": "owner/get_level_threshold.c",
     "main:08078e28": "owner/action/add.c",
     "main:080797fc": "owner/get_digit_values.c",
     "main:0807987c": "owner/get_resistance_value.c",
     "main:0801b148": "resource/reset_owner_entries.c",
-    "main:08017004": "ui/window/update_interpolated_geometry.c",
-    "main:08016868": "ui/runtime/process_render_channels.c",
-    "main:0801e260": "ui/window/clear_tile_attributes_in_rect.c",
-    "main:080209d0": "ui/window/copy_tilemap_region.c",
-    "main:08026fa8": "ui/text/show_localized_message_and_wait.c",
-    "main:08020b14": "ui/text/set_render_string.c",
-    "main:08020b64": "ui/text/draw_padded_label.c",
-    "main:08019944": "ui/render/lookup_named_value.c",
+    "main:08017004": {
+      "name": "UiWindow_UpdateInterpolatedGeometry",
+      "source": "ui/window/update_interpolated_geometry.c"
+    },
+    "main:08016868": {
+      "name": "UiWork_ProcessRenderChannels",
+      "source": "ui/runtime/process_render_channels.c"
+    },
+    "main:0801e260": {
+      "name": "UiWindow_ClearTileAttributesInRect",
+      "source": "ui/window/clear_tile_attributes_in_rect.c"
+    },
+    "main:080209d0": {
+      "name": "UiWindow_CopyTilemapRegion",
+      "source": "ui/window/copy_tilemap_region.c"
+    },
+    "main:08026fa8": {
+      "name": "UiText_ShowLocalizedMessageAndWait",
+      "source": "ui/text/show_localized_message_and_wait.c"
+    },
+    "main:08020b14": {
+      "name": "UiText_SetRenderString",
+      "source": "ui/text/set_render_string.c"
+    },
+    "main:08020b64": {
+      "name": "UiText_DrawPaddedLabel",
+      "source": "ui/text/draw_padded_label.c"
+    },
+    "main:08019944": {
+      "name": "UiRender_LookupNamedValue",
+      "source": "ui/render/lookup_named_value.c"
+    },
     "main:0801c21c": "resource/transfer/reset_pending.c",
     "main:0800be70": "map/shared/render_animated_tile_frame.c",
     "main:080110e0": "map/shared/render_palette_mapped_row.c",
@@ -206,7 +320,10 @@
     "main:08079ae8": "owner/refresh_derived_data.c",
     "main:0807961c": "party/add_active_owner.c",
     "main:08079664": "party/remove_active_owner.c",
-    "main:08079c8c": "item/get_equipped_element.c",
+    "main:08079c8c": {
+      "name": "Item_GetEquippedElement",
+      "source": "item/get_equipped_element.c"
+    },
     "main:080921c4": "object/motion/set_position_and_reset.c",
     "main:08092128": "object/motion/reset_and_set_position.c",
     "main:08092158": "object/motion/set_position_and_commit.c",
@@ -501,210 +618,603 @@
       "name": "UpdateLinkSessionCountdown",
       "source": "link/update_session_countdown.c"
     },
-    "main:0801e7c0": "ui/text/draw_character.c",
-    "main:08017dd4": "ui/text/format_number.c",
-    "main:0801e858": "ui/text/draw_string.c",
-    "main:0801e8b0": "ui/text/draw_string_at_offset.c",
-    "main:0801e940": "ui/text/draw_string_in_window.c",
-    "main:0801e9a0": "ui/text/draw_number.c",
-    "main:0801e9d4": "ui/text/draw_number_at_offset.c",
-    "main:0801ea08": "ui/text/draw_number_in_window.c",
-    "main:0801ea3c": "ui/text/draw_prefixed_number_at_offset.c",
+    "main:0801e7c0": {
+      "name": "UiText_DrawCharacterAtOffset",
+      "source": "ui/text/draw_character.c"
+    },
+    "main:08017dd4": {
+      "name": "UiText_FormatNumber",
+      "source": "ui/text/format_number.c"
+    },
+    "main:0801e858": {
+      "name": "UiText_DrawString",
+      "source": "ui/text/draw_string.c"
+    },
+    "main:0801e8b0": {
+      "name": "UiText_DrawStringAtOffset",
+      "source": "ui/text/draw_string_at_offset.c"
+    },
+    "main:0801e940": {
+      "name": "UiText_DrawStringInWindow",
+      "source": "ui/text/draw_string_in_window.c"
+    },
+    "main:0801e9a0": {
+      "name": "UiText_DrawNumber",
+      "source": "ui/text/draw_number.c"
+    },
+    "main:0801e9d4": {
+      "name": "UiText_DrawNumberAtOffset",
+      "source": "ui/text/draw_number_at_offset.c"
+    },
+    "main:0801ea08": {
+      "name": "UiText_DrawNumberInWindow",
+      "source": "ui/text/draw_number_in_window.c"
+    },
+    "main:0801ea3c": {
+      "name": "UiText_DrawPrefixedNumberAtOffset",
+      "source": "ui/text/draw_prefixed_number_at_offset.c"
+    },
     "main:08096af0": "field/events/run_type_handler.c",
-    "main:080970f8": "battle/effects/setup_object_pair.c",
+    "main:080970f8": {
+      "name": "BattleEffect_SetupObjectPair",
+      "source": "battle/effects/setup_object_pair.c"
+    },
     "main:08096b88": "object/group/apply_random_child_values.c",
     "main:08096cdc": "object/group/set_action_for_others.c",
-    "main:0809ba34": "battle/effects/runtime/has_reached_target.c",
-    "main:0809ba5c": "battle/effects/runtime/set_position.c",
-    "main:0809ba70": "battle/effects/runtime/set_object_mode.c",
-    "main:0809ba7c": "battle/effects/runtime/set_callback.c",
-    "main:0809b804": "battle/effects/runtime/update_slot.c",
-    "main:08095884": "battle/effects/runtime/update_all_slots.c",
-    "main:080958e4": "battle/effects/runtime/clear_active_slots_and_schedule_updates.c",
-    "main:0809b0b0": "battle/effects/runtime/update_spin_angle.c",
-    "main:0809b0dc": "battle/effects/runtime/update_descending_object.c",
+    "main:0809ba34": {
+      "name": "BattleEffect_HasReachedTarget",
+      "source": "battle/effects/runtime/has_reached_target.c"
+    },
+    "main:0809ba5c": {
+      "name": "EffectSlot_SetPosition",
+      "source": "battle/effects/runtime/set_position.c"
+    },
+    "main:0809ba70": {
+      "name": "EffectSlot_SetObjectMode",
+      "source": "battle/effects/runtime/set_object_mode.c"
+    },
+    "main:0809ba7c": {
+      "name": "EffectSlot_SetCallback",
+      "source": "battle/effects/runtime/set_callback.c"
+    },
+    "main:0809b804": {
+      "name": "EffectSlot_Update",
+      "source": "battle/effects/runtime/update_slot.c"
+    },
+    "main:08095884": {
+      "name": "BattleEffect_UpdateAllSlots",
+      "source": "battle/effects/runtime/update_all_slots.c"
+    },
+    "main:080958e4": {
+      "name": "BattleEffect_ClearActiveSlotsAndScheduleUpdates",
+      "source": "battle/effects/runtime/clear_active_slots_and_schedule_updates.c"
+    },
+    "main:0809b0b0": {
+      "name": "BattleEffect_UpdateSpinAngle",
+      "source": "battle/effects/runtime/update_spin_angle.c"
+    },
+    "main:0809b0dc": {
+      "name": "BattleEffect_UpdateDescendingObject",
+      "source": "battle/effects/runtime/update_descending_object.c"
+    },
     "main:0809b698": {
       "name": "RunBattleEffect16"
     },
-    "main:0809b364": "battle/effects/particles/update_descending_positive_arc.c",
-    "main:0809b3d8": "battle/effects/particles/update_descending_negative_arc.c",
-    "main:0809b5dc": "battle/effects/particles/update_paired_arc_spawner.c",
-    "main:0809b588": "battle/effects/update_effect16_state.c",
-    "main:0809a65c": "battle/effects/particles/update_motion_and_scale.c",
-    "main:0809ad90": "battle/effects/object_control/pause_object.c",
-    "main:0809ade8": "battle/effects/object_control/resume_object.c",
+    "main:0809b364": {
+      "name": "BattleEffect_UpdateDescendingParticlePositiveArc",
+      "source": "battle/effects/particles/update_descending_positive_arc.c"
+    },
+    "main:0809b3d8": {
+      "name": "BattleEffect_UpdateDescendingParticleNegativeArc",
+      "source": "battle/effects/particles/update_descending_negative_arc.c"
+    },
+    "main:0809b5dc": {
+      "name": "BattleEffect_UpdatePairedArcSpawner",
+      "source": "battle/effects/particles/update_paired_arc_spawner.c"
+    },
+    "main:0809b588": {
+      "name": "BattleEffect_UpdateEffect16State",
+      "source": "battle/effects/update_effect16_state.c"
+    },
+    "main:0809a65c": {
+      "name": "BattleEffect_UpdateParticleMotionAndScale",
+      "source": "battle/effects/particles/update_motion_and_scale.c"
+    },
+    "main:0809ad90": {
+      "name": "BattleEffect_PauseObject",
+      "source": "battle/effects/object_control/pause_object.c"
+    },
+    "main:0809ade8": {
+      "name": "BattleEffect_ResumeObject",
+      "source": "battle/effects/object_control/resume_object.c"
+    },
     "main:0809b648": "field/events/show_status_message.c",
-    "main:0809bcd4": "battle/effects/cleanup_resources_and_window.c",
-    "main:0809c314": "battle/effects/update_object_visibility_bounds.c",
-    "main:0809c3a4": "battle/effects/run_visibility_transition.c",
-    "main:0809088c": "battle/effects/interpolate_buffers.c",
-    "main:0809748c": "battle/effects/interpolate/prepare.c",
-    "main:08091220": "battle/effects/interpolate/apply_color_to_source_buffer.c",
-    "main:08091200": "battle/effects/interpolate/apply_color_to_target_buffer.c",
-    "main:08091254": "battle/effects/interpolate/start_buffer.c",
-    "main:08091240": "battle/effects/buffers/set_primary_value.c",
-    "main:0808a8d0": "battle/effects/data/get_resource_group.c",
-    "main:0808ab48": "battle/effects/data/load_resource_group.c",
-    "main:0808adf0": "battle/effects/data/lookup_result.c",
-    "main:0808b05c": "battle/effects/data/get_weighted_result.c",
-    "main:0808b074": "battle/effects/data/get_phase_result.c",
-    "main:0808b2b0": "battle/effects/data/select_result_pointer.c",
+    "main:0809bcd4": {
+      "name": "BattleEffect_CleanupResourcesAndWindow",
+      "source": "battle/effects/cleanup_resources_and_window.c"
+    },
+    "main:0809c314": {
+      "name": "BattleEffect_UpdateObjectVisibilityBounds",
+      "source": "battle/effects/update_object_visibility_bounds.c"
+    },
+    "main:0809c3a4": {
+      "name": "BattleEffect_RunVisibilityTransition",
+      "source": "battle/effects/run_visibility_transition.c"
+    },
+    "main:0809088c": {
+      "name": "BattleEffect_InterpolateBuffers",
+      "source": "battle/effects/interpolate_buffers.c"
+    },
+    "main:0809748c": {
+      "name": "BattleEffect_PrepareBufferInterpolation",
+      "source": "battle/effects/interpolate/prepare.c"
+    },
+    "main:08091220": {
+      "name": "BattleEffect_ApplyColorToSourceBuffer",
+      "source": "battle/effects/interpolate/apply_color_to_source_buffer.c"
+    },
+    "main:08091200": {
+      "name": "BattleEffect_ApplyColorToTargetBuffer",
+      "source": "battle/effects/interpolate/apply_color_to_target_buffer.c"
+    },
+    "main:08091254": {
+      "name": "BattleEffect_StartBufferInterpolation",
+      "source": "battle/effects/interpolate/start_buffer.c"
+    },
+    "main:08091240": {
+      "name": "BattleEffect_SetPrimaryBufferValue",
+      "source": "battle/effects/buffers/set_primary_value.c"
+    },
+    "main:0808a8d0": {
+      "name": "BattleEffect_GetResourceGroup",
+      "source": "battle/effects/data/get_resource_group.c"
+    },
+    "main:0808ab48": {
+      "name": "BattleEffect_LoadResourceGroup",
+      "source": "battle/effects/data/load_resource_group.c"
+    },
+    "main:0808adf0": {
+      "name": "BattleEffect_LookupResult",
+      "source": "battle/effects/data/lookup_result.c"
+    },
+    "main:0808b05c": {
+      "name": "BattleEffect_GetWeightedResult",
+      "source": "battle/effects/data/get_weighted_result.c"
+    },
+    "main:0808b074": {
+      "name": "BattleEffect_GetPhaseResult",
+      "source": "battle/effects/data/get_phase_result.c"
+    },
+    "main:0808b2b0": {
+      "name": "BattleEffect_SelectResultPointer",
+      "source": "battle/effects/data/select_result_pointer.c"
+    },
     "main:0808b8e8": {
       "name": "BattleEffect_ClearOutOfBoundsObjects"
     },
-    "main:0808d428": "game_flags/is_condition_active.c",
-    "main:0808c2dc": "battle/party/apply_drain.c",
-    "main:0808c3a4": "battle/party/apply_status_damage.c",
-    "main:080a1bdc": "psynergy_menu/refresh_owner_entries.c",
-    "main:080a1c2c": "psynergy_menu/position_owner_entry.c",
-    "main:080a1c6c": "inventory_menu/position_owner_entry.c",
-    "main:080a1cb0": "inventory_menu/refresh_owner_entries.c",
-    "main:080a172c": "ui/icon/create_with_resource.c",
-    "main:080a1778": "ui/icon/create_with_resource_variant.c",
-    "main:080a17c4": "ui/icon/prepare_object.c",
-    "main:080a1814": "ui/menu/create_cursor.c",
-    "main:080a9cbc": "inventory_menu/position_category_items.c",
-    "main:080a9d84": "inventory_menu/reset_category_item_positions.c",
-    "main:080f3898": "graphics/color/clamp_rgb555_channel.c",
-    "main:080f38ac": "graphics/color/clamp_rgb555_component.c",
-    "main:080f4028": "camera/scene/reset_defaults.c",
+    "main:0808d428": {
+      "name": "GameFlag_IsConditionActive",
+      "source": "game_flags/is_condition_active.c"
+    },
+    "main:0808c2dc": {
+      "name": "BattleParty_ApplyDrain",
+      "source": "battle/party/apply_drain.c"
+    },
+    "main:0808c3a4": {
+      "name": "BattleParty_ApplyStatusDamage",
+      "source": "battle/party/apply_status_damage.c"
+    },
+    "main:080a1bdc": {
+      "name": "PsynergyMenu_RefreshOwnerEntries",
+      "source": "psynergy_menu/refresh_owner_entries.c"
+    },
+    "main:080a1c2c": {
+      "name": "PsynergyMenu_PositionOwnerEntry",
+      "source": "psynergy_menu/position_owner_entry.c"
+    },
+    "main:080a1c6c": {
+      "name": "InventoryMenu_PositionOwnerEntry",
+      "source": "inventory_menu/position_owner_entry.c"
+    },
+    "main:080a1cb0": {
+      "name": "InventoryMenu_RefreshOwnerEntries",
+      "source": "inventory_menu/refresh_owner_entries.c"
+    },
+    "main:080a172c": {
+      "name": "UiIcon_CreateWithResource",
+      "source": "ui/icon/create_with_resource.c"
+    },
+    "main:080a1778": {
+      "name": "UiIcon_CreateWithResourceVariant",
+      "source": "ui/icon/create_with_resource_variant.c"
+    },
+    "main:080a17c4": {
+      "name": "UiIcon_PrepareObject",
+      "source": "ui/icon/prepare_object.c"
+    },
+    "main:080a1814": {
+      "name": "UiMenu_CreateCursor",
+      "source": "ui/menu/create_cursor.c"
+    },
+    "main:080a9cbc": {
+      "name": "InventoryMenu_PositionCategoryItems",
+      "source": "inventory_menu/position_category_items.c"
+    },
+    "main:080a9d84": {
+      "name": "InventoryMenu_ResetCategoryItemPositions",
+      "source": "inventory_menu/reset_category_item_positions.c"
+    },
+    "main:080f3898": {
+      "name": "Graphics_ClampRgb555Channel",
+      "source": "graphics/color/clamp_rgb555_channel.c"
+    },
+    "main:080f38ac": {
+      "name": "Graphics_ClampRgb555Component",
+      "source": "graphics/color/clamp_rgb555_component.c"
+    },
+    "main:080f4028": {
+      "name": "Camera_ResetSceneDefaults",
+      "source": "camera/scene/reset_defaults.c"
+    },
     "main:080f40b4": "math/multiply_fixed_8_8.c",
     "main:080f40d0": "math/scale_by_ratio_fixed.c",
     "main:080f40e8": "math/reciprocal_fixed.c",
     "main:080f4100": "graphics/color/scale_rgb555_buffer.c",
-    "main:08016418": "ui/render/finalize.c",
-    "main:08017364": "ui/render/is_complete.c",
-    "main:080174f8": "ui/text/prepare_message_work.c",
-    "main:080175a0": "ui/text/show_message_and_wait.c",
-    "main:08019a54": "ui/render/finalize_pending.c",
-    "main:0801c0dc": "ui/text/resource/initialize.c",
-    "main:0801c154": "ui/text/resource/set_position.c",
-    "main:0801c17c": "ui/text/resource/release.c",
-    "main:0801c0c4": "ui/text/resource/no_op_callback.c",
-    "main:0801c0c8": "ui/text/resource/no_op_callback_bank.c",
-    "main:08016478": "ui/render/output_list/prepare_for_redraw.c",
-    "main:08016498": "ui/render/output_list/redraw_saved_rect.c",
-    "main:08015e8c": "ui/render/output_list/acquire_free.c",
-    "main:08015ec0": "ui/render/output_list/release_free.c",
+    "main:08016418": {
+      "name": "UiWork_Finalize",
+      "source": "ui/render/finalize.c"
+    },
+    "main:08017364": {
+      "name": "UiWork_IsComplete",
+      "source": "ui/render/is_complete.c"
+    },
+    "main:080174f8": {
+      "name": "UiText_PrepareMessageWork",
+      "source": "ui/text/prepare_message_work.c"
+    },
+    "main:080175a0": {
+      "name": "UiText_ShowMessageAndWaitCore",
+      "source": "ui/text/show_message_and_wait.c"
+    },
+    "main:08019a54": {
+      "name": "UiWork_FinalizePendingCore",
+      "source": "ui/render/finalize_pending.c"
+    },
+    "main:0801c0dc": {
+      "name": "UiTextResource_Initialize",
+      "source": "ui/text/resource/initialize.c"
+    },
+    "main:0801c154": {
+      "name": "UiTextResource_SetPosition",
+      "source": "ui/text/resource/set_position.c"
+    },
+    "main:0801c17c": {
+      "name": "UiTextResource_Release",
+      "source": "ui/text/resource/release.c"
+    },
+    "main:0801c0c4": {
+      "name": "UiTextResource_NoOpCallback",
+      "source": "ui/text/resource/no_op_callback.c"
+    },
+    "main:0801c0c8": {
+      "name": "UiTextResource_NoOpCallbackBank",
+      "source": "ui/text/resource/no_op_callback_bank.c"
+    },
+    "main:08016478": {
+      "name": "RenderOutput_PrepareForRedraw",
+      "source": "ui/render/output_list/prepare_for_redraw.c"
+    },
+    "main:08016498": {
+      "name": "RenderOutput_RedrawSavedRect",
+      "source": "ui/render/output_list/redraw_saved_rect.c"
+    },
+    "main:08015e8c": {
+      "name": "RenderOutput_AcquireFree",
+      "source": "ui/render/output_list/acquire_free.c"
+    },
+    "main:08015ec0": {
+      "name": "RenderOutput_ReleaseFree",
+      "source": "ui/render/output_list/release_free.c"
+    },
     "main:0801a97c": "resource/schedule_owner_reset.c",
     "main:0801a968": "resource/schedule_owner_reset_delayed.c",
     "main:080a5534": "resource/load_paired_blocks.c",
     "main:080ae88c": "resource/load_paired_blocks_if_available.c",
-    "main:080ae958": "ui/icon/create_with_loaded_resource.c",
-    "main:080ae908": "ui/icon/load_resource_into_slot.c",
-    "main:0801fda8": "ui/window/fill_tilemap_rect.c",
-    "main:08020a60": "ui/window/set_tile_attribute_rect.c",
+    "main:080ae958": {
+      "name": "UiIcon_CreateWithLoadedResource",
+      "source": "ui/icon/create_with_loaded_resource.c"
+    },
+    "main:080ae908": {
+      "name": "UiIcon_LoadResourceIntoSlot",
+      "source": "ui/icon/load_resource_into_slot.c"
+    },
+    "main:0801fda8": {
+      "name": "UiWindow_FillTilemapRect",
+      "source": "ui/window/fill_tilemap_rect.c"
+    },
+    "main:08020a60": {
+      "name": "UiWindow_SetTileAttributeRect",
+      "source": "ui/window/set_tile_attribute_rect.c"
+    },
     "main:08019000": {
       "name": "UiWindow_SetTilemapEntry"
     },
-    "main:0801f5f0": "ui/window/set_tile_attribute_bit_rect.c",
-    "main:080164ac": "ui/render/output_list/clear.c",
-    "main:08016584": "ui/render/output_list/append.c",
-    "main:08016594": "ui/render/output_list/release.c",
-    "main:0801b398": "menu/selection/loop.c",
-    "main:0801b424": "menu/selection/wait_for_input.c",
-    "main:0801b4ec": "menu/selection/move_forward.c",
-    "main:0801b5c0": "menu/selection/move_backward.c",
-    "main:080a10d0": "ui/window/update_or_create.c",
-    "main:080a1114": "ui/window/close_if_open.c",
-    "main:080a2444": "menu/input/cancel_sound_tick.c",
-    "main:080a2474": "menu/input/reset_cancel_sound.c",
-    "main:080a2490": "menu/input/ensure_cancel_sound.c",
-    "main:0801eadc": "ui/render/create_output.c",
-    "main:0801eb64": "ui/render/create_output_from_resource.c",
-    "main:0801eb90": "ui/render/create_output_loaded.c",
-    "main:0801ebd8": "ui/render/create_output_with_transform.c",
-    "main:0801ec24": "ui/render/create_output_from_table.c",
+    "main:0801f5f0": {
+      "name": "UiWindow_SetTileAttributeBitRect",
+      "source": "ui/window/set_tile_attribute_bit_rect.c"
+    },
+    "main:080164ac": {
+      "name": "RenderOutput_ClearList",
+      "source": "ui/render/output_list/clear.c"
+    },
+    "main:08016584": {
+      "name": "RenderOutput_AppendToList",
+      "source": "ui/render/output_list/append.c"
+    },
+    "main:08016594": {
+      "name": "RenderOutput_Release",
+      "source": "ui/render/output_list/release.c"
+    },
+    "main:0801b398": {
+      "name": "Menu_SelectionLoop",
+      "source": "menu/selection/loop.c"
+    },
+    "main:0801b424": {
+      "name": "Menu_WaitForSelectionInput",
+      "source": "menu/selection/wait_for_input.c"
+    },
+    "main:0801b4ec": {
+      "name": "Menu_MoveSelectionForward",
+      "source": "menu/selection/move_forward.c"
+    },
+    "main:0801b5c0": {
+      "name": "Menu_MoveSelectionBackward",
+      "source": "menu/selection/move_backward.c"
+    },
+    "main:080a10d0": {
+      "name": "UiWindow_UpdateOrCreate",
+      "source": "ui/window/update_or_create.c"
+    },
+    "main:080a1114": {
+      "name": "UiWindow_CloseIfOpen",
+      "source": "ui/window/close_if_open.c"
+    },
+    "main:080a2444": {
+      "name": "Menu_CancelSoundTick",
+      "source": "menu/input/cancel_sound_tick.c"
+    },
+    "main:080a2474": {
+      "name": "Menu_CancelSoundReset",
+      "source": "menu/input/reset_cancel_sound.c"
+    },
+    "main:080a2490": {
+      "name": "Menu_EnsureCancelSound",
+      "source": "menu/input/ensure_cancel_sound.c"
+    },
+    "main:0801eadc": {
+      "name": "RenderOutput_Create",
+      "source": "ui/render/create_output.c"
+    },
+    "main:0801eb64": {
+      "name": "RenderOutput_CreateFromResource",
+      "source": "ui/render/create_output_from_resource.c"
+    },
+    "main:0801eb90": {
+      "name": "RenderOutput_CreateLoaded",
+      "source": "ui/render/create_output_loaded.c"
+    },
+    "main:0801ebd8": {
+      "name": "RenderOutput_CreateWithTransform",
+      "source": "ui/render/create_output_with_transform.c"
+    },
+    "main:0801ec24": {
+      "name": "RenderOutput_CreateFromTable",
+      "source": "ui/render/create_output_from_table.c"
+    },
     "main:080215e0": "graphics/resource/load_pair.c",
     "main:08021620": "graphics/resource/create_pair.c",
     "main:080216e8": "graphics/resource/load_frame.c",
     "main:08021750": "graphics/resource/create_frame.c",
-    "main:0801c3e8": "ui/timed_notice/tick.c",
-    "main:0801c428": "ui/timed_notice/close_if_active.c",
-    "main:0802875c": "menu/load_resource_slot.c",
-    "main:0802851c": "menu/end_resource_selection.c",
-    "main:080287a8": "menu/append_resource_entry.c",
-    "main:080288a8": "menu/layout_resource_entries.c",
-    "main:08028aa8": "menu/draw_mode_label.c",
-    "main:08028b80": "menu/draw_mode_indicator.c",
-    "main:08028ef0": "menu/draw_selection_row.c",
-    "main:08028f98": "menu/run_selection.c",
+    "main:0801c3e8": {
+      "name": "UiTimedNotice_Tick",
+      "source": "ui/timed_notice/tick.c"
+    },
+    "main:0801c428": {
+      "name": "UiTimedNotice_CloseIfActive",
+      "source": "ui/timed_notice/close_if_active.c"
+    },
+    "main:0802875c": {
+      "name": "Menu_LoadResourceSlot",
+      "source": "menu/load_resource_slot.c"
+    },
+    "main:0802851c": {
+      "name": "Menu_EndResourceSelection",
+      "source": "menu/end_resource_selection.c"
+    },
+    "main:080287a8": {
+      "name": "Menu_AppendResourceEntry",
+      "source": "menu/append_resource_entry.c"
+    },
+    "main:080288a8": {
+      "name": "Menu_LayoutResourceEntries",
+      "source": "menu/layout_resource_entries.c"
+    },
+    "main:08028aa8": {
+      "name": "Menu_DrawModeLabel",
+      "source": "menu/draw_mode_label.c"
+    },
+    "main:08028b80": {
+      "name": "Menu_DrawModeIndicator",
+      "source": "menu/draw_mode_indicator.c"
+    },
+    "main:08028ef0": {
+      "name": "Menu_DrawSelectionRow",
+      "source": "menu/draw_selection_row.c"
+    },
+    "main:08028f98": {
+      "name": "Menu_RunSelection",
+      "source": "menu/run_selection.c"
+    },
     "main:08092054": "object/get_by_id.c",
     "main:08096c80": "object/spawn.c",
-    "main:080fb518": "audio/execute_memory_access_command.c",
-    "main:080f7db4": "audio/track/reset_slot_buckets.c",
-    "main:080f7df0": "audio/track/insert_slot_node.c",
-    "main:080f7e34": "audio/track/remove_slot_node.c",
-    "main:080f7e60": "audio/track/consume_slot_bytes.c",
-    "main:080f7f30": "audio/track/copy_buffered_bytes.c",
-    "main:080f2ebc": "graphics/color/interpolate_palette_buffers.c",
+    "main:080fb518": {
+      "name": "MusicPlayer_ExecuteMemoryAccessCommand",
+      "source": "audio/execute_memory_access_command.c"
+    },
+    "main:080f7db4": {
+      "name": "AudioTrack_ResetSlotBuckets",
+      "source": "audio/track/reset_slot_buckets.c"
+    },
+    "main:080f7df0": {
+      "name": "AudioTrack_InsertSlotNode",
+      "source": "audio/track/insert_slot_node.c"
+    },
+    "main:080f7e34": {
+      "name": "AudioTrack_RemoveSlotNode",
+      "source": "audio/track/remove_slot_node.c"
+    },
+    "main:080f7e60": {
+      "name": "AudioTrack_ConsumeSlotBytes",
+      "source": "audio/track/consume_slot_bytes.c"
+    },
+    "main:080f7f30": {
+      "name": "AudioTrack_CopyBufferedBytes",
+      "source": "audio/track/copy_buffered_bytes.c"
+    },
+    "main:080f2ebc": {
+      "name": "Graphics_InterpolatePaletteBuffers",
+      "source": "graphics/color/interpolate_palette_buffers.c"
+    },
     "main:080f3804": "graphics/color/transform_large_palette.c",
     "main:080f3824": "graphics/color/transform_small_palette.c",
     "main:080f3844": "graphics/color/set_palette_transform_value.c",
     "main:080f3858": "graphics/color/update_palette_interpolation.c",
-    "main:080fb410": "audio/music/track/clear_modulation.c",
-    "main:080fb430": "audio/music/player/set_modulation_depth.c",
-    "main:080fb4a4": "audio/music/player/set_lfo_speed.c",
-    "main:080fb6a4": "audio/music/track/read_wave_pointer.c",
-    "main:080fb714": "audio/music/track/set_tone_decay.c",
-    "main:080fb728": "audio/music/track/set_tone_sustain.c",
-    "main:080fb73c": "audio/music/track/set_tone_release.c",
-    "main:080fb750": "audio/music/track/set_pseudo_echo_volume.c",
-    "main:080fb75c": "audio/music/track/set_pseudo_echo_length.c",
+    "main:080fb410": {
+      "name": "MusicTrack_ClearModulation",
+      "source": "audio/music/track/clear_modulation.c"
+    },
+    "main:080fb430": {
+      "name": "MusicPlayer_SetModulationDepth",
+      "source": "audio/music/player/set_modulation_depth.c"
+    },
+    "main:080fb4a4": {
+      "name": "MusicPlayer_SetLfoSpeed",
+      "source": "audio/music/player/set_lfo_speed.c"
+    },
+    "main:080fb6a4": {
+      "name": "MusicTrack_ReadWavePointer",
+      "source": "audio/music/track/read_wave_pointer.c"
+    },
+    "main:080fb714": {
+      "name": "MusicTrack_SetToneDecay",
+      "source": "audio/music/track/set_tone_decay.c"
+    },
+    "main:080fb728": {
+      "name": "MusicTrack_SetToneSustain",
+      "source": "audio/music/track/set_tone_sustain.c"
+    },
+    "main:080fb73c": {
+      "name": "MusicTrack_SetToneRelease",
+      "source": "audio/music/track/set_tone_release.c"
+    },
+    "main:080fb750": {
+      "name": "MusicTrack_SetPseudoEchoVolume",
+      "source": "audio/music/track/set_pseudo_echo_volume.c"
+    },
+    "main:080fb75c": {
+      "name": "MusicTrack_SetPseudoEchoLength",
+      "source": "audio/music/track/set_pseudo_echo_length.c"
+    },
     "main:08096810": {
-      "name": "RunBattleEffect",
+      "name": "BattleEffect_Run",
       "source": "battle/effects/run_effect.c"
     },
     "main:0808df1c": {
       "name": "BattleEffect_SelectNearbyTargetObject"
     },
-    "main:08097b70": "battle/effects/item_break/update_fragment.c",
+    "main:08097b70": {
+      "name": "BattleEffect_UpdateItemBreakFragment",
+      "source": "battle/effects/item_break/update_fragment.c"
+    },
     "main:0809802c": {
       "name": "BattleEffect_RunItemBreakSequence",
       "source": "battle/effects/item_break/run_item_break_sequence.c"
     },
-    "main:08098070": "battle/effects/item_break/start.c",
-    "main:08098a84": "battle/effects/item_break/spawn_mode_3.c",
-    "main:0809a3c4": "battle/effects/item_break/spawn_mode_1.c",
+    "main:08098070": {
+      "name": "BattleEffect_StartItemBreak",
+      "source": "battle/effects/item_break/start.c"
+    },
+    "main:08098a84": {
+      "name": "BattleEffect_SpawnItemBreakMode3",
+      "source": "battle/effects/item_break/spawn_mode_3.c"
+    },
+    "main:0809a3c4": {
+      "name": "BattleEffect_SpawnItemBreakMode1",
+      "source": "battle/effects/item_break/spawn_mode_1.c"
+    },
     "main:080984c0": {
       "name": "ResetSceneTransitionEffect",
       "source": "battle/effects/scene_transition/reset.c"
     },
     "main:080985a8": {
-      "name": "RunBurstParticleMainObject",
+      "name": "BattleEffect_RunBurstParticleMainObject",
       "source": "battle/effects/burst_particles/run_main_object.c"
     },
     "main:08098698": {
       "name": "BattleEffect_SpawnBurstParticleField"
     },
     "main:080985fc": {
-      "name": "RunBurstParticleEffect",
+      "name": "BattleEffect_RunBurstParticles",
       "source": "battle/effects/burst_particles/run.c"
     },
     "main:08099018": {
-      "name": "UpdateOrbitingParticleMain",
+      "name": "BattleEffect_UpdateOrbitingParticleMain",
       "source": "battle/effects/orbiting_particles/update_main.c"
     },
-    "main:08099040": "battle/effects/orbiting_particles/update_fade.c",
-    "main:08099070": "battle/effects/orbiting_particles/update_orbit_left.c",
-    "main:080990cc": "battle/effects/orbiting_particles/update_orbit_right.c",
+    "main:08099040": {
+      "name": "BattleEffect_UpdateOrbitingParticleFade",
+      "source": "battle/effects/orbiting_particles/update_fade.c"
+    },
+    "main:08099070": {
+      "name": "BattleEffect_UpdateOrbitingParticleLeft",
+      "source": "battle/effects/orbiting_particles/update_orbit_left.c"
+    },
+    "main:080990cc": {
+      "name": "BattleEffect_UpdateOrbitingParticleRight",
+      "source": "battle/effects/orbiting_particles/update_orbit_right.c"
+    },
     "main:08099128": {
-      "name": "StartOrbitingParticleEffect",
+      "name": "BattleEffect_StartOrbitingParticles",
       "source": "battle/effects/orbiting_particles/start.c"
     },
     "main:08099160": {
-      "name": "RunOrbitingParticleEffect",
+      "name": "BattleEffect_RunOrbitingParticles",
       "source": "battle/effects/orbiting_particles/run.c"
     },
-    "main:0808eee4": "battle/effects/random_particle/emit.c",
+    "main:0808eee4": {
+      "name": "BattleEffect_EmitRandomParticleFromEmitter",
+      "source": "battle/effects/random_particle/emit.c"
+    },
     "main:0808ef70": {
       "name": "BattleEffect_StartRandomParticleEmitter",
       "source": "battle/effects/random_particle/start_emitter.c"
     },
-    "main:0808f28c": "battle/effects/random_particle/spawn_at_position.c",
-    "main:08098b10": "battle/effects/radial_burst/update.c",
-    "main:0809aa98": "battle/effects/radial_camera/update.c",
-    "main:0809a44c": "battle/effects/update_object_motion_scale_and_linked_angle.c",
+    "main:0808f28c": {
+      "name": "BattleEffect_SpawnRandomParticleAtPosition",
+      "source": "battle/effects/random_particle/spawn_at_position.c"
+    },
+    "main:08098b10": {
+      "name": "BattleEffect_UpdateRadialBurst",
+      "source": "battle/effects/radial_burst/update.c"
+    },
+    "main:0809aa98": {
+      "name": "BattleEffect_UpdateRadialCamera",
+      "source": "battle/effects/radial_camera/update.c"
+    },
+    "main:0809a44c": {
+      "name": "BattleEffect_UpdateObjectMotionScaleAndLinkedAngle",
+      "source": "battle/effects/update_object_motion_scale_and_linked_angle.c"
+    },
     "main:080a2268": "render/tilemap/set_flag_rect.c",
     "main:080ad608": "object/motion/four_object/replace_slot.c",
     "main:080ad318": "object/motion/four_object/clear_slots_and_schedule.c",
@@ -714,18 +1224,36 @@
     "main:080ad508": "object/motion/four_object/initialize_bottom_row.c",
     "main:080ad35c": "object/motion/four_object/update_all_positions.c",
     "main:080ad658": "object/motion/four_object/clear_slots_and_schedule_alt.c",
-    "main:080be0b4": "battle/placement/count_valid_entries.c",
-    "main:080bf5a8": "battle/placement/update_timed_entries.c",
-    "main:08099d18": "battle/effects/particles/spawn_falling.c",
+    "main:080be0b4": {
+      "name": "BattlePlacement_CountValidEntries",
+      "source": "battle/placement/count_valid_entries.c"
+    },
+    "main:080bf5a8": {
+      "name": "BattlePlacement_UpdateTimedEntries",
+      "source": "battle/placement/update_timed_entries.c"
+    },
+    "main:08099d18": {
+      "name": "BattleEffect_SpawnFallingParticles",
+      "source": "battle/effects/particles/spawn_falling.c"
+    },
     "main:0809a484": {
       "name": "BattleEffect_CreateRadialParticle"
     },
     "main:0809abb4": {
       "name": "BattleEffect_RunFallbackObjectTransition"
     },
-    "main:0809a6b8": "battle/effects/particles/spawn_radial_particle_ring.c",
-    "main:08092624": "battle/effects/particles/spawn_burst.c",
-    "main:0809b11c": "battle/effects/particles/update_radial_launch.c",
+    "main:0809a6b8": {
+      "name": "BattleEffect_SpawnRadialParticleRing",
+      "source": "battle/effects/particles/spawn_radial_particle_ring.c"
+    },
+    "main:08092624": {
+      "name": "BattleEffect_SpawnBurstParticle",
+      "source": "battle/effects/particles/spawn_burst.c"
+    },
+    "main:0809b11c": {
+      "name": "BattleEffect_UpdateRadialLaunch",
+      "source": "battle/effects/particles/update_radial_launch.c"
+    },
     "main:08095c08": {
       "name": "BattleEffect_UpdatePhasedRadialParticle"
     },
@@ -744,26 +1272,65 @@
     "main:080cd260": {
       "name": "BattlePresentation_ProcessPendingGraphicsTransfer"
     },
-    "main:08096048": "battle/effects/particles/update_radial_spread.c",
-    "main:0809641c": "battle/effects/particles/update_random_target_particle.c",
-    "main:0808ee0c": "battle/effects/particles/emit_random.c",
-    "main:08092708": "battle/effects/objects/run_rising_sequence.c",
-    "main:08097f80": "battle/effects/orbiting_particles/update_return.c",
-    "main:08095a44": "battle/effects/heavy_impact/finish.c",
-    "main:080903bc": "display/transition/update.c",
-    "main:08090378": "display/state/clear_flags.c",
-    "main:08090584": "display/transition/update_scanline.c",
-    "main:08091294": "battle/effects/color/clamp_rgb555_channel.c",
-    "main:080912a8": "battle/effects/color/clamp_rgb555_component.c",
+    "main:08096048": {
+      "name": "BattleEffect_UpdateRadialSpread",
+      "source": "battle/effects/particles/update_radial_spread.c"
+    },
+    "main:0809641c": {
+      "name": "BattleEffect_UpdateRandomTargetParticle",
+      "source": "battle/effects/particles/update_random_target_particle.c"
+    },
+    "main:0808ee0c": {
+      "name": "BattleEffect_EmitRandomParticle",
+      "source": "battle/effects/particles/emit_random.c"
+    },
+    "main:08092708": {
+      "name": "BattleEffect_RunRisingObjectSequence",
+      "source": "battle/effects/objects/run_rising_sequence.c"
+    },
+    "main:08097f80": {
+      "name": "BattleEffect_UpdateOrbitAndReturn",
+      "source": "battle/effects/orbiting_particles/update_return.c"
+    },
+    "main:08095a44": {
+      "name": "BattleEffect_FinishHeavyImpact",
+      "source": "battle/effects/heavy_impact/finish.c"
+    },
+    "main:080903bc": {
+      "name": "DisplayTransition_Update",
+      "source": "display/transition/update.c"
+    },
+    "main:08090378": {
+      "name": "DisplayState_ClearFlags",
+      "source": "display/state/clear_flags.c"
+    },
+    "main:08090584": {
+      "name": "DisplayTransition_UpdateScanline",
+      "source": "display/transition/update_scanline.c"
+    },
+    "main:08091294": {
+      "name": "BattleEffect_ClampRgb555Channel",
+      "source": "battle/effects/color/clamp_rgb555_channel.c"
+    },
+    "main:080912a8": {
+      "name": "BattleEffect_ClampRgb555Component",
+      "source": "battle/effects/color/clamp_rgb555_component.c"
+    },
     "main:0809728c": "field/event_object/initialize.c",
     "main:08099678": "map/shared/events/check_object_tile.c",
     "main:08099738": "map/shared/events/run_tile_trigger_sequence.c",
-    "main:0800b7c0": "animation/initialize_objects.c",
+    "main:0800b7c0": {
+      "name": "Animation_InitializeObjects",
+      "source": "animation/initialize_objects.c"
+    },
     "main:0800ba30": {
       "name": "AnimationObjects_SelectAnimation",
       "source": "animation/select_object_animation.c"
     },
-    "main:080a1870": "psynergy_menu/initialize_entry_objects.c",
+    "main:080a1870": {
+      "name": "PsynergyMenu_InitializeEntryObjects",
+      "source": "psynergy_menu/initialize_entry_objects.c"
+    },
     "main:0801ec6c": "object/side/create.c",
     "main:0801fe2c": "object/placement/create_group.c",
     "main:0809397c": "object/motion/move_toward_target.c",
@@ -778,9 +1345,18 @@
       "source": "battle/effects/runtime/flush_pending_graphics_transfer.c"
     },
     "main:080d6888": "object/group/update_members.c",
-    "main:080c0e38": "graphics/blend/fade_alpha_out.c",
-    "main:080c0e70": "graphics/blend/fade_alpha_in.c",
-    "main:080c0ea8": "graphics/blend/set_control.c",
+    "main:080c0e38": {
+      "name": "Graphics_FadeAlphaOut",
+      "source": "graphics/blend/fade_alpha_out.c"
+    },
+    "main:080c0e70": {
+      "name": "Graphics_FadeAlphaIn",
+      "source": "graphics/blend/fade_alpha_in.c"
+    },
+    "main:080c0ea8": {
+      "name": "Graphics_SetBlendControl",
+      "source": "graphics/blend/set_control.c"
+    },
     "main:080c1084": "graphics/palette/advance_cycle.c",
     "main:080c1438": "graphics/vram/upload_block.c",
     "main:080c1724": "graphics/color/scale_rgb555_clamped.c",
@@ -790,13 +1366,34 @@
     "main:080e3958": "effects/position/apply_animation_and_y_offset.c",
     "main:080e396c": "effects/position/apply_step_and_y_offset.c",
     "main:080e3980": "effects/position/apply_alternate_step_and_y_offset.c",
-    "main:080f954c": "audio/command/get_state_byte.c",
-    "main:080f9594": "audio/command/get_secondary_state_byte.c",
-    "main:080f9558": "audio/command/stop_all_players.c",
-    "main:080f9564": "audio/command/resume_all_players.c",
-    "main:080f95a0": "audio/command/wait_for_completion.c",
-    "main:080b04c4": "audio/command/wait_for_state_byte_clear.c",
-    "main:080f95c8": "audio/command/get_command_width.c",
+    "main:080f954c": {
+      "name": "AudioCommand_GetStateByte",
+      "source": "audio/command/get_state_byte.c"
+    },
+    "main:080f9594": {
+      "name": "AudioCommand_GetSecondaryStateByte",
+      "source": "audio/command/get_secondary_state_byte.c"
+    },
+    "main:080f9558": {
+      "name": "AudioCommand_StopAllPlayers",
+      "source": "audio/command/stop_all_players.c"
+    },
+    "main:080f9564": {
+      "name": "AudioCommand_ResumeAllPlayers",
+      "source": "audio/command/resume_all_players.c"
+    },
+    "main:080f95a0": {
+      "name": "AudioCommand_WaitForCompletion",
+      "source": "audio/command/wait_for_completion.c"
+    },
+    "main:080b04c4": {
+      "name": "AudioCommand_WaitForStateByteClear",
+      "source": "audio/command/wait_for_state_byte_clear.c"
+    },
+    "main:080f95c8": {
+      "name": "AudioCommand_GetWidth",
+      "source": "audio/command/get_command_width.c"
+    },
     "main:080df9d0": "graphics/tile/pack_rows.c",
     "main:080dfddc": "graphics/tile/transpose_copy.c",
     "main:0808ba1c": "object/table/get.c",
@@ -824,93 +1421,246 @@
     "main:08096bec": "object/motion/set_target_position_from_magnitude_angle.c",
     "main:08092208": "object/motion/snap_heading_and_offset.c",
     "main:08092560": "object/motion/launch.c",
-    "main:080925e0": "battle/effects/particles/update_linear_motion.c",
-    "main:080937b8": "battle/effects/objects/spawn_linked_resource_object.c",
+    "main:080925e0": {
+      "name": "BattleEffect_UpdateParticleLinearMotion",
+      "source": "battle/effects/particles/update_linear_motion.c"
+    },
+    "main:080937b8": {
+      "name": "BattleEffect_SpawnLinkedResourceObject",
+      "source": "battle/effects/objects/spawn_linked_resource_object.c"
+    },
     "main:08092a74": "object/motion/step_angle.c",
     "main:080f6038": "graphics/color/scale_rgb555.c",
-    "main:080f9438": "audio/initialize_runtime_defaults.c",
-    "main:080f94e0": "audio/command/set_pitch.c",
-    "main:080f94c8": "audio/command/set_pitch_and_update_frequency.c",
-    "main:080f950c": "audio/command/set_volume.c",
-    "main:080f9570": "audio/command/update_toggle_mask.c",
+    "main:080f9438": {
+      "name": "Audio_InitializeRuntimeDefaults",
+      "source": "audio/initialize_runtime_defaults.c"
+    },
+    "main:080f94e0": {
+      "name": "MusicCommand_SetPitch",
+      "source": "audio/command/set_pitch.c"
+    },
+    "main:080f94c8": {
+      "name": "MusicCommand_SetPitchAndUpdateFrequency",
+      "source": "audio/command/set_pitch_and_update_frequency.c"
+    },
+    "main:080f950c": {
+      "name": "MusicCommand_SetVolume",
+      "source": "audio/command/set_volume.c"
+    },
+    "main:080f9570": {
+      "name": "AudioCommand_UpdateToggleMask",
+      "source": "audio/command/update_toggle_mask.c"
+    },
     "main:080f9a30": {
       "name": "CgbChannel_Unlink",
       "source": "audio/cgb/unlink_channel.c"
     },
-    "main:080fb790": "audio/dummy_callback.c",
+    "main:080fb790": {
+      "name": "Audio_DummyCallback",
+      "source": "audio/dummy_callback.c"
+    },
     "main:080b5e14": "party/update_name_entries.c",
     "main:080b26c8": "field/event_table/get_row_limit.c",
-    "main:080a8b8c": "menu/build_page_result.c",
-    "main:0808bc44": "battle/effects/counters/reset.c",
-    "main:0808bc9c": "battle/effects/counters/sum.c",
-    "main:080df8b8": "battle/effects/motion/initialize_rising_object.c",
-    "main:080df90c": "battle/effects/motion/set_approach_motion.c",
+    "main:080a8b8c": {
+      "name": "Menu_BuildPageResult",
+      "source": "menu/build_page_result.c"
+    },
+    "main:0808bc44": {
+      "name": "BattleEffect_ResetCounters",
+      "source": "battle/effects/counters/reset.c"
+    },
+    "main:0808bc9c": {
+      "name": "BattleEffect_SumCounters",
+      "source": "battle/effects/counters/sum.c"
+    },
+    "main:080df8b8": {
+      "name": "BattleEffect_InitializeRisingObject",
+      "source": "battle/effects/motion/initialize_rising_object.c"
+    },
+    "main:080df90c": {
+      "name": "BattleEffect_SetApproachMotion",
+      "source": "battle/effects/motion/set_approach_motion.c"
+    },
     "main:080b26cc": "field/event_table/apply_row_abilities.c",
     "main:080b2764": "field/event_table/get_row_type.c",
-    "main:080bd7dc": "battle/event_runtime/begin_phase.c",
-    "main:080bd808": "battle/event_runtime/schedule_phase.c",
-    "main:080bdfec": "battle/event_runtime/reset.c",
-    "main:080be02c": "battle/event_runtime/wait_for_ready.c",
-    "main:080b3210": "inn/calculate_room_price.c",
-    "main:080b3284": "inn/check_in.c",
-    "main:080b3398": "inn/play_sleep_sequence.c",
-    "main:080b0204": "inn/cleanup_resources.c",
-    "main:080b8fd4": "camera/scene/configure.c",
-    "main:080e155c": "camera/apply_shake.c",
-    "main:080119cc": "display/blend/run_script.c",
+    "main:080bd7dc": {
+      "name": "BattleEventRuntime_BeginPhase",
+      "source": "battle/event_runtime/begin_phase.c"
+    },
+    "main:080bd808": {
+      "name": "BattleEventRuntime_SchedulePhase",
+      "source": "battle/event_runtime/schedule_phase.c"
+    },
+    "main:080bdfec": {
+      "name": "BattleEventRuntime_Reset",
+      "source": "battle/event_runtime/reset.c"
+    },
+    "main:080be02c": {
+      "name": "BattleEventRuntime_WaitForReady",
+      "source": "battle/event_runtime/wait_for_ready.c"
+    },
+    "main:080b3210": {
+      "name": "Inn_CalculatePartyRoomPrice",
+      "source": "inn/calculate_room_price.c"
+    },
+    "main:080b3284": {
+      "name": "Inn_CheckIn",
+      "source": "inn/check_in.c"
+    },
+    "main:080b3398": {
+      "name": "Inn_PlaySleepSequence",
+      "source": "inn/play_sleep_sequence.c"
+    },
+    "main:080b0204": {
+      "name": "Inn_CleanupResources",
+      "source": "inn/cleanup_resources.c"
+    },
+    "main:080b8fd4": {
+      "name": "Camera_ConfigureScene",
+      "source": "camera/scene/configure.c"
+    },
+    "main:080e155c": {
+      "name": "Camera_ApplyShake",
+      "source": "camera/apply_shake.c"
+    },
+    "main:080119cc": {
+      "name": "DisplayBlend_RunScript",
+      "source": "display/blend/run_script.c"
+    },
     "main:08003d28": {
       "name": "AffineMatrix_BuildForEffect",
       "source": "graphics/affine/build_matrix.c"
     },
-    "main:080c1df4": "battle/summon/take_charge.c",
-    "main:080c1ebc": "battle/summon/release_charge.c",
+    "main:080c1df4": {
+      "name": "Summon_TakeCharge",
+      "source": "battle/summon/take_charge.c"
+    },
+    "main:080c1ebc": {
+      "name": "Summon_ReleaseCharge",
+      "source": "battle/summon/release_charge.c"
+    },
     "main:080c1fa8": {
       "name": "BattleFormation_SelectRandomAvailableMember",
       "source": "battle/formation/select_random_available_member.c"
     },
-    "main:080b2f4c": "battle/effects/radial/update_motion.c",
+    "main:080b2f4c": {
+      "name": "BattleEffect_UpdateRadialMotion",
+      "source": "battle/effects/radial/update_motion.c"
+    },
     "main:0801c7fc": "object/collect_resources.c",
     "main:080798e0": "owner/build_digit_tiles.c",
-    "main:08016670": "ui/render/activate_channel.c",
-    "main:080167d8": "ui/render/reset_channel_transition.c",
-    "main:08017394": "ui/runtime/is_idle.c",
-    "main:080187ac": "ui/text/get_resource_dimensions.c",
+    "main:08016670": {
+      "name": "UiWork_ActivateChannel",
+      "source": "ui/render/activate_channel.c"
+    },
+    "main:080167d8": {
+      "name": "UiWork_ResetChannelTransition",
+      "source": "ui/render/reset_channel_transition.c"
+    },
+    "main:08017394": {
+      "name": "UiWork_IsIdle",
+      "source": "ui/runtime/is_idle.c"
+    },
+    "main:080187ac": {
+      "name": "UiText_GetResourceDimensions",
+      "source": "ui/text/get_resource_dimensions.c"
+    },
     "main:0801a32c": "graphics/resource/load_table_entry.c",
-    "main:0801e74c": "ui/text/draw_resource.c",
-    "main:080a23f4": "ui/window/set_bounds.c",
+    "main:0801e74c": {
+      "name": "UiText_DrawResource",
+      "source": "ui/text/draw_resource.c"
+    },
+    "main:080a23f4": {
+      "name": "UiWindow_SetBounds",
+      "source": "ui/window/set_bounds.c"
+    },
     "main:080798b4": "owner/get_default_element.c",
-    "main:080a195c": "menu/release_entry_objects.c",
-    "main:080197c4": "ui/render/drain_pending.c",
-    "main:080286a0": "menu/select_resource.c",
-    "main:0801c188": "menu/resource_transfer/load_selected.c",
-    "main:080a76d0": "menu/run_action_flow.c",
+    "main:080a195c": {
+      "name": "Menu_ReleaseEntryObjects",
+      "source": "menu/release_entry_objects.c"
+    },
+    "main:080197c4": {
+      "name": "UiWork_DrainPending",
+      "source": "ui/render/drain_pending.c"
+    },
+    "main:080286a0": {
+      "name": "Menu_SelectResource",
+      "source": "menu/select_resource.c"
+    },
+    "main:0801c188": {
+      "name": "Menu_LoadSelectedResource",
+      "source": "menu/resource_transfer/load_selected.c"
+    },
+    "main:080a76d0": {
+      "name": "Menu_RunActionFlow",
+      "source": "menu/run_action_flow.c"
+    },
     "main:080797d4": "summon/get_definition.c",
-    "main:08091c1c": "inventory/try_add_and_return_owner.c",
-    "main:08093054": "battle/event_runtime/process_action.c",
-    "main:080a9e34": "item/prepare_use_palette.c",
+    "main:08091c1c": {
+      "name": "Inventory_TryAddAndReturnOwner",
+      "source": "inventory/try_add_and_return_owner.c"
+    },
+    "main:08093054": {
+      "name": "BattleEventRuntime_ProcessAction",
+      "source": "battle/event_runtime/process_action.c"
+    },
+    "main:080a9e34": {
+      "name": "Item_PrepareUsePalette",
+      "source": "item/prepare_use_palette.c"
+    },
     "main:080a9e48": {
       "name": "Item_Use",
       "source": "item/use.c"
     },
     "main:080b0694": "node_chain/get_node_at_index.c",
-    "main:080b7b30": "battle/motion/release_battle_object_records.c",
-    "main:080babdc": "battle/motion/run_value_sequence.c",
+    "main:080b7b30": {
+      "name": "ReleaseBattleObjectRecords",
+      "source": "battle/motion/release_battle_object_records.c"
+    },
+    "main:080babdc": {
+      "name": "BattleMotion_RunValueSequence",
+      "source": "battle/motion/run_value_sequence.c"
+    },
     "main:080c0f98": {
       "name": "BattlePresentation_SetActorRecordMode",
       "source": "battle/presentation/set_actor_record_mode.c"
     },
     "main:080c10e8": {
-      "name": "set_actor_modes",
+      "name": "BattlePresentation_SetActorModes",
       "source": "battle/presentation/set_actor_modes.c"
     },
-    "main:080bace8": "battle/motion/initialize_actor_records.c",
-    "main:080b7e04": "battle/motion/reset_motion_record_group.c",
-    "main:080b7e24": "battle/motion/reset_battle_object_record_groups.c",
-    "main:080b8808": "battle/object/is_valid_id.c",
-    "main:080a21b0": "menu/draw_page_indicator.c",
-    "main:080a847c": "character_menu/draw_selection_cursor.c",
-    "main:080a8508": "character_menu/draw_selection_labels.c",
-    "main:080a8b10": "character_menu/build_availability.c",
+    "main:080bace8": {
+      "name": "BattleMotion_InitializeActorRecords",
+      "source": "battle/motion/initialize_actor_records.c"
+    },
+    "main:080b7e04": {
+      "name": "ResetMotionRecordGroup",
+      "source": "battle/motion/reset_motion_record_group.c"
+    },
+    "main:080b7e24": {
+      "name": "ResetBattleObjectRecordGroups",
+      "source": "battle/motion/reset_battle_object_record_groups.c"
+    },
+    "main:080b8808": {
+      "name": "BattleObject_IsValidId",
+      "source": "battle/object/is_valid_id.c"
+    },
+    "main:080a21b0": {
+      "name": "Menu_DrawPageIndicator",
+      "source": "menu/draw_page_indicator.c"
+    },
+    "main:080a847c": {
+      "name": "CharacterMenu_DrawSelectionCursor",
+      "source": "character_menu/draw_selection_cursor.c"
+    },
+    "main:080a8508": {
+      "name": "CharacterMenu_DrawSelectionLabels",
+      "source": "character_menu/draw_selection_labels.c"
+    },
+    "main:080a8b10": {
+      "name": "CharacterMenu_BuildAvailability",
+      "source": "character_menu/build_availability.c"
+    },
     "main:080a8c2c": {
       "name": "Menu_BuildPatternTiles",
       "source": "menu/build_pattern_tiles.c"
@@ -919,51 +1669,156 @@
       "name": "Menu_BuildLocalizedPatternTiles",
       "source": "menu/build_localized_pattern_tiles.c"
     },
-    "main:080a9dc4": "character_menu/update_selection_icons.c",
+    "main:080a9dc4": {
+      "name": "CharacterMenu_UpdateSelectionIcons",
+      "source": "character_menu/update_selection_icons.c"
+    },
     "main:080b7424": {
-      "name": "LayoutSummonPositions",
+      "name": "Summon_LayoutPositions",
       "source": "battle/summon/layout_positions.c"
     },
-    "main:080b7514": "battle/summon/find_available_slot.c",
-    "main:080b6cdc": "battle/summon/class_is_valid.c",
-    "main:080e7320": "battle/effects/runtime/initialize_default_mode.c",
-    "main:080e732c": "battle/effects/runtime/initialize_mode_1.c",
-    "main:08091814": "event/validate_packed_id.c",
-    "main:08091858": "event/clear_invalid_packed_values.c",
-    "main:080b0070": "ui/ability_menu/build_available_list.c",
-    "main:080b04dc": "ui/message/show_and_wait.c",
-    "main:080b0574": "ui/message/show_and_restore_state.c",
-    "main:080b0634": "ui/message/show_choice.c",
+    "main:080b7514": {
+      "name": "Summon_FindSlot",
+      "source": "battle/summon/find_available_slot.c"
+    },
+    "main:080b6cdc": {
+      "name": "Summon_ClassValid",
+      "source": "battle/summon/class_is_valid.c"
+    },
+    "main:080e7320": {
+      "name": "BattleEffect_InitializeDefaultMode",
+      "source": "battle/effects/runtime/initialize_default_mode.c"
+    },
+    "main:080e732c": {
+      "name": "BattleEffect_InitializeMode1",
+      "source": "battle/effects/runtime/initialize_mode_1.c"
+    },
+    "main:08091814": {
+      "name": "Event_ValidatePackedId",
+      "source": "event/validate_packed_id.c"
+    },
+    "main:08091858": {
+      "name": "Event_ClearInvalidPackedValues",
+      "source": "event/clear_invalid_packed_values.c"
+    },
+    "main:080b0070": {
+      "name": "AbilityMenu_BuildAvailableList",
+      "source": "ui/ability_menu/build_available_list.c"
+    },
+    "main:080b04dc": {
+      "name": "UiMessage_ShowAndWait",
+      "source": "ui/message/show_and_wait.c"
+    },
+    "main:080b0574": {
+      "name": "UiMessage_ShowAndRestoreState",
+      "source": "ui/message/show_and_restore_state.c"
+    },
+    "main:080b0634": {
+      "name": "UiMessage_ShowChoice",
+      "source": "ui/message/show_choice.c"
+    },
     "main:080cd418": "graphics/registers/apply_window_blend.c",
     "main:080cd488": "graphics/registers/apply_bg2_reference.c",
-    "main:080d655c": "battle/effects/common/run_no_effect_frames.c",
-    "main:080d6578": "battle/effects/runtime/initialize_mode.c",
-    "main:080d6660": "battle/effects/runtime/dispatch_mode.c",
+    "main:080d655c": {
+      "name": "BattleEffect_RunNoEffectFrames",
+      "source": "battle/effects/common/run_no_effect_frames.c"
+    },
+    "main:080d6578": {
+      "name": "BattleEffect_InitializeMode",
+      "source": "battle/effects/runtime/initialize_mode.c"
+    },
+    "main:080d6660": {
+      "name": "BattleEffect_DispatchMode",
+      "source": "battle/effects/runtime/dispatch_mode.c"
+    },
     "main:080d6750": {
       "name": "BattleEffect_SelectLivingTargets",
       "source": "battle/effects/select_living_targets.c"
     },
-    "main:080de974": "battle/effects/runtime/run_mode_0.c",
-    "main:080de980": "battle/effects/runtime/run_mode_1.c",
-    "main:080de98c": "battle/effects/runtime/run_mode_2.c",
-    "main:080de998": "battle/effects/runtime/run_mode_3.c",
-    "main:080de9a4": "battle/effects/runtime/run_mode_11.c",
-    "main:080de9b0": "battle/effects/runtime/run_mode_4.c",
-    "main:080de9bc": "battle/effects/runtime/run_mode_5_with_action.c",
-    "main:080de9f0": "battle/effects/runtime/run_mode_6_with_action.c",
-    "main:080dea24": "battle/effects/runtime/run_mode_7.c",
-    "main:080dea30": "battle/effects/runtime/run_mode_10.c",
-    "main:080dea3c": "battle/effects/runtime/run_mode_9_with_action.c",
-    "main:080d244c": "battle/effects/runtime/render_animation_mode_1.c",
-    "main:080d2458": "battle/effects/runtime/render_animation_mode_0.c",
-    "main:080d5258": "battle/effects/runtime/render_mode_0_or_1.c",
-    "main:080d5274": "battle/effects/runtime/render_mode_1.c",
-    "main:080d5280": "battle/effects/runtime/render_mode_2.c",
-    "main:080d528c": "battle/effects/runtime/render_mode_3.c",
-    "main:080d5298": "battle/effects/runtime/render_mode_4.c",
-    "main:080d52a4": "battle/effects/runtime/render_mode_5.c",
-    "main:080d52b0": "battle/effects/runtime/render_mode_7.c",
-    "main:080d52bc": "battle/effects/runtime/render_mode_6.c",
+    "main:080de974": {
+      "name": "BattleEffect_RunMode0",
+      "source": "battle/effects/runtime/run_mode_0.c"
+    },
+    "main:080de980": {
+      "name": "BattleEffect_RunMode1",
+      "source": "battle/effects/runtime/run_mode_1.c"
+    },
+    "main:080de98c": {
+      "name": "BattleEffect_RunMode2",
+      "source": "battle/effects/runtime/run_mode_2.c"
+    },
+    "main:080de998": {
+      "name": "BattleEffect_RunMode3",
+      "source": "battle/effects/runtime/run_mode_3.c"
+    },
+    "main:080de9a4": {
+      "name": "BattleEffect_RunMode11",
+      "source": "battle/effects/runtime/run_mode_11.c"
+    },
+    "main:080de9b0": {
+      "name": "BattleEffect_RunMode4",
+      "source": "battle/effects/runtime/run_mode_4.c"
+    },
+    "main:080de9bc": {
+      "name": "BattleEffect_RunMode5WithAction",
+      "source": "battle/effects/runtime/run_mode_5_with_action.c"
+    },
+    "main:080de9f0": {
+      "name": "BattleEffect_RunMode6WithAction",
+      "source": "battle/effects/runtime/run_mode_6_with_action.c"
+    },
+    "main:080dea24": {
+      "name": "BattleEffect_RunMode7",
+      "source": "battle/effects/runtime/run_mode_7.c"
+    },
+    "main:080dea30": {
+      "name": "BattleEffect_RunMode10",
+      "source": "battle/effects/runtime/run_mode_10.c"
+    },
+    "main:080dea3c": {
+      "name": "BattleEffect_RunMode9WithAction",
+      "source": "battle/effects/runtime/run_mode_9_with_action.c"
+    },
+    "main:080d244c": {
+      "name": "BattleEffect_RenderAnimationMode1",
+      "source": "battle/effects/runtime/render_animation_mode_1.c"
+    },
+    "main:080d2458": {
+      "name": "BattleEffect_RenderAnimationMode0",
+      "source": "battle/effects/runtime/render_animation_mode_0.c"
+    },
+    "main:080d5258": {
+      "name": "BattleEffect_RenderMode0Or1",
+      "source": "battle/effects/runtime/render_mode_0_or_1.c"
+    },
+    "main:080d5274": {
+      "name": "BattleEffect_RenderMode1",
+      "source": "battle/effects/runtime/render_mode_1.c"
+    },
+    "main:080d5280": {
+      "name": "BattleEffect_RenderMode2",
+      "source": "battle/effects/runtime/render_mode_2.c"
+    },
+    "main:080d528c": {
+      "name": "BattleEffect_RenderMode3",
+      "source": "battle/effects/runtime/render_mode_3.c"
+    },
+    "main:080d5298": {
+      "name": "BattleEffect_RenderMode4",
+      "source": "battle/effects/runtime/render_mode_4.c"
+    },
+    "main:080d52a4": {
+      "name": "BattleEffect_RenderMode5",
+      "source": "battle/effects/runtime/render_mode_5.c"
+    },
+    "main:080d52b0": {
+      "name": "BattleEffect_RenderMode7",
+      "source": "battle/effects/runtime/render_mode_7.c"
+    },
+    "main:080d52bc": {
+      "name": "BattleEffect_RenderMode6",
+      "source": "battle/effects/runtime/render_mode_6.c"
+    },
     "main:080e28f4": "effects/step/run_animation_mode_6_or_7_or_8.c",
     "main:080e291c": "effects/step/run_animation_mode_0.c",
     "main:080e2928": "effects/step/run_animation_mode_0_duplicate.c",
@@ -971,10 +1826,22 @@
     "main:080e2940": "effects/step/run_animation_mode_2.c",
     "main:080e294c": "effects/step/run_animation_mode_3_or_4_or_5.c",
     "main:080e0524": "resource/load_and_decompress.c",
-    "main:080dfa18": "battle/effects/particle_field/variant_0.c",
-    "main:080dfa24": "battle/effects/particle_field/variant_1.c",
-    "main:080dfa30": "battle/effects/particle_field/variant_2.c",
-    "main:080dfa3c": "battle/effects/particle_field/variant_3.c",
+    "main:080dfa18": {
+      "name": "BattleEffect_RunParticleFieldVariant0",
+      "source": "battle/effects/particle_field/variant_0.c"
+    },
+    "main:080dfa24": {
+      "name": "BattleEffect_RunParticleFieldVariant1",
+      "source": "battle/effects/particle_field/variant_1.c"
+    },
+    "main:080dfa30": {
+      "name": "BattleEffect_RunParticleFieldVariant2",
+      "source": "battle/effects/particle_field/variant_2.c"
+    },
+    "main:080dfa3c": {
+      "name": "BattleEffect_RunParticleFieldVariant3",
+      "source": "battle/effects/particle_field/variant_3.c"
+    },
     "main:0808ec14": "effect_runtime/find_slot_by_object.c",
     "main:0808ec50": "effect_runtime/set_mode5_and_play_cue.c",
     "main:0808ec8c": "effect_runtime/set_mode7_and_launch.c",
@@ -985,25 +1852,61 @@
     "main:08097174": "effect_runtime/stop_current_object.c",
     "main:0808edac": "effect_runtime/set_current_position.c",
     "main:0808f304": "effect_runtime/is_active.c",
-    "main:08091560": "battle/effects/runtime/find_definition.c",
-    "main:08091584": "battle/effects/runtime/get_animation_value.c",
-    "main:080915ac": "battle/effects/runtime/get_resource_id.c",
-    "main:080915dc": "battle/effects/runtime/get_flags.c",
-    "main:080915ec": "battle/runtime/update_mode_from_shoulder_buttons.c",
-    "main:0809ae3c": "battle/effects/filter_object_id.c",
-    "main:0809202c": "battle/effects/audio/play_queued_sound.c",
-    "main:08091ff0": "battle/effects/audio/set_queued_sound_and_play.c",
+    "main:08091560": {
+      "name": "BattleEffect_FindDefinition",
+      "source": "battle/effects/runtime/find_definition.c"
+    },
+    "main:08091584": {
+      "name": "BattleEffect_GetAnimationValue",
+      "source": "battle/effects/runtime/get_animation_value.c"
+    },
+    "main:080915ac": {
+      "name": "BattleEffect_GetResourceId",
+      "source": "battle/effects/runtime/get_resource_id.c"
+    },
+    "main:080915dc": {
+      "name": "BattleEffect_GetFlags",
+      "source": "battle/effects/runtime/get_flags.c"
+    },
+    "main:080915ec": {
+      "name": "BattleRuntime_UpdateModeFromShoulderButtons",
+      "source": "battle/runtime/update_mode_from_shoulder_buttons.c"
+    },
+    "main:0809ae3c": {
+      "name": "BattleEffect_FilterObjectIdByFlags",
+      "source": "battle/effects/filter_object_id.c"
+    },
+    "main:0809202c": {
+      "name": "BattleEffect_PlayQueuedSound",
+      "source": "battle/effects/audio/play_queued_sound.c"
+    },
+    "main:08091ff0": {
+      "name": "BattleEffect_SetQueuedSoundAndPlay",
+      "source": "battle/effects/audio/set_queued_sound_and_play.c"
+    },
     "main:08092064": "object/motion/set_speed_parameters.c",
     "main:0809207c": "object/motion/enable_action_and_set_callback.c",
     "main:080920a0": "object/motion/enable_action_and_reset_motion.c",
     "main:080920c0": "object/link/link_object_and_set_callback.c",
-    "main:08091660": "battle/runtime/initialize_render_object.c",
-    "main:080916b0": "battle/runtime/reset.c",
-    "main:0809163c": "battle/runtime/wait_if_mode_zero.c",
+    "main:08091660": {
+      "name": "BattleRuntime_InitializeRenderObject",
+      "source": "battle/runtime/initialize_render_object.c"
+    },
+    "main:080916b0": {
+      "name": "BattleRuntime_Reset",
+      "source": "battle/runtime/reset.c"
+    },
+    "main:0809163c": {
+      "name": "BattleRuntime_WaitIfModeZero",
+      "source": "battle/runtime/wait_if_mode_zero.c"
+    },
     "main:0808f0d8": "effect_runtime/prepare_rising_object.c",
     "main:0808f140": "effect_runtime/run_rising_object_sequence.c",
     "main:080aac84": "graphics/palette/adjust_bank.c",
-    "main:080a7380": "menu/open_character_selector.c",
+    "main:080a7380": {
+      "name": "Menu_OpenCharacterSelector",
+      "source": "menu/open_character_selector.c"
+    },
     "main:080a7f44": {
       "name": "CharacterSelector_MoveEntry",
       "source": "menu/character_selector/move_entry.c"
@@ -1017,231 +1920,486 @@
       "source": "ability/play_use_animation.c"
     },
     "main:080ae778": {
-      "name": "CheckDjinnTurnBalance",
+      "name": "Djinn_CheckTurnBalance",
       "source": "djinn/check_turn_balance.c"
     },
     "main:080ae7fc": {
-      "name": "CountDjinnTurns",
+      "name": "Djinn_CountTurns",
       "source": "djinn/count_turns.c"
     },
     "main:080ba584": {
-      "name": "RunSimpleBattlePresentation",
+      "name": "BattlePresentation_RunSimple",
       "source": "battle/run_simple_presentation.c"
     },
-    "main:080b7dd0": "battle/motion/get_battle_object_slot.c",
-    "main:080b7e60": "battle/motion/activate_battle_object_slot.c",
-    "main:080b7f70": "battle/motion/get_motion_record.c",
-    "main:080b8000": "battle/motion/reset_actor_at_anchor.c",
-    "main:080b80b8": "battle/motion/interpolate_position.c",
-    "main:080b8144": "battle/motion/set_object_position.c",
-    "main:080b8178": "battle/motion/reset_object_at_scaled_anchor.c",
-    "main:080b8228": "battle/motion/apply_variant_motion.c",
-    "main:080bb588": "battle/actor/reset_runtime_fields.c",
-    "main:080bb8e8": "battle/actor/destroy_temporary_object.c",
-    "main:080b7994": "battle/status_icon/cycle.c",
-    "main:080b82c4": "battle/motion/approach_target.c",
-    "main:080b8824": "battle/escape/play_run.c",
-    "main:080b874c": "battle/presentation/run_action.c",
-    "main:080b8f08": "battle/target/replace_defeated.c",
-    "main:080b90f8": "battle/escape/check_success.c",
-    "main:080b5d3c": "battle/summon/update_availability.c",
-    "main:080b595c": "battle/intro/announce_encounter.c",
-    "main:080b6378": "battle/party/assign_member_slots.c",
-    "main:080b6b40": "battle/party/list_living_units.c",
-    "main:080b6ae0": "battle/party/list_present_enemies.c",
+    "main:080b7dd0": {
+      "name": "GetBattleObjectSlot",
+      "source": "battle/motion/get_battle_object_slot.c"
+    },
+    "main:080b7e60": {
+      "name": "ActivateBattleObjectSlot",
+      "source": "battle/motion/activate_battle_object_slot.c"
+    },
+    "main:080b7f70": {
+      "name": "GetMotionRecord",
+      "source": "battle/motion/get_motion_record.c"
+    },
+    "main:080b8000": {
+      "name": "Actor_ResetMotionAtAnchor",
+      "source": "battle/motion/reset_actor_at_anchor.c"
+    },
+    "main:080b80b8": {
+      "name": "BattleMotion_InterpolatePosition",
+      "source": "battle/motion/interpolate_position.c"
+    },
+    "main:080b8144": {
+      "name": "BattleMotion_SetObjectPosition",
+      "source": "battle/motion/set_object_position.c"
+    },
+    "main:080b8178": {
+      "name": "BattleMotion_ResetObjectAtScaledAnchor",
+      "source": "battle/motion/reset_object_at_scaled_anchor.c"
+    },
+    "main:080b8228": {
+      "name": "BattleMotion_ApplyVariantMotion",
+      "source": "battle/motion/apply_variant_motion.c"
+    },
+    "main:080bb588": {
+      "name": "BattleActor_ResetRuntimeFields",
+      "source": "battle/actor/reset_runtime_fields.c"
+    },
+    "main:080bb8e8": {
+      "name": "BattleActor_DestroyTemporaryObject",
+      "source": "battle/actor/destroy_temporary_object.c"
+    },
+    "main:080b7994": {
+      "name": "BattleStatusIcon_Cycle",
+      "source": "battle/status_icon/cycle.c"
+    },
+    "main:080b82c4": {
+      "name": "BattleMotion_ApproachTarget",
+      "source": "battle/motion/approach_target.c"
+    },
+    "main:080b8824": {
+      "name": "BattleEscape_PlayRun",
+      "source": "battle/escape/play_run.c"
+    },
+    "main:080b874c": {
+      "name": "BattlePresentation_RunAction",
+      "source": "battle/presentation/run_action.c"
+    },
+    "main:080b8f08": {
+      "name": "BattleTarget_ReplaceDefeated",
+      "source": "battle/target/replace_defeated.c"
+    },
+    "main:080b90f8": {
+      "name": "BattleEscape_CheckSuccess",
+      "source": "battle/escape/check_success.c"
+    },
+    "main:080b5d3c": {
+      "name": "BattleSummon_UpdateAvailability",
+      "source": "battle/summon/update_availability.c"
+    },
+    "main:080b595c": {
+      "name": "BattleIntro_AnnounceEncounter",
+      "source": "battle/intro/announce_encounter.c"
+    },
+    "main:080b6378": {
+      "name": "BattleParty_AssignMemberSlots",
+      "source": "battle/party/assign_member_slots.c"
+    },
+    "main:080b6b40": {
+      "name": "BattleParty_ListLivingUnits",
+      "source": "battle/party/list_living_units.c"
+    },
+    "main:080b6ae0": {
+      "name": "BattleParty_ListPresentEnemies",
+      "source": "battle/party/list_present_enemies.c"
+    },
     "main:080d8948": {
-      "name": "BattleEffectA0",
+      "name": "BattleEffect_RunSeriesAMode0",
       "source": "battle/effects/series_a/mode_0.c"
     },
     "main:080d8954": {
-      "name": "BattleEffectA1",
+      "name": "BattleEffect_RunSeriesAMode1",
       "source": "battle/effects/series_a/mode_1.c"
     },
     "main:080d8960": {
-      "name": "BattleEffectA2",
+      "name": "BattleEffect_RunSeriesAMode2",
       "source": "battle/effects/series_a/mode_2.c"
     },
     "main:080d896c": {
-      "name": "BattleEffectA3Or4",
+      "name": "BattleEffect_RunSeriesAMode3Or4",
       "source": "battle/effects/series_a/mode_3_or_4.c"
     },
     "main:080d8988": {
-      "name": "BattleEffectA4",
+      "name": "BattleEffect_RunSeriesAMode4",
       "source": "battle/effects/series_a/mode_4.c"
     },
     "main:080d8994": {
-      "name": "BattleEffectA5",
+      "name": "BattleEffect_RunSeriesAMode5",
       "source": "battle/effects/series_a/mode_5.c"
     },
     "main:080d89a0": {
-      "name": "BattleEffectA6",
+      "name": "BattleEffect_RunSeriesAMode6",
       "source": "battle/effects/series_a/mode_6.c"
     },
     "main:080d9194": {
-      "name": "BattleEffectB0",
+      "name": "BattleEffect_RunSeriesBMode0",
       "source": "battle/effects/series_b/mode_0.c"
     },
     "main:080d91a0": {
-      "name": "BattleEffectB1",
+      "name": "BattleEffect_RunSeriesBMode1",
       "source": "battle/effects/series_b/mode_1.c"
     },
     "main:080d91ac": {
-      "name": "BattleEffectB2",
+      "name": "BattleEffect_RunSeriesBMode2",
       "source": "battle/effects/series_b/mode_2.c"
     },
     "main:080d91b8": {
-      "name": "BattleEffectB3",
+      "name": "BattleEffect_RunSeriesBMode3",
       "source": "battle/effects/series_b/mode_3.c"
     },
     "main:080d91c4": {
-      "name": "BattleEffectB5",
+      "name": "BattleEffect_RunSeriesBMode5",
       "source": "battle/effects/series_b/mode_5.c"
     },
     "main:080d91d0": {
-      "name": "BattleEffectB4",
+      "name": "BattleEffect_RunSeriesBMode4",
       "source": "battle/effects/series_b/mode_4.c"
     },
     "main:080d9ab8": {
-      "name": "RunPaletteRampEffectMode0",
+      "name": "BattleEffect_RunPaletteRampMode0",
       "source": "battle/effects/palette_ramp/mode_0.c"
     },
     "main:080d9ac4": {
-      "name": "RunPaletteRampEffectMode1",
+      "name": "BattleEffect_RunPaletteRampMode1",
       "source": "battle/effects/palette_ramp/mode_1.c"
     },
     "main:080d9ad0": {
-      "name": "RunPaletteRampEffectMode2",
+      "name": "BattleEffect_RunPaletteRampMode2",
       "source": "battle/effects/palette_ramp/mode_2.c"
     },
     "main:080d9adc": {
-      "name": "RunPaletteRampEffectMode3",
+      "name": "BattleEffect_RunPaletteRampMode3",
       "source": "battle/effects/palette_ramp/mode_3.c"
     },
     "main:080da24c": {
-      "name": "BuildCenteredIndexList",
+      "name": "BattleEffect_BuildCenteredIndexList",
       "source": "battle/effects/common/build_centered_index_list.c"
     },
     "main:080db6c8": {
-      "name": "RunParticleFieldEffectMode1",
+      "name": "BattleEffect_RunParticleFieldMode1",
       "source": "battle/effects/particle_field/mode_1.c"
     },
     "main:080db6d4": {
-      "name": "RunParticleFieldEffectMode0",
+      "name": "BattleEffect_RunParticleFieldMode0",
       "source": "battle/effects/particle_field/mode_0.c"
     },
     "main:080dbb24": {
-      "name": "SpawnBattleEffectObjects",
+      "name": "BattleEffect_SpawnObjects",
       "source": "battle/effects/common/spawn_objects.c"
     },
     "main:080dbb98": {
-      "name": "NoBattleEffect",
+      "name": "BattleEffect_RunNoEffect",
       "source": "battle/effects/common/no_effect.c"
     },
     "main:080dbbdc": {
-      "name": "BattleEffectI0",
+      "name": "BattleEffect_RunSeriesIMode0",
       "source": "battle/effects/series_i/mode_0.c"
     },
     "main:080dbbe8": {
-      "name": "BattleEffectI2",
+      "name": "BattleEffect_RunSeriesIMode2",
       "source": "battle/effects/series_i/mode_2.c"
     },
     "main:080dbbf4": {
-      "name": "BattleEffectI6",
+      "name": "BattleEffect_RunSeriesIMode6",
       "source": "battle/effects/series_i/mode_6.c"
     },
     "main:080dbc00": {
-      "name": "BattleEffectI3",
+      "name": "BattleEffect_RunSeriesIMode3",
       "source": "battle/effects/series_i/mode_3.c"
     },
     "main:080dbc0c": {
-      "name": "BattleEffectI5",
+      "name": "BattleEffect_RunSeriesIMode5",
       "source": "battle/effects/series_i/mode_5.c"
     },
     "main:080dbc18": {
-      "name": "BattleEffectI7",
+      "name": "BattleEffect_RunSeriesIMode7",
       "source": "battle/effects/series_i/mode_7.c"
     },
     "main:080dbc24": {
-      "name": "BattleEffectI4",
+      "name": "BattleEffect_RunSeriesIMode4",
       "source": "battle/effects/series_i/mode_4.c"
     },
-    "main:08078414": "item/get_definition.c",
-    "main:08079bc4": "battle/random_16.c",
-    "main:08079be8": "battle/random_percent.c",
-    "main:08079cbc": "item/get_unleash_rate_bonus.c",
-    "main:08079d1c": "item/roll_weapon_unleash.c",
-    "main:08079d7c": "battle/effects/get_base_success_rate.c",
+    "main:08078414": {
+      "name": "Item_GetDirect",
+      "source": "item/get_definition.c"
+    },
+    "main:08079bc4": {
+      "name": "BattleRandom16",
+      "source": "battle/random_16.c"
+    },
+    "main:08079be8": {
+      "name": "BattleRandomPercent",
+      "source": "battle/random_percent.c"
+    },
+    "main:08079cbc": {
+      "name": "Equipment_GetUnleashRateBonus",
+      "source": "item/get_unleash_rate_bonus.c"
+    },
+    "main:08079d1c": {
+      "name": "Item_RollWeaponUnleash",
+      "source": "item/roll_weapon_unleash.c"
+    },
+    "main:08079d7c": {
+      "name": "BattleEffect_GetBaseSuccessRate",
+      "source": "battle/effects/get_base_success_rate.c"
+    },
     "main:0808e680": {
       "name": "BattleCommand_ExecuteSelectedAction"
     },
     "main:08079460": {
       "name": "BattleUnit_Assign"
     },
-    "main:08079e9c": "battle/effects/target_is_weak.c",
-    "main:08079ef8": "battle/effects/is_revive.c",
-    "main:08079f10": "battle/effects/roll_success.c",
+    "main:08079e9c": {
+      "name": "BattleTarget_IsWeakToEffect",
+      "source": "battle/effects/target_is_weak.c"
+    },
+    "main:08079ef8": {
+      "name": "BattleEffect_IsRevive",
+      "source": "battle/effects/is_revive.c"
+    },
+    "main:08079f10": {
+      "name": "BattleEffect_RollSuccess",
+      "source": "battle/effects/roll_success.c"
+    },
     "main:0808bd24": "map/shared/get_focused_object_collision.c",
     "main:0808bde0": "map/shared/update_region_at_position.c",
-    "main:0807842c": "item/can_owner_equip.c",
-    "main:0807845c": "item/is_compatible_with_owner.c",
-    "main:08078480": "item/get_equipment_group.c",
-    "main:080784b0": "inventory/get_quantity.c",
-    "main:080784d8": "inventory/count.c",
-    "main:08078500": "inventory/party_has_space.c",
-    "main:08078550": "inventory/count_party_free_slots.c",
-    "main:08078588": "inventory/add.c",
-    "main:08078618": "inventory/add_to_party.c",
+    "main:0807842c": {
+      "name": "Item_CanOwnerEquipDirect",
+      "source": "item/can_owner_equip.c"
+    },
+    "main:0807845c": {
+      "name": "Item_IsCompatibleWithOwner",
+      "source": "item/is_compatible_with_owner.c"
+    },
+    "main:08078480": {
+      "name": "Item_GetEquipmentGroup",
+      "source": "item/get_equipment_group.c"
+    },
+    "main:080784b0": {
+      "name": "Inventory_GetQuantity",
+      "source": "inventory/get_quantity.c"
+    },
+    "main:080784d8": {
+      "name": "Inventory_Count",
+      "source": "inventory/count.c"
+    },
+    "main:08078500": {
+      "name": "PartyInventory_HasSpace",
+      "source": "inventory/party_has_space.c"
+    },
+    "main:08078550": {
+      "name": "PartyInventory_CountFreeSlots",
+      "source": "inventory/count_party_free_slots.c"
+    },
+    "main:08078588": {
+      "name": "Inventory_AddItem",
+      "source": "inventory/add.c"
+    },
+    "main:08078618": {
+      "name": "PartyInventory_Add",
+      "source": "inventory/add_to_party.c"
+    },
     "main:08078ee8": {
       "name": "Owner_InitRecords"
     },
-    "main:08078664": "inventory/find.c",
-    "main:08078698": "inventory/find_party_owner.c",
-    "main:08078708": "inventory/equip.c",
-    "main:080787dc": "inventory/find_equipped.c",
-    "main:0807882c": "inventory/get_equipped_definition.c",
-    "main:08078870": "inventory/get_equipped_item.c",
-    "main:08078948": "inventory/discard.c",
-    "main:08078980": "inventory/check_discard.c",
-    "main:080789dc": "inventory/remove_from_party.c",
-    "main:08078a08": "inventory/discard_from_party.c",
-    "main:08078a34": "inventory/break.c",
-    "main:08078a60": "inventory/repair.c",
-    "main:08078a8c": "item/get_target_mode.c",
-    "main:08078aa0": "item/adjust_counter_slot.c",
-    "main:08078ad0": "item/adjust_counter.c",
-    "main:08078af8": "inventory/count_item.c",
-    "main:08078b60": "inventory/count_party_item.c",
-    "main:08078b9c": "battle/get_action_definition.c",
-    "main:08078bc0": "inventory/has_equipment_value.c",
-    "main:08079338": "game_flags/test.c",
-    "main:08079358": "game_flags/set.c",
-    "main:08079374": "game_flags/clear.c",
-    "main:08079390": "game_flags/toggle.c",
-    "main:080793b8": "game_flags/get_byte.c",
-    "main:080793c8": "game_flags/set_byte.c",
-    "main:080793d8": "game_flags/increment_byte.c",
-    "main:080793f8": "game_flags/decrement_byte.c",
-    "main:08079418": "game_flags/get_nibble.c",
-    "main:08079434": "game_flags/set_nibble.c",
+    "main:08078664": {
+      "name": "Inventory_Find",
+      "source": "inventory/find.c"
+    },
+    "main:08078698": {
+      "name": "PartyInventory_FindOwner",
+      "source": "inventory/find_party_owner.c"
+    },
+    "main:08078708": {
+      "name": "Inventory_Equip",
+      "source": "inventory/equip.c"
+    },
+    "main:080787dc": {
+      "name": "Inventory_FindEquipped",
+      "source": "inventory/find_equipped.c"
+    },
+    "main:0807882c": {
+      "name": "Inventory_GetEquippedDefinition",
+      "source": "inventory/get_equipped_definition.c"
+    },
+    "main:08078870": {
+      "name": "Inventory_GetEquippedItem",
+      "source": "inventory/get_equipped_item.c"
+    },
+    "main:08078948": {
+      "name": "Inventory_Discard",
+      "source": "inventory/discard.c"
+    },
+    "main:08078980": {
+      "name": "Inventory_CheckDiscard",
+      "source": "inventory/check_discard.c"
+    },
+    "main:080789dc": {
+      "name": "PartyInventory_Remove",
+      "source": "inventory/remove_from_party.c"
+    },
+    "main:08078a08": {
+      "name": "PartyInventory_Discard",
+      "source": "inventory/discard_from_party.c"
+    },
+    "main:08078a34": {
+      "name": "Inventory_Break",
+      "source": "inventory/break.c"
+    },
+    "main:08078a60": {
+      "name": "Inventory_Repair",
+      "source": "inventory/repair.c"
+    },
+    "main:08078a8c": {
+      "name": "Item_GetTargetMode",
+      "source": "item/get_target_mode.c"
+    },
+    "main:08078aa0": {
+      "name": "ItemCounter_Adjust",
+      "source": "item/adjust_counter_slot.c"
+    },
+    "main:08078ad0": {
+      "name": "Item_AdjustCounter",
+      "source": "item/adjust_counter.c"
+    },
+    "main:08078af8": {
+      "name": "Inventory_CountItem",
+      "source": "inventory/count_item.c"
+    },
+    "main:08078b60": {
+      "name": "PartyInventory_CountItem",
+      "source": "inventory/count_party_item.c"
+    },
+    "main:08078b9c": {
+      "name": "BattleAction_GetDirect",
+      "source": "battle/get_action_definition.c"
+    },
+    "main:08078bc0": {
+      "name": "Equipment_HasValue",
+      "source": "inventory/has_equipment_value.c"
+    },
+    "main:08079338": {
+      "name": "GameFlag_Test",
+      "source": "game_flags/test.c"
+    },
+    "main:08079358": {
+      "name": "GameFlag_SetBit",
+      "source": "game_flags/set.c"
+    },
+    "main:08079374": {
+      "name": "GameFlag_ClearBit",
+      "source": "game_flags/clear.c"
+    },
+    "main:08079390": {
+      "name": "GameFlag_Toggle",
+      "source": "game_flags/toggle.c"
+    },
+    "main:080793b8": {
+      "name": "GameFlag_GetByte",
+      "source": "game_flags/get_byte.c"
+    },
+    "main:080793c8": {
+      "name": "GameFlag_SetByte",
+      "source": "game_flags/set_byte.c"
+    },
+    "main:080793d8": {
+      "name": "GameFlag_IncrementByte",
+      "source": "game_flags/increment_byte.c"
+    },
+    "main:080793f8": {
+      "name": "GameFlag_DecrementByte",
+      "source": "game_flags/decrement_byte.c"
+    },
+    "main:08079418": {
+      "name": "GameFlag_GetNibble",
+      "source": "game_flags/get_nibble.c"
+    },
+    "main:08079434": {
+      "name": "GameFlag_SetNibble",
+      "source": "game_flags/set_nibble.c"
+    },
     "main:080795fc": "party/count_active_owners.c",
     "main:080796c4": "party/list_active_owners.c",
-    "main:080a32b8": "inventory_menu/use_selected_item.c",
-    "main:080a345c": "inventory_menu/hide_all_item_icons.c",
-    "main:080a3480": "inventory_menu/hide_page_start_icons.c",
-    "main:080a3354": "inventory_menu/initialize_interface.c",
-    "main:080a34c0": "inventory_menu/close_windows.c",
-    "main:080a355c": "inventory_menu/prepare_owner_items.c",
-    "main:080a38a8": "inventory_menu/open_category_items.c",
-    "main:080a3c08": "equipment_menu/update_compatibility_indicators.c",
-    "main:080a3c98": "equipment_menu/start_compatibility_indicators.c",
-    "main:080a3ce4": "inventory_menu/is_special_item_range.c",
-    "main:080a3cf8": "inventory_menu/draw_message.c",
-    "main:080a3d24": "inventory_menu/hide_empty_entry_icons.c",
-    "main:080a3d6c": "inventory_menu/count_items.c",
-    "main:080a3e28": "inventory_menu/draw_item_icons.c",
-    "main:080a3e88": "inventory_menu/refresh_owner_items.c",
-    "main:080a4110": "inventory_menu/get_command_cursor_x.c",
-    "main:080a413c": "inventory_menu/get_command_cursor_y.c",
+    "main:080a32b8": {
+      "name": "InventoryMenu_UseSelectedItem",
+      "source": "inventory_menu/use_selected_item.c"
+    },
+    "main:080a345c": {
+      "name": "InventoryMenu_HideAllItemIcons",
+      "source": "inventory_menu/hide_all_item_icons.c"
+    },
+    "main:080a3480": {
+      "name": "InventoryMenu_HidePageStartIcons",
+      "source": "inventory_menu/hide_page_start_icons.c"
+    },
+    "main:080a3354": {
+      "name": "InventoryMenu_InitializeInterface",
+      "source": "inventory_menu/initialize_interface.c"
+    },
+    "main:080a34c0": {
+      "name": "InventoryMenu_CloseWindows",
+      "source": "inventory_menu/close_windows.c"
+    },
+    "main:080a355c": {
+      "name": "InventoryMenu_PrepareOwnerItems",
+      "source": "inventory_menu/prepare_owner_items.c"
+    },
+    "main:080a38a8": {
+      "name": "InventoryMenu_OpenCategoryItems",
+      "source": "inventory_menu/open_category_items.c"
+    },
+    "main:080a3c08": {
+      "name": "EquipmentMenu_UpdateCompatibilityIndicators",
+      "source": "equipment_menu/update_compatibility_indicators.c"
+    },
+    "main:080a3c98": {
+      "name": "EquipmentMenu_StartCompatibilityIndicators",
+      "source": "equipment_menu/start_compatibility_indicators.c"
+    },
+    "main:080a3ce4": {
+      "name": "InventoryMenu_IsSpecialItemRange",
+      "source": "inventory_menu/is_special_item_range.c"
+    },
+    "main:080a3cf8": {
+      "name": "InventoryMenu_DrawMessage",
+      "source": "inventory_menu/draw_message.c"
+    },
+    "main:080a3d24": {
+      "name": "Menu_HideEmptyEntryIcons",
+      "source": "inventory_menu/hide_empty_entry_icons.c"
+    },
+    "main:080a3d6c": {
+      "name": "InventoryMenu_CountItems",
+      "source": "inventory_menu/count_items.c"
+    },
+    "main:080a3e28": {
+      "name": "InventoryMenu_DrawItemIcons",
+      "source": "inventory_menu/draw_item_icons.c"
+    },
+    "main:080a3e88": {
+      "name": "InventoryMenu_RefreshOwnerItems",
+      "source": "inventory_menu/refresh_owner_items.c"
+    },
+    "main:080a4110": {
+      "name": "InventoryMenu_GetCommandCursorX",
+      "source": "inventory_menu/get_command_cursor_x.c"
+    },
+    "main:080a413c": {
+      "name": "InventoryMenu_GetCommandCursorY",
+      "source": "inventory_menu/get_command_cursor_y.c"
+    },
     "main:080a448c": {
       "name": "InventoryMenu_BuildCommandStates",
       "source": "inventory_menu/build_command_states.c"
@@ -1258,41 +2416,110 @@
       "name": "InventoryMenu_OpenItemDetails",
       "source": "inventory_menu/open_item_details.c"
     },
-    "main:080a4db4": "inventory_menu/draw_stat_delta.c",
-    "main:080a4e20": "inventory_menu/set_item_window_five_row_bounds.c",
-    "main:080a4e44": "inventory_menu/set_item_window_three_row_bounds.c",
-    "main:080a4e68": "inventory_menu/set_message_window_row_5_bounds.c",
-    "main:080a4e90": "inventory_menu/set_message_window_row_6_bounds.c",
-    "main:080a4eb8": "inventory_menu/set_message_window_row_7_bounds.c",
-    "main:080a4ee0": "inventory_menu/set_message_window_row_3_bounds.c",
-    "main:080a51d0": "inventory_menu/draw_selected_item_header.c",
-    "main:080a5578": "inventory_menu/build_page_result.c",
-    "main:080a56c8": "inventory_menu/draw_item_name_page.c",
-    "main:080a5fe0": "psynergy_menu/classify_selected_psynergy.c",
-    "main:080a6384": "psynergy_menu/refresh_owner_psynergy.c",
-    "main:080a63dc": "psynergy_menu/return_true.c",
-    "main:080a65e4": "psynergy_menu/set_shortcut.c",
-    "main:080a6794": "psynergy_menu/create_entry_grid.c",
-    "main:080a6874": "psynergy_menu/close_windows.c",
-    "main:080a68a8": "psynergy_menu/draw_psynergy_icons.c",
+    "main:080a4db4": {
+      "name": "InventoryMenu_DrawStatDelta",
+      "source": "inventory_menu/draw_stat_delta.c"
+    },
+    "main:080a4e20": {
+      "name": "InventoryMenu_SetItemWindowFiveRowBounds",
+      "source": "inventory_menu/set_item_window_five_row_bounds.c"
+    },
+    "main:080a4e44": {
+      "name": "InventoryMenu_SetItemWindowThreeRowBounds",
+      "source": "inventory_menu/set_item_window_three_row_bounds.c"
+    },
+    "main:080a4e68": {
+      "name": "InventoryMenu_SetMessageWindowRow5Bounds",
+      "source": "inventory_menu/set_message_window_row_5_bounds.c"
+    },
+    "main:080a4e90": {
+      "name": "InventoryMenu_SetMessageWindowRow6Bounds",
+      "source": "inventory_menu/set_message_window_row_6_bounds.c"
+    },
+    "main:080a4eb8": {
+      "name": "InventoryMenu_SetMessageWindowRow7Bounds",
+      "source": "inventory_menu/set_message_window_row_7_bounds.c"
+    },
+    "main:080a4ee0": {
+      "name": "InventoryMenu_SetMessageWindowRow3Bounds",
+      "source": "inventory_menu/set_message_window_row_3_bounds.c"
+    },
+    "main:080a51d0": {
+      "name": "InventoryMenu_DrawSelectedItemHeader",
+      "source": "inventory_menu/draw_selected_item_header.c"
+    },
+    "main:080a5578": {
+      "name": "InventoryMenu_BuildPageResult",
+      "source": "inventory_menu/build_page_result.c"
+    },
+    "main:080a56c8": {
+      "name": "InventoryMenu_DrawItemNamePage",
+      "source": "inventory_menu/draw_item_name_page.c"
+    },
+    "main:080a5fe0": {
+      "name": "PsynergyMenu_ClassifySelectedPsynergy",
+      "source": "psynergy_menu/classify_selected_psynergy.c"
+    },
+    "main:080a6384": {
+      "name": "PsynergyMenu_RefreshOwnerPsynergy",
+      "source": "psynergy_menu/refresh_owner_psynergy.c"
+    },
+    "main:080a63dc": {
+      "name": "PsynergyMenu_ReturnTrue",
+      "source": "psynergy_menu/return_true.c"
+    },
+    "main:080a65e4": {
+      "name": "PsynergyMenu_SetShortcut",
+      "source": "psynergy_menu/set_shortcut.c"
+    },
+    "main:080a6794": {
+      "name": "PsynergyMenu_CreateEntryGrid",
+      "source": "psynergy_menu/create_entry_grid.c"
+    },
+    "main:080a6874": {
+      "name": "PsynergyMenu_CloseWindows",
+      "source": "psynergy_menu/close_windows.c"
+    },
+    "main:080a68a8": {
+      "name": "PsynergyMenu_DrawPsynergyIcons",
+      "source": "psynergy_menu/draw_psynergy_icons.c"
+    },
     "main:080a68ec": {
       "name": "PsynergyMenu_CollectActions"
     },
-    "main:080a6a00": "psynergy_menu/build_page_result.c",
-    "main:080a735c": "psynergy_menu/is_action_restricted.c",
-    "main:080a9374": "psynergy_menu/draw_prepared_psynergy_icons.c",
-    "main:080a9a5c": "inventory_menu/draw_category_items.c",
+    "main:080a6a00": {
+      "name": "PsynergyMenu_BuildPageResult",
+      "source": "psynergy_menu/build_page_result.c"
+    },
+    "main:080a735c": {
+      "name": "PsynergyMenu_IsActionRestricted",
+      "source": "psynergy_menu/is_action_restricted.c"
+    },
+    "main:080a9374": {
+      "name": "PsynergyMenu_DrawPreparedPsynergyIcons",
+      "source": "psynergy_menu/draw_prepared_psynergy_icons.c"
+    },
+    "main:080a9a5c": {
+      "name": "InventoryMenu_DrawCategoryItems",
+      "source": "inventory_menu/draw_category_items.c"
+    },
     "main:080b08b8": {
       "name": "ShopCursor_Advance"
     },
     "main:080b0958": {
       "name": "ShopCursor_MoveTowardTarget"
     },
-    "main:080b09fc": "shop/set_cursor_position.c",
+    "main:080b09fc": {
+      "name": "Shop_SetCursorPosition",
+      "source": "shop/set_cursor_position.c"
+    },
     "main:080b0a20": {
       "name": "ShopCursor_SetPositionImmediate"
     },
-    "main:080b0a6c": "shop/place_cursor.c",
+    "main:080b0a6c": {
+      "name": "Shop_PlaceCursor",
+      "source": "shop/place_cursor.c"
+    },
     "main:080b6a60": {
       "name": "BattleParty_PrepareActiveOwners"
     },
@@ -1305,79 +2532,277 @@
     "main:080bae40": {
       "name": "BattleTarget_SelectForAction"
     },
-    "main:080b0fa4": "shop/draw_stock_page.c",
-    "main:080b10cc": "shop/draw_money.c",
-    "main:080b11a4": "shop/draw_message.c",
-    "main:080b11c4": "shop/update_party_member_list.c",
-    "main:080b1470": "shop/draw_party_member_items.c",
-    "main:080b153c": "shop/select_purchase_quantity.c",
-    "main:080b17e4": "shop/complete_purchase.c",
+    "main:080b0fa4": {
+      "name": "Shop_DrawStockPage",
+      "source": "shop/draw_stock_page.c"
+    },
+    "main:080b10cc": {
+      "name": "Shop_DrawMoney",
+      "source": "shop/draw_money.c"
+    },
+    "main:080b11a4": {
+      "name": "Shop_DrawMessage",
+      "source": "shop/draw_message.c"
+    },
+    "main:080b11c4": {
+      "name": "Shop_UpdatePartyMemberList",
+      "source": "shop/update_party_member_list.c"
+    },
+    "main:080b1470": {
+      "name": "Shop_DrawPartyMemberItems",
+      "source": "shop/draw_party_member_items.c"
+    },
+    "main:080b153c": {
+      "name": "Shop_SelectPurchaseQuantity",
+      "source": "shop/select_purchase_quantity.c"
+    },
+    "main:080b17e4": {
+      "name": "Shop_CompletePurchase",
+      "source": "shop/complete_purchase.c"
+    },
     "main:080b1868": {
       "name": "Shop_ConfirmEquipItem",
       "source": "shop/confirm_equip_item.c"
     },
-    "main:080b196c": "shop/sell_replaced_item.c",
-    "main:080b19cc": "shop/compute_sale_price.c",
-    "main:080b1a14": "shop/select_party_member.c",
-    "main:080b1dec": "shop/draw_party_member_item_grid.c",
-    "main:080b1e80": "shop/select_sale_quantity.c",
-    "main:080b20e8": "shop/compute_repair_price.c",
-    "main:080b2110": "shop/run_party_member_selection.c",
-    "main:080fa1c8": "audio/read_track_command_byte.c",
-    "main:080fa1fc": "audio/pcm_key_to_frequency.c",
-    "main:080fa2a0": "audio/initialize.c",
-    "main:080fa318": "audio/run_mixer.c",
-    "main:080fa324": "audio/play_sound.c",
-    "main:080fa350": "audio/play_sound_if_inactive.c",
-    "main:080fa39c": "audio/play_or_resume_sound.c",
-    "main:080fa3f0": "audio/stop_sound.c",
-    "main:080fa424": "audio/resume_sound.c",
-    "main:080fa458": "audio/stop_all_players.c",
-    "main:080fa484": "audio/resume_music_player.c",
-    "main:080fa490": "audio/resume_all_players.c",
-    "main:080fa4bc": "audio/fade_out_music_player.c",
-    "main:080fa55c": "audio/initialize_cgb.c",
-    "main:080fa678": "audio/invoke_command_slot_34.c",
-    "main:080fa68c": "audio/invoke_command_slot_35.c",
-    "main:080fa6a0": "audio/initialize_engine.c",
-    "main:080fa798": "audio/set_pcm_rate.c",
-    "main:080fa83c": "audio/set_mode.c",
-    "main:080fa8d4": "audio/stop_all_channels.c",
-    "main:080fa928": "audio/disable_pcm_dma.c",
-    "main:080fa9a4": "audio/enable_pcm_dma.c",
-    "main:080fa9e0": "audio/initialize_music_player.c",
-    "main:080faa58": "audio/start_song.c",
-    "main:080fab3c": "audio/stop_music_player.c",
-    "main:080fab7c": "audio/update_music_player_fade.c",
-    "main:080fac44": "audio/update_track_volume_pitch.c",
-    "main:080facf8": "audio/cgb_key_to_frequency.c",
-    "main:080fada0": "audio/stop_cgb_oscillator.c",
-    "main:080fadf0": "audio/update_cgb_pan_envelope.c",
-    "resource_371:02000030": "event/story/progress/trigger_event_0808.c",
-    "resource_371:0200008c": "event/story/progress/trigger_event_0809.c",
-    "resource_371:020000d4": "event/story/progress/trigger_event_080a.c",
-    "resource_371:0200011c": "event/story/actors/advance_timer.c",
-    "resource_371:0200013c": "event/story/actors/configure_spawned_object.c",
-    "resource_371:02000250": "event/story/actors/initialize.c",
-    "resource_371:020002a4": "event/story/actors/apply_flagged_mode.c",
+    "main:080b196c": {
+      "name": "Shop_SellReplacedItem",
+      "source": "shop/sell_replaced_item.c"
+    },
+    "main:080b19cc": {
+      "name": "Shop_ComputeSalePrice",
+      "source": "shop/compute_sale_price.c"
+    },
+    "main:080b1a14": {
+      "name": "Shop_SelectPartyMember",
+      "source": "shop/select_party_member.c"
+    },
+    "main:080b1dec": {
+      "name": "Shop_DrawPartyMemberItemGrid",
+      "source": "shop/draw_party_member_item_grid.c"
+    },
+    "main:080b1e80": {
+      "name": "Shop_SelectSaleQuantity",
+      "source": "shop/select_sale_quantity.c"
+    },
+    "main:080b20e8": {
+      "name": "Shop_ComputeRepairPrice",
+      "source": "shop/compute_repair_price.c"
+    },
+    "main:080b2110": {
+      "name": "Shop_RunPartyMemberSelection",
+      "source": "shop/run_party_member_selection.c"
+    },
+    "main:080fa1c8": {
+      "name": "MusicTrack_ReadCommandByte",
+      "source": "audio/read_track_command_byte.c"
+    },
+    "main:080fa1fc": {
+      "name": "Pcm_KeyToFrequency",
+      "source": "audio/pcm_key_to_frequency.c"
+    },
+    "main:080fa2a0": {
+      "name": "Audio_Initialize",
+      "source": "audio/initialize.c"
+    },
+    "main:080fa318": {
+      "name": "AudioEngine_RunMixer",
+      "source": "audio/run_mixer.c"
+    },
+    "main:080fa324": {
+      "name": "Audio_PlaySound",
+      "source": "audio/play_sound.c"
+    },
+    "main:080fa350": {
+      "name": "Audio_PlaySoundIfInactive",
+      "source": "audio/play_sound_if_inactive.c"
+    },
+    "main:080fa39c": {
+      "name": "Audio_PlayOrResumeSound",
+      "source": "audio/play_or_resume_sound.c"
+    },
+    "main:080fa3f0": {
+      "name": "Audio_StopSound",
+      "source": "audio/stop_sound.c"
+    },
+    "main:080fa424": {
+      "name": "Audio_ResumeSound",
+      "source": "audio/resume_sound.c"
+    },
+    "main:080fa458": {
+      "name": "Audio_StopAllPlayers",
+      "source": "audio/stop_all_players.c"
+    },
+    "main:080fa484": {
+      "name": "MusicPlayer_Resume",
+      "source": "audio/resume_music_player.c"
+    },
+    "main:080fa490": {
+      "name": "Audio_ResumeAllPlayers",
+      "source": "audio/resume_all_players.c"
+    },
+    "main:080fa4bc": {
+      "name": "MusicPlayer_FadeOut",
+      "source": "audio/fade_out_music_player.c"
+    },
+    "main:080fa55c": {
+      "name": "CgbAudio_Initialize",
+      "source": "audio/initialize_cgb.c"
+    },
+    "main:080fa678": {
+      "name": "AudioCommand_InvokeSlot34",
+      "source": "audio/invoke_command_slot_34.c"
+    },
+    "main:080fa68c": {
+      "name": "AudioCommand_InvokeSlot35",
+      "source": "audio/invoke_command_slot_35.c"
+    },
+    "main:080fa6a0": {
+      "name": "AudioEngine_Initialize",
+      "source": "audio/initialize_engine.c"
+    },
+    "main:080fa798": {
+      "name": "AudioEngine_SetPcmRate",
+      "source": "audio/set_pcm_rate.c"
+    },
+    "main:080fa83c": {
+      "name": "AudioEngine_SetMode",
+      "source": "audio/set_mode.c"
+    },
+    "main:080fa8d4": {
+      "name": "AudioEngine_StopAllChannels",
+      "source": "audio/stop_all_channels.c"
+    },
+    "main:080fa928": {
+      "name": "AudioEngine_DisablePcmDma",
+      "source": "audio/disable_pcm_dma.c"
+    },
+    "main:080fa9a4": {
+      "name": "AudioEngine_EnablePcmDma",
+      "source": "audio/enable_pcm_dma.c"
+    },
+    "main:080fa9e0": {
+      "name": "MusicPlayer_Initialize",
+      "source": "audio/initialize_music_player.c"
+    },
+    "main:080faa58": {
+      "name": "MusicPlayer_StartSong",
+      "source": "audio/start_song.c"
+    },
+    "main:080fab3c": {
+      "name": "MusicPlayer_Stop",
+      "source": "audio/stop_music_player.c"
+    },
+    "main:080fab7c": {
+      "name": "MusicPlayer_UpdateFade",
+      "source": "audio/update_music_player_fade.c"
+    },
+    "main:080fac44": {
+      "name": "MusicTrack_UpdateVolumePitch",
+      "source": "audio/update_track_volume_pitch.c"
+    },
+    "main:080facf8": {
+      "name": "Cgb_KeyToFrequency",
+      "source": "audio/cgb_key_to_frequency.c"
+    },
+    "main:080fada0": {
+      "name": "Cgb_StopOscillator",
+      "source": "audio/stop_cgb_oscillator.c"
+    },
+    "main:080fadf0": {
+      "name": "CgbChannel_UpdatePanEnvelope",
+      "source": "audio/update_cgb_pan_envelope.c"
+    },
+    "resource_371:02000030": {
+      "name": "StoryProgress_TriggerEvent0808",
+      "source": "event/story/progress/trigger_event_0808.c"
+    },
+    "resource_371:0200008c": {
+      "name": "StoryProgress_TriggerEvent0809",
+      "source": "event/story/progress/trigger_event_0809.c"
+    },
+    "resource_371:020000d4": {
+      "name": "StoryProgress_TriggerEvent080A",
+      "source": "event/story/progress/trigger_event_080a.c"
+    },
+    "resource_371:0200011c": {
+      "name": "StoryActor_AdvanceTimer",
+      "source": "event/story/actors/advance_timer.c"
+    },
+    "resource_371:0200013c": {
+      "name": "StoryActor_ConfigureSpawnedObject",
+      "source": "event/story/actors/configure_spawned_object.c"
+    },
+    "resource_371:02000250": {
+      "name": "StoryActor_Initialize",
+      "source": "event/story/actors/initialize.c"
+    },
+    "resource_371:020002a4": {
+      "name": "StoryActor_ApplyFlaggedMode",
+      "source": "event/story/actors/apply_flagged_mode.c"
+    },
     "resource_371:020002cc": {
       "name": "initialize_story_actor_animation_frame"
     },
-    "resource_371:02000314": "event/story/actors/reset_position.c",
-    "resource_371:02000350": "event/story/actors/clear_active_flag.c",
-    "resource_371:0200037c": "event/story/select_placement_table.c",
-    "resource_371:020004a0": "event/story/set_branch_value_from_x.c",
-    "resource_371:020004f0": "event/story/set_branch_value_from_z.c",
-    "resource_371:020028a8": "event/story/show_reward_dialogue.c",
-    "resource_371:02003130": "event/story/start_transition.c",
-    "resource_371:0200341c": "event/story/compute_opposing_slot_delta.c",
-    "resource_371:02003448": "event/story/lookup_reward.c",
-    "resource_371:02003678": "event/story/update_selected_actor_progress.c",
-    "resource_371:020037bc": "event/story/set_reference_actor.c",
-    "resource_371:020037c8": "event/story/activate_shared_state.c",
-    "resource_371:020037d8": "event/story/complete_actor_98.c",
-    "resource_371:02003fb4": "event/story/effects/animate_vertical_positive.c",
-    "resource_371:02004004": "event/story/effects/animate_vertical_negative.c",
+    "resource_371:02000314": {
+      "name": "StoryActor_ResetPosition",
+      "source": "event/story/actors/reset_position.c"
+    },
+    "resource_371:02000350": {
+      "name": "StoryActor_ClearActiveFlag",
+      "source": "event/story/actors/clear_active_flag.c"
+    },
+    "resource_371:0200037c": {
+      "name": "StoryScene_SelectPlacementTable",
+      "source": "event/story/select_placement_table.c"
+    },
+    "resource_371:020004a0": {
+      "name": "StoryScene_SetBranchValueFromX",
+      "source": "event/story/set_branch_value_from_x.c"
+    },
+    "resource_371:020004f0": {
+      "name": "StoryScene_SetBranchValueFromZ",
+      "source": "event/story/set_branch_value_from_z.c"
+    },
+    "resource_371:020028a8": {
+      "name": "StoryScene_ShowRewardDialogue",
+      "source": "event/story/show_reward_dialogue.c"
+    },
+    "resource_371:02003130": {
+      "name": "StoryScene_StartTransition",
+      "source": "event/story/start_transition.c"
+    },
+    "resource_371:0200341c": {
+      "name": "StoryScene_ComputeOpposingSlotDelta",
+      "source": "event/story/compute_opposing_slot_delta.c"
+    },
+    "resource_371:02003448": {
+      "name": "StoryReward_LookupBySelection",
+      "source": "event/story/lookup_reward.c"
+    },
+    "resource_371:02003678": {
+      "name": "StoryScene_UpdateSelectedActorProgress",
+      "source": "event/story/update_selected_actor_progress.c"
+    },
+    "resource_371:020037bc": {
+      "name": "StoryScene_SetReferenceActor",
+      "source": "event/story/set_reference_actor.c"
+    },
+    "resource_371:020037c8": {
+      "name": "StoryScene_ActivateSharedState",
+      "source": "event/story/activate_shared_state.c"
+    },
+    "resource_371:020037d8": {
+      "name": "StoryScene_CompleteActor98",
+      "source": "event/story/complete_actor_98.c"
+    },
+    "resource_371:02003fb4": {
+      "name": "StoryEffect_AnimateVerticalPositive",
+      "source": "event/story/effects/animate_vertical_positive.c"
+    },
+    "resource_371:02004004": {
+      "name": "StoryEffect_AnimateVerticalNegative",
+      "source": "event/story/effects/animate_vertical_negative.c"
+    },
     "resource_372:02003e18": {
       "name": "ActorPresentation_SelectActorTwentySevenState",
       "source": "overlays/actor_presentation/select_actor_twenty_seven_state.c"
@@ -1680,7 +3105,10 @@
     "resource_39b:02000ed0": "overlays/staged_actor_effect_sequence/run_scene_effect_sequence.c",
     "resource_39b:02001fe8": "overlays/staged_actor_effect_sequence/clear_linked_scene_record.c",
     "resource_39c:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_39c:0200013c": "battle/effects/spawn_configured_effect.c",
+    "resource_39c:0200013c": {
+      "name": "BattleEffect_SpawnConfigured",
+      "source": "battle/effects/spawn_configured_effect.c"
+    },
     "resource_39c:02000314": "overlays/shared/calculate_fixed_point_position_distance.c",
     "resource_39c:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
     "resource_39c:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
@@ -4471,7 +5899,10 @@
       "name": "Battle_ApplyValueToWork2224",
       "source": "battle/runtime/apply_value_to_work_2224.c"
     },
-    "main:080b6c90": "battle/actor/commit_placement.c",
+    "main:080b6c90": {
+      "name": "BattleActor_CommitPlacement",
+      "source": "battle/actor/commit_placement.c"
+    },
     "main:080b6cb0": {
       "name": "BattleParty_ListAllUnitsAndSubmit",
       "source": "battle/party/list_all_units_and_submit.c"
@@ -4600,8 +6031,14 @@
       "name": "BattleEvent_DispatchQueued",
       "source": "battle/event_runtime/dispatch_queued_events.c"
     },
-    "main:080bbabc": "battle/event/push.c",
-    "main:080bbae8": "battle/effects/can_affect_defeated_unit.c",
+    "main:080bbabc": {
+      "name": "BattleEvent_Push",
+      "source": "battle/event/push.c"
+    },
+    "main:080bbae8": {
+      "name": "BattleEffect_CanAffectDefeatedUnit",
+      "source": "battle/effects/can_affect_defeated_unit.c"
+    },
     "main:080bd3c8": {
       "name": "Ability_CheckStatusOrSpecialId",
       "source": "ability/check_status_or_special_id.c"
@@ -4714,7 +6151,10 @@
       "name": "Runtime_RemoveIrqHandlerSlot2",
       "source": "runtime/callbacks/remove_irq_handler_slot2.c"
     },
-    "main:080c1f50": "battle/summon/reset_charge.c",
+    "main:080c1f50": {
+      "name": "Summon_ResetCharge",
+      "source": "battle/summon/reset_charge.c"
+    },
     "main:080c2368": {
       "name": "Summon_GetEntryByte3Kind",
       "source": "battle/summon/get_entry_byte3_kind.c"
@@ -5056,7 +6496,7 @@
       "source": "overlays/scene_dialogue/show_line_128e.c"
     },
     "resource_3a2:02000030": {
-      "name": "prepare_event_actor_render_flags",
+      "name": "EventScript_PrepareActorRenderFlags",
       "source": "event/scripts/prepare_actor_render_flags.c"
     },
     "resource_390:020000e4": {
@@ -12907,7 +14347,7 @@
       "name": "RunBattleEffect13"
     },
     "main:0809b208": {
-      "name": "RunBattleEffect15",
+      "name": "BattleEffect_RunEffect15",
       "source": "battle/effects/run_effect15.c"
     },
     "main:0809b7e4": {

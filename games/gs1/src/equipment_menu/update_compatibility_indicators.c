@@ -17,12 +17,12 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 
             if (Item_CanOwnerEquip(*(u16 *)(menu + owner_offset),
                                    *(u16 *)(menu + 376) & 0x1FF) != 0) {
-                s32 indicator_offset = member_index * 4 + 276;
-                void *indicator = *(void **)(menu + indicator_offset);
+                s32 off = member_index * 4 + 276;
+                void *indicator = *(void **)(menu + off);
                 Object_InitializeMode(indicator, 3);
             } else {
-                s32 indicator_offset = member_index * 4 + 276;
-                void *indicator = *(void **)(menu + indicator_offset);
+                s32 off = member_index * 4 + 276;
+                void *indicator = *(void **)(menu + off);
                 Object_InitializeMode(indicator, 1);
             }
             member_index++;

@@ -10,7 +10,7 @@ void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void BattleEffect_PrepareBufferInterpolation(void);
 
-void RunBurstParticleMainObject(void) {
+void BattleEffect_RunBurstParticleMainObject(void) {
     u8 *object;
     u8 *flags;
     u8 battle_value;

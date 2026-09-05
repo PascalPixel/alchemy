@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor10Flags30bTo30eSequenceB Func_02000a60
-
 extern void Func_02002e76(s32);
 extern void Func_02000bf2(s32, s32, s32);
 extern void Func_02002e88(s32);

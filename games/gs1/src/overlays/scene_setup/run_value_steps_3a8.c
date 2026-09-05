@@ -7,8 +7,6 @@ extern void Func_02003dac(s32, s32);
 extern void Func_02003db4(s32, s32);
 extern void Func_02003df8(void);
 
-#define FieldScene_RunStepWithValue29df Func_020001e4
-
 void FieldScene_RunStepWithValue29df(void) {
     Func_02003ddc();
     Func_02003dac(0x947, 1);
@@ -17,8 +15,6 @@ void FieldScene_RunStepWithValue29df(void) {
 }
 
 #include "types.h"
-
-#define FieldScene_RunStepWithValueFd6 Func_0200020c
 
 extern void Func_02003e04(void);
 extern s32 Func_02003e8e(s32, s32, s32);

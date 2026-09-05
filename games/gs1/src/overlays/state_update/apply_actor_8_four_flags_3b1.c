@@ -1,4 +1,3 @@
-#define SceneState_ApplyActor8FourFlags Func_02005004
 /*
  * Resource 3b1 unindexed helper at 0x02005004 (52 bytes incl. pool,
  * 2 calls).

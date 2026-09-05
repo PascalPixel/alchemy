@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ApplyValue15 Func_02000a58
-
 extern void Func_02001f1e(s32 actor, s32 mode);
 s32 OverlayObject_ApplyValue15(s32 actor)
 {

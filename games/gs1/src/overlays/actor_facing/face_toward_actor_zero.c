@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FaceTowardActorZero Func_02000aa8
-
 u8 *Func_02002ff0();
 s32 Func_02002f42();
 

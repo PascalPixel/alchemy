@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor22SceneWhenFlag836Only Func_02001684
-
 extern s32 Func_02005d66(s32);
 extern s32 Func_02005d70(s32);
 extern void Func_02005d98(void);

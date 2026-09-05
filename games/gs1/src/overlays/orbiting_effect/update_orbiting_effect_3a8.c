@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateOrbitingEffect Func_020039d4
-
 typedef struct RenderData {
     unsigned char pad00[0x1E];
     s16 rotation;

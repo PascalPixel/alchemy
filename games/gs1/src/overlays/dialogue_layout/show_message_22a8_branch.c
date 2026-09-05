@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowMessage22a8Branch Func_02000524
-
 extern u8 Value_000022a8;
 extern void Func_020049c6(s32);
 extern s32 Func_020049d6(s32, s32);

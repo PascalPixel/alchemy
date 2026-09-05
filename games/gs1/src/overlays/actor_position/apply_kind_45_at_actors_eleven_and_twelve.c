@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ApplyKind45AtActorsElevenAndTwelve Func_0200199c
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

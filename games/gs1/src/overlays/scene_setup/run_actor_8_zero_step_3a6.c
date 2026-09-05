@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor8ZeroStep Func_02001378
-
 /* Actor-8 presentation reset at 0x02001378, including alignment to 0x1390. */
 
 extern void Func_02003028(void);

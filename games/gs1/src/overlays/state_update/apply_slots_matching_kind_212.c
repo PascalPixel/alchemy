@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ApplySlotsMatchingKind212 Func_02000558
-
 extern u8 *Data_03001ebc;
 extern void Func_020054b8(s32 *, s32);
 extern u8 Value_00000212;

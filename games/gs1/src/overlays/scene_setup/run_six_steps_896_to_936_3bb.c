@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSixSteps896To936 Func_02001fb8
-
 /*
  * resource_3bb owner at 0x02001fb8, 66 bytes: six calls to a family of
  * near-identical handler stubs (10 bytes apart, 0x2005eca..0x2005efc),

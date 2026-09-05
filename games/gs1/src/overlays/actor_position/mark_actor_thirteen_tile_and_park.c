@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_MarkActorThirteenTileAndPark Func_02001b84
-
 /*
  * resource_39f owner at 0x02001b84, 176 bytes: code 0x02001b84-0x02001c2d, an
  * alignment halfword at 0x02001c2e and the pool word 0xfffe0000 at 0x02001c30.

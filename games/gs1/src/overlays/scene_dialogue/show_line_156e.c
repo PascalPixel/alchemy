@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLine156E Func_02000668
-
 void Func_0200289c();
 void Func_02002972();
 void Func_02002982();

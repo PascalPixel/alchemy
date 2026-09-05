@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetMode3AndRate4ccc Func_02002a10
 extern unsigned char Value_00004ccc;
 
 /*

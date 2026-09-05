@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectRecordByScene21 Func_0200009c
-
 struct SceneRecord {
     u8 unk_000[166];
     u8 field_166;

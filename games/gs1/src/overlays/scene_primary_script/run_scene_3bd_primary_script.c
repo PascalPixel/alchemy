@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunBranchingCutsceneSequence Func_02002c44
-
 /*
  * resource_3bd cutscene owner 0x02002c44-0x020034bb (2168 bytes).
  *

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateWobbleByCounter Func_02000030
-
 struct Object {
     u8 filler00[24];
     s32 x;

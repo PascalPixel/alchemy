@@ -9,8 +9,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Func_02001dee(actor, x, y);
 }
 
-#define ConfigureAndPlaceActorFourteen Func_02000870
-
 void ConfigureAndPlaceActorFourteen(void)
 {
     s32 a = 21, b = 9;

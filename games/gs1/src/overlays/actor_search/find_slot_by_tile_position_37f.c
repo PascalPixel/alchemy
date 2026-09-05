@@ -54,8 +54,6 @@ void Func_020005ac(void)
 
 #include "types.h"
 
-#define SceneActor_FindSlotByTilePosition Func_0200079c
-
 extern s32 *Func_020021be(s32);
 extern void Func_0200219e(s32);
 extern void Func_020021a4(s32);

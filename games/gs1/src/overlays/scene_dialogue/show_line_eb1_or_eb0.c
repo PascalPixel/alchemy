@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLineEB1OrEB0 Func_020005e8
 #define NULL ((void *)0)
 
 extern u8 Value_00000eb0;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_DecayRecordField1e Func_02000400
-
 typedef struct {
     u8 filler0[0x1e];
     u16 unk1e;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableByStoryFlags Func_020000b8
-
 extern s32 Func_020019be(s32);
 extern s32 Func_020019cc(s32);
 extern s32 Func_02001a0c(s32);

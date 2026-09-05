@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectAndPlaceSlot12 Func_02001198
-
 void Func_0200367e(s32, s32, s32, s32, s32, s32);
 s32 Func_020036bc(s32);
 void Func_0200373e(s32, s32, s32);

@@ -4,7 +4,6 @@
 
 s32 Func_02001a9e(s32, s32);
 
-#define OverlayObject_UpdateFacingTowardTarget Func_02000030
 #define CalculateFacingAngle Func_02001a9e
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object) {
     s32 delta;

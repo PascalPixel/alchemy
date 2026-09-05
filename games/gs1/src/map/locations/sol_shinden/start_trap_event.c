@@ -66,8 +66,6 @@ static __inline__ void SetFinalScale(s32 actor, s32 horizontal, s32 vertical)
     Func_02003eae(actor, horizontal, vertical);
 }
 
-#define StartSolShindenTrapEvent Func_02001380
-
 void StartSolShindenTrapEvent(void)
 {
     u32 scene_state;

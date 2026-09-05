@@ -6,7 +6,6 @@ struct V { s32 a; s32 b; s32 c; };
 extern struct S *Func_02004ba4(s32 arg0);
 extern s32 Func_02003576(struct S *arg0, struct V *arg1);
 
-#define CheckActorPathSouth Func_02001b14
 s32 CheckActorPathSouth(void) {
     struct S *actor = Func_02004ba4(0);
     struct V destination;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SpawnWithMode14 Func_02000058
-
 void Func_020000b2(void *, s32);
 void *Func_02004e4e(s32, s32, s32, s32);
 void Func_02004ed6(void *, s32);

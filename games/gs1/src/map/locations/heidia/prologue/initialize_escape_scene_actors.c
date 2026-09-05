@@ -13,7 +13,6 @@ extern void Func_02003244(s32, s32, s32, s32);
 extern void Func_02003250(s32, s32, s32, s32);
 extern void Func_0200325c(s32, s32, s32, s32);
 
-#define InitializeEscapeSceneActors Func_0200191c
 void InitializeEscapeSceneActors(void)
 {
     Func_02003184(8, 0x11, 0x1E, 0x15);

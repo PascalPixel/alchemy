@@ -18,7 +18,6 @@ extern u16 Data_0200ade4;
  * value is unchanged, which in ordinary C only a volatile object produces. */
 extern volatile s32 Data_0200ade8;
 
-#define UpdateStatueLight1 Func_02000d9c
 void UpdateStatueLight1(void)
 {
     volatile s32 *st;

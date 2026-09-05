@@ -9,8 +9,6 @@ extern u8 Data_02009730[];
 extern u8 Data_020099f4[];
 extern u8 Data_02009724[];
 
-#define SceneData_GetPrimaryTable Func_0200011c
-
 s32 SceneData_GetPrimaryTable(void) {
     s16 v = Data_02000240[224];
 
@@ -24,8 +22,6 @@ s32 SceneData_GetPrimaryTable(void) {
 }
 
 #include "types.h"
-
-#define FieldScene_RunActorEightPromptDialogue Func_0200015c
 
 void Func_02001008();       /* opens a scripted sequence */
 void Func_02001096();       /* queues a cue / script id */

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorNineFlagDialogueA Func_0200027c
-
 /*
  * Resource 378 owner at 0x0200027c (112 bytes, through 0x020002eb).
  *

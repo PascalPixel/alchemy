@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_UnpackSoftDouble Func_02001770
-
 /*
  * resource_3a7 soft-float double unpack at 0x02001770, 212 bytes.
  *

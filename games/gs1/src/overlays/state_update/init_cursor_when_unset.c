@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitCursorWhenUnset Func_02002e64
-
 extern s16 Data_0200cb46;
 extern s32 Func_02006d3e(void);
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ShowDialogue17B1 Func_02000abc
-
 void Func_02004e9c(void);
 void Func_02004f62(s32);
 s32 Func_02004f8a(s32, s32);

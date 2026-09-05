@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InstallTask8714AndApplyTwoRects Func_020009b0
-
 extern void Func_02004a58(s32);
 extern void Func_020048b0(s32);
 extern void Func_02004774(s32);

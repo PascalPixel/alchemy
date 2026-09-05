@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource37c_Run Func_02000054
-
 #include "resource_37c.h"
 #include "resource_37c_runtime.h"
 

@@ -7,8 +7,6 @@ extern u8 Value_00000021;
 extern u8 Data_0200aca8[];
 extern u8 Data_0200ac9c[];
 
-#define SceneData_SelectTableac9cByState Func_02000100
-
 s32 SceneData_SelectTableac9cByState(void) {
     if (Data_02000240[224] == (s32)&Value_00000021) {
         return (s32)Data_0200aca8;
@@ -17,8 +15,6 @@ s32 SceneData_SelectTableac9cByState(void) {
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor10Message1420 Func_02000130
 
 extern u8 Value_00001420;
 

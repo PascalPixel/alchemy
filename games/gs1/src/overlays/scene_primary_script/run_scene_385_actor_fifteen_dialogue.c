@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorFifteenFacingPreservedDialogue Func_02000640
-
 /* Complete actor-15 facing-preserving dialogue scene through its two-word pool. */
 struct Actor_02000640 {
     u8 reserved00[6];

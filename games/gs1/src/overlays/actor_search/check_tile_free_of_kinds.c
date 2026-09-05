@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CheckTileFreeOfKinds Func_02004840
-
 extern s32 Func_02009062(s32, s32, s32);
 extern s32 Func_02009030(s32, s32, s32);
 extern s32 Func_0200903e(s32, s32, s32);

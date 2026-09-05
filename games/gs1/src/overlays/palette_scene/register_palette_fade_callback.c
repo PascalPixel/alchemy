@@ -1,4 +1,3 @@
-#define SceneEffect_RegisterPaletteFadeCallback Func_0200184c
 /*
  * Register this overlay's palette-fade callback.
  *

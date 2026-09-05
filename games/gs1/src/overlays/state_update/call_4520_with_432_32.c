@@ -1,4 +1,3 @@
-#define SceneState_Call4520With432And32 Func_020045f0
 /*
  * Resource 3c8 fixed-argument shorthand at 0x020045f0 (16 bytes, 1 call).
  *

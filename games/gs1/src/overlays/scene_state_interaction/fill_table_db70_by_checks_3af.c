@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_FillTableDb70ByChecks Func_020033b8
-
 extern s32 Func_02006514(s32);
 extern s32 Func_02006832(s32);
 extern s32 Func_02006532(s32);

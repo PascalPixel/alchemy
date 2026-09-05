@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnParticleRowsAndDrawTiles Func_02003860
-
 extern void Func_02009280(s32, s32, s32, s32, s32, s32);
 extern u32 Func_0200923a(void);
 extern u32 Func_0200924e(void);

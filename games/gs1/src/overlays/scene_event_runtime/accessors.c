@@ -1,11 +1,5 @@
 #include "types.h"
 
-#define SceneEventRuntime_GetScriptData Func_02000030
-#define SceneEventRuntime_ReturnZero Func_02000038
-#define SceneEventRuntime_GetMessageData Func_0200003c
-#define SceneEventRuntime_GetActorData Func_02000044
-#define SceneEventRuntime_GetEffectData Func_0200004c
-
 extern u8 SceneEventRuntime_ScriptData[];
 extern u8 SceneEventRuntime_MessageData[];
 extern u8 SceneEventRuntime_ActorData[];

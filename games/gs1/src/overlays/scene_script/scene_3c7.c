@@ -1,25 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSecondaryScript Func_02000eec
-
-#define SceneData_SelectScriptBySceneIdAndFlag9a7 Func_020004b0
-
-#define SceneState_ForwardWord16cAndApply7b Func_0200048c
-
-#define FieldScene_RunThreeCallSequence Func_02000468
-
-#define FieldScene_RunSequenceA Func_020003f4
-
-#define SceneData_SelectTableBySceneIdAndFlag9a7 Func_02000084
-
-#define SceneData_GetTable96d0 Func_0200007c
-
-#define SceneData_SelectTableByWord224 Func_0200004c
-
-#define SceneData_GetTable9438 Func_02000044
-
-#define SceneActor_SetActor14Pose258 Func_02000030
-#define FieldScene_RunPrimaryScript Func_02000508
 #define SetActorPose Func_020012de
 
 extern s16 Data_02000240[];

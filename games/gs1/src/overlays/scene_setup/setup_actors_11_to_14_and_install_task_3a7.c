@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetupActors11To14AndInstallTask Func_02000c50
-
 s32 *Func_02001d8a();
 void Func_02001d40();
 void Func_02001dc8();

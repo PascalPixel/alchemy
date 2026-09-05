@@ -15,7 +15,6 @@ extern void Func_020013f8(void);
 extern void Func_020014a6(s32 msg);
 extern s32 Func_020014ce(s32 actor, s32 mode);
 extern void Func_02001412(void);
-#define SceneDialogue_RunActor16Message11be Func_02000258
 void SceneDialogue_RunActor16Message11be(void)
 {
     Func_020013f8();
@@ -25,8 +24,6 @@ void SceneDialogue_RunActor16Message11be(void)
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor10Message1c3d Func_02000278
 
 /* Complete 32-byte actor-10 dialogue owner through its one-word pool. */
 extern void Func_02001418(void);

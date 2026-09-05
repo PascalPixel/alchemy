@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorThirteenFlagDialogue Func_020004b8
-
 extern void Func_02001a3c(void);
 extern s32 Func_02001a12(s32);
 extern void Func_02001ae4(s32);

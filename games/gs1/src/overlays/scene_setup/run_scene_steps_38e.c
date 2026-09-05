@@ -9,8 +9,6 @@ extern void Func_02000cd8(s32, s32);
 extern s32 Func_02000c00(s32, s32);
 extern void Func_02000bfc(void);
 
-#define FieldScene_RunStepWithValueFd2 Func_020000f8
-
 void FieldScene_RunStepWithValueFd2(void)
 {
     Func_02000bd0();
@@ -28,8 +26,6 @@ extern void Func_02000bdc(s32, s32);
 extern void Func_02000be4(s32, s32);
 extern void Func_02000c20(void);
 
-#define FieldScene_RunStepWithValue29de Func_0200012c
-
 void FieldScene_RunStepWithValue29de(void)
 {
     Func_02000c04();
@@ -45,8 +41,6 @@ extern u8 Value_00000022;
 extern u8 Data_02008d30[];
 extern u8 Data_02008d24[];
 
-#define SceneData_SelectTable8d24ByState Func_02000154
-
 s32 SceneData_SelectTable8d24ByState(void) {
     if (Data_02000240[224] == (s32)&Value_00000022) {
         return (s32)Data_02008d30;
@@ -55,12 +49,6 @@ s32 SceneData_SelectTable8d24ByState(void) {
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor11Message1751 Func_020001c4
-
-#define SceneDialogue_RunActor10Message13c3 Func_020001a4
-
-#define SceneDialogue_RunActor9Message13c0 Func_02000184
 
 extern u8 Value_000013c0;
 

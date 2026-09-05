@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_RampWords24And28Over16Frames Func_02001c60
-
 s32 OverlayObject_RampWords24And28Over16Frames(u8 *obj) {
     u16 *cnt = (u16 *)(obj + 100);
     s16 n;

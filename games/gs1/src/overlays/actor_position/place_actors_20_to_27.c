@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PlaceActors20To27 Func_020017a0
-
 extern void Func_02005b18(s32, s32, s32);
 extern u8 *Func_02005abe(s32);
 extern void Func_02005b32(s32, s32, s32);

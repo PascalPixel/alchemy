@@ -5,8 +5,6 @@
 extern void Func_020010b2(s32);
 extern void Func_020010cc(s32, s32);
 
-#define SceneDialogue_RunMessage0e36 Func_020002b8
-
 void SceneDialogue_RunMessage0e36(void)
 {
     Func_020010b2(0x0E36);
@@ -14,8 +12,6 @@ void SceneDialogue_RunMessage0e36(void)
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunMessage0e37 Func_020002d4
 
 extern void Func_020010ce(s32);
 extern void Func_020010e8(s32, s32);

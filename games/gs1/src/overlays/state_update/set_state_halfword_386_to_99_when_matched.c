@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetStateHalfword386To99WhenMatched Func_020019e0
-
 extern u8 *Data_03001ebc;
 extern s32 Data_02000240[];
 

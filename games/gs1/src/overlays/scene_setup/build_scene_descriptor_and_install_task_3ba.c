@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_BuildSceneDescriptorAndInstallTask Func_02003764
-
 /*
  * resource_3ba owner at 0x02003764, 232 bytes (0x02003764-0x0200384b).
  *

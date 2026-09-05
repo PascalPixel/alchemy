@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_IsStateFour Func_02001554
-
 s32 SceneState_IsStateFour(s32 *state)
 {
     s32 ret = 0;

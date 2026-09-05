@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateHeadingTimer Func_02000424
-
 typedef struct {
     u8 filler0[6];
     u16 unk06;

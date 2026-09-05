@@ -12,8 +12,6 @@
  */
 #include "types.h"
 
-#define SceneActor_MirrorFlag201IntoSlot14 Func_02001458
-
 void Func_0200453c(s32);
 s32 Func_0200453a(s32);
 u8 *Func_0200457c(s32);

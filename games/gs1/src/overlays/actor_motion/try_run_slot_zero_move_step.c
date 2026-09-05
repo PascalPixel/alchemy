@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_TryRunSlotZeroMoveStep Func_02000cd0
-
 extern s32 *Func_02003a98(s32 a);
 extern void Func_02003a98_b(void);
 extern s32 Func_02003a40(s32 *p, s16 *q);

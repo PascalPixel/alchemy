@@ -1,8 +1,6 @@
 #include "types.h"
 
-#define SceneActor_CalculateFixedPointPositionDistance Func_02000030
 #define StagedActorStepTable Data_02008ec8
-#define StagedActor_AdvancePair Func_020000c4
 #define GetStagedActor Func_02000f08
 #define FindNextStagedActor Func_02000176
 #define FindBlockingStagedActor Func_020001a2
@@ -18,13 +16,11 @@
 #define SetStagedActorTransition Func_02000ff0
 #define StagedActorDirectionSteps Data_02008ec8
 #define StagedActorProbeValues Data_02008f08
-#define StagedActor_CheckProbe Func_020002a8
 #define FindStagedActorAtProbe Func_02000342
 #define CheckStagedActorProbePosition Func_0200110e
 #define TestActorPosition Func_02001348
 #define ActorProbeOffsets Data_02008f20
 #define ActorSearchStep Data_02008ec8
-#define StagedActor_FindClearPosition Func_02000474
 #define ResolveActorSearchContext Func_020007de
 #define GetOrbitingSceneObject Func_02001af4
 #define NormalizeOrbitingSceneObject Func_02001ae6
@@ -34,36 +30,9 @@
 #define ConfigurePaletteTransfer Func_02001b14
 #define ReleaseEffectTransfer Func_02001b12
 #define UpdateOrbitingSceneObject Value_02008c4d
-#define SceneEffect_InitOrbitingParticle Func_02000cb4
 
 #include "staged_actor.h"
 #include "staged_actor_probe_state.h"
-
-#define SceneEffect_UpdateOrbitingParticle Func_02000c4c
-
-#define SceneEffect_AdjustColorChannels Func_02000b24
-
-#define SceneEffect_AdjustPaletteWindow Func_02000abc
-
-#define FieldScene_SetupEntryActors8To11 Func_02000a68
-
-#define SceneData_GetTable9068 Func_02000a60
-
-#define FieldScene_SetupActor11Effect181 Func_02000a2c
-
-#define SceneActor_RunPlacementQuery Func_020009f8
-
-#define SceneData_GetTable8ff0 Func_020009f0
-
-#define SceneData_GetTable8fe0 Func_020009e8
-
-#define SceneData_ReturnZero Func_020009e4
-
-#define SceneData_GetTable8f80 Func_020009dc
-
-#define SceneState_FillGridAttributeRectangle Func_02000244
-
-#define SceneActor_FindActorAtFixedPointPosition Func_0200006c
 
 typedef struct { s32 lo, hi; } Pair;
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchByRange Func_02002508
-
 extern void Func_020068f0();
 extern void Func_0200691c();
 extern u8 *Func_02006912();

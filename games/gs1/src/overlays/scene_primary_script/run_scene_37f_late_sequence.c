@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFourEntitySequence Func_02000f8c
-
 extern u8 Value_00000fe0;
 void Func_080770c8();
 void Func_080770d0();

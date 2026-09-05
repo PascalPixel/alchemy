@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_IntegrateAndDamp Func_020000bc
-
 /*
  * resource_3a4 owner at 0x020000bc, 40 bytes: the per-frame integrator
  * for one actor record. Advance two position words by their velocities,

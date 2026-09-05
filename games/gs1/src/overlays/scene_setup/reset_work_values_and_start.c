@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ResetWorkValuesAndStart Func_020013d4
-
 extern u8 *Data_03001e70;
 extern void Func_020056c2(s32);
 extern s32 Func_02005668(void);

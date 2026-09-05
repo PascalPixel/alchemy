@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorTenFourStepSequence Func_02002d08
-
 void Func_020069e8();          /* site veneer -> Func_0808a428 */
 void Func_020069f8();          /* site veneer -> Func_0808a430 */
 void Func_02006a14();          /* site veneer -> Func_0808a448 */

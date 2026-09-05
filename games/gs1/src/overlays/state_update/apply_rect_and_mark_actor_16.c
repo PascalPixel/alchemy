@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectAndMarkActor16 Func_0200050c
-
 extern u8 *Func_02001644(s32);
 extern void Func_020015fa(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_02001664(s32);

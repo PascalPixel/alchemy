@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_GetDifferenceOfPairSums Func_02001130
-
 extern s32 Func_02002292(s32);
 extern s32 Func_0200229a(s32);
 extern s32 Func_020022a2(s32);

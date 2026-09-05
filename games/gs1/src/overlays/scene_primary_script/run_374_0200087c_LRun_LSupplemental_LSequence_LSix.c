@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSupplementalSequenceSix Func_0200087c
-
 extern u8 Value_0200beb4;
 void Func_02000fb0();
 void Func_02002ec8();

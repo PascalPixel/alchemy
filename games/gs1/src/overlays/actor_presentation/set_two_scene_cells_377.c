@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetTwoSceneCells Func_020013b4
-
 extern void Func_02002c44(s32, s32, s32, s32, s32, s32);
 extern void Func_02002c76(s32, s32, s32, s32, s32, s32);
 

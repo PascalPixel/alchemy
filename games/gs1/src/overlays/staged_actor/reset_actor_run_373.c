@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ResetActorRun Func_0200345c
-
 /*
  * Resource 373: reset or tear down a consecutive run of scene actors.
  *

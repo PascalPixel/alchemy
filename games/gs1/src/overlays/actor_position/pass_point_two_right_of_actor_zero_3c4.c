@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PassPointTwoRightOfActorZero Func_020013b4
-
 struct Actor {
     s32 f00;
     s32 f04;

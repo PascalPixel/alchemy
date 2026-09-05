@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_AskMessage255c Func_0200141c
-
 extern void Func_02002fc6(s32);
 extern s32 Func_02002fd6(s32, s32);
 extern s32 Func_02002f66(s32, s32);

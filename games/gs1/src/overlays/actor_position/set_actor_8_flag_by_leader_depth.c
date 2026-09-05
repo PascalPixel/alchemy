@@ -6,8 +6,6 @@
  */
 #include "types.h"
 
-#define SceneActor_SetActor8FlagByLeaderDepth Func_02000468
-
 extern u8 * Func_02001e6e(s32);
 extern u8 * Func_02001e7e(s32);
 extern u8 * Func_02001e8e(s32);

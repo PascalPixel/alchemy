@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEightTurnDialogue Func_02000114
-
 extern void Func_02001b9c(void);
 extern s32 Func_02001c60(s32, s32, s32);
 extern void Func_02001c36(s32);

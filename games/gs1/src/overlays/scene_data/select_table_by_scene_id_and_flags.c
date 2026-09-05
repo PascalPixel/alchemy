@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableBySceneIdAndFlags Func_0200014c
-
 /*
  * Resource 378 owner at 0x0200014c (304 bytes).
  *

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunBracketedSceneWithFlag282 Func_020038dc
-
 /*
  * resource_3c9 owner at 0x020038dc, 72 bytes: a scripted-scene bracket
  * around two other candidates from this sweep, a story-flag set, a

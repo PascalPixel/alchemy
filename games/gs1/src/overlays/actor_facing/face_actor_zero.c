@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FaceActorZero Func_02000cf8
-
 /* Point an object toward actor zero using their fixed-point X/Z delta. */
 extern u8 * Func_020029bc(s32 no);
 extern s32 Func_0200293e(s32 dz, s32 dx);

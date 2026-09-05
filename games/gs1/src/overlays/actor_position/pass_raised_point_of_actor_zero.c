@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PassRaisedPointOfActorZero Func_02000dc8
-
 struct Actor {
     s32 f00;
     s32 f04;

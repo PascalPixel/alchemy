@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunSlotZeroFacingCheck Func_02002738
-
 struct Obj {
     u8 pad00[6];
     u16 f06;

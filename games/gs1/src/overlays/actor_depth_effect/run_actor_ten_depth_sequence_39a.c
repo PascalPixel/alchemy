@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorTenDepthSequence Func_02000568
-
 extern void Func_02002982(s32);
 /* Three sites of one import, so three names. */
 extern void Func_020006fc(s32, s32, s32);

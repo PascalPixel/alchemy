@@ -12,7 +12,6 @@ struct SceneWork {
     struct SceneActor *actors[58];
 };
 
-#define FindActorNearPosition Func_02001144
 struct SceneActor *FindActorNearPosition(s32 x, s32 y)
 {
     struct SceneWork *work;

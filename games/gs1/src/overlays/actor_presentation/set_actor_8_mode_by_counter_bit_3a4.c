@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetActor8ModeByCounterBit Func_02002ffc
-
 /*
  * resource_3a4 owner at 0x02002ffc, 44 bytes: test bit 1 of the runtime
  * word at 0x03001e40 and call Func_0808a158 on record 8 with 7 or 6.

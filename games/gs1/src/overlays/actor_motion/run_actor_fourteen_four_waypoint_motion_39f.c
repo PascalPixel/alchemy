@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunActorFourteenFourWaypointMotion Func_02001880
-
 /* Two veneers each serve two imports: 0x020046fa is the three-argument setter
  * at site 8 and the one-argument wait at site 21, and 0x02004730 is the
  * three-argument step at site 14 and the one-argument wait at site 27. */

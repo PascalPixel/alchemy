@@ -12,8 +12,6 @@
 
 #include "spawn_configured_effect.h"
 
-#define SceneEffect_SpawnConfiguredEffect Func_02000ae8
-
 void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct Options *options)
 {

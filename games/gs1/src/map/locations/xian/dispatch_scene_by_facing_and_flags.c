@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchByFacingAndFlags Func_020013b8
-
 extern u8 * Func_020057c2();
 extern void Func_020057a0();
 extern void Func_0200226c(void);

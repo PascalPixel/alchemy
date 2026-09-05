@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunWhenSlotZeroFacingC000 Func_02000fe4
 #define NULL ((void *)0)
 
 u16 *Func_02003456(s32);

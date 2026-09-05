@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ApplyPointLeftOfActorZero Func_02001348
-
 struct Actor {
     s32 f00;
     s32 f04;

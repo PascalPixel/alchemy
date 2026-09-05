@@ -9,8 +9,6 @@ extern void Func_0200635e(s32, s32);
 extern void Func_0200636c(s32);
 extern void Func_0200624e(s32);
 
-#define FieldScene_RunVariantStep Func_02002d48
-
 void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 {
     if (a == 1) {
@@ -27,8 +25,6 @@ void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 }
 
 #include "types.h"
-
-#define FieldScene_RunStepByRuntimeBits Func_02002d94
 
 extern s32 Data_03001e40;
 extern void Func_0200624c(s32, s32);

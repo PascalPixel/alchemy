@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnEffect284AtCell Func_02000c5c
-
 struct EffectObject {
     u8 filler00[0xc];
     s32 timer;

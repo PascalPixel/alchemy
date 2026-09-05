@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetWord28RandomlyOneIn40 Func_0200089c
-
 extern s32 Func_02004b0e(void);
 
 s32 SceneActor_SetWord28RandomlyOneIn40(u8 *obj)

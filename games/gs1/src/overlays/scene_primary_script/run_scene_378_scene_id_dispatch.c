@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchBySceneId Func_02003334
-
 /*
  * Resource 378 owner at 0x02003334 (296 bytes).
  *

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define StagedActor_StepDownUntilClamp Func_02001174
-
 /*
  * Resource 3b3 descent loop at 0x02001174 (80-byte whole-owner span, 2 calls).
  *

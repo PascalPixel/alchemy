@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor18Line Func_02000530
-
 extern s32 Func_02002764();
 extern s32 Func_0200283a();
 extern s32 Func_0200285a();

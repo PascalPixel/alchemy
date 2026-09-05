@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_PlaceActorTenByFlags Func_02000768
-
 extern void Func_02002b7e(s32);
 extern s32 Func_02002a8e(s32);
 extern void Func_02000906(s32, s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSlotSubjectBranch Func_020004ec
-
 extern void Func_0200296a(void);
 extern s32 Func_02002ab4(s32, s32, s32);
 /* 0x02002996 serves two imports: the two-argument reader that guards the

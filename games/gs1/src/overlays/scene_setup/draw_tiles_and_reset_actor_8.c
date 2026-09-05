@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DrawTilesAndResetActor8 Func_020003f4
 extern u8 *Func_02001dfc(s32);
 extern u8 *Func_02001e04(s32);
 extern void Func_02001da8(s32, s32, s32, s32, s32, s32);

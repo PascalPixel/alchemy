@@ -1,10 +1,8 @@
 #include "types.h"
 
-#define SceneEffect_SetRecordMode Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define OverlayObject_PrepareObject      Func_02000048
-#define OverlayObject_CreateConfiguredObject Func_020000a0
 #define AcquireOverlayObject      Func_02000736
 #define RunOverlayObjectCommand0  Func_0200076c
 #define RunOverlayObjectCommand1  Func_02000784
@@ -13,10 +11,6 @@
 #define SetOverlayObjectMode Func_020007c8
 #define SetOverlayObjectSlot Func_02000838
 #define EffectDescriptorTable Data_0200880c
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
-#define FieldScene_RunActor8AtCell24Sequence Func_02000380
-#define FieldScene_PlaceActor8OnEntry Func_02000414
-#define SceneEffect_RotateRecord Func_020004c4
 #define GetPartyEffect Func_02000882
 #define SpawnEffect Func_02000860
 #define SetEffectVariant Func_0200086a
@@ -29,18 +23,6 @@
 #define SetEffectCallbackArgument Func_02000994
 
 #include "configured_effect_spawn.h"
-
-#define SceneActor_WaitObjectBelowHeight Func_020004d4
-
-#define SceneData_GetTable8990OrTable89f0 Func_020003e4
-
-#define SceneData_GetTable8948OrTable8978 Func_02000350
-
-#define SceneData_GetTable8920 Func_02000348
-
-#define SceneData_ReturnZero Func_02000344
-
-#define SceneData_GetTable8818OrTable88d8 Func_02000314
 
 struct EffectRecord {
     u8 pad[9];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor15Flag303Scene Func_0200028c
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];

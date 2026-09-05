@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor12TwoFlagScene Func_0200052c
-
 /*
  * Complete actor-12 two-flag dialogue scene through its three-word pool.
  *

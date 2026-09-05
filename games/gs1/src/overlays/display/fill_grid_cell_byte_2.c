@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_FillGridCellByte2 Func_020004f4
-
 extern u8 *Data_03001e70;
 extern u8 Data_02010000[];
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorEightTimedDialogue Func_02000710
-
 /* Complete actor-8 timed flag/dialogue scene through its two-word pool. */
 
 extern void Func_020017fc(void);

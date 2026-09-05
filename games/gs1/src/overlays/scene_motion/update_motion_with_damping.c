@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateMotionWithDamping Func_020036f8
-
 struct Obj {
     u8 filler00[8];
     s32 f08;

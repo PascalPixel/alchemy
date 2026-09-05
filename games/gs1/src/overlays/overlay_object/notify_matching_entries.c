@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_NotifyMatchingEntries Func_02002380
-
 /*
  * resource_3bb owner at 0x02002380, 60 bytes: look up an object by
  * arg0, then scan the first 15 halfword entries of its table at offset

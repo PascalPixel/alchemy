@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_PassZeroAndMinusOneRecord Func_02003fe4
-
 struct Args_02003fe4 {
     s32 first;
     s32 unused;

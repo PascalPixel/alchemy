@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectBlockAndResetCounters Func_020026a8
-
 extern u8 Data_0200a1b9[];
 extern u8 Data_0200c57e[];
 extern u8 Data_0200be4e[];

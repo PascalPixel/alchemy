@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyCrossRectsAroundActor11 Func_02001520
-
 extern void Func_020042ce(void);
 /* Three sites of the record accessor, so three names. */
 extern s32 *Func_020042f4(s32);

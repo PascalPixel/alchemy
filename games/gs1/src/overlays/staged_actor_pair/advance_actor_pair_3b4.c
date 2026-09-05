@@ -18,7 +18,6 @@ extern void Func_020027e8(void);
 extern void Func_020026cc(struct StagedActor *arg0, s32 arg1);
 
 #define StagedActorStepTable Data_0200a644
-#define StagedActor_AdvanceActorPair Func_020000c4
 #define GetStagedActor Func_02002614
 #define FindNextStagedActor Func_02000176
 #define FindBlockingStagedActor Func_020001a2

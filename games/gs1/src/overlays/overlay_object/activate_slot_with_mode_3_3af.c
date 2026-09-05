@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ActivateSlotWithMode3 Func_02003380
-
 extern u8 *Func_02007692(s32);
 extern void Func_02007778(s32, s32);
 extern void Func_02007640(u8 *, s32);

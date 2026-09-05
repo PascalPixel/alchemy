@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableByWord224 Func_02001180
-
 extern s16 Data_02000240[];
 extern u8 Value_0000004a;
 extern u8 Data_02009c9c[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunDescentBurst Func_02000db4
-
 extern u8 *Func_020051c6(s32 id);
 extern void Func_02005118(s32 arg0);
 extern void Func_02005370(s32 sound_id);

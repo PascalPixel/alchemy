@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ConfigureEntries8Through19 Func_020034bc
-
 extern void Func_02006a1c(s32, s32);
 extern void Func_02006a2a(s32, s32);
 extern void Func_02006a38(s32, s32);

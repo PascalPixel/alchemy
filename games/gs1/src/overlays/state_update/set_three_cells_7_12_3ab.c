@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetThreeCellsAt7x12 Func_0200118c
-
 /* Three adjacent collision cells used by the scene's lower doorway. */
 extern void Func_02002b32(s32, s32, s32, s32, s32, s32);
 extern void Func_02002b44(s32, s32, s32, s32, s32, s32);

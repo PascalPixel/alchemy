@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLayoutAt93By30 Func_02001374
-
 extern void Func_0200446e(void);
 extern void Func_0200442a(s32, s32, s32, s32, s32, s32);
 extern void Func_02001456(void);

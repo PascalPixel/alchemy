@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetByte22bTo3AndSend51 Func_020003e0
-
 extern u8 Data_02000240[];
 extern u8 Value_00000051;
 extern void Func_0200409a(s32, s32);

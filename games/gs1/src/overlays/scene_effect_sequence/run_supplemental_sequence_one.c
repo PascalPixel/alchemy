@@ -2,8 +2,6 @@
 
 extern u8 Value_00002233;
 
-#define RunSupplementalSequenceOne Func_02003e40
-
 /* Supplemental scene sequence of the resource_3b8 overlay. */
 
 void Func_020081ee();

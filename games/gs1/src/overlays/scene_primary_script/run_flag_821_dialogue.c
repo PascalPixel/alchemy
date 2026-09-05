@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag821Dialogue Func_020003bc
-
 /*
  * Resource 37f, owner at 0x020003bc (76 bytes of code + a five-word literal
  * pool at 0x0200040c-0x0200041f).  `push {r5, lr}` at 0x020003bc, interworking

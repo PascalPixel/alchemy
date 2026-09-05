@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetRuntimeWord448To513 Func_0200160c
-
 extern u8 *Data_03001ebc;
 
 extern void Func_02004204();

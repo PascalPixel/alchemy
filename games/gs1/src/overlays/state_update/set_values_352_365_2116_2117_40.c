@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetValues352_365_2116_2117_40 Func_020025b0
 #define NULL ((void *)0)
 
 void Func_02004c34(s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetPositionAndHeading Func_02004890
-
 /*
  * Resource 3b1 unindexed helper at 0x02004890 (28 bytes, 55 calls).
  *

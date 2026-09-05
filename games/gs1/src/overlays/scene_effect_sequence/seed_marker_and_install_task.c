@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SeedMarkerAndInstallTask Func_02002fc0
-
 /* Seed the marker cycle directly from caller coordinates and install it. */
 extern u16 Data_0200cc94;
 extern u16 Data_0200cc20;

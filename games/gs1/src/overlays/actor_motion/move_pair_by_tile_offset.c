@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_MovePairByTileOffset Func_02000310
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

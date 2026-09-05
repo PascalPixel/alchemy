@@ -24,7 +24,6 @@ void Func_020071f6(s32);
 void Func_0200732c(s32);
 void Func_02007210(void);
 
-#define RunActorScriptedSequenceA Func_02001b24
 void RunActorScriptedSequenceA(s32 actor_id)
 {
     Func_0200715a();

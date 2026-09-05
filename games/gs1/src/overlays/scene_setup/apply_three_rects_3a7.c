@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyThreeRects Func_02000398
-
 extern void Func_02001476(s32, s32, s32, s32, s32, s32);
 extern void Func_0200148a(s32, s32, s32, s32, s32, s32);
 extern void Func_020014a4(s32, s32, s32, s32, s32, s32);

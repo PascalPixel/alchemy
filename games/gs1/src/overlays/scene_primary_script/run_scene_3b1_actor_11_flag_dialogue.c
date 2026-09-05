@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor11FlagDialogue Func_02000a80
-
 s32 Func_02006f28(s32 n);
 void Func_02006f58(void);
 void Func_0200708a(s32 a, s32 b);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_InstallSlotNineHandler Func_020019e4
-
 extern s32 Func_02004b08(s32, s32);
 extern void Func_02004ace(s32);
 extern u8 *Func_02004b04(s32);

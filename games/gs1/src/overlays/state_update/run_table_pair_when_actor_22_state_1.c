@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunTablePairWhenActor22State1 Func_02001454
-
 extern u8 *Func_0200743e(s32);
 extern s32 Func_020073fe(s32);
 extern void Func_0200290a(s32, s32);

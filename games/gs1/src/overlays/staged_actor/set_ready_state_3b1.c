@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define StagedActor_SetReadyState Func_020002f4
 /*
  * resource_3b1 owner at 0x020002f4, 76 bytes.
  * Puts an actor into its ready state: stage byte at +89, two mode fields on the

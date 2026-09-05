@@ -1,4 +1,3 @@
-#define SceneState_SendRequest15With45 Func_02000314
 /*
  * Resource 3c0 constant-argument request at 0x02000314 (14 bytes, 1 call).
  *

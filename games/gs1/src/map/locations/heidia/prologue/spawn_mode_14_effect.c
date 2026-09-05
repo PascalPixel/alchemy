@@ -6,7 +6,6 @@ void Func_02003a64(u8 *object, s32 mode);
 void Func_02003afc(u8 *object, s32 mode);
 void Func_02003a7c(u8 *object, s32 mode);
 
-#define SpawnMode14Effect Func_020009f4
 u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *object = Func_02003a0e(kind, x, y, z);

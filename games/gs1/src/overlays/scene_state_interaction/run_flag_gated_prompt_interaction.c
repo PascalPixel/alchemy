@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunFlagGatedPromptInteraction Func_02001d64
-
 extern s16 Data_02000240[];
 extern u8 Value_0000008f;
 extern u8 Value_00000090;

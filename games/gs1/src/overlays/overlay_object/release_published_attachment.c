@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ReleasePublishedAttachment Func_020023b8
-
 extern u8 **Func_020047ec(s32, s32);
 extern void Func_02004824(u8 *);
 

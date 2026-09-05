@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateRandomSlotByFrame Func_02004304
-
 extern s32 Func_02008950(s32, s32);
 extern void Func_020089f0(s32, s32);
 extern s32 Func_02008966(s32, s32);

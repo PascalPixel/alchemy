@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetSlot15Byte89AndRunStep Func_02001144
-
 extern void Func_0200263a(void);
 extern void Func_02002616(s32, s32, s32, s32, s32, s32);
 /* Two sites reach this one symbol with different arities; old-style so both

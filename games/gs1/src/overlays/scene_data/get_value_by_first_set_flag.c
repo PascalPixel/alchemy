@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_GetValueByFirstSetFlag Func_0200115c
-
 extern s32 Func_0200238c(s32);
 extern s32 Data_020098f8[];
 

@@ -1,70 +1,8 @@
 #include "types.h"
 
-#define SceneActor_ApplyActorCueThenWait Func_0200173c
-
-#define SceneActor_ApplyActorZeroThenWait Func_02001724
-
-#define SceneActor_GetPositionDistance Func_02001638
-
-#define FieldScene_SetupScene13At152_264 Func_02001198
-
-#define FieldScene_SetupScene10At120_144 Func_0200106c
-
-#define FieldScene_SetupScene7At216_288 Func_02000f8c
-
-#define FieldScene_SetupScene6At312_304 Func_02000f64
-
-#define FieldScene_SetupScene5At408_320 Func_02000f3c
-
-#define SceneState_Apply200ThenPlace23_23 Func_02000ecc
-
-#define SceneState_Apply200ThenPlace55_26 Func_02000ea4
-
-#define SceneDialogue_RunActor21Line Func_02000e84
-
-#define SceneDialogue_RunActor11FlaggedLine Func_02000c8c
-
-#define SceneDialogue_RunActor20Line Func_02000c54
-
-#define SceneDialogue_RunActor13Line Func_02000a2c
-
-#define SceneDialogue_RunActor12LineAndAdvance Func_020009f0
-
-#define SceneDialogue_RunActor11SecondLine Func_020009d0
-
-#define SceneActor_RunActorCommandWithFlag91 Func_02000938
-
-#define SceneActor_RunActorStep Func_0200090c
-
-#define SceneDialogue_RunActor19Line Func_020007b8
-
-#define SceneDialogue_RunActor16Line Func_02000798
-
-#define SceneDialogue_RunActor11Line Func_02000778
-
-#define SceneData_SelectTableA414ByFlag855 Func_020005f0
-
-#define SceneState_SetFlags947And29dc Func_020005c8
-
-#define OverlayObject_RunObject2WhenFlagged Func_02000464
-
-#define OverlayObject_GetObject2Byte280 Func_02000450
-
-#define SceneData_SelectActorTableByFlag855 Func_0200042c
-
-#define SceneData_GetMessageTable Func_02000424
-
-#define SceneData_ReturnZero Func_02000420
-
-#define SceneData_GetScriptTable Func_02000418
-
-#define SceneActor_UpdateProximityToLeader Func_02000314
-
-#define SceneEffect_SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define OverlayObject_PrepareSceneObject        Func_02000048
-#define OverlayObject_CreateConfiguredObject Func_020000a0
 #define AcquireOverlayObject      Func_02001992
 #define RunOverlayObjectCommand0  Func_020019d8
 #define RunOverlayObjectCommand1  Func_020019f0
@@ -73,34 +11,7 @@
 #define SetOverlayObjectMode Func_02001a34
 #define SetOverlayObjectSlot Func_02001b2c
 #define EffectDescriptorTable Data_02009bb4
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
-#define ActorPresentation_UpdateEntityFromLeader Func_020003ac
-#define SceneDialogue_RunActor9LineAndAdvance Func_02000614
-#define ActorPresentation_RunActorThirteenSceneSetup Func_02000674
-#define ActorPresentation_RunActorSeventeenSceneSetup Func_020006d0
-#define ActorPresentation_RunActorEighteenSceneSetup Func_02000724
-#define ActorPresentation_RunActorFourteenDialogue Func_020007ec
-#define ActorPresentation_RunActorFifteenDialogue Func_0200085c
-#define FieldScene_RunActor21Sequence Func_020008cc
-#define ActorPresentation_RunActorEightSceneSetup Func_0200097c
-#define ActorPresentation_RunActorFourteenDialogueAndAdvanceStory Func_02000a4c
-#define ActorPresentation_RunActorFifteenFollowupDialogue Func_02000acc
-#define ActorPresentation_RunActorSixteenSceneSetup Func_02000b3c
-#define ActorPresentation_RunActorEighteenFollowupSceneSetup Func_02000b98
-#define ActorPresentation_RunActorNineteenDialogueAndSetSceneState Func_02000bec
 #define SceneDialogue_RunActor13FlaggedLine      Func_02000cc4
-#define ActorPresentation_RunActorFourteenFlaggedDialogue Func_02000cfc
-#define ActorPresentation_RunActorFifteenScriptBranch Func_02000d78
-#define ActorPresentation_RunActorSixteenScriptBranch Func_02000dd4
-#define ActorPresentation_RunActorNineteenScriptBranch Func_02000e0c
-#define SceneActor_PlaceActor0AndSetSceneDelay Func_02000ef4
-#define ActorPresentation_SetupActorZeroForSceneEightAt376_224 Func_02000fb4
-#define ActorPresentation_SetupActorZeroForSceneNineAt296_176 Func_02001010
-#define ActorPresentation_SetupActorZeroForSceneTwelveAt72_160 Func_0200113c
-#define ActorPresentation_MoveActorToPositionAndWait Func_020011b0
-#define FieldScene_RunActor23SequenceOnceByFlag867 Func_02001238
-#define FieldScene_RunActor19MotionSequence Func_020012c0
-#define SceneEffect_UpdateMotionWithDamping Func_02001754
 #define GetPartyEffect Func_02001b3e
 #define SpawnEffect Func_02001abc
 #define SetEffectVariant Func_02001ac6

@@ -10,7 +10,6 @@ typedef struct SceneActor {
 SceneActor *Func_02006ed4(void);
 SceneActor *Func_02006edc(s32);
 
-#define IsSceneActorHorizontallyNearPlayer Func_02001880
 s32 IsSceneActorHorizontallyNearPlayer(void)
 {
     SceneActor *scene_actor = Func_02006ed4();

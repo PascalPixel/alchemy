@@ -38,18 +38,12 @@ typedef int bool;
 #define MapStagedActor_AdvancePair Func_020000c4
 #define MapStagedActor_StopBlockedMotion Func_020002a8
 #define MapStagedActor_FindClearPosition Func_02000474
-#define MapStagedScene_SelectPrimaryData Func_020009dc
-#define MapStagedScene_GetEmptyData Func_020009e4
-#define MapStagedScene_SelectSecondaryData Func_020009e8
-#define MapStagedScene_SelectTertiaryData Func_020009f0
 #define MapStagedScene_SelectQuaternaryData Func_02000aa4
 #define Runtime_ComputeFixedPointDistance Func_02005610
 #define Effect_ConfigureSpawnedParticle Func_0200575c
 #define Effect_SpawnRisingDustBurst Func_020057fc
 #define Effect_UpdateParticlePosition Func_020058f0
 #define Effect_PlayStepSound Func_02005a08
-#define Effect_AnimateVerticalPositive Func_02005cc4
-#define Effect_AnimateVerticalNegative Func_02005d14
 #define Object_UpdateFacingTowardTarget Func_02000030
 #define SceneEffect_AnimateVerticalPositive Func_0200239c
 #define SceneEffect_AnimateVerticalNegative Func_020023ec
@@ -702,7 +696,6 @@ typedef int bool;
 #define Resource387_NoOpCallbackA Func_020004cc
 #define Resource387_NoOpCallbackB Func_020004d0
 #define Resource397_EmptyHook Func_020001d0
-#define Resource398_ImportBankNoOp Func_02000904
 #define Resource3a7_NoOpCallback Func_020004cc
 #define Resource3b4_EmptyHookA Func_020009ec
 #define Resource3b4_EmptyHookB Func_02000aa4

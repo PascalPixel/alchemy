@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetPairZeroAndValue Func_020022e0
 #define NULL ((void *)0)
 
 void Func_02004a74(s32, s32, s32);

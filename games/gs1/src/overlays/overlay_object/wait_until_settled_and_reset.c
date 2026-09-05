@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_WaitUntilSettledAndReset Func_02000d78
-
 /*
  * Resource 3b3 unindexed helper at 0x02000d78 (48 bytes, 1 call).
  *

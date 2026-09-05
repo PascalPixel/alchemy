@@ -4,16 +4,12 @@
 
 extern u8 Data_0200c1dc[];
 
-#define SceneData_GetTablec1dc Func_0200003c
-
 u8 *SceneData_GetTablec1dc(void)
 {
     return Data_0200c1dc;
 }
 
 #include "types.h"
-
-#define SceneData_GetTablec1f4 Func_02000044
 
 extern u8 Data_0200c1f4[];
 

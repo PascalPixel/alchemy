@@ -28,6 +28,23 @@ pub fn driver() -> PathBuf {
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
+/// Modern syntax support with the historical integer/soft-float object ABI.
+pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
+    [
+        "arm-none-eabi-as",
+        "-mcpu=arm7tdmi",
+        "-mthumb-interwork",
+        "-meabi=gnu",
+        "-mfpu=softfpa",
+        "-mfloat-abi=soft",
+        "-o",
+        object,
+        source,
+    ]
+    .iter()
+    .map(|s| (*s).to_string())
+    .collect()
+}
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum CompilerTarget {
     Gs1,
@@ -155,6 +172,14 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
 #[cfg(test)]
 mod target_tests {
     use super::*;
+    #[test]
+    fn assembly_uses_historical_soft_float_abi() {
+        let command = assembly_command("input.s", "output.o");
+        for flag in ["-meabi=gnu", "-mfpu=softfpa", "-mfloat-abi=soft"] {
+            assert!(command.iter().any(|arg| arg == flag));
+        }
+        assert_eq!(&command[command.len() - 3..], ["-o", "output.o", "input.s"]);
+    }
     #[test]
     fn each_game_uses_its_own_include_tree() {
         let gs1 = cflags_for_target(CompilerTarget::Gs1);

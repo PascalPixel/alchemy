@@ -68,14 +68,7 @@ pub fn run<S: AsRef<str>>(command: &[S], cwd: &Path) -> Result<String, String> {
 }
 pub fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     run(
-        &[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            object,
-            assembly,
-        ],
+        &compiler_core::routing::assembly_command(assembly, object),
         root(),
     )
     .map(drop)

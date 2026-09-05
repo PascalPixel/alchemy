@@ -95,8 +95,9 @@ const SELF_SOURCE: [&[u8]; 6] = [
     include_bytes!("regex.rs"),
     include_bytes!("cli.rs"),
 ];
-const LINKED_POSTPROCESS_SOURCE: [&[u8]; 3] = [
+const LINKED_POSTPROCESS_SOURCE: [&[u8]; 4] = [
     include_bytes!("../../compiler-core/src/lib.rs"),
+    include_bytes!("../../compiler-core/src/routing.rs"),
     include_bytes!("../../compiler-core/src/call_via_data.rs"),
     include_bytes!("../../compiler-core/src/symbols.rs"),
 ];
@@ -249,14 +250,7 @@ fn checked(command: &[String], cwd: &Path) -> Result<String, String> {
 }
 fn assemble_file(source: &str, object: &str, work: &Path) -> Result<(), String> {
     checked(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            object,
-            source,
-        ]),
+        &compiler_core::routing::assembly_command(source, object),
         work,
     )
     .map(drop)

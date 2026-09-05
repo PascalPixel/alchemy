@@ -1,5 +1,5 @@
 use crate::{cli::Options, render::align_streams};
-use candidate_compiler::verify::{assemble, compile_source, copy_text, run};
+use candidate_compiler::verify::{compile_source, copy_text, run};
 use regex::Regex;
 use std::path::Path;
 
@@ -229,7 +229,13 @@ pub(crate) fn decode(
         &options.configuration,
         &dir,
     )?;
-    assemble(&assembly.to_string_lossy(), &object.to_string_lossy())?;
+    run(
+        &compiler_core::routing::compiler_assembly_command(
+            &assembly.to_string_lossy(),
+            &object.to_string_lossy(),
+        ),
+        &dir,
+    )?;
     let normal_object = options
         .precompiled_object
         .as_deref()

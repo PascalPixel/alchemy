@@ -3,90 +3,43 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// Appended after a source-unchanged rebuild of bcfb458 on 2026-08-27; all four
-// binaries came from one staging event and passed `make full-rom-check`.
+// Restored agscc 5ec3e2e host build; unmodified GNU gas 2.10.
 const GS1: &[ExecutableDigests] = &[
     (
         "xgcc",
-        &[
-            "1c0b96c0193a3f547bf10c70078d87df10a62d34207da545653165b65c80d4c2",
-            "bf6161b89ca5832dff2784d92d2a39c857123e26fa4654ecc8ee46d3937b0b3a",
-        ],
+        &["7303ec4e1b246415db0edaa888cd8d01550ca2752df825c41f9ec08e8814245f"],
     ),
     (
-        "cpp",
-        &[
-            "c69d8c0423517be6a4962bd88e343c193a0842a164dd600550ceb36f8155d736",
-            "05509d9a475f1cc8d7937ad245eaf00f4e00b4f8b659016a4c5e86bad71d5ef7",
-        ],
+        "cpp0",
+        &["4edb7644d5875f3524e40d4830653ab8a232e33984bf6a5700c783f19070887c"],
     ),
     (
-        "tradcpp",
-        &[
-            "f1e4340c3550029675b49e22976dd7d10588e365816ae0f2decd19729371ee00",
-            "2bed3f31593d16ab3c762be9725090fb7fb4d090ec9581b022070ee66541b759",
-        ],
+        "tradcpp0",
+        &["c54bbb4c4bc1b9eb79bbe4fdc85d75facd55fd77bb622288e77cf24d61f97214"],
     ),
     (
         "cc1",
-        &[
-            "f7d1aeb098815f9b98c5df25bb47bab89aa14b1ab184b63c1472986f515fa3dd",
-            "4525e2477f4d903580155e8d79cbb965b5af89e0d9ac903287713736238d37eb",
-            // Clean local rebuild of pinned alchemy-gcc bcfb458.
-            "3f8a272981eba0b383b1b8d573feedbf6ba1715deb67213523c46b3ba35256b2",
-            // alchemy-gcc a10308d: opt-in GS2 inline register-call route plus
-            // the preceding default-off minipool route. The defaults remain
-            // byte-identical; admitted after full-ROM verification.
-            "95dc6357181813c5295591fa0008a263530b91ff5a9b9570254cf8ab25499f1e",
-        ],
+        &["341996a29bbf5620d4c16982369597189f0c973945f3f526904eb93ef778427e"],
+    ),
+    (
+        "as",
+        &["a3cd21bc5a51f11ec97909f6547719857e16e76fa361abe7520d9025be84730f"],
     ),
 ];
-const EMPTY_GS1: &[ExecutableDigests] =
-    &[("xgcc", &[]), ("cpp", &[]), ("tradcpp", &[]), ("cc1", &[])];
+const EMPTY_GS1: &[ExecutableDigests] = &[
+    ("xgcc", &[]),
+    ("cpp0", &[]),
+    ("tradcpp0", &[]),
+    ("cc1", &[]),
+    ("as", &[]),
+];
 const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
-
-// Source-unchanged 640614e linux-x64 rebuild, admitted 2026-08-27 only after a
-// byte-identical `make full-rom-check` on that build.
-const LINUX_X64_GS1: &[ExecutableDigests] = &[
-    (
-        "xgcc",
-        &[
-            "cc35e03215be6ec15aea1463c79e9598b754430c0927c2062ea337c46b725abc",
-            // alchemy-gcc bcfb458 rebuilt on linux-x64 (Ubuntu 24.04, gcc 13.3);
-            // admitted after a byte-identical `make full-rom-check`.
-            "a3c3cfd9de1ccd19bab833e03bae15a46d77cbb988c87157342e21bee072f471",
-        ],
-    ),
-    (
-        "cpp",
-        &[
-            "c01747023ae601e84c7739317d96bfae5ceab88de7271a83f7073fddeb9893aa",
-            "7c5fb526706457fd595bc18f9df22ef18cd3ddd9e4dff8d37911548dd9a214d7",
-        ],
-    ),
-    (
-        "tradcpp",
-        &[
-            "cbf6602147a0b6cec2884d47ee56d44d1278a1fee31d2c413968c488c278787f",
-            "411e5af5d86461afcccf846b9a9634da8106a25ed8cb2715c58766d9a34d9b67",
-        ],
-    ),
-    (
-        "cc1",
-        &[
-            "d0c3f7857e568272f6d2a0d25f2138daeac2ee0941c4828db3abd10d9204b096",
-            "4361771bd1af3fba04dcf1bf3f142404feee0432445f73658c5861e49d6fbcce",
-        ],
-    ),
-];
 
 pub static EXPECTED: &[HostTargets] = &[
     ("darwin-arm64", &[("gs1", GS1), ("gs2", GS1)]),
     ("darwin-x64", EMPTY),
-    (
-        "linux-x64",
-        &[("gs1", LINUX_X64_GS1), ("gs2", LINUX_X64_GS1)],
-    ),
+    // The old modified Linux bundle is not evidence for this restored route.
+    ("linux-x64", EMPTY),
     ("linux-arm64", EMPTY),
 ];
 pub static AGBCC_EXPECTED: &[HostDigests] = &[

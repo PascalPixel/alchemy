@@ -60,10 +60,10 @@ s32 BattlePresentation_RunAction(s16 *action)
         break;
     case 0:
     default: {
-        struct BattlePresentationTransition *other_transition = Data_03001f00;
-        other_transition->flag = 0;
+        struct BattlePresentationTransition *tr = Data_03001f00;
+        tr->flag = 0;
         Func_080b8c1c(action);
-        other_transition->flag = 0;
+        tr->flag = 0;
         break;
     }
     case 1:

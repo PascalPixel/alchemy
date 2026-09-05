@@ -32,7 +32,7 @@ void Func_0809b0b0(void);
 void Func_0809b0dc(void);
 void Func_0809b11c(void);
 
-void RunBattleEffect15(void)
+void BattleEffect_RunEffect15(void)
 {
     u8 *scene = Data_03001f30;
     u8 *main_object = *(u8 **)(scene + 16);

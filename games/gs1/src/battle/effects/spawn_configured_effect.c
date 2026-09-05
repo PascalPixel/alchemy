@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define BattleEffect_SpawnConfigured Func_0200013c
+
 struct BattleEffectSprite {
     u8 reserved00[9];
     u8 flags9;
@@ -65,24 +67,24 @@ s32 Func_02005c0e();
 void Func_02005c7c();
 void Func_02005c8c();
 
-void Func_0200013c(s32 x, s32 y,
+void BattleEffect_SpawnConfigured(s32 x, s32 y,
                    s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
                    const struct EffectSpawnOptions *options)
 {
     u32 table_offset;
-    struct BattleEffect *reference_effect;
+    struct BattleEffect *ref;
     u32 copied_bits;
     s32 flag_mask;
     u32 block_bits;
     struct BattleEffect *effect;
     struct BattleEffectSprite *effect_sprite;
-    struct BattleEffectSprite *effect_sprite_before_options;
+    struct BattleEffectSprite *sprite0;
     u32 option_bits;
     u16 *tag;
     s32 duration;
     s32 first_delta;
     s32 accumulated;
-    reference_effect = Func_02005c32(0);
+    ref = Func_02005c32(0);
 
     if ((flags & 0x100000) != 0 && options != 0) {
         effect = Func_02005b58(options->kind, x, y, z);
@@ -92,7 +94,7 @@ void Func_0200013c(s32 x, s32 y,
     if (effect == 0) return;
 
     effect_sprite = effect->sprite;
-    effect_sprite_before_options = effect_sprite;
+    sprite0 = effect_sprite;
 
     Func_02005b62(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
@@ -107,7 +109,7 @@ void Func_0200013c(s32 x, s32 y,
     effect->velocity_y = vy;
     effect->velocity_z = vz;
 
-    copied_bits = reference_effect->sprite->flags9 & 12;
+    copied_bits = ref->sprite->flags9 & 12;
     block_bits = *(volatile u8 *)&effect_sprite->flags9;
     flag_mask = ~12;
     effect_sprite->flags9 = (u8)((block_bits & flag_mask) | copied_bits);
@@ -126,7 +128,7 @@ void Func_0200013c(s32 x, s32 y,
     if ((flags & 0x20000) != 0) {
         effect->effect_flags &= 0xfe;
         option_bits = *(const u8 *)options & x;
-        effect_sprite->flags9 = (u8)((*((const u8 *)effect_sprite_before_options + 9) & flag_mask)
+        effect_sprite->flags9 = (u8)((*((const u8 *)sprite0 + 9) & flag_mask)
                              | (option_bits << 2));
     }
 

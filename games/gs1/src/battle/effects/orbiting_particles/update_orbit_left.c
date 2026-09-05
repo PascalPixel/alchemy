@@ -15,19 +15,19 @@ void BattleEffect_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
 {
     u8 *arg = (u8 *)particle;
     struct OrbitingParticleVector local;
-    s16 remaining_lifetime;
-    s32 lifetime_counter;
+    s16 life;
+    s32 cnt;
 
     if (arg != 0) {
-        lifetime_counter = *(u16 *)(arg + 100) - 1;
-        *(u16 *)(arg + 100) = lifetime_counter;
-        remaining_lifetime = (s16)lifetime_counter;
-        if (remaining_lifetime != 0) {
+        cnt = *(u16 *)(arg + 100) - 1;
+        *(u16 *)(arg + 100) = cnt;
+        life = (s16)cnt;
+        if (life != 0) {
             local.x = *(s32 *)(arg + 56);
             local.y = *(s32 *)(arg + 60);
             local.z = *(s32 *)(arg + 64);
-            RotateVectorByMagnitude(remaining_lifetime << 17,
-                          *(s16 *)(arg + 102) + (remaining_lifetime << 11),
+            RotateVectorByMagnitude(life << 17,
+                          *(s16 *)(arg + 102) + (life << 11),
                           &local);
             *(s32 *)(arg + 8) = local.x;
             *(s32 *)(arg + 12) = local.y;

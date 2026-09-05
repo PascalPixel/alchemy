@@ -12,8 +12,8 @@ void EquipmentMenu_StartCompatibilityIndicators(void) {
     if (menu[0x219] != 0) {
         member_index = 0;
         do {
-            s32 indicator_offset = member_index * 4 + 276;
-            void *indicator = *(void **)(menu + indicator_offset);
+            s32 off = member_index * 4 + 276;
+            void *indicator = *(void **)(menu + off);
             Object_InitializeMode(indicator, 1);
             member_index++;
         } while (member_index < menu[0x219]);

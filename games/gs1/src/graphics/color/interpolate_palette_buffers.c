@@ -1,22 +1,22 @@
 #include "types.h"
 
-void Graphics_InterpolatePaletteBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3) {
+void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n) {
     s32 index;
     s32 first;
     s32 second;
     s32 (*divide)(s32, s32);
 
-    if (arg3 > 0) {
+    if (n > 0) {
         divide = (s32 (*)(s32, s32))0x03000380;
         index = 0x5FF;
         do {
-            first = *arg0;
-            second = *arg1;
-            *arg2 = divide(second - first, arg3);
+            first = *a;
+            second = *b;
+            *dst = divide(second - first, n);
             index--;
-            arg0++;
-            arg1++;
-            arg2++;
+            a++;
+            b++;
+            dst++;
         } while (index >= 0);
     }
 }

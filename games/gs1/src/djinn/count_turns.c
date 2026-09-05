@@ -4,7 +4,7 @@ u8 *Runtime_GetObject(s32);
 
 extern u8 *Data_03001f2c;
 
-void CountDjinnTurns(u8 *counts)
+void Djinn_CountTurns(u8 *counts)
 {
     u8 *work;
     u16 *owner_ids;

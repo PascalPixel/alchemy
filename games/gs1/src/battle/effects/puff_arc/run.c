@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define BattleEffect_RunPuffArc Func_080d9fc8
+
 /*
  * Effect sequence at 0x080d9fc8.
  *
@@ -84,7 +86,7 @@ typedef struct Efx {
 
 #define WORK_EFX (*(Efx **)(work + 0x7828))
 
-void Func_080d9fc8(Efx *efx)
+void BattleEffect_RunPuffArc(Efx *efx)
 {
     u32 *cache;
     u32 *entry;

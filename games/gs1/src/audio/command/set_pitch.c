@@ -1,6 +1,6 @@
 #include "types.h"
 
-void MusicPlayer_SetPitch(u8 *state, u32 maskArg, u32 valueArg);
+void MusicPlayer_SetPitch(u8 *state, u32 mask, u32 value);
 void MusicCommand_SetPitch(s16 pitch)
 {
   int player_address;

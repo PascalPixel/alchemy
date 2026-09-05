@@ -11,15 +11,15 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
     struct OwnerTransferState *state = Owner_GetState(source);
     /* Retained across calls for the two accesses to available[index]. */
-    s32 availableOffset = index * 4 + 0xf8;
+    s32 avail_off = index * 4 + 0xf8;
     u32 mask = 1U << bit;
     u32 present;
 
-    if ((*(u32 *)((u8 *)state + availableOffset) & mask) != 0) {
+    if ((*(u32 *)((u8 *)state + avail_off) & mask) != 0) {
         present = Djinn_IsActive(source, index, bit);
         if (Djinn_AddToOwner(target, index, bit) == 0) {
             Djinn_Deactivate(source, index, bit);
-            *(u32 *)((u8 *)state + availableOffset) &= ~mask;
+            *(u32 *)((u8 *)state + avail_off) &= ~mask;
             state->owned_counts[index]--;
 
             if (present != 0) {

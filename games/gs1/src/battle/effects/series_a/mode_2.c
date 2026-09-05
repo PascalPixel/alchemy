@@ -2,6 +2,6 @@
 
 s32 BattleEffectA(s32, s32);
 
-void BattleEffectA2(s32 effect) {
+void BattleEffect_RunSeriesAMode2(s32 effect) {
     BattleEffectA(effect, 2);
 }

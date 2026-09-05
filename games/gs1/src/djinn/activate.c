@@ -2,7 +2,7 @@
 #include "owner_state.h"
 
 s32 Trade_CanOfferDjinn(s32, s32, s32);
-void Owner_RefreshDerivedData(s32 arg0);
+void Owner_RefreshDerivedData(s32 owner);
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {

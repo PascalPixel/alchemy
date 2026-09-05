@@ -230,26 +230,20 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
         ))
     }
 }
-/// Run a `build-stage` subcommand, except for the separate asset binary.
+/// Run one stage through the unified contributor executable.
 fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
-    let manifest = match stage {
-        "assets" => "tools/build-assets/Cargo.toml",
-        _ => "tools/build-stage/Cargo.toml",
-    };
-    let mut command = argv(&[
+    argv(&[
         "cargo",
         "run",
         "--quiet",
         "--release",
         "--offline",
         "--manifest-path",
-        &text(root.join(manifest)),
+        &text(root.join("tools/alchemy/Cargo.toml")),
         "--",
-    ]);
-    if manifest.ends_with("build-stage/Cargo.toml") {
-        command.push(stage.into());
-    }
-    command
+        "build",
+        stage,
+    ])
 }
 fn value_u64(value: &Value, label: &str) -> Result<u64, String> {
     value

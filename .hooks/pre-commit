@@ -1,4 +1,4 @@
 #!/bin/sh
 # 登録予定の内容を公開可能な正準ソースに限定する。
 exec cargo run --offline --quiet --release \
-  --manifest-path tools/check/Cargo.toml -- check-publication --staged
+  --manifest-path tools/alchemy/Cargo.toml -- check publication --staged

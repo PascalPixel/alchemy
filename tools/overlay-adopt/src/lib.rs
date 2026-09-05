@@ -2,8 +2,8 @@ pub mod park;
 pub mod score;
 pub mod twins;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use disassemble::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use no_asm_c::{expanded_forbidden, find_forbidden};
-use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use serde::Deserialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -619,7 +619,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = overlay_disasm::paths::basename(&options.source);
+        let source_base = disassemble::paths::basename(&options.source);
         println!(
             "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
             options.id,

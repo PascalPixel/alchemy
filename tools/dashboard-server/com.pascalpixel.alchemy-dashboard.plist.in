@@ -12,9 +12,9 @@
     <string>--quiet</string>
     <string>--release</string>
     <string>--manifest-path</string>
-    <string>@ALCHEMY_ROOT@/tools/compiler/Cargo.toml</string>
+    <string>@ALCHEMY_ROOT@/tools/alchemy/Cargo.toml</string>
     <string>--</string>
-    <string>dashboard-server</string>
+    <string>dashboard</string>
     <string>--bind</string>
     <string>127.0.0.1:4650</string>
   </array>

@@ -3,8 +3,8 @@ use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
 };
-use overlay_disasm::compile::assemble_overlay;
-use overlay_disasm::{canonical_overlay, CanonicalRom, OverlaySource, OVERLAY_BASE};
+use disassemble::compile::assemble_overlay;
+use disassemble::{canonical_overlay, CanonicalRom, OverlaySource, OVERLAY_BASE};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
@@ -524,7 +524,7 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
         }
         _ => {
             let image = canonical_overlay(root, &overlay)?;
-            let text = overlay_disasm::build_overlay_source(&image, OVERLAY_BASE)?;
+            let text = disassemble::build_overlay_source(&image, OVERLAY_BASE)?;
             region_text(&define_dangling_labels(&text), address, span)?
         }
     };
@@ -544,7 +544,7 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
             }
         }
     }
-    let image = overlay_disasm::compile::assemble_overlay_raw(
+    let image = disassemble::compile::assemble_overlay_raw(
         &OverlaySource::named(overlay.clone(), text.clone()),
         OVERLAY_BASE,
     )?;

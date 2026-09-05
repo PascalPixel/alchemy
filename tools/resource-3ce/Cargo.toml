@@ -12,5 +12,5 @@ path = "src/lib.rs"
 
 [dependencies]
 extract-resource = { path = "../extract-resource" }
-overlay-disasm = { path = "../overlay-disasm" }
+disassemble = { path = "../disassemble" }
 serde_json = { version = "1", features = ["preserve_order"] }

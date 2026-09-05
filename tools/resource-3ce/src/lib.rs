@@ -1,5 +1,5 @@
+use disassemble::{assemble_overlay, OverlaySource};
 use extract_resource::{encode_general, GeneralToken};
-use overlay_disasm::{assemble_overlay, OverlaySource};
 use serde_json::{Map, Value};
 use std::fs;
 use std::io::{self, Write};

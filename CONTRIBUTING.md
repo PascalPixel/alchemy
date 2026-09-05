@@ -61,7 +61,7 @@ Configure the repository hooks once, then build the contributor host:
 
 ```sh
 git config core.hooksPath .hooks
-cargo build --offline --release --manifest-path tools/compiler/Cargo.toml
+cargo build --offline --release --manifest-path tools/alchemy/Cargo.toml
 ```
 
 Worktrees may symlink `roms/` and `alchemy-gcc/dist/` from the main checkout.
@@ -74,32 +74,28 @@ Every immediate tool directory with a Cargo manifest or executable script
 appears exactly once. `make tooling-index-check` proves that this index and the
 filesystem agree.
 
-Contributor-facing work goes through six hosts. Run one with `cargo run
---offline --quiet --release --manifest-path tools/<host>/Cargo.toml --
-<command>`; the Makefile supplies the usual routes. Libraries remain separate
-for testing and provenance, not as public commands.
+Contributor-facing work goes through `./alchemy <command>`. The repository
+launcher builds the current Rust executable offline before running it, so a
+stale binary cannot silently survive source changes. The Makefile supplies
+the usual routes. Libraries remain separate
+for testing and provenance; standalone entry points are retired.
+
+Use `decompile` for candidate recovery, `diff` for scoring, `match` for
+decoder-named repairs, and `waves` for prepared cohorts. The former overlay
+text-listing drafter and unrestricted source/tuning runners are retired;
+they are not alternate routes around the repair catalog or wave contracts.
 
 ### Public hosts
 
 | Tool | Responsibility |
 | --- | --- |
-| [assets](tools/assets/) | Archival extractors and game-specific asset/data codecs; `assets --list` names the commands. |
-| [build-assets](tools/build-assets/) | Rebuild tracked assets and data packages from source. |
-| [build-stage](tools/build-stage/) | Assemble retained regions, compile claimed C, and compose or verify the ROM. |
-| [check](tools/check/) | Publication, ownership, retained-code, coverage, integration, routing, and progress checks. |
-| [compiler](tools/compiler/) | Candidate scoring, families, cross-edition work, waves, permutation, and the dashboard. |
-| [overlay](tools/overlay/) | Overlay scoring, reconstruction, adoption, parking, audit, twins, and disassembly. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, assets, decompile, disassemble, inspect, diff, adopt, match, families, waves, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 
-### Direct workflows
+### Decompilation library
 
 | Tool | Responsibility |
 | --- | --- |
-| [allocator-lens](tools/allocator-lens/) | Read GCC 2.96 pseudos, costs, conflicts, assignments, spills, and reloads. |
-| [thumb2c](tools/thumb2c/) | Convert retained Thumb code (overlay modules and main-image owners) to candidate C, tune it against the ROM, and adopt exact results. |
-| [shape-search](tools/shape-search/) | Run bounded source-shape searches through the real scorer. |
-| [unit-flatten](tools/unit-flatten/) | Flatten a wholly exact overlay's owners into one translation unit, reconciling declarations. |
-| [unit-scaffold](tools/unit-scaffold/) | Scaffold declared translation units and owner composition. |
-| [weyard-font](tools/weyard-font/) | Extract and verify the shared text font across historical ROMs. |
+| [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 
 ### Build and repository foundations
 
@@ -121,10 +117,10 @@ for testing and provenance, not as public commands.
 | Tool | Responsibility |
 | --- | --- |
 | [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
-| [candidate-show](tools/candidate-show/) | Score and explain structural, allocator, type, and code residuals. |
+| [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, targets, and translation units. |
 | [integrate-matches](tools/integrate-matches/) | Adopt byte-exact main-image C through the integration gate. |
-| [permuter](tools/permuter/) | Execute finite, decoder-named source repairs. |
+| [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
 
 ### Overlay support
 
@@ -132,8 +128,7 @@ for testing and provenance, not as public commands.
 | --- | --- |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [overlay-call-targets](tools/overlay-call-targets/) | Decode overlay-specific call-target words. |
-| [overlay-disasm](tools/overlay-disasm/) | Disassemble and compile overlay-qualified owners. |
-| [overlay-show](tools/overlay-show/) | Render and reconstruct overlay owners and resources. |
+| [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 
 ### Verification and reporting
 
@@ -272,7 +267,7 @@ written down in those dumps or readable in that source.
 
 So when a candidate diverges, the order of work is:
 
-1. **Read the decision.** Run `out/cargo-target/release/allocator-lens <owner>` for
+1. **Read the decision.** Run `out/cargo-target/release/alchemy inspect allocator <owner>` for
    the per-pseudo record (creation order, class costs, preferences, global
    ordering, conflicts, assignments, spills, reloads), or read the pass
    dumps directly.
@@ -294,7 +289,7 @@ So when a candidate diverges, the order of work is:
    repeatedly in this project's history and every time they turned out to be
    a way of disguising a wrong reconstruction as a right one.
 
-Spelling search and the permuter are the last resort, not the first move,
+Spelling search and the matching engine are the last resort, not the first move,
 and for allocation-class residuals they are measured to regress. A week of
 refuted-hypothesis dossiers was spent probing decisions the compiler
 prints when asked. Do not repeat that: look at the compiler.
@@ -330,11 +325,11 @@ exact members exact, refuting one member's earlier `u16` guess.
 Scaffold a new unit with:
 
 ```sh
-out/cargo-target/release/unit-scaffold gs1 <unit-id> <start-hex> <end-hex>
+out/cargo-target/release/alchemy unit scaffold gs1 <unit-id> <start-hex> <end-hex>
 ```
 
 then add the printed manifest entry, resolve declaration collisions in the
-composite or in shared headers, and score with `candidate-show --unit` until
+composite or in shared headers, and score with `diff --unit` until
 every previously exact owner is exact again. Unit boundaries are provisional
 working divisions, not recovered history — the original boundaries remain
 unknown; merge or split units freely as evidence accumulates.
@@ -354,7 +349,7 @@ Reconstruct the whole function as one C source at the head address and
 score the complete span explicitly:
 
 ```sh
-out/cargo-target/release/compiler candidate-show   games/gs1/recon/en/main/<head>.c --owner <head> --size <span-bytes>
+out/cargo-target/release/alchemy diff   games/gs1/recon/en/main/<head>.c --owner <head> --size <span-bytes>
 ```
 
 where span-bytes runs from the head to the end of the terminal fragment.
@@ -382,7 +377,7 @@ and read the bytes straight out of the reference ROM.
 3. Compile and inspect the linked result:
 
    ```sh
-   out/cargo-target/release/compiler candidate-show \
+   out/cargo-target/release/alchemy diff \
      games/gs1/recon/en/main/<address>.c --align --first
    ```
 
@@ -390,7 +385,7 @@ and read the bytes straight out of the reference ROM.
    member from the same object:
 
    ```sh
-   out/cargo-target/release/compiler candidate-show \
+   out/cargo-target/release/alchemy diff \
      --unit <translation-unit-id> --first
    ```
 
@@ -400,7 +395,7 @@ and read the bytes straight out of the reference ROM.
    both layers: register-role repairs when the instruction streams align, and
    reachability-filtered branch evidence — guard counts, loop shapes,
    mirrored or inverted guards — when they do not. Strong structural findings
-   take precedence over an allocator proposal, and `compiler permute`
+   take precedence over an allocator proposal, and `alchemy match`
    searches only the catalogued repairs the decoder names.
 6. Register the semantic destination and adopt only at zero linked differences.
    The `integrate` command is for standalone owners. Shared-unit owners are
@@ -418,7 +413,7 @@ cannot be reproduced from a clean checkout.
 
 ## Route residual work
 
-The triage router runs as part of `compiler candidate-show` and prints a
+The triage router runs as part of `alchemy diff` and prints a
 `next=` line: the literal command to run for that owner's residual class.
 When reference bytes prove a narrower corpus-derived repair, it also prints a
 `repair_hint=` line with the guarded playbook.  Treat that as one bounded edit,
@@ -428,7 +423,7 @@ before adoption.
 Follow it — and for any allocation, scheduling, or pool-placement residual,
 start from **Read the compiler first** above before touching the source. Do not improvise a different route from the raw diff, and do not
 hand-probe an owner whose `next=` line already names a mechanical route —
-`allocation-covered` goes through `compiler permute`, `unclassified` and
+`allocation-covered` goes through `alchemy match`, `unclassified` and
 `allocation-uncovered` go to the smart queue, and uncovered allocation is
 measured to regress under source respelling, not merely suspected to.
 
@@ -436,11 +431,11 @@ The executable repair catalog is
 `games/gs1/recon/compiler-repair-patterns.json`. Add a repair only with a named
 decoder signal, guarded finite operation, recorded verdict, and regression
 fixture; never encode fixed registers or instruction scheduling. Run
-`compiler permute --acceptance-test` (included by `make test`) to prove the
+`alchemy match --acceptance-test` (included by `make test`) to prove the
 catalog still names and reverses the controlled perturbations before using a
 catalog operation in a wave.
 
-The residual dispatcher is `compiler waves`. Use `inventory` and `bucket` to
+The residual dispatcher is `alchemy waves`. Use `inventory` and `bucket` to
 classify the existing candidate corpus. For no-candidate drafting, run `draft
 prepare` once, run one or more read-only `draft score --shard I/N` workers, then
 run `draft collect`. Preparation binds the evidence-mined aggregate context and

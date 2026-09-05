@@ -183,6 +183,58 @@ mod tests {
     }
 
     #[test]
+    fn respells_a_symbol_local_declared_with_its_initializer() {
+        let lines: Vec<String> = [
+            "extern u8 Data_00000000[];",
+            "void Lifted_02002aec(void)",
+            "{",
+            "    u8 *rec7;",
+            "",
+            "    {",
+            "        s32 data = (s32)Data_00000000;",
+            "",
+            "        rec7[85] = 3;",
+            "        rec7[34] = data;",
+            "    }",
+            "}",
+        ]
+        .iter()
+        .map(|line| (*line).to_string())
+        .collect();
+        let respelt = himode_local(&lines, "data").expect("respelt");
+        assert_eq!(respelt[6], "        u16 data[1];");
+        // The value has no statement of its own, so it opens the block.
+        assert_eq!(respelt[8], "        data[0] = (u16)(s32)Data_00000000;");
+        assert_eq!(respelt[9], "        rec7[85] = 3;");
+        assert_eq!(respelt[10], "        rec7[34] = data[0];");
+    }
+
+    #[test]
+    fn takes_a_direct_narrow_store_through_a_halfword_temporary() {
+        let lines: Vec<String> = [
+            "extern u8 Data_00000000[];",
+            "void Lifted_02002d84(void)",
+            "{",
+            "    u32 i;",
+            "    u8 *rec7;",
+            "",
+            "    rec7[34] = (s32)Data_00000000;",
+            "    *(s32 *)(rec7 + 12) = (s32)Data_00000000;",
+            "}",
+        ]
+        .iter()
+        .map(|line| (*line).to_string())
+        .collect();
+        let respelt = himode_store(&lines, 6).expect("respelt");
+        // The temporary is declared beside the other locals.
+        assert_eq!(respelt[5], "    u16 p0[1];");
+        assert_eq!(respelt[7], "    p0[0] = (u16)(s32)Data_00000000;");
+        assert_eq!(respelt[8], "    rec7[34] = p0[0];");
+        // A word-wide store keeps the bits the temporary would drop.
+        assert!(himode_store(&lines, 7).is_none());
+    }
+
+    #[test]
     fn reads_the_early_pool_signature() {
         let report = |row: &str| format!("{}{row}\n", "header\n".repeat(9));
         assert!(pool_is_late(&report(
@@ -945,6 +997,9 @@ fn himode_names(lines: &[String]) -> Vec<String> {
         else {
             continue;
         };
+        let name = name
+            .split_once(" = ")
+            .map_or(name, |(declared, _)| declared);
         let plain = !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
         if plain && !found.iter().any(|held| held == name) {
             found.push(name.to_string());
@@ -979,7 +1034,13 @@ pub fn himode_local(lines: &[String], name: &str) -> Option<Vec<String>> {
             continue;
         }
         let (lhs, value) = statement.strip_suffix(';')?.split_once(" = ")?;
-        if lhs == name {
+        let declares = ["s32 ", "u16 "]
+            .iter()
+            .any(|kind| lhs == format!("{kind}{name}"));
+        if declares || lhs == name {
+            if declares && at_declaration.replace(index).is_some() {
+                return None;
+            }
             if at_assignment.replace(index).is_some() {
                 return None;
             }
@@ -992,10 +1053,7 @@ pub fn himode_local(lines: &[String], name: &str) -> Option<Vec<String>> {
         reads.push(index);
     }
     let (at_declaration, at_assignment) = (at_declaration?, at_assignment?);
-    let declared = lines
-        .iter()
-        .any(|line| line.trim_start().starts_with("extern ") && mentions(line, symbol));
-    if reads.is_empty() || !declared {
+    if reads.is_empty() || !declares_extern(lines, symbol) {
         return None;
     }
     let lead = |index: usize| {
@@ -1004,10 +1062,89 @@ pub fn himode_local(lines: &[String], name: &str) -> Option<Vec<String>> {
     };
     let mut out = lines.to_vec();
     out[at_declaration] = format!("{}u16 {name}[1];", lead(at_declaration));
-    out[at_assignment] = format!("{}{name}[0] = (u16)(s32){symbol};", lead(at_assignment));
+    let assignment = format!("{}{name}[0] = (u16)(s32){symbol};", lead(at_assignment));
     for index in reads {
         out[index] = format!("{}[0];", lines[index].trim_end().strip_suffix(';')?);
     }
+    // Written on the declaration itself the value has no statement of its
+    // own; it becomes the first statement of the block the declaration opens.
+    if at_assignment == at_declaration {
+        out.insert(statement_start(lines, at_declaration), assignment);
+    } else {
+        out[at_assignment] = assignment;
+    }
+    Some(out)
+}
+
+/// A local declaration in the lifter's style, with or without an initializer.
+fn is_declaration(line: &str) -> bool {
+    let statement = line.trim();
+    statement.ends_with(';')
+        && ["s32 ", "s16 ", "u32 ", "u16 ", "u8 "]
+            .iter()
+            .any(|kind| statement.starts_with(kind))
+}
+
+/// Whether the unit declares `symbol` extern, so its address is a link-time
+/// constant rather than an ordinary local read.
+fn declares_extern(lines: &[String], symbol: &str) -> bool {
+    lines
+        .iter()
+        .any(|line| line.trim_start().starts_with("extern ") && mentions(line, symbol))
+}
+
+/// The first statement after the declaration at `from`.
+fn statement_start(lines: &[String], from: usize) -> usize {
+    let mut at = from + 1;
+    while at < lines.len() && (lines[at].trim().is_empty() || is_declaration(&lines[at])) {
+        at += 1;
+    }
+    at
+}
+
+/// The end of the run of locals the enclosing function opens with, so a new
+/// local can be declared beside the others.
+fn declaration_end(lines: &[String], before: usize) -> Option<usize> {
+    let open = (0..before).rev().find(|&index| lines[index] == "{")?;
+    let mut at = open + 1;
+    while at < lines.len() && is_declaration(&lines[at]) {
+        at += 1;
+    }
+    (at > open + 1).then_some(at)
+}
+
+/// A local name the unit does not use.
+fn fresh_name(lines: &[String]) -> Option<String> {
+    (0..100)
+        .map(|ordinal| format!("p{ordinal}"))
+        .find(|name| !lines.iter().any(|line| mentions(line, name)))
+}
+
+/// The unit with the direct narrow store at `index`, `rec7[34] =
+/// (s32)Sym;`, taken through a one-element `u16` temporary declared beside
+/// the other locals. Stored straight the value is SImode and files a
+/// 1020-byte pool fix; through the temporary it is HImode and files a
+/// 64-byte one. None unless the target is a halfword or narrower and the
+/// unit declares the symbol extern.
+pub fn himode_store(lines: &[String], index: usize) -> Option<Vec<String>> {
+    let line = &lines[index];
+    let statement = line.trim();
+    let lead = &line[..line.len() - line.trim_start().len()];
+    let (lhs, value) = statement.strip_suffix(';')?.split_once(" = ")?;
+    let symbol = symbol_address(value)?;
+    if !narrows(lines, lhs) || !declares_extern(lines, symbol) {
+        return None;
+    }
+    let at = declaration_end(lines, index)?;
+    let name = fresh_name(lines)?;
+    let declaration_lead = {
+        let held: &str = &lines[at - 1];
+        &held[..held.len() - held.trim_start().len()]
+    };
+    let mut out = lines.to_vec();
+    out[index] = format!("{lead}{lhs} = {name}[0];");
+    out.insert(index, format!("{lead}{name}[0] = (u16)(s32){symbol};"));
+    out.insert(at, format!("{declaration_lead}u16 {name}[1];"));
     Some(out)
 }
 
@@ -1059,5 +1196,27 @@ fn try_himode(
             }
             _ => {}
         }
+    }
+    let mut index = 0;
+    while index < lines.len() {
+        if best.differing == 0 || !pool_is_late(&best.report) {
+            return;
+        }
+        if let Some(rewritten) = himode_store(lines, index) {
+            if let Ok(trial) = score_text(&format!("{}\n", rewritten.join("\n"))) {
+                if trial.differing < best.differing {
+                    report(&format!(
+                        "{} -> {}  himode store {}",
+                        best.differing,
+                        trial.differing,
+                        lines[index].trim()
+                    ));
+                    *best = trial;
+                    *lines = rewritten;
+                    index += 2;
+                }
+            }
+        }
+        index += 1;
     }
 }

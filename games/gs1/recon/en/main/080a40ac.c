@@ -32,7 +32,7 @@ s32 Func_080a40ac(s32 owner_id)
 
             if (flag == 2)
                 goto found;
-            goto done;
+            return 0;
         }
 
         slot++;

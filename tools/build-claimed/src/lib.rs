@@ -409,8 +409,7 @@ fn materialize_unit_owner(
     let assembly = object_dir.join(format!("{stem}.s"));
     let output = text(object_dir.join(format!("{stem}.o")));
     write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
-    let mut assembler = strings(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork"]);
-    assembler.extend(strings(&["-o", &output, &text(assembly)]));
+    let assembler = compiler_core::routing::assembly_command(&text(assembly), &output);
     run(root, &assembler)?;
     if verify(&output)?.actual != verification.actual {
         return Err(format!("{}: emitted {stem} slice changed output", unit.id));
@@ -556,14 +555,7 @@ pub fn compile_source_for_owner(
     }
     run(
         root,
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &object,
-            &assembly,
-        ]),
+        &compiler_core::routing::assembly_command(&assembly, &object),
     )?;
     let defined = last_fields(&run(
         root,
@@ -878,14 +870,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     write_file(&symbols_source, externals.as_bytes())?;
     run(
         root,
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &text(symbols_object.clone()),
-            &text(symbols_source.clone()),
-        ]),
+        &compiler_core::routing::assembly_command(&text(&symbols_source), &text(&symbols_object)),
     )?;
     let linker = output.join("claimed.ld");
     let mut script = format!(

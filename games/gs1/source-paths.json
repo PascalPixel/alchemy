@@ -14834,6 +14834,10 @@
     "main:080c1afc": {
       "name": "BattleFormation_SelectLevelMatchedCandidate",
       "source": "battle/formation/select_level_matched_candidate.c"
+    },
+    "main:08012e28": {
+      "name": "Battle_PlaceActorsByFormationKind",
+      "source": "battle/placement/place_actors_by_formation_kind.c"
     }
   }
 }

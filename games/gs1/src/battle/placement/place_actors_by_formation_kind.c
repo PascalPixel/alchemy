@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define Battle_PlaceActorsByFormationKind Func_08012e28
+
 struct BattleCells {
     u8 *actors;   /* 56-byte actor records */
     u8 *unk_04;
@@ -9,25 +11,30 @@ struct BattleCells {
     u8 *work;     /* 16-byte position records */
 };
 
+struct Vec2 {
+    s32 x;
+    s32 y;
+};
+
 extern struct BattleCells Data_03001e60;
-extern s32 Data_08013584[2];
+extern struct Vec2 Data_08013584;
 
 void Func_0800b168(void *object, s32 *position, s32 *scale, u32 mode);
 
-void Func_08012e28(void)
+void Battle_PlaceActorsByFormationKind(void)
 {
     u8 *actor = Data_03001e60.actors;
-    u8 *tbl = Data_03001e60.work;
     u32 kind = (*(u8 **)(actor + 40))[4];
-    s32 scale[2];
+    struct Vec2 scale;
+    u8 *tbl;
     u16 angle;
     u16 step;
     u16 odd = 0;
     u32 cnt;
     u32 i;
 
-    scale[0] = Data_08013584[0];
-    scale[1] = Data_08013584[1];
+    scale = Data_08013584;
+    tbl = Data_03001e60.work;
 
     switch (kind) {
     case 3:
@@ -63,7 +70,7 @@ void Func_08012e28(void)
     }
 
     for (i = 0; i < cnt; i++) {
-        Func_0800b168(actor, (s32 *)(tbl + i * 16), scale, angle);
+        Func_0800b168(actor, (s32 *)(tbl + i * 16), (s32 *)&scale, angle);
         actor += 56;
         angle += step;
         if (i & 1)

@@ -14826,6 +14826,10 @@
     "resource_371:0200395c": {
       "name": "FieldScene_RunLateSequence",
       "source": "overlays/scene_primary_script/run_scene_371_late_sequence.c"
+    },
+    "main:080b29a8": {
+      "name": "Shop_ConfirmPartyAction",
+      "source": "shop/confirm_party_action.c"
     }
   }
 }

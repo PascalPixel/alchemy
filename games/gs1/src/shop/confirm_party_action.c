@@ -27,17 +27,18 @@ void UiWindow_Close(s32 window, s32 style);
 s32 Shop_ConfirmPartyAction(s32 unit_id)
 {
     s32 party_action = 0;
-    s32 list_window;
+    s32 list_window = 0;
     struct ShopRuntime *shop;
     struct ShopCursorAnchor *cursor_anchor;
 
     Func_080b010c();
     shop = SHOP_RUNTIME;
-    shop->party_action = party_action;
+    shop->party_action = list_window;
 
     {
-        u16 *dst = (u16 *)((u8 *)shop + 0x3a4);
-        *dst = *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Func_0808a080(unit_id) + 80) + 40));
+        s32 shown =
+            *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Func_0808a080(unit_id) + 80) + 40));
+        *(u16 *)((u8 *)shop + 0x3a4) = shown;
     }
 
     list_window = Func_080150f8(*(u16 *)((u8 *)shop + 0x3a4), 0, 0, 0);
@@ -70,11 +71,17 @@ s32 Shop_ConfirmPartyAction(s32 unit_id)
         if (party_action == -1)
             break;
 
-        Func_080b28d4(0xd24);
-        if (Func_080b280c() == 0) {
-            Func_080b28d4(0xd25);
-        } else {
-            Func_080b2b10();
+        {
+            s32 base = 0xd24;
+            s32 message = base;
+
+            base = 0;
+            Func_080b28d4(message);
+            if (Func_080b280c() == 0) {
+                Func_080b28d4(message + 1);
+            } else {
+                Func_080b2b10();
+            }
         }
         shop->party_action = 0;
         Func_080b0a20(&shop->cursor, -32, 112);
@@ -82,8 +89,8 @@ s32 Shop_ConfirmPartyAction(s32 unit_id)
     }
 
     Func_080b28d4(0xd23);
-    UiWindow_Close(list_window, 2);
     UiWindow_Close(shop->money_window, 2);
+    UiWindow_Close(list_window, 2);
     Func_080b0204();
     return 0;
 }

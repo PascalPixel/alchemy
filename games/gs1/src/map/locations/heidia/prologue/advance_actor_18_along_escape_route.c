@@ -25,7 +25,6 @@ void Func_02003e12();
 void Func_02003e22();
 void Func_02003e32();
 
-#define AdvanceActor18AlongEscapeRoute Func_020025f0
 void AdvanceActor18AlongEscapeRoute(void)
 {
     s32 column;

@@ -29,7 +29,6 @@ struct SceneActor {
     u8 flags55;
 };
 
-#define InitializeActorZeroMotion Func_02000518
 void InitializeActorZeroMotion(void)
 {
     struct SceneActor *actor;

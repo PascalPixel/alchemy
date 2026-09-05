@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetFlag200AndConfigureRegion55_26 Func_02000d24
-
 extern void Func_02001df6(s32 flag);
 extern void Func_02001dda(s32 kind, s32 x, s32 enabled, s32 mode,
                           s32 a, s32 b);

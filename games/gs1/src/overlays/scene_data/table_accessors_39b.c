@@ -1,12 +1,4 @@
-#define FieldScene_RunStepWithValue1632 Func_02000eac
 
-#define SceneData_GetTableac58 Func_02000ea4
-
-#define SceneData_GetTableabf8 Func_02000e9c
-
-#define SceneData_ReturnZero Func_02000e98
-
-#define SceneData_GetTablea928 Func_02000e90
 /* Contiguous unnamed leaf-owner run for resource_39b. */
 
 void *SceneData_GetTablea928(void) { return (void *)0x0200a928; }

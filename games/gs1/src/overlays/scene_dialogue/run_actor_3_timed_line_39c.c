@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor3TimedLine Func_02002814
-
 extern void Func_020082cc(void);
 extern void Func_02008354(s32, s32);
 extern void Func_020082d2(s32);

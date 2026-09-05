@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_WaitUntilWord1000IsNine Func_02002fa0
-
 extern s16 Data_02001000;
 
 extern void Func_02006ab8(s32);

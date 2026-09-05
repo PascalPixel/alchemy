@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetupWithDescriptor976C Func_02000b18
-
 /* Complete scene-variant seven actor-zero setup wrapper through its pool. */
 extern const u8 Data_0200976c[];
 

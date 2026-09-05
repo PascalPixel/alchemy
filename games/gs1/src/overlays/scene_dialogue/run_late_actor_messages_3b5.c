@@ -7,8 +7,6 @@ extern void Func_0200139a(s32);
 extern void Func_020013b2(s32, s32);
 extern void Func_02001316(void);
 
-#define SceneDialogue_RunActor27Message1fa3 Func_0200059c
-
 void SceneDialogue_RunActor27Message1fa3(void)
 {
     Func_020012fc();
@@ -18,8 +16,6 @@ void SceneDialogue_RunActor27Message1fa3(void)
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor24Message235f Func_020005bc
 
 extern void Func_0200131c(void);
 extern void Func_020013ba(s32);

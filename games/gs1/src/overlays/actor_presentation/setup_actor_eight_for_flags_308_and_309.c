@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetupActorEightForFlags308And309 Func_020006c0
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_Send210AndApplyRectAt40x84 Func_02000d70
-
 extern void Func_02006d1e(s32);
 extern void Func_02006cca(s32, s32, s32, s32, s32, s32);
 

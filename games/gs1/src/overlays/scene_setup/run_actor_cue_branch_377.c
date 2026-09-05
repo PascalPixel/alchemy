@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorCueBranch Func_02000118
-
 extern u8 Value_000022b9;
 
 extern void Func_02001ae6(s32);

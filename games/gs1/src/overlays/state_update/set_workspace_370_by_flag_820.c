@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetWorkspace370ByFlag820 Func_02001f58
-
 /*
  * Resource 39a overlay routine at 0x02001f58.
  *

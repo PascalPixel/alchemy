@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FindSlotAtTilePosition Func_020038b0
-
 extern u8 *Data_03001ebc;
 
 s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0) {

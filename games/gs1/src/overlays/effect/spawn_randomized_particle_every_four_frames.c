@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnRandomizedParticleEveryFourFrames Func_02000b98
-
 struct SceneObject {
     u8 filler00[8];
     s32 x;

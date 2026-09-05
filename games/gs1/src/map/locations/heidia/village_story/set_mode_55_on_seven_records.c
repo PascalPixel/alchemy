@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetMode55OnSevenRecords Func_02000ad0
-
 /*
  * resource_39d owner at 0x02000ad0, 82 bytes.
  *

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FaceLeaderWhileGrounded Func_02000d58
-
 extern u8 *Func_0200324c(s32 id);
 extern u16 Func_0200317c(s32 deltaZ, s32 deltaX);
 extern void Func_020032f2(s32 id, s32 angle, s32 frames);

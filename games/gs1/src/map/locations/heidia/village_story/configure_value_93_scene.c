@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ConfigureValue93Scene Func_02003438
-
 /* Configure and publish the scene's presentation layer. */
 extern void Func_02006c50(s32 value, s32 mode);
 extern void Func_02006c60(s32 left, s32 right);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CalculateFixedPointDistance Func_020002f0
-
 typedef s32 (*IwramSqrt020002f0)(s32);
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)

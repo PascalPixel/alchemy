@@ -121,6 +121,21 @@ pub fn self_digest() -> String {
     *slot = Some(digest.clone());
     digest
 }
+/// Where one overlay's register bindings live. The work directory is
+/// short-lived and shared, so the bindings go to a stable path named by
+/// their own content hash instead.
+fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> {
+    let directory = root().join("out/overlay-bindings");
+    fs::create_dir_all(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
+    let path = directory.join(format!(
+        "{overlay}-{}.h",
+        &sha256::hex(text.as_bytes())[..16]
+    ));
+    if !path.exists() {
+        fs::write(&path, text).map_err(|error| format!("{}: {error}", path.display()))?;
+    }
+    Ok(path)
+}
 fn plan_stamp(commands: &[Vec<String>], work: &str) -> String {
     static MEMO: Mutex<Option<BTreeMap<Vec<u8>, String>>> = Mutex::new(None);
     let identity = command_identity(commands, work);
@@ -430,6 +445,13 @@ fn compile_overlay_with_mutations(
         assembly.clone(),
     );
     options.preprocessed_output = Some(at(&format!("{stem}.i")));
+    // The overlay's own name bindings, rendered from the register.
+    let binding_text = source_paths.symbol_bindings(Some(overlay));
+    let bindings = write_overlay_bindings(overlay, &binding_text)?;
+    options.preprocessor_flags.push("-include".to_string());
+    options
+        .preprocessor_flags
+        .push(bindings.to_string_lossy().into_owned());
     if let Some(requested) = mutations {
         options.flags = Some(requested.clone());
     }
@@ -441,6 +463,9 @@ fn compile_overlay_with_mutations(
         &mut source_inputs,
         &fs::read(source_paths.manifest_path()).map_err(|error| error.to_string())?,
     );
+    // The binding path carries a content hash, so a rename changes the
+    // command; hashing the text keeps the key honest if that ever changes.
+    append_frame(&mut source_inputs, binding_text.as_bytes());
     let plan_signature = plan_stamp(&steps, &work_display);
     let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
@@ -587,6 +612,14 @@ fn compile_overlay_unit(
             .preprocessor_flags
             .push(format!("-DGS1_EDITION_{}=1", edition.to_ascii_uppercase()));
     }
+    // The overlay's own name bindings: each image has its own name space,
+    // so the register renders the bindings for this resource alone.
+    let binding_text = names.symbol_bindings(Some(overlay));
+    let bindings = write_overlay_bindings(overlay, &binding_text)?;
+    options.preprocessor_flags.push("-include".to_string());
+    options
+        .preprocessor_flags
+        .push(bindings.to_string_lossy().into_owned());
     for step in source_to_assembly_plan(&options)?.steps {
         checked(&step.command, work)?;
     }

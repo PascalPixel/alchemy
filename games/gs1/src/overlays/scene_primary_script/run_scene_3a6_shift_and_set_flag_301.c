@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunShiftAndSetFlag301 Func_020018b4
-
 /*
  * Resource 3a6 camera-shift scene at 0x020018b4 (54 bytes, 7 calls).
  *

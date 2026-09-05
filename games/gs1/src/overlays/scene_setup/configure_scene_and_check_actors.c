@@ -9,8 +9,6 @@ static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
     Func_02003a08(actor, x, y, mode);
 }
 
-#define ConfigureSceneAndCheckActors Func_020015d4
-
 void ConfigureSceneAndCheckActors(void)
 {
     ConfigureScene(2, 0x00d00000, 0x00700000, 0);

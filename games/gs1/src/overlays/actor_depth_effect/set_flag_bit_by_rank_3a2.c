@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetFlagBitByRankAgainstActorZero Func_02001060
-
 struct Actor02001060 {
     u8 head[12];
     s32 rank;

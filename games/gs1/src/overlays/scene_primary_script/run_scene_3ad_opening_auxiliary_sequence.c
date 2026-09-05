@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunOpeningAuxiliarySequence Func_02000210
-
 /* Runs a short sequence of external calls with fixed numeric arguments.
  * If a gate check on Func_02001d26 succeeds, four extra paired calls run
  * first; the routine then always runs eight more paired calls before a

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyValues123And11 Func_020003e4
-
 extern void Func_02001e96(s32);
 extern void Func_020006d0(s32);
 

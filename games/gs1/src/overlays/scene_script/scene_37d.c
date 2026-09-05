@@ -1,19 +1,7 @@
 #include "types.h"
 
-#define FieldScene_InitSceneRequestAndCameraZoom Func_02000054
-
 #include "resource_37d.h"
 #include "resource_37de_scene.h"
-
-#define SceneData_GetEffectTable Func_0200004c
-
-#define SceneData_GetActorTable Func_02000044
-
-#define SceneData_GetMessageTable Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetScriptTable Func_02000030
 
 /*
  * resource_37d owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

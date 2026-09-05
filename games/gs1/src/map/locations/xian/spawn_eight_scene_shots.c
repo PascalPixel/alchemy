@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SpawnEightShots Func_02004140
-
 extern u8 *Func_0200854c(s32 id);
 extern void Func_02008540(s32 frames);
 extern void Func_020086f6(s32 sound_id);

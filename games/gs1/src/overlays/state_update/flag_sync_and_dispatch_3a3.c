@@ -12,8 +12,6 @@ extern struct Actor *Func_0200171a(s32);
 extern void Func_020016f0(s32);
 extern void Func_02001700(s32);
 
-#define SceneState_SetFlag906ByActorNineteenX Func_0200084c
-
 void SceneState_SetFlag906ByActorNineteenX(void)
 {
     struct Actor *p = Func_0200171a(19);
@@ -26,8 +24,6 @@ void SceneState_SetFlag906ByActorNineteenX(void)
 }
 
 #include "types.h"
-
-#define SceneState_SyncProgressFlagsAndDispatch Func_02000874
 
 /*
  * resource_3a3 flag-sync owner 0x02000874-0x02000903 (144 bytes).

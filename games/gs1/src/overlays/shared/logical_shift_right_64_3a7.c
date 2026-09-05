@@ -8,8 +8,6 @@
  */
 #include "types.h"
 
-#define Runtime_LogicalShiftRight64 Func_02001574
-
 /*
  * Resource 3bf 64-bit logical right shift at 0x02005c08.
  *

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorTwentyFourAngleDialogue Func_02000420
-
 struct Obj {
     u8 filler00[6];
     u16 f06;

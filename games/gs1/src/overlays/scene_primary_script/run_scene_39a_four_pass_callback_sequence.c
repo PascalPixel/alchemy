@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFourPassCallbackSequence Func_02001e08
-
 /*
  * Resource 39a overlay sequence at 0x02001e08.
  *

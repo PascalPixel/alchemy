@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SetupBlendByFlag201 Func_02000b30
-
 extern void Func_0200474c(s32);
 extern void Func_0200490a(s32);
 extern s32 Func_020047ea(s32);

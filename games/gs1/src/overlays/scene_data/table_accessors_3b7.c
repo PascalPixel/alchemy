@@ -22,16 +22,12 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-#define SceneData_GetTable9ac8 Func_0200003c
-
 u8 *SceneData_GetTable9ac8(void)
 {
     return (u8 *)0x02009ac8;
 }
 
 #include "types.h"
-
-#define SceneData_SelectTable9cfcByState Func_02000044
 
 extern s16 Data_02000240[];
 extern u8 Value_000000bd;

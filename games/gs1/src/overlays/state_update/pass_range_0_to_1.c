@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_PassRange0To1 Func_02003ffc
-
 struct Args_02003ffc {
     s32 first;
     s32 unused;

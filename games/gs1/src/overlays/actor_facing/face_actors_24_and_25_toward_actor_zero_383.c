@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FaceActors24And25TowardActorZero Func_02002ba0
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the

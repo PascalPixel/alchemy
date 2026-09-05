@@ -2,10 +2,6 @@
 
 #include "types.h"
 
-#define FieldScene_RunActorTenRepeatedMotion Func_020007ac
-
-#define FieldScene_RunActorNinePromptDialogue Func_02000730
-
 /*
  * Resource 3c3, dialogue bracket at 0x02000730 (124 bytes, 11 call sites).
  *

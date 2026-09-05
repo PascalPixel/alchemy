@@ -1,4 +1,3 @@
-#define SceneDialogue_RunActor19TwoFlagLineB Func_020015e8
 void Func_02007ab4(); void Func_02007af2(); int Func_02007a92(); int Func_02007aa4();
 void Func_02007ba4(); void Func_02007bb6(); void Func_02007bbe(); void Func_02007bd6();
 /* Second-phase story selector at 0x020015e8, 84 bytes; eight calls. */

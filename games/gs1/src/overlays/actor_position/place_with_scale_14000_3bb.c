@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PlaceWithScale14000 Func_020030e8
-
 /* STILL-OPEN: adopt --where differing_bytes=13/80. alchemist.ts refused
  * (tiers: class, priority) -- matches the documented DEAD-END FINGERPRINT
  * (adjacent register swap in an asrs/str block), genuinely unfixed. */

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_AdvanceScaleCounter Func_02001c88
-
 s32 OverlayObject_AdvanceScaleCounter(u8 *o) {
     u16 *c = (u16 *)(o + 100);
     s16 n;

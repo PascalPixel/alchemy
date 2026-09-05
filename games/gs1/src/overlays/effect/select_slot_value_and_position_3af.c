@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SelectSlotValueAndPosition Func_020035ec
-
 extern s32 Func_0200790e(s32);
 extern void Func_02007a40(s32, s32);
 extern void Func_02007a54(s32, s32);

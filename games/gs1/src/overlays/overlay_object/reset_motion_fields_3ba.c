@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ResetMotionFields Func_02002bac
-
 typedef struct Obj {
     u32 f00[9];
     s32 f24;

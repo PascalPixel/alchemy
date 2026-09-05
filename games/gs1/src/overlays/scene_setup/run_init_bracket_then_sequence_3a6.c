@@ -1,4 +1,3 @@
-#define FieldScene_RunInitBracketThenSequence Func_020010c8
 
 /*
  * resource_3a6 owner at 0x020010c8, 24 bytes: open the scene scheduler,

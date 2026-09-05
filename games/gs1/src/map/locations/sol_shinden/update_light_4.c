@@ -13,7 +13,6 @@ extern s32 Func_02003bbe(void);
 extern u16 Data_0200adec;
 extern s32 Data_0200ade8;
 
-#define UpdateStatueLight4 Func_02001140
 void UpdateStatueLight4(void)
 {
     if ((Func_02003aca() & 3) != 0) {

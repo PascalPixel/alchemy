@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunTwoArmSequence Func_02002738
-
 extern u16 Data_0200c57e[];
 
 extern void Func_020063e2(void);

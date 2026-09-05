@@ -24,8 +24,6 @@
  */
 #include "types.h"
 
-#define SceneActor_BranchOnSlotZeroAtTile38 Func_02001b60
-
 /*
  * resource_3b4 owner at 0x02001b60, 100 bytes: code 0x02001b60-0x02001bbf and
  * the pool word 0x000fffff at 0x02001bc0.

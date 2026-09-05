@@ -19,8 +19,6 @@ static __inline__ void ConfigureThird(s32 channel, s32 value, s32 zero)
     Func_02003f08(channel, value, zero);
 }
 
-#define ConfigureSecondarySceneChannels Func_02001984
-
 void ConfigureSecondarySceneChannels(void)
 {
     ConfigureFirst(1, 0xc000, 0);

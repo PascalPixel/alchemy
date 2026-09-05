@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetWork448AndRunFlag915Step Func_020018a4
-
 extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 

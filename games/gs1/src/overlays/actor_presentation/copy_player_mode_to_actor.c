@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CopyPlayerModeToActor Func_020006e8
-
 /*
  * resource_3b5 owner at 0x020006e8, 62 bytes.
  *

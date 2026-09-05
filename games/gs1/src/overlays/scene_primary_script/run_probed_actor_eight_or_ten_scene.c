@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunProbedActorEightOrTenScene Func_02001454
-
 /* The probe record is passed on by value: four words in r0-r3 and the last two
  * copied to the outgoing stack area by an `ldmia`/`stmia` pair. */
 struct Resource39fProbe {

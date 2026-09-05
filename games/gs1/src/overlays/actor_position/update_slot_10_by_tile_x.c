@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UpdateSlot10ByTileX Func_0200040c
-
 extern s32 *Func_02003fac(s32);
 extern void Func_02003f56(s32, s32, s32, s32, s32, s32);
 extern void Func_02003f6e(s32, s32, s32, s32, s32, s32);

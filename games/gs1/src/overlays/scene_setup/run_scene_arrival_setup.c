@@ -21,8 +21,6 @@ static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
     Func_020041d8(actor, axis, offset);
 }
 
-#define RunSceneArrivalSetup Func_02000504
-
 void RunSceneArrivalSetup(void)
 {
     s32 two = 2;

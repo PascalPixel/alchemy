@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectDataBySelectorAndFlags Func_02000070
-
 extern u8 Data_02000240[];
 extern u8 Value_0000008b;
 extern u8 Data_0200cb3c[];

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define ClearSolShindenBackdrop Func_0200022c
 void ClearSolShindenBackdrop(void)
 {
     s32 black = 0;

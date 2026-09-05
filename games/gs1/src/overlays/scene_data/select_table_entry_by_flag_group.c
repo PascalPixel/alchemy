@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableEntryByFlagGroup Func_02003464
-
 extern s32 Func_02007764(s32);
 
 extern s32 Data_0200db08[];

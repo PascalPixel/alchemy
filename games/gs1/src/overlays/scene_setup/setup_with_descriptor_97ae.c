@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetupWithDescriptor97AE Func_02000bf8
-
 /* Complete scene-variant ten actor-zero setup wrapper through its pool. */
 extern const u8 Data_020097ae[];
 extern void Func_02001dae(s32 value);

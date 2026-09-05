@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunValue1528Scene Func_02000a64
-
 extern void Func_020045d8(void);
 extern void Func_020045b8(s32, s32);
 extern void Func_02004796(s32);

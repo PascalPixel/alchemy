@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RaiseSlot9StepB Func_0200055c
-
 extern s32 *Func_020040fc(s32);
 extern void Func_020040a2(s32, s32, s32, s32, s32, s32);
 extern void Func_020040b6(s32 *, s32);

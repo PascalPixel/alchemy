@@ -2,10 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global DisplayTransition_InitializeState
+	.global DisplayTransition_InitializeBattleEffectState
 	.global Func_0808fe38
 	.thumb_func
-DisplayTransition_InitializeState:
+DisplayTransition_InitializeBattleEffectState:
 Func_0808fe38:
 	push	{r5, r6, lr}
 	movs	r1, #168

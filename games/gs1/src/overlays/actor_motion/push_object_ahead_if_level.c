@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PushObjectAheadIfLevel Func_020026fc
-
 struct LevelCheckRecord {
     u8 unknown_00[12];
     s32 y;                          /* +0x0c */

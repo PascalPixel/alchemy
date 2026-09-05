@@ -9,7 +9,6 @@ void Func_02006a2a(s32, s32, s32);
 void Func_02002e3c(s32);
 void Func_02006954(void);
 
-#define ConfigureSceneActor9 Func_020012e0
 void ConfigureSceneActor9(void)
 {
     Func_02006914();

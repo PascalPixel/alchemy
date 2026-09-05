@@ -1,6 +1,5 @@
 #include "staged_actor.h"
 
-#define UpdateStagedActorVerticalPosition Func_02000058
 #define GetDescendingMotionStep Func_0200649a
 #define GetAscendingMotionStep Func_020064b4
 

@@ -7,7 +7,6 @@ void Func_02001fd0();
 void Func_02001fe2();
 void Func_02002006();
 
-#define ConfigureSceneForActorEightColumn Func_02000b6c
 void ConfigureSceneForActorEightColumn(void)
 {
     u8 *actor;

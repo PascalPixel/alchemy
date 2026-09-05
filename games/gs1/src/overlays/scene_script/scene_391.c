@@ -1,8 +1,6 @@
 #include "types.h"
 
-#define CalculateFixedPointPositionDistance Func_02000030
 #define StagedActorStepTable Data_0200ad68
-#define StagedActor_PushActorAhead Func_020000c4
 #define GetStagedActor Func_02002cf8
 #define FindNextStagedActor Func_02000176
 #define FindBlockingStagedActor Func_020001a2
@@ -16,16 +14,6 @@
 #define FinishStagedActorMove Func_02002dc0
 #define FinishStagedActorEffect Func_02002f0c
 #define SetStagedActorTransition Func_02002dc8
-#define SceneActor_ResetMotionWhenAheadBlocked Func_020002a8
-#define FindStagedActorProbePosition Func_02000474
-#define OverlayObject_ClearPendingAndRestoreMode Func_020009dc
-#define SceneActor_UpdateRandomCounterMode Func_020009fc
-#define SceneData_GetTableb06c Func_02000a4c
-#define SceneData_ReturnZero Func_02000a54
-#define SceneData_GetTableb0cc Func_02000a58
-#define SceneData_GetTableb0e4 Func_02000a60
-#define FieldScene_RunTile10x20Transition Func_02000a68
-#define StagedActor_RunStepEffect Func_02000b1c
 #define GetStagedActorEffect Func_0200374e
 #define CanStartStagedActorEffect Func_0200371e
 #define BeginStagedActorEffect Func_02003750
@@ -42,17 +30,7 @@
 #define WaitSceneFrames Func_02003756
 #define RestoreStagedActorEffect Func_0200376c
 #define FinishStagedActorEffect_02000b1c Func_02003810
-#define SceneActor_PassSubjectOffsetPosition Func_02000c14
-#define SceneData_GetTableB294 Func_02000c60
-#define FieldScene_RunScene391_02000c68 Func_02000c68
 #define SceneTransition_Phase Data_02000240[225]
-#define FieldScene_RunSplitPairSteps Func_02002768
-#define SceneActor_SetPairZeroAndValue Func_02002780
-#define SceneEffect_AdvanceAngleAndFinishWhenParked Func_02002798
-#define SceneEffect_SpawnObject26EveryEightFrames Func_020027c8
-#define OverlayObject_SelectValueByFrameBit1 Func_02002864
-#define SceneActor_CheckRegionTrigger Func_0200288c
-#define SceneActor_AlternateSlots13To16Field0c Func_02002ad8
 
 #include "staged_actor.h"
 #include "staged_actor_probe.h"

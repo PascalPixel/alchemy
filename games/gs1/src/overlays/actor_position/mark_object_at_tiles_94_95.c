@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_MarkObjectAtTiles94To95 Func_02000a10
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

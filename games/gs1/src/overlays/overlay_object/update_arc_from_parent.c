@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateArcFromParent Func_020043c8
-
 typedef struct Obj {
     u8 pad00[8];
     s32 f08;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateArcFromAnchor Func_02001638
-
 /* The anchor pointer is read before the frame counter is stored: the reference
  * hoists `ldr r6,[r5,#104]` above the `strh`, and only that source order
  * reproduces it. */

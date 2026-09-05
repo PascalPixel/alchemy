@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateOnFrameParity Func_02001580
-
 extern volatile u32 Data_03001e40;
 
 extern s32 Func_02002da4(s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag88FBranch Func_02000484
-
 extern u8 *Data_03001ebc;
 
 void Func_02004864(void);

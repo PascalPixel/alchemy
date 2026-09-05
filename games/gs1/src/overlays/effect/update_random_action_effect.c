@@ -1,7 +1,5 @@
 #include "resource_3a8_effect.h"
 
-#define SceneEffect_UpdateRandomAction Func_02000040
-
 s32 Func_02003b7e();
 s32 Func_02003bac();
 s32 Func_02003bba();

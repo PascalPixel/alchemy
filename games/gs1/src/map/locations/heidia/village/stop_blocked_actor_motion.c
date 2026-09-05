@@ -27,7 +27,6 @@ extern s32 Data_0200df18[];
 BlockingActor *Func_02000342(s32 *position, MovingActor *actor);
 s32 Func_02005902(MovingActor *actor, s32 *position);
 
-#define StopBlockedActorMotion Func_020002a8
 s32 StopBlockedActorMotion(MovingActor *actor)
 {
     s32 destination[3];

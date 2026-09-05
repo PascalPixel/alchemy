@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunEntryZeroAndScene22Body Func_020004bc
-
 /*
  * resource_38e owner at 0x020004bc, 80 bytes: the overlay's ENTRY-0 root -
  * seat scene entity 8 in its idle presentation and, when the shared scene

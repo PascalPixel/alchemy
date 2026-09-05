@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSlotZeroFacingSequence Func_020002e8
-
 struct Obj {
     u8 filler00[6];
     u16 f06;

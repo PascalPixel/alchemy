@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLineF3F Func_020001f0
 #define NULL ((void *)0)
 
 void Func_02002890(void);

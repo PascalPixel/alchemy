@@ -24,8 +24,6 @@
  */
 #include "types.h"
 
-#define FieldScene_DispatchBySlotZeroFacing Func_020018e0
-
 /*
  * resource_3b4 owner at 0x020018e0, 160 bytes: code 0x020018e0-0x02001977 and
  * the pool words 0x00000206 and 0x00000207 at 0x02001978.

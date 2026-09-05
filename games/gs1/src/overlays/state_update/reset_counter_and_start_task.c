@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ResetCounterAndStartTask Func_02000134
-
 typedef void (*Task02000134)(void);
 
 extern s32 Data_0200c41c;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_FindSlotAtPosition Func_02003b48
-
 extern u8 *Data_03001ebc;
 
 s32 *SceneData_FindSlotAtPosition(s32 *pos) {

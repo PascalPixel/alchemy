@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DrawTilesAndRaiseActor11 Func_02003970
-
 typedef struct Effect {
     unsigned char pad00[0xC];
     s32 y;

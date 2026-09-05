@@ -1,38 +1,7 @@
 #include "types.h"
 
-#define SceneEffect_AdjustColorChannels Func_02000ecc
-
-#define SceneEffect_AdjustPaletteColors Func_02000e64
-
-#define SceneState_CheckFourCellRun Func_02000be4
-
-#define SceneData_FindTileRunAt Func_02000b8c
-
-#define SceneState_StampRecordCells Func_02000b3c
-
-#define SceneState_CopyPresetA0d0WithOffsetB0 Func_020003c0
-
-#define FieldScene_RepaintBoardRecords Func_02000194
-
-#define SceneState_ApplyRectByLayoutSelector Func_02000150
-
-#define FieldScene_CallHelper118c Func_0200008c
-
-#define SceneState_ApplyRecordTable92c0 Func_02000054
-
-#define SceneData_GetTable9240 Func_0200004c
-
-#define SceneData_GetTable91e0 Func_02000044
-
-#define SceneData_GetTable91d0 Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetTable9170 Func_02000030
-
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define FieldScene_RunActorEightSequence Func_020008b0
 
 struct TileRun {
     s16 id;

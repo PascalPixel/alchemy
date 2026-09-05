@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetPairZeroAndValue Func_02004624
-
 extern void Func_02009438(s32, s32, s32);
 extern void Func_0200936e(s32);
 

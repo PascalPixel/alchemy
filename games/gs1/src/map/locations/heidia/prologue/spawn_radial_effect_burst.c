@@ -24,7 +24,6 @@ extern s32 Func_02003dfc(s32);
 extern s32 Func_02003df2(s32, s32);
 extern void Func_0200194a(s32, s32, s32, s32, s32, s32, s32, struct EffectParams *);
 
-#define SpawnRadialEffectBurst Func_02000e00
 void SpawnRadialEffectBurst(void)
 {
     struct SceneObject *object;

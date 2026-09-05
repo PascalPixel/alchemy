@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PassActorNinePositionWithId107 Func_02001ec0
-
 struct Frame {
     s32 f00;
     s32 f04;

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunScriptedStep1120 Func_02004618
 extern u8 Value_00001120;
 
 extern void Func_02008d18(void);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetValue268bInScene Func_02002330
-
 extern void Func_02005428(void);
 extern void Func_02005480(s32, s32);
 extern void Func_02005410(s32, s32);

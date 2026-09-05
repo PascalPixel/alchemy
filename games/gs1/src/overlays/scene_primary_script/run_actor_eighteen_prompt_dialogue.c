@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEighteenPromptDialogue Func_02000764
 extern u8 *Data_03001ebc;
 
 extern void Func_02002148(void);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunGuardedSixWordStep Func_02000eac
-
 typedef struct {
     s32 a, b, c, d, e, f;
 } S6;

@@ -1,6 +1,4 @@
-#define FieldScene_ConfigureRegionAtRow17 Func_02000de8
 
-#define FieldScene_ConfigureRegionAtRow15 Func_02000dcc
 /* Contiguous unnamed leaf-owner run for resource_3a6. */
 
 void Func_02002a44();

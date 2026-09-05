@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SwapPositionsByDepth Func_02000910
-
 struct Position {
     u32 filler00[2];
     s32 x;

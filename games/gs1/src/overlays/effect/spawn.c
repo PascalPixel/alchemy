@@ -75,7 +75,6 @@ s32 Func_020045de();
 void Func_02004634();
 void Func_02004644();
 
-#define SpawnEffect Func_0200013c
 void SpawnEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
                    const struct Options *options)
 {

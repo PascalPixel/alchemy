@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunStep15 Func_02002580
 #define NULL ((void *)0)
 
 void Func_02004c4a(s32);

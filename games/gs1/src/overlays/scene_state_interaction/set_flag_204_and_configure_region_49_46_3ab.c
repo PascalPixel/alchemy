@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetFlag204AndConfigureRegion49_46 Func_02001280
 extern void Func_02007242(void);
 extern s32 Func_02004612(s32, s32, s32, s32);
 extern void Func_02007246(s32);

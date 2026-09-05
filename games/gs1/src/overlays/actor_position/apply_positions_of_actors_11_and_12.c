@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ApplyPositionsOfActors11And12 Func_020019c0
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

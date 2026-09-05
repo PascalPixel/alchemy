@@ -1,10 +1,4 @@
-#define SceneData_GetTable9368 Func_02000340
 
-#define SceneData_GetTable9358 Func_02000338
-
-#define SceneData_ReturnZero Func_02000334
-
-#define SceneData_GetTable92f8 Func_0200032c
 /* Contiguous unnamed leaf-owner run for resource_387. */
 
 /* resource_387 prologue-less table getter, including its one-word pool. */

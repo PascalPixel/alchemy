@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnWithRandomOffset Func_02003bd4
-
 extern u32 Func_0200958a(void);
 extern u32 Func_0200959a(void);
 extern void Func_02003d68(s32, s32, s32, s32, s32, s32, s32, s32 *);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_MarkActorAndApplyRectAtTile Func_02001a14
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

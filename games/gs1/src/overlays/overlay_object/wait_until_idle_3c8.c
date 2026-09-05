@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_WaitUntilIdle Func_0200094c
-
 struct BusyObject {
     u8 filler00[0x28];
     s32 busy;

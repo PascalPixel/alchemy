@@ -8,8 +8,6 @@ extern s32 Func_02003754(s32, s32);
 extern void Func_0200379e(s32, s32, s32);
 extern void Func_0200373c(s32);
 
-#define FieldScene_RunStep8ValueEe7 Func_02001204
-
 void FieldScene_RunStep8ValueEe7(void)
 {
     Func_020037ec(0xF4, 3);
@@ -26,8 +24,6 @@ extern void Func_020037c8(s32, s32);
 extern s32 Func_02003788(s32, s32);
 extern void Func_020037d2(s32, s32, s32);
 extern void Func_02003770(s32);
-
-#define FieldScene_RunStep9ValueEe8 Func_02001238
 
 void FieldScene_RunStep9ValueEe8(void)
 {
@@ -46,8 +42,6 @@ extern s32 Func_020037bc(s32, s32);
 extern void Func_02003806(s32, s32, s32);
 extern void Func_020037a4(s32);
 
-#define FieldScene_RunStep10ValueEe9 Func_0200126c
-
 void FieldScene_RunStep10ValueEe9(void)
 {
     Func_02003854(0xF4, 3);
@@ -58,10 +52,6 @@ void FieldScene_RunStep10ValueEe9(void)
 }
 
 #include "types.h"
-
-#define FieldScene_RunStep12ValueEeb Func_020012d4
-
-#define FieldScene_RunStep11ValueEea Func_020012a0
 
 extern void Func_02003888(s32, s32);
 extern void Func_02003830(s32, s32);

@@ -4,8 +4,6 @@
 void *Func_02004730(s32);
 s16 Func_020046a2(s32, s32);
 
-#define FaceXianActorToPlayer Func_02000324
-
 s32 FaceXianActorToPlayer(void *actor)
 {
     void *player = Func_02004730(0);

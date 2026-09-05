@@ -1,41 +1,6 @@
 #include "types.h"
 
-#define SceneState_SetRuntimeWord448To521 Func_02000598
-
-#define SceneData_SelectTable8d4cOr8a28 Func_02000570
-
-#define SceneDialogue_RunActor9MotionDialogue Func_02000524
-
-#define SceneDialogue_RunActor12Dialogue Func_02000504
-
-#define SceneDialogue_RunActor10Dialogue Func_020004e4
-
-#define SceneDialogue_RunActor17FlaggedDialogue Func_02000484
-
-#define SceneDialogue_RunActor16FlaggedDialogue Func_0200041c
-
-#define SceneDialogue_RunActor15FlaggedDialogue Func_020003bc
-
-#define SceneDialogue_RunActor14FlaggedDialogue Func_0200035c
-
-#define SceneData_SelectTable89c8Or8890 Func_02000328
-
-#define SceneData_GetTable8868 Func_02000320
-
-#define SceneData_ReturnZero Func_0200031c
-
-#define SceneData_GetTable8778 Func_02000314
-
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
-
-#define OverlayObject_IntegrateVelocities Func_02000104
-
-#define OverlayObject_SpawnWithMode14 Func_02000048
-
-#define OverlayObject_SetEntryField Func_02000030
-
 #define NULL ((void *)0)
-#define OverlayObject_CreateConfigured Func_020000a0
 #define CreateOverlayObject Func_020006de
 #define SetOverlayObjectMode Func_02000710
 #define SetOverlayObjectSlot Func_02000770

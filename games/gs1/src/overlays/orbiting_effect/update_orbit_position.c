@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateOrbitPosition Func_02005ae0
-
 extern s32 Func_0200b99e(s32);
 extern s32 Func_0200b9b4(s32);
 extern s32 Func_0200b9ce(s32);

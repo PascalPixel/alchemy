@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SpawnKind24AtActor Func_02001bc8
-
 extern u8 *Func_02004020();
 extern void Func_02004026();
 extern void Func_02004038();

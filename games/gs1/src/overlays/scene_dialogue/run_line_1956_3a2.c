@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunLine1956 Func_0200084c
-
 extern void Func_02001d40(void);
 extern void Func_02001db0(s32, s32);
 extern void Func_02001d28(s32, s32);

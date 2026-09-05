@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_StepScaleUpSixteenFrames Func_02005218
-
 s32 OverlayObject_StepScaleUpSixteenFrames(u8 *o) {
     u16 *c = (u16 *)(o + 100);
     s16 n;

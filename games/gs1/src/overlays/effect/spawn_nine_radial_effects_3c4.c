@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnNineRadialEffects Func_020011e0
-
 struct SceneObject {
     u8 filler00[8];
     s32 x;

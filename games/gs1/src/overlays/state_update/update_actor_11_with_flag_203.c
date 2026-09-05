@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_UpdateActor11WithFlag203 Func_02001960
-
 extern void Func_02003b80(s32);
 extern void Func_02003c98(s32, s32);
 extern void Func_02003b84(s32, s32, s32, s32, s32, s32);

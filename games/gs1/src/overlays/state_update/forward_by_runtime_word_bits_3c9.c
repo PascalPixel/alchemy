@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ForwardByRuntimeWordBits Func_0200211c
-
 s32 Func_02007d28(u32, s32);
 void Func_02007e10(s32, s32);
 s32 Func_02007d38(u32, s32);

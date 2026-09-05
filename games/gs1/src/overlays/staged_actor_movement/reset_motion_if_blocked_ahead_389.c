@@ -10,7 +10,6 @@ extern s32 Func_0200171a(
 
 #define StagedActorDirectionSteps Data_02009554
 #define StagedActorProbeValues Data_02009594
-#define StagedActor_ResetMotionIfBlockedAhead Func_020002a8
 #define FindStagedActorAtProbe Func_02000342
 #define CheckStagedActorProbePosition Func_0200171a
 

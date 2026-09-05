@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_RunObjectTwoWhenFlagged Func_02002f98
-
 extern void Func_02007eb8(void);
 extern u8 *Func_02007ca6(s32);
 extern void Func_02007ce6(s32, s32, s32, s32);

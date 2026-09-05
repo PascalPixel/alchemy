@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_ReturnZero Func_02000e74
-
 /* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
 s32 SceneData_ReturnZero(void)
 {

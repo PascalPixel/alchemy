@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyArgMode0AndSet10 Func_02000894
-
 void Func_0200669e(s32, s32);
 void Func_020065cc(s32);
 

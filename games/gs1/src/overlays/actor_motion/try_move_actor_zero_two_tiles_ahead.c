@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_TryMoveActorZeroTwoTilesAhead Func_02000cc8
-
 struct SceneObject {
     u8 filler00[6];
     u16 angle;

@@ -21,8 +21,6 @@ static __inline__ void ConfigureFourth(s32 channel, s32 value, s32 zero)
     Func_02002f72(channel, value, zero);
 }
 
-#define ConfigureFourSceneChannelsAndHandoff Func_0200140c
-
 void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
 {
     Func_02002f4e(0, 0x6000, 0);

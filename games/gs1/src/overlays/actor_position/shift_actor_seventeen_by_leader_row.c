@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ShiftActorSeventeenByLeaderRow Func_0200042c
-
 typedef struct Obj {
     s32 f00;
     s32 f04;

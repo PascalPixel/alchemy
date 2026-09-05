@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor9Transition302 Func_020002e0
-
 extern void Func_020026f6(s32);
 extern s32 Func_02000470(s32, s32, s32);
 extern void Func_02002706(s32);

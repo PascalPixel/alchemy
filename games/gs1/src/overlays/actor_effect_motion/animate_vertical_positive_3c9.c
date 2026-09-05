@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Effect_AnimateVerticalPositive Func_0200215c
-
 struct StagedVerticalEffect {
     s32 pad0[2];
     s32 f8;

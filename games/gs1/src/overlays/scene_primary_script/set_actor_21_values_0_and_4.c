@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetActor21Values0And4 Func_02000d74
-
 /*
  * Complete actor-21 mode-four reset wrapper.
  *

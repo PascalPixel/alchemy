@@ -12,7 +12,6 @@ typedef struct {
     s16 velocity_y;
 } ScaledMotion;
 
-#define AdvancePositionScaleAndVelocity Func_02000088
 s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
 {
     motion->x += motion->velocity_x << 8;

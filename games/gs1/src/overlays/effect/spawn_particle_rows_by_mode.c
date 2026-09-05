@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnParticleRowsByMode Func_02002030
-
 extern void Func_02007a56(s32, s32, s32, s32, s32, s32);
 extern void Func_02007a66(s32, s32, s32, s32, s32, s32);
 extern void Func_02007a76(s32, s32, s32, s32, s32, s32);

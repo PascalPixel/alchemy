@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyArgMode0AndReturnZero Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 #define RuntimeSelectorTable Data_02000240
@@ -11,29 +10,8 @@
 #define SecondaryOverlayData Data_02008a64
 #define TertiaryOverlayData Data_02008b24
 #define DefaultOverlayData Data_020089bc
-#define SceneData_SelectByRuntimeSelector Func_02000040
-#define SceneData_GetTable8bcc Func_02000098
-#define SceneData_SelectSecondaryDataByRuntimeSelector Func_020000a0
-#define SceneData_SelectDataByRuntimeSelector Func_020000f4
-#define SceneState_ConfigureRegion1_0_21x14 Func_02000148
-#define SceneState_ConfigureRegion0_0_21x14 Func_02000168
-#define SceneState_ApplyTwoRects Func_02000188
-#define FieldScene_RunTwoLayoutSteps Func_020001bc
-#define FieldScene_RunActor9Flag882Scene Func_020001f0
-#define FieldScene_RunActorFifteenScene Func_02000280
-#define FieldScene_RunActorSixteenScene Func_020002ac
-#define FieldScene_RunActor17Steps28AndD2 Func_020002d8
-#define ActorPresentation_SetSceneCell31AndFlag305 Func_02000424
-#define SceneState_SetGlobalByte17 Func_0200044c
-#define SceneState_ClearRuntimeByte17 Func_0200045c
-#define FieldScene_DispatchByScenarioId Func_0200046c
-#define RunGuardedSceneSetup Func_020004b4
 #define RunSceneCommand Func_02000e04
 #define FinishSceneSetup Func_02000e64
-#define SceneState_SetRuntimeWord448To516 Func_020004e8
-#define SceneActor_FindSlotAtTile Func_020007c4
-#define StagedActor_PushActorAhead Func_020007f8
-#define Resource398_ImportBankNoOp Func_02000904
 
 #include "select_overlay_data_by_runtime_selector.h"
 

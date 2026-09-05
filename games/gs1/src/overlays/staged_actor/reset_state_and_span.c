@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ResetStateAndSpan Func_02000c0c
-
 struct Actor02000c0c {
     u8 head[18];
     u8 gap18[6];

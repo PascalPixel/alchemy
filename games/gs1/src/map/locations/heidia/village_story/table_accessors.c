@@ -4,8 +4,6 @@
 
 extern u8 Data_0200b9c8[];
 
-#define SceneData_GetTableb9c8 Func_02000320
-
 void *SceneData_GetTableb9c8(void) {
     return Data_0200b9c8;
 }
@@ -17,8 +15,6 @@ extern u8 Data_0200b9d4[];
 
 void Func_020039f6(s32);
 
-#define SceneData_GetTableB9d4AfterStateCheck Func_02000328
-
 void *SceneData_GetTableB9d4AfterStateCheck(void) {
     if (Data_02000240[225] != 1) {
         Func_020039f6(0x253);
@@ -27,8 +23,6 @@ void *SceneData_GetTableB9d4AfterStateCheck(void) {
 }
 
 #include "types.h"
-
-#define SceneData_GetTablebbe4 Func_02000354
 
 extern u8 Data_0200bbe4[];
 

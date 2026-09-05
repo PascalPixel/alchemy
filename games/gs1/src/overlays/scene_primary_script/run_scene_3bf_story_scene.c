@@ -1,5 +1,4 @@
 #include "types.h"
-#define PlayStoryScene Func_020027b0
 
 void Func_02004d2a();
 void Func_02004f02();

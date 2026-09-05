@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlag985DialogueBranch Func_020025c8
-
 extern u8 *Data_03001ebc;
 extern void Func_0200540a();
 extern s32 Func_020053fc();

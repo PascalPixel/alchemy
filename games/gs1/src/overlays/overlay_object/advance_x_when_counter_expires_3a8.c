@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_AdvanceXWhenCounterExpires Func_020000ac
-
 struct Object {
     u8 filler00[6];
     u16 x;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunActorTwelveThreeWaypointMotion Func_02001328
-
 extern u8 *Func_020040ec(s32);
 extern void Func_020040dc(void);
 extern void Func_020021e8(s32, s32);

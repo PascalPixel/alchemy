@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_TurnTowardTableAngle Func_02001f24
-
 typedef struct {
     u8 filler0[6];
     u16 unk6;

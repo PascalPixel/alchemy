@@ -1,7 +1,6 @@
 #include "types.h"
 #include "facing_object.h"
 
-#define OverlayObject_UpdateFacingTowardTarget Func_02000040
 #define NULL ((void *)0)
 
 s32 Func_02003afa(s32, s32);

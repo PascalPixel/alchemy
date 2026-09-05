@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ClearStoryVariantWhenIdle Func_02000674
-
 extern s16 *Data_0200add0;
 extern s32 Func_02002238(void);
 

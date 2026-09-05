@@ -24,8 +24,6 @@
  */
 #include "types.h"
 
-#define SceneActor_PublishMarkerBySlotZeroHeight Func_02001edc
-
 /*
  * resource_3b4 owner at 0x02001edc, 156 bytes: code 0x02001edc-0x02001f73 and
  * the pool word 0x000fffff at 0x02001f74.

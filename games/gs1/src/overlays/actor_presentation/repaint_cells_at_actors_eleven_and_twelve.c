@@ -24,8 +24,6 @@
  */
 #include "types.h"
 
-#define ActorPresentation_RepaintCellsAtActorsElevenAndTwelve Func_02001df8
-
 /*
  * resource_3b4 owner at 0x02001df8, 92 bytes: code 0x02001df8-0x02001e4d, two
  * bytes of alignment, and the pool word 0x000fffff at 0x02001e50.

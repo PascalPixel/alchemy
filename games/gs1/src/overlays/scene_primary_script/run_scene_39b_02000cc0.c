@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunScene39b_02000cc0 Func_02000cc0
-
 void Func_02000e6a();
 s32 Func_020030ea();
 

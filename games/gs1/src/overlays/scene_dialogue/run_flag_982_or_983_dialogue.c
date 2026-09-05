@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunFlag982Or983Dialogue Func_02001970
-
 extern void Func_02004a68(void);
 extern void Func_02004ac0(s32, s32);
 extern s32 Func_02004a56(s32);

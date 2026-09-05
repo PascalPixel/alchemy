@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetRuntimeWord448To521AndRun Func_020002bc
 extern u8 *Data_03001ebc;
 
 /* Complete 76-byte shared numbered-scene owner through its two-word pool. */

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CheckTwoUnitsAboveActorZero Func_02001424
-
 struct Actor02001424 {
     u8 head[8];
     s32 x;

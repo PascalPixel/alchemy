@@ -3,7 +3,6 @@
 void Func_02002fe6(s32);
 void Func_02006afe(void);
 
-#define ActivateSceneActor17 Func_020014bc
 void ActivateSceneActor17(void)
 {
     Func_02002fe6(17);

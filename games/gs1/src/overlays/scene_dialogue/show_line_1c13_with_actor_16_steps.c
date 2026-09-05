@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLine1C13WithActor16Steps Func_02000ef8
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 

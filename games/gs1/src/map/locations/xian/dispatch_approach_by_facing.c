@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchApproachByFacing Func_020012e0
-
 extern s32 Func_020056d0(s32 flagId);
 extern void Func_020056c0(void);
 extern void Func_0200570c(void);

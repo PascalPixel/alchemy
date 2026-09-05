@@ -1,31 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DrawThreeDigitValue Func_02001294
-
-#define FieldScene_ShowDialoguePair292c Func_02001228
-
-#define FieldScene_ShowDialoguePair292a Func_020011bc
-
-#define SceneData_GetTable9e14 Func_020011b4
-
-#define SceneState_NoOp Func_02000f88
-
-#define SceneState_ApplyValueAndGetResult Func_02000f18
-
-#define SceneData_CopyUpToThreeEntries Func_0200053c
-
-#define FieldScene_ClearFlagsAndPlayCue2927 Func_02000340
-
-#define SceneData_SelectTable9c04ByState Func_02000060
-
-#define SceneData_GetTable99f0 Func_02000058
-
-#define SceneState_RunQueryWithInterruptMasterSaved Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetTable9948 Func_02000030
-
 extern s16 Data_02000240[];
 extern u8 Data_02009c04[];
 extern u8 Data_020099f4[];

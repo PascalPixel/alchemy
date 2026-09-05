@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunPrimarySequence Func_02000f5c
-
 extern u8 Value_0200f570;
 void Func_02006e98();
 void Func_02006f94();

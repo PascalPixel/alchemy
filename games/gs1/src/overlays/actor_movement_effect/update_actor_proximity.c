@@ -6,7 +6,6 @@ s32 Func_0200078e();
 u8 *Func_02001548();
 void Func_020007ce();
 
-#define UpdateActorProximity Func_02000400
 #define Scene_GetPartnerActor Func_02001532
 #define Actor_CheckProximity Func_0200078e
 #define Scene_GetPlayerActor Func_02001548

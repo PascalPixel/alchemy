@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorSeventeenFlagDialogue Func_020002cc
-
 void Func_02002740();           /* scripted-scene bracket: open */
 s32 Func_02002726();            /* story-flag test; used in a condition */
 void Func_02002818();           /* show a dialogue line by id */

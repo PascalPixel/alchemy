@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectScriptByScene33AndFlag881 Func_0200016c
-
 /*
  * resource_399 scene-script selector at 0x0200016c, 116 bytes.
  *

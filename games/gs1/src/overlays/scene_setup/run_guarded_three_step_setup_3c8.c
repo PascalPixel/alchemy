@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunGuardedThreeStepSetup Func_020019f0
-
 extern void Func_02006888(void);
 extern s32 Func_020026c0(void);
 extern void Func_0200339c(void);

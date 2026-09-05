@@ -1,4 +1,3 @@
-#define SceneState_InitFourActorRecordsAndInstallTask Func_020016a8
 /*
  * resource_3b7 owner at 0x020016a8, 148 bytes (0x020016a8-0x0200173b).
  *

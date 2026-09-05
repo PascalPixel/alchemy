@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define RunScene59Sequence Func_02001af0
-
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
 extern u8 *Data_03001ebc;
 extern u8 *Data_03001e70;

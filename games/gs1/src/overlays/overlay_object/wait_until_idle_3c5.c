@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_WaitUntilIdle Func_02000cd0
-
 extern void Func_02003a5e();
 
 void OverlayObject_WaitUntilIdle(s32 *obj) {

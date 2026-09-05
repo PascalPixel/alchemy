@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunPairedLayoutStepsThenSetOne Func_02000ff0
-
 extern void Func_020024b6(s32, s32, s32, s32, s32, s32);
 extern void Func_020024d2(s32, s32, s32, s32, s32, s32);
 extern void Func_02002508(s32);

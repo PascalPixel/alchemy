@@ -12,19 +12,16 @@ use compiler_core::{
     translation_units::TranslationUnits,
 };
 use overlay_disasm::compile::compile_overlay_c;
-use overlay_disasm::{OVERLAY_BASE, OVERLAY_LINK_BIAS};
+use overlay_disasm::OVERLAY_LINK_BIAS;
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {
-    if let Some((overlay, address)) = target.split_once(':') {
-        let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("{target}: address must be hexadecimal"))?;
-        let address = if address < OVERLAY_BASE {
-            address + OVERLAY_BASE
-        } else {
-            address
-        };
-        return SourceOwner::parse(&format!("{overlay}:{address:08x}"));
+    if target.contains(':') {
+        let owner = SourceOwner::parse_argument(target)?;
+        owner
+            .overlay_id()
+            .ok_or_else(|| format!("{target}: not an overlay owner"))?;
+        return Ok(owner);
     }
     if let Some((overlay, address)) = Path::new(target)
         .file_stem()

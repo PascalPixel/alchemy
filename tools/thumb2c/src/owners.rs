@@ -71,14 +71,11 @@ pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
 
 /// Parses `<overlay>:<hex>` into its parts.
 pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
-    let (overlay, address) = owner
-        .split_once(':')
+    let resolved = SourceOwner::parse_argument(owner)?;
+    let overlay = resolved
+        .overlay_id()
         .ok_or_else(|| format!("{owner}: expected <overlay>:<addressHex>"))?;
-    let mut entry = parse_hex(address)?;
-    if entry < crate::decode::OVERLAY_BASE {
-        entry += crate::decode::OVERLAY_BASE;
-    }
-    Ok((overlay.to_string(), entry))
+    Ok((overlay, resolved.address()))
 }
 
 /// The registered span of an owner, from the retained module register.

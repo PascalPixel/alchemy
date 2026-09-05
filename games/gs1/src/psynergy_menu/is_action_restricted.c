@@ -2,19 +2,19 @@
 
 u8 *Ability_GetData(u32 action);
 
-s32 PsynergyMenu_IsActionRestricted(s32 encoded_action)
+s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
-    u8 *action = Ability_GetData((u32)(encoded_action << 18) >> 18);
-    u32 masked_flags;
+    u8 *action = Ability_GetData((u32)(no << 18) >> 18);
+    u32 flags;
 
     if (action[12] != 0)
         goto restricted;
-    masked_flags = action[1] & 0xc0;
-    encoded_action = 1;
-    if (masked_flags != 0xc0)
+    flags = action[1] & 0xc0;
+    no = 1;
+    if (flags != 0xc0)
         goto done;
 restricted:
-    encoded_action = 0;
+    no = 0;
 done:
-    return encoded_action;
+    return no;
 }

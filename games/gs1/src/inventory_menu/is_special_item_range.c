@@ -2,13 +2,13 @@
 
 s32 InventoryMenu_IsSpecialItemRange(s32 item_id) {
     s32 result;
-    s32 first_special_item;
+    s32 first;
 
     if (item_id > 0xC4) {
         goto L0;
     }
-    first_special_item = 0xC1;
-    if (item_id < first_special_item) {
+    first = 0xC1;
+    if (item_id < first) {
         goto L0;
     }
     result = 1;

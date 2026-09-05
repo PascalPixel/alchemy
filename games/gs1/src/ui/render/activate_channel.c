@@ -33,7 +33,7 @@ struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
     struct Slot *slot;
     struct Slot *selected;
     u16 *destination;
-    u16 field04Value;
+    u16 val04;
     u16 zero;
     u32 index;
 
@@ -49,7 +49,7 @@ struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
     if (selected != 0) {
         if (selected->work == 0) {
             selected->field06 = 0xA00;
-            field04Value = 0x300;
+            val04 = 0x300;
             selected->work = work;
             goto reset_field04;
         }
@@ -61,9 +61,9 @@ struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
             } else {
                 UiWork_ResetChannelTransition(selected);
             }
-            field04Value = 0x300;
+            val04 = 0x300;
 reset_field04:
-            selected->field04 = field04Value;
+            selected->field04 = val04;
         }
 
         zero = 0;

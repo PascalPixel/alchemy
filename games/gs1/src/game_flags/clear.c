@@ -1,6 +1,6 @@
 #include "game_flags.h"
 
-void GameFlag_Clear(s32 flag)
+void GameFlag_ClearBit(s32 flag)
 {
     s32 flag_mask;
     u8 *flag_bytes;

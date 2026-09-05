@@ -6,7 +6,7 @@ void Func_08077428(s32 owner);
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
     struct OwnerInventoryState *inv = OwnerState_Get(owner);
-    unsigned int equipped_flag_mask;
+    unsigned int mask;
     unsigned int item_id = inv->inventory[slot];
     struct ItemDefinition *item;
     u8 type;
@@ -14,8 +14,8 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
     if (Item_CanOwnerEquipDirect(owner, item_id) == 0)
         return -1;
-    equipped_flag_mask = 0x200;
-    if (item_id & equipped_flag_mask)
+    mask = 0x200;
+    if (item_id & mask)
         return 0;
 
     item = Item_GetDirect(item_id);
@@ -24,11 +24,11 @@ s32 Inventory_Equip(s32 owner, s32 slot)
         for (other = 0, item_id = 0xd8;
              other <= 14;
              item_id += 2, other++) {
-            unsigned int slot_flag_mask = equipped_flag_mask;
-            unsigned int slot_flags = *(u16 *)(item_id + (unsigned int)inv);
+            unsigned int m = mask;
+            unsigned int flags = *(u16 *)(item_id + (unsigned int)inv);
 
-            slot_flags &= slot_flag_mask;
-            if (slot_flags == 0)
+            flags &= m;
+            if (flags == 0)
                 continue;
             if (Item_GetDirect(
                     *(volatile u16 *)(item_id + (unsigned int)inv))->type

@@ -21,7 +21,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_SIZE_GUARD(State_080a9d84_size, struct State_080a9d84, 328);
 
 extern struct State_080a9d84 *Data_03001f2c;
-void Func_080a17c4(void *arg0);
+void Func_080a17c4(void *obj);
 
 void InventoryMenu_ResetCategoryItemPositions(void)
 {

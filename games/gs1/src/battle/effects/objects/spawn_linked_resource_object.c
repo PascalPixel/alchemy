@@ -79,13 +79,13 @@ void BattleEffect_SpawnLinkedResourceObject(
             } else {
                 s32 copied_flags = 12;
                 u8 source_flags = resource->visual->flags;
-                u8 destination_flags;
+                u8 flags;
                 s32 clear_mask = 13;
 
                 copied_flags &= source_flags;
-                destination_flags = object->visual->flags;
+                flags = object->visual->flags;
                 clear_mask = -clear_mask;
-                clear_mask &= destination_flags;
+                clear_mask &= flags;
                 clear_mask |= copied_flags;
                 object->visual->flags = clear_mask;
             }

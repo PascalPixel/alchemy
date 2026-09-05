@@ -6,7 +6,7 @@
 
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids) {
     u16 active_members[8];
-    u16 *active_members_base;
+    u16 *base;
     s32 remaining;
     s32 enemy_limit;
     u16 *output;
@@ -25,10 +25,10 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids) {
         enemy_capacity = 3;
     }
     if (side_mask & BATTLE_SIDE_PARTY) {
-        active_members_base = active_members;
-        active_count = BattleParty_ListActiveMembers(active_members_base);
+        base = active_members;
+        active_count = BattleParty_ListActiveMembers(base);
         if (living_count < active_count) {
-            member = active_members_base;
+            member = base;
             remaining = active_count;
             do {
                 unit_id = *member;

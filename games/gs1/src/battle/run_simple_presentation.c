@@ -58,7 +58,7 @@ void Actor_ResetMotionAtAnchor(s32 id);
 void Func_080c9008(struct BattlePresentationWork *work);
 void Func_080bb938(void);
 
-s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags)
+s32 BattlePresentation_RunSimple(struct SimplePresentationInput *input, s32 flags)
 {
     struct BattlePresentationWork work;
     struct SimplePresentationInput *saved_input;
@@ -68,17 +68,17 @@ s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags
     s32 angle;
     s32 adjusted;
     s32 facing_angle;
-    s32 first_coordinate;
-    s32 second_coordinate;
+    s32 x;
+    s32 z;
     s32 divisor;
     s32 scripted;
 
     facing = Data_03001f00;
     saved_input = input;
     object = GetBattleObjectSlot(saved_input->primary_id)->object;
-    second_coordinate = object->z;
-    first_coordinate = object->x;
-    angle = (u16)ArcTan2(first_coordinate, second_coordinate);
+    z = object->z;
+    x = object->x;
+    angle = (u16)ArcTan2(x, z);
     adjusted = angle - 0x2000;
     if (saved_input->primary_id > 7)
         adjusted = angle + 0x6000;

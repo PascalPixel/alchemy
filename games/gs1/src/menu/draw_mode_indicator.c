@@ -1,7 +1,7 @@
 #include "types.h"
 
 void RenderOutput_PrepareForRedraw(void *);
-void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 extern u8 Data_03001f38;
 extern u8 Value_00000c71;
 extern u8 Value_00000c73;

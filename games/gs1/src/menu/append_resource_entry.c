@@ -2,9 +2,9 @@
 #include "global_cells.h"
 
 extern s32 Resource_FindFreeSlot(void);
-extern void Menu_LoadResourceSlot(s32 arg0, s32 index);
+extern void Menu_LoadResourceSlot(s32 slot, s32 index);
 
-void Menu_AppendResourceEntry(s32 arg0)
+void Menu_AppendResourceEntry(s32 no)
 {
     u8 *base;
     u8 *entry;
@@ -20,12 +20,12 @@ void Menu_AppendResourceEntry(s32 arg0)
         *(u16 *)(base + 142) = *(u16 *)(base + 142) + 1;
         entry = base + index * 20;
         slot = Resource_FindFreeSlot();
-        Menu_LoadResourceSlot(slot, arg0);
+        Menu_LoadResourceSlot(slot, no);
         *(u16 *)(entry + 12) = index * 24 + 32;
         flags = 136;
         *(u16 *)(entry + 14) = flags;
         off = index + 132;
         *(u16 *)(entry + 18) = slot;
-        base[off] = (u8) arg0;
+        base[off] = (u8) no;
     }
 }

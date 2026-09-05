@@ -11,7 +11,7 @@ void Menu_MoveSelectionBackward(u8 *state)
     u32 *selection = (u32 *)(state + 0x39c);
 
     if (*selection != 0) {
-        u32 savedIndex;
+        u32 no;
 
         Func_0801b9a8(state, *(u16 *)(state + 0x39e));
         {
@@ -21,8 +21,8 @@ void Menu_MoveSelectionBackward(u8 *state)
             *status = value;
         }
         WaitFrames(1);
-        savedIndex = *(u16 *)(state + 0x39e);
-        if (savedIndex == 1 && *(u16 *)selection != 0) {
+        no = *(u16 *)(state + 0x39e);
+        if (no == 1 && *(u16 *)selection != 0) {
             {
                 u32 value = 8;
 
@@ -33,7 +33,7 @@ void Menu_MoveSelectionBackward(u8 *state)
             if (*(u16 *)selection == 0) {
                 *(u16 *)(state + 10) = 0;
             }
-            *(u16 *)(state + 62) = savedIndex;
+            *(u16 *)(state + 62) = no;
         } else {
             *(u16 *)(state + 0x39e) += 0xffff;
         }

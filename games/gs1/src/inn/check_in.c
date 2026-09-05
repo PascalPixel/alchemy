@@ -51,7 +51,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 {
     struct InnRuntimeState *state;
     struct InnObject *object;
-    s32 resource_window;
+    s32 win;
     s32 amount;
     s32 message_base;
 
@@ -63,7 +63,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 
     object = Scene_GetRecord(object_id);
     state->resource_id = *object->component->resource_id;
-    resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
+    win = Func_080150f8(state->resource_id, 0, 0, 0);
 
     amount = Inn_CalculateRoomPrice(mode);
     UiText_DrawQuantity(amount, 5);
@@ -84,17 +84,17 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         UiWindow_Close(state->window, 2);
         Func_080b04dc(message_base
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-        UiWindow_Close(resource_window, 2);
+        UiWindow_Close(win, 2);
         Inn_PlaySleepSequence(amount);
 
         object = Scene_GetRecord(object_id);
         state->resource_id = *object->component->resource_id;
-        resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
+        win = Func_080150f8(state->resource_id, 0, 0, 0);
         Func_080b04dc(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
 
-    UiWindow_Close(resource_window, 2);
+    UiWindow_Close(win, 2);
     Inn_CleanupResources();
     return 0;
 }

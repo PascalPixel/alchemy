@@ -28,28 +28,28 @@ void BattleEffect_StartBufferInterpolation(s32 battle_value);
 s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
 void Func_08098294(s32 battle_value);
 void Func_080982dc(void);
-void Audio_PlayCue(s32 soundId);
+void Audio_PlayCue(s32 no);
 
 extern SceneTransitionContext *Data_03001f30;
 extern s32 Data_02000240[];
 
 void ResetSceneTransitionEffect(void)
 {
-    SceneTransitionContext **globalSlot = &Data_03001f30;
-    SceneTransitionContext *context = *globalSlot;
-    SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)globalSlot - 0x64);
-    SceneTransitionState *state = *(SceneTransitionState **)((u8 *)globalSlot - 0x74);
-    s16 clearedValue;
-    s32 resourceSize;
+    SceneTransitionContext **cell = &Data_03001f30;
+    SceneTransitionContext *ctx = *cell;
+    SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)cell - 0x64);
+    SceneTransitionState *state = *(SceneTransitionState **)((u8 *)cell - 0x74);
+    s16 zero;
+    s32 size;
     void *resource;
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
         ScheduleCallback(Func_080982dc);
 
-        clearedValue = 0;
-        state->active = clearedValue;
-        state->transition_timer = clearedValue;
+        zero = 0;
+        state->active = zero;
+        state->transition_timer = zero;
         Func_08098294(0);
 
         BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
@@ -59,11 +59,11 @@ void ResetSceneTransitionEffect(void)
         BattleEffect_StartBufferInterpolation(30);
         WaitFrames(1);
 
-        resource = Func_0808e4b4(0x40000005, 8, &resourceSize);
+        resource = Func_0808e4b4(0x40000005, 8, &size);
         if (resource != NULL)
-            Func_08096b28(resource, Data_02000240[125], resourceSize);
+            Func_08096b28(resource, Data_02000240[125], size);
 
-        if (context->field34 == 0) {
+        if (ctx->field34 == 0) {
             scene->transition_phase = 0;
             scene->transition_status = 1;
             scene->transition_mode = 1;

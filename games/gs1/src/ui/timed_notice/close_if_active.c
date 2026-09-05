@@ -8,11 +8,11 @@ void UiWork_Finalize(struct Work *work, s32 release);
 void UiTimedNotice_Tick(void);
 
 void UiTimedNotice_CloseIfActive(void) {
-    void *notice_work;
+    void *work;
 
-    notice_work = FIELD_AT_OFFSET(*(void **)ADDR_03001EBC, void **, 0x230);
-    if ((notice_work != NULL) && (FIELD_AT_OFFSET(notice_work, u16 *, 0x16) != 0)) {
-        UiWork_Finalize(notice_work, 2);
+    work = FIELD_AT_OFFSET(*(void **)ADDR_03001EBC, void **, 0x230);
+    if ((work != NULL) && (FIELD_AT_OFFSET(work, u16 *, 0x16) != 0)) {
+        UiWork_Finalize(work, 2);
         ScheduleCallback((s32)UiTimedNotice_Tick);
     }
 }

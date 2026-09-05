@@ -10,7 +10,7 @@ extern u8 Data_0809a65d;
 void BattleEffect_SpawnRadialParticleRing(void *origin) {
     s32 particle_config[10];
     volatile u8 stack_padding[8];
-    s32 velocity_storage;
+    s32 work;
     s32 *velocity;
     s32 *config;
     s32 sine;
@@ -25,7 +25,7 @@ void BattleEffect_SpawnRadialParticleRing(void *origin) {
     FIELD_AT_OFFSET(config, s32 *, 8) = 0xCCCC;
     FIELD_AT_OFFSET(config, s32 *, 0xC) = 0xCCCC;
     particle_index = 0;
-    velocity = &velocity_storage;
+    velocity = &work;
     do {
         angle = particle_index << 0xC;
         scaled_cosine = Func_0800231c(angle) * 3;

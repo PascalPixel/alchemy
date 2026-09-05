@@ -15,9 +15,9 @@ struct OrbitingParticleState {
 };
 
 extern struct OrbitingParticleState *Data_03001f30;
-void RunOrbitingParticleEffect(void);
+void BattleEffect_RunOrbitingParticles(void);
 
-void StartOrbitingParticleEffect(void)
+void BattleEffect_StartOrbitingParticles(void)
 {
     struct OrbitingParticleState *state = Data_03001f30;
     struct OrbitingParticleChild *child = state->child;
@@ -27,6 +27,6 @@ void StartOrbitingParticleEffect(void)
             state->active = 1;
         }
         child->flags |= 2;
-        RunOrbitingParticleEffect();
+        BattleEffect_RunOrbitingParticles();
     }
 }

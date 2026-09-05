@@ -4,7 +4,7 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/0808e23c.c"
-#include "../main/0808e4b4.c"
+#include "../../../src/battle/effects/find_matching_event.c"
 #include "../../../src/battle/effects/execute_packed_ability_effect.c"
 #include "../../../src/battle/command/execute_selected_action.c"
 #include "../../../src/battle/effects/has_matching_event5.c"

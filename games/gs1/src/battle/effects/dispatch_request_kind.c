@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define BattleEffect_DispatchRequestKind Func_08096960
+
 struct BattleEffectRequest {
     u8 reserved_000[0x14];
     void *object;
@@ -43,7 +45,7 @@ void Func_0809ade8(s32);
 void Func_0809ad90(s32);
 void Func_0809ab98(s32);
 
-void Func_08096960(void)
+void BattleEffect_DispatchRequestKind(void)
 {
     struct BattleEffectRequest *request = Data_03001f30;
     struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&Data_03001f30 - 0x74);
@@ -52,18 +54,21 @@ void Func_08096960(void)
 
     request->running = 0;
     switch (battle_mode) {
-    case 1:
-        Func_08097c3c(target_id);
-        break;
     case 2:
         if (battle->active != 0)
             Func_080984c0();
-        if (Data_02000240.selected_id != target_id)
+        if (Data_02000240.selected_id != request->target_id)
             *(u8 *)((u8 *)request->object + 91) = 1;
         Func_08097540(request->source_id, target_id);
         break;
-    case 3:
-        Func_080994c0(target_id);
+    case 1:
+        Func_08097c3c(target_id);
+        break;
+    case 7:
+        Func_08098848(target_id);
+        break;
+    case 11:
+        Func_08099da4(target_id);
         break;
     case 4:
         Func_08098ccc(target_id);
@@ -74,11 +79,8 @@ void Func_08096960(void)
     case 6:
         Func_08099128(target_id);
         break;
-    case 7:
-        Func_08098848(target_id);
-        break;
-    case 8:
-        Func_080983a0();
+    case 12:
+        Func_080985a8(target_id);
         break;
     case 9:
         if (Data_02000240.selected_id != -1) {
@@ -89,20 +91,20 @@ void Func_08096960(void)
         Data_02000240.selected_id = target_id;
         Func_0809ab98(target_id);
         break;
-    case 10:
-        Func_08099838();
+    case 3:
+        Func_080994c0(target_id);
         break;
-    case 11:
-        Func_08099da4(target_id);
-        break;
-    case 12:
-        Func_080985a8(target_id);
+    case 14:
+        Func_0809a8b8(target_id);
         break;
     case 13:
         Func_0809ae58(target_id);
         break;
-    case 14:
-        Func_0809a8b8(target_id);
+    case 8:
+        Func_080983a0();
+        break;
+    case 10:
+        Func_08099838();
         break;
     case 15:
         Func_0809b208();

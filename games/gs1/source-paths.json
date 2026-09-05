@@ -7241,7 +7241,8 @@
       "name": "MapScene_RunLargeObjectSequence"
     },
     "resource_380:02000a98": {
-      "name": "FieldScene_RunPartyIntroduction"
+      "name": "FieldScene_RunPartyIntroduction",
+      "source": "overlays/scene_primary_script/run_party_introduction.c"
     },
     "resource_380:02000d5c": {
       "name": "FieldScene_StagePairedActors",
@@ -14717,7 +14718,8 @@
       "source": "overlays/event_script/run_event_script_01_3aa_02000360.c"
     },
     "resource_3aa:02001450": {
-      "name": "RunEventScript04"
+      "name": "SceneChannel_ConfigureUniformAndHandoff",
+      "source": "overlays/scene_channel/configure_uniform_and_handoff.c"
     },
     "resource_3af:02001db0": {
       "name": "RunEventScript01"
@@ -15102,7 +15104,8 @@
       "source": "overlays/scene_primary_script/run_scene_3a8_two_actor_cutscene_sequence.c"
     },
     "resource_380:020006f4": {
-      "name": "FieldScene_RunMultiStageEffectPresentation"
+      "name": "FieldScene_RunMultiStageEffectPresentation",
+      "source": "overlays/scene_primary_script/run_multi_stage_effect_presentation.c"
     },
     "resource_380:02002400": {
       "name": "FieldScene_RunSixPassEffectSequence",
@@ -16666,7 +16669,8 @@
       "name": "RunEventScript01Second"
     },
     "resource_380:0200178c": {
-      "name": "RunEventScript01Second"
+      "name": "FieldScene_RunCountedActorSequence",
+      "source": "overlays/scene_primary_script/run_counted_actor_sequence.c"
     },
     "resource_371:02000a8c": {
       "name": "RunEventScript01",
@@ -17250,6 +17254,14 @@
     "main:080a5614": {
       "name": "InventoryMenu_DrawItemDetailPage",
       "source": "inventory_menu/draw_item_detail_page.c"
+    },
+    "resource_39d:02003460": {
+      "name": "SceneEffect_UpdateArcPosition",
+      "source": "overlays/orbiting_effect/update_scene_arc_position.c"
+    },
+    "resource_3b4:02000e50": {
+      "name": "FieldScene_CopyActorPosition",
+      "source": "overlays/actor_position/copy_scene_actor_position.c"
     }
   }
 }

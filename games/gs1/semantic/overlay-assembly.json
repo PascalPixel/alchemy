@@ -3746,19 +3746,6 @@
       ]
     },
     {
-      "overlay": "resource_3bb",
-      "start": "0x02000714",
-      "end": "0x020008ec",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 36 calls, 1 loop(s), 11 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3bb:02000714",
-        "boundary corrected to the reviewed 472-byte span in games/gs1/semantic/regions.json"
-      ]
-    },
-    {
       "overlay": "resource_3b5",
       "start": "0x02000726",
       "end": "0x02000894",

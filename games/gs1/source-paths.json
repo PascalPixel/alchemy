@@ -12821,9 +12821,6 @@
     "resource_380:02001d04": {
       "name": "FieldScene_RunActorFourteenGuestScene"
     },
-    "resource_3a4:02000ec0": {
-      "name": "FieldScene_RunSharedSetPiece"
-    },
     "resource_3af:02002c84": {
       "name": "FieldScene_RunPartyRosterScene"
     },
@@ -14776,6 +14773,10 @@
     "resource_39c:020016c4": {
       "name": "FieldScene_RunScene39cSequenceG",
       "source": "overlays/scene_primary_script/run_scene_39c_sequence_g.c"
+    },
+    "resource_3a4:02000ec0": {
+      "name": "FieldScene_RunSharedSetPiece",
+      "source": "overlays/scene_primary_script/run_scene_3a4_shared_set_piece.c"
     }
   }
 }

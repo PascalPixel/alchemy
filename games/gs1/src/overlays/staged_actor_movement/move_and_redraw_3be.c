@@ -34,9 +34,8 @@
 
 #include "staged_actor_movement.h"
 
-#define ApplyActorPairSceneMovementAndRedraw Func_020008ec
 
-void ApplyActorPairSceneMovementAndRedraw(StagedActorMovementRequest request)
+void Func_020008ec(StagedActorMovementRequest request)
 {
 #include "run_staged_actor_movement_and_redraw_body.inc"
 }

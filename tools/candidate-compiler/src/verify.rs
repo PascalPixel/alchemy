@@ -5,6 +5,7 @@ use compiler_core::plan::{
     source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions,
 };
 use compiler_core::routing::{root, CompilerTarget};
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use compiler_core::{external_symbol, ExternalSymbol, CALL_VIA_BASE};
 use std::collections::BTreeMap;
@@ -144,6 +145,12 @@ pub fn compile_source(
     cwd: &Path,
 ) -> Result<(), String> {
     let mut options = SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly);
+    let bindings = resolve_against_cwd(assembly, cwd).with_extension("bindings.h");
+    write(
+        &bindings.to_string_lossy(),
+        source_symbol_bindings(root(), routing_source, compiler)?.as_bytes(),
+    )?;
+    options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
     options.family = configuration.family;
     let mut add_flags = extra_flags.to_vec();
     add_flags.extend(configuration.add_flags.iter().cloned());
@@ -165,6 +172,17 @@ pub fn compile_source(
         &assembly_path.to_string_lossy(),
         configuration.label_word_bias,
     )
+}
+/// Match production's register-derived compiler names, including overlay scope.
+pub fn source_symbol_bindings(
+    repository: &Path,
+    routing_source: &str,
+    compiler: CompilerTarget,
+) -> Result<String, String> {
+    let overlay = SourceOwner::from_legacy_stem(&source_stem(routing_source))
+        .and_then(SourceOwner::overlay_id);
+    Ok(SourcePaths::load_for_game(repository, compiler.as_str())?
+        .symbol_bindings(overlay.as_deref()))
 }
 fn resolve_against_cwd(path: &str, cwd: &Path) -> PathBuf {
     let path = Path::new(path);
@@ -378,11 +396,7 @@ pub fn verify_candidate_owned_routed_with_object(
     let fields = symbol_fields(&symbols, symbol)
         .ok_or_else(|| format!("missing linked symbol: {symbol}"))?;
     let binary_bytes = std::fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
-    let size = if fields.len() >= 4 {
-        parse_hex(fields[1])?
-    } else {
-        binary_bytes.len() as u64
-    };
+    let size = parse_hex(fields[1])?;
     let linked_symbol_address = parse_hex(fields.first().ok_or("missing linked symbol address")?)?;
     let binary_offset = linked_symbol_address as f64 - link_address as f64;
     let actual = js_subarray(&binary_bytes, binary_offset, binary_offset + size as f64);
@@ -394,7 +408,13 @@ fn symbol_fields<'a>(listing: &'a str, symbol: &str) -> Option<Vec<&'a str>> {
     listing
         .lines()
         .map(|line| line.split_whitespace().collect::<Vec<_>>())
-        .find(|fields| fields.last() == Some(&symbol))
+        .find(|fields| {
+            fields.len() == 4
+                && fields[3] == symbol
+                && fields[2] != "U"
+                && u64::from_str_radix(fields[0], 16).is_ok()
+                && u64::from_str_radix(fields[1], 16).is_ok()
+        })
 }
 fn absolute_symbol_directive(kind: AbsoluteSymbolKind) -> &'static str {
     if kind == AbsoluteSymbolKind::Thumb {
@@ -616,6 +636,45 @@ pub(crate) fn write(path: &str, bytes: &[u8]) -> Result<(), String> {
 #[cfg(test)]
 mod reference_symbol_tests {
     use super::*;
+    #[test]
+    fn owner_symbols_require_a_defined_sized_nm_record() {
+        let undefined = "         U Func_0808e5d8\n0808e5d8 A Func_0808e5d8\n";
+        assert!(symbol_fields(undefined, "Func_0808e5d8").is_none());
+        let listing = format!("{undefined}000003a0 000000a8 T Func_0808e5d8\n");
+        assert_eq!(
+            symbol_fields(&listing, "Func_0808e5d8").unwrap(),
+            ["000003a0", "000000a8", "T", "Func_0808e5d8"]
+        );
+    }
+    #[test]
+    fn candidate_bindings_use_the_game_and_overlay_register_namespace() {
+        let root = std::env::temp_dir().join(format!("candidate-bindings-{}", std::process::id()));
+        for game in ["gs1", "gs2"] {
+            std::fs::create_dir_all(root.join("games").join(game)).unwrap();
+            std::fs::write(
+                root.join("games").join(game).join("source-paths.json"),
+                format!(r#"{{"format":3,"owners":{{"main:08001234":{{"name":"{game}_Main"}},"resource_380:02000100":{{"name":"Scene_Run"}},"resource_381:02000200":{{"name":"Scene_Run"}}}}}}"#),
+            ).unwrap();
+        }
+        assert_eq!(
+            source_symbol_bindings(&root, "games/gs1/src/08001234.c", CompilerTarget::Gs1).unwrap(),
+            "#define gs1_Main Func_08001234\n"
+        );
+        assert_eq!(
+            source_symbol_bindings(&root, "games/gs2/src/08001234.c", CompilerTarget::Gs2).unwrap(),
+            "#define gs2_Main Func_08001234\n"
+        );
+        assert_eq!(
+            source_symbol_bindings(
+                &root,
+                "games/gs1/src/resource_380_c_02000100.c",
+                CompilerTarget::Gs1
+            )
+            .unwrap(),
+            "#define Scene_Run Func_02000100\n"
+        );
+        std::fs::remove_dir_all(root).unwrap();
+    }
     #[test]
     fn decodes_a_forward_thumb_call_at_the_owner_address() {
         let rom = [0x00, 0xf0, 0x18, 0xf9];

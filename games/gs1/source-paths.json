@@ -17262,6 +17262,94 @@
     "resource_3b4:02000e50": {
       "name": "FieldScene_CopyActorPosition",
       "source": "overlays/actor_position/copy_scene_actor_position.c"
+    },
+    "main:080bbb0c": {
+      "name": "Battle_ResolveTargetAction"
+    },
+    "resource_373:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "020068d6",
+      "source": "overlays/staged_actor_movement/move_and_redraw_373.c"
+    },
+    "resource_389:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02001c9a",
+      "source": "overlays/staged_actor_movement/move_and_redraw_389.c"
+    },
+    "resource_391:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "020034ae",
+      "source": "overlays/staged_actor_movement/move_and_redraw_391.c"
+    },
+    "resource_392:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "0200160e",
+      "source": "overlays/staged_actor_movement/move_and_redraw_392.c"
+    },
+    "resource_393:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02001656",
+      "source": "overlays/staged_actor_movement/move_and_redraw_393.c"
+    },
+    "resource_39b:020008ec": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02003082",
+      "source": "overlays/staged_actor_movement/move_and_redraw_39b.c"
+    },
+    "resource_39c:020008ec": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "020066d2",
+      "source": "overlays/staged_actor_movement/move_and_redraw_39c.c"
+    },
+    "resource_39f:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "0200363e",
+      "source": "overlays/staged_actor_movement/move_and_redraw_39f.c"
+    },
+    "resource_3a6:020008ec": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "020027ca",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3a6.c"
+    },
+    "resource_3b2:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "020038a2",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3b2.c"
+    },
+    "resource_3b3:020008ec": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02003622",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3b3.c"
+    },
+    "resource_3b4:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02002d8a",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3b4.c"
+    },
+    "resource_3bd:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "020045fa",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3bd.c"
+    },
+    "resource_3be:020008ec": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02002042",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3be.c"
+    },
+    "resource_3bf:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02005f32",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3bf.c"
+    },
+    "resource_3c4:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "02003936",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3c4.c"
+    },
+    "resource_3c5:02000608": {
+      "name": "SceneActor_MoveAndRedraw",
+      "call_via": "0200371a",
+      "source": "overlays/staged_actor_movement/move_and_redraw_3c5.c"
     }
   }
 }

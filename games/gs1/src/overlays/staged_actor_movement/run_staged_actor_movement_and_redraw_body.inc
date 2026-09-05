@@ -7,7 +7,7 @@
     s32 horizontal_extent;
     s32 vertical_extent;
 
-    workspace = Data_03001e70;
+    workspace = (u8 *)Data_03001e70;
     direction = Func_02006610(0)->orientation >> 12;
     actor = Func_0200661c(request.actor_id);
     footprint_table = (u8 *)Data_0200e1e8;

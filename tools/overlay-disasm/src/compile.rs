@@ -927,7 +927,15 @@ fn compile_production_overlay(
     let mut paths = BTreeSet::new();
     for address in &placeholders {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-        paths.insert(names.source_path(owner));
+        let path = names.source_path(owner);
+        if !path.is_file() {
+            return Err(format!(
+                "{} has an AlchemyC placeholder but no exact C source at {}",
+                owner.id(),
+                path.display()
+            ));
+        }
+        paths.insert(path);
     }
     for path in paths {
         validate_shared_overlay_source(&root(), &names, &units.units, overlay, &path)?;
@@ -952,13 +960,6 @@ fn compile_production_overlay(
     for address in placeholders.difference(&handled) {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
         let path = names.source_path(owner);
-        if !path.is_file() {
-            return Err(format!(
-                "{} has an AlchemyC placeholder but no exact C source at {}",
-                owner.id(),
-                path.display()
-            ));
-        }
         compiled.push(compile_overlay_c(&path, work, overlay, None, &[])?);
     }
     compiled.sort_by_key(|member| member.address);
@@ -1139,7 +1140,10 @@ mod source_activation_tests {
         let assembly = work.path().join("resource_382_overlay.s");
         fs::write(&assembly, "AlchemyC_0200dead:\n  .space 4\n").unwrap();
         let error = overlay_c_spans(&OverlaySource::path(assembly), 0x0200_0000).unwrap_err();
-        assert!(error.contains("resource_382:0200dead has an AlchemyC placeholder"));
+        assert!(
+            error.contains("resource_382:0200dead has an AlchemyC placeholder"),
+            "{error}"
+        );
     }
     #[test]
     fn shared_overlay_source_requires_one_wholly_exact_unit() {

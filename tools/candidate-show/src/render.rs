@@ -7,8 +7,8 @@ use crate::{
     triage::{classify, classify_with_topology},
 };
 use candidate_compiler::verify::{
-    compile_to_assembly, verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
-    CandidateCompilerFamily, ROM_BASE,
+    compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
+    CandidateCompilerConfiguration, CandidateCompilerFamily, ROM_BASE,
 };
 use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
@@ -185,6 +185,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     let key = source_cache_key(
         &options.source,
         &identity.routing.to_string_lossy(),
+        options.target,
         &stem,
         &options.flags,
         &options.configuration,
@@ -663,6 +664,7 @@ pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, 
 fn source_cache_key(
     source: &str,
     routing_source: &str,
+    compiler: CompilerTarget,
     owner_stem: &str,
     flags: &[String],
     configuration: &CandidateCompilerConfiguration,
@@ -679,6 +681,7 @@ fn source_cache_key(
     source_cache_key_with_environment(
         source,
         routing_source,
+        compiler,
         owner_stem,
         flags,
         configuration,
@@ -693,6 +696,7 @@ fn source_cache_key(
 fn source_cache_key_with_environment(
     source: &str,
     routing_source: &str,
+    compiler: CompilerTarget,
     owner_stem: &str,
     flags: &[String],
     configuration: &CandidateCompilerConfiguration,
@@ -704,11 +708,12 @@ fn source_cache_key_with_environment(
     compiler_bundle: &[u8],
 ) -> Result<String, String> {
     let mut hasher = Sha256::new();
-    hasher.update(b"candidate-show-cache-v5");
+    hasher.update(b"candidate-show-cache-v6");
     hasher.update(source_input_signature(
         compiler_core::routing::root(),
         source,
         routing_source,
+        compiler,
         flags,
     )?);
     hasher.update([7]);
@@ -780,6 +785,7 @@ fn source_input_signature(
     root: &Path,
     source: &str,
     routing_source: &str,
+    compiler: CompilerTarget,
     flags: &[String],
 ) -> Result<Vec<u8>, String> {
     let source = root.join(source);
@@ -797,7 +803,9 @@ fn source_input_signature(
             )
         }))
         .collect::<Vec<_>>();
-    source_tree_signature(&source, &include_dirs)
+    let mut signature = source_tree_signature(&source, &include_dirs)?;
+    signature.extend(source_symbol_bindings(root, routing_source, compiler)?.as_bytes());
+    Ok(signature)
 }
 #[cfg(test)]
 mod cache_key_tests {
@@ -824,6 +832,7 @@ mod cache_key_tests {
             source_cache_key_with_environment(
                 source,
                 route,
+                CompilerTarget::Gs1,
                 owner,
                 &[],
                 configuration,
@@ -879,6 +888,7 @@ mod cache_key_tests {
             source_cache_key_with_environment(
                 source,
                 "games/gs1/src/08000000.c",
+                CompilerTarget::Gs1,
                 "08000000",
                 &[],
                 &configuration,
@@ -1026,5 +1036,25 @@ mod source_identity_tests {
         .unwrap();
         assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080a8904.c"));
         let _ = fs::remove_dir_all(&root);
+    }
+    #[test]
+    fn register_binding_changes_invalidate_candidate_source_identity() {
+        let root = scratch_root("bindings");
+        fs::write(root.join("candidate.c"), "void Scene_Run(void) {}\n").unwrap();
+        let signature = |route| {
+            source_input_signature(&root, "candidate.c", route, CompilerTarget::Gs1, &[]).unwrap()
+        };
+        let register = root.join("games/gs1/source-paths.json");
+        fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Run"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
+        let main = signature("games/gs1/src/08001234.c");
+        let overlay = signature("games/gs1/src/resource_380_c_02000100.c");
+        assert_ne!(main, overlay);
+        fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Start"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
+        assert_ne!(main, signature("games/gs1/src/08001234.c"));
+        assert_eq!(
+            overlay,
+            signature("games/gs1/src/resource_380_c_02000100.c")
+        );
+        fs::remove_dir_all(root).unwrap();
     }
 }

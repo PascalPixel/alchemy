@@ -79,6 +79,14 @@ fn write_json(path: &Path, value: &Value, pretty: bool, newline: bool) -> Result
     std::fs::write(path, text).map_err(|e| format!("{}: {e}", path.display()))
 }
 
+fn set_source(record: &mut Value, name: &str, source: &str) {
+    if !record.is_object() {
+        *record = serde_json::json!({});
+    }
+    record["name"] = name.into();
+    record["source"] = source.into();
+}
+
 fn git(root: &Path, args: &[&str]) -> Result<(), String> {
     let status = Command::new("git")
         .current_dir(root)
@@ -205,9 +213,10 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         .and_then(Value::as_str)
         .map(str::to_string)
         .unwrap_or_else(|| name.clone());
-    owners_map.insert(
-        owner.id(),
-        serde_json::json!({ "name": registered_name, "source": relative }),
+    set_source(
+        owners_map.entry(owner.id()).or_insert(Value::Null),
+        &registered_name,
+        &relative,
     );
     write_json(&manifest, &register, true, true)?;
 
@@ -339,6 +348,22 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn source_registration_preserves_call_via() {
+        let mut record = serde_json::json!({
+            "name": "SceneActor_MoveAndRedraw",
+            "call_via": "020068d6"
+        });
+        set_source(&mut record, "SceneActor_MoveAndRedraw", "scene/move.c");
+        assert_eq!(record["call_via"], "020068d6");
+        assert_eq!(record["source"], "scene/move.c");
+
+        let mut legacy = Value::String("scene/old.c".into());
+        set_source(&mut legacy, "SceneActor_MoveAndRedraw", "scene/move.c");
+        assert_eq!(legacy["name"], "SceneActor_MoveAndRedraw");
+        assert_eq!(legacy["source"], "scene/move.c");
+    }
 
     #[test]
     fn slugs_follow_the_name() {

@@ -4,6 +4,22 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "battle-action-resolution",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/battle-action-resolution.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080bbb0c",
+          "extent": 6332,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "scheduler",
       "game": "gs1",
       "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",

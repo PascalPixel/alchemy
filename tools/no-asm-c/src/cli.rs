@@ -149,12 +149,24 @@ pub(crate) fn macro_self_test() -> Result<(), String> {
         }
         let target = target_for(DecompTargetId::Gs1En);
         let paths = SourcePaths::load_for_game(root, "gs1")?;
-        let human = Path::new("games/gs1/src/save/read_flash_id.c");
+        let registered = paths
+            .all_sources()?
+            .into_iter()
+            .find(|source| {
+                uses_agbcc_compiler(
+                    CompilerTarget::Gs1,
+                    &source.owner.routing_path().to_string_lossy(),
+                )
+            })
+            .ok_or("missing registered AGBCC source")?;
+        let human = registered
+            .path
+            .strip_prefix(root)
+            .map_err(|error| error.to_string())?;
         if sibling(root, &human.to_string_lossy()) != Some(root.join(human).with_extension("s")) {
             return Err("relative sibling path did not resolve under repository root".into());
         }
-        let owner = paths.owner_for_path(human)?.ok_or("missing AGBCC owner")?;
-        let routing = owner.routing_path_for_game("gs1");
+        let routing = registered.owner.routing_path_for_game("gs1");
         let mut command = prefix(target, &routing.to_string_lossy())?;
         command.push(source.to_string_lossy().into_owned());
         let found = run(root, &("macro-regression".into(), command))?;

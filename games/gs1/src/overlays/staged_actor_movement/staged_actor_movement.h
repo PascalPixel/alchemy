@@ -42,7 +42,7 @@ typedef struct StagedActorMovementRequest {
     StagedActorMovementRequestTail tail;
 } StagedActorMovementRequest;
 
-extern u8 *Data_03001e70;
+extern u32 Data_03001e70;
 extern s32 Data_0200e1e8[];
 extern s32 Data_0200e190[];
 extern u8 Value_020082a9;

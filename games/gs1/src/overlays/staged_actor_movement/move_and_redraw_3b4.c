@@ -30,9 +30,8 @@
 #define STAGED_ACTOR_MOVEMENT_UNTYPED_LOCATION_CALL
 #include "staged_actor_movement.h"
 
-#define ApplySceneActorMovementAndRedraw Func_02000608
 
-void ApplySceneActorMovementAndRedraw(StagedActorMovementRequest request)
+void Func_02000608(StagedActorMovementRequest request)
 {
 #include "run_staged_actor_movement_and_redraw_body.inc"
 }

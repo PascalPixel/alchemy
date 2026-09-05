@@ -163,7 +163,7 @@ impl FamilyCatalog {
         let names = SourcePaths::load(repository)?;
         let units = TranslationUnits::load(repository)?;
         let exact = exact_template_registrations(repository)?;
-        let aliases = header_alias_registry(repository)?;
+        let aliases = source_alias_registry(repository)?;
         let mut templates = BTreeMap::<String, TemplateSource>::new();
         let mut standalone_templates = BTreeSet::new();
         for details in index.targets.iter().flat_map(|target| &target.alternatives) {
@@ -816,7 +816,7 @@ fn require_family(owner: &str, family: Option<&str>) -> Result<(), String> {
     })
 }
 fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
-    let aliases = header_alias_registry(root)?
+    let aliases = source_alias_registry(root)?
         .remove(symbol)
         .unwrap_or_default();
     if aliases.len() > 1 {
@@ -828,8 +828,12 @@ fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
     Ok(aliases.into_iter().next())
 }
 
-fn header_alias_registry(root: &Path) -> Result<BTreeMap<String, BTreeSet<String>>, String> {
+fn source_alias_registry(root: &Path) -> Result<BTreeMap<String, BTreeSet<String>>, String> {
     let mut aliases = BTreeMap::new();
+    collect_aliases(
+        &SourcePaths::load(root)?.symbol_bindings(None),
+        &mut aliases,
+    );
     for entry in WalkDir::new(root.join("games/gs1/include"))
         .into_iter()
         .filter_map(Result::ok)
@@ -1491,7 +1495,7 @@ mod tests {
         let repository = compiler_core::routing::root();
         let source =
             read(&repository.join("games/gs1/src/resource/table/find_free_slot.c")).unwrap();
-        let aliases = header_alias_registry(repository).unwrap();
+        let aliases = source_alias_registry(repository).unwrap();
         let entry = source_entry_name(&aliases, &source, "Func_08004080").unwrap();
         assert_eq!(entry, "Resource_FindFreeSlot");
         let output = retarget_source(
@@ -1525,7 +1529,7 @@ mod tests {
     fn entry_macro_accepts_a_verified_raw_symbol_without_an_alias() {
         let repository = compiler_core::routing::root();
         let source = "/* void Func_08001234(void) {} */\nvoid Func_08001234(void)\n{\n}\n";
-        let aliases = header_alias_registry(repository).unwrap();
+        let aliases = source_alias_registry(repository).unwrap();
         let entry = source_entry_name(&aliases, source, "Func_08001234").unwrap();
         assert_eq!(entry, "Func_08001234");
         let output = retarget_source(
@@ -1541,9 +1545,23 @@ mod tests {
     #[test]
     fn source_entry_resolution_fails_closed_on_ambiguity() {
         let source = "#define First Func_08001234\n#define Second Func_08001234\nvoid First(void) {}\nvoid Second(void) {}\n";
-        let aliases = header_alias_registry(compiler_core::routing::root()).unwrap();
+        let aliases = source_alias_registry(compiler_core::routing::root()).unwrap();
         let error = source_entry_name(&aliases, source, "Func_08001234").unwrap_err();
         assert!(error.contains("ambiguous source entries: First, Second"));
+    }
+    #[test]
+    fn exact_template_uses_register_only_entry_names() {
+        let repository = compiler_core::routing::root();
+        let symbol = "Func_080c0228";
+        let name = "BattlePresentation_DrawTransitionRows";
+        let source = format!("void {name}(void) {{}}\n");
+        let aliases = source_alias_registry(repository).unwrap();
+        assert_eq!(source_entry_name(&aliases, &source, symbol).unwrap(), name);
+        assert_eq!(
+            entry_alias(repository, symbol).unwrap().as_deref(),
+            Some(name)
+        );
+        assert!(source_entry_name(&aliases, "void Unrelated(void) {}", symbol).is_err());
     }
     #[test]
     fn reordered_instruction_around_a_match_is_one_group() {

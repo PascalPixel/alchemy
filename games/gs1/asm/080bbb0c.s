@@ -3,8 +3,10 @@
 @ 0x080bbb0c (6332 bytes); the draft C stays in games/gs1/recon/en/main/.
 .syntax unified
 	.thumb
+	.global Battle_ResolveTargetAction
 	.global Func_080bbb0c
 	.thumb_func
+Battle_ResolveTargetAction:
 Func_080bbb0c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

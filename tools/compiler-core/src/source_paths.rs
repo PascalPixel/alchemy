@@ -13,6 +13,17 @@ pub enum SourceOwner {
     Overlay { resource: u16, address: u32 },
 }
 impl SourceOwner {
+    /// Normalize a command-line address without relaxing persisted owner IDs.
+    pub fn parse_argument(input: &str) -> Result<Self, String> {
+        let (space, address) = input.split_once(':').unwrap_or(("main", input));
+        let mut address = u32::from_str_radix(address.trim_start_matches("0x"), 16)
+            .map_err(|_| format!("{input}: address must be hexadecimal"))?;
+        if space != "main" && address < 0x0200_0000 {
+            address += 0x0200_0000;
+        }
+        Self::parse(&format!("{space}:{address:08x}"))
+    }
+
     pub fn parse(id: &str) -> Result<Self, String> {
         if let Some(address) = id.strip_prefix("main:") {
             return Ok(Self::Main(parse_lower_hex(address, 8, id)?));
@@ -631,6 +642,36 @@ fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), 
 }
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn cli_owner_normalization_keeps_register_ids_strict() {
+        use super::SourceOwner;
+        let overlay = SourceOwner::parse("resource_3bb:02000a1c").unwrap();
+        for input in [
+            "resource_3bb:a1c",
+            "resource_3bb:0x02000A1C",
+            "resource_3bb:02000a1c",
+        ] {
+            assert_eq!(SourceOwner::parse_argument(input).unwrap(), overlay);
+        }
+        assert_eq!(
+            SourceOwner::parse_argument("08091EB0").unwrap(),
+            SourceOwner::Main(0x08091eb0)
+        );
+        assert_eq!(
+            SourceOwner::parse_argument("main:0x08091eb0").unwrap(),
+            SourceOwner::Main(0x08091eb0)
+        );
+        assert!(SourceOwner::parse("resource_3bb:a1c").is_err());
+        for input in [
+            "garbage:1234",
+            "resource_xyz:1234",
+            "resource_3bb:-1",
+            "main:100000000",
+        ] {
+            assert!(SourceOwner::parse_argument(input).is_err(), "{input}");
+        }
+    }
+
     use super::*;
     use tempfile::tempdir;
     fn manifest() -> &'static str {

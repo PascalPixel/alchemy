@@ -50,19 +50,33 @@ const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 const LINUX_X64_GS1: &[ExecutableDigests] = &[
     (
         "xgcc",
-        &["cc35e03215be6ec15aea1463c79e9598b754430c0927c2062ea337c46b725abc"],
+        &[
+            "cc35e03215be6ec15aea1463c79e9598b754430c0927c2062ea337c46b725abc",
+            // alchemy-gcc bcfb458 rebuilt on linux-x64 (Ubuntu 24.04, gcc 13.3);
+            // admitted after a byte-identical `make full-rom-check`.
+            "a3c3cfd9de1ccd19bab833e03bae15a46d77cbb988c87157342e21bee072f471",
+        ],
     ),
     (
         "cpp",
-        &["c01747023ae601e84c7739317d96bfae5ceab88de7271a83f7073fddeb9893aa"],
+        &[
+            "c01747023ae601e84c7739317d96bfae5ceab88de7271a83f7073fddeb9893aa",
+            "7c5fb526706457fd595bc18f9df22ef18cd3ddd9e4dff8d37911548dd9a214d7",
+        ],
     ),
     (
         "tradcpp",
-        &["cbf6602147a0b6cec2884d47ee56d44d1278a1fee31d2c413968c488c278787f"],
+        &[
+            "cbf6602147a0b6cec2884d47ee56d44d1278a1fee31d2c413968c488c278787f",
+            "411e5af5d86461afcccf846b9a9634da8106a25ed8cb2715c58766d9a34d9b67",
+        ],
     ),
     (
         "cc1",
-        &["d0c3f7857e568272f6d2a0d25f2138daeac2ee0941c4828db3abd10d9204b096"],
+        &[
+            "d0c3f7857e568272f6d2a0d25f2138daeac2ee0941c4828db3abd10d9204b096",
+            "4361771bd1af3fba04dcf1bf3f142404feee0432445f73658c5861e49d6fbcce",
+        ],
     ),
 ];
 

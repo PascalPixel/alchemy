@@ -1,7 +1,5 @@
 #include "counter_runtime.h"
 
-#define BattleUnit_TickCounter13c Func_080bf484
-
 s32 BattleUnit_TickCounter13c(s32 value)
 {
     struct CounterRuntime *state = Runtime_GetObject();

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_RemapCharacterIdByFlags Func_0808b398
-
 s32 GameFlag_IsSet(s32);
 
 s32 Party_RemapCharacterIdByFlags(s32 arg0) {

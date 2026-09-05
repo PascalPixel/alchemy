@@ -3,7 +3,6 @@
 #include "battle_formation.h"
 u32 Random16(void);
 
-#define BattleFormation_SelectRandomAvailableMember Func_080c1fa8
 s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
 {
     s32 choices[5];

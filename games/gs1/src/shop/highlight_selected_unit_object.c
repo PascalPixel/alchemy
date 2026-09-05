@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_HighlightSelectedUnitObject Func_080b2e30
-
 void Object_InitializeMode(void *, s32);
 s32 Func_080b27b0(s32, s32);
 

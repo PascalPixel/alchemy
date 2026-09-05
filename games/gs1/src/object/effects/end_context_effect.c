@@ -1,8 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
 
-#define ObjectEffect_EndContextEffect Func_08094380
-
 typedef struct {
     u8 unknown00[5];
     u8 kind;

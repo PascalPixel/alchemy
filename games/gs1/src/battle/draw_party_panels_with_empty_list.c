@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_DrawPartyPanelsWithEmptyList Func_080270ac
-
 void Func_0802281c(u16 *);
 void Func_080b50e0(u16 *, s32);
 

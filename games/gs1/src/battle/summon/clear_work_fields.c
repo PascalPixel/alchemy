@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Summon_ClearWorkFields Func_080c24b0
-
 extern s16 Data_02000240[];
 
 union Word {

@@ -474,6 +474,24 @@ fn cache_hit(
     std::fs::write(output[1], assembly).ok()?;
     Some((defined, undefined))
 }
+/// Write one image's register bindings and return the path. The content hash
+/// is in the file name, so a rename changes the compiler command and the
+/// object cache key with it.
+fn write_symbol_bindings(
+    output: &Path,
+    source_paths: &SourcePaths,
+    overlay: Option<&str>,
+) -> Result<String> {
+    let text = source_paths.symbol_bindings(overlay);
+    let stamp = digest(text.as_bytes());
+    let directory = output.join("bindings");
+    std::fs::create_dir_all(&directory).map_err(|e| format!("{}: {e}", directory.display()))?;
+    let path = directory.join(format!("{}-{}.h", overlay.unwrap_or("main"), &stamp[..16]));
+    if !path.exists() {
+        write_file(&path, text.as_bytes())?;
+    }
+    Ok(path.to_string_lossy().into_owned())
+}
 fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
     match target {
         DecompCompilerTarget::Gs1 => CompilerTarget::Gs1,
@@ -492,6 +510,7 @@ pub fn compile_source_for_owner(
     edition_define: &str,
     signatures: &CacheSignatures,
     allowed_undefined: &[String],
+    bindings: Option<&str>,
 ) -> Result<Compiled> {
     let name = format!("{owner:08x}");
     let object = text(Path::new(object_dir).join(format!("{name}.o")));
@@ -505,6 +524,10 @@ pub fn compile_source_for_owner(
         assembly.clone(),
     );
     options.preprocessor_flags = vec![format!("-D{edition_define}=1")];
+    if let Some(bindings) = bindings {
+        options.preprocessor_flags.push("-include".to_string());
+        options.preprocessor_flags.push(bindings.to_string());
+    }
     options.preprocessed_output = Some(text(Path::new(object_dir).join(format!("{name}.i"))));
     let plan = source_to_assembly_plan(&options)?;
     let commands: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
@@ -674,6 +697,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     if let Some(path) = &export_path {
         write_file(path, source_paths.main_symbol_exports().as_bytes())?;
     }
+    let bindings = write_symbol_bindings(&output, &source_paths, None)?;
     let cache = SqliteCache::open(&Path::new(root).join("out/cache/claimed-objects.sqlite3"))?;
     let signatures = CacheSignatures::production()?;
     let declared_units = units
@@ -707,6 +731,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             target.edition_define,
             &signatures,
             &[],
+            Some(&bindings),
         )
     })?;
     let mut compiled = vec![None; sources.len()];
@@ -732,6 +757,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             target.edition_define,
             &signatures,
             &unit.absolute_symbols.keys().cloned().collect::<Vec<_>>(),
+            Some(&bindings),
         )?;
         let mut declared = unit
             .symbols()

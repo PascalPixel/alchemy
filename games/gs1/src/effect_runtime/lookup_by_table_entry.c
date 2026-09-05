@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define EffectRuntime_LookupByTableEntry Func_0808b02c
-
 extern u8 *Data_03001ebc;
 
 extern s32 Func_0808ae74();

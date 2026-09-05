@@ -1,8 +1,6 @@
 #include "types.h"
 #include "object_effect.h"
 
-#define BattleEffect_LinkObjectToTarget Func_08093570
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);

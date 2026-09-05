@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define UiWork_SetAltFlagAndClearTable Func_0801e3c8
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void UiWork_SetAltFlagAndClearTable(s32 flag) {

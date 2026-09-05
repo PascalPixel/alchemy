@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_GetWorkEntryPair Func_080b7eb4
-
 struct Entry_080b7eb4 {
     s32 first;
     s32 second;

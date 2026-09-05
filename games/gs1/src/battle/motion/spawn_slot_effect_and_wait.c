@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleMotion_SpawnSlotEffectAndWait Func_080b8418
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 WaitFrames(s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Math_IntegerSqrt Func_080045a4
-
 s32 Math_IntegerSqrt(s32 value)
 {
     s32 trial;

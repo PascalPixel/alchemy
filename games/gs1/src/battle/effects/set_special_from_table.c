@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_SetSpecialFromTable Func_0808b25c
-
 extern s16 Data_02000240[];
 extern s32 Data_0809e270[];
 

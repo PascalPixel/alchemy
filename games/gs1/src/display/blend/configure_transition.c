@@ -7,8 +7,6 @@ extern u8 Data_03001aec;
 extern volatile u8 Data_03001c98;
 extern u8 Data_03001ac0;
 
-#define Blend_ConfigureTransition Func_08003c80
-
 void Blend_ConfigureTransition(s8 mode, s32 coefficient, u32 start, s32 target, s32 duration)
 {
     Data_03001cd4 = mode;

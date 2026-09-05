@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Animation_LookupValueByKey Func_0800b798
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 struct LookupEntry {

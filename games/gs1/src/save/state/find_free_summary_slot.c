@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define SaveState_FindFreeSummarySlot Func_0801f704
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 u32 SaveState_FindFreeSummarySlot(void) {

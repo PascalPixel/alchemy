@@ -1,7 +1,5 @@
 #include "object_runtime.h"
 
-#define Object_RefreshSelectorById Func_080920e8
-
 void Func_08009148(struct ObjectRuntime *);
 
 void Object_RefreshSelectorById(u32 object_id)

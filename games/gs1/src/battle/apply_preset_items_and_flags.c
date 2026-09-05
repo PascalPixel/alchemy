@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define Battle_ApplyPresetItemsAndFlags Func_080b0444
-
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 #if defined(GS1_EDITION_JA)

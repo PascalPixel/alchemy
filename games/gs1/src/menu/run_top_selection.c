@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define Menu_RunTopSelection Func_0801c244
-
 #if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || \
     defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
 #define HAS_LOCALIZED_MENU_GUARD 1

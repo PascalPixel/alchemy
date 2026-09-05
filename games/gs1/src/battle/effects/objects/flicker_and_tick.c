@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_FlickerObjectAndTick Func_08096f14
-
 extern s32 Data_03001e40;
 void Func_08009240(s32, s32);
 void Func_08096ddc(s32);

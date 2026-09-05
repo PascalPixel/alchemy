@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define BattlePresentation_AdvanceTransitionTimer Func_080c01bc
-
 #if defined(GS1_EDITION_DE)
 #define TIMER_CELL_ADDR 0x03001F08
 #define POSITION_ADDR   0x03001AE0

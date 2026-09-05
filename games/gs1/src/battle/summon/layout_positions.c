@@ -8,7 +8,6 @@ struct BattleActorDefinition {
 struct BattleActorDefinition *Func_08077008(s32 actor_id);
 s32 Func_080c23c0(u8 class_id);
 
-#define LayoutSummonPositions Func_080b7424
 void LayoutSummonPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
 {
     s32 total_spacing = count <= 4 ? 30 : 27;

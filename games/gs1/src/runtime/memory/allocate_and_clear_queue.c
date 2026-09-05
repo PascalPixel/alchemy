@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_AllocateAndClearQueue Func_08011b00
-
 struct SubQueueItem_08011b00 {
     u32 unknown_00;
     u16 unknown_04;

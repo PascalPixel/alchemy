@@ -3,8 +3,6 @@
 #include "battle_msg.h"
 #include "battle_motion.h"
 
-#define BattlePresentation_RunApproachAction Func_080b8b48
-
 struct Input_080b8b48 {
     s16 primary_id;
     u8 padding02[8];

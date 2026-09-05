@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_ShowPairedUnitWorkAndWait Func_080931ec
-
 struct Runtime_080931ec {
     u8 unknown_000[0x1d8];
     s16 effect_count;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_DrawSelectionMessage Func_080b2ed8
-
 extern u8 *Data_03001f2c;
 extern u8 Value_00000d2c;
 extern u8 Value_00000d2d;

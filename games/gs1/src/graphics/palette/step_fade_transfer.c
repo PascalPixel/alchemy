@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Palette_StepFadeTransfer Func_080cd4b4
-
 struct Globals {
     void *target;
     u8 unknown[116];

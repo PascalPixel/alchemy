@@ -3,8 +3,6 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-#define SaveState_FindLatestSlot Func_08005b24
-
 u32 SaveState_FindLatestSlot(s32 record_id)
 {
     u16 *sequence_cursor;

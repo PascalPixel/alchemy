@@ -27,8 +27,6 @@
  */
 #include "types.h"
 
-#define Runtime_CallWorkBlockEntry Func_0808d590
-
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 

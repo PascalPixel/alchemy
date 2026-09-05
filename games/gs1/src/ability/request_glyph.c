@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ability_RequestGlyph Func_08019f98
-
 u8 *Ability_GetData(s32);
 void Func_08019fcc(s32, s32, s32, s32, s32);
 

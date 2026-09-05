@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Resource_FindFreeTransferEntry Func_0801a910
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Resource_FindFreeTransferEntry(s32 kind) {

@@ -2,8 +2,6 @@
 #include "runtime_interfaces.h"
 #include "global_cells.h"
 
-#define SaveState_CountRecordsExcludingFlagged Func_0801f730
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_080056cc();

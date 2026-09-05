@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define BattleEffect_MarkChildAndRunFallbackTransition Func_0809ab98
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_0809abb4();

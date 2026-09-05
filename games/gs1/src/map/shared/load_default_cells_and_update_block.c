@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "resource.h"
 
-#define Map_LoadDefaultCellsAndUpdateBlock Func_0801173c
-
 extern u8 Data_000000d5[];
 void WaitFrames(u32);
 void Func_08005340(s32, s32);

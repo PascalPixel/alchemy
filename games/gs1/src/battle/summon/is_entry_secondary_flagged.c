@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Summon_IsEntrySecondaryFlagged Func_080c2434
-
 struct Entry {
     u16 value;
     u8 flags0;

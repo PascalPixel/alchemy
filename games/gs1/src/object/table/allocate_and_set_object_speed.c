@@ -1,7 +1,5 @@
 #include "object_runtime.h"
 
-#define ObjectTable_AllocateAndSetObjectSpeed Func_080933d4
-
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 struct ObjectOwner_080933d4 {

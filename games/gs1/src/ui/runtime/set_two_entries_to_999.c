@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWork_SetTwoEntriesTo999 Func_08019d0c
-
 #if defined(GS1_EDITION_JA)
 #define WORK_NO 0x8BE
 #else

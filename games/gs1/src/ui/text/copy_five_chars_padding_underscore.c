@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Text_CopyFiveCharsPaddingUnderscore Func_080b606c
-
 /* Preserve independent live ranges while producing constants zero and three. */
 #define LIVE_CONSTANT(seed, offset) (((u32)(seed) | ~(u32)(seed)) + (offset))
 

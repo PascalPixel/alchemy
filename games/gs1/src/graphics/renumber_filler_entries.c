@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Graphics_RenumberFillerEntries Func_0800fa8c
-
 extern u32 Data_02010000[];
 
 void Graphics_RenumberFillerEntries(void)

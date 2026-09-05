@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_GetServicePrice Func_080b2778
-
 u8 *Runtime_GetObject(void);
 
 s32 Shop_GetServicePrice(s32 unused, s32 kind)

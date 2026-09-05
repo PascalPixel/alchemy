@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Scheduler_ScheduleCallbackAAfterFrames Func_0801fd84
-
 s32 ScheduleCallbackAfterFrames(s32, s32);
 
 void Scheduler_ScheduleCallbackAAfterFrames(void) {

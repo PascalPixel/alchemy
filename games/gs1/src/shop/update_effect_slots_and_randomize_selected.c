@@ -2,8 +2,6 @@
 #include "fixed_math.h"
 #include "global_cells.h"
 
-#define Shop_UpdateEffectSlotsAndRandomizeSelected Func_080b2ffc
-
 void Func_0808a500(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */

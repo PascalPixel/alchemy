@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Script_WaitForEventTimeout Func_0800ca6c
-
 void WaitFrames(s32);
 s32 Func_0800ca98(void *arg0);
 

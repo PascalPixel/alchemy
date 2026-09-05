@@ -1,8 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-#define SaveState_CopySlotPair Func_0801fba8
-
 extern u8 Data_02000000;
 extern u8 Value_0000000a;
 extern u8 Value_0000000c;

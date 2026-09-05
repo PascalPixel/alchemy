@@ -8,7 +8,6 @@ extern s32 Func_08015278(s32);
 extern s32 UiWindow_Commit(s32);
 extern s32 Func_080a1d08(s32, s32, s32);
 extern s32 Func_080aa448(u32);
-#define Item_PlayUseAnimation Func_080aa448
 
 s32 InventoryMenu_UseSelectedItem(void)
 {

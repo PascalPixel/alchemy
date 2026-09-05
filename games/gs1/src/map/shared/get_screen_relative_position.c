@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Map_GetScreenRelativePosition Func_0800bfa4
-
 struct Thing {
     u8 filler0[8];
     s32 field8;

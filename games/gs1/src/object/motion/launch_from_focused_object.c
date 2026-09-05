@@ -1,7 +1,5 @@
 #include "object_runtime.h"
 
-#define ObjectMotion_LaunchFromFocusedObject Func_0809233c
-
 void ObjectMotion_SetSpeedParameters(s32, s32, s32);
 struct ObjectRuntime *Object_GetById(u32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ResourceMetadata_ReleaseSlot Func_0800b9a4
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Func_0800bc48(void *destination);
 void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)

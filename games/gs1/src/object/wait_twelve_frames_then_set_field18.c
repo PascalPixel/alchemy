@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Object_WaitTwelveFramesThenSetField18 Func_080eceac
-
 s32 WaitFrames(s32);
 s32 Func_080b5078(s32, s16, s32, s32);
 s32 Func_080d4604(void *, s32);

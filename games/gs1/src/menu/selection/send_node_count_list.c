@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_SendNodeCountList Func_0801ba34
-
 void Func_080b50e0(u16 *, s32);
 
 void Menu_SendNodeCountList(u8 *arg0)

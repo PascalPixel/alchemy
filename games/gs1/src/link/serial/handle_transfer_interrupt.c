@@ -33,8 +33,6 @@ struct SerialRuntime {
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 #endif
 
-#define SerialRuntime_HandleTransferInterrupt Func_08006240
-
 void SerialRuntime_HandleTransferInterrupt(void)
 {
     struct SerialRuntime *send_state;

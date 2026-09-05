@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Field_StoreAssignedKeyValue Func_0800ea60
-
 extern u8 *Data_03001ebc;
 s32 GameFlag_IsSet(s32);
 

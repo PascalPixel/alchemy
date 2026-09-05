@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_ShrinkObjectScaleUntilHalf Func_0809a890
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_080090f0(void *, s32, s32, s32);

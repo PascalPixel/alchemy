@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define GraphicsPalette_SetTintChannelsFromCounters Func_0801ca1c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 Modulo(s32, s32);
 extern u8 Data_02000240[];

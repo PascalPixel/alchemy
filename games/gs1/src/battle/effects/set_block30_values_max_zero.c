@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_SetBlock30ValuesMaxZero Func_08095214
-
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 struct Fields_08095214 {

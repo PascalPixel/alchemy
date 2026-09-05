@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Map_RenderAnimatedTileFramesForObject Func_0800befc
-
 s32 WaitFrames(s32);
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 

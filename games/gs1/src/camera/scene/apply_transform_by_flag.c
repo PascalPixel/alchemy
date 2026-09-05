@@ -26,8 +26,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Camera_ApplyTransformByFlag Func_080b7ed8
-
 void Func_080049ac(void);
 s32 GameFlag_IsSet(s32);
 s32 Func_080051e8(void *, void *);

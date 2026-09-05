@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_ApplyTableOffsetToPair Func_080216b4
-
 struct Object_080216b4 {
     struct Object_080216b4 *next;
     u8 filler4[4];

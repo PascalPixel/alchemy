@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleUnit_TickCounter13f Func_080bf54c
-
 u8 *Runtime_GetObject(void);
 
 s32 BattleUnit_TickCounter13f(void) {

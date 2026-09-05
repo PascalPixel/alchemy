@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource_LoadByModeIntoSlot Func_0801bcd4
-
 extern s32 Resource_FindFreeSlot(void);
 extern void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);

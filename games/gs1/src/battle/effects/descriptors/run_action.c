@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_RunDescriptorAction Func_0808d5dc
-
 struct ActionDescriptor_0808d5dc {
     s16 id;
     u8 unused_02[20];

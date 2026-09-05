@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_CheckDescriptorKind3Result Func_0808d458
-
 u32 BattleEffect_CheckDescriptorKind3Result(s32 descriptor, s32 value)
 {
   u32 tmp;

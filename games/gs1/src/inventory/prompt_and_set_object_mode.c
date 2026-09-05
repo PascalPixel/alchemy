@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Inventory_PromptAndSetObjectMode Func_08091c7c
-
 struct Entry_08091c7c {
     u8 unknown_00[10];
     u16 value_0a;

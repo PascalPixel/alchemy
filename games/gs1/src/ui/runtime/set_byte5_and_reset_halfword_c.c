@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWork_SetByte5AndResetHalfwordC Func_0801edcc
-
 void UiWork_SetByte5AndResetHalfwordC(void *arg0, int arg1)
 {
   void *zero;

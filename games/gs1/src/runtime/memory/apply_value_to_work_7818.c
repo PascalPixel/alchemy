@@ -27,8 +27,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Runtime_ApplyValueToWork7818 Func_080cd508
-
 u32 Func_080072f0(s32, s32, u32, s32);
 void Runtime_ApplyValueToWork7818(u32 arg2)
 {

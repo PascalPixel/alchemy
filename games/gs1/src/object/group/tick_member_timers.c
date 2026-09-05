@@ -1,6 +1,4 @@
 #include "types.h"
-#undef ObjectGroup_TickMemberTimers
-#define ObjectGroup_TickMemberTimers Func_080cd52c
 
 extern u8 *Data_03001eec;
 

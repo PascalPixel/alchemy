@@ -26,8 +26,6 @@
  */
 #include "types.h"
 
-#define Battle_ApplyValueToWork2224 Func_080b63b0
-
 s16 Func_080072f0(s32, s32, s16, s32);
 char Battle_ApplyValueToWork2224(s16 arg2)
 {

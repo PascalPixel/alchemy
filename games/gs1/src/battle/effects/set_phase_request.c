@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_SetPhaseRequest Func_08091f14
-
 struct RuntimeState_08091f14 {
     u8 data[0x17c];
     s16 value;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Owner_ScaleAdjustedAmount Func_08079bf8
-
 s32 Func_08079b24(s32 selector, s32 mode);
 
 s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 selector)

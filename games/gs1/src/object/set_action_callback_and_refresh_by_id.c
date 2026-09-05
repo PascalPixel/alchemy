@@ -1,7 +1,5 @@
 #include "object_runtime.h"
 
-#define Object_SetActionCallbackAndRefreshById Func_080920fc
-
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 void Func_08009148(struct ObjectRuntime *);
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_RunSelectionWithCursorObject Func_080291e4
-
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void Func_080292c4(s32, s32);
 void Func_0801c0dc(struct Object_0801c0dc *obj, s32 *slot);

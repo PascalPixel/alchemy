@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define BattleEffect_RunPageEffectForSlot Func_080955b0
-
 struct MenuState {
     u8 padding_000[20];
     s32 slots[4];

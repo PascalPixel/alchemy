@@ -1,7 +1,5 @@
 #include "effect_runtime.h"
 
-#define Animation_ApplyChildPalette Func_0808e0b0
-
 struct Item0808e0b0 {
     u8 padding0[5];
     u8 value;

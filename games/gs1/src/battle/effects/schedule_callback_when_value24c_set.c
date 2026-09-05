@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_ScheduleCallbackWhenValue24cSet Func_08099810
-
 struct Fields_08099810 {
     u8 filler[0x24c];
     s16 value;

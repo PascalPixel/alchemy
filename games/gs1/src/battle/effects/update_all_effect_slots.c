@@ -1,8 +1,6 @@
 #include "effect_0809b11c.h"
 #include "global_cells.h"
 
-#define BattleEffect_UpdateAllEffectSlots Func_08096f8c
-
 void BattleEffect_UpdateAllEffectSlots(void) {
     s32 p;
     s32 cnt;

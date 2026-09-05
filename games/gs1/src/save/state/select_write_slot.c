@@ -6,8 +6,6 @@ u32 Random16(void);
 s32 Func_08002304(s32, s32);
 u32 Func_08005b24(s32);
 
-#define SaveState_SelectWriteSlot Func_08005810
-
 u32 SaveState_SelectWriteSlot(s32 mode)
 {
     u32 empty[16];

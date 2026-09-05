@@ -14772,6 +14772,10 @@
     "resource_3a8:02003768": {
       "name": "FieldScene_RunSupplementalSequenceOne",
       "source": "overlays/scene_primary_script/run_scene_3a8_supplemental_sequence_one.c"
+    },
+    "resource_39c:020016c4": {
+      "name": "FieldScene_RunScene39cSequenceG",
+      "source": "overlays/scene_primary_script/run_scene_39c_sequence_g.c"
     }
   }
 }

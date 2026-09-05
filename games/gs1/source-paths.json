@@ -76,7 +76,7 @@
     "resource_377:02000088": "overlays/facing_target_scene/get_script_data.c",
     "resource_379:02000030": {
       "name": "ConditionalSceneSetup_GetScriptData",
-      "source": "overlays/conditional_scene_setup/get_script_data.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_37b:02000030": {
       "name": "SceneEventRuntime_GetScriptData",
@@ -1325,9 +1325,18 @@
       "source": "overlays/scene_script/scene_38a.c"
     },
     "resource_38e:02000974": "overlays/orbiting_effect/initialize_orbiting_scene_entity.c",
-    "resource_391:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_391:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_391:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_391:02000030": {
+      "name": "CalculateFixedPointPositionDistance",
+      "source": "overlays/scene_script/scene_391.c"
+    },
+    "resource_391:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/scene_script/scene_391.c"
+    },
+    "resource_391:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/scene_script/scene_391.c"
+    },
     "resource_392:02000030": {
       "name": "SceneActor_CalculateFixedPointPositionDistance",
       "source": "overlays/scene_script/scene_392.c"
@@ -1775,7 +1784,10 @@
       "name": "SceneState_RunEmptyHook",
       "source": "overlays/scene_script/scene_397.c"
     },
-    "resource_398:02000904": "runtime/callbacks/import_bank_no_op.c",
+    "resource_398:02000904": {
+      "name": "Resource398_ImportBankNoOp",
+      "source": "overlays/scene_script/scene_398.c"
+    },
     "resource_3a7:020004cc": "runtime/callbacks/no_op_callback_e.c",
     "resource_3b4:020009ec": "runtime/callbacks/empty_hook_b.c",
     "resource_3b4:02000aa4": "runtime/callbacks/empty_hook_c.c",
@@ -4243,7 +4255,7 @@
     },
     "resource_391:02000a60": {
       "name": "SceneData_GetTableb0e4",
-      "source": "overlays/scene_data/table_accessors_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3c4:02001910": {
       "name": "FieldScene_SetActor19TableB3B8",
@@ -4455,7 +4467,7 @@
     },
     "resource_398:0200044c": {
       "name": "SceneState_SetGlobalByte17",
-      "source": "overlays/state_update/set_global_byte_17_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_376:02000308": {
       "name": "FieldScene_RunIndexedStep1",
@@ -4507,7 +4519,7 @@
     },
     "resource_391:0200288c": {
       "name": "SceneActor_CheckRegionTrigger",
-      "source": "overlays/scene_state_interaction/check_region_trigger.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3cd:020007c8": {
       "name": "SceneState_GetFarResult100c",
@@ -4603,7 +4615,7 @@
     },
     "resource_379:02000044": {
       "name": "ConditionalSceneSetup_GetActorData",
-      "source": "overlays/conditional_scene_setup/get_actor_data.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_3cc:02000094": {
       "name": "SceneState_ApplyValues11And3And0Then6c",
@@ -4651,7 +4663,7 @@
     },
     "resource_398:020001bc": {
       "name": "FieldScene_RunTwoLayoutSteps",
-      "source": "overlays/dialogue_layout/run_two_layout_steps_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3c7:02000030": {
       "name": "SceneActor_SetActor14Pose258",
@@ -5155,7 +5167,7 @@
     },
     "resource_391:02000c60": {
       "name": "SceneData_GetTableB294",
-      "source": "overlays/scene_data/get_table_b294.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3cd:020000ec": {
       "name": "FieldScene_RunCountAdjustPanel",
@@ -5191,7 +5203,7 @@
     },
     "resource_398:02000168": {
       "name": "SceneState_ConfigureRegion0_0_21x14",
-      "source": "overlays/scene_setup/configure_region_0_0_21x14.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3c2:020001d4": {
       "name": "FieldScene_RunActorCueBranch",
@@ -5263,7 +5275,7 @@
     },
     "resource_391:02002798": {
       "name": "SceneEffect_AdvanceAngleAndFinishWhenParked",
-      "source": "overlays/scene_motion/advance_angle_and_finish_when_parked.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3ba:020020e8": {
       "name": "SceneActor_ApplyValueAndMatchingSlots",
@@ -5433,7 +5445,7 @@
     },
     "resource_398:020002d8": {
       "name": "FieldScene_RunActor17Steps28AndD2",
-      "source": "overlays/scene_primary_script/run_actor_17_steps_28_and_d2.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_382:02000dd4": {
       "name": "ActorPresentation_RunActorSixteenScriptBranch",
@@ -5781,7 +5793,7 @@
     },
     "resource_391:02002864": {
       "name": "OverlayObject_SelectValueByFrameBit1",
-      "source": "overlays/overlay_object/select_value_by_frame_bit_1.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3ba:020038f8": {
       "name": "StagedActor_PushActorAhead",
@@ -5897,7 +5909,7 @@
     },
     "resource_398:020004e8": {
       "name": "SceneState_SetRuntimeWord448To516",
-      "source": "overlays/state_update/set_runtime_word_448_to_516.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_382:020009f0": {
       "name": "SceneDialogue_RunActor12LineAndAdvance",
@@ -5998,7 +6010,7 @@
     },
     "resource_398:0200045c": {
       "name": "SceneState_ClearRuntimeByte17",
-      "source": "overlays/state_update/clear_runtime_byte_17.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3ae:02000b68": {
       "name": "SceneActor_SetMode3AndFlagBit1",
@@ -6185,7 +6197,7 @@
     },
     "resource_379:02000054": {
       "name": "ConditionalSceneSetup_InitForScene15",
-      "source": "overlays/conditional_scene_setup/init_for_scene_15.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_3a6:020000a0": {
       "name": "OverlayObject_CreateConfiguredB",
@@ -6269,7 +6281,7 @@
     },
     "resource_391:02000474": {
       "name": "FindStagedActorProbePosition",
-      "source": "overlays/staged_actor/find_probe_position.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3a1:020000a0": {
       "name": "OverlayObject_CreateConfigured",
@@ -6469,7 +6481,7 @@
     },
     "resource_391:02002768": {
       "name": "FieldScene_RunSplitPairSteps",
-      "source": "overlays/shared/run_split_pair_steps_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3c3:02000084": {
       "name": "SceneData_GetTable8B48",
@@ -6585,7 +6597,7 @@
     },
     "resource_398:02000188": {
       "name": "SceneState_ApplyTwoRects",
-      "source": "overlays/state_update/apply_two_rects_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_38d:0200009c": {
       "name": "SceneData_SelectRecordByScene21",
@@ -6633,7 +6645,7 @@
     },
     "resource_398:02000040": {
       "name": "SceneData_SelectByRuntimeSelector",
-      "source": "overlays/scene_data/select_by_runtime_selector_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_372:020012f0": {
       "name": "SceneState_ApplyFourRects",
@@ -7377,7 +7389,7 @@
     },
     "resource_379:0200004c": {
       "name": "ConditionalSceneSetup_GetEffectData",
-      "source": "overlays/conditional_scene_setup/get_effect_data.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_37c:0200004c": {
       "name": "unnamed_run_097",
@@ -7434,7 +7446,7 @@
     },
     "resource_391:020009fc": {
       "name": "SceneActor_UpdateRandomCounterMode",
-      "source": "overlays/actor_motion/update_random_counter_mode.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3c9:02002344": {
       "name": "FieldScene_ForwardValue81fc",
@@ -7506,11 +7518,11 @@
     },
     "resource_379:02000038": {
       "name": "ConditionalSceneSetup_GetInitialState",
-      "source": "overlays/conditional_scene_setup/get_initial_state.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_391:02000a58": {
       "name": "SceneData_GetTableb0cc",
-      "source": "overlays/scene_data/table_accessors_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_36f:0200004c": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_3bd:02000f10": {
@@ -7648,7 +7660,7 @@
     },
     "resource_391:02002ad8": {
       "name": "SceneActor_AlternateSlots13To16Field0c",
-      "source": "overlays/actor_position/alternate_slots_13_to_16_field_0c.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_38e:020001a4": {
       "name": "SceneDialogue_RunActor10Message13c3",
@@ -7704,7 +7716,7 @@
     },
     "resource_398:020001f0": {
       "name": "FieldScene_RunActor9Flag882Scene",
-      "source": "overlays/staged_actor_scene/run_actor_9_flag_882_scene_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_39f:02001de0": {
       "name": "FieldScene_RunSlot16WaypointSequence",
@@ -7728,7 +7740,7 @@
     },
     "resource_398:020007c4": {
       "name": "SceneActor_FindSlotAtTile",
-      "source": "overlays/actor_search/find_slot_at_tile.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3b1:02001594": {
       "name": "SceneDialogue_RunActor18TwoFlagLine",
@@ -7920,7 +7932,7 @@
     },
     "resource_398:02000098": {
       "name": "SceneData_GetTable8bcc",
-      "source": "overlays/scene_data/get_table_8bcc_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_39c:02005218": {
       "name": "OverlayObject_StepScaleUpSixteenFrames",
@@ -8164,7 +8176,7 @@
     },
     "resource_398:020000f4": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene_data/select_data_by_runtime_selector_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_38c:02000030": {
       "name": "SceneData_GetPrimaryTable",
@@ -8510,7 +8522,7 @@
     },
     "resource_391:02000a68": {
       "name": "FieldScene_RunTile10x20Transition",
-      "source": "overlays/scene_primary_script/run_scene_391_tile_10_20_transition.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3ad:02000030": {
       "name": "SceneData_GetTable9c34",
@@ -8714,7 +8726,7 @@
     },
     "resource_379:0200003c": {
       "name": "ConditionalSceneSetup_GetMessageData",
-      "source": "overlays/conditional_scene_setup/get_message_data.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_3a7:0200040c": {
       "name": "FieldScene_NoOp",
@@ -8818,7 +8830,7 @@
     },
     "resource_391:02000b1c": {
       "name": "StagedActor_RunStepEffect",
-      "source": "overlays/staged_actor_effect_sequence/run_step_effect_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3bb:02000950": {
       "name": "SceneState_ApplyTable8715AndValue104",
@@ -8846,7 +8858,7 @@
     },
     "resource_398:020000a0": {
       "name": "SceneData_SelectSecondaryDataByRuntimeSelector",
-      "source": "overlays/scene_data/select_secondary_data_by_runtime_selector_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3ba:02000830": {
       "name": "SceneState_ApplyValue768",
@@ -9055,7 +9067,7 @@
     },
     "resource_391:02002780": {
       "name": "SceneActor_SetPairZeroAndValue",
-      "source": "overlays/actor_presentation/set_pair_zero_and_value_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3c5:02000ae8": {
       "name": "SceneEffect_SpawnConfiguredEffect",
@@ -9177,7 +9189,7 @@
     },
     "resource_391:020027c8": {
       "name": "SceneEffect_SpawnObject26EveryEightFrames",
-      "source": "overlays/effect/spawn_object_26_every_eight_frames.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_39b:02000ea4": {
       "name": "SceneData_GetTableac58",
@@ -9237,7 +9249,7 @@
     },
     "resource_391:02000a4c": {
       "name": "SceneData_GetTableb06c",
-      "source": "overlays/scene_data/table_accessors_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_383:020007cc": {
       "name": "SceneDialogue_RunActor10Line",
@@ -9490,7 +9502,7 @@
     },
     "resource_398:02000424": {
       "name": "ActorPresentation_SetSceneCell31AndFlag305",
-      "source": "overlays/actor_presentation/set_scene_cell_31_and_flag_305.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3c0:020003ac": {
       "name": "SceneData_SelectOverlayDataByRuntimeSelector",
@@ -9663,7 +9675,7 @@
     },
     "resource_391:020002a8": {
       "name": "SceneActor_ResetMotionWhenAheadBlocked",
-      "source": "overlays/actor_motion/reset_motion_when_ahead_blocked_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_39d:02000320": {
       "name": "SceneData_GetTableb9c8",
@@ -9803,7 +9815,7 @@
     },
     "resource_391:020009dc": {
       "name": "OverlayObject_ClearPendingAndRestoreMode",
-      "source": "overlays/overlay_object/clear_pending_and_restore_mode.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_372:020001d0": {
       "name": "SceneState_SetValue123Mode1",
@@ -9900,7 +9912,7 @@
     },
     "resource_398:02000030": {
       "name": "SceneState_ApplyArgMode0AndReturnZero",
-      "source": "overlays/state_update/apply_arg_mode_0_and_return_zero_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3b3:02000048": {
       "name": "OverlayObject_PrepareObject",
@@ -10253,7 +10265,7 @@
     },
     "resource_398:020007f8": {
       "name": "StagedActor_PushActorAhead",
-      "source": "overlays/staged_actor_movement/push_actor_ahead_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_38c:020000bc": {
       "name": "FieldScene_RunActor18MessageBranch",
@@ -10538,7 +10550,7 @@
     },
     "resource_398:02000148": {
       "name": "SceneState_ConfigureRegion1_0_21x14",
-      "source": "overlays/scene_state_interaction/configure_region_1_0_21x14_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_38f:020001ac": {
       "name": "SceneData_GetTableB010ForSelector26",
@@ -10614,7 +10626,7 @@
     },
     "resource_398:02000280": {
       "name": "FieldScene_RunActorFifteenScene",
-      "source": "overlays/scene_setup/run_actor_fifteen_scene.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_38e:020004bc": {
       "name": "FieldScene_RunEntryZeroAndScene22Body",
@@ -10726,7 +10738,7 @@
     },
     "resource_398:0200046c": {
       "name": "FieldScene_DispatchByScenarioId",
-      "source": "overlays/scene_state_interaction/dispatch_by_scenario_id_398.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_382:020011b0": {
       "name": "ActorPresentation_MoveActorToPositionAndWait",
@@ -11019,7 +11031,10 @@
       "name": "SceneData_SelectTable9cfcByState",
       "source": "overlays/scene_data/table_accessors_3b7.c"
     },
-    "resource_398:02000094": "overlays/shared/get_followup_default_result.c",
+    "resource_398:02000094": {
+      "name": "get_followup_default_result",
+      "source": "overlays/scene_script/scene_398.c"
+    },
     "resource_38f:02000694": {
       "name": "FieldScene_SetupEntryBySelector",
       "source": "overlays/scene_script/scene_38f.c"
@@ -11256,7 +11271,7 @@
     "resource_36f:02000030": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_391:020000c4": {
       "name": "StagedActor_PushActorAhead",
-      "source": "overlays/staged_actor_movement/push_actor_ahead_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_3b5:02000030": {
       "name": "SceneState_SetValues31_2_4",
@@ -11564,7 +11579,7 @@
     },
     "resource_391:02000c14": {
       "name": "SceneActor_PassSubjectOffsetPosition",
-      "source": "overlays/actor_position/pass_subject_offset_position_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_392:02000474": {
       "name": "StagedActor_FindClearPosition",
@@ -11870,7 +11885,7 @@
     },
     "resource_391:02000a54": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene_data/table_accessors_391.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_397:020001b4": {
       "name": "SceneData_GetTable84a4",
@@ -11898,7 +11913,7 @@
     },
     "resource_398:020002ac": {
       "name": "FieldScene_RunActorSixteenScene",
-      "source": "overlays/scene_setup/run_actor_sixteen_scene.c"
+      "source": "overlays/scene_script/scene_398.c"
     },
     "resource_3b3:02001174": {
       "name": "StagedActor_StepDownUntilClamp",
@@ -11929,7 +11944,10 @@
       "source": "overlays/orbiting_effect/step_ellipse_orbit_378.c"
     },
     "resource_3a7:02001158": "runtime/soft_float/add_parts.c",
-    "resource_398:020004b4": "overlays/scene_setup/run_guarded_scene_setup.c",
+    "resource_398:020004b4": {
+      "name": "RunGuardedSceneSetup",
+      "source": "overlays/scene_script/scene_398.c"
+    },
     "resource_3ba:02001c7c": "overlays/party/run_party_count_interaction.c",
     "resource_3bb:02001f14": "overlays/party/run_party_count_interaction_copy_a.c",
     "resource_3bc:020029ac": "overlays/party/run_party_count_interaction_copy_b.c",
@@ -12275,7 +12293,7 @@
     },
     "resource_379:02000074": {
       "name": "RunEventScript01",
-      "source": "overlays/event_script/run_event_script_01_379_02000074.c"
+      "source": "overlays/scene_script/scene_379.c"
     },
     "resource_37a:02001380": {
       "name": "StartSolShindenTrapEvent",
@@ -14162,7 +14180,7 @@
     },
     "resource_391:02000c68": {
       "name": "FieldScene_RunScene391_02000c68",
-      "source": "overlays/scene_primary_script/run_scene_391_02000c68.c"
+      "source": "overlays/scene_script/scene_391.c"
     },
     "resource_39c:02001340": {
       "name": "FieldScene_RunScene39c_02001340",

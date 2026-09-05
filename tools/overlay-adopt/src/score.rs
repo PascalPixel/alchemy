@@ -4,15 +4,15 @@ use crate::{
     retained_source,
 };
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
-use candidate_show::{cli::Options, render::render};
 use compiler_core::{
     overlay_call_via_base,
     routing::CompilerTarget,
     source_paths::{SourceOwner, SourcePaths},
     translation_units::TranslationUnits,
 };
-use overlay_disasm::compile::compile_overlay_c;
-use overlay_disasm::OVERLAY_LINK_BIAS;
+use diff::{cli::Options, render::render};
+use disassemble::compile::compile_overlay_c;
+use disassemble::OVERLAY_LINK_BIAS;
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {

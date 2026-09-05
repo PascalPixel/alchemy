@@ -1,0 +1,92 @@
+[workspace]
+
+[package]
+name = "alchemy"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+png = "0.17"
+decompile = { path = "../decompile" }
+candidate-compiler = { path = "../candidate-compiler" }
+diff = { path = "../diff" }
+compiler-core = { path = "../compiler-core" }
+dashboard-server = { path = "../dashboard-server" }
+integrate-matches = { path = "../integrate-matches" }
+no-asm-c = { path = "../no-asm-c" }
+objdiff-core = { version = "3.8.0", default-features = false, features = ["arm", "std"] }
+disassemble = { path = "../disassemble" }
+matching = { path = "../matching" }
+regex = "1.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+similar = { version = "=3.1.1", default-features = false, features = ["hashbrown"] }
+walkdir = "2.5"
+alignment-tail = { path = "../alignment-tail" }
+asset-paths = { path = "../asset-paths" }
+audio-engine-data = { path = "../audio-engine-data" }
+archive-asset = { path = "../archive-asset" }
+canonical-json = { path = "../canonical-json" }
+cache-entry = { path = "../cache-entry" }
+extract-resource = { path = "../extract-resource" }
+generated-files = { path = "../generated-files" }
+import-asset = { path = "../import-asset" }
+map-load-table = { path = "../map-load-table" }
+music = { path = "../music" }
+pairtable = { path = "../pairtable" }
+tilemap = { path = "../tilemap" }
+wordstream = { path = "../wordstream" }
+gba-header = { path = "../gba-header" }
+sha1 = "0.10"
+build-asm = { path = "../build-asm" }
+build-claimed = { path = "../build-claimed" }
+build-full = { path = "../build-full" }
+indexed-still = { path = "../indexed-still" }
+encounter-data = { path = "../encounter-data" }
+character-catalog = { path = "../character-catalog" }
+staff-roll = { path = "../staff-roll" }
+audio-wave = { path = "../audio-wave" }
+localization-tables = { path = "../localization-tables" }
+byte-value-regions = { path = "../byte-value-regions" }
+executable-gap-sources = { path = "../executable-gap-sources" }
+music-residuals = { path = "../music-residuals" }
+f0-archive = { path = "../f0-archive" }
+simple-resources = { path = "../simple-resources" }
+kind2-resources = { path = "../kind2-resources" }
+resource-01c = { path = "../resource-01c" }
+resource-byte-canvases = { path = "../resource-byte-canvases" }
+skip-sprite-archive = { path = "../skip-sprite-archive" }
+static-sprite-series = { path = "../static-sprite-series" }
+localization-font = { path = "../localization-font" }
+map-container-components = { path = "../map-container-components" }
+byte-henkan = { path = "../byte-henkan" }
+namae-nyuuryoku = { path = "../namae-nyuuryoku" }
+kind1-map-grid = { path = "../kind1-map-grid" }
+resource-directory = { path = "../resource-directory" }
+late-runtime-residual = { path = "../late-runtime-residual" }
+early-runtime-data = { path = "../early-runtime-data" }
+message-archive = { path = "../message-archive" }
+resource-3ce = { path = "../resource-3ce" }
+resource-5 = { path = "../resource-5" }
+resource-d1-d3 = { path = "../resource-d1-d3" }
+title-resources = { path = "../title-resources" }
+sentou-resources = { path = "../sentou-resources" }
+map-resources = { path = "../map-resources" }
+battle-effect-data = { path = "../battle-effect-data" }
+runtime-support-data = { path = "../runtime-support-data" }
+sentou-kouka-runtime = { path = "../sentou-kouka-runtime" }
+sentou-menu-data = { path = "../sentou-menu-data" }
+sentou-gamen-data = { path = "../sentou-gamen-data" }
+sentou-hyouji = { path = "../sentou-hyouji" }
+check-commit-progress = { path = "../check-commit-progress" }
+check-publication = { path = "../check-publication" }
+check-unmatchable = { path = "../check-unmatchable" }
+core-retained-audit = { path = "../core-retained-audit" }
+coverage-map = { path = "../coverage-map" }
+full-c-progress = { path = "../full-c-progress" }
+overlay-adopt = { path = "../overlay-adopt" }
+tempfile = "3"
+
+[[bin]]
+name = "alchemy"
+path = "src/main.rs"

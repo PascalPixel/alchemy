@@ -1,6 +1,6 @@
 //! Overlay `bl` words encode target image offset minus two, unlike linked
 //! main-image PC-relative branches: `target_offset = stored + 2`.
-use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE as DISASM_OVERLAY_BASE};
+use disassemble::{assemble_overlay, OverlaySource, OVERLAY_BASE as DISASM_OVERLAY_BASE};
 use serde_json::Value;
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -14,7 +14,7 @@ pub const OVERLAY_BASE: i64 = 0x0200_0000;
 /// load-bearing module cycle.
 const RETURN_WINDOW: i64 = 128;
 fn root() -> PathBuf {
-    overlay_disasm::paths::root()
+    disassemble::paths::root()
 }
 /// Decode a Thumb BL pair into the displacement the instruction stores.
 /// Returns `None` when the halfwords are not a BL prefix/suffix pair.
@@ -298,144 +298,4 @@ pub fn resolve_overlay(
         }
     }
     Ok(sites)
-}
-/// Resolve every call site in one explicitly bounded owner to its C spelling.
-///
-/// Kept here so readers such as `overlay_show` can annotate a listing without
-/// reimplementing the overlay's non-PC-relative BL rule. Explicit bounds are
-/// required by the caller: an unbounded run intentionally has different
-/// inventory semantics and is not safe for a tracked owner.
-pub fn resolved_call_names(
-    overlay: &str,
-    owner: i64,
-    owner_end: i64,
-) -> Result<Vec<(i64, String)>, String> {
-    let image = overlay_image(overlay)?;
-    let rows = inventory()?;
-    let prologues: HashSet<i64> = rows
-        .iter()
-        .filter(|row| row.overlay == overlay && row.starts_with_prologue)
-        .map(|row| row.offset)
-        .collect();
-    let mut names = Vec::new();
-    for site in resolve_overlay(overlay, Some(owner), Some(owner_end))? {
-        let detail = classify(&image, site.target, &prologues);
-        let name = match detail.imported {
-            Some(imported) => format!("Func_{imported:08x}"),
-            None => format!("Func_{:08x}", OVERLAY_BASE + site.target),
-        };
-        names.push((site.site, name));
-    }
-    Ok(names)
-}
-fn names_get(names: &[(i64, String)], site: i64) -> Option<&str> {
-    names
-        .iter()
-        .rev()
-        .find(|(at, _)| *at == site)
-        .map(|(_, name)| name.as_str())
-}
-/// A colon-anchored `HHHHHHH:` line-start address, as `overlay_show`/objdump
-/// listings print it.
-fn line_address(line: &str) -> Option<i64> {
-    let trimmed = line.trim_start();
-    let leading_ws = line.len() - trimmed.len();
-    // Only pure whitespace may precede the address, matching `^\s*`.
-    if line[..leading_ws].chars().any(|c| !c.is_whitespace()) {
-        return None;
-    }
-    let colon = trimmed.find(':')?;
-    let digits = &trimmed[..colon];
-    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_hexdigit()) {
-        return None;
-    }
-    i64::from_str_radix(digits, 16).ok()
-}
-/// Rewrite an `overlay_show` listing so each `bl` names its REAL callee.
-pub fn annotate(listing: &str, sites: &[(i64, String)]) -> String {
-    let mut out: Vec<String> = Vec::new();
-    for line in listing.split('\n') {
-        let Some(address) = line_address(line) else {
-            out.push(line.to_string());
-            continue;
-        };
-        let site = address - OVERLAY_BASE;
-        let Some(name) = names_get(sites, site) else {
-            out.push(line.to_string());
-            continue;
-        };
-        out.push(replace_bl_target(line, name));
-    }
-    out.join("\n")
-}
-/// `line.replace(/\bbl\s+\S+/, replacement)`: replace the FIRST `bl <target>`
-/// run, matching only a whole-word `bl` (so `bls`/`blt`/`bl_x` do not match).
-fn replace_bl_target(line: &str, name: &str) -> String {
-    let bytes = line.as_bytes();
-    let mut i = 0usize;
-    while i + 1 < bytes.len() {
-        if &line[i..i + 2] == "bl" {
-            let word_start_ok = i == 0 || !is_word_byte(bytes[i - 1]);
-            let after = bytes.get(i + 2).copied();
-            let word_end_ok = after.map(|b| !is_word_byte(b)).unwrap_or(true);
-            if word_start_ok && word_end_ok {
-                // Require at least one whitespace char after `bl`.
-                if let Some(b) = after {
-                    if (b as char).is_whitespace() {
-                        let mut j = i + 2;
-                        while j < bytes.len() && (bytes[j] as char).is_whitespace() {
-                            j += 1;
-                        }
-                        let target_start = j;
-                        while j < bytes.len() && !(bytes[j] as char).is_whitespace() {
-                            j += 1;
-                        }
-                        if j > target_start {
-                            return format!("{}bl {}{}", &line[..i], name, &line[j..]);
-                        }
-                    }
-                }
-            }
-        }
-        i += 1;
-    }
-    line.to_string()
-}
-fn is_word_byte(b: u8) -> bool {
-    b.is_ascii_alphanumeric() || b == b'_'
-}
-/// Every `bl` line in the listing whose site the resolver did NOT cover.
-///
-/// Matches `bl ` with a trailing space so that `bls`, `blt` and friends,
-/// which are conditional branches and not calls, are not counted.
-pub fn unannotated_call_sites(listing: &str, sites: &[(i64, String)]) -> Vec<i64> {
-    let mut missed = Vec::new();
-    for line in listing.split('\n') {
-        let Some(address) = line_address(line) else {
-            continue;
-        };
-        if !contains_bl_word(line) {
-            continue;
-        }
-        let site = address - OVERLAY_BASE;
-        if names_get(sites, site).is_none() {
-            missed.push(site);
-        }
-    }
-    missed
-}
-/// `/\bbl\s/.test(line)`.
-fn contains_bl_word(line: &str) -> bool {
-    let bytes = line.as_bytes();
-    let mut i = 0usize;
-    while i + 2 < bytes.len() {
-        if &line[i..i + 2] == "bl" {
-            let word_start_ok = i == 0 || !is_word_byte(bytes[i - 1]);
-            if word_start_ok && (bytes[i + 2] as char).is_whitespace() {
-                return true;
-            }
-        }
-        i += 1;
-    }
-    false
 }

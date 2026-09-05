@@ -1,5 +1,5 @@
-# Alchemy has six executables: two builders and four contributor-facing hosts.
-# Game-specific asset codecs are libraries behind `assets`; they are not public
+# Alchemy's build and contributor workflows share the alchemy executable.
+# Game-specific asset codecs are libraries behind `alchemy assets`; they are not public
 # commands and are not copied when starting another decompilation project.
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
@@ -11,23 +11,23 @@ CARGO ?= cargo
 export CARGO_TARGET_DIR := $(CURDIR)/out/cargo-target
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
 
-BUILD := $(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml --
-ASSETS := $(CARGO_RUN) $(TOOLS)/build-assets/Cargo.toml --
-CHECK := $(CARGO_RUN) $(TOOLS)/check/Cargo.toml --
-COMPILER := $(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml --
-OVERLAY := $(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml --
+BUILD := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build
+ASSETS := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build assets
+CHECK := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- check
+COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
+OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
-HOSTS := build-assets build-stage assets compiler overlay check
-CORE_TESTS := compiler-core candidate-compiler candidate-show permuter \
-		overlay-disasm overlay-adopt build-full thumb2c \
+HOSTS := alchemy
+CORE_TESTS := compiler-core candidate-compiler diff matching \
+		disassemble overlay-adopt build-full decompile \
               extract-resource coverage-map check-publication
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
-	generated-files no-asm-c build-stage build-claimed build-asm build-full \
-	compiler compiler-core candidate-compiler candidate-show permuter \
-	dashboard-server overlay overlay-disasm overlay-show \
-	overlay-adopt overlay-call-targets check check-commit-progress \
+	generated-files no-asm-c build-claimed build-asm build-full \
+	alchemy compiler-core candidate-compiler diff matching \
+	dashboard-server disassemble \
+	overlay-adopt overlay-call-targets check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets weyard-font shape-search unit-scaffold allocator-lens thumb2c
+	full-c-progress integrate-matches decomp-targets decompile
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.
@@ -146,7 +146,7 @@ $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
 dashboard:
-	$(COMPILER) dashboard-server --bind 127.0.0.1:4650
+	$(COMPILER) dashboard --bind 127.0.0.1:4650
 
 dashboard-service-install:
 	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
@@ -228,7 +228,7 @@ candidate-corpus-check:
 	@set -e; total=0; \
 	for route in $(CANDIDATE_SINGLE_OWNERS); do \
 		owner=$${route%%=*}; source=$${route#*=}; \
-		result=$$($(COMPILER) candidate-show games/gs1/recon/en/units/$$source \
+		result=$$($(COMPILER) diff games/gs1/recon/en/units/$$source \
 			--owner $$owner --first); \
 		diff=$$(printf '%s\n' "$$result" | sed -n 's/.*differing_halfwords=\([0-9][0-9]*\).*/\1/p' | head -n 1); \
 		if test -z "$$diff" || test "$$diff" -eq 0; then \
@@ -243,7 +243,7 @@ candidate-corpus-check:
 		games/gs1/recon/translation-units.json); \
 	for unit in $$units; do \
 		report=$$(mktemp /tmp/alchemy-tu-corpus.XXXXXX); \
-		$(COMPILER) candidate-show --unit $$unit | \
+		$(COMPILER) diff --unit $$unit | \
 			awk -F= '/^owner=/{owner=$$2} /^candidate=/{split($$0,a,"differing_halfwords="); print owner "\t" a[2]+0}' \
 			> "$$report"; \
 		for owner in $$(awk -F '"' -v unit="$$unit" '/"id":/{id=$$4} id==unit && /"state":"retained-assembly"/{print $$4}' \
@@ -339,9 +339,12 @@ tool-tests:
 			--manifest-path $(TOOLS)/$$crate/Cargo.toml; \
 		printf ' ok\n'; \
 	done
-	$(COMPILER) permute --acceptance-test
+	$(COMPILER) match --acceptance-test
 
 tooling-size:
+	@for path in $(addprefix $(TOOLS)/,$(PORTABLE_TOOLS)); do \
+		test -d "$$path" || { printf 'missing counted tooling directory: %s\n' "$$path"; exit 1; }; \
+	done
 	@lines=$$(find $(addprefix $(TOOLS)/,$(PORTABLE_TOOLS)) -type f \
 		\( -name '*.rs' -o -name '*.js' -o -name '*.ts' -o -name '*.css' \) \
 		-not -path '*/target/*' -print0 | xargs -0 cat | wc -l | tr -d ' '); \

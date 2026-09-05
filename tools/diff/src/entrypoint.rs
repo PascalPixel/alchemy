@@ -1,0 +1,290 @@
+use crate::{
+    cli::{options_of, ParseOutcome, USAGE},
+    diff::self_test,
+    render::{render, RenderOutput},
+};
+use compiler_core::{
+    overlay_call_via_base,
+    routing::root,
+    translation_units::{TranslationUnit, TranslationUnits},
+};
+use disassemble::{canonical_overlay, OVERLAY_LINK_BIAS};
+use std::path::Path;
+use std::process::Command;
+pub fn entry(arguments: &[String]) {
+    if arguments.iter().any(|arg| arg == "--self-test") {
+        match self_test() {
+            Ok(line) => println!("{line}"),
+            Err(error) => fail(&error),
+        }
+        return;
+    }
+    match options_of(root(), arguments) {
+        Ok(ParseOutcome::Help) => println!("{USAGE}"),
+        Ok(ParseOutcome::Options(options)) => match run(*options) {
+            Ok(output) => print!("{output}"),
+            Err(error) => fail(&error),
+        },
+        Err(error) => fail(&error),
+    }
+}
+fn run(mut options: crate::cli::Options) -> Result<String, String> {
+    let Some(id) = options.unit.clone() else {
+        return render(root(), &options).map(|output| output.stdout);
+    };
+    let manifest = TranslationUnits::load(root())?;
+    let unit = manifest
+        .unit(&id)
+        .ok_or_else(|| format!("unknown translation unit {id}"))?
+        .clone();
+    if unit.target()? != options.target {
+        return Err(format!(
+            "translation unit {id} belongs to {}, not {}",
+            unit.game,
+            options.target.as_str()
+        ));
+    }
+    if let Some(overlay) = unit.overlay.clone() {
+        if options.owner.is_none() {
+            return score_overlay_unit(&unit, &overlay);
+        }
+    }
+    options.source = unit.source.to_string_lossy().into_owned();
+    options.configuration.absolute_symbols = unit.canonical_symbols()?;
+    let default_work = format!("scratch/diff/{id}");
+    let work = options.work.clone().unwrap_or(default_work);
+    let work = root().join(work).to_string_lossy().into_owned();
+    options.work = Some(work.clone());
+    if let Some(overlay) = &unit.overlay {
+        options.overlay = Some(overlay.clone());
+        options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
+        options.configuration.label_word_bias = Some(OVERLAY_LINK_BIAS as u64);
+        let reference = canonical_overlay(root(), overlay)?;
+        let path = Path::new(&work).join(format!(
+            "reference-{}.bin",
+            compiler_core::sha256::hex(&reference)
+        ));
+        std::fs::create_dir_all(&work).map_err(|error| format!("{work}: {error}"))?;
+        std::fs::write(&path, reference).map_err(|error| format!("{}: {error}", path.display()))?;
+        options.rom = Some(path.to_string_lossy().into_owned());
+    }
+    let selected_owner = options.owner;
+    if let Some(address) = selected_owner {
+        if !unit.owners.iter().any(|owner| owner.address == address) {
+            return Err(format!("{id} does not declare 0x{address:08x}"));
+        }
+    }
+    let mut output = String::new();
+    let mut layout_mismatches = Vec::new();
+    let exact_unit = unit.exact();
+    let mut byte_mismatches = Vec::new();
+    for (index, owner) in unit.owners.iter().enumerate() {
+        let address = owner.address;
+        let address_text = format!("0x{address:08x}");
+        options.owner = Some(address);
+        options.size = Some(owner.extent);
+        if index == 1 {
+            options.precompiled_object = Some(
+                Path::new(&work)
+                    .join(format!("{:08x}.o", unit.owners[0].address))
+                    .to_string_lossy()
+                    .into_owned(),
+            );
+        }
+        let rendered = render(root(), &options)?;
+        if exact_unit && exact_mismatch(&rendered) {
+            byte_mismatches.push(address_text.clone());
+        }
+        if index == 0 {
+            layout_mismatches = validate_layout(
+                &unit,
+                &Path::new(&work).join(format!("{:08x}.o", address)),
+                address,
+            )?;
+            if !layout_mismatches.is_empty() && exact_unit {
+                return Err(format!(
+                    "translation unit {id} has {} symbol offset mismatches",
+                    layout_mismatches.len()
+                ));
+            }
+        }
+        if selected_owner.is_none() || selected_owner == Some(address) {
+            output.push_str(&format!(
+                "scope=translation-unit\nowner={address_text}\n{}",
+                rendered.stdout
+            ));
+        }
+    }
+    if !layout_mismatches.is_empty() {
+        output.push_str(&format!(
+            "layout_mismatches={} owners={}\n",
+            layout_mismatches.len(),
+            layout_mismatches.join(",")
+        ));
+    }
+    if !byte_mismatches.is_empty() {
+        return Err(format!(
+            "translation unit {id} has byte mismatches in {}",
+            byte_mismatches.join(",")
+        ));
+    }
+    Ok(output)
+}
+/// An overlay unit is proved the way the full build places it: the unit
+/// compiles once, every function is linked at its owner's address, and each
+/// member's bytes are compared with the canonical overlay image.
+fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
+    let compiled = disassemble::compile_declared_overlay_unit(unit, "en")?;
+    let reference = canonical_overlay(root(), overlay)?;
+    let base = 0x0200_0000i64;
+    let mut output = String::new();
+    let mut mismatches = Vec::new();
+    for owner in &unit.owners {
+        let address = i64::from(owner.address);
+        let offset = usize::try_from(address - compiled.address)
+            .map_err(|_| format!("{}: owner precedes the compiled unit", unit.id))?;
+        let candidate = compiled
+            .data
+            .get(offset..offset + owner.extent)
+            .ok_or_else(|| format!("{}: compiled unit lacks 0x{address:08x}", unit.id))?;
+        let start = usize::try_from(address - base)
+            .map_err(|_| format!("{}: owner precedes the overlay image", unit.id))?;
+        let expected = reference
+            .get(start..start + owner.extent)
+            .ok_or_else(|| format!("{}: overlay image lacks 0x{address:08x}", unit.id))?;
+        let differing = candidate
+            .chunks(2)
+            .zip(expected.chunks(2))
+            .filter(|(a, b)| a != b)
+            .count();
+        output.push_str(&format!(
+            "scope=translation-unit\nowner=0x{address:08x}\ncandidate={} reference={} differing_halfwords={differing}\n",
+            candidate.len(),
+            expected.len()
+        ));
+        if differing != 0 {
+            if let Some(first) = candidate.iter().zip(expected).position(|(a, b)| a != b) {
+                output.push_str(&format!("first_difference=+0x{first:x}\n"));
+            }
+            mismatches.push(format!("0x{address:08x}"));
+        }
+    }
+    if !mismatches.is_empty() && unit.exact() {
+        return Err(format!(
+            "{output}translation unit {} has byte mismatches in {}",
+            unit.id,
+            mismatches.join(",")
+        ));
+    }
+    Ok(output)
+}
+
+fn exact_mismatch(output: &RenderOutput) -> bool {
+    output.differing_halfwords != 0
+        || output.candidate_length != output.reference_length
+        || (output.candidate_length == 0
+            && !output
+                .stdout
+                .contains("\nclass=exact wrong_instructions=0\n"))
+}
+fn validate_layout(
+    unit: &TranslationUnit,
+    object: &Path,
+    base: u32,
+) -> Result<Vec<String>, String> {
+    let output = Command::new("arm-none-eabi-nm")
+        .args(["-S", "--defined-only"])
+        .arg(object)
+        .output()
+        .map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
+    if !output.status.success() {
+        return Err(format!(
+            "cannot inspect translation unit {}",
+            object.display()
+        ));
+    }
+    let rows = String::from_utf8_lossy(&output.stdout);
+    let mut mismatches = Vec::new();
+    for (address, _, extent) in unit.symbols() {
+        let owner = unit.source_owner(address)?;
+        let symbol = owner.legacy_name();
+        let offset = address
+            .checked_sub(base)
+            .ok_or_else(|| format!("{} precedes its translation unit", owner.id()))?;
+        let found = rows.lines().any(|row| {
+            let fields: Vec<_> = row.split_whitespace().collect();
+            fields
+                .first()
+                .and_then(|field| u32::from_str_radix(field, 16).ok())
+                == Some(offset)
+                && fields
+                    .get(1)
+                    .and_then(|field| usize::from_str_radix(field, 16).ok())
+                    == Some(extent)
+                && fields.last() == Some(&symbol.as_str())
+        });
+        if !found {
+            mismatches.push(owner.id());
+        }
+    }
+    Ok(mismatches)
+}
+fn fail(message: &str) -> ! {
+    eprintln!("{message}");
+    std::process::exit(1)
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn entrypoint_contracts() {
+        let output = |difference| RenderOutput {
+            stdout: String::new(),
+            candidate_length: 4,
+            reference_length: 4,
+            differing_halfwords: difference,
+            allocator: None,
+            residual: crate::triage::classify(&[], &[], 4, 4, difference),
+        };
+        assert!(!exact_mismatch(&output(0)));
+        assert!(exact_mismatch(&output(1)));
+        let repository = std::env::temp_dir().join(format!("diff-no-rom-{}", std::process::id()));
+        let error = canonical_overlay(&repository, "resource_36f").unwrap_err();
+        assert!(error.contains("roms/gs1-en.gba"));
+        let work = Path::new("out/diff-unit-test");
+        let _ = std::fs::remove_dir_all(&work);
+        std::fs::create_dir_all(&work).unwrap();
+        let patch = work.join("unit-relative-include.patch");
+        std::fs::write(&patch, "diff --git a/accessors.c b/accessors.c\n--- a/accessors.c\n+++ b/accessors.c\n@@ -1 +1 @@\n-#include \"types.h\"\n+#include \"../../../include/types.h\"\n").unwrap();
+        let arguments = [
+            "--unit",
+            "scene-event-runtime",
+            "--owner",
+            "0200003c",
+            "--patch",
+            patch.to_str().unwrap(),
+            "--first",
+            "--work",
+            work.to_str().unwrap(),
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+        let ParseOutcome::Options(options) = options_of(root(), &arguments).unwrap() else {
+            panic!("expected options")
+        };
+        let output = run(*options).unwrap();
+        let staged = root()
+            .join(work)
+            .join("try/games/gs1/src/overlays/scene_event_runtime/accessors.c");
+        assert!(std::fs::read_to_string(staged)
+            .unwrap()
+            .contains("../../../include/types.h"));
+        assert_eq!(output.matches("scope=translation-unit").count(), 1);
+        assert_eq!(output.matches("owner=0x0200003c").count(), 1);
+        assert_eq!(output.matches("differing_halfwords=0").count(), 1);
+        assert_eq!(output.matches("compile=fresh").count(), 0);
+        assert_eq!(output.matches("compile=shared-object").count(), 1);
+        let _ = std::fs::remove_dir_all(work);
+    }
+}

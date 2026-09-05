@@ -1,0 +1,23 @@
+[workspace]
+
+[package]
+name = "decompile"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "decompile"
+path = "src/lib.rs"
+
+[dependencies]
+# Sibling crates: the canonical ROM reader and the owner register.
+compiler-core = { path = "../compiler-core" }
+disassemble = { path = "../disassemble" }
+diff = { path = "../diff" }
+tempfile = "3"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[profile.release]
+opt-level = 3
+lto = true

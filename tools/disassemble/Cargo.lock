@@ -46,14 +46,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "candidate-compiler"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "decomp-targets",
-]
-
-[[package]]
 name = "cc"
 version = "1.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -99,24 +91,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "decomp-targets"
-version = "0.1.0"
-
-[[package]]
-name = "diff"
-version = "0.1.0"
-dependencies = [
- "cache-entry",
- "candidate-compiler",
- "compiler-core",
- "disassemble",
- "regex",
- "serde",
- "serde_json",
- "sha2",
-]
-
-[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -136,12 +110,6 @@ dependencies = [
  "regex",
  "tempfile",
 ]
-
-[[package]]
-name = "equivalent"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "errno"
@@ -222,28 +190,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "hashbrown"
-version = "0.17.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
-
-[[package]]
 name = "hashlink"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ba4ff7128dee98c7dc9794b6a411377e1404dba1c97deb8d1a55297bd25d8af"
 dependencies = [
- "hashbrown 0.14.5",
-]
-
-[[package]]
-name = "indexmap"
-version = "2.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
-dependencies = [
- "equivalent",
- "hashbrown 0.17.1",
+ "hashbrown",
 ]
 
 [[package]]
@@ -282,34 +234,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
-name = "no-asm-c"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "decomp-targets",
- "regex",
- "tempfile",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
-
-[[package]]
-name = "overlay-adopt"
-version = "0.1.0"
-dependencies = [
- "candidate-compiler",
- "compiler-core",
- "diff",
- "disassemble",
- "no-asm-c",
- "serde",
- "serde_json",
- "tempfile",
-]
 
 [[package]]
 name = "pkg-config"
@@ -433,7 +361,6 @@ version = "1.0.151"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
 dependencies = [
- "indexmap",
  "itoa",
  "memchr",
  "serde",

@@ -1,7 +1,7 @@
 use crate::{overlay_assembly, park::placeholder_block};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::thumb::{reference_map, relocation_info, Reference};
-use overlay_disasm::{decode_overlay, resource_table, OVERLAY_BASE};
+use disassemble::{decode_overlay, resource_table, OVERLAY_BASE};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};

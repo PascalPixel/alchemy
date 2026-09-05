@@ -103,6 +103,18 @@ name = "decomp-targets"
 version = "0.1.0"
 
 [[package]]
+name = "decompile"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "diff",
+ "disassemble",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
 name = "diff"
 version = "0.1.0"
 dependencies = [
@@ -238,9 +250,9 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.14.0"
+version = "2.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
+checksum = "07aa2048142242915a31d35844fb311e0e53fcca590c3a0a40dcf1b841fa09eb"
 dependencies = [
  "equivalent",
  "hashbrown 0.17.1",
@@ -282,34 +294,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
-name = "no-asm-c"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "decomp-targets",
- "regex",
- "tempfile",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
-
-[[package]]
-name = "overlay-adopt"
-version = "0.1.0"
-dependencies = [
- "candidate-compiler",
- "compiler-core",
- "diff",
- "disassemble",
- "no-asm-c",
- "serde",
- "serde_json",
- "tempfile",
-]
 
 [[package]]
 name = "pkg-config"
@@ -424,7 +412,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 3.0.3",
+ "syn 3.0.4",
 ]
 
 [[package]]
@@ -477,9 +465,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "3.0.3"
+version = "3.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53e9bae58849f64dfa4f5d5ae372c8341f7305f82a3868709269343628b659a3"
+checksum = "e6275cddf4610d1775e6d1fe9469b2e77d0f39fd98fb7450901b821e0c53649f"
 dependencies = [
  "proc-macro2",
  "quote",

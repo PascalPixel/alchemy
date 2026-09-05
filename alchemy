@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")"
+exec cargo run --offline --quiet --release --manifest-path tools/alchemy/Cargo.toml -- "$@"

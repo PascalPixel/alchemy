@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+name = "matching"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+compiler-core = { path = "../compiler-core" }
+candidate-compiler = { path = "../candidate-compiler" }
+diff = { path = "../diff" }
+disassemble = { path = "../disassemble" }
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+tempfile = "3"
+regex = "1"
+
+[lib]
+name = "matching"
+path = "src/lib.rs"

@@ -1,4 +1,4 @@
 #!/bin/sh
 # Validate the DONE prefix against the current byte-identical production build.
 exec cargo run --offline --quiet --release \
-  --manifest-path tools/check/Cargo.toml -- check-commit-progress "$1"
+  --manifest-path tools/alchemy/Cargo.toml -- check commit-progress "$1"

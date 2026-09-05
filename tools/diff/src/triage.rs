@@ -44,9 +44,7 @@ impl ResidualClass {
     pub fn playbook(&self) -> Option<&'static str> {
         self.route().1
     }
-    /// The literal command to run next. Agents act on printed commands far
-    /// more reliably than on documentation, so the router speaks in commands:
-    /// {source} is the candidate path, {owner} the address-qualified owner.
+    /// Next command; {source} is the candidate path, {owner} the qualified owner.
     pub fn next_command(&self) -> &'static str {
         match self {
             Self::Exact => "check integrate --apply games/gs1/recon/en/main (registers in source-paths.json first)",
@@ -62,7 +60,7 @@ impl ResidualClass {
                 "alchemy diff {source} --align (recover widths and signedness from the access-width evidence)"
             }
             Self::StructuralTopology => {
-                "alchemy diff {source} --allocator-order (repair the named branch divergences before anything else)"
+                "alchemy diff {source} --allocator-order (inspect named branch evidence; without a repair, inspect destinations and block contents)"
             }
             Self::MissingExtraCode => {
                 "alchemy diff {source} --align --first (reconstruct the absent or surplus statements the diff names)"

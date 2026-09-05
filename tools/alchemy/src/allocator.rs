@@ -78,19 +78,23 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|e| e.to_string())?
         .keep();
     let src = repo.join(&source);
-    let dir = src.parent().unwrap_or(&repo).to_path_buf();
     let bundle = repo.join("alchemy-gcc/dist");
-    checked(
-        &bundle.join("cpp"),
-        &[
-            "-nostdinc".into(),
-            format!("-I{}", repo.join("games/gs1/include").display()),
-            format!("-I{}", dir.display()),
-            src.to_string_lossy().into_owned(),
-            work.join("in.i").to_string_lossy().into_owned(),
-        ],
-        &repo,
-    )?;
+    let mut cpp = compiler_core::plan::direct_preprocessor_command(
+        &src.to_string_lossy(),
+        &work.join("in.i").to_string_lossy(),
+    )
+    .map_err(|e| e.to_string())?;
+    let bindings = work.join("bindings.h");
+    fs::write(
+        &bindings,
+        candidate_compiler::verify::source_symbol_bindings(&repo, &source, CompilerTarget::Gs1)?,
+    )
+    .map_err(|e| e.to_string())?;
+    cpp.splice(
+        1..1,
+        ["-include".into(), bindings.to_string_lossy().into_owned()],
+    );
+    checked(Path::new(&cpp[0]), &cpp[1..], &repo)?;
     let mut cc1 = cflags_for_target_source(CompilerTarget::Gs1, &source);
     cc1.retain(|flag| flag != "-nostdinc" && !flag.starts_with("-I"));
     cc1.extend([

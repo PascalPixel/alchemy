@@ -5,7 +5,6 @@ u32 Func_08004458(void);
 u8 *Func_08077008(s32 unit_id);
 void Func_080bd424(void *entry, s32 arg1);
 
-#define BattlePresentation_BuildOpponentEntries Func_080b9324
 
 struct BattlePresentationOpponentEntry {
     u16 unit_id;
@@ -20,12 +19,11 @@ struct BattlePresentationOpponentEntry {
 s32 BattlePresentation_BuildOpponentEntries(
     struct BattlePresentationOpponentEntry *entries)
 {
-    u8 *battle = *(u8 **)0x03001e74;
     u16 unit_ids[14];
     s32 entry_count = 0;
+    u8 *battle = *(u8 **)0x03001e74;
     s32 unit_count;
-    s32 shuffle_index;
-    s32 unit_index;
+    s32 i;
 
     if (battle[0x45] == 1) {
         return 0;
@@ -36,10 +34,10 @@ s32 BattlePresentation_BuildOpponentEntries(
         return 0;
     }
 
-    for (shuffle_index = 31; shuffle_index >= 0; shuffle_index--) {
+    for (i = 31; i >= 0; i--) {
         u32 first = (u32)(unit_count * Func_08004458()) >> 16;
         u32 second = (u32)(unit_count * Func_08004458()) >> 16;
-        u16 swap = unit_ids[first];
+        s32 swap = unit_ids[first];
         unit_ids[first] = unit_ids[second];
         unit_ids[second] = swap;
     }
@@ -55,20 +53,21 @@ s32 BattlePresentation_BuildOpponentEntries(
         }
     }
 
-    for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        u16 unit_id = unit_ids[unit_index];
+    for (i = 0; i < unit_count; i++) {
+        s32 unit_id = unit_ids[i];
         u8 *unit = Func_08077008(unit_id);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
             struct BattlePresentationOpponentEntry *entry =
                 &entries[entry_count];
-            s16 value = *(u16 *)(unit + 0x40);
+            s32 value;
 
             entry->unit_id = unit_id;
+            value = *(u16 *)(unit + 0x40);
             entry->value = value;
             if (copy_index != 0) {
-                entry->value = value / 2;
+                entry->value = (s16)value / 2;
             }
 
             if (unit[0x13c] != 0 || unit[0x13b] != 0) {

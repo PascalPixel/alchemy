@@ -1,6 +1,8 @@
 #include "types.h"
 #include "fixed_math.h"
 
+#define BattleFormation_SelectLevelMatchedCandidate Func_080c1afc
+
 u32 Random16(void);
 
 struct BattleUnitLevel {
@@ -21,9 +23,9 @@ void *Func_08077198(s32 id);
 s32 Func_080770d0(s32 id);
 s32 Func_080770e0(s32 id);
 void Func_08002df0(void *ptr);
-extern const u16 Data_080c73f8[];
+extern u16 Data_080c73f8[];
 
-s32 Func_080c1afc(s32 *out_margin)
+s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
     s32 match_count = 0;
     struct FormationCandidate *pool =
@@ -32,21 +34,21 @@ s32 Func_080c1afc(s32 *out_margin)
     s32 level_total = 0;
     s32 unit_count = Func_080b6a60(party);
     s32 i;
+    s32 j;
     s32 chance;
-    s32 record_id;
     s32 result;
 
     if (unit_count > 0) {
         u16 *p = party;
-        s32 n = unit_count;
 
+        i = unit_count;
         do {
             u8 level = Runtime_GetObject((s32)*p)->level;
 
-            n--;
+            i--;
             p++;
             level_total += level;
-        } while (n != 0);
+        } while (i != 0);
     }
 
     chance = FixedPoint_Ratio(level_total, unit_count);
@@ -59,28 +61,28 @@ s32 Func_080c1afc(s32 *out_margin)
     for (i = 0; i <= 31; i++)
         pool[i].score = -1;
 
-    for (i = 0; i <= 19; i++) {
+    for (i = 0; (u32)i <= 19; i++) {
         Func_08077198(Data_080c73f8[i]);
         Func_080770d0(Data_080c73f8[i] + 1536);
     }
 
-    for (record_id = 0; (u32)record_id <= 379; record_id++) {
-        s32 score = Party_ComputeEligibleMemberAverage(record_id);
+    for (i = 0; (u32)i <= 379; i++) {
+        s32 score = Party_ComputeEligibleMemberAverage(i);
 
         if (score >= 0 && score <= chance + 3) {
-            s32 min_value = 999;
             s32 min_index = -1;
+            s32 min_value;
 
-            for (i = 0; i <= 31; i++) {
-                if (pool[i].score < min_value) {
-                    min_value = pool[i].score;
-                    min_index = i;
+            for (j = 0, min_value = 999; j <= 31; j++) {
+                if (pool[j].score < min_value) {
+                    min_value = pool[j].score;
+                    min_index = j;
                 }
             }
 
             if (min_index >= 0) {
                 pool[min_index].score = (s16)score;
-                pool[min_index].record_id = (s16)record_id;
+                pool[min_index].record_id = (s16)i;
                 match_count++;
             }
         }

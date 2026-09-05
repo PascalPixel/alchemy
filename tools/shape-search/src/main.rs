@@ -7,6 +7,12 @@
 //! candidate is a legal respelling.
 //!
 //!   shape-search <owner-hex> [rounds]
+//!   shape-search --source FILE --owner <overlay>:<addressHex> --span N [rounds]
+//!
+//! The second form scores FILE directly (edited in place, same as the first
+//! form) via `overlay score FILE --owner <owner> --span N` instead of the
+//! main-image `compiler candidate-show`. Everything past scoring is
+//! identical: same mutation engine, same greedy accept-on-improvement loop.
 
 use regex::Regex;
 use std::collections::BTreeSet;
@@ -29,21 +35,58 @@ fn main() -> ExitCode {
     }
 }
 
+const USAGE: &str = "usage: shape-search <owner-hex> [rounds]\n   or: shape-search --source FILE --owner <overlay>:<addressHex> --span N [rounds]";
+
 fn run() -> Result<(), String> {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let owner = args
-        .first()
-        .cloned()
-        .ok_or("usage: shape-search <owner-hex> [rounds]")?;
-    let rounds: usize = args.get(1).and_then(|r| r.parse().ok()).unwrap_or(4);
     let repo = std::env::current_dir().map_err(|e| e.to_string())?;
-    let relative = format!("games/gs1/recon/en/main/{owner}.c");
-    let file: PathBuf = repo.join(&relative);
-    let scorer = repo.join("out/cargo-target/release/compiler");
+
+    let (owner, file, scorer, scorer_args, rounds): (String, PathBuf, PathBuf, Vec<String>, usize) =
+        if args.first().map(String::as_str) == Some("--source") {
+            let (mut source, mut owner_opt, mut span_opt) = (None, None, None);
+            let mut rest = Vec::new();
+            let mut it = args.iter();
+            while let Some(a) = it.next() {
+                match a.as_str() {
+                    "--source" => source = Some(it.next().ok_or(USAGE)?.clone()),
+                    "--owner" => owner_opt = Some(it.next().ok_or(USAGE)?.clone()),
+                    "--span" => span_opt = Some(it.next().ok_or(USAGE)?.clone()),
+                    other => rest.push(other.to_string()),
+                }
+            }
+            let file = repo.join(source.ok_or(USAGE)?);
+            let owner = owner_opt.ok_or(USAGE)?;
+            let span = span_opt.ok_or(USAGE)?;
+            let rounds = rest.first().and_then(|r| r.parse().ok()).unwrap_or(4);
+            let scorer = repo.join("out/cargo-target/release/overlay");
+            let scorer_args = vec![
+                "score".to_string(),
+                file.to_string_lossy().into_owned(),
+                "--owner".to_string(),
+                owner.clone(),
+                "--span".to_string(),
+                span,
+            ];
+            (owner, file, scorer, scorer_args, rounds)
+        } else {
+            let owner = args.first().cloned().ok_or(USAGE)?;
+            let rounds = args.get(1).and_then(|r| r.parse().ok()).unwrap_or(4);
+            let relative = format!("games/gs1/recon/en/main/{owner}.c");
+            let file = repo.join(&relative);
+            let scorer = repo.join("out/cargo-target/release/compiler");
+            let scorer_args = vec![
+                "candidate-show".to_string(),
+                relative,
+                "--owner".to_string(),
+                owner.clone(),
+            ];
+            (owner, file, scorer, scorer_args, rounds)
+        };
+
     let score = |_: &()| -> u64 {
         let output = Command::new(&scorer)
             .current_dir(&repo)
-            .args(["candidate-show", &relative, "--owner", &owner])
+            .args(&scorer_args)
             .output();
         let Ok(output) = output else { return u64::MAX };
         let text = String::from_utf8_lossy(&output.stdout);

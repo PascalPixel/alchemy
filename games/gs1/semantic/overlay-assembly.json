@@ -3671,18 +3671,6 @@
       ]
     },
     {
-      "overlay": "resource_376",
-      "start": "0x02000368",
-      "end": "0x020004dc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 32 calls, 0 loop(s), 2 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_376:02000368"
-      ]
-    },
-    {
       "overlay": "resource_377",
       "start": "0x020013e2",
       "end": "0x020013e4",

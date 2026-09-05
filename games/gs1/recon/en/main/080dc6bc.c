@@ -29,7 +29,7 @@
  * `bl Func_080072f0`/`bl Func_080072f4` are the r3/r4 entries of the
  * fourteen-slot `_call_via_rN` trampoline bundle at games/gs1/asm/
  * 080072e4.s (`bx rN; mov r8,r8` at 0x080072e4+4*N), not real functions:
- * arm_function_arg (alchemy-gcc/agscc/gcc/config/arm/arm.c) never places an
+ * arm_function_arg (agscc/gcc/config/arm/arm.c) never places an
  * argument in r4, and tracing r3/r4's values back confirms both are
  * function-pointer casts, exactly the already-adopted member_orbit/run.c's
  * own `((DrawRectangleFn)rectangle_slot[slot & 1])(...)` idiom.

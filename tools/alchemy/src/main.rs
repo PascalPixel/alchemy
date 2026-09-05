@@ -49,6 +49,14 @@ fn main() -> ExitCode {
             scaffold::entry(&rest[1..])
         }
         "unit" if rest.first().map(String::as_str) == Some("flatten") => flatten::entry(&rest[1..]),
+        "unit" => {
+            println!("usage: alchemy unit <scaffold|flatten> [args]");
+            if rest == ["--help"] || rest == ["-h"] {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::from(2)
+            }
+        }
         "assets" if rest.first().map(String::as_str) == Some("font") => font::entry(&rest[1..]),
         "build" if rest.first().map(String::as_str) == Some("assets") => {
             build_assets::entry(&rest[1..])
@@ -77,13 +85,7 @@ fn main() -> ExitCode {
         "cross-edition" => result(cross_edition::run(rest)),
         "families" => result(families::run(rest)),
         "waves" => result(waves::run(rest)),
-        "match" => match matching::run(rest.to_vec()) {
-            Ok(()) => ExitCode::SUCCESS,
-            Err(error) => {
-                eprintln!("error: {error}");
-                ExitCode::FAILURE
-            }
-        },
+        "match" => result(matching::run(rest.to_vec())),
         "dashboard" => {
             dashboard_server::cli::entry(rest);
             ExitCode::SUCCESS

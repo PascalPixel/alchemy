@@ -38,12 +38,16 @@ pub fn entry(args: &[String]) -> ExitCode {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    const USAGE: &str =
+        "usage: alchemy unit scaffold <game> <unit-id> <start-hex> <end-hex> [--apply]";
+    if args == ["--help"] || args == ["-h"] {
+        println!("{USAGE}");
+        return Ok(());
+    }
     let apply = args.iter().any(|a| a == "--apply");
     let positional: Vec<&String> = args.iter().filter(|a| *a != "--apply").collect();
     let [game, unit_id, start_hex, end_hex] = positional[..] else {
-        return Err(
-            "usage: alchemy unit scaffold <game> <unit-id> <start-hex> <end-hex> [--apply]".into(),
-        );
+        return Err(USAGE.into());
     };
     let start = u32::from_str_radix(start_hex.trim_start_matches("0x"), 16)
         .map_err(|_| "start is not hex")?;

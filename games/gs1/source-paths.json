@@ -17242,6 +17242,10 @@
     "main:080bad7c": {
       "name": "BattleTarget_SelectRandomPosition",
       "source": "battle/target/select_random_position.c"
+    },
+    "main:080292c4": {
+      "name": "Menu_DrawFlagBitTable",
+      "source": "menu/draw_flag_bit_table.c"
     }
   }
 }

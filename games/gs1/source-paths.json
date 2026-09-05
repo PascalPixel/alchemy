@@ -12055,7 +12055,8 @@
       "name": "BattlePresentation_RunPairedUnitTransition"
     },
     "main:080b920c": {
-      "name": "BattlePresentation_BuildUnitEntries"
+      "name": "BattlePresentation_BuildUnitEntries",
+      "source": "battle/presentation/build_unit_entries.c"
     },
     "main:080b9324": {
       "name": "BattlePresentation_BuildOpponentEntries"

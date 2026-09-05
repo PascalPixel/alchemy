@@ -49,7 +49,7 @@ s32 BattleStatusIcon_Cycle(struct BattleStatusIconRecord *record)
     struct EffectContext *context;
     struct BattleStatusIconOwner *owner;
     s32 effect_id;
-    s32 previous_condition;
+    s32 prev;
     s32 changed = 0;
 
     if (record->cycle_timer >= 0)
@@ -72,15 +72,15 @@ update:
     effect_id = -1;
     owner = record->owner;
     if ((s16)record->active_conditions != 0) {
-        previous_condition = record->selected_condition;
-        for (effect_id = previous_condition + 1;; effect_id++) {
+        prev = record->selected_condition;
+        for (effect_id = prev + 1;; effect_id++) {
             if (effect_id > 13)
                 effect_id = 0;
             if ((((s16)record->active_conditions >> effect_id) & 1) != 0)
                 break;
         }
 
-        if (previous_condition != effect_id || old_effect == 0) {
+        if (prev != effect_id || old_effect == 0) {
             record->selected_condition = effect_id;
             changed = 1;
         }

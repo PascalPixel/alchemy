@@ -10,7 +10,6 @@ void Func_0200391e(s32);
 void Func_02003996(s32);
 void Func_020038e2(s32);
 
-#define TurnActorToSceneDirection Func_02001be4
 void TurnActorToSceneDirection(s32 actor_id)
 {
     Func_020072be(actor_id, 0, 0);

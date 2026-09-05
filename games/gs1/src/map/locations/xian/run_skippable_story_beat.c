@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSkippableStoryBeat Func_02001d50
-
 extern void Func_02006130(void);
 extern void Func_02006148();
 extern s32 Func_0200615e(s32 arg0, s32 arg1);

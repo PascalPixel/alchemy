@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor16CountedDialogue Func_020006b4
-
 /* Complete actor-16 conditional-counter dialogue scene through its pool. */
 struct SceneWork_020006b4 {
     u8 reserved000[472];

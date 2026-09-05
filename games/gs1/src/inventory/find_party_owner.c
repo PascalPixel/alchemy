@@ -6,7 +6,7 @@ s32 PartyInventory_FindOwner(s32 item_id)
     s32 owner_count;
     s32 owner_index;
     s16 *owner_cursor;
-    s16 candidate_owner;
+    s16 owner;
 
     if (Inventory_Find(Data_02000240.current_owner, item_id) != -1)
         return Data_02000240.current_owner;
@@ -15,9 +15,9 @@ s32 PartyInventory_FindOwner(s32 item_id)
     owner_index = 0;
     if (owner_index < owner_count) {
         do {
-            candidate_owner = *owner_cursor++;
-            if (Inventory_Find(candidate_owner, item_id) != -1)
-                return candidate_owner;
+            owner = *owner_cursor++;
+            if (Inventory_Find(owner, item_id) != -1)
+                return owner;
             owner_index++;
         } while (owner_index < owner_count);
     }

@@ -17,37 +17,37 @@ extern u8 Data_080373ef[];
 extern u8 Data_0000001f;
 
 void RenderOutput_PrepareForRedraw(void *work);
-void UiText_DrawCharacter(s32 resource_id, void *work, s32 arg2, s32 arg3);
+void UiText_DrawCharacter(s32 resource_id, void *work, s32 x, s32 y);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
-static inline s32 AbsoluteDifference(s32 difference, s32 lhs, s32 rhs)
+static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
 {
-    if (difference >= 0)
-        return difference;
+    if (diff >= 0)
+        return diff;
     return rhs - lhs;
 }
 
-s32 Menu_SelectResource(s32 initial_selection, s32 target_selection)
+s32 Menu_SelectResource(s32 start, s32 goal)
 {
     s16 resource_base;
-    s16 current_selection;
-    s32 difference;
+    s16 cur;
+    s32 diff;
     s32 resource_id;
-    s32 distance;
-    s32 current_selection_index;
-    s32 selection_step;
-    s32 frame_delay;
-    const u8 *selection_delay_table;
+    s32 dist;
+    s32 pos;
+    s32 step;
+    s32 delay;
+    const u8 *tbl;
     struct MenuSelectionState *state;
 
     state = Data_03001f38;
-    selection_step = 1;
-    frame_delay = 12;
-    state->selection = (s16)initial_selection;
-    if (target_selection < initial_selection)
-        selection_step = -1;
-    current_selection_index = initial_selection;
+    step = 1;
+    delay = 12;
+    state->selection = (s16)start;
+    if (goal < start)
+        step = -1;
+    pos = start;
 
     for (;;) {
         RenderOutput_PrepareForRedraw(state->work);
@@ -59,22 +59,22 @@ s32 Menu_SelectResource(s32 initial_selection, s32 target_selection)
         }
         UiText_DrawCharacter(resource_id, state->work, 0, 0);
 
-        current_selection = state->selection;
-        selection_delay_table = Data_080373ef;
-        difference = current_selection - target_selection;
-        distance = AbsoluteDifference(difference, current_selection, target_selection);
-        WaitFrames(selection_delay_table[distance] + frame_delay);
+        cur = state->selection;
+        tbl = Data_080373ef;
+        diff = cur - goal;
+        dist = AbsoluteDifference(diff, cur, goal);
+        WaitFrames(tbl[dist] + delay);
 
-        if (current_selection_index == target_selection)
+        if (pos == goal)
             break;
 
-        state->selection = (s16)((u16)state->selection + selection_step);
+        state->selection = (s16)((u16)state->selection + step);
         Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-        frame_delay = 0;
-        current_selection_index += selection_step;
+        delay = 0;
+        pos += step;
     }
 
     WaitFrames(48);
     Audio_PlayCue(SOUND_MENU_CONFIRM);
-    return target_selection;
+    return goal;
 }

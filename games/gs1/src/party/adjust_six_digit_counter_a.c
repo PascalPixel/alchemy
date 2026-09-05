@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_AdjustSixDigitCounterA Func_08079700
-
 struct Work_08079700 {
     u8 unknown_00[0x10];
     s32 value;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ResetActorAndCenterOffsets Func_02001704
-
 /*
  * resource_399 owner at 0x02001704, 72 bytes.
  *

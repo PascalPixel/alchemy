@@ -1,8 +1,6 @@
 #include "types.h"
 #include "staged_actor.h"
 
-#define StagedActor_AdvancePair Func_020000c4
-
 extern u32 Data_0200beb4[];
 
 extern struct StagedActor *Func_02003d9c(s32 arg0);

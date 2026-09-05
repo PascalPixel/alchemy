@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEightTenStepLoop Func_02000f38
-
 extern void Func_02005dd2(void);
 extern void Func_02005e5a(s32, s32);
 extern void Func_02005e90(s32);

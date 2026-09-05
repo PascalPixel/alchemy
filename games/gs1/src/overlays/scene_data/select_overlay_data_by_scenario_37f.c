@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectOverlayDataBySelector Func_02000030
-
 extern s16 Data_02000240[];
 extern u8 Value_00000013;
 extern u8 Value_00000010;

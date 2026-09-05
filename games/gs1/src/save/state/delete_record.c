@@ -3,8 +3,6 @@
 u32 Func_08005b24(s32);
 s32 Func_08005b64(s32);
 
-#define SaveState_DeleteRecord Func_08005ac0
-
 u32 SaveState_DeleteRecord(s32 record_id)
 {
     s32 index;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_WaitUntilWordC41cIs22 Func_02000178
-
 extern u32 Data_0200c41c;
 
 extern void Func_02003c86(s32);

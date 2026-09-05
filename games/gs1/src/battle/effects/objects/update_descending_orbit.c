@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_UpdateDescendingOrbitObject Func_08095fcc
-
 struct Triple08095fcc {
     s32 x;
     s32 y;

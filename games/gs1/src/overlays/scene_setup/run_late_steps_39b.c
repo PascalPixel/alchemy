@@ -1,6 +1,4 @@
-#define FieldScene_RunActor8StepWithTableA820 Func_02001150
 
-#define FieldScene_RunIndexedStep63 Func_02001144
 /* Contiguous unnamed leaf-owner run for resource_39b. */
 
 extern void Func_020036ee();

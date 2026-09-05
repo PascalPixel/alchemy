@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Field_CheckConfiguredKeys Func_0800eaf8
-
 /* キー入力と設定表の照合。押下キーに対応する番号欄へ1を立てる。
    該当が無ければ表の値をFunc_0800ea60へ渡す。
    キー状態は割り込みで更新されるため、判定ごとに読み直す。 */

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSlot16WaypointSequence Func_02001de0
-
 extern u8 *Func_02004ba4(s32);
 extern void Func_02004b92(void);
 extern void Func_02002c9e(s32, s32);

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunFlagGatedMessageStep Func_020003b4
 #define NULL ((void *)0)
 
 void Func_02002a54(void);

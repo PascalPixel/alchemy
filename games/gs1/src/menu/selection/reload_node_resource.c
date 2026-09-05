@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_ReloadNodeResource Func_0801b9a8
-
 struct Node_0801b9a8 {
     u8 filler0[4];
     struct Node_0801b9a8 *next;

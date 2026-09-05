@@ -1,4 +1,3 @@
-#define SceneDialogue_ShowLine1EDBTo1EDDActor20 Func_0200163c
 void Func_02007b08(); void Func_02007b46(); int Func_02007ae6(); int Func_02007af8();
 void Func_02007bf8(); void Func_02007c0a(); void Func_02007c12(); void Func_02007c2a();
 /* Second-phase story selector at 0x0200163c, 84 bytes; eight calls. */

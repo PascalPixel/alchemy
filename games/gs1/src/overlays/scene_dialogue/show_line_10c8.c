@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLine10C8 Func_0200278c
-
 /*
  * resource_380 owner at 0x0200278c, 32 bytes: the talk handler for
  * actor 13, one of four byte-identical 32-byte stubs in this

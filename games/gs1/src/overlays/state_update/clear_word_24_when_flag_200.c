@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ClearWord24WhenFlag200 Func_0200158c
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];

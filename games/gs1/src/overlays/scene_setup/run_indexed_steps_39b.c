@@ -1,10 +1,4 @@
-#define SceneData_GetTablead60 Func_02000fd0
 
-#define FieldScene_RunIndexedStep19 Func_02000fc4
-
-#define FieldScene_RunIndexedStep18 Func_02000fb8
-
-#define FieldScene_RunIndexedStep17 Func_02000fac
 /* Contiguous unnamed leaf-owner run for resource_39b. */
 
 extern void Func_02001e82(int page);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ShowDialogue17DF Func_0200254c
-
 extern void Func_0200692c(void);
 extern void Func_0200694e(void);
 extern void Func_020069cc(s32 id, s32 arg1);

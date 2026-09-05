@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunActor13AtColumn42Setup Func_02001644
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

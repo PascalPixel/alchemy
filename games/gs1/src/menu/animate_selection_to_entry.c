@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_AnimateSelectionToEntry Func_0802899c
-
 void Func_0801c2d0(void);
 void *Func_080284dc(void);
 void Menu_AppendResourceEntry(s32 arg0);

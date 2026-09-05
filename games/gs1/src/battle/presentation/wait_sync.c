@@ -14,8 +14,6 @@ struct LinkWork {
 #define LINK_LOCAL ((u16 *)0x02002224)
 #define LINK_STAT (*(u16 *)0x03001f64)
 
-#define BattlePresentation_WaitSync Func_080b60a0
-
 s32 BattlePresentation_WaitSync(void)
 {
     struct LinkWork *work = LINK_WORK;

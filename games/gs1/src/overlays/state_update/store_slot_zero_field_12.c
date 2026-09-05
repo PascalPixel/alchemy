@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StoreSlotZeroField12 Func_020003c0
-
 typedef struct {
     u8 filler0[12];
     s32 unk12;

@@ -41,7 +41,6 @@ void Func_0200b89e(const SoftDouble *packed, SoftFloatRecord *record);
 SoftFloatRecord *Func_0200b298(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
 SoftDouble Func_0200b6e8(SoftFloatRecord *record);
 
-#define SubtractSoftDouble Func_02005a78
 SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
 {
     struct {

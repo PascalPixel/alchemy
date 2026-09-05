@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Map_GetCellHighFlags Func_080120b4
-
 s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
     s32 tile_x = x / 16;

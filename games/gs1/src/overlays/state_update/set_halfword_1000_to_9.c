@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetHalfword1000To9 Func_0200322c
-
 extern u16 Data_02001000;
 
 /* Complete eight-byte state setter plus its sole four-byte pool word. */

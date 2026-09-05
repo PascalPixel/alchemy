@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_MoveGridCursor Func_080a99b0
-
 s32 Menu_MoveGridCursor(s32 *arg0, s32 *arg1, s32 arg2)
 {
     s32 row;

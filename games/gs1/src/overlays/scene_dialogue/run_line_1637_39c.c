@@ -1,4 +1,3 @@
-#define SceneDialogue_RunLine1637 Func_02000f14
 void Func_0200696c();
 void Func_020069cc();
 void Func_020069e0();

@@ -2,54 +2,9 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define FieldScene_ConfigureActor0ThenRun Func_020002b4
 #define SCENE_POINTER (*(u8 *volatile *)0x03001ebc)
 
 #include "resource_38f.h"
-
-#define FieldScene_RunFlag845And847Branches Func_02002910
-
-#define SceneEffect_SetModeByFrameBit1 Func_020026a4
-
-#define SceneEffect_SpawnObject26EveryEightFrames Func_02002608
-
-#define SceneEffect_AdvanceAngleUntilIdle Func_020025d8
-
-#define FieldScene_RunPairedStepB Func_020025c0
-
-#define FieldScene_RunPairedStepA Func_020025a8
-
-#define FieldScene_RunSequenceA Func_020008d8
-
-#define FieldScene_StartEffect141Sequence Func_020008ac
-
-#define SceneActor_SetActors19To22HeightByFrameParity Func_02000800
-
-#define FieldScene_SetupEntryBySelector Func_02000694
-
-#define SceneData_SelectTableB3b0BySelector Func_02000284
-
-#define FieldScene_RunActor27Step Func_02000274
-
-#define FieldScene_RunActor16MessageBranch Func_02000230
-
-#define SceneData_SelectTableB080BySelector Func_020001dc
-
-#define SceneData_GetTableB040 Func_020001d4
-
-#define SceneData_GetTableB010ForSelector26 Func_020001ac
-
-#define SceneData_SelectTableAe60BySelector Func_0200016c
-
-#define SceneActor_TurnTowardTarget Func_02000114
-
-#define SceneEffect_UpdateFallingObject Func_020000cc
-
-#define SceneData_InitRecordTable Func_020000a0
-
-#define SceneEffect_AdvanceCounterAndSwitchMode Func_02000050
-
-#define SceneState_FlushPendingWordB698 Func_02000030
 
 struct Obj {
     s32 f00, f04, f08, f0c, f10, f14, f18, f1c;

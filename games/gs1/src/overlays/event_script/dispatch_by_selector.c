@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchBySelector Func_02001a4c
 extern u8 Data_02000240[];
 
 /*

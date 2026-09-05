@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetWorkWordsAndFlag87f Func_02004278
-
 extern void Func_02008978(void);
 extern void Func_0200897c(s32);
 extern s32 Func_02008ae4(s32, s32);

@@ -19,8 +19,6 @@ static __inline__ void ConfigureThird(s32 actor, s32 value)
     Func_02001ee2(actor, value);
 }
 
-#define ConfigureActorThirteenSceneParameters Func_020009dc
-
 void ConfigureActorThirteenSceneParameters(void)
 {
     ConfigureFirst(13, 256, 0);

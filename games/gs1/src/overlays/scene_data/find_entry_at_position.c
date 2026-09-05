@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_FindEntryAtPosition Func_02004704
-
 extern u8 Data_0200cf2c[];
 
 u8 *SceneData_FindEntryAtPosition(s32 *o) {

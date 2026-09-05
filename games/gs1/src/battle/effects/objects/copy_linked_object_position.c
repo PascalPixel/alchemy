@@ -1,8 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-#define BattleEffect_CopyLinkedObjectPosition Func_0809376c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s16 *Func_0808d394(s16);

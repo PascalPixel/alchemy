@@ -1,4 +1,3 @@
-#define SceneDialogue_ShowLine1ECETo1ED0 Func_02001324
 void Func_020077f0(); void Func_0200782e(); int Func_020077ce();
 int Func_020077e0(); void Func_020078e0(); void Func_020078f2(); void Func_020078fa();
 void Func_02007912();

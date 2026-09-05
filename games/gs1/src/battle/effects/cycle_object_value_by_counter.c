@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_CycleObjectValueByCounter Func_08096f50
-
 extern volatile s32 Data_03001e40;
 s32 Func_08002304(s32, s32);
 void Func_08009240(s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_ResolveTablePair Func_0808b1d8
-
 extern s16 Data_02000240[];
 extern const s16 Data_0809e1d8[];
 

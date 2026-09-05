@@ -3,8 +3,6 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-#define SaveState_GetLatestSequence Func_08005c2c
-
 u32 SaveState_GetLatestSequence(s32 record_id)
 {
     u16 *sequence_cursor;

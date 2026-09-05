@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetActor14Field98ByFlag200 Func_020014ac
-
 s32 Func_0200458e(s32);
 u8 *Func_020045d0(s32);
 u8 *Func_020045dc(s32);

@@ -2,6 +2,8 @@
 #include "battle_runtime.h"
 #include "sound_ids.h"
 
+#define Shop_SelectRepairItem Func_080b211c
+
 s32 Modulo(s32, s32);
 s32 FixedPoint_Ratio(s32, s32);
 void WaitFrames(s32);
@@ -21,7 +23,7 @@ extern u8 Value_00000cc2;
  * slot at a time, and hand a confirmed slot off to Func_080b2328 before
  * showing the repair-result message.
  */
-s32 Func_080b211c(s32 unit_id)
+s32 Shop_SelectRepairItem(s32 unit_id)
 {
     struct ShopRuntime *shop;
     s32 item_count;

@@ -2,8 +2,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Menu_CreateEightEntryObjects Func_080a9cf8
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Menu_CreateEightEntryObjects(s32 resource) {

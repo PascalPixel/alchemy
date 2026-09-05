@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_SetNodeCoordinates Func_0801b1ec
-
 struct Node_0801b1ec {
     u8 filler0[4];
     struct Node_0801b1ec *next;

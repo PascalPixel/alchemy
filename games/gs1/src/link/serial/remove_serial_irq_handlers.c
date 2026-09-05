@@ -7,8 +7,6 @@ typedef void (*InterruptHandler)(void);
 void Func_0800307c(s32, s32, InterruptHandler);
 #endif
 
-#define SerialRuntime_RemoveIrqHandlers Func_08006358
-
 void SerialRuntime_RemoveIrqHandlers(void)
 {
     s16 *work;

@@ -10,8 +10,6 @@
  */
 #include "types.h"
 
-#define SceneState_SetSlot17And18Selectors Func_02001f70
-
 typedef struct Slot_02001f70 {
     s32 pad0;
     s32 pad4;

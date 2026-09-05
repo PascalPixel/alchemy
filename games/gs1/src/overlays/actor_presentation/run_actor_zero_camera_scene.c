@@ -16,8 +16,6 @@ static __inline__ void SetActorDirection(s32 actor, s32 direction, s32 duration)
     Func_020025d2(actor, direction, duration);
 }
 
-#define ActorPresentation_RunActorZeroCameraScene Func_02000b0c
-
 void ActorPresentation_RunActorZeroCameraScene(void)
 {
     Func_020024f0();

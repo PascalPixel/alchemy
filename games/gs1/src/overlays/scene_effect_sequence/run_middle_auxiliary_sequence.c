@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define RunMiddleAuxiliarySequence Func_020003b0
-
 void Func_020047a2();
 void Func_020047ca();
 void Func_020047d8();

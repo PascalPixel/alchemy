@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ObjectDispatch_WaitForValue16 Func_0800c4ec
-
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void WaitFrames(s32);

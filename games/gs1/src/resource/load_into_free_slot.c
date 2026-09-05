@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource_LoadIntoFreeSlot Func_080040b4
-
 s32 Resource_CopyData(s32, s32, s32);
 s32 Resource_FindFreeSlot();
 

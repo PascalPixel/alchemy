@@ -18,7 +18,6 @@ extern void Func_0200210c();
 extern void Func_0200340c();
 extern void Func_0200212c();
 extern void Func_0200342c();
-#define DialogueLayout_ConfigureGroupOne Func_02001050
 void DialogueLayout_ConfigureGroupOne(void)
 {
     { s32 f1 = 8; s32 g1 = 29; Func_02003356(8, 42, 15, 5,  f1, g1); }

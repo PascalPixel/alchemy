@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnRandomizedBurst Func_02003c48
-
 extern void Func_020098c8(s32);
 extern void Func_0200965a(s32, s32, s32 *);
 extern u32 Func_02009646(void);

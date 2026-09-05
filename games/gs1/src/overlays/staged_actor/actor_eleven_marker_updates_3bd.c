@@ -18,8 +18,6 @@ typedef struct {
 extern Ent *Func_02004a2c(s32);
 extern s32 Func_020049ce(Ent *, Vec *);
 
-#define SceneState_MarkObjectWhenActorElevenAhead Func_02000d58
-
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)0x03001f30;
@@ -36,8 +34,6 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 }
 
 #include "types.h"
-
-#define FieldScene_RunActorElevenCellSetup Func_02000d90
 
 extern u8 *Func_02004a64(s32);
 extern void Func_02004a06(s32, s32, s32, s32, s32, s32);

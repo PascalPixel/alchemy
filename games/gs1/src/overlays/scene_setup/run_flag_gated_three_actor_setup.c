@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlagGatedThreeActorSetup Func_02001a60
-
 /*
  * resource_3b1 owner at 0x02001a60, 212 bytes.  It is gated by flag 0x922,
  * returns through `pop {r0} / bx r0` at 0x02001b16-0x02001b18, includes the

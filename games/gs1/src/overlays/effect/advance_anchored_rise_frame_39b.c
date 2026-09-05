@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_AdvanceAnchoredRiseFrame Func_02001c20
 /*
  * resource_39c owner at 0x020051b0, 64 bytes.
  * Advances a frame counter and, while it is still within 31, reseeds the two

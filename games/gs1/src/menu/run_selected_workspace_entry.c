@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_RunSelectedWorkspaceEntry Func_0801d94c
-
 extern u8 *Data_03001ea0;
 void Func_080b0020(void *);
 void Func_080217a4(struct Object *object);

@@ -18,7 +18,6 @@ extern void Func_02005a32(s32 cue);
 extern void Func_02005a4a(s32 actorId, s32 mode);
 extern void Func_020059b6(void);
 
-#define RunPartyCountInteraction Func_02001c7c
 #define GetPartyInteractionRecord Func_0200593a
 #define FinishPartyInteractionRecordRead Func_0200592e
 #define GetPartyMemberCount Func_0200590a

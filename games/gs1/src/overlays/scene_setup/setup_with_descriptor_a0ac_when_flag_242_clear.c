@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear Func_02000ba8
-
 extern u8 Data_0200a0ac[];
 
 extern s32 Func_02002612(s32);

@@ -2,42 +2,6 @@
 
 #include "resource_3ac.h"
 
-#define SceneDialogue_RunActor22FacingDialogue Func_02000454
-
-#define SceneState_SetRuntimeWord448To521 Func_020003dc
-
-#define SceneDialogue_RunActor15FacingFlaggedDialogue Func_02000374
-
-#define SceneDialogue_RunActor15FlaggedDialogue Func_02000338
-
-#define SceneDialogue_RunActor14FacingFlaggedDialogue Func_020002d0
-
-#define SceneDialogue_RunActor14FlaggedDialogue Func_02000294
-
-#define SceneDialogue_RunActor16FacingFlaggedDialogue Func_02000224
-
-#define SceneDialogue_RunActor16FlaggedDialogue Func_020001d8
-
-#define SceneDialogue_RunActor21FlaggedDialogue Func_0200016c
-
-#define SceneDialogue_RunActor18Dialogue Func_0200014c
-
-#define SceneDialogue_RunActor20DialogueB Func_02000124
-
-#define SceneDialogue_RunActor20DialogueA Func_020000fc
-
-#define SceneDialogue_RunActor17FlaggedDialogue Func_0200008c
-
-#define SceneData_SelectTableBySubStateAndFlag941 Func_0200004c
-
-#define SceneData_GetTable865c Func_02000044
-
-#define SceneData_GetTable8630 Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetTable84f8 Func_02000030
-
 typedef struct {
     u8 filler0[6];
     u16 unk6;

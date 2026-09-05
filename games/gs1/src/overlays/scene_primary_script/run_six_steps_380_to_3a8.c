@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSixSteps380To3A8 Func_02001d20
-
 extern void Func_0200599a(s32, s32);
 extern void Func_020059a4(s32, s32);
 extern void Func_020059ae(s32, s32);

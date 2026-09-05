@@ -1,7 +1,5 @@
 #include "effect_runtime.h"
 
-#define BattleEffect_HasMatchingEvent5 Func_0808e96c
-
 s32 Func_0808e4b4(s32, u16, void *);
 
 s32 BattleEffect_HasMatchingEvent5(s32 effectId) {

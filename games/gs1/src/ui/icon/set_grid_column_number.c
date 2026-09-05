@@ -1,8 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-#define Ui_SetGridColumnNumber Func_08012de8
-
 extern u8 *Data_03001e60;
 void Func_0800b868(void *);
 

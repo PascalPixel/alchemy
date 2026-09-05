@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunRect73x38Step Func_02001318
-
 extern void Func_02004412(void);
 extern void Func_020043ce(s32, s32, s32, s32, s32, s32);
 extern void Func_020013fa(void);

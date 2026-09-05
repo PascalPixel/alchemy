@@ -26,8 +26,6 @@
  */
 #include "types.h"
 
-#define Graphics_BuildSequentialTileTable Func_080c0098
-
 void Func_080072f0(s32 *, s32, s32, s32);
 
 void Graphics_BuildSequentialTileTable(s32 *destination)

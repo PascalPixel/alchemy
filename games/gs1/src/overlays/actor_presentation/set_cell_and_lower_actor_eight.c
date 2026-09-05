@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetCellAndLowerActorEight Func_0200047c
-
 extern s32 *Func_0200401c(s32);
 extern void Func_02003fc2(s32, s32, s32, s32, s32, s32);
 extern void Func_02003fd6(s32 *, s32);

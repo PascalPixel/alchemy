@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFourRectsAt48_55 Func_02001da0
-
 extern void Func_0200428e(s32, s32, s32, s32, s32, s32);
 extern void Func_020042a0(s32, s32, s32, s32, s32, s32);
 extern void Func_020042b2(s32, s32, s32, s32, s32, s32);

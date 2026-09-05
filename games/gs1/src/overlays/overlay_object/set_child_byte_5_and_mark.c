@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetChildByte5AndMark Func_0200209c
-
 extern u8 Data_0200c8bc[];
 
 void OverlayObject_SetChildByte5AndMark(u8 *o, s32 n)

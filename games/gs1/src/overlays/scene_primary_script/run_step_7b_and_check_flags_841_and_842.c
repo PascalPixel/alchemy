@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunStep7BAndCheckFlags841And842 Func_0200020c
-
 extern void Func_02004ac6(s32);
 extern s32 Func_020048f4(s32);
 extern s32 Func_020048fe(s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyLevelFromFlags Func_020012dc
-
 /*
  * Resource 3b1 unindexed helper at 0x020012dc (72 bytes incl. three-word
  * pool, 9 calls).

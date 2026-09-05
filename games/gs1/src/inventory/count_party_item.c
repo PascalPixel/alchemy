@@ -8,12 +8,12 @@ s32 PartyInventory_CountItem(s32 item_id)
 
     if (item_count < owner_count) {
         u16 *owner_cursor = owners;
-        s32 remaining_owners = owner_count;
+        s32 n = owner_count;
 
         do {
             item_count += Inventory_CountItem(*owner_cursor++, item_id);
-            remaining_owners--;
-        } while (remaining_owners != 0);
+            n--;
+        } while (n != 0);
     }
     return item_count;
 }

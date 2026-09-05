@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_WaitHeightBelowLimit Func_02000da8
-
 /*
  * Resource 3b3 unindexed helper at 0x02000da8 (52 bytes, 2 calls).
  *

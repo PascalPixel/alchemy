@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor9Line Func_02000844
-
 extern void Func_02002228(void);
 extern void Func_020022be(s32);
 /* Returns a value: the reference sets r1 before r0 at this site, which

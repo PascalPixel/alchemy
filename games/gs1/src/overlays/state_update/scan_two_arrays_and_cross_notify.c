@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ScanTwoArraysAndCrossNotify Func_020063ac
-
 /*
  * Resource 3b1 unindexed helper at 0x020063ac (116 bytes, 2 calls).
  *

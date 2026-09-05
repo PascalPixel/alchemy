@@ -1,12 +1,4 @@
-#define FieldScene_RunActor12Step Func_02000588
 
-#define FieldScene_RunActor11Step Func_0200057c
-
-#define FieldScene_RunActor10Step Func_02000570
-
-#define FieldScene_RunActor9Step Func_02000564
-
-#define FieldScene_RunActor8Step Func_02000558
 /* Contiguous unnamed leaf-owner run for resource_3c0. */
 
 extern void Func_020009c2(int actor);

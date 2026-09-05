@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFiveRectsAtColumn78 Func_02003950
-
 extern void Func_02007bfa(s32, s32, s32, s32, s32, s32);
 extern void Func_02007c0a(s32, s32, s32, s32, s32, s32);
 extern void Func_02007c1c(s32, s32, s32, s32, s32, s32);

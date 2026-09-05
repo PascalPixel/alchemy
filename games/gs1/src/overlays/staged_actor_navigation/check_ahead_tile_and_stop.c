@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CheckAheadTileAndStop Func_020002a8
-
 typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
 typedef struct { u8 filler0[0x28]; s16 *unk28; } Sub;
 typedef struct {

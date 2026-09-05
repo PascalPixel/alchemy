@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_UpdateRandomTimerLevel Func_0200135c
-
 extern s32 Data_0200bb70;
 extern s32 Data_0200bb6c;
 extern s32 Data_0200bb68;

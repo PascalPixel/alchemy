@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSequence111F Func_0200010c
 #define NULL ((void *)0)
 
 void Func_020027ac(void);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSupplementalSequenceTwo Func_020049a0
-
 /* Audited retained supplemental scene body.
  * The complete production span preserves 49 calls, 0 loop(s), and 0 explicit memory operation(s).
  * Approved GCC changes scheduling, allocation, control-flow lowering, and

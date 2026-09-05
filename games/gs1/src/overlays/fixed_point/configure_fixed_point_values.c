@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ConfigureFixedPointValues Func_0200007c
-
 extern void Func_02001172(s32, s32, s32, s32, s32, s32, s32);
 
 void FieldScene_ConfigureFixedPointValues(void)

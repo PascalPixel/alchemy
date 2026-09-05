@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ObjectEffect_BeginContextEffect25 Func_08094368
-
 s32 GameFlag_Set(s32);
 void ObjectEffect_PrepareContextEffect(s32);
 

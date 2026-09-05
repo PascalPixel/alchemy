@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Runtime_SetWorkTripleIfNonNegative Func_08012330
-
 struct Work_08012330 {
     s32 unknown_00;
     s32 value_04;

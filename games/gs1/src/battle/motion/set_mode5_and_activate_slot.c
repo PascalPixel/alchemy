@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleMotion_SetMode5AndActivateSlot Func_080b8ec4
-
 struct Creature_080b8ec4 {
   u8 padding_00[0x38];
   s16 field_38;

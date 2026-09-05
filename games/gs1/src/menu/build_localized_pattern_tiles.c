@@ -17,8 +17,6 @@ extern const struct TileMask Data_08037250[];
 #define MaskTbl Data_08037250
 #define FillWords ((FillProc)0x03000168)
 
-#define Menu_BuildLocalizedPatternTiles Func_08021848
-
 s32 Menu_BuildLocalizedPatternTiles(void)
 {
     u32 *vram = (u32 *)0x06006280;

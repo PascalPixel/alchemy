@@ -9,8 +9,6 @@ extern u16 Data_03001cf8;
 
 s32 Func_080022ec(s32 numerator, s32 denominator);
 
-#define BlendTransition_Update Func_08003adc
-
 void BlendTransition_Update(void)
 {
     if (Data_03001c98 != 0) {

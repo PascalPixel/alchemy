@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ToggleField84Bit0 Func_0200033c
-
 /* Complete 16-byte flag-toggle leaf, including its alignment halfword. */
 s32 OverlayObject_ToggleField84Bit0(u8 *obj)
 {

@@ -1,8 +1,6 @@
 #include "global_progress.h"
 #include "types.h"
 
-#define Party_AdjustCounterCappedAt28 Func_08079754
-
 s32 Party_AdjustCounterCappedAt28(s32 amount)
 {
     s32 value;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_RunConfirmSelection Func_08028df4
-
 void *Func_080284dc(void);
 void Menu_AppendResourceEntry(s32 arg0);
 s32 Func_08028808(s32, s32, s32);

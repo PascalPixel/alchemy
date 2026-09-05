@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_PrepareTransferFromTableEntry Func_0801a4c0
-
 struct State_0801a4c0 {
     u8 filler0[0x600];
     u16 first;

@@ -25,8 +25,6 @@
  */
 #include "types.h"
 
-#define BattleEffect_RunEventAction Func_08096b28
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_080072f0(s32, s32);

@@ -9,8 +9,6 @@ extern void Func_020050dc(s32);
 extern void Func_020051cc(s32, s32);
 extern void Func_020050f8(void);
 
-#define SceneState_RunGuardedActorStep Func_02000378
-
 void SceneState_RunGuardedActorStep(s32 x)
 {
     u8 *flag = (u8 *)Func_020050fe() + 91;
@@ -26,8 +24,6 @@ void SceneState_RunGuardedActorStep(s32 x)
 }
 
 #include "types.h"
-
-#define SceneDialogue_PromptAndCountSkip Func_020003bc
 
 extern u8 *Data_03001ebc;
 

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneEventRuntime_SelectInitialSceneByFlags Func_02000054
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_RemapBytesByTable Func_0800f9cc
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 extern u8 Data_080097b8[];

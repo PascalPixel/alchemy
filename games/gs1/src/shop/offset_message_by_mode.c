@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_OffsetMessageByMode Func_080b2884
-
 struct Work_080b2884 {
     u8 padding[0x3AA];
     s8 mode;

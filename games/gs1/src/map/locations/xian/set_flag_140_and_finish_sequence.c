@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SetFlag140AndFinishSequence Func_020040dc
-
 extern void Func_020084b0();
 extern void Func_02008638();
 extern void Func_0200864c();

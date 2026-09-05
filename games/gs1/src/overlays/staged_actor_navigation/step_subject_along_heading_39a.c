@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_StepSubjectAlongHeading Func_02002094
 #define NULL ((void *)0)
 
 /*

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PickHighestSlotAtSameTileAndRelease Func_020023d4
-
 /*
  * resource_3c8 owner at 0x020023d4, 168 bytes: among scene slots 8-13,
  * locate candidates sharing the selected slot's x/z tile, retain the highest

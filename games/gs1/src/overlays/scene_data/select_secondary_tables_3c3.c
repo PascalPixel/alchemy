@@ -2,9 +2,6 @@
 
 #include "types.h"
 
-#define SceneData_GetTertiaryTable Func_020000e4
-
-#define SceneData_GetSecondaryTable Func_0200008c
 extern u8 Value_000000a9;
 extern u8 Value_000000aa;
 

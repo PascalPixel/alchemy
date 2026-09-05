@@ -1,4 +1,3 @@
-#define FieldScene_RunThreeStepsInBracket Func_020038c0
 /*
  * resource_3c9 owner at 0x020038c0, 28 bytes: the shortest owner in
  * this overlay -- a scripted-scene bracket around three other

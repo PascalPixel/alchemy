@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePresentation_RunActorEntries Func_080ba27c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 WaitFrames(s32);

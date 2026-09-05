@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define StagedActor_RunHeadingProbeStep Func_02001fa4
 #define NULL ((void *)0)
 
 /*

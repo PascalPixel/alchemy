@@ -19,7 +19,6 @@ extern void Func_02004d62(s32 arg0);
 extern void Func_02004dee(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void Func_02004dfe(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
-#define UpdateActor10RetreatRoute Func_02001d2c
 void UpdateActor10RetreatRoute(void) {
     s32 x = Func_02004dbc(10)->f08 >> 20;
     s32 y = Func_02004dc6(10)->f10 >> 20;

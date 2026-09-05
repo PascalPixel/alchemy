@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ConfigureRegion82_7AndApply768 Func_020027f4
-
 /*
  * Configure this overlay's scene parameters, enable the configuration, and
  * apply the final magnitude.  The complete owner is the saved-link function

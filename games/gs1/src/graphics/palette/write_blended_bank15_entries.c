@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Palette_WriteBlendedBank15Entries Func_0801cae0
-
 s16 Func_0801cbd4(s32, s32, s32, s32);
 
 void Palette_WriteBlendedBank15Entries(s32 arg0) {

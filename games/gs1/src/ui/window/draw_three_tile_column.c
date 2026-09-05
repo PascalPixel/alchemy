@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWindow_DrawThreeTileColumn Func_080218dc
-
 void Func_08019000(s32, s32, s32, s32, s32);
 volatile int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

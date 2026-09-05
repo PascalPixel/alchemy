@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetFlagBitByRelativeDepth Func_020008c8
 struct Actor_020008c8 { u8 unknown_00[8]; s32 x; s32 y; s32 z; u8 unknown_14[0xf]; u8 flags23; };
 struct Actor_020008c8 *Func_0200577c();
 s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_020008c8 *actor)

@@ -2,7 +2,7 @@
 #include "owner_state.h"
 
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
-void Owner_RefreshDerivedData(s32 arg0);
+void Owner_RefreshDerivedData(s32 owner);
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {

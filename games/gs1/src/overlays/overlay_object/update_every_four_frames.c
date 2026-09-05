@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateEveryFourFrames Func_020005ac
-
 extern void Func_020054fa(void *, s32);
 extern void Func_02005502(void *, s32);
 extern void Func_020055d4(s32);

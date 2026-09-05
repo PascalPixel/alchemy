@@ -1,44 +1,4 @@
-#define FieldScene_RunStep214 Func_02000660
 
-#define FieldScene_RunStep213 Func_02000648
-
-#define FieldScene_RunStep212 Func_02000630
-
-#define FieldScene_RunStep211 Func_02000618
-
-#define FieldScene_RunStep210 Func_02000604
-
-#define FieldScene_RunStep20f Func_020005ec
-
-#define FieldScene_RunStep20e Func_020005d4
-
-#define FieldScene_RunStep20d Func_020005bc
-
-#define FieldScene_RunStep20c Func_020005a8
-
-#define FieldScene_RunStep20b Func_02000590
-
-#define FieldScene_RunStep20a Func_02000578
-
-#define FieldScene_RunStep209 Func_02000560
-
-#define FieldScene_RunStep208 Func_0200054c
-
-#define FieldScene_RunStep207 Func_02000534
-
-#define FieldScene_RunStep206 Func_0200051c
-
-#define FieldScene_RunStep205 Func_02000504
-
-#define FieldScene_RunStep204 Func_020004f0
-
-#define FieldScene_RunStep203 Func_020004d8
-
-#define FieldScene_RunStep202 Func_020004c0
-
-#define FieldScene_RunStep201 Func_020004a8
-
-#define FieldScene_RunStep200 Func_02000494
 /* Contiguous unnamed leaf-owner run for resource_396. */
 
 extern void Func_020007d6(int, int, int, int);

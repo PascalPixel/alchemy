@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorThirteenRestoration Func_02000838
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 s32 Func_02001a8c();

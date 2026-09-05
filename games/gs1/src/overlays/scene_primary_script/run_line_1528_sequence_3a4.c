@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLine1528Sequence Func_02000b0c
-
 extern void Func_02004680(void);
 extern void Func_02004660(s32, s32);
 extern void Func_0200483e(s32);

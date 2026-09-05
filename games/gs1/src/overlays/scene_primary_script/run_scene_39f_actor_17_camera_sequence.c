@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor17CameraSequence Func_02001ef0
-
 /* 0x02004d98 serves two imports: the two-argument setter at site 7 and the
  * three-argument one at site 14. */
 extern u8 *Func_02004cb4(s32);

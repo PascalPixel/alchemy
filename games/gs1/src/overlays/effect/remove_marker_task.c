@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_RemoveMarkerTask Func_02003080
-
 /* Remove the marker task and release its selected display slot.
  * Per-site veneers (raw sub_ symbols from the overlay .s). */
 extern s16 Data_0200cb46;

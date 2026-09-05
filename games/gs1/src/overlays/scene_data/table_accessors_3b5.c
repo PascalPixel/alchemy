@@ -22,16 +22,12 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-#define SceneData_GetTable91f8 Func_02000214
-
 u8 *SceneData_GetTable91f8(void)
 {
     return (u8 *)0x020091f8;
 }
 
 #include "types.h"
-
-#define SceneData_GetTable9238 Func_0200021c
 
 /*
  * resource_3b5 owner at 0x0200021c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ConfigureRegionByActorElevenColumn Func_0200005c
-
 u8 Func_02003f0e(s32, s32, s32, s32, s32, s32);
 u8 Func_02003f2a(s32, s32, s32, s32, s32, s32);
 u8 Func_02003f62(s32);

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Djinn_MarkBalancedEntries Func_080ae714
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_080ae778(s32, s32);

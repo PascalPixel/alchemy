@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePresentation_ClearAllActorRecordModes Func_080c1054
-
 s32 Func_080b6c08(s32, s16 *);
 void Func_080c0f98(s32, s32);
 

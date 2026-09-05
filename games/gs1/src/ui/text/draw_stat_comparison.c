@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define UiText_DrawStatComparison Func_080a15f0
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 Data_00000b20[];
 void Func_08015080();

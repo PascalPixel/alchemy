@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_GetObjectTableValue Func_080b8530
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 extern void *Runtime_GetObject(s32);

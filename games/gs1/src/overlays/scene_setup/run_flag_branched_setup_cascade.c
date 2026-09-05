@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFlagBranchedSetupCascade Func_02003f94
-
 /*
  * Resource 3b1 unindexed helper at 0x02003f94 (340 bytes incl. pool,
  * 1 call).

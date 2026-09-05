@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Text_FormatPlayTime Func_0801f680
-
 u32 Func_080022f4(s32, s32);
 s32 Func_08002304(s32, s32);
 u8 *Text_FormatNumber(u8 *, s32, s32);

@@ -1,7 +1,6 @@
 /* Reset the selected actor's motion fields after refreshing it. */
 #include "types.h"
 
-#define StagedActor_ResetMotionAfterRefresh Func_02002e44
 u8 *Func_02006d98();
 void Func_02006cb6();
 

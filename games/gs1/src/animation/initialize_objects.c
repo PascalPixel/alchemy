@@ -45,7 +45,7 @@ struct AnimationSetupState {
 
 extern s32 Func_0800b798(s32);
 
-s32 InitializeAnimationObjects(struct AnimationSetupState *state)
+s32 Animation_InitializeObjects(struct AnimationSetupState *state)
 {
     s32 index;
 

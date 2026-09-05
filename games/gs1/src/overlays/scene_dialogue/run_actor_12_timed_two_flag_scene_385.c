@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor12TimedTwoFlagScene Func_02000784
-
 /* Complete actor-12 timed two-flag dialogue scene through its pool. */
 
 extern void Func_02001870(void);

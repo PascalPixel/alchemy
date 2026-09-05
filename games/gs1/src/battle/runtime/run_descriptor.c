@@ -25,8 +25,6 @@
  */
 #include "types.h"
 
-#define BattleAction_RunDescriptor Func_0808d828
-
 typedef struct {
     s32 flags;
     u8 pad4[4];

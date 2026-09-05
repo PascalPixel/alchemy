@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_LandOnHighestPlatform Func_02001c2c
-
 /*
  * resource_3c4 owner at 0x02001c2c, 216 bytes: code 0x02001c2c-0x02001cff and
  * the single pool word 0xffb00000 at 0x02001d00-0x02001d03.

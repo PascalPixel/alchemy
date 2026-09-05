@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ability_CheckStatusOrSpecialId Func_080bd3c8
-
 struct Entry_080bd3c8 {
     u8 unknown_00[9];
     u8 status;

@@ -1,4 +1,3 @@
-#define SceneDialogue_RunActor19TwoFlagLineA Func_02001378
 void Func_02007844(); void Func_02007882(); int Func_02007822();
 int Func_02007834(); void Func_02007934(); void Func_02007946(); void Func_0200794e();
 void Func_02007966();

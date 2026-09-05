@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetRecordField1 Func_02000030
-
 typedef struct {
     u8 filler0[9];
     u8 f0 : 2;

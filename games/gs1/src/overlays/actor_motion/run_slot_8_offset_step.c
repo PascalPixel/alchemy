@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunSlot8OffsetStep Func_0200029c
-
 extern void Func_020026b6(s32);
 extern void Func_02000430(s32, s32, s32);
 extern void Func_0200043a(s32, s32, s32);

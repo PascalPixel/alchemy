@@ -11,7 +11,6 @@ void Func_020061f2(s32);
 s32 Func_0200ab7a(s32);
 void Func_02006204(s32);
 
-#define ActivateFiveActorGroupFromFlags Func_02005520
 void ActivateFiveActorGroupFromFlags(void)
 {
     if (Func_0200ab38(0x350)) {

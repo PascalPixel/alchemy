@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorEightBranchedDialogue Func_02000608
-
 void Func_0200283c();
 extern s32 Func_02002822();
 void Func_0200291c();

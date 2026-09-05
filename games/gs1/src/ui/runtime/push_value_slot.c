@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define UiWork_PushValueSlot Func_08019908
-
 struct State_08019908 {
     u8 filler0[RENDER_VALUE_TBL_OFS];
     u32 values[8];

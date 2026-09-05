@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActors24And25Setup Func_02004218
-
 /*
  * Resource 3b1 unindexed helper at 0x02004218 (60 bytes incl. pool,
  * 1 call).

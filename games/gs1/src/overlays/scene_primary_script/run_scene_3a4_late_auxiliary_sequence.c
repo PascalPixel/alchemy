@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLateAuxiliarySequence Func_02002f10
-
 extern u8 Data_02000240[];
 extern u8 Value_00000056;
 void Func_020069d4();

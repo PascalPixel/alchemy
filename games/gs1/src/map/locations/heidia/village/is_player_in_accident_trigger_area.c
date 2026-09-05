@@ -9,7 +9,6 @@ typedef struct SceneActor {
 
 SceneActor *Func_0200675e(s32);
 
-#define IsPlayerInAccidentTriggerArea Func_02001108
 s32 IsPlayerInAccidentTriggerArea(void)
 {
     SceneActor *player = Func_0200675e(0);

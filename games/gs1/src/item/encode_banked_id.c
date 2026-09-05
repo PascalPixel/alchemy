@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Item_EncodeBankedId Func_080c2470
-
 u8 *Item_GetData(u32);
 
 u32 Item_EncodeBankedId(u32 value)

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_StepActor24AnimationByFacing Func_020005bc
-
 typedef struct {
     u8 filler0[6];
     u16 unk6;

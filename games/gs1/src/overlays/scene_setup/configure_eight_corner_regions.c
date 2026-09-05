@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ConfigureEightCornerRegions Func_02002c9c
-
 extern void Func_02006132(s32, s32, s32, s32, s32, s32);
 extern void Func_02006144(s32, s32, s32, s32, s32, s32);
 extern void Func_02006156(s32, s32, s32, s32, s32, s32);

@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define Ui_FillBank15PaletteGrey Func_08097a7c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void ScheduleCallbackAfterFrames(s32, s32);

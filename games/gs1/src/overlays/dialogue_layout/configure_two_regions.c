@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define DialogueLayout_ConfigureTwoRegions Func_020039b8
-
 extern void Func_02007c62(s32, s32, s32, s32, s32, s32);
 extern void Func_02007c7c(s32, s32, s32, s32, s32, s32);
 

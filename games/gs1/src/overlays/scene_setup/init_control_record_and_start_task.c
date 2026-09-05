@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitControlRecordAndStartTask Func_02003ae4
-
 typedef struct Ctl {
     s16 f0;
     s16 f2;

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunStep7BThen8 Func_020008dc
 #define NULL ((void *)0)
 
 void Func_0200312e(s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetByte55ForActorZeroAnd12To17 Func_020006c0
-
 u8 *Func_02006412(s32);
 u8 *Func_0200641e(s32);
 u8 *Func_0200642a(s32);

@@ -6,7 +6,6 @@ void Func_0200627c(s32, s32, s32, s32, s32, s32);
 void Func_0200628e(s32, s32, s32, s32, s32, s32);
 void Func_020062a2(s32, s32, s32, s32, s32, s32);
 
-#define PlaceSceneObjectPairFromTableA Func_02000c90
 void PlaceSceneObjectPairFromTableA(s32 table_index)
 {
     s32 position_x = Data_0200f714[table_index * 2];

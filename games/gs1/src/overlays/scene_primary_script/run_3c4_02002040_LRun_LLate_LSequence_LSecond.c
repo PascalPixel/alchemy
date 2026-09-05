@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLateSequenceSecond Func_02002040
-
 void Func_020050f2();
 void Func_02005104();
 void Func_020051ca();

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define UiWork_FinalizeEntityMatchingLocalizedId Func_08019e48
-
 extern s32 Localization_LookupEntryId();
 extern void UiWork_Finalize(struct Work *work, s32 release);
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_SetObjectAlternatingWords Func_08095b8c
-
 extern u32 Data_03001800;
 extern u32 Data_0809f0a4[];
 

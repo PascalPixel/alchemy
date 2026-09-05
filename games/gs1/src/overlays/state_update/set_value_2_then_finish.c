@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetValue2ThenFinish Func_02004684
-
 extern void Func_02009556(s32);
 extern void Func_02009572(void);
 extern void Func_0200957e(void);

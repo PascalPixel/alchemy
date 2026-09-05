@@ -1,6 +1,5 @@
 #include "resource_3af_motion.h"
 
-#define SceneEffect_UpdateCountdownMotion Func_02000030
 #define BuildMotionCountdown Func_020042e6
 #define GetMotionCountdownInput Func_020042f8
 

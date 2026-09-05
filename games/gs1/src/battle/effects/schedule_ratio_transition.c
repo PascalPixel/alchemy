@@ -15,8 +15,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define BattleEffect_ScheduleRatioTransition Func_080936a0
-
 typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
 
 struct Work_080936a0 {

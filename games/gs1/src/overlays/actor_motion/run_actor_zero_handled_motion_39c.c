@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunActorZeroHandledMotion Func_02000f84
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
 
 extern u8 *Func_02006a60(s32);

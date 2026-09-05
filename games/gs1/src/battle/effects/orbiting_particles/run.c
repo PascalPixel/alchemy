@@ -57,20 +57,18 @@ struct OrbitingParticle *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
 void Func_08097384(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-#define UpdateOrbitingParticleMain Func_08099018
 #define UpdateOrbitingParticleLeft Func_08099070
 #define UpdateOrbitingParticleRight Func_080990cc
-void UpdateOrbitingParticleMain(struct OrbitingParticle *particle);
+void BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle);
 void UpdateOrbitingParticleLeft(struct OrbitingParticle *particle);
 void UpdateOrbitingParticleRight(struct OrbitingParticle *particle);
 void Audio_PlayCue(s32 sound_id);
 
-#define RunOrbitingParticleEffect Func_08099160
-void RunOrbitingParticleEffect(void)
+void BattleEffect_RunOrbitingParticles(void)
 {
     s32 resource_size;
     struct OrbitingParticleVector position;
-    struct OrbitingParticleVector *position_pointer;
+    struct OrbitingParticleVector *p;
     struct OrbitingParticleScene *scene;
     struct OrbitingParticle *main_particle;
     struct OrbitingParticle *particle;
@@ -82,7 +80,7 @@ void RunOrbitingParticleEffect(void)
     Func_08097384();
     Audio_PlayCue(0x73);
 
-    position_pointer = &position;
+    p = &position;
     entry_count = 15;
     do {
         particle = Object_Spawn(0xe8, 0, 0, 0);
@@ -103,14 +101,14 @@ void RunOrbitingParticleEffect(void)
             particle->orbit_angle = Rand();
             Func_08009240(particle, 9);
 
-            position_pointer->x = scene->origin.x;
-            position_pointer->y = scene->origin.y;
-            position_pointer->z = scene->origin.z;
+            p->x = scene->origin.x;
+            p->y = scene->origin.y;
+            p->z = scene->origin.z;
             magnitude = (Rand() << 2) + 0x20000;
-            RotateVectorByMagnitude(magnitude, Rand(), position_pointer);
-            particle->orbit_center.x = position_pointer->x;
-            particle->orbit_center.y = position_pointer->y;
-            particle->orbit_center.z = position_pointer->z;
+            RotateVectorByMagnitude(magnitude, Rand(), p);
+            particle->orbit_center.x = p->x;
+            particle->orbit_center.y = p->y;
+            particle->orbit_center.z = p->z;
         }
 
         WaitFrames(3);
@@ -138,7 +136,7 @@ void RunOrbitingParticleEffect(void)
             Object_SetMode(main_particle, 2);
         }
 
-        main_particle->update = UpdateOrbitingParticleMain;
+        main_particle->update = BattleEffect_UpdateOrbitingParticleMain;
         resource = Func_0808e4b4(0x50000005, 6, &resource_size);
         if (resource != NULL) {
             Func_08096b28(

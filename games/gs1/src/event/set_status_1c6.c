@@ -1,7 +1,5 @@
 #include "event_runtime.h"
 
-#define Event_SetStatus1c6 Func_08091dc8
-
 void Func_0808fefc(s32 first, s32 second);
 
 void Event_SetStatus1c6(void)

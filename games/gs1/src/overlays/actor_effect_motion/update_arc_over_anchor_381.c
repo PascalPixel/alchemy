@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateArcOverAnchor Func_02002e0c
-
 /* resource_381 owner at 0x02002e0c (80 bytes), the twin of resource_371:3fb4.
  * Ported from that byte-exact owner: same field layout, same two calls. */
 

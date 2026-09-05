@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_DrawPartyItemPage Func_080a9598
-
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 Data_00000182[];
 extern u8 Data_00000af7[];

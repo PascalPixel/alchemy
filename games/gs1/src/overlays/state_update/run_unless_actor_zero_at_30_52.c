@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunUnlessActorZeroAt30_52 Func_02001530
-
 struct Actor {
     s32 f00;
     s32 f04;

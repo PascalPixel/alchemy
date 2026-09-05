@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunFlagGatedSetupCascade Func_0200351c
-
 /*
  * Resource 3b1 unindexed helper at 0x0200351c (336 bytes incl. pool,
  * 1 call).

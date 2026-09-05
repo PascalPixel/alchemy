@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource_LoadFixedBlockBIntoFreeSlot Func_080209b0
-
 s32 Resource_CopyData(s32, s32, s32);
 s32 Resource_FindFreeSlot();
 extern u8 Data_080310a4[];

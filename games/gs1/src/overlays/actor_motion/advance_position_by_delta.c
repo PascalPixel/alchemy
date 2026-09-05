@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_AdvancePositionByDelta Func_02001bdc
-
 /* Advance both coordinate triplets by their corresponding deltas. */
 struct MovingObject_02001bdc {
     u8 unknown00[8];

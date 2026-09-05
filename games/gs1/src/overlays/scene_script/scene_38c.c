@@ -2,43 +2,9 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define FieldScene_RunActor17MessageBranch Func_02000124
-#define FieldScene_ConfigureActor21Scene Func_020001a8
-#define FieldScene_RunActor24Sequence Func_020001e0
-#define FieldScene_RunActor27Sequence Func_02000250
-#define FieldScene_RunActor21SequenceOnFlag300 Func_0200035c
-#define FieldScene_ConfigureActor23Scene Func_02000430
 #define WORKSPACE (*(u8 **) 0x03001EBC)
 
 #include "resource_38c.h"
-
-#define FieldScene_SetupActor27OnEntry Func_020004c8
-
-#define FieldScene_RunActor10MessageBranch Func_02000490
-
-#define FieldScene_RunActor27Message Func_02000470
-
-#define FieldScene_ConfigureActor22Scene Func_020003f4
-
-#define FieldScene_RunActor19MessageBranch Func_020002f4
-
-#define FieldScene_RunActor13Message Func_020002d4
-
-#define FieldScene_RunActor8Message Func_020002b4
-
-#define SceneData_GetTertiaryTable Func_0200011c
-
-#define FieldScene_RunActor18MessageBranch Func_020000bc
-
-#define FieldScene_RunActor16MessageBranch Func_0200005c
-
-#define SceneData_PrepareTable86b0 Func_02000044
-
-#define SceneData_GetSecondaryTable Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetPrimaryTable Func_02000030
 
 extern u8 Data_03001ebc[];
 

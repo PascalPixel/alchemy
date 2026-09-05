@@ -1,4 +1,3 @@
-#define SceneDialogue_ShowLine1ED1Or1ED2 Func_02001420
 void Func_020078ec(); void Func_02007918(); int Func_020078ca();
 void Func_020079dc(); void Func_020079e4(); void Func_020079fc();
 /* Story selector owner at 0x02001420, 60 bytes; six calls. */

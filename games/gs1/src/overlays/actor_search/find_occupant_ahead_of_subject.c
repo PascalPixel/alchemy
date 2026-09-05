@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FindOccupantAheadOfSubject Func_02003cf8
-
 /*
  * resource_3bb owner at 0x02003cf8, 160 bytes (0x02003cf8-0x02003d97):
  * 150 bytes of code, two alignment bytes at 0x02003d8e, and the two-word

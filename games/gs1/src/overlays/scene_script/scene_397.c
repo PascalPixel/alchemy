@@ -2,49 +2,8 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneState_RunEmptyHook Func_020001d0
 
 #include "resource_397.h"
-
-#define SceneState_ApplyTables826dAnd82a1 Func_020002e0
-
-#define SceneEffect_UpdateBg3HofsByVcount Func_0200026c
-
-#define SceneState_SetRuntimeWord448To256 Func_02000200
-
-#define SceneData_InitHeader8590 Func_020001d4
-
-#define FieldScene_RunTwoCallSequence Func_020001bc
-
-#define SceneData_GetTable84a4 Func_020001b4
-
-#define SceneEffect_SetAlphaBlendForScene9 Func_0200015c
-
-#define SceneState_SetValue123ThenCounter16c Func_02000138
-
-#define FieldScene_ApplyOffset0Neg6 Func_02000128
-
-#define FieldScene_ApplyOffset0Pos6 Func_02000118
-
-#define FieldScene_ApplyOffset0Neg5Second Func_02000108
-
-#define FieldScene_ApplyOffset0Pos5Second Func_020000f8
-
-#define FieldScene_ApplyOffset0Neg5 Func_020000e8
-
-#define FieldScene_ApplyOffset0Pos5 Func_020000d8
-
-#define SceneActor_ShiftObjectsByBlock Func_0200005c
-
-#define SceneData_GetTable8474 Func_02000054
-
-#define SceneData_GetTable844c Func_0200004c
-
-#define SceneData_ReturnZero Func_02000048
-
-#define SceneData_GetTable835c Func_02000040
-
-#define SceneState_SetActorEightValue3d Func_02000030
 
 struct SceneObject {
     u8 unknown_00[8];

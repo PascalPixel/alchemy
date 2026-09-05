@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_SoftDoubleToSignedInt Func_020014d8
-
 typedef u64 SoftDouble;
 
 typedef union FloUnion {

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_CheckBucketOffsetPoint Func_02001280
-
 /*
  * Resource 3b1 unindexed helper at 0x02001280 (92 bytes incl. pool,
  * 2 calls).

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSupplementalSequenceOne Func_02001c34
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_02000240[];
@@ -112,4 +110,3 @@ void FieldScene_RunSupplementalSequenceOne(void)
     }
     Func_02004a9c();
 }
-

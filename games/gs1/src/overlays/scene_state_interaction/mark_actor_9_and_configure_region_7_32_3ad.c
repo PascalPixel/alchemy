@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_MarkActor9AndConfigureRegion7_32 Func_02000094
-
 /*
  * resource_3ad owner at 0x02000094, 64 bytes.
  *

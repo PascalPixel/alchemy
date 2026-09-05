@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define BattlePresentation_AdjustCameraByShoulderKeysAlt Func_080b9acc
-
 void Func_080c0a24(u32, u32, s32, s32, u32);
 
 extern u16 Value_fffffe00;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEightResetSequence Func_020006e8
-
 /*
  * Resource 378 scene reset at 0x020006e8 (100 bytes including its literal).
  * The prologue and the pop-{r0}/bx-r0 epilogue are unambiguous.  The literal

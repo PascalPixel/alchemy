@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Map_SetWorkFlagBits9To11 Func_080108c4
-
 struct State_080108c4 {
     u8 filler0[0x14];
     u16 flags;

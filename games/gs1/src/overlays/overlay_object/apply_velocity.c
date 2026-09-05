@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ApplyVelocity Func_02000104
-
 union Slot {
     s32 w;
     u16 h[2];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_PlaceSlots14And15 Func_02000af8
-
 extern s32 *Func_020020a4(s32);
 extern s32 *Func_020020b4(s32);
 extern void Func_02002032(s32, s32, s32, s32, s32, s32);

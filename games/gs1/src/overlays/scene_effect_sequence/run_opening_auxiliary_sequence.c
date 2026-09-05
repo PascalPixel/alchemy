@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define RunOpeningAuxiliarySequence Func_02000108
-
 s32 Func_020044d0();
 void Func_020044e4();
 void Func_020044f2();

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor11AcceptanceDialogue Func_02000754
-
 /* Complete actor-11 temporary-acceptance dialogue wrapper through its pool. */
 struct Actor_02000754 {
     u8 reserved00[91];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_CheckFlags941And940 Func_020017e8
-
 extern s16 Data_02000240[];
 
 extern s32 Func_020053c2(s32);

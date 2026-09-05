@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_ShowDialogue182D Func_02000bd4
-
 extern void Func_02004fb4(void);
 extern void Func_02004fce(void);
 extern void Func_0200507a(s32 dialogueId);

@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorTwentySixEffectPresentation Func_02000444
 #define NULL ((void *)0)
 
 void Func_02002ae4(void);

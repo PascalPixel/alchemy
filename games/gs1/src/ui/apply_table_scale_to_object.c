@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_ApplyTableScaleToObject Func_080217a4
-
 struct Effect {
     unsigned x : 16;
     unsigned y : 16;

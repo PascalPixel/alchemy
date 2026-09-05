@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StoreParamsAndInstallTask Func_02002bb0
-
 extern s32 Data_0200d240[3];
 extern s32 Data_0200d23c;
 

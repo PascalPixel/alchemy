@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define Menu_SelectSaveSlotAction Func_080289e8
-
 extern s32 Func_0801f77c(void);
 extern void *Func_080284dc(void);
 extern void Menu_AppendResourceEntry(s32 arg0);

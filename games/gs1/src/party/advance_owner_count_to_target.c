@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_AdvanceOwnerCountToTarget Func_080792fc
-
 struct State_080792fc {
     u8 padding[15];
     u8 count;

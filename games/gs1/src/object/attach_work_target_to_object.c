@@ -3,8 +3,6 @@
 #include "object_effect.h"
 #include "global_cells.h"
 
-#define Object_AttachWorkTargetToObject Func_0809335c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_08009128(void);

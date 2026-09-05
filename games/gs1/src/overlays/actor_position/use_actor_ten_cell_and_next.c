@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UseActorTenCellAndNext Func_02001a84
-
 /*
  * resource_37b owner at 0x02001a84, 40 bytes: fetches scene record 10
  * and, if it exists, hands a coarse coordinate derived from it to a

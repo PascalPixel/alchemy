@@ -18,7 +18,6 @@ extern u8 Value_020097d9;
 
 #define UpdateOrbitingSceneObject Value_020097d9
 
-#define InitializeSpawnedOrbitingEffect Func_02001840
 void InitializeSpawnedOrbitingEffect(void)
 {
 #include "initialize_orbiting_scene_object_body.inc"

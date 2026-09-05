@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_LerpTwoSamplesB Func_08011d10
-
 s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position)
 {
     s32 base;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Text_FormatSignedDecimalToWork Func_08004620
-
 extern s32 Func_080022f4(u32, s32);
 extern u8 Data_08007970[];
 extern u8 Data_03001f70[];

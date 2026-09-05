@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define BattleEffect_RunMemberOrbit Func_080ce85c
+
 /*
  * Battle-presentation sub-effect at 0x080ce85c: entry 34 of the effect
  * callback table at 0x080EE2B4, so the single argument is the effect state
@@ -56,7 +58,7 @@ void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);
 
-void Func_080ce85c(void *object)
+void BattleEffect_RunMemberOrbit(void *object)
 {
     void **heap_cache;
     void **cursor;
@@ -70,7 +72,7 @@ void Func_080ce85c(void *object)
     s32 member;
     s32 y_offset;
     void **rectangle_slot;
-    void *second_rectangle;
+    void *rect2;
     s32 *record_slot;
     s32 frame;
 
@@ -87,9 +89,9 @@ void Func_080ce85c(void *object)
     status = Func_080ed408(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
     status = Func_080ed408(47, 7, 7, 15, 2);
-    second_rectangle = heap_cache[8];
+    rect2 = heap_cache[8];
     rectangle_slot = rectangle;
-    rectangle_slot[1] = second_rectangle;
+    rectangle_slot[1] = rect2;
     Func_080041d8((void *)0x080DBB9D, 0x480);
     FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
     FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
@@ -107,7 +109,7 @@ void Func_080ce85c(void *object)
         s32 facing;
         s32 *scanline;
         s32 i;
-        s32 member_id_offset;
+        s32 id_ofs;
 
         facing = *(s32 *)0x03001E80;
         scanline = (s32 *)((u8 *)work + 0x6980);
@@ -133,21 +135,21 @@ void Func_080ce85c(void *object)
         member = 0;
         if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {
             record_slot = record;
-            member_id_offset = 36;
+            id_ofs = 36;
             while (member
                 != FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)) {
                 void *member_object;
 
                 member_object = *Func_080b5098(
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s16 *,
-                        member_id_offset));
+                        id_ofs));
                 if (frame > member * 16 && frame < (member * 16) + 60) {
                     s32 spin;
 
                     if (frame == (member * 16) + 32) {
                         Func_080d6888(
                             FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
-                                s16 *, member_id_offset),
+                                s16 *, id_ofs),
                             0, 5, -1, 0);
                     }
                     record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
@@ -170,7 +172,7 @@ void Func_080ce85c(void *object)
                             x - 16, y - 16, 32, 32);
                     }
                 }
-                member_id_offset += 2;
+                id_ofs += 2;
                 member++;
             }
         }

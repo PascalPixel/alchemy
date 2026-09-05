@@ -1,8 +1,6 @@
 #include "types.h"
 #include "object_efx.h"
 
-#define BattleEffect_UpdateShrinkingOrbitObject Func_08099340
-
 struct Triple08099340 {
     s32 x;
     s32 y;

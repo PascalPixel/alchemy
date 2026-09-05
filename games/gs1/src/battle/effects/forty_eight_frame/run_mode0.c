@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_RunFortyEightFrameMode0 Func_080cefe0
-
 s32 Func_080ceff8(s32, s32);
 
 void BattleEffect_RunFortyEightFrameMode0(s32 arg0) {

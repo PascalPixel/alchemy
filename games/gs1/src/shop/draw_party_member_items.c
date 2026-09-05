@@ -21,7 +21,7 @@ void Shop_DrawPartyMemberItems(s32 window, s32 unit_id, s32 item_id)
     s32 y;
     s32 item_index;
     s32 slot;
-    s32 selected_offset;
+    s32 off;
     s32 first_offset;
     s32 item_offset;
     s32 next_offset;
@@ -36,8 +36,8 @@ void Shop_DrawPartyMemberItems(s32 window, s32 unit_id, s32 item_id)
         /* 参照は枠位置を「バイト差」として先に組み、状態先頭を基底に残す。
            足し込む順を変えると二レジスタ番地形が崩れる。 */
         if (slot != -1) {
-            selected_offset = slot * 2 + 216;
-            UiText_DrawQuantity((*(u16 *)(unit + selected_offset) >> 11) + 1, 5);
+            off = slot * 2 + 216;
+            UiText_DrawQuantity((*(u16 *)(unit + off) >> 11) + 1, 5);
             UiText_DrawAt((s32)&Value_00000c90, window, 0, 0);
         } else {
             UiText_DrawAt((s32)&Value_00000c8f, window, 0, 0);

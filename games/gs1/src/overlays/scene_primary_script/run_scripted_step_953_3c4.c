@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunScriptedStep953 Func_02002354
-
 extern void Func_0200544c(void);
 extern void Func_0200542c(s32, s32);
 extern void Func_02005460(void);

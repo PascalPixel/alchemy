@@ -1,8 +1,10 @@
 #include "types.h"
 
+#define AudioCommand_WaitForCompletion Func_080f95a0
+
 s32 WaitFrames(s32);
 
-void Func_080f95a0(void)
+void AudioCommand_WaitForCompletion(void)
 {
     s32 wait_count = 0;
 

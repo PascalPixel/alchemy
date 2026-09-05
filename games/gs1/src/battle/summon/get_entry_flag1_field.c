@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Summon_GetEntryFlag1Field Func_080c23a0
-
 struct Entry {
     u16 value;
     u8 flags0;

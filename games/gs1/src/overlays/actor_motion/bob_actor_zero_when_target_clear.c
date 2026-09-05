@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_BobActorZeroWhenTargetClear Func_02001ac8
-
 /* Four sites of the record accessor, so four names. */
 extern u8 *Func_02004890(s32);
 extern u8 *Func_020048a0(s32);

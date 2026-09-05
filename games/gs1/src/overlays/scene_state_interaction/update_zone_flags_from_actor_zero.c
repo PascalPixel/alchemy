@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_UpdateZoneFlagsFromActorZero Func_020018c4
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

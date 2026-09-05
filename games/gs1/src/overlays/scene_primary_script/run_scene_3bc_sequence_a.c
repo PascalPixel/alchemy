@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLateSequence Func_02003574
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_00000000[];
@@ -99,7 +97,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void FieldScene_RunLateSequence(s32 a0)
+void FieldScene_RunScene3bcSequenceA(s32 a0)
 {
     s32 kind;
 

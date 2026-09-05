@@ -15,7 +15,6 @@ void Func_02002506();
 void Func_02002516();
 void Func_0200251e();
 
-#define ActorPresentation_RunActorElevenRecoveryScene Func_02000f44
 void ActorPresentation_RunActorElevenRecoveryScene(void)
 {
     Func_02002464();

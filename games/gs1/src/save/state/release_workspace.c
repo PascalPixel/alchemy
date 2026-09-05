@@ -1,8 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-#define SaveState_ReleaseWorkspace Func_08005cf8
-
 typedef void (*InterruptHandler)(void);
 
 u32 Func_08002dd8(s32);

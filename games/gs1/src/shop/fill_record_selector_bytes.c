@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_FillRecordSelectorBytes Func_080b06c0
-
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];

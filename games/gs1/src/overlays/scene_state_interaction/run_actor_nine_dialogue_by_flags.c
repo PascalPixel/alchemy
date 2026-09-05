@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorNineDialogueByFlags Func_02002674
-
 /*
  * resource_380 owner at 0x02002674, 108 bytes: the talk handler for
  * actor 9, one of a per-actor bank of seven published callbacks.

@@ -4,8 +4,6 @@
 
 extern void Func_02001e8e(s32, s32, u8 *);
 
-#define SceneActor_PlaceFiveActorsInRow Func_02000f6c
-
 void SceneActor_PlaceFiveActorsInRow(u8 *p)
 {
     s32 i = 0;
@@ -18,8 +16,6 @@ void SceneActor_PlaceFiveActorsInRow(u8 *p)
 }
 
 #include "types.h"
-
-#define SceneEffect_UpdateStateMachine Func_02000f94
 
 extern u16 *Data_0200bf6c;
 extern s8 Data_02001002;

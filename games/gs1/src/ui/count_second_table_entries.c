@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_CountSecondTableEntries Func_08019ed0
-
 extern u8 Data_0802e108[];
 extern u8 Data_0802de88[];
 

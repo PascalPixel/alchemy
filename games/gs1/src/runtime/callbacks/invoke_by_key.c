@@ -27,8 +27,6 @@
  */
 #include "types.h"
 
-#define Runtime_InvokeCallbacksByKey Func_08004420
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Func_080072e4(s32);
 extern u8 Data_03001d34;

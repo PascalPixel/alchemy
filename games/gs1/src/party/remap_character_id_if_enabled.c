@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_RemapCharacterIdIfEnabled Func_0808b3d0
-
 s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1) {
     s32 result;
 

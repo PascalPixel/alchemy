@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWork_InitFreeList Func_08015ef4
-
 extern u8 *Data_03001e8c;
 
 void UiWork_InitFreeList(void)

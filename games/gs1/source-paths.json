@@ -13116,9 +13116,6 @@
     "resource_3a7:02000754": {
       "name": "FieldScene_RunSupplementalSequenceOne"
     },
-    "resource_3c3:02000124": {
-      "name": "FieldScene_RunSupplementalSequenceOne"
-    },
     "resource_3bf:020049a0": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
       "source": "overlays/scene_primary_script/run_scene_3bf_sequence.c"
@@ -14711,6 +14708,14 @@
     "resource_3bb:02000714": {
       "name": "FieldScene_RunSupplementalSequenceOne",
       "source": "overlays/scene_primary_script/run_scene_3bb_supplemental_sequence_one.c"
+    },
+    "resource_3c3:02000124": {
+      "name": "FieldScene_RunSupplementalSequenceOne",
+      "source": "overlays/scene_primary_script/run_scene_3c3_supplemental_sequence_one.c"
+    },
+    "resource_3c3:02000288": {
+      "name": "FieldScene_RunScene3c3SequenceC",
+      "source": "overlays/scene_primary_script/run_scene_3c3_sequence_c.c"
     }
   }
 }

@@ -14422,7 +14422,8 @@
       "source": "battle/presentation/build_unit_entries.c"
     },
     "main:080b9324": {
-      "name": "BattlePresentation_BuildOpponentEntries"
+      "name": "BattlePresentation_BuildOpponentEntries",
+      "source": "battle/presentation/build_opponent_entries.c"
     },
     "main:080b9724": {
       "name": "BattlePresentation_AppendLinkedActions"

@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">59.82% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">59.88% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -2873,7 +2873,8 @@
 </g>
 <g aria-label="0x080b9324–0x080b9554: 560 bytes">
 <title>0x080b9324–0x080b9554: 560 bytes</title>
-<rect x="372.85070501365703" y="95.71169420619131" width="9.100437102914995" height="12.929639780302487" style="fill:#d8d9df"/>
+<rect x="372.85070501365703" y="103.3771235045135" width="9.100437102914995" height="5.264210481980299" style="fill:#d8d9df"/>
+<rect x="372.85070501365703" y="95.71169420619131" width="9.100437102914995" height="7.665429298322189" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080b9554–0x080b9724: 464 bytes">
 <title>0x080b9554–0x080b9724: 464 bytes</title>
@@ -3754,11 +3755,11 @@
 <rect x="534.7355617592607" y="277.9552614633638" width="1.7644382407393877" height="1.5447385366362336" style="fill:#6d4fc2"/>
 </g>
 <rect x="6" y="288" width="10" height="10" style="fill:#d8d9df"/>
-<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 38.6%</text>
+<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 38.5%</text>
 <rect x="100" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
 <text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 1.6%</text>
 <rect x="188" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>
 <text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 38.7%</text>
 <rect x="300" y="288" width="10" height="10" style="fill:#6d4fc2"/>
-<text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 21.1%</text>
+<text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 21.2%</text>
 </svg>

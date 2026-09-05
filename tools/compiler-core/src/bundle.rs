@@ -271,9 +271,10 @@ pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
     vec![
         bundle_dir.join("xgcc"),
-        bundle_dir.join("cpp"),
-        bundle_dir.join("tradcpp"),
+        bundle_dir.join("cpp0"),
+        bundle_dir.join("tradcpp0"),
         bundle_dir.join("cc1"),
+        bundle_dir.join("as"),
         agbcc_driver(),
     ]
 }

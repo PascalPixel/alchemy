@@ -260,7 +260,10 @@ pub fn verify_candidate_owned_routed_with_object(
             configuration,
             root(),
         )?;
-        assemble(&assembly, &object)?;
+        run(
+            &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+            cwd,
+        )?;
     }
     // GCC 2.96 keeps observable state across functions, so some owners need
     // their original translation-unit context. Link the section so the

@@ -45,6 +45,23 @@ pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
     .map(|s| (*s).to_string())
     .collect()
 }
+/// Unmodified GCC/agbcc output uses era GAS alignment semantics.
+pub fn compiler_assembly_command(source: &str, object: &str) -> Vec<String> {
+    let mut command = vec![bundle().join("as").to_string_lossy().into_owned()];
+    command.extend(
+        [
+            "-marm7tdmi",
+            "-mthumb",
+            "-mthumb-interwork",
+            "-o",
+            object,
+            source,
+        ]
+        .iter()
+        .map(|s| (*s).to_string()),
+    );
+    command
+}
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum CompilerTarget {
     Gs1,

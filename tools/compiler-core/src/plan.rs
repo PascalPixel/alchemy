@@ -237,7 +237,7 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 ) -> Result<Vec<String>> {
     validate_bundle(target)?;
     let mut command = vec![
-        bundle().join("cpp").to_string_lossy().into_owned(),
+        bundle().join("cpp0").to_string_lossy().into_owned(),
         "-lang-c".into(),
         "-nostdinc".into(),
         "-D__GNUC__=2".into(),

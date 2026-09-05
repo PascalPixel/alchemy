@@ -4,14 +4,25 @@
 // source that is not exact under its family's flags is not exact.
 
 // The soft-float support leaves: prebuilt toolchain library code with the
-// stock ABI (r4 callee-saved) and no interworking. Main-image members are the
-// IWRAM-copied routines named by their run address; overlay members are the
-// same routines linked into the two overlays that carry a copy.
-pub static SOFT_FLOAT_LIBRARY_SOURCES: &[&str] = &[
-    "0200142c", "0200143c", "0200144c", "02001564", "02001750", "02001760", "02005ac0", "02005ad0",
-    "02005bd8", "02005be8", "02005bf8", "02005dd4", "02005de4", "02005df4",
-];
+// stock ABI (r4 callee-saved) and no interworking, linked into the two
+// overlays that carry a copy. Members are named by their overlay routing
+// path: a bare address would also claim the unrelated function another
+// overlay links at the same address.
 pub static SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES: &[&str] = &[
+    "games/gs1/src/resource_3a7_c_0200142c.c",
+    "games/gs1/src/resource_3a7_c_0200143c.c",
+    "games/gs1/src/resource_3a7_c_0200144c.c",
+    "games/gs1/src/resource_3a7_c_02001564.c",
+    "games/gs1/src/resource_3a7_c_02001750.c",
+    "games/gs1/src/resource_3a7_c_02001760.c",
+    "games/gs1/src/resource_3bf_c_02005ac0.c",
+    "games/gs1/src/resource_3bf_c_02005ad0.c",
+    "games/gs1/src/resource_3bf_c_02005bd8.c",
+    "games/gs1/src/resource_3bf_c_02005be8.c",
+    "games/gs1/src/resource_3bf_c_02005bf8.c",
+    "games/gs1/src/resource_3bf_c_02005dd4.c",
+    "games/gs1/src/resource_3bf_c_02005de4.c",
+    "games/gs1/src/resource_3bf_c_02005df4.c",
     "games/gs1/src/resource_3a7_c_02001770.c",
     "games/gs1/src/resource_3bf_c_02005e04.c",
     "games/gs1/src/resource_3a7_c_020015a4.c",

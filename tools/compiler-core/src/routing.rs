@@ -5,7 +5,6 @@
 //! flag: a function that is not exact under its family's flags is not exact,
 //! and stays retained assembly until an ordinary C spelling reproduces it.
 use crate::routing_data::*;
-use crate::source_paths::lower_hex;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 /// Repository root: `<crate>/../..`.
@@ -116,24 +115,6 @@ fn source_stem_ref(source: &str) -> &str {
 pub fn source_stem(source: &str) -> String {
     source_stem_ref(source).to_string()
 }
-fn is_hex8(value: &str) -> bool {
-    value.len() == 8 && lower_hex(value)
-}
-/// `overlayStem`: an overlay row routes by its bare address, so a candidate
-/// verified as `<addr>.c` and the installed `<overlay>_c_<addr>.c` agree.
-fn overlay_stem(source: &str) -> &str {
-    let stem = source_stem_ref(source);
-    if is_hex8(stem) {
-        return stem;
-    }
-    if let Some(index) = stem.rfind("_c_") {
-        let tail = &stem[index + 3..];
-        if is_hex8(tail) {
-            return tail;
-        }
-    }
-    stem
-}
 fn has(table: &'static [&'static str], value: &str) -> bool {
     table.contains(&value)
 }
@@ -151,10 +132,7 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     if agbcc {
         return CompilerFamily::Agbcc;
     }
-    if target == CompilerTarget::Gs1
-        && (has(SOFT_FLOAT_LIBRARY_SOURCES, overlay_stem(source))
-            || has_owner(SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES, source))
-    {
+    if target == CompilerTarget::Gs1 && has_owner(SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES, source) {
         return CompilerFamily::SoftFloatLibrary;
     }
     CompilerFamily::Game
@@ -215,7 +193,7 @@ mod target_tests {
     #[test]
     fn soft_float_library_family_is_uniform() {
         for owner in [
-            "0200142c.c",
+            "games/gs1/src/resource_3a7_c_0200142c.c",
             "games/gs1/src/resource_3a7_c_02001544.c",
             "games/gs1/src/resource_3bf_c_02005ae0.c",
             "games/gs1/src/resource_3a7_c_0200145c.c",

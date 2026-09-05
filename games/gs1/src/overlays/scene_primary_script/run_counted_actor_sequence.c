@@ -1,13 +1,10 @@
 #include "types.h"
 
-#define RunEventScript01 Func_0200178c
-
-/* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 147 calls, 1 loops, 14 memory operations.
- * Recovered from the complete decoded owner. Calls, arguments, control flow,
- * loops, and memory operations are accounted for against the ROM. */
-
-void Func_02001a84();
-void *Func_02005a3e();
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+extern u8 Data_000010b0[];
+extern u8 Data_000010b2[];
+void Func_02005a3e();
 void Func_02005a70();
 void Func_02005a9a();
 void Func_02005abe();
@@ -29,7 +26,7 @@ void Func_02005e0e();
 void Func_02006134();
 void Func_02006158();
 s32 Func_02006162();
-void *Func_0200617a();
+void Func_0200617a();
 void Func_02006198();
 void Func_020061b8();
 void Func_020061c2();
@@ -54,7 +51,7 @@ void Func_0200628a();
 void Func_02006294();
 void Func_0200629a();
 void Func_020062a2();
-void *Func_020062a6();
+void Func_020062a6();
 void Func_020062b0();
 void Func_020062be();
 void Func_020062c8();
@@ -70,7 +67,7 @@ void Func_02006358();
 void Func_0200635a();
 void Func_02006370();
 void Func_02006380();
-void Func_020063a2();
+s32 Func_020063a2();
 void Func_020063a6();
 void Func_020063b2();
 void Func_020063c0();
@@ -99,8 +96,8 @@ void Func_020064ba();
 void Func_020064c0();
 void Func_020064c2();
 void Func_020064c6();
-void Func_020064ee();
-void *Func_020064fa();
+s32 Func_020064ee();
+s32 Func_020064fa();
 void Func_020064fc();
 void Func_02006500();
 void Func_02006526();
@@ -113,7 +110,7 @@ void Func_0200657e();
 void Func_0200658c();
 void Func_020065c0();
 void Func_020065d2();
-void *Func_020065d6();
+s32 Func_020065d6();
 void Func_020065d8();
 void Func_020065e2();
 void Func_02006602();
@@ -139,38 +136,72 @@ void Func_02006776();
 void Func_020067a2();
 void Func_020067ce();
 
-void RunEventScript01(void)
-{
-    void *p1;
-    void *p11;
-    void *p110;
-    void *p13;
-    void *p131;
-    s32 i1;
+/* Inline calls keep argument constants local; direct calls permit sharing. */
 
-    p1 = Func_020062a6(161);
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+void Func_0200178c(void)
+{
+    u8 *obj;
+    s32 other;
+    s32 tbl;
+    s32 left;
+    s32 cnt;
+    s32 mes_a;
+    s32 mes_b;
+
+    Func_020062a6(161);
     Func_020061c6(12, 3);
     Func_02006134(40);
-    if (Func_02006162(12) != 0) {
-        Func_020061b8(13);
+    other = Value1(Func_02006162, 12);
+    if (other != 0) {
+        Func_020061b8(13, *(volatile s32 *)(other + 8), *(volatile s32 *)(other + 16));
     }
     Func_020061c2(12, 0, 0);
     Func_02006158(20);
-    Func_0200624c(13, 12288, 40);
+    Call3(Func_0200624c, 13, 0x3000, 40);
     Func_02006204(5, 3);
     Func_0200620c(5, 3);
-    p11 = Func_0200617a(40);
+    Func_0200617a(40);
     Func_0200621a(5, 2);
-    p13 = Func_02005a3e(5, 20);
+    Func_02005a3e(5, 20);
     Func_02006212(13, 3);
     Func_02006198(10);
     Func_02006230(5, 3);
-    Func_02006294(9, 32768, 10);
+    Call3(Func_02006294, 9, 0x8000, 10);
     Func_0200624c(9, 2);
     Func_02005a70(9, 40);
     Func_02006244(5, 3);
     Func_020061ca(40);
-    Func_020062be(9, 45056, 40);
+    Call3(Func_020062be, 9, 0xb000, 40);
     Func_02006276(13, 2);
     Func_02005a9a(13, 20);
     Func_02006286(5, 1);
@@ -208,106 +239,134 @@ void RunEventScript01(void)
     Func_02005b94(11, 10);
     Func_02006380(10, 1);
     Func_02005ba4(10, 10);
-    Func_020063e4(9, 12288, 80);
-    Func_020063fe(9);
+    Call3(Func_020063e4, 9, 0x3000, 80);
+    Call3(Func_020063fe, 9, 0x105, 80);
     Func_020063a6(11, 1);
-    Func_02006402(11, 20480, 40);
+    Call3(Func_02006402, 11, 0x5000, 40);
     Func_020063b2(11, 2);
     Func_02005bde(11, 20);
     Func_02006486();
     Func_02006492();
-    Func_0200645a();
+    Call4(Func_0200645a, 0x1050000, -1, 0x1d20000, 0);
     Func_02006286();
     Func_0200621c(1);
     Func_020064a0();
     Func_020064b4();
     Func_0200635a(20);
-    Func_0200644e(0, 12288, 0);
-    Func_0200645a(1, 45056, 20);
+    Call3(Func_0200644e, 0, 0x3000, 0);
+    Call3(Func_0200645a, 1, 0xb000, 20);
     Func_0200640a(0, 2);
     Func_0200641a(1, 2);
-    Func_020063c0(0, 32768, 16384);
-    Func_020063ce(1, 32768, 16384);
-    Func_02006402(0, 244, 478);
-    Func_02006418(1, 260, 490);
+    Call3(Func_020063c0, 0, 0x8000, 0x4000);
+    Call3(Func_020063ce, 1, 0x8000, 0x4000);
+    Call3(Func_02006402, 0, 244, 0x1de);
+    Call3(Func_02006418, 1, 0x104, 0x1ea);
     Func_02006426(0);
     Func_0200643e(0, 1);
-    Func_020064ba(0, 12288, 0);
-    Func_020064c6(1, 45056, 20);
+    Call3(Func_020064ba, 0, 0x3000, 0);
+    Call3(Func_020064c6, 1, 0xb000, 20);
     Func_0200647e(0, 2);
     Func_0200646e(1, 4);
     Func_020063f4(20);
-    Func_020063a2(1);
-    for (i1 = 14; i1 >= 0; i1--) {
-        Func_02001a84();
-    }
-    Func_020064ee(1, 0);
-    if (Func_0200644e(0, 0) == 0) {
-        Func_020064fa();
+    tbl = Func_020063a2(1);
+    cnt = 0;
+    tbl += 216;
+    left = 14;
+    do {
+        u32 id = *(volatile u16 *)(tbl) & 0x1ff;
+        tbl = (tbl + 2);
+        if (id - 220 > 1) {
+            if (id != 223) {
+                goto L_02001a86;
+            }
+        }
+        cnt = (cnt + 1);
+        L_02001a86:;
+        left = (left - 1);
+    } while (left >= 0);
+    Value2(Func_020064ee, 1, 0);
+    if (Value2(Func_0200644e, 0, 0) == 0) {
+        mes_a = (s32)Data_000010b0;
+        ((void (*)())Func_020064fa)(mes_a);
         Func_020064c2(1, 3);
         Func_02006448(10);
-        Func_02005d08(1, 30);
-        Func_020064c0(1, 252, 486);
-        Func_02006500(1, 2);
-        Func_0200646e(10);
-        Func_02006410();
-        Func_02006540();
+        if (cnt <= 2) {
+            Func_02005d08(1, 30);
+            Call3(Func_020064c0, 1, 252, 0x1e6);
+            Func_02006500(1, 2);
+            Func_0200646e(10);
+            Func_02006410((mes_a + 1), 1, 0);
+            goto L_02001bdc;
+        }
+        Call1(Func_02006540, 0x10b4);
         Func_02005d3c(1, 30);
     } else {
-        Func_02006556();
-        Func_02006536(1, 3);
-        Func_02006526(1, 4);
-        Func_02005d62(1, 10);
-        Func_02006536(1, 4);
-        Func_02006556(1, 1);
-        Func_020064fc(1, 131072, 65536);
-        p110 = Func_020064fa(0);
-        *(u8 *)((u8 *)(p110) + 90) &= 0xfe;
-        Func_0200654c(1, 244, 478);
-        Func_0200652a(0, 98304, 49152);
-        Func_0200658c(0, 6, 0);
-        Func_02006556(0, 218);
-        Func_0200657e(0);
-        Func_020064b8();
-        Func_020065c0(0, 2);
-        Func_0200661a(0, 0, 30);
-        *(u8 *)((u8 *)(p110) + 90) |= 0x1;
-        Func_02006602();
-        Func_020065e2(1, 3);
-        Func_020065d2(1, 4);
-        Func_02005e0e(1, 10);
-        Func_020065e2(1, 4);
-        Func_02006656(0, 57344, 30);
+        if (cnt <= 2) {
+            mes_b = (s32)Data_000010b2;
+            Func_02006556(mes_b);
+            Func_02006536(1, 3);
+            Func_02006526(1, 4);
+            Func_02005d62(1, 10);
+            Func_02006536(1, 4);
+            Func_02006556(1, 1);
+            Call3(Func_020064fc, 1, 0x20000, 0x10000);
+            obj = Value1(Func_020064fa, 0);
+            obj[90] &= 254;
+            Call3(Func_0200654c, 1, 244, 0x1de);
+            Call3(Func_0200652a, 0, 0x18000, 0xc000);
+            Func_0200658c(0, 6, 0);
+            Call3(Func_02006556, 0, 218, 0x1d7);
+            Func_0200657e(0);
+            Func_020064b8((mes_b + 1), 1, 0);
+            Func_020065c0(0, 2);
+            Func_0200661a(0, 0, 30);
+            {
+                u8 value = *(volatile u8 *)&obj[90];
+
+                obj[90] = (u8)(value | 1);
+            }
+        } else {
+            Call1(Func_02006602, 0x10b5);
+            Func_020065e2(1, 3);
+            Func_020065d2(1, 4);
+            Func_02005e0e(1, 10);
+            Func_020065e2(1, 4);
+            Call3(Func_02006656, 0, 0xe000, 30);
+        }
     }
-    Func_0200668a(32768, 4096);
+    L_02001bdc:;
+    Call2(Func_0200668a, 0x8000, 0x1000);
     Func_0200668a(1, 1);
     Func_020066a6();
-    Func_0200667a(1, 32768, 30);
+    Call3(Func_0200667a, 1, 0x8000, 30);
     Func_02006632(1, 2);
-    Func_020065d8(1, 32768, 16384);
-    p131 = Func_020065d6(1);
-    *(u8 *)((u8 *)(p131) + 90) &= 0xfe;
-    Func_0200662a(1, 264, 482);
-    *(u8 *)((u8 *)(p131) + 90) |= 0x1;
-    Func_02006640(1, 278, 480);
-    *(s32 *)(p131 + 48) = 196608;
-    *(s32 *)(p131 + 52) = 131072;
+    Call3(Func_020065d8, 1, 0x8000, 0x4000);
+    obj = Value1(Func_020065d6, 1);
+    obj[90] &= 254;
+    Call3(Func_0200662a, 1, 0x108, 0x1e2);
+    {
+        u8 value = *(volatile u8 *)&obj[90];
+
+        obj[90] = (u8)(value | 1);
+    }
+    Call3(Func_02006640, 1, 0x116, 0x1e0);
+    *(volatile s32 *)((s32)obj + 48) = 0x30000;
+    *(volatile s32 *)((s32)obj + 52) = 0x20000;
     Func_02006776(153);
-    *(s32 *)(p131 + 40) = 393216;
+    *(volatile s32 *)((s32)obj + 40) = 0x60000;
     Func_02006678(1, 7);
-    Func_0200665e(1, 312, 470);
+    Call3(Func_0200665e, 1, 0x138, 0x1d6);
     Func_0200668e(1, 1);
     Func_0200661c(30);
     Func_020067a2(153);
-    *(s32 *)(p131 + 40) = 393216;
+    *(volatile s32 *)((s32)obj + 40) = 0x60000;
     Func_020066a4(1, 7);
-    Func_0200668a(1, 342, 470);
+    Call3(Func_0200668a, 1, 0x156, 0x1d6);
     Func_020066ba(1, 1);
     Func_02006648(30);
     Func_020067ce(153);
-    *(s32 *)(p131 + 40) = 393216;
+    *(volatile s32 *)((s32)obj + 40) = 0x60000;
     Func_020066d0(1, 7);
-    Func_020066b6(1, 376, 470);
+    Call3(Func_020066b6, 1, 0x178, 0x1d6);
     Func_020066e6(1, 1);
 }
-

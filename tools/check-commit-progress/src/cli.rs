@@ -20,7 +20,7 @@ fn command(program: &Path, arguments: &[&str]) -> Result<String, String> {
 
 fn progress_subject() -> Result<String, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
-    command(&executable, &["progress", "--subject"])
+    command(&executable, &["check", "progress", "--subject"])
 }
 
 fn require_verified_index() -> Result<(), String> {

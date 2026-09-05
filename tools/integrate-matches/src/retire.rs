@@ -272,7 +272,7 @@ fn synthesize_assembly(root: &Path, owner: SourceOwner) -> Result<String, String
     let bytes = rom
         .get(start..start + extent)
         .ok_or_else(|| format!("{}: extent runs past the ROM", owner.id()))?;
-    let raw = overlay_disasm::build_region_source(bytes, address as i64)?;
+    let raw = disassemble::build_region_source(bytes, address as i64)?;
     let set_line = regex::Regex::new(r"(?m)^\t\.set sub_[0-9a-f]{8}, 0x[0-9a-f]{8}\n").unwrap();
     let symbol = regex::Regex::new(r"\bsub_([0-9a-f]{8})\b").unwrap();
     let global = regex::Regex::new(r"(?m)^\t\.global Overlay_([0-9a-f]{8})$").unwrap();

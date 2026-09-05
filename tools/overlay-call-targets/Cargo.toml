@@ -10,9 +10,9 @@ edition = "2021"
 
 [dependencies]
 # Sibling crate, not a third-party dependency: the already-landed Rust half of
-# `../lib/overlay_disasm.ts`, which `tools/lib/overlay_call_targets.ts` imports
+# `../lib/disassemble.ts`, which `tools/lib/overlay_call_targets.ts` imports
 # for `assembleOverlay`.
-overlay-disasm = { path = "../overlay-disasm" }
+disassemble = { path = "../disassemble" }
 serde_json = "1"
 
 [lib]

@@ -1,0 +1,47 @@
+use std::path::{Path, PathBuf};
+use std::process::ExitCode;
+
+const USAGE: &str = "usage: alchemy overlay <adopt|park|audit|score|twins|disasm> [args]";
+
+fn root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(Path::parent)
+        .expect("overlay is under tools")
+        .to_path_buf()
+}
+
+fn code(result: Result<i32, String>) -> ExitCode {
+    match result {
+        Ok(0) => ExitCode::SUCCESS,
+        Ok(_) => ExitCode::FAILURE,
+        Err(error) => {
+            eprintln!("{error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+pub fn entry(arguments: &[String]) -> ExitCode {
+    let Some(command) = arguments.first().map(String::as_str) else {
+        eprintln!("{USAGE}");
+        return ExitCode::from(2);
+    };
+    let rest = &arguments[1..];
+    match command {
+        "adopt" => code(overlay_adopt::run(&root(), rest)),
+        "park" => code(overlay_adopt::park::run(&root(), rest)),
+        "audit" => code(overlay_adopt::park::run_audit(&root(), rest)),
+        "score" => code(overlay_adopt::score::run(&root(), rest)),
+        "disasm" => disassemble::cli::entry(rest),
+        "twins" => code(overlay_adopt::twins::run(&root(), rest)),
+        "-h" | "--help" => {
+            println!("{USAGE}");
+            ExitCode::SUCCESS
+        }
+        _ => {
+            eprintln!("unknown overlay command: {command}\n{USAGE}");
+            ExitCode::from(2)
+        }
+    }
+}

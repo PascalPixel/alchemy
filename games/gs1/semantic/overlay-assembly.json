@@ -3398,19 +3398,6 @@
       ]
     },
     {
-      "overlay": "resource_3a3",
-      "start": "0x02000524",
-      "end": "0x020006a4",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 49 calls, 1 loop(s), 26 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a3:02000524",
-        "boundary corrected to the reviewed 384-byte span in games/gs1/semantic/regions.json"
-      ]
-    },
-    {
       "overlay": "resource_3c4",
       "start": "0x02001fda",
       "end": "0x02001fdc",
@@ -3934,14 +3921,15 @@
     },
     {
       "overlay": "resource_39f",
-      "start": "0x02001c34",
+      "start": "0x02001d04",
       "end": "0x02001de0",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 33 calls, 0 loop(s), 11 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39f:02001c34"
+        "games/gs1/recon/en/dossiers.json#resource_39f:02001c34",
+        "region split around the exact C owner at 0x02001c34..0x02001d04; the retained bytes after it keep their classification"
       ]
     },
     {

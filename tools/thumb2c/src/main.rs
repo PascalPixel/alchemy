@@ -9,7 +9,7 @@ const USAGE: &str = "usage: lifter <command> [args]\n\
   score <overlay>:<addressHex> [--span BYTES] [--name NAME] [--diff ROWS]\n\
       lift, compile, and compare against the ROM bytes\n\
   tune  <overlay>:<addressHex> [--span BYTES] [--name NAME]\n\
-      score, then try call respellings line by line and keep improvements\n\
+      score, then try call and literal-pool respellings and keep improvements\n\
   batch [--kind WORD] [--limit N] [--all]\n\
       score every unregistered retained module (scene and script kinds)\n\
   list  [--kind WORD] [--all]\n\

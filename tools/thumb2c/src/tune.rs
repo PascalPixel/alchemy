@@ -87,6 +87,10 @@ pub fn tune(
             lines = stripped;
         }
     }
+    // A symbol address the reference held in HImode files a 64-byte pool
+    // fix where an SImode spelling files a 1020-byte one, so the reference's
+    // pool lands earlier. Where the report shows that, each site is respelt.
+    try_himode(&mut lines, &mut best, &write_and_score, &mut report);
     let mut index = 0;
     while index < lines.len() && best.differing > 0 {
         for alternative in alternatives(&lines[index]) {
@@ -135,6 +139,61 @@ mod tests {
             ]
         );
         assert!(alternatives("    record[3] = 1;").is_empty());
+    }
+
+    #[test]
+    fn respells_a_halfword_store_of_a_symbol_constant() {
+        assert_eq!(
+            himode_constant("    *shown = (u16)(s32)Data_00000e00;").as_deref(),
+            Some("    *shown = 0xe00;")
+        );
+        // A real address is not a halfword, and an ordinary cast is not a
+        // symbol whose name carries its value.
+        assert!(himode_constant("    *shown = (u16)(s32)Data_0200e7a0;").is_none());
+        assert!(himode_constant("    *shown = (u16)pal_b00;").is_none());
+    }
+
+    #[test]
+    fn respells_a_symbol_local_into_a_halfword_array() {
+        let unit = |wide: &str| -> Vec<String> {
+            [
+                "extern u8 Data_00000000[];",
+                "void Lifted_0200423c(void)",
+                "{",
+                "    s32 p8;",
+                "    u8 *record;",
+                "",
+                "    p8 = (s32)Data_00000000;",
+                "    record[98] = p8;",
+                wide,
+                "}",
+            ]
+            .iter()
+            .map(|line| (*line).to_string())
+            .collect()
+        };
+        let respelt = himode_local(&unit("    *(u8 *)(record + 85) = p8;"), "p8").expect("respelt");
+        assert_eq!(respelt[3], "    u16 p8[1];");
+        assert_eq!(respelt[6], "    p8[0] = (u16)(s32)Data_00000000;");
+        assert_eq!(respelt[7], "    record[98] = p8[0];");
+        assert_eq!(respelt[8], "    *(u8 *)(record + 85) = p8[0];");
+        // A word-wide read would lose the bits the truncation drops.
+        assert!(himode_local(&unit("    *(s32 *)(record + 76) = p8;"), "p8").is_none());
+        assert!(himode_local(&unit("    record[85] = p8;"), "record").is_none());
+    }
+
+    #[test]
+    fn reads_the_early_pool_signature() {
+        let report = |row: &str| format!("{}{row}\n", "header\n".repeat(9));
+        assert!(pool_is_late(&report(
+            "  ! ldr\tr3, [pc, #288]\t@ (0x678)   ldr\tr3, [pc, #60]\t@ (0x594)"
+        )));
+        assert!(!pool_is_late(&report(
+            "  ! ldr\tr3, [pc, #60]\t@ (0x594)   ldr\tr3, [pc, #288]\t@ (0x678)"
+        )));
+        assert!(!pool_is_late(&report(
+            "    movs\tr0, #19                   movs\tr0, #19"
+        )));
     }
 }
 
@@ -284,6 +343,10 @@ pub fn tune_targeted(
             lines = stripped;
         }
     }
+    // A symbol address the reference held in HImode files a 64-byte pool
+    // fix where an SImode spelling files a 1020-byte one, so the reference's
+    // pool lands earlier. Where the report shows that, each site is respelt.
+    try_himode(&mut lines, &mut best, &write_and_score, &mut report);
     // Two volatile stores in a row are output-dependent whatever their
     // offsets (alias analysis never separates volatile accesses), which
     // ranks the second below an independent instruction after the first
@@ -774,4 +837,227 @@ pub fn strip_volatile(lines: &[String], base: &str) -> Vec<String> {
             out
         })
         .collect()
+}
+
+/// The pool word a `ldr rX, [pc, #N]  @ (0x594)` disassembly column reads.
+fn pool_word(column: &str) -> Option<u32> {
+    if !column.contains("[pc, #") {
+        return None;
+    }
+    let at = column.rfind("@ (0x")?;
+    let hex: String = column[at + 5..]
+        .chars()
+        .take_while(|c| c.is_ascii_hexdigit())
+        .collect();
+    u32::from_str_radix(&hex, 16).ok()
+}
+
+/// Whether the aligned report shows the candidate's literal pool behind the
+/// reference's: on some row both columns load a pool word and the
+/// candidate's sits at the higher address. GCC 2.96 places a pool by the
+/// tightest pending fix, taking each fix's range from the pattern
+/// alternative recog chose (`push_minipool_fix`, arm.c:5367) and keeping the
+/// entries sorted by `max_address` (`add_minipool_forward_ref`, arm.c:4829),
+/// so a late pool is the signature of symbol loads spelled in SImode
+/// (`*thumb_movsi_insn` alt 6, range 1020, arm.md:3838) where the reference
+/// used a short HImode range (`*thumb_movhi_insn` alt 1, range 64,
+/// arm.md:4318).
+pub fn pool_is_late(report: &str) -> bool {
+    report.lines().skip(9).any(|line| {
+        let Some(at) = line.rfind("  ") else {
+            return false;
+        };
+        matches!(
+            (pool_word(&line[..at]), pool_word(&line[at + 2..])),
+            (Some(candidate), Some(reference)) if candidate > reference
+        )
+    })
+}
+
+/// A halfword store of a symbol-derived constant respelled as the bare
+/// constant: `*p = (u16)(s32)Data_00000e00;` becomes `*p = 0xe00;`. The
+/// lifter names such a word by the value the image holds, so the constant is
+/// the symbol's own address; through the cast the value is SImode and files a
+/// 1020-byte fix, and as a bare halfword it is HImode and files a 64-byte one.
+pub fn himode_constant(line: &str) -> Option<String> {
+    let trimmed = line.trim_start();
+    let lead = &line[..line.len() - trimmed.len()];
+    let (lhs, value) = trimmed.strip_suffix(';')?.split_once(" = ")?;
+    let digits = value.strip_prefix("(u16)(s32)Data_")?;
+    if digits.len() != 8 || !digits.chars().all(|c| c.is_ascii_hexdigit()) {
+        return None;
+    }
+    let constant = u32::from_str_radix(digits, 16).ok()?;
+    (constant > 0 && constant <= 0xffff).then(|| format!("{lead}{lhs} = {constant:#x};"))
+}
+
+/// The symbol whose address a value takes, in `(s32)Sym` or `(u16)(s32)Sym`.
+fn symbol_address(value: &str) -> Option<&str> {
+    let rest = value
+        .strip_prefix("(u16)")
+        .unwrap_or(value)
+        .strip_prefix("(s32)")?;
+    let plain = !rest.starts_with(|c: char| c.is_ascii_digit())
+        && !rest.is_empty()
+        && rest.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+    plain.then_some(rest)
+}
+
+/// Whether a store target is a halfword or narrower, so a value truncated to
+/// HImode reaches it unchanged.
+fn narrows(lines: &[String], lhs: &str) -> bool {
+    if [
+        "*(u8 *)",
+        "*(u16 *)",
+        "*(volatile u8 *)",
+        "*(volatile u16 *)",
+    ]
+    .iter()
+    .any(|cast| lhs.starts_with(cast))
+    {
+        return true;
+    }
+    let Some((base, index)) = lhs.split_once('[') else {
+        return false;
+    };
+    if !index.ends_with(']') || !base.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+        return false;
+    }
+    lines.iter().any(|line| {
+        let declaration = line.trim();
+        ["u8 *", "u16 *"]
+            .iter()
+            .any(|kind| declaration == format!("{kind}{base};"))
+            || ["u8 ", "u16 "]
+                .iter()
+                .any(|kind| declaration.starts_with(&format!("{kind}{base}[")))
+    })
+}
+
+/// The scalar locals a rewrite could hold in HImode, in declaration order.
+fn himode_names(lines: &[String]) -> Vec<String> {
+    let mut found: Vec<String> = Vec::new();
+    for line in lines {
+        let declaration = line.trim();
+        let Some(name) = declaration
+            .strip_suffix(';')
+            .and_then(|d| d.strip_prefix("s32 ").or_else(|| d.strip_prefix("u16 ")))
+        else {
+            continue;
+        };
+        let plain = !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+        if plain && !found.iter().any(|held| held == name) {
+            found.push(name.to_string());
+        }
+    }
+    found
+}
+
+/// The unit with the scalar local `name` respelled as a one-element `u16`
+/// array: `s32 p8; p8 = (s32)Sym;` becomes `u16 p8[1]; p8[0] =
+/// (u16)(s32)Sym;` and every read becomes `p8[0]`. A plain `u16` local is
+/// promoted back to SImode by `PROMOTE_MODE` (arm.h:618); the array element
+/// stays HImode, which is what the reference spelled. None unless the local
+/// is declared once, assigned once from a symbol address the unit declares
+/// extern, and read only into halfword-or-narrower stores.
+pub fn himode_local(lines: &[String], name: &str) -> Option<Vec<String>> {
+    let (mut at_declaration, mut at_assignment) = (None, None);
+    let mut symbol = "";
+    let mut reads = Vec::new();
+    for (index, line) in lines.iter().enumerate() {
+        if !mentions(line, name) {
+            continue;
+        }
+        let statement = line.trim();
+        if ["s32 ", "u16 "]
+            .iter()
+            .any(|kind| statement == format!("{kind}{name};"))
+        {
+            if at_declaration.replace(index).is_some() {
+                return None;
+            }
+            continue;
+        }
+        let (lhs, value) = statement.strip_suffix(';')?.split_once(" = ")?;
+        if lhs == name {
+            if at_assignment.replace(index).is_some() {
+                return None;
+            }
+            symbol = symbol_address(value)?;
+            continue;
+        }
+        if value != name || !narrows(lines, lhs) {
+            return None;
+        }
+        reads.push(index);
+    }
+    let (at_declaration, at_assignment) = (at_declaration?, at_assignment?);
+    let declared = lines
+        .iter()
+        .any(|line| line.trim_start().starts_with("extern ") && mentions(line, symbol));
+    if reads.is_empty() || !declared {
+        return None;
+    }
+    let lead = |index: usize| {
+        let line: &str = &lines[index];
+        line[..line.len() - line.trim_start().len()].to_string()
+    };
+    let mut out = lines.to_vec();
+    out[at_declaration] = format!("{}u16 {name}[1];", lead(at_declaration));
+    out[at_assignment] = format!("{}{name}[0] = (u16)(s32){symbol};", lead(at_assignment));
+    for index in reads {
+        out[index] = format!("{}[0];", lines[index].trim_end().strip_suffix(';')?);
+    }
+    Some(out)
+}
+
+/// Trials of the two HImode literal-pool respellings, one site at a time,
+/// each kept only on a strict improvement and only while the report still
+/// shows the candidate's pool behind the reference's.
+fn try_himode(
+    lines: &mut Vec<String>,
+    best: &mut Score,
+    score_text: &dyn Fn(&str) -> Result<Score, String>,
+    report: &mut dyn FnMut(&str),
+) {
+    for index in 0..lines.len() {
+        if best.differing == 0 || !pool_is_late(&best.report) {
+            return;
+        }
+        let Some(alternative) = himode_constant(&lines[index]) else {
+            continue;
+        };
+        let saved = std::mem::replace(&mut lines[index], alternative);
+        match score_text(&format!("{}\n", lines.join("\n"))) {
+            Ok(trial) if trial.differing < best.differing => {
+                report(&format!(
+                    "{} -> {}  himode {}",
+                    best.differing,
+                    trial.differing,
+                    lines[index].trim()
+                ));
+                *best = trial;
+            }
+            _ => lines[index] = saved,
+        }
+    }
+    for name in himode_names(lines) {
+        if best.differing == 0 || !pool_is_late(&best.report) {
+            return;
+        }
+        let Some(rewritten) = himode_local(lines, &name) else {
+            continue;
+        };
+        match score_text(&format!("{}\n", rewritten.join("\n"))) {
+            Ok(trial) if trial.differing < best.differing => {
+                report(&format!(
+                    "{} -> {}  himode {name}[1]",
+                    best.differing, trial.differing
+                ));
+                *best = trial;
+                *lines = rewritten;
+            }
+            _ => {}
+        }
+    }
 }

@@ -2155,7 +2155,8 @@
       "source": "battle/effects/get_base_success_rate.c"
     },
     "main:0808e680": {
-      "name": "BattleCommand_ExecuteSelectedAction"
+      "name": "BattleCommand_ExecuteSelectedAction",
+      "source": "battle/command/execute_selected_action.c"
     },
     "main:08079460": {
       "name": "BattleUnit_Assign"

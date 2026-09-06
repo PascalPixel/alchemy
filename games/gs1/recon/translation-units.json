@@ -8660,9 +8660,9 @@
       "local_symbols": []
     },
     {
-      "id": "overlays-scene-primary-script-run-scene-3b5-02000224",
+      "id": "scene-actor-and-event-sequences-3b5",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b5_02000224.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/actor_and_event_sequences_3b5.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -8673,24 +8673,7 @@
         "Func_02000fa6_b": {
           "address": "0x02008d4c",
           "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02000224",
-          "extent": 60,
-          "state": "exact-c"
-        }
-      ],
-      "local_symbols": []
-    },
-    {
-      "id": "overlays-scene-primary-script-run-scene-3b5-020005dc",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b5_020005dc.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3b5",
-      "absolute_symbols": {
+        },
         "Func_0200133c_a": {
           "address": "0x02008d5c",
           "kind": "thumb"
@@ -8698,12 +8681,30 @@
         "Func_0200133c_b": {
           "address": "0x02008d4c",
           "kind": "thumb"
+        },
+        "Func_020016ce_a": {
+          "address": "0x02008e1c",
+          "kind": "thumb"
+        },
+        "Func_020016ce_b": {
+          "address": "0x02008dfc",
+          "kind": "thumb"
         }
       },
       "owners": [
         {
+          "address": "0x02000224",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
           "address": "0x020005dc",
           "extent": 104,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000894",
+          "extent": 192,
           "state": "exact-c"
         }
       ],
@@ -8738,31 +8739,6 @@
           "address": "0x02000728",
           "extent": 364,
           "state": "retained-assembly"
-        }
-      ],
-      "local_symbols": []
-    },
-    {
-      "id": "overlays-scene-primary-script-run-scene-3b5-sequence-a",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b5_sequence_a.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3b5",
-      "absolute_symbols": {
-        "Func_020016ce_a": {
-          "address": "0x02008e1c",
-          "kind": "thumb"
-        },
-        "Func_020016ce_b": {
-          "address": "0x02008dfc",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02000894",
-          "extent": 192,
-          "state": "exact-c"
         }
       ],
       "local_symbols": []

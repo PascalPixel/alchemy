@@ -1,5 +1,7 @@
 #include "shared-aggregates.h"
 
+typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
+
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
  * which can be enabled by passing `--valid-syntax` on the command line.
@@ -173,7 +175,7 @@ void Func_080dc968(void *arg0) {
     Func_080d6750(M2C_FIELD(temp_r3_25, void **, 0x7828));
     Func_080dbb24(9, 0x172, 1);
     Func_080e0524(0x6A, temp_r3_25, 1, 1);
-    Func_080072f0(0x05000000, Func_08002f40(0xA0), 0x80, 0x03001388);
+    ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(0xA0), 0x80);
     Func_080e0524(0x73, sp24, 0, 0);
     sp30 = Func_08002f40(0xD2);
     sp0 = 2;

@@ -4,6 +4,54 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "battle-staged-particle-presentation",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/battle-staged-particle-presentation.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080dc968",
+          "extent": 2372,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "battle-palette-particle-presentation",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/battle-palette-particle-presentation.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d2464",
+          "extent": 2356,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "battle-particle-distance-presentation",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/battle-particle-distance-presentation.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d91dc",
+          "extent": 2268,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "battle-tile-palette-animation",
       "game": "gs1",
       "source": "games/gs1/recon/en/units/battle-tile-palette-animation.c",

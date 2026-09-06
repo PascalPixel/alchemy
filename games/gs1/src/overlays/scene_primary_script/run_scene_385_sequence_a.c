@@ -12,8 +12,11 @@ s32 Func_020019f4();
 void Func_020019fe();
 void Func_02001a06();
 s32 Func_02001a1e();
+s32 Func_02001a1e_a();
+void Func_02001a1e_b();
 void Func_02001a3a();
 s32 Func_02001a44();
+s32 Func_02001a44_a();
 void Func_02001a4a();
 s32 Func_02001a56();
 s32 Func_02001a64();
@@ -84,13 +87,13 @@ void FieldScene_RunScene385SequenceA(void)
             bump_step(1);
         }
         Func_02001a90(16, 0);
-        *(u8 *)(Func_02001a1e(16) + 91) = rec7;
+        *(u8 *)(Func_02001a1e_a(16) + 91) = rec7;
         Func_02001a3a(16, 2);
-        Call0((void (*)())Func_02001a1e);
+        Call0(Func_02001a1e_b);
         Call1(Func_020019fe, 0x308);
     } else {
         Call1(Func_02001aa6, 0x1cc2);
-        *(u8 *)(Func_02001a44(16) + 91) = 1;
+        *(u8 *)(Func_02001a44_a(16) + 91) = 1;
         Func_02000e04(16);
         v5 = 0;
         *(u8 *)(Func_02001a56(16) + 91) = v5;

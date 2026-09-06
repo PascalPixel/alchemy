@@ -6,6 +6,7 @@ extern u8 Data_03001ebc[];
 void Func_02001638();
 s32 Func_0200169e();
 void Func_020016b6();
+void Func_020016b6_a();
 void Func_02001708();
 void Func_02001714();
 void Func_0200179e();
@@ -41,6 +42,6 @@ void FieldScene_RunPrimaryScript(void)
     *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
     Func_02001714(0, 2);
     Call3(Func_02001708, 0, 0, -16);
-    Func_020016b6(16);
+    Func_020016b6_a(16);
     Func_020017b4(2);
 }

@@ -3,6 +3,7 @@
 void Func_02007410(void);
 void Func_020075de(s32);
 void Func_0200756e(s32, s32);
+void Func_0200756e_a(s32, s32);
 void Func_02007584(s32);
 void Func_020072da(s32);
 void Func_020075a4(void);
@@ -14,6 +15,7 @@ void Func_0200730a(s32);
 void Func_0200757e(s32, s32);
 void Func_02007328(void *, s32);
 void Func_020075d0(s32, s32);
+void Func_020075d0_a(s32, s32);
 void Func_020075da(s32, s32);
 void Func_020075f0(s32);
 void Func_02007496(s32);
@@ -30,7 +32,7 @@ void StoryScene_StartTransition(void)
     Func_02007410();
     Func_020075de(141);
     Func_0200756e(0, 0);
-    Func_0200756e(0, 0);
+    Func_0200756e_a(0, 0);
     Func_02007584(1);
     Func_020072da(2);
     *(s32 *)(*(u8 **)0x03001ebc + 456) = 1;
@@ -46,7 +48,7 @@ void StoryScene_StartTransition(void)
         Func_02007328(transition_callback, transition_delay);
     }
     Func_020075d0(0, 0);
-    Func_020075d0(0x10004, 1);
+    Func_020075d0_a(0x10004, 1);
     Func_020075da(0x10000, 2);
     Func_020075f0(40);
     Func_02007496(240);

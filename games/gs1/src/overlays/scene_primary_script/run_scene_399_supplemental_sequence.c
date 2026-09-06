@@ -31,7 +31,8 @@ void Func_020026b2();
 void Func_020026b4();
 void Func_020026bc();
 void Func_020026c8();
-void Func_020026dc();
+void Func_020026dc_a();
+void Func_020026dc_b();
 void Func_020026e8();
 void Func_020026ec();
 void *Scene_GetRecord_2();
@@ -66,7 +67,7 @@ void Func_020027ca();
 #define GameFlag_IsSet_2(a0) Value1(Func_020025cc, a0)
 #define BattleRuntime_Reset_2() Value0(Func_020025f4)
 #define Object_SetModeById_1(a0, a1) Call2(Func_02002684, a0, a1)
-#define SceneWork_SetStepValue_2(a0) Value1(Func_020026dc, a0)
+#define SceneWork_SetStepValue_2(a0) Value1(Func_020026dc_a, a0)
 #define BattleEvent_RunActionAndWait_1(a0, a1) Call2(Func_020026ec, a0, a1)
 #define Object_SetModeById_2(a0, a1) Call2(Func_020026a4, a0, a1)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_2() Call0(Func_02002632)
@@ -82,7 +83,7 @@ void Func_020027ca();
 #define BattleRuntime_RunThenWaitIfModeZero_1(a0, a1, a2) Call3(Func_02002762, a0, a1, a2)
 #define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Func_020026b2, a0, a1)
 #define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_020026b4, a0, a1, a2)
-#define ObjectMotion_MarkActiveAndSetActionCallback_1(a0, a1) Value2(Func_020026dc, a0, a1)
+#define ObjectMotion_MarkActiveAndSetActionCallback_1(a0, a1) Value2(Func_020026dc_b, a0, a1)
 #define BattleRuntime_WaitIfModeZero_2(a0) Value1(Func_0200269a, a0)
 #define ObjectMotion_Launch_1(a0, a1, a2) Call3(Func_02002744, a0, a1, a2)
 #define ObjectMotion_SetVariantCallback_2(a0, a1) Call2(Func_02002754, a0, a1)

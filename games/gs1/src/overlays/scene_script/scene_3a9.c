@@ -44,6 +44,7 @@ void Func_02000646(void);
 void Func_02000658();
 void Func_02000710();
 u8 *Func_020006e6();
+void Func_020006e6_a(s32);
 void Func_020006f0();
 void Func_02000718();
 void Func_02000714();
@@ -297,7 +298,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 
 void FieldScene_RunArrivalPlacement(void)
 {
-    u8 *Func_0200067a();
+    u8 *Func_0200067a_a();
 
     u8 *work = *(u8 **)0x03001ebc;
     u32 slot;
@@ -307,7 +308,7 @@ void FieldScene_RunArrivalPlacement(void)
     Func_02000658();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *rec = Func_0200067a(slot);
+        u8 *rec = Func_0200067a_a(slot);
 
         if (rec != 0) {
             rec[85] = 0;
@@ -344,7 +345,7 @@ void FieldScene_RunArrivalPlacement(void)
 
     Func_02000714(0, 2);
     Func_02000718(0, 3, -8);
-    Func_020006e6(10);
+    Func_020006e6_a(10);
 
     Func_0200075c(*(s16 *)(work + 364));
     Func_02000768();

@@ -3,6 +3,7 @@ pub mod bundle;
 pub mod bundle_data;
 pub mod call_via_data;
 pub mod nodepath;
+pub mod overlay;
 pub mod plan;
 pub mod routing;
 pub mod routing_data;

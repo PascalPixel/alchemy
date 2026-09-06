@@ -68,7 +68,7 @@ void Func_02004392();
 s32 Func_02004406();
 s32 Func_02004410();
 void Func_02004426();
-void Func_02004406_b();
+void Func_02004406_a();
 void Func_02004416();
 void Func_02004444();
 s32 Func_0200446e();
@@ -142,7 +142,7 @@ void SceneActor_StepSubjectAlongHeading(void)
         Func_02004426(subject, x, subject->y, z);
         /* Same veneer address as the marker lookup, but a two-argument
          * command with a distinct declaration. */
-        Func_02004406_b(subject, 2);
+        Func_02004406_a(subject, 2);
         Func_02004416(subject, 48);
         Func_02004444(subject);
         subject->callback = (void *)Func_0200a014;

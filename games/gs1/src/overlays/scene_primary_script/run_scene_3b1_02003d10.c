@@ -87,7 +87,7 @@ void FieldScene_RunScene3b1_02003d10(void)
     Func_0200a254(20);
     Call3(Func_0200a2d2, 8, 0x1d2, 0x270);
     Value2(Func_0200862c, 8, 0x5000);
-    Func_0200a32c(8, 2);
+    Func_0200a32c_a(8, 2);
     Call1(Func_0200a362, 0x1e3b);
     Func_0200a384(8, 0, 20);
     Func_020086b6(9, 11, 0);

@@ -25,6 +25,7 @@ extern Obj *Func_02005c46(s32);
 extern void Func_02005d28(s32);
 extern void Func_02005d40(s32, s32);
 extern void Func_02005cb0();
+extern void Func_02005cb0_a();
 extern void Func_02005dec(void);
 extern void Func_02005df8(void);
 extern void Func_02005ca0(s32, s32);
@@ -81,7 +82,7 @@ void Func_02001cc0(void)
     {
         s32 v = p->f10 >> 20;
 
-        Func_02005cb0(base + 888, v);
+        Func_02005cb0_a(base + 888, v);
     }
     n++;
     if (n > 3) {

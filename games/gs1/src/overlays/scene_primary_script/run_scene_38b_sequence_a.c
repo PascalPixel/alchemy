@@ -10,6 +10,7 @@ void Func_02001bac();
 s32 Func_02001bb8();
 s32 Func_02001bc0();
 s32 Func_02001bc8();
+s32 Func_02001bc8_a();
 s32 Func_02001bee();
 s32 Func_02001bf8();
 void Func_02001c14();
@@ -19,6 +20,7 @@ void Func_02001c3c();
 void Func_02001c48();
 void Func_02001c54();
 s32 Func_02001c70();
+s32 Func_02001c70_a();
 s32 Func_02001c7e();
 s32 Func_02001c8a();
 void Func_02001c94();
@@ -86,7 +88,7 @@ void FieldScene_RunScene38bSequenceA(void)
         Func_02001c1e(10, 0, 0);
         Func_02001c28(11, 0, 0);
         Call6(Func_02001bac, 56, 15, 40, 15, 1, 2);
-        Call6(Func_02001bc8, 26, 15, 1, 3, 10, 15);
+        Call6(Func_02001bc8_a, 26, 15, 1, 3, 10, 15);
         if (Value1(Func_02001bee, 0x849) == 0) {
             if (Value1(Func_02001bf8, 0x848) != 0) {
                 goto L_02000c92;
@@ -107,7 +109,7 @@ void FieldScene_RunScene38bSequenceA(void)
         Func_02001c54(record, 0);
         target = (s32)rec8 + 85;
         *(u8 *)target = rec7;
-        record = Value1(Func_02001c70, 0x881);
+        record = Value1(Func_02001c70_a, 0x881);
         if (record != 0) {
             *(u8 *)(Func_02001cb2(9) + 89) |= 16;
             *(u8 *)(Func_02001cc2(16) + 89) |= 16;

@@ -3,6 +3,1163 @@
   "comment": "Proven ASM describes a reproducible implementation form, not Camelot source provenance: the approved compiler model cannot emit the required form as ordinary C, the reason is recorded, and assembly reproduces the audited extent byte-exactly. Weaker classifications remain Draft ASM.",
   "regions": [
     {
+      "overlay": "resource_371",
+      "start": "0x020017a4",
+      "end": "0x020017fc",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:020017a4"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x020017fc",
+      "end": "0x02001888",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:020017fc"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02001888",
+      "end": "0x02001938",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02001888"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02001938",
+      "end": "0x020019e8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02001938"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x020019e8",
+      "end": "0x02001a98",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:020019e8"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02001a98",
+      "end": "0x02001b5c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02001a98"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02001b5c",
+      "end": "0x02001c08",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02001b5c"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02002274",
+      "end": "0x020024a8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02002274"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02002cb4",
+      "end": "0x0200312e",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02002cb4"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x020032f0",
+      "end": "0x0200341c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_371:020032f0"
+      ]
+    },
+    {
+      "overlay": "resource_372",
+      "start": "0x02001154",
+      "end": "0x020012f0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_372:02001154"
+      ]
+    },
+    {
+      "overlay": "resource_372",
+      "start": "0x02001b18",
+      "end": "0x0200209c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_372:02001b18"
+      ]
+    },
+    {
+      "overlay": "resource_372",
+      "start": "0x02003fb0",
+      "end": "0x020040f0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_372:02003fb0"
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x02000cd0",
+      "end": "0x02000d2c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_373:02000cd0"
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x020012bc",
+      "end": "0x02001454",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_373:020012bc"
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x020031b4",
+      "end": "0x020032b0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_373:020031b4"
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x020034c8",
+      "end": "0x02003fb0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_373:020034c8"
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x02003fb0",
+      "end": "0x02005594",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_373:02003fb0"
+      ]
+    },
+    {
+      "overlay": "resource_376",
+      "start": "0x02000658",
+      "end": "0x020010c0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_376:02000658"
+      ]
+    },
+    {
+      "overlay": "resource_377",
+      "start": "0x020013e4",
+      "end": "0x02001544",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_377:020013e4"
+      ]
+    },
+    {
+      "overlay": "resource_379",
+      "start": "0x02000074",
+      "end": "0x02000ab8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_379:02000074"
+      ]
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x02000d9c",
+      "end": "0x02000ef8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37a:02000d9c"
+      ]
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x02001264",
+      "end": "0x02001380",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37a:02001264"
+      ]
+    },
+    {
+      "overlay": "resource_37b",
+      "start": "0x0200105c",
+      "end": "0x020014b8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37b:0200105c"
+      ]
+    },
+    {
+      "overlay": "resource_37c",
+      "start": "0x02000054",
+      "end": "0x020000a0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37c:02000054"
+      ]
+    },
+    {
+      "overlay": "resource_37d",
+      "start": "0x02000054",
+      "end": "0x020000a0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37d:02000054"
+      ]
+    },
+    {
+      "overlay": "resource_37e",
+      "start": "0x02000054",
+      "end": "0x020000a0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37e:02000054"
+      ]
+    },
+    {
+      "overlay": "resource_37f",
+      "start": "0x02000258",
+      "end": "0x020003bc",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37f:02000258"
+      ]
+    },
+    {
+      "overlay": "resource_37f",
+      "start": "0x02000420",
+      "end": "0x0200056c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37f:02000420"
+      ]
+    },
+    {
+      "overlay": "resource_37f",
+      "start": "0x02000d1c",
+      "end": "0x02000f8c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_37f:02000d1c"
+      ]
+    },
+    {
+      "overlay": "resource_380",
+      "start": "0x020006f4",
+      "end": "0x02000a64",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_380:020006f4"
+      ]
+    },
+    {
+      "overlay": "resource_380",
+      "start": "0x02000a98",
+      "end": "0x02000d5c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_380:02000a98"
+      ]
+    },
+    {
+      "overlay": "resource_380",
+      "start": "0x02002400",
+      "end": "0x02002674",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_380:02002400"
+      ]
+    },
+    {
+      "overlay": "resource_383",
+      "start": "0x02000b48",
+      "end": "0x02000de4",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_383:02000b48"
+      ]
+    },
+    {
+      "overlay": "resource_383",
+      "start": "0x02004b2c",
+      "end": "0x02004c6c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_383:02004b2c"
+      ]
+    },
+    {
+      "overlay": "resource_389",
+      "start": "0x02000ce0",
+      "end": "0x02000ecc",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_389:02000ce0"
+      ]
+    },
+    {
+      "overlay": "resource_38d",
+      "start": "0x020008c0",
+      "end": "0x0200179c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_38d:020008c0"
+      ]
+    },
+    {
+      "overlay": "resource_38d",
+      "start": "0x0200179c",
+      "end": "0x02001958",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_38d:0200179c"
+      ]
+    },
+    {
+      "overlay": "resource_395",
+      "start": "0x020002ec",
+      "end": "0x02000488",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_395:020002ec"
+      ]
+    },
+    {
+      "overlay": "resource_39b",
+      "start": "0x02001208",
+      "end": "0x020012e0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39b:02001208"
+      ]
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x020010c0",
+      "end": "0x02001164",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39c:020010c0"
+      ]
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x020015e0",
+      "end": "0x020016c4",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39c:020015e0"
+      ]
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x020016c4",
+      "end": "0x02001790",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39c:020016c4"
+      ]
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x02003788",
+      "end": "0x02003860",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39c:02003788"
+      ]
+    },
+    {
+      "overlay": "resource_39d",
+      "start": "0x0200056c",
+      "end": "0x02000890",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39d:0200056c"
+      ]
+    },
+    {
+      "overlay": "resource_39d",
+      "start": "0x02002eb8",
+      "end": "0x02002f16",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39d:02002eb8"
+      ]
+    },
+    {
+      "overlay": "resource_39e",
+      "start": "0x02002ad0",
+      "end": "0x02003e58",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_39e:02002ad0"
+      ]
+    },
+    {
+      "overlay": "resource_3a2",
+      "start": "0x020008a8",
+      "end": "0x020008de",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a2:020008a8"
+      ]
+    },
+    {
+      "overlay": "resource_3a3",
+      "start": "0x020007b8",
+      "end": "0x0200084c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a3:020007b8"
+      ]
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x020006dc",
+      "end": "0x020007e8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a4:020006dc"
+      ]
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x020007e8",
+      "end": "0x020008d4",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a4:020007e8"
+      ]
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x020008d4",
+      "end": "0x020009ec",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a4:020008d4"
+      ]
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x02000ec0",
+      "end": "0x02001398",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a4:02000ec0"
+      ]
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x02001398",
+      "end": "0x02001678",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a4:02001398"
+      ]
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x02002f10",
+      "end": "0x02002ffc",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a4:02002f10"
+      ]
+    },
+    {
+      "overlay": "resource_3a7",
+      "start": "0x02000754",
+      "end": "0x020008a8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a7:02000754"
+      ]
+    },
+    {
+      "overlay": "resource_3a8",
+      "start": "0x02002008",
+      "end": "0x020026c0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3a8:02002008"
+      ]
+    },
+    {
+      "overlay": "resource_3aa",
+      "start": "0x02000360",
+      "end": "0x0200140c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3aa:02000360"
+      ]
+    },
+    {
+      "overlay": "resource_3ab",
+      "start": "0x0200049c",
+      "end": "0x020005f0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3ab:0200049c"
+      ]
+    },
+    {
+      "overlay": "resource_3af",
+      "start": "0x02001a98",
+      "end": "0x02001b58",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3af:02001a98"
+      ]
+    },
+    {
+      "overlay": "resource_3b0",
+      "start": "0x0200040c",
+      "end": "0x02000468",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b0:0200040c"
+      ]
+    },
+    {
+      "overlay": "resource_3b1",
+      "start": "0x0200413c",
+      "end": "0x02004198",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b1:0200413c"
+      ]
+    },
+    {
+      "overlay": "resource_3b2",
+      "start": "0x0200167c",
+      "end": "0x02001740",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b2:0200167c"
+      ]
+    },
+    {
+      "overlay": "resource_3b4",
+      "start": "0x02000b68",
+      "end": "0x02000ccc",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b4:02000b68"
+      ]
+    },
+    {
+      "overlay": "resource_3b4",
+      "start": "0x02000fdc",
+      "end": "0x02001070",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b4:02000fdc"
+      ]
+    },
+    {
+      "overlay": "resource_3b4",
+      "start": "0x020011d8",
+      "end": "0x02001204",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b4:020011d8"
+      ]
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x0200028c",
+      "end": "0x020002b8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b5:0200028c"
+      ]
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x02000728",
+      "end": "0x02000894",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b5:02000728"
+      ]
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x02000980",
+      "end": "0x02000ca8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b5:02000980"
+      ]
+    },
+    {
+      "overlay": "resource_3b9",
+      "start": "0x02001688",
+      "end": "0x02001a14",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3b9:02001688"
+      ]
+    },
+    {
+      "overlay": "resource_3bb",
+      "start": "0x02001424",
+      "end": "0x02001538",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bb:02001424"
+      ]
+    },
+    {
+      "overlay": "resource_3bc",
+      "start": "0x020020f0",
+      "end": "0x020022c4",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bc:020020f0"
+      ]
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x02000bec",
+      "end": "0x02000c78",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bf:02000bec"
+      ]
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x02000ce0",
+      "end": "0x02000d54",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bf:02000ce0"
+      ]
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x02000dcc",
+      "end": "0x02000e30",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bf:02000dcc"
+      ]
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x02000f30",
+      "end": "0x02000f94",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bf:02000f30"
+      ]
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x020025f8",
+      "end": "0x0200269c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3bf:020025f8"
+      ]
+    },
+    {
+      "overlay": "resource_3c0",
+      "start": "0x02000dc8",
+      "end": "0x02000e5c",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c0:02000dc8"
+      ]
+    },
+    {
+      "overlay": "resource_3c4",
+      "start": "0x02001550",
+      "end": "0x020016f4",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c4:02001550"
+      ]
+    },
+    {
+      "overlay": "resource_3c4",
+      "start": "0x02001744",
+      "end": "0x020018f8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c4:02001744"
+      ]
+    },
+    {
+      "overlay": "resource_3c4",
+      "start": "0x02002040",
+      "end": "0x020020a2",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c4:02002040"
+      ]
+    },
+    {
+      "overlay": "resource_3c5",
+      "start": "0x02000d4c",
+      "end": "0x02000eac",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c5:02000d4c"
+      ]
+    },
+    {
+      "overlay": "resource_3c5",
+      "start": "0x02000eac",
+      "end": "0x02000f58",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c5:02000eac"
+      ]
+    },
+    {
+      "overlay": "resource_3c5",
+      "start": "0x02001158",
+      "end": "0x02001182",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c5:02001158"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020007d8",
+      "end": "0x020008a0",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c8:020007d8"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020009c8",
+      "end": "0x02000b08",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c8:020009c8"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02004a2c",
+      "end": "0x02004bd8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c8:02004a2c"
+      ]
+    },
+    {
+      "overlay": "resource_3c9",
+      "start": "0x02003924",
+      "end": "0x02003bc8",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c9:02003924"
+      ]
+    },
+    {
+      "overlay": "resource_3c9",
+      "start": "0x02004b28",
+      "end": "0x02004bec",
+      "kind": "compiler_regression",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
+        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
+        "games/gs1/recon/en/dossiers.json#resource_3c9:02004b28"
+      ]
+    },
+    {
       "overlay": "resource_36f",
       "start": "0x020001c0",
       "end": "0x02000238",
@@ -1935,13 +3092,11 @@
       "end": "0x02000918",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 221 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_396:0200069c",
-        "boundary corrected to the reviewed 636-byte span in games/gs1/semantic/regions.json"
+        "The historical candidate combined later owners with the first reviewed 636-byte owner; its whole-range score and call count do not establish compiler impossibility.",
+        "The bounded draft is being reconstructed and scored with canonical GCC 2.96; unsuccessful optimization probes and absence of high-register moves are not an impossibility proof.",
+        "games/gs1/recon/en/dossiers.json#resource_396:0200069c"
       ]
     },
     {
@@ -1960,29 +3115,53 @@
     },
     {
       "overlay": "resource_3a2",
-      "start": "0x02000924",
-      "end": "0x02000fcc",
-      "kind": "generated_call_script_module",
+      "start": "0x2000924",
+      "end": "0x2000ac0",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 187 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "This segment preserves retained assembly from the historical 0x02000924–0x02000fcc range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
+        "games/gs1/recon/en/dossiers.json#resource_3a2:02000924"
+      ]
+    },
+    {
+      "overlay": "resource_3a2",
+      "start": "0x2000ac0",
+      "end": "0x2000fcc",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "This segment preserves retained assembly from the historical 0x02000924–0x02000fcc range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3a2:02000924"
       ]
     },
     {
       "overlay": "resource_375",
-      "start": "0x020000dc",
-      "end": "0x02000736",
-      "kind": "generated_call_script_module",
+      "start": "0x20000dc",
+      "end": "0x2000170",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 167 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "This segment preserves retained assembly from the historical 0x020000dc–0x02000736 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
+        "games/gs1/recon/en/dossiers.json#resource_375:020000dc"
+      ]
+    },
+    {
+      "overlay": "resource_375",
+      "start": "0x2000170",
+      "end": "0x2000736",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "This segment preserves retained assembly from the historical 0x020000dc–0x02000736 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_375:020000dc"
       ]
     },
@@ -2252,15 +3431,27 @@
     },
     {
       "overlay": "resource_3af",
-      "start": "0x02001db0",
-      "end": "0x02002282",
-      "kind": "generated_call_script_module",
+      "start": "0x2001db0",
+      "end": "0x2001f90",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 137 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
+        "games/gs1/recon/en/dossiers.json#resource_3af:02001db0"
+      ]
+    },
+    {
+      "overlay": "resource_3af",
+      "start": "0x2001f90",
+      "end": "0x2002282",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3af:02001db0"
       ]
     },
@@ -2394,15 +3585,27 @@
     },
     {
       "overlay": "resource_377",
-      "start": "0x02000f90",
-      "end": "0x020013a2",
-      "kind": "generated_call_script_module",
+      "start": "0x2000f90",
+      "end": "0x200133c",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 103 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "This segment preserves retained assembly from the historical 0x02000f90–0x020013a2 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
+        "games/gs1/recon/en/dossiers.json#resource_377:02000f90"
+      ]
+    },
+    {
+      "overlay": "resource_377",
+      "start": "0x200133c",
+      "end": "0x20013a2",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "This segment preserves retained assembly from the historical 0x02000f90–0x020013a2 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_377:02000f90"
       ]
     },
@@ -2468,11 +3671,11 @@
       "end": "0x020008b6",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 89 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "this retained range crosses distinct reviewed owners; the first owner ends at 0x020005dc and contains 17 calls, not the previously claimed 89-call 938-byte function",
+        "2026-09-06: the first candidate was reconstructed at its complete 208-byte boundary, correcting misplaced flag guards; it remains nonexact and the later owners remain retained assembly",
+        "failed optimization probes and absence of high-register moves do not establish compiler impossibility; this range is Draft ASM, not proven necessary ASM",
         "games/gs1/recon/en/dossiers.json#resource_38e:0200050c"
       ]
     },
@@ -3121,16 +4324,27 @@
     },
     {
       "overlay": "resource_3b7",
-      "start": "0x020001d8",
-      "end": "0x02000d70",
-      "kind": "intra_function_call_module",
+      "start": "0x20001d8",
+      "end": "0x20004bc",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete audited 2968-byte retained module accounts for 243 calls, five loops, nine memory operations, and its production boundary",
-        "direct bl at 0x020003c0 targets intra-owner 0x02000cba, which is also reached by ordinary fallthrough from 0x02000cb8 with live owner state",
-        "approved GCC 2.96 Thumb direct-call patterns at agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip",
+        "This segment preserves retained assembly from the historical 0x020001d8–0x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
+        "games/gs1/recon/en/dossiers.json#resource_3b7:020001d8"
+      ]
+    },
+    {
+      "overlay": "resource_3b7",
+      "start": "0x20004bc",
+      "end": "0x2000d70",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "This segment preserves retained assembly from the historical 0x020001d8–0x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3b7:020001d8"
       ]
     },
@@ -3148,16 +4362,27 @@
     },
     {
       "overlay": "resource_37a",
-      "start": "0x02001510",
-      "end": "0x02001a58",
-      "kind": "intra_function_call_module",
+      "start": "0x2001510",
+      "end": "0x2001790",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete audited 1352-byte retained module accounts for 137 calls, ten loops, and its production boundary",
-        "six direct bl sites at 0x02001642 0x0200166a 0x0200167c 0x02001692 0x020016a4 and 0x020016ba target intra-owner blocks 0x0200187c 0x020018a4 0x020019de 0x020018cc 0x02001a06 and 0x020018f4 that are also reached by ordinary fallthrough with live owner state",
-        "approved GCC 2.96 Thumb direct-call patterns at agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip",
+        "This segment preserves retained assembly from the historical 0x02001510–0x02001a58 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
+        "games/gs1/recon/en/dossiers.json#resource_37a:02001510"
+      ]
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x2001790",
+      "end": "0x2001a58",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "This segment preserves retained assembly from the historical 0x02001510–0x02001a58 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_37a:02001510"
       ]
     },
@@ -3200,14 +4425,13 @@
       "overlay": "resource_39e",
       "start": "0x02000e94",
       "end": "0x020012e0",
-      "kind": "intra_function_call_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete audited 1100-byte retained module accounts for 85 calls, one loop, 31 memory operations, and its production boundary",
-        "direct bl sites at 0x02000f02 0x02000f1a 0x02000f3c and 0x02000f58 target intra-owner blocks 0x02001040 0x02001058 0x0200107a and 0x02001096 that are also reached by ordinary fallthrough with live owner state",
-        "approved GCC 2.96 Thumb direct-call patterns at agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip",
+        "The reviewed first owner is 236 bytes, ending at 0x02000f80; the historical 1100-byte draft appended later owners.",
+        "The four BL sites at 0x02000f02, 0x02000f1a, 0x02000f3c and 0x02000f58 all resolve to the separate SpawnEffect owner at resource offset 0x0200013c (runtime 0x0200813c), not intra-function fallthrough blocks.",
+        "Loader-backed literal values and the four eight-argument calls are recovered in bounded ordinary C. The failed historical draft does not prove compiler impossibility.",
         "games/gs1/recon/en/dossiers.json#resource_39e:02000e94"
       ]
     },

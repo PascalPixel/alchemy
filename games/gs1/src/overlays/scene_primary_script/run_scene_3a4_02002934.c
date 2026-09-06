@@ -15,6 +15,7 @@ void Func_0200651a();
 void Func_0200652c();
 void Func_02006532();
 s32 Func_0200653c();
+s32 Func_0200653c_a();
 void Func_020059f0();
 void Func_020065c2();
 
@@ -49,7 +50,7 @@ void FieldScene_RunScene3a4_02002934(void)
     flag = Data_02000240[225];
     if (flag == 1 || flag == 98) {
         if (Value1(Func_020064ea, 0x109) == 0) {
-            rec7 = Value1(Func_0200653c, 0);
+            rec7 = Value1(Func_0200653c_a, 0);
             Func_0200651a();
             *(volatile s32 *)(rec7 + 12) = 0x100000;
             Func_0200652c();

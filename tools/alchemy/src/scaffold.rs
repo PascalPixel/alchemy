@@ -192,6 +192,5 @@ fn hex_of(value: &Value) -> Option<u32> {
 }
 
 fn read_json(path: &Path) -> Result<Value, String> {
-    let text = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))
+    compiler_core::build_io::read_json(path)
 }

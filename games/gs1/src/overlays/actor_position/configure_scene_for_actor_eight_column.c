@@ -3,6 +3,7 @@
 void Func_02001f8a();
 void Func_02001fa4();
 u8 *Func_02001fc4();
+void Func_02001fc4_a();
 void Func_02001fd0();
 void Func_02001fe2();
 void Func_02002006();
@@ -19,7 +20,7 @@ void ConfigureSceneForActorEightColumn(void)
     if (x < 0)
         x += 0xfffff;
     x >>= 20;
-    Func_02001fc4();
+    Func_02001fc4_a();
     if (x == 20) {
         a4 = 18;
         a5 = 6;

@@ -10,7 +10,8 @@ void Func_02002f2c();
 void Func_02002f52();
 void Func_02002f86();
 void Func_02002fc6();
-void Func_02002fe4();
+void Func_02002fe4_a();
+void Func_02002fe4_b();
 void Func_02003012();
 s32 Func_02003022();
 void Func_0200302a();
@@ -51,9 +52,9 @@ void FieldScene_RunScene3b9_02000334(void)
     Func_02002f2c();
     if (Value1(Func_02002efa, 0x962) != 0) {
         Func_02002fc6(14, 2);
-        Call1(Func_02002fe4, 0x2256);
+        Call1(Func_02002fe4_a, 0x2256);
         Func_02001f9e(14);
-        Func_02002fe4(14, 0, 0);
+        Func_02002fe4_b(14, 0, 0);
         Func_02002f52(20);
         Value2(Func_02003022, 14, 0);
         Func_02001fd2(14, 0);

@@ -19,19 +19,28 @@ void Func_02001bb4();
 void Func_02001bbe();
 void Func_02001be0();
 void Func_02001be4();
+void Func_02001be4_a();
 void Func_02001bee();
+void Func_02001bee_a();
 void Func_02001c00();
 void Func_02001c06();
 void Func_02001c10();
 u8 *Scene_GetRecord_2();
 void Func_02001c16();
 void Func_02001c24();
+void Func_02001c24_a();
 void Func_02001c30();
 void Func_02001c32();
+void Func_02001c32_a();
 void Func_02001c44();
+void Func_02001c44_a();
 void Func_02001c54();
+void Func_02001c54_a();
+void Func_02001c54_b();
+void Func_02001c54_c();
 void Func_02001c62();
 void Func_02001c74();
+void Func_02001c74_a();
 
 /* Resolved engine calls: each pseudo symbol is the per-site call word the
  * overlay image holds (a word can serve two sites with different targets),
@@ -54,7 +63,7 @@ void Func_02001c74();
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02001be0, a0, a1, a2)
 #define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02001be4, a0, a1, a2)
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02001bb4(args)
-#define BattleEvent_RunActionAndWait_1(args...) Func_02001be4(args)
+#define BattleEvent_RunActionAndWait_1(args...) Func_02001be4_a(args)
 #define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_02001c06, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_02001c10, a0, a1, a2)
 #define BattleEvent_RunActionAndWait_2(args...) Func_02001c00(args)
@@ -62,21 +71,21 @@ void Func_02001c74();
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02001bee(args)
 #define BattleEvent_RunActionAndWait_3(args...) Func_02001c16(args)
 #define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02001c32, a0, a1, a2)
-#define BattleEventRuntime_ProcessAction_1(args...) Func_02001c32(args)
+#define BattleEventRuntime_ProcessAction_1(args...) Func_02001c32_a(args)
 #define BattleRuntime_WaitIfModeZero_2(args...) Func_02001ba0(args)
 #define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3(Func_02001c54, a0, a1, a2)
 #define BattleEvent_RunActionAndWait_4(args...) Func_02001c44(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02001c24(args)
-#define BattleEvent_RunActionAndWait_5(args...) Func_02001c54(args)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02001bee, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02001c24, a0, a1, a2)
+#define BattleEvent_RunActionAndWait_5(args...) Func_02001c54_a(args)
+#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02001bee_a, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02001c24_a, a0, a1, a2)
 #define BattleEvent_RunActionAndWait_6(args...) Func_02001c74(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02001c54(args)
-#define Object_SetModeById_1(args...) Func_02001c54(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02001c54_b(args)
+#define Object_SetModeById_1(args...) Func_02001c54_c(args)
 #define Scene_GetRecord_2(args...) Func_02001c12(args)
-#define ObjectMotion_ResetAndSetPosition_1(args...) Func_02001c44(args)
+#define ObjectMotion_ResetAndSetPosition_1(args...) Func_02001c44_a(args)
 #define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_02001c62(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_02001c74(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_02001c74_a(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02001c30(args)
 u8 *Func_02001b02();
 u8 *Func_02001c12();

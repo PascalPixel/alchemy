@@ -8,6 +8,7 @@
 
 void Func_0200289e();
 void Func_020028a0();
+void Func_020028a0_a();
 void Func_020028d2();
 void Func_020028fa();
 void Func_02002914();
@@ -28,6 +29,7 @@ void Func_020029b4();
 void Func_020029c4();
 void Func_020029cc();
 s32 Func_020029da();
+s32 Func_020029da_a();
 void Func_020029ec();
 void Func_020029f0();
 void Func_020029f6();
@@ -35,6 +37,7 @@ void Func_020029f8();
 void Func_02002a08();
 void Func_02002a1c();
 void Func_02002a2e();
+void Func_02002a2e_a();
 void Func_02002a32();
 s32 Func_02002a34();
 void Func_02002a40();
@@ -63,6 +66,7 @@ void Func_02002b22();
 void Func_02002b30();
 void Func_02002b36();
 void Func_02002b3a();
+void Func_02002b3a_a();
 void Func_02002b4a();
 void Func_02002b4c();
 void Func_02002b52();
@@ -128,7 +132,7 @@ void RunEventScript01(void)
     Func_020028fa(80);
     Func_02002934(8, 52428, 26214);
     Func_02002962(8, 584, 406);
-    Func_020028a0(11);
+    Func_020028a0_a(11);
     Func_0200289e(12);
     Func_0200299e(8, 12);
     Func_0200292c(80);
@@ -146,13 +150,13 @@ void RunEventScript01(void)
     Func_02002a2e(8, 1);
     Func_0200299c(20);
     Func_02002a7e(8, 0, 20);
-    Func_02002a2e(8, 12);
+    Func_02002a2e_a(8, 12);
     Func_020029b4(20);
     Func_02002ac0(0, 258, 60);
     Func_02002a40(8, 13);
     Func_02002a98(8, 0);
     Func_020029f8(0, 0);
-    if (Func_020029da(2076) != 0) {
+    if (Func_020029da_a(2076) != 0) {
         Func_02002b02(8, 258, 60);
     }
     Func_02002a08(20);
@@ -168,7 +172,7 @@ void RunEventScript01(void)
     Func_02002a62(20);
     Func_02002b3a(8, 0);
     Func_02002b74(8, 263, 60);
-    Func_02002b3a(base + 3);
+    Func_02002b3a_a(base + 3);
     Func_02002b52(8, 0);
     Func_02002b22(8, 1);
     Func_02002a90(20);
@@ -211,19 +215,4 @@ void RunEventScript01(void)
     Func_02002bce(2078);
     Func_02002bd4(515);
     Func_02002bf8();
-    Func_02002c4c();
-    if (Func_02002c32() != 0) {
-        Func_02002d12(8, 65536);
-        Func_02002c60(20);
-        Func_02002d26();
-        Func_02002d3e(8, 0);
-    } else {
-        Func_02002d10(8, 2);
-        Func_02002c7e(40);
-        Func_02002d46();
-        Func_02002d6a(8, 0, 40);
-        Func_02002c6a();
-    }
-    Func_02002cae();
 }
-

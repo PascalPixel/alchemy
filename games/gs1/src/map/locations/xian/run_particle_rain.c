@@ -48,7 +48,7 @@ void FieldScene_RunParticleRain(void)
     *(u32 *)(Func_02008606(8) + 108) = 0x0200c1c5;
     Func_020085e0(40);
     Func_0200872a(128 << 9, 0);
-    Func_0200872a(0x205c54, 1);
+    Func_0200872a_a(0x205c54, 1);
     Func_02008740(60);
     Func_020085fe(40);
     Func_020087ac(0x83);

@@ -23,6 +23,7 @@ void Func_0200b660();
 s32 Func_0200b66a();
 void Func_0200b66c();
 void Func_0200b698();
+void Func_0200b698_a();
 void Func_0200b6ae();
 void Func_0200b6b0();
 void Func_0200b6b2();
@@ -73,7 +74,7 @@ void Func_0200b84e();
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_0200b6c4(args)
 #define Scene_GetRecord_3(a0) Value1(Func_0200b66a, a0)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_0200b6d8(args)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_0200b698, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_0200b698_a, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_0200b6d4, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_0200b6ae, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Call3(Func_0200b6ea, a0, a1, a2)

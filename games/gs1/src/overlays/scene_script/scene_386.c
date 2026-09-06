@@ -52,6 +52,7 @@ void Func_020008b2();
 void Func_020008b6();
 void Func_020008c0();
 void Func_020008c6();
+void Func_020008c6_a();
 void Func_020008d6();
 void Func_020008e6();
 void Func_020008f0();
@@ -396,23 +397,24 @@ void SceneDialogue_RunActor23Line(void)
 
 void FieldScene_RunActor18FlaggedSequence(void)
 {
-    void Func_02000880();
+    void Func_02000880_a();
+    void Func_0200089e_a();
     void Func_02000976();
 
     u32 i;
     s32 record;
 
     Func_02000844();
-    ((void (*)())Func_0200089e)(18, 0, 0);
+    Func_0200089e_a(18, 0, 0);
     if (Value1(Func_0200082c, 0x85b) == 0) {
         Call1(Func_020008b6, 0x137c);
         Func_020008c6(18, 0);
     } else {
-        Call1(Func_020008c6, 0x1385);
+        Call1(Func_020008c6_a, 0x1385);
         Func_020008d6(18, 0);
     }
     if (Value2(Func_0200089e, 0, 0) == 0) {
-        Func_02000880(20);
+        Func_02000880_a(20);
         Func_020008f8(18, 0);
         Func_0200088e(20);
         Func_020008e6(18, 2);
@@ -441,7 +443,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
 
 void SceneActor_RunActor16StepWithFlag91(void)
 {
-    u8 *Func_02000976(s32);
+    u8 *Func_02000976_a(s32);
     u8 *Func_02000986(s32);
 
     u8 *slot;
@@ -450,7 +452,7 @@ void SceneActor_RunActor16StepWithFlag91(void)
     Func_0200093c();
     Func_0200098c(16, 1);
     Func_02000950();
-    slot = Func_02000976(16) + 91;
+    slot = Func_02000976_a(16) + 91;
     *slot = 1;
     Func_02000438();
     slot = Func_02000986(16) + 91;
@@ -460,14 +462,14 @@ void SceneActor_RunActor16StepWithFlag91(void)
 
 void FieldScene_RunActor18ConditionalCue(void)
 {
-    void Func_02000986(s32);
+    void Func_02000986_a(s32);
     void Func_020009c8(s32, s32);
 
     Func_02000978();
 
     if (Func_0200096c() == 0) {
         Func_020009c8(18, 4);
-        Func_02000986(20);
+        Func_02000986_a(20);
         Func_020009ec(0x1384);
         Func_02000a04(18, 0);
     } else {
@@ -480,12 +482,12 @@ void FieldScene_RunActor18ConditionalCue(void)
 
 void FieldScene_RunActor19StepByPlace(void)
 {
-    void Func_020009c8(void);
+    void Func_020009c8_a(void);
 
     u32 place;
 
     place = *(u16 *) (Func_020009ea(0) + 6);
-    Func_020009c8();
+    Func_020009c8_a();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Func_02000a6a(4, 19);
@@ -571,7 +573,7 @@ u8 *SceneData_GetEffectTable(void)
 
 s32 FieldScene_InitSceneStateByStep(void)
 {
-    void Func_02000abe();
+    void Func_02000abe_a();
 
     s32 scene;
     s32 zero;
@@ -591,7 +593,7 @@ s32 FieldScene_InitSceneStateByStep(void)
         *(s32 *)(Func_02000b94(8) + 20) = zero;
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
-        Func_02000abe(0xe7, 0x02380000, 0x00100000, 0x02a00000);
+        Func_02000abe_a(0xe7, 0x02380000, 0x00100000, 0x02a00000);
         /* 0x02008031 is Func_02000030 + 1; 200 << 4 is the period. */
         Func_02000b34(0x02008031, 0xc80);
     }

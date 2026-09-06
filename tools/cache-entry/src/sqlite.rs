@@ -104,15 +104,8 @@ mod tests {
 
     #[test]
     fn roundtrips_and_replaces_by_key() {
-        let directory = std::env::temp_dir().join(format!(
-            "cache-entry-sqlite-test-{}-{}",
-            std::process::id(),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_nanos()
-        ));
-        let path = directory.join("cache.sqlite3");
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("cache.sqlite3");
         let cache = SqliteCache::open(&path).unwrap();
         assert_eq!(cache.get("missing").unwrap(), None);
         cache
@@ -125,6 +118,5 @@ mod tests {
         cache.put("a", &[("object", b"three")]).unwrap();
         let replaced = cache.get("a").unwrap().unwrap();
         assert_eq!(replaced, vec![("object".to_string(), b"three".to_vec())]);
-        std::fs::remove_dir_all(&directory).ok();
     }
 }

@@ -8,7 +8,7 @@ use compiler_core::{
     routing::root,
     translation_units::{TranslationUnit, TranslationUnits},
 };
-use disassemble::{canonical_overlay, OVERLAY_LINK_BIAS};
+use disassemble::canonical_overlay;
 use std::path::Path;
 use std::process::Command;
 pub fn entry(arguments: &[String]) {
@@ -58,7 +58,6 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
     if let Some(overlay) = &unit.overlay {
         options.overlay = Some(overlay.clone());
         options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
-        options.configuration.label_word_bias = Some(OVERLAY_LINK_BIAS as u64);
         let reference = canonical_overlay(root(), overlay)?;
         let path = Path::new(&work).join(format!(
             "reference-{}.bin",
@@ -83,6 +82,7 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         let address_text = format!("0x{address:08x}");
         options.owner = Some(address);
         options.size = Some(owner.extent);
+        options.configuration.overlay_extent = unit.overlay.as_ref().map(|_| owner.extent);
         if index == 1 {
             options.precompiled_object = Some(
                 Path::new(&work)
@@ -124,7 +124,7 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
     }
     if !byte_mismatches.is_empty() {
         return Err(format!(
-            "translation unit {id} has byte mismatches in {}",
+            "{output}translation unit {id} has byte mismatches in {}",
             byte_mismatches.join(",")
         ));
     }
@@ -134,7 +134,7 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
 /// compiles once, every function is linked at its owner's address, and each
 /// member's bytes are compared with the canonical overlay image.
 fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
-    let compiled = disassemble::compile_declared_overlay_unit(unit, "en")?;
+    let compiled = disassemble::compile_declared_overlay_unit(unit, "en", None)?;
     let reference = canonical_overlay(root(), overlay)?;
     let base = 0x0200_0000i64;
     let mut output = String::new();
@@ -251,7 +251,7 @@ mod tests {
         let repository = std::env::temp_dir().join(format!("diff-no-rom-{}", std::process::id()));
         let error = canonical_overlay(&repository, "resource_36f").unwrap_err();
         assert!(error.contains("roms/gs1-en.gba"));
-        let work = Path::new("out/diff-unit-test");
+        let work = root().join("out/diff-unit-test");
         let _ = std::fs::remove_dir_all(&work);
         std::fs::create_dir_all(&work).unwrap();
         let patch = work.join("unit-relative-include.patch");
@@ -275,7 +275,7 @@ mod tests {
         };
         let output = run(*options).unwrap();
         let staged = root()
-            .join(work)
+            .join(&work)
             .join("try/games/gs1/src/overlays/scene_event_runtime/accessors.c");
         assert!(std::fs::read_to_string(staged)
             .unwrap()

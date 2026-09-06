@@ -51,8 +51,8 @@ void Func_02000d90(s32);
 void Func_02000936(void);
 void Func_020009d2(void);
 s32 Func_02000e04();
+void Func_02000e04_a(s32, s32, s32, s32, s32, s32);
 void Func_02000e64();
-typedef void(*SceneSetup)(s32, s32, s32, s32, s32, s32);
 void Func_02000e86(s32, s32);
 void Func_02000e8e(s32, s32);
 s32 Func_02000e54(s32);
@@ -64,6 +64,7 @@ s32 *Func_02000ff6();
 s32 *Func_0200101a();
 s32 Func_020011c0();
 void Func_020011a4();
+void Func_020011a4_a(s32);
 void Func_0200124a();
 void Func_020011ca();
 void Func_020011dc();
@@ -321,7 +322,7 @@ void FieldScene_RunActorFifteenScene(void)
 
 void FieldScene_RunActorSixteenScene(void)
 {
-    void Func_02000c40(void);
+    void Func_02000c40_a(void);
     void Func_02000c6c(s32);
 
     Func_02000c18();
@@ -329,19 +330,19 @@ void FieldScene_RunActorSixteenScene(void)
     Func_02000c1e(0x28);
     Func_02000c6c(0xD2);
     Func_02000c5c(0x10, 6);
-    Func_02000c40();
+    Func_02000c40_a();
 }
 
 void FieldScene_RunActor17Steps28AndD2(void)
 {
-    void Func_02000c6c(void);
+    void Func_02000c6c_a(void);
 
     Func_02000c44();
     Func_02000c7c(0x11, 0);
     Func_02000c4a(0x28);
     Func_02000c98(0xD2);
     Func_02000c88(0x11, 6);
-    Func_02000c6c();
+    Func_02000c6c_a();
 }
 
 void ActorPresentation_SetSceneCell31AndFlag305(void)
@@ -363,14 +364,14 @@ void SceneState_ClearRuntimeByte17(void) {
 
 s32 FieldScene_DispatchByScenarioId(void)
 {
-    void Func_02000976(void);
+    void Func_02000976_a(void);
 
     s16 variant = Data_02000240[224];
 
     if (variant == (s32)&Value_00000031) {
         Func_02000936();
     } else if (variant == (s32)&Value_00000030) {
-        Func_02000976();
+        Func_02000976_a();
     } else if (variant == (s32)&Value_0000002f) {
         Func_020009d2();
     }
@@ -383,7 +384,7 @@ void RunGuardedSceneSetup(void)
         s32 width = 8;
         s32 height = 13;
 
-        ((SceneSetup)RunSceneCommand)(31, 0, 1, 1, width, height);
+        Func_02000e04_a(31, 0, 1, 1, width, height);
         FinishSceneSetup(8, 0);
     }
 }
@@ -455,7 +456,7 @@ void StagedActor_PushActorAhead(void)
     if (Func_020011c0(target, pos) > 0) return;
 
     Func_020011a4(player, 8);
-    Func_020011a4(15);
+    Func_020011a4_a(15);
     Func_0200124a(185);
 
     *(s32 *)(target + 48) = 0x3333;

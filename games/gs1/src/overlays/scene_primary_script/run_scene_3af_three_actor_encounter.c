@@ -2,7 +2,8 @@
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-s32 Func_02007768();
+s32 Func_02007768_a();
+void Func_02007768_b();
 void Func_02007770();
 s32 Func_02007786();
 void Func_020077b2();
@@ -20,7 +21,8 @@ s32 Func_02007fea();
 void Func_02008000();
 void Func_02008012();
 void Func_02008020();
-void Func_0200802a();
+void Func_0200802a_a();
+void Func_0200802a_b();
 void Func_02008030();
 void Func_02008044();
 void Func_02008058();
@@ -41,12 +43,14 @@ void Func_0200813c();
 void Func_0200814c();
 void Func_02008154();
 void Func_02008158();
-s32 Func_02008160();
+s32 Func_02008160_a();
+s32 Func_02008160_b();
 s32 Func_02008164();
 void Func_0200816e();
 void Func_02008184();
 u8 *Scene_GetRecord_5();
-void Func_02008188();
+void Func_02008188_a();
+void Func_02008188_b();
 s32 Func_02008196();
 void Func_020081a0();
 void Func_020081a6();
@@ -85,20 +89,20 @@ void Func_02008292();
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_02008058(args)
 #define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02008012, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02008020, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_0200802a, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_0200802a_a, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_0200806e, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Call3(Func_02008078, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_0200808c, a0, a1, a2)
 #define Object_SetModeById_1(args...) Func_020080ac(args)
 #define Object_SetModeById_2(args...) Func_020080b4(args)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_0200802a(args)
+#define BattleRuntime_WaitIfModeZero_1(args...) Func_0200802a_b(args)
 #define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02008126, a0, a1, a2)
 #define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02008132, a0, a1, a2)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_02008122, a0)
 #define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_02008154(args)
-#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02008188, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02008188_a, a0, a1, a2)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02008138(args)
-#define ObjectMotion_SetSpeedParameters_5(a0, a1) Value2(Func_02008160, a0, a1)
+#define ObjectMotion_SetSpeedParameters_5(a0, a1) Value2(Func_02008160_a, a0, a1)
 #define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_020080b8, a0, a1)
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_0200813c(args)
 #define Object_SetModeById_3(args...) Func_0200814c(args)
@@ -111,7 +115,7 @@ void Func_02008292();
 #define BattleRuntime_WaitIfModeZero_2(args...) Func_02008106(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_020081a6(args)
 #define SceneWork_SetStepValue_3(a0) Call1(Func_020081dc, a0)
-#define ObjectMotion_SetSpeedParameters_8(a0, a1, a2) Call3(Func_02008160, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_8(a0, a1, a2) Call3(Func_02008160_b, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_9(a0, a1, a2) Call3(Func_0200816e, a0, a1, a2)
 #define Scene_GetRecord_4(args...) Func_02008164(args)
 #define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_020081ca, a0, a1, a2)
@@ -119,7 +123,7 @@ void Func_02008292();
 #define Scene_GetRecord_5(args...) Func_02008186(args)
 #define Scene_GetRecord_6(a0) Value1(Func_02008196, a0)
 #define ObjectMotion_SetPositionAndReset_4(a0, a1, a2) Call3(Func_020081fa, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_4(args...) Func_02008188(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_02008188_b(args)
 #define Scene_GetRecord_7(args...) Func_020081b6(args)
 #define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02008292, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_3(a0, a1, a2) Call3(Func_0200822c, a0, a1, a2)
@@ -210,10 +214,10 @@ void FieldScene_RunThreeActorEncounter(void)
     BattleRuntime_WaitIfModeZero_1(10);
     ObjectMotion_ArmCallback_2(1, 0x8000, 0);
     ObjectMotion_ArmCallback_3(2, 0x8000, 0);
-    Value2(Func_02007768, 3, 0x8000);
+    Value2(Func_02007768_a, 3, 0x8000);
     Func_02007770(22, 0);
     SceneWork_SetStepValue_1(0x1f55);
-    Call1((void (*)())Func_02007768, 22);
+    Call1(Func_02007768_b, 22);
     Value2(Func_02007786, 21, 0xd000);
     BattleRuntime_RunThenWaitIfModeZero_1(21, 0, 40);
     BattleEffect_SpawnLinkedResourceObject_1(22, 0x100, 20);

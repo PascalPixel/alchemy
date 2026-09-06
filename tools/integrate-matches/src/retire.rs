@@ -154,9 +154,7 @@ fn production_source(
         return Ok(path);
     }
     let path = root.join("out/gs1-en/full/rebuilt.owner-inventory.json");
-    let text = fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let value: serde_json::Value = compiler_core::build_io::read_json(&path)?;
     value["owners"]
         .as_array()
         .into_iter()
@@ -229,9 +227,7 @@ fn plan(root: &Path, paths: &SourcePaths, owner: SourceOwner) -> Result<Plan, St
 /// still owns, so the gap to the next start is the honest extent.
 fn audited_extent(root: &Path, owner: SourceOwner) -> Result<usize, String> {
     let path = root.join("out/gs1-en/full/rebuilt.owner-inventory.json");
-    let text = fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let value: serde_json::Value = compiler_core::build_io::read_json(&path)?;
     let parse = |entry: &serde_json::Value| {
         entry["address"]
             .as_str()
@@ -415,9 +411,7 @@ fn git_show(root: &Path, spec: &str) -> Result<Vec<u8>, String> {
 
 fn unit_of(root: &Path, owner: SourceOwner) -> Result<Option<String>, String> {
     let path = root.join("games/gs1/recon/translation-units.json");
-    let text = fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let value: serde_json::Value = compiler_core::build_io::read_json(&path)?;
     for unit in value["units"].as_array().into_iter().flatten() {
         if unit["overlay"].is_string() {
             continue;
@@ -475,10 +469,7 @@ fn apply_plan(root: &Path, paths: &SourcePaths, plan: &Plan) -> Result<(), Strin
 
 fn drop_register_entry(root: &Path, owner: SourceOwner) -> Result<(), String> {
     let manifest = root.join("games/gs1/source-paths.json");
-    let text = fs::read_to_string(&manifest)
-        .map_err(|error| format!("{}: {error}", manifest.display()))?;
-    let mut value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", manifest.display()))?;
+    let mut value: serde_json::Value = compiler_core::build_io::read_json(&manifest)?;
     if let Some(owners) = value
         .get_mut("owners")
         .and_then(serde_json::Value::as_object_mut)
@@ -527,10 +518,7 @@ fn remove_empty_parents(stop: PathBuf, mut directory: Option<&Path>) {
 /// from the reconstruction corpus, the composition `unit-scaffold` documents.
 fn mark_unit_member_retained(root: &Path, unit_id: &str, plan: &Plan) -> Result<(), String> {
     let manifest = root.join("games/gs1/recon/translation-units.json");
-    let text = fs::read_to_string(&manifest)
-        .map_err(|error| format!("{}: {error}", manifest.display()))?;
-    let mut value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", manifest.display()))?;
+    let mut value: serde_json::Value = compiler_core::build_io::read_json(&manifest)?;
     let mut source_file = None;
     let mut exact_left = 0;
     for unit in value["units"].as_array_mut().into_iter().flatten() {

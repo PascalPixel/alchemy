@@ -138,45 +138,40 @@ fn scan_preprocessed(
 }
 pub(crate) fn macro_self_test() -> Result<(), String> {
     let root = compiler_root();
-    let directory = std::env::temp_dir().join(format!("alchemy-no-asm-{}", std::process::id()));
-    let source = directory.join("fixture.c");
+    let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
+    let source = directory.path().join("fixture.c");
     let text = "#if __GNUC_MINOR__ == 9\n#define ABI_KIND naked\n#else\n#define ABI_KIND packed\n#endif\nvoid f(void) __attribute__((ABI_KIND));\n";
-    let result = (|| {
-        fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-        fs::write(&source, text).map_err(|error| error.to_string())?;
-        if !find_forbidden("fixture.c", text).is_empty() {
-            return Err("macro fixture did not evade the raw scan".into());
-        }
-        let target = target_for(DecompTargetId::Gs1En);
-        let paths = SourcePaths::load_for_game(root, "gs1")?;
-        let registered = paths
-            .all_sources()?
-            .into_iter()
-            .find(|source| {
-                uses_agbcc_compiler(
-                    CompilerTarget::Gs1,
-                    &source.owner.routing_path().to_string_lossy(),
-                )
-            })
-            .ok_or("missing registered AGBCC source")?;
-        let human = registered
-            .path
-            .strip_prefix(root)
-            .map_err(|error| error.to_string())?;
-        if sibling(root, &human.to_string_lossy()) != Some(root.join(human).with_extension("s")) {
-            return Err("relative sibling path did not resolve under repository root".into());
-        }
-        let routing = registered.owner.routing_path_for_game("gs1");
-        let mut command = prefix(target, &routing.to_string_lossy())?;
-        command.push(source.to_string_lossy().into_owned());
-        let found = run(root, &("macro-regression".into(), command))?;
-        if found.len() != 1 || !found[0].token.contains("naked") {
-            return Err("production AGBCC route missed macro-expanded naked ABI".into());
-        }
-        Ok(())
-    })();
-    let _ = fs::remove_dir_all(directory);
-    result
+    fs::write(&source, text).map_err(|error| error.to_string())?;
+    if !find_forbidden("fixture.c", text).is_empty() {
+        return Err("macro fixture did not evade the raw scan".into());
+    }
+    let target = target_for(DecompTargetId::Gs1En);
+    let paths = SourcePaths::load_for_game(root, "gs1")?;
+    let registered = paths
+        .all_sources()?
+        .into_iter()
+        .find(|source| {
+            uses_agbcc_compiler(
+                CompilerTarget::Gs1,
+                &source.owner.routing_path().to_string_lossy(),
+            )
+        })
+        .ok_or("missing registered AGBCC source")?;
+    let human = registered
+        .path
+        .strip_prefix(root)
+        .map_err(|error| error.to_string())?;
+    if sibling(root, &human.to_string_lossy()) != Some(root.join(human).with_extension("s")) {
+        return Err("relative sibling path did not resolve under repository root".into());
+    }
+    let routing = registered.owner.routing_path_for_game("gs1");
+    let mut command = prefix(target, &routing.to_string_lossy())?;
+    command.push(source.to_string_lossy().into_owned());
+    let found = run(root, &("macro-regression".into(), command))?;
+    if found.len() != 1 || !found[0].token.contains("naked") {
+        return Err("production AGBCC route missed macro-expanded naked ABI".into());
+    }
+    Ok(())
 }
 pub fn entry(arguments: &[String]) -> ExitCode {
     match arguments {

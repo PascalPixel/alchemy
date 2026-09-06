@@ -1,4 +1,13 @@
 use std::collections::BTreeMap;
+pub fn bl_displacement(pair: &[u8]) -> Option<i32> {
+    let high = u16::from_le_bytes(pair.get(..2)?.try_into().ok()?);
+    let low = u16::from_le_bytes(pair.get(2..4)?.try_into().ok()?);
+    if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
+        return None;
+    }
+    let value = (i32::from(high & 0x7ff) << 12) | (i32::from(low & 0x7ff) << 1);
+    Some((value << 9) >> 9)
+}
 /// A Thumb relocation-bearing site: kind (`b'B'` call, `b'L'` literal load),
 /// instruction offset, affected byte offset, and the referenced value.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -10,17 +19,13 @@ pub fn relocation_info(bytes: &[u8], base: u64) -> (Vec<bool>, Vec<Reference>) {
     let mut mask = vec![false; bytes.len()];
     let mut references = Vec::new();
     for at in (0..bytes.len().saturating_sub(3)).step_by(2) {
-        let high = u16::from_le_bytes([bytes[at], bytes[at + 1]]);
-        let low = u16::from_le_bytes([bytes[at + 2], bytes[at + 3]]);
-        if high & 0xf800 == 0xf000 && low & 0xf800 == 0xf800 {
+        if let Some(delta) = bl_displacement(&bytes[at..at + 4]) {
             mask[at..at + 4].fill(true);
-            let delta =
-                (((i32::from(high & 0x7ff) << 21) >> 9) | (i32::from(low & 0x7ff) << 1)) as i64;
             references.push(Reference(
                 b'B',
                 at,
                 at,
-                (base as i64 + at as i64 + 4 + delta) as u32,
+                (base as i64 + at as i64 + 4 + i64::from(delta)) as u32,
             ));
         }
     }

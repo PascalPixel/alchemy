@@ -9,11 +9,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Sibling crate, not a third-party dependency: the already-landed Rust half of
-# `../lib/disassemble.ts`, which `tools/lib/overlay_call_targets.ts` imports
-# for `assembleOverlay`.
+compiler-core = { path = "../compiler-core" }
 disassemble = { path = "../disassemble" }
-serde_json = "1"
 
 [lib]
 name = "overlay_call_targets"

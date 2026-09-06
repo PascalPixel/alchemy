@@ -18,6 +18,7 @@ void Func_02002b8a();
 void Func_02002b90();
 void Func_02002bb0();
 s32 Func_02002bec();
+s32 Func_02002bec_a();
 s32 Func_02002c22();
 void Func_02002c3e();
 void Func_02002c4a();
@@ -92,7 +93,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Func_02002bb0(20);
     Func_02002a84();
     for (i = 0; i < 40; i++) {
-        Func_02002824(Func_02002bec(15));
+        Func_02002824(Func_02002bec_a(15));
         Func_02002b20(1);
     }
     Value2(Func_02002b36, 0x200a581, 0xc80);

@@ -1,5 +1,8 @@
 use crate::paths::{basename, root, OverlaySource};
 use crate::regex::Regex;
+use candidate_compiler::verify::run as checked;
+use compiler_core::overlay;
+use compiler_core::overlay::placeholder_addresses;
 use compiler_core::plan::{
     source_to_assembly_plan, CompilerFlagMutations, SourceToAssemblyPlanOptions,
 };
@@ -10,7 +13,6 @@ use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{
     AbsoluteSymbol, AbsoluteSymbolKind, TranslationUnit, TranslationUnits,
 };
-use compiler_core::{external_symbol_assembly, overlay_call_via_base};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -22,47 +24,6 @@ pub fn hex(value: i64, width: usize) -> String {
         return format!("-{:0width$x}", value.unsigned_abs());
     }
     format!("{value:0width$x}", width = width)
-}
-const LOCAL_LABEL_DEFINITION: &str = r"^(\.L[A-Za-z0-9_$.]*):";
-const LOCAL_LABEL_WORD: &str = r"^(\s*\.word\s+)(\.L[A-Za-z0-9_$.]*)\s*$";
-pub const OVERLAY_LINK_BIAS: i64 = 0x8000;
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BiasResult {
-    pub text: String,
-    pub biased: usize,
-}
-pub fn bias_in_image_label_words(assembly: &str) -> BiasResult {
-    let definition = Regex::new(LOCAL_LABEL_DEFINITION, "");
-    let word = Regex::new(LOCAL_LABEL_WORD, "");
-    let lines: Vec<&str> = assembly.split('\n').collect();
-    let mut defined: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
-    for line in &lines {
-        let trimmed = crate::regex::js_trim(line);
-        if let Some(found) = definition.exec(trimmed) {
-            defined.insert(found.group(trimmed, 1).expect("group 1").to_string());
-        }
-    }
-    let mut biased = 0usize;
-    let mut out: Vec<String> = Vec::with_capacity(lines.len());
-    for line in &lines {
-        match word.exec(line) {
-            Some(found) => {
-                let label = found.group(line, 2).expect("group 2");
-                if !defined.contains(label) {
-                    out.push((*line).to_string());
-                    continue;
-                }
-                biased += 1;
-                let head = found.group(line, 1).expect("group 1");
-                out.push(format!("{head}{label} + 0x{:x}", OVERLAY_LINK_BIAS));
-            }
-            None => out.push((*line).to_string()),
-        }
-    }
-    BiasResult {
-        text: out.join("\n"),
-        biased,
-    }
 }
 fn overlay_c_cache_path() -> PathBuf {
     match std::env::var_os("ALCHEMY_OVERLAY_C_CACHE") {
@@ -95,36 +56,27 @@ const SELF_SOURCE: [&[u8]; 6] = [
     include_bytes!("regex.rs"),
     include_bytes!("cli.rs"),
 ];
-const LINKED_POSTPROCESS_SOURCE: [&[u8]; 4] = [
+const COMPILER_SOURCES: [&[u8]; 7] = [
     include_bytes!("../../compiler-core/src/lib.rs"),
     include_bytes!("../../compiler-core/src/routing.rs"),
     include_bytes!("../../compiler-core/src/call_via_data.rs"),
     include_bytes!("../../compiler-core/src/symbols.rs"),
+    include_bytes!("../../compiler-core/src/overlay.rs"),
+    include_bytes!("../../compiler-core/src/plan.rs"),
+    include_bytes!("../../candidate-compiler/src/verify.rs"),
 ];
 pub fn self_digest() -> String {
-    static CACHE: Mutex<Option<String>> = Mutex::new(None);
-    let mut slot = CACHE.lock().expect("self-digest lock");
-    if let Some(found) = slot.as_ref() {
-        return found.clone();
-    }
-    let mut stream: Vec<u8> = Vec::new();
-    for part in SELF_SOURCE {
-        stream.extend_from_slice(part);
-    }
-    for part in LINKED_POSTPROCESS_SOURCE {
-        stream.extend_from_slice(part);
-    }
-    assert!(
-        !stream.is_empty(),
-        "disassemble read an EMPTY source; refusing to key the cache"
-    );
-    let digest = sha256::hex(&stream);
-    *slot = Some(digest.clone());
-    digest
+    static DIGEST: OnceLock<String> = OnceLock::new();
+    DIGEST
+        .get_or_init(|| {
+            let sources = SELF_SOURCE
+                .into_iter()
+                .chain(COMPILER_SOURCES)
+                .collect::<Vec<_>>();
+            sha256::hex(&sources.concat())
+        })
+        .clone()
 }
-/// Where one overlay's register bindings live. The work directory is
-/// short-lived and shared, so the bindings go to a stable path named by
-/// their own content hash instead.
 fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> {
     let directory = root().join("out/overlay-bindings");
     fs::create_dir_all(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
@@ -132,39 +84,11 @@ fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> 
         "{overlay}-{}.h",
         &sha256::hex(text.as_bytes())[..16]
     ));
-    if !path.exists() {
-        fs::write(&path, text).map_err(|error| format!("{}: {error}", path.display()))?;
+    if !fs::read(&path).is_ok_and(|bytes| bytes == text.as_bytes()) {
+        cache_entry::write_cache_entry_atomically(&path, text.as_bytes())
+            .map_err(|error| format!("{}: {error}", path.display()))?;
     }
     Ok(path)
-}
-fn plan_stamp(commands: &[Vec<String>], work: &str) -> String {
-    static MEMO: Mutex<Option<BTreeMap<Vec<u8>, String>>> = Mutex::new(None);
-    let identity = command_identity(commands, work);
-    {
-        let guard = MEMO.lock().expect("plan-stamp lock");
-        if let Some(found) = guard.as_ref().and_then(|memo| memo.get(&identity)) {
-            return found.clone();
-        }
-    }
-    let mut stream = identity.clone();
-    for command in commands {
-        let Some(binary) = command.first() else {
-            continue;
-        };
-        if !binary.starts_with('/') {
-            continue;
-        }
-        match fs::read(binary) {
-            Ok(bytes) => append_frame(&mut stream, &bytes),
-            Err(_) => append_frame(&mut stream, b"unreadable"),
-        }
-    }
-    let stamp = sha256::hex(&stream);
-    let mut guard = MEMO.lock().expect("plan-stamp lock");
-    guard
-        .get_or_insert_with(BTreeMap::new)
-        .insert(identity, stamp.clone());
-    stamp
 }
 fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
     stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
@@ -187,85 +111,9 @@ fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
     }
     identity
 }
-fn placeholder_addresses(assembly: &str) -> Vec<u32> {
-    assembly
-        .lines()
-        .filter_map(|line| {
-            line.trim()
-                .strip_prefix("AlchemyC_")?
-                .strip_suffix(':')
-                .and_then(|address| u32::from_str_radix(address, 16).ok())
-        })
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect()
-}
-fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64), String> {
-    let paths = SourcePaths::load(&root())?;
-    if let Some(owner) = paths.overlay_owner_for_path(overlay, path)? {
-        let stem = owner.address_stem();
-        return Ok((owner, stem, owner.address() as i64));
-    }
-    let display = path.to_string_lossy().to_string();
-    let name = basename(&display);
-    let stem = name.strip_suffix(".c").unwrap_or(name);
-    let tail = stem
-        .rsplit_once("_c_")
-        .map(|(_, tail)| tail)
-        .unwrap_or(stem);
-    if tail.len() != 8 || !tail.bytes().all(|b| b.is_ascii_hexdigit()) {
-        return Err(format!("overlay C filename is not an address: {display}"));
-    }
-    let address = i64::from_str_radix(tail, 16).map_err(|error| error.to_string())?;
-    let resource = overlay
-        .strip_prefix("resource_")
-        .and_then(|value| u16::from_str_radix(value, 16).ok())
-        .ok_or_else(|| format!("invalid overlay owner {overlay:?}"))?;
-    let owner = SourceOwner::from_legacy_stem(stem)
-        .filter(|owner| owner.overlay_id().as_deref() == Some(overlay))
-        .unwrap_or(SourceOwner::Overlay {
-            resource,
-            address: address as u32,
-        });
-    Ok((owner, tail.to_ascii_lowercase(), address))
-}
-fn checked(command: &[String], cwd: &Path) -> Result<String, String> {
-    let (binary, rest) = command.split_first().ok_or("empty command")?;
-    let output = Command::new(binary)
-        .args(rest)
-        .current_dir(cwd)
-        .output()
-        .map_err(|error| format!("{} failed: {error}", basename(binary)))?;
-    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
-        let detail = crate::regex::js_trim(if stderr.is_empty() { &stdout } else { &stderr });
-        return Err(if detail.is_empty() {
-            format!("{} failed", basename(binary))
-        } else {
-            format!("{} failed: {detail}", basename(binary))
-        });
-    }
-    Ok(stdout)
-}
 fn assemble_file(source: &str, object: &str, work: &Path) -> Result<(), String> {
     checked(
         &compiler_core::routing::assembly_command(source, object),
-        work,
-    )
-    .map(drop)
-}
-fn copy_text(elf: &str, binary: &str, work: &Path) -> Result<(), String> {
-    checked(
-        &strings(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            elf,
-            binary,
-        ]),
         work,
     )
     .map(drop)
@@ -289,18 +137,18 @@ pub struct Compiled {
     pub address: i64,
     pub data: Vec<u8>,
 }
-const OVERLAY_HOST_TOOLS: [&str; 4] = [
+const OVERLAY_HOST_TOOLS: [&str; 5] = [
     "arm-none-eabi-as",
     "arm-none-eabi-nm",
     "arm-none-eabi-ld",
     "arm-none-eabi-objcopy",
+    "arm-none-eabi-objdump",
 ];
 fn overlay_cache_key(
     compiler_signature: &str,
     host_signature: &str,
     plan_signature: &str,
     address: i64,
-    call_via_base: i64,
     source_inputs: &[u8],
 ) -> String {
     let mut key = Vec::new();
@@ -310,7 +158,6 @@ fn overlay_cache_key(
     append_frame(&mut key, host_signature.as_bytes());
     append_frame(&mut key, plan_signature.as_bytes());
     append_frame(&mut key, hex(address, 8).as_bytes());
-    append_frame(&mut key, hex(call_via_base, 8).as_bytes());
     append_frame(&mut key, source_inputs);
     sha256::hex(&key)
 }
@@ -324,133 +171,97 @@ fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
 fn overlay_external_assembly(
     name: &str,
     unit: Option<&TranslationUnit>,
-    call_via_base: u64,
+    is_call: bool,
+    reference: &[u8],
+    calls: &BTreeMap<String, BTreeSet<u64>>,
 ) -> Result<String, String> {
     let symbol = unit.and_then(|unit| unit.absolute_symbols.get(name).copied());
     if let Some(symbol) = symbol {
         return Ok(absolute_symbol_assembly(name, symbol));
     }
-    external_symbol_assembly(name, call_via_base)
+    overlay::external(name, is_call, reference, calls)
+        .map(|symbol| absolute_symbol_assembly(name, symbol))
+}
+
+fn call_relocations(object: &str, work: &Path) -> Result<BTreeSet<String>, String> {
+    Ok(
+        checked(&strings(&["arm-none-eabi-objdump", "-r", object]), work)?
+            .lines()
+            .filter_map(|line| {
+                let fields = line.split_whitespace().collect::<Vec<_>>();
+                (fields.get(1) == Some(&"R_ARM_THM_CALL"))
+                    .then(|| fields.get(2).map(|name| name.to_string()))
+                    .flatten()
+            })
+            .collect(),
+    )
 }
 fn translation_unit_signature() -> Result<Vec<u8>, String> {
     fs::read(root().join("games/gs1/recon/translation-units.json"))
         .map_err(|error| error.to_string())
 }
-fn link_object(
-    files: [&str; 5],
-    work: &Path,
-    address: i64,
-    entry: Option<&str>,
-    unit: Option<&TranslationUnit>,
-    names: &SourcePaths,
-    call_via: u64,
-) -> Result<Vec<u8>, String> {
-    let [object, symbols_source, symbols_object, elf, binary] = files;
-    let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", object]), work)?;
-    let mut stubs = names.main_symbol_exports();
-    for name in undefined
-        .lines()
-        .filter_map(|line| line.split_whitespace().last())
-    {
-        if names.main_symbol(name)?.is_some() {
-            continue;
-        }
-        stubs.push_str(
-            &overlay_external_assembly(name, unit, call_via)
-                .map_err(|_| format!("unsupported overlay C external symbol: {name}"))?,
-        );
-    }
-    fs::write(symbols_source, stubs).map_err(|error| format!("{symbols_source}: {error}"))?;
-    assemble_file(symbols_source, symbols_object, work)?;
-    let mut command = strings(&["arm-none-eabi-ld", &format!("-Ttext=0x{}", hex(address, 8))]);
-    if let Some(entry) = entry {
-        command.extend(strings(&["-e", entry]));
-    }
-    command.extend(strings(&["-o", elf, object, symbols_object]));
-    checked(&command, work)?;
-    copy_text(elf, binary, work)?;
-    fs::read(binary).map_err(|error| format!("{binary}: {error}"))
-}
 pub fn compile_overlay_c(
     source: &Path,
     work: &Path,
     overlay: &str,
+    extent: usize,
     routing_source: Option<&Path>,
     extra_flags: &[String],
 ) -> Result<Compiled, String> {
-    let mutations = (!extra_flags.is_empty()).then(|| CompilerFlagMutations {
-        add_flags: extra_flags.to_vec(),
-        remove_flags: Vec::new(),
-    });
-    compile_overlay_with_mutations(source, work, overlay, routing_source, mutations.as_ref())
-}
-fn compile_overlay_with_mutations(
-    source: &Path,
-    work: &Path,
-    overlay: &str,
-    routing_source: Option<&Path>,
-    mutations: Option<&CompilerFlagMutations>,
-) -> Result<Compiled, String> {
-    let extra_flags: Vec<String> = mutations
-        .map(|m| {
-            let mut all = m.add_flags.clone();
-            all.extend(m.remove_flags.iter().cloned());
-            all
-        })
-        .unwrap_or_default();
     let source_display = source.to_string_lossy().to_string();
     let source_paths = SourcePaths::load(&root())?;
-    let routed_owner = routing_source
-        .map(|path| source_paths.overlay_owner_for_path(overlay, path))
-        .transpose()?
-        .flatten();
-    let (owner, stem, address) = match routed_owner {
-        Some(owner) => (owner, owner.address_stem(), owner.address() as i64),
-        None => address_stem(source, overlay)?,
+    let route = routing_source.unwrap_or(source);
+    let owner = source_paths
+        .overlay_owner_for_path(overlay, route)?
+        .or_else(|| {
+            SourceOwner::from_legacy_stem(&route.file_stem()?.to_str()?.to_ascii_lowercase())
+        })
+        .ok_or_else(|| {
+            format!(
+                "{} has no overlay owner; supply a registered route",
+                route.display()
+            )
+        })?;
+    let owner = if owner.is_main() {
+        SourceOwner::parse(&format!("{overlay}:{}", owner.address_stem()))?
+    } else {
+        owner
     };
+    if owner.overlay_id().as_deref() != Some(overlay) {
+        return Err(format!("{} does not belong to {overlay}", owner.id()));
+    }
+    let (stem, address) = (owner.address_stem(), i64::from(owner.address()));
     let units = translation_units()?;
     let unit = units.unit_for_game_owner("gs1", owner);
-    let routing_source = match routing_source {
-        Some(path) => source_paths
-            .overlay_owner_for_path(overlay, path)?
-            .map(SourceOwner::routing_path)
-            .unwrap_or_else(|| path.to_path_buf()),
-        None => owner.routing_path(),
-    }
-    .to_string_lossy()
-    .into_owned();
-    let call_via_base = source_paths
-        .registered_call_via(owner)
-        .map(u64::from)
-        .unwrap_or_else(|| overlay_call_via_base(overlay)) as i64;
-    let symbol = format!("Func_{}", stem.to_lowercase());
+    let reference = crate::canonical_overlay(&root(), overlay)?;
+    let routing_source = owner.routing_path().to_string_lossy().into_owned();
     let work_display = work.to_string_lossy().to_string();
     let at = |name: &str| work.join(name).to_string_lossy().to_string();
     let assembly = at(&format!("{stem}.s"));
-    let object = at(&format!("{stem}.o"));
-    let symbols_source = at(&format!("{stem}.symbols.s"));
-    let symbols_object = at(&format!("{stem}.symbols.o"));
-    let elf = at(&format!("{stem}.elf"));
-    let binary = at(&format!("{stem}.bin"));
     let mut options = SourceToAssemblyPlanOptions::new(
         CompilerTarget::Gs1,
-        routing_source,
+        routing_source.clone(),
         source_display.clone(),
         assembly.clone(),
     );
     options.preprocessed_output = Some(at(&format!("{stem}.i")));
-    // The overlay's own name bindings, rendered from the register.
     let binding_text = source_paths.symbol_bindings(Some(overlay));
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
-    options.preprocessor_flags.push("-include".to_string());
-    options
-        .preprocessor_flags
-        .push(bindings.to_string_lossy().into_owned());
-    if let Some(requested) = mutations {
-        options.flags = Some(requested.clone());
-    }
+    options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
+    options.flags = Some(CompilerFlagMutations {
+        add_flags: extra_flags.to_vec(),
+        remove_flags: Vec::new(),
+    });
     let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
+    let configuration = candidate_compiler::CandidateCompilerConfiguration {
+        overlay_extent: Some(extent),
+        absolute_symbols: unit
+            .map(TranslationUnit::canonical_symbols)
+            .transpose()?
+            .unwrap_or_default(),
+        ..Default::default()
+    };
     let mut source_inputs = compiler_source_tree_signature(&root(), source, &steps)?;
     append_frame(&mut source_inputs, &translation_unit_signature()?);
     append_frame(
@@ -460,7 +271,9 @@ fn compile_overlay_with_mutations(
     // The binding path carries a content hash, so a rename changes the
     // command; hashing the text keeps the key honest if that ever changes.
     append_frame(&mut source_inputs, binding_text.as_bytes());
-    let plan_signature = plan_stamp(&steps, &work_display);
+    append_frame(&mut source_inputs, &reference);
+    append_frame(&mut source_inputs, &extent.to_le_bytes());
+    let plan_signature = sha256::hex(&command_identity(&steps, &work_display));
     let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
     let cache_key = overlay_cache_key(
@@ -468,7 +281,6 @@ fn compile_overlay_with_mutations(
         &host_signature,
         &plan_signature,
         address,
-        call_via_base,
         &source_inputs,
     );
     // Flag-mutated compiles (matching/diagnostic overrides) are throwaway by
@@ -486,52 +298,18 @@ fn compile_overlay_with_mutations(
             }
         }
     }
-    for step in &plan.steps {
-        checked(&step.command, work)?;
-    }
-    let produced = fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
-    fs::write(&assembly, bias_in_image_label_words(&produced).text)
-        .map_err(|error| format!("{assembly}: {error}"))?;
-    checked(
-        &compiler_core::routing::compiler_assembly_command(&assembly, &object),
-        work,
-    )?;
-    let object_listing = checked(&strings(&["arm-none-eabi-nm", "-S", &object]), work)?;
-    let (object_offset, object_size) = symbol_span(&object_listing, &symbol)?;
-    let link_address = address
-        .checked_sub(object_offset as i64)
-        .ok_or_else(|| format!("overlay owner {symbol} precedes its translation unit"))?;
-    let whole = link_object(
-        [&object, &symbols_source, &symbols_object, &elf, &binary],
-        work,
-        link_address,
-        Some(&symbol),
-        unit,
-        &source_paths,
-        call_via_base as u64,
-    )?;
-    let listing = checked(&strings(&["arm-none-eabi-nm", "-S", &elf]), work)?;
-    let needle = format!(" {symbol}");
-    let row = split_lines(&listing)
-        .into_iter()
-        .find(|line| line.ends_with(&needle))
-        .ok_or_else(|| format!("missing linked overlay C symbol: {symbol}"))?;
-    let size_field = crate::regex::js_trim(&row)
-        .split(|c: char| crate::regex::is_js_space(c))
-        .filter(|part| !part.is_empty())
-        .nth(1)
-        .ok_or_else(|| format!("nm -S row has no size field: {row}"))?
-        .to_string();
-    let size = js_parse_int_hex(&size_field)
-        .ok_or_else(|| format!("nm -S size is not hex: {size_field}"))?;
-    if size as usize != object_size {
-        return Err(format!("linked overlay C symbol size changed: {symbol}"));
-    }
-    let end = object_offset + size.max(0) as usize;
-    let data = whole
-        .get(object_offset..end)
-        .ok_or_else(|| format!("linked overlay C symbol is truncated: {symbol}"))?
-        .to_vec();
+    let data = candidate_compiler::verify_candidate_owned_routed(
+        &source_display,
+        &routing_source,
+        &stem,
+        &reference,
+        &work_display,
+        extra_flags,
+        f64::from(overlay::RESOURCE_BASE),
+        CompilerTarget::Gs1,
+        &configuration,
+    )?
+    .actual;
     // Mirror the read-side guard above: never persist a flag-mutated compile.
     if extra_flags.is_empty() {
         if let Ok(cache) = overlay_c_cache() {
@@ -561,6 +339,7 @@ fn compile_overlay_unit(
     work: &Path,
     overlay: &str,
     edition: Option<&str>,
+    placement: Option<&OverlayEditionPlacement<'_>>,
 ) -> Result<Vec<Compiled>, String> {
     let names = SourcePaths::load(&root())?;
     let source = root().join(&unit.source);
@@ -568,33 +347,13 @@ fn compile_overlay_unit(
         .owners
         .first()
         .ok_or("empty overlay translation unit")?;
-    let base = first.address as i64;
-    let call_via = unit
-        .owners
-        .iter()
-        .map(|member| {
-            unit.source_owner(member.address).map(|owner| {
-                names
-                    .registered_call_via(owner)
-                    .map(u64::from)
-                    .unwrap_or_else(|| overlay_call_via_base(overlay))
-            })
-        })
-        .collect::<Result<BTreeSet<_>, _>>()?;
-    if call_via.len() != 1 {
-        return Err(format!(
-            "{}: grouped owners disagree on call-via bank",
-            unit.id
-        ));
-    }
-    let call_via = *call_via.first().unwrap();
     let at = |suffix: &str| {
         work.join(format!("{}.{suffix}", unit.id))
             .to_string_lossy()
             .into_owned()
     };
-    let [assembly, object, symbols_source, symbols_object, elf, binary] =
-        ["s", "o", "symbols.s", "symbols.o", "elf", "bin"].map(at);
+    let [assembly, object, symbols_source, symbols_object, elf] =
+        ["s", "o", "symbols.s", "symbols.o", "elf"].map(at);
     let mut options = SourceToAssemblyPlanOptions::new(
         CompilerTarget::Gs1,
         unit.source_owner(first.address)?
@@ -609,19 +368,15 @@ fn compile_overlay_unit(
             .preprocessor_flags
             .push(format!("-DGS1_EDITION_{}=1", edition.to_ascii_uppercase()));
     }
-    // The overlay's own name bindings: each image has its own name space,
-    // so the register renders the bindings for this resource alone.
     let binding_text = names.symbol_bindings(Some(overlay));
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
-    options.preprocessor_flags.push("-include".to_string());
     options
         .preprocessor_flags
-        .push(bindings.to_string_lossy().into_owned());
+        .extend(["-include".into(), bindings.to_string_lossy().into_owned()]);
     for step in source_to_assembly_plan(&options)?.steps {
         checked(&step.command, work)?;
     }
     let produced = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
-    let biased = bias_in_image_label_words(&produced).text;
     // The unit's functions need not be contiguous in the image: retained
     // assembly, tables, and pools sit between them. Each function goes into
     // its own section and one link places every section at its owner's
@@ -631,7 +386,12 @@ fn compile_overlay_unit(
     let mut placed: Vec<(u32, String, usize)> = Vec::new();
     for (address, _, extent) in &members {
         placed.push((
-            *address,
+            match placement {
+                Some(placement) => *placement.addresses.get(address).ok_or_else(|| {
+                    format!("{}: missing regional placement for {address:08x}", unit.id)
+                })?,
+                None => *address,
+            },
             unit.source_owner(*address)?.legacy_name(),
             *extent,
         ));
@@ -641,7 +401,7 @@ fn compile_overlay_unit(
         .map(|(_, symbol, _)| symbol.as_str())
         .collect();
     let sectioned =
-        section_functions(&biased, &symbols).map_err(|error| format!("{}: {error}", unit.id))?;
+        section_functions(&produced, &symbols).map_err(|error| format!("{}: {error}", unit.id))?;
     fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
     checked(
         &compiler_core::routing::compiler_assembly_command(&assembly, &object),
@@ -665,7 +425,65 @@ fn compile_overlay_unit(
     }
     let script = at("ld");
     let mut text = String::from("SECTIONS\n{\n");
+    let canonical = crate::canonical_overlay(&root(), overlay)?;
+    let reference = placement.map_or(canonical.as_slice(), |placement| placement.reference);
+    let loaded = match placement {
+        Some(_) => Some((overlay::load(&canonical, 0)?, overlay::load(reference, 0)?)),
+        None => None,
+    };
+    let mut calls = BTreeMap::<String, BTreeSet<u64>>::new();
+    let mut edition_symbols = BTreeMap::new();
+    for ((canonical_address, _, _), (address, _, extent)) in members.iter().zip(&placed) {
+        let (found, translations) = if placement.is_some() {
+            paired_overlay_calls(&canonical, *canonical_address, reference, *address, *extent)?
+        } else {
+            (
+                overlay::call_symbols(
+                    reference,
+                    (*address - overlay::RESOURCE_BASE) as usize,
+                    *extent,
+                )?,
+                BTreeMap::new(),
+            )
+        };
+        for (name, targets) in found {
+            calls.entry(name).or_default().extend(targets);
+        }
+        for (alias, symbol) in &unit.absolute_symbols {
+            let translated = match symbol.kind {
+                AbsoluteSymbolKind::Thumb => translations.get(&symbol.address).copied(),
+                AbsoluteSymbolKind::Data | AbsoluteSymbolKind::Arm => match &loaded {
+                    Some((canonical, edition)) => paired_data_alias(
+                        canonical,
+                        *canonical_address,
+                        edition,
+                        *address,
+                        *extent,
+                        symbol.address,
+                    )?,
+                    None => None,
+                },
+            };
+            if let Some(address) = translated {
+                let translated = AbsoluteSymbol { address, ..*symbol };
+                if edition_symbols
+                    .insert(alias.clone(), translated)
+                    .is_some_and(|old| old != translated)
+                {
+                    return Err(format!("{alias}: conflicting regional symbol addresses"));
+                }
+            }
+        }
+    }
+    if placement.is_some() {
+        for (alias, symbol) in &unit.absolute_symbols {
+            if symbol.kind != AbsoluteSymbolKind::Thumb && !edition_symbols.contains_key(alias) {
+                return Err(format!("{alias}: no corresponding regional data address"));
+            }
+        }
+    }
     for (address, symbol, _) in &placed {
+        let address = address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
         text.push_str(&format!(
             "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
         ));
@@ -676,11 +494,18 @@ fn compile_overlay_unit(
         [&object, &symbols_source, &symbols_object, &elf],
         work,
         &script,
-        Some(unit),
+        Some(&placement.map_or_else(
+            || unit.clone(),
+            |_| {
+                let mut edition_unit = unit.clone();
+                edition_unit.absolute_symbols = edition_symbols;
+                edition_unit
+            },
+        )),
         &names,
-        call_via,
+        &reference,
+        &calls,
     )?;
-    let _ = (base, binary);
     let mut compiled = Vec::new();
     for (address, symbol, extent) in &placed {
         let piece = at(&format!("{symbol}.bin"));
@@ -713,7 +538,7 @@ fn compile_overlay_unit(
         }
         compiled.push(Compiled {
             address: i64::from(*address),
-            data,
+            data: overlay::encode(&data, (*address - overlay::RESOURCE_BASE) as usize)?,
         });
     }
     Ok(compiled)
@@ -806,10 +631,12 @@ fn link_placed_object(
     script: &str,
     unit: Option<&TranslationUnit>,
     names: &SourcePaths,
-    call_via: u64,
+    reference: &[u8],
+    calls: &BTreeMap<String, BTreeSet<u64>>,
 ) -> Result<(), String> {
     let [object, symbols_source, symbols_object, elf] = files;
     let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", object]), work)?;
+    let relocations = call_relocations(object, work)?;
     let mut stubs = names.main_symbol_exports();
     for name in undefined
         .lines()
@@ -818,10 +645,13 @@ fn link_placed_object(
         if names.main_symbol(name)?.is_some() {
             continue;
         }
-        stubs.push_str(
-            &overlay_external_assembly(name, unit, call_via)
-                .map_err(|_| format!("unsupported overlay C external symbol: {name}"))?,
-        );
+        stubs.push_str(&overlay_external_assembly(
+            name,
+            unit,
+            relocations.contains(name),
+            reference,
+            calls,
+        )?);
     }
     fs::write(symbols_source, stubs).map_err(|error| format!("{symbols_source}: {error}"))?;
     assemble_file(symbols_source, symbols_object, work)?;
@@ -839,27 +669,102 @@ fn link_placed_object(
     )
     .map(drop)
 }
+
+fn paired_overlay_calls(
+    canonical: &[u8],
+    canonical_address: u32,
+    edition: &[u8],
+    edition_address: u32,
+    extent: usize,
+) -> Result<(BTreeMap<String, BTreeSet<u64>>, BTreeMap<u64, u64>), String> {
+    let canonical_offset = (canonical_address - overlay::RESOURCE_BASE) as usize;
+    let edition_offset = (edition_address - overlay::RESOURCE_BASE) as usize;
+    let edition_calls = overlay::call_sites(edition, edition_offset, extent)?
+        .into_iter()
+        .map(|(site, _, target)| (site, target))
+        .collect::<BTreeMap<_, _>>();
+    let mut calls = BTreeMap::<String, BTreeSet<u64>>::new();
+    let mut translations = BTreeMap::new();
+    for (site, name, canonical_target) in overlay::call_sites(canonical, canonical_offset, extent)?
+    {
+        let edition_target = *edition_calls
+            .get(&site)
+            .ok_or("edition lacks a corresponding overlay call")?;
+        calls.entry(name).or_default().insert(edition_target);
+        if translations
+            .insert(canonical_target, edition_target)
+            .is_some_and(|old| old != edition_target)
+        {
+            return Err("canonical runtime call has inconsistent edition targets".into());
+        }
+    }
+    Ok((calls, translations))
+}
+
+fn paired_data_alias(
+    canonical: &[u8],
+    canonical_address: u32,
+    edition: &[u8],
+    edition_address: u32,
+    extent: usize,
+    target: u64,
+) -> Result<Option<u64>, String> {
+    let target = u32::try_from(target).map_err(|_| "overlay data address exceeds 32 bits")?;
+    let canonical_offset = (canonical_address - overlay::RESOURCE_BASE) as usize;
+    let edition_offset = (edition_address - overlay::RESOURCE_BASE) as usize;
+    let canonical = canonical
+        .get(canonical_offset..canonical_offset + extent)
+        .ok_or("canonical overlay owner exceeds reference")?;
+    let edition = edition
+        .get(edition_offset..edition_offset + extent)
+        .ok_or("edition overlay owner exceeds reference")?;
+    let canonical =
+        compiler_core::thumb::relocation_info(canonical, u64::from(canonical_address)).1;
+    let edition = compiler_core::thumb::relocation_info(edition, u64::from(edition_address)).1;
+    let mut value = None;
+    for site in canonical
+        .iter()
+        .filter(|site| site.0 == b'L' && site.3 == target)
+    {
+        let found = edition
+            .iter()
+            .find(|candidate| candidate.0 == b'L' && candidate.1 == site.1)
+            .ok_or("edition lacks a corresponding literal load")?
+            .3;
+        if value.replace(found).is_some_and(|old| old != found) {
+            return Err("canonical data alias has conflicting regional targets".into());
+        }
+    }
+    Ok(value.map(u64::from))
+}
 pub fn compile_declared_overlay_unit(
     unit: &TranslationUnit,
     edition: &str,
+    placement: Option<&OverlayEditionPlacement<'_>>,
 ) -> Result<Compiled, String> {
     if !unit.exact() || unit.overlay.is_none() {
         return Err(format!("{}: not a wholly exact overlay unit", unit.id));
     }
     let work = tempdir().map_err(|error| error.to_string())?;
-    let members = compile_overlay_unit(
-        unit,
-        work.path(),
-        unit.overlay.as_deref().unwrap(),
-        Some(edition),
-    )?;
+    compiled_span(
+        compile_overlay_unit(
+            unit,
+            work.path(),
+            unit.overlay.as_deref().unwrap(),
+            Some(edition),
+            placement,
+        )?,
+        &unit.id,
+    )
+}
+fn compiled_span(members: Vec<Compiled>, unit_id: &str) -> Result<Compiled, String> {
     // One span from the first member to the end of the last, zero between
     // members, so a caller indexes owners by their offset from the base.
     let first = members
         .iter()
         .map(|member| member.address)
         .min()
-        .ok_or_else(|| format!("{}: no compiled members", unit.id))?;
+        .ok_or_else(|| format!("{unit_id}: no compiled members"))?;
     let end = members
         .iter()
         .map(|member| member.address + member.data.len() as i64)
@@ -875,6 +780,12 @@ pub fn compile_declared_overlay_unit(
         data,
     })
 }
+
+pub struct OverlayEditionPlacement<'a> {
+    pub reference: &'a [u8],
+    pub addresses: BTreeMap<u32, u32>,
+}
+
 fn validate_shared_overlay_source(
     repository: &Path,
     names: &SourcePaths,
@@ -919,9 +830,7 @@ fn compile_production_overlay(
     overlay: &str,
 ) -> Result<Vec<Compiled>, String> {
     let text = source.read_text().map_err(|error| error.to_string())?;
-    let placeholders = placeholder_addresses(&text)
-        .into_iter()
-        .collect::<BTreeSet<_>>();
+    let placeholders = placeholder_addresses(&text);
     let names = SourcePaths::load(&root())?;
     let units = translation_units()?;
     let mut paths = BTreeSet::new();
@@ -955,15 +864,43 @@ fn compile_production_overlay(
                 ));
             }
         }
-        compiled.extend(compile_overlay_unit(unit, work, overlay, None)?);
+        compiled.extend(
+            compile_overlay_unit(unit, work, overlay, None, None)
+                .map_err(|error| format!("unit {}: {error}", unit.id))?,
+        );
     }
     for address in placeholders.difference(&handled) {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
         let path = names.source_path(owner);
-        compiled.push(compile_overlay_c(&path, work, overlay, None, &[])?);
+        let extent = placeholder_extent(&text, *address)
+            .ok_or_else(|| format!("{} has no complete placeholder extent", owner.id()))?;
+        compiled.push(
+            compile_overlay_c(&path, work, overlay, extent, None, &[])
+                .map_err(|error| format!("{}: {error}", owner.id()))?,
+        );
     }
     compiled.sort_by_key(|member| member.address);
     Ok(compiled)
+}
+pub fn placeholder_extent(text: &str, address: u32) -> Option<usize> {
+    let label = format!("AlchemyC_{address:08x}:");
+    let mut lines = text.lines().skip_while(|line| line.trim() != label);
+    lines.next()?;
+    let mut extent = 0usize;
+    for line in lines {
+        let line = line.trim();
+        if let Some(value) = line.strip_prefix(".space ") {
+            let value = value.trim();
+            extent = extent.checked_add(if let Some(hex) = value.strip_prefix("0x") {
+                usize::from_str_radix(hex, 16).ok()?
+            } else {
+                value.parse().ok()?
+            })?;
+        } else if !(line.starts_with(".L_") && line.ends_with(':')) {
+            break;
+        }
+    }
+    (extent > 0).then_some(extent)
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Span {
@@ -1035,47 +972,7 @@ pub fn assemble_overlay_raw(source: &OverlaySource, base: i64) -> Result<Vec<u8>
 }
 pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
-    let at = |name: &str| work.path().join(name).to_string_lossy().to_string();
-    let assembly = at("o.s");
-    let object = at("o.o");
-    let elf = at("o.elf");
-    let binary = at("o.bin");
-    let text = source.read_text().map_err(|error| error.to_string())?;
-    fs::write(&assembly, text).map_err(|error| error.to_string())?;
-    spawn_raw(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &object,
-            &assembly,
-        ]),
-        work.path(),
-    )?;
-    spawn_raw(
-        &strings(&[
-            "arm-none-eabi-ld",
-            &format!("-Ttext=0x{}", hex(base, 8)),
-            "-o",
-            &elf,
-            &object,
-        ]),
-        work.path(),
-    )?;
-    spawn_raw(
-        &strings(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            &elf,
-            &binary,
-        ]),
-        work.path(),
-    )?;
-    let mut result = fs::read(&binary).map_err(|error| error.to_string())?;
+    let mut result = assemble_overlay_raw(source, base)?;
     let display = source.to_display_string();
     let overlay = source
         .overlay_id()
@@ -1125,12 +1022,63 @@ mod source_activation_tests {
     use compiler_core::translation_units::{OwnerState, TranslationOwner};
     use tempfile::tempdir;
     #[test]
+    fn regional_overlay_calls_keep_canonical_names_and_take_regional_targets() {
+        let call = |value: u16| {
+            let high = 0xf000 | value >> 12;
+            let low = 0xf800 | (value >> 1) & 0x7ff;
+            [high as u8, (high >> 8) as u8, low as u8, (low >> 8) as u8]
+        };
+        let mut canonical = vec![0; 0x108];
+        let mut regional = vec![0; 0x12c];
+        canonical[0x20..0x24].copy_from_slice(&call(0x100));
+        regional[0x28..0x2c].copy_from_slice(&call(0x120));
+        let (calls, translated) =
+            paired_overlay_calls(&canonical, 0x0200_0020, &regional, 0x0200_0028, 4).unwrap();
+        assert_eq!(calls["Func_02000124"], BTreeSet::from([0x0200_8122]));
+        assert_eq!(translated[&0x0200_8102], 0x0200_8122);
+    }
+    #[test]
+    fn regional_data_aliases_come_from_corresponding_reference_literals() {
+        let mut canonical = vec![0; 0x34];
+        let mut regional = vec![0; 0x3c];
+        canonical[0x20..0x22].copy_from_slice(&0x4800u16.to_le_bytes());
+        regional[0x28..0x2a].copy_from_slice(&0x4800u16.to_le_bytes());
+        canonical[0x24..0x28].copy_from_slice(&0x0200_a000u32.to_le_bytes());
+        regional[0x2c..0x30].copy_from_slice(&0x0200_b000u32.to_le_bytes());
+        canonical[0x30..0x34].copy_from_slice(&0x0200_a000u32.to_le_bytes());
+        assert_eq!(
+            paired_data_alias(
+                &canonical,
+                0x0200_0020,
+                &regional,
+                0x0200_0028,
+                20,
+                0x0200_a000
+            )
+            .unwrap(),
+            Some(0x0200_b000)
+        );
+        canonical[0x22..0x24].copy_from_slice(&0x4901u16.to_le_bytes());
+        regional[0x2a..0x2c].copy_from_slice(&0x4901u16.to_le_bytes());
+        canonical[0x28..0x2c].copy_from_slice(&0x0200_a000u32.to_le_bytes());
+        regional[0x30..0x34].copy_from_slice(&0x0200_c000u32.to_le_bytes());
+        assert!(paired_data_alias(
+            &canonical,
+            0x0200_0020,
+            &regional,
+            0x0200_0028,
+            20,
+            0x0200_a000
+        )
+        .is_err());
+    }
+    #[test]
     fn only_explicit_overlay_placeholders_activate_exact_c() {
         assert_eq!(
             placeholder_addresses(
                 "Func_02000104:\n  bx lr\nAlchemyC_02000104:\n  .space 8\nAlchemyC_02000314:\n"
             ),
-            vec![0x0200_0104, 0x0200_0314]
+            BTreeSet::from([0x0200_0104, 0x0200_0314])
         );
         assert!(placeholder_addresses("Func_02000104:\n  bx lr\n").is_empty());
     }

@@ -2,6 +2,18 @@
   "format": 1,
   "manual_regions": [
     {
+      "overlay": "resource_37d",
+      "entry": "0x02000054",
+      "span_bytes": 76,
+      "evidence": "Complete camera-setup owner through its return and associated literal pool; the historical 76-byte C placeholder was restored from assembly and checked byte-identically against the canonical loader image. The current compiler emits 72 bytes; this record describes the reference extent, not a compiler-impossibility claim."
+    },
+    {
+      "overlay": "resource_37e",
+      "entry": "0x02000054",
+      "span_bytes": 76,
+      "evidence": "Complete camera-setup owner through its return and associated literal pool; the historical 76-byte C placeholder was restored from assembly and checked byte-identically against the canonical loader image. The current compiler emits 72 bytes; this record describes the reference extent, not a compiler-impossibility claim."
+    },
+    {
       "overlay": "resource_36f",
       "entry": "0x020001c0",
       "span_bytes": 120,
@@ -298,8 +310,8 @@
     {
       "overlay": "resource_371",
       "entry": "0x02002cb4",
-      "span_bytes": 1148,
-      "evidence": "complete actors-5/8/9 staging and camera choreography through the shared interworking return at 0x02003128-0x0200312c and thirty-five control-flow-safe workspace/dialogue/pose/position/descriptor pool words through 0x02003127; every static call remains explicit in machine order, including the actor-5 step-counter wait loop, eleven-argument ensemble transition and terminal camera/presentation publication before the next prologue"
+      "span_bytes": 1146,
+      "evidence": "Complete owner from 0x02002cb4 through the interworking return: pop at 0x02003128, pop at 0x0200312a, bx at 0x0200312c. Includes the interior literal pools, excludes the independent zero alignment halfword at 0x0200312e before the next prologue at 0x02003130. The prior 1148-byte review included that alignment halfword."
     },
     {
       "overlay": "resource_371",
@@ -3766,8 +3778,8 @@
     {
       "overlay": "resource_38d",
       "entry": "0x020008c0",
-      "span_bytes": 3790,
-      "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,lr} prologue at 0x020008c0 to the single matching epilogue pop {r5}/pop {r0}/bx r0 at 0x02001788-0x0200178d, following every branch and treating the bl at 0x02000e16 (target 0x0200177e, neither veneer nor prologue) as a long tail branch. 3,568 instruction bytes plus five interior literal pools totalling 222 bytes (0x02000cd0, 0x02000e1a, 0x02001206, 0x0200129e, 0x02001690); the trailing pool 0x02001790-0x0200179b and the 0x0200178e alignment halfword are excluded. End confirmed by the next prologue at 0x0200179c, already converted."
+      "span_bytes": 3804,
+      "evidence": "Complete owner from 0x020008c0 through return at 0x0200178c and the required trailing literal pool through 0x0200179b. Canonical loads at 0x0200175a, 0x02001762 and 0x02001778 reference words at 0x02001790, 0x02001794 and 0x02001798 respectively. The old 3790-byte review wrongly excluded these live literals and their alignment. The next owner starts at 0x0200179c."
     },
     {
       "overlay": "resource_38d",
@@ -10768,8 +10780,8 @@
     {
       "overlay": "resource_3b9",
       "entry": "0x02002b1c",
-      "span_bytes": 112,
-      "evidence": "parked owner: assembly restored byte-identically after its former C source stopped reproducing the audited placeholder span"
+      "span_bytes": 110,
+      "evidence": "complete function through its return at 02002b88; the following two-byte zero alignment belongs to the resource layout, not the C function; canonical compiler output is not padded to extend ownership"
     },
     {
       "overlay": "resource_3ba",
@@ -14040,6 +14052,18 @@
       "entry": "0x02000cf4",
       "span_bytes": 532,
       "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
-    }
+    },
+    {"overlay":"resource_370","entry":"0x02000384","span_bytes":72,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_373","entry":"0x02005950","span_bytes":184,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_380","entry":"0x02000104","span_bytes":54,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_397","entry":"0x020002a0","span_bytes":64,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_39c","entry":"0x020003a8","span_bytes":384,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_39c","entry":"0x02001c9c","span_bytes":160,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_39e","entry":"0x02000104","span_bytes":54,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_3ba","entry":"0x02000540","span_bytes":752,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_3c9","entry":"0x02000104","span_bytes":54,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_3c9","entry":"0x02003600","span_bytes":96,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_3cb","entry":"0x02001050","span_bytes":28,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
+    {"overlay":"resource_3cd","entry":"0x020000c0","span_bytes":44,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"}
   ]
 }

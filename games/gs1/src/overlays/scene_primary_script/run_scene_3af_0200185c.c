@@ -13,7 +13,8 @@ s32 Func_02005bae();
 u8 *Func_02005bce();
 void Func_02005bd0();
 void Func_02005be0();
-void Func_02005be2();
+void Func_02005be2_a();
+void Func_02005be2_b();
 void Func_02005bee();
 void Func_02005bf0();
 void Func_02005bfa();
@@ -60,7 +61,7 @@ void FieldScene_RunScene3af_0200185c(void)
     Func_02005b4c();
     Call1(Func_02005b62, 0x200d160);
     Func_02005ac8(1);
-    Func_02005be2(20, 0, 0);
+    Func_02005be2_a(20, 0, 0);
     Call3(Func_02005bee, 23, 0xee0000, 0x2720000);
     Call3(Func_02005bfa, 22, 0xcc0000, 0x2090000);
     record = Func_02005ba0(22);
@@ -79,5 +80,5 @@ void FieldScene_RunScene3af_0200185c(void)
     if (Value1(Func_02005bae, 0x109) != 0) {
         Func_02005b02();
     }
-    Func_02005be2();
+    Func_02005be2_b();
 }

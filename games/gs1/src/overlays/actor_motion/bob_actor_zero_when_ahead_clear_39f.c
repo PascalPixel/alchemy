@@ -3,7 +3,7 @@
 extern s32 *Func_02003e40(s32 a);
 extern s32 Func_02001d82(s32 *actor);
 extern void Func_02003e5e(void);
-extern void Func_02003ec2(s32 a, s32 b);
+extern void Func_02003ec2_a(s32 a, s32 b);
 extern void Func_02003ec2_b(void);
 extern void Func_02003dc6(s32 a);
 extern void Func_02003dd8(s32 a);
@@ -21,7 +21,7 @@ void SceneActor_BobActorZeroWhenAheadClear(void) {
     if (Func_02001d82(pos) != 0) {
         Func_02003e5e();
         *fp = 0;
-        Func_02003ec2(9, 7);
+        Func_02003ec2_a(9, 7);
         actor[3] += -0x10000;
         actor[5] += -0x10000;
         Func_02003dc6(2);

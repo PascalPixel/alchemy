@@ -455,6 +455,7 @@ name = "disassemble"
 version = "0.1.0"
 dependencies = [
  "cache-entry",
+ "candidate-compiler",
  "compiler-core",
  "extract-resource",
  "regex",

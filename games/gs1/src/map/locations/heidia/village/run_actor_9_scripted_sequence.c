@@ -3,9 +3,11 @@
 extern u8 Value_0000240d;
 
 void Func_020070e4(void);
-void Func_0200714e();
+void Func_0200714e_a();
+void Func_0200714e_b();
 void Func_02007126(s32, s32);
-void Func_0200713c();
+void Func_0200713c_a();
+void Func_0200713c_b();
 void Func_0200717c(s32, s32);
 void Func_020071cc(s32);
 void Func_020071e4(s32, s32);
@@ -18,11 +20,11 @@ void Func_0200728a(void);
 void RunActor9ScriptedSequence(void)
 {
     Func_020070e4();
-    Func_0200714e(9, 0, 0);
+    Func_0200714e_a(9, 0, 0);
     Func_02007126(9, 1);
-    Func_0200713c(9);
+    Func_0200713c_a(9);
     Func_0200717c(9, 0);
-    Func_0200713c(0, 1);
+    Func_0200713c_b(0, 1);
     {
         u8 *t = &Value_0000240d;
 
@@ -34,5 +36,5 @@ void RunActor9ScriptedSequence(void)
     Func_02007200(9, 0);
     Func_02007266(60);
     Func_0200728a();
-    Func_0200714e();
+    Func_0200714e_b();
 }

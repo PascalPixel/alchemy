@@ -22,7 +22,8 @@ extern void Func_02007186(void);
 extern StageActor *Func_020071a6(s32);
 extern void Func_020072a0(s32);
 extern void Func_020072b8(s32, s32);
-extern void Func_02007210();
+extern void Func_02007210_a();
+extern void Func_02007210_b();
 extern void Func_02007374(void);
 extern void Func_02007380(void);
 extern void Func_02007200(s32, s32);
@@ -90,13 +91,13 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     frame = (s32 *)(state + 448);
     *frame = 0x200;
     *(s32 *)(state + 456) = 15;
-    Func_02007210(20);
+    Func_02007210_a(20);
     Func_02007374();
     Func_02007380();
     base = active_slot * 16;
     Func_02007200(base + 880, target->x >> 20);
     z = target->z >> 20;
-    Func_02007210(base + 888, z);
+    Func_02007210_b(base + 888, z);
     active_slot = active_slot + 1;
     if (active_slot > 3) {
         Func_0200735a(10);

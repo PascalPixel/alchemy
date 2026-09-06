@@ -49,9 +49,7 @@ fn parse_hex(text: &str) -> Result<u32, String> {
 /// Every retained overlay module, in register order.
 pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
     let path = root.join("games/gs1/semantic/overlay-assembly.json");
-    let text = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let assembly: Assembly =
-        serde_json::from_slice(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let assembly: Assembly = compiler_core::build_io::read_json(&path)?;
     let sources = SourcePaths::load(root)?;
     let mut modules = Vec::new();
     for region in assembly.regions {

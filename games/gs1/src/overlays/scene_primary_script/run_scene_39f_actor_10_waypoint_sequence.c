@@ -12,6 +12,7 @@ extern void Func_02003fee(s32, s32);
 extern void Func_02003fc0(s32, s32, s32);
 extern void Func_02003f46(s32);
 extern void Func_02003fb6_b(s32, s32);
+extern void Func_02003fb6_c(s32);
 extern void Func_0200400a(s32, s32);
 extern void Func_02003f62(s32);
 extern void Func_02001f62(s32, s32, s32, s32);
@@ -22,7 +23,7 @@ extern void Func_0200400c(s32, s32, s32);
 extern void Func_02003f9a(s32);
 extern void Func_02001f9a(s32, s32, s32, s32);
 extern void Func_02004028(s32, s32, s32);
-extern void Func_02003fb6(s32);
+extern void Func_02003fb6_a(s32);
 extern void Func_02004020(s32, s32, s32);
 extern void Func_0200402a(s32, s32, s32);
 void FieldScene_RunActor10WaypointSequence(void)
@@ -59,9 +60,9 @@ void FieldScene_RunActor10WaypointSequence(void)
 
     Func_02001f9a(10, 120, 240, 0x30000);
     Func_02004028(0, 10, 0);
-    Func_02003fb6(10);
+    Func_02003fb6_a(10);
 
-    Func_02003fb6(768);                         /* 192 << 2 */
+    Func_02003fb6_c(768);                       /* 192 << 2 */
     Func_02004020(13, 0, 0);
     Func_0200402a(10, 0, 0);
 

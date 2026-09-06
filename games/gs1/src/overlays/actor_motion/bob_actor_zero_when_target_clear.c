@@ -9,7 +9,7 @@ extern s32 Func_020027d8(s32 *);
 extern void Func_020048b4(void);
 /* 0x02004918 serves two imports: the two-argument mode select and the
  * zero-argument bracket close. */
-extern void Func_02004918(s32, s32);
+extern void Func_02004918_a(s32, s32);
 extern void Func_02004918_b(void);
 extern void Func_0200481c(s32);
 extern void Func_0200482e(s32);
@@ -35,7 +35,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
         Func_020048b4();
 
         *mode = 0;
-        Func_02004918(11, 7);
+        Func_02004918_a(11, 7);
 
         *(s32 *)(record + 12) += (s32)0xffff0000;
         *(s32 *)(record + 20) += (s32)0xffff0000;

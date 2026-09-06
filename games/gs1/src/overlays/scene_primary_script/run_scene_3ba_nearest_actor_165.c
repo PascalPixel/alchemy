@@ -25,6 +25,7 @@ extern Obj *Func_02005716(s32);
 extern void Func_020057f0(s32);
 extern void Func_02005808(s32, s32);
 extern void Func_02005780();
+extern void Func_02005780_a();
 extern void Func_020058a4(void);
 extern void Func_020058b0(void);
 extern void Func_02005770(s32, s32);
@@ -81,7 +82,7 @@ void FieldScene_RunNearestActor165Scene(void)
     {
         s32 v = p->f10 >> 20;
 
-        Func_02005780(base + 888, v);
+        Func_02005780_a(base + 888, v);
     }
     n++;
     if (n > 3) {

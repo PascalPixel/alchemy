@@ -6,6 +6,35 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
 pub const FORMAT: u32 = 4;
 
+#[derive(Deserialize)]
+struct ReviewedRegions {
+    manual_regions: Vec<ReviewedRegion>,
+}
+#[derive(Deserialize)]
+struct ReviewedRegion {
+    overlay: String,
+    entry: String,
+    span_bytes: usize,
+}
+pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    let path = root.join("games/gs1/semantic/regions.json");
+    let document: ReviewedRegions = crate::build_io::read_json(path)?;
+    document
+        .manual_regions
+        .into_iter()
+        .map(|region| {
+            let owner = SourceOwner::parse(&format!(
+                "{}:{}",
+                region.overlay,
+                region.entry.trim_start_matches("0x")
+            ))?;
+            (region.span_bytes > 0)
+                .then_some((owner, region.span_bytes))
+                .ok_or_else(|| "overlay region has no positive span_bytes".into())
+        })
+        .collect()
+}
+
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
 #[serde(rename_all = "kebab-case")]
 pub enum AbsoluteSymbolKind {
@@ -122,7 +151,12 @@ impl TranslationUnit {
             symbols.insert(
                 self.source_owner(address)?.legacy_name(),
                 AbsoluteSymbol {
-                    address: u64::from(address),
+                    address: u64::from(address)
+                        + if self.overlay.is_some() {
+                            u64::from(crate::overlay::RUNTIME_BASE - crate::overlay::RESOURCE_BASE)
+                        } else {
+                            0
+                        },
                     kind: AbsoluteSymbolKind::Thumb,
                 },
             );
@@ -142,11 +176,7 @@ pub struct TranslationUnits {
 impl TranslationUnits {
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join("games/gs1/recon/translation-units.json");
-        let mut document: Self = serde_json::from_str(
-            &std::fs::read_to_string(&path)
-                .map_err(|error| format!("{}: {error}", path.display()))?,
-        )
-        .map_err(|error| format!("{}: {error}", path.display()))?;
+        let mut document: Self = crate::build_io::read_json(&path)?;
         if document.format != FORMAT
             || document.kind != "reconstruction-composition-contracts"
             || document.original_translation_units != "unknown"
@@ -258,7 +288,7 @@ impl TranslationUnits {
                 if !c_identifier(name)
                     || (symbol.kind != AbsoluteSymbolKind::Data && symbol.address & 1 != 0)
                     || (unit.overlay.is_some()
-                        && (symbol.kind != AbsoluteSymbolKind::Data
+                        && (symbol.kind == AbsoluteSymbolKind::Arm
                             || names.main_symbol(name)?.is_some()))
                 {
                     return Err(format!("{}: invalid absolute symbol {name:?}", unit.id));
@@ -292,13 +322,25 @@ fn validate_production_state(
     grouped: bool,
     names: &SourcePaths,
 ) -> Result<(), String> {
+    let retained_overlay_candidate = unit.overlay.is_some()
+        && !grouped
+        && unit.local_symbols.is_empty()
+        && unit
+            .owners
+            .iter()
+            .all(|owner| owner.state == OwnerState::RetainedAssembly)
+        && source.starts_with(
+            root.join("games")
+                .join(&unit.game)
+                .join("recon/en/overlays"),
+        );
     if unit.exact() && !grouped {
         return Err(format!(
             "{}: complete exact C must use its declared TU source",
             unit.id
         ));
     }
-    if unit.overlay.is_some() && !(grouped && unit.exact()) {
+    if unit.overlay.is_some() && !(grouped && unit.exact()) && !retained_overlay_candidate {
         return Err(format!(
             "{}: overlay units must be wholly exact grouped C under the source root",
             unit.id
@@ -344,18 +386,14 @@ fn validate_production_state(
                 .join(format!("{overlay}_overlay.s"));
             std::fs::read_to_string(&assembly)
                 .map_err(|error| format!("{}: {error}", assembly.display()))
-                .map(|text| {
-                    text.lines()
-                        .filter_map(|line| {
-                            line.trim()
-                                .strip_prefix("AlchemyC_")?
-                                .strip_suffix(':')
-                                .and_then(|value| u32::from_str_radix(value, 16).ok())
-                        })
-                        .collect::<BTreeSet<_>>()
-                })
+                .map(|text| crate::overlay::placeholder_addresses(&text))
         })
         .transpose()?;
+    let reviewed = if retained_overlay_candidate {
+        reviewed_overlay_spans(root)?
+    } else {
+        BTreeMap::new()
+    };
     for member in &unit.owners {
         let owner = unit.source_owner(member.address)?;
         let mapped = names.mapped_source_path(owner);
@@ -369,6 +407,16 @@ fn validate_production_state(
             },
             |set| !set.contains(&member.address),
         );
+        if retained_overlay_candidate {
+            let complete = reviewed.get(&owner) == Some(&member.extent);
+            if mapped.is_some() || !retained || !complete {
+                return Err(format!(
+                    "{}: {} is not a complete unmapped reviewed retained overlay owner",
+                    unit.id,
+                    owner.id()
+                ));
+            }
+        }
         let exact_source = if grouped && !requires_direct {
             mapped.as_ref().is_some_and(|path| path == source)
                 || (unit.overlay.is_none() && mapped.is_none())
@@ -471,6 +519,28 @@ mod tests {
         let owner = SourceOwner::Main(0x0800_40e8);
         assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
         assert!(manifest.unit_for_game_owner("gs2", owner).is_none());
+        let root = crate::routing::root();
+        let names = SourcePaths::load_for_game(root, "gs1").unwrap();
+        let candidate = manifest
+            .unit("overlay-candidate-bindings-373-020015dc")
+            .unwrap();
+        assert!(!candidate.exact());
+        let invalid_state = |unit: &TranslationUnit| {
+            validate_production_state(root, unit, &root.join(&unit.source), false, &names).is_err()
+        };
+        let mut invalid = candidate.clone();
+        invalid.owners[0].extent += 2;
+        assert!(invalid_state(&invalid));
+        let mut mixed = candidate.clone();
+        mixed.owners[0].state = OwnerState::ExactC;
+        assert!(invalid_state(&mixed));
+        let mut installed = candidate.clone();
+        installed.overlay = Some("resource_373".into());
+        installed.owners[0].address = 0x0200_0f5c;
+        installed.owners[0].extent = 0x30;
+        assert!(invalid_state(&installed));
+        invalid.source = PathBuf::from("games/gs1/src/invalid-retained-overlay.c");
+        assert!(invalid_state(&invalid));
         let i = unconditional_quoted_includes;
         assert!(i("#define X \\\n#include \"x\"").is_empty());
         assert!(i("/* */ #if 0\n#include \"x\"").is_empty());

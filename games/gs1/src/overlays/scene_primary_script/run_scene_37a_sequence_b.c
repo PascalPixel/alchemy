@@ -4,7 +4,8 @@
  * word the image holds. */
 extern u8 Data_03001ebc[];
 s32 Func_02002ac4();
-void Func_02002aec();
+void Func_02002aec_a();
+void Func_02002aec_b();
 void Func_02002afa();
 void Func_02002b00();
 void Func_02002b1c();
@@ -45,10 +46,10 @@ void FieldScene_RunScene37aSequenceB(void)
     s32 record;
 
     if (Value1(Func_02002ac4, 0x200) == 0) {
-        Func_02002aec();
+        Func_02002aec_a();
         Call2(Func_02002bde, 0x10000, 1);
         Func_02002bf4(20);
-        Call1(Func_02002aec, 0x200);
+        Call1(Func_02002aec_b, 0x200);
         Call1(Func_02002afa, 0x201);
         Call1(Func_02002b00, 0x202);
         Func_02002b1c();

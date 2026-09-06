@@ -19,6 +19,7 @@ void Func_02006024();
 void Func_02006070();
 void Func_0200607a();
 void Func_020060a2();
+void Func_020060a2_a();
 void Func_020060ae();
 void Func_020060e4();
 void Func_020060f4();
@@ -72,5 +73,5 @@ void FieldScene_RunScene371_02001c08(void)
     Call1(Func_02005f10, 0x171);
     Func_0200611c();
     Func_02005f5a(30);
-    Func_020060a2(12, 6);
+    Func_020060a2_a(12, 6);
 }

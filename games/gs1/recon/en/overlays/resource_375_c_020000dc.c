@@ -15,6 +15,7 @@ void Func_02001be8();
 void Func_02001c04();
 void Func_02001c1c();
 void Func_02001c20();
+void Func_02001c20_a();
 void Func_02001c2e();
 void Func_02001c32();
 void Func_02001c34();
@@ -174,7 +175,7 @@ void RunEventScript01(void)
         base = 3958;
         Func_02001c2e(base);
         Func_02001c20(12, 0, 10);
-        Func_02001c20(12, 2);
+        Func_02001c20_a(12, 2);
         Func_02001b96(6);
         Func_02001c56(12, 0);
         if (Func_02001bbe(0, 0) == 0) {
@@ -187,6 +188,10 @@ void RunEventScript01(void)
         Func_02001cac(12, 49152, 10);
     }
     Func_02001be8();
+}
+
+void Func_02000170(void)
+{
     if (Func_02001bda(2049) != 0) {
     } else {
         Func_02001c04();
@@ -346,4 +351,3 @@ void RunEventScript01(void)
         Func_02002276(5, 0, 10);
     }
 }
-

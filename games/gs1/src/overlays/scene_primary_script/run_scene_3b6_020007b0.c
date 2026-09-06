@@ -8,6 +8,7 @@ s32 Func_02001184();
 void Func_02001196();
 void Func_020011ba();
 s32 Func_020011c8();
+s32 Func_020011c8_a();
 void Func_020011da();
 void Func_020011f6();
 void Func_02001200();
@@ -70,7 +71,7 @@ void FieldScene_RunScene3b6_020007b0(s32 a0)
         }
         Func_02001240(a0, 0);
     } else {
-        if (Value1(Func_020011c8, 0x8be) == 0) {
+        if (Value1(Func_020011c8_a, 0x8be) == 0) {
             Call1(Func_020011da, 0x8be);
             Call1(Func_02001248, 0x239c);
             Func_02001260(a0, 0);

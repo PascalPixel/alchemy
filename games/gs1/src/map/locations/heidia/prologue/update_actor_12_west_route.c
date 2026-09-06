@@ -9,7 +9,7 @@ struct S {
 };
 
 extern struct S *Func_02005008(s32 arg0);
-extern struct S *Func_02005012(s32 arg0);
+extern struct S *Func_02005012_a(s32 arg0);
 extern struct S *Func_0200505c(s32 arg0);
 extern void Func_02003714(s32 arg0, s32 arg1, s32 arg2);
 extern void Func_0200372a(s32 arg0, s32 arg1, s32 arg2);
@@ -20,7 +20,7 @@ extern void Func_02005022(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 void UpdateActor12WestRoute(void) {
     s32 x = Func_02005008(12)->f08 >> 20;
-    s32 y = Func_02005012(12)->f10 >> 20;
+    s32 y = Func_02005012_a(12)->f10 >> 20;
 
     if (x == 36) {
         Func_02003714(12, -96, 0);

@@ -5,7 +5,7 @@
 extern u8 Data_03001ebc[];
 void Func_02007d7e();
 void Func_02007d98();
-void Func_02007db2();
+void Func_02007db2_a(); void Func_02007db2_b();
 void Func_02007dcc();
 void Func_02007de6();
 void Func_02007e04();
@@ -40,10 +40,10 @@ void FieldScene_RunScene3bf_02002718(void)
     s32 record;
 
     Call3(Func_02007d7e, 2, 0x10000, 0x8000);
-    Call3(Func_02007db2, 2, 0x1f8, 216);
+    Call3(Func_02007db2_a, 2, 0x1f8, 216);
     Call3(Func_02007d98, 3, 0x10000, 0x8000);
     Call3(Func_02007dcc, 3, 0x1b8, 232);
-    Call3(Func_02007db2, 1, 0x10000, 0x8000);
+    Call3(Func_02007db2_b, 1, 0x10000, 0x8000);
     Call3(Func_02007de6, 1, 0x1e0, 224);
     Func_02007e04(1);
     Call3(Func_02007e80, 1, 0xc000, 0);

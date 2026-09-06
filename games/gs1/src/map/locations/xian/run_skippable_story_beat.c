@@ -2,6 +2,7 @@
 
 extern void Func_02006130(void);
 extern void Func_02006148();
+extern void Func_02006148_a();
 extern s32 Func_0200615e(s32 arg0, s32 arg1);
 extern void Func_0200616c(void);
 extern void Func_0200618c(void);
@@ -24,7 +25,7 @@ void FieldScene_RunSkippableStoryBeat(void)
     if (Func_0200615e(0, 0) == 0) {
         Func_02006148(20);
         Func_02006232(18, 0, 20);
-        Func_02006148(0x898);
+        Func_02006148_a(0x898);
         Func_0200616c();
     } else {
         workspace = Data_03001ebc;

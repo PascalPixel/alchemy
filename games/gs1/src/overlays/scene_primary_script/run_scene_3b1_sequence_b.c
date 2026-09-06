@@ -16,10 +16,14 @@ s32 Func_02007228();
 s32 Func_02007230();
 void Func_02007232();
 s32 Func_02007242();
+s32 Func_02007242_a();
 void Func_02007246();
 s32 Func_02007248();
 s32 Func_02007254();
+s32 Func_02007254_a();
+s32 Func_02007254_b();
 void Func_02007266();
+void Func_02007266_a();
 void Func_0200726e();
 void Func_0200728a();
 void Func_02007290();
@@ -29,6 +33,7 @@ void Func_020072b8();
 void Func_020072ca();
 void Func_020072ce();
 s32 Func_020072f0();
+s32 Func_020072f0_a();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -86,7 +91,7 @@ void FieldScene_RunScene3b1SequenceB(void)
         Call1(Func_020072ce, 0x1e84);
         ((void (*)())Func_020072f0)(9, 0, 60);
         Func_020072b8(9, 1);
-        Value2(Func_020072f0, 9, 0);
+        Value2(Func_020072f0_a, 9, 0);
         if (Value2(Func_02007228, 0, 0) == 0) {
             Func_020055be(9);
             Func_020072aa(9, 2);
@@ -94,19 +99,19 @@ void FieldScene_RunScene3b1SequenceB(void)
             if (record != 0) {
                 Func_0200728a(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
-            Func_020072b8(9);
+            Func_020072b8_a(9);
             Func_020072ca(9, 0, 0);
             Call1(Func_02007232, 0x300);
             if (Value1(Func_02007230, 0x92b) != 0) {
                 Call1(Func_02007242, 0x991);
                 goto L_02000de0;
             }
-            if (Value1(Func_02007242, 0x92a) != 0) {
-                Call1(Func_02007254, 0x918);
+            if (Value1(Func_02007242_a, 0x92a) != 0) {
+                Call1(Func_02007254_a, 0x918);
                 goto L_02000de0;
             }
-            if (Value1(Func_02007254, 0x929) != 0) {
-                Call1(Func_02007266, 0x936);
+            if (Value1(Func_02007254_b, 0x929) != 0) {
+                Call1(Func_02007266_a, 0x936);
                 goto L_02000de0;
             }
             Call1(Func_0200726e, 0x92d);

@@ -26,7 +26,7 @@ void FieldScene_RunSlotZeroFacingSequence(void) {
     u16 *q;
 
     o = Func_02003f0a(0);
-    v = (o->f06 + 0xf9b4f001) << 16;
+    v = (o->f06 + 0xfffff000) << 16;
     if (v > 0x60000000) {
         Func_02003ef6();
         Func_02003fb0(0, 8, 0);

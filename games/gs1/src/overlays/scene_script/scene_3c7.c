@@ -48,6 +48,7 @@ void Func_020017ac();
 void Func_020017ae();
 void Func_020017b2();
 void Func_020017c0();
+void Func_020017c0_a();
 void Func_020017c4();
 void Func_020017ca();
 void Func_020017ce();
@@ -67,9 +68,12 @@ void Func_02001856();
 void Func_02001860();
 void Func_02001864();
 void Func_0200186c();
+void Func_0200186c_a();
 void Func_02001872();
 s32 Func_02001878(s32);
+s32 Func_02001878_a(s32);
 s32 Func_0200187a();
+s32 Func_0200187a_a();
 void Func_02001886();
 void Func_02001888();
 void Func_02001896();
@@ -83,9 +87,11 @@ void Func_020018be();
 void Func_020018ce();
 void Func_020018d6();
 void Func_020018e8();
+void Func_020018e8_a();
 void Func_020018f0();
 void Func_020018f6();
 void Func_02001904();
+void Func_02001904_a();
 void Func_02001912();
 void Func_02001918();
 void Func_02001920();
@@ -94,11 +100,13 @@ void Func_0200192a();
 void Func_0200192e();
 void Func_0200193e();
 void Func_0200194e();
+void Func_0200194e_a();
 void Func_0200195c();
 void Func_0200195e();
 void Func_02001960();
 void Func_0200196a();
 void Func_02001978();
+void Func_02001978_a();
 void Func_0200197e();
 void Func_02001982();
 void Func_02001988();
@@ -113,6 +121,7 @@ void Func_020019c4();
 void Func_020019c6();
 void Func_020019d0();
 void Func_020019d2();
+void Func_020019d2_a();
 void Func_020019e0();
 void Func_020019f0();
 void Func_020019f6();
@@ -124,6 +133,7 @@ s32 Func_02001a26(s32, s32);
 void Func_02001a2c();
 void Func_02001a42();
 void Func_02001a48();
+void Func_02001a48_a();
 void Func_02001a54();
 void Func_02001a56();
 void Func_02001a64();
@@ -135,6 +145,7 @@ void Func_02001a9c();
 void Func_02001ab0();
 void Func_02001abe();
 void Func_02001ac4();
+void Func_02001ac4_a();
 void Func_02001ad0();
 void Func_02001ad2();
 void Func_02001adc();
@@ -144,6 +155,7 @@ void Func_02001afe();
 void Func_02001b0c();
 void Func_02001b26();
 void Func_02001b2c();
+void Func_02001b2c_a();
 void Func_02001b40();
 void Func_02001b46();
 void Func_02001b4c();
@@ -151,9 +163,11 @@ void Func_02001b58();
 void Func_02001b68();
 void Func_02001b7c();
 void Func_02001b82();
+void Func_02001b82_a();
 void Func_02001b90();
 void Func_02001b96();
 void Func_02001b9e();
+void Func_02001b9e_a();
 void Func_02001ba0();
 void Func_02001bac();
 void Func_02001bba();
@@ -163,11 +177,13 @@ void Func_02001be0();
 void Func_02001be4();
 void Func_02001bea();
 void Func_02001bf2();
+void Func_02001bf2_a();
 void Func_02001bfe();
 void Func_02001c00();
 void Func_02001c0a();
 void Func_02001c12();
 void Func_02001c16();
+void Func_02001c16_a();
 void Func_02001c20();
 void Func_02001c2e();
 void Func_02001c30();
@@ -177,6 +193,7 @@ void Func_02001c4c();
 void Func_02001c58();
 void Func_02001c66();
 void Func_02001c6a();
+void Func_02001c6a_a();
 void Func_02001c6e();
 void Func_02001c78();
 void Func_02001c7e();
@@ -184,6 +201,7 @@ void Func_02001c84();
 void Func_02001c88();
 void Func_02001c92();
 void Func_02001cac();
+void Func_02001cac_a();
 void Func_02001cb2();
 void Func_02001cb4();
 void Func_02001cba();
@@ -210,6 +228,7 @@ void Func_02001d6e();
 void Func_02001d78();
 void Func_02001d80();
 void Func_02001d86();
+void Func_02001d86_a();
 void Func_02001d88();
 void Func_02001d94();
 void Func_02001da0();
@@ -217,6 +236,7 @@ void Func_02001da6();
 void Func_02001dac();
 void Func_02001db2();
 void Func_02001db4();
+void Func_02001db4_a();
 void Func_02001dba();
 void Func_02001dbc();
 void Func_02001dc4();
@@ -246,9 +266,11 @@ void Func_02001e94();
 void Func_02001e9e();
 void Func_02001ea0();
 void Func_02001eae();
+void Func_02001eae_a();
 void Func_02001eb6();
 void Func_02001ebc();
 void Func_02001eca();
+void Func_02001eca_a();
 void Func_02001ee4();
 void Func_02001ef6();
 void Func_02001efa();
@@ -270,6 +292,7 @@ void Func_02001f5c();
 void Func_02001f5e();
 void Func_02001f60();
 void Func_02001f6e();
+void Func_02001f6e_a();
 void Func_02001f72();
 void Func_02001f7c();
 void Func_02001f86();
@@ -278,6 +301,7 @@ void Func_02001f8e();
 void Func_02001f96();
 void Func_02001f98();
 void Func_02001fa6();
+void Func_02001fa6_a();
 void Func_02001fb4();
 void Func_02001fb8();
 void Func_02001fc2();
@@ -293,6 +317,8 @@ void Func_0200201c();
 void Func_02002038();
 void Func_0200204a();
 void Func_02002054();
+void Func_02002054_a();
+void Func_02002054_b();
 void Func_0200205a();
 void Func_0200205e();
 void Func_02002062();
@@ -620,10 +646,10 @@ void SceneState_ForwardWord16cAndApply7b(void)
 
 u8 *SceneData_SelectScriptBySceneIdAndFlag9a7(void)
 {
-    s32 Func_020016a4();
+    s32 Func_020016a4_a();
 
     if (Data_02000240[224] == (s32)&Value_000000b4) {
-        if (Func_020016a4(0x9a7) != 0) {
+        if (Func_020016a4_a(0x9a7) != 0) {
             return Data_0200a010;
         }
         return Data_02009eb4;
@@ -636,9 +662,9 @@ u8 *SceneData_SelectScriptBySceneIdAndFlag9a7(void)
 
 void FieldScene_RunPrimaryScript(void)
 {
-    void Func_02001708();
+    void Func_02001708_a();
 
-    Value0(Func_02001708);
+    Value0(Func_02001708_a);
     Value1(Func_020016fe, 1);
     Call3(Func_02001764, 0, 6291456, 12058624);
     Call3(Func_020017c0, 0, 49152, 0);
@@ -659,16 +685,16 @@ void FieldScene_RunPrimaryScript(void)
     Value1(Func_020017ac, 20);
     Value1(Func_020017b2, 10);
     Value2(Func_0200182a, 2, 2);
-    Value1(Func_020017c0, 20);
+    Value1(Func_020017c0_a, 20);
     Value2(Func_02001860, 2, 0);
     Value1(Func_020017ce, 10);
-    Call3(Func_0200187a, 11, 16384, 0);
+    Call3(Func_0200187a_a, 11, 16384, 0);
     Value3(Func_02001886, 12, 16384, 0);
     Value1(Func_020017ec, 30);
     Call3(Func_0200189e, 11, 261, 70);
     Value2(Func_02001896, 11, 0);
     Value1(Func_02001804, 10);
-    Value2(Func_0200186c, 11, 4);
+    Value2(Func_0200186c_a, 11, 4);
     Value1(Func_02001812, 20);
     Value2(Func_020018b2, 11, 0);
     Value1(Func_02001820, 20);
@@ -686,7 +712,7 @@ void FieldScene_RunPrimaryScript(void)
     Call1(Func_02001878, 10);
     Call3(Func_0200192a, 11, 261, 50);
     Value2(Func_02001922, 11, 0);
-    if (Value1(Func_02001878, 2495) == 0) {
+    if (Value1(Func_02001878_a, 2495) == 0) {
         Value0(Func_02001590);
     } else {
     Call1(Func_020018a0, 20);
@@ -698,11 +724,11 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_02001978, 0, 261, 60);
     Value1(Func_020018d6, 10);
     Value3(Func_02001982, 1, 49152, 0);
-    Value1(Func_020018e8, 20);
+    Value1(Func_020018e8_a, 20);
     Value2(Func_02001988, 1, 0);
     Value1(Func_020018f6, 10);
     Value2(Func_0200195e, 3, 4);
-    Value1(Func_02001904, 20);
+    Value1(Func_02001904_a, 20);
     Value2(Func_020019a4, 3, 0);
     Value1(Func_02001912, 10);
     Value2(Func_0200198a, 2, 2);
@@ -712,13 +738,13 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_020019e0, 12, 257, 40);
     Value2(Func_020019d0, 12, 0);
     Value2(Func_02001960, 0, 0);
-    Value1(Func_0200194e, 20);
+    Value1(Func_0200194e_a, 20);
     Value2(Func_020019c6, 12, 2);
     Value1(Func_0200195c, 20);
     Value2(Func_020019fc, 12, 0);
     Value1(Func_0200196a, 20);
     Value2(Func_020019d2, 0, 3);
-    Value1(Func_02001978, 30);
+    Value1(Func_02001978_a, 30);
     Value1(Func_0200197e, 10);
     Value2(Func_020019f6, 1, 2);
     Value1(Func_0200198c, 20);
@@ -731,7 +757,7 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Func_02001a1e, 2, 3);
     Value1(Func_020019c4, 30);
     Value2(Func_02001a64, 2, 0);
-    Value1(Func_020019d2, 10);
+    Value1(Func_020019d2_a, 10);
     Call3(Func_02001a54, 2, 0, 30);
     Call2(Func_02001a74, 8194, 0);
     }
@@ -745,7 +771,7 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_02001ad0, 1, 49152, 0);
     Value3(Func_02001adc, 2, 49152, 0);
     Value1(Func_02001a42, 30);
-    Value1(Func_02001a48, 10);
+    Value1(Func_02001a48_a, 10);
     Value2(Func_02001ab0, 11, 3);
     Value1(Func_02001a56, 30);
     Value2(Func_02001af6, 11, 0);
@@ -756,7 +782,7 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_02001b4c, 1, 49152, 0);
     Value3(Func_02001b58, 2, 49152, 0);
     Value1(Func_02001abe, 30);
-    Value1(Func_02001ac4, 10);
+    Value1(Func_02001ac4_a, 10);
     Value2(Func_02001b2c, 11, 4);
     Value1(Func_02001ad2, 20);
     (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
@@ -770,7 +796,7 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_02001b96, 1, 0, 0);
     Value3(Func_02001ba0, 3, 2, 0);
     Value1(Func_02001b26, 40);
-    Value1(Func_02001b2c, 10);
+    Value1(Func_02001b2c_a, 10);
     Call3(Func_02001be0, 11, 258, 40);
     Value2(Func_02001bd8, 11, 0);
     Value1(Func_02001b46, 10);
@@ -779,12 +805,12 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_02001c0a, 2, 49152, 0);
     Value3(Func_02001c16, 3, 49152, 0);
     Value1(Func_02001b7c, 50);
-    Value1(Func_02001b82, 10);
+    Value1(Func_02001b82_a, 10);
     Value2(Func_02001bea, 11, 3);
     Value1(Func_02001b90, 30);
     Value2(Func_02001c30, 11, 0);
-    Value1(Func_02001b9e, 10);
-    Value2(Func_02001c16, 11, 2);
+    Value1(Func_02001b9e_a, 10);
+    Value2(Func_02001c16_a, 11, 2);
     Value1(Func_02001bac, 20);
     Value2(Func_02001c4c, 11, 0);
     Value1(Func_02001bba, 10);
@@ -794,7 +820,7 @@ void FieldScene_RunPrimaryScript(void)
     Value3(Func_02001c7e, 11, 0, 0);
     Value1(Func_02001be4, 20);
     Value2(Func_02001c84, 11, 0);
-    Value1(Func_02001bf2, 10);
+    Value1(Func_02001bf2_a, 10);
     Value2(Func_02001c6a, 12, 2);
     Value1(Func_02001c00, 20);
     Value3(Func_02001cac, 12, 32768, 0);
@@ -810,7 +836,7 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Func_02001cea, 2, 0);
     Value1(Func_02001c58, 10);
     Value3(Func_02001d04, 11, 16384, 0);
-    Value1(Func_02001c6a, 30);
+    Value1(Func_02001c6a_a, 30);
     Value2(Func_02001d0a, 11, 0);
     Value1(Func_02001c78, 10);
     Call3(Func_02001d2c, 12, 258, 50);
@@ -818,7 +844,7 @@ void FieldScene_RunPrimaryScript(void)
     Value1(Func_02001c92, 20);
     Call3(Func_02001d44, 11, 257, 65);
     Value3(Func_02001d46, 11, 0, 0);
-    Value1(Func_02001cac, 20);
+    Value1(Func_02001cac_a, 20);
     Value2(Func_02001d4c, 11, 0);
     Value1(Func_02001cba, 20);
     Call3(Func_02001d6e, 12, 256, 40);
@@ -846,13 +872,13 @@ void FieldScene_RunPrimaryScript(void)
     Value3(Func_02001e12, 11, 0, 0);
     Value1(Func_02001d78, 20);
     Value2(Func_02001e18, 11, 0);
-    Value1(Func_02001d86, 10);
+    Value1(Func_02001d86_a, 10);
     Value2(Func_02001dfe, 12, 2);
     Value1(Func_02001d94, 30);
     Value3(Func_02001e40, 12, 32768, 0);
     Value1(Func_02001da6, 20);
     Value2(Func_02001e46, 12, 0);
-    Value1(Func_02001db4, 10);
+    Value1(Func_02001db4_a, 10);
     Call3(Func_02001e66, 11, 257, 0);
     Value1(Func_02001dc4, 10);
     Value3(Func_02001e70, 1, 57344, 0);
@@ -883,11 +909,11 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Func_02001efa, 2, 4);
     Value1(Func_02001ea0, 20);
     Value2(Func_02001f40, 2, 0);
-    Value1(Func_02001eae, 10);
+    Value1(Func_02001eae_a, 10);
     Value2(Func_02001f16, 11, 4);
     Value1(Func_02001ebc, 20);
     Value2(Func_02001f5c, 11, 0);
-    Value1(Func_02001eca, 10);
+    Value1(Func_02001eca_a, 10);
     Call2(Func_02001f4e, 0, 2);
     Call2(Func_02001f56, 1, 2);
     Call2(Func_02001f5e, 3, 2);
@@ -907,7 +933,7 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Func_02001fca, 11, 2);
     Value1(Func_02001f60, 20);
     Value2(Func_02002000, 11, 0);
-    Value1(Func_02001f6e, 10);
+    Value1(Func_02001f6e_a, 10);
     Value2(Func_02001fe6, 1, 2);
     Value1(Func_02001f7c, 20);
     Value2(Func_0200201c, 1, 0);
@@ -915,7 +941,7 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Func_02001ff2, 11, 3);
     Value1(Func_02001f98, 30);
     Value2(Func_02002038, 11, 0);
-    Value1(Func_02001fa6, 20);
+    Value1(Func_02001fa6_a, 20);
     Value2(Func_0200200e, 3, 3);
     Value1(Func_02001fb4, 30);
     Value2(Func_02002054, 3, 0);
@@ -924,14 +950,14 @@ void FieldScene_RunPrimaryScript(void)
     Call3(Func_0200207a, 1, 57344, 0);
     Value3(Func_02002086, 2, 40960, 0);
     Value1(Func_02001fec, 30);
-    Value2(Func_02002054, 0, 3);
+    Value2(Func_02002054_a, 0, 3);
     Value1(Func_02001ffa, 10);
     Call2(Func_0200205a, 1, 3);
     Call2(Func_02002062, 2, 3);
     Value2(Func_02002072, 3, 3);
     Value1(Func_02002018, 30);
     Call3(Func_0200204a, 1, 78643, 39321);
-    Call3(Func_02002054, 3, 78643, 39321);
+    Call3(Func_02002054_b, 3, 78643, 39321);
     Call3(Func_0200205e, 2, 78643, 39321);
     Value2(Func_02002096, 1, 2);
     {
@@ -972,6 +998,11 @@ void FieldScene_RunPrimaryScript(void)
 
 void FieldScene_RunSecondaryScript(void)
 {
+    void Func_020021aa_a(s32);
+    void Func_020021d4_a(s32);
+    void Func_020021f0_a(s32);
+    void Func_0200220c_a(s32);
+
     Func_0200216e(((s32) &Value_00002880));
     Func_020020ec(20);
 
@@ -1005,7 +1036,7 @@ void FieldScene_RunSecondaryScript(void)
 
     Func_0200220e(0, 2);
     Func_020021a4(20);
-    Func_020021aa(25);
+    Func_020021aa_a(25);
 
     Func_02002222(1, 2);
     Func_020021b8(30);
@@ -1013,17 +1044,17 @@ void FieldScene_RunSecondaryScript(void)
     Func_020021c6(30);
 
     Func_0200222e(1, 4);
-    Func_020021d4(20);
+    Func_020021d4_a(20);
     Func_02002274(1, 0);
     Func_020021e2(10);
 
     Func_0200224a(3, 4);
-    Func_020021f0(20);
+    Func_020021f0_a(20);
     Func_02002290(3, 0);
     Func_020021fe(10);
 
     Func_02002266(2, 3);
-    Func_0200220c(30);
+    Func_0200220c_a(30);
     Func_020022ac(2, 0);
     Func_0200221a(10);
 

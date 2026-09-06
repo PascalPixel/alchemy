@@ -9,6 +9,7 @@ void Func_02006b68();
 void Func_02006c0e();
 void Func_02006c46();
 void Func_02006c4a();
+void Func_02006c4a_a();
 void Func_02006c7c();
 void Func_02006c7e();
 void Func_02006c90();
@@ -62,7 +63,7 @@ void FieldScene_RunFlag807BranchSequence(void)
         Func_02006c4a(0, 18, 20);
         Func_02006c7c(18, 0, 6);
         Call3(Func_02006c98, 18, 0x8000, 30);
-        Func_02006c4a(18, 2, 20);
+        Func_02006c4a_a(18, 2, 20);
         Func_02006c9c(18, 0, 6);
         Func_02006c7e(18, 0, 10);
         Call3(Func_02006cd8, 18, 0x103, 0);

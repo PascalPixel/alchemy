@@ -9,6 +9,7 @@ void Func_02003e54();
 s32 Func_02003e58();
 void Func_02003e78();
 void Func_02003e7a();
+void Func_02003e7a_a();
 void Func_02003e88();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -43,7 +44,7 @@ void FieldScene_RunScene39a_02001ad0(s32 a0, s32 a1)
     Call3(Func_02003e3e, 0, 0x28000, 0x14000);
     Value3(Func_02003e58, 0, a0, a1);
     Func_02003e7a(0, 4, 0);
-    Func_02003e7a(0, 7);
+    Func_02003e7a_a(0, 7);
     Func_02003e78(0);
     Func_02003e88(0, 6);
     Func_02003e54();

@@ -14,6 +14,7 @@ void Func_020014b4();
 void Func_020014b8();
 void Func_020014ba();
 s32 Func_020014da();
+void Func_020014da_a();
 s32 Func_020014e2();
 void Func_020014e8();
 void Func_0200151a();
@@ -100,7 +101,7 @@ void FieldScene_RunScene38bSequenceC(void)
     rec7 = Value1(Func_020014e2, 11);
     if ((*(volatile s32 *)((s32)rec7 + 8) >> 20) != 6) {
     } else {
-        ((void (*)())Func_020014da)();
+        Func_020014da_a();
         Func_02001582(11, 1);
         Func_02001552(0, 2);
         Func_020014e8(20);

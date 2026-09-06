@@ -16,7 +16,8 @@ s32 Func_02004d36();
 s32 Func_02004d54();
 void Func_02004d70();
 s32 Func_02004d78();
-void Func_02004d96();
+void Func_02004d96_a();
+void Func_02004d96_b();
 s32 Func_02004d98();
 void Func_02004e0c();
 
@@ -71,7 +72,7 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         if ((s32)record != 0) {
             Func_02004d70((s32)p6, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
-        Func_02004d96((s32)p6);
+        Func_02004d96_a((s32)p6);
         record = Value1(Func_02004d54, 11);
         record[85] = rec;
         *(s32 *)((s32)record + 52) = 0x6666;
@@ -95,6 +96,6 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         Func_02004d26(rec7, 1);
         *p9 = 3;
         *(s32 *)(rec7 + 20) = *(s32 *)(rec7 + 12);
-        Call1(Func_02004d96, 0x367);
+        Call1(Func_02004d96_b, 0x367);
     }
 }

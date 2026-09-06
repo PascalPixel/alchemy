@@ -5,7 +5,7 @@ use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::symbol_is_thumb;
 use compiler_core::translation_units::{TranslationUnit, TranslationUnits};
-use disassemble::compile_declared_overlay_unit;
+use disassemble::{compile_declared_overlay_unit, OverlayEditionPlacement};
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -1792,13 +1792,36 @@ fn write_overlay_edition_build(
     }
     let mut reports = Vec::new();
     for unit in units {
-        for edition in EDITIONS {
-            let compiled = compile_declared_overlay_unit(unit, edition)?;
-            for owner in &unit.owners {
+        let found = unit
+            .owners
+            .iter()
+            .map(|owner| {
                 let source_owner = unit.source_owner(owner.address)?;
-                let found = matches.get(&source_owner.id()).ok_or_else(|| {
+                matches.get(&source_owner.id()).ok_or_else(|| {
                     format!("{}: owner lacks overlay correspondence", source_owner.id())
-                })?;
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        for edition in EDITIONS {
+            let mut addresses = BTreeMap::new();
+            let mut resource = None;
+            for (owner, counterpart) in unit.owners.iter().zip(&found) {
+                resource.get_or_insert(counterpart.owner.resource);
+                if resource != Some(counterpart.owner.resource) {
+                    return Err(format!("{}: unit crosses overlay resources", unit.id));
+                }
+                let address = u32::try_from(OVERLAY_BASE + counterpart.starts[edition] as u64)
+                    .map_err(|_| "edition overlay address overflow")?;
+                addresses.insert(owner.address, address);
+            }
+            let resource = resource.ok_or_else(|| format!("{}: unit has no owners", unit.id))?;
+            let placement = OverlayEditionPlacement {
+                reference: &decoded[edition][&resource],
+                addresses,
+            };
+            let compiled = compile_declared_overlay_unit(unit, edition, Some(&placement))?;
+            for (owner, found) in unit.owners.iter().zip(&found) {
+                let source_owner = unit.source_owner(owner.address)?;
                 if found.owner.size != owner.extent {
                     return Err(format!(
                         "{}: owner extent differs from placeholder",
@@ -1812,8 +1835,9 @@ fn write_overlay_edition_build(
                     found.starts[edition],
                     owner.extent,
                 )?;
-                let offset =
-                    usize::try_from(i64::from(owner.address) - compiled.address).map_err(|_| {
+                let actual_address = placement.addresses[&owner.address];
+                let offset = usize::try_from(i64::from(actual_address) - compiled.address)
+                    .map_err(|_| {
                         format!("{}: owner precedes compiled overlay", source_owner.id())
                     })?;
                 let actual = offset
@@ -1823,9 +1847,14 @@ fn write_overlay_edition_build(
                         format!("{}: compiled owner extent is absent", source_owner.id())
                     })?;
                 if actual != expected {
+                    let difference = actual
+                        .iter()
+                        .zip(expected)
+                        .position(|(actual, expected)| actual != expected)
+                        .unwrap();
                     return Err(format!(
-                        "{}: {edition} overlay owner differs",
-                        source_owner.id()
+                        "{}: {edition} overlay owner differs at +0x{difference:x} ({:02x} != {:02x})",
+                        source_owner.id(), actual[difference], expected[difference]
                     ));
                 }
             }

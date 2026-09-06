@@ -1,10 +1,29 @@
 #include "types.h"
 
+/* The step value differs in the localized scene data. */
+#if defined(GS1_EDITION_JA)
+#define SCENE_STEP_VALUE 0x20ac
+#elif defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define SCENE_STEP_VALUE 0x1f05
+#else
+#define SCENE_STEP_VALUE 0x1f23
+#endif
+
+#if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define Data_0200db50 Data_0200db90
+#define Data_0200db60 Data_0200dba0
+#define Data_0200d160 Data_0200d1a4
+#endif
+#if defined(GS1_EDITION_DE)
+#define Data_03001ebc Data_03001ecc
+#endif
+
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_00006014[];
 extern u8 Data_0200db50[];
 extern u8 Data_0200db60[];
+extern u8 Data_0200d160[];
 extern u8 Data_03001ebc[];
 void Func_020074c2();
 void Func_020074da();
@@ -29,9 +48,9 @@ void Func_02007dd0();
 void Func_02007dd4();
 void Func_02007de6();
 void Func_02007e1c();
-void Func_02007e26();
+void Func_02007e26_a(); void Func_02007e26_b();
 void Func_02007e5c();
-void Func_02007e74();
+void Func_02007e74_a(); void Func_02007e74_b();
 void Func_02007e7c();
 void Func_02007e94();
 void Func_02007e96();
@@ -80,7 +99,7 @@ void Func_02008082();
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_02007dd4, a0, a1, a2)
 #define Scene_GetRecord_3(args...) Func_02007d7a(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_02007de6(args)
-#define ObjectGroup_ConfigureChildValue_1(args...) Func_02007e26(args)
+#define ObjectGroup_ConfigureChildValue_1(args...) Func_02007e26_a(args)
 #define Scene_GetRecord_4(args...) Func_02007d94(args)
 #define BattleRuntime_WaitIfModeZero_1(args...) Func_02007ee2(args)
 #define ObjectMotion_SetSpeedParameters_1(args...) Func_02007ef6(args)
@@ -88,7 +107,7 @@ void Func_02008082();
 #define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_02007e1c, a0, a1, a2)
 #define ObjectMotion_ArmCallback_1(args...) Func_02007e9e(args)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_02007e7c, a0)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02007e74(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02007e74_a(args)
 #define Object_SetModeById_1(args...) Func_02007e5c(args)
 #define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02007ece, a0, a1, a2)
 #define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02007eda, a0, a1, a2)
@@ -97,9 +116,9 @@ void Func_02008082();
 #define Object_SetModeById_2(args...) Func_02007e96(args)
 #define BattleRuntime_WaitIfModeZero_2(a0, a1) Call2(Func_02007f26, a0, a1)
 #define BattleRuntime_WaitIfModeZero_3(a0, a1) Call2(Func_02007f30, a0, a1)
-#define BattleRuntime_WaitIfModeZero_4(args...) Func_02007e26(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_02007e26_b(args)
 #define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_02007f3a, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02007e74, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02007e74_b, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02007ec0, a0, a1, a2)
 #define ObjectMotion_ArmCallback_4(args...) Func_02007f42(args)
 #define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_02007e94, a0, a1, a2)
@@ -161,7 +180,7 @@ void FieldScene_ConfigureFourActorPresentation(void)
     BattleRuntime_Reset_1();
     *(volatile s32 *)Data_0200db50 = 0x40000;
     *(volatile s32 *)Data_0200db60 = -0x8000;
-    Object_NotifyLastActiveOfEvent_1(0x200d160);
+    Object_NotifyLastActiveOfEvent_1((s32)Data_0200d160);
     Func_02007c86(1);
     ObjectMotion_SetHorizontalPositionWithTerrain_1(21, 0xb60000, 0x26a0000);
     record = Scene_GetRecord_1(21);
@@ -195,7 +214,7 @@ void FieldScene_ConfigureFourActorPresentation(void)
     ObjectMotion_SetSpeedParameters_2(21, 0xcccc, 0x6666);
     ObjectMotion_SetPositionAndReset_1(21, 182, 0x214);
     ObjectMotion_ArmCallback_1(21, 0xb000, 40);
-    SceneWork_SetStepValue_1(0x1f23);
+    SceneWork_SetStepValue_1(SCENE_STEP_VALUE);
     Func_020074c2(21);
     base6_6014 = (s32)Data_00006014;
     ObjectMotion_SetVariantCallbackAndInvokeObject_1(20, 2);

@@ -10,6 +10,7 @@ void Func_0200539c();
 s32 Func_020053be();
 void Func_020053d0();
 void Func_020053d8();
+void Func_020053d8_a();
 void Func_020053dc();
 void Func_020053e0();
 void Func_02005402();
@@ -67,7 +68,7 @@ void FieldScene_RunScene3c5_02002548(void)
         if (Value1(Func_020053be, 0x301) != 0) {
             Call1(Func_020053d8, 0x301);
         } else {
-            Call1(Func_020053d8, 0x301);
+            Call1(Func_020053d8_a, 0x301);
         }
     }
 }

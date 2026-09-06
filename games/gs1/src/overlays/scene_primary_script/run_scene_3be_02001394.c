@@ -8,6 +8,7 @@ extern u8 Data_02000240[];
 extern u8 Data_03001ebc[];
 extern s16 Data_02000240_t[][1];
 s32 Func_020028b4();
+s32 Func_020028b4_a();
 void Func_020028c4();
 void Func_020028f8();
 s32 Func_020028fa();
@@ -61,7 +62,7 @@ s32 FieldScene_RunScene3be_02001394(void)
 
     if (Data_02000240_t[224][0] == (s32)Data_00000098) {
         Call1(Func_020028b4, 0x144);
-        if (Value1(Func_020028b4, 0x9a0) != 0) {
+        if (Value1(Func_020028b4_a, 0x9a0) != 0) {
             Func_0200292a(11, 0, 0);
         }
     }

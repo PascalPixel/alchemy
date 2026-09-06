@@ -1,5 +1,16 @@
 #include "types.h"
 
+#if defined(GS1_EDITION_JA)
+#define SCENE_STEP_VALUE 0x1725
+#elif defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define SCENE_STEP_VALUE 0x157e
+#else
+#define SCENE_STEP_VALUE 0x159c
+#endif
+#if defined(GS1_EDITION_DE)
+#define Data_03001ebc Data_03001ecc
+#endif
+
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
 extern u8 *Data_03001ebc;
 extern u8 Data_02000240[];
@@ -115,6 +126,7 @@ void Func_02004490();
 void Func_020044c0();
 void Func_020044cc();
 void Func_020044d0();
+void Func_020044d0_a();
 void Func_020044d4();
 s32 Func_020044d6();
 void Func_020044e6();
@@ -343,7 +355,8 @@ s32 Func_02004dd0();
 void Func_02004ddc();
 s32 Func_02004de0();
 void Func_02004dec();
-s32 Func_02004dec_a();
+void Func_02004dec_a();
+s32 Func_02004dec_b();
 void Func_02004df8();
 s32 Func_02004e02();
 s32 Func_02004e0e();
@@ -417,6 +430,34 @@ void Func_02005120();
 void Func_0200512c();
 void Func_02005140();
 s32 Func_02005140_a();
+
+void Func_020045a8_a();
+void Func_02004628_a();
+void Func_020046a0_a();
+void Func_02004712_a();
+void Func_020047ca_a();
+void Func_0200480a_a();
+void Func_02004900_a();
+void Func_0200499a_a();
+void Func_020049f2_a();
+void Func_02004a64_a();
+void Func_02004a98_a();
+void Func_02004aa2_a();
+void Func_02004ae6_a();
+void Func_02004b16_a();
+void Func_02004b22_a();
+void Func_02004c62_a();
+void Func_02004c82_a();
+void Func_02004ce4_a();
+void Func_02004ddc_a();
+void Func_02004f0c_a();
+void Func_02004f20_a();
+void Func_02004f48_a();
+void Func_02004fde_a();
+void Func_0200502a_a();
+s32 Func_02005066_a();
+s32 Func_02005066_b();
+void Func_02005098_a();
 void Func_0200515c();
 void Func_02005164();
 void Func_0200516e();
@@ -549,7 +590,7 @@ void RunScene58Sequence(void) {
     Call3(Func_0200442a, 1, 0x2000, 0x14);
     Call0(Func_0200445e);
     Call2(Func_020043e6, 1, 4);
-    Call1(Func_0200441c, 0x0000159c);
+    Call1(Func_0200441c, SCENE_STEP_VALUE);
     Call3(Func_0200443e, 1, 0, 0x14);
     Call2(Func_02004468, 3, 0x102);
     Call1(Func_0200439e, 0x3C);
@@ -584,7 +625,7 @@ void RunScene58Sequence(void) {
     } else {
         temp_r2_2 = Data_03001ebc;
         FIELD(temp_r2_2, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_2, u16 *, 0x1D8) + 2);
-        Call1(Func_020044d0, 0x14);
+        Call1(Func_020044d0_a, 0x14);
         Call3(Func_020045a2, 3, 0x00000101, 0x3C);
         Call3(Func_0200459e, 1, 0x4000, 0xA);
         Call2(Func_02004556, 1, 4);
@@ -609,11 +650,11 @@ void RunScene58Sequence(void) {
     Call2(Func_020045f2, 0, 3);
     Call2(Func_020045fa, 1, 3);
     Call2(Func_0200460a, 2, 3);
-    Call1(Func_020045a8, 0x14);
+    Call1(Func_020045a8_a, 0x14);
     Call2(Func_02004618, 3, 4);
     Call1(Func_020045b6, 0xA);
     Call3(Func_02004678, 3, 0, 0xA);
-    Call2(Func_02004628, 3, 0x10);
+    Call2(Func_02004628_a, 3, 0x10);
     Call3(Func_02004682, 3, 0, 0x3C);
     Call1(Func_02004748, 0x11);
     Call3(Func_0200463e, 5, 0xD80000, 0xC80000);
@@ -633,8 +674,8 @@ void RunScene58Sequence(void) {
     Call3(Func_02004736, 0, 0x8000, 5);
     Call2(Func_020046f6, 0, 2);
     Call3(Func_0200474a, 1, 0x8000, 0xA);
-    Call2(Func_02004712, 1, 2);
-    Call1(Func_020046a0, 0x14);
+    Call2(Func_02004712_a, 1, 2);
+    Call1(Func_020046a0_a, 0x14);
     Call2(Func_02004784, 0x30000, 0x6000);
     Call4(Func_0200479c, 0x780000, 0xffe80000, 0xA80000, 1);
     Call0(Func_020047a8);
@@ -655,12 +696,12 @@ void RunScene58Sequence(void) {
     Call2(Func_020047b2, 0x17, 4);
     Call1(Func_02004750, 0x14);
     Call3(Func_0200480a, 0x17, 0, 0x14);
-    Call2(Func_020047ca, 0x17, 3);
+    Call2(Func_020047ca_a, 0x17, 3);
     Call1(Func_02004768, 0x14);
     Call3(Func_02004822, 0x17, 0, 0x14);
     Call3(Func_02004836, 0x17, 0xA000, 0xA);
     Call3(Func_02004842, 0x15, 0x2000, 0xA);
-    Call2(Func_0200480a, 0x15, 1);
+    Call2(Func_0200480a_a, 0x15, 1);
     Call1(Func_02004798, 0x14);
     Call3(Func_0200485c, 5, 0x8000, 0);
     Call3(Func_02004868, 0x14, 0x8000, 0x1E);
@@ -680,7 +721,7 @@ void RunScene58Sequence(void) {
     Call3(Func_020048f4, 5, 0x102, 0);
     Call3(Func_02004900, 0x14, 0x102, 0x46);
     Call3(Func_0200489e, 0x16, 0x01080000, 0x01200000);
-    Call3(Func_02004900, 0x16, 0, 0x14);
+    Call3(Func_02004900_a, 0x16, 0, 0x14);
     Call3(Func_020048b6, 0x16, 0x01280000, 0x780000);
     Call3(Func_02004922, 0, 0xA000, 0);
     Call3(Func_0200492e, 1, 0xC000, 0);
@@ -711,7 +752,7 @@ void RunScene58Sequence(void) {
     Call2(Func_020049f4, 1, 1);
     Call2(Func_020049fc, 2, 1);
     Call2(Func_02004a0c, 3, 1);
-    Call1(Func_0200499a, 0x14);
+    Call1(Func_0200499a_a, 0x14);
     Call1(Func_020049a0, 0x14);
     Call2(Func_02004a10, 0x16, 3);
     Call1(Func_020049ae, 0x14);
@@ -722,21 +763,21 @@ void RunScene58Sequence(void) {
     Call3(Func_02004aa2, 3, 0x00000107, 0);
     Call3(Func_02004aac, 2, 0x00000107, 0x46);
     Call2(Func_02004a64, 0x16, 1);
-    Call1(Func_020049f2, 0x1E);
-    Call2(Func_02004aa2, 0x16, 0);
+    Call1(Func_020049f2_a, 0x1E);
+    Call2(Func_02004aa2_a, 0x16, 0);
     Call1(Func_02004a00, 0xA);
     Call3(Func_02004ad2, 0, 0x00000105, 0);
     Call3(Func_02004adc, 1, 0x00000105, 0);
     Call3(Func_02004ae6, 2, 0x00000105, 0);
     Call3(Func_02004af0, 3, 0x00000105, 0x46);
-    Call2(Func_02004a98, 0x16, 3);
+    Call2(Func_02004a98_a, 0x16, 3);
     Call1(Func_02004a36, 0x14);
-    Call2(Func_02004ae6, 0x16, 0);
+    Call2(Func_02004ae6_a, 0x16, 0);
     Call1(Func_02004a44, 0x14);
     Call2(Func_02004af4, 0x17, 0);
     Call1(Func_02004a52, 0xA);
     Call3(Func_02004b16, 0x16, 0x5000, 0);
-    Call1(Func_02004a64, 0x28);
+    Call1(Func_02004a64_a, 0x28);
     Call2(Func_02004b14, 0x16, 0);
     Call1(Func_02004a72, 0x1E);
     Call2(Func_02004b22, 0x17, 0);
@@ -749,7 +790,7 @@ void RunScene58Sequence(void) {
     FIELD(temp_r0_5, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_5, u8 *, 0x5A));
     Call3(Func_02004afe, 1, 0x148, 0xE0);
     Call3(Func_02004b0a, 0, 0x158, 0xE0);
-    Call3(Func_02004b16, 2, 0x158, 0xE8);
+    Call3(Func_02004b16_a, 2, 0x158, 0xE8);
     Call1(Func_02004b2c, 1);
     flag = 1;
     temp_r0_6 = Value1(Func_02004b02, 1);
@@ -760,7 +801,7 @@ void RunScene58Sequence(void) {
     Call3(Func_02004bc2, 0, 0xA000, 0);
     Call1(Func_02004b60, 2);
     Call3(Func_02004bd4, 2, 0xC000, 0);
-    Call1(Func_02004b22, 0x1E);
+    Call1(Func_02004b22_a, 0x1E);
     Call3(Func_02004b88, 0x17, 0xA80000, 0xC80000);
     Call3(Func_02004bea, 0x17, 0, 0x14);
     Call3(Func_02004ba0, 0x17, 0x680000, 0xC80000);
@@ -782,7 +823,7 @@ void RunScene58Sequence(void) {
     Call1(Func_02004bda, 0x32);
     Call3(Func_02004c9e, 5, 0x5000, 0);
     Call3(Func_02004caa, 0x14, 0x3000, 0x14);
-    Call2(Func_02004c62, 5, 4);
+    Call2(Func_02004c62_a, 5, 4);
     Call1(Func_02004c00, 0x14);
     Call3(Func_02004cd4, 0x17, 0x100, 0x3C);
     Call3(Func_02004cc6, 0x17, 0, 0x14);
@@ -797,8 +838,8 @@ void RunScene58Sequence(void) {
     Call3(Func_02004d14, 0x17, 0, 0x14);
     Call2(Func_02004d3e, 0x15, 0x102);
     Call1(Func_02004c74, 0x3C);
-    Call2(Func_02004ce4, 0x15, 4);
-    Call1(Func_02004c82, 0x14);
+    Call2(Func_02004ce4_a, 0x15, 4);
+    Call1(Func_02004c82_a, 0x14);
     Call3(Func_02004d3c, 0x15, 0, 0x14);
     Call2(Func_02004d66, 5, 0x102);
     Call1(Func_02004c9c, 0x3C);
@@ -824,8 +865,8 @@ void RunScene58Sequence(void) {
     bits = FIELD(temp_r0_8, u8 *, 0x5A) | flag;
     FIELD(temp_r0_8, u8 *, 0x5A) = bits;
     Call3(Func_02004e2c, 0x17, 0xB000, 0x14);
-    Call2(Func_02004ddc, 0x17, 3);
-    Call2(Func_02004dec, 0x15, 3);
+    Call2(Func_02004ddc_a, 0x17, 3);
+    Call2(Func_02004dec_a, 0x15, 3);
     Call1(Func_02004d8a, 0x28);
     Call3(Func_02004dc0, 0x17, 0x30000, 0x20000);
     FIELD(Value1(Func_02004dbe, 0x17), s32 *, 0x28) = 0x40000;
@@ -833,7 +874,7 @@ void RunScene58Sequence(void) {
     temp_r0_9 = Value1(Func_02004dd0, 0x17);
     FIELD(temp_r0_9, u8 *, 0x55) = (u8) (0x7E & FIELD(temp_r0_9, u8 *, 0x55));
     Call2(Func_02004d86, Func_02004de0(0x17), 0);
-    FIELD(Func_02004dec_a(0x11), s8 *, 0x55) = 4;
+    FIELD(Func_02004dec_b(0x11), s8 *, 0x55) = 4;
     Call3(Func_02004e14, 0x17, 0x68, 0xA8);
     Call2(Func_02004da8, Func_02004e02(0x17), 1);
     FIELD(Value1(Func_02004e0e, 0x17), s8 *, 0x55) = 3;
@@ -856,10 +897,10 @@ void RunScene58Sequence(void) {
     Call3(Func_02004f48, 3, 0x6000, 0);
     Call4(Func_02004f82, 0x01300000, 0x200000, 0xD80000, 1);
     Call0(Func_02004f8e);
-    Call3(Func_02004f0c, 0x14, 0x01100000, 0x01180000);
+    Call3(Func_02004f0c_a, 0x14, 0x01100000, 0x01180000);
     Call3(Func_02004f6e, 0x14, 0, 0x14);
-    Call3(Func_02004f20, 0x14, 0, 0);
-    Call2(Func_02004f48, 1, 1);
+    Call3(Func_02004f20_a, 0x14, 0, 0);
+    Call2(Func_02004f48_a, 1, 1);
     Call1(Func_02004ed6, 0x14);
     Call3(Func_02004f90, 1, 0, 0x14);
     Call3(Func_02004f16, 1, 0x18000, 0xC000);
@@ -888,7 +929,7 @@ void RunScene58Sequence(void) {
     Call2(Func_02005042, 3, 1);
     Call1(Func_02004fd0, 0x14);
     Call2(Func_02005050, 0x16, 1);
-    Call1(Func_02004fde, 0xA);
+    Call1(Func_02004fde_a, 0xA);
     Call3(Func_02005098, 0x16, 0, 0x14);
     Call2(Func_02005068, 1, 2);
     Call1(Func_02004ff6, 0xA);
@@ -898,19 +939,19 @@ void RunScene58Sequence(void) {
     Call2(Func_0200508e, 2, 1);
     Call1(Func_0200501c, 0xA);
     Call2(Func_0200508c, 2, 3);
-    Call1(Func_0200502a, 0x14);
+    Call1(Func_0200502a_a, 0x14);
     Call3(Func_020050e4, 2, 0, 0x14);
     Call3(Func_02005106, 0x16, 0x00000101, 0x3C);
     Value2(Func_020050e6, 0x16, 0);
-    if (Value2(Func_02005066, 0, 0) == 0) {
+    if (Value2(Func_02005066_a, 0, 0) == 0) {
         Call1(Func_02005058, 0x14);
         Call2(Func_020050c8, 0x16, 4);
-        Value1(Func_02005066, 0x14);
+        Value1(Func_02005066_b, 0x14);
         Call3(Func_02005120, 0x16, 0, 0x14);
         temp_r2_3 = Data_03001ebc;
         FIELD(temp_r2_3, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_3, u16 *, 0x1D8) + 1);
     } else {
-        Call1(Func_02005098, 0x14);
+        Call1(Func_02005098_a, 0x14);
         Call2(Func_02005108, 0x16, 4);
         Call1(Func_020050a6, 0x14);
         temp_r2_4 = Data_03001ebc;

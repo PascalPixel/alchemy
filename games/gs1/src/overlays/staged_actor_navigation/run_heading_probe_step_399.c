@@ -81,7 +81,7 @@ struct Subject_02001fa4 *Func_02004358();
 void Func_02004212();
 s32 Func_0200420c();
 void Func_020041ba();
-s32 Func_02004226();
+s32 Func_02004226_a();
 s32 Func_02004230();
 void Func_0200423e();
 void Func_02004216();
@@ -149,7 +149,7 @@ void StagedActor_RunHeadingProbeStep(void)
          * passed by address and is advanced by the callee. */
         Func_020041ba((s32)0x100000, heading, probe);
 
-        marker = Func_02004226((s32)*p, probe[0], probe[2]);
+        marker = Func_02004226_a((s32)*p, probe[0], probe[2]);
         if (marker == 255
                 || Func_02004230((s32)*p, probe[0], probe[2])
                     - subject->y > 0x80000) {

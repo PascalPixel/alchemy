@@ -1,6 +1,7 @@
 #include "types.h"
 
-s32 Func_0200458e(s32);
+s32 Func_0200458e_a(s32);
+s32 Func_0200458e_b(s32);
 u8 *Func_020045d0(s32);
 u8 *Func_020045dc(s32);
 u8 *Func_020045ec(s32);
@@ -11,8 +12,8 @@ void SceneActor_SetActor14Field98ByFlag200(void)
     u8 *p;
     u8 val;
 
-    Func_0200458e(0x201);
-    if (Func_0200458e(0x200) != 0) {
+    Func_0200458e_a(0x201);
+    if (Func_0200458e_b(0x200) != 0) {
         Func_020045d0(14)[98] = 0;
         Func_020045dc(14)[89] &= (u8)0xf7;
     } else {

@@ -275,6 +275,7 @@ void FieldScene_RunActor18MessageBranch(void)
 void FieldScene_RunActor19MessageBranch(void)
 {
     void Func_020004a2(s32, s32);
+    void Func_020004a2_a(s32, s32);
 
     /* The local is wider than the field: read into a u16 the compiler reloads
      * it signed and re-normalises across the call. */
@@ -286,7 +287,7 @@ void FieldScene_RunActor19MessageBranch(void)
         Func_020004a2(3, 19);
     } else {
         Func_02000492(0x16B7);
-        Func_020004a2(19, 0);
+        Func_020004a2_a(19, 0);
     }
 
     Func_0200047e();
@@ -299,7 +300,7 @@ u8 *SceneData_GetTable8658(void)
 
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
-    s32 Func_020004a2();
+    s32 Func_020004a2_b();
 
     u8 *work = MAP390_WORKSPACE;
     s32 id;
@@ -308,7 +309,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
     *(s32 *)(work + 448) = 0x209;
 
-    if (Func_020004a2(0x845) == 0) {
+    if (Func_020004a2_b(0x845) == 0) {
         id = 8;
         do {
             void *record = Func_020004ce(id);

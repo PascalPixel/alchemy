@@ -13,6 +13,7 @@ s32 Func_02005254();           /* local thunk to Func_020020e8, site B */
 void Func_02006d82();          /* veneer to UiText_DrawQuantity, site A */
 void Func_02006d94();          /* veneer to UiText_DrawQuantity, site B */
 void Func_02006da4();          /* shared veneer, selector refresh + 0x96a */
+void Func_02006da4_a();
 void Func_02006d62();          /* veneer to Func_08009148 */
 
 s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
@@ -68,7 +69,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     shared = Data_02000240;
     Func_02006da4(*(s32 *)(shared + 500), 1);
-    Func_02006da4(0x96a, 3);
+    Func_02006da4_a(0x96a, 3);
     Func_02006d62(rec);
 
     return flag;

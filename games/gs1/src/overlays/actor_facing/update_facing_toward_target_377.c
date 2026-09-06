@@ -22,9 +22,9 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object) {
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The load at 0x0200006E owns the Thumb-like data word at 0x02000084. */
-            if (delta < (s32)0xF842F001) {
-                delta = (s32)0xF842F001;
+            /* The loader relocates the stored pool word to -0x1000. */
+            if (delta < -0x1000) {
+                delta = -0x1000;
             }
             object->facing = (u16) (old + delta);
         }

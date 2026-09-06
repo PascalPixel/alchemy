@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern s32 *Func_02003a98(s32 a);
+extern s32 *Func_02003a98_a(s32 a);
 extern void Func_02003a98_b(void);
 extern s32 Func_02003a40(s32 *p, s16 *q);
 extern void Func_02003a20(s32 *p, s32 b);
@@ -14,7 +14,7 @@ extern void Func_02003aac(s32 *p, s32 b);
 extern void Func_02003b04(void);
 
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg) {
-    s32 *p = Func_02003a98(0);
+    s32 *p = Func_02003a98_a(0);
     u8 *f = (u8 *)p + 0x55;
     s32 saved = *f;
 

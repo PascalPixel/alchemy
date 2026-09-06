@@ -35,7 +35,8 @@ void Func_020058cc();
 void Func_020058d6();
 void Func_020058d8();
 void Func_020058da();
-void Func_020058e2();
+void Func_020058e2_a();
+void Func_020058e2_b();
 void Func_020058ee();
 void Func_020058fa();
 void Func_0200590a();
@@ -46,7 +47,8 @@ void Func_02005994();
 void Func_020059a0();
 void Func_020059a2();
 void Func_020059ac();
-void Func_020059b8();
+void Func_020059b8_a();
+void Func_020059b8_b();
 void Func_020059f4();
 
 /* Resolved engine calls: each pseudo symbol is the per-site call word the
@@ -90,17 +92,17 @@ void Func_020059f4();
 #define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3(Func_02005932, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3(Func_0200593e, a0, a1, a2)
 #define ObjectMotion_Launch_1(args...) Func_020058d8(args)
-#define ObjectMotion_Launch_2(args...) Func_020058e2(args)
+#define ObjectMotion_Launch_2(args...) Func_020058e2_a(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_020058d6, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_020058e2, a0, a1, a2)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_020058e2_b, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_4(a0, a1, a2) Call3(Func_020058ee, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_5(a0, a1, a2) Call3(Func_020058fa, a0, a1, a2)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_020059a2, a0, a1)
-#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020059b8, a0, a1, a2, a3)
+#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020059b8_a, a0, a1, a2, a3)
 #define ObjectMotion_ArmCallback_7(a0, a1, a2) Call3(Func_02005994, a0, a1, a2)
 #define ObjectMotion_ArmCallback_8(a0, a1, a2) Call3(Func_020059a0, a0, a1, a2)
 #define ObjectMotion_ArmCallback_9(a0, a1, a2) Call3(Func_020059ac, a0, a1, a2)
-#define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_020059b8, a0, a1, a2)
+#define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_020059b8_b, a0, a1, a2)
 #define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_020059f4(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_020058da(args)
 u8 *Func_02005794();

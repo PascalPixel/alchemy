@@ -13,6 +13,7 @@ path = "src/lib.rs"
 # Sibling crates owning the former compiler-module surface. These are not
 # third-party dependencies; they are the Rust half of the same tree.
 compiler-core = { path = "../compiler-core" }
+candidate-compiler = { path = "../candidate-compiler" }
 # `CompilerTarget` lives here. This dependency is read-only for this crate.
 cache-entry = { path = "../cache-entry" }
 extract-resource = { path = "../extract-resource" }

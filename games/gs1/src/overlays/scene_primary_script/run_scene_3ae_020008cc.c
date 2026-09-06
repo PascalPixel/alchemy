@@ -11,6 +11,7 @@ void Func_02001e44();
 s32 Func_02001e54();
 s32 Func_02001e64();
 s32 Func_02001e6e();
+s32 Func_02001e6e_a();
 void Func_02001f08();
 void Func_02001f7a();
 
@@ -59,7 +60,7 @@ void FieldScene_RunScene3ae_020008cc(void)
         }
     }
     if (Value1(Func_02001e64, 0x911) != 0) {
-        if (Value1(Func_02001e6e, 0x8a9) == 0) {
+        if (Value1(Func_02001e6e_a, 0x8a9) == 0) {
             Call3(Func_02001f08, 12, 0x580000, 0x5180000);
             Func_02001f7a(12, 0, 0);
         }

@@ -17,14 +17,16 @@ void Func_020015c0();
 s32 Func_020015c4();
 void Func_020015ca();
 void Func_020015d4();
-s32 Func_020015de();
+s32 Func_020015de_a();
+s32 Func_020015de_b();
 void Func_020015e8();
 void Func_020015f2();
 void Func_020015fc();
 void Func_02001606();
 s32 Func_0200160c();
 void Func_02001610();
-void Func_0200161a();
+void Func_0200161a_a();
+void Func_0200161a_b();
 void Func_02001620();
 u8 *Func_0200162c();
 u8 *Func_02001664();
@@ -32,7 +34,8 @@ void Func_0200169e();
 void Func_020016ba();
 void Func_020016ce();
 void Func_020016ec();
-void Func_02001706();
+void Func_02001706_a();
+void Func_02001706_b();
 void Func_0200171a();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -74,13 +77,13 @@ s32 Func_02000368(void)
         Func_020015c0(13, 0, 0);
         Func_020015ca(14, 0, 0);
         Func_020015d4(15, 0, 0);
-        ((void (*)())Func_020015de)(16, 0, 0);
+        ((void (*)())Func_020015de_a)(16, 0, 0);
         Func_020015e8(17, 0, 0);
         Func_020015f2(18, 0, 0);
         Func_020015fc(19, 0, 0);
         Func_02001606(20, 0, 0);
         Func_02001610(21, 0, 0);
-        Func_0200161a(22, 0, 0);
+        Func_0200161a_a(22, 0, 0);
         Func_020016ce();
         {
             u16 *target = (u16 *)(scene[3] + 0x1f84);
@@ -90,13 +93,13 @@ s32 Func_02000368(void)
         }
         Func_020016ec();
         Func_0200157a(30);
-        Func_02001706();
+        Func_02001706_a();
         Func_0200171a();
-        Func_02001706();
+        Func_02001706_b();
     }
     if (Value1(Func_020015c4, 0x87a) != 0) {
         if (Data_02000240_t[225][0] == 6) {
-            if (Value1(Func_020015de, 0x81d) == 0) {
+            if (Value1(Func_020015de_b, 0x81d) == 0) {
                 Func_02000aba();
             }
         }
@@ -111,7 +114,7 @@ s32 Func_02000368(void)
         if (Value1(Func_0200160c, 0x815) != 0) {
             Call3(Func_0200169e, 13, 0x1c60000, 0x960000);
             record = Func_02001664(13);
-            Func_0200161a((s32)record, 0);
+            Func_0200161a_b((s32)record, 0);
             Func_020016ba(13, 5);
             Func_02001620(4);
         }

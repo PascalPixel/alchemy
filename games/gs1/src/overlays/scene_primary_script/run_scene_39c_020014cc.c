@@ -6,7 +6,8 @@ void Func_02006f40();
 void Func_02006f48();
 s32 Func_02006f58();
 void Func_02006f90();
-s32 Func_02006fb2();
+s32 Func_02006fb2_a();
+s32 Func_02006fb2_b();
 void Func_02006fb6();
 s32 Func_02006fbc();
 s32 Func_02006fe4();
@@ -49,14 +50,14 @@ void FieldScene_RunScene39c_020014cc(void)
     s16 v18;
 
     if (Value1(Func_02006f58, 0x256) == 0) {
-        record = Value1(Func_02006fb2, 0);
+        record = Value1(Func_02006fb2_a, 0);
         v10 = *(s16 *)(record + 10);
         record2 = Value1(Func_02006fbc, 0);
         v18 = *(s16 *)(record2 + 18);
         if ((u32)(v10 - 84) <= 7) {
             if (v18 > 211) {
                 if (v18 <= 219) {
-                    Func_02006fb2(record2);
+                    Func_02006fb2_b(record2);
                     Call1(Func_02006f90, 0x256);
                     Func_02006fb6(5);
                     record = Func_02006fe4(0);

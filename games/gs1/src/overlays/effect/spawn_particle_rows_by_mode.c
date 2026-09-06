@@ -2,7 +2,8 @@
 
 extern void Func_02007a56(s32, s32, s32, s32, s32, s32);
 extern void Func_02007a66(s32, s32, s32, s32, s32, s32);
-extern void Func_02007a76(s32, s32, s32, s32, s32, s32);
+extern void Func_02007a76_a(s32, s32, s32, s32, s32, s32);
+extern u32 Func_02007a76_b(void);
 extern void Func_02007cdc(s32);
 extern u32 Func_02007a3e(void);
 extern u32 Func_02007aac(void);
@@ -21,7 +22,7 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 
     Func_02007a56(0x70, 0x39, 0x71, 0x2a, 1, 1);
     Func_02007a66(0x75, 0x3a, 0x70, 0x2e, 1, 1);
-    Func_02007a76(0x75, 0x39, 0x74, 0x2c, 1, 1);
+    Func_02007a76_a(0x75, 0x39, 0x74, 0x2c, 1, 1);
     Func_02007cdc(0x121);
     buf[1] = 5;
     buf[2] = 0x8000;
@@ -35,7 +36,7 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
                                   mode, 0x4000, 0x90000, buf);
                 } else if (mode == 1) {
                     Func_0200224e((((j << 2) + i) << 17) + 0x03120000, 0,
-                                  (((((u32 (*)(void))Func_02007a76)() * 5) >> 16) << 16) + 0x2e80000, 0x4000,
+                                  (((((u32 (*)(void))Func_02007a76_b)() * 5) >> 16) << 16) + 0x2e80000, 0x4000,
                                   0, 0, 0x90000, buf);
                 } else {
                     Func_02002288(0x3380000 - (i << 17) - (j << 19), 0,

@@ -21,5 +21,5 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
     slot = Func_0200266c(15) + 89;
     *slot = 254;
     Func_02002648(0x201);
-    Func_0200266c();
+    Func_0200266c_a();
 }

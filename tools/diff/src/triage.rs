@@ -14,7 +14,6 @@ pub enum ResidualClass {
     StructuralTopology,
     MissingExtraCode,
     FrameContext,
-    CompilerUnemittable,
     Unclassified,
 }
 impl ResidualClass {
@@ -34,7 +33,6 @@ impl ResidualClass {
                 Some("reconstruct-missing-or-extra-code"),
             ),
             Self::FrameContext => ("frame-context", Some("recover-stack-local-context")),
-            Self::CompilerUnemittable => ("compiler-unemittable", Some("classification-proof")),
             Self::Unclassified => ("unclassified", None),
         }
     }
@@ -47,29 +45,26 @@ impl ResidualClass {
     /// Next command; {source} is the candidate path, {owner} the qualified owner.
     pub fn next_command(&self) -> &'static str {
         match self {
-            Self::Exact => "check integrate --apply games/gs1/recon/en/main (registers in source-paths.json first)",
+            Self::Exact => "alchemy adopt {owner} --source {source} (complete-owner and production verification still required)",
             Self::LayoutOnly => "alchemy diff {source} --align (layout drift: inspect pools and padding, not code)",
             Self::AllocationCovered => "alchemy match {source} (the decoder names a catalogued repair; do not hand-edit first)",
             Self::AllocationUncovered => {
                 "route to the smart queue; do not probe register roles by respelling source (measured: such probes regress)"
             }
             Self::SchedulingFloor => {
-                "alchemy diff {source} --allocator-order (tie-break evidence first; catalogued statement-order edits only)"
+                "alchemy inspect allocator {owner} (read the scheduling decision; no automatic repair is established)"
             }
             Self::TypeWidthMismatch => {
                 "alchemy diff {source} --align (recover widths and signedness from the access-width evidence)"
             }
             Self::StructuralTopology => {
-                "alchemy diff {source} --allocator-order (inspect named branch evidence; without a repair, inspect destinations and block contents)"
+                "smart queue: reconstruct the divergent blocks in the complete translation unit; only a decoder-named repair may enter search"
             }
             Self::MissingExtraCode => {
-                "alchemy diff {source} --align --first (reconstruct the absent or surplus statements the diff names)"
+                "smart queue: audit the complete owner extent and translation-unit membership before reconstructing missing or extra statements"
             }
             Self::FrameContext => {
                 "alchemy diff {source} --asm (build a stack-slot ledger and recover the missing local or translation-unit context)"
-            }
-            Self::CompilerUnemittable => {
-                "record a classification proof; do not search spellings for a shape the compiler cannot emit"
             }
             Self::Unclassified => "route to the smart queue with the full --align diff attached",
         }
@@ -334,10 +329,6 @@ fn branch_topology_equal(
     let (left_slots, right_slots) = aligned_slots(left.len(), right.len(), pairs);
     branch_edges(left, &left_slots) == branch_edges(right, &right_slots)
 }
-fn multiple(line: &str) -> bool {
-    line.split(|character: char| !character.is_ascii_alphanumeric())
-        .any(|word| matches!(word, "stmia" | "ldmia" | "stmdb" | "ldmdb" | "stm" | "ldm"))
-}
 fn width_family(op: &str) -> Option<&'static str> {
     match op {
         "ldr" | "ldrb" | "ldrh" | "ldrsb" | "ldrsh" => Some("load"),
@@ -575,12 +566,6 @@ pub fn classify_with_topology(
         ResidualClass::LayoutOnly
     } else if frame_context_only(left, right) {
         ResidualClass::FrameContext
-    } else if actual_bytes == reference_bytes
-        && branch_topology_equal
-        && right.iter().any(|line| multiple(line))
-        && !left.iter().any(|line| multiple(line))
-    {
-        ResidualClass::CompilerUnemittable
     } else if register_erased_ordered_equal {
         ResidualClass::AllocationUncovered
     } else if instruction_multiset_equal {
@@ -752,5 +737,23 @@ mod tests {
             2,
             ResidualClass::StructuralTopology,
         );
+    }
+
+    #[test]
+    fn multiple_transfer_is_a_mismatch_not_compiler_impossibility() {
+        let candidate = vec!["ldr r1, [r0]".into(), "bx lr".into()];
+        let reference = vec!["ldmia r0!, {r1}".into(), "bx lr".into()];
+        let report = classify_with_topology(&candidate, &reference, 4, 4, 1, &Comparison::Equal);
+        assert_eq!(report.class, ResidualClass::MissingExtraCode);
+        assert!(!serde_json::to_string(&report)
+            .unwrap()
+            .contains("unemittable"));
+    }
+
+    #[test]
+    fn exact_route_is_owner_qualified_and_not_a_corpus_wide_write() {
+        let command = ResidualClass::Exact.next_command();
+        assert!(command.starts_with("alchemy adopt {owner} --source {source}"));
+        assert!(!command.contains("recon/en/main"));
     }
 }

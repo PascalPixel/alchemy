@@ -14,6 +14,7 @@ void Func_02004afc();
 void Func_02004b0a();
 void Func_02004b28();
 void Func_02004b30();
+void Func_02004b30_a();
 void Func_02004b3a();
 void Func_02004b3c();
 void Func_02004b42();
@@ -57,7 +58,7 @@ void FieldScene_RunScene3bb_02000b38(s32 a0)
     Call3(Func_02004b3c, 0, 0x4000, 0);
     if (a0 < 0) {
         Func_02004b28(8, 10);
-        Func_02004b30(0, 35);
+        Func_02004b30_a(0, 35);
     } else {
         Func_02004b3a(8, 8);
         Func_02004b42(0, 28);

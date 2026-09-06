@@ -30,7 +30,7 @@
 #define StartStagedActorEffectSound Func_020019b4
 #define SetStagedActorMotionMode Func_0200191c
 #define PrepareStagedActorEffect Func_02001966
-#define TestStagedActorEffectCell Func_020019b4
+#define TestStagedActorEffectCell Func_020019b4_a
 #define StartStagedActorEffectMove Func_02001954
 #define SetStagedActorEffectTransition Func_02001984
 #define WaitStagedActorEffect Func_020019e8
@@ -52,7 +52,7 @@
 #define RunSceneBeat8 Func_0200151e
 #define RunSceneBeat9 Func_02001524
 #define IsSceneFlag0845Set Func_02001ac6
-#define RunPhase516Followup Func_02001900
+#define RunPhase516Followup Func_02001900_a
 
 #include "staged_actor.h"
 #include "staged_actor_probe_state.h"
@@ -90,6 +90,7 @@ struct StagedActor *Func_020001a2(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *Func_020001ce(s32 *arg0, struct StagedActor *arg1);
 s32 Func_02000fec(struct StagedActor *arg0, s32 *arg1);
 void Func_02000fe4();
+void Func_02000fe4_a(s32);
 void Func_02001092(s32 arg0);
 void Func_0200100a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_0200101a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -106,6 +107,7 @@ s32 Func_02000e7a(struct PlacementResult *result);
 void Func_02001026(struct PlacementResult result);
 void Func_020018e0(s32,s32); void Func_020018dc(s32,s32,s32);
 void Func_020018b2(s32); u8 *Func_02001918();
+void Func_02001918_a(s32);
 void Func_020018b8(s32,s32,s32,s32,s32,s32);
 s32 Func_02000ccc(s32,s32,s32,s32,s32,s32);
 void Func_020018f2(s32); void Func_020018ee(u8 *,s32);
@@ -303,7 +305,7 @@ void StagedActor_AdvancePair(void) {
 
     SelectStagedActorSlot(lead, 8);
     rate = 0x3333;
-    SelectStagedActorSlot(15);
+    Func_02000fe4_a(15);
     StartStagedActorEffect(185);
     next->move_rate_x = rate;
     next->move_rate_z = rate;
@@ -528,7 +530,7 @@ void FieldScene_RunActorTenPlacementScene(void)
             Func_020018e0(10, 3);
             Func_020018dc(10, -18, 6);
             Func_020018b2(30);
-            Func_02001918(240);
+            Func_02001918_a(240);
             Func_02001900(10, 8);
             Func_020018de(10)[35] = 2;
             zero = 0;
@@ -544,6 +546,7 @@ void FieldScene_RunActorTenPlacementScene(void)
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
     s32 Func_020019b4();
+    s32 Func_020019b4_a();
 
     struct StagedActorEffect *actor = GetStagedActorEffect(0);
     u8 *flags = &actor->motion_flags;
@@ -601,7 +604,7 @@ u8 *SceneData_GetTable9098(void) { return (u8 *)0x02009098; }
 
 s32 SceneState_SetRuntimeWord448To516(void)
 {
-    void Func_02001900();
+    void Func_02001900_a();
 
     u8 *work = SCENE_WORKSPACE;
 
@@ -628,7 +631,7 @@ s32 SceneState_SetRuntimeWord448To516(void)
 
 void SceneEffect_AdjustPaletteColors(s32 a)
 {
-    s32 Func_020019b4(s32, s32);
+    s32 Func_020019b4_b(s32, s32);
 
     u32 x;
 
@@ -638,7 +641,7 @@ void SceneEffect_AdjustPaletteColors(s32 a)
         u32 idx = x >> 16;
         if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
             u16 *pal = (u16 *)(0x5000000 + idx * 2);
-            *pal = Func_020019b4(*pal, a);
+            *pal = Func_020019b4_b(*pal, a);
         }
         {
             u32 nx = x + 0x10000;

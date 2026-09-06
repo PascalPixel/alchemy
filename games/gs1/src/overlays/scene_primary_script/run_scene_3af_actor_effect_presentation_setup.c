@@ -17,7 +17,8 @@ void Func_02004796();
 void Func_020047aa();
 void Func_020047b8();
 void Func_020047da();
-void Func_0200480a();
+void Func_0200480a_a();
+void Func_0200480a_b();
 void Func_02004822();
 void Func_0200484a();
 s32 Func_02004868();
@@ -36,7 +37,8 @@ void Func_0200508c();
 void Func_020050a4();
 void Func_020050aa();
 void Func_020050ba();
-void Func_020050d4();
+void Func_020050d4_a();
+void Func_020050d4_b();
 void Func_020050de();
 void Func_020050e0();
 void Func_020050f8();
@@ -53,7 +55,8 @@ void Func_02005166();
 void Func_02005168();
 void Func_0200519c();
 void Func_020051a4();
-void Func_020051bc();
+void Func_020051bc_a();
+void Func_020051bc_b();
 void Func_020051c4();
 void Func_020051e4();
 void Func_020051e8();
@@ -70,7 +73,8 @@ s32 Func_0200525e();
 void Func_02005260();
 void Func_0200526e();
 s32 Func_02005270();
-void Func_02005272();
+void Func_02005272_a();
+void Func_02005272_b();
 void Func_02005284();
 void Func_02005288();
 void Func_02005292();
@@ -80,7 +84,8 @@ void Func_020052be();
 u8 *Scene_GetRecord_1();
 void Func_020052e4();
 void Func_020052ee();
-void Func_020052f6();
+void Func_020052f6_a();
+void Func_020052f6_b();
 void Func_0200530c();
 void Func_02005314();
 void Func_0200531e();
@@ -90,7 +95,8 @@ void Func_02005338();
 void Func_0200533c();
 void Func_02005340();
 s32 Func_02005342();
-void Func_0200534c();
+void Func_0200534c_a();
+void Func_0200534c_b();
 void Func_02005358();
 void Func_02005362();
 void Func_02005376();
@@ -119,7 +125,7 @@ void Func_020053d4();
 #define ObjectMotion_SetVariantCallback_1(args...) Func_020050a4(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_020050ba(args)
 #define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02005106, a0, a1, a2)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_020050d4(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_020050d4_a(args)
 #define Object_SetModeById_1(args...) Func_020050e0(args)
 #define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_02005168, a0, a1, a2)
 #define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_0200515c, a0, a1, a2)
@@ -129,18 +135,18 @@ void Func_020053d4();
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02005142(args)
 #define Object_SetModeById_2(args...) Func_02005156(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02005166(args)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_020050d4(args)
+#define BattleRuntime_WaitIfModeZero_2(args...) Func_020050d4_b(args)
 #define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3(Func_020051e8, a0, a1, a2)
-#define SceneWork_SetStepValue_2(args...) Func_020051bc(args)
+#define SceneWork_SetStepValue_2(args...) Func_020051bc_a(args)
 #define ObjectMotion_SetVariantCallback_3(args...) Func_020051a4(args)
 #define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3(Func_02005214, a0, a1, a2)
-#define ObjectMotion_SetVariantCallback_4(args...) Func_020051bc(args)
+#define ObjectMotion_SetVariantCallback_4(args...) Func_020051bc_b(args)
 #define BattleEffect_SpawnLinkedResourceObject_6(a0, a1, a2) Call3(Func_0200522e, a0, a1, a2)
 #define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_02005210(args)
 #define BattleEffect_SpawnLinkedResourceObject_7(a0, a1, a2) Call3(Func_02005244, a0, a1, a2)
 #define ObjectMotion_CallThenWaitForAnimationChange_4(args...) Func_020051ec(args)
 #define BattleRuntime_RunThenWaitIfModeZero_2(args...) Func_0200523e(args)
-#define BattleEffect_SpawnLinkedResourceObject_8(a0, a1, a2) Call3(Func_02005272, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_8(a0, a1, a2) Call3(Func_02005272_a, a0, a1, a2)
 #define ObjectMotion_SetVariantCallback_5(args...) Func_0200521a(args)
 #define Object_SetModeById_3(args...) Func_02005218(args)
 #define ObjectMotion_ArmCallback_3(args...) Func_02005288(args)
@@ -159,20 +165,20 @@ void Func_020053d4();
 #define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Func_0200525e, a0, a1)
 #define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02005260, a0, a1, a2)
 #define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Func_02005270, a0, a1)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02005272, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02005272_b, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_020052be, a0, a1, a2)
-#define ObjectMotion_SetVariantCallback_6(args...) Func_020052f6(args)
+#define ObjectMotion_SetVariantCallback_6(args...) Func_020052f6_a(args)
 #define BattleEffect_SpawnLinkedResourceObject_9(a0, a1, a2) Call3(Func_02005362, a0, a1, a2)
-#define BattleRuntime_RunThenWaitIfModeZero_3(args...) Func_0200534c(args)
+#define BattleRuntime_RunThenWaitIfModeZero_3(args...) Func_0200534c_a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_6(args...) Func_0200530c(args)
 #define ObjectMotion_Launch_1(args...) Func_0200531e(args)
 #define ObjectMotion_ArmCallback_7(args...) Func_02005378(args)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_3(a0, a1) Call2(Func_020053bc, a0, a1)
 #define ObjectMotion_PlaceWithinCameraBounds_3(a0, a1, a2, a3) Call4(Func_020053d4, a0, a1, a2, a3)
 #define Scene_GetRecord_1(args...) Func_020052d2(args)
-#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_020052f6, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_020052f6_b, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02005340, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_0200534c, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_0200534c_b, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_4(a0, a1, a2) Call3(Func_02005358, a0, a1, a2)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_5(args...) Func_020053a0(args)
 #define ObjectMotion_SetPositionAndReset_5(a0, a1, a2) Call3(Func_02005376, a0, a1, a2)
@@ -275,10 +281,10 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         ObjectMotion_CallThenWaitForAnimationChange_3(20, 3);
         BattleRuntime_WaitIfModeZero_2(60);
         BattleEffect_SpawnLinkedResourceObject_4(22, 0x106, 40);
-        Func_0200480a(22, 0x5000);
+        Func_0200480a_a(22, 0x5000);
         SceneWork_SetStepValue_2((s32)Data_00001d40);
         ObjectMotion_SetVariantCallback_3(22, 1);
-        Func_0200480a(0x4016);
+        Func_0200480a_b(0x4016);
         BattleEffect_SpawnLinkedResourceObject_5(20, 0x101, 40);
         ObjectMotion_SetVariantCallback_4(20, 2);
         Func_02004822(20);

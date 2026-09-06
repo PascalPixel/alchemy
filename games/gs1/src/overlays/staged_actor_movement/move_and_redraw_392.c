@@ -22,7 +22,7 @@
 #define Func_0200677a Func_020015ca
 #define Func_020068f4 Func_0200162c
 #define Func_020068fa Func_02001632
-#define Func_020066b8 Func_02001590
+#define Func_020066b8 Func_02001590_a
 #define Func_02006752 Func_020015fa
 #define Func_020067ae Func_02001656
 #define Func_020069d0 Func_02001708

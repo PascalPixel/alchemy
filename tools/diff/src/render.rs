@@ -109,7 +109,7 @@ struct RenderedScore {
     candidate: Vec<String>,
     reference: Vec<String>,
 }
-fn region_size(root: &Path, address: u32) -> Option<usize> {
+pub fn region_size(root: &Path, address: u32) -> Option<usize> {
     for manifest in [
         "out/gs1-en/full/claimed/manifest.json",
         "out/gs1-en/claimed/manifest.json",
@@ -195,18 +195,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         patch_text.as_deref(),
     )?;
     let cache = cache_entry::sqlite::SqliteCache::open(&work.join("cache.sqlite3"))?;
-    if options.first && !options.allocator_order {
-        if let Some(stdout) = cached_first(&cache, &key) {
-            return Ok(RenderOutput {
-                stdout,
-                candidate_length: 0,
-                reference_length: 0,
-                differing_halfwords: 0,
-                allocator: None,
-                residual: classify(&[], &[], 0, 0, 0),
-            });
-        }
-    }
     let cached = (!options.allocator_order)
         .then(|| cached_bins(&cache, &key))
         .flatten();
@@ -242,8 +230,15 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             .ok_or_else(|| format!("{stem} precedes its image base"))?
             as usize;
         let end = offset.saturating_add(size).min(rom.len());
-        let actual = verification.actual;
-        let expected = rom[offset.min(end)..end].to_vec();
+        let (actual, expected) = if options.configuration.overlay_extent.is_some() {
+            let runtime = compiler_core::overlay::load(&rom, 0)?;
+            (
+                compiler_core::overlay::load(&verification.actual, offset)?,
+                runtime[offset.min(end)..end].to_vec(),
+            )
+        } else {
+            (verification.actual, rom[offset.min(end)..end].to_vec())
+        };
         let candidate_gas = read_candidate_gas(&work, &stem, options.precompiled_object.as_deref());
         if !options.allocator_order {
             let mut entries = vec![
@@ -268,16 +263,19 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             },
         )
     };
-    let topology = topology_for_owner(
-        root,
-        options,
-        identity.owner.is_main(),
-        &stem,
-        candidate_gas.as_deref(),
-    );
-    let mut score = render_bytes(
-        actual, expected, compile, topology, options, &work, &cache, &key,
-    )?;
+    let topology = if actual == expected {
+        Comparison::Equal
+    } else {
+        topology_for_owner(
+            root,
+            options,
+            identity.owner.is_main(),
+            &stem,
+            candidate_gas.as_deref(),
+            &expected,
+        )
+    };
+    let mut score = render_bytes(actual, expected, compile, topology, options, &work)?;
     let allocator = if options.allocator_order {
         let report = crate::allocator::decode(
             root,
@@ -310,6 +308,10 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         ));
         rendered.allocator = Some(report);
     }
+    rendered.stdout = rendered
+        .stdout
+        .replace("{owner}", &identity.owner.id())
+        .replace("{source}", &options.source);
     Ok(rendered)
 }
 
@@ -343,10 +345,8 @@ fn topology_for_owner(
     main: bool,
     stem: &str,
     candidate: Option<&[u8]>,
+    expected: &[u8],
 ) -> Comparison {
-    if !main {
-        return Comparison::Uncovered("overlay-not-yet-supported".into());
-    }
     let Some(candidate) = candidate.and_then(|source| std::str::from_utf8(source).ok()) else {
         return Comparison::Uncovered("candidate-gas-unavailable".into());
     };
@@ -355,10 +355,31 @@ fn topology_for_owner(
         .join(options.target.as_str())
         .join("asm")
         .join(format!("{stem}.s"));
+    let candidate_symbol = format!("Func_{stem}");
+    if !main || !reference.is_file() {
+        let Some(address) = u32::from_str_radix(stem, 16).ok() else {
+            return Comparison::Uncovered("invalid-owner-address".into());
+        };
+        let base = address
+            + if main {
+                0
+            } else {
+                compiler_core::overlay::RUNTIME_BASE - compiler_core::overlay::RESOURCE_BASE
+            };
+        return match disassemble::build_region_source(expected, i64::from(base)) {
+            Ok(reference) => topology::compare_symbols_at(
+                candidate,
+                &candidate_symbol,
+                &reference,
+                &format!("Overlay_{base:08x}"),
+                base,
+            ),
+            Err(error) => Comparison::Uncovered(format!("reference-decode:{error}")),
+        };
+    }
     let Ok(reference) = std::fs::read_to_string(&reference) else {
         return Comparison::Uncovered("reference-gas-unavailable".into());
     };
-    let candidate_symbol = format!("Func_{stem}");
     let reference_symbol = u32::from_str_radix(stem, 16)
         .ok()
         .and_then(|address| {
@@ -382,8 +403,6 @@ fn render_bytes(
     topology: Comparison,
     options: &Options,
     work: &Path,
-    cache: &cache_entry::sqlite::SqliteCache,
-    key: &str,
 ) -> Result<RenderedScore, String> {
     let candidate_path = work.join("candidate.bin");
     let reference_path = work.join("reference.bin");
@@ -439,11 +458,6 @@ fn render_bytes(
         }
         out.push_str("      candidate                      reference\n");
         out.push_str(&side_by_side(&pairs[start..end]));
-        if options.first {
-            cache
-                .upsert(key, "first", out.as_bytes())
-                .map_err(|error| format!("cache: {error}"))?;
-        }
     } else {
         if actual.len() != expected.len() {
             out.push_str("  note: the two sides are different lengths, so the offset view below is\n             phase-shifted and every later row will read as a difference.\n             Re-run with --align to see the insertion or deletion itself.\n");
@@ -759,7 +773,7 @@ fn source_cache_key_with_environment(
     );
     hasher.update(
         configuration
-            .label_word_bias
+            .overlay_extent
             .unwrap_or_default()
             .to_le_bytes(),
     );
@@ -812,7 +826,8 @@ mod cache_key_tests {
     use super::*;
     #[test]
     fn compiler_route_flags_host_and_bundle_are_cache_identity() {
-        let source = std::env::temp_dir().join("diff-cache-key.c");
+        let directory = tempfile::tempdir().unwrap();
+        let source = directory.path().join("candidate.c");
         std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
         let source = source.to_str().unwrap();
         let routed = CandidateCompilerConfiguration {
@@ -863,22 +878,13 @@ mod cache_key_tests {
         ] {
             assert_ne!(base, changed);
         }
-        let _ = std::fs::remove_file(source);
     }
 
     #[test]
     fn changing_rom_contents_at_the_same_path_does_not_reuse_cached_reference() {
-        let directory = std::env::temp_dir().join(format!(
-            "diff-rom-cache-test-{}-{}",
-            std::process::id(),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_nanos()
-        ));
-        std::fs::create_dir_all(&directory).unwrap();
-        let source = directory.join("candidate.c");
-        let rom = directory.join("reference.gba");
+        let directory = tempfile::tempdir().unwrap();
+        let source = directory.path().join("candidate.c");
+        let rom = directory.path().join("reference.gba");
         std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
         std::fs::write(&rom, b"first-rom").unwrap();
         let source = source.to_str().unwrap();
@@ -902,8 +908,8 @@ mod cache_key_tests {
             .unwrap()
         };
         let first_key = key(&std::fs::read(&rom).unwrap());
-        let cache =
-            cache_entry::sqlite::SqliteCache::open(&directory.join("cache.sqlite3")).unwrap();
+        let cache = cache_entry::sqlite::SqliteCache::open(&directory.path().join("cache.sqlite3"))
+            .unwrap();
         cache
             .put(
                 &first_key,
@@ -916,13 +922,7 @@ mod cache_key_tests {
         let second_key = key(&std::fs::read(&rom).unwrap());
         assert_ne!(first_key, second_key);
         assert!(cached_bins(&cache, &second_key).is_none());
-        std::fs::remove_dir_all(directory).unwrap();
     }
-}
-fn cached_first(cache: &cache_entry::sqlite::SqliteCache, key: &str) -> Option<String> {
-    let entries = cache.get(key).ok().flatten()?;
-    let text = String::from_utf8(entries.into_iter().find(|(kind, _)| kind == "first")?.1).ok()?;
-    (!text.is_empty()).then(|| text.replacen("compile=fresh\n", "compile=cache\n", 1))
 }
 fn cached_bins(
     cache: &cache_entry::sqlite::SqliteCache,
@@ -950,44 +950,43 @@ mod region_size_tests {
     use super::*;
     use std::fs;
 
-    fn scratch_root(name: &str) -> std::path::PathBuf {
-        let dir = std::env::temp_dir().join(format!("diff-region-size-test-{name}"));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(dir.join("out/gs1-en/asm")).unwrap();
+    fn scratch_root() -> tempfile::TempDir {
+        let dir = tempfile::tempdir().unwrap();
+        fs::create_dir_all(dir.path().join("out/gs1-en/asm")).unwrap();
         dir
     }
 
     #[test]
     fn shared_object_reads_translation_unit_assembly() {
-        let dir = scratch_root("shared-gas");
-        let object = dir.join("first.o");
-        fs::write(dir.join("first.s"), b"translation-unit").unwrap();
-        fs::write(dir.join("later.s"), b"stale-member").unwrap();
+        let dir = scratch_root();
+        let root = dir.path();
+        let object = root.join("first.o");
+        fs::write(root.join("first.s"), b"translation-unit").unwrap();
+        fs::write(root.join("later.s"), b"stale-member").unwrap();
         assert_eq!(
-            read_candidate_gas(&dir, "later", object.to_str()).unwrap(),
+            read_candidate_gas(root, "later", object.to_str()).unwrap(),
             b"translation-unit"
         );
-        fs::remove_dir_all(dir).unwrap();
     }
 
     #[test]
     fn owner_size_requires_a_matching_generated_manifest_region() {
-        let root = scratch_root("lookup");
-        assert_eq!(region_size(&root, 0x080a_b5e4), None);
+        let directory = scratch_root();
+        let root = directory.path();
+        assert_eq!(region_size(root, 0x080a_b5e4), None);
         fs::write(
             root.join("out/gs1-en/asm/manifest.json"),
             r#"{"regions":[{"address":134986508,"size":6332}]}"#,
         )
         .unwrap();
-        assert_eq!(region_size(&root, 0x080a_b5e4), None);
+        assert_eq!(region_size(root, 0x080a_b5e4), None);
         fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
         fs::write(
             root.join("out/gs1-en/claimed/manifest.json"),
             r#"{"regions":[{"address":134942628,"size":296}]}"#,
         )
         .unwrap();
-        assert_eq!(region_size(&root, 0x080b_0fa4), Some(296));
-        let _ = fs::remove_dir_all(&root);
+        assert_eq!(region_size(root, 0x080b_0fa4), Some(296));
     }
 }
 
@@ -996,23 +995,23 @@ mod source_identity_tests {
     use super::*;
     use std::fs;
 
-    fn scratch_root(name: &str) -> PathBuf {
-        let root = std::env::temp_dir().join(format!("diff-source-identity-{name}"));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(root.join("games/gs1")).unwrap();
+    fn scratch_root() -> tempfile::TempDir {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("games/gs1")).unwrap();
         root
     }
 
     #[test]
     fn source_identity_uses_manifest_and_stable_routes() {
-        let root = scratch_root("routes");
+        let directory = scratch_root();
+        let root = directory.path();
         fs::write(
             root.join("games/gs1/source-paths.json"),
             r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
         )
         .unwrap();
         let identity = SourceIdentity::resolve(
-            &root,
+            root,
             "games/gs1/src/battle/inventory/draw_paged_item_list.c",
             CompilerTarget::Gs1,
             None,
@@ -1023,11 +1022,11 @@ mod source_identity_tests {
         assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080b0fa4.c"));
         let source = "games/gs1/recon/en/main/080ab5e4.c";
         let identity =
-            SourceIdentity::resolve(&root, source, CompilerTarget::Gs1, None, None).unwrap();
+            SourceIdentity::resolve(root, source, CompilerTarget::Gs1, None, None).unwrap();
         assert_eq!(identity.owner, SourceOwner::Main(0x080ab5e4));
         assert_eq!(identity.routing, PathBuf::from(source));
         let identity = SourceIdentity::resolve(
-            &root,
+            root,
             "candidate.c",
             CompilerTarget::Gs1,
             Some(0x080a8904),
@@ -1035,14 +1034,14 @@ mod source_identity_tests {
         )
         .unwrap();
         assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080a8904.c"));
-        let _ = fs::remove_dir_all(&root);
     }
     #[test]
     fn register_binding_changes_invalidate_candidate_source_identity() {
-        let root = scratch_root("bindings");
+        let directory = scratch_root();
+        let root = directory.path();
         fs::write(root.join("candidate.c"), "void Scene_Run(void) {}\n").unwrap();
         let signature = |route| {
-            source_input_signature(&root, "candidate.c", route, CompilerTarget::Gs1, &[]).unwrap()
+            source_input_signature(root, "candidate.c", route, CompilerTarget::Gs1, &[]).unwrap()
         };
         let register = root.join("games/gs1/source-paths.json");
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Run"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
@@ -1055,6 +1054,5 @@ mod source_identity_tests {
             overlay,
             signature("games/gs1/src/resource_380_c_02000100.c")
         );
-        fs::remove_dir_all(root).unwrap();
     }
 }

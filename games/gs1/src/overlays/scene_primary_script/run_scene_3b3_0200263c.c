@@ -5,6 +5,7 @@
 extern u8 Data_03001ebc[];
 void Func_020050be();
 s32 Func_0200513a();
+s32 Func_0200513a_a();
 s32 Func_02005160();
 void Func_020051aa();
 
@@ -41,7 +42,7 @@ void FieldScene_RunScene3b3_0200263c(s32 a0)
     if (Value1(Func_0200513a, (a0 + 0x1f5)) != 0) {
         Func_020050be(rec7, 5);
         *(s32 *)(rec7 + 108) = 0x200a0b9;
-        Call6(Func_0200513a, 20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+        Call6(Func_0200513a_a, 20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
         Func_020051aa(a0, 0x200ad64);
     }
 }

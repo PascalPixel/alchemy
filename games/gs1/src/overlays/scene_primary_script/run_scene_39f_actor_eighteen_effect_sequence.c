@@ -8,7 +8,7 @@ extern void Func_02002f3c(s32, s32);
 extern void Func_02002e38(s32, s32, s32, s32);
 extern void Func_02004e4a(s32);
 extern void Func_02002bb4(s32, s32, s32, s32, s32, s32, s32, s32);
-extern void Func_02004f28(s32, s32);
+extern void Func_02004f28_a(s32, s32);
 extern void Func_02004efa(s32, s32, s32);
 extern void Func_02004e80(s32);
 extern void Func_02004ef0(s32, s32);
@@ -48,7 +48,7 @@ void FieldScene_RunActorEighteenEffectSequence(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004f28(18, 1);
+    Func_02004f28_a(18, 1);
     Func_02004efa(18, 0, 0);
     Func_02004e80(20);
     Func_02004ef0(18, 2);

@@ -4,6 +4,22 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "battle-tile-palette-animation",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/battle-tile-palette-animation.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080cbc0c",
+          "extent": 2508,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "retained-overlay-37c-state-update",
       "game": "gs1",
       "source": "games/gs1/recon/en/overlays/resource_37c_c_02000054.c",

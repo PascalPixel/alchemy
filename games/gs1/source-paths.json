@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "main:080cbc0c": {
+      "name": "BattleEffect_RunTileAndPaletteAnimation"
+    },
     "main:0808f1c0": {
       "name": "BattleEffect_StartEffectObject22",
       "source": "battle/effects/objects/start_effect_22.c"

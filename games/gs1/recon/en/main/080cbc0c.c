@@ -1,11 +1,14 @@
 #include "shared-aggregates.h"
 
-#define BattleEffect_RunScreenShatter Func_080cbc0c
+#define BattleEffect_RunTileAndPaletteAnimation Func_080cbc0c
 
 typedef void (*DrawRectangleFn)(
     void *destination, const void *source, s32 x, s32 y,
     s32 width, s32 height);
 typedef void (*MemoryTransferFn)();
+typedef void (*CopyWordsFn)(void *dst, const void *src, s32 size);
+typedef void (*FillWordsFn)(void *dst, s32 size, u32 word);
+void Func_080d6888(s32 set, s32 object, s32 group, s32 slot, s32 value);
 
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
@@ -76,7 +79,7 @@ typedef s64 M2C_UNK64;
 
 #endif
 
-void BattleEffect_RunScreenShatter(void *arg0) {
+void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     struct M2cAggregate_absolute_02010000 *sp28;
     struct M2cAggregate_absolute_02010000 *sp24;
     s32 sp20;
@@ -212,7 +215,7 @@ void BattleEffect_RunScreenShatter(void *arg0) {
     M2C_FIELD((void *)0x04000020, s16 *, 6) = 0x100;
     absolute_04000040.field_0000 = 0xF0;
     absolute_04000040.field_0004 = 0x1088;
-    temp_r3_116 = &absolute_04000040.field_0004 - 2;
+    temp_r3_116 = (u8 *)&absolute_04000040.field_0004 - 2;
     M2C_FIELD(temp_r3_116, s16 *, 0) = 0xF0;
     M2C_FIELD(temp_r3_116, s16 *, 4) = 0x1088;
     absolute_04000048.field_0000 = 0x3537;
@@ -243,7 +246,7 @@ loop_4:
     temp_r4_193 = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
     if ((s32) absolute_02002090.field_0000 <= 0x1F) {
-        temp_r3_202 = (absolute_02002090.field_0000 * 0xC) + &absolute_02002090;
+        temp_r3_202 = (absolute_02002090.field_0000 * 0xC) + (u8 *)&absolute_02002090;
         absolute_02002090.field_0000 += 1;
         temp_r3_205 = temp_r3_202 + 4;
         M2C_FIELD(temp_r3_202, s32 *, 4) = 0x7741;
@@ -263,7 +266,7 @@ loop_4:
     routines[1] = (DrawRectangleFn)absolute_03001e50.field_00bc;
     spC = 0;
     var_r4_290 = (u8 *)0x080EE037;
-    var_r1_291 = sp28 + 0x7080;
+    var_r1_291 = (void *)((u8 *)sp28 + 0x7080);
     var_r0_292 = (u8 *)0x080EE016;
     var_r6_295 = 0;
     do {
@@ -276,9 +279,9 @@ loop_4:
         var_r1_291->field_0010 = (u32) ((s32) (temp_r3_300 + 0xFFC40000) >> 2);
         var_r0_292 += 1;
         var_r4_290 += 1;
-        var_r1_291 += 0x1C;
+        var_r1_291 = (void *)((u8 *)var_r1_291 + 0x1C);
     } while (var_r6_295 != 0x21);
-    Func_080072f0(&absolute_02010000, (struct M2cAggregate_absolute_02010000 *)0x06008000, 0x7800, 0x03001388);
+    ((CopyWordsFn)0x03001388)(&absolute_02010000, (void *)0x06008000, 0x7800);
     transfer = (MemoryTransferFn)0x03000164;
     transfer(&absolute_02010000, 0x7800, 0x01010101);
     temp_r9_36->field_0010 = 1;
@@ -288,7 +291,7 @@ loop_4:
     temp_r4_345 = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0;
     if ((s32) absolute_02002090.field_0000 <= 0x1F) {
-        temp_r3_354 = (absolute_02002090.field_0000 * 0xC) + &absolute_02002090;
+        temp_r3_354 = (absolute_02002090.field_0000 * 0xC) + (u8 *)&absolute_02002090;
         absolute_02002090.field_0000 += 1;
         temp_r3_357 = temp_r3_354 + 4;
         M2C_FIELD(temp_r3_354, s32 *, 4) = 0x1F81;
@@ -308,7 +311,7 @@ loop_14:
         Func_080f9010(0xD4);
     }
     if (sp20 == 0x1C) {
-        Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), -1, 3, 0);
+        Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), -1, 3, -1, 0);
     }
     if (sp20 == 0x20) {
         Func_080f9010(0x95);
@@ -333,7 +336,7 @@ loop_14:
             temp_r3_519 = temp_r3_514 << 0x10;
             temp_sl_521 = temp_r3_519;
             temp_r4_522 = temp_r3_519 >> 0x15;
-            var_r9_457 += 2;
+            var_r9_457 += 1;
             temp_r4_526 = temp_r4_522 & 0x1F;
             temp_r3_529 = (temp_sl_521 >> 0x1A) & 0x1F;
             if (var_r5_509 < temp_r1_518) {
@@ -353,11 +356,11 @@ loop_14:
             }
             var_r6_454 += 1;
             *var_lr_453 = (var_r0_516 << 0xA) | (var_r2_515 << 5) | var_r5_509;
-            var_lr_453 += 2;
+            var_lr_453 += 1;
         } while (var_r6_454 != 0x80);
     }
     if (sp20 == 4) {
-        Func_080072f0((struct M2cAggregate_absolute_02010000 *)0x06008000, (struct M2cAggregate_absolute_02010000 *)0x7800, 0x02020202, 0x03000168);
+        ((FillWordsFn)0x03000168)((void *)0x06008000, 0x7800, 0x02020202);
     }
     if (sp20 > 3) {
 
@@ -524,18 +527,18 @@ loop_48:
                 goto loop_46;
             }
         }
-        Func_080072f0((struct M2cAggregate_absolute_02010000 *)0x06008000, &absolute_02010000, 0x7800, 0x03001388);
+        ((CopyWordsFn)0x03001388)((void *)0x06008000, &absolute_02010000, 0x7800);
     }
     if (sp20 <= 0x32) {
         var_r6_953 = 0;
-        var_r5_954 = sp28 + 0x7080;
+        var_r5_954 = (void *)((u8 *)sp28 + 0x7080);
         do {
             routines[0](sp24, &sp28->unknown_0000[*(u16 *)(0x080EDFD2 + (var_r6_953 * 2))], M2C_FIELD(var_r5_954, s16 *, 2), M2C_FIELD(var_r5_954, s16 *, 6), (s32) *(u8 *)(0x080EDF90 + var_r6_953), (s32) *(u8 *)(0x080EDFB1 + var_r6_953));
             if (sp20 > 3) {
                 Func_080e3908(var_r5_954, 0x40, 0x4000);
             }
             var_r6_953 += 1;
-            var_r5_954 += 0x1C;
+            var_r5_954 = (void *)((u8 *)var_r5_954 + 0x1C);
         } while (var_r6_953 != 0x21);
     }
     temp_r1_989 = sp20 - 8;
@@ -557,11 +560,11 @@ loop_48:
             }
             var_r6_1013 += 1;
             *var_r0_1012 = (var_r1_1017 << 0xA) | (((s32) (var_r1_1017 + ((u32) var_r1_1017 >> 0x1F)) >> 1) << 5) | var_r1_1017;
-            var_r0_1012 += 2;
+            var_r0_1012 += 1;
         } while (var_r6_1013 != 0x40);
         absolute_04000050.field_0000 = 0x3F44;
         var_r6_1041 = 0;
-        var_r5_1072 = sp28 + 0x7080;
+        var_r5_1072 = (void *)((u8 *)sp28 + 0x7080);
         do {
             M2C_FIELD(var_r5_1072, s32 *, 0) = (s32) (((Func_08004458() & 0x1F) + 0x20) << 0x10);
             var_r5_1072->field_0004 = ((Func_08004458() & 0x1F) + 0x50) << 0x10;
@@ -569,14 +572,14 @@ loop_48:
             var_r5_1072->field_000c = ((0x1FF & Func_08004458()) + 0xFFFFFF00) << 0xC;
             var_r5_1072->field_0010 = 0;
             var_r5_1072->field_0018 = 0;
-            var_r5_1072 += 0x1C;
+            var_r5_1072 = (void *)((u8 *)var_r5_1072 + 0x1C);
         } while (var_r6_1041 != 0x20);
         M2C_FIELD(sp28, s32 *, 0x7780) = 2;
         M2C_FIELD(sp28, s32 *, 0x7784) = 0x32;
     }
     if (sp20 > 0x34) {
         var_r6_1118 = 0;
-        var_r5_1119 = sp28 + 0x7080;
+        var_r5_1119 = (void *)((u8 *)sp28 + 0x7080);
         do {
             var_r3_1121 = var_r6_1118;
             if (var_r6_1118 < 0) {
@@ -593,13 +596,13 @@ loop_48:
                     if (var_r1_1139 > 5) {
                         var_r1_1139 = 5;
                     }
-                    routines[1](sp24, sp28 + (var_r1_1139 << 0xB), M2C_FIELD(var_r5_1119, s16 *, 2) - 0x10, M2C_FIELD(var_r5_1119, s16 *, 6) - 0x20, 0x20, 0x40);
+                    routines[1](sp24, (u8 *)sp28 + (var_r1_1139 << 0xB), M2C_FIELD(var_r5_1119, s16 *, 2) - 0x10, M2C_FIELD(var_r5_1119, s16 *, 6) - 0x20, 0x20, 0x40);
                     Func_080e3908(var_r5_1119, 0x3C, 0xFFFFF000);
                     var_r5_1119->field_0018 += 1;
                 }
             }
             var_r6_1118 += 1;
-            var_r5_1119 += 0x1C;
+            var_r5_1119 = (void *)((u8 *)var_r5_1119 + 0x1C);
         } while (var_r6_1118 != 0x20);
     }
     Func_080cd52c();
@@ -613,7 +616,7 @@ loop_48:
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
     Func_08004278(0x080CD261);
-    Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), -1, 1, 0);
+    Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), -1, 1, -1, 0);
     absolute_03001ad0.field_0004 = (u16) M2C_FIELD(sp28, s32 *, 0x77A0);
     absolute_03001ad0.field_0006 = 0x20;
     Func_080b5038(2, M2C_FIELD(sp14, u16 *, 0x648), 0);
@@ -621,7 +624,7 @@ loop_48:
     temp_r4_1228 = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0;
     if ((s32) absolute_02002090.field_0000 <= 0x1F) {
-        temp_r3_1237 = (absolute_02002090.field_0000 * 0xC) + &absolute_02002090;
+        temp_r3_1237 = (absolute_02002090.field_0000 * 0xC) + (u8 *)&absolute_02002090;
         absolute_02002090.field_0000 += 1;
         temp_r3_1240 = temp_r3_1237 + 4;
         M2C_FIELD(temp_r3_1237, s32 *, 4) = 0x7541;

@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "main:080dc968": {
+      "name": "BattleEffect_RunStagedParticles"
+    },
+    "main:080d2464": {
+      "name": "BattleEffect_RunPaletteParticles"
+    },
     "main:080cbc0c": {
       "name": "BattleEffect_RunTileAndPaletteAnimation"
     },

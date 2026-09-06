@@ -18338,7 +18338,7 @@
       ]
     },
     {
-      "id": "unnamed-leaf-run-139",
+      "id": "scene-actor-steps-3c0",
       "game": "gs1",
       "source": "games/gs1/src/overlays/actor_presentation/run_actor_steps_3c0.c",
       "compiler_route": "canonical-gcc296",
@@ -18370,18 +18370,7 @@
           "address": "0x02000588",
           "extent": 12,
           "state": "exact-c"
-        }
-      ]
-    },
-    {
-      "id": "unnamed-leaf-run-140",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/actor_presentation/run_late_actor_steps_3c0.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3c0",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
+        },
         {
           "address": "0x020007fc",
           "extent": 12,

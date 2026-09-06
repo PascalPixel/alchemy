@@ -7488,7 +7488,7 @@
     },
     "resource_3c0:02000820": {
       "name": "FieldScene_RunLateActor11Step",
-      "source": "overlays/actor_presentation/run_late_actor_steps_3c0.c"
+      "source": "overlays/actor_presentation/run_actor_steps_3c0.c"
     },
     "resource_3ce:0200007c": {
       "name": "CommandTable_RunDirectionalInput",
@@ -8814,7 +8814,7 @@
     },
     "resource_3c0:02000808": {
       "name": "FieldScene_RunLateActor9Step",
-      "source": "overlays/actor_presentation/run_late_actor_steps_3c0.c"
+      "source": "overlays/actor_presentation/run_actor_steps_3c0.c"
     },
     "resource_3a4:020004cc": {
       "name": "SceneState_ApplyRectAndSetActor9Byte55",
@@ -9771,7 +9771,7 @@
     },
     "resource_3c0:020007fc": {
       "name": "FieldScene_RunLateActor8Step",
-      "source": "overlays/actor_presentation/run_late_actor_steps_3c0.c"
+      "source": "overlays/actor_presentation/run_actor_steps_3c0.c"
     },
     "resource_3ac:02000044": {
       "name": "SceneData_GetTable865c",
@@ -9989,7 +9989,7 @@
     },
     "resource_3c0:0200082c": {
       "name": "FieldScene_RunLateActor12Step",
-      "source": "overlays/actor_presentation/run_late_actor_steps_3c0.c"
+      "source": "overlays/actor_presentation/run_actor_steps_3c0.c"
     },
     "resource_3a6:02000048": {
       "name": "OverlayObject_CreateConfigured",
@@ -13370,7 +13370,7 @@
     },
     "resource_3c0:02000814": {
       "name": "FieldScene_RunLateActor10Step",
-      "source": "overlays/actor_presentation/run_late_actor_steps_3c0.c"
+      "source": "overlays/actor_presentation/run_actor_steps_3c0.c"
     },
     "resource_3bd:02000f94": {
       "name": "SceneEffect_UpdateStateMachine",

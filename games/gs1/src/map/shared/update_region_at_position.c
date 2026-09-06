@@ -1,30 +1,3 @@
-/*
- * VENEER AUDIT NOTE (2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
- *
- * This file is byte-exact, so nothing below is rewritten.  The note records
- * what the call sites actually are, so the next reader is not misled.
- *
- * 0x080072e4 begins the GCC `__call_via_rN` veneer bank: fifteen four-byte
- * `bx rN; nop` entries in register order r0..lr, ending at 0x08007320.  A
- * `bl` into that range is an INDIRECT CALL through the named register, not a
- * call to a function at the branch target.  The `Func_080072f*` prototype
- * this file declares is therefore a phantom, and the register load that
- * precedes each site -- which reads like dead code -- is the callee load.
- *
- * Why the file is still byte-identical while being wrong: a direct call to a
- * declared function at 0x080072f0 emits exactly the same `bl` the real
- * indirect call emits.  Converting to a function-pointer call would require
- * the compiler to choose the same register and therefore the same veneer
- * entry, which is a byte-exact source question and is deliberately NOT attempted
- * here.
- *
- * Sites in this owner, resolved with tools/veneer_resolve.ts:
- *
- *   0x0808bdfa  __call_via_r0  ->  loaded from memory [r3, #44]
- *     CONTEXT-DEPENDENT: a function-pointer table entry, struct field or
- *     stack slot. Must be read with the surrounding code; must NOT be
- *     pattern-matched against other files.
- */
 #include "types.h"
 #include "map.h"
 
@@ -54,7 +27,6 @@ struct RuntimeServices_0808bde0 {
 extern struct RuntimeServices_0808bde0 Data_02008000;
 extern struct Runtime_0808bde0 *Data_03001ebc;
 
-struct Region_0808bde0 *Func_080072e4(RegionProvider_0808bde0 callback);
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
 void BattleRuntime_InitializeRenderObject(void);
@@ -80,7 +52,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
     x = position_x;
     y = position_y;
     z = position_z;
-    region = Func_080072e4(Data_02008000.region_provider);
+    region = Data_02008000.region_provider();
     if (region != 0 &&
         (runtime = Data_03001ebc, min_x = region->min_x, min_x != -1)) {
 loop:

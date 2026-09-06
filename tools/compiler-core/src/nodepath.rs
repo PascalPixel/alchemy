@@ -1,76 +1,32 @@
-//! Exact POSIX `node:path` basename/extname semantics for compiler argv.
-//! Rust path methods differ on trailing slashes/dots. Byte scanning matches
-//! Node's UTF-16 scan because only ASCII `/` and `.` are tested. Do not replace
-//! this with routing's simplified source-stem logic: caller paths reach its edge cases.
+//! POSIX `node:path` filename semantics retained by the compiler argv contract.
 
-/// `path.basename(path)` for POSIX, with no `ext` argument.
 pub fn basename(path: &str) -> &str {
-    let bytes = path.as_bytes();
-    let mut start = 0usize;
-    let mut end: Option<usize> = None;
-    let mut matched_slash = true;
-    for index in (0..bytes.len()).rev() {
-        if bytes[index] == b'/' {
-            // Trailing slashes are skipped; the first slash after real
-            // characters ends the scan.
-            if !matched_slash {
-                start = index + 1;
-                break;
-            }
-        } else if end.is_none() {
-            matched_slash = false;
-            end = Some(index + 1);
-        }
-    }
-    match end {
-        // All slashes, or empty: Node returns the empty string.
-        None => "",
-        Some(end) => &path[start..end],
+    path.trim_end_matches('/').rsplit('/').next().unwrap_or("")
+}
+
+pub fn extname(path: &str) -> &str {
+    let name = basename(path);
+    match name.rfind('.') {
+        Some(index) if index > 0 && name != ".." => &name[index..],
+        _ => "",
     }
 }
 
-/// `path.extname(path)` for POSIX.
-///
-/// `pre_dot_state` preserves Node's distinction between dot-only basenames and
-/// extensions such as `a..` or `.c`.
-pub fn extname(path: &str) -> &str {
-    let bytes = path.as_bytes();
-    let mut start_dot: Option<usize> = None;
-    let mut start_part = 0usize;
-    let mut end: Option<usize> = None;
-    let mut matched_slash = true;
-    // 0 = nothing seen yet, 1 = only dots seen, -1 = a non-dot was seen.
-    let mut pre_dot_state = 0i8;
-    for index in (0..bytes.len()).rev() {
-        let code = bytes[index];
-        if code == b'/' {
-            if !matched_slash {
-                start_part = index + 1;
-                break;
-            }
-            continue;
-        }
-        if end.is_none() {
-            matched_slash = false;
-            end = Some(index + 1);
-        }
-        if code == b'.' {
-            if start_dot.is_none() {
-                start_dot = Some(index);
-            } else if pre_dot_state != 1 {
-                pre_dot_state = 1;
-            }
-        } else if start_dot.is_some() {
-            pre_dot_state = -1;
-        }
+#[test]
+fn posix_names_preserve_dotfiles_unicode_and_trailing_slashes() {
+    for (path, base, ext) in [
+        ("", "", ""),
+        ("///", "", ""),
+        ("a/.", ".", ""),
+        ("a/..//", "..", ""),
+        ("a/...", "...", "."),
+        ("a/.c", ".c", ""),
+        ("a/..c", "..c", ".c"),
+        ("a/.c.s/", ".c.s", ".s"),
+        ("a/b..", "b..", "."),
+        ("日本/場面.c//", "場面.c", ".c"),
+    ] {
+        assert_eq!((basename(path), extname(path)), (base, ext));
     }
-    let (Some(start_dot), Some(end)) = (start_dot, end) else {
-        return "";
-    };
-    if pre_dot_state == 0
-        || (pre_dot_state == 1 && start_dot == end - 1 && start_dot == start_part + 1)
-    {
-        return "";
-    }
-    &path[start_dot..end]
+    assert_eq!(crate::plan::inferred_preprocessed_output("a.c/"), "a..i");
 }

@@ -4,7 +4,7 @@
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
 
-use crate::owners::{self, modules, parse_owner, score_extending, tool_command};
+use crate::owners::{self, modules, parse_owner, score, tool_command};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -117,10 +117,7 @@ fn run_tool(root: &Path, tool: &str, args: &[&str]) -> Result<String, String> {
 pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     let (overlay, entry) = parse_owner(request.owner)?;
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
-    let span = match request.span {
-        Some(span) => span,
-        None => owners::span_for(root, &overlay, entry)?,
-    };
+    let span = owners::span_for(root, &overlay, entry, request.span)?;
     let end = entry + span;
     // A retained region that lies wholly inside the span and has no source
     // is this function's own bytes, a literal pool or a tail the register
@@ -181,11 +178,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
     }
     std::fs::write(&destination, &unit).map_err(|e| format!("{}: {e}", destination.display()))?;
-    let result = score_extending(root, &destination, request.owner, span)?;
-    // A pool past the registered end extends the span; the gap it fills was
-    // checked to be unregistered when the extended score was taken.
-    let span = result.extended.unwrap_or(span);
-    let end = entry + span;
+    let result = score(root, &destination, request.owner, span)?;
     let mut report = vec![format!(
         "candidate={} reference={} differing_halfwords={} span={span}",
         result.candidate, result.reference, result.differing

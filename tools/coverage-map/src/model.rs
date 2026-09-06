@@ -94,6 +94,8 @@ pub struct Tile {
     pub group: Option<String>,
     pub subgroup: Option<String>,
     pub address: Option<i64>,
+    pub source: Option<String>,
+    pub children: Vec<Tile>,
 }
 #[derive(Clone, Debug, Default)]
 pub struct Area {

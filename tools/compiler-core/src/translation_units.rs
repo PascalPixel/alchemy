@@ -19,20 +19,78 @@ struct ReviewedRegion {
 pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
     let path = root.join("games/gs1/semantic/regions.json");
     let document: ReviewedRegions = crate::build_io::read_json(path)?;
-    document
-        .manual_regions
-        .into_iter()
-        .map(|region| {
-            let owner = SourceOwner::parse(&format!(
-                "{}:{}",
-                region.overlay,
-                region.entry.trim_start_matches("0x")
-            ))?;
-            (region.span_bytes > 0)
-                .then_some((owner, region.span_bytes))
-                .ok_or_else(|| "overlay region has no positive span_bytes".into())
-        })
-        .collect()
+    let mut spans = BTreeMap::new();
+    for region in document.manual_regions {
+        let owner = SourceOwner::parse(&format!(
+            "{}:{}",
+            region.overlay,
+            region.entry.trim_start_matches("0x")
+        ))?;
+        if region.span_bytes == 0 {
+            return Err(format!(
+                "{} has no positive reviewed span_bytes",
+                owner.id()
+            ));
+        }
+        if spans.insert(owner, region.span_bytes).is_some() {
+            return Err(format!(
+                "{} has duplicate reviewed owner entries",
+                owner.id()
+            ));
+        }
+    }
+    Ok(spans)
+}
+
+/// A requested span is a constraint, never evidence of a function boundary.
+/// `installed_span` must come from a source-backed production C placeholder.
+pub fn resolve_overlay_span(
+    reviewed: &BTreeMap<SourceOwner, usize>,
+    owner: SourceOwner,
+    installed_span: Option<usize>,
+    requested_span: Option<usize>,
+) -> Result<usize, String> {
+    let overlay = owner.overlay_id().ok_or("expected an overlay owner")?;
+    let reviewed_span = reviewed.get(&owner).copied();
+    let span = installed_span.or(reviewed_span).ok_or_else(|| {
+        format!(
+            "{} has no reviewed complete owner boundary; --span cannot establish one",
+            owner.id()
+        )
+    })?;
+    let end = u32::try_from(span)
+        .ok()
+        .filter(|span| *span > 0)
+        .and_then(|span| owner.address().checked_add(span))
+        .ok_or_else(|| format!("{} has an invalid owner extent", owner.id()))?;
+    if requested_span.is_some_and(|requested| requested != span) {
+        return Err(format!(
+            "{}: requested span {} differs from complete {} extent {span}",
+            owner.id(),
+            requested_span.unwrap(),
+            if installed_span.is_some() {
+                "installed"
+            } else {
+                "reviewed"
+            }
+        ));
+    }
+    if let Some((other, _)) = reviewed.iter().find(|(other, extent)| {
+        **other != owner
+            && other.overlay_id().as_deref() == Some(&overlay)
+            && other.address() < end
+            && u64::from(owner.address()) < u64::from(other.address()) + **extent as u64
+    }) {
+        return Err(format!(
+            "{} overlaps reviewed owner {}",
+            owner.id(),
+            other.id()
+        ));
+    }
+    if installed_span.is_some() && reviewed_span.is_some_and(|reviewed| reviewed != span) {
+        eprintln!("{}: installed extent {span} differs from reviewed extent {}; preserving existing C extent pending boundary audit", owner.id(), reviewed_span.unwrap());
+    }
+    Ok(span)
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
@@ -408,8 +466,8 @@ fn validate_production_state(
             |set| !set.contains(&member.address),
         );
         if retained_overlay_candidate {
-            let complete = reviewed.get(&owner) == Some(&member.extent);
-            if mapped.is_some() || !retained || !complete {
+            resolve_overlay_span(&reviewed, owner, None, Some(member.extent))?;
+            if mapped.is_some() || !retained {
                 return Err(format!(
                     "{}: {} is not a complete unmapped reviewed retained overlay owner",
                     unit.id,
@@ -503,6 +561,63 @@ fn hex64<'de, D: Deserializer<'de>>(deserializer: D) -> Result<u64, D::Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reviewed_owner_duplicates_never_select_the_last_extent() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("games/gs1/semantic/regions.json");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        for sizes in [[4, 4], [4, 8]] {
+            let rows = sizes.map(|span| {
+                serde_json::json!({
+                    "overlay": "resource_371", "entry": "0x02000100", "span_bytes": span
+                })
+            });
+            std::fs::write(
+                &path,
+                serde_json::json!({"manual_regions": rows}).to_string(),
+            )
+            .unwrap();
+            assert!(reviewed_overlay_spans(root.path())
+                .unwrap_err()
+                .contains("duplicate"));
+        }
+    }
+    #[test]
+    fn supplied_overlay_spans_cannot_establish_or_resize_owners() {
+        let owner = SourceOwner::parse("resource_371:02000100").unwrap();
+        let other = SourceOwner::parse("resource_371:02000120").unwrap();
+        let reviewed = BTreeMap::from([(owner, 0x20), (other, 0x10)]);
+        let resolve = |entry, installed, requested| {
+            resolve_overlay_span(&reviewed, entry, installed, requested)
+        };
+        assert_eq!(resolve(owner, None, None).unwrap(), 0x20);
+        assert_eq!(resolve(owner, None, Some(0x20)).unwrap(), 0x20);
+        for span in [0, 2, 0x1e, 0x22, 0x30, usize::MAX] {
+            assert!(resolve(owner, None, Some(span)).is_err());
+        }
+        for id in [
+            "resource_371:02000110",
+            "resource_372:02000100",
+            "main:08000100",
+        ] {
+            assert!(resolve(SourceOwner::parse(id).unwrap(), None, Some(0x10)).is_err());
+        }
+        // Existing installed alignment extents remain explicit, not silent review rewrites.
+        assert_eq!(resolve(owner, Some(0x1e), Some(0x1e)).unwrap(), 0x1e);
+        assert!(resolve(owner, Some(0x1e), Some(0x20)).is_err());
+        assert!(resolve(owner, Some(0x22), None)
+            .unwrap_err()
+            .contains("overlaps"));
+        let interior = SourceOwner::parse("resource_371:02000110").unwrap();
+        assert!(resolve(interior, Some(4), None)
+            .unwrap_err()
+            .contains("overlaps"));
+        let leaf = SourceOwner::parse("resource_371:02000200").unwrap();
+        assert_eq!(resolve(leaf, Some(8), Some(8)).unwrap(), 8);
+        assert!(resolve(leaf, None, Some(8)).is_err());
+        assert!(resolve(leaf, Some(0), None).is_err());
+        assert!(resolve(leaf, Some(usize::MAX), None).is_err());
+    }
     #[test]
     fn loads_typed_main_and_overlay_units() {
         let manifest = TranslationUnits::load(crate::routing::root()).unwrap();

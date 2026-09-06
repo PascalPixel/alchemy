@@ -4,6 +4,1582 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "overlay-3c5-following-event-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/event_script/run_actor_event_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Func_02004b18": {
+          "address": "0x0200af00",
+          "kind": "thumb"
+        },
+        "Func_02004b18_a": {
+          "address": "0x0200aeb0",
+          "kind": "thumb"
+        },
+        "Func_02004b4a": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_02004b4a_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004b9c": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_02004b9c_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004bee": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_02004bee_a": {
+          "address": "0x0200ae58",
+          "kind": "thumb"
+        },
+        "Func_02004be2": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_02004be2_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004dba": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_02004dba_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004e00": {
+          "address": "0x0200af00",
+          "kind": "thumb"
+        },
+        "Func_02004e00_a": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_02004e2a": {
+          "address": "0x0200af00",
+          "kind": "thumb"
+        },
+        "Func_02004e2a_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004f1c": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_02004f1c_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004ed0": {
+          "address": "0x0200ae48",
+          "kind": "thumb"
+        },
+        "Func_02004ed0_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004f90": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_02004f90_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02005034": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_02005034_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_0200513e": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_0200513e_a": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_020050fc": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_020050fc_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02001b10",
+          "extent": 2396,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "overlay-3c5-event-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/event_script/run_branching_actor_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {
+        "Func_020041b4": {
+          "address": "0x0200af68",
+          "kind": "thumb"
+        },
+        "Func_020041b4_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_0200421e": {
+          "address": "0x0200af28",
+          "kind": "thumb"
+        },
+        "Func_0200421e_a": {
+          "address": "0x0200aea8",
+          "kind": "thumb"
+        },
+        "Func_020041f4": {
+          "address": "0x0200aeb0",
+          "kind": "thumb"
+        },
+        "Func_020041f4_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_020042ae": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_020042ae_a": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_0200427c": {
+          "address": "0x0200aeb0",
+          "kind": "thumb"
+        },
+        "Func_0200427c_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_020042c2": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_020042c2_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004364": {
+          "address": "0x0200af00",
+          "kind": "thumb"
+        },
+        "Func_02004364_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_0200438e": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_0200438e_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004416": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_02004416_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_0200459c": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_0200459c_a": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_0200455a": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_0200455a_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_020045ca": {
+          "address": "0x0200aee0",
+          "kind": "thumb"
+        },
+        "Func_020045ca_a": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_0200453a": {
+          "address": "0x0200ae48",
+          "kind": "thumb"
+        },
+        "Func_0200453a_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004712": {
+          "address": "0x0200af80",
+          "kind": "thumb"
+        },
+        "Func_02004712_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004608": {
+          "address": "0x0200ae58",
+          "kind": "thumb"
+        },
+        "Func_02004608_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_0200467e": {
+          "address": "0x0200ae48",
+          "kind": "thumb"
+        },
+        "Func_0200467e_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_020046e0": {
+          "address": "0x0200ae98",
+          "kind": "thumb"
+        },
+        "Func_020046e0_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_02004792": {
+          "address": "0x0200aee8",
+          "kind": "thumb"
+        },
+        "Func_02004792_a": {
+          "address": "0x0200ae90",
+          "kind": "thumb"
+        },
+        "Func_0200480c": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_0200480c_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        },
+        "Func_020048a8": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "Func_020048a8_a": {
+          "address": "0x0200ae58",
+          "kind": "thumb"
+        },
+        "Func_02004876": {
+          "address": "0x0200ae70",
+          "kind": "thumb"
+        },
+        "Func_02004876_a": {
+          "address": "0x0200ae30",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02001238",
+          "extent": 2264,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-383-main-sequence",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_383_c_02000de4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Func_02005bfc": {
+          "address": "0x0200cdb4",
+          "kind": "thumb"
+        },
+        "Func_02005bfc_a": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Func_02005ce6": {
+          "address": "0x0200cdfc",
+          "kind": "thumb"
+        },
+        "Func_02005ce6_a": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Func_02005d1e": {
+          "address": "0x0200cdfc",
+          "kind": "thumb"
+        },
+        "Func_02005d1e_a": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Func_02005d86": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "Func_02005d86_a": {
+          "address": "0x0200ce1c",
+          "kind": "thumb"
+        },
+        "Func_02005f3e": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "Func_02005f3e_a": {
+          "address": "0x0200ce24",
+          "kind": "thumb"
+        },
+        "Func_02005f60": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "Func_02005f60_a": {
+          "address": "0x0200ce24",
+          "kind": "thumb"
+        },
+        "Func_02005e66": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Func_02005e66_a": {
+          "address": "0x0200ccf4",
+          "kind": "thumb"
+        },
+        "Func_0200583c": {
+          "address": "0x0200c684",
+          "kind": "thumb"
+        },
+        "Func_0200583c_a": {
+          "address": "0x0200c63c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000de4",
+          "extent": 1380,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "overlay-375-actor-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_actor_position_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_375",
+      "absolute_symbols": {
+        "Func_02001cc0_a": {
+          "address": "0x02009b2c",
+          "kind": "thumb"
+        },
+        "Func_02001cc0_b": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02001cd6_a": {
+          "address": "0x02009b1c",
+          "kind": "thumb"
+        },
+        "Func_02001cd6_b": {
+          "address": "0x02009ae4",
+          "kind": "thumb"
+        },
+        "Func_02001ce6_a": {
+          "address": "0x02009acc",
+          "kind": "thumb"
+        },
+        "Func_02001ce6_b": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02001db8_a": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02001db8_b": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Func_02001d88_a": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Func_02001d88_b": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02001dfa_a": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02001dfa_b": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Func_02001f22_a": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Func_02001f22_b": {
+          "address": "0x02009b34",
+          "kind": "thumb"
+        },
+        "Func_02001f44_a": {
+          "address": "0x02009b2c",
+          "kind": "thumb"
+        },
+        "Func_02001f44_b": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02001f9e_a": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02001f9e_b": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Func_02001fcc_a": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Func_02001fcc_b": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Func_020020a6_a": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Func_020020a6_b": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02002262_a": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Func_02002262_b": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_020022a6_a": {
+          "address": "0x02009a94",
+          "kind": "thumb"
+        },
+        "Func_020022a6_b": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_020023ce_a": {
+          "address": "0x02009ad4",
+          "kind": "thumb"
+        },
+        "Func_020023ce_b": {
+          "address": "0x02009a8c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000170",
+          "extent": 2036,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-380-large-object-sequence",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_380_c_020027f8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Func_0200738e_a": {
+          "address": "0x0200caf4",
+          "kind": "thumb"
+        },
+        "Func_0200738e_b": {
+          "address": "0x0200c9f4",
+          "kind": "thumb"
+        },
+        "Func_020073aa_a": {
+          "address": "0x0200caa4",
+          "kind": "thumb"
+        },
+        "Func_020073aa_b": {
+          "address": "0x0200c9c4",
+          "kind": "thumb"
+        },
+        "Func_02007372_a": {
+          "address": "0x0200ca04",
+          "kind": "thumb"
+        },
+        "Func_02007372_b": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Func_02007420_a": {
+          "address": "0x0200ca0c",
+          "kind": "thumb"
+        },
+        "Func_02007420_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_020074f4_a": {
+          "address": "0x0200c9fc",
+          "kind": "thumb"
+        },
+        "Func_020074f4_b": {
+          "address": "0x0200c9c4",
+          "kind": "thumb"
+        },
+        "Func_020076ee_a": {
+          "address": "0x0200ca1c",
+          "kind": "thumb"
+        },
+        "Func_020076ee_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02007766_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02007766_b": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Func_02007766_c": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_020077a6_a": {
+          "address": "0x0200caa4",
+          "kind": "thumb"
+        },
+        "Func_020077a6_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_0200786a_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_0200786a_b": {
+          "address": "0x0200c248",
+          "kind": "thumb"
+        },
+        "Func_02007834_a": {
+          "address": "0x0200c9c4",
+          "kind": "thumb"
+        },
+        "Func_02007834_b": {
+          "address": "0x0200c248",
+          "kind": "thumb"
+        },
+        "Func_02007938_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02007938_b": {
+          "address": "0x0200c248",
+          "kind": "thumb"
+        },
+        "Func_020071a4": {
+          "address": "0x200c248",
+          "kind": "thumb"
+        },
+        "Func_02007a9e_a": {
+          "address": "0x0200caac",
+          "kind": "thumb"
+        },
+        "Func_02007a9e_b": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_020079c4_a": {
+          "address": "0x0200c9c4",
+          "kind": "thumb"
+        },
+        "Func_020079c4_b": {
+          "address": "0x0200c248",
+          "kind": "thumb"
+        },
+        "Func_02007ab4_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02007ab4_b": {
+          "address": "0x0200c9ec",
+          "kind": "thumb"
+        },
+        "Func_02007cae_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02007cae_b": {
+          "address": "0x0200c9d4",
+          "kind": "thumb"
+        },
+        "Func_02007cba_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02007cba_b": {
+          "address": "0x0200c9d4",
+          "kind": "thumb"
+        },
+        "Func_02007db4_a": {
+          "address": "0x0200caac",
+          "kind": "thumb"
+        },
+        "Func_02007db4_b": {
+          "address": "0x0200ca04",
+          "kind": "thumb"
+        },
+        "Func_02007df2_a": {
+          "address": "0x0200caac",
+          "kind": "thumb"
+        },
+        "Func_02007df2_b": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02007dfe_a": {
+          "address": "0x0200cab4",
+          "kind": "thumb"
+        },
+        "Func_02007dfe_b": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02007e22_a": {
+          "address": "0x0200ca64",
+          "kind": "thumb"
+        },
+        "Func_02007e22_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02007e8c_a": {
+          "address": "0x0200caac",
+          "kind": "thumb"
+        },
+        "Func_02007e8c_b": {
+          "address": "0x0200ca04",
+          "kind": "thumb"
+        },
+        "Func_02007e1e_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02007e1e_b": {
+          "address": "0x0200ca1c",
+          "kind": "thumb"
+        },
+        "Func_02007f4a_a": {
+          "address": "0x0200caac",
+          "kind": "thumb"
+        },
+        "Func_02007f4a_b": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02007f16_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02007f16_b": {
+          "address": "0x0200ca1c",
+          "kind": "thumb"
+        },
+        "Func_02008012_a": {
+          "address": "0x0200ca1c",
+          "kind": "thumb"
+        },
+        "Func_02008012_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02008036_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02008036_b": {
+          "address": "0x0200c248",
+          "kind": "thumb"
+        },
+        "Func_020080b8_a": {
+          "address": "0x0200ca8c",
+          "kind": "thumb"
+        },
+        "Func_020080b8_b": {
+          "address": "0x0200ca5c",
+          "kind": "thumb"
+        },
+        "Func_02008176_a": {
+          "address": "0x0200ca94",
+          "kind": "thumb"
+        },
+        "Func_02008176_b": {
+          "address": "0x0200c864",
+          "kind": "thumb"
+        },
+        "Func_020081e4_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_020081e4_b": {
+          "address": "0x0200ca24",
+          "kind": "thumb"
+        },
+        "Func_02008290_a": {
+          "address": "0x0200ca24",
+          "kind": "thumb"
+        },
+        "Func_02008290_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_0200830c_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_0200830c_b": {
+          "address": "0x0200c9c4",
+          "kind": "thumb"
+        },
+        "Func_020083aa_a": {
+          "address": "0x0200c9dc",
+          "kind": "thumb"
+        },
+        "Func_020083aa_b": {
+          "address": "0x0200c9c4",
+          "kind": "thumb"
+        },
+        "Func_02008448_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02008448_b": {
+          "address": "0x0200c9cc",
+          "kind": "thumb"
+        },
+        "Func_020085d0_a": {
+          "address": "0x0200ca8c",
+          "kind": "thumb"
+        },
+        "Func_020085d0_b": {
+          "address": "0x0200ca24",
+          "kind": "thumb"
+        },
+        "Func_02008620_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02008620_b": {
+          "address": "0x0200ca24",
+          "kind": "thumb"
+        },
+        "Func_0200873e_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_0200873e_b": {
+          "address": "0x0200c9f4",
+          "kind": "thumb"
+        },
+        "Func_02008882_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02008882_b": {
+          "address": "0x0200c9a4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020027f8",
+          "extent": 5932,
+          "state": "retained-assembly"
+        }
+      ],
+      "local_symbols": []
+    },
+    {
+      "id": "retained-overlay-380-actor-formation",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_380_c_02000f8c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Func_020059fc_a": {
+          "address": "0x0200ca54",
+          "kind": "thumb"
+        },
+        "Func_020059fc_b": {
+          "address": "0x0200ca1c",
+          "kind": "thumb"
+        },
+        "Func_02005a38_a": {
+          "address": "0x0200ca2c",
+          "kind": "thumb"
+        },
+        "Func_02005a38_b": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Func_02005b7c_a": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        },
+        "Func_02005b7c_b": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Func_02005bbc_a": {
+          "address": "0x0200caa4",
+          "kind": "thumb"
+        },
+        "Func_02005bbc_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02005bd2_a": {
+          "address": "0x0200caac",
+          "kind": "thumb"
+        },
+        "Func_02005bd2_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02005c50_a": {
+          "address": "0x0200cb14",
+          "kind": "thumb"
+        },
+        "Func_02005c50_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02005c3e_a": {
+          "address": "0x0200ca84",
+          "kind": "thumb"
+        },
+        "Func_02005c3e_b": {
+          "address": "0x0200ca24",
+          "kind": "thumb"
+        },
+        "Func_02005be0_a": {
+          "address": "0x0200c9f4",
+          "kind": "thumb"
+        },
+        "Func_02005be0_b": {
+          "address": "0x0200c8d4",
+          "kind": "thumb"
+        },
+        "Func_02005cb4_a": {
+          "address": "0x0200ca14",
+          "kind": "thumb"
+        },
+        "Func_02005cb4_b": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Func_02005e5c_a": {
+          "address": "0x0200caec",
+          "kind": "thumb"
+        },
+        "Func_02005e5c_b": {
+          "address": "0x0200ca7c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f8c",
+          "extent": 1220,
+          "state": "retained-assembly"
+        }
+      ],
+      "local_symbols": []
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c9-02004b28",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c9_02004b28.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02004b28",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c8-02004a2c",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c8_02004a2c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02004a2c",
+          "extent": 428,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c8-supplemental-sequence-one",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c8_supplemental_sequence_one.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020009c8",
+          "extent": 320,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-setup-reset-scene-parameters-and-finish-setup",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_setup/reset_scene_parameters_and_finish_setup.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001158",
+          "extent": 42,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c5-sequence-a",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c5_sequence_a.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000eac",
+          "extent": 172,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c5-supplemental-sequence-one",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c5_supplemental_sequence_one.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000d4c",
+          "extent": 352,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-3c4-02002040-lrun-llate-lsequence-lsecond",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_3c4_02002040_LRun_LLate_LSequence_LSecond.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02002040",
+          "extent": 98,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c4-supplemental-sequence-one",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c4_supplemental_sequence_one.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001744",
+          "extent": 436,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c4-supplemental-sequence-two",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c4_supplemental_sequence_two.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001550",
+          "extent": 420,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3c0-sequence-a",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c0_sequence_a.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000dc8",
+          "extent": 148,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3bf-020025f8",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_020025f8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020025f8",
+          "extent": 164,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3bf-02000f30",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02000f30.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000f30",
+          "extent": 100,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3bf-sequence-d",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_sequence_d.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000dcc",
+          "extent": 100,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3bf-supplemental-sequence-three",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_supplemental_sequence_three.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000ce0",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3bf-02000bec",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02000bec.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000bec",
+          "extent": 140,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3bc-four-step-actor-motion",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bc_four_step_actor_motion.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bc",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020020f0",
+          "extent": 468,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-actor-presentation-configure-and-hide-actor-one-hundred-two",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/actor_presentation/configure_and_hide_actor_one_hundred_two.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b5",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x0200028c",
+          "extent": 44,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-actor-presentation-configure-and-place-actor-twelve",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/actor_presentation/configure_and_place_actor_twelve.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020011d8",
+          "extent": 44,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3b4-02000fdc",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b4_02000fdc.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000fdc",
+          "extent": 148,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3b2-0200167c",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b2_0200167c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b2",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x0200167c",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3b0-0200040c",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b0_0200040c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b0",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x0200040c",
+          "extent": 92,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3af-02001a98",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3af_02001a98.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3af",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001a98",
+          "extent": 192,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3ab-supplemental-sequence-one",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3ab_supplemental_sequence_one.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ab",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x0200049c",
+          "extent": 340,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3a7-supplemental-sequence-one",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a7_supplemental_sequence_one.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a7",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000754",
+          "extent": 340,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3a4-sequence-i",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a4_sequence_i.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020008d4",
+          "extent": 280,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3a4-sequence-h",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a4_sequence_h.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020007e8",
+          "extent": 236,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3a4-early-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a4_early_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020006dc",
+          "extent": 268,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-3a2-020008a8",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a2_020008a8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a2",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020008a8",
+          "extent": 54,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-39d-02002eb8",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39d_02002eb8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39d",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02002eb8",
+          "extent": 94,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-39c-sequence-g",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39c_sequence_g.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020016c4",
+          "extent": 204,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-39c-020010c0",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39c_020010c0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020010c0",
+          "extent": 164,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-383-02004b2c",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_383_02004b2c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02004b2c",
+          "extent": 320,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-map-locations-sol-shinden-update-light-1",
+      "game": "gs1",
+      "source": "games/gs1/src/map/locations/sol_shinden/update_light_1.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_37a",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000d9c",
+          "extent": 348,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-377-supplemental-sequence-one",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_377_supplemental_sequence_one.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_377",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020013e4",
+          "extent": 352,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-373-02000cd0",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_373_02000cd0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_373",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000cd0",
+          "extent": 92,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-372-opening-auxiliary-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_372_opening_auxiliary_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_372",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001154",
+          "extent": 412,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-371-actor-eight-approach",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_actor_eight_approach.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020032f0",
+          "extent": 300,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-371-020019e8",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_020019e8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020019e8",
+          "extent": 176,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-371-02001938",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_02001938.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001938",
+          "extent": 176,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-371-02001888",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_02001888.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001888",
+          "extent": 176,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-371-020017fc",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_020017fc.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020017fc",
+          "extent": 140,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "restored-overlays-scene-primary-script-run-scene-371-020017a4",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_020017a4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x020017a4",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "battle-staged-particle-presentation",
       "game": "gs1",
       "source": "games/gs1/recon/en/units/battle-staged-particle-presentation.c",
@@ -63,295 +1639,6 @@
         {
           "address": "0x080cbc0c",
           "extent": 2508,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
-      "id": "retained-overlay-37c-state-update",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37c_c_02000054.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_37c",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02000054",
-          "extent": 76,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
-      "id": "retained-overlay-37d-unit",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37d_c_02000054.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_37d",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02000054",
-          "extent": 76,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
-      "id": "retained-overlay-37e-unit",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37e_c_02000054.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_37e",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02000054",
-          "extent": 76,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
-      "id": "retained-overlay-379-unit",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_379_c_02000074.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_379",
-      "absolute_symbols": {
-        "Func_02000cc0": {
-          "address": "0x02008be0",
-          "kind": "thumb"
-        },
-        "Func_02000cc0_a": {
-          "address": "0x02008bc0",
-          "kind": "thumb"
-        },
-        "Func_02000d2c": {
-          "address": "0x02008bd8",
-          "kind": "thumb"
-        },
-        "Func_02000d2c_a": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_02000d52": {
-          "address": "0x02008bf8",
-          "kind": "thumb"
-        },
-        "Func_02000d52_a": {
-          "address": "0x02008ba0",
-          "kind": "thumb"
-        },
-        "Func_02000d80": {
-          "address": "0x02008bf8",
-          "kind": "thumb"
-        },
-        "Func_02000d80_a": {
-          "address": "0x02008b90",
-          "kind": "thumb"
-        },
-        "Func_02000d6c": {
-          "address": "0x02008b58",
-          "kind": "thumb"
-        },
-        "Func_02000d6c_a": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_02000dac": {
-          "address": "0x02008b90",
-          "kind": "thumb"
-        },
-        "Func_02000dac_a": {
-          "address": "0x02008b68",
-          "kind": "thumb"
-        },
-        "Func_02000ddc": {
-          "address": "0x02008b90",
-          "kind": "thumb"
-        },
-        "Func_02000ddc_a": {
-          "address": "0x02008b58",
-          "kind": "thumb"
-        },
-        "Func_02000ea4": {
-          "address": "0x02008bf8",
-          "kind": "thumb"
-        },
-        "Func_02000ea4_a": {
-          "address": "0x02008b28",
-          "kind": "thumb"
-        },
-        "Func_02000e3e": {
-          "address": "0x02008b78",
-          "kind": "thumb"
-        },
-        "Func_02000e3e_a": {
-          "address": "0x02008b10",
-          "kind": "thumb"
-        },
-        "Func_02000e48": {
-          "address": "0x02008b78",
-          "kind": "thumb"
-        },
-        "Func_02000e48_a": {
-          "address": "0x02008b60",
-          "kind": "thumb"
-        },
-        "Func_02000e50": {
-          "address": "0x02008b60",
-          "kind": "thumb"
-        },
-        "Func_02000e50_a": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_02000f12": {
-          "address": "0x02008bb8",
-          "kind": "thumb"
-        },
-        "Func_02000f12_a": {
-          "address": "0x02008b30",
-          "kind": "thumb"
-        },
-        "Func_02000eb8": {
-          "address": "0x02008b50",
-          "kind": "thumb"
-        },
-        "Func_02000eb8_a": {
-          "address": "0x02008b30",
-          "kind": "thumb"
-        },
-        "Func_02000f5a": {
-          "address": "0x02008ba0",
-          "kind": "thumb"
-        },
-        "Func_02000f5a_a": {
-          "address": "0x02008b68",
-          "kind": "thumb"
-        },
-        "Func_02000f8a": {
-          "address": "0x02008b90",
-          "kind": "thumb"
-        },
-        "Func_02000f8a_a": {
-          "address": "0x02008b78",
-          "kind": "thumb"
-        },
-        "Func_02000f8a_b": {
-          "address": "0x02008b50",
-          "kind": "thumb"
-        },
-        "Func_02001156": {
-          "address": "0x02008b98",
-          "kind": "thumb"
-        },
-        "Func_02001156_a": {
-          "address": "0x02008b10",
-          "kind": "thumb"
-        },
-        "Func_02001144": {
-          "address": "0x02008b60",
-          "kind": "thumb"
-        },
-        "Func_02001144_a": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_02001148": {
-          "address": "0x02008b50",
-          "kind": "thumb"
-        },
-        "Func_02001148_a": {
-          "address": "0x02008b10",
-          "kind": "thumb"
-        },
-        "Func_02001204": {
-          "address": "0x02008b98",
-          "kind": "thumb"
-        },
-        "Func_02001204_a": {
-          "address": "0x02008b50",
-          "kind": "thumb"
-        },
-        "Func_02001204_b": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_0200121e": {
-          "address": "0x02008b98",
-          "kind": "thumb"
-        },
-        "Func_0200121e_a": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_02001286": {
-          "address": "0x02008b78",
-          "kind": "thumb"
-        },
-        "Func_02001286_a": {
-          "address": "0x02008b50",
-          "kind": "thumb"
-        },
-        "Func_0200140e": {
-          "address": "0x02008b70",
-          "kind": "thumb"
-        },
-        "Func_0200140e_a": {
-          "address": "0x02008af0",
-          "kind": "thumb"
-        },
-        "Func_020014a0": {
-          "address": "0x02008b78",
-          "kind": "thumb"
-        },
-        "Func_020014a0_a": {
-          "address": "0x02008b10",
-          "kind": "thumb"
-        },
-        "Func_02001496": {
-          "address": "0x02008b58",
-          "kind": "thumb"
-        },
-        "Func_02001496_a": {
-          "address": "0x02008b10",
-          "kind": "thumb"
-        },
-        "Func_0200154c": {
-          "address": "0x02008b98",
-          "kind": "thumb"
-        },
-        "Func_0200154c_a": {
-          "address": "0x02008ad8",
-          "kind": "thumb"
-        },
-        "Func_0200151a": {
-          "address": "0x02008b58",
-          "kind": "thumb"
-        },
-        "Func_0200151a_a": {
-          "address": "0x02008b18",
-          "kind": "thumb"
-        },
-        "Func_02001540": {
-          "address": "0x02008b68",
-          "kind": "thumb"
-        },
-        "Func_02001540_a": {
-          "address": "0x02008ad0",
-          "kind": "thumb"
-        }
-      },
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02000074",
-          "extent": 2628,
           "state": "retained-assembly"
         }
       ]
@@ -960,9 +2247,9 @@
       ]
     },
     {
-      "id": "overlays-scene-primary-script-run-scene-37a-02001be8",
+      "id": "retained-overlay-37a-actor-position-transition",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37a_02001be8.c",
+      "source": "games/gs1/recon/en/overlays/resource_37a_c_02001be8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -980,7 +2267,7 @@
         {
           "address": "0x02001be8",
           "extent": 192,
-          "state": "exact-c"
+          "state": "retained-assembly"
         }
       ]
     },
@@ -1601,9 +2888,9 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3c9-02003924",
+      "id": "restored-overlays-scene-primary-script-run-scene-3c9-02003924",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3c9_c_02003924.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c9_02003924.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -1637,7 +2924,7 @@
         {
           "address": "0x02003924",
           "extent": 676,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -1730,9 +3017,9 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3b5-primary-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-3b5-primary-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3b5_c_02000980.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b5_primary_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -1782,7 +3069,7 @@
         {
           "address": "0x02000980",
           "extent": 808,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -2348,9 +3635,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-37f-opening-auxiliary-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-37f-opening-auxiliary-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37f_c_02000258.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37f_opening_auxiliary_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -2367,15 +3654,15 @@
         {
           "address": "0x02000258",
           "extent": 356,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-37f-early-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-37f-early-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37f_c_02000420.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37f_early_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -2400,7 +3687,7 @@
         {
           "address": "0x02000420",
           "extent": 332,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -2431,9 +3718,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-37f-02000d1c",
+      "id": "restored-overlays-scene-primary-script-run-scene-37f-02000d1c",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37f_c_02000d1c.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37f_02000d1c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -2510,7 +3797,7 @@
         {
           "address": "0x02000d1c",
           "extent": 624,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -2802,9 +4089,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-39b-02001208",
+      "id": "restored-overlays-scene-primary-script-run-scene-39b-02001208",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_39b_c_02001208.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39b_02001208.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -2821,7 +4108,7 @@
         {
           "address": "0x02001208",
           "extent": 216,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -3127,9 +4414,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-39e-roof-ensemble-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-39e-roof-ensemble-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_39e_c_02002ad0.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39e_roof_ensemble_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39e",
       "absolute_symbols": {
@@ -3478,7 +4765,7 @@
         {
           "address": "0x02002ad0",
           "extent": 5000,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -3762,9 +5049,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-event-script-run-event-script-01-3aa-02000360",
+      "id": "restored-overlays-event-script-run-event-script-01-3aa-02000360",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3aa_c_02000360.c",
+      "source": "games/gs1/src/overlays/event_script/run_event_script_01_3aa_02000360.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3aa",
       "absolute_symbols": {
@@ -4009,7 +5296,7 @@
         {
           "address": "0x02000360",
           "extent": 4268,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -4505,9 +5792,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3b1-0200413c",
+      "id": "restored-overlays-scene-primary-script-run-scene-3b1-0200413c",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3b1_c_0200413c.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b1_0200413c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b1",
       "absolute_symbols": {
@@ -4524,7 +5811,7 @@
         {
           "address": "0x0200413c",
           "extent": 92,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -4704,9 +5991,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3b4-02000b68",
+      "id": "restored-overlays-scene-primary-script-run-scene-3b4-02000b68",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3b4_c_02000b68.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b4_02000b68.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -4739,7 +6026,7 @@
         {
           "address": "0x02000b68",
           "extent": 356,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -5674,9 +6961,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3bb-second-actor-interaction",
+      "id": "restored-overlays-scene-primary-script-run-scene-3bb-second-actor-interaction",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3bb_c_02001424.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bb_second_actor_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -5693,7 +6980,7 @@
         {
           "address": "0x02001424",
           "extent": 276,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -6065,9 +7352,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-376-long-presentation-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-376-long-presentation-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_376_c_02000658.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_376_long_presentation_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {
@@ -6272,7 +7559,7 @@
         {
           "address": "0x02000658",
           "extent": 2664,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -6394,9 +7681,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-37a-02001264",
+      "id": "restored-overlays-scene-primary-script-run-scene-37a-02001264",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_37a_c_02001264.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37a_02001264.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -6421,15 +7708,15 @@
         {
           "address": "0x02001264",
           "extent": 284,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-multi-stage-effect-presentation",
+      "id": "restored-overlays-scene-primary-script-run-multi-stage-effect-presentation",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_380_c_020006f4.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_multi_stage_effect_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -6462,15 +7749,15 @@
         {
           "address": "0x020006f4",
           "extent": 880,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-party-introduction",
+      "id": "restored-overlays-scene-primary-script-run-party-introduction",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_380_c_02000a98.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_party_introduction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -6507,7 +7794,7 @@
         {
           "address": "0x02000a98",
           "extent": 708,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -6841,9 +8128,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-380-six-pass-effect-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-380-six-pass-effect-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_380_c_02002400.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_380_six_pass_effect_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -6892,7 +8179,7 @@
         {
           "address": "0x02002400",
           "extent": 628,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -7012,9 +8299,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-38d-long-branching-choreography",
+      "id": "restored-overlays-scene-primary-script-run-scene-38d-long-branching-choreography",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_38d_c_020008c0.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_38d_long_branching_choreography.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -7175,15 +8462,15 @@
         {
           "address": "0x020008c0",
           "extent": 3804,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-38d-0200179c",
+      "id": "restored-overlays-scene-primary-script-run-scene-38d-0200179c",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_38d_c_0200179c.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_38d_0200179c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -7240,7 +8527,7 @@
         {
           "address": "0x0200179c",
           "extent": 444,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -7511,9 +8798,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-39c-opening-auxiliary-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-39c-opening-auxiliary-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_39c_c_020015e0.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39c_opening_auxiliary_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -7530,7 +8817,7 @@
         {
           "address": "0x020015e0",
           "extent": 228,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -7594,9 +8881,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-39c-sequence-d",
+      "id": "restored-overlays-scene-primary-script-run-scene-39c-sequence-d",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_39c_c_02003788.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39c_sequence_d.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -7613,7 +8900,7 @@
         {
           "address": "0x02003788",
           "extent": 216,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -7911,9 +9198,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3a3-sequence-c",
+      "id": "restored-overlays-scene-primary-script-run-scene-3a3-sequence-c",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3a3_c_020007b8.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a3_sequence_c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {
@@ -7938,7 +9225,7 @@
         {
           "address": "0x020007b8",
           "extent": 148,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -8759,9 +10046,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3b5-supplemental-sequence-one",
+      "id": "restored-overlays-scene-primary-script-run-scene-3b5-supplemental-sequence-one",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3b5_c_02000728.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b5_supplemental_sequence_one.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -8786,7 +10073,7 @@
         {
           "address": "0x02000728",
           "extent": 364,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -8942,9 +10229,9 @@
       "local_symbols": []
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3b9-middle-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-3b9-middle-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3b9_c_02001688.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b9_middle_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b9",
       "absolute_symbols": {
@@ -9013,7 +10300,7 @@
         {
           "address": "0x02001688",
           "extent": 908,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -10431,11 +11718,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-37b-sequence-b",
+      "id": "restored-overlays-scene-primary-script-run-scene-37b-sequence-b",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
-      "source": "games/gs1/recon/en/overlays/resource_37b_c_0200105c.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37b_sequence_b.c",
       "absolute_symbols": {
         "Func_020035c8": {
           "address": "0x0200a4a4",
@@ -10467,7 +11754,7 @@
         {
           "address": "0x0200105c",
           "extent": 1116,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -10622,11 +11909,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-389-sequence-a",
+      "id": "restored-overlays-scene-primary-script-run-scene-389-sequence-a",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
-      "source": "games/gs1/recon/en/overlays/resource_389_c_02000ce0.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_389_sequence_a.c",
       "absolute_symbols": {
         "Func_02002142": {
           "address": "0x02009450",
@@ -10666,16 +11953,16 @@
         {
           "address": "0x02000ce0",
           "extent": 492,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
-      "id": "retained-overlays-event-script-run-event-script-01-395-020002ec",
+      "id": "restored-overlays-event-script-run-event-script-01-395-020002ec",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_395",
-      "source": "games/gs1/recon/en/overlays/resource_395_c_020002ec.c",
+      "source": "games/gs1/src/overlays/event_script/run_event_script_01_395_020002ec.c",
       "absolute_symbols": {
         "Func_02001d96": {
           "address": "0x02009a88",
@@ -10699,7 +11986,7 @@
         {
           "address": "0x020002ec",
           "extent": 412,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -10861,11 +12148,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-39d-four-actor-presentation",
+      "id": "restored-overlays-scene-primary-script-run-scene-39d-four-actor-presentation",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39d",
-      "source": "games/gs1/recon/en/overlays/resource_39d_c_0200056c.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39d_four_actor_presentation.c",
       "absolute_symbols": {
         "Func_02003dee": {
           "address": "0x0200b7b8",
@@ -10941,7 +12228,7 @@
         {
           "address": "0x0200056c",
           "extent": 804,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -11413,11 +12700,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3a4-shared-set-piece",
+      "id": "restored-overlays-scene-primary-script-run-scene-3a4-shared-set-piece",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
-      "source": "games/gs1/recon/en/overlays/resource_3a4_c_02000ec0.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a4_shared_set_piece.c",
       "absolute_symbols": {
         "Func_02004b62": {
           "address": "0x0200bc68",
@@ -11473,7 +12760,7 @@
         {
           "address": "0x02000ec0",
           "extent": 1240,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -11503,11 +12790,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3a4-late-auxiliary-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-3a4-late-auxiliary-sequence",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
-      "source": "games/gs1/recon/en/overlays/resource_3a4_c_02002f10.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a4_late_auxiliary_sequence.c",
       "absolute_symbols": {
         "Func_02006c6a": {
           "address": "0x0200bd20",
@@ -11523,16 +12810,16 @@
         {
           "address": "0x02002f10",
           "extent": 236,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3a4-02001398",
+      "id": "restored-overlays-scene-primary-script-run-scene-3a4-02001398",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
-      "source": "games/gs1/recon/en/overlays/resource_3a4_c_02001398.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a4_02001398.c",
       "absolute_symbols": {
         "Func_02005040": {
           "address": "0x0200bc50",
@@ -11564,7 +12851,7 @@
         {
           "address": "0x02001398",
           "extent": 736,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -11677,11 +12964,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3a8-two-actor-cutscene-sequence",
+      "id": "restored-overlays-scene-primary-script-run-scene-3a8-two-actor-cutscene-sequence",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
-      "source": "games/gs1/recon/en/overlays/resource_3a8_c_02002008.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3a8_two_actor_cutscene_sequence.c",
       "absolute_symbols": {
         "Func_02005d52": {
           "address": "0x0200bd0c",
@@ -11777,7 +13064,7 @@
         {
           "address": "0x02002008",
           "extent": 1720,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -13152,11 +14439,11 @@
       ]
     },
     {
-      "id": "retained-overlays-scene-primary-script-run-scene-3c8-sequence-a",
+      "id": "restored-overlays-scene-primary-script-run-scene-3c8-sequence-a",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c8",
-      "source": "games/gs1/recon/en/overlays/resource_3c8_c_020007d8.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3c8_sequence_a.c",
       "absolute_symbols": {
         "Func_02005712": {
           "address": "0x0200cef4",
@@ -13180,7 +14467,7 @@
         {
           "address": "0x020007d8",
           "extent": 200,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -13282,9 +14569,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-staged-actor-cutscene",
+      "id": "restored-field-scene-staged-actor-cutscene",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_373_c_02003fb0.c",
+      "source": "games/gs1/src/overlays/staged_actor_scene/run_staged_actor_cutscene_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -13554,14 +14841,14 @@
         {
           "address": "0x02003fb0",
           "extent": 5604,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
-      "id": "retained-field-scene-large-staging-sequence",
+      "id": "restored-field-scene-large-staging-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_373_c_020034c8.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_373_large_staging_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -13735,14 +15022,14 @@
         {
           "address": "0x020034c8",
           "extent": 2792,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
-      "id": "retained-field-scene-companion-actor-sequence",
+      "id": "restored-field-scene-companion-actor-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_373_c_020031b4.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_373_companion_actor_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -13760,7 +15047,7 @@
         {
           "address": "0x020031b4",
           "extent": 252,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -13907,9 +15194,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-actor-action-and-callback",
+      "id": "restored-field-scene-actor-action-and-callback",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_373_c_020012bc.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_373_sequence_e.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -13935,7 +15222,7 @@
         {
           "address": "0x020012bc",
           "extent": 408,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -14000,9 +15287,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-actor-twenty-two-camera-setup",
+      "id": "restored-field-scene-actor-twenty-two-camera-setup",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_372_c_02003fb0.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/configure_scene_372_actor_twenty_two.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_372",
       "absolute_symbols": {
@@ -14020,7 +15307,7 @@
         {
           "address": "0x02003fb0",
           "extent": 320,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -14285,9 +15572,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-return-event-sequence",
+      "id": "restored-field-scene-return-event-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_372_c_02001b18.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_372_return_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_372",
       "absolute_symbols": {
@@ -14373,7 +15660,7 @@
         {
           "address": "0x02001b18",
           "extent": 1412,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -14890,9 +16177,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-actor-presentation-sequence",
+      "id": "restored-field-scene-actor-presentation-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_371_c_02002cb4.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_actor_presentation_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -14962,14 +16249,14 @@
         {
           "address": "0x02002cb4",
           "extent": 1146,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
-      "id": "retained-field-scene-actor-position-sequence",
+      "id": "restored-field-scene-actor-position-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_371_c_02002274.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_02002274.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -14987,7 +16274,7 @@
         {
           "address": "0x02002274",
           "extent": 564,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -15007,9 +16294,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-actor-speed-and-finish",
+      "id": "restored-field-scene-actor-speed-and-finish",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_371_c_02001b5c.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_02001b5c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -15027,14 +16314,14 @@
         {
           "address": "0x02001b5c",
           "extent": 172,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
-      "id": "retained-field-scene-actor-callback-and-finish",
+      "id": "restored-field-scene-actor-callback-and-finish",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_371_c_02001a98.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_371_02001a98.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -15052,7 +16339,7 @@
         {
           "address": "0x02001a98",
           "extent": 196,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -15373,9 +16660,9 @@
       ]
     },
     {
-      "id": "retained-field-scene-motion-and-event-setup",
+      "id": "restored-field-scene-motion-and-event-setup",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_383_c_02000b48.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_383_sequence_a.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -15425,7 +16712,7 @@
         {
           "address": "0x02000b48",
           "extent": 668,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -15588,7 +16875,7 @@
     {
       "id": "battle-action-resolution",
       "game": "gs1",
-      "source": "games/gs1/recon/en/units/battle-action-resolution.c",
+      "source": "games/gs1/src/battle/action/resolve_target_action.c",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -15597,7 +16884,7 @@
         {
           "address": "0x080bbb0c",
           "extent": 6332,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -19327,6 +20614,11 @@
           "address": "0x0200004c",
           "extent": 8,
           "state": "exact-c"
+        },
+        {
+          "address": "0x02000054",
+          "extent": 76,
+          "state": "exact-c"
         }
       ]
     },
@@ -19363,6 +20655,11 @@
           "address": "0x0200004c",
           "extent": 8,
           "state": "exact-c"
+        },
+        {
+          "address": "0x02000054",
+          "extent": 76,
+          "state": "exact-c"
         }
       ]
     },
@@ -19398,6 +20695,11 @@
         {
           "address": "0x0200004c",
           "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000054",
+          "extent": 76,
           "state": "exact-c"
         }
       ]
@@ -22306,6 +23608,11 @@
         {
           "address": "0x02000054",
           "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000074",
+          "extent": 2628,
           "state": "exact-c"
         }
       ]

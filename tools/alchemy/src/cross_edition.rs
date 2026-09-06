@@ -1,6 +1,4 @@
-use candidate_compiler::verify::{
-    compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
-};
+use candidate_compiler::verify::{assemble, compile_to_assembly, run as run_compiler};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::symbol_is_thumb;
@@ -380,7 +378,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         owner_address,
         &object_path,
         &roms,
-        options.calls,
+        options.calls || options.edition_build.is_some(),
         None,
     )?;
     let edition_build = options
@@ -414,7 +412,7 @@ fn analyze_owner(
     calls: bool,
     hints: Option<&BTreeMap<&str, usize>>,
 ) -> Result<Report, String> {
-    let (size, symbol_address, _, relocation_mask, relocations, _) =
+    let (size, symbol_address, owner_bytes, relocation_mask, relocations, _) =
         relocation_mask(object_path, owner)?;
     let literals = literal_sites(object_path, symbol_address, size)?;
     let mut mask = relocation_mask.clone();
@@ -426,12 +424,18 @@ fn analyze_owner(
     let en_owner = en_rom
         .get(en_offset..en_offset + size)
         .ok_or("EN owner extends past ROM")?;
-    let anchors = anchors(en_owner, &mask);
-    if anchors.is_empty() && hints.is_none() {
-        return Err(
-            "owner has no relocation-free anchor long enough to locate counterparts".into(),
-        );
+    if calls {
+        let complete = translation_unit(owner)?.is_none_or(|unit| {
+            unit.symbols()
+                .any(|(address, _, extent)| u64::from(address) == owner_address && extent == size)
+        });
+        if !complete || core_diff_bytes(&owner_bytes, en_owner, &relocation_mask) != 0 {
+            return Err(
+                "edition call bindings require a complete reference-matching object".into(),
+            );
+        }
     }
+    let anchors = anchors(en_owner, &mask);
     let mut found = BTreeMap::new();
     found.insert(
         "en",
@@ -443,11 +447,7 @@ fn analyze_owner(
     );
     for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
         let rom = &roms.images[edition];
-        let located = if anchors.is_empty() {
-            Err("no relocation-free anchor found in ROM".into())
-        } else {
-            locate(en_owner, &mask, &anchors, rom)
-        };
+        let located = locate(en_owner, &mask, &anchors, rom);
         let (start, support) = located
             .or_else(|global_error| {
                 hints
@@ -525,7 +525,15 @@ fn write_edition_build(
     report: &Report,
     roms: &EditionRoms,
 ) -> Result<EditionBuildReport, String> {
-    let build = edition_build_report(owner, object_path, report, roms, &mut BTreeMap::new(), None)?;
+    let locations = reference_call_locations(&report.call_targets)?;
+    let build = edition_build_report(
+        owner,
+        object_path,
+        report,
+        roms,
+        &mut BTreeMap::new(),
+        Some(&locations),
+    )?;
     write_json(path, &build, "edition build")?;
     println!(
         "edition_build={} owner={} editions={} all_exact={}",
@@ -535,6 +543,37 @@ fn write_edition_build(
         build.all_exact
     );
     Ok(build)
+}
+fn reference_call_locations(calls: &[CallTarget]) -> Result<EditionLocations, String> {
+    let mut locations = EditionLocations::new();
+    for call in calls {
+        let en = call
+            .editions
+            .iter()
+            .find(|entry| entry.edition == "en")
+            .ok_or("call lacks EN reference")?;
+        if address_function(&call.en_symbol)
+            && owner_address(&call.en_symbol[5..])?
+                != ROM_BASE + parse_rom_address(&en.address)? as u64
+        {
+            return Err(format!(
+                "{} disagrees with its EN reference call",
+                call.en_symbol
+            ));
+        }
+        let entries = call
+            .editions
+            .iter()
+            .map(|entry| {
+                Ok((
+                    entry.edition.clone(),
+                    ROM_BASE + parse_rom_address(&entry.address)? as u64,
+                ))
+            })
+            .collect::<Result<BTreeMap<_, _>, String>>()?;
+        locations.insert(call.en_symbol.clone(), entries);
+    }
+    Ok(locations)
 }
 fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
     // Pure per-process compile scratch: nothing outside this run ever reads
@@ -577,18 +616,11 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
         &output_text,
         &[],
         CompilerTarget::Gs1,
-        &CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Routed),
-            ..Default::default()
-        },
     )?;
     let object = output.join("owner.o");
-    run_tool(
-        Command::new("arm-none-eabi-as")
-            .args(["-mcpu=arm7tdmi", "-mthumb-interwork", "-o"])
-            .arg(&object)
-            .arg(&assembly),
-        "assemble edition source",
+    run_compiler(
+        &compiler_core::routing::compiler_assembly_command(&assembly, &object.to_string_lossy()),
+        compiler_core::routing::root(),
     )?;
     Ok(object)
 }
@@ -611,7 +643,7 @@ fn edition_build_report(
     compiled: &mut BTreeMap<(String, String), Result<PathBuf, String>>,
     locations: Option<&EditionLocations>,
 ) -> Result<EditionBuildReport, String> {
-    let (size, symbol_offset, owner_bytes, owner_mask, relocations, complete_object) =
+    let (size, symbol_offset, _, _, relocations, complete_object) =
         relocation_mask(object_path, owner)?;
     if size != report.size {
         return Err(format!(
@@ -659,59 +691,56 @@ fn edition_build_report(
         .map_err(|error| format!("{}: {error}", source_path.display()))?
         .contains("#include \"gs1_edition.h\"");
     let compile_each_edition = unit.is_some() || edition_variant;
+    let literal_sites = literal_sites(object_path, symbol_offset, report.size)?;
+    let en_reference =
+        edition_reference(&roms.images["en"], report_start(report, "en")?, report.size)?;
     let mut editions = Vec::with_capacity(EDITIONS.len());
     for edition in EDITIONS {
-        let reported_start = report_start(report, edition)?;
+        let start = report_start(report, edition)?;
         let variant_object = if compile_each_edition {
             compiled_edition_object(compiled, &route, edition, &source_path)?
         } else {
             object_path.to_path_buf()
         };
-        let (
-            variant_size,
-            variant_symbol_offset,
-            variant_bytes,
-            variant_mask,
-            variant_relocations,
-            _,
-        ) = if compile_each_edition {
-            relocation_mask(&variant_object, owner)?
+        let (variant_size, variant_symbol_offset, variant_relocations) = if compile_each_edition {
+            let (size, offset, _, _, relocations, _) = relocation_mask(&variant_object, owner)?;
+            (size, offset, relocations)
         } else {
-            (
-                size,
-                symbol_offset,
-                owner_bytes.clone(),
-                owner_mask.clone(),
-                relocations.clone(),
-                complete_object,
-            )
+            (size, symbol_offset, relocations.clone())
         };
-        let start = if compile_each_edition && edition != "en" {
-            locate_near_exact(
-                &variant_bytes,
-                &variant_mask,
-                &roms.images[edition],
-                reported_start,
-                0x1000,
-                ROM_BASE,
+        let reference = edition_reference(&roms.images[edition], start, report.size)
+            .map_err(|error| format!("{edition}: {error}"))?;
+        let mut bindings = EditionLocations::new();
+        for site in &variant_relocations {
+            if let Some(values) = locations.and_then(|locations| locations.get(&site.symbol)) {
+                bindings
+                    .entry(site.symbol.clone())
+                    .or_insert_with(|| values.clone());
+            }
+        }
+        let built = if report.core_identical {
+            bind_reference_literals(
+                &variant_relocations,
+                &literal_sites,
+                en_reference,
+                reference,
+                edition,
+                &mut bindings,
             )
-            .map(|(start, _)| start)
-            .unwrap_or(reported_start)
         } else {
-            reported_start
-        };
-        let reference = roms.images[edition]
-            .get(start..start + variant_size)
-            .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
-        let built = derive_link_symbols(
-            &variant_relocations,
-            reference,
-            start,
-            &owner_symbol,
-            unit.is_some(),
-            edition,
-            locations,
-        )
+            Err("regional literal sites require independently aligned reference cores".into())
+        }
+        .and_then(|()| {
+            derive_link_symbols(
+                &variant_relocations,
+                reference,
+                start,
+                &owner_symbol,
+                unit.is_some(),
+                edition,
+                Some(&bindings),
+            )
+        })
         .and_then(|values| {
             link_owner_for_edition(
                 &output_root,
@@ -770,6 +799,64 @@ fn edition_build_report(
         editions,
     };
     Ok(build)
+}
+fn edition_reference(rom: &[u8], start: usize, reference_size: usize) -> Result<&[u8], String> {
+    // Candidate length cannot establish a reference boundary. Regional owners
+    // with different extents need independently reviewed boundaries first.
+    start
+        .checked_add(reference_size)
+        .and_then(|end| rom.get(start..end))
+        .ok_or_else(|| "owner extends past ROM".into())
+}
+fn bind_reference_literals(
+    relocations: &[RelocationSite],
+    sites: &[LiteralSite],
+    en: &[u8],
+    regional: &[u8],
+    edition: &str,
+    locations: &mut EditionLocations,
+) -> Result<(), String> {
+    for relocation in relocations.iter().filter(|site| {
+        site.external && site.kind == "R_ARM_ABS32" && !address_function(&site.symbol)
+    }) {
+        let symbol =
+            compiler_core::external_symbol(&relocation.symbol, compiler_core::CALL_VIA_BASE)
+                .ok_or_else(|| format!("{}: no EN literal identity", relocation.symbol))?;
+        let expected = (symbol.address as u32 | u32::from(symbol.thumb))
+            .wrapping_add(relocation.addend as u32);
+        let mut values = BTreeSet::new();
+        for site in sites.iter().filter(|site| site.size == 4) {
+            let word = |bytes: &[u8]| -> Result<u32, String> {
+                let bytes = bytes
+                    .get(site.offset..site.offset + 4)
+                    .ok_or("reference literal extends past owner")?;
+                Ok(u32::from_le_bytes(bytes.try_into().unwrap()))
+            };
+            if word(en)? == expected {
+                let value = word(regional)?.wrapping_sub(relocation.addend as u32);
+                values.insert(u64::from(if symbol.thumb { value & !1 } else { value }));
+            }
+        }
+        if values.len() != 1 {
+            return Err(format!(
+                "{}: expected one reference literal binding, found {}",
+                relocation.symbol,
+                values.len()
+            ));
+        }
+        let value = *values.first().unwrap();
+        let entries = locations.entry(relocation.symbol.clone()).or_default();
+        if entries
+            .insert(edition.into(), value)
+            .is_some_and(|previous| previous != value)
+        {
+            return Err(format!(
+                "{}: reference literal addends disagree",
+                relocation.symbol
+            ));
+        }
+    }
+    Ok(())
 }
 fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), String> {
     if let Some(parent) = path
@@ -1057,7 +1144,14 @@ fn derive_link_symbols(
         site.external
             || complete_unit && site.symbol.starts_with("Func_") && site.symbol != owner_symbol
     }) {
-        let value = if is_thumb_call(site) {
+        let proved = locations
+            .and_then(|values| values.get(&site.symbol)?.get(edition))
+            .copied();
+        let value = if let Some(value) =
+            proved.filter(|_| is_thumb_call(site) || site.kind == "R_ARM_ABS32")
+        {
+            value
+        } else if is_thumb_call(site) {
             thumb_bl_target(reference, start, site.offset)?
         } else if site.kind == "R_ARM_ABS32" {
             let bytes = reference
@@ -1102,7 +1196,7 @@ fn proved_symbol_location(
             "{edition}: {symbol} decodes to 0x{decoded:08x}, proved at 0x{proved:08x}"
         )),
         Some(proved) => Ok(proved),
-        None if locations.is_none() && address_function(symbol) => Err(format!(
+        None if address_function(symbol) => Err(format!(
             "{edition}: {symbol} has no proved counterpart location"
         )),
         None => Ok(decoded),
@@ -1143,12 +1237,9 @@ fn link_owner_for_edition(
     }
     fs::write(&symbols_source, source)
         .map_err(|error| format!("{}: {error}", symbols_source.display()))?;
-    run_tool(
-        Command::new("arm-none-eabi-as")
-            .args(["-mcpu=arm7tdmi", "-mthumb-interwork", "-o"])
-            .arg(&symbols_object)
-            .arg(&symbols_source),
-        "assemble edition symbols",
+    assemble(
+        &symbols_source.to_string_lossy(),
+        &symbols_object.to_string_lossy(),
     )?;
     let mut canonical = Command::new("arm-none-eabi-objcopy");
     for name in values.keys() {
@@ -2384,7 +2475,9 @@ fn parse_literal_sites(output: &str, symbol_address: u64, size: usize) -> Vec<Li
         let Some((address, text)) = line.trim_start().split_once(':') else {
             continue;
         };
-        let field_size = if text.contains(".word") {
+        // Historical GAS predates data mapping symbols: its pool words may be
+        // disassembled as instructions, but ABS32 still identifies data sites.
+        let field_size = if text.contains(".word") || text.contains("R_ARM_ABS32") {
             4
         } else if text.contains(".short") {
             2
@@ -2407,7 +2500,7 @@ fn parse_literal_sites(output: &str, symbol_address: u64, size: usize) -> Vec<Li
             });
         }
     }
-    sites.sort_by_key(|site| site.offset);
+    sites.sort_by_key(|site| (site.offset, std::cmp::Reverse(site.size)));
     sites.dedup_by_key(|site| site.offset);
     sites
 }
@@ -2459,6 +2552,19 @@ fn locate(
     anchors: &[Anchor],
     rom: &[u8],
 ) -> Result<(usize, usize), String> {
+    if anchors.is_empty() {
+        // Short veneers may lack a 16-byte core anchor. Match their complete
+        // bytes, including literals; a masked short prefix is not sufficient.
+        let hits = find_all(rom, owner)
+            .into_iter()
+            .filter(|start| start % 2 == 0)
+            .collect::<Vec<_>>();
+        return match hits.as_slice() {
+            [start] => Ok((*start, 1)),
+            [] => Err("no complete byte-identical counterpart found in ROM".into()),
+            _ => Err("ambiguous complete byte-identical counterpart".into()),
+        };
+    }
     let mut support = BTreeMap::<usize, usize>::new();
     for anchor in anchors {
         let needle = &owner[anchor.offset..anchor.offset + anchor.size];
@@ -2632,6 +2738,25 @@ fn call_targets(
 ) -> Result<Vec<CallTarget>, String> {
     let mut groups = BTreeMap::<&str, Vec<usize>>::new();
     for site in relocations.iter().filter(|site| is_thumb_call(site)) {
+        // GCC also uses BL relocations for long branches inside an owner.
+        // Defined TU peers still need bindings; only proved owner-local targets
+        // are excluded, and every reference must preserve their relative target.
+        let en = &found["en"];
+        let target = thumb_bl_target(&en.bytes, en.start, site.offset)?;
+        let start = ROM_BASE + en.start as u64;
+        if !site.external && (start..start + en.bytes.len() as u64).contains(&target) {
+            for (edition, entry) in found {
+                if thumb_bl_target(&entry.bytes, entry.start, site.offset)?
+                    != ROM_BASE + entry.start as u64 + (target - start)
+                {
+                    return Err(format!(
+                        "{edition}: owner-local branch at 0x{:x} changes target",
+                        site.offset
+                    ));
+                }
+            }
+            continue;
+        }
         groups.entry(&site.symbol).or_default().push(site.offset);
     }
     groups
@@ -2738,6 +2863,205 @@ fn print_report(report: &Report, calls: bool) {
 mod tests {
     use super::*;
     #[test]
+    fn literal_bindings_use_complete_reference_sites_and_reject_conflicts() {
+        let relocation = RelocationSite {
+            offset: usize::MAX,
+            size: 4,
+            kind: "R_ARM_ABS32".into(),
+            symbol: "Value_00000830".into(),
+            addend: 4,
+            external: true,
+        };
+        let sites = [
+            LiteralSite { offset: 0, size: 4 },
+            LiteralSite { offset: 4, size: 4 },
+        ];
+        let en = [0x834u32, 0x834]
+            .into_iter()
+            .flat_map(u32::to_le_bytes)
+            .collect::<Vec<_>>();
+        let regional = [0x92bu32, 0x92b]
+            .into_iter()
+            .flat_map(u32::to_le_bytes)
+            .collect::<Vec<_>>();
+        let mut bindings = EditionLocations::new();
+        bind_reference_literals(
+            std::slice::from_ref(&relocation),
+            &sites,
+            &en,
+            &regional,
+            "de",
+            &mut bindings,
+        )
+        .unwrap();
+        assert_eq!(bindings["Value_00000830"]["de"], 0x927);
+        for wrong in [
+            vec![0; 8],
+            regional[..4].to_vec(),
+            [0x92bu32, 0x92c]
+                .into_iter()
+                .flat_map(u32::to_le_bytes)
+                .collect(),
+        ] {
+            assert!(bind_reference_literals(
+                std::slice::from_ref(&relocation),
+                &sites,
+                &en,
+                &wrong,
+                "de",
+                &mut bindings
+            )
+            .is_err());
+        }
+        assert!(bind_reference_literals(
+            &[relocation],
+            &sites,
+            &[0; 8],
+            &regional,
+            "de",
+            &mut EditionLocations::new()
+        )
+        .is_err());
+    }
+    #[test]
+    fn proved_callee_binding_does_not_follow_candidate_instruction_offsets() {
+        let locations = BTreeMap::from([(
+            "Func_08004938".into(),
+            BTreeMap::from([("en".into(), 0x08004938)]),
+        )]);
+        let relocation = RelocationSite {
+            offset: 0,
+            size: 4,
+            kind: "R_ARM_THM_PC22".into(),
+            symbol: "Func_08004938".into(),
+            addend: 0,
+            external: true,
+        };
+        let values = derive_link_symbols(
+            &[relocation],
+            &[0; 4],
+            0,
+            "Func_080bbb0c",
+            false,
+            "en",
+            Some(&locations),
+        )
+        .unwrap();
+        assert_eq!(values["Func_08004938"], 0x08004938);
+    }
+    #[test]
+    fn owner_local_long_branches_do_not_hide_defined_or_external_callees() {
+        let mut found = EDITIONS
+            .iter()
+            .enumerate()
+            .map(|(i, edition)| {
+                (
+                    *edition,
+                    FoundEdition {
+                        start: i * 0x100,
+                        bytes: [
+                            0xf000u16, 0xf802, 0xf000, 0xf802, 0xf000, 0xf81a, 0xf000, 0xf818,
+                        ]
+                        .into_iter()
+                        .flat_map(u16::to_le_bytes)
+                        .collect(),
+                        anchor_matches: 1,
+                    },
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+        let sites = [
+            (0, ".gcc2_compiled.", false),
+            (4, ".gcc2_compiled.", false),
+            (8, "DefinedPeer", false),
+            (12, "ExternalCallee", true),
+        ]
+        .into_iter()
+        .map(|(offset, symbol, external)| RelocationSite {
+            offset,
+            size: 4,
+            kind: "R_ARM_THM_PC22".into(),
+            symbol: symbol.into(),
+            addend: 0,
+            external,
+        })
+        .collect::<Vec<_>>();
+        let calls = call_targets(&sites, &found).unwrap();
+        assert_eq!(calls.len(), 2);
+        assert_eq!(calls[0].en_symbol, "DefinedPeer");
+        assert_eq!(calls[1].en_symbol, "ExternalCallee");
+        for call in &calls {
+            for target in &call.editions {
+                assert_eq!(
+                    parse_rom_address(&target.address).unwrap(),
+                    found[target.edition.as_str()].start + 0x40
+                );
+            }
+        }
+        found.get_mut("ja").unwrap().bytes[2] = 0x1e;
+        assert!(call_targets(&sites, &found)
+            .unwrap_err()
+            .contains("owner-local branch"));
+    }
+    #[test]
+    fn reference_call_locations_check_the_en_symbol_identity() {
+        let mut call = CallTarget {
+            en_symbol: "Func_08004938".into(),
+            sites: 1,
+            editions: EDITIONS
+                .iter()
+                .map(|edition| TargetAddress {
+                    edition: (*edition).into(),
+                    address: "0x08004938".into(),
+                })
+                .collect(),
+        };
+        let locations = reference_call_locations(std::slice::from_ref(&call)).unwrap();
+        assert_eq!(locations["Func_08004938"].len(), 6);
+        assert_eq!(locations["Func_08004938"]["ja"], 0x08004938);
+        call.editions
+            .iter_mut()
+            .find(|entry| entry.edition == "en")
+            .unwrap()
+            .address = "0x08004930".into();
+        assert!(reference_call_locations(&[call]).is_err());
+    }
+    #[test]
+    fn edition_reference_keeps_the_complete_extent() {
+        let rom = [1, 2, 3, 4, 5, 6];
+        let reference = edition_reference(&rom, 1, 4).unwrap();
+        let short_candidate = [2, 3];
+        assert!(reference.starts_with(&short_candidate));
+        assert_ne!(reference, short_candidate);
+        assert_eq!(reference, [2, 3, 4, 5]);
+        assert!(edition_reference(&rom, 3, 4).is_err());
+        assert!(edition_reference(&rom, usize::MAX, 4).is_err());
+    }
+    #[test]
+    fn edition_c_uses_era_alignment_and_links_with_symbol_objects() {
+        let scratch = tempfile::tempdir().unwrap();
+        let source = scratch.path().join("source.c");
+        fs::write(
+            &source,
+            "void Func_08000000(void) {}\nint Next(void) { return 1; }\n",
+        )
+        .unwrap();
+        let object = compile_edition_object("08000000", "assembler-test", &source).unwrap();
+        let linked = link_owner_for_edition(
+            scratch.path(),
+            "assembler-test",
+            &object,
+            "Func_08000000",
+            ROM_BASE,
+            0,
+            4,
+            &BTreeMap::new(),
+        )
+        .unwrap();
+        // Historical GAS fills function alignment with zeros, not Thumb NOPs.
+        assert_eq!(linked, [0x70, 0x47, 0, 0]);
+    }
+    #[test]
     fn artifact_substitution_and_callee_inference_fail_closed() {
         let unit = translation_unit("08003b70").unwrap().unwrap();
         assert!(!complete_unit_symbols(unit, |name| name == "Func_08003b70"));
@@ -2753,10 +3077,7 @@ mod tests {
             proved_symbol_location(Some(&locations), "Func_0801e940", "fr", 0x0801_d8ac),
             Ok(0x0801_d8ac)
         );
-        assert_eq!(
-            proved_symbol_location(Some(&locations), "Func_08000000", "fr", 7),
-            Ok(7)
-        );
+        assert!(proved_symbol_location(Some(&locations), "Func_08000000", "fr", 7).is_err());
         assert!(proved_symbol_location(None, "Func_08000000", "fr", 7).is_err());
     }
     #[test]
@@ -2769,6 +3090,20 @@ mod tests {
         assert_eq!(found[0].size, 32);
         assert_eq!(found[1].offset, 0);
         assert_eq!(found[1].size, 20);
+    }
+    #[test]
+    fn short_counterparts_require_unique_aligned_complete_bytes() {
+        let owner = [1, 2, 3, 4, 5, 6, 7, 8];
+        let mask = [false, false, false, false, true, true, true, true];
+        let mut rom = vec![0; 32];
+        rom[2..10].copy_from_slice(&owner);
+        assert_eq!(locate(&owner, &mask, &[], &rom), Ok((2, 1)));
+        rom[9] ^= 1;
+        assert!(locate(&owner, &mask, &[], &rom).is_err());
+        rom[9] ^= 1;
+        rom[16..24].copy_from_slice(&owner);
+        assert!(locate(&owner, &mask, &[], &rom).is_err());
+        assert!(locate(&owner, &mask, &[], &[0, 1, 2, 3, 4, 5, 6, 7, 8]).is_err());
     }
     #[test]
     fn locates_owner_while_ignoring_relocations() {
@@ -2969,10 +3304,16 @@ mod tests {
     }
     #[test]
     fn reads_literal_fields_from_objdump() {
-        let output = "  1008:\t12345678 \t.word\t0x12345678\n  100c:\t0000 \t.short\t0x0000\n";
+        let output = "  1004:\t0000 \tmovs\tr0, r0\n\
+                      1004: R_ARM_ABS32 Data_03001e74\n\
+                      1008:\t12345678 \t.word\t0x12345678\n\
+                      1008: R_ARM_ABS32 Data_03001e74\n\
+                      100c:\t0000 \t.short\t0x0000\n\
+                      1010: R_ARM_ABS32 Data_03001e74\n";
         let sites = parse_literal_sites(output, 0x1000, 16);
-        assert_eq!(sites.len(), 2);
-        assert_eq!((sites[0].offset, sites[0].size), (8, 4));
-        assert_eq!((sites[1].offset, sites[1].size), (12, 2));
+        assert_eq!(sites.len(), 3);
+        assert_eq!((sites[0].offset, sites[0].size), (4, 4));
+        assert_eq!((sites[1].offset, sites[1].size), (8, 4));
+        assert_eq!((sites[2].offset, sites[2].size), (12, 2));
     }
 }

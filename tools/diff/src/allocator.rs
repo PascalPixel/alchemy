@@ -244,15 +244,13 @@ pub(crate) fn decode(
         .map_err(|e| format!("{source}: {e}"))?;
     let assembly = dir.join("candidate.s");
     let object = dir.join("candidate.o");
-    let mut flags = options.flags.clone();
-    flags.extend(["-g", "-dp", "-dr", "-dl", "-dg"].map(str::to_string));
+    let flags = ["-g", "-dp", "-dr", "-dl", "-dg"].map(str::to_string);
     compile_source(
         &input.to_string_lossy(),
         &routing.to_string_lossy(),
         &assembly.to_string_lossy(),
         &flags,
         options.target,
-        &options.configuration,
         &dir,
     )?;
     run(

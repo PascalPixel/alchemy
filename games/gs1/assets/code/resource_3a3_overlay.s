@@ -478,65 +478,8 @@ AlchemyC_020006a4:
 	.4byte 0x0000e666
 	.2byte 0x8000
 	.2byte 0xfffe
-	.2byte 0xb500
-	movs	r0, #18
-	bl	sub_02001686
-	adds	r1, r0, #0
-	adds	r3, r1, #0
-	movs	r2, #0
-	adds	r3, #100
-	strh	r2, [r3, #0]
-	adds	r3, #2
-	strh	r2, [r3, #0]
-	ldr	r3, [pc, #104]
-	str	r3, [r1, #72]
-	ldr	r3, [pc, #104]
-	movs	r0, #18
-	str	r3, [r1, #108]
-	ldr	r2, [pc, #100]
-	ldr	r1, [pc, #104]
-	bl	sub_020016b6
-	movs	r2, #230
-	movs	r0, #18
-	movs	r1, #28
-	lsls	r2, r2, #1
-	bl	sub_020016ca
-	movs	r2, #224
-	movs	r1, #24
-	lsls	r2, r2, #1
-	movs	r0, #18
-	bl	sub_020016d6
-	movs	r0, #229
-	bl	sub_020017bc
-	movs	r0, #18
-	bl	sub_020016d2
-	movs	r1, #128
-	movs	r2, #128
-	lsls	r1, r1, #9
-	lsls	r2, r2, #9
-	movs	r0, #0
-	bl	sub_02001690
-	movs	r0, #4
-	bl	sub_020016b6
-	movs	r0, #1
-	movs	r1, #1
-	negs	r1, r1
-	ldr	r2, [pc, #40]
-	negs	r0, r0
-	bl	sub_020016a4
-	movs	r0, #40
-	bl	sub_020016ca
-	movs	r0, #18
-	movs	r1, #1
-	bl	sub_02001732
-	pop	{r0}
-	bx	r0
-	.4byte 0x00006666
-	.4byte 0x020086f1
-	.4byte 0x00009999
-	.4byte 0x00013333
-	.2byte 0xe666
-	.2byte 0x0000
+AlchemyC_020007b8:
+	.space 0x94
 AlchemyC_0200084c:
 	.space 0x28
 AlchemyC_02000874:

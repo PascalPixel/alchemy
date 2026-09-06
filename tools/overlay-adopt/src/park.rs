@@ -1,5 +1,7 @@
 use crate::{listing_offsets, overlay_assembly, overlay_offset, region_lines, retained_source};
+pub(crate) use compiler_core::overlay::placeholder_block;
 use compiler_core::{
+    overlay::space_size,
     source_paths::{SourceOwner, SourcePaths},
     thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
 };
@@ -95,45 +97,12 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
     }
     Ok(findings)
 }
-#[derive(Clone, Copy)]
-pub(crate) struct Placeholder {
-    pub(crate) start: usize,
-    pub(crate) end: usize,
-    pub(crate) span: i64,
-}
 fn placeholder_address(line: &str) -> Option<i64> {
     i64::from_str_radix(
         line.trim().strip_prefix("AlchemyC_")?.strip_suffix(':')?,
         16,
     )
     .ok()
-}
-fn space_size(line: &str) -> Option<i64> {
-    let size = line.trim().strip_prefix(".space ")?.trim();
-    size.strip_prefix("0x")
-        .map(|hex| i64::from_str_radix(hex, 16).ok())
-        .unwrap_or_else(|| size.parse().ok())
-}
-pub(crate) fn placeholder_block(lines: &[&str], address: i64) -> Option<Placeholder> {
-    let tag = format!("AlchemyC_{address:08x}:");
-    let start = lines.iter().position(|line| line.trim() == tag)?;
-    let mut end = start + 1;
-    let mut span = 0i64;
-    while end < lines.len() {
-        let trimmed = lines[end].trim();
-        if trimmed.starts_with(".space ") {
-            span += space_size(trimmed)?;
-            end += 1;
-        } else if trimmed.starts_with(".L_") && trimmed.ends_with(':') {
-            end += 1;
-        } else {
-            break;
-        }
-    }
-    if end == start + 1 {
-        return None;
-    }
-    Some(Placeholder { start, end, span })
 }
 fn placeholder_addresses(lines: &[&str]) -> Vec<i64> {
     lines
@@ -708,14 +677,22 @@ mod tests {
     #[test]
     fn literal_pool_address_is_not_adoptable() {
         let root = tempdir().unwrap();
-        let metrics = root.path().join("games/gs1/metrics");
-        fs::create_dir_all(&metrics).unwrap();
+        let semantic = root.path().join("games/gs1/semantic");
+        fs::create_dir_all(&semantic).unwrap();
         fs::write(
-            metrics.join("gs1-en-executable.json"),
-            r#"{"overlays":[{"id":"resource_371","intervals":[{"start":33554432,"end":33554448,"kind":"literal_pool"},{"start":33554448,"end":33554464,"kind":"thumb"}]}]}"#,
+            semantic.join("regions.json"),
+            r#"{"manual_regions":[{"overlay":"resource_371","entry":"0x02000010","span_bytes":16}]}"#,
         )
         .unwrap();
-        assert!(audited_span(root.path(), "resource_371", 0x02000000, 4, "resource_371").is_err());
-        assert!(audited_span(root.path(), "resource_371", 0x02000010, 4, "resource_371").is_ok());
+        let accepts = |entry, span| audited_span(root.path(), "resource_371", entry, span).is_ok();
+        assert!(accepts(0x02000010, 16));
+        for (entry, span) in [
+            (0x02000000, 4),
+            (0x02000012, 14),
+            (0x02000010, 4),
+            (0x02000010, 18),
+        ] {
+            assert!(!accepts(entry, span));
+        }
     }
 }

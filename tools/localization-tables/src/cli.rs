@@ -283,7 +283,7 @@ fn text(source: &serde_json::Map<String, Value>, size: usize) -> Result<Vec<u8>,
     Ok(output)
 }
 
-fn build(value: &Value) -> Result<Vec<u8>, String> {
+pub fn build(value: &Value) -> Result<Vec<u8>, String> {
     let source = object(value, "localization-table source")?;
     exact_keys(
         source,

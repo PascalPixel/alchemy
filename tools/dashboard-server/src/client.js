@@ -206,7 +206,6 @@ async function loadSoundfont(game) {
   if (soundfont.engine !== "golden-sun-rom-audio-bank" || soundfont.bank.length !== expectedVoices) throw new Error(`recovered ${game.toUpperCase()} music bank is incomplete`);
   soundfont.game = game;
   soundfont.sampleByAddress = new Map(soundfont.samples.map((sample) => [sample.address, sample]));
-  soundfont.embeddedByAddress = new Map(soundfont.embedded_samples.map((sample) => [sample.address, sample]));
   for (const sample of soundfont.embedded_samples) {
     soundfont.sampleByAddress.set(sample.address, { ...sample, loop_start: sample.control & 0xc0000000 ? sample.loop_start : null, embedded: true });
   }
@@ -217,11 +216,10 @@ async function loadSoundfont(game) {
 }
 function resolveTone(note) {
   let tone = music.soundfont.bank[note.program];
-  let rhythm = false;
-  if (tone?.kind === "rhythm") {
+  const rhythm = tone?.kind === "rhythm";
+  if (rhythm) {
     const base = Number(tone.tones.slice(-3));
     tone = music.soundfont.bank[base + note.note];
-    rhythm = true;
   }
   if (!tone) throw new Error(`program ${note.program} / key ${note.note} is absent from the recovered bank`);
   return { tone, rhythm };
@@ -232,20 +230,29 @@ async function loadSample(game, address) {
   const sample = music.soundfont.sampleByAddress.get(address);
   if (!sample) throw new Error(`PCM sample ${address} is absent from the recovered wave catalog`);
   if (sample.embedded) {
-    const rate = Math.max(3000, sample.frequency / 1024);
-    const buffer = ensureAudio().createBuffer(1, sample.samples.length, rate);
+    const buffer = ensureAudio().createBuffer(1, sample.samples.length, Math.max(3000, sample.frequency / 1024));
     buffer.copyToChannel(Float32Array.from(sample.samples, (value) => (value > 127 ? value - 256 : value) / 128), 0);
     music.sampleBuffers.set(cacheKey, buffer);
     return buffer;
   }
   const response = await fetch(`/music/${game === "gs1" ? "" : "gs2/"}samples/${sample.source}`);
   if (!response.ok) throw new Error(`${sample.source} returned ${response.status}`);
-  const buffer = await ensureAudio().decodeAudioData(await response.arrayBuffer());
+  const buffer = pcmBuffer(await response.arrayBuffer());
   music.sampleBuffers.set(cacheKey, buffer);
   return buffer;
 }
+function pcmBuffer(bytes) {
+  // The ROM mixer loops at header.length, excluding the final lookahead byte
+  // retained in our WAVs (080f9674, 0300718c). Preserve native frames too:
+  // decodeAudioData rounds resampled tails, detuning these very short loops.
+  const view = new DataView(bytes);
+  if (bytes.byteLength < 44 || view.getUint32(0) !== 0x52494646 || view.getUint32(8) !== 0x57415645 || view.getUint32(12) !== 0x666d7420 || view.getUint32(36) !== 0x64617461 || view.getUint32(16, true) !== 16 || view.getUint16(20, true) !== 1 || view.getUint16(22, true) !== 1 || view.getUint16(34, true) !== 8 || view.getUint32(40, true) !== bytes.byteLength - 44) throw new Error("Sample is not canonical mono PCM8 WAV");
+  const buffer = ensureAudio().createBuffer(1, bytes.byteLength - 44, view.getUint32(24, true));
+  buffer.copyToChannel(Float32Array.from(new Uint8Array(bytes, 44, buffer.length), (value) => (value - 128) / 128), 0);
+  return buffer;
+}
+function pcmLoopEnd(buffer, sample) { return (buffer.length - Number(!sample.embedded)) / buffer.sampleRate; }
 async function prepareTrackSamples(game) {
-  await loadSoundfont(game);
   const addresses = new Set();
   for (const note of music.notes) {
     const { tone } = resolveTone(note);
@@ -302,10 +309,7 @@ function scheduleTone(note, position) {
     const sample = music.soundfont.sampleByAddress.get(tone.sample);
     source.buffer = music.sampleBuffers.get(`${track.game}:${tone.sample}`);
     if (!source.buffer || !sample) throw new Error(`PCM sample ${tone.sample} was not prepared`);
-    // Five GS1 voices are tiny, ROM-resident periodic waves rather than
-    // ordinary recordings. Playing their four or eight samples at the raw
-    // mixer rate puts them several octaves above the voice's root key and
-    // turns instruments such as sequence 007's flute into a loud beep.
+    // Compact ROM waves are periodic generators, not ordinary recordings.
     if (sample.embedded) {
       const rootFrequency = 440 * 2 ** ((tone.key - 69) / 12);
       const rawCycleFrequency = source.buffer.sampleRate / source.buffer.length;
@@ -314,7 +318,7 @@ function scheduleTone(note, position) {
     if (sample.loop_start !== null) {
       source.loop = true;
       source.loopStart = sample.loop_start / Math.max(3000, sample.frequency / 1024);
-      source.loopEnd = source.buffer.duration;
+      source.loopEnd = pcmLoopEnd(source.buffer, sample);
     }
   } else {
     source.buffer = generatorBuffer(tone);
@@ -429,11 +433,7 @@ async function loadMusic(index, autoplay = false) {
   updateMusicUi();
   try {
     if (!track.available || !track.file) {
-      music.notes = [];
-      music.duration = 0;
-      music.position = 0;
       music.ui.source.textContent = `${track.source} · not yet recovered (${track.status})`;
-      updateMusicUi();
       return;
     }
     await loadSoundfont(track.game);
@@ -471,7 +471,6 @@ function musicIcon(kind) {
 }
 function musicPlayer() {
   if (music.ui?.card) return music.ui.card;
-  pauseMusic(true);
   const count = h("span", {}, "Reading tracks…");
   const list = h("div", { className: "music-list", role: "listbox", "aria-label": "Golden Sun music" });
   const title = h("div", { className: "music-now-title" }, "Reading recovered sequences…");
@@ -521,7 +520,6 @@ function musicPlayer() {
       },
       h("span", { className: "music-row-request" }, track.game.toUpperCase()),
       h("span", { className: "music-row-title" }, track.title),
-      h("span", { className: "music-row-source" }, track.gameTitle),
       );
       row.addEventListener("click", () => {
         if (index === music.index && music.ready) music.playing ? pauseMusic() : playMusic();
@@ -544,41 +542,77 @@ async function requestSnapshot() {
   return response.json();
 }
 function hideTooltip() { tooltip.hidden = true; }
-function showTooltip(event) {
+function showTooltip(event, message) {
   const target = event.target instanceof Element ? event.target.closest("g[aria-label]") : null;
-  const label = target?.getAttribute("aria-label")?.trim();
-  if (!label) { hideTooltip(); return; }
+  const label = message ?? target?.getAttribute("aria-label")?.trim();
+  if (!target || !label) { hideTooltip(); return; }
   tooltip.textContent = label;
   tooltip.hidden = false;
   const gap = 14;
   const edge = 8;
   const bounds = tooltip.getBoundingClientRect();
-  const left = Math.min(event.clientX + gap, window.innerWidth - bounds.width - edge);
-  const below = event.clientY + gap;
-  const top = below + bounds.height <= window.innerHeight - edge ? below : event.clientY - bounds.height - gap;
+  const anchor = target.getBoundingClientRect();
+  const x = event.clientX ?? anchor.left + anchor.width / 2;
+  const y = event.clientY ?? anchor.top + anchor.height / 2;
+  const left = Math.min(x + gap, window.innerWidth - bounds.width - edge);
+  const below = y + gap;
+  const top = below + bounds.height <= window.innerHeight - edge ? below : y - bounds.height - gap;
   tooltip.style.left = `${Math.max(edge, left)}px`;
   tooltip.style.top = `${Math.max(edge, top)}px`;
 }
-async function loadTree(section, tree, title, revision) {
-  const response = await fetch(`/svg/${tree}?v=${encodeURIComponent(revision)}`);
+async function copyTileAddress(event) {
+  if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
+  const target = event.target instanceof Element ? event.target.closest("g[data-address]") : null;
+  const address = target?.getAttribute("data-address");
+  if (!address) return;
+  event.preventDefault();
+  try {
+    await navigator.clipboard.writeText(address);
+    showTooltip(event, `Copied ${address}`);
+  } catch {
+    showTooltip(event, `Could not copy ${address}`);
+  }
+}
+async function loadTree(section, tree, title, revision, width = 540) {
+  const response = await fetch(`/svg/${tree}/${width}?v=${encodeURIComponent(revision)}`);
   if (!response.ok) throw new Error(`/svg/${tree} returned ${response.status}`);
   const parsed = new DOMParser().parseFromString(await response.text(), "image/svg+xml");
   const svg = parsed.documentElement;
   if (svg.localName !== "svg") throw new Error(`/svg/${tree} did not return an SVG`);
+  // Keep accessible labels, but let only the dashboard's JS tooltip render.
+  svg.querySelectorAll("title").forEach((title) => title.remove());
+  svg.querySelectorAll("g[data-address]").forEach((tile) => {
+    tile.setAttribute("role", tile.getAttribute("data-node") === "container" ? "group" : "button");
+    tile.setAttribute("tabindex", "0");
+  });
   svg.classList.add("tree-image");
+  svg.setAttribute("role", "group");
   svg.setAttribute("aria-label", `${title} coverage graph`);
-  section.querySelector(".chart")?.replaceChildren(svg);
+  const chart = section.querySelector(".chart");
+  if (chart?.dataset?.width && chart.dataset.width !== String(width)) return;
+  chart?.replaceChildren(svg);
 }
 function panel(tree, title, revision) {
-  const chart = h("div", { className: "chart" }, h("div", { className: "chart-loading" }, "Reading…"));
+  const chart = h("div", { className: "chart", "data-tree": tree, "data-title": title, "data-revision": revision }, h("div", { className: "chart-loading" }, "Reading…"));
   const section = h("section", { className: `panel p-${tree}` },
     chart,
   );
-  loadTree(section, tree, title, revision).catch((error) => showError(error instanceof Error ? error.message : String(error)));
+  treeObserver.observe(chart);
   return section;
 }
+// Reflow at CSS-pixel dimensions; never scale the 16px bitmap font with a viewBox.
+const treeObserver = new ResizeObserver(entries => {
+  for (const { target: chart } of entries) {
+    const width = chart.clientWidth;
+    if (!width || width === Number(chart.dataset.width)) continue;
+    chart.dataset.width = String(width);
+    loadTree(chart.parentElement, chart.dataset.tree, chart.dataset.title, chart.dataset.revision, width)
+      .catch(error => showError(error instanceof Error ? error.message : String(error)));
+  }
+});
 function render(snapshot) {
   hideTooltip();
+  treeObserver.disconnect();
   const summary = snapshot.summary;
   const trees = Object.entries(snapshot.trees).map(([tree, title]) => panel(tree, title, snapshot.revision));
   root.replaceChildren(h("main", { className: "cards" }, ...trees, musicPlayer()));
@@ -615,4 +649,7 @@ events.addEventListener("update", (event) => {
 });
 root.addEventListener("pointermove", showTooltip);
 root.addEventListener("pointerleave", hideTooltip);
+root.addEventListener("click", copyTileAddress);
+root.addEventListener("keydown", copyTileAddress);
+root.addEventListener("focusout", hideTooltip);
 window.addEventListener("scroll", hideTooltip, { capture: true, passive: true });

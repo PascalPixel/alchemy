@@ -1,1162 +1,19 @@
 {
   "format": 1,
-  "comment": "Proven ASM describes a reproducible implementation form, not Camelot source provenance: the approved compiler model cannot emit the required form as ordinary C, the reason is recorded, and assembly reproduces the audited extent byte-exactly. Weaker classifications remain Draft ASM.",
+  "comment": "Retained assembly regions, not function identities or original-source provenance. Proven ASM requires recorded proof that the approved compiler cannot emit the required form as ordinary C, plus byte-exact assembly. Scene reconstructions use structured_scene_module and remain Draft ASM. Complete owner bounds are reviewed in semantic/regions.json; historical dossier scores are not classification authority.",
   "regions": [
     {
-      "overlay": "resource_371",
-      "start": "0x020017a4",
-      "end": "0x020017fc",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:020017a4"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x020017fc",
-      "end": "0x02001888",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:020017fc"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02001888",
-      "end": "0x02001938",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:02001888"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02001938",
-      "end": "0x020019e8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:02001938"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x020019e8",
-      "end": "0x02001a98",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:020019e8"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02001a98",
-      "end": "0x02001b5c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:02001a98"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02001b5c",
-      "end": "0x02001c08",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:02001b5c"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02002274",
-      "end": "0x020024a8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:02002274"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02002cb4",
-      "end": "0x0200312e",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:02002cb4"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x020032f0",
-      "end": "0x0200341c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_371:020032f0"
-      ]
-    },
-    {
-      "overlay": "resource_372",
-      "start": "0x02001154",
-      "end": "0x020012f0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_372:02001154"
-      ]
-    },
-    {
-      "overlay": "resource_372",
-      "start": "0x02001b18",
-      "end": "0x0200209c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_372:02001b18"
-      ]
-    },
-    {
-      "overlay": "resource_372",
-      "start": "0x02003fb0",
-      "end": "0x020040f0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_372:02003fb0"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x02000cd0",
-      "end": "0x02000d2c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_373:02000cd0"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x020012bc",
-      "end": "0x02001454",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_373:020012bc"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x020031b4",
-      "end": "0x020032b0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_373:020031b4"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x020034c8",
-      "end": "0x02003fb0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_373:020034c8"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x02003fb0",
-      "end": "0x02005594",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_373:02003fb0"
-      ]
-    },
-    {
-      "overlay": "resource_376",
-      "start": "0x02000658",
-      "end": "0x020010c0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_376:02000658"
-      ]
-    },
-    {
-      "overlay": "resource_377",
-      "start": "0x020013e4",
-      "end": "0x02001544",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_377:020013e4"
-      ]
-    },
-    {
-      "overlay": "resource_379",
-      "start": "0x02000074",
-      "end": "0x02000ab8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_379:02000074"
-      ]
-    },
-    {
       "overlay": "resource_37a",
-      "start": "0x02000d9c",
-      "end": "0x02000ef8",
-      "kind": "compiler_regression",
+      "start": "0x02001be8",
+      "end": "0x02001ca8",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37a:02000d9c"
-      ]
-    },
-    {
-      "overlay": "resource_37a",
-      "start": "0x02001264",
-      "end": "0x02001380",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37a:02001264"
-      ]
-    },
-    {
-      "overlay": "resource_37b",
-      "start": "0x0200105c",
-      "end": "0x020014b8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37b:0200105c"
-      ]
-    },
-    {
-      "overlay": "resource_37c",
-      "start": "0x02000054",
-      "end": "0x020000a0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37c:02000054"
-      ]
-    },
-    {
-      "overlay": "resource_37d",
-      "start": "0x02000054",
-      "end": "0x020000a0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37d:02000054"
-      ]
-    },
-    {
-      "overlay": "resource_37e",
-      "start": "0x02000054",
-      "end": "0x020000a0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37e:02000054"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000258",
-      "end": "0x020003bc",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000258"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000420",
-      "end": "0x0200056c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000420"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000d1c",
-      "end": "0x02000f8c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000d1c"
-      ]
-    },
-    {
-      "overlay": "resource_380",
-      "start": "0x020006f4",
-      "end": "0x02000a64",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_380:020006f4"
-      ]
-    },
-    {
-      "overlay": "resource_380",
-      "start": "0x02000a98",
-      "end": "0x02000d5c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_380:02000a98"
-      ]
-    },
-    {
-      "overlay": "resource_380",
-      "start": "0x02002400",
-      "end": "0x02002674",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_380:02002400"
-      ]
-    },
-    {
-      "overlay": "resource_383",
-      "start": "0x02000b48",
-      "end": "0x02000de4",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_383:02000b48"
-      ]
-    },
-    {
-      "overlay": "resource_383",
-      "start": "0x02004b2c",
-      "end": "0x02004c6c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_383:02004b2c"
-      ]
-    },
-    {
-      "overlay": "resource_389",
-      "start": "0x02000ce0",
-      "end": "0x02000ecc",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_389:02000ce0"
-      ]
-    },
-    {
-      "overlay": "resource_38d",
-      "start": "0x020008c0",
-      "end": "0x0200179c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_38d:020008c0"
-      ]
-    },
-    {
-      "overlay": "resource_38d",
-      "start": "0x0200179c",
-      "end": "0x02001958",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_38d:0200179c"
-      ]
-    },
-    {
-      "overlay": "resource_395",
-      "start": "0x020002ec",
-      "end": "0x02000488",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_395:020002ec"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
-      "start": "0x02001208",
-      "end": "0x020012e0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39b:02001208"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x020010c0",
-      "end": "0x02001164",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39c:020010c0"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x020015e0",
-      "end": "0x020016c4",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39c:020015e0"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x020016c4",
-      "end": "0x02001790",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39c:020016c4"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x02003788",
-      "end": "0x02003860",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39c:02003788"
-      ]
-    },
-    {
-      "overlay": "resource_39d",
-      "start": "0x0200056c",
-      "end": "0x02000890",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39d:0200056c"
-      ]
-    },
-    {
-      "overlay": "resource_39d",
-      "start": "0x02002eb8",
-      "end": "0x02002f16",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39d:02002eb8"
-      ]
-    },
-    {
-      "overlay": "resource_39e",
-      "start": "0x02002ad0",
-      "end": "0x02003e58",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_39e:02002ad0"
-      ]
-    },
-    {
-      "overlay": "resource_3a2",
-      "start": "0x020008a8",
-      "end": "0x020008de",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a2:020008a8"
-      ]
-    },
-    {
-      "overlay": "resource_3a3",
-      "start": "0x020007b8",
-      "end": "0x0200084c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a3:020007b8"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x020006dc",
-      "end": "0x020007e8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:020006dc"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x020007e8",
-      "end": "0x020008d4",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:020007e8"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x020008d4",
-      "end": "0x020009ec",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:020008d4"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x02000ec0",
-      "end": "0x02001398",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02000ec0"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x02001398",
-      "end": "0x02001678",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02001398"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x02002f10",
-      "end": "0x02002ffc",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02002f10"
-      ]
-    },
-    {
-      "overlay": "resource_3a7",
-      "start": "0x02000754",
-      "end": "0x020008a8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a7:02000754"
-      ]
-    },
-    {
-      "overlay": "resource_3a8",
-      "start": "0x02002008",
-      "end": "0x020026c0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3a8:02002008"
-      ]
-    },
-    {
-      "overlay": "resource_3aa",
-      "start": "0x02000360",
-      "end": "0x0200140c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3aa:02000360"
-      ]
-    },
-    {
-      "overlay": "resource_3ab",
-      "start": "0x0200049c",
-      "end": "0x020005f0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3ab:0200049c"
-      ]
-    },
-    {
-      "overlay": "resource_3af",
-      "start": "0x02001a98",
-      "end": "0x02001b58",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3af:02001a98"
-      ]
-    },
-    {
-      "overlay": "resource_3b0",
-      "start": "0x0200040c",
-      "end": "0x02000468",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b0:0200040c"
-      ]
-    },
-    {
-      "overlay": "resource_3b1",
-      "start": "0x0200413c",
-      "end": "0x02004198",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b1:0200413c"
-      ]
-    },
-    {
-      "overlay": "resource_3b2",
-      "start": "0x0200167c",
-      "end": "0x02001740",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b2:0200167c"
-      ]
-    },
-    {
-      "overlay": "resource_3b4",
-      "start": "0x02000b68",
-      "end": "0x02000ccc",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b4:02000b68"
-      ]
-    },
-    {
-      "overlay": "resource_3b4",
-      "start": "0x02000fdc",
-      "end": "0x02001070",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b4:02000fdc"
-      ]
-    },
-    {
-      "overlay": "resource_3b4",
-      "start": "0x020011d8",
-      "end": "0x02001204",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b4:020011d8"
-      ]
-    },
-    {
-      "overlay": "resource_3b5",
-      "start": "0x0200028c",
-      "end": "0x020002b8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:0200028c"
-      ]
-    },
-    {
-      "overlay": "resource_3b5",
-      "start": "0x02000728",
-      "end": "0x02000894",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:02000728"
-      ]
-    },
-    {
-      "overlay": "resource_3b5",
-      "start": "0x02000980",
-      "end": "0x02000ca8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:02000980"
-      ]
-    },
-    {
-      "overlay": "resource_3b9",
-      "start": "0x02001688",
-      "end": "0x02001a14",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3b9:02001688"
-      ]
-    },
-    {
-      "overlay": "resource_3bb",
-      "start": "0x02001424",
-      "end": "0x02001538",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bb:02001424"
-      ]
-    },
-    {
-      "overlay": "resource_3bc",
-      "start": "0x020020f0",
-      "end": "0x020022c4",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bc:020020f0"
-      ]
-    },
-    {
-      "overlay": "resource_3bf",
-      "start": "0x02000bec",
-      "end": "0x02000c78",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bf:02000bec"
-      ]
-    },
-    {
-      "overlay": "resource_3bf",
-      "start": "0x02000ce0",
-      "end": "0x02000d54",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bf:02000ce0"
-      ]
-    },
-    {
-      "overlay": "resource_3bf",
-      "start": "0x02000dcc",
-      "end": "0x02000e30",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bf:02000dcc"
-      ]
-    },
-    {
-      "overlay": "resource_3bf",
-      "start": "0x02000f30",
-      "end": "0x02000f94",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bf:02000f30"
-      ]
-    },
-    {
-      "overlay": "resource_3bf",
-      "start": "0x020025f8",
-      "end": "0x0200269c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3bf:020025f8"
-      ]
-    },
-    {
-      "overlay": "resource_3c0",
-      "start": "0x02000dc8",
-      "end": "0x02000e5c",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c0:02000dc8"
-      ]
-    },
-    {
-      "overlay": "resource_3c4",
-      "start": "0x02001550",
-      "end": "0x020016f4",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c4:02001550"
-      ]
-    },
-    {
-      "overlay": "resource_3c4",
-      "start": "0x02001744",
-      "end": "0x020018f8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c4:02001744"
-      ]
-    },
-    {
-      "overlay": "resource_3c4",
-      "start": "0x02002040",
-      "end": "0x020020a2",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c4:02002040"
-      ]
-    },
-    {
-      "overlay": "resource_3c5",
-      "start": "0x02000d4c",
-      "end": "0x02000eac",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:02000d4c"
-      ]
-    },
-    {
-      "overlay": "resource_3c5",
-      "start": "0x02000eac",
-      "end": "0x02000f58",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:02000eac"
-      ]
-    },
-    {
-      "overlay": "resource_3c5",
-      "start": "0x02001158",
-      "end": "0x02001182",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:02001158"
-      ]
-    },
-    {
-      "overlay": "resource_3c8",
-      "start": "0x020007d8",
-      "end": "0x020008a0",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c8:020007d8"
-      ]
-    },
-    {
-      "overlay": "resource_3c8",
-      "start": "0x020009c8",
-      "end": "0x02000b08",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c8:020009c8"
-      ]
-    },
-    {
-      "overlay": "resource_3c8",
-      "start": "0x02004a2c",
-      "end": "0x02004bd8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c8:02004a2c"
-      ]
-    },
-    {
-      "overlay": "resource_3c9",
-      "start": "0x02003924",
-      "end": "0x02003bc8",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c9:02003924"
-      ]
-    },
-    {
-      "overlay": "resource_3c9",
-      "start": "0x02004b28",
-      "end": "0x02004bec",
-      "kind": "compiler_regression",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The formerly exact C source no longer reproduces this complete span with the approved corrected GCC 2.96. Its assembly was restored and checked byte-identically against the canonical decoded overlay; the C remains a retained draft.",
-        "This records a nonmatching implementation, not compiler impossibility. No Proven C or Proven ASM claim is made.",
-        "games/gs1/recon/en/dossiers.json#resource_3c9:02004b28"
+        "Complete 192-byte actor-position transition is retained as draft assembly because repeated fresh approved stock compiler invocations produce different bytes for its current C candidate.",
+        "Saved equal-input pass dumps first diverge during reload CSE constant sharing. This is a repeatability failure, not proof that ordinary C cannot emit the owner.",
+        "The C candidate and its distinct runtime call bindings remain in the retained translation unit; historical assembly is restored without changing the compiler or selecting successful output.",
+        "games/gs1/recon/en/dossiers.json#resource_37a:02001be8"
       ]
     },
     {
@@ -1787,12 +644,12 @@
       "overlay": "resource_3c9",
       "start": "0x020008b4",
       "end": "0x0200124a",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 255 calls, presentation-object state, workspace transition, and conditional event progress",
-        "candidate and reference differ by 142 bytes after all decoded control flow and side effects are represented; the reference contains two embedded literal pools plus approved GCC allocation and scheduling residuals",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3c9:020008b4"
       ]
     },
@@ -3059,43 +1916,28 @@
       ]
     },
     {
-      "overlay": "resource_3c5",
-      "start": "0x0200186c",
-      "end": "0x0200245e",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 330 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:0200186c"
-      ]
-    },
-    {
       "overlay": "resource_395",
       "start": "0x02000488",
       "end": "0x02001056",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 319 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_395:02000470"
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
+        "games/gs1/recon/en/dossiers.json#resource_395:02000488"
       ]
     },
     {
       "overlay": "resource_396",
       "start": "0x0200069c",
       "end": "0x02000918",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "The historical candidate combined later owners with the first reviewed 636-byte owner; its whole-range score and call count do not establish compiler impossibility.",
-        "The bounded draft is being reconstructed and scored with canonical GCC 2.96; unsuccessful optimization probes and absence of high-register moves are not an impossibility proof.",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_396:0200069c"
       ]
     },
@@ -3103,13 +1945,12 @@
       "overlay": "resource_38d",
       "start": "0x020019b0",
       "end": "0x02002182",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 185 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_38d:020019b0"
       ]
     },
@@ -3153,43 +1994,16 @@
       ]
     },
     {
-      "overlay": "resource_375",
-      "start": "0x2000170",
-      "end": "0x2000736",
+      "overlay": "resource_399",
+      "start": "0x02000f84",
+      "end": "0x0200154c",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x020000dc–0x02000736 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "games/gs1/recon/en/dossiers.json#resource_375:020000dc"
-      ]
-    },
-    {
-      "overlay": "resource_3c5",
-      "start": "0x02001238",
-      "end": "0x0200186a",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 184 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:02001238"
-      ]
-    },
-    {
-      "overlay": "resource_399",
-      "start": "0x02000f84",
-      "end": "0x0200154c",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 142 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "02000f84 is a literal loaded by 02000f38 in owner02000b70; terminal return02000f80 precedes this pool and actual next head is02000f90.",
+        "The candidate has two for loops initialized0 with condition<0; reference loops at02001284–02001298 and020013e0–020013f4 repeatedly call and inspect signed object halfword+100. Thus the recorded complete reconstruction is false.",
         "games/gs1/recon/en/dossiers.json#resource_399:02000f84"
       ]
     },
@@ -3197,25 +2011,24 @@
       "overlay": "resource_3aa",
       "start": "0x02001494",
       "end": "0x02001a16",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "retained scene sequence begins at 0x02001494 after the separate 68-byte channel-configuration owner; games/gs1/semantic/regions.json records its complete 1440-byte extent through 0x02001a34",
-        "this classification covers the instruction region and internal pools through 0x02001a16, excluding the final alignment and literal pool",
-        "the former compiler-impossibility claim cited the preceding owner, which ordinary C reproduces exactly; failed optimization probes do not prove this remaining sequence impossible"
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE."
       ]
     },
     {
       "overlay": "resource_380",
       "start": "0x02000f8c",
-      "end": "0x02001392",
-      "kind": "generated_call_script_module",
+      "end": "0x02001450",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 118 calls, both motion loops, actor state writes, coordinate deltas, and the conditional scene-counter increment",
-        "candidate and reference extents differ by four bytes after every decoded side effect is represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_380:02000f8c"
       ]
     },
@@ -3223,12 +2036,12 @@
       "overlay": "resource_3bc",
       "start": "0x02001a0c",
       "end": "0x02001c20",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 47 calls, source-relative four-actor placement, three conditional coordinate handoffs, and final scene positioning",
-        "candidate and reference differ by six bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bc:02001a0c"
       ]
     },
@@ -3236,12 +2049,12 @@
       "overlay": "resource_3bc",
       "start": "0x02001c20",
       "end": "0x02001df8",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for the global mode gate, all three state routes, 44 calls, and four actor field groups",
-        "candidate and reference differ by twelve bytes after all decoded side effects are represented; residual is approved GCC allocation and scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bc:02001c20"
       ]
     },
@@ -3249,12 +2062,12 @@
       "overlay": "resource_3bc",
       "start": "0x02001df8",
       "end": "0x02001f90",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for the global mode gate, all three state routes, 40 calls, and every scene argument",
-        "candidate and reference differ by four bytes after all decoded control flow is represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bc:02001df8"
       ]
     },
@@ -3262,12 +2075,12 @@
       "overlay": "resource_3bc",
       "start": "0x02001f90",
       "end": "0x020020f0",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for the global mode gate, three state routes, bounded event-polling loop, all 30 calls, and terminal event-counter reset",
-        "candidate and reference have identical extents; residual is approved GCC allocation and scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bc:02001f90"
       ]
     },
@@ -3275,12 +2088,12 @@
       "overlay": "resource_3c9",
       "start": "0x02003e9c",
       "end": "0x0200423c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 94 calls, every argument, both route branches, and the event-counter side effect",
-        "candidate and reference differ by sixteen bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3c9:02003e9c"
       ]
     },
@@ -3288,12 +2101,12 @@
       "overlay": "resource_3c9",
       "start": "0x0200423c",
       "end": "0x02004736",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 141 calls, actor-coordinate stages, presentation-object fields, polling, palette write, and terminal workspace state",
-        "candidate and complete-owner reference differ by 48 bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3c9:0200423c"
       ]
     },
@@ -3301,12 +2114,12 @@
       "overlay": "resource_377",
       "start": "0x02000578",
       "end": "0x02000a0c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction from 0x02000578 accounts for all 111 calls, actor and motion fields, workspace state, event flag, conditional counter increment, and terminal reset",
-        "candidate and complete-owner reference differ by four bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_377:02000578"
       ]
     },
@@ -3314,12 +2127,12 @@
       "overlay": "resource_377",
       "start": "0x02000a0c",
       "end": "0x02000e34",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 86 calls, actor flags, palette halfwords, two display-register ramps, event flag, and workspace-state pairs",
-        "candidate and reference differ by 40 bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_377:02000a0c"
       ]
     },
@@ -3327,12 +2140,12 @@
       "overlay": "resource_3ca",
       "start": "0x02000430",
       "end": "0x02000b34",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete owner reconstruction accounts for all 188 calls, all six conditional event advances, presentation-object fields, runtime state, and palette clear",
-        "candidate and complete-owner reference differ by 42 bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3ca:02000430"
       ]
     },
@@ -3353,13 +2166,12 @@
       "overlay": "resource_380",
       "start": "0x020027f8",
       "end": "0x02003f24",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "the audited ordinary-C reconstruction accounts for all 556 calls, five loops, branch conditions, arguments, and memory effects across the complete owner",
-        "the historical seven-flag probe records failed matches, not compiler-impossibility evidence; retain this complete owner as Draft ASM until ordinary C is exact or a compiler restriction is proved",
-        "2026-09-05 canonical-route diagnostic: a fresh ordinary-C candidate emits 5932 of 5932 bytes with 755 differing halfwords and 68 aligned wrong instructions; the owner remains nonexact, and matching extent does not establish complete semantics or required assembly",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_380:020027f8"
       ]
     },
@@ -3367,12 +2179,12 @@
       "overlay": "resource_373",
       "start": "0x020015dc",
       "end": "0x02002a54",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "the audited ordinary-C reconstruction accounts for all 496 calls, three loops, branch conditions, arguments, and memory effects across the complete owner",
-        "the approved seven-route GCC 2.96 optimization and CSE cohort produced zero exact emissions; the remaining residual is distributed allocation, scheduling, immediate construction, and literal-pool placement",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_373:020015dc"
       ]
     },
@@ -3380,12 +2192,12 @@
       "overlay": "resource_383",
       "start": "0x02000de4",
       "end": "0x02001348",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "the audited ordinary-C reconstruction accounts for all 151 calls, arguments, and memory effects across the complete owner",
-        "the approved seven-route GCC 2.96 cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_383:02000de4"
       ]
     },
@@ -3393,12 +2205,12 @@
       "overlay": "resource_383",
       "start": "0x02001348",
       "end": "0x02001990",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "the audited ordinary-C reconstruction accounts for all 169 calls and arguments across the complete state-free owner",
-        "the approved seven-route GCC 2.96 cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_383:02001348"
       ]
     },
@@ -3406,12 +2218,12 @@
       "overlay": "resource_381",
       "start": "0x02000054",
       "end": "0x02000e30",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "the audited ordinary-C reconstruction accounts for all 337 calls, branch conditions, arguments, and memory effects across the complete two-phase owner",
-        "the approved seven-route GCC 2.96 cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_381:02000054"
       ]
     },
@@ -3419,13 +2231,12 @@
       "overlay": "resource_371",
       "start": "0x02001064",
       "end": "0x0200155a",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 115 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_371:02001064"
       ]
     },
@@ -3459,13 +2270,13 @@
       "overlay": "resource_374",
       "start": "0x02000b8c",
       "end": "0x0200105a",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 113 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "02000b8c is a literal loaded by02000942; preceding owner returns02000b88, and next prologue is02000bbc. Claim ends0200105a but final referenced pool extends through02001084.",
+        "Current reference has114 calls, not dossier113. Candidate omits site02000ee2, legacy Func_020031c4, actual overlay target020022e0, with r0=22,r1=8192,r2=60.",
         "games/gs1/recon/en/dossiers.json#resource_374:02000b8c"
       ]
     },
@@ -3473,13 +2284,12 @@
       "overlay": "resource_374",
       "start": "0x020017c8",
       "end": "0x020022c8",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 293 calls, their arguments, the returned-object field forwarding, and all 13 explicit memory operations",
-        "aligned reference comparison restored six zero-valued second arguments, actor fields at offsets 8 and 16, and final scene-state words at workspace offsets 448 and 456",
-        "approved GCC allocation and literal scheduling changes the owner extent and instruction order without an exact ordinary-C emission",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_374:020017c8"
       ]
     },
@@ -3487,14 +2297,12 @@
       "overlay": "resource_3a8",
       "start": "0x02000aac",
       "end": "0x0200151c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "candidate and ROM contain the same 402 calls in machine order and all argument values are represented",
-        "all 22 explicit memory operations are represented, including workspace state 364, object state 90 and 100, and result fields at offset 6",
-        "direct assembly audit restored the two state-dependent branch arms and all four object-state wait loops omitted by the mechanical draft",
-        "approved GCC allocation and literal-pool scheduling changes the complete owner extent without an exact ordinary-C emission",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3a8:02000aac"
       ]
     },
@@ -3502,14 +2310,12 @@
       "overlay": "resource_3a8",
       "start": "0x020026c0",
       "end": "0x02003156",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "candidate and ROM contain the same 248 calls in machine order and all argument values are represented",
-        "direct assembly audit restored three returned-object field forwards and four fixed-point object-field initializers",
-        "the state-dependent branch preserves its exclusive arms, workspace counter increment, and final words at offsets 448 and 456",
-        "approved GCC allocation and literal-pool scheduling changes the complete owner extent without an exact ordinary-C emission",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3a8:020026c0"
       ]
     },
@@ -3517,12 +2323,12 @@
       "overlay": "resource_3af",
       "start": "0x02002618",
       "end": "0x020029d4",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "all 86 calls, arguments, returned-object fields, workspace state, and terminal scene-data writes are represented",
-        "approved GCC allocation and literal scheduling does not emit the complete owner exactly",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3af:02002618"
       ]
     },
@@ -3530,13 +2336,13 @@
       "overlay": "resource_37b",
       "start": "0x02000554",
       "end": "0x02000a16",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 123 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "02000554 is a literal loaded by02000156; branch02000550 skips the interior pool to02000598. Existing candidate concatenates the first owner tail with the second head02000614. Claim ends at an interior pool/alignment after branch02000a14→02000a4c; second owner continues through02000c8c.",
+        "Dossier claims0 memory operations, but reference stores at020005fe,02000604,02000626,0200062e are omitted by candidate; the two first stores use the first owner saved work values. Subsequent167-call owner is truncated: only112 calls lie before claim end and55 calls follow.",
         "games/gs1/recon/en/dossiers.json#resource_37b:02000554"
       ]
     },
@@ -3544,42 +2350,40 @@
       "overlay": "resource_37f",
       "start": "0x0200161c",
       "end": "0x02001a86",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 82 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02001604",
-        "start corrected from 0x02001604 to 0x0200161c: the first 24 bytes are the literal pool of the preceding owner resource_37f:02000f8c, now exact C"
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "Current head0200161c is valid, but the dossier score remains for02001604/1154bytes including24bytes of preceding owner pool. Current1130-byte region concatenates420-byte owner0200161c and710bytes of748-byte owner020017c0, omitting38 trailingbytes.",
+        "Candidate puts the second function body after the first instead of a separate entry with incomingr0, omitting its argument-dependent guards. Reference has83 calls, not82: site02001940 to080091c0 with six arguments is absent.",
+        "games/gs1/recon/en/dossiers.json#resource_37f:02001604"
       ]
     },
     {
       "overlay": "resource_371",
       "start": "0x02000c28",
       "end": "0x02001062",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 123 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_371:02000c1c"
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
+        "games/gs1/recon/en/dossiers.json#resource_371:02000c28"
       ]
     },
     {
       "overlay": "resource_39e",
       "start": "0x0200064c",
       "end": "0x02000a8e",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 125 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "0200064c is a literal loaded by02000532; preceding owner returns02000648. Claim concatenates complete196-byte owner02000658 with882bytes of928-byte owner0200071c; return02000712 and new prologue0200071c prove distinct functions. Final46bytes are omitted.",
+        "Candidate puts both returning functions into one C body and shares unresolved call labels; e.g.Func_02004b58 at02000692 targets0808a1b8 and at0200069a targets0808a190, yet has one declaration. Its failed compile cannot establish an allocator limitation for either true owner.",
         "games/gs1/recon/en/dossiers.json#resource_39e:0200064c"
       ]
     },
@@ -3613,13 +2417,12 @@
       "overlay": "resource_37b",
       "start": "0x02000150",
       "end": "0x02000552",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 116 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_37b:02000150"
       ]
     },
@@ -3627,13 +2430,12 @@
       "overlay": "resource_3b8",
       "start": "0x020006dc",
       "end": "0x02000ada",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 113 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b8:020006dc"
       ]
     },
@@ -3641,13 +2443,12 @@
       "overlay": "resource_39f",
       "start": "0x02002500",
       "end": "0x020028ae",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 84 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_39f:02002500"
       ]
     },
@@ -3655,13 +2456,13 @@
       "overlay": "resource_3b9",
       "start": "0x02000708",
       "end": "0x02000ab6",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 101 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "02000708 is a literal loaded by020006cc; previous callback returns02000704 and actual next prologue is02000710. The claim stops02000ab6, immediately after branch02000ab4→02000c90, not at a return.",
+        "The candidate has only the first101 of actual owner177 call sites; remaining76calls, nested choices, shared tails and return02000dac are absent. Owner guard also omits the reference input0x962 to the flag test at02000714.",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02000708"
       ]
     },
@@ -3669,13 +2470,12 @@
       "overlay": "resource_38e",
       "start": "0x0200050c",
       "end": "0x020008b6",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "this retained range crosses distinct reviewed owners; the first owner ends at 0x020005dc and contains 17 calls, not the previously claimed 89-call 938-byte function",
-        "2026-09-06: the first candidate was reconstructed at its complete 208-byte boundary, correcting misplaced flag guards; it remains nonexact and the later owners remain retained assembly",
-        "failed optimization probes and absence of high-register moves do not establish compiler impossibility; this range is Draft ASM, not proven necessary ASM",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_38e:0200050c"
       ]
     },
@@ -3683,13 +2483,12 @@
       "overlay": "resource_381",
       "start": "0x02001798",
       "end": "0x02001b32",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 92 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_381:02001798"
       ]
     },
@@ -3697,13 +2496,12 @@
       "overlay": "resource_372",
       "start": "0x02002dec",
       "end": "0x0200316a",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 84 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_372:02002dec"
       ]
     },
@@ -3875,12 +2673,12 @@
       "overlay": "resource_383",
       "start": "0x02001f50",
       "end": "0x020021c8",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 61 calls, arguments, signed scene-selector branches, shared-object flags, and two workspace transitions",
-        "direct assembly audit removed a false branch-target call and restored selected-actor forwarding plus states 513 and 521",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_383:02001f50"
       ]
     },
@@ -3888,12 +2686,12 @@
       "overlay": "resource_383",
       "start": "0x020021c8",
       "end": "0x02002546",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 91 calls, arguments, nested conditionals, success/fallback routing, shared-object flags, and workspace state",
-        "direct assembly audit restored three literal-backed actor setup calls and the fallback guard omitted by the mechanical draft",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_383:020021c8"
       ]
     },
@@ -3901,12 +2699,12 @@
       "overlay": "resource_3a4",
       "start": "0x02001838",
       "end": "0x02001cf0",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 107 calls, arguments, repeated object-state phases, terminal actor lookup, and coordinate forwarding",
-        "direct boundary audit excludes the preceding continuation data and following literal pool from the callable owner",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3a4:02001838"
       ]
     },
@@ -3914,12 +2712,12 @@
       "overlay": "resource_3a4",
       "start": "0x02001d14",
       "end": "0x02002006",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 68 calls, arguments, repeated object state, bounded completion polling, terminal actor lookup, and coordinate forwarding",
-        "direct boundary audit excludes the preceding literal pool and restores the loop condition omitted by the mechanical draft",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3a4:02001d14"
       ]
     },
@@ -3927,12 +2725,12 @@
       "overlay": "resource_3b9",
       "start": "0x02001cd4",
       "end": "0x020023c6",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 180 calls, arguments, the event-result branch, both progress updates, and all workspace state writes",
-        "direct boundary and literal-pool audit restored every semantic operation omitted by the mechanical draft",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02001cd4"
       ]
     },
@@ -3940,12 +2738,12 @@
       "overlay": "resource_375",
       "start": "0x0200150c",
       "end": "0x0200172c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 46 calls, progress predicates, actor-state writes, and both progress-dependent branches",
-        "direct boundary and literal-pool audit excludes the preceding pool and confirms the complete callable owner through its return",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_375:0200150c"
       ]
     },
@@ -3953,12 +2751,12 @@
       "overlay": "resource_375",
       "start": "0x02001760",
       "end": "0x02001972",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 60 calls, nested resource predicates, presentation arguments, and actor-coordinate forwarding",
-        "direct boundary and literal-pool audit confirms the complete callable owner through its return",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_375:02001760"
       ]
     },
@@ -3966,11 +2764,12 @@
       "overlay": "resource_3bb",
       "start": "0x020010dc",
       "end": "0x020012d8",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 47 calls, relative actor placements, actor lookups, and closing position updates",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bb:020010dc"
       ]
     },
@@ -3978,11 +2777,12 @@
       "overlay": "resource_3bb",
       "start": "0x020012f0",
       "end": "0x02001418",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 29 calls, the progress gate, both result branches, and common cleanup",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bb:020012f0"
       ]
     },
@@ -3990,11 +2790,12 @@
       "overlay": "resource_3b9",
       "start": "0x02001298",
       "end": "0x020015ec",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 92 calls, actor configuration, literal-backed presentation arguments, and workspace phases",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02001298"
       ]
     },
@@ -4002,11 +2803,12 @@
       "overlay": "resource_3b1",
       "start": "0x02001b34",
       "end": "0x02001f3c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 107 calls, the guarded entry, three actor presentation phases, and both actor flag updates",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:02001b34"
       ]
     },
@@ -4014,11 +2816,12 @@
       "overlay": "resource_3b9",
       "start": "0x02000dcc",
       "end": "0x020011ac",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 101 calls, the progress guard, actor formation phases, two actor flag updates, and the full presentation-record reset",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02000dcc"
       ]
     },
@@ -4026,11 +2829,12 @@
       "overlay": "resource_3b1",
       "start": "0x020052f4",
       "end": "0x02005684",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 80 calls, both result paths, the conditional workspace counter, terminal workspace state, and the literal-backed closing event",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:020052f4"
       ]
     },
@@ -4038,11 +2842,12 @@
       "overlay": "resource_3b1",
       "start": "0x020057ec",
       "end": "0x02005c48",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 112 calls, three returned actor handles and their uses, formation phases, and the terminal presentation-state clear",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:020057ec"
       ]
     },
@@ -4050,11 +2855,12 @@
       "overlay": "resource_3b1",
       "start": "0x02005d10",
       "end": "0x02006110",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 87 calls, four returned actor handles and their uses, both progress decisions, both workspace-counter updates, and every presentation phase",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:02005d10"
       ]
     },
@@ -4062,11 +2868,12 @@
       "overlay": "resource_3b1",
       "start": "0x02004254",
       "end": "0x020045d0",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 83 calls, the incoming and returned actor handles, optional record coordinate transfer, the 0x300 gate, and all nested event-dependent presentation branches",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:02004254"
       ]
     },
@@ -4074,11 +2881,12 @@
       "overlay": "resource_3b1",
       "start": "0x020038ac",
       "end": "0x02003d10",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 112 calls, the workspace presentation field, three null-gated actor-coordinate transfers, and the terminal event literal",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:020038ac"
       ]
     },
@@ -4086,11 +2894,12 @@
       "overlay": "resource_39c",
       "start": "0x02004a08",
       "end": "0x02004c68",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 66 calls, the signed actor-coordinate gate, nested dialogue conditions, repeated dialogue phase, and signed actor-coordinate handoff",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_39c:02004a08"
       ]
     },
@@ -4098,11 +2907,12 @@
       "overlay": "resource_3b1",
       "start": "0x02001f3c",
       "end": "0x020027d8",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 229 calls and their arguments across the linear actor presentation owner",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:02001f3c"
       ]
     },
@@ -4110,11 +2920,12 @@
       "overlay": "resource_3ab",
       "start": "0x0200131c",
       "end": "0x020015bc",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 70 calls, two completion waits, and fifteen actor/effect memory operations",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3ab:0200131c"
       ]
     },
@@ -4122,11 +2933,12 @@
       "overlay": "resource_39b",
       "start": "0x02001730",
       "end": "0x0200196c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 53 calls, the bounded two-pass exchange, and fourteen actor/effect memory operations",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_39b:02001730"
       ]
     },
@@ -4134,11 +2946,12 @@
       "overlay": "resource_3a0",
       "start": "0x02000f30",
       "end": "0x02001060",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 21 calls, three object spawns, actor presentation, and the guarded story-state increment",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3a0:02000f30"
       ]
     },
@@ -4146,11 +2959,12 @@
       "overlay": "resource_3b1",
       "start": "0x020027d8",
       "end": "0x02002ff0",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 203 calls, three scene-counter branches, and six nullable actor-coordinate transfers",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b1:020027d8"
       ]
     },
@@ -4158,11 +2972,12 @@
       "overlay": "resource_3ba",
       "start": "0x02001214",
       "end": "0x020013e4",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 46 calls and the phase-selected full, revisit, and active-scene paths",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3ba:02001214"
       ]
     },
@@ -4170,11 +2985,12 @@
       "overlay": "resource_3ba",
       "start": "0x020016ec",
       "end": "0x02001898",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 42 calls and the phase-selected full, revisit, and active-scene paths",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3ba:020016ec"
       ]
     },
@@ -4182,11 +2998,12 @@
       "overlay": "resource_3b0",
       "start": "0x02000e78",
       "end": "0x020010a0",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 56 calls, seven-actor staging, both workspace-state updates, and the final actor selector branch",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b0:02000e78"
       ]
     },
@@ -4194,11 +3011,12 @@
       "overlay": "resource_3bb",
       "start": "0x020016d4",
       "end": "0x02001898",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 40 calls, the phase-selected full and revisit paths, and the lifted actor-state transfer",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3bb:020016d4"
       ]
     },
@@ -4206,11 +3024,12 @@
       "overlay": "resource_3b0",
       "start": "0x02000564",
       "end": "0x020007b0",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 52 calls, actor 9/10/11/12 staging, placement and workspace publications, and terminal scene close",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_3b0:02000564"
       ]
     },
@@ -4254,11 +3073,12 @@
       "overlay": "resource_378",
       "start": "0x0200088c",
       "end": "0x0200187c",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 489 calls, three scene-state branches, workspace effects, and three inline pools",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_378:0200088c"
       ]
     },
@@ -4266,11 +3086,12 @@
       "overlay": "resource_39e",
       "start": "0x02001494",
       "end": "0x02001d50",
-      "kind": "generated_call_script_module",
+      "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
-        "complete reconstruction accounts for all 233 calls, both skip-beat gates, workspace updates, and story-flag effects",
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/gs1/recon/en/dossiers.json#resource_39e:02001494"
       ]
     },

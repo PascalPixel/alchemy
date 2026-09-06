@@ -76,13 +76,23 @@ replacing the approved bundle. `agbcc` comes directly from pret; `agscc` is
 the separately audited GCC 2.96 host port in PascalPixel/agscc. Compiler source
 history belongs to those repositories; Alchemy owns routing and verification.
 
-The pinned `agscc` includes the maintainer-authorized post-reload constant-mode
-lookup correction documented in its README. It fixes an inconsistent cselib
-query, not allocation or scheduling policy. Its game-independent regression is
-run with `rustc agscc/contrib/check-cselib.rs -o agscc/build/check-cselib`, then
-`agscc/build/check-cselib out/compilers/dist/xgcc agscc/gcc/testsuite/gcc.dg/cselib-constant-mode.c out/compiler-regression`.
-`make test` runs this repeatability check automatically. It does not replace
-the full ROM and edition audit.
+**Standing rule: no modifications to `agscc` unless they bring it closer to
+the historical stock GCC 2.96 shipped by Red Hat.** This includes temporary
+diagnostic patches, host-port changes, optimizer fixes, and test changes that
+would establish different compiler behavior. Better matching scores, newer GCC
+behavior, determinism, speed, or a passing ROM build do not justify a departure
+from that historical compiler. Every proposed change must identify the specific
+Red Hat release and source package or vendor patch set, show the discrepancy,
+and demonstrate restored historical fidelity before admission. A version string
+or our current pin alone is not proof of Red Hat provenance. Existing maintainer
+approval and verification requirements still apply; they do not waive this rule.
+
+The pinned `agscc` preserves the pre-fix GCC 2.96 code-generation behavior.
+The post-reload constant-mode correction was rolled back by the maintainer:
+it changed historical output and invalidated 89 matching overlay C owners.
+Compiler repeatability must be investigated without changing optimizer behavior
+or selecting successful runs. A repeatability test must not require a new
+optimization that the historical compiler did not reliably perform.
 
 The restored bundle contains `xgcc`, `cc1`, `cpp0`, and `tradcpp0` from
 `agscc/build/gcc`, stock `agbcc/gcc/old_agbcc` under `agbcc/`, and unmodified
@@ -133,6 +143,10 @@ Use `decompile` for candidate recovery, `diff` for scoring, `match` for
 decoder-named repairs, and `waves` for prepared cohorts. The former overlay
 text-listing drafter and unrestricted source/tuning runners are retired;
 they are not alternate routes around the repair catalog or wave contracts.
+Candidate scoring also rejects the retired `--family`, `--flags`, and
+`--remove-flags` overrides. Main and overlay candidates derive their compiler
+family and flags from the same canonical source route as production; diagnostic
+dumps remain available through `inspect allocator` and `diff --allocator-order`.
 
 ### Public hosts
 
@@ -365,6 +379,19 @@ overlay evidence lives in `games/gs1/semantic/overlay-assembly.json`. Entries
 marked `strong` remain Draft ASM, and unclassified bytes remain Unknown.
 Missing reasoning, invalid extents, or stale generated evidence stops coverage
 generation rather than promoting the bytes.
+
+Reconstructed scene scripts use `structured_scene_module` with `strong`
+confidence. The former `generated_call_script_module` duplicated this category
+while escaping its coverage guard; it is retired, not an alternate proof route.
+A classification range describes retained bytes, not a function identity. Use
+the reviewed complete owner boundaries when selecting, scoring, or adopting;
+historical dossier spans and supplied score spans cannot establish an entry.
+Overlay decompilation, inspection, scoring, and adoption share the boundary
+resolver in `compiler-core`. For retained owners, `--span` must equal the reviewed
+complete extent; the tool never extends it to fit a candidate. Existing C uses
+its source-backed assembly placeholder. A disagreement with an older reviewed
+extent is reported as pending boundary audit, not silently rewritten; overlaps
+with a different reviewed owner are rejected.
 
 The point is authentic compile context. GCC 2.96 codegen depends on the
 translation unit around a function — symbol names, shared declarations,

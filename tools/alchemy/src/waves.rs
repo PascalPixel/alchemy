@@ -396,7 +396,7 @@ fn bucket_report_is_fresh(report: &BucketReport, inventory: &Inventory, environm
             })
 }
 
-fn bucket_class(entry: &BucketEntry) -> Result<&str, String> {
+fn bucket_class(entry: &BucketEntry) -> Result<String, String> {
     if entry.residual.is_none()
         && !matches!(
             entry.verdict.as_str(),
@@ -416,19 +416,8 @@ fn bucket_class(entry: &BucketEntry) -> Result<&str, String> {
     let class = entry
         .residual
         .as_ref()
-        .map(|residual| match &residual.class {
-            ResidualClass::Exact => "exact",
-            ResidualClass::LayoutOnly => "layout_only",
-            ResidualClass::AllocationCovered => "allocation_covered",
-            ResidualClass::AllocationUncovered => "allocation_uncovered",
-            ResidualClass::SchedulingFloor => "scheduling_floor",
-            ResidualClass::TypeWidthMismatch => "type_width_mismatch",
-            ResidualClass::StructuralTopology => "structural_topology",
-            ResidualClass::MissingExtraCode => "missing_extra_code",
-            ResidualClass::FrameContext => "frame_context",
-            ResidualClass::Unclassified => "unclassified",
-        })
-        .unwrap_or(entry.verdict.as_str());
+        .map(|residual| residual.class.label().replace('-', "_"))
+        .unwrap_or_else(|| entry.verdict.clone());
     if class.is_empty() || class == "unclassified" {
         Err(format!("{} has no triage class", entry.owner))
     } else {
@@ -441,7 +430,7 @@ fn bucket_scoreboard<'a>(entries: impl Iterator<Item = &'a BucketEntry>) -> Resu
     let mut owners = 0;
     let mut bytes = 0;
     for entry in entries {
-        let row = classes.entry(bucket_class(entry)?.into()).or_default();
+        let row = classes.entry(bucket_class(entry)?).or_default();
         row.0 += 1;
         row.1 += entry.size;
         owners += 1;

@@ -8,7 +8,8 @@ void Func_020030c0();
 void Func_020030fe();
 void Func_0200315a();
 void Func_02003178();
-void Func_020031a2();
+void Func_020031a2_a();
+void Func_020031a2_b();
 void Func_020031ba();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -45,11 +46,11 @@ void FieldScene_RunScene3b9_020004c8(void)
     s32 record;
 
     Func_020030c0();
-    Call2(Func_020031a2, 14, 0x102);
+    Call2(Func_020031a2_a, 14, 0x102);
     Func_0200315a(14, 2);
     Call1(Func_02003178, 0x2116);
     Func_02002132(14);
     Call3(Func_020031ba, 14, 0x102, 40);
-    Func_020031a2(14, 0);
+    Func_020031a2_b(14, 0);
     Func_020030fe();
 }

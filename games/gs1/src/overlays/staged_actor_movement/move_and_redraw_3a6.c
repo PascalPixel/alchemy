@@ -16,14 +16,14 @@
 #define RefreshStagedActor Func_020026e0
 #define Func_02006614 Func_02002638
 #define Func_0200661e Func_02002642
-#define Func_0200687c Func_02002770
+#define Func_0200687c Func_02002770_a
 #define Func_02006658 Func_02002674
 #define Func_02006776 Func_02002712
 #define Func_0200678e Func_0200272a
 #define Func_02006740 Func_020026fc
 #define Func_020067a4 Func_02002740
 #define Func_020067bc Func_02002758
-#define Func_020067d4 Func_02002770
+#define Func_020067d4 Func_02002770_b
 #define Func_0200677a Func_02002736
 #define Func_020068f4 Func_020027e8
 #define Func_020068fa Func_020027ee

@@ -233,9 +233,7 @@ void FieldScene_ApplyOffset0Neg5(void)
 
 void FieldScene_ApplyOffset0Pos5Second(void)
 {
-    void SceneEffect_SetAlphaBlendForScene9(s32, s32);
-
-    SceneEffect_SetAlphaBlendForScene9(0, 5);
+    SceneActor_ShiftObjectsByBlock(0, 5);
 }
 
 void FieldScene_ApplyOffset0Neg5Second(void)

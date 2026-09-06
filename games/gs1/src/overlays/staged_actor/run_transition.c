@@ -14,6 +14,7 @@ extern void Func_02005472(s32 arg0);
 extern void Func_0200528a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void Func_0200529a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void Func_020052a8();
+extern void Func_020052a8_a();
 extern void Func_02005494(void);
 
 #define StagedActorDirectionSteps Data_0200d0e8
@@ -28,6 +29,7 @@ extern void Func_02005494(void);
 #define SetStagedActorMoveTarget Func_0200528a
 #define SetLeadActorMoveTarget Func_0200529a
 #define UpdateStagedActorState Func_020052a8
+#define UpdateLeadActorState Func_020052a8_a
 #define FinalizeStagedActorUpdate Func_02005494
 
 void RunStagedActorTransition(void) {
@@ -97,5 +99,5 @@ void RunStagedActorTransition(void) {
     leader->unknown_2c = transition_busy;
     leader->x.value = leader->x.parts.cell << 16;
     leader->z.value = leader->z.parts.cell << 16;
-    UpdateStagedActorState(leader, 1);
+    UpdateLeadActorState(leader, 1);
 }

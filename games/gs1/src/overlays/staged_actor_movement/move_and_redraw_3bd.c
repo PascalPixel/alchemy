@@ -19,11 +19,11 @@
 #define Func_020067a4 Func_02004480
 #define Func_020067bc Func_02004498
 #define Func_020067d4 Func_020044b0
-#define Func_0200677a Func_0200445e_a
+#define Func_0200677a Func_0200445e
 #define Func_020068f4 Func_02004618
 #define Func_020068fa Func_0200461e
 #define Func_020066b8 Func_020043ec
-#define Func_02006752 Func_0200445e
+#define Func_02006752 Func_0200445e_a
 #define Func_020067ae Func_020044ba
 #define Func_020069d0 Func_020046e4
 

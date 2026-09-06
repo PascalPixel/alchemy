@@ -4,7 +4,8 @@
  * word the image holds. */
 extern u8 Data_03001ebc[];
 s32 Func_02001706();
-s32 Func_02001718();
+s32 Func_02001718_a();
+s32 Func_02001718_b();
 s32 Func_02001726();
 void Func_02001756();
 void Func_020017d0();
@@ -45,11 +46,11 @@ void FieldScene_RunScene376_0200055c(void)
     if ((u32)(*(volatile u16 *)(record + 6) + -0xa001) <= 0x3ffe) {
         Func_02001862(2, 22);
     } else {
-        ((void (*)())Func_02001718)();
+        ((void (*)())Func_02001718_a)();
         if (Value1(Func_02001706, 0x87a) != 0) {
             Call1(Func_020017d0, 0x1c09);
         } else {
-            if (Value1(Func_02001718, 0x815) != 0) {
+            if (Value1(Func_02001718_b, 0x815) != 0) {
                 Call1(Func_020017e2, 0x11a3);
             } else {
                 Call1(Func_020017ea, 0xf54);

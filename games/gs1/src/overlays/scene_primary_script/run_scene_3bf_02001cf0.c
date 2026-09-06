@@ -6,13 +6,15 @@ extern u8 Data_00002424[];
 extern u8 Data_03001ebc[];
 void Func_02007330();
 void Func_020073e2();
-void Func_020073f0();
+void Func_020073f0_a();
+void Func_020073f0_b();
 void Func_020073fa();
 void Func_02007400();
 void Func_02007416();
 void Func_02007418();
 void Func_0200742a();
-void Func_0200742e();
+void Func_0200742e_a();
+void Func_0200742e_b();
 void Func_02007446();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -46,10 +48,10 @@ void FieldScene_RunScene3bf_02001cf0(s32 a0)
     Call3(Func_0200742a, a0, 0x101, 60);
     Func_02007400((base6_2424 + 1));
     Func_02007418(a0, 0);
-    Func_020073f0(a0, 1);
+    Func_020073f0_a(a0, 1);
     Func_02007416((base6_2424 + 2));
-    Func_0200742e(a0, 0);
-    Func_020073f0(a0, 4);
-    Func_0200742e((base6_2424 + 3));
+    Func_0200742e_a(a0, 0);
+    Func_020073f0_b(a0, 4);
+    Func_0200742e_b((base6_2424 + 3));
     Func_02007446(a0, 0);
 }

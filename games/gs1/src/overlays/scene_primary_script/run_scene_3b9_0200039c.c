@@ -8,7 +8,8 @@ s32 Func_02002f6e();
 void Func_02002f94();
 s32 Func_02002fd8();
 void Func_02002ff0();
-s32 Func_02003008();
+s32 Func_02003008_a();
+s32 Func_02003008_b();
 void Func_02003046();
 void Func_02003050();
 void Func_02003058();
@@ -69,10 +70,10 @@ void FieldScene_RunScene3b9_0200039c(void)
                 bump_step(1);
                 Call3(Func_020030b8, 16, 0x100, 40);
                 Value2(Func_02003098, 16, 0);
-                if (Value2(Func_02003008, 0, 0) == 0) {
+                if (Value2(Func_02003008_a, 0, 0) == 0) {
                     bump_step(1);
                 }
-                ((void (*)())Func_02003008)(40);
+                ((void (*)())Func_02003008_b)(40);
                 Func_020030c8(16, 0);
                 Call1(Func_02002ff0, 0x3c0);
                 goto L_02000448;

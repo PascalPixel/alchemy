@@ -532,9 +532,8 @@ mod tests {
     use super::*;
     #[test]
     fn symbolizes_jump_tables_external_pools_and_aliases() {
-        let directory = env::temp_dir().join(format!("alchemy-family-m2c-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&directory);
-        fs::create_dir_all(&directory).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let directory = directory.path();
         let source = directory.join("08000000.s");
         let listing = directory.join("target.lst");
         write(&source, b".thumb\ncmp r0, #0\nldr r2, [pc, #12]\nmov pc, r2\n.align 2\n.4byte 0x0800000c\nnop\n.align 2\n.4byte 0x08000008\n").unwrap();
@@ -554,16 +553,11 @@ mod tests {
         assert!(output.contains(".global sub_08000100"));
         assert!(output.contains("ldr r0, .Lm2c_pool_0008"));
         assert!(output.contains(".Lm2c_pool_0008:\n.4byte 0x"));
-        fs::remove_dir_all(directory).unwrap();
     }
     #[test]
     fn m2c_accepts_aggregate_and_family_contexts() {
-        let directory = env::temp_dir().join(format!(
-            "alchemy-family-m2c-contexts-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&directory);
-        fs::create_dir_all(&directory).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let directory = directory.path();
         let assembly = directory.join("08000000.s");
         let aggregate = directory.join("aggregate.i");
         let family = directory.join("family.i");
@@ -585,15 +579,12 @@ mod tests {
         )
         .unwrap();
         assert!(output.contains("FamilyTransform(absolute_03001000.field_0004)"));
-        fs::remove_dir_all(directory).unwrap();
     }
 
     #[test]
     fn known_absolute_root_becomes_named_field_access() {
-        let directory =
-            env::temp_dir().join(format!("alchemy-family-m2c-field-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&directory);
-        fs::create_dir_all(&directory).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let directory = directory.path();
         let source = directory.join("08000000.s");
         let listing = directory.join("target.lst");
         let context = directory.join("aggregate.i");
@@ -613,6 +604,5 @@ mod tests {
         )
         .unwrap();
         assert!(output.contains("absolute_03001000.field_0004"));
-        fs::remove_dir_all(directory).unwrap();
     }
 }

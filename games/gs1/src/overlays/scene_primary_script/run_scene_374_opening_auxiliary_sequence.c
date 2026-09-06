@@ -13,12 +13,14 @@ void Func_020028e8();
 s32 Func_020028f2();
 void Func_020028f6();
 s32 Func_0200290c();
+s32 Func_0200290c_a();
 void Func_02002950();
 void Func_0200295a();
 s32 Func_0200295e();
 void Func_02002976();
 void Func_02002984();
 void Func_020029c2();
+void Func_020029c2_a();
 void Func_020029e2();
 s32 Func_02002a06();
 void Func_02002a0a();
@@ -99,13 +101,13 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Func_02002858();
         base7_0 = 0;
         for (i = 0; i < 40; i++) {
-            Func_020025fa(((s32 (*)())Func_020029c2)(17));
+            Func_020025fa(((s32 (*)())Func_020029c2_a)(17));
             Func_020028f6(1);
         }
         Value2(Func_0200290c, 0x200a591, 0xc80);
         Func_02002b6a(107);
         for (i = 0; i != 180; i++) {
-            if (Value2(Func_0200290c, i, 10) == 0) {
+            if (Value2(Func_0200290c_a, i, 10) == 0) {
                 if ((1 & base7_0) != 0) {
                     *(volatile s32 *)p6 = *(volatile s32 *)p6 - 0x10000;
                 } else {

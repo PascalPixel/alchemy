@@ -26,9 +26,9 @@
 #define PlayActor9IntroCue   Func_020003d8
 #define FinishActor9Intro    Func_020003e8
 #define EndActor9Intro       Func_020003ac
-#define BeginActor10Intro    Func_020003b4
+#define BeginActor10Intro    Func_020003b4_a
 #define SetActor10Mode       Func_020003d4
-#define WaitActor10Intro     Func_020003ba
+#define WaitActor10Intro     Func_020003ba_a
 #define PlayActor10IntroCue  Func_02000408
 #define FinishActor10Intro   Func_02000418
 #define EndActor10Intro      Func_020003dc
@@ -203,8 +203,8 @@ void FieldScene_RunActor9Intro(void)
 
 void FieldScene_RunActor10Intro(void)
 {
-    void Func_020003b4(void);
-    void Func_020003ba(s32);
+    void Func_020003b4_a(void);
+    void Func_020003ba_a(s32);
 
     BeginActor10Intro();
     SetActor10Mode(RESOURCE384_ACTOR_10, 4);

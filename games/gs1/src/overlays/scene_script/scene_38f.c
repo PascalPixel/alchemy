@@ -113,6 +113,7 @@ s32 Func_02003142();
 void Func_02003100();
 void Func_0200316a();
 void Func_02003172();
+void Func_02003172_a();
 void Func_0200317a();
 void Func_02003182();
 s32 Func_02003138();
@@ -129,6 +130,7 @@ void Func_02003204();
 void Func_0200320a();
 void Func_02003210();
 void Func_02003216();
+void Func_02003216_a();
 void Func_0200321c();
 void Func_02003222();
 void Func_02003228();
@@ -259,7 +261,7 @@ void SceneData_InitRecordTable(u8 *o) {
 s32 SceneEffect_UpdateFallingObject(struct Obj *p) {
     p->f08 += p->f24;
     p->f10 += p->f2c;
-    p->f2c += 0xf888f5c4;
+    p->f2c -= 2621;
     p->f18 += 0x600;
     p->f1c += 0x600;
     {
@@ -294,8 +296,8 @@ s32 SceneActor_TurnTowardTarget(struct Ent *p) {
             if (t > 0x1000) {
                 t = 0x1000;
             }
-            if (t < (s32)0xf8b4f001) {
-                t = (s32)0xf8b4f001;
+            if (t < -0x1000) {
+                t = -0x1000;
             }
             p->f06 = p->f06 + t;
         }
@@ -416,7 +418,7 @@ s32 FieldScene_SetupEntryBySelector(void)
         {
             s32 m = 14;
             s32 n = 9;
-            Func_02003172(13, 9, 1, 1, m, n);
+            Func_02003172_a(13, 9, 1, 1, m, n);
         }
     }
 
@@ -436,7 +438,7 @@ s32 FieldScene_SetupEntryBySelector(void)
         Func_0200321c(20);
         Func_02003222(21);
         Func_02003228(22);
-        Func_02003216(Data_0200b2d8);
+        Func_02003216_a(Data_0200b2d8);
     }
 
     return 0;

@@ -37,6 +37,7 @@ void Func_02001b12();
 void Func_02001b14();
 void Func_02001b24();
 void Func_02001b28();
+void Func_02001b28_a();
 void Func_02001b2e();
 void Func_02001b32();
 void Func_02001b44();
@@ -45,11 +46,13 @@ void Func_02001b56();
 void Func_02001b58();
 void Func_02001b5e();
 void Func_02001b6c();
+void Func_02001b6c_a();
 void Func_02001b70();
 void Func_02001b74();
 void Func_02001b7c();
 void Func_02001b82();
 void Func_02001b8a();
+void Func_02001b8a_a();
 void Func_02001b90();
 void Func_02001b98();
 void Func_02001ba0();
@@ -91,7 +94,7 @@ void Func_02001d4e();
 #define BattleRuntime_WaitIfModeZero_3(args...) Func_02001a68(args)
 #define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02001aa6, a0, a1, a2)
 #define Object_SetPosition_1(a0, a1, a2, a3) Call4(Func_02001a5e, a0, a1, a2, a3)
-#define Object_CommitPosition_1(args...) Func_02001a6c(args)
+#define Object_CommitPosition_1(args...) Func_02001a6c_a(args)
 #define Object_SetPosition_2(a0, a1, a2, a3) Call4(Func_02001a74, a0, a1, a2, a3)
 #define Object_CommitPosition_2(args...) Func_02001a82(args)
 #define Object_SetPosition_3(a0, a1, a2, a3) Call4(Func_02001a8a, a0, a1, a2, a3)
@@ -100,7 +103,7 @@ void Func_02001d4e();
 #define ObjectMotion_EnableActionAndResetMotion_2(args...) Func_02001b0e(args)
 #define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02001b70, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02001b8a, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02001b28, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02001b28_a, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_02001b04(args)
 #define ObjectMotion_EnableActionAndSetCallback_2(args...) Func_02001b44(args)
 #define BattleRuntime_WaitIfModeZero_5(args...) Func_02001b12(args)
@@ -113,10 +116,10 @@ void Func_02001d4e();
 #define Object_SetPosition_6(a0, a1, a2, a3) Call4(Func_02001b48, a0, a1, a2, a3)
 #define Object_CommitPosition_5(args...) Func_02001b56(args)
 #define Object_SetPosition_7(a0, a1, a2, a3) Call4(Func_02001b5e, a0, a1, a2, a3)
-#define Object_CommitPosition_6(args...) Func_02001b6c(args)
+#define Object_CommitPosition_6(args...) Func_02001b6c_a(args)
 #define Object_SetPosition_8(a0, a1, a2, a3) Call4(Func_02001b74, a0, a1, a2, a3)
 #define Object_CommitPosition_7(args...) Func_02001b82(args)
-#define Object_SetPosition_9(a0, a1, a2, a3) Call4(Func_02001b8a, a0, a1, a2, a3)
+#define Object_SetPosition_9(a0, a1, a2, a3) Call4(Func_02001b8a_a, a0, a1, a2, a3)
 #define Object_CommitPosition_8(args...) Func_02001b98(args)
 #define Object_SetPosition_10(a0, a1, a2, a3) Call4(Func_02001ba0, a0, a1, a2, a3)
 #define ObjectMotion_EnableActionAndResetMotion_4(args...) Func_02001c0e(args)
@@ -137,7 +140,7 @@ void Func_02001d4e();
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02001c78(args)
 u8 *Func_020019fc();
 u8 *Func_02001a6c();
-u8 *Func_02001a6c();
+void Func_02001a6c_a();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

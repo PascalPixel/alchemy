@@ -11,12 +11,16 @@ void Func_02002e9e();
 void Func_02002ecc();
 s32 Func_02002edc();
 void Func_02002ede();
-void Func_02002ef0();
+void Func_02002ef0_a();
+void Func_02002ef0_b();
 void Func_02002ef6();
-void Func_02002ef8();
+void Func_02002ef8_a();
+void Func_02002ef8_b();
+void Func_02002ef8_c();
 void Func_02002f04();
 void Func_02002f0c();
-void Func_02002f10();
+void Func_02002f10_a();
+void Func_02002f10_b();
 void Func_02002f5a();
 void Func_02002f76();
 
@@ -61,23 +65,23 @@ void FieldScene_RunScene3a6SequenceA(void)
     if (Value1(Func_02002e34, 0x200) == 0) {
         Call1(Func_02002e48, 0x200);
         Func_02002e64();
-        Call2(Func_02002ef8, 0x10000, 0x2000);
-        Func_02002ef8(8, 1);
+        Call2(Func_02002ef8_a, 0x10000, 0x2000);
+        Func_02002ef8_b(8, 1);
         Func_02002f0c();
         Func_02002e7a(60);
         Call3(Func_02002ef6, 8, 0xc000, 20);
-        Call2(Func_02002f10, 8, 0x102);
-        Func_02002ef8(8, 2);
+        Call2(Func_02002f10_a, 8, 0x102);
+        Func_02002ef8_c(8, 2);
         Func_02002e9e(20);
         Call3(Func_02002ecc, 8, 0x10000, 0x8000);
-        Call3(Func_02002ef0, 8, 0x318, 248);
+        Call3(Func_02002ef0_a, 8, 0x318, 248);
         Func_02002f76(152);
         record = Func_02002edc(8);
         *(volatile s32 *)(record + 40) = 0x80000;
-        Call3(Func_02002f10, 8, 0x318, 0x118);
+        Call3(Func_02002f10_b, 8, 0x318, 0x118);
         Func_02002ede(20);
         Call3(Func_02002f5a, 8, 0xc000, 20);
-        Func_02002ef0(30);
+        Func_02002ef0_b(30);
         Func_02002f04();
     }
 }

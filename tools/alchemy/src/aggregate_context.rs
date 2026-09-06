@@ -848,10 +848,8 @@ mod tests {
             compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
         };
         use compiler_core::{routing::CompilerTarget, source_paths::SourceOwner};
-        let directory =
-            std::env::temp_dir().join(format!("alchemy-aggregate-header-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&directory);
-        fs::create_dir_all(&directory).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let directory = directory.path();
         let source = directory.join("candidate.c");
         fs::write(directory.join("shared-aggregates.h"), header(&proposals())).unwrap();
         fs::write(&source, b"#include \"shared-aggregates.h\"\nu32 ReadRoot(void) { return absolute_03001000.field_0000; }\n").unwrap();
@@ -873,7 +871,6 @@ mod tests {
         let assembly = fs::read_to_string(assembly).unwrap();
         assert!(assembly.contains("\tldr\tr0, [r3]"));
         assert!(!assembly.contains("ldrb"));
-        fs::remove_dir_all(directory).unwrap();
     }
 
     #[test]

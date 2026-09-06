@@ -15,7 +15,10 @@ s32 Func_020039c8();
 u8 *Func_020039e2();
 void Func_020039ee();
 u8 *Func_020039f2();
+void Func_020039f2_a();
 void Func_02003a12();
+void Func_02003a12_a();
+void Func_02003a12_b();
 s32 Func_02003a20();
 s32 Func_02003a22();
 void Func_02003a28();
@@ -35,6 +38,7 @@ void Func_02003aba();
 void Func_02003ac4();
 void Func_02003ad0();
 void Func_02003ad4();
+void Func_02003ad4_a();
 void Func_02003ade();
 void Func_02003af4();
 void Func_02003af8();
@@ -125,12 +129,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
                         goto L_02000488;
                     }
                 }
-                Call3(Func_02003a12, 8, 0x8000, 0x4000);
+                Call3(Func_02003a12_a, 8, 0x8000, 0x4000);
                 Func_02003ac4(8, 0, 0);
-                Call1((void (*)())Func_020039f2, 10);
+                Call1(Func_020039f2_a, 10);
                 *(u8 *)(Func_02003a20(8) + 90) &= 254;
                 Func_02003a6c(8, 152, 120);
-                Func_02003a12(1);
+                Func_02003a12_b(1);
                 {
                     u8 *record = Func_02003a40(8);
                     u8 value = *(volatile u8 *)&record[90];
@@ -164,5 +168,5 @@ void FieldScene_RunSupplementalSequenceOne(void)
             }
         }
     }
-    Func_02003ad4();
+    Func_02003ad4_a();
 }

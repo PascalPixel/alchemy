@@ -8,6 +8,7 @@ void Func_02004e3e();
 void Func_02004e50();
 void Func_02004e90();
 void Func_02004ea8();
+void Func_02004ea8_a();
 void Func_02004eca();
 s32 Func_0200554a();
 void Func_02005574();
@@ -81,7 +82,7 @@ void FieldScene_RunScene383SequenceC(void)
         bump_step(1);
         if (Value0(Func_020055d6) == 0) {
             Func_020056c0(((s32)Data_00001360 + 3));
-            Func_02004ea8(16, 20);
+            Func_02004ea8_a(16, 20);
             Func_02005604();
             goto L_02000906;
         }

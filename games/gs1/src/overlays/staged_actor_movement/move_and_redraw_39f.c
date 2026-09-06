@@ -5,10 +5,10 @@
 #define Func_020066b4 Func_0200348c
 #define Func_02006714 Func_020034cc
 #define Func_0200668a Func_02003472
-#define Func_0200672c Func_020034e4
+#define Func_0200672c Func_020034e4_a
 #define Func_020066ea Func_020034c2
 #define Func_020066c4 Func_020034ac
-#define RefreshStagedActor Func_020034e4
+#define RefreshStagedActor Func_020034e4_b
 #define Func_02006614 Func_02003444
 #define Func_0200661e Func_0200344e
 #define Func_0200687c Func_020035e4

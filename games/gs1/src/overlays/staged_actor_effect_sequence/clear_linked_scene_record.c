@@ -29,6 +29,7 @@ extern s32 **Data_03001edc;
 
 extern void Func_020044ca(s32 arg0);
 extern void Func_02004456(s32 *object, s32 arg1);
+extern void Func_02004456_a(s32 *object, s32 arg1);
 
 void Func_02001fe8(void)
 {
@@ -46,7 +47,7 @@ void Func_02001fe8(void)
     if (target != 0) {
         *(short *)((u8 *)target + 0x64) = 0;
         Func_02004456(target, (s32)0x0200a7dc);
-        Func_02004456(target, 7);
+        Func_02004456_a(target, 7);
         record[5] = 0;
     }
 }

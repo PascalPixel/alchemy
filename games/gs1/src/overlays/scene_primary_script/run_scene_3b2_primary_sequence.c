@@ -19,7 +19,8 @@ void Func_020028b4();
 void Func_02003fe6();
 void Func_02003ff8();
 s32 Func_02003ffe();
-void Func_02004044();
+void Func_02004044_a();
+void Func_02004044_b();
 s32 Func_02004054();
 void Func_02004068();
 void Func_02004078();
@@ -36,7 +37,8 @@ void Func_020040fc();
 void Func_0200411c();
 void Func_0200412c();
 s32 Func_02004130();
-s32 Func_02004132();
+s32 Func_02004132_a();
+s32 Func_02004132_b();
 void Func_02004138();
 void Func_02004158();
 s32 Func_0200416c();
@@ -45,7 +47,8 @@ void Func_02004174();
 void Func_02004194();
 void Func_020041a4();
 s32 Func_020041a8();
-s32 Func_020041ba();
+s32 Func_020041ba_a();
+s32 Func_020041ba_b();
 s32 Func_020041d2();
 void Func_020042a8();
 
@@ -118,8 +121,8 @@ s32 Func_02000f70(void)
                 }
             }
             Call1(Func_02004068, 0x8d1);
-            Call6(Func_02004044, 0, 1, 1, 1, 13, 30);
-            Call3(Func_02004132, 100, 0xd80000, 0x1e80000);
+            Call6(Func_02004044_a, 0, 1, 1, 1, 13, 30);
+            Call3(Func_02004132_a, 100, 0xd80000, 0x1e80000);
             return 0;
         }
     }
@@ -150,7 +153,7 @@ s32 Func_02000f70(void)
             }
             Call4(Func_0200411c, 0, 0x500000, 0x1700000, 253);
         }
-        if (Value1(Func_02004132, 0x242) != 0) {
+        if (Value1(Func_02004132_b, 0x242) != 0) {
             rec7 = Value1(Func_0200416c, 13);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
@@ -169,16 +172,16 @@ s32 Func_02000f70(void)
             Call4(Func_02004194, 0, 0x900000, 0x1400000, 253);
             Call4(Func_020041a4, 0, 0x2f00000, 0x1400000, 253);
         }
-        if (Value1(Func_020041ba, 0xfd7) != 0) {
+        if (Value1(Func_020041ba_a, 0xfd7) != 0) {
             return 0;
         }
-        Func_02004044(8);
+        Func_02004044_b(8);
         return 0;
     }
     lo = (s32)Data_0000007e;
     if (cur == lo) {
         if (Value1(Func_020041d2, 0xef4) == 0) {
-            Call6(Func_020041ba, 0, 0, 1, 1, 37, 10);
+            Call6(Func_020041ba_b, 0, 0, 1, 1, 37, 10);
             Call3(Func_020042a8, 100, 0x2580000, 0xa80000);
         }
     }

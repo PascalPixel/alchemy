@@ -5,7 +5,7 @@ extern void Func_02000d0c(void);
  * three-argument setter at +0x0e. `_b` is the same address with its own
  * prototype. */
 extern void Func_02000d6a(s32);
-extern void Func_02000d6a_b(s32, s32, s32);
+extern void Func_02000d6a_a(s32, s32, s32);
 extern void Func_02000d10(s32);
 extern void Func_02000d74(s32, s32, s32);
 extern void Func_02000d9c(s32, s32);
@@ -35,7 +35,7 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     Func_02000d10(30);
     /* Same import, same first two arguments, differing only in the third.
      * Two call sites, not a loop. */
-    Func_02000d6a_b(31, 4, 13);
+    Func_02000d6a_a(31, 4, 13);
     Func_02000d74(31, 4, 30);
     Func_02000d9c(31, 0);
     Func_02000d32(10);

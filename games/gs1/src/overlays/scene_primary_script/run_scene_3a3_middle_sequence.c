@@ -26,7 +26,8 @@ void Func_0200189c();
 void Func_020018a2();
 void Func_020018a4();
 void Func_020018a8();
-void Func_020018b8();
+void Func_020018b8_a();
+void Func_020018b8_b();
 s32 Func_020018c2();
 void Func_020018d0();
 void Func_02001900();
@@ -42,7 +43,8 @@ u8 *Func_0200195c();
 s32 Func_0200196a();
 s32 Func_0200197a();
 void Func_02001980();
-u8 *Func_02001988();
+u8 *Func_02001988_a();
+u8 *Func_02001988_b();
 s32 Func_02001990();
 void Func_02001992();
 void Func_02001998();
@@ -130,7 +132,7 @@ void FieldScene_RunMiddleSequence(void)
     Func_020018a8(17);
     L_020009da:;
     if (Value1(Func_02001866, 0x8ff) != 0) {
-        Func_020018b8(18);
+        Func_020018b8_a(18);
     } else {
         Func_02001998(170);
         Func_02001918(18, 2);
@@ -138,7 +140,7 @@ void FieldScene_RunMiddleSequence(void)
         Call2(Func_02001832, 0x2008d09, 0xc80);
     }
     if (Data_02000240_t[225][0] == 3) {
-        Call1(Func_020018b8, 0x12f);
+        Call1(Func_020018b8_b, 0x12f);
     }
     Call6(Func_020018a4, 0, 33, 4, 3, 20, 41);
     if (Value1(Func_020018c2, 0x906) != 0) {
@@ -146,7 +148,7 @@ void FieldScene_RunMiddleSequence(void)
     }
     Func_020018d0((s32)Func_0200191a(19), 0);
     Func_02001980(22, 15);
-    Call2((void (*)())Func_02001988, 23, 15);
+    Call2((void (*)())Func_02001988_a, 23, 15);
     bit = 8;
     Func_02001990(24, 15);
     *(u8 *)(Func_0200193e(22) + 89) |= bit;
@@ -161,7 +163,7 @@ void FieldScene_RunMiddleSequence(void)
     *(u8 *)(Func_0200196a(22) + 35) |= bit;
     *(u8 *)(Func_0200197a(23) + 35) |= bit;
     {
-        u8 *record = Func_02001988(24);
+        u8 *record = Func_02001988_b(24);
         u8 value = *(volatile u8 *)&record[35];
 
         record[35] = (u8)(value | bit);

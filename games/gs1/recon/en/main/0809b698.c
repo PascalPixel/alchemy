@@ -15,7 +15,7 @@ extern void Func_080f9010(s32);
 extern u8 *Data_03001f30;
 extern u8 Data_02000240[];
 
-void Func_0809b698(void)
+void RunBattleEffect16(void)
 {
     u8 *scene;
     u8 *object;
@@ -81,5 +81,3 @@ void Func_0809b698(void)
     Func_08003f3c(*(s16 *)(scene + 0x71a));
     Func_08015040(0x922, 1);
 }
-
-void RunBattleEffect16(void) __attribute__((alias("Func_0809b698")));

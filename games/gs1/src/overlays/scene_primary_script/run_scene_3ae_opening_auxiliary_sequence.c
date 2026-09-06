@@ -28,6 +28,7 @@ void Func_02001bae();
 s32 Func_02001bc2();
 void Func_02001bc6();
 s32 Func_02001be0();
+s32 Func_02001be0_a();
 void Func_02001bea();
 void Func_02001c14();
 void Func_02001c42();
@@ -117,7 +118,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Func_02001baa(10);
             bump_step(3);
             Func_02001c70(8, 0);
-            Func_02001be0(235, 0);
+            Func_02001be0_a(235, 0);
             Call1(Func_02001bae, 0x8a5);
             Call1(Func_02001bc6, -six00);
         }

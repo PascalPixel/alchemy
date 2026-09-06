@@ -342,10 +342,10 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
     let built = match assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE) {
         Ok(built) => built,
         Err(error) => {
-            return Ok(addresses
-                .into_iter()
-                .map(|address| format!("{overlay}:{address:08x}\tCOMPILE_FAILED\t{error}"))
-                .collect())
+            return Ok(vec![format!(
+                "{overlay}\tCOMPILE_FAILED\t{error}\tunverified_owners={}",
+                placeholders.len()
+            )])
         }
     };
     if built.len() != image.len() {
@@ -434,8 +434,10 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     });
     let mut results = results.into_inner().unwrap();
     results.sort_by_key(|result| result.0);
-    for (_, result) in results {
-        for line in result? {
+    for (index, result) in results {
+        for line in result.unwrap_or_else(|error| {
+            vec![format!("{}\tVERIFICATION_FAILED\t{error}", overlays[index])]
+        }) {
             println!("{line}");
             findings += 1;
         }

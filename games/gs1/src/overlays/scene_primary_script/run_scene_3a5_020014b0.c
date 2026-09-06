@@ -7,6 +7,7 @@ void Func_02002512();
 void Func_02003160();
 s32 Func_02003208();
 s32 Func_02003216();
+void Func_02003216_a();
 void Func_0200322e();
 s32 Func_02003270();
 s32 Func_02003278();
@@ -99,7 +100,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             rect[1] = rec8;
             rect[2] = rec8;
             record = Func_020032dc(0);
-            Call3(Func_02003216, -0x100000, *(u16 *)(record + 6), (s32)rect);
+            Call3(Func_02003216_a, -0x100000, *(u16 *)(record + 6), (s32)rect);
             Call3(Func_020032fc, 0, 0x20000, 0x10000);
             Func_02003334(0, 2);
             Func_0200333a(0, rect[0] / 0x10000, rect[2] / 0x10000);
@@ -109,13 +110,13 @@ void FieldScene_RunScene3a5_020014b0(void)
             Func_02003324(30);
             Func_02003412(148);
             Func_0200339a(8, 2);
-            Func_02003338(20);
+            Func_02003338_a(20);
             Call3(Func_02003366, 8, 0x28000, 0x14000);
             Func_02003380(8, 168, 104);
             Call3(Func_0200337e, 8, 0x8000, 0x4000);
             Func_02003398(8, 168, 92);
             *shown_addr = shown;
-            Func_0200328e(0);
+            Func_0200328e_a(0);
         }
     }
     /* unlifted: 0x02001590..0x02001594 (2), 0x0200159c..0x020015a0 (2) */

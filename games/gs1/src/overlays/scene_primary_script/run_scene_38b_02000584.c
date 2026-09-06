@@ -10,6 +10,7 @@ s32 Func_0200165a();
 void Func_02001660();
 u8 *Func_0200169a();
 void Func_02001720();
+void Func_02001720_a();
 void Func_0200172e();
 void Func_02001738();
 void Func_0200173a();
@@ -21,6 +22,7 @@ void Func_02001764();
 void Func_02001766();
 void Func_02001770();
 void Func_02001780();
+void Func_02001780_a();
 void Func_0200179c();
 void Func_020017a4();
 void Func_020017a8();
@@ -57,6 +59,8 @@ s32 Func_020018a2();
 void Func_020018a4();
 void Func_020018b0();
 void Func_020018ba();
+void Func_020018ba_a();
+void Func_020018ba_b();
 u8 *Func_020018c2();
 void Func_020018ce();
 void Func_020018f6();
@@ -135,7 +139,7 @@ void FieldScene_RunScene38b_02000584(void)
             if (*(s32 *)((s32)record + 8) > *(volatile s32 *)(rec7 + 8)) {
                 Call3(Func_0200172e, 13, 0x5000, 20);
                 Call3(Func_0200174a, 13, 0x100, 20);
-                Call1(Func_02001720, 0x1775);
+                Call1(Func_02001720_a, 0x1775);
                 Func_0200173a(13, 0, 10);
                 Call3(Func_02001766, 12, 0x100, 0);
             } else {
@@ -158,7 +162,7 @@ void FieldScene_RunScene38b_02000584(void)
             Call3(Func_02001808, 12, 0x8000, 20);
             Func_020017d0(12, 3);
             Call2(Func_02001832, 14, 0x102);
-            Func_02001780(40);
+            Func_02001780_a(40);
             Call3(Func_0200182c, 14, 0x3000, 10);
             Call3(Func_02001838, 12, 0x5000, 0);
             Call3(Func_02001844, 13, 0x3000, 10);
@@ -180,8 +184,8 @@ void FieldScene_RunScene38b_02000584(void)
             bump_step(1);
             Func_02001932(194, 3);
             Value2(Func_0200186a, 194, 0);
-            Func_020018ba(14, 3);
-            Func_020018ba(0, 1);
+            Func_020018ba_a(14, 3);
+            Func_020018ba_b(0, 1);
             Call3(Func_0200190e, 0, 0xc000, 0);
             Call3(Func_020018a4, 14, 0x10000, 0x8000);
             *(u8 *)(Func_020018a2(14) + 90) &= 254;

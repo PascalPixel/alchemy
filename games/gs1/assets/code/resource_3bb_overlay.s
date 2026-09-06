@@ -2165,8 +2165,119 @@ AlchemyC_02000b38:
 	.4byte 0x0000209e
 	.2byte 0x209d
 	.2byte 0x0000
-AlchemyC_02001424:
-	.space 0x114
+	push	{r5, r6, r7, lr}
+	ldr	r3, [pc, #260]
+	movs	r2, #225
+	lsls	r2, r2, #1
+	adds	r3, r3, r2
+	movs	r2, #0
+	ldrsh	r3, [r3, r2]
+	adds	r6, r0, #0
+	cmp	r3, #2
+	bne.n	.L_0200143e
+	bl	sub_0200322e
+	b.n	.L_02001524
+.L_0200143e:
+	bl	sub_02005378
+	adds	r0, r6, #0
+	movs	r1, #2
+	bl	sub_02003444
+	adds	r7, r0, #0
+	cmp	r7, #0
+	bne.n	.L_02001504
+	ldr	r0, [pc, #220]
+	bl	sub_02005424
+	bl	.L_02001d44
+	movs	r0, #192
+	movs	r1, #192
+	lsls	r0, r0, #10
+	lsls	r1, r1, #7
+	bl	sub_0200547c
+	movs	r0, #246
+	movs	r1, #1
+	movs	r2, #232
+	movs	r3, #1
+	lsls	r2, r2, #16
+	lsls	r0, r0, #18
+	negs	r1, r1
+	bl	sub_02005496
+	bl	sub_020054a2
+	movs	r1, #0
+	adds	r0, r6, #0
+	bl	sub_02005462
+	movs	r5, #135
+	bl	.L_02001dd8
+	adds	r0, r6, #0
+	movs	r1, #0
+	bl	sub_02005470
+	lsls	r5, r5, #3
+	movs	r2, #132
+	lsls	r2, r2, #1
+	adds	r1, r5, #0
+	movs	r0, #0
+	bl	sub_02004046
+	movs	r0, #15
+	bl	sub_020053d4
+	movs	r1, #192
+	movs	r2, #192
+	movs	r0, #0
+	lsls	r1, r1, #9
+	lsls	r2, r2, #8
+	bl	sub_02005412
+	adds	r1, r5, #0
+	movs	r2, #216
+	movs	r0, #0
+	bl	sub_020045a4
+	movs	r1, #133
+	lsls	r1, r1, #3
+	movs	r2, #216
+	movs	r0, #0
+	bl	sub_020045b0
+	bl	sub_02001e3c
+	bl	sub_02005520
+	movs	r0, #1
+	movs	r1, #1
+	movs	r2, #1
+	negs	r2, r2
+	movs	r3, #0
+	negs	r0, r0
+	negs	r1, r1
+	bl	sub_02005502
+	movs	r1, #0
+	adds	r0, r6, #0
+	bl	sub_020054ca
+	movs	r0, #0
+	bl	sub_02004274
+	movs	r0, #0
+	movs	r1, #0
+	bl	sub_02005508
+	adds	r0, r6, #0
+	movs	r1, #2
+	bl	sub_020035b8
+	b.n	.L_02001516
+.L_02001504:
+	cmp	r7, #1
+	bne.n	.L_02001516
+	ldr	r0, [pc, #40]
+	bl	sub_020054dc
+	adds	r0, r6, #0
+	movs	r1, #0
+	bl	sub_020054f4
+.L_02001516:
+	adds	r1, r6, #0
+	movs	r2, #2
+	adds	r0, r7, #0
+	bl	.L_02003632
+	bl	sub_02005462
+.L_02001524:
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x02000240
+	.4byte 0x000020a2
+	.2byte 0x20a1
+	.2byte 0x0000
 AlchemyC_02001538:
 	.space 0x19c
 	push	{r5, r6, r7, lr}

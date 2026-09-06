@@ -24,6 +24,7 @@ void Func_02004892();
 void Func_020048a2();
 void Func_020048b0();
 void Func_020048be();
+void Func_020048be_a();
 void Func_020048c6();
 void Func_020048cc();
 void Func_020048d4();
@@ -72,7 +73,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     Func_020048e0(a, 258, 60);
     Func_020048b0(a, 2);
     Func_0200480e(30);
-    Func_020048be(a, 2);
+    Func_020048be_a(a, 2);
     Func_0200481c(30);
     Func_020048cc(a, 2);
     Func_0200482a(30);

@@ -21,6 +21,7 @@ s32 Func_020065ec();
 void Func_020065fa();
 void Func_020065fe();
 void Func_02006606();
+void Func_02006606_a();
 void Func_02006612();
 void Func_0200661a();
 
@@ -93,7 +94,7 @@ void FieldScene_RunScene39d_02002ddc(void)
     Func_02006524(30);
     Call6(Func_020064e6, 29, 74, 4, 74, 5, 4);
     Func_020065fe(17, 0);
-    Func_02006606(18, 0);
+    Func_02006606_a(18, 0);
     Func_0200619e();
     Func_02006612(17, 1);
     Func_0200661a(18, 1);

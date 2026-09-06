@@ -8,6 +8,7 @@ void Func_02001646();
 void Func_02001650();
 void Func_02001672();
 void Func_02001680();
+void Func_02001680_a();
 s32 Func_020016ba();
 void Func_020016c0();
 void Func_020016dc();
@@ -40,7 +41,7 @@ void FieldScene_RunScene3b0_02000468(void)
     Call3(Func_020016dc, 0, 0xa40000, 0x1410000);
     Func_02001704(0, 15);
     record = Func_020016ba(0);
-    Func_02001680(record, 0);
+    Func_02001680_a(record, 0);
     Func_02001646(1);
     Func_02001672();
     Func_02001650(1);

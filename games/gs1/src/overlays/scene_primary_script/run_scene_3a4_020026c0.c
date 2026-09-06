@@ -19,11 +19,13 @@ void Func_020062a0();
 s32 Func_020062a8();
 void Func_020062cc();
 u8 *Func_020062d8();
+u8 *Func_020062d8_a();
 void Func_020062dc();
 s32 Func_020062e8();
 void Func_020062f6();
 void Func_02006302();
 u8 *Func_02006316();
+u8 *Func_02006316_a();
 void Func_02006354();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -89,7 +91,7 @@ void FieldScene_RunScene3a4_020026c0(void)
         Func_02006354(12, 5);
         Call6(Func_020062a0, 1, 0, 1, 1, 26, 15);
         {
-            u8 *record = Func_02006316(12);
+            u8 *record = Func_02006316_a(12);
             u8 value = *(volatile u8 *)&record[35];
 
             record[35] = (u8)(value | 2);
@@ -97,7 +99,7 @@ void FieldScene_RunScene3a4_020026c0(void)
     }
     Call2(Func_02006212, 0x200b429, 0xc80);
     if (Value1(Func_020062e8, 0x327) != 0) {
-        Call6((void (*)())Func_020062d8, 30, 82, 1, 1, 29, 81);
+        Call6((void (*)())Func_020062d8_a, 30, 82, 1, 1, 29, 81);
         Call6(Func_020062cc, 46, 28, 29, 17, 1, 2);
     } else {
         Call6(Func_02006302, 28, 82, 1, 1, 29, 81);

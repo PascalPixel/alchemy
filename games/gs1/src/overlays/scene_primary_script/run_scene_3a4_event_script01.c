@@ -24,6 +24,7 @@ void Func_02006c98();
 s32 Func_02006c9e();
 s32 Func_02006cee();
 void Func_02006d1a();
+void Func_02006d1a_a();
 void Func_02006d22();
 void Func_02006d26();
 void Func_02006d34();
@@ -31,6 +32,7 @@ void Func_02006d42();
 void Func_02006d46();
 void Func_02006d4e();
 void Func_02006d54();
+void Func_02006d54_a();
 void Func_02006d5a();
 void Func_02006d62();
 void Func_02006d6c();
@@ -43,6 +45,7 @@ void Func_02006d92();
 void Func_02006d94();
 void Func_02006d9e();
 void Func_02006da4();
+void Func_02006da4_a();
 void Func_02006dca();
 void Func_02006dd4();
 void Func_02006df0();
@@ -59,6 +62,7 @@ void Func_02006e66();
 void Func_02006e6a();
 void Func_02006e74();
 void Func_02006e7e();
+void Func_02006e7e_a();
 void Func_02006e86();
 void Func_02006e88();
 void Func_02006e9e();
@@ -68,6 +72,7 @@ void Func_02006ec2();
 void Func_02006ede();
 void Func_02006ee8();
 void Func_02006eea();
+void Func_02006eea_a();
 void Func_02006ef6();
 void Func_02006ef8();
 void Func_02006f00();
@@ -87,7 +92,9 @@ void Func_02006f4e();
 void Func_02006f50();
 void Func_02006f52();
 void Func_02006f5a();
+void Func_02006f5a_a();
 void Func_02006f62();
+void Func_02006f62_a();
 void Func_02006f72();
 void Func_02006f78();
 void Func_02006f8c();
@@ -140,7 +147,7 @@ void Func_0200affd();
 #define Object_SetModeById_3(args...) Func_02006d8c(args)
 #define Object_SetModeById_4(args...) Func_02006d94(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02006da4(args)
-#define BattleRuntime_WaitIfModeZero_3(args...) Func_02006d1a(args)
+#define BattleRuntime_WaitIfModeZero_3(args...) Func_02006d1a_a(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_02006dca(args)
 #define SceneWork_SetStepValue_2(a0) Call1(Func_02006df0, a0)
 #define BattleEvent_RunActionAndWait_1(args...) Func_02006e08(args)
@@ -155,7 +162,7 @@ void Func_0200affd();
 #define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3(Func_02006e88, a0, a1, a2)
 #define Audio_PlayCue_1(args...) Func_02006f4e(args)
 #define ObjectGroup_ConfigureChildValue_1(args...) Func_02006e4e(args)
-#define BattleRuntime_WaitIfModeZero_4(args...) Func_02006da4(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_02006da4_a(args)
 #define Audio_PlayCue_2(a0) Call1(Func_02006f62, a0)
 #define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_02006e9e, a0, a1, a2)
 #define ObjectMotion_ArmCallback_11(a0, a1, a2) Call3(Func_02006eaa, a0, a1, a2)
@@ -167,9 +174,9 @@ void Func_0200affd();
 #define BattleEffect_SpawnLinkedResourceObject_9(a0, a1, a2) Call3(Func_02006f02, a0, a1, a2)
 #define Audio_PlayCue_3(args...) Func_02006fc8(args)
 #define ObjectMotion_EnableActionAndSetCallback_3(args...) Func_02006e66(args)
-#define ObjectMotion_MarkActiveAndSetActionCallback_2(args...) Func_02006e7e(args)
+#define ObjectMotion_MarkActiveAndSetActionCallback_2(args...) Func_02006e7e_a(args)
 #define BattleRuntime_WaitIfModeZero_5(args...) Func_02006e3a(args)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_4(args...) Func_02006eea(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_4(args...) Func_02006eea_a(args)
 #define BattleRuntime_WaitIfModeZero_6(args...) Func_02006e48(args)
 #define BattleEvent_RunActionAndWait_3(args...) Func_02006f28(args)
 #define ObjectMotion_ArmCallback_14(a0, a1, a2) Call3(Func_02006f44, a0, a1, a2)
@@ -185,8 +192,8 @@ void Func_0200affd();
 #define ObjectMotion_CallThenWaitForAnimationChange_5(args...) Func_02006f48(args)
 #define BattleRuntime_RunThenWaitIfModeZero_4(args...) Func_02006fa2(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_6(args...) Func_02006f5a(args)
-#define Object_SetModeById_7(args...) Func_02006f5a(args)
-#define Object_SetModeById_8(args...) Func_02006f62(args)
+#define Object_SetModeById_7(args...) Func_02006f5a_a(args)
+#define Object_SetModeById_8(args...) Func_02006f62_a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_7(args...) Func_02006f72(args)
 #define BattleRuntime_WaitIfModeZero_8(args...) Func_02006ee8(args)
 #define ObjectMotion_EnableActionAndSetCallback_4(args...) Func_02006f32(args)
@@ -335,7 +342,7 @@ void RunEventScript01(void)
     addr_0200c0e4 = (s32)Data_0200c0e4;
     ObjectMotion_EnableActionAndSetCallback_3(9, addr_0200c0e4);
     ObjectMotion_MarkActiveAndSetActionCallback_2(8, addr_0200c0e4);
-    Func_02006d54(addr_0200affd); /* main:080000d8 */
+    Func_02006d54_a(addr_0200affd); /* main:080000d8 */
     BattleRuntime_WaitIfModeZero_5(60);
     ObjectMotion_SetVariantCallbackAndInvokeObject_4(2, 2);
     BattleRuntime_WaitIfModeZero_6(20);

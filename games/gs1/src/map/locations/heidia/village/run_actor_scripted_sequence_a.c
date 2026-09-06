@@ -8,11 +8,13 @@ void Func_02007252(s32, s32, s32);
 void Func_020071d4(s32, s32, s32);
 void Func_020071ac(s32, s32);
 void Func_020071fc(s32, s32);
-void Func_0200722e();
+void Func_0200722e_a();
+void Func_0200722e_b();
 void Func_0200720e(s32, s32);
 void Func_02007200(s32, s32, s32);
 void Func_020071d8(s32, s32);
-void Func_020071ee();
+void Func_020071ee_a();
+void Func_020071ee_b();
 void Func_0200727e(s32);
 void Func_02007296(s32, s32);
 void Func_02007278(s32, s32, s32);
@@ -32,13 +34,13 @@ void RunActorScriptedSequenceA(s32 actor_id)
     Func_020071d4(actor_id, 0, 0);
     Func_020071ac(actor_id, 1);
     Func_020071fc(actor_id, 0);
-    Func_0200722e(actor_id, 0, 0);
+    Func_0200722e_a(actor_id, 0, 0);
     Func_0200720e(0, 1);
     Func_02007200(actor_id, 0, 0);
     Func_020071d8(actor_id, 1);
-    Func_020071ee(actor_id);
-    Func_0200722e(actor_id, 0);
-    Func_020071ee(0, 1);
+    Func_020071ee_a(actor_id);
+    Func_0200722e_b(actor_id, 0);
+    Func_020071ee_b(0, 1);
     {
         u8 *t = &Value_0000240d;
 

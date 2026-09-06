@@ -23,7 +23,7 @@ s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
         break;
     case 4:
         obj->x += 0x2000;
-        obj->z += 0xf868f001;
+        obj->z -= 0x1000;
         break;
     case 2:
         obj->x += 0x1000;

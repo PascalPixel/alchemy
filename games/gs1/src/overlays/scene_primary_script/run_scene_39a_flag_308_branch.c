@@ -32,9 +32,11 @@ void Func_02001b7e();
 void Func_02002b0e();
 s32 Func_02002b16();
 void Func_02002b3a();
+void Func_02002b3a_a();
 s32 Func_02002b42();
 void Func_02002b48();
 void Func_02002b66();
+void Func_02002b66_a();
 s32 Func_02002b6c();
 void Func_02002b74();
 void Func_02002b90();
@@ -55,14 +57,14 @@ void FieldScene_RunFlag308DialogueBranch(void)
     if (Func_02002b16((s32)0x308) != 0) {
         Func_0200098c(10, 0, 16);
         Func_02002b3a((s32)0x30b);
-        Func_02002b3a((s32)0x30c);
+        Func_02002b3a_a((s32)0x30c);
         Func_02002b48((s32)0x30d);
         Func_02002ba4((s32)0x30e);
         /* movs r0,#0xc4 / lsls r0,#2 builds 0x310. */
     } else if (Func_02002b42((s32)0x310) != 0) {
         Func_020009b8(10, 0, 16);
         Func_02002b66((s32)0x30b);
-        Func_02002b66((s32)0x30c);
+        Func_02002b66_a((s32)0x30c);
         Func_02002b74((s32)0x30d);
         Func_02002ba4((s32)0x30e);
     } else if (Func_02002b6c((s32)0x311) != 0) {

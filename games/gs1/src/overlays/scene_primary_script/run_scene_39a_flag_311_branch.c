@@ -34,7 +34,9 @@ s32 Func_02002c44();
 void Func_02002c68();
 void Func_02002c6e();
 s32 Func_02002c70();
+s32 Func_02002c70_a();
 void Func_02002c94();
+void Func_02002c94_a();
 void Func_02002ca2();
 void Func_02002ca8();
 void Func_02002cba();
@@ -55,10 +57,10 @@ void FieldScene_RunFlag311DialogueBranch(void)
         Func_02002c6e((s32)0x30d);
         Func_02002ca8((s32)0x30e);
         /* movs r0,#0xc4 / lsls r0,#2 builds 0x310. */
-    } else if (Func_02002c70((s32)0x310) != 0) {
+    } else if (Func_02002c70_a((s32)0x310) != 0) {
         Func_02000ae6(10, 0, 32);
         Func_02002c94((s32)0x30b);
-        Func_02002c94((s32)0x30c);
+        Func_02002c94_a((s32)0x30c);
         Func_02002ca2((s32)0x30d);
         Func_02002ca8((s32)0x30e);
     } else {

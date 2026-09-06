@@ -40,7 +40,8 @@ void Func_0200a124();
 void Func_0200a12a();
 void Func_0200a12c();
 void Func_0200a132();
-void Func_0200a13a();
+void Func_0200a13a_a();
+void Func_0200a13a_b();
 void Func_0200a142();
 void Func_0200a154();
 void Func_0200a15a();
@@ -48,7 +49,8 @@ void Func_0200a15c();
 void Func_0200a162();
 void Func_0200a16e();
 void Func_0200a17c();
-void Func_0200a18c();
+void Func_0200a18c_a();
+void Func_0200a18c_b();
 void Func_0200a1a4();
 void Func_0200a1a6();
 void Func_0200a1b4();
@@ -83,7 +85,7 @@ void Func_0200a232();
 #define ObjectMotion_SetAngleToward_1(a0, a1, a2) Value3(Func_0200a0fe, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_2(a0) Value1(Func_0200a0cc, a0)
 #define SceneWork_SetStepValue_2(a0) Value1(Func_0200a122, a0)
-#define BattleEvent_RunActionAndWait_2(a0, a1) Call2(Func_0200a13a, a0, a1)
+#define BattleEvent_RunActionAndWait_2(a0, a1) Call2(Func_0200a13a_a, a0, a1)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_2(a0, a1) Call2(Func_0200a112, a0, a1)
 #define ObjectMotion_SetAngleToward_2(a0, a1, a2) Value3(Func_0200a124, a0, a1, a2)
 #define SceneWork_SetStepValue_3(a0) Value1(Func_0200a142, a0)
@@ -95,7 +97,7 @@ void Func_0200a232();
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Value3(Func_0200a10c, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_3(a0) Value1(Func_0200a12a, a0)
 #define ObjectMotion_ArmCallback_1(a0, a1, a2) Value3(Func_0200a1a6, a0, a1, a2)
-#define SceneWork_SetStepValue_4(a0) Value1(Func_0200a18c, a0)
+#define SceneWork_SetStepValue_4(a0) Value1(Func_0200a18c_a, a0)
 #define BattleEvent_RunActionAndWait_4(a0, a1) Call2(Func_0200a1a4, a0, a1)
 #define Object_SetModeById_3(a0, a1) Value2(Func_0200a15c, a0, a1)
 #define BattleRuntime_WaitIfModeZero_5(a0) Value1(Func_0200a0e2, a0)
@@ -105,11 +107,11 @@ void Func_0200a232();
 #define SceneWork_SetStepValue_5(a0) Value1(Func_0200a1c2, a0)
 #define BattleEvent_RunActionAndWait_5(a0, a1) Call2(Func_0200a1da, a0, a1)
 #define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Value3(Func_0200a16e, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_5(a0) Value1(Func_0200a18c, a0)
+#define ObjectMotion_CommitCurrentPositionAndActivate_5(a0) Value1(Func_0200a18c_b, a0)
 #define Object_LinkPair_1(a0, a1, a2) Value3(Func_0200a1d6, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_6(a0) Value1(Func_0200a12c, a0)
 #define Object_SetModeById_5(a0, a1) Call2(Func_0200a1b4, a0, a1)
-#define BattleRuntime_WaitIfModeZero_7(a0) Value1(Func_0200a13a, a0)
+#define BattleRuntime_WaitIfModeZero_7(a0) Value1(Func_0200a13a_b, a0)
 #define GameFlag_Set_1(a0) Value1(Func_0200a132, a0)
 #define SceneWork_SetStepValue_6(a0) Call1(Func_0200a20a, a0)
 #define BattleEvent_RunActionAndWait_6(a0, a1) Call2(Func_0200a222, a0, a1)

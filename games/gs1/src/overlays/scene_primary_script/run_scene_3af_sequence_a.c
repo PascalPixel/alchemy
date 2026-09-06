@@ -11,7 +11,8 @@ s32 Func_02004da6();
 void Func_02004dc0();
 s32 Func_02004dc6();
 void Func_02004dca();
-s32 Func_02004de0();
+s32 Func_02004de0_a();
+s32 Func_02004de0_b();
 void Func_02004e08();
 void Func_02004e0c();
 void Func_02004e20();
@@ -69,12 +70,12 @@ void Func_02000af0(void)
     s32 record;
     s32 shown;
 
-    ((void (*)())Func_02004de0)();
+    ((void (*)())Func_02004de0_a)();
     if (Value1(Func_02004dc6, 0x925) != 0) {
         Call1(Func_02004eb0, 0x1e09);
         Func_02004ec8(24, 0);
     } else {
-        if (Value1(Func_02004de0, 0x922) != 0) {
+        if (Value1(Func_02004de0_b, 0x922) != 0) {
             Func_02004eb4(24, 2);
             Call1(Func_02004ed2, 0x1d70);
             Func_02004eea(24, 0);

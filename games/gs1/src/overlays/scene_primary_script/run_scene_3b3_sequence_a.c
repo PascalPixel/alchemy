@@ -25,6 +25,7 @@ void Func_0200419a();
 void Func_020041ae();
 s32 Func_020041bc();
 void Func_020041be();
+void Func_020041be_a();
 void Func_02004264();
 void Func_0200427c();
 
@@ -105,6 +106,6 @@ void FieldScene_RunScene3b3SequenceA(void)
     Func_02004186(1, 0, 0);
     Func_02004164(1);
     Call1(Func_0200417a, 0x20095cd);
-    Func_020041be();
+    Func_020041be_a();
     Func_02004174(30);
 }

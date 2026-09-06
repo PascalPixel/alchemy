@@ -13,7 +13,8 @@ void Func_020016a4();
 void Func_020016ae();
 void Func_020016bc();
 void Func_020016be();
-s32 Func_020016ce();
+s32 Func_020016ce_a();
+s32 Func_020016ce_b();
 void Func_020016da();
 void Func_020016fa();
 void Func_02001740();
@@ -54,11 +55,11 @@ void FieldScene_RunScene3b5SequenceA(void)
 
     Func_020015f4();
     Call3(Func_02001642, 0, 0x130, 0x138);
-    Call3(Func_020016ce, 0, 0xc000, 0);
+    Call3(Func_020016ce_a, 0, 0xc000, 0);
     Call3(Func_020016da, 28, 0x4000, 0);
     Func_02001618(20);
     Call1(Func_020016be, 0xe3d);
-    Value2(Func_020016ce, 28, 0);
+    Value2(Func_020016ce_b, 28, 0);
     if (Value2(Func_0200164e, 0, 0) == 0) {
         bump_step(1);
         Func_020016fa(28, 0);

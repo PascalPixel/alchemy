@@ -19,6 +19,7 @@ void Func_02005722();
 void Func_02005746();
 void Func_0200574e();
 void Func_0200575e();
+void Func_0200575e_a();
 void Func_0200576c();
 void Func_0200576e();
 void Func_02005776();
@@ -79,7 +80,7 @@ void FieldScene_RunScene383_0200091c(void)
         Call1(Func_0200574e, 0x137c);
         Func_0200575e(18, 0);
     } else {
-        Call1(Func_0200575e, 0x1385);
+        Call1(Func_0200575e_a, 0x1385);
         Func_0200576e(18, 0);
     }
     if (Value2(Func_020056ce, 0, 0) == 0) {

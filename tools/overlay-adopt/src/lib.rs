@@ -5,7 +5,6 @@ use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use disassemble::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use no_asm_c::{expanded_forbidden, find_forbidden};
 use serde::Deserialize;
-use serde_json::Value;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -18,13 +17,6 @@ pub struct Options {
     pub source: String,
     pub apply: bool,
     pub where_: bool,
-}
-#[derive(Debug, Clone)]
-struct FunctionRow {
-    overlay: String,
-    entry: i64,
-    offset: i64,
-    span_bytes: i64,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalAlias {
@@ -45,16 +37,6 @@ struct AuditReport {
 struct AuditOverlay {
     id: String,
     intervals: Vec<AuditInterval>,
-}
-#[derive(Deserialize)]
-struct ReviewedRegions {
-    manual_regions: Vec<ReviewedRegion>,
-}
-#[derive(Deserialize)]
-struct ReviewedRegion {
-    overlay: String,
-    entry: String,
-    span_bytes: usize,
 }
 pub(crate) fn overlay_assembly(root: &Path, overlay: &str) -> PathBuf {
     root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"))
@@ -260,25 +242,7 @@ pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<Str
     }))
 }
 pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    let path = root.join("games/gs1/semantic/regions.json");
-    let document: ReviewedRegions = serde_json::from_slice(
-        &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
-    document
-        .manual_regions
-        .into_iter()
-        .map(|region| {
-            let owner = SourceOwner::parse(&format!(
-                "{}:{}",
-                region.overlay,
-                region.entry.trim_start_matches("0x")
-            ))?;
-            (region.span_bytes > 0)
-                .then_some((owner, region.span_bytes))
-                .ok_or_else(|| "overlay region has no positive span_bytes".into())
-        })
-        .collect()
+    compiler_core::translation_units::reviewed_overlay_spans(root)
 }
 fn audited_span(
     root: &Path,
@@ -468,68 +432,27 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         .map(|finding| format!("{}:{}", finding.token, finding.line))
         .collect::<Vec<_>>()
         .join(",");
-    // The generated function inventory has no writer in the current tree
-    // (its generator was retired in a consolidation wave). Adoption safety
-    // never rested on it — audited_span validates every entry against the
-    // tracked audited intervals — so a missing inventory falls back to the
-    // explicit --span path instead of failing before it.
-    let inventory_path: PathBuf = root.join("out/decomp/overlays.json");
-    let inventory_text =
-        fs::read_to_string(&inventory_path).unwrap_or_else(|_| r#"{"functions":[]}"#.to_string());
-    let inventory: Value =
-        serde_json::from_str(&inventory_text).map_err(|error| error.to_string())?;
-    let functions = inventory
-        .get("functions")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "out/decomp/overlays.json: unexpected shape".to_string())?;
-    let found = functions
-        .iter()
-        .find(|row| row.get("id").and_then(Value::as_str) == Some(options.id.as_str()));
-    let fn_row: FunctionRow = if let Some(row) = found {
-        FunctionRow {
-            overlay: row["overlay"].as_str().unwrap_or("").to_string(),
-            entry: row["entry"].as_i64().unwrap_or(0),
-            offset: row["offset"].as_i64().unwrap_or(0),
-            span_bytes: row["span_bytes"].as_i64().unwrap_or(0),
-        }
-    } else if let Some(span) = options.span {
-        let mut parts = options.id.splitn(2, ':');
-        let overlay = parts.next().unwrap_or("").to_string();
-        let offset_text = parts.next().unwrap_or("");
-        let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("unparseable overlay id: {}", options.id))?;
-        let offset = if offset >= OVERLAY_BASE {
-            offset - OVERLAY_BASE
-        } else {
-            offset
-        };
-        FunctionRow {
-            overlay,
-            entry: OVERLAY_BASE + offset,
-            offset,
-            span_bytes: span,
-        }
+    let (overlay, address) = options
+        .id
+        .split_once(':')
+        .ok_or_else(|| format!("unparseable overlay id: {}", options.id))?;
+    let entry = i64::from_str_radix(address.trim_start_matches("0x"), 16)
+        .map_err(|_| format!("unparseable overlay id: {}", options.id))?;
+    let offset = if entry >= OVERLAY_BASE {
+        entry - OVERLAY_BASE
     } else {
-        return Err(format!(
-            "no such overlay function: {} (pass --span BYTES to adopt an undiscovered entry)",
-            options.id
-        ));
+        entry
     };
-    let owner = SourceOwner::parse(&format!("{}:{:08x}", fn_row.overlay, fn_row.entry))?;
+    let entry = OVERLAY_BASE + offset;
+    let span = options
+        .span
+        .ok_or("--span BYTES is required for overlay adoption")?;
+    let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
     let source_paths = SourcePaths::load(root)?;
     let installed = source_paths.registered_source_path(owner)?;
     let stem = owner.address_stem();
-    if fn_row.entry - OVERLAY_BASE != fn_row.offset {
-        return Err("inventory entry and offset disagree".to_string());
-    }
-    audited_span(
-        root,
-        &fn_row.overlay,
-        fn_row.entry,
-        fn_row.span_bytes,
-        &options.id,
-    )?;
-    let assembly = overlay_assembly(root, &fn_row.overlay);
+    audited_span(root, overlay, entry, span, &options.id)?;
+    let assembly = overlay_assembly(root, overlay);
     let _lock = OverlayLock::acquire(&assembly)?;
     let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;
     let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
@@ -538,15 +461,15 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         .map(|line| line.to_string())
         .collect();
     let offsets = listing_offsets(&assembly)?;
-    let (first, last) = region_lines(&offsets, fn_row.offset, fn_row.span_bytes)?;
+    let (first, last) = region_lines(&offsets, offset, span)?;
     let marker = format!("AlchemyC_{stem}:");
     if lines.iter().any(|line| line == &marker) {
         return Err(format!("{} is already adopted as C", options.id));
     }
-    let aliases = internal_aliases(&lines, first, last, fn_row.offset, fn_row.span_bytes)?;
+    let aliases = internal_aliases(&lines, first, last, offset, span)?;
     let mut replaced_lines: Vec<String> = Vec::with_capacity(lines.len());
     replaced_lines.extend(lines[..(first - 1) as usize].iter().cloned());
-    replaced_lines.extend(placeholder_lines(&stem, fn_row.span_bytes, &aliases));
+    replaced_lines.extend(placeholder_lines(&stem, span, &aliases));
     replaced_lines.extend(lines[last as usize..].iter().cloned());
     let replaced = replaced_lines.join("\n");
     let preexisting = if installed.exists() {
@@ -613,7 +536,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         revert(&installed, &assembly, &preexisting, &original_text)?;
         println!(
             "adopt=evidence-only {} exact_bytes={} forbidden={} source_retained=true",
-            options.id, fn_row.span_bytes, forbidden
+            options.id, span, forbidden
         );
         return Ok(1);
     }
@@ -623,7 +546,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         println!(
             "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
             options.id,
-            fn_row.span_bytes,
+            span,
             aliases.len(),
             first,
             last,
@@ -634,7 +557,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     println!(
         "adopt=applied {} span={} aliases={} c={}",
         options.id,
-        fn_row.span_bytes,
+        span,
         aliases.len(),
         source_paths.repository_relative_path(owner).display()
     );

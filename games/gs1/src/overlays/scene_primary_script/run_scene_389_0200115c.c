@@ -15,6 +15,7 @@ void Func_0200263c();
 u8 *Func_02002646();
 void Func_02002648();
 void Func_02002652();
+void Func_02002652_a();
 void Func_02002654();
 void Func_02002656();
 void Func_0200265e();
@@ -71,5 +72,5 @@ void FieldScene_RunScene389_0200115c(void)
         record[35] = (u8)(value | 2);
     }
     Call1(Func_0200262e, 0x869);
-    Func_02002652();
+    Func_02002652_a();
 }

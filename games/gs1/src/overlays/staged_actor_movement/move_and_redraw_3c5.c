@@ -8,7 +8,7 @@
 #define Func_0200672c Func_02003578
 #define Func_020066ea Func_02003556
 #define Func_020066c4 Func_02003540
-#define RefreshStagedActor Func_02003560
+#define RefreshStagedActor Func_02003560_a
 #define Func_02006614 Func_020034b8
 #define Func_0200661e Func_020034c2
 #define Func_0200687c Func_020036c0

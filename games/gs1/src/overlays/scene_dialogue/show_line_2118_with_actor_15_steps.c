@@ -1,7 +1,8 @@
 #include "types.h"
 
 extern void Func_02003104();
-extern void Func_020031aa();
+extern void Func_020031aa_a();
+extern void Func_020031aa_b();
 extern void Func_02002164();
 extern void Func_02002174();
 extern void Func_020031a0();
@@ -13,9 +14,9 @@ extern void Func_0200314c();
 void SceneDialogue_ShowLine2118WithActor15Steps(void)
 {
     Func_02003104();
-    Func_020031aa(0x2118);
+    Func_020031aa_a(0x2118);
     Func_02002164(15);
-    Func_020031aa(15, 0, 20);
+    Func_020031aa_b(15, 0, 20);
     Func_02002174(15);
     Func_020031a0(15, 3);
     Func_02003198(15, 0);

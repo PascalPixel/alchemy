@@ -8,6 +8,7 @@ s32 Func_0200198e();
 void Func_020019b2();
 s32 Func_020019f4();
 s32 Func_02001a04();
+s32 Func_02001a04_a();
 s32 Func_02001a0a();
 void Func_02001a0e();
 s32 Func_02001a30();
@@ -69,7 +70,7 @@ void FieldScene_RunScene38b_020008f0(void)
             Call1(Func_02001a0e, 0x12f);
         }
     }
-    if (Value1(Func_02001a04, 0x109) == 0) {
+    if (Value1(Func_02001a04_a, 0x109) == 0) {
         {
             s32 off = 450;
             sub_state = *(s16 *)(Data_02000240 + off);

@@ -1,20 +1,50 @@
 use crate::{
-    overlay_offset,
     park::{placeholder_span, truth_window},
     retained_source,
 };
-use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::{
     overlay_call_via_base,
-    routing::CompilerTarget,
     source_paths::{SourceOwner, SourcePaths},
     translation_units::TranslationUnits,
 };
 use diff::{cli::Options, render::render};
 use disassemble::compile::compile_overlay_c;
-use disassemble::OVERLAY_LINK_BIAS;
+use serde_json::Value;
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
+fn nonowner_relationship(
+    kind: &str,
+    entry: SourceOwner,
+    reviewed: &BTreeMap<SourceOwner, usize>,
+) -> Option<(&'static str, Option<SourceOwner>)> {
+    match kind {
+        "literal_pool" => return Some(("literal-pool", None)),
+        "executable_alignment" => {}
+        _ => return None,
+    }
+    let overlay = entry.overlay_id()?;
+    let address = i64::from(entry.address());
+    reviewed.iter().find_map(|(owner, span)| {
+        let start = i64::from(owner.address());
+        match (owner.overlay_id().as_deref() == Some(&overlay), start) {
+            (true, start) if start < address && address < start + *span as i64 => {
+                Some(("alignment-inside", Some(*owner)))
+            }
+            (true, start) if start == address + 2 => Some(("alignment-before", Some(*owner))),
+            _ => None,
+        }
+    })
+}
+fn retained_fragment_span(
+    retention: Option<&str>,
+    span: Option<u64>,
+    complete: usize,
+) -> Option<usize> {
+    retention?.starts_with("keep_").then_some(())?;
+    let span = usize::try_from(span?).ok().filter(|span| *span > 0)?;
+    (span < complete).then_some(span)
+}
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {
     if target.contains(':') {
         let owner = SourceOwner::parse_argument(target)?;
@@ -23,17 +53,15 @@ pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> 
             .ok_or_else(|| format!("{target}: not an overlay owner"))?;
         return Ok(owner);
     }
-    if let Some((overlay, address)) = Path::new(target)
+    if let Some(owner) = Path::new(target)
         .file_stem()
         .and_then(|stem| stem.to_str())
-        .and_then(|stem| stem.split_once("_c_"))
-        .and_then(|(overlay, address)| {
-            i64::from_str_radix(address, 16)
-                .ok()
-                .map(|address| (overlay.to_string(), address))
-        })
+        .and_then(SourceOwner::from_legacy_stem)
     {
-        return SourceOwner::parse(&format!("{overlay}:{address:08x}"));
+        owner
+            .overlay_id()
+            .ok_or_else(|| format!("{target}: not an overlay owner"))?;
+        return Ok(owner);
     }
     let owner = SourcePaths::load(root)?
         .owner_for_path(Path::new(target))?
@@ -84,9 +112,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             "--asm" => asm = true,
             "-h" | "--help" => {
                 println!(
-                    "usage: overlay score <overlay>:<addressHex> | <source.c> [--owner <overlay>:<addressHex>] [--align] [--asm]\n\n\
-                     Compare candidate and reference bytes. A mapped owner supplies the span;\n\
-                     --span BYTES is an explicit read-only diagnostic override."
+                    "usage: overlay score TARGET [--owner OWNER] [--span BYTES] [--align] [--asm]"
                 );
                 return Ok(0);
             }
@@ -106,69 +132,46 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     } else {
         source_for(root, resolved)?
     };
-    let owner = resolved;
     let reviewed = crate::reviewed_spans(root)?;
-    let span = match override_span {
-        Some(span) => Some(span),
-        None => placeholder_span(root, resolved)?
-            .or_else(|| reviewed.get(&owner).map(|span| *span as i64)),
-    };
-    let span = match span {
-        Some(span) => span,
-        None => match crate::audited_kind(root, &overlay, address)? {
-            Some(kind) => {
-                return Err(format!(
-                    "{overlay}:{address:08x} begins in audited {kind}; it is not a mapped owner"
-                ))
-            }
-            None => return Err(format!("{overlay}:{address:08x} has no mapped owner span")),
-        },
+    let span = override_span
+        .or(placeholder_span(root, resolved)?)
+        .or_else(|| reviewed.get(&resolved).map(|span| *span as i64));
+    let Some(span) = span else {
+        return Err(match crate::audited_kind(root, &overlay, address)? {
+            Some(kind) => format!(
+                "{overlay}:{address:08x} begins in audited {kind}; it is not a mapped owner"
+            ),
+            None => format!("{overlay}:{address:08x} has no mapped owner span"),
+        });
     };
     let work = tempdir().map_err(|error| error.to_string())?;
     let reference = work.path().join("reference.bin");
-    let (window, oracle) = truth_window(root, resolved, span)?;
-    let start = overlay_offset(resolved);
-    let mut image = vec![0; start + window.len()];
-    image[start..].copy_from_slice(&window);
+    let image = disassemble::canonical_overlay(root, &overlay)?;
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
     let paths = SourcePaths::load(root)?;
     let units = TranslationUnits::load(root)?;
-    let mut configuration = CandidateCompilerConfiguration {
-        family: Some(CandidateCompilerFamily::Routed),
-        call_via_base: Some(
-            paths
-                .registered_call_via(owner)
-                .map(u64::from)
-                .unwrap_or_else(|| overlay_call_via_base(&overlay)),
-        ),
-        label_word_bias: Some(OVERLAY_LINK_BIAS as u64),
-        ..Default::default()
-    };
-    if let Some(unit) = units.unit_for_game_owner("gs1", owner) {
-        configuration.absolute_symbols = unit.canonical_symbols()?;
+    let mut options = Options::gs1(source.to_string_lossy().into_owned());
+    options.configuration.call_via_base = Some(
+        paths
+            .registered_call_via(resolved)
+            .map(u64::from)
+            .unwrap_or_else(|| overlay_call_via_base(&overlay)),
+    );
+    options.configuration.overlay_extent =
+        Some(usize::try_from(span).map_err(|_| "invalid overlay span")?);
+    if let Some(unit) = units.unit_for_game_owner("gs1", resolved) {
+        options.configuration.absolute_symbols = unit.canonical_symbols()?;
     }
-    let rendered = render(
-        root,
-        &Options {
-            source: source.to_string_lossy().into_owned(),
-            rom: Some(reference.to_string_lossy().into_owned()),
-            work: Some(work.path().to_string_lossy().into_owned()),
-            flags: extra,
-            configuration,
-            target: CompilerTarget::Gs1,
-            owner: Some(address as u32),
-            overlay: Some(overlay),
-            unit: None,
-            precompiled_object: None,
-            size: Some(span as usize),
-            align,
-            first: false,
-            allocator_order: false,
-            asm,
-            patch: None,
-        },
-    )?;
-    println!("reference_from={oracle}");
+    options.rom = Some(reference.to_string_lossy().into_owned());
+    options.work = Some(work.path().to_string_lossy().into_owned());
+    options.flags = extra;
+    options.owner = Some(address as u32);
+    options.overlay = Some(overlay);
+    options.size = Some(span as usize);
+    options.align = align;
+    options.asm = asm;
+    let rendered = render(root, &options)?;
+    println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
     print!("{}", rendered.stdout);
     Ok(i32::from(
         rendered.differing_halfwords != 0 || rendered.candidate_length != rendered.reference_length,
@@ -188,40 +191,72 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     }
     let paths = SourcePaths::load(root)?;
     let reviewed = crate::reviewed_spans(root)?;
-    // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered
-    let mut count = [0usize; 9];
+    let dossiers: Value = serde_json::from_slice(
+        &std::fs::read(root.join("games/gs1/recon/en/dossiers.json"))
+            .map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered, parked
+    let mut count = [0usize; 10];
     for source in &sources {
-        let target = source.to_string_lossy();
-        let target = resolve(root, &target)?;
+        let target = resolve(root, &source.to_string_lossy())?;
         let overlay = target.overlay_id().expect("resolved overlay owner");
         let address = i64::from(target.address());
-        let owner = target;
         let placeholder = placeholder_span(root, target)?;
-        let span = placeholder.or_else(|| reviewed.get(&owner).map(|span| *span as i64));
+        let span = placeholder.or_else(|| reviewed.get(&target).map(|span| *span as i64));
         let Some(span) = span else {
-            if crate::audited_kind(root, &overlay, address)?.as_deref() != Some("literal_pool") {
+            let kind = crate::audited_kind(root, &overlay, address)?;
+            let relationship = kind
+                .as_deref()
+                .and_then(|kind| nonowner_relationship(kind, target, &reviewed));
+            let Some((relationship, related)) = relationship else {
                 return Err(format!(
-                    "{} has no mapped owner and is not audited literal-pool data",
-                    source.display()
+                    "{} has no mapped owner; audited kind is {} without a reviewed-owner relationship",
+                    source.display(), kind.as_deref().unwrap_or("unknown")
                 ));
-            }
+            };
             count[1] += 1;
-            println!("not-owner\t{overlay}:{address:08x}\taudited-literal-pool");
+            println!(
+                "not-owner\t{overlay}:{address:08x}\taudited-{relationship}\t{}",
+                related
+                    .map(|owner| owner.id())
+                    .unwrap_or_else(|| "none".into())
+            );
             continue;
         };
-        let registered = paths.registered_name(owner).is_some();
+        let registered = paths.registered_name(target).is_some();
         count[0] += usize::from(registered);
         count[7] += usize::from(placeholder.is_some());
         count[8] += usize::from(!registered);
-        let (reference, _) = truth_window(root, target, span)?;
-        let work = tempdir().map_err(|error| error.to_string())?;
-        if compile_overlay_c(source, work.path(), &overlay, None, &[])?.data != reference {
-            count[3] += usize::from(registered);
+        let destination = paths.registered_source_path(target);
+        if placeholder.is_some() && destination.as_ref().is_ok_and(|path| path.is_file()) {
+            count[2] += 1;
+            println!("installed-owner\t{}", target.id());
             continue;
         }
-        let destination = paths.registered_source_path(owner);
-        if destination.as_ref().is_ok_and(|path| path.is_file()) {
-            count[2] += 1;
+        if placeholder.is_none() {
+            let dossier = &dossiers["records"][target.id()];
+            let candidate_span = dossier["span_bytes"]
+                .as_u64()
+                .or_else(|| dossier["owner_bytes"].as_u64());
+            if let Some(fragment) =
+                retained_fragment_span(dossier["retention"].as_str(), candidate_span, span as usize)
+            {
+                count[9] += 1;
+                println!(
+                    "unverified-retained-fragment\t{}\tfragment_span={}\tcomplete_span={span}",
+                    target.id(),
+                    fragment
+                );
+                continue;
+            }
+        }
+        let (reference, _) = truth_window(root, target, span)?;
+        let work = tempdir().map_err(|error| error.to_string())?;
+        if compile_overlay_c(source, work.path(), &overlay, span as usize, None, &[])?.data
+            != reference
+        {
+            count[3] += usize::from(registered);
             continue;
         }
         let class = if !registered || destination.is_err() {
@@ -232,8 +267,47 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
             count[5 - usize::from(ordinary)] += 1;
             ["nonordinary", "ordinary"][usize::from(ordinary)]
         };
-        println!("exact-retained\t{}\t{class}", owner.id());
+        println!("exact-retained\t{}\t{class}", target.id());
     }
-    println!("overlay-corpus sources={} registered_owners={} placeholder_spans={} literal_pool_nonowners={} installed_exact={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={} unregistered_candidates={}", sources.len(), count[0], count[7], count[1], count[2], count[3], count[4], count[5], count[6], count[8]);
+    println!("overlay-corpus sources={} registered_owners={} placeholder_spans={} audited_nonowners={} installed_owners={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={} unregistered_candidates={} unverified_retained_fragments={}", sources.len(), count[0], count[7], count[1], count[2], count[3], count[4], count[5], count[6], count[8], count[9]);
     Ok(i32::from(count[4..7].iter().sum::<usize>() != 0))
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn owner(value: &str) -> SourceOwner {
+        SourceOwner::parse_argument(value).unwrap()
+    }
+    #[test]
+    fn executable_alignment_requires_same_overlay_owner_relationship() {
+        let reviewed = BTreeMap::from([(owner("resource_371:02000100"), 0x20)]);
+        let relation = |kind, entry| nonowner_relationship(kind, owner(entry), &reviewed);
+        for (entry, expected) in [
+            ("resource_371:02000110", "alignment-inside"),
+            ("resource_371:020000fe", "alignment-before"),
+        ] {
+            assert_eq!(relation("executable_alignment", entry).unwrap().0, expected);
+        }
+        assert!([
+            ("executable_alignment", "resource_372:02000110"),
+            ("executable_alignment", "resource_371:020000fc"),
+            ("thumb", "resource_371:02000110"),
+            ("unknown", "resource_371:02000110"),
+        ]
+        .into_iter()
+        .all(|(kind, entry)| relation(kind, entry).is_none()));
+    }
+    #[test]
+    fn only_shorter_retained_spans_are_fragments() {
+        for (retention, span, expected) in [
+            (Some("keep_structured_asm"), Some(12), Some(12)),
+            (Some("keep_structured_asm"), Some(16), None),
+            (Some("keep_structured_asm"), Some(20), None),
+            (None, Some(12), None),
+            (Some("measured-draft"), Some(12), None),
+            (Some("keep_structured_asm"), None, None),
+        ] {
+            assert_eq!(retained_fragment_span(retention, span, 16), expected);
+        }
+    }
 }

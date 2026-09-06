@@ -5,6 +5,7 @@ extern u8 Value_00000f31;
 
 extern void Func_02004988(void);
 extern void Func_02004ab4();
+extern void Func_02004ab4_a();
 extern void Func_02004a4c();
 extern void Func_02004a66(s32, s32);
 extern void Func_0200499c(s32);
@@ -36,7 +37,7 @@ void SceneDialogue_RunChoiceSequence2352(void)
     Func_02004a4c(msg);
     Func_02004a66(-1, 0);
     Func_0200499c(10);
-    Func_02004a4c(14, 2);
+    Func_02004a4c_a(14, 2);
     Func_020049aa(30);
     Func_02004a64(0, 14, 30);
     Func_02004a84(14, 0);
@@ -54,8 +55,8 @@ void SceneDialogue_RunChoiceSequence2352(void)
         Func_02004a12(30);
         Func_02004a9c(16, 0, 0);
         Func_02004b4c(205, 3);
-        Func_02004ab4(0, 1);
-        Func_02004a4c(205, 0);
+        Func_02004ab4_a(0, 1);
+        Func_02004a4c_b(205, 0);
         Func_02004a0a((s32)&Value_00000f31);
     }
 }

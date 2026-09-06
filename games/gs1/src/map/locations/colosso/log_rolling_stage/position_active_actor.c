@@ -3,7 +3,8 @@
 extern u8 Data_02000240[];
 
 s32 Func_020087a0();           /* veneer to GameFlag_IsSet */
-u8 *Func_02008818();           /* veneer to Scene_GetRecord */
+u8 *Func_02008818_a();         /* veneer to Scene_GetRecord */
+u8 *Func_02008818_b();
 void Func_0200876a();          /* veneer to Object_SetPosition */
 void Func_02008750();          /* veneer to Object_SetCallback */
 void Func_020086b6();          /* veneer to Func_080000c0 */
@@ -11,7 +12,8 @@ s32 Func_02006ca2();           /* local thunk to Func_020020e8, site A */
 s32 Func_02006cb4();           /* local thunk to Func_020020e8, site B */
 void Func_0200880a();          /* veneer to UiText_DrawQuantity, site A */
 void Func_0200881c();          /* veneer to UiText_DrawQuantity, site B */
-void Func_0200882c();          /* shared veneer, selector refresh + 0x96a */
+void Func_0200882c_a();          /* shared veneer, selector refresh + 0x96a */
+void Func_0200882c_b();          /* shared veneer, selector refresh + 0x96a */
 void Func_020087ca();          /* veneer to Func_08009148 */
 
 s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle)
@@ -28,7 +30,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     flag = Func_020087a0(0x211);
 
     shared = Data_02000240;
-    record = Func_02008818(*(s32 *)(shared + 500));
+    record = Func_02008818_a(*(s32 *)(shared + 500));
 
     if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
         x = *(s32 *)(workspace + 232) + 0xc0000;
@@ -50,7 +52,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     *(s32 *)(record + 48) = 0x10000;
 
     Func_0200876a(record, x, 0, z);
-    Func_02008818(0x211);
+    Func_02008818_b(0x211);
     Func_02008750(record, (void *)0x0200db24);
 
     while (*waitp != 0) {
@@ -66,8 +68,8 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     }
 
     shared = Data_02000240;
-    Func_0200882c(*(s32 *)(shared + 500), 1);
-    Func_0200882c(0x96a, 3);
+    Func_0200882c_a(*(s32 *)(shared + 500), 1);
+    Func_0200882c_b(0x96a, 3);
     Func_020087ca(record);
 
     return flag;

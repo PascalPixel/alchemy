@@ -14,7 +14,8 @@ void Func_02002f78();
 void Func_02002f8e();
 void Func_02002f94();
 void Func_02002f9c();
-s32 Func_02002fa2();
+s32 Func_02002fa2_a();
+s32 Func_02002fa2_b();
 void Func_02002faa();
 void Func_02002fac();
 void Func_02002ff4();
@@ -76,9 +77,9 @@ void FieldScene_RunScene3a6SequenceB(void)
             Call3(Func_02002faa, 8, 0x318, 0x138);
             Func_02002f78(10);
             Call3(Func_02002ff4, 8, 0xc000, 20);
-            record = Func_02002fa2(8);
+            record = Func_02002fa2_a(8);
             *(volatile s32 *)(record + 108) = 0x2008cf9;
-            Call0((void (*)())Func_02002fa2);
+            Call0((void (*)())Func_02002fa2_b);
         }
     }
 }

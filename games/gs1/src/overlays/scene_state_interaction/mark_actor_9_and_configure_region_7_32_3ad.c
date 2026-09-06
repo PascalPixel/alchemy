@@ -20,6 +20,7 @@ struct Rec_3ad {
 };
 
 struct Rec_3ad *Func_02001bd8();
+void Func_02001bd8_a(s32);
 void Func_02001bb0();
 
 void SceneState_MarkActor9AndConfigureRegion7_32(void)
@@ -35,5 +36,5 @@ void SceneState_MarkActor9AndConfigureRegion7_32(void)
     p5 = 8;
     p6 = 32;
     Func_02001bb0(7, 32, 1, 1, p5, p6);
-    Func_02001bd8(516);
+    Func_02001bd8_a(516);
 }

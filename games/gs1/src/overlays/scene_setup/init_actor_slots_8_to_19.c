@@ -1,7 +1,14 @@
 #include "types.h"
 
+#if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define Data_0200db40 Data_0200db80
+#define Data_0200db70 Data_0200dbb0
+#define Data_0200db90 Data_0200dbd0
+#endif
+
 extern void Func_02006ab6(s32);
-extern s32 *Func_02007aac();
+extern s32 *Func_02007aac_a();
+extern s32 *Func_02007aac_b();
 extern void Func_02007ab6(s32, s32, s32);
 extern void Func_02007ac0(s32, s32, s32);
 extern void Func_02007aca(s32, s32, s32);
@@ -22,7 +29,8 @@ extern s32 *Func_02007af6(s32);
 extern s32 *Func_02007b08(s32);
 extern s32 *Func_02007b14(s32);
 extern s32 *Func_02007b20(s32);
-extern s32 *Func_02007b2c();
+extern s32 *Func_02007b2c_a();
+extern s32 *Func_02007b2c_b();
 extern s32 *Func_02007b38(s32);
 extern void Func_02007ba6(s32, s32, s32);
 extern void Func_02007a9c(s32);
@@ -65,7 +73,7 @@ void SceneState_InitActorSlots8To19(void)
         for (i = 0; i < 8; i++) p[i] = 0xC000;
     }
     Func_02006ab6(8);
-    ((void (*)())Func_02007aac)(9, 0, 0);
+    ((void (*)())Func_02007aac_a)(9, 0, 0);
     Func_02007ab6(10, 0, 0);
     Func_02007ac0(11, 0, 0);
     Func_02007aca(12, 0, 0);
@@ -81,7 +89,7 @@ void SceneState_InitActorSlots8To19(void)
         t[3] = z;
         Data_0200db90[0] = Func_02007a90(8)[4];
         Data_0200db90[1] = Func_02007aa0(13)[4];
-        Data_0200db90[2] = Func_02007aac(14)[4];
+        Data_0200db90[2] = Func_02007aac_b(14)[4];
         Data_0200db90[3] = Func_02007ab8(15)[4];
         Func_02006b38(16);
         Func_02006b3e(17);
@@ -102,7 +110,7 @@ void SceneState_InitActorSlots8To19(void)
         Data_0200db90[4] = Func_02007b08(16)[4];
         Data_0200db90[5] = Func_02007b14(17)[4];
         Data_0200db90[6] = Func_02007b20(18)[4];
-        Data_0200db90[7] = Func_02007b2c(19)[4];
+        Data_0200db90[7] = Func_02007b2c_a(19)[4];
     }
     {
         s32 *w = Func_02007b38(0);
@@ -129,7 +137,7 @@ void SceneState_InitActorSlots8To19(void)
         Func_02007bc8(18)[92] = o;
         Func_02007bd2(19)[92] = o;
     }
-    Func_02007b2c(1);
+    Func_02007b2c_b(1);
     Func_02007c4a(8, 0x840000, 0x2780000);
     Func_02007b40(1);
     Func_02006eda(8, 0, 2);

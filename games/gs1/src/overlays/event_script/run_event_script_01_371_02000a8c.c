@@ -16,12 +16,16 @@ void Func_02004e12();
 void Func_02004e26();
 void Func_02004e2c();
 s32 Func_02004e30();
+s32 Func_02004e30_a();
 s32 Func_02004e66();
+s32 Func_02004e66_a();
 void Func_02004e6a();
 void Func_02004e72();
+void Func_02004e72_a();
 void Func_02004e7c();
 void Func_02004e92();
 s32 Func_02004e9c();
+s32 Func_02004e9c_a();
 void Func_02004ea0();
 void Func_02004ea8();
 void Func_02004eb0();
@@ -35,6 +39,7 @@ void Func_02004ee2();
 void Func_02004ee4();
 void Func_02004ee8();
 void Func_02004ef8();
+void Func_02004ef8_a();
 void Func_02004efe();
 void Func_02004f0c();
 void Func_02004f1e();
@@ -103,11 +108,11 @@ void RunEventScript01(void)
     Func_02004e92(12, 2);
     record = Value1(Func_02004e30, 8);
     if (record != 0) {
-        Func_02004e72(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Func_02004e72_a(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Func_02004ea0(12);
     Func_02004eb2(12, 0, 0);
-    ((void (*)())Func_02004e30)(60);
+    ((void (*)())Func_02004e30_a)(60);
     Func_02004ec8(11, 2);
     record = Value1(Func_02004e66, 8);
     if (record != 0) {
@@ -115,7 +120,7 @@ void RunEventScript01(void)
     }
     Func_02004ed6(11);
     Func_02004ee8(11, 0, 0);
-    ((void (*)())Func_02004e66)(60);
+    ((void (*)())Func_02004e66_a)(60);
     Func_02004efe(0, 2);
     record = Value1(Func_02004e9c, 8);
     if (record != 0) {
@@ -123,7 +128,7 @@ void RunEventScript01(void)
     }
     Func_02004f0c(0);
     Func_02004f1e(0, 0, 0);
-    ((void (*)())Func_02004e9c)(60);
+    ((void (*)())Func_02004e9c_a)(60);
     Call3(Func_02004ee2, 8, 0x8000, 0x4000);
     Func_02004f2c(8, 56, 8);
     Func_02004f3a(8);
@@ -133,5 +138,5 @@ void RunEventScript01(void)
     Func_02004f5a(8);
     Func_0200504e();
     Func_0200501c(108);
-    Func_02004ef8();
+    Func_02004ef8_a();
 }

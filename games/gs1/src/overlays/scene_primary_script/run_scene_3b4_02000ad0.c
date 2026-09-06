@@ -15,6 +15,7 @@ void Func_020030a0();
 void Func_020030ac();
 void Func_020030b4();
 void Func_020030b8();
+void Func_020030b8_a();
 void Func_020030f0();
 void Func_02003132();
 
@@ -63,8 +64,8 @@ void FieldScene_RunScene3b4_02000ad0(void)
         Func_020030b8(15, 1);
         Func_020030b4();
         Func_0200309e(15, 0, 20);
-        Call2(Func_020030b8, 15, 0x102);
-        Func_020030a0(15, 2);
+        Call2(Func_020030b8_a, 15, 0x102);
+        Func_020030a0_a(15, 2);
         Func_0200303e(20);
         Call3(Func_02003074, 15, 0x10000, 0x8000);
         Func_02003132(152);

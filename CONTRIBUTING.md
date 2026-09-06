@@ -52,6 +52,20 @@ coverage evidence, but none of them is compiler-impossibility proof.
 
 Never fill an unfinished build from the reference ROM.
 
+Overlay owner IDs are resource offsets, not runtime addresses. Compile and link
+C at the loader's runtime base (`0x02008000`), then serialize it back through the
+loader's inverse and require the load/serialize round trip. The loader rewrites
+every BL-shaped pair, including literal-pool data. Never bias GCC's `.word`
+output or bind callees using candidate instruction positions. Legacy call names
+must resolve uniquely from the reference owner's audited extent; collisions
+need distinct C declarations and explicit runtime symbols in the translation
+unit. A failed binding blocks verification; it is not a compiler limitation.
+
+A direct C declaration for a `bx rN` call-via slot is not an indirect call model,
+even when it produces identical bytes. Use a typed function-pointer call; the
+idiom lint applies equally to argument and saved registers. Previously accepted
+owners with this artifact require source-model review, not a lint exemption.
+
 ## Setup
 
 Install Rust, Ninja, and `arm-none-eabi-binutils`. Put approved ROMs in ignored
@@ -61,6 +75,14 @@ Initialize the pinned `agbcc` and `agscc` submodules with
 replacing the approved bundle. `agbcc` comes directly from pret; `agscc` is
 the separately audited GCC 2.96 host port in PascalPixel/agscc. Compiler source
 history belongs to those repositories; Alchemy owns routing and verification.
+
+The pinned `agscc` includes the maintainer-authorized post-reload constant-mode
+lookup correction documented in its README. It fixes an inconsistent cselib
+query, not allocation or scheduling policy. Its game-independent regression is
+run with `rustc agscc/contrib/check-cselib.rs -o agscc/build/check-cselib`, then
+`agscc/build/check-cselib out/compilers/dist/xgcc agscc/gcc/testsuite/gcc.dg/cselib-constant-mode.c out/compiler-regression`.
+`make test` runs this repeatability check automatically. It does not replace
+the full ROM and edition audit.
 
 The restored bundle contains `xgcc`, `cc1`, `cpp0`, and `tradcpp0` from
 `agscc/build/gcc`, stock `agbcc/gcc/old_agbcc` under `agbcc/`, and unmodified
@@ -331,6 +353,11 @@ still being recovered are included as their candidate drafts; owners with no
 C anywhere stay retained assembly and appear in the manifest as holes. This
 is the pret discipline at function granularity — the hole is always a whole
 function, never `asm()` inside a C body, and DONE never counts a hole.
+Wholly retained overlay candidate units may declare call bindings for scoring
+without adopting production C. They must use the overlay candidate corpus,
+match a complete reviewed span, and remain unmapped and absent from the
+production overlay placeholders; exact overlay units still require grouped
+production sources.
 
 The proof categories are defined once under **Keep exactness literal** above.
 Main-image Proven ASM evidence lives in the generated assembly manifest;
@@ -441,7 +468,11 @@ cannot be reproduced from a clean checkout.
 ## Route residual work
 
 The triage router runs as part of `alchemy diff` and prints a
-`next=` line: the literal command to run for that owner's residual class.
+`next=` line: a diagnostic command or an explicit smart-queue handoff.
+Only a decoder-named executable catalog operation is an automatic repair;
+re-running a diagnostic is not one. A transfer fingerprint alone cannot prove
+compiler impossibility. Read scores from current source and the complete
+approved compiler bundle, never from historical dossier prose or cached text.
 When reference bytes prove a narrower corpus-derived repair, it also prints a
 `repair_hint=` line with the guarded playbook.  Treat that as one bounded edit,
 not permission to repeat the transformation elsewhere: rescore it in
@@ -476,6 +507,15 @@ belong beneath ignored `out/gs1-en/waves/`, never `/tmp`. Cheap agents execute
 only prepared shards and named playbooks; exact results still pass through the
 explicit integrator before repository source changes.
 
+Preparation freezes the actual cohort and its denominators in the receipt,
+not constants in the tool. Inventory changes require a new preparation, while
+old cohorts retain their original prediction denominators. For closure work,
+rank complete translation units and demonstrated families by unresolved bytes;
+use the smallest-first ordering only for the explicitly bounded drafting
+experiment. Commit completed work before another wave. Record adopted bytes,
+parked bytes, and residual classes; a wave with no adoptions does not justify
+expanding the same search. Repair verification failures before resuming waves.
+
 `make coverage` also refreshes the main-ROM residual class scoreboard. It
 re-triages ordinary tracked candidate source with the current router, keeps
 absent candidates explicit, and records deterministic source, reference, and
@@ -489,6 +529,16 @@ disposable experiment records: no build, coverage, or later wave discovers or
 consumes them automatically. Keep a named record only while its verdict is
 still being reviewed; otherwise remove it and regenerate from repository
 source when needed.
+
+Dossiers preserve dated reasoning, including disproven hypotheses. Their
+scores and closed-axis claims do not override fresh inventory, compiler,
+source, or reference receipts. Reconcile an adopted owner or corrected runtime
+model immediately rather than selecting it again from an old floor list.
+
+Report Proven C, proven necessary ASM, unresolved bytes, and full-build target
+coverage separately. 100% DONE is not 100% C; twelve correspondence or object
+checks are not twelve byte-identical ROM builds. No percentage increase is
+claimed until the affected owners and complete production build pass.
 
 ## Validate and commit
 
@@ -531,6 +581,12 @@ Run the extra gate only when the change owns it:
 | Retained-assembly classification | `make classification-check` |
 | Candidate corpus policy | `make candidate-corpus-check` |
 | Exact ownership, owner labels, or README/coverage figures | `make coverage` |
+
+The candidate-corpus audit distinguishes installed owners, scored complete
+candidates, audited nonowners, and unverified retained fragments. A retained
+dossier whose recorded span is shorter than the reviewed complete owner is not a
+complete-function score. Report it as unverified; never count it as exact or
+nonexact. Complete candidates still require successful binding and compilation.
 
 `make audit` is the explicit exhaustive audit for a release, merge, or large
 compiler/ownership batch. It covers every edition, retained candidate,

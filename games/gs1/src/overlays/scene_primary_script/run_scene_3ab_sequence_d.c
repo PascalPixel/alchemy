@@ -5,7 +5,8 @@
 void Func_02002686();
 void Func_020026c8();
 s32 Func_020026fe();
-void Func_02002702();
+void Func_02002702_a();
+void Func_02002702_b();
 s32 Func_0200270a();
 void Func_02002716();
 void Func_0200272a();
@@ -92,14 +93,14 @@ void FieldScene_BuildFlaggedMapLayout(void)
             ObjectMotion_SetHorizontalPositionWithTerrain_1(19, 0, 0);
             Audio_PlayCue_1(210);
             Func_02002686(1);
-            Call6(Func_02002702, 32, 45, CELL_W, CELL_H, 1, 14);
+            Call6(Func_02002702_a, 32, 45, CELL_W, CELL_H, 1, 14);
             Call6(Func_02002716, 35, 45, CELL_W, CELL_H, 33, 14);
             Call6(Func_0200272a, 38, 45, CELL_W, CELL_H, 1, 46);
             Func_020026c8(10);
             Call6(Func_02002740, 41, 45, CELL_W, CELL_H, 1, 14);
             Call6(Func_02002752, 44, 45, CELL_W, CELL_H, 33, 14);
             Call6(Func_02002764, 47, 45, CELL_W, CELL_H, 1, 46);
-            Func_02002702(10);
+            Func_02002702_b(10);
             Call6(Func_0200277a, 50, 45, CELL_W, CELL_H, 1, 14);
             Call6(Func_0200278c, 53, 45, CELL_W, CELL_H, 33, 14);
             Call6(Func_0200279e, 56, 45, CELL_W, CELL_H, 1, 46);

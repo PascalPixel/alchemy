@@ -12,7 +12,8 @@ void Func_02003e70();
 void Func_02003e74();
 void Func_02003e78();
 void Func_02003e9a();
-void Func_02003eb2();
+void Func_02003eb2_a();
+void Func_02003eb2_b();
 void Func_02003f00();
 s32 Func_02003f06();
 void Func_02003f1a();
@@ -32,10 +33,10 @@ void Func_02003f84();
 #define GameFlag_IsSet_1(a0) Value1(Func_02003d8a, a0)
 #define Object_LinkPair_1(args...) Func_02003e62(args)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_02003e78, a0)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02003eb2, a0, a1, a2)
+#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02003eb2_a, a0, a1, a2)
 #define ObjectMotion_SetVariantCallback_1(args...) Func_02003e74(args)
 #define SceneWork_SetStepValue_2(a0) Call1(Func_02003e9a, a0)
-#define BattleEvent_RunActionAndWait_1(args...) Func_02003eb2(args)
+#define BattleEvent_RunActionAndWait_1(args...) Func_02003eb2_b(args)
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_02003f06(args)
 #define RuntimeBlock_GetOffset1e0Pointer_2(args...) Func_02003f06(args)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02003f00, a0, a1)

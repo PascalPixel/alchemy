@@ -9,6 +9,7 @@ s32 Func_02005b38();
 s32 Func_02005b4e();
 void Func_02005bb0();
 void Func_02005bc4();
+void Func_02005bc4_a();
 void Func_02005bee();
 void Func_02005c00();
 void Func_02005c2c();
@@ -19,6 +20,7 @@ s32 Func_02005c9a();
 void Func_02005ca4();
 void Func_02005cc2();
 void Func_02005cda();
+void Func_02005cda_a();
 void Func_02005ce8();
 void Func_02005cea();
 void Func_02005cf2();
@@ -26,11 +28,13 @@ void Func_02005d10();
 void Func_02005d1a();
 s32 Func_02005d1c();
 void Func_02005d1e();
+void Func_02005d1e_a();
 void Func_02005d2c();
 void Func_02005d30();
 void Func_02005d36();
 s32 Func_02005d52();
 void Func_02005d56();
+void Func_02005d56_a();
 void Func_02005d60();
 void Func_02005d6a();
 void Func_02005db2();
@@ -38,8 +42,10 @@ void Func_02005e2c();
 
 s32 Func_02005bbc();
 s32 Func_02005cf4();
+s32 Func_02005cf4_a();
 
 s32 Func_02005d3e();
+s32 Func_02005d3e_a();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -146,8 +152,8 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     Func_02005cda(owner, 0);
     return;
 L_main:
-    ((void (*)())Func_02005bc4)(obj, 1);
-    Call1(Func_02005cda, 0x207f);
+    ((void (*)())Func_02005bc4_a)(obj, 1);
+    Call1(Func_02005cda_a, 0x207f);
     Func_02005cf2(owner, 0);
     Call3(Func_02005c88, 0, 0x10000, 0x8000);
     Call3(Func_02005c96, obj, 0x10000, 0x8000);
@@ -160,7 +166,7 @@ L_main:
     Func_02005cea(obj, p9, hi);
     lo = p9 + 16;
     Value3(Func_02005cf4, 0, lo, hi);
-    ((void (*)())Func_02005d3e)(obj, 0, 30);
+    ((void (*)())Func_02005d3e_a)(obj, 0, 30);
     Func_02005d1e(obj, 3);
     tail = hi - 32;
     Func_02005d30(0, 3);
@@ -170,14 +176,14 @@ L_main:
     Func_02005d36(obj, p9, tail);
     Func_02005d56(owner, 1);
     Call3(Func_02005db2, owner, 0x8000, 0);
-    Func_02005d56(obj, p9, p11 - 48);
+    Func_02005d56_a(obj, p9, p11 - 48);
     Func_02005d60(owner, p9, tail);
     Func_02005d6a(owner, p9, p11);
     Func_02005d10(obj);
-    ((void (*)())Func_02005cf4)(base + 512);
+    ((void (*)())Func_02005cf4_a)(base + 512);
     rec = Value1(Func_02005d52, obj);
     sx = *(volatile s32 *)(rec + 8) >> 20;
-    Func_02005d1e((obj << 4) + 880, sx);
+    Func_02005d1e_a((obj << 4) + 880, sx);
     sy = *(volatile s32 *)(rec + 16) >> 20;
     Func_02005d2c((obj << 4) + 888, sy);
 }

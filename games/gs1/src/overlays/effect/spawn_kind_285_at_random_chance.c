@@ -21,6 +21,7 @@ extern void Func_02006b3e(s32, s32, s32 *);
 extern Obj *Func_02006bd2(s32, s32, s32, s32);
 extern void Func_02006c3e(Obj *, s32);
 extern void Func_02006be6(Obj *, s32);
+extern void Func_02006be6_a(Obj *, s32);
 extern void Func_02006bee(Obj *, s32);
 
 void SceneEffect_SpawnKind285AtRandomChance(Obj *a)
@@ -54,7 +55,7 @@ void SceneEffect_SpawnKind285AtRandomChance(Obj *a)
             o->f55 = 0;
             Func_02006c3e(o, 0);
             Func_02006be6(o, (s32)Data_0200bfe4);
-            Func_02006be6(o, 1);
+            Func_02006be6_a(o, 1);
             Func_02006bee(o, 0);
         }
     }

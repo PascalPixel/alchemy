@@ -42,8 +42,8 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     d = (s16)(d - prev);
     if (d > 0x1000)
         d = 0x1000;
-    if (d < (s32)0xFFD0F002)
-        d = (s32)0xFFD0F002;
+    if (d < -0x1000)
+        d = -0x1000;
     o->unk6 = prev + d;
     Func_02004128(o, 2);
     Func_02004138(o, 0x30);

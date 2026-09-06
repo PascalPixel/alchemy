@@ -17,7 +17,7 @@ void OverlayObject_DecayRecordField1e(Spr *s)
 
     if ((s32)((h + 0xffff) << 16) < 0) {
         {
-            s32 t = h + (s32)0xfa10f601;
+            s32 t = h + (s32)0xfffff600;
             o->unk1e = t;
         }
     }

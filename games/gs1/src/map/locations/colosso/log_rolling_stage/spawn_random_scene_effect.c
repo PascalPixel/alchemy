@@ -20,7 +20,8 @@ extern s32 Func_0200858a(void);
 extern void Func_020085a6(s32, s32, s32 *);
 extern StageEffect *Func_0200863a(s32, s32, s32, s32);
 extern void Func_020086b6(StageEffect *, s32);
-extern void Func_0200864e(StageEffect *, s32);
+extern void Func_0200864e_a(StageEffect *, s32);
+extern void Func_0200864e_b(StageEffect *, s32);
 extern void Func_02008656(StageEffect *, s32);
 
 void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
@@ -53,8 +54,8 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         if (effect != 0) {
             effect->state = 0;
             Func_020086b6(effect, 0);
-            Func_0200864e(effect, (s32)Data_0200ce50);
-            Func_0200864e(effect, 1);
+            Func_0200864e_b(effect, (s32)Data_0200ce50);
+            Func_0200864e_a(effect, 1);
             Func_02008656(effect, 0);
         }
     }

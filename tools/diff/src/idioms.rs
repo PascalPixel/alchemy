@@ -154,24 +154,19 @@ fn models_shared_work_cache_cursor(source: &str) -> bool {
         })
     })
 }
-/// Lint unresolved candidates before scoring. Low-register direct-call
-/// spellings remain accepted: the original ABI deliberately passes the branch
-/// target in r0-r3 at a matching veneer address. A direct call to an r4-r13
-/// slot cannot load that register through the C calling convention and is the
-/// repeated fictional-callee model this rule rejects.
+/// A veneer is an indirect call in ordinary C, including argument registers.
+/// Byte equality does not make a phantom direct-callee declaration authentic.
 pub fn lint(source: &str, reference_assembly: &str, overlay: Option<&str>) -> LintReport {
     let requirements = call_via_requirements(reference_assembly, overlay);
     let clean_source = without_comments(source);
     let mut findings = requirements
         .iter()
-        .filter(|requirement| {
-            requirement.register >= 4 && direct_call(&clean_source, requirement.address)
-        })
+        .filter(|requirement| direct_call(&clean_source, requirement.address))
         .map(|requirement| LintFinding {
             rule: "call-via-is-indirect".into(),
             playbook: "model-typed-indirect-call".into(),
             detail: format!(
-                "reference branches through r{} at 0x{:08x}; an ordinary direct callee cannot place the target in that register",
+                "reference branches through r{} at 0x{:08x}; model the target as a typed function pointer, not a direct callee",
                 requirement.register, requirement.address
             ),
         })
@@ -210,7 +205,7 @@ mod tests {
             .collect()
     }
     #[test]
-    fn rejects_fictional_high_register_callee_but_allows_indirect_and_low_register_abi() {
+    fn rejects_phantom_callees_in_both_argument_and_saved_registers() {
         let reference = "\tbl Func_080072f4\n\tbl Func_080072f0\n";
         assert_eq!(
             rules("void f(void) { Func_080072f4(1,2,3,4,5); }", reference),
@@ -221,7 +216,10 @@ mod tests {
             reference
         )
         .is_empty());
-        assert!(rules("void f(void) { Func_080072f0(1,2,3,target); }", reference).is_empty());
+        assert_eq!(
+            rules("void f(void) { Func_080072f0(1,2,3,target); }", reference),
+            ["call-via-is-indirect"]
+        );
     }
     #[test]
     fn uses_overlay_bank_authority() {

@@ -23,8 +23,8 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
             if (angle_delta > 0x1000) {
                 angle_delta = 0x1000;
             }
-            if (angle_delta < (s32)0xf9b4f001) {
-                angle_delta = (s32)0xf9b4f001;
+            if (angle_delta < -0x1000) {
+                angle_delta = -0x1000;
             }
             object->angle = angle + angle_delta;
         }

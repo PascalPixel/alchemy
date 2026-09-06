@@ -12,13 +12,6 @@ pub mod unit;
 
 use std::path::Path;
 
-/// Lifts the window of an overlay image into a candidate unit.
-pub fn lift_window(image: &[u8], entry: u32, span: u32, name: &str) -> String {
-    let ins = decode::decode_window(image, entry, span);
-    let body = unit::bodies(&ins);
-    unit::compose(entry, name, &body)
-}
-
 /// Lifts an owner from the canonical ROM. `span` falls back to the register.
 pub fn lift_owner(
     root: &Path,

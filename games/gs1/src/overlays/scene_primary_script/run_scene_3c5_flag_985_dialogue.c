@@ -4,6 +4,7 @@ extern u8 *Data_03001ebc;
 extern void Func_0200540a();
 extern s32 Func_020053fc();
 extern void Func_02005400();
+extern void Func_02005400_a();
 extern void Func_02005586();
 extern void Func_020053ea();
 extern void Func_02005440();
@@ -27,7 +28,7 @@ void FieldScene_RunFlag985DialogueBranch(void) {
             Func_02005586(155);
             Func_020053ea(35, 78, 1, 2, k5, k6);
             Func_02005440(10);
-            Func_02005400(34, 78, 1, 2, k5, k6);
+            Func_02005400_a(34, 78, 1, 2, k5, k6);
             Func_02005456(10);
             Func_02004afa();
         }

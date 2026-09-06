@@ -4,6 +4,7 @@ extern PartyInteractionRecord *Func_02005e6a(void);
 extern void Func_02005e5e(void);
 extern s32 Func_02005e3a(void);
 extern void Func_02005f04();
+extern void Func_02005f04_a();
 extern s32 Func_02005f24(s32 actorId, s32 mode);
 extern void Func_02005eae(s32 actorId, s32 horizontalRate, s32 verticalRate);
 extern void Func_02005ebc(s32 actorId, s32 horizontalRate, s32 verticalRate);
@@ -25,7 +26,7 @@ extern void Func_02005ee6(void);
 #define PlaceSelectedActor Func_02005ee0
 #define SetInteractionStep Func_02005e9e
 #define PlaceActorZero Func_02005ef8
-#define PlaceSupportActor Func_02005f04
+#define PlaceSupportActor Func_02005f04_a
 #define StartInteractionPhase Func_02005ff0
 #define AdvanceInteractionPhase Func_02005ffc
 #define SelectInteractionStep Func_02005fc2

@@ -1,6 +1,7 @@
 #include "types.h"
 
-extern s32 Func_0200790e(s32);
+extern s32 Func_0200790e_a(s32);
+extern s32 Func_0200790e_b(s32);
 extern void Func_02007a40(s32, s32);
 extern void Func_02007a54(s32, s32);
 extern void Func_02007a68(s32, s32);
@@ -21,7 +22,7 @@ extern s32 Data_0200db90[];
 
 void SceneEffect_SelectSlotValueAndPosition(s32 a, s32 b, s32 c)
 {
-    s32 *p = (s32 *)Func_0200790e(a);
+    s32 *p = (s32 *)Func_0200790e_a(a);
     union Slot *q = (union Slot *)p[20];
     s32 t;
 
@@ -46,7 +47,7 @@ void SceneEffect_SelectSlotValueAndPosition(s32 a, s32 b, s32 c)
         }
     }
     if ((c & 1) != 0) {
-        t = Func_0200790e(Data_0200db40[b]);
+        t = Func_0200790e_b(Data_0200db40[b]);
         q[7].h[1] = Func_0200791c(Data_0200db40[b] + 0x8000) >> 5;
         p[4] = Data_0200db90[b] - (t << 2) - (t << 1);
     } else {

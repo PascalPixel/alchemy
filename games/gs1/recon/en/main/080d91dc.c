@@ -1,5 +1,8 @@
 #include "shared-aggregates.h"
 
+typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
+typedef s32 (*IntegerSqrtFn)(s32 value);
+
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
  * which can be enabled by passing `--valid-syntax` on the command line.
@@ -193,7 +196,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
         } else {
             var_r0_133 = 0x8D;
         }
-        Func_080072f0(0x05000000, Func_08002f40(var_r0_133), 0x80, 0x03001388);
+        ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(var_r0_133), 0x80);
         break;
     case 4:                                         /* switch 2 */
         Func_080e0524(0xA5, sp44 + 0x2B8E, 1, 1);
@@ -216,7 +219,7 @@ block_22:
             var_r0_182 = 0xBB;
             break;
         }
-        Func_080072f0(0x05000000, Func_08002f40(var_r0_182), 0x80, 0x03001388);
+        ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(var_r0_182), 0x80);
         break;
     default:                                        /* switch 2 */
         Func_080e0524(0x9B, sp44 + 0x2B8E, 1, 0);
@@ -369,7 +372,7 @@ loop_60:
                         temp_r3_637 = (s32) M2C_FIELD(var_r6_626, s32 *, 4) >> 8;
                         temp_r2_639 = temp_r3_637 * temp_r3_637;
                         temp_r3_641 = (s32) M2C_FIELD(var_r6_626, s32 *, 8) >> 8;
-                        temp_ret_648 = Func_080072f0((temp_r3_633 * temp_r3_633) + temp_r2_639 + (temp_r3_641 * temp_r3_641), var_r1_620, temp_r2_639, 0x030001D8);
+                        temp_ret_648 = ((IntegerSqrtFn)0x030001d8)((temp_r3_633 * temp_r3_633) + temp_r2_639 + (temp_r3_641 * temp_r3_641));
                         temp_r0_648 = temp_ret_648;
                         var_r1_620 = temp_r8_625;
                         temp_r7_649 = temp_r0_648 >> 9;

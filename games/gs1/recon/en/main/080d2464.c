@@ -265,7 +265,7 @@ loop_23:
     if (sp24 == 0xB0) {
         M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 3;
         M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x02020202;
-        Func_080072f0(0x05000000, Func_08002f40(0xB4), 0x80, 0x03001388);
+        copy((void *)0x05000000, Func_08002f40(0xB4), 0x80);
     } else if ((u32) (sp24 - 0xA0) <= 0xFU) {
         M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 1;
         M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x10101010;

@@ -149,7 +149,10 @@ struct AffinityPair {
 #endif
 
 #ifndef BATTLE_AFTER_COPY
-#define BATTLE_COPY_UNIT(copy, target, size) Mem_Copy((copy), (target), (size), UnitCopyDesc)
+typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
+/* The fixed IWRAM word-copy entry takes three arguments, not a descriptor. */
+#define BATTLE_COPY_UNIT(copy, target, size) \
+    ((BattleUnitCopyFn)0x03001388)((copy), (target), (size))
 #define BATTLE_AFTER_COPY()
 #define BATTLE_BEFORE_HIT()
 #define BATTLE_HIT_PREP()

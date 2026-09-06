@@ -12,7 +12,8 @@ void Func_02002310();
 void Func_02002372();
 void Func_0200238c();
 void Func_0200239a();
-void Func_020023b2();
+void Func_020023b2_a();
+void Func_020023b2_b();
 void Func_020023c0();
 void Func_020023c2();
 void Func_020023d8();
@@ -62,9 +63,9 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             Call3(Func_020023c2, 8, 0x101, 60);
             base5_24db = (s32)Data_000024db;
             Func_0200239a(base5_24db);
-            Func_020023b2(8, 0);
+            Func_020023b2_a(8, 0);
             Func_0200238c(8, 1);
-            Func_020023b2((base5_24db + 1));
+            Func_020023b2_b((base5_24db + 1));
             Call1(Func_02002310, 0x9af);
         } else {
             L_0200094c:;

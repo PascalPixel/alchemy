@@ -1,5 +1,13 @@
 #include "types.h"
 
+#if defined(GS1_EDITION_JA)
+#define SCENE_STEP_VALUE 0x22c1
+#elif defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define SCENE_STEP_VALUE 0x211a
+#else
+#define SCENE_STEP_VALUE 0x2138
+#endif
+
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_0200adac[];
@@ -20,7 +28,7 @@ void Func_02005628();
 void Func_02005636();
 void Func_0200563c();
 void Func_02005640();
-void Func_02005644();
+void Func_02005644_a(); void Func_02005644_b();
 void Func_0200564a();
 void Func_0200564e();
 void Func_02005656();
@@ -102,20 +110,20 @@ void FieldScene_RunScene3b9_02002964(void)
     Func_0200558c(40);
     Func_02005624(8, 1);
     Func_0200560c(8, 3);
-    Call1(Func_0200564a, 0x2138);
+    Call1(Func_0200564a, SCENE_STEP_VALUE);
     Func_02004604(8);
     Func_02005640(9, 1);
     Func_02004612(9);
     Func_0200564e(10, 1);
     Func_02004620(10);
     Func_0200565c(11, 1);
-    Func_02005644(11, 3);
+    Func_02005644_a(11, 3);
     Func_02004636(11);
     Call3(Func_020056b6, 1, 0xe000, 0);
     Call3(Func_020056c2, 2, 0xa000, 20);
     Call3(Func_02005628, 1, 0x10000, 0x8000);
     Call3(Func_02005636, 2, 0x10000, 0x8000);
-    Call3(Func_02005644, 3, 0x10000, 0x8000);
+    Call3(Func_02005644_b, 3, 0x10000, 0x8000);
     base5_200adac = (s32)Data_0200adac;
     Func_02005656(1, base5_200adac);
     Value2(Func_0200565e, 2, base5_200adac);

@@ -4,7 +4,7 @@ extern void Func_0200296a(void);
 extern s32 Func_02002ab4(s32, s32, s32);
 /* 0x02002996 serves two imports: the two-argument reader that guards the
  * branch and the one-argument flag clear inside its first arm. */
-extern s32 Func_02002996(s32, s32);
+extern s32 Func_02002996_a(s32, s32);
 extern void Func_02002996_b(s32);
 extern void Func_02002a1e(s32, s32);
 extern void Func_0200297c(s32);
@@ -23,7 +23,7 @@ void FieldScene_RunSlotSubjectBranch(s32 slot, s32 subject, s32 flag)
 
     record = Func_02002ab4(0, slot, subject);
 
-    if (Func_02002996(subject, 0) != -1) {
+    if (Func_02002996_a(subject, 0) != -1) {
         Func_02002a1e(slot, 2);
         Func_0200297c(0x84E);
         Func_02002982(flag);

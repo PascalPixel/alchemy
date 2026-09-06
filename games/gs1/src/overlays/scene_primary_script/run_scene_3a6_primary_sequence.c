@@ -12,7 +12,8 @@ void Func_02002dac();
 void Func_02002dd0();
 void Func_02002dde();
 void Func_02002dfc();
-s32 Func_02002e3c();
+s32 Func_02002e3c_a();
+s32 Func_02002e3c_b();
 void Func_02002e94();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -61,11 +62,11 @@ s32 Func_020010e0(s32 a0)
         *(volatile s32 *)(rec + 40) = 0x40000;
         *flag = *flag & 126;
         Func_02002dde((s32)rec, 0);
-        Value3(Func_02002e3c, 0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
+        Value3(Func_02002e3c_a, 0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
         Func_02002dac((s32)rec, 6);
         Func_02002dfc((s32)rec, 1);
         *flag = (u8)saved;
-        ((void (*)())Func_02002e3c)();
+        ((void (*)())Func_02002e3c_b)();
         return 1;
     }
     return 0;

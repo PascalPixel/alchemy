@@ -614,10 +614,12 @@ s32 Func_02002370();
 s32 Func_02002378();
 s32 Func_02002380();
 s32 Func_02002388();
+s32 Func_02002388_a();
 s32 Func_02002390();
 s32 Func_02002398();
 s32 Func_020023a0();
 s32 Func_020023a8();
+void Func_020023a8_a(s32, s32);
 void Func_020023b0(s32, s32);
 void Func_020023b8(s32, s32);
 s32 Func_020023c0();
@@ -1243,9 +1245,9 @@ void FieldScene_AssignCodeSetAToSlots(void) {
 
 void SceneState_RunCall1c00(void)
 {
-    void Func_02001c00(void);
+    void Func_02001c00_a(void);
 
-    Func_02001c00();
+    Func_02001c00_a();
 }
 
 void FieldScene_AssignCodeSetBToSlots(void)
@@ -1320,14 +1322,14 @@ s32 CommandTable_ConfigureCommandList(void) {
     Func_02002398(130, 1);
     Func_020023a0(140, 1);
     Func_020023a8(151, 1);
-    ((void (*)())Func_020023a8)(0, 50);
+    Func_020023a8_a(0, 50);
     Func_020023b0(1, 30);
     Func_020023b8(3, 30);
     Func_020023c0(2, 30);
     Func_02002376(0);
     Func_0200237c(1);
     Func_02002382(3);
-    Func_02002388(2);
+    Func_02002388_a(2);
     return 0;
 }
 

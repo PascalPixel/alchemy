@@ -7,7 +7,8 @@ extern u8 Data_0000248e[];
 extern u8 Data_000024a6[];
 void Func_02003d0c();
 void Func_02008646();
-void Func_02008674();
+void Func_02008674_a();
+void Func_02008674_b();
 void Func_0200867a();
 void Func_020086b0();
 u8 *Scene_GetRecord_1();
@@ -36,19 +37,23 @@ void Func_0200884e();
 void Func_02008860();
 void Func_02008862();
 void Func_02008868();
-void Func_0200887a();
+void Func_0200887a_a();
+void Func_0200887a_b();
 void Func_02008892();
 void Func_02008896();
 void Func_02008898();
 void Func_020088a4();
 void Func_020088b6();
-void Func_020088bc();
+void Func_020088bc_a();
+void Func_020088bc_b();
 void Func_020088c0();
-void Func_020088c6();
+void Func_020088c6_a();
+void Func_020088c6_b();
 void Func_020088ca();
 void Func_020088cc();
 void Func_020088d0();
-void Func_020088d4();
+void Func_020088d4_a();
+void Func_020088d4_b();
 void Func_020088dc();
 void Func_020088fc();
 void Func_02008900();
@@ -61,7 +66,9 @@ void Func_02008932();
 void Func_02008938();
 void Func_0200893c();
 void Func_0200893e();
-void Func_02008946();
+void Func_02008946_a();
+void Func_02008946_b();
+void Func_02008946_c();
 void Func_02008954();
 void Func_0200896c();
 void Func_02008984();
@@ -79,14 +86,16 @@ void Func_020089de();
 void Func_020089e2();
 void Func_020089ec();
 void Func_020089f6();
-void Func_020089fa();
+void Func_020089fa_a();
+void Func_020089fa_b();
 void Func_020089fc();
 void Func_020089fe();
 void Func_02008a00();
 void Func_02008a06();
 void Func_02008a0c();
 void Func_02008a18();
-void Func_02008a1a();
+void Func_02008a1a_a();
+void Func_02008a1a_b();
 s32 Func_02008a2a();
 void Func_02008a38();
 void Func_02008a3a();
@@ -95,13 +104,15 @@ void Func_02008a76();
 void Func_02008a7a();
 void Func_02008a84();
 void Func_02008a88();
-void Func_02008a8e();
+void Func_02008a8e_a();
+void Func_02008a8e_b();
 void Func_02008a9c();
 void Func_02008a9e();
 void Func_02008aae();
 void Func_02008acc();
 void Func_02008aea();
-void Func_02008aec();
+void Func_02008aec_a();
+void Func_02008aec_b();
 void Func_02008af2();
 void Func_02008af6();
 void Func_02008af8();
@@ -123,29 +134,34 @@ void Func_02008b68();
 void Func_02008b74();
 void Func_02008b7a();
 void Func_02008b86();
-void Func_02008b98();
+void Func_02008b98_a();
+void Func_02008b98_b();
 void Func_02008bb4();
 void Func_02008bb6();
 void Func_02008bb8();
 void Func_02008bc6();
 void Func_02008bd2();
 void Func_02008bde();
-void Func_02008be4();
+void Func_02008be4_a();
+void Func_02008be4_b();
 void Func_02008c02();
 void Func_02008c14();
 void Func_02008c26();
 void Func_02008c30();
 void Func_02008c3c();
-void Func_02008c48();
+void Func_02008c48_a();
+void Func_02008c48_b();
 void Func_02008c50();
 void Func_02008c52();
-void Func_02008c58();
+void Func_02008c58_a();
+void Func_02008c58_b();
 void Func_02008c60();
 void Func_02008c62();
 void Func_02008c68();
 void Func_02008c6a();
 void Func_02008c6c();
-void Func_02008c7e();
+void Func_02008c7e_a();
+void Func_02008c7e_b();
 void Func_02008c80();
 void Func_02008c84();
 void Func_02008c88();
@@ -170,18 +186,21 @@ void Func_02008d70();
 void Func_02008d7c();
 void Func_02008d88();
 void Func_02008d8a();
-void Func_02008d94();
+void Func_02008d94_a();
+void Func_02008d94_b();
 void Func_02008da2();
 void Func_02008da6();
 void Func_02008db2();
 void Func_02008db8();
 void Func_02008dc4();
 void Func_02008dd6();
-void Func_02008dde();
+void Func_02008dde_a();
+void Func_02008dde_b();
 void Func_02008de4();
 void Func_02008dee();
 void Func_02008df0();
-void Func_02008dfc();
+void Func_02008dfc_a();
+void Func_02008dfc_b();
 void Func_02008dfe();
 void Func_02008e02();
 void Func_02008e0e();
@@ -206,13 +225,15 @@ void Func_02008ede();
 void Func_02008ee6();
 void Func_02008ef6();
 void Func_02008ef8();
-void Func_02008f02();
+void Func_02008f02_a();
+void Func_02008f02_b();
 void Func_02008f0a();
 void Func_02008f14();
 void Func_02008f20();
 void Func_02008f26();
 void Func_02008f30();
-void Func_02008f36();
+void Func_02008f36_a();
+void Func_02008f36_b();
 void Func_02008f38();
 void Func_02008f50();
 void Func_02008f54();
@@ -234,13 +255,16 @@ void Func_02008fe2();
 void Func_02008fe8();
 void Func_02008ff8();
 void Func_02008ffc();
-void Func_02009006();
+void Func_02009006_a();
+void Func_02009006_b();
 void Func_02009010();
 void Func_02009014();
 void Func_0200901a();
-void Func_0200901e();
+void Func_0200901e_a();
+void Func_0200901e_b();
 void Func_02009032();
-void Func_02009036();
+void Func_02009036_a();
+void Func_02009036_b();
 void Func_0200903c();
 void Func_02009050();
 void Func_02009052();
@@ -258,7 +282,8 @@ void Func_020090c4();
 void Func_020090d6();
 void Func_020090dc();
 void Func_020090f0();
-void Func_020090f4();
+void Func_020090f4_a();
+void Func_020090f4_b();
 void Func_020090fa();
 void Func_020090fe();
 void Func_02009112();
@@ -271,15 +296,18 @@ void Func_02009152();
 void Func_0200915a();
 void Func_0200915e();
 void Func_02009160();
-void Func_02009164();
+void Func_02009164_a();
+void Func_02009164_b();
 void Func_0200916e();
-void Func_02009178();
+void Func_02009178_a();
+void Func_02009178_b();
 void Func_0200917a();
 void Func_0200917c();
 void Func_02009182();
 void Func_0200918a();
 void Func_02009190();
-void Func_0200919a();
+void Func_0200919a_a();
+void Func_0200919a_b();
 void Func_020091b2();
 void Func_020091c6();
 void Func_020091c8();
@@ -287,7 +315,8 @@ void Func_020091d2();
 void Func_020091d6();
 void Func_020091de();
 void Func_020091f2();
-void Func_020091f4();
+void Func_020091f4_a();
+void Func_020091f4_b();
 void Func_020091fa();
 void Func_02009208();
 void Func_02009212();
@@ -322,11 +351,13 @@ s32 Func_02009308();
 void Func_02009310();
 void Func_02009320();
 void Func_0200935e();
-void Func_02009376();
+void Func_02009376_a();
+void Func_02009376_b();
 void Func_0200937c();
 void Func_02009380();
 void Func_0200938a();
-void Func_02009394();
+void Func_02009394_a();
+void Func_02009394_b();
 void Func_0200939c();
 void Func_0200939e();
 void Func_020093a4();
@@ -335,7 +366,8 @@ void Func_020093b0();
 void Func_020093b2();
 void Func_020093ba();
 void Func_020093ea();
-void Func_020093ee();
+void Func_020093ee_a();
+void Func_020093ee_b();
 void Func_020093fc();
 void Func_02009406();
 void Func_02009416();
@@ -349,13 +381,15 @@ void Func_02009448();
 void Func_0200944a();
 void Func_0200945a();
 void Func_02009464();
-void Func_0200946a();
+void Func_0200946a_a();
+void Func_0200946a_b();
 void Func_0200947a();
 void Func_02009482();
 void Func_02009486();
 void Func_02009488();
 void Func_020094a0();
-void Func_020094a6();
+void Func_020094a6_a();
+void Func_020094a6_b();
 void Func_020094aa();
 void Func_020094b4();
 void Func_020094b6();
@@ -375,28 +409,34 @@ void Func_0200951c();
 void Func_02009520();
 void Func_02009524();
 void Func_02009526();
-void Func_0200953e();
+void Func_0200953e_a();
+void Func_0200953e_b();
 void Func_02009540();
 void Func_02009550();
-void Func_02009558();
+void Func_02009558_a();
+void Func_02009558_b();
 void Func_02009568();
 void Func_02009570();
 void Func_02009580();
 void Func_02009582();
-void Func_02009590();
+void Func_02009590_a();
+void Func_02009590_b();
 void Func_02009598();
-void Func_020095a6();
+void Func_020095a6_a();
+void Func_020095a6_b();
 void Func_020095b0();
 void Func_020095b4();
 void Func_020095bc();
 void Func_020095c0();
-void Func_020095c8();
+void Func_020095c8_a();
+void Func_020095c8_b();
 void Func_020095e0();
 void Func_020095ec();
 void Func_020095fc();
 void Func_02009604();
 void Func_0200960a();
-void Func_02009610();
+void Func_02009610_a();
+void Func_02009610_b();
 void Func_02009620();
 void Func_02009622();
 void Func_02009628();
@@ -426,13 +466,16 @@ void Func_020096dc();
 void Func_020096e6();
 void Func_020096f0();
 void Func_02009708();
-void Func_02009716();
+void Func_02009716_a();
+void Func_02009716_b();
 void Func_0200972e();
 void Func_0200973c();
 void Func_02009754();
 void Func_02009758();
 void Func_02009762();
-void Func_0200976c();
+void Func_0200976c_a();
+void Func_0200976c_b();
+void Func_0200976c_c();
 void Func_02009772();
 void Func_02009776();
 void Func_0200977e();
@@ -445,9 +488,11 @@ void Func_020097c8();
 void Func_020097d4();
 void Func_020097d6();
 void Func_020097d8();
-void Func_020097de();
+void Func_020097de_a();
+void Func_020097de_b();
 void Func_020097e0();
-void Func_020097e8();
+void Func_020097e8_a();
+void Func_020097e8_b();
 void Func_020097f0();
 void Func_020097f2();
 void Func_020097f4();
@@ -463,17 +508,21 @@ void Func_02009868();
 void Func_0200986a();
 void Func_0200986c();
 void Func_0200986e();
-void Func_02009870();
+void Func_02009870_a();
+void Func_02009870_b();
 void Func_02009888();
 void Func_0200988c();
 void Func_0200988e();
 void Func_02009898();
 void Func_0200989e();
 void Func_020098ae();
-void Func_020098b6();
-void Func_020098bc();
+void Func_020098b6_a();
+void Func_020098b6_b();
+void Func_020098bc_a();
+void Func_020098bc_b();
 void Func_020098ce();
-void Func_020098d4();
+void Func_020098d4_a();
+void Func_020098d4_b();
 void Func_020098ec();
 void Func_020098f8();
 void Func_020098fc();
@@ -482,10 +531,12 @@ void Func_02009916();
 void Func_02009920();
 void Func_0200992e();
 void Func_02009938();
-void Func_0200993e();
+void Func_0200993e_a();
+void Func_0200993e_b();
 void Func_0200994a();
 void Func_0200994c();
-void Func_02009950();
+void Func_02009950_a();
+void Func_02009950_b();
 void Func_02009956();
 void Func_0200995a();
 void Func_0200996e();
@@ -505,7 +556,8 @@ void Func_020099d4();
 void Func_020099d8();
 void Func_020099dc();
 void Func_020099ee();
-void Func_020099f4();
+void Func_020099f4_a();
+void Func_020099f4_b();
 u8 *Scene_GetRecord_2();
 void Func_02009a04();
 void Func_02009a0c();
@@ -527,7 +579,8 @@ void Func_02009a6a();
 void Func_02009a72();
 void Func_02009a82();
 void Func_02009a90();
-void Func_02009a9a();
+void Func_02009a9a_a();
+void Func_02009a9a_b();
 void Func_02009aa2();
 void Func_02009aa8();
 void Func_02009ab2();
@@ -545,13 +598,16 @@ void Func_02009b3a();
 void Func_02009b42();
 void Func_02009b5a();
 void Func_02009b68();
-void Func_02009b70();
+void Func_02009b70_a();
+void Func_02009b70_b();
 void Func_02009b76();
 void Func_02009b7a();
 void Func_02009b80();
 void Func_02009b88();
 void Func_02009b96();
-void Func_02009b98();
+void Func_02009b98_a();
+void Func_02009b98_b();
+void Func_02009b98_c();
 void Func_02009bb0();
 void Func_02009bb6();
 void Func_02009bc6();
@@ -573,7 +629,8 @@ void Func_02009c36();
 void Func_02009c40();
 void Func_02009c46();
 void Func_02009c4a();
-void Func_02009c4c();
+void Func_02009c4c_a();
+void Func_02009c4c_b();
 void Func_02009c54();
 void Func_02009c5e();
 void Func_02009c66();
@@ -589,7 +646,7 @@ void Func_02009d9c();
  * overlay veneer and the main-image veneer island, keeping the site's own
  * calling form. Names without a repository binding are provisional.
  */
-#define GameFlag_Set_1(a0) Call1(Func_02008674, a0)
+#define GameFlag_Set_1(a0) Call1(Func_02008674_a, a0)
 #define GameFlag_Set_2(a0) Call1(Func_0200867a, a0)
 #define BattleRuntime_Reset_1(args...) Func_020086b0(args)
 #define Scene_GetRecord_1(args...) Func_020086d6(args)
@@ -614,41 +671,41 @@ void Func_02009d9c();
 #define BattleRuntime_WaitIfModeZero_1(args...) Func_020088dc(args)
 #define BattleRuntime_WaitIfModeZero_2(args...) Func_0200879a(args)
 #define SceneWork_SetStepValue_1(args...) Func_02008862(args)
-#define BattleEvent_RunActionAndWait_1(args...) Func_0200887a(args)
+#define BattleEvent_RunActionAndWait_1(args...) Func_0200887a_a(args)
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_020088a4, a0, a1, a2)
-#define SceneWork_SetStepValue_2(args...) Func_0200887a(args)
+#define SceneWork_SetStepValue_2(args...) Func_0200887a_b(args)
 #define BattleEvent_RunActionAndWait_2(args...) Func_02008892(args)
-#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_020088bc, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_020088c6, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_020088bc_a, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_020088c6_a, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3(Func_020088d0, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_3(args...) Func_020087e6(args)
 #define ObjectMotion_SetAngleToward_1(args...) Func_02008898(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_020087f6(args)
-#define SceneWork_SetStepValue_3(args...) Func_020088bc(args)
-#define BattleEvent_RunActionAndWait_3(args...) Func_020088d4(args)
+#define SceneWork_SetStepValue_3(args...) Func_020088bc_b(args)
+#define BattleEvent_RunActionAndWait_3(args...) Func_020088d4_a(args)
 #define ObjectMotion_SetAngleToward_2(args...) Func_020088b6(args)
 #define ObjectMotion_SetAngleToward_3(args...) Func_020088c0(args)
 #define ObjectMotion_SetAngleToward_4(args...) Func_020088ca(args)
-#define ObjectMotion_SetAngleToward_5(args...) Func_020088d4(args)
+#define ObjectMotion_SetAngleToward_5(args...) Func_020088d4_b(args)
 #define BattleRuntime_WaitIfModeZero_5(args...) Func_02008832(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_02008896, a0, a1, a2)
-#define Object_SetModeById_3(args...) Func_020088c6(args)
+#define Object_SetModeById_3(args...) Func_020088c6_b(args)
 #define BattleRuntime_WaitIfModeZero_6(args...) Func_0200884c(args)
 #define SceneWork_SetStepValue_4(args...) Func_02008912(args)
 #define BattleEvent_RunActionAndWait_4(args...) Func_0200892a(args)
 #define BattleRuntime_WaitIfModeZero_7(args...) Func_02008860(args)
 #define ObjectMotion_SetVariantCallback_1(args...) Func_02008900(args)
 #define SceneWork_SetStepValue_5(args...) Func_0200892e(args)
-#define BattleEvent_RunActionAndWait_5(args...) Func_02008946(args)
+#define BattleEvent_RunActionAndWait_5(args...) Func_02008946_a(args)
 #define ObjectMotion_SetAngleToward_6(args...) Func_02008928(args)
 #define ObjectMotion_SetAngleToward_7(args...) Func_02008932(args)
 #define ObjectMotion_SetAngleToward_8(args...) Func_0200893c(args)
-#define ObjectMotion_SetAngleToward_9(args...) Func_02008946(args)
+#define ObjectMotion_SetAngleToward_9(args...) Func_02008946_b(args)
 #define ObjectMotion_SetVariantCallback_2(args...) Func_0200893e(args)
 #define SceneWork_SetStepValue_6(args...) Func_0200896c(args)
 #define BattleEvent_RunActionAndWait_6(args...) Func_02008984(args)
 #define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3(Func_020089ae, a0, a1, a2)
-#define Object_SetModeById_4(args...) Func_02008946(args)
+#define Object_SetModeById_4(args...) Func_02008946_c(args)
 #define BattleRuntime_WaitIfModeZero_8(args...) Func_020088cc(args)
 #define Object_SetModeById_5(args...) Func_02008954(args)
 #define SceneWork_SetStepValue_7(args...) Func_0200899a(args)
@@ -661,13 +718,13 @@ void Func_02009d9c();
 #define ObjectMotion_SetAngleToward_10(args...) Func_020089bc(args)
 #define BattleRuntime_WaitIfModeZero_10(args...) Func_0200891a(args)
 #define SceneWork_SetStepValue_9(args...) Func_020089e2(args)
-#define BattleEvent_RunActionAndWait_9(args...) Func_020089fa(args)
+#define BattleEvent_RunActionAndWait_9(args...) Func_020089fa_a(args)
 #define ObjectMotion_SetVariantCallback_4(args...) Func_020089ca(args)
 #define BattleRuntime_WaitIfModeZero_11(args...) Func_02008938(args)
 #define SceneWork_SetStepValue_10(args...) Func_02008a00(args)
 #define BattleEvent_RunActionAndWait_10(args...) Func_02008a18(args)
-#define ObjectMotion_SetAngleToward_11(args...) Func_020089fa(args)
-#define SceneWork_SetStepValue_11(args...) Func_02008a1a(args)
+#define ObjectMotion_SetAngleToward_11(args...) Func_020089fa_b(args)
+#define SceneWork_SetStepValue_11(args...) Func_02008a1a_a(args)
 #define ObjectMotion_SetSpeedParameters_1(a0, a1) Value2(Func_02008a2a, a0, a1)
 #define UiWork_WaitThenFinalizeCapacity_1(args...) Func_0200898a(args)
 #define Object_SetModeById_6(args...) Func_020089f6(args)
@@ -676,23 +733,23 @@ void Func_02009d9c();
 #define ObjectMotion_SetAngleToward_12(args...) Func_02008a38(args)
 #define BattleRuntime_WaitIfModeZero_12(args...) Func_02008996(args)
 #define SceneWork_SetStepValue_12(args...) Func_02008a76(args)
-#define BattleEvent_RunActionAndWait_11(args...) Func_02008a8e(args)
+#define BattleEvent_RunActionAndWait_11(args...) Func_02008a8e_a(args)
 #define ObjectMotion_SetAngleToward_13(args...) Func_02008a70(args)
 #define ObjectMotion_SetAngleToward_14(args...) Func_02008a7a(args)
 #define ObjectMotion_SetAngleToward_15(args...) Func_02008a84(args)
-#define ObjectMotion_SetAngleToward_16(args...) Func_02008a8e(args)
+#define ObjectMotion_SetAngleToward_16(args...) Func_02008a8e_b(args)
 #define BattleRuntime_WaitIfModeZero_13(args...) Func_020089ec(args)
 #define ObjectMotion_SetAngleToward_17(args...) Func_02008a9e(args)
 #define BattleRuntime_WaitIfModeZero_14(args...) Func_020089fc(args)
 #define ObjectMotion_SetAngleToward_18(args...) Func_02008aae(args)
 #define BattleRuntime_WaitIfModeZero_15(args...) Func_02008a0c(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02008a9c(args)
-#define BattleRuntime_WaitIfModeZero_16(args...) Func_02008a1a(args)
+#define BattleRuntime_WaitIfModeZero_16(args...) Func_02008a1a_b(args)
 #define ObjectMotion_SetAngleToward_19(args...) Func_02008acc(args)
-#define SceneWork_SetStepValue_13(args...) Func_02008aec(args)
+#define SceneWork_SetStepValue_13(args...) Func_02008aec_a(args)
 #define BattleEvent_RunActionAndWait_12(args...) Func_02008b04(args)
 #define BattleRuntime_WaitIfModeZero_17(args...) Func_02008a3a(args)
-#define ObjectMotion_SetAngleToward_20(args...) Func_02008aec(args)
+#define ObjectMotion_SetAngleToward_20(args...) Func_02008aec_b(args)
 #define ObjectMotion_SetAngleToward_21(args...) Func_02008af6(args)
 #define ObjectMotion_SetAngleToward_22(args...) Func_02008b00(args)
 #define ObjectMotion_SetAngleToward_23(args...) Func_02008b0a(args)
@@ -715,26 +772,26 @@ void Func_02009d9c();
 #define ObjectMotion_ResetAndSetPositionInMode2_3(a0, a1, a2) Call3(Func_02008b68, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_2(args...) Func_02008b86(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_4(a0, a1, a2) Call3(Func_02008b7a, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_3(args...) Func_02008b98(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_3(args...) Func_02008b98_a(args)
 #define ObjectMotion_ArmCallback_8(a0, a1, a2) Call3(Func_02008c14, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_5(a0, a1, a2) Call3(Func_02008b98, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_5(a0, a1, a2) Call3(Func_02008b98_b, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_4(args...) Func_02008bb6(args)
 #define ObjectMotion_ArmCallback_9(args...) Func_02008c30(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_6(a0, a1, a2) Call3(Func_02008bb4, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_5(args...) Func_02008bd2(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_7(a0, a1, a2) Call3(Func_02008bc6, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_6(args...) Func_02008be4(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_6(args...) Func_02008be4_a(args)
 #define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_02008c60, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_8(a0, a1, a2) Call3(Func_02008be4, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_8(a0, a1, a2) Call3(Func_02008be4_b, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_7(args...) Func_02008c02(args)
-#define ObjectMotion_ArmCallback_11(a0, a1, a2) Call3(Func_02008c7e, a0, a1, a2)
-#define Object_LinkPair_1(args...) Func_02008c58(args)
+#define ObjectMotion_ArmCallback_11(a0, a1, a2) Call3(Func_02008c7e_a, a0, a1, a2)
+#define Object_LinkPair_1(args...) Func_02008c58_a(args)
 #define Object_LinkPair_2(args...) Func_02008c62(args)
 #define BattleRuntime_WaitIfModeZero_19(args...) Func_02008bb8(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02008c48(args)
-#define Object_SetModeById_13(args...) Func_02008c48(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02008c48_a(args)
+#define Object_SetModeById_13(args...) Func_02008c48_b(args)
 #define Object_SetModeById_14(args...) Func_02008c50(args)
-#define Object_SetModeById_15(args...) Func_02008c58(args)
+#define Object_SetModeById_15(args...) Func_02008c58_b(args)
 #define BattleRuntime_WaitIfModeZero_20(args...) Func_02008bde(args)
 #define Audio_PlayCue_1(args...) Func_02008d64(args)
 #define Object_SetModeById_16(args...) Func_02008c6c(args)
@@ -746,7 +803,7 @@ void Func_02009d9c();
 #define ObjectMotion_OffsetPositionAndResetMotion_3(a0, a1, a2) Call3(Func_02008c96, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_9(a0, a1, a2) Call3(Func_02008c68, a0, a1, a2)
 #define ObjectMotion_OffsetPositionAndResetMotion_4(a0, a1, a2) Call3(Func_02008cac, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_10(a0, a1, a2) Call3(Func_02008c7e, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_10(a0, a1, a2) Call3(Func_02008c7e_b, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_11(a0, a1, a2) Call3(Func_02008c88, a0, a1, a2)
 #define ObjectMotion_OffsetPositionAndResetMotion_5(a0, a1, a2) Call3(Func_02008ccc, a0, a1, a2)
 #define ObjectMotion_OffsetPositionAndResetMotion_6(a0, a1, a2) Call3(Func_02008cd8, a0, a1, a2)
@@ -756,7 +813,7 @@ void Func_02009d9c();
 #define ObjectMotion_ArmCallback_12(a0, a1, a2) Call3(Func_02008d70, a0, a1, a2)
 #define ObjectMotion_ArmCallback_13(a0, a1, a2) Call3(Func_02008d7c, a0, a1, a2)
 #define ObjectMotion_ArmCallback_14(a0, a1, a2) Call3(Func_02008d88, a0, a1, a2)
-#define ObjectMotion_ArmCallback_15(a0, a1, a2) Call3(Func_02008d94, a0, a1, a2)
+#define ObjectMotion_ArmCallback_15(a0, a1, a2) Call3(Func_02008d94_a, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_22(args...) Func_02008cba(args)
 #define Object_SetModeById_17(args...) Func_02008d42(args)
 #define Object_SetModeById_18(args...) Func_02008d4a(args)
@@ -771,7 +828,7 @@ void Func_02009d9c();
 #define ObjectMotion_CommitCurrentPositionAndActivate_9(args...) Func_02008d8a(args)
 #define Object_SetModeById_21(args...) Func_02008da2(args)
 #define ObjectMotion_ArmCallback_16(a0, a1, a2) Call3(Func_02008e0e, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_10(a0, a1, a2) Call3(Func_02008d94, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_10(a0, a1, a2) Call3(Func_02008d94_b, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_10(args...) Func_02008db2(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_11(a0, a1, a2) Call3(Func_02008da6, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_11(args...) Func_02008dc4(args)
@@ -779,17 +836,17 @@ void Func_02009d9c();
 #define ObjectMotion_CommitCurrentPositionAndActivate_12(args...) Func_02008dd6(args)
 #define Object_SetModeById_22(args...) Func_02008dee(args)
 #define ObjectMotion_ArmCallback_17(a0, a1, a2) Call3(Func_02008e5a, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_13(a0, a1, a2) Call3(Func_02008dde, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_13(args...) Func_02008dfc(args)
+#define ObjectMotion_ResetAndSetPositionInMode2_13(a0, a1, a2) Call3(Func_02008dde_a, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_13(args...) Func_02008dfc_a(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_14(a0, a1, a2) Call3(Func_02008df0, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_15(a0, a1, a2) Call3(Func_02008dfc, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_15(a0, a1, a2) Call3(Func_02008dfc_b, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_14(args...) Func_02008e1a(args)
 #define Object_SetModeById_23(args...) Func_02008e32(args)
 #define ObjectMotion_ArmCallback_18(a0, a1, a2) Call3(Func_02008e9e, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_15(args...) Func_02008e34(args)
 #define Object_SetModeById_24(args...) Func_02008e4c(args)
 #define ObjectMotion_ArmCallback_19(a0, a1, a2) Call3(Func_02008eb8, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_24(args...) Func_02008dde(args)
+#define BattleRuntime_WaitIfModeZero_24(args...) Func_02008dde_b(args)
 #define BattleRuntime_WaitIfModeZero_25(args...) Func_02008de4(args)
 #define SceneWork_SetStepValue_14(args...) Func_02008eac(args)
 #define BattleEvent_RunActionAndWait_13(args...) Func_02008ec4(args)
@@ -803,9 +860,9 @@ void Func_02009d9c();
 #define BattleRuntime_WaitIfModeZero_28(args...) Func_02008e2c(args)
 #define Object_LinkPair_3(args...) Func_02008ee6(args)
 #define BattleRuntime_WaitIfModeZero_29(args...) Func_02008e3c(args)
-#define BattleEffect_SpawnLinkedResourceObject_7(a0, a1, a2) Call3(Func_02008f36, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_7(a0, a1, a2) Call3(Func_02008f36_a, a0, a1, a2)
 #define ObjectMotion_SetAngleToward_29(args...) Func_02008ef8(args)
-#define ObjectMotion_SetAngleToward_30(args...) Func_02008f02(args)
+#define ObjectMotion_SetAngleToward_30(args...) Func_02008f02_a(args)
 #define SceneWork_SetStepValue_16(args...) Func_02008f20(args)
 #define BattleEvent_RunActionAndWait_15(args...) Func_02008f38(args)
 #define BattleEffect_SpawnLinkedResourceObject_8(a0, a1, a2) Call3(Func_02008f64, a0, a1, a2)
@@ -821,30 +878,30 @@ void Func_02009d9c();
 #define BattleEvent_RunActionAndWait_17(args...) Func_02008f90(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02008f50(args)
 #define BattleEffect_SpawnLinkedResourceObject_10(a0, a1, a2) Call3(Func_02008fc2, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_16(a0, a1, a2) Call3(Func_02008f36, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_16(a0, a1, a2) Call3(Func_02008f36_b, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_16(args...) Func_02008f54(args)
 #define ObjectMotion_SetAngleToward_31(args...) Func_02008f96(args)
 #define SceneWork_SetStepValue_19(args...) Func_02008fb4(args)
 #define BattleEvent_RunActionAndWait_18(args...) Func_02008fcc(args)
-#define BattleRuntime_WaitIfModeZero_32(args...) Func_02008f02(args)
+#define BattleRuntime_WaitIfModeZero_32(args...) Func_02008f02_b(args)
 #define BattleEffect_SpawnLinkedResourceObject_11(a0, a1, a2) Call3(Func_02008ffc, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_12(a0, a1, a2) Call3(Func_02009006, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_12(a0, a1, a2) Call3(Func_02009006_a, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_13(a0, a1, a2) Call3(Func_02009010, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_14(a0, a1, a2) Call3(Func_0200901a, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_33(args...) Func_02008f30(args)
 #define ObjectMotion_SetAngleToward_32(args...) Func_02008fe2(args)
-#define BattleEffect_SpawnLinkedResourceObject_15(a0, a1, a2) Call3(Func_02009036, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_15(a0, a1, a2) Call3(Func_02009036_a, a0, a1, a2)
 #define ObjectMotion_SetAngleToward_33(args...) Func_02008ff8(args)
 #define Object_SetModeById_29(args...) Func_02008fd8(args)
-#define SceneWork_SetStepValue_20(args...) Func_0200901e(args)
-#define BattleEvent_RunActionAndWait_19(args...) Func_02009036(args)
+#define SceneWork_SetStepValue_20(args...) Func_0200901e_a(args)
+#define BattleEvent_RunActionAndWait_19(args...) Func_02009036_b(args)
 #define BattleEffect_SpawnLinkedResourceObject_16(a0, a1, a2) Call3(Func_02009060, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_34(args...) Func_02008f76(args)
 #define SceneWork_SetStepValue_21(args...) Func_0200903c(args)
 #define BattleEvent_RunActionAndWait_20(args...) Func_02009054(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_17(a0, a1, a2) Call3(Func_02008fe8, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_17(args...) Func_02009006(args)
-#define Object_SetModeById_30(args...) Func_0200901e(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_17(args...) Func_02009006_b(args)
+#define Object_SetModeById_30(args...) Func_0200901e_b(args)
 #define ObjectMotion_SetAngleToward_34(args...) Func_02009050(args)
 #define SceneWork_SetStepValue_22(args...) Func_02009070(args)
 #define BattleEvent_RunActionAndWait_21(args...) Func_02009088(args)
@@ -857,27 +914,27 @@ void Func_02009d9c();
 #define Object_SetModeById_31(args...) Func_0200908e(args)
 #define BattleRuntime_WaitIfModeZero_37(args...) Func_02009014(args)
 #define SceneWork_SetStepValue_24(args...) Func_020090dc(args)
-#define BattleEvent_RunActionAndWait_23(args...) Func_020090f4(args)
+#define BattleEvent_RunActionAndWait_23(args...) Func_020090f4_a(args)
 #define ObjectMotion_SetVariantCallback_8(args...) Func_020090c4(args)
 #define BattleRuntime_WaitIfModeZero_38(args...) Func_02009032(args)
 #define SceneWork_SetStepValue_25(args...) Func_020090fa(args)
 #define BattleEvent_RunActionAndWait_24(args...) Func_02009112(args)
-#define ObjectMotion_SetAngleToward_36(args...) Func_020090f4(args)
+#define ObjectMotion_SetAngleToward_36(args...) Func_020090f4_b(args)
 #define BattleRuntime_WaitIfModeZero_39(args...) Func_02009052(args)
 #define SceneWork_SetStepValue_26(args...) Func_0200911a(args)
 #define BattleEvent_RunActionAndWait_25(args...) Func_02009132(args)
 #define BattleRuntime_WaitIfModeZero_40(args...) Func_02009068(args)
-#define BattleEffect_SpawnLinkedResourceObject_17(a0, a1, a2) Call3(Func_02009164, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_17(a0, a1, a2) Call3(Func_02009164_a, a0, a1, a2)
 #define ObjectMotion_SetAngleToward_37(args...) Func_02009126(args)
 #define SceneWork_SetStepValue_27(args...) Func_02009146(args)
 #define BattleEvent_RunActionAndWait_26(args...) Func_0200915e(args)
 #define ObjectMotion_SetAngleToward_38(args...) Func_02009140(args)
 #define SceneWork_SetStepValue_28(args...) Func_02009160(args)
-#define BattleEvent_RunActionAndWait_27(args...) Func_02009178(args)
+#define BattleEvent_RunActionAndWait_27(args...) Func_02009178_a(args)
 #define ObjectMotion_SetAngleToward_39(args...) Func_0200915a(args)
-#define ObjectMotion_SetAngleToward_40(args...) Func_02009164(args)
+#define ObjectMotion_SetAngleToward_40(args...) Func_02009164_b(args)
 #define ObjectMotion_SetAngleToward_41(args...) Func_0200916e(args)
-#define ObjectMotion_SetAngleToward_42(args...) Func_02009178(args)
+#define ObjectMotion_SetAngleToward_42(args...) Func_02009178_b(args)
 #define BattleRuntime_WaitIfModeZero_41(args...) Func_020090d6(args)
 #define BattleEffect_SpawnLinkedResourceObject_18(a0, a1, a2) Call3(Func_020091d2, a0, a1, a2)
 #define ObjectMotion_SetVariantCallback_9(args...) Func_02009182(args)
@@ -888,11 +945,11 @@ void Func_02009d9c();
 #define BattleEvent_RunActionAndWait_28(args...) Func_020091de(args)
 #define BattleEffect_SpawnLinkedResourceObject_19(a0, a1, a2) Call3(Func_02009208, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_18(a0, a1, a2) Call3(Func_0200917c, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_18(args...) Func_0200919a(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_18(args...) Func_0200919a_a(args)
 #define Object_SetModeById_32(args...) Func_020091b2(args)
 #define SceneWork_SetStepValue_30(args...) Func_020091fa(args)
 #define BattleEvent_RunActionAndWait_29(args...) Func_02009212(args)
-#define ObjectMotion_SetAngleToward_43(args...) Func_020091f4(args)
+#define ObjectMotion_SetAngleToward_43(args...) Func_020091f4_a(args)
 #define BattleRuntime_WaitIfModeZero_44(args...) Func_02009152(args)
 #define ObjectMotion_SetVariantCallback_11(args...) Func_020091f2(args)
 #define SceneWork_SetStepValue_31(args...) Func_02009222(args)
@@ -902,7 +959,7 @@ void Func_02009d9c();
 #define ObjectMotion_SetAngleToward_45(args...) Func_0200922c(args)
 #define BattleRuntime_WaitIfModeZero_46(args...) Func_0200918a(args)
 #define ObjectMotion_SetAngleToward_46(args...) Func_0200923c(args)
-#define BattleRuntime_WaitIfModeZero_47(args...) Func_0200919a(args)
+#define BattleRuntime_WaitIfModeZero_47(args...) Func_0200919a_b(args)
 #define ObjectMotion_SetAngleToward_47(args...) Func_0200924c(args)
 #define ObjectMotion_SetAngleToward_48(args...) Func_02009256(args)
 #define ObjectMotion_SetAngleToward_49(args...) Func_02009260(args)
@@ -913,7 +970,7 @@ void Func_02009d9c();
 #define SceneWork_SetStepValue_32(args...) Func_0200929e(args)
 #define BattleEvent_RunActionAndWait_31(args...) Func_020092b6(args)
 #define ObjectMotion_SetVariantCallback_12(args...) Func_02009286(args)
-#define BattleRuntime_WaitIfModeZero_50(args...) Func_020091f4(args)
+#define BattleRuntime_WaitIfModeZero_50(args...) Func_020091f4_b(args)
 #define SceneWork_SetStepValue_33(args...) Func_020092bc(args)
 #define BattleEvent_RunActionAndWait_32(args...) Func_020092d4(args)
 #define BattleEffect_SpawnLinkedResourceObject_20(a0, a1, a2) Call3(Func_02009300, a0, a1, a2)
@@ -932,21 +989,21 @@ void Func_02009d9c();
 #define UiWork_WaitThenFinalizeCapacity_2(args...) Func_020092ac(args)
 #define Audio_PlayCue_3(args...) Func_02009416(args)
 #define SceneWork_SetStepValue_36(args...) Func_0200935e(args)
-#define BattleEvent_RunActionAndWait_34(args...) Func_02009376(args)
+#define BattleEvent_RunActionAndWait_34(args...) Func_02009376_a(args)
 #define Audio_PlayCue_4(args...) Func_02009434(args)
 #define SceneWork_SetStepValue_37(args...) Func_0200937c(args)
-#define BattleEvent_RunActionAndWait_35(args...) Func_02009394(args)
-#define ObjectMotion_SetAngleToward_56(args...) Func_02009376(args)
+#define BattleEvent_RunActionAndWait_35(args...) Func_02009394_a(args)
+#define ObjectMotion_SetAngleToward_56(args...) Func_02009376_b(args)
 #define ObjectMotion_SetAngleToward_57(args...) Func_02009380(args)
 #define ObjectMotion_SetAngleToward_58(args...) Func_0200938a(args)
-#define ObjectMotion_SetAngleToward_59(args...) Func_02009394(args)
+#define ObjectMotion_SetAngleToward_59(args...) Func_02009394_b(args)
 #define ObjectMotion_SetAngleToward_60(args...) Func_0200939e(args)
 #define ObjectMotion_SetAngleToward_61(args...) Func_020093a8(args)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02009422, a0, a1, a2, a3)
 #define ObjectMotion_SetVariantCallback_13(args...) Func_020093b2(args)
 #define BattleRuntime_WaitIfModeZero_52(args...) Func_02009320(args)
-#define Audio_PlayCue_5(args...) Func_020094a6(args)
-#define SceneWork_SetStepValue_38(args...) Func_020093ee(args)
+#define Audio_PlayCue_5(args...) Func_020094a6_a(args)
+#define SceneWork_SetStepValue_38(args...) Func_020093ee_a(args)
 #define BattleEvent_RunActionAndWait_36(args...) Func_02009406(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_19(a0, a1, a2) Call3(Func_0200939c, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_19(args...) Func_020093ba(args)
@@ -954,12 +1011,12 @@ void Func_02009d9c();
 #define ObjectMotion_PlaceWithinCameraBounds_2(a0, a1, a2, a3) Call4(Func_0200947a, a0, a1, a2, a3)
 #define SceneWork_SetStepValue_39(args...) Func_02009430(args)
 #define BattleEvent_RunActionAndWait_37(args...) Func_02009448(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_20(args...) Func_020093ee(args)
-#define ObjectMotion_ArmCallback_20(a0, a1, a2) Call3(Func_0200946a, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_20(args...) Func_020093ee_b(args)
+#define ObjectMotion_ArmCallback_20(a0, a1, a2) Call3(Func_0200946a_a, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_21(a0, a1, a2) Call3(Func_02009486, a0, a1, a2)
 #define Object_SetModeById_33(args...) Func_0200941e(args)
 #define BattleRuntime_WaitIfModeZero_53(args...) Func_020093a4(args)
-#define SceneWork_SetStepValue_40(args...) Func_0200946a(args)
+#define SceneWork_SetStepValue_40(args...) Func_0200946a_b(args)
 #define BattleEvent_RunActionAndWait_38(args...) Func_02009482(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_0200945a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_5(args...) Func_0200944a(args)
@@ -984,35 +1041,35 @@ void Func_02009d9c();
 #define ObjectMotion_SetVariantCallback_15(args...) Func_020094ec(args)
 #define BattleEffect_SpawnLinkedResourceObject_23(a0, a1, a2) Call3(Func_02009550, a0, a1, a2)
 #define SceneWork_SetStepValue_45(args...) Func_02009526(args)
-#define BattleEvent_RunActionAndWait_43(args...) Func_0200953e(args)
+#define BattleEvent_RunActionAndWait_43(args...) Func_0200953e_a(args)
 #define BattleEffect_SpawnLinkedResourceObject_24(a0, a1, a2) Call3(Func_02009568, a0, a1, a2)
 #define SceneWork_SetStepValue_46(args...) Func_02009540(args)
-#define BattleEvent_RunActionAndWait_44(args...) Func_02009558(args)
+#define BattleEvent_RunActionAndWait_44(args...) Func_02009558_a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_7(args...) Func_02009518(args)
-#define SceneWork_SetStepValue_47(args...) Func_02009558(args)
+#define SceneWork_SetStepValue_47(args...) Func_02009558_b(args)
 #define BattleEvent_RunActionAndWait_45(args...) Func_02009570(args)
-#define BattleRuntime_WaitIfModeZero_58(args...) Func_020094a6(args)
-#define BattleRuntime_WaitIfModeZero_59(a0, a1) Call2(Func_020095a6, a0, a1)
+#define BattleRuntime_WaitIfModeZero_58(args...) Func_020094a6_b(args)
+#define BattleRuntime_WaitIfModeZero_59(a0, a1) Call2(Func_020095a6_a, a0, a1)
 #define BattleRuntime_WaitIfModeZero_60(args...) Func_020094b4(args)
 #define BattleRuntime_WaitIfModeZero_61(args...) Func_020095b4(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_21(a0, a1, a2) Call3(Func_02009520, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_21(args...) Func_0200953e(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_21(args...) Func_0200953e_b(args)
 #define ObjectMotion_SetAngleToward_63(args...) Func_02009580(args)
 #define BattleRuntime_WaitIfModeZero_62(args...) Func_020094de(args)
-#define ObjectMotion_SetAngleToward_64(args...) Func_02009590(args)
+#define ObjectMotion_SetAngleToward_64(args...) Func_02009590_a(args)
 #define SceneWork_SetStepValue_48(args...) Func_020095b0(args)
-#define BattleEvent_RunActionAndWait_46(args...) Func_020095c8(args)
+#define BattleEvent_RunActionAndWait_46(args...) Func_020095c8_a(args)
 #define ObjectMotion_SetVariantCallback_16(args...) Func_02009598(args)
-#define SceneWork_SetStepValue_49(args...) Func_020095c8(args)
+#define SceneWork_SetStepValue_49(args...) Func_020095c8_b(args)
 #define BattleEvent_RunActionAndWait_47(args...) Func_020095e0(args)
 #define BattleRuntime_WaitIfModeZero_63(args...) Func_02009516(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_8(args...) Func_020095a6(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_8(args...) Func_020095a6_b(args)
 #define BattleRuntime_WaitIfModeZero_64(args...) Func_02009524(args)
 #define SceneWork_SetStepValue_50(args...) Func_020095ec(args)
 #define BattleEvent_RunActionAndWait_48(args...) Func_02009604(args)
 #define Object_SetModeById_35(args...) Func_020095bc(args)
 #define BattleEffect_SpawnLinkedResourceObject_25(a0, a1, a2) Call3(Func_02009638, a0, a1, a2)
-#define SceneWork_SetStepValue_51(args...) Func_02009610(args)
+#define SceneWork_SetStepValue_51(args...) Func_02009610_a(args)
 #define BattleEvent_RunActionAndWait_49(args...) Func_02009628(args)
 #define BattleEffect_SpawnLinkedResourceObject_26(a0, a1, a2) Call3(Func_02009654, a0, a1, a2)
 #define SceneWork_SetStepValue_52(args...) Func_0200962c(args)
@@ -1020,7 +1077,7 @@ void Func_02009d9c();
 #define Object_SetModeById_36(args...) Func_020095fc(args)
 #define BattleRuntime_WaitIfModeZero_65(args...) Func_02009582(args)
 #define Object_SetModeById_37(args...) Func_0200960a(args)
-#define BattleRuntime_WaitIfModeZero_66(args...) Func_02009590(args)
+#define BattleRuntime_WaitIfModeZero_66(args...) Func_02009590_b(args)
 #define Object_LinkPair_4(args...) Func_0200964a(args)
 #define Object_SetModeById_38(args...) Func_02009622(args)
 #define Object_SetModeById_39(args...) Func_0200962a(args)
@@ -1035,7 +1092,7 @@ void Func_02009d9c();
 #define BattleEvent_RunActionAndWait_52(args...) Func_020096c6(args)
 #define Object_LinkPair_5(args...) Func_020096b0(args)
 #define Object_LinkPair_6(args...) Func_020096ba(args)
-#define BattleRuntime_WaitIfModeZero_68(args...) Func_02009610(args)
+#define BattleRuntime_WaitIfModeZero_68(args...) Func_02009610_b(args)
 #define ObjectMotion_SetAngleToward_65(args...) Func_020096c2(args)
 #define BattleRuntime_WaitIfModeZero_69(args...) Func_02009620(args)
 #define ObjectMotion_SetAngleToward_66(args...) Func_020096d2(args)
@@ -1043,38 +1100,38 @@ void Func_02009d9c();
 #define ObjectMotion_SetAngleToward_68(args...) Func_020096e6(args)
 #define ObjectMotion_SetAngleToward_69(args...) Func_020096f0(args)
 #define BattleRuntime_WaitIfModeZero_70(args...) Func_0200964e(args)
-#define SceneWork_SetStepValue_55(args...) Func_02009716(args)
+#define SceneWork_SetStepValue_55(args...) Func_02009716_a(args)
 #define BattleEvent_RunActionAndWait_53(args...) Func_0200972e(args)
 #define BattleEffect_SpawnLinkedResourceObject_29(a0, a1, a2) Call3(Func_02009758, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_30(a0, a1, a2) Call3(Func_02009762, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_31(a0, a1, a2) Call3(Func_0200976c, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_31(a0, a1, a2) Call3(Func_0200976c_a, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_32(a0, a1, a2) Call3(Func_02009776, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_71(args...) Func_0200968c(args)
 #define SceneWork_SetStepValue_56(args...) Func_02009754(args)
-#define BattleEvent_RunActionAndWait_54(args...) Func_0200976c(args)
+#define BattleEvent_RunActionAndWait_54(args...) Func_0200976c_b(args)
 #define ObjectMotion_SetVariantCallback_17(args...) Func_0200973c(args)
 #define BattleRuntime_WaitIfModeZero_72(args...) Func_020096aa(args)
 #define SceneWork_SetStepValue_57(args...) Func_02009772(args)
 #define BattleEvent_RunActionAndWait_55(args...) Func_0200978a(args)
-#define ObjectMotion_SetAngleToward_70(args...) Func_0200976c(args)
+#define ObjectMotion_SetAngleToward_70(args...) Func_0200976c_c(args)
 #define BattleRuntime_WaitIfModeZero_73(args...) Func_020096ca(args)
 #define SceneWork_SetStepValue_58(args...) Func_02009792(args)
 #define BattleEvent_RunActionAndWait_56(args...) Func_020097aa(args)
 #define BattleEffect_SpawnLinkedResourceObject_33(a0, a1, a2) Call3(Func_020097d4, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_34(a0, a1, a2) Call3(Func_020097de, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_35(a0, a1, a2) Call3(Func_020097e8, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_34(a0, a1, a2) Call3(Func_020097de_a, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_35(a0, a1, a2) Call3(Func_020097e8_a, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_36(a0, a1, a2) Call3(Func_020097f2, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_74(args...) Func_02009708(args)
 #define Object_SetModeById_42(args...) Func_02009790(args)
-#define BattleRuntime_WaitIfModeZero_75(args...) Func_02009716(args)
-#define SceneWork_SetStepValue_59(args...) Func_020097de(args)
+#define BattleRuntime_WaitIfModeZero_75(args...) Func_02009716_b(args)
+#define SceneWork_SetStepValue_59(args...) Func_020097de_b(args)
 #define BattleEvent_RunActionAndWait_57(args...) Func_02009804(args)
 #define BattleEffect_SpawnLinkedResourceObject_37(a0, a1, a2) Call3(Func_02009830, a0, a1, a2)
 #define SceneWork_SetStepValue_60(args...) Func_02009808(args)
 #define BattleEvent_RunActionAndWait_58(args...) Func_02009820(args)
 #define Object_SetModeById_43(args...) Func_020097d8(args)
 #define Object_SetModeById_44(args...) Func_020097e0(args)
-#define Object_SetModeById_45(args...) Func_020097e8(args)
+#define Object_SetModeById_45(args...) Func_020097e8_b(args)
 #define Object_SetModeById_46(args...) Func_020097f0(args)
 #define Object_SetModeById_47(args...) Func_020097f8(args)
 #define BattleRuntime_WaitIfModeZero_76(args...) Func_0200977e(args)
@@ -1083,41 +1140,41 @@ void Func_02009d9c();
 #define SceneWork_SetStepValue_61(args...) Func_02009854(args)
 #define BattleEvent_RunActionAndWait_59(args...) Func_0200986c(args)
 #define BattleEffect_SpawnLinkedResourceObject_38(a0, a1, a2) Call3(Func_02009898, a0, a1, a2)
-#define SceneWork_SetStepValue_62(args...) Func_02009870(args)
+#define SceneWork_SetStepValue_62(args...) Func_02009870_a(args)
 #define BattleEvent_RunActionAndWait_60(args...) Func_02009888(args)
 #define ObjectMotion_SetAngleToward_71(args...) Func_0200986a(args)
 #define BattleRuntime_WaitIfModeZero_78(args...) Func_020097c8(args)
 #define ObjectMotion_SetVariantCallback_18(args...) Func_02009868(args)
 #define BattleRuntime_WaitIfModeZero_79(args...) Func_020097d6(args)
 #define SceneWork_SetStepValue_63(args...) Func_0200989e(args)
-#define BattleEvent_RunActionAndWait_61(args...) Func_020098b6(args)
+#define BattleEvent_RunActionAndWait_61(args...) Func_020098b6_a(args)
 #define Object_SetModeById_49(args...) Func_0200986e(args)
 #define BattleRuntime_WaitIfModeZero_80(args...) Func_020097f4(args)
-#define SceneWork_SetStepValue_64(args...) Func_020098bc(args)
-#define BattleEvent_RunActionAndWait_62(args...) Func_020098d4(args)
+#define SceneWork_SetStepValue_64(args...) Func_020098bc_a(args)
+#define BattleEvent_RunActionAndWait_62(args...) Func_020098d4_a(args)
 #define Object_SetModeById_50(args...) Func_0200988c(args)
-#define SceneWork_SetStepValue_65(args...) Func_020098d4(args)
+#define SceneWork_SetStepValue_65(args...) Func_020098d4_b(args)
 #define BattleEvent_RunActionAndWait_63(args...) Func_020098ec(args)
 #define ObjectMotion_SetAngleToward_72(args...) Func_020098ce(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_9(args...) Func_020098b6(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_9(args...) Func_020098b6_b(args)
 #define BattleRuntime_WaitIfModeZero_81(args...) Func_02009834(args)
 #define SceneWork_SetStepValue_66(args...) Func_020098fc(args)
 #define BattleEvent_RunActionAndWait_64(args...) Func_02009914(args)
-#define BattleEffect_SpawnLinkedResourceObject_39(a0, a1, a2) Call3(Func_0200993e, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_39(a0, a1, a2) Call3(Func_0200993e_a, a0, a1, a2)
 #define SceneWork_SetStepValue_67(args...) Func_02009916(args)
 #define BattleEvent_RunActionAndWait_65(args...) Func_0200992e(args)
 #define ObjectMotion_ArmCallback_22(a0, a1, a2) Call3(Func_0200994a, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_82(args...) Func_02009870(args)
+#define BattleRuntime_WaitIfModeZero_82(args...) Func_02009870_b(args)
 #define SceneWork_SetStepValue_68(args...) Func_02009938(args)
-#define BattleEvent_RunActionAndWait_66(args...) Func_02009950(args)
+#define BattleEvent_RunActionAndWait_66(args...) Func_02009950_a(args)
 #define ObjectMotion_SetVariantCallback_19(args...) Func_02009920(args)
 #define BattleRuntime_WaitIfModeZero_83(args...) Func_0200988e(args)
 #define SceneWork_SetStepValue_69(args...) Func_02009956(args)
 #define BattleEvent_RunActionAndWait_67(args...) Func_0200996e(args)
-#define ObjectMotion_SetAngleToward_73(args...) Func_02009950(args)
+#define ObjectMotion_SetAngleToward_73(args...) Func_02009950_b(args)
 #define BattleRuntime_WaitIfModeZero_84(args...) Func_020098ae(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_10(args...) Func_0200993e(args)
-#define BattleRuntime_WaitIfModeZero_85(args...) Func_020098bc(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_10(args...) Func_0200993e_b(args)
+#define BattleRuntime_WaitIfModeZero_85(args...) Func_020098bc_b(args)
 #define SceneWork_SetStepValue_70(args...) Func_02009984(args)
 #define BattleEvent_RunActionAndWait_68(args...) Func_0200999c(args)
 #define BattleEffect_SpawnLinkedResourceObject_40(a0, a1, a2) Call3(Func_020099c8, a0, a1, a2)
@@ -1129,9 +1186,9 @@ void Func_02009d9c();
 #define BattleEvent_RunActionAndWait_70(args...) Func_020099d8(args)
 #define BattleEffect_SpawnLinkedResourceObject_41(a0, a1, a2) Call3(Func_02009a04, a0, a1, a2)
 #define SceneWork_SetStepValue_73(args...) Func_020099dc(args)
-#define BattleEvent_RunActionAndWait_71(args...) Func_020099f4(args)
+#define BattleEvent_RunActionAndWait_71(args...) Func_020099f4_a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_11(args...) Func_020099b4(args)
-#define SceneWork_SetStepValue_74(args...) Func_020099f4(args)
+#define SceneWork_SetStepValue_74(args...) Func_020099f4_b(args)
 #define BattleEvent_RunActionAndWait_72(args...) Func_02009a0c(args)
 #define ObjectMotion_SetAngleToward_75(args...) Func_020099ee(args)
 #define BattleRuntime_WaitIfModeZero_87(args...) Func_0200994c(args)
@@ -1154,7 +1211,7 @@ void Func_02009d9c();
 #define Object_SetModeById_57(args...) Func_02009a52(args)
 #define Scene_GetRecord_2(args...) Func_02009a00(args)
 #define ObjectMotion_ResetAndSetPosition_1(args...) Func_02009a3a(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_22(args...) Func_02009a60(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_22(args...) Func_02009a60_a(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_10(args...) Func_02009a72(args)
 #define Object_SetModeById_58(args...) Func_02009a82(args)
 #define Scene_GetRecord_3(args...) Func_02009a30(args)
@@ -1162,25 +1219,25 @@ void Func_02009d9c();
 #define ObjectMotion_CommitCurrentPositionAndActivate_23(args...) Func_02009a90(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_11(args...) Func_02009aa2(args)
 #define Object_SetModeById_59(args...) Func_02009ab2(args)
-#define Scene_GetRecord_4(args...) Func_02009a60(args)
-#define ObjectMotion_ResetAndSetPosition_3(args...) Func_02009a9a(args)
+#define Scene_GetRecord_4(args...) Func_02009a60_b(args)
+#define ObjectMotion_ResetAndSetPosition_3(args...) Func_02009a9a_a(args)
 #define ObjectMotion_CommitCurrentPositionAndActivate_24(args...) Func_02009ac0(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_12(args...) Func_02009ad2(args)
-#define BattleRuntime_WaitIfModeZero_92(args...) Func_02009a60(args)
-#define ObjectMotion_SetSpeedParameters_19(a0, a1, a2) Call3(Func_02009a9a, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_92(args...) Func_02009a60_c(args)
+#define ObjectMotion_SetSpeedParameters_19(a0, a1, a2) Call3(Func_02009a9a_b, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_22(a0, a1, a2) Call3(Func_02009ace, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_25(args...) Func_02009aec(args)
 #define Object_SetModeById_60(args...) Func_02009b04(args)
-#define ObjectMotion_ArmCallback_23(a0, a1, a2) Call3(Func_02009b70, a0, a1, a2)
+#define ObjectMotion_ArmCallback_23(a0, a1, a2) Call3(Func_02009b70_a, a0, a1, a2)
 #define ObjectMotion_SetAngleToward_76(args...) Func_02009b42(args)
 #define Object_SetModeById_61(args...) Func_02009b22(args)
 #define BattleRuntime_WaitIfModeZero_93(args...) Func_02009aa8(args)
 #define ObjectMotion_SetAngleToward_77(args...) Func_02009b5a(args)
 #define BattleRuntime_WaitIfModeZero_94(args...) Func_02009ab8(args)
 #define SceneWork_SetStepValue_77(args...) Func_02009b80(args)
-#define BattleEvent_RunActionAndWait_74(args...) Func_02009b98(args)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_02009b70(args)
-#define SceneWork_SetStepValue_78(args...) Func_02009b98(args)
+#define BattleEvent_RunActionAndWait_74(args...) Func_02009b98_a(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_02009b70_b(args)
+#define SceneWork_SetStepValue_78(args...) Func_02009b98_b(args)
 #define BattleEvent_RunActionAndWait_75(args...) Func_02009bb0(args)
 #define Object_SetModeById_62(args...) Func_02009b68(args)
 #define BattleRuntime_WaitIfModeZero_95(args...) Func_02009aee(args)
@@ -1191,12 +1248,12 @@ void Func_02009d9c();
 #define BattleRuntime_WaitIfModeZero_96(args...) Func_02009b24(args)
 #define ObjectMotion_SetActionVariant_2(args...) Func_02009c14(args)
 #define ObjectMotion_SetActionVariant_3(args...) Func_02009c1c(args)
-#define ObjectMotion_ResetAndSetPositionInMode2_24(a0, a1, a2) Call3(Func_02009b98, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_24(a0, a1, a2) Call3(Func_02009b98_c, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_26(args...) Func_02009bb6(args)
 #define ObjectMotion_SetAngleToward_78(args...) Func_02009bf8(args)
 #define ObjectMotion_CommitCurrentPositionAndActivate_27(args...) Func_02009bc6(args)
 #define ObjectMotion_SetAngleToward_79(args...) Func_02009c08(args)
-#define ObjectMotion_ArmCallback_24(a0, a1, a2) Call3(Func_02009c4c, a0, a1, a2)
+#define ObjectMotion_ArmCallback_24(a0, a1, a2) Call3(Func_02009c4c_a, a0, a1, a2)
 #define Object_SetModeById_63(args...) Func_02009bf4(args)
 #define BattleRuntime_WaitIfModeZero_97(args...) Func_02009b7a(args)
 #define Object_SetModeById_64(args...) Func_02009c02(args)
@@ -1218,14 +1275,14 @@ void Func_02009d9c();
 #define BattleRuntime_WaitIfModeZero_100(args...) Func_02009c16(args)
 #define Audio_PlayCue_6(args...) Func_02009d9c(args)
 #define BattleRuntime_WaitIfModeZero_101(args...) Func_02009c46(args)
-#define BattleRuntime_WaitIfModeZero_102(args...) Func_02009c4c(args)
+#define BattleRuntime_WaitIfModeZero_102(args...) Func_02009c4c_b(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02009c66(args)
 u8 *Func_020086d6();
 u8 *Func_02009a00();
-u8 *Func_02009a60();
+u8 *Func_02009a60_a();
 u8 *Func_02009a30();
-u8 *Func_02009a60();
-u8 *Func_02009a60();
+u8 *Func_02009a60_b();
+u8 *Func_02009a60_c();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -1291,7 +1348,7 @@ void FieldScene_RunMainScriptSequence(void)
     Func_02003d0c(4);
     BattleRuntime_Reset_1();
     record = Scene_GetRecord_1(12);
-    Func_02008674(record, 1);
+    Func_02008674_b(record, 1);
     ObjectMotion_SetHorizontalPositionWithTerrain_1(0, 0x1c80000, 0xb80000);
     ObjectMotion_ArmCallback_1(0, 0x4000, 0);
     ObjectMotion_SetHorizontalPositionWithTerrain_2(1, 0x1b80000, 0xc00000);

@@ -14,8 +14,8 @@ s32 SceneEffect_UpdateCountdownMotion(struct Resource3afMotion *motion) {
         break;
     case 4:
         motion->component_a += 0x2000;
-        /* The load at 0x0200006A owns the Thumb-like data word at 0x020000AC. */
-        motion->component_b += (s32) 0xF856F001;
+        /* The loader relocates the stored pool word to -0x1000. */
+        motion->component_b -= 0x1000;
         break;
     case 2:
         motion->component_a += 0x1000;

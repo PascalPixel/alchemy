@@ -6,6 +6,9 @@ edition.workspace = true
 [dependencies]
 rusqlite = { version = "0.31", features = ["bundled"] }
 
+[dev-dependencies]
+tempfile = "3"
+
 [lib]
 name = "cache_entry"
 path = "src/lib.rs"

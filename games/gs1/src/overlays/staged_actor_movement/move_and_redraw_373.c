@@ -1,3 +1,4 @@
+#define RefreshStagedActor Func_020066c4_a
 #include "staged_actor_movement.h"
 
 void Func_02000608(StagedActorMovementRequest request)

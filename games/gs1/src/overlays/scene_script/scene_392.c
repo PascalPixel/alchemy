@@ -120,6 +120,7 @@ void Func_02001846(void);
 s32 Func_02000e7a(Query *result);
 void Func_02001026(Query result);
 void Func_0200184c();
+void Func_0200184c_a();
 void Func_02001878(void);
 void Func_0200188e(s32,s32,s32);
 void Func_020018bc(s32,s32);
@@ -538,7 +539,7 @@ void FieldScene_SetupActor11Effect181(void)
 {
     Func_0200184c();
     Func_0200188e(11, 0, 0);
-    Func_0200184c(0xfd3);
+    Func_0200184c_a(0xfd3);
     Func_020018bc(181, 3);
     Func_0200187c(181, 0);
     Func_02001878();

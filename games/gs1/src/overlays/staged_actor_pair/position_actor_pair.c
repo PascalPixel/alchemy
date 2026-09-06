@@ -13,7 +13,8 @@ typedef struct Obj {
 
 extern s32 Data_02000240[];
 
-extern Obj *Func_020034b6();
+extern Obj *Func_020034b6_a();
+extern Obj *Func_020034b6_b();
 extern Obj *Func_020034be(s32);
 extern void Func_020034b4(void);
 extern void Func_02003496(Obj *, s32, s32, s32);
@@ -30,7 +31,7 @@ void Func_020017d8(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = Func_020034b6(Data_02000240[125]);
+    p = Func_020034b6_a(Data_02000240[125]);
     q = Func_020034be(a0);
     Func_020034b4();
     {
@@ -51,7 +52,7 @@ void Func_020017d8(s32 a0, s32 a1, s32 a2)
         Func_020034c2(q, x, q->f0c, y);
     }
     if (a1 < 0 || a2 < 0) {
-        Func_020034b6(q, 4);
+        Func_020034b6_b(q, 4);
     } else {
         Func_020034c0(q, 3);
     }

@@ -36,7 +36,9 @@ s32 Func_02002e34();
 void Func_02002e5a();
 void Func_02002e60();
 s32 Func_02002e62();
+s32 Func_02002e62_a();
 void Func_02002e88();
+void Func_02002e88_a();
 void Func_02002e96();
 void Func_02002e9c();
 void Func_02002ea8();
@@ -58,10 +60,10 @@ void FieldScene_RunActorElevenFlaggedSteps(void)
         Func_02002e60((s32)0x311);
         Func_02002e9c((s32)0x312);
         /* movs r0,#0xc3 / lsls r0,#2 builds 0x30c. */
-    } else if (Func_02002e62((s32)0x30c) != 0) {
+    } else if (Func_02002e62_a((s32)0x30c) != 0) {
         Func_02000cda(11, 0, -112);
         Func_02002e88((s32)0x30f);
-        Func_02002e88((s32)0x310);
+        Func_02002e88_a((s32)0x310);
         Func_02002e96((s32)0x311);
         Func_02002e9c((s32)0x312);
     } else {

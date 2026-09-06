@@ -1,12 +1,11 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use candidate_compiler::verify::{assemble, copy_text};
 use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::build_io::read_json;
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use disassemble::{assemble_overlay, compile_overlay_c, OverlaySource, OVERLAY_BASE};
+use disassemble::{compile_overlay_c, OVERLAY_BASE};
 use serde::Serialize;
 use serde_json::Value;
 use tempfile::tempdir;
@@ -89,70 +88,6 @@ fn overlay_span(name: &str, address: u32) -> Result<usize, String> {
         })
 }
 
-fn reference_tool(
-    program: &str,
-    directory: &Path,
-    result: Result<(), String>,
-) -> Result<(), String> {
-    result.map_err(|error| {
-        error
-            .strip_prefix(&format!("{program} failed: "))
-            .map(|detail| format!("{program} failed in {}: {detail}", directory.display()))
-            .or_else(|| {
-                error
-                    .strip_prefix(&format!("{program}: "))
-                    .map(|detail| format!("cannot run {program}: {detail}"))
-            })
-            .unwrap_or(error)
-    })
-}
-
-fn main_span(stem: &str, directory: &Path) -> Result<usize, String> {
-    let assembly = root().join("games/gs1/asm").join(format!("{stem}.s"));
-    if assembly.is_file() {
-        let object = directory.join("reference.o");
-        let binary = directory.join("reference.bin");
-        reference_tool(
-            "arm-none-eabi-as",
-            directory,
-            assemble(&assembly.to_string_lossy(), &object.to_string_lossy()),
-        )?;
-        reference_tool(
-            "arm-none-eabi-objcopy",
-            directory,
-            copy_text(&object.to_string_lossy(), &binary.to_string_lossy()),
-        )?;
-        return fs::metadata(&binary)
-            .map(|metadata| metadata.len() as usize)
-            .map_err(|error| format!("{}: {error}", binary.display()));
-    }
-    let address = u64::from_str_radix(stem, 16).map_err(|error| error.to_string())?;
-    for relative in [
-        "out/gs1-en/full/claimed/manifest.json",
-        "out/gs1-en/claimed/manifest.json",
-    ] {
-        let path = root().join(relative);
-        let Ok(document) = read_json::<Value>(&path) else {
-            continue;
-        };
-        let size = document["regions"]
-            .as_array()
-            .into_iter()
-            .flatten()
-            .find_map(|region| {
-                (hexadecimal(&region["address"]) == Some(address))
-                    .then(|| region["size"].as_u64())
-                    .flatten()
-            });
-        if let Some(size) = size {
-            return usize::try_from(size).map_err(|error| error.to_string());
-        }
-    }
-    Err(format!(
-        "no assembly or claimed manifest records main owner {stem}"
-    ))
-}
-
 fn window(bytes: &[u8], start: i64, length: usize) -> Result<Vec<u8>, String> {
     let start = usize::try_from(start).map_err(|_| "reference window starts before its image")?;
     bytes
@@ -193,26 +128,22 @@ impl Target {
         fs::write(&candidate, source)
             .map_err(|error| format!("{}: {error}", candidate.display()))?;
         let (expected, actual, kind) = if let Some(name) = owner.overlay_id() {
+            let span = overlay_span(&name, owner.address())?;
             let compiled = compile_overlay_c(
                 &candidate,
                 work.path(),
                 &name,
+                span,
                 Some(&owner.routing_path()),
                 &local_flags(&source_path),
             )?;
-            let reference = assemble_overlay(
-                &OverlaySource::path(
-                    root()
-                        .join("games/gs1/assets/code")
-                        .join(format!("{name}_overlay.s")),
-                ),
-                OVERLAY_BASE,
-            )?;
-            let span = overlay_span(&name, owner.address())?;
-            let expected = window(&reference, compiled.address - OVERLAY_BASE, span)?;
+            let reference = disassemble::canonical_overlay(root(), &name)?;
+            let runtime = compiler_core::overlay::load(&reference, 0)?;
+            let offset = compiled.address - OVERLAY_BASE;
+            let expected = window(&runtime, offset, span)?;
             (
                 expected,
-                compiled.data,
+                compiler_core::overlay::load(&compiled.data, offset as usize)?,
                 Kind::Overlay {
                     name,
                     address: compiled.address,
@@ -237,7 +168,9 @@ impl Target {
             let expected = window(
                 &rom,
                 i64::from(owner.address()) - ROM_BASE as i64,
-                main_span(&stem, work.path())?,
+                diff::render::region_size(root(), owner.address()).ok_or_else(|| {
+                    format!("no audited manifest extent for {stem}; rebuild the owner inventory")
+                })?,
             )?;
             (expected, verification.actual, Kind::Main { rom })
         };
@@ -266,6 +199,7 @@ impl Target {
                     &candidate,
                     work.path(),
                     name,
+                    self.expected.len(),
                     Some(&self.owner.routing_path()),
                     &local_flags(&self.source),
                 )?;
@@ -275,7 +209,7 @@ impl Target {
                         compiled.address
                     ));
                 }
-                compiled.data
+                compiler_core::overlay::load(&compiled.data, (*address - OVERLAY_BASE) as usize)?
             }
             Kind::Main { rom } => {
                 verify_candidate_owned_routed(

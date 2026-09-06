@@ -20,6 +20,7 @@ extern void Func_02007f36(void);
 extern void Func_020080ba(void);
 extern void Func_02008072(s32 arg0, s32 arg1);
 extern void Func_02006336();
+extern void Func_02006336_a();
 extern void Func_02008038(s32 message);
 extern void Func_02006302(s32 id);
 extern void Func_02006308(s32 id);
@@ -54,7 +55,7 @@ void FieldScene_RunFlagGatedThreeActorSetup(void)
     Func_02006308(10);
     Func_02006326(8, 0x3000);
     Func_02006318(8);
-    Func_02006336(10, 0xd000);
+    Func_02006336_a(10, 0xd000);
     Func_02006328(10);
     Func_02006346(9, 0x5000);
     Func_02006338(9);

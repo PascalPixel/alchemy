@@ -18,7 +18,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(void *obj) {
         delta = (s16)(angle - old);
         if (delta != 0) {
             if (delta > 0x1000) delta = 0x1000;
-            if (delta < (s32)0xF896F001) delta = (s32)0xF896F001;
+            if (delta < -0x1000) delta = -0x1000;
             FIELD(obj, u16, 6) = (u16)(old + delta);
         }
     }

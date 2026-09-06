@@ -27,6 +27,7 @@ extern void Func_020062a6(s32, s32);
 extern void Func_0200627e(s32, s32);
 extern void Func_020062b6(s32, s32);
 extern void Func_02006276(s32, s32);
+extern void Func_02006276_a(s32, s32);
 extern Thing2 *Func_02006214(s32);
 extern void Func_0200625e(s32, s32, s32);
 extern void Func_02006284(s32);
@@ -54,7 +55,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
     Func_0200627e(22, 2);
     Func_020062b6(22, 0);
     Func_02006276(0, 3);
-    Func_02006276(22, 2);
+    Func_02006276_a(22, 2);
     b = Func_02006214(0);
     if (b != 0) {
         Func_0200625e(22, b->unkA, b->unk12);

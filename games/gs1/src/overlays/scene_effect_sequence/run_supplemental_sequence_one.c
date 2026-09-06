@@ -9,6 +9,7 @@ void Func_0200822a();
 void Func_0200825c();
 void Func_0200827e();
 s32 Func_02008294();
+s32 Func_02008294_a();
 void Func_020082a8();
 void Func_020082aa();
 void Func_020082c4();
@@ -26,10 +27,12 @@ void Func_0200833e();
 void Func_02008344();
 void Func_02008356();
 void Func_0200835a();
+void Func_0200835a_a();
 void Func_0200835c();
 void Func_0200836a();
 void Func_02008372();
 void Func_02008374();
+void Func_02008374_a();
 void Func_02008394();
 void Func_02008396();
 void Func_020083ac();
@@ -89,7 +92,7 @@ void RunSupplementalSequenceOne(void)
         Func_02008344(p + 1);
         Call2(Func_0200835c, 8, 0);
     } else {
-        Value1(Func_02008294, 20);
+        Value1(Func_02008294_a, 20);
         Func_0200835a(p + 2);
         Call2(Func_02008372, 8, 0);
         Call1(Func_020082a8, 20);
@@ -99,7 +102,7 @@ void RunSupplementalSequenceOne(void)
         Call2(Func_02008374, 9, 2);
         Call1(Func_020082d2, 30);
         Call3(Func_02008394, 8, 9, 30);
-        Call2(Func_02008374, 9, 3);
+        Call2(Func_02008374_a, 9, 3);
         Call1(Func_020082ea, 30);
         Call3(Func_020083d6, 8, 258, 50);
         Call3(Func_020083da, 8, 20480, 0);
@@ -113,5 +116,5 @@ void RunSupplementalSequenceOne(void)
         Call1(Func_0200833e, 20);
         Call2(Func_02008416, 8, 0);
     }
-    Call0(Func_0200835a);
+    Call0(Func_0200835a_a);
 }

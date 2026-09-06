@@ -20,7 +20,7 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
     Func_02002464();
     Func_020024c6(11, 0, 0);
     Func_020024d0(0, 11, 0);
-    Func_020024d0(0, 1);
+    Func_020024d0_a(0, 1);
     Func_0200247e(10);
     Func_020024f0(0, 11, 0);
     Func_02002506(0x23d9);
@@ -35,6 +35,6 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
     Func_02002504(11);
     Func_02002516(11, 0, 0);
     Func_020024cc(20);
-    Func_020024c4(2464);
+    Func_020024c4_a(2464);
     Func_020024e8();
 }

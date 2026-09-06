@@ -16,6 +16,6 @@ void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
     Func_0200864c(arg0, arg1);
     globalCtx[0x23] = 0;
     Func_02008666();
-    Func_0200864c(1);
+    Func_0200864c_a(1);
     Func_0200845a(1);
 }

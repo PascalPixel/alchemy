@@ -19,14 +19,16 @@ extern s32 Func_020035c2(s32);
 extern s32 Func_020035ce(s32);
 extern void Func_02000d2a(void);
 extern s32 Func_020035de(s32);
-extern s32 Func_02003608();
+extern s32 Func_02003608_a();
+extern s32 Func_02003608_b();
 extern void Func_02003660(s32, s32);
 extern void Func_02003696(s32);
 extern u8 Value_00001000;
 extern s32 Func_020035fe(s32);
 extern EntA *Func_0200364a(s32);
 extern void Func_02003688(s32, s32, s32);
-extern s32 Func_0200363e();
+extern s32 Func_0200363e_a();
+extern s32 Func_0200363e_b();
 extern void Func_02003674(s32, s32, s32);
 extern void Func_020036c2(s32, s32, s32);
 extern void Func_02003678(s32);
@@ -36,7 +38,8 @@ extern void Func_020036e8(s32, s32, s32);
 extern void Func_02003698(s32);
 extern void Func_020036fc(s32, s32, s32);
 extern void Func_02003770(s32, s32, s32);
-extern void Func_0200377c();
+extern void Func_0200377c_a();
+extern void Func_0200377c_b();
 extern void Func_0200377e(s32, s32, s32);
 extern void Func_02003746(s32, s32);
 extern s32 Func_020036d6(s32);
@@ -82,18 +85,18 @@ void UpdateStatueTrapActor(void)
     if (Func_020035de(0x819) != 0) {
         return;
     }
-    Func_02003608();
+    Func_02003608_a();
     Func_02003660(0, 0);
     Func_02003696((s32)&Value_00001000);
-    if (Func_020035fe(g1) != 0 || Func_02003608(0x80a) == 0) {
+    if (Func_020035fe(g1) != 0 || Func_02003608_b(0x80a) == 0) {
         target_actor = Func_0200364a(0);
         if (target_actor != 0) {
             Func_02003688(16, target_actor->unk8, target_actor->unk10);
         }
-        Func_0200363e(4);
+        Func_0200363e_a(4);
         Func_02003674(16, s1, s2);
     } else {
-        if (Func_0200363e(g2) != 0) goto do1;
+        if (Func_0200363e_b(g2) != 0) goto do1;
         h1 = 0x1540000;
         if (scene_actor->unk8 > h1) {
 do1:
@@ -112,7 +115,7 @@ do2:
     }
     Func_020036fc(16, d2, 0xe8);
     Func_02003770(0, d5, 0);
-    Func_0200377c(16, s5, 10);
+    Func_0200377c_a(16, s5, 10);
     Func_0200377e(16, 0, 10);
     Func_02003746(0, 3);
     if (Func_020036d6(g4) != 0 || Func_020036e0(0x80a) == 0) {
@@ -122,7 +125,7 @@ do2:
             Func_0200374c(16, target_position->unkA, target_position->unk12);
         }
         Func_0200376a(16);
-        Func_0200377c(16, 0, 0);
+        Func_0200377c_b(16, 0, 0);
         Func_02003778(0, d3, 0xe8);
     } else {
         Func_02003786(0, d4, 0xf8);

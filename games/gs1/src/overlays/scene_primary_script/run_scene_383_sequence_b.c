@@ -53,6 +53,7 @@ void Func_02006b3c();
 void Func_02006b5a();
 void Func_02006b76();
 void Func_02006b80();
+void Func_02006b80_a();
 void Func_02006b88();
 void Func_02006b8a();
 void Func_02006b9c();
@@ -60,6 +61,7 @@ void Func_02006b9e();
 void Func_02006ba8();
 void Func_02006bac();
 void Func_02006bb6();
+void Func_02006bb6_a();
 void Func_02006bc4();
 void Func_02006bca();
 void Func_02006bd2();
@@ -115,12 +117,12 @@ void Func_02006c48();
 #define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Call3(Func_02006b76, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02006b8a, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_02006bac(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_02006bb6(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_02006bb6_a(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_5(a0, a1, a2) Call3(Func_02006bc4, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_6(a0, a1, a2) Call3(Func_02006bd2, a0, a1, a2)
 #define ObjectMotion_ArmCallback_3(args...) Func_02006c3c(args)
 #define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02006c48, a0, a1, a2)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006b80(args)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006b80_a(args)
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

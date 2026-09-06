@@ -30,6 +30,7 @@ void Func_02002368();
 void Func_02002390();
 void Func_02002394();
 void Func_0200239e();
+void Func_0200239e_a();
 s32 Func_020023a0();
 void Func_020023d2();
 void Func_020023d6();
@@ -47,6 +48,7 @@ void Func_0200244e();
 void Func_02002452();
 void Func_02002464();
 void Func_0200246c();
+void Func_0200246c_a();
 void Func_0200247a();
 void Func_02002492();
 
@@ -107,7 +109,7 @@ void FieldScene_RunScene3beSequenceB(void)
             if (Value2(Func_020023a0, 0, 0) == 0) {
                 Func_0200241c(11, 0);
                 Func_020023d6(11, 152, 232);
-                Call1(Func_0200239e, 0x9a0);
+                Call1(Func_0200239e_a, 0x9a0);
                 Func_020023f4(11);
                 Func_0200240c(11, 1);
                 Data_02000240_t[226][0] = (s32)Data_00000088;
@@ -124,8 +126,8 @@ void FieldScene_RunScene3beSequenceB(void)
                 Func_02002464(11, 0, 0);
                 Func_0200241a(30);
                 Func_0200247a(0, 2);
-                Func_0200246c(0, 0, 16);
-                Func_0200247a(0);
+                Func_0200246c_a(0, 0, 16);
+                Func_0200247a_a(0);
                 Func_02002492(0, 1);
             }
             Func_0200244e();

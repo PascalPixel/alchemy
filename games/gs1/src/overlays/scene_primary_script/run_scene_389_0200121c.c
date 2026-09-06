@@ -23,6 +23,7 @@ u8 *Func_02002748();
 void Func_0200274c();
 void Func_0200277c();
 s32 Func_0200279a();
+s32 Func_0200279a_a();
 void Func_020027c4();
 void Func_020027c6();
 void Func_02002824();
@@ -116,7 +117,7 @@ s32 FieldScene_RunScene389_0200121c(void)
         Func_0200277c(60);
         *(u8 *)(Func_0200279a(9) + 34) = 2;
         Call3(Func_020027c4, 9, 0x198, 192);
-        Call1((void (*)())Func_0200279a, 60);
+        Call1((void (*)())Func_0200279a_a, 60);
         Func_02002046();
     }
     if (Data_02000240[282] != 0) {

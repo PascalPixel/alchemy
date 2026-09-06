@@ -11,6 +11,7 @@ typedef struct {
 } Struct_1644;
 
 extern Struct_1644 *Func_020064f8();
+extern Struct_1644 *Func_020064f8_a();
 extern void Func_020064e6(void);
 extern void Func_020064ec(s32);
 extern void Func_02006662(s32);
@@ -33,7 +34,7 @@ void SceneState_RunActor13AtColumn42Setup(void)
         val = 0xfffe0000;
         obj->unk14 = val;
         obj->unkC = val;
-        Func_020064f8(0x200);
+        Func_020064f8_a(0x200);
         a = 3;
         b = 5;
         Func_020064ac(44, 117, 41, 117, a, b);

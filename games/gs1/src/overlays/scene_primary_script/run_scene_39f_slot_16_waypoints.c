@@ -23,7 +23,8 @@ extern void Func_02004cc6(s32, s32, s32);
 extern void Func_02004c54(s32);
 extern void Func_02004d14(s32, s32);
 extern void Func_02004cbe(s32, s32, s32);
-extern void Func_02004c6c(s32);
+extern void Func_02004c6c_a(s32);
+extern void Func_02004c6c_b(s32);
 extern void Func_02004cd6(s32, s32, s32);
 extern void Func_02004c92(void);
 void FieldScene_RunSlot16WaypointSequence(void)
@@ -65,8 +66,8 @@ void FieldScene_RunSlot16WaypointSequence(void)
 
     Func_02004d14(0, 1);
     Func_02004cbe(16, 0, 0);
-    Func_02004c6c(30);
-    Func_02004c6c(776);                         /* 194 << 2 */
+    Func_02004c6c_a(30);
+    Func_02004c6c_b(776);                         /* 194 << 2 */
     Func_02004cd6(20, 0, 0);
 
     /* Common exit; no argument registers are set. */

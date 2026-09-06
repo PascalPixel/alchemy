@@ -27,6 +27,9 @@ compiler-core = { path = "../compiler-core" }
 disassemble = { path = "../disassemble" }
 cache-entry = { path = "../cache-entry" }
 
+[dev-dependencies]
+tempfile = "3"
+
 [lib]
 name = "diff"
 path = "src/lib.rs"

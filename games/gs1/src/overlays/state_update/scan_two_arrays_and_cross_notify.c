@@ -33,6 +33,7 @@ s32 Func_0200c876();
 void Func_0200c890();
 s32 Func_0200c896();
 void Func_0200c8b0();
+void Func_0200c8b0_a();
 void Func_0200c8b8();
 
 void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
@@ -59,6 +60,6 @@ void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
         cnt_b++;
     }
 
-    Func_0200c8b0(b + cnt_a);
+    Func_0200c8b0_a(b + cnt_a);
     Func_0200c8b8(a + cnt_b);
 }

@@ -10,8 +10,7 @@ fn root() -> PathBuf {
 }
 
 fn json(path: &Path) -> Result<Value, String> {
-    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))
+    compiler_core::build_io::read_json(path)
 }
 
 fn exact(root: &Path) -> Result<HashSet<String>, String> {

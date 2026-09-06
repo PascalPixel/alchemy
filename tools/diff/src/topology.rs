@@ -53,6 +53,22 @@ pub fn compare_symbols(
         Ok(base) => base,
         Err(_) => return Comparison::Uncovered("candidate-non-address-owner-symbol".into()),
     };
+    compare_symbols_at(
+        candidate,
+        candidate_symbol,
+        reference,
+        reference_symbol,
+        base,
+    )
+}
+
+pub fn compare_symbols_at(
+    candidate: &str,
+    candidate_symbol: &str,
+    reference: &str,
+    reference_symbol: &str,
+    base: u32,
+) -> Comparison {
     let candidate = match parse(candidate, candidate_symbol, base) {
         Ok(program) => program,
         Err(reason) => return Comparison::Uncovered(format!("candidate-{reason}")),

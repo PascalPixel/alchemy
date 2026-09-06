@@ -5,6 +5,7 @@
 extern u8 Data_03001ebc[];
 void Func_02001cf8();
 void Func_02001d2e();
+void Func_02001d2e_a();
 s32 Func_02001d44();
 s32 Func_02001d54();
 s32 Func_02001d60();
@@ -60,7 +61,7 @@ void FieldScene_RunScene3a0_02000968(void)
     record = Value1(Func_02001d60, 20);
     p5 = *(volatile s32 *)(record + 8);
     record = Value1(Func_02001d68, 20);
-    Call6(Func_02001d2e, 3, 17, 1, 1, ((s32)p5 >> 20), (*(volatile s32 *)(record + 16) >> 20));
+    Call6(Func_02001d2e_a, 3, 17, 1, 1, ((s32)p5 >> 20), (*(volatile s32 *)(record + 16) >> 20));
     Call2(Func_02001cf8, 0x2008325, 0xc80);
     Call1(Func_02001d66, 0x201);
     Func_02001e4e(20, 2);

@@ -36,12 +36,17 @@ fn visit(
     path: &Path,
     dirs: &[PathBuf],
     seen: &mut BTreeSet<PathBuf>,
+    active: &mut BTreeSet<PathBuf>,
     hash: &mut Sha256,
 ) -> Result<(), String> {
     let path = std::fs::canonicalize(path).map_err(|error| error.to_string())?;
+    if active.contains(&path) && path.extension().is_some_and(|ext| ext == "c") {
+        return Err(format!("recursive C source include: {}", path.display()));
+    }
     if !seen.insert(path.clone()) {
         return Ok(());
     }
+    active.insert(path.clone());
     let bytes = std::fs::read(&path).map_err(|error| error.to_string())?;
     for input in [path.to_string_lossy().as_bytes(), &bytes] {
         hash.update((input.len() as u64).to_be_bytes());
@@ -56,15 +61,22 @@ fn visit(
             .chain(dirs.iter().map(|dir| dir.join(name)))
             .find(|candidate| candidate.is_file());
         if let Some(found) = found {
-            visit(&found, dirs, seen, hash)?;
+            visit(&found, dirs, seen, active, hash)?;
         }
     }
+    active.remove(&path);
     Ok(())
 }
 
 pub fn source_tree_signature(source: &Path, dirs: &[PathBuf]) -> Result<Vec<u8>, String> {
     let mut hash = Sha256::new();
-    visit(source, dirs, &mut BTreeSet::new(), &mut hash)?;
+    visit(
+        source,
+        dirs,
+        &mut BTreeSet::new(),
+        &mut BTreeSet::new(),
+        &mut hash,
+    )?;
     Ok(hash.finalize().to_vec())
 }
 
@@ -93,4 +105,8 @@ fn included_file_mutation_changes_compiler_input_identity() {
     std::fs::write(&body, "after\n").unwrap();
     let second = compiler_source_tree_signature(root.path(), &source, &[]).unwrap();
     assert_ne!(first, second);
+    std::fs::write(&body, "#include \"owner.c\"\n").unwrap();
+    assert!(compiler_source_tree_signature(root.path(), &source, &[])
+        .unwrap_err()
+        .contains("recursive C source include"));
 }

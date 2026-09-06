@@ -20,8 +20,10 @@ void Func_02008232();
 void Func_02008238();
 void Func_02008266();
 void Func_0200826a();
-void Func_02008270();
-void Func_0200827e();
+void Func_02008270_a();
+void Func_02008270_b();
+void Func_0200827e_a();
+void Func_0200827e_b();
 void Func_02008280();
 void Func_0200828c();
 s32 Func_020082a6();
@@ -64,7 +66,7 @@ void Func_0200837a();
 #define ObjectMotion_SetSpeedParameters_3(a0, a1) Value2(Func_020082a6, a0, a1)
 #define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_020081f6, a0, a1)
 #define BattleRuntime_WaitIfModeZero_3(args...) Func_020081e0(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02008270(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02008270_a(args)
 #define BattleRuntime_RunThenWaitIfModeZero_3(args...) Func_020082d2(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_0200821a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_020082aa(args)
@@ -75,13 +77,13 @@ void Func_0200837a();
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02008360, a0, a1, a2, a3)
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_020082c6, a0, a1, a2)
 #define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_0200837a(args)
-#define BattleRuntime_WaitIfModeZero_6(args...) Func_02008270(args)
+#define BattleRuntime_WaitIfModeZero_6(args...) Func_02008270_b(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02008318(args)
-#define BattleRuntime_WaitIfModeZero_7(args...) Func_0200827e(args)
+#define BattleRuntime_WaitIfModeZero_7(args...) Func_0200827e_a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_0200830e(args)
 #define BattleRuntime_WaitIfModeZero_8(args...) Func_0200828c(args)
 #define BattleRuntime_RunThenWaitIfModeZero_5(args...) Func_02008376(args)
-#define GameFlag_Set_1(a0) Call1(Func_0200827e, a0)
+#define GameFlag_Set_1(a0) Call1(Func_0200827e_b, a0)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_020082b2(args)
 
 /* Call sites spelled through these wrappers pass their constants straight

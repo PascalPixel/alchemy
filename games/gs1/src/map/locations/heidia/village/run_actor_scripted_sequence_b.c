@@ -40,7 +40,8 @@ void Func_02007338();
 void Func_02007344();
 void Func_0200735c();
 void Func_0200735e();
-void Func_02007376();
+void Func_02007376_a();
+void Func_02007376_b();
 void Func_02007388();
 void Func_0200738e();
 
@@ -59,9 +60,9 @@ void RunActorScriptedSequenceB(s32 handle)
     Func_0200735c(handle, 0);
     Call_02007388(handle);
     Func_0200735e((s32)(id + 1));
-    Func_02007376(handle, 0);
+    Func_02007376_a(handle, 0);
     id += 2;
     Func_02007338(handle, 4);
-    Func_02007376((s32)id);
+    Func_02007376_b((s32)id);
     Func_0200738e(handle, 0);
 }

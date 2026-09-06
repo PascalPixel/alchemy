@@ -17,9 +17,11 @@ void Func_020070e2();
 s32 Func_020070e8();
 void Func_020070ea();
 s32 Func_020070fa();
+s32 Func_020070fa_a();
 s32 Func_02007100();
 void Func_02007102();
 s32 Func_0200710c();
+s32 Func_0200710c_a();
 void Func_02007110();
 void Func_0200711e();
 void Func_02007122();
@@ -105,11 +107,11 @@ void FieldScene_RunScene3b1SequenceA(void)
                 Call1(Func_020070fa, 0x994);
                 goto L_02000c9a;
             }
-            if (Value1(Func_020070fa, 0x92a) != 0) {
+            if (Value1(Func_020070fa_a, 0x92a) != 0) {
                 Call1(Func_0200710c, 0x91b);
                 goto L_02000c9a;
             }
-            if (Value1(Func_0200710c, 0x929) != 0) {
+            if (Value1(Func_0200710c_a, 0x929) != 0) {
                 Call1(Func_0200711e, 0x939);
                 goto L_02000c9a;
             }

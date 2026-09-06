@@ -14,6 +14,7 @@ u8 *Func_020019fc();
 s32 Func_02001a3e();
 s32 Func_02001a48();
 u8 *Func_02001a66();
+void Func_02001a66_a();
 s32 Func_02001a76();
 void Func_02001a80();
 s32 Func_02001a84();
@@ -32,6 +33,7 @@ s32 Func_02001b0e();
 void Func_02001b10();
 void Func_02001b24();
 u8 *Func_02001b2a();
+u8 *Func_02001b2a_a();
 s32 Func_02001b36();
 void Func_02001b3a();
 u8 *Func_02001b3e();
@@ -68,6 +70,7 @@ void Func_02001cc8();
 void Func_02001ccc();
 u8 *Func_02001cd6();
 void Func_02001cda();
+void Func_02001cda_a();
 void Func_02001cdc();
 void Func_02001cf2();
 void Func_02001cf4();
@@ -156,7 +159,7 @@ void FieldScene_RunPrimarySequence(void)
     }
     record = Func_02001a66(18);
     *(volatile s32 *)((s32)record + 108) = 0x2008501;
-    Call0((void (*)())Func_02001a66);
+    Call0(Func_02001a66_a);
     goto L_02000916;
     L_020006a2:;
     record = Value1(Func_02001a76, 0);
@@ -185,7 +188,7 @@ void FieldScene_RunPrimarySequence(void)
         }
     }
     v5 = 128;
-    record = Func_02001b2a(18);
+    record = Func_02001b2a_a(18);
     *(volatile s32 *)((s32)record + 56) = (v5 << 24);
     record = Value1(Func_02001b36, 18);
     *(volatile s32 *)((s32)record + 60) = (v5 << 24);
@@ -244,7 +247,7 @@ void FieldScene_RunPrimarySequence(void)
         *(u8 *)(Func_02001c68(0) + 90) &= 254;
         Func_02001cda(0, 2);
         Func_02001ccc(0, 0, 16);
-        Func_02001cda(0);
+        Func_02001cda_a(0);
         Func_02001cf2(0, 1);
     }
     Call3(Func_02001ca4, 18, 0xcccc, 0x6666);

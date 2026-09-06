@@ -8,12 +8,14 @@ void Func_02001c4c();
 void Func_02001c5e();
 void Func_02001c78();
 s32 Func_02001c80();
+s32 Func_02001c80_a();
 void Func_02001c94();
 void Func_02001cb2();
 void Func_02001cc6();
 void Func_02001cd8();
 void Func_02001ce8();
 s32 Func_02001cee();
+s32 Func_02001cee_a();
 void Func_02001d04();
 void Func_02001d0c();
 void Func_02001d1c();
@@ -83,7 +85,7 @@ void FieldScene_RunScene3ae_020006c8(void)
         Func_02001c94(20);
         Call1(Func_02001d3a, 0x1f18);
         Func_02001d52(11, 0);
-        if (Value1(Func_02001c80, 0x8a6) != 0) {
+        if (Value1(Func_02001c80_a, 0x8a6) != 0) {
             Func_02001cb2(20);
             Call3(Func_02001d96, 11, 0x102, 40);
             Value2(Func_02001d6e, 11, 0);
@@ -93,12 +95,12 @@ void FieldScene_RunScene3ae_020006c8(void)
                 Call1(Func_02001cc6, 0x8a8);
                 goto L_020007be;
             }
-            ((void (*)())Func_02001cee)(10);
+            ((void (*)())Func_02001cee_a)(10);
             bump_step(1);
             Func_02001db6(11, 0);
             Func_02001d0c(10);
             Func_02001dde(11, 0, 0);
-            Func_02001d1c(30);
+            Func_02001d1c_a(30);
         } else {
             Func_02001d24(10);
             Func_02001df6(11, 0, 0);

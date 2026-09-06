@@ -7,7 +7,8 @@ extern u8 Data_03001ebc[];
 void Func_020077f8();
 void Func_0200783a();
 void Func_02007862();
-void Func_02007872();
+void Func_02007872_a();
+void Func_02007872_b();
 void Func_0200788a();
 void Func_0200788c();
 void Func_020078da();
@@ -68,8 +69,8 @@ void FieldScene_RunScene3bf_020021c4(void)
     Func_02007920((base5_240d + 1));
     Func_02007938(13, 0);
     Func_020079bc();
-    Func_02007872(60);
+    Func_02007872_a(60);
     Func_020079a8(60);
     Func_0200788c();
-    Call1(Func_02007872, 0x225);
+    Call1(Func_02007872_b, 0x225);
 }

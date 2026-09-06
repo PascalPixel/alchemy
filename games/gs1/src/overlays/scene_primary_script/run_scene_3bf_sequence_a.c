@@ -9,7 +9,8 @@ s32 Func_02002d10();
 s32 Func_02002fae();
 s32 Func_02006cb8();
 void Func_02006cec();
-s32 Func_02006cf4();
+s32 Func_02006cf4_a();
+s32 Func_02006cf4_b();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -51,10 +52,10 @@ void FieldScene_RunScene3bfSequenceA(void)
             if (Data_02000240_t[147][0] == 0) {
                 if (Value1(Func_02002fae, 17) != 0) {
                     Call1(Func_02006cec, 0x215);
-                    Call1(Func_02006cf4, 0x214);
+                    Call1(Func_02006cf4_a, 0x214);
                 }
             }
-            if (Value1(Func_02006cf4, 0x214) != 0) {
+            if (Value1(Func_02006cf4_b, 0x214) != 0) {
                 {
                     volatile u16 *target = (volatile u16 *)(((s32)p5 + 0x182));
                     s32 shown = 94;

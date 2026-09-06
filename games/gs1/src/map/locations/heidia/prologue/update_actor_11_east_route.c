@@ -8,7 +8,7 @@ struct S {
     s32 f10;
 };
 
-extern struct S *Func_02004f84(s32 arg0);
+extern struct S *Func_02004f84_a(s32 arg0);
 extern struct S *Func_02004f8e(s32 arg0);
 extern struct S *Func_02004fa0(s32 arg0);
 extern struct S *Func_02004fce(s32 arg0);
@@ -19,7 +19,7 @@ extern void Func_02004f84_b(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void Func_02004f94(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 void UpdateActor11EastRoute(void) {
-    s32 x = Func_02004f84(11)->f08 >> 20;
+    s32 x = Func_02004f84_a(11)->f08 >> 20;
     s32 y = Func_02004f8e(11)->f10 >> 20;
 
     if (x != 36) {

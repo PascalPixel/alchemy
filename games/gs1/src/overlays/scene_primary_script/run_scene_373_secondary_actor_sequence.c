@@ -8,10 +8,13 @@ void Func_02008cf2();
 void Func_02008cfc();
 s32 Func_02008d20();
 void Func_02008d32();
+void Func_02008d32_a();
 void Func_02008d38();
 void Func_02008d42();
 void Func_02008d52();
+void Func_02008d52_a();
 void Func_02008d7c();
+void Func_02008d7c_a();
 void Func_02008d86();
 s32 Func_02008d92();
 void Func_02008db8();
@@ -28,6 +31,7 @@ void Func_02008e10();
 void Func_02008e1c();
 void Func_02008e24();
 void Func_02008e2e();
+void Func_02008e2e_a();
 s32 Func_02008e3a();
 void Func_02008e5a();
 void Func_02008e62();
@@ -39,6 +43,7 @@ void Func_02008e88();
 void Func_02008e92();
 s32 Func_02008ea0();
 void Func_02008eaa();
+void Func_02008eaa_a();
 void Func_02008eac();
 void Func_02008eae();
 void Func_02008ebe();
@@ -51,7 +56,9 @@ void Func_02008ee2();
 void Func_02008eec();
 void Func_02008ef6();
 void Func_02008efa();
+void Func_02008efa_a();
 void Func_02008f08();
+void Func_02008f08_a();
 void Func_02008f14();
 void Func_02008f1a();
 void Func_02008f2c();
@@ -67,7 +74,7 @@ void Func_02008f32();
 #define ObjectGroup_ConfigureChildValue_1(args...) Func_02008d38(args)
 #define ObjectMotion_SetAngleToward_1(args...) Func_02008d32(args)
 #define SceneWork_SetStepValue_1(args...) Func_02008d52(args)
-#define ObjectMotion_SetVariantCallback_1(args...) Func_02008d32(args)
+#define ObjectMotion_SetVariantCallback_1(args...) Func_02008d32_a(args)
 #define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_02008d7c(args)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02008dc8, a0, a1)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02008de0, a0, a1, a2, a3)
@@ -78,7 +85,7 @@ void Func_02008f32();
 #define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02008de2, a0, a1, a2)
 #define Scene_GetRecord_1(a0) Value1(Func_02008d20, a0)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1(args...) Func_02008d86(args)
-#define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02008d7c, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02008d7c_a, a0, a1, a2)
 #define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02008e10, a0, a1, a2)
 #define BattleEvent_RunActionAndWait_1(a0, a1) Call2(Func_02008e00, a0, a1)
 #define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02008e24, a0, a1, a2)
@@ -86,7 +93,7 @@ void Func_02008f32();
 #define BattleEvent_RunActionAndWait_2(a0, a1) Call2(Func_02008e1c, a0, a1)
 #define Object_SetModeById_1(args...) Func_02008dd4(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02008de4(args)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_02008d52(args)
+#define BattleRuntime_WaitIfModeZero_1(args...) Func_02008d52_a(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02008e0a(args)
 #define ObjectMotion_SetSpeedParameters_3(a0, a1) Value2(Func_02008e3a, a0, a1)
 #define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_02008d92, a0, a1)
@@ -97,7 +104,7 @@ void Func_02008f32();
 #define BattleRuntime_RunThenWaitIfModeZero_3(a0, a1, a2) Call3(Func_02008e92, a0, a1, a2)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_02008e62(args)
 #define BattleRuntime_WaitIfModeZero_2(args...) Func_02008db8(args)
-#define BattleRuntime_RunThenWaitIfModeZero_4(a0, a1, a2) Call3(Func_02008eaa, a0, a1, a2)
+#define BattleRuntime_RunThenWaitIfModeZero_4(a0, a1, a2) Call3(Func_02008eaa_a, a0, a1, a2)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_02008e7a(args)
 #define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3(Func_02008ece, a0, a1, a2)
 #define BattleEvent_RunActionAndWait_3(a0, a1) Call2(Func_02008ebe, a0, a1)
@@ -109,17 +116,17 @@ void Func_02008f32();
 #define ObjectMotion_CallThenWaitForAnimationChange_4(args...) Func_02008eae(args)
 #define BattleRuntime_RunThenWaitIfModeZero_8(a0, a1, a2) Call3(Func_02008f08, a0, a1, a2)
 #define ObjectMotion_CallThenWaitForAnimationChange_5(args...) Func_02008ec0(args)
-#define BattleRuntime_WaitIfModeZero_3(args...) Func_02008e2e(args)
+#define BattleRuntime_WaitIfModeZero_3(args...) Func_02008e2e_a(args)
 #define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3(Func_02008f32, a0, a1, a2)
 #define BattleRuntime_RunThenWaitIfModeZero_9(a0, a1, a2) Call3(Func_02008f2c, a0, a1, a2)
 #define Object_SetModeById_2(args...) Func_02008edc(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_6(args...) Func_02008eec(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_02008e5a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_7(args...) Func_02008efa(args)
-#define Object_SetModeById_3(args...) Func_02008efa(args)
+#define Object_SetModeById_3(args...) Func_02008efa_a(args)
 #define Scene_GetRecord_2(a0) Value1(Func_02008ea0, a0)
 #define ObjectMotion_ResetAndSetPosition_1(args...) Func_02008eda(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_02008f08(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_02008f08_a(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_02008f1a(args)
 #define GameFlag_Set_1(a0) Call1(Func_02008e88, a0)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02008eac(args)

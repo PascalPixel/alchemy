@@ -6,6 +6,7 @@ extern u8 Data_03001ebc[];
 void Func_02002424();
 s32 Func_02002442();
 s32 Func_0200244c();
+s32 Func_0200244c_a();
 s32 Func_02002458();
 s32 Func_02002460();
 s32 Func_02002468();
@@ -16,6 +17,7 @@ void Func_020024a8();
 void Func_020024b6();
 void Func_020024ea();
 s32 Func_020024f2();
+void Func_020024f2_a();
 void Func_020024f4();
 void Func_020024fc();
 void Func_020024fe();
@@ -66,7 +68,7 @@ void FieldScene_RunScene3a0_02001060(void)
     Call2((void (*)())Func_0200244c, 18, 1);
     record = Func_02002442(18);
     *(volatile s32 *)(record + 108) = 0;
-    record = Func_0200244c(18);
+    record = Func_0200244c_a(18);
     *(volatile s32 *)(record + 56) = -0x80000000;
     record = Value1(Func_02002458, 18);
     *(volatile s32 *)(record + 64) = -0x80000000;
@@ -91,5 +93,5 @@ void FieldScene_RunScene3a0_02001060(void)
     Call2(Func_020024fc, 18, 0x20095b0);
     record = Func_020024f2(18);
     *(volatile s32 *)(record + 108) = 0x2008501;
-    Call0((void (*)())Func_020024f2);
+    Call0(Func_020024f2_a);
 }

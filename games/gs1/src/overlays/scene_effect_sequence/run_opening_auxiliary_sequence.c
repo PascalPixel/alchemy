@@ -16,6 +16,7 @@ void Func_020045f8();
 s32 Func_020045fc();
 void Func_02004604();
 void Func_02004612();
+void Func_02004612_a();
 s32 Func_02004614();
 void Func_02004626();
 void Func_0200462c();
@@ -117,8 +118,8 @@ void RunOpeningAuxiliarySequence(s32 a)
             Func_020046ce(a, 0);
         }
         Func_02004604(10);
-        Func_0200469c(a, 3);
-        Func_02004612(20);
+        Func_0200469c_a(a, 3);
+        Func_02004612_a(20);
         Call3(Func_02004776, a, -64, 0);
         Func_02004780(a, 0, 48);
     }

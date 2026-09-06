@@ -16,6 +16,7 @@ void Func_02006cb6();
 void Func_02006cc4();
 void Func_02006ce4();
 void Func_02006d1e();
+void Func_02006d1e_a();
 void Func_02006d36();
 void Func_02006d38();
 void Func_02006d50();
@@ -65,7 +66,7 @@ void FieldScene_RunScene3b1_02000728(void)
         Func_02006cc4(8, 3);
     } else {
         if (Value1(Func_02006c0c, 0x925) != 0) {
-            Call1(Func_02006d1e, 0x1e06);
+            Call1(Func_02006d1e_a, 0x1e06);
             Func_02006d36(8, 0);
         } else {
             if (Value1(Func_02006c26, 0x921) != 0) {

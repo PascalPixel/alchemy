@@ -12,7 +12,7 @@ extern void Func_020041fe(void);
 extern s32 Func_020018d6(struct Resource39fProbe *);
 extern void Func_02001a82(struct Resource39fProbe);
 extern void Func_020041e8(s32, s32, s32, s32, s32, s32);
-extern void Func_02004246(s32);
+extern void Func_02004246_a(s32);
 extern void Func_020042b6(s32, s32);
 extern void Func_020042aa(s32, s32, s32);
 extern void Func_02004268(s32);
@@ -44,7 +44,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
             /* Written here, not at the call: the reference keeps it in a
              * callee-saved register across the whole sequence. */
             value = 0;
-            Func_02004246(0x311);
+            Func_02004246_a(0x311);
             Func_020042b6(10, 3);
             Func_020042aa(10, -16, 6);
             Func_02004268(30);

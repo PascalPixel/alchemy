@@ -10,7 +10,8 @@ s32 Func_020075b4();
 s32 Func_020075c0();
 s32 Func_020075de();
 void Func_02007640();
-s32 Func_0200764c();
+s32 Func_0200764c_a();
+s32 Func_0200764c_b();
 void Func_02007654();
 void Func_0200767e();
 void Func_02007690();
@@ -21,7 +22,8 @@ void Func_02007726();
 s32 Func_0200772a();
 void Func_02007734();
 void Func_02007772();
-void Func_0200778a();
+void Func_0200778a_a();
+void Func_0200778a_b();
 void Func_02007788();
 void Func_02007782();
 void Func_0200777c();
@@ -107,12 +109,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         }
         if (count <= 1) {
             Func_02007772(0x2083);
-            Func_0200778a(owner, 0);
+            Func_0200778a_a(owner, 0);
             return;
         }
         if (Value1(Func_020075c0, base + 512) != 0) {
             Func_02007772(0x2084);
-            Func_0200778a(owner, 0);
+            Func_0200778a_a(owner, 0);
             return;
         }
         if (mode == 2) {
@@ -121,7 +123,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         } else {
             Call1(Func_020076dc, 0x207d);
             Value2(Func_020076ec, owner, 0);
-            state = Value2(Func_0200764c, 0, 0);
+            state = Value2(Func_0200764c_a, 0, 0);
         }
         if (state == 0) {
             if (state < count) {
@@ -147,11 +149,11 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         }
     }
     Func_02007772(0x207e);
-    Func_0200778a(owner, 0);
+    Func_0200778a_a(owner, 0);
     return;
 L_main:
-    ((void (*)())Func_0200764c)(obj, 1);
-    Call1(Func_0200778a, 0x207f);
+    ((void (*)())Func_0200764c_b)(obj, 1);
+    Call1(Func_0200778a_b, 0x207f);
     Func_020077a2(owner, 0);
     Call3(Func_02007718, 0, 0x10000, 0x8000);
     Call3(Func_02007726, obj, 0x10000, 0x8000);

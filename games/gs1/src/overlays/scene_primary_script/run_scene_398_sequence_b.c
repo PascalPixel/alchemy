@@ -6,6 +6,7 @@ extern u8 Data_03001ebc[];
 void Func_02000c7c();
 s32 Func_02000c84();
 s32 Func_02000c8c();
+void Func_02000c8c_a(s32);
 void Func_02000c9c();
 s32 Func_02000ca4();
 void Func_02000cae();
@@ -16,6 +17,7 @@ void Func_02000ce0();
 void Func_02000ce2();
 void Func_02000ce4();
 s32 Func_02000d0e();
+s32 Func_02000d0e_a(s32);
 void Func_02000d1e();
 void Func_02000d26();
 void Func_02000d28();
@@ -73,7 +75,7 @@ void FieldScene_RunScene398SequenceB(void)
         Call1(Func_02000c7c, 0x303);
     } else {
         L_02000330:;
-        Call1(Func_02000c8c, 0x303);
+        Call1(Func_02000c8c_a, 0x303);
     }
     if ((*(volatile s32 *)(rec8 + 8) >> 20) == 35) {
         if ((*(volatile s32 *)(rec8 + 16) >> 20) != 23) {
@@ -103,7 +105,7 @@ void FieldScene_RunScene398SequenceB(void)
     Call1(Func_02000d0e, 0x302);
     goto L_02000414;
     L_020003c2:;
-    if (Value1(Func_02000d0e, 0x302) != 0) {
+    if (Value1(Func_02000d0e_a, 0x302) != 0) {
         Func_02000d36();
         Func_02000d34(40);
         Func_02000d82(220);

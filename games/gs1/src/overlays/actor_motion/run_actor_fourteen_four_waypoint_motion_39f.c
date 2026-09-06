@@ -10,13 +10,13 @@ extern void Func_02002638(s32, s32, s32, s32);
 extern void Func_0200464a(s32);
 extern void Func_020023b4(s32, s32, s32, s32, s32, s32, s32, s32);
 extern void Func_02004728(s32, s32);
-extern void Func_020046fa(s32, s32, s32);
+extern void Func_020046fa_a(s32, s32, s32);
 extern void Func_02004680(s32);
 extern void Func_020046f0(s32, s32);
 extern void Func_02004742(s32, s32);
 extern void Func_0200469c(s32);
 extern void Func_020026a2(s32, s32, s32, s32);
-extern void Func_02004730(s32, s32, s32);
+extern void Func_02004730_a(s32, s32, s32);
 extern void Func_020046be(s32);
 extern void Func_020026c0(s32, s32, s32, s32);
 extern void Func_0200474e(s32, s32, s32);
@@ -51,7 +51,7 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
                   0, 0, 0, 1, 0);
 
     Func_02004728(14, 1);
-    Func_020046fa(14, 0, 0);
+    Func_020046fa_a(14, 0, 0);
     Func_02004680(20);
     Func_020046f0(14, 2);
     Func_02004742(14, 258);                     /* 129 << 1 */
@@ -59,7 +59,7 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
 
     /* Four waypoints; Z is 132 << 2 and the height 192 << 10 throughout. */
     Func_020026a2(14, 360, 528, 0x30000);
-    Func_02004730(0, 14, 0);
+    Func_02004730_a(0, 14, 0);
     Func_020046be(6);
 
     Func_020026c0(14, 328, 528, 0x30000);

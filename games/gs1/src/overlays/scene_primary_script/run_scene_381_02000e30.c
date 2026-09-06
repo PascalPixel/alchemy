@@ -12,6 +12,7 @@ void Func_0200437c();
 void Func_020043a6();
 void Func_020043b8();
 void Func_020043fc();
+void Func_020043fc_a();
 void Func_02004434();
 void Func_0200443e();
 void Func_020044c2();
@@ -61,7 +62,7 @@ void FieldScene_RunScene381_02000e30(s32 a0)
     rec7 = Value1(Func_02004364, p10);
     rec2 = Func_0200436c(p10);
     Func_0200430a(rec2, 0);
-    Call2(Func_020043fc, p10, 0x100);
+    Call2(Func_020043fc_a, p10, 0x100);
     rec7[85] = 0;
     Func_020044c2(201);
     base6_0 = 0;

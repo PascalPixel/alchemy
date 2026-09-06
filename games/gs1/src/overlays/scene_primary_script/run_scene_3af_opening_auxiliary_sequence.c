@@ -5,7 +5,8 @@
 extern u8 Data_03001ebc[];
 s32 Func_02004cfe();
 s32 Func_02004d1e();
-s32 Func_02004d38();
+s32 Func_02004d38_a();
+s32 Func_02004d38_b();
 s32 Func_02004d98();
 s32 Func_02004da6();
 void Func_02004dc0();
@@ -68,12 +69,12 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 record;
     s32 shown;
 
-    ((void (*)())Func_02004d38)();
+    ((void (*)())Func_02004d38_a)();
     if (Value1(Func_02004d1e, 0x925) != 0) {
         Call1(Func_02004e08, 0x1e08);
         Func_02004e20(21, 0);
     } else {
-        if (Value1(Func_02004d38, 0x922) != 0) {
+        if (Value1(Func_02004d38_b, 0x922) != 0) {
             Func_02004e0c(21, 2);
             Call1(Func_02004e2a, 0x1d6f);
             Func_02004e42(21, 0);
@@ -91,4 +92,3 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     }
     Func_02004dc0();
 }
-

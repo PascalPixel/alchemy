@@ -7,6 +7,7 @@ extern void Func_020053d4(s32);
 extern void Func_020053da(s32);
 extern void Func_020053e0(s32);
 extern s32 Func_020053e6(s32);
+extern s32 Func_020053e6_a(s32);
 extern void Func_020053f8(s32);
 extern s32 Func_02005406(s32);
 extern void Func_02003842(void);
@@ -18,7 +19,7 @@ void SceneState_CheckFlags941And940(void) {
         Func_020053e0(0x912);
         Func_020053e6(0x915);
     }
-    if (Func_020053e6(0x940) != 0) {
+    if (Func_020053e6_a(0x940) != 0) {
         Func_020053f8(0x321);
     }
     if (Data_02000240[225] != 0) {

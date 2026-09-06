@@ -22,33 +22,39 @@ pub struct Options {
     pub asm: bool,
     pub patch: Option<String>,
 }
+impl Options {
+    pub fn gs1(source: String) -> Self {
+        Self {
+            source,
+            rom: None,
+            work: None,
+            flags: Vec::new(),
+            configuration: CandidateCompilerConfiguration {
+                family: Some(CandidateCompilerFamily::Routed),
+                ..Default::default()
+            },
+            target: CompilerTarget::Gs1,
+            owner: None,
+            overlay: None,
+            unit: None,
+            precompiled_object: None,
+            size: None,
+            align: false,
+            first: false,
+            allocator_order: false,
+            asm: false,
+            patch: None,
+        }
+    }
+}
 #[derive(Debug)]
 pub enum ParseOutcome {
     Help,
     Options(Box<Options>),
 }
 pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> {
-    let mut options = Options {
-        source: String::new(),
-        rom: Some(root.join("roms/gs1-en.gba").to_string_lossy().into_owned()),
-        work: None,
-        flags: Vec::new(),
-        configuration: CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Routed),
-            ..Default::default()
-        },
-        target: CompilerTarget::Gs1,
-        owner: None,
-        overlay: None,
-        unit: None,
-        precompiled_object: None,
-        size: None,
-        align: false,
-        first: false,
-        allocator_order: false,
-        asm: false,
-        patch: None,
-    };
+    let mut options = Options::gs1(String::new());
+    options.rom = Some(root.join("roms/gs1-en.gba").to_string_lossy().into_owned());
     let mut rest = Vec::new();
     let mut rom_explicit = false;
     let mut index = 0;

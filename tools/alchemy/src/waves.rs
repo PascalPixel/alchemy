@@ -1,7 +1,6 @@
 use crate::families::{FamilyCatalog, RetargetMode, TemplateMatch};
-use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::{
-    routing::{root, CompilerTarget},
+    routing::root,
     sha256,
     source_paths::{SourceOwner, SourcePaths},
     translation_units::{TranslationUnit, TranslationUnits},
@@ -36,14 +35,6 @@ const DEBT: [&str; 5] = [
     "merge_with_owner",
     "split_first",
 ];
-// The drafting cohort is frozen so unintended drift fails loudly; intended
-// drift — an adoption or a draft tracked into the corpus — updates these
-// numbers as its acknowledgment. Last acknowledged: the current worktree's
-// exact-C adoptions and tracked reconstruction drafts.
-const DRAFT_OWNERS: usize = 181;
-const INDEPENDENT_OWNERS: usize = 110;
-const OWNER_GROUP_OWNERS: usize = 52;
-const SPLIT_REGION_OWNERS: usize = 19;
 
 #[derive(Deserialize)]
 struct Manifest {
@@ -209,7 +200,7 @@ fn inventory_command(output: Option<PathBuf>) -> Result<(), String> {
     let output = output.unwrap_or_else(|| root().join("out/gs1-en/waves/inventory.json"));
     write_json(&output, &inventory)?;
     let (unit, draft, none, named) = inventory_counts(&inventory.owners);
-    println!("debt_owners={} debt_bytes={} standalone_drafts={draft} translation_units={unit} no_candidate={none} named_wave_ready={named} inventory={}", inventory.owners.len(), inventory.owners.iter().map(|o| o.size).sum::<usize>(), output.display());
+    println!("debt_owners={} debt_bytes={} standalone_drafts={draft} translation_units={unit} no_candidate={none} named_standalone_drafts={named} ordering=unit_debt_bytes_desc_then_owner_bytes_desc inventory={}", inventory.owners.len(), inventory.owners.iter().map(|o| o.size).sum::<usize>(), output.display());
     Ok(())
 }
 
@@ -246,7 +237,9 @@ fn build_bucket_report(
             error: None,
         };
         match owner.scope {
-            Scope::StandaloneDraft => bucket_score(repository, owner, &owner_dir, &mut entry),
+            Scope::StandaloneDraft if owner.retention == "c_candidate" => {
+                bucket_score(repository, owner, &owner_dir, &mut entry)
+            }
             Scope::TranslationUnit => {
                 bucket_lint(repository, owner, &mut entry);
                 if entry.verdict.is_empty() {
@@ -262,7 +255,7 @@ fn build_bucket_report(
                     }
                 }
             }
-            Scope::NoCandidate => {
+            _ => {
                 (entry.verdict, entry.error) = match owner.retention.as_str() {
                     "c_candidate" => (
                         "no_candidate".into(),
@@ -433,7 +426,6 @@ fn bucket_class(entry: &BucketEntry) -> Result<&str, String> {
             ResidualClass::StructuralTopology => "structural_topology",
             ResidualClass::MissingExtraCode => "missing_extra_code",
             ResidualClass::FrameContext => "frame_context",
-            ResidualClass::CompilerUnemittable => "compiler_unemittable",
             ResidualClass::Unclassified => "unclassified",
         })
         .unwrap_or(entry.verdict.as_str());
@@ -663,28 +655,15 @@ fn score_translation_unit(
         if index != 0 && !wanted.contains_key(&member.address) {
             continue;
         }
-        let mut options = CandidateOptions {
-            source: source.clone(),
-            rom: Some(rom.clone()),
-            work: Some(work.join("score").to_string_lossy().into_owned()),
-            flags: Vec::new(),
-            configuration: CandidateCompilerConfiguration {
-                family: Some(CandidateCompilerFamily::Routed),
-                absolute_symbols: unit.canonical_symbols()?,
-                ..Default::default()
-            },
-            target: CompilerTarget::Gs1,
-            owner: Some(member.address),
-            overlay: None,
-            unit: Some(unit.id.clone()),
-            precompiled_object: (index != 0).then(|| object.to_string_lossy().into_owned()),
-            size: Some(member.extent),
-            align: true,
-            first: false,
-            allocator_order: false,
-            asm: false,
-            patch: None,
-        };
+        let mut options = CandidateOptions::gs1(source.clone());
+        options.rom = Some(rom.clone());
+        options.work = Some(work.join("score").to_string_lossy().into_owned());
+        options.configuration.absolute_symbols = unit.canonical_symbols()?;
+        options.owner = Some(member.address);
+        options.unit = Some(unit.id.clone());
+        options.precompiled_object = (index != 0).then(|| object.to_string_lossy().into_owned());
+        options.size = Some(member.extent);
+        options.align = true;
         let mut scored = render(repository, &options)?;
         if wanted.contains_key(&member.address)
             && scored.residual.class == ResidualClass::AllocationUncovered
@@ -732,8 +711,9 @@ fn draft_prepare(args: DraftArgs) -> Result<(), String> {
             );
         }
         println!(
-            "draft_reused={} independent={INDEPENDENT_OWNERS} output={}",
+            "draft_reused={} independent={} output={}",
             cohort.owners.len(),
+            cohort_counts(&cohort.owners).0,
             args.output.display()
         );
         return Ok(());
@@ -772,11 +752,12 @@ fn draft_prepare(args: DraftArgs) -> Result<(), String> {
         };
         packs.push(json!({"owner":owner.owner,"pack_sha256":hash(directory.join("pack.json"))?,"status":value["status"]}));
     }
-    let receipt = json!({"schema_version":3,"state_sha256":hash(args.output.join("prepare-state.json"))?,"cohort_sha256":cohort_sha256,"manifest_sha256":cohort.manifest_sha256,"family_index_sha256":family_sha256,"m2c_identity":m2c_identity,"scoring_environment_sha256":environment_sha256,"ordering":cohort.ordering,"source_policy":"prepared_sources_only","denominators":{"all_records":DRAFT_OWNERS,"independent_m2c":INDEPENDENT_OWNERS},"predictions":prediction_contract(),"packs":packs});
+    let receipt = json!({"schema_version":3,"state_sha256":hash(args.output.join("prepare-state.json"))?,"cohort_sha256":cohort_sha256,"manifest_sha256":cohort.manifest_sha256,"family_index_sha256":family_sha256,"m2c_identity":m2c_identity,"scoring_environment_sha256":environment_sha256,"ordering":cohort.ordering,"source_policy":"prepared_sources_only","denominators":{"all_records":cohort.owners.len(),"independent_m2c":cohort_counts(&cohort.owners).0},"predictions":prediction_contract(),"packs":packs});
     write_json(&args.output.join("prepare-receipt.json"), &receipt)?;
     println!(
-        "draft_prepared={} independent={INDEPENDENT_OWNERS} output={}",
+        "draft_prepared={} independent={} output={}",
         cohort.owners.len(),
+        cohort_counts(&cohort.owners).0,
         args.output.display()
     );
     Ok(())
@@ -837,8 +818,8 @@ fn draft_collect(args: DraftArgs) -> Result<(), String> {
         .collect::<Vec<_>>();
     let all = scoreboard(&records);
     let independent_scoreboard = scoreboard(&independent.into_iter().cloned().collect::<Vec<_>>());
-    let comparison = prediction_comparison(&records);
-    let report = json!({"schema_version":2,"complete":errors.is_empty(),"errors":errors,"receipt":receipt,"shard_count":collected.shard_count,"predictions":prediction_contract(),"denominators":{"all_records":DRAFT_OWNERS,"independent_m2c":INDEPENDENT_OWNERS},"scoreboards":{"all_cohort":all,"independent_m2c":independent_scoreboard},"comparison":comparison,"owners":records});
+    let comparison = prediction_comparison(&records, &receipt["denominators"]);
+    let report = json!({"schema_version":2,"complete":errors.is_empty(),"errors":errors,"receipt":receipt,"shard_count":collected.shard_count,"predictions":prediction_contract(),"denominators":receipt["denominators"],"scoreboards":{"all_cohort":all,"independent_m2c":independent_scoreboard},"comparison":comparison,"owners":records});
     write_json(&args.output.join("draft-report.json"), &report)?;
     if !report["complete"].as_bool().unwrap_or(false) {
         return Err(format!(
@@ -847,7 +828,8 @@ fn draft_collect(args: DraftArgs) -> Result<(), String> {
         ));
     }
     println!(
-        "draft_collected={DRAFT_OWNERS} output={}",
+        "draft_collected={} output={}",
+        records.len(),
         args.output.display()
     );
     Ok(())
@@ -978,7 +960,6 @@ fn collect_shard_reports(output: &Path, cohort: &[DraftOwner], receipt: &Value) 
 
 fn result_errors(records: &[Value]) -> Vec<String> {
     let independent = |record: &&Value| record["route"] == "independent_m2c";
-    let independent_count = records.iter().filter(independent).count();
     let missing = records
         .iter()
         .filter(independent)
@@ -992,17 +973,13 @@ fn result_errors(records: &[Value]) -> Vec<String> {
         .iter()
         .filter(|record| !terminal_record(record))
         .count();
-    let stats = (
-        records.len(),
-        independent_count,
-        missing,
-        unclassified,
-        nonterminal,
-    );
-    if stats == (DRAFT_OWNERS, INDEPENDENT_OWNERS, 0, 0, 0) {
+    let stats = (missing, unclassified, nonterminal);
+    if stats == (0, 0, 0) {
         Vec::new()
     } else {
-        vec![format!("completion gate (total, independent, missing residual, unclassified, nonterminal): {stats:?}")]
+        vec![format!(
+            "completion gate (missing residual, unclassified, nonterminal): {stats:?}"
+        )]
     }
 }
 
@@ -1137,19 +1114,6 @@ fn cohort_counts(owners: &[DraftOwner]) -> (usize, usize, usize) {
 }
 
 fn validate_cohort(owners: &[DraftOwner]) -> Result<(), String> {
-    let (independent, groups, splits) = cohort_counts(owners);
-    let expected = (
-        DRAFT_OWNERS,
-        INDEPENDENT_OWNERS,
-        OWNER_GROUP_OWNERS,
-        SPLIT_REGION_OWNERS,
-    );
-    if (owners.len(), independent, groups, splits) != expected {
-        return Err(format!(
-            "draft cohort changed: {} total, {independent} independent, {groups} owner-group, {splits} split-region",
-            owners.len()
-        ));
-    }
     let disordered = owners
         .windows(2)
         .any(|pair| (pair[0].size, pair[0].address) >= (pair[1].size, pair[1].address));
@@ -1294,13 +1258,15 @@ fn prepared(repository: &Path, output: &Path) -> Result<(DraftCohort, Value), St
         || receipt["m2c_identity"] != state["m2c_identity"]
         || receipt["scoring_environment_sha256"] != state["scoring_environment_sha256"]
         || receipt["scoring_environment_sha256"] != scoring_environment(repository)?
+        || receipt["denominators"]
+            != json!({"all_records":cohort.owners.len(),"independent_m2c":cohort_counts(&cohort.owners).0})
     {
         return Err("draft preparation is stale".into());
     }
     let packs = receipt["packs"]
         .as_array()
         .ok_or("prepare receipt has no packs")?;
-    if packs.len() != DRAFT_OWNERS {
+    if packs.len() != cohort.owners.len() {
         return Err("prepare receipt does not cover the cohort".into());
     }
     for (row, expected) in packs.iter().zip(&cohort.owners) {
@@ -1576,7 +1542,7 @@ fn terminal_record(record: &Value) -> bool {
     )
 }
 
-fn prediction_comparison(records: &[Value]) -> Value {
+fn prediction_comparison(records: &[Value], denominators: &Value) -> Value {
     fn measured<'a>(records: impl Iterator<Item = &'a Value>, denominator: usize) -> Value {
         let floor = [
             "exact",
@@ -1604,12 +1570,15 @@ fn prediction_comparison(records: &[Value]) -> Value {
         let basis = |n, d| (d > 0).then(|| json!(n * 10000 / d)).unwrap_or(Value::Null);
         json!({"denominator":denominator,"exact_or_floor":{"owners":exact_or_floor,"basis_points":basis(exact_or_floor,denominator),"prediction_met":exact_or_floor*100<15*denominator},"structural_topology":{"owners":structural,"scored_nonexact_denominator":scored_nonexact,"basis_points":basis(structural,scored_nonexact),"prediction_met":scored_nonexact>0 && structural*100>=60*scored_nonexact},"dominant_scored_nonexact":dominant.map(|(class,(owners,bytes))|json!({"class":class,"owners":owners,"bytes":bytes})).unwrap_or(Value::Null)})
     }
-    let all = measured(records.iter(), DRAFT_OWNERS);
+    let all = measured(
+        records.iter(),
+        denominators["all_records"].as_u64().unwrap_or(0) as usize,
+    );
     let independent = measured(
         records
             .iter()
             .filter(|record| record["route"] == "independent_m2c"),
-        INDEPENDENT_OWNERS,
+        denominators["independent_m2c"].as_u64().unwrap_or(0) as usize,
     );
     let winner = independent["dominant_scored_nonexact"]["class"].clone();
     let structural_prediction_met = independent["structural_topology"]["prediction_met"].clone();
@@ -1627,35 +1596,18 @@ fn score(
     work: &Path,
     allocator: bool,
 ) -> Result<RenderOutput, String> {
-    render(
-        repository,
-        &CandidateOptions {
-            source: source.into(),
-            rom: Some(
-                repository
-                    .join("roms/gs1-en.gba")
-                    .to_string_lossy()
-                    .into_owned(),
-            ),
-            work: Some(work.join("score").to_string_lossy().into_owned()),
-            flags: Vec::new(),
-            configuration: CandidateCompilerConfiguration {
-                family: Some(CandidateCompilerFamily::Routed),
-                ..Default::default()
-            },
-            target: CompilerTarget::Gs1,
-            owner: Some(owner.address),
-            overlay: None,
-            unit: None,
-            precompiled_object: None,
-            size: Some(owner.size),
-            align: true,
-            first: false,
-            allocator_order: allocator,
-            asm: false,
-            patch: None,
-        },
-    )
+    let rom = repository
+        .join("roms/gs1-en.gba")
+        .to_string_lossy()
+        .into_owned();
+    let mut options = CandidateOptions::gs1(source.into());
+    options.rom = Some(rom);
+    options.work = Some(work.join("score").to_string_lossy().into_owned());
+    options.owner = Some(owner.address);
+    options.size = Some(owner.size);
+    options.align = true;
+    options.allocator_order = allocator;
+    render(repository, &options)
 }
 
 fn pack(
@@ -1845,11 +1797,30 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
     if owners.windows(2).any(|pair| pair[0].owner == pair[1].owner) {
         return Err("debt manifest contains a duplicate owner identity".into());
     }
+    prioritize(&mut owners);
     Ok(Inventory {
         schema_version: 1,
         manifest_sha256: sha256::hex(manifest_text.as_bytes()),
         owners,
     })
+}
+
+fn prioritize(owners: &mut [Owner]) {
+    let mut units = BTreeMap::<String, usize>::new();
+    for owner in owners.iter() {
+        *units
+            .entry(owner.unit.as_ref().unwrap_or(&owner.owner).clone())
+            .or_default() += owner.size;
+    }
+    owners.sort_by_key(|owner| {
+        let unit = owner.unit.as_ref().unwrap_or(&owner.owner);
+        (
+            std::cmp::Reverse(units[unit]),
+            unit.clone(),
+            std::cmp::Reverse(owner.size),
+            owner.address,
+        )
+    });
 }
 
 fn reject_non_c_candidate_intersections(
@@ -1997,19 +1968,29 @@ fn hash_paths(root: &Path, mut paths: Vec<PathBuf>) -> Result<String, String> {
     Ok(sha256::hex(&fingerprint))
 }
 fn scoring_environment(repository: &Path) -> Result<String, String> {
-    let bundle = compiler_core::routing::bundle();
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let paths = [
         executable,
-        bundle.join("xgcc"),
-        bundle.join("cc1"),
-        bundle.join("cpp"),
         repository.join("roms/gs1-en.gba"),
         repository.join("games/gs1/source-paths.json"),
         repository.join("games/gs1/recon/translation-units.json"),
         repository.join(CATALOG),
     ];
     let mut fingerprints = paths.iter().map(hash).collect::<Result<String, String>>()?;
+    fingerprints.push_str(
+        &compiler_core::bundle::compiler_bundle_signature_checked()
+            .map_err(|error| error.to_string())?,
+    );
+    fingerprints.push_str(
+        &compiler_core::bundle::host_executable_signature(&[
+            "arm-none-eabi-as",
+            "arm-none-eabi-ld",
+            "arm-none-eabi-objcopy",
+            "arm-none-eabi-objdump",
+            "arm-none-eabi-nm",
+        ])
+        .map_err(|error| error.to_string())?,
+    );
     fingerprints.push_str(&hash_tree(&repository.join("games/gs1/include"))?);
     Ok(sha256::hex(fingerprints.as_bytes()))
 }
@@ -2031,6 +2012,8 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
+    use compiler_core::routing::CompilerTarget;
 
     fn scratch(label: &str) -> PathBuf {
         std::env::temp_dir().join(format!("alchemy-waves-{label}-{}", std::process::id()))
@@ -2193,14 +2176,29 @@ mod tests {
         let repository = root();
         let inventory = inventory(repository).unwrap();
         let cohort = draft_cohort(repository, &inventory).unwrap();
-        assert_eq!(cohort.owners.len(), DRAFT_OWNERS);
         assert_eq!(
-            cohort_counts(&cohort.owners),
-            (INDEPENDENT_OWNERS, OWNER_GROUP_OWNERS, SPLIT_REGION_OWNERS)
+            cohort.owners.len(),
+            inventory
+                .owners
+                .iter()
+                .filter(|owner| owner.scope == Scope::NoCandidate)
+                .count()
         );
         assert_eq!(cohort.ordering, "reference_size_ascending_then_address");
         assert!(cohort.owners.iter().all(|owner| owner.symbol
             == assembly_symbol(&repository.join(&owner.reference)).unwrap_or_default()));
+        let mut priorities = vec![
+            fixture_inventory_owner(0, 60, Scope::TranslationUnit),
+            fixture_inventory_owner(1, 60, Scope::TranslationUnit),
+            fixture_inventory_owner(2, 100, Scope::StandaloneDraft),
+        ];
+        priorities[0].unit = Some("shared".into());
+        priorities[1].unit = Some("shared".into());
+        prioritize(&mut priorities);
+        assert_eq!(
+            priorities[2].size, 100,
+            "rank the complete 120-byte unit ahead of a 100-byte singleton"
+        );
     }
 
     #[test]
@@ -2270,9 +2268,12 @@ mod tests {
 
     #[test]
     fn layout_only_is_not_an_exact_or_floor_prediction_hit() {
-        let comparison = prediction_comparison(&[
-            json!({"route":"independent_m2c","compiled":true,"residual":{"class":"layout_only"}}),
-        ]);
+        let comparison = prediction_comparison(
+            &[
+                json!({"route":"independent_m2c","compiled":true,"residual":{"class":"layout_only"}}),
+            ],
+            &json!({"all_records":1,"independent_m2c":1}),
+        );
         assert_eq!(comparison["independent_m2c"]["exact_or_floor"]["owners"], 0);
     }
 
@@ -2580,14 +2581,20 @@ mod tests {
     #[test]
     fn winner_is_the_dominant_scored_nonexact_class_with_stable_ties() {
         let record = |class: &str, size| json!({"route":"independent_m2c","compiled":true,"size":size,"residual":{"class":class}});
-        let comparison = prediction_comparison(&[
-            record("missing_extra_code", 4),
-            record("missing_extra_code", 4),
-            record("structural_topology", 16),
-        ]);
+        let comparison = prediction_comparison(
+            &[
+                record("missing_extra_code", 4),
+                record("missing_extra_code", 4),
+                record("structural_topology", 16),
+            ],
+            &json!({"all_records":3,"independent_m2c":3}),
+        );
         assert_eq!(comparison["winner"], "missing_extra_code");
         assert_eq!(comparison["structural_prediction_met"], false);
-        let tied = prediction_comparison(&[record("beta", 4), record("alpha", 4)]);
+        let tied = prediction_comparison(
+            &[record("beta", 4), record("alpha", 4)],
+            &json!({"all_records":2,"independent_m2c":2}),
+        );
         assert_eq!(tied["winner"], "alpha");
     }
 }

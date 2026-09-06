@@ -10,7 +10,8 @@ void Func_02002cd8();
 void Func_02002d48();
 void Func_02002d78();
 void Func_02002d88();
-void Func_02002d98();
+void Func_02002d98_a();
+void Func_02002d98_b();
 void Func_02002dbc();
 void Func_02002e38();
 
@@ -55,10 +56,10 @@ void FieldScene_RunScene399_02000a3c(void)
         Func_02002d48(16, 0, 10);
         if (Value1(Func_02002c7e, 0x881) != 0) {
             Call1(Func_02002d78, 0x1653);
-            Func_02002d98(16, 0);
+            Func_02002d98_a(16, 0);
         } else {
             Call1(Func_02002d88, 0x154b);
-            Func_02002d98(16, 0);
+            Func_02002d98_b(16, 0);
         }
         Call3(Func_02002dbc, 16, 0x3000, 10);
         Func_02002cd8();

@@ -36,13 +36,14 @@ void Func_02002102();
 void Func_02001ffc();
 void Func_02001d72();
 void Func_020040e6();
-void Func_020040b8();
+void Func_020040b8_a();
+void Func_020040b8_b();
 void Func_0200403e();
 void Func_020040ae();
 void Func_020040f8();
 void Func_0200416e();
 void Func_0200405c();
-u8 *Func_02004082();
+u8 *Func_02004082_a();
 u8 *Func_0200408c();
 void Func_02002070();
 void Func_02004082_b();
@@ -70,7 +71,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
                   0, 0, 0, 1, 0);
 
     Func_020040e6(11, 1);
-    Func_020040b8(11, 0, 0);
+    Func_020040b8_a(11, 0, 0);
     Func_0200403e(30);
     Func_020040ae(11, 2);
     Func_020040f8(11, 0x103, 0);
@@ -80,7 +81,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
     Func_02002070(11,
-                  *(s16 *)(Func_02004082(0) + 10),
+                  *(s16 *)(Func_02004082_a(0) + 10),
                   *(s16 *)(Func_0200408c(0) + 18),
                   0x40000);                          /* 128 << 11 */
 
@@ -94,5 +95,5 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Func_02004184(53, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_020040b8();
+    Func_020040b8_b();
 }

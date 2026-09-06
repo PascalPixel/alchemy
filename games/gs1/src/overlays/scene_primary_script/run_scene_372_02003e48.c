@@ -18,6 +18,7 @@ void Func_02008622();
 void Func_02008624();
 void Func_0200862c();
 void Func_0200862e();
+void Func_0200862e_a();
 void Func_0200864c();
 void Func_02008656();
 void Func_0200865a();
@@ -33,8 +34,10 @@ void Func_020086ae();
 void Func_020086c8();
 s32 Func_020086ca();
 void Func_020086dc();
+void Func_020086dc_a();
 void Func_020086de();
 void Func_020086e6();
+void Func_020086e6_a();
 void Func_020086fe();
 void Func_02008706();
 void Func_02008722();
@@ -92,7 +95,7 @@ void FieldScene_RunScene372_02003e48(void)
         if (*(s16 *)(rec8 + 6) >= 0) {
             Func_02008624(8, 7);
         } else {
-            Func_0200862e(8, 8);
+            Func_0200862e_a(8, 8);
         }
         Func_02008656(8, 2);
         Func_0200859c(20);
@@ -119,9 +122,9 @@ void FieldScene_RunScene372_02003e48(void)
         Func_020086e6(8, 2);
         Func_0200862c(40);
         if (*(s16 *)(rec8 + 6) >= 0) {
-            Func_020086dc(8, 7);
+            Func_020086dc_a(8, 7);
         } else {
-            Func_020086e6(8, 8);
+            Func_020086e6_a(8, 8);
         }
         Func_0200864c(2);
         Func_02008706(8, 2, 0);

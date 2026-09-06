@@ -21,9 +21,9 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object) {
             if (facing_delta > 0x1000) {
                 facing_delta = 0x1000;
             }
-            /* The load at 0x0200006E owns the Thumb-like data word at 0x02000084. */
-            if (facing_delta < (s32)0xF842F001) {
-                facing_delta = (s32)0xF842F001;
+            /* The loader relocates the stored pool word to -0x1000. */
+            if (facing_delta < -0x1000) {
+                facing_delta = -0x1000;
             }
             object->facing = (u16) (old_facing + facing_delta);
         }

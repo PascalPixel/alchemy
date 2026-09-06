@@ -1319,8 +1319,7 @@ fn stem(address: u64) -> Result<String, String> {
     Ok(format!("{address:08x}"))
 }
 fn json<T: serde::de::DeserializeOwned>(path: impl AsRef<Path>) -> Result<T, String> {
-    let path = path.as_ref();
-    serde_json::from_str(&read(path)?).map_err(|error| format!("{}: {error}", path.display()))
+    compiler_core::build_io::read_json(path)
 }
 fn read(path: &Path) -> Result<String, String> {
     fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))

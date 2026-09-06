@@ -7,12 +7,14 @@ extern s16 Data_02000240[];
 
 s32 Func_020002e2(s32);
 s32 Func_02000332();
+s32 Func_02000332_a(s32, s32);
 s32 Func_02000342(s32, s32);
 void Func_02000334(s32);
 void Func_02000352(s32);
 void Func_0200035a(s32);
 void Func_02000372(s32, s32);
 s32 Func_0200037a();
+s32 Func_0200037a_a(s32, s32);
 s32 Func_0200038a(s32, s32);
 void Func_0200037c(s32);
 void Func_0200039a(s32);
@@ -115,7 +117,7 @@ void FieldScene_RunActorCue25b8Branch(s32 obj)
     s32 cue = (s32) &Value_000025b8;
     Func_02000332(cue);
     Func_02000342(obj, 0);
-    if (Func_02000332(0, 0) == 0) {
+    if (Func_02000332_a(0, 0) == 0) {
         Func_02000334(10);
         Func_02000352(cue + 1);
     } else {
@@ -129,7 +131,7 @@ void FieldScene_RunActorCue25dcBranch(s32 obj)
     s32 cue = (s32) &Value_000025dc;
     Func_0200037a(cue);
     Func_0200038a(obj, 0);
-    if (Func_0200037a(0, 0) == 0) {
+    if (Func_0200037a_a(0, 0) == 0) {
         Func_0200037c(10);
         Func_0200039a(cue + 1);
     } else {

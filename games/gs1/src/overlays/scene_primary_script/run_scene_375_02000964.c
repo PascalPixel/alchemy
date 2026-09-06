@@ -22,17 +22,22 @@ void Func_0200252a();
 void Func_02002530();
 void Func_02002536();
 void Func_02002540();
+void Func_02002540_a();
+void Func_02002540_b();
 void Func_0200254c();
 s32 Func_02002550();
 void Func_02002564();
 void Func_0200256a();
 s32 Func_02002570();
+s32 Func_02002570_a();
 void Func_02002572();
 void Func_02002574();
+void Func_02002574_a();
 void Func_02002584();
 void Func_02002586();
 void Func_0200258a();
 s32 Func_02002590();
+s32 Func_02002590_a();
 void Func_0200259a();
 void Func_020025aa();
 void Func_020025b8();
@@ -44,6 +49,7 @@ void Func_020025da();
 void Func_020025e8();
 void Func_020025ea();
 void Func_020025fa();
+void Func_020025fa_a();
 void Func_02002602();
 void Func_02002604();
 void Func_0200260e();
@@ -128,15 +134,15 @@ void FieldScene_RunScene375_02000964(void)
     Call3(Func_02002590, 0, 0x8000, 10);
     Func_02002530(0, 3);
     Func_02002540(1, 3);
-    Func_02002540(0, 0);
+    Func_02002540_a(0, 0);
     Func_020024d6(20);
     Func_020025b8(0, 0, 0);
     Call3(Func_020025c4, 5, 0x8000, 10);
     Func_02002564(5, 3);
     Func_02002574(0, 3);
-    Func_02002574(0, 0);
+    Func_02002574_a(0, 0);
     Call3(Func_02002536, 1, 0xcccc, 0x6666);
-    Call3(Func_02002540, 5, 0xcccc, 0x6666);
+    Call3(Func_02002540_b, 5, 0xcccc, 0x6666);
     Func_020025fa(0, 0xc000, 0);
     Func_0200259a(1, 2);
     record = Value1(Func_02002550, 0);
@@ -144,17 +150,17 @@ void FieldScene_RunScene375_02000964(void)
         Func_0200258a(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Func_020025ba(5, 2);
-    record = Value1(Func_02002570, 0);
+    record = Value1(Func_02002570_a, 0);
     if (record != 0) {
         Func_020025aa(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Func_020025da(13, 2);
-    record = Value1(Func_02002590, 0);
+    record = Value1(Func_02002590_a, 0);
     if (record != 0) {
         Func_020025ca(13, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Func_020025e8(1);
-    Func_020025fa(1, 0, 0);
+    Func_020025fa_a(1, 0, 0);
     Func_02002604(5, 0, 0);
     Func_02002602(13);
     Func_02002614(13, 0, 0);

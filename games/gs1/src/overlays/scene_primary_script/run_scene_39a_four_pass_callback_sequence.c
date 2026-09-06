@@ -30,6 +30,7 @@
 
 /* The callback, named by its in-image address. */
 void Func_02004224();
+void Func_02004224_a();
 void Func_0200422a();
 void Func_02004156();
 void Func_0200421a();
@@ -37,6 +38,7 @@ void Func_020041e4();
 void Func_020041fa();
 void Func_020040a0();
 void Func_0200412e();
+void Func_0200412e_a();
 void Func_0200413e();
 void Func_0200421e();
 void Func_02004234();
@@ -109,11 +111,11 @@ void FieldScene_RunFourPassCallbackSequence(void)
     Func_02004272((s32)0x10000, 1);
     Func_02004288(80);
     /* Same import as in the loop, one argument here. */
-    Func_0200412e(80);
+    Func_0200412e_a(80);
     /* movs r0,#0x82 / lsls r0,#4 builds 0x820. */
     Func_020041f6((s32)0x820);
     Func_0200420c(230);
     Func_020042e0();
     /* Same import as the first call, no argument register written here. */
-    Func_02004224();
+    Func_02004224_a();
 }

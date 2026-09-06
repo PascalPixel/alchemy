@@ -20,10 +20,12 @@ void Func_02002e0e();
 void Func_02002ec0();
 void Func_02004244();
 void Func_0200426e();
+void Func_0200426e_a();
 s32 Func_0200427e();
 void Func_0200428c();
 void Func_02004296();
 void Func_020042b2();
+void Func_020042b2_a();
 s32 Func_020042de();
 u8 *Scene_GetRecord_2();
 void Func_020042ea();
@@ -60,7 +62,7 @@ void Func_0200442a();
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_020042ea, a0, a1)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02004302, a0, a1, a2, a3)
 #define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_0200430e(args)
-#define UiText_DrawMessage_1(a0, a1) Call2(Func_0200426e, a0, a1)
+#define UiText_DrawMessage_1(a0, a1) Call2(Func_0200426e_a, a0, a1)
 #define GameFlag_IsSet_1(a0) Value1(Func_0200427e, a0)
 #define Audio_PlayCue_1(args...) Func_02004352(args)
 #define BattleRuntime_WaitIfModeZero_1(args...) Func_020042b2(args)
@@ -162,7 +164,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Object_SetModeById_1(REC_ID, 1);
         Call3(Func_0200428c, 0x200adfc, 80, 24);
         Call3(Func_02004296, 0x200ae50, 80, 28);
-        Call6(Func_020042b2, 65, 40, 16, 27, 2, 4);
+        Call6(Func_020042b2_a, 65, 40, 16, 27, 2, 4);
         Func_02002e0e();
         Func_020026e0(9);
         Func_020026e6(10);

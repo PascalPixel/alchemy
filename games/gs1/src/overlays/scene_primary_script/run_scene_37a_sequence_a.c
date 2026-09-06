@@ -16,7 +16,8 @@ void Func_02002a50();
 s32 Func_02002a5c();
 s32 Func_02002a72();
 void Func_02002a90();
-void Func_02002a9a();
+void Func_02002a9a_a();
+void Func_02002a9a_b();
 void Func_02002aa8();
 void Func_02002aae();
 void Func_02002aca();
@@ -85,10 +86,10 @@ void FieldScene_RunScene37aSequenceA(void)
         Func_02002a90();
     } else {
         if (Value1(Func_02002a72, 0x200) == 0) {
-            Func_02002a9a();
+            Func_02002a9a_a();
             Call2(Func_02002b8c, 0x10000, 1);
             Func_02002ba2(20);
-            Call1(Func_02002a9a, 0x200);
+            Call1(Func_02002a9a_b, 0x200);
             Call1(Func_02002aa8, 0x201);
             Call1(Func_02002aae, 0x202);
             Func_02002aca();

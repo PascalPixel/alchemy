@@ -15,7 +15,8 @@ void Func_0200a2ae();
 void Func_0200a2b2();
 void Func_0200a2ea();
 void Func_0200a2f0();
-void Func_0200a2f4();
+void Func_0200a2f4_a();
+void Func_0200a2f4_b();
 void Func_0200a300();
 s32 Func_0200a302();
 void Func_0200a30c();
@@ -27,10 +28,12 @@ void Func_0200a356();
 void Func_0200a36e();
 void Func_0200a37a();
 void Func_0200a380();
-void Func_0200a392();
+void Func_0200a392_a();
+void Func_0200a392_b();
 s32 Func_0200a3a2();
 void Func_0200a3ac();
-void Func_0200a3bc();
+void Func_0200a3bc_a();
+void Func_0200a3bc_b();
 void Func_0200a3c2();
 void Func_0200a3d2();
 
@@ -75,11 +78,11 @@ void RunActor20SceneSequence(void)
     s32 base5_2430;
 
     if (Value1(Func_0200a212, 0x226) != 0) {
-        Call1(Func_0200a2f4, 0x2434);
+        Call1(Func_0200a2f4_a, 0x2434);
         Func_0200a30c(20, 0);
     } else {
         Func_0200a24a();
-        Func_0200a2f4(20, 0, 0);
+        Func_0200a2f4_b(20, 0, 0);
         if (Value1(Func_0200a23a, 0x227) == 0) {
             Func_0200a2f0(20, 4, 0);
             Func_0200a2ae(20);
@@ -97,13 +100,13 @@ void RunActor20SceneSequence(void)
         }
         base5_2430 = (s32)Data_00002430;
         Func_0200a37a(base5_2430);
-        Func_0200a392(20, 0);
-        Call3(Func_0200a3bc, 20, 0x101, 40);
-        Func_0200a392((base5_2430 + 1));
+        Func_0200a392_a(20, 0);
+        Call3(Func_0200a3bc_a, 20, 0x101, 40);
+        Func_0200a392_b((base5_2430 + 1));
         Value2(Func_0200a3a2, 20, 0);
         if (Value2(Func_0200a302, 0, 0) == 0) {
             Func_0200a3ac((base5_2430 + 2));
-            Func_0200a3bc(20, 0);
+            Func_0200a3bc_b(20, 0);
             Call1(Func_0200a2ea, 0x226);
         } else {
             Func_0200a3c2((base5_2430 + 3));

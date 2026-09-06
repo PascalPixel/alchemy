@@ -23,5 +23,5 @@ void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
     }
     Func_020035fe(flag);
     Func_02002038(0x100 | selector);
-    Func_020035fe(244);
+    Func_020035fe_a(244);
 }

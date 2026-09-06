@@ -16,7 +16,8 @@ void Func_020075a6();
 void Func_020075c6();
 void Func_020075ce();
 void Func_020075d8();
-void Func_020075de();
+void Func_020075de_a();
+void Func_020075de_b();
 void Func_020075e2();
 void Func_020075e8();
 void Func_020075ec();
@@ -31,10 +32,13 @@ void Func_0200763c();
 void Func_0200763e();
 void Func_02007640();
 void Func_02007642();
-void Func_0200764c();
+void Func_0200764c_a();
+void Func_0200764c_b();
 void Func_02007650();
 void Func_02007656();
-void Func_02007662();
+void Func_02007662_a();
+void Func_02007662_b();
+void Func_02007662_c();
 void Func_02007664();
 void Func_0200766a();
 void Func_02007678();
@@ -63,12 +67,12 @@ void Func_02007782();
 #define Object_SetModeById_2(args...) Func_0200754c(args)
 #define Object_SetModeById_3(args...) Func_02007554(args)
 #define Object_SetModeById_4(args...) Func_0200755c(args)
-#define Audio_PlayCue_1(args...) Func_02007662(args)
-#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_020075de, a0, a1, a2)
+#define Audio_PlayCue_1(args...) Func_02007662_a(args)
+#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_020075de_a, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_1(args...) Func_020074f4(args)
 #define ObjectMotion_SetAngleToward_1(args...) Func_020075a6(args)
 #define SceneWork_SetStepValue_1(args...) Func_020075c6(args)
-#define BattleEvent_RunActionAndWait_1(args...) Func_020075de(args)
+#define BattleEvent_RunActionAndWait_1(args...) Func_020075de_b(args)
 #define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_0200760a, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_02007616, a0, a1, a2)
 #define ObjectMotion_SetAngleToward_2(args...) Func_020075d8(args)
@@ -82,10 +86,10 @@ void Func_02007782();
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02007600(args)
 #define SceneWork_SetStepValue_3(args...) Func_0200763e(args)
 #define BattleEvent_RunActionAndWait_3(args...) Func_02007656(args)
-#define SceneWork_SetStepValue_4(args...) Func_0200764c(args)
+#define SceneWork_SetStepValue_4(args...) Func_0200764c_a(args)
 #define BattleEvent_RunActionAndWait_4(args...) Func_02007664(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_0200763c(args)
-#define SceneWork_SetStepValue_5(args...) Func_02007662(args)
+#define SceneWork_SetStepValue_5(args...) Func_02007662_b(args)
 #define BattleEvent_RunActionAndWait_5(args...) Func_0200767a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_0200763a(args)
 #define SceneWork_SetStepValue_6(args...) Func_02007678(args)
@@ -95,7 +99,7 @@ void Func_02007782();
 #define ObjectMotion_SetAngleToward_5(args...) Func_02007680(args)
 #define ObjectMotion_SetAngleToward_6(args...) Func_0200768a(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_020075e8(args)
-#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_0200764c, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_0200764c_b, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_0200766a(args)
 #define ObjectMotion_SetAngleToward_7(args...) Func_020076ac(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_4(args...) Func_02007694(args)
@@ -108,7 +112,7 @@ void Func_02007782();
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_020076d6(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_020076e0(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_0200767c(args)
-#define GameFlag_Set_1(a0) Call1(Func_02007662, a0)
+#define GameFlag_Set_1(a0) Call1(Func_02007662_c, a0)
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

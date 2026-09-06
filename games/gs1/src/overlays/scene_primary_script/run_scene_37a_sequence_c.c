@@ -6,7 +6,8 @@ extern u8 Data_03001ebc[];
 void Func_02000bc4();
 s32 Func_02002704();
 s32 Func_02002b14();
-void Func_02002b3c();
+void Func_02002b3c_a();
+void Func_02002b3c_b();
 void Func_02002b4a();
 s32 Func_02002b4c();
 void Func_02002b50();
@@ -65,10 +66,10 @@ void FieldScene_RunScene37aSequenceC(void)
         if (record != 0) {
             goto L_020001d6;
         }
-        Func_02002b3c();
+        Func_02002b3c_a();
         Call2(Func_02002c2e, 0x10000, 1);
         Func_02002c44(20);
-        Call1(Func_02002b3c, 0x200);
+        Call1(Func_02002b3c_b, 0x200);
         Call1(Func_02002b4a, 0x201);
         Call1(Func_02002b50, 0x202);
         Func_02002b6c();

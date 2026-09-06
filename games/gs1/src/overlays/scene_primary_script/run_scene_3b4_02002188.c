@@ -21,6 +21,7 @@ s32 Func_0200470c();
 s32 Func_02004726();
 s32 Func_02004736();
 s32 Func_02004746();
+s32 Func_02004746_a();
 s32 Func_02004756();
 void Func_0200475e();
 s32 Func_02004766();
@@ -79,7 +80,7 @@ void FieldScene_RunScene3b4_02002188(void)
     if (Value1(Func_02004736, 0x9c1) != 0) {
         Func_02003178(1);
     }
-    if (Value1(Func_02004746, 0x9c2) != 0) {
+    if (Value1(Func_02004746_a, 0x9c2) != 0) {
         Func_02003188(2);
     }
     if (Value1(Func_02004756, 0x9c3) != 0) {

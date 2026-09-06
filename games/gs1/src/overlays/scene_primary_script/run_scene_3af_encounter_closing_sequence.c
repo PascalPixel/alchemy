@@ -48,11 +48,13 @@ void Func_020083ee();
 void Func_020083fa();
 void Func_02008404();
 void Func_02008440();
-void Func_02008446();
+void Func_02008446_a();
+void Func_02008446_b();
 void Func_02008450();
 void Func_02008458();
 void Func_0200845e();
-void Func_02008462();
+void Func_02008462_a();
+void Func_02008462_b();
 void Func_02008466();
 void Func_0200846c();
 void Func_0200846e();
@@ -108,13 +110,13 @@ void Func_02008618();
 #define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_0200837e, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_4(a0, a1, a2) Call3(Func_020083ca, a0, a1, a2)
 #define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3(Func_02008450, a0, a1, a2)
-#define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3(Func_02008462, a0, a1, a2)
+#define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3(Func_02008462_a, a0, a1, a2)
 #define ObjectMotion_ArmCallback_7(a0, a1, a2) Call3(Func_0200846e, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_02008490, a0, a1, a2)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_02008440(args)
-#define ObjectMotion_SetVariantCallback_1(args...) Func_02008446(args)
+#define ObjectMotion_SetVariantCallback_1(args...) Func_02008446_a(args)
 #define ObjectMotion_ArmCallback_8(a0, a1, a2) Value3(Func_0200849e, a0, a1, a2)
-#define Object_SetModeById_2(args...) Func_02008446(args)
+#define Object_SetModeById_2(args...) Func_02008446_b(args)
 #define ObjectMotion_Launch_2(args...) Func_02008466(args)
 #define Object_SetModeById_3(args...) Func_0200845e(args)
 #define ObjectMotion_SetPositionAndReset_5(a0, a1, a2) Call3(Func_02008458, a0, a1, a2)
@@ -128,7 +130,7 @@ void Func_02008618();
 #define ObjectMotion_SetSpeedParameters_6(a0, a1, a2) Call3(Func_02008480, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_6(a0, a1, a2) Call3(Func_020084cc, a0, a1, a2)
 #define ObjectMotion_EnableActionAndSetCallback_2(args...) Func_0200849c(args)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_02008462(args)
+#define BattleRuntime_WaitIfModeZero_2(args...) Func_02008462_b(args)
 #define ObjectMotion_EnableActionAndSetCallback_3(args...) Func_020084aa(args)
 #define BattleRuntime_WaitIfModeZero_3(args...) Func_02008470(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_0200852a(args)

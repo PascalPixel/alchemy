@@ -12,12 +12,13 @@ void Func_020092e8();
 void Func_0200a664();
 s32 Func_0200a6ce();
 void Func_0200a6d8();
+void Func_0200a6d8_a();
 s32 Func_0200a6e0();
 s32 Func_0200a6e8();
 void Func_0200a716();
 void Func_0200a788();
 void Func_0200a790();
-void Func_0200a798();
+void Func_0200a798(s32, s32);
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -58,5 +59,5 @@ void FieldScene_RunScene3b1_02004198(void)
     Func_0200a790(37, 3);
     Func_0200a798(38, 3);
     Func_020092e8();
-    Func_0200a6d8();
+    Func_0200a6d8_a();
 }

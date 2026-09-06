@@ -24,6 +24,7 @@ void Func_0200058e(s32);
 void Func_020005a6(s32, s32);
 void Func_0200059e(s32);
 void Func_020005b6();
+void Func_020005b6_a(s32);
 void Func_0200059a(void);
 void Func_020005b0(void);
 void Func_020005ce(s32);
@@ -49,6 +50,7 @@ void Func_0200065c(void);
 void Func_0200067a(s32);
 void Func_0200068a(s32, s32);
 s32 Func_02000676();
+s32 Func_02000676_a(s32);
 void Func_02000696(void);
 void Func_020006b4(s32);
 void Func_020006c4(s32, s32);
@@ -71,6 +73,7 @@ void Func_02000730(void);
 s32 Func_02000732(s32);
 void Func_0200076c(s32);
 void Func_0200077c();
+void Func_0200077c_a(s32);
 void Func_0200078c(s32, s32);
 T *Func_02000796(s32);
 s32 Func_02000776(s32);
@@ -84,6 +87,7 @@ void Func_020007ec(s32, s32);
 s32 Func_020007d6(s32);
 void Func_02000810(s32);
 void Func_02000820();
+void Func_02000820_a(s32);
 void Func_02000830(s32, s32);
 T *Func_0200083a(s32);
 s32 Func_0200081a(s32);
@@ -228,7 +232,7 @@ void SceneDialogue_RunActor20DialogueA(void)
     Func_020005b0();
     Func_020005ce(0x1bd5);
     Func_020005e6(20, 0);
-    Func_020005b6(0x940);
+    Func_020005b6_a(0x940);
     Func_020005d2();
 }
 
@@ -271,7 +275,7 @@ void SceneDialogue_RunActor21FlaggedDialogue(void)
 
 void SceneDialogue_RunActor16FlaggedDialogue(void)
 {
-    if (Func_02000676(0x941) != 0) {
+    if (Func_02000676_a(0x941) != 0) {
         Func_02000696();
         Func_020006b4(0x24fa);
         Func_020006c4(16, 0);
@@ -310,7 +314,7 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
         Func_0200076c(0x24f6);
         Func_0200077c(14, 0);
     } else {
-        Func_0200077c(0x1bde);
+        Func_0200077c_a(0x1bde);
         Func_0200078c(14, 0);
     }
 }
@@ -343,7 +347,7 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
         Func_02000810(0x24f8);
         Func_02000820(15, 0);
     } else {
-        Func_02000820(0x1bdf);
+        Func_02000820_a(0x1bdf);
         Func_02000830(15, 0);
     }
 }

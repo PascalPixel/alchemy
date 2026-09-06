@@ -11,6 +11,7 @@ extern u8 Data_02008958;
 
 void Func_020008f2();
 void Func_0200090e();
+void Func_0200090e_a(s32, s32);
 s32 Func_0200092a(s32, s32, s32);
 void Func_02000920(s32);
 u8 *Func_020008f8(s32);
@@ -21,6 +22,7 @@ s32 Func_02000902();
 void Func_02000922();
 void Func_0200093e();
 void Func_02000978();
+void Func_02000978_a();
 void Func_02000964();
 void Func_0200099c();
 void Func_02000250();
@@ -366,7 +368,7 @@ void FieldScene_RunActor13Mode102Step(void)
 
     Call1(Func_020008f2, 0x23cd);
     Call3(Func_0200090e, 13, 0x102, 0);
-    Func_0200090e(13, 0);
+    Func_0200090e_a(13, 0);
 }
 
 void FieldScene_RunActor13Mode105Step(void)
@@ -395,7 +397,7 @@ void SceneState_AddToRecordCount(s32 arg0, s32 arg1)
 
 void FieldScene_RunCountAdjustPanel(void)
 {
-    void Func_02000930();
+    void Func_02000930_a();
 
     u8 *record;
     volatile s32 *work;
@@ -410,7 +412,7 @@ void FieldScene_RunCountAdjustPanel(void)
 
     msg = ((s32) &Value_00000c20);
     Func_02000922(msg, win, 0, 0);
-    Func_02000930(msg + 1, win, 0, 16);
+    Func_02000930_a(msg + 1, win, 0, 16);
     msg += 2;
     flag = 1;
     Func_0200093e(msg, win, 0, 32);
@@ -420,7 +422,7 @@ loop:
         if (flag != 0) {
             Func_02000978(win);
             Func_02000964(record, win, 0, 48);
-            Func_02000978(Data_020088d0, win, 48, 48);
+            Func_02000978_a(Data_020088d0, win, 48, 48);
             flag = 0;
             Func_0200099c(record[15], 0, win, 72, 48);
         }

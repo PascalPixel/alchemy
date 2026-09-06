@@ -74,6 +74,7 @@ void Func_020038aa();
 s32 Func_020038ae();
 void Func_020038b0();
 s32 Func_020038be();
+s32 Func_020038be_a();
 s32 Func_020038e6();
 s32 Func_020038e8();
 void Func_020038f8();
@@ -149,7 +150,7 @@ void Func_020014b8(void)
     p = (volatile s32 *)Data_0200aa50;
     buf = Value2(Func_02003890, 14, 0x400);
     Call2(Func_020038aa, 0x200a56c, buf);
-    value = Func_020038be(Func_020038be(), 128, buf);
+    value = Func_020038be_a(Func_020038be(), 128, buf);
     for (i = 0; i < 9; i++) {
         volatile s32 *q = p;
 

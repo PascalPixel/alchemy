@@ -21,6 +21,7 @@ extern void Func_0200706e(s32, s32, s32 *);
 extern Obj *Func_0200710a(s32, s32, s32, s32);
 extern void Func_02007166(Obj *, s32);
 extern void Func_0200711e(Obj *, s32);
+extern void Func_0200711e_a(Obj *, s32);
 extern void Func_02007126(Obj *, s32);
 
 void Func_0200325c(Obj *a)
@@ -54,7 +55,7 @@ void Func_0200325c(Obj *a)
             o->f55 = 0;
             Func_02007166(o, 0);
             Func_0200711e(o, (s32)Data_0200c264);
-            Func_0200711e(o, 1);
+            Func_0200711e_a(o, 1);
             Func_02007126(o, 0);
         }
     }

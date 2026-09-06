@@ -20,7 +20,8 @@ void Func_02005032();
 void Func_02005040();
 void Func_02005042();
 void Func_02005048();
-void Func_0200505c();
+void Func_0200505c_a();
+void Func_0200505c_b();
 void Func_0200506a();
 void Func_0200507e();
 void Func_02005082();
@@ -82,7 +83,7 @@ void FieldScene_RunScene39f_020021b0(void)
     Func_02005032(18, 2);
     Func_02005082(18, 1);
     Func_02002fce(18, 136, 0x1b8, 0x60000);
-    Func_0200505c(0, 18, 0);
+    Func_0200505c_a(0, 18, 0);
     Func_02004fec(10);
     Func_02002ff0(18, 136, 0x1d8, 0x30000);
     Func_0200507e(0, 18, 0);
@@ -94,5 +95,5 @@ void FieldScene_RunScene39f_020021b0(void)
     Func_02005094(18, 0, 0);
     Func_02005042(60);
     Call1(Func_02005040, 0x89d);
-    Func_0200505c();
+    Func_0200505c_b();
 }

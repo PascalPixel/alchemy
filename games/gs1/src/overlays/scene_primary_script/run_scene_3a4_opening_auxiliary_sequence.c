@@ -17,6 +17,7 @@ void Func_02006a32();
 s32 Func_02006a3c();
 void Func_02006a3e();
 void Func_02006a4a();
+void Func_02006a4a_a();
 void Func_02006a56();
 void Func_02006a60();
 void Func_02006a64();
@@ -78,7 +79,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Value2(Func_02006930, 202, 0);
     *(u8 *)(Func_02006a3c() + 85) = 0;
     Call2(Func_02006a32, 0x19999, 0x3333);
-    Call4(Func_02006a4a, 0x640000, 0, 0xf90000, 1);
+    Call4(Func_02006a4a_a, 0x640000, 0, 0xf90000, 1);
     Func_02006a56();
     Func_0200693c(20);
     Func_020034b4();

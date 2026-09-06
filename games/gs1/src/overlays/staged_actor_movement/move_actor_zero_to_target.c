@@ -19,7 +19,7 @@
  * The return value is observable: `pop {r3, r5} ; ... ; pop {r1} ; bx r1`
  * preserves r0, so this returns 1 when the move was refused and 0 when it ran.
  *
- * Func_02003dec and Func_02003dca are each called twice with different
+ * Func_02003dec and Func_02003dca_a are each called twice with different
  * argument shapes, so they are declared without prototypes: only what the two
  * call sites jointly establish is asserted.
  */
@@ -46,9 +46,10 @@ typedef struct Target_02000cd0 {
     s32 z;                 /* +8, 12.20 fixed point */
 } Target_02000cd0;
 
-Actor_02000cd0 *Func_02003dec();
+Actor_02000cd0 *Func_02003dec_a();
 s32 Func_02003d6a();
-s32 Func_02003dca();
+s32 Func_02003dca_a();
+s32 Func_02003dca_b();
 s32 Func_02003dd6();
 void Func_02003e2e();
 void Func_02003d96();
@@ -59,12 +60,11 @@ void Func_02003e24();
 void Func_02003eb4();
 void Func_02003dec_b();
 void Func_02003e4c();
-void Func_02003dca_b();
 void Func_02003eaa();
 
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
-    Actor_02000cd0 *actor = Func_02003dec(0);
+    Actor_02000cd0 *actor = Func_02003dec_a(0);
     u8 saved = actor->flags;
     s32 probe[3];
 
@@ -77,7 +77,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     /* 両方の判定は末尾の共有ブロックへ分岐する。
      * Both guards branch to one shared exit placed after the body; writing
      * `return 1` twice puts an inline copy near the top instead. */
-    if (Func_02003dca(actor, probe) == 1) {
+    if (Func_02003dca_a(actor, probe) == 1) {
         goto refuse;
     }
     if (Func_02003dd6(actor, target) != 0) {

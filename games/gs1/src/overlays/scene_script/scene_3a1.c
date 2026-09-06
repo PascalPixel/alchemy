@@ -398,6 +398,7 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
 void SceneDialogue_RunActor16FlaggedDialogue(void)
 {
     void Func_02000af0();
+    void Func_02000af0_a(s32);
 
     u16 *state = Func_02000a96(0);
     u32 value = state[3];
@@ -409,7 +410,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
         Func_02000ae0(0x181b);
         Func_02000af0(16, 0);
     } else {
-        Func_02000af0(0x1a4a);
+        Func_02000af0_a(0x1a4a);
         Func_02000b10(16, 0);
     }
     Func_02000acc();
@@ -417,7 +418,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
 
 void SceneDialogue_RunActor17FlaggedDialogue(void)
 {
-    s32 Func_02000af0(s32);
+    s32 Func_02000af0_b(s32);
 
     u16 *state = Func_02000afe(0);
     u32 value = state[3];
@@ -426,7 +427,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
     if (value < 0x2000 || value > 0xe000) {
         Func_02000b60(5, 17);
     } else {
-        if (Func_02000af0(0x895) == 0) {
+        if (Func_02000af0_b(0x895) == 0) {
             Func_02000b4a(0x181d);
         } else {
             Func_02000b52(0x1a4e);
@@ -448,21 +449,21 @@ void SceneDialogue_RunActor10Dialogue(void)
 
 void SceneDialogue_RunActor12Dialogue(void)
 {
-    void Func_02000ba2(s32);
+    void Func_02000ba2_a(s32);
     s32 Func_02000bc2(s32, s32);
 
     Func_02000b64();
-    Func_02000ba2((s32)&Value_00001a40);
+    Func_02000ba2_a((s32)&Value_00001a40);
     Func_02000bc2(12, 0);
     Func_02000b7e();
 }
 
 void SceneDialogue_RunActor9MotionDialogue(void)
 {
-    void Func_02000bc2(s32);
+    void Func_02000bc2_a(s32);
 
     Func_02000b84();
-    Func_02000bc2(0x1a64);
+    Func_02000bc2_a(0x1a64);
     Func_02000bdc(9, 0, 20);
     Func_02000bc6(9, 10, 0);
     Func_02000b9c(60);
@@ -481,17 +482,17 @@ s32 SceneData_SelectTable8d4cOr8a28(void) {
 
 s32 SceneState_SetRuntimeWord448To521(void)
 {
-    void Func_02000686(s32, s32, s32, s32);
+    void Func_02000686_a(s32, s32, s32, s32);
 
     s16 scene;
 
     *(s32 *)(Data_03001ebc + 448) = 521;
     scene = Data_02000240[225];
     if (scene == 4 || scene == 7) {
-        Func_02000686(0x00f80000, 0, 0x01a10000, 20);
+        Func_02000686_a(0x00f80000, 0, 0x01a10000, 20);
     } else if (scene == 6) {
         Func_02000678(0x01cc0000, 0, 0x02380000, 20);
-        Func_02000686(0x01e40000, 0, 0x02380000, 20);
+        Func_02000686_a(0x01e40000, 0, 0x02380000, 20);
     } else if (scene == 8) {
         Func_02000c3e(0x12f);
         Func_02000c76(10, 6);

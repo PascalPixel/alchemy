@@ -32,10 +32,11 @@
  * advancing by one, but this owner alone is no evidence for that.
  */
 
-extern void Func_02003d7e();
+extern void Func_02003d7e_a();
+extern void Func_02003d7e_b();
 
 void SceneState_ApplyFlags565And564(void)
 {
-    Func_02003d7e(0x235);
-    Func_02003d7e(564);
+    Func_02003d7e_a(0x235);
+    Func_02003d7e_b(564);
 }

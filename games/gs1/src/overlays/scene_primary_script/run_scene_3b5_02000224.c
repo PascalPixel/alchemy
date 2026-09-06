@@ -5,7 +5,8 @@
 extern u8 Data_03001ebc[];
 void Func_02000f66();
 void Func_02000f7e();
-s32 Func_02000fa6();
+s32 Func_02000fa6_a();
+s32 Func_02000fa6_b();
 u8 *Func_02000fb8();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -41,12 +42,12 @@ void FieldScene_RunScene3b5_02000224(void)
     u32 i;
     u8 *record;
 
-    record = Value1(Func_02000fa6, 8);
+    record = Value1(Func_02000fa6_a, 8);
     if ((s32)record != 0) {
         record[89] = 0;
     }
     record = Func_02000fb8(8);
     Func_02000f66((s32)record, 0);
     Call4(Func_02000f7e, 0, 0x2200000, 0x1200000, 253);
-    Call1(Func_02000fa6, 0x200);
+    Call1(Func_02000fa6_b, 0x200);
 }

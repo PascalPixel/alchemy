@@ -9,6 +9,7 @@ void Func_020024ca();
 s32 Func_020024d6();
 void Func_020024de();
 s32 Func_020024f0();
+s32 Func_020024f0_a();
 void Func_02002502();
 void Func_02002514();
 void Func_02002540();
@@ -58,7 +59,7 @@ void FieldScene_RunScene37f_0200092c(void)
     }
     if (Value1(Func_020024f0, 0x879) != 0) {
         Call6(Func_020024de, 5, 6, 1, 1, 6, 6);
-        Call6(Func_020024f0, 5, 6, 1, 1, 7, 6);
+        Call6(Func_020024f0_a, 5, 6, 1, 1, 7, 6);
         Call6(Func_02002502, 5, 6, 1, 1, 8, 6);
         Call6(Func_02002514, 0, 1, 3, 1, 6, 5);
     }

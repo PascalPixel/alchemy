@@ -7,6 +7,7 @@ void Func_02002424();
 s32 Func_02004734();
 s32 Func_0200473e();
 void Func_0200474e();
+void Func_0200474e_a();
 void Func_0200476a();
 s32 Func_02004784();
 s32 Func_020047b8();
@@ -74,7 +75,7 @@ void FieldScene_RunScene37b_020022f4(void)
             Call4(Func_02004848, 0x11e0000, -1, 0x920000, 1);
             Func_02004854();
             Func_0200489a(186);
-            Call6(Func_0200474e, 4, 59, 17, 38, 4, 3);
+            Call6(Func_0200474e_a, 4, 59, 17, 38, 4, 3);
             if (Value1(Func_02004784, 0x816) != 0) {
                 Call6(Func_0200476a, 8, 60, 17, 39, 2, 2);
             }

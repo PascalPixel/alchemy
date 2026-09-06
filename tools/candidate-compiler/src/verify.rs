@@ -21,7 +21,8 @@ pub struct CandidateCompilerConfiguration {
     pub reference_symbols: bool,
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
     pub call_via_base: Option<u64>,
-    pub label_word_bias: Option<u64>,
+    /// Complete reference extent for an overlay owner, independent of candidate size.
+    pub overlay_extent: Option<usize>,
     /// Compiled owner symbol when it differs from the compare address. GCC
     /// 2.96's codegen is name-dependent (symbol hashes steer allocation
     /// tie-breaks), so cross-edition scoring compiles the owner under its
@@ -160,11 +161,7 @@ pub fn compile_source(
     for step in source_to_assembly_plan(&options)?.steps {
         run(&step.command, cwd)?;
     }
-    let assembly_path = resolve_against_cwd(assembly, cwd);
-    apply_label_word_bias(
-        &assembly_path.to_string_lossy(),
-        configuration.label_word_bias,
-    )
+    Ok(())
 }
 /// Match production's register-derived compiler names, including overlay scope.
 pub fn source_symbol_bindings(
@@ -223,6 +220,9 @@ pub fn verify_candidate_owned_routed_with_object(
     configuration: &CandidateCompilerConfiguration,
     precompiled_object: Option<&str>,
 ) -> Result<Verification, String> {
+    if configuration.overlay_extent.is_some() && configuration.reference_symbols {
+        return Err("overlay calls require stable reference bindings, not candidate-position symbol inference".into());
+    }
     let stem = owner_stem.to_string();
     let address = parse_hex(&stem)?;
     let canonical_symbol = configuration
@@ -281,7 +281,15 @@ pub fn verify_candidate_owned_routed_with_object(
             .ok_or("missing object symbol address")?,
     )?;
     let owner_size = parse_hex(object_fields.get(1).ok_or("missing object symbol size")?)?;
-    let link_address = address
+    let runtime_address = if configuration.overlay_extent.is_some() {
+        address
+            + u64::from(
+                compiler_core::overlay::RUNTIME_BASE - compiler_core::overlay::RESOURCE_BASE,
+            )
+    } else {
+        address
+    };
+    let link_address = runtime_address
         .checked_sub(owner_section_offset)
         .ok_or_else(|| format!("owner symbol offset exceeds link address: {symbol}"))?;
     let owner_offset =
@@ -303,6 +311,15 @@ pub fn verify_candidate_owned_routed_with_object(
         &canonical_object
     };
     let owner_relocations = object_relocations(link_object, owner_offset, owner_size)?;
+    let overlay_calls = configuration
+        .overlay_extent
+        .map(|extent| {
+            let offset = address
+                .checked_sub(u64::from(compiler_core::overlay::RESOURCE_BASE))
+                .ok_or("overlay owner precedes resource base")? as usize;
+            compiler_core::overlay::call_symbols(rom, offset, extent)
+        })
+        .transpose()?;
     let call_via_base = configuration.call_via_base.unwrap_or(CALL_VIA_BASE);
     let mut names: Vec<String> = Vec::new();
     let undefined_symbols = run(&["arm-none-eabi-nm", "-u", link_object], cwd)?;
@@ -356,6 +373,12 @@ pub fn verify_candidate_owned_routed_with_object(
     for name in &names {
         let (address, directive) = if let Some(symbol) = configuration.absolute_symbols.get(name) {
             (symbol.address, absolute_symbol_directive(symbol.kind))
+        } else if let Some(calls) = &overlay_calls {
+            let is_call = owner_relocations
+                .get(name)
+                .is_some_and(|sites| sites.iter().any(|site| site.kind == "R_ARM_THM_CALL"));
+            let symbol = compiler_core::overlay::external(name, is_call, rom, calls)?;
+            (symbol.address, absolute_symbol_directive(symbol.kind))
         } else {
             let symbol = resolved
                 .get(name)
@@ -397,6 +420,11 @@ pub fn verify_candidate_owned_routed_with_object(
     let binary_offset = linked_symbol_address as f64 - link_address as f64;
     let actual = js_subarray(&binary_bytes, binary_offset, binary_offset + size as f64);
     let offset = address as f64 - image_base;
+    let actual = if configuration.overlay_extent.is_some() {
+        compiler_core::overlay::encode(&actual, offset as usize)?
+    } else {
+        actual
+    };
     let expected = js_subarray(rom, offset, offset + size as f64);
     Ok(Verification { actual, expected })
 }
@@ -418,37 +446,6 @@ fn absolute_symbol_directive(kind: AbsoluteSymbolKind) -> &'static str {
     } else {
         ".set"
     }
-}
-fn apply_label_word_bias(path: &str, bias: Option<u64>) -> Result<(), String> {
-    let Some(bias) = bias.filter(|bias| *bias != 0) else {
-        return Ok(());
-    };
-    let text = std::fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?;
-    let labels = text
-        .lines()
-        .filter_map(|line| {
-            line.trim()
-                .strip_suffix(':')
-                .filter(|label| label.starts_with(".L"))
-        })
-        .map(str::to_string)
-        .collect::<std::collections::BTreeSet<_>>();
-    let mut output = text
-        .lines()
-        .map(|line| {
-            let operand = line.trim().strip_prefix(".word").map(str::trim);
-            if operand.is_some_and(|operand| labels.contains(operand)) {
-                format!("{line} + 0x{bias:x}")
-            } else {
-                line.to_string()
-            }
-        })
-        .collect::<Vec<_>>()
-        .join("\n");
-    if text.ends_with('\n') {
-        output.push('\n');
-    }
-    write(path, output.as_bytes())
 }
 #[derive(Clone, Debug)]
 struct ReferenceRelocation {
@@ -612,19 +609,11 @@ fn thumb_bl_target(
     let bytes = rom
         .get(rom_start + offset..rom_start + offset + 4)
         .ok_or_else(|| format!("call at 0x{offset:x} extends past the reference image"))?;
-    let high = u16::from_le_bytes([bytes[0], bytes[1]]);
-    let low = u16::from_le_bytes([bytes[2], bytes[3]]);
-    if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
-        return Err(format!(
-            "reference relocation at 0x{offset:x} is not a Thumb BL"
-        ));
-    }
-    let mut displacement = (((high & 0x07ff) as i64) << 12) | (((low & 0x07ff) as i64) << 1);
-    if displacement & (1 << 22) != 0 {
-        displacement -= 1 << 23;
-    }
+    let displacement = compiler_core::thumb::bl_displacement(bytes)
+        .ok_or_else(|| format!("reference relocation at 0x{offset:x} is not a Thumb BL"))?;
     let pc = address as i64 + offset as i64 + 4;
-    u64::try_from(pc + displacement).map_err(|_| format!("call at 0x{offset:x} is below ROM"))
+    u64::try_from(pc + i64::from(displacement))
+        .map_err(|_| format!("call at 0x{offset:x} is below ROM"))
 }
 pub(crate) fn write(path: &str, bytes: &[u8]) -> Result<(), String> {
     std::fs::write(path, bytes).map_err(|error| format!("{path}: {error}"))
@@ -714,36 +703,5 @@ mod reference_symbol_tests {
             validate_reference_topology(&object, 0, object.len(), &swapped, 0, &relocations)
                 .unwrap_err();
         assert!(error.contains("non-relocation byte differs at owner offset 0x1"));
-    }
-    #[test]
-    fn overlay_bias_applies_only_to_defined_local_label_words() {
-        let path = std::env::temp_dir().join("alchemy-overlay-label-bias.s");
-        std::fs::write(&path, ".L2:\n.word .L2\n.word External\n").unwrap();
-        apply_label_word_bias(path.to_str().unwrap(), Some(0x8000)).unwrap();
-        assert_eq!(
-            std::fs::read_to_string(&path).unwrap(),
-            ".L2:\n.word .L2 + 0x8000\n.word External\n"
-        );
-        let _ = std::fs::remove_file(path);
-    }
-    #[test]
-    fn overlay_bias_resolves_relative_assembly_against_compile_cwd() {
-        let cwd = std::env::temp_dir().join(format!(
-            "alchemy-overlay-label-bias-cwd-{}",
-            std::process::id()
-        ));
-        let relative = "nested/candidate.s";
-        let path = cwd.join(relative);
-        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        std::fs::write(&path, ".L2:\n.word .L2\n").unwrap();
-
-        let resolved = resolve_against_cwd(relative, &cwd);
-        apply_label_word_bias(&resolved.to_string_lossy(), Some(0x8000)).unwrap();
-
-        assert_eq!(
-            std::fs::read_to_string(&path).unwrap(),
-            ".L2:\n.word .L2 + 0x8000\n"
-        );
-        let _ = std::fs::remove_dir_all(cwd);
     }
 }

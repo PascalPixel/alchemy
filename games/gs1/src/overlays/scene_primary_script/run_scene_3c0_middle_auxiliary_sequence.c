@@ -8,6 +8,7 @@ s32 Func_020016d4();
 s32 Func_020016da();
 s32 Func_0200170c();
 void Func_02001714();
+void Func_02001714_a();
 void Func_0200171c();
 s32 Func_0200173a();
 void Func_02001762();
@@ -70,7 +71,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     Func_02001714(p10);
     rec2 = Value1(Func_020016da, 0x20f);
     if (rec2 == 0) {
-        Func_02001714();
+        Func_02001714_a();
         Call2(Func_020017c4, (s32)p6, 0x101);
         Func_0200177c((s32)p6, 9);
         record = Value1(Func_0200173a, p10);

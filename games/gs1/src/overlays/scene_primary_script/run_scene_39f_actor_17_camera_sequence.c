@@ -8,7 +8,7 @@ extern void Func_02002db0(s32, s32);
 extern void Func_02002ca8(s32, s32, s32, s32);
 extern void Func_02004cba(s32);
 extern void Func_02002a24(s32, s32, s32, s32, s32, s32, s32, s32);
-extern void Func_02004d98(s32, s32);
+extern void Func_02004d98_a(s32, s32);
 extern void Func_02004d6a(s32, s32, s32);
 extern void Func_02004cf0(s32);
 extern void Func_02004d60(s32, s32);
@@ -46,7 +46,7 @@ void FieldScene_RunActor17CameraSequence(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004d98(17, 1);
+    Func_02004d98_a(17, 1);
     Func_02004d6a(17, 0, 0);
     Func_02004cf0(20);
     Func_02004d60(17, 2);

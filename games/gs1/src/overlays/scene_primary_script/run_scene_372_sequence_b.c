@@ -12,6 +12,7 @@ void Func_02005d6c();
 void Func_02005dba();
 void Func_02005df2();
 void Func_02005e04();
+void Func_02005e04_a();
 void Func_02005e14();
 void Func_02005e3e();
 void Func_02005e42();
@@ -57,7 +58,7 @@ void FieldScene_RunScene372SequenceB(void)
             Call3(Func_02005e3e, 0, 0x101, 40);
             Call3(Func_02005dba, 0, 0x17e, 0x26b);
             Func_02005e04(0, 22, 0);
-            Func_02005e04(0, 2);
+            Func_02005e04_a(0, 2);
             Func_02005d4a(30);
             Func_02005e42(22, 0);
             Call1(Func_02005d48, 0x836);

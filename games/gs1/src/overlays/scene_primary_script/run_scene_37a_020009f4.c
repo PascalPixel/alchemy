@@ -32,13 +32,15 @@ void Func_02003536();
 void Func_02003538();
 void Func_02003548();
 void Func_0200354a();
-s32 Func_0200354e();
+s32 Func_0200354e_a();
+s32 Func_0200354e_b();
 void Func_02003554();
 void Func_02003558();
 void Func_0200355e();
 void Func_02003560();
 void Func_02003572();
-void Func_0200357e();
+void Func_0200357e_a();
+void Func_0200357e_b();
 void Func_02003584();
 void Func_0200358e();
 void Func_020035a8();
@@ -132,7 +134,7 @@ void FieldScene_RunScene37a_020009f4(void)
     Func_0200354a(16, 0, 60);
     Func_0200351a(16, 2);
     Call3(Func_0200355e, 16, 0x3000, 10);
-    Value2(Func_0200354e, base5_4010, 0);
+    Value2(Func_0200354e_a, base5_4010, 0);
     if (Value2(Func_020034de, 0, 0) == 0) {
         Call1(Func_02003558, 0xffa);
     } else {
@@ -142,14 +144,14 @@ void FieldScene_RunScene37a_020009f4(void)
     Call3(Func_0200358e, 0, 0xa000, 10);
     Func_0200311e(base5_4010_2, 10);
     base6_ffc = (s32)Data_00000ffc;
-    Func_0200357e(base6_ffc);
+    Func_0200357e_a(base6_ffc);
     Func_020035a8(16, 0, 40);
     Call3(Func_020035ba, 16, 0x105, 40);
     Func_02003572(16, 4);
     Call3(Func_020035c6, 16, 0x3000, 10);
-    Func_0200357e(16, 4);
+    Func_0200357e_b(16, 4);
     Value2(Func_020035be, base5_4010_2, 0);
-    if (Value2(Func_0200354e, 0, 0) == 0) {
+    if (Value2(Func_0200354e_b, 0, 0) == 0) {
         Func_020035c8((base6_ffc + 1));
         Call1(Func_02003536, 0x896);
     } else {

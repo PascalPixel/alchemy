@@ -5,7 +5,8 @@
 extern u8 Data_03001ebc[];
 void Func_020036be();
 void Func_02006476();
-s32 Func_02006480();
+s32 Func_02006480_a();
+s32 Func_02006480_b();
 void Func_020064bc();
 void Func_020064ca();
 void Func_02006502();
@@ -32,7 +33,8 @@ void Func_02006e1c();
 void Func_02006e2c();
 void Func_02006e3a();
 void Func_02006e48();
-void Func_02006e54();
+void Func_02006e54_a();
+void Func_02006e54_b();
 void Func_02006e5c();
 void Func_02006e74();
 void Func_02006e82();
@@ -70,10 +72,10 @@ void Func_02006ea4();
 #define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02006e82, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02006ea4, a0, a1, a2)
 #define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_02006e86(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02006e54(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02006e54_a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02006e5c(args)
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02006e48, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02006e54, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02006e54_b, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_02006df0(args)
 #define ObjectMotion_SetPositionAndReset_4(a0, a1, a2) Call3(Func_02006e74, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_02006e8e(args)
@@ -155,10 +157,10 @@ void FieldScene_ConfigureLeadActors(void)
     ObjectMotion_SetSpeedParameters_3(20, 0x19999, 0xcccc);
     ObjectMotion_SetPositionAndReset_1(20, 182, 0x224);
     Func_02006476(20, 0);
-    Value2(Func_02006480, 0, 0x8000);
+    Value2(Func_02006480_a, 0, 0x8000);
     ObjectMotion_SetVariantCallbackAndInvokeObject_1(20, 1);
     SceneWork_SetStepValue_1(0x1ee1);
-    ((void (*)())Func_02006480)(20);
+    ((void (*)())Func_02006480_b)(20);
     ObjectMotion_CallThenWaitForAnimationChange_1(0, 3);
     BattleRuntime_WaitIfModeZero_3(40);
     ObjectMotion_ArmCallback_1(20, 0x5000, 20);

@@ -54,6 +54,7 @@ void Func_020007b4();
 void Func_0200076c();
 void Func_0200077a();
 s32 Func_020007aa();
+void Func_020007aa_a();
 void Func_020007ac();
 void Func_020007c6();
 s32 Func_020007ca();
@@ -72,18 +73,21 @@ void Func_020008a2(s32, s32);
 void Func_02000874(s32);
 void Func_02000884(s32);
 void Func_0200089c(s32, s32);
+void Func_0200089c_a(s32, s32);
 void Func_02000860(void);
 s32 Func_02000868();
 void Func_02000878();
 void Func_020008b6();
 void Func_020008c2();
 void Func_020008c4();
+void Func_020008c4_a();
 void Func_020008d6();
 void Func_020008da();
 void Func_020008ee();
 void Func_020008fe();
 void Func_02000904();
 void Func_0200090e();
+void Func_0200090e_a();
 void Func_0200091c();
 void Func_02000920();
 void Func_02000934();
@@ -194,9 +198,6 @@ void Func_020009fc(s32);
  * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Both arms reach this one name from sites 0x10 apart, so it stands for two
- * different veneers -- 0x570 from the first arm and 0x560 from the second. */
 
 /* The workspace pointer the overlay's own rows all reach through. */
 
@@ -329,13 +330,13 @@ u8 *SceneData_GetTertiaryTable(void)
 
 void FieldScene_RunActor17MessageBranch(void)
 {
-    s32 Func_02000662();
+    s32 Func_02000662_a();
 
     u32 i;
     s32 record;
     u8 *dir;
 
-    record = Value1(Func_02000662, 0);
+    record = Value1(Func_02000662_a, 0);
     dir = *(volatile u16 *)(record + 6);
     Func_02000648();
     if ((u32)((s32)dir + -0xa001) <= 0x3ffe) {
@@ -392,7 +393,7 @@ void FieldScene_RunActor27Sequence(void)
     s32 record;
 
     Func_0200076c();
-    Call1(Func_020007aa, 0x13f6);
+    Call1(Func_020007aa_a, 0x13f6);
     Func_020007ac(27, 0, 0);
     Func_0200077a(10);
     Value2(Func_020007ca, 27, 0);
@@ -422,7 +423,7 @@ void FieldScene_RunActor13Message(void)
 
 void FieldScene_RunActor19MessageBranch(void)
 {
-    s32 Func_0200081a(s32);
+    s32 Func_0200081a_a(s32);
 
     u32 dir;
 
@@ -431,12 +432,12 @@ void FieldScene_RunActor19MessageBranch(void)
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Func_020008a2(2, 19);
-    } else if (Func_0200081a(0x845) != 0) {
+    } else if (Func_0200081a_a(0x845) != 0) {
         Func_02000874(0x16FB);
         Func_0200089c(19, 0);
     } else {
         Func_02000884(0x13EB);
-        Func_0200089c(19, 0);
+        Func_0200089c_a(19, 0);
     }
 
     Func_02000860();
@@ -460,9 +461,9 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
         Func_020008b6(60);
         Func_0200090e(22, 0);
         Func_020008c4(10);
-        Call1(Func_020008c4, 0x300);
+        Call1(Func_020008c4_a, 0x300);
     }
-    Func_0200090e(21, 0, 0);
+    Func_0200090e_a(21, 0, 0);
     Call1(Func_0200091c, 0x1702);
     Func_02000934(21, 0);
     Call3(Func_02000958, 21, 0xc000, 10);
@@ -471,13 +472,13 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
 
 void FieldScene_ConfigureActor22Scene(void)
 {
-    void Func_02000958(s32, s32, s32);
+    void Func_02000958_a(s32, s32, s32);
     void Func_0200099a(s32, s32, s32);
 
     Func_02000910();
     Func_0200094e(0x1703);
     Func_02000966(0x16, 0);
-    Func_02000958(0x16, 0, 0);
+    Func_02000958_a(0x16, 0, 0);
     Func_02000978(0x16, 0);
     Func_0200099a(0x16, 0, 0xA);
     Func_02000946();
@@ -510,30 +511,30 @@ void FieldScene_RunActor27Message(void)
 
 void FieldScene_RunActor10MessageBranch(void)
 {
-    s32 Func_0200099a(s32);
-    void Func_020009d8(void);
+    s32 Func_0200099a_a(s32);
+    void Func_020009d8_a(void);
     void Func_02000a14(s32, s32);
 
     Func_020009ac();
-    if (Func_0200099a(3) != 0) {
+    if (Func_0200099a_a(3) != 0) {
         Func_020009f4(0x146F);
     } else {
         Func_020009fc(0x13D9);
     }
     Func_02000a14(10, 0);
-    Func_020009d8();
+    Func_020009d8_a();
 }
 
 s32 FieldScene_SetupActor27OnEntry(void)
 {
-    u8 *Func_02000a14(s32);
+    u8 *Func_02000a14_a(s32);
 
     u8 *actor;
     u8 *record;
     s32 bits;
 
     *(s32 *) (WORKSPACE + 448) = 521;
-    actor = Func_02000a14(27);
+    actor = Func_02000a14_a(27);
     /* The stored zero is the mask's starting value: the reference builds
      * -13 by subtracting from the register the `strb` already set to 0
      * rather than materialising 0xf3 or negating 13. */

@@ -1,6 +1,7 @@
 #include "orbiting_scene_object.h"
 
 extern OrbitingSceneObject *Func_0200bb38();
+extern s32 Func_0200bb38_a(s32);
 extern void Func_0200bad2(OrbitingSceneObject *, s32);
 extern u8 *Func_0200ba98(s32, s32);
 extern void Func_0200bb60(s32);
@@ -9,7 +10,7 @@ extern void Func_0200babe(s32);
 extern u8 Value_0200dae1;
 #define GetOrbitingSceneObject Func_0200bb38
 #define NormalizeOrbitingSceneObject Func_0200bad2
-#define IsGameFlagSet Func_0200bb38
+#define IsGameFlagSet Func_0200bb38_a
 #define AllocateEffectTransfer Func_0200ba98
 #define LoadEffectResource Func_0200bb60
 #define ConfigurePaletteTransfer Func_0200bac8

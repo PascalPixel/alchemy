@@ -46,6 +46,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+]
+
+[[package]]
 name = "cc"
 version = "1.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -91,6 +99,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "decomp-targets"
+version = "0.1.0"
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -98,6 +110,18 @@ checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
  "block-buffer",
  "crypto-common",
+]
+
+[[package]]
+name = "disassemble"
+version = "0.1.0"
+dependencies = [
+ "cache-entry",
+ "candidate-compiler",
+ "compiler-core",
+ "extract-resource",
+ "regex",
+ "tempfile",
 ]
 
 [[package]]
@@ -232,19 +256,8 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 name = "overlay-call-targets"
 version = "0.1.0"
 dependencies = [
- "overlay-disasm",
- "serde_json",
-]
-
-[[package]]
-name = "overlay-disasm"
-version = "0.1.0"
-dependencies = [
- "cache-entry",
  "compiler-core",
- "extract-resource",
- "regex",
- "tempfile",
+ "disassemble",
 ]
 
 [[package]]

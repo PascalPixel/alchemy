@@ -2,99 +2,58 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 const USAGE: &str = "usage: disassemble --build-source FILE [BASE_HEX]\n       disassemble --assemble FILE [BASE_HEX]\n       disassemble --c-spans FILE [BASE_HEX]";
-fn base_argument(arguments: &[String], index: usize) -> Result<i64, String> {
+fn base_argument(arguments: &[String]) -> Result<i64, String> {
     arguments
-        .get(index)
+        .get(2)
         .map(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16))
         .transpose()
         .map_err(|_| "base must be hex".to_string())
         .map(|value| value.unwrap_or(crate::OVERLAY_BASE))
 }
-fn validate_arguments(arguments: &[String]) -> Result<bool, String> {
+fn operation(arguments: &[String]) -> Result<(), String> {
     if arguments.len() == 1 && matches!(arguments[0].as_str(), "-h" | "--help") {
         println!("{USAGE}");
-        return Ok(true);
+        return Ok(());
     }
-    let Some(mode) = arguments.first().map(String::as_str) else {
-        return Err(USAGE.to_string());
-    };
+    let mode = arguments.first().map(String::as_str).ok_or(USAGE)?;
     if !matches!(mode, "--build-source" | "--assemble" | "--c-spans") {
         return Err(format!("unknown option: {mode}\n{USAGE}"));
     }
     if !(arguments.len() == 2 || arguments.len() == 3) {
-        return Err(USAGE.to_string());
+        return Err(USAGE.into());
     }
-    if arguments.len() == 3 && arguments[2].starts_with('-') {
+    if arguments.get(2).is_some_and(|base| base.starts_with('-')) {
         return Err(format!("base must be hex\n{USAGE}"));
     }
-    Ok(false)
+    let base = base_argument(arguments)?;
+    let path = &arguments[1];
+    match mode {
+        "--build-source" => print!(
+            "{}",
+            crate::disasm::build_overlay_source_from_file(Path::new(path), base)?
+        ),
+        "--assemble" => io::stdout()
+            .write_all(&crate::assemble_overlay(
+                &crate::OverlaySource::path(path.clone()),
+                base,
+            )?)
+            .map_err(|error| error.to_string())?,
+        "--c-spans" => {
+            let source = crate::OverlaySource::path(path.clone());
+            for span in crate::overlay_c_spans(&source, base)? {
+                println!("{},{}", span.start, span.end);
+            }
+        }
+        _ => unreachable!(),
+    }
+    Ok(())
 }
 pub fn entry(arguments: &[String]) -> ExitCode {
-    let arguments: Vec<String> = arguments.to_vec();
-    match validate_arguments(&arguments) {
-        Ok(true) => return ExitCode::SUCCESS,
-        Ok(false) => {}
+    match operation(arguments) {
+        Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("{error}");
-            return ExitCode::FAILURE;
+            ExitCode::FAILURE
         }
     }
-    if arguments.len() >= 2 && arguments[0] == "--build-source" {
-        let base = match base_argument(&arguments, 2) {
-            Ok(base) => base,
-            Err(error) => {
-                eprintln!("{error}");
-                return ExitCode::FAILURE;
-            }
-        };
-        return match crate::disasm::build_overlay_source_from_file(Path::new(&arguments[1]), base) {
-            Ok(text) => {
-                print!("{text}");
-                ExitCode::SUCCESS
-            }
-            Err(error) => {
-                eprintln!("{error}");
-                ExitCode::FAILURE
-            }
-        };
-    }
-    if arguments.len() >= 2 && (arguments[0] == "--assemble" || arguments[0] == "--c-spans") {
-        let base = match base_argument(&arguments, 2) {
-            Ok(base) => base,
-            Err(error) => {
-                eprintln!("{error}");
-                return ExitCode::FAILURE;
-            }
-        };
-        let source = crate::OverlaySource::path(arguments[1].clone());
-        if arguments[0] == "--assemble" {
-            return match crate::assemble_overlay(&source, base) {
-                Ok(bytes) => match io::stdout().write_all(&bytes) {
-                    Ok(()) => ExitCode::SUCCESS,
-                    Err(error) => {
-                        eprintln!("{error}");
-                        ExitCode::FAILURE
-                    }
-                },
-                Err(error) => {
-                    eprintln!("{error}");
-                    ExitCode::FAILURE
-                }
-            };
-        }
-        match crate::overlay_c_spans(&source, base) {
-            Ok(spans) => {
-                for span in spans {
-                    println!("{},{}", span.start, span.end);
-                }
-            }
-            Err(error) => {
-                eprintln!("{error}");
-                return ExitCode::FAILURE;
-            }
-        }
-        return ExitCode::SUCCESS;
-    }
-    eprintln!("{USAGE}");
-    ExitCode::FAILURE
 }

@@ -26,6 +26,7 @@ extern u8 *Func_02004c2c(s32);
 extern u8 *Func_02004c3a(s32);
 extern u8 *Func_02004c48(s32);
 extern u8 *Func_02004c64(s32);
+extern u8 *Func_02004c64_a(s32);
 extern void Func_02004ce0(s32, s32, s32);
 extern u8 *Func_02004c86(s32);
 extern s32 Func_02004c44(s32);
@@ -55,6 +56,7 @@ extern void Func_02004db8(s32, u8 *);
 extern void Func_02004e10(s32, s32);
 extern u8 *Func_02004dae(s32);
 extern u8 *Func_02004dc0(s32);
+extern u8 *Func_02004dc0_a(s32);
 extern void Func_02004cea(u8 *, s32);
 extern u8 *Func_02004e3c(s32);
 extern void Func_02004e3c_b(s32, s32, s32);
@@ -111,6 +113,7 @@ extern s32 Func_02005018(s32);
 extern void Func_02005040(void);
 extern void Func_02005160(s32, s32);
 extern void Func_020050e4(s32, s32, s32);
+extern void Func_020050e4_a(s32, s32, s32);
 extern void Func_020050f0(s32, s32, s32);
 extern void Func_020050f8(s32, s32, s32);
 extern void Func_02005118(s32, s32);
@@ -251,7 +254,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     } else {
         Func_02004cc6(19, Data_0200c9f4);
     }
-    if (Func_02004c64((s32)&Value_00000841) != 0) {
+    if (Func_02004c64_a((s32)&Value_00000841) != 0) {
         s32 h2;
         u8 *tbl;
         Func_02004682();
@@ -328,7 +331,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         if (Func_02004db0((s32)&Value_00000842) != 0) {
             Func_02004f70(22, 0, 0);
         }
-    } else if (Func_02004dc0((s32)&Value_0000083a) != 0) {
+    } else if (Func_02004dc0_a((s32)&Value_0000083a) != 0) {
         u8 *tbl;
         Func_02004e82(10, w8, b1);
         Func_02004efe(10, w9, 0);
@@ -416,7 +419,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Func_02005160(22, c2);
         Func_020050e4(22, w15, p5);
         Func_020050f0(21, w16, p6);
-        Func_020050e4(22, w17, c1);
+        Func_020050e4_a(22, w17, c1);
         Func_020050f8(21, w18, 0x26B);
         Func_02005118(21, 2);
         Func_02005120(22, 5);

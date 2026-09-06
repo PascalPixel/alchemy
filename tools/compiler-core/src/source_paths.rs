@@ -368,10 +368,7 @@ impl SourcePaths {
         if !manifest.exists() {
             return Ok(false);
         }
-        let text = fs::read_to_string(&manifest)
-            .map_err(|error| format!("{}: {error}", manifest.display()))?;
-        let mut value: Value = serde_json::from_str(&text)
-            .map_err(|error| format!("{}: {error}", manifest.display()))?;
+        let mut value: Value = crate::build_io::read_json(&manifest)?;
         let owners = value
             .get_mut("owners")
             .and_then(Value::as_object_mut)

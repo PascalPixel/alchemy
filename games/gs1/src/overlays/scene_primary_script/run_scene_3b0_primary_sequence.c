@@ -37,6 +37,7 @@ void Func_02001e44();
 void Func_02001e52();
 void Func_02001e5e();
 void Func_02001e72();
+void Func_02001e72_a();
 void Func_02001e74();
 void Func_02001e7e();
 void Func_02001e82();
@@ -74,6 +75,7 @@ void Func_02001fde();
 void Func_02001ff4();
 void Func_02001ffa();
 void Func_02002008();
+void Func_02002008_a();
 void Func_0200200a();
 void Func_02002010();
 void Func_02002030();
@@ -127,7 +129,7 @@ void Func_02002136();
 #define ObjectMotion_ResetAndSetPosition_5(args...) Func_02001e9c(args)
 #define ObjectMotion_ResetAndSetPosition_6(a0, a1, a2) Call3(Func_02001ea8, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPosition_7(a0, a1, a2) Call3(Func_02001eb4, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_4(args...) Func_02001e72(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_02001e72_a(args)
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02001f1c, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_5(args...) Func_02001e82(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1(args...) Func_02001ee4(args)
@@ -158,7 +160,7 @@ void Func_02002136();
 #define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Call2(Func_02001ff4, a0, a1)
 #define BattleRuntime_WaitIfModeZero_9(args...) Func_02001fc2(args)
 #define ObjectMotion_SetActionVariant_1(args...) Func_02002062(args)
-#define ObjectMotion_SetSpeedParameters_9(a0, a1, a2) Call3(Func_02002008, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_9(a0, a1, a2) Call3(Func_02002008_a, a0, a1, a2)
 #define Audio_PlayCue_4(args...) Func_020020e6(args)
 #define ObjectMotion_ResetAndSetPosition_8(a0, a1, a2) Call3(Func_02002040, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPosition_9(a0, a1, a2) Call3(Func_0200204c, a0, a1, a2)

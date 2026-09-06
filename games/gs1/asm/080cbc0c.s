@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_RunTileAndPaletteAnimation
 	.global Func_080cbc0c
 	.thumb_func
+BattleEffect_RunTileAndPaletteAnimation:
 Func_080cbc0c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

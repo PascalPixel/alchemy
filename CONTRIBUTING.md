@@ -485,6 +485,11 @@ hand-probe an owner whose `next=` line already names a mechanical route —
 `allocation-uncovered` go to the smart queue, and uncovered allocation is
 measured to regress under source respelling, not merely suspected to.
 
+`call-target-mismatch` identifies differing direct-call destinations when block
+topology and owner sizes agree. Review symbol bindings and indirect-call veneers
+manually; accompanying register differences remain part of the full diff. This
+class has no automatic repair and does not relax linked-byte verification.
+
 The executable repair catalog is
 `games/gs1/recon/compiler-repair-patterns.json`. Add a repair only with a named
 decoder signal, guarded finite operation, recorded verdict, and regression

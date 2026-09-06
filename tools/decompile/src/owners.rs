@@ -76,42 +76,35 @@ pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
     Ok((overlay, resolved.address()))
 }
 
-/// The registered span of an owner, from the retained module register.
-pub fn span_for(root: &Path, overlay: &str, entry: u32) -> Result<u32, String> {
-    if let Some(module) = modules(root)?
-        .into_iter()
-        .find(|m| m.overlay == overlay && m.entry == entry)
+/// Resolve an overlay owner from reviewed bounds or its installed C placeholder.
+/// A caller-supplied span confirms the extent; it cannot establish a new owner.
+pub fn span_for(
+    root: &Path,
+    overlay: &str,
+    entry: u32,
+    requested: Option<u32>,
+) -> Result<u32, String> {
+    let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
+    let reviewed = compiler_core::translation_units::reviewed_overlay_spans(root)?;
+    let paths = SourcePaths::load(root)?;
+    let installed = if paths
+        .mapped_source_path(owner)
+        .is_some_and(|path| path.is_file())
     {
-        return Ok(module.span);
-    }
-    // An unregistered owner whose extent a reviewer already recorded: the
-    // reviewed span, not a guess carved from the surrounding stretch.
-    if let Some(span) = reviewed_span(root, overlay, entry)? {
-        return Ok(span);
-    }
-    Err(format!(
-        "{overlay}:{entry:08x} is not a retained module and has no reviewed span; pass --span"
-    ))
-}
-
-/// The reviewed extent in `games/gs1/semantic/regions.json`, when one
-/// exists for this owner.
-pub fn reviewed_span(root: &Path, overlay: &str, entry: u32) -> Result<Option<u32>, String> {
-    let path = root.join("games/gs1/semantic/regions.json");
-    let text =
-        std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
-    let wanted = format!("0x{entry:08x}");
-    Ok(value["manual_regions"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .find(|region| {
-            region["overlay"].as_str() == Some(overlay) && region["entry"].as_str() == Some(&wanted)
-        })
-        .and_then(|region| region["span_bytes"].as_u64())
-        .map(|span| span as u32))
+        let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+        let text = std::fs::read_to_string(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        compiler_core::overlay::placeholder_extent(&text, entry)
+    } else {
+        None
+    };
+    let span = compiler_core::translation_units::resolve_overlay_span(
+        &reviewed,
+        owner,
+        installed,
+        requested.map(|span| span as usize),
+    )?;
+    u32::try_from(span).map_err(|_| format!("{}: owner extent exceeds address space", owner.id()))
 }
 
 pub fn overlay_image(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
@@ -124,9 +117,6 @@ pub struct Score {
     pub reference: u32,
     pub differing: u32,
     pub report: String,
-    /// The longer span the candidate is exact at, when its pool outgrows the
-    /// registered span into an unregistered gap.
-    pub extended: Option<u32>,
 }
 
 /// Re-enter the unified executable, falling back to Cargo before installation.
@@ -201,45 +191,7 @@ pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score
         reference,
         differing,
         report,
-        extended: None,
     })
-}
-
-/// A module whose literal pool sits past its registered end is exact at its
-/// own size. When the candidate outgrows the span and the bytes beyond the
-/// span are an unregistered gap, this scores again over the candidate's size
-/// and reports that span through `extended`.
-pub fn score_extending(
-    root: &Path,
-    source: &Path,
-    owner: &str,
-    span: u32,
-) -> Result<Score, String> {
-    let result = score(root, source, owner, span)?;
-    if result.differing == 0 || result.candidate <= result.reference {
-        return Ok(result);
-    }
-    let (overlay, entry) = parse_owner(owner)?;
-    let end = entry + result.candidate;
-    // An unregistered region wholly inside the extension is absorbed; a
-    // registered one, or one straddling the end, keeps the span as it is.
-    let taken = modules(root)?.into_iter().any(|m| {
-        m.overlay == overlay
-            && m.entry != entry
-            && m.entry < end
-            && m.entry + m.span > entry + span
-            && (m.registered || m.entry + m.span > end)
-    });
-    if taken {
-        return Ok(result);
-    }
-    match score(root, source, owner, result.candidate) {
-        Ok(mut extended) if extended.differing == 0 => {
-            extended.extended = Some(result.candidate);
-            Ok(extended)
-        }
-        _ => Ok(result),
-    }
 }
 
 /// The canonical main image, read once per call: the ROM as loaded at
@@ -264,10 +216,7 @@ pub fn image_window(
     let owner = SourceOwner::parse_argument(owner)?;
     let entry = owner.address();
     let (image, base, extent) = if let Some(overlay) = owner.overlay_id() {
-        let extent = match span {
-            Some(span) => span,
-            None => span_for(root, &overlay, entry)?,
-        };
+        let extent = span_for(root, &overlay, entry, span)?;
         (
             overlay_image(root, &overlay)?,
             crate::decode::OVERLAY_BASE,
@@ -291,7 +240,39 @@ pub fn image_window(
 
 #[cfg(test)]
 mod owner_tests {
-    use super::parse_main_owner;
+    use super::*;
+
+    #[test]
+    fn retained_regions_and_requested_spans_cannot_create_owners() {
+        let root = tempfile::tempdir().unwrap();
+        let semantic = root.path().join("games/gs1/semantic");
+        std::fs::create_dir_all(&semantic).unwrap();
+        std::fs::write(semantic.join("regions.json"), r#"{"manual_regions":[{"overlay":"resource_374","entry":"0x02001000","span_bytes":512}]}"#).unwrap();
+        std::fs::write(semantic.join("overlay-assembly.json"), r#"{"regions":[{"overlay":"resource_374","start":"0x02001010","end":"0x02001030","kind":"structured_scene_module"}]}"#).unwrap();
+        assert_eq!(
+            span_for(root.path(), "resource_374", 0x02001000, None).unwrap(),
+            512
+        );
+        assert_eq!(
+            span_for(root.path(), "resource_374", 0x02001000, Some(512)).unwrap(),
+            512
+        );
+        assert!(span_for(root.path(), "resource_374", 0x02001000, Some(32)).is_err());
+        let error = image_window(root.path(), "resource_374:02001010", Some(32)).unwrap_err();
+        assert!(error.contains("reviewed"), "{error}");
+        assert!(crate::adopt::adopt(
+            root.path(),
+            &crate::adopt::Request {
+                owner: "resource_374:02001010",
+                span: Some(32),
+                name: None,
+                path: None,
+                source: None,
+            }
+        )
+        .is_err());
+        assert!(!root.path().join("games/gs1/src").exists());
+    }
 
     #[test]
     fn main_addresses_share_the_register_parser() {

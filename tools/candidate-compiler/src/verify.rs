@@ -1,9 +1,7 @@
 //! Compile candidate C, link it at its ROM address, and return both byte spans.
 use crate::jsnum::{hex8, parse_hex};
 use compiler_core::nodepath::{basename, extname};
-use compiler_core::plan::{
-    source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions,
-};
+use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
@@ -12,12 +10,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
-pub type CandidateCompilerFamily = CompilerFamily;
 #[derive(Debug, Clone, Default)]
 pub struct CandidateCompilerConfiguration {
-    pub family: Option<CandidateCompilerFamily>,
-    pub add_flags: Vec<String>,
-    pub remove_flags: Vec<String>,
     pub reference_symbols: bool,
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
     pub call_via_base: Option<u64>,
@@ -109,7 +103,6 @@ pub fn compile_to_assembly(
     output_directory: &str,
     extra_compiler_flags: &[String],
     compiler: CompilerTarget,
-    configuration: &CandidateCompilerConfiguration,
 ) -> Result<String, String> {
     let stem = source_stem(source);
     std::fs::create_dir_all(output_directory)
@@ -124,7 +117,6 @@ pub fn compile_to_assembly(
         &assembly,
         extra_compiler_flags,
         compiler,
-        configuration,
         root(),
     )?;
     Ok(assembly)
@@ -135,7 +127,6 @@ pub fn compile_source(
     assembly: &str,
     extra_flags: &[String],
     compiler: CompilerTarget,
-    configuration: &CandidateCompilerConfiguration,
     cwd: &Path,
 ) -> Result<(), String> {
     let mut options = SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly);
@@ -145,13 +136,7 @@ pub fn compile_source(
         source_symbol_bindings(root(), routing_source, compiler)?.as_bytes(),
     )?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
-    options.family = configuration.family;
-    let mut add_flags = extra_flags.to_vec();
-    add_flags.extend(configuration.add_flags.iter().cloned());
-    options.flags = Some(CompilerFlagMutations {
-        add_flags,
-        remove_flags: configuration.remove_flags.clone(),
-    });
+    options.support_flags = extra_flags.to_vec();
     options.preprocessed_output = Some(
         Path::new(assembly)
             .with_extension("i")
@@ -257,7 +242,6 @@ pub fn verify_candidate_owned_routed_with_object(
             &assembly,
             extra_compiler_flags,
             compiler,
-            configuration,
             root(),
         )?;
         run(

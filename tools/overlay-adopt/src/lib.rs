@@ -244,62 +244,15 @@ pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<Str
 pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
     compiler_core::translation_units::reviewed_overlay_spans(root)
 }
-fn audited_span(
-    root: &Path,
-    overlay: &str,
-    start: i64,
-    span_bytes: i64,
-    id: &str,
-) -> Result<(), String> {
-    let intervals = audit_intervals(root, overlay)?
-        .ok_or_else(|| format!("{id}: {overlay} has no executable audit"))?;
-    let end = start + span_bytes;
-    if intervals.iter().any(|interval| {
-        interval.start <= start
-            && end <= interval.end
-            && matches!(interval.kind.as_str(), "thumb" | "arm")
-    }) {
-        return Ok(());
-    }
-    let mut touched: Vec<&AuditInterval> = intervals
-        .iter()
-        .filter(|interval| interval.start < end && start < interval.end)
-        .collect();
-    touched.sort_by_key(|interval| interval.start);
-    let tiles = !touched.is_empty()
-        && touched[0].start <= start
-        && touched[touched.len() - 1].end >= end
-        && touched.windows(2).all(|pair| pair[0].end == pair[1].start);
-    let starts_in_code = touched
-        .first()
-        .is_some_and(|interval| matches!(interval.kind.as_str(), "thumb" | "arm"));
-    if tiles
-        && starts_in_code
-        && touched.last().map(|interval| interval.kind.as_str()) != Some("executable_alignment")
-    {
-        return Ok(());
-    }
-    // Only an exact reviewed owner may bridge a missed pre-prologue instruction.
+fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64) -> Result<(), String> {
     let owner = SourceOwner::parse(&format!("{overlay}:{start:08x}"))?;
-    if reviewed_spans(root)?.get(&owner).copied() == usize::try_from(span_bytes).ok() {
-        return Ok(());
-    }
-    let mut detail = touched
-        .iter()
-        .map(|interval| {
-            format!(
-                "[{:#010x},{:#010x}) {}",
-                interval.start, interval.end, interval.kind
-            )
-        })
-        .collect::<Vec<_>>()
-        .join(" + ");
-    if detail.is_empty() {
-        detail.push_str("no audited executable interval covers it");
-    }
-    Err(format!(
-        "{id} span 0x{start:08x}..0x{end:08x} is not inside one audited executable interval: {detail}"
-    ))
+    compiler_core::translation_units::resolve_overlay_span(
+        &reviewed_spans(root)?,
+        owner,
+        None,
+        Some(usize::try_from(span_bytes).map_err(|_| "invalid overlay span")?),
+    )?;
+    Ok(())
 }
 const USAGE: &str =
     "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
@@ -448,10 +401,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         .span
         .ok_or("--span BYTES is required for overlay adoption")?;
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
+    audited_span(root, overlay, entry, span)?;
     let source_paths = SourcePaths::load(root)?;
     let installed = source_paths.registered_source_path(owner)?;
     let stem = owner.address_stem();
-    audited_span(root, overlay, entry, span, &options.id)?;
     let assembly = overlay_assembly(root, overlay);
     let _lock = OverlayLock::acquire(&assembly)?;
     let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;

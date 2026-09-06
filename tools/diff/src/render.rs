@@ -8,7 +8,7 @@ use crate::{
 };
 use candidate_compiler::verify::{
     compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
-    CandidateCompilerConfiguration, CandidateCompilerFamily, ROM_BASE,
+    CandidateCompilerConfiguration, ROM_BASE,
 };
 use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
@@ -17,7 +17,6 @@ use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use disassemble::OVERLAY_BASE;
 use regex::Regex;
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -187,7 +186,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         &identity.routing.to_string_lossy(),
         options.target,
         &stem,
-        &options.flags,
         &options.configuration,
         rom_path,
         &rom,
@@ -212,7 +210,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &stem,
             &rom,
             work.to_string_lossy().as_ref(),
-            &options.flags,
+            &[],
             f64::from(image_base),
             options.target,
             &options.configuration,
@@ -509,9 +507,8 @@ fn render_asm(
         &source,
         &identity.routing.to_string_lossy(),
         &work.to_string_lossy(),
-        &options.flags,
+        &[],
         options.target,
-        &options.configuration,
     )?;
     let candidate_gas =
         std::fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
@@ -680,30 +677,25 @@ fn source_cache_key(
     routing_source: &str,
     compiler: CompilerTarget,
     owner_stem: &str,
-    flags: &[String],
     configuration: &CandidateCompilerConfiguration,
     rom_path: &str,
     rom: &[u8],
     size: Option<usize>,
     patch: Option<&str>,
 ) -> Result<String, String> {
-    let executable = std::env::current_exe()
-        .map_err(|error| format!("cannot resolve the diff executable: {error}"))?;
-    let executable =
-        std::fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
+    let executable = compiler_core::bundle::executable_signature()?;
     let bundle = compiler_bundle_signature_checked()?;
     source_cache_key_with_environment(
         source,
         routing_source,
         compiler,
         owner_stem,
-        flags,
         configuration,
         rom_path,
         rom,
         size,
         patch,
-        &executable,
+        executable.as_bytes(),
         bundle.as_bytes(),
     )
 }
@@ -712,7 +704,6 @@ fn source_cache_key_with_environment(
     routing_source: &str,
     compiler: CompilerTarget,
     owner_stem: &str,
-    flags: &[String],
     configuration: &CandidateCompilerConfiguration,
     rom_path: &str,
     rom: &[u8],
@@ -721,86 +712,39 @@ fn source_cache_key_with_environment(
     executable: &[u8],
     compiler_bundle: &[u8],
 ) -> Result<String, String> {
-    let mut hasher = Sha256::new();
-    hasher.update(b"diff-cache-v6");
-    hasher.update(source_input_signature(
-        compiler_core::routing::root(),
-        source,
-        routing_source,
-        compiler,
-        flags,
-    )?);
-    hasher.update([7]);
-    hasher.update(routing_source.as_bytes());
-    hasher.update([8]);
-    hasher.update(owner_stem.as_bytes());
-    hasher.update([5]);
-    hasher.update(executable);
-    hasher.update([6]);
-    hasher.update(compiler_bundle);
-    for flag in flags {
-        hasher.update([0]);
-        hasher.update(flag.as_bytes());
-    }
-    hasher.update([1]);
-    hasher.update(
-        configuration
-            .family
-            .unwrap_or(CandidateCompilerFamily::Routed)
-            .as_str()
-            .as_bytes(),
-    );
-    for flag in &configuration.add_flags {
-        hasher.update([2]);
-        hasher.update(flag.as_bytes());
-    }
-    for flag in &configuration.remove_flags {
-        hasher.update([3]);
-        hasher.update(flag.as_bytes());
-    }
-    hasher.update([9, u8::from(configuration.reference_symbols)]);
-    for (name, symbol) in &configuration.absolute_symbols {
-        hasher.update([12]);
-        hasher.update(name.as_bytes());
-        hasher.update(symbol.address.to_le_bytes());
-        hasher.update([symbol.kind as u8]);
-    }
-    hasher.update(
-        configuration
-            .call_via_base
-            .unwrap_or_default()
-            .to_le_bytes(),
-    );
-    hasher.update(
-        configuration
-            .overlay_extent
-            .unwrap_or_default()
-            .to_le_bytes(),
-    );
-    if let Some(symbol) = &configuration.owner_symbol {
-        hasher.update([14]);
-        hasher.update(symbol.as_bytes());
-    }
-    hasher.update([10]);
-    hasher.update(rom_path.as_bytes());
-    hasher.update([13]);
-    hasher.update(Sha256::digest(rom));
-    if let Some(size) = size {
-        hasher.update([11]);
-        hasher.update(size.to_le_bytes());
-    }
-    if let Some(patch) = patch {
-        hasher.update([4]);
-        hasher.update(patch.as_bytes());
-    }
-    Ok(compiler_core::sha256::hex(&hasher.finalize()))
+    let symbols: Vec<_> = configuration
+        .absolute_symbols
+        .iter()
+        .map(|(name, symbol)| (name, symbol.address, symbol.kind as u8))
+        .collect();
+    // JSON frames every field, including None versus zero and symbol names;
+    // delimiter bytes and a second hand-written binary schema are unnecessary.
+    let identity = serde_json::json!({
+        "version": "diff-cache-v9",
+        "source": source_input_signature(compiler_core::routing::root(), source, routing_source, compiler)?,
+        "route": routing_source,
+        "owner": owner_stem,
+        "implementation": executable,
+        "compiler_bundle": compiler_bundle,
+        "reference_symbols": configuration.reference_symbols,
+        "absolute_symbols": symbols,
+        "call_via_base": configuration.call_via_base,
+        "overlay_extent": configuration.overlay_extent,
+        "owner_symbol": configuration.owner_symbol,
+        "rom_path": rom_path,
+        "rom": compiler_core::sha256::hex(rom),
+        "size": size,
+        "patch": patch,
+    });
+    Ok(compiler_core::sha256::hex(
+        &serde_json::to_vec(&identity).map_err(|error| error.to_string())?,
+    ))
 }
 fn source_input_signature(
     root: &Path,
     source: &str,
     routing_source: &str,
     compiler: CompilerTarget,
-    flags: &[String],
 ) -> Result<Vec<u8>, String> {
     let source = root.join(source);
     let include_dirs = routing_source
@@ -808,14 +752,6 @@ fn source_input_signature(
         .and_then(|path| path.split('/').next())
         .map(|game| root.join("games").join(game).join("include"))
         .into_iter()
-        .chain(flags.iter().filter_map(|flag| {
-            let path = Path::new(flag.strip_prefix("-I").filter(|path| !path.is_empty())?);
-            Some(
-                path.is_absolute()
-                    .then(|| path.into())
-                    .unwrap_or_else(|| root.join(path)),
-            )
-        }))
         .collect::<Vec<_>>();
     let mut signature = source_tree_signature(&source, &include_dirs)?;
     signature.extend(source_symbol_bindings(root, routing_source, compiler)?.as_bytes());
@@ -825,22 +761,14 @@ fn source_input_signature(
 mod cache_key_tests {
     use super::*;
     #[test]
-    fn compiler_route_flags_host_and_bundle_are_cache_identity() {
+    fn compiler_route_bindings_host_and_bundle_are_cache_identity() {
         let directory = tempfile::tempdir().unwrap();
         let source = directory.path().join("candidate.c");
         std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
         let source = source.to_str().unwrap();
-        let routed = CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Routed),
-            ..Default::default()
-        };
-        let gcc296 = CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Gcc296),
-            ..Default::default()
-        };
-        let removed = CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Routed),
-            remove_flags: vec!["-fgcse".into()],
+        let routed = CandidateCompilerConfiguration::default();
+        let reference_symbols = CandidateCompilerConfiguration {
+            reference_symbols: true,
             ..Default::default()
         };
         let key = |route, owner, configuration, host: &[u8], bundle: &[u8]| {
@@ -849,7 +777,6 @@ mod cache_key_tests {
                 route,
                 CompilerTarget::Gs1,
                 owner,
-                &[],
                 configuration,
                 "roms/gs1-en.gba",
                 b"reference-rom",
@@ -863,8 +790,13 @@ mod cache_key_tests {
         let route = "games/gs1/src/08000000.c";
         let base = key(route, "08000000", &routed, b"host-a", b"bundle-a");
         for changed in [
-            key(route, "08000000", &gcc296, b"host-a", b"bundle-a"),
-            key(route, "08000000", &removed, b"host-a", b"bundle-a"),
+            key(
+                route,
+                "08000000",
+                &reference_symbols,
+                b"host-a",
+                b"bundle-a",
+            ),
             key(
                 "games/gs1/recon/en/main/08000000.c",
                 "08000000",
@@ -896,7 +828,6 @@ mod cache_key_tests {
                 "games/gs1/src/08000000.c",
                 CompilerTarget::Gs1,
                 "08000000",
-                &[],
                 &configuration,
                 rom_path,
                 contents,
@@ -1041,7 +972,7 @@ mod source_identity_tests {
         let root = directory.path();
         fs::write(root.join("candidate.c"), "void Scene_Run(void) {}\n").unwrap();
         let signature = |route| {
-            source_input_signature(root, "candidate.c", route, CompilerTarget::Gs1, &[]).unwrap()
+            source_input_signature(root, "candidate.c", route, CompilerTarget::Gs1).unwrap()
         };
         let register = root.join("games/gs1/source-paths.json");
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Run"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();

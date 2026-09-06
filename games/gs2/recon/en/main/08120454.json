@@ -6,25 +6,25 @@
   "status": "measured-draft",
   "owner_bytes": 8300,
   "score": {
-    "measured": "2026-08-31",
+    "measured": "2026-09-06",
     "candidate_bytes": 8164,
     "reference_bytes": 8300,
-    "differing_halfwords": 3969,
-    "wrong_instructions": 2493,
-    "class": "missing-extra-code",
-    "command": "compiler candidate-show --target gs1 --flags -mthumb-inline-register-call --owner 08120454 --size 8300 --rom roms/gs2-en.gba games/gs2/recon/en/main/08120454.c",
-    "note": "Raw halfwords remain phase-dominated by displaced pools. Reordering the GS2 plan loads to create target_id before action_id/range makes the first 70 instructions exact (formerly 40) and improves the aligned difference from 4018 to 3969 halfwords. The PP-restoration call audit removed a duplicated Math_Div block: effect 0x4d retains its own call while 0x4e and the default arm now share the one tail present in the ROM. The remaining 136-byte deficit begins in the post-copy state guard."
+    "differing_halfwords": 3971,
+    "wrong_instructions": 2497,
+    "class": "structural-topology",
+    "command": "./alchemy diff games/gs2/recon/en/main/08120454.c --target gs2 --owner 08120454 --size 8300 --rom roms/gs2-en.gba --work out/battle-showcase/gs2-en-shared-headers --first",
+    "note": "Fresh linked stock-compiler measurement after making the shared GS1 header dependencies explicit. No compiler patch or flag override. The 136-byte deficit and indirect-call disagreement remain; this is not exact C."
   },
   "shape": {
-    "architecture": "Twelve-ROM master: games/gs1/recon/ja/main/080b2b0c.c is the shared body, written against ~60 BATTLE_* hook macros (362 uses). GS1 editions bind the hooks to GS1 semantics; games/gs2/recon/ja/main/battle_delta.h rebinds them with the sequel's grown logic (extra effect/heal/KO/guard cases) plus per-edition literal headers and ~200 per-edition callee retargets. BATTLE_SECOND_ACTOR reshapes struct BattlePlan in games/gs1/include/battle_types.h.",
-    "constraint": "The master body must stay byte-exact for gs1-en: measured 6332/6332 at 0 differing halfwords when wrapped as Func_080bbb0c against roms/gs1-en.gba. Every GS2-side repair must live in the hook bodies, the delta headers, or GS2-only conditionals -- never in unguarded shared text.",
-    "gs1_status": "main:080bbb0c is production-exact and relink-proven byte-exact in all six GS1 editions (exact-main-builds, location_methods asaaaa). Six of the twelve ROMs stand.",
-    "gs2_editions": "All six GS2 editions are core-identical for this owner (games/gs2/recon/cross-edition.json): one exact edition source closes all six through the existing literal/retarget headers."
+    "architecture": "Shared body: games/gs1/src/battle/action/resolve_target_action.c, included through the JA compatibility wrapper, uses BATTLE_* hooks for edition deltas. games/gs2/recon/ja/main/battle_delta.h supplies the sequel's extra effect/heal/KO/guard logic, per-edition literals and callee bindings. BATTLE_SECOND_ACTOR reshapes struct BattlePlan in games/gs1/include/battle_types.h. Shared structure does not establish GS2 exactness.",
+    "constraint": "Preserve the complete GS1 owner's independently verified semantics and exactness. GS1 EN is now production C: the complete canonical TU emits 6332/6332 bytes with zero differences, and the full EN ROM is byte-identical without fallback. The GS2 EN draft freshly remains 8164/8300 bytes and 3971 differing halfwords after the production-source move.",
+    "gs1_status": "2026-09-06: all six GS1 C links are freshly byte-exact with the unchanged approved compiler and canonical flags, independently of the retired per-file route. The repair scopes only the remaining-entry immobilization scan in its do/while(0) macro, preserving CSE and loop-motion boundaries. Report: out/battle-showcase/gs1-production-object-build.json. This is six owner checks, not six full-ROM builds or GS2 proof.",
+    "gs2_editions": "All six recorded locations have unique entry anchors and matching normalized reference cores, but each C owner still needs independent complete linked verification. Fresh canonical scores are 8164/8300 bytes and 3971 differing halfwords in every edition; reported wrong instructions: JA 2517, EN 2497, DE/ES/FR/IT 2523."
   },
   "unexpressed": [
     {
-      "op": "register allocation",
-      "where": "entry region: candidate permutes r1/r2/r5 against the reference and parks sl one instruction late; the added GS2 hook bodies shift pressure and LUIDs across the whole owner"
+      "op": "stock Thumb indirect-call form",
+      "where": "The copy call at owner+0x9c is an inline link-register transfer in all six local ROMs: JA 081204ec, EN 081204f0, DE/ES/FR/IT 08120508. Approved agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148, gcc/config/arm/arm.md:5905-5936, lowers both void and value-returning Thumb register calls exclusively through call-via trampolines. The typed void copy call therefore has a route-level mismatch before the later structural residuals. This evidence concerns this call form, not the original source language or the whole owner's classification; retain Draft C and zero DONE credit. No compiler change, direct-veneer disguise or output patch is an admissible repair."
     },
     {
       "op": "literal pool placement",
@@ -32,12 +32,12 @@
     },
     {
       "op": "state and effect control-flow extent",
-      "where": "the corrected command-pointer lifetime reveals a real 120-byte deficit. The first state block still lacks the reference's distinct command-pointer refresh tails, and later deficits must be localized by aligned call and branch sequences rather than compensated with redundant setup"
+      "where": "The fresh stock-route whole-owner deficit is 136 bytes. Historical entry-register permutations were repaired (70 decoded instructions match before the copy-call disagreement), so they are no longer an open entry-allocation hypothesis. The first state block still lacks the reference's distinct command-pointer refresh tails; later deficits must be localized by aligned calls and branches rather than compensated with redundant setup."
     }
   ],
   "notes": [
-    "Accepted compiler route: `-mthumb-inline-register-call` restores GCC's historical `mov lr, rN; .hword 0xf800` Thumb indirect-call lowering. The GS2 EN ROM contains 1,828 instances of that signature while GS1 EN contains none, so the route is GS2-only and default-off in agscc. At this owner's single site it reproduces the four reference bytes exactly.",
-    "The JA-native GS1 candidate (games/gs1/recon/ja/main/080b2b0c.c wrapped as Func_080b2b0c) measures 6332/6332 at 272 differing halfwords against roms/gs1-ja.gba; since the production EN object relinks byte-exact at the JA address, those 272 halfwords are JA-side binding/literal gaps in the wrapper, not core differences.",
+    "Historical experiments used the now-retired -mthumb-inline-register-call compiler modification. It is not an accepted route. Reference GS2 EN 081204f0 contains the inline register-call pair while stock GCC emits a veneer call; the independent structural deficit also remains. No compiler modification is authorized by this dossier.",
+    "The old JA-wrapper scores are historical diagnostics. The current production GS1 C object has since been independently linked and verified over the complete owner in all six GS1 editions; this does not establish GS2 exactness or six full-ROM builds.",
     "Recovered only from retained/located owner bytes in the approved local ROMs, the adopted GS1 EN source, in-repository headers, and the approved compiler.",
     "This candidate claims zero DONE bytes."
   ],
@@ -81,5 +81,6 @@
     "The active GS2 state block now establishes cmd after the state load, letting GCC schedule the inline call, state address/load, and command-pointer store exactly as the ROM. It cuts wrong_instructions 2570 -> 2439 and exposes rather than masks the remaining 120-byte control-flow deficit.",
     "BATTLE_HEAL_PREP direct-access respell: the 0x4c/0x47/0x46 arms now read max_hp through direct casts, emitting the reference's movs #52 / ldrsh reg-offset + ldrh immediate forms instead of pre-adding 52 into the base; the else arm keeps the GS1 pointer walk to preserve its unfolded double-width load. Cluster verified locally against the reference; wrong_instructions 2608 -> 2574.",
     "Remaining in this cluster: the reference shares one Math_Div call site across the calling arms (arms branch to a common 0x1458 tail with the divisor staged per arm) while the candidate duplicates the call; the exact sharing boundary excludes the maxu sign-extend, so a plain goto over-merges."
-  ]
+  ],
+  "measured": "2026-09-06"
 }

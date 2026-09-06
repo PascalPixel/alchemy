@@ -47,6 +47,56 @@ pub struct WaveReport {
     pub padding_fill: f64,
 }
 
+fn scalar(value: Option<&serde_json::Value>, label: &str) -> Result<Scalar, String> {
+    match value {
+        Some(value) if value.is_string() => Ok(Scalar::Str(value.as_str().unwrap().into())),
+        Some(value) if value.is_number() => Ok(Scalar::Num(value.as_f64().unwrap())),
+        _ => Err(format!("{label} must be a number or string")),
+    }
+}
+
+pub fn parse_wave_source(text: &str) -> Result<WaveRecordSource, String> {
+    let value: serde_json::Value = serde_json::from_str(text).map_err(|error| error.to_string())?;
+    let object = value.as_object().ok_or("wave source must be an object")?;
+    let header = object
+        .get("header")
+        .map(|value| -> Result<ExactWaveHeaderSource, String> {
+            let item = value.as_object().ok_or("wave header must be an object")?;
+            Ok(ExactWaveHeaderSource {
+                control: scalar(item.get("control"), "wave control")?,
+                frequency: scalar(item.get("frequency"), "wave frequency")?,
+                loop_start: scalar(item.get("loop_start"), "wave loop start")?,
+                sample_count: scalar(item.get("sample_count"), "wave sample count")?,
+            })
+        })
+        .transpose()?;
+    let padding = object
+        .get("padding")
+        .map(|value| -> Result<ExactWavePaddingSource, String> {
+            let item = value.as_object().ok_or("wave padding must be an object")?;
+            Ok(ExactWavePaddingSource {
+                size: scalar(item.get("size"), "wave padding size")?,
+                fill: scalar(item.get("fill"), "wave padding fill")?,
+            })
+        })
+        .transpose()?;
+    let loop_start = match object.get("loop_start") {
+        None | Some(serde_json::Value::Null) => None,
+        Some(value) => Some(
+            value
+                .as_f64()
+                .ok_or("wave loop start must be numeric or null")?,
+        ),
+    };
+    Ok(WaveRecordSource {
+        frequency: scalar(object.get("frequency"), "wave catalog frequency")?,
+        loop_start,
+        size: scalar(object.get("size"), "wave record size")?,
+        header,
+        padding,
+    })
+}
+
 fn js_number(value: &str) -> f64 {
     let value = value.trim_matches(|c: char| c.is_ascii_whitespace() || c == '\u{feff}');
     if value.is_empty() {

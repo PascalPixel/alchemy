@@ -14,6 +14,7 @@
 //! agent's work, scored with diff --unit until every previously
 //! exact owner is exact again.
 
+use compiler_core::build_io::read_json;
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use std::fs;
@@ -53,11 +54,11 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|_| "start is not hex")?;
     let end =
         u32::from_str_radix(end_hex.trim_start_matches("0x"), 16).map_err(|_| "end is not hex")?;
-    let inventory = read_json(Path::new(&format!(
+    let inventory: Value = read_json(Path::new(&format!(
         "out/{game}-en/full/rebuilt.owner-inventory.json"
     )))?;
     let manifest_path = format!("games/{game}/recon/translation-units.json");
-    let mut manifest = read_json(Path::new(&manifest_path))?;
+    let mut manifest: Value = read_json(Path::new(&manifest_path))?;
     // Owners already claimed by a declared unit are excluded: overlapping
     // declarations can never coexist, and the fix is extending that unit.
     let mut declared: BTreeSet<u32> = BTreeSet::new();
@@ -189,8 +190,4 @@ fn run(args: &[String]) -> Result<(), String> {
 
 fn hex_of(value: &Value) -> Option<u32> {
     u32::from_str_radix(value.as_str()?.trim_start_matches("0x"), 16).ok()
-}
-
-fn read_json(path: &Path) -> Result<Value, String> {
-    compiler_core::build_io::read_json(path)
 }

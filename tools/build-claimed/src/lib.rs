@@ -93,11 +93,10 @@ pub struct CacheSignatures {
 }
 impl CacheSignatures {
     pub fn production() -> Result<Self> {
-        let executable = std::env::current_exe().map_err(|e| e.to_string())?;
         Ok(Self {
             compiler_bundle: compiler_bundle_signature(),
             binutils: host_executable_signature(&BINUTILS)?,
-            implementation: digest(&std::fs::read(executable).map_err(|e| e.to_string())?),
+            implementation: compiler_core::bundle::executable_signature()?,
         })
     }
 }

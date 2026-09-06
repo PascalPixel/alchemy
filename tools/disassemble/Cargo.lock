@@ -121,6 +121,7 @@ dependencies = [
  "compiler-core",
  "extract-resource",
  "regex",
+ "serde_json",
  "tempfile",
 ]
 

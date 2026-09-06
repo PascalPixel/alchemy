@@ -3,7 +3,7 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// agscc 919451b: authorized post-reload constant-mode fix; stock GNU gas 2.10.
+// Restored agscc 5ec3e2e host build; unmodified GNU gas 2.10.
 const GS1: &[ExecutableDigests] = &[
     (
         "xgcc",
@@ -19,7 +19,7 @@ const GS1: &[ExecutableDigests] = &[
     ),
     (
         "cc1",
-        &["ded338f5983f05378f45156356cf1809d26a6e6bc7f1cc952380f16cdb89cc46"],
+        &["341996a29bbf5620d4c16982369597189f0c973945f3f526904eb93ef778427e"],
     ),
     (
         "as",

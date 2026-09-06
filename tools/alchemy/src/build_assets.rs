@@ -7,8 +7,13 @@ use asset_paths::AssetPaths;
 use audio_engine_data::build_audio_engine_data;
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
-use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
+use compiler_core::build_io::relative;
+use compiler_core::bundle::{
+    compiler_bundle_signature, executable_signature, host_executable_signature,
+};
+use compiler_core::routing::{cflags_for_target_source, CompilerTarget};
 use compiler_core::sha256;
+use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use disassemble::{assemble_overlay, OverlaySource};
 use extract_resource::{PaletteGroup, PaletteOperation};
@@ -24,9 +29,8 @@ use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::{Command, ExitCode, Stdio};
+use std::process::ExitCode;
 use tilemap::import_tilemap;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
@@ -210,18 +214,37 @@ fn build_offset_archive(plan_path: &Path, atlas_path: &Path) -> Result<Vec<u8>, 
     )
     .map_err(|error| error.to_string())
 }
-type Json = Value;
-fn json(path: &Path) -> Result<Json, String> {
+fn json(path: &Path) -> Result<Value, String> {
     serde_json::from_slice(&fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?)
         .map_err(|error| format!("{}: invalid JSON: {error}", path.display()))
 }
-fn json_number(value: &Json, label: &str) -> Result<usize, String> {
-    number(value, label)
-}
-fn json_string<'a>(value: &'a Json, label: &str) -> Result<&'a str, String> {
+fn json_string<'a>(value: &'a Value, label: &str) -> Result<&'a str, String> {
     value
         .as_str()
         .ok_or_else(|| format!("{label} must be a string"))
+}
+#[test]
+fn field_readers_reject_missing_null_and_wrong_types_without_defaulting() {
+    for document in [
+        serde_json::json!({}),
+        serde_json::json!({"field": null}),
+        serde_json::json!({"field": true}),
+        serde_json::json!([]),
+        serde_json::json!(false),
+    ] {
+        assert!(number(&document["field"], "field").is_err());
+        assert!(json_string(&document["field"], "field").is_err());
+    }
+    for (value, expected) in [(serde_json::json!(0), 0), (serde_json::json!("0x80"), 128)] {
+        let document = serde_json::json!({"field": value});
+        assert_eq!(number(&document["field"], "field").unwrap(), expected);
+    }
+    assert!(number(&serde_json::json!(-1), "field").is_err());
+    assert!(number(&serde_json::json!(1.5), "field").is_err());
+    assert_eq!(
+        json_string(&serde_json::json!("source.png"), "field").unwrap(),
+        "source.png"
+    );
 }
 fn root_path(root: &Path, name: &str) -> Result<PathBuf, String> {
     let path = if Path::new(name).is_absolute() {
@@ -245,100 +268,25 @@ fn root_relative(root: &Path, path: &Path) -> Result<String, String> {
     })?;
     Ok(relative.to_string_lossy().replace('\\', "/"))
 }
+fn root_sources(root: &Path, paths: &[PathBuf]) -> Result<Vec<String>, String> {
+    paths.iter().map(|path| root_relative(root, path)).collect()
+}
+#[test]
+fn library_sources_preserve_order_and_reject_paths_outside_the_root() {
+    let root = Path::new("/repo");
+    let paths = [
+        root.join("index.json"),
+        root.join("image.png"),
+        root.join("index.json"),
+    ];
+    assert_eq!(
+        root_sources(root, &paths).unwrap(),
+        ["index.json", "image.png", "index.json"]
+    );
+    assert!(root_sources(root, &[PathBuf::from("/elsewhere/image.png")]).is_err());
+}
 fn hex_address(address: usize) -> String {
     format!("0x{address:08x}")
-}
-fn implementation_signature() -> Result<String, String> {
-    let executable = env::current_exe().map_err(|error| error.to_string())?;
-    let bytes =
-        fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
-    Ok(sha256::hex(&bytes))
-}
-struct ProcessOutput {
-    stdout: Vec<u8>,
-    stderr: String,
-}
-fn run_tool(
-    root: &Path,
-    tool: &str,
-    args: &[String],
-    input: Option<&[u8]>,
-) -> Result<ProcessOutput, String> {
-    if tool != "build-assets" && !crate::assets::contains(tool) {
-        return Err(format!("unknown asset operation: {tool}"));
-    }
-    let binary = env::current_exe().map_err(|error| error.to_string())?;
-    let mut command = Command::new(binary);
-    if tool == "build-assets" {
-        command.args(["build", "assets"]);
-    } else {
-        command.arg("assets").arg(tool);
-    }
-    command.args(args);
-    command
-        .current_dir(root)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped());
-    if input.is_some() {
-        command.stdin(Stdio::piped());
-    }
-    let mut child = command
-        .spawn()
-        .map_err(|error| format!("failed to start native {tool}: {error}"))?;
-    if let Some(input) = input {
-        child
-            .stdin
-            .take()
-            .ok_or_else(|| format!("native {tool} has no stdin"))?
-            .write_all(input)
-            .map_err(|error| format!("native {tool} stdin: {error}"))?;
-    }
-    let output = child
-        .wait_with_output()
-        .map_err(|error| format!("native {tool}: {error}"))?;
-    let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
-    if !output.status.success() {
-        let detail = stderr.trim();
-        return Err(if detail.is_empty() {
-            format!("{tool} failed")
-        } else {
-            format!("{tool} failed: {detail}")
-        });
-    }
-    Ok(ProcessOutput {
-        stdout: output.stdout,
-        stderr,
-    })
-}
-fn native_bytes(
-    root: &Path,
-    tool: &str,
-    command: &str,
-    source: &str,
-    extra: &[String],
-) -> Result<Vec<u8>, String> {
-    let mut args = vec![command.to_string(), source.to_string()];
-    args.extend(extra.iter().cloned());
-    Ok(run_tool(root, tool, &args, None)?.stdout)
-}
-fn native_command(root: &Path, tool: &str, args: &[String]) -> Result<Vec<u8>, String> {
-    Ok(run_tool(root, tool, args, None)?.stdout)
-}
-fn native_with_report(root: &Path, tool: &str, args: &[String]) -> Result<(Vec<u8>, Json), String> {
-    let output = run_tool(root, tool, args, None)?;
-    let line = output
-        .stderr
-        .lines()
-        .rev()
-        .find(|line| line.trim_start().starts_with('{'))
-        .ok_or_else(|| format!("{tool} returned no build report"))?;
-    let report =
-        serde_json::from_str(line.trim()).map_err(|error| format!("{tool} report: {error}"))?;
-    Ok((output.stdout, report))
-}
-fn native_json(root: &Path, tool: &str, args: &[String]) -> Result<Json, String> {
-    let output = run_tool(root, tool, args, None)?;
-    serde_json::from_slice(&output.stdout).map_err(|error| format!("{tool} JSON: {error}"))
 }
 fn child_path(plan_path: &Path, name: &str) -> PathBuf {
     let parent = plan_path.parent().unwrap_or(Path::new("."));
@@ -362,7 +310,7 @@ fn dedup_sources(sources: Vec<String>) -> Vec<String> {
 struct ComponentResult {
     data: Vec<u8>,
     sources: Vec<String>,
-    details: Json,
+    details: Value,
 }
 fn decode_tile_entry(value: u16) -> (usize, usize, bool, bool) {
     (
@@ -400,16 +348,8 @@ fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, S
     {
         return Err("unsupported tile-object plan".to_string());
     }
-    let tile_count = json_number(
-        plan.get("tile_count")
-            .ok_or("object-bank tile_count is missing")?,
-        "tile_count",
-    )?;
-    let fallback = json_string(
-        plan.get("fallback")
-            .ok_or("object-bank fallback is missing")?,
-        "fallback",
-    )?;
+    let tile_count = number(&plan["tile_count"], "tile_count")?;
+    let fallback = json_string(&plan["fallback"], "fallback")?;
     let fallback_path = child_path(plan_path, fallback);
     let (fallback_bytes, _, _) =
         gba_graphics(&fs::read(&fallback_path).map_err(|e| e.to_string())?, 4.0)
@@ -475,7 +415,7 @@ fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, S
                 source_path.display()
             ));
         }
-        let base_tile = json_number(
+        let base_tile = number(
             object.get("base_tile").ok_or("object base_tile missing")?,
             "base_tile",
         )?;
@@ -568,44 +508,33 @@ fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, S
         }),
     })
 }
-fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String> {
-    let kind = json_string(
-        entry.get("kind").ok_or("asset component kind is missing")?,
-        "component kind",
-    )?;
-    let source_name = json_string(
-        entry
-            .get("source")
-            .ok_or("asset component source is missing")?,
-        "component source",
-    )?;
+fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String> {
+    let kind = json_string(&entry["kind"], "component kind")?;
+    let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
         "gba-4bpp-object-bank" => {
             let result = build_object_bank(root, &source)?;
             return Ok(result);
         }
-        "gba-4bpp-tiles" | "gba-8bpp-tiles" => {
+        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" => {
             let bpp = if kind == "gba-4bpp-tiles" { 4.0 } else { 8.0 };
-            let (built, _, report) =
+            let (graphics, palette, report) =
                 gba_graphics(&fs::read(&source).map_err(|e| e.to_string())?, bpp)
                     .map_err(|e| e.to_string())?;
-            let details: Json = serde_json::from_str(&import_asset::sorted_json(&report))
+            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
                 .map_err(|e| e.to_string())?;
-            (built, details, vec![source_name.to_string()])
-        }
-        "gba-palette" => {
-            let (_, built, report) =
-                gba_graphics(&fs::read(&source).map_err(|e| e.to_string())?, 8.0)
-                    .map_err(|e| e.to_string())?;
-            let details: Json = serde_json::from_str(&import_asset::sorted_json(&report))
-                .map_err(|e| e.to_string())?;
+            let built = if kind == "gba-palette" {
+                palette
+            } else {
+                graphics
+            };
             (built, details, vec![source_name.to_string()])
         }
         "gba-palette-rgba" => {
             let (built, report) = gba_palette_rgba(&fs::read(&source).map_err(|e| e.to_string())?)
                 .map_err(|e| e.to_string())?;
-            let details: Json = serde_json::from_str(&import_asset::sorted_json(&report))
+            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
                 .map_err(|e| e.to_string())?;
             (built, details, vec![source_name.to_string()])
         }
@@ -623,12 +552,7 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
                 .map_err(|e| e.to_string())?;
             let mut built: Vec<u8> = image.pixels.into_iter().map(|pixel| pixel as u8).collect();
             if kind == "raw-lz-bytes" {
-                let size = json_number(
-                    entry
-                        .get("size")
-                        .ok_or("raw-lz component size is missing")?,
-                    "component size",
-                )?;
+                let size = number(&entry["size"], "component size")?;
                 built.truncate(size);
                 (
                     built.clone(),
@@ -652,64 +576,30 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
                 vec![source_name.to_string()],
             )
         }
-        "little-u16-text" => (
-            native_bytes(
-                root,
-                "wordstream",
-                "build-stdout",
-                source.to_string_lossy().as_ref(),
-                &[],
-            )?,
-            serde_json::json!({}),
-            vec![source_name.to_string()],
-        ),
-        "little-u16-pairs" => (
-            native_bytes(
-                root,
-                "pairtable",
-                "build-stdout",
-                source.to_string_lossy().as_ref(),
-                &[],
-            )?,
-            serde_json::json!({}),
-            vec![source_name.to_string()],
-        ),
+        "little-u16-text" | "little-u16-pairs" => {
+            let text = fs::read_to_string(&source).map_err(|error| error.to_string())?;
+            let data = if kind == "little-u16-text" {
+                wordstream::import_words(&text).map_err(|error| error.to_string())?
+            } else {
+                pairtable::import_pairs(&text).map_err(|error| error.to_string())?
+            };
+            (data, serde_json::json!({}), vec![source_name.to_string()])
+        }
         "zero-skip-sprite-archive" => {
-            let plan_name = json_string(
-                entry.get("plan").ok_or("sprite archive plan is missing")?,
-                "archive plan",
-            )?;
-            let palette_name = json_string(
-                entry
-                    .get("palette")
-                    .ok_or("sprite archive palette is missing")?,
-                "archive palette",
-            )?;
+            let plan_name = json_string(&entry["plan"], "archive plan")?;
+            let palette_name = json_string(&entry["palette"], "archive palette")?;
             let plan = root_path(root, plan_name)?;
             let palette = root_path(root, palette_name)?;
-            let args = vec![
-                source.to_string_lossy().into_owned(),
-                plan.to_string_lossy().into_owned(),
-                palette.to_string_lossy().into_owned(),
-            ];
             let plan_section = entry.get("plan_section").and_then(Value::as_str);
-            let mut command = vec![
-                "build-stdout".to_string(),
-                args[0].clone(),
-                args[1].clone(),
-                args[2].clone(),
-            ];
-            if let Some(section) = plan_section {
-                command.extend(["--section".to_string(), section.to_string()]);
-            }
-            let built = native_command(root, "skip-sprite-archive", &command)?;
             let plan_document = json(&plan)?;
             let document = plan_section
                 .and_then(|section| plan_document.get(section))
                 .unwrap_or(&plan_document);
+            let built = skip_sprite_archive::build_archive(document, &source, &palette)
+                .map_err(|error| error.to_string())?;
             (
                 built,
-                serde_json::json!({"images": json_number(document.get("images").ok_or("archive image count is missing")?, "images")?, "width": json_number(document.get("width").ok_or("archive width is missing")?, "width")?, "height": json_number(document.get("height").ok_or("archive height is missing")?, "height")?}),
+                serde_json::json!({"images": number(&document["images"], "images")?, "width": number(&document["width"], "width")?, "height": number(&document["height"], "height")?}),
                 vec![
                     source_name.to_string(),
                     plan_name.to_string(),
@@ -718,10 +608,7 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
             )
         }
         "golden-sun-thumb-overlay" => {
-            let base = json_number(
-                entry.get("base").ok_or("overlay base is missing")?,
-                "overlay base",
-            )?;
+            let base = number(&entry["base"], "overlay base")?;
             let built = assemble_overlay(&OverlaySource::path(&source), base as i64)
                 .map_err(|e| e.to_string())?;
             (
@@ -732,10 +619,7 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
         }
         _ => return Err(format!("unsupported asset component: {kind}")),
     };
-    let expected = json_number(
-        entry.get("size").ok_or("asset component size is missing")?,
-        "component size",
-    )?;
+    let expected = number(&entry["size"], "component size")?;
     if data.len() != expected {
         return Err(format!(
             "{source_name}: built 0x{:x}, expected 0x{:x}",
@@ -749,7 +633,7 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
         details,
     })
 }
-fn parse_general_tokens(value: &Json) -> Result<Vec<extract_resource::GeneralToken>, String> {
+fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
         .as_array()
         .ok_or("general-LZ tokens are not an array".to_string())?
@@ -763,32 +647,24 @@ fn parse_general_tokens(value: &Json) -> Result<Vec<extract_resource::GeneralTok
                 .and_then(Value::as_str)
                 .ok_or("general-LZ token has no tag".to_string())?;
             match tag {
-                "l" if values.len() == 2 => Ok(extract_resource::GeneralToken::Literal(
-                    json_number(&values[1], "literal")? as u32,
-                )),
+                "l" if values.len() == 2 => Ok(extract_resource::GeneralToken::Literal(number(
+                    &values[1], "literal",
+                )?
+                    as u32)),
                 "c" if values.len() == 3 => Ok(extract_resource::GeneralToken::Copy {
-                    length: json_number(&values[1], "copy length")? as u32,
-                    distance: json_number(&values[2], "copy distance")? as u32,
+                    length: number(&values[1], "copy length")? as u32,
+                    distance: number(&values[2], "copy distance")? as u32,
                 }),
                 _ => Err("unsupported general-LZ token".to_string()),
             }
         })
         .collect()
 }
-fn parse_hex_text(value: &Json, label: &str) -> Result<Vec<u8>, String> {
-    let text = json_string(value, label)?;
-    if text.len() % 2 != 0 {
-        return Err(format!("{label} has odd length"));
-    }
-    (0..text.len())
-        .step_by(2)
-        .map(|index| {
-            u8::from_str_radix(&text[index..index + 2], 16)
-                .map_err(|_| format!("{label} is not hexadecimal text"))
-        })
-        .collect()
+fn parse_hex_text(value: &Value, label: &str) -> Result<Vec<u8>, String> {
+    json_string(value, label)?;
+    hex_bytes(value, label)
 }
-fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, Json), String> {
+fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>, Value), String> {
     let components = entry
         .get("components")
         .and_then(Value::as_array)
@@ -799,12 +675,7 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
     for component in components {
         let result = build_component(root, component)?;
         if component.get("kind").and_then(Value::as_str) == Some("zero-skip-sprite-archive") {
-            let plan_name = json_string(
-                component
-                    .get("plan")
-                    .ok_or("sprite archive plan is missing")?,
-                "archive plan",
-            )?;
+            let plan_name = json_string(&component["plan"], "archive plan")?;
             let plan_path = root_path(root, plan_name)?;
             let plan_document = json(&plan_path)?;
             let plan = component
@@ -812,14 +683,8 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
                 .and_then(Value::as_str)
                 .and_then(|section| plan_document.get(section))
                 .unwrap_or(&plan_document);
-            let image_count = json_number(
-                plan.get("images").ok_or("archive image count is missing")?,
-                "images",
-            )?;
-            let source_name = json_string(
-                component.get("source").ok_or("archive source is missing")?,
-                "archive source",
-            )?;
+            let image_count = number(&plan["images"], "images")?;
+            let source_name = json_string(&component["source"], "archive source")?;
             if plan.get("atlas_columns").is_some() {
                 sources.push(format!("{source_name}_images.8bpp.png"));
             } else {
@@ -828,34 +693,15 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
                 }
             }
             sources.push(plan_name.to_string());
-            sources.push(
-                json_string(
-                    component
-                        .get("palette")
-                        .ok_or("archive palette is missing")?,
-                    "archive palette",
-                )?
-                .to_string(),
-            );
+            sources.push(json_string(&component["palette"], "archive palette")?.to_string());
         } else {
-            sources.push(
-                json_string(
-                    component
-                        .get("source")
-                        .ok_or("component source is missing")?,
-                    "component source",
-                )?
-                .to_string(),
-            );
+            sources.push(json_string(&component["source"], "component source")?.to_string());
             sources.extend(result.sources.iter().skip(1).cloned());
         }
         decoded.extend(result.data);
         reports.push(serde_json::json!({"kind": component.get("kind"), "source": component.get("source"), "details": result.details}));
     }
-    let plan_name = json_string(
-        entry.get("plan").ok_or("general-LZ plan is missing")?,
-        "general-LZ plan",
-    )?;
+    let plan_name = json_string(&entry["plan"], "general-LZ plan")?;
     let plan_path = root_path(root, plan_name)?;
     let plan_document = json(&plan_path)?;
     let plan = entry
@@ -863,14 +709,8 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
         .and_then(Value::as_str)
         .and_then(|section| plan_document.get(section))
         .unwrap_or(&plan_document);
-    let codec = json_string(
-        plan.get("codec").ok_or("general-LZ codec is missing")?,
-        "codec",
-    )?;
-    let decoded_size = json_number(
-        plan.get("decoded_size").ok_or("decoded_size is missing")?,
-        "decoded_size",
-    )?;
+    let codec = json_string(&plan["codec"], "codec")?;
+    let decoded_size = number(&plan["decoded_size"], "decoded_size")?;
     if decoded.len() != decoded_size {
         return Err("decoded components do not match plan size".to_string());
     }
@@ -878,8 +718,8 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
         "golden-sun-general-lz-prefill" => extract_resource::encode_general_prefill(
             &decoded,
             &parse_general_tokens(plan.get("tokens").ok_or("general-LZ tokens are missing")?)?,
-            json_number(plan.get("prefill").ok_or("prefill is missing")?, "prefill")?,
-            json_number(plan.get("header").unwrap_or(&Value::from(1)), "header")?,
+            number(&plan["prefill"], "prefill")?,
+            number(plan.get("header").unwrap_or(&Value::from(1)), "header")?,
         )
         .map_err(|e| e.to_string())?,
         "golden-sun-general-lz" => extract_resource::encode_general(
@@ -900,12 +740,7 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
         _ => return Err("unsupported custom-LZ plan".to_string()),
     };
     if codec == "golden-sun-tagged-palette-lz" {
-        if json_number(
-            plan.get("tag")
-                .ok_or("tagged palette-LZ plan is missing tag")?,
-            "tag",
-        )? != 1
-        {
+        if number(&plan["tag"], "tag")? != 1 {
             return Err("tagged palette-LZ plan is missing tag 1".to_string());
         }
         built.insert(0, 1);
@@ -937,219 +772,178 @@ fn closure_self_test() -> Result<String, String> {
     if present_regions == 0 {
         return Err("PCM self-test index is empty".to_string());
     }
-    // The closure self-test deliberately retains the overlap invariant instead
-    // of merely checking that the fixture exists.
-    let left = (0x0800_1000usize, 0x0800_1010usize);
-    let right = (0x0800_1008usize, 0x0800_1018usize);
-    if left.0 < right.1 && right.0 < left.1 {
-        // This is the expected rejected fixture; reaching this branch proves
-        // that the overlap predicate still rejects it.
-    } else {
+    let overlapping = serde_json::json!([
+        {"address": "0x08001000", "size": 16},
+        {"address": "0x08001008", "size": 16}
+    ]);
+    if closure_coverage(overlapping.as_array().unwrap(), "self-test").is_ok() {
         return Err("overlapping closure coverage was accepted".to_string());
     }
     Ok(format!(
         "self-test=ok optional=skipped present_regions={present_regions} provenance=verified"
     ))
 }
-#[derive(Clone)]
-struct MapResource {
-    id: usize,
-    address: usize,
-    data: Vec<u8>,
-    sources: Vec<String>,
-}
-#[derive(Clone)]
-struct MusicResidual {
-    address: usize,
-    data: Vec<u8>,
-    sources: Vec<String>,
-}
 struct Context {
     root: PathBuf,
     paths: AssetPaths,
-    tokushu: HashMap<String, Vec<MapResource>>,
-    chiiki: HashMap<String, Vec<MapResource>>,
-    music: HashMap<String, Vec<MusicResidual>>,
+    maps: HashMap<(String, &'static str), Vec<map_resources::BuiltMapResource>>,
+    music: HashMap<String, Vec<music_residuals::BuiltMusicResidual>>,
+    battle: HashMap<String, Vec<(usize, Vec<u8>, Vec<PathBuf>)>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
             root: root.to_path_buf(),
             paths: AssetPaths::new(root),
-            tokushu: HashMap::new(),
-            chiiki: HashMap::new(),
+            maps: HashMap::new(),
             music: HashMap::new(),
+            battle: HashMap::new(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
     }
-    fn map_sparse_source(&self, map_dir: &str) -> String {
-        format!("{map_dir}.json")
-    }
-    fn map_sources(
-        &self,
+    fn map_series(
+        &mut self,
         index_name: &str,
-        resource: &Json,
-        prefix: &str,
-    ) -> Result<Vec<String>, String> {
-        let index_path = Path::new(index_name);
-        let parent = index_path
-            .parent()
-            .map_or_else(String::new, |path| path.to_string_lossy().into_owned());
-        let map_dir = format!(
-            "{parent}/{}{directory}",
-            prefix,
-            directory = json_string(
-                resource
-                    .get("directory")
-                    .ok_or("map resource directory missing")?,
-                "directory",
-            )?
-        );
-        let header_name = format!("{map_dir}.json");
-        let header = json(&self.source(&header_name)?)?;
-        let offsets = header
-            .get("header")
-            .unwrap_or(&header)
-            .get("component_offsets")
-            .and_then(Value::as_array)
-            .ok_or("map header component_offsets is missing")?;
-        let names: Vec<Vec<String>> = vec![
-            vec![header_name.clone()],
-            vec![header_name.clone()],
-            vec![
-                format!("{map_dir}_grid_grid.kind1.json"),
-                format!("{map_dir}_grid_layers.png"),
-            ],
-            vec![header_name.clone()],
-            vec![header_name.clone()],
-            vec![self.map_sparse_source(&map_dir)],
-        ];
-        let mut sources = vec![index_name.to_string(), header_name];
-        for (slot, offset) in offsets.iter().enumerate() {
-            if json_number(offset, "component offset")? != 0 {
-                if let Some(items) = names.get(slot) {
-                    sources.extend(items.iter().cloned());
-                }
-            }
-        }
-        for source in &sources {
-            self.source(source)?;
-        }
-        Ok(sources)
-    }
-    fn map_series(&mut self, index_name: &str, kind: &str) -> Result<Vec<MapResource>, String> {
-        if let Some(cached) = if kind == "tokushu" {
-            self.tokushu.get(index_name)
+        kind: &str,
+    ) -> Result<Vec<map_resources::BuiltMapResource>, String> {
+        let (name, kind) = if kind == "tokushu" {
+            ("tokushu", map_resources::SeriesKind::Tokushu)
         } else {
-            self.chiiki.get(index_name)
-        } {
-            return Ok(cached.clone());
-        }
-        let index_path = self.source(index_name)?;
-        let index = json(&index_path)?;
-        let resources = index
-            .get("resources")
-            .and_then(Value::as_array)
-            .ok_or("map index resources is missing")?;
-        let tool = if kind == "tokushu" {
-            "map-tokushu"
-        } else {
-            "map-chiiki"
+            ("chiiki", map_resources::SeriesKind::Chiiki)
         };
-        let bytes = native_bytes(
-            &self.root,
-            tool,
-            "series-stdout",
-            &index_path.to_string_lossy(),
-            &[],
-        )?;
-        let mut offset = 0usize;
-        let mut built = Vec::new();
-        for resource in resources {
-            let size = json_number(
-                resource.get("size").ok_or("map resource size missing")?,
-                "map resource size",
-            )?;
-            if offset + size > bytes.len() {
-                return Err(format!("{kind} map series output is truncated"));
-            }
-            let id_text = json_string(
-                resource.get("id").ok_or("map resource id missing")?,
-                "map resource id",
-            )?;
-            let id = usize::from_str_radix(id_text.trim_start_matches("0x"), 16)
-                .map_err(|_| "map resource id is invalid".to_string())?;
-            built.push(MapResource {
-                id,
-                address: json_number(
-                    resource
-                        .get("address")
-                        .ok_or("map resource address missing")?,
-                    "map resource address",
-                )?,
-                data: bytes[offset..offset + size].to_vec(),
-                sources: self.map_sources(index_name, resource, &format!("{kind}_"))?,
-            });
-            offset += size;
+        let key = (index_name.to_string(), name);
+        if !self.maps.contains_key(&key) {
+            let built = map_resources::build_series(&self.source(index_name)?, kind)?;
+            self.maps.insert(key.clone(), built);
         }
-        if offset != bytes.len() {
-            return Err(format!("{kind} map series output has trailing bytes"));
-        }
-        if kind == "tokushu" {
-            self.tokushu.insert(index_name.to_string(), built.clone());
-        } else {
-            self.chiiki.insert(index_name.to_string(), built.clone());
-        }
-        Ok(built)
+        Ok(self.maps[&key].clone())
     }
-    fn music_residuals(&mut self, index_name: &str) -> Result<Vec<MusicResidual>, String> {
-        if let Some(cached) = self.music.get(index_name) {
-            return Ok(cached.clone());
+    fn music_residuals(
+        &mut self,
+        index_name: &str,
+    ) -> Result<Vec<music_residuals::BuiltMusicResidual>, String> {
+        if !self.music.contains_key(index_name) {
+            let built = music_residuals::build_music_residuals(&self.source(index_name)?)?;
+            self.music.insert(index_name.to_string(), built);
         }
-        let index_path = self.source(index_name)?;
-        let text = fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
-        let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-        if rows.next() != Some("kind\tname\taddress\tend\tpriority\treverb\ttone_bank\tfill") {
-            return Err("unsupported music residual table".to_string());
-        }
-        let mut addresses = Vec::new();
-        for row in rows {
-            let fields = row.split('\t').collect::<Vec<_>>();
-            if !(4..=8).contains(&fields.len())
-                || !matches!(fields[0], "empty_header" | "reserve_stream" | "alignment")
-            {
-                return Err("music residual table row differs".to_string());
-            }
-            addresses.push(
-                usize::from_str_radix(fields[2].trim_start_matches("0x"), 16)
-                    .map_err(|_| "music residual address differs".to_string())?,
-            );
-        }
-        addresses.sort_unstable();
-        let mut built = Vec::new();
-        for address in addresses {
-            let args = vec![
-                "build-stdout".to_string(),
-                self.source(index_name)?.to_string_lossy().into_owned(),
-                hex_address(address),
-            ];
-            let data = native_command(&self.root, "music-residuals", &args)?;
-            built.push(MusicResidual {
-                address,
-                data,
-                sources: vec![index_name.to_string()],
-            });
-        }
-        self.music.insert(index_name.to_string(), built.clone());
-        Ok(built)
+        Ok(self.music[index_name].clone())
     }
+    fn battle_resources(
+        &mut self,
+        index_name: &str,
+    ) -> Result<&[(usize, Vec<u8>, Vec<PathBuf>)], String> {
+        if !self.battle.contains_key(index_name) {
+            let built = sentou_resources::build_sentou_series(&self.source(index_name)?)?;
+            self.battle.insert(index_name.to_string(), built);
+        }
+        Ok(&self.battle[index_name])
+    }
+}
+#[test]
+fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    fs::write(root.join("index.json"), b"{}").unwrap();
+    let mut ctx = Context::new(root);
+    for kind in [
+        "golden-sun-sentou-gamen-data",
+        "golden-sun-kind2-resource",
+        "golden-sun-kana-glyph-bank",
+        "golden-sun-d1-d3-resource",
+        "golden-sun-tokushu-map",
+        "golden-sun-chiiki-map",
+        "golden-sun-music-residual",
+    ] {
+        let entry =
+            serde_json::json!({"kind":kind,"source":"index.json","address":0,"resource_id":0});
+        assert!(build_entry(&mut ctx, &entry).is_err(), "{kind}");
+    }
+    assert!(ctx.maps.is_empty());
+    assert!(ctx.music.is_empty());
+    assert!(ctx.battle_resources("index.json").is_err());
+    assert!(ctx.battle.is_empty());
+}
+#[test]
+fn battle_resources_report_the_actual_palette_and_build_once() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    let mut pixels = vec![0; 512];
+    pixels[..4].copy_from_slice(b"TEST");
+    for (name, pixels, width, height, format) in [
+        ("battle_naiyou.png", pixels, 64, 8, PixelFormat::Indexed8),
+        (
+            "battle_custom.rgba.png",
+            vec![248, 0, 0, 255],
+            1,
+            1,
+            PixelFormat::Rgba,
+        ),
+    ] {
+        fs::write(
+            root.join(name),
+            archive_asset::make_atlas(&[pixels], width, height, 1, format).unwrap(),
+        )
+        .unwrap();
+    }
+    let stream = extract_resource::encode_general_prefill(
+        b"TEST",
+        &[extract_resource::GeneralToken::Literal(4)],
+        0x1000,
+        1,
+    )
+    .unwrap();
+    let size = stream.len() + 2;
+    let mut plan = serde_json::json!({
+        "kind":"golden-sun-sentou-resource", "source_size":size, "resource_boundary_size":size,
+        "image":{"source":"naiyou.png","encoding":"naiyou","canvas_size":512},
+        "stream":{"decoded_size":4,"codec":"general-lz-prefill","tokens":[["l",4]]},
+        "prefix_palette":{"source":"custom.rgba.png"}
+    });
+    fs::write(root.join("battle_stream.json"), plan.to_string()).unwrap();
+    fs::write(
+        root.join("index.json"),
+        serde_json::json!({"resources":[{
+            "address":"0x08001000","size":size,"source":"battle_stream.json"
+        }]})
+        .to_string(),
+    )
+    .unwrap();
+    let mut ctx = Context::new(root);
+    let mut entries = Vec::new();
+    expand_series(
+        &mut ctx,
+        &serde_json::json!({"series":[{
+            "kind":"golden-sun-sentou-resource-series","index":"index.json"
+        }]}),
+        &mut entries,
+    )
+    .unwrap();
+    assert_eq!(entries[0]["source"], "battle_naiyou.png");
+    plan["prefix_palette"]["source"] = Value::Null;
+    fs::write(root.join("battle_stream.json"), plan.to_string()).unwrap();
+    let (data, sources, report) = build_entry(&mut ctx, &entries[0]).unwrap();
+    assert_eq!(data, [&[31, 0][..], &stream].concat());
+    assert_eq!(report["source_bytes"], size);
+    assert_eq!(
+        sources,
+        [
+            "index.json",
+            "battle_stream.json",
+            "battle_naiyou.png",
+            "battle_custom.rgba.png"
+        ]
+    );
+    assert!(Context::new(root)
+        .battle_resources("index.json")
+        .unwrap_err()
+        .contains("palette source must be a string"));
 }
 fn expand_series(
     ctx: &mut Context,
-    manifest: &Json,
-    entries: &mut Vec<Json>,
+    manifest: &Value,
+    entries: &mut Vec<Value>,
 ) -> Result<(), String> {
     let mut grid_addresses: HashMap<String, usize> = HashMap::new();
     if let Some(series) = manifest.get("series").and_then(Value::as_array) {
@@ -1161,7 +955,7 @@ fn expand_series(
                 let tuple = grid.as_array().ok_or("grid tuple is malformed")?;
                 grid_addresses.insert(
                     json_string(&tuple[0], "grid id")?.to_ascii_lowercase(),
-                    json_number(&tuple[1], "grid address")?,
+                    number(&tuple[1], "grid address")?,
                 );
             }
         }
@@ -1172,30 +966,16 @@ fn expand_series(
         .cloned()
         .unwrap_or_default();
     for series in &series_list {
-        let kind = json_string(
-            series.get("kind").ok_or("asset series kind is missing")?,
-            "series kind",
-        )?;
+        let kind = json_string(&series["kind"], "series kind")?;
         match kind {
             "golden-sun-delta7-still-series" => {
-                if json_number(series.get("width").ok_or("delta7 width missing")?, "width")? != 256
-                    || json_number(
-                        series.get("height").ok_or("delta7 height missing")?,
-                        "height",
-                    )? != 120
-                    || json_number(
-                        series
-                            .get("palette_entries")
-                            .ok_or("delta7 palette count missing")?,
-                        "palette_entries",
-                    )? != 128
+                if number(&series["width"], "width")? != 256
+                    || number(&series["height"], "height")? != 120
+                    || number(&series["palette_entries"], "palette_entries")? != 128
                 {
                     return Err("unsupported delta7-still layout".to_string());
                 }
-                let index_name = json_string(
-                    series.get("index").ok_or("delta7 index missing")?,
-                    "delta7 index",
-                )?;
+                let index_name = json_string(&series["index"], "delta7 index")?;
                 let index = json(&ctx.source(index_name)?)?;
                 let resources = index
                     .get("resources")
@@ -1204,27 +984,20 @@ fn expand_series(
                 let mut lookup = HashMap::new();
                 for item in resources {
                     lookup.insert(
-                        json_string(item.get("id").ok_or("delta7 id missing")?, "delta7 id")?
-                            .to_ascii_lowercase(),
+                        json_string(&item["id"], "delta7 id")?.to_ascii_lowercase(),
                         item.clone(),
                     );
                 }
                 for resource in series_values(series, "resources")? {
-                    let id = json_string(
-                        resource.get("id").ok_or("delta7 resource id missing")?,
-                        "delta7 resource id",
-                    )?
-                    .to_ascii_lowercase();
+                    let id =
+                        json_string(&resource["id"], "delta7 resource id")?.to_ascii_lowercase();
                     let indexed = lookup.get(&id).ok_or_else(|| {
                         format!("pre-rendered background index has no resource {id}")
                     })?;
                     let source = Path::new(index_name)
                         .parent()
                         .unwrap_or(Path::new("."))
-                        .join(json_string(
-                            indexed.get("file").ok_or("delta7 file missing")?,
-                            "delta7 file",
-                        )?);
+                        .join(json_string(&indexed["file"], "delta7 file")?);
                     entries.push(serde_json::json!({
                         "address": resource.get("address"),
                         "size": resource.get("size"),
@@ -1234,18 +1007,10 @@ fn expand_series(
                 }
             }
             "golden-sun-zero-skip-sprite-series" => {
-                let palette = json_string(
-                    series
-                        .get("palette")
-                        .ok_or("sprite series palette missing")?,
-                    "palette",
-                )?;
+                let palette = json_string(&series["palette"], "palette")?;
                 for resource in series_values(series, "resources")? {
-                    let name = json_string(
-                        resource.get("id").ok_or("sprite resource id missing")?,
-                        "sprite resource id",
-                    )?
-                    .to_ascii_lowercase();
+                    let name =
+                        json_string(&resource["id"], "sprite resource id")?.to_ascii_lowercase();
                     let directory = ctx.paths.resource_graphics_dir(&name);
                     entries.push(serde_json::json!({
                         "address": resource.get("address"),
@@ -1322,9 +1087,7 @@ fn expand_series(
             }
             "golden-sun-standalone-palette-series" => {
                 for palette in series_values(series, "palettes")? {
-                    let name =
-                        json_string(palette.get("id").ok_or("palette id missing")?, "palette id")?
-                            .to_ascii_lowercase();
+                    let name = json_string(&palette["id"], "palette id")?.to_ascii_lowercase();
                     let directory = ctx.paths.resource_graphics_dir(&name);
                     entries.push(serde_json::json!({
                         "address":palette.get("address"),"size":palette.get("size"),
@@ -1335,31 +1098,21 @@ fn expand_series(
             }
             "golden-sun-color-table-series" => {
                 for resource in series_values(series, "resources")? {
-                    let name = json_string(
-                        resource.get("id").ok_or("color table id missing")?,
-                        "color table id",
-                    )?
-                    .to_ascii_lowercase();
+                    let name = json_string(&resource["id"], "color table id")?.to_ascii_lowercase();
                     let directory = ctx.paths.resource_graphics_dir(&name);
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"gba-palette-rgba","source":format!("{directory}_color_table.rgba.png")}));
                 }
             }
             "golden-sun-standalone-tile-series" => {
                 for resource in series_values(series, "resources")? {
-                    let name =
-                        json_string(resource.get("id").ok_or("tile id missing")?, "tile id")?
-                            .to_ascii_lowercase();
+                    let name = json_string(&resource["id"], "tile id")?.to_ascii_lowercase();
                     let directory = ctx.paths.resource_graphics_dir(&name);
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-lz","plan":format!("{directory}_tiles.kind2.json"),"components":[{"kind":"gba-4bpp-tiles","size":"0x4000","source":format!("{directory}_tiles.4bpp.png")}] }));
                 }
             }
             "golden-sun-prefill-lz-series" => {
                 for resource in series_values(series, "resources")? {
-                    let name = json_string(
-                        resource.get("id").ok_or("prefill id missing")?,
-                        "prefill id",
-                    )?
-                    .to_ascii_lowercase();
+                    let name = json_string(&resource["id"], "prefill id")?.to_ascii_lowercase();
                     let directory = format!("games/gs1/assets/data/resource_{name}");
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"raw-lz-bytes","size":resource.get("decoded_size"),"source":format!("{directory}_content.png")}] }));
                 }
@@ -1388,12 +1141,12 @@ fn expand_series(
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
                     let directory = format!("games/gs1/assets/maps/map_{name}");
-                    let container = json_number(&tuple[1], "map container")?;
+                    let container = number(&tuple[1], "map container")?;
                     let mut offsets = serde_json::Map::new();
                     for raw in &tuple[3..] {
                         let item = raw.as_array().ok_or("map component malformed")?;
-                        let slot = json_number(&item[0], "map component slot")?;
-                        let address = json_number(&item[1], "map component address")?;
+                        let slot = number(&item[0], "map component slot")?;
+                        let address = number(&item[1], "map component address")?;
                         offsets.insert(slot.to_string(), Value::from(address - container));
                     }
                     offsets.insert(
@@ -1408,7 +1161,7 @@ fn expand_series(
                     entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-map-container-header","source":format!("{directory}.json"),"offsets_check":Value::Object(offsets)}));
                     for raw in &tuple[3..] {
                         let item = raw.as_array().ok_or("map component malformed")?;
-                        let slot = json_number(&item[0], "map component slot")?;
+                        let slot = number(&item[0], "map component slot")?;
                         let component_kind = match slot {
                             0 => "golden-sun-map-metatiles",
                             1 => "golden-sun-map-descriptors",
@@ -1417,80 +1170,28 @@ fn expand_series(
                             5 => "golden-sun-map-sparse-cells",
                             _ => return Err("unsupported map component slot".into()),
                         };
-                        let source = if slot == 5 {
-                            ctx.map_sparse_source(&directory)
-                        } else {
-                            format!("{directory}.json")
-                        };
+                        let source = format!("{directory}.json");
                         entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":component_kind,"source":source}));
                     }
                 }
             }
             "golden-sun-sentou-resource-series" => {
-                let index_name = json_string(
-                    series.get("index").ok_or("sentou index missing")?,
-                    "sentou index",
-                )?;
-                let index = json(&ctx.source(index_name)?)?;
-                let prefix = Path::new(index_name)
-                    .file_name()
-                    .unwrap_or_default()
-                    .to_string_lossy()
-                    .replace("index.json", "");
-                for resource in series_values(&index, "resources")? {
-                    let plan_name = Path::new(index_name)
-                        .parent()
-                        .unwrap_or(Path::new("."))
-                        .join(format!(
-                            "{prefix}{}",
-                            json_string(
-                                resource.get("source").ok_or("sentou plan missing")?,
-                                "sentou plan"
-                            )?
-                        ));
-                    let plan = json(&plan_name)?;
-                    let image = format!(
-                        "{}{}",
-                        plan_name.to_string_lossy().replace("stream.json", ""),
-                        json_string(&plan["image"]["source"], "sentou image")?
-                    );
-                    let plan_path = ctx.source(&plan_name.to_string_lossy())?;
-                    let built = native_bytes(
-                        &ctx.root,
-                        "sentou",
-                        "build-stdout",
-                        &plan_path.to_string_lossy(),
-                        &[],
-                    )?;
-                    if built.len()
-                        != json_number(
-                            resource.get("size").ok_or("sentou size missing")?,
-                            "sentou size",
-                        )?
-                    {
-                        return Err(
-                            "sentou index size differs from its canonical source".to_string()
-                        );
-                    }
-                    entries.push(serde_json::json!({"address":resource.get("address"),"size":built.len(),"kind":"golden-sun-sentou-resource","source":image,"index":index_name}));
+                let index_name = json_string(&series["index"], "sentou index")?;
+                let root = ctx.root.clone();
+                for (address, built, sources) in ctx.battle_resources(index_name)? {
+                    let image = root_relative(&root, &sources[1])?;
+                    entries.push(serde_json::json!({"address":hex_address(*address),"size":built.len(),"kind":"golden-sun-sentou-resource","source":image,"index":index_name}));
                 }
             }
             "golden-sun-kind2-resource-series" => {
-                let index_name = json_string(
-                    series.get("index").ok_or("kind2 index missing")?,
-                    "kind2 index",
-                )?;
+                let index_name = json_string(&series["index"], "kind2 index")?;
                 let index_path = ctx.source(index_name)?;
                 let index = json(&index_path)?;
                 for resource in series_values(&index, "resources")? {
-                    let plan_name =
-                        index_path
-                            .parent()
-                            .unwrap_or(Path::new("."))
-                            .join(json_string(
-                                resource.get("source").ok_or("kind2 plan missing")?,
-                                "kind2 plan",
-                            )?);
+                    let plan_name = index_path
+                        .parent()
+                        .unwrap_or(Path::new("."))
+                        .join(json_string(&resource["source"], "kind2 plan")?);
                     let plan = json(&plan_name)?;
                     let image = format!(
                         "{}{}",
@@ -1501,8 +1202,7 @@ fn expand_series(
                 }
             }
             "golden-sun-tokushu-map-series" | "golden-sun-chiiki-map-series" => {
-                let index_name =
-                    json_string(series.get("index").ok_or("map index missing")?, "map index")?;
+                let index_name = json_string(&series["index"], "map index")?;
                 let map_kind = if kind.contains("tokushu") {
                     "tokushu"
                 } else {
@@ -1513,217 +1213,121 @@ fn expand_series(
                 }
             }
             "golden-sun-final-battle-overlay-series" => {
-                let source = json_string(
-                    series.get("source").ok_or("final overlay source missing")?,
-                    "final overlay source",
-                )?;
+                let source = json_string(&series["source"], "final overlay source")?;
                 let source_path = ctx.source(source)?;
-                let stream = native_command(
-                    &ctx.root,
-                    "3ce",
-                    &[
-                        "build-stdout".to_string(),
-                        source_path.to_string_lossy().into_owned(),
-                        "stream".to_string(),
-                    ],
-                )?;
-                let fill = native_command(
-                    &ctx.root,
-                    "3ce",
-                    &[
-                        "build-stdout".to_string(),
-                        source_path.to_string_lossy().into_owned(),
-                        "fill".to_string(),
-                    ],
-                )?;
-                entries.push(serde_json::json!({"address":RESOURCE_3CE_STREAM_ADDRESS,"size":stream.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":"stream"}));
-                entries.push(serde_json::json!({"address":RESOURCE_3CE_FILL_ADDRESS,"size":fill.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":"fill"}));
+                let resource = resource_3ce::build_resource_3ce(&source_path)?;
+                for (component, address, built) in [
+                    ("stream", RESOURCE_3CE_STREAM_ADDRESS, resource.stream),
+                    ("fill", RESOURCE_3CE_FILL_ADDRESS, resource.fill),
+                ] {
+                    entries.push(serde_json::json!({"address":address,"size":built.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":component}));
+                }
             }
             "golden-sun-encounter-data-series" => {
-                let directory = json_string(
-                    series
-                        .get("directory")
-                        .ok_or("encounter directory missing")?,
-                    "encounter directory",
-                )?;
-                let regions = native_json(
-                    &ctx.root,
-                    "encounter-data",
-                    &[
-                        "list-regions".to_string(),
-                        ctx.source(directory)?.to_string_lossy().into_owned(),
-                    ],
-                )?;
-                for region in regions
-                    .as_array()
-                    .ok_or("encounter regions are not an array")?
-                {
-                    entries.push(serde_json::json!({"address":region["address"],"size":region["size"],"kind":"golden-sun-encounter-data","source":Path::new(directory).join(json_string(&region["source"], "encounter source")?).to_string_lossy().replace('\\', "/")}));
+                let directory = json_string(&series["directory"], "encounter directory")?;
+                for region in encounter_data::build_encounter_regions(
+                    &ctx.source(directory)?.to_string_lossy(),
+                )? {
+                    entries.push(serde_json::json!({"address":region.address,"size":region.size,"kind":"golden-sun-encounter-data","source":Path::new(directory).join(region.source).to_string_lossy().replace('\\', "/")}));
                 }
             }
             "golden-sun-music-residuals" => {
-                let index_name = json_string(
-                    series.get("index").ok_or("music residual index missing")?,
-                    "music residual index",
-                )?;
+                let index_name = json_string(&series["index"], "music residual index")?;
                 for region in ctx.music_residuals(index_name)? {
                     entries.push(serde_json::json!({"address":region.address,"size":region.data.len(),"kind":"golden-sun-music-residual","source":index_name}));
                 }
             }
             "golden-sun-sound-sequence-series" => {
-                let index_name = json_string(
-                    series.get("index").ok_or("sequence index missing")?,
-                    "sequence index",
-                )?;
-                if index_name.ends_with(".tsv") {
-                    let index_path = ctx.source(index_name)?;
-                    let text =
-                        fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
-                    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-                    if rows.next() != Some("sound_id\tclass\taddress\tsize\tsource") {
-                        return Err("sequence table header differs".to_string());
-                    }
-                    let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
-                    let mut previous = None;
-                    for row in rows {
-                        let fields = row.split('\t').collect::<Vec<_>>();
-                        if fields.len() != 5 {
-                            return Err("sequence table row width differs".to_string());
-                        }
-                        let id = fields[0]
-                            .parse::<usize>()
-                            .map_err(|_| "sequence table sound ID differs".to_string())?;
-                        if previous.is_some_and(|value| id <= value)
-                            || !matches!(fields[1], "music" | "sfx")
-                        {
-                            return Err(format!("sequence table row {id} identity differs"));
-                        }
-                        previous = Some(id);
-                        let source = directory
-                            .join(fields[4])
-                            .to_string_lossy()
-                            .replace('\\', "/");
-                        ctx.source(&source)?;
-                        entries.push(serde_json::json!({
-                            "address":fields[2],
-                            "size":fields[3],
-                            "kind":"golden-sun-sound-sequence",
-                            "source":source,
-                        }));
-                    }
-                    if previous.is_none() {
-                        return Err("sequence table is empty".to_string());
-                    }
-                    continue;
+                let index_name = json_string(&series["index"], "sequence index")?;
+                if !index_name.ends_with(".tsv") {
+                    return Err("sequence series requires its canonical TSV table".into());
                 }
-                let index = json(&ctx.source(index_name)?)?;
+                let index_path = ctx.source(index_name)?;
+                let text = fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
+                let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+                if rows.next() != Some("sound_id\tclass\taddress\tsize\tsource") {
+                    return Err("sequence table header differs".to_string());
+                }
                 let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
-                let midi_directory = index
-                    .get("directory")
-                    .and_then(Value::as_str)
-                    .map(Path::new)
-                    .unwrap_or(Path::new("."));
-                for sequence in series_values(&index, "sequences")? {
-                    let tuple = sequence.as_array().ok_or("sequence tuple malformed")?;
-                    let id = json_number(&tuple[0], "song id")?;
-                    let class = json_string(&tuple[1], "song class")?;
-                    // The index's `names` map when it has this id, else
-                    // `{class}_{id:03}`. Renaming a sequence is then an edit to one
-                    // JSON string rather than a code change, which is the point:
-                    // the manufactured names are provisional and meant to be
-                    // replaced by ear.
-                    //
-                    // The fallback used to be
-                    // `format!("{class}_{id:03}. sound_{id:03}")`, which put the id
-                    // in twice joined by a period and a space -- every sequence was
-                    // `music_000. sound_000.mid`. The period also truncated the stem
-                    // the asset-maturity rule reads, since it splits on the FIRST
-                    // dot, so the second half was never even looked at.
-                    let base = index
-                        .get("names")
-                        .and_then(|names| names.get(format!("{id}")))
-                        .and_then(Value::as_str)
-                        .map(str::to_string)
-                        .unwrap_or_else(|| format!("{class}_{id:03}"));
-                    let midi = directory.join(midi_directory).join(format!("{base}.mid"));
-                    let object = serde_json::json!({"address":tuple[2],"size":tuple[3],"kind":"golden-sun-sound-sequence","source":root_relative(&ctx.root, &ctx.source(&midi.to_string_lossy())?)?});
-                    entries.push(object);
+                let mut previous = None;
+                for row in rows {
+                    let fields = row.split('\t').collect::<Vec<_>>();
+                    if fields.len() != 5 {
+                        return Err("sequence table row width differs".to_string());
+                    }
+                    let id = fields[0]
+                        .parse::<usize>()
+                        .map_err(|_| "sequence table sound ID differs".to_string())?;
+                    if previous.is_some_and(|value| id <= value)
+                        || !matches!(fields[1], "music" | "sfx")
+                    {
+                        return Err(format!("sequence table row {id} identity differs"));
+                    }
+                    previous = Some(id);
+                    let source = directory
+                        .join(fields[4])
+                        .to_string_lossy()
+                        .replace('\\', "/");
+                    ctx.source(&source)?;
+                    entries.push(serde_json::json!({
+                        "address":fields[2],
+                        "size":fields[3],
+                        "kind":"golden-sun-sound-sequence",
+                        "source":source,
+                    }));
+                }
+                if previous.is_none() {
+                    return Err("sequence table is empty".to_string());
                 }
             }
             "golden-sun-pcm-wave-series" => {
-                let index_name =
-                    json_string(series.get("index").ok_or("PCM index missing")?, "PCM index")?;
-                if index_name.ends_with(".tsv") {
-                    let index_path = ctx.source(index_name)?;
-                    let text =
-                        fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
-                    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-                    if rows.next()
-                        != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource")
-                    {
-                        return Err("PCM table header differs".to_string());
+                let index_name = json_string(&series["index"], "PCM index")?;
+                if !index_name.ends_with(".tsv") {
+                    return Err("PCM series requires its canonical TSV table".into());
+                }
+                let index_path = ctx.source(index_name)?;
+                let text = fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
+                let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+                if rows.next()
+                    != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource")
+                {
+                    return Err("PCM table header differs".to_string());
+                }
+                let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
+                for (sample, row) in rows.enumerate() {
+                    let fields = row.split('\t').collect::<Vec<_>>();
+                    if fields.len() != 6 || fields[0] != sample.to_string() {
+                        return Err(format!("PCM table row {sample} identity differs"));
                     }
-                    let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
-                    for (sample, row) in rows.enumerate() {
-                        let fields = row.split('\t').collect::<Vec<_>>();
-                        if fields.len() != 6 || fields[0] != sample.to_string() {
-                            return Err(format!("PCM table row {sample} identity differs"));
-                        }
-                        let frequency = fields[2]
-                            .parse::<u32>()
-                            .map_err(|_| format!("PCM table row {sample} frequency differs"))?;
-                        let loop_start = if fields[3].is_empty() {
+                    let frequency = fields[2]
+                        .parse::<u32>()
+                        .map_err(|_| format!("PCM table row {sample} frequency differs"))?;
+                    let loop_start =
+                        if fields[3].is_empty() {
                             Value::Null
                         } else {
                             Value::from(fields[3].parse::<u32>().map_err(|_| {
                                 format!("PCM table row {sample} loop point differs")
                             })?)
                         };
-                        let sample_count = fields[4]
-                            .parse::<usize>()
-                            .map_err(|_| format!("PCM table row {sample} extent differs"))?;
-                        let size = (16usize + sample_count + 3) & !3;
-                        let source = directory
-                            .join(fields[5])
-                            .to_string_lossy()
-                            .replace('\\', "/");
-                        ctx.source(&source)?;
-                        entries.push(serde_json::json!({
-                            "address":fields[1],
-                            "size":size,
-                            "frequency":frequency,
-                            "loop_start":loop_start,
-                            "kind":"golden-sun-pcm-wave",
-                            "source":source,
-                            "index":index_name,
-                        }));
-                    }
-                    continue;
-                }
-                let index = json(&ctx.source(index_name)?)?;
-                let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
-                let prefix = Path::new(index_name)
-                    .file_name()
-                    .unwrap_or_default()
-                    .to_string_lossy()
-                    .replace("index.json", "");
-                for wave in series_values(&index, "waves")? {
-                    let mut object = wave.clone();
-                    object["kind"] = Value::String("golden-sun-pcm-wave".to_string());
-                    object["source"] = Value::String(
-                        directory
-                            .join(format!(
-                                "{prefix}{}",
-                                json_string(
-                                    wave.get("source").ok_or("PCM source missing")?,
-                                    "PCM source"
-                                )?
-                            ))
-                            .to_string_lossy()
-                            .replace('\\', "/"),
-                    );
-                    object["index"] = Value::String(index_name.to_string());
-                    entries.push(object);
+                    let sample_count = fields[4]
+                        .parse::<usize>()
+                        .map_err(|_| format!("PCM table row {sample} extent differs"))?;
+                    let size = (16usize + sample_count + 3) & !3;
+                    let source = directory
+                        .join(fields[5])
+                        .to_string_lossy()
+                        .replace('\\', "/");
+                    ctx.source(&source)?;
+                    entries.push(serde_json::json!({
+                        "address":fields[1],
+                        "size":size,
+                        "frequency":frequency,
+                        "loop_start":loop_start,
+                        "kind":"golden-sun-pcm-wave",
+                        "source":source,
+                        "index":index_name,
+                    }));
                 }
             }
             _ => return Err(format!("unsupported asset series: {kind}")),
@@ -1731,26 +1335,64 @@ fn expand_series(
     }
     Ok(())
 }
-fn series_values<'a>(value: &'a Json, key: &str) -> Result<&'a Vec<Json>, String> {
+fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, String> {
     value
         .get(key)
         .and_then(Value::as_array)
         .ok_or_else(|| format!("{key} is missing or is not an array"))
 }
-fn closure_coverage(items: &[Json], label: &str) -> Result<Vec<(usize, usize)>, String> {
+#[test]
+fn sound_series_use_only_the_canonical_tables() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut ctx = Context::new(directory.path());
+    let sequence =
+        "sound_id\tclass\taddress\tsize\tsource\n0\tmusic\t0x08000000\t16\tsongs/opening.mid\n";
+    let samples = "sample\taddress\tfrequency\tloop_start\tsample_count\tsource\n0\t0x08000010\t8000\t\t5\tsamples/flute.wav\n";
+    for (kind, table, source, expected_size) in [
+        (
+            "sound-sequence",
+            sequence,
+            "songs/opening.mid",
+            serde_json::json!("16"),
+        ),
+        (
+            "pcm-wave",
+            samples,
+            "samples/flute.wav",
+            serde_json::json!(24),
+        ),
+    ] {
+        let manifest = serde_json::json!({"series":[{
+            "kind":format!("golden-sun-{kind}-series"), "index":"index.tsv"
+        }]});
+        fs::write(directory.path().join("index.tsv"), table).unwrap();
+        let mut entries = Vec::new();
+        expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0]["source"], source);
+        assert_eq!(entries[0]["size"], expected_size);
+        for invalid in [
+            table.replacen('\t', ",", 1),
+            table.replace("\n0\t", "\nno-id\t"),
+        ] {
+            fs::write(directory.path().join("index.tsv"), invalid).unwrap();
+            assert!(expand_series(&mut ctx, &manifest, &mut Vec::new()).is_err());
+        }
+        let mut legacy = manifest;
+        legacy["series"][0]["index"] = serde_json::json!("index.json");
+        assert!(expand_series(&mut ctx, &legacy, &mut Vec::new())
+            .unwrap_err()
+            .contains("canonical TSV"));
+    }
+}
+fn closure_coverage(items: &[Value], label: &str) -> Result<Vec<(usize, usize)>, String> {
     let mut regions = Vec::new();
     for (index, item) in items.iter().enumerate() {
         if !item.is_object() || item.is_array() {
             return Err(format!("{label} region {index} differs"));
         }
-        let address = json_number(
-            item.get("address").ok_or("closure address missing")?,
-            "closure address",
-        )?;
-        let size = json_number(
-            item.get("size").ok_or("closure size missing")?,
-            "closure size",
-        )?;
+        let address = number(&item["address"], "closure address")?;
+        let size = number(&item["size"], "closure size")?;
         if size == 0 || address < 0x0800_0000 || address + size > 0x0880_0000 {
             return Err(format!("{label} region {index} extent differs"));
         }
@@ -1774,8 +1416,8 @@ fn closure_coverage(items: &[Json], label: &str) -> Result<Vec<(usize, usize)>, 
 }
 fn expand_closure_packages(
     ctx: &mut Context,
-    manifest: &Json,
-    entries: &mut Vec<Json>,
+    manifest: &Value,
+    entries: &mut Vec<Value>,
 ) -> Result<(), String> {
     let supported = [
         "golden-sun-asset-fragment",
@@ -1855,7 +1497,7 @@ fn expand_closure_packages(
 }
 fn closure_sources(
     ctx: &Context,
-    entry: &Json,
+    entry: &Value,
     mut sources: Vec<String>,
 ) -> Result<Vec<String>, String> {
     if let Some(package) = entry.get("_closure_package").and_then(Value::as_str) {
@@ -1866,15 +1508,9 @@ fn closure_sources(
     }
     Ok(dedup_sources(sources))
 }
-fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>, Json), String> {
-    let kind = json_string(
-        entry.get("kind").ok_or("asset kind is missing")?,
-        "asset kind",
-    )?;
-    let address = json_number(
-        entry.get("address").ok_or("asset address is missing")?,
-        "asset address",
-    )?;
+fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>, Value), String> {
+    let kind = json_string(&entry["kind"], "asset kind")?;
+    let address = number(&entry["address"], "asset address")?;
     let entry_source = entry.get("source").and_then(Value::as_str).unwrap_or("");
     let source_path = |name: &str| ctx.source(name);
     match kind {
@@ -1886,10 +1522,7 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 ctx,
                 &source,
                 address,
-                json_number(
-                    entry.get("size").ok_or("header size missing")?,
-                    "header size",
-                )?,
+                number(&entry["size"], "header size")?,
             )?;
             Ok((
                 built.clone(),
@@ -1898,12 +1531,17 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             ))
         }
         "golden-sun-early-runtime-data" => {
-            let args = vec![
-                "build-region-stdout".to_string(),
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-                hex_address(address),
-            ];
-            let (built, report) = native_with_report(&ctx.root, "early-runtime-data", &args)?;
+            let result = early_runtime_data::build_early_runtime_data(
+                &source_path(entry_source)?.to_string_lossy(),
+                &early_runtime_data::default_catalog_path(),
+            )
+            .map_err(|error| error.to_string())?;
+            let report = serde_json::json!({"source_bytes":result.source_bytes,"region_address":hex_address(address)});
+            let (_, built) = result
+                .regions
+                .into_iter()
+                .find(|(start, _)| *start == address as i64)
+                .ok_or("early-runtime asset address is not a produced region")?;
             Ok((
                 built,
                 vec![
@@ -1914,75 +1552,50 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             ))
         }
         "golden-sun-late-runtime-residual" => {
-            let args = vec![
-                "build-region-stdout".to_string(),
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-                hex_address(address),
-            ];
-            let (built, report) = native_with_report(&ctx.root, "late-runtime-residual", &args)?;
-            let report = serde_json::json!({"source_bytes":report.get("source_bytes"),"region_address":hex_address(address)});
-            Ok((built, vec![entry_source.to_string()], report))
+            let result = late_runtime_residual::build_late_runtime_residual(
+                &source_path(entry_source)?,
+                &ctx.root
+                    .join("games/gs1/assets/data/late_runtime_catalog.json"),
+            )?;
+            if result.source_bytes != late_runtime_residual::SOURCE_BYTES {
+                return Err("late residual source-byte total differs".into());
+            }
+            let (_, built) = result
+                .regions
+                .iter()
+                .find(|(start, _)| *start as usize == address)
+                .ok_or("late-runtime asset address is not a produced region")?;
+            let report = serde_json::json!({"source_bytes":result.source_bytes,"region_address":hex_address(address)});
+            Ok((built.clone(), vec![entry_source.to_string()], report))
         }
         "golden-sun-resource-byte-canvas" => {
-            let resource = json_string(
-                entry
-                    .get("resource_id")
-                    .ok_or("byte canvas resource id missing")?,
-                "resource id",
-            )?
-            .to_ascii_lowercase();
-            let index = json(&source_path(entry_source)?)?;
-            let source = series_values(&index, "resources")?
-                .iter()
-                .find(|item| {
-                    item.get("id")
-                        .and_then(Value::as_str)
-                        .is_some_and(|id| id.to_ascii_lowercase() == resource)
-                })
-                .ok_or_else(|| format!("resource byte canvas {resource} is absent"))?;
-            let source_name = format!(
-                "{}{}",
-                entry_source.replace("index.json", ""),
-                json_string(
-                    source.get("source").ok_or("byte canvas source missing")?,
-                    "byte canvas source"
-                )?
-            );
-            let built = native_bytes(
-                &ctx.root,
-                "resource-byte-canvases",
-                "build-stdout",
-                &source_path(entry_source)?.to_string_lossy(),
-                &[resource.clone()],
-            )?;
+            let resource = json_string(&entry["resource_id"], "resource id")?.to_ascii_lowercase();
+            let built =
+                resource_byte_canvases::build_resource_byte_canvases(&source_path(entry_source)?)
+                    .map_err(|error| error.to_string())?
+                    .into_iter()
+                    .find(|item| item.id == resource)
+                    .ok_or_else(|| format!("resource byte canvas {resource} is absent"))?;
+            let source_name = format!("{}{}", entry_source.replace("index.json", ""), built.source);
             Ok((
-                built,
+                built.data,
                 vec![entry_source.to_string(), source_name],
                 serde_json::json!({"resource_id":format!("0x{resource}"),"representation":"provisional-neutral-byte-canvas"}),
             ))
         }
         "golden-sun-byte-value-regions" => {
-            let size = json_number(
-                entry.get("size").ok_or("byte-value size missing")?,
-                "byte-value size",
-            )?;
-            let args = vec![
-                "build-region-stdout".to_string(),
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-                hex_address(address),
-                size.to_string(),
-            ];
-            let (built, report) = native_with_report(&ctx.root, "byte-value-regions", &args)?;
-            Ok((built, vec![entry_source.to_string()], report))
+            let size = number(&entry["size"], "byte-value size")?;
+            let region = byte_value_regions::build_byte_value_regions(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?
+                .into_iter()
+                .find(|region| region.address as usize == address && region.data.len() == size)
+                .ok_or("byte-value region differs from manifest")?;
+            let report = serde_json::json!({"representation":"structured byte values","region_address":hex_address(address)});
+            Ok((region.data, vec![entry_source.to_string()], report))
         }
         "golden-sun-executable-gap-data" => {
-            let built = native_bytes(
-                &ctx.root,
-                "executable-gap-sources",
-                "build-stdout",
-                &source_path(entry_source)?.to_string_lossy(),
-                &[hex_address(address)],
-            )?;
+            let built =
+                executable_gap_sources::build_section(&source_path(entry_source)?, address as u64)?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -2011,10 +1624,7 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 sources.extend(result.sources);
                 reports.push(serde_json::json!({"kind":component.get("kind"),"source":component.get("source"),"details":result.details}));
             }
-            let plan_name = json_string(
-                entry.get("plan").ok_or("kind-2 plan missing")?,
-                "kind-2 plan",
-            )?;
+            let plan_name = json_string(&entry["plan"], "kind-2 plan")?;
             let plan_path = source_path(plan_name)?;
             let plan_document = json(&plan_path)?;
             let plan_section = entry.get("plan_section").and_then(Value::as_str);
@@ -2026,23 +1636,10 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                     return Err("tag-2 plan layout differs from manifest".to_string());
                 }
             }
-            if decoded.len()
-                != json_number(
-                    plan.get("decoded_size")
-                        .ok_or("kind-2 decoded_size missing")?,
-                    "decoded_size",
-                )?
-            {
+            if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
                 return Err("decoded tag-2 components do not match plan".to_string());
             }
-            let mut args = vec![
-                "encode-stdout".to_string(),
-                plan_path.to_string_lossy().into_owned(),
-            ];
-            if let Some(section) = plan_section {
-                args.extend(["--section".to_string(), section.to_string()]);
-            }
-            let built = run_tool(&ctx.root, "kind2-resources", &args, Some(&decoded))?.stdout;
+            let built = kind2_resources::encode_kind2_plan(&decoded, &plan_path, plan_section)?;
             sources.push(plan_name.to_string());
             Ok((
                 built,
@@ -2051,27 +1648,17 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             ))
         }
         "golden-sun-kind1-grid" => {
-            let plan_name =
-                json_string(entry.get("plan").ok_or("grid plan missing")?, "grid plan")?;
+            let plan_name = json_string(&entry["plan"], "grid plan")?;
             let directory = source_path(entry_source)?;
-            let built = native_bytes(
-                &ctx.root,
-                "kind1-map-grid",
-                "build-stdout",
-                &source_path(plan_name)?.to_string_lossy(),
-                &[
-                    "--directory".to_string(),
-                    directory.to_string_lossy().into_owned(),
-                ],
-            )?;
             let plan = json(&source_path(plan_name)?)?;
+            let built = kind1_map_grid::build_grid(&plan, &directory)?;
             let nested = vec![format!("{entry_source}_grid_layers.png")];
             Ok((
                 built,
                 std::iter::once(plan_name.to_string())
                     .chain(nested)
                     .collect(),
-                serde_json::json!({"decoded_size":json_number(plan.get("decoded_size").ok_or("grid decoded_size missing")?,"decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"planes":4}),
+                serde_json::json!({"decoded_size":number(&plan["decoded_size"], "decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"planes":4}),
             ))
         }
         "golden-sun-map-metatiles"
@@ -2089,15 +1676,13 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 .map(|plan| json_string(plan, "map component plan"))
                 .transpose()?
                 .unwrap_or(entry_source);
-            let args = vec![
-                "build-stdout".to_string(),
-                component.to_string(),
-                "--source".to_string(),
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-                "--plan".to_string(),
-                source_path(plan_name)?.to_string_lossy().into_owned(),
-            ];
-            let built = native_command(&ctx.root, "map-container-components", &args)?;
+            let build = match component {
+                "metatiles" => map_container_components::build_metatiles,
+                "descriptors" => map_container_components::build_descriptors,
+                "queues" => map_container_components::build_queues,
+                _ => map_container_components::build_blend_animation,
+            };
+            let built = build(&source_path(entry_source)?, &source_path(plan_name)?)?;
             let document = json(&source_path(plan_name)?)?;
             let section = match component {
                 "queues" => "animation_queues",
@@ -2109,20 +1694,11 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             Ok((
                 built,
                 vec![entry_source.to_string()],
-                serde_json::json!({"decoded_size":json_number(plan.get("decoded_size").ok_or("component decoded_size missing")?,"decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"component":plan.get("component")}),
+                serde_json::json!({"decoded_size":number(&plan["decoded_size"], "decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"component":plan.get("component")}),
             ))
         }
         "golden-sun-map-container-header" => {
-            let built = native_command(
-                &ctx.root,
-                "map-container-components",
-                &[
-                    "build-stdout".to_string(),
-                    "header".to_string(),
-                    "--source".to_string(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                ],
-            )?;
+            let built = map_container_components::build_header(&source_path(entry_source)?, None)?;
             let document = json(&source_path(entry_source)?)?;
             let document = document.get("header").unwrap_or(&document);
             Ok((
@@ -2132,16 +1708,7 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             ))
         }
         "golden-sun-map-sparse-cells" => {
-            let built = native_command(
-                &ctx.root,
-                "map-container-components",
-                &[
-                    "build-stdout".to_string(),
-                    "sparse".to_string(),
-                    "--source".to_string(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                ],
-            )?;
+            let built = map_container_components::build_sparse(&source_path(entry_source)?)?;
             let document = json(&source_path(entry_source)?)?;
             let document = document.get("sparse_cells").unwrap_or(&document);
             Ok((
@@ -2161,14 +1728,10 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             ))
         }
         "golden-sun-sound-table" => {
-            let (built, report) = native_with_report(
-                &ctx.root,
-                "music",
-                &[
-                    "build-stdout".to_string(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                ],
-            )?;
+            let source =
+                music::read_sound_table_source(&source_path(entry_source)?.to_string_lossy())?;
+            let (built, report) = music::build_sound_table(&source)?;
+            let report = serde_json::json!({"entries":report.entries,"unique_headers":report.unique_headers});
             Ok((built, vec![entry_source.to_string()], report))
         }
         _ => build_entry_native_tail(ctx, entry, kind, address, entry_source),
@@ -2215,22 +1778,22 @@ fn sequence_control_opcode(name: &str) -> Option<u8> {
 fn sequence_sets_running_status(opcode: u8) -> bool {
     opcode != 0xbb
 }
-fn sequence_duration_index(value: &Json, label: &str) -> Result<u8, String> {
-    let ticks = json_number(value, label)?;
+fn sequence_duration_index(value: &Value, label: &str) -> Result<u8, String> {
+    let ticks = number(value, label)?;
     SEQUENCE_DURATIONS
         .iter()
         .position(|candidate| *candidate == ticks)
         .map(|index| index as u8)
         .ok_or_else(|| format!("{label} is not representable by the engine duration table"))
 }
-fn sequence_address(value: &Json, label: &str) -> Result<u32, String> {
-    let address = json_number(value, label)?;
+fn sequence_address(value: &Value, label: &str) -> Result<u32, String> {
+    let address = number(value, label)?;
     if !(0x0800_0000..0x0a00_0000).contains(&address) {
         return Err(format!("{label} is not a ROM address"));
     }
     Ok(address as u32)
 }
-fn sequence_symbol(value: &Json, label: &str) -> Result<String, String> {
+fn sequence_symbol(value: &Value, label: &str) -> Result<String, String> {
     let symbol = json_string(value, label)?;
     if symbol.is_empty()
         || !symbol.chars().enumerate().all(|(index, character)| {
@@ -2245,8 +1808,8 @@ fn sequence_symbol(value: &Json, label: &str) -> Result<String, String> {
     }
     Ok(symbol.to_string())
 }
-fn sequence_parameter(value: &Json, name: &str) -> Result<u8, String> {
-    let number = json_number(value, name)? as i64;
+fn sequence_parameter(value: &Value, name: &str) -> Result<u8, String> {
+    let number = number(value, name)? as i64;
     let signed = matches!(name, "key_shift" | "pan" | "pitch_bend" | "tuning");
     if signed {
         if !(-128..=127).contains(&number) {
@@ -2259,7 +1822,7 @@ fn sequence_parameter(value: &Json, name: &str) -> Result<u8, String> {
         Err(format!("{name} does not fit u8"))
     }
 }
-fn sequence_note_parameters(event: &[Json], start: usize, label: &str) -> Result<Vec<u8>, String> {
+fn sequence_note_parameters(event: &[Value], start: usize, label: &str) -> Result<Vec<u8>, String> {
     if event.len() < start || event.len() - start > 3 {
         return Err(format!("{label} has more than three parameters"));
     }
@@ -2267,7 +1830,7 @@ fn sequence_note_parameters(event: &[Json], start: usize, label: &str) -> Result
         .iter()
         .enumerate()
         .map(|(index, value)| {
-            let number = json_number(value, &format!("{label} parameter {index}"))?;
+            let number = number(value, &format!("{label} parameter {index}"))?;
             if number >= 0x80 {
                 return Err(format!("{label} parameter {index} must be below 0x80"));
             }
@@ -2275,24 +1838,16 @@ fn sequence_note_parameters(event: &[Json], start: usize, label: &str) -> Result
         })
         .collect()
 }
-#[derive(Clone)]
 struct EncodedSequenceStream {
     data: Vec<u8>,
     labels: Vec<(String, usize)>,
+    pointers: Vec<(usize, String)>,
     events: usize,
 }
-fn sequence_pointer(opcode: u8, target: &str, labels: Option<&HashMap<String, u32>>) -> Vec<u8> {
-    let address = labels.and_then(|map| map.get(target).copied()).unwrap_or(0);
-    let mut bytes = vec![opcode];
-    bytes.extend_from_slice(&address.to_le_bytes());
-    bytes
-}
-fn encode_sequence_stream(
-    events: &[Json],
-    labels: Option<&HashMap<String, u32>>,
-) -> Result<EncodedSequenceStream, String> {
+fn encode_sequence_stream(events: &[Value]) -> Result<EncodedSequenceStream, String> {
     let mut data = Vec::new();
     let mut local_labels = Vec::new();
+    let mut pointers = Vec::new();
     let mut running: Option<u8> = None;
     let mut event_count = 0;
     for raw in events {
@@ -2330,8 +1885,9 @@ fn encode_sequence_stream(
                     event.get(1).ok_or("sequence target is missing")?,
                     "sequence target",
                 )?;
-                encoded =
-                    sequence_pointer(if kind == "goto" { 0xb2 } else { 0xb3 }, &target, labels);
+                encoded.push(if kind == "goto" { 0xb2 } else { 0xb3 });
+                pointers.push((data.len() + 1, target));
+                encoded.extend_from_slice(&[0; 4]);
             }
             "pattern_end" => {
                 if event.len() != 1 {
@@ -2343,7 +1899,7 @@ fn encode_sequence_stream(
                 if event.len() != 3 {
                     return Err("repeat requires a count and target".to_string());
                 }
-                let count = json_number(
+                let count = number(
                     event.get(1).ok_or("repeat count is missing")?,
                     "repeat count",
                 )?;
@@ -2356,12 +1912,8 @@ fn encode_sequence_stream(
                 )?;
                 encoded.push(0xb5);
                 encoded.push(count as u8);
-                encoded.extend_from_slice(
-                    &labels
-                        .and_then(|map| map.get(&target).copied())
-                        .unwrap_or(0)
-                        .to_le_bytes(),
-                );
+                pointers.push((data.len() + 2, target));
+                encoded.extend_from_slice(&[0; 4]);
             }
             "note" => {
                 let opcode = 0xcf
@@ -2458,6 +2010,7 @@ fn encode_sequence_stream(
     Ok(EncodedSequenceStream {
         data,
         labels: local_labels,
+        pointers,
         events: event_count,
     })
 }
@@ -2467,22 +2020,15 @@ fn sequence_alignment_size(offset: usize, boundary: usize) -> Result<usize, Stri
     }
     Ok((0usize.wrapping_sub(offset)) & (boundary - 1))
 }
-fn build_sequence_source(source: &Json) -> Result<(Vec<u8>, Json), String> {
-    if json_number(
-        source.get("format").ok_or("sequence format is missing")?,
-        "sequence format",
-    )? != 1
-        || source.get("engine").and_then(Value::as_str) != Some("smsh-sequence")
+fn build_sequence_source(source: &Value) -> Result<(Vec<u8>, Value), String> {
+    if number(&source["format"], "sequence format")? != 1
+        || source["engine"].as_str() != Some("smsh-sequence")
     {
-        return Err("unsupported sequence source".to_string());
+        return Err("unsupported sequence source".into());
     }
-    let base = sequence_address(
-        source.get("base").ok_or("sequence base is missing")?,
-        "sequence base",
-    )?;
-    let externals = source
-        .get("externals")
-        .and_then(Value::as_object)
+    let base = sequence_address(&source["base"], "sequence base")?;
+    let externals = source["externals"]
+        .as_object()
         .ok_or("sequence externals are missing")?;
     let mut external_addresses = HashMap::<String, u32>::new();
     for (name, value) in externals {
@@ -2491,199 +2037,100 @@ fn build_sequence_source(source: &Json) -> Result<(Vec<u8>, Json), String> {
             sequence_address(value, "external address")?,
         );
     }
-    let layout = source
-        .get("layout")
-        .and_then(Value::as_array)
+    let layout = source["layout"]
+        .as_array()
         .ok_or("sequence layout is missing")?;
     let mut labels = HashMap::<String, u32>::new();
-    let mut measured = HashMap::<usize, EncodedSequenceStream>::new();
-    let mut offset = 0usize;
-    let mut stream_count = 0usize;
-    let mut track_count = 0usize;
-    let mut event_count = 0usize;
+    let mut define = |name, offset: usize| -> Result<(), String> {
+        if labels.insert(name, base + offset as u32).is_some() {
+            return Err("duplicate local label".into());
+        }
+        Ok(())
+    };
+    let mut output = Vec::new();
+    let mut pointers = Vec::new();
+    let mut used_externals = BTreeSet::new();
+    let (mut stream_count, mut track_count, mut event_count) = (0usize, 0usize, 0usize);
     for (index, segment) in layout.iter().enumerate() {
-        let object = segment
-            .as_object()
-            .ok_or_else(|| format!("layout segment {index} is malformed"))?;
-        match object.get("kind").and_then(Value::as_str) {
+        match segment["kind"].as_str() {
             Some("stream") => {
-                let name = sequence_symbol(
-                    object.get("label").ok_or("stream label is missing")?,
-                    "stream label",
+                let offset = output.len();
+                define(sequence_symbol(&segment["label"], "stream label")?, offset)?;
+                let encoded = encode_sequence_stream(
+                    segment["events"]
+                        .as_array()
+                        .ok_or("stream events are missing")?,
                 )?;
-                if labels.insert(name, base + offset as u32).is_some() {
-                    return Err("duplicate local label".to_string());
+                for (name, inner) in encoded.labels {
+                    define(name, offset + inner)?;
                 }
-                let events = object
-                    .get("events")
-                    .and_then(Value::as_array)
-                    .ok_or("stream events are missing")?;
-                let encoded = encode_sequence_stream(events, None)?;
-                for (label, inner) in &encoded.labels {
-                    if labels
-                        .insert(label.clone(), base + offset as u32 + *inner as u32)
-                        .is_some()
-                    {
-                        return Err("duplicate local label".to_string());
-                    }
-                }
-                offset += encoded.data.len();
-                event_count += encoded.events;
+                pointers.extend(
+                    encoded
+                        .pointers
+                        .into_iter()
+                        .map(|(site, name)| (offset + site, name)),
+                );
+                output.extend(encoded.data);
                 stream_count += 1;
-                measured.insert(index, encoded);
+                event_count += encoded.events;
             }
             Some("align") => {
-                offset += sequence_alignment_size(
-                    base as usize + offset,
-                    json_number(
-                        object
-                            .get("boundary")
-                            .ok_or("alignment boundary is missing")?,
-                        "alignment boundary",
-                    )?,
+                let size = sequence_alignment_size(
+                    base as usize + output.len(),
+                    number(&segment["boundary"], "alignment boundary")?,
                 )?;
+                let fill = u8::try_from(number(&segment["fill"], "alignment fill")?)
+                    .map_err(|_| "alignment fill does not fit u8")?;
+                output.resize(output.len() + size, fill);
             }
             Some("header") => {
-                let name = sequence_symbol(
-                    object.get("label").ok_or("header label is missing")?,
-                    "header label",
+                define(
+                    sequence_symbol(&segment["label"], "header label")?,
+                    output.len(),
                 )?;
-                if labels.insert(name, base + offset as u32).is_some() {
-                    return Err("duplicate local label".to_string());
-                }
-                let tracks = object
-                    .get("tracks")
-                    .and_then(Value::as_array)
+                let tracks = segment["tracks"]
+                    .as_array()
                     .ok_or("header tracks are missing")?;
                 if tracks.is_empty() || tracks.len() > 16 {
-                    return Err("header track list is invalid".to_string());
+                    return Err("header track list is invalid".into());
                 }
-                if json_number(
-                    object
-                        .get("block_count")
-                        .ok_or("header block_count is missing")?,
-                    "header block_count",
-                )? != 0
-                {
-                    return Err("nonzero sequence block_count is not supported".to_string());
+                if number(&segment["block_count"], "header block_count")? != 0 {
+                    return Err("nonzero sequence block_count is not supported".into());
                 }
-                if json_number(
-                    object.get("priority").ok_or("header priority is missing")?,
-                    "header priority",
-                )? > 0xff
-                    || json_number(
-                        object.get("reverb").ok_or("header reverb is missing")?,
-                        "header reverb",
-                    )? > 0xff
-                {
-                    return Err("header value does not fit u8".to_string());
+                let priority = u8::try_from(number(&segment["priority"], "header priority")?)
+                    .map_err(|_| "header value does not fit u8")?;
+                let reverb = u8::try_from(number(&segment["reverb"], "header reverb")?)
+                    .map_err(|_| "header value does not fit u8")?;
+                let tone_bank = sequence_symbol(&segment["tone_bank"], "tone bank")?;
+                if external_addresses.contains_key(&tone_bank) {
+                    used_externals.insert(tone_bank.clone());
                 }
-                offset += 8 + tracks.len() * 4;
+                output.extend_from_slice(&[tracks.len() as u8, 0, priority, reverb]);
+                pointers.push((output.len(), tone_bank));
+                output.extend_from_slice(&[0; 4]);
+                for track in tracks {
+                    pointers.push((output.len(), sequence_symbol(track, "track symbol")?));
+                    output.extend_from_slice(&[0; 4]);
+                }
                 track_count += tracks.len();
             }
             _ => return Err(format!("unsupported layout segment {index}")),
         }
     }
-    let mut resolved = labels.clone();
+    let label_count = labels.len();
+    let mut resolved = labels;
     resolved.extend(
         external_addresses
             .iter()
             .map(|(name, address)| (name.clone(), *address)),
     );
-    let mut output = Vec::new();
-    offset = 0;
-    let mut used_externals = BTreeSet::new();
-    for (index, segment) in layout.iter().enumerate() {
-        let object = segment
-            .as_object()
-            .ok_or("sequence layout segment is malformed")?;
-        match object.get("kind").and_then(Value::as_str) {
-            Some("stream") => {
-                let events = object
-                    .get("events")
-                    .and_then(Value::as_array)
-                    .ok_or("stream events are missing")?;
-                let encoded = encode_sequence_stream(events, Some(&resolved))?;
-                if encoded.data.len()
-                    != measured
-                        .get(&index)
-                        .ok_or("missing measured stream")?
-                        .data
-                        .len()
-                {
-                    return Err("stream size changed during resolution".to_string());
-                }
-                output.extend(encoded.data);
-                offset += measured[&index].data.len();
-            }
-            Some("align") => {
-                let boundary = json_number(
-                    object
-                        .get("boundary")
-                        .ok_or("alignment boundary is missing")?,
-                    "alignment boundary",
-                )?;
-                let fill = json_number(
-                    object.get("fill").ok_or("alignment fill is missing")?,
-                    "alignment fill",
-                )?;
-                if fill > 0xff {
-                    return Err("alignment fill does not fit u8".to_string());
-                }
-                let size = sequence_alignment_size(base as usize + offset, boundary)?;
-                output.extend(std::iter::repeat(fill as u8).take(size));
-                offset += size;
-            }
-            Some("header") => {
-                let tracks = object
-                    .get("tracks")
-                    .and_then(Value::as_array)
-                    .ok_or("header tracks are missing")?;
-                let block_count = json_number(
-                    object
-                        .get("block_count")
-                        .ok_or("header block_count is missing")?,
-                    "header block_count",
-                )?;
-                let priority = json_number(
-                    object.get("priority").ok_or("header priority is missing")?,
-                    "header priority",
-                )?;
-                let reverb = json_number(
-                    object.get("reverb").ok_or("header reverb is missing")?,
-                    "header reverb",
-                )?;
-                let tone_bank = sequence_symbol(
-                    object.get("tone_bank").ok_or("tone bank is missing")?,
-                    "tone bank",
-                )?;
-                let tone_address = *resolved
-                    .get(&tone_bank)
-                    .ok_or_else(|| format!("unknown sequence symbol: {tone_bank}"))?;
-                if external_addresses.contains_key(&tone_bank) {
-                    used_externals.insert(tone_bank);
-                }
-                let mut header = vec![
-                    tracks.len() as u8,
-                    block_count as u8,
-                    priority as u8,
-                    reverb as u8,
-                ];
-                header.extend_from_slice(&tone_address.to_le_bytes());
-                for track in tracks {
-                    let name = sequence_symbol(track, "track symbol")?;
-                    let address = *resolved
-                        .get(&name)
-                        .ok_or_else(|| format!("unknown sequence symbol: {name}"))?;
-                    header.extend_from_slice(&address.to_le_bytes());
-                }
-                output.extend(header);
-                offset += 8 + tracks.len() * 4;
-            }
-            _ => return Err("unsupported sequence layout segment".to_string()),
-        }
+    for (offset, name) in pointers {
+        let address = resolved
+            .get(&name)
+            .ok_or_else(|| format!("unknown sequence symbol: {name}"))?;
+        output[offset..offset + 4].copy_from_slice(&address.to_le_bytes());
     }
-    let unused: Vec<String> = external_addresses
+    let unused: Vec<_> = external_addresses
         .keys()
         .filter(|name| !used_externals.contains(*name))
         .cloned()
@@ -2691,18 +2138,78 @@ fn build_sequence_source(source: &Json) -> Result<(Vec<u8>, Json), String> {
     if !unused.is_empty() {
         return Err(format!("unused sequence externals: {}", unused.join(", ")));
     }
-    Ok((
-        output.clone(),
+    let report = serde_json::json!({
+        "base": base,
+        "end": base as usize + output.len(),
+        "bytes": output.len(),
+        "streams": stream_count,
+        "tracks": track_count,
+        "events": event_count,
+        "labels": label_count,
+    });
+    Ok((output, report))
+}
+#[test]
+fn sequence_emission_resolves_forward_and_backward_labels_and_rejects_invalid_layouts() {
+    let source = serde_json::json!({
+        "format": 1, "engine": "smsh-sequence", "base": "0x08000000",
+        "externals": {"voicegroup": "0x08010000"},
+        "layout": [
+            {"kind": "header", "label": "song", "tracks": ["track"],
+             "block_count": 0, "priority": 1, "reverb": 0, "tone_bank": "voicegroup"},
+            {"kind": "align", "boundary": 16, "fill": 0},
+            {"kind": "stream", "label": "track", "events": [
+                ["goto", "end"], ["label", "loop"], ["note", 1, 60, 100],
+                ["wait", 1], ["repeat", 2, "loop"], ["label", "end"],
+                ["pattern", "loop"], ["fine"]
+            ]}
+        ]
+    });
+    let (bytes, report) = build_sequence_source(&source).unwrap();
+    assert_eq!(
+        bytes,
+        [
+            1, 0, 1, 0, 0, 0, 1, 8, 16, 0, 0, 8, 0, 0, 0, 0, 0xb2, 31, 0, 0, 8, 0xd0, 60, 100,
+            0x81, 0xb5, 2, 21, 0, 0, 8, 0xb3, 21, 0, 0, 8, 0xb1,
+        ]
+    );
+    assert_eq!(
+        report,
         serde_json::json!({
-            "base": base,
-            "end": base as usize + output.len(),
-            "bytes": output.len(),
-            "streams": stream_count,
-            "tracks": track_count,
-            "events": event_count,
-            "labels": labels.len(),
-        }),
-    ))
+            "base": 0x08000000, "end": 0x08000025, "bytes": 37,
+            "streams": 1, "tracks": 1, "events": 6, "labels": 4,
+        })
+    );
+    for (path, value, error) in [
+        (
+            "/layout/2/events/0/1",
+            serde_json::json!("missing"),
+            "unknown sequence symbol",
+        ),
+        (
+            "/layout/2/label",
+            serde_json::json!("song"),
+            "duplicate local label",
+        ),
+        ("/layout/0/block_count", serde_json::json!(1), "nonzero"),
+        ("/layout/0/priority", serde_json::json!(256), "header value"),
+        ("/layout/0/reverb", serde_json::json!(256), "header value"),
+        ("/layout/0/tracks", serde_json::json!([]), "track list"),
+        ("/layout/1/boundary", serde_json::json!(3), "power of two"),
+        ("/layout/1/fill", serde_json::json!(256), "alignment fill"),
+    ] {
+        let mut invalid = source.clone();
+        *invalid.pointer_mut(path).unwrap() = value;
+        assert!(
+            build_sequence_source(&invalid).unwrap_err().contains(error),
+            "{path}"
+        );
+    }
+    let mut unused = source;
+    unused["externals"]["unused"] = serde_json::json!("0x08010004");
+    assert!(build_sequence_source(&unused)
+        .unwrap_err()
+        .contains("unused sequence externals"));
 }
 fn midi_hex(data: &str) -> Result<Vec<u8>, String> {
     if data.len() % 2 != 0 {
@@ -2721,9 +2228,9 @@ struct MidiNode {
     compact_tick: i64,
     raw_tick: i64,
     order: usize,
-    event: Json,
+    event: Value,
 }
-fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Json>, String> {
+fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Value>, String> {
     let mut nodes = Vec::<MidiNode>::new();
     let mut grid = Vec::<usize>::new();
     let mut pending = HashMap::<u8, Vec<usize>>::new();
@@ -2761,7 +2268,7 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Json>, String> {
                 if depth > 0 {
                     continue;
                 }
-                let value = serde_json::from_slice::<Json>(&midi_hex(data)?)
+                let value = serde_json::from_slice::<Value>(&midi_hex(data)?)
                     .map_err(|e| format!("MIDI event marker: {e}"))?;
                 let index = nodes.len();
                 nodes.push(MidiNode {
@@ -2845,7 +2352,7 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Json>, String> {
 fn sha1_hex(data: &[u8]) -> String {
     format!("{:x}", Sha1::digest(data))
 }
-fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
+fn greedy_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
     let mut output = Vec::new();
     let mut running: Option<u8> = None;
     let (mut key, mut velocity) = (0usize, 0usize);
@@ -2856,13 +2363,12 @@ fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
             .and_then(Value::as_str)
             .ok_or("sequence event has no kind")?;
         if kind == "note" || kind == "note_running" {
-            let duration = json_number(
+            let duration = number(
                 values.get(1).ok_or("note duration is missing")?,
                 "note duration",
             )?;
-            let effective_key =
-                json_number(values.get(2).ok_or("note key is missing")?, "note key")?;
-            let effective_velocity = json_number(
+            let effective_key = number(values.get(2).ok_or("note key is missing")?, "note key")?;
+            let effective_velocity = number(
                 values.get(3).ok_or("note velocity is missing")?,
                 "note velocity",
             )?;
@@ -2928,7 +2434,6 @@ fn native_sequence_self_test() -> Result<(), String> {
         events
             .as_array()
             .ok_or("sequence self-test events are malformed")?,
-        None,
     )?;
     if encoded.data != [0xba, 5, 6, 0xbc, 0, 1, 0xbb, 30] {
         return Err("sequence running-status self-test differs".to_string());
@@ -2938,7 +2443,6 @@ fn native_sequence_self_test() -> Result<(), String> {
         invalid
             .as_array()
             .ok_or("sequence self-test invalid events are malformed")?,
-        None,
     )
     .is_ok()
     {
@@ -2947,18 +2451,12 @@ fn native_sequence_self_test() -> Result<(), String> {
     Ok(())
 }
 fn apply_sequence_deviations(
-    default: &[Json],
-    track: &Json,
+    default: &[Value],
+    track: &Value,
     name: &str,
-) -> Result<Vec<Json>, String> {
-    let events = json_number(
-        track.get("events").ok_or("sidecar track events missing")?,
-        "sidecar events",
-    )?;
-    let hash = json_string(
-        track.get("hash").ok_or("sidecar track hash missing")?,
-        "sidecar hash",
-    )?;
+) -> Result<Vec<Value>, String> {
+    let events = number(&track["events"], "sidecar events")?;
+    let hash = json_string(&track["hash"], "sidecar hash")?;
     let encoded = serde_json::to_vec(default).map_err(|e| e.to_string())?;
     if default.len() != events || hash.len() < 16 || sha1_hex(&encoded)[..16] != hash[..16] {
         return Err(format!("sidecar {name} default stream drift"));
@@ -2987,8 +2485,8 @@ fn apply_sequence_deviations(
         if items.len() < 2 {
             return Err("sidecar deviation is too short".to_string());
         }
-        let start = json_number(&items[0], "sidecar deviation start")?;
-        let count = json_number(&items[1], "sidecar deviation length")?;
+        let start = number(&items[0], "sidecar deviation start")?;
+        let count = number(&items[1], "sidecar deviation length")?;
         if count == 0 || start < previous_end || start + count > default.len() {
             return Err("sidecar deviation span is invalid".to_string());
         }
@@ -3122,7 +2620,7 @@ fn repack_midi_tracks(midi: &[u8], native_tracks: usize) -> Result<Vec<u8>, Stri
     }
     Ok(output)
 }
-fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), String> {
+fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), String> {
     let report = midi_events(&fs::read(source).map_err(|e| format!("{}: {e}", source.display()))?)
         .map_err(|e| e.to_string())?;
     let mut by_track = HashMap::<usize, Vec<MidiEvent>>::new();
@@ -3141,7 +2639,7 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
         .as_deref()
         .and_then(|data| data.strip_prefix(MIDI_BUILD_DIRECTIVE))
         .map(|source| {
-            serde_json::from_slice::<Json>(source)
+            serde_json::from_slice::<Value>(source)
                 .map_err(|error| format!("MIDI build directive: {error}"))
         })
         .transpose()?;
@@ -3152,14 +2650,13 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
             _ => None,
         })
         .ok_or("MIDI conductor skeleton is missing")?;
-    let skeleton: Json = serde_json::from_slice(&midi_hex(marker)?)
+    let skeleton: Value = serde_json::from_slice(&midi_hex(marker)?)
         .map_err(|e| format!("MIDI conductor skeleton: {e}"))?;
     let skeleton_layout = skeleton
         .get("layout")
         .and_then(Value::as_array)
         .ok_or("MIDI skeleton layout is missing")?;
     let mut stream_index = 0usize;
-    let mut default_streams = HashMap::<String, Vec<Json>>::new();
     let mut layout = Vec::new();
     for segment in skeleton_layout {
         if segment.get("kind").and_then(Value::as_str) != Some("stream") {
@@ -3167,11 +2664,7 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
             continue;
         }
         stream_index += 1;
-        let label = json_string(
-            segment.get("label").ok_or("MIDI stream label is missing")?,
-            "MIDI stream label",
-        )?
-        .to_string();
+        let label = json_string(&segment["label"], "MIDI stream label")?.to_string();
         let events = reconstruct_midi_stream(
             by_track
                 .get(&stream_index)
@@ -3179,7 +2672,6 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
                 .unwrap_or(&[]),
         )?;
         let canonical = greedy_sequence(&events)?;
-        default_streams.insert(label.clone(), canonical.clone());
         layout.push(serde_json::json!({
             "kind": "stream",
             "label": label,
@@ -3187,10 +2679,7 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
         }));
     }
     if let Some(sidecar) = midi_directive {
-        if json_number(
-            sidecar.get("format").ok_or("sidecar format is missing")?,
-            "sidecar format",
-        )? != 1
+        if number(&sidecar["format"], "sidecar format")? != 1
             || sidecar.get("engine").and_then(Value::as_str) != Some("smsh-sequence-sidecar")
         {
             return Err("invalid sequence sidecar".to_string());
@@ -3206,15 +2695,10 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
             .iter_mut()
             .filter(|segment| segment.get("kind").and_then(Value::as_str) == Some("stream"))
         {
-            let label = json_string(
-                segment
-                    .get("label")
-                    .ok_or("sidecar stream label is missing")?,
-                "sidecar stream label",
-            )?;
+            let label = json_string(&segment["label"], "sidecar stream label")?;
             if let Some(track) = tracks.get(label) {
-                let defaults = default_streams
-                    .get(label)
+                let defaults = segment["events"]
+                    .as_array()
                     .ok_or("sidecar stream is not in MIDI")?;
                 let applied = apply_sequence_deviations(defaults, track, label)?;
                 segment["events"] = Value::Array(applied);
@@ -3231,7 +2715,7 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
     build_sequence_source(&source)
 }
 
-fn adopt_smsh_midi(source: &Json, midi: &[u8]) -> Result<Vec<u8>, String> {
+fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
     let native_tracks = source
         .get("layout")
         .and_then(Value::as_array)
@@ -3258,12 +2742,7 @@ fn adopt_smsh_midi(source: &Json, midi: &[u8]) -> Result<Vec<u8>, String> {
             continue;
         }
         stream_index += 1;
-        let label = json_string(
-            segment
-                .get("label")
-                .ok_or("sequence stream label missing")?,
-            "stream label",
-        )?;
+        let label = json_string(&segment["label"], "stream label")?;
         let native = segment
             .get("events")
             .and_then(Value::as_array)
@@ -3306,23 +2785,14 @@ fn adopt_smsh_midi(source: &Json, midi: &[u8]) -> Result<Vec<u8>, String> {
     .map_err(|error| error.to_string())?;
     add_midi_build_directive(&add_midi_conductor_text(&midi, &skeleton)?, &sidecar)
 }
-fn build_source(ctx: &Context, tool: &str, source: &str) -> Result<Vec<u8>, String> {
-    native_bytes(
-        &ctx.root,
-        tool,
-        "build-stdout",
-        &ctx.source(source)?.to_string_lossy(),
-        &[],
-    )
-}
 
 fn build_entry_native_tail(
     ctx: &mut Context,
-    entry: &Json,
+    entry: &Value,
     kind: &str,
     address: usize,
     entry_source: &str,
-) -> Result<(Vec<u8>, Vec<String>, Json), String> {
+) -> Result<(Vec<u8>, Vec<String>, Value), String> {
     let source_path = |name: &str| ctx.source(name);
     match kind {
         "golden-sun-sound-sequence" => {
@@ -3334,12 +2804,15 @@ fn build_entry_native_tail(
             Ok((built, vec![entry_source.to_string()], report))
         }
         "golden-sun-pcm-wave" => {
-            let args = vec![
-                "build-record-stdout".to_string(),
-                serde_json::to_string(entry).map_err(|e| e.to_string())?,
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-            ];
-            let (built, report) = native_with_report(&ctx.root, "audio-wave", &args)?;
+            let source = audio_wave::parse_wave_source(&entry.to_string())?;
+            let wav = fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?;
+            let (built, report) = audio_wave::build_wave_record(&source, &wav)?;
+            let report = serde_json::json!({
+                "samples":report.samples as u64,"rate":report.rate as u64,
+                "frequency":report.frequency as u64,"control":report.control as u64,
+                "looped":report.looped,"loop_start":report.loop_start.map(|value| value as u64),
+                "padding_bytes":report.padding_bytes as u64,"padding_fill":report.padding_fill as u64,
+            });
             let mut sources = vec![entry_source.to_string()];
             if let Some(index) = entry.get("index").and_then(Value::as_str) {
                 ctx.source(index)?;
@@ -3348,7 +2821,11 @@ fn build_entry_native_tail(
             Ok((built, sources, report))
         }
         "golden-sun-delta7-still" => {
-            let built = build_source(ctx, "indexed-still", entry_source)?;
+            let built = indexed_still::build_still(
+                &fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?,
+            )
+            .map_err(|error| error.to_string())?
+            .0;
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -3357,22 +2834,13 @@ fn build_entry_native_tail(
         }
         "golden-sun-static-sprite-series" => {
             let index = json(&source_path(entry_source)?)?;
-            let palette_name = json_string(
-                entry
-                    .get("palette")
-                    .ok_or("static sprite palette missing")?,
-                "palette",
-            )?;
-            let built = native_command(
-                &ctx.root,
-                "static-sprite-series",
-                &[
-                    "build-stdout".to_string(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                    "--palette".to_string(),
-                    source_path(palette_name)?.to_string_lossy().into_owned(),
-                ],
-            )?;
+            let palette_name = json_string(&entry["palette"], "palette")?;
+            let built = static_sprite_series::build_series(
+                &index,
+                &source_path(entry_source)?,
+                &source_path(palette_name)?,
+            )
+            .map_err(|error| error.to_string())?;
             let directory = Path::new(entry_source)
                 .parent()
                 .unwrap_or(Path::new("."))
@@ -3382,10 +2850,7 @@ fn build_entry_native_tail(
             for item in series_values(&index, "packages")? {
                 let plan_name = ctx.paths.character_bank_path(
                     ctx.root.join(&directory),
-                    json_string(
-                        item.get("plan").ok_or("static sprite plan missing")?,
-                        "static sprite plan",
-                    )?,
+                    json_string(&item["plan"], "static sprite plan")?,
                 );
                 let plan_rel = root_relative(&ctx.root, &plan_name)?;
                 sources.push(plan_rel.clone());
@@ -3396,19 +2861,13 @@ fn build_entry_native_tail(
                         sources.push(format!(
                             "{}{}",
                             prefix,
-                            json_string(
-                                atlas.get("source").ok_or("static atlas source missing")?,
-                                "static atlas source"
-                            )?
+                            json_string(&atlas["source"], "static atlas source")?
                         ));
                     }
                 } else if plan.get("atlas_columns").is_some() {
                     sources.push(format!(
                         "{directory}/{}",
-                        json_string(
-                            item.get("source").ok_or("static package source missing")?,
-                            "static package source"
-                        )?
+                        json_string(&item["source"], "static package source")?
                     ));
                 } else if let Some(frames) = plan.get("frames").and_then(Value::as_array) {
                     for frame in 0..frames.len() {
@@ -3424,10 +2883,10 @@ fn build_entry_native_tail(
         }
         "golden-sun-resource-directory" => {
             let document = json(&source_path(entry_source)?)?;
-            if json_number(&document["address"], "resource directory address")? != address {
+            if number(&document["address"], "resource directory address")? != address {
                 return Err("resource-directory address differs from manifest".to_string());
             }
-            let built = build_source(ctx, "resource-directory", entry_source)?;
+            let built = resource_directory::build_resource_directory(&document)?;
             Ok((
                 built.clone(),
                 vec![entry_source.to_string()],
@@ -3435,19 +2894,17 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-runtime-support-data" => {
-            let size = json_number(
-                entry.get("size").ok_or("runtime support size missing")?,
-                "runtime support size",
-            )?;
-            let args = vec![
-                "build-stdout".to_string(),
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-                "--address".to_string(),
-                address.to_string(),
-                "--size".to_string(),
-                size.to_string(),
-            ];
-            let built = native_command(&ctx.root, "runtime-support", &args)?;
+            let size = number(&entry["size"], "runtime support size")?;
+            let text = fs::read_to_string(source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
+            let source = runtime_support_data::parse_runtime_support_source(&text)
+                .map_err(|error| error.to_string())?;
+            let built = runtime_support_data::build_runtime_support_component(
+                &source,
+                address as u32,
+                size,
+            )
+            .map_err(|error| error.to_string())?;
             Ok((
                 built.clone(),
                 vec![entry_source.to_string()],
@@ -3455,7 +2912,7 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-byte-henkan-tables" => {
-            let built = build_source(ctx, "byte-henkan", entry_source)?;
+            let built = byte_henkan::build_byte_henkan_tables(&source_path(entry_source)?)?;
             if address != 0x0800_92b8 || built.len() != 0x900 {
                 return Err(
                     "byte-conversion tables differ from canonical manifest extent".to_string(),
@@ -3469,16 +2926,14 @@ fn build_entry_native_tail(
         }
         "golden-sun-character-catalog" => {
             let document = json(&source_path(entry_source)?)?;
-            if json_number(&document["address"], "character catalog address")? != address
-                || json_number(&document["size"], "character catalog size")?
-                    != json_number(
-                        entry.get("size").ok_or("catalog size missing")?,
-                        "catalog size",
-                    )?
+            if number(&document["address"], "character catalog address")? != address
+                || number(&document["size"], "character catalog size")?
+                    != number(&entry["size"], "catalog size")?
             {
                 return Err("character-catalog extent differs from manifest".to_string());
             }
-            let built = build_source(ctx, "character-catalog", entry_source)?;
+            let built = character_catalog::build_character_catalog(&document)
+                .map_err(|error| error.to_string())?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -3487,7 +2942,7 @@ fn build_entry_native_tail(
         }
         "golden-sun-message-archive" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "message-archive", entry_source)?;
+            let built = message_archive::cli::build_message_archive(&document)?;
             let messages = document["banks"].as_array().map_or(0, |banks| {
                 banks
                     .iter()
@@ -3511,10 +2966,7 @@ fn build_entry_native_tail(
             {
                 nested.push(format!(
                     "games/gs1/assets/{}",
-                    flat_asset_name(json_string(
-                        item.get("source").ok_or("font source missing")?,
-                        "font source"
-                    )?)
+                    flat_asset_name(json_string(&item["source"], "font source")?)
                 ));
             }
             nested.push(format!(
@@ -3531,30 +2983,22 @@ fn build_entry_native_tail(
             for name in &nested {
                 ctx.source(name)?;
             }
-            let built = native_command(
-                &ctx.root,
-                "localization-font",
-                &[
-                    "build-stdout".to_string(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                    "--root".to_string(),
-                    ctx.root
-                        .join("games/gs1/assets")
-                        .to_string_lossy()
-                        .into_owned(),
-                ],
-            )?;
+            let built = localization_font::build_localization_font(
+                &document,
+                &ctx.root.join("games/gs1/assets"),
+            )
+            .map_err(|error| error.to_string())?;
             Ok((
                 built,
                 std::iter::once(entry_source.to_string())
                     .chain(nested)
                     .collect(),
-                serde_json::json!({"mtf_images":document["mtf_banks"].as_array().map_or(0,|banks|banks.iter().map(|b|json_number(&b["images"],"images").unwrap_or(0)).sum()),"packed_images":document["packed_images"]["images"],"font_glyphs":document["font"]["glyphs"],"article_entries":document["articles"]["entries"].as_array().map_or(0,Vec::len)}),
+                serde_json::json!({"mtf_images":document["mtf_banks"].as_array().map_or(0,|banks|banks.iter().map(|b|number(&b["images"],"images").unwrap_or(0)).sum()),"packed_images":document["packed_images"]["images"],"font_glyphs":document["font"]["glyphs"],"article_entries":document["articles"]["entries"].as_array().map_or(0,Vec::len)}),
             ))
         }
         "golden-sun-localization-tables" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "localization-tables", entry_source)?;
+            let built = localization_tables::cli::build(&document)?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -3578,25 +3022,16 @@ fn build_entry_native_tail(
             ) {
                 nested.push(format!(
                     "games/gs1/assets/{}",
-                    flat_asset_name(json_string(
-                        item.get("source").ok_or("battle graphic source missing")?,
-                        "battle graphic source"
-                    )?)
+                    flat_asset_name(json_string(&item["source"], "battle graphic source")?)
                 ));
             }
             for name in &nested {
                 ctx.source(name)?;
             }
-            let args = vec![
-                "build-stdout".to_string(),
-                source_path(entry_source)?.to_string_lossy().into_owned(),
-                "--root".to_string(),
-                ctx.root
-                    .join("games/gs1/assets")
-                    .to_string_lossy()
-                    .into_owned(),
-            ];
-            let (built, _) = native_with_report(&ctx.root, "battle-effect", &args)?;
+            let built = battle_effect_data::build_battle_effect_data(
+                &document,
+                &ctx.root.join("games/gs1/assets"),
+            )?;
             Ok((
                 built,
                 std::iter::once(entry_source.to_string())
@@ -3606,32 +3041,17 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-sentou-gamen-data" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "battle-screen", entry_source)?;
+            let (built, sources) =
+                sentou_gamen_data::build_sentou_gamen_data(&source_path(entry_source)?)
+                    .map_err(|error| error.to_string())?;
             if address != SENTOU_GAMEN_ADDRESS || built.len() != SENTOU_GAMEN_SIZE {
                 return Err(
                     "battle-screen package differs from canonical manifest extent".to_string(),
                 );
             }
-            let prefix = entry_source.replace("index.json", "");
-            let mut nested = Vec::<String>::new();
-            for item in document["graphics"].as_array().into_iter().flatten() {
-                nested.push(format!(
-                    "{prefix}{}",
-                    json_string(
-                        item.get("source").ok_or("battle graphics source missing")?,
-                        "graphics source"
-                    )?
-                ));
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
             Ok((
                 built,
-                std::iter::once(entry_source.to_string())
-                    .chain(nested)
-                    .collect(),
+                root_sources(&ctx.root, &sources)?,
                 serde_json::json!({"source_bytes":SENTOU_GAMEN_SIZE,"graphics":5,"display_glyph_cells":14,"derived_zero_bytes":3308}),
             ))
         }
@@ -3654,7 +3074,8 @@ fn build_entry_native_tail(
             for name in &nested {
                 ctx.source(name)?;
             }
-            let built = build_source(ctx, "battle-display", entry_source)?;
+            let built = sentou_hyouji::build_sentou_hyouji(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
             Ok((
                 built.clone(),
                 nested,
@@ -3663,13 +3084,11 @@ fn build_entry_native_tail(
         }
         "golden-sun-sentou-kouka-runtime" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "battle-runtime", entry_source)?;
+            let built =
+                sentou_kouka_runtime::build_sentou_kouka_runtime(&source_path(entry_source)?)
+                    .map_err(|error| error.to_string())?;
             if address != 0x080e_da78
-                || built.len()
-                    != json_number(
-                        entry.get("size").ok_or("effect runtime size missing")?,
-                        "effect runtime size",
-                    )?
+                || built.len() != number(&entry["size"], "effect runtime size")?
             {
                 return Err("battle-effect runtime differs from manifest".to_string());
             }
@@ -3696,7 +3115,8 @@ fn build_entry_native_tail(
         }
         "golden-sun-sentou-menu-data" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "battle-menu", entry_source)?;
+            let built = sentou_menu_data::build_sentou_menu_data(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
             if address != 0x080b_3940 || built.len() != 0x16c0 {
                 return Err(
                     "battle-menu package differs from canonical manifest extent".to_string()
@@ -3707,10 +3127,7 @@ fn build_entry_native_tail(
             for item in document["graphics"].as_array().into_iter().flatten() {
                 nested.push(format!(
                     "{prefix}{}",
-                    json_string(
-                        item.get("source").ok_or("menu graphics source missing")?,
-                        "graphics source"
-                    )?
+                    json_string(&item["source"], "graphics source")?
                 ));
             }
             for name in &nested {
@@ -3726,7 +3143,8 @@ fn build_entry_native_tail(
         }
         "golden-sun-staff-roll" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "staff-roll", entry_source)?;
+            let built = staff_roll::build_staff_roll(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
             if address != STAFF_ROLL_ADDRESS || built.len() != STAFF_ROLL_SIZE {
                 return Err("staff-roll package differs from canonical manifest extent".to_string());
             }
@@ -3748,120 +3166,35 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-sentou-resource" => {
-            let index_name = json_string(
-                entry.get("index").ok_or("sentou resource index missing")?,
-                "sentou resource index",
-            )?;
-            let index = json(&source_path(index_name)?)?;
-            let resource = series_values(&index, "resources")?
+            let index_name = json_string(&entry["index"], "sentou resource index")?;
+            let (_, built, sources) = ctx
+                .battle_resources(index_name)?
                 .iter()
-                .find(|item| {
-                    json_number(item.get("address").unwrap_or(&Value::Null), "address")
-                        .unwrap_or(usize::MAX)
-                        == address
-                })
+                .find(|item| item.0 == address)
+                .cloned()
                 .ok_or("sentou resource address is absent from its index")?;
-            let prefix = Path::new(index_name)
-                .file_name()
-                .unwrap_or_default()
-                .to_string_lossy()
-                .replace("index.json", "");
-            let plan_name = Path::new(index_name)
-                .parent()
-                .unwrap_or(Path::new("."))
-                .join(format!(
-                    "{prefix}{}",
-                    json_string(
-                        resource.get("source").ok_or("sentou plan missing")?,
-                        "sentou plan"
-                    )?
-                ));
-            let plan = json(&source_path(&plan_name.to_string_lossy())?)?;
-            let image_name = format!(
-                "{}{}",
-                plan_name.to_string_lossy().replace("stream.json", ""),
-                json_string(&plan["image"]["source"], "sentou image")?
-            );
-            let built = native_bytes(
-                &ctx.root,
-                "sentou",
-                "build-stdout",
-                &source_path(&plan_name.to_string_lossy())?.to_string_lossy(),
-                &[],
-            )?;
-            let mut sources = vec![
-                index_name.to_string(),
-                root_relative(&ctx.root, &source_path(&plan_name.to_string_lossy())?)?,
-                root_relative(&ctx.root, &source_path(&image_name)?)?,
-            ];
-            if !plan["prefix_palette"].is_null() {
-                sources.push(root_relative(
-                    &ctx.root,
-                    &source_path(&format!(
-                        "{}{}",
-                        plan_name.to_string_lossy().replace("stream.json", ""),
-                        json_string(&plan["prefix_palette"]["source"], "palette source")?
-                    ))?,
-                )?);
-            }
-            Ok((
-                built.clone(),
-                dedup_sources(sources),
-                serde_json::json!({"source_bytes":built.len()}),
-            ))
+            let mut nested = vec![index_name.to_string()];
+            nested.extend(root_sources(&ctx.root, &sources)?);
+            let report = serde_json::json!({"source_bytes":built.len()});
+            Ok((built, dedup_sources(nested), report))
         }
         "golden-sun-kind2-resource" => {
             let plan_path = source_path(entry_source)?;
             let plan = json(&plan_path)?;
-            let image_name = json_string(&plan["image"]["source"], "kind2 image")?;
-            let built = native_bytes(
-                &ctx.root,
-                "kind2-resources",
-                "build-stdout",
-                &plan_path.to_string_lossy(),
-                &[],
-            )?;
-            let mut sources = vec![
-                entry
-                    .get("index")
-                    .and_then(Value::as_str)
-                    .unwrap_or(entry_source)
-                    .to_string(),
-                entry_source.to_string(),
-                root_relative(
-                    &ctx.root,
-                    &plan_path
-                        .parent()
-                        .unwrap_or(Path::new("."))
-                        .join(image_name),
-                )?,
-            ];
-            if let Some(prefix) = plan.get("prefix_palette").and_then(Value::as_object) {
-                sources.push(root_relative(
-                    &ctx.root,
-                    &plan_path
-                        .parent()
-                        .unwrap_or(Path::new("."))
-                        .join(json_string(
-                            prefix
-                                .get("source")
-                                .ok_or("prefix palette source missing")?,
-                            "prefix palette source",
-                        )?),
-                )?);
-            }
+            let built = kind2_resources::build_kind2_resource(&plan_path)
+                .map_err(|error| error.to_string())?;
+            let mut sources = vec![entry["index"].as_str().unwrap_or(entry_source).to_string()];
+            sources.extend(root_sources(&ctx.root, &built.sources)?);
+            let size = built.data.len();
             Ok((
-                built.clone(),
+                built.data,
                 dedup_sources(sources),
-                serde_json::json!({"resource_id":plan.get("resource_id"),"source_bytes":built.len()}),
+                serde_json::json!({"resource_id":plan.get("resource_id"),"source_bytes":size}),
             ))
         }
         "golden-sun-tokushu-map" | "golden-sun-chiiki-map" => {
             let index_name = entry_source;
-            let id = json_number(
-                entry.get("resource_id").ok_or("map resource id missing")?,
-                "map resource id",
-            )?;
+            let id = number(&entry["resource_id"], "map resource id")?;
             let map_kind = if kind.contains("tokushu") {
                 "tokushu"
             } else {
@@ -3873,50 +3206,35 @@ fn build_entry_native_tail(
                 .find(|item| item.id == id)
                 .ok_or("map resource differs from manifest")?;
             let data_len = resource.data.len();
+            let mut sources = vec![index_name.to_string()];
+            sources.extend(root_sources(&ctx.root, &resource.sources)?);
             Ok((
                 resource.data,
-                resource.sources,
+                sources,
                 serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
             ))
         }
         "golden-sun-kana-glyph-bank" => {
-            let source = source_path(entry_source)?;
-            let built = native_bytes(
-                &ctx.root,
-                "resource-01c",
-                "build-stdout",
-                &source.to_string_lossy(),
-                &[],
-            )?;
-            let document = json(&source)?;
-            let nested = format!(
-                "{}{}",
-                entry_source.replace("stream.json", ""),
-                json_string(&document["source"], "glyph source")?
-            );
-            ctx.source(&nested)?;
+            let (built, sources) = resource_01c::build_resource_01c(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
+            let size = built.len();
             Ok((
-                built.clone(),
-                vec![entry_source.to_string(), nested],
-                serde_json::json!({"glyphs":36,"source_bytes":built.len()}),
+                built,
+                root_sources(&ctx.root, &sources)?,
+                serde_json::json!({"glyphs":36,"source_bytes":size}),
             ))
         }
         "golden-sun-music-residual" => {
-            let address = json_number(
-                entry
-                    .get("address")
-                    .ok_or("music residual address missing")?,
-                "music residual address",
-            )?;
+            let address = number(&entry["address"], "music residual address")?;
             let region = ctx
                 .music_residuals(entry_source)?
                 .into_iter()
-                .find(|item| item.address == address)
+                .find(|item| item.address as usize == address)
                 .ok_or("music residual differs from manifest")?;
             let data_len = region.data.len();
             Ok((
                 region.data,
-                region.sources,
+                vec![entry_source.to_string()],
                 serde_json::json!({"source_bytes":data_len}),
             ))
         }
@@ -3940,61 +3258,27 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-d1-d3-resource" => {
-            let id = json_number(
-                entry.get("resource_id").ok_or("D1-D3 id missing")?,
-                "D1-D3 id",
-            )?;
-            let built = native_bytes(
-                &ctx.root,
-                "d1-d3",
-                "build-stdout",
-                &source_path(entry_source)?.to_string_lossy(),
-                &[format!("{id:x}")],
-            )?;
-            let base = Path::new(entry_source).parent().unwrap_or(Path::new("."));
-            let nested = if id == 0xd1 {
-                vec![
-                    base.join("resources_d1_d3_stream.json")
-                        .to_string_lossy()
-                        .replace('\\', "/"),
-                    base.join("resources_d1_d3_iro.rgba.png")
-                        .to_string_lossy()
-                        .replace('\\', "/"),
-                    base.join("resources_d1_d3_haikei.8bpp.png")
-                        .to_string_lossy()
-                        .replace('\\', "/"),
-                ]
-            } else {
-                vec![base
-                    .join(format!("resources_d1_d3_idou_d{}.json", id - 0xd0))
-                    .to_string_lossy()
-                    .replace('\\', "/")]
-            };
-            for name in &nested {
-                ctx.source(name)?;
-            }
+            let id = number(&entry["resource_id"], "D1-D3 id")?;
+            let built = resource_d1_d3::build_resource_d1_d3(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?
+                .into_iter()
+                .find(|resource| resource.id as usize == id)
+                .ok_or("D1-D3 resource differs from manifest")?;
+            let size = built.data.len();
             Ok((
-                built.clone(),
-                std::iter::once(entry_source.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":built.len(),"boundary_bytes":built.len(),"suffix_fallback":0}),
+                built.data,
+                root_sources(&ctx.root, &built.sources)?,
+                serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":size,"boundary_bytes":size,"suffix_fallback":0}),
             ))
         }
         "golden-sun-final-battle-overlay" => {
-            let component = json_string(
-                entry.get("component").ok_or("overlay component missing")?,
-                "overlay component",
-            )?;
-            let built = native_command(
-                &ctx.root,
-                "3ce",
-                &[
-                    "build-stdout".to_string(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                    component.to_string(),
-                ],
-            )?;
+            let component = json_string(&entry["component"], "overlay component")?;
+            let resource = resource_3ce::build_resource_3ce(&source_path(entry_source)?)?;
+            let built = match component {
+                "stream" => resource.stream,
+                "fill" => resource.fill,
+                _ => return Err("resource 3ce component must be stream or fill".into()),
+            };
             let directory = Path::new(entry_source).parent().unwrap_or(Path::new("."));
             let nested = vec![
                 entry_source.to_string(),
@@ -4018,28 +3302,23 @@ fn build_entry_native_tail(
         }
         "golden-sun-encounter-data" => {
             let source = source_path(entry_source)?;
-            let size = json_number(
-                entry.get("size").ok_or("encounter size missing")?,
-                "encounter size",
-            )?;
+            let size = number(&entry["size"], "encounter size")?;
             let directory = source.parent().unwrap_or(Path::new("."));
-            let args = vec![
-                "build-region-stdout".to_string(),
-                directory.to_string_lossy().into_owned(),
-                hex_address(address),
-                source
-                    .file_name()
-                    .unwrap_or_default()
-                    .to_string_lossy()
-                    .into_owned(),
-                size.to_string(),
-            ];
-            let (built, report) = native_with_report(&ctx.root, "encounter-data", &args)?;
-            Ok((built, vec![entry_source.to_string()], report))
+            let region = encounter_data::build_encounter_regions(&directory.to_string_lossy())?
+                .into_iter()
+                .find(|region| {
+                    region.address == address
+                        && region.size == size
+                        && source.file_name().is_some_and(|name| name == region.source)
+                })
+                .ok_or("encounter-data region differs from manifest")?;
+            let report = serde_json::json!({"source_bytes":region.data.len()});
+            Ok((region.data, vec![entry_source.to_string()], report))
         }
         "golden-sun-namae-nyuuryoku" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "namae-nyuuryoku", entry_source)?;
+            let built = namae_nyuuryoku::build_namae_nyuuryoku(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -4048,7 +3327,7 @@ fn build_entry_native_tail(
         }
         "golden-sun-gameplay-databases" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = build_source(ctx, "5", entry_source)?;
+            let built = resource_5::build_gameplay_databases(&document)?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -4056,12 +3335,7 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-simple-resource" => {
-            let id = json_number(
-                entry
-                    .get("resource_id")
-                    .ok_or("simple resource id missing")?,
-                "simple resource id",
-            )?;
+            let id = number(&entry["resource_id"], "simple resource id")?;
             let sources = match id {
                 2 => vec![
                     "games/gs1/assets/data/resource_2_build_stamp.txt".to_string(),
@@ -4078,13 +3352,11 @@ fn build_entry_native_tail(
             for name in &sources {
                 ctx.source(name)?;
             }
-            let built = native_bytes(
-                &ctx.root,
-                "simple-resources",
-                "build-stdout",
-                &ctx.root.join("games/gs1/assets").to_string_lossy(),
-                &[format!("{id:x}")],
-            )?;
+            let built = simple_resources::build_simple_resource(
+                id as u32,
+                &ctx.root.join("games/gs1/assets"),
+            )
+            .map_err(|error| error.to_string())?;
             Ok((built, sources, serde_json::json!({"resource_id":id})))
         }
         "golden-sun-title-lz" => {
@@ -4095,29 +3367,21 @@ fn build_entry_native_tail(
                 let relative = format!(
                     "{}{}",
                     title_prefix,
-                    json_string(
-                        component
-                            .get("source")
-                            .ok_or("title component source missing")?,
-                        "title component source"
-                    )?
-                    .replace('/', "_")
+                    json_string(&component["source"], "title component source")?.replace('/', "_")
                 );
                 ctx.source(&relative)?;
                 sources.push(relative);
             }
-            let built = build_source(ctx, "title", entry_source)?;
+            let built = title_resources::build_title_resource(&source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
             Ok((
                 built,
                 sources,
-                serde_json::json!({"resource_id":document["resource_id"],"decoded_size":document["decoded_size"],"components":document["components"].as_array().map_or(0,Vec::len),"fallback_tail":if document["tail"]["policy"].as_str()==Some("fallback"){json_number(&document["tail"]["size"],"tail size")?}else{0}}),
+                serde_json::json!({"resource_id":document["resource_id"],"decoded_size":document["decoded_size"],"components":document["components"].as_array().map_or(0,Vec::len),"fallback_tail":if document["tail"]["policy"].as_str()==Some("fallback"){number(&document["tail"]["size"],"tail size")?}else{0}}),
             ))
         }
         "golden-sun-offset-palette-lz" => {
-            let plan_name = json_string(
-                entry.get("plan").ok_or("offset palette plan missing")?,
-                "offset palette plan",
-            )?;
+            let plan_name = json_string(&entry["plan"], "offset palette plan")?;
             let plan = json(&source_path(plan_name)?)?;
             let built =
                 build_offset_archive(&source_path(plan_name)?, &source_path(entry_source)?)?;
@@ -4128,16 +3392,11 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-mtf4-archive" => {
-            let plan_name = json_string(entry.get("plan").ok_or("F0 plan missing")?, "F0 plan")?;
+            let plan_name = json_string(&entry["plan"], "F0 plan")?;
             let plan = json(&source_path(plan_name)?)?;
-            let built = native_bytes(
-                &ctx.root,
-                "f0-archive",
-                "build-stdout",
-                &source_path(plan_name)?.to_string_lossy(),
-                &[source_path(entry_source)?.to_string_lossy().into_owned()],
-            )?;
-            let images = json_number(&plan["images"], "F0 images")?;
+            let built = f0_archive::build_archive(&plan, &source_path(entry_source)?)
+                .map_err(|error| error.to_string())?;
+            let images = number(&plan["images"], "F0 images")?;
             let sources = if plan.get("atlas_columns").is_some() {
                 vec![
                     plan_name.to_string(),
@@ -4238,40 +3497,30 @@ fn stamp_files(
     root: &Path,
     directory: &Path,
     files: &mut BTreeMap<String, PathBuf>,
-    include: &impl Fn(&str) -> bool,
 ) -> Result<(), String> {
     if !directory.exists() {
         return Ok(());
     }
-    let mut entries = fs::read_dir(directory)
-        .map_err(|error| format!("{}: {error}", directory.display()))?
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|error| error.to_string())?;
-    entries.sort_by_key(|entry| entry.file_name());
+    let entries = walkdir::WalkDir::new(directory)
+        .follow_links(true)
+        .into_iter()
+        .filter_entry(|entry| {
+            entry.depth() == 0
+                || !entry.file_type().is_dir()
+                || !matches!(
+                    entry.file_name().to_str(),
+                    Some("target" | "out" | "scratch")
+                )
+        });
     for entry in entries {
-        let path = entry.path();
-        if path.is_dir() {
-            if !matches!(
-                path.file_name().and_then(|name| name.to_str()),
-                Some("target" | "out" | "scratch")
-            ) {
-                stamp_files(root, &path, files, include)?;
-            }
-        } else if path.is_file() {
-            let relative = path
-                .strip_prefix(root)
-                .unwrap_or(&path)
-                .to_string_lossy()
-                .replace('\\', "/");
-            if include(&relative) {
-                files.entry(relative).or_insert(path);
-            }
+        let entry = entry.map_err(|error| error.to_string())?;
+        if entry.file_type().is_file() {
+            files
+                .entry(relative(root, entry.path()))
+                .or_insert(entry.into_path());
         }
     }
     Ok(())
-}
-fn include_all_stamp_files(_: &str) -> bool {
-    true
 }
 fn stamp_record(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
     stream.extend_from_slice(label.as_bytes());
@@ -4301,40 +3550,33 @@ fn stage_stamp_with_signature(
         b"mode:rom\0"
     });
     let mut files = BTreeMap::new();
-    stamp_files(
-        root,
-        &root.join("games/gs1/assets"),
-        &mut files,
-        &include_all_stamp_files,
-    )?;
+    for directory in ["games/gs1/assets", "games/gs1/sound"] {
+        stamp_files(root, &root.join(directory), &mut files)?;
+    }
     let source_paths = SourcePaths::load(root)?;
     let overlay_sources = source_paths
         .all_sources()?
         .into_iter()
         .filter(|source| source.owner.overlay_id().is_some())
-        .map(|source| {
-            source
-                .path
-                .strip_prefix(root)
-                .unwrap_or(&source.path)
-                .to_string_lossy()
-                .replace('\\', "/")
-        })
+        .map(|source| source.path)
         .collect::<BTreeSet<_>>();
-    stamp_files(root, &root.join("games/gs1/src"), &mut files, &|relative| {
-        overlay_sources.contains(relative)
-    })?;
-    let source_paths_manifest = root.join(SOURCE_PATHS_MANIFEST);
-    if source_paths_manifest.is_file() {
-        files.insert(SOURCE_PATHS_MANIFEST.into(), source_paths_manifest);
+    for source in overlay_sources {
+        let name = relative(root, &source);
+        let flags = cflags_for_target_source(CompilerTarget::Gs1, &name);
+        let signature = compiler_source_tree_signature(root, &source, &[flags])?;
+        stamp_record(&mut stream, &name, &signature);
     }
-    let manifest_relative = manifest
-        .strip_prefix(root)
-        .unwrap_or(manifest)
-        .to_string_lossy()
-        .replace('\\', "/");
+    for name in [
+        SOURCE_PATHS_MANIFEST,
+        "games/gs1/recon/translation-units.json",
+    ] {
+        let path = root.join(name);
+        if path.is_file() {
+            files.insert(name.into(), path);
+        }
+    }
     files
-        .entry(manifest_relative)
+        .entry(relative(root, manifest))
         .or_insert_with(|| manifest.to_path_buf());
     for (relative, path) in files {
         let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -4374,7 +3616,7 @@ fn stage_stamp(
         "arm-none-eabi-ld",
         "arm-none-eabi-objcopy",
     ])?;
-    let implementation = implementation_signature()?;
+    let implementation = executable_signature()?;
     stage_stamp_with_signature(
         root,
         manifest,
@@ -4386,6 +3628,50 @@ fn stage_stamp(
             implementation: &implementation,
         },
     )
+}
+#[test]
+fn asset_stamp_tracks_sound_and_included_overlay_sources() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    for name in ["assets", "sound/out", "src", "recon"] {
+        fs::create_dir_all(root.join("games/gs1").join(name)).unwrap();
+    }
+    let manifest = root.join("games/gs1/assets/manifest.json");
+    let sound = root.join("games/gs1/sound/sequences.tsv");
+    let header = root.join("games/gs1/src/shared.h");
+    let unit = root.join("games/gs1/recon/translation-units.json");
+    for path in [&manifest, &sound, &header, &unit] {
+        fs::write(path, "before").unwrap();
+    }
+    fs::write(
+        root.join("games/gs1/src/resource_373_c_02001000.c"),
+        "#include \"shared.h\"\nvoid Test(void) {}\n",
+    )
+    .unwrap();
+    let stamp = || {
+        stage_stamp_with_signature(
+            root,
+            &manifest,
+            true,
+            None,
+            StageSignatures {
+                bundle: "stock",
+                host_binutils: "stock",
+                implementation: "test",
+            },
+        )
+    };
+    let mut previous = stamp().unwrap();
+    for path in [&sound, &header, &unit] {
+        fs::write(path, "after").unwrap();
+        let next = stamp().unwrap();
+        assert_ne!(previous, next, "{}", path.display());
+        previous = next;
+    }
+    fs::write(root.join("games/gs1/sound/out/report.txt"), "ignored").unwrap();
+    assert_eq!(previous, stamp().unwrap());
+    fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
+    assert!(stamp().unwrap_err().contains("recursive C source include"));
 }
 fn output_matches(region: &Value) -> bool {
     let Some(output) = region.get("output").and_then(Value::as_str) else {
@@ -4465,13 +3751,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     };
     let rom_size = rom.as_ref().map_or(ROM_SIZE, Vec::len);
     let manifest = json(&options.manifest)?;
-    if json_number(
-        manifest
-            .get("format")
-            .ok_or("asset manifest format is missing")?,
-        "asset manifest format",
-    )? != 1
-    {
+    if number(&manifest["format"], "asset manifest format")? != 1 {
         return Err("unsupported asset manifest format".to_string());
     }
     fs::create_dir_all(&options.output)
@@ -4517,12 +3797,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             continue;
         }
         let package = entries.remove(index);
-        let source_name = json_string(
-            package
-                .get("source")
-                .ok_or("byte-value package source is missing")?,
-            "byte-value package source",
-        )?;
+        let source_name = json_string(&package["source"], "byte-value package source")?;
         let document = json(&ctx.source(source_name)?)?;
         if document.get("kind").and_then(Value::as_str) != Some("golden-sun-byte-value-regions") {
             return Err("byte-value package source differs".to_string());
@@ -4549,7 +3824,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         entries.splice(index..index, generated);
     }
     entries.sort_unstable_by_key(|entry| {
-        json_number(
+        number(
             entry.get("address").unwrap_or(&Value::Null),
             "asset address",
         )
@@ -4559,14 +3834,8 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     let mut regions = Vec::new();
     let mut all_sources = Vec::<String>::new();
     for entry in &entries {
-        let address = json_number(
-            entry.get("address").ok_or("asset address is missing")?,
-            "asset address",
-        )?;
-        let size = json_number(
-            entry.get("size").ok_or("asset size is missing")?,
-            "asset size",
-        )?;
+        let address = number(&entry["address"], "asset address")?;
+        let size = number(&entry["size"], "asset size")?;
         let end = address.checked_add(size).ok_or("asset region overflows")?;
         if address < previous_end {
             return Err(format!("overlapping asset region at 0x{address:08x}"));
@@ -4651,7 +3920,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     }
     let asset_bytes = regions
         .iter()
-        .map(|region| json_number(&region["size"], "asset size").unwrap_or(0))
+        .map(|region| number(&region["size"], "asset size").unwrap_or(0))
         .sum::<usize>();
     let output_manifest = serde_json::json!({
         "format": 1,
@@ -4673,22 +3942,29 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
-    if arguments.first().map(String::as_str) == Some("--verify-smsh-midi") {
+    if matches!(
+        arguments.first().map(String::as_str),
+        Some("--verify-smsh-midi" | "--verify-smsh-source")
+    ) {
         if arguments.len() != 3 {
             return Err(USAGE.to_string());
         }
         let rom = fs::read(&arguments[1]).map_err(|error| format!("{}: {error}", arguments[1]))?;
-        let (built, report) = build_midi_sequence(&repository_root(), Path::new(&arguments[2]))?;
-        let base = json_number(
-            report.get("base").ok_or("sequence report base missing")?,
-            "base",
-        )?;
+        let (built, report, label) = if arguments[0] == "--verify-smsh-midi" {
+            let (built, report) =
+                build_midi_sequence(&repository_root(), Path::new(&arguments[2]))?;
+            (built, report, "MIDI")
+        } else {
+            let (built, report) = build_sequence_source(&json(Path::new(&arguments[2]))?)?;
+            (built, report, "source")
+        };
+        let base = number(&report["base"], "base")?;
         let end = base
             .checked_add(built.len())
             .ok_or("sequence extent overflows")?;
         let start = base.checked_sub(ROM_BASE).ok_or("sequence precedes ROM")?;
         if rom.get(start..start + built.len()) != Some(built.as_slice()) {
-            return Err(format!("sequence MIDI differs at 0x{base:08x}"));
+            return Err(format!("sequence {label} differs at 0x{base:08x}"));
         }
         println!(
             "identical=true base=0x{base:08x} end=0x{end:08x} bytes={}",
@@ -4705,30 +3981,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
         let adopted = adopt_smsh_midi(&source, &midi)?;
         fs::write(&arguments[3], adopted).map_err(|error| format!("{}: {error}", arguments[3]))?;
         println!("adopted=true output={}", arguments[3]);
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--verify-smsh-source") {
-        if arguments.len() != 3 {
-            return Err(USAGE.to_string());
-        }
-        let rom = fs::read(&arguments[1]).map_err(|error| format!("{}: {error}", arguments[1]))?;
-        let source = json(Path::new(&arguments[2]))?;
-        let (built, report) = build_sequence_source(&source)?;
-        let base = json_number(
-            report.get("base").ok_or("sequence report base missing")?,
-            "base",
-        )?;
-        let end = base
-            .checked_add(built.len())
-            .ok_or("sequence extent overflows")?;
-        let start = base.checked_sub(ROM_BASE).ok_or("sequence precedes ROM")?;
-        if rom.get(start..start + built.len()) != Some(built.as_slice()) {
-            return Err(format!("sequence source differs at 0x{base:08x}"));
-        }
-        println!(
-            "identical=true base=0x{base:08x} end=0x{end:08x} bytes={}",
-            built.len()
-        );
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.as_slice() == ["--self-test"] {

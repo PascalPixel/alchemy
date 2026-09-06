@@ -124,3 +124,26 @@ u8 *SceneData_GetEffectTable(void)
 {
     return RESOURCE37E_QUATERNARY_TABLE;   /* image offset 0x148 */
 }
+
+
+s32 FieldScene_InitSceneRequestAndCameraZoom(void) {
+    struct Resource37deSceneRuntime *runtime;
+    /* The three scale values are locals, not literals at the call, so that
+       their materialisation sits in the entry block instead of the call's.
+       Local CSE only unifies identical large constants inside one basic
+       block; folding these back into the argument list collapses the three
+       movs/lsls pairs to one pair plus two register copies. */
+    s32 zoom_x = 0x10000;
+    s32 zoom_y = 0x10000;
+    s32 zoom_z = 0x10000;
+
+    runtime = RESOURCE37DE_SCENE_RUNTIME;
+    runtime->scene_request_1c0 = 0x204;
+    runtime->scene_setup_word_1c8 = 0x10;
+    if (TestSceneFlag(0x814) != 0) {
+        QueueSceneSound(0x8D);
+        SetCameraZoom(zoom_x, zoom_y, zoom_z);
+        InitializeSceneRecordBuffer();
+    }
+    return 0;
+}

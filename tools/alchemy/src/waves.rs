@@ -1,5 +1,6 @@
 use crate::families::{FamilyCatalog, RetargetMode, TemplateMatch};
 use compiler_core::{
+    build_io::read_json as json_file,
     routing::root,
     sha256,
     source_paths::{SourceOwner, SourcePaths},
@@ -1983,9 +1984,6 @@ fn scoring_environment(repository: &Path) -> Result<String, String> {
     fingerprints.push_str(&hash_tree(&repository.join("games/gs1/include"))?);
     Ok(sha256::hex(fingerprints.as_bytes()))
 }
-fn json_file<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, String> {
-    serde_json::from_str(&read(path)?).map_err(|e| format!("{}: {e}", path.display()))
-}
 fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     fs::create_dir_all(path.parent().ok_or("output has no parent")?).map_err(|e| e.to_string())?;
     let temp = path.with_extension(format!("tmp-{}", std::process::id()));
@@ -2001,7 +1999,7 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
+    use candidate_compiler::verify::CandidateCompilerConfiguration;
     use compiler_core::routing::CompilerTarget;
 
     fn scratch(label: &str) -> PathBuf {
@@ -2079,10 +2077,7 @@ mod tests {
             &[],
             candidate_compiler::verify::ROM_BASE,
             CompilerTarget::Gs1,
-            &CandidateCompilerConfiguration {
-                family: Some(CandidateCompilerFamily::Routed),
-                ..Default::default()
-            },
+            &CandidateCompilerConfiguration::default(),
         )
         .unwrap();
         assert!(!verification.actual.is_empty());

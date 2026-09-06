@@ -1,8 +1,8 @@
 use candidate_compiler::verify::{
-    verify_candidate_owned_routed, CandidateCompilerConfiguration, CandidateCompilerFamily,
-    ROM_BASE,
+    verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE,
 };
 use compiler_core::{
+    build_io::read_json as json,
     routing::CompilerTarget,
     sha256,
     source_paths::{SourceOwner, SourcePaths},
@@ -1174,10 +1174,7 @@ fn prove_member(
     // rather than the tracked repo tree.
     let work = std::env::temp_dir().join("alchemy-family-proof").join(stem);
     fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
-    let config = CandidateCompilerConfiguration {
-        family: Some(CandidateCompilerFamily::Routed),
-        ..Default::default()
-    };
+    let config = CandidateCompilerConfiguration::default();
     let address = u32::from_str_radix(stem, 16).map_err(|error| error.to_string())?;
     let route = SourceOwner::Main(address).routing_path();
     let rom_path = compiler_core::routing::root().join("roms/gs1-en.gba");
@@ -1317,9 +1314,6 @@ fn stem(address: u64) -> Result<String, String> {
         return Err(format!("invalid main owner address 0x{address:08x}"));
     }
     Ok(format!("{address:08x}"))
-}
-fn json<T: serde::de::DeserializeOwned>(path: impl AsRef<Path>) -> Result<T, String> {
-    compiler_core::build_io::read_json(path)
 }
 fn read(path: &Path) -> Result<String, String> {
     fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))

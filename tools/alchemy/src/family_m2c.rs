@@ -1,9 +1,8 @@
 //! Typed aggregate and exact-family context for m2c seed generation.
 
-use candidate_compiler::verify::{
-    compile_to_assembly, run, CandidateCompilerConfiguration, CandidateCompilerFamily,
-};
+use candidate_compiler::verify::{compile_to_assembly, run};
 use compiler_core::{
+    build_io::write,
     plan::direct_preprocessor_command,
     routing::{root, uses_agbcc_compiler, CompilerTarget},
     sha256,
@@ -92,10 +91,6 @@ pub(crate) fn generate_with_m2c(
             text_path(&output.join("template-build"))?,
             &[],
             CompilerTarget::Gs1,
-            &CandidateCompilerConfiguration {
-                family: Some(CandidateCompilerFamily::Routed),
-                ..Default::default()
-            },
         )?;
         let generated = Path::new(&assembly).with_extension("i");
         if !uses_agbcc_compiler(CompilerTarget::Gs1, text_path(&route)?) {
@@ -523,10 +518,6 @@ fn text_path(path: &Path) -> Result<&str, String> {
 fn read(path: &Path) -> Result<String, String> {
     fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))
 }
-fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
-    fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

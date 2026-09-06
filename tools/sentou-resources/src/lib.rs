@@ -207,12 +207,18 @@ pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)
     } else {
         return fail("unsupported sentou codec");
     };
+    let image_source = field(image, "source")?.as_str().unwrap_or_default();
+    let mut sources = vec![plan_path.to_path_buf(), sibling(plan_path, image_source)];
     let prefix = match field(plan, "prefix_palette")? {
         Value::Null => Vec::new(),
         value => {
             let palette = object(value, "sentou prefix palette")?;
-            let source = field(palette, "source")?.as_str().unwrap_or("iro.rgba.png");
-            let image = fs::read(sibling(plan_path, source)).map_err(|e| e.to_string())?;
+            let source = field(palette, "source")?
+                .as_str()
+                .ok_or("sentou palette source must be a string")?;
+            let path = sibling(plan_path, source);
+            let image = fs::read(&path).map_err(|e| e.to_string())?;
+            sources.push(path);
             gba_palette_rgba(&image).map_err(|e| e.0)?.0
         }
     };
@@ -238,11 +244,6 @@ pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)
     }
     if result.len() != source_size && result.len() != boundary_size {
         return fail("sentou resource differs from its audited boundary size");
-    }
-    let image_source = field(image, "source")?.as_str().unwrap_or_default();
-    let mut sources = vec![plan_path.to_path_buf(), sibling(plan_path, image_source)];
-    if !matches!(field(plan, "prefix_palette")?, Value::Null) {
-        sources.push(sibling(plan_path, "iro.rgba.png"));
     }
     Ok((result, sources))
 }

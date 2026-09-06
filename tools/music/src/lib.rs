@@ -507,6 +507,119 @@ pub struct SoundTableReport {
     pub mirrored_auxiliary: bool,
 }
 
+pub fn read_sound_table_source(path: &str) -> Result<SoundTableSource> {
+    if path.ends_with(".tsv") {
+        let text = std::fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?;
+        let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+        if rows.next() != Some("slot\theader\tplayer\tsource\tstatus") {
+            return Err("sound table header differs".into());
+        }
+        let mut symbols = Vec::new();
+        let mut by_address = std::collections::BTreeMap::new();
+        let mut entries = Vec::new();
+        for (slot, row) in rows.enumerate() {
+            let fields = row.split('\t').collect::<Vec<_>>();
+            if fields.len() != 5 || fields[0] != slot.to_string() {
+                return Err(format!("sound table row {slot} identity differs"));
+            }
+            let address = u32::from_str_radix(fields[1].trim_start_matches("0x"), 16)
+                .map_err(|_| format!("sound table row {slot} address differs"))?;
+            let symbol = by_address
+                .entry(address)
+                .or_insert_with(|| {
+                    let symbol = format!("header_{address:08x}");
+                    symbols.push((
+                        symbol.clone(),
+                        SymbolValue::Text(format!("0x{address:08x}")),
+                    ));
+                    symbol
+                })
+                .clone();
+            entries.push(SoundTableEntry {
+                header: symbol,
+                player: fields[2]
+                    .parse::<i64>()
+                    .map_err(|_| format!("sound table row {slot} player differs"))?,
+            });
+        }
+        return Ok(SoundTableSource {
+            format: 1,
+            fields: vec!["header".into(), "player".into()],
+            auxiliary: "copy-player".into(),
+            symbols,
+            entries,
+        });
+    }
+    let value: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(path).map_err(|e| format!("{path}: {e}"))?)
+            .map_err(|e| e.to_string())?;
+    let object = value
+        .as_object()
+        .ok_or_else(|| "sound table must be an object".to_string())?;
+    let fields = object
+        .get("fields")
+        .and_then(serde_json::Value::as_array)
+        .ok_or_else(|| "sound table fields are missing".to_string())?
+        .iter()
+        .map(|item| {
+            item.as_str()
+                .map(str::to_owned)
+                .ok_or_else(|| "sound table field is not a string".to_string())
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let symbols = object
+        .get("symbols")
+        .and_then(serde_json::Value::as_object)
+        .ok_or_else(|| "sound table symbols are missing".to_string())?
+        .iter()
+        .map(|(name, item)| {
+            let value = item
+                .as_str()
+                .map(|v| SymbolValue::Text(v.to_owned()))
+                .or_else(|| item.as_f64().map(SymbolValue::Number))
+                .ok_or_else(|| "sound table symbol is not scalar".to_string())?;
+            Ok((name.clone(), value))
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let entries = object
+        .get("entries")
+        .and_then(serde_json::Value::as_array)
+        .ok_or_else(|| "sound table entries are missing".to_string())?
+        .iter()
+        .map(|item| {
+            let pair = item
+                .as_array()
+                .ok_or_else(|| "sound table entry is not a pair".to_string())?;
+            if pair.len() != 2 {
+                return Err("sound table entry is not a pair".into());
+            }
+            Ok(SoundTableEntry {
+                header: pair[0]
+                    .as_str()
+                    .ok_or_else(|| "sound table header is not a string".to_string())?
+                    .to_owned(),
+                player: pair[1]
+                    .as_i64()
+                    .ok_or_else(|| "sound table player is not an integer".to_string())?,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(SoundTableSource {
+        format: object
+            .get("format")
+            .and_then(serde_json::Value::as_i64)
+            .ok_or_else(|| "sound table format is missing".to_string())?,
+        fields,
+        auxiliary: object
+            .get("auxiliary")
+            .and_then(serde_json::Value::as_str)
+            .ok_or_else(|| "sound table auxiliary is missing".to_string())?
+            .to_owned(),
+        symbols,
+        entries,
+    })
+}
+
 pub fn js_number(text: &str) -> f64 {
     let t = text.trim();
     if t.is_empty() {

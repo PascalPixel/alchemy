@@ -2,10 +2,8 @@
 
 #define FieldScene_RunMainSequence Func_02000de4
 
-/* AUDITED GENERATED SCENE SCRIPT for FieldScene_RunMainSequence:
- * all 151 calls, arguments, and reference memory effects are represented
- * in machine order. */
-
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 void Func_02005416();
 void Func_0200542e();
 void Func_020054a8();
@@ -33,6 +31,7 @@ void Func_02005808();
 void Func_0200580a();
 void Func_02005824();
 void Func_0200583c();
+void Func_0200583c_a();
 void Func_0200585e();
 void Func_02005878();
 void Func_02005888();
@@ -45,20 +44,21 @@ void Func_02005908();
 void Func_0200592a();
 void Func_0200593c();
 void Func_0200594e();
-void *Func_02005b2a();
+void Func_02005b2a();
 void Func_02005b46();
-void *Func_02005b56();
+void Func_02005b56();
 void Func_02005b6e();
-void *Func_02005b70();
+s32 Func_02005b70();
 void Func_02005b92();
 void Func_02005bc4();
 void Func_02005bda();
-void *Func_02005be4();
+s32 Func_02005be4();
 void Func_02005bf0();
 void Func_02005bfc();
-void *Func_02005c0a();
+void Func_02005bfc_a();
+s32 Func_02005c0a();
 void Func_02005c1e();
-void *Func_02005c28();
+void Func_02005c28();
 void Func_02005c2c();
 void Func_02005c36();
 void Func_02005c4c();
@@ -72,23 +72,26 @@ void Func_02005ca8();
 void Func_02005cc8();
 void Func_02005cca();
 void Func_02005ce6();
+void Func_02005ce6_a();
 void Func_02005cf4();
 void Func_02005cfa();
 void Func_02005cfe();
 void Func_02005d06();
 void Func_02005d18();
 void Func_02005d1e();
+void Func_02005d1e_a();
 void Func_02005d26();
 void Func_02005d48();
 void Func_02005d58();
 void Func_02005d5c();
-void *Func_02005d6c();
+s32 Func_02005d6c();
 void Func_02005d70();
 void Func_02005d78();
 void Func_02005d7a();
 void Func_02005d82();
-void Func_02005d86();
-void *Func_02005d8e();
+s32 Func_02005d86();
+s32 Func_02005d86_a();
+u8 *Func_02005d8e();
 void Func_02005d98();
 void Func_02005dba();
 void Func_02005dcc();
@@ -102,6 +105,7 @@ void Func_02005e18();
 void Func_02005e44();
 void Func_02005e50();
 void Func_02005e66();
+void Func_02005e66_a();
 void Func_02005e86();
 void Func_02005e8a();
 void Func_02005e90();
@@ -117,7 +121,9 @@ void Func_02005eea();
 void Func_02005f32();
 void Func_02005f34();
 void Func_02005f3e();
+void Func_02005f3e_a();
 void Func_02005f60();
+void Func_02005f60_a();
 void Func_02005f6c();
 void Func_02005f7a();
 void Func_02005f84();
@@ -150,47 +156,67 @@ void Func_02006128();
 void Func_02006138();
 void Func_02006158();
 
-void Func_02000de4(void)
-{
-    void *p1;
-    void *p16;
-    void *p19;
-    void *p2;
-    void *p5;
-    void *p59;
-    void *p6;
-    void *p62;
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
 
-    p1 = Func_02005b2a(20);
-    p2 = Func_02005b70(2);
-    *(u8 *)((u8 *)(p2) + 91) = 0;
-    Func_02005bf0(2, 4, 0, 0);
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+void FieldScene_RunMainSequence(void)
+{
+    s32 v5;
+    s32 v6;
+    s32 base8_125f;
+
+    Func_02005b2a(20);
+    *(u8 *)(Func_02005b70(2) + 91) = 0;
+    Func_02005bf0(2, 4, 0);
     Func_02005b46(40);
-    p5 = Func_02005c28(4703);
-    p6 = Func_02005b56(20);
+    base8_125f = 0x125f;
+    Func_02005c28(0x125f);
+    Func_02005b56(20);
     Func_02005416(2, 20);
-    Func_02005c68(2, 257, 0);
+    Call3(Func_02005c68, 2, 0x101, 0);
     Func_02005b6e(50);
     Func_0200542e(2, 30);
-    Func_02005bfc(2, 376, 392);
+    Call3(Func_02005bfc, 2, 0x178, 0x188);
     Func_020054a8(2, 0);
     Func_02005b92(40);
     Func_020054de();
+    v5 = 254;
     Func_02005c5e(0, 1);
-    p16 = Func_02005be4(0);
-    *(u8 *)((u8 *)(p16) + 90) &= 0xfe;
-    Func_02005c36(0, 384, 424);
+    *(u8 *)(Func_02005be4(0) + 90) &= v5;
+    Call3(Func_02005c36, 0, 0x180, 0x1a8);
+    v6 = 1;
     Func_02005bc4(1);
-    p19 = Func_02005c0a(0);
-    *(u8 *)((u8 *)(p19) + 90) |= 0x1;
+    *(u8 *)(Func_02005c0a(0) + 90) |= v6;
     Func_02005bda(30);
     Func_02005cca(2, 0);
-    Func_02005cf4(0, 258);
-    Func_02005cfe(1, 258);
-    Func_02005bfc(60);
+    Call2(Func_02005cf4, 0, 0x102);
+    Call2(Func_02005cfe, 1, 0x102);
+    Func_02005bfc_a(60);
     Func_02005c9c(0, 3);
     Func_0200550e(1, 3, 30);
-    Func_02005d18(2, 257, 0);
+    Call3(Func_02005d18, 2, 0x101, 0);
     Func_02005c1e(60);
     Func_02005ce6(2, 1);
     Func_02005c2c(10);
@@ -202,36 +228,39 @@ void Func_02000de4(void)
     Func_02005d1e(0, 2);
     Func_02005c64(10);
     Func_0200553e(0, 1, 40);
-    Func_02005d7a(0, 258, 0);
-    Func_02005d86(1, 258, 0);
+    Call3(Func_02005d7a, 0, 0x102, 0);
+    Call3(Func_02005d86, 1, 0x102, 0);
     Func_02005c8c(60);
-    Func_02005d98(2, 258, 0);
+    Call3(Func_02005d98, 2, 0x102, 0);
     Func_02005c9e(60);
-    Func_02005d86(2, 0);
+    Value2(Func_02005d86_a, 2, 0);
     Func_02005d78(0, 2, 0);
     Func_02005d82(1, 2, 0);
     Func_02005cfa(0, 0);
     Func_02005cc8(30);
     Func_020055d2(2, 3, 10);
-    Func_02005d58(2, 384, 408);
-    Func_02005ce6(10);
-    Func_02005ca8(4708, 1);
-    Func_02005dd0(4709);
+    Call3(Func_02005d58, 2, 0x180, 0x198);
+    Func_02005ce6_a(10);
+    Func_02005ca8((base8_125f + 5), 1);
+    Func_02005dd0((base8_125f + 6));
     Func_02005dd2(2, 1, 0);
     Func_020055dc(0, 1, 20);
-    Func_02005e18(1, 258, 0);
-    Func_02005d1e(60);
+    Call3(Func_02005e18, 1, 0x102, 0);
+    Func_02005d1e_a(60);
     Func_02005de6(1, 1);
-    p59 = Func_02005d6c(1);
-    *(u8 *)((u8 *)(p59) + 90) &= 0xfe;
-    Func_02005dba(1, 352, 408);
+    *(u8 *)(Func_02005d6c(1) + 90) &= v5;
+    Call3(Func_02005dba, 1, 0x160, 0x198);
     Func_02005d48(1);
-    p62 = Func_02005d8e(1);
-    *(u8 *)((u8 *)(p62) + 90) |= 0x1;
+    {
+        u8 *record = Func_02005d8e(1);
+        u8 value = record[90];
+
+        record[90] = (u8)(value | v6);
+    }
     Func_02005d5c(10);
-    Func_02005dda(2, 368, 408);
+    Call3(Func_02005dda, 2, 0x170, 0x198);
     Func_02005d70(20);
-    Func_02005df6(0, 368, 424);
+    Call3(Func_02005df6, 0, 0x170, 0x1a8);
     Func_02005e50(0, 1, 0);
     Func_02005e16(2);
     Func_020056b2(2, 1);
@@ -252,25 +281,25 @@ void Func_02000de4(void)
     Func_02005716(0, 3, 40);
     Func_02005ee8(0, 2, 0);
     Func_020056fa(1, 2, 30);
-    Func_02005f34(0, 257, 0);
-    Func_02005f3e(1, 257, 0);
+    Call3(Func_02005f34, 0, 0x101, 0);
+    Call3(Func_02005f3e, 1, 0x101, 0);
     Func_02005e44(60);
     Func_0200574e(2, 3, 20);
-    Func_02005f3e(2, 0);
-    Func_02005f60(1, 259, 0);
+    Func_02005f3e_a(2, 0);
+    Call3(Func_02005f60, 1, 0x103, 0);
     Func_02005e66(60);
     Func_02005740(1, 0, 10);
-    Func_02005f60(1, 0);
-    Func_02005f84(2, 256, 0);
+    Func_02005f60_a(1, 0);
+    Call3(Func_02005f84, 2, 0x100, 0);
     Func_02005e8a(60);
     Func_02005f7a(2, 0);
-    Func_02005f9e(1, 258, 0);
+    Call3(Func_02005f9e, 1, 0x102, 0);
     Func_02005ea4(60);
-    Func_02005e66(4716, 1);
-    Func_02005f8e(4717);
+    Func_02005e66_a((base8_125f + 13), 1);
+    Func_02005f8e((base8_125f + 14));
     Func_02005f90(2, 0, 0);
     Func_02005f92(1, 0, 0);
-    Func_02005fd6(0, 258, 0);
+    Call3(Func_02005fd6, 0, 0x102, 0);
     Func_02005edc(60);
     Func_02005800(2, 0);
     Func_020060a8();
@@ -283,10 +312,10 @@ void Func_02000de4(void)
     Func_02005824(0, 3, 20);
     Func_02005fec(1, 1);
     Func_02005f32(20);
-    Func_0200583c(1, 4, 10);
+    Func_0200583c_a(1, 4, 10);
     Func_0200580a(1, 30);
     Func_02006024(2, 1, 0);
-    Func_02006066(2, 257, 0);
+    Call3(Func_02006066, 2, 0x101, 0);
     Func_02005f6c(30);
     Func_0200585e(0, 1, 10);
     Func_02006016(0, 3);
@@ -294,19 +323,19 @@ void Func_02000de4(void)
     Func_0200605a(0, 2, 0);
     Func_02006064(1, 2, 0);
     Func_0200606e(2, 0, 0);
-    Func_020060b2(2, 262, 0);
+    Call3(Func_020060b2, 2, 0x106, 0);
     Func_02005fb8(60);
     Func_02005878(2, 10);
     Func_02006060(0, 3);
     Func_020058d2(1, 3, 20);
     Func_020058dc(2, 4, 20);
     Func_0200589c(2, 20);
-    Func_020060ee(0, 257, 0);
-    Func_020060f8(1, 257, 0);
+    Call3(Func_020060ee, 0, 0x101, 0);
+    Call3(Func_020060f8, 1, 0x101, 0);
     Func_02005ffe(60);
     Func_02005908(2, 3, 10);
     Func_020058c8(2, 30);
-    Func_0200611a(0);
+    Call3(Func_0200611a, 0, 0x105, 0);
     Func_02006020(60);
     Func_0200592a(2, 4, 10);
     Func_020058ea(2, 30);
@@ -314,7 +343,7 @@ void Func_02000de4(void)
     Func_020060dc(0, 3);
     Func_0200594e(1, 3, 20);
     Func_02006076(2, 1);
-    Func_02006138(4703);
+    Func_02006138(base8_125f + 22);
     Func_02006128(2, 1);
     Func_02006158(2, 0);
 }

@@ -1,14 +1,13 @@
-use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
+use candidate_compiler::verify::CandidateCompilerConfiguration;
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: diff <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: diff <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: diff <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
     pub source: String,
     pub rom: Option<String>,
     pub work: Option<String>,
-    pub flags: Vec<String>,
     pub configuration: CandidateCompilerConfiguration,
     pub target: CompilerTarget,
     pub owner: Option<u32>,
@@ -28,11 +27,7 @@ impl Options {
             source,
             rom: None,
             work: None,
-            flags: Vec::new(),
-            configuration: CandidateCompilerConfiguration {
-                family: Some(CandidateCompilerFamily::Routed),
-                ..Default::default()
-            },
+            configuration: CandidateCompilerConfiguration::default(),
             target: CompilerTarget::Gs1,
             owner: None,
             overlay: None,
@@ -101,14 +96,10 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             }
             "--asm" => options.asm = true,
             "--patch" => options.patch = next(&mut index).cloned(),
-            "--flags" => options.flags = split(next(&mut index))?,
-            "--remove-flags" => options.configuration.remove_flags = split(next(&mut index))?,
-            "--family" => {
-                options.configuration.family =
-                    next(&mut index).and_then(|value| CandidateCompilerFamily::parse(value));
-                if options.configuration.family.is_none() {
-                    return Err("--family must be routed, gcc296, or old-agbcc".into());
-                }
+            "--flags" | "--remove-flags" | "--family" => {
+                return Err(format!(
+                    "{arg} is retired; candidates use their canonical compiler route"
+                ));
             }
             "-h" | "--help" => return Ok(ParseOutcome::Help),
             other => rest.push(other.into()),
@@ -145,14 +136,6 @@ fn parse_address(value: &str) -> Result<u32, String> {
     }
     Ok(owner.address())
 }
-fn split(value: Option<&String>) -> Result<Vec<String>, String> {
-    let value = value.ok_or("undefined is not an object (evaluating 'argv[++index].split')")?;
-    Ok(value
-        .split(',')
-        .filter(|value| !value.is_empty())
-        .map(str::to_string)
-        .collect())
-}
 fn default_work(root: &Path, source: &str) -> String {
     let stem = Path::new(source)
         .file_stem()
@@ -172,6 +155,15 @@ fn default_work(root: &Path, source: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn candidate_routes_cannot_be_overridden() {
+        for flag in ["--flags", "--remove-flags", "--family"] {
+            let args = ["candidate.c", flag, "override"].map(str::to_string);
+            assert!(options_of(Path::new("/repo"), &args)
+                .unwrap_err()
+                .contains("canonical compiler route"));
+        }
+    }
     #[test]
     fn main_identity_uses_the_shared_argument_parser() {
         for value in ["080bbb0c", "0x080bbb0c", "main:080bbb0c", "main:080BBB0C"] {

@@ -1,63 +1,22 @@
 //! Compilation policy for source-to-assembly plans.
 //!
 //! `routing_source` selects evidenced compiler policy; `input` is the file being
-//! compiled. Candidate sources need both names. Flag order is behavior because
-//! GCC is later-flag-wins: additions follow the filtered canonical list, and no
-//! unordered container may enter this path.
+//! compiled. Candidate sources need both names. Compiler family and ordered
+//! flags come only from routing; callers may supply local include paths or dumps.
 use crate::bundle::{compiler_command_for_target, validate_agbcc_bundle, validate_bundle};
 use crate::nodepath::{basename, extname};
 use crate::routing::{
-    agbcc_cflags, agbcc_driver, bundle, cflags_for_target, cflags_for_target_source, include_flag,
-    uses_agbcc_compiler, CompilerTarget,
+    agbcc_driver, bundle, cflags_for_target_source, include_flag, uses_agbcc_compiler,
+    CompilerTarget,
 };
-/// Error text is user-facing and retained exactly.
 pub type Result<T> = std::result::Result<T, String>;
-/// `Routed` derives the family from routing evidence.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CompilerFamily {
-    Routed,
-    Gcc296,
-    OldAgbcc,
-}
-/// A resolved family cannot be `Routed`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum ResolvedFamily {
-    Gcc296,
-    OldAgbcc,
-}
-impl CompilerFamily {
-    /// User-facing spelling; changing it changes errors.
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Routed => "routed",
-            Self::Gcc296 => "gcc296",
-            Self::OldAgbcc => "old-agbcc",
-        }
-    }
-    pub fn parse(text: &str) -> Option<Self> {
-        Some(match text {
-            "routed" => Self::Routed,
-            "gcc296" => Self::Gcc296,
-            "old-agbcc" => Self::OldAgbcc,
-            _ => return None,
-        })
-    }
-}
-/// Ordered flag edits. Do not replace either vector with an unordered container.
-#[derive(Debug, Clone, Default)]
-pub struct CompilerFlagMutations {
-    pub add_flags: Vec<String>,
-    pub remove_flags: Vec<String>,
-}
-/// `None` carries the same defaulting meaning as an omitted option.
 #[derive(Debug, Clone)]
 pub struct SourceToAssemblyPlanOptions {
     pub target: CompilerTarget,
     pub routing_source: String,
     pub input: String,
     pub output: String,
-    pub family: Option<CompilerFamily>,
-    pub flags: Option<CompilerFlagMutations>,
+    pub support_flags: Vec<String>,
     /// Preprocessor-only flags; old-agbcc rejects them on its `.i` compile step.
     pub preprocessor_flags: Vec<String>,
     /// Explicit old-agbcc intermediate; otherwise inferred beside the output.
@@ -76,8 +35,7 @@ impl SourceToAssemblyPlanOptions {
             routing_source: routing_source.into(),
             input: input.into(),
             output: output.into(),
-            family: None,
-            flags: None,
+            support_flags: Vec::new(),
             preprocessor_flags: Vec::new(),
             preprocessed_output: None,
             dumpbase: None,
@@ -106,31 +64,6 @@ impl StepKind {
 pub struct SourceToAssemblyPlan {
     pub steps: Vec<CompilerCommandStep>,
 }
-/// Filter canonical flags, then append additions: GCC's later flag wins.
-/// Conflicts are rejected before filtering, including absent canonical flags.
-pub fn mutated_compiler_flags(
-    canonical: &[String],
-    mutations: Option<&CompilerFlagMutations>,
-) -> Result<Vec<String>> {
-    let empty = CompilerFlagMutations::default();
-    let mutations = mutations.unwrap_or(&empty);
-    let added = &mutations.add_flags;
-    let removed = &mutations.remove_flags;
-    for flag in added {
-        if removed.iter().any(|candidate| candidate == flag) {
-            return Err(format!(
-                "compiler flag cannot be both added and removed: {flag}"
-            ));
-        }
-    }
-    let mut out: Vec<String> = canonical
-        .iter()
-        .filter(|flag| !removed.iter().any(|candidate| candidate == *flag))
-        .cloned()
-        .collect();
-    out.extend(added.iter().cloned());
-    Ok(out)
-}
 /// Preserves the pinned trailing-slash bug: `a.c/` becomes `a..i`. Fixing it
 /// would change a cache-visible intermediate name.
 pub fn inferred_preprocessed_output(output: &str) -> String {
@@ -144,35 +77,23 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
 pub fn source_to_assembly_plan(
     options: &SourceToAssemblyPlanOptions,
 ) -> Result<SourceToAssemblyPlan> {
-    let requested_family = options.family.unwrap_or(CompilerFamily::Routed);
-    let family = match requested_family {
-        // Shared audio owners use old-agbcc in both games; other GS2 owners use 2.96.
-        CompilerFamily::Routed => {
-            if uses_agbcc_compiler(options.target, &options.routing_source) {
-                ResolvedFamily::OldAgbcc
-            } else {
-                ResolvedFamily::Gcc296
-            }
-        }
-        CompilerFamily::Gcc296 => ResolvedFamily::Gcc296,
-        CompilerFamily::OldAgbcc => ResolvedFamily::OldAgbcc,
-    };
-    // Only Routed includes per-source flags. Explicit Gcc296 intentionally uses
-    // target-base flags; changing that would invalidate recorded sweeps.
-    let canonical: Vec<String> = if requested_family == CompilerFamily::Routed {
-        cflags_for_target_source(options.target, &options.routing_source)
-    } else if family == ResolvedFamily::OldAgbcc {
-        agbcc_cflags()
-    } else {
-        cflags_for_target(options.target)
-    };
-    let flags = mutated_compiler_flags(&canonical, options.flags.as_ref())?;
+    if let Some(flag) = options.support_flags.iter().find(|flag| {
+        !matches!(flag.as_str(), "-g" | "-dp" | "-dr" | "-dl" | "-dg" | "-da")
+            && !flag.strip_prefix("-I").is_some_and(|path| !path.is_empty())
+    }) {
+        return Err(format!(
+            "compiler flag is not an include path or diagnostic: {flag}"
+        ));
+    }
+    let old_agbcc = uses_agbcc_compiler(options.target, &options.routing_source);
+    let mut flags = cflags_for_target_source(options.target, &options.routing_source);
+    flags.extend(options.support_flags.iter().cloned());
     let dumpbase = options
         .dumpbase
         .clone()
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps: Vec<CompilerCommandStep> = Vec::new();
-    if family == ResolvedFamily::OldAgbcc {
+    if old_agbcc {
         let driver = agbcc_driver();
         validate_agbcc_bundle()?;
         let compiler_input = options
@@ -266,14 +187,39 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 mod tests {
     use super::*;
     #[test]
+    fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
+        for source in ["games/gs1/src/080bbb0c.c", "games/gs1/src/08006878.c"] {
+            let mut options = SourceToAssemblyPlanOptions::new(
+                CompilerTarget::Gs1,
+                source,
+                "source.c",
+                "source.s",
+            );
+            let canonical = cflags_for_target_source(options.target, source);
+            options.support_flags = vec!["-da".into(), "-Ilocal-headers".into()];
+            let plan = source_to_assembly_plan(&options).unwrap();
+            let command = &plan.steps.last().unwrap().command;
+            assert!(command
+                .windows(canonical.len())
+                .any(|flags| flags == canonical));
+            assert!(command.iter().any(|flag| flag == "-da"));
+            assert!(command.iter().any(|flag| flag == "-Ilocal-headers"));
+            for flag in ["-O0", "-fno-regmove", "-ffixed-r5", "-marm"] {
+                options.support_flags = vec![flag.into()];
+                assert!(source_to_assembly_plan(&options)
+                    .unwrap_err()
+                    .contains("not an include path or diagnostic"));
+            }
+        }
+    }
+    #[test]
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Gs1,
-            "games/gs1/src/080000c0.c",
+            "games/gs1/src/08006878.c",
             "candidate.c",
             "candidate.s",
         );
-        options.family = Some(CompilerFamily::OldAgbcc);
         options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
         assert!(plan.steps[0]
@@ -293,7 +239,6 @@ mod tests {
             "candidate.c",
             "candidate.s",
         );
-        options.family = Some(CompilerFamily::Gcc296);
         options.preprocessor_flags = vec!["-DGS2_EDITION_IT=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
         assert_eq!(plan.steps.len(), 1);

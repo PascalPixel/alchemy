@@ -398,17 +398,6 @@ fn validate_counts(
     }
     Ok(())
 }
-fn self_digest() -> Result<String, String> {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/lib.rs");
-    let bytes = read(&path)?;
-    if bytes.is_empty() {
-        return Err(format!(
-            "build_asm read an EMPTY source at {}; refusing to key the cache",
-            path.display()
-        ));
-    }
-    Ok(sha256::hex(&bytes))
-}
 const ASSEMBLY_BINUTILS: [&str; 4] = [
     "arm-none-eabi-as",
     "arm-none-eabi-nm",
@@ -425,33 +414,23 @@ fn production_binutil_signatures() -> Result<Vec<(String, String)>, String> {
         })
         .collect()
 }
-fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
-    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
-    stream.extend_from_slice(bytes);
-}
-/// Build a region key from injectable tool signatures so tests do not depend
-/// on an installed ARM toolchain. The ordered name/signature pairs are part of
-/// the key, and this material intentionally migrates the old region namespace
-/// once; old entries remain on disk but are unreachable.
+/// Cache identity includes the running implementation, ordered tool signatures,
+/// complete source, and linked address; serialization frames each field.
 pub fn region_cache_key_with_signatures(
     source: &[u8],
     linked_address: u64,
     binutils: &[(String, String)],
 ) -> Result<String, String> {
-    let mut bytes = Vec::new();
-    append_frame(
-        &mut bytes,
-        b"build-asm cache identity: signed ordered binutils",
+    let identity = (
+        "build-asm-cache-v3",
+        compiler_core::bundle::executable_signature()?,
+        linked_address,
+        binutils,
+        sha256::hex(source),
     );
-    append_frame(&mut bytes, self_digest()?.as_bytes());
-    append_frame(&mut bytes, &linked_address.to_be_bytes());
-    append_frame(&mut bytes, &(binutils.len() as u64).to_be_bytes());
-    for (name, signature) in binutils {
-        append_frame(&mut bytes, name.as_bytes());
-        append_frame(&mut bytes, signature.as_bytes());
-    }
-    append_frame(&mut bytes, source);
-    Ok(sha256::hex(&bytes))
+    Ok(sha256::hex(
+        &serde_json::to_vec(&identity).map_err(|error| error.to_string())?,
+    ))
 }
 fn valid_external(name: &str) -> bool {
     let Some((prefix, address)) = name.rsplit_once('_') else {

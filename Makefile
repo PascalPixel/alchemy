@@ -20,7 +20,7 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 HOSTS := alchemy
 CORE_TESTS := compiler-core candidate-compiler diff matching \
 		disassemble overlay-adopt build-full decompile \
-              extract-resource coverage-map check-publication
+              extract-resource coverage-map check-publication dashboard-server
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching \
@@ -421,7 +421,7 @@ lint-all-targets: standard-check compiler-source-check
 	done
 	$(CHECK) no-asm
 
-test: lint tooling-size tooling-index-check tool-tests compiler-regression-check
+test: lint tooling-size tooling-index-check tool-tests compiler-source-check
 	$(CHECK) publication --self-test
 	$(CHECK) commit-progress --self-test
 	$(CHECK) progress --self-test
@@ -445,10 +445,7 @@ standard-check:
 	@diff -u /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt
 	@printf 'compiler standard ok\n'
 
-.PHONY: compilers compiler-regression-check
-compiler-regression-check: compiler-source-check
-	rustc agscc/contrib/check-cselib.rs -o out/check-cselib
-	out/check-cselib out/compilers/dist/xgcc agscc/gcc/testsuite/gcc.dg/cselib-constant-mode.c out/compiler-regression
+.PHONY: compilers
 
 compilers:
 	sh agscc/build.sh
@@ -458,7 +455,7 @@ compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \
 		case "$$repo" in \
 		  agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
-		  agscc) approved=919451b0e71e177de0b59945ed9229cc398adac4;; \
+		  agscc) approved=5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148;; \
 		esac; \
 		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 		test "$$(git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \

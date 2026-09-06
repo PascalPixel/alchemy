@@ -13,18 +13,15 @@
 //! Without `--apply` it writes out/unit-flatten/<unit-id>.c and prints the
 //! manifest entry.
 //!
-//! Declarations that differ between owners are reconciled mechanically where
-//! the reconciliation cannot change a byte: a data symbol becomes one
-//! `extern u8 Name[];` and a file that typed it otherwise reads it through a
-//! cast of that shape; a function two owners declare differently keeps both
-//! declarations at block scope inside the functions of the file that made
-//! each (the prototype decides argument order and the return register, so
-//! nothing weaker would keep the bytes); a wrapper spelling the scene work
+//! Conflicting data and function declarations stay at block scope inside
+//! the functions of the file that made each declaration; their types must
+//! not change when the sources join. A wrapper spelling the scene work
 //! pointer as a literal takes the symbol; two wrappers with one name and
 //! different callees are told apart by the callee address. Whatever remains
 //! is reported and stops the run: it is the shared interface the unit forces
 //! into the open.
 
+use compiler_core::build_io::read_json;
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -92,12 +89,12 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     let root = std::env::current_dir().map_err(|e| e.to_string())?;
     let source_root = root.join("games").join(&game).join("src");
-    let inventory =
+    let inventory: Value =
         read_json(&root.join(format!("out/{game}-en/full/rebuilt.owner-inventory.json")))?;
     let register_path = root.join(format!("games/{game}/source-paths.json"));
-    let mut register = read_json(&register_path)?;
+    let mut register: Value = read_json(&register_path)?;
     let manifest_path = root.join(format!("games/{game}/recon/translation-units.json"));
-    let mut manifest = read_json(&manifest_path)?;
+    let mut manifest: Value = read_json(&manifest_path)?;
 
     let mut owners = Vec::new();
     let mut retained = 0;
@@ -136,6 +133,17 @@ fn run(args: &[String]) -> Result<(), String> {
     if owners.is_empty() {
         return Err(format!("{overlay}: no owners"));
     }
+    // Registered owners are not the full executable inventory: unregistered
+    // code must also be closed before the overlay can be flattened as complete.
+    let tree = coverage_map::tree::work_tree_at(root.clone());
+    let coverage =
+        coverage_map::pipeline::build_coverage_map(&coverage_map::pipeline::BuildOptions {
+            target: format!("{game}-en"),
+            exact: &tree,
+            recon: None,
+            prefer_verified_assets: true,
+        })?;
+    check_overlay_coverage(&coverage.executable_areas, &overlay)?;
     owners.sort_by_key(|o| o.address);
 
     let mut files: Vec<PathBuf> = Vec::new();
@@ -199,12 +207,7 @@ fn run(args: &[String]) -> Result<(), String> {
                     continue;
                 }
             }
-            if let Some((name, _)) = data_shape(&it.text) {
-                let symbol = resolve(&name);
-                if symbol != name {
-                    it.text = replace_word(&it.text, &name, &symbol);
-                }
-            } else if let Some((name, _, _)) = function_decl(&it.text) {
+            if let Some((_, name, _)) = declaration(&it.text) {
                 let symbol = resolve(&name);
                 if symbol != name {
                     it.text = replace_word(&it.text, &name, &symbol);
@@ -213,23 +216,17 @@ fn run(args: &[String]) -> Result<(), String> {
         }
     }
     // Reconcile data and function declarations.
-    let mut data_decls: BTreeMap<String, BTreeMap<PathBuf, Shape>> = BTreeMap::new();
-    let mut func_decls: BTreeMap<String, BTreeMap<PathBuf, (String, String)>> = BTreeMap::new();
+    let mut declarations: BTreeMap<(&str, String), BTreeMap<PathBuf, String>> = BTreeMap::new();
     for (file, list) in &parsed {
         for it in list {
             if it.kind != "extern" && it.kind != "prototype" {
                 continue;
             }
-            if let Some((name, shape)) = data_shape(&it.text) {
-                data_decls
-                    .entry(name)
+            if let Some((kind, name, text)) = declaration(&it.text) {
+                declarations
+                    .entry((kind, name))
                     .or_default()
-                    .insert(file.clone(), shape);
-            } else if let Some((name, ret, params)) = function_decl(&it.text) {
-                func_decls
-                    .entry(name)
-                    .or_default()
-                    .insert(file.clone(), (ret, params));
+                    .insert(file.clone(), text);
             }
         }
     }
@@ -239,31 +236,7 @@ fn run(args: &[String]) -> Result<(), String> {
     // file scope once.
     let mut block_scoped: BTreeSet<String> = BTreeSet::new();
     let mut block_decls: BTreeMap<PathBuf, Vec<String>> = BTreeMap::new();
-    let mut unified_data: BTreeMap<String, String> = BTreeMap::new();
-    for (name, by_file) in &data_decls {
-        let distinct: BTreeSet<String> = by_file.values().map(|s| s.text()).collect();
-        if distinct.len() == 1 {
-            unified_data.insert(
-                name.clone(),
-                by_file.values().next().unwrap().declaration(name),
-            );
-            continue;
-        }
-        block_scoped.insert(name.clone());
-        for (file, shape) in by_file {
-            block_decls
-                .entry(file.clone())
-                .or_default()
-                .push(shape.declaration(name));
-        }
-    }
-    let rewrites: BTreeMap<PathBuf, BTreeMap<String, String>> = BTreeMap::new();
-    // A function two owners declare differently keeps both declarations,
-    // each at block scope inside the functions of the file that made it:
-    // the prototype decides argument order and the return register, so an
-    // unprototyped `()` would change bytes. Only identical declarations
-    // rise to file scope.
-    let mut unified_funcs: BTreeMap<String, String> = BTreeMap::new();
+    let mut unified_decls = BTreeMap::new();
     let mut conflicts: Vec<String> = Vec::new();
     // A file that calls a function without declaring it compiled against the
     // implicit `int f()`; a prototype another file wrote must not reach it.
@@ -292,7 +265,7 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     // A function the unit itself defines: a prototype another owner wrote
     // with a different signature stays in that owner's functions only.
-    let mut definitions: BTreeMap<String, (String, String)> = BTreeMap::new();
+    let mut definitions = BTreeMap::new();
     for (_, list) in &parsed {
         for it in list.iter().filter(|it| it.kind == "function") {
             let head = it.text.lines().next().unwrap_or("");
@@ -308,36 +281,34 @@ fn run(args: &[String]) -> Result<(), String> {
                     .map(|rest| rest.trim().to_string())
                     .filter(|rest| rest.starts_with("Func_"))
                 {
-                    definitions.insert(target, (ret.clone(), params.clone()));
+                    definitions.insert(target.clone(), prototype(&target, &ret, &params));
                 }
-                definitions.insert(name, (ret, params));
+                definitions.insert(name.clone(), prototype(&name, &ret, &params));
             }
         }
     }
-    for (name, by_file) in &func_decls {
-        let mut distinct: BTreeSet<(&str, &str)> = by_file
-            .values()
-            .map(|(r, p)| (r.as_str(), p.as_str()))
-            .collect();
-        if let Some((ret, params)) = definitions.get(name) {
-            distinct.insert((ret.as_str(), params.as_str()));
+    for ((kind, name), by_file) in &declarations {
+        let mut distinct: BTreeSet<&String> = by_file.values().collect();
+        let function = *kind == "prototype";
+        if function {
+            if let Some(text) = definitions.get(name) {
+                distinct.insert(text);
+            }
         }
-        let implicit_user = parsed.iter().any(|(file, _)| {
-            !by_file.contains_key(file) && calls.get(file).is_some_and(|c| c.contains(name))
-        });
+        let implicit_user = function
+            && parsed.iter().any(|(file, _)| {
+                !by_file.contains_key(file) && calls.get(file).is_some_and(|c| c.contains(name))
+            });
         if distinct.len() == 1 && !implicit_user {
-            let (ret, params) = distinct.iter().next().unwrap();
-            let space = if ret.ends_with('*') { "" } else { " " };
-            unified_funcs.insert(name.clone(), format!("{ret}{space}{name}({params});"));
+            unified_decls.insert((*kind, name.clone()), (*distinct.first().unwrap()).clone());
             continue;
         }
         block_scoped.insert(name.clone());
-        for (file, (ret, params)) in by_file {
-            let space = if ret.ends_with('*') { "" } else { " " };
+        for (file, text) in by_file {
             block_decls
                 .entry(file.clone())
                 .or_default()
-                .push(format!("{ret}{space}{name}({params});"));
+                .push(text.clone());
         }
     }
     if !block_scoped.is_empty() {
@@ -346,20 +317,6 @@ fn run(args: &[String]) -> Result<(), String> {
             block_scoped.iter().cloned().collect::<Vec<_>>().join(" ")
         );
     }
-    for (file, list) in parsed.iter_mut() {
-        let Some(map) = rewrites.get(file) else {
-            continue;
-        };
-        for it in list.iter_mut() {
-            if it.kind == "extern" || it.kind == "prototype" || it.kind == "include" {
-                continue;
-            }
-            for (name, replacement) in map {
-                it.text = replace_word(&it.text, name, replacement);
-            }
-        }
-    }
-
     // Two files defining one record layout, typedef, or macro name
     // differently each keep their own under a name suffixed with the file's
     // first owner address; that file's every use follows. Identical
@@ -461,25 +418,20 @@ fn run(args: &[String]) -> Result<(), String> {
                     }
                 }
                 "extern" | "prototype" => {
-                    if let Some((name, _)) = data_shape(&it.text) {
-                        if !block_scoped.contains(&name) && !externs.contains_key(&name) {
+                    if let Some((kind, name, _)) = declaration(&it.text) {
+                        let (entries, order) = if kind == "extern" {
+                            (&mut externs, &mut extern_order)
+                        } else {
+                            (&mut prototypes, &mut prototype_order)
+                        };
+                        if !block_scoped.contains(&name) && !entries.contains_key(&name) {
                             let mut unified = it.clone();
-                            unified.text = unified_data
-                                .get(&name)
+                            unified.text = unified_decls
+                                .get(&(kind, name.clone()))
                                 .cloned()
                                 .unwrap_or_else(|| it.text.clone());
-                            extern_order.push(name.clone());
-                            externs.insert(name, unified);
-                        }
-                    } else if let Some((name, _, _)) = function_decl(&it.text) {
-                        if !block_scoped.contains(&name) && !prototypes.contains_key(&name) {
-                            let mut unified = it.clone();
-                            unified.text = unified_funcs
-                                .get(&name)
-                                .cloned()
-                                .unwrap_or_else(|| it.text.clone());
-                            prototype_order.push(name.clone());
-                            prototypes.insert(name, unified);
+                            order.push(name.clone());
+                            entries.insert(name, unified);
                         }
                     } else if let Some(have) = externs.get(&it.key) {
                         if norm(&have.text) != norm(&it.text) {
@@ -598,10 +550,6 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     for line in &renamed {
         println!("  {line}");
-    }
-    for (file, map) in &rewrites {
-        let list: Vec<String> = map.iter().map(|(n, r)| format!("{n} -> {r}")).collect();
-        println!("  {}: {}", rel(file, &source_root), list.join(", "));
     }
     if !conflicts.is_empty() {
         let mut message = format!("{overlay}: {} declaration conflicts:", conflicts.len());
@@ -898,45 +846,8 @@ fn run(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-/// The declared shape of a data symbol: element type, qualifiers, pointer
-/// depth on the element, and the array dimensions verbatim (`[]`, `[][64]`).
-#[derive(Clone)]
-struct Shape {
-    ty: String,
-    qualifiers: String,
-    stars: usize,
-    dims: String,
-}
-
-impl Shape {
-    fn text(&self) -> String {
-        format!(
-            "{} {} {}{}",
-            self.qualifiers,
-            self.ty,
-            "*".repeat(self.stars),
-            self.dims
-        )
-        .trim()
-        .to_string()
-    }
-    fn declaration(&self, name: &str) -> String {
-        let q = if self.qualifiers.is_empty() {
-            String::new()
-        } else {
-            format!("{} ", self.qualifiers)
-        };
-        format!(
-            "extern {q}{} {}{name}{};",
-            self.ty,
-            "*".repeat(self.stars),
-            self.dims
-        )
-    }
-}
-
 /// `extern [qualifiers] type [*...]name[dims];` without a parameter list.
-fn data_shape(text: &str) -> Option<(String, Shape)> {
+fn data_shape(text: &str) -> Option<(String, String)> {
     let t = text.trim();
     let body = t.strip_prefix("extern ")?.strip_suffix(';')?.trim();
     if body.contains('(') {
@@ -971,15 +882,28 @@ fn data_shape(text: &str) -> Option<(String, Shape)> {
     if ty.is_empty() {
         return None;
     }
+    let mut words = vec!["extern".to_string()];
+    words.extend(qualifiers);
+    words.extend(ty);
     Some((
         name.to_string(),
-        Shape {
-            ty: ty.join(" "),
-            qualifiers: qualifiers.join(" "),
-            stars,
-            dims,
-        },
+        format!("{} {}{name}{dims};", words.join(" "), "*".repeat(stars)),
     ))
+}
+
+fn prototype(name: &str, ret: &str, params: &str) -> String {
+    let space = if ret.ends_with('*') { "" } else { " " };
+    format!("{ret}{space}{name}({params});")
+}
+
+fn declaration(text: &str) -> Option<(&'static str, String, String)> {
+    if let Some((name, text)) = data_shape(text) {
+        Some(("extern", name, text))
+    } else {
+        let (name, ret, params) = function_decl(text)?;
+        let text = prototype(&name, &ret, &params);
+        Some(("prototype", name, text))
+    }
 }
 
 /// `[extern] ret name(params);` → (name, ret, params).
@@ -1014,35 +938,27 @@ fn callee_address(text: &str) -> Option<String> {
 /// Rename a wrapper's definition head (first occurrence before `(`) or, for
 /// a body, every call of it.
 fn rename_call(text: &str, from: &str, to: &str, first_only: bool) -> String {
-    let mut out = String::new();
-    let mut rest = text;
     let mut done = false;
-    while let Some(at) = rest.find(from) {
-        let before = &rest[..at];
-        let after = &rest[at + from.len()..];
-        let word = !before
-            .chars()
-            .last()
-            .is_some_and(|c| c.is_ascii_alphanumeric() || c == '_')
-            && !after
-                .chars()
-                .next()
-                .is_some_and(|c| c.is_ascii_alphanumeric() || c == '_');
-        let call = after.trim_start().starts_with('(');
-        out.push_str(before);
-        if word && call && !(first_only && done) {
-            out.push_str(to);
+    replace_words(text, from, to, |after| {
+        if after.trim_start().starts_with('(') && !(first_only && done) {
             done = true;
+            true
         } else {
-            out.push_str(from);
+            false
         }
-        rest = after;
-    }
-    out.push_str(rest);
-    out
+    })
 }
 
 fn replace_word(text: &str, word: &str, with: &str) -> String {
+    replace_words(text, word, with, |_| true)
+}
+
+fn replace_words(
+    text: &str,
+    word: &str,
+    with: &str,
+    mut accept: impl FnMut(&str) -> bool,
+) -> String {
     let mut out = String::new();
     let mut rest = text;
     while let Some(at) = rest.find(word) {
@@ -1057,7 +973,7 @@ fn replace_word(text: &str, word: &str, with: &str) -> String {
                 .next()
                 .is_some_and(|c| c.is_ascii_alphanumeric() || c == '_');
         out.push_str(before);
-        out.push_str(if whole { with } else { word });
+        out.push_str(if whole && accept(after) { with } else { word });
         rest = after;
     }
     out.push_str(rest);
@@ -1215,11 +1131,7 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
                     ';' if depth == 0 => {
                         let piece = text[start..=index].trim();
                         if !piece.is_empty() {
-                            let single = [piece];
-                            for item in items(piece, file) {
-                                out.push(item);
-                            }
-                            let _ = single;
+                            out.extend(items(piece, file));
                         }
                         start = index + 1;
                     }
@@ -1244,7 +1156,11 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
             }
             continue;
         }
-        if head.contains("__inline__") || head.starts_with("static inline") {
+        let inline = head.contains("__inline__") || head.starts_with("static inline");
+        let record = ["struct", "typedef struct", "union", "typedef union"]
+            .iter()
+            .any(|prefix| head.starts_with(prefix));
+        if inline || (!record && head.contains('(') && !head.ends_with(';')) {
             let name = head
                 .split('(')
                 .next()
@@ -1252,12 +1168,13 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
                 .unwrap_or(head)
                 .trim_start_matches('*')
                 .to_string();
-            push(&mut out, "inline", name, block);
-        } else if head.starts_with("struct")
-            || head.starts_with("typedef struct")
-            || head.starts_with("union")
-            || head.starts_with("typedef union")
-        {
+            push(
+                &mut out,
+                if inline { "inline" } else { "function" },
+                name,
+                block,
+            );
+        } else if record {
             let tail = block[block.len() - 1].trim();
             let name = head
                 .split_whitespace()
@@ -1270,15 +1187,6 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
                 })
                 .unwrap_or_else(|| head.to_string());
             push(&mut out, "struct", name, block);
-        } else if head.contains('(') && !head.ends_with(';') {
-            let name = head
-                .split('(')
-                .next()
-                .and_then(|h| h.split_whitespace().last())
-                .unwrap_or(head)
-                .trim_start_matches('*')
-                .to_string();
-            push(&mut out, "function", name, block);
         } else {
             push(&mut out, "other", block.join("\n"), block);
         }
@@ -1287,30 +1195,21 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
 }
 
 fn header_still_used(source_root: &Path, header: &Path) -> Result<bool, String> {
-    let name = header
-        .file_name()
-        .unwrap_or_default()
-        .to_string_lossy()
-        .into_owned();
+    let name = header.file_name().unwrap_or_default().to_string_lossy();
     let needle = format!("#include \"{name}\"");
-    let mut stack = vec![source_root.to_path_buf()];
-    while let Some(dir) = stack.pop() {
-        for entry in fs::read_dir(&dir).map_err(|e| format!("{}: {e}", dir.display()))? {
-            let path = entry.map_err(|e| e.to_string())?.path();
-            if path.is_dir() {
-                stack.push(path);
-            } else if path != header
-                && path
-                    .extension()
-                    .is_some_and(|x| x == "c" || x == "h" || x == "inc")
-            {
-                if fs::read_to_string(&path)
-                    .map_err(|e| format!("{}: {e}", path.display()))?
-                    .contains(&needle)
-                {
-                    return Ok(true);
-                }
-            }
+    for entry in walkdir::WalkDir::new(source_root).follow_links(true) {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let path = entry.path();
+        if !entry.file_type().is_dir()
+            && path != header
+            && path
+                .extension()
+                .is_some_and(|x| x == "c" || x == "h" || x == "inc")
+            && fs::read_to_string(path)
+                .map_err(|e| format!("{}: {e}", path.display()))?
+                .contains(&needle)
+        {
+            return Ok(true);
         }
     }
     Ok(false)
@@ -1329,11 +1228,113 @@ fn git_rm(root: &Path, path: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn read_json(path: &Path) -> Result<Value, String> {
-    compiler_core::build_io::read_json(path)
-}
-
 fn write_json(path: &Path, value: &Value) -> Result<(), String> {
     let text = serde_json::to_string_pretty(value).map_err(|e| e.to_string())?;
     fs::write(path, format!("{text}\n")).map_err(|e| format!("{}: {e}", path.display()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn flatten_rejects_unregistered_holes_and_missing_coverage() {
+        use coverage_map::model::{area, Category, Tile};
+        let tile = |category: Category| {
+            let mut tile = Tile {
+                bytes: 4,
+                group: Some("test".into()),
+                ..Tile::default()
+            };
+            tile.categories[category as usize] = 4;
+            tile
+        };
+        let mut areas = vec![area(
+            "overlays",
+            "Overlays",
+            vec![tile(Category::ProvenC), tile(Category::ProvenAsm)],
+        )];
+        assert!(check_overlay_coverage(&areas, "resource_test").is_ok());
+        assert!(check_overlay_coverage(&areas, "resource_absent").is_err());
+        for category in [Category::Unknown, Category::DraftC, Category::DraftAsm] {
+            areas[0].tiles.push(tile(category));
+            assert!(check_overlay_coverage(&areas, "resource_test")
+                .unwrap_err()
+                .contains("4 unresolved"));
+            areas[0].tiles.pop();
+        }
+    }
+
+    #[test]
+    fn declarations_keep_qualifiers_dimensions_and_prototype_shapes() {
+        for (input, kind, expected) in [
+            ("extern u8 Data[];", "extern", "extern u8 Data[];"),
+            (
+                "extern const volatile struct Work **Data[][64];",
+                "extern",
+                "extern const volatile struct Work **Data[][64];",
+            ),
+            ("extern u8 const Data;", "extern", "extern const u8 Data;"),
+            (
+                "extern void *Func(s32 n);",
+                "prototype",
+                "void *Func(s32 n);",
+            ),
+            ("int Func();", "prototype", "int Func();"),
+            ("int Func(void);", "prototype", "int Func(void);"),
+        ] {
+            let (actual_kind, _, text) = declaration(input).unwrap();
+            assert_eq!((actual_kind, text.as_str()), (kind, expected));
+        }
+        assert!(declaration("static int Func(void);").is_none());
+        assert_eq!(
+            prototype("Func_12345678", "int", "int Func"),
+            "int Func_12345678(int Func);"
+        );
+    }
+
+    #[test]
+    fn replacements_distinguish_identifiers_calls_and_first_definition() {
+        let text = "Call xCall Call_x Call(); Call \n(1); &Call;";
+        assert_eq!(
+            replace_word(text, "Call", "Next"),
+            "Next xCall Call_x Next(); Next \n(1); &Next;"
+        );
+        assert_eq!(
+            rename_call(text, "Call", "Next", false),
+            "Call xCall Call_x Next(); Next \n(1); &Call;"
+        );
+        assert_eq!(
+            rename_call(text, "Call", "Next", true),
+            "Call xCall Call_x Next(); Call \n(1); &Call;"
+        );
+    }
+}
+
+fn check_overlay_coverage(
+    areas: &[coverage_map::model::Area],
+    overlay: &str,
+) -> Result<(), String> {
+    use coverage_map::model::Category;
+    let group = overlay
+        .strip_prefix("resource_")
+        .ok_or("invalid overlay ID")?;
+    let tiles: Vec<_> = areas
+        .iter()
+        .filter(|area| area.id == "overlays")
+        .flat_map(|area| &area.tiles)
+        .filter(|tile| tile.group.as_deref() == Some(group))
+        .collect();
+    let unresolved: i64 = tiles
+        .iter()
+        .map(|tile| {
+            tile.bytes
+                - tile.categories[Category::ProvenC as usize]
+                - tile.categories[Category::ProvenAsm as usize]
+        })
+        .sum();
+    if tiles.is_empty() || unresolved != 0 {
+        return Err(format!("{overlay}: {unresolved} unresolved executable bytes or missing coverage; registered owners alone cannot prove completion"));
+    }
+    Ok(())
 }

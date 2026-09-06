@@ -22,8 +22,8 @@ use walkdir::WalkDir;
 const TREES: [(&str, &str); 4] = [
     ("core", "Main image"),
     ("overlays", "Code overlays"),
-    ("images", "Images"),
-    ("music", "Music"),
+    ("images", "Graphics"),
+    ("music", "Sound"),
 ];
 const COVERAGE_DIRS: [&str; 12] = [
     "games/gs1/asm",
@@ -126,36 +126,8 @@ pub struct Live {
     revision: String,
     generated: String,
     trees: Vec<(&'static str, String)>,
-    executable: f64,
-    proven_c: f64,
-    proven_c_percent: f64,
-    draft_c: f64,
-    draft_c_percent: f64,
-    proven_asm: f64,
-    gs1_ja_sources: usize,
-    gs1_en_sources: usize,
-    gs2_ja_sources: usize,
-    gs2_en_sources: usize,
-    correspondence: Option<Correspondence>,
-}
-
-struct Correspondence {
-    total: usize,
-    matched: usize,
-    shared: usize,
-    regional: usize,
-    unresolved: usize,
-}
-impl Correspondence {
-    fn add(self, other: Self) -> Self {
-        Self {
-            total: self.total + other.total,
-            matched: self.matched + other.matched,
-            shared: self.shared + other.shared,
-            regional: self.regional + other.regional,
-            unresolved: self.unresolved + other.unresolved,
-        }
-    }
+    map: Option<coverage_map::pipeline::CoverageMap>,
+    summary: Value,
 }
 #[derive(Default)]
 pub struct State {
@@ -177,38 +149,6 @@ fn document_number(document: &Value, path: &[&str]) -> Option<f64> {
     }
     v.as_f64()
 }
-fn count_c(path: &Path) -> usize {
-    WalkDir::new(path)
-        .into_iter()
-        .filter_map(Result::ok)
-        .filter(|entry| {
-            entry.file_type().is_file() && entry.path().extension().is_some_and(|x| x == "c")
-        })
-        .count()
-}
-fn correspondence(path: &Path) -> Result<Option<Correspondence>, String> {
-    let bytes = match std::fs::read(path) {
-        Ok(bytes) => bytes,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-        Err(error) => return Err(format!("{}: {error}", path.display())),
-    };
-    let value: serde_json::Value =
-        serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))?;
-    let number = |key: &str| {
-        value
-            .get(key)
-            .and_then(serde_json::Value::as_u64)
-            .map(|value| value as usize)
-            .ok_or_else(|| format!("{} lacks numeric {key}", path.display()))
-    };
-    Ok(Some(Correspondence {
-        total: number("owners_total")?,
-        matched: number("matched_owners")?,
-        shared: number("shared_core_owners")?,
-        regional: number("regional_core_owners")?,
-        unresolved: number("unresolved_owners")?,
-    }))
-}
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
     let map = build_coverage_map(&BuildOptions {
@@ -218,7 +158,9 @@ fn compute() -> Result<Live, String> {
         prefer_verified_assets: true,
     })?;
     let trees = render_box_trees(&map, Some(&tree), true)?;
-    live_from(map.document, trees)
+    let mut live = live_from(map.document.clone(), trees)?;
+    live.map = Some(map);
+    Ok(live)
 }
 fn cached() -> Result<Live, String> {
     let report = root().join("out/gs1-en/reports/coverage-map.json");
@@ -238,67 +180,32 @@ fn cached() -> Result<Live, String> {
     live_from(document, trees)
 }
 fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live, String> {
-    let gs1_ja_sources = count_c(&root().join("games/gs1/recon/ja"));
-    let gs1_en_sources = count_c(&root().join("games/gs1/recon/en"));
-    let gs2_ja_sources = count_c(&root().join("games/gs2/recon/ja"));
-    let gs2_en_sources = count_c(&root().join("games/gs2/recon/en"));
-    let reports = root().join("out/gs1-en/reports");
-    let correspondence = match (
-        correspondence(&reports.join("exact-correspondence.json"))?,
-        correspondence(&reports.join("exact-overlay-correspondence.json"))?,
-    ) {
-        (Some(main), Some(overlays)) => Some(main.add(overlays)),
-        _ => None,
-    };
-    let correspondence_revision = correspondence.as_ref().map_or_else(
-        || "correspondence-unavailable".into(),
-        |correspondence| {
-            format!(
-                "{}-{}-{}-{}",
-                correspondence.matched,
-                correspondence.shared,
-                correspondence.regional,
-                correspondence.unresolved
-            )
-        },
-    );
-    let revision = BOX_TREES
+    let revision = trees
         .iter()
-        .map(|name| {
-            svg_cache_version(
-                trees
-                    .iter()
-                    .find(|(id, _)| id == name)
-                    .map_or("", |(_, s)| s),
-            )
-        })
-        .collect::<Vec<_>>()
-        .into_iter()
-        .chain([
-            gs1_ja_sources.to_string(),
-            gs1_en_sources.to_string(),
-            gs2_ja_sources.to_string(),
-            gs2_en_sources.to_string(),
-            correspondence_revision,
-        ])
+        .map(|(_, svg)| svg_cache_version(svg))
         .collect::<Vec<_>>()
         .join("-");
     let n = |key| document_number(&document, key).unwrap_or(0.0);
+    let executable = n(&["executable_bytes"]);
+    let proven_c = n(&["categories", "proven_c", "bytes"]);
+    let proven_asm = n(&["categories", "proven_asm", "bytes"]);
+    let summary = json!({
+        "executableBytes": number(executable),
+        "provenCBytes": number(proven_c),
+        "provenCPercent": number(n(&["categories", "proven_c", "percent_of_executable"])),
+        "draftCBytes": number(n(&["categories", "draft_c", "bytes"])),
+        "draftCPercent": number(n(&["categories", "draft_c", "percent_of_executable"])),
+        "provenAsmBytes": number(proven_asm),
+        "doneBytes": number(proven_c + proven_asm),
+        "donePercent": number((proven_c + proven_asm) * 100.0 / executable.max(1.0)),
+        "historicalTargets": 12, "fullTargets": 1, "compileOnlyTargets": 11
+    });
     Ok(Live {
         revision,
         generated: iso_now(),
         trees,
-        executable: n(&["executable_bytes"]),
-        proven_c: n(&["categories", "proven_c", "bytes"]),
-        proven_c_percent: n(&["categories", "proven_c", "percent_of_executable"]),
-        draft_c: n(&["categories", "draft_c", "bytes"]),
-        draft_c_percent: n(&["categories", "draft_c", "percent_of_executable"]),
-        proven_asm: n(&["categories", "proven_asm", "bytes"]),
-        gs1_ja_sources,
-        gs1_en_sources,
-        gs2_ja_sources,
-        gs2_en_sources,
-        correspondence,
+        map: None,
+        summary,
     })
 }
 fn iso_now() -> String {
@@ -354,37 +261,7 @@ fn snapshot_from(state: &State) -> Value {
         object.insert("error".into(), json!(error));
     }
     if let Some(live) = &state.coverage {
-        let mut summary = json!({
-                "executableBytes": number(live.executable),
-                "provenCBytes": number(live.proven_c),
-                "provenCPercent": number(live.proven_c_percent),
-                "draftCBytes": number(live.draft_c),
-                "draftCPercent": number(live.draft_c_percent),
-                "provenAsmBytes": number(live.proven_asm),
-                "doneBytes": number(live.proven_c + live.proven_asm),
-                "donePercent": number((live.proven_c + live.proven_asm) * 100.0 / live.executable.max(1.0)),
-                "gs1JaSources": live.gs1_ja_sources,
-                "gs1EnSources": live.gs1_en_sources,
-                "gs2JaSources": live.gs2_ja_sources,
-                "gs2EnSources": live.gs2_en_sources,
-                "historicalTargets": 12,
-                "fullTargets": 1,
-                "compileOnlyTargets": 11,
-                "correspondenceAvailable": live.correspondence.is_some()
-        });
-        if let Some(value) = &live.correspondence {
-            summary
-                .as_object_mut()
-                .expect("dashboard summary object")
-                .extend([
-                    ("correspondenceTotal".into(), json!(value.total)),
-                    ("correspondenceMatched".into(), json!(value.matched)),
-                    ("correspondenceShared".into(), json!(value.shared)),
-                    ("correspondenceRegional".into(), json!(value.regional)),
-                    ("correspondenceUnresolved".into(), json!(value.unresolved)),
-                ]);
-        }
-        object.insert("summary".into(), summary);
+        object.insert("summary".into(), live.summary.clone());
     }
     document
 }
@@ -692,17 +569,11 @@ fn soundfont() -> Result<Vec<u8>, String> {
         .get("regions")
         .or_else(|| residuals.get("entries"))
         .and_then(Value::as_array)
+        .or_else(|| residuals.as_array())
         .and_then(|regions| {
             regions
                 .iter()
                 .find(|region| region.get("address").and_then(Value::as_str) == Some("0x0811dac8"))
-        })
-        .or_else(|| {
-            residuals.as_array().and_then(|regions| {
-                regions.iter().find(|region| {
-                    region.get("address").and_then(Value::as_str) == Some("0x0811dac8")
-                })
-            })
         })
         .ok_or("embedded PCM region is absent")?;
     let values = embedded_region
@@ -1022,12 +893,26 @@ fn response(path: &str) -> Response {
         path if music_file(path).is_some() => std::fs::read(music_file(path).unwrap())
             .map(|body| Response::new(200, "OK", Some("audio/midi"), "public, max-age=300", body))
             .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Track not found".to_vec())),
-        path if path.starts_with("/svg/") && TREES.iter().any(|(id, _)| path == format!("/svg/{id}")) => {
-            let id = &path[5..];
+        path if path.starts_with("/svg/") => {
+            let mut parts = path[5..].split('/');
+            let id = parts.next().unwrap_or("");
+            let width = match parts.next() {
+                None => None,
+                Some(value) => match value.parse::<u16>() {
+                    Ok(width @ 240..=2000) => Some(width),
+                    _ => return Response::new(400, "Bad Request", None, "no-store", b"Invalid chart width".to_vec()),
+                },
+            };
+            if parts.next().is_some() || !TREES.iter().any(|(key, _)| *key == id) {
+                return Response::new(404, "Not Found", None, "no-store", b"Unknown chart".to_vec());
+            }
             state(|s| {
                 s.coverage
                     .as_ref()
-                    .and_then(|c| c.trees.iter().find(|(k, _)| *k == id).map(|(_, v)| v.clone()))
+                    .and_then(|c| match width {
+                        Some(width) => c.map.as_ref().map(|map| coverage_map::boxtree::svg(id, map, f64::from(width))),
+                        None => c.trees.iter().find(|(k, _)| *k == id).map(|(_, v)| v.clone()),
+                    })
                     .ok_or_else(|| s.error.clone().unwrap_or_else(|| "Coverage is still being read".into()))
                     .map(|s| Response::new(200, "OK", Some("image/svg+xml; charset=utf-8"), "no-store", s.into_bytes()))
                     .unwrap_or_else(|e| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", e.into_bytes()))
@@ -1155,7 +1040,6 @@ pub fn self_test() -> Result<String, String> {
     let js = client::bundled_client().map_err(|e| e.to_string())?;
     if !assets::STYLES.contains(".hover-tooltip")
         || !assets::STYLES.contains(".cards")
-        || !assets::STYLES.contains(".music-player, .music-player button, .music-player output { font: var(--weyard-font); }")
         || !js.contains("EventSource")
         || !js.contains("createElementNS")
         || !js.contains("viewBox: \"0 0 24 24\"")
@@ -1166,16 +1050,10 @@ pub fn self_test() -> Result<String, String> {
         || !js.contains("/music/gs2/soundfont")
         || !js.contains("createBufferSource")
         || !js.contains("if (music.ui?.card) return music.ui.card")
-        || !js.contains("className: \"music-list\"")
-        || !js.contains("className: \"music-chin\"")
-        || !js.contains("className: \"music-wave\"")
-        || !js.contains("Repeat this track")
         || !js.contains("if (status < 0xf0) running = status")
         || !js.contains("command === \"voice\"")
         || !js.contains("120547500 / value")
         || !js.contains("command === \"pitch_bend\"")
-        || js.contains("function pcmPlaybackBuffer")
-        || !js.contains("sample.loop_start / Math.max(3000, sample.frequency / 1024)")
     {
         return Err("dashboard assets are incomplete".into());
     }
@@ -1265,12 +1143,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn missing_correspondence_report_is_unavailable() {
-        let path = std::env::temp_dir().join(format!(
-            "alchemy-missing-correspondence-{}.json",
-            std::process::id()
-        ));
-        assert!(correspondence(&path).unwrap().is_none());
+    fn summary_comes_only_from_coverage_document() {
+        let live = live_from(
+            json!({"executable_bytes":1000,"categories":{
+                "proven_c":{"bytes":400,"percent_of_executable":40},
+                "proven_asm":{"bytes":100},"draft_c":{"bytes":200,"percent_of_executable":20}
+            }}),
+            Vec::new(),
+        )
+        .unwrap();
+        assert_eq!(live.summary["donePercent"], 50);
+        assert_eq!(live.summary["provenCBytes"], 400);
+        assert_eq!(live.summary["draftCBytes"], 200);
+        assert!(live.summary.get("correspondenceAvailable").is_none());
+        assert!(live.summary.get("gs1JaSources").is_none());
     }
 
     #[test]
@@ -1291,17 +1177,8 @@ mod tests {
                 revision: "revision".into(),
                 generated: "2001-08-27T12:34:56.789Z".into(),
                 trees: Vec::new(),
-                executable: 1.0,
-                proven_c: 1.0,
-                proven_c_percent: 100.0,
-                draft_c: 0.0,
-                draft_c_percent: 0.0,
-                proven_asm: 0.0,
-                gs1_ja_sources: 0,
-                gs1_en_sources: 0,
-                gs2_ja_sources: 0,
-                gs2_en_sources: 0,
-                correspondence: None,
+                map: None,
+                summary: json!({"donePercent":100}),
             }),
             error: None,
             scanning: false,
@@ -1324,31 +1201,23 @@ mod tests {
     }
 
     #[test]
-    fn music_player_keeps_one_native_pixel_font_size() {
-        assert!(assets::STYLES.contains(
-            ".music-player, .music-player button, .music-player output { font: var(--weyard-font); }"
-        ));
-        for rule in assets::STYLES
-            .lines()
-            .filter(|line| line.trim_start().starts_with(".music"))
-        {
-            assert!(
-                !rule.contains("font-size:"),
-                "music player must inherit the one native Weyard size: {rule}"
-            );
-        }
-        let client = client::bundled_client().unwrap();
-        assert!(client.contains("volume: 1,"));
-        assert!(!client.contains("music-volume"));
-        assert!(client.contains("Repeat this track"));
-        assert!(!client.contains("function pcmPlaybackBuffer"));
-    }
-
-    #[test]
-    fn music_player_tunes_compact_rom_waves_to_the_voice_root() {
-        let client = client::bundled_client().unwrap();
-        assert!(client.contains("if (sample.embedded)"));
-        assert!(client.contains("source.buffer.sampleRate / source.buffer.length"));
-        assert!(client.contains("baseRate = rootFrequency / rawCycleFrequency"));
+    fn music_client_regressions() {
+        let directory = root().join("out/dashboard-tests");
+        std::fs::create_dir_all(&directory).unwrap();
+        let script = directory.join(format!("client-{}.test.js", std::process::id()));
+        let source = include_str!("client.test.js").replace(
+            "import.meta.url",
+            &format!(
+                "require('node:url').pathToFileURL({})",
+                json!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/client.test.js"))
+            ),
+        );
+        std::fs::write(&script, source).unwrap();
+        assert!(std::process::Command::new("bun")
+            .arg("test")
+            .arg(script)
+            .status()
+            .expect("Bun is required for dashboard client tests")
+            .success());
     }
 }

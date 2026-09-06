@@ -3,9 +3,8 @@ use crate::regex::Regex;
 use candidate_compiler::verify::run as checked;
 use compiler_core::overlay;
 use compiler_core::overlay::placeholder_addresses;
-use compiler_core::plan::{
-    source_to_assembly_plan, CompilerFlagMutations, SourceToAssemblyPlanOptions,
-};
+pub use compiler_core::overlay::placeholder_extent;
+use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::sha256;
 use compiler_core::source_inputs::compiler_source_tree_signature;
@@ -47,35 +46,6 @@ fn translation_units() -> Result<&'static TranslationUnits, String> {
         Ok(units) => Ok(units),
         Err(error) => Err(error.clone()),
     }
-}
-const SELF_SOURCE: [&[u8]; 6] = [
-    include_bytes!("lib.rs"),
-    include_bytes!("compile.rs"),
-    include_bytes!("disasm.rs"),
-    include_bytes!("paths.rs"),
-    include_bytes!("regex.rs"),
-    include_bytes!("cli.rs"),
-];
-const COMPILER_SOURCES: [&[u8]; 7] = [
-    include_bytes!("../../compiler-core/src/lib.rs"),
-    include_bytes!("../../compiler-core/src/routing.rs"),
-    include_bytes!("../../compiler-core/src/call_via_data.rs"),
-    include_bytes!("../../compiler-core/src/symbols.rs"),
-    include_bytes!("../../compiler-core/src/overlay.rs"),
-    include_bytes!("../../compiler-core/src/plan.rs"),
-    include_bytes!("../../candidate-compiler/src/verify.rs"),
-];
-pub fn self_digest() -> String {
-    static DIGEST: OnceLock<String> = OnceLock::new();
-    DIGEST
-        .get_or_init(|| {
-            let sources = SELF_SOURCE
-                .into_iter()
-                .chain(COMPILER_SOURCES)
-                .collect::<Vec<_>>();
-            sha256::hex(&sources.concat())
-        })
-        .clone()
 }
 fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> {
     let directory = root().join("out/overlay-bindings");
@@ -150,16 +120,19 @@ fn overlay_cache_key(
     plan_signature: &str,
     address: i64,
     source_inputs: &[u8],
-) -> String {
-    let mut key = Vec::new();
-    append_frame(&mut key, b"overlay-c-cache-v3");
-    append_frame(&mut key, self_digest().as_bytes());
-    append_frame(&mut key, compiler_signature.as_bytes());
-    append_frame(&mut key, host_signature.as_bytes());
-    append_frame(&mut key, plan_signature.as_bytes());
-    append_frame(&mut key, hex(address, 8).as_bytes());
-    append_frame(&mut key, source_inputs);
-    sha256::hex(&key)
+) -> Result<String, String> {
+    let identity = (
+        "overlay-c-cache-v5",
+        compiler_core::bundle::executable_signature()?,
+        compiler_signature,
+        host_signature,
+        plan_signature,
+        address,
+        sha256::hex(source_inputs),
+    );
+    Ok(sha256::hex(
+        &serde_json::to_vec(&identity).map_err(|error| error.to_string())?,
+    ))
 }
 fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
     let directive = [".set", ".thumb_set"][(symbol.kind == AbsoluteSymbolKind::Thumb) as usize];
@@ -248,10 +221,7 @@ pub fn compile_overlay_c(
     let binding_text = source_paths.symbol_bindings(Some(overlay));
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
-    options.flags = Some(CompilerFlagMutations {
-        add_flags: extra_flags.to_vec(),
-        remove_flags: Vec::new(),
-    });
+    options.support_flags = extra_flags.to_vec();
     let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
     let configuration = candidate_compiler::CandidateCompilerConfiguration {
@@ -282,8 +252,8 @@ pub fn compile_overlay_c(
         &plan_signature,
         address,
         &source_inputs,
-    );
-    // Flag-mutated compiles (matching/diagnostic overrides) are throwaway by
+    )?;
+    // Compiles with local includes or diagnostic dumps are throwaway by
     // construction and must never be persisted: every candidate has unique
     // source, so caching them would grow the database without bound.
     if extra_flags.is_empty() {
@@ -881,26 +851,6 @@ fn compile_production_overlay(
     }
     compiled.sort_by_key(|member| member.address);
     Ok(compiled)
-}
-pub fn placeholder_extent(text: &str, address: u32) -> Option<usize> {
-    let label = format!("AlchemyC_{address:08x}:");
-    let mut lines = text.lines().skip_while(|line| line.trim() != label);
-    lines.next()?;
-    let mut extent = 0usize;
-    for line in lines {
-        let line = line.trim();
-        if let Some(value) = line.strip_prefix(".space ") {
-            let value = value.trim();
-            extent = extent.checked_add(if let Some(hex) = value.strip_prefix("0x") {
-                usize::from_str_radix(hex, 16).ok()?
-            } else {
-                value.parse().ok()?
-            })?;
-        } else if !(line.starts_with(".L_") && line.ends_with(':')) {
-            break;
-        }
-    }
-    (extent > 0).then_some(extent)
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Span {

@@ -1,4 +1,4 @@
-use compiler_core::{routing::root, sha256};
+use compiler_core::{build_io::read, routing::root, sha256};
 use diff::disasm::{disassemble, Rows};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -759,10 +759,6 @@ fn word(bytes: &[u8], at: usize) -> Option<u32> {
 fn absolute_anchor(value: u32) -> Option<String> {
     (matches!(value >> 24, 0x02..=0x09)).then(|| format!("absolute_{value:08x}"))
 }
-fn read(path: &Path) -> Result<Vec<u8>, String> {
-    fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -844,9 +840,7 @@ mod tests {
 
     #[test]
     fn compile_header_preserves_aligned_word_load() {
-        use candidate_compiler::{
-            compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
-        };
+        use candidate_compiler::compile_to_assembly;
         use compiler_core::{routing::CompilerTarget, source_paths::SourceOwner};
         let directory = tempfile::tempdir().unwrap();
         let directory = directory.path();
@@ -862,10 +856,6 @@ mod tests {
             directory.join("build").to_str().unwrap(),
             &[],
             CompilerTarget::Gs1,
-            &CandidateCompilerConfiguration {
-                family: Some(CandidateCompilerFamily::Routed),
-                ..Default::default()
-            },
         )
         .unwrap();
         let assembly = fs::read_to_string(assembly).unwrap();

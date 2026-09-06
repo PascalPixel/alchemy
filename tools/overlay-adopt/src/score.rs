@@ -5,7 +5,7 @@ use crate::{
 use compiler_core::{
     overlay_call_via_base,
     source_paths::{SourceOwner, SourcePaths},
-    translation_units::TranslationUnits,
+    translation_units::{resolve_overlay_span, TranslationUnits},
 };
 use diff::{cli::Options, render::render};
 use disassemble::compile::compile_overlay_c;
@@ -71,11 +71,8 @@ pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> 
         .ok_or_else(|| format!("{target}: not an overlay source"))?;
     Ok(owner)
 }
-fn source_for(root: &Path, owner: SourceOwner) -> Result<PathBuf, String> {
-    let candidates = [
-        SourcePaths::load(root)?.source_path(owner),
-        retained_source(root, owner),
-    ];
+fn source_for(root: &Path, paths: &SourcePaths, owner: SourceOwner) -> Result<PathBuf, String> {
+    let candidates = [paths.source_path(owner), retained_source(root, owner)];
     candidates
         .into_iter()
         .find(|candidate| candidate.exists())
@@ -84,21 +81,20 @@ fn source_for(root: &Path, owner: SourceOwner) -> Result<PathBuf, String> {
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let (mut align, mut asm, mut target, mut owner_target, mut override_span) =
         (false, false, None, None, None);
-    let mut extra = Vec::new();
     let mut args = argv.iter();
     while let Some(argument) = args.next() {
         match argument.as_str() {
-            "--flags" => extra.extend(
-                args.next()
-                    .ok_or("--flags needs a comma-separated value")?
-                    .split(',')
-                    .map(str::to_string),
-            ),
+            "--flags" | "--remove-flags" | "--family" => {
+                return Err(format!(
+                    "{argument} is retired; candidates use their canonical compiler route"
+                ));
+            }
             "--span" => {
                 override_span = Some(
                     args.next()
                         .and_then(|value| value.parse().ok())
-                        .ok_or("--span wants a decimal byte count")?,
+                        .filter(|span| *span > 0)
+                        .ok_or("--span wants a positive decimal byte count")?,
                 )
             }
             "--owner" => {
@@ -124,31 +120,33 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let resolved = resolve(root, owner_target.as_deref().unwrap_or(&target))?;
     let overlay = resolved.overlay_id().expect("resolved overlay owner");
     let address = i64::from(resolved.address());
+    let paths = SourcePaths::load(root)?;
+    let installed = if paths
+        .mapped_source_path(resolved)
+        .is_some_and(|path| path.is_file())
+    {
+        placeholder_span(root, resolved)?.and_then(|span| usize::try_from(span).ok())
+    } else {
+        None
+    };
+    let span = resolve_overlay_span(
+        &crate::reviewed_spans(root)?,
+        resolved,
+        installed,
+        override_span,
+    )?;
     let explicit = Path::new(&target);
     let source = if explicit.is_file() {
         explicit
             .canonicalize()
             .map_err(|error| format!("{}: {error}", explicit.display()))?
     } else {
-        source_for(root, resolved)?
-    };
-    let reviewed = crate::reviewed_spans(root)?;
-    let span = override_span
-        .or(placeholder_span(root, resolved)?)
-        .or_else(|| reviewed.get(&resolved).map(|span| *span as i64));
-    let Some(span) = span else {
-        return Err(match crate::audited_kind(root, &overlay, address)? {
-            Some(kind) => format!(
-                "{overlay}:{address:08x} begins in audited {kind}; it is not a mapped owner"
-            ),
-            None => format!("{overlay}:{address:08x} has no mapped owner span"),
-        });
+        source_for(root, &paths, resolved)?
     };
     let work = tempdir().map_err(|error| error.to_string())?;
     let reference = work.path().join("reference.bin");
     let image = disassemble::canonical_overlay(root, &overlay)?;
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
-    let paths = SourcePaths::load(root)?;
     let units = TranslationUnits::load(root)?;
     let mut options = Options::gs1(source.to_string_lossy().into_owned());
     options.configuration.call_via_base = Some(
@@ -157,17 +155,15 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             .map(u64::from)
             .unwrap_or_else(|| overlay_call_via_base(&overlay)),
     );
-    options.configuration.overlay_extent =
-        Some(usize::try_from(span).map_err(|_| "invalid overlay span")?);
+    options.configuration.overlay_extent = Some(span);
     if let Some(unit) = units.unit_for_game_owner("gs1", resolved) {
         options.configuration.absolute_symbols = unit.canonical_symbols()?;
     }
     options.rom = Some(reference.to_string_lossy().into_owned());
     options.work = Some(work.path().to_string_lossy().into_owned());
-    options.flags = extra;
     options.owner = Some(address as u32);
     options.overlay = Some(overlay);
-    options.size = Some(span as usize);
+    options.size = Some(span);
     options.align = align;
     options.asm = asm;
     let rendered = render(root, &options)?;
@@ -275,6 +271,25 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn explicit_score_span_cannot_override_a_pool_head_or_owner_extent() {
+        let root = compiler_core::routing::root();
+        for (target, span, message) in [
+            (
+                "resource_3c5:0200186c",
+                "596",
+                "no reviewed complete owner boundary",
+            ),
+            (
+                "resource_3c5:02001b10",
+                "2394",
+                "differs from complete installed extent 2396",
+            ),
+        ] {
+            let args = [target, "--span", span].map(str::to_owned);
+            assert!(run(root, &args).unwrap_err().contains(message));
+        }
+    }
     fn owner(value: &str) -> SourceOwner {
         SourceOwner::parse_argument(value).unwrap()
     }

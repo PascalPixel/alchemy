@@ -74,23 +74,10 @@ fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
 }
 
 fn audited(root: &Path) -> Result<HashSet<String>, String> {
-    let document = json(&root.join("games/gs1/semantic/regions.json"))?;
-    let mut stems = HashSet::new();
-    for row in document
-        .get("manual_regions")
-        .and_then(Value::as_array)
-        .ok_or("games/gs1/semantic/regions.json has no manual_regions")?
-    {
-        let Some(overlay) = row.get("overlay").and_then(Value::as_str) else {
-            continue;
-        };
-        let Some(entry) = row.get("entry").and_then(Value::as_str) else {
-            continue;
-        };
-        let address = u32::from_str_radix(entry.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("invalid owner address {entry}"))?;
-        stems.insert(format!("{overlay}_c_{address:08x}"));
-    }
+    let stems: HashSet<String> = compiler_core::translation_units::reviewed_overlay_spans(root)?
+        .into_keys()
+        .map(|owner| owner.legacy_stem())
+        .collect();
     if stems.is_empty() {
         return Err("games/gs1/semantic/regions.json contains no audited owners".into());
     }

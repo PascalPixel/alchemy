@@ -404,6 +404,19 @@ pub fn compiler_bundle_signature_checked() -> Result<String> {
     Ok(compiler_bundle_signature())
 }
 type HostExecutableSignatureCache = Vec<(Vec<String>, Result<String>)>;
+/// Identity of all code linked into this running contributor command.
+pub fn executable_signature() -> Result<String> {
+    static SIGNATURE: OnceLock<Result<String>> = OnceLock::new();
+    SIGNATURE
+        .get_or_init(|| {
+            let path = std::env::current_exe().map_err(|error| error.to_string())?;
+            fs::read(&path)
+                .map(|bytes| sha256::hex(&bytes))
+                .map_err(|error| format!("{}: {error}", path.display()))
+        })
+        .clone()
+}
+
 fn host_executable_signature_cache() -> &'static Mutex<HostExecutableSignatureCache> {
     static CACHE: OnceLock<Mutex<HostExecutableSignatureCache>> = OnceLock::new();
     CACHE.get_or_init(|| Mutex::new(Vec::new()))

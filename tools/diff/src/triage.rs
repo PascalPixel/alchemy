@@ -14,6 +14,7 @@ pub enum ResidualClass {
     StructuralTopology,
     MissingExtraCode,
     FrameContext,
+    CallTargetMismatch,
     Unclassified,
 }
 impl ResidualClass {
@@ -33,6 +34,7 @@ impl ResidualClass {
                 Some("reconstruct-missing-or-extra-code"),
             ),
             Self::FrameContext => ("frame-context", Some("recover-stack-local-context")),
+            Self::CallTargetMismatch => ("call-target-mismatch", None),
             Self::Unclassified => ("unclassified", None),
         }
     }
@@ -67,6 +69,7 @@ impl ResidualClass {
                 "alchemy diff {source} --asm (build a stack-slot ledger and recover the missing local or translation-unit context)"
             }
             Self::Unclassified => "route to the smart queue with the full --align diff attached",
+            Self::CallTargetMismatch => "smart queue: inspect call bindings and veneers in the full --align diff; no automatic repair",
         }
     }
 }
@@ -578,6 +581,16 @@ pub fn classify_with_topology(
         ResidualClass::StructuralTopology
     } else if streams_differ || actual_bytes != reference_bytes {
         ResidualClass::MissingExtraCode
+    } else if branch_topology_equal
+        && left.iter().zip(right).any(|(a, b)| {
+            mnemonic(a) == "bl"
+                && mnemonic(b) == "bl"
+                && branch_target(a)
+                    .zip(branch_target(b))
+                    .is_some_and(|(a, b)| a != b)
+        })
+    {
+        ResidualClass::CallTargetMismatch
     } else {
         ResidualClass::Unclassified
     };
@@ -601,6 +614,8 @@ mod tests {
     #[test]
     fn routes_each_mechanical_residual() {
         use ResidualClass::*;
+        assert_route(&["bl 0x20"], &["bl 0x24"], 1, CallTargetMismatch);
+        assert_route(&["movs r0, #1"], &["movs r0, #2"], 1, Unclassified);
         assert_route(&["movs r0, #1"], &["movs r0, #1"], 0, Exact);
         assert_route(&["ldr r0, [pc, #4]"], &["ldr r0, [pc, #8]"], 1, LayoutOnly);
         assert_route(

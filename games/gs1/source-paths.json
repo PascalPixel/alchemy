@@ -2653,12 +2653,10 @@
       "source": "audio/initialize_cgb.c"
     },
     "main:080fa678": {
-      "name": "AudioCommand_InvokeSlot34",
-      "source": "audio/invoke_command_slot_34.c"
+      "name": "AudioCommand_InvokeSlot34"
     },
     "main:080fa68c": {
-      "name": "AudioCommand_InvokeSlot35",
-      "source": "audio/invoke_command_slot_35.c"
+      "name": "AudioCommand_InvokeSlot35"
     },
     "main:080fa6a0": {
       "name": "AudioEngine_Initialize",

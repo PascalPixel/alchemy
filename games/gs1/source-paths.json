@@ -17441,6 +17441,14 @@
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "0200371a",
       "source": "overlays/staged_actor_movement/move_and_redraw_3c5.c"
+    },
+    "resource_38b:020009cc": {
+      "name": "Scene_UpdatePuzzleActors",
+      "source": "overlays/scene_script/update_puzzle_actors.c"
+    },
+    "resource_38b:02000890": {
+      "name": "Scene_DispatchPuzzleEvent",
+      "source": "overlays/scene_script/dispatch_puzzle_event.c"
     }
   }
 }

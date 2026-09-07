@@ -1,8 +1,10 @@
 use std::io::Cursor;
 mod compression;
+mod huffman_archive;
 mod text;
 mod wav;
 pub use compression::{delta7_image, encode_delta7, encode_mtf4};
+pub use huffman_archive::{encode_huffman_archive, HuffmanArchive};
 pub use text::{import_pairs, import_tilemap, import_words};
 pub use wav::wav_pcm8;
 pub type Rgb = [u8; 3];

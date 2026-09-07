@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a3:0200007c": {
+      "name": "SceneData_SelectFlaggedTable",
+      "source": "overlays/scene_data/select_table_by_word_224_3a3.c"
+    },
     "resource_3c2:0200006c": {
       "name": "SceneDialogue_HandleFacingChoice",
       "source": "overlays/scene_script/scene_3c2.c"

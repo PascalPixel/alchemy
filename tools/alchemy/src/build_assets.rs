@@ -1008,21 +1008,32 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             if names.is_empty() || names.len() != fields.len() {
                 return Err("record field names must be nonempty and unique".into());
             }
+            let label = segment
+                .get("label")
+                .map(|label| json_string(label, "record label"))
+                .transpose()?;
+            let mut seen_labels = std::collections::HashSet::new();
             let mut bytes = Vec::new();
             for record in segment["records"].as_array().ok_or("records missing")? {
                 let record = record.as_object().ok_or("record must be an object")?;
-                if record.len() != fields.len() {
-                    return Err("record fields differ".into());
+                for (key, value) in record {
+                    if Some(key.as_str()) == label {
+                        let text = json_string(value, "record label")?;
+                        if text.is_empty() || !seen_labels.insert(text.to_string()) {
+                            return Err("record labels must be nonempty and unique".into());
+                        }
+                    } else if !names.contains(key.as_str()) {
+                        return Err("record fields differ".into());
+                    }
                 }
                 let start = bytes.len();
                 for field in fields {
                     let name = json_string(&field["name"], "field name")?;
-                    bytes.extend(table_values(
-                        record.get(name).ok_or("record field absent")?,
-                        field,
-                        stride,
-                        &labels,
-                    )?);
+                    let value = record
+                        .get(name)
+                        .or_else(|| field.get("default"))
+                        .ok_or("record field absent")?;
+                    bytes.extend(table_values(value, field, stride, &labels)?);
                 }
                 if bytes.len() - start != stride {
                     return Err("record stride differs".into());
@@ -1280,6 +1291,17 @@ fn table_values(
         }
     }
     let mut bytes = integer_array(&serde_json::json!(values), kind)?;
+    if let Some(capacity) = spec.get("capacity") {
+        let capacity = number(capacity, "capacity")?;
+        if spec.get("terminated_capacity").is_some()
+            || capacity == 0
+            || capacity > max_bytes / width
+            || values.len() > capacity
+        {
+            return Err("field exceeds its capacity".into());
+        }
+        bytes.resize(capacity * width, 0);
+    }
     if let Some(capacity) = spec.get("terminated_capacity") {
         let capacity = number(capacity, "terminated capacity")?;
         if capacity == 0
@@ -1394,6 +1416,48 @@ fn typed_tables_resolve_symbolic_values_and_pad_capacities() {
         *bad.pointer_mut(pointer).unwrap() = value;
         assert!(typed_table(&bad).is_err(), "{pointer}");
     }
+}
+
+#[test]
+fn typed_records_apply_defaults_capacities_and_labels() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":12,"segments":[
+        {"address":0,"end":12,"stride":6,"element":"record","label":"name","fields":[
+            {"name":"id","element":"le-u16"},
+            {"name":"slots","element":"u8","capacity":3,"default":[]},
+            {"name":"kind","element":"u8","default":4,"max":4}
+        ],"records":[{"name":"first","id":1},{"name":"second","id":2,"slots":[7,8],"kind":0}]}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [1, 0, 0, 0, 0, 4, 2, 0, 7, 8, 0, 0]
+    );
+    for (pointer, value) in [
+        ("/segments/0/records/0/name", serde_json::json!("")),
+        ("/segments/0/records/0/name", serde_json::json!("second")),
+        ("/segments/0/records/0/id", serde_json::json!(null)),
+        (
+            "/segments/0/records/1/slots",
+            serde_json::json!([1, 2, 3, 4]),
+        ),
+        ("/segments/0/records/1/kind", serde_json::json!(5)),
+        ("/segments/0/fields/1/capacity", serde_json::json!(0)),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+    let mut both = source.clone();
+    both["segments"][0]["fields"][1]["terminated_capacity"] = serde_json::json!(3);
+    assert!(typed_table(&both).is_err());
+    let mut unknown = source.clone();
+    unknown["segments"][0]["records"][0]["extra"] = serde_json::json!(1);
+    assert!(typed_table(&unknown).is_err());
+    let mut missing = source;
+    missing["segments"][0]["records"][0]
+        .as_object_mut()
+        .unwrap()
+        .remove("id");
+    assert!(typed_table(&missing).is_err());
 }
 
 #[test]
@@ -4111,15 +4175,6 @@ fn build_entry_native_tail(
                 resource.data,
                 sources,
                 serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
-            ))
-        }
-        "golden-sun-gameplay-databases" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = resource_5::build_gameplay_databases(&document)?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"items":document["items"].as_array().map_or(0,Vec::len),"abilities":document["abilities"].as_array().map_or(0,Vec::len),"combatants":document["combatants"].as_array().map_or(0,Vec::len),"classes":document["classes"].as_array().map_or(0,Vec::len),"djinn":document["djinn"].as_array().map_or(0,Vec::len),"alignment_bytes":document.get("alignment_bytes")}),
             ))
         }
         "golden-sun-offset-palette-lz" => {

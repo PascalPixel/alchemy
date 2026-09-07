@@ -56,7 +56,6 @@ dependencies = [
  "decompile",
  "diff",
  "disassemble",
- "early-runtime-data",
  "encounter-data",
  "executable-gap-sources",
  "extract-resource",
@@ -429,15 +428,6 @@ dependencies = [
  "regex",
  "serde_json",
  "tempfile",
-]
-
-[[package]]
-name = "early-runtime-data"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "import-asset",
- "serde_json",
 ]
 
 [[package]]

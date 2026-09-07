@@ -21059,6 +21059,9 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c2",
       "absolute_symbols": {
+        "SceneMessage_Show": { "address": "0x02008bc4", "kind": "thumb" },
+        "Func_02000d84": { "address": "0x02008b3c", "kind": "thumb" },
+        "SceneMessage_FacingChoiceBase": { "address": "0x0000261c", "kind": "data" },
         "Func_02000e64": { "address": "0x02008bdc", "kind": "thumb" },
         "Func_02000e64_a": { "address": "0x02008b44", "kind": "thumb" },
         "Func_02000e7e": { "address": "0x02008bac", "kind": "thumb" },
@@ -21132,6 +21135,21 @@
         {
           "address": "0x02000048",
           "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200006c",
+          "extent": 148,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000100",
+          "extent": 108,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200016c",
+          "extent": 104,
           "state": "exact-c"
         },
         {

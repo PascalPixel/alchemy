@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "main:080c91dc": {
+      "name": "BattleEffect_RunFallingParticles"
+    },
     "resource_375:02000170": {
       "name": "FieldScene_RunActorPositionSequence",
       "source": "overlays/scene_primary_script/run_actor_position_sequence.c"

@@ -65,7 +65,6 @@ dependencies = [
  "map-container-components",
  "matching",
  "message-archive",
- "namae-nyuuryoku",
  "no-asm-c",
  "objdiff-core",
  "overlay-adopt",
@@ -76,10 +75,8 @@ dependencies = [
  "serde_json",
  "sha1",
  "skip-sprite-archive",
- "staff-roll",
  "static-sprite-series",
  "tempfile",
- "title-resources",
  "walkdir",
 ]
 
@@ -787,14 +784,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "namae-nyuuryoku"
-version = "0.1.0"
-dependencies = [
- "extract-resource",
- "serde_json",
-]
-
-[[package]]
 name = "no-asm-c"
 version = "0.1.0"
 dependencies = [
@@ -1128,15 +1117,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
 
 [[package]]
-name = "staff-roll"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "import-asset",
- "serde_json",
-]
-
-[[package]]
 name = "static-sprite-series"
 version = "0.1.0"
 dependencies = [
@@ -1198,16 +1178,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 3.0.3",
-]
-
-[[package]]
-name = "title-resources"
-version = "0.1.0"
-dependencies = [
- "alignment-tail",
- "extract-resource",
- "import-asset",
- "serde_json",
 ]
 
 [[package]]

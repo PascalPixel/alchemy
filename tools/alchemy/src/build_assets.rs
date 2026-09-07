@@ -892,7 +892,8 @@ fn resolve_table_symbols(document: &mut Value, symbols: &SourcePaths) -> Result<
         for value in values {
             let address = if value.is_null() {
                 0
-            } else if value.is_number() {
+            } else if value.is_number() || value.as_str().is_some_and(|text| text.starts_with("0x"))
+            {
                 let address = u32::try_from(number(value, "pointer address")?)
                     .map_err(|_| "pointer exceeds u32")?;
                 if address % 2 != 0 {
@@ -945,6 +946,7 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
         return Err("typed table identity differs".into());
     }
     let mut address = number(&document["address"], "table address")?;
+    let labels = table_labels(document)?;
     let mut output = Vec::new();
     for segment in document["segments"]
         .as_array()
@@ -1000,6 +1002,7 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
                         record.get(name).ok_or("record field absent")?,
                         field,
                         stride,
+                        &labels,
                     )?);
                 }
                 if bytes.len() - start != stride {
@@ -1011,7 +1014,9 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             let text = json_string(&segment["text"], "fixed text")?;
             if stride != 1
                 || text.len() >= size
-                || !text.bytes().all(|b| (0x20..=0x7e).contains(&b))
+                || !text
+                    .bytes()
+                    .all(|b| (0x20..=0x7e).contains(&b) || b == b'\n')
             {
                 return Err("fixed text differs".into());
             }
@@ -1019,7 +1024,7 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             bytes.resize(size, 0);
             bytes
         } else {
-            table_values(&segment["values"], segment, size)?
+            table_values(&segment["values"], segment, size, &labels)?
         };
         if bytes.len() != size {
             return Err("table segment size differs".into());
@@ -1060,7 +1065,73 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>, String> {
+/// Symbolic integer values of one typed table. A string value is a named
+/// constant from the field's or the table's `names`, a `0x` hexadecimal
+/// literal, a segment `name` (its start address) or `name[index]` (the
+/// address of element `index` of that segment). A name declared by more
+/// than one segment is ambiguous and cannot be referenced.
+struct TableLabels {
+    segments: std::collections::BTreeMap<String, Option<(usize, usize)>>,
+    names: Value,
+}
+
+fn table_labels(document: &Value) -> Result<TableLabels, String> {
+    let mut segments = std::collections::BTreeMap::new();
+    for segment in document["segments"]
+        .as_array()
+        .ok_or("table segments missing")?
+    {
+        if let Some(name) = segment.get("name") {
+            let name = json_string(name, "segment name")?;
+            let start = number(&segment["address"], "segment address")?;
+            let stride = number(&segment["stride"], "segment stride")?;
+            segments
+                .entry(name.to_string())
+                .and_modify(|label| *label = None)
+                .or_insert(Some((start, stride)));
+        }
+    }
+    Ok(TableLabels {
+        segments,
+        names: document.get("names").cloned().unwrap_or(Value::Null),
+    })
+}
+
+fn symbolic_value(text: &str, spec: &Value, labels: &TableLabels) -> Result<i64, String> {
+    if let Some(named) = spec
+        .get("names")
+        .and_then(|names| names.get(text))
+        .or_else(|| labels.names.get(text))
+    {
+        return named
+            .as_i64()
+            .ok_or_else(|| format!("named value {text} is not an integer"));
+    }
+    if text.starts_with("0x") {
+        return i64::try_from(number(&Value::from(text), "hexadecimal value")?)
+            .map_err(|_| format!("hexadecimal value {text} overflows"));
+    }
+    let (name, index) = match text.strip_suffix(']').and_then(|text| text.split_once('[')) {
+        Some((name, index)) => (name, number(&Value::from(index), "element index")?),
+        None => (text, 0),
+    };
+    match labels.segments.get(name) {
+        Some(Some((start, stride))) => index
+            .checked_mul(*stride)
+            .and_then(|offset| offset.checked_add(*start))
+            .and_then(|address| i64::try_from(address).ok())
+            .ok_or_else(|| format!("element index overflows in {text}")),
+        Some(None) => Err(format!("segment name {name} is ambiguous")),
+        None => Err(format!("unknown table value {text}")),
+    }
+}
+
+fn table_values(
+    value: &Value,
+    spec: &Value,
+    max_bytes: usize,
+    labels: &TableLabels,
+) -> Result<Vec<u8>, String> {
     let element = json_string(&spec["element"], "field element")?;
     let (kind, width) = match element {
         "u8" => ("u8-array", 1),
@@ -1071,18 +1142,25 @@ fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>
         "le-s32" => ("le-s32-array", 4),
         _ => return Err("unknown field element".into()),
     };
-    fn flatten(value: &Value, out: &mut Vec<i64>) -> Result<(), String> {
+    fn flatten(
+        value: &Value,
+        spec: &Value,
+        labels: &TableLabels,
+        out: &mut Vec<i64>,
+    ) -> Result<(), String> {
         if let Some(items) = value.as_array() {
             for item in items {
-                flatten(item, out)?;
+                flatten(item, spec, labels, out)?;
             }
+        } else if let Some(text) = value.as_str() {
+            out.push(symbolic_value(text, spec, labels)?);
         } else {
             out.push(value.as_i64().ok_or("field value is not an integer")?);
         }
         Ok(())
     }
     let mut values = Vec::new();
-    flatten(value, &mut values)?;
+    flatten(value, spec, labels, &mut values)?;
     for key in ["min", "max"] {
         if let Some(limit) = spec.get(key) {
             let limit = limit.as_i64().ok_or("field bound is not an integer")?;
@@ -1112,6 +1190,12 @@ fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>
             || values.contains(&0)
         {
             return Err("terminated field has no room for terminator or contains zero".into());
+        }
+        bytes.resize(capacity.checked_mul(width).ok_or("field size overflow")?, 0);
+    } else if let Some(capacity) = spec.get("capacity") {
+        let capacity = number(capacity, "capacity")?;
+        if capacity == 0 || capacity > max_bytes / width || values.len() > capacity {
+            return Err("field exceeds its zero-padded capacity".into());
         }
         bytes.resize(capacity.checked_mul(width).ok_or("field size overflow")?, 0);
     }
@@ -1166,6 +1250,42 @@ fn typed_records_preserve_names_termination_bounds_and_signedness() {
         ("/segments/0/fields/1/name", serde_json::json!("ids")),
         ("/segments/1/fill", serde_json::json!(256)),
         ("/segments/1/address", serde_json::json!(7)),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+}
+
+#[test]
+fn typed_tables_resolve_symbolic_values_and_pad_capacities() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":4096,"size":28,"names":{"stop":239},"segments":[
+        {"name":"script","address":4096,"end":4102,"stride":2,"element":"u8","values":[[1,2],[3,4],["stop",0]]},
+        {"name":"directory","address":4102,"end":4110,"stride":4,"element":"le-u32","values":["script[2]","directory"]},
+        {"name":"record","address":4110,"end":4116,"stride":6,"element":"record","fields":[
+            {"name":"kind","element":"u8","names":{"wide":7}},
+            {"name":"slots","element":"u8","capacity":3},
+            {"name":"target","element":"le-u16"}
+        ],"records":[{"kind":"wide","slots":[9],"target":"0x1002"}]},
+        {"address":4116,"end":4124,"stride":1,"element":"ascii-fixed","text":"ab\n"}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [
+            1, 2, 3, 4, 239, 0, 4, 16, 0, 0, 6, 16, 0, 0, 7, 9, 0, 0, 2, 16, 97, 98, 10, 0, 0, 0,
+            0, 0
+        ]
+    );
+    for (pointer, value) in [
+        ("/segments/1/values/0", serde_json::json!("script[x]")),
+        ("/segments/1/values/0", serde_json::json!("missing")),
+        (
+            "/segments/2/records/0/slots",
+            serde_json::json!([1, 2, 3, 4]),
+        ),
+        ("/segments/2/fields/1/capacity", serde_json::json!(0)),
+        ("/segments/0/values/2", serde_json::json!(["halt", 0])),
+        ("/segments/0/name", serde_json::json!("directory")),
     ] {
         let mut bad = source.clone();
         *bad.pointer_mut(pointer).unwrap() = value;

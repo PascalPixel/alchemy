@@ -155,6 +155,18 @@ pub struct RgbaImage {
     pub pixels: Vec<u8>,
 }
 
+/// Read linear palette indices, allowing only zero padding after the payload.
+pub fn indexed_bytes(data: &[u8], size: usize) -> Result<Vec<u8>, AssetError> {
+    let image = indexed_png(data)?;
+    if size > image.pixels.len() || image.pixels[size..].iter().any(|pixel| *pixel != 0) {
+        return err("indexed PNG payload size or zero padding differs");
+    }
+    Ok(image.pixels[..size]
+        .iter()
+        .map(|pixel| *pixel as u8)
+        .collect())
+}
+
 pub fn rgba_png(data: &[u8]) -> Result<RgbaImage, AssetError> {
     let (output, bytes, _) = decode(data)?;
     if output.color_type != png::ColorType::Rgba || output.bit_depth != png::BitDepth::Eight {
@@ -585,5 +597,26 @@ mod tests {
     #[test]
     fn self_test_is_focused_and_stable() {
         assert_eq!(self_test().unwrap(), "self-test=ok");
+    }
+
+    #[test]
+    fn indexed_payload_requires_zero_padding_and_complete_input() {
+        let image = indexed(png::BitDepth::Eight);
+        assert_eq!(indexed_bytes(&image, 17).unwrap(), vec![0; 17]);
+        assert_eq!(indexed_bytes(&image, 64).unwrap(), vec![0; 64]);
+        assert!(indexed_bytes(&image, 65).is_err());
+        let mut pixels = vec![0; 64];
+        pixels[63] = 1;
+        let image = encode_png(
+            8,
+            8,
+            png::ColorType::Indexed,
+            png::BitDepth::Eight,
+            Some(&[0, 0, 0, 248, 0, 0]),
+            &pixels,
+        )
+        .unwrap();
+        assert!(indexed_bytes(&image, 63).is_err());
+        assert_eq!(indexed_bytes(&image, 64).unwrap()[63], 1);
     }
 }

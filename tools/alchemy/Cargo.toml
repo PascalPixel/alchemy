@@ -20,7 +20,6 @@ matching = { path = "../matching" }
 regex = "1.12"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
-similar = { version = "=3.1.1", default-features = false, features = ["hashbrown"] }
 walkdir = "2.5"
 alignment-tail = { path = "../alignment-tail" }
 asset-paths = { path = "../asset-paths" }
@@ -53,8 +52,6 @@ music-residuals = { path = "../music-residuals" }
 f0-archive = { path = "../f0-archive" }
 simple-resources = { path = "../simple-resources" }
 kind2-resources = { path = "../kind2-resources" }
-resource-01c = { path = "../resource-01c" }
-resource-byte-canvases = { path = "../resource-byte-canvases" }
 skip-sprite-archive = { path = "../skip-sprite-archive" }
 static-sprite-series = { path = "../static-sprite-series" }
 localization-font = { path = "../localization-font" }
@@ -66,9 +63,7 @@ resource-directory = { path = "../resource-directory" }
 late-runtime-residual = { path = "../late-runtime-residual" }
 early-runtime-data = { path = "../early-runtime-data" }
 message-archive = { path = "../message-archive" }
-resource-3ce = { path = "../resource-3ce" }
 resource-5 = { path = "../resource-5" }
-resource-d1-d3 = { path = "../resource-d1-d3" }
 title-resources = { path = "../title-resources" }
 sentou-resources = { path = "../sentou-resources" }
 map-resources = { path = "../map-resources" }

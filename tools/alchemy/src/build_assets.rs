@@ -39,8 +39,6 @@ const SENTOU_GAMEN_ADDRESS: usize = 0x080a_ea4c;
 const SENTOU_GAMEN_SIZE: usize = 0x15b4;
 const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
 const AUDIO_ENGINE_SIZE: usize = 0x0ef2;
-const RESOURCE_3CE_STREAM_ADDRESS: usize = 0x087fcd20;
-const RESOURCE_3CE_FILL_ADDRESS: usize = 0x087fd4bc;
 const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
 const STAFF_ROLL_SIZE: usize = 0x15a4;
 fn repository_root() -> PathBuf {
@@ -513,6 +511,17 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
     let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
+        "s8-array" | "be-s16-array" => {
+            let document = json(&source)?;
+            let pointer = json_string(&entry["pointer"], "array pointer")?;
+            let values = document.pointer(pointer).ok_or("array pointer is absent")?;
+            let data = integer_array(values, kind == "be-s16-array")?;
+            (
+                data,
+                serde_json::json!({"pointer":pointer}),
+                vec![source_name.to_string()],
+            )
+        }
         "gba-4bpp-object-bank" => {
             let result = build_object_bank(root, &source)?;
             return Ok(result);
@@ -548,8 +557,8 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
             )
         }
         "indexed-bytes" | "raw-lz-bytes" => {
-            let image = indexed_png(&fs::read(&source).map_err(|e| e.to_string())?)
-                .map_err(|e| e.to_string())?;
+            let encoded = fs::read(&source).map_err(|e| e.to_string())?;
+            let image = indexed_png(&encoded).map_err(|e| e.to_string())?;
             let mut built: Vec<u8> = image.pixels.into_iter().map(|pixel| pixel as u8).collect();
             if kind == "raw-lz-bytes" {
                 let size = number(&entry["size"], "component size")?;
@@ -560,6 +569,11 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                     vec![source_name.to_string()],
                 )
             } else {
+                let built = import_asset::indexed_bytes(
+                    &encoded,
+                    number(&entry["size"], "component size")?,
+                )
+                .map_err(|error| error.to_string())?;
                 (
                     built,
                     serde_json::json!({"width": image.width, "height": image.height}),
@@ -632,6 +646,49 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         sources: dedup_sources(sources),
         details,
     })
+}
+fn integer_array(value: &Value, wide: bool) -> Result<Vec<u8>, String> {
+    let mut output = Vec::new();
+    for value in value.as_array().ok_or("integer array is not an array")? {
+        if value.is_array() {
+            output.extend(integer_array(value, wide)?);
+        } else {
+            let value = value.as_i64().ok_or("array member is not an integer")?;
+            if wide {
+                output.extend(
+                    i16::try_from(value)
+                        .map_err(|_| "array member exceeds s16")?
+                        .to_be_bytes(),
+                );
+            } else {
+                output.push(i8::try_from(value).map_err(|_| "array member exceeds s8")? as u8);
+            }
+        }
+    }
+    Ok(output)
+}
+
+#[test]
+fn integer_arrays_preserve_endianness_sign_and_order() {
+    assert_eq!(
+        integer_array(&serde_json::json!([[-128, 127], [0, -1]]), false).unwrap(),
+        [128, 127, 0, 255]
+    );
+    assert_eq!(
+        integer_array(&serde_json::json!([160, -39]), true).unwrap(),
+        [0, 160, 255, 217]
+    );
+    for value in [
+        serde_json::json!([128]),
+        serde_json::json!([-129]),
+        serde_json::json!([1.5]),
+        serde_json::json!([null]),
+        serde_json::json!({}),
+    ] {
+        assert!(integer_array(&value, false).is_err());
+    }
+    assert!(integer_array(&serde_json::json!([32768]), true).is_err());
+    assert!(integer_array(&serde_json::json!([-32769]), true).is_err());
 }
 fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
@@ -850,8 +907,7 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
     for kind in [
         "golden-sun-sentou-gamen-data",
         "golden-sun-kind2-resource",
-        "golden-sun-kana-glyph-bank",
-        "golden-sun-d1-d3-resource",
+        "golden-sun-general-lz",
         "golden-sun-tokushu-map",
         "golden-sun-chiiki-map",
         "golden-sun-music-residual",
@@ -864,6 +920,20 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
     assert!(ctx.music.is_empty());
     assert!(ctx.battle_resources("index.json").is_err());
     assert!(ctx.battle.is_empty());
+}
+
+#[test]
+fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut context = Context::new(directory.path());
+    let mut entry = serde_json::json!({"kind":"byte-fill", "address":0, "size":9, "value":165});
+    let (bytes, sources, _) = build_entry(&mut context, &entry).unwrap();
+    assert_eq!(bytes, vec![165; 9]);
+    assert!(sources.is_empty());
+    entry["value"] = Value::from(256);
+    assert!(build_entry(&mut context, &entry).is_err());
+    entry["value"] = Value::from(-1);
+    assert!(build_entry(&mut context, &entry).is_err());
 }
 #[test]
 fn battle_resources_report_the_actual_palette_and_build_once() {
@@ -1212,17 +1282,6 @@ fn expand_series(
                     entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":if map_kind == "tokushu" {"golden-sun-tokushu-map"} else {"golden-sun-chiiki-map"},"source":index_name,"resource_id":resource.id}));
                 }
             }
-            "golden-sun-final-battle-overlay-series" => {
-                let source = json_string(&series["source"], "final overlay source")?;
-                let source_path = ctx.source(source)?;
-                let resource = resource_3ce::build_resource_3ce(&source_path)?;
-                for (component, address, built) in [
-                    ("stream", RESOURCE_3CE_STREAM_ADDRESS, resource.stream),
-                    ("fill", RESOURCE_3CE_FILL_ADDRESS, resource.fill),
-                ] {
-                    entries.push(serde_json::json!({"address":address,"size":built.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":component}));
-                }
-            }
             "golden-sun-encounter-data-series" => {
                 let directory = json_string(&series["directory"], "encounter directory")?;
                 for region in encounter_data::build_encounter_regions(
@@ -1514,6 +1573,16 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
     let entry_source = entry.get("source").and_then(Value::as_str).unwrap_or("");
     let source_path = |name: &str| ctx.source(name);
     match kind {
+        "byte-fill" => {
+            let size = number(&entry["size"], "fill size")?;
+            let value = u8::try_from(number(&entry["value"], "fill byte")?)
+                .map_err(|_| "fill byte exceeds 255")?;
+            Ok((
+                vec![value; size],
+                Vec::new(),
+                serde_json::json!({"value":value}),
+            ))
+        }
         "gba-cartridge-header-standard-fields" => {
             let source = source_path(entry_source)?;
             let document = json(&source)?;
@@ -1568,21 +1637,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             let report = serde_json::json!({"source_bytes":result.source_bytes,"region_address":hex_address(address)});
             Ok((built.clone(), vec![entry_source.to_string()], report))
         }
-        "golden-sun-resource-byte-canvas" => {
-            let resource = json_string(&entry["resource_id"], "resource id")?.to_ascii_lowercase();
-            let built =
-                resource_byte_canvases::build_resource_byte_canvases(&source_path(entry_source)?)
-                    .map_err(|error| error.to_string())?
-                    .into_iter()
-                    .find(|item| item.id == resource)
-                    .ok_or_else(|| format!("resource byte canvas {resource} is absent"))?;
-            let source_name = format!("{}{}", entry_source.replace("index.json", ""), built.source);
-            Ok((
-                built.data,
-                vec![entry_source.to_string(), source_name],
-                serde_json::json!({"resource_id":format!("0x{resource}"),"representation":"provisional-neutral-byte-canvas"}),
-            ))
-        }
         "golden-sun-byte-value-regions" => {
             let size = number(&entry["size"], "byte-value size")?;
             let region = byte_value_regions::build_byte_value_regions(&source_path(entry_source)?)
@@ -1602,7 +1656,8 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 serde_json::json!({"representation":"typed mixed-region table","region_address":hex_address(address)}),
             ))
         }
-        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" | "gba-palette-rgba" => {
+        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" | "gba-palette-rgba"
+        | "indexed-bytes" | "s8-array" | "be-s16-array" => {
             let result = build_component(&ctx.root, entry)?;
             Ok((result.data, result.sources, result.details))
         }
@@ -3214,16 +3269,6 @@ fn build_entry_native_tail(
                 serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
             ))
         }
-        "golden-sun-kana-glyph-bank" => {
-            let (built, sources) = resource_01c::build_resource_01c(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            let size = built.len();
-            Ok((
-                built,
-                root_sources(&ctx.root, &sources)?,
-                serde_json::json!({"glyphs":36,"source_bytes":size}),
-            ))
-        }
         "golden-sun-music-residual" => {
             let address = number(&entry["address"], "music residual address")?;
             let region = ctx
@@ -3256,49 +3301,6 @@ fn build_entry_native_tail(
                 dedup_sources(nested),
                 serde_json::json!({"source_bytes":result.data.len(),"tone_records":225,"waveforms":18,"players":8,"derived_alignment_bytes":2}),
             ))
-        }
-        "golden-sun-d1-d3-resource" => {
-            let id = number(&entry["resource_id"], "D1-D3 id")?;
-            let built = resource_d1_d3::build_resource_d1_d3(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?
-                .into_iter()
-                .find(|resource| resource.id as usize == id)
-                .ok_or("D1-D3 resource differs from manifest")?;
-            let size = built.data.len();
-            Ok((
-                built.data,
-                root_sources(&ctx.root, &built.sources)?,
-                serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":size,"boundary_bytes":size,"suffix_fallback":0}),
-            ))
-        }
-        "golden-sun-final-battle-overlay" => {
-            let component = json_string(&entry["component"], "overlay component")?;
-            let resource = resource_3ce::build_resource_3ce(&source_path(entry_source)?)?;
-            let built = match component {
-                "stream" => resource.stream,
-                "fill" => resource.fill,
-                _ => return Err("resource 3ce component must be stream or fill".into()),
-            };
-            let directory = Path::new(entry_source).parent().unwrap_or(Path::new("."));
-            let nested = vec![
-                entry_source.to_string(),
-                directory
-                    .join("overlay.s")
-                    .to_string_lossy()
-                    .replace('\\', "/"),
-                directory
-                    .join("stream.lz.json")
-                    .to_string_lossy()
-                    .replace('\\', "/"),
-            ];
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            let mut report = serde_json::json!({"component":component,"source_bytes":built.len()});
-            if component == "stream" {
-                report["fallback_bytes"] = Value::from(3);
-            }
-            Ok((built, nested, report))
         }
         "golden-sun-encounter-data" => {
             let source = source_path(entry_source)?;

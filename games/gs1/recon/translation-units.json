@@ -21730,6 +21730,8 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c6",
       "absolute_symbols": {
+        "Func_020017c0": { "address": "0x02009590", "kind": "thumb" },
+        "Func_020017c0_a": { "address": "0x02009620", "kind": "thumb" },
         "Func_02001672": { "address": "0x020095d8", "kind": "thumb" },
         "Func_02001672_a": { "address": "0x02009528", "kind": "thumb" },
         "Func_02001686": { "address": "0x020095e0", "kind": "thumb" },
@@ -21848,6 +21850,11 @@
         {
           "address": "0x0200010c",
           "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000158",
+          "extent": 152,
           "state": "exact-c"
         },
         {

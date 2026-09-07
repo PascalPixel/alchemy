@@ -17449,6 +17449,10 @@
     "resource_38b:02000890": {
       "name": "Scene_DispatchPuzzleEvent",
       "source": "overlays/scene_script/dispatch_puzzle_event.c"
+    },
+    "resource_3a2:02000ac0": {
+      "name": "Scene_RunActorCue",
+      "source": "overlays/scene_script/run_actor_cue.c"
     }
   }
 }

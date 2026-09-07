@@ -49,7 +49,6 @@ kind1-map-grid = { path = "../kind1-map-grid" }
 message-archive = { path = "../message-archive" }
 resource-5 = { path = "../resource-5" }
 title-resources = { path = "../title-resources" }
-runtime-support-data = { path = "../runtime-support-data" }
 check-commit-progress = { path = "../check-commit-progress" }
 check-publication = { path = "../check-publication" }
 check-unmatchable = { path = "../check-unmatchable" }

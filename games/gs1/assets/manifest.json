@@ -295,38 +295,43 @@
     {
       "address": "0x0800795c",
       "size": "0x38",
-      "kind": "golden-sun-runtime-support-data",
-      "source": "games/gs1/assets/data/runtime_support.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/runtime_support.json",
+      "pointer": "/regions/0"
     },
     {
       "address": "0x080079b0",
       "size": "0x70",
-      "kind": "golden-sun-runtime-support-data",
-      "source": "games/gs1/assets/data/runtime_support.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/runtime_support.json",
+      "pointer": "/regions/1"
     },
     {
       "address": "0x08007aa4",
       "size": "0x70",
-      "kind": "golden-sun-runtime-support-data",
-      "source": "games/gs1/assets/data/runtime_support.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/runtime_support.json",
+      "pointer": "/regions/2"
     },
     {
       "address": "0x08007b3c",
       "size": "0x88",
-      "kind": "golden-sun-runtime-support-data",
-      "source": "games/gs1/assets/data/runtime_support.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/runtime_support.json",
+      "pointer": "/regions/3"
     },
     {
       "address": "0x08007bcc",
       "size": "0x70",
-      "kind": "golden-sun-runtime-support-data",
-      "source": "games/gs1/assets/data/runtime_support.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/runtime_support.json",
+      "pointer": "/regions/4"
     },
     {
       "address": "0x08007c64",
       "size": "0x139c",
-      "kind": "golden-sun-runtime-support-data",
-      "source": "games/gs1/assets/data/runtime_support.json"
+      "kind": "byte-fill",
+      "value": 0
     },
     {
       "address": "0x080092b8",

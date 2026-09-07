@@ -487,7 +487,6 @@ libraries are not additional public command surfaces.
 | [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
-| [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |
 | [simple-resources](tools/simple-resources/) | Rebuild maintained stamp, font, word-table and screen records. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [staff-roll](tools/staff-roll/) | Build the staff-roll package. |

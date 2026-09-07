@@ -37,7 +37,6 @@ build-full = { path = "../build-full" }
 staff-roll = { path = "../staff-roll" }
 music-residuals = { path = "../music-residuals" }
 f0-archive = { path = "../f0-archive" }
-simple-resources = { path = "../simple-resources" }
 kind2-resources = { path = "../kind2-resources" }
 skip-sprite-archive = { path = "../skip-sprite-archive" }
 static-sprite-series = { path = "../static-sprite-series" }

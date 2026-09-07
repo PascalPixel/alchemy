@@ -458,7 +458,7 @@ libraries are not additional public command surfaces.
 | [archive-asset](tools/archive-asset/) | Encode and decode archive-backed assets. |
 | [export-asset](tools/export-asset/) | Export GBA graphics into editable assets. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
-| [import-asset](tools/import-asset/) | Import editable assets into GBA formats. |
+| [import-asset](tools/import-asset/) | Import images and text into GBA formats; shared MTF4 and delta7 pixel encoders. |
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
@@ -467,7 +467,6 @@ libraries are not additional public command surfaces.
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
 | [executable-gap-sources](tools/executable-gap-sources/) | Decode typed source packages in executable gaps. |
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
-| [indexed-still](tools/indexed-still/) | Extract indexed still-image packages. |
 | [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
 | [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
 | [late-runtime-data](tools/late-runtime-data/) | Define typed layouts for late-runtime encoding. |

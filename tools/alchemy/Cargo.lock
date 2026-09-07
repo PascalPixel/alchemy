@@ -65,7 +65,6 @@ dependencies = [
  "gba-header",
  "generated-files",
  "import-asset",
- "indexed-still",
  "integrate-matches",
  "kind1-map-grid",
  "kind2-resources",
@@ -686,13 +685,6 @@ name = "import-asset"
 version = "0.1.0"
 dependencies = [
  "png",
-]
-
-[[package]]
-name = "indexed-still"
-version = "0.1.0"
-dependencies = [
- "import-asset",
 ]
 
 [[package]]

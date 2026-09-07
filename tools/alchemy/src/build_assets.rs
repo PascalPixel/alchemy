@@ -3909,24 +3909,6 @@ fn build_entry_native_tail(
                 serde_json::json!({"packages":index["packages"].as_array().map_or(0,Vec::len)}),
             ))
         }
-        "golden-sun-runtime-support-data" => {
-            let size = number(&entry["size"], "runtime support size")?;
-            let text = fs::read_to_string(source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            let source = runtime_support_data::parse_runtime_support_source(&text)
-                .map_err(|error| error.to_string())?;
-            let built = runtime_support_data::build_runtime_support_component(
-                &source,
-                address as u32,
-                size,
-            )
-            .map_err(|error| error.to_string())?;
-            Ok((
-                built.clone(),
-                vec![entry_source.to_string()],
-                serde_json::json!({"component_address":entry.get("address"),"bytes":built.len()}),
-            ))
-        }
         "golden-sun-character-catalog" => {
             let document = json(&source_path(entry_source)?)?;
             if number(&document["address"], "character catalog address")? != address

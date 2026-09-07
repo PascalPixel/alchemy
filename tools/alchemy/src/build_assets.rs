@@ -511,11 +511,11 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
     let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
-        "s8-array" | "be-s16-array" => {
+        "u8-array" | "s8-array" | "be-s16-array" => {
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
             let values = document.pointer(pointer).ok_or("array pointer is absent")?;
-            let data = integer_array(values, kind == "be-s16-array")?;
+            let data = integer_array(values, kind)?;
             (
                 data,
                 serde_json::json!({"pointer":pointer}),
@@ -647,21 +647,25 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         details,
     })
 }
-fn integer_array(value: &Value, wide: bool) -> Result<Vec<u8>, String> {
+fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
     let mut output = Vec::new();
     for value in value.as_array().ok_or("integer array is not an array")? {
         if value.is_array() {
-            output.extend(integer_array(value, wide)?);
+            output.extend(integer_array(value, kind)?);
         } else {
             let value = value.as_i64().ok_or("array member is not an integer")?;
-            if wide {
+            if kind == "be-s16-array" {
                 output.extend(
                     i16::try_from(value)
                         .map_err(|_| "array member exceeds s16")?
                         .to_be_bytes(),
                 );
-            } else {
+            } else if kind == "s8-array" {
                 output.push(i8::try_from(value).map_err(|_| "array member exceeds s8")? as u8);
+            } else if kind == "u8-array" {
+                output.push(u8::try_from(value).map_err(|_| "array member exceeds u8")?);
+            } else {
+                return Err("unknown integer encoding".into());
             }
         }
     }
@@ -671,11 +675,11 @@ fn integer_array(value: &Value, wide: bool) -> Result<Vec<u8>, String> {
 #[test]
 fn integer_arrays_preserve_endianness_sign_and_order() {
     assert_eq!(
-        integer_array(&serde_json::json!([[-128, 127], [0, -1]]), false).unwrap(),
+        integer_array(&serde_json::json!([[-128, 127], [0, -1]]), "s8-array").unwrap(),
         [128, 127, 0, 255]
     );
     assert_eq!(
-        integer_array(&serde_json::json!([160, -39]), true).unwrap(),
+        integer_array(&serde_json::json!([160, -39]), "be-s16-array").unwrap(),
         [0, 160, 255, 217]
     );
     for value in [
@@ -685,10 +689,22 @@ fn integer_arrays_preserve_endianness_sign_and_order() {
         serde_json::json!([null]),
         serde_json::json!({}),
     ] {
-        assert!(integer_array(&value, false).is_err());
+        assert!(integer_array(&value, "s8-array").is_err());
     }
-    assert!(integer_array(&serde_json::json!([32768]), true).is_err());
-    assert!(integer_array(&serde_json::json!([-32769]), true).is_err());
+    assert!(integer_array(&serde_json::json!([32768]), "be-s16-array").is_err());
+    assert!(integer_array(&serde_json::json!([-32769]), "be-s16-array").is_err());
+    assert_eq!(
+        integer_array(&serde_json::json!([[0], [255]]), "u8-array").unwrap(),
+        [0, 255]
+    );
+    for value in [
+        serde_json::json!([-1]),
+        serde_json::json!([256]),
+        serde_json::json!([1.5]),
+        serde_json::json!([null]),
+    ] {
+        assert!(integer_array(&value, "u8-array").is_err());
+    }
 }
 fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
@@ -1637,16 +1653,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             let report = serde_json::json!({"source_bytes":result.source_bytes,"region_address":hex_address(address)});
             Ok((built.clone(), vec![entry_source.to_string()], report))
         }
-        "golden-sun-byte-value-regions" => {
-            let size = number(&entry["size"], "byte-value size")?;
-            let region = byte_value_regions::build_byte_value_regions(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?
-                .into_iter()
-                .find(|region| region.address as usize == address && region.data.len() == size)
-                .ok_or("byte-value region differs from manifest")?;
-            let report = serde_json::json!({"representation":"structured byte values","region_address":hex_address(address)});
-            Ok((region.data, vec![entry_source.to_string()], report))
-        }
         "golden-sun-executable-gap-data" => {
             let built =
                 executable_gap_sources::build_section(&source_path(entry_source)?, address as u64)?;
@@ -1657,7 +1663,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             ))
         }
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" | "gba-palette-rgba"
-        | "indexed-bytes" | "s8-array" | "be-s16-array" => {
+        | "indexed-bytes" | "u8-array" | "s8-array" | "be-s16-array" => {
             let result = build_component(&ctx.root, entry)?;
             Ok((result.data, result.sources, result.details))
         }
@@ -3792,37 +3798,45 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     expand_series(&mut ctx, &manifest, &mut entries)?;
     let mut index = 0;
     while index < entries.len() {
-        if entries[index].get("kind").and_then(Value::as_str)
-            != Some("golden-sun-byte-value-region-package")
-        {
+        if entries[index].get("kind").and_then(Value::as_str) != Some("integer-region-package") {
             index += 1;
             continue;
         }
         let package = entries.remove(index);
-        let source_name = json_string(&package["source"], "byte-value package source")?;
-        let document = json(&ctx.source(source_name)?)?;
-        if document.get("kind").and_then(Value::as_str) != Some("golden-sun-byte-value-regions") {
-            return Err("byte-value package source differs".to_string());
+        let source_name = json_string(&package["source"], "integer package source")?;
+        let encoding = json_string(&package["encoding"], "integer package encoding")?;
+        if !matches!(encoding, "u8-array" | "s8-array" | "be-s16-array") {
+            return Err("unknown integer encoding".into());
+        }
+        let text = fs::read_to_string(ctx.source(source_name)?).map_err(|e| e.to_string())?;
+        let document: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+        if document["kind"] != "integer-regions"
+            || document["format"] != 1
+            || !canonical_json::is_canonical_json_text(&text, &document)
+        {
+            return Err("integer package source differs".into());
         }
         let regions = document
             .get("regions")
             .and_then(Value::as_array)
-            .ok_or("byte-value package regions are missing")?;
+            .ok_or("integer package regions are missing")?;
         let generated = regions
             .iter()
-            .map(|region| {
-                let values = region
-                    .get("values")
-                    .and_then(Value::as_array)
-                    .map_or(0, Vec::len);
-                serde_json::json!({
+            .enumerate()
+            .map(|(i, region)| {
+                let size = integer_array(&region["values"], encoding)?.len();
+                if size == 0 {
+                    return Err("empty integer region".to_string());
+                }
+                Ok(serde_json::json!({
                     "address": region.get("address"),
-                    "size": values,
-                    "kind": "golden-sun-byte-value-regions",
+                    "size": size,
+                    "kind": encoding,
                     "source": source_name,
-                })
+                    "pointer": format!("/regions/{i}/values"),
+                }))
             })
-            .collect::<Vec<_>>();
+            .collect::<Result<Vec<_>, String>>()?;
         entries.splice(index..index, generated);
     }
     entries.sort_unstable_by_key(|entry| {

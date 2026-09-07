@@ -1,8 +1,9 @@
+use crate::Result;
+
 use serde_json::{Map, Value};
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
-pub type Result<T> = std::result::Result<T, String>;
 pub const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
 pub const AUDIO_ENGINE_END: usize = 0x080f_c684;
 pub const AUDIO_ENGINE_SIZE: usize = AUDIO_ENGINE_END - AUDIO_ENGINE_ADDRESS;

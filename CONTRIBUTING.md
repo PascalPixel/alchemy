@@ -473,7 +473,6 @@ libraries are not additional public command surfaces.
 | [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
-| [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [battle-assets](tools/battle-assets/) | Rebuild battle screen, display, effect, and compressed resource packages. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
@@ -484,8 +483,7 @@ libraries are not additional public command surfaces.
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
 | [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
-| [music](tools/music/) | Extract and verify music data. |
-| [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |
+| [music](tools/music/) | Build music sequences, the sound table, audio-engine data, residual sound records, and dashboard catalog data. |
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
 | [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |

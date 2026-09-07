@@ -4026,11 +4026,11 @@
       "index": "games/gs1/assets/graphics/sentou_index.json"
     },
     {
-      "kind": "golden-sun-tokushu-map-series",
+      "kind": "golden-sun-map-container-series",
       "index": "games/gs1/assets/maps/tokushu_index.json"
     },
     {
-      "kind": "golden-sun-chiiki-map-series",
+      "kind": "golden-sun-map-container-series",
       "index": "games/gs1/assets/maps/chiiki_index.json"
     },
     {

@@ -470,8 +470,7 @@ libraries are not additional public command surfaces.
 | [dashboard-server](tools/dashboard-server/) | Serve the local reconstruction dashboard. |
 | [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
-| [archive-asset](tools/archive-asset/) | Encode and decode archive-backed assets. |
-| [export-asset](tools/export-asset/) | Export GBA graphics into editable assets. |
+| [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
@@ -484,7 +483,6 @@ libraries are not additional public command surfaces.
 | [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
-| [map-resources](tools/map-resources/) | Build and verify map-container resource series. |
 | [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
 | [music](tools/music/) | Extract and verify music data. |
 | [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |

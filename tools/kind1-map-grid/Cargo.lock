@@ -36,16 +36,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "export-asset"
-version = "0.1.0"
-dependencies = [
- "crc32fast",
- "flate2",
- "import-asset",
- "png",
-]
-
-[[package]]
 name = "extract-resource"
 version = "0.1.0"
 
@@ -107,7 +97,6 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 name = "kind1-map-grid"
 version = "0.1.0"
 dependencies = [
- "export-asset",
  "extract-resource",
  "hex",
  "import-asset",

@@ -574,6 +574,16 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 }
                 built = ordered;
             }
+            if let Some(canvas) = entry.get("canvas_size") {
+                let size = number(&entry["size"], "component size")?;
+                if built.len() != number(canvas, "canvas size")?
+                    || built.len() < size
+                    || built[size..].iter().any(|&byte| byte != 0)
+                {
+                    return Err("canvas differs or carries data beyond the extent".into());
+                }
+                built.truncate(size);
+            }
             (built, details, vec![source_name.to_string()])
         }
         "gba-palette-rgba" => {
@@ -1215,7 +1225,40 @@ fn table_values(
         Ok(())
     }
     let mut values = Vec::new();
-    flatten(value, spec, labels, &mut values)?;
+    if let Some(bits) = spec.get("bits") {
+        let widths = bits
+            .as_object()
+            .ok_or("bit widths must map part names to widths")?
+            .values()
+            .map(|w| number(w, "bit width"))
+            .collect::<Result<Vec<_>, _>>()?;
+        if widths.iter().sum::<usize>() != width * 8 || widths.iter().any(|&w| w == 0) {
+            return Err("bit widths do not fill the element".into());
+        }
+        let groups = match value.as_array() {
+            Some(items) if items.iter().all(Value::is_array) => items.iter().collect(),
+            _ => vec![value],
+        };
+        for group in groups {
+            let parts = group
+                .as_array()
+                .filter(|parts| parts.len() == widths.len())
+                .ok_or("packed value has the wrong number of parts")?;
+            let mut packed = 0i64;
+            let mut shift = 0;
+            for (part, &bits) in parts.iter().zip(&widths) {
+                let part = part.as_i64().ok_or("packed part is not an integer")?;
+                if part < 0 || part >= 1i64 << bits {
+                    return Err("packed part exceeds its bit width".into());
+                }
+                packed |= part << shift;
+                shift += bits;
+            }
+            values.push(packed);
+        }
+    } else {
+        flatten(value, spec, labels, &mut values)?;
+    }
     for key in ["min", "max"] {
         if let Some(limit) = spec.get(key) {
             let limit = limit.as_i64().ok_or("field bound is not an integer")?;
@@ -1441,6 +1484,55 @@ fn typed_text_pools_resolve_aligned_string_pointers() {
     assert!(typed_table(&reversed).is_err());
 }
 
+#[test]
+fn typed_fields_pack_named_bit_widths_lsb_first() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":6,"segments":[
+        {"address":0,"end":4,"element":"le-u16","stride":2,"bits":{"id":9,"class":7},"values":[[1,0],[15,1]]},
+        {"address":4,"end":6,"element":"le-u16","stride":2,"bits":{"low":12,"high":4},"values":[4095,0]}
+    ]});
+    assert_eq!(typed_table(&source).unwrap(), [1, 0, 15, 2, 255, 15]);
+    for (pointer, value) in [
+        ("/segments/0/values/0", serde_json::json!([512, 0])),
+        ("/segments/0/values/0", serde_json::json!([1])),
+        ("/segments/0/values/0", serde_json::json!([-1, 0])),
+        ("/segments/0/bits", serde_json::json!({"id":9,"class":6})),
+        ("/segments/0/bits", serde_json::json!([9, 7])),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+}
+
+#[test]
+fn tile_components_truncate_zero_canvas_tails() {
+    let root = tempfile::tempdir().unwrap();
+    let mut image = Vec::new();
+    {
+        let mut encoder = png::Encoder::new(&mut image, 8, 16);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::Eight);
+        encoder.set_palette((0..16).flat_map(|i| [i * 8; 3]).collect::<Vec<u8>>());
+        let pixels = (0..128).map(|i| u8::from(i < 72)).collect::<Vec<u8>>();
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&pixels)
+            .unwrap();
+    }
+    fs::write(root.path().join("canvas.png"), image).unwrap();
+    let entry = serde_json::json!({"kind":"gba-4bpp-tiles","source":"canvas.png","size":36,"canvas_size":64});
+    assert_eq!(
+        build_component(root.path(), &entry).unwrap().data,
+        vec![0x11; 36]
+    );
+    for (key, value) in [("size", 35), ("canvas_size", 63)] {
+        let mut bad = entry.clone();
+        bad[key] = serde_json::json!(value);
+        assert!(build_component(root.path(), &bad).is_err(), "{key}");
+    }
+}
+
 fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
         .as_array()
@@ -1464,6 +1556,30 @@ fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralTo
                     distance: number(&values[2], "copy distance")? as u32,
                 }),
                 _ => Err("unsupported general-LZ token".to_string()),
+            }
+        })
+        .collect()
+}
+fn parse_halfword_tokens(value: &Value) -> Result<Vec<extract_resource::HalfwordToken>, String> {
+    value
+        .as_array()
+        .ok_or("halfword-LZ tokens are not an array".to_string())?
+        .iter()
+        .map(|item| {
+            let values = item
+                .as_array()
+                .ok_or("halfword-LZ token is not an array".to_string())?;
+            match (values.first().and_then(Value::as_str), values.len()) {
+                (Some("l"), 2) => Ok(extract_resource::HalfwordToken::Literal(number(
+                    &values[1], "literal",
+                )?
+                    as u32)),
+                (Some("c"), 3) => Ok(extract_resource::HalfwordToken::Copy {
+                    length: number(&values[1], "copy length")? as u32,
+                    distance: number(&values[2], "copy distance")? as u32,
+                }),
+                (Some("e"), 1) => Ok(extract_resource::HalfwordToken::End),
+                _ => Err("unsupported halfword-LZ token".to_string()),
             }
         })
         .collect()
@@ -1533,6 +1649,11 @@ fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>,
         "golden-sun-general-lz" => extract_resource::encode_general(
             &decoded,
             &parse_general_tokens(plan.get("tokens").ok_or("general-LZ tokens are missing")?)?,
+        )
+        .map_err(|e| e.to_string())?,
+        "golden-sun-halfword-lz" => extract_resource::encode_halfword(
+            &decoded,
+            &parse_halfword_tokens(plan.get("tokens").ok_or("halfword-LZ tokens are missing")?)?,
         )
         .map_err(|e| e.to_string())?,
         "golden-sun-palette-lz" | "golden-sun-tagged-palette-lz" => {
@@ -1828,7 +1949,6 @@ struct Context {
     root: PathBuf,
     paths: AssetPaths,
     maps: HashMap<String, Vec<BuiltMapContainer>>,
-    battle: HashMap<String, Vec<battle_assets::BuiltBattleResource>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
@@ -1836,7 +1956,6 @@ impl Context {
             root: root.to_path_buf(),
             paths: AssetPaths::new(root),
             maps: HashMap::new(),
-            battle: HashMap::new(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
@@ -1849,16 +1968,6 @@ impl Context {
         }
         Ok(self.maps[index_name].clone())
     }
-    fn battle_resources(
-        &mut self,
-        index_name: &str,
-    ) -> Result<&[battle_assets::BuiltBattleResource], String> {
-        if !self.battle.contains_key(index_name) {
-            let built = battle_assets::build_resource_series(&self.source(index_name)?)?;
-            self.battle.insert(index_name.to_string(), built);
-        }
-        Ok(&self.battle[index_name])
-    }
 }
 #[test]
 fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
@@ -1867,7 +1976,6 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
     fs::write(root.join("index.json"), b"{}").unwrap();
     let mut ctx = Context::new(root);
     for kind in [
-        "golden-sun-sentou-gamen-data",
         "golden-sun-kind2-resource",
         "golden-sun-general-lz",
         "golden-sun-tokushu-map",
@@ -1878,8 +1986,6 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
         assert!(build_entry(&mut ctx, &entry).is_err(), "{kind}");
     }
     assert!(ctx.maps.is_empty());
-    assert!(ctx.battle_resources("index.json").is_err());
-    assert!(ctx.battle.is_empty());
 }
 
 #[test]
@@ -1920,106 +2026,6 @@ fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
     assert!(build_entry(&mut context, &entry).is_err());
     entry["value"] = Value::from(-1);
     assert!(build_entry(&mut context, &entry).is_err());
-}
-#[test]
-fn battle_resources_report_the_actual_palette_and_build_once() {
-    let directory = tempfile::tempdir().unwrap();
-    let root = directory.path();
-    let png = |pixels: &[u8], width: u32, height: u32, format: PixelFormat| {
-        let mut image = Vec::new();
-        let mut encoder = png::Encoder::new(&mut image, width, height);
-        match format {
-            PixelFormat::Rgba => {
-                encoder.set_color(png::ColorType::Rgba);
-                encoder.set_depth(png::BitDepth::Eight);
-            }
-            PixelFormat::Indexed8 => {
-                encoder.set_color(png::ColorType::Indexed);
-                encoder.set_depth(png::BitDepth::Eight);
-                encoder.set_palette(
-                    (0..256)
-                        .flat_map(|value| [value as u8; 3])
-                        .collect::<Vec<_>>(),
-                );
-            }
-        }
-        encoder
-            .write_header()
-            .unwrap()
-            .write_image_data(pixels)
-            .unwrap();
-        image
-    };
-    let mut pixels = vec![0; 512];
-    pixels[..4].copy_from_slice(b"TEST");
-    for (name, pixels, width, height, format) in [
-        ("battle_naiyou.png", pixels, 64, 8, PixelFormat::Indexed8),
-        (
-            "battle_custom.rgba.png",
-            vec![248, 0, 0, 255],
-            1,
-            1,
-            PixelFormat::Rgba,
-        ),
-    ] {
-        fs::write(
-            root.join(name),
-            png(&pixels, width as u32, height as u32, format),
-        )
-        .unwrap();
-    }
-    let stream = extract_resource::encode_general_prefill(
-        b"TEST",
-        &[extract_resource::GeneralToken::Literal(4)],
-        0x1000,
-        1,
-    )
-    .unwrap();
-    let size = stream.len() + 2;
-    let mut plan = serde_json::json!({
-        "kind":"golden-sun-sentou-resource", "source_size":size, "resource_boundary_size":size,
-        "image":{"source":"naiyou.png","encoding":"naiyou","canvas_size":512},
-        "stream":{"decoded_size":4,"codec":"general-lz-prefill","tokens":[["l",4]]},
-        "prefix_palette":{"source":"custom.rgba.png"}
-    });
-    fs::write(root.join("battle_stream.json"), plan.to_string()).unwrap();
-    fs::write(
-        root.join("index.json"),
-        serde_json::json!({"resources":[{
-            "address":"0x08001000","size":size,"source":"battle_stream.json"
-        }]})
-        .to_string(),
-    )
-    .unwrap();
-    let mut ctx = Context::new(root);
-    let mut entries = Vec::new();
-    expand_series(
-        &mut ctx,
-        &serde_json::json!({"series":[{
-            "kind":"golden-sun-sentou-resource-series","index":"index.json"
-        }]}),
-        &mut entries,
-    )
-    .unwrap();
-    assert_eq!(entries[0]["source"], "battle_naiyou.png");
-    plan["prefix_palette"]["source"] = Value::Null;
-    fs::write(root.join("battle_stream.json"), plan.to_string()).unwrap();
-    let (data, sources, report) = build_entry(&mut ctx, &entries[0]).unwrap();
-    assert_eq!(data, [&[31, 0][..], &stream].concat());
-    assert_eq!(report["source_bytes"], size);
-    assert_eq!(
-        sources,
-        [
-            "index.json",
-            "battle_stream.json",
-            "battle_naiyou.png",
-            "battle_custom.rgba.png"
-        ]
-    );
-    assert!(Context::new(root)
-        .battle_resources("index.json")
-        .unwrap_err()
-        .contains("palette source must be a string"));
 }
 fn expand_series(
     ctx: &mut Context,
@@ -2251,14 +2257,6 @@ fn expand_series(
                         let source = format!("{directory}.json");
                         entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":component_kind,"source":source}));
                     }
-                }
-            }
-            "golden-sun-sentou-resource-series" => {
-                let index_name = json_string(&series["index"], "sentou index")?;
-                let root = ctx.root.clone();
-                for resource in ctx.battle_resources(index_name)? {
-                    let image = root_relative(&root, &resource.sources[1])?;
-                    entries.push(serde_json::json!({"address":hex_address(resource.address),"size":resource.data.len(),"kind":"golden-sun-sentou-resource","source":image,"index":index_name}));
                 }
             }
             "golden-sun-kind2-resource-series" => {
@@ -2588,9 +2586,18 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 serde_json::json!({"standard_header_bytes":built.len()}),
             ))
         }
-        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "1bpp-tiles" | "gba-palette" | "gba-palette-rgba"
-        | "indexed-bytes" | "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array"
-        | "le-u32-array" => {
+        "gba-4bpp-tiles"
+        | "gba-8bpp-tiles"
+        | "1bpp-tiles"
+        | "gba-palette"
+        | "gba-palette-rgba"
+        | "indexed-bytes"
+        | "u8-array"
+        | "s8-array"
+        | "be-s16-array"
+        | "le-u16-array"
+        | "le-u32-array"
+        | "golden-sun-thumb-overlay" => {
             let result = build_component(&ctx.root, entry)?;
             Ok((result.data, result.sources, result.details))
         }
@@ -4071,122 +4078,6 @@ fn build_entry_native_tail(
                 vec![entry_source.to_string()],
                 serde_json::json!({"segments":document["segments"].as_array().map_or(0,Vec::len)}),
             ))
-        }
-        "golden-sun-battle-effect-data" => {
-            let document = json(&source_path(entry_source)?)?;
-            let mut nested = Vec::new();
-            for item in document["direct_graphics"].as_array().into_iter().flatten() {
-                nested.push(format!(
-                    "games/gs1/assets/{}",
-                    flat_asset_name(json_string(item, "battle graphic source")?)
-                ));
-            }
-            for item in std::iter::once(&document["halfword_graphic"]).chain(
-                document["palette_graphics"]
-                    .as_array()
-                    .into_iter()
-                    .flatten(),
-            ) {
-                nested.push(format!(
-                    "games/gs1/assets/{}",
-                    flat_asset_name(json_string(&item["source"], "battle graphic source")?)
-                ));
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            let built =
-                battle_assets::build_effect_data(&document, &ctx.root.join("games/gs1/assets"))?;
-            Ok((
-                built,
-                std::iter::once(entry_source.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"graphics":document["direct_graphics"].as_array().map_or(0,Vec::len)+1+document["palette_graphics"].as_array().map_or(0,Vec::len),"weighted_records":document["weighted_records"].as_array().map_or(0,Vec::len),"typed_tables":document["typed_tables"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-sentou-gamen-data" => {
-            let (built, sources) = battle_assets::build_screen(&source_path(entry_source)?)?;
-            if address != battle_assets::SCREEN_ADDRESS || built.len() != battle_assets::SCREEN_SIZE
-            {
-                return Err(
-                    "battle-screen package differs from canonical manifest extent".to_string(),
-                );
-            }
-            Ok((
-                built,
-                root_sources(&ctx.root, &sources)?,
-                serde_json::json!({"source_bytes":battle_assets::SCREEN_SIZE,"graphics":5,"display_glyph_cells":14,"derived_zero_bytes":3308}),
-            ))
-        }
-        "golden-sun-sentou-hyouji" => {
-            let document = json(&source_path(entry_source)?)?;
-            let prefix = entry_source.replace("index.json", "");
-            let mut nested = vec![entry_source.to_string()];
-            for value in [
-                &document["sources"]["kihon"],
-                &document["sources"]["koma"]["source"],
-                &document["sources"]["haichi"],
-                &document["sources"]["hosei"],
-                &document["sources"]["gauge"]["source"],
-            ] {
-                nested.push(format!(
-                    "{prefix}{}",
-                    json_string(value, "battle display source")?
-                ));
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            let built = battle_assets::build_display(&source_path(entry_source)?)?;
-            Ok((
-                built.clone(),
-                nested,
-                serde_json::json!({"source_bytes":built.len(),"typed_tables":3,"atlases":2}),
-            ))
-        }
-        "golden-sun-sentou-kouka-runtime" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = battle_assets::build_effect_runtime(&source_path(entry_source)?)?;
-            if address != battle_assets::EFFECT_RUNTIME_ADDRESS
-                || built.len() != battle_assets::EFFECT_RUNTIME_SIZE
-                || built.len() != number(&entry["size"], "effect runtime size")?
-            {
-                return Err("battle-effect runtime differs from manifest".to_string());
-            }
-            let directory = Path::new(entry_source).parent().unwrap_or(Path::new("."));
-            let mut nested = vec![entry_source.to_string()];
-            if let Some(sources) = document["sources"].as_object() {
-                for value in sources.values() {
-                    nested.push(
-                        directory
-                            .join(json_string(value, "effect source")?)
-                            .to_string_lossy()
-                            .replace('\\', "/"),
-                    );
-                }
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            Ok((
-                built.clone(),
-                dedup_sources(nested),
-                serde_json::json!({"source_bytes":built.len(),"callback_slots":407,"derived_zero_bytes":4012}),
-            ))
-        }
-        "golden-sun-sentou-resource" => {
-            let index_name = json_string(&entry["index"], "sentou resource index")?;
-            let resource = ctx
-                .battle_resources(index_name)?
-                .iter()
-                .find(|item| item.address == address)
-                .cloned()
-                .ok_or("sentou resource address is absent from its index")?;
-            let mut nested = vec![index_name.to_string()];
-            nested.extend(root_sources(&ctx.root, &resource.sources)?);
-            let report = serde_json::json!({"source_bytes":resource.data.len()});
-            Ok((resource.data, dedup_sources(nested), report))
         }
         "golden-sun-kind2-resource" => {
             let plan_path = source_path(entry_source)?;

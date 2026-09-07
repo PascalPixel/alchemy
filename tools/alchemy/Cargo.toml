@@ -21,7 +21,6 @@ walkdir = "2.5"
 alignment-tail = { path = "../alignment-tail" }
 asset-paths = { path = "../asset-paths" }
 archive-asset = { path = "../archive-asset" }
-battle-assets = { path = "../battle-assets" }
 canonical-json = { path = "../canonical-json" }
 cache-entry = { path = "../cache-entry" }
 extract-resource = { path = "../extract-resource" }

@@ -408,6 +408,10 @@ internal directories and animation tables reference their targets that way
 instead of through a per-package Rust builder.
 Tiled PNG inputs may declare frame dimensions and atlas columns; the ordinary
 tile converter then writes frame order. Keep those layouts in the manifest.
+A field or segment may declare `bits`, named LSB-first widths packed into one
+unsigned element, so bit-packed words keep their parts in the source.
+A tile component whose authored canvas exceeds its compressed extent declares
+`canvas_size`; the converter checks the zero tail and truncates.
 
 `thumb-pointer` table segments resolve named main-image callbacks from the owner
 register, retain null slots, and encode the Thumb tag. An unregistered target

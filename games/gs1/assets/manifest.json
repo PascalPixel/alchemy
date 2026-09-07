@@ -187,6 +187,252 @@
       "source": "games/gs1/assets/graphics/resource_byte_closure_resource_04a.png"
     },
     {
+      "address": "0x083cdb04",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_04b_iro.rgba.png"
+    },
+    {
+      "address": "0x083cdb84",
+      "size": "0x642",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_04b_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_04b_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083ce1c8",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_04c_iro.rgba.png"
+    },
+    {
+      "address": "0x083ce248",
+      "size": "0x265",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_04c_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_04c_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083ce4b0",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_04d_iro.rgba.png"
+    },
+    {
+      "address": "0x083ce530",
+      "size": "0x4fc",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_04d_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_04d_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083cea2c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_04e_iro.rgba.png"
+    },
+    {
+      "address": "0x083ceaac",
+      "size": "0x668",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_04e_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_04e_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083cf114",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_04f_iro.rgba.png"
+    },
+    {
+      "address": "0x083cf194",
+      "size": "0x67f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_04f_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_04f_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083cf814",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_050_iro.rgba.png"
+    },
+    {
+      "address": "0x083cf894",
+      "size": "0x369",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_050_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_050_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083cffd0",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_052_iro.rgba.png"
+    },
+    {
+      "address": "0x083d0050",
+      "size": "0x81f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_052_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5500",
+          "canvas_size": "0x5640",
+          "source": "games/gs1/assets/graphics/sentou_resource_052_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083d1ecc",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_056_iro.rgba.png"
+    },
+    {
+      "address": "0x083d1f4c",
+      "size": "0x3d8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_056_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x10e0",
+          "canvas_size": "0x12c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_056_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083d3390",
+      "size": "0xfc7",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_058_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3840",
+          "source": "games/gs1/assets/graphics/sentou_resource_058_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083d6010",
+      "size": "0x1b4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_05c_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x300",
+          "source": "games/gs1/assets/graphics/sentou_resource_05c_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083d61c4",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_05d_iro.rgba.png"
+    },
+    {
+      "address": "0x083d6244",
+      "size": "0x315",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_05d_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1200",
+          "canvas_size": "0x12c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_05d_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083d655c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_05e_iro.rgba.png"
+    },
+    {
+      "address": "0x083d65dc",
+      "size": "0x1d06",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_05e_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x564c",
+          "canvas_size": "0x5a00",
+          "source": "games/gs1/assets/graphics/sentou_resource_05e_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083d82e4",
+      "size": "0x277",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_05f_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x480",
+          "source": "games/gs1/assets/graphics/sentou_resource_05f_naiyou.png"
+        }
+      ]
+    },
+    {
       "address": "0x083d85e0",
       "size": "0x444",
       "kind": "indexed-bytes",
@@ -199,16 +445,220 @@
       "source": "games/gs1/assets/graphics/resource_byte_closure_resource_064.png"
     },
     {
+      "address": "0x083dc418",
+      "size": "0x43b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_065_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x8b0",
+          "source": "games/gs1/assets/graphics/sentou_resource_065_naiyou.png"
+        }
+      ]
+    },
+    {
       "address": "0x083dc854",
       "size": "0x114",
       "kind": "indexed-bytes",
       "source": "games/gs1/assets/graphics/resource_byte_closure_resource_066.png"
     },
     {
+      "address": "0x083dc968",
+      "size": "0x19c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_067_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x35c",
+          "source": "games/gs1/assets/graphics/sentou_resource_067_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083dd0e4",
+      "size": "0x49d",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_069_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0xa00",
+          "source": "games/gs1/assets/graphics/sentou_resource_069_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083dd584",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_06a_iro.rgba.png"
+    },
+    {
+      "address": "0x083dd604",
+      "size": "0xc92",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_06a_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1deb",
+          "canvas_size": "0x1e00",
+          "source": "games/gs1/assets/graphics/sentou_resource_06a_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083de7d8",
+      "size": "0x83e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_06c_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1b00",
+          "canvas_size": "0x1e00",
+          "source": "games/gs1/assets/graphics/sentou_resource_06c_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083e1ec8",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_071_iro.rgba.png"
+    },
+    {
+      "address": "0x083e1f48",
+      "size": "0x7aa",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_071_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x63c0",
+          "canvas_size": "0x6540",
+          "source": "games/gs1/assets/graphics/sentou_resource_071_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083e26f4",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_072_iro.rgba.png"
+    },
+    {
+      "address": "0x083e2774",
+      "size": "0x370",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_072_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3180",
+          "canvas_size": "0x3480",
+          "source": "games/gs1/assets/graphics/sentou_resource_072_koma.4bpp.png"
+        }
+      ]
+    },
+    {
       "address": "0x083e2ae4",
       "size": "0x29c",
       "kind": "indexed-bytes",
       "source": "games/gs1/assets/graphics/resource_byte_closure_resource_073.png"
+    },
+    {
+      "address": "0x083e2d80",
+      "size": "0x1bb",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_074_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x302",
+          "source": "games/gs1/assets/graphics/sentou_resource_074_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083e2f3c",
+      "size": "0x940",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_075_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0xc08",
+          "source": "games/gs1/assets/graphics/sentou_resource_075_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083e387c",
+      "size": "0x417",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_076_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x604",
+          "source": "games/gs1/assets/graphics/sentou_resource_076_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083e45bc",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_07a_iro.rgba.png"
+    },
+    {
+      "address": "0x083e463c",
+      "size": "0x32b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_07a_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x800",
+          "canvas_size": "0xb40",
+          "source": "games/gs1/assets/graphics/sentou_resource_07a_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083e9d70",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_084_iro.rgba.png"
+    },
+    {
+      "address": "0x083e9df0",
+      "size": "0xd4b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_084_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2d25",
+          "canvas_size": "0x30c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_084_koma.4bpp.png"
+        }
+      ]
     },
     {
       "address": "0x083f5f4c",
@@ -221,6 +671,208 @@
       "size": "0x518",
       "kind": "indexed-bytes",
       "source": "games/gs1/assets/graphics/resource_byte_closure_resource_0a6.png"
+    },
+    {
+      "address": "0x083f7ec4",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0aa_iro.rgba.png"
+    },
+    {
+      "address": "0x083f7f44",
+      "size": "0x217",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0aa_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x39c",
+          "canvas_size": "0x3c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_0aa_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f815c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0ab_iro.rgba.png"
+    },
+    {
+      "address": "0x083f81dc",
+      "size": "0x1480",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0ab_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5e01",
+          "canvas_size": "0x6180",
+          "source": "games/gs1/assets/graphics/sentou_resource_0ab_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f965c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0ac_iro.rgba.png"
+    },
+    {
+      "address": "0x083f96dc",
+      "size": "0x41b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0ac_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x603e",
+          "canvas_size": "0x6180",
+          "source": "games/gs1/assets/graphics/sentou_resource_0ac_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083fb484",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0ae_iro.rgba.png"
+    },
+    {
+      "address": "0x083fb504",
+      "size": "0x36a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0ae_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x6680",
+          "canvas_size": "0x6900",
+          "source": "games/gs1/assets/graphics/sentou_resource_0ae_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083fcb58",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0b0_iro.rgba.png"
+    },
+    {
+      "address": "0x083fcbd8",
+      "size": "0xc0b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0b0_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3000",
+          "canvas_size": "0x30c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_0b0_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083fe348",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0b3_iro.rgba.png"
+    },
+    {
+      "address": "0x083fe3c8",
+      "size": "0x9b3",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0b3_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1901",
+          "canvas_size": "0x1a40",
+          "source": "games/gs1/assets/graphics/sentou_resource_0b3_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083ff978",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0b5_iro.rgba.png"
+    },
+    {
+      "address": "0x083ff9f8",
+      "size": "0x755",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0b5_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5100",
+          "canvas_size": "0x5280",
+          "source": "games/gs1/assets/graphics/sentou_resource_0b5_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08400150",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0b6_iro.rgba.png"
+    },
+    {
+      "address": "0x084001d0",
+      "size": "0xa4e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0b6_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5100",
+          "canvas_size": "0x5280",
+          "source": "games/gs1/assets/graphics/sentou_resource_0b6_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08400c20",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0b7_iro.rgba.png"
+    },
+    {
+      "address": "0x08400ca0",
+      "size": "0xabb",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0b7_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2580",
+          "source": "games/gs1/assets/graphics/sentou_resource_0b7_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08403324",
+      "size": "0x61",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0ba_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x101",
+          "source": "games/gs1/assets/graphics/sentou_resource_0ba_naiyou.png"
+        }
+      ]
     },
     {
       "address": "0x080f38bc",
@@ -441,15 +1093,136 @@
     },
     {
       "address": "0x0809c410",
-      "size": "0x4bf0",
-      "kind": "golden-sun-battle-effect-data",
-      "source": "games/gs1/assets/data/battle_effect_data_layout.json"
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/battle_effects_obj_tiles_0809c410.4bpp.png"
+    },
+    {
+      "address": "0x0809c510",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/battle_effects_obj_tiles_0809c510.4bpp.png"
+    },
+    {
+      "address": "0x0809c610",
+      "size": "0x1ebe",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/battle_effect_rules.json"
+    },
+    {
+      "address": "0x0809e4ce",
+      "size": "0x1b2",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/battle_effect_glyphs_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x600",
+          "source": "games/gs1/assets/graphics/battle_effects_battle_glyphs.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0809e680",
+      "size": "0x18d8",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/battle_effect_tail.json"
+    },
+    {
+      "address": "0x0809ff58",
+      "size": "0xc6",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/battle_effect_particles_stream.json",
+      "plan_section": "particle_slash",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x300",
+          "source": "games/gs1/assets/graphics/battle_effects_particle_slash.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x080a001e",
+      "size": "0x9a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/battle_effect_particles_stream.json",
+      "plan_section": "particle_spark",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x300",
+          "source": "games/gs1/assets/graphics/battle_effects_particle_spark.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x080a00b8",
+      "size": "0x4f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/battle_effect_particles_stream.json",
+      "plan_section": "particle_beam",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x200",
+          "source": "games/gs1/assets/graphics/battle_effects_particle_beam.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x080a0107",
+      "size": "0xef9",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/battle_effect_closing.json"
     },
     {
       "address": "0x080aea4c",
-      "size": "0x15b4",
-      "kind": "golden-sun-sentou-gamen-data",
-      "source": "games/gs1/assets/graphics/sentou_gamen_index.json"
+      "size": "0x600",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_gamen_koma.4bpp.png",
+      "frames": 12,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 3,
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080af04c",
+      "size": "0x40",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_gamen_obi.4bpp.png"
+    },
+    {
+      "address": "0x080af08c",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_gamen_men.4bpp.png"
+    },
+    {
+      "address": "0x080af18c",
+      "size": "0x80",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_gamen_hyouji.4bpp.png"
+    },
+    {
+      "address": "0x080af20c",
+      "size": "0x60",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/sentou_gamen_moji.json"
+    },
+    {
+      "address": "0x080af26c",
+      "size": "0x20",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_gamen_masuku.4bpp.png"
+    },
+    {
+      "address": "0x080af28c",
+      "size": "0xd74",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/sentou_gamen_seigyo.json"
     },
     {
       "address": "0x080b3940",
@@ -514,9 +1287,43 @@
     },
     {
       "address": "0x080c2a0a",
-      "size": "0x3126",
-      "kind": "golden-sun-sentou-hyouji",
-      "source": "games/gs1/assets/graphics/sentou_hyouji_index.json"
+      "size": "0xd2a",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/sentou_hyouji_kihon.json"
+    },
+    {
+      "address": "0x080c3734",
+      "size": "0x800",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_hyouji_koma.4bpp.png",
+      "frames": 16,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 8,
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080c3f34",
+      "size": "0x1a04",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/sentou_hyouji_haichi.json"
+    },
+    {
+      "address": "0x080c5938",
+      "size": "0xf8",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/sentou_hyouji_hosei.json"
+    },
+    {
+      "address": "0x080c5a30",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/sentou_hyouji_gauge.4bpp.png",
+      "frames": 8,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "columns": 8,
+      "symbolic_palette": true
     },
     {
       "address": "0x080c5b30",
@@ -544,9 +1351,60 @@
     },
     {
       "address": "0x080eda78",
-      "size": "0x27dc",
-      "kind": "golden-sun-sentou-kouka-runtime",
-      "source": "games/gs1/assets/code/sentou_kouka_index.json"
+      "size": "0x78",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/code/sentou_kouka_keisu.json"
+    },
+    {
+      "address": "0x080edaf0",
+      "size": "0x358",
+      "kind": "golden-sun-thumb-overlay",
+      "base": "0x080edaf0",
+      "source": "games/gs1/assets/code/sentou_kouka_gousei.s"
+    },
+    {
+      "address": "0x080ede48",
+      "size": "0x46c",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/code/sentou_kouka_hyou_a.json"
+    },
+    {
+      "address": "0x080ee2b4",
+      "size": "0x65c",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/code/sentou_kouka_kansuu_hyou.json"
+    },
+    {
+      "address": "0x080ee910",
+      "size": "0x694",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/code/sentou_kouka_hyou_b.json"
+    },
+    {
+      "address": "0x080eefa4",
+      "size": "0x70",
+      "kind": "golden-sun-thumb-overlay",
+      "base": "0x080eefa4",
+      "source": "games/gs1/assets/code/sentou_kouka_gousei_iro.s"
+    },
+    {
+      "address": "0x080ef014",
+      "size": "0x40",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/code/sentou_kouka_bit_mask.json"
+    },
+    {
+      "address": "0x080ef054",
+      "size": "0xfac",
+      "kind": "byte-fill",
+      "value": 0
+    },
+    {
+      "address": "0x080f0000",
+      "size": "0x254",
+      "kind": "golden-sun-thumb-overlay",
+      "base": "0x080f0000",
+      "source": "games/gs1/assets/code/sentou_kouka_tenkai.s"
     },
     {
       "address": "0x080f0a5c",
@@ -900,10 +1758,306 @@
       ]
     },
     {
+      "address": "0x083c3574",
+      "size": "0x20",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_03f_iro.rgba.png"
+    },
+    {
+      "address": "0x083c3594",
+      "size": "0x761",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_03f_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x4b00",
+          "source": "games/gs1/assets/graphics/sentou_resource_03f_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083c5678",
+      "size": "0x1c0",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_042_iro.rgba.png"
+    },
+    {
+      "address": "0x083c5838",
+      "size": "0x2c5d",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_042_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x9600",
+          "source": "games/gs1/assets/graphics/sentou_resource_042_haikei.8bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083cb4bc",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_044_iro.rgba.png"
+    },
+    {
+      "address": "0x083cb53c",
+      "size": "0x7c5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_044_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x6d2a",
+          "canvas_size": "0x7080",
+          "source": "games/gs1/assets/graphics/sentou_resource_044_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083cbd04",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_045_iro.rgba.png"
+    },
+    {
+      "address": "0x083cbd84",
+      "size": "0x1180",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_045_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5300",
+          "canvas_size": "0x5640",
+          "source": "games/gs1/assets/graphics/sentou_resource_045_koma.4bpp.png"
+        }
+      ]
+    },
+    {
       "address": "0x083ee384",
       "size": "0x80",
       "kind": "gba-palette",
       "source": "games/gs1/assets/graphics/palettes_direct_palettes_8d.png"
+    },
+    {
+      "address": "0x083ee404",
+      "size": "0x35b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_08d_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x640",
+          "canvas_size": "0x780",
+          "source": "games/gs1/assets/graphics/sentou_resource_08d_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083ee760",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_08e_iro.rgba.png"
+    },
+    {
+      "address": "0x083ee7e0",
+      "size": "0x209",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_08e_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x320",
+          "canvas_size": "0x3c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_08e_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083eed90",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_090_iro.rgba.png"
+    },
+    {
+      "address": "0x083eee10",
+      "size": "0x1da",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_090_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x320",
+          "canvas_size": "0x3c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_090_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f088c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_096_iro.rgba.png"
+    },
+    {
+      "address": "0x083f090c",
+      "size": "0x1542",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_096_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5100",
+          "canvas_size": "0x5280",
+          "source": "games/gs1/assets/graphics/sentou_resource_096_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f28bc",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_098_iro.rgba.png"
+    },
+    {
+      "address": "0x083f293c",
+      "size": "0x344",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_098_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0xb40",
+          "source": "games/gs1/assets/graphics/sentou_resource_098_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f2c80",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_099_iro.rgba.png"
+    },
+    {
+      "address": "0x083f2d00",
+      "size": "0x992",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_099_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2d00",
+          "source": "games/gs1/assets/graphics/sentou_resource_099_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f3694",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_09a_iro.rgba.png"
+    },
+    {
+      "address": "0x083f3714",
+      "size": "0x301",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_09a_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x810",
+          "canvas_size": "0xb40",
+          "source": "games/gs1/assets/graphics/sentou_resource_09a_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f3a18",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_09b_iro.rgba.png"
+    },
+    {
+      "address": "0x083f3a98",
+      "size": "0xc2d",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_09b_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2580",
+          "source": "games/gs1/assets/graphics/sentou_resource_09b_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f46c8",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_09c_iro.rgba.png"
+    },
+    {
+      "address": "0x083f4748",
+      "size": "0xac5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_09c_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1a40",
+          "source": "games/gs1/assets/graphics/sentou_resource_09c_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f5210",
+      "size": "0x196",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_09d_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "size": "0x2b8",
+          "source": "games/gs1/assets/graphics/sentou_resource_09d_naiyou.png"
+        }
+      ]
+    },
+    {
+      "address": "0x083f53a8",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_09e_iro.rgba.png"
+    },
+    {
+      "address": "0x083f5428",
+      "size": "0x80b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_09e_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1b00",
+          "canvas_size": "0x1e00",
+          "source": "games/gs1/assets/graphics/sentou_resource_09e_koma.4bpp.png"
+        }
+      ]
     },
     {
       "address": "0x08403388",
@@ -912,10 +2066,195 @@
       "source": "games/gs1/assets/graphics/palettes_direct_palettes_bb.png"
     },
     {
+      "address": "0x08403408",
+      "size": "0x2eb",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0bb_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x600",
+          "canvas_size": "0x780",
+          "source": "games/gs1/assets/graphics/sentou_resource_0bb_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08403fc8",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0be_iro.rgba.png"
+    },
+    {
+      "address": "0x08404048",
+      "size": "0x2b9",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0be_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x400",
+          "canvas_size": "0x780",
+          "source": "games/gs1/assets/graphics/sentou_resource_0be_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08404304",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0bf_iro.rgba.png"
+    },
+    {
+      "address": "0x08404384",
+      "size": "0xf96",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0bf_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x239d",
+          "canvas_size": "0x2580",
+          "source": "games/gs1/assets/graphics/sentou_resource_0bf_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0840531c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0c0_iro.rgba.png"
+    },
+    {
+      "address": "0x0840539c",
+      "size": "0x15ec",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0c0_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x38dc",
+          "canvas_size": "0x3c00",
+          "source": "games/gs1/assets/graphics/sentou_resource_0c0_koma.4bpp.png"
+        }
+      ]
+    },
+    {
       "address": "0x084090cc",
       "size": "0x80",
       "kind": "gba-palette",
       "source": "games/gs1/assets/graphics/palettes_direct_palettes_c4.png"
+    },
+    {
+      "address": "0x0840914c",
+      "size": "0xf94",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0c4_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2d00",
+          "source": "games/gs1/assets/graphics/sentou_resource_0c4_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0840a0e0",
+      "size": "0x37b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0c5_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1073",
+          "canvas_size": "0x12c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_0c5_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0840a45c",
+      "size": "0x42f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0c6_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0xd80",
+          "canvas_size": "0xf00",
+          "source": "games/gs1/assets/graphics/sentou_resource_0c6_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0840a88c",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0c7_iro.rgba.png"
+    },
+    {
+      "address": "0x0840a90c",
+      "size": "0x104c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0c7_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2514",
+          "canvas_size": "0x2580",
+          "source": "games/gs1/assets/graphics/sentou_resource_0c7_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0840b9dc",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0c9_iro.rgba.png"
+    },
+    {
+      "address": "0x0840ba5c",
+      "size": "0x468",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0c9_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x104e",
+          "canvas_size": "0x12c0",
+          "source": "games/gs1/assets/graphics/sentou_resource_0c9_koma.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0840cf98",
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/sentou_resource_0ce_iro.rgba.png"
+    },
+    {
+      "address": "0x0840d018",
+      "size": "0x1ab2",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/sentou_resource_0ce_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3956",
+          "canvas_size": "0x3c00",
+          "source": "games/gs1/assets/graphics/sentou_resource_0ce_koma.4bpp.png"
+        }
+      ]
     },
     {
       "address": "0x084101d0",
@@ -4273,10 +5612,6 @@
           "size": "0x84"
         }
       ]
-    },
-    {
-      "kind": "golden-sun-sentou-resource-series",
-      "index": "games/gs1/assets/graphics/sentou_index.json"
     },
     {
       "kind": "golden-sun-map-container-series",

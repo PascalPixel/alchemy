@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x080af20c",
+  "end": "0x080af26c",
+  "size": 96,
+  "consumer": {
+    "display_rows": 3,
+    "display_columns": 4,
+    "mask_rows": 6
+  },
+  "segments": [
+    {
+      "name": "display_glyph_cells",
+      "address": "0x080af20c",
+      "end": "0x080af23c",
+      "element": "record",
+      "stride": 4,
+      "fields": [
+        {
+          "name": "glyphs",
+          "element": "u8",
+          "terminated_capacity": 4,
+          "min": 1,
+          "max": 255
+        }
+      ],
+      "records": [
+        {
+          "glyphs": [76, 118]
+        },
+        {
+          "glyphs": [72, 80]
+        },
+        {
+          "glyphs": [47]
+        },
+        {
+          "glyphs": [80, 80]
+        },
+        {
+          "glyphs": [120]
+        },
+        {
+          "glyphs": [46]
+        },
+        {
+          "glyphs": [43]
+        },
+        {
+          "glyphs": [45]
+        },
+        {
+          "glyphs": [76, 118]
+        },
+        {
+          "glyphs": [47]
+        },
+        {
+          "glyphs": [72, 80]
+        },
+        {
+          "glyphs": [80, 80]
+        }
+      ]
+    },
+    {
+      "name": "mask_rows",
+      "address": "0x080af23c",
+      "end": "0x080af26c",
+      "element": "le-u32",
+      "stride": 8,
+      "values": [
+        [348160, 0],
+        [84234320, 0],
+        [84234320, 5],
+        [84234320, 1285],
+        [84234320, 328965],
+        [84234320, 84215045]
+      ]
+    }
+  ]
+}

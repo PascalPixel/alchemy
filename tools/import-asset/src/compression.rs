@@ -61,6 +61,36 @@ pub fn encode_mtf4(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     Ok(bits.bytes)
 }
 
+/// Zero-skip byte stream: literals 1..=0xdf, runs of up to 32 zeros as
+/// `0xdf + count`, and a terminating zero byte.
+pub fn encode_zero_skip(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let mut output = Vec::new();
+    let mut cursor = 0;
+    while cursor < pixels.len() {
+        if pixels[cursor] != 0 {
+            if pixels[cursor] > 0xdf {
+                return Err(AssetError("zero-skip literal exceeds 0xdf".into()));
+            }
+            output.push(pixels[cursor]);
+            cursor += 1;
+            continue;
+        }
+        let mut end = cursor + 1;
+        while end < pixels.len() && pixels[end] == 0 {
+            end += 1;
+        }
+        let mut remaining = end - cursor;
+        while remaining != 0 {
+            let count = remaining.min(32);
+            output.push(0xdf + count as u8);
+            remaining -= count;
+        }
+        cursor = end;
+    }
+    output.push(0);
+    Ok(output)
+}
+
 pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     let mut bits = Bits::default();
     let mut previous = 0u8;
@@ -191,6 +221,13 @@ fn compression_checks_pixel_domains_and_padding() {
     assert!(encode_tilemap_delta(&entries, 3).is_err());
     assert!(encode_tilemap_delta(&entries[..3], 0).is_err());
     assert!(encode_tilemap_delta(&[], 0).is_err());
+    assert_eq!(encode_zero_skip(&[]).unwrap(), [0]);
+    assert_eq!(
+        encode_zero_skip(&[1, 0, 0, 0, 2, 0, 0]).unwrap(),
+        [1, 0xe2, 2, 0xe1, 0]
+    );
+    assert_eq!(encode_zero_skip(&[0; 33]).unwrap(), [0xff, 0xe0, 0]);
+    assert!(encode_zero_skip(&[0xe0]).is_err());
 }
 
 #[test]

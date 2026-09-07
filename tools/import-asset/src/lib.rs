@@ -3,7 +3,9 @@ mod compression;
 mod huffman_archive;
 mod text;
 mod wav;
-pub use compression::{delta7_image, encode_delta7, encode_mtf4, encode_tilemap_delta};
+pub use compression::{
+    delta7_image, encode_delta7, encode_mtf4, encode_tilemap_delta, encode_zero_skip,
+};
 pub use huffman_archive::{encode_huffman_archive, HuffmanArchive};
 pub use text::{import_pairs, import_tilemap, import_words};
 pub use wav::wav_pcm8;

@@ -1210,6 +1210,52 @@ void SceneActor_SetupActor18Event(void)
     Func_02001672_a(10);
 }
 
+#define Scene_RunTableTransition Func_02000158
+
+extern s16 Data_02009ca8[][2];
+extern u8 Data_02009cee[];
+extern u8 Data_02009cd8[];
+u8 *Func_020016c6(s32);
+void Func_020017b2(s32);
+s32 Func_02001684();
+s32 Func_020016a0();
+void Func_020017c0_a();
+void Func_02001734();
+void Func_020016ea(s32);
+void Func_020017ce(s32);
+
+static __inline__ s32 Scene_Value3(s32 (*fn)(), s32 a, s32 b, s32 c)
+{
+    return fn(a, b, c);
+}
+
+static __inline__ void Scene_Call3(void (*fn)(), s32 a, s32 b, s32 c)
+{
+    fn(a, b, c);
+}
+
+void Scene_RunTableTransition(void)
+{
+    extern u8 *Data_03001ebc;
+
+    s32 no = *(s16 *)(Data_03001ebc + 0x16c);
+    s32 x = Data_02009ca8[no][0];
+    s32 y = Data_02009ca8[no][1];
+
+    Func_020016c6(0)[85] = 2;
+    Func_020017b2(158);
+    if (no == 6) {
+        Scene_Value3(Func_02001684, (s32)Data_02009cee, (u16)x, (u16)y);
+        Scene_Call3(Func_020017c0_a, 0, 0, -16);
+    } else {
+        Scene_Value3(Func_020016a0, (s32)Data_02009cd8, (u16)x, (u16)y);
+        Scene_Call3(Func_02001734, 0, 2, -16);
+    }
+    Func_020016ea(10);
+    *(s32 *)(Data_03001ebc + 0x1c8) = 16;
+    Func_020017ce(no);
+}
+
 void SceneState_SetWord1c8To16AndForward16c(void)
 {
     extern u8 *Data_03001ebc;

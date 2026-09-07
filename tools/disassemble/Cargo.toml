@@ -10,7 +10,6 @@ path = "src/lib.rs"
 [dependencies]
 compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
-cache-entry = { path = "../cache-entry" }
 extract-resource = { path = "../extract-resource" }
 regex = "1.13.1"
 serde_json = "1"

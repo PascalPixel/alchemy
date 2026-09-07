@@ -1,12 +1,16 @@
 //! Compile, verify, cache, and manifest every exact C owner in the main image.
 pub mod cli;
-use cache_entry::sqlite::SqliteCache;
 use candidate_compiler::verify::{
     verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
 };
-use canonical_json::{canonical_json, write_canonical};
 use compiler_core::build_io::{argv as strings, read, relative, rooted, text, write as write_file};
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
+use compiler_core::cache::sqlite::SqliteCache;
+use compiler_core::canonical_json::{canonical_json, write_canonical};
+use compiler_core::decomp_targets::{
+    decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
+    DecompTarget, DecompTargetId, DEFAULT_TARGET,
+};
 use compiler_core::nodepath::basename;
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
@@ -16,10 +20,6 @@ use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths};
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use compiler_core::translation_units::{
     AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
-};
-use decomp_targets::{
-    decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
-    DecompTarget, DecompTargetId, DEFAULT_TARGET,
 };
 use serde_json::{json, Value};
 use std::{

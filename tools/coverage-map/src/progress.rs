@@ -1,8 +1,8 @@
 //! Full-C reporting over the coverage map's shared audited interval model.
-use coverage_map::jsnum::{commas, round_half_up};
-use coverage_map::model::{bytes, normalize, Span};
-use coverage_map::pipeline::{build_coverage_map, progress_tally, BuildOptions, ProgressTally};
-use coverage_map::tree::{root, work_tree_at};
+use crate::jsnum::{commas, round_half_up};
+use crate::model::{bytes, normalize, Span};
+use crate::pipeline::{build_coverage_map, progress_tally, BuildOptions, ProgressTally};
+use crate::tree::{root, work_tree_at};
 use serde_json::{json, Value};
 use std::path::Path;
 

@@ -63,13 +63,11 @@ dependencies = [
  "localization-font",
  "map-container-components",
  "matching",
- "message-archive",
  "no-asm-c",
  "objdiff-core",
  "overlay-adopt",
  "png",
  "regex",
- "resource-5",
  "serde",
  "serde_json",
  "sha1",
@@ -735,13 +733,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "message-archive"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
 name = "miniz_oxide"
 version = "0.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -958,13 +949,6 @@ name = "regex-syntax"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-
-[[package]]
-name = "resource-5"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
 
 [[package]]
 name = "rusqlite"

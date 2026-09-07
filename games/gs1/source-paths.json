@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ad:02001760": {
+      "name": "SceneEvent_RunPartyDeparture",
+      "source": "overlays/scene_primary_script/run_party_departure.c"
+    },
     "resource_3a3:020006f0": {
       "name": "SceneMotion_UpdateTimedActor",
       "source": "overlays/scene_script/actor_motion_and_particles.c"

@@ -54,7 +54,6 @@ message-archive = { path = "../message-archive" }
 resource-5 = { path = "../resource-5" }
 title-resources = { path = "../title-resources" }
 sentou-resources = { path = "../sentou-resources" }
-map-resources = { path = "../map-resources" }
 battle-effect-data = { path = "../battle-effect-data" }
 runtime-support-data = { path = "../runtime-support-data" }
 sentou-kouka-runtime = { path = "../sentou-kouka-runtime" }

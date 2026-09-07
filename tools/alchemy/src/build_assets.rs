@@ -1,8 +1,6 @@
 //! Native entry point for the asset build stage.
 use alignment_tail::parse_alignment_tail;
-use archive_asset::{
-    build_archive, self_test as archive_self_test, ArchivePlan, ArchiveStream, PixelFormat,
-};
+use archive_asset::{build_archive, ArchivePlan, ArchiveStream, PixelFormat};
 use asset_paths::AssetPaths;
 use audio_engine_data::build_audio_engine_data;
 use cache_entry::write_cache_entry_atomically;
@@ -40,6 +38,7 @@ const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
 const AUDIO_ENGINE_SIZE: usize = 0x0ef2;
 const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
 const STAFF_ROLL_SIZE: usize = 0x15a4;
+const MAP_CONTAINER_HEADER_SIZE: usize = 0x3c;
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -180,8 +179,6 @@ fn parse_plan(value: Value) -> Result<ArchivePlan, String> {
         }
     };
     Ok(ArchivePlan {
-        format: 1,
-        codec: "golden-sun-offset-palette-lz".to_string(),
         chunk_width: number(required(object, "chunk_width")?, "chunk_width")?,
         chunk_height: number(required(object, "chunk_height")?, "chunk_height")?,
         columns: number(required(object, "columns")?, "columns")?,
@@ -1381,10 +1378,243 @@ fn closure_self_test() -> Result<String, String> {
         "self-test=ok optional=skipped present_regions={present_regions} provenance=verified"
     ))
 }
+#[derive(Debug, Clone)]
+struct BuiltMapContainer {
+    id: usize,
+    address: usize,
+    kind: String,
+    data: Vec<u8>,
+    sources: Vec<PathBuf>,
+}
+fn map_container_id(value: &Value) -> Result<usize, String> {
+    let value = json_string(value, "map resource id")?;
+    let value = value
+        .strip_prefix("0x")
+        .or_else(|| value.strip_prefix("0X"))
+        .unwrap_or(value);
+    if value.is_empty() {
+        return Err("map resource id must be hexadecimal".into());
+    }
+    usize::from_str_radix(value, 16).map_err(|_| "map resource id must be hexadecimal".into())
+}
+fn map_container_source_base(index_path: &Path, source: &str) -> Result<PathBuf, String> {
+    if source.is_empty()
+        || source.contains('\\')
+        || Path::new(source).is_absolute()
+        || source
+            .split('/')
+            .any(|part| part.is_empty() || part == "." || part == "..")
+    {
+        return Err("map container source must be a relative path below its index".into());
+    }
+    Ok(index_path
+        .parent()
+        .ok_or("map container index has no parent")?
+        .join(source))
+}
+fn map_container_required_slots(index: &Value) -> Result<BTreeSet<usize>, String> {
+    let mut slots = BTreeSet::new();
+    for value in series_values(index, "required_components")? {
+        let slot = number(value, "required map component")?;
+        if slot >= 6 || !slots.insert(slot) {
+            return Err("required map components must be unique slots from 0 through 5".into());
+        }
+    }
+    if !slots.contains(&0) {
+        return Err("map container must require component slot 0".into());
+    }
+    Ok(slots)
+}
+fn map_container_offsets(
+    header: &[u8],
+    size: usize,
+    required_slots: &BTreeSet<usize>,
+) -> Result<[usize; 6], String> {
+    if header.len() != MAP_CONTAINER_HEADER_SIZE || size <= MAP_CONTAINER_HEADER_SIZE {
+        return Err("invalid map container extent".into());
+    }
+    let mut offsets = [0usize; 6];
+    for (slot, offset) in offsets.iter_mut().enumerate() {
+        let start = 0x24 + slot * 4;
+        *offset = u32::from_le_bytes(header[start..start + 4].try_into().unwrap()) as usize;
+    }
+    if required_slots.iter().any(|slot| offsets[*slot] == 0) {
+        return Err("map container lacks a required component".into());
+    }
+    if offsets[0] != MAP_CONTAINER_HEADER_SIZE {
+        return Err("map container has an invalid header offset".into());
+    }
+    let mut previous = MAP_CONTAINER_HEADER_SIZE - 1;
+    for offset in offsets {
+        if offset == 0 {
+            continue;
+        }
+        if offset <= previous || offset >= size {
+            return Err("map container component offsets are not ordered".into());
+        }
+        previous = offset;
+    }
+    Ok(offsets)
+}
+fn map_container_component_end(
+    offsets: &[usize; 6],
+    slot: usize,
+    size: usize,
+) -> Result<usize, String> {
+    if offsets[slot] == 0 {
+        return Err("map component is absent".into());
+    }
+    Ok(offsets[slot + 1..]
+        .iter()
+        .copied()
+        .find(|offset| *offset != 0)
+        .unwrap_or(size))
+}
+fn map_container_component(
+    source_base: &Path,
+    header_path: &Path,
+    slot: usize,
+) -> Result<(Vec<u8>, Vec<PathBuf>), String> {
+    let (data, sources) = match slot {
+        0 => (
+            map_container_components::build_metatiles(header_path, header_path)?,
+            vec![header_path.to_path_buf()],
+        ),
+        1 => (
+            map_container_components::build_descriptors(header_path, header_path)?,
+            vec![header_path.to_path_buf()],
+        ),
+        2 => {
+            let plan_path =
+                PathBuf::from(format!("{}_grid_grid.kind1.json", source_base.display()));
+            let plan = json(&plan_path)?;
+            let mut sources = vec![plan_path];
+            if plan.get("atlas_layers").and_then(Value::as_u64) == Some(5) {
+                sources.push(PathBuf::from(format!(
+                    "{}_grid_layers.png",
+                    source_base.display()
+                )));
+            } else {
+                for name in [
+                    "value_low.png",
+                    "value_high.png",
+                    "attribute_a.png",
+                    "attribute_b.png",
+                    "sentinels.png",
+                ] {
+                    sources.push(PathBuf::from(format!(
+                        "{}_grid_{name}",
+                        source_base.display()
+                    )));
+                }
+            }
+            (kind1_map_grid::build_grid(&plan, source_base)?, sources)
+        }
+        3 => (
+            map_container_components::build_queues(header_path, header_path)?,
+            vec![header_path.to_path_buf()],
+        ),
+        4 => (
+            map_container_components::build_blend_animation(header_path, header_path)?,
+            vec![header_path.to_path_buf()],
+        ),
+        5 => (
+            map_container_components::build_sparse(header_path)?,
+            vec![header_path.to_path_buf()],
+        ),
+        _ => return Err("unsupported map component slot".into()),
+    };
+    Ok((data, sources))
+}
+fn build_map_container_series(
+    root: &Path,
+    index_name: &str,
+) -> Result<Vec<BuiltMapContainer>, String> {
+    let index_path = root_path(root, index_name)?;
+    let index = json(&index_path)?;
+    if index.get("format") != Some(&Value::from(1))
+        || index.get("kind").and_then(Value::as_str) != Some("golden-sun-map-container-series")
+    {
+        return Err("unsupported map container index".into());
+    }
+    let asset_kind = json_string(
+        index
+            .get("asset_kind")
+            .ok_or("map container asset kind is missing")?,
+        "map container asset kind",
+    )?
+    .to_string();
+    if !matches!(
+        asset_kind.as_str(),
+        "golden-sun-tokushu-map" | "golden-sun-chiiki-map"
+    ) {
+        return Err("unsupported map container asset kind".into());
+    }
+    let required_slots = map_container_required_slots(&index)?;
+    let mut ids = BTreeSet::new();
+    let mut addresses = BTreeSet::new();
+    let mut built = Vec::new();
+    for resource in series_values(&index, "resources")? {
+        let resource = resource
+            .as_object()
+            .ok_or("map container resource must be an object")?;
+        let id = map_container_id(resource.get("id").ok_or("map resource id is missing")?)?;
+        let address = number(
+            resource
+                .get("address")
+                .ok_or("map resource address is missing")?,
+            "map resource address",
+        )?;
+        let size = number(
+            resource.get("size").ok_or("map resource size is missing")?,
+            "map resource size",
+        )?;
+        let source_name = json_string(
+            resource
+                .get("source")
+                .ok_or("map resource source is missing")?,
+            "map resource source",
+        )?;
+        if !ids.insert(id) || !addresses.insert(address) {
+            return Err("map container index repeats a resource id or address".into());
+        }
+        let source_base = map_container_source_base(&index_path, source_name)?;
+        let header_path = PathBuf::from(format!("{}.json", source_base.display()));
+        let header = map_container_components::build_header(&header_path, None)?;
+        let offsets = map_container_offsets(&header, size, &required_slots)?;
+        let mut data = header;
+        let mut sources = vec![header_path.clone()];
+        for slot in 0..6 {
+            if offsets[slot] == 0 {
+                continue;
+            }
+            let end = map_container_component_end(&offsets, slot, size)?;
+            let (component, component_sources) =
+                map_container_component(&source_base, &header_path, slot)
+                    .map_err(|error| format!("map component {slot}: {error}"))?;
+            if component.len() != end - offsets[slot] {
+                return Err(format!("map component {slot} has the wrong size"));
+            }
+            data.extend(component);
+            sources.extend(component_sources);
+        }
+        if data.len() != size {
+            return Err(format!("map resource {id:03x} has the wrong rebuilt size"));
+        }
+        built.push(BuiltMapContainer {
+            id,
+            address,
+            kind: asset_kind.clone(),
+            data,
+            sources,
+        });
+    }
+    Ok(built)
+}
 struct Context {
     root: PathBuf,
     paths: AssetPaths,
-    maps: HashMap<(String, &'static str), Vec<map_resources::BuiltMapResource>>,
+    maps: HashMap<String, Vec<BuiltMapContainer>>,
     music: HashMap<String, Vec<music_residuals::BuiltMusicResidual>>,
     battle: HashMap<String, Vec<(usize, Vec<u8>, Vec<PathBuf>)>>,
 }
@@ -1401,22 +1631,12 @@ impl Context {
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
     }
-    fn map_series(
-        &mut self,
-        index_name: &str,
-        kind: &str,
-    ) -> Result<Vec<map_resources::BuiltMapResource>, String> {
-        let (name, kind) = if kind == "tokushu" {
-            ("tokushu", map_resources::SeriesKind::Tokushu)
-        } else {
-            ("chiiki", map_resources::SeriesKind::Chiiki)
-        };
-        let key = (index_name.to_string(), name);
-        if !self.maps.contains_key(&key) {
-            let built = map_resources::build_series(&self.source(index_name)?, kind)?;
-            self.maps.insert(key.clone(), built);
+    fn map_series(&mut self, index_name: &str) -> Result<Vec<BuiltMapContainer>, String> {
+        if !self.maps.contains_key(index_name) {
+            let built = build_map_container_series(&self.root, index_name)?;
+            self.maps.insert(index_name.to_string(), built);
         }
-        Ok(self.maps[&key].clone())
+        Ok(self.maps[index_name].clone())
     }
     fn music_residuals(
         &mut self,
@@ -1464,6 +1684,32 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
 }
 
 #[test]
+fn map_container_offsets_preserve_required_component_extents() {
+    let mut header = vec![0u8; MAP_CONTAINER_HEADER_SIZE];
+    for (slot, offset) in [0x3c_u32, 0x80, 0xa0, 0x120, 0, 0x140]
+        .into_iter()
+        .enumerate()
+    {
+        header[0x24 + slot * 4..0x28 + slot * 4].copy_from_slice(&offset.to_le_bytes());
+    }
+    let required = [0, 1, 2, 3, 5].into_iter().collect();
+    let offsets = map_container_offsets(&header, 0x148, &required).unwrap();
+    assert_eq!(
+        map_container_component_end(&offsets, 3, 0x148).unwrap(),
+        0x140
+    );
+    assert_eq!(
+        map_container_component_end(&offsets, 5, 0x148).unwrap(),
+        0x148
+    );
+
+    let mut missing = header.clone();
+    missing[0x24 + 3 * 4..0x28 + 3 * 4].fill(0);
+    assert!(map_container_offsets(&missing, 0x148, &required).is_err());
+    assert!(map_container_offsets(&[0u8; MAP_CONTAINER_HEADER_SIZE], 0x100, &required).is_err());
+}
+
+#[test]
 fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
     let directory = tempfile::tempdir().unwrap();
     let mut context = Context::new(directory.path());
@@ -1480,6 +1726,31 @@ fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
 fn battle_resources_report_the_actual_palette_and_build_once() {
     let directory = tempfile::tempdir().unwrap();
     let root = directory.path();
+    let png = |pixels: &[u8], width: u32, height: u32, format: PixelFormat| {
+        let mut image = Vec::new();
+        let mut encoder = png::Encoder::new(&mut image, width, height);
+        match format {
+            PixelFormat::Rgba => {
+                encoder.set_color(png::ColorType::Rgba);
+                encoder.set_depth(png::BitDepth::Eight);
+            }
+            PixelFormat::Indexed8 => {
+                encoder.set_color(png::ColorType::Indexed);
+                encoder.set_depth(png::BitDepth::Eight);
+                encoder.set_palette(
+                    (0..256)
+                        .flat_map(|value| [value as u8; 3])
+                        .collect::<Vec<_>>(),
+                );
+            }
+        }
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(pixels)
+            .unwrap();
+        image
+    };
     let mut pixels = vec![0; 512];
     pixels[..4].copy_from_slice(b"TEST");
     for (name, pixels, width, height, format) in [
@@ -1494,7 +1765,7 @@ fn battle_resources_report_the_actual_palette_and_build_once() {
     ] {
         fs::write(
             root.join(name),
-            archive_asset::make_atlas(&[pixels], width, height, 1, format).unwrap(),
+            png(&pixels, width as u32, height as u32, format),
         )
         .unwrap();
     }
@@ -1809,15 +2080,10 @@ fn expand_series(
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-resource","source":root_relative(&ctx.root, &ctx.source(&image)?)?,"index":index_name}));
                 }
             }
-            "golden-sun-tokushu-map-series" | "golden-sun-chiiki-map-series" => {
+            "golden-sun-map-container-series" => {
                 let index_name = json_string(&series["index"], "map index")?;
-                let map_kind = if kind.contains("tokushu") {
-                    "tokushu"
-                } else {
-                    "chiiki"
-                };
-                for resource in ctx.map_series(index_name, map_kind)? {
-                    entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":if map_kind == "tokushu" {"golden-sun-tokushu-map"} else {"golden-sun-chiiki-map"},"source":index_name,"resource_id":resource.id}));
+                for resource in ctx.map_series(index_name)? {
+                    entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":resource.kind,"source":index_name,"resource_id":resource.id}));
                 }
             }
             "golden-sun-encounter-data-series" => {
@@ -3811,16 +4077,14 @@ fn build_entry_native_tail(
         "golden-sun-tokushu-map" | "golden-sun-chiiki-map" => {
             let index_name = entry_source;
             let id = number(&entry["resource_id"], "map resource id")?;
-            let map_kind = if kind.contains("tokushu") {
-                "tokushu"
-            } else {
-                "chiiki"
-            };
             let resource = ctx
-                .map_series(index_name, map_kind)?
+                .map_series(index_name)?
                 .into_iter()
                 .find(|item| item.id == id)
                 .ok_or("map resource differs from manifest")?;
+            if resource.kind != kind {
+                return Err("map resource kind differs from manifest".into());
+            }
             let data_len = resource.data.len();
             let mut sources = vec![index_name.to_string()];
             sources.extend(root_sources(&ctx.root, &resource.sources)?);
@@ -4567,7 +4831,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.as_slice() == ["--self-test"] {
-        archive_self_test().map_err(|error| error.to_string())?;
         native_sequence_self_test()?;
         println!("{}", closure_self_test()?);
         return Ok(ExitCode::SUCCESS);

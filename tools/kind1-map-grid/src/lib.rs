@@ -1,24 +1,15 @@
-//! Native kind-1 map-grid exporter and verifier.
+//! Rebuild kind-1 map grids from tracked PNG planes and palette-codec plans.
 //!
-//! A kind-1 map contains two byte planes, two attribute planes, and a
-//! palette-compressed 16-bit value plane. Values whose low twelve bits are
-//! `0xfff` are represented in the exported images by a separate binary
-//! sentinel mask and are assigned consecutive ordinals while exporting.
-//!
-//! The TypeScript implementation remains in place because the asset builder
-//! imports its library functions. This crate provides the standalone CLI and
-//! keeps the exact same stream, PNG, and plan representations for direct
-//! export and verification.
+//! Both the five-layer atlas and the older split-plane representation retain
+//! the binary sentinel mask needed to reverse exported ordinal values.
 
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use export_asset::{byte_png, chunk, zlib};
-use extract_resource::{decode_palette_trace, encode_palette, PaletteGroup, PaletteOperation};
+use extract_resource::{encode_palette, PaletteGroup, PaletteOperation};
 use import_asset::indexed_png;
-use serde_json::{json, Map, Value};
+use serde_json::{Map, Value};
 
-pub const ROM_BASE: usize = 0x0800_0000;
 pub const PLANE: usize = 0x4000;
 pub const DECODED_SIZE: usize = 4 * PLANE;
 pub const WIDTH: usize = 128;
@@ -33,13 +24,6 @@ const FILES: [&str; 4] = [
 
 pub type Result<T> = std::result::Result<T, String>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ExportStats {
-    pub tokens: usize,
-    pub sentinels: usize,
-    pub encoded: usize,
-}
-
 fn err(message: impl Into<String>) -> String {
     message.into()
 }
@@ -48,24 +32,13 @@ fn read(path: &Path) -> Result<Vec<u8>> {
     fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-fn write(path: &Path, data: &[u8]) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
-    }
-    fs::write(path, data).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 fn grid_path(directory: &Path, suffix: &str) -> PathBuf {
     PathBuf::from(format!("{}_grid_{suffix}", directory.display()))
 }
 
-fn plan_path(directory: &Path) -> PathBuf {
-    PathBuf::from(format!("{}_grid_grid.kind1.json", directory.display()))
-}
-
 /// Split the decoded kind-1 payload into its four exported byte planes and
 /// the one-bit sentinel mask.
-pub fn transform(decoded: &[u8]) -> Result<([Vec<u8>; 4], Vec<u8>)> {
+fn transform(decoded: &[u8]) -> Result<([Vec<u8>; 4], Vec<u8>)> {
     if decoded.len() != DECODED_SIZE {
         return Err(err("kind-1 map input must contain three 128x128 planes"));
     }
@@ -132,39 +105,6 @@ pub fn inverse(planes: &[Vec<u8>], mask: &[u8]) -> Result<Vec<u8>> {
     Ok(decoded)
 }
 
-/// Encode the sentinel mask in the same 1-bit indexed PNG form as the
-/// TypeScript `mask_png` helper.
-pub fn mask_png(mask: &[u8]) -> Result<Vec<u8>> {
-    if mask.len() != PLANE || mask.iter().any(|value| *value != 0 && *value != 1) {
-        return Err(err("sentinel mask must contain 128x128 binary pixels"));
-    }
-    let mut rows = vec![0u8; HEIGHT * 17];
-    let mut cursor = 0usize;
-    for y in 0..HEIGHT {
-        cursor += 1;
-        for x in (0..WIDTH).step_by(8) {
-            let mut value = 0u8;
-            for bit in 0..8 {
-                value |= mask[y * WIDTH + x + bit] << (7 - bit);
-            }
-            rows[cursor] = value;
-            cursor += 1;
-        }
-    }
-    let mut header = [0u8; 13];
-    header[0..4].copy_from_slice(&(WIDTH as u32).to_be_bytes());
-    header[4..8].copy_from_slice(&(HEIGHT as u32).to_be_bytes());
-    header[8] = 1;
-    header[9] = 3;
-    let compressed = zlib(&rows);
-    let mut output = b"\x89PNG\r\n\x1a\n".to_vec();
-    output.extend_from_slice(&chunk(b"IHDR", &header));
-    output.extend_from_slice(&chunk(b"PLTE", b"\0\0\0\xff\xff\xff"));
-    output.extend_from_slice(&chunk(b"IDAT", &compressed));
-    output.extend_from_slice(&chunk(b"IEND", &[]));
-    Ok(output)
-}
-
 fn read_plane(path: &Path) -> Result<Vec<u8>> {
     let image = indexed_png(&read(path)?).map_err(|error| error.0)?;
     if image.width != WIDTH as u32 || image.height != HEIGHT as u32 || image.pixels.len() != PLANE {
@@ -192,24 +132,6 @@ fn read_mask(path: &Path) -> Result<Vec<u8>> {
             }
         })
         .collect()
-}
-
-fn token_value(token: &PaletteGroup) -> Value {
-    match token {
-        PaletteGroup::Zeros => json!(["z"]),
-        PaletteGroup::Group(operations) => json!([
-            "g",
-            operations.iter().map(operation_value).collect::<Vec<_>>()
-        ]),
-    }
-}
-
-fn operation_value(operation: &PaletteOperation) -> Value {
-    match operation {
-        PaletteOperation::Literal => json!(["l"]),
-        PaletteOperation::End => json!(["e"]),
-        PaletteOperation::Copy { length, distance } => json!(["c", length, distance]),
-    }
 }
 
 fn number(value: &Value, label: &str) -> Result<u64> {
@@ -276,22 +198,6 @@ fn parse_tokens(value: &Value) -> Result<Vec<PaletteGroup>> {
         .collect()
 }
 
-fn plan_value(
-    decoded_size: usize,
-    encoded_size: usize,
-    tokens: &[PaletteGroup],
-    lookahead: &str,
-) -> Value {
-    json!({
-        "format": 1,
-        "codec": "golden-sun-kind1-grid",
-        "decoded_size": decoded_size,
-        "encoded_size": encoded_size,
-        "tokens": tokens.iter().map(token_value).collect::<Vec<_>>(),
-        "lookahead": lookahead,
-    })
-}
-
 fn plan_parts(plan: &Value) -> Result<(Vec<PaletteGroup>, String)> {
     let object: &Map<String, Value> = plan
         .as_object()
@@ -351,75 +257,6 @@ pub fn build_grid(plan: &Value, directory: &Path) -> Result<Vec<u8>> {
     Ok(encoded)
 }
 
-pub fn export_grid(data: &[u8], directory: &Path) -> Result<ExportStats> {
-    if data.is_empty() || data[0] != 1 {
-        return Err(err("kind-1 map grid must begin with byte 1"));
-    }
-    let (decoded, used, tokens) =
-        decode_palette_trace(data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
-    let (planes, mask) = transform(&decoded)?;
-    fs::create_dir_all(directory).map_err(|error| format!("{}: {error}", directory.display()))?;
-    let layers = planes
-        .iter()
-        .chain(std::iter::once(&mask))
-        .flatten()
-        .copied()
-        .collect::<Vec<_>>();
-    let image = byte_png(&layers, WIDTH as f64).map_err(|error| error.0)?.0;
-    write(&grid_path(directory, "layers.png"), &image)?;
-    let lookahead = import_asset::hex(&data[used..]);
-    let mut plan = plan_value(decoded.len(), data.len(), &tokens, &lookahead);
-    plan["atlas_layers"] = json!(5);
-    let plan_text = serde_json::to_string(&plan).map_err(|error| error.to_string())?;
-    write(&plan_path(directory), format!("{plan_text}\n").as_bytes())?;
-    let rebuilt = build_grid(&plan, directory)?;
-    if rebuilt != data {
-        return Err(err("exported kind-1 grid does not round-trip"));
-    }
-    Ok(ExportStats {
-        tokens: tokens.len(),
-        sentinels: mask.iter().filter(|value| **value != 0).count(),
-        encoded: data.len(),
-    })
-}
-
-pub fn verify_grid(
-    rom: &[u8],
-    address: usize,
-    size: usize,
-    directory: &Path,
-) -> Result<ExportStats> {
-    let data = rom_range(rom, address, size)?;
-    let plan_text = fs::read_to_string(plan_path(directory)).map_err(|error| error.to_string())?;
-    let plan: Value = serde_json::from_str(&plan_text).map_err(|error| error.to_string())?;
-    let rebuilt = build_grid(&plan, directory)?;
-    if rebuilt != data {
-        return Err(err("kind-1 grid source differs from ROM"));
-    }
-    let (decoded, _, tokens) =
-        decode_palette_trace(&data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
-    let (_, mask) = transform(&decoded)?;
-    Ok(ExportStats {
-        tokens: tokens.len(),
-        sentinels: mask.iter().filter(|value| **value != 0).count(),
-        encoded: data.len(),
-    })
-}
-
-fn rom_range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {
-    if address < ROM_BASE {
-        return Err(err("kind-1 grid range is outside the ROM"));
-    }
-    let start = address - ROM_BASE;
-    let end = start
-        .checked_add(size)
-        .ok_or_else(|| err("kind-1 grid range is outside the ROM"))?;
-    if end > rom.len() {
-        return Err(err("kind-1 grid range is outside the ROM"));
-    }
-    Ok(&rom[start..end])
-}
-
 pub fn self_test() -> Result<()> {
     let mut decoded = vec![0u8; DECODED_SIZE];
     for (index, value) in [0x0fff_u16, 0x2fff, 0x1234, 0x4fff].into_iter().enumerate() {
@@ -432,8 +269,15 @@ pub fn self_test() -> Result<()> {
     {
         return Err(err("kind-1 map transform self-test failed"));
     }
-    if mask_png(&mask)?.is_empty() {
-        return Err(err("kind-1 mask PNG self-test failed"));
+    let mut invalid_mask = mask.clone();
+    invalid_mask[0] = 2;
+    if inverse(&planes, &invalid_mask).is_ok() || inverse(&planes, &mask[..PLANE - 1]).is_ok() {
+        return Err(err("invalid kind-1 sentinel mask was accepted"));
     }
     Ok(())
+}
+
+#[test]
+fn grid_transform_round_trip() -> Result<()> {
+    self_test()
 }

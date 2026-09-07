@@ -21006,6 +21006,16 @@
           "state": "exact-c"
         },
         {
+          "address": "0x0200007c",
+          "extent": 104,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020000e4",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
           "address": "0x02000144",
           "extent": 40,
           "state": "exact-c"

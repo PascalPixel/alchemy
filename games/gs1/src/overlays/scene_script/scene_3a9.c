@@ -235,6 +235,74 @@ u8 *SceneData_GetTable8728(void)
     return (u8 *)0x02008728;
 }
 
+extern s16 Data_02000240[];
+extern u8 Value_00000064;
+extern u8 Value_00000065;
+extern u8 Data_020088d4[];
+extern u8 Data_0200879c[];
+extern u8 Data_02008a0c[];
+extern u8 Data_02008784[];
+extern void Func_020004d0(void *);
+extern u8 Data_02008c88[];
+extern u8 Data_02008a48[];
+extern u8 Data_02008eb0[];
+extern u8 Data_02008a3c[];
+
+u8 *SceneData_SelectAndPrepareTable(void)
+{
+    s32 id = Data_02000240[224];
+    if (id == (s32)&Value_00000064) {
+        s32 state = Data_02000240[225];
+        u8 *tbl;
+        switch (state) {
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 17:
+            tbl = Data_020088d4;
+            break;
+        default:
+            tbl = Data_0200879c;
+            break;
+        }
+        Func_020004d0(tbl);
+        return tbl;
+    }
+    if (id == (s32)&Value_00000065) {
+        return Data_02008a0c;
+    }
+    return Data_02008784;
+}
+
+u8 *SceneData_SelectSubStateTable(void)
+{
+    s32 id = Data_02000240[224];
+    if (id == (s32)&Value_00000064) {
+        s32 state = Data_02000240[225];
+        switch (state) {
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 17:
+            return Data_02008c88;
+        default:
+            return Data_02008a48;
+        }
+    }
+    if (id == (s32)&Value_00000065) {
+        return Data_02008eb0;
+    }
+    return Data_02008a3c;
+}
+
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Func_02000558();

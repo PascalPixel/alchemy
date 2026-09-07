@@ -1,7 +1,6 @@
 use extract_resource::{encode_palette, PaletteGroup, PaletteOperation};
 use import_asset::gba_graphics;
 use serde_json::Value;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 pub const BATTLE_DATA_ADDRESS: u32 = 0x0809_c410;
 pub const BATTLE_DATA_END: u32 = 0x080a_1000;
@@ -973,39 +972,4 @@ pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
         return err("battle-effect source extent differs");
     }
     Ok(output)
-}
-const USAGE: &str = "usage: battle-effect-data build-stdout SOURCE --root ASSETS";
-fn option(args: &[String], name: &str) -> Option<String> {
-    args.iter()
-        .position(|arg| arg == name)
-        .and_then(|index| args.get(index + 1))
-        .cloned()
-}
-fn validate_options(args: &[String]) -> Res<()> {
-    if args.len() != 4
-        || args[0] != "build-stdout"
-        || args[1].is_empty()
-        || args[2] != "--root"
-        || args[3].is_empty()
-    {
-        return err(USAGE);
-    }
-    Ok(())
-}
-pub fn run(args: Vec<String>) -> Res<()> {
-    if args.is_empty() || args == ["-h"] || args == ["--help"] {
-        println!("{USAGE}");
-        return Ok(());
-    }
-    validate_options(&args)?;
-    let input = Path::new(&args[1]);
-    let root = option(&args, "--root").ok_or(USAGE)?;
-    let text = String::from_utf8_lossy(&read_file(input)?).into_owned();
-    let document: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
-    let built = build_battle_effect_data(&document, Path::new(&root))?;
-    std::io::stdout()
-        .write_all(&built)
-        .map_err(|error| error.to_string())?;
-    eprintln!("{{}}");
-    Ok(())
 }

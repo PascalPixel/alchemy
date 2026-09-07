@@ -1,8 +1,5 @@
-use canonical_json::canonical_json;
 use serde_json::{Map, Value};
 use std::collections::HashSet;
-use std::fs;
-use std::io::{self, Write};
 
 pub const ADDRESS: usize = 0x0807_a828;
 pub const END: usize = 0x0808_a000;
@@ -786,22 +783,6 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
         ));
     }
     Ok(result)
-}
-
-pub fn run(args: Vec<String>) -> Result<()> {
-    let [command, source] = args.as_slice() else {
-        return err("usage: assets 5 (build-stdout|format) SOURCE");
-    };
-    let text = fs::read_to_string(source).map_err(|error| format!("{source}: {error}"))?;
-    let value: Value = serde_json::from_str(&text).map_err(|error| format!("{source}: {error}"))?;
-    match command.as_str() {
-        "build-stdout" => io::stdout()
-            .write_all(&build_gameplay_databases(&value)?)
-            .map_err(|error| error.to_string()),
-        "format" => fs::write(source, format!("{}\n", canonical_json(&value)))
-            .map_err(|error| error.to_string()),
-        _ => err("usage: assets 5 (build-stdout|format) SOURCE"),
-    }
 }
 
 #[cfg(test)]

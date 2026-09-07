@@ -375,7 +375,7 @@ Do not copy a framework for worker waves, template packs, inferred aggregate
 contexts or report inventories.
 
 Alchemy also retains the dependencies its actual game build requires:
-`assets` and its Golden Sun codecs rebuild maintained data; `overlay` handles
+`build assets` and its Golden Sun codecs rebuild maintained data; `overlay` handles
 the loader's relocation format; `cross-edition` checks edition differences;
 `check` enforces source, classification, compiler and publication contracts.
 These are project integration, not tools to take to another game.
@@ -404,13 +404,25 @@ to check their domain and uniqueness without a game-specific validator.
 The inventory remains mandatory, including game-specific and internal libraries.
 Build dependency status is not an exemption from review or consolidation.
 
+Build maintained asset packages with `alchemy build assets`; full-ROM comparison
+verifies their production extents. The former `alchemy assets` command tree and
+its per-package extraction/build CLIs are retired. Their required codecs remain
+internal build dependencies pending format migration, not supported commands.
+Do not reintroduce parallel package-specific build or verify commands.
+
+Use `alchemy convert FORMAT INPUT OUTPUT` for file conversions: `words2bin`,
+`pairs2bin`, `tilemap2bin`, `png2gba4bpp`, `png2gba8bpp`, and `png2gbapal`.
+These have no game addresses or default ROMs and refuse to overwrite an existing
+output. `alchemy font` retains the project's shared font reconstruction pipeline;
+it is project integration, not part of the portable kit.
+
 The following is the complete library and command index.
 `make tooling-index-check` checks every immediate tool directory exactly once;
 libraries are not additional public command surfaces.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, assets, decompile, disassemble, inspect, diff, adopt, match, families, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, families, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 | [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
 | [asset-paths](tools/asset-paths/) | Own canonical tracked asset paths. |
@@ -442,9 +454,6 @@ libraries are not additional public command surfaces.
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import editable assets into GBA formats. |
 | [map-load-table](tools/map-load-table/) | Encode and verify map-loading tables. |
-| [pairtable](tools/pairtable/) | Decode paired table records. |
-| [tilemap](tools/tilemap/) | Encode and decode GBA tilemaps. |
-| [wordstream](tools/wordstream/) | Decode word-oriented ROM streams. |
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |

@@ -1,10 +1,10 @@
 use std::process::ExitCode;
 
 mod allocator;
-mod assets;
 mod build;
 mod build_assets;
 mod check;
+mod convert;
 mod cross_edition;
 mod families;
 mod flatten;
@@ -27,7 +27,8 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild and report ROM coverage\n\
   check                 run repository contract checks\n\
-  assets                extract and encode assets; font extracts shared fonts\n\
+  convert               convert named file formats (see convert --help)\n\
+  font                  rebuild the shared Golden Sun font\n\
   overlay               legacy overlay operations during migration";
 
 fn main() -> ExitCode {
@@ -53,14 +54,14 @@ fn main() -> ExitCode {
                 ExitCode::from(2)
             }
         }
-        "assets" if rest.first().map(String::as_str) == Some("font") => font::entry(&rest[1..]),
+        "font" => font::entry(rest),
         "build" if rest.first().map(String::as_str) == Some("assets") => {
             build_assets::entry(&rest[1..])
         }
         "build" => build::entry(rest),
         "verify" | "coverage" => make_target(command, rest),
         "check" => check::entry(rest),
-        "assets" => assets::entry(rest),
+        "convert" => result(convert::run(rest)),
         "overlay" => overlay::entry(rest),
         "decompile" => decompile_command("draft", rest),
         "adopt" => decompile_command("adopt", rest),

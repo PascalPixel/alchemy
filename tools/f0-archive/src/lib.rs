@@ -1,5 +1,3 @@
-pub mod cli;
-
 use import_asset::{indexed_png, rgba_png};
 use serde_json::Value;
 use std::fs;

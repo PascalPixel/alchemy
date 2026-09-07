@@ -11,5 +11,5 @@ path = "src/lib.rs"
 
 [dependencies]
 extract-resource = { path = "../extract-resource" }
-tilemap = { path = "../tilemap" }
+import-asset = { path = "../import-asset" }
 serde_json = { version = "1", features = ["preserve_order"] }

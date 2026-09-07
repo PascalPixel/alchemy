@@ -3,10 +3,7 @@ use extract_resource::{encode_palette, PaletteGroup, PaletteOperation};
 use import_asset::gba_graphics;
 use serde_json::Value;
 use std::fs;
-use std::io::{self, Write};
 use std::path::{Path, PathBuf};
-
-const USAGE: &str = "usage: title_resources build-stdout PLAN";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Error(pub String);
@@ -232,15 +229,4 @@ pub fn build_title_resource(plan_path: &Path) -> Result<Vec<u8>, Error> {
         encoded.extend(build_alignment_tail(&tail));
     }
     Ok(encoded)
-}
-
-pub fn run(args: Vec<String>) -> Result<(), Error> {
-    if args.first().map(String::as_str) != Some("build-stdout") {
-        return Err(err(USAGE));
-    }
-    let plan = args.get(1).ok_or_else(|| err(USAGE))?;
-    let built = build_title_resource(Path::new(plan))?;
-    io::stdout()
-        .write_all(&built)
-        .map_err(|e| err(e.to_string()))
 }

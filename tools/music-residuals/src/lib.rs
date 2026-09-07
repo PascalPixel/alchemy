@@ -4,8 +4,6 @@
 //! audited reserve stream, and the zero-filled tail alignment. Sequence byte
 //! emission is shared with the native `music` crate.
 
-pub mod cli;
-
 use std::path::Path;
 
 use music::build_reserve_sequence;

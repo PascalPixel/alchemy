@@ -1,4 +1,6 @@
 use std::io::Cursor;
+mod text;
+pub use text::{import_pairs, import_tilemap, import_words};
 pub type Rgb = [u8; 3];
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Report(pub Vec<(String, f64)>);

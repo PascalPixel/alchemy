@@ -1,4 +1,3 @@
-pub mod cli;
 use serde_json::{Map, Value};
 use std::path::Path;
 fn get<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {

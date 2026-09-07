@@ -1,15 +1,12 @@
-pub mod cli;
-
 use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::Value;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 pub const ADDRESS: usize = 0x080c2a0a;
 pub const END: usize = 0x080c5b30;
 pub const SIZE: usize = END - ADDRESS;
-const ROM_BASE: usize = 0x08000000;
 const KIHON_END: usize = 0x080c3734;
 const KOMA_END: usize = 0x080c3f34;
 const HAICHI_ADDRESS: usize = KOMA_END;
@@ -573,23 +570,4 @@ pub fn build_sentou_hyouji(index_path: &Path) -> Result<Vec<u8>> {
         return err("battle display output size differs");
     }
     Ok(out)
-}
-pub fn verify_sentou_hyouji(rom: &[u8], index: &Path) -> Result<()> {
-    let start = ADDRESS - ROM_BASE;
-    let expected = rom
-        .get(start..start + SIZE)
-        .ok_or_else(|| Error("ROM is too small for battle display data".into()))?;
-    let built = build_sentou_hyouji(index)?;
-    if built != expected {
-        return err("battle display differs from ROM");
-    }
-    Ok(())
-}
-pub fn self_test() -> Result<()> {
-    let index = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../assets/graphics/sentou_hyouji_index.json");
-    if index.exists() {
-        build_sentou_hyouji(&index)?;
-    }
-    Ok(())
 }

@@ -1,5 +1,3 @@
-pub mod cli;
-
 use serde_json::Value;
 
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;

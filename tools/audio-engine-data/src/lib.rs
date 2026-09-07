@@ -1,4 +1,3 @@
-use canonical_json::is_canonical_json_text;
 use serde_json::{Map, Value};
 use std::collections::BTreeSet;
 use std::fs;
@@ -18,7 +17,6 @@ const SOURCE_NAMES: [&str; 4] = [
     "waveforms.tsv",
     "players.tsv",
 ];
-const USAGE: &str = "usage: audio-engine-data {build-stdout INDEX|extract-control JSON TSV|extract-waveforms JSON TSV|extract-voicegroups JSON SAMPLE_INDEX TSV|extract-players JSON TSV}";
 const CONTROL_SECTIONS: [(&str, usize); 13] = [
     ("leading_alignment", 2),
     ("diagnostic_sounds", 3),
@@ -39,16 +37,6 @@ fn error<T>(message: impl Into<String>) -> Result<T> {
 }
 fn hex(value: usize) -> String {
     format!("0x{value:08x}")
-}
-fn canonical_document(path: &Path, label: &str) -> Result<Value> {
-    let bytes = fs::read(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let text = String::from_utf8_lossy(&bytes);
-    let value: Value =
-        serde_json::from_str(&text).map_err(|e| format!("{label}: invalid JSON: {e}"))?;
-    if !is_canonical_json_text(&text, &value) {
-        return error(format!("{label} is not canonical JSON"));
-    }
-    Ok(value)
 }
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>> {
     match value {
@@ -268,61 +256,6 @@ fn child(index_path: &Path, name: &str) -> Result<PathBuf> {
     }
     Ok(path)
 }
-fn read_source(path: &Path, label: &str, keys: &[&str]) -> Result<Map<String, Value>> {
-    let value = canonical_document(path, label)?;
-    let object = object(&value, label)?;
-    exact_keys(object, keys, label)?;
-    Ok(object.clone())
-}
-fn check_extent(
-    object: &Map<String, Value>,
-    kind: &str,
-    address: usize,
-    end: usize,
-    label: &str,
-) -> Result<()> {
-    if integer(field(object, "format")?, 0, i64::MAX, label)? != 1
-        || field(object, "kind")?.as_str() != Some(kind)
-        || field(object, "address")?.as_str() != Some(&hex(address))
-        || field(object, "end")?.as_str() != Some(&hex(end))
-    {
-        return error(format!("{label} extent differs"));
-    }
-    Ok(())
-}
-fn read_control(path: &Path) -> Result<Map<String, Value>> {
-    let object = read_source(
-        path,
-        "audio-engine control",
-        &[
-            "format",
-            "kind",
-            "address",
-            "end",
-            "leading_alignment",
-            "diagnostic_sounds",
-            "command_dispatch",
-            "direct_pitch_codes",
-            "direct_frequency_ratios",
-            "pcm_samples_per_vblank",
-            "cgb_pitch_codes",
-            "cgb_frequency_steps",
-            "noise_pitch_codes",
-            "cgb_volume_registers",
-            "wait_durations",
-            "wait_alignment",
-            "cgb_command_dispatch",
-        ],
-    )?;
-    check_extent(
-        &object,
-        "golden-sun-audio-engine-control",
-        AUDIO_ENGINE_ADDRESS,
-        CONTROL_END,
-        "audio-engine control",
-    )?;
-    Ok(object)
-}
 fn build_control(source: &Map<String, Value>) -> Result<Vec<u8>> {
     let diagnostic = array(field(source, "diagnostic_sounds")?, 3, "diagnostic sounds")?
         .iter()
@@ -484,37 +417,6 @@ fn build_control_file(path: &Path) -> Result<(Vec<u8>, PathBuf)> {
     Ok((build_control(&source)?, canonical_path(path)?))
 }
 
-fn extract_control(source: &Path, table: &Path) -> Result<()> {
-    let control = read_control(source)?;
-    let _ = build_control(&control)?;
-    let mut output =
-        String::from("# Ordered GS1 audio-engine control tables.\nsection\tindex\tvalue\n");
-    for (section, count) in CONTROL_SECTIONS {
-        let values = if matches!(section, "leading_alignment" | "wait_alignment") {
-            let alignment = field(&control, section)?
-                .as_object()
-                .ok_or("audio-control alignment differs")?;
-            let fill = field(alignment, "fill")?
-                .as_i64()
-                .ok_or("audio-control alignment fill differs")?;
-            vec![Value::from(fill); count]
-        } else {
-            field(&control, section)?
-                .as_array()
-                .filter(|values| values.len() == count)
-                .cloned()
-                .ok_or_else(|| format!("audio control {section} differs"))?
-        };
-        for (index, value) in values.iter().enumerate() {
-            let value = value
-                .as_str()
-                .map(str::to_string)
-                .unwrap_or_else(|| value.to_string());
-            output.push_str(&format!("{section}\t{index}\t{value}\n"));
-        }
-    }
-    fs::write(table, output).map_err(|error| format!("{}: {error}", table.display()))
-}
 fn tone_address(value: &Value) -> Result<usize> {
     let Some(symbol) = value.as_str() else {
         return error("rhythm tone symbol differs");
@@ -541,9 +443,6 @@ fn tone_address(value: &Value) -> Result<usize> {
     } else {
         BANK_1_ADDRESS
     }) + record * 12)
-}
-fn waveform_symbol(index: usize) -> String {
-    format!("wave_{index:02}")
 }
 fn waveform_address(value: &Value) -> Result<usize> {
     let Some(symbol) = value.as_str() else {
@@ -658,61 +557,6 @@ fn build_tone_record(value: &Value, label: &str) -> Result<Vec<u8>> {
         4,
         &format!("{label} envelope"),
     )?);
-    Ok(output)
-}
-fn read_tones(path: &Path) -> Result<Map<String, Value>> {
-    let object = read_source(
-        path,
-        "audio tone banks",
-        &["format", "kind", "address", "end", "banks"],
-    )?;
-    check_extent(
-        &object,
-        "golden-sun-audio-tone-banks",
-        BANK_0_ADDRESS,
-        WAVEFORM_ADDRESS,
-        "audio tone banks",
-    )?;
-    Ok(object)
-}
-fn build_tones(source: &Map<String, Value>) -> Result<Vec<u8>> {
-    let banks = array(field(source, "banks")?, 2, "tone banks")?;
-    let mut output = Vec::new();
-    for (bank, bank_value) in banks.iter().enumerate() {
-        let item = object(bank_value, &format!("tone bank {bank}"))?;
-        exact_keys(
-            item,
-            &["name", "address", "records"],
-            &format!("tone bank {bank}"),
-        )?;
-        let base = if bank == 0 {
-            BANK_0_ADDRESS
-        } else {
-            BANK_1_ADDRESS
-        };
-        let count = if bank == 0 { 144 } else { 81 };
-        if field(item, "name")?.as_str() != Some(&format!("bank_{bank}"))
-            || field(item, "address")?.as_str() != Some(&hex(base))
-        {
-            return error(format!("tone bank {bank} identity differs"));
-        }
-        for (index, record) in array(
-            field(item, "records")?,
-            count,
-            &format!("tone bank {bank} records"),
-        )?
-        .iter()
-        .enumerate()
-        {
-            output.extend(build_tone_record(
-                record,
-                &format!("tone bank {bank} record {index}"),
-            )?);
-        }
-    }
-    if output.len() != WAVEFORM_ADDRESS - BANK_0_ADDRESS {
-        return error("audio tone-bank size differs");
-    }
     Ok(output)
 }
 
@@ -874,161 +718,6 @@ fn build_tone_files(index: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
     Ok((output, sources))
 }
 
-fn extract_voicegroups(source: &Path, sample_index: &Path, table: &Path) -> Result<()> {
-    let tones = read_tones(source)?;
-    let _ = build_tones(&tones)?;
-    let samples = sample_source_addresses(sample_index)?
-        .into_iter()
-        .map(|(source, address)| (address, source))
-        .collect::<std::collections::BTreeMap<_, _>>();
-    let sound = table
-        .parent()
-        .and_then(Path::parent)
-        .ok_or("voice-group output location differs")?;
-    fs::create_dir_all(table.parent().unwrap()).map_err(|error| error.to_string())?;
-    let banks = field(&tones, "banks")?
-        .as_array()
-        .ok_or("tone banks differ")?;
-    let mut catalog = String::from(
-        "# Ordered GS1 voice groups used by the SMSH sequence headers.\nbank\taddress\tsource\n",
-    );
-    for (bank, value) in banks.iter().enumerate() {
-        let records = value
-            .get("records")
-            .and_then(Value::as_array)
-            .ok_or("tone-bank records differ")?;
-        let base = if bank == 0 {
-            BANK_0_ADDRESS
-        } else {
-            BANK_1_ADDRESS
-        };
-        let relative = format!("voicegroups/voicegroup_{bank:03}.tsv");
-        catalog.push_str(&format!("{bank}\t{}\t{relative}\n", hex(base)));
-        let mut text = String::from(
-            "# SMSH 12-byte voice records.\nprogram\tkind\tfixed_pitch\tkey\tlength\tpan_sweep\tsource\tattack\tdecay\tsustain\trelease\n",
-        );
-        for (program, record) in records.iter().enumerate() {
-            let object = record.as_object().ok_or("tone record differs")?;
-            let kind = field(object, "kind")?.as_str().ok_or("tone kind differs")?;
-            let fixed = object
-                .get("fixed_pitch")
-                .and_then(Value::as_bool)
-                .unwrap_or(false);
-            let key = field(object, "key")?.as_u64().ok_or("tone key differs")?;
-            let length = field(object, "length")?
-                .as_u64()
-                .ok_or("tone length differs")?;
-            let pan = field(object, "pan_sweep")?
-                .as_u64()
-                .ok_or("tone pan differs")?;
-            let source = match kind {
-                "pcm" => {
-                    let address = field(object, "sample")?
-                        .as_str()
-                        .ok_or("tone sample differs")?;
-                    samples
-                        .get(address)
-                        .cloned()
-                        .unwrap_or_else(|| format!("embedded_pcm_{address}"))
-                }
-                "wave" => format!(
-                    "programmable_wave_samples/{}.pcm4",
-                    field(object, "waveform")?
-                        .as_str()
-                        .ok_or("tone waveform differs")?
-                ),
-                "rhythm" => {
-                    let tones = field(object, "tones")?
-                        .as_str()
-                        .ok_or("rhythm table differs")?;
-                    let suffix = tones.strip_prefix("bank_").ok_or("rhythm table differs")?;
-                    let (target_bank, target_program) =
-                        suffix.split_once('_').ok_or("rhythm table differs")?;
-                    format!(
-                        "voicegroup_{target_bank}:{}",
-                        target_program
-                            .parse::<u8>()
-                            .map_err(|_| "rhythm table differs")?
-                    )
-                }
-                _ => field(object, "generator")?
-                    .as_u64()
-                    .ok_or("tone generator differs")?
-                    .to_string(),
-            };
-            let envelope = object
-                .get("envelope")
-                .and_then(Value::as_array)
-                .map(|values| {
-                    values
-                        .iter()
-                        .map(|value| value.as_u64().unwrap_or(0))
-                        .collect::<Vec<_>>()
-                })
-                .unwrap_or_else(|| vec![0; 4]);
-            text.push_str(&format!(
-                "{program}\t{kind}\t{fixed}\t{key}\t{length}\t{pan}\t{source}\t{}\t{}\t{}\t{}\n",
-                envelope[0], envelope[1], envelope[2], envelope[3]
-            ));
-        }
-        fs::write(sound.join(&relative), text).map_err(|error| error.to_string())?;
-    }
-    fs::write(table, catalog).map_err(|error| error.to_string())
-}
-fn read_waveforms(path: &Path) -> Result<Map<String, Value>> {
-    let object = read_source(
-        path,
-        "CGB waveforms",
-        &["format", "kind", "address", "end", "waveforms"],
-    )?;
-    check_extent(
-        &object,
-        "golden-sun-cgb-waveforms",
-        WAVEFORM_ADDRESS,
-        PLAYER_ADDRESS,
-        "CGB waveforms",
-    )?;
-    Ok(object)
-}
-fn build_waveforms(source: &Map<String, Value>) -> Result<Vec<u8>> {
-    let mut output = vec![0; 18 * 16];
-    for (index, item) in array(field(source, "waveforms")?, 18, "CGB waveforms")?
-        .iter()
-        .enumerate()
-    {
-        let object = object(item, &format!("CGB waveform {index}"))?;
-        exact_keys(
-            object,
-            &["name", "samples"],
-            &format!("CGB waveform {index}"),
-        )?;
-        if field(object, "name")?.as_str() != Some(&waveform_symbol(index)) {
-            return error(format!("CGB waveform {index} name differs"));
-        }
-        for (sample, value) in array(
-            field(object, "samples")?,
-            32,
-            &format!("CGB waveform {index} samples"),
-        )?
-        .iter()
-        .enumerate()
-        {
-            let value = integer(
-                value,
-                0,
-                15,
-                &format!("CGB waveform {index} sample {sample}"),
-            )? as u8;
-            if sample % 2 == 0 {
-                output[index * 16 + sample / 2] = value << 4;
-            } else {
-                output[index * 16 + sample / 2] |= value;
-            }
-        }
-    }
-    Ok(output)
-}
-
 fn build_waveform_files(index: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
     let text =
         fs::read_to_string(index).map_err(|error| format!("{}: {error}", index.display()))?;
@@ -1066,40 +755,6 @@ fn build_waveform_files(index: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
     Ok((data, sources))
 }
 
-fn extract_waveforms(source: &Path, table: &Path) -> Result<()> {
-    let packed = build_waveforms(&read_waveforms(source)?)?;
-    let root = table.parent().unwrap_or_else(|| Path::new("."));
-    let directory = root.join("programmable_wave_samples");
-    fs::create_dir_all(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
-    let mut text =
-        String::from("# Eighteen packed 4-bit CGB waveforms used by GS1.\nwave\taddress\tsource\n");
-    for wave in 0..18 {
-        let relative = format!("programmable_wave_samples/wave_{wave:02}.pcm4");
-        let path = root.join(&relative);
-        fs::write(&path, &packed[wave * 16..wave * 16 + 16])
-            .map_err(|error| format!("{}: {error}", path.display()))?;
-        text.push_str(&format!(
-            "{wave}\t{}\t{relative}\n",
-            hex(WAVEFORM_ADDRESS + wave * 16)
-        ));
-    }
-    fs::write(table, text).map_err(|error| format!("{}: {error}", table.display()))
-}
-fn read_players(path: &Path) -> Result<Map<String, Value>> {
-    let object = read_source(
-        path,
-        "music players",
-        &["format", "kind", "address", "end", "players"],
-    )?;
-    check_extent(
-        &object,
-        "golden-sun-music-players",
-        PLAYER_ADDRESS,
-        AUDIO_ENGINE_END,
-        "music players",
-    )?;
-    Ok(object)
-}
 fn ewram_address(value: &Value, label: &str) -> Result<usize> {
     address(value, label, 0x0200_0000, 0x0203_ffff)
 }
@@ -1182,31 +837,6 @@ fn build_player_file(path: &Path) -> Result<(Vec<u8>, PathBuf)> {
     ))
 }
 
-fn extract_players(source: &Path, table: &Path) -> Result<()> {
-    let players = read_players(source)?;
-    let _ = build_players(&players)?;
-    let rows = field(&players, "players")?
-        .as_array()
-        .ok_or("music players differ")?;
-    let mut output = String::from(
-        "# GS1 music-player state and track-storage assignments.\nplayer\tstate\ttrack_storage\tmax_tracks\n",
-    );
-    for (player, row) in rows.iter().enumerate() {
-        output.push_str(&format!(
-            "{player}\t{}\t{}\t{}\n",
-            row.get("state")
-                .and_then(Value::as_str)
-                .ok_or("music-player state differs")?,
-            row.get("track_storage")
-                .and_then(Value::as_str)
-                .ok_or("music-player storage differs")?,
-            row.get("max_tracks")
-                .and_then(Value::as_u64)
-                .ok_or("music-player track count differs")?,
-        ));
-    }
-    fs::write(table, output).map_err(|error| format!("{}: {error}", table.display()))
-}
 #[derive(Debug, Clone)]
 pub struct BuiltAudioEngineData {
     pub address: usize,
@@ -1232,36 +862,4 @@ pub fn build_audio_engine_data(index_path: &Path) -> Result<BuiltAudioEngineData
         data,
         sources: all,
     })
-}
-pub fn run(args: Vec<String>) -> Result<Option<String>> {
-    if args == ["-h"] || args == ["--help"] {
-        return Ok(Some(USAGE.into()));
-    }
-    if args.len() == 2 && args[0] == "build-stdout" {
-        let built = build_audio_engine_data(Path::new(&args[1]))?;
-        std::io::Write::write_all(&mut std::io::stdout(), &built.data)
-            .map_err(|error| error.to_string())?;
-        return Ok(None);
-    }
-    if args.len() == 3 && args[0] == "extract-waveforms" {
-        extract_waveforms(Path::new(&args[1]), Path::new(&args[2]))?;
-        return Ok(Some("waveforms=18 format=pcm4".into()));
-    }
-    if args.len() == 3 && args[0] == "extract-control" {
-        extract_control(Path::new(&args[1]), Path::new(&args[2]))?;
-        return Ok(Some("control-sections=13".into()));
-    }
-    if args.len() == 4 && args[0] == "extract-voicegroups" {
-        extract_voicegroups(
-            Path::new(&args[1]),
-            Path::new(&args[2]),
-            Path::new(&args[3]),
-        )?;
-        return Ok(Some("voicegroups=2 records=225".into()));
-    }
-    if args.len() == 3 && args[0] == "extract-players" {
-        extract_players(Path::new(&args[1]), Path::new(&args[2]))?;
-        return Ok(Some("players=8".into()));
-    }
-    error(USAGE)
 }

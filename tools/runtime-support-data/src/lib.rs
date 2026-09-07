@@ -1,9 +1,6 @@
 //! Build-only encoder for the tracked runtime-support data package.
 
 use std::collections::BTreeMap;
-use std::fs;
-use std::io::{self, Write};
-use std::path::Path;
 
 use serde_json::{Map, Value};
 
@@ -514,42 +511,4 @@ pub fn parse_runtime_support_source(text: &str) -> Result<Value> {
         return fail("runtime-support source is not canonical JSON text");
     }
     Ok(value)
-}
-
-fn read_source(path: &Path) -> Result<Value> {
-    let text = fs::read_to_string(path).map_err(|error| Error(error.to_string()))?;
-    parse_runtime_support_source(&text)
-}
-
-pub fn run(args: Vec<String>) -> Result<()> {
-    const USAGE: &str =
-        "usage: runtime-support-data build-stdout SOURCE --address ADDRESS --size SIZE";
-    if args.is_empty() || args == ["-h"] || args == ["--help"] {
-        println!("{USAGE}");
-        return Ok(());
-    }
-    if args.len() != 6 || args[0] != "build-stdout" {
-        return fail(USAGE);
-    }
-    let source = read_source(Path::new(&args[1]))?;
-    let address = parse_cli_integer(&args[3], "build address")?;
-    let size = parse_cli_integer(&args[5], "build size")? as usize;
-    let bytes = build_runtime_support_component(&source, address, size)?;
-    io::stdout()
-        .write_all(&bytes)
-        .map_err(|error| Error(error.to_string()))?;
-    Ok(())
-}
-
-fn parse_cli_integer(value: &str, label: &str) -> Result<u32> {
-    let digits = value.strip_prefix("0x").unwrap_or(value);
-    if digits.is_empty()
-        || !digits.bytes().all(|byte| {
-            byte.is_ascii_digit() || (value.starts_with("0x") && (b'a'..=b'f').contains(&byte))
-        })
-    {
-        return fail(format!("{label} is not a canonical nonnegative integer"));
-    }
-    u32::from_str_radix(digits, if value.starts_with("0x") { 16 } else { 10 })
-        .map_err(|_| Error(format!("{label} is outside the supported range")))
 }

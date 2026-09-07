@@ -1,6 +1,5 @@
 use serde_json::{Map, Value};
 use std::fs;
-use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -18,7 +17,6 @@ const BIT_MASK_ADDRESS: u32 = 0x080e_f014;
 const ZERO_FILL_ADDRESS: u32 = 0x080e_f054;
 const TENKAI_ADDRESS: u32 = 0x080f_0000;
 const CALLBACK_COUNT: usize = 407;
-const USAGE: &str = "usage: sentou-kouka-runtime build-stdout INDEX";
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Error(pub String);
 impl std::fmt::Display for Error {
@@ -526,16 +524,4 @@ pub fn build_sentou_kouka_runtime(index_path: &Path) -> Result<Vec<u8>> {
         return fail("battle effect runtime output size differs");
     }
     Ok(output)
-}
-pub fn run(args: Vec<String>) -> Result<()> {
-    if args.is_empty() || args == ["-h"] || args == ["--help"] {
-        println!("{USAGE}");
-        return Ok(());
-    }
-    match args.as_slice() {
-        [command, index] if command == "build-stdout" => io::stdout()
-            .write_all(&build_sentou_kouka_runtime(Path::new(index))?)
-            .map_err(|error| Error(error.to_string())),
-        _ => fail(USAGE),
-    }
 }

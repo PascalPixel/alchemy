@@ -4,8 +4,6 @@
 //! and PNGs are authored assets, while the build and ROM verification paths are
 //! the parts needed by the native asset toolchain.
 
-pub mod cli;
-
 use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::Value;
@@ -16,6 +14,7 @@ pub const ROM_BASE: usize = 0x0800_0000;
 pub const ADDRESS: usize = 0x080a_ea4c;
 pub const END: usize = 0x080b_0000;
 pub const SIZE: usize = END - ADDRESS;
+#[cfg(test)]
 const DISPLAY_GLYPH_ADDRESS: usize = 0x080a_f20c;
 const MASK_TILE_ADDRESS: usize = 0x080a_f26c;
 const ALIGNMENT_ADDRESS: usize = 0x080a_f314;
@@ -483,20 +482,8 @@ pub fn build_sentou_gamen_data(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBu
     Ok((out, nested))
 }
 
-pub fn verify_sentou_gamen_data(rom: &[u8], index_path: &Path) -> Result<()> {
-    if rom.len() != 0x800000 {
-        return err("battle-screen verifier requires the canonical 8 MiB ROM");
-    }
-    let start = ADDRESS - ROM_BASE;
-    let expected = &rom[start..start + SIZE];
-    let (actual, _) = build_sentou_gamen_data(index_path)?;
-    if actual != expected {
-        return err("battle-screen package differs from ROM");
-    }
-    Ok(())
-}
-
-pub fn self_test() -> Result<()> {
+#[test]
+fn graphic_partitions() -> Result<()> {
     let dimensions = [(48, 64), (16, 8), (32, 16), (16, 16), (8, 8)];
     let mut cursor = ADDRESS;
     for (i, spec) in GRAPHICS.iter().enumerate() {

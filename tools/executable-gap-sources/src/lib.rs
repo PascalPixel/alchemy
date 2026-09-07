@@ -1,7 +1,5 @@
 //! Decode the typed executable-gap package used by the asset builder.
 
-pub mod cli;
-
 use serde_json::Value;
 use std::path::Path;
 

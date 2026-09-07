@@ -3,47 +3,73 @@
   "kind": "golden-sun-map-container",
   "header": {
     "format": 1,
-    "parameters": [
-      0,
-      0,
-      128,
-      128,
-      3,
-      2,
-      1,
-      0,
-      2,
-      2,
-      0,
-      0
-    ],
-    "records": [
-      [
-        0,
-        4112,
-        0,
-        65535
-      ],
-      [
-        128,
-        4112,
-        0,
-        65535
-      ],
-      [
-        32768,
-        4112,
-        0,
-        65535
-      ]
-    ],
-    "component_offsets": [
-      "0x3c",
-      "0x514",
-      "0x528",
-      "0x11c0",
-      "0x11c8",
-      "0x11d8"
+    "kind": "typed-table",
+    "address": "0x086c992c",
+    "size": "0x3c",
+    "segments": [
+      {
+        "name": "parameters",
+        "address": "0x086c992c",
+        "end": "0x086c9938",
+        "stride": 12,
+        "element": "u8",
+        "values": [
+          0,
+          0,
+          128,
+          128,
+          3,
+          2,
+          1,
+          0,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "records",
+        "address": "0x086c9938",
+        "end": "0x086c9950",
+        "stride": 8,
+        "element": "le-u16",
+        "values": [
+          [
+            0,
+            4112,
+            0,
+            65535
+          ],
+          [
+            128,
+            4112,
+            0,
+            65535
+          ],
+          [
+            32768,
+            4112,
+            0,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "component_offsets",
+        "address": "0x086c9950",
+        "end": "0x086c9968",
+        "stride": 4,
+        "element": "le-u32",
+        "values": [
+          "0x3c",
+          "0x514",
+          "0x528",
+          "0x11c0",
+          "0x11c8",
+          "0x11d8"
+        ]
+      }
     ]
   },
   "metatiles": {
@@ -3269,6 +3295,76 @@
   },
   "descriptors": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 28,
+    "encoded_size": 20,
+    "tokens": [
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        4,
+        1
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        3
+      ]
+    ],
+    "lookahead": "00",
+    "component": "map-descriptors-4byte",
     "record_size": 4,
     "records": [
       [
@@ -3313,194 +3409,137 @@
         0,
         0
       ]
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 28,
-      "encoded_size": 20,
-      "tokens": [
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          4,
-          1
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          3
-        ]
-      ],
-      "lookahead": "00",
-      "component": "map-descriptors-4byte",
-      "records": 7
-    }
+    ]
   },
   "animation_queues": {
     "format": 1,
+    "codec": "golden-sun-tagged-palette-lz",
+    "tag": 1,
+    "decoded_size": 2,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "g",
+        [
+          [
+            "l"
+          ],
+          [
+            "l"
+          ],
+          [
+            "e"
+          ]
+        ]
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-animation-queues",
+    "word_size": 2,
     "terminators": [
       "0xfe00",
       "0xffff"
     ],
-    "queues": [],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-tagged-palette-lz",
-      "tag": 1,
-      "decoded_size": 2,
-      "encoded_size": 8,
-      "tokens": [
-        [
-          "g",
-          [
-            [
-              "l"
-            ],
-            [
-              "l"
-            ],
-            [
-              "e"
-            ]
-          ]
-        ]
-      ],
-      "lookahead": "0000",
-      "component": "map-animation-queues",
-      "queues": 0,
-      "commands": 0
-    }
+    "words": [
+      "0xffff"
+    ]
   },
   "blend_animation": {
     "format": 1,
-    "word_size": 2,
-    "commands": [
-      {
-        "op": "set_blend_control",
-        "value": "0x3f42"
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x1007",
-        "duration": 20
-      },
-      {
-        "op": "jump",
-        "target_pair": 0
-      },
-      {
-        "op": "reset"
-      }
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-tagged-palette-lz",
-      "tag": 1,
-      "decoded_size": 10,
-      "encoded_size": 16,
-      "tokens": [
+    "codec": "golden-sun-tagged-palette-lz",
+    "tag": 1,
+    "decoded_size": 10,
+    "encoded_size": 16,
+    "tokens": [
+      [
+        "z"
+      ],
+      [
+        "g",
         [
-          "z"
-        ],
-        [
-          "g",
           [
-            [
-              "l"
-            ],
-            [
-              "l"
-            ],
-            [
-              "e"
-            ]
+            "l"
+          ],
+          [
+            "l"
+          ],
+          [
+            "e"
           ]
         ]
+      ]
+    ],
+    "lookahead": "00",
+    "component": "map-blend-animation",
+    "word_size": 2,
+    "words": [
+      [
+        "0x3f42"
       ],
-      "lookahead": "00",
-      "component": "map-blend-animation",
-      "commands": 4
-    }
+      [
+        "0x1007",
+        20
+      ],
+      [
+        "0xfe00"
+      ],
+      [
+        "0xffff"
+      ]
+    ]
   },
   "sparse_cells": {
     "format": 1,
+    "kind": "typed-table",
+    "address": "0x086cab04",
+    "size": "0x10",
     "record_size": 3,
-    "terminator": "ffffff",
-    "alignment_zeros": 1,
-    "records": [
-      [
-        47,
-        26,
-        100
-      ],
-      [
-        41,
-        29,
-        103
-      ],
-      [
-        42,
-        42,
-        102
-      ],
-      [
-        55,
-        43,
-        101
-      ]
+    "segments": [
+      {
+        "name": "records",
+        "address": "0x086cab04",
+        "end": "0x086cab10",
+        "stride": 3,
+        "element": "u8",
+        "values": [
+          [
+            47,
+            26,
+            100
+          ],
+          [
+            41,
+            29,
+            103
+          ],
+          [
+            42,
+            42,
+            102
+          ],
+          [
+            55,
+            43,
+            101
+          ]
+        ]
+      },
+      {
+        "name": "terminator",
+        "address": "0x086cab10",
+        "end": "0x086cab13",
+        "stride": 1,
+        "element": "u8",
+        "fill": 255
+      },
+      {
+        "name": "alignment",
+        "address": "0x086cab13",
+        "end": "0x086cab14",
+        "stride": 1,
+        "element": "u8",
+        "fill": 0
+      }
     ]
   }
 }

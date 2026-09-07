@@ -3,47 +3,73 @@
   "kind": "golden-sun-map-container",
   "header": {
     "format": 1,
-    "parameters": [
-      0,
-      0,
-      64,
-      64,
-      3,
-      2,
-      1,
-      0,
-      2,
-      2,
-      0,
-      0
-    ],
-    "records": [
-      [
-        0,
-        4112,
-        0,
-        65535
-      ],
-      [
-        64,
-        4112,
-        0,
-        65535
-      ],
-      [
-        16384,
-        4112,
-        0,
-        65535
-      ]
-    ],
-    "component_offsets": [
-      "0x3c",
-      "0xfb0",
-      "0xfe8",
-      "0x1c7c",
-      "0x1c84",
-      "0x1c8c"
+    "kind": "typed-table",
+    "address": "0x085ff240",
+    "size": "0x3c",
+    "segments": [
+      {
+        "name": "parameters",
+        "address": "0x085ff240",
+        "end": "0x085ff24c",
+        "stride": 12,
+        "element": "u8",
+        "values": [
+          0,
+          0,
+          64,
+          64,
+          3,
+          2,
+          1,
+          0,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "records",
+        "address": "0x085ff24c",
+        "end": "0x085ff264",
+        "stride": 8,
+        "element": "le-u16",
+        "values": [
+          [
+            0,
+            4112,
+            0,
+            65535
+          ],
+          [
+            64,
+            4112,
+            0,
+            65535
+          ],
+          [
+            16384,
+            4112,
+            0,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "component_offsets",
+        "address": "0x085ff264",
+        "end": "0x085ff27c",
+        "stride": 4,
+        "element": "le-u32",
+        "values": [
+          "0x3c",
+          "0xfb0",
+          "0xfe8",
+          "0x1c7c",
+          "0x1c84",
+          "0x1c8c"
+        ]
+      }
     ]
   },
   "metatiles": {
@@ -8794,6 +8820,202 @@
   },
   "descriptors": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 92,
+    "encoded_size": 56,
+    "tokens": [
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        4,
+        1
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        3
+      ],
+      [
+        "l",
+        3
+      ],
+      [
+        "c",
+        2,
+        7
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        9
+      ],
+      [
+        "l",
+        3
+      ],
+      [
+        "c",
+        2,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        19
+      ],
+      [
+        "c",
+        3,
+        20
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        16
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        8
+      ],
+      [
+        "c",
+        3,
+        7
+      ],
+      [
+        "c",
+        3,
+        5
+      ],
+      [
+        "c",
+        3,
+        16
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        25
+      ],
+      [
+        "c",
+        2,
+        16
+      ],
+      [
+        "c",
+        3,
+        40
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        2
+      ],
+      [
+        "c",
+        2,
+        21
+      ],
+      [
+        "c",
+        2,
+        2
+      ],
+      [
+        "c",
+        2,
+        16
+      ],
+      [
+        "c",
+        2,
+        47
+      ],
+      [
+        "c",
+        3,
+        8
+      ],
+      [
+        "c",
+        4,
+        28
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        4,
+        16
+      ],
+      [
+        "c",
+        3,
+        2
+      ],
+      [
+        "c",
+        2,
+        40
+      ],
+      [
+        "c",
+        2,
+        4
+      ],
+      [
+        "c",
+        2,
+        12
+      ],
+      [
+        "c",
+        2,
+        4
+      ]
+    ],
+    "lookahead": "000000",
+    "component": "map-descriptors-4byte",
     "record_size": 4,
     "records": [
       [
@@ -8934,299 +9156,111 @@
         4,
         0
       ]
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 92,
-      "encoded_size": 56,
-      "tokens": [
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          4,
-          1
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          3
-        ],
-        [
-          "l",
-          3
-        ],
-        [
-          "c",
-          2,
-          7
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          9
-        ],
-        [
-          "l",
-          3
-        ],
-        [
-          "c",
-          2,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          19
-        ],
-        [
-          "c",
-          3,
-          20
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          16
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          8
-        ],
-        [
-          "c",
-          3,
-          7
-        ],
-        [
-          "c",
-          3,
-          5
-        ],
-        [
-          "c",
-          3,
-          16
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          25
-        ],
-        [
-          "c",
-          2,
-          16
-        ],
-        [
-          "c",
-          3,
-          40
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          2
-        ],
-        [
-          "c",
-          2,
-          21
-        ],
-        [
-          "c",
-          2,
-          2
-        ],
-        [
-          "c",
-          2,
-          16
-        ],
-        [
-          "c",
-          2,
-          47
-        ],
-        [
-          "c",
-          3,
-          8
-        ],
-        [
-          "c",
-          4,
-          28
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          4,
-          16
-        ],
-        [
-          "c",
-          3,
-          2
-        ],
-        [
-          "c",
-          2,
-          40
-        ],
-        [
-          "c",
-          2,
-          4
-        ],
-        [
-          "c",
-          2,
-          12
-        ],
-        [
-          "c",
-          2,
-          4
-        ]
-      ],
-      "lookahead": "000000",
-      "component": "map-descriptors-4byte",
-      "records": 23
-    }
+    ]
   },
   "animation_queues": {
     "format": 1,
+    "codec": "golden-sun-tagged-palette-lz",
+    "tag": 1,
+    "decoded_size": 2,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "g",
+        [
+          [
+            "l"
+          ],
+          [
+            "l"
+          ],
+          [
+            "e"
+          ]
+        ]
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-animation-queues",
+    "word_size": 2,
     "terminators": [
       "0xfe00",
       "0xffff"
     ],
-    "queues": [],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-tagged-palette-lz",
-      "tag": 1,
-      "decoded_size": 2,
-      "encoded_size": 8,
-      "tokens": [
-        [
-          "g",
-          [
-            [
-              "l"
-            ],
-            [
-              "l"
-            ],
-            [
-              "e"
-            ]
-          ]
-        ]
-      ],
-      "lookahead": "0000",
-      "component": "map-animation-queues",
-      "queues": 0,
-      "commands": 0
-    }
+    "words": [
+      "0xffff"
+    ]
   },
   "blend_animation": {
     "format": 1,
-    "word_size": 2,
-    "commands": [
-      {
-        "op": "reset"
-      }
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-tagged-palette-lz",
-      "tag": 1,
-      "decoded_size": 2,
-      "encoded_size": 8,
-      "tokens": [
+    "codec": "golden-sun-tagged-palette-lz",
+    "tag": 1,
+    "decoded_size": 2,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "g",
         [
-          "g",
           [
-            [
-              "l"
-            ],
-            [
-              "l"
-            ],
-            [
-              "e"
-            ]
+            "l"
+          ],
+          [
+            "l"
+          ],
+          [
+            "e"
           ]
         ]
-      ],
-      "lookahead": "0000",
-      "component": "map-blend-animation",
-      "commands": 1
-    }
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-blend-animation",
+    "word_size": 2,
+    "words": [
+      [
+        "0xffff"
+      ]
+    ]
   },
   "sparse_cells": {
     "format": 1,
+    "kind": "typed-table",
+    "address": "0x08600ecc",
+    "size": "0xc",
     "record_size": 3,
-    "terminator": "ffffff",
-    "alignment_zeros": 0,
-    "records": [
-      [
-        9,
-        11,
-        100
-      ],
-      [
-        21,
-        18,
-        101
-      ],
-      [
-        7,
-        24,
-        102
-      ]
+    "segments": [
+      {
+        "name": "records",
+        "address": "0x08600ecc",
+        "end": "0x08600ed5",
+        "stride": 3,
+        "element": "u8",
+        "values": [
+          [
+            9,
+            11,
+            100
+          ],
+          [
+            21,
+            18,
+            101
+          ],
+          [
+            7,
+            24,
+            102
+          ]
+        ]
+      },
+      {
+        "name": "terminator",
+        "address": "0x08600ed5",
+        "end": "0x08600ed8",
+        "stride": 1,
+        "element": "u8",
+        "fill": 255
+      }
     ]
   }
 }

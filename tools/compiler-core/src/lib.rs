@@ -1,7 +1,10 @@
 pub mod build_io;
 pub mod bundle;
 pub mod bundle_data;
+pub mod cache;
 pub mod call_via_data;
+pub mod canonical_json;
+pub mod decomp_targets;
 pub mod nodepath;
 pub mod overlay;
 pub mod plan;

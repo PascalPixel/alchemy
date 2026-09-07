@@ -3,47 +3,73 @@
   "kind": "golden-sun-map-container",
   "header": {
     "format": 1,
-    "parameters": [
-      0,
-      0,
-      64,
-      32,
-      3,
-      2,
-      2,
-      0,
-      2,
-      2,
-      0,
-      0
-    ],
-    "records": [
-      [
-        0,
-        4112,
-        0,
-        65535
-      ],
-      [
-        8192,
-        4112,
-        0,
-        65535
-      ],
-      [
-        16384,
-        4112,
-        0,
-        65535
-      ]
-    ],
-    "component_offsets": [
-      "0x3c",
-      "0x67c",
-      "0x684",
-      "0xe28",
-      "0xe50",
-      "0xe70"
+    "kind": "typed-table",
+    "address": "0x08517e64",
+    "size": "0x3c",
+    "segments": [
+      {
+        "name": "parameters",
+        "address": "0x08517e64",
+        "end": "0x08517e70",
+        "stride": 12,
+        "element": "u8",
+        "values": [
+          0,
+          0,
+          64,
+          32,
+          3,
+          2,
+          2,
+          0,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "records",
+        "address": "0x08517e70",
+        "end": "0x08517e88",
+        "stride": 8,
+        "element": "le-u16",
+        "values": [
+          [
+            0,
+            4112,
+            0,
+            65535
+          ],
+          [
+            8192,
+            4112,
+            0,
+            65535
+          ],
+          [
+            16384,
+            4112,
+            0,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "component_offsets",
+        "address": "0x08517e88",
+        "end": "0x08517ea0",
+        "stride": 4,
+        "element": "le-u32",
+        "values": [
+          "0x3c",
+          "0x67c",
+          "0x684",
+          "0xe28",
+          "0xe50",
+          "0xe70"
+        ]
+      }
     ]
   },
   "metatiles": {
@@ -3100,6 +3126,22 @@
   },
   "descriptors": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 4,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        1
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-descriptors-4byte",
     "record_size": 4,
     "records": [
       [
@@ -3108,308 +3150,294 @@
         0,
         0
       ]
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 4,
-      "encoded_size": 8,
-      "tokens": [
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          1
-        ]
-      ],
-      "lookahead": "0000",
-      "component": "map-descriptors-4byte",
-      "records": 1
-    }
+    ]
   },
   "animation_queues": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 54,
+    "encoded_size": 40,
+    "tokens": [
+      [
+        "l",
+        7
+      ],
+      [
+        "c",
+        2,
+        3
+      ],
+      [
+        "l",
+        10
+      ],
+      [
+        "c",
+        7,
+        16
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        7,
+        16
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        7,
+        16
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        8
+      ],
+      [
+        "c",
+        4,
+        16
+      ],
+      [
+        "l",
+        4
+      ]
+    ],
+    "lookahead": "00",
+    "component": "map-animation-queues",
+    "word_size": 2,
     "terminators": [
       "0xfe00",
       "0xffff"
     ],
-    "queues": [
-      {
-        "header": "0xfd00",
-        "commands": [
-          [
-            1536,
-            4
-          ],
-          [
-            1232,
-            0
-          ],
-          [
-            1568,
-            3
-          ],
-          [
-            1264,
-            8
-          ],
-          [
-            1540,
-            4
-          ],
-          [
-            1232,
-            0
-          ],
-          [
-            1572,
-            3
-          ],
-          [
-            1264,
-            8
-          ],
-          [
-            1544,
-            4
-          ],
-          [
-            1232,
-            0
-          ],
-          [
-            1576,
-            4
-          ],
-          [
-            1264,
-            8
-          ]
-        ]
-      }
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 54,
-      "encoded_size": 40,
-      "tokens": [
+    "words": [
+      [
+        "0xfd00",
         [
-          "l",
-          7
+          1536,
+          4
         ],
         [
-          "c",
-          2,
+          1232,
+          0
+        ],
+        [
+          1568,
           3
         ],
         [
-          "l",
-          10
-        ],
-        [
-          "c",
-          7,
-          16
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          7,
-          16
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          7,
-          16
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
+          1264,
           8
         ],
         [
-          "c",
-          4,
-          16
+          1540,
+          4
         ],
         [
-          "l",
+          1232,
+          0
+        ],
+        [
+          1572,
+          3
+        ],
+        [
+          1264,
+          8
+        ],
+        [
+          1544,
           4
-        ]
+        ],
+        [
+          1232,
+          0
+        ],
+        [
+          1576,
+          4
+        ],
+        [
+          1264,
+          8
+        ],
+        "0xfe00"
       ],
-      "lookahead": "00",
-      "component": "map-animation-queues",
-      "queues": 1,
-      "commands": 12
-    }
+      "0xffff"
+    ]
   },
   "blend_animation": {
     "format": 1,
-    "word_size": 2,
-    "commands": [
-      {
-        "op": "set_blend_control",
-        "value": "0x3f42"
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x1009",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100a",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100b",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100c",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100d",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100e",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100d",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100c",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100b",
-        "duration": 20
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x100a",
-        "duration": 20
-      },
-      {
-        "op": "jump",
-        "target_pair": 0
-      },
-      {
-        "op": "reset"
-      }
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 46,
-      "encoded_size": 32,
-      "tokens": [
-        [
-          "l",
-          7
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          7,
-          8
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          7,
-          24
-        ],
-        [
-          "c",
-          4,
-          32
-        ],
-        [
-          "l",
-          4
-        ]
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 46,
+    "encoded_size": 32,
+    "tokens": [
+      [
+        "l",
+        7
       ],
-      "lookahead": "0000",
-      "component": "map-blend-animation",
-      "commands": 13
-    }
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        7,
+        8
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        7,
+        24
+      ],
+      [
+        "c",
+        4,
+        32
+      ],
+      [
+        "l",
+        4
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-blend-animation",
+    "word_size": 2,
+    "words": [
+      [
+        "0x3f42"
+      ],
+      [
+        "0x1009",
+        20
+      ],
+      [
+        "0x100a",
+        20
+      ],
+      [
+        "0x100b",
+        20
+      ],
+      [
+        "0x100c",
+        20
+      ],
+      [
+        "0x100d",
+        20
+      ],
+      [
+        "0x100e",
+        20
+      ],
+      [
+        "0x100d",
+        20
+      ],
+      [
+        "0x100c",
+        20
+      ],
+      [
+        "0x100b",
+        20
+      ],
+      [
+        "0x100a",
+        20
+      ],
+      [
+        "0xfe00"
+      ],
+      [
+        "0xffff"
+      ]
+    ]
   },
   "sparse_cells": {
     "format": 1,
+    "kind": "typed-table",
+    "address": "0x08518cd4",
+    "size": "0x8",
     "record_size": 3,
-    "terminator": "ffffff",
-    "alignment_zeros": 2,
-    "records": [
-      [
-        4,
-        5,
-        100
-      ]
+    "segments": [
+      {
+        "name": "records",
+        "address": "0x08518cd4",
+        "end": "0x08518cd7",
+        "stride": 3,
+        "element": "u8",
+        "values": [
+          [
+            4,
+            5,
+            100
+          ]
+        ]
+      },
+      {
+        "name": "terminator",
+        "address": "0x08518cd7",
+        "end": "0x08518cda",
+        "stride": 1,
+        "element": "u8",
+        "fill": 255
+      },
+      {
+        "name": "alignment",
+        "address": "0x08518cda",
+        "end": "0x08518cdc",
+        "stride": 1,
+        "element": "u8",
+        "fill": 0
+      }
     ]
   }
 }

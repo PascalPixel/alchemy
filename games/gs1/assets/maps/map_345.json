@@ -3,47 +3,73 @@
   "kind": "golden-sun-map-container",
   "header": {
     "format": 1,
-    "parameters": [
-      0,
-      0,
-      64,
-      64,
-      3,
-      0,
-      0,
-      0,
-      2,
-      2,
-      0,
-      0
-    ],
-    "records": [
-      [
-        0,
-        4112,
-        0,
-        65535
-      ],
-      [
-        0,
-        4112,
-        0,
-        65535
-      ],
-      [
-        0,
-        4112,
-        0,
-        65535
-      ]
-    ],
-    "component_offsets": [
-      "0x3c",
-      "0x44",
-      "0x4c",
-      "0x0",
-      "0x0",
-      "0x348"
+    "kind": "typed-table",
+    "address": "0x087756b0",
+    "size": "0x3c",
+    "segments": [
+      {
+        "name": "parameters",
+        "address": "0x087756b0",
+        "end": "0x087756bc",
+        "stride": 12,
+        "element": "u8",
+        "values": [
+          0,
+          0,
+          64,
+          64,
+          3,
+          0,
+          0,
+          0,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "records",
+        "address": "0x087756bc",
+        "end": "0x087756d4",
+        "stride": 8,
+        "element": "le-u16",
+        "values": [
+          [
+            0,
+            4112,
+            0,
+            65535
+          ],
+          [
+            0,
+            4112,
+            0,
+            65535
+          ],
+          [
+            0,
+            4112,
+            0,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "component_offsets",
+        "address": "0x087756d4",
+        "end": "0x087756ec",
+        "stride": 4,
+        "element": "le-u32",
+        "values": [
+          "0x3c",
+          "0x44",
+          "0x4c",
+          "0x0",
+          "0x0",
+          "0x348"
+        ]
+      }
     ]
   },
   "metatiles": {
@@ -70,6 +96,22 @@
   },
   "descriptors": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 4,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        1
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-descriptors-4byte",
     "record_size": 4,
     "records": [
       [
@@ -78,33 +120,31 @@
         0,
         0
       ]
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 4,
-      "encoded_size": 8,
-      "tokens": [
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          1
-        ]
-      ],
-      "lookahead": "0000",
-      "component": "map-descriptors-4byte",
-      "records": 1
-    }
+    ]
   },
   "sparse_cells": {
     "format": 1,
+    "kind": "typed-table",
+    "address": "0x087759f8",
+    "size": "0x4",
     "record_size": 3,
-    "terminator": "ffffff",
-    "alignment_zeros": 1,
-    "records": []
+    "segments": [
+      {
+        "name": "terminator",
+        "address": "0x087759f8",
+        "end": "0x087759fb",
+        "stride": 1,
+        "element": "u8",
+        "fill": 255
+      },
+      {
+        "name": "alignment",
+        "address": "0x087759fb",
+        "end": "0x087759fc",
+        "stride": 1,
+        "element": "u8",
+        "fill": 0
+      }
+    ]
   }
 }

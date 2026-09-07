@@ -1,0 +1,172 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x080af28c",
+  "end": "0x080b0000",
+  "size": 3444,
+  "segments": [
+    {
+      "name": "auxiliary_display_glyph_cells",
+      "address": "0x080af28c",
+      "end": "0x080af294",
+      "element": "record",
+      "stride": 4,
+      "fields": [
+        {
+          "name": "glyphs",
+          "element": "u8",
+          "terminated_capacity": 4,
+          "min": 1,
+          "max": 255
+        }
+      ],
+      "records": [
+        {
+          "glyphs": [76, 118]
+        },
+        {
+          "glyphs": [47]
+        }
+      ]
+    },
+    {
+      "name": "x_offsets",
+      "address": "0x080af294",
+      "end": "0x080af29d",
+      "element": "s8",
+      "stride": 1,
+      "values": [0, 1, 1, 2, 2, 1, 1, 0, 0]
+    },
+    {
+      "name": "y_offsets",
+      "address": "0x080af29d",
+      "end": "0x080af2a6",
+      "element": "s8",
+      "stride": 1,
+      "values": [0, -1, -1, -2, -2, -1, -1, 0, 0]
+    },
+    {
+      "name": "order_0",
+      "address": "0x080af2a6",
+      "end": "0x080af2b0",
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 1, 4, 3, 2, 5, 6, 7, 8, 9],
+      "index_count": 10,
+      "permutation": true
+    },
+    {
+      "name": "order_0_terminator",
+      "address": "0x080af2b0",
+      "end": "0x080af2b1",
+      "element": "u8",
+      "stride": 1,
+      "fill": 255
+    },
+    {
+      "name": "order_1",
+      "address": "0x080af2b1",
+      "end": "0x080af2bb",
+      "element": "u8",
+      "stride": 1,
+      "values": [1, 4, 3, 2, 5, 6, 7, 8, 9, 0],
+      "index_count": 10,
+      "permutation": true
+    },
+    {
+      "name": "order_1_terminator",
+      "address": "0x080af2bb",
+      "end": "0x080af2bc",
+      "element": "u8",
+      "stride": 1,
+      "fill": 255
+    },
+    {
+      "name": "order_2",
+      "address": "0x080af2bc",
+      "end": "0x080af2cf",
+      "element": "u8",
+      "stride": 1,
+      "values": [129, 132, 131, 130, 133, 134, 135, 136, 137, 1, 4, 3, 2, 5, 6, 7, 8, 9, 0],
+      "min": 0,
+      "max": 254,
+      "unique": true
+    },
+    {
+      "name": "order_2_terminator",
+      "address": "0x080af2cf",
+      "end": "0x080af2d0",
+      "element": "u8",
+      "stride": 1,
+      "fill": 255
+    },
+    {
+      "name": "order_3",
+      "address": "0x080af2d0",
+      "end": "0x080af2e3",
+      "element": "u8",
+      "stride": 1,
+      "values": [129, 132, 131, 130, 133, 134, 135, 136, 137, 0, 1, 4, 3, 2, 5, 6, 7, 8, 9],
+      "min": 0,
+      "max": 254,
+      "unique": true
+    },
+    {
+      "name": "order_3_terminator",
+      "address": "0x080af2e3",
+      "end": "0x080af2e4",
+      "element": "u8",
+      "stride": 1,
+      "fill": 255
+    },
+    {
+      "name": "lookup_ids",
+      "address": "0x080af2e4",
+      "end": "0x080af2fc",
+      "element": "le-u32",
+      "stride": 12,
+      "values": [
+        [86, 117, 166],
+        [86, 117, 166]
+      ],
+      "min": 0,
+      "max": 65535
+    },
+    {
+      "name": "mode_selectors",
+      "address": "0x080af2fc",
+      "end": "0x080af301",
+      "element": "u8",
+      "stride": 1,
+      "values": [6, 7, 7, 6, 6],
+      "min": 6,
+      "max": 7
+    },
+    {
+      "name": "mode_selector_padding",
+      "address": "0x080af301",
+      "end": "0x080af304",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0
+    },
+    {
+      "name": "object_resource_ids",
+      "address": "0x080af304",
+      "end": "0x080af314",
+      "element": "le-u32",
+      "stride": 4,
+      "values": [90, 91, 92, 93],
+      "min": 0,
+      "max": 65535
+    },
+    {
+      "name": "alignment",
+      "address": "0x080af314",
+      "end": "0x080b0000",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0
+    }
+  ]
+}

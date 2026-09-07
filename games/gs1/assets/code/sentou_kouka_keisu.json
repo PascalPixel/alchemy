@@ -1,22 +1,97 @@
 {
   "format": 1,
+  "kind": "typed-table",
   "address": "0x080eda78",
+  "end": "0x080edaf0",
   "size": 120,
-  "unit_q16": [65536, 65536, 65536, 65536],
-  "negative_offsets": [-32, -32, -32, -32],
-  "coordinate_pairs": [
-    [8, 135],
-    [184, 135],
-    [128, 135],
-    [96, 32],
-    [96, 32],
-    [64, 135]
-  ],
-  "scales_q16": {
-    "base": [65536, 65536, 65536, 65536],
-    "enhanced": [81920, 81920],
-    "normal_a": [65536, 65536, 65536, 65536],
-    "normal_b": [65536, 65536, 65536, 65536],
-    "high": [98304, 98304]
-  }
+  "consumers": {
+    "fragment_composer": {
+      "symbol": "Func_080ed408",
+      "copy_sizes_words": [2, 4, 25, 16, 6, 3, 97, 14]
+    },
+    "callback_lookup": {
+      "symbol": "Func_080d6660",
+      "slots": 407,
+      "index_bias": -1,
+      "stride": 4
+    },
+    "packed_decoder_copy": {
+      "symbol": "Func_080f02b0",
+      "source": "0x080f0024",
+      "size": 560
+    }
+  },
+  "segments": [
+    {
+      "name": "unit_q16",
+      "address": "0x080eda78",
+      "end": "0x080eda88",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 65536, 65536]
+    },
+    {
+      "name": "negative_offsets",
+      "address": "0x080eda88",
+      "end": "0x080eda98",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [-32, -32, -32, -32]
+    },
+    {
+      "name": "coordinate_pairs",
+      "address": "0x080eda98",
+      "end": "0x080edab0",
+      "element": "le-s16",
+      "stride": 4,
+      "values": [
+        [8, 135],
+        [184, 135],
+        [128, 135],
+        [96, 32],
+        [96, 32],
+        [64, 135]
+      ]
+    },
+    {
+      "name": "scale_base_q16",
+      "address": "0x080edab0",
+      "end": "0x080edac0",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 65536, 65536]
+    },
+    {
+      "name": "scale_enhanced_q16",
+      "address": "0x080edac0",
+      "end": "0x080edac8",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [81920, 81920]
+    },
+    {
+      "name": "scale_normal_a_q16",
+      "address": "0x080edac8",
+      "end": "0x080edad8",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 65536, 65536]
+    },
+    {
+      "name": "scale_normal_b_q16",
+      "address": "0x080edad8",
+      "end": "0x080edae8",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 65536, 65536]
+    },
+    {
+      "name": "scale_high_q16",
+      "address": "0x080edae8",
+      "end": "0x080edaf0",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [98304, 98304]
+    }
+  ]
 }

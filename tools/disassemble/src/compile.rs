@@ -30,11 +30,11 @@ fn overlay_c_cache_path() -> PathBuf {
         None => root().join("out/cache/overlay-c.sqlite3"),
     }
 }
-fn overlay_c_cache() -> Result<&'static Mutex<cache_entry::sqlite::SqliteCache>, String> {
-    static CACHE: OnceLock<Result<Mutex<cache_entry::sqlite::SqliteCache>, String>> =
+fn overlay_c_cache() -> Result<&'static Mutex<compiler_core::cache::sqlite::SqliteCache>, String> {
+    static CACHE: OnceLock<Result<Mutex<compiler_core::cache::sqlite::SqliteCache>, String>> =
         OnceLock::new();
     match CACHE.get_or_init(|| {
-        cache_entry::sqlite::SqliteCache::open(&overlay_c_cache_path()).map(Mutex::new)
+        compiler_core::cache::sqlite::SqliteCache::open(&overlay_c_cache_path()).map(Mutex::new)
     }) {
         Ok(cache) => Ok(cache),
         Err(error) => Err(error.clone()),
@@ -55,7 +55,7 @@ fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> 
         &sha256::hex(text.as_bytes())[..16]
     ));
     if !fs::read(&path).is_ok_and(|bytes| bytes == text.as_bytes()) {
-        cache_entry::write_cache_entry_atomically(&path, text.as_bytes())
+        compiler_core::cache::write_cache_entry_atomically(&path, text.as_bytes())
             .map_err(|error| format!("{}: {error}", path.display()))?;
     }
     Ok(path)

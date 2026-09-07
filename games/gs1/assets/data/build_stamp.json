@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "resource_id": "0x2",
+  "address": "0x08320fa0",
+  "size": 16,
+  "segments": [
+    {
+      "name": "build_stamp",
+      "address": "0x08320fa0",
+      "end": "0x08320fb0",
+      "element": "ascii-fixed",
+      "stride": 1,
+      "text": "010918151347\n"
+    }
+  ]
+}

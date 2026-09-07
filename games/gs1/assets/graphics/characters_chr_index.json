@@ -1,328 +1,56 @@
 {
   "format": 1,
-  "codec": "golden-sun-static-sprite-series",
+  "kind": "components",
+  "layout": "golden-sun-static-sprite-series",
   "address": "0x08244fc0",
   "size": "0x00048018",
   "descriptor_table": "0x08185024",
   "descriptor_count": 512,
-  "palette_offset": 16,
-  "palette_entries": 224,
-  "prefix_zeros": 8,
-  "packages": [
+  "components": [
+    {"kind": "byte-fill", "value": 0, "size": 8},
+    {"kind": "components", "id": "080", "address": "0x08244fc8", "size": "0x000026d8", "directory": "0x08247618", "source": "games/gs1/assets/graphics/battle_characters_chr_080_bank.json", "image": "battle_characters_chr_080_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "081", "address": "0x082476a0", "size": "0x0000221c", "directory": "0x08249828", "source": "games/gs1/assets/graphics/battle_characters_chr_081_bank.json", "image": "battle_characters_chr_081_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "083", "address": "0x082498bc", "size": "0x00002ae4", "directory": "0x0824c2f4", "source": "games/gs1/assets/graphics/battle_characters_chr_083_bank.json", "image": "battle_characters_chr_083_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "07b", "address": "0x0824c3a0", "size": "0x000023a8", "directory": "0x0824e6d8", "source": "games/gs1/assets/graphics/battle_characters_chr_07b_bank.json", "image": "battle_characters_chr_07b_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "082", "address": "0x0824e748", "size": "0x000034b0", "directory": "0x08251b28", "source": "games/gs1/assets/graphics/battle_characters_chr_082_bank.json", "image": "battle_characters_chr_082_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "084", "address": "0x08251bf8", "size": "0x00002768", "directory": "0x082542e0", "source": "games/gs1/assets/graphics/battle_characters_chr_084_bank.json", "image": "battle_characters_chr_084_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "085", "address": "0x08254360", "size": "0x000020cc", "directory": "0x08256394", "source": "games/gs1/assets/graphics/battle_characters_chr_085_bank.json", "image": "battle_characters_chr_085_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "086", "address": "0x0825642c", "size": "0x00002670", "directory": "0x08258a10", "source": "games/gs1/assets/graphics/battle_characters_magicore_bank.json", "image": "battle_characters_magicore_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "087", "address": "0x08258a9c", "size": "0x000026b0", "directory": "0x0825b0c4", "source": "games/gs1/assets/graphics/battle_characters_chr_087_bank.json", "image": "battle_characters_chr_087_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "088", "address": "0x0825b14c", "size": "0x00000f58", "directory": "0x0825c034", "source": "games/gs1/assets/graphics/battle_characters_chr_088_bank.json", "image": "battle_characters_chr_088_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "08f", "address": "0x0825c0a4", "size": "0x00002094", "directory": "0x0825e0b0", "source": "games/gs1/assets/graphics/battle_characters_chr_08f_bank.json", "image": "battle_characters_chr_08f_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "090", "address": "0x0825e138", "size": "0x0000239c", "directory": "0x08260438", "source": "games/gs1/assets/graphics/battle_characters_chr_090_bank.json", "image": "battle_characters_chr_090_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "091", "address": "0x082604d4", "size": "0x00001fd0", "directory": "0x0826241c", "source": "games/gs1/assets/graphics/battle_characters_chr_091_bank.json", "image": "battle_characters_chr_091_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "092", "address": "0x082624a4", "size": "0x00001ef8", "directory": "0x08264314", "source": "games/gs1/assets/graphics/battle_characters_chr_092_bank.json", "image": "battle_characters_chr_092_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "093", "address": "0x0826439c", "size": "0x000023c8", "directory": "0x082666c8", "source": "games/gs1/assets/graphics/battle_characters_chr_093_bank.json", "image": "battle_characters_chr_093_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "069", "address": "0x08266764", "size": "0x000004f8", "directory": "0x08266c4c", "source": "games/gs1/assets/graphics/battle_characters_chr_069_bank.json", "image": "battle_characters_chr_069_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "06e", "address": "0x08266c5c", "size": "0x0000030c", "directory": "0x08266f58", "source": "games/gs1/assets/graphics/battle_characters_chr_06e_bank.json", "image": "battle_characters_chr_06e_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "094", "address": "0x08266f68", "size": "0x0000263c", "directory": "0x0826950c", "source": "games/gs1/assets/graphics/battle_characters_chr_094_bank.json", "image": "battle_characters_chr_094_koma.8bpp.png", "aliases": []},
     {
-      "id": "080",
-      "aliases": [],
-      "address": "0x08244fc8",
-      "size": "0x000026d8",
-      "directory": "0x08247618",
-      "plan": "chr_080_bank.json",
-      "source": "battle_characters_chr_080_koma.8bpp.png"
-    },
-    {
-      "id": "081",
-      "aliases": [],
-      "address": "0x082476a0",
-      "size": "0x0000221c",
-      "directory": "0x08249828",
-      "plan": "chr_081_bank.json",
-      "source": "battle_characters_chr_081_koma.8bpp.png"
-    },
-    {
-      "id": "083",
-      "aliases": [],
-      "address": "0x082498bc",
-      "size": "0x00002ae4",
-      "directory": "0x0824c2f4",
-      "plan": "chr_083_bank.json",
-      "source": "battle_characters_chr_083_koma.8bpp.png"
-    },
-    {
-      "id": "07b",
-      "aliases": [],
-      "address": "0x0824c3a0",
-      "size": "0x000023a8",
-      "directory": "0x0824e6d8",
-      "plan": "chr_07b_bank.json",
-      "source": "battle_characters_chr_07b_koma.8bpp.png"
-    },
-    {
-      "id": "082",
-      "aliases": [],
-      "address": "0x0824e748",
-      "size": "0x000034b0",
-      "directory": "0x08251b28",
-      "plan": "chr_082_bank.json",
-      "source": "battle_characters_chr_082_koma.8bpp.png"
-    },
-    {
-      "id": "084",
-      "aliases": [],
-      "address": "0x08251bf8",
-      "size": "0x00002768",
-      "directory": "0x082542e0",
-      "plan": "chr_084_bank.json",
-      "source": "battle_characters_chr_084_koma.8bpp.png"
-    },
-    {
-      "id": "085",
-      "aliases": [],
-      "address": "0x08254360",
-      "size": "0x000020cc",
-      "directory": "0x08256394",
-      "plan": "chr_085_bank.json",
-      "source": "battle_characters_chr_085_koma.8bpp.png"
-    },
-    {
-      "id": "086",
-      "aliases": [],
-      "address": "0x0825642c",
-      "size": "0x00002670",
-      "directory": "0x08258a10",
-      "plan": "magicore/bank.json",
-      "source": "battle_characters_magicore_koma.8bpp.png"
-    },
-    {
-      "id": "087",
-      "aliases": [],
-      "address": "0x08258a9c",
-      "size": "0x000026b0",
-      "directory": "0x0825b0c4",
-      "plan": "chr_087_bank.json",
-      "source": "battle_characters_chr_087_koma.8bpp.png"
-    },
-    {
-      "id": "088",
-      "aliases": [],
-      "address": "0x0825b14c",
-      "size": "0x00000f58",
-      "directory": "0x0825c034",
-      "plan": "chr_088_bank.json",
-      "source": "battle_characters_chr_088_koma.8bpp.png"
-    },
-    {
-      "id": "08f",
-      "aliases": [],
-      "address": "0x0825c0a4",
-      "size": "0x00002094",
-      "directory": "0x0825e0b0",
-      "plan": "chr_08f_bank.json",
-      "source": "battle_characters_chr_08f_koma.8bpp.png"
-    },
-    {
-      "id": "090",
-      "aliases": [],
-      "address": "0x0825e138",
-      "size": "0x0000239c",
-      "directory": "0x08260438",
-      "plan": "chr_090_bank.json",
-      "source": "battle_characters_chr_090_koma.8bpp.png"
-    },
-    {
-      "id": "091",
-      "aliases": [],
-      "address": "0x082604d4",
-      "size": "0x00001fd0",
-      "directory": "0x0826241c",
-      "plan": "chr_091_bank.json",
-      "source": "battle_characters_chr_091_koma.8bpp.png"
-    },
-    {
-      "id": "092",
-      "aliases": [],
-      "address": "0x082624a4",
-      "size": "0x00001ef8",
-      "directory": "0x08264314",
-      "plan": "chr_092_bank.json",
-      "source": "battle_characters_chr_092_koma.8bpp.png"
-    },
-    {
-      "id": "093",
-      "aliases": [],
-      "address": "0x0826439c",
-      "size": "0x000023c8",
-      "directory": "0x082666c8",
-      "plan": "chr_093_bank.json",
-      "source": "battle_characters_chr_093_koma.8bpp.png"
-    },
-    {
-      "id": "069",
-      "aliases": [],
-      "address": "0x08266764",
-      "size": "0x000004f8",
-      "directory": "0x08266c4c",
-      "plan": "chr_069_bank.json",
-      "source": "battle_characters_chr_069_koma.8bpp.png"
-    },
-    {
-      "id": "06e",
-      "aliases": [],
-      "address": "0x08266c5c",
-      "size": "0x0000030c",
-      "directory": "0x08266f58",
-      "plan": "chr_06e_bank.json",
-      "source": "battle_characters_chr_06e_koma.8bpp.png"
-    },
-    {
-      "id": "094",
-      "aliases": [],
-      "address": "0x08266f68",
-      "size": "0x0000263c",
-      "directory": "0x0826950c",
-      "plan": "chr_094_bank.json",
-      "source": "battle_characters_chr_094_koma.8bpp.png"
-    },
-    {
+      "kind": "components",
       "id": "070",
-      "aliases": [],
       "address": "0x082695a4",
       "size": "0x00002394",
       "directory": "0x0826b89c",
-      "plan": "wild-gryphon/bank.json",
-      "source": "battle_characters_wild-gryphon_koma.8bpp.png"
+      "source": "games/gs1/assets/graphics/battle_characters_wild-gryphon_bank.json",
+      "image": "battle_characters_wild-gryphon_koma.8bpp.png",
+      "aliases": []
     },
-    {
-      "id": "071",
-      "aliases": [],
-      "address": "0x0826b938",
-      "size": "0x000024a0",
-      "directory": "0x0826dd34",
-      "plan": "chr_071_bank.json",
-      "source": "battle_characters_chr_071_koma.8bpp.png"
-    },
-    {
-      "id": "095",
-      "aliases": [],
-      "address": "0x0826ddd8",
-      "size": "0x00001f90",
-      "directory": "0x0826fce0",
-      "plan": "chr_095_bank.json",
-      "source": "battle_characters_chr_095_koma.8bpp.png"
-    },
-    {
-      "id": "096",
-      "aliases": [],
-      "address": "0x0826fd68",
-      "size": "0x000020d4",
-      "directory": "0x08271db4",
-      "plan": "chr_096_bank.json",
-      "source": "battle_characters_chr_096_koma.8bpp.png"
-    },
-    {
-      "id": "097",
-      "aliases": [],
-      "address": "0x08271e3c",
-      "size": "0x000018e0",
-      "directory": "0x08273694",
-      "plan": "chr_097_bank.json",
-      "source": "battle_characters_chr_097_koma.8bpp.png"
-    },
-    {
-      "id": "098",
-      "aliases": [],
-      "address": "0x0827371c",
-      "size": "0x00002520",
-      "directory": "0x08275bb0",
-      "plan": "chr_098_bank.json",
-      "source": "battle_characters_chr_098_koma.8bpp.png"
-    },
-    {
-      "id": "099",
-      "aliases": [],
-      "address": "0x08275c3c",
-      "size": "0x0000236c",
-      "directory": "0x08277f14",
-      "plan": "chr_099_bank.json",
-      "source": "battle_characters_chr_099_koma.8bpp.png"
-    },
-    {
-      "id": "09b",
-      "aliases": [],
-      "address": "0x08277fa8",
-      "size": "0x00000140",
-      "directory": "0x082780d8",
-      "plan": "chr_09b_bank.json",
-      "source": "battle_characters_chr_09b_koma.8bpp.png"
-    },
-    {
-      "id": "09e",
-      "aliases": [],
-      "address": "0x082780e8",
-      "size": "0x0000235c",
-      "directory": "0x0827a3a0",
-      "plan": "chr_09e_bank.json",
-      "source": "battle_characters_chr_09e_koma.8bpp.png"
-    },
-    {
-      "id": "09c",
-      "aliases": [],
-      "address": "0x0827a444",
-      "size": "0x000022b4",
-      "directory": "0x0827c670",
-      "plan": "chr_09c_bank.json",
-      "source": "battle_characters_chr_09c_koma.8bpp.png"
-    },
-    {
-      "id": "09f",
-      "aliases": [],
-      "address": "0x0827c6f8",
-      "size": "0x000026e4",
-      "directory": "0x0827ed50",
-      "plan": "chr_09f_bank.json",
-      "source": "battle_characters_chr_09f_koma.8bpp.png"
-    },
-    {
-      "id": "0a0",
-      "aliases": [],
-      "address": "0x0827eddc",
-      "size": "0x00001fa4",
-      "directory": "0x08280cf8",
-      "plan": "chr_0a0_bank.json",
-      "source": "battle_characters_chr_0a0_koma.8bpp.png"
-    },
-    {
-      "id": "0a2",
-      "aliases": [],
-      "address": "0x08280d80",
-      "size": "0x0000278c",
-      "directory": "0x08283484",
-      "plan": "chr_0a2_bank.json",
-      "source": "battle_characters_chr_0a2_koma.8bpp.png"
-    },
-    {
-      "id": "0a3",
-      "aliases": [],
-      "address": "0x0828350c",
-      "size": "0x00002528",
-      "directory": "0x082859ac",
-      "plan": "dread-hound/bank.json",
-      "source": "battle_characters_dread-hound_koma.8bpp.png"
-    },
-    {
-      "id": "0a4",
-      "aliases": [],
-      "address": "0x08285a34",
-      "size": "0x00001d40",
-      "directory": "0x082876ec",
-      "plan": "chr_0a4_bank.json",
-      "source": "battle_characters_chr_0a4_koma.8bpp.png"
-    },
-    {
-      "id": "0a5",
-      "aliases": [],
-      "address": "0x08287774",
-      "size": "0x00003988",
-      "directory": "0x0828b014",
-      "plan": "chr_0a5_bank.json",
-      "source": "battle_characters_chr_0a5_koma.8bpp.png"
-    },
-    {
-      "id": "0a6",
-      "aliases": [],
-      "address": "0x0828b0fc",
-      "size": "0x00001edc",
-      "directory": "0x0828cf50",
-      "plan": "chr_0a6_bank.json",
-      "source": "battle_characters_chr_0a6_koma.8bpp.png"
-    }
+    {"kind": "components", "id": "071", "address": "0x0826b938", "size": "0x000024a0", "directory": "0x0826dd34", "source": "games/gs1/assets/graphics/battle_characters_chr_071_bank.json", "image": "battle_characters_chr_071_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "095", "address": "0x0826ddd8", "size": "0x00001f90", "directory": "0x0826fce0", "source": "games/gs1/assets/graphics/battle_characters_chr_095_bank.json", "image": "battle_characters_chr_095_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "096", "address": "0x0826fd68", "size": "0x000020d4", "directory": "0x08271db4", "source": "games/gs1/assets/graphics/battle_characters_chr_096_bank.json", "image": "battle_characters_chr_096_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "097", "address": "0x08271e3c", "size": "0x000018e0", "directory": "0x08273694", "source": "games/gs1/assets/graphics/battle_characters_chr_097_bank.json", "image": "battle_characters_chr_097_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "098", "address": "0x0827371c", "size": "0x00002520", "directory": "0x08275bb0", "source": "games/gs1/assets/graphics/battle_characters_chr_098_bank.json", "image": "battle_characters_chr_098_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "099", "address": "0x08275c3c", "size": "0x0000236c", "directory": "0x08277f14", "source": "games/gs1/assets/graphics/battle_characters_chr_099_bank.json", "image": "battle_characters_chr_099_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "09b", "address": "0x08277fa8", "size": "0x00000140", "directory": "0x082780d8", "source": "games/gs1/assets/graphics/battle_characters_chr_09b_bank.json", "image": "battle_characters_chr_09b_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "09e", "address": "0x082780e8", "size": "0x0000235c", "directory": "0x0827a3a0", "source": "games/gs1/assets/graphics/battle_characters_chr_09e_bank.json", "image": "battle_characters_chr_09e_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "09c", "address": "0x0827a444", "size": "0x000022b4", "directory": "0x0827c670", "source": "games/gs1/assets/graphics/battle_characters_chr_09c_bank.json", "image": "battle_characters_chr_09c_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "09f", "address": "0x0827c6f8", "size": "0x000026e4", "directory": "0x0827ed50", "source": "games/gs1/assets/graphics/battle_characters_chr_09f_bank.json", "image": "battle_characters_chr_09f_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "0a0", "address": "0x0827eddc", "size": "0x00001fa4", "directory": "0x08280cf8", "source": "games/gs1/assets/graphics/battle_characters_chr_0a0_bank.json", "image": "battle_characters_chr_0a0_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "0a2", "address": "0x08280d80", "size": "0x0000278c", "directory": "0x08283484", "source": "games/gs1/assets/graphics/battle_characters_chr_0a2_bank.json", "image": "battle_characters_chr_0a2_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "0a3", "address": "0x0828350c", "size": "0x00002528", "directory": "0x082859ac", "source": "games/gs1/assets/graphics/battle_characters_dread-hound_bank.json", "image": "battle_characters_dread-hound_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "0a4", "address": "0x08285a34", "size": "0x00001d40", "directory": "0x082876ec", "source": "games/gs1/assets/graphics/battle_characters_chr_0a4_bank.json", "image": "battle_characters_chr_0a4_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "0a5", "address": "0x08287774", "size": "0x00003988", "directory": "0x0828b014", "source": "games/gs1/assets/graphics/battle_characters_chr_0a5_bank.json", "image": "battle_characters_chr_0a5_koma.8bpp.png", "aliases": []},
+    {"kind": "components", "id": "0a6", "address": "0x0828b0fc", "size": "0x00001edc", "directory": "0x0828cf50", "source": "games/gs1/assets/graphics/battle_characters_chr_0a6_bank.json", "image": "battle_characters_chr_0a6_koma.8bpp.png", "aliases": []}
   ]
 }

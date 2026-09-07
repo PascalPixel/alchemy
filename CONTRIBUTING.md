@@ -15,7 +15,7 @@ names and game-specific implementations are not Alchemy's reconstruction rules.
 
 ## What 100% means
 
-Completion requires all of the following, not a rounded dashboard percentage:
+Completion requires all of the following, not a rounded percentage:
 
 - Every executable byte, including overlay code and gaps outside registered
   functions, belongs to a complete audited owner or an explained nonfunction
@@ -45,9 +45,8 @@ range immediately, without double-counting the bytes.
 
 ### 1. Select a bounded piece of the game
 
-Inspect the current tree, production coverage and candidate scores. Use
-`./alchemy families` and the dashboard to find
-work; historical dossiers and similarity clusters are leads, not authority.
+Inspect the current tree, production coverage and candidate scores to find
+work; historical dossiers are leads, not authority.
 
 Rank complete modules by genuinely unresolved bytes, demonstrated sibling
 repairs and the work needed to close them. Count the expected gain after
@@ -58,8 +57,7 @@ or difficult remainder when it becomes the work left to reach 100%.
 Choose both main-image and overlay work on that basis. A count such as "64
 finished overlays" is useful only when each overlay has no unresolved executable
 bytes, including unregistered gaps. Flattening files alone adds no DONE bytes.
-A family finder proposing similar code does not prove shared source or an
-automatic repair.
+Similar code does not prove shared source or an automatic repair.
 
 Before editing, state the unit, complete owners, current residuals, expected
 unresolved-byte gain and a finite experiment budget. Fix binding or boundary
@@ -278,7 +276,7 @@ is not agent-authored documentation and must not be damaged by cleanup.
 Each fact has one authority: owner names and paths in
 `games/<game>/source-paths.json`; compile-local composition in translation-unit
 manifests; code and asset data in their sources; measured status in current
-build outputs. Derived coverage, family and correspondence reports are not
+build outputs. Derived coverage and correspondence reports are not
 editable authorities. Dossiers retain dated reasoning, not current scores.
 
 Current build outputs own measured coverage. `make coverage` refreshes the ROM
@@ -375,12 +373,13 @@ Do not copy a framework for worker waves, template packs, inferred aggregate
 contexts or report inventories.
 
 Alchemy also retains the dependencies its actual game build requires:
-`build assets` and its Golden Sun codecs rebuild maintained data; `overlay` handles
-the loader's relocation format; `cross-edition` checks edition differences;
-`check` enforces source, classification, compiler and publication contracts.
-These are project integration, not tools to take to another game.
-`families` offers read-only similarity ranking and existing retention checks;
-the dashboard displays the resulting game data.
+`build assets` rebuilds maintained data from the asset descriptions under
+`games/` through format-named codecs; `overlay` handles the loader's
+relocation format; `cross-edition` checks edition differences; `check`
+enforces source, classification, compiler and publication contracts. These
+are project integration, not tools to take to another game. There is no
+game-specific asset crate: a package layout is data, and a codec is named
+for its format.
 
 Asset tooling is organized by format and conversion, never by resource number,
 ROM address or the first game asset that needed it. Name a directional converter
@@ -404,17 +403,44 @@ Byte index tables declare `index_count` and, when required, `permutation: true`
 to check their domain and uniqueness without a game-specific validator.
 
 The same table encoder supports signed little-endian halfwords, byte fills and
-fixed-stride records with named fields. Bounds, uniqueness and terminated-array
-capacity are declared beside those fields, not hard-coded in a game-specific
-crate. A manifest may select a table by JSON pointer within a shared source.
+fixed-stride records with named fields. Bounds, uniqueness, terminated-array
+capacity and zero-padded `capacity` are declared beside those fields, not
+hard-coded in a game-specific crate. A field may declare a `default` so sparse
+records omit it, and a record segment may name a `label` key that documents
+each record without serializing it. A manifest may select a table by JSON
+pointer within a shared source. Integer values may be spelled symbolically: a
+`0x` literal, a constant from the field's or table's `names`, a segment `name`
+for that segment's address, or `name[index]` for the address of its element;
+internal directories and animation tables reference their targets that way
+instead of through a per-package Rust builder.
 Tiled PNG inputs may declare frame dimensions and atlas columns; the ordinary
 tile converter then writes frame order. Keep those layouts in the manifest.
+A field or segment may declare `bits`, named LSB-first widths packed into one
+unsigned element, so bit-packed words keep their parts in the source.
+A tile component whose authored canvas exceeds its compressed extent declares
+`canvas_size`; the converter checks the zero tail and truncates.
+
+A `components` region concatenates parts at running addresses; each part is an
+ordinary manifest entry with its own checked `size`, listed inline or in a source
+document, so an archive is its offset table, its streams and its padding, each
+described by data. Pixel components (`indexed-bytes`, `rgba-bytes`,
+`zero-skip-bytes`, `mtf4-bytes`, tiled images) may select atlas frames by
+`frame_width`, `frame_height` and `columns` with `frame`, `frame_order` or
+`frames`, and may name the shared `palette` they must match. A general-LZ plan
+array is a stream sequence: stream `i` encodes frame `i`, is padded to
+`stream_alignment`, and arena-LZ streams read the streams before them. A
+`typed-table` record field of element `1bpp-rows` packs glyph rows from the
+segment's `image`. Offsets, pointers, stream extents and frame plans stay in the
+asset source.
 
 `thumb-pointer` table segments resolve named main-image callbacks from the owner
 register, retain null slots, and encode the Thumb tag. An unregistered target
-remains an explicit aligned numeric address; do not invent an owner or name to
-serialize a pointer. Signed words use `le-s32`. Shared lookup views and consumer
-evidence stay beside their backing values, not in a second layout catalog.
+remains an explicit aligned numeric address (a decimal number or a `0x` string,
+as any table value may be spelled); do not invent an owner or name to serialize
+a pointer. Signed words use `le-s32`. Shared lookup views and consumer evidence
+stay beside their backing values, not in a second layout catalog. Sequence
+streams outside MIDI sources are `golden-sun-sound-sequence` entries whose
+source is the encoder's own `smsh-sequence` JSON document, selected by pointer.
 
 `record-table` describes ordered named integer fields, their radix, common bias
 and encoding; it checks sequential record indices before serializing. `pointer-table`
@@ -426,10 +452,10 @@ The inventory remains mandatory, including game-specific and internal libraries.
 Build dependency status is not an exemption from review or consolidation.
 
 Build maintained asset packages with `alchemy build assets`; full-ROM comparison
-verifies their production extents. The former `alchemy assets` command tree and
-its per-package extraction/build CLIs are retired. Their required codecs remain
-internal build dependencies pending format migration, not supported commands.
-Do not reintroduce parallel package-specific build or verify commands.
+verifies their production extents. Every package is a manifest region or series
+over data in `games/`, encoded by the shared table, pixel, text, sample and
+compression codecs. Do not reintroduce package-specific crates, build routes or
+verify commands.
 
 Use `alchemy convert FORMAT INPUT OUTPUT [options]` for file conversions:
 `words2bin`, `pairs2bin`, `tilemap2bin`, `png2bpp4`, `bpp42png`, `png2bpp8`,
@@ -443,61 +469,32 @@ converter. These have no game addresses or default ROMs and refuse to overwrite
 an existing output. `alchemy font` retains the project's shared font
 reconstruction pipeline; it is project integration, not part of the portable kit.
 
-The following is the complete library and command index.
+The following is the complete library and command index. Every crate is a
+member of the one `tools/` Cargo workspace with its one lockfile.
 `make tooling-index-check` checks every immediate tool directory exactly once;
 libraries are not additional public command surfaces.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, families, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, and cross-edition commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
-| [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
-| [asset-paths](tools/asset-paths/) | Own canonical tracked asset paths. |
 | [build-asm](tools/build-asm/) | Assemble retained regions and emit their classified manifest. |
 | [build-claimed](tools/build-claimed/) | Compile, verify, cache, and manifest exact-C owners. |
 | [build-full](tools/build-full/) | Compose claimed C, retained assembly, and assets into the ROM. |
-| [cache-entry](tools/cache-entry/) | Provide deterministic SQLite-backed cache entries and receipts. |
-| [canonical-json](tools/canonical-json/) | Serialize stable JSON for reproducible reports and hashes. |
-| [decomp-targets](tools/decomp-targets/) | Define the twelve historical ROM targets and build paths. |
 | [gba-header](tools/gba-header/) | Encode and verify the GBA cartridge header. |
-| [generated-files](tools/generated-files/) | Track generated-file identity and freshness. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
-| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, targets, and translation units. |
+| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, the twelve decompilation targets, translation units, the build cache, and canonical JSON. |
 | [integrate-matches](tools/integrate-matches/) | Adopt byte-exact main-image C through the integration gate. |
 | [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
-| [check-commit-progress](tools/check-commit-progress/) | Enforce progress-bearing commit subjects. |
-| [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history. |
-| [check-unmatchable](tools/check-unmatchable/) | Audit owner registers and unmatchable classifications. |
-| [core-retained-audit](tools/core-retained-audit/) | Verify retained main-image assembly classifications and extents. |
-| [coverage-map](tools/coverage-map/) | Build coverage metrics, SVGs, and dashboard data. |
-| [dashboard-server](tools/dashboard-server/) | Serve the local reconstruction dashboard. |
-| [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
+| [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history; enforce progress-bearing commit subjects. |
+| [check-unmatchable](tools/check-unmatchable/) | Audit owner registers, unmatchable classifications, and retained main-image assembly extents. |
+| [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
-| [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |
-| [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
-| [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
-| [battle-assets](tools/battle-assets/) | Rebuild battle screen, display, effect, and compressed resource packages. |
-| [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
-| [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
-| [executable-gap-sources](tools/executable-gap-sources/) | Decode typed source packages in executable gaps. |
-| [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
-| [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
-| [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
-| [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
-| [map-container-components](tools/map-container-components/) | Extract map-container component series. |
-| [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
-| [music](tools/music/) | Build music sequences, the sound table, audio-engine data, residual sound records, and dashboard catalog data. |
-| [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
-| [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
-| [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |
-| [simple-resources](tools/simple-resources/) | Rebuild maintained stamp, font, word-table and screen records. |
-| [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
-| [staff-roll](tools/staff-roll/) | Build the staff-roll package. |
-| [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
-| [title-resources](tools/title-resources/) | Build title-screen resources. |
+| [extract-resource](tools/extract-resource/) | Read resource payloads from approved ROMs; general, palette, halfword, arena and MTF4 LZ stream codecs. |
+| [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |
 
 ## Owners and names
 

@@ -1,12 +1,12 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
 pub mod cli;
-use canonical_json::write_canonical;
 use compiler_core::build_io::{argv, read, read_json, rooted, text, write};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use compiler_core::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
-use decomp_targets::{
+use compiler_core::canonical_json::write_canonical;
+use compiler_core::decomp_targets::{
     parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
 };
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use compiler_core::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
 use serde_json::{json, Number, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};

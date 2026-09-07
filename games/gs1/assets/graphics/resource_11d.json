@@ -38670,27 +38670,55 @@
     "lookahead": ""
   },
   "archive": {
-    "format": 1,
-    "codec": "zero-skip-sprite-archive",
-    "width": 64,
-    "height": 64,
-    "images": 12,
-    "palette_offset": 16,
-    "palette_entries": 224,
-    "stream_order": [
-      1,
-      3,
-      5,
-      7,
-      9,
-      11,
-      0,
-      2,
-      4,
-      6,
-      8,
-      10
-    ],
-    "atlas_columns": 8
-  }
+    "offsets": [
+      10140,
+      52,
+      11751,
+      1645,
+      13328,
+      3211,
+      14931,
+      4790,
+      16700,
+      6539,
+      18380,
+      8381,
+      0
+    ]
+  },
+  "components": [
+    {
+      "kind": "le-u32-array",
+      "source": "games/gs1/assets/graphics/resource_11d.json",
+      "pointer": "/archive/offsets",
+      "size": 52
+    },
+    {
+      "kind": "zero-skip-bytes",
+      "source": "games/gs1/assets/graphics/resource_11d_images.8bpp.png",
+      "frame_width": 64,
+      "frame_height": 64,
+      "columns": 8,
+      "frame_order": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        11,
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "palette": {
+        "source": "games/gs1/assets/graphics/0800777c.gbapal.png",
+        "offset": 16,
+        "entries": 224
+      },
+      "size": 20309
+    }
+  ]
 }

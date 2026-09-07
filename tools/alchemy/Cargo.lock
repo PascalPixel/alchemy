@@ -72,7 +72,6 @@ dependencies = [
  "kind2-resources",
  "late-runtime-residual",
  "localization-font",
- "localization-tables",
  "map-container-components",
  "map-load-table",
  "map-resources",
@@ -822,13 +821,6 @@ version = "0.1.0"
 dependencies = [
  "extract-resource",
  "import-asset",
- "serde_json",
-]
-
-[[package]]
-name = "localization-tables"
-version = "0.1.0"
-dependencies = [
  "serde_json",
 ]
 

@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "kind": "golden-sun-localization-tables",
+  "kind": "typed-table",
   "address": "0x080370d4",
   "size": "0x00000390",
   "segments": [
@@ -49,7 +49,7 @@
       "end": "0x08037206",
       "stride": 2,
       "consumers": ["Func_08021228"],
-      "element": "u16",
+      "element": "le-u16",
       "values": [90, 91, 92, 93]
     },
     {
@@ -57,7 +57,7 @@
       "end": "0x08037216",
       "stride": 2,
       "consumers": ["Func_08021360"],
-      "element": "u16",
+      "element": "le-u16",
       "values": [0, 1, 2, 3, 35, 5, 6, 7]
     },
     {
@@ -65,7 +65,7 @@
       "end": "0x08037226",
       "stride": 2,
       "consumers": ["Func_08021360"],
-      "element": "u16",
+      "element": "le-u16",
       "values": [18, 19, 2, 3, 36, 48, 6, 7]
     },
     {
@@ -81,7 +81,7 @@
       "end": "0x08037250",
       "stride": 4,
       "consumers": ["Func_080217a4"],
-      "element": "u32",
+      "element": "le-u32",
       "values": [72089, 74055, 76021, 77987, 79953, 77987, 76021, 74055]
     },
     {
@@ -105,7 +105,7 @@
       "end": "0x08037300",
       "stride": 2,
       "consumers": ["Func_08021a18"],
-      "element": "u16",
+      "element": "le-u16",
       "values": [0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     },
     {

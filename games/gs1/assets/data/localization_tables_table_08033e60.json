@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "kind": "golden-sun-localization-tables",
+  "kind": "typed-table",
   "address": "0x08033e60",
   "size": "0x00000098",
   "segments": [

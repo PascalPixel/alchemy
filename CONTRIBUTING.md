@@ -393,6 +393,12 @@ a separate executable or crate per resource. Share the implementation across
 assets of the same format and prove their rebuilt bytes before deleting the old
 route. Renaming hard-coded resource logic does not make it portable.
 
+The asset builder's `typed-table` format encodes contiguous source-described
+segments: `u8`, `s8`, `le-u16`, `le-u32`, and zero-terminated, padded `ascii-fixed`.
+Addresses, extents, strides and consumer evidence stay in the asset source.
+Integer ranges, segment continuity, text encoding and output sizes are checked
+by the shared builder; do not create another crate for a particular table.
+
 The inventory remains mandatory, including game-specific and internal libraries.
 Build dependency status is not an exemption from review or consolidation.
 
@@ -452,7 +458,6 @@ libraries are not additional public command surfaces.
 | [late-runtime-data](tools/late-runtime-data/) | Define typed layouts for late-runtime encoding. |
 | [late-runtime-residual](tools/late-runtime-residual/) | Build late-runtime residual regions. |
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
-| [localization-tables](tools/localization-tables/) | Build localization lookup tables. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
 | [map-resources](tools/map-resources/) | Build and verify map-container resource series. |
 | [message-archive](tools/message-archive/) | Extract and rebuild message archives. |

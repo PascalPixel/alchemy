@@ -55,7 +55,6 @@ dependencies = [
  "diff",
  "disassemble",
  "encounter-data",
- "executable-gap-sources",
  "extract-resource",
  "f0-archive",
  "full-c-progress",
@@ -446,13 +445,6 @@ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
  "windows-sys",
-]
-
-[[package]]
-name = "executable-gap-sources"
-version = "0.1.0"
-dependencies = [
- "serde_json",
 ]
 
 [[package]]

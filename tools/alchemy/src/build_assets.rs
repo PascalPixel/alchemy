@@ -505,7 +505,7 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
     let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
-        "u8-array" | "s8-array" | "be-s16-array" => {
+        "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array" => {
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
             let values = document.pointer(pointer).ok_or("array pointer is absent")?;
@@ -694,7 +694,11 @@ fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
         if value.is_array() {
             output.extend(integer_array(value, kind)?);
         } else {
-            let value = value.as_i64().ok_or("array member is not an integer")?;
+            let value = match value.as_i64() {
+                Some(value) => value,
+                None => i64::try_from(number(value, "array member")?)
+                    .map_err(|_| "array member exceeds i64")?,
+            };
             if kind == "be-s16-array" || kind == "le-s16-array" {
                 let value = i16::try_from(value).map_err(|_| "array member exceeds s16")?;
                 output.extend(if kind == "le-s16-array" {
@@ -2401,17 +2405,9 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 serde_json::json!({"standard_header_bytes":built.len()}),
             ))
         }
-        "golden-sun-executable-gap-data" => {
-            let built =
-                executable_gap_sources::build_section(&source_path(entry_source)?, address as u64)?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"representation":"typed mixed-region table","region_address":hex_address(address)}),
-            ))
-        }
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" | "gba-palette-rgba"
-        | "indexed-bytes" | "u8-array" | "s8-array" | "be-s16-array" => {
+        | "indexed-bytes" | "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array"
+        | "le-u32-array" => {
             let result = build_component(&ctx.root, entry)?;
             Ok((result.data, result.sources, result.details))
         }

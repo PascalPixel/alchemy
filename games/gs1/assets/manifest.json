@@ -594,7 +594,7 @@
       "size": "0x152",
       "kind": "golden-sun-general-lz",
       "plan": "games/gs1/assets/maps/world_map_animation.lz.json",
-      "components": [{"kind": "little-u16-text",  "size": "0x3a2",  "source": "games/gs1/assets/maps/world_map_animation.commands.txt"}]
+      "components": [{"kind": "little-u16-text",  "size": "0x3a2",  "source": "games/gs1/assets/maps/world_map_animation.commands"}]
     },
     {
       "address": "0x084247dc",
@@ -692,21 +692,21 @@
       "size": "0x189a",
       "kind": "golden-sun-general-lz",
       "plan": "games/gs1/assets/data/resource_e4_e6_e4.lz.json",
-      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e4.pairs.txt"}]
+      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e4.pairs"}]
     },
     {
       "address": "0x08431c50",
       "size": "0x15c6",
       "kind": "golden-sun-general-lz",
       "plan": "games/gs1/assets/data/resource_e4_e6_e5.lz.json",
-      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e5.pairs.txt"}]
+      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e5.pairs"}]
     },
     {
       "address": "0x08433218",
       "size": "0x1a8e",
       "kind": "golden-sun-general-lz",
       "plan": "games/gs1/assets/data/resource_e4_e6_e6.lz.json",
-      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e6.pairs.txt"}]
+      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e6.pairs"}]
     },
     {
       "address": "0x08434ca8",

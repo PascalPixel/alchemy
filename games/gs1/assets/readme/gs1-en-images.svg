@@ -722,8 +722,8 @@
 <title>resource_1b_content.png · golden-sun-general-lz · 0x08337104: 15,108 bytes</title>
 <rect data-content-type="Images" x="19.93518164393831" y="171.1577164559243" width="13.463592126839849" height="11.868869232783878" style="fill:#8eafc7"/>
 </g>
-<g aria-label="resource_2_build_stamp.txt · golden-sun-simple-resource · 0x08320fa0: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x08320fa0" data-source="games/gs1/assets/data/resource_2_build_stamp.txt">
-<title>resource_2_build_stamp.txt · golden-sun-simple-resource · 0x08320fa0: 16 bytes</title>
+<g aria-label="resource_2_build_stamp.stamp · golden-sun-simple-resource · 0x08320fa0: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x08320fa0" data-source="games/gs1/assets/data/resource_2_build_stamp.stamp">
+<title>resource_2_build_stamp.stamp · golden-sun-simple-resource · 0x08320fa0: 16 bytes</title>
 <rect data-content-type="Other data" x="33.9092108098964" y="170.66815349504253" width="4.700759253082972" height="0.0208740782364702" style="fill:#92a8ac"/>
 </g>
 <g aria-label="resource_40_content.png · golden-sun-general-lz · 0x083c3cf8: 4,916 bytes" data-node="leaf" data-kind="file" data-bytes="4916" data-address="0x083c3cf8" data-source="games/gs1/assets/data/resource_40_content.png">
@@ -982,16 +982,16 @@
 <title>resource_directory.json · golden-sun-resource-directory · 0x08320000: 4,000 bytes</title>
 <rect data-content-type="Other data" x="12.65181426452795" y="262.46996287538354" width="3.9243960333033066" height="9.007292558857532" style="fill:#92a8ac"/>
 </g>
-<g aria-label="resource_e4_e6_e4.pairs.txt · golden-sun-general-lz · 0x084303b4: 6,298 bytes" data-node="leaf" data-kind="file" data-bytes="6298" data-address="0x084303b4" data-source="games/gs1/assets/data/resource_e4_e6_e4.pairs.txt">
-<title>resource_e4_e6_e4.pairs.txt · golden-sun-general-lz · 0x084303b4: 6,298 bytes</title>
+<g aria-label="resource_e4_e6_e4.pairs · golden-sun-general-lz · 0x084303b4: 6,298 bytes" data-node="leaf" data-kind="file" data-bytes="6298" data-address="0x084303b4" data-source="games/gs1/assets/data/resource_e4_e6_e4.pairs">
+<title>resource_e4_e6_e4.pairs · golden-sun-general-lz · 0x084303b4: 6,298 bytes</title>
 <rect data-content-type="Other data" x="17.576210297831256" y="262.46996287538354" width="6.753461554436056" height="9.007292558857532" style="fill:#92a8ac"/>
 </g>
-<g aria-label="resource_e4_e6_e5.pairs.txt · golden-sun-general-lz · 0x08431c50: 5,574 bytes" data-node="leaf" data-kind="file" data-bytes="5574" data-address="0x08431c50" data-source="games/gs1/assets/data/resource_e4_e6_e5.pairs.txt">
-<title>resource_e4_e6_e5.pairs.txt · golden-sun-general-lz · 0x08431c50: 5,574 bytes</title>
+<g aria-label="resource_e4_e6_e5.pairs · golden-sun-general-lz · 0x08431c50: 5,574 bytes" data-node="leaf" data-kind="file" data-bytes="5574" data-address="0x08431c50" data-source="games/gs1/assets/data/resource_e4_e6_e5.pairs">
+<title>resource_e4_e6_e5.pairs · golden-sun-general-lz · 0x08431c50: 5,574 bytes</title>
 <rect data-content-type="Other data" x="12.65181426452795" y="272.4772554342411" width="4.7117990780843195" height="11.022744565758924" style="fill:#92a8ac"/>
 </g>
-<g aria-label="resource_e4_e6_e6.pairs.txt · golden-sun-general-lz · 0x08433218: 6,798 bytes" data-node="leaf" data-kind="file" data-bytes="6798" data-address="0x08433218" data-source="games/gs1/assets/data/resource_e4_e6_e6.pairs.txt">
-<title>resource_e4_e6_e6.pairs.txt · golden-sun-general-lz · 0x08433218: 6,798 bytes</title>
+<g aria-label="resource_e4_e6_e6.pairs · golden-sun-general-lz · 0x08433218: 6,798 bytes" data-node="leaf" data-kind="file" data-bytes="6798" data-address="0x08433218" data-source="games/gs1/assets/data/resource_e4_e6_e6.pairs">
+<title>resource_e4_e6_e6.pairs · golden-sun-general-lz · 0x08433218: 6,798 bytes</title>
 <rect data-content-type="Other data" x="18.36361334261227" y="272.4772554342411" width="5.966058509655043" height="11.022744565758924" style="fill:#92a8ac"/>
 </g>
 <g aria-label="runtime_support.json: 5,548 bytes · 6 items" data-node="container" data-kind="file" data-bytes="5548" data-source="games/gs1/assets/data/runtime_support.json">
@@ -10572,8 +10572,8 @@
 <rect data-content-type="Maps" x="495.09574634709116" y="241.82147231153553" width="1.8073974141562354" height="5.942134965450591" style="fill:#9bbfaf"/>
 </g>
 </g>
-<g aria-label="world_map_animation.commands.txt · golden-sun-general-lz · 0x08424688: 338 bytes" data-node="leaf" data-kind="file" data-bytes="338" data-address="0x08424688" data-source="games/gs1/assets/maps/world_map_animation.commands.txt">
-<title>world_map_animation.commands.txt · golden-sun-general-lz · 0x08424688: 338 bytes</title>
+<g aria-label="world_map_animation.commands · golden-sun-general-lz · 0x08424688: 338 bytes" data-node="leaf" data-kind="file" data-bytes="338" data-address="0x08424688" data-source="games/gs1/assets/maps/world_map_animation.commands">
+<title>world_map_animation.commands · golden-sun-general-lz · 0x08424688: 338 bytes</title>
 <rect data-content-type="Maps" x="485.05454738392064" y="250.3331889389006" width="14.279014715412293" height="0.1391633238290062" style="fill:#9bbfaf"/>
 </g>
 <g aria-label="world_map_chunks.rgba.png · golden-sun-offset-palette-lz · 0x08411474: 63,528 bytes" data-node="leaf" data-kind="file" data-bytes="63528" data-address="0x08411474" data-source="games/gs1/assets/maps/world_map_chunks.rgba.png">

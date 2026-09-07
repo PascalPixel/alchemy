@@ -167,25 +167,67 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
     ))
 }
 fn new_text_file_reason(path: &str, existing: bool) -> Option<String> {
-    let suffix = extension(path);
-    if (!suffix.eq_ignore_ascii_case("txt") && !suffix.eq_ignore_ascii_case("md")) || existing {
+    if existing
+        || !listed(extension(path), &["md", "txt"])
+        || matches!(
+            path,
+            "README.md" | "CONTRIBUTING.md" | "AGENTS.md" | "CLAUDE.md"
+        )
+    {
         return None;
     }
-    if suffix.eq_ignore_ascii_case("md") {
-        if matches!(path, "README.md" | "CONTRIBUTING.md") {
-            return None;
+    Some(format!("separate document {path}: use CONTRIBUTING.md"))
+}
+pub fn check_documents(root: &Path) -> Result<(), String> {
+    let mut pending = vec![root.to_path_buf()];
+    let mut rejected = Vec::new();
+    while let Some(directory) = pending.pop() {
+        for entry in std::fs::read_dir(&directory).map_err(|e| e.to_string())? {
+            let entry = entry.map_err(|e| e.to_string())?;
+            let path = entry.path();
+            let kind = entry.file_type().map_err(|e| e.to_string())?;
+            if kind.is_dir() {
+                // External decompiler and compiler distributions are source inputs.
+                if entry.file_name() != ".git"
+                    && path != root.join("m2c")
+                    && !path.join("gcc/toplev.c").is_file()
+                {
+                    pending.push(path);
+                }
+                continue;
+            }
+            let relative = path
+                .strip_prefix(root)
+                .map_err(|e| e.to_string())?
+                .to_string_lossy();
+            if !listed(extension(&relative), &["md", "txt"])
+                || matches!(relative.as_ref(), "README.md" | "CONTRIBUTING.md")
+            {
+                continue;
+            }
+            if matches!(relative.as_ref(), "AGENTS.md" | "CLAUDE.md") {
+                let pointer = std::fs::read_to_string(&path).unwrap_or_default();
+                if kind.is_symlink()
+                    || matches!(
+                        pointer.trim(),
+                        "@CONTRIBUTING.md" | "See [CONTRIBUTING.md](CONTRIBUTING.md)."
+                    )
+                {
+                    continue;
+                }
+            }
+            rejected.push(relative.into_owned());
         }
-        return Some(format!(
-            "new markdown file {path}: this repository keeps exactly two \
-             (README.md and CONTRIBUTING.md). Put project procedure in \
-             CONTRIBUTING.md, which is the single contributor guide"
-        ));
     }
-    Some(format!(
-        "new text file {path}: notes and scratch output do not belong in the tree. \
-         Put durable content in CONTRIBUTING.md and transient output in the \
-         scratch directory"
-    ))
+    rejected.sort();
+    if rejected.is_empty() {
+        Ok(())
+    } else {
+        Err(format!(
+            "separate documentation is forbidden, including ignored files:\n{}",
+            rejected.join("\n")
+        ))
+    }
 }
 fn incbin(data: &[u8]) -> bool {
     let text = String::from_utf8_lossy(data);
@@ -263,10 +305,6 @@ fn git(root: &Path, args: &[&str], label: &str) -> Result<Vec<u8>, String> {
         stderr
     })
 }
-fn existed_in_head(root: &Path, path: &str) -> bool {
-    git(root, &["ls-tree", "HEAD", "--", path], "tracked path scan")
-        .is_ok_and(|output| !output.is_empty())
-}
 fn nul_list(value: &[u8]) -> Vec<String> {
     value
         .split(|byte| *byte == 0)
@@ -307,10 +345,7 @@ struct Entry {
 fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String> {
     let mut failures = Vec::new();
     for entry in entries {
-        let existing = entry.existing
-            || (listed(extension(&entry.path), &["txt", "md"])
-                && existed_in_head(root, &entry.path));
-        if let Some(reason) = new_text_file_reason(&entry.path, existing) {
+        if let Some(reason) = new_text_file_reason(&entry.path, entry.existing) {
             failures.push(format!("{} {reason}", entry.scope));
             continue;
         }
@@ -488,7 +523,7 @@ pub fn self_test() -> Result<(), String> {
         "games/gs1/assets/data/layout.json",
         "tools/compare-roms/src/main.rs",
         "tools/build-full/src/main.rs",
-        "games/gs1/assets/data/resource_2_build_stamp.txt",
+        "games/gs1/assets/data/resource_2_build_stamp.stamp",
         "games/gs1/assets/maps/town/metatiles.bin",
         "games/gs1/assets/maps/town/metatile_attributes.bin",
         "rom.sha1",
@@ -556,7 +591,25 @@ mod tests {
         assert_eq!(changes[1], ("new.txt".to_string(), true));
         assert!(new_text_file_reason("README.md", false).is_none());
         assert!(new_text_file_reason("CONTRIBUTING.md", false).is_none());
-        assert!(new_text_file_reason("AGENTS.md", false).is_some());
+        assert!(new_text_file_reason("AGENTS.md", false).is_none());
         assert!(new_text_file_reason("notes.txt", false).is_some());
+    }
+    #[test]
+    fn documents_include_ignored_output_and_allow_only_agent_pointers() {
+        let root = std::env::temp_dir().join(format!("alchemy-documents-{}", std::process::id()));
+        std::fs::create_dir_all(root.join("out")).unwrap();
+        std::fs::write(root.join(".gitignore"), "out/\n").unwrap();
+        std::fs::write(root.join("CONTRIBUTING.md"), "guide").unwrap();
+        std::fs::write(root.join("AGENTS.md"), "@CONTRIBUTING.md\n").unwrap();
+        std::fs::create_dir_all(root.join("out/compiler/gcc")).unwrap();
+        std::fs::write(root.join("out/compiler/gcc/toplev.c"), "compiler source").unwrap();
+        std::fs::write(root.join("out/compiler/gcc/thumb.md"), "(define_insn)").unwrap();
+        assert!(check_documents(&root).is_ok());
+        for name in ["out/verdict.md", "out/score.txt", "AGENTS.md"] {
+            std::fs::write(root.join(name), "another guide").unwrap();
+            assert!(check_documents(&root).unwrap_err().contains(name));
+            std::fs::remove_file(root.join(name)).unwrap();
+        }
+        std::fs::remove_dir_all(root).unwrap();
     }
 }

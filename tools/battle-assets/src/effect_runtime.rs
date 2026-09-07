@@ -3,10 +3,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
-pub const ROM_BASE: u32 = 0x0800_0000;
-pub const SENTOU_KOUKA_ADDRESS: u32 = 0x080e_da78;
-pub const SENTOU_KOUKA_END: u32 = 0x080f_0254;
-pub const SENTOU_KOUKA_SIZE: usize = (SENTOU_KOUKA_END - SENTOU_KOUKA_ADDRESS) as usize;
+const ROM_BASE: u32 = 0x0800_0000;
+pub(crate) const SENTOU_KOUKA_ADDRESS: u32 = 0x080e_da78;
+const SENTOU_KOUKA_END: u32 = 0x080f_0254;
+pub(crate) const SENTOU_KOUKA_SIZE: usize = (SENTOU_KOUKA_END - SENTOU_KOUKA_ADDRESS) as usize;
 const KEISU_ADDRESS: u32 = 0x080e_da78;
 const GOUSEI_ADDRESS: u32 = 0x080e_daf0;
 const HYOU_A_ADDRESS: u32 = 0x080e_de48;
@@ -18,7 +18,7 @@ const ZERO_FILL_ADDRESS: u32 = 0x080e_f054;
 const TENKAI_ADDRESS: u32 = 0x080f_0000;
 const CALLBACK_COUNT: usize = 407;
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Error(pub String);
+pub(crate) struct Error(pub String);
 impl std::fmt::Display for Error {
     fn fmt(&self, output: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         output.write_str(&self.0)
@@ -468,7 +468,7 @@ fn parse_index(path: &Path) -> Result<Sources> {
 fn source_path(directory: &Path, sources: &Sources, name: &str) -> PathBuf {
     directory.join(format!("{}{}", sources.prefix, name))
 }
-pub fn build_sentou_kouka_runtime(index_path: &Path) -> Result<Vec<u8>> {
+pub(crate) fn build(index_path: &Path) -> Result<Vec<u8>> {
     let sources = parse_index(index_path)?;
     let directory = index_path
         .parent()

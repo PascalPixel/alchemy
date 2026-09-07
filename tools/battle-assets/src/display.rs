@@ -4,9 +4,9 @@ use serde_json::Value;
 use std::fs;
 use std::path::Path;
 
-pub const ADDRESS: usize = 0x080c2a0a;
-pub const END: usize = 0x080c5b30;
-pub const SIZE: usize = END - ADDRESS;
+const ADDRESS: usize = 0x080c2a0a;
+const END: usize = 0x080c5b30;
+const SIZE: usize = END - ADDRESS;
 const KIHON_END: usize = 0x080c3734;
 const KOMA_END: usize = 0x080c3f34;
 const HAICHI_ADDRESS: usize = KOMA_END;
@@ -14,9 +14,9 @@ const HAICHI_END: usize = 0x080c5938;
 const HOSEI_ADDRESS: usize = HAICHI_END;
 const HOSEI_END: usize = 0x080c5a30;
 
-pub type Result<T> = std::result::Result<T, Error>;
+type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Error(pub String);
+pub(crate) struct Error(pub String);
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&self.0)
@@ -517,7 +517,7 @@ fn hosei(path: &Path) -> Result<Vec<u8>> {
     Ok(out)
 }
 
-pub fn build_sentou_hyouji(index_path: &Path) -> Result<Vec<u8>> {
+pub(crate) fn build(index_path: &Path) -> Result<Vec<u8>> {
     let i = value(index_path)?;
     keys(
         &i,

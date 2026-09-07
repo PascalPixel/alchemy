@@ -20,7 +20,7 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 HOSTS := alchemy
 CORE_TESTS := compiler-core candidate-compiler diff matching \
 		disassemble overlay-adopt build-full decompile \
-              extract-resource coverage-map check-publication dashboard-server
+		extract-resource coverage-map check-publication dashboard-server battle-assets
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching \

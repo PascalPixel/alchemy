@@ -1,9 +1,10 @@
-//! Native build and verification support for the sentou resource series.
+//! Rebuild the battle resource stream series from audited plans.
 //!
 //! Export is intentionally not part of this narrow port. The tracked plans
 //! are the build input: PNGs are decoded by `import-asset`, and their audited
 //! token streams are encoded by `extract-resource`.
 
+use crate::BuiltBattleResource;
 use alignment_tail::{build_alignment_tail, parse_alignment_tail};
 use extract_resource::{
     encode_general_prefill, encode_palette, GeneralToken, PaletteGroup, PaletteOperation,
@@ -13,9 +14,8 @@ use serde_json::{Map, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub type Result<T> = std::result::Result<T, String>;
+type Result<T> = std::result::Result<T, String>;
 const PREFILL: usize = 0x1000;
-const ROM_BASE: usize = 0x0800_0000;
 
 fn fail<T>(message: impl Into<String>) -> Result<T> {
     Err(message.into())
@@ -176,7 +176,7 @@ fn build_decoded(
 }
 
 /// Build one audited stream and return its source paths for manifest callers.
-pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
+fn build_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
     let document = json_file(plan_path)?;
     let plan = object(&document, "sentou plan")?;
     if field(plan, "kind")?.as_str() != Some("golden-sun-sentou-resource") {
@@ -247,7 +247,7 @@ pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)
     Ok((result, sources))
 }
 
-pub fn build_sentou_series(index_path: &Path) -> Result<Vec<(usize, Vec<u8>, Vec<PathBuf>)>> {
+pub(crate) fn build_series(index_path: &Path) -> Result<Vec<BuiltBattleResource>> {
     let document = json_file(index_path)?;
     let index = object(&document, "sentou index")?;
     let resources = field(index, "resources")?
@@ -271,64 +271,15 @@ pub fn build_sentou_series(index_path: &Path) -> Result<Vec<(usize, Vec<u8>, Vec
                 .parent()
                 .unwrap_or_else(|| Path::new("."))
                 .join(format!("{prefix}{source}"));
-            let (data, sources) = build_sentou_resource(&plan)?;
+            let (data, sources) = build_resource(&plan)?;
             if data.len() != expected {
                 return fail("sentou index size differs from its canonical source");
             }
-            Ok((address, data, sources))
+            Ok(BuiltBattleResource {
+                address,
+                data,
+                sources,
+            })
         })
         .collect()
-}
-
-pub fn verify_sentou_resources(rom_path: &Path, directory: &Path) -> Result<String> {
-    let index_path = PathBuf::from(format!("{}_index.json", directory.display()));
-    let built = build_sentou_series(&index_path)?;
-    let rom = fs::read(rom_path).map_err(|e| e.to_string())?;
-    let index_document = json_file(&index_path)?;
-    let index = object(&index_document, "sentou index")?;
-    let resources = field(index, "resources")?.as_array().unwrap();
-    let mut claimed = 0usize;
-    let mut boundary = 0usize;
-    for (position, (address, data, _)) in built.iter().enumerate() {
-        let start = address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| "sentou address lies before ROM base".to_string())?;
-        if start + data.len() > rom.len() || rom[start..start + data.len()] != *data {
-            return fail(format!("sentou resource {position} differs from ROM"));
-        }
-        claimed += data.len();
-        boundary += number(
-            field(
-                object(&resources[position], "sentou index entry")?,
-                "resource_boundary_size",
-            )?,
-            "sentou boundary",
-        )?;
-    }
-    Ok(format!(
-        "identical=true resources={} claimed_bytes={} boundary_bytes={} suffix_fallback={}",
-        built.len(),
-        claimed,
-        boundary,
-        boundary - claimed
-    ))
-}
-
-pub fn self_test() -> Result<()> {
-    let encoded = encode_general_prefill(b"TEST", &[GeneralToken::Literal(4)], PREFILL, 1)
-        .map_err(|e| e.0)?;
-    if encoded.is_empty() {
-        return fail("sentou general self-test failed");
-    }
-    let mut operations = vec![PaletteOperation::Literal; 7];
-    operations.push(PaletteOperation::End);
-    let groups = [PaletteGroup::Group(operations)];
-    if encode_palette(&[0u8; 7], &groups)
-        .map_err(|e| e.0)?
-        .is_empty()
-    {
-        return fail("sentou palette self-test failed");
-    }
-    println!("self-test=ok");
-    Ok(())
 }

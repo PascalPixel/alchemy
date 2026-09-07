@@ -18,8 +18,8 @@ use gba_header::{build_gba_header_component, read_gba_header_source};
 use generated_files::{prune_files, unused_tracked_images};
 use import_asset::import_tilemap;
 use import_asset::{
-    append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png,
-    EventBody, MidiEvent, MIDI_BUILD_DIRECTIVE,
+    append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, one_bit_tiles,
+    rgba_png, EventBody, MidiEvent, MIDI_BUILD_DIRECTIVE,
 };
 use serde_json::Value;
 use sha1::{Digest, Sha1};
@@ -31,8 +31,6 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
-const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
-const STAFF_ROLL_SIZE: usize = 0x15a4;
 const MAP_CONTAINER_HEADER_SIZE: usize = 0x3c;
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -585,6 +583,13 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 .map_err(|e| e.to_string())?;
             (built, details, vec![source_name.to_string()])
         }
+        "1bpp-tiles" => {
+            let (built, report) = one_bit_tiles(&fs::read(&source).map_err(|e| e.to_string())?)
+                .map_err(|e| e.to_string())?;
+            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
+                .map_err(|e| e.to_string())?;
+            (built, details, vec![source_name.to_string()])
+        }
         "gba-tilemap16" => {
             let built = import_tilemap(&fs::read_to_string(&source).map_err(|e| e.to_string())?)
                 .map_err(|e| e.to_string())?;
@@ -949,6 +954,7 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
     let mut address = number(&document["address"], "table address")?;
     let labels = table_labels(document)?;
     let mut output = Vec::new();
+    let mut pools: HashMap<String, Vec<usize>> = HashMap::new();
     for segment in document["segments"]
         .as_array()
         .ok_or("table segments missing")?
@@ -968,6 +974,8 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             Some("le-u32") => ("le-u32-array", 4),
             Some("le-s32") => ("le-s32-array", 4),
             Some("ascii-fixed") => ("ascii-fixed", 1),
+            Some("ascii-pool") => ("ascii-pool", 1),
+            Some("pool-pointer") => ("pool-pointer", 4),
             Some("record") => ("record", 1),
             _ => return Err("unknown table element".into()),
         };
@@ -1024,6 +1032,52 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             let mut bytes = text.as_bytes().to_vec();
             bytes.resize(size, 0);
             bytes
+        } else if kind == "ascii-pool" {
+            // Zero-terminated printable strings; every string after the first
+            // starts on an `alignment` boundary of its address, and the pool's
+            // `name` lets a later `pool-pointer` segment address them by index.
+            let alignment = number(&segment["alignment"], "pool alignment")?;
+            let texts = segment["texts"].as_array().ok_or("pool texts missing")?;
+            if stride != 1 || alignment == 0 || texts.is_empty() {
+                return Err("text pool layout differs".into());
+            }
+            let mut bytes = Vec::new();
+            let mut addresses = Vec::new();
+            for text in texts {
+                let text = json_string(text, "pool text")?;
+                if !text.bytes().all(|b| (0x20..=0x7e).contains(&b)) {
+                    return Err("pool text is not printable ASCII".into());
+                }
+                if !addresses.is_empty() {
+                    let aligned = (start + bytes.len()).div_ceil(alignment) * alignment - start;
+                    bytes.resize(aligned, 0);
+                }
+                addresses.push(start + bytes.len());
+                bytes.extend_from_slice(text.as_bytes());
+                bytes.push(0);
+            }
+            let name = json_string(&segment["name"], "pool name")?;
+            if pools.insert(name.to_string(), addresses).is_some() {
+                return Err("duplicate pool name".into());
+            }
+            bytes
+        } else if kind == "pool-pointer" {
+            let pool = pools
+                .get(json_string(&segment["pool"], "pointer pool")?)
+                .ok_or("pointer pool is not an earlier text pool")?;
+            let addresses = segment["values"]
+                .as_array()
+                .ok_or("pointer values missing")?
+                .iter()
+                .map(|index| {
+                    pool.get(number(index, "pool index")?)
+                        .copied()
+                        .ok_or_else(|| "pool index is outside its pool".to_string())
+                })
+                .collect::<Result<Vec<_>, String>>()?;
+            let mut spec = segment.clone();
+            spec["element"] = Value::from("le-u32");
+            table_values(&serde_json::json!(addresses), &spec, size, &labels)?
         } else {
             table_values(&segment["values"], segment, size, &labels)?
         };
@@ -1354,6 +1408,37 @@ fn typed_tables_check_layout_width_and_text() {
         *invalid.pointer_mut(pointer).unwrap() = value;
         assert!(typed_table(&invalid).is_err(), "{pointer}");
     }
+}
+
+#[test]
+fn typed_text_pools_resolve_aligned_string_pointers() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":256,"size":26,"segments":[
+        {"address":256,"end":270,"stride":1,"element":"ascii-pool","name":"names","alignment":4,"texts":["AB","","CDEFG"]},
+        {"address":270,"end":282,"stride":4,"element":"pool-pointer","pool":"names","values":[2,0],"terminated_capacity":3}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [65, 66, 0, 0, 0, 0, 0, 0, 67, 68, 69, 70, 71, 0, 8, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+    );
+    for (pointer, value) in [
+        ("/segments/0/alignment", serde_json::json!(0)),
+        ("/segments/0/texts/2", serde_json::json!("é")),
+        ("/segments/0/texts/2", serde_json::json!("CDEF")),
+        ("/segments/1/pool", serde_json::json!("other")),
+        ("/segments/1/values/0", serde_json::json!(3)),
+        ("/segments/1/values", serde_json::json!([0, 1, 2])),
+    ] {
+        let mut invalid = source.clone();
+        *invalid.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&invalid).is_err(), "{pointer}");
+    }
+    let mut reversed = source.clone();
+    reversed["segments"].as_array_mut().unwrap().reverse();
+    reversed["segments"][0]["address"] = Value::from(256);
+    reversed["segments"][0]["end"] = Value::from(268);
+    reversed["segments"][1]["address"] = Value::from(268);
+    reversed["segments"][1]["end"] = Value::from(282);
+    assert!(typed_table(&reversed).is_err());
 }
 
 fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
@@ -2503,7 +2588,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 serde_json::json!({"standard_header_bytes":built.len()}),
             ))
         }
-        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" | "gba-palette-rgba"
+        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "1bpp-tiles" | "gba-palette" | "gba-palette-rgba"
         | "indexed-bytes" | "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array"
         | "le-u32-array" => {
             let result = build_component(&ctx.root, entry)?;
@@ -4088,30 +4173,6 @@ fn build_entry_native_tail(
                 built.clone(),
                 dedup_sources(nested),
                 serde_json::json!({"source_bytes":built.len(),"callback_slots":407,"derived_zero_bytes":4012}),
-            ))
-        }
-        "golden-sun-staff-roll" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = staff_roll::build_staff_roll(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            if address != STAFF_ROLL_ADDRESS || built.len() != STAFF_ROLL_SIZE {
-                return Err("staff-roll package differs from canonical manifest extent".to_string());
-            }
-            let font_path = child_path(
-                &source_path(entry_source)?,
-                json_string(&document["font"]["source"], "staff font source")?,
-            );
-            let nested = vec![
-                entry_source.to_string(),
-                root_relative(&ctx.root, &font_path)?,
-            ];
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            Ok((
-                built.clone(),
-                dedup_sources(nested),
-                serde_json::json!({"source_bytes":built.len(),"preload_slots":33,"strings":110,"line_entries":339,"font_glyphs":96}),
             ))
         }
         "golden-sun-sentou-resource" => {

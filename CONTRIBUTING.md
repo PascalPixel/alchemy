@@ -484,10 +484,7 @@ libraries are not additional public command surfaces.
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
-| [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
-| [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
-| [map-container-components](tools/map-container-components/) | Extract map-container component series. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
 

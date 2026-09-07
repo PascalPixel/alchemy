@@ -24145,6 +24145,95 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-party-departure",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_party_departure.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ad",
+      "absolute_symbols": {
+        "Func_02003330_a": {
+          "address": "0x02009bb4",
+          "kind": "thumb"
+        },
+        "Func_02003330_b": {
+          "address": "0x02009b94",
+          "kind": "thumb"
+        },
+        "Func_0200336c_a": {
+          "address": "0x02009bb4",
+          "kind": "thumb"
+        },
+        "Func_0200336c_b": {
+          "address": "0x02009b74",
+          "kind": "thumb"
+        },
+        "Func_0200336c_c": {
+          "address": "0x02009b1c",
+          "kind": "thumb"
+        },
+        "Func_0200337e_a": {
+          "address": "0x02009ba4",
+          "kind": "thumb"
+        },
+        "Func_0200337e_b": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Func_02003406_a": {
+          "address": "0x02009bbc",
+          "kind": "thumb"
+        },
+        "Func_02003406_b": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Func_0200349e_a": {
+          "address": "0x02009bbc",
+          "kind": "thumb"
+        },
+        "Func_0200349e_b": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Func_0200349e_c": {
+          "address": "0x02009b4c",
+          "kind": "thumb"
+        },
+        "Func_020034bc_a": {
+          "address": "0x02009bbc",
+          "kind": "thumb"
+        },
+        "Func_020034bc_b": {
+          "address": "0x02009b64",
+          "kind": "thumb"
+        },
+        "Func_020034ce_a": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Func_020034ce_b": {
+          "address": "0x02009b4c",
+          "kind": "thumb"
+        },
+        "Func_020034fe_a": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Func_020034fe_b": {
+          "address": "0x02009b4c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02001760",
+          "extent": 684,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

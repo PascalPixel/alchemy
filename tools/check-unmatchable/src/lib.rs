@@ -1,4 +1,5 @@
 pub mod cli;
+pub mod retained;
 
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;

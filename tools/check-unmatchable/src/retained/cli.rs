@@ -18,7 +18,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         eprintln!("{USAGE}");
         return ExitCode::from(2);
     }
-    match crate::audit(&crate::repository_root()) {
+    match crate::retained::audit(&crate::retained::repository_root()) {
         Ok(audit) => {
             if arguments.iter().any(|argument| argument == "--json") {
                 println!("{}", serde_json::to_string_pretty(&audit.json()).unwrap());

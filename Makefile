@@ -18,13 +18,10 @@ COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy
-PORTABLE_TOOLS := alignment-tail cache-entry canonical-json \
-	generated-files no-asm-c build-claimed build-asm build-full \
-	alchemy compiler-core candidate-compiler diff matching \
-	disassemble \
-	overlay-adopt check-commit-progress \
-	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets decompile
+PORTABLE_TOOLS := no-asm-c build-claimed build-asm build-full \
+	alchemy compiler-core candidate-compiler diff matching disassemble \
+	overlay-adopt check-publication check-unmatchable coverage-map \
+	integrate-matches decompile
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.

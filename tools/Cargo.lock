@@ -34,7 +34,6 @@ name = "alchemy"
 version = "0.1.0"
 dependencies = [
  "alignment-tail",
- "archive-asset",
  "asset-paths",
  "build-asm",
  "build-claimed",
@@ -52,13 +51,11 @@ dependencies = [
  "diff",
  "disassemble",
  "extract-resource",
- "f0-archive",
  "full-c-progress",
  "gba-header",
  "generated-files",
  "import-asset",
  "integrate-matches",
- "localization-font",
  "matching",
  "no-asm-c",
  "objdiff-core",
@@ -68,8 +65,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sha1",
- "skip-sprite-archive",
- "static-sprite-series",
  "tempfile",
  "walkdir",
 ]
@@ -87,16 +82,6 @@ name = "anyhow"
 version = "1.0.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-
-[[package]]
-name = "archive-asset"
-version = "0.1.0"
-dependencies = [
- "alignment-tail",
- "extract-resource",
- "import-asset",
- "png",
-]
 
 [[package]]
 name = "arm-attr"
@@ -403,14 +388,6 @@ name = "extract-resource"
 version = "0.1.0"
 
 [[package]]
-name = "f0-archive"
-version = "0.1.0"
-dependencies = [
- "import-asset",
- "serde_json",
-]
-
-[[package]]
 name = "fallible-iterator"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -651,15 +628,6 @@ name = "linux-raw-sys"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
-
-[[package]]
-name = "localization-font"
-version = "0.1.0"
-dependencies = [
- "extract-resource",
- "import-asset",
- "serde_json",
-]
 
 [[package]]
 name = "log"
@@ -1039,27 +1007,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "skip-sprite-archive"
-version = "0.1.0"
-dependencies = [
- "import-asset",
- "serde_json",
-]
-
-[[package]]
 name = "smallvec"
 version = "1.15.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
-
-[[package]]
-name = "static-sprite-series"
-version = "0.1.0"
-dependencies = [
- "extract-resource",
- "import-asset",
- "serde_json",
-]
 
 [[package]]
 name = "syn"

@@ -4222,16 +4222,6 @@ fn build_entry_native_tail(
                 serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
             ))
         }
-        "golden-sun-namae-nyuuryoku" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = namae_nyuuryoku::build_namae_nyuuryoku(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"resource_ids":document["resource_ids"].as_array().map_or(0,Vec::len),"tilemap_entries":document["tilemap"]["tiles"].as_array().map_or(0,|rows|rows.iter().map(|row|row.as_array().map_or(0,Vec::len)).sum())}),
-            ))
-        }
         "golden-sun-gameplay-databases" => {
             let document = json(&source_path(entry_source)?)?;
             let built = resource_5::build_gameplay_databases(&document)?;

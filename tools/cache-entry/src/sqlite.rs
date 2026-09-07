@@ -57,23 +57,6 @@ impl SqliteCache {
         Ok((!rows.is_empty()).then_some(rows))
     }
 
-    /// Insert or replace a single (key, kind) entry, leaving any other kind
-    /// stored under the same key untouched.
-    pub fn upsert(&self, key: &str, kind: &str, value: &[u8]) -> Result<(), String> {
-        let connection = self
-            .connection
-            .lock()
-            .map_err(|_| "cache connection poisoned")?;
-        connection
-            .execute(
-                "INSERT INTO entries (key, kind, value) VALUES (?1, ?2, ?3)
-                 ON CONFLICT(key, kind) DO UPDATE SET value = excluded.value",
-                rusqlite::params![key, kind, value],
-            )
-            .map_err(|error| error.to_string())?;
-        Ok(())
-    }
-
     /// Atomically replace every entry for `key` with `items`, in one transaction.
     pub fn put(&self, key: &str, items: &[(&str, &[u8])]) -> Result<(), String> {
         let mut connection = self

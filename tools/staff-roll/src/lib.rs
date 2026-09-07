@@ -347,20 +347,6 @@ pub fn build_staff_roll(index_path: &Path) -> Result<Vec<u8>> {
     build_inner(index_path)
 }
 
-pub fn verify_staff_roll(rom_path: &Path, index_path: &Path) -> Result<usize> {
-    let rom = fs::read(rom_path).map_err(|e| err(format!("{}: {e}", rom_path.display())))?;
-    let offset = (STAFF_ROLL_ADDRESS - ROM_BASE) as usize;
-    let end = offset + STAFF_ROLL_SIZE;
-    if rom.len() < end {
-        return Err(err("ROM is shorter than the staff-roll region"));
-    }
-    let built = build_inner(index_path)?;
-    if built != rom[offset..end] {
-        return Err(err("staff-roll source differs from ROM"));
-    }
-    Ok(STAFF_ROLL_SIZE)
-}
-
 pub fn self_test() -> Result<usize> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let index = root.join("games/gs1/assets/text/staff_roll_index.json");

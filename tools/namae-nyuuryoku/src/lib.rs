@@ -273,20 +273,6 @@ pub fn build_namae_nyuuryoku(path: &Path) -> Result<Vec<u8>> {
     Ok(output)
 }
 
-pub fn verify_namae_nyuuryoku(rom: &[u8], source: &Path) -> Result<()> {
-    let start = ADDRESS
-        .checked_sub(ROM_BASE)
-        .ok_or_else(|| Error("ROM address is invalid".into()))?;
-    let expected = rom
-        .get(start..start + SIZE)
-        .ok_or_else(|| Error("ROM is too small for name-entry data".into()))?;
-    let built = build_namae_nyuuryoku(source)?;
-    if built != expected {
-        return fail("name-entry package differs from ROM");
-    }
-    Ok(())
-}
-
 pub fn self_test() -> Result<()> {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../assets/graphics/fonts_namae_nyuuryoku_gamen.json");

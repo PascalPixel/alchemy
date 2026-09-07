@@ -622,20 +622,20 @@
     {
       "address": "0x08320fa0",
       "size": "0x10",
-      "kind": "golden-sun-simple-resource",
-      "resource_id": "0x2"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/build_stamp.json"
     },
     {
       "address": "0x08320fb0",
       "size": "0x2000",
-      "kind": "golden-sun-simple-resource",
-      "resource_id": "0x13"
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/resource_13_font.4bpp.png"
     },
     {
       "address": "0x08322fb0",
       "size": "0x8c0",
-      "kind": "golden-sun-simple-resource",
-      "resource_id": "0x14"
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/resource_14_words.rgba.png"
     },
     {
       "address": "0x08323870",
@@ -657,9 +657,22 @@
     },
     {
       "address": "0x083337a0",
-      "size": "0x828",
-      "kind": "golden-sun-simple-resource",
-      "resource_id": "0x18"
+      "size": "0x1c0",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/resource_18_screen.8bpp.png"
+    },
+    {
+      "address": "0x08333960",
+      "size": "0x668",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_18_screen.lz.json",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x9600",
+          "source": "games/gs1/assets/graphics/resource_18_screen.8bpp.png"
+        }
+      ]
     },
     {
       "address": "0x08333fc8",

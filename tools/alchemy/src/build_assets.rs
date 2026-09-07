@@ -4213,31 +4213,6 @@ fn build_entry_native_tail(
                 serde_json::json!({"items":document["items"].as_array().map_or(0,Vec::len),"abilities":document["abilities"].as_array().map_or(0,Vec::len),"combatants":document["combatants"].as_array().map_or(0,Vec::len),"classes":document["classes"].as_array().map_or(0,Vec::len),"djinn":document["djinn"].as_array().map_or(0,Vec::len),"alignment_bytes":document.get("alignment_bytes")}),
             ))
         }
-        "golden-sun-simple-resource" => {
-            let id = number(&entry["resource_id"], "simple resource id")?;
-            let sources = match id {
-                2 => vec![
-                    "games/gs1/assets/data/resource_2_build_stamp.stamp".to_string(),
-                    "games/gs1/assets/data/resource_2_layout.json".to_string(),
-                ],
-                0x13 => vec!["games/gs1/assets/graphics/resource_13_font.4bpp.png".to_string()],
-                0x14 => vec!["games/gs1/assets/graphics/resource_14_words.rgba.png".to_string()],
-                0x18 => vec![
-                    "games/gs1/assets/graphics/resource_18_screen.8bpp.png".to_string(),
-                    "games/gs1/assets/graphics/resource_18_screen.lz.json".to_string(),
-                ],
-                _ => return Err("unsupported simple resource".to_string()),
-            };
-            for name in &sources {
-                ctx.source(name)?;
-            }
-            let built = simple_resources::build_simple_resource(
-                id as u32,
-                &ctx.root.join("games/gs1/assets"),
-            )
-            .map_err(|error| error.to_string())?;
-            Ok((built, sources, serde_json::json!({"resource_id":id})))
-        }
         "golden-sun-title-lz" => {
             let document = json(&source_path(entry_source)?)?;
             let title_prefix = entry_source.replace("container.json", "");

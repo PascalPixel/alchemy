@@ -192,7 +192,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         options.size,
         patch_text.as_deref(),
     )?;
-    let cache = cache_entry::sqlite::SqliteCache::open(&work.join("cache.sqlite3"))?;
+    let cache = compiler_core::cache::sqlite::SqliteCache::open(&work.join("cache.sqlite3"))?;
     let cached = (!options.allocator_order)
         .then(|| cached_bins(&cache, &key))
         .flatten();
@@ -839,8 +839,10 @@ mod cache_key_tests {
             .unwrap()
         };
         let first_key = key(&std::fs::read(&rom).unwrap());
-        let cache = cache_entry::sqlite::SqliteCache::open(&directory.path().join("cache.sqlite3"))
-            .unwrap();
+        let cache = compiler_core::cache::sqlite::SqliteCache::open(
+            &directory.path().join("cache.sqlite3"),
+        )
+        .unwrap();
         cache
             .put(
                 &first_key,
@@ -856,7 +858,7 @@ mod cache_key_tests {
     }
 }
 fn cached_bins(
-    cache: &cache_entry::sqlite::SqliteCache,
+    cache: &compiler_core::cache::sqlite::SqliteCache,
     key: &str,
 ) -> Option<(Vec<u8>, Vec<u8>, Option<Vec<u8>>, &'static str)> {
     let entries = cache.get(key).ok().flatten()?;

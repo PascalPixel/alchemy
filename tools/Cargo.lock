@@ -33,26 +33,19 @@ dependencies = [
 name = "alchemy"
 version = "0.1.0"
 dependencies = [
- "alignment-tail",
  "build-asm",
  "build-claimed",
  "build-full",
- "cache-entry",
  "candidate-compiler",
- "canonical-json",
- "check-commit-progress",
  "check-publication",
  "check-unmatchable",
  "compiler-core",
- "core-retained-audit",
  "coverage-map",
  "decompile",
  "diff",
  "disassemble",
  "extract-resource",
- "full-c-progress",
  "gba-header",
- "generated-files",
  "import-asset",
  "integrate-matches",
  "matching",
@@ -66,14 +59,6 @@ dependencies = [
  "sha1",
  "tempfile",
  "walkdir",
-]
-
-[[package]]
-name = "alignment-tail"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -132,8 +117,6 @@ dependencies = [
 name = "build-asm"
 version = "0.1.0"
 dependencies = [
- "cache-entry",
- "canonical-json",
  "compiler-core",
  "serde",
  "serde_json",
@@ -143,11 +126,8 @@ dependencies = [
 name = "build-claimed"
 version = "0.1.0"
 dependencies = [
- "cache-entry",
  "candidate-compiler",
- "canonical-json",
  "compiler-core",
- "decomp-targets",
  "serde_json",
 ]
 
@@ -155,9 +135,7 @@ dependencies = [
 name = "build-full"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
  "compiler-core",
- "decomp-targets",
  "serde_json",
 ]
 
@@ -168,26 +146,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
 
 [[package]]
-name = "cache-entry"
-version = "0.1.0"
-dependencies = [
- "rusqlite",
- "tempfile",
-]
-
-[[package]]
 name = "candidate-compiler"
 version = "0.1.0"
 dependencies = [
  "compiler-core",
- "decomp-targets",
-]
-
-[[package]]
-name = "canonical-json"
-version = "0.1.0"
-dependencies = [
- "serde_json",
 ]
 
 [[package]]
@@ -207,10 +169,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
-name = "check-commit-progress"
-version = "0.1.0"
-
-[[package]]
 name = "check-publication"
 version = "0.1.0"
 
@@ -227,6 +185,7 @@ name = "compiler-core"
 version = "0.1.0"
 dependencies = [
  "fs2",
+ "rusqlite",
  "serde",
  "serde_json",
  "sha2",
@@ -234,17 +193,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "core-retained-audit"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
 name = "coverage-map"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
  "compiler-core",
  "serde_json",
  "sha1",
@@ -294,10 +245,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2e06f9bce634a3c898eb1e5cb949ff63133cbb218af93cc9b38b31d6f3ea285"
 
 [[package]]
-name = "decomp-targets"
-version = "0.1.0"
-
-[[package]]
 name = "decompile"
 version = "0.1.0"
 dependencies = [
@@ -313,7 +260,6 @@ dependencies = [
 name = "diff"
 version = "0.1.0"
 dependencies = [
- "cache-entry",
  "candidate-compiler",
  "compiler-core",
  "disassemble",
@@ -338,7 +284,6 @@ dependencies = [
 name = "disassemble"
 version = "0.1.0"
 dependencies = [
- "cache-entry",
  "candidate-compiler",
  "compiler-core",
  "extract-resource",
@@ -459,27 +404,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "full-c-progress"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "coverage-map",
- "serde_json",
-]
-
-[[package]]
 name = "gba-header"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
+ "compiler-core",
  "import-asset",
  "serde_json",
  "sha2",
 ]
-
-[[package]]
-name = "generated-files"
-version = "0.1.0"
 
 [[package]]
 name = "generic-array"
@@ -694,7 +626,6 @@ name = "no-asm-c"
 version = "0.1.0"
 dependencies = [
  "compiler-core",
- "decomp-targets",
  "regex",
  "tempfile",
 ]

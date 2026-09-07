@@ -3,12 +3,14 @@ use crate::{
     Finding,
 };
 use compiler_core::bundle::compiler_command_for_target;
+use compiler_core::decomp_targets::{
+    target_for, DecompCompilerTarget, DecompTarget, DecompTargetId, TARGET_IDS,
+};
 use compiler_core::routing::{
     cflags_for_target_source, root as compiler_root, uses_agbcc_compiler, CompilerTarget,
 };
 use compiler_core::source_paths::SourcePaths;
 use compiler_core::translation_units::TranslationUnits;
-use decomp_targets::{target_for, DecompCompilerTarget, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;

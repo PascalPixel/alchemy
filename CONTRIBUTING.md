@@ -472,28 +472,20 @@ libraries are not additional public command surfaces.
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, and cross-edition commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
-| [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
 | [build-asm](tools/build-asm/) | Assemble retained regions and emit their classified manifest. |
 | [build-claimed](tools/build-claimed/) | Compile, verify, cache, and manifest exact-C owners. |
 | [build-full](tools/build-full/) | Compose claimed C, retained assembly, and assets into the ROM. |
-| [cache-entry](tools/cache-entry/) | Provide deterministic SQLite-backed cache entries and receipts. |
-| [canonical-json](tools/canonical-json/) | Serialize stable JSON for reproducible reports and hashes. |
-| [decomp-targets](tools/decomp-targets/) | Define the twelve historical ROM targets and build paths. |
 | [gba-header](tools/gba-header/) | Encode and verify the GBA cartridge header. |
-| [generated-files](tools/generated-files/) | Track generated-file identity and freshness. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
-| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, targets, and translation units. |
+| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, the twelve decompilation targets, translation units, the build cache, and canonical JSON. |
 | [integrate-matches](tools/integrate-matches/) | Adopt byte-exact main-image C through the integration gate. |
 | [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
-| [check-commit-progress](tools/check-commit-progress/) | Enforce progress-bearing commit subjects. |
-| [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history. |
-| [check-unmatchable](tools/check-unmatchable/) | Audit owner registers and unmatchable classifications. |
-| [core-retained-audit](tools/core-retained-audit/) | Verify retained main-image assembly classifications and extents. |
-| [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures. |
-| [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
+| [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history; enforce progress-bearing commit subjects. |
+| [check-unmatchable](tools/check-unmatchable/) | Audit owner registers, unmatchable classifications, and retained main-image assembly extents. |
+| [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
 | [extract-resource](tools/extract-resource/) | Read resource payloads from approved ROMs; general, palette, halfword, arena and MTF4 LZ stream codecs. |
 | [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |

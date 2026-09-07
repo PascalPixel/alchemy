@@ -8,6 +8,7 @@ mod convert;
 mod cross_edition;
 mod flatten;
 mod font;
+mod generated_files;
 mod overlay;
 mod scaffold;
 

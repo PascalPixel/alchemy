@@ -14775,6 +14775,10 @@
     "resource_3a2:02000924": {
       "name": "RunEventScript01"
     },
+    "resource_3a2:02000b2c": {
+      "name": "Scene_RunActorExchange",
+      "source": "overlays/scene_script/run_actor_exchange.c"
+    },
     "resource_3a4:02003028": {
       "name": "RunEventScript01",
       "source": "overlays/scene_primary_script/run_scene_3a4_event_script01.c"

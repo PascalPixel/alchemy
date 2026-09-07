@@ -37,7 +37,6 @@ dependencies = [
  "archive-asset",
  "asset-paths",
  "audio-engine-data",
- "audio-wave",
  "battle-effect-data",
  "build-asm",
  "build-claimed",
@@ -138,13 +137,6 @@ version = "0.1.0"
 
 [[package]]
 name = "audio-engine-data"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "audio-wave"
 version = "0.1.0"
 dependencies = [
  "serde_json",

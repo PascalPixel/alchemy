@@ -39,7 +39,6 @@ build-full = { path = "../build-full" }
 encounter-data = { path = "../encounter-data" }
 character-catalog = { path = "../character-catalog" }
 staff-roll = { path = "../staff-roll" }
-audio-wave = { path = "../audio-wave" }
 executable-gap-sources = { path = "../executable-gap-sources" }
 music-residuals = { path = "../music-residuals" }
 f0-archive = { path = "../f0-archive" }

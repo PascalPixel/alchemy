@@ -68,7 +68,7 @@ const SOURCES: [(&str, Kind, usize); 12] = [
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     if !arguments.is_empty() {
-        eprintln!("usage: alchemy assets font (output: WEYARD_OUT or out/fonts)");
+        eprintln!("usage: alchemy font (output: WEYARD_OUT or out/fonts)");
         return if arguments == ["--help"] {
             ExitCode::SUCCESS
         } else {

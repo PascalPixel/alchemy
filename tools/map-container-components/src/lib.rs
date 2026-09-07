@@ -1,12 +1,11 @@
-pub mod cli;
 use extract_resource::{
     encode_general, encode_palette, GeneralToken, PaletteGroup, PaletteOperation,
 };
+use import_asset::import_tilemap;
 use serde_json::{Map, Value};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
-use tilemap::import_tilemap;
 pub type Result<T> = std::result::Result<T, String>;
 pub type OffsetChecks = BTreeMap<usize, usize>;
 fn err<T>(message: impl Into<String>) -> Result<T> {

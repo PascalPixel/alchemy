@@ -1,13 +1,11 @@
 //! Native source-to-ROM builder for `sentou_menu_index.json`.
 //! The ROM-to-source exporter remains owned by the existing asset worker.
 
-pub mod cli;
-
 use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::Value;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 pub const ROM_BASE: usize = 0x0800_0000;
 pub const ADDRESS: usize = 0x080b_3940;
@@ -336,26 +334,4 @@ pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
         return fail("battle-menu package size differs");
     }
     Ok(output)
-}
-
-pub fn verify_sentou_menu_data(rom: &[u8], index: &Path) -> Result<()> {
-    let start = ADDRESS
-        .checked_sub(ROM_BASE)
-        .ok_or_else(|| Error("ROM address is invalid".into()))?;
-    let expected = rom
-        .get(start..start + SIZE)
-        .ok_or_else(|| Error("ROM is too small for battle-menu data".into()))?;
-    if build_sentou_menu_data(index)? != expected {
-        return fail("battle-menu package differs from ROM");
-    }
-    Ok(())
-}
-
-pub fn self_test() -> Result<()> {
-    let index =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/data/sentou_menu_index.json");
-    if index.exists() && build_sentou_menu_data(&index)?.len() != SIZE {
-        return fail("battle-menu self-test size differs");
-    }
-    Ok(())
 }

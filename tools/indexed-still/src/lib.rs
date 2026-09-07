@@ -1,4 +1,3 @@
-pub mod cli;
 use import_asset::{indexed_png, Report, Rgb};
 pub const STILL_WIDTH: usize = 256;
 pub const STILL_HEIGHT: usize = 120;

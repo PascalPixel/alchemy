@@ -11,7 +11,6 @@ use extract_resource::{
 use import_asset::{gba_graphics, gba_palette_rgba, indexed_png};
 use serde_json::{Map, Value};
 use std::fs;
-use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
 pub type Result<T> = std::result::Result<T, String>;
@@ -332,33 +331,4 @@ pub fn self_test() -> Result<()> {
     }
     println!("self-test=ok");
     Ok(())
-}
-
-pub fn run(args: &[String]) -> Result<()> {
-    if args == ["--self-test"] {
-        return self_test();
-    }
-    if args.len() == 2 && args[0] == "build-stdout" {
-        let (data, _) = build_sentou_resource(Path::new(&args[1]))?;
-        io::stdout().write_all(&data).map_err(|e| e.to_string())?;
-        return Ok(());
-    }
-    if args.len() == 2 && args[0] == "series-stdout" {
-        for (_, data, _) in build_sentou_series(Path::new(&args[1]))? {
-            io::stdout().write_all(&data).map_err(|e| e.to_string())?;
-        }
-        return Ok(());
-    }
-    if args.len() == 4 && args[0] == "verify" && args[2] == "--directory" {
-        println!(
-            "{}",
-            verify_sentou_resources(Path::new(&args[1]), Path::new(&args[3]))?
-        );
-        return Ok(());
-    }
-    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
-        println!("usage: sentou-resources build-stdout PLAN | series-stdout INDEX | verify ROM --directory DIRECTORY | --self-test");
-        return Ok(());
-    }
-    fail("invalid sentou-resources arguments")
 }

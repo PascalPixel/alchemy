@@ -5,8 +5,6 @@
 //! component extents, and composition of a resource from its tracked sources.
 //! It is build-facing: export is intentionally not part of this port.
 
-pub mod entry_chiiki;
-pub mod entry_tokushu;
 use canonical_json::is_canonical_json_text;
 use kind1_map_grid::{build_grid, self_test as grid_self_test};
 use map_container_components::{
@@ -15,7 +13,6 @@ use map_container_components::{
 };
 use serde_json::{Map, Value};
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 
 pub type Result<T> = std::result::Result<T, String>;
@@ -431,56 +428,4 @@ pub fn self_test() -> Result<()> {
         return Err("empty map header was accepted".into());
     }
     Ok(())
-}
-
-pub fn run(args: Vec<String>, kind: SeriesKind) -> Result<()> {
-    if args.len() == 1 && args[0] == "--self-test" {
-        self_test()?;
-        println!("self-test=ok");
-        return Ok(());
-    }
-    let usage = format!("usage: {} build-stdout INDEX RESOURCE_ID | series-stdout INDEX | build INDEX --output FILE | verify ROM --index INDEX | --self-test", kind.label());
-    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
-        println!("{usage}");
-        return Ok(());
-    }
-    match args.first().map(String::as_str) {
-        Some("build-stdout") if args.len() == 3 => {
-            let resource = build_resource_by_id(
-                Path::new(&args[1]),
-                kind,
-                parse_id(&args[2], "resource id")?,
-            )?;
-            std::io::stdout()
-                .write_all(&resource.data)
-                .map_err(|error| error.to_string())?;
-            Ok(())
-        }
-        Some("series-stdout") if args.len() == 2 => {
-            for resource in build_series(Path::new(&args[1]), kind)? {
-                std::io::stdout()
-                    .write_all(&resource.data)
-                    .map_err(|error| error.to_string())?;
-            }
-            Ok(())
-        }
-        Some("build") if args.len() == 4 && args[2] == "--output" => {
-            let resources = build_series(Path::new(&args[1]), kind)?;
-            let bytes: Vec<u8> = resources
-                .iter()
-                .flat_map(|resource| resource.data.iter().copied())
-                .collect();
-            fs::write(&args[3], &bytes).map_err(|error| error.to_string())?;
-            println!("resources={} source_bytes={}", resources.len(), bytes.len());
-            Ok(())
-        }
-        Some("verify") if args.len() == 4 && args[2] == "--index" => {
-            println!(
-                "{}",
-                verify_series(Path::new(&args[1]), Path::new(&args[3]), kind)?
-            );
-            Ok(())
-        }
-        _ => Err(usage),
-    }
 }

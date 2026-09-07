@@ -19,6 +19,7 @@ use disassemble::{assemble_overlay, OverlaySource};
 use extract_resource::{PaletteGroup, PaletteOperation};
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use generated_files::{prune_files, unused_tracked_images};
+use import_asset::import_tilemap;
 use import_asset::{
     gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
 };
@@ -31,7 +32,6 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-use tilemap::import_tilemap;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
@@ -593,9 +593,9 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         "little-u16-text" | "little-u16-pairs" => {
             let text = fs::read_to_string(&source).map_err(|error| error.to_string())?;
             let data = if kind == "little-u16-text" {
-                wordstream::import_words(&text).map_err(|error| error.to_string())?
+                import_asset::import_words(&text)?
             } else {
-                pairtable::import_pairs(&text).map_err(|error| error.to_string())?
+                import_asset::import_pairs(&text)?
             };
             (data, serde_json::json!({}), vec![source_name.to_string()])
         }

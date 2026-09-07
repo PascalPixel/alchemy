@@ -82,7 +82,6 @@ dependencies = [
  "no-asm-c",
  "objdiff-core",
  "overlay-adopt",
- "pairtable",
  "png",
  "regex",
  "resource-5",
@@ -101,10 +100,8 @@ dependencies = [
  "staff-roll",
  "static-sprite-series",
  "tempfile",
- "tilemap",
  "title-resources",
  "walkdir",
- "wordstream",
 ]
 
 [[package]]
@@ -149,7 +146,6 @@ version = "0.1.0"
 name = "audio-engine-data"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
  "serde_json",
 ]
 
@@ -827,8 +823,8 @@ name = "map-container-components"
 version = "0.1.0"
 dependencies = [
  "extract-resource",
+ "import-asset",
  "serde_json",
- "tilemap",
 ]
 
 [[package]]
@@ -1022,13 +1018,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pairtable"
-version = "0.1.0"
-dependencies = [
- "wordstream",
-]
-
-[[package]]
 name = "pkg-config"
 version = "0.3.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1137,7 +1126,6 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 name = "resource-5"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
  "serde_json",
 ]
 
@@ -1426,10 +1414,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tilemap"
-version = "0.1.0"
-
-[[package]]
 name = "title-resources"
 version = "0.1.0"
 dependencies = [
@@ -1536,10 +1520,6 @@ checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
 dependencies = [
  "windows-link",
 ]
-
-[[package]]
-name = "wordstream"
-version = "0.1.0"
 
 [[package]]
 name = "zerocopy"

@@ -32,9 +32,6 @@ generated-files = { path = "../generated-files" }
 import-asset = { path = "../import-asset" }
 map-load-table = { path = "../map-load-table" }
 music = { path = "../music" }
-pairtable = { path = "../pairtable" }
-tilemap = { path = "../tilemap" }
-wordstream = { path = "../wordstream" }
 gba-header = { path = "../gba-header" }
 sha1 = "0.10"
 build-asm = { path = "../build-asm" }

@@ -1,7 +1,5 @@
 //! Rebuild the late-runtime residual regions consumed by `build-assets`.
 
-pub mod cli;
-
 use late_runtime_data::{
     read_late_runtime_catalog, ComponentKind, LateRuntimeCatalog, LateRuntimeComponent, TableKind,
 };

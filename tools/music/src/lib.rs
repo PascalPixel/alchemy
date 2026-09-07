@@ -1,4 +1,3 @@
-pub mod cli;
 pub mod smsh;
 
 use std::collections::{HashMap, HashSet};

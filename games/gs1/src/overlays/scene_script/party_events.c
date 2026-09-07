@@ -1,13 +1,88 @@
 #include "types.h"
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+#define Scene_RunPartySequence Func_02001494
+#define SceneData_SelectTable9bd4ByState Func_02000030
+#define SceneData_ReturnZero Func_02000060
+#define SceneData_GetTable9d9c Func_02000064
+#define SceneData_SelectTable9ddcByStateWithInit Func_0200006c
+#define SceneData_SelectTable9f2cByState Func_020000a4
+#define SceneDialogue_RunActor13Message1b83 Func_020000d4
+#define SceneDialogue_RunActor16Message1b88 Func_020000f4
+#define FieldScene_RunActorEightTurnDialogue Func_02000114
+#define FieldScene_RunScene3aa_02000184 Func_02000184
+#define SceneState_SetWord448To209AndRun Func_02000230
+#define FieldScene_DispatchSceneByIndex Func_02000264
+#define RunEventScript01 Func_02000360
+#define ConfigureFourSceneChannelsAndHandoff Func_0200140c
+
+extern s16 Data_02000240[];
+extern u8 Value_00000067;
+extern u8 Data_02009c04[];
+extern u8 Data_02009bd4[];
+extern u8 Data_02009df4[];
+extern u8 Data_02009ddc[];
+extern u8 Data_02009f38[];
+extern u8 Data_02009f2c[];
 extern u8 Data_02009b94[];
-extern u8 Data_03001ebc[];
+
+void Func_02001b1a();
+void Func_02001b5c(void);
+void Func_02001bea(s32);
+s32 Func_02001c12(s32, s32);
+void Func_02001b76(void);
+void Func_02001b7c(void);
+void Func_02001c0a(s32);
+s32 Func_02001c32(s32, s32);
+void Func_02001b96(void);
+void Func_02001b9c(void);
+s32 Func_02001c60(s32, s32, s32);
+void Func_02001c36(s32);
+void Func_02001c58(s32, s32, s32);
+void Func_02001c40(s32, s32);
+void Func_02001c6a(s32, s32, s32);
+void Func_02001c42(s32, s32);
+void Func_02001c7c(s32, s32, s32);
+void Func_02001c54(s32, s32);
+s32 Func_02001c8e(s32, s32, s32);
+void Func_02001bdc(s32);
+void Func_02001c06();
+void Func_02001c0e();
+void Func_02001c10();
+void Func_02001c3c();
+void Func_02001c6c();
+void Func_02001c72();
+void Func_02001c7a();
+void Func_02001c80();
+void Func_02001cae();
+void Func_02001cc2();
+void Func_02001ccc();
+void Func_02001cd2();
+void Func_02001d32();
+void Func_02001d3a();
+void Func_02001d6e();
+void Func_020004ae(void);
+void Func_02001cc0();
+void Func_02001cc6();
+s32 Func_02001cfc();
+u8 *Func_02001d46();
+s32 Func_02001d12();
+void Func_0200174a();
+void Func_02001da6();
+s32 Func_02001d2c();
+void Func_02001dbc(s32, s32, s32);
+u8 *Func_02001d82();
+s32 Func_02001d50();
+void Func_02001d48(s32, s32, s32, s32, s32, s32);
+void Func_02001d74(s32, s32, s32, s32, s32, s32);
+void Func_02001d58();
+void Func_02001d58_handoff(s32);
+void Func_02001d56();
+void Func_02001e12();
+s32 Func_02001d98();
+void Func_0200069c();
 void Func_0200191e();
 void Func_02001b74();
 void Func_02001bbe();
-void Func_02001d58();
 void Func_02001db0();
 void Func_02001dcc();
 void Func_02001de8();
@@ -194,7 +269,6 @@ void Func_0200256a();
 void Func_02002570();
 s32 Func_0200257e();
 s32 Func_0200257e_a();
-s32 Func_0200257e_a();
 void Func_0200258c();
 void Func_0200259c();
 void Func_020025aa();
@@ -242,7 +316,6 @@ void Func_02002762();
 void Func_02002766();
 void Func_02002768();
 s32 Func_0200276a();
-s32 Func_0200276a_a();
 s32 Func_0200276a_a();
 void Func_02002770();
 void Func_02002772();
@@ -381,7 +454,6 @@ void Func_02002cb6();
 void Func_02002cbc();
 s32 Func_02002cce();
 s32 Func_02002cce_a();
-s32 Func_02002cce_a();
 void Func_02002cea();
 void Func_02002cf2();
 void Func_02002cf8();
@@ -427,60 +499,529 @@ void Func_02002e58();
 void Func_02002e5a();
 void Func_02002e5a_a();
 void Func_02002e5a_b();
-void Func_02002e5a_a();
-void Func_02002e5a_b();
 void Func_02002e62();
 void Func_02002e6c();
 void Func_02002e72();
 s32 Func_02002e74();
 void Func_02002e7c();
 s32 Func_02002e84();
+void Func_02002f4e(s32, s32, s32);
+void Func_02002f5a(s32, s32, s32);
+void Func_02002f66(s32, s32, s32);
+void Func_02002f72(s32, s32, s32);
+void Func_02002ec4(s32);
+void Func_02002f92(s32, s32, s32);
+void Func_02002f9e(s32, s32, s32);
+void Func_02002faa(s32, s32, s32);
+void Func_02002fb6(s32, s32, s32);
+void Func_02002f08(s32);
+void Func_02002a2e();
+void Func_02002d34();
+void Func_02002ee4();
+void Func_02002f00();
+void Func_02002f02();
+void Func_02002f1c();
+void Func_02002fbc();
+void Func_02002fc6();
+void Func_02002fd0();
+void Func_02002fda();
+void Func_02002fe4();
+s32 Func_02002ff0();
+void Func_02002ffe();
+s32 Func_02003004();
+void Func_02003012();
+void Func_02003016();
+s32 Func_02003018();
+void Func_0200303e();
+void Func_0200304a();
+void Func_02003052();
+void Func_02003054();
+void Func_02003062();
+void Func_02003064();
+void Func_02003066();
+void Func_02003070();
+void Func_02003072();
+void Func_02003086();
+void Func_020030ae();
+void Func_020030b6();
+void Func_020030be();
+void Func_020030e2();
+void Func_02003106();
+void Func_02003124();
+void Func_02003128();
+void Func_02003148();
+void Func_0200314a();
+void Func_0200314e();
+void Func_0200315c();
+void Func_02003160();
+void Func_0200316a();
+void Func_02003170();
+s32 Func_02003176();
+void Func_02003186();
+void Func_02003190();
+void Func_0200319a();
+void Func_020031a4();
+void Func_020031ac();
+void Func_020031ae();
+void Func_020031b2();
+void Func_020031b6();
+void Func_020031be();
+void Func_020031c8();
+void Func_020031ce();
+void Func_020031d8();
+void Func_020031dc();
+void Func_020031e0();
+s32 Func_020031e4();
+void Func_020031f6();
+void Func_020031fc();
+void Func_0200322e();
+void Func_0200323a();
+void Func_0200326e();
+void Func_02003270();
+void Func_02003280();
+void Func_0200328c();
+void Func_02003298();
+void Func_0200329e();
+void Func_020032b8();
+void Func_020032ba();
+void Func_020032be();
+void Func_020032c0();
+void Func_020032c2();
+void Func_020032ca();
+void Func_020032ce();
+void Func_020032e0();
+void Func_020032e6();
+void Func_020032ea();
+void Func_020032f2();
+void Func_020032f4();
+void Func_020032fc();
+void Func_02003310();
+void Func_02003312();
+void Func_02003324();
+void Func_0200333a();
+void Func_02003340();
+void Func_02003342();
+void Func_02003356();
+void Func_0200335a();
+void Func_02003368();
+s32 Func_02003382();
+void Func_02003392();
+void Func_020033c2();
+void Func_020033d2();
+void Func_020033f0();
+void Func_020033f2();
+void Func_02003402();
+void Func_02003410();
+void Func_02003418();
+void Func_0200341a();
+void Func_0200342c();
+void Func_02003446();
+void Func_02003448();
+void Func_0200344a();
+void Func_0200345e();
+void Func_02003464();
+void Func_02003466();
+void Func_0200346c();
+void Func_02003476();
+void Func_02003478();
+void Func_0200347c();
+void Func_02003482();
+void Func_02003488();
+void Func_0200348a();
+void Func_0200348e();
+s32 Func_02003492();
+void Func_0200349a();
+void Func_020034a0();
+void Func_020034a2();
+void Func_020034aa();
+void Func_020034b2();
+void Func_020034ba();
+void Func_020034ca();
+void Func_02003054_a();
+void Func_02003128_a();
+void Func_02003298_a();
+s32 Func_02003312_a();
+void Func_02003340_a();
+void Func_02003340_b();
+void Func_0200335a_a();
+void Func_02003448_a();
+void Func_0200349a_a();
+void Func_0200349a_b();
+s32 Func_020034a2_a();
+
+/* Contiguous unnamed leaf-owner run for resource_3aa. */
+
+/*
+ * resource_3aa owner at 0x02000064, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
+ * one-word literal pool at 0x2000068 holding 0x2009d9c.
+ *
+ * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ *
+ * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
+ * `pc`-relative load at 0x02000064 reads it, so it belongs to this owner.
+ * Recording 4 would orphan a word and manufacture a phantom gap.
+ *
+ * The pool word is an ADDRESS -- 0x2009d9c is image offset
+ * 0x1d9c under the base + 0x8000 spelling -- loaded and returned
+ * without being dereferenced, so this is a getter for an in-image table.
+ *
+ * One of the 191 rows sharing this exact body across the tree, and every
+ * one of them returns a DIFFERENT address. Identical bytes are not
+ * identical semantics; this row's pool word was resolved on its own.
+ */
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
+/* The scene step counter at 0x1d8 of the shared scene work record. */
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
+/* Contiguous unnamed state-owner run for resource_3aa. */
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
+/*
+ * resource_3aa owner at 0x02000264, 252 bytes: code 0x02000264-0x02000343 and
+ * the seven-word literal pool at 0x02000344-0x0200035f.  The next inventory
+ * row starts at 0x02000360, so the owner is exactly its advertised span; the
+ * 8-byte outgoing-argument frame it opens with `sub sp, #8` is released by
+ * `add sp, #8` before the return, so nothing live escapes.
+ *
+ * This is the overlay's scene dispatcher.  It re-enables two channels, then
+ * switches on the signed halfword `Data_02000240[225]` - the neighbour of the
+ * edition selector at index 224 that the byte-exact siblings
+ * `games/gs1/assets/code/resource_3aa_c_02000030.c` and `_020000a4.c` test - and runs
+ * one of three scene bodies.  Values other than 9, 10, 11 and 20 do nothing.
+ *
+ * The comparison chain is a compiled `switch`: `cmp #11 / bgt`, then
+ * `cmp #10 / bge` for the 10-11 pair, then `cmp #9 / beq`, with 20 tested on
+ * the greater-than side.  10 and 11 share one body.
+ *
+ * Return type, by the interworking-epilogue rule: `pop {r0} / bx r0` pops the
+ * return address into r0, so the owner is void.  r0 is written with 1 before
+ * the first branch, so the owner takes no arguments either.
+ *
+ * Call accounting: 18 `bl` sites, all resolved with
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3aa 0264` - 16 to import
+ * veneers (10 distinct) and 2 to in-overlay prologues, at file offsets 0x1494
+ * and 0x0360.  Every site appears below exactly once.  The disassembler's own
+ * annotations are wrong in the usual overlay way and were not used.
+ *
+ * Import shapes, consistent with the already-converted overlays:
+ *   GameFlag_IsSet(id)              -> queried predicate; its result is tested
+ *                                     against zero at all five sites, so it is
+ *                                     used purely as a condition here.
+ *   Scene_GetRecord(selector)        -> rec pointer; the halfword at +6 of
+ *                                     the returned rec is written straight
+ *                                     after both calls (resource_373 and
+ *                                     resource_39f fix the same shape).
+ *   Func_0808a0f0(selector, x, z)  -> 16.16 position setter.
+ *   Func_080091c0(a, b, c, d, e, f)-> the six-argument service whose spelling
+ *                                     games/gs1/semantic/overlays/resource_39a already
+ *                                     carries; the two stack words this owner
+ *                                     stores at [sp,#0] and [sp,#4] before the
+ *                                     0x02000302 and 0x02000316 branches are
+ *                                     arguments five and six, so Func_08009180
+ *                                     is called with the same six-argument
+ *                                     shape.
+ *
+ * Uncertainties, recorded rather than guessed:
+ *  - The pooled ids 0x941, 0x914, 0x321, 0x915 and 0x109 passed to
+ *    GameFlag_IsSet are opaque here; only the sense of each test is recovered.
+ *  - The halfword written at +6 of the Scene_GetRecord rec is 0x1000 in one
+ *    arm and 0xd000 in the other, both built by shifting 0x80 / 0xd0.  Whether
+ *    that field is an angle or a flag word is not established.
+ *  - Func_0808a0f0(8, 0x038a0000, 0x01a60000) uses a pooled first coordinate
+ *    and a shifted second (211 << 17); as 16.16 these are 906.0 and 211.0.
+ *  - Both in-overlay branches (0x02001494 and 0x02000360) are taken with r0
+ *    holding the zero result of the preceding GameFlag_IsSet, i.e. no argument
+ *    is deliberately set, so they are called with none here.
+ */
+
+/* Imports, named by the main-image address in the trailing word of each
+ * overlay veneer. Old-style declarations are mandatory in this overlay. */
+
+/* Signed halfword table in RAM; index 225 selects the scene. */
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_03001ebc[];
+    void Func_02001c00();
+
     f(a0, a1, a2);
 }
 
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
+    extern u8 Data_03001ebc[];
+    void Func_02001c00();
+
     u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0, a1);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ void ConfigureSecond(s32 channel, s32 value, s32 zero)
+{
+    Func_02002f5a(channel, value, zero);
+}
+
+static __inline__ void ConfigureThird(s32 channel, s32 value, s32 zero)
+{
+    Func_02002f66(channel, value, zero);
+}
+
+static __inline__ void ConfigureFourth(s32 channel, s32 value, s32 zero)
+{
+    Func_02002f72(channel, value, zero);
+}
+
+static __inline__ void ConfigureFirst(s32 channel, s32 value, s32 zero)
+{
+    Func_02002f92(channel, value, zero);
+}
+
+static __inline__ void ConfigureUniformSecond(s32 channel, s32 value, s32 zero)
+{
+    Func_02002f9e(channel, value, zero);
+}
+
+static __inline__ void ConfigureUniformThird(s32 channel, s32 value, s32 zero)
+{
+    Func_02002faa(channel, value, zero);
+}
+
+static __inline__ void ConfigureUniformFourth(s32 channel, s32 value, s32 zero)
+{
+    Func_02002fb6(channel, value, zero);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0);
+}
+
+static __inline__ void Scene_AdvanceStep(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    *(u16 *)(*(u8 **)Data_03001ebc + 0x1d8) += amount;
+}
+
+s32 SceneData_SelectTable9bd4ByState(void) {
+    if (Data_02000240[224] == (s32)&Value_00000067) {
+        return (s32)Data_02009c04;
+    }
+    return (s32)Data_02009bd4;
+}
+
+s32 SceneData_ReturnZero(void)
+{
+    return 0;
+}
+
+u8 *SceneData_GetTable9d9c(void)
+{
+    return (u8 *)0x02009d9c;
+}
+
+s32 SceneData_SelectTable9ddcByStateWithInit(void) {
+    if (Data_02000240[224] == (s32)&Value_00000067) {
+        Func_02001b1a(Data_02009df4);
+        return (s32)Data_02009df4;
+    }
+    return (s32)Data_02009ddc;
+}
+
+s32 SceneData_SelectTable9f2cByState(void) {
+    if (Data_02000240[224] == (s32)&Value_00000067) {
+        return (s32)Data_02009f38;
+    }
+    return (s32)Data_02009f2c;
+}
+
+void SceneDialogue_RunActor13Message1b83(void)
+{
+    Func_02001b5c();
+    Func_02001bea(0x1B83);
+    Func_02001c12(13, 0);
+    Func_02001b76();
+}
+
+void SceneDialogue_RunActor16Message1b88(void)
+{
+    Func_02001b7c();
+    Func_02001c0a(0x1B88);
+    Func_02001c32(16, 0);
+    Func_02001b96();
+}
+
+void FieldScene_RunActorEightTurnDialogue(void)
+{
+    void Func_02001c00_end(void);
+
+    Func_02001b9c();
+    Func_02001c60(8, 0x100, 0x3C);
+    Func_02001c36(0x1B91);
+    Func_02001c58(8, 0, 0xA);
+    Func_02001c40(8, 2);
+    Func_02001c6a(8, 0, 0xA);
+    Func_02001c42(8, 4);
+    Func_02001c7c(8, 0, 0xA);
+    Func_02001c54(8, 3);
+    Func_02001c8e(8, 0, 0xA);
+    Func_02001bdc(0x913);
+    Func_02001c00_end();
+}
+
+void FieldScene_RunScene3aa_02000184(void)
+{
+    extern u8 Data_03001ebc[];
+    void Func_02001c00();
+
+    u32 i;
+    s32 record;
+    u8 *p5;
+
+    p5 = *(volatile s32 *)Data_03001ebc;
+    Func_02001c10();
+    Func_02001c0e(10);
+    if (*(s16 *)(((s32)p5 + 0x16c)) == 4) {
+        Func_02001d32(188);
+    } else {
+        Func_02001d3a(158);
+    }
+    Func_02001c00(1);
+    Func_02001c06(2);
+    Func_02001c3c(10);
+    Call3(Func_02001c7a, 0, 0x8000, 0x4000);
+    Func_02001cc2(0, 2);
+    if (*(s16 *)(((s32)p5 + 0x16c)) == 4) {
+        Call3(Func_02001ccc, 0, 0, -16);
+    } else {
+        Call3(Func_02001cd2, 0, 3, -16);
+    }
+    Func_02001c80(16);
+    Func_02001d6e(*(s16 *)(((s32)p5 + 0x16c)));
+    Func_02001c6c(1);
+    Func_02001c72(2);
+    Func_02001cae();
+}
+
+s32 SceneState_SetWord448To209AndRun(void)
+{
+    extern u8 *Data_03001ebc;
+
+    *(s32 *)(Data_03001ebc + 448) = 0x209;
+    if (Data_02000240[224] == (s32) (u32) &Value_00000067) {
+        Func_020004ae();
+    }
+    return 0;
+}
+
+void FieldScene_DispatchSceneByIndex(void)
+{
+    extern u8 *Data_03001ebc;
+
+    u8 *rec;
+    s32 h;
+    s32 x1 = 0x038a0000;
+    s32 z1 = 0x01a60000;
+
+    Func_02001cc0(1);
+    Func_02001cc6(2);
+
+    switch (Data_02000240[225]) {
+    case 9:
+        if (Func_02001cfc(0x941) != 0) {
+            rec = Func_02001d46(8);
+            h = 0x1000;
+            *(u16 *)(rec + 6) = h;
+
+            if (Func_02001d12(0x914) == 0) {
+                Func_0200174a();
+            }
+        } else {
+            Func_02001da6(9, 0, 0);
+            if (Func_02001d2c(0x321) != 0) {
+                Func_02001dbc(8, x1, z1);
+                rec = Func_02001d82(8);
+                h = 0xd000;
+                *(u16 *)(rec + 6) = h;
+            }
+        }
+        break;
+
+    case 10:
+    case 11:
+        if (Func_02001d50(0x915) != 0) {
+            s32 a5 = 4;
+            s32 a6 = 3;
+            Func_02001d48(58, 70, 54, 70, a5, a6);
+            {
+                s32 b5 = 55;
+                s32 b6 = 8;
+                Func_02001d74(55, 9, 2, 1, b5, b6);
+            }
+            Func_02001d58();
+            Func_02001d56(1);
+        }
+        break;
+
+    case 20:
+        Func_02001e12(9, 0, 0);
+        if (Func_02001d98(0x109) == 0) {
+            Func_0200069c();
+        }
+        break;
+
+    default:
+        break;
+    }
+}
+
 void RunEventScript01(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 record;
     u8 *work;
     s32 v5;
-    s32 base5_2009b94;
+    s32 tbl;
 
     Func_02001de8();
     Call4(Func_02001eca, -1, -1, -1, 0);
@@ -631,7 +1172,7 @@ void RunEventScript01(void)
     Call3(Func_02002424, 11, 0xb000, 10);
     Func_020023fc_a(10, 2);
     Func_02002426(10, 0, 20);
-    Func_02001d58(20);
+    Func_02001d58_handoff(20);
     Func_02002414(8, 2);
     Func_02002392(40);
     Func_02002444(8, 0, 10);
@@ -924,14 +1465,203 @@ void RunEventScript01(void)
     Call3(Func_02002e3e, 1, 0x10000, 0x8000);
     Call3(Func_02002e4c, 2, 0x10000, 0x8000);
     Call3(Func_02002e5a_a, 3, 0x10000, 0x8000);
-    base5_2009b94 = (s32)Data_02009b94;
-    Func_02002e6c(1, base5_2009b94);
-    Value2(Func_02002e74, 2, base5_2009b94);
-    Value2(Func_02002e84, 3, base5_2009b94);
+    tbl = (s32)Data_02009b94;
+    Func_02002e6c(1, tbl);
+    Value2(Func_02002e74, 2, tbl);
+    Value2(Func_02002e84, 3, tbl);
     work = *(u8 *volatile *)Data_03001ebc;
     *(volatile s32 *)(((s32)work + 0x1c8)) = 16;
     *(volatile s32 *)(((s32)work + 0x1c0)) = 0x209;
     Call1(Func_02002e5a_b, 0x12f);
     Call1(Func_02002e58, 0x912);
     Func_02002e7c();
+}
+
+void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
+{
+    Func_02002f4e(0, 0x6000, 0);
+    ConfigureSecond(1, 0xe000, 0);
+    ConfigureThird(2, 0x2000, 0);
+    ConfigureFourth(3, 0xa000, 0);
+    if (handoff != 0) {
+        Func_02002ec4(handoff);
+    }
+}
+
+void Func_02001450(s32 handoff)
+{
+    ConfigureFirst(0, 0xc000, 0);
+    ConfigureUniformSecond(1, 0xc000, 0);
+    ConfigureUniformThird(2, 0xc000, 0);
+    ConfigureUniformFourth(3, 0xc000, 0);
+    if (handoff != 0) {
+        Func_02002f08(handoff);
+    }
+}
+
+void Scene_RunPartySequence(void)
+{
+    extern u8 Data_03001ebc[];
+
+    s32 record;
+    u8 *work;
+    s32 v5;
+    s32 tbl;
+
+    Func_02002f1c();
+    Call4(Func_02002ffe, -1, -1, -1, 0);
+    Func_02002ee4(1);
+    Call4(Func_02003016, 0x3600000, -1, 0x2180000, 0);
+    Func_02002f02();
+    Func_02002f00(1);
+    Call3(Func_02002fbc, 0, 0x3600000, 0x2760000);
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = v5 = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 40;
+    Func_02003072();
+    Call2(Func_0200304a, 0x6666, 0xccc);
+    Call4(Func_02003064, 0x3600000, -1, 0x1d80000, 1);
+    Call3(Func_02002fc6, 0, 0xcccc, 0x6666);
+    Call3(Func_02002fd0, 1, 0xcccc, 0x6666);
+    Call3(Func_02002fda, 2, 0xcccc, 0x6666);
+    Call3(Func_02002fe4, 3, 0xcccc, 0x6666);
+    Call3(Func_02003012, 0, 0x360, 0x1f2);
+    record = Value1(Func_02002ff0, 0);
+    if (record != 0) {
+        Func_0200303e(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    }
+    record = Value1(Func_02003004, 0);
+    if (record != 0) {
+        Func_02003052(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    }
+    record = Value1(Func_02003018, 0);
+    if (record != 0) {
+        Func_02003066(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    }
+    Call3(Func_02003054, 0, 0x358, 0x1e6);
+    Call3(Func_02003062, 1, 0x350, 0x1f6);
+    Call3(Func_02003070, 2, 0x368, 0x1e6);
+    Call3(Func_02003086, 3, 0x370, 0x1f6);
+    Func_020030ae(0, 1);
+    Func_020030b6(1, 1);
+    Func_020030be(2, 1);
+    Func_02003054_a(10);
+    Func_02002a2e(10);
+    Func_02003124(9, v5, 20);
+    Call3(Func_02003128, 9, 0x5000, 20);
+    Call1(Func_02003106, 0x2588);
+    Call3(Func_02003128_a, 0x2009, 0, 10);
+    Func_0200314a(8, v5, 20);
+    Call3(Func_0200314e, 8, 0x3000, 20);
+    Func_02003148(8, 0, 20);
+    Call3(Func_0200316a, 8, 0x107, 60);
+    Func_0200315c(8, 0, 10);
+    Call2(Func_02003186, 0, 0x102);
+    Call2(Func_02003190, 1, 0x102);
+    Call2(Func_0200319a, 2, 0x102);
+    Call2(Func_020031a4, 3, 0x102);
+    Func_020030e2(60);
+    Call3(Func_020031ae, 9, 0x102, 60);
+    Call3(Func_020031b2, 9, 0x7000, 10);
+    Call3(Func_020031ac, 0x2009, 0, 10);
+    Call3(Func_020031c8, 8, 0x1000, 10);
+    Call3(Func_020031dc, 8, 0x108, 20);
+    Func_020031ce(8, 0, 40);
+    Func_020031b6(8, 2);
+    Func_020031e0(8, 0, 20);
+    Call3(Func_020031fc, 8, 0x3000, 10);
+    Value2(Func_020031e4, 8, 0);
+    v5 = 1;
+    if (Value2(Func_02003176, 0, 0) == 0) {
+        Func_02003160(10);
+        Func_020031d8(8, 3);
+    } else {
+        Func_02003170(10);
+        Scene_AdvanceStep(1);
+        Func_020031f6(8, 4);
+        v5 = 0;
+    }
+    Func_0200323a(8, 0, 10);
+    if (v5 != 0) {
+        Scene_AdvanceStep(1);
+    }
+    Func_0200322e(9, 2);
+    Call2(Func_02003280, 9, 0x102);
+    Func_020031be(80);
+    Call3(Func_02003270, 0x2009, 0, 10);
+    Call3(Func_0200328c, 8, 0x1000, 10);
+    Call3(Func_0200329e, 8, 0x107, 40);
+    Func_0200326e(2, 3);
+    Call3(Func_02003298, 0x2002, 0, 20);
+    Call3(Func_020032ba, 8, 0x105, 60);
+    Call3(Func_020032be, 8, 0x3000, 60);
+    Func_020032b8(8, 0, 10);
+    Func_02003298_a(1, 2);
+    Func_020032ca(1, 0, 10);
+    Call3(Func_020032e6, 9, 0x5000, 0);
+    Call3(Func_020032f2, 2, 0x6000, 10);
+    Func_020032c2(2, 2);
+    Call3(Func_020032f4, 0x6002, 0, 10);
+    Call3(Func_02003310, 2, 0xc000, 10);
+    Func_020032e0(2, 2);
+    Call3(Func_02003312, 0x2002, 0, 20);
+    Func_020032ea(8, 3);
+    Func_02003324(8, 0, 20);
+    Call3(Func_02003340, 2, 0x8000, 20);
+    Call3(Func_0200333a, 0x6002, 0, 10);
+    Call3(Func_02003356, 3, 0xa000, 10);
+    Call3(Func_02003368, 3, 0x105, 40);
+    Func_0200335a(3, 0, 10);
+    Func_02003342(2, 2);
+    Func_020032c0(80);
+    Func_02003340_a(2, 3);
+    Func_020032ce(20);
+    Call3(Func_02003392, 1, 0xe000, 10);
+    Func_0200335a_a(1, 4);
+    Value2(Func_02003382, 1, 0);
+    if (Value2(Func_02003312_a, 0, 0) == 0) {
+        Func_020032fc(20);
+        Scene_AdvanceStep(1);
+    } else {
+        Func_02003340_b(20);
+        Func_020033f2(1, 0, 10);
+    }
+    Func_020033c2(2, 3);
+    Func_020033d2(3, 3);
+    Func_02002d34(20);
+    Func_020033f0(9, 2);
+    Call3(Func_0200341a, 0x2009, 0, 10);
+    Func_02003402(3, 2);
+    Func_0200342c(3, 0, 10);
+    Call3(Func_02003448, 9, 0x3000, 10);
+    Func_02003410(9, 3);
+    Call3(Func_0200344a, 0x2009, 0, 10);
+    Call3(Func_0200346c, 2, 0x101, 60);
+    Call3(Func_0200345e, 0x2002, 0, 10);
+    Func_02003446(9, 1);
+    Call3(Func_02003482, 9, 0x5000, 10);
+    Call3(Func_0200347c, 0x2009, 0, 10);
+    Func_02003464(1, 2);
+    Func_0200348e(1, 0, 10);
+    Func_02003466(9, 4);
+    Call3(Func_020034a0, 0x2009, 0, 10);
+    Func_02003488(3, 1);
+    Func_020034b2(3, 0, 10);
+    Func_0200349a(8, 1);
+    Func_02003418(20);
+    Func_020034ca(8, 0, 10);
+    Func_0200349a_a(0, 3);
+    Func_020034a2(1, 3);
+    Func_020034aa(2, 3);
+    Func_020034ba(3, 3);
+    Func_02003448_a(20);
+    tbl = (s32)Data_02009b94;
+    Func_0200348a(1, tbl);
+    Value2(Func_02003492, 2, tbl);
+    Value2(Func_020034a2_a, 3, tbl);
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(((s32)work + 0x1c8)) = 16;
+    *(s32 *)(((s32)work + 0x1c0)) = 0x209;
+    Call1(Func_02003478, 0x12f);
+    Call1(Func_02003476, 0x914);
+    Func_0200349a_b();
 }

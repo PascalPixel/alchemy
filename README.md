@@ -21,7 +21,7 @@ _Golden Sun_ release as the first complete derived build target.
 
 ![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=e2dae73c69e08ddf)
 
-![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=e7fee8b061bddb90)
+![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=de0a49fcc8c541a2)
 
 ![Music and sound naming coverage](games/gs1/assets/readme/gs1-en-music.svg?v=56cddcb72da03a75)
 

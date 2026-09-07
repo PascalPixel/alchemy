@@ -32,8 +32,6 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
-const SENTOU_GAMEN_ADDRESS: usize = 0x080a_ea4c;
-const SENTOU_GAMEN_SIZE: usize = 0x15b4;
 const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
 const AUDIO_ENGINE_SIZE: usize = 0x0ef2;
 const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
@@ -1616,7 +1614,7 @@ struct Context {
     paths: AssetPaths,
     maps: HashMap<String, Vec<BuiltMapContainer>>,
     music: HashMap<String, Vec<music_residuals::BuiltMusicResidual>>,
-    battle: HashMap<String, Vec<(usize, Vec<u8>, Vec<PathBuf>)>>,
+    battle: HashMap<String, Vec<battle_assets::BuiltBattleResource>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
@@ -1651,9 +1649,9 @@ impl Context {
     fn battle_resources(
         &mut self,
         index_name: &str,
-    ) -> Result<&[(usize, Vec<u8>, Vec<PathBuf>)], String> {
+    ) -> Result<&[battle_assets::BuiltBattleResource], String> {
         if !self.battle.contains_key(index_name) {
-            let built = sentou_resources::build_sentou_series(&self.source(index_name)?)?;
+            let built = battle_assets::build_resource_series(&self.source(index_name)?)?;
             self.battle.insert(index_name.to_string(), built);
         }
         Ok(&self.battle[index_name])
@@ -2057,9 +2055,9 @@ fn expand_series(
             "golden-sun-sentou-resource-series" => {
                 let index_name = json_string(&series["index"], "sentou index")?;
                 let root = ctx.root.clone();
-                for (address, built, sources) in ctx.battle_resources(index_name)? {
-                    let image = root_relative(&root, &sources[1])?;
-                    entries.push(serde_json::json!({"address":hex_address(*address),"size":built.len(),"kind":"golden-sun-sentou-resource","source":image,"index":index_name}));
+                for resource in ctx.battle_resources(index_name)? {
+                    let image = root_relative(&root, &resource.sources[1])?;
+                    entries.push(serde_json::json!({"address":hex_address(resource.address),"size":resource.data.len(),"kind":"golden-sun-sentou-resource","source":image,"index":index_name}));
                 }
             }
             "golden-sun-kind2-resource-series" => {
@@ -3938,10 +3936,8 @@ fn build_entry_native_tail(
             for name in &nested {
                 ctx.source(name)?;
             }
-            let built = battle_effect_data::build_battle_effect_data(
-                &document,
-                &ctx.root.join("games/gs1/assets"),
-            )?;
+            let built =
+                battle_assets::build_effect_data(&document, &ctx.root.join("games/gs1/assets"))?;
             Ok((
                 built,
                 std::iter::once(entry_source.to_string())
@@ -3951,10 +3947,9 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-sentou-gamen-data" => {
-            let (built, sources) =
-                sentou_gamen_data::build_sentou_gamen_data(&source_path(entry_source)?)
-                    .map_err(|error| error.to_string())?;
-            if address != SENTOU_GAMEN_ADDRESS || built.len() != SENTOU_GAMEN_SIZE {
+            let (built, sources) = battle_assets::build_screen(&source_path(entry_source)?)?;
+            if address != battle_assets::SCREEN_ADDRESS || built.len() != battle_assets::SCREEN_SIZE
+            {
                 return Err(
                     "battle-screen package differs from canonical manifest extent".to_string(),
                 );
@@ -3962,7 +3957,7 @@ fn build_entry_native_tail(
             Ok((
                 built,
                 root_sources(&ctx.root, &sources)?,
-                serde_json::json!({"source_bytes":SENTOU_GAMEN_SIZE,"graphics":5,"display_glyph_cells":14,"derived_zero_bytes":3308}),
+                serde_json::json!({"source_bytes":battle_assets::SCREEN_SIZE,"graphics":5,"display_glyph_cells":14,"derived_zero_bytes":3308}),
             ))
         }
         "golden-sun-sentou-hyouji" => {
@@ -3984,8 +3979,7 @@ fn build_entry_native_tail(
             for name in &nested {
                 ctx.source(name)?;
             }
-            let built = sentou_hyouji::build_sentou_hyouji(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
+            let built = battle_assets::build_display(&source_path(entry_source)?)?;
             Ok((
                 built.clone(),
                 nested,
@@ -3994,10 +3988,9 @@ fn build_entry_native_tail(
         }
         "golden-sun-sentou-kouka-runtime" => {
             let document = json(&source_path(entry_source)?)?;
-            let built =
-                sentou_kouka_runtime::build_sentou_kouka_runtime(&source_path(entry_source)?)
-                    .map_err(|error| error.to_string())?;
-            if address != 0x080e_da78
+            let built = battle_assets::build_effect_runtime(&source_path(entry_source)?)?;
+            if address != battle_assets::EFFECT_RUNTIME_ADDRESS
+                || built.len() != battle_assets::EFFECT_RUNTIME_SIZE
                 || built.len() != number(&entry["size"], "effect runtime size")?
             {
                 return Err("battle-effect runtime differs from manifest".to_string());
@@ -4049,16 +4042,16 @@ fn build_entry_native_tail(
         }
         "golden-sun-sentou-resource" => {
             let index_name = json_string(&entry["index"], "sentou resource index")?;
-            let (_, built, sources) = ctx
+            let resource = ctx
                 .battle_resources(index_name)?
                 .iter()
-                .find(|item| item.0 == address)
+                .find(|item| item.address == address)
                 .cloned()
                 .ok_or("sentou resource address is absent from its index")?;
             let mut nested = vec![index_name.to_string()];
-            nested.extend(root_sources(&ctx.root, &sources)?);
-            let report = serde_json::json!({"source_bytes":built.len()});
-            Ok((built, dedup_sources(nested), report))
+            nested.extend(root_sources(&ctx.root, &resource.sources)?);
+            let report = serde_json::json!({"source_bytes":resource.data.len()});
+            Ok((resource.data, dedup_sources(nested), report))
         }
         "golden-sun-kind2-resource" => {
             let plan_path = source_path(entry_source)?;

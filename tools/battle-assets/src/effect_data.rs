@@ -2,8 +2,8 @@ use extract_resource::{encode_palette, PaletteGroup, PaletteOperation};
 use import_asset::gba_graphics;
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-pub const BATTLE_DATA_ADDRESS: u32 = 0x0809_c410;
-pub const BATTLE_DATA_END: u32 = 0x080a_1000;
+const BATTLE_DATA_ADDRESS: u32 = 0x0809_c410;
+const BATTLE_DATA_END: u32 = 0x080a_1000;
 const DIRECT_GRAPHICS_END: u32 = 0x0809_c610;
 const RULE_TABLES_END: u32 = 0x0809_e4ce;
 const HALFWORD_GRAPHIC_END: u32 = 0x0809_e680;
@@ -13,7 +13,7 @@ const GRADIENT_ADDRESS: u32 = 0x0809_f840;
 const GRADIENT_END: u32 = 0x0809_fbc0;
 const SPARSE_TABLE_ADDRESS: u32 = 0x080a_0138;
 const SPARSE_TABLE_END: u32 = 0x080a_0288;
-pub type Res<T> = Result<T, String>;
+type Res<T> = Result<T, String>;
 fn err<T>(message: &str) -> Res<T> {
     Err(message.to_string())
 }
@@ -454,7 +454,7 @@ fn build_tail_tables(source: &Value) -> Res<Vec<(u32, u32, Vec<u8>)>> {
     build_table_collection(tables, TAIL_TABLE_LAYOUT, "tail-table")
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum HalfwordToken {
+enum HalfwordToken {
     Literal(u32),
     Copy { length: u32, distance: u32 },
     End,
@@ -474,7 +474,7 @@ enum HalfwordOperation {
     Copy { length: u32, distance: u32 },
     End,
 }
-pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Res<Vec<u8>> {
+fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Res<Vec<u8>> {
     if !decoded.len().is_multiple_of(2) {
         return err("halfword pixels have an odd size");
     }
@@ -936,7 +936,7 @@ fn assemble_tail(segments: &[(u32, u32, Vec<u8>)]) -> Res<Vec<u8>> {
     }
     Ok(output)
 }
-pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
+pub(crate) fn build(value: &Value, root: &Path) -> Res<Vec<u8>> {
     if !number_is(value.get("format"), 3.0)
         || !text_is(value.get("kind"), "golden-sun-battle-effect-data")
     {

@@ -474,7 +474,7 @@ libraries are not additional public command surfaces.
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
-| [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
+| [battle-assets](tools/battle-assets/) | Rebuild battle screen, display, effect, and compressed resource packages. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
 | [executable-gap-sources](tools/executable-gap-sources/) | Decode typed source packages in executable gaps. |
@@ -489,10 +489,6 @@ libraries are not additional public command surfaces.
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
 | [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |
-| [sentou-gamen-data](tools/sentou-gamen-data/) | Build battle-screen data. |
-| [sentou-hyouji](tools/sentou-hyouji/) | Build battle-display data. |
-| [sentou-kouka-runtime](tools/sentou-kouka-runtime/) | Build and verify the battle-effect runtime. |
-| [sentou-resources](tools/sentou-resources/) | Build and verify battle resource series. |
 | [simple-resources](tools/simple-resources/) | Rebuild maintained stamp, font, word-table and screen records. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [staff-roll](tools/staff-roll/) | Build the staff-roll package. |

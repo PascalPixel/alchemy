@@ -532,11 +532,58 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                     .map_err(|e| e.to_string())?;
             let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
                 .map_err(|e| e.to_string())?;
-            let built = if kind == "gba-palette" {
+            let mut built = if kind == "gba-palette" {
                 palette
             } else {
                 graphics
             };
+            if entry.get("frames").is_some() {
+                if kind != "gba-4bpp-tiles" && kind != "gba-8bpp-tiles" {
+                    return Err("atlas requires tiled pixels".into());
+                }
+                let image = indexed_png(&fs::read(&source).map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())?;
+                let frames = number(&entry["frames"], "frames")?;
+                let columns = number(&entry["columns"], "columns")?;
+                let w = number(&entry["frame_tiles_wide"], "frame tile width")?;
+                let h = number(&entry["frame_tiles_high"], "frame tile height")?;
+                if frames == 0
+                    || columns == 0
+                    || w == 0
+                    || h == 0
+                    || columns.checked_mul(w).and_then(|n| n.checked_mul(8))
+                        != Some(image.width as usize)
+                    || frames
+                        .div_ceil(columns)
+                        .checked_mul(h)
+                        .and_then(|n| n.checked_mul(8))
+                        != Some(image.height as usize)
+                {
+                    return Err("atlas dimensions differ".into());
+                }
+                if entry["symbolic_palette"] == true {
+                    let count = if bpp == 4.0 { 16 } else { 256 };
+                    let expected = (0..count)
+                        .map(|i| {
+                            let v = (if count == 16 { i * 8 } else { i }) as u8;
+                            [v, v, v]
+                        })
+                        .collect::<Vec<_>>();
+                    if image.palette != expected {
+                        return Err("symbolic atlas palette differs".into());
+                    }
+                }
+                let tile_bytes = if bpp == 4.0 { 32 } else { 64 };
+                let mut ordered = Vec::new();
+                for frame in 0..frames {
+                    for y in 0..h {
+                        let start = ((frame / columns * h + y) * columns * w + frame % columns * w)
+                            * tile_bytes;
+                        ordered.extend_from_slice(&built[start..start + w * tile_bytes]);
+                    }
+                }
+                built = ordered;
+            }
             (built, details, vec![source_name.to_string()])
         }
         "gba-palette-rgba" => {
@@ -653,12 +700,13 @@ fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
             output.extend(integer_array(value, kind)?);
         } else {
             let value = value.as_i64().ok_or("array member is not an integer")?;
-            if kind == "be-s16-array" {
-                output.extend(
-                    i16::try_from(value)
-                        .map_err(|_| "array member exceeds s16")?
-                        .to_be_bytes(),
-                );
+            if kind == "be-s16-array" || kind == "le-s16-array" {
+                let value = i16::try_from(value).map_err(|_| "array member exceeds s16")?;
+                output.extend(if kind == "le-s16-array" {
+                    value.to_le_bytes()
+                } else {
+                    value.to_be_bytes()
+                });
             } else if kind == "s8-array" {
                 output.push(i8::try_from(value).map_err(|_| "array member exceeds s8")? as u8);
             } else if kind == "u8-array" {
@@ -846,14 +894,52 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             Some("u8") => ("u8-array", 1),
             Some("s8") => ("s8-array", 1),
             Some("le-u16") => ("le-u16-array", 2),
+            Some("le-s16") => ("le-s16-array", 2),
             Some("le-u32") => ("le-u32-array", 4),
             Some("ascii-fixed") => ("ascii-fixed", 1),
+            Some("record") => ("record", 1),
             _ => return Err("unknown table element".into()),
         };
         if stride < width || stride % width != 0 || size % stride != 0 {
             return Err("table stride differs".into());
         }
-        let bytes = if kind == "ascii-fixed" {
+        let bytes = if let Some(fill) = segment.get("fill") {
+            if segment.get("values").is_some() || kind != "u8-array" {
+                return Err("fill requires an unsigned byte segment without values".into());
+            }
+            vec![u8::try_from(number(fill, "fill")?).map_err(|_| "fill exceeds u8")?; size]
+        } else if kind == "record" {
+            let fields = segment["fields"]
+                .as_array()
+                .ok_or("record fields missing")?;
+            let names = fields
+                .iter()
+                .map(|f| json_string(&f["name"], "field name"))
+                .collect::<Result<std::collections::HashSet<_>, _>>()?;
+            if names.is_empty() || names.len() != fields.len() {
+                return Err("record field names must be nonempty and unique".into());
+            }
+            let mut bytes = Vec::new();
+            for record in segment["records"].as_array().ok_or("records missing")? {
+                let record = record.as_object().ok_or("record must be an object")?;
+                if record.len() != fields.len() {
+                    return Err("record fields differ".into());
+                }
+                let start = bytes.len();
+                for field in fields {
+                    let name = json_string(&field["name"], "field name")?;
+                    bytes.extend(table_values(
+                        record.get(name).ok_or("record field absent")?,
+                        field,
+                        stride,
+                    )?);
+                }
+                if bytes.len() - start != stride {
+                    return Err("record stride differs".into());
+                }
+            }
+            bytes
+        } else if kind == "ascii-fixed" {
             let text = json_string(&segment["text"], "fixed text")?;
             if stride != 1
                 || text.len() >= size
@@ -865,7 +951,7 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             bytes.resize(size, 0);
             bytes
         } else {
-            integer_array(&segment["values"], kind)?
+            table_values(&segment["values"], segment, size)?
         };
         if bytes.len() != size {
             return Err("table segment size differs".into());
@@ -906,6 +992,63 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
+fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>, String> {
+    let element = json_string(&spec["element"], "field element")?;
+    let (kind, width) = match element {
+        "u8" => ("u8-array", 1),
+        "s8" => ("s8-array", 1),
+        "le-u16" => ("le-u16-array", 2),
+        "le-s16" => ("le-s16-array", 2),
+        "le-u32" => ("le-u32-array", 4),
+        _ => return Err("unknown field element".into()),
+    };
+    fn flatten(value: &Value, out: &mut Vec<i64>) -> Result<(), String> {
+        if let Some(items) = value.as_array() {
+            for item in items {
+                flatten(item, out)?;
+            }
+        } else {
+            out.push(value.as_i64().ok_or("field value is not an integer")?);
+        }
+        Ok(())
+    }
+    let mut values = Vec::new();
+    flatten(value, &mut values)?;
+    for key in ["min", "max"] {
+        if let Some(limit) = spec.get(key) {
+            let limit = limit.as_i64().ok_or("field bound is not an integer")?;
+            if values
+                .iter()
+                .any(|&v| if key == "min" { v < limit } else { v > limit })
+            {
+                return Err("field value outside bounds".into());
+            }
+        }
+    }
+    if let Some(unique) = spec.get("unique") {
+        if unique.as_bool().ok_or("unique must be boolean")? {
+            let mut sorted = values.clone();
+            sorted.sort_unstable();
+            if sorted.windows(2).any(|v| v[0] == v[1]) {
+                return Err("duplicate field value".into());
+            }
+        }
+    }
+    let mut bytes = integer_array(&serde_json::json!(values), kind)?;
+    if let Some(capacity) = spec.get("terminated_capacity") {
+        let capacity = number(capacity, "terminated capacity")?;
+        if capacity == 0
+            || capacity > max_bytes / width
+            || values.len() >= capacity
+            || values.contains(&0)
+        {
+            return Err("terminated field has no room for terminator or contains zero".into());
+        }
+        bytes.resize(capacity.checked_mul(width).ok_or("field size overflow")?, 0);
+    }
+    Ok(bytes)
+}
+
 #[test]
 fn typed_byte_tables_check_index_ranges_and_permutations() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
@@ -926,6 +1069,68 @@ fn typed_byte_tables_check_index_ranges_and_permutations() {
     mapping["segments"][0]["permutation"] = serde_json::json!(false);
     mapping["segments"][0]["values"] = serde_json::json!([1, 1, 1, 1]);
     assert_eq!(typed_table(&mapping).unwrap(), [1, 1, 1, 1]);
+}
+
+#[test]
+fn typed_records_preserve_names_termination_bounds_and_signedness() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":10,"segments":[
+        {"address":0,"end":8,"stride":8,"element":"record","fields":[
+            {"name":"ids","element":"le-u16","terminated_capacity":3,"min":1,"max":100,"unique":true},
+            {"name":"offset","element":"le-s16"}
+        ],"records":[{"ids":[2,3],"offset":-2}]},
+        {"address":8,"end":10,"stride":1,"element":"u8","fill":255}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [2, 0, 3, 0, 0, 0, 254, 255, 255, 255]
+    );
+    for (pointer, value) in [
+        ("/segments/0/records/0/ids", serde_json::json!([2, 2])),
+        ("/segments/0/records/0/ids", serde_json::json!([0])),
+        ("/segments/0/records/0/ids", serde_json::json!([101])),
+        ("/segments/0/records/0/ids", serde_json::json!([1, 2, 3])),
+        ("/segments/0/records/0/offset", serde_json::json!(32768)),
+        (
+            "/segments/0/fields/0/terminated_capacity",
+            serde_json::json!(1000000000),
+        ),
+        ("/segments/0/fields/1/name", serde_json::json!("ids")),
+        ("/segments/1/fill", serde_json::json!(256)),
+        ("/segments/1/address", serde_json::json!(7)),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+}
+
+#[test]
+fn tiled_atlas_serializes_frames_before_tile_rows() {
+    let root = tempfile::tempdir().unwrap();
+    let mut image = Vec::new();
+    {
+        let mut encoder = png::Encoder::new(&mut image, 16, 16);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::Eight);
+        encoder.set_palette((0..16).flat_map(|i| [i * 8; 3]).collect::<Vec<u8>>());
+        let pixels = (0..256)
+            .map(|i| if i % 16 < 8 { 1 } else { 2 })
+            .collect::<Vec<u8>>();
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&pixels)
+            .unwrap();
+    }
+    fs::write(root.path().join("atlas.png"), image).unwrap();
+    let entry = serde_json::json!({"kind":"gba-4bpp-tiles","source":"atlas.png","size":128,"frames":2,"columns":2,"frame_tiles_wide":1,"frame_tiles_high":2,"symbolic_palette":true});
+    let result = build_component(root.path(), &entry).unwrap();
+    assert_eq!(result.data, [vec![0x11; 64], vec![0x22; 64]].concat());
+    for field in ["frames", "columns", "frame_tiles_wide", "frame_tiles_high"] {
+        let mut bad = entry.clone();
+        bad[field] = serde_json::json!(0);
+        assert!(build_component(root.path(), &bad).is_err());
+    }
 }
 
 #[test]
@@ -1882,23 +2087,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 ],
                 report,
             ))
-        }
-        "golden-sun-late-runtime-residual" => {
-            let result = late_runtime_residual::build_late_runtime_residual(
-                &source_path(entry_source)?,
-                &ctx.root
-                    .join("games/gs1/assets/data/late_runtime_catalog.json"),
-            )?;
-            if result.source_bytes != late_runtime_residual::SOURCE_BYTES {
-                return Err("late residual source-byte total differs".into());
-            }
-            let (_, built) = result
-                .regions
-                .iter()
-                .find(|(start, _)| *start as usize == address)
-                .ok_or("late-runtime asset address is not a produced region")?;
-            let report = serde_json::json!({"source_bytes":result.source_bytes,"region_address":hex_address(address)});
-            Ok((built.clone(), vec![entry_source.to_string()], report))
         }
         "golden-sun-executable-gap-data" => {
             let built =
@@ -3293,6 +3481,13 @@ fn build_entry_native_tail(
         }
         "typed-table" => {
             let document = json(&source_path(entry_source)?)?;
+            let document = if let Some(pointer) = entry.get("pointer") {
+                document
+                    .pointer(json_string(pointer, "table pointer")?)
+                    .ok_or("table pointer is absent")?
+            } else {
+                &document
+            };
             if number(&document["address"], "table address")? != address {
                 return Err("table address differs from manifest".into());
             }
@@ -3409,34 +3604,6 @@ fn build_entry_native_tail(
                 built.clone(),
                 dedup_sources(nested),
                 serde_json::json!({"source_bytes":built.len(),"callback_slots":407,"derived_zero_bytes":4012}),
-            ))
-        }
-        "golden-sun-sentou-menu-data" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = sentou_menu_data::build_sentou_menu_data(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            if address != 0x080b_3940 || built.len() != 0x16c0 {
-                return Err(
-                    "battle-menu package differs from canonical manifest extent".to_string()
-                );
-            }
-            let prefix = entry_source.replace("index.json", "");
-            let mut nested = Vec::<String>::new();
-            for item in document["graphics"].as_array().into_iter().flatten() {
-                nested.push(format!(
-                    "{prefix}{}",
-                    json_string(&item["source"], "graphics source")?
-                ));
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            Ok((
-                built.clone(),
-                std::iter::once(entry_source.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"source_bytes":built.len(),"atlases":5,"loadout_records":35}),
             ))
         }
         "golden-sun-staff-roll" => {

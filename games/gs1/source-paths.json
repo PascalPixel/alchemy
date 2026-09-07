@@ -1,9 +1,21 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a3:020006f0": {
+      "name": "SceneMotion_UpdateTimedActor",
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
+    },
+    "resource_3a3:02000c44": {
+      "name": "SceneEffect_UpdateDriftingParticle",
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
+    },
+    "resource_3a3:02000d08": {
+      "name": "SceneEffect_SpawnDriftingParticle",
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
+    },
     "resource_3a3:0200007c": {
       "name": "SceneData_SelectFlaggedTable",
-      "source": "overlays/scene_data/select_table_by_word_224_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3c2:0200006c": {
       "name": "SceneDialogue_HandleFacingChoice",
@@ -7656,7 +7668,7 @@
     },
     "resource_3a3:02000298": {
       "name": "SceneDialogue_RunActor17Message1924",
-      "source": "overlays/scene_dialogue/run_actor_messages_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_382:02000420": {
       "name": "SceneData_ReturnZero",
@@ -8213,7 +8225,7 @@
     },
     "resource_3a3:02000874": {
       "name": "SceneState_SyncProgressFlagsAndDispatch",
-      "source": "overlays/state_update/flag_sync_and_dispatch_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3bd:020009ec": {
       "name": "SceneData_GetTablebf70",
@@ -8309,7 +8321,7 @@
     },
     "resource_3a3:020001b0": {
       "name": "SceneDialogue_ShowLine1918",
-      "source": "overlays/scene_dialogue/show_line_1918.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_390:02000070": {
       "name": "SceneData_PrepareTable84d8",
@@ -9036,7 +9048,7 @@
     },
     "resource_3a3:0200015c": {
       "name": "FieldScene_RunActorEightPromptDialogue",
-      "source": "overlays/scene_state_interaction/table_and_actor_eight_prompt_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3a5:02001c78": {
       "name": "SceneState_SetHalfwordB030",
@@ -9220,7 +9232,7 @@
     },
     "resource_3a3:02000c0c": {
       "name": "SceneActor_ResetStateAndSpan",
-      "source": "overlays/staged_actor/reset_state_and_span.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3ba:02002e10": {
       "name": "SceneActor_StartMode5MoveToTile",
@@ -9580,7 +9592,7 @@
     },
     "resource_3a3:0200011c": {
       "name": "SceneData_GetPrimaryTable",
-      "source": "overlays/scene_state_interaction/table_and_actor_eight_prompt_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_397:02000048": {
       "name": "SceneData_ReturnZero",
@@ -9886,7 +9898,7 @@
     },
     "resource_3a3:02000338": {
       "name": "SceneActor_IsSlotZeroAngleInRange",
-      "source": "overlays/actor_facing/is_slot_zero_angle_in_range.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_397:0200026c": {
       "name": "SceneEffect_UpdateBg3HofsByVcount",
@@ -10035,7 +10047,7 @@
     },
     "resource_3a3:020002d8": {
       "name": "SceneDialogue_RunActor10Message18d9",
-      "source": "overlays/scene_dialogue/run_actor_messages_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3b3:020026b8": {
       "name": "SceneActor_CheckActors8To11NearSlotZero",
@@ -10263,7 +10275,7 @@
     },
     "resource_3a3:020004bc": {
       "name": "FieldScene_RunFacingGatedDialogue18",
-      "source": "overlays/scene_primary_script/run_scene_3a3_facing_gated_dialogue.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_396:02000048": {
       "name": "OverlayObject_PrepareSpawnedObject",
@@ -11935,7 +11947,7 @@
     },
     "resource_3a3:020002b8": {
       "name": "SceneDialogue_RunActor9Message1932",
-      "source": "overlays/scene_dialogue/run_actor_messages_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_383:020000fc": {
       "name": "FieldScene_RunObjectTwentySixPositionCheck",
@@ -12164,7 +12176,7 @@
     },
     "resource_3a3:02000448": {
       "name": "FieldScene_RunActorTwentyOneFlagBranch",
-      "source": "overlays/conditional_scene_setup/run_actor_twenty_one_flag_branch.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_38c:020002b4": {
       "name": "FieldScene_RunActor8Message",
@@ -12328,7 +12340,7 @@
     },
     "resource_3a3:02000318": {
       "name": "SceneDialogue_RunActor21Message194a",
-      "source": "overlays/scene_dialogue/run_actor_messages_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3cd:02000044": {
       "name": "SceneData_GetTable8998",
@@ -12440,7 +12452,7 @@
     },
     "resource_3a3:0200084c": {
       "name": "SceneState_SetFlag906ByActorNineteenX",
-      "source": "overlays/state_update/flag_sync_and_dispatch_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3a8:02000374": {
       "name": "SceneDialogue_RunActorTenDialogue",
@@ -12493,7 +12505,7 @@
     },
     "resource_3a3:020002f8": {
       "name": "SceneDialogue_RunActor14Message18e1",
-      "source": "overlays/scene_dialogue/run_actor_messages_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3a7:020014d8": {
       "name": "Runtime_SoftDoubleToSignedInt",
@@ -12537,7 +12549,7 @@
     },
     "resource_3a3:02000360": {
       "name": "FieldScene_RunActorFifteenFlagBranch",
-      "source": "overlays/conditional_scene_setup/run_actor_fifteen_flag_branch.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_386:02000570": {
       "name": "OverlayObject_InitObject22",
@@ -13430,7 +13442,10 @@
       "name": "SceneEffect_UpdateStateMachine",
       "source": "overlays/effect/actor_row_and_effect_state_3bd.c"
     },
-    "resource_3a3:02000070": "overlays/shared/get_secondary_default_result.c",
+    "resource_3a3:02000070": {
+      "name": "get_secondary_default_result",
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
+    },
     "resource_3a4:02000a64": {
       "name": "FieldScene_RunValue1528Scene",
       "source": "overlays/scene_setup/run_value_1528_scene.c"
@@ -13966,7 +13981,7 @@
     },
     "resource_3a3:02000030": {
       "name": "SceneData_SelectTableByWord224",
-      "source": "overlays/scene_data/select_table_by_word_224_3a3.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3c4:02001fc4": {
       "name": "FieldScene_RunFourCallSequence",
@@ -14087,7 +14102,7 @@
     },
     "resource_3a3:020003d4": {
       "name": "FieldScene_RunActorTwentyFlagBranch",
-      "source": "overlays/conditional_scene_setup/run_actor_twenty_flag_branch.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_386:020004a0": {
       "name": "SceneDialogue_RunActor18FlaggedLine",
@@ -14192,7 +14207,7 @@
     },
     "resource_3a3:02000074": {
       "name": "SceneData_GetTable9390",
-      "source": "overlays/scene_data/get_table_9390.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3ce:0200004c": {
       "name": "SceneDialogue_ShowMessageAndWait",
@@ -15353,7 +15368,7 @@
     },
     "resource_3a3:02000524": {
       "name": "FieldScene_RunEarlySequence",
-      "source": "overlays/scene_primary_script/run_scene_3a3_early_sequence.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3c4:02001fda": {
       "name": "FieldScene_RunLateSequence"
@@ -15364,7 +15379,7 @@
     },
     "resource_3a3:02000904": {
       "name": "FieldScene_RunMiddleSequence",
-      "source": "overlays/scene_primary_script/run_scene_3a3_middle_sequence.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_373:02000f5c": {
       "name": "FieldScene_RunPrimarySequence",
@@ -15543,7 +15558,7 @@
     },
     "resource_3a3:020001d0": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
-      "source": "overlays/scene_primary_script/run_scene_3a3_sequence_a.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_380:02004260": {
       "name": "FieldScene_RunOpeningAuxiliarySequence"
@@ -16355,7 +16370,7 @@
     },
     "resource_3a3:02000d58": {
       "name": "FieldScene_RunScene3a3_02000d58",
-      "source": "overlays/scene_primary_script/run_scene_3a3_02000d58.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3a4:02000c9c": {
       "name": "FieldScene_RunScene3a4_02000c9c",
@@ -16941,7 +16956,7 @@
     },
     "resource_3a3:02000b2c": {
       "name": "FieldScene_RunScene3a3SequenceD",
-      "source": "overlays/scene_primary_script/run_scene_3a3_sequence_d.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_3bc:02003574": {
       "name": "FieldScene_RunScene3bcSequenceA",
@@ -17085,7 +17100,7 @@
     },
     "resource_3a3:020007b8": {
       "name": "FieldScene_RunScene3a3SequenceC",
-      "source": "overlays/scene_primary_script/run_scene_3a3_sequence_c.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_372:02001600": {
       "name": "FieldScene_RunScene372SequenceB",
@@ -17129,7 +17144,7 @@
     },
     "resource_3a3:020006a4": {
       "name": "FieldScene_RunScene3a3SequenceB",
-      "source": "overlays/scene_primary_script/run_scene_3a3_sequence_b.c"
+      "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "main:080a9598": {
       "name": "Shop_DrawPartyItemPage",

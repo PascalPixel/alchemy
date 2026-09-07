@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c2:0200006c": {
+      "name": "SceneDialogue_HandleFacingChoice",
+      "source": "overlays/scene_script/scene_3c2.c"
+    },
+    "resource_3c2:02000100": {
+      "name": "SceneDialogue_HandleFacingBranch",
+      "source": "overlays/scene_script/scene_3c2.c"
+    },
+    "resource_3c2:0200016c": {
+      "name": "SceneDialogue_HandleFacingAction",
+      "source": "overlays/scene_script/scene_3c2.c"
+    },
     "resource_3a9:0200007c": {
       "name": "SceneData_SelectAndPrepareTable",
       "source": "overlays/scene_script/scene_3a9.c"

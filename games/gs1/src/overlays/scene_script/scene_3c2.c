@@ -1,4 +1,83 @@
 #include "types.h"
+extern u8 SceneMessage_FacingChoiceBase;
+
+u16 *Func_02000bd8(s32);
+void Func_02000cae(s32, s32);
+s32 Func_02000bd4(s32);
+void Func_02000c70(s32);
+s32 Func_02000c80(s32, s32);
+s32 Func_02000c18(s32, s32);
+void Func_02000c0a(s32);
+void Func_02000c90(s32);
+void Func_02000c98(s32);
+void Func_02000cb0(s32, s32);
+void Func_02000ca8(s32);
+void Func_02000cc0(s32, s32);
+u16 *Func_02000cd8(s32);
+void Func_02000db4(s32);
+s32 Func_02000ccc(s32);
+void Func_02000d66(s32);
+void Func_02000d7e(s32, s32);
+void SceneMessage_Show(s32);
+void Func_02000d9c(s32, s32);
+
+u16 *Func_02000c6c(s32);
+void Func_02000d52(s32, s32);
+s32 Func_02000c68(s32);
+void Func_02000d02(s32);
+void Func_02000d1a(s32, s32);
+void Func_02000d12(s32);
+void Func_02000d2a(s32, s32);
+
+void SceneDialogue_HandleFacingBranch(s32 no)
+{
+    u16 facing = (Func_02000c6c(0)[3] + 0x2000) & ~0x3fff;
+    if (facing == 0xc000) {
+        Func_02000d52(10, no);
+    } else if (Func_02000c68(0x96f)) {
+        Func_02000d02(0x2620);
+        Func_02000d1a(no, 0);
+    } else {
+        Func_02000d12(0x25d1);
+        Func_02000d2a(no, 0);
+    }
+}
+
+void SceneDialogue_HandleFacingChoice(s32 no)
+{
+    u16 facing = (Func_02000bd8(0)[3] + 0x2000) & ~0x3fff;
+    if (facing == 0xc000) {
+        Func_02000cae(31, no);
+    } else if (Func_02000bd4(0x96f)) {
+        s32 msg = (s32)&SceneMessage_FacingChoiceBase;
+        Func_02000c70(msg);
+        Func_02000c80(no, 0);
+        if (Func_02000c18(0, 0) == 0) {
+            Func_02000c0a(10);
+            Func_02000c90(msg + 1);
+        } else {
+            Func_02000c98(msg + 2);
+        }
+        Func_02000cb0(no, 0);
+    } else {
+        Func_02000ca8(0x25cf);
+        Func_02000cc0(no, 0);
+    }
+}
+
+void SceneDialogue_HandleFacingAction(s32 no)
+{
+    u16 facing = (Func_02000cd8(0)[3] + 0x2000) & ~0x3fff;
+    if (facing == 0xc000) {
+        Func_02000db4(no);
+    } else if (Func_02000ccc(0x96f)) {
+        Func_02000d66(0x262c);
+        Func_02000d7e(no, 0);
+    } else {
+        SceneMessage_Show(0x25d5);
+        Func_02000d9c(no, 0);
+    }
+}
 
 #define GameFlag_Set_1(a0) Value1(Func_02000d84, a0)
 #define GameFlag_IsSet_1(a0) Value1(Func_02000d82, a0)

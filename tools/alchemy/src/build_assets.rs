@@ -4231,27 +4231,6 @@ fn build_entry_native_tail(
                 serde_json::json!({"items":document["items"].as_array().map_or(0,Vec::len),"abilities":document["abilities"].as_array().map_or(0,Vec::len),"combatants":document["combatants"].as_array().map_or(0,Vec::len),"classes":document["classes"].as_array().map_or(0,Vec::len),"djinn":document["djinn"].as_array().map_or(0,Vec::len),"alignment_bytes":document.get("alignment_bytes")}),
             ))
         }
-        "golden-sun-title-lz" => {
-            let document = json(&source_path(entry_source)?)?;
-            let title_prefix = entry_source.replace("container.json", "");
-            let mut sources = vec![entry_source.to_string()];
-            for component in document["components"].as_array().into_iter().flatten() {
-                let relative = format!(
-                    "{}{}",
-                    title_prefix,
-                    json_string(&component["source"], "title component source")?.replace('/', "_")
-                );
-                ctx.source(&relative)?;
-                sources.push(relative);
-            }
-            let built = title_resources::build_title_resource(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                sources,
-                serde_json::json!({"resource_id":document["resource_id"],"decoded_size":document["decoded_size"],"components":document["components"].as_array().map_or(0,Vec::len),"fallback_tail":if document["tail"]["policy"].as_str()==Some("fallback"){number(&document["tail"]["size"],"tail size")?}else{0}}),
-            ))
-        }
         "golden-sun-offset-palette-lz" => {
             let plan_name = json_string(&entry["plan"], "offset palette plan")?;
             let plan = json(&source_path(plan_name)?)?;

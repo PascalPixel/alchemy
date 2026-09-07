@@ -722,21 +722,117 @@
     },
     {
       "address": "0x08323870",
-      "size": "0x1177",
-      "kind": "golden-sun-title-lz",
-      "source": "games/gs1/assets/graphics/resource_15_container.json"
+      "size": "0x200",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/resource_15_objects_hikari_64.8bpp.png"
+    },
+    {
+      "address": "0x08323a70",
+      "size": "0xf77",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_15_container.json",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x1000",
+          "source": "games/gs1/assets/graphics/resource_15_objects_hikari_64.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x400",
+          "source": "games/gs1/assets/graphics/resource_15_objects_taiyou_32.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x400",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_32.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_16_a.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_16_b.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_16_c.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_16_d.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_16_e.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/gs1/assets/graphics/resource_15_objects_niji_16_f.8bpp.png"
+        }
+      ]
     },
     {
       "address": "0x083249e8",
-      "size": "0x66c0",
-      "kind": "golden-sun-title-lz",
-      "source": "games/gs1/assets/graphics/resource_16_container.json"
+      "size": "0x200",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/resource_16_title.8bpp.png"
+    },
+    {
+      "address": "0x08324be8",
+      "size": "0x64be",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_16_container.json",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x9600",
+          "source": "games/gs1/assets/graphics/resource_16_title.8bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0832b0a6",
+      "size": "0x2",
+      "kind": "byte-fill",
+      "value": 0
     },
     {
       "address": "0x0832b0a8",
-      "size": "0x86f8",
-      "kind": "golden-sun-title-lz",
-      "source": "games/gs1/assets/graphics/resource_17_container.json"
+      "size": "0x200",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/resource_17_iwa.8bpp.png"
+    },
+    {
+      "address": "0x0832b2a8",
+      "size": "0x84f5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_17_container.json",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0xa140",
+          "source": "games/gs1/assets/graphics/resource_17_sora.4bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0xac80",
+          "source": "games/gs1/assets/graphics/resource_17_iwa.8bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0833379d",
+      "size": "0x3",
+      "kind": "byte-fill",
+      "value": 0
     },
     {
       "address": "0x083337a0",

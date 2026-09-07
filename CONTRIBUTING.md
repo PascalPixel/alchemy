@@ -488,7 +488,6 @@ libraries are not additional public command surfaces.
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
-| [title-resources](tools/title-resources/) | Build title-screen resources. |
 
 ## Owners and names
 

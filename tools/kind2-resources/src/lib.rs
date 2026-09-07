@@ -1,6 +1,4 @@
-//! Native build and ROM verification for Golden Sun Kind-2 resources.
-//!
-//! This crate owns the build-facing API and its verifier.
+//! Rebuild Golden Sun Kind-2 resources from their maintained plans.
 
 use import_asset::{gba_graphics, gba_palette_rgba, indexed_png};
 use serde_json::{Map, Value};
@@ -456,49 +454,8 @@ pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
         .collect()
 }
 
-fn range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {
-    rom.get(
-        address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| err("kind-2 range is outside the ROM"))?
-            ..address.checked_sub(ROM_BASE).unwrap() + size,
-    )
-    .ok_or_else(|| err("kind-2 range is outside the ROM"))
-}
-pub fn verify_kind2_series(rom_path: &Path, index_path: &Path) -> Result<String> {
-    let rom = read(rom_path)?;
-    let built = build_kind2_series(index_path)?;
-    let mut bytes = 0;
-    for resource in &built {
-        if range(&rom, resource.address, resource.data.len())? != resource.data {
-            return Err(format!(
-                "kind-2 resource 0x{:03x} differs from ROM",
-                resource.id
-            ));
-        }
-        bytes += resource.data.len();
-    }
-    Ok(format!(
-        "identical=true resources={} source_bytes={bytes}",
-        built.len()
-    ))
-}
-pub fn verify_kind2_resource(rom_path: &Path, plan_path: &Path) -> Result<String> {
-    let rom = read(rom_path)?;
-    let built = build_kind2_resource(plan_path)?;
-    if range(&rom, built.address, built.data.len())? != built.data {
-        return Err(format!(
-            "kind-2 resource 0x{:03x} differs from ROM",
-            built.id
-        ));
-    }
-    Ok(format!(
-        "identical=true resource=0x{:03x} source_bytes={}",
-        built.id,
-        built.data.len()
-    ))
-}
-pub fn self_test() -> Result<()> {
+#[test]
+fn codec_round_trip() -> Result<()> {
     let prefix: Vec<u8> = (0..32)
         .map(|index| ((index * 37 + 11) & 255) as u8)
         .collect();

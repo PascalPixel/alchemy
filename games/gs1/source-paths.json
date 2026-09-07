@@ -1,6 +1,7 @@
 {
   "format": 3,
   "owners": {
+    "resource_385:02000104": {"name": "SceneEffect_UpdateMotion", "source": "overlays/scene_script/actor_motion_events.c"},
     "resource_38a:020004f4": {
       "name": "SceneEffect_RunActorBurst",
       "source": "overlays/scene_script/actor_burst.c"
@@ -3083,7 +3084,7 @@
     "resource_385:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_385:0200013c": {
       "name": "SpawnConfiguredEffect",
-      "source": "overlays/actor_movement_effect/spawn_configured_effect.c"
+      "source": "overlays/scene_script/actor_motion_events.c"
     },
     "resource_385:02000314": {
       "name": "CalculateFixedPointPositionDistance",

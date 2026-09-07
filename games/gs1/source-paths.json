@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c6:02000158": {
+      "name": "Scene_RunTableTransition",
+      "source": "overlays/scene_script/scene_3c6.c"
+    },
     "resource_3ae:02000328": {
       "name": "SceneDialogue_RunActor12Event",
       "source": "overlays/scene_dialogue/run_actor_dialogue_event.c"

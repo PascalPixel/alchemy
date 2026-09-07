@@ -1,9 +1,14 @@
 pub mod smsh;
 
+mod residuals;
+mod sound_engine;
+
 use std::collections::{HashMap, HashSet};
 
 pub type Error = String;
 pub type Result<T> = std::result::Result<T, Error>;
+pub use residuals::{build_music_residuals, BuiltMusicResidual};
+pub use sound_engine::{build_audio_engine_data, BuiltAudioEngineData};
 pub const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
 const SMSH_TEMPO_CLOCK: u64 = 120_547_500;
 
@@ -726,7 +731,7 @@ pub struct SequenceBuildReport {
     pub events: usize,
 }
 
-pub fn build_reserve_sequence(base: u32) -> (Vec<u8>, SequenceBuildReport) {
+pub(crate) fn build_reserve_sequence(base: u32) -> (Vec<u8>, SequenceBuildReport) {
     let data = vec![
         0xbe, 120, 0xbc, 0, 0xbb, 30, 0xbd, 21, 0xd0, 61, 127, 0x81, 66, 0x81, 0xee, 69, 0xa0, 0xb1,
     ];

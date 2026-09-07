@@ -3,17 +3,21 @@
   "kind": "reconstruction-composition-contracts",
   "original_translation_units": "unknown",
   "units": [
+    {"id":"retained-scene-actor-proximity","game":"gs1","source":"games/gs1/recon/en/overlays/scene_actor_proximity.c","compiler_route":"canonical-gcc296","overlay":"resource_385","absolute_symbols":{"Func_0200068c":{"address":"0x02008314","kind":"thumb"},"Func_020013fc":{"address":"0x02009068","kind":"thumb"},"Func_02001442":{"address":"0x02009070","kind":"thumb"},"Func_02001458":{"address":"0x02009070","kind":"thumb"}},"local_symbols":[],"owners":[{"address":"0x02000350","extent":176,"state":"retained-assembly"}]},
     {
       "id": "scene-motion-update",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene_script/actor_motion_events.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_385",
-      "absolute_symbols": {},
+      "absolute_symbols": {"Func_02001a1e":{"address":"0x02009148","kind":"thumb"},"Func_02001a1e_a":{"address":"0x02009100","kind":"thumb"},"Func_02001a1e_b":{"address":"0x020090f0","kind":"thumb"},"Func_02001a44":{"address":"0x02009158","kind":"thumb"},"Func_02001a44_a":{"address":"0x02009100","kind":"thumb"},"Func_0200196a":{"address":"0x02009100","kind":"thumb"},"Func_02001960":{"address":"0x020090e8","kind":"thumb"},"Func_020019e6":{"address":"0x02009168","kind":"thumb"},"Func_02000d38":{"address":"0x020084b4","kind":"thumb"},"Func_02001978":{"address":"0x020090f0","kind":"thumb"},"Func_0200198e":{"address":"0x02009100","kind":"thumb"},"Func_02001696":{"address":"0x02009100","kind":"thumb"},"Func_02001696_a":{"address":"0x020090e8","kind":"thumb"},"Func_0200171e":{"address":"0x02009168","kind":"thumb"},"Func_020016f6":{"address":"0x02009138","kind":"thumb"},"Func_02001720":{"address":"0x02009158","kind":"thumb"},"Func_02001690":{"address":"0x020090c0","kind":"thumb"},"Func_0200177a":{"address":"0x02009190","kind":"thumb"},"Func_02001774":{"address":"0x02009180","kind":"thumb"},"Func_0200177e":{"address":"0x02009180","kind":"thumb"},"Func_020016ce":{"address":"0x020090c8","kind":"thumb"},"Func_02001774_a":{"address":"0x02009168","kind":"thumb"},"Func_02001796":{"address":"0x02009180","kind":"thumb"},"Func_02001680":{"address":"0x02009060","kind":"thumb"},"Func_02001714":{"address":"0x020090f0","kind":"thumb"},"Func_020016f6_a":{"address":"0x020090c8","kind":"thumb"},"SceneMessage_ActorFourteenBase":{"address":"0x00001cb1","kind":"data"}},
       "local_symbols": [],
       "owners": [
         {"address": "0x02000104", "extent": 56, "state": "exact-c"},
-        {"address": "0x0200013c", "extent": 472, "state": "exact-c"}
+        {"address": "0x0200013c", "extent": 472, "state": "exact-c"},
+        {"address": "0x0200058c", "extent": 180, "state": "exact-c"},
+        {"address": "0x02000864", "extent": 68, "state": "exact-c"},
+        {"address": "0x020008a8", "extent": 200, "state": "exact-c"}
       ]
     },
     {
@@ -3794,43 +3798,6 @@
         {
           "address": "0x02000d1c",
           "extent": 624,
-          "state": "exact-c"
-        }
-      ],
-      "local_symbols": []
-    },
-    {
-      "id": "overlays-scene-primary-script-run-scene-385-sequence-a",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_385_sequence_a.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_385",
-      "absolute_symbols": {
-        "Func_02001a1e": {
-          "address": "0x02009148",
-          "kind": "thumb"
-        },
-        "Func_02001a1e_a": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001a1e_b": {
-          "address": "0x020090f0",
-          "kind": "thumb"
-        },
-        "Func_02001a44": {
-          "address": "0x02009158",
-          "kind": "thumb"
-        },
-        "Func_02001a44_a": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x020008a8",
-          "extent": 200,
           "state": "exact-c"
         }
       ],

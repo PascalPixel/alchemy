@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_385:02000350": {"name": "SceneActor_UpdateProximity"},
+    "resource_385:0200058c": {"name": "SceneDialogue_RunActorFourteenFlagDialogue", "source": "overlays/scene_script/actor_motion_events.c"},
+    "resource_385:02000864": {"name": "SceneDialogue_RunActorFifteenDialogue", "source": "overlays/scene_script/actor_motion_events.c"},
     "resource_385:02000104": {"name": "SceneEffect_UpdateMotion", "source": "overlays/scene_script/actor_motion_events.c"},
     "resource_38a:020004f4": {
       "name": "SceneEffect_RunActorBurst",
@@ -17117,7 +17120,7 @@
     },
     "resource_385:020008a8": {
       "name": "FieldScene_RunScene385SequenceA",
-      "source": "overlays/scene_primary_script/run_scene_385_sequence_a.c"
+      "source": "overlays/scene_script/actor_motion_events.c"
     },
     "resource_38d:020001b4": {
       "name": "FieldScene_RunScene38dSequenceA",

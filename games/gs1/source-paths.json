@@ -1,6 +1,7 @@
 {
   "format": 3,
   "owners": {
+    "resource_385:02000c1c": {"name": "ActorPresentation_SetupActorSceneCells", "source": "overlays/actor_presentation/actor_scene_setup.c"},
     "resource_385:02000350": {"name": "SceneActor_UpdateProximity"},
     "resource_385:0200058c": {"name": "SceneDialogue_RunActorFourteenFlagDialogue", "source": "overlays/scene_script/actor_motion_events.c"},
     "resource_385:02000864": {"name": "SceneDialogue_RunActorFifteenDialogue", "source": "overlays/scene_script/actor_motion_events.c"},
@@ -3108,7 +3109,7 @@
     },
     "resource_385:02000cc8": {
       "name": "ActorPresentation_SetupActorZeroForSceneTwelve",
-      "source": "overlays/actor_presentation/setup_actor_zero_for_scene_twelve.c"
+      "source": "overlays/actor_presentation/actor_scene_setup.c"
     },
     "resource_387:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_387:0200013c": {

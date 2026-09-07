@@ -1955,32 +1955,6 @@
       ]
     },
     {
-      "overlay": "resource_3a2",
-      "start": "0x2000924",
-      "end": "0x2000ac0",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "This segment preserves retained assembly from the historical 0x02000924–0x02000fcc range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "games/gs1/recon/en/dossiers.json#resource_3a2:02000924"
-      ]
-    },
-    {
-      "overlay": "resource_3a2",
-      "start": "0x2000c30",
-      "end": "0x2000fcc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The complete owners at 0x02000ac0 and 0x02000b2c are adopted as exact C. This remaining scene range stays unresolved and must be recovered using complete audited owner boundaries.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility.",
-        "games/gs1/recon/en/dossiers.json#resource_3a2:02000924"
-      ]
-    },
-    {
       "overlay": "resource_375",
       "start": "0x20000dc",
       "end": "0x2000170",

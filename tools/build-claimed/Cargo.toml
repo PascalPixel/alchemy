@@ -1,8 +1,3 @@
-# Bare `[workspace]`: this crate is an independently buildable workspace
-# rather than a member of the aggregate tools workspace. `version`/`edition`
-# are literal because `.workspace` inheritance is unavailable here.
-[workspace]
-
 [package]
 name = "build-claimed"
 version = "0.1.0"
@@ -13,9 +8,6 @@ name = "build_claimed"
 path = "src/lib.rs"
 
 [dependencies]
-# Sibling crates, not third-party dependencies. Each already owns a proved port
-# of the layer this tool calls; a second copy of any of them is exactly the
-# hand-sync problem the Rust effort exists to end.
 compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
 decomp-targets = { path = "../decomp-targets" }

@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "runtime-support-data"
 version = "0.1.0"
@@ -8,7 +6,6 @@ edition = "2021"
 [lib]
 name = "runtime_support_data"
 path = "src/lib.rs"
-
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

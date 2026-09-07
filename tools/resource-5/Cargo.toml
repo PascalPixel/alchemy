@@ -7,8 +7,5 @@ edition = "2021"
 name = "resource_5"
 path = "src/lib.rs"
 
-
 [dependencies]
 serde_json = { version = "1", features = ["preserve_order"] }
-
-[workspace]

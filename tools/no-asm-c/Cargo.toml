@@ -12,5 +12,3 @@ compiler-core = { path = "../compiler-core" }
 decomp-targets = { path = "../decomp-targets" }
 regex = "1"
 tempfile = "3"
-
-[workspace]

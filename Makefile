@@ -18,9 +18,6 @@ COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy
-CORE_TESTS := compiler-core candidate-compiler diff matching \
-		disassemble overlay-adopt build-full decompile \
-		extract-resource coverage-map check-publication battle-assets
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching \
@@ -299,12 +296,8 @@ build-tools:
 	done
 
 tool-tests:
-	@set -e; for crate in $(HOSTS) $(CORE_TESTS); do \
-		printf '  test  %-20s' "$$crate"; \
-		$(CARGO) test --offline --quiet --release \
-			--manifest-path $(TOOLS)/$$crate/Cargo.toml; \
-		printf ' ok\n'; \
-	done
+	$(CARGO) test --offline --quiet --release --workspace \
+		--manifest-path $(TOOLS)/Cargo.toml
 	$(COMPILER) match --acceptance-test
 
 tooling-size:

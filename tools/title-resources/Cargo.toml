@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "title-resources"
 version = "0.1.0"
@@ -8,7 +6,6 @@ edition = "2021"
 [lib]
 name = "title_resources"
 path = "src/lib.rs"
-
 
 [dependencies]
 alignment-tail = { path = "../alignment-tail" }

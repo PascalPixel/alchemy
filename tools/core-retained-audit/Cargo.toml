@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "core-retained-audit"
 version = "0.1.0"

@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "decomp-targets"
 version = "0.1.0"

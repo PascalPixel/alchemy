@@ -135,524 +135,524 @@
 <rect class="container-frame" x="33.406975954139924" y="130.87925430938068" width="5.232030922169038" height="6.0265301596648815" fill="#1f7f93"/>
 <path class="bevel-light" d="M33.406975954139924 136.90578446904556 V130.87925430938068 H38.63900687630896" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M33.406975954139924 136.90578446904556 H38.63900687630896 V130.87925430938068" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08000764: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x08000764" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08000764: 12 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08000764: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x08000764" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08000764: 12 bytes</title>
 <rect data-content-type="Other data" x="34.718966379931594" y="132.19124473517238" width="2.6080500705856937" height="0.007965390498825291" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08001b70: 1,916 bytes" data-node="leaf" data-kind="file" data-bytes="1916" data-address="0x08001b70" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08001b70: 1,916 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08001b70: 1,916 bytes" data-node="leaf" data-kind="file" data-bytes="1916" data-address="0x08001b70" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08001b70: 1,916 bytes</title>
 <rect data-content-type="Other data" x="35.21498368468218" y="132.7031928209206" width="1.616015461084519" height="1.5436146992915436" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800380a: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x0800380a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800380a: 6 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0800380a: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x0800380a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0800380a: 6 bytes</title>
 <rect data-content-type="Other data" x="34.72423335009839" y="134.75605718562835" width="0.5446990055633143" height="0.018499330832416703" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007a20: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x08007a20" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007a20: 132 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08007a20: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x08007a20" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08007a20: 132 bytes</title>
 <rect data-content-type="Other data" x="34.85578326878112" y="134.9246057659759" width="0.2815991681978655" height="0.5323713884284693" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007b14: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08007b14" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007b14: 40 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08007b14: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08007b14" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08007b14: 40 bytes</title>
 <rect data-content-type="Other data" x="35.361660035365816" y="134.83028553450004" width="0.1669560285758096" height="0.24907336703320604" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007bc4: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x08007bc4" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007bc4: 8 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08007bc4: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x08007bc4" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08007bc4: 8 bytes</title>
 <rect data-content-type="Other data" x="35.629428636379906" y="134.7641420783625" width="0.3660253522811917" height="0.0346691163007513" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007c3c: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08007c3c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08007c3c: 40 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08007c3c: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08007c3c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08007c3c: 40 bytes</title>
 <rect data-content-type="Other data" x="35.69876686898141" y="134.90281854356553" width="0.2273488870781865" height="0.1733455815037565" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800c0c6: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x0800c0c6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800c0c6: 6 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0800c0c6: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x0800c0c6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0800c0c6: 6 bytes</title>
 <rect data-content-type="Other data" x="35.30924915126949" y="135.19390404601273" width="0.10554766396906148" height="0.06213426038316466" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800c628: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0800c628" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800c628: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0800c628: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0800c628" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0800c628: 4 bytes</title>
 <rect data-content-type="Other data" x="35.298893441205635" y="135.3078168567152" width="0.12625908409678305" height="0.041422840255443114" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800c87c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0800c87c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0800c87c: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0800c87c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0800c87c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0800c87c: 4 bytes</title>
 <rect data-content-type="Other data" x="35.46657536555786" y="135.18354833594887" width="0.12625908409678305" height="0.041422840255443114" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0801c466: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x0801c466" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0801c466: 6 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0801c466: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x0801c466" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0801c466: 6 bytes</title>
 <rect data-content-type="Other data" x="35.476931075621714" y="135.27674972652363" width="0.10554766396906148" height="0.06213426038316466" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080209cc: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080209cc" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080209cc: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080209cc: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080209cc" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080209cc: 4 bytes</title>
 <rect data-content-type="Other data" x="35.29342583238266" y="135.3851949284031" width="0.030487622609495665" height="0.19733799879544148" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08073808: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x08073808" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08073808: 10 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08073808: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x08073808" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08073808: 10 bytes</title>
 <rect data-content-type="Other data" x="35.37726679455877" y="135.40806064536022" width="0.07621905652373916" height="0.151606564881198" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0808ec4c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0808ec4c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0808ec4c: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0808ec4c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0808ec4c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0808ec4c: 4 bytes</title>
 <rect data-content-type="Other data" x="35.52007358202" y="135.39842931977398" width="0.06499408508674837" height="0.056956405351234286" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08091778: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x08091778" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08091778: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08091778: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x08091778" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08091778: 4 bytes</title>
 <rect data-content-type="Other data" x="35.52007358202" y="135.51234213047644" width="0.06499408508674837" height="0.056956405351234286" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080917c2: 14 bytes" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x080917c2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080917c2: 14 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080917c2: 14 bytes" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x080917c2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080917c2: 14 bytes</title>
 <rect data-content-type="Other data" x="35.665738648504224" y="135.215029694543" width="0.12850600415659746" height="0.10438555744371665" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08091c3e: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x08091c3e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08091c3e: 6 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08091c3e: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x08091c3e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08091c3e: 6 bytes</title>
 <rect data-content-type="Other data" x="35.87775309861579" y="135.19415258305426" width="0.10371978096256582" height="0.06263133446622998" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0809255c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0809255c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0809255c: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0809255c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0809255c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0809255c: 4 bytes</title>
 <rect data-content-type="Other data" x="35.86731454287142" y="135.30897669624235" width="0.12459689245130913" height="0.04175422297748667" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080a5784: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080a5784" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080a5784: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080a5784: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080a5784" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080a5784: 4 bytes</title>
 <rect data-content-type="Other data" x="35.641816958256705" y="135.3998791191829" width="0.06630172367566167" height="0.05654217694867985" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080a63e0: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080a63e0" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080a63e0: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080a63e0: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080a63e0" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080a63e0: 4 bytes</title>
 <rect data-content-type="Other data" x="35.641816958256705" y="135.51296347308028" width="0.06630172367566167" height="0.05654217694867985" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080a939e: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x080a939e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080a939e: 6 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080a939e: 6 bytes" data-node="leaf" data-kind="file" data-bytes="6" data-address="0x080a939e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080a939e: 6 bytes</title>
 <rect data-content-type="Other data" x="35.75942300177377" y="135.39464126207565" width="0.046066462734128066" height="0.18010224506059133" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080c5c30: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x080c5c30" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080c5c30: 8 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080c5c30: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x080c5c30" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080c5c30: 8 bytes</title>
 <rect data-content-type="Other data" x="35.86621748050741" y="135.40930281534105" width="0.1088762816716058" height="0.07538956926490646" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080f2b6c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080f2b6c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080f2b6c: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080f2b6c: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080f2b6c" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080f2b6c: 4 bytes</title>
 <rect data-content-type="Other data" x="35.847370088191184" y="135.5412345615546" width="0.14657106630405903" height="0.03769478463245324" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080fa674: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080fa674" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080fa674: 4 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x080fa674: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080fa674" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x080fa674: 4 bytes</title>
 <rect data-content-type="Other data" x="36.01807406990645" y="134.75209304330713" width="0.6464936796050672" height="0.010571046189952402" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0811dac8: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x0811dac8" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0811dac8: 112 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0811dac8: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x0811dac8" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0811dac8: 112 bytes</title>
 <rect data-content-type="Other data" x="36.160783193470806" y="134.91594425925138" width="0.3610754324763524" height="0.29598929331866725" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083249e7: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083249e7" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083249e7: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083249e7: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083249e7" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083249e7: 1 bytes</title>
 <rect data-content-type="Other data" x="36.02373962557472" y="135.37087927799263" width="0.021902157526500654" height="0.05738068889814235" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083357f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083357f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083357f2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083357f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083357f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083357f2: 2 bytes</title>
 <rect data-content-type="Other data" x="36.07641357347063" y="135.37974891083556" width="0.047967206893681114" height="0.0396414232123215" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0833f2fe: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0833f2fe" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0833f2fe: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0833f2fe: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0833f2fe" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0833f2fe: 2 bytes</title>
 <rect data-content-type="Other data" x="36.026002354548915" y="135.45242485339145" width="0.10498532968412293" height="0.026427615474881" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0834fa6e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0834fa6e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0834fa6e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0834fa6e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0834fa6e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0834fa6e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.02921516495635" y="135.50849289474866" width="0.03285323628975098" height="0.07285722560977304" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0835305e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0835305e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0835305e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0835305e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0835305e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0835305e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.09492163753585" y="135.50849289474866" width="0.03285323628975098" height="0.07285722560977304" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0835eb02: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0835eb02" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0835eb02: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0835eb02: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0835eb02" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0835eb02: 2 bytes</title>
 <rect data-content-type="Other data" x="36.15880293032148" y="135.3745296375804" width="0.02920287670200087" height="0.08972139293496365" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0836f1b2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0836f1b2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0836f1b2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0836f1b2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0836f1b2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0836f1b2: 2 bytes</title>
 <rect data-content-type="Other data" x="36.2174727790791" y="135.374793732934" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08376c52: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08376c52" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08376c52: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08376c52: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08376c52" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08376c52: 2 bytes</title>
 <rect data-content-type="Other data" x="36.2174727790791" y="135.43425586775248" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0837a492: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0837a492" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0837a492: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0837a492: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0837a492" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0837a492: 2 bytes</title>
 <rect data-content-type="Other data" x="36.15880293032148" y="135.49345390721737" width="0.02920287670200087" height="0.08972139293496365" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0837eeca: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0837eeca" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0837eeca: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0837eeca: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0837eeca" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0837eeca: 2 bytes</title>
 <rect data-content-type="Other data" x="36.2174727790791" y="135.49371800257097" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083838c6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083838c6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083838c6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083838c6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083838c6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083838c6: 2 bytes</title>
 <rect data-content-type="Other data" x="36.2174727790791" y="135.55318013738946" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08387b42: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08387b42" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08387b42: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08387b42: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08387b42" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08387b42: 2 bytes</title>
 <rect data-content-type="Other data" x="36.33402019053348" y="135.3745296375804" width="0.02920287670200087" height="0.08972139293496365" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0838ecee: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0838ecee" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0838ecee: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0838ecee: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0838ecee" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0838ecee: 2 bytes</title>
 <rect data-content-type="Other data" x="36.392690039291104" y="135.374793732934" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08396baa: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08396baa" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08396baa: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08396baa: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08396baa" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08396baa: 2 bytes</title>
 <rect data-content-type="Other data" x="36.392690039291104" y="135.43425586775248" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0839b63a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0839b63a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0839b63a: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0839b63a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0839b63a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0839b63a: 2 bytes</title>
 <rect data-content-type="Other data" x="36.33402019053348" y="135.49345390721737" width="0.02920287670200087" height="0.08972139293496365" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0839f8ee: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0839f8ee" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0839f8ee: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0839f8ee: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0839f8ee" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0839f8ee: 2 bytes</title>
 <rect data-content-type="Other data" x="36.392690039291104" y="135.49371800257097" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083a326e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083a326e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083a326e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083a326e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083a326e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083a326e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.392690039291104" y="135.55318013738946" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083afaaa: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083afaaa" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083afaaa: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083afaaa: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083afaaa" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083afaaa: 2 bytes</title>
 <rect data-content-type="Other data" x="36.50923745074549" y="135.3745296375804" width="0.02920287670200087" height="0.08972139293496365" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083be3f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083be3f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083be3f2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083be3f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083be3f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083be3f2: 2 bytes</title>
 <rect data-content-type="Other data" x="36.56790729950311" y="135.374793732934" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083c3572: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083c3572" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083c3572: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083c3572: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083c3572" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083c3572: 2 bytes</title>
 <rect data-content-type="Other data" x="36.56790729950311" y="135.43425586775248" width="0.08708043939876237" height="0.029731067409241127" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083c3cf5: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083c3cf5" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083c3cf5: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083c3cf5: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083c3cf5" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083c3cf5: 3 bytes</title>
 <rect data-content-type="Other data" x="36.516538169920985" y="135.50075462639288" width="0.04380431505300131" height="0.0751199545839632" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083c8495: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083c8495" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083c8495: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083c8495: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083c8495" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083c8495: 3 bytes</title>
 <rect data-content-type="Other data" x="36.60414680002699" y="135.50075462639288" width="0.04380431505300131" height="0.0751199545839632" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083cbd01: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083cbd01" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083cbd01: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083cbd01: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083cbd01" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083cbd01: 3 bytes</title>
 <rect data-content-type="Other data" x="36.687581797987555" y="134.76453604559322" width="0.11146425438458044" height="0.035457050762132014" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ce1c6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083ce1c6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ce1c6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083ce1c6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083ce1c6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083ce1c6: 2 bytes</title>
 <rect data-content-type="Other data" x="36.68209671470205" y="134.82996506383196" width="0.02448688419111874" height="0.11734131885740931" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ce4ad: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083ce4ad" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ce4ad: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083ce4ad: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083ce4ad" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083ce4ad: 3 bytes</title>
 <rect data-content-type="Other data" x="36.74331392517985" y="134.84220850592752" width="0.048973768382237486" height="0.05739738390415856" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083cf813: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083cf813" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083cf813: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083cf813: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083cf813" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083cf813: 1 bytes</title>
 <rect data-content-type="Other data" x="36.72769130367926" y="134.93295703671333" width="0.08021901138340896" height="0.017728525381066007" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083cfbfd: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083cfbfd" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083cfbfd: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083cfbfd: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083cfbfd" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083cfbfd: 3 bytes</title>
 <rect data-content-type="Other data" x="36.84094983963647" y="134.77098278209542" width="0.059391766674378815" height="0.048350523766543654" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d086f: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083d086f" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d086f: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083d086f: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083d086f" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083d086f: 1 bytes</title>
 <rect data-content-type="Other data" x="36.93660449913576" y="134.75889515115378" width="0.047652931744009815" height="0.024175261883271827" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d4357: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083d4357" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d4357: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083d4357: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083d4357" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083d4357: 1 bytes</title>
 <rect data-content-type="Other data" x="36.93660449913576" y="134.80724567492032" width="0.047652931744009815" height="0.024175261883271827" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d6559: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083d6559" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d6559: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083d6559: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083d6559" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083d6559: 3 bytes</title>
 <rect data-content-type="Other data" x="36.83922088826173" y="134.86595487825375" width="0.04489262101705103" height="0.07114863602265376" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d82e2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083d82e2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d82e2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083d82e2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083d82e2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083d82e2: 2 bytes</title>
 <rect data-content-type="Other data" x="36.92590002929392" y="134.86284877725186" width="0.051104823020867135" height="0.03868041901323492" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d855b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083d855b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083d855b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083d855b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083d855b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083d855b: 1 bytes</title>
 <rect data-content-type="Other data" x="36.916229924540616" y="134.930539510525" width="0.07044503252748459" height="0.019340209506617467" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083dc853: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083dc853" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083dc853: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083dc853: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083dc853" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083dc853: 1 bytes</title>
 <rect data-content-type="Other data" x="36.680056141019456" y="134.9697526931979" width="0.020405736825932285" height="0.06469118500318455" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083dd581: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083dd581" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083dd581: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083dd581: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083dd581" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083dd581: 3 bytes</title>
 <rect data-content-type="Other data" x="36.73193897671563" y="134.9808240552422" width="0.07988596004103529" height="0.04254846091455842" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083de296: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083de296" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083de296: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083de296: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083de296" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083de296: 2 bytes</title>
 <rect data-content-type="Other data" x="36.68345709715711" y="135.05825057116468" width="0.027207649101243046" height="0.10043773364243222" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083df016: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083df016" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083df016: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083df016: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083df016" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083df016: 2 bytes</title>
 <rect data-content-type="Other data" x="36.74022424365193" y="135.060602419457" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e26f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083e26f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e26f2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083e26f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083e26f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083e26f2: 2 bytes</title>
 <rect data-content-type="Other data" x="36.74022424365193" y="135.12442511082884" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e2f3b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083e2f3b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e2f3b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083e2f3b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083e2f3b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083e2f3b: 1 bytes</title>
 <rect data-content-type="Other data" x="36.84639556124974" y="134.97284621882073" width="0.0387055697713843" height="0.02659278807159901" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e3c93: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083e3c93" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e3c93: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083e3c93: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083e3c93" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083e3c93: 1 bytes</title>
 <rect data-content-type="Other data" x="36.84639556124974" y="135.02603179496393" width="0.0387055697713843" height="0.02659278807159901" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e4967: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083e4967" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083e4967: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083e4967: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083e4967" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083e4967: 1 bytes</title>
 <rect data-content-type="Other data" x="36.90726178774746" y="134.96841408747548" width="0.08021901138340896" height="0.017728525381066007" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083eab3b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083eab3b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083eab3b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083eab3b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083eab3b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083eab3b: 1 bytes</title>
 <rect data-content-type="Other data" x="36.91064096715249" y="135.00725031764262" width="0.024486884191118743" height="0.04642721733314528" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ee75f: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083ee75f" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ee75f: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083ee75f: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083ee75f" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083ee75f: 1 bytes</title>
 <rect data-content-type="Other data" x="36.95961473553473" y="135.00725031764262" width="0.024486884191118743" height="0.04642721733314528" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ee9e9: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083ee9e9" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083ee9e9: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083ee9e9: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083ee9e9" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083ee9e9: 3 bytes</title>
 <rect data-content-type="Other data" x="36.857586051405065" y="135.09040786126243" width="0.048973768382237486" height="0.05739738390415856" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083eefea: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083eefea" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083eefea: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083eefea: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083eefea" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083eefea: 2 bytes</title>
 <rect data-content-type="Other data" x="36.94737129343916" y="135.08224556653207" width="0.032649178921491655" height="0.07372197336490438" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f1e4e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083f1e4e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f1e4e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f1e4e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083f1e4e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f1e4e: 2 bytes</title>
 <rect data-content-type="Other data" x="37.017100408609" y="134.76756286699973" width="0.04215282741114344" height="0.04151069357517895" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f3692: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083f3692" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f3692: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f3692: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083f3692" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f3692: 2 bytes</title>
 <rect data-content-type="Other data" x="37.10076392959532" y="134.76756286699973" width="0.04215282741114344" height="0.04151069357517895" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f3a15: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083f3a15" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f3a15: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f3a15: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083f3a15" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f3a15: 3 bytes</title>
 <rect data-content-type="Other data" x="37.01726094206799" y="134.85074478760907" width="0.041831760493161195" height="0.08270032023237561" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f46c5: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083f46c5" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f46c5: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f46c5: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083f46c5" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f46c5: 3 bytes</title>
 <rect data-content-type="Other data" x="37.10092446305431" y="134.85074478760907" width="0.041831760493161195" height="0.08270032023237561" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f520d: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083f520d" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f520d: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f520d: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x083f520d" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f520d: 3 bytes</title>
 <rect data-content-type="Other data" x="37.18877116008995" y="134.77190657650803" width="0.05019811259179343" height="0.053578621346153925" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f53a6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083f53a6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f53a6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f53a6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083f53a6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f53a6: 2 bytes</title>
 <rect data-content-type="Other data" x="37.28080103317491" y="134.7635402244094" width="0.03346540839452896" height="0.0703113255434184" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f5c33: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083f5c33" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f5c33: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f5c33: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083f5c33" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f5c33: 1 bytes</title>
 <rect data-content-type="Other data" x="37.1766441955363" y="134.86355634589233" width="0.040986633304571085" height="0.02594418348448684" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f815b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083f815b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f815b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f815b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083f815b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f815b: 1 bytes</title>
 <rect data-content-type="Other data" x="37.1766441955363" y="134.9154447128613" width="0.040986633304571085" height="0.02594418348448684" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f9af7: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083f9af7" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083f9af7: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083f9af7: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083f9af7" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083f9af7: 1 bytes</title>
 <rect data-content-type="Other data" x="37.23925098174461" y="134.85923231531157" width="0.08310010286059563" height="0.017296122322991225" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083fb86e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083fb86e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083fb86e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083fb86e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x083fb86e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083fb86e: 2 bytes</title>
 <rect data-content-type="Other data" x="37.247899042906106" y="134.90247262111905" width="0.0658039805376044" height="0.034592244645982456" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083fd7e3: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083fd7e3" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083fd7e3: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083fd7e3: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083fd7e3" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083fd7e3: 1 bytes</title>
 <rect data-content-type="Other data" x="37.00996575815076" y="134.9679816844174" width="0.036502242378486816" height="0.027241392658711183" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083fed7b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083fed7b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x083fed7b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x083fed7b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x083fed7b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x083fed7b: 1 bytes</title>
 <rect data-content-type="Other data" x="37.07370939318796" y="134.9679816844174" width="0.036502242378486816" height="0.027241392658711183" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840014d: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x0840014d" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840014d: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0840014d: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x0840014d" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0840014d: 3 bytes</title>
 <rect data-content-type="Other data" x="37.01677610631544" y="135.0292748178995" width="0.08662518108632923" height="0.04086208898806677" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08400c1e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08400c1e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08400c1e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08400c1e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08400c1e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08400c1e: 2 bytes</title>
 <rect data-content-type="Other data" x="37.01677610631544" y="135.11099899587563" width="0.04412942439486389" height="0.04086208898806677" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840175b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0840175b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840175b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0840175b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0840175b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0840175b: 1 bytes</title>
 <rect data-content-type="Other data" x="37.091960514377206" y="135.10119189055445" width="0.02124787834573267" height="0.060476299630400875" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08403385: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08403385" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08403385: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08403385: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08403385" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08403385: 3 bytes</title>
 <rect data-content-type="Other data" x="37.140596265839626" y="134.97112492203186" width="0.12184724251552564" height="0.03352786788764454" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084036f3: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x084036f3" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084036f3: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x084036f3: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x084036f3" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x084036f3: 1 bytes</title>
 <rect data-content-type="Other data" x="37.29215536816591" y="134.96730891395498" width="0.02589585173386169" height="0.04115988404142738" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08404301: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08404301" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08404301: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08404301: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08404301" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08404301: 3 bytes</title>
 <rect data-content-type="Other data" x="37.14109623305171" y="135.03868062501923" width="0.03452780231181559" height="0.11634760318258477" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840531a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0840531a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840531a: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0840531a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0840531a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0840531a: 2 bytes</title>
 <rect data-content-type="Other data" x="37.21174736220623" y="135.04027614955012" width="0.054355288124574824" height="0.03771885137360009" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840a45b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0840a45b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840a45b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0840a45b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0840a45b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0840a45b: 1 bytes</title>
 <rect data-content-type="Other data" x="37.296471343454876" y="135.0329259913006" width="0.023018534874543736" height="0.05241916787265645" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840a88b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0840a88b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840a88b: 1 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0840a88b: 1 bytes" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0840a88b" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0840a88b: 1 bytes</title>
 <rect data-content-type="Other data" x="37.2043972039567" y="135.1083636940478" width="0.02301853487454373" height="0.05241916787265646" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840eaca: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0840eaca" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0840eaca: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0840eaca: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0840eaca" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0840eaca: 2 bytes</title>
 <rect data-content-type="Other data" x="37.25778443195532" y="135.11571385229732" width="0.05435528812457484" height="0.03771885137360009" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08411275: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08411275" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08411275: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08411275: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08411275" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08411275: 3 bytes</title>
 <rect data-content-type="Other data" x="36.69434015679761" y="135.19677901354882" width="0.048973768382237486" height="0.05739738390415856" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084247da: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084247da" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084247da: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x084247da: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084247da" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x084247da: 2 bytes</title>
 <rect data-content-type="Other data" x="36.784125398831705" y="135.18861671881845" width="0.032649178921491655" height="0.07372197336490438" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08424c6a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08424c6a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08424c6a: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08424c6a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08424c6a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08424c6a: 2 bytes</title>
 <rect data-content-type="Other data" x="36.68617786206723" y="135.29498787110484" width="0.032649178921491655" height="0.07372197336490438" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08424e61: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08424e61" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08424e61: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08424e61: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08424e61" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08424e61: 3 bytes</title>
 <rect data-content-type="Other data" x="36.75963851464059" y="135.3031501658352" width="0.048973768382237486" height="0.05739738390415856" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842651e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842651e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842651e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0842651e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842651e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0842651e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.85350490403988" y="135.19269786618364" width="0.04081147365186457" height="0.044285448177252267" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08427a3e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08427a3e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08427a3e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08427a3e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08427a3e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08427a3e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.93512785134361" y="135.19269786618364" width="0.04081147365186457" height="0.044285448177252267" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842860a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842860a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842860a: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0842860a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842860a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0842860a: 2 bytes</title>
 <rect data-content-type="Other data" x="36.846702991764566" y="135.27099287573745" width="0.027207649101243046" height="0.10043773364243222" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842917e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842917e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842917e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0842917e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842917e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0842917e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.90347013825939" y="135.27334472402978" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842c7b6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842c7b6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842c7b6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0842c7b6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842c7b6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0842c7b6: 2 bytes</title>
 <rect data-content-type="Other data" x="36.90347013825939" y="135.3371674154016" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842dc66: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842dc66" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0842dc66: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0842dc66: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0842dc66" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0842dc66: 2 bytes</title>
 <rect data-content-type="Other data" x="36.690259009432424" y="135.40544017075644" width="0.04081147365186457" height="0.044285448177252267" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08431c4e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08431c4e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08431c4e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08431c4e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08431c4e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08431c4e: 2 bytes</title>
 <rect data-content-type="Other data" x="36.77188195673615" y="135.40544017075644" width="0.04081147365186457" height="0.044285448177252267" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08433216: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08433216" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08433216: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08433216: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08433216" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08433216: 2 bytes</title>
 <rect data-content-type="Other data" x="36.68345709715711" y="135.48373518031025" width="0.027207649101243046" height="0.10043773364243222" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08434ca6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08434ca6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08434ca6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08434ca6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08434ca6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08434ca6: 2 bytes</title>
 <rect data-content-type="Other data" x="36.74022424365193" y="135.48608702860258" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0843f866: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0843f866" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0843f866: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0843f866: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0843f866" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0843f866: 2 bytes</title>
 <rect data-content-type="Other data" x="36.74022424365193" y="135.5499097199744" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08441a1a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08441a1a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08441a1a: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08441a1a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08441a1a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08441a1a: 2 bytes</title>
 <rect data-content-type="Other data" x="36.85350490403988" y="135.40544017075644" width="0.04081147365186457" height="0.044285448177252267" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08445b82: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08445b82" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08445b82: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08445b82: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08445b82" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08445b82: 2 bytes</title>
 <rect data-content-type="Other data" x="36.93512785134361" y="135.40544017075644" width="0.04081147365186457" height="0.044285448177252267" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08448da6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08448da6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08448da6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08448da6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08448da6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08448da6: 2 bytes</title>
 <rect data-content-type="Other data" x="36.846702991764566" y="135.48373518031025" width="0.027207649101243046" height="0.10043773364243222" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0844a4aa: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0844a4aa" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0844a4aa: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0844a4aa: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0844a4aa" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0844a4aa: 2 bytes</title>
 <rect data-content-type="Other data" x="36.90347013825939" y="135.48608702860258" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08451092: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08451092" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08451092: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08451092: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08451092" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08451092: 2 bytes</title>
 <rect data-content-type="Other data" x="36.90347013825939" y="135.5499097199744" width="0.07691925071905338" height="0.031911345685918815" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08459a16: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08459a16" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08459a16: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08459a16: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08459a16" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08459a16: 2 bytes</title>
 <rect data-content-type="Other data" x="37.017100408609" y="135.1930474761453" width="0.04215282741114344" height="0.04151069357517895" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084614f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084614f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084614f2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x084614f2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084614f2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x084614f2: 2 bytes</title>
 <rect data-content-type="Other data" x="37.10076392959532" y="135.1930474761453" width="0.04215282741114344" height="0.04151069357517895" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08464586: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08464586" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08464586: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08464586: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08464586" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08464586: 2 bytes</title>
 <rect data-content-type="Other data" x="37.010288981985795" y="135.26925743667246" width="0.02788784032877413" height="0.09664424039676268" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08467996: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08467996" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08467996: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08467996: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08467996" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08467996: 2 bytes</title>
 <rect data-content-type="Other data" x="37.06768725256965" y="135.27088002659875" width="0.08041834113371232" height="0.031133020181384204" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846a202: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846a202" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846a202: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0846a202: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846a202" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0846a202: 2 bytes</title>
 <rect data-content-type="Other data" x="37.06768725256965" y="135.33314606696152" width="0.08041834113371232" height="0.031133020181384204" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846bcf2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846bcf2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846bcf2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0846bcf2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846bcf2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0846bcf2: 2 bytes</title>
 <rect data-content-type="Other data" x="37.184427450581644" y="135.1930474761453" width="0.04215282741114344" height="0.04151069357517895" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846cb0a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846cb0a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846cb0a: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0846cb0a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846cb0a" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0846cb0a: 2 bytes</title>
 <rect data-content-type="Other data" x="37.268090971567965" y="135.1930474761453" width="0.04215282741114344" height="0.04151069357517895" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846d7f6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846d7f6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0846d7f6: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0846d7f6: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0846d7f6" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0846d7f6: 2 bytes</title>
 <rect data-content-type="Other data" x="37.17761602395844" y="135.26925743667246" width="0.02788784032877413" height="0.09664424039676268" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08476cb2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08476cb2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08476cb2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08476cb2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08476cb2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08476cb2: 2 bytes</title>
 <rect data-content-type="Other data" x="37.235014294542296" y="135.27088002659875" width="0.08041834113371232" height="0.031133020181384204" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084779be: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084779be" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084779be: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x084779be: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084779be" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x084779be: 2 bytes</title>
 <rect data-content-type="Other data" x="37.235014294542296" y="135.33314606696152" width="0.08041834113371232" height="0.031133020181384204" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08479ad2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08479ad2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08479ad2: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08479ad2: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08479ad2" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08479ad2: 2 bytes</title>
 <rect data-content-type="Other data" x="37.01626494777053" y="135.39976548318273" width="0.039839771898248756" height="0.047332684609627036" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0847dd2e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0847dd2e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0847dd2e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0847dd2e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0847dd2e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0847dd2e: 2 bytes</title>
 <rect data-content-type="Other data" x="37.095944491567025" y="135.39976548318273" width="0.039839771898248756" height="0.047332684609627036" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08483712: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08483712" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x08483712: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x08483712: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08483712" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x08483712: 2 bytes</title>
 <rect data-content-type="Other data" x="37.00962498578749" y="135.48029797770758" width="0.026559847932165835" height="0.10419883682964784" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0848c992: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0848c992" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0848c992: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0848c992: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0848c992" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0848c992: 2 bytes</title>
 <rect data-content-type="Other data" x="37.06580959328097" y="135.48336288933672" width="0.07354972053820993" height="0.03268967119045342" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0848d57e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0848d57e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0848d57e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0848d57e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0848d57e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0848d57e: 2 bytes</title>
 <rect data-content-type="Other data" x="37.06580959328097" y="135.54874223171763" width="0.07354972053820993" height="0.03268967119045342" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0849449e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0849449e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0849449e: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0849449e: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0849449e" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0849449e: 2 bytes</title>
 <rect data-content-type="Other data" x="37.175516071348014" y="135.39965751916722" width="0.048023654308931" height="0.03962384386721627" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0849a702: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0849a702" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0849a702: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0849a702: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0849a702" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0849a702: 2 bytes</title>
 <rect data-content-type="Other data" x="37.26316356952416" y="135.39965751916722" width="0.048023654308931" height="0.03962384386721627" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0849e7ca: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0849e7ca" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0849e7ca: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x0849e7ca: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0849e7ca" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x0849e7ca: 2 bytes</title>
 <rect data-content-type="Other data" x="37.16822522058243" y="135.47161435613606" width="0.025042142336042076" height="0.11364131119921483" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084a1e92: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084a1e92" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x084a1e92: 2 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x084a1e92: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x084a1e92" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x084a1e92: 2 bytes</title>
 <rect data-content-type="Other data" x="37.21965677944001" y="135.47296163032158" width="0.097474020973159" height="0.027736690707051384" style="fill:#92a8ac"/>
 </g>
-<g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x087fd4b9: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x087fd4b9" data-source="games/gs1/assets/data/final_byte_regions_index.json">
-<title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x087fd4b9: 3 bytes</title>
+<g aria-label="final_byte_regions_index.json · u8-array · 0x087fd4b9: 3 bytes" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x087fd4b9" data-source="games/gs1/assets/data/final_byte_regions_index.json">
+<title>final_byte_regions_index.json · u8-array · 0x087fd4b9: 3 bytes</title>
 <rect data-content-type="Other data" x="37.22659095211677" y="135.53536918441242" width="0.08360567561963332" height="0.04160503606057707" style="fill:#92a8ac"/>
 </g>
 </g>

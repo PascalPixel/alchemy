@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "kind": "golden-sun-byte-value-regions",
+  "kind": "integer-regions",
   "regions": [
     {
       "name": "residual_000",

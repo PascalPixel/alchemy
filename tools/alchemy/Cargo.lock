@@ -43,7 +43,6 @@ dependencies = [
  "build-claimed",
  "build-full",
  "byte-henkan",
- "byte-value-regions",
  "cache-entry",
  "candidate-compiler",
  "canonical-json",
@@ -246,14 +245,6 @@ dependencies = [
 name = "byte-henkan"
 version = "0.1.0"
 dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "byte-value-regions"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
  "serde_json",
 ]
 

@@ -441,7 +441,6 @@ libraries are not additional public command surfaces.
 | [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
 | [byte-henkan](tools/byte-henkan/) | Build byte-conversion tables. |
-| [byte-value-regions](tools/byte-value-regions/) | Build typed byte-value regions. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
 | [early-runtime-data](tools/early-runtime-data/) | Build the early-runtime data package. |
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |

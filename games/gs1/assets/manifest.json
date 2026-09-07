@@ -86,7 +86,8 @@
       "value": 0
     },
     {
-      "kind": "golden-sun-byte-value-region-package",
+      "encoding": "u8-array",
+      "kind": "integer-region-package",
       "source": "games/gs1/assets/data/final_byte_regions_index.json"
     },
     {

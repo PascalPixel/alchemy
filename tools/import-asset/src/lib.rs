@@ -261,6 +261,33 @@ pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report),
     Ok((tiles, palette, report))
 }
 
+/// Pack an indexed PNG into 8x8 tiles of one bit per pixel: each tile is
+/// eight bytes, one row each from the top, with the leftmost pixel in the most
+/// significant bit; tiles follow in row-major order.  Palette index 0 clears a
+/// bit and index 1 sets it, whatever colours the palette holds.
+pub fn one_bit_tiles(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
+    let image = indexed_png(data)?;
+    if image.palette.len() > 2 || image.pixels.iter().any(|pixel| *pixel > 1) {
+        return err("image does not fit 1bpp");
+    }
+    let width = image.width as usize;
+    let mut tiles = Vec::with_capacity(width * image.height as usize / 8);
+    for top in (0..image.height as usize).step_by(8) {
+        for left in (0..width).step_by(8) {
+            for y in 0..8 {
+                let row = &image.pixels[(top + y) * width + left..][..8];
+                tiles.push(row.iter().fold(0, |bits, pixel| bits << 1 | *pixel as u8));
+            }
+        }
+    }
+    let mut report = Report::default();
+    report.set("width", image.width.into());
+    report.set("height", image.height.into());
+    report.set("bpp", 1.0);
+    report.set("tiles", (width / 8 * image.height as usize / 8) as f64);
+    Ok((tiles, report))
+}
+
 fn be_u16(data: &[u8], at: usize) -> Option<u16> {
     data.get(at..at + 2)
         .map(|x| u16::from_be_bytes([x[0], x[1]]))
@@ -600,6 +627,36 @@ mod tests {
         ] {
             assert_eq!(indexed_png(&indexed(depth)).unwrap().pixels.len(), 64);
         }
+    }
+
+    #[test]
+    fn one_bit_tiles_pack_rows_most_significant_bit_first() {
+        let mut out = Vec::new();
+        let mut encoder = png::Encoder::new(&mut out, 16, 8);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::One);
+        encoder.set_palette(vec![0, 0, 0, 255, 255, 255]);
+        let rows: Vec<u8> = (0..8).flat_map(|y| [0x80 >> y, 0x01 << y]).collect();
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&rows)
+            .unwrap();
+        let (tiles, report) = one_bit_tiles(&out).unwrap();
+        assert_eq!(tiles[..8], [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]);
+        assert_eq!(tiles[8..], [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80]);
+        assert_eq!(report.get("tiles"), Some(2.0));
+        let mut wide = Vec::new();
+        let mut encoder = png::Encoder::new(&mut wide, 8, 8);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::Two);
+        encoder.set_palette(vec![0, 0, 0, 8, 8, 8, 16, 16, 16]);
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&[0xaa; 16])
+            .unwrap();
+        assert!(one_bit_tiles(&wide).is_err());
     }
 
     #[test]

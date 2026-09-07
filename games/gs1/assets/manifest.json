@@ -528,9 +528,21 @@
     },
     {
       "address": "0x080f0a5c",
-      "size": "0x15a4",
-      "kind": "golden-sun-staff-roll",
+      "size": "0xd14",
+      "kind": "typed-table",
       "source": "games/gs1/assets/text/staff_roll_index.json"
+    },
+    {
+      "address": "0x080f1770",
+      "size": "0x300",
+      "kind": "1bpp-tiles",
+      "source": "games/gs1/assets/text/staff_roll_moji.1bpp.png"
+    },
+    {
+      "address": "0x080f1a70",
+      "size": "0x590",
+      "kind": "byte-fill",
+      "value": 0
     },
     {
       "address": "0x080fb792",

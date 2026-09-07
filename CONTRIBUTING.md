@@ -487,7 +487,6 @@ libraries are not additional public command surfaces.
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
-| [staff-roll](tools/staff-roll/) | Build the staff-roll package. |
 | [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
 | [title-resources](tools/title-resources/) | Build title-screen resources. |
 

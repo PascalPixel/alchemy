@@ -32,7 +32,6 @@ sha1 = "0.10"
 build-asm = { path = "../build-asm" }
 build-claimed = { path = "../build-claimed" }
 build-full = { path = "../build-full" }
-staff-roll = { path = "../staff-roll" }
 f0-archive = { path = "../f0-archive" }
 kind2-resources = { path = "../kind2-resources" }
 skip-sprite-archive = { path = "../skip-sprite-archive" }

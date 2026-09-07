@@ -3,7 +3,7 @@ use crate::owners;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy decompile OWNER [--span BYTES] [--name NAME] [--out FILE]\nUse alchemy diff to score, match for catalogued repairs, and waves for cohorts.";
+const USAGE: &str = "usage: alchemy decompile OWNER [--span BYTES] [--name NAME] [--out FILE]\nUse alchemy diff to score and match for catalogued repairs.";
 
 struct Options {
     positional: Vec<String>,

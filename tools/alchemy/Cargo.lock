@@ -88,11 +88,7 @@ dependencies = [
  "pairtable",
  "png",
  "regex",
- "resource-01c",
- "resource-3ce",
  "resource-5",
- "resource-byte-canvases",
- "resource-d1-d3",
  "resource-directory",
  "runtime-support-data",
  "sentou-gamen-data",
@@ -103,7 +99,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sha1",
- "similar",
  "simple-resources",
  "skip-sprite-archive",
  "staff-roll",
@@ -1164,49 +1159,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
-name = "resource-01c"
-version = "0.1.0"
-dependencies = [
- "extract-resource",
- "import-asset",
- "serde_json",
- "sha2",
-]
-
-[[package]]
-name = "resource-3ce"
-version = "0.1.0"
-dependencies = [
- "disassemble",
- "extract-resource",
- "serde_json",
-]
-
-[[package]]
 name = "resource-5"
 version = "0.1.0"
 dependencies = [
  "canonical-json",
- "serde_json",
-]
-
-[[package]]
-name = "resource-byte-canvases"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "export-asset",
- "import-asset",
- "serde_json",
-]
-
-[[package]]
-name = "resource-d1-d3"
-version = "0.1.0"
-dependencies = [
- "alignment-tail",
- "extract-resource",
- "import-asset",
  "serde_json",
 ]
 

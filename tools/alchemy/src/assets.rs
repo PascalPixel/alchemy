@@ -46,10 +46,6 @@ asset_commands! {
         simple_resources::cli::entry,
     "kind2-resources": "extract kind2 resources data from the ROM" =>
         kind2_resources::cli::entry,
-    "resource-01c": "extract resource 01c data from the ROM" =>
-        resource_01c::cli::entry,
-    "resource-byte-canvases": "extract resource byte canvases data from the ROM" =>
-        resource_byte_canvases::cli::entry,
     "skip-sprite-archive": "extract skip sprite archive data from the ROM" =>
         skip_sprite_archive::cli::entry,
     "static-sprite-series": "extract static sprite series data from the ROM" =>
@@ -74,12 +70,8 @@ asset_commands! {
         early_runtime_data::cli::entry,
     "message-archive": "message archive" =>
         |args| { message_archive::cli::entry(args); ExitCode::SUCCESS },
-    "3ce": "decode resource 3ce" =>
-        |args: &[String]| report(resource_3ce::run(args.to_vec())),
     "5": "decode resource 5" =>
         |args: &[String]| report(resource_5::run(args.to_vec())),
-    "d1-d3": "decode resources d1 through d3" =>
-        |args: &[String]| report(resource_d1_d3::run(args.to_vec())),
     "title": "decode title-screen resources" =>
         |args: &[String]| report(title_resources::run(args.to_vec())),
     "sentou": "decode battle (sentou) resources" =>

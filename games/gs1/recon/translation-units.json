@@ -23984,6 +23984,18 @@
       "owners": [
         { "address": "0x020015dc", "extent": 5240, "state": "retained-assembly" }
       ]
+    },
+    {
+      "id": "battle-falling-particles",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/battle-falling-particles.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        { "address": "0x080c91dc", "extent": 1360, "state": "retained-assembly" }
+      ]
     }
   ]
 }

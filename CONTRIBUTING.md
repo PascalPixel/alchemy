@@ -15,7 +15,7 @@ names and game-specific implementations are not Alchemy's reconstruction rules.
 
 ## What 100% means
 
-Completion requires all of the following, not a rounded dashboard percentage:
+Completion requires all of the following, not a rounded percentage:
 
 - Every executable byte, including overlay code and gaps outside registered
   functions, belongs to a complete audited owner or an explained nonfunction

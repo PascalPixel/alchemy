@@ -357,15 +357,9 @@ register-shrink-check:
 # directories carry no scripts either.
 language-check:
 	@set -eu; \
-	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|mjs|cjs|py|sh)$$' || true); \
-	if [ -n "$$scripts" ]; then printf 'TypeScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
-	for js in $$(git ls-files --cached --others --exclude-standard | grep -E '\.js$$' || true); do \
-		base=$$(basename "$$js"); dir=$$(dirname "$$js"); \
-		if ! grep -Rq "include_str!(\"$$base\")" "$$dir/.." 2>/dev/null; then \
-			printf '%s is JS with no Rust include_str! embedder beside it; tool implementations must be Rust\n' "$$js"; exit 1; \
-		fi; \
-	done; \
-	printf 'language gate ok: Rust only (embedded browser-client JS excepted)\n'
+	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|js|mjs|cjs|py|sh)$$' || true); \
+	if [ -n "$$scripts" ]; then printf 'TypeScript, JavaScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
+	printf 'language gate ok: Rust only\n'
 
 lint: lint-all-targets
 

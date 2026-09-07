@@ -2,7 +2,7 @@ use crate::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TRE
 use crate::jsnum::{commas, number};
 use crate::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use crate::tree::{ref_tree, root, work_tree};
-use canonical_json::canonical_json;
+use compiler_core::canonical_json::canonical_json;
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";

@@ -24,18 +24,19 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     let rest = &arguments[1..];
     match command {
         "publication" | "check-publication" => check_publication::cli::entry(rest),
-        "commit-progress" | "check-commit-progress" => check_commit_progress::cli::entry(rest),
+        "commit-progress" | "check-commit-progress" => {
+            check_publication::commit_progress::entry(rest)
+        }
         "owners" | "check-unmatchable" => check_unmatchable::cli::entry(rest),
-        "retained" | "core-retained-audit" => core_retained_audit::cli::entry(rest),
+        "retained" | "core-retained-audit" => check_unmatchable::retained::cli::entry(rest),
         "coverage" | "coverage-map" => {
             coverage_map::entrypoint::entry(rest);
             ExitCode::SUCCESS
         }
         "integrate" | "integrate-matches" => integrate_matches::entry(rest),
-        "retire" => integrate_matches::retire::entry(rest),
         "no-asm" | "no-asm-c" => no_asm_c::cli::entry(rest),
         "progress" => {
-            full_c_progress::entry(rest);
+            coverage_map::progress::entry(rest);
             ExitCode::SUCCESS
         }
         "routes" => routes(rest),

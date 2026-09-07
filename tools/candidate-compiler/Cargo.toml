@@ -1,27 +1,10 @@
-# Bare `[workspace]`: this crate is an independently buildable workspace
-# rather than a member of the aggregate tools workspace. `version.workspace`
-# and `edition.workspace` therefore cannot resolve, so both keys are literal.
-[workspace]
-
 [package]
 name = "candidate-compiler"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Sibling crates, not third-party dependencies. These are the landed slices of
-# Native compiler planning and symbol dependencies:
-#   compiler-core -> compilation plans, routing, and external symbols
-# A second copy of either is exactly the hand-sync problem this port exists to
-# end.
-#   compiler-core -> `CompilerTarget`, `root()` (the repository root)
-# `canonical_json.ts` is 27 lines and is reimplemented in `src/json.rs` over
-# this crate's own insertion-ordered value type rather than pulled in through
-# `tools/canonical-json`, which would drag `serde_json` in as this crate's
-# only third-party dependency for no gain.
 compiler-core = { path = "../compiler-core" }
-# `./decomp_targets.ts`, already ported.
-decomp-targets = { path = "../decomp-targets" }
 
 [lib]
 name = "candidate_compiler"

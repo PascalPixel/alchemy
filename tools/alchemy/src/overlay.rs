@@ -1,7 +1,7 @@
 use compiler_core::routing::root;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy overlay <adopt|park|audit|score|twins|disasm> [args]";
+const USAGE: &str = "usage: alchemy overlay <adopt|park|audit|score|disasm> [args]";
 
 fn code(result: Result<i32, String>) -> ExitCode {
     match result {
@@ -26,7 +26,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "audit" => code(overlay_adopt::park::run_audit(root(), rest)),
         "score" => code(overlay_adopt::score::run(root(), rest)),
         "disasm" => disassemble::cli::entry(rest),
-        "twins" => code(overlay_adopt::twins::run(root(), rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

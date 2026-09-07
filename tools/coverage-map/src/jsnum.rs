@@ -7,9 +7,6 @@ pub fn number(value: f64) -> String {
         format!("{value}")
     }
 }
-pub fn js_number_string(value: f64) -> String {
-    number(value)
-}
 pub fn commas(value: i64) -> String {
     let text = value.to_string();
     let (sign, digits) = text

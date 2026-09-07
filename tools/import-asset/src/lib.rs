@@ -1,14 +1,16 @@
 use std::io::Cursor;
 mod compression;
 mod gba;
+mod huffman_archive;
 mod text;
 mod wav;
-mod zero_skip;
-pub use compression::{delta7_image, encode_delta7, encode_mtf4};
+pub use compression::{
+    delta7_image, encode_delta7, encode_mtf4, encode_tilemap_delta, encode_zero_skip,
+};
 pub use gba::{bgr555_palette_from_png, gba_tiles_from_png, png_from_gba_tiles, GbaBpp};
+pub use huffman_archive::{encode_huffman_archive, HuffmanArchive};
 pub use text::{import_pairs, import_tilemap, import_words};
 pub use wav::{pcm8_wav, wav_pcm8};
-pub use zero_skip::encode_zero_skip;
 pub type Rgb = [u8; 3];
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Report(pub Vec<(String, f64)>);
@@ -248,6 +250,33 @@ pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report),
     Ok((tiles, palette, report))
 }
 
+/// Pack an indexed PNG into 8x8 tiles of one bit per pixel: each tile is
+/// eight bytes, one row each from the top, with the leftmost pixel in the most
+/// significant bit; tiles follow in row-major order.  Palette index 0 clears a
+/// bit and index 1 sets it, whatever colours the palette holds.
+pub fn one_bit_tiles(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
+    let image = indexed_png(data)?;
+    if image.palette.len() > 2 || image.pixels.iter().any(|pixel| *pixel > 1) {
+        return err("image does not fit 1bpp");
+    }
+    let width = image.width as usize;
+    let mut tiles = Vec::with_capacity(width * image.height as usize / 8);
+    for top in (0..image.height as usize).step_by(8) {
+        for left in (0..width).step_by(8) {
+            for y in 0..8 {
+                let row = &image.pixels[(top + y) * width + left..][..8];
+                tiles.push(row.iter().fold(0, |bits, pixel| bits << 1 | *pixel as u8));
+            }
+        }
+    }
+    let mut report = Report::default();
+    report.set("width", image.width.into());
+    report.set("height", image.height.into());
+    report.set("bpp", 1.0);
+    report.set("tiles", (width / 8 * image.height as usize / 8) as f64);
+    Ok((tiles, report))
+}
+
 fn be_u16(data: &[u8], at: usize) -> Option<u16> {
     data.get(at..at + 2)
         .map(|x| u16::from_be_bytes([x[0], x[1]]))
@@ -418,64 +447,6 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     })
 }
 
-pub fn canonical_midi_json(report: &MidiReport) -> String {
-    let mut out = format!(
-        "{{\n  \"format\": {},\n  \"tracks\": {},\n  \"ticks_per_quarter\": {},\n  \"events\": ",
-        report.format, report.tracks, report.ticks_per_quarter
-    );
-    if report.events.is_empty() {
-        out.push_str("[]");
-    } else {
-        let events: Vec<String> = report
-            .events
-            .iter()
-            .map(|event| {
-                let mut fields = vec![
-                    format!("\"tick\": {}", event.tick),
-                    format!("\"track\": {}", event.track),
-                    format!("\"order\": {}", event.order),
-                ];
-                match &event.body {
-                    EventBody::Meta { meta, data } => fields.extend([
-                        "\"type\": \"meta\"".into(),
-                        format!("\"meta\": {meta}"),
-                        format!("\"data\": \"{data}\""),
-                    ]),
-                    EventBody::Sysex { status, data } => fields.extend([
-                        "\"type\": \"sysex\"".into(),
-                        format!("\"status\": {status}"),
-                        format!("\"data\": \"{data}\""),
-                    ]),
-                    EventBody::Channel { status, data } => fields.extend([
-                        "\"type\": \"channel\"".into(),
-                        format!("\"status\": {status}"),
-                        format!(
-                            "\"data\": [{}]",
-                            data.iter()
-                                .map(u8::to_string)
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                        ),
-                    ]),
-                }
-                format!(
-                    "    {{\n{}\n    }}",
-                    fields
-                        .into_iter()
-                        .map(|field| format!("      {field}"))
-                        .collect::<Vec<_>>()
-                        .join(",\n")
-                )
-            })
-            .collect();
-        out.push_str("[\n");
-        out.push_str(&events.join(",\n"));
-        out.push_str("\n  ]");
-    }
-    out.push_str("\n}");
-    out
-}
-
 pub fn sorted_json(report: &Report) -> String {
     let mut values: Vec<_> = report.0.iter().collect();
     values.sort_by(|a, b| a.0.cmp(&b.0));
@@ -556,9 +527,69 @@ pub fn self_test() -> Result<String, AssetError> {
     Ok("self-test=ok".into())
 }
 
+/// Sequencer-specific meta prefix that marks a build directive in a MIDI conductor track.
+pub const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
+
+fn midi_vlq(mut value: usize) -> Vec<u8> {
+    let mut bytes = vec![(value & 0x7f) as u8];
+    while {
+        value >>= 7;
+        value != 0
+    } {
+        bytes.push(((value & 0x7f) as u8) | 0x80);
+    }
+    bytes.reverse();
+    bytes
+}
+
+/// Append a meta event with `payload` to the first (conductor) track of a MIDI
+/// file, immediately before its canonical end-of-track event, and rewrite the
+/// track length.
+pub fn append_conductor_meta(midi: &[u8], meta: u8, payload: &[u8]) -> Result<Vec<u8>, AssetError> {
+    if midi.len() < 26 || &midi[..4] != b"MThd" {
+        return err("MIDI header is missing");
+    }
+    let track = 8 + be_u32(midi, 4).unwrap() as usize;
+    if midi.get(track..track + 4) != Some(b"MTrk") {
+        return err("MIDI conductor track is missing");
+    }
+    let length = be_u32(midi, track + 4)
+        .ok_or_else(|| AssetError("MIDI conductor length is truncated".into()))?
+        as usize;
+    let end = track + 8 + length;
+    if end > midi.len() || midi.get(end - 4..end) != Some(&[0, 0xff, 0x2f, 0]) {
+        return err("MIDI conductor end is not canonical");
+    }
+    let mut event = vec![0, 0xff, meta];
+    event.extend(midi_vlq(payload.len()));
+    event.extend_from_slice(payload);
+    let new_length = u32::try_from(length + event.len())
+        .map_err(|_| AssetError("MIDI conductor is too large".into()))?;
+    let mut output = Vec::with_capacity(midi.len() + event.len());
+    output.extend_from_slice(&midi[..track + 4]);
+    output.extend_from_slice(&new_length.to_be_bytes());
+    output.extend_from_slice(&midi[track + 8..end - 4]);
+    output.extend_from_slice(&event);
+    output.extend_from_slice(&midi[end - 4..]);
+    Ok(output)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn conductor_meta_events_are_appended_before_the_canonical_end() {
+        let midi = b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x09\0\xff\x01\x01a\0\xff\x2f\0";
+        let appended = append_conductor_meta(midi, 0x7f, b"directive").unwrap();
+        let expected = b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x16\0\xff\x01\x01a\0\xff\x7f\x09directive\0\xff\x2f\0";
+        assert_eq!(appended, expected);
+        assert_eq!(midi_events(&appended).unwrap().events.len(), 3);
+        assert_eq!(midi_vlq(0x4000), [0x81, 0x80, 0x00]);
+        let truncated = &midi[..midi.len() - 1];
+        assert!(append_conductor_meta(truncated, 0x01, b"x").is_err());
+        assert!(append_conductor_meta(b"MTrk", 0x01, b"x").is_err());
+    }
 
     fn indexed(depth: png::BitDepth) -> Vec<u8> {
         let mut out = Vec::new();
@@ -585,6 +616,36 @@ mod tests {
         ] {
             assert_eq!(indexed_png(&indexed(depth)).unwrap().pixels.len(), 64);
         }
+    }
+
+    #[test]
+    fn one_bit_tiles_pack_rows_most_significant_bit_first() {
+        let mut out = Vec::new();
+        let mut encoder = png::Encoder::new(&mut out, 16, 8);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::One);
+        encoder.set_palette(vec![0, 0, 0, 255, 255, 255]);
+        let rows: Vec<u8> = (0..8).flat_map(|y| [0x80 >> y, 0x01 << y]).collect();
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&rows)
+            .unwrap();
+        let (tiles, report) = one_bit_tiles(&out).unwrap();
+        assert_eq!(tiles[..8], [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]);
+        assert_eq!(tiles[8..], [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80]);
+        assert_eq!(report.get("tiles"), Some(2.0));
+        let mut wide = Vec::new();
+        let mut encoder = png::Encoder::new(&mut wide, 8, 8);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::Two);
+        encoder.set_palette(vec![0, 0, 0, 8, 8, 8, 16, 16, 16]);
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&[0xaa; 16])
+            .unwrap();
+        assert!(one_bit_tiles(&wide).is_err());
     }
 
     #[test]

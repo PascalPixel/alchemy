@@ -1,8 +1,0 @@
-[package]
-name = "asset-paths"
-version.workspace = true
-edition.workspace = true
-
-[lib]
-name = "asset_paths"
-path = "src/lib.rs"

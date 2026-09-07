@@ -1,6 +1,6 @@
 # Alchemy's build and contributor workflows share the alchemy executable.
-# Game-specific asset codecs are libraries behind `alchemy assets`; they are not public
-# commands and are not copied when starting another decompilation project.
+# Asset packages are described by data under games/; the shared codecs behind
+# `alchemy build assets` are named for their formats, not for any resource.
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
                  -fno-builtin -nostdinc -ffreestanding \
@@ -18,16 +18,10 @@ COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy
-CORE_TESTS := compiler-core candidate-compiler diff matching \
-		disassemble overlay-adopt build-full decompile \
-		extract-resource coverage-map check-publication dashboard-server battle-assets
-PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
-	generated-files no-asm-c build-claimed build-asm build-full \
-	alchemy compiler-core candidate-compiler diff matching \
-	dashboard-server disassemble \
-	overlay-adopt check-commit-progress \
-	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets decompile
+PORTABLE_TOOLS := no-asm-c build-claimed build-asm build-full \
+	alchemy compiler-core candidate-compiler diff matching disassemble \
+	overlay-adopt check-publication check-unmatchable coverage-map \
+	integrate-matches decompile
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.
@@ -67,7 +61,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	families family-check coverage coverage-check dashboard dashboard-service-install clean clean-preview
+	coverage coverage-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -94,12 +88,8 @@ help:
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
 		'make correspondence   match exact EN owners across GS1 editions' \
-		'make families         rank unresolved compiler owners by exact-C family' \
-		'make family-check     prove the family index and retained-family evidence' \
 		'make edition-builds   relink exact EN C across GS1 editions' \
-		'make coverage         refresh dashboard data and figures' \
-		'make dashboard        serve the dashboard on localhost:4649' \
-		'make dashboard-service-install install and start the macOS dashboard LaunchAgent'
+		'make coverage         refresh coverage data and figures'
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)
@@ -145,27 +135,6 @@ targets: $(HISTORICAL_TARGETS)
 $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
-dashboard:
-	$(COMPILER) dashboard --bind 127.0.0.1:4650
-
-dashboard-service-install:
-	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
-	@sed -e 's|@ALCHEMY_ROOT@|$(CURDIR)|g' \
-		-e 's|@CARGO@|$(shell command -v $(CARGO))|g' \
-		tools/dashboard-server/com.pascalpixel.alchemy-dashboard.plist.in \
-		> '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
-	@domain='gui/$(shell id -u)'; service="$$domain/com.pascalpixel.alchemy-dashboard"; \
-		plist='$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'; \
-		launchctl bootout "$$service" 2>/dev/null || true; \
-		attempt=0; until launchctl bootstrap "$$domain" "$$plist" 2>/dev/null; do \
-			attempt=$$((attempt + 1)); \
-			if test "$$attempt" -ge 10; then \
-				printf 'dashboard service did not reload after %s attempts\n' "$$attempt"; exit 1; \
-			fi; \
-			sleep 1; \
-		done
-	@printf 'Alchemy dashboard service installed: http://localhost:4650/\n'
-
 progress:
 	$(CHECK) progress
 
@@ -206,14 +175,8 @@ correspondence-check: correspondence
 	printf 'cross-edition correspondence ok: main=%s/%s overlay=%s/%s matched/unresolved\n' \
 		"$$main_matched" "$$main_unresolved" "$$overlay_matched" "$$overlay_unresolved"
 
-families: build-claimed build-asm | $(REPORT_DIR)
-	$(COMPILER) families cluster --write $(REPORT_DIR)/compiler-families.json
-
-family-check: families
-	$(COMPILER) families prove games/gs1/recon/family-retention.json
-
-classification-check: core-retained-check family-check
-	@printf 'classification and family-retention contracts ok\n'
+classification-check: core-retained-check
+	@printf 'classification contracts ok\n'
 
 candidate-corpus-check:
 	$(CHECK) integrate --check games/gs1/recon/en/main
@@ -330,12 +293,8 @@ build-tools:
 	done
 
 tool-tests:
-	@set -e; for crate in $(HOSTS) $(CORE_TESTS); do \
-		printf '  test  %-20s' "$$crate"; \
-		$(CARGO) test --offline --quiet --release \
-			--manifest-path $(TOOLS)/$$crate/Cargo.toml; \
-		printf ' ok\n'; \
-	done
+	$(CARGO) test --offline --quiet --release --workspace \
+		--manifest-path $(TOOLS)/Cargo.toml
 	$(COMPILER) match --acceptance-test
 
 tooling-size:
@@ -395,15 +354,9 @@ register-shrink-check:
 # directories carry no scripts either.
 language-check:
 	@set -eu; \
-	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|mjs|cjs|py|sh)$$' || true); \
-	if [ -n "$$scripts" ]; then printf 'TypeScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
-	for js in $$(git ls-files --cached --others --exclude-standard | grep -E '\.js$$' || true); do \
-		base=$$(basename "$$js"); dir=$$(dirname "$$js"); \
-		if ! grep -Rq "include_str!(\"$$base\")" "$$dir/.." 2>/dev/null; then \
-			printf '%s is JS with no Rust include_str! embedder beside it; tool implementations must be Rust\n' "$$js"; exit 1; \
-		fi; \
-	done; \
-	printf 'language gate ok: Rust only (embedded browser-client JS excepted)\n'
+	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|js|mjs|cjs|py|sh)$$' || true); \
+	if [ -n "$$scripts" ]; then printf 'TypeScript, JavaScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
+	printf 'language gate ok: Rust only\n'
 
 lint: lint-all-targets
 
@@ -435,7 +388,7 @@ verify: index-sync-check source-tracking-check corpus-check language-check regis
 audit: verify test targets classification-check candidate-corpus-check \
 	correspondence-check progress-report coverage-check
 
-reports: correspondence families progress-report coverage
+reports: correspondence progress-report coverage
 
 standard-check:
 	@set -e; actual=$$($(CHECK) routes --standard | grep -v '^-I' | sort); \

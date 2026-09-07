@@ -1,6 +1,0 @@
-[workspace]
-
-[package]
-name = "check-commit-progress"
-version = "0.1.0"
-edition = "2021"

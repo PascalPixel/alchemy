@@ -3,7 +3,7 @@
 use std::fs;
 use std::path::Path;
 
-use canonical_json::is_canonical_json_text;
+use compiler_core::canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
@@ -454,25 +454,6 @@ pub fn encode_arm_branch(address: u32, target: u32) -> Result<Vec<u8>, String> {
     }
     let instruction = 0xea00_0000u32 | (words as u32 & 0x00ff_ffff);
     Ok(instruction.to_le_bytes().to_vec())
-}
-
-pub fn decode_arm_branch(data: &[u8], address: u32) -> Result<u32, String> {
-    if data.len() != 4 {
-        return Err("GBA entry branch must contain one ARM instruction".to_string());
-    }
-    let instruction = u32::from_le_bytes(data.try_into().unwrap());
-    if instruction & 0xff00_0000 != 0xea00_0000 {
-        return Err("GBA entry instruction is not an unconditional ARM B".to_string());
-    }
-    let mut displacement = instruction & 0x00ff_ffff;
-    if displacement & 0x0080_0000 != 0 {
-        displacement |= 0xff00_0000;
-    }
-    let target = address as i64 + 8 + (displacement as i32 as i64) * 4;
-    if !(0..=0xffff_fffc).contains(&target) || target % 4 != 0 {
-        return Err("GBA entry target is invalid".to_string());
-    }
-    Ok(target as u32)
 }
 
 pub fn gba_complement_checksum(header: &[u8]) -> Result<u8, String> {

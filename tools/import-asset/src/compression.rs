@@ -61,6 +61,36 @@ pub fn encode_mtf4(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     Ok(bits.bytes)
 }
 
+/// Zero-skip byte stream: literals 1..=0xdf, runs of up to 32 zeros as
+/// `0xdf + count`, and a terminating zero byte.
+pub fn encode_zero_skip(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let mut output = Vec::new();
+    let mut cursor = 0;
+    while cursor < pixels.len() {
+        if pixels[cursor] != 0 {
+            if pixels[cursor] > 0xdf {
+                return Err(AssetError("zero-skip literal exceeds 0xdf".into()));
+            }
+            output.push(pixels[cursor]);
+            cursor += 1;
+            continue;
+        }
+        let mut end = cursor + 1;
+        while end < pixels.len() && pixels[end] == 0 {
+            end += 1;
+        }
+        let mut remaining = end - cursor;
+        while remaining != 0 {
+            let count = remaining.min(32);
+            output.push(0xdf + count as u8);
+            remaining -= count;
+        }
+        cursor = end;
+    }
+    output.push(0);
+    Ok(output)
+}
+
 pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     let mut bits = Bits::default();
     let mut previous = 0u8;
@@ -85,6 +115,35 @@ pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     }
     bits.align(16, 0);
     Ok(bits.bytes)
+}
+
+/// Delta-code little-endian 16-bit tile entries behind a mode byte: mode 0
+/// keeps the entries, mode 2 XORs each entry with its predecessor, and mode 1
+/// writes that XOR stream as a plane of high bytes followed by the low bytes.
+pub fn encode_tilemap_delta(entries: &[u8], mode: u8) -> Result<Vec<u8>, AssetError> {
+    if mode > 2 || entries.is_empty() || entries.len() % 2 != 0 {
+        return Err(AssetError(
+            "tilemap delta requires mode 0, 1 or 2 and whole 16-bit entries".into(),
+        ));
+    }
+    let mut previous = 0u16;
+    let transformed: Vec<u16> = entries
+        .chunks_exact(2)
+        .map(|entry| {
+            let value = u16::from_le_bytes([entry[0], entry[1]]);
+            let coded = if mode == 0 { value } else { value ^ previous };
+            previous = value;
+            coded
+        })
+        .collect();
+    let mut output = vec![mode];
+    if mode == 1 {
+        output.extend(transformed.iter().map(|value| (value >> 8) as u8));
+        output.extend(transformed.iter().map(|value| *value as u8));
+    } else {
+        output.extend(transformed.iter().flat_map(|value| value.to_le_bytes()));
+    }
+    Ok(output)
 }
 
 pub fn delta7_image(
@@ -146,6 +205,29 @@ fn compression_checks_pixel_domains_and_padding() {
     }
     assert_eq!(encode_delta7(&[127, 0]).unwrap(), [21, 0]);
     assert_eq!(encode_mtf4(&[1, 1]).unwrap(), [241, 255]);
+    let entries = [0x34, 0x12, 0x78, 0x56];
+    assert_eq!(
+        encode_tilemap_delta(&entries, 0).unwrap(),
+        [0, 0x34, 0x12, 0x78, 0x56]
+    );
+    assert_eq!(
+        encode_tilemap_delta(&entries, 2).unwrap(),
+        [2, 0x34, 0x12, 0x4c, 0x44]
+    );
+    assert_eq!(
+        encode_tilemap_delta(&entries, 1).unwrap(),
+        [1, 0x12, 0x44, 0x34, 0x4c]
+    );
+    assert!(encode_tilemap_delta(&entries, 3).is_err());
+    assert!(encode_tilemap_delta(&entries[..3], 0).is_err());
+    assert!(encode_tilemap_delta(&[], 0).is_err());
+    assert_eq!(encode_zero_skip(&[]).unwrap(), [0]);
+    assert_eq!(
+        encode_zero_skip(&[1, 0, 0, 0, 2, 0, 0]).unwrap(),
+        [1, 0xe2, 2, 0xe1, 0]
+    );
+    assert_eq!(encode_zero_skip(&[0; 33]).unwrap(), [0xff, 0xe0, 0]);
+    assert!(encode_zero_skip(&[0xe0]).is_err());
 }
 
 #[test]

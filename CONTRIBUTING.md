@@ -484,7 +484,6 @@ libraries are not additional public command surfaces.
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
 | [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
-| [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |

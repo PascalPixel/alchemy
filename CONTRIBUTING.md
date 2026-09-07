@@ -482,10 +482,10 @@ libraries are not additional public command surfaces.
 | [sentou-kouka-runtime](tools/sentou-kouka-runtime/) | Build and verify the battle-effect runtime. |
 | [sentou-menu-data](tools/sentou-menu-data/) | Build battle-menu data. |
 | [sentou-resources](tools/sentou-resources/) | Build and verify battle resource series. |
-| [simple-resources](tools/simple-resources/) | Extract and rebuild simple resource records. |
+| [simple-resources](tools/simple-resources/) | Rebuild maintained stamp, font, word-table and screen records. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [staff-roll](tools/staff-roll/) | Build the staff-roll package. |
-| [static-sprite-series](tools/static-sprite-series/) | Export, build, and verify static sprite series. |
+| [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
 | [title-resources](tools/title-resources/) | Build title-screen resources. |
 
 ## Owners and names

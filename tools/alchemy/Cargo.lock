@@ -1317,7 +1317,6 @@ dependencies = [
 name = "simple-resources"
 version = "0.1.0"
 dependencies = [
- "export-asset",
  "extract-resource",
  "import-asset",
  "serde_json",
@@ -1350,10 +1349,7 @@ dependencies = [
 name = "static-sprite-series"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
- "export-asset",
  "extract-resource",
- "generated-files",
  "import-asset",
  "serde_json",
 ]

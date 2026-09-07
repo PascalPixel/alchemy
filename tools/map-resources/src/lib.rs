@@ -1,4 +1,4 @@
-//! Native build and ROM verification for the two Golden Sun map-container series.
+//! Source composition for the two Golden Sun map-container series.
 //!
 //! The map grid and six container components are deliberately delegated to
 //! their native crates. This crate only owns the audited series catalog,
@@ -6,10 +6,14 @@
 //! It is build-facing: export is intentionally not part of this port.
 
 use canonical_json::is_canonical_json_text;
-use kind1_map_grid::{build_grid, self_test as grid_self_test};
+use kind1_map_grid::build_grid;
+#[cfg(test)]
+use kind1_map_grid::self_test as grid_self_test;
+#[cfg(test)]
+use map_container_components::self_test as components_self_test;
 use map_container_components::{
     build_blend_animation, build_descriptors, build_header, build_metatiles, build_queues,
-    build_sparse, self_test as components_self_test,
+    build_sparse,
 };
 use serde_json::{Map, Value};
 use std::fs;
@@ -371,46 +375,8 @@ pub fn build_resource_by_id(
         .ok_or_else(|| format!("resource {id:03x} is absent"))
 }
 
-pub fn verify_series(rom_path: &Path, index_path: &Path, kind: SeriesKind) -> Result<String> {
-    let rom = read(rom_path)?;
-    let resources = build_series(index_path, kind)?;
-    let mut bytes = 0usize;
-    for resource in &resources {
-        let pointer = RESOURCE_TABLE
-            .checked_sub(ROM_BASE)
-            .and_then(|offset| offset.checked_add(resource.id * 4))
-            .ok_or_else(|| "resource table is outside the ROM".to_string())?;
-        if pointer + 8 > rom.len() {
-            return Err("resource table is outside the ROM".into());
-        }
-        let actual = u32::from_le_bytes(rom[pointer..pointer + 4].try_into().unwrap()) as usize;
-        let next = u32::from_le_bytes(rom[pointer + 4..pointer + 8].try_into().unwrap()) as usize;
-        if actual != resource.address || next != resource.address + resource.data.len() {
-            return Err(format!(
-                "resource {} directory bounds differ",
-                id_text(resource.id)
-            ));
-        }
-        let start = resource
-            .address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| "resource lies before ROM base".to_string())?;
-        let end = start + resource.data.len();
-        if end > rom.len() || rom[start..end] != resource.data {
-            return Err(format!(
-                "resource {} differs from ROM",
-                id_text(resource.id)
-            ));
-        }
-        bytes += resource.data.len();
-    }
-    Ok(format!(
-        "identical=true resources={} source_bytes={bytes}",
-        resources.len()
-    ))
-}
-
-pub fn self_test() -> Result<()> {
+#[test]
+fn component_extents() -> Result<()> {
     components_self_test().map_err(|error| error.to_string())?;
     grid_self_test().map_err(|error| error.to_string())?;
     let mut header = vec![0u8; HEADER_SIZE];

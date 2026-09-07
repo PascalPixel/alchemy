@@ -1,14 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use export_asset::{palette_rgba_image, tile_png};
-use extract_resource::{decode_palette_trace, encode_palette, PaletteGroup, PaletteOperation};
-use import_asset::{gba_graphics, gba_palette_rgba, Rgb};
-use serde_json::{Map, Value};
+#[cfg(test)]
+use extract_resource::decode_palette_trace;
+use extract_resource::{encode_palette, PaletteGroup, PaletteOperation};
+use import_asset::{gba_graphics, gba_palette_rgba};
+use serde_json::Value;
 
-pub const ROM_BASE: u32 = 0x0800_0000;
-pub const RESOURCE_TABLE: u32 = 0x0832_0000;
-const R2: (u32, usize) = (0x0832_0fa0, 0x10);
 const R13: (u32, usize) = (0x0832_0fb0, 0x2000);
 const R14: (u32, usize) = (0x0832_2fb0, 0x8c0);
 const R18: (u32, usize, usize) = (0x0833_37a0, 0x828, 0x9600);
@@ -30,16 +28,6 @@ fn read(path: &Path) -> Result<Vec<u8>, Error> {
 }
 fn text(path: &Path) -> Result<String, Error> {
     fs::read_to_string(path).map_err(|e| err(format!("{}: {e}", path.display())))
-}
-fn write(path: &Path, bytes: &[u8]) -> Result<(), Error> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|e| err(format!("{}: {e}", parent.display())))?;
-    }
-    fs::write(path, bytes).map_err(|e| err(format!("{}: {e}", path.display())))
-}
-fn write_json(path: &Path, value: &Value) -> Result<(), Error> {
-    let json = serde_json::to_string(value).map_err(|e| err(e.to_string()))?;
-    write(path, format!("{json}\n").as_bytes())
 }
 fn absolute(path: &Path) -> PathBuf {
     if path.is_absolute() {
@@ -83,61 +71,6 @@ fn number(value: &Value) -> Option<u64> {
 }
 fn number_field(value: &Value, name: &str) -> Result<u64, Error> {
     number(field(value, name)?).ok_or_else(|| err(format!("invalid {name}")))
-}
-fn offset(address: u32) -> Result<usize, Error> {
-    address
-        .checked_sub(ROM_BASE)
-        .map(|x| x as usize)
-        .ok_or_else(|| err("resource address is below ROM base"))
-}
-fn pointer(rom: &[u8], id: u32) -> Result<u32, Error> {
-    let start = RESOURCE_TABLE
-        .checked_sub(ROM_BASE)
-        .and_then(|x| (x as usize).checked_add(id as usize * 4))
-        .ok_or_else(|| err("resource pointer is outside the ROM"))?;
-    let bytes = rom
-        .get(start..start + 4)
-        .ok_or_else(|| err("resource pointer is outside the ROM"))?;
-    Ok(u32::from_le_bytes(bytes.try_into().unwrap()))
-}
-fn range(rom: &[u8], id: u32, address: u32, size: usize) -> Result<Vec<u8>, Error> {
-    if pointer(rom, id)? != address {
-        return Err(err(format!("resource {id:x} address differs")));
-    }
-    let start = offset(address)?;
-    rom.get(start..start + size)
-        .map(ToOwned::to_owned)
-        .ok_or_else(|| err("resource range is outside the ROM"))
-}
-fn bgr555(data: &[u8]) -> Result<Vec<Rgb>, Error> {
-    if !data.len().is_multiple_of(2) {
-        return Err(err("palette has an odd byte count"));
-    }
-    Ok(data
-        .chunks_exact(2)
-        .map(|x| {
-            let v = u16::from_le_bytes([x[0], x[1]]);
-            [
-                ((v & 31) << 3) as u8,
-                (((v >> 5) & 31) << 3) as u8,
-                (((v >> 10) & 31) << 3) as u8,
-            ]
-        })
-        .collect())
-}
-fn font_palette(rom: &[u8]) -> Result<Vec<Rgb>, Error> {
-    let start = offset(0x0800_777c)?;
-    let mut values = rom
-        .get(start..start + 32)
-        .ok_or_else(|| err("font palette is outside the ROM"))?
-        .to_vec();
-    for (i, value) in [0x4180u16, 0x3960, 0x3140, 0x2920, 0x49a0, 0x51c0, 0x59e0]
-        .into_iter()
-        .enumerate()
-    {
-        values[(i + 4) * 2..(i + 5) * 2].copy_from_slice(&value.to_le_bytes());
-    }
-    bgr555(&values)
 }
 fn stamp_paths(root: &Path) -> (PathBuf, PathBuf) {
     let p = root.join("data/resource_2");
@@ -302,136 +235,8 @@ pub fn build_simple_resource(id: u32, root: &Path) -> Result<Vec<u8>, Error> {
     }
 }
 
-fn plan_json(tokens: &[PaletteGroup]) -> Value {
-    let mut plan = Map::new();
-    for (k, v) in [
-        ("format", Value::from(1)),
-        ("codec", Value::from("golden-sun-tagged-palette-screen")),
-        ("resource_id", Value::from("18")),
-        ("address", Value::from("0x083337a0")),
-        ("container_size", Value::from("0x828")),
-        ("decoded_size", Value::from("0x9600")),
-        ("palette_entries", Value::from(224)),
-        ("tag", Value::from(1)),
-        ("width", Value::from(240)),
-        ("height", Value::from(160)),
-    ] {
-        plan.insert(k.into(), v);
-    }
-    let mut consumer = Map::new();
-    for (k, v) in [
-        ("function", Value::from("Func_080f2b70")),
-        ("palette_bytes", Value::from("0x1c0")),
-        ("stream_offset", Value::from("0x1c0")),
-        ("tile_depth", Value::from(8)),
-    ] {
-        consumer.insert(k.into(), v);
-    }
-    plan.insert("consumer".into(), Value::Object(consumer));
-    let tokens = tokens
-        .iter()
-        .map(|group| match group {
-            PaletteGroup::Zeros => Value::Array(vec![Value::from("z")]),
-            PaletteGroup::Group(ops) => Value::Array(vec![
-                Value::from("g"),
-                Value::Array(
-                    ops.iter()
-                        .map(|op| match op {
-                            PaletteOperation::Literal => Value::Array(vec![Value::from("l")]),
-                            PaletteOperation::End => Value::Array(vec![Value::from("e")]),
-                            PaletteOperation::Copy { length, distance } => Value::Array(vec![
-                                Value::from("c"),
-                                Value::from(*length),
-                                Value::from(*distance),
-                            ]),
-                        })
-                        .collect(),
-                ),
-            ]),
-        })
-        .collect();
-    plan.insert("tokens".into(), Value::Array(tokens));
-    Value::Object(plan)
-}
-pub fn export_simple_resources(rom_path: &Path, root: &Path) -> Result<String, Error> {
-    let rom = read(rom_path)?;
-    let stamp = range(&rom, 2, R2.0, R2.1)?;
-    let (source, plan) = stamp_paths(root);
-    write(
-        &source,
-        format!("{}\n", String::from_utf8_lossy(&stamp[..12])).as_bytes(),
-    )?;
-    let mut stamp_plan = Map::new();
-    stamp_plan.insert("format".into(), Value::from(1));
-    stamp_plan.insert("kind".into(), Value::from("golden-sun-build-stamp"));
-    stamp_plan.insert("digits".into(), Value::from(12));
-    stamp_plan.insert(
-        "trailer".into(),
-        Value::Array(stamp[12..].iter().map(|x| Value::from(*x)).collect()),
-    );
-    write_json(&plan, &Value::Object(stamp_plan))?;
-    if build_resource_2(root)? != stamp {
-        return Err(err("resource 2 round trip differs"));
-    }
-    let font = range(&rom, 0x13, R13.0, R13.1)?;
-    write(
-        &root.join("graphics/resource_13_font.4bpp.png"),
-        &tile_png(&font, 4.0, 16.0, Some(&font_palette(&rom)?))
-            .map_err(|e| err(e.0))?
-            .0,
-    )?;
-    if build_resource_13(root)? != font {
-        return Err(err("resource 13 round trip differs"));
-    }
-    let words = range(&rom, 0x14, R14.0, R14.1)?;
-    write(
-        &root.join("graphics/resource_14_words.rgba.png"),
-        &palette_rgba_image(&words, 16.0).map_err(|e| err(e.0))?.0,
-    )?;
-    if build_resource_14(root)? != words {
-        return Err(err("resource 14 round trip differs"));
-    }
-    let screen = range(&rom, 0x18, R18.0, R18.1)?;
-    let start = offset(R18.0)?;
-    if screen[0x1c0] != 1 {
-        return Err(err("resource 18 lacks its tag-1 screen stream"));
-    }
-    let (decoded, cursor, tokens) =
-        decode_palette_trace(&rom, start + 0x1c1, start + screen.len(), R18.2 as u64)
-            .map_err(|e| err(e.0))?;
-    if decoded.len() != R18.2 || cursor != start + screen.len() {
-        return Err(err(
-            "resource 18 screen stream differs from its consumer bounds",
-        ));
-    }
-    write(
-        &root.join("graphics/resource_18_screen.8bpp.png"),
-        &tile_png(&decoded, 8.0, 30.0, Some(&bgr555(&screen[..0x1c0])?))
-            .map_err(|e| err(e.0))?
-            .0,
-    )?;
-    write_json(
-        &root.join("graphics/resource_18_screen.lz.json"),
-        &plan_json(&tokens),
-    )?;
-    if build_resource_18(root)? != screen {
-        return Err(err("resource 18 screen round trip differs"));
-    }
-    Ok("resources=4 unique_bytes=0x30f8 screen_18=240x160 decoded_18=0x9600".into())
-}
-pub fn verify_simple_resources(rom_path: &Path, root: &Path) -> Result<String, Error> {
-    let rom = read(rom_path)?;
-    for (id, address, size) in [(2, R2.0, R2.1), (0x13, R13.0, R13.1), (0x14, R14.0, R14.1)] {
-        if build_simple_resource(id, root)? != range(&rom, id, address, size)? {
-            return Err(err(format!("resource {id:x} verification differs")));
-        }
-    }
-    if build_resource_18(root)? != range(&rom, 0x18, R18.0, R18.1)? {
-        return Err(err("resource 18 verification differs"));
-    }
-    Ok("identical=true resources=4 unique_bytes=0x30f8".into())
-}
-pub fn self_test() -> Result<(), Error> {
+#[test]
+fn codec_round_trip() -> Result<(), Error> {
     let digits = "012345678901";
     if digits.len() != 12 || !digits.bytes().all(|x| x.is_ascii_digit()) {
         return Err(err("build-stamp validation self-test failed"));

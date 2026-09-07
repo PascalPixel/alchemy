@@ -10,9 +10,6 @@ name = "static_sprite_series"
 path = "src/lib.rs"
 
 [dependencies]
-canonical-json = { path = "../canonical-json" }
 extract-resource = { path = "../extract-resource" }
-export-asset = { path = "../export-asset" }
-generated-files = { path = "../generated-files" }
 import-asset = { path = "../import-asset" }
 serde_json = { version = "1", features = ["preserve_order"] }

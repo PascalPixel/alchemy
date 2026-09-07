@@ -355,6 +355,7 @@ tooling-size:
 	printf 'portable tooling ok: %s / %s lines\n' "$$lines" '$(TOOLING_LINE_LIMIT)'
 
 tooling-index-check:
+	@$(CHECK) publication --documents
 	@set -eu; \
 	actual=$$(mktemp /tmp/alchemy-tool-index.actual.XXXXXX); \
 	indexed=$$(mktemp /tmp/alchemy-tool-index.indexed.XXXXXX); \
@@ -440,9 +441,9 @@ audit: verify test targets classification-check candidate-corpus-check \
 reports: correspondence families progress-report coverage
 
 standard-check:
-	@printf '%s\n' $(GCC296_CFLAGS) | grep -v '^-I' | sort > /tmp/alchemy-standard-makefile.txt
-	@$(CHECK) routes --standard | grep -v '^-I' | sort > /tmp/alchemy-standard-routing.txt
-	@diff -u /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt
+	@set -e; actual=$$($(CHECK) routes --standard | grep -v '^-I' | sort); \
+	expected=$$(printf '%s\n' $(GCC296_CFLAGS) | grep -v '^-I' | sort); \
+	test "$$actual" = "$$expected" || { printf 'compiler flags differ\nexpected:\n%s\nactual:\n%s\n' "$$expected" "$$actual"; exit 1; }
 	@printf 'compiler standard ok\n'
 
 .PHONY: compilers

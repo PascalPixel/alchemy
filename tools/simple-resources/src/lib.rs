@@ -144,7 +144,7 @@ fn font_palette(rom: &[u8]) -> Result<Vec<Rgb>, Error> {
 fn stamp_paths(root: &Path) -> (PathBuf, PathBuf) {
     let p = root.join("data/resource_2");
     (
-        p.with_file_name("resource_2_build_stamp.txt"),
+        p.with_file_name("resource_2_build_stamp.stamp"),
         p.with_file_name("resource_2_layout.json"),
     )
 }

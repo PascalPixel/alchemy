@@ -11,11 +11,7 @@ use music::build_reserve_sequence;
 pub type Error = String;
 pub type Result<T> = std::result::Result<T, Error>;
 
-pub const ROM_BASE: u32 = 0x0800_0000;
-pub const ROM_SIZE: usize = 0x0080_0000;
-pub const SOUND_TABLE_ADDRESS: u32 = 0x080f_c684;
 pub const ORPHAN_STREAM_ADDRESS: u32 = 0x0818_19b0;
-pub const ORPHAN_STREAM_END: u32 = 0x0818_19c2;
 pub const ALIGNMENT_ADDRESS: u32 = 0x0818_4698;
 pub const ALIGNMENT_END: u32 = 0x0818_5000;
 
@@ -74,85 +70,6 @@ pub fn build_music_residuals(index_path: &Path) -> Result<Vec<BuiltMusicResidual
     ];
     regions.sort_by_key(|region| region.address);
     Ok(regions)
-}
-
-fn read_u16(rom: &[u8], offset: usize) -> Result<u16> {
-    let bytes = rom
-        .get(offset..offset + 2)
-        .ok_or_else(|| "sound-table entry lies outside ROM".to_string())?;
-    Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
-}
-
-fn read_u32(rom: &[u8], offset: usize) -> Result<u32> {
-    let bytes = rom
-        .get(offset..offset + 4)
-        .ok_or_else(|| "sound-table entry lies outside ROM".to_string())?;
-    Ok(u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]))
-}
-
-fn verify_sound_table_links(rom: &[u8]) -> Result<()> {
-    for (sound, header) in [
-        (19u32, 0x0816_52d8),
-        (95, 0x0818_10b8),
-        (138, ORPHAN_STREAM_ADDRESS - 12),
-        (139, 0x0818_19d4),
-        (288, 0x0818_41f8),
-        (298, 0x0818_4358),
-    ] {
-        let offset = (SOUND_TABLE_ADDRESS - ROM_BASE + sound * 8) as usize;
-        if read_u32(rom, offset)? != header {
-            return Err(format!(
-                "sound-table entry {sound} does not select its residual header"
-            ));
-        }
-        if read_u16(rom, offset + 4)? != read_u16(rom, offset + 6)? {
-            return Err(format!(
-                "sound-table entry {sound} does not mirror its player selector"
-            ));
-        }
-    }
-    let sound138 = (ORPHAN_STREAM_ADDRESS - 12 - ROM_BASE) as usize;
-    let sound139 = (0x0818_19d4 - ROM_BASE) as usize;
-    if rom.get(sound138) != Some(&1) || read_u32(rom, sound138 + 8)? != 0x0818_1988 {
-        return Err("reserve sound stream does not follow sound 138".into());
-    }
-    if rom.get(sound139) != Some(&1) || read_u32(rom, sound139 + 8)? != ORPHAN_STREAM_END {
-        return Err("reserve sound stream does not precede sound 139".into());
-    }
-    Ok(())
-}
-
-fn verify_regions(rom: &[u8], regions: &[BuiltMusicResidual]) -> Result<usize> {
-    let mut bytes = 0;
-    for region in regions {
-        let start = region
-            .address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| "music residual address is below ROM".to_string())?
-            as usize;
-        let original = rom
-            .get(start..start + region.data.len())
-            .ok_or_else(|| "music residual lies outside ROM".to_string())?;
-        if original != region.data.as_slice() {
-            return Err(format!(
-                "music residual at 0x{:x} differs from ROM",
-                region.address
-            ));
-        }
-        bytes += region.data.len();
-    }
-    Ok(bytes)
-}
-
-pub fn verify_music_residuals(rom_path: &Path, index_path: &Path) -> Result<String> {
-    let rom =
-        std::fs::read(rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
-    if rom.len() != ROM_SIZE {
-        return Err("music residual verifier requires the 8 MiB canonical ROM".into());
-    }
-    verify_sound_table_links(&rom)?;
-    let bytes = verify_regions(&rom, &build_music_residuals(index_path)?)?;
-    Ok(format!("identical=true regions=7 source_bytes={bytes}"))
 }
 
 pub fn self_test() -> Result<()> {

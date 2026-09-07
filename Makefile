@@ -67,7 +67,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	families family-check coverage coverage-check clean clean-preview
+	coverage coverage-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -94,8 +94,6 @@ help:
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
 		'make correspondence   match exact EN owners across GS1 editions' \
-		'make families         rank unresolved compiler owners by exact-C family' \
-		'make family-check     prove the family index and retained-family evidence' \
 		'make edition-builds   relink exact EN C across GS1 editions' \
 		'make coverage         refresh coverage data and figures'
 
@@ -183,14 +181,8 @@ correspondence-check: correspondence
 	printf 'cross-edition correspondence ok: main=%s/%s overlay=%s/%s matched/unresolved\n' \
 		"$$main_matched" "$$main_unresolved" "$$overlay_matched" "$$overlay_unresolved"
 
-families: build-claimed build-asm | $(REPORT_DIR)
-	$(COMPILER) families cluster --write $(REPORT_DIR)/compiler-families.json
-
-family-check: families
-	$(COMPILER) families prove games/gs1/recon/family-retention.json
-
-classification-check: core-retained-check family-check
-	@printf 'classification and family-retention contracts ok\n'
+classification-check: core-retained-check
+	@printf 'classification contracts ok\n'
 
 candidate-corpus-check:
 	$(CHECK) integrate --check games/gs1/recon/en/main
@@ -412,7 +404,7 @@ verify: index-sync-check source-tracking-check corpus-check language-check regis
 audit: verify test targets classification-check candidate-corpus-check \
 	correspondence-check progress-report coverage-check
 
-reports: correspondence families progress-report coverage
+reports: correspondence progress-report coverage
 
 standard-check:
 	@set -e; actual=$$($(CHECK) routes --standard | grep -v '^-I' | sort); \

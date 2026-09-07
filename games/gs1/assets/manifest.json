@@ -547,7 +547,7 @@
     {
       "address": "0x08185024",
       "size": "0x8530",
-      "kind": "golden-sun-character-catalog",
+      "kind": "typed-table",
       "source": "games/gs1/assets/data/chr_catalog.json"
     },
     {

@@ -1,6 +1,26 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b6:020003dc": {
+      "name": "Scene_InitFacingActors",
+      "source": "overlays/scene_script/facing_events.c"
+    },
+    "resource_3b6:02000500": {
+      "name": "SceneDialogue_RunFacingPrompt",
+      "source": "overlays/scene_script/facing_events.c"
+    },
+    "resource_3b6:020005a8": {
+      "name": "SceneDialogue_RunFacingActionPrompt",
+      "source": "overlays/scene_script/facing_events.c"
+    },
+    "resource_3b6:0200066c": {
+      "name": "SceneDialogue_RunFacingAction",
+      "source": "overlays/scene_script/facing_events.c"
+    },
+    "resource_3b6:0200091c": {
+      "name": "SceneDialogue_RunFacingMessage",
+      "source": "overlays/scene_script/facing_events.c"
+    },
     "resource_3ad:02001760": {
       "name": "SceneEvent_RunPartyDeparture",
       "source": "overlays/scene_primary_script/run_party_departure.c"
@@ -7203,7 +7223,7 @@
     },
     "resource_3b6:0200009c": {
       "name": "SceneState_SetWork1c0AndRun",
-      "source": "overlays/state_update/set_work_1c0_1c8_and_run_3b6.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_38b:020001ec": {
       "name": "FieldScene_RunScriptedStep1472",
@@ -7447,7 +7467,7 @@
     },
     "resource_3b6:02000064": {
       "name": "SceneData_SelectTable9310ByFlags",
-      "source": "overlays/scene_data/table_accessors_3b6.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3bb:02003b90": {
       "name": "StagedActor_PushActorAhead",
@@ -7773,7 +7793,7 @@
     },
     "resource_3b6:02000030": {
       "name": "SceneData_GetTable8BB4",
-      "source": "overlays/scene_data/get_table_8bb4.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_371:02000290": {
       "name": "SceneData_GetTableD27C",
@@ -7913,7 +7933,7 @@
     },
     "resource_3b6:02000760": {
       "name": "SceneDialogue_RunMessage1FBBStep",
-      "source": "overlays/actor_presentation/run_message_1fbb_step.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3c3:0200008c": {
       "name": "SceneData_GetSecondaryTable",
@@ -9180,7 +9200,7 @@
     },
     "resource_3b6:020006ec": {
       "name": "SceneDialogue_RunMessage239eStep",
-      "source": "overlays/scene_primary_script/run_message_239e_step.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_377:020003d0": {
       "name": "FieldScene_RunStep7BThen10",
@@ -9364,7 +9384,7 @@
     },
     "resource_3b6:0200003c": {
       "name": "SceneData_GetTable8dac",
-      "source": "overlays/scene_data/table_accessors_3b6.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_371:0200029c": {
       "name": "SceneData_GetTableDA2C",
@@ -9484,7 +9504,7 @@
     },
     "resource_3b6:0200085c": {
       "name": "SceneDialogue_RunActor25FlaggedLine",
-      "source": "overlays/scene_dialogue/run_actor_25_flagged_line_3b6.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3ab:020008a4": {
       "name": "SceneDialogue_RunActor10Scene",
@@ -9772,7 +9792,7 @@
     },
     "resource_3b6:020008cc": {
       "name": "SceneDialogue_RunMessage23acStep",
-      "source": "overlays/scene_primary_script/run_message_23ac_step.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3af:02003710": {
       "name": "SceneState_InitActorSlots8To19",
@@ -10387,7 +10407,7 @@
     },
     "resource_3b6:0200073c": {
       "name": "SceneDialogue_RunActorLine23a1",
-      "source": "overlays/scene_dialogue/run_actor_line_23a1_3b6.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_39a:02000a60": {
       "name": "FieldScene_RunActor10Flags30bTo30eSequenceB",
@@ -11020,7 +11040,7 @@
     },
     "resource_3b6:02000328": {
       "name": "FieldScene_RunActorsThirtyOneToThirtyThreeChoreography",
-      "source": "overlays/scene_primary_script/run_actors_thirty_one_to_thirty_three_choreography.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_39a:02000bf4": {
       "name": "FieldScene_RunActor11Offset128Sequence",
@@ -11965,7 +11985,10 @@
       "name": "SceneData_ReturnZero",
       "source": "overlays/scene_data/return_zero_371.c"
     },
-    "resource_3b6:02000038": "overlays/shared/get_default_result.c",
+    "resource_3b6:02000038": {
+      "name": "get_default_result",
+      "source": "overlays/scene_script/facing_events.c"
+    },
     "resource_3c4:0200170c": {
       "name": "ActorPresentation_ConfigureActorTwentyAndFlag200",
       "source": "overlays/actor_presentation/configure_actor_twenty_and_flag_200.c"
@@ -12809,7 +12832,7 @@
     },
     "resource_3b6:02000044": {
       "name": "SceneData_SelectTable8e00ByFlag",
-      "source": "overlays/scene_data/table_accessors_3b6.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3ba:02002f94": {
       "name": "SceneState_SetHalfword1000To9",
@@ -15414,7 +15437,7 @@
     },
     "resource_3b6:020000c0": {
       "name": "FieldScene_RunPrimarySequence",
-      "source": "overlays/scene_primary_script/run_scene_3b6_primary_sequence.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3b3:020011c4": {
       "name": "FieldScene_RunPrimarySequence",
@@ -16166,7 +16189,7 @@
     },
     "resource_3b6:020007b0": {
       "name": "FieldScene_RunScene3b6_020007b0",
-      "source": "overlays/scene_primary_script/run_scene_3b6_020007b0.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3b8:02000264": {
       "name": "FieldScene_RunScene3b8_02000264",
@@ -16490,7 +16513,7 @@
     },
     "resource_3b6:02000898": {
       "name": "FieldScene_RunScene3b6_02000898",
-      "source": "overlays/scene_primary_script/run_scene_3b6_02000898.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_3c6:020011bc": {
       "name": "FieldScene_RunSequenceB",
@@ -16928,7 +16951,7 @@
     },
     "resource_3b6:0200013c": {
       "name": "FieldScene_RunScene3b6SequenceA",
-      "source": "overlays/scene_primary_script/run_scene_3b6_sequence_a.c"
+      "source": "overlays/scene_script/facing_events.c"
     },
     "resource_373:02000fec": {
       "name": "FieldScene_RunScene373SequenceC",

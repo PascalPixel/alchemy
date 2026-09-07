@@ -2,7 +2,6 @@
 use alignment_tail::parse_alignment_tail;
 use archive_asset::{build_archive, ArchivePlan, ArchiveStream, PixelFormat};
 use asset_paths::AssetPaths;
-use audio_engine_data::build_audio_engine_data;
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use compiler_core::build_io::relative;
@@ -21,7 +20,10 @@ use import_asset::import_tilemap;
 use import_asset::{
     gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
 };
-use music::{add_midi_build_directive, add_midi_conductor_text, MIDI_BUILD_DIRECTIVE};
+use music::{
+    add_midi_build_directive, add_midi_conductor_text, build_audio_engine_data,
+    build_music_residuals, BuiltMusicResidual, MIDI_BUILD_DIRECTIVE,
+};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -32,8 +34,6 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
-const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
-const AUDIO_ENGINE_SIZE: usize = 0x0ef2;
 const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
 const STAFF_ROLL_SIZE: usize = 0x15a4;
 const MAP_CONTAINER_HEADER_SIZE: usize = 0x3c;
@@ -1613,7 +1613,7 @@ struct Context {
     root: PathBuf,
     paths: AssetPaths,
     maps: HashMap<String, Vec<BuiltMapContainer>>,
-    music: HashMap<String, Vec<music_residuals::BuiltMusicResidual>>,
+    music: HashMap<String, Vec<BuiltMusicResidual>>,
     battle: HashMap<String, Vec<battle_assets::BuiltBattleResource>>,
 }
 impl Context {
@@ -1636,12 +1636,9 @@ impl Context {
         }
         Ok(self.maps[index_name].clone())
     }
-    fn music_residuals(
-        &mut self,
-        index_name: &str,
-    ) -> Result<Vec<music_residuals::BuiltMusicResidual>, String> {
+    fn music_residuals(&mut self, index_name: &str) -> Result<Vec<BuiltMusicResidual>, String> {
         if !self.music.contains_key(index_name) {
-            let built = music_residuals::build_music_residuals(&self.source(index_name)?)?;
+            let built = build_music_residuals(&self.source(index_name)?)?;
             self.music.insert(index_name.to_string(), built);
         }
         Ok(self.music[index_name].clone())
@@ -4104,10 +4101,7 @@ fn build_entry_native_tail(
         "golden-sun-audio-engine-data" => {
             let source = source_path(entry_source)?;
             let result = build_audio_engine_data(&source).map_err(|error| error.to_string())?;
-            if address != AUDIO_ENGINE_ADDRESS
-                || result.address != AUDIO_ENGINE_ADDRESS
-                || result.data.len() != AUDIO_ENGINE_SIZE
-            {
+            if result.address != address {
                 return Err("audio-engine data differs from canonical manifest extent".to_string());
             }
             let mut nested = vec![entry_source.to_string()];

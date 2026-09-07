@@ -36,7 +36,6 @@ dependencies = [
  "alignment-tail",
  "archive-asset",
  "asset-paths",
- "audio-engine-data",
  "battle-assets",
  "build-asm",
  "build-claimed",
@@ -71,7 +70,6 @@ dependencies = [
  "matching",
  "message-archive",
  "music",
- "music-residuals",
  "namae-nyuuryoku",
  "no-asm-c",
  "objdiff-core",
@@ -127,13 +125,6 @@ dependencies = [
 [[package]]
 name = "asset-paths"
 version = "0.1.0"
-
-[[package]]
-name = "audio-engine-data"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
 
 [[package]]
 name = "autocfg"
@@ -834,14 +825,6 @@ dependencies = [
 name = "music"
 version = "0.1.0"
 dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "music-residuals"
-version = "0.1.0"
-dependencies = [
- "music",
  "serde_json",
 ]
 

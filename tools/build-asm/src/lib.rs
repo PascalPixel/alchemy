@@ -1,7 +1,7 @@
 //! Assemble retained source regions and emit their classified manifest.
 pub mod cli;
-use cache_entry::sqlite::SqliteCache;
-use canonical_json::write_canonical;
+use compiler_core::cache::sqlite::SqliteCache;
+use compiler_core::canonical_json::write_canonical;
 use compiler_core::{
     build_io::{argv, read, read_json, relative, rooted, text, write},
     bundle::host_executable_signature,

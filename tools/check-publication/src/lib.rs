@@ -1,5 +1,6 @@
 //! Fail-closed publication checks for staged changes and outgoing history.
 pub mod cli;
+pub mod commit_progress;
 use std::path::Path;
 use std::process::Command;
 const BLOCKED_EXTENSIONS: &[&str] = &[

@@ -1,17 +1,9 @@
-# Bare `[workspace]`: this crate is an independently buildable workspace
-# rather than a member of the aggregate tools workspace. `version.workspace`
-# and `edition.workspace` therefore cannot resolve, so both keys are literal.
-[workspace]
-
 [package]
 name = "overlay-adopt"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Sibling crates, not third-party dependencies: the already-landed Rust
-# halves of the exact TypeScript modules `overlay_adopt.ts` imports.
-#   ../lib/disassemble.ts -> assembleOverlay, OVERLAY_BASE
 disassemble = { path = "../disassemble" }
 compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
@@ -24,6 +16,3 @@ tempfile = "3"
 [lib]
 name = "overlay_adopt"
 path = "src/lib.rs"
-
-[profile.release]
-opt-level = 3

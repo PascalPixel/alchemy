@@ -1,13 +1,11 @@
 //! Native entry point for the asset build stage.
-use alignment_tail::parse_alignment_tail;
-use archive_asset::{build_archive, ArchivePlan, ArchiveStream, PixelFormat};
-use asset_paths::AssetPaths;
-use cache_entry::write_cache_entry_atomically;
-use canonical_json::canonical_json;
+use crate::generated_files::{prune_files, unused_tracked_images};
 use compiler_core::build_io::relative;
 use compiler_core::bundle::{
     compiler_bundle_signature, executable_signature, host_executable_signature,
 };
+use compiler_core::cache::write_cache_entry_atomically;
+use compiler_core::canonical_json::canonical_json;
 use compiler_core::routing::{cflags_for_target_source, CompilerTarget};
 use compiler_core::sha256;
 use compiler_core::source_inputs::compiler_source_tree_signature;
@@ -15,14 +13,10 @@ use compiler_core::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use disassemble::{assemble_overlay, OverlaySource};
 use extract_resource::{PaletteGroup, PaletteOperation};
 use gba_header::{build_gba_header_component, read_gba_header_source};
-use generated_files::{prune_files, unused_tracked_images};
 use import_asset::import_tilemap;
 use import_asset::{
-    gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
-};
-use music::{
-    add_midi_build_directive, add_midi_conductor_text, build_audio_engine_data,
-    build_music_residuals, BuiltMusicResidual, MIDI_BUILD_DIRECTIVE,
+    append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, one_bit_tiles,
+    rgba_png, EventBody, MidiEvent, MIDI_BUILD_DIRECTIVE,
 };
 use serde_json::Value;
 use sha1::{Digest, Sha1};
@@ -34,9 +28,6 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
-const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
-const STAFF_ROLL_SIZE: usize = 0x15a4;
-const MAP_CONTAINER_HEADER_SIZE: usize = 0x3c;
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -57,22 +48,14 @@ fn number(value: &Value, label: &str) -> Result<usize, String> {
     };
     parsed.map_err(|_| format!("{label} must be an integer"))
 }
-fn required<'a>(
-    object: &'a serde_json::Map<String, Value>,
-    key: &str,
-) -> Result<&'a Value, String> {
-    object
-        .get(key)
-        .ok_or_else(|| format!("archive plan is missing {key}"))
-}
 fn parse_operation(value: &Value) -> Result<PaletteOperation, String> {
     let items = value
         .as_array()
-        .ok_or_else(|| "archive token operation is not an array".to_string())?;
+        .ok_or_else(|| "palette token operation is not an array".to_string())?;
     let tag = items
         .first()
         .and_then(Value::as_str)
-        .ok_or_else(|| "archive token operation has no tag".to_string())?;
+        .ok_or_else(|| "palette token operation has no tag".to_string())?;
     match tag {
         "l" if items.len() == 1 => Ok(PaletteOperation::Literal),
         "e" if items.len() == 1 => Ok(PaletteOperation::End),
@@ -80,29 +63,29 @@ fn parse_operation(value: &Value) -> Result<PaletteOperation, String> {
             length: number(&items[1], "copy length")? as u32,
             distance: number(&items[2], "copy distance")? as u32,
         }),
-        _ => Err("unsupported archive token operation".to_string()),
+        _ => Err("unsupported palette token operation".to_string()),
     }
 }
 fn parse_group(value: &Value) -> Result<PaletteGroup, String> {
     let items = value
         .as_array()
-        .ok_or_else(|| "archive token group is not an array".to_string())?;
+        .ok_or_else(|| "palette token group is not an array".to_string())?;
     let tag = items
         .first()
         .and_then(Value::as_str)
-        .ok_or_else(|| "archive token group has no tag".to_string())?;
+        .ok_or_else(|| "palette token group has no tag".to_string())?;
     match tag {
         "z" if items.len() == 1 => Ok(PaletteGroup::Zeros),
         "g" if items.len() == 2 => {
             let operations = items[1]
                 .as_array()
-                .ok_or_else(|| "archive token group operations are not an array".to_string())?
+                .ok_or_else(|| "palette token group operations are not an array".to_string())?
                 .iter()
                 .map(parse_operation)
                 .collect::<Result<Vec<_>, _>>()?;
             Ok(PaletteGroup::Group(operations))
         }
-        _ => Err("unsupported archive token group".to_string()),
+        _ => Err("unsupported palette token group".to_string()),
     }
 }
 fn hex_bytes(value: &Value, label: &str) -> Result<Vec<u8>, String> {
@@ -119,92 +102,6 @@ fn hex_bytes(value: &Value, label: &str) -> Result<Vec<u8>, String> {
                 .map_err(|_| format!("{label} is not hexadecimal text"))
         })
         .collect()
-}
-fn parse_plan(value: Value) -> Result<ArchivePlan, String> {
-    let object = value
-        .as_object()
-        .ok_or_else(|| "archive plan is not an object".to_string())?;
-    if number(required(object, "format")?, "format")? != 1
-        || required(object, "codec")?.as_str() != Some("golden-sun-offset-palette-lz")
-    {
-        return Err("unsupported archive plan".to_string());
-    }
-    let pixel_format = match object
-        .get("pixel_format")
-        .and_then(Value::as_str)
-        .unwrap_or("rgba")
-    {
-        "rgba" => PixelFormat::Rgba,
-        "indexed8" => PixelFormat::Indexed8,
-        _ => return Err("unsupported archive pixel format".to_string()),
-    };
-    let streams = required(object, "streams")?
-        .as_array()
-        .ok_or_else(|| "archive streams are not an array".to_string())?
-        .iter()
-        .map(|raw| {
-            let stream = raw
-                .as_object()
-                .ok_or_else(|| "archive stream is not an object".to_string())?;
-            let tokens = required(stream, "tokens")?
-                .as_array()
-                .ok_or_else(|| "archive stream tokens are not an array".to_string())?
-                .iter()
-                .map(parse_group)
-                .collect::<Result<Vec<_>, _>>()?;
-            Ok(ArchiveStream {
-                decoded_size: number(required(stream, "decoded_size")?, "decoded_size")?,
-                encoded_size: number(required(stream, "encoded_size")?, "encoded_size")?,
-                tokens,
-                lookahead: hex_bytes(required(stream, "lookahead")?, "lookahead")?,
-            })
-        })
-        .collect::<Result<Vec<_>, String>>()?;
-    let alignment_tail = match object.get("alignment_tail") {
-        None => None,
-        Some(value) => {
-            let size = number(
-                value
-                    .as_object()
-                    .and_then(|item| item.get("size"))
-                    .ok_or_else(|| "alignment_tail is missing size".to_string())?,
-                "alignment_tail size",
-            )?;
-            Some(
-                parse_alignment_tail(value, size, 3, "alignment_tail")
-                    .map_err(|error| error.to_string())?,
-            )
-        }
-    };
-    Ok(ArchivePlan {
-        chunk_width: number(required(object, "chunk_width")?, "chunk_width")?,
-        chunk_height: number(required(object, "chunk_height")?, "chunk_height")?,
-        columns: number(required(object, "columns")?, "columns")?,
-        pixel_format,
-        offset_width: object
-            .get("offset_width")
-            .map(|value| number(value, "offset_width"))
-            .transpose()?
-            .unwrap_or(4),
-        stream_alignment: object
-            .get("stream_alignment")
-            .map(|value| number(value, "stream_alignment"))
-            .transpose()?
-            .unwrap_or(1),
-        streams,
-        alignment_tail,
-    })
-}
-fn build_offset_archive(plan_path: &Path, atlas_path: &Path) -> Result<Vec<u8>, String> {
-    let plan = parse_plan(
-        serde_json::from_slice(&fs::read(plan_path).map_err(|error| error.to_string())?)
-            .map_err(|error| format!("invalid archive plan: {error}"))?,
-    )?;
-    build_archive(
-        &fs::read(atlas_path).map_err(|error| error.to_string())?,
-        &plan,
-    )
-    .map_err(|error| error.to_string())
 }
 fn json(path: &Path) -> Result<Value, String> {
     serde_json::from_slice(&fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?)
@@ -259,23 +156,6 @@ fn root_relative(root: &Path, path: &Path) -> Result<String, String> {
         )
     })?;
     Ok(relative.to_string_lossy().replace('\\', "/"))
-}
-fn root_sources(root: &Path, paths: &[PathBuf]) -> Result<Vec<String>, String> {
-    paths.iter().map(|path| root_relative(root, path)).collect()
-}
-#[test]
-fn library_sources_preserve_order_and_reject_paths_outside_the_root() {
-    let root = Path::new("/repo");
-    let paths = [
-        root.join("index.json"),
-        root.join("image.png"),
-        root.join("index.json"),
-    ];
-    assert_eq!(
-        root_sources(root, &paths).unwrap(),
-        ["index.json", "image.png", "index.json"]
-    );
-    assert!(root_sources(root, &[PathBuf::from("/elsewhere/image.png")]).is_err());
 }
 fn hex_address(address: usize) -> String {
     format!("0x{address:08x}")
@@ -500,12 +380,103 @@ fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, S
         }),
     })
 }
+/// Frames selected by a component's atlas geometry (`frame_width`,
+/// `frame_height` and `columns` with `frame`, `frame_order` or `frames`), or
+/// the whole image when it declares none. `depth` is the bytes per pixel.
+fn component_frames(
+    entry: &Value,
+    width: usize,
+    height: usize,
+    pixels: &[u8],
+    depth: usize,
+) -> Result<Vec<Vec<u8>>, String> {
+    let Some(frame_width) = entry.get("frame_width") else {
+        return Ok(vec![pixels.to_vec()]);
+    };
+    let frame_width = number(frame_width, "frame width")?;
+    let frame_height = number(&entry["frame_height"], "frame height")?;
+    let columns = number(&entry["columns"], "atlas columns")?;
+    if frame_width == 0
+        || frame_height == 0
+        || columns == 0
+        || width != columns * frame_width
+        || height % frame_height != 0
+    {
+        return Err("atlas dimensions differ".into());
+    }
+    let slots = columns * (height / frame_height);
+    let selected: Vec<usize> = if let Some(frame) = entry.get("frame") {
+        vec![number(frame, "frame")?]
+    } else if let Some(order) = entry.get("frame_order") {
+        order
+            .as_array()
+            .ok_or("frame order is not an array")?
+            .iter()
+            .map(|frame| number(frame, "frame"))
+            .collect::<Result<_, _>>()?
+    } else {
+        let frames = number(&entry["frames"], "frames")?;
+        if frames == 0 || frames.div_ceil(columns) * frame_height != height {
+            return Err("atlas dimensions differ".into());
+        }
+        (0..frames).collect()
+    };
+    let mut output = Vec::with_capacity(selected.len());
+    for frame in selected {
+        if frame >= slots {
+            return Err(format!("frame {frame} lies outside its atlas"));
+        }
+        let left = frame % columns * frame_width;
+        let top = frame / columns * frame_height;
+        let mut buffer = Vec::with_capacity(frame_width * frame_height * depth);
+        for y in 0..frame_height {
+            let start = ((top + y) * width + left) * depth;
+            buffer.extend_from_slice(&pixels[start..start + frame_width * depth]);
+        }
+        output.push(buffer);
+    }
+    Ok(output)
+}
+/// Check an indexed image against the shared palette its component declares:
+/// `{"source", "offset", "entries"}` name the colors that the pixels
+/// `offset..offset + entries` of an indexed palette image select.
+fn check_shared_palette(
+    root: &Path,
+    entry: &Value,
+    image: &import_asset::IndexedImage,
+) -> Result<Option<String>, String> {
+    let Some(shared) = entry.get("palette") else {
+        return Ok(None);
+    };
+    let name = json_string(&shared["source"], "shared palette source")?;
+    let palette = indexed_png(&fs::read(root_path(root, name)?).map_err(|e| e.to_string())?)
+        .map_err(|e| e.to_string())?;
+    let offset = number(&shared["offset"], "shared palette offset")?;
+    let entries = number(&shared["entries"], "shared palette entries")?;
+    let colors = palette
+        .pixels
+        .get(offset..offset + entries)
+        .ok_or("shared palette is too small")?
+        .iter()
+        .map(|pixel| {
+            palette
+                .palette
+                .get(*pixel as usize)
+                .copied()
+                .ok_or("shared palette references a missing color")
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if image.palette != colors {
+        return Err(format!("palette differs from the shared palette {name}"));
+    }
+    Ok(Some(name.to_string()))
+}
 fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String> {
     let kind = json_string(&entry["kind"], "component kind")?;
     let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
-        "u8-array" | "s8-array" | "be-s16-array" => {
+        "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array" => {
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
             let values = document.pointer(pointer).ok_or("array pointer is absent")?;
@@ -577,7 +548,25 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                         ordered.extend_from_slice(&built[start..start + w * tile_bytes]);
                     }
                 }
+                if let Some(frame) = entry.get("frame") {
+                    let frame = number(frame, "frame")?;
+                    let bytes = w * h * tile_bytes;
+                    if frame >= frames {
+                        return Err("frame lies outside its atlas".into());
+                    }
+                    ordered = ordered[frame * bytes..(frame + 1) * bytes].to_vec();
+                }
                 built = ordered;
+            }
+            if let Some(canvas) = entry.get("canvas_size") {
+                let size = number(&entry["size"], "component size")?;
+                if built.len() != number(canvas, "canvas size")?
+                    || built.len() < size
+                    || built[size..].iter().any(|&byte| byte != 0)
+                {
+                    return Err("canvas differs or carries data beyond the extent".into());
+                }
+                built.truncate(size);
             }
             (built, details, vec![source_name.to_string()])
         }
@@ -588,46 +577,93 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 .map_err(|e| e.to_string())?;
             (built, details, vec![source_name.to_string()])
         }
-        "gba-tilemap16" => {
-            let built = import_tilemap(&fs::read_to_string(&source).map_err(|e| e.to_string())?)
+        "1bpp-tiles" => {
+            let (built, report) = one_bit_tiles(&fs::read(&source).map_err(|e| e.to_string())?)
                 .map_err(|e| e.to_string())?;
+            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
+                .map_err(|e| e.to_string())?;
+            (built, details, vec![source_name.to_string()])
+        }
+        "gba-tilemap16" => {
+            // The tilemap text is the whole source file, or one text value of
+            // a JSON source selected by `pointer`.
+            let text = if let Some(pointer) = entry.get("pointer") {
+                let document = json(&source)?;
+                json_string(
+                    document
+                        .pointer(json_string(pointer, "tilemap pointer")?)
+                        .ok_or("tilemap pointer is absent")?,
+                    "tilemap text",
+                )?
+                .to_string()
+            } else {
+                fs::read_to_string(&source).map_err(|e| e.to_string())?
+            };
+            let entries = import_tilemap(&text).map_err(|e| e.to_string())?;
+            let built = if let Some(mode) = entry.get("delta_mode") {
+                let mode = u8::try_from(number(mode, "tilemap delta mode")?)
+                    .map_err(|_| "tilemap delta mode exceeds u8")?;
+                import_asset::encode_tilemap_delta(&entries, mode).map_err(|e| e.to_string())?
+            } else {
+                entries.clone()
+            };
             (
-                built.clone(),
-                serde_json::json!({"entries": built.len() / 2}),
+                built,
+                serde_json::json!({"entries": entries.len() / 2, "delta_mode": entry.get("delta_mode")}),
                 vec![source_name.to_string()],
             )
         }
-        "indexed-bytes" | "raw-lz-bytes" => {
+        "indexed-bytes" | "raw-lz-bytes" | "zero-skip-bytes" | "mtf4-bytes" => {
             let encoded = fs::read(&source).map_err(|e| e.to_string())?;
             let image = indexed_png(&encoded).map_err(|e| e.to_string())?;
-            let mut built: Vec<u8> = image.pixels.into_iter().map(|pixel| pixel as u8).collect();
-            if kind == "raw-lz-bytes" {
-                let size = number(&entry["size"], "component size")?;
-                built.truncate(size);
-                (
-                    built.clone(),
-                    serde_json::json!({"width": image.width, "height": image.height, "bytes": built.len()}),
-                    vec![source_name.to_string()],
-                )
+            let mut sources = vec![source_name.to_string()];
+            sources.extend(check_shared_palette(root, entry, &image)?);
+            let (width, height) = (image.width as usize, image.height as usize);
+            let pixels: Vec<u8> = image.pixels.iter().map(|pixel| *pixel as u8).collect();
+            let built = if kind == "raw-lz-bytes" {
+                let mut built = pixels;
+                built.truncate(number(&entry["size"], "component size")?);
+                built
+            } else if kind == "indexed-bytes" && entry.get("frame_width").is_none() {
+                import_asset::indexed_bytes(&encoded, number(&entry["size"], "component size")?)
+                    .map_err(|error| error.to_string())?
             } else {
-                let built = import_asset::indexed_bytes(
-                    &encoded,
-                    number(&entry["size"], "component size")?,
-                )
-                .map_err(|error| error.to_string())?;
-                (
-                    built,
-                    serde_json::json!({"width": image.width, "height": image.height}),
-                    vec![source_name.to_string()],
-                )
-            }
+                let mut built = Vec::new();
+                for frame in component_frames(entry, width, height, &pixels, 1)? {
+                    built.extend(match kind {
+                        "zero-skip-bytes" => {
+                            import_asset::encode_zero_skip(&frame).map_err(|e| e.to_string())?
+                        }
+                        "mtf4-bytes" => {
+                            import_asset::encode_mtf4(&frame).map_err(|e| e.to_string())?
+                        }
+                        _ => frame,
+                    });
+                }
+                built
+            };
+            let bytes = built.len();
+            (
+                built,
+                serde_json::json!({"width": width, "height": height, "bytes": bytes}),
+                sources,
+            )
         }
         "rgba-bytes" => {
             let image = rgba_png(&fs::read(&source).map_err(|e| e.to_string())?)
                 .map_err(|e| e.to_string())?;
+            let built = component_frames(
+                entry,
+                image.width as usize,
+                image.height as usize,
+                &image.pixels,
+                4,
+            )?
+            .concat();
+            let pixels = built.len() / 4;
             (
-                image.pixels.clone(),
-                serde_json::json!({"width": image.width, "height": image.height, "pixels": image.pixels.len() / 4}),
+                built,
+                serde_json::json!({"width": image.width, "height": image.height, "pixels": pixels}),
                 vec![source_name.to_string()],
             )
         }
@@ -639,28 +675,6 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 import_asset::import_pairs(&text)?
             };
             (data, serde_json::json!({}), vec![source_name.to_string()])
-        }
-        "zero-skip-sprite-archive" => {
-            let plan_name = json_string(&entry["plan"], "archive plan")?;
-            let palette_name = json_string(&entry["palette"], "archive palette")?;
-            let plan = root_path(root, plan_name)?;
-            let palette = root_path(root, palette_name)?;
-            let plan_section = entry.get("plan_section").and_then(Value::as_str);
-            let plan_document = json(&plan)?;
-            let document = plan_section
-                .and_then(|section| plan_document.get(section))
-                .unwrap_or(&plan_document);
-            let built = skip_sprite_archive::build_archive(document, &source, &palette)
-                .map_err(|error| error.to_string())?;
-            (
-                built,
-                serde_json::json!({"images": number(&document["images"], "images")?, "width": number(&document["width"], "width")?, "height": number(&document["height"], "height")?}),
-                vec![
-                    source_name.to_string(),
-                    plan_name.to_string(),
-                    palette_name.to_string(),
-                ],
-            )
         }
         "golden-sun-thumb-overlay" => {
             let base = number(&entry["base"], "overlay base")?;
@@ -674,13 +688,15 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         }
         _ => return Err(format!("unsupported asset component: {kind}")),
     };
-    let expected = number(&entry["size"], "component size")?;
-    if data.len() != expected {
-        return Err(format!(
-            "{source_name}: built 0x{:x}, expected 0x{:x}",
-            data.len(),
-            expected
-        ));
+    if let Some(expected) = entry.get("size") {
+        let expected = number(expected, "component size")?;
+        if data.len() != expected {
+            return Err(format!(
+                "{source_name}: built 0x{:x}, expected 0x{:x}",
+                data.len(),
+                expected
+            ));
+        }
     }
     Ok(ComponentResult {
         data,
@@ -688,13 +704,193 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         details,
     })
 }
+/// An integer array member: a JSON integer, or hexadecimal text such as
+/// `"0x3c"` for values that read better in the radix their consumer uses.
+fn array_member(value: &Value) -> Result<i64, String> {
+    if value.is_string() {
+        return i64::try_from(number(value, "array member")?)
+            .map_err(|_| "array member exceeds i64".into());
+    }
+    value
+        .as_i64()
+        .ok_or("array member is not an integer".into())
+}
+#[cfg(test)]
+fn test_png(width: u32, height: u32, palette: &[u8], pixels: &[u8]) -> Vec<u8> {
+    let mut image = Vec::new();
+    let mut encoder = png::Encoder::new(&mut image, width, height);
+    encoder.set_color(png::ColorType::Indexed);
+    encoder.set_depth(png::BitDepth::Eight);
+    encoder.set_palette(palette.to_vec());
+    encoder
+        .write_header()
+        .unwrap()
+        .write_image_data(pixels)
+        .unwrap();
+    image
+}
+#[test]
+fn atlas_frames_select_order_and_feed_pixel_codecs() {
+    let root = tempfile::tempdir().unwrap();
+    let mut pixels = vec![0u8; 16 * 8];
+    for y in 0..8 {
+        pixels[y * 16] = 1;
+        pixels[y * 16 + 8] = 2;
+    }
+    fs::write(
+        root.path().join("atlas.png"),
+        test_png(16, 8, &[0, 0, 0, 8, 8, 8, 16, 16, 16], &pixels),
+    )
+    .unwrap();
+    fs::write(
+        root.path().join("shared.png"),
+        test_png(
+            8,
+            8,
+            &[0, 0, 0, 8, 8, 8, 16, 16, 16],
+            &[0, 1, 2, 0, 0, 0, 0, 0].repeat(8),
+        ),
+    )
+    .unwrap();
+    let entry = serde_json::json!({"kind":"zero-skip-bytes","source":"atlas.png","frame_width":8,"frame_height":8,"columns":2,"frame_order":[1,0],
+        "palette":{"source":"shared.png","offset":0,"entries":3}});
+    let result = build_component(root.path(), &entry).unwrap();
+    let frame = |value: u8| [[value, 0xe6].repeat(7), vec![value, 0xe6, 0]].concat();
+    assert_eq!(result.data, [frame(2), frame(1)].concat());
+    assert_eq!(result.sources, ["atlas.png", "shared.png"]);
+    let mut mtf = entry.clone();
+    mtf["kind"] = Value::from("mtf4-bytes");
+    mtf.as_object_mut().unwrap().remove("frame_order");
+    mtf["frames"] = Value::from(2);
+    let result = build_component(root.path(), &mtf).unwrap();
+    let frame_pixels = |value: u8| {
+        let mut pixels = vec![0u8; 64];
+        for y in 0..8 {
+            pixels[y * 8] = value;
+        }
+        pixels
+    };
+    assert_eq!(
+        result.data,
+        [
+            import_asset::encode_mtf4(&frame_pixels(1)).unwrap(),
+            import_asset::encode_mtf4(&frame_pixels(2)).unwrap()
+        ]
+        .concat()
+    );
+    for (pointer, value) in [
+        ("/frame_order", serde_json::json!([2])),
+        ("/columns", serde_json::json!(3)),
+        ("/palette/entries", serde_json::json!(2)),
+    ] {
+        let mut bad = entry.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(build_component(root.path(), &bad).is_err(), "{pointer}");
+    }
+    let mut bad = entry;
+    bad["size"] = Value::from(1);
+    assert!(build_component(root.path(), &bad).is_err());
+}
+#[test]
+fn component_regions_concatenate_parts_at_running_addresses() {
+    let root = tempfile::tempdir().unwrap();
+    fs::write(
+        root.path().join("parts.json"),
+        r#"{"components":[{"kind":"byte-fill","value":7,"size":2},{"kind":"byte-fill","value":9,"size":1,"address":"0x08000014"}]}"#,
+    )
+    .unwrap();
+    let mut ctx = Context::new(root.path());
+    let entry = serde_json::json!({"address":"0x08000010","size":5,"kind":"components","components":[
+        {"kind":"byte-fill","value":1,"size":2},
+        {"kind":"components","source":"parts.json","size":3}
+    ]});
+    let (built, sources, details) = build_entry(&mut ctx, &entry).unwrap();
+    assert_eq!(built, [1, 1, 7, 7, 9]);
+    assert_eq!(sources, ["parts.json"]);
+    assert_eq!(details["components"].as_array().unwrap().len(), 2);
+    let mut bad = entry.clone();
+    bad["components"][0]["address"] = Value::from("0x08000011");
+    assert!(build_entry(&mut ctx, &bad).is_err());
+    bad = entry.clone();
+    bad["components"][1]["size"] = Value::from(4);
+    assert!(build_entry(&mut ctx, &bad).is_err());
+}
+#[test]
+fn typed_table_bitmap_fields_pack_rows_from_the_atlas() {
+    let root = tempfile::tempdir().unwrap();
+    let mut pixels = vec![0u8; 16 * 16];
+    pixels[0] = 1;
+    pixels[16 + 15] = 1;
+    fs::write(
+        root.path().join("glyphs.png"),
+        test_png(16, 16, &[0, 0, 0, 255, 255, 255], &pixels),
+    )
+    .unwrap();
+    let mut document = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":32,"segments":[
+        {"address":0,"end":32,"stride":32,"element":"record",
+         "image":{"source":"glyphs.png","frame_width":16,"frame_height":16,"columns":1,"frames":1},
+         "fields":[{"name":"advance","element":"le-u16"},{"name":"glyph","element":"1bpp-rows","rows":15}],
+         "records":[{"advance":6,"glyph":0}]}]});
+    let blank = document.clone();
+    assert_eq!(
+        resolve_table_bitmaps(&mut document, root.path()).unwrap(),
+        ["glyphs.png"]
+    );
+    let mut expected = vec![6, 0, 0, 0x80, 1, 0];
+    expected.resize(32, 0);
+    assert_eq!(typed_table(&document).unwrap(), expected);
+    pixels[15 * 16] = 1;
+    fs::write(
+        root.path().join("glyphs.png"),
+        test_png(16, 16, &[0, 0, 0, 255, 255, 255], &pixels),
+    )
+    .unwrap();
+    let mut dirty = blank;
+    assert!(resolve_table_bitmaps(&mut dirty, root.path()).is_err());
+}
+#[test]
+fn general_lz_sequences_encode_one_stream_per_frame() {
+    let root = tempfile::tempdir().unwrap();
+    let mut pixels = vec![0u8; 16 * 8];
+    pixels[0] = 3;
+    pixels[8] = 5;
+    fs::write(
+        root.path().join("atlas.png"),
+        test_png(
+            16,
+            8,
+            &[
+                0, 0, 0, 8, 8, 8, 16, 16, 16, 24, 24, 24, 32, 32, 32, 40, 40, 40,
+            ],
+            &pixels,
+        ),
+    )
+    .unwrap();
+    fs::write(
+        root.path().join("plan.json"),
+        r#"{"streams":[{"codec":"golden-sun-arena-lz","decoded_size":4,"encoded_size":6},{"codec":"golden-sun-arena-lz","decoded_size":4,"encoded_size":6}],
+            "components":[{"kind":"zero-skip-bytes","source":"atlas.png","frame_width":8,"frame_height":8,"columns":2}]}"#,
+    )
+    .unwrap();
+    let entry = serde_json::json!({"address":0,"size":16,"kind":"golden-sun-general-lz","plan":"plan.json","plan_section":"/streams","stream_alignment":8});
+    let (built, sources, details) = build_general_lz(root.path(), &entry).unwrap();
+    assert_eq!(
+        built,
+        [0, 0, 3, 0xff, 0xfe, 0, 0, 0, 0, 0, 5, 0xff, 0xfe, 0, 0, 0]
+    );
+    assert_eq!(sources, ["atlas.png", "plan.json"]);
+    assert_eq!(details["streams"], 2);
+    let mut bad = entry.clone();
+    bad["plan_section"] = Value::from("/missing");
+    assert!(build_general_lz(root.path(), &bad).is_err());
+}
 fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
     let mut output = Vec::new();
     for value in value.as_array().ok_or("integer array is not an array")? {
         if value.is_array() {
             output.extend(integer_array(value, kind)?);
         } else {
-            let value = value.as_i64().ok_or("array member is not an integer")?;
+            let value = array_member(value)?;
             if kind == "be-s16-array" || kind == "le-s16-array" {
                 let value = i16::try_from(value).map_err(|_| "array member exceeds s16")?;
                 output.extend(if kind == "le-s16-array" {
@@ -888,7 +1084,8 @@ fn resolve_table_symbols(document: &mut Value, symbols: &SourcePaths) -> Result<
         for value in values {
             let address = if value.is_null() {
                 0
-            } else if value.is_number() {
+            } else if value.is_number() || value.as_str().is_some_and(|text| text.starts_with("0x"))
+            {
                 let address = u32::try_from(number(value, "pointer address")?)
                     .map_err(|_| "pointer exceeds u32")?;
                 if address % 2 != 0 {
@@ -932,8 +1129,84 @@ fn typed_pointer_tables_use_the_owner_register() {
     let mut bad = source;
     bad["segments"][0]["values"][0] = Value::from("Missing");
     assert!(resolve_table_symbols(&mut bad, &symbols).is_err());
+    let mut hex = bad;
+    hex["segments"][0]["values"][0] = Value::from("0x08001002");
+    resolve_table_symbols(&mut hex, &symbols).unwrap();
+    assert_eq!(hex["segments"][0]["values"][0], 0x0800_1003);
     resolved["segments"][1]["values"][0] = Value::from(2147483648_i64);
     assert!(typed_table(&resolved).is_err());
+}
+
+/// Replace `1bpp-rows` record fields with the packed rows of the atlas frame
+/// each record names in the segment's `image`: pixel x of a row sits at bit
+/// `width - 1 - x`; rows of eight pixels become `u8` values and rows of
+/// sixteen pixels little-endian `le-u16` values. Rows below the packed ones
+/// must be blank.
+fn resolve_table_bitmaps(document: &mut Value, root: &Path) -> Result<Vec<String>, String> {
+    let mut sources = Vec::new();
+    for segment in document["segments"]
+        .as_array_mut()
+        .ok_or("table segments missing")?
+    {
+        let Some(image) = segment.get("image").cloned() else {
+            continue;
+        };
+        let name = json_string(&image["source"], "bitmap source")?;
+        let decoded = indexed_png(&fs::read(root_path(root, name)?).map_err(|e| e.to_string())?)
+            .map_err(|e| e.to_string())?;
+        if decoded.pixels.iter().any(|pixel| *pixel > 1) {
+            return Err("bitmap image is not 1bpp".into());
+        }
+        let pixels: Vec<u8> = decoded.pixels.iter().map(|pixel| *pixel as u8).collect();
+        let frame_width = number(&image["frame_width"], "frame width")?;
+        let frame_height = number(&image["frame_height"], "frame height")?;
+        let frames = component_frames(
+            &image,
+            decoded.width as usize,
+            decoded.height as usize,
+            &pixels,
+            1,
+        )?;
+        let mut bitmap_fields = Vec::new();
+        for field in segment["fields"]
+            .as_array_mut()
+            .ok_or("record fields missing")?
+        {
+            if field["element"] != "1bpp-rows" {
+                continue;
+            }
+            let rows = number(&field["rows"], "bitmap rows")?;
+            if rows == 0 || rows > frame_height {
+                return Err("bitmap rows exceed the frame".into());
+            }
+            field["element"] = Value::from(match frame_width {
+                8 => "u8",
+                16 => "le-u16",
+                _ => return Err("bitmap rows must be 8 or 16 pixels wide".into()),
+            });
+            bitmap_fields.push((json_string(&field["name"], "field name")?.to_string(), rows));
+        }
+        for record in segment["records"].as_array_mut().ok_or("records missing")? {
+            for (name, rows) in &bitmap_fields {
+                let frame = frames
+                    .get(number(&record[name.as_str()], "bitmap frame")?)
+                    .ok_or("bitmap frame lies outside its atlas")?;
+                if frame[rows * frame_width..].iter().any(|pixel| *pixel != 0) {
+                    return Err("bitmap rows below the record are not blank".into());
+                }
+                let values: Vec<u32> = (0..*rows)
+                    .map(|y| {
+                        (0..frame_width).fold(0u32, |row, x| {
+                            row | u32::from(frame[y * frame_width + x]) << (frame_width - 1 - x)
+                        })
+                    })
+                    .collect();
+                record[name.as_str()] = Value::from(values);
+            }
+        }
+        sources.push(name.to_string());
+    }
+    Ok(sources)
 }
 
 fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
@@ -941,7 +1214,9 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
         return Err("typed table identity differs".into());
     }
     let mut address = number(&document["address"], "table address")?;
+    let labels = table_labels(document)?;
     let mut output = Vec::new();
+    let mut pools: HashMap<String, Vec<usize>> = HashMap::new();
     for segment in document["segments"]
         .as_array()
         .ok_or("table segments missing")?
@@ -961,6 +1236,8 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             Some("le-u32") => ("le-u32-array", 4),
             Some("le-s32") => ("le-s32-array", 4),
             Some("ascii-fixed") => ("ascii-fixed", 1),
+            Some("ascii-pool") => ("ascii-pool", 1),
+            Some("pool-pointer") => ("pool-pointer", 4),
             Some("record") => ("record", 1),
             _ => return Err("unknown table element".into()),
         };
@@ -983,20 +1260,32 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             if names.is_empty() || names.len() != fields.len() {
                 return Err("record field names must be nonempty and unique".into());
             }
+            let label = segment
+                .get("label")
+                .map(|label| json_string(label, "record label"))
+                .transpose()?;
+            let mut seen_labels = std::collections::HashSet::new();
             let mut bytes = Vec::new();
             for record in segment["records"].as_array().ok_or("records missing")? {
                 let record = record.as_object().ok_or("record must be an object")?;
-                if record.len() != fields.len() {
-                    return Err("record fields differ".into());
+                for (key, value) in record {
+                    if Some(key.as_str()) == label {
+                        let text = json_string(value, "record label")?;
+                        if text.is_empty() || !seen_labels.insert(text.to_string()) {
+                            return Err("record labels must be nonempty and unique".into());
+                        }
+                    } else if !names.contains(key.as_str()) {
+                        return Err("record fields differ".into());
+                    }
                 }
                 let start = bytes.len();
                 for field in fields {
                     let name = json_string(&field["name"], "field name")?;
-                    bytes.extend(table_values(
-                        record.get(name).ok_or("record field absent")?,
-                        field,
-                        stride,
-                    )?);
+                    let value = record
+                        .get(name)
+                        .or_else(|| field.get("default"))
+                        .ok_or("record field absent")?;
+                    bytes.extend(table_values(value, field, stride, &labels)?);
                 }
                 if bytes.len() - start != stride {
                     return Err("record stride differs".into());
@@ -1007,15 +1296,63 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             let text = json_string(&segment["text"], "fixed text")?;
             if stride != 1
                 || text.len() >= size
-                || !text.bytes().all(|b| (0x20..=0x7e).contains(&b))
+                || !text
+                    .bytes()
+                    .all(|b| (0x20..=0x7e).contains(&b) || b == b'\n')
             {
                 return Err("fixed text differs".into());
             }
             let mut bytes = text.as_bytes().to_vec();
             bytes.resize(size, 0);
             bytes
+        } else if kind == "ascii-pool" {
+            // Zero-terminated printable strings; every string after the first
+            // starts on an `alignment` boundary of its address, and the pool's
+            // `name` lets a later `pool-pointer` segment address them by index.
+            let alignment = number(&segment["alignment"], "pool alignment")?;
+            let texts = segment["texts"].as_array().ok_or("pool texts missing")?;
+            if stride != 1 || alignment == 0 || texts.is_empty() {
+                return Err("text pool layout differs".into());
+            }
+            let mut bytes = Vec::new();
+            let mut addresses = Vec::new();
+            for text in texts {
+                let text = json_string(text, "pool text")?;
+                if !text.bytes().all(|b| (0x20..=0x7e).contains(&b)) {
+                    return Err("pool text is not printable ASCII".into());
+                }
+                if !addresses.is_empty() {
+                    let aligned = (start + bytes.len()).div_ceil(alignment) * alignment - start;
+                    bytes.resize(aligned, 0);
+                }
+                addresses.push(start + bytes.len());
+                bytes.extend_from_slice(text.as_bytes());
+                bytes.push(0);
+            }
+            let name = json_string(&segment["name"], "pool name")?;
+            if pools.insert(name.to_string(), addresses).is_some() {
+                return Err("duplicate pool name".into());
+            }
+            bytes
+        } else if kind == "pool-pointer" {
+            let pool = pools
+                .get(json_string(&segment["pool"], "pointer pool")?)
+                .ok_or("pointer pool is not an earlier text pool")?;
+            let addresses = segment["values"]
+                .as_array()
+                .ok_or("pointer values missing")?
+                .iter()
+                .map(|index| {
+                    pool.get(number(index, "pool index")?)
+                        .copied()
+                        .ok_or_else(|| "pool index is outside its pool".to_string())
+                })
+                .collect::<Result<Vec<_>, String>>()?;
+            let mut spec = segment.clone();
+            spec["element"] = Value::from("le-u32");
+            table_values(&serde_json::json!(addresses), &spec, size, &labels)?
         } else {
-            table_values(&segment["values"], segment, size)?
+            table_values(&segment["values"], segment, size, &labels)?
         };
         if bytes.len() != size {
             return Err("table segment size differs".into());
@@ -1056,7 +1393,73 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>, String> {
+/// Symbolic integer values of one typed table. A string value is a named
+/// constant from the field's or the table's `names`, a `0x` hexadecimal
+/// literal, a segment `name` (its start address) or `name[index]` (the
+/// address of element `index` of that segment). A name declared by more
+/// than one segment is ambiguous and cannot be referenced.
+struct TableLabels {
+    segments: std::collections::BTreeMap<String, Option<(usize, usize)>>,
+    names: Value,
+}
+
+fn table_labels(document: &Value) -> Result<TableLabels, String> {
+    let mut segments = std::collections::BTreeMap::new();
+    for segment in document["segments"]
+        .as_array()
+        .ok_or("table segments missing")?
+    {
+        if let Some(name) = segment.get("name") {
+            let name = json_string(name, "segment name")?;
+            let start = number(&segment["address"], "segment address")?;
+            let stride = number(&segment["stride"], "segment stride")?;
+            segments
+                .entry(name.to_string())
+                .and_modify(|label| *label = None)
+                .or_insert(Some((start, stride)));
+        }
+    }
+    Ok(TableLabels {
+        segments,
+        names: document.get("names").cloned().unwrap_or(Value::Null),
+    })
+}
+
+fn symbolic_value(text: &str, spec: &Value, labels: &TableLabels) -> Result<i64, String> {
+    if let Some(named) = spec
+        .get("names")
+        .and_then(|names| names.get(text))
+        .or_else(|| labels.names.get(text))
+    {
+        return named
+            .as_i64()
+            .ok_or_else(|| format!("named value {text} is not an integer"));
+    }
+    if text.starts_with("0x") || text.bytes().all(|byte| byte.is_ascii_digit()) {
+        return i64::try_from(number(&Value::from(text), "numeric value")?)
+            .map_err(|_| format!("numeric value {text} overflows"));
+    }
+    let (name, index) = match text.strip_suffix(']').and_then(|text| text.split_once('[')) {
+        Some((name, index)) => (name, number(&Value::from(index), "element index")?),
+        None => (text, 0),
+    };
+    match labels.segments.get(name) {
+        Some(Some((start, stride))) => index
+            .checked_mul(*stride)
+            .and_then(|offset| offset.checked_add(*start))
+            .and_then(|address| i64::try_from(address).ok())
+            .ok_or_else(|| format!("element index overflows in {text}")),
+        Some(None) => Err(format!("segment name {name} is ambiguous")),
+        None => Err(format!("unknown table value {text}")),
+    }
+}
+
+fn table_values(
+    value: &Value,
+    spec: &Value,
+    max_bytes: usize,
+    labels: &TableLabels,
+) -> Result<Vec<u8>, String> {
     let element = json_string(&spec["element"], "field element")?;
     let (kind, width) = match element {
         "u8" => ("u8-array", 1),
@@ -1067,18 +1470,58 @@ fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>
         "le-s32" => ("le-s32-array", 4),
         _ => return Err("unknown field element".into()),
     };
-    fn flatten(value: &Value, out: &mut Vec<i64>) -> Result<(), String> {
+    fn flatten(
+        value: &Value,
+        spec: &Value,
+        labels: &TableLabels,
+        out: &mut Vec<i64>,
+    ) -> Result<(), String> {
         if let Some(items) = value.as_array() {
             for item in items {
-                flatten(item, out)?;
+                flatten(item, spec, labels, out)?;
             }
+        } else if let Some(text) = value.as_str() {
+            out.push(symbolic_value(text, spec, labels)?);
         } else {
-            out.push(value.as_i64().ok_or("field value is not an integer")?);
+            out.push(array_member(value).map_err(|_| "field value is not an integer")?);
         }
         Ok(())
     }
     let mut values = Vec::new();
-    flatten(value, &mut values)?;
+    if let Some(bits) = spec.get("bits") {
+        let widths = bits
+            .as_object()
+            .ok_or("bit widths must map part names to widths")?
+            .values()
+            .map(|w| number(w, "bit width"))
+            .collect::<Result<Vec<_>, _>>()?;
+        if widths.iter().sum::<usize>() != width * 8 || widths.iter().any(|&w| w == 0) {
+            return Err("bit widths do not fill the element".into());
+        }
+        let groups = match value.as_array() {
+            Some(items) if items.iter().all(Value::is_array) => items.iter().collect(),
+            _ => vec![value],
+        };
+        for group in groups {
+            let parts = group
+                .as_array()
+                .filter(|parts| parts.len() == widths.len())
+                .ok_or("packed value has the wrong number of parts")?;
+            let mut packed = 0i64;
+            let mut shift = 0;
+            for (part, &bits) in parts.iter().zip(&widths) {
+                let part = part.as_i64().ok_or("packed part is not an integer")?;
+                if part < 0 || part >= 1i64 << bits {
+                    return Err("packed part exceeds its bit width".into());
+                }
+                packed |= part << shift;
+                shift += bits;
+            }
+            values.push(packed);
+        }
+    } else {
+        flatten(value, spec, labels, &mut values)?;
+    }
     for key in ["min", "max"] {
         if let Some(limit) = spec.get(key) {
             let limit = limit.as_i64().ok_or("field bound is not an integer")?;
@@ -1100,6 +1543,17 @@ fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>
         }
     }
     let mut bytes = integer_array(&serde_json::json!(values), kind)?;
+    if let Some(capacity) = spec.get("capacity") {
+        let capacity = number(capacity, "capacity")?;
+        if spec.get("terminated_capacity").is_some()
+            || capacity == 0
+            || capacity > max_bytes / width
+            || values.len() > capacity
+        {
+            return Err("field exceeds its capacity".into());
+        }
+        bytes.resize(capacity * width, 0);
+    }
     if let Some(capacity) = spec.get("terminated_capacity") {
         let capacity = number(capacity, "terminated capacity")?;
         if capacity == 0
@@ -1108,6 +1562,12 @@ fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>
             || values.contains(&0)
         {
             return Err("terminated field has no room for terminator or contains zero".into());
+        }
+        bytes.resize(capacity.checked_mul(width).ok_or("field size overflow")?, 0);
+    } else if let Some(capacity) = spec.get("capacity") {
+        let capacity = number(capacity, "capacity")?;
+        if capacity == 0 || capacity > max_bytes / width || values.len() > capacity {
+            return Err("field exceeds its zero-padded capacity".into());
         }
         bytes.resize(capacity.checked_mul(width).ok_or("field size overflow")?, 0);
     }
@@ -1149,6 +1609,11 @@ fn typed_records_preserve_names_termination_bounds_and_signedness() {
         typed_table(&source).unwrap(),
         [2, 0, 3, 0, 0, 0, 254, 255, 255, 255]
     );
+    let mut hex = source.clone();
+    hex["segments"][0]["records"][0]["ids"] = serde_json::json!(["0x2", "3"]);
+    assert_eq!(typed_table(&hex).unwrap(), typed_table(&source).unwrap());
+    hex["segments"][0]["records"][0]["ids"] = serde_json::json!(["-2"]);
+    assert!(typed_table(&hex).is_err());
     for (pointer, value) in [
         ("/segments/0/records/0/ids", serde_json::json!([2, 2])),
         ("/segments/0/records/0/ids", serde_json::json!([0])),
@@ -1167,6 +1632,84 @@ fn typed_records_preserve_names_termination_bounds_and_signedness() {
         *bad.pointer_mut(pointer).unwrap() = value;
         assert!(typed_table(&bad).is_err(), "{pointer}");
     }
+}
+
+#[test]
+fn typed_tables_resolve_symbolic_values_and_pad_capacities() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":4096,"size":28,"names":{"stop":239},"segments":[
+        {"name":"script","address":4096,"end":4102,"stride":2,"element":"u8","values":[[1,2],[3,4],["stop",0]]},
+        {"name":"directory","address":4102,"end":4110,"stride":4,"element":"le-u32","values":["script[2]","directory"]},
+        {"name":"record","address":4110,"end":4116,"stride":6,"element":"record","fields":[
+            {"name":"kind","element":"u8","names":{"wide":7}},
+            {"name":"slots","element":"u8","capacity":3},
+            {"name":"target","element":"le-u16"}
+        ],"records":[{"kind":"wide","slots":[9],"target":"0x1002"}]},
+        {"address":4116,"end":4124,"stride":1,"element":"ascii-fixed","text":"ab\n"}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [
+            1, 2, 3, 4, 239, 0, 4, 16, 0, 0, 6, 16, 0, 0, 7, 9, 0, 0, 2, 16, 97, 98, 10, 0, 0, 0,
+            0, 0
+        ]
+    );
+    for (pointer, value) in [
+        ("/segments/1/values/0", serde_json::json!("script[x]")),
+        ("/segments/1/values/0", serde_json::json!("missing")),
+        (
+            "/segments/2/records/0/slots",
+            serde_json::json!([1, 2, 3, 4]),
+        ),
+        ("/segments/2/fields/1/capacity", serde_json::json!(0)),
+        ("/segments/0/values/2", serde_json::json!(["halt", 0])),
+        ("/segments/0/name", serde_json::json!("directory")),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+}
+
+#[test]
+fn typed_records_apply_defaults_capacities_and_labels() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":12,"segments":[
+        {"address":0,"end":12,"stride":6,"element":"record","label":"name","fields":[
+            {"name":"id","element":"le-u16"},
+            {"name":"slots","element":"u8","capacity":3,"default":[]},
+            {"name":"kind","element":"u8","default":4,"max":4}
+        ],"records":[{"name":"first","id":1},{"name":"second","id":2,"slots":[7,8],"kind":0}]}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [1, 0, 0, 0, 0, 4, 2, 0, 7, 8, 0, 0]
+    );
+    for (pointer, value) in [
+        ("/segments/0/records/0/name", serde_json::json!("")),
+        ("/segments/0/records/0/name", serde_json::json!("second")),
+        ("/segments/0/records/0/id", serde_json::json!(null)),
+        (
+            "/segments/0/records/1/slots",
+            serde_json::json!([1, 2, 3, 4]),
+        ),
+        ("/segments/0/records/1/kind", serde_json::json!(5)),
+        ("/segments/0/fields/1/capacity", serde_json::json!(0)),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+    let mut both = source.clone();
+    both["segments"][0]["fields"][1]["terminated_capacity"] = serde_json::json!(3);
+    assert!(typed_table(&both).is_err());
+    let mut unknown = source.clone();
+    unknown["segments"][0]["records"][0]["extra"] = serde_json::json!(1);
+    assert!(typed_table(&unknown).is_err());
+    let mut missing = source;
+    missing["segments"][0]["records"][0]
+        .as_object_mut()
+        .unwrap()
+        .remove("id");
+    assert!(typed_table(&missing).is_err());
 }
 
 #[test]
@@ -1226,6 +1769,86 @@ fn typed_tables_check_layout_width_and_text() {
     }
 }
 
+#[test]
+fn typed_text_pools_resolve_aligned_string_pointers() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":256,"size":26,"segments":[
+        {"address":256,"end":270,"stride":1,"element":"ascii-pool","name":"names","alignment":4,"texts":["AB","","CDEFG"]},
+        {"address":270,"end":282,"stride":4,"element":"pool-pointer","pool":"names","values":[2,0],"terminated_capacity":3}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [65, 66, 0, 0, 0, 0, 0, 0, 67, 68, 69, 70, 71, 0, 8, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+    );
+    for (pointer, value) in [
+        ("/segments/0/alignment", serde_json::json!(0)),
+        ("/segments/0/texts/2", serde_json::json!("é")),
+        ("/segments/0/texts/2", serde_json::json!("CDEF")),
+        ("/segments/1/pool", serde_json::json!("other")),
+        ("/segments/1/values/0", serde_json::json!(3)),
+        ("/segments/1/values", serde_json::json!([0, 1, 2])),
+    ] {
+        let mut invalid = source.clone();
+        *invalid.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&invalid).is_err(), "{pointer}");
+    }
+    let mut reversed = source.clone();
+    reversed["segments"].as_array_mut().unwrap().reverse();
+    reversed["segments"][0]["address"] = Value::from(256);
+    reversed["segments"][0]["end"] = Value::from(268);
+    reversed["segments"][1]["address"] = Value::from(268);
+    reversed["segments"][1]["end"] = Value::from(282);
+    assert!(typed_table(&reversed).is_err());
+}
+
+#[test]
+fn typed_fields_pack_named_bit_widths_lsb_first() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":6,"segments":[
+        {"address":0,"end":4,"element":"le-u16","stride":2,"bits":{"id":9,"class":7},"values":[[1,0],[15,1]]},
+        {"address":4,"end":6,"element":"le-u16","stride":2,"bits":{"low":12,"high":4},"values":[4095,0]}
+    ]});
+    assert_eq!(typed_table(&source).unwrap(), [1, 0, 15, 2, 255, 15]);
+    for (pointer, value) in [
+        ("/segments/0/values/0", serde_json::json!([512, 0])),
+        ("/segments/0/values/0", serde_json::json!([1])),
+        ("/segments/0/values/0", serde_json::json!([-1, 0])),
+        ("/segments/0/bits", serde_json::json!({"id":9,"class":6})),
+        ("/segments/0/bits", serde_json::json!([9, 7])),
+    ] {
+        let mut bad = source.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&bad).is_err(), "{pointer}");
+    }
+}
+
+#[test]
+fn tile_components_truncate_zero_canvas_tails() {
+    let root = tempfile::tempdir().unwrap();
+    let mut image = Vec::new();
+    {
+        let mut encoder = png::Encoder::new(&mut image, 8, 16);
+        encoder.set_color(png::ColorType::Indexed);
+        encoder.set_depth(png::BitDepth::Eight);
+        encoder.set_palette((0..16).flat_map(|i| [i * 8; 3]).collect::<Vec<u8>>());
+        let pixels = (0..128).map(|i| u8::from(i < 72)).collect::<Vec<u8>>();
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&pixels)
+            .unwrap();
+    }
+    fs::write(root.path().join("canvas.png"), image).unwrap();
+    let entry = serde_json::json!({"kind":"gba-4bpp-tiles","source":"canvas.png","size":36,"canvas_size":64});
+    assert_eq!(
+        build_component(root.path(), &entry).unwrap().data,
+        vec![0x11; 36]
+    );
+    for (key, value) in [("size", 35), ("canvas_size", 63)] {
+        let mut bad = entry.clone();
+        bad[key] = serde_json::json!(value);
+        assert!(build_component(root.path(), &bad).is_err(), "{key}");
+    }
+}
+
 fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
         .as_array()
@@ -1253,71 +1876,68 @@ fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralTo
         })
         .collect()
 }
+fn parse_halfword_tokens(value: &Value) -> Result<Vec<extract_resource::HalfwordToken>, String> {
+    value
+        .as_array()
+        .ok_or("halfword-LZ tokens are not an array".to_string())?
+        .iter()
+        .map(|item| {
+            let values = item
+                .as_array()
+                .ok_or("halfword-LZ token is not an array".to_string())?;
+            match (values.first().and_then(Value::as_str), values.len()) {
+                (Some("l"), 2) => Ok(extract_resource::HalfwordToken::Literal(number(
+                    &values[1], "literal",
+                )?
+                    as u32)),
+                (Some("c"), 3) => Ok(extract_resource::HalfwordToken::Copy {
+                    length: number(&values[1], "copy length")? as u32,
+                    distance: number(&values[2], "copy distance")? as u32,
+                }),
+                (Some("e"), 1) => Ok(extract_resource::HalfwordToken::End),
+                _ => Err("unsupported halfword-LZ token".to_string()),
+            }
+        })
+        .collect()
+}
 fn parse_hex_text(value: &Value, label: &str) -> Result<Vec<u8>, String> {
     json_string(value, label)?;
     hex_bytes(value, label)
 }
-fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>, Value), String> {
-    let components = entry
-        .get("components")
-        .and_then(Value::as_array)
-        .ok_or("general-LZ components are not an array".to_string())?;
-    let mut decoded = Vec::new();
-    let mut sources = Vec::new();
-    let mut reports = Vec::new();
-    for component in components {
-        let result = build_component(root, component)?;
-        if component.get("kind").and_then(Value::as_str) == Some("zero-skip-sprite-archive") {
-            let plan_name = json_string(&component["plan"], "archive plan")?;
-            let plan_path = root_path(root, plan_name)?;
-            let plan_document = json(&plan_path)?;
-            let plan = component
-                .get("plan_section")
-                .and_then(Value::as_str)
-                .and_then(|section| plan_document.get(section))
-                .unwrap_or(&plan_document);
-            let image_count = number(&plan["images"], "images")?;
-            let source_name = json_string(&component["source"], "archive source")?;
-            if plan.get("atlas_columns").is_some() {
-                sources.push(format!("{source_name}_images.8bpp.png"));
-            } else {
-                for index in 0..image_count {
-                    sources.push(format!("{source_name}_images_frame_{index:02}.png"));
-                }
-            }
-            sources.push(plan_name.to_string());
-            sources.push(json_string(&component["palette"], "archive palette")?.to_string());
-        } else {
-            sources.push(json_string(&component["source"], "component source")?.to_string());
-            sources.extend(result.sources.iter().skip(1).cloned());
-        }
-        decoded.extend(result.data);
-        reports.push(serde_json::json!({"kind": component.get("kind"), "source": component.get("source"), "details": result.details}));
+/// The plan an entry selects inside its plan document: `plan_section` names
+/// a top-level key or, starting with `/`, a JSON pointer.
+fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, String> {
+    match entry.get("plan_section").and_then(Value::as_str) {
+        None => Ok(document),
+        Some(pointer) if pointer.starts_with('/') => document
+            .pointer(pointer)
+            .ok_or_else(|| format!("plan section {pointer} is absent")),
+        Some(section) => Ok(document.get(section).unwrap_or(document)),
     }
-    let plan_name = json_string(&entry["plan"], "general-LZ plan")?;
-    let plan_path = root_path(root, plan_name)?;
-    let plan_document = json(&plan_path)?;
-    let plan = entry
-        .get("plan_section")
-        .and_then(Value::as_str)
-        .and_then(|section| plan_document.get(section))
-        .unwrap_or(&plan_document);
+}
+/// Encode one stream from its plan. `arena` holds the bytes that precede the
+/// stream in its container for codecs whose copies read from them.
+fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8>, String> {
     let codec = json_string(&plan["codec"], "codec")?;
-    let decoded_size = number(&plan["decoded_size"], "decoded_size")?;
-    if decoded.len() != decoded_size {
+    if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
         return Err("decoded components do not match plan size".to_string());
     }
     let mut built = match codec {
         "golden-sun-general-lz-prefill" => extract_resource::encode_general_prefill(
-            &decoded,
+            decoded,
             &parse_general_tokens(plan.get("tokens").ok_or("general-LZ tokens are missing")?)?,
             number(&plan["prefill"], "prefill")?,
             number(plan.get("header").unwrap_or(&Value::from(1)), "header")?,
         )
         .map_err(|e| e.to_string())?,
         "golden-sun-general-lz" => extract_resource::encode_general(
-            &decoded,
+            decoded,
             &parse_general_tokens(plan.get("tokens").ok_or("general-LZ tokens are missing")?)?,
+        )
+        .map_err(|e| e.to_string())?,
+        "golden-sun-halfword-lz" => extract_resource::encode_halfword(
+            &decoded,
+            &parse_halfword_tokens(plan.get("tokens").ok_or("halfword-LZ tokens are missing")?)?,
         )
         .map_err(|e| e.to_string())?,
         "golden-sun-palette-lz" | "golden-sun-tagged-palette-lz" => {
@@ -1328,7 +1948,22 @@ fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>,
                 .iter()
                 .map(parse_group)
                 .collect::<Result<Vec<_>, _>>()?;
-            extract_resource::encode_palette(&decoded, &groups).map_err(|e| e.to_string())?
+            extract_resource::encode_palette(decoded, &groups).map_err(|e| e.to_string())?
+        }
+        "golden-sun-arena-lz" => {
+            let tokens = plan.get("tokens").map(parse_general_tokens).transpose()?;
+            let final_flags = plan
+                .get("final_flags")
+                .map(|value| number(value, "final_flags"))
+                .transpose()?
+                .unwrap_or(0);
+            extract_resource::encode_arena(
+                decoded,
+                tokens.as_deref(),
+                u8::try_from(final_flags).map_err(|_| "final flags exceed a byte")?,
+                arena,
+            )
+            .map_err(|e| e.to_string())?
         }
         _ => return Err("unsupported custom-LZ plan".to_string()),
     };
@@ -1341,11 +1976,76 @@ fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>,
     if let Some(lookahead) = plan.get("lookahead") {
         built.extend(parse_hex_text(lookahead, "lookahead")?);
     }
+    if let Some(expected) = plan.get("encoded_size") {
+        let expected = number(expected, "encoded_size")?;
+        if built.len() != expected {
+            return Err(format!(
+                "encoded stream is 0x{:x} bytes, plan expects 0x{expected:x}",
+                built.len()
+            ));
+        }
+    }
+    Ok(built)
+}
+/// Build an LZ entry: its components are concatenated and encoded with the
+/// selected plan. A plan array describes a sequence of streams: stream `i`
+/// encodes the components with atlas frame `i` selected, is padded to
+/// `stream_alignment`, and may read the streams before it as its arena.
+fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>, Value), String> {
+    let plan_name = json_string(&entry["plan"], "general-LZ plan")?;
+    let plan_path = root_path(root, plan_name)?;
+    let plan_document = json(&plan_path)?;
+    let plan = select_plan(&plan_document, entry)?;
+    let components = entry
+        .get("components")
+        .or_else(|| plan_document.get("components"))
+        .and_then(Value::as_array)
+        .ok_or("general-LZ components are not an array".to_string())?;
+    let sequence = plan.is_array();
+    let plans: Vec<&Value> = match plan.as_array() {
+        Some(streams) => streams.iter().collect(),
+        None => vec![plan],
+    };
+    let alignment = entry
+        .get("stream_alignment")
+        .map(|value| number(value, "stream alignment"))
+        .transpose()?
+        .unwrap_or(1)
+        .max(1);
+    let mut built = Vec::new();
+    let mut sources = Vec::new();
+    let mut reports = Vec::new();
+    let mut decoded_total = 0;
+    let mut tokens = 0;
+    for (index, plan) in plans.iter().enumerate() {
+        let mut decoded = Vec::new();
+        for component in components {
+            let mut component = component.clone();
+            if sequence {
+                component["frame"] = Value::from(index);
+            }
+            let result = build_component(root, &component)?;
+            if index == 0 {
+                sources.push(json_string(&component["source"], "component source")?.to_string());
+                sources.extend(result.sources.iter().skip(1).cloned());
+                reports.push(serde_json::json!({"kind": component.get("kind"), "source": component.get("source"), "details": result.details}));
+            }
+            decoded.extend(result.data);
+        }
+        decoded_total += decoded.len();
+        tokens += plan
+            .get("tokens")
+            .and_then(Value::as_array)
+            .map_or(0, Vec::len);
+        let mut stream = encode_lz_stream(&decoded, plan, &built)?;
+        stream.resize(stream.len().div_ceil(alignment) * alignment, 0);
+        built.extend(stream);
+    }
     sources.push(plan_name.to_string());
     Ok((
         built,
         dedup_sources(sources),
-        serde_json::json!({"decoded_size": decoded.len(), "tokens": plan.get("tokens").and_then(Value::as_array).map_or(0, Vec::len), "components": reports}),
+        serde_json::json!({"decoded_size": decoded_total, "tokens": tokens, "streams": plans.len(), "components": reports}),
     ))
 }
 fn closure_self_test() -> Result<String, String> {
@@ -1376,282 +2076,17 @@ fn closure_self_test() -> Result<String, String> {
         "self-test=ok optional=skipped present_regions={present_regions} provenance=verified"
     ))
 }
-#[derive(Debug, Clone)]
-struct BuiltMapContainer {
-    id: usize,
-    address: usize,
-    kind: String,
-    data: Vec<u8>,
-    sources: Vec<PathBuf>,
-}
-fn map_container_id(value: &Value) -> Result<usize, String> {
-    let value = json_string(value, "map resource id")?;
-    let value = value
-        .strip_prefix("0x")
-        .or_else(|| value.strip_prefix("0X"))
-        .unwrap_or(value);
-    if value.is_empty() {
-        return Err("map resource id must be hexadecimal".into());
-    }
-    usize::from_str_radix(value, 16).map_err(|_| "map resource id must be hexadecimal".into())
-}
-fn map_container_source_base(index_path: &Path, source: &str) -> Result<PathBuf, String> {
-    if source.is_empty()
-        || source.contains('\\')
-        || Path::new(source).is_absolute()
-        || source
-            .split('/')
-            .any(|part| part.is_empty() || part == "." || part == "..")
-    {
-        return Err("map container source must be a relative path below its index".into());
-    }
-    Ok(index_path
-        .parent()
-        .ok_or("map container index has no parent")?
-        .join(source))
-}
-fn map_container_required_slots(index: &Value) -> Result<BTreeSet<usize>, String> {
-    let mut slots = BTreeSet::new();
-    for value in series_values(index, "required_components")? {
-        let slot = number(value, "required map component")?;
-        if slot >= 6 || !slots.insert(slot) {
-            return Err("required map components must be unique slots from 0 through 5".into());
-        }
-    }
-    if !slots.contains(&0) {
-        return Err("map container must require component slot 0".into());
-    }
-    Ok(slots)
-}
-fn map_container_offsets(
-    header: &[u8],
-    size: usize,
-    required_slots: &BTreeSet<usize>,
-) -> Result<[usize; 6], String> {
-    if header.len() != MAP_CONTAINER_HEADER_SIZE || size <= MAP_CONTAINER_HEADER_SIZE {
-        return Err("invalid map container extent".into());
-    }
-    let mut offsets = [0usize; 6];
-    for (slot, offset) in offsets.iter_mut().enumerate() {
-        let start = 0x24 + slot * 4;
-        *offset = u32::from_le_bytes(header[start..start + 4].try_into().unwrap()) as usize;
-    }
-    if required_slots.iter().any(|slot| offsets[*slot] == 0) {
-        return Err("map container lacks a required component".into());
-    }
-    if offsets[0] != MAP_CONTAINER_HEADER_SIZE {
-        return Err("map container has an invalid header offset".into());
-    }
-    let mut previous = MAP_CONTAINER_HEADER_SIZE - 1;
-    for offset in offsets {
-        if offset == 0 {
-            continue;
-        }
-        if offset <= previous || offset >= size {
-            return Err("map container component offsets are not ordered".into());
-        }
-        previous = offset;
-    }
-    Ok(offsets)
-}
-fn map_container_component_end(
-    offsets: &[usize; 6],
-    slot: usize,
-    size: usize,
-) -> Result<usize, String> {
-    if offsets[slot] == 0 {
-        return Err("map component is absent".into());
-    }
-    Ok(offsets[slot + 1..]
-        .iter()
-        .copied()
-        .find(|offset| *offset != 0)
-        .unwrap_or(size))
-}
-fn map_container_component(
-    source_base: &Path,
-    header_path: &Path,
-    slot: usize,
-) -> Result<(Vec<u8>, Vec<PathBuf>), String> {
-    let (data, sources) = match slot {
-        0 => (
-            map_container_components::build_metatiles(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        1 => (
-            map_container_components::build_descriptors(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        2 => {
-            let plan_path =
-                PathBuf::from(format!("{}_grid_grid.kind1.json", source_base.display()));
-            let plan = json(&plan_path)?;
-            let mut sources = vec![plan_path];
-            if plan.get("atlas_layers").and_then(Value::as_u64) == Some(5) {
-                sources.push(PathBuf::from(format!(
-                    "{}_grid_layers.png",
-                    source_base.display()
-                )));
-            } else {
-                for name in [
-                    "value_low.png",
-                    "value_high.png",
-                    "attribute_a.png",
-                    "attribute_b.png",
-                    "sentinels.png",
-                ] {
-                    sources.push(PathBuf::from(format!(
-                        "{}_grid_{name}",
-                        source_base.display()
-                    )));
-                }
-            }
-            (kind1_map_grid::build_grid(&plan, source_base)?, sources)
-        }
-        3 => (
-            map_container_components::build_queues(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        4 => (
-            map_container_components::build_blend_animation(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        5 => (
-            map_container_components::build_sparse(header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        _ => return Err("unsupported map component slot".into()),
-    };
-    Ok((data, sources))
-}
-fn build_map_container_series(
-    root: &Path,
-    index_name: &str,
-) -> Result<Vec<BuiltMapContainer>, String> {
-    let index_path = root_path(root, index_name)?;
-    let index = json(&index_path)?;
-    if index.get("format") != Some(&Value::from(1))
-        || index.get("kind").and_then(Value::as_str) != Some("golden-sun-map-container-series")
-    {
-        return Err("unsupported map container index".into());
-    }
-    let asset_kind = json_string(
-        index
-            .get("asset_kind")
-            .ok_or("map container asset kind is missing")?,
-        "map container asset kind",
-    )?
-    .to_string();
-    if !matches!(
-        asset_kind.as_str(),
-        "golden-sun-tokushu-map" | "golden-sun-chiiki-map"
-    ) {
-        return Err("unsupported map container asset kind".into());
-    }
-    let required_slots = map_container_required_slots(&index)?;
-    let mut ids = BTreeSet::new();
-    let mut addresses = BTreeSet::new();
-    let mut built = Vec::new();
-    for resource in series_values(&index, "resources")? {
-        let resource = resource
-            .as_object()
-            .ok_or("map container resource must be an object")?;
-        let id = map_container_id(resource.get("id").ok_or("map resource id is missing")?)?;
-        let address = number(
-            resource
-                .get("address")
-                .ok_or("map resource address is missing")?,
-            "map resource address",
-        )?;
-        let size = number(
-            resource.get("size").ok_or("map resource size is missing")?,
-            "map resource size",
-        )?;
-        let source_name = json_string(
-            resource
-                .get("source")
-                .ok_or("map resource source is missing")?,
-            "map resource source",
-        )?;
-        if !ids.insert(id) || !addresses.insert(address) {
-            return Err("map container index repeats a resource id or address".into());
-        }
-        let source_base = map_container_source_base(&index_path, source_name)?;
-        let header_path = PathBuf::from(format!("{}.json", source_base.display()));
-        let header = map_container_components::build_header(&header_path, None)?;
-        let offsets = map_container_offsets(&header, size, &required_slots)?;
-        let mut data = header;
-        let mut sources = vec![header_path.clone()];
-        for slot in 0..6 {
-            if offsets[slot] == 0 {
-                continue;
-            }
-            let end = map_container_component_end(&offsets, slot, size)?;
-            let (component, component_sources) =
-                map_container_component(&source_base, &header_path, slot)
-                    .map_err(|error| format!("map component {slot}: {error}"))?;
-            if component.len() != end - offsets[slot] {
-                return Err(format!("map component {slot} has the wrong size"));
-            }
-            data.extend(component);
-            sources.extend(component_sources);
-        }
-        if data.len() != size {
-            return Err(format!("map resource {id:03x} has the wrong rebuilt size"));
-        }
-        built.push(BuiltMapContainer {
-            id,
-            address,
-            kind: asset_kind.clone(),
-            data,
-            sources,
-        });
-    }
-    Ok(built)
-}
 struct Context {
     root: PathBuf,
-    paths: AssetPaths,
-    maps: HashMap<String, Vec<BuiltMapContainer>>,
-    music: HashMap<String, Vec<BuiltMusicResidual>>,
-    battle: HashMap<String, Vec<battle_assets::BuiltBattleResource>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
             root: root.to_path_buf(),
-            paths: AssetPaths::new(root),
-            maps: HashMap::new(),
-            music: HashMap::new(),
-            battle: HashMap::new(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
-    }
-    fn map_series(&mut self, index_name: &str) -> Result<Vec<BuiltMapContainer>, String> {
-        if !self.maps.contains_key(index_name) {
-            let built = build_map_container_series(&self.root, index_name)?;
-            self.maps.insert(index_name.to_string(), built);
-        }
-        Ok(self.maps[index_name].clone())
-    }
-    fn music_residuals(&mut self, index_name: &str) -> Result<Vec<BuiltMusicResidual>, String> {
-        if !self.music.contains_key(index_name) {
-            let built = build_music_residuals(&self.source(index_name)?)?;
-            self.music.insert(index_name.to_string(), built);
-        }
-        Ok(self.music[index_name].clone())
-    }
-    fn battle_resources(
-        &mut self,
-        index_name: &str,
-    ) -> Result<&[battle_assets::BuiltBattleResource], String> {
-        if !self.battle.contains_key(index_name) {
-            let built = battle_assets::build_resource_series(&self.source(index_name)?)?;
-            self.battle.insert(index_name.to_string(), built);
-        }
-        Ok(&self.battle[index_name])
     }
 }
 #[test]
@@ -1660,48 +2095,11 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
     let root = directory.path();
     fs::write(root.join("index.json"), b"{}").unwrap();
     let mut ctx = Context::new(root);
-    for kind in [
-        "golden-sun-sentou-gamen-data",
-        "golden-sun-kind2-resource",
-        "golden-sun-general-lz",
-        "golden-sun-tokushu-map",
-        "golden-sun-chiiki-map",
-        "golden-sun-music-residual",
-    ] {
+    for kind in ["golden-sun-general-lz"] {
         let entry =
             serde_json::json!({"kind":kind,"source":"index.json","address":0,"resource_id":0});
         assert!(build_entry(&mut ctx, &entry).is_err(), "{kind}");
     }
-    assert!(ctx.maps.is_empty());
-    assert!(ctx.music.is_empty());
-    assert!(ctx.battle_resources("index.json").is_err());
-    assert!(ctx.battle.is_empty());
-}
-
-#[test]
-fn map_container_offsets_preserve_required_component_extents() {
-    let mut header = vec![0u8; MAP_CONTAINER_HEADER_SIZE];
-    for (slot, offset) in [0x3c_u32, 0x80, 0xa0, 0x120, 0, 0x140]
-        .into_iter()
-        .enumerate()
-    {
-        header[0x24 + slot * 4..0x28 + slot * 4].copy_from_slice(&offset.to_le_bytes());
-    }
-    let required = [0, 1, 2, 3, 5].into_iter().collect();
-    let offsets = map_container_offsets(&header, 0x148, &required).unwrap();
-    assert_eq!(
-        map_container_component_end(&offsets, 3, 0x148).unwrap(),
-        0x140
-    );
-    assert_eq!(
-        map_container_component_end(&offsets, 5, 0x148).unwrap(),
-        0x148
-    );
-
-    let mut missing = header.clone();
-    missing[0x24 + 3 * 4..0x28 + 3 * 4].fill(0);
-    assert!(map_container_offsets(&missing, 0x148, &required).is_err());
-    assert!(map_container_offsets(&[0u8; MAP_CONTAINER_HEADER_SIZE], 0x100, &required).is_err());
 }
 
 #[test]
@@ -1717,126 +2115,11 @@ fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
     entry["value"] = Value::from(-1);
     assert!(build_entry(&mut context, &entry).is_err());
 }
-#[test]
-fn battle_resources_report_the_actual_palette_and_build_once() {
-    let directory = tempfile::tempdir().unwrap();
-    let root = directory.path();
-    let png = |pixels: &[u8], width: u32, height: u32, format: PixelFormat| {
-        let mut image = Vec::new();
-        let mut encoder = png::Encoder::new(&mut image, width, height);
-        match format {
-            PixelFormat::Rgba => {
-                encoder.set_color(png::ColorType::Rgba);
-                encoder.set_depth(png::BitDepth::Eight);
-            }
-            PixelFormat::Indexed8 => {
-                encoder.set_color(png::ColorType::Indexed);
-                encoder.set_depth(png::BitDepth::Eight);
-                encoder.set_palette(
-                    (0..256)
-                        .flat_map(|value| [value as u8; 3])
-                        .collect::<Vec<_>>(),
-                );
-            }
-        }
-        encoder
-            .write_header()
-            .unwrap()
-            .write_image_data(pixels)
-            .unwrap();
-        image
-    };
-    let mut pixels = vec![0; 512];
-    pixels[..4].copy_from_slice(b"TEST");
-    for (name, pixels, width, height, format) in [
-        ("battle_naiyou.png", pixels, 64, 8, PixelFormat::Indexed8),
-        (
-            "battle_custom.rgba.png",
-            vec![248, 0, 0, 255],
-            1,
-            1,
-            PixelFormat::Rgba,
-        ),
-    ] {
-        fs::write(
-            root.join(name),
-            png(&pixels, width as u32, height as u32, format),
-        )
-        .unwrap();
-    }
-    let stream = extract_resource::encode_general_prefill(
-        b"TEST",
-        &[extract_resource::GeneralToken::Literal(4)],
-        0x1000,
-        1,
-    )
-    .unwrap();
-    let size = stream.len() + 2;
-    let mut plan = serde_json::json!({
-        "kind":"golden-sun-sentou-resource", "source_size":size, "resource_boundary_size":size,
-        "image":{"source":"naiyou.png","encoding":"naiyou","canvas_size":512},
-        "stream":{"decoded_size":4,"codec":"general-lz-prefill","tokens":[["l",4]]},
-        "prefix_palette":{"source":"custom.rgba.png"}
-    });
-    fs::write(root.join("battle_stream.json"), plan.to_string()).unwrap();
-    fs::write(
-        root.join("index.json"),
-        serde_json::json!({"resources":[{
-            "address":"0x08001000","size":size,"source":"battle_stream.json"
-        }]})
-        .to_string(),
-    )
-    .unwrap();
-    let mut ctx = Context::new(root);
-    let mut entries = Vec::new();
-    expand_series(
-        &mut ctx,
-        &serde_json::json!({"series":[{
-            "kind":"golden-sun-sentou-resource-series","index":"index.json"
-        }]}),
-        &mut entries,
-    )
-    .unwrap();
-    assert_eq!(entries[0]["source"], "battle_naiyou.png");
-    plan["prefix_palette"]["source"] = Value::Null;
-    fs::write(root.join("battle_stream.json"), plan.to_string()).unwrap();
-    let (data, sources, report) = build_entry(&mut ctx, &entries[0]).unwrap();
-    assert_eq!(data, [&[31, 0][..], &stream].concat());
-    assert_eq!(report["source_bytes"], size);
-    assert_eq!(
-        sources,
-        [
-            "index.json",
-            "battle_stream.json",
-            "battle_naiyou.png",
-            "battle_custom.rgba.png"
-        ]
-    );
-    assert!(Context::new(root)
-        .battle_resources("index.json")
-        .unwrap_err()
-        .contains("palette source must be a string"));
-}
 fn expand_series(
     ctx: &mut Context,
     manifest: &Value,
     entries: &mut Vec<Value>,
 ) -> Result<(), String> {
-    let mut grid_addresses: HashMap<String, usize> = HashMap::new();
-    if let Some(series) = manifest.get("series").and_then(Value::as_array) {
-        for item in series {
-            if item.get("kind").and_then(Value::as_str) != Some("golden-sun-map-grid-series") {
-                continue;
-            }
-            for grid in series_values(item, "grids")? {
-                let tuple = grid.as_array().ok_or("grid tuple is malformed")?;
-                grid_addresses.insert(
-                    json_string(&tuple[0], "grid id")?.to_ascii_lowercase(),
-                    number(&tuple[1], "grid address")?,
-                );
-            }
-        }
-    }
     let series_list = manifest
         .get("series")
         .and_then(Value::as_array)
@@ -1880,26 +2163,19 @@ fn expand_series(
                     }));
                 }
             }
-            "golden-sun-zero-skip-sprite-series" => {
-                let palette = json_string(&series["palette"], "palette")?;
+            "golden-sun-general-lz-series" => {
                 for resource in series_values(series, "resources")? {
-                    let name =
-                        json_string(&resource["id"], "sprite resource id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let name = json_string(&resource["id"], "resource id")?.to_ascii_lowercase();
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({
                         "address": resource.get("address"),
                         "size": resource.get("size"),
                         "kind": "golden-sun-general-lz",
                         "plan": format!("{directory}.json"),
-                        "plan_section": "compression",
-                        "components": [{
-                            "kind": "zero-skip-sprite-archive",
-                            "size": resource.get("decoded_size"),
-                            "source": directory,
-                            "plan": format!("{directory}.json"),
-                            "plan_section": "archive",
-                            "palette": palette
-                        }]
+                        "plan_section": "compression"
                     }));
                 }
             }
@@ -1915,7 +2191,10 @@ fn expand_series(
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("charblock family is malformed")?;
                     let name = json_string(&tuple[0], "charblock family id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({
                         "address": tuple[1],
                         "size": tuple[2],
@@ -1962,7 +2241,10 @@ fn expand_series(
             "golden-sun-standalone-palette-series" => {
                 for palette in series_values(series, "palettes")? {
                     let name = json_string(&palette["id"], "palette id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({
                         "address":palette.get("address"),"size":palette.get("size"),
                         "kind":"golden-sun-general-lz","plan":format!("{directory}.json"),"plan_section":"palette",
@@ -1973,14 +2255,20 @@ fn expand_series(
             "golden-sun-color-table-series" => {
                 for resource in series_values(series, "resources")? {
                     let name = json_string(&resource["id"], "color table id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"gba-palette-rgba","source":format!("{directory}_color_table.rgba.png")}));
                 }
             }
             "golden-sun-standalone-tile-series" => {
                 for resource in series_values(series, "resources")? {
                     let name = json_string(&resource["id"], "tile id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-lz","plan":format!("{directory}_tiles.kind2.json"),"components":[{"kind":"gba-4bpp-tiles","size":"0x4000","source":format!("{directory}_tiles.4bpp.png")}] }));
                 }
             }
@@ -2002,97 +2290,80 @@ fn expand_series(
                         .push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
             }
-            "golden-sun-map-grid-series" => {
-                for grid in series_values(series, "grids")? {
-                    let tuple = grid.as_array().ok_or("grid tuple malformed")?;
-                    let name = json_string(&tuple[0], "grid id")?.to_ascii_lowercase();
-                    let directory = format!("games/gs1/assets/maps/map_{name}");
-                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-kind1-grid","source":directory,"plan":format!("{directory}_grid_grid.kind1.json")}));
-                }
-            }
             "golden-sun-map-component-series" => {
+                // A family is [id, container address, header size, [slot,
+                // address, size]...]: the container header is a typed table
+                // whose offset words must agree with the listed components,
+                // and each slot is a general-LZ stream or typed table whose
+                // plan and values live in the family's JSON document.
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
                     let directory = format!("games/gs1/assets/maps/map_{name}");
+                    let source = format!("{directory}.json");
+                    let document = json(&ctx.source(&source)?)?;
                     let container = number(&tuple[1], "map container")?;
-                    let mut offsets = serde_json::Map::new();
+                    let mut offsets = [0usize; 6];
+                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"typed-table","source":source,"pointer":"/header"}));
                     for raw in &tuple[3..] {
                         let item = raw.as_array().ok_or("map component malformed")?;
                         let slot = number(&item[0], "map component slot")?;
                         let address = number(&item[1], "map component address")?;
-                        offsets.insert(slot.to_string(), Value::from(address - container));
-                    }
-                    offsets.insert(
-                        "2".to_string(),
-                        Value::from(
-                            grid_addresses
-                                .get(&name)
-                                .ok_or_else(|| format!("missing grid address for {name}"))?
-                                - container,
-                        ),
-                    );
-                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-map-container-header","source":format!("{directory}.json"),"offsets_check":Value::Object(offsets)}));
-                    for raw in &tuple[3..] {
-                        let item = raw.as_array().ok_or("map component malformed")?;
-                        let slot = number(&item[0], "map component slot")?;
-                        let component_kind = match slot {
-                            0 => "golden-sun-map-metatiles",
-                            1 => "golden-sun-map-descriptors",
-                            3 => "golden-sun-map-animation-queues",
-                            4 => "golden-sun-map-blend-animation",
-                            5 => "golden-sun-map-sparse-cells",
-                            _ => return Err("unsupported map component slot".into()),
+                        if slot >= 6 || offsets[slot] != 0 || address <= container {
+                            return Err(
+                                "map component slots must be unique and follow the header".into()
+                            );
+                        }
+                        offsets[slot] = address - container;
+                        let (section, component) = match slot {
+                            0 => (
+                                "metatiles",
+                                serde_json::json!({"kind":"gba-tilemap16","pointer":"/metatiles/tilemap","delta_mode":document["metatiles"]["transform_mode"]}),
+                            ),
+                            1 => (
+                                "descriptors",
+                                serde_json::json!({"kind":"u8-array","pointer":"/descriptors/records"}),
+                            ),
+                            2 => {
+                                let plan = format!("{directory}_grid.lz.json");
+                                let decoded_size =
+                                    json(&ctx.source(&plan)?)?["decoded_size"].clone();
+                                entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"golden-sun-general-lz","plan":plan,"components":[{"kind":"indexed-bytes","size":decoded_size,"source":format!("{directory}_grid_content.png")}]}));
+                                continue;
+                            }
+                            3 => (
+                                "animation_queues",
+                                serde_json::json!({"kind":"le-u16-array","pointer":"/animation_queues/words"}),
+                            ),
+                            4 => (
+                                "blend_animation",
+                                serde_json::json!({"kind":"le-u16-array","pointer":"/blend_animation/words"}),
+                            ),
+                            _ => {
+                                entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"typed-table","source":source,"pointer":"/sparse_cells"}));
+                                continue;
+                            }
                         };
-                        let source = format!("{directory}.json");
-                        entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":component_kind,"source":source}));
+                        let mut component = component;
+                        component["source"] = Value::from(source.as_str());
+                        component["size"] = document[section]["decoded_size"].clone();
+                        entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"golden-sun-general-lz","plan":source,"plan_section":section,"components":[component]}));
                     }
-                }
-            }
-            "golden-sun-sentou-resource-series" => {
-                let index_name = json_string(&series["index"], "sentou index")?;
-                let root = ctx.root.clone();
-                for resource in ctx.battle_resources(index_name)? {
-                    let image = root_relative(&root, &resource.sources[1])?;
-                    entries.push(serde_json::json!({"address":hex_address(resource.address),"size":resource.data.len(),"kind":"golden-sun-sentou-resource","source":image,"index":index_name}));
-                }
-            }
-            "golden-sun-kind2-resource-series" => {
-                let index_name = json_string(&series["index"], "kind2 index")?;
-                let index_path = ctx.source(index_name)?;
-                let index = json(&index_path)?;
-                for resource in series_values(&index, "resources")? {
-                    let plan_name = index_path
-                        .parent()
-                        .unwrap_or(Path::new("."))
-                        .join(json_string(&resource["source"], "kind2 plan")?);
-                    let plan = json(&plan_name)?;
-                    let image = format!(
-                        "{}{}",
-                        plan_name.to_string_lossy().replace("stream.json", ""),
-                        json_string(&plan["image"]["source"], "kind2 image")?
-                    );
-                    entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-resource","source":root_relative(&ctx.root, &ctx.source(&image)?)?,"index":index_name}));
-                }
-            }
-            "golden-sun-map-container-series" => {
-                let index_name = json_string(&series["index"], "map index")?;
-                for resource in ctx.map_series(index_name)? {
-                    entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":resource.kind,"source":index_name,"resource_id":resource.id}));
-                }
-            }
-            "golden-sun-encounter-data-series" => {
-                let directory = json_string(&series["directory"], "encounter directory")?;
-                for region in encounter_data::build_encounter_regions(
-                    &ctx.source(directory)?.to_string_lossy(),
-                )? {
-                    entries.push(serde_json::json!({"address":region.address,"size":region.size,"kind":"golden-sun-encounter-data","source":Path::new(directory).join(region.source).to_string_lossy().replace('\\', "/")}));
-                }
-            }
-            "golden-sun-music-residuals" => {
-                let index_name = json_string(&series["index"], "music residual index")?;
-                for region in ctx.music_residuals(index_name)? {
-                    entries.push(serde_json::json!({"address":region.address,"size":region.data.len(),"kind":"golden-sun-music-residual","source":index_name}));
+                    let declared = document["header"]["segments"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .find(|segment| segment["name"] == "component_offsets")
+                        .and_then(|segment| segment["values"].as_array())
+                        .ok_or_else(|| format!("map {name} header lacks component offsets"))?
+                        .iter()
+                        .map(|value| number(value, "component offset"))
+                        .collect::<Result<Vec<_>, _>>()?;
+                    if declared != offsets {
+                        return Err(format!(
+                            "map {name} header offsets differ from its listed components"
+                        ));
+                    }
                 }
             }
             "golden-sun-sound-sequence-series" => {
@@ -2277,11 +2548,7 @@ fn expand_closure_packages(
     manifest: &Value,
     entries: &mut Vec<Value>,
 ) -> Result<(), String> {
-    let supported = [
-        "golden-sun-asset-fragment",
-        "golden-sun-kind2-resource-series",
-        "golden-sun-pcm-wave-series",
-    ];
+    let supported = ["golden-sun-asset-fragment", "golden-sun-pcm-wave-series"];
     for package in manifest
         .get("closure_packages")
         .and_then(Value::as_array)
@@ -2398,19 +2665,75 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 serde_json::json!({"standard_header_bytes":built.len()}),
             ))
         }
-        "golden-sun-executable-gap-data" => {
-            let built =
-                executable_gap_sources::build_section(&source_path(entry_source)?, address as u64)?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"representation":"typed mixed-region table","region_address":hex_address(address)}),
-            ))
-        }
-        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" | "gba-palette-rgba"
-        | "indexed-bytes" | "u8-array" | "s8-array" | "be-s16-array" => {
+        "gba-4bpp-tiles"
+        | "gba-8bpp-tiles"
+        | "1bpp-tiles"
+        | "gba-palette"
+        | "gba-palette-rgba"
+        | "indexed-bytes"
+        | "u8-array"
+        | "s8-array"
+        | "be-s16-array"
+        | "le-u16-array"
+        | "le-u32-array"
+        | "rgba-bytes"
+        | "zero-skip-bytes"
+        | "mtf4-bytes"
+        | "golden-sun-thumb-overlay" => {
             let result = build_component(&ctx.root, entry)?;
             Ok((result.data, result.sources, result.details))
+        }
+        "components" => {
+            let (parts, mut sources) = if let Some(parts) = entry.get("components") {
+                (parts.clone(), Vec::new())
+            } else {
+                let pointer = entry
+                    .get("pointer")
+                    .map(|pointer| json_string(pointer, "components pointer"))
+                    .transpose()?
+                    .unwrap_or("/components");
+                let document = json(&source_path(entry_source)?)?;
+                let parts = document
+                    .pointer(pointer)
+                    .ok_or("components pointer is absent")?
+                    .clone();
+                (parts, vec![entry_source.to_string()])
+            };
+            let mut built = Vec::new();
+            let mut reports = Vec::new();
+            for part in parts.as_array().ok_or("components are not an array")? {
+                let mut part = part.clone();
+                let offset = address + built.len();
+                if let Some(declared) = part.get("address") {
+                    if number(declared, "component address")? != offset {
+                        return Err(format!(
+                            "component at 0x{offset:08x} declares address {declared}"
+                        ));
+                    }
+                }
+                part["address"] = Value::from(offset);
+                let size = number(&part["size"], "component size")?;
+                let (data, part_sources, _) = build_entry(ctx, &part).map_err(|error| {
+                    format!(
+                        "component at 0x{offset:08x} ({}): {error}",
+                        part["kind"].as_str().unwrap_or("unknown")
+                    )
+                })?;
+                if data.len() != size {
+                    return Err(format!(
+                        "component at 0x{offset:08x}: built 0x{:x}, expected 0x{size:x}",
+                        data.len()
+                    ));
+                }
+                built.extend(data);
+                sources.extend(part_sources);
+                reports.push(serde_json::json!({"kind": part.get("kind"), "address": hex_address(offset), "size": size}));
+            }
+            Ok((
+                built,
+                dedup_sources(sources),
+                serde_json::json!({"components": reports}),
+            ))
         }
         "golden-sun-general-lz" => {
             let (built, sources, report) = build_general_lz(&ctx.root, entry)?;
@@ -2442,89 +2765,62 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                     return Err("tag-2 plan layout differs from manifest".to_string());
                 }
             }
+            if plan["format"] != 1 || plan["codec"] != "golden-sun-kind2-lz" {
+                return Err("unsupported tag-2 plan".to_string());
+            }
             if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
                 return Err("decoded tag-2 components do not match plan".to_string());
             }
-            let built = kind2_resources::encode_kind2_plan(&decoded, &plan_path, plan_section)?;
+            let tokens = plan["tokens"]
+                .as_array()
+                .ok_or("tag-2 tokens must be an array")?
+                .iter()
+                .map(|token| {
+                    // A bare width is a literal; `[distance, length]` a copy.
+                    if token.is_u64() {
+                        return Ok(extract_resource::Mtf4LzToken::Literal {
+                            width: number(token, "tag-2 literal width")? as u32,
+                        });
+                    }
+                    match token.as_array().map(Vec::as_slice) {
+                        Some([distance, length]) => Ok(extract_resource::Mtf4LzToken::Copy {
+                            length: number(length, "tag-2 copy length")? as u32,
+                            distance: number(distance, "tag-2 copy distance")? as u32,
+                        }),
+                        _ => Err("invalid tag-2 token".to_string()),
+                    }
+                })
+                .collect::<Result<Vec<_>, _>>()?;
+            let mut built = extract_resource::encode_mtf4_lz(&decoded, &tokens)
+                .map_err(|error| error.to_string())?;
+            let lookahead = hex_bytes(
+                plan.get("lookahead").unwrap_or(&Value::from("")),
+                "tag-2 lookahead",
+            )?;
+            if lookahead.len() > 3 {
+                return Err("tag-2 lookahead is too long".to_string());
+            }
+            built.extend(lookahead);
+            if let Some(size) = plan.get("encoded_size") {
+                if number(size, "encoded_size")? != built.len() {
+                    return Err("tag-2 stream has the wrong encoded size".to_string());
+                }
+            }
             sources.push(plan_name.to_string());
             Ok((
                 built,
                 dedup_sources(sources),
-                serde_json::json!({"decoded_size":decoded.len(),"tokens":plan["stream"]["tokens"].as_array().map_or(0,Vec::len),"layout":plan.get("layout").cloned().unwrap_or(Value::Null),"components":reports}),
-            ))
-        }
-        "golden-sun-kind1-grid" => {
-            let plan_name = json_string(&entry["plan"], "grid plan")?;
-            let directory = source_path(entry_source)?;
-            let plan = json(&source_path(plan_name)?)?;
-            let built = kind1_map_grid::build_grid(&plan, &directory)?;
-            let nested = vec![format!("{entry_source}_grid_layers.png")];
-            Ok((
-                built,
-                std::iter::once(plan_name.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"decoded_size":number(&plan["decoded_size"], "decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"planes":4}),
-            ))
-        }
-        "golden-sun-map-metatiles"
-        | "golden-sun-map-descriptors"
-        | "golden-sun-map-animation-queues"
-        | "golden-sun-map-blend-animation" => {
-            let component = match kind {
-                "golden-sun-map-metatiles" => "metatiles",
-                "golden-sun-map-descriptors" => "descriptors",
-                "golden-sun-map-animation-queues" => "queues",
-                _ => "blend",
-            };
-            let plan_name = entry
-                .get("plan")
-                .map(|plan| json_string(plan, "map component plan"))
-                .transpose()?
-                .unwrap_or(entry_source);
-            let build = match component {
-                "metatiles" => map_container_components::build_metatiles,
-                "descriptors" => map_container_components::build_descriptors,
-                "queues" => map_container_components::build_queues,
-                _ => map_container_components::build_blend_animation,
-            };
-            let built = build(&source_path(entry_source)?, &source_path(plan_name)?)?;
-            let document = json(&source_path(plan_name)?)?;
-            let section = match component {
-                "queues" => "animation_queues",
-                "blend" => "blend_animation",
-                other => other,
-            };
-            let document = document.get(section).unwrap_or(&document);
-            let plan = document.get("compression").unwrap_or(&document);
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"decoded_size":number(&plan["decoded_size"], "decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"component":plan.get("component")}),
-            ))
-        }
-        "golden-sun-map-container-header" => {
-            let built = map_container_components::build_header(&source_path(entry_source)?, None)?;
-            let document = json(&source_path(entry_source)?)?;
-            let document = document.get("header").unwrap_or(&document);
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"records":document["records"].as_array().map_or(0,Vec::len),"component_offsets":document.get("component_offsets")}),
-            ))
-        }
-        "golden-sun-map-sparse-cells" => {
-            let built = map_container_components::build_sparse(&source_path(entry_source)?)?;
-            let document = json(&source_path(entry_source)?)?;
-            let document = document.get("sparse_cells").unwrap_or(&document);
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"records":document["records"].as_array().map_or(0,Vec::len),"alignment_zeros":document.get("alignment_zeros")}),
+                serde_json::json!({"decoded_size":decoded.len(),"tokens":tokens.len(),"layout":plan.get("layout").cloned().unwrap_or(Value::Null),"components":reports}),
             ))
         }
         "record-table" | "pointer-table" => {
             let document = json(&source_path(entry_source)?)?;
+            let document = match entry.get("pointer") {
+                Some(pointer) => document
+                    .pointer(json_string(pointer, "table pointer")?)
+                    .ok_or("table pointer is absent")?,
+                None => &document,
+            };
             if document["format"] != 1 || document["kind"] != kind {
                 return Err("table identity differs".into());
             }
@@ -2542,13 +2838,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 vec![entry_source.to_string()],
                 serde_json::json!({"representation":kind}),
             ))
-        }
-        "golden-sun-sound-table" => {
-            let source =
-                music::read_sound_table_source(&source_path(entry_source)?.to_string_lossy())?;
-            let (built, report) = music::build_sound_table(&source)?;
-            let report = serde_json::json!({"entries":report.entries,"unique_headers":report.unique_headers});
-            Ok((built, vec![entry_source.to_string()], report))
         }
         _ => build_entry_native_tail(ctx, entry, kind, address, entry_source),
     }
@@ -3599,7 +3888,16 @@ fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
         "tracks":sidecar_tracks
     }))
     .map_err(|error| error.to_string())?;
-    add_midi_build_directive(&add_midi_conductor_text(&midi, &skeleton)?, &sidecar)
+    if midi
+        .windows(MIDI_BUILD_DIRECTIVE.len())
+        .any(|part| part == MIDI_BUILD_DIRECTIVE)
+    {
+        return Err("MIDI already has build directives".to_string());
+    }
+    let mut directive = MIDI_BUILD_DIRECTIVE.to_vec();
+    directive.extend(sidecar);
+    let midi = append_conductor_meta(&midi, 0x01, &skeleton).map_err(|error| error.to_string())?;
+    append_conductor_meta(&midi, 0x7f, &directive).map_err(|error| error.to_string())
 }
 
 fn build_pcm_record(entry: &Value, wav: &[u8]) -> Result<(Vec<u8>, Value), String> {
@@ -3708,6 +4006,95 @@ fn pcm_records_preserve_exact_headers_loops_and_padding() {
     assert!(build_pcm_record(&bad, &wav).is_err());
 }
 
+/// Message markup is printable ASCII text and `{"command": name}` atoms from
+/// the source's command table, each with an `argument` when the table says so;
+/// `null` is an empty message.
+fn message_symbols(
+    message: &Value,
+    commands: &serde_json::Map<String, Value>,
+    symbol_count: usize,
+) -> Result<Option<Vec<u16>>, String> {
+    let atoms = match message {
+        Value::Null => return Ok(None),
+        Value::String(_) => std::slice::from_ref(message),
+        Value::Array(atoms) => atoms.as_slice(),
+        _ => return Err("message must be text, atoms, or null".into()),
+    };
+    let symbol = |value: usize| {
+        u16::try_from(value)
+            .ok()
+            .filter(|_| value < symbol_count)
+            .ok_or("message symbol is outside the alphabet")
+    };
+    let mut symbols = Vec::new();
+    for atom in atoms {
+        if let Some(text) = atom.as_str() {
+            for character in text.chars() {
+                if !character.is_ascii_graphic() && character != ' ' {
+                    return Err("message text must be printable ASCII".into());
+                }
+                symbols.push(symbol(character as usize)?);
+            }
+            continue;
+        }
+        let atom = atom
+            .as_object()
+            .ok_or("message atom must be text or a command")?;
+        let name = json_string(&atom["command"], "message command")?;
+        let command = commands
+            .get(name)
+            .ok_or_else(|| format!("unknown message command {name}"))?;
+        let opcode = number(&command["opcode"], "command opcode")?;
+        if !(1..32).contains(&opcode) {
+            return Err(format!(
+                "message command {name} opcode is not a control code"
+            ));
+        }
+        symbols.push(symbol(opcode)?);
+        let takes_argument = command["argument"] == true;
+        if atom.len() != 1 + usize::from(takes_argument)
+            || takes_argument != atom.contains_key("argument")
+        {
+            return Err(format!("message command {name} argument differs"));
+        }
+        if takes_argument {
+            symbols.push(symbol(number(&atom["argument"], "command argument")?)?);
+        }
+    }
+    Ok(Some(symbols))
+}
+
+#[test]
+fn message_markup_follows_the_declared_command_table() {
+    let commands = serde_json::json!({"end":{"opcode":2},"color":{"opcode":8,"argument":true}});
+    let commands = commands.as_object().unwrap();
+    assert_eq!(message_symbols(&Value::Null, commands, 123).unwrap(), None);
+    assert_eq!(
+        message_symbols(&serde_json::json!("Hi"), commands, 123).unwrap(),
+        Some(vec![72, 105])
+    );
+    assert_eq!(
+        message_symbols(
+            &serde_json::json!([{"command":"color","argument":5},"z",{"command":"end"}]),
+            commands,
+            123
+        )
+        .unwrap(),
+        Some(vec![8, 5, 122, 2])
+    );
+    for bad in [
+        serde_json::json!("{"),
+        serde_json::json!("\u{e9}"),
+        serde_json::json!([{"command":"missing"}]),
+        serde_json::json!([{"command":"end","argument":1}]),
+        serde_json::json!([{"command":"color"}]),
+        serde_json::json!([{"command":"color","argument":123}]),
+        serde_json::json!([7]),
+    ] {
+        assert!(message_symbols(&bad, commands, 123).is_err(), "{bad}");
+    }
+}
+
 fn build_entry_native_tail(
     ctx: &mut Context,
     entry: &Value,
@@ -3719,7 +4106,19 @@ fn build_entry_native_tail(
     match kind {
         "golden-sun-sound-sequence" => {
             let source = source_path(entry_source)?;
-            let (built, report) = build_midi_sequence(&ctx.root, &source)?;
+            let (built, report) = if entry_source.ends_with(".json") {
+                let document = json(&source)?;
+                let document = if let Some(pointer) = entry.get("pointer") {
+                    document
+                        .pointer(json_string(pointer, "sequence pointer")?)
+                        .ok_or("sequence pointer is absent")?
+                } else {
+                    &document
+                };
+                build_sequence_source(document)?
+            } else {
+                build_midi_sequence(&ctx.root, &source)?
+            };
             if report["base"].as_u64() != Some(address as u64) {
                 return Err("sound-sequence base differs from manifest".to_string());
             }
@@ -3749,143 +4148,53 @@ fn build_entry_native_tail(
                 serde_json::json!({"width":entry["width"],"height":entry["height"],"palette_entries":entry["palette_entries"]}),
             ))
         }
-        "golden-sun-static-sprite-series" => {
-            let index = json(&source_path(entry_source)?)?;
-            let palette_name = json_string(&entry["palette"], "palette")?;
-            let built = static_sprite_series::build_series(
-                &index,
-                &source_path(entry_source)?,
-                &source_path(palette_name)?,
-            )
-            .map_err(|error| error.to_string())?;
-            let directory = Path::new(entry_source)
-                .parent()
-                .unwrap_or(Path::new("."))
-                .to_string_lossy()
-                .replace('\\', "/");
-            let mut sources = vec![entry_source.to_string(), palette_name.to_string()];
-            for item in series_values(&index, "packages")? {
-                let plan_name = ctx.paths.character_bank_path(
-                    ctx.root.join(&directory),
-                    json_string(&item["plan"], "static sprite plan")?,
+        "golden-sun-message-archive" => {
+            let document = json(&source_path(entry_source)?)?;
+            if document["format"] != 2
+                || document["kind"] != kind
+                || number(&document["address"], "archive address")? != address
+            {
+                return Err("message archive identity differs".into());
+            }
+            let symbol_count = number(&document["symbol_count"], "message symbol count")?;
+            let bank_size = number(&document["bank_size"], "message bank size")?;
+            let commands = document["commands"]
+                .as_object()
+                .ok_or("message commands missing")?;
+            let source_banks = document["banks"]
+                .as_array()
+                .ok_or("message banks missing")?;
+            let mut banks = Vec::new();
+            for (index, bank) in source_banks.iter().enumerate() {
+                let messages = bank.as_array().ok_or("message bank is not an array")?;
+                if messages.len() > bank_size
+                    || (messages.len() < bank_size && index + 1 != source_banks.len())
+                {
+                    return Err("message bank size differs".into());
+                }
+                banks.push(
+                    messages
+                        .iter()
+                        .map(|message| message_symbols(message, commands, symbol_count))
+                        .collect::<Result<Vec<_>, _>>()?,
                 );
-                let plan_rel = root_relative(&ctx.root, &plan_name)?;
-                sources.push(plan_rel.clone());
-                let plan = json(&plan_name)?;
-                let prefix = plan_rel.replace("bank.json", "");
-                if let Some(atlases) = plan.get("atlases").and_then(Value::as_array) {
-                    for atlas in atlases {
-                        sources.push(format!(
-                            "{}{}",
-                            prefix,
-                            json_string(&atlas["source"], "static atlas source")?
-                        ));
-                    }
-                } else if plan.get("atlas_columns").is_some() {
-                    sources.push(format!(
-                        "{directory}/{}",
-                        json_string(&item["source"], "static package source")?
-                    ));
-                } else if let Some(frames) = plan.get("frames").and_then(Value::as_array) {
-                    for frame in 0..frames.len() {
-                        sources.push(format!("{prefix}koma_{frame:03}.png"));
-                    }
+            }
+            let base = u32::try_from(address).map_err(|_| "archive address exceeds u32")?;
+            let archive = import_asset::encode_huffman_archive(base, symbol_count, &banks)
+                .map_err(|error| error.to_string())?;
+            for (key, actual) in [
+                ("offset_table_address", archive.offset_table),
+                ("message_address", archive.messages),
+                ("directory_address", archive.directory),
+            ] {
+                if number(&document[key], key)? != actual as usize {
+                    return Err(format!("{key} differs from the built archive"));
                 }
             }
             Ok((
-                built,
-                dedup_sources(sources),
-                serde_json::json!({"packages":index["packages"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-runtime-support-data" => {
-            let size = number(&entry["size"], "runtime support size")?;
-            let text = fs::read_to_string(source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            let source = runtime_support_data::parse_runtime_support_source(&text)
-                .map_err(|error| error.to_string())?;
-            let built = runtime_support_data::build_runtime_support_component(
-                &source,
-                address as u32,
-                size,
-            )
-            .map_err(|error| error.to_string())?;
-            Ok((
-                built.clone(),
+                archive.bytes,
                 vec![entry_source.to_string()],
-                serde_json::json!({"component_address":entry.get("address"),"bytes":built.len()}),
-            ))
-        }
-        "golden-sun-character-catalog" => {
-            let document = json(&source_path(entry_source)?)?;
-            if number(&document["address"], "character catalog address")? != address
-                || number(&document["size"], "character catalog size")?
-                    != number(&entry["size"], "catalog size")?
-            {
-                return Err("character-catalog extent differs from manifest".to_string());
-            }
-            let built = character_catalog::build_character_catalog(&document)
-                .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"descriptors":document["descriptors"].as_object().map_or(0,|value| value.len()),"animation_groups":document["animation_groups"].as_array().map_or(0,Vec::len),"frame_directories":document["frame_directories"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-message-archive" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = message_archive::cli::build_message_archive(&document)?;
-            let messages = document["banks"].as_array().map_or(0, |banks| {
-                banks
-                    .iter()
-                    .map(|bank| bank.as_array().map_or(0, Vec::len))
-                    .sum()
-            });
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"banks":document["banks"].as_array().map_or(0,Vec::len),"messages":messages}),
-            ))
-        }
-        "golden-sun-localization-font" => {
-            let document = json(&source_path(entry_source)?)?;
-            let mut nested = Vec::new();
-            for item in document["direct_tiles"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .chain(document["mtf_banks"].as_array().into_iter().flatten())
-            {
-                nested.push(format!(
-                    "games/gs1/assets/{}",
-                    flat_asset_name(json_string(&item["source"], "font source")?)
-                ));
-            }
-            nested.push(format!(
-                "games/gs1/assets/{}",
-                flat_asset_name(json_string(
-                    &document["packed_images"]["source"],
-                    "packed image source"
-                )?)
-            ));
-            nested.push(format!(
-                "games/gs1/assets/{}",
-                flat_asset_name(json_string(&document["font"]["source"], "font source")?)
-            ));
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            let built = localization_font::build_localization_font(
-                &document,
-                &ctx.root.join("games/gs1/assets"),
-            )
-            .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                std::iter::once(entry_source.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"mtf_images":document["mtf_banks"].as_array().map_or(0,|banks|banks.iter().map(|b|number(&b["images"],"images").unwrap_or(0)).sum()),"packed_images":document["packed_images"]["images"],"font_glyphs":document["font"]["glyphs"],"article_entries":document["articles"]["entries"].as_array().map_or(0,Vec::len)}),
+                serde_json::json!({"banks":banks.len(),"messages":banks.iter().map(Vec::len).sum::<usize>(),"contexts":archive.contexts}),
             ))
         }
         "typed-table" => {
@@ -3901,344 +4210,24 @@ fn build_entry_native_tail(
                 return Err("table address differs from manifest".into());
             }
             let mut document = document.clone();
-            let symbols = SourcePaths::load(&ctx.root)?;
-            resolve_table_symbols(&mut document, &symbols)?;
+            let has_symbols = document["segments"]
+                .as_array()
+                .is_some_and(|segments| segments.iter().any(|s| s["element"] == "thumb-pointer"));
+            if has_symbols {
+                let symbols = SourcePaths::load(&ctx.root)?;
+                resolve_table_symbols(&mut document, &symbols)?;
+            }
+            let mut sources = vec![entry_source.to_string()];
+            sources.extend(resolve_table_bitmaps(&mut document, &ctx.root)?);
             let built = typed_table(&document)?;
             Ok((
                 built,
-                vec![entry_source.to_string()],
+                sources,
                 serde_json::json!({"segments":document["segments"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-battle-effect-data" => {
-            let document = json(&source_path(entry_source)?)?;
-            let mut nested = Vec::new();
-            for item in document["direct_graphics"].as_array().into_iter().flatten() {
-                nested.push(format!(
-                    "games/gs1/assets/{}",
-                    flat_asset_name(json_string(item, "battle graphic source")?)
-                ));
-            }
-            for item in std::iter::once(&document["halfword_graphic"]).chain(
-                document["palette_graphics"]
-                    .as_array()
-                    .into_iter()
-                    .flatten(),
-            ) {
-                nested.push(format!(
-                    "games/gs1/assets/{}",
-                    flat_asset_name(json_string(&item["source"], "battle graphic source")?)
-                ));
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            let built =
-                battle_assets::build_effect_data(&document, &ctx.root.join("games/gs1/assets"))?;
-            Ok((
-                built,
-                std::iter::once(entry_source.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"graphics":document["direct_graphics"].as_array().map_or(0,Vec::len)+1+document["palette_graphics"].as_array().map_or(0,Vec::len),"weighted_records":document["weighted_records"].as_array().map_or(0,Vec::len),"typed_tables":document["typed_tables"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-sentou-gamen-data" => {
-            let (built, sources) = battle_assets::build_screen(&source_path(entry_source)?)?;
-            if address != battle_assets::SCREEN_ADDRESS || built.len() != battle_assets::SCREEN_SIZE
-            {
-                return Err(
-                    "battle-screen package differs from canonical manifest extent".to_string(),
-                );
-            }
-            Ok((
-                built,
-                root_sources(&ctx.root, &sources)?,
-                serde_json::json!({"source_bytes":battle_assets::SCREEN_SIZE,"graphics":5,"display_glyph_cells":14,"derived_zero_bytes":3308}),
-            ))
-        }
-        "golden-sun-sentou-hyouji" => {
-            let document = json(&source_path(entry_source)?)?;
-            let prefix = entry_source.replace("index.json", "");
-            let mut nested = vec![entry_source.to_string()];
-            for value in [
-                &document["sources"]["kihon"],
-                &document["sources"]["koma"]["source"],
-                &document["sources"]["haichi"],
-                &document["sources"]["hosei"],
-                &document["sources"]["gauge"]["source"],
-            ] {
-                nested.push(format!(
-                    "{prefix}{}",
-                    json_string(value, "battle display source")?
-                ));
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            let built = battle_assets::build_display(&source_path(entry_source)?)?;
-            Ok((
-                built.clone(),
-                nested,
-                serde_json::json!({"source_bytes":built.len(),"typed_tables":3,"atlases":2}),
-            ))
-        }
-        "golden-sun-sentou-kouka-runtime" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = battle_assets::build_effect_runtime(&source_path(entry_source)?)?;
-            if address != battle_assets::EFFECT_RUNTIME_ADDRESS
-                || built.len() != battle_assets::EFFECT_RUNTIME_SIZE
-                || built.len() != number(&entry["size"], "effect runtime size")?
-            {
-                return Err("battle-effect runtime differs from manifest".to_string());
-            }
-            let directory = Path::new(entry_source).parent().unwrap_or(Path::new("."));
-            let mut nested = vec![entry_source.to_string()];
-            if let Some(sources) = document["sources"].as_object() {
-                for value in sources.values() {
-                    nested.push(
-                        directory
-                            .join(json_string(value, "effect source")?)
-                            .to_string_lossy()
-                            .replace('\\', "/"),
-                    );
-                }
-            }
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            Ok((
-                built.clone(),
-                dedup_sources(nested),
-                serde_json::json!({"source_bytes":built.len(),"callback_slots":407,"derived_zero_bytes":4012}),
-            ))
-        }
-        "golden-sun-staff-roll" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = staff_roll::build_staff_roll(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            if address != STAFF_ROLL_ADDRESS || built.len() != STAFF_ROLL_SIZE {
-                return Err("staff-roll package differs from canonical manifest extent".to_string());
-            }
-            let font_path = child_path(
-                &source_path(entry_source)?,
-                json_string(&document["font"]["source"], "staff font source")?,
-            );
-            let nested = vec![
-                entry_source.to_string(),
-                root_relative(&ctx.root, &font_path)?,
-            ];
-            for name in &nested {
-                ctx.source(name)?;
-            }
-            Ok((
-                built.clone(),
-                dedup_sources(nested),
-                serde_json::json!({"source_bytes":built.len(),"preload_slots":33,"strings":110,"line_entries":339,"font_glyphs":96}),
-            ))
-        }
-        "golden-sun-sentou-resource" => {
-            let index_name = json_string(&entry["index"], "sentou resource index")?;
-            let resource = ctx
-                .battle_resources(index_name)?
-                .iter()
-                .find(|item| item.address == address)
-                .cloned()
-                .ok_or("sentou resource address is absent from its index")?;
-            let mut nested = vec![index_name.to_string()];
-            nested.extend(root_sources(&ctx.root, &resource.sources)?);
-            let report = serde_json::json!({"source_bytes":resource.data.len()});
-            Ok((resource.data, dedup_sources(nested), report))
-        }
-        "golden-sun-kind2-resource" => {
-            let plan_path = source_path(entry_source)?;
-            let plan = json(&plan_path)?;
-            let built = kind2_resources::build_kind2_resource(&plan_path)
-                .map_err(|error| error.to_string())?;
-            let mut sources = vec![entry["index"].as_str().unwrap_or(entry_source).to_string()];
-            sources.extend(root_sources(&ctx.root, &built.sources)?);
-            let size = built.data.len();
-            Ok((
-                built.data,
-                dedup_sources(sources),
-                serde_json::json!({"resource_id":plan.get("resource_id"),"source_bytes":size}),
-            ))
-        }
-        "golden-sun-tokushu-map" | "golden-sun-chiiki-map" => {
-            let index_name = entry_source;
-            let id = number(&entry["resource_id"], "map resource id")?;
-            let resource = ctx
-                .map_series(index_name)?
-                .into_iter()
-                .find(|item| item.id == id)
-                .ok_or("map resource differs from manifest")?;
-            if resource.kind != kind {
-                return Err("map resource kind differs from manifest".into());
-            }
-            let data_len = resource.data.len();
-            let mut sources = vec![index_name.to_string()];
-            sources.extend(root_sources(&ctx.root, &resource.sources)?);
-            Ok((
-                resource.data,
-                sources,
-                serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
-            ))
-        }
-        "golden-sun-music-residual" => {
-            let address = number(&entry["address"], "music residual address")?;
-            let region = ctx
-                .music_residuals(entry_source)?
-                .into_iter()
-                .find(|item| item.address as usize == address)
-                .ok_or("music residual differs from manifest")?;
-            let data_len = region.data.len();
-            Ok((
-                region.data,
-                vec![entry_source.to_string()],
-                serde_json::json!({"source_bytes":data_len}),
-            ))
-        }
-        "golden-sun-audio-engine-data" => {
-            let source = source_path(entry_source)?;
-            let result = build_audio_engine_data(&source).map_err(|error| error.to_string())?;
-            if result.address != address {
-                return Err("audio-engine data differs from canonical manifest extent".to_string());
-            }
-            let mut nested = vec![entry_source.to_string()];
-            for path in result.sources.iter().skip(1) {
-                nested.push(root_relative(&ctx.root, path)?);
-            }
-            Ok((
-                result.data.clone(),
-                dedup_sources(nested),
-                serde_json::json!({"source_bytes":result.data.len(),"tone_records":225,"waveforms":18,"players":8,"derived_alignment_bytes":2}),
-            ))
-        }
-        "golden-sun-encounter-data" => {
-            let source = source_path(entry_source)?;
-            let size = number(&entry["size"], "encounter size")?;
-            let directory = source.parent().unwrap_or(Path::new("."));
-            let region = encounter_data::build_encounter_regions(&directory.to_string_lossy())?
-                .into_iter()
-                .find(|region| {
-                    region.address == address
-                        && region.size == size
-                        && source.file_name().is_some_and(|name| name == region.source)
-                })
-                .ok_or("encounter-data region differs from manifest")?;
-            let report = serde_json::json!({"source_bytes":region.data.len()});
-            Ok((region.data, vec![entry_source.to_string()], report))
-        }
-        "golden-sun-namae-nyuuryoku" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = namae_nyuuryoku::build_namae_nyuuryoku(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"resource_ids":document["resource_ids"].as_array().map_or(0,Vec::len),"tilemap_entries":document["tilemap"]["tiles"].as_array().map_or(0,|rows|rows.iter().map(|row|row.as_array().map_or(0,Vec::len)).sum())}),
-            ))
-        }
-        "golden-sun-gameplay-databases" => {
-            let document = json(&source_path(entry_source)?)?;
-            let built = resource_5::build_gameplay_databases(&document)?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"items":document["items"].as_array().map_or(0,Vec::len),"abilities":document["abilities"].as_array().map_or(0,Vec::len),"combatants":document["combatants"].as_array().map_or(0,Vec::len),"classes":document["classes"].as_array().map_or(0,Vec::len),"djinn":document["djinn"].as_array().map_or(0,Vec::len),"alignment_bytes":document.get("alignment_bytes")}),
-            ))
-        }
-        "golden-sun-simple-resource" => {
-            let id = number(&entry["resource_id"], "simple resource id")?;
-            let sources = match id {
-                2 => vec![
-                    "games/gs1/assets/data/resource_2_build_stamp.stamp".to_string(),
-                    "games/gs1/assets/data/resource_2_layout.json".to_string(),
-                ],
-                0x13 => vec!["games/gs1/assets/graphics/resource_13_font.4bpp.png".to_string()],
-                0x14 => vec!["games/gs1/assets/graphics/resource_14_words.rgba.png".to_string()],
-                0x18 => vec![
-                    "games/gs1/assets/graphics/resource_18_screen.8bpp.png".to_string(),
-                    "games/gs1/assets/graphics/resource_18_screen.lz.json".to_string(),
-                ],
-                _ => return Err("unsupported simple resource".to_string()),
-            };
-            for name in &sources {
-                ctx.source(name)?;
-            }
-            let built = simple_resources::build_simple_resource(
-                id as u32,
-                &ctx.root.join("games/gs1/assets"),
-            )
-            .map_err(|error| error.to_string())?;
-            Ok((built, sources, serde_json::json!({"resource_id":id})))
-        }
-        "golden-sun-title-lz" => {
-            let document = json(&source_path(entry_source)?)?;
-            let title_prefix = entry_source.replace("container.json", "");
-            let mut sources = vec![entry_source.to_string()];
-            for component in document["components"].as_array().into_iter().flatten() {
-                let relative = format!(
-                    "{}{}",
-                    title_prefix,
-                    json_string(&component["source"], "title component source")?.replace('/', "_")
-                );
-                ctx.source(&relative)?;
-                sources.push(relative);
-            }
-            let built = title_resources::build_title_resource(&source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                sources,
-                serde_json::json!({"resource_id":document["resource_id"],"decoded_size":document["decoded_size"],"components":document["components"].as_array().map_or(0,Vec::len),"fallback_tail":if document["tail"]["policy"].as_str()==Some("fallback"){number(&document["tail"]["size"],"tail size")?}else{0}}),
-            ))
-        }
-        "golden-sun-offset-palette-lz" => {
-            let plan_name = json_string(&entry["plan"], "offset palette plan")?;
-            let plan = json(&source_path(plan_name)?)?;
-            let built =
-                build_offset_archive(&source_path(plan_name)?, &source_path(entry_source)?)?;
-            Ok((
-                built,
-                vec![entry_source.to_string(), plan_name.to_string()],
-                serde_json::json!({"streams":plan["streams"].as_array().map_or(0,Vec::len),"chunk_width":plan["chunk_width"],"chunk_height":plan["chunk_height"]}),
-            ))
-        }
-        "golden-sun-mtf4-archive" => {
-            let plan_name = json_string(&entry["plan"], "F0 plan")?;
-            let plan = json(&source_path(plan_name)?)?;
-            let built = f0_archive::build_archive(&plan, &source_path(entry_source)?)
-                .map_err(|error| error.to_string())?;
-            let images = number(&plan["images"], "F0 images")?;
-            let sources = if plan.get("atlas_columns").is_some() {
-                vec![
-                    plan_name.to_string(),
-                    format!("{entry_source}_images.rgba.png"),
-                ]
-            } else {
-                std::iter::once(plan_name.to_string())
-                    .chain(
-                        (0..images)
-                            .map(|index| format!("{entry_source}_images_image_{index:02}.png")),
-                    )
-                    .collect()
-            };
-            Ok((
-                built,
-                sources,
-                serde_json::json!({"entries":plan["entries"].as_array().map_or(0,Vec::len),"images":images}),
             ))
         }
         _ => Err(format!("unsupported asset kind: {kind}")),
     }
-}
-fn flat_asset_name(name: &str) -> String {
-    let parts: Vec<&str> = name.split('/').collect();
-    if parts.len() <= 2 {
-        return name.to_string();
-    }
-    format!("{}/{}", parts[0], parts[1..].join("_"))
 }
 struct BuildOptions {
     rom: String,
@@ -4630,7 +4619,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         let document: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
         if document["kind"] != "integer-regions"
             || document["format"] != 1
-            || !canonical_json::is_canonical_json_text(&text, &document)
+            || !compiler_core::canonical_json::is_canonical_json_text(&text, &document)
         {
             return Err("integer package source differs".into());
         }

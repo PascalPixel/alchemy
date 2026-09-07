@@ -1,4 +1,3 @@
-use std::collections::BTreeMap;
 pub fn bl_displacement(pair: &[u8]) -> Option<i32> {
     let high = u16::from_le_bytes(pair.get(..2)?.try_into().ok()?);
     let low = u16::from_le_bytes(pair.get(2..4)?.try_into().ok()?);
@@ -148,45 +147,9 @@ pub fn standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
         })
         .collect()
 }
-fn bind(map: &mut BTreeMap<u32, u32>, key: u32, value: u32) -> Result<(), ()> {
-    match map.insert(key, value) {
-        Some(previous) if previous != value => Err(()),
-        _ => Ok(()),
-    }
-}
-/// Require a bijective donor-to-target mapping over matching reference
-/// topology, and render it as `donor>target` pairs.
-pub fn reference_map(donor: &[Reference], target: &[Reference]) -> Result<String, &'static str> {
-    if donor.len() != target.len()
-        || donor
-            .iter()
-            .zip(target)
-            .any(|(donor, target)| (donor.0, donor.1, donor.2) != (target.0, target.1, target.2))
-    {
-        return Err("topology");
-    }
-    let mut forward = BTreeMap::new();
-    let mut reverse = BTreeMap::new();
-    let memory = |value: u32| matches!(value >> 24, 0x02..=0x0e);
-    for (donor, target) in donor.iter().zip(target) {
-        match donor.0 {
-            b'L' if donor.3 == target.3 && !memory(donor.3) => continue,
-            b'L' if !(memory(donor.3) && memory(target.3)) => return Err("unmapped-literal"),
-            b'B' if !(memory(donor.3) && memory(target.3)) => return Err("unmapped-call"),
-            _ => {}
-        }
-        bind(&mut forward, donor.3, target.3).map_err(|_| "conflicting-donor")?;
-        bind(&mut reverse, target.3, donor.3).map_err(|_| "conflicting-target")?;
-    }
-    Ok(forward
-        .iter()
-        .map(|(donor, target)| format!("{donor:08x}>{target:08x}"))
-        .collect::<Vec<_>>()
-        .join(","))
-}
 #[cfg(test)]
 mod tests {
-    use super::{reference_map, relocation_info, Reference};
+    use super::relocation_info;
     #[test]
     fn masks_thumb_calls_and_reached_literals() {
         let bytes = [0x00, 0xf0, 0x00, 0xf8, 0x00, 0x48, 0x70, 0x47, 1, 2, 3, 4];
@@ -200,34 +163,5 @@ mod tests {
         assert_eq!(references.len(), 2);
         assert_eq!(references[0].3, 0x0200_0004);
         assert_eq!(references[1].3, 0x0403_0201);
-    }
-    #[test]
-    fn requires_bijective_reference_mapping() {
-        let reference = |at, value| Reference(b'B', at, at, value);
-        let rejects = |donor: &[Reference], target: &[Reference], error| {
-            assert_eq!(reference_map(donor, target), Err(error));
-        };
-        let donor = [reference(0, 0x0200_0010), reference(4, 0x0200_0010)];
-        rejects(
-            &donor,
-            &[reference(0, 0x0200_0020), reference(4, 0x0200_0030)],
-            "conflicting-donor",
-        );
-        rejects(
-            &[reference(0, 0x0200_0010), reference(4, 0x0200_0030)],
-            &[reference(0, 0x0200_0020), reference(4, 0x0200_0020)],
-            "conflicting-target",
-        );
-        rejects(
-            &[reference(0, 0x0200_0010)],
-            &[reference(2, 0x0200_0020)],
-            "topology",
-        );
-        let literal = Reference(b'L', 0, 4, 42);
-        rejects(
-            &[literal],
-            &[Reference(literal.0, literal.1, literal.2, 43)],
-            "unmapped-literal",
-        );
     }
 }

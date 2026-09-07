@@ -1,23 +1,9 @@
-# Bare `[workspace]`: this crate is an independently buildable workspace
-# rather than a member of the aggregate tools workspace. `version.workspace`
-# and `edition.workspace` therefore cannot resolve, so both keys are literal.
-[workspace]
-
 [package]
 name = "diff"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Sibling crates, not third-party dependencies.
-#   candidate-compiler       -> verifyCandidate, ROM_BASE, CandidateCompilerConfiguration,
-#                      CandidateCompilerFamily, and the JavaScript-semantics
-#                      modules (`jsnum`, `jsstring`, `json`) the port leans on.
-#                      `diff.ts` imports the first four from
-#                      the shared candidate compiler directly.
-#   compiler-core -> `root()` (the repository root) and `CompilerTarget`.
-# The compiler tables are reached transitively through `candidate-compiler`;
-# `diff.ts` never imports them by name.
 candidate-compiler = { path = "../candidate-compiler" }
 serde_json = { version = "1", features = ["preserve_order"] }
 serde = { version = "1", features = ["derive"] }
@@ -25,7 +11,6 @@ regex = "1"
 sha2 = "0.10"
 compiler-core = { path = "../compiler-core" }
 disassemble = { path = "../disassemble" }
-cache-entry = { path = "../cache-entry" }
 
 [dev-dependencies]
 tempfile = "3"

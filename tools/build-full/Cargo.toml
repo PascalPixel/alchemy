@@ -1,14 +1,10 @@
-[workspace]
-
 [package]
 name = "build-full"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-canonical-json = { path = "../canonical-json" }
 compiler-core = { path = "../compiler-core" }
-decomp-targets = { path = "../decomp-targets" }
 serde_json = { version = "1", features = ["preserve_order"] }
 
 [lib]

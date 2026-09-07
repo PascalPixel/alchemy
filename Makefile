@@ -1,6 +1,6 @@
 # Alchemy's build and contributor workflows share the alchemy executable.
-# Game-specific asset codecs are libraries behind `alchemy assets`; they are not public
-# commands and are not copied when starting another decompilation project.
+# Asset packages are described by data under games/; the shared codecs behind
+# `alchemy build assets` are named for their formats, not for any resource.
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
                  -fno-builtin -nostdinc -ffreestanding \

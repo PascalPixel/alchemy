@@ -411,9 +411,12 @@ tile converter then writes frame order. Keep those layouts in the manifest.
 
 `thumb-pointer` table segments resolve named main-image callbacks from the owner
 register, retain null slots, and encode the Thumb tag. An unregistered target
-remains an explicit aligned numeric address; do not invent an owner or name to
-serialize a pointer. Signed words use `le-s32`. Shared lookup views and consumer
-evidence stay beside their backing values, not in a second layout catalog.
+remains an explicit aligned numeric address (a decimal number or a `0x` string,
+as any table value may be spelled); do not invent an owner or name to serialize
+a pointer. Signed words use `le-s32`. Shared lookup views and consumer evidence
+stay beside their backing values, not in a second layout catalog. Sequence
+streams outside MIDI sources are `golden-sun-sound-sequence` entries whose
+source is the encoder's own `smsh-sequence` JSON document, selected by pointer.
 
 `record-table` describes ordered named integer fields, their radix, common bias
 and encoding; it checks sequential record indices before serializing. `pointer-table`
@@ -474,7 +477,6 @@ libraries are not additional public command surfaces.
 | [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
-| [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [battle-assets](tools/battle-assets/) | Rebuild battle screen, display, effect, and compressed resource packages. |
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
 | [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
@@ -482,8 +484,6 @@ libraries are not additional public command surfaces.
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
 | [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
-| [music](tools/music/) | Extract and verify music data. |
-| [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |

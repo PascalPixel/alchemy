@@ -14,29 +14,31 @@ const SOUND_TYPES: [(&str, &str); 5] = [
     ("Tables", "#8fa4b0"),
     ("Unclassified", UNKNOWN),
 ];
+/// Sound assets are the sequence and PCM kinds plus every table described
+/// under the sound directory (engine data, the sound table, residual headers).
+fn is_sound(tile: &Tile) -> bool {
+    matches!(
+        tile.group.as_deref(),
+        Some("golden-sun-sound-sequence" | "golden-sun-pcm-wave")
+    ) || tile
+        .source
+        .as_deref()
+        .is_some_and(|source| source.starts_with("games/gs1/sound/"))
+}
 fn sound_type(tile: &Tile) -> usize {
     match (tile.group.as_deref(), tile.subgroup.as_deref()) {
         (Some("golden-sun-sound-sequence"), Some("music")) => 0,
         (Some("golden-sun-sound-sequence"), Some("sfx")) => 1,
         (Some("golden-sun-pcm-wave"), _) => 2,
-        (
-            Some(
-                "golden-sun-audio-engine-data"
-                | "golden-sun-sound-table"
-                | "golden-sun-music-residual",
-            ),
-            _,
-        ) => 3,
+        (Some("golden-sun-sound-sequence"), _) => 4,
+        _ if is_sound(tile) => 3,
         _ => 4,
     }
 }
 fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     let kind = tile.group.as_deref().unwrap_or("");
     let source = tile.source.as_deref().unwrap_or("");
-    if kind.contains("sound")
-        || kind.contains("audio")
-        || kind.contains("music")
-        || kind == "golden-sun-pcm-wave"
+    if is_sound(tile) || kind.contains("sound") || kind.contains("audio") || kind.contains("music")
     {
         return SOUND_TYPES[sound_type(tile)];
     }
@@ -387,17 +389,7 @@ fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>)
             if !matches!(tree, "images" | "music") {
                 return true;
             }
-            let sound = matches!(
-                tile.group.as_deref(),
-                Some(
-                    "golden-sun-sound-sequence"
-                        | "golden-sun-sound-table"
-                        | "golden-sun-pcm-wave"
-                        | "golden-sun-audio-engine-data"
-                        | "golden-sun-music-residual"
-                )
-            );
-            sound == (tree == "music")
+            is_sound(tile) == (tree == "music")
         })
         .collect();
     (area, tiles)
@@ -664,14 +656,23 @@ mod tests {
 
     #[test]
     fn graphics_and_sound_partition_assets_by_type_not_label() {
-        for (kind, sound) in [
-            ("golden-sun-sound-sequence", true),
-            ("golden-sun-sound-table", true),
-            ("golden-sun-pcm-wave", true),
-            ("golden-sun-audio-engine-data", true),
-            ("golden-sun-music-residual", true),
-            ("gba-palette", false),
-            ("", false),
+        for (kind, source, sound) in [
+            ("golden-sun-sound-sequence", None, true),
+            ("typed-table", Some("games/gs1/sound/song_table.json"), true),
+            ("golden-sun-pcm-wave", None, true),
+            ("typed-table", Some("games/gs1/sound/engine.json"), true),
+            (
+                "golden-sun-sound-sequence",
+                Some("games/gs1/sound/residuals.json"),
+                true,
+            ),
+            (
+                "typed-table",
+                Some("games/gs1/assets/data/menu.json"),
+                false,
+            ),
+            ("gba-palette", None, false),
+            ("", None, false),
         ] {
             let mut map = CoverageMap {
                 document: Value::Null,
@@ -686,6 +687,7 @@ mod tests {
                         }
                         .into(),
                         group: (!kind.is_empty()).then(|| kind.into()),
+                        source: source.map(String::from),
                         address: Some(0x08182830),
                         bytes: 564,
                         categories: [0, 0, 0, 0, 0, 564],

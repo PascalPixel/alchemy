@@ -535,14 +535,63 @@
     {
       "address": "0x080fb792",
       "size": "0xef2",
-      "kind": "golden-sun-audio-engine-data",
-      "source": "games/gs1/sound/engine.tsv"
+      "kind": "typed-table",
+      "source": "games/gs1/sound/engine.json"
     },
     {
       "address": "0x080fc684",
       "size": "0x9c0",
-      "kind": "golden-sun-sound-table",
-      "source": "games/gs1/sound/song_table.tsv"
+      "kind": "typed-table",
+      "source": "games/gs1/sound/song_table.json"
+    },
+    {
+      "address": "0x080fd044",
+      "size": "0x4",
+      "kind": "typed-table",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/0"
+    },
+    {
+      "address": "0x081652d8",
+      "size": "0x8",
+      "kind": "typed-table",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/1"
+    },
+    {
+      "address": "0x081810b8",
+      "size": "0x8",
+      "kind": "typed-table",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/2"
+    },
+    {
+      "address": "0x081819b0",
+      "size": "0x12",
+      "kind": "golden-sun-sound-sequence",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/3"
+    },
+    {
+      "address": "0x081841f8",
+      "size": "0x8",
+      "kind": "typed-table",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/4"
+    },
+    {
+      "address": "0x08184358",
+      "size": "0x8",
+      "kind": "typed-table",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/5"
+    },
+    {
+      "address": "0x08184698",
+      "size": "0x968",
+      "kind": "typed-table",
+      "source": "games/gs1/sound/residuals.json",
+      "pointer": "/regions/6"
     },
     {
       "address": "0x08185024",
@@ -1045,10 +1094,6 @@
     {
       "kind": "golden-sun-sound-sequence-series",
       "index": "games/gs1/sound/sequences.tsv"
-    },
-    {
-      "kind": "golden-sun-music-residuals",
-      "index": "games/gs1/sound/residuals.tsv"
     },
     {
       "kind": "golden-sun-pcm-wave-series",

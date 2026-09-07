@@ -1,0 +1,265 @@
+{
+  "format": 1,
+  "kind": "sound-residual-package",
+  "note": "Audited GS1 music bytes outside ordinary MIDI sources: track-less headers, the orphan reserve stream and the tail alignment.",
+  "regions": [
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "sound_empty",
+      "address": "0x080fd044",
+      "end": "0x080fd048",
+      "size": 4,
+      "note": "Track-less, bank-less SMSH sequence header selected by every sound-table slot in song_table.json that has no sequence.",
+      "segments": [
+        {
+          "id": "sound_empty",
+          "address": "0x080fd044",
+          "end": "0x080fd048",
+          "element": "record",
+          "stride": 4,
+          "fields": [
+            {
+              "name": "track_count",
+              "element": "u8"
+            },
+            {
+              "name": "block_count",
+              "element": "u8"
+            },
+            {
+              "name": "priority",
+              "element": "u8"
+            },
+            {
+              "name": "reverb",
+              "element": "u8"
+            }
+          ],
+          "records": [
+            {"track_count": 0, "block_count": 0, "priority": 0, "reverb": 0}
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "sound_019",
+      "address": "0x081652d8",
+      "end": "0x081652e0",
+      "size": 8,
+      "note": "Track-less SMSH sequence header selected by sound-table slot 19 in song_table.json.",
+      "segments": [
+        {
+          "id": "sound_019",
+          "address": "0x081652d8",
+          "end": "0x081652e0",
+          "element": "record",
+          "stride": 8,
+          "fields": [
+            {
+              "name": "track_count",
+              "element": "u8"
+            },
+            {
+              "name": "block_count",
+              "element": "u8"
+            },
+            {
+              "name": "priority",
+              "element": "u8"
+            },
+            {
+              "name": "reverb",
+              "element": "u8"
+            },
+            {
+              "name": "tone_bank",
+              "element": "le-u32"
+            }
+          ],
+          "records": [
+            {"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x080fba78"}
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "sound_095",
+      "address": "0x081810b8",
+      "end": "0x081810c0",
+      "size": 8,
+      "note": "Track-less SMSH sequence header selected by sound-table slot 95 in song_table.json.",
+      "segments": [
+        {
+          "id": "sound_095",
+          "address": "0x081810b8",
+          "end": "0x081810c0",
+          "element": "record",
+          "stride": 8,
+          "fields": [
+            {
+              "name": "track_count",
+              "element": "u8"
+            },
+            {
+              "name": "block_count",
+              "element": "u8"
+            },
+            {
+              "name": "priority",
+              "element": "u8"
+            },
+            {
+              "name": "reverb",
+              "element": "u8"
+            },
+            {
+              "name": "tone_bank",
+              "element": "le-u32"
+            }
+          ],
+          "records": [
+            {"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x080fba78"}
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "engine": "smsh-sequence",
+      "id": "orphan_stream_after_item_break",
+      "base": "0x081819b0",
+      "end": "0x081819c2",
+      "note": "Single sequence stream between the header of sound 138 (0x081819a4) and the track of sound 139 (0x081819c2); no header selects it.",
+      "externals": {},
+      "layout": [
+        {
+          "kind": "stream",
+          "label": "orphan_stream_after_item_break",
+          "events": [
+            ["volume", 120],
+            ["key_shift", 0],
+            ["tempo", 30],
+            ["voice", 21],
+            ["note", 1, 61, 127],
+            ["wait", 1],
+            ["note_running", 1, 66],
+            ["wait", 1],
+            ["note", 44, 69],
+            ["wait", 48],
+            ["fine"]
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "sound_288",
+      "address": "0x081841f8",
+      "end": "0x08184200",
+      "size": 8,
+      "note": "Track-less SMSH sequence header selected by sound-table slot 288 in song_table.json.",
+      "segments": [
+        {
+          "id": "sound_288",
+          "address": "0x081841f8",
+          "end": "0x08184200",
+          "element": "record",
+          "stride": 8,
+          "fields": [
+            {
+              "name": "track_count",
+              "element": "u8"
+            },
+            {
+              "name": "block_count",
+              "element": "u8"
+            },
+            {
+              "name": "priority",
+              "element": "u8"
+            },
+            {
+              "name": "reverb",
+              "element": "u8"
+            },
+            {
+              "name": "tone_bank",
+              "element": "le-u32"
+            }
+          ],
+          "records": [
+            {"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x080fc138"}
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "sound_298",
+      "address": "0x08184358",
+      "end": "0x08184360",
+      "size": 8,
+      "note": "Track-less SMSH sequence header selected by sound-table slot 298 in song_table.json.",
+      "segments": [
+        {
+          "id": "sound_298",
+          "address": "0x08184358",
+          "end": "0x08184360",
+          "element": "record",
+          "stride": 8,
+          "fields": [
+            {
+              "name": "track_count",
+              "element": "u8"
+            },
+            {
+              "name": "block_count",
+              "element": "u8"
+            },
+            {
+              "name": "priority",
+              "element": "u8"
+            },
+            {
+              "name": "reverb",
+              "element": "u8"
+            },
+            {
+              "name": "tone_bank",
+              "element": "le-u32"
+            }
+          ],
+          "records": [
+            {"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x080fc138"}
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "tail_alignment",
+      "address": "0x08184698",
+      "end": "0x08185000",
+      "size": 2408,
+      "note": "Zero fill from the last sequence to the 0x1000-aligned character catalog.",
+      "segments": [
+        {
+          "id": "tail_alignment",
+          "address": "0x08184698",
+          "end": "0x08185000",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        }
+      ]
+    }
+  ]
+}

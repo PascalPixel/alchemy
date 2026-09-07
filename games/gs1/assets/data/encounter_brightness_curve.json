@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x080c5c10",
+  "size": 32,
+  "segments": [
+    {
+      "name": "phases",
+      "address": "0x080c5c10",
+      "end": "0x080c5c30",
+      "element": "s8",
+      "stride": 16,
+      "values": [
+        [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        [4, 6, 7, 8, 8, 8, 8, 8, 4, 2, 1, 0, 0, 0, 0, 0]
+      ]
+    }
+  ]
+}

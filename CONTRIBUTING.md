@@ -477,7 +477,6 @@ libraries are not additional public command surfaces.
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [battle-assets](tools/battle-assets/) | Rebuild battle screen, display, effect, and compressed resource packages. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
-| [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
 | [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
 | [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |

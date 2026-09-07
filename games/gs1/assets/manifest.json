@@ -498,6 +498,24 @@
       "source": "games/gs1/assets/graphics/080c5b30.4bpp.png"
     },
     {
+      "address": "0x080c5c10",
+      "size": "0x20",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/encounter_brightness_curve.json"
+    },
+    {
+      "address": "0x080c5c38",
+      "size": "0x1d48",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/encounter_tables.json"
+    },
+    {
+      "address": "0x080c7980",
+      "size": "0x1680",
+      "kind": "byte-fill",
+      "value": 0
+    },
+    {
       "address": "0x080eda78",
       "size": "0x27dc",
       "kind": "golden-sun-sentou-kouka-runtime",
@@ -4074,10 +4092,6 @@
     {
       "kind": "golden-sun-map-container-series",
       "index": "games/gs1/assets/maps/chiiki_index.json"
-    },
-    {
-      "kind": "golden-sun-encounter-data-series",
-      "directory": "games/gs1/assets/data/encounter_data"
     }
   ]
 }

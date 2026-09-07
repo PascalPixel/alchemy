@@ -2208,14 +2208,6 @@ fn expand_series(
                     entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":resource.kind,"source":index_name,"resource_id":resource.id}));
                 }
             }
-            "golden-sun-encounter-data-series" => {
-                let directory = json_string(&series["directory"], "encounter directory")?;
-                for region in encounter_data::build_encounter_regions(
-                    &ctx.source(directory)?.to_string_lossy(),
-                )? {
-                    entries.push(serde_json::json!({"address":region.address,"size":region.size,"kind":"golden-sun-encounter-data","source":Path::new(directory).join(region.source).to_string_lossy().replace('\\', "/")}));
-                }
-            }
             "golden-sun-music-residuals" => {
                 let index_name = json_string(&series["index"], "music residual index")?;
                 for region in ctx.music_residuals(index_name)? {
@@ -4235,21 +4227,6 @@ fn build_entry_native_tail(
                 dedup_sources(nested),
                 serde_json::json!({"source_bytes":result.data.len(),"tone_records":225,"waveforms":18,"players":8,"derived_alignment_bytes":2}),
             ))
-        }
-        "golden-sun-encounter-data" => {
-            let source = source_path(entry_source)?;
-            let size = number(&entry["size"], "encounter size")?;
-            let directory = source.parent().unwrap_or(Path::new("."));
-            let region = encounter_data::build_encounter_regions(&directory.to_string_lossy())?
-                .into_iter()
-                .find(|region| {
-                    region.address == address
-                        && region.size == size
-                        && source.file_name().is_some_and(|name| name == region.source)
-                })
-                .ok_or("encounter-data region differs from manifest")?;
-            let report = serde_json::json!({"source_bytes":region.data.len()});
-            Ok((region.data, vec![entry_source.to_string()], report))
         }
         "golden-sun-namae-nyuuryoku" => {
             let document = json(&source_path(entry_source)?)?;

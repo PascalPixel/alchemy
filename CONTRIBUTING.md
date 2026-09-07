@@ -398,9 +398,14 @@ Byte index tables declare `index_count` and, when required, `permutation: true`
 to check their domain and uniqueness without a game-specific validator.
 
 The same table encoder supports signed little-endian halfwords, byte fills and
-fixed-stride records with named fields. Bounds, uniqueness and terminated-array
-capacity are declared beside those fields, not hard-coded in a game-specific
-crate. A manifest may select a table by JSON pointer within a shared source.
+fixed-stride records with named fields. Bounds, uniqueness, terminated-array
+capacity and zero-padded `capacity` are declared beside those fields, not
+hard-coded in a game-specific crate. A manifest may select a table by JSON
+pointer within a shared source. Integer values may be spelled symbolically: a
+`0x` literal, a constant from the field's or table's `names`, a segment `name`
+for that segment's address, or `name[index]` for the address of its element;
+internal directories and animation tables reference their targets that way
+instead of through a per-package Rust builder.
 Tiled PNG inputs may declare frame dimensions and atlas columns; the ordinary
 tile converter then writes frame order. Keep those layouts in the manifest.
 

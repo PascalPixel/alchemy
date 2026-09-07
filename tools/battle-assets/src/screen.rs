@@ -1,4 +1,4 @@
-//! Native build/verify support for `tools/make/sentou_gamen_data.ts`.
+//! Rebuild the battle-screen package from its maintained assets.
 //!
 //! This crate intentionally has no exporter: the tracked battle-screen JSON
 //! and PNGs are authored assets, while the build and ROM verification paths are
@@ -10,17 +10,18 @@ use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+#[allow(dead_code)]
 pub const ROM_BASE: usize = 0x0800_0000;
-pub const ADDRESS: usize = 0x080a_ea4c;
-pub const END: usize = 0x080b_0000;
-pub const SIZE: usize = END - ADDRESS;
+pub(crate) const ADDRESS: usize = 0x080a_ea4c;
+const END: usize = 0x080b_0000;
+pub(crate) const SIZE: usize = END - ADDRESS;
 #[cfg(test)]
 const DISPLAY_GLYPH_ADDRESS: usize = 0x080a_f20c;
 const MASK_TILE_ADDRESS: usize = 0x080a_f26c;
 const ALIGNMENT_ADDRESS: usize = 0x080a_f314;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Error(pub String);
+pub(crate) struct Error(pub String);
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -28,7 +29,7 @@ impl std::fmt::Display for Error {
     }
 }
 impl std::error::Error for Error {}
-pub type Result<T> = std::result::Result<T, Error>;
+type Result<T> = std::result::Result<T, Error>;
 fn err<T>(message: impl Into<String>) -> Result<T> {
     Err(Error(message.into()))
 }
@@ -354,7 +355,7 @@ fn orders(value: &Value) -> Result<Vec<u8>> {
     Ok(out)
 }
 
-pub fn build_sentou_gamen_data(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
+pub(crate) fn build(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
     let source = source_json(index_path)?;
     let entries = array(
         source.get("graphics").unwrap(),

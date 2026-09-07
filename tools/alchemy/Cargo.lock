@@ -37,7 +37,7 @@ dependencies = [
  "archive-asset",
  "asset-paths",
  "audio-engine-data",
- "battle-effect-data",
+ "battle-assets",
  "build-asm",
  "build-claimed",
  "build-full",
@@ -80,10 +80,6 @@ dependencies = [
  "regex",
  "resource-5",
  "runtime-support-data",
- "sentou-gamen-data",
- "sentou-hyouji",
- "sentou-kouka-runtime",
- "sentou-resources",
  "serde",
  "serde_json",
  "sha1",
@@ -146,9 +142,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
-name = "battle-effect-data"
+name = "battle-assets"
 version = "0.1.0"
 dependencies = [
+ "alignment-tail",
+ "canonical-json",
  "extract-resource",
  "import-asset",
  "serde_json",
@@ -1092,42 +1090,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
-]
-
-[[package]]
-name = "sentou-gamen-data"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "import-asset",
- "serde_json",
-]
-
-[[package]]
-name = "sentou-hyouji"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "import-asset",
- "serde_json",
-]
-
-[[package]]
-name = "sentou-kouka-runtime"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "serde_json",
-]
-
-[[package]]
-name = "sentou-resources"
-version = "0.1.0"
-dependencies = [
- "alignment-tail",
- "extract-resource",
- "import-asset",
- "serde_json",
 ]
 
 [[package]]

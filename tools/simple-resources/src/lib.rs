@@ -29,22 +29,6 @@ fn read(path: &Path) -> Result<Vec<u8>, Error> {
 fn text(path: &Path) -> Result<String, Error> {
     fs::read_to_string(path).map_err(|e| err(format!("{}: {e}", path.display())))
 }
-fn absolute(path: &Path) -> PathBuf {
-    if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        std::env::current_dir().unwrap_or_default().join(path)
-    }
-}
-fn same(left: &Path, right: &Path) -> bool {
-    match (fs::canonicalize(left), fs::canonicalize(right)) {
-        (Ok(a), Ok(b)) => a == b,
-        _ => absolute(left) == absolute(right),
-    }
-}
-pub fn same_paths(left: &Path, right: &Path) -> bool {
-    same(left, right)
-}
 fn json(path: &Path) -> Result<Value, Error> {
     serde_json::from_str(&text(path)?).map_err(|e| err(format!("{}: {e}", path.display())))
 }

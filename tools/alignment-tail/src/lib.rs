@@ -43,26 +43,6 @@ impl std::error::Error for AlignmentTailError {}
 fn fail<T>(message: impl Into<String>) -> Result<T, AlignmentTailError> {
     Err(AlignmentTailError(message.into()))
 }
-pub fn inspect_alignment_tail(
-    data: &[u8],
-    maximum: usize,
-) -> Result<AlignmentTail, AlignmentTailError> {
-    if maximum < 1 {
-        return fail("alignment-tail maximum must be positive");
-    }
-    if data.is_empty() || data.len() > maximum {
-        return fail("alignment tail is outside its bounded extent");
-    }
-    if data.iter().all(|byte| *byte == data[0]) {
-        return Ok(AlignmentTail::Fill {
-            size: data.len(),
-            value: data[0],
-        });
-    }
-    Ok(AlignmentTail::Bytes {
-        values: data.to_vec(),
-    })
-}
 fn exact_keys(
     object: &serde_json::Map<String, Value>,
     keys: &[&str],

@@ -431,64 +431,6 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     })
 }
 
-pub fn canonical_midi_json(report: &MidiReport) -> String {
-    let mut out = format!(
-        "{{\n  \"format\": {},\n  \"tracks\": {},\n  \"ticks_per_quarter\": {},\n  \"events\": ",
-        report.format, report.tracks, report.ticks_per_quarter
-    );
-    if report.events.is_empty() {
-        out.push_str("[]");
-    } else {
-        let events: Vec<String> = report
-            .events
-            .iter()
-            .map(|event| {
-                let mut fields = vec![
-                    format!("\"tick\": {}", event.tick),
-                    format!("\"track\": {}", event.track),
-                    format!("\"order\": {}", event.order),
-                ];
-                match &event.body {
-                    EventBody::Meta { meta, data } => fields.extend([
-                        "\"type\": \"meta\"".into(),
-                        format!("\"meta\": {meta}"),
-                        format!("\"data\": \"{data}\""),
-                    ]),
-                    EventBody::Sysex { status, data } => fields.extend([
-                        "\"type\": \"sysex\"".into(),
-                        format!("\"status\": {status}"),
-                        format!("\"data\": \"{data}\""),
-                    ]),
-                    EventBody::Channel { status, data } => fields.extend([
-                        "\"type\": \"channel\"".into(),
-                        format!("\"status\": {status}"),
-                        format!(
-                            "\"data\": [{}]",
-                            data.iter()
-                                .map(u8::to_string)
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                        ),
-                    ]),
-                }
-                format!(
-                    "    {{\n{}\n    }}",
-                    fields
-                        .into_iter()
-                        .map(|field| format!("      {field}"))
-                        .collect::<Vec<_>>()
-                        .join(",\n")
-                )
-            })
-            .collect();
-        out.push_str("[\n");
-        out.push_str(&events.join(",\n"));
-        out.push_str("\n  ]");
-    }
-    out.push_str("\n}");
-    out
-}
-
 pub fn sorted_json(report: &Report) -> String {
     let mut values: Vec<_> = report.0.iter().collect();
     values.sort_by(|a, b| a.0.cmp(&b.0));

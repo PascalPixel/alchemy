@@ -92,45 +92,87 @@
     },
     {
       "address": "0x08000404",
-      "size": "0x2f8",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/executable_gaps/index.json"
+      "size": "0x98",
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/0/sections/1/records/0/words"
+    },
+    {
+      "address": "0x0800049c",
+      "size": "0x98",
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/0/sections/1/records/1/words"
+    },
+    {
+      "address": "0x08000534",
+      "size": "0x98",
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/0/sections/1/records/2/words"
+    },
+    {
+      "address": "0x080005cc",
+      "size": "0x98",
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/0/sections/1/records/3/words"
+    },
+    {
+      "address": "0x08000664",
+      "size": "0x98",
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/0/sections/1/records/4/words"
     },
     {
       "address": "0x0800731c",
       "size": "0x04",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/executable_gaps/index.json"
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/2/sections/0/values"
     },
     {
       "address": "0x08007320",
       "size": "0x38",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/executable_gaps/index.json"
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/2/sections/1/values"
     },
     {
       "address": "0x08007358",
-      "size": "0x424",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/executable_gaps/index.json"
+      "size": "0x31e",
+      "kind": "le-u16-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/2/sections/2/tables/0/values"
+    },
+    {
+      "address": "0x08007676",
+      "size": "0x106",
+      "kind": "le-u16-array",
+      "source": "games/gs1/asm/executable_gaps/index.json",
+      "pointer": "/gaps/2/sections/2/tables/1/values"
     },
     {
       "address": "0x080b5204",
       "size": "0x08",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/veneer_island_residual/index.json"
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/veneer_island_residual/index.json",
+      "pointer": "/gaps/0/sections/1/values"
     },
     {
       "address": "0x080b5218",
       "size": "0x20",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/veneer_island_residual/index.json"
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/veneer_island_residual/index.json",
+      "pointer": "/gaps/0/sections/3/values"
     },
     {
       "address": "0x080b5238",
       "size": "0x20",
-      "kind": "golden-sun-executable-gap-data",
-      "source": "games/gs1/asm/veneer_island_residual/index.json"
+      "kind": "le-u32-array",
+      "source": "games/gs1/asm/veneer_island_residual/index.json",
+      "pointer": "/gaps/0/sections/4/values"
     },
     {
       "address": "0x083cd090",

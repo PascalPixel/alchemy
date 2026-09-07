@@ -415,6 +415,19 @@ unsigned element, so bit-packed words keep their parts in the source.
 A tile component whose authored canvas exceeds its compressed extent declares
 `canvas_size`; the converter checks the zero tail and truncates.
 
+A `components` region concatenates parts at running addresses; each part is an
+ordinary manifest entry with its own checked `size`, listed inline or in a source
+document, so an archive is its offset table, its streams and its padding, each
+described by data. Pixel components (`indexed-bytes`, `rgba-bytes`,
+`zero-skip-bytes`, `mtf4-bytes`, tiled images) may select atlas frames by
+`frame_width`, `frame_height` and `columns` with `frame`, `frame_order` or
+`frames`, and may name the shared `palette` they must match. A general-LZ plan
+array is a stream sequence: stream `i` encodes frame `i`, is padded to
+`stream_alignment`, and arena-LZ streams read the streams before them. A
+`typed-table` record field of element `1bpp-rows` packs glyph rows from the
+segment's `image`. Offsets, pointers, stream extents and frame plans stay in the
+asset source.
+
 `thumb-pointer` table segments resolve named main-image callbacks from the owner
 register, retain null slots, and encode the Thumb tag. An unregistered target
 remains an explicit aligned numeric address (a decimal number or a `0x` string,
@@ -480,13 +493,8 @@ libraries are not additional public command surfaces.
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures. |
 | [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
-| [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
-| [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
-| [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
-| [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
-| [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
 
 ## Owners and names
 

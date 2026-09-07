@@ -51,11 +51,11 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     match kind {
         "golden-sun-static-sprite-series" => ("Sprite sheets", "#afa6c6"),
         "gba-palette" | "gba-palette-rgba" => ("Palettes", "#c8a2b0"),
-        "golden-sun-localization-font"
-        | "golden-sun-kana-glyph-bank"
-        | "golden-sun-namae-nyuuryoku" => ("Fonts", "#d6c58e"),
+        "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#d6c58e"),
         "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", "#b6ccc1"),
-        _ if source.contains("/fonts_") => ("Fonts", "#d6c58e"),
+        _ if source.contains("/fonts_") || source.contains("/text/localization_font") => {
+            ("Fonts", "#d6c58e")
+        }
         _ if source.ends_with(".png") => ("Images", "#8eafc7"),
         _ => ("Other data", "#92a8ac"),
     }

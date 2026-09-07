@@ -662,6 +662,8 @@ fn mtf4_lz_streams_carry_the_tag_and_move_to_front_literals() {
         ]
     )
     .is_err());
+}
+// ---------------------------------------------------------------------------
 // arena stream
 // ---------------------------------------------------------------------------
 /// Decode an arena stream at `offset`: a little-endian split halfword, the

@@ -373,10 +373,13 @@ Do not copy a framework for worker waves, template packs, inferred aggregate
 contexts or report inventories.
 
 Alchemy also retains the dependencies its actual game build requires:
-`build assets` and its Golden Sun codecs rebuild maintained data; `overlay` handles
-the loader's relocation format; `cross-edition` checks edition differences;
-`check` enforces source, classification, compiler and publication contracts.
-These are project integration, not tools to take to another game.
+`build assets` rebuilds maintained data from the asset descriptions under
+`games/` through format-named codecs; `overlay` handles the loader's
+relocation format; `cross-edition` checks edition differences; `check`
+enforces source, classification, compiler and publication contracts. These
+are project integration, not tools to take to another game. There is no
+game-specific asset crate: a package layout is data, and a codec is named
+for its format.
 
 Asset tooling is organized by format and conversion, never by resource number,
 ROM address or the first game asset that needed it. Name a directional converter
@@ -447,10 +450,10 @@ The inventory remains mandatory, including game-specific and internal libraries.
 Build dependency status is not an exemption from review or consolidation.
 
 Build maintained asset packages with `alchemy build assets`; full-ROM comparison
-verifies their production extents. The former `alchemy assets` command tree and
-its per-package extraction/build CLIs are retired. Their required codecs remain
-internal build dependencies pending format migration, not supported commands.
-Do not reintroduce parallel package-specific build or verify commands.
+verifies their production extents. Every package is a manifest region or series
+over data in `games/`, encoded by the shared table, pixel, text, sample and
+compression codecs. Do not reintroduce package-specific crates, build routes or
+verify commands.
 
 Use `alchemy convert FORMAT INPUT OUTPUT` for file conversions: `words2bin`,
 `pairs2bin`, `tilemap2bin`, `png2gba4bpp`, `png2gba8bpp`, `png2gbapal`, and `wav2pcm8`.
@@ -492,8 +495,8 @@ libraries are not additional public command surfaces.
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures. |
 | [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
-| [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
-| [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
+| [extract-resource](tools/extract-resource/) | Read resource payloads from approved ROMs; general, palette, halfword, arena and MTF4 LZ stream codecs. |
+| [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |
 
 ## Owners and names
 

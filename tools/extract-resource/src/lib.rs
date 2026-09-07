@@ -599,6 +599,131 @@ pub fn decode(
     err("stream is ambiguous; specify --format general or palette")
 }
 // ---------------------------------------------------------------------------
+// halfword LZ: 16-flag groups over little-endian 16-bit units
+// ---------------------------------------------------------------------------
+/// `["l", n]` / `["c", length, distance]` / `["e"]` over halfword units.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HalfwordToken {
+    Literal(u32),
+    Copy { length: u32, distance: u32 },
+    End,
+}
+/// Each group is a flag halfword (bit 15 first) followed by up to sixteen
+/// halfwords: a literal unit, a copy `(distance << 5) | (length - 2)` with
+/// `distance` 1..=2047 and `length` 2..=33, or a flagged zero terminator.
+pub fn decode_halfword(data: &[u8]) -> Result<(Vec<u8>, Vec<HalfwordToken>), DecodeError> {
+    let read = |at: usize| -> Result<u16, DecodeError> {
+        match data.get(at..at + 2) {
+            Some(bytes) => Ok(u16::from_le_bytes([bytes[0], bytes[1]])),
+            None => err("halfword stream ended inside a group"),
+        }
+    };
+    let mut output: Vec<u16> = Vec::new();
+    let mut tokens = Vec::new();
+    let mut cursor = 0;
+    loop {
+        let flags = read(cursor)?;
+        cursor += 2;
+        for index in 0..16 {
+            let word = read(cursor)?;
+            cursor += 2;
+            if flags & (1 << (15 - index)) == 0 {
+                output.push(word);
+                match tokens.last_mut() {
+                    Some(HalfwordToken::Literal(count)) => *count += 1,
+                    _ => tokens.push(HalfwordToken::Literal(1)),
+                }
+                continue;
+            }
+            if word == 0 {
+                tokens.push(HalfwordToken::End);
+                return Ok((
+                    output.iter().flat_map(|unit| unit.to_le_bytes()).collect(),
+                    tokens,
+                ));
+            }
+            let distance = u32::from(word >> 5);
+            let length = u32::from(word & 31) + 2;
+            if distance as usize > output.len() {
+                return err("halfword copy crossed replay prefix");
+            }
+            for _ in 0..length {
+                output.push(output[output.len() - distance as usize]);
+            }
+            tokens.push(HalfwordToken::Copy { length, distance });
+        }
+    }
+}
+pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Result<Vec<u8>, DecodeError> {
+    if decoded.len() % 2 != 0 {
+        return err("halfword pixels have an odd size");
+    }
+    let units: Vec<u16> = decoded
+        .chunks(2)
+        .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
+        .collect();
+    let mut operations = Vec::new();
+    for token in tokens {
+        match *token {
+            HalfwordToken::Literal(count) => {
+                if count == 0 || count as usize > units.len() {
+                    return err("halfword literal count is invalid");
+                }
+                operations.extend((0..count).map(|_| HalfwordToken::Literal(1)));
+            }
+            HalfwordToken::Copy { length, distance } => {
+                if !(2..=33).contains(&length) || !(1..=2047).contains(&distance) {
+                    return err("halfword copy differs");
+                }
+                operations.push(*token);
+            }
+            HalfwordToken::End => operations.push(HalfwordToken::End),
+        }
+    }
+    let mut encoded = Vec::new();
+    let mut replay: Vec<u16> = Vec::new();
+    let mut ended = false;
+    for group in operations.chunks(16) {
+        let mut flags = 0u16;
+        let mut words = Vec::new();
+        for (index, operation) in group.iter().enumerate() {
+            if ended {
+                return err("halfword plan has data after terminator");
+            }
+            match *operation {
+                HalfwordToken::Literal(_) => {
+                    let unit = *units.get(replay.len()).ok_or(DecodeError(
+                        "halfword literal crossed decoded pixels".into(),
+                    ))?;
+                    replay.push(unit);
+                    words.push(unit);
+                }
+                HalfwordToken::Copy { length, distance } => {
+                    flags |= 1 << (15 - index);
+                    if distance as usize > replay.len() {
+                        return err("halfword copy crossed replay prefix");
+                    }
+                    words.push(((distance << 5) | (length - 2)) as u16);
+                    for _ in 0..length {
+                        replay.push(replay[replay.len() - distance as usize]);
+                    }
+                }
+                HalfwordToken::End => {
+                    flags |= 1 << (15 - index);
+                    words.push(0);
+                    ended = true;
+                }
+            }
+        }
+        encoded.extend(flags.to_le_bytes());
+        encoded.extend(words.iter().flat_map(|word| word.to_le_bytes()));
+    }
+    if !ended || replay != units {
+        return err("halfword plan does not reconstruct decoded pixels");
+    }
+    Ok(encoded)
+}
+// ---------------------------------------------------------------------------
 // self-test
 // ---------------------------------------------------------------------------
 pub fn synthetic_general() -> Vec<u8> {
@@ -648,6 +773,13 @@ pub fn self_test() -> Result<(), String> {
     }
     if encode_palette(&output, &groups).map_err(|error| error.0)? != palette {
         return Err("palette encoder self-test failed".into());
+    }
+    let halfword: Vec<u8> = vec![0x00, 0x60, 0x41, 0x00, 0x20, 0x00, 0x00, 0x00];
+    let (output, tokens) = decode_halfword(&halfword).map_err(|error| error.0)?;
+    if output != b"A\0A\0A\0"
+        || encode_halfword(&output, &tokens).map_err(|error| error.0)? != halfword
+    {
+        return Err("halfword codec self-test failed".into());
     }
     let truncated_general = &general[..general.len() - 2];
     if decode_general(truncated_general, 0, truncated_general.len(), 4).is_ok() {

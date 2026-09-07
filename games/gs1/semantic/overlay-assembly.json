@@ -1969,13 +1969,13 @@
     },
     {
       "overlay": "resource_3a2",
-      "start": "0x2000b2c",
+      "start": "0x2000c30",
       "end": "0x2000fcc",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "The complete 108-byte owner at 0x02000ac0 is adopted as exact C. This remaining scene range stays unresolved and must be recovered using complete audited owner boundaries.",
+        "The complete owners at 0x02000ac0 and 0x02000b2c are adopted as exact C. This remaining scene range stays unresolved and must be recovered using complete audited owner boundaries.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility.",
         "games/gs1/recon/en/dossiers.json#resource_3a2:02000924"
       ]

@@ -3909,22 +3909,6 @@ fn build_entry_native_tail(
                 serde_json::json!({"packages":index["packages"].as_array().map_or(0,Vec::len)}),
             ))
         }
-        "golden-sun-character-catalog" => {
-            let document = json(&source_path(entry_source)?)?;
-            if number(&document["address"], "character catalog address")? != address
-                || number(&document["size"], "character catalog size")?
-                    != number(&entry["size"], "catalog size")?
-            {
-                return Err("character-catalog extent differs from manifest".to_string());
-            }
-            let built = character_catalog::build_character_catalog(&document)
-                .map_err(|error| error.to_string())?;
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"descriptors":document["descriptors"].as_object().map_or(0,|value| value.len()),"animation_groups":document["animation_groups"].as_array().map_or(0,Vec::len),"frame_directories":document["frame_directories"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
         "golden-sun-message-archive" => {
             let document = json(&source_path(entry_source)?)?;
             let built = message_archive::cli::build_message_archive(&document)?;

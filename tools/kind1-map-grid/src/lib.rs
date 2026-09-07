@@ -10,8 +10,6 @@
 //! keeps the exact same stream, PNG, and plan representations for direct
 //! export and verification.
 
-pub mod cli;
-
 use std::fs;
 use std::path::{Path, PathBuf};
 

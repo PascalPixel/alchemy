@@ -1,5 +1,3 @@
-pub mod cli;
-
 use std::fs;
 use std::path::{Path, PathBuf};
 

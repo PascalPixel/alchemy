@@ -1,5 +1,3 @@
-pub mod cli;
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum Scalar {
     Num(f64),

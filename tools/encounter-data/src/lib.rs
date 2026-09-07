@@ -1,5 +1,3 @@
-pub mod cli;
-
 use serde_json::{Map, Value};
 
 pub type Result<T> = std::result::Result<T, String>;

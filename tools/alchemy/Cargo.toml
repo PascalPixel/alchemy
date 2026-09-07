@@ -20,7 +20,6 @@ serde_json = { version = "1", features = ["preserve_order"] }
 walkdir = "2.5"
 alignment-tail = { path = "../alignment-tail" }
 asset-paths = { path = "../asset-paths" }
-archive-asset = { path = "../archive-asset" }
 canonical-json = { path = "../canonical-json" }
 cache-entry = { path = "../cache-entry" }
 extract-resource = { path = "../extract-resource" }
@@ -31,10 +30,6 @@ sha1 = "0.10"
 build-asm = { path = "../build-asm" }
 build-claimed = { path = "../build-claimed" }
 build-full = { path = "../build-full" }
-f0-archive = { path = "../f0-archive" }
-skip-sprite-archive = { path = "../skip-sprite-archive" }
-static-sprite-series = { path = "../static-sprite-series" }
-localization-font = { path = "../localization-font" }
 check-commit-progress = { path = "../check-commit-progress" }
 check-publication = { path = "../check-publication" }
 check-unmatchable = { path = "../check-unmatchable" }

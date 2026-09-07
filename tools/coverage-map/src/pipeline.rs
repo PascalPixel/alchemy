@@ -871,14 +871,23 @@ pub(crate) fn source_container(source: String, children: Vec<Tile>) -> Tile {
     }
     tile
 }
+/// Per-package tiles of a static sprite series: the region's index document
+/// declares the series layout and lists one component per package with its
+/// address, size and sheet image.
 fn sprite_children(tree: &SourceTree, source: &str, span: Span, data: &[Span]) -> Vec<Tile> {
     let Some(index) = json(tree, source) else {
         return Vec::new();
     };
+    if text(&index, "layout") != "golden-sun-static-sprite-series" {
+        return Vec::new();
+    }
     let directory = Path::new(source).parent().unwrap_or(Path::new(""));
     let mut children = Vec::new();
     let mut covered = Vec::new();
-    for package in array(&index, "packages") {
+    for package in array(&index, "components")
+        .iter()
+        .filter(|package| text(package, "kind") == "components")
+    {
         let (Some(start), Some(size)) = (
             asset_number(package, "address"),
             asset_number(package, "size"),
@@ -901,7 +910,7 @@ fn sprite_children(tree: &SourceTree, source: &str, span: Span, data: &[Span]) -
         if size == 0 {
             continue;
         }
-        let file = text(package, "source");
+        let file = text(package, "image");
         if file.is_empty() {
             return Vec::new();
         }
@@ -970,10 +979,14 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
         } else {
             sources.first().and_then(Value::as_str).unwrap_or(source)
         };
-        let children = if kind == "golden-sun-static-sprite-series" {
+        let children = if kind == "components" {
             sprite_children(tree, owner, span, data)
         } else {
             Vec::new()
+        };
+        let group = match children.first().and_then(|child| child.group.clone()) {
+            Some(group) => group,
+            None => kind.clone(),
         };
         groups.entry(owner.into()).or_default().push(Tile {
             label: format!(
@@ -984,7 +997,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             ),
             bytes: actual,
             categories: [0, 0, 0, 0, 0, actual],
-            group: Some(kind.clone()),
+            group: Some(group),
             subgroup: sequence_classes.get(&start).cloned(),
             address: Some(start),
             source: Some(source.into()),

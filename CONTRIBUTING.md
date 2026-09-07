@@ -400,7 +400,9 @@ to check their domain and uniqueness without a game-specific validator.
 The same table encoder supports signed little-endian halfwords, byte fills and
 fixed-stride records with named fields. Bounds, uniqueness, terminated-array
 capacity and zero-padded `capacity` are declared beside those fields, not
-hard-coded in a game-specific crate. A manifest may select a table by JSON
+hard-coded in a game-specific crate. A field may declare a `default` so sparse
+records omit it, and a record segment may name a `label` key that documents
+each record without serializing it. A manifest may select a table by JSON
 pointer within a shared source. Integer values may be spelled symbolically: a
 `0x` literal, a constant from the field's or table's `names`, a segment `name`
 for that segment's address, or `name[index]` for the address of its element;

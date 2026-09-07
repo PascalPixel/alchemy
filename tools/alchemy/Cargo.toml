@@ -39,7 +39,6 @@ localization-font = { path = "../localization-font" }
 map-container-components = { path = "../map-container-components" }
 kind1-map-grid = { path = "../kind1-map-grid" }
 message-archive = { path = "../message-archive" }
-resource-5 = { path = "../resource-5" }
 check-commit-progress = { path = "../check-commit-progress" }
 check-publication = { path = "../check-publication" }
 check-unmatchable = { path = "../check-unmatchable" }

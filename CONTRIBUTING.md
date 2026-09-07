@@ -470,7 +470,6 @@ libraries are not additional public command surfaces.
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, and cross-edition commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 | [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
-| [asset-paths](tools/asset-paths/) | Own canonical tracked asset paths. |
 | [build-asm](tools/build-asm/) | Assemble retained regions and emit their classified manifest. |
 | [build-claimed](tools/build-claimed/) | Compile, verify, cache, and manifest exact-C owners. |
 | [build-full](tools/build-full/) | Compose claimed C, retained assembly, and assets into the ROM. |

@@ -2904,6 +2904,7 @@
     },
     {
       "kind": "golden-sun-standalone-palette-series",
+      "source_prefix": "games/gs1/assets/graphics/map_resource_",
       "palettes": [
         {
           "id": "1e6",
@@ -2959,6 +2960,7 @@
     },
     {
       "kind": "golden-sun-map-charblock-series",
+      "source_prefix": "games/gs1/assets/graphics/map_resource_",
       "charblock_layout": {
         "format": "sequential-gba-4bpp-tiles",
         "purpose": "map-charblock-source",
@@ -3148,6 +3150,7 @@
     },
     {
       "kind": "golden-sun-general-lz-series",
+      "source_prefix": "games/gs1/assets/graphics/resource_",
       "resources": [
         {"id": "f4",  "address": "0x08443310",  "size": "0x2872"},
         {"id": "f5",  "address": "0x08445b84",  "size": "0x3222"},
@@ -3306,6 +3309,7 @@
     },
     {
       "kind": "golden-sun-prefill-lz-series",
+      "source_prefix": "games/gs1/assets/graphics/resource_",
       "resources": [
         {
           "id": "1a",
@@ -3701,6 +3705,7 @@
     },
     {
       "kind": "golden-sun-standalone-tile-series",
+      "source_prefix": "games/gs1/assets/graphics/map_resource_",
       "resources": [
         {
           "id": "1e7",
@@ -3806,6 +3811,7 @@
     },
     {
       "kind": "golden-sun-color-table-series",
+      "source_prefix": "games/gs1/assets/graphics/resource_",
       "resources": [
         {
           "id": "46",

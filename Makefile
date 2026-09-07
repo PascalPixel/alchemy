@@ -18,7 +18,7 @@ COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy
-PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
+PORTABLE_TOOLS := alignment-tail cache-entry canonical-json \
 	generated-files no-asm-c build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching \
 	disassemble \

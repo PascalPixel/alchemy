@@ -23,7 +23,6 @@ use import_asset::import_tilemap;
 use import_asset::{
     gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
 };
-use map_load_table::build_table as build_map_load_table;
 use music::{add_midi_build_directive, add_midi_conductor_text, MIDI_BUILD_DIRECTIVE};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
@@ -718,6 +717,114 @@ fn integer_arrays_preserve_endianness_sign_and_order() {
         assert!(integer_array(&value, "u8-array").is_err());
     }
 }
+fn record_table(document: &Value) -> Result<Vec<u8>, String> {
+    let fields = document["fields"]
+        .as_array()
+        .ok_or("record fields missing")?;
+    if fields.is_empty() {
+        return Err("empty record layout".into());
+    }
+    let kind = json_string(&document["element"], "record element")?;
+    let bias = number(&document["bias"], "record bias")?;
+    let radix = number(&document["radix"], "record radix")?;
+    if !(2..=36).contains(&radix) {
+        return Err("invalid record radix".into());
+    }
+    let index_field = json_string(&document["index_field"], "record index field")?;
+    let mut values = Vec::new();
+    for (i, record) in document["records"]
+        .as_array()
+        .ok_or("records missing")?
+        .iter()
+        .enumerate()
+    {
+        if number(&record[index_field], "record index")? != i {
+            return Err("record indices are not sequential".into());
+        }
+        for field in fields {
+            let name = json_string(field, "record field")?;
+            let value = u64::from_str_radix(json_string(&record[name], name)?, radix as u32)
+                .map_err(|e| e.to_string())?;
+            let value = value
+                .checked_sub(bias as u64)
+                .ok_or("record value is below bias")?;
+            values.push(Value::from(value));
+        }
+    }
+    integer_array(&Value::Array(values), kind)
+}
+
+fn pointer_table(document: &Value) -> Result<Vec<u8>, String> {
+    let base = u32::try_from(number(&document["base_address"], "pointer base")?)
+        .map_err(|_| "pointer base exceeds u32")?;
+    let address = u32::try_from(number(&document["address"], "pointer table address")?)
+        .map_err(|_| "table address exceeds u32")?;
+    let slots = document["slots"]
+        .as_array()
+        .ok_or("pointer slots missing")?;
+    if slots.len() != number(&document["slot_count"], "pointer count")? {
+        return Err("pointer count differs".into());
+    }
+    let mut resolved = Vec::<u32>::new();
+    for slot in slots {
+        let text = json_string(slot, "pointer slot")?;
+        let value = match text {
+            "base" => base,
+            "self" => address,
+            "null" => 0,
+            _ if text.starts_with("alias:") => {
+                let target = number(&Value::String(text[6..].into()), "alias index")?;
+                let value = *resolved
+                    .get(target)
+                    .ok_or("alias must reference an earlier slot")?;
+                if value == 0 {
+                    return Err("alias references a null slot".into());
+                }
+                value
+            }
+            _ => {
+                let value =
+                    u32::try_from(number(slot, "pointer")?).map_err(|_| "pointer exceeds u32")?;
+                if value < base {
+                    return Err("pointer lies before base".into());
+                }
+                value
+            }
+        };
+        resolved.push(value);
+    }
+    Ok(resolved.into_iter().flat_map(u32::to_le_bytes).collect())
+}
+
+#[test]
+fn record_and_pointer_tables_preserve_layout_and_reject_bad_references() {
+    let records = serde_json::json!({"fields":["a","b"],"element":"le-u16-array","bias":16,"radix":16,"index_field":"id","records":[{"id":0,"a":"11","b":"1234"}]});
+    assert_eq!(record_table(&records).unwrap(), [1, 0, 36, 18]);
+    for (pointer, value) in [
+        ("/records/0/id", serde_json::json!(1)),
+        ("/records/0/a", serde_json::json!("f")),
+        ("/records/0/a", serde_json::json!("10010")),
+        ("/radix", serde_json::json!(1)),
+    ] {
+        let mut bad = records.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(record_table(&bad).is_err());
+    }
+    let pointers = serde_json::json!({"base_address":4096,"address":8192,"slot_count":5,"slots":["base","self","0x1234","alias:0x002","null"]});
+    assert_eq!(
+        pointer_table(&pointers).unwrap(),
+        [0, 16, 0, 0, 0, 32, 0, 0, 52, 18, 0, 0, 52, 18, 0, 0, 0, 0, 0, 0]
+    );
+    for invalid in ["alias:4", "0x100000000", "0xfff"] {
+        let mut bad = pointers.clone();
+        bad["slots"][3] = Value::from(invalid);
+        assert!(pointer_table(&bad).is_err());
+    }
+    let mut bad = pointers;
+    bad["slots"][2] = Value::from("null");
+    assert!(pointer_table(&bad).is_err());
+}
+
 fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
     if document["format"] != 1 || document["kind"] != "typed-table" {
         return Err("typed table identity differs".into());
@@ -1921,14 +2028,24 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 serde_json::json!({"records":document["records"].as_array().map_or(0,Vec::len),"alignment_zeros":document.get("alignment_zeros")}),
             ))
         }
-        "golden-sun-map-load-table" => {
-            let source = source_path(entry_source)?;
-            let built = build_map_load_table(&source).map_err(|e| e.to_string())?;
-            let document = json(&source)?;
+        "record-table" | "pointer-table" => {
+            let document = json(&source_path(entry_source)?)?;
+            if document["format"] != 1 || document["kind"] != kind {
+                return Err("table identity differs".into());
+            }
+            if kind == "pointer-table" && number(&document["address"], "table address")? != address
+            {
+                return Err("table address differs from manifest".into());
+            }
+            let built = if kind == "record-table" {
+                record_table(&document)?
+            } else {
+                pointer_table(&document)?
+            };
             Ok((
                 built,
                 vec![entry_source.to_string()],
-                serde_json::json!({"records":document["records"].as_array().map_or(0,Vec::len),"record_size":12}),
+                serde_json::json!({"representation":kind}),
             ))
         }
         "golden-sun-sound-table" => {
@@ -3083,18 +3200,6 @@ fn build_entry_native_tail(
                 built,
                 dedup_sources(sources),
                 serde_json::json!({"packages":index["packages"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-resource-directory" => {
-            let document = json(&source_path(entry_source)?)?;
-            if number(&document["address"], "resource directory address")? != address {
-                return Err("resource-directory address differs from manifest".to_string());
-            }
-            let built = resource_directory::build_resource_directory(&document)?;
-            Ok((
-                built.clone(),
-                vec![entry_source.to_string()],
-                serde_json::json!({"slots":built.len()/4}),
             ))
         }
         "golden-sun-runtime-support-data" => {

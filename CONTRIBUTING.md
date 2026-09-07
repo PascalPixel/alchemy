@@ -401,6 +401,12 @@ by the shared builder; do not create another crate for a particular table.
 Byte index tables declare `index_count` and, when required, `permutation: true`
 to check their domain and uniqueness without a game-specific validator.
 
+`record-table` describes ordered named integer fields, their radix, common bias
+and encoding; it checks sequential record indices before serializing. `pointer-table`
+declares its base and table addresses and preserves explicit nulls and backward
+aliases. Both use the manifest's checked extent; neither assumes a game address,
+resource count or field layout in Rust.
+
 The inventory remains mandatory, including game-specific and internal libraries.
 Build dependency status is not an exemption from review or consolidation.
 
@@ -453,7 +459,6 @@ libraries are not additional public command surfaces.
 | [export-asset](tools/export-asset/) | Export GBA graphics into editable assets. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import editable assets into GBA formats. |
-| [map-load-table](tools/map-load-table/) | Encode and verify map-loading tables. |
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
@@ -475,7 +480,6 @@ libraries are not additional public command surfaces.
 | [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
-| [resource-directory](tools/resource-directory/) | Extract and verify the resource directory. |
 | [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |
 | [sentou-gamen-data](tools/sentou-gamen-data/) | Build battle-screen data. |
 | [sentou-hyouji](tools/sentou-hyouji/) | Build battle-display data. |

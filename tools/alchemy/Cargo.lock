@@ -72,7 +72,6 @@ dependencies = [
  "late-runtime-residual",
  "localization-font",
  "map-container-components",
- "map-load-table",
  "map-resources",
  "matching",
  "message-archive",
@@ -85,7 +84,6 @@ dependencies = [
  "png",
  "regex",
  "resource-5",
- "resource-directory",
  "runtime-support-data",
  "sentou-gamen-data",
  "sentou-hyouji",
@@ -828,14 +826,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "map-load-table"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "serde_json",
-]
-
-[[package]]
 name = "map-resources"
 version = "0.1.0"
 dependencies = [
@@ -1124,13 +1114,6 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "resource-5"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "resource-directory"
 version = "0.1.0"
 dependencies = [
  "serde_json",

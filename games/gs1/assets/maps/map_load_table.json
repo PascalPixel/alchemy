@@ -1,6 +1,11 @@
 {
   "format": 1,
-  "resource_base": "0x128",
+  "kind": "record-table",
+  "bias": "0x128",
+  "radix": 16,
+  "element": "le-u16-array",
+  "index_field": "map_index",
+  "fields": ["container", "palette", "vram_charblock1", "vram_charblock2", "vram_charblock3", "animation_source"],
   "records": [
     {
       "map_index": 0,

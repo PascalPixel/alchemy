@@ -972,8 +972,8 @@
 <title>resource_d0_content.png · golden-sun-general-lz · 0x0840fb1c: 1,716 bytes</title>
 <rect data-content-type="Images" x="36.4702089284844" y="253.92754243704857" width="1.668797947824559" height="6.891782739588895" style="fill:#8eafc7"/>
 </g>
-<g aria-label="resource_directory.json · golden-sun-resource-directory · 0x08320000: 4,000 bytes" data-node="leaf" data-kind="file" data-bytes="4000" data-address="0x08320000" data-source="games/gs1/assets/data/resource_directory.json">
-<title>resource_directory.json · golden-sun-resource-directory · 0x08320000: 4,000 bytes</title>
+<g aria-label="resource_directory.json · pointer-table · 0x08320000: 4,000 bytes" data-node="leaf" data-kind="file" data-bytes="4000" data-address="0x08320000" data-source="games/gs1/assets/data/resource_directory.json">
+<title>resource_directory.json · pointer-table · 0x08320000: 4,000 bytes</title>
 <rect data-content-type="Other data" x="13.526383434743668" y="261.81932517663745" width="3.7651456974739723" height="9.30284911032146" style="fill:#92a8ac"/>
 </g>
 <g aria-label="resource_e4_e6_e4.pairs · golden-sun-general-lz · 0x084303b4: 6,298 bytes" data-node="leaf" data-kind="file" data-bytes="6298" data-address="0x084303b4" data-source="games/gs1/assets/data/resource_e4_e6_e4.pairs">
@@ -10548,8 +10548,8 @@
 <title>map_369_grid_grid.kind1.json · golden-sun-kind1-grid · 0x0877896c: 764 bytes</title>
 <rect data-content-type="Maps" x="479.3791714724779" y="244.98499374274792" width="0.7636570803273971" height="5.175111641732509" style="fill:#9bbfaf"/>
 </g>
-<g aria-label="map_load_table.json · golden-sun-map-load-table · 0x08013784: 2,232 bytes" data-node="leaf" data-kind="file" data-bytes="2232" data-address="0x08013784" data-source="games/gs1/assets/maps/map_load_table.json">
-<title>map_load_table.json · golden-sun-map-load-table · 0x08013784: 2,232 bytes</title>
+<g aria-label="map_load_table.json · record-table · 0x08013784: 2,232 bytes" data-node="leaf" data-kind="file" data-bytes="2232" data-address="0x08013784" data-source="games/gs1/assets/maps/map_load_table.json">
+<title>map_load_table.json · record-table · 0x08013784: 2,232 bytes</title>
 <rect data-content-type="Maps" x="481.02465709296894" y="245.10316520258422" width="3.4619963436930634" height="4.938768722059907" style="fill:#9bbfaf"/>
 </g>
 <g aria-label="tokushu_index.json: 39,756 bytes · 6 items" data-node="container" data-kind="file" data-bytes="39756" data-source="games/gs1/assets/maps/tokushu_index.json">

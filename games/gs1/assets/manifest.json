@@ -279,7 +279,7 @@
     {
       "address": "0x08013784",
       "size": "0x8b8",
-      "kind": "golden-sun-map-load-table",
+      "kind": "record-table",
       "source": "games/gs1/assets/maps/map_load_table.json"
     },
     {
@@ -480,7 +480,7 @@
     {
       "address": "0x08320000",
       "size": "0xfa0",
-      "kind": "golden-sun-resource-directory",
+      "kind": "pointer-table",
       "source": "games/gs1/assets/data/resource_directory.json"
     },
     {

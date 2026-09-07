@@ -1,5 +1,7 @@
 use std::io::Cursor;
+mod compression;
 mod text;
+pub use compression::{delta7_image, encode_delta7, encode_mtf4};
 pub use text::{import_pairs, import_tilemap, import_words};
 pub type Rgb = [u8; 3];
 #[derive(Debug, Clone, PartialEq, Default)]

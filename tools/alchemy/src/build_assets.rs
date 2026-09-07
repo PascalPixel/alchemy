@@ -1305,12 +1305,6 @@ fn expand_series(
         let kind = json_string(&series["kind"], "series kind")?;
         match kind {
             "golden-sun-delta7-still-series" => {
-                if number(&series["width"], "width")? != 256
-                    || number(&series["height"], "height")? != 120
-                    || number(&series["palette_entries"], "palette_entries")? != 128
-                {
-                    return Err("unsupported delta7-still layout".to_string());
-                }
                 let index_name = json_string(&series["index"], "delta7 index")?;
                 let index = json(&ctx.source(index_name)?)?;
                 let resources = index
@@ -1338,6 +1332,9 @@ fn expand_series(
                         "address": resource.get("address"),
                         "size": resource.get("size"),
                         "kind": "golden-sun-delta7-still",
+                        "width": series["width"],
+                        "height": series["height"],
+                        "palette_entries": series["palette_entries"],
                         "source": root_relative(&ctx.root, &ctx.source(&source.to_string_lossy())?)?
                     }));
                 }
@@ -3142,15 +3139,17 @@ fn build_entry_native_tail(
             Ok((built, sources, report))
         }
         "golden-sun-delta7-still" => {
-            let built = indexed_still::build_still(
+            let built = import_asset::delta7_image(
                 &fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?,
+                number(&entry["width"], "delta7 width")?,
+                number(&entry["height"], "delta7 height")?,
+                number(&entry["palette_entries"], "delta7 palette entries")?,
             )
-            .map_err(|error| error.to_string())?
-            .0;
+            .map_err(|error| error.to_string())?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
-                serde_json::json!({"width":256,"height":120,"palette_entries":128}),
+                serde_json::json!({"width":entry["width"],"height":entry["height"],"palette_entries":entry["palette_entries"]}),
             ))
         }
         "golden-sun-static-sprite-series" => {

@@ -541,6 +541,129 @@ pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>
     Ok(encoded)
 }
 // ---------------------------------------------------------------------------
+// MTF4 LZ stream (tag 2)
+// ---------------------------------------------------------------------------
+/// A token of the tag-2 stream: the general stream's copy coding with
+/// literals written as two move-to-front nibble indices of `width` bits.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Mtf4LzToken {
+    Literal { width: u32 },
+    Copy { length: u32, distance: u32 },
+}
+fn mtf4_index(table: &mut [u8; 16], value: u8) -> u32 {
+    let index = table
+        .iter()
+        .position(|candidate| *candidate == value)
+        .unwrap_or(0);
+    table[..=index].rotate_right(1);
+    index as u32
+}
+/// Encode `decoded` as a tag-2 stream: tag byte 2, then LSB-first bits where
+/// a literal is `1`, a two-bit width selector (`1` = 2 bits, `01` = 3 bits,
+/// `00` = 4 bits) and the low then high nibble as MTF indices, and a copy uses
+/// the general stream's length and position-dependent distance coding.
+pub fn encode_mtf4_lz(decoded: &[u8], tokens: &[Mtf4LzToken]) -> Result<Vec<u8>, DecodeError> {
+    let mut bits: Vec<u8> = Vec::new();
+    let mut table: [u8; 16] = std::array::from_fn(|index| index as u8);
+    let mut cursor = 0usize;
+    for token in tokens {
+        match *token {
+            Mtf4LzToken::Literal { width } => {
+                if !(2..=4).contains(&width) || cursor >= decoded.len() {
+                    return err("invalid tag-2 literal token");
+                }
+                put(&mut bits, 1, 1);
+                if width == 2 {
+                    put(&mut bits, 1, 1);
+                } else {
+                    put(&mut bits, 0, 1);
+                    put(&mut bits, u32::from(width == 3), 1);
+                }
+                let value = decoded[cursor];
+                let low = mtf4_index(&mut table, value & 15);
+                let high = mtf4_index(&mut table, value >> 4);
+                if low >= 1 << width || high >= 1 << width {
+                    return err("literal does not fit its recorded MTF width");
+                }
+                put(&mut bits, low, width);
+                put(&mut bits, high, width);
+                cursor += 1;
+            }
+            Mtf4LzToken::Copy { length, distance } => {
+                let (length, distance) = (length as usize, distance as usize);
+                if distance < 1 || distance > cursor || cursor + length > decoded.len() {
+                    return err("tag-2 copy is outside decoded data");
+                }
+                if (0..length)
+                    .any(|index| decoded[cursor + index] != decoded[cursor + index - distance])
+                {
+                    return err("tag-2 copy token differs from source pixels");
+                }
+                encode_length(&mut bits, length as u32)?;
+                if distance <= 32 {
+                    put(&mut bits, 1, 1);
+                    put(&mut bits, distance as u32 - 1, 5);
+                } else {
+                    put(&mut bits, 0, 1);
+                    let window = cursor as i64 - 33;
+                    let width = if (0..2048).contains(&window) {
+                        bit_length(window as u32)
+                    } else {
+                        12
+                    };
+                    if (distance - 33) as u64 >= 1u64 << width {
+                        return err("tag-2 long distance does not fit");
+                    }
+                    put(&mut bits, distance as u32 - 33, width);
+                }
+                cursor += length;
+            }
+        }
+    }
+    if cursor != decoded.len() {
+        return err("tag-2 tokens do not cover decoded data");
+    }
+    let mut packed = finish_bits(&bits, 1);
+    packed[0] = 2;
+    Ok(packed)
+}
+#[test]
+fn mtf4_lz_streams_carry_the_tag_and_move_to_front_literals() {
+    let literal = |width| Mtf4LzToken::Literal { width };
+    assert_eq!(
+        encode_mtf4_lz(&[0], &[literal(2)]).unwrap(),
+        [2, 0x83, 0x0f, 0]
+    );
+    // 0x21 moves 1 then 2 to the front; the second byte then reads them back
+    // at MTF indices 1 and 1, and the copy repeats the pair at distance 2.
+    let encoded = encode_mtf4_lz(
+        &[0x21, 0x12, 0x21, 0x12],
+        &[
+            literal(2),
+            literal(2),
+            Mtf4LzToken::Copy {
+                length: 2,
+                distance: 2,
+            },
+        ],
+    )
+    .unwrap();
+    assert_eq!(encoded, [2, 0xe7, 0xc4, 0xe0, 0x03, 0]);
+    assert!(encode_mtf4_lz(&[0x1f], &[literal(2)]).is_err());
+    assert!(encode_mtf4_lz(&[0, 0], &[literal(2)]).is_err());
+    assert!(encode_mtf4_lz(
+        &[0, 1],
+        &[
+            literal(2),
+            Mtf4LzToken::Copy {
+                length: 1,
+                distance: 1
+            }
+        ]
+    )
+    .is_err());
+}
+// ---------------------------------------------------------------------------
 // dispatch
 // ---------------------------------------------------------------------------
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

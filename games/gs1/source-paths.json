@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ae:02000328": {
+      "name": "SceneDialogue_RunActor12Event",
+      "source": "overlays/scene_dialogue/run_actor_dialogue_event.c"
+    },
     "resource_3b6:020003dc": {
       "name": "Scene_InitFacingActors",
       "source": "overlays/scene_script/facing_events.c"

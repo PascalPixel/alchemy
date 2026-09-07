@@ -1,5 +1,11 @@
 use std::process::ExitCode;
 
+mod commit_progress;
+mod integrate;
+mod owners;
+mod publication;
+mod retained;
+
 const USAGE: &str = "usage: alchemy check <publication|commit-progress|owners|retained|coverage|integrate|no-asm|progress|routes> [args]";
 
 fn routes(arguments: &[String]) -> ExitCode {
@@ -23,17 +29,15 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "publication" | "check-publication" => check_publication::cli::entry(rest),
-        "commit-progress" | "check-commit-progress" => {
-            check_publication::commit_progress::entry(rest)
-        }
-        "owners" | "check-unmatchable" => check_unmatchable::cli::entry(rest),
-        "retained" | "core-retained-audit" => check_unmatchable::retained::cli::entry(rest),
+        "publication" | "check-publication" => publication::entry(rest),
+        "commit-progress" | "check-commit-progress" => commit_progress::entry(rest),
+        "owners" | "check-unmatchable" => owners::entry(rest),
+        "retained" | "core-retained-audit" => retained::entry(rest),
         "coverage" | "coverage-map" => {
             coverage_map::entrypoint::entry(rest);
             ExitCode::SUCCESS
         }
-        "integrate" | "integrate-matches" => integrate_matches::entry(rest),
+        "integrate" | "integrate-matches" => integrate::entry(rest),
         "no-asm" | "no-asm-c" => no_asm_c::cli::entry(rest),
         "progress" => {
             coverage_map::progress::entry(rest);

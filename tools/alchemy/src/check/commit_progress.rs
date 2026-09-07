@@ -78,7 +78,7 @@ fn run(arguments: &[String]) -> Result<(), String> {
     }
 }
 
-pub fn entry(arguments: &[String]) -> ExitCode {
+pub(super) fn entry(arguments: &[String]) -> ExitCode {
     if let Err(error) = run(arguments) {
         eprintln!("error: {error}");
         return ExitCode::FAILURE;

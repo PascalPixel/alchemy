@@ -1,83 +1,4 @@
 #include "types.h"
-extern u8 SceneMessage_FacingChoiceBase;
-
-u16 *Func_02000bd8(s32);
-void Func_02000cae(s32, s32);
-s32 Func_02000bd4(s32);
-void Func_02000c70(s32);
-s32 Func_02000c80(s32, s32);
-s32 Func_02000c18(s32, s32);
-void Func_02000c0a(s32);
-void Func_02000c90(s32);
-void Func_02000c98(s32);
-void Func_02000cb0(s32, s32);
-void Func_02000ca8(s32);
-void Func_02000cc0(s32, s32);
-u16 *Func_02000cd8(s32);
-void Func_02000db4(s32);
-s32 Func_02000ccc(s32);
-void Func_02000d66(s32);
-void Func_02000d7e(s32, s32);
-void SceneMessage_Show(s32);
-void Func_02000d9c(s32, s32);
-
-u16 *Func_02000c6c(s32);
-void Func_02000d52(s32, s32);
-s32 Func_02000c68(s32);
-void Func_02000d02(s32);
-void Func_02000d1a(s32, s32);
-void Func_02000d12(s32);
-void Func_02000d2a(s32, s32);
-
-void SceneDialogue_HandleFacingBranch(s32 no)
-{
-    u16 facing = (Func_02000c6c(0)[3] + 0x2000) & ~0x3fff;
-    if (facing == 0xc000) {
-        Func_02000d52(10, no);
-    } else if (Func_02000c68(0x96f)) {
-        Func_02000d02(0x2620);
-        Func_02000d1a(no, 0);
-    } else {
-        Func_02000d12(0x25d1);
-        Func_02000d2a(no, 0);
-    }
-}
-
-void SceneDialogue_HandleFacingChoice(s32 no)
-{
-    u16 facing = (Func_02000bd8(0)[3] + 0x2000) & ~0x3fff;
-    if (facing == 0xc000) {
-        Func_02000cae(31, no);
-    } else if (Func_02000bd4(0x96f)) {
-        s32 msg = (s32)&SceneMessage_FacingChoiceBase;
-        Func_02000c70(msg);
-        Func_02000c80(no, 0);
-        if (Func_02000c18(0, 0) == 0) {
-            Func_02000c0a(10);
-            Func_02000c90(msg + 1);
-        } else {
-            Func_02000c98(msg + 2);
-        }
-        Func_02000cb0(no, 0);
-    } else {
-        Func_02000ca8(0x25cf);
-        Func_02000cc0(no, 0);
-    }
-}
-
-void SceneDialogue_HandleFacingAction(s32 no)
-{
-    u16 facing = (Func_02000cd8(0)[3] + 0x2000) & ~0x3fff;
-    if (facing == 0xc000) {
-        Func_02000db4(no);
-    } else if (Func_02000ccc(0x96f)) {
-        Func_02000d66(0x262c);
-        Func_02000d7e(no, 0);
-    } else {
-        SceneMessage_Show(0x25d5);
-        Func_02000d9c(no, 0);
-    }
-}
 
 #define GameFlag_Set_1(a0) Value1(Func_02000d84, a0)
 #define GameFlag_IsSet_1(a0) Value1(Func_02000d82, a0)
@@ -332,10 +253,72 @@ void SceneDialogue_HandleFacingAction(s32 no)
 #define Audio_PlayCueForPartyMember_1() Value0(Func_0200163e)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Value0(Func_02001592)
 #define STEP_COUNTER (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
+#define Scene_InitActorRecords Func_02000a78
+#define SceneData_GetScriptTable Func_02000030
+#define SceneData_GetTable8da4 Func_02000038
+#define SceneData_GetTable8dd4 Func_02000040
+#define SceneData_SelectTable8e08ByFlag96f Func_02000048
+#define SceneDialogue_HandleFacingChoice Func_0200006c
+#define SceneDialogue_HandleFacingBranch Func_02000100
+#define SceneDialogue_HandleFacingAction Func_0200016c
+#define FieldScene_RunActorCueBranch Func_020001d4
+#define SceneState_ApplyCounter16cThenCall7b Func_0200021c
+#define FieldScene_RunPrimaryScript Func_02000240
+#define SceneData_SelectTable9090ByFlag96f Func_02000a54
 
+struct SceneRecord {
+    u8 unk_00[9];
+    u8 flags;
+    u8 unk_0a[20];
+    u16 angle;
+    u8 unk_20[6];
+    u8 field_26;
+};
+
+union SceneActor {
+    struct {
+        u8 unk_00[12];
+        s32 y;
+        u8 unk_10[64];
+        struct SceneRecord *record;
+        u8 unk_54;
+        u8 mode;
+        u8 unk_56[3];
+        u8 flags;
+    } fields;
+    u8 bytes[90];
+};
+
+extern u8 SceneMessage_FacingChoiceBase;
 extern u8 Value_00002624;
-extern u8 *Data_03001ebc;
+extern s16 Data_02000240[];
 
+u16 *Func_02000bd8(s32);
+void Func_02000cae(s32, s32);
+s32 Func_02000bd4(s32);
+void Func_02000c70(s32);
+s32 Func_02000c80(s32, s32);
+s32 Func_02000c18(s32, s32);
+void Func_02000c0a(s32);
+void Func_02000c90(s32);
+void Func_02000c98(s32);
+void Func_02000cb0(s32, s32);
+void Func_02000ca8(s32);
+void Func_02000cc0(s32, s32);
+u16 *Func_02000cd8(s32);
+void Func_02000db4(s32);
+s32 Func_02000ccc(s32);
+void Func_02000d66(s32);
+void Func_02000d7e(s32, s32);
+void SceneMessage_Show(s32);
+void Func_02000d9c(s32, s32);
+u16 *Func_02000c6c(s32);
+void Func_02000d52(s32, s32);
+s32 Func_02000c68(s32);
+void Func_02000d02(s32);
+void Func_02000d1a(s32, s32);
+void Func_02000d12(s32);
+void Func_02000d2a(s32, s32);
 s32 Func_02000b82(s32);
 void Func_02000da2(s32);
 s32 Func_02000db2(s32, s32);
@@ -599,6 +582,11 @@ void Func_020015bc();
 void Func_0200162a();
 void Func_0200163e();
 s32 Func_0200158e(s32);
+void Func_020015d0(s32);
+union SceneActor *Func_02001614(s32);
+union SceneActor *Func_02001628(s32);
+union SceneActor *Func_02001636(s32);
+union SceneActor *Func_0200165e(s32);
 
 /* Contiguous unnamed leaf-owner run for resource_3c2. */
 
@@ -686,75 +674,162 @@ s32 Func_0200158e(s32);
  * driving several numbered actors (10, 19, 20, 21, 30, 40) through position,
  * pose, and timing steps, guarded by an initial skip check. */
 
+/* Keep byte and field views on the same actor: stores through the linked
+ * record must not make its next pointer read disappear through alias analysis. */
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
+    extern u8 *Data_03001ebc;
+
     f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
+    extern u8 *Data_03001ebc;
+
     f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 *Data_03001ebc;
+
     f(a0, a1, a2);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
+    extern u8 *Data_03001ebc;
+
     f(a0, a1, a2, a3);
 }
 
 static __inline__ s32 Value0(s32 (*f)())
 {
+    extern u8 *Data_03001ebc;
+
     return f();
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
+    extern u8 *Data_03001ebc;
+
     return f(a0);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
+    extern u8 *Data_03001ebc;
+
     return f(a0, a1);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 *Data_03001ebc;
+
     return f(a0, a1, a2);
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
+    extern u8 *Data_03001ebc;
+
     return f(a0, a1, a2, a3);
 }
 
 u8 *SceneData_GetScriptTable(void)
 {
+    extern u8 *Data_03001ebc;
+
     return (u8 *)0x02008c3c;
 }
 
 u8 *SceneData_GetTable8da4(void)
 {
+    extern u8 *Data_03001ebc;
+
     return (u8 *)0x02008da4;
 }
 
 u8 *SceneData_GetTable8dd4(void)
 {
+    extern u8 *Data_03001ebc;
+
     return (u8 *)0x02008dd4;
 }
 
 s32 SceneData_SelectTable8e08ByFlag96f(void) {
+    extern u8 *Data_03001ebc;
+
     if (Func_02000b82(0x96f) != 0) {
         return 0x02008f28;
     }
     return 0x02008e08;
 }
 
+void SceneDialogue_HandleFacingChoice(s32 no)
+{
+    extern u8 *Data_03001ebc;
+
+    u16 facing = (Func_02000bd8(0)[3] + 0x2000) & ~0x3fff;
+    if (facing == 0xc000) {
+        Func_02000cae(31, no);
+    } else if (Func_02000bd4(0x96f)) {
+        s32 msg = (s32)&SceneMessage_FacingChoiceBase;
+        Func_02000c70(msg);
+        Func_02000c80(no, 0);
+        if (Func_02000c18(0, 0) == 0) {
+            Func_02000c0a(10);
+            Func_02000c90(msg + 1);
+        } else {
+            Func_02000c98(msg + 2);
+        }
+        Func_02000cb0(no, 0);
+    } else {
+        Func_02000ca8(0x25cf);
+        Func_02000cc0(no, 0);
+    }
+}
+
+void SceneDialogue_HandleFacingBranch(s32 no)
+{
+    extern u8 *Data_03001ebc;
+
+    u16 facing = (Func_02000c6c(0)[3] + 0x2000) & ~0x3fff;
+    if (facing == 0xc000) {
+        Func_02000d52(10, no);
+    } else if (Func_02000c68(0x96f)) {
+        Func_02000d02(0x2620);
+        Func_02000d1a(no, 0);
+    } else {
+        Func_02000d12(0x25d1);
+        Func_02000d2a(no, 0);
+    }
+}
+
+void SceneDialogue_HandleFacingAction(s32 no)
+{
+    extern u8 *Data_03001ebc;
+
+    u16 facing = (Func_02000cd8(0)[3] + 0x2000) & ~0x3fff;
+    if (facing == 0xc000) {
+        Func_02000db4(no);
+    } else if (Func_02000ccc(0x96f)) {
+        Func_02000d66(0x262c);
+        Func_02000d7e(no, 0);
+    } else {
+        SceneMessage_Show(0x25d5);
+        Func_02000d9c(no, 0);
+    }
+}
+
 void FieldScene_RunActorCueBranch(s32 obj)
 {
+    extern u8 *Data_03001ebc;
+
     s32 cue = (s32) &Value_00002624;
     Func_02000da2(cue);
     Func_02000db2(obj, 0);
@@ -769,6 +844,8 @@ void FieldScene_RunActorCueBranch(s32 obj)
 
 void SceneState_ApplyCounter16cThenCall7b(void)
 {
+    extern u8 *Data_03001ebc;
+
     u8 *state = Data_03001ebc;
     s16 *cnt = (s16 *)(state + 0x16C);
 
@@ -778,6 +855,8 @@ void SceneState_ApplyCounter16cThenCall7b(void)
 
 void FieldScene_RunPrimaryScript(void)
 {
+    extern u8 *Data_03001ebc;
+
     u8 *record;
     GameFlag_Set_1(2480);
     if (GameFlag_IsSet_1(2442) == 0) {
@@ -1042,8 +1121,39 @@ void FieldScene_RunPrimaryScript(void)
 
 s32 SceneData_SelectTable9090ByFlag96f(void)
 {
+    extern u8 *Data_03001ebc;
+
     if (Func_0200158e(0x96F) != 0) {
         return 0x020091EC;
     }
     return 0x02009090;
+}
+
+s32 Scene_InitActorRecords(void)
+{
+    extern s32 *Data_03001ebc;
+
+    union SceneActor *work;
+    if (Data_02000240[225] == 90)
+        Func_020015d0(0x96f);
+    Data_03001ebc[112] = 521;
+    Data_03001ebc[114] = 24;
+    Func_02001614(12)->bytes[89] |= 4;
+    Func_02001628(13)->bytes[89] |= 4;
+    work = Func_02001636(20);
+    work->fields.record->field_26 = 0;
+    work->fields.record->angle = 0x4000;
+    {
+        struct SceneRecord *record = work->fields.record;
+        s32 flags = ~12;
+
+        flags = flags & record->flags;
+        record->flags = flags | 4;
+    }
+    work = Func_0200165e(21);
+    work->fields.record->field_26 = 0;
+    work->fields.record->angle = 0x4000;
+    work->bytes[85] = 2;
+    work->fields.y = 0;
+    return 0;
 }

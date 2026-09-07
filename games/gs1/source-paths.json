@@ -55,15 +55,15 @@
     },
     "resource_3c2:0200006c": {
       "name": "SceneDialogue_HandleFacingChoice",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_3c2:02000100": {
       "name": "SceneDialogue_HandleFacingBranch",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_3c2:0200016c": {
       "name": "SceneDialogue_HandleFacingAction",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_3a9:0200007c": {
       "name": "SceneData_SelectAndPrepareTable",
@@ -6781,7 +6781,7 @@
     },
     "resource_3c2:02000030": {
       "name": "SceneData_GetScriptTable",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_378:02002660": {
       "name": "SceneState_ResetObject14Word108",
@@ -7604,7 +7604,7 @@
     },
     "resource_3c2:020001d4": {
       "name": "FieldScene_RunActorCueBranch",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_377:02000394": {
       "name": "FieldScene_RunStep80Then7",
@@ -10567,7 +10567,7 @@
     },
     "resource_3c2:02000048": {
       "name": "SceneData_SelectTable8e08ByFlag96f",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_3b1:020012dc": {
       "name": "SceneState_ApplyLevelFromFlags",
@@ -11060,7 +11060,7 @@
     },
     "resource_3c2:02000038": {
       "name": "SceneData_GetTable8da4",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_39c:02001060": {
       "name": "SceneState_ApplyWork16cMinus50A",
@@ -12343,7 +12343,7 @@
     },
     "resource_3c2:0200021c": {
       "name": "SceneState_ApplyCounter16cThenCall7b",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_373:02000a74": {
       "name": "FieldScene_RunActor181Scene",
@@ -14036,7 +14036,7 @@
     },
     "resource_3c2:02000a54": {
       "name": "SceneData_SelectTable9090ByFlag96f",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_375:02000090": "overlays/shared/get_tertiary_default_result.c",
     "resource_3ba:020030ac": {
@@ -14085,7 +14085,7 @@
     },
     "resource_3c2:02000040": {
       "name": "SceneData_GetTable8dd4",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_3b4:020012d4": {
       "name": "FieldScene_RunStep12ValueEeb",
@@ -15325,7 +15325,7 @@
     },
     "resource_3c2:02000240": {
       "name": "FieldScene_RunPrimaryScript",
-      "source": "overlays/scene_script/scene_3c2.c"
+      "source": "overlays/scene_script/actor_setup.c"
     },
     "resource_3a2:02000180": {
       "name": "FieldScene_RunPrimaryScript",
@@ -17466,6 +17466,10 @@
     "resource_3cd:020000c0": {
       "name": "Scene_AddToListedRecordCounts",
       "source": "overlays/scene_script/record_events.c"
+    },
+    "resource_3c2:02000a78": {
+      "name": "Scene_InitActorRecords",
+      "source": "overlays/scene_script/actor_setup.c"
     }
   }
 }

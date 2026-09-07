@@ -664,6 +664,18 @@ fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
                 output.push(i8::try_from(value).map_err(|_| "array member exceeds s8")? as u8);
             } else if kind == "u8-array" {
                 output.push(u8::try_from(value).map_err(|_| "array member exceeds u8")?);
+            } else if kind == "le-u16-array" {
+                output.extend(
+                    u16::try_from(value)
+                        .map_err(|_| "array member exceeds u16")?
+                        .to_le_bytes(),
+                );
+            } else if kind == "le-u32-array" {
+                output.extend(
+                    u32::try_from(value)
+                        .map_err(|_| "array member exceeds u32")?
+                        .to_le_bytes(),
+                );
             } else {
                 return Err("unknown integer encoding".into());
             }
@@ -706,6 +718,88 @@ fn integer_arrays_preserve_endianness_sign_and_order() {
         assert!(integer_array(&value, "u8-array").is_err());
     }
 }
+fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
+    if document["format"] != 1 || document["kind"] != "typed-table" {
+        return Err("typed table identity differs".into());
+    }
+    let mut address = number(&document["address"], "table address")?;
+    let mut output = Vec::new();
+    for segment in document["segments"]
+        .as_array()
+        .ok_or("table segments missing")?
+    {
+        let start = number(&segment["address"], "segment address")?;
+        let end = number(&segment["end"], "segment end")?;
+        if start != address || end <= start {
+            return Err("table segments are not contiguous".into());
+        }
+        let size = end - start;
+        let stride = number(&segment["stride"], "segment stride")?;
+        let (kind, width) = match segment["element"].as_str() {
+            Some("u8") => ("u8-array", 1),
+            Some("s8") => ("s8-array", 1),
+            Some("le-u16") => ("le-u16-array", 2),
+            Some("le-u32") => ("le-u32-array", 4),
+            Some("ascii-fixed") => ("ascii-fixed", 1),
+            _ => return Err("unknown table element".into()),
+        };
+        if stride < width || stride % width != 0 || size % stride != 0 {
+            return Err("table stride differs".into());
+        }
+        let bytes = if kind == "ascii-fixed" {
+            let text = json_string(&segment["text"], "fixed text")?;
+            if stride != 1
+                || text.len() >= size
+                || !text.bytes().all(|b| (0x20..=0x7e).contains(&b))
+            {
+                return Err("fixed text differs".into());
+            }
+            let mut bytes = text.as_bytes().to_vec();
+            bytes.resize(size, 0);
+            bytes
+        } else {
+            integer_array(&segment["values"], kind)?
+        };
+        if bytes.len() != size {
+            return Err("table segment size differs".into());
+        }
+        output.extend(bytes);
+        address = end;
+    }
+    if output.len() != number(&document["size"], "table size")? {
+        return Err("table size differs".into());
+    }
+    Ok(output)
+}
+
+#[test]
+fn typed_tables_check_layout_width_and_text() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":16,"size":12,"segments":[
+        {"address":16,"end":18,"element":"s8","stride":1,"values":[-128,127]},
+        {"address":18,"end":20,"element":"le-u16","stride":2,"values":[4660]},
+        {"address":20,"end":24,"element":"le-u32","stride":4,"values":[305419896]},
+        {"address":24,"end":28,"element":"ascii-fixed","stride":1,"text":"AB"}
+    ]});
+    assert_eq!(
+        typed_table(&source).unwrap(),
+        [128, 127, 52, 18, 120, 86, 52, 18, 65, 66, 0, 0]
+    );
+    for (pointer, value) in [
+        ("/segments/0/address", serde_json::json!(15)),
+        ("/segments/1/stride", serde_json::json!(0)),
+        ("/segments/1/values/0", serde_json::json!(65536)),
+        ("/segments/2/values/0", serde_json::json!(-1)),
+        ("/segments/2/values/0", serde_json::json!(4294967296u64)),
+        ("/segments/3/text", serde_json::json!("ABCD")),
+        ("/segments/3/text", serde_json::json!("é")),
+        ("/size", serde_json::json!(13)),
+    ] {
+        let mut invalid = source.clone();
+        *invalid.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&invalid).is_err(), "{pointer}");
+    }
+}
+
 fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
         .as_array()
@@ -3057,9 +3151,12 @@ fn build_entry_native_tail(
                 serde_json::json!({"mtf_images":document["mtf_banks"].as_array().map_or(0,|banks|banks.iter().map(|b|number(&b["images"],"images").unwrap_or(0)).sum()),"packed_images":document["packed_images"]["images"],"font_glyphs":document["font"]["glyphs"],"article_entries":document["articles"]["entries"].as_array().map_or(0,Vec::len)}),
             ))
         }
-        "golden-sun-localization-tables" => {
+        "typed-table" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = localization_tables::cli::build(&document)?;
+            if number(&document["address"], "table address")? != address {
+                return Err("table address differs from manifest".into());
+            }
+            let built = typed_table(&document)?;
             Ok((
                 built,
                 vec![entry_source.to_string()],

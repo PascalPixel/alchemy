@@ -32,8 +32,6 @@ asset_commands! {
         audio_wave::cli::entry,
     "audio-engine-data": "build or extract Golden Sun audio-engine data" =>
         |args: &[String]| report_message(audio_engine_data::run(args.to_vec())),
-    "localization-tables": "build the localization tables" =>
-        |args| { localization_tables::cli::entry(args); ExitCode::SUCCESS },
     "executable-gap-sources": "build executable-gap sources" =>
         executable_gap_sources::cli::entry,
     "music-residuals": "build music residuals" =>

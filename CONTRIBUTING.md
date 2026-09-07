@@ -408,6 +408,12 @@ crate. A manifest may select a table by JSON pointer within a shared source.
 Tiled PNG inputs may declare frame dimensions and atlas columns; the ordinary
 tile converter then writes frame order. Keep those layouts in the manifest.
 
+`thumb-pointer` table segments resolve named main-image callbacks from the owner
+register, retain null slots, and encode the Thumb tag. An unregistered target
+remains an explicit aligned numeric address; do not invent an owner or name to
+serialize a pointer. Signed words use `le-s32`. Shared lookup views and consumer
+evidence stay beside their backing values, not in a second layout catalog.
+
 `record-table` describes ordered named integer fields, their radix, common bias
 and encoding; it checks sequential record indices before serializing. `pointer-table`
 declares its base and table addresses and preserves explicit nulls and backward
@@ -470,7 +476,6 @@ libraries are not additional public command surfaces.
 | [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
-| [early-runtime-data](tools/early-runtime-data/) | Build the early-runtime data package. |
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
 | [executable-gap-sources](tools/executable-gap-sources/) | Decode typed source packages in executable gaps. |
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |

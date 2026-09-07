@@ -717,6 +717,12 @@ fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
                         .map_err(|_| "array member exceeds u16")?
                         .to_le_bytes(),
                 );
+            } else if kind == "le-s32-array" {
+                output.extend(
+                    i32::try_from(value)
+                        .map_err(|_| "array member exceeds s32")?
+                        .to_le_bytes(),
+                );
             } else if kind == "le-u32-array" {
                 output.extend(
                     u32::try_from(value)
@@ -873,6 +879,68 @@ fn record_and_pointer_tables_preserve_layout_and_reject_bad_references() {
     assert!(pointer_table(&bad).is_err());
 }
 
+fn resolve_table_symbols(document: &mut Value, symbols: &SourcePaths) -> Result<(), String> {
+    for segment in document["segments"]
+        .as_array_mut()
+        .ok_or("table segments missing")?
+    {
+        if segment["element"] != "thumb-pointer" {
+            continue;
+        }
+        let values = segment["values"]
+            .as_array_mut()
+            .ok_or("pointer array missing")?;
+        for value in values {
+            let address = if value.is_null() {
+                0
+            } else if value.is_number() {
+                let address = u32::try_from(number(value, "pointer address")?)
+                    .map_err(|_| "pointer exceeds u32")?;
+                if address % 2 != 0 {
+                    return Err("Thumb function address must be halfword aligned".into());
+                }
+                address | 1
+            } else {
+                let name = json_string(value, "pointer symbol")?;
+                let address = symbols
+                    .main_symbol(name)?
+                    .ok_or_else(|| format!("unknown pointer symbol: {name}"))?;
+                if address % 2 != 0 {
+                    return Err("Thumb function address must be halfword aligned".into());
+                }
+                address | 1
+            };
+            *value = Value::from(address);
+        }
+        segment["element"] = Value::from("le-u32");
+    }
+    Ok(())
+}
+
+#[test]
+fn typed_pointer_tables_use_the_owner_register() {
+    let symbols = SourcePaths::parse(
+        Path::new("."),
+        r#"{"format":3,"owners":{"main:08001000":{"name":"Callback_Run"}}}"#,
+    )
+    .unwrap();
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":12,"segments":[
+        {"address":0,"end":8,"stride":4,"element":"thumb-pointer","values":["Callback_Run",null]},
+        {"address":8,"end":12,"stride":4,"element":"le-s32","values":[-2]}
+    ]});
+    let mut resolved = source.clone();
+    resolve_table_symbols(&mut resolved, &symbols).unwrap();
+    assert_eq!(
+        typed_table(&resolved).unwrap(),
+        [1, 16, 0, 8, 0, 0, 0, 0, 254, 255, 255, 255]
+    );
+    let mut bad = source;
+    bad["segments"][0]["values"][0] = Value::from("Missing");
+    assert!(resolve_table_symbols(&mut bad, &symbols).is_err());
+    resolved["segments"][1]["values"][0] = Value::from(2147483648_i64);
+    assert!(typed_table(&resolved).is_err());
+}
+
 fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
     if document["format"] != 1 || document["kind"] != "typed-table" {
         return Err("typed table identity differs".into());
@@ -896,6 +964,7 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             Some("le-u16") => ("le-u16-array", 2),
             Some("le-s16") => ("le-s16-array", 2),
             Some("le-u32") => ("le-u32-array", 4),
+            Some("le-s32") => ("le-s32-array", 4),
             Some("ascii-fixed") => ("ascii-fixed", 1),
             Some("record") => ("record", 1),
             _ => return Err("unknown table element".into()),
@@ -1000,6 +1069,7 @@ fn table_values(value: &Value, spec: &Value, max_bytes: usize) -> Result<Vec<u8>
         "le-u16" => ("le-u16-array", 2),
         "le-s16" => ("le-s16-array", 2),
         "le-u32" => ("le-u32-array", 4),
+        "le-s32" => ("le-s32-array", 4),
         _ => return Err("unknown field element".into()),
     };
     fn flatten(value: &Value, out: &mut Vec<i64>) -> Result<(), String> {
@@ -2065,27 +2135,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 built.clone(),
                 vec![entry_source.to_string(), logo.to_string()],
                 serde_json::json!({"standard_header_bytes":built.len()}),
-            ))
-        }
-        "golden-sun-early-runtime-data" => {
-            let result = early_runtime_data::build_early_runtime_data(
-                &source_path(entry_source)?.to_string_lossy(),
-                &early_runtime_data::default_catalog_path(),
-            )
-            .map_err(|error| error.to_string())?;
-            let report = serde_json::json!({"source_bytes":result.source_bytes,"region_address":hex_address(address)});
-            let (_, built) = result
-                .regions
-                .into_iter()
-                .find(|(start, _)| *start == address as i64)
-                .ok_or("early-runtime asset address is not a produced region")?;
-            Ok((
-                built,
-                vec![
-                    entry_source.to_string(),
-                    entry_source.replace("index.json", "display.4bpp.png"),
-                ],
-                report,
             ))
         }
         "golden-sun-executable-gap-data" => {
@@ -3491,6 +3540,9 @@ fn build_entry_native_tail(
             if number(&document["address"], "table address")? != address {
                 return Err("table address differs from manifest".into());
             }
+            let mut document = document.clone();
+            let symbols = SourcePaths::load(&ctx.root)?;
+            resolve_table_symbols(&mut document, &symbols)?;
             let built = typed_table(&document)?;
             Ok((
                 built,
@@ -3917,6 +3969,9 @@ fn stamp_files(
         .follow_links(true)
         .into_iter()
         .filter_entry(|entry| {
+            if entry.path() == root.join("games/gs1/assets/readme") {
+                return false; // Coverage figures are outputs, never ROM asset inputs.
+            }
             entry.depth() == 0
                 || !entry.file_type().is_dir()
                 || !matches!(
@@ -4082,6 +4137,15 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     }
     fs::write(root.join("games/gs1/sound/out/fixture.bin"), "ignored").unwrap();
     assert_eq!(previous, stamp().unwrap());
+    fs::create_dir_all(root.join("games/gs1/assets/readme")).unwrap();
+    fs::write(
+        root.join("games/gs1/assets/readme/coverage.svg"),
+        "generated",
+    )
+    .unwrap();
+    assert_eq!(previous, stamp().unwrap());
+    fs::write(root.join("games/gs1/assets/palette.json"), "source").unwrap();
+    assert_ne!(previous, stamp().unwrap());
     fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
     assert!(stamp().unwrap_err().contains("recursive C source include"));
 }

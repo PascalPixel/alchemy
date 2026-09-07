@@ -203,15 +203,28 @@
     },
     {
       "address": "0x08012f20",
-      "size": "0x864",
-      "kind": "golden-sun-early-runtime-data",
-      "source": "games/gs1/assets/data/early_runtime_index.json"
+      "size": 128,
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/data/early_runtime_display.4bpp.png",
+      "frames": 4,
+      "columns": 4,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x08012fa0",
+      "size": 2020,
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/early_runtime_index.json",
+      "pointer": "/regions/0"
     },
     {
       "address": "0x0801403c",
-      "size": "0xfc4",
-      "kind": "golden-sun-early-runtime-data",
-      "source": "games/gs1/assets/data/early_runtime_index.json"
+      "size": 4036,
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/early_runtime_index.json",
+      "pointer": "/regions/1"
     },
     {
       "address": "0x08000000",

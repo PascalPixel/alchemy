@@ -99,8 +99,8 @@
 <rect data-content-type="Other data" x="17.27889344969105" y="99.98815735291818" width="21.37195607369973" height="1.9763147058363608" style="fill:#92a8ac"/>
 </g>
 </g>
-<g aria-label="data: 371,549 bytes · 89 items" data-node="container" data-kind="folder" data-bytes="371549" data-source="games/gs1/assets/data/">
-<title>data: 371,549 bytes · 89 items</title>
+<g aria-label="data: 371,549 bytes · 90 items" data-node="container" data-kind="folder" data-bytes="371549" data-source="games/gs1/assets/data/">
+<title>data: 371,549 bytes · 90 items</title>
 <rect class="container-frame" x="11.026383434743668" y="103.95262941167272" width="29.612623441565297" height="182.04737058832728" fill="#1f7f93"/>
 <path class="bevel-light" d="M11.026383434743668 286 V103.95262941167272 H40.63900687630897" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M11.026383434743668 286 H40.63900687630897 V103.95262941167272" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -116,18 +116,22 @@
 <title>chr_catalog.json · golden-sun-character-catalog · 0x08185024: 34,096 bytes</title>
 <rect data-content-type="Other data" x="13.526383434743668" y="116.87241798887946" width="19.38059251939626" height="19.5333664801661" style="fill:#92a8ac"/>
 </g>
-<g aria-label="early_runtime_index.json: 6,184 bytes · 2 items" data-node="container" data-kind="file" data-bytes="6184" data-source="games/gs1/assets/data/early_runtime_index.json">
-<title>early_runtime_index.json: 6,184 bytes · 2 items</title>
-<rect class="container-frame" x="33.406975954139924" y="116.37241798887946" width="5.232030922169038" height="14.50683632050122" fill="#1f7f93"/>
-<path class="bevel-light" d="M33.406975954139924 130.87925430938068 V116.37241798887946 H38.63900687630896" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M33.406975954139924 130.87925430938068 H38.63900687630896 V116.37241798887946" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="early_runtime_index.json · golden-sun-early-runtime-data · 0x08012f20: 2,148 bytes" data-node="leaf" data-kind="file" data-bytes="2148" data-address="0x08012f20" data-source="games/gs1/assets/data/early_runtime_index.json">
-<title>early_runtime_index.json · golden-sun-early-runtime-data · 0x08012f20: 2,148 bytes</title>
-<rect data-content-type="Other data" x="35.21498368468218" y="118.18042571942172" width="1.616015461084519" height="3.130252782345905" style="fill:#92a8ac"/>
+<g aria-label="early_runtime_display.4bpp.png · gba-4bpp-tiles · 0x08012f20: 128 bytes" data-node="leaf" data-kind="file" data-bytes="128" data-address="0x08012f20" data-source="games/gs1/assets/data/early_runtime_display.4bpp.png">
+<title>early_runtime_display.4bpp.png · gba-4bpp-tiles · 0x08012f20: 128 bytes</title>
+<rect data-content-type="Images" x="33.48204367119297" y="116.44748570593251" width="5.081895488062945" height="0.1501354341060928" style="fill:#8eafc7"/>
 </g>
-<g aria-label="early_runtime_index.json · golden-sun-early-runtime-data · 0x0801403c: 4,036 bytes" data-node="leaf" data-kind="file" data-bytes="4036" data-address="0x0801403c" data-source="games/gs1/assets/data/early_runtime_index.json">
-<title>early_runtime_index.json · golden-sun-early-runtime-data · 0x0801403c: 4,036 bytes</title>
-<rect data-content-type="Other data" x="35.21498368468218" y="122.31067850176763" width="1.616015461084519" height="6.760568077070796" style="fill:#92a8ac"/>
+<g aria-label="early_runtime_index.json: 6,056 bytes · 2 items" data-node="container" data-kind="file" data-bytes="6056" data-source="games/gs1/assets/data/early_runtime_index.json">
+<title>early_runtime_index.json: 6,056 bytes · 2 items</title>
+<rect class="container-frame" x="33.406975954139924" y="116.67268885709164" width="5.232030922169038" height="14.206565452289036" fill="#1f7f93"/>
+<path class="bevel-light" d="M33.406975954139924 130.87925430938068 V116.67268885709164 H38.63900687630896" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M33.406975954139924 130.87925430938068 H38.63900687630896 V116.67268885709164" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="early_runtime_index.json · typed-table · 0x08012fa0: 2,020 bytes" data-node="leaf" data-kind="file" data-bytes="2020" data-address="0x08012fa0" data-source="games/gs1/assets/data/early_runtime_index.json">
+<title>early_runtime_index.json · typed-table · 0x08012fa0: 2,020 bytes</title>
+<rect data-content-type="Other data" x="35.21498368468218" y="118.4806965876339" width="1.616015461084519" height="2.8660685241468173" style="fill:#92a8ac"/>
+</g>
+<g aria-label="early_runtime_index.json · typed-table · 0x0801403c: 4,036 bytes" data-node="leaf" data-kind="file" data-bytes="4036" data-address="0x0801403c" data-source="games/gs1/assets/data/early_runtime_index.json">
+<title>early_runtime_index.json · typed-table · 0x0801403c: 4,036 bytes</title>
+<rect data-content-type="Other data" x="35.21498368468218" y="122.34676511178071" width="1.616015461084519" height="6.7244814670577" style="fill:#92a8ac"/>
 </g>
 </g>
 <g aria-label="final_byte_regions_index.json: 2,569 bytes · 130 items" data-node="container" data-kind="file" data-bytes="2569" data-source="games/gs1/assets/data/final_byte_regions_index.json">

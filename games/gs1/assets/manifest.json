@@ -183,20 +183,23 @@
     {
       "address": "0x080f38bc",
       "size": "0x744",
-      "kind": "golden-sun-late-runtime-residual",
-      "source": "games/gs1/assets/data/late_runtime_residual_index.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/late_runtime_residual_index.json",
+      "pointer": "/regions/0"
     },
     {
       "address": "0x080f53ce",
       "size": "0xc32",
-      "kind": "golden-sun-late-runtime-residual",
-      "source": "games/gs1/assets/data/late_runtime_residual_index.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/late_runtime_residual_index.json",
+      "pointer": "/regions/1"
     },
     {
       "address": "0x080f86f8",
       "size": "0x908",
-      "kind": "golden-sun-late-runtime-residual",
-      "source": "games/gs1/assets/data/late_runtime_residual_index.json"
+      "kind": "typed-table",
+      "source": "games/gs1/assets/data/late_runtime_residual_index.json",
+      "pointer": "/regions/2"
     },
     {
       "address": "0x08012f20",
@@ -368,8 +371,63 @@
     },
     {
       "address": "0x080b3940",
-      "size": "0x16c0",
-      "kind": "golden-sun-sentou-menu-data",
+      "size": 768,
+      "source": "games/gs1/assets/data/sentou_menu_hyouji_00.4bpp.png",
+      "frames": 6,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 6,
+      "kind": "gba-4bpp-tiles",
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080b3c40",
+      "size": 256,
+      "source": "games/gs1/assets/data/sentou_menu_hyouji_01.4bpp.png",
+      "frames": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 2,
+      "kind": "gba-4bpp-tiles",
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080b3d40",
+      "size": 320,
+      "source": "games/gs1/assets/data/sentou_menu_moji.4bpp.png",
+      "frames": 10,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "columns": 10,
+      "kind": "gba-4bpp-tiles",
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080b3e80",
+      "size": 256,
+      "source": "games/gs1/assets/data/sentou_menu_hyouji_02.4bpp.png",
+      "frames": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 2,
+      "kind": "gba-4bpp-tiles",
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080b3f80",
+      "size": 384,
+      "source": "games/gs1/assets/data/sentou_menu_hyouji_03.4bpp.png",
+      "frames": 3,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 3,
+      "kind": "gba-4bpp-tiles",
+      "symbolic_palette": true
+    },
+    {
+      "address": "0x080b4100",
+      "size": 3840,
+      "kind": "typed-table",
       "source": "games/gs1/assets/data/sentou_menu_index.json"
     },
     {

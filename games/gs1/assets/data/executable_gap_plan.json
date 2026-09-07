@@ -567,7 +567,7 @@
     {
       "address": "0x080f9000",
       "size": 8,
-      "evidence": "games/gs1/assets/data/late_runtime/catalog.json -> Func_080f9000"
+      "evidence": "games/gs1/assets/data/late_runtime_residual_index.json -> Func_080f9000"
     },
     {
       "address": "0x080f94f8",

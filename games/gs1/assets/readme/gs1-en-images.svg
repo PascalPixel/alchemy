@@ -99,8 +99,8 @@
 <rect data-content-type="Other data" x="17.27889344969105" y="99.98815735291818" width="21.37195607369973" height="1.9763147058363608" style="fill:#92a8ac"/>
 </g>
 </g>
-<g aria-label="data: 371,549 bytes · 84 items" data-node="container" data-kind="folder" data-bytes="371549" data-source="games/gs1/assets/data/">
-<title>data: 371,549 bytes · 84 items</title>
+<g aria-label="data: 371,549 bytes · 89 items" data-node="container" data-kind="folder" data-bytes="371549" data-source="games/gs1/assets/data/">
+<title>data: 371,549 bytes · 89 items</title>
 <rect class="container-frame" x="11.026383434743668" y="103.95262941167272" width="29.612623441565297" height="182.04737058832728" fill="#1f7f93"/>
 <path class="bevel-light" d="M11.026383434743668 286 V103.95262941167272 H40.63900687630897" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M11.026383434743668 286 H40.63900687630897 V103.95262941167272" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -683,16 +683,16 @@
 <rect class="container-frame" x="13.34484112809819" y="167.31025216802522" width="12.098075079832745" height="7.399851692845224" fill="#1f7f93"/>
 <path class="bevel-light" d="M13.34484112809819 174.71010386087045 V167.31025216802522 H25.442916207930935" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M13.34484112809819 174.71010386087045 H25.442916207930935 V167.31025216802522" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="late_runtime_residual_index.json · golden-sun-late-runtime-residual · 0x080f38bc: 1,860 bytes" data-node="leaf" data-kind="file" data-bytes="1860" data-address="0x080f38bc" data-source="games/gs1/assets/data/late_runtime_residual_index.json">
-<title>late_runtime_residual_index.json · golden-sun-late-runtime-residual · 0x080f38bc: 1,860 bytes</title>
+<g aria-label="late_runtime_residual_index.json · typed-table · 0x080f38bc: 1,860 bytes" data-node="leaf" data-kind="file" data-bytes="1860" data-address="0x080f38bc" data-source="games/gs1/assets/data/late_runtime_residual_index.json">
+<title>late_runtime_residual_index.json · typed-table · 0x080f38bc: 1,860 bytes</title>
 <rect data-content-type="Other data" x="15.694804051309497" y="169.66021509123652" width="1.141562595851775" height="2.699925846422612" style="fill:#92a8ac"/>
 </g>
-<g aria-label="late_runtime_residual_index.json · golden-sun-late-runtime-residual · 0x080f53ce: 3,122 bytes" data-node="leaf" data-kind="file" data-bytes="3122" data-address="0x080f53ce" data-source="games/gs1/assets/data/late_runtime_residual_index.json">
-<title>late_runtime_residual_index.json · golden-sun-late-runtime-residual · 0x080f53ce: 3,122 bytes</title>
+<g aria-label="late_runtime_residual_index.json · typed-table · 0x080f53ce: 3,122 bytes" data-node="leaf" data-kind="file" data-bytes="3122" data-address="0x080f53ce" data-source="games/gs1/assets/data/late_runtime_residual_index.json">
+<title>late_runtime_residual_index.json · typed-table · 0x080f53ce: 3,122 bytes</title>
 <rect data-content-type="Other data" x="17.83636664716127" y="169.66021509123652" width="2.5946013033598065" height="2.699925846422612" style="fill:#92a8ac"/>
 </g>
-<g aria-label="late_runtime_residual_index.json · golden-sun-late-runtime-residual · 0x080f86f8: 2,312 bytes" data-node="leaf" data-kind="file" data-bytes="2312" data-address="0x080f86f8" data-source="games/gs1/assets/data/late_runtime_residual_index.json">
-<title>late_runtime_residual_index.json · golden-sun-late-runtime-residual · 0x080f86f8: 2,312 bytes</title>
+<g aria-label="late_runtime_residual_index.json · typed-table · 0x080f86f8: 2,312 bytes" data-node="leaf" data-kind="file" data-bytes="2312" data-address="0x080f86f8" data-source="games/gs1/assets/data/late_runtime_residual_index.json">
+<title>late_runtime_residual_index.json · typed-table · 0x080f86f8: 2,312 bytes</title>
 <rect data-content-type="Other data" x="21.430967950521076" y="169.66021509123652" width="1.6619853341985502" height="2.699925846422612" style="fill:#92a8ac"/>
 </g>
 </g>
@@ -1018,9 +1018,29 @@
 <rect data-content-type="Other data" x="27.421860631450162" y="264.1325364661135" width="2.2552191971195104" height="5.518410015908972" style="fill:#92a8ac"/>
 </g>
 </g>
-<g aria-label="sentou_menu_index.json · golden-sun-sentou-menu-data · 0x080b3940: 5,824 bytes" data-node="leaf" data-kind="file" data-bytes="5824" data-address="0x080b3940" data-source="games/gs1/assets/data/sentou_menu_index.json">
-<title>sentou_menu_index.json · golden-sun-sentou-menu-data · 0x080b3940: 5,824 bytes</title>
-<rect data-content-type="Other data" x="32.30468942712943" y="261.81932517663745" width="5.834317449179535" height="9.459230903944805" style="fill:#92a8ac"/>
+<g aria-label="sentou_menu_hyouji_00.4bpp.png · gba-4bpp-tiles · 0x080b3940: 768 bytes" data-node="leaf" data-kind="file" data-bytes="768" data-address="0x080b3940" data-source="games/gs1/assets/data/sentou_menu_hyouji_00.4bpp.png">
+<title>sentou_menu_hyouji_00.4bpp.png · gba-4bpp-tiles · 0x080b3940: 768 bytes</title>
+<rect data-content-type="Images" x="32.30468942712943" y="261.81932517663745" width="2.1543003611597853" height="1.9883516868413729" style="fill:#8eafc7"/>
+</g>
+<g aria-label="sentou_menu_hyouji_01.4bpp.png · gba-4bpp-tiles · 0x080b3c40: 256 bytes" data-node="leaf" data-kind="file" data-bytes="256" data-address="0x080b3c40" data-source="games/gs1/assets/data/sentou_menu_hyouji_01.4bpp.png">
+<title>sentou_menu_hyouji_01.4bpp.png · gba-4bpp-tiles · 0x080b3c40: 256 bytes</title>
+<rect data-content-type="Images" x="35.2218481517192" y="261.58218354006743" width="0.5257167268599642" height="2.4626349599814086" style="fill:#8eafc7"/>
+</g>
+<g aria-label="sentou_menu_hyouji_02.4bpp.png · gba-4bpp-tiles · 0x080b3e80: 256 bytes" data-node="leaf" data-kind="file" data-bytes="256" data-address="0x080b3e80" data-source="games/gs1/assets/data/sentou_menu_hyouji_02.4bpp.png">
+<title>sentou_menu_hyouji_02.4bpp.png · gba-4bpp-tiles · 0x080b3e80: 256 bytes</title>
+<rect data-content-type="Images" x="36.30925841069328" y="261.6181603453216" width="2.030913296931547" height="0.5976703373682746" style="fill:#8eafc7"/>
+</g>
+<g aria-label="sentou_menu_hyouji_03.4bpp.png · gba-4bpp-tiles · 0x080b3f80: 384 bytes" data-node="leaf" data-kind="file" data-bytes="384" data-address="0x080b3f80" data-source="games/gs1/assets/data/sentou_menu_hyouji_03.4bpp.png">
+<title>sentou_menu_hyouji_03.4bpp.png · gba-4bpp-tiles · 0x080b3f80: 384 bytes</title>
+<rect data-content-type="Images" x="36.45867599503535" y="262.9629186044002" width="1.7320781282474096" height="0.8965055060524119" style="fill:#8eafc7"/>
+</g>
+<g aria-label="sentou_menu_index.json · typed-table · 0x080b4100: 3,840 bytes" data-node="leaf" data-kind="file" data-bytes="3840" data-address="0x080b4100" data-source="games/gs1/assets/data/sentou_menu_index.json">
+<title>sentou_menu_index.json · typed-table · 0x080b4100: 3,840 bytes</title>
+<rect data-content-type="Other data" x="32.30468942712943" y="264.80767686347883" width="5.834317449179535" height="5.8961962004031685" style="fill:#92a8ac"/>
+</g>
+<g aria-label="sentou_menu_moji.4bpp.png · gba-4bpp-tiles · 0x080b3d40: 320 bytes" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x080b3d40" data-source="games/gs1/assets/data/sentou_menu_moji.4bpp.png">
+<title>sentou_menu_moji.4bpp.png · gba-4bpp-tiles · 0x080b3d40: 320 bytes</title>
+<rect data-content-type="Images" x="31.948360181304494" y="271.34754381805703" width="6.5469759408294035" height="0.28734150835013184" style="fill:#8eafc7"/>
 </g>
 <g aria-label="encounter_data: 13,288 bytes · 3 items" data-node="container" data-kind="folder" data-bytes="13288" data-source="games/gs1/assets/data/encounter_data/">
 <title>encounter_data: 13,288 bytes · 3 items</title>

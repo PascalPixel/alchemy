@@ -401,6 +401,13 @@ by the shared builder; do not create another crate for a particular table.
 Byte index tables declare `index_count` and, when required, `permutation: true`
 to check their domain and uniqueness without a game-specific validator.
 
+The same table encoder supports signed little-endian halfwords, byte fills and
+fixed-stride records with named fields. Bounds, uniqueness and terminated-array
+capacity are declared beside those fields, not hard-coded in a game-specific
+crate. A manifest may select a table by JSON pointer within a shared source.
+Tiled PNG inputs may declare frame dimensions and atlas columns; the ordinary
+tile converter then writes frame order. Keep those layouts in the manifest.
+
 `record-table` describes ordered named integer fields, their radix, common bias
 and encoding; it checks sequential record indices before serializing. `pointer-table`
 declares its base and table addresses and preserves explicit nulls and backward
@@ -469,8 +476,6 @@ libraries are not additional public command surfaces.
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
 | [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
 | [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
-| [late-runtime-data](tools/late-runtime-data/) | Define typed layouts for late-runtime encoding. |
-| [late-runtime-residual](tools/late-runtime-residual/) | Build late-runtime residual regions. |
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
 | [map-resources](tools/map-resources/) | Build and verify map-container resource series. |
@@ -483,7 +488,6 @@ libraries are not additional public command surfaces.
 | [sentou-gamen-data](tools/sentou-gamen-data/) | Build battle-screen data. |
 | [sentou-hyouji](tools/sentou-hyouji/) | Build battle-display data. |
 | [sentou-kouka-runtime](tools/sentou-kouka-runtime/) | Build and verify the battle-effect runtime. |
-| [sentou-menu-data](tools/sentou-menu-data/) | Build battle-menu data. |
 | [sentou-resources](tools/sentou-resources/) | Build and verify battle resource series. |
 | [simple-resources](tools/simple-resources/) | Rebuild maintained stamp, font, word-table and screen records. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |

@@ -68,7 +68,6 @@ dependencies = [
  "integrate-matches",
  "kind1-map-grid",
  "kind2-resources",
- "late-runtime-residual",
  "localization-font",
  "map-container-components",
  "map-resources",
@@ -87,7 +86,6 @@ dependencies = [
  "sentou-gamen-data",
  "sentou-hyouji",
  "sentou-kouka-runtime",
- "sentou-menu-data",
  "sentou-resources",
  "serde",
  "serde_json",
@@ -754,23 +752,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "late-runtime-data"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "late-runtime-residual"
-version = "0.1.0"
-dependencies = [
- "late-runtime-data",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.189"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1178,15 +1159,6 @@ name = "sentou-kouka-runtime"
 version = "0.1.0"
 dependencies = [
  "canonical-json",
- "serde_json",
-]
-
-[[package]]
-name = "sentou-menu-data"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "import-asset",
  "serde_json",
 ]
 

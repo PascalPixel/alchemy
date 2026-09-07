@@ -1,4 +1,5 @@
 //! Native entry point for the asset build stage.
+mod gba_header;
 use crate::generated_files::{prune_files, unused_tracked_images};
 use compiler_core::build_io::relative;
 use compiler_core::bundle::{

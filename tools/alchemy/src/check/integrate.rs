@@ -12,8 +12,8 @@ use compiler_core::translation_units::TranslationUnits;
 use no_asm_c::{find_forbidden, source_files};
 use std::fs;
 use std::path::{Path, PathBuf};
-pub const USAGE: &str = "usage: integrate-matches [-h] [--apply|--check] directory";
-pub const ROOT_OVERRIDE: &str = "ALCHEMY_INTEGRATE_ROOT";
+const USAGE: &str = "usage: integrate-matches [-h] [--apply|--check] directory";
+const ROOT_OVERRIDE: &str = "ALCHEMY_INTEGRATE_ROOT";
 #[derive(Default)]
 struct PipelineReport {
     lines: Vec<String>,
@@ -142,10 +142,8 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
     if !directory.is_dir() {
         return Err(format!("{}: not a directory", directory.display()));
     }
-    // Pure per-candidate compile scratch: consumed only within this same
-    // loop iteration to compute a score, so it lives under system temp
-    // rather than the tracked repo tree (this used to leave thousands of
-    // files under scratch/integrate-gate that no cleanup pass ever reached).
+    // Per-candidate compile scratch lives under the system temp directory,
+    // not the tracked tree.
     let gate = std::env::temp_dir().join("alchemy-integrate-gate");
     fs::create_dir_all(&gate).map_err(|error| format!("{}: {error}", gate.display()))?;
     let candidates = source_files(&directory)
@@ -351,7 +349,7 @@ fn parse_arguments(arguments: &[String]) -> Result<Option<(String, bool, bool)>,
         [_, extra, ..] => Err(format!("unrecognized argument: {extra}")),
     }
 }
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+pub(super) fn entry(arguments: &[String]) -> std::process::ExitCode {
     let result = match parse_arguments(arguments) {
         Ok(None) => {
             println!("{USAGE}");

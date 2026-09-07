@@ -1,7 +1,8 @@
-pub mod cli;
+//! Retained main-image assembly complement audit.
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
+use std::process::ExitCode;
 const ROM_BASE: u64 = 0x0800_0000;
 const ROM_SIZE: usize = 0x80_0000;
 #[derive(Debug)]
@@ -13,18 +14,11 @@ struct Region {
     evidence: String,
 }
 #[derive(Debug)]
-pub struct Audit {
+struct Audit {
     pub executable: usize,
     pub exact: usize,
     pub retained: usize,
     pub kinds: BTreeMap<(String, String), (usize, usize)>,
-}
-pub fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("audit is under tools")
-        .to_path_buf()
 }
 fn document(path: &Path) -> Result<Value, String> {
     let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -167,7 +161,7 @@ fn stale(output: &Path, source: &Path) -> Result<(), String> {
         Ok(())
     }
 }
-pub fn audit(root: &Path) -> Result<Audit, String> {
+fn audit(root: &Path) -> Result<Audit, String> {
     let inventory_path = root.join("games/gs1/metrics/gs1-en-executable.json");
     let asm_path = root.join("out/gs1-en/full/asm/manifest.json");
     let claimed_path = root.join("out/gs1-en/full/claimed/manifest.json");
@@ -215,7 +209,7 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
     })
 }
 impl Audit {
-    pub fn json(&self) -> Value {
+    fn json(&self) -> Value {
         let kinds = self.kinds.iter().map(|((kind, confidence), (regions, bytes))| json!({"kind":kind,"confidence":confidence,"regions":regions,"bytes":bytes})).collect::<Vec<_>>();
         json!({
             "format": 1,
@@ -225,6 +219,41 @@ impl Audit {
             "retained_by_kind_confidence": kinds,
             "failures": []
         })
+    }
+}
+const USAGE: &str = "usage: check retained --check [--json]";
+pub(super) fn entry(arguments: &[String]) -> ExitCode {
+    if arguments
+        .iter()
+        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
+    {
+        println!("{USAGE}");
+        return ExitCode::SUCCESS;
+    }
+    if !arguments.iter().any(|argument| argument == "--check")
+        || arguments
+            .iter()
+            .any(|argument| !matches!(argument.as_str(), "--check" | "--json"))
+    {
+        eprintln!("{USAGE}");
+        return ExitCode::from(2);
+    }
+    match audit(compiler_core::routing::root()) {
+        Ok(audit) => {
+            if arguments.iter().any(|argument| argument == "--json") {
+                println!("{}", serde_json::to_string_pretty(&audit.json()).unwrap());
+            } else {
+                println!(
+                    "status=ok executable={} exact_c={} retained={}",
+                    audit.executable, audit.exact, audit.retained
+                );
+            }
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
+        }
     }
 }
 #[cfg(test)]

@@ -1,10 +1,10 @@
-pub mod cli;
-pub mod retained;
+//! Owner-register and retained-candidate classification checks.
 
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
+use std::process::ExitCode;
 
 fn root() -> PathBuf {
     compiler_core::routing::root().to_path_buf()
@@ -275,7 +275,7 @@ fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
-pub fn validate() -> Result<(usize, usize, usize, usize, usize, usize), String> {
+fn validate() -> Result<(usize, usize, usize, usize, usize, usize), String> {
     let root = root();
     let exact = exact(&root)?;
     let names = validate_registered_main_symbols(&root)?;
@@ -293,4 +293,28 @@ pub fn validate() -> Result<(usize, usize, usize, usize, usize, usize), String> 
         audited.len(),
         names,
     ))
+}
+
+pub(super) fn entry(arguments: &[String]) -> ExitCode {
+    if arguments
+        .iter()
+        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
+    {
+        println!("usage: check owners");
+        return ExitCode::SUCCESS;
+    }
+    if !arguments.is_empty() {
+        eprintln!("usage: check owners");
+        return ExitCode::from(2);
+    }
+    match validate() {
+        Ok((unmatchable, provisional, sealed, drafts, audited, names)) => {
+            println!("owner registers ok: {unmatchable} unmatchable, {provisional} provisional, {sealed} sealed, {drafts} drafts, {audited} audited, {names} named main assembly owners");
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
+        }
+    }
 }

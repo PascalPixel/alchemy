@@ -1,8 +1,7 @@
 //! Fail-closed publication checks for staged changes and outgoing history.
-pub mod cli;
-pub mod commit_progress;
+use std::io::Read;
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, ExitCode};
 const BLOCKED_EXTENSIONS: &[&str] = &[
     "a", "bin", "bps", "bsdiff", "d", "diff", "dis", "dll", "dmp", "dump", "dylib", "elf", "exe",
     "gba", "gz", "ips", "lst", "log", "map", "o", "patch", "raw", "rom", "sav", "so", "sym", "tar",
@@ -61,7 +60,7 @@ fn canonical_binary_source(path: &str) -> bool {
             Some("metatiles.bin" | "metatile_attributes.bin")
         )
 }
-pub fn publication_path_reason(path: &str) -> Option<&'static str> {
+fn publication_path_reason(path: &str) -> Option<&'static str> {
     let normalized = path.replace('\\', "/");
     let components: Vec<_> = normalized
         .split('/')
@@ -110,7 +109,7 @@ fn gba_image(data: &[u8]) -> bool {
         .fold(0u8, |sum, byte| sum.wrapping_add(*byte));
     data[0xbd] == 0u8.wrapping_sub(sum).wrapping_sub(0x19)
 }
-pub fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
+fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     if gba_image(data) {
         return Some("GBA ROM image");
     }
@@ -150,7 +149,7 @@ fn marker_line(line: &str) -> bool {
         && (bytes[..7].iter().all(|byte| *byte == b'<')
             || bytes[..7].iter().all(|byte| *byte == b'>'))
 }
-pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
+fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
     if !listed(extension(path), MARKER_EXTENSIONS) {
         return None;
     }
@@ -179,7 +178,7 @@ fn new_text_file_reason(path: &str, existing: bool) -> Option<String> {
     }
     Some(format!("separate document {path}: use CONTRIBUTING.md"))
 }
-pub fn check_documents(root: &Path) -> Result<(), String> {
+fn check_documents(root: &Path) -> Result<(), String> {
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
     while let Some(directory) = pending.pop() {
@@ -286,7 +285,7 @@ fn byte_dump(message: &str) -> bool {
     }
     false
 }
-pub fn commit_message_reason(message: &str) -> Option<&'static str> {
+fn commit_message_reason(message: &str) -> Option<&'static str> {
     byte_dump(message).then_some("commit message contains a raw byte dump")
 }
 fn git(root: &Path, args: &[&str], label: &str) -> Result<Vec<u8>, String> {
@@ -378,7 +377,7 @@ fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String>
         ))
     }
 }
-pub fn check_staged(root: &Path) -> Result<(), String> {
+fn check_staged(root: &Path) -> Result<(), String> {
     let output = git(
         root,
         &[
@@ -421,7 +420,7 @@ fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, Stri
             .collect()
     })
 }
-pub fn check_push(root: &Path, updates: &str) -> Result<(), String> {
+fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     let updates: Vec<_> = updates
         .lines()
         .map(str::trim)
@@ -492,7 +491,7 @@ pub fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     }
     scan(root, entries, false)
 }
-pub fn self_test() -> Result<(), String> {
+fn self_test() -> Result<(), String> {
     for directory in BLOCKED_DIRECTORIES {
         let path = format!("{directory}/fixture.c");
         if publication_path_reason(&path).is_none() {
@@ -577,6 +576,41 @@ pub fn self_test() -> Result<(), String> {
         }
     }
     Ok(())
+}
+const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history using update lines on stdin.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
+fn fail(message: &str) -> ExitCode {
+    eprintln!("error: {message}");
+    ExitCode::FAILURE
+}
+pub(super) fn entry(arguments: &[String]) -> ExitCode {
+    let root = compiler_core::routing::root();
+    match arguments {
+        [argument] if argument == "--documents" => {
+            check_documents(root).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
+        }
+        [argument] if argument == "-h" || argument == "--help" => {
+            println!("{USAGE}");
+            ExitCode::SUCCESS
+        }
+        [argument] if argument == "--staged" => {
+            check_staged(root).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
+        }
+        [argument] if argument == "--pre-push" => {
+            let mut updates = String::new();
+            if let Err(error) = std::io::stdin().read_to_string(&mut updates) {
+                return fail(&format!("pre-push stdin failed: {error}"));
+            }
+            check_push(root, &updates).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
+        }
+        [argument] if argument == "--self-test" => self_test().map_or_else(
+            |error| fail(&error),
+            |_| {
+                println!("self-test=ok");
+                ExitCode::SUCCESS
+            },
+        ),
+        _ => fail(USAGE),
+    }
 }
 #[cfg(test)]
 mod tests {

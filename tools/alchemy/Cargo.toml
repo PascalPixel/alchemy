@@ -34,7 +34,6 @@ sha1 = "0.10"
 build-asm = { path = "../build-asm" }
 build-claimed = { path = "../build-claimed" }
 build-full = { path = "../build-full" }
-encounter-data = { path = "../encounter-data" }
 character-catalog = { path = "../character-catalog" }
 staff-roll = { path = "../staff-roll" }
 music-residuals = { path = "../music-residuals" }

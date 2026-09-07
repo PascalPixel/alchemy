@@ -1108,9 +1108,9 @@ fn symbolic_value(text: &str, spec: &Value, labels: &TableLabels) -> Result<i64,
             .as_i64()
             .ok_or_else(|| format!("named value {text} is not an integer"));
     }
-    if text.starts_with("0x") {
-        return i64::try_from(number(&Value::from(text), "hexadecimal value")?)
-            .map_err(|_| format!("hexadecimal value {text} overflows"));
+    if text.starts_with("0x") || text.bytes().all(|byte| byte.is_ascii_digit()) {
+        return i64::try_from(number(&Value::from(text), "numeric value")?)
+            .map_err(|_| format!("numeric value {text} overflows"));
     }
     let (name, index) = match text.strip_suffix(']').and_then(|text| text.split_once('[')) {
         Some((name, index)) => (name, number(&Value::from(index), "element index")?),

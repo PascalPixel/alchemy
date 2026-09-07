@@ -21,7 +21,7 @@ _Golden Sun_ release as the first complete derived build target.
 
 ![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=e2dae73c69e08ddf)
 
-![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=464f27cc6c050a89)
+![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=fae642983cde42c2)
 
 ![Music and sound naming coverage](games/gs1/assets/readme/gs1-en-music.svg?v=56cddcb72da03a75)
 
@@ -45,7 +45,7 @@ to Camelot's original source. Draft classifications never count as DONE.
 This is a preservation and decompilation project—not a remake, ROM hack,
 emulator, or game distribution. No ROM is included. To build locally or help
 with the reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md), including its
-[complete tooling index](CONTRIBUTING.md#tooling-index).
+[tooling guide](CONTRIBUTING.md#tooling-index).
 
 ## Acknowledgements
 

@@ -56,6 +56,36 @@
   ],
   "regions": [
     {
+      "address": "0x087fcd20",
+      "size": "0x799",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/code/resource_3ce_stream.lz.json",
+      "selection": {
+        "table": "0x0809f1a8",
+        "record_index": 200,
+        "record_address": "0x0809f7e8",
+        "resource_id": "0x3ce",
+        "group": 70,
+        "variant": 1,
+        "effect_id": 0,
+        "consumers": ["Func_0808a8e4", "Func_0808ab48", "Func_0808ab74"]
+      },
+      "components": [
+        {
+          "kind": "golden-sun-thumb-overlay",
+          "size": "0x168c",
+          "base": "0x02000000",
+          "source": "games/gs1/assets/code/resource_3ce_overlay.s"
+        }
+      ]
+    },
+    {
+      "address": "0x087fd4bc",
+      "size": "0x2b44",
+      "kind": "byte-fill",
+      "value": 0
+    },
+    {
       "kind": "golden-sun-byte-value-region-package",
       "source": "games/gs1/assets/data/final_byte_regions_index.json"
     },
@@ -104,58 +134,50 @@
     {
       "address": "0x083cd090",
       "size": "0x488",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "049"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_049.png"
     },
     {
       "address": "0x083cd518",
       "size": "0x5ec",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "04a"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_04a.png"
     },
     {
       "address": "0x083d85e0",
       "size": "0x444",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "061"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_061.png"
     },
     {
       "address": "0x083dc1f8",
       "size": "0x220",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "064"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_064.png"
     },
     {
       "address": "0x083dc854",
       "size": "0x114",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "066"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_066.png"
     },
     {
       "address": "0x083e2ae4",
       "size": "0x29c",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "073"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_073.png"
     },
     {
       "address": "0x083f5f4c",
       "size": "0x7b0",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "0a5"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_0a5.png"
     },
     {
       "address": "0x083f66fc",
       "size": "0x518",
-      "kind": "golden-sun-resource-byte-canvas",
-      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
-      "resource_id": "0a6"
+      "kind": "indexed-bytes",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_resource_0a6.png"
     },
     {
       "address": "0x080f38bc",
@@ -533,8 +555,20 @@
     {
       "address": "0x0833ac08",
       "size": "0x2b4",
-      "kind": "golden-sun-kana-glyph-bank",
-      "source": "games/gs1/assets/graphics/resource_01c_stream.json"
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_01c_stream.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0x20",
+          "source": "games/gs1/assets/graphics/resource_01c_kana.4bpp.png"
+        },
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x480",
+          "source": "games/gs1/assets/graphics/resource_01c_kana.4bpp.png"
+        }
+      ]
     },
     {
       "address": "0x083ee384",
@@ -556,24 +590,58 @@
     },
     {
       "address": "0x084101d0",
-      "size": "0x10a5",
-      "kind": "golden-sun-d1-d3-resource",
-      "resource_id": "0x0d1",
-      "source": "games/gs1/assets/graphics/resources_d1_d3_index.json"
+      "size": "0x80",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_iro.rgba.png"
+    },
+    {
+      "address": "0x08410250",
+      "size": "0x1025",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d1_d3_stream.json",
+      "plan_section": "stream",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x2a00",
+          "source": "games/gs1/assets/graphics/resources_d1_d3_haikei.8bpp.png"
+        }
+      ]
     },
     {
       "address": "0x08411278",
-      "size": "0x1a8",
-      "kind": "golden-sun-d1-d3-resource",
-      "resource_id": "0x0d2",
-      "source": "games/gs1/assets/graphics/resources_d1_d3_index.json"
+      "size": "0x4",
+      "kind": "be-s16-array",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_idou_d2.json",
+      "pointer": "/initial"
+    },
+    {
+      "address": "0x0841127c",
+      "size": "0x1a2",
+      "kind": "s8-array",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_idou_d2.json",
+      "pointer": "/deltas"
+    },
+    {
+      "address": "0x0841141e",
+      "size": "0x2",
+      "kind": "s8-array",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_idou_d2.json",
+      "pointer": "/boundary_deltas"
     },
     {
       "address": "0x08411420",
-      "size": "0x54",
-      "kind": "golden-sun-d1-d3-resource",
-      "resource_id": "0x0d3",
-      "source": "games/gs1/assets/graphics/resources_d1_d3_index.json"
+      "size": "0x4",
+      "kind": "be-s16-array",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_idou_d3.json",
+      "pointer": "/initial"
+    },
+    {
+      "address": "0x08411424",
+      "size": "0x50",
+      "kind": "s8-array",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_idou_d3.json",
+      "pointer": "/deltas"
     },
     {
       "address": "0x08411474",
@@ -3892,10 +3960,6 @@
     {
       "kind": "golden-sun-chiiki-map-series",
       "index": "games/gs1/assets/maps/chiiki_index.json"
-    },
-    {
-      "kind": "golden-sun-final-battle-overlay-series",
-      "source": "games/gs1/assets/code/resource_3ce_layout.json"
     },
     {
       "kind": "golden-sun-encounter-data-series",

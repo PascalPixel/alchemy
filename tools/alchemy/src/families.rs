@@ -2,10 +2,7 @@ use candidate_compiler::verify::{
     verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE,
 };
 use compiler_core::{
-    build_io::read_json as json,
-    routing::CompilerTarget,
-    sha256,
-    source_paths::{SourceOwner, SourcePaths},
+    build_io::read_json as json, routing::CompilerTarget, sha256, source_paths::SourceOwner,
     translation_units::TranslationUnits,
 };
 use diff::{
@@ -14,17 +11,14 @@ use diff::{
     render::{align_streams, alignment_key, without_pc_offset, without_register},
     triage::{classify, ResidualClass},
 };
-use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
-    path::{Component, Path, PathBuf},
+    path::{Path, PathBuf},
 };
-use walkdir::WalkDir;
-const USAGE: &str = "usage: alchemy families <cluster (--write|--check) FILE | transplant main:ADDRESS [--index FILE] [--output DIR] | prove [FILE]>";
-const DEFAULT_INDEX: &str = "out/gs1-en/reports/compiler-families.json";
+const USAGE: &str = "usage: alchemy families <cluster (--write|--check) FILE | prove [FILE]>";
 const DEFAULT_PROOFS: &str = "games/gs1/recon/family-retention.json";
 const INDEX_SCHEMA_VERSION: u32 = 5;
 const MIN_SCORE: u16 = 7500;
@@ -85,26 +79,26 @@ struct Family {
     target_bytes: usize,
 }
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) struct TargetMatch {
-    pub(crate) owner: String,
-    pub(crate) symbol: String,
-    pub(crate) source: String,
+struct TargetMatch {
+    owner: String,
+    symbol: String,
+    source: String,
     size: usize,
     instructions: usize,
-    pub(crate) family: Option<String>,
-    pub(crate) alternatives: Vec<TemplateMatch>,
+    family: Option<String>,
+    alternatives: Vec<TemplateMatch>,
 }
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) struct TemplateMatch {
-    pub(crate) owner: String,
-    pub(crate) symbol: String,
-    pub(crate) source: String,
-    pub(crate) assembly: String,
+struct TemplateMatch {
+    owner: String,
+    symbol: String,
+    source: String,
+    assembly: String,
     source_sha256: String,
     assembly_sha256: String,
     size: usize,
     instructions: usize,
-    pub(crate) score_basis_points: u16,
+    score_basis_points: u16,
     ngram_similarity_basis_points: u16,
     length_similarity_basis_points: u16,
     has_call_target_evidence: bool,
@@ -113,204 +107,6 @@ pub(crate) struct TemplateMatch {
     branch_similarity_basis_points: u16,
 }
 
-pub(crate) struct FamilyCatalog {
-    index: FamilyIndex,
-    templates: BTreeMap<String, TemplateSource>,
-    standalone_templates: BTreeSet<String>,
-}
-
-pub(crate) struct TemplateSource {
-    pub(crate) owner: SourceOwner,
-    pub(crate) source: String,
-    pub(crate) registered_name: Option<String>,
-    pub(crate) entry_name: Option<String>,
-    source_sha256: String,
-    assembly_sha256: String,
-}
-
-#[derive(Clone)]
-struct ExactRegistration {
-    symbol: String,
-    source: String,
-    assembly: String,
-}
-
-#[derive(Clone, Copy)]
-pub(crate) enum RetargetMode<'a> {
-    EntryMacro {
-        entry: &'a str,
-    },
-    Transplant {
-        registered_name: Option<&'a str>,
-        alias: Option<&'a str>,
-    },
-}
-
-impl FamilyCatalog {
-    pub(crate) fn load(repository: &Path, path: &Path) -> Result<Self, String> {
-        let path = if path.is_absolute() {
-            path.into()
-        } else {
-            repository.join(path)
-        };
-        let index: FamilyIndex = json(path)?;
-        if index.schema_version != INDEX_SCHEMA_VERSION {
-            return Err(format!(
-                "family index schema {} is not supported; run `make families`",
-                index.schema_version
-            ));
-        }
-        let names = SourcePaths::load(repository)?;
-        let units = TranslationUnits::load(repository)?;
-        let exact = exact_template_registrations(repository)?;
-        let aliases = source_alias_registry(repository)?;
-        let mut templates = BTreeMap::<String, TemplateSource>::new();
-        let mut standalone_templates = BTreeSet::new();
-        for details in index.targets.iter().flat_map(|target| &target.alternatives) {
-            let owner = exact_template_owner(details)?;
-            let registration = exact
-                .get(&details.owner)
-                .ok_or_else(|| format!("{} is no longer claimed as exact C", details.owner))?;
-            if registration.symbol != details.symbol
-                || registration.source != details.source
-                || registration.assembly != details.assembly
-            {
-                return Err(format!(
-                    "{} exact source binding changed; run `make families`",
-                    details.owner
-                ));
-            }
-            if let Some(template) = templates.get(&details.owner) {
-                validate_template_hashes(
-                    details,
-                    &template.source_sha256,
-                    &template.assembly_sha256,
-                )?;
-                continue;
-            }
-            let source = read(&resolve(repository, &details.source))?;
-            let assembly = read(&resolve(repository, &details.assembly))?;
-            let source_sha256 = sha256::hex(source.as_bytes());
-            let assembly_sha256 = sha256::hex(assembly.as_bytes());
-            validate_template_hashes(details, &source_sha256, &assembly_sha256)?;
-            let mapped = names.owners_for_path(&repository.join(&details.source));
-            let standalone = units.unit_for_game_owner("gs1", owner).is_none()
-                && matches!(mapped.as_slice(), [mapped] if *mapped == owner);
-            let entry_name = standalone
-                .then(|| source_entry_name(&aliases, &source, &details.symbol))
-                .transpose()?;
-            if standalone {
-                standalone_templates.insert(details.owner.clone());
-            }
-            templates.insert(
-                details.owner.clone(),
-                TemplateSource {
-                    owner,
-                    source,
-                    registered_name: names.registered_name(owner).map(str::to_string),
-                    entry_name,
-                    source_sha256,
-                    assembly_sha256,
-                },
-            );
-        }
-        Ok(Self {
-            index,
-            templates,
-            standalone_templates,
-        })
-    }
-
-    pub(crate) fn target(&self, owner: &str) -> Option<&TargetMatch> {
-        self.index
-            .targets
-            .iter()
-            .find(|target| target.owner == owner)
-    }
-
-    #[cfg(test)]
-    pub(crate) fn targets(&self) -> &[TargetMatch] {
-        &self.index.targets
-    }
-
-    pub(crate) fn template(&self, details: &TemplateMatch) -> Option<&TemplateSource> {
-        self.standalone_templates
-            .contains(&details.owner)
-            .then(|| self.templates.get(&details.owner))
-            .flatten()
-    }
-
-    fn transplant_template(&self, details: &TemplateMatch) -> Option<&TemplateSource> {
-        self.templates.get(&details.owner)
-    }
-}
-
-fn exact_template_owner(details: &TemplateMatch) -> Result<SourceOwner, String> {
-    SourceOwner::parse(&details.owner).map_err(|error| {
-        format!(
-            "invalid exact family alternative {}: {error}",
-            details.owner
-        )
-    })
-}
-
-fn exact_template_registrations(
-    repository: &Path,
-) -> Result<BTreeMap<String, ExactRegistration>, String> {
-    let manifest: BuildManifest = json(repository.join("out/gs1-en/claimed/manifest.json"))?;
-    let mut exact = BTreeMap::new();
-    for region in manifest.regions {
-        let assembly = format!("out/gs1-en/claimed/obj/{}.s", stem(region.address)?);
-        let symbols = if region.symbols.is_empty() {
-            vec![region.symbol]
-        } else {
-            region.symbols
-        };
-        for symbol in symbols {
-            let address = symbol
-                .strip_prefix("Func_")
-                .ok_or_else(|| format!("invalid exact symbol {symbol}"))?;
-            let owner = format!("main:{address}");
-            let registration = ExactRegistration {
-                symbol: symbol.clone(),
-                source: region.source.clone(),
-                assembly: assembly.clone(),
-            };
-            if let Some(previous) = exact.insert(owner.clone(), registration.clone()) {
-                if previous.symbol != registration.symbol
-                    || previous.source != registration.source
-                    || previous.assembly != registration.assembly
-                {
-                    return Err(format!("{owner}: conflicting exact registrations"));
-                }
-            }
-        }
-    }
-    Ok(exact)
-}
-
-fn validate_template_hashes(
-    details: &TemplateMatch,
-    source_sha256: &str,
-    assembly_sha256: &str,
-) -> Result<(), String> {
-    if details.source_sha256 != source_sha256 || details.assembly_sha256 != assembly_sha256 {
-        return Err(format!(
-            "{} exact template bytes changed; run `make families`",
-            details.owner
-        ));
-    }
-    Ok(())
-}
-
-fn resolve(repository: &Path, path: &str) -> PathBuf {
-    let path = Path::new(path);
-    if path.is_absolute() {
-        path.into()
-    } else {
-        repository.join(path)
-    }
-}
 #[derive(Debug, Deserialize)]
 struct ProofManifest {
     format: u32,
@@ -325,18 +121,9 @@ struct ProofFamily {
     minimum_attempted_candidates_per_member: usize,
     maximum_mismatch_run_rows: usize,
 }
-#[derive(Debug, Serialize)]
-struct Block {
-    kind: &'static str,
-    template_start: usize,
-    template_end: usize,
-    target_start: usize,
-    target_end: usize,
-}
 pub fn run(arguments: &[String]) -> Result<(), String> {
     match arguments.first().map(String::as_str) {
         Some("cluster") => cluster_command(&arguments[1..]),
-        Some("transplant") => transplant_command(&arguments[1..]),
         Some("prove") => prove_command(&arguments[1..]),
         Some("-h" | "--help") => {
             println!("{USAGE}");
@@ -670,349 +457,6 @@ fn cosine(left: &BTreeMap<String, u32>, right: &BTreeMap<String, u32>) -> u16 {
 fn ratio(left: usize, right: usize) -> u16 {
     (left.min(right) * 10_000 / left.max(right).max(1)) as u16
 }
-fn transplant_command(arguments: &[String]) -> Result<(), String> {
-    let owner = arguments.first().ok_or(USAGE)?;
-    let mut index = PathBuf::from(DEFAULT_INDEX);
-    let mut output = PathBuf::from("out/family-transplants").join(owner.replace(':', "-"));
-    let mut pairs = arguments[1..].chunks_exact(2);
-    for pair in &mut pairs {
-        match pair[0].as_str() {
-            "--index" => index = pair[1].clone().into(),
-            "--output" => output = pair[1].clone().into(),
-            _ => return Err(USAGE.into()),
-        }
-    }
-    if !pairs.remainder().is_empty() {
-        return Err(USAGE.into());
-    }
-    let output = output_path(&output)?;
-    let repository = compiler_core::routing::root();
-    let catalog = FamilyCatalog::load(repository, &index)?;
-    let target = catalog
-        .target(owner)
-        .ok_or_else(|| format!("{owner}: not in family index"))?;
-    require_family(owner, target.family.as_deref())?;
-    let details = target
-        .alternatives
-        .first()
-        .ok_or_else(|| format!("{owner}: no compatible exact template"))?;
-    let template = catalog
-        .transplant_template(details)
-        .ok_or_else(|| format!("{} is not a current exact template", details.owner))?;
-    let template_source = &template.source;
-    let target_owner = SourceOwner::parse(owner)?;
-    let template_owner = template.owner;
-    if !target_owner.is_main() || !template_owner.is_main() {
-        return Err("family transplant currently supports main-image owners".into());
-    }
-    let stem = target_owner.address_stem();
-    let candidate_path = PathBuf::from(format!("games/gs1/recon/en/main/{stem}.c"));
-    let (seed, origin, seed_source) = if candidate_path.is_file() {
-        (
-            read(&candidate_path)?,
-            "semantic_candidate",
-            candidate_path.clone(),
-        )
-    } else {
-        let alias = entry_alias(repository, &details.symbol)?;
-        (
-            retarget_source(
-                &details.owner,
-                &template.source,
-                &details.symbol,
-                &target.symbol,
-                RetargetMode::Transplant {
-                    registered_name: template.registered_name.as_deref(),
-                    alias: alias.as_deref(),
-                },
-            )?,
-            "exact_template_symbol_seed",
-            PathBuf::from(&details.source),
-        )
-    };
-    let template_path = output.join("template.c");
-    let seed_path = output.join(format!("{stem}.c"));
-    write(&template_path, template_source.as_bytes())?;
-    write(&seed_path, seed.as_bytes())?;
-    let target_asm = read(&resolve(repository, &target.source))?;
-    let template_asm = read(&resolve(repository, &details.assembly))?;
-    let target_lines = gas_function_insns(&target_asm, &target.symbol)
-        .into_iter()
-        .map(|line| token(&line))
-        .collect::<Vec<_>>();
-    let template_lines = gas_function_insns(&template_asm, &details.symbol)
-        .into_iter()
-        .map(|line| token(&line))
-        .collect::<Vec<_>>();
-    if target_lines.is_empty() || template_lines.is_empty() {
-        return Err(format!(
-            "cannot align {} ({}) with {} ({})",
-            target.owner, target.symbol, details.owner, details.symbol
-        ));
-    }
-    let blocks = blocks(&template_lines, &target_lines);
-    write_json(&output.join("alignment.json"), &blocks)?;
-    let m2c = crate::family_m2c::generate(
-        target_owner,
-        &resolve(repository, &target.source),
-        &target.symbol,
-        Some((
-            template_owner,
-            &resolve(repository, &details.source),
-            &details.symbol,
-        )),
-        &output.join("m2c"),
-    )?;
-    let recipe = serde_json::json!({
-        "schema_version": 2,
-        "family": target.family,
-        "target": target.owner,
-        "target_assembly": target.source,
-        "template": details,
-        "seed_origin": origin,
-        "seed_source": seed_source,
-        "seed": seed_path,
-        "seed_sha256": sha256::hex(seed.as_bytes()),
-        "template_sha256": sha256::hex(template_source.as_bytes()),
-        "m2c": {
-            "seed": m2c.source,
-            "seed_sha256": m2c.source_sha256,
-            "contexts": m2c.contexts.iter().map(|context| serde_json::json!({
-                "path":context.path,"sha256":context.sha256,"kind":context.kind
-            })).collect::<Vec<_>>(),
-            "context_kind": m2c.context_kind,
-            "aggregate_report":m2c.aggregate_report,
-            "aggregate_report_sha256":m2c.aggregate_report_sha256,
-            "compile_header":m2c.compile_header,
-            "compile_header_sha256":m2c.compile_header_sha256,
-            "proposal_count":m2c.proposal_count,
-            "struct_count":m2c.struct_count,
-            "rejected_misaligned_fields":m2c.rejected_misaligned_fields,
-            "template_symbol": details.symbol,
-            "target_symbol": target.symbol,
-        },
-        "permutation": {
-            "mode": "allocator_catalog",
-            "source": "ordinary_c",
-            "requires_directives": false,
-            "decoder": "diff --allocator-order",
-            "catalog": "games/gs1/recon/compiler-repair-patterns.json",
-            "command": format!("cargo run --offline --quiet --release --manifest-path tools/alchemy/Cargo.toml -- match {} --iterations 20000 --output out/family-search/{stem}", seed_path.display()),
-        },
-    });
-    write_json(&output.join("recipe.json"), &recipe)?;
-    println!(
-        "transplant={} template={} score={} output={}",
-        owner,
-        details.owner,
-        details.score_basis_points,
-        output.display()
-    );
-    Ok(())
-}
-fn require_family(owner: &str, family: Option<&str>) -> Result<(), String> {
-    family.map(|_| ()).ok_or_else(|| {
-        format!("{owner}: no exact template reaches the {MIN_SCORE}-point family threshold")
-    })
-}
-fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
-    let aliases = source_alias_registry(root)?
-        .remove(symbol)
-        .unwrap_or_default();
-    if aliases.len() > 1 {
-        return Err(format!(
-            "{symbol} has multiple source aliases: {}",
-            aliases.into_iter().collect::<Vec<_>>().join(", ")
-        ));
-    }
-    Ok(aliases.into_iter().next())
-}
-
-fn source_alias_registry(root: &Path) -> Result<BTreeMap<String, BTreeSet<String>>, String> {
-    let mut aliases = BTreeMap::new();
-    collect_aliases(
-        &SourcePaths::load(root)?.symbol_bindings(None),
-        &mut aliases,
-    );
-    for entry in WalkDir::new(root.join("games/gs1/include"))
-        .into_iter()
-        .filter_map(Result::ok)
-        .filter(|entry| entry.path().extension().and_then(|value| value.to_str()) == Some("h"))
-    {
-        collect_aliases(&read(entry.path())?, &mut aliases);
-    }
-    Ok(aliases)
-}
-
-fn collect_aliases(source: &str, aliases: &mut BTreeMap<String, BTreeSet<String>>) {
-    for line in source.lines() {
-        if let Some((alias, symbol)) = alias_definition(line) {
-            aliases
-                .entry(symbol.to_string())
-                .or_default()
-                .insert(alias.to_string());
-        }
-    }
-}
-
-fn alias_definition(line: &str) -> Option<(&str, &str)> {
-    let words = line.split_whitespace().collect::<Vec<_>>();
-    (words.len() >= 3
-        && words[0] == "#define"
-        && words[2].starts_with("Func_")
-        && source_identifier(words[1])
-        && source_identifier(words[2]))
-    .then(|| (words[1], words[2]))
-}
-
-fn source_identifier(value: &str) -> bool {
-    let mut bytes = value.bytes();
-    matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic())
-        && bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
-}
-
-fn source_entry_name(
-    aliases: &BTreeMap<String, BTreeSet<String>>,
-    source: &str,
-    symbol: &str,
-) -> Result<String, String> {
-    let mut candidates = aliases.get(symbol).cloned().unwrap_or_default();
-    let mut local = BTreeMap::new();
-    collect_aliases(source, &mut local);
-    candidates.extend(local.remove(symbol).unwrap_or_default());
-    candidates.insert(symbol.to_string());
-    let code = c_code(source);
-    let entries = candidates
-        .into_iter()
-        .filter(|candidate| source_defines_entry(&code, candidate))
-        .collect::<Vec<_>>();
-    match entries.as_slice() {
-        [entry] => Ok(entry.clone()),
-        [] => Err(format!(
-            "{symbol} has no verified source entry or alias in its exact template"
-        )),
-        _ => Err(format!(
-            "{symbol} has ambiguous source entries: {}",
-            entries.join(", ")
-        )),
-    }
-}
-
-fn source_defines_entry(source: &str, name: &str) -> bool {
-    let pattern = format!(
-        r"(?m)^[ \t]*[A-Za-z_][A-Za-z0-9_]*(?:[ \t\r\n*]+[A-Za-z_][A-Za-z0-9_]*)*[ \t\r\n*]+{}[ \t\r\n]*\([^;{{}}]*\)[ \t\r\n]*\{{",
-        regex::escape(name)
-    );
-    Regex::new(&pattern)
-        .expect("escaped C entry expression")
-        .is_match(source)
-}
-
-fn c_code(source: &str) -> String {
-    Regex::new(
-        r#"(?ms)^[ \t]*\#[^\n]*(?:\\\n[^\n]*)*|/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#,
-    )
-    .expect("static C masking expression")
-    .replace_all(source, " ")
-    .into_owned()
-}
-
-fn retarget_local_entry_definitions(
-    source: &str,
-    entry: &str,
-    template_symbol: &str,
-    target_symbol: &str,
-) -> (String, usize) {
-    let mut count = 0;
-    let mut output = String::with_capacity(source.len());
-    for line in source.split_inclusive('\n') {
-        if alias_definition(line) == Some((entry, template_symbol)) {
-            output.push_str(&line.replacen(template_symbol, target_symbol, 1));
-            count += 1;
-        } else {
-            output.push_str(line);
-        }
-    }
-    (output, count)
-}
-
-pub(crate) fn retarget_source(
-    template_owner: &str,
-    source: &str,
-    template_symbol: &str,
-    target_symbol: &str,
-    mode: RetargetMode<'_>,
-) -> Result<String, String> {
-    let entry = match mode {
-        RetargetMode::EntryMacro { entry } => entry,
-        RetargetMode::Transplant { .. } => template_symbol,
-    };
-    if matches!(mode, RetargetMode::EntryMacro { .. })
-        && (entry == target_symbol || source.contains(&format!(" {target_symbol}(")))
-    {
-        return Err(format!("{template_owner} already defines {target_symbol}"));
-    }
-    let (mut output, alias) = match mode {
-        RetargetMode::EntryMacro { entry } => {
-            let (output, local_definitions) =
-                retarget_local_entry_definitions(source, entry, template_symbol, target_symbol);
-            (output, (local_definitions == 0).then_some(entry))
-        }
-        RetargetMode::Transplant {
-            registered_name,
-            alias,
-        } => {
-            let name = registered_name
-                .ok_or_else(|| format!("{template_owner} has no registered source name"))?;
-            (
-                source
-                    .replace(template_symbol, target_symbol)
-                    .replace(name, target_symbol),
-                alias,
-            )
-        }
-    };
-    if let Some(alias) = alias {
-        let mut cursor = 0;
-        let mut at = 0;
-        for line in output.split_inclusive('\n') {
-            cursor += line.len();
-            if line.trim_start().starts_with("#include") {
-                at = cursor;
-            }
-        }
-        output.insert_str(
-            at,
-            &format!("#undef {alias}\n#define {alias} {target_symbol}\n\n"),
-        );
-    }
-    Ok(output)
-}
-fn blocks(template: &[String], target: &[String]) -> Vec<Block> {
-    let pairs = align_streams(template, target);
-    let mut output = Vec::new();
-    let (mut row, mut template_at, mut target_at) = (0, 0, 0);
-    while row < pairs.len() {
-        let matched = matches!(&pairs[row], (Some(left), Some(right)) if left == right);
-        let (template_start, target_start, start) = (template_at, target_at, row);
-        while row < pairs.len()
-            && matches!(&pairs[row], (Some(left), Some(right)) if left == right) == matched
-        {
-            template_at += usize::from(pairs[row].0.is_some());
-            target_at += usize::from(pairs[row].1.is_some());
-            row += 1;
-        }
-        output.push(Block {
-            kind: if matched { "shared" } else { "lowering_delta" },
-            template_start,
-            template_end: template_at,
-            target_start,
-            target_end: target_at,
-        });
-        debug_assert!(row > start);
-    }
-    output
-}
 fn prove_command(arguments: &[String]) -> Result<(), String> {
     let path = match arguments {
         [] => Path::new(DEFAULT_PROOFS),
@@ -1327,52 +771,6 @@ fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     }
     fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
-fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
-    let text = serde_json::to_string_pretty(value)
-        .map_err(|error| format!("{}: {error}", path.display()))?
-        + "\n";
-    write(path, text.as_bytes())
-}
-fn output_path(path: &Path) -> Result<PathBuf, String> {
-    let root = compiler_core::routing::root();
-    let path = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root.join(path)
-    };
-    let mut normalized = PathBuf::new();
-    for component in path.components() {
-        match component {
-            Component::CurDir => {}
-            Component::ParentDir => {
-                normalized.pop();
-            }
-            value => normalized.push(value.as_os_str()),
-        }
-    }
-    let trusted = root.join("out");
-    if normalized == trusted || !normalized.starts_with(&trusted) {
-        return Err(format!(
-            "transplant output must be under out/: {}",
-            normalized.display()
-        ));
-    }
-    fs::create_dir_all(&normalized)
-        .map_err(|error| format!("{}: {error}", normalized.display()))?;
-    let trusted = trusted
-        .canonicalize()
-        .map_err(|error| format!("{}: {error}", trusted.display()))?;
-    let resolved = normalized
-        .canonicalize()
-        .map_err(|error| format!("{}: {error}", normalized.display()))?;
-    if resolved == trusted || !resolved.starts_with(&trusted) {
-        return Err(format!(
-            "transplant output resolves outside out/: {}",
-            resolved.display()
-        ));
-    }
-    Ok(resolved)
-}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1425,11 +823,6 @@ mod tests {
         assert_eq!(ratio(3, 4), 7500);
     }
     #[test]
-    fn transplant_rejects_unqualified_similarity() {
-        assert!(require_family("main:08000000", None).is_err());
-        assert!(require_family("main:08000000", Some("family")).is_ok());
-    }
-    #[test]
     fn family_requires_shared_call_identity_when_calls_are_present() {
         let mut candidate = template_match();
         candidate.call_target_similarity_basis_points = 0;
@@ -1447,114 +840,6 @@ mod tests {
         assert!(!qualifies_family(&candidate));
         candidate.ngram_similarity_basis_points = MIN_NO_CALL_NGRAM_SCORE;
         assert!(qualifies_family(&candidate));
-    }
-    #[test]
-    fn wave_policy_excludes_translation_units_without_blocking_transplants() {
-        let repository = compiler_core::routing::root();
-        let units = TranslationUnits::load(repository).unwrap();
-        let catalog = FamilyCatalog::load(repository, Path::new(DEFAULT_INDEX)).unwrap();
-        let details = catalog
-            .targets()
-            .iter()
-            .flat_map(|target| &target.alternatives)
-            .find(|details| {
-                SourceOwner::parse(&details.owner)
-                    .ok()
-                    .is_some_and(|owner| units.unit_for_game_owner("gs1", owner).is_some())
-            })
-            .expect("family corpus must retain a translation-unit exact alternative");
-        assert!(catalog.template(details).is_none());
-        assert!(catalog.transplant_template(details).is_some());
-    }
-    #[test]
-    fn exact_template_hashes_are_part_of_the_catalog_contract() {
-        let details = template_match();
-        assert!(validate_template_hashes(&details, "source-hash", "assembly-hash").is_ok());
-        assert!(validate_template_hashes(&details, "changed", "assembly-hash").is_err());
-        assert!(validate_template_hashes(&details, "source-hash", "changed").is_err());
-    }
-    #[test]
-    fn invalid_family_alternative_identity_is_an_error() {
-        let mut details = template_match();
-        details.owner = "not-an-owner".into();
-        assert!(exact_template_owner(&details).is_err());
-    }
-    #[test]
-    fn transplant_retargets_semantic_entry_name() {
-        assert_eq!(retarget_source("main:08001000", "#include \"x.h\"\n\ns32 Shop_Select(void) {}", "Func_08001000", "Func_08002000", RetargetMode::Transplant { registered_name: Some("select"), alias: Some("Shop_Select") }).unwrap(), "#include \"x.h\"\n#undef Shop_Select\n#define Shop_Select Func_08002000\n\n\ns32 Shop_Select(void) {}");
-    }
-    #[test]
-    fn entry_macro_uses_the_exact_sources_real_alias() {
-        let repository = compiler_core::routing::root();
-        let source =
-            read(&repository.join("games/gs1/src/resource/table/find_free_slot.c")).unwrap();
-        let aliases = source_alias_registry(repository).unwrap();
-        let entry = source_entry_name(&aliases, &source, "Func_08004080").unwrap();
-        assert_eq!(entry, "Resource_FindFreeSlot");
-        let output = retarget_source(
-            "main:08004080",
-            &source,
-            "Func_08004080",
-            "Func_080b6e7c",
-            RetargetMode::EntryMacro { entry: &entry },
-        )
-        .unwrap();
-        assert!(output.contains("#define Resource_FindFreeSlot Func_080b6e7c"));
-        assert!(!output.contains("#define find_free_slot Func_080b6e7c"));
-    }
-    #[test]
-    fn entry_macro_retargets_a_source_local_alias_definition() {
-        let source = "#include \"types.h\"\n#define LayoutSummonPositions Func_080b7424\n\nvoid LayoutSummonPositions(void) {}\n";
-        let output = retarget_source(
-            "main:080b7424",
-            source,
-            "Func_080b7424",
-            "Func_0800bc70",
-            RetargetMode::EntryMacro {
-                entry: "LayoutSummonPositions",
-            },
-        )
-        .unwrap();
-        assert!(output.contains("#define LayoutSummonPositions Func_0800bc70"));
-        assert!(!output.contains("#define LayoutSummonPositions Func_080b7424"));
-    }
-    #[test]
-    fn entry_macro_accepts_a_verified_raw_symbol_without_an_alias() {
-        let repository = compiler_core::routing::root();
-        let source = "/* void Func_08001234(void) {} */\nvoid Func_08001234(void)\n{\n}\n";
-        let aliases = source_alias_registry(repository).unwrap();
-        let entry = source_entry_name(&aliases, source, "Func_08001234").unwrap();
-        assert_eq!(entry, "Func_08001234");
-        let output = retarget_source(
-            "main:08001234",
-            source,
-            "Func_08001234",
-            "Func_08005678",
-            RetargetMode::EntryMacro { entry: &entry },
-        )
-        .unwrap();
-        assert!(output.contains("#define Func_08001234 Func_08005678"));
-    }
-    #[test]
-    fn source_entry_resolution_fails_closed_on_ambiguity() {
-        let source = "#define First Func_08001234\n#define Second Func_08001234\nvoid First(void) {}\nvoid Second(void) {}\n";
-        let aliases = source_alias_registry(compiler_core::routing::root()).unwrap();
-        let error = source_entry_name(&aliases, source, "Func_08001234").unwrap_err();
-        assert!(error.contains("ambiguous source entries: First, Second"));
-    }
-    #[test]
-    fn exact_template_uses_register_only_entry_names() {
-        let repository = compiler_core::routing::root();
-        let symbol = "Func_080c0228";
-        let name = "BattlePresentation_DrawTransitionRows";
-        let source = format!("void {name}(void) {{}}\n");
-        let aliases = source_alias_registry(repository).unwrap();
-        assert_eq!(source_entry_name(&aliases, &source, symbol).unwrap(), name);
-        assert_eq!(
-            entry_alias(repository, symbol).unwrap().as_deref(),
-            Some(name)
-        );
-        assert!(source_entry_name(&aliases, "void Unrelated(void) {}", symbol).is_err());
     }
     #[test]
     fn reordered_instruction_around_a_match_is_one_group() {

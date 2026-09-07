@@ -46,7 +46,7 @@ range immediately, without double-counting the bytes.
 ### 1. Select a bounded piece of the game
 
 Inspect the current tree, production coverage and candidate scores. Use
-`./alchemy families`, `./alchemy waves inventory` and the dashboard to find
+`./alchemy families` and the dashboard to find
 work; historical dossiers and similarity clusters are leads, not authority.
 
 Rank complete modules by genuinely unresolved bytes, demonstrated sibling
@@ -150,16 +150,11 @@ actual closure. `./alchemy match` runs only decoder-named catalog operations;
 its acceptance fixtures are part of `make test`. Permutation is last-mile work
 after the structure is credible, not a substitute for missing types or loops.
 
-Use existing wave preparation and scoring for a proven class. Cheap workers
-execute named playbooks against prepared owners; uncovered work needs analysis.
-Do not multiply workers before a representative repair works, and do not let
-workers adopt overlapping units independently.
-
-For a specifically authorized no-candidate experiment, `./alchemy waves draft
-prepare` binds the context and templates; `draft score --shard I/N` scores
-prepared shards; `draft collect` checks the cohort and publishes its verdict.
-Use smallest-first only for that bounded drafting experiment. Ordinary closure
-work remains ordered by unresolved module value.
+Apply a proven repair to a bounded group of related owners, scoring each complete
+extent. Inspect siblings in their maintained source; do not generate another
+cohort, template pack or parallel type context. Shared types belong in game
+headers once established from evidence. Never adopt overlapping units
+independently.
 
 End a batch with exact-C bytes added, newly resolved bytes, parked bytes,
 residual classes and time spent. A zero-adoption batch does not justify a
@@ -286,11 +281,11 @@ manifests; code and asset data in their sources; measured status in current
 build outputs. Derived coverage, family and correspondence reports are not
 editable authorities. Dossiers retain dated reasoning, not current scores.
 
-Only the canonical `out/gs1-en/waves/bucket.json`, its `bucket/` receipts and
-current `draft/` cohort are live wave state. Other output paths are disposable
-experiments, not automatic inputs to later work. `make coverage` refreshes the
-current GS1 main-ROM residual scoreboard; it is not a complete overlay inventory.
-Check overlay coverage separately until both are measured by the same report.
+Current build outputs own measured coverage. `make coverage` refreshes the ROM
+coverage figures; it does not recompile draft C or publish a draft-class
+scoreboard. Score candidates directly with `alchemy diff` and check overlay
+coverage with the existing overlay audit. Old experiment outputs are not inputs
+to the build or evidence of current candidate status.
 
 ## Setup and the short development loop
 
@@ -340,7 +335,7 @@ rejects a staged tree different from the verified one.
 `make targets` is a compile check, not twelve full-ROM proofs. The candidate
 audit separates installed C, complete nonexact candidates, nonowners and
 unverified fragments; an unscored complete owner is a failure, not a parked
-match. Repair verification failures before resuming affected waves.
+match. Repair verification failures before resuming affected work.
 
 Use `make audit` for exhaustive release or large compiler/ownership checks and
 `make reports` to regenerate analysis outputs, not in every function's edit
@@ -362,13 +357,52 @@ Portable tooling is capped at 50,000 Rust, TypeScript, JavaScript and CSS lines,
 as checked by `make tooling-size`. The ceiling and its scope are Pascal's:
 do not raise it or move code outside the counted set to admit a change.
 
+The reusable working kit is deliberately small:
+
+| Operation | Command |
+| --- | --- |
+| Recover and inspect C | `alchemy decompile`, `disassemble`, `inspect` |
+| Compile and compare complete owners or units | `alchemy diff` |
+| Search a bounded, justified C repair | `alchemy match` |
+| Install verified C and consolidate modules | `alchemy adopt`, `unit` |
+| Build, verify and measure the game | `alchemy build`, `verify`, `coverage` |
+
+For another GBA game, carry the compiler invocation, instruction decoding,
+byte comparison and bounded matching machinery, plus the minimum build
+integration. Choose that game's compiler from evidence; Golden Sun's compiler
+route, address map, owner register and asset formats are not portable defaults.
+Do not copy a framework for worker waves, template packs, inferred aggregate
+contexts or report inventories.
+
+Alchemy also retains the dependencies its actual game build requires:
+`assets` and its Golden Sun codecs rebuild maintained data; `overlay` handles
+the loader's relocation format; `cross-edition` checks edition differences;
+`check` enforces source, classification, compiler and publication contracts.
+These are project integration, not tools to take to another game.
+`families` offers read-only similarity ranking and existing retention checks;
+the dashboard displays the resulting game data.
+
+Asset tooling is organized by format and conversion, never by resource number,
+ROM address or the first game asset that needed it. Name a directional converter
+for its actual inputs and outputs, such as `png2gba4bpp`; distinguish raw tiled
+pixels, palettes and file containers. A bidirectional codec library may use the
+format name. Do not label an SMSH source parser as a MIDI converter unless it
+actually performs that conversion. Game-specific offsets, dimensions, table
+layouts and compression plans belong in the maintained asset description, not
+a separate executable or crate per resource. Share the implementation across
+assets of the same format and prove their rebuilt bytes before deleting the old
+route. Renaming hard-coded resource logic does not make it portable.
+
+The inventory remains mandatory, including game-specific and internal libraries.
+Build dependency status is not an exemption from review or consolidation.
+
 The following is the complete library and command index.
 `make tooling-index-check` checks every immediate tool directory exactly once;
 libraries are not additional public command surfaces.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, assets, decompile, disassemble, inspect, diff, adopt, match, families, waves, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, assets, decompile, disassemble, inspect, diff, adopt, match, families, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 | [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
 | [asset-paths](tools/asset-paths/) | Own canonical tracked asset paths. |
@@ -386,7 +420,6 @@ libraries are not additional public command surfaces.
 | [integrate-matches](tools/integrate-matches/) | Adopt byte-exact main-image C through the integration gate. |
 | [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
-| [overlay-call-targets](tools/overlay-call-targets/) | Decode overlay-specific call-target words. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [check-commit-progress](tools/check-commit-progress/) | Enforce progress-bearing commit subjects. |
 | [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history. |
@@ -427,11 +460,7 @@ libraries are not additional public command surfaces.
 | [music](tools/music/) | Extract and verify music data. |
 | [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |
 | [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
-| [resource-01c](tools/resource-01c/) | Decode and rebuild resource 01C. |
-| [resource-3ce](tools/resource-3ce/) | Decode and rebuild resource 3CE. |
 | [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
-| [resource-byte-canvases](tools/resource-byte-canvases/) | Encode byte-canvas resources. |
-| [resource-d1-d3](tools/resource-d1-d3/) | Decode and rebuild resources D1 through D3. |
 | [resource-directory](tools/resource-directory/) | Extract and verify the resource directory. |
 | [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |
 | [sentou-gamen-data](tools/sentou-gamen-data/) | Build battle-screen data. |

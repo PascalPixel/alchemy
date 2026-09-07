@@ -1,6 +1,5 @@
 use std::process::ExitCode;
 
-mod aggregate_context;
 mod allocator;
 mod assets;
 mod build;
@@ -8,12 +7,10 @@ mod build_assets;
 mod check;
 mod cross_edition;
 mod families;
-mod family_m2c;
 mod flatten;
 mod font;
 mod overlay;
 mod scaffold;
-mod waves;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   decompile OWNER       recover candidate C\n\
@@ -23,8 +20,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   adopt OWNER           verify and integrate candidate C\n\
   match SOURCE          search decoder-named, catalogued source repairs\n\
   unit                  scaffold or flatten translation units\n\
-  families              discover and transfer related source\n\
-  waves                 run prepared reconstruction cohorts\n\
+  families              compare related functions and audit retained families\n\
   cross-edition         compare historical editions\n\
   dashboard             serve the local dashboard\n\
   build                 build compilers or ROM stages (asm, claimed, full, rom, assets)\n\
@@ -84,7 +80,6 @@ fn main() -> ExitCode {
         },
         "cross-edition" => result(cross_edition::run(rest)),
         "families" => result(families::run(rest)),
-        "waves" => result(waves::run(rest)),
         "match" => result(matching::run(rest.to_vec())),
         "dashboard" => {
             dashboard_server::cli::entry(rest);

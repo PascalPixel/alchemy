@@ -25,7 +25,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching \
 	dashboard-server disassemble \
-	overlay-adopt overlay-call-targets check-commit-progress \
+	overlay-adopt check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches decomp-targets decompile
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
@@ -269,9 +269,6 @@ edition-builds-check: correspondence-check
 
 coverage: full-rom-check | $(REPORT_DIR)
 	$(CHECK) coverage --write
-ifeq ($(TARGET),gs1-en)
-	$(COMPILER) waves scoreboard
-endif
 
 coverage-check: full-rom-check
 	$(CHECK) coverage --check

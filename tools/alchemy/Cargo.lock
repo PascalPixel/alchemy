@@ -42,7 +42,6 @@ dependencies = [
  "build-asm",
  "build-claimed",
  "build-full",
- "byte-henkan",
  "cache-entry",
  "candidate-compiler",
  "canonical-json",
@@ -237,13 +236,6 @@ dependencies = [
  "canonical-json",
  "compiler-core",
  "decomp-targets",
- "serde_json",
-]
-
-[[package]]
-name = "byte-henkan"
-version = "0.1.0"
-dependencies = [
  "serde_json",
 ]
 

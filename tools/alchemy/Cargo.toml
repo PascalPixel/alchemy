@@ -54,7 +54,6 @@ skip-sprite-archive = { path = "../skip-sprite-archive" }
 static-sprite-series = { path = "../static-sprite-series" }
 localization-font = { path = "../localization-font" }
 map-container-components = { path = "../map-container-components" }
-byte-henkan = { path = "../byte-henkan" }
 namae-nyuuryoku = { path = "../namae-nyuuryoku" }
 kind1-map-grid = { path = "../kind1-map-grid" }
 resource-directory = { path = "../resource-directory" }

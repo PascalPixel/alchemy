@@ -763,6 +763,33 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
         if bytes.len() != size {
             return Err("table segment size differs".into());
         }
+        if let Some(count) = segment.get("index_count") {
+            let count = number(count, "index count")?;
+            if kind != "u8-array"
+                || count == 0
+                || count > 256
+                || bytes.iter().any(|&byte| usize::from(byte) >= count)
+            {
+                return Err("byte index is outside its table".into());
+            }
+            if let Some(permutation) = segment.get("permutation") {
+                let permutation = permutation.as_bool().ok_or("permutation must be boolean")?;
+                if permutation {
+                    let mut ordered = bytes.clone();
+                    ordered.sort_unstable();
+                    if ordered.len() != count
+                        || ordered
+                            .iter()
+                            .enumerate()
+                            .any(|(i, &b)| i != usize::from(b))
+                    {
+                        return Err("byte table is not a permutation".into());
+                    }
+                }
+            }
+        } else if segment.get("permutation").is_some() {
+            return Err("permutation requires index_count".into());
+        }
         output.extend(bytes);
         address = end;
     }
@@ -770,6 +797,28 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
         return Err("table size differs".into());
     }
     Ok(output)
+}
+
+#[test]
+fn typed_byte_tables_check_index_ranges_and_permutations() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
+        {"address":0,"end":4,"element":"u8","stride":1,"values":[2,0,3,1],"index_count":4,"permutation":true}
+    ]});
+    assert_eq!(typed_table(&source).unwrap(), [2, 0, 3, 1]);
+    for (pointer, value) in [
+        ("/segments/0/values/0", serde_json::json!(1)),
+        ("/segments/0/values/0", serde_json::json!(4)),
+        ("/segments/0/index_count", serde_json::json!(5)),
+        ("/segments/0/permutation", serde_json::json!("true")),
+    ] {
+        let mut invalid = source.clone();
+        *invalid.pointer_mut(pointer).unwrap() = value;
+        assert!(typed_table(&invalid).is_err(), "{pointer}");
+    }
+    let mut mapping = source;
+    mapping["segments"][0]["permutation"] = serde_json::json!(false);
+    mapping["segments"][0]["values"] = serde_json::json!([1, 1, 1, 1]);
+    assert_eq!(typed_table(&mapping).unwrap(), [1, 1, 1, 1]);
 }
 
 #[test]
@@ -3064,19 +3113,6 @@ fn build_entry_native_tail(
                 built.clone(),
                 vec![entry_source.to_string()],
                 serde_json::json!({"component_address":entry.get("address"),"bytes":built.len()}),
-            ))
-        }
-        "golden-sun-byte-henkan-tables" => {
-            let built = byte_henkan::build_byte_henkan_tables(&source_path(entry_source)?)?;
-            if address != 0x0800_92b8 || built.len() != 0x900 {
-                return Err(
-                    "byte-conversion tables differ from canonical manifest extent".to_string(),
-                );
-            }
-            Ok((
-                built.clone(),
-                vec![entry_source.to_string()],
-                serde_json::json!({"source_bytes":built.len(),"tables":9,"derived_zero_bytes":288}),
             ))
         }
         "golden-sun-character-catalog" => {

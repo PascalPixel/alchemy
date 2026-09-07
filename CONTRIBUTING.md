@@ -398,6 +398,8 @@ segments: `u8`, `s8`, `le-u16`, `le-u32`, and zero-terminated, padded `ascii-fix
 Addresses, extents, strides and consumer evidence stay in the asset source.
 Integer ranges, segment continuity, text encoding and output sizes are checked
 by the shared builder; do not create another crate for a particular table.
+Byte index tables declare `index_count` and, when required, `permutation: true`
+to check their domain and uniqueness without a game-specific validator.
 
 The inventory remains mandatory, including game-specific and internal libraries.
 Build dependency status is not an exemption from review or consolidation.
@@ -446,7 +448,6 @@ libraries are not additional public command surfaces.
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
 | [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
-| [byte-henkan](tools/byte-henkan/) | Build byte-conversion tables. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
 | [early-runtime-data](tools/early-runtime-data/) | Build the early-runtime data package. |
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |

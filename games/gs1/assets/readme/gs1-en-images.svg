@@ -108,8 +108,8 @@
 <title>battle_effect_data_layout.json · golden-sun-battle-effect-data · 0x0809c410: 19,440 bytes</title>
 <rect data-content-type="Other data" x="13.526383434743668" y="106.45262941167272" width="21.898703076896126" height="9.419788577206743" style="fill:#92a8ac"/>
 </g>
-<g aria-label="byte_henkan_hyou.json · golden-sun-byte-henkan-tables · 0x080092b8: 2,304 bytes" data-node="leaf" data-kind="file" data-bytes="2304" data-address="0x080092b8" data-source="games/gs1/assets/data/byte_henkan_hyou.json">
-<title>byte_henkan_hyou.json · golden-sun-byte-henkan-tables · 0x080092b8: 2,304 bytes</title>
+<g aria-label="byte_henkan_hyou.json · typed-table · 0x080092b8: 2,304 bytes" data-node="leaf" data-kind="file" data-bytes="2304" data-address="0x080092b8" data-source="games/gs1/assets/data/byte_henkan_hyou.json">
+<title>byte_henkan_hyou.json · typed-table · 0x080092b8: 2,304 bytes</title>
 <rect data-content-type="Other data" x="36.42508651163979" y="106.45262941167272" width="1.7139203646691712" height="9.419788577206743" style="fill:#92a8ac"/>
 </g>
 <g aria-label="chr_catalog.json · golden-sun-character-catalog · 0x08185024: 34,096 bytes" data-node="leaf" data-kind="file" data-bytes="34096" data-address="0x08185024" data-source="games/gs1/assets/data/chr_catalog.json">

@@ -50,8 +50,6 @@ asset_commands! {
         localization_font::cli::entry,
     "map-container-components": "extract map container components data from the ROM" =>
         map_container_components::cli::entry,
-    "byte-henkan": "extract byte henkan data from the ROM" =>
-        byte_henkan::cli::entry,
     "namae-nyuuryoku": "extract namae nyuuryoku data from the ROM" =>
         namae_nyuuryoku::cli::entry,
     "music": "extract music data from the ROM" =>

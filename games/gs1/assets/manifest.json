@@ -273,7 +273,7 @@
     {
       "address": "0x080092b8",
       "size": "0x900",
-      "kind": "golden-sun-byte-henkan-tables",
+      "kind": "typed-table",
       "source": "games/gs1/assets/data/byte_henkan_hyou.json"
     },
     {

@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a9:0200007c": {
+      "name": "SceneData_SelectAndPrepareTable",
+      "source": "overlays/scene_script/scene_3a9.c"
+    },
+    "resource_3a9:020000e4": {
+      "name": "SceneData_SelectSubStateTable",
+      "source": "overlays/scene_script/scene_3a9.c"
+    },
     "resource_3b5:02000644": {
       "name": "SceneScript_SetupActors",
       "source": "overlays/scene_script/actor_setup_and_events.c"

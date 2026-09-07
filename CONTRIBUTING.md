@@ -430,7 +430,9 @@ internal build dependencies pending format migration, not supported commands.
 Do not reintroduce parallel package-specific build or verify commands.
 
 Use `alchemy convert FORMAT INPUT OUTPUT` for file conversions: `words2bin`,
-`pairs2bin`, `tilemap2bin`, `png2gba4bpp`, `png2gba8bpp`, and `png2gbapal`.
+`pairs2bin`, `tilemap2bin`, `png2gba4bpp`, `png2gba8bpp`, `png2gbapal`, and `wav2pcm8`.
+`wav2pcm8` reads canonical mono 8-bit PCM WAV and emits signed 8-bit sample bytes;
+game-engine headers and looping metadata belong to the asset build, not the converter.
 These have no game addresses or default ROMs and refuse to overwrite an existing
 output. `alchemy font` retains the project's shared font reconstruction pipeline;
 it is project integration, not part of the portable kit.
@@ -471,9 +473,8 @@ libraries are not additional public command surfaces.
 | [archive-asset](tools/archive-asset/) | Encode and decode archive-backed assets. |
 | [export-asset](tools/export-asset/) | Export GBA graphics into editable assets. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
-| [import-asset](tools/import-asset/) | Import images and text into GBA formats; shared MTF4 and delta7 pixel encoders. |
+| [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
 | [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
-| [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
 | [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
 | [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
 | [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |

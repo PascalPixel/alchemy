@@ -2008,18 +2008,6 @@
       ]
     },
     {
-      "overlay": "resource_3aa",
-      "start": "0x02001494",
-      "end": "0x02001a16",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE."
-      ]
-    },
-    {
       "overlay": "resource_380",
       "start": "0x02000f8c",
       "end": "0x02001450",

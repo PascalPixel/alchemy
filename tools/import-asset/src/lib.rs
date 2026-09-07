@@ -511,9 +511,69 @@ pub fn self_test() -> Result<String, AssetError> {
     Ok("self-test=ok".into())
 }
 
+/// Sequencer-specific meta prefix that marks a build directive in a MIDI conductor track.
+pub const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
+
+fn midi_vlq(mut value: usize) -> Vec<u8> {
+    let mut bytes = vec![(value & 0x7f) as u8];
+    while {
+        value >>= 7;
+        value != 0
+    } {
+        bytes.push(((value & 0x7f) as u8) | 0x80);
+    }
+    bytes.reverse();
+    bytes
+}
+
+/// Append a meta event with `payload` to the first (conductor) track of a MIDI
+/// file, immediately before its canonical end-of-track event, and rewrite the
+/// track length.
+pub fn append_conductor_meta(midi: &[u8], meta: u8, payload: &[u8]) -> Result<Vec<u8>, AssetError> {
+    if midi.len() < 26 || &midi[..4] != b"MThd" {
+        return err("MIDI header is missing");
+    }
+    let track = 8 + be_u32(midi, 4).unwrap() as usize;
+    if midi.get(track..track + 4) != Some(b"MTrk") {
+        return err("MIDI conductor track is missing");
+    }
+    let length = be_u32(midi, track + 4)
+        .ok_or_else(|| AssetError("MIDI conductor length is truncated".into()))?
+        as usize;
+    let end = track + 8 + length;
+    if end > midi.len() || midi.get(end - 4..end) != Some(&[0, 0xff, 0x2f, 0]) {
+        return err("MIDI conductor end is not canonical");
+    }
+    let mut event = vec![0, 0xff, meta];
+    event.extend(midi_vlq(payload.len()));
+    event.extend_from_slice(payload);
+    let new_length = u32::try_from(length + event.len())
+        .map_err(|_| AssetError("MIDI conductor is too large".into()))?;
+    let mut output = Vec::with_capacity(midi.len() + event.len());
+    output.extend_from_slice(&midi[..track + 4]);
+    output.extend_from_slice(&new_length.to_be_bytes());
+    output.extend_from_slice(&midi[track + 8..end - 4]);
+    output.extend_from_slice(&event);
+    output.extend_from_slice(&midi[end - 4..]);
+    Ok(output)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn conductor_meta_events_are_appended_before_the_canonical_end() {
+        let midi = b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x09\0\xff\x01\x01a\0\xff\x2f\0";
+        let appended = append_conductor_meta(midi, 0x7f, b"directive").unwrap();
+        let expected = b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x16\0\xff\x01\x01a\0\xff\x7f\x09directive\0\xff\x2f\0";
+        assert_eq!(appended, expected);
+        assert_eq!(midi_events(&appended).unwrap().events.len(), 3);
+        assert_eq!(midi_vlq(0x4000), [0x81, 0x80, 0x00]);
+        let truncated = &midi[..midi.len() - 1];
+        assert!(append_conductor_meta(truncated, 0x01, b"x").is_err());
+        assert!(append_conductor_meta(b"MTrk", 0x01, b"x").is_err());
+    }
 
     fn indexed(depth: png::BitDepth) -> Vec<u8> {
         let mut out = Vec::new();

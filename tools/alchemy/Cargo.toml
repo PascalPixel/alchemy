@@ -20,7 +20,6 @@ serde_json = { version = "1", features = ["preserve_order"] }
 walkdir = "2.5"
 alignment-tail = { path = "../alignment-tail" }
 asset-paths = { path = "../asset-paths" }
-audio-engine-data = { path = "../audio-engine-data" }
 archive-asset = { path = "../archive-asset" }
 battle-assets = { path = "../battle-assets" }
 canonical-json = { path = "../canonical-json" }
@@ -28,14 +27,12 @@ cache-entry = { path = "../cache-entry" }
 extract-resource = { path = "../extract-resource" }
 generated-files = { path = "../generated-files" }
 import-asset = { path = "../import-asset" }
-music = { path = "../music" }
 gba-header = { path = "../gba-header" }
 sha1 = "0.10"
 build-asm = { path = "../build-asm" }
 build-claimed = { path = "../build-claimed" }
 build-full = { path = "../build-full" }
 staff-roll = { path = "../staff-roll" }
-music-residuals = { path = "../music-residuals" }
 f0-archive = { path = "../f0-archive" }
 kind2-resources = { path = "../kind2-resources" }
 skip-sprite-archive = { path = "../skip-sprite-archive" }

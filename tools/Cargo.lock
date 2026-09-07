@@ -36,7 +36,6 @@ dependencies = [
  "alignment-tail",
  "archive-asset",
  "asset-paths",
- "audio-engine-data",
  "battle-assets",
  "build-asm",
  "build-claimed",
@@ -44,7 +43,6 @@ dependencies = [
  "cache-entry",
  "candidate-compiler",
  "canonical-json",
- "character-catalog",
  "check-commit-progress",
  "check-publication",
  "check-unmatchable",
@@ -54,7 +52,6 @@ dependencies = [
  "decompile",
  "diff",
  "disassemble",
- "encounter-data",
  "extract-resource",
  "f0-archive",
  "full-c-progress",
@@ -68,8 +65,6 @@ dependencies = [
  "map-container-components",
  "matching",
  "message-archive",
- "music",
- "music-residuals",
  "namae-nyuuryoku",
  "no-asm-c",
  "objdiff-core",
@@ -77,11 +72,9 @@ dependencies = [
  "png",
  "regex",
  "resource-5",
- "runtime-support-data",
  "serde",
  "serde_json",
  "sha1",
- "simple-resources",
  "skip-sprite-archive",
  "staff-roll",
  "static-sprite-series",
@@ -126,13 +119,6 @@ dependencies = [
 [[package]]
 name = "asset-paths"
 version = "0.1.0"
-
-[[package]]
-name = "audio-engine-data"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
 
 [[package]]
 name = "autocfg"
@@ -259,14 +245,6 @@ name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
-
-[[package]]
-name = "character-catalog"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "serde_json",
-]
 
 [[package]]
 name = "check-commit-progress"
@@ -422,13 +400,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75030f3c4f45dafd7586dd6780965a8c7e8e285a5ecb86713e63a79c5b2766f3"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "encounter-data"
-version = "0.1.0"
-dependencies = [
- "serde_json",
 ]
 
 [[package]]
@@ -816,21 +787,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "music"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "music-residuals"
-version = "0.1.0"
-dependencies = [
- "music",
- "serde_json",
-]
-
-[[package]]
 name = "namae-nyuuryoku"
 version = "0.1.0"
 dependencies = [
@@ -1034,14 +990,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "runtime-support-data"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "serde_json",
-]
-
-[[package]]
 name = "rusqlite"
 version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1163,15 +1111,6 @@ checksum = "e6505efef05804732ed8a3f2d4f279429eb485bd69d5b0cc6b19cc02005cda16"
 dependencies = [
  "bstr",
  "hashbrown 0.15.5",
-]
-
-[[package]]
-name = "simple-resources"
-version = "0.1.0"
-dependencies = [
- "extract-resource",
- "import-asset",
- "serde_json",
 ]
 
 [[package]]

@@ -2,7 +2,6 @@
 use alignment_tail::parse_alignment_tail;
 use archive_asset::{build_archive, ArchivePlan, ArchiveStream, PixelFormat};
 use asset_paths::AssetPaths;
-use audio_engine_data::build_audio_engine_data;
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use compiler_core::build_io::relative;
@@ -19,9 +18,9 @@ use gba_header::{build_gba_header_component, read_gba_header_source};
 use generated_files::{prune_files, unused_tracked_images};
 use import_asset::import_tilemap;
 use import_asset::{
-    gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
+    append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png,
+    EventBody, MidiEvent, MIDI_BUILD_DIRECTIVE,
 };
-use music::{add_midi_build_directive, add_midi_conductor_text, MIDI_BUILD_DIRECTIVE};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -32,8 +31,6 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
-const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
-const AUDIO_ENGINE_SIZE: usize = 0x0ef2;
 const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
 const STAFF_ROLL_SIZE: usize = 0x15a4;
 const MAP_CONTAINER_HEADER_SIZE: usize = 0x3c;
@@ -937,6 +934,10 @@ fn typed_pointer_tables_use_the_owner_register() {
     let mut bad = source;
     bad["segments"][0]["values"][0] = Value::from("Missing");
     assert!(resolve_table_symbols(&mut bad, &symbols).is_err());
+    let mut hex = bad;
+    hex["segments"][0]["values"][0] = Value::from("0x08001002");
+    resolve_table_symbols(&mut hex, &symbols).unwrap();
+    assert_eq!(hex["segments"][0]["values"][0], 0x0800_1003);
     resolved["segments"][1]["values"][0] = Value::from(2147483648_i64);
     assert!(typed_table(&resolved).is_err());
 }
@@ -1237,6 +1238,11 @@ fn typed_records_preserve_names_termination_bounds_and_signedness() {
         typed_table(&source).unwrap(),
         [2, 0, 3, 0, 0, 0, 254, 255, 255, 255]
     );
+    let mut hex = source.clone();
+    hex["segments"][0]["records"][0]["ids"] = serde_json::json!(["0x2", "3"]);
+    assert_eq!(typed_table(&hex).unwrap(), typed_table(&source).unwrap());
+    hex["segments"][0]["records"][0]["ids"] = serde_json::json!(["-2"]);
+    assert!(typed_table(&hex).is_err());
     for (pointer, value) in [
         ("/segments/0/records/0/ids", serde_json::json!([2, 2])),
         ("/segments/0/records/0/ids", serde_json::json!([0])),
@@ -1737,7 +1743,6 @@ struct Context {
     root: PathBuf,
     paths: AssetPaths,
     maps: HashMap<String, Vec<BuiltMapContainer>>,
-    music: HashMap<String, Vec<music_residuals::BuiltMusicResidual>>,
     battle: HashMap<String, Vec<battle_assets::BuiltBattleResource>>,
 }
 impl Context {
@@ -1746,7 +1751,6 @@ impl Context {
             root: root.to_path_buf(),
             paths: AssetPaths::new(root),
             maps: HashMap::new(),
-            music: HashMap::new(),
             battle: HashMap::new(),
         }
     }
@@ -1759,16 +1763,6 @@ impl Context {
             self.maps.insert(index_name.to_string(), built);
         }
         Ok(self.maps[index_name].clone())
-    }
-    fn music_residuals(
-        &mut self,
-        index_name: &str,
-    ) -> Result<Vec<music_residuals::BuiltMusicResidual>, String> {
-        if !self.music.contains_key(index_name) {
-            let built = music_residuals::build_music_residuals(&self.source(index_name)?)?;
-            self.music.insert(index_name.to_string(), built);
-        }
-        Ok(self.music[index_name].clone())
     }
     fn battle_resources(
         &mut self,
@@ -1793,14 +1787,12 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
         "golden-sun-general-lz",
         "golden-sun-tokushu-map",
         "golden-sun-chiiki-map",
-        "golden-sun-music-residual",
     ] {
         let entry =
             serde_json::json!({"kind":kind,"source":"index.json","address":0,"resource_id":0});
         assert!(build_entry(&mut ctx, &entry).is_err(), "{kind}");
     }
     assert!(ctx.maps.is_empty());
-    assert!(ctx.music.is_empty());
     assert!(ctx.battle_resources("index.json").is_err());
     assert!(ctx.battle.is_empty());
 }
@@ -2206,12 +2198,6 @@ fn expand_series(
                 let index_name = json_string(&series["index"], "map index")?;
                 for resource in ctx.map_series(index_name)? {
                     entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":resource.kind,"source":index_name,"resource_id":resource.id}));
-                }
-            }
-            "golden-sun-music-residuals" => {
-                let index_name = json_string(&series["index"], "music residual index")?;
-                for region in ctx.music_residuals(index_name)? {
-                    entries.push(serde_json::json!({"address":region.address,"size":region.data.len(),"kind":"golden-sun-music-residual","source":index_name}));
                 }
             }
             "golden-sun-sound-sequence-series" => {
@@ -2653,13 +2639,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 vec![entry_source.to_string()],
                 serde_json::json!({"representation":kind}),
             ))
-        }
-        "golden-sun-sound-table" => {
-            let source =
-                music::read_sound_table_source(&source_path(entry_source)?.to_string_lossy())?;
-            let (built, report) = music::build_sound_table(&source)?;
-            let report = serde_json::json!({"entries":report.entries,"unique_headers":report.unique_headers});
-            Ok((built, vec![entry_source.to_string()], report))
         }
         _ => build_entry_native_tail(ctx, entry, kind, address, entry_source),
     }
@@ -3710,7 +3689,16 @@ fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
         "tracks":sidecar_tracks
     }))
     .map_err(|error| error.to_string())?;
-    add_midi_build_directive(&add_midi_conductor_text(&midi, &skeleton)?, &sidecar)
+    if midi
+        .windows(MIDI_BUILD_DIRECTIVE.len())
+        .any(|part| part == MIDI_BUILD_DIRECTIVE)
+    {
+        return Err("MIDI already has build directives".to_string());
+    }
+    let mut directive = MIDI_BUILD_DIRECTIVE.to_vec();
+    directive.extend(sidecar);
+    let midi = append_conductor_meta(&midi, 0x01, &skeleton).map_err(|error| error.to_string())?;
+    append_conductor_meta(&midi, 0x7f, &directive).map_err(|error| error.to_string())
 }
 
 fn build_pcm_record(entry: &Value, wav: &[u8]) -> Result<(Vec<u8>, Value), String> {
@@ -3830,7 +3818,19 @@ fn build_entry_native_tail(
     match kind {
         "golden-sun-sound-sequence" => {
             let source = source_path(entry_source)?;
-            let (built, report) = build_midi_sequence(&ctx.root, &source)?;
+            let (built, report) = if entry_source.ends_with(".json") {
+                let document = json(&source)?;
+                let document = if let Some(pointer) = entry.get("pointer") {
+                    document
+                        .pointer(json_string(pointer, "sequence pointer")?)
+                        .ok_or("sequence pointer is absent")?
+                } else {
+                    &document
+                };
+                build_sequence_source(document)?
+            } else {
+                build_midi_sequence(&ctx.root, &source)?
+            };
             if report["base"].as_u64() != Some(address as u64) {
                 return Err("sound-sequence base differs from manifest".to_string());
             }
@@ -4159,39 +4159,6 @@ fn build_entry_native_tail(
                 resource.data,
                 sources,
                 serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
-            ))
-        }
-        "golden-sun-music-residual" => {
-            let address = number(&entry["address"], "music residual address")?;
-            let region = ctx
-                .music_residuals(entry_source)?
-                .into_iter()
-                .find(|item| item.address as usize == address)
-                .ok_or("music residual differs from manifest")?;
-            let data_len = region.data.len();
-            Ok((
-                region.data,
-                vec![entry_source.to_string()],
-                serde_json::json!({"source_bytes":data_len}),
-            ))
-        }
-        "golden-sun-audio-engine-data" => {
-            let source = source_path(entry_source)?;
-            let result = build_audio_engine_data(&source).map_err(|error| error.to_string())?;
-            if address != AUDIO_ENGINE_ADDRESS
-                || result.address != AUDIO_ENGINE_ADDRESS
-                || result.data.len() != AUDIO_ENGINE_SIZE
-            {
-                return Err("audio-engine data differs from canonical manifest extent".to_string());
-            }
-            let mut nested = vec![entry_source.to_string()];
-            for path in result.sources.iter().skip(1) {
-                nested.push(root_relative(&ctx.root, path)?);
-            }
-            Ok((
-                result.data.clone(),
-                dedup_sources(nested),
-                serde_json::json!({"source_bytes":result.data.len(),"tone_records":225,"waveforms":18,"players":8,"derived_alignment_bytes":2}),
             ))
         }
         "golden-sun-namae-nyuuryoku" => {

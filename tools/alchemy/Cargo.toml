@@ -51,7 +51,6 @@ localization-font = { path = "../localization-font" }
 map-container-components = { path = "../map-container-components" }
 namae-nyuuryoku = { path = "../namae-nyuuryoku" }
 kind1-map-grid = { path = "../kind1-map-grid" }
-early-runtime-data = { path = "../early-runtime-data" }
 message-archive = { path = "../message-archive" }
 resource-5 = { path = "../resource-5" }
 title-resources = { path = "../title-resources" }

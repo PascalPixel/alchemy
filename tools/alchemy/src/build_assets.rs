@@ -1,5 +1,4 @@
 //! Native entry point for the asset build stage.
-use asset_paths::AssetPaths;
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use compiler_core::build_io::relative;
@@ -2079,13 +2078,11 @@ fn closure_self_test() -> Result<String, String> {
 }
 struct Context {
     root: PathBuf,
-    paths: AssetPaths,
 }
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
             root: root.to_path_buf(),
-            paths: AssetPaths::new(root),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
@@ -2169,7 +2166,10 @@ fn expand_series(
             "golden-sun-general-lz-series" => {
                 for resource in series_values(series, "resources")? {
                     let name = json_string(&resource["id"], "resource id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({
                         "address": resource.get("address"),
                         "size": resource.get("size"),
@@ -2191,7 +2191,10 @@ fn expand_series(
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("charblock family is malformed")?;
                     let name = json_string(&tuple[0], "charblock family id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({
                         "address": tuple[1],
                         "size": tuple[2],
@@ -2238,7 +2241,10 @@ fn expand_series(
             "golden-sun-standalone-palette-series" => {
                 for palette in series_values(series, "palettes")? {
                     let name = json_string(&palette["id"], "palette id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({
                         "address":palette.get("address"),"size":palette.get("size"),
                         "kind":"golden-sun-general-lz","plan":format!("{directory}.json"),"plan_section":"palette",
@@ -2249,14 +2255,20 @@ fn expand_series(
             "golden-sun-color-table-series" => {
                 for resource in series_values(series, "resources")? {
                     let name = json_string(&resource["id"], "color table id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"gba-palette-rgba","source":format!("{directory}_color_table.rgba.png")}));
                 }
             }
             "golden-sun-standalone-tile-series" => {
                 for resource in series_values(series, "resources")? {
                     let name = json_string(&resource["id"], "tile id")?.to_ascii_lowercase();
-                    let directory = ctx.paths.resource_graphics_dir(&name);
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "series source prefix")?
+                    );
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-lz","plan":format!("{directory}_tiles.kind2.json"),"components":[{"kind":"gba-4bpp-tiles","size":"0x4000","source":format!("{directory}_tiles.4bpp.png")}] }));
                 }
             }

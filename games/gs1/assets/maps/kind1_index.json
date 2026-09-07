@@ -1,7 +1,7 @@
 {
   "format": 1,
   "kind": "golden-sun-kind1-map-series",
-  "note": "The 174 ordinary field maps. chiiki_index.json and tokushu_index.json covered the 8 special series; these had no index at all. address and size are derived from games/gs1/assets/data/resource_directory.json -- slot address, and size to the next populated slot -- a derivation that reproduces every entry in both existing indexes exactly. `location` is null throughout: the ROM table joining a map to its name has not been found, and message_archive bank 9 holds only 99 location names against 182 maps, so there is no positional mapping to take.",
+  "note": "The 174 ordinary field maps; the 8 special maps (former chiiki_index.json and tokushu_index.json) are listed beside them in the manifest map component series. address and size are derived from games/gs1/assets/data/resource_directory.json -- slot address, and size to the next populated slot -- a derivation that reproduces every entry in both existing indexes exactly. `location` is null throughout: the ROM table joining a map to its name has not been found, and message_archive bank 9 holds only 99 location names against 182 maps, so there is no positional mapping to take.",
   "resources": [
     {
       "id": "128",

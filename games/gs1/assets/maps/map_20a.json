@@ -3,47 +3,73 @@
   "kind": "golden-sun-map-container",
   "header": {
     "format": 1,
-    "parameters": [
-      0,
-      0,
-      128,
-      64,
-      3,
-      2,
-      1,
-      0,
-      2,
-      2,
-      0,
-      0
-    ],
-    "records": [
-      [
-        0,
-        2056,
-        0,
-        65535
-      ],
-      [
-        128,
-        4112,
-        0,
-        65535
-      ],
-      [
-        16384,
-        4112,
-        0,
-        65535
-      ]
-    ],
-    "component_offsets": [
-      "0x3c",
-      "0x774",
-      "0x794",
-      "0x1554",
-      "0x155c",
-      "0x156c"
+    "kind": "typed-table",
+    "address": "0x085ee828",
+    "size": "0x3c",
+    "segments": [
+      {
+        "name": "parameters",
+        "address": "0x085ee828",
+        "end": "0x085ee834",
+        "stride": 12,
+        "element": "u8",
+        "values": [
+          0,
+          0,
+          128,
+          64,
+          3,
+          2,
+          1,
+          0,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "records",
+        "address": "0x085ee834",
+        "end": "0x085ee84c",
+        "stride": 8,
+        "element": "le-u16",
+        "values": [
+          [
+            0,
+            2056,
+            0,
+            65535
+          ],
+          [
+            128,
+            4112,
+            0,
+            65535
+          ],
+          [
+            16384,
+            4112,
+            0,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "component_offsets",
+        "address": "0x085ee84c",
+        "end": "0x085ee864",
+        "stride": 4,
+        "element": "le-u32",
+        "values": [
+          "0x3c",
+          "0x774",
+          "0x794",
+          "0x1554",
+          "0x155c",
+          "0x156c"
+        ]
+      }
     ]
   },
   "metatiles": {
@@ -5078,6 +5104,113 @@
   },
   "descriptors": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 44,
+    "encoded_size": 32,
+    "tokens": [
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        4,
+        1
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        3
+      ],
+      [
+        "l",
+        3
+      ],
+      [
+        "c",
+        2,
+        5
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        8
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        17
+      ],
+      [
+        "c",
+        2,
+        12
+      ],
+      [
+        "c",
+        2,
+        17
+      ],
+      [
+        "l",
+        2
+      ],
+      [
+        "c",
+        3,
+        25
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        28
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        3
+      ]
+    ],
+    "lookahead": "00",
+    "component": "map-descriptors-4byte",
     "record_size": 4,
     "records": [
       [
@@ -5146,210 +5279,108 @@
         0,
         0
       ]
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 44,
-      "encoded_size": 32,
-      "tokens": [
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          4,
-          1
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          3
-        ],
-        [
-          "l",
-          3
-        ],
-        [
-          "c",
-          2,
-          5
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          8
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          17
-        ],
-        [
-          "c",
-          2,
-          12
-        ],
-        [
-          "c",
-          2,
-          17
-        ],
-        [
-          "l",
-          2
-        ],
-        [
-          "c",
-          3,
-          25
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          28
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          3
-        ]
-      ],
-      "lookahead": "00",
-      "component": "map-descriptors-4byte",
-      "records": 11
-    }
+    ]
   },
   "animation_queues": {
     "format": 1,
+    "codec": "golden-sun-tagged-palette-lz",
+    "tag": 1,
+    "decoded_size": 2,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "g",
+        [
+          [
+            "l"
+          ],
+          [
+            "l"
+          ],
+          [
+            "e"
+          ]
+        ]
+      ]
+    ],
+    "lookahead": "0000",
+    "component": "map-animation-queues",
+    "word_size": 2,
     "terminators": [
       "0xfe00",
       "0xffff"
     ],
-    "queues": [],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-tagged-palette-lz",
-      "tag": 1,
-      "decoded_size": 2,
-      "encoded_size": 8,
-      "tokens": [
-        [
-          "g",
-          [
-            [
-              "l"
-            ],
-            [
-              "l"
-            ],
-            [
-              "e"
-            ]
-          ]
-        ]
-      ],
-      "lookahead": "0000",
-      "component": "map-animation-queues",
-      "queues": 0,
-      "commands": 0
-    }
+    "words": [
+      "0xffff"
+    ]
   },
   "blend_animation": {
     "format": 1,
-    "word_size": 2,
-    "commands": [
-      {
-        "op": "set_blend_control",
-        "value": "0x3f42"
-      },
-      {
-        "op": "write_blend_value",
-        "value": "0x0c04",
-        "duration": 43200
-      },
-      {
-        "op": "jump",
-        "target_pair": 0
-      },
-      {
-        "op": "reset"
-      }
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-tagged-palette-lz",
-      "tag": 1,
-      "decoded_size": 10,
-      "encoded_size": 16,
-      "tokens": [
+    "codec": "golden-sun-tagged-palette-lz",
+    "tag": 1,
+    "decoded_size": 10,
+    "encoded_size": 16,
+    "tokens": [
+      [
+        "z"
+      ],
+      [
+        "g",
         [
-          "z"
-        ],
-        [
-          "g",
           [
-            [
-              "l"
-            ],
-            [
-              "l"
-            ],
-            [
-              "e"
-            ]
+            "l"
+          ],
+          [
+            "l"
+          ],
+          [
+            "e"
           ]
         ]
+      ]
+    ],
+    "lookahead": "00",
+    "component": "map-blend-animation",
+    "word_size": 2,
+    "words": [
+      [
+        "0x3f42"
       ],
-      "lookahead": "00",
-      "component": "map-blend-animation",
-      "commands": 4
-    }
+      [
+        "0x0c04",
+        43200
+      ],
+      [
+        "0xfe00"
+      ],
+      [
+        "0xffff"
+      ]
+    ]
   },
   "sparse_cells": {
     "format": 1,
+    "kind": "typed-table",
+    "address": "0x085efd94",
+    "size": "0x4",
     "record_size": 3,
-    "terminator": "ffffff",
-    "alignment_zeros": 1,
-    "records": []
+    "segments": [
+      {
+        "name": "terminator",
+        "address": "0x085efd94",
+        "end": "0x085efd97",
+        "stride": 1,
+        "element": "u8",
+        "fill": 255
+      },
+      {
+        "name": "alignment",
+        "address": "0x085efd97",
+        "end": "0x085efd98",
+        "stride": 1,
+        "element": "u8",
+        "fill": 0
+      }
+    ]
   }
 }

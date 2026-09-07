@@ -3,47 +3,73 @@
   "kind": "golden-sun-map-container",
   "header": {
     "format": 1,
-    "parameters": [
-      0,
-      0,
-      46,
-      46,
-      3,
-      1,
-      2,
-      0,
-      2,
-      2,
-      0,
-      0
-    ],
-    "records": [
-      [
-        23552,
-        1542,
-        0,
-        65535
-      ],
-      [
-        11776,
-        4112,
-        0,
-        65535
-      ],
-      [
-        0,
-        4112,
-        0,
-        65535
-      ]
-    ],
-    "component_offsets": [
-      "0x3c",
-      "0x4a8",
-      "0x4b8",
-      "0xac4",
-      "0x0",
-      "0xae8"
+    "kind": "typed-table",
+    "address": "0x086bf154",
+    "size": "0x3c",
+    "segments": [
+      {
+        "name": "parameters",
+        "address": "0x086bf154",
+        "end": "0x086bf160",
+        "stride": 12,
+        "element": "u8",
+        "values": [
+          0,
+          0,
+          46,
+          46,
+          3,
+          1,
+          2,
+          0,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "records",
+        "address": "0x086bf160",
+        "end": "0x086bf178",
+        "stride": 8,
+        "element": "le-u16",
+        "values": [
+          [
+            23552,
+            1542,
+            0,
+            65535
+          ],
+          [
+            11776,
+            4112,
+            0,
+            65535
+          ],
+          [
+            0,
+            4112,
+            0,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "component_offsets",
+        "address": "0x086bf178",
+        "end": "0x086bf190",
+        "stride": 4,
+        "element": "le-u32",
+        "values": [
+          "0x3c",
+          "0x4a8",
+          "0x4b8",
+          "0xac4",
+          "0x0",
+          "0xae8"
+        ]
+      }
     ]
   },
   "metatiles": {
@@ -2258,6 +2284,49 @@
   },
   "descriptors": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 16,
+    "encoded_size": 16,
+    "tokens": [
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        4,
+        1
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        3,
+        4
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        2,
+        3
+      ],
+      [
+        "l",
+        2
+      ],
+      [
+        "c",
+        2,
+        4
+      ]
+    ],
+    "lookahead": "000000",
+    "component": "map-descriptors-4byte",
     "record_size": 4,
     "records": [
       [
@@ -2284,199 +2353,166 @@
         0,
         0
       ]
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 16,
-      "encoded_size": 16,
-      "tokens": [
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          4,
-          1
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          3,
-          4
-        ],
-        [
-          "l",
-          1
-        ],
-        [
-          "c",
-          2,
-          3
-        ],
-        [
-          "l",
-          2
-        ],
-        [
-          "c",
-          2,
-          4
-        ]
-      ],
-      "lookahead": "000000",
-      "component": "map-descriptors-4byte",
-      "records": 4
-    }
+    ]
   },
   "animation_queues": {
     "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 70,
+    "encoded_size": 36,
+    "tokens": [
+      [
+        "l",
+        11
+      ],
+      [
+        "c",
+        7,
+        8
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        7,
+        8
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        7,
+        8
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        15,
+        16
+      ],
+      [
+        "l",
+        1
+      ],
+      [
+        "c",
+        15,
+        48
+      ],
+      [
+        "l",
+        4
+      ]
+    ],
+    "lookahead": "00",
+    "component": "map-animation-queues",
+    "word_size": 2,
     "terminators": [
       "0xfe00",
       "0xffff"
     ],
-    "queues": [
-      {
-        "header": "0xfd00",
-        "commands": [
-          [
-            1546,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1578,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1610,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1642,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1674,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1642,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1610,
-            8
-          ],
-          [
-            24,
-            20
-          ],
-          [
-            1578,
-            8
-          ],
-          [
-            24,
-            20
-          ]
-        ]
-      }
-    ],
-    "compression": {
-      "format": 1,
-      "codec": "golden-sun-general-lz",
-      "decoded_size": 70,
-      "encoded_size": 36,
-      "tokens": [
+    "words": [
+      [
+        "0xfd00",
         [
-          "l",
-          11
-        ],
-        [
-          "c",
-          7,
+          1546,
           8
         ],
         [
-          "l",
-          1
+          24,
+          20
         ],
         [
-          "c",
-          7,
+          1578,
           8
         ],
         [
-          "l",
-          1
+          24,
+          20
         ],
         [
-          "c",
-          7,
+          1610,
           8
         ],
         [
-          "l",
-          1
+          24,
+          20
         ],
         [
-          "c",
-          15,
-          16
+          1642,
+          8
         ],
         [
-          "l",
-          1
+          24,
+          20
         ],
         [
-          "c",
-          15,
-          48
+          1674,
+          8
         ],
         [
-          "l",
-          4
-        ]
+          24,
+          20
+        ],
+        [
+          1642,
+          8
+        ],
+        [
+          24,
+          20
+        ],
+        [
+          1610,
+          8
+        ],
+        [
+          24,
+          20
+        ],
+        [
+          1578,
+          8
+        ],
+        [
+          24,
+          20
+        ],
+        "0xfe00"
       ],
-      "lookahead": "00",
-      "component": "map-animation-queues",
-      "queues": 1,
-      "commands": 16
-    }
+      "0xffff"
+    ]
   },
   "sparse_cells": {
     "format": 1,
+    "kind": "typed-table",
+    "address": "0x086bfc3c",
+    "size": "0x4",
     "record_size": 3,
-    "terminator": "ffffff",
-    "alignment_zeros": 1,
-    "records": []
+    "segments": [
+      {
+        "name": "terminator",
+        "address": "0x086bfc3c",
+        "end": "0x086bfc3f",
+        "stride": 1,
+        "element": "u8",
+        "fill": 255
+      },
+      {
+        "name": "alignment",
+        "address": "0x086bfc3f",
+        "end": "0x086bfc40",
+        "stride": 1,
+        "element": "u8",
+        "fill": 0
+      }
+    ]
   }
 }

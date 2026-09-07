@@ -488,7 +488,6 @@ libraries are not additional public command surfaces.
 | [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
 | [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
 | [map-container-components](tools/map-container-components/) | Extract map-container component series. |
-| [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
 | [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
 | [static-sprite-series](tools/static-sprite-series/) | Build static sprite series from maintained images and compression plans. |
 

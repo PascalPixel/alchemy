@@ -31,7 +31,6 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
-const MAP_CONTAINER_HEADER_SIZE: usize = 0x3c;
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -254,23 +253,6 @@ fn root_relative(root: &Path, path: &Path) -> Result<String, String> {
         )
     })?;
     Ok(relative.to_string_lossy().replace('\\', "/"))
-}
-fn root_sources(root: &Path, paths: &[PathBuf]) -> Result<Vec<String>, String> {
-    paths.iter().map(|path| root_relative(root, path)).collect()
-}
-#[test]
-fn library_sources_preserve_order_and_reject_paths_outside_the_root() {
-    let root = Path::new("/repo");
-    let paths = [
-        root.join("index.json"),
-        root.join("image.png"),
-        root.join("index.json"),
-    ];
-    assert_eq!(
-        root_sources(root, &paths).unwrap(),
-        ["index.json", "image.png", "index.json"]
-    );
-    assert!(root_sources(root, &[PathBuf::from("/elsewhere/image.png")]).is_err());
 }
 fn hex_address(address: usize) -> String {
     format!("0x{address:08x}")
@@ -601,11 +583,31 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
             (built, details, vec![source_name.to_string()])
         }
         "gba-tilemap16" => {
-            let built = import_tilemap(&fs::read_to_string(&source).map_err(|e| e.to_string())?)
-                .map_err(|e| e.to_string())?;
+            // The tilemap text is the whole source file, or one text value of
+            // a JSON source selected by `pointer`.
+            let text = if let Some(pointer) = entry.get("pointer") {
+                let document = json(&source)?;
+                json_string(
+                    document
+                        .pointer(json_string(pointer, "tilemap pointer")?)
+                        .ok_or("tilemap pointer is absent")?,
+                    "tilemap text",
+                )?
+                .to_string()
+            } else {
+                fs::read_to_string(&source).map_err(|e| e.to_string())?
+            };
+            let entries = import_tilemap(&text).map_err(|e| e.to_string())?;
+            let built = if let Some(mode) = entry.get("delta_mode") {
+                let mode = u8::try_from(number(mode, "tilemap delta mode")?)
+                    .map_err(|_| "tilemap delta mode exceeds u8")?;
+                import_asset::encode_tilemap_delta(&entries, mode).map_err(|e| e.to_string())?
+            } else {
+                entries.clone()
+            };
             (
-                built.clone(),
-                serde_json::json!({"entries": built.len() / 2}),
+                built,
+                serde_json::json!({"entries": entries.len() / 2, "delta_mode": entry.get("delta_mode")}),
                 vec![source_name.to_string()],
             )
         }
@@ -700,17 +702,24 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         details,
     })
 }
+/// An integer array member: a JSON integer, or hexadecimal text such as
+/// `"0x3c"` for values that read better in the radix their consumer uses.
+fn array_member(value: &Value) -> Result<i64, String> {
+    if value.is_string() {
+        return i64::try_from(number(value, "array member")?)
+            .map_err(|_| "array member exceeds i64".into());
+    }
+    value
+        .as_i64()
+        .ok_or("array member is not an integer".into())
+}
 fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
     let mut output = Vec::new();
     for value in value.as_array().ok_or("integer array is not an array")? {
         if value.is_array() {
             output.extend(integer_array(value, kind)?);
         } else {
-            let value = match value.as_i64() {
-                Some(value) => value,
-                None => i64::try_from(number(value, "array member")?)
-                    .map_err(|_| "array member exceeds i64")?,
-            };
+            let value = array_member(value)?;
             if kind == "be-s16-array" || kind == "le-s16-array" {
                 let value = i16::try_from(value).map_err(|_| "array member exceeds s16")?;
                 output.extend(if kind == "le-s16-array" {
@@ -1231,7 +1240,7 @@ fn table_values(
         } else if let Some(text) = value.as_str() {
             out.push(symbolic_value(text, spec, labels)?);
         } else {
-            out.push(value.as_i64().ok_or("field value is not an integer")?);
+            out.push(array_member(value).map_err(|_| "field value is not an integer")?);
         }
         Ok(())
     }
@@ -1776,261 +1785,19 @@ fn closure_self_test() -> Result<String, String> {
         "self-test=ok optional=skipped present_regions={present_regions} provenance=verified"
     ))
 }
-#[derive(Debug, Clone)]
-struct BuiltMapContainer {
-    id: usize,
-    address: usize,
-    kind: String,
-    data: Vec<u8>,
-    sources: Vec<PathBuf>,
-}
-fn map_container_id(value: &Value) -> Result<usize, String> {
-    let value = json_string(value, "map resource id")?;
-    let value = value
-        .strip_prefix("0x")
-        .or_else(|| value.strip_prefix("0X"))
-        .unwrap_or(value);
-    if value.is_empty() {
-        return Err("map resource id must be hexadecimal".into());
-    }
-    usize::from_str_radix(value, 16).map_err(|_| "map resource id must be hexadecimal".into())
-}
-fn map_container_source_base(index_path: &Path, source: &str) -> Result<PathBuf, String> {
-    if source.is_empty()
-        || source.contains('\\')
-        || Path::new(source).is_absolute()
-        || source
-            .split('/')
-            .any(|part| part.is_empty() || part == "." || part == "..")
-    {
-        return Err("map container source must be a relative path below its index".into());
-    }
-    Ok(index_path
-        .parent()
-        .ok_or("map container index has no parent")?
-        .join(source))
-}
-fn map_container_required_slots(index: &Value) -> Result<BTreeSet<usize>, String> {
-    let mut slots = BTreeSet::new();
-    for value in series_values(index, "required_components")? {
-        let slot = number(value, "required map component")?;
-        if slot >= 6 || !slots.insert(slot) {
-            return Err("required map components must be unique slots from 0 through 5".into());
-        }
-    }
-    if !slots.contains(&0) {
-        return Err("map container must require component slot 0".into());
-    }
-    Ok(slots)
-}
-fn map_container_offsets(
-    header: &[u8],
-    size: usize,
-    required_slots: &BTreeSet<usize>,
-) -> Result<[usize; 6], String> {
-    if header.len() != MAP_CONTAINER_HEADER_SIZE || size <= MAP_CONTAINER_HEADER_SIZE {
-        return Err("invalid map container extent".into());
-    }
-    let mut offsets = [0usize; 6];
-    for (slot, offset) in offsets.iter_mut().enumerate() {
-        let start = 0x24 + slot * 4;
-        *offset = u32::from_le_bytes(header[start..start + 4].try_into().unwrap()) as usize;
-    }
-    if required_slots.iter().any(|slot| offsets[*slot] == 0) {
-        return Err("map container lacks a required component".into());
-    }
-    if offsets[0] != MAP_CONTAINER_HEADER_SIZE {
-        return Err("map container has an invalid header offset".into());
-    }
-    let mut previous = MAP_CONTAINER_HEADER_SIZE - 1;
-    for offset in offsets {
-        if offset == 0 {
-            continue;
-        }
-        if offset <= previous || offset >= size {
-            return Err("map container component offsets are not ordered".into());
-        }
-        previous = offset;
-    }
-    Ok(offsets)
-}
-fn map_container_component_end(
-    offsets: &[usize; 6],
-    slot: usize,
-    size: usize,
-) -> Result<usize, String> {
-    if offsets[slot] == 0 {
-        return Err("map component is absent".into());
-    }
-    Ok(offsets[slot + 1..]
-        .iter()
-        .copied()
-        .find(|offset| *offset != 0)
-        .unwrap_or(size))
-}
-fn map_container_component(
-    source_base: &Path,
-    header_path: &Path,
-    slot: usize,
-) -> Result<(Vec<u8>, Vec<PathBuf>), String> {
-    let (data, sources) = match slot {
-        0 => (
-            map_container_components::build_metatiles(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        1 => (
-            map_container_components::build_descriptors(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        2 => {
-            let plan_path =
-                PathBuf::from(format!("{}_grid_grid.kind1.json", source_base.display()));
-            let plan = json(&plan_path)?;
-            let mut sources = vec![plan_path];
-            if plan.get("atlas_layers").and_then(Value::as_u64) == Some(5) {
-                sources.push(PathBuf::from(format!(
-                    "{}_grid_layers.png",
-                    source_base.display()
-                )));
-            } else {
-                for name in [
-                    "value_low.png",
-                    "value_high.png",
-                    "attribute_a.png",
-                    "attribute_b.png",
-                    "sentinels.png",
-                ] {
-                    sources.push(PathBuf::from(format!(
-                        "{}_grid_{name}",
-                        source_base.display()
-                    )));
-                }
-            }
-            (kind1_map_grid::build_grid(&plan, source_base)?, sources)
-        }
-        3 => (
-            map_container_components::build_queues(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        4 => (
-            map_container_components::build_blend_animation(header_path, header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        5 => (
-            map_container_components::build_sparse(header_path)?,
-            vec![header_path.to_path_buf()],
-        ),
-        _ => return Err("unsupported map component slot".into()),
-    };
-    Ok((data, sources))
-}
-fn build_map_container_series(
-    root: &Path,
-    index_name: &str,
-) -> Result<Vec<BuiltMapContainer>, String> {
-    let index_path = root_path(root, index_name)?;
-    let index = json(&index_path)?;
-    if index.get("format") != Some(&Value::from(1))
-        || index.get("kind").and_then(Value::as_str) != Some("golden-sun-map-container-series")
-    {
-        return Err("unsupported map container index".into());
-    }
-    let asset_kind = json_string(
-        index
-            .get("asset_kind")
-            .ok_or("map container asset kind is missing")?,
-        "map container asset kind",
-    )?
-    .to_string();
-    if !matches!(
-        asset_kind.as_str(),
-        "golden-sun-tokushu-map" | "golden-sun-chiiki-map"
-    ) {
-        return Err("unsupported map container asset kind".into());
-    }
-    let required_slots = map_container_required_slots(&index)?;
-    let mut ids = BTreeSet::new();
-    let mut addresses = BTreeSet::new();
-    let mut built = Vec::new();
-    for resource in series_values(&index, "resources")? {
-        let resource = resource
-            .as_object()
-            .ok_or("map container resource must be an object")?;
-        let id = map_container_id(resource.get("id").ok_or("map resource id is missing")?)?;
-        let address = number(
-            resource
-                .get("address")
-                .ok_or("map resource address is missing")?,
-            "map resource address",
-        )?;
-        let size = number(
-            resource.get("size").ok_or("map resource size is missing")?,
-            "map resource size",
-        )?;
-        let source_name = json_string(
-            resource
-                .get("source")
-                .ok_or("map resource source is missing")?,
-            "map resource source",
-        )?;
-        if !ids.insert(id) || !addresses.insert(address) {
-            return Err("map container index repeats a resource id or address".into());
-        }
-        let source_base = map_container_source_base(&index_path, source_name)?;
-        let header_path = PathBuf::from(format!("{}.json", source_base.display()));
-        let header = map_container_components::build_header(&header_path, None)?;
-        let offsets = map_container_offsets(&header, size, &required_slots)?;
-        let mut data = header;
-        let mut sources = vec![header_path.clone()];
-        for slot in 0..6 {
-            if offsets[slot] == 0 {
-                continue;
-            }
-            let end = map_container_component_end(&offsets, slot, size)?;
-            let (component, component_sources) =
-                map_container_component(&source_base, &header_path, slot)
-                    .map_err(|error| format!("map component {slot}: {error}"))?;
-            if component.len() != end - offsets[slot] {
-                return Err(format!("map component {slot} has the wrong size"));
-            }
-            data.extend(component);
-            sources.extend(component_sources);
-        }
-        if data.len() != size {
-            return Err(format!("map resource {id:03x} has the wrong rebuilt size"));
-        }
-        built.push(BuiltMapContainer {
-            id,
-            address,
-            kind: asset_kind.clone(),
-            data,
-            sources,
-        });
-    }
-    Ok(built)
-}
 struct Context {
     root: PathBuf,
     paths: AssetPaths,
-    maps: HashMap<String, Vec<BuiltMapContainer>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
             root: root.to_path_buf(),
             paths: AssetPaths::new(root),
-            maps: HashMap::new(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
-    }
-    fn map_series(&mut self, index_name: &str) -> Result<Vec<BuiltMapContainer>, String> {
-        if !self.maps.contains_key(index_name) {
-            let built = build_map_container_series(&self.root, index_name)?;
-            self.maps.insert(index_name.to_string(), built);
-        }
-        Ok(self.maps[index_name].clone())
     }
 }
 #[test]
@@ -2039,43 +1806,11 @@ fn library_asset_builds_reject_invalid_plans_without_populating_caches() {
     let root = directory.path();
     fs::write(root.join("index.json"), b"{}").unwrap();
     let mut ctx = Context::new(root);
-    for kind in [
-        "golden-sun-kind2-resource",
-        "golden-sun-general-lz",
-        "golden-sun-tokushu-map",
-        "golden-sun-chiiki-map",
-    ] {
+    for kind in ["golden-sun-general-lz"] {
         let entry =
             serde_json::json!({"kind":kind,"source":"index.json","address":0,"resource_id":0});
         assert!(build_entry(&mut ctx, &entry).is_err(), "{kind}");
     }
-    assert!(ctx.maps.is_empty());
-}
-
-#[test]
-fn map_container_offsets_preserve_required_component_extents() {
-    let mut header = vec![0u8; MAP_CONTAINER_HEADER_SIZE];
-    for (slot, offset) in [0x3c_u32, 0x80, 0xa0, 0x120, 0, 0x140]
-        .into_iter()
-        .enumerate()
-    {
-        header[0x24 + slot * 4..0x28 + slot * 4].copy_from_slice(&offset.to_le_bytes());
-    }
-    let required = [0, 1, 2, 3, 5].into_iter().collect();
-    let offsets = map_container_offsets(&header, 0x148, &required).unwrap();
-    assert_eq!(
-        map_container_component_end(&offsets, 3, 0x148).unwrap(),
-        0x140
-    );
-    assert_eq!(
-        map_container_component_end(&offsets, 5, 0x148).unwrap(),
-        0x148
-    );
-
-    let mut missing = header.clone();
-    missing[0x24 + 3 * 4..0x28 + 3 * 4].fill(0);
-    assert!(map_container_offsets(&missing, 0x148, &required).is_err());
-    assert!(map_container_offsets(&[0u8; MAP_CONTAINER_HEADER_SIZE], 0x100, &required).is_err());
 }
 
 #[test]
@@ -2096,21 +1831,6 @@ fn expand_series(
     manifest: &Value,
     entries: &mut Vec<Value>,
 ) -> Result<(), String> {
-    let mut grid_addresses: HashMap<String, usize> = HashMap::new();
-    if let Some(series) = manifest.get("series").and_then(Value::as_array) {
-        for item in series {
-            if item.get("kind").and_then(Value::as_str) != Some("golden-sun-map-grid-series") {
-                continue;
-            }
-            for grid in series_values(item, "grids")? {
-                let tuple = grid.as_array().ok_or("grid tuple is malformed")?;
-                grid_addresses.insert(
-                    json_string(&tuple[0], "grid id")?.to_ascii_lowercase(),
-                    number(&tuple[1], "grid address")?,
-                );
-            }
-        }
-    }
     let series_list = manifest
         .get("series")
         .and_then(Value::as_array)
@@ -2276,75 +1996,80 @@ fn expand_series(
                         .push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
             }
-            "golden-sun-map-grid-series" => {
-                for grid in series_values(series, "grids")? {
-                    let tuple = grid.as_array().ok_or("grid tuple malformed")?;
-                    let name = json_string(&tuple[0], "grid id")?.to_ascii_lowercase();
-                    let directory = format!("games/gs1/assets/maps/map_{name}");
-                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-kind1-grid","source":directory,"plan":format!("{directory}_grid_grid.kind1.json")}));
-                }
-            }
             "golden-sun-map-component-series" => {
+                // A family is [id, container address, header size, [slot,
+                // address, size]...]: the container header is a typed table
+                // whose offset words must agree with the listed components,
+                // and each slot is a general-LZ stream or typed table whose
+                // plan and values live in the family's JSON document.
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
                     let directory = format!("games/gs1/assets/maps/map_{name}");
+                    let source = format!("{directory}.json");
+                    let document = json(&ctx.source(&source)?)?;
                     let container = number(&tuple[1], "map container")?;
-                    let mut offsets = serde_json::Map::new();
+                    let mut offsets = [0usize; 6];
+                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"typed-table","source":source,"pointer":"/header"}));
                     for raw in &tuple[3..] {
                         let item = raw.as_array().ok_or("map component malformed")?;
                         let slot = number(&item[0], "map component slot")?;
                         let address = number(&item[1], "map component address")?;
-                        offsets.insert(slot.to_string(), Value::from(address - container));
-                    }
-                    offsets.insert(
-                        "2".to_string(),
-                        Value::from(
-                            grid_addresses
-                                .get(&name)
-                                .ok_or_else(|| format!("missing grid address for {name}"))?
-                                - container,
-                        ),
-                    );
-                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-map-container-header","source":format!("{directory}.json"),"offsets_check":Value::Object(offsets)}));
-                    for raw in &tuple[3..] {
-                        let item = raw.as_array().ok_or("map component malformed")?;
-                        let slot = number(&item[0], "map component slot")?;
-                        let component_kind = match slot {
-                            0 => "golden-sun-map-metatiles",
-                            1 => "golden-sun-map-descriptors",
-                            3 => "golden-sun-map-animation-queues",
-                            4 => "golden-sun-map-blend-animation",
-                            5 => "golden-sun-map-sparse-cells",
-                            _ => return Err("unsupported map component slot".into()),
+                        if slot >= 6 || offsets[slot] != 0 || address <= container {
+                            return Err(
+                                "map component slots must be unique and follow the header".into()
+                            );
+                        }
+                        offsets[slot] = address - container;
+                        let (section, component) = match slot {
+                            0 => (
+                                "metatiles",
+                                serde_json::json!({"kind":"gba-tilemap16","pointer":"/metatiles/tilemap","delta_mode":document["metatiles"]["transform_mode"]}),
+                            ),
+                            1 => (
+                                "descriptors",
+                                serde_json::json!({"kind":"u8-array","pointer":"/descriptors/records"}),
+                            ),
+                            2 => {
+                                let plan = format!("{directory}_grid.lz.json");
+                                let decoded_size =
+                                    json(&ctx.source(&plan)?)?["decoded_size"].clone();
+                                entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"golden-sun-general-lz","plan":plan,"components":[{"kind":"indexed-bytes","size":decoded_size,"source":format!("{directory}_grid_content.png")}]}));
+                                continue;
+                            }
+                            3 => (
+                                "animation_queues",
+                                serde_json::json!({"kind":"le-u16-array","pointer":"/animation_queues/words"}),
+                            ),
+                            4 => (
+                                "blend_animation",
+                                serde_json::json!({"kind":"le-u16-array","pointer":"/blend_animation/words"}),
+                            ),
+                            _ => {
+                                entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"typed-table","source":source,"pointer":"/sparse_cells"}));
+                                continue;
+                            }
                         };
-                        let source = format!("{directory}.json");
-                        entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":component_kind,"source":source}));
+                        let mut component = component;
+                        component["source"] = Value::from(source.as_str());
+                        component["size"] = document[section]["decoded_size"].clone();
+                        entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"golden-sun-general-lz","plan":source,"plan_section":section,"components":[component]}));
                     }
-                }
-            }
-            "golden-sun-kind2-resource-series" => {
-                let index_name = json_string(&series["index"], "kind2 index")?;
-                let index_path = ctx.source(index_name)?;
-                let index = json(&index_path)?;
-                for resource in series_values(&index, "resources")? {
-                    let plan_name = index_path
-                        .parent()
-                        .unwrap_or(Path::new("."))
-                        .join(json_string(&resource["source"], "kind2 plan")?);
-                    let plan = json(&plan_name)?;
-                    let image = format!(
-                        "{}{}",
-                        plan_name.to_string_lossy().replace("stream.json", ""),
-                        json_string(&plan["image"]["source"], "kind2 image")?
-                    );
-                    entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-resource","source":root_relative(&ctx.root, &ctx.source(&image)?)?,"index":index_name}));
-                }
-            }
-            "golden-sun-map-container-series" => {
-                let index_name = json_string(&series["index"], "map index")?;
-                for resource in ctx.map_series(index_name)? {
-                    entries.push(serde_json::json!({"address":resource.address,"size":resource.data.len(),"kind":resource.kind,"source":index_name,"resource_id":resource.id}));
+                    let declared = document["header"]["segments"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .find(|segment| segment["name"] == "component_offsets")
+                        .and_then(|segment| segment["values"].as_array())
+                        .ok_or_else(|| format!("map {name} header lacks component offsets"))?
+                        .iter()
+                        .map(|value| number(value, "component offset"))
+                        .collect::<Result<Vec<_>, _>>()?;
+                    if declared != offsets {
+                        return Err(format!(
+                            "map {name} header offsets differ from its listed components"
+                        ));
+                    }
                 }
             }
             "golden-sun-sound-sequence-series" => {
@@ -2529,11 +2254,7 @@ fn expand_closure_packages(
     manifest: &Value,
     entries: &mut Vec<Value>,
 ) -> Result<(), String> {
-    let supported = [
-        "golden-sun-asset-fragment",
-        "golden-sun-kind2-resource-series",
-        "golden-sun-pcm-wave-series",
-    ];
+    let supported = ["golden-sun-asset-fragment", "golden-sun-pcm-wave-series"];
     for package in manifest
         .get("closure_packages")
         .and_then(Value::as_array)
@@ -2695,85 +2416,52 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                     return Err("tag-2 plan layout differs from manifest".to_string());
                 }
             }
+            if plan["format"] != 1 || plan["codec"] != "golden-sun-kind2-lz" {
+                return Err("unsupported tag-2 plan".to_string());
+            }
             if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
                 return Err("decoded tag-2 components do not match plan".to_string());
             }
-            let built = kind2_resources::encode_kind2_plan(&decoded, &plan_path, plan_section)?;
+            let tokens = plan["tokens"]
+                .as_array()
+                .ok_or("tag-2 tokens must be an array")?
+                .iter()
+                .map(|token| {
+                    // A bare width is a literal; `[distance, length]` a copy.
+                    if token.is_u64() {
+                        return Ok(extract_resource::Mtf4LzToken::Literal {
+                            width: number(token, "tag-2 literal width")? as u32,
+                        });
+                    }
+                    match token.as_array().map(Vec::as_slice) {
+                        Some([distance, length]) => Ok(extract_resource::Mtf4LzToken::Copy {
+                            length: number(length, "tag-2 copy length")? as u32,
+                            distance: number(distance, "tag-2 copy distance")? as u32,
+                        }),
+                        _ => Err("invalid tag-2 token".to_string()),
+                    }
+                })
+                .collect::<Result<Vec<_>, _>>()?;
+            let mut built = extract_resource::encode_mtf4_lz(&decoded, &tokens)
+                .map_err(|error| error.to_string())?;
+            let lookahead = hex_bytes(
+                plan.get("lookahead").unwrap_or(&Value::from("")),
+                "tag-2 lookahead",
+            )?;
+            if lookahead.len() > 3 {
+                return Err("tag-2 lookahead is too long".to_string());
+            }
+            built.extend(lookahead);
+            if let Some(size) = plan.get("encoded_size") {
+                if number(size, "encoded_size")? != built.len() {
+                    return Err("tag-2 stream has the wrong encoded size".to_string());
+                }
+            }
             sources.push(plan_name.to_string());
             Ok((
                 built,
                 dedup_sources(sources),
-                serde_json::json!({"decoded_size":decoded.len(),"tokens":plan["stream"]["tokens"].as_array().map_or(0,Vec::len),"layout":plan.get("layout").cloned().unwrap_or(Value::Null),"components":reports}),
-            ))
-        }
-        "golden-sun-kind1-grid" => {
-            let plan_name = json_string(&entry["plan"], "grid plan")?;
-            let directory = source_path(entry_source)?;
-            let plan = json(&source_path(plan_name)?)?;
-            let built = kind1_map_grid::build_grid(&plan, &directory)?;
-            let nested = vec![format!("{entry_source}_grid_layers.png")];
-            Ok((
-                built,
-                std::iter::once(plan_name.to_string())
-                    .chain(nested)
-                    .collect(),
-                serde_json::json!({"decoded_size":number(&plan["decoded_size"], "decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"planes":4}),
-            ))
-        }
-        "golden-sun-map-metatiles"
-        | "golden-sun-map-descriptors"
-        | "golden-sun-map-animation-queues"
-        | "golden-sun-map-blend-animation" => {
-            let component = match kind {
-                "golden-sun-map-metatiles" => "metatiles",
-                "golden-sun-map-descriptors" => "descriptors",
-                "golden-sun-map-animation-queues" => "queues",
-                _ => "blend",
-            };
-            let plan_name = entry
-                .get("plan")
-                .map(|plan| json_string(plan, "map component plan"))
-                .transpose()?
-                .unwrap_or(entry_source);
-            let build = match component {
-                "metatiles" => map_container_components::build_metatiles,
-                "descriptors" => map_container_components::build_descriptors,
-                "queues" => map_container_components::build_queues,
-                _ => map_container_components::build_blend_animation,
-            };
-            let built = build(&source_path(entry_source)?, &source_path(plan_name)?)?;
-            let document = json(&source_path(plan_name)?)?;
-            let section = match component {
-                "queues" => "animation_queues",
-                "blend" => "blend_animation",
-                other => other,
-            };
-            let document = document.get(section).unwrap_or(&document);
-            let plan = document.get("compression").unwrap_or(&document);
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"decoded_size":number(&plan["decoded_size"], "decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"component":plan.get("component")}),
-            ))
-        }
-        "golden-sun-map-container-header" => {
-            let built = map_container_components::build_header(&source_path(entry_source)?, None)?;
-            let document = json(&source_path(entry_source)?)?;
-            let document = document.get("header").unwrap_or(&document);
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"records":document["records"].as_array().map_or(0,Vec::len),"component_offsets":document.get("component_offsets")}),
-            ))
-        }
-        "golden-sun-map-sparse-cells" => {
-            let built = map_container_components::build_sparse(&source_path(entry_source)?)?;
-            let document = json(&source_path(entry_source)?)?;
-            let document = document.get("sparse_cells").unwrap_or(&document);
-            Ok((
-                built,
-                vec![entry_source.to_string()],
-                serde_json::json!({"records":document["records"].as_array().map_or(0,Vec::len),"alignment_zeros":document.get("alignment_zeros")}),
+                serde_json::json!({"decoded_size":decoded.len(),"tokens":tokens.len(),"layout":plan.get("layout").cloned().unwrap_or(Value::Null),"components":reports}),
             ))
         }
         "record-table" | "pointer-table" => {
@@ -4257,47 +3945,18 @@ fn build_entry_native_tail(
                 return Err("table address differs from manifest".into());
             }
             let mut document = document.clone();
-            let symbols = SourcePaths::load(&ctx.root)?;
-            resolve_table_symbols(&mut document, &symbols)?;
+            let has_symbols = document["segments"]
+                .as_array()
+                .is_some_and(|segments| segments.iter().any(|s| s["element"] == "thumb-pointer"));
+            if has_symbols {
+                let symbols = SourcePaths::load(&ctx.root)?;
+                resolve_table_symbols(&mut document, &symbols)?;
+            }
             let built = typed_table(&document)?;
             Ok((
                 built,
                 vec![entry_source.to_string()],
                 serde_json::json!({"segments":document["segments"].as_array().map_or(0,Vec::len)}),
-            ))
-        }
-        "golden-sun-kind2-resource" => {
-            let plan_path = source_path(entry_source)?;
-            let plan = json(&plan_path)?;
-            let built = kind2_resources::build_kind2_resource(&plan_path)
-                .map_err(|error| error.to_string())?;
-            let mut sources = vec![entry["index"].as_str().unwrap_or(entry_source).to_string()];
-            sources.extend(root_sources(&ctx.root, &built.sources)?);
-            let size = built.data.len();
-            Ok((
-                built.data,
-                dedup_sources(sources),
-                serde_json::json!({"resource_id":plan.get("resource_id"),"source_bytes":size}),
-            ))
-        }
-        "golden-sun-tokushu-map" | "golden-sun-chiiki-map" => {
-            let index_name = entry_source;
-            let id = number(&entry["resource_id"], "map resource id")?;
-            let resource = ctx
-                .map_series(index_name)?
-                .into_iter()
-                .find(|item| item.id == id)
-                .ok_or("map resource differs from manifest")?;
-            if resource.kind != kind {
-                return Err("map resource kind differs from manifest".into());
-            }
-            let data_len = resource.data.len();
-            let mut sources = vec![index_name.to_string()];
-            sources.extend(root_sources(&ctx.root, &resource.sources)?);
-            Ok((
-                resource.data,
-                sources,
-                serde_json::json!({"resource_id":format!("0x{id:03x}"),"source_bytes":data_len}),
             ))
         }
         "golden-sun-offset-palette-lz" => {

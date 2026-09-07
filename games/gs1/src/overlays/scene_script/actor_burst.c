@@ -171,6 +171,40 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
+#define SceneEffect_UpdateMotion Func_02000104
+
+/* The object is accessed through word fields and a linked record. Keep the
+ * shared storage view so the record load follows the position stores. */
+union MotionWork {
+    struct {
+        u32 unk_00[2];
+        s32 x, y, z;
+        u32 unk_14;
+        s32 accum_x, accum_y;
+        u32 unk_20[4];
+        s32 rate_x, rate_y;
+        u32 unk_38[3];
+        s32 velocity_x, velocity_y, velocity_z;
+        u16 *record;
+        u8 unk_54[16];
+        u16 angle_step;
+    } fields;
+    u8 bytes[102];
+};
+
+void SceneEffect_UpdateMotion(union MotionWork *work)
+{
+    u16 *record;
+
+    work->fields.x += work->fields.velocity_x;
+    work->fields.y += work->fields.velocity_y;
+    work->fields.z += work->fields.velocity_z;
+    work->fields.accum_x += work->fields.rate_x;
+    work->fields.accum_y += work->fields.rate_y;
+    record = work->fields.record;
+    record[15] += work->fields.angle_step;
+}
+
 void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct ConfiguredEffectOptions *options)
 {
@@ -290,4 +324,109 @@ void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height)
         if (*(s32 *)(object + 12) <= height)
             break;
     }
+}
+
+union SceneActor {
+    struct {
+        u32 unk_00[2];
+        s32 x, y, z;
+        u32 unk_14[3];
+        u8 unk_20[2];
+        u8 field_22;
+        u8 unk_23[5];
+        s32 field_28;
+        u32 unk_2c[3];
+        u32 field_38;
+        u32 unk_3c[3];
+        s32 velocity_y;
+        u32 unk_4c;
+        struct Sprite *sprite;
+        u8 unk_54;
+        u8 mode;
+        u8 unk_56[22];
+        u32 callback;
+    } fields;
+    u8 bytes[112];
+};
+struct Vector { s32 x, y, z; };
+
+union SceneActor *Func_02000c2c(s32);
+void Func_02000bce(s32);
+s32 Func_02000bf0(s32);
+s32 Func_02000c8c(s32);
+void SceneActor_SetSpeed();
+void Func_02000c9c();
+void Func_02000cba(s32);
+void Func_02000a5a(union SceneActor *, s32);
+void Func_02000ce8(s32);
+void Func_02000c96();
+void Func_02000cfc(s32);
+void Func_02000caa();
+void Func_02000740();
+void Func_02000d56();
+void Func_02000d64(s32);
+void Func_02000b04(union SceneActor *, s32);
+void Func_020007ac();
+void Func_02000dd2(s32);
+void Func_02000dca(s32, s32);
+void Func_02000d86(void);
+
+
+#define SceneEffect_RunActorBurst Func_020004f4
+
+/* Mixed object and option views preserve the reference's alias ordering. */
+void SceneEffect_RunActorBurst(s32 no)
+{
+    union SceneActor *work;
+    u32 cnt;
+    struct Vector vec;
+    union {
+        struct ConfiguredEffectOptions fields;
+        u8 bytes[sizeof(struct ConfiguredEffectOptions)];
+    } opt;
+
+    work = Func_02000c2c(no);
+    work->fields.mode = 0;
+    for (cnt = 0; cnt < 18; cnt++) {
+        Func_02000bce(1);
+        work->fields.sprite->angle -= 256;
+        work->fields.x -= Func_02000bf0(work->fields.sprite->angle) / 2;
+        work->fields.field_38 = 0x80000000;
+    }
+    work->fields.callback = 0x020084c5;
+    Call3(SceneActor_SetSpeed, no, 0x30000, 0x18000);
+    Call3(Func_02000c9c, no, 376, 288);
+    work->fields.velocity_y = 0xcccc;
+    work->fields.mode = 3;
+    work->fields.field_22 = 0;
+    Func_02000cba(no);
+    Func_02000a5a(work, 0);
+    Func_02000ce8(188);
+    Call3(Func_02000c96, 0x50000, 0x50000, 0x10000);
+    Func_02000cfc(141);
+    Call3(Func_02000caa, -1, -1, 0xe666);
+    for (cnt = 0; cnt < 17; cnt++) {
+        vec.x = Func_02000bf0(cnt << 12);
+        vec.y = 0;
+        vec.z = Func_02000c8c(cnt << 12);
+        vec.x -= vec.x / 4;
+        vec.z -= vec.z / 2;
+        Func_02000740(work->fields.x, work->fields.y, work->fields.z,
+                     vec.x, vec.y, vec.z, 0, NULL);
+    }
+    work->fields.field_28 = 0x50000;
+    Call3(Func_02000d56, no, 346, 292);
+    Func_02000d64(no);
+    Func_02000b04(work, 0);
+    work->fields.callback = 0;
+    work->fields.sprite->angle = 0x1000;
+    opt.fields.kind = 214;
+    opt.fields.accum18 = 0x8000;
+    opt.fields.accum1c = 0xcccc;
+    opt.fields.target30 = 0x18000;
+    opt.fields.target34 = 0x13333;
+    Func_020007ac(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0, 0x1c0000, &opt.fields);
+    Func_02000dd2(154);
+    Func_02000dca(no, 3);
+    Func_02000d86();
 }

@@ -37,26 +37,22 @@ dependencies = [
  "build-claimed",
  "build-full",
  "candidate-compiler",
- "check-publication",
- "check-unmatchable",
  "compiler-core",
  "coverage-map",
  "decompile",
  "diff",
  "disassemble",
  "extract-resource",
- "gba-header",
  "import-asset",
- "integrate-matches",
  "matching",
  "no-asm-c",
  "objdiff-core",
  "overlay-adopt",
  "png",
- "regex",
  "serde",
  "serde_json",
  "sha1",
+ "sha2",
  "tempfile",
  "walkdir",
 ]
@@ -167,18 +163,6 @@ name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
-
-[[package]]
-name = "check-publication"
-version = "0.1.0"
-
-[[package]]
-name = "check-unmatchable"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "serde_json",
-]
 
 [[package]]
 name = "compiler-core"
@@ -404,16 +388,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gba-header"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "import-asset",
- "serde_json",
- "sha2",
-]
-
-[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -494,19 +468,6 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
 dependencies = [
  "equivalent",
  "hashbrown 0.17.1",
-]
-
-[[package]]
-name = "integrate-matches"
-version = "0.1.0"
-dependencies = [
- "candidate-compiler",
- "compiler-core",
- "disassemble",
- "no-asm-c",
- "regex",
- "serde_json",
- "tempfile",
 ]
 
 [[package]]

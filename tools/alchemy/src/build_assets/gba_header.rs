@@ -1,4 +1,4 @@
-//! GBA cartridge-header codec, ported from tools/make/gba_header.ts.
+//! GBA cartridge-header codec.
 
 use std::fs;
 use std::path::Path;
@@ -8,16 +8,16 @@ use import_asset::indexed_png;
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
 
-pub const GBA_HEADER_ADDRESS: u32 = 0x0800_0000;
-pub const GBA_HEADER_SIZE: usize = 0xc0;
-pub const GBA_LOGO_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0x04;
-pub const GBA_LOGO_SIZE: usize = 0x9c;
-pub const GBA_FIXED_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0xb2;
-pub const GBA_FIXED_SIZE: usize = 0x0a;
-pub const GBA_RESERVED_END_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0xbe;
-pub const GBA_RESERVED_END_SIZE: usize = 0x02;
-pub const GBA_LOGO_WIDTH: u32 = 104;
-pub const GBA_LOGO_HEIGHT: u32 = 16;
+const GBA_HEADER_ADDRESS: u32 = 0x0800_0000;
+const GBA_HEADER_SIZE: usize = 0xc0;
+const GBA_LOGO_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0x04;
+const GBA_LOGO_SIZE: usize = 0x9c;
+const GBA_FIXED_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0xb2;
+const GBA_FIXED_SIZE: usize = 0x0a;
+const GBA_RESERVED_END_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0xbe;
+const GBA_RESERVED_END_SIZE: usize = 0x02;
+const GBA_LOGO_WIDTH: u32 = 104;
+const GBA_LOGO_HEIGHT: u32 = 16;
 
 const LOGO_SHA256: &str = "08a0153cfd6b0ea54b938f7d209933fa849da0d56f5a34c481060c9ff2fad818";
 const LOGO_PNG_SHA256: &str = "060df97f1ea5afefd2c32a471614d116ef855b545800695a451915d8f5f350ba";
@@ -233,7 +233,7 @@ fn parse_edition(value: &Value) -> Result<Edition, String> {
     })
 }
 
-pub fn parse_gba_header_source(value: &Value) -> Result<(), String> {
+fn parse_gba_header_source(value: &Value) -> Result<(), String> {
     let source = object(value, "GBA header source")?;
     exact_keys(
         source,
@@ -359,7 +359,7 @@ fn source_array<'a>(value: Option<&'a Value>, message: &str) -> Result<&'a Vec<V
         .ok_or_else(|| message.to_string())
 }
 
-pub fn read_gba_header_source(path: &Path) -> Result<Value, String> {
+pub(super) fn read_gba_header_source(path: &Path) -> Result<Value, String> {
     let text = fs::read_to_string(path).map_err(|error| error.to_string())?;
     let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
     if !is_canonical_json_text(&text, &value) {
@@ -423,7 +423,7 @@ fn huffman_logo(data: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-pub fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
+fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
     let decoded = indexed_png(image).map_err(|error| error.0)?;
     let pixels: Vec<u8> = decoded.pixels.iter().map(|pixel| *pixel as u8).collect();
     if decoded.width != GBA_LOGO_WIDTH
@@ -440,7 +440,7 @@ pub fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-pub fn encode_arm_branch(address: u32, target: u32) -> Result<Vec<u8>, String> {
+fn encode_arm_branch(address: u32, target: u32) -> Result<Vec<u8>, String> {
     if address > 0xffff_fffc
         || target > 0xffff_fffc
         || !address.is_multiple_of(4)
@@ -456,7 +456,7 @@ pub fn encode_arm_branch(address: u32, target: u32) -> Result<Vec<u8>, String> {
     Ok(instruction.to_le_bytes().to_vec())
 }
 
-pub fn gba_complement_checksum(header: &[u8]) -> Result<u8, String> {
+fn gba_complement_checksum(header: &[u8]) -> Result<u8, String> {
     if header.len() < 0xbd {
         return Err("GBA header is too short for its complement checksum".to_string());
     }
@@ -476,7 +476,7 @@ fn edition(source: &Value) -> Result<Edition, String> {
     }
 }
 
-pub fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, String> {
+fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, String> {
     parse_gba_header_source(source)?;
     let edition = edition(source)?;
     let mut output = vec![0u8; GBA_HEADER_SIZE];
@@ -491,7 +491,7 @@ pub fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, St
     Ok(output)
 }
 
-pub fn build_gba_header_component(
+pub(super) fn build_gba_header_component(
     source: &Value,
     logo_image: &[u8],
     address: u32,

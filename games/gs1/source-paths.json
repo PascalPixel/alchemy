@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_376:020000fc": {
+      "name": "SceneData_SelectFlaggedTable",
+      "source": "overlays/scene_data/select_flagged_scene_table.c"
+    },
     "main:080c91dc": {
       "name": "BattleEffect_RunFallingParticles"
     },

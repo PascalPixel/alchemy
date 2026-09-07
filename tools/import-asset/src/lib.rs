@@ -3,10 +3,12 @@ mod compression;
 mod gba;
 mod text;
 mod wav;
+mod zero_skip;
 pub use compression::{delta7_image, encode_delta7, encode_mtf4};
 pub use gba::{bgr555_palette_from_png, gba_tiles_from_png, png_from_gba_tiles, GbaBpp};
 pub use text::{import_pairs, import_tilemap, import_words};
 pub use wav::{pcm8_wav, wav_pcm8};
+pub use zero_skip::encode_zero_skip;
 pub type Rgb = [u8; 3];
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Report(pub Vec<(String, f64)>);

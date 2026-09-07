@@ -8,7 +8,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use extract_resource::{GeneralToken, PaletteGroup, PaletteOperation};
-use import_asset::{indexed_png, Rgb};
+use import_asset::{encode_zero_skip, indexed_png, Rgb};
 use serde_json::{json, Map, Value};
 
 const MAX_PIXELS: usize = 0x1000000;
@@ -161,31 +161,7 @@ fn zero_decode(data: &[u8], offset: usize, max: usize) -> Result<(Vec<u8>, usize
     fail("zero-skip stream has no terminator")
 }
 fn zero_encode(pixels: &[u8]) -> Result<Vec<u8>> {
-    let mut out = Vec::new();
-    let mut cursor = 0;
-    while cursor < pixels.len() {
-        if pixels[cursor] != 0 {
-            if pixels[cursor] > 0xdf {
-                return fail("zero-skip literal is outside 1..223");
-            }
-            out.push(pixels[cursor]);
-            cursor += 1;
-        } else {
-            let mut end = cursor + 1;
-            while end < pixels.len() && pixels[end] == 0 {
-                end += 1;
-            }
-            let mut count = end - cursor;
-            while count > 0 {
-                let n = count.min(32);
-                out.push(0xdf + n as u8);
-                count -= n;
-            }
-            cursor = end;
-        }
-    }
-    out.push(0);
-    Ok(out)
+    encode_zero_skip(pixels).map_err(|_| Error("zero-skip literal is outside 1..223".into()))
 }
 
 fn mode3_decode(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, Value)> {

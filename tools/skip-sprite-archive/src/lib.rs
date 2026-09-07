@@ -1,4 +1,4 @@
-use import_asset::indexed_png;
+use import_asset::{encode_zero_skip, indexed_png};
 use serde_json::{Map, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -36,32 +36,7 @@ fn plan_field<'a>(plan: &'a Map<String, Value>, name: &str) -> Result<&'a Value>
 }
 
 pub fn encode_stream(pixels: &[u8]) -> Result<Vec<u8>> {
-    let mut output = Vec::new();
-    let mut cursor = 0usize;
-    while cursor < pixels.len() {
-        let value = pixels[cursor];
-        if value != 0 {
-            if value > 0xdf {
-                return fail("sprite pixel exceeds the literal range");
-            }
-            output.push(value);
-            cursor += 1;
-            continue;
-        }
-        let mut end = cursor + 1;
-        while end < pixels.len() && pixels[end] == 0 {
-            end += 1;
-        }
-        let mut remaining = end - cursor;
-        while remaining != 0 {
-            let count = remaining.min(32);
-            output.push(0xdf + count as u8);
-            remaining -= count;
-        }
-        cursor = end;
-    }
-    output.push(0);
-    Ok(output)
+    encode_zero_skip(pixels).map_err(|_| Error("sprite pixel exceeds the literal range".into()))
 }
 
 pub type Rgb = [u8; 3];
@@ -232,4 +207,18 @@ pub fn build_archive(plan_value: &Value, directory: &Path, palette_path: &Path) 
         header.extend_from_slice(&streams[index]);
     }
     Ok(header)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::encode_stream;
+
+    #[test]
+    fn archive_stream_keeps_its_legacy_contract() {
+        assert_eq!(encode_stream(&[1, 0, 0, 2]).unwrap(), [1, 0xe1, 2, 0]);
+        assert_eq!(
+            encode_stream(&[0xe0]).unwrap_err().0,
+            "sprite pixel exceeds the literal range"
+        );
+    }
 }

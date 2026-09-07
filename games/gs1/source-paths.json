@@ -6922,7 +6922,7 @@
     },
     "resource_3cd:020007c8": {
       "name": "SceneState_GetFarResult100c",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_3c8:020045f0": {
       "name": "SceneState_Call4520With432And32",
@@ -7568,7 +7568,7 @@
     },
     "resource_3cd:020000ec": {
       "name": "FieldScene_RunCountAdjustPanel",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_385:02000e60": {
       "name": "ActorPresentation_SetAlternatePairedSceneCells",
@@ -7745,7 +7745,7 @@
     },
     "resource_3cd:0200003c": {
       "name": "SceneData_GetTable8994",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_37e:02000044": {
       "name": "SceneData_GetActorTable",
@@ -7753,7 +7753,7 @@
     },
     "resource_3cd:020006f8": {
       "name": "SceneState_SetWorkWords1c0And1c8",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_3cb:02000f18": {
       "name": "SceneState_ApplyValueAndGetResult",
@@ -8474,7 +8474,7 @@
     },
     "resource_3cd:020007b8": {
       "name": "SceneState_SetRecordFlag53",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_3ca:02000038": "overlays/shared/get_default_result.c",
     "resource_3b3:0200209c": {
@@ -8848,7 +8848,7 @@
     },
     "resource_3cd:02000070": {
       "name": "FieldScene_RunActor13Mode105Step",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_3b1:0200351c": {
       "name": "SceneState_RunFlagGatedSetupCascade",
@@ -9424,7 +9424,7 @@
     },
     "resource_3cd:02000030": {
       "name": "SceneData_GetTable8964",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_385:02000048": {
       "name": "OverlayObject_CreateConfigured",
@@ -10039,7 +10039,7 @@
     },
     "resource_3cd:020007d4": {
       "name": "SceneState_GetFarResult1020",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_382:020005c8": {
       "name": "SceneState_SetFlags947And29dc",
@@ -10511,7 +10511,7 @@
     },
     "resource_3cd:020000a0": {
       "name": "SceneState_AddToRecordCount",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_392:020002a8": {
       "name": "StagedActor_CheckProbe",
@@ -11433,7 +11433,7 @@
     },
     "resource_3cd:02000098": {
       "name": "SceneData_GetTable8a58",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_394:0200003c": {
       "name": "SceneData_GetTable91d0",
@@ -12383,7 +12383,7 @@
     },
     "resource_3cd:02000044": {
       "name": "SceneData_GetTable8998",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_37e:0200003c": {
       "name": "SceneData_GetMessageTable",
@@ -13017,7 +13017,7 @@
     },
     "resource_3cd:02000768": {
       "name": "FieldScene_DrawThreeCaptionWindow",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_381:02002820": {
       "name": "SceneActor_MoveTo232_125AndFace4000",
@@ -13250,7 +13250,7 @@
     },
     "resource_3cd:0200071c": {
       "name": "FieldScene_RunEntrySetup",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_378:02000070": {
       "name": "SceneData_SelectPlacementTableBySubstate",
@@ -13290,7 +13290,7 @@
     },
     "resource_3cd:02000038": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_3a7:02001544": {
       "name": "SceneState_IsStateAtMostOneB",
@@ -16542,7 +16542,7 @@
     },
     "resource_3cd:0200004c": {
       "name": "FieldScene_RunActor13Mode102Step",
-      "source": "overlays/scene_script/scene_3cd.c"
+      "source": "overlays/scene_script/record_events.c"
     },
     "resource_371:020017a4": {
       "name": "FieldScene_RunScene371_020017a4",
@@ -17462,6 +17462,10 @@
     "resource_3a2:02000ac0": {
       "name": "Scene_RunActorCue",
       "source": "overlays/scene_script/actor_events.c"
+    },
+    "resource_3cd:020000c0": {
+      "name": "Scene_AddToListedRecordCounts",
+      "source": "overlays/scene_script/record_events.c"
     }
   }
 }

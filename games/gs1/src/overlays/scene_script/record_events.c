@@ -1,5 +1,22 @@
 #include "types.h"
 
+#define Scene_AddToListedRecordCounts Func_020000c0
+#define SceneData_GetTable8964 Func_02000030
+#define SceneData_ReturnZero Func_02000038
+#define SceneData_GetTable8994 Func_0200003c
+#define SceneData_GetTable8998 Func_02000044
+#define FieldScene_RunActor13Mode102Step Func_0200004c
+#define FieldScene_RunActor13Mode105Step Func_02000070
+#define SceneData_GetTable8a58 Func_02000098
+#define SceneState_AddToRecordCount Func_020000a0
+#define FieldScene_RunCountAdjustPanel Func_020000ec
+#define SceneState_SetWorkWords1c0And1c8 Func_020006f8
+#define FieldScene_RunEntrySetup Func_0200071c
+#define FieldScene_DrawThreeCaptionWindow Func_02000768
+#define SceneState_SetRecordFlag53 Func_020007b8
+#define SceneState_GetFarResult100c Func_020007c8
+#define SceneState_GetFarResult1020 Func_020007d4
+
 extern u8 Data_03001ebc[];
 extern u8 Data_02008a58;
 extern u8 Value_00000c20;
@@ -47,6 +64,8 @@ void Func_02000fac(const void *, s32, s32, s32);
 void Func_02000fb8(const void *, s32, s32, s32);
 int Func_0200100c(void);
 int Func_02001020(void);
+s32 Func_02000942(u16 *);
+void Func_0200017e(u16, s32);
 
 /*
  * resource_3cd owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr`
@@ -341,6 +360,11 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+static __inline__ s32 Scene_ListRecords(s32 (*func)(u16 *), u16 *list)
+{
+    return func(list);
+}
+
 u8 *SceneData_GetTable8964(void)
 {
     return (u8 *)0x02008964;
@@ -393,6 +417,23 @@ void SceneState_AddToRecordCount(s32 arg0, s32 arg1)
 
     Func_02000932(arg0, entry[15] + arg1);
     Func_02000910(arg0);
+}
+
+void Scene_AddToListedRecordCounts(s32 arg)
+{
+    u16 list[16];
+    u16 *p;
+    s32 n;
+
+    n = Scene_ListRecords(Func_02000942, list);
+    if (n > 0) {
+        s32 count;
+        p = list;
+        count = n;
+        do {
+            Func_0200017e(*p++, arg);
+        } while (--count != 0);
+    }
 }
 
 void FieldScene_RunCountAdjustPanel(void)

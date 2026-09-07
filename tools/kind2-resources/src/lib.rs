@@ -3,24 +3,18 @@
 use import_asset::{gba_graphics, gba_palette_rgba, indexed_png};
 use serde_json::{Map, Value};
 use std::fs;
-use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 pub type Result<T> = std::result::Result<T, String>;
-pub const ROM_BASE: usize = 0x0800_0000;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BuiltResource {
-    pub id: usize,
-    pub address: usize,
     pub data: Vec<u8>,
-    pub prefix_palette_size: usize,
-    pub presentation_status: String,
     pub sources: Vec<PathBuf>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Token {
+enum Token {
     Literal(usize),
     Copy { distance: usize, length: usize },
 }
@@ -80,14 +74,6 @@ fn child(root: &Path, name: &str) -> Result<PathBuf> {
     }
     Ok(root.join(name))
 }
-fn indexed_child(root: &Path, name: &str, id: usize) -> Result<PathBuf> {
-    let expected = format!("resource_{id:03x}/stream.json");
-    if name != expected {
-        return Err("kind-2 index source name is not canonical".into());
-    }
-    Ok(root.join(name))
-}
-
 struct BitWriter {
     bits: Vec<u8>,
 }
@@ -161,7 +147,7 @@ fn mtf_index(table: &mut Vec<u8>, value: u8) -> usize {
     index
 }
 
-pub fn encode_kind2(decoded: &[u8], tokens: &[Token], lookahead: &[u8]) -> Result<Vec<u8>> {
+fn encode_kind2(decoded: &[u8], tokens: &[Token], lookahead: &[u8]) -> Result<Vec<u8>> {
     let mut bits = BitWriter::new();
     let mut table: Vec<u8> = (0..16).collect();
     let mut cursor = 0usize;
@@ -296,12 +282,9 @@ pub fn encode_kind2_plan(
 }
 
 struct Plan {
-    id: usize,
-    address: usize,
     size: usize,
     encoding: String,
     image: String,
-    status: String,
     tokens: Vec<Token>,
     decoded_size: usize,
     encoded_size: usize,
@@ -312,16 +295,16 @@ struct Plan {
 fn parse_plan(path: &Path) -> Result<Plan> {
     let value = json(path)?;
     let plan = object(&value, "kind-2 plan")?;
-    let id = parse_hex(
+    parse_hex(
         &string(field(plan, "resource_id")?, "resource_id")?,
         "resource_id",
     )?;
-    let address = parse_hex(&string(field(plan, "address")?, "address")?, "address")?;
+    parse_hex(&string(field(plan, "address")?, "address")?, "address")?;
     let size = parse_hex(&string(field(plan, "size")?, "size")?, "size")?;
     let image = object(field(plan, "image")?, "kind-2 image")?;
     let encoding = string(field(image, "encoding")?, "encoding")?;
     let image_name = string(field(image, "source")?, "image source")?;
-    let status = string(field(image, "status")?, "image status")?;
+    string(field(image, "status")?, "image status")?;
     let stream = object(field(plan, "stream")?, "kind-2 stream")?;
     let encoded_size = parse_hex(
         &string(field(stream, "encoded_size")?, "encoded_size")?,
@@ -346,12 +329,9 @@ fn parse_plan(path: &Path) -> Result<Plan> {
         return Err("kind-2 stream extent is invalid".into());
     }
     Ok(Plan {
-        id,
-        address,
         size,
         encoding,
         image: image_name,
-        status,
         tokens: parse_tokens(field(stream, "tokens")?)?,
         decoded_size,
         encoded_size,
@@ -405,7 +385,7 @@ pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
     if stream.len() != plan.encoded_size {
         return Err("kind-2 stream has the wrong encoded size".into());
     }
-    let mut data = prefix.clone();
+    let mut data = prefix;
     data.extend(stream);
     if data.len() != plan.size {
         return Err("kind-2 resource has the wrong size".into());
@@ -414,44 +394,7 @@ pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
     if let Some(path) = palette_path {
         sources.push(path);
     }
-    Ok(BuiltResource {
-        id: plan.id,
-        address: plan.address,
-        data,
-        prefix_palette_size: prefix.len(),
-        presentation_status: plan.status,
-        sources,
-    })
-}
-
-pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
-    let value = json(index_path)?;
-    let index = object(&value, "kind-2 index")?;
-    if field(index, "kind")?.as_str() != Some("golden-sun-kind2-resource-series") {
-        return Err("unsupported kind-2 series index".into());
-    }
-    let directory = index_path
-        .parent()
-        .ok_or_else(|| err("kind-2 index has no parent"))?;
-    let entries = field(index, "resources")?
-        .as_array()
-        .ok_or_else(|| err("kind-2 index resources must be an array"))?;
-    entries
-        .iter()
-        .map(|entry| {
-            let entry = object(entry, "kind-2 index entry")?;
-            let id = parse_hex(&string(field(entry, "id")?, "id")?, "id")?;
-            let plan_path =
-                indexed_child(directory, &string(field(entry, "source")?, "source")?, id)?;
-            let built = build_kind2_resource(&plan_path)?;
-            let address = parse_hex(&string(field(entry, "address")?, "address")?, "address")?;
-            let size = parse_hex(&string(field(entry, "size")?, "size")?, "size")?;
-            if built.id != id || built.address != address || built.data.len() != size {
-                return Err("kind-2 resource differs from its series index".into());
-            }
-            Ok(built)
-        })
-        .collect()
+    Ok(BuiltResource { data, sources })
 }
 
 #[test]
@@ -472,21 +415,4 @@ fn codec_round_trip() -> Result<()> {
         return Err("kind-2 codec self-test failed".into());
     }
     Ok(())
-}
-pub fn write_build_stdout(plan: &Path) -> Result<()> {
-    let built = build_kind2_resource(plan)?;
-    std::io::stdout()
-        .write_all(&built.data)
-        .map_err(|e| e.to_string())
-}
-
-pub fn write_encode_stdout(plan: &Path, section: Option<&str>) -> Result<()> {
-    let mut decoded = Vec::new();
-    std::io::stdin()
-        .read_to_end(&mut decoded)
-        .map_err(|e| e.to_string())?;
-    let encoded = encode_kind2_plan(&decoded, plan, section)?;
-    std::io::stdout()
-        .write_all(&encoded)
-        .map_err(|e| e.to_string())
 }

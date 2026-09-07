@@ -68,7 +68,6 @@ dependencies = [
  "kind2-resources",
  "localization-font",
  "map-container-components",
- "map-resources",
  "matching",
  "message-archive",
  "music",
@@ -116,10 +115,8 @@ name = "archive-asset"
 version = "0.1.0"
 dependencies = [
  "alignment-tail",
- "export-asset",
  "extract-resource",
  "import-asset",
- "serde_json",
 ]
 
 [[package]]
@@ -468,16 +465,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "export-asset"
-version = "0.1.0"
-dependencies = [
- "crc32fast",
- "flate2",
- "import-asset",
- "png",
-]
-
-[[package]]
 name = "extract-resource"
 version = "0.1.0"
 
@@ -718,7 +705,6 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 name = "kind1-map-grid"
 version = "0.1.0"
 dependencies = [
- "export-asset",
  "extract-resource",
  "hex",
  "import-asset",
@@ -777,16 +763,6 @@ version = "0.1.0"
 dependencies = [
  "extract-resource",
  "import-asset",
- "serde_json",
-]
-
-[[package]]
-name = "map-resources"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "kind1-map-grid",
- "map-container-components",
  "serde_json",
 ]
 

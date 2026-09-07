@@ -1,10 +1,12 @@
 use std::io::Cursor;
 mod compression;
+mod gba;
 mod text;
 mod wav;
 pub use compression::{delta7_image, encode_delta7, encode_mtf4};
+pub use gba::{bgr555_palette_from_png, gba_tiles_from_png, png_from_gba_tiles, GbaBpp};
 pub use text::{import_pairs, import_tilemap, import_words};
-pub use wav::wav_pcm8;
+pub use wav::{pcm8_wav, wav_pcm8};
 pub type Rgb = [u8; 3];
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Report(pub Vec<(String, f64)>);
@@ -94,6 +96,7 @@ pub struct IndexedImage {
     pub height: u32,
     pub pixels: Vec<u32>,
     pub palette: Vec<Rgb>,
+    pub has_transparency: bool,
 }
 
 pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
@@ -125,6 +128,10 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     if palette.len() as u32 > 1 << depth {
         return err("palette exceeds indexed bit depth");
     }
+    let has_transparency = info
+        .trns
+        .as_deref()
+        .is_some_and(|alpha| alpha.iter().any(|value| *value != 255));
     if let Some(alpha) = info.trns.as_deref() {
         if alpha.len() > palette.len() || alpha.iter().any(|value| *value != 0 && *value != 255) {
             return err("transparency must contain only binary alpha");
@@ -151,6 +158,7 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
         height,
         pixels,
         palette,
+        has_transparency,
     })
 }
 
@@ -218,45 +226,22 @@ pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
 }
 
 pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report), AssetError> {
-    let image = indexed_png(data)?;
-    let four = bpp == 4.0;
-    let limit = if four { 16u32 } else { 256 };
-    if image.palette.len() > limit as usize || image.pixels.iter().any(|pixel| *pixel >= limit) {
-        return Err(AssetError(format!(
-            "image does not fit {}bpp",
-            js_number_json(bpp)
-        )));
-    }
-    let mut palette = Vec::with_capacity(image.palette.len() * 2);
-    for [r, g, b] in image.palette {
-        if r & 7 != 0 || g & 7 != 0 || b & 7 != 0 {
-            return err("palette channels must be exact five-bit values (multiples of 8)");
+    let bpp_kind = match bpp {
+        4.0 => GbaBpp::Bpp4,
+        8.0 => GbaBpp::Bpp8,
+        _ => {
+            return err(format!(
+                "GBA graphics must be 4bpp or 8bpp, not {}",
+                js_number_json(bpp)
+            ))
         }
-        palette.extend_from_slice(
-            &(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10).to_le_bytes(),
-        );
-    }
-    let width = image.width as usize;
-    let mut tiles = Vec::with_capacity(width * image.height as usize / if four { 2 } else { 1 });
-    for top in (0..image.height as usize).step_by(8) {
-        for left in (0..width).step_by(8) {
-            for y in 0..8 {
-                for x in (0..8).step_by(if four { 2 } else { 1 }) {
-                    let at = (top + y) * width + left + x;
-                    if four {
-                        tiles.push((image.pixels[at] | image.pixels[at + 1] << 4) as u8);
-                    } else {
-                        tiles.push(image.pixels[at] as u8);
-                    }
-                }
-            }
-        }
-    }
+    };
+    let (tiles, palette, width, height) = gba::gba_graphics_from_png(data, bpp_kind, false)?;
     let mut report = Report::default();
-    report.set("width", image.width.into());
-    report.set("height", image.height.into());
+    report.set("width", width.into());
+    report.set("height", height.into());
     report.set("bpp", bpp);
-    report.set("tiles", (width / 8 * image.height as usize / 8) as f64);
+    report.set("tiles", (width as usize / 8 * height as usize / 8) as f64);
     report.set("palette_entries", palette.len() as f64 / 2.0);
     Ok((tiles, palette, report))
 }

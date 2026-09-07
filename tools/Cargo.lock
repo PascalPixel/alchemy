@@ -34,7 +34,6 @@ name = "alchemy"
 version = "0.1.0"
 dependencies = [
  "alignment-tail",
- "asset-paths",
  "build-asm",
  "build-claimed",
  "build-full",
@@ -91,10 +90,6 @@ checksum = "5790583a9ebcc63c55f142a85d85fe63ec0e033c941fcf00a3605f81dada2e32"
 dependencies = [
  "thiserror",
 ]
-
-[[package]]
-name = "asset-paths"
-version = "0.1.0"
 
 [[package]]
 name = "autocfg"

@@ -384,14 +384,16 @@ the dashboard displays the resulting game data.
 
 Asset tooling is organized by format and conversion, never by resource number,
 ROM address or the first game asset that needed it. Name a directional converter
-for its actual inputs and outputs, such as `png2gba4bpp`; distinguish raw tiled
-pixels, palettes and file containers. A bidirectional codec library may use the
-format name. Do not label an SMSH source parser as a MIDI converter unless it
-actually performs that conversion. Game-specific offsets, dimensions, table
-layouts and compression plans belong in the maintained asset description, not
-a separate executable or crate per resource. Share the implementation across
-assets of the same format and prove their rebuilt bytes before deleting the old
-route. Renaming hard-coded resource logic does not make it portable.
+for its actual portable inputs and outputs: `png2bpp4`, `bpp42png`,
+`png2bpp8`, `bpp82png`, `png2bgr555`, `wav2pcm8`, and `pcm82wav`.
+`bpp4` and `bpp8` mean GBA tile-major pixel bytes; `bgr555` means little-endian
+15-bit palette words. Do not invent format names for a game source parser:
+an SMSH parser is not `midi2smsh`, and Thumb code is not a music format.
+Game-specific offsets, dimensions, table layouts and compression plans belong
+in the maintained asset description, not a separate executable or crate per
+resource. Share the implementation across assets of the same format and prove
+their rebuilt bytes before deleting the old route. Renaming hard-coded resource
+logic does not make it portable.
 
 The asset builder's `typed-table` format encodes contiguous source-described
 segments: `u8`, `s8`, `le-u16`, `le-u32`, and zero-terminated, padded `ascii-fixed`.
@@ -429,13 +431,17 @@ its per-package extraction/build CLIs are retired. Their required codecs remain
 internal build dependencies pending format migration, not supported commands.
 Do not reintroduce parallel package-specific build or verify commands.
 
-Use `alchemy convert FORMAT INPUT OUTPUT` for file conversions: `words2bin`,
-`pairs2bin`, `tilemap2bin`, `png2gba4bpp`, `png2gba8bpp`, `png2gbapal`, and `wav2pcm8`.
-`wav2pcm8` reads canonical mono 8-bit PCM WAV and emits signed 8-bit sample bytes;
-game-engine headers and looping metadata belong to the asset build, not the converter.
-These have no game addresses or default ROMs and refuse to overwrite an existing
-output. `alchemy font` retains the project's shared font reconstruction pipeline;
-it is project integration, not part of the portable kit.
+Use `alchemy convert FORMAT INPUT OUTPUT [options]` for file conversions:
+`words2bin`, `pairs2bin`, `tilemap2bin`, `png2bpp4`, `bpp42png`, `png2bpp8`,
+`bpp82png`, `png2bgr555`, `wav2pcm8`, and `pcm82wav`. `bpp42png` and
+`bpp82png` require `--palette FILE --tiles-wide N`; their palette is LE BGR555,
+and bit 15, transparent PNG entries, bad tile lengths, and out-of-range indices
+are errors rather than lost data. `wav2pcm8` reads canonical mono 8-bit PCM WAV
+and emits signed 8-bit sample bytes; `pcm82wav` requires `--rate HZ`.
+Game-engine headers and looping metadata belong to the asset build, not the
+converter. These have no game addresses or default ROMs and refuse to overwrite
+an existing output. `alchemy font` retains the project's shared font
+reconstruction pipeline; it is project integration, not part of the portable kit.
 
 The following is the complete library and command index.
 `make tooling-index-check` checks every immediate tool directory exactly once;

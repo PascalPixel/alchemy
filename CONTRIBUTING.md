@@ -481,7 +481,6 @@ libraries are not additional public command surfaces.
 | [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |
 | [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
 | [import-asset](tools/import-asset/) | Import images, text and WAV PCM into binary formats; shared MTF4 and delta7 pixel encoders. |
-| [battle-assets](tools/battle-assets/) | Rebuild battle screen, display, effect, and compressed resource packages. |
 | [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
 | [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
 | [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |

@@ -662,6 +662,217 @@ fn mtf4_lz_streams_carry_the_tag_and_move_to_front_literals() {
         ]
     )
     .is_err());
+// arena stream
+// ---------------------------------------------------------------------------
+/// Decode an arena stream at `offset`: a little-endian split halfword, the
+/// literal block, then flag groups whose copies read from the bytes that
+/// precede the literal block in `data`. A zero split stores the stream raw
+/// up to and including its zero terminator. Returns the decoded stream, the
+/// encoded length and the unused final flag bits.
+pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), DecodeError> {
+    let split = usize::from(u16::from_le_bytes([
+        *data
+            .get(offset)
+            .ok_or_else(|| DecodeError("arena split is truncated".into()))?,
+        *data
+            .get(offset + 1)
+            .ok_or_else(|| DecodeError("arena split is truncated".into()))?,
+    ]));
+    let base = offset + 2;
+    if split == 0 {
+        let end = data[base..]
+            .iter()
+            .position(|byte| *byte == 0)
+            .ok_or_else(|| DecodeError("raw arena stream has no terminator".into()))?;
+        return Ok((data[base..=base + end].to_vec(), 3 + end, 0));
+    }
+    if split < 2 || offset + split >= data.len() {
+        return err("arena split is outside the encoded data");
+    }
+    let control = offset + split;
+    let mut literal = base;
+    let mut cursor = control;
+    let mut output = Vec::new();
+    loop {
+        let flags = *data
+            .get(cursor)
+            .ok_or_else(|| DecodeError("arena flag group is truncated".into()))?;
+        cursor += 1;
+        for bit in 0..8 {
+            if flags & (1 << bit) != 0 {
+                if literal >= control {
+                    return err("arena literal block is exhausted");
+                }
+                output.push(data[literal]);
+                literal += 1;
+                continue;
+            }
+            let word = u16::from_be_bytes([
+                *data
+                    .get(cursor)
+                    .ok_or_else(|| DecodeError("arena copy is truncated".into()))?,
+                *data
+                    .get(cursor + 1)
+                    .ok_or_else(|| DecodeError("arena copy is truncated".into()))?,
+            ]);
+            cursor += 2;
+            if word == 0 {
+                if literal != control {
+                    return err("arena literal block was not consumed exactly");
+                }
+                return Ok((output, cursor - offset, flags & !((2u16 << bit) - 1) as u8));
+            }
+            let distance = usize::from(word & 0x0fff);
+            let length = if word >> 12 == 0 {
+                let extra = *data
+                    .get(cursor)
+                    .ok_or_else(|| DecodeError("arena copy length is truncated".into()))?;
+                cursor += 1;
+                usize::from(extra) + 18
+            } else {
+                usize::from(word >> 12) + 2
+            };
+            let source = base
+                .checked_sub(distance)
+                .filter(|source| distance != 0 && source + length <= data.len())
+                .ok_or_else(|| DecodeError("arena copy is outside the encoded data".into()))?;
+            for index in 0..length {
+                output.push(data[source + index]);
+            }
+        }
+    }
+}
+/// Encode `decoded` as an arena stream. `tokens` of `None` stores it raw behind
+/// a zero split; otherwise the literal runs and copies are laid out from the
+/// plan and every copy is checked against `arena` (the bytes that precede this
+/// stream) followed by the stream itself.
+pub fn encode_arena(
+    decoded: &[u8],
+    tokens: Option<&[GeneralToken]>,
+    final_flags: u8,
+    arena: &[u8],
+) -> Result<Vec<u8>, DecodeError> {
+    let Some(tokens) = tokens else {
+        if decoded.last() != Some(&0) || decoded[..decoded.len() - 1].contains(&0) {
+            return err("raw arena stream must end with its only zero byte");
+        }
+        let mut output = vec![0, 0];
+        output.extend_from_slice(decoded);
+        return Ok(output);
+    };
+    let mut literals = Vec::new();
+    let mut flags = Vec::new();
+    let mut payloads: Vec<Vec<u8>> = Vec::new();
+    let mut consumed = 0usize;
+    for token in tokens {
+        match *token {
+            GeneralToken::Literal(count) => {
+                let count = count as usize;
+                if consumed + count > decoded.len() {
+                    return err("arena literal run exceeds decoded input");
+                }
+                literals.extend_from_slice(&decoded[consumed..consumed + count]);
+                consumed += count;
+                flags.extend(std::iter::repeat_n(true, count));
+                payloads.extend(std::iter::repeat_n(Vec::new(), count));
+            }
+            GeneralToken::Copy { length, distance } => {
+                if !(1..=0xfff).contains(&distance) || !(3..=273).contains(&length) {
+                    return err("arena copy token is invalid");
+                }
+                if consumed + length as usize > decoded.len() {
+                    return err("arena copy exceeds decoded input");
+                }
+                consumed += length as usize;
+                flags.push(false);
+                payloads.push(if length <= 17 {
+                    (((length - 2) << 12 | distance) as u16)
+                        .to_be_bytes()
+                        .to_vec()
+                } else {
+                    let mut payload = (distance as u16).to_be_bytes().to_vec();
+                    payload.push((length - 18) as u8);
+                    payload
+                });
+            }
+        }
+    }
+    if consumed != decoded.len() {
+        return err("arena plan does not cover decoded input");
+    }
+    let split = u16::try_from(literals.len() + 2)
+        .map_err(|_| DecodeError("arena literal block exceeds the split halfword".into()))?;
+    flags.push(false);
+    payloads.push(vec![0, 0]);
+    let used = (flags.len() - 1) % 8 + 1;
+    if final_flags & ((1u16 << used) - 1) as u8 != 0 {
+        return err("arena final flags overlap planned operations");
+    }
+    let mut output = split.to_le_bytes().to_vec();
+    output.extend_from_slice(&literals);
+    for group in 0..flags.len().div_ceil(8) {
+        let members = &flags[group * 8..flags.len().min(group * 8 + 8)];
+        let mut byte = if group * 8 + members.len() == flags.len() {
+            final_flags
+        } else {
+            0
+        };
+        for (bit, flag) in members.iter().enumerate() {
+            byte |= u8::from(*flag) << bit;
+        }
+        output.push(byte);
+        for payload in &payloads[group * 8..group * 8 + members.len()] {
+            output.extend_from_slice(payload);
+        }
+    }
+    let mut combined = arena.to_vec();
+    combined.extend_from_slice(&output);
+    let base = arena.len() + 2;
+    let mut position = 0usize;
+    for token in tokens {
+        match *token {
+            GeneralToken::Literal(count) => position += count as usize,
+            GeneralToken::Copy { length, distance } => {
+                let source = base - distance as usize;
+                if source + length as usize > combined.len()
+                    || decoded[position..position + length as usize]
+                        != combined[source..source + length as usize]
+                {
+                    return err("arena copy differs from the preceding bytes");
+                }
+                position += length as usize;
+            }
+        }
+    }
+    Ok(output)
+}
+#[test]
+fn arena_streams_round_trip_and_check_their_dictionary() {
+    let arena = vec![0x55; 96];
+    let raw = encode_arena(&[1, 2, 3, 0], None, 0, &arena).unwrap();
+    assert_eq!(raw, [0, 0, 1, 2, 3, 0]);
+    assert_eq!(decode_arena(&raw, 0).unwrap(), (vec![1, 2, 3, 0], 6, 0));
+    assert!(encode_arena(&[1, 0, 2], None, 0, &arena).is_err());
+    let tokens = [
+        GeneralToken::Literal(2),
+        GeneralToken::Copy {
+            length: 4,
+            distance: 8,
+        },
+        GeneralToken::Literal(1),
+    ];
+    let decoded = [7, 8, 0x55, 0x55, 0x55, 0x55, 0];
+    let encoded = encode_arena(&decoded, Some(&tokens), 0xe0, &arena).unwrap();
+    assert_eq!(encoded, [5, 0, 7, 8, 0, 0xeb, 0x20, 0x08, 0, 0]);
+    let mut data = arena.clone();
+    data.extend_from_slice(&encoded);
+    assert_eq!(
+        decode_arena(&data, arena.len()).unwrap(),
+        (decoded.to_vec(), encoded.len(), 0xe0)
+    );
+    assert!(encode_arena(&[7, 8, 1, 2, 3, 4, 0], Some(&tokens), 0, &arena).is_err());
+    assert!(encode_arena(&decoded, Some(&tokens), 0x08, &arena).is_err());
+    assert!(encode_arena(&decoded[..6], Some(&tokens), 0, &arena).is_err());
 }
 // ---------------------------------------------------------------------------
 // dispatch

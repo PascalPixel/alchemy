@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "build-asm"
 version = "0.1.0"

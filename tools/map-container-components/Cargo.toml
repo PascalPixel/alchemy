@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "map-container-components"
 version = "0.1.0"

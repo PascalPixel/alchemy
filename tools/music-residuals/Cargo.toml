@@ -3,8 +3,6 @@ name = "music-residuals"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-
 [lib]
 name = "music_residuals"
 path = "src/lib.rs"

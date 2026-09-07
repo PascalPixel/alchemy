@@ -23265,10 +23265,10 @@
     {
       "id": "overlay-38a-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_script/scene_38a.c",
+      "source": "games/gs1/src/overlays/scene_script/actor_burst.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38a",
-      "absolute_symbols": {},
+      "absolute_symbols": {"SceneActor_SetSpeed": {"address": "0x0200872c", "kind": "thumb"}},
       "local_symbols": [],
       "owners": [
         {
@@ -23284,6 +23284,11 @@
         {
           "address": "0x020000a0",
           "extent": 98,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000104",
+          "extent": 56,
           "state": "exact-c"
         },
         {
@@ -23334,6 +23339,11 @@
         {
           "address": "0x020004d4",
           "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020004f4",
+          "extent": 440,
           "state": "exact-c"
         }
       ]

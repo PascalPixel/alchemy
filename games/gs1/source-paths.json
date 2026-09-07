@@ -1,6 +1,11 @@
 {
   "format": 3,
   "owners": {
+    "resource_38a:020004f4": {"name": "SceneEffect_RunActorBurst", "source": "overlays/scene_script/actor_burst.c"},
+    "resource_38a:02000104": {
+      "name": "SceneEffect_UpdateMotion",
+      "source": "overlays/scene_script/actor_burst.c"
+    },
     "resource_3aa:02001494": {
       "name": "Scene_RunPartySequence",
       "source": "overlays/scene_script/party_events.c"
@@ -259,7 +264,7 @@
     },
     "resource_38a:020004c4": {
       "name": "SceneEffect_RotateRecord",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_3be:02000d18": {
       "name": "StagedActorPairScene_GetMessageData",
@@ -3108,11 +3113,11 @@
     "resource_389:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
     "resource_38a:02000030": {
       "name": "SceneEffect_SetRecordMode",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_38a:0200013c": {
       "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_38e:02000974": {
       "name": "InitializeOrbitingSceneEntity",
@@ -8872,7 +8877,7 @@
     },
     "resource_38a:02000314": {
       "name": "SceneData_GetTable8818OrTable88d8",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_38f:02002910": {
       "name": "FieldScene_RunFlag845And847Branches",
@@ -8984,7 +8989,7 @@
     },
     "resource_38a:02000350": {
       "name": "SceneData_GetTable8948OrTable8978",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_373:02000d98": {
       "name": "SceneState_Send210AndApplyRect",
@@ -9845,7 +9850,7 @@
     },
     "resource_38a:02000344": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_391:020009fc": {
       "name": "SceneActor_UpdateRandomCounterMode",
@@ -12019,7 +12024,7 @@
     },
     "resource_38a:020003e4": {
       "name": "SceneData_GetTable8990OrTable89f0",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_39a:02001ab0": {
       "name": "FieldScene_ApplyOffset0Neg32",
@@ -12107,7 +12112,7 @@
     },
     "resource_38a:020000a0": {
       "name": "OverlayObject_CreateConfiguredObject",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_392:020009e8": {
       "name": "SceneData_GetTable8fe0",
@@ -12139,7 +12144,7 @@
     },
     "resource_38a:020004d4": {
       "name": "SceneActor_WaitObjectBelowHeight",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_3ca:02000030": {
       "name": "SceneData_GetTable96c8",
@@ -13531,7 +13536,7 @@
     },
     "resource_38a:02000048": {
       "name": "OverlayObject_PrepareObject",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_3b5:020002d4": {
       "name": "SceneDialogue_RunMessage0e37",
@@ -13976,7 +13981,7 @@
     },
     "resource_38a:02000348": {
       "name": "SceneData_GetTable8920",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_373:020055c0": {
       "name": "SceneState_SetValue0ThenCall",
@@ -16562,7 +16567,7 @@
     },
     "resource_38a:02000380": {
       "name": "FieldScene_RunActor8AtCell24Sequence",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_39d:02002ddc": {
       "name": "FieldScene_RunScene39d_02002ddc",
@@ -16610,7 +16615,7 @@
     },
     "resource_38a:02000414": {
       "name": "FieldScene_PlaceActor8OnEntry",
-      "source": "overlays/scene_script/scene_38a.c"
+      "source": "overlays/scene_script/actor_burst.c"
     },
     "resource_399:02000abc": {
       "name": "FieldScene_RunScene399_02000abc",

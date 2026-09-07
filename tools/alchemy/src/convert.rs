@@ -2,7 +2,7 @@
 use std::io::Write;
 
 const FORMATS: &str =
-    "words2bin | pairs2bin | tilemap2bin | png2gba4bpp | png2gba8bpp | png2gbapal";
+    "words2bin | pairs2bin | tilemap2bin | png2gba4bpp | png2gba8bpp | png2gbapal | wav2pcm8";
 
 fn encode(format: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     let text = || std::str::from_utf8(input).map_err(|e| e.to_string());
@@ -10,6 +10,9 @@ fn encode(format: &str, input: &[u8]) -> Result<Vec<u8>, String> {
         "words2bin" => import_asset::import_words(text()?),
         "pairs2bin" => import_asset::import_pairs(text()?),
         "tilemap2bin" => import_asset::import_tilemap(text()?),
+        "wav2pcm8" => import_asset::wav_pcm8(input)
+            .map(|(_, samples)| samples)
+            .map_err(|e| e.to_string()),
         "png2gba4bpp" | "png2gba8bpp" | "png2gbapal" => {
             let (pixels, palette, _) =
                 import_asset::gba_graphics(input, if format == "png2gba4bpp" { 4.0 } else { 8.0 })

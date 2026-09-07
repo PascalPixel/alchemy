@@ -3341,6 +3341,112 @@ fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
     add_midi_build_directive(&add_midi_conductor_text(&midi, &skeleton)?, &sidecar)
 }
 
+fn build_pcm_record(entry: &Value, wav: &[u8]) -> Result<(Vec<u8>, Value), String> {
+    let word = |v: &Value, label: &str| {
+        u32::try_from(number(v, label)?).map_err(|_| format!("{label} exceeds u32"))
+    };
+    let header = entry.get("header");
+    let frequency = word(&entry["frequency"], "wave frequency")?;
+    let (rate, samples) = import_asset::wav_pcm8(wav).map_err(|e| e.to_string())?;
+    if samples.is_empty() || u64::from(rate) != (u64::from(frequency) + 512) / 1024 {
+        return Err("WAV sample count or rate differs from catalog".into());
+    }
+    let catalog_loop = entry
+        .get("loop_start")
+        .filter(|v| !v.is_null())
+        .map(|v| word(v, "wave loop start"))
+        .transpose()?;
+    let (control, loop_start) = if let Some(header) = header {
+        if word(&header["frequency"], "header frequency")? != frequency
+            || number(&header["sample_count"], "sample count")? != samples.len()
+        {
+            return Err("wave header differs from catalog or WAV data".into());
+        }
+        (
+            word(&header["control"], "wave control")?,
+            word(&header["loop_start"], "wave loop start")?,
+        )
+    } else {
+        (
+            if catalog_loop.is_some() {
+                0x40000000
+            } else {
+                0
+            },
+            catalog_loop.unwrap_or(0),
+        )
+    };
+    let looped = control & 0xc0000000 != 0;
+    if (header.is_some() && catalog_loop != looped.then_some(loop_start))
+        || (looped && loop_start as usize >= samples.len())
+    {
+        return Err("wave loop differs or starts beyond samples".into());
+    }
+    let size = number(&entry["size"], "wave size")?;
+    let padding = size
+        .checked_sub(16)
+        .and_then(|n| n.checked_sub(samples.len()))
+        .ok_or("wave record is shorter than samples")?;
+    let fill = if header.is_some() {
+        if number(&entry["padding"]["size"], "padding size")? != padding {
+            return Err("wave padding size differs".into());
+        }
+        u8::try_from(number(&entry["padding"]["fill"], "padding fill")?)
+            .map_err(|_| "padding exceeds u8")?
+    } else {
+        if padding > 3 {
+            return Err("wave alignment exceeds three bytes".into());
+        }
+        0
+    };
+    let last_sample =
+        u32::try_from(samples.len() - 1).map_err(|_| "wave sample count exceeds u32")?;
+    let mut bytes = Vec::with_capacity(size);
+    for value in [control, frequency, loop_start, last_sample] {
+        bytes.extend(value.to_le_bytes());
+    }
+    bytes.extend(&samples);
+    bytes.resize(size, fill);
+    Ok((
+        bytes,
+        serde_json::json!({"samples":samples.len(),"rate":rate,"frequency":frequency,"control":control,
+        "looped":looped,"loop_start":looped.then_some(loop_start),"padding_bytes":padding,"padding_fill":fill}),
+    ))
+}
+
+#[test]
+fn pcm_records_preserve_exact_headers_loops_and_padding() {
+    let mut wav=Vec::from(&b"RIFF\x27\0\0\0WAVEfmt \x10\0\0\0\x01\0\x01\0\x40\x1f\0\0\x40\x1f\0\0\x01\0\x08\0data\x03\0\0\0"[..]);
+    wav.extend([0, 128, 255]);
+    let source = serde_json::json!({"frequency":8192511,"loop_start":1,"size":20});
+    let (built, report) = build_pcm_record(&source, &wav).unwrap();
+    assert_eq!(&built[16..], &[128, 0, 127, 0]);
+    assert_eq!(u32::from_le_bytes(built[12..16].try_into().unwrap()), 2);
+    assert_eq!(report["control"], 0x40000000);
+    let mut exact = source.clone();
+    exact["header"] = serde_json::json!({"frequency":8192511,"control":0x80000000_u32,"loop_start":1,"sample_count":3});
+    exact["padding"] = serde_json::json!({"size":1,"fill":165});
+    let (built, report) = build_pcm_record(&exact, &wav).unwrap();
+    assert_eq!(built[19], 165);
+    assert_eq!(report["control"], 0x80000000_u32);
+    for (pointer, value) in [
+        ("/header/frequency", serde_json::json!(8192512)),
+        ("/header/sample_count", serde_json::json!(2)),
+        ("/header/loop_start", serde_json::json!(3)),
+        ("/header/control", serde_json::json!(0)),
+        ("/padding/size", serde_json::json!(2)),
+        ("/padding/fill", serde_json::json!(256)),
+        ("/size", serde_json::json!(18)),
+    ] {
+        let mut bad = exact.clone();
+        *bad.pointer_mut(pointer).unwrap() = value;
+        assert!(build_pcm_record(&bad, &wav).is_err(), "{pointer}");
+    }
+    let mut bad = source;
+    bad["size"] = serde_json::json!(23);
+    assert!(build_pcm_record(&bad, &wav).is_err());
+}
+
 fn build_entry_native_tail(
     ctx: &mut Context,
     entry: &Value,
@@ -3359,15 +3465,8 @@ fn build_entry_native_tail(
             Ok((built, vec![entry_source.to_string()], report))
         }
         "golden-sun-pcm-wave" => {
-            let source = audio_wave::parse_wave_source(&entry.to_string())?;
             let wav = fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?;
-            let (built, report) = audio_wave::build_wave_record(&source, &wav)?;
-            let report = serde_json::json!({
-                "samples":report.samples as u64,"rate":report.rate as u64,
-                "frequency":report.frequency as u64,"control":report.control as u64,
-                "looped":report.looped,"loop_start":report.loop_start.map(|value| value as u64),
-                "padding_bytes":report.padding_bytes as u64,"padding_fill":report.padding_fill as u64,
-            });
+            let (built, report) = build_pcm_record(entry, &wav)?;
             let mut sources = vec![entry_source.to_string()];
             if let Some(index) = entry.get("index").and_then(Value::as_str) {
                 ctx.source(index)?;

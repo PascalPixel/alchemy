@@ -22,7 +22,6 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   unit                  scaffold or flatten translation units\n\
   families              compare related functions and audit retained families\n\
   cross-edition         compare historical editions\n\
-  dashboard             serve the local dashboard\n\
   build                 build compilers or ROM stages (asm, claimed, full, rom, assets)\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild and report ROM coverage\n\
@@ -82,10 +81,6 @@ fn main() -> ExitCode {
         "cross-edition" => result(cross_edition::run(rest)),
         "families" => result(families::run(rest)),
         "match" => result(matching::run(rest.to_vec())),
-        "dashboard" => {
-            dashboard_server::cli::entry(rest);
-            ExitCode::SUCCESS
-        }
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

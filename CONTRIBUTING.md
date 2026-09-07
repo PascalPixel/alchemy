@@ -46,8 +46,8 @@ range immediately, without double-counting the bytes.
 ### 1. Select a bounded piece of the game
 
 Inspect the current tree, production coverage and candidate scores. Use
-`./alchemy families` and the dashboard to find
-work; historical dossiers and similarity clusters are leads, not authority.
+`./alchemy families` to find work; historical dossiers and similarity
+clusters are leads, not authority.
 
 Rank complete modules by genuinely unresolved bytes, demonstrated sibling
 repairs and the work needed to close them. Count the expected gain after
@@ -379,8 +379,7 @@ Alchemy also retains the dependencies its actual game build requires:
 the loader's relocation format; `cross-edition` checks edition differences;
 `check` enforces source, classification, compiler and publication contracts.
 These are project integration, not tools to take to another game.
-`families` offers read-only similarity ranking and existing retention checks;
-the dashboard displays the resulting game data.
+`families` offers read-only similarity ranking and existing retention checks.
 
 Asset tooling is organized by format and conversion, never by resource number,
 ROM address or the first game asset that needed it. Name a directional converter
@@ -443,7 +442,7 @@ libraries are not additional public command surfaces.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, families, cross-edition, and dashboard commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, families, and cross-edition commands. Verification and coverage retain their Makefile contracts. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 | [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
 | [asset-paths](tools/asset-paths/) | Own canonical tracked asset paths. |
@@ -466,8 +465,7 @@ libraries are not additional public command surfaces.
 | [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history. |
 | [check-unmatchable](tools/check-unmatchable/) | Audit owner registers and unmatchable classifications. |
 | [core-retained-audit](tools/core-retained-audit/) | Verify retained main-image assembly classifications and extents. |
-| [coverage-map](tools/coverage-map/) | Build coverage metrics, SVGs, and dashboard data. |
-| [dashboard-server](tools/dashboard-server/) | Serve the local reconstruction dashboard. |
+| [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures. |
 | [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
 | [archive-asset](tools/archive-asset/) | Rebuild offset-table palette-LZ archives from authored plans and atlases. |

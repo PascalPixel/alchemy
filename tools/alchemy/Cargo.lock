@@ -51,7 +51,6 @@ dependencies = [
  "compiler-core",
  "core-retained-audit",
  "coverage-map",
- "dashboard-server",
  "decompile",
  "diff",
  "disassemble",
@@ -353,16 +352,6 @@ name = "cwdemangle"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2e06f9bce634a3c898eb1e5cb949ff63133cbb218af93cc9b38b31d6f3ea285"
-
-[[package]]
-name = "dashboard-server"
-version = "0.1.0"
-dependencies = [
- "coverage-map",
- "music",
- "serde_json",
- "walkdir",
-]
 
 [[package]]
 name = "decomp-targets"

@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "extract-resource"
 version = "0.1.0"

@@ -1,21 +1,11 @@
+# One workspace, one lockfile, one shared artifact tree for every tool crate.
+# `alchemy` is the only binary; the other members are its libraries. A new
+# crate is a workspace member and a row in the CONTRIBUTING tooling index.
 [workspace]
 resolver = "2"
-members = [
-  "alignment-tail",
-  "asset-paths",
-  "cache-entry",
-  "canonical-json",
-  "generated-files",
-  "map-load-table",
-  "pairtable",
-  "tilemap",
-  "wordstream",
-]
+members = ["*"]
+exclude = []
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-
-[profile.release]
-opt-level = 3
-lto = true

@@ -1,5 +1,3 @@
-[workspace]
-
 [package]
 name = "kind1-map-grid"
 version = "0.1.0"

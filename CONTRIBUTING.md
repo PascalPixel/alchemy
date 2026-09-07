@@ -433,7 +433,8 @@ These have no game addresses or default ROMs and refuse to overwrite an existing
 output. `alchemy font` retains the project's shared font reconstruction pipeline;
 it is project integration, not part of the portable kit.
 
-The following is the complete library and command index.
+The following is the complete library and command index. Every crate is a
+member of the one `tools/` Cargo workspace with its one lockfile.
 `make tooling-index-check` checks every immediate tool directory exactly once;
 libraries are not additional public command surfaces.
 

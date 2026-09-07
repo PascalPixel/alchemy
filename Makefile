@@ -20,11 +20,11 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 HOSTS := alchemy
 CORE_TESTS := compiler-core candidate-compiler diff matching \
 		disassemble overlay-adopt build-full decompile \
-		extract-resource coverage-map check-publication dashboard-server battle-assets
+		extract-resource coverage-map check-publication battle-assets
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching \
-	dashboard-server disassemble \
+	disassemble \
 	overlay-adopt check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches decomp-targets decompile
@@ -67,7 +67,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	families family-check coverage coverage-check dashboard dashboard-service-install clean clean-preview
+	families family-check coverage coverage-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -97,9 +97,7 @@ help:
 		'make families         rank unresolved compiler owners by exact-C family' \
 		'make family-check     prove the family index and retained-family evidence' \
 		'make edition-builds   relink exact EN C across GS1 editions' \
-		'make coverage         refresh dashboard data and figures' \
-		'make dashboard        serve the dashboard on localhost:4649' \
-		'make dashboard-service-install install and start the macOS dashboard LaunchAgent'
+		'make coverage         refresh coverage data and figures'
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)
@@ -144,27 +142,6 @@ targets: $(HISTORICAL_TARGETS)
 
 $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
-
-dashboard:
-	$(COMPILER) dashboard --bind 127.0.0.1:4650
-
-dashboard-service-install:
-	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
-	@sed -e 's|@ALCHEMY_ROOT@|$(CURDIR)|g' \
-		-e 's|@CARGO@|$(shell command -v $(CARGO))|g' \
-		tools/dashboard-server/com.pascalpixel.alchemy-dashboard.plist.in \
-		> '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
-	@domain='gui/$(shell id -u)'; service="$$domain/com.pascalpixel.alchemy-dashboard"; \
-		plist='$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'; \
-		launchctl bootout "$$service" 2>/dev/null || true; \
-		attempt=0; until launchctl bootstrap "$$domain" "$$plist" 2>/dev/null; do \
-			attempt=$$((attempt + 1)); \
-			if test "$$attempt" -ge 10; then \
-				printf 'dashboard service did not reload after %s attempts\n' "$$attempt"; exit 1; \
-			fi; \
-			sleep 1; \
-		done
-	@printf 'Alchemy dashboard service installed: http://localhost:4650/\n'
 
 progress:
 	$(CHECK) progress

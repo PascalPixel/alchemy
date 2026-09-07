@@ -3963,6 +3963,95 @@ fn pcm_records_preserve_exact_headers_loops_and_padding() {
     assert!(build_pcm_record(&bad, &wav).is_err());
 }
 
+/// Message markup is printable ASCII text and `{"command": name}` atoms from
+/// the source's command table, each with an `argument` when the table says so;
+/// `null` is an empty message.
+fn message_symbols(
+    message: &Value,
+    commands: &serde_json::Map<String, Value>,
+    symbol_count: usize,
+) -> Result<Option<Vec<u16>>, String> {
+    let atoms = match message {
+        Value::Null => return Ok(None),
+        Value::String(_) => std::slice::from_ref(message),
+        Value::Array(atoms) => atoms.as_slice(),
+        _ => return Err("message must be text, atoms, or null".into()),
+    };
+    let symbol = |value: usize| {
+        u16::try_from(value)
+            .ok()
+            .filter(|_| value < symbol_count)
+            .ok_or("message symbol is outside the alphabet")
+    };
+    let mut symbols = Vec::new();
+    for atom in atoms {
+        if let Some(text) = atom.as_str() {
+            for character in text.chars() {
+                if !character.is_ascii_graphic() && character != ' ' {
+                    return Err("message text must be printable ASCII".into());
+                }
+                symbols.push(symbol(character as usize)?);
+            }
+            continue;
+        }
+        let atom = atom
+            .as_object()
+            .ok_or("message atom must be text or a command")?;
+        let name = json_string(&atom["command"], "message command")?;
+        let command = commands
+            .get(name)
+            .ok_or_else(|| format!("unknown message command {name}"))?;
+        let opcode = number(&command["opcode"], "command opcode")?;
+        if !(1..32).contains(&opcode) {
+            return Err(format!(
+                "message command {name} opcode is not a control code"
+            ));
+        }
+        symbols.push(symbol(opcode)?);
+        let takes_argument = command["argument"] == true;
+        if atom.len() != 1 + usize::from(takes_argument)
+            || takes_argument != atom.contains_key("argument")
+        {
+            return Err(format!("message command {name} argument differs"));
+        }
+        if takes_argument {
+            symbols.push(symbol(number(&atom["argument"], "command argument")?)?);
+        }
+    }
+    Ok(Some(symbols))
+}
+
+#[test]
+fn message_markup_follows_the_declared_command_table() {
+    let commands = serde_json::json!({"end":{"opcode":2},"color":{"opcode":8,"argument":true}});
+    let commands = commands.as_object().unwrap();
+    assert_eq!(message_symbols(&Value::Null, commands, 123).unwrap(), None);
+    assert_eq!(
+        message_symbols(&serde_json::json!("Hi"), commands, 123).unwrap(),
+        Some(vec![72, 105])
+    );
+    assert_eq!(
+        message_symbols(
+            &serde_json::json!([{"command":"color","argument":5},"z",{"command":"end"}]),
+            commands,
+            123
+        )
+        .unwrap(),
+        Some(vec![8, 5, 122, 2])
+    );
+    for bad in [
+        serde_json::json!("{"),
+        serde_json::json!("\u{e9}"),
+        serde_json::json!([{"command":"missing"}]),
+        serde_json::json!([{"command":"end","argument":1}]),
+        serde_json::json!([{"command":"color"}]),
+        serde_json::json!([{"command":"color","argument":123}]),
+        serde_json::json!([7]),
+    ] {
+        assert!(message_symbols(&bad, commands, 123).is_err(), "{bad}");
+    }
+}
+
 fn build_entry_native_tail(
     ctx: &mut Context,
     entry: &Value,
@@ -4067,17 +4156,51 @@ fn build_entry_native_tail(
         }
         "golden-sun-message-archive" => {
             let document = json(&source_path(entry_source)?)?;
-            let built = message_archive::cli::build_message_archive(&document)?;
-            let messages = document["banks"].as_array().map_or(0, |banks| {
-                banks
-                    .iter()
-                    .map(|bank| bank.as_array().map_or(0, Vec::len))
-                    .sum()
-            });
+            if document["format"] != 2
+                || document["kind"] != kind
+                || number(&document["address"], "archive address")? != address
+            {
+                return Err("message archive identity differs".into());
+            }
+            let symbol_count = number(&document["symbol_count"], "message symbol count")?;
+            let bank_size = number(&document["bank_size"], "message bank size")?;
+            let commands = document["commands"]
+                .as_object()
+                .ok_or("message commands missing")?;
+            let source_banks = document["banks"]
+                .as_array()
+                .ok_or("message banks missing")?;
+            let mut banks = Vec::new();
+            for (index, bank) in source_banks.iter().enumerate() {
+                let messages = bank.as_array().ok_or("message bank is not an array")?;
+                if messages.len() > bank_size
+                    || (messages.len() < bank_size && index + 1 != source_banks.len())
+                {
+                    return Err("message bank size differs".into());
+                }
+                banks.push(
+                    messages
+                        .iter()
+                        .map(|message| message_symbols(message, commands, symbol_count))
+                        .collect::<Result<Vec<_>, _>>()?,
+                );
+            }
+            let base = u32::try_from(address).map_err(|_| "archive address exceeds u32")?;
+            let archive = import_asset::encode_huffman_archive(base, symbol_count, &banks)
+                .map_err(|error| error.to_string())?;
+            for (key, actual) in [
+                ("offset_table_address", archive.offset_table),
+                ("message_address", archive.messages),
+                ("directory_address", archive.directory),
+            ] {
+                if number(&document[key], key)? != actual as usize {
+                    return Err(format!("{key} differs from the built archive"));
+                }
+            }
             Ok((
-                built,
+                archive.bytes,
                 vec![entry_source.to_string()],
-                serde_json::json!({"banks":document["banks"].as_array().map_or(0,Vec::len),"messages":messages}),
+                serde_json::json!({"banks":banks.len(),"messages":banks.iter().map(Vec::len).sum::<usize>(),"contexts":archive.contexts}),
             ))
         }
         "golden-sun-localization-font" => {

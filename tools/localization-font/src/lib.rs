@@ -172,49 +172,6 @@ fn pack_tiles(pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, Err
     Ok(output)
 }
 
-fn encode_pixels(pixels: &[u8]) -> Result<Vec<u8>, Error> {
-    let mut mtf: Vec<u8> = (0..16).collect();
-    let prefixes = [
-        "00",
-        "010",
-        "011",
-        "100",
-        "101",
-        "110",
-        "11100",
-        "11101",
-        "11110",
-        "1111100",
-        "1111101",
-        "1111110",
-        "111111100",
-        "111111101",
-        "111111110",
-    ];
-    let mut bits = Vec::new();
-    for value in pixels {
-        if *value >= 16 {
-            return err("F0 image contains a non-4bpp pixel");
-        }
-        if *value == mtf[0] {
-            bits.push(0);
-            continue;
-        }
-        let index = mtf.iter().position(|item| item == value).unwrap();
-        bits.push(1);
-        bits.extend(prefixes[index - 1].bytes().map(|byte| byte - b'0'));
-        let value = mtf.remove(index);
-        mtf.insert(0, value);
-    }
-    bits.extend(std::iter::repeat_n(1, 10));
-    bits.extend(std::iter::repeat_n(1, (8 - bits.len() % 8) % 8));
-    let mut output = vec![0; bits.len() / 8];
-    for (index, bit) in bits.into_iter().enumerate() {
-        output[index / 8] |= bit << (index % 8);
-    }
-    Ok(output)
-}
-
 fn parse_source(value: &Value) -> Result<&Map<String, Value>, Error> {
     let source = object(value, "localization-font source")?;
     exact_keys(
@@ -426,7 +383,7 @@ fn build_mtf(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>, E
         )?;
         let streams: Vec<Vec<u8>> = frames
             .iter()
-            .map(|frame| encode_pixels(frame))
+            .map(|frame| import_asset::encode_mtf4(frame).map_err(|e| Error(e.0)))
             .collect::<Result<_, _>>()?;
         let header_size = entries.len() * 4 + usize::from(terminal) * 4;
         let mut pointers = Vec::new();

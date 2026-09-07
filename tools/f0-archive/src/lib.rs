@@ -20,53 +20,6 @@ fn err<T>(message: impl Into<String>) -> Result<T> {
     Err(Error(message.into()))
 }
 
-const PREFIX: [&str; 15] = [
-    "00",
-    "010",
-    "011",
-    "100",
-    "101",
-    "110",
-    "11100",
-    "11101",
-    "11110",
-    "1111100",
-    "1111101",
-    "1111110",
-    "111111100",
-    "111111101",
-    "111111110",
-];
-
-pub fn encode_pixels(pixels: &[u8]) -> Result<Vec<u8>> {
-    let mut move_to_front: Vec<u8> = (0..16).collect();
-    let mut bits = Vec::new();
-    for value in pixels {
-        if *value >= 16 {
-            return err("F0 image contains a non-4bpp pixel");
-        }
-        if *value == move_to_front[0] {
-            bits.push(0);
-            continue;
-        }
-        let index = move_to_front
-            .iter()
-            .position(|item| item == value)
-            .expect("4bpp value is in the move-to-front table");
-        bits.push(1);
-        bits.extend(PREFIX[index - 1].bytes().map(|byte| byte - b'0'));
-        let value = move_to_front.remove(index);
-        move_to_front.insert(0, value);
-    }
-    bits.extend(std::iter::repeat_n(1, 10));
-    bits.extend(std::iter::repeat_n(1, (8 - bits.len() % 8) % 8));
-    let mut output = vec![0u8; bits.len() / 8];
-    for (index, bit) in bits.into_iter().enumerate() {
-        output[index / 8] |= bit << (index % 8);
-    }
-    Ok(output)
-}
-
 fn read_image(path: &Path) -> Result<(Vec<u8>, Vec<u8>)> {
     let image =
         indexed_png(&fs::read(path).map_err(|e| Error(e.to_string()))?).map_err(|e| Error(e.0))?;
@@ -99,7 +52,7 @@ fn source_image_path(directory: &Path, index: usize) -> PathBuf {
 
 fn package_image(path: &Path) -> Result<Vec<u8>> {
     let (pixels, palette) = read_image(path)?;
-    let encoded = encode_pixels(&pixels)?;
+    let encoded = import_asset::encode_mtf4(&pixels).map_err(|e| Error(e.0))?;
     let mut data = palette;
     data.extend_from_slice(&encoded);
     data.resize((data.len() + 3) & !3, 0);
@@ -260,7 +213,7 @@ fn atlas_packages(plan: &Plan, directory: &Path, columns: usize) -> Result<Vec<V
             .iter()
             .flat_map(|color| color.to_le_bytes())
             .collect::<Vec<_>>();
-        package.extend(encode_pixels(&pixels)?);
+        package.extend(import_asset::encode_mtf4(&pixels).map_err(|e| Error(e.0))?);
         package.resize((package.len() + 3) & !3, 0);
         packages.push(package);
     }

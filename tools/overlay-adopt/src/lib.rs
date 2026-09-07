@@ -68,7 +68,7 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
 }
 pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
-    let listing = work.path().join("listing.txt");
+    let listing = work.path().join("listing.lst");
     let object = work.path().join("listing.o");
     let output = Command::new("arm-none-eabi-as")
         .args(["-mcpu=arm7tdmi", "-mthumb-interwork"])

@@ -3338,7 +3338,7 @@ fn build_entry_native_tail(
             let id = number(&entry["resource_id"], "simple resource id")?;
             let sources = match id {
                 2 => vec![
-                    "games/gs1/assets/data/resource_2_build_stamp.txt".to_string(),
+                    "games/gs1/assets/data/resource_2_build_stamp.stamp".to_string(),
                     "games/gs1/assets/data/resource_2_layout.json".to_string(),
                 ],
                 0x13 => vec!["games/gs1/assets/graphics/resource_13_font.4bpp.png".to_string()],
@@ -3668,7 +3668,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         assert_ne!(previous, next, "{}", path.display());
         previous = next;
     }
-    fs::write(root.join("games/gs1/sound/out/report.txt"), "ignored").unwrap();
+    fs::write(root.join("games/gs1/sound/out/fixture.bin"), "ignored").unwrap();
     assert_eq!(previous, stamp().unwrap());
     fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
     assert!(stamp().unwrap_err().contains("recursive C source include"));
@@ -3762,7 +3762,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         options.source_only,
         rom.as_deref(),
     )?;
-    let stamp_path = options.output.join("stage-stamp.txt");
+    let stamp_path = options.output.join("stage.stamp");
     let built_manifest = options.output.join("manifest.json");
     if stamp_path.exists()
         && built_manifest.exists()

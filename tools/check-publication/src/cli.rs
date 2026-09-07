@@ -2,7 +2,7 @@
 
 use std::{io::Read, path::Path, process::ExitCode};
 
-const USAGE: &str = "Usage: check-publication [--staged | --pre-push | --self-test]\n\nModes:\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history using update lines on stdin.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
+const USAGE: &str = "Usage: check-publication [--documents | --staged | --pre-push | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history using update lines on stdin.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
 
 fn root() -> &'static Path {
     Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."))
@@ -15,6 +15,9 @@ fn fail(message: &str) -> ExitCode {
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     match arguments {
+        [argument] if argument == "--documents" => {
+            crate::check_documents(root()).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
+        }
         [argument] if argument == "-h" || argument == "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

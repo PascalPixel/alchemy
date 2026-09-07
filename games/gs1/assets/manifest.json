@@ -407,9 +407,31 @@
     },
     {
       "address": "0x08073852",
-      "size": "0x37ae",
-      "kind": "golden-sun-namae-nyuuryoku",
-      "source": "games/gs1/assets/graphics/fonts_namae_nyuuryoku_gamen.json"
+      "size": "0x12",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/fonts_namae_nyuuryoku_gamen.json",
+      "pointer": "/regions/0"
+    },
+    {
+      "address": "0x08073864",
+      "size": "0x101",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/fonts_namae_nyuuryoku_gamen.json",
+      "plan_section": "tilemap",
+      "components": [
+        {
+          "kind": "gba-tilemap16",
+          "size": "0x270",
+          "source": "games/gs1/assets/graphics/fonts_namae_nyuuryoku_gamen.tilemap"
+        }
+      ]
+    },
+    {
+      "address": "0x08073965",
+      "size": "0x369b",
+      "kind": "typed-table",
+      "source": "games/gs1/assets/graphics/fonts_namae_nyuuryoku_gamen.json",
+      "pointer": "/regions/1"
     },
     {
       "address": "0x0807a828",

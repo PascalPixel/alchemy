@@ -38,7 +38,6 @@ skip-sprite-archive = { path = "../skip-sprite-archive" }
 static-sprite-series = { path = "../static-sprite-series" }
 localization-font = { path = "../localization-font" }
 map-container-components = { path = "../map-container-components" }
-namae-nyuuryoku = { path = "../namae-nyuuryoku" }
 kind1-map-grid = { path = "../kind1-map-grid" }
 message-archive = { path = "../message-archive" }
 resource-5 = { path = "../resource-5" }

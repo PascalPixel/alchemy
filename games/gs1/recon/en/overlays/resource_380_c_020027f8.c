@@ -630,6 +630,7 @@ void Lifted_020027f8(void)
     s32 base5_4009;
     s32 v6;
     s32 base5_8009;
+    s32 zero;
 
     Func_020071a6();
     Call6(Func_02007112, 27, 16, 5, 1, 27, 17);
@@ -696,6 +697,7 @@ void Lifted_020027f8(void)
     Func_02007334(20);
     Func_020073d4(0, 2);
     Func_02007342(20);
+    zero = 0;
     record = (u8 *)Func_02007372_b(0);
     if ((s32)record != 0) {
         Func_020073c8(5, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
@@ -764,7 +766,7 @@ void Lifted_020027f8(void)
     Call3(Func_020076dc, 5, 0x6000, 60);
     rec = (u8 *)Func_02007622(9);
     p9b = *(u8 **)(rec + 80) + 38;
-    *p9b = 0;
+    *p9b = zero;
     *(s32 *)(rec + 24) = 0x1999;
     *(s32 *)(rec + 28) = 0x1999;
     *(s32 *)(rec2 + 24) = 0x1999;
@@ -772,7 +774,7 @@ void Lifted_020027f8(void)
     Call2(Func_020076ca, 9, 0x100);
     Call3(Func_02007696, 9, 0x1d70000, 0x1220000);
     p10b = rec + 85;
-    *p10b = 0;
+    *p10b = zero;
     *(s32 *)(rec + 12) = 0x280000;
     Func_0200763a(1);
     Call1(Func_02007700, 0x103c);

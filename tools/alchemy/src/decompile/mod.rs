@@ -30,12 +30,78 @@ pub fn lift_owner(
     Ok((text, span))
 }
 
+/// Golden Sun's existing draft symbol policy, independent of portable C recovery.
+fn resolve_symbol(word: u32, kind: lift::ReferenceKind, main: bool) -> Option<lift::Symbol> {
+    use lift::{ReferenceKind, Symbol};
+    let rom = (0x0800_0000..0x0a00_0000).contains(&word);
+    let ram =
+        (0x0200_0000..0x0204_0000).contains(&word) || (0x0300_0000..0x0300_8000).contains(&word);
+    let main_symbol = if main && rom && word % 2 == 1 {
+        Some(Symbol::Function(word & !1))
+    } else if main && (rom || ram) {
+        Some(Symbol::Data(word))
+    } else {
+        None
+    };
+    let overlay = (0x0200_0000..0x0201_0000).contains(&word);
+    match kind {
+        ReferenceKind::Constant => main_symbol,
+        ReferenceKind::Shared { pool } => {
+            if overlay && word % 2 == 1 {
+                Some(Symbol::Function(word))
+            } else if pool && word < 0x0201_0000 {
+                Some(Symbol::Data(word))
+            } else {
+                None
+            }
+        }
+        ReferenceKind::Argument => (overlay && word % 2 == 1).then_some(Symbol::Function(word)),
+        ReferenceKind::Dereference => {
+            if main_symbol.is_some() {
+                Some(Symbol::Data(word))
+            } else if (0x0400_0000..0x0500_0000).contains(&word) {
+                Some(Symbol::Volatile)
+            } else if overlay {
+                Some(Symbol::Data(word))
+            } else {
+                None
+            }
+        }
+    }
+}
+
+#[test]
+fn game_symbol_policy_preserves_existing_pool_and_callback_spelling() {
+    use lift::{ReferenceKind as R, Symbol as S};
+    assert_eq!(
+        resolve_symbol(0x08001001, R::Constant, true),
+        Some(S::Function(0x08001000))
+    );
+    assert_eq!(resolve_symbol(0x08001001, R::Constant, false), None);
+    assert_eq!(
+        resolve_symbol(0x02000001, R::Argument, false),
+        Some(S::Function(0x02000001))
+    );
+    assert_eq!(resolve_symbol(0x02020001, R::Argument, false), None);
+    assert_eq!(
+        resolve_symbol(12, R::Shared { pool: true }, false),
+        Some(S::Data(12))
+    );
+    assert_eq!(resolve_symbol(12, R::Shared { pool: false }, false), None);
+    assert_eq!(
+        resolve_symbol(0x04000000, R::Dereference, false),
+        Some(S::Volatile)
+    );
+    assert_eq!(resolve_symbol(0x02020000, R::Dereference, false), None);
+}
+
 fn source(ins: &[decode::Ins], entry: u32, name: &str, main: bool) -> String {
+    let symbols = |address, kind| resolve_symbol(address, kind, main);
     let mut tables = BTreeMap::new();
     let body = unit::split_functions(ins)
         .iter()
         .map(|(entry, function)| {
-            let mut draft = lift::lift(function, &mut tables, main, &[0x03001ebc]);
+            let mut draft = lift::lift(function, &mut tables, &symbols, &[0x03001ebc]);
             if !main {
                 rewrite_scene_work(&mut draft.lines);
             }
@@ -139,7 +205,7 @@ mod tests {
     fn scene_reconstruction_is_owned_by_alchemy() {
         let image = [0x08, 0x60, 0x70, 0x47];
         let ins = decode::decode_window_at(&image, 0x02000000, 0x02000000, 4);
-        let (body, tables) = unit::bodies(&ins, false);
+        let (body, tables) = unit::bodies(&ins, &|_, _| None);
         let portable = unit::compose(0x02000000, "Store", &body, &tables);
         assert!(!portable.contains("bump_step"));
         assert!(!portable.contains("Data_03001ebc"));

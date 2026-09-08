@@ -688,9 +688,8 @@ fn paired_data_alias(
     let edition = edition
         .get(edition_offset..edition_offset + extent)
         .ok_or("edition overlay owner exceeds reference")?;
-    let canonical =
-        compiler_core::thumb::relocation_info(canonical, u64::from(canonical_address)).1;
-    let edition = compiler_core::thumb::relocation_info(edition, u64::from(edition_address)).1;
+    let canonical = psynergy::thumb::relocation_info(canonical, u64::from(canonical_address)).1;
+    let edition = psynergy::thumb::relocation_info(edition, u64::from(edition_address)).1;
     let mut value = None;
     for site in canonical
         .iter()

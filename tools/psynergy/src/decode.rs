@@ -646,19 +646,15 @@ pub fn decode_one(image: &[u8], base: u32, pc: u32) -> Option<Ins> {
                         as u32,
                 }
             } else if half & 0xf800 == 0xf000 {
-                let low = half_at(image, offset + 2)?;
-                if low & 0xf800 != 0xf800 {
+                let pair = image.get(offset..offset + 4)?;
+                let Some(displacement) = crate::thumb::bl_displacement(pair) else {
                     return Some(Ins {
                         addr: pc,
                         size: 2,
                         kind: Kind::Unknown(half),
                         text: text_of(&Kind::Unknown(half)),
                     });
-                }
-                let displacement = sign_extend(
-                    (((half & 0x7ff) as u32) << 12) | (((low & 0x7ff) as u32) << 1),
-                    23,
-                );
+                };
                 let target = (pc as i64 + 4 + displacement as i64) as u32;
                 let kind = Kind::Bl { target };
                 return Some(Ins {

@@ -61,14 +61,16 @@ Do not invent structures or rewrite calls merely to obtain a better score.
 
 Reuse established headers. When a decompiler supports type or union hints, give
 it evidence-backed context; otherwise repair the ordinary C directly. The
-current native entry point is `alchemy decompile`, not a promise that Melee's
-PowerPC m2c options apply to Thumb. Do not build a second decompiler or context
-registry during a recovery batch.
+native decompiler is `psynergy decompile`; it takes bytes and explicit addresses,
+not Golden Sun owner identities. Alchemy supplies project ownership and build
+context. Melee's PowerPC m2c options do not automatically apply to Thumb.
+Do not build a second decompiler or context registry during a recovery batch.
 
 ### 3. Run the short loop
 
 ```sh
-./alchemy decompile <owner>
+./alchemy extract <owner> --out out/owner.bin
+./psynergy decompile out/owner.bin --base <address> --entry <address> --span <bytes> --out out/candidate.c
 ./alchemy inspect <owner>
 ./alchemy diff <candidate.c> --owner <owner> --align --first
 ./alchemy diff --unit <unit-id> --first
@@ -78,6 +80,13 @@ Keep one canonical candidate. Change one evidenced source hypothesis, compile
 the affected object or unit, read the complete residual, and retain a supported
 improvement. Use `--work out/<experiment>` for native diagnostics. Do not run
 full asset, coverage or twelve-edition checks after every source spelling.
+
+Extraction reports the bounded image's base, entry and span. Keep these local
+reference bytes under ignored `out/`; never commit them. Psynergy works outside
+this repository and knows no default ROM, owner register, scene layout or
+compiler route. Its output is a draft using the caller's `types.h` aliases;
+resolve project symbols and review its control flow before scoring. Extraction
+and decompilation refuse to overwrite an existing output.
 
 Use the existing declaration in `games/<game>/recon/translation-units.json`.
 For a main module that needs one:
@@ -281,6 +290,7 @@ the bundle under `out/compilers/dist/`.
 git submodule update --init
 git config core.hooksPath .hooks
 ./alchemy --help
+./psynergy --help
 make compiler-source-check
 ```
 
@@ -320,7 +330,8 @@ checks and `make reports` to regenerate analysis, not inside every edit loop.
 
 ## Tooling index
 
-There is one public command, `alchemy`, and two crates in one Cargo workspace.
+There are two public commands and two crates in one Cargo workspace:
+`alchemy` for Golden Sun integration and `psynergy` for portable machinery.
 Every immediate tool directory, including internal or game-specific libraries,
 must remain listed here. Build dependency status does not excuse inventory.
 `make tooling-index-check` enforces this; never remove the requirement to hide
@@ -328,9 +339,11 @@ tool growth.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Golden Sun command dispatch, twelve-target registry, owner lookup, source recovery/adoption, scene integration, compiler routes and provenance, candidate compilation, bindings, translation units, residual classification, matching catalog, overlay loading/serialization/assembly/audits, ROM stages, asset manifests, coverage, publication checks, dashboard and optional music debugger. Its `compiler`, `decompile`, `diff`, `matching`, `overlay`, `coverage` and asset/build modules are integration, not extra public tools. |
+| [alchemy](tools/alchemy/) | Golden Sun command dispatch, twelve-target registry, owner lookup/extraction, source recovery/adoption, scene integration, compiler routes and provenance, candidate compilation, bindings, translation units, residual classification, matching catalog, overlay loading/serialization/assembly/audits, ROM stages, asset manifests, coverage, publication checks, dashboard and optional music debugger. Its `compiler`, `recovery`, `diff`, `matching`, `overlay`, `coverage` and asset/build modules are integration, not extra public tools. |
 | [psynergy](tools/psynergy/) | Portable Thumb and objdump decoding, lifetime analysis, C recovery, normalization/alignment, structural and byte comparison, bounded C repair enumeration, explicit subprocess execution, atomic file writes, transactional cache storage, and byte-oriented image/MIDI/WAV/text/pixel/Huffman/LZ codecs. Callers supply addresses, symbols, paths, keys, formats and layouts; no Golden Sun owners, default ROMs or compiler routes. |
 
+Psynergy's standalone `decompile` command uses the same library as Alchemy's
+internal recovery integration; there is no `alchemy decompile` alias.
 Psynergy shares decoding and comparison across recovery, scoring and overlays;
 BL-shaped data is not automatically executable code. Its dependencies include
 `regex`, `rusqlite`, `png`, and test-only `tempfile`. Alchemy owns cache
@@ -339,7 +352,8 @@ responsibilities in another wrapper or registry.
 
 | Operation | Command |
 | --- | --- |
-| Recover and read code | `alchemy decompile`, `disassemble`, `inspect` |
+| Recover C from a bounded image | `psynergy decompile` |
+| Extract and inspect Golden Sun owners | `alchemy extract`, `disassemble`, `inspect` |
 | Compile and compare | `alchemy diff` |
 | Bounded catalog search | `alchemy match` |
 | Install C / assemble units | `alchemy adopt`, `check integrate`, `unit` |

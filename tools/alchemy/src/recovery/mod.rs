@@ -1,4 +1,4 @@
-//! Golden Sun owner integration and source reconstruction, outside Psynergy.
+//! Golden Sun owner resolution, source integration and game-specific recovery.
 mod adopt;
 pub mod cli;
 mod imports;

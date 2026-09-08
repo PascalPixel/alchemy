@@ -12178,8 +12178,8 @@
     {
       "overlay": "resource_3bf",
       "entry": "0x02004638",
-      "span_bytes": 172,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "span_bytes": 204,
+      "evidence": "Saved-LR entry at 02004638, switch table at 0200464c, return at 020046d8, and literal pool ending at 02004704 (exclusive). Case loads at 0200466c-02004684 read seven words at 020046e4-020046fc; the special case load at 020046ca reads 02004700. The former 172-byte extent stopped before these eight referenced words. The next exact owner begins at 02004704."
     },
     {
       "overlay": "resource_3bf",

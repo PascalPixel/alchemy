@@ -10478,31 +10478,6 @@
       "local_symbols": []
     },
     {
-      "id": "overlays-scene-primary-script-run-scene-3bf-02004704",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02004704.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3bf",
-      "absolute_symbols": {
-        "Func_02009e34_a": {
-          "address": "0x0200d708",
-          "kind": "thumb"
-        },
-        "Func_02009e34_b": {
-          "address": "0x0200d6e8",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02004704",
-          "extent": 144,
-          "state": "exact-c"
-        }
-      ],
-      "local_symbols": []
-    },
-    {
       "id": "overlays-scene-primary-script-run-scene-3bf-02004794",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02004794.c",
@@ -27406,7 +27381,10 @@
       "source": "games/gs1/src/map/locations/heidia/village/actor_scenes.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "Func_02009e34_a": {"address": "0x0200d708", "kind": "thumb"},
+        "Func_02009e34_b": {"address": "0x0200d6e8", "kind": "thumb"}
+      },
       "owners": [
         {
           "address": "0x02000b4c",
@@ -27461,6 +27439,16 @@
         {
           "address": "0x02000f30",
           "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02004638",
+          "extent": 204,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02004704",
+          "extent": 144,
           "state": "exact-c"
         }
       ],

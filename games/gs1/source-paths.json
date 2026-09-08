@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bf:020050e4": {
+      "name": "FieldScene_SetupActorsForScene",
+      "source": "map/locations/heidia/village/actor_setup.c"
+    },
     "resource_3bf:02005324": {
       "name": "FieldScene_RestoreActorsFromFlags",
       "source": "map/locations/heidia/village/actor_setup.c"

@@ -11,9 +11,12 @@
       "overlay": "resource_3bf",
       "absolute_symbols": {
         "Village_GetActor": {"address": "0x0200d650", "kind": "thumb"},
+        "Func_0200a812_setup": {"address": "0x0200d5e8", "kind": "thumb"},
+        "Func_0200a812": {"address": "0x0200d4dc", "kind": "thumb"},
         "Village_FinishActorRestore": {"address": "0x0200d5f8", "kind": "thumb"}
       },
       "owners": [
+        {"address": "0x020050e4", "extent": 576, "state": "exact-c"},
         {"address": "0x02005324", "extent": 332, "state": "exact-c"},
         {"address": "0x02005470", "extent": 64, "state": "exact-c"},
         {"address": "0x020054b0", "extent": 44, "state": "exact-c"},

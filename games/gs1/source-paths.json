@@ -15662,7 +15662,7 @@
       "source": "overlays/scene_script/actor_motion_and_particles.c"
     },
     "resource_380:02004260": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence"
+      "name": "FieldScene_PresentItem"
     },
     "resource_3bb:02000714": {
       "name": "FieldScene_RunSupplementalSequenceOne",

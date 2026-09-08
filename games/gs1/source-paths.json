@@ -15395,7 +15395,8 @@
       "source": "map/locations/sol_shinden/statue_transition.c"
     },
     "resource_37a:02001510": {
-      "name": "FieldScene_RunClosingSequence"
+      "name": "FieldScene_RunClosingSequence",
+      "source": "map/locations/sol_shinden/statue_transition.c"
     },
     "resource_3a8:020031b8": {
       "name": "FieldScene_RunLateSequence",

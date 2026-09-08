@@ -305,7 +305,9 @@ launcher builds the current contributor executable offline before dispatch.
 While iterating, use `diff --unit` and the narrow relevant build:
 `make build-claimed`, `make build-asm`, `make build-assets`,
 `make overlay-check` or `make check-owners`. Use `./alchemy --help` and command
-help for supported arguments. `overlay` remains transitional; it is not an
+help for supported arguments. `decompile`, `disassemble`, `inspect` and `diff`
+resolve main and resource-qualified owners. `overlay` retains only adoption,
+parking and audit integration; it is not an alternative scoring interface or an
 alternative around the adoption or catalog gates.
 
 Before a normal commit, stage only intended files and run:

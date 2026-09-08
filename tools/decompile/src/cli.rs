@@ -78,10 +78,10 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let root = owners::root();
     let result = parse(&arguments[1..]).and_then(|options| match command {
-        "draft" => draft(&root, &options).map(|_| 0),
+        "decompile" => draft(&root, &options).map(|_| 0),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
-        "imports" => imports_owner(&root, &options),
-        "disasm" => disasm(&root, &options).map(|_| 0),
+        "inspect" => imports_owner(&root, &options),
+        "disassemble" => disasm(&root, &options).map(|_| 0),
         "-h" | "--help" => {
             println!("{USAGE}");
             Ok(0)

@@ -3,8 +3,8 @@
 
 use std::path::Path;
 
-use crate::allocator::Report;
-use crate::disasm::disassemble;
+use crate::diff::allocator::Report;
+use crate::diff::disasm::disassemble;
 use psynergy::repair::{Repair, RepairPlan};
 
 #[derive(Clone, Debug, Eq, PartialEq)]

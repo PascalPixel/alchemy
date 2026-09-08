@@ -7,7 +7,7 @@ edition = "2021"
 png = "0.17"
 psynergy = { path = "../psynergy" }
 candidate-compiler = { path = "../candidate-compiler" }
-diff = { path = "../diff" }
+regex = "1"
 compiler-core = { path = "../compiler-core" }
 objdiff-core = { version = "3.8.0", default-features = false, features = ["arm", "std"] }
 disassemble = { path = "../disassemble" }

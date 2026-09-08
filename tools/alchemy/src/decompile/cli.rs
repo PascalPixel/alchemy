@@ -108,7 +108,7 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let binary = work.path().join("owner.bin");
     let start = (entry - base) as usize;
     std::fs::write(&binary, &image[start..start + span as usize]).map_err(|e| e.to_string())?;
-    let rows = diff::disasm::disassemble(&binary.to_string_lossy(), f64::from(entry))?;
+    let rows = crate::diff::disasm::disassemble(&binary.to_string_lossy(), f64::from(entry))?;
     let calls = super::imports::imports(root, owner, Some(span))?;
     for offset in rows.keys() {
         let address = entry + offset as u32;

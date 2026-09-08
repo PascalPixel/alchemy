@@ -20,9 +20,6 @@ impl Rows {
     pub fn keys(&self) -> impl Iterator<Item = f64> + '_ {
         self.entries.iter().map(|(key, _)| *key)
     }
-    pub fn len(&self) -> usize {
-        self.entries.len()
-    }
 }
 fn parse_row(line: &str) -> Option<(&str, &str)> {
     let (address, rest) = line.trim_start().split_once(":\t")?;

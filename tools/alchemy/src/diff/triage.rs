@@ -1,4 +1,4 @@
-use crate::render::{alignment_key, without_pc_offset, without_register};
+use crate::diff::render::{alignment_key, without_pc_offset, without_register};
 use psynergy::compare::topology::Comparison;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;

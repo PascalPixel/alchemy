@@ -11,6 +11,7 @@ mod convert;
 mod cross_edition;
 mod dashboard;
 mod decompile;
+mod diff;
 mod flatten;
 mod font;
 mod generated_files;
@@ -78,7 +79,7 @@ fn main() -> ExitCode {
         "diff" => match overlay_candidate(rest) {
             Ok(true) => overlay::code(overlay::score::run(compiler_core::routing::root(), rest)),
             Ok(false) => {
-                diff::entrypoint::entry(rest);
+                diff::entry(rest);
                 ExitCode::SUCCESS
             }
             Err(error) => result(Err(error)),

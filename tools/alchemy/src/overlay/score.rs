@@ -1,3 +1,7 @@
+use crate::diff::{
+    cli::{options_of, ParseOutcome, USAGE},
+    render::render,
+};
 use crate::overlay::{
     park::{placeholder_span, truth_window},
     retained_source,
@@ -6,10 +10,6 @@ use compiler_core::{
     overlay_call_via_base,
     source_paths::{SourceOwner, SourcePaths},
     translation_units::{resolve_overlay_span, TranslationUnits},
-};
-use diff::{
-    cli::{options_of, ParseOutcome, USAGE},
-    render::render,
 };
 use disassemble::compile::compile_overlay_c;
 use serde_json::Value;

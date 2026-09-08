@@ -37,7 +37,7 @@ fn load(path: &Path) -> Result<(PathBuf, String), String> {
     Ok((path, source))
 }
 
-fn allocator_report(path: &Path) -> Result<diff::allocator::Report, String> {
+fn allocator_report(path: &Path) -> Result<crate::diff::allocator::Report, String> {
     let work = tempfile::tempdir().map_err(|error| error.to_string())?;
     let arguments = [
         path.to_string_lossy().into_owned(),
@@ -45,11 +45,12 @@ fn allocator_report(path: &Path) -> Result<diff::allocator::Report, String> {
         "--work".into(),
         work.path().to_string_lossy().into_owned(),
     ];
-    let diff::cli::ParseOutcome::Options(options) = diff::cli::options_of(root(), &arguments)?
+    let crate::diff::cli::ParseOutcome::Options(options) =
+        crate::diff::cli::options_of(root(), &arguments)?
     else {
         return Err("allocator decoder options unexpectedly requested help".into());
     };
-    let report = diff::render::render(root(), &options)?
+    let report = crate::diff::render::render(root(), &options)?
         .allocator
         .ok_or("allocator decoder produced no report")?;
     if report.dimensions.is_empty() || report.repair.is_none() {
@@ -162,7 +163,7 @@ fn save(
     evaluations: &[Evaluation],
     options: &Options,
     permutation: &Permutation,
-    decoder: &diff::allocator::Report,
+    decoder: &crate::diff::allocator::Report,
 ) -> Result<RunSummary, String> {
     let best = evaluations
         .iter()

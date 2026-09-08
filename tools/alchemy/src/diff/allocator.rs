@@ -1,4 +1,4 @@
-use crate::{cli::Options, render::align_streams};
+use crate::diff::{cli::Options, render::align_streams};
 use candidate_compiler::verify::{compile_source, copy_text};
 use psynergy::process::run;
 use psynergy::repair::{split_pointer_uses, Repair, RepairPlan};
@@ -9,7 +9,7 @@ type Var = (String, Option<u8>, Option<i32>);
 #[test]
 fn split_pointer_rejects_induction() {
     assert!(!split_pointer_uses(
-        include_str!("../../../games/gs1/recon/en/main/0808c30c.c"),
+        include_str!("../../../../games/gs1/recon/en/main/0808c30c.c"),
         "id"
     ));
 }

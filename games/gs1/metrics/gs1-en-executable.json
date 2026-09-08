@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1349246,
+  "total_union_bytes": 1349252,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -37581,8 +37581,8 @@
     {
       "id": "resource_3c9",
       "decoded_bytes": 26464,
-      "executable_bytes": 23768,
-      "excluded_bytes": 2696,
+      "executable_bytes": 23774,
+      "excluded_bytes": 2690,
       "audit": "complete",
       "intervals": [
         {
@@ -38240,10 +38240,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33576030,
+          "start": 33576024,
           "end": 33576550,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "Reachable Thumb BL at 0x02005458 calls loaded veneer 0x0200de2c, followed by movs r1,#129 at 0x0200545c and the existing Thumb span. The former six-byte gap was a linear Thumb-2 disassembly error after the preceding literal pool; raw halfwords and Thumb-1 control flow confirm all six bytes are executable."
         },
         {
           "start": 33576550,

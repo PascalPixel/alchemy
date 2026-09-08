@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define FieldScene_RunFourWayEffectSequence Func_020029a4
+
 void Func_0200b4f4(s32);
 void Func_0200b5ec(s32, s32);
 void Func_0200b5f4(s32);
@@ -27,9 +29,9 @@ static __inline__ void Call3(void (*f)(s32, s32, s32), s32 a, s32 b, s32 c)
     f(a, b, c);
 }
 
-void Func_020029a4(u32 mode)
+void FieldScene_RunFourWayEffectSequence(u32 mode)
 {
-    u32 i;
+    u32 i, zero;
     s32 x, y, z;
     s32 *pos;
     u8 *obj, *sprite;
@@ -44,7 +46,9 @@ void Func_020029a4(u32 mode)
     }
     Func_0200b5f4(60);
     Func_0200b624(214);
-    for (i = 0, pos = &Data_0200b684[0][0]; i <= 9; i++, pos += 2) {
+    i = 0;
+    zero = i;
+    for (pos = &Data_0200b684[0][0]; i <= 9; i++, pos += 2) {
         x = pos[0];
         y = pos[1];
         z = 0;
@@ -54,12 +58,12 @@ void Func_020029a4(u32 mode)
         case 2: x += 0x2c70000; z = 0x900000; break;
         case 3: x += 0x2c70000; z = 0x1d00000; break;
         }
-        Data_0200bb40[i] = 0;
+        Data_0200bb40[i] = zero;
         obj = Func_0200b454(284, x, y, z);
         Data_0200bb10[i] = obj;
-        obj[85] = 0;
+        obj[85] = zero;
         sprite = *(u8 **)(obj + 80);
-        sprite[38] = 0;
+        sprite[38] = zero;
         ((SpriteMode *)sprite)->mode = 1;
         Func_0200b444(obj, 6);
         Func_0200b3e4(6);

@@ -12227,7 +12227,7 @@
       "overlay": "resource_3bf",
       "entry": "0x020050e4",
       "span_bytes": 576,
-      "evidence": "complete mode-dispatch scene owner through its sole return and eleven-word pool before 0x02005324; independently decoded 31-entry linked jump table, shared tails and all 32 ordered calls are explicit ordinary C"
+      "evidence": "complete mode-dispatch scene owner through its sole return and eleven-word pool before 0x02005324; independently decoded 31-entry linked jump table, shared tails and all 32 ordered calls are explicit ordinary C. Reference audit includes alignment at 0200516e-02005170, switch table at 02005170-020051ec, instruction bodies formerly spelled as data at 020051ec-020052b8, and four referenced trailing words at 02005314-02005324; these 346 bytes were omitted from the executable inventory. Complete 576-byte owner and four neighboring actor-setup owners match from one canonical shared C object."
     },
     {
       "overlay": "resource_3bf",

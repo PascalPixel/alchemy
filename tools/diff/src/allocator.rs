@@ -1,5 +1,6 @@
 use crate::{cli::Options, render::align_streams};
-use candidate_compiler::verify::{compile_source, copy_text, run};
+use candidate_compiler::verify::{compile_source, copy_text};
+use psynergy::process::run;
 use regex::Regex;
 use std::path::Path;
 

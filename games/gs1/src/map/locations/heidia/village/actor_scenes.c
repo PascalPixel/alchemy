@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_runtime.h"
 
 /* External Func aliases name loader-relocated call words, not runtime addresses. */
 void Func_0200613a(s32, s32, s32, s32, s32, s32);
@@ -89,6 +90,23 @@ void Func_02009e4c();
 void Func_02009e64();
 void Func_02009e76();
 void Func_02009e7c();
+
+extern u8 Data_03001e70[];
+extern u32 Data_03001e40;
+extern s16 Data_02000240[];
+extern u8 Value_00002092;
+struct ObjectRuntime *Func_020067ac();
+struct ObjectRuntime *Func_020067b4();
+s32 Func_020067a6();
+s32 Func_020067de();
+double Func_02006ce6(s32);
+double Func_02006c7a(double, double);
+s32 Func_02006d72(double);
+s32 Func_02002314();
+s32 Func_02002b3e();
+s32 Func_02002b72();
+void Func_020068a0();
+
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -263,6 +281,62 @@ void FieldScene_UpdateObjectPairC(void)
         Call3(Func_0200655a, 0x30000, 0x30000, 0x10000);
         Call3(Func_02006564, -1, -1, 0xe666);
         Func_02006596(field + 0x332);
+    }
+}
+
+static __inline__ void SetSceneValue(s16 *field, s32 value)
+{
+    *field = value;
+}
+
+void FieldScene_UpdateActorPairInteraction(void)
+{
+    struct ObjectRuntime *actor = Func_020067ac(9);
+    struct ObjectRuntime *other = Func_020067b4(10);
+    s32 *work = (s32 *)(*(u8 **)Data_03001e70 + 0x164);
+    s16 *scene = *(s16 **)(Data_03001e70 + 0x4c);
+
+    if (Data_03001e40 & 1) {
+        work[6] = 1;
+        work[7] = 1;
+    } else {
+        work[6] = -1;
+        work[7] = -1;
+    }
+    if (Func_020067a6(0x106) || scene[191] != 0 || scene[192] != 0) {
+        actor->movement_state = 1;
+        other->movement_state = 1;
+    } else if (!Value1(Func_020067de, 0x214)) {
+        actor->movement_state = 0;
+        other->movement_state = 0;
+        if (!Value1(Func_020067de, 0x214) && actor->movement_state == 0) {
+            work[8] = Func_02006d72(Func_02006c7a(8912896.0, Func_02006ce6(actor->x)));
+        }
+        if (!Func_02002314()) {
+            if (Data_02000240[294] != 0) {
+                if (Func_02002b3e(9) && Data_02000240[294] != 0) {
+                    SetSceneValue(&scene[191], (s32)&Value_00002092);
+                    return;
+                }
+                if (Func_02002b3e(10) && Data_02000240[294] != 0) {
+                    SetSceneValue(&scene[191], (s32)&Value_00002092);
+                    return;
+                }
+            }
+            if (Data_02000240[294] == 0) {
+                if (Func_02002b72(9)) {
+                    Func_020068a0(0x215);
+                    Func_020068a0(0x214);
+                }
+                if (Func_02002b72(10)) {
+                    Func_020068a0(0x215);
+                    Func_020068a0(0x214);
+                }
+            }
+            if (Value1(Func_020067de, 0x214)) {
+                SetSceneValue(&scene[193], 91);
+            }
+        }
     }
 }
 

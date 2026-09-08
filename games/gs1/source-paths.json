@@ -17796,6 +17796,10 @@
     "resource_3b2:020012b4": {
       "name": "HandleActorReachingEscapeColumn",
       "source": "map/locations/heidia/prologue/handle_actor_reaching_escape_column.c"
+    },
+    "resource_3b2:020013ac": {
+      "name": "DispatchPrologueSceneSlot",
+      "source": "map/locations/heidia/prologue/dispatch_prologue_scene_slot.c"
     }
   }
 }

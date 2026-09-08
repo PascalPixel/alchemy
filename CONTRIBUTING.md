@@ -379,6 +379,11 @@ trampoline guard, search execution and matching acceptance fixtures live in
 `tools/alchemy/src/matching`, not a separate tool crate.
 Owner-aware scoring and reports live in `tools/alchemy/src/diff`. They use
 Psynergy's shared comparisons and repair types; they are not a separate crate.
+Instruction normalization and weighted sequence alignment belong to Psynergy's
+`compare` module, shared directly by rendering, triage and allocator diagnosis.
+Alchemy retains residual classifications and command advice; the renderer and
+triage do not own or call each other's alignment machinery. Alignment preserves
+the original instruction text and cannot establish byte equality.
 Golden Sun coverage, progress and chart rendering live in
 `tools/alchemy/src/coverage`, shared by the checks and dashboard. They read the
 project's owner and asset manifests; they are not a portable coverage library.

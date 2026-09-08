@@ -84,9 +84,9 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     s32 sp8;
     s32 spC;
     s32 sp10;
-    s32 **sp14;
-    s32 **sp18;
-    s32 **sp1C;
+    s32 *sp14;
+    s32 *sp18;
+    s32 *sp1C;
     u32 *sp20;
     struct M2cAggregate_absolute_03001e80 *sp24;
     struct M2cAggregate_deref_absolute_03001e80_0 *sp28;
@@ -100,13 +100,14 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     s32 sp48;
     s32 sp4C;
     s32 sp50;
-    s32 sp60;
-    s32 sp64;
-    s32 sp78;
-    s32 **temp_r8_625;
-    s32 **var_r1_620;
-    s32 **var_r6_626;
-    s32 *temp_r5_705;
+    s32 origin[3];
+    s32 projected[3];
+    s32 zero[3];
+    s32 pos[2];
+    s32 *temp_r8_625;
+    s32 *var_r1_620;
+    s32 *var_r6_626;
+    s32 temp_r5_705;
     s32 temp_r0_390;
     s32 temp_r0_648;
     s32 temp_r0_688;
@@ -249,12 +250,12 @@ block_36:
         var_sl_245 += 1;
         var_r5_244->field_0008 = (Func_08002304(Func_08004458(), 0xC8) - 0x64) << 0xE;
         var_r5_244->field_0018 = 0;
-        var_r5_244 += 0x1C;
+        var_r5_244 = (void *)((u8 *)var_r5_244 + 0x1C);
     } while (var_sl_245 != 0x200);
     temp_r2_277 = M2C_FIELD(sp44, void **, 0x7828);
     if (M2C_FIELD(temp_r2_277, s32 *, 0x14) == 1) {
-        Func_080e396c(M2C_FIELD(temp_r2_277, s16 *, 0x24), &sp78);
-        sp30 = Func_080022ec((0 - sp78) * 4, 5) + 0x40;
+        Func_080e396c(M2C_FIELD(temp_r2_277, s16 *, 0x24), pos);
+        sp30 = Func_080022ec((0 - pos[0]) * 4, 5) + 0x40;
     } else {
         sp30 = -0x40;
         if (M2C_FIELD(temp_r2_277, s32 *, 4) != 1) {
@@ -316,9 +317,9 @@ loop_49:
 
         } else {
             sp20 = &sp28->field_000c;
-            sp1C = &sp0 + 0x54;
-            sp18 = &sp0 + 0x60;
-            sp14 = &sp0 + 0x6C;
+            sp1C = (s32 *)origin;
+            sp18 = (s32 *)projected;
+            sp14 = (s32 *)zero;
             sp10 = 0;
             spC = 0x24;
             var_r9_478 = var_fp_344;
@@ -330,7 +331,7 @@ loop_60:
             }
             Func_080049ac();
             Func_080051d8(sp28, sp20);
-            M2C_FIELD(sp1C, s32 **, 0) = M2C_FIELD(temp_r5_488, s32 **, 8);
+            M2C_FIELD(sp1C, s32 *, 0) = M2C_FIELD(temp_r5_488, s32 *, 8);
             M2C_FIELD(sp1C, s32 *, 4) = temp_r7_496;
             M2C_FIELD(sp1C, s32 *, 8) = (s32) M2C_FIELD(temp_r5_488, s32 *, 0x10);
             Func_08004cb4(sp1C);
@@ -365,7 +366,7 @@ loop_60:
                 var_r1_620 = sp18;
                 var_sl_624 = 0;
                 temp_r8_625 = var_r1_620;
-                var_r6_626 = (sp34 * 0x1C0 * 4) + &absolute_02010000;
+                var_r6_626 = (void *)((u8 *)&absolute_02010000 + sp34 * 0x700);
                 do {
                     if (var_fp_344 > (s32) (sp10 + var_sl_624)) {
                         temp_r3_633 = (s32) M2C_FIELD(var_r6_626, s32 *, 0) >> 8;
@@ -379,7 +380,7 @@ loop_60:
                         if (temp_r7_649 != 0) {
                             Func_080e3944(var_r6_626, temp_r8_625);
                             var_r2_661 = M2C_FIELD(temp_r8_625, s32 *, 8);
-                            M2C_FIELD(temp_r8_625, s32 **, 0) = Func_080022ec((s32) M2C_FIELD(temp_r8_625, s32 **, 0) * 4, 5) + sp30;
+                            M2C_FIELD(temp_r8_625, s32 *, 0) = Func_080022ec((s32) M2C_FIELD(temp_r8_625, s32 *, 0) * 4, 5) + sp30;
                             if (var_r2_661 <= 0x139) {
                                 M2C_FIELD(sp18, s32 *, 8) = 0x13A;
                                 var_r2_661 = 0x13A;
@@ -396,9 +397,9 @@ loop_60:
                             temp_r4_689 = temp_r0_688 * 2;
                             sp0 = temp_r4_689;
                             sp4 = temp_r4_689;
-                            ((BattleEffectDrawFn)sp3C)(sp40, sp44 + *(const u16 *)(0x080EDE5C + temp_r4_689 - 2), M2C_FIELD(sp18, s32 **, 0) - temp_r0_688, M2C_FIELD(sp18, s32 *, 4) - temp_r0_688, temp_r4_689, temp_r4_689);
-                            temp_r5_705 = M2C_FIELD(var_r6_626, s32 **, 0);
-                            M2C_FIELD(var_r6_626, s32 **, 0) = temp_r5_705 - Func_080022ec((s32) temp_r5_705, temp_r7_649);
+                            ((BattleEffectDrawFn)sp3C)(sp40, sp44 + *(const u16 *)(0x080EDE5C + temp_r4_689 - 2), M2C_FIELD(sp18, s32 *, 0) - temp_r0_688, M2C_FIELD(sp18, s32 *, 4) - temp_r0_688, temp_r4_689, temp_r4_689);
+                            temp_r5_705 = M2C_FIELD(var_r6_626, s32 *, 0);
+                            M2C_FIELD(var_r6_626, s32 *, 0) = temp_r5_705 - Func_080022ec((s32) temp_r5_705, temp_r7_649);
                             temp_r5_711 = M2C_FIELD(var_r6_626, s32 *, 4);
                             M2C_FIELD(var_r6_626, s32 *, 4) = (s32) (temp_r5_711 - Func_080022ec(temp_r5_711, temp_r7_649));
                             temp_r5_717 = M2C_FIELD(var_r6_626, s32 *, 8);
@@ -408,16 +409,16 @@ loop_60:
                         }
                     }
                     var_sl_624 += 1;
-                    var_r6_626 += 0x1C;
+                    var_r6_626 = (void *)((u8 *)var_r6_626 + 0x1C);
                 } while (var_sl_624 != 0x20);
                 Func_08002dd8(0x2F);
                 Func_08002dd8(0x2E);
             }
-            M2C_FIELD(sp14, s32 **, 0) = NULL;
+            M2C_FIELD(sp14, s32 *, 0) = 0;
             M2C_FIELD(sp14, s32 *, 4) = 0;
             M2C_FIELD(sp14, s32 *, 8) = 0;
-            Func_080e3944(sp14, &sp60);
-            sp60 = Func_080022ec((s32) sp60 * 4, 5) + sp30;
+            Func_080e3944(sp14, projected);
+            projected[0] = Func_080022ec((s32) projected[0] * 4, 5) + sp30;
             if ((var_fp_344 >= (s32) (sp10 + 0x34)) && (var_fp_344 < (s32) (sp10 + 0x4C))) {
                 var_r3_760 = var_r9_478 - 0x34;
                 if (var_r3_760 < 0) {
@@ -429,7 +430,7 @@ loop_60:
                 sp0 = (s32 *)0x28;
                 sp4 = (s32 *)0x28;
                 sp38 = *(s32 *)0x03001F08;
-                ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_769 * 0x640) + 0x60E, M2C_FIELD(sp18, s32 **, 0) - 0x14, M2C_FIELD(sp18, s32 *, 4) - 0x14, 0x28, 0x28);
+                ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_769 * 0x640) + 0x60E, M2C_FIELD(sp18, s32 *, 0) - 0x14, M2C_FIELD(sp18, s32 *, 4) - 0x14, 0x28, 0x28);
                 Func_08002dd8(0x2E);
             }
             switch (sp48) {                         /* switch 6; irregular */
@@ -449,7 +450,7 @@ loop_60:
                     sp0 = (s32 *)0x18;
                     sp4 = (s32 *)0x28;
                     sp38 = *(s32 *)0x03001F08;
-                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_826 * 0x3C0) + 0x2B8E, sp60 - 0xC, sp64 - 0x14, 0x18, 0x28);
+                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_826 * 0x3C0) + 0x2B8E, projected[0] - 0xC, projected[1] - 0x14, 0x18, 0x28);
 block_112:
                     Func_08002dd8(0x2E);
                 }
@@ -471,7 +472,7 @@ block_112:
                     sp0 = (s32 *)0x20;
                     sp4 = (s32 *)0x40;
                     sp38 = *(s32 *)0x03001F08;
-                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r0_881 << 0xB) + 0x2B8E, sp60 - 0x10, sp64 - 0x20, 0x20, 0x40);
+                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r0_881 << 0xB) + 0x2B8E, projected[0] - 0x10, projected[1] - 0x20, 0x20, 0x40);
                     goto block_112;
                 }
                 break;
@@ -493,11 +494,11 @@ block_112:
                     sp0 = (s32 *)0x40;
                     sp8 = 0x40;
                     sp4 = (s32 *)0x20;
-                    ((BattleEffectDrawFn)sp38)(sp40, temp_r5_961, sp60 - 0x20, sp64 - 0x18,
+                    ((BattleEffectDrawFn)sp38)(sp40, temp_r5_961, projected[0] - 0x20, projected[1] - 0x18,
                         0x40, 0x20);
                     sp0 = (s32 *)0x40;
                     sp4 = (s32 *)0x20;
-                    ((BattleEffectDrawFn)sp3C)(sp40, temp_r5_961, sp60 - 0x20, sp64 + 8,
+                    ((BattleEffectDrawFn)sp3C)(sp40, temp_r5_961, projected[0] - 0x20, projected[1] + 8,
                         0x40, 0x20);
                     Func_08002dd8(0x2F);
                     goto block_112;
@@ -515,7 +516,7 @@ block_112:
                     sp0 = (s32 *)0x28;
                     sp4 = (s32 *)0x28;
                     sp38 = *(s32 *)0x03001F08;
-                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_1031 * 0x640) + 0x2B8E, sp60 - 0x14, sp64 - 0x14, 0x28, 0x28);
+                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_1031 * 0x640) + 0x2B8E, projected[0] - 0x14, projected[1] - 0x14, 0x28, 0x28);
                     Func_08002dd8(0x2E);
                 }
                 break;

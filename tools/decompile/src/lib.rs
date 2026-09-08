@@ -1,6 +1,6 @@
-//! Thumb-to-C lifting for retained overlay modules. The output is a
-//! candidate translation unit tuned to recompile byte-exactly through the
-//! GCC 2.96 overlay route rather than to read well.
+//! Recover candidate C from bounded Thumb instruction windows. Owner lookup
+//! supplies game context; lifting and composition share explicit unit tables.
+//! Generated source still requires compilation and complete-byte comparison.
 
 pub mod adopt;
 pub mod decode;
@@ -30,8 +30,8 @@ pub fn lift_owner(
     });
     lift::set_main_mode(base == decode::MAIN_BASE);
     let ins = decode::decode_window_at(&image, base, entry, span);
-    let body = unit::bodies(&ins);
-    let text = unit::compose(entry, &name, &body);
+    let (body, tables) = unit::bodies(&ins);
+    let text = unit::compose(entry, &name, &body, &tables);
     lift::set_main_mode(false);
     Ok((text, span))
 }

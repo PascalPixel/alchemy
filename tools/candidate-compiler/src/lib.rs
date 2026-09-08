@@ -1,6 +1,5 @@
-//! Native candidate compilation and compatibility primitives.
+//! Candidate compilation and complete byte-range comparison.
 
-pub mod jsnum;
 pub mod verify;
 
 pub use compiler_core::routing::CompilerTarget;

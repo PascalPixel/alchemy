@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_370:020003cc": {
+      "name": "FieldScene_InitializeEntryState"
+    },
     "resource_38e:0200009c": {
       "name": "SceneData_SelectRecordByScene22",
       "source": "overlays/scene_setup/run_scene_steps_38e.c"

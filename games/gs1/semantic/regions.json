@@ -12047,7 +12047,7 @@
       "overlay": "resource_3bf",
       "entry": "0x02001150",
       "span_bytes": 400,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "evidence": "complete actor-pair interaction owner through return at 020012c2 and seven trailing words ending 020012e0. Shared ObjectRuntime movement-state bytes, cached scene fields at 17e/180/182 and signed-to-double/subtract/double-to-signed calls match the reference. A word-input halfword setter preserves the reference branch-local address calculations and immediate scene number; fourteen actor-scene owners remain exact from their shared object."
     },
     {
       "overlay": "resource_3bf",

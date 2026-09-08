@@ -111,6 +111,9 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
 
 fn overlay_candidate(arguments: &[String]) -> Result<bool, String> {
     use compiler_core::source_paths::{SourceOwner, SourcePaths};
+    if arguments.iter().any(|arg| arg == "--unit") {
+        return Ok(false);
+    }
     if let Some(pair) = arguments.windows(2).find(|pair| pair[0] == "--owner") {
         return SourceOwner::parse_argument(&pair[1]).map(|owner| !owner.is_main());
     }
@@ -145,6 +148,10 @@ mod command_tests {
             assert_eq!(overlay_candidate(&args).unwrap(), overlay);
         }
         assert!(overlay_candidate(&["resource_3ba:02002910".into()]).unwrap());
+        assert!(!overlay_candidate(
+            &["--unit", "battle", "--owner", "resource_3ba:02002910"].map(str::to_owned)
+        )
+        .unwrap());
     }
 
     #[test]

@@ -7,7 +7,10 @@ use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     translation_units::{resolve_overlay_span, TranslationUnits},
 };
-use diff::{cli::Options, render::render};
+use diff::{
+    cli::{options_of, ParseOutcome, USAGE},
+    render::render,
+};
 use disassemble::compile::compile_overlay_c;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -79,45 +82,28 @@ fn source_for(root: &Path, paths: &SourcePaths, owner: SourceOwner) -> Result<Pa
         .ok_or_else(|| format!("no source for {}", owner.id()))
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
-    let (mut align, mut asm, mut target, mut owner_target, mut override_span) =
-        (false, false, None, None, None);
-    let mut args = argv.iter();
-    while let Some(argument) = args.next() {
-        match argument.as_str() {
-            "--flags" | "--remove-flags" | "--family" => {
-                return Err(format!(
-                    "{argument} is retired; candidates use their canonical compiler route"
-                ));
-            }
-            "--span" => {
-                override_span = Some(
-                    args.next()
-                        .and_then(|value| value.parse().ok())
-                        .filter(|span| *span > 0)
-                        .ok_or("--span wants a positive decimal byte count")?,
-                )
-            }
-            "--owner" => {
-                owner_target = Some(
-                    args.next()
-                        .ok_or("--owner needs <overlay>:<addressHex>")?
-                        .to_string(),
-                )
-            }
-            "--align" => align = true,
-            "--asm" => asm = true,
-            "-h" | "--help" => {
-                println!(
-                    "usage: alchemy diff TARGET [--owner OWNER] [--span BYTES] [--align] [--asm]"
-                );
-                return Ok(0);
-            }
-            other if target.is_none() => target = Some(other.to_string()),
-            other => return Err(format!("unexpected argument {other:?}")),
-        }
+    let ParseOutcome::Options(mut options) = options_of(root, argv)? else {
+        println!("{USAGE}");
+        return Ok(0);
+    };
+    if options.unit.is_some() {
+        return Err("score complete translation units with alchemy diff --unit ID".into());
     }
-    let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
-    let resolved = resolve(root, owner_target.as_deref().unwrap_or(&target))?;
+    if options.target != compiler_core::routing::CompilerTarget::Gs1
+        || argv.iter().any(|arg| arg == "--rom")
+    {
+        return Err("overlay scoring currently requires the canonical GS1 reference".into());
+    }
+    let target = options.source.clone();
+    let resolved = if let Some(address) = options.owner {
+        let overlay = options
+            .overlay
+            .as_deref()
+            .ok_or("expected a resource-qualified overlay owner")?;
+        SourceOwner::parse_argument(&format!("{overlay}:{address:08x}"))?
+    } else {
+        resolve(root, &target)?
+    };
     let overlay = resolved.overlay_id().expect("resolved overlay owner");
     let address = i64::from(resolved.address());
     let paths = SourcePaths::load(root)?;
@@ -133,7 +119,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         &crate::reviewed_spans(root)?,
         resolved,
         installed,
-        override_span,
+        options.size,
     )?;
     let explicit = Path::new(&target);
     let source = if explicit.is_file() {
@@ -148,7 +134,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let image = disassemble::canonical_overlay(root, &overlay)?;
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
     let units = TranslationUnits::load(root)?;
-    let mut options = Options::gs1(source.to_string_lossy().into_owned());
+    options.source = source.to_string_lossy().into_owned();
     options.configuration.call_via_base = Some(
         paths
             .registered_call_via(resolved)
@@ -160,12 +146,9 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         options.configuration.absolute_symbols = unit.canonical_symbols()?;
     }
     options.rom = Some(reference.to_string_lossy().into_owned());
-    options.work = Some(work.path().to_string_lossy().into_owned());
     options.owner = Some(address as u32);
     options.overlay = Some(overlay);
     options.size = Some(span);
-    options.align = align;
-    options.asm = asm;
     let rendered = render(root, &options)?;
     println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
     print!("{}", rendered.stdout);

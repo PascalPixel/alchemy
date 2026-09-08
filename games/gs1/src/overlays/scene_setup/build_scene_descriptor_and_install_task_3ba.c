@@ -9,7 +9,7 @@
  * plus a 4-byte frame.  The body ends at 0x02003820 with `add sp, #4` and a
  * `b.n` over the six-word literal pool at 0x02003822-0x0200383b to the unwind
  * at 0x0200383c..0x0200384a.  The next row, 0x0200384c, is a separate owner
- * whose byte-exact source is `games/gs1/assets/code/resource_3ba_c_0200384c.c`, so
+ * whose byte-exact source is `games/gs1/asm/overlays/resource_3ba_c_0200384c.c`, so
  * nothing live crosses this row's end.
  *
  * `pop {r0} ; bx r0` — r0 holds the popped return address, so the owner
@@ -29,7 +29,7 @@
  * inventory's `calls=10` agrees.
  *
  * LINK BASE 0x02008000, proven for this overlay by the byte-exact sibling
- * `games/gs1/assets/code/resource_3ba_c_02000158.c` (pool word 0x0200804d =
+ * `games/gs1/asm/overlays/resource_3ba_c_02000158.c` (pool word 0x0200804d =
  * Func_0200004c + the Thumb bit).  Two of this owner's pool words fall in the
  * in-image band, and the parity test classifies them:
  *   0x0200bf14  even -> in-image DATA at file offset 0x3f14, passed as the

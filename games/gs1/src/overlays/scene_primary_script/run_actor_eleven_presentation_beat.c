@@ -16,7 +16,7 @@
  *
  * Data_02000240 is a genuine EWRAM global, not overlay data: this module is
  * linked at 0x02008000, so an address below that base cannot be in-image.  The
- * byte-exact sources in games/gs1/assets/code use the same symbol.
+ * byte-exact sources in games/gs1/asm/overlays use the same symbol.
  *
  * The epilogue is `add sp, #16 / pop {r5} / pop {r0} / bx r0`, so the owner is
  * void.

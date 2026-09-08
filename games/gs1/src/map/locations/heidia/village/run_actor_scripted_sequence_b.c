@@ -18,7 +18,7 @@ extern u8 Value_0000241e;
  * dispatcher at 0x02004638 loads its jump-table base as 0x0200c64c while the
  * table itself is embedded at offset 0x464c, and every entry in it likewise
  * points 0x8000 past the case body it selects.  Both the existing byte-exact
- * sources under games/gs1/assets/code and this file keep the printed-offset spelling for
+ * sources under games/gs1/asm/overlays and this file keep the printed-offset spelling for
  * symbol names and the raw pool value for absolute data addresses, which is
  * self-consistent; nothing here depends on which of the two bases is real.  Note that Func_02007376 is reached twice with
  * different argument shapes — once as (handle, 0) and once as (identifier) —

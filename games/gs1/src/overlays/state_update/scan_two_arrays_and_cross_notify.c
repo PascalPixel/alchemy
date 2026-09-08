@@ -19,7 +19,7 @@
  * the *other* array: `cnt_a` (from scanning `a`) indexes into `b`, and
  * `cnt_b` (from scanning `b`) indexes into `a`.
  *
- * Call symbols are per-site, not per-import: the raw region (games/gs1/assets/code/
+ * Call symbols are per-site, not per-import: the raw region (games/gs1/asm/overlays/
  * resource_3b1_overlay.s around line 9152) spells the six calls as
  * `bl sub_0200c876`, `bl sub_0200c890`, `bl sub_0200c896`, `bl sub_0200c8b0`,
  * `bl sub_0200c8b0` (again), `bl sub_0200c8b8` -- five distinct local

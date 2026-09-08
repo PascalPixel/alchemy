@@ -314,7 +314,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     }
     report.push(last);
 
-    let overlay_source: PathBuf = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+    let overlay_source: PathBuf = root.join(format!("games/gs1/asm/overlays/{overlay}_overlay.s"));
     let mut staged: Vec<String> = vec![
         destination.to_string_lossy().into_owned(),
         manifest.to_string_lossy().into_owned(),

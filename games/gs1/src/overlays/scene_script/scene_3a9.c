@@ -125,7 +125,7 @@ s32 Func_020007be();
  * The clearing loop runs slots 8..65 inclusive (`movs r5,#8` /
  * `cmp r5,#65 / bls`) and skips a slot whose record comes back null; the +85
  * byte it zeroes is the same field the tracked
- * `games/gs1/assets/code/resource_36f_c_02000054.c` clears on a scene record, so the
+ * `games/gs1/asm/overlays/resource_36f_c_02000054.c` clears on a scene record, so the
  * offset is evidence rather than inference.  The later single clear of the
  * player's own +85 byte does NOT test for null, and that asymmetry is in the
  * reference.
@@ -146,7 +146,7 @@ s32 Func_020007be();
  * `+ 364` (built as `movs r2,#182 / lsls r2,r2,#1`, the documented
  * displacement-as-shifted-constant habit) is the s16 sub-state slot of the
  * workspace the pointer cell 0x03001ebc addresses — one dereference, as the
- * tracked `games/gs1/assets/code/resource_3a9_c_02000308.c` spells it.  It is read twice,
+ * tracked `games/gs1/asm/overlays/resource_3a9_c_02000308.c` spells it.  It is read twice,
  * once for the switch and once for Func_0808a248, and both reads are kept.
  *
  * Uncertainty: 158 is a Audio_PlayCue cue id from its argument position.
@@ -202,7 +202,7 @@ s32 Func_020007be();
  * free cross-check that both were read correctly.
  *
  * `Data_02000240 + 450` is the s16 sub-state slot of the shared work area,
- * `Data_02000240[225]`, as the tracked `games/gs1/assets/code/resource_3a9_c_02000308.c`
+ * `Data_02000240[225]`, as the tracked `games/gs1/asm/overlays/resource_3a9_c_02000308.c`
  * and the tracked resource_36f sources spell it.
  *
  * Uncertainties: 0x911 is read as an event-flag id from its argument position

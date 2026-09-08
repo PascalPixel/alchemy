@@ -16,10 +16,10 @@ struct SceneRecord {
  * the five-word literal pool at 0x020000ec-0x020000ff.  A control-flow walk
  * from the prologue reaches the pool only through `ldr rN, [pc, #imm]`; the
  * last instruction before it is `bx r1`, so nothing falls into it.
- * `games/gs1/assets/code/resource_38d_overlay.s` spells the pool literally as four
+ * `games/gs1/asm/overlays/resource_38d_overlay.s` spells the pool literally as four
  * `.4byte`s plus a split `.2byte` pair, which confirms the boundary.
  *
- * Byte-exact sibling: `games/gs1/assets/code/resource_38d_c_02000100.c` is the same
+ * Byte-exact sibling: `games/gs1/asm/overlays/resource_38d_c_02000100.c` is the same
  * selector with the record-initialising arm removed - same
  * `Data_02000240[224] == 0x21` guard, same "one of two records" return.  Its
  * field offset and pool spelling are reused here rather than rederived.

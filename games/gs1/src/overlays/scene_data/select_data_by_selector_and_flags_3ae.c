@@ -15,7 +15,7 @@
  * Selector: `ldr r3,[pc] (= 0x02000240) / movs r1,#224 / lsls r1,r1,#1 /
  * adds r3,r3,r1 / movs r1,#0 / ldrsh r2,[r3,r1]` — the signed halfword at byte
  * offset 448 of the cross-overlay workspace, i.e. `Data_02000240[224]`.  The
- * byte-exact sibling `games/gs1/assets/code/resource_3ae_c_02000040.c` selects on exactly
+ * byte-exact sibling `games/gs1/asm/overlays/resource_3ae_c_02000040.c` selects on exactly
  * the same halfword against the same three constants (0x6b, 0x70, 0x6c) and
  * returns in-image data pointers, so this owner is the same accessor family for
  * a different asset set.

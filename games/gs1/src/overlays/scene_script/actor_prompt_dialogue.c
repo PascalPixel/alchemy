@@ -241,7 +241,7 @@ void Func_020010f0(void);
  * 0x020000e3 are its literal pool (seven words), reached by no control path.
  *
  * This is the third of three sibling selectors in this overlay; 0x02000040 and
- * 0x020000e4 are already byte-exact in `games/gs1/assets/code/` and have exactly this
+ * 0x020000e4 are already byte-exact in `games/gs1/asm/overlays/` and have exactly this
  * shape.  The difference here is the extra story-flag test in the 0xa9 arm,
  * which picks between two tables instead of one.
  *

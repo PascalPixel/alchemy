@@ -23,7 +23,7 @@
  * established here.
  *
  * Func_02006a26 is already tracked byte-exact as
- * games/gs1/assets/code/resource_380_c_02004248.c, a two-call wrapper the file's
+ * games/gs1/asm/overlays/resource_380_c_02004248.c, a two-call wrapper the file's
  * own header describes as this overlay's most-called workhorse; its
  * signature (s32, s32) is taken from there rather than re-derived.
  *

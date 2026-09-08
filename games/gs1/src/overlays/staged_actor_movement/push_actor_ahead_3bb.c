@@ -45,7 +45,7 @@ typedef struct Position3 {
  * 0x3da0 -> Func_080000c0, 0x3e78 -> Object_SetPosition (twice), 0x40b0 ->
  * Audio_PlayCue (twice), plus three calls to this overlay's own
  * Func_02003b48, whose byte-exact source is
- * games/gs1/assets/code/resource_3bb_c_02003b48.c.
+ * games/gs1/asm/overlays/resource_3bb_c_02003b48.c.
  *
  * That byte-exact sibling settles the interface: Func_02003b48 takes the
  * three-word position and returns the occupying slot pointer or 0.  All three
@@ -55,7 +55,7 @@ typedef struct Position3 {
  *
  * The pool word 0x02000240 is below the overlay's 0x02008000 link base (base
  * witnessed by 0x02008715 = Func_02000714 + 1 in the byte-exact sibling
- * games/gs1/assets/code/resource_3bb_c_02000950.c), so it is a RAM global holding the
+ * games/gs1/asm/overlays/resource_3bb_c_02000950.c), so it is a RAM global holding the
  * active subject id at +500 (250 << 1).  0x0200c3d4 is inside the link band
  * and is therefore in-image data at file offset 0x43d4: a sixteen-entry table
  * indexed by the top nibble of the subject's facing halfword at +6.  Each
@@ -96,7 +96,7 @@ void Func_02007b36(SceneRecord *);
 void Func_02007d6e(s32);
 void Func_02007b1c(SceneRecord *, s32);
 
-/* This overlay's own lookup; byte-exact source in games/gs1/assets/code. */
+/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
 
 /* In-image dir table at file offset 0x43d4, sixteen packed steps. */
 extern u32 Data_0200c3d4[];

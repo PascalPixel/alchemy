@@ -13,7 +13,7 @@
  *
  * `Data_02000240[224]` (the signed halfword at byte offset 448) against the
  * small constant 0x6a is the cross-overlay scene-id idiom; the byte-exact
- * sibling `games/gs1/assets/code/resource_3ad_c_02000044.c` tests the same halfword
+ * sibling `games/gs1/asm/overlays/resource_3ad_c_02000044.c` tests the same halfword
  * against the same value, spelled there as `(s32)&Value_0000006a`.
  *
  * r5 is loaded once with 0x204 (`movs r5,#129 / lsls r5,#2`) and serves two

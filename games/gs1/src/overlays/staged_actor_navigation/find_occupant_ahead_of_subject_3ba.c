@@ -16,7 +16,7 @@
  * VERBATIM TWIN of `games/gs1/semantic/overlays/resource_3bb_c_02003cf8.c` — the same
  * 160-byte body, instruction for instruction, with resource_3bb's own lookup
  * Func_02003b48 replaced by this overlay's Func_020038b0.  Both lookups have
- * byte-exact sources in `games/gs1/assets/code` and are the same routine: one argument,
+ * byte-exact sources in `games/gs1/asm/overlays` and are the same routine: one argument,
  * a three-word pos; scan slots 8..65 of the workspace at
  * `Data_03001ebc + 0x14` and return the hit whose x/y/z agree to whole
  * units, or 0.  The cross-check is free and it is what settles the interface.
@@ -29,11 +29,11 @@
  *
  * The pool word 0x02000240 is below this overlay's 0x02008000 link base (base
  * witnessed by 0x0200804d = Func_0200004c + 1 in the byte-exact sibling
- * `games/gs1/assets/code/resource_3ba_c_02000158.c`), so it is a RAM global — the shared
+ * `games/gs1/asm/overlays/resource_3ba_c_02000158.c`), so it is a RAM global — the shared
  * `s16 Data_02000240[]` table that the byte-exact sources in resource_36f and
  * resource_371 already declare.  The index is built as 250 << 1 = 500, i.e.
  * the pointer-sized word `*(void **)&Data_02000240[250]`, exactly as
- * `games/gs1/assets/code/resource_36f_c_02000054.c` reads it.
+ * `games/gs1/asm/overlays/resource_36f_c_02000054.c` reads it.
  *
  * Shape: take the active subject's rec, derive its facing as
  * `(rec halfword at +6 + 0x2000) & 0xc000` — the biased quadrant, with no
@@ -64,7 +64,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-/* This overlay's own lookup; byte-exact source in games/gs1/assets/code. */
+/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
 
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {

@@ -8,7 +8,7 @@
  * {lr}` at 0x0200209c, epilogue `pop {r0} / bx r0` at
  * 0x020020b0-0x020020b2. The one-word literal pool at 0x020020b4
  * (0x03001ee0, the `Data_03001ee0` pointer already declared in
- * games/gs1/assets/code/resource_3a8_c_02001930.c and
+ * games/gs1/asm/overlays/resource_3a8_c_02001930.c and
  * games/gs1/semantic/overlays/resource_39a_c_020017e4.c) is included per the
  * usual pool rule, immediately followed by the next function's push
  * {r5,lr} at 0x020020b8 (not part of this overlay's item-28 population,

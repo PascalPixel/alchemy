@@ -179,7 +179,7 @@ void Func_0200017e(u16, s32);
  * offset-0 export table's odd words 0x02008031 / 0x02008039 / 0x0200803d /
  * 0x02008045 / 0x0200804d / 0x02008099 / 0x0200871d all land on function
  * starts at `word - 0x8000`, 0x0200804d is `Func_0200004c + 1` whose byte-exact
- * source is tracked as `games/gs1/assets/code/resource_3cd_c_0200004c.c`, and the table
+ * source is tracked as `games/gs1/asm/overlays/resource_3cd_c_0200004c.c`, and the table
  * above names two more tracked starts.  The table also carries even words
  * (0x020088d0 and up) which are in-image DATA, and one of them is read here.
  *
@@ -197,7 +197,7 @@ void Func_0200017e(u16, s32);
  *   0x0828 UiNumber_DrawAt x1   0x00c0 (prologue) x2      0x08c8 Audio_PlayCue x3
  *   0x07e8 Func_080000c0 x2   0x07f8 UiWindow_Close x1   0x0858 BattleUnit_Recalculate x4
  * The 0x00c0 prologue is the in-overlay helper whose byte-exact source is
- * tracked as `games/gs1/assets/code/resource_3cd_c_020000c0.c` — it walks a 16-entry list
+ * tracked as `games/gs1/asm/overlays/resource_3cd_c_020000c0.c` — it walks a 16-entry list
  * and applies `arg` to each member.
  *
  * The Func_08015xxx family is the window/text layer established by the tracked
@@ -205,7 +205,7 @@ void Func_0200017e(u16, s32);
  * `(image, layer, x, y)` and `src/080a14f0.c` fixes Func_080150a8 as
  * `(value, digits, layer, x, y)`, which is the same shape UiNumber_DrawAt is
  * called with here.  The item record's byte at +15 being a count is confirmed
- * independently by the tracked `games/gs1/assets/code/resource_3cd_c_020000a0.c`, which
+ * independently by the tracked `games/gs1/asm/overlays/resource_3cd_c_020000a0.c`, which
  * reads `entry[15]` off the same accessor.
  *
  * Closing with `BattleUnit_Recalculate` over slots 0, 1, 3, 2 is the documented
@@ -218,7 +218,7 @@ void Func_0200017e(u16, s32);
  * repaint block on the first pass.
  *
  * Uncertainties: 0x03001c94 is the button-press latch this family spins on (the
- * tracked `games/gs1/assets/code/resource_36f_c_02000054.c` waits on the same word); bits
+ * tracked `games/gs1/asm/overlays/resource_36f_c_02000054.c` waits on the same word); bits
  * 0/1/2/3 are read here as A / B / Select / Start on the standard GBA key
  * assignment, which fits "A adjusts by 1, Select-or-Start adjusts by 5, B
  * closes" but is not otherwise witnessed.  The pointer handed to Func_08015090

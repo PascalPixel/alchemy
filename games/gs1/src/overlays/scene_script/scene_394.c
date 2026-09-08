@@ -171,9 +171,9 @@ void Func_02001fc0(s32, s32);
  * chain; it in turn calls 0x02000b3c twice and 0x02000150 once.
  *
  * 0x020092c0 and 0x020092c8 are pointer CELLS, not values — the body always
- * loads through them twice.  tracked byte-exact games/gs1/assets/code/
+ * loads through them twice.  tracked byte-exact games/gs1/asm/overlays/
  * resource_394_c_02000054.c reads `*(s32 *)0x020092C0` the same way, and
- * games/gs1/assets/code/resource_394_c_020008b0.c declares the neighbouring cell
+ * games/gs1/asm/overlays/resource_394_c_020008b0.c declares the neighbouring cell
  * `extern u16 *Data_020092c4`.
  *
  * The layout selector at `*Data_020092c8` is re-read four times rather

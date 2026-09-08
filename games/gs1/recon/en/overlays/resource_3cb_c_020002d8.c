@@ -27,8 +27,8 @@
  *   0x0200032a -> veneer 0x0200184c -> Func_0808a020
  *
  * Link base: resource_3cb is linked at 0x02008000 — the handler table at the
- * tail of games/gs1/assets/code/resource_3cb_overlay.s lists 0x02009051, 0x020082d9 and
- * 0x02008341, which are Func_02001050 (byte-exact in games/gs1/assets/code),
+ * tail of games/gs1/asm/overlays/resource_3cb_overlay.s lists 0x02009051, 0x020082d9 and
+ * 0x02008341, which are Func_02001050 (byte-exact in games/gs1/asm/overlays),
  * Func_020002d8 (this owner) and Func_02000340 plus the Thumb bit.  So the
  * pool word 0x02009f50 is an IN-IMAGE datum at file offset 0x1f50, not a RAM
  * global.  The overlay image is writable EWRAM, so this counter genuinely

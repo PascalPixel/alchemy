@@ -15,7 +15,7 @@ test("PCM playback excludes the ROM lookahead byte and preserves native loop pit
   const context = { createBuffer: (_, length, sampleRate) => ({ length, sampleRate, duration: length / sampleRate, copyToChannel(data) { this.data = data; } }) };
   const [decode, loopEnd] = new Function("ensureAudio", source.slice(source.indexOf("function pcmBuffer"), source.indexOf("async function prepareTrackSamples")) + ";return [pcmBuffer, pcmLoopEnd];")(() => context);
   for (const game of ["gs1", "gs2"]) {
-    const base = new URL(`../../../../games/${game}/sound/`, import.meta.url);
+    const base = new URL(`../../../../games/${game}/assets/sound/`, import.meta.url);
     const rows = (await Bun.file(new URL("samples.tsv", base)).text()).trim().split("\n").filter(line => !line.startsWith("#")).slice(1);
     for (const row of rows) {
       const [, , frequency, loop, count, path] = row.split("\t");

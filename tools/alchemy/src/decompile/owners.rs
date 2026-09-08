@@ -91,7 +91,7 @@ pub fn span_for(
         .mapped_source_path(owner)
         .is_some_and(|path| path.is_file())
     {
-        let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+        let path = root.join(format!("games/gs1/asm/overlays/{overlay}_overlay.s"));
         let text = std::fs::read_to_string(&path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
         crate::compiler::overlay::placeholder_extent(&text, entry)

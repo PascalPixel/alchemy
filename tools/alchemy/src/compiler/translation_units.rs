@@ -443,7 +443,7 @@ fn validate_production_state(
             let assembly = root
                 .join("games")
                 .join(&unit.game)
-                .join("assets/code")
+                .join("asm/overlays")
                 .join(format!("{overlay}_overlay.s"));
             std::fs::read_to_string(&assembly)
                 .map_err(|error| format!("{}: {error}", assembly.display()))

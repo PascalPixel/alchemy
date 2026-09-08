@@ -4,7 +4,7 @@
  * Complete actor-21 mode-four reset wrapper.
  *
  * Call symbol resolved directly against the raw region in
- * games/gs1/assets/code/resource_385_overlay.s (`push {lr} / movs r0,#21 / movs r1,#0 /
+ * games/gs1/asm/overlays/resource_385_overlay.s (`push {lr} / movs r0,#21 / movs r1,#0 /
  * movs r2,#4 / bl sub_02001f26 / pop {r0} / bx r0`): the per-site overlay
  * veneer is sub_02001f26, not a main-image address guessed from elsewhere.
  */

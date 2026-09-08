@@ -25,7 +25,7 @@
  * Under that base the image occupies 0x02008000-0x0200a069 (decoded size
  * 0x206a).  So the five remaining pool addresses split cleanly:
  *   0x0200a05a, 0x0200a05e, 0x0200a062  -> file offsets 0x205a/0x205e/0x2062,
- *      inside the image, and `games/gs1/assets/code/resource_3b7_overlay.s` spells the
+ *      inside the image, and `games/gs1/asm/overlays/resource_3b7_overlay.s` spells the
  *      bytes there literally: X tile coords 0x50, 0xa0, 0x50, 0x48; Z tile
  *      coords 0x20, 0x68, 0x44, 0x48; headings 0x0000, 0x0001, 0x0000, 0x8000
  *      - four entries each, which is exactly the loop trip count.

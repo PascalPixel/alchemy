@@ -224,10 +224,7 @@ s32 Func_020003cc(void)
     s32 rec8;
     s32 record;
     s32 value;
-    s32 r10;
     s32 r8;
-    s32 r2;
-    s32 r3;
     s32 base3_2000240;
     s32 v5;
     s32 v7;
@@ -244,6 +241,7 @@ s32 Func_020003cc(void)
     s32 none;
     s32 base5_c82;
     s32 v11;
+    s32 x;
     s32 started;
     s32 slot8;
     s32 slot4;
@@ -282,8 +280,8 @@ s32 Func_020003cc(void)
         Func_02001130();
         L_02000474:;
         Func_02001944(112);
-        Func_0200939c(r10);
-        Func_02001812(r10, 2);
+        Func_0200939c(rec4);
+        Func_02001812(rec4, 2);
         Value2(Func_0200938c, slot16, 2);
         Value2(Func_02001822, slot12, 2);
         Func_020017c0(1);
@@ -564,8 +562,8 @@ s32 Func_020003cc(void)
     goto L_020004a8;
     L_020009a6:;
     Func_02001e76(113);
-    Func_0200939c(r10);
-    Func_02001d44(r10, 2);
+    Func_0200939c(rec4);
+    Func_02001d44(rec4, 2);
     Func_0200938c(slot16, 2);
     Func_02001d54(slot12, 2);
     goto L_020009d2;
@@ -656,11 +654,13 @@ s32 Func_020003cc(void)
                     v6 = 0;
                     v5 = (-p8 + 18);
                     do {
+                        value = base7_0 + 0xf301;
                         if (base7_0 == v11) {
+                            value = base7_0 + 0xf30b;
                         }
+                        Func_02001f92(rec4, value, v5, -1, v6);
                         base7_0 = (base7_0 + 1);
                         v5 = (v5 + 1);
-                        Func_02001f92(rec4, (base7_0 + 0xf30b), v5, -1, v6);
                     } while (base7_0 != p8);
                 }
                 v5 = 0;
@@ -688,18 +688,20 @@ s32 Func_020003cc(void)
                         rec7 = Func_02001f4a(v4, 10);
                         v4 = slot4;
                         record = Func_02001f4e(v4, 10);
+                        x = rec7 * 12 + 18;
                         v3 = record;
                         v3 = (v3 << 4);
                     } else {
                         slot4 = v4;
-                        rec7 = Func_02001f6e(v4, 10, r2, r3);
+                        rec7 = Func_02001f6e(v4, 10);
                         v4 = slot4;
                         record = Func_02001f72(v4, 10);
+                        x = rec7 * 12 + 8;
                         v3 = record;
                         v3 = (v3 << 4);
                     }
                     v3 = (v3 + 2);
-                    Func_02002030(slot24, rec4, ((((rec7 << 1) + rec7) << 2) + 18), v3);
+                    Func_02002030(slot24, rec4, x, v3);
                     v4 = slot4;
                     v7 = (v7 + 1);
                     v4 = (v4 + 1);

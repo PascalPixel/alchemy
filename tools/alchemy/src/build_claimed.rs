@@ -26,12 +26,10 @@ pub fn entry(arguments: &[String]) -> Result<()> {
     }
     Ok(())
 }
+use crate::candidate::{link_candidate_owned_routed_with_object, CandidateCompilerConfiguration};
 use crate::targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompTarget, DecompTargetId,
     DEFAULT_TARGET,
-};
-use candidate_compiler::verify::{
-    link_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
 };
 use compiler_core::build_io::{argv as strings, read, relative, rooted, text, write as write_file};
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};

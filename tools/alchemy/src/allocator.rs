@@ -76,7 +76,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let bindings = work.join("bindings.h");
     fs::write(
         &bindings,
-        candidate_compiler::verify::source_symbol_bindings(&repo, &source, CompilerTarget::Gs1)?,
+        crate::candidate::source_symbol_bindings(&repo, &source, CompilerTarget::Gs1)?,
     )
     .map_err(|e| e.to_string())?;
     cpp.splice(

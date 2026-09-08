@@ -3,7 +3,7 @@
 //! A candidate is adoptable only when its linked bytes equal the bytes produced
 //! by the corresponding hand-written assembly at the same ROM address.
 //! `--apply` performs the move and cleanup only after that proof.
-use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
+use crate::candidate::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::no_asm::{find_forbidden, source_files};
 use compiler_core::plan::direct_preprocessor_command;
 use compiler_core::routing::{root, CompilerTarget};

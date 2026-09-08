@@ -1,6 +1,6 @@
+use crate::candidate::{assemble, compile_to_assembly};
 use crate::overlay::compile::compile_declared_overlay_unit;
 use crate::overlay::compile::OverlayEditionPlacement;
-use candidate_compiler::verify::{assemble, compile_to_assembly};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::symbol_is_thumb;

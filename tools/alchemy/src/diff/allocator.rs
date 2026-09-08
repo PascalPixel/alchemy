@@ -1,5 +1,5 @@
+use crate::candidate::{compile_source, copy_text};
 use crate::diff::{cli::Options, render::align_streams};
-use candidate_compiler::verify::{compile_source, copy_text};
 use psynergy::process::run;
 use psynergy::repair::{split_pointer_uses, Repair, RepairPlan};
 use regex::Regex;

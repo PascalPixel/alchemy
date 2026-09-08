@@ -15,10 +15,9 @@ use crate::diff::{
 use crate::overlay::assembly::OVERLAY_BASE;
 use psynergy::compare::{
     differing_offsets,
-    insns::gas_function_insns,
+    insns::{align_streams, gas_function_insns},
     topology::{self, Comparison},
 };
-use regex::Regex;
 use serde_json::Value;
 use std::{
     path::{Path, PathBuf},
@@ -598,39 +597,6 @@ fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
         String::from_utf8_lossy(&output.stdout).into_owned()
     })
 }
-pub fn alignment_key(instruction: &str) -> String {
-    let registered = without_register(instruction);
-    let text = registered.split('@').next().unwrap_or(&registered);
-    let mut out = String::new();
-    let mut chars = text.chars().peekable();
-    while let Some(c) = chars.next() {
-        if c == '0' && chars.peek() == Some(&'x') {
-            chars.next();
-            out.push_str("0xN");
-            while chars.peek().is_some_and(|c| c.is_ascii_hexdigit()) {
-                chars.next();
-            }
-        } else if c.is_ascii_digit() {
-            out.push('N');
-            while chars.peek().is_some_and(char::is_ascii_digit) {
-                chars.next();
-            }
-        } else {
-            out.push(if c == '\t' { ' ' } else { c });
-        }
-    }
-    out.split_whitespace().collect::<Vec<_>>().join(" ")
-}
-pub fn without_pc_offset(instruction: &str) -> String {
-    let mut out = instruction.to_string();
-    while let Some(start) = out.find("[pc, #") {
-        let end = out[start..]
-            .find(']')
-            .map_or(out.len() - start, |end| end + 1);
-        out = format!("{}[pc]{}", &out[..start], &out[start + end..]);
-    }
-    out
-}
 pub fn ordered_lines(rows: &Rows) -> Vec<String> {
     let mut keys: Vec<_> = rows.keys().collect();
     keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
@@ -656,25 +622,6 @@ pub fn side_by_side(pairs: &[(Option<String>, Option<String>)]) -> String {
             format!("  {mark} {candidate:<30.30} {reference}\n")
         })
         .collect()
-}
-pub fn without_register(instruction: &str) -> String {
-    static REG: std::sync::OnceLock<Regex> = std::sync::OnceLock::new();
-    REG.get_or_init(|| Regex::new(r"(?i)\b(?:r(?:1[0-2]|[0-9])|fp|ip|sl)\b").unwrap())
-        .replace_all(instruction, "R")
-        .into_owned()
-}
-pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
-    crate::diff::triage::alignment_indices(left, right, |left, right| {
-        usize::from(alignment_key(left) == alignment_key(right))
-    })
-    .into_iter()
-    .map(|(left_index, right_index)| {
-        (
-            left_index.map(|index| left[index].clone()),
-            right_index.map(|index| right[index].clone()),
-        )
-    })
-    .collect()
 }
 fn source_cache_key(
     source: &str,

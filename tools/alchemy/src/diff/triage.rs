@@ -1,5 +1,8 @@
-use crate::diff::render::{alignment_key, without_pc_offset, without_register};
 use psynergy::compare::topology::Comparison;
+use psynergy::compare::{
+    alignment_indices,
+    insns::{alignment_key, without_pc_offset, without_register},
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -202,42 +205,6 @@ fn frame_context_only(left: &[String], right: &[String]) -> bool {
             .iter()
             .zip(right)
             .any(|(left, right)| normalized(left) != normalized(right))
-}
-pub(crate) fn alignment_indices(
-    left: &[String],
-    right: &[String],
-    score: impl Copy + Fn(&str, &str) -> usize,
-) -> Vec<(Option<usize>, Option<usize>)> {
-    let mut table = vec![vec![0; right.len() + 1]; left.len() + 1];
-    for i in (0..left.len()).rev() {
-        for j in (0..right.len()).rev() {
-            let pair = score(&left[i], &right[j]);
-            let diagonal = (pair != 0).then(|| table[i + 1][j + 1] + pair);
-            table[i][j] = diagonal
-                .unwrap_or_default()
-                .max(table[i + 1][j])
-                .max(table[i][j + 1]);
-        }
-    }
-    let (mut i, mut j) = (0, 0);
-    let mut pairs = Vec::new();
-    while i < left.len() && j < right.len() {
-        let pair = score(&left[i], &right[j]);
-        if pair != 0 && table[i][j] == table[i + 1][j + 1] + pair {
-            pairs.push((Some(i), Some(j)));
-            i += 1;
-            j += 1;
-        } else if table[i + 1][j] >= table[i][j + 1] {
-            pairs.push((Some(i), None));
-            i += 1;
-        } else {
-            pairs.push((None, Some(j)));
-            j += 1;
-        }
-    }
-    pairs.extend((i..left.len()).map(|index| (Some(index), None)));
-    pairs.extend((j..right.len()).map(|index| (None, Some(index))));
-    pairs
 }
 fn aligned_slots(
     left_len: usize,

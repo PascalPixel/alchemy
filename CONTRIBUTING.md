@@ -181,9 +181,12 @@ owner or explained nonfunction role. Exact C means ordinary production C emits
 the complete linked extent with zero differences under the approved route.
 Names, plausible behavior, matching size and fuzzy scores are not proof.
 
-Retained assembly requires independent compiler or machine-code evidence.
+Credited assembly requires positive evidence of real handwritten or third-party
+assembly, such as a verified match to historical assembly runtime source or an
+independently established hand-authored machine interface. Failure of the
+approved compiler to emit a shape is not, by itself, evidence of that origin.
 Search exhaustion, register mismatches, repeated scripts and large functions
-are not evidence that C is impossible. A C recovery invalidates incompatible
+earn no Assembly credit. A C recovery invalidates incompatible
 ASM evidence across its complete range: reconcile it immediately without
 double-counting. Main evidence is exposed by the assembly manifest; overlay
 evidence lives in `games/gs1/semantic/overlay-assembly.json`. Entries marked

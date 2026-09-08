@@ -1,6 +1,20 @@
 {
   "format": 3,
   "owners": {
+    "resource_38b:02000db4": {"name": "SceneActor_PushPuzzleActor"},
+    "resource_385:02000f30": {
+      "name": "SceneSetup_InitializeActorsAndFlags"
+    },
+    "resource_3a2:020011b0": {
+      "name": "FieldScene_RunActorEventSetup"
+    },
+    "resource_3b5:0200007c": {
+      "name": "SceneActor_UpdatePlayerProximity",
+      "source": "overlays/actor_proximity/player_proximity.c"
+    },
+    "resource_3ae:02000958": {
+      "name": "FieldScene_ConfigureFlaggedActors"
+    },
     "resource_39c:02002f68": {
       "name": "FieldScene_RunRandomEffectActorSequence"
     },
@@ -46,7 +60,8 @@
       "source": "overlays/actor_presentation/actor_scene_setup.c"
     },
     "resource_385:02000350": {
-      "name": "SceneActor_UpdateProximity"
+      "name": "SceneActor_UpdateProximity",
+      "source": "overlays/actor_proximity/proximity.c"
     },
     "resource_385:0200058c": {
       "name": "SceneDialogue_RunActorFourteenFlagDialogue",

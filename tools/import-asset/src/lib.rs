@@ -12,21 +12,10 @@ pub use huffman_archive::{encode_huffman_archive, HuffmanArchive};
 pub use text::{import_pairs, import_tilemap, import_words};
 pub use wav::{pcm8_wav, wav_pcm8};
 pub type Rgb = [u8; 3];
-#[derive(Debug, Clone, PartialEq, Default)]
-pub struct Report(pub Vec<(String, f64)>);
-impl Report {
-    pub fn set(&mut self, key: &str, value: f64) {
-        match self.0.iter_mut().find(|(name, _)| name == key) {
-            Some(slot) => slot.1 = value,
-            None => self.0.push((key.to_string(), value)),
-        }
-    }
-    pub fn get(&self, key: &str) -> Option<f64> {
-        self.0
-            .iter()
-            .find(|(name, _)| name == key)
-            .map(|(_, value)| *value)
-    }
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ImageSize {
+    pub width: u32,
+    pub height: u32,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -61,19 +50,6 @@ pub fn hex(bytes: &[u8]) -> String {
 pub fn subarray(data: &[u8], start: usize, end: usize) -> &[u8] {
     let start = start.min(data.len());
     &data[start..end.clamp(start, data.len())]
-}
-
-pub fn js_number_json(value: f64) -> String {
-    if !value.is_finite() {
-        return "null".into();
-    }
-    if value == 0.0 {
-        return "0".into();
-    }
-    if value.fract() == 0.0 && value.abs() < 1e21 {
-        return format!("{value:.0}");
-    }
-    value.to_string()
 }
 
 fn png_error(error: impl std::fmt::Display) -> AssetError {
@@ -203,7 +179,7 @@ pub fn rgba_png(data: &[u8]) -> Result<RgbaImage, AssetError> {
     })
 }
 
-pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
+pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, ImageSize), AssetError> {
     let image = rgba_png(data)?;
     let mut palette = Vec::with_capacity(image.pixels.len() / 2);
     for rgba in image.pixels.chunks_exact(4) {
@@ -222,39 +198,25 @@ pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
                 .to_le_bytes(),
         );
     }
-    let mut report = Report::default();
-    report.set("width", image.width.into());
-    report.set("height", image.height.into());
-    report.set("palette_entries", (palette.len() / 2) as f64);
-    Ok((palette, report))
+    Ok((
+        palette,
+        ImageSize {
+            width: image.width,
+            height: image.height,
+        },
+    ))
 }
 
-pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report), AssetError> {
-    let bpp_kind = match bpp {
-        4.0 => GbaBpp::Bpp4,
-        8.0 => GbaBpp::Bpp8,
-        _ => {
-            return err(format!(
-                "GBA graphics must be 4bpp or 8bpp, not {}",
-                js_number_json(bpp)
-            ))
-        }
-    };
-    let (tiles, palette, width, height) = gba::gba_graphics_from_png(data, bpp_kind, false)?;
-    let mut report = Report::default();
-    report.set("width", width.into());
-    report.set("height", height.into());
-    report.set("bpp", bpp);
-    report.set("tiles", (width as usize / 8 * height as usize / 8) as f64);
-    report.set("palette_entries", palette.len() as f64 / 2.0);
-    Ok((tiles, palette, report))
+pub fn gba_graphics(data: &[u8], bpp: GbaBpp) -> Result<(Vec<u8>, Vec<u8>, ImageSize), AssetError> {
+    let (tiles, palette, width, height) = gba::gba_graphics_from_png(data, bpp, false)?;
+    Ok((tiles, palette, ImageSize { width, height }))
 }
 
 /// Pack an indexed PNG into 8x8 tiles of one bit per pixel: each tile is
 /// eight bytes, one row each from the top, with the leftmost pixel in the most
 /// significant bit; tiles follow in row-major order.  Palette index 0 clears a
 /// bit and index 1 sets it, whatever colours the palette holds.
-pub fn one_bit_tiles(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
+pub fn one_bit_tiles(data: &[u8]) -> Result<(Vec<u8>, ImageSize), AssetError> {
     let image = indexed_png(data)?;
     if image.palette.len() > 2 || image.pixels.iter().any(|pixel| *pixel > 1) {
         return err("image does not fit 1bpp");
@@ -269,12 +231,13 @@ pub fn one_bit_tiles(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
             }
         }
     }
-    let mut report = Report::default();
-    report.set("width", image.width.into());
-    report.set("height", image.height.into());
-    report.set("bpp", 1.0);
-    report.set("tiles", (width / 8 * image.height as usize / 8) as f64);
-    Ok((tiles, report))
+    Ok((
+        tiles,
+        ImageSize {
+            width: image.width,
+            height: image.height,
+        },
+    ))
 }
 
 fn be_u16(data: &[u8], at: usize) -> Option<u16> {
@@ -447,19 +410,6 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     })
 }
 
-pub fn sorted_json(report: &Report) -> String {
-    let mut values: Vec<_> = report.0.iter().collect();
-    values.sort_by(|a, b| a.0.cmp(&b.0));
-    format!(
-        "{{{}}}",
-        values
-            .iter()
-            .map(|(key, value)| format!("\"{key}\": {}", js_number_json(*value)))
-            .collect::<Vec<_>>()
-            .join(", ")
-    )
-}
-
 fn encode_png(
     width: usize,
     height: usize,
@@ -510,7 +460,7 @@ pub fn self_test() -> Result<String, AssetError> {
         .map_err(png_error)?
         .write_image_data(&[0x55; 8])
         .map_err(png_error)?;
-    let (tiles, palette, _) = gba_graphics(&indexed, 4.0)?;
+    let (tiles, palette, _) = gba_graphics(&indexed, GbaBpp::Bpp4)?;
     if tiles != [0x10; 32] || palette != [0, 0, 0x1f, 0] {
         return err("GBA graphics self-test failed");
     }
@@ -631,10 +581,16 @@ mod tests {
             .unwrap()
             .write_image_data(&rows)
             .unwrap();
-        let (tiles, report) = one_bit_tiles(&out).unwrap();
+        let (tiles, size) = one_bit_tiles(&out).unwrap();
         assert_eq!(tiles[..8], [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]);
         assert_eq!(tiles[8..], [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80]);
-        assert_eq!(report.get("tiles"), Some(2.0));
+        assert_eq!(
+            size,
+            ImageSize {
+                width: 16,
+                height: 8
+            }
+        );
         let mut wide = Vec::new();
         let mut encoder = png::Encoder::new(&mut wide, 8, 8);
         encoder.set_color(png::ColorType::Indexed);

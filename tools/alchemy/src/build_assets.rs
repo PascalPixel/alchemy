@@ -17,7 +17,7 @@ use gba_header::{build_gba_header_component, read_gba_header_source};
 use import_asset::import_tilemap;
 use import_asset::{
     append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, one_bit_tiles,
-    rgba_png, EventBody, MidiEvent, MIDI_BUILD_DIRECTIVE,
+    rgba_png, EventBody, GbaBpp, MidiEvent, MIDI_BUILD_DIRECTIVE,
 };
 use serde_json::Value;
 use sha1::{Digest, Sha1};
@@ -224,9 +224,11 @@ fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, S
     let tile_count = number(&plan["tile_count"], "tile_count")?;
     let fallback = json_string(&plan["fallback"], "fallback")?;
     let fallback_path = child_path(plan_path, fallback);
-    let (fallback_bytes, _, _) =
-        gba_graphics(&fs::read(&fallback_path).map_err(|e| e.to_string())?, 4.0)
-            .map_err(|e| e.to_string())?;
+    let (fallback_bytes, _, _) = gba_graphics(
+        &fs::read(&fallback_path).map_err(|e| e.to_string())?,
+        GbaBpp::Bpp4,
+    )
+    .map_err(|e| e.to_string())?;
     if fallback_bytes.len() != tile_count * 32 {
         return Err("object-bank fallback has the wrong tile count".to_string());
     }
@@ -493,12 +495,20 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
             return Ok(result);
         }
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" => {
-            let bpp = if kind == "gba-4bpp-tiles" { 4.0 } else { 8.0 };
-            let (graphics, palette, report) =
+            let bpp = if kind == "gba-4bpp-tiles" {
+                GbaBpp::Bpp4
+            } else {
+                GbaBpp::Bpp8
+            };
+            let (graphics, palette, size) =
                 gba_graphics(&fs::read(&source).map_err(|e| e.to_string())?, bpp)
                     .map_err(|e| e.to_string())?;
-            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
-                .map_err(|e| e.to_string())?;
+            let details = serde_json::json!({
+                "width": size.width, "height": size.height,
+                "bpp": if bpp == GbaBpp::Bpp4 { 4 } else { 8 },
+                "tiles": size.width as usize / 8 * (size.height as usize / 8),
+                "palette_entries": palette.len() / 2,
+            });
             let mut built = if kind == "gba-palette" {
                 palette
             } else {
@@ -529,7 +539,7 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                     return Err("atlas dimensions differ".into());
                 }
                 if entry["symbolic_palette"] == true {
-                    let count = if bpp == 4.0 { 16 } else { 256 };
+                    let count = if bpp == GbaBpp::Bpp4 { 16 } else { 256 };
                     let expected = (0..count)
                         .map(|i| {
                             let v = (if count == 16 { i * 8 } else { i }) as u8;
@@ -540,7 +550,7 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                         return Err("symbolic atlas palette differs".into());
                     }
                 }
-                let tile_bytes = if bpp == 4.0 { 32 } else { 64 };
+                let tile_bytes = if bpp == GbaBpp::Bpp4 { 32 } else { 64 };
                 let mut ordered = Vec::new();
                 for frame in 0..frames {
                     for y in 0..h {
@@ -572,17 +582,19 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
             (built, details, vec![source_name.to_string()])
         }
         "gba-palette-rgba" => {
-            let (built, report) = gba_palette_rgba(&fs::read(&source).map_err(|e| e.to_string())?)
+            let (built, size) = gba_palette_rgba(&fs::read(&source).map_err(|e| e.to_string())?)
                 .map_err(|e| e.to_string())?;
-            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
-                .map_err(|e| e.to_string())?;
+            let details = serde_json::json!({
+                "width": size.width, "height": size.height, "palette_entries": built.len() / 2,
+            });
             (built, details, vec![source_name.to_string()])
         }
         "1bpp-tiles" => {
-            let (built, report) = one_bit_tiles(&fs::read(&source).map_err(|e| e.to_string())?)
+            let (built, size) = one_bit_tiles(&fs::read(&source).map_err(|e| e.to_string())?)
                 .map_err(|e| e.to_string())?;
-            let details: Value = serde_json::from_str(&import_asset::sorted_json(&report))
-                .map_err(|e| e.to_string())?;
+            let details = serde_json::json!({
+                "width": size.width, "height": size.height, "bpp": 1, "tiles": built.len() / 8,
+            });
             (built, details, vec![source_name.to_string()])
         }
         "gba-tilemap16" => {
@@ -1735,6 +1747,12 @@ fn tiled_atlas_serializes_frames_before_tile_rows() {
     let entry = serde_json::json!({"kind":"gba-4bpp-tiles","source":"atlas.png","size":128,"frames":2,"columns":2,"frame_tiles_wide":1,"frame_tiles_high":2,"symbolic_palette":true});
     let result = build_component(root.path(), &entry).unwrap();
     assert_eq!(result.data, [vec![0x11; 64], vec![0x22; 64]].concat());
+    assert_eq!(
+        result.details,
+        serde_json::json!({
+            "width": 16, "height": 16, "bpp": 4, "tiles": 4, "palette_entries": 16,
+        })
+    );
     for field in ["frames", "columns", "frame_tiles_wide", "frame_tiles_high"] {
         let mut bad = entry.clone();
         bad[field] = serde_json::json!(0);

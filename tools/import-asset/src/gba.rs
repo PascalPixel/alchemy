@@ -300,6 +300,6 @@ mod tests {
         assert!(crate::indexed_png(&source).unwrap().has_transparency);
         assert!(gba_tiles_from_png(&source, GbaBpp::Bpp4).is_err());
         assert!(bgr555_palette_from_png(&source).is_err());
-        assert!(crate::gba_graphics(&source, 4.0).is_ok());
+        assert!(crate::gba_graphics(&source, GbaBpp::Bpp4).is_ok());
     }
 }

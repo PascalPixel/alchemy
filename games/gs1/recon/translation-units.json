@@ -16,6 +16,7 @@
         "Village_FinishActorRestore": {"address": "0x0200d5f8", "kind": "thumb"}
       },
       "owners": [
+        {"address": "0x02004f60", "extent": 388, "state": "exact-c"},
         {"address": "0x020050e4", "extent": 576, "state": "exact-c"},
         {"address": "0x02005324", "extent": 332, "state": "exact-c"},
         {"address": "0x02005470", "extent": 64, "state": "exact-c"},

@@ -188,9 +188,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     absolute_04000020.field_0000 = 0xCC;
     Func_080e0524(0x76, sp44, 0, 0);
     Func_080e0524(0xB7, sp44 + 0x60E, 1, 1);
-    switch (sp48) {                                 /* switch 2; irregular */
-    case 3:                                         /* switch 2 */
-    case 5:                                         /* switch 2 */
+    if (sp48 == 3 || sp48 == 5) {
         Func_080e0524(0xB0, sp44 + 0x2B8E, 1, 1);
         if (sp48 == 3) {
             var_r0_133 = 0x93;
@@ -198,49 +196,35 @@ void BattleEffectB(s32 arg0, s32 arg1) {
             var_r0_133 = 0x8D;
         }
         ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(var_r0_133), 0x80);
-        break;
-    case 4:                                         /* switch 2 */
+    } else if (sp48 == 4) {
         Func_080e0524(0xA5, sp44 + 0x2B8E, 1, 1);
-        break;
-    case 0:                                         /* switch 2 */
-        Func_080e0524(0x9C, sp44 + 0x2B8E, 1, 0);
-block_22:
-        switch (sp48) {                             /* switch 3; irregular */
-        case 0:                                     /* switch 3 */
+    } else {
+        if (sp48 == 0) {
+            Func_080e0524(0x9C, sp44 + 0x2B8E, 1, 0);
+        } else {
+            Func_080e0524(0x9B, sp44 + 0x2B8E, 1, 0);
+        }
+        if (sp48 == 0) {
             var_r0_182 = 0x8D;
-            break;
-        case 2:                                     /* switch 3 */
-        case 4:                                     /* switch 3 */
+        } else if (sp48 == 2 || sp48 == 4) {
             var_r0_182 = 0x8F;
-            break;
-        case 1:                                     /* switch 3 */
+        } else if (sp48 == 1) {
             var_r0_182 = 0x8D;
-            break;
-        default:                                    /* switch 3 */
+        } else {
             var_r0_182 = 0xBB;
-            break;
         }
         ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(var_r0_182), 0x80);
-        break;
-    default:                                        /* switch 2 */
-        Func_080e0524(0x9B, sp44 + 0x2B8E, 1, 0);
-        goto block_22;
     }
-    switch (sp48) {                                 /* switch 4; irregular */
-    case 3:                                         /* switch 4 */
+    if (sp48 == 3) {
         var_r0_215 = 0x93;
         var_r1_216 = sp44 + 0x65C0;
-block_36:
         Func_080e0524(var_r0_215, var_r1_216, 1, 0);
-        break;
-    case 2:                                         /* switch 4 */
-    case 4:                                         /* switch 4 */
+    } else if (sp48 == 2 || sp48 == 4) {
         var_r0_215 = 0x8F;
         var_r1_216 = sp44 + 0x65C0;
-        goto block_36;
-    default:                                        /* switch 4 */
+        Func_080e0524(var_r0_215, var_r1_216, 1, 0);
+    } else {
         Func_080e0524(0x8D, sp44 + 0x65C0, 1, 0);
-        break;
     }
     var_r5_244 = &absolute_02010000;
     var_sl_245 = 0;

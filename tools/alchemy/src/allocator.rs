@@ -6,7 +6,7 @@ use compiler_core::{
 };
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
 const REGS: [&str; 16] = [
@@ -19,7 +19,6 @@ mod tests {
     fn invalid_owners_and_route_overrides_are_rejected_before_compilation() {
         for args in [
             vec!["../../elsewhere"],
-            vec!["resource_3ba:02002910"],
             vec!["080bbb0c", "-fno-cse-follow-jumps"],
             vec!["080bbb0c", "source.c", "extra"],
         ] {
@@ -27,6 +26,84 @@ mod tests {
             assert!(super::run(&args).is_err());
         }
         assert!(super::run(&["--help".into()]).is_ok());
+    }
+
+    /// Compile one owner's draft, then the same text from a path outside the
+    /// draft directory: the report has to be the same, because the compiler
+    /// route and the symbol bindings follow the owner and not the file name.
+    /// Returns the work directory of the first compile with its report.
+    fn dumps_and_report(owner: &str, stem: &str) -> (std::path::PathBuf, String) {
+        let (work, report) = super::inspect(owner, None).unwrap();
+        let dumps = std::fs::read_dir(&work)
+            .unwrap()
+            .filter_map(Result::ok)
+            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .collect::<Vec<_>>();
+        for pass in ["lreg", "greg", "sched2"] {
+            let suffix = format!(".{pass}");
+            assert!(
+                dumps.iter().any(|name| name.ends_with(&suffix)),
+                "no {pass} dump for {owner} among {dumps:?}"
+            );
+        }
+        let elsewhere = tempfile::Builder::new()
+            .suffix(".c")
+            .tempfile()
+            .unwrap()
+            .into_temp_path();
+        let parsed = compiler_core::source_paths::SourceOwner::parse_argument(owner).unwrap();
+        let drafts = if parsed.is_main() { "main" } else { "overlays" };
+        std::fs::copy(
+            compiler_core::routing::root().join(format!("games/gs1/recon/en/{drafts}/{stem}.c")),
+            &elsewhere,
+        )
+        .unwrap();
+        let (_, renamed) = super::inspect(owner, elsewhere.to_str()).unwrap();
+        assert_eq!(renamed, report, "{owner} routed by its candidate's name");
+        (work, report)
+    }
+
+    /// Which image's symbols the compile was bound against. Overlay owners
+    /// live at 0x02......, main-image owners at 0x08......, so the generated
+    /// header says outright which route produced the dumps.
+    fn bound_images(work: &std::path::Path) -> (bool, bool) {
+        let bindings = std::fs::read_to_string(work.join("bindings.h")).unwrap();
+        assert!(!bindings.is_empty(), "no symbol bindings were generated");
+        (bindings.contains("Func_02"), bindings.contains("Func_08"))
+    }
+
+    /// The allocator and scheduling route has to reach overlay owners: their
+    /// drafts are the ones parked on a scheduling residual.
+    #[test]
+    fn an_overlay_owner_dumps_and_reports_its_allocation() {
+        let (work, report) = dumps_and_report("resource_378:0200088c", "resource_378_c_0200088c");
+        // The overlay's own bindings, not the main image's: this is the fix.
+        assert_eq!(bound_images(&work), (true, false));
+        assert!(
+            report.starts_with("resource_378_c_0200088c: 201 pseudos, global order: 222 37 54\n"),
+            "{}",
+            report.lines().next().unwrap_or_default()
+        );
+        assert!(report.contains(
+            "\nspill insns: 96 99 110 113 168 171 465 482 529 546 681 723 778 896 3212 3226 3236\n"
+        ));
+        assert!(report.ends_with("\nreloads: r3 for reload 0; r3 for reload 0; r2 for reload 0; r3 for reload 0; r3 for reload 0; r3 for reload 0; r3 for reload 0"));
+        let rows = report
+            .lines()
+            .filter(|line| line.starts_with(|first: char| first.is_ascii_digit()))
+            .count();
+        assert_eq!(rows, 201);
+        assert!(report.contains("  conflicts: "));
+    }
+
+    /// The main image keeps the report it had, and gains the same
+    /// independence from the candidate's location.
+    #[test]
+    fn a_main_owner_reports_its_allocation_unchanged() {
+        let (work, report) = dumps_and_report("0800300c", "0800300c");
+        assert_eq!(bound_images(&work), (false, true));
+        assert!(report.starts_with("0800300c: 24 pseudos, global order: \n"));
+        assert!(report.ends_with("\nspill insns: 12 18 24 30 36 42 48 54 60 66 72 78"));
     }
 }
 
@@ -41,7 +118,7 @@ pub fn entry(args: &[String]) -> ExitCode {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    const USAGE: &str = "usage: alchemy inspect allocator MAIN_OWNER [candidate.c]";
+    const USAGE: &str = "usage: alchemy inspect allocator OWNER [candidate.c]";
     if args == ["--help"] || args == ["-h"] {
         println!("{USAGE}");
         return Ok(());
@@ -49,15 +126,27 @@ fn run(args: &[String]) -> Result<(), String> {
     if args.is_empty() || args.len() > 2 || args.iter().any(|a| a.starts_with('-')) {
         return Err(USAGE.into());
     }
-    let parsed = SourceOwner::parse_argument(&args[0])?;
-    if !parsed.is_main() {
-        return Err("allocator inspection currently requires a main-ROM owner".into());
-    }
-    let owner = format!("{:08x}", parsed.address());
-    let source = args
-        .get(1)
-        .cloned()
-        .unwrap_or_else(|| format!("games/gs1/recon/en/main/{owner}.c"));
+    let (work, report) = inspect(&args[0], args.get(1).map(String::as_str))?;
+    println!("{report}");
+    println!(
+        "dumps kept in {} (cse=03, cse2=09, combine=13, lreg=17, greg=18, sched2=23)",
+        work.display()
+    );
+    Ok(())
+}
+
+/// Compile the owner's candidate with GCC's `-da` dumps and read the
+/// allocation out of them. Compiler route and symbol bindings follow the
+/// owner, so an overlay owner is dumped through the overlay's own route and
+/// its translation unit's bindings; only the draft's directory differs.
+fn inspect(target: &str, candidate: Option<&str>) -> Result<(PathBuf, String), String> {
+    let parsed = SourceOwner::parse_argument(target)?;
+    let owner = parsed.legacy_stem();
+    let source = candidate.map(str::to_string).unwrap_or_else(|| {
+        let drafts = if parsed.is_main() { "main" } else { "overlays" };
+        format!("games/gs1/recon/en/{drafts}/{owner}.c")
+    });
+    let routing = parsed.routing_path().to_string_lossy().into_owned();
     let repo = compiler_core::routing::root();
     let directory = repo.join("out/allocator");
     fs::create_dir_all(&directory).map_err(|e| e.to_string())?;
@@ -76,7 +165,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let bindings = work.join("bindings.h");
     fs::write(
         &bindings,
-        candidate_compiler::verify::source_symbol_bindings(&repo, &source, CompilerTarget::Gs1)?,
+        candidate_compiler::verify::source_symbol_bindings(&repo, &routing, CompilerTarget::Gs1)?,
     )
     .map_err(|e| e.to_string())?;
     cpp.splice(
@@ -84,7 +173,7 @@ fn run(args: &[String]) -> Result<(), String> {
         ["-include".into(), bindings.to_string_lossy().into_owned()],
     );
     checked(Path::new(&cpp[0]), &cpp[1..], &repo)?;
-    let mut cc1 = cflags_for_target_source(CompilerTarget::Gs1, &source);
+    let mut cc1 = cflags_for_target_source(CompilerTarget::Gs1, &routing);
     cc1.retain(|flag| flag != "-nostdinc" && !flag.starts_with("-I"));
     cc1.extend([
         "-quiet".into(),
@@ -231,16 +320,18 @@ fn run(args: &[String]) -> Result<(), String> {
         }
     }
 
-    println!(
-        "{owner}: {} pseudos, global order: {}",
-        creation.len(),
-        order
-            .iter()
-            .map(|n| n.to_string())
-            .collect::<Vec<_>>()
-            .join(" ")
-    );
-    println!("pseudo  hard  var                     pref      order  costs");
+    let mut lines = vec![
+        format!(
+            "{owner}: {} pseudos, global order: {}",
+            creation.len(),
+            order
+                .iter()
+                .map(|n| n.to_string())
+                .collect::<Vec<_>>()
+                .join(" ")
+        ),
+        "pseudo  hard  var                     pref      order  costs".to_string(),
+    ];
     for p in &creation {
         let hard = assigned
             .get(p)
@@ -255,7 +346,7 @@ fn run(args: &[String]) -> Result<(), String> {
             .position(|o| o == p)
             .map(|i| i.to_string())
             .unwrap_or_else(|| "-".into());
-        println!(
+        lines.push(format!(
             "{:<7} {:<5} {:<23} {:<9} {:<6} {}{}",
             p,
             hard,
@@ -267,19 +358,15 @@ fn run(args: &[String]) -> Result<(), String> {
                 .get(p)
                 .map(|c| format!("  conflicts: {c}"))
                 .unwrap_or_default()
-        );
+        ));
     }
     if !spills.is_empty() {
-        println!("spill insns: {}", spills.join(" "));
+        lines.push(format!("spill insns: {}", spills.join(" ")));
     }
     if !reloads.is_empty() {
-        println!("reloads: {}", reloads.join("; "));
+        lines.push(format!("reloads: {}", reloads.join("; ")));
     }
-    println!(
-        "dumps kept in {} (cse=03, cse2=09, combine=13, lreg=17, greg=18, sched2=23)",
-        work.display()
-    );
-    Ok(())
+    Ok((work, lines.join("\n")))
 }
 
 fn checked(program: &Path, args: &[String], cwd: &Path) -> Result<(), String> {

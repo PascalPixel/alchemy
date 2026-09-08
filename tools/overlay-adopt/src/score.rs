@@ -12,7 +12,7 @@ use disassemble::compile::compile_overlay_c;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-use tempfile::tempdir;
+use tempfile::{tempdir, TempDir};
 fn nonowner_relationship(
     kind: &str,
     entry: SourceOwner,
@@ -78,46 +78,73 @@ fn source_for(root: &Path, paths: &SourcePaths, owner: SourceOwner) -> Result<Pa
         .find(|candidate| candidate.exists())
         .ok_or_else(|| format!("no source for {}", owner.id()))
 }
-pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
-    let (mut align, mut asm, mut target, mut owner_target, mut override_span) =
-        (false, false, None, None, None);
-    let mut args = argv.iter();
-    while let Some(argument) = args.next() {
-        match argument.as_str() {
-            "--flags" | "--remove-flags" | "--family" => {
-                return Err(format!(
-                    "{argument} is retired; candidates use their canonical compiler route"
-                ));
+#[derive(Default)]
+struct Arguments {
+    target: Option<String>,
+    owner: Option<String>,
+    span: Option<usize>,
+    align: bool,
+    first: bool,
+    allocator_order: bool,
+    asm: bool,
+}
+impl Arguments {
+    /// `None` means `--help`, already answered.
+    fn parse(argv: &[String]) -> Result<Option<Self>, String> {
+        let mut parsed = Self::default();
+        let mut args = argv.iter();
+        while let Some(argument) = args.next() {
+            match argument.as_str() {
+                "--flags" | "--remove-flags" | "--family" => {
+                    return Err(format!(
+                        "{argument} is retired; candidates use their canonical compiler route"
+                    ));
+                }
+                "--span" => {
+                    parsed.span = Some(
+                        args.next()
+                            .and_then(|value| value.parse().ok())
+                            .filter(|span| *span > 0)
+                            .ok_or("--span wants a positive decimal byte count")?,
+                    )
+                }
+                "--owner" => {
+                    parsed.owner = Some(
+                        args.next()
+                            .ok_or("--owner needs <overlay>:<addressHex>")?
+                            .to_string(),
+                    )
+                }
+                "--align" => parsed.align = true,
+                // Both evidence flags imply the aligned stream. This mirrors
+                // `diff::cli::options_of`, which cannot be shared: it parses a
+                // candidate positional with --rom/--target/--unit, while this
+                // command takes an owner target with --span.
+                "--first" | "--allocator-order" => {
+                    parsed.first |= argument == "--first";
+                    parsed.allocator_order |= argument == "--allocator-order";
+                    parsed.align = true;
+                }
+                "--asm" => parsed.asm = true,
+                "-h" | "--help" => {
+                    println!("usage: overlay score TARGET [--owner OWNER] [--span BYTES] [--align] [--first] [--allocator-order] [--asm]");
+                    return Ok(None);
+                }
+                other if parsed.target.is_none() => parsed.target = Some(other.to_string()),
+                other => return Err(format!("unexpected argument {other:?}")),
             }
-            "--span" => {
-                override_span = Some(
-                    args.next()
-                        .and_then(|value| value.parse().ok())
-                        .filter(|span| *span > 0)
-                        .ok_or("--span wants a positive decimal byte count")?,
-                )
-            }
-            "--owner" => {
-                owner_target = Some(
-                    args.next()
-                        .ok_or("--owner needs <overlay>:<addressHex>")?
-                        .to_string(),
-                )
-            }
-            "--align" => align = true,
-            "--asm" => asm = true,
-            "-h" | "--help" => {
-                println!(
-                    "usage: overlay score TARGET [--owner OWNER] [--span BYTES] [--align] [--asm]"
-                );
-                return Ok(0);
-            }
-            other if target.is_none() => target = Some(other.to_string()),
-            other => return Err(format!("unexpected argument {other:?}")),
         }
+        Ok(Some(parsed))
     }
-    let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
-    let resolved = resolve(root, owner_target.as_deref().unwrap_or(&target))?;
+}
+/// Options for the shared renderer. The work directory holds the overlay's
+/// reference image, so it has to outlive the render.
+fn options_for(root: &Path, arguments: &Arguments) -> Result<(Options, TempDir), String> {
+    let target = arguments
+        .target
+        .as_deref()
+        .ok_or("a <overlay>:<addressHex> or source path is required")?;
+    let resolved = resolve(root, arguments.owner.as_deref().unwrap_or(target))?;
     let overlay = resolved.overlay_id().expect("resolved overlay owner");
     let address = i64::from(resolved.address());
     let paths = SourcePaths::load(root)?;
@@ -133,9 +160,9 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         &crate::reviewed_spans(root)?,
         resolved,
         installed,
-        override_span,
+        arguments.span,
     )?;
-    let explicit = Path::new(&target);
+    let explicit = Path::new(target);
     let source = if explicit.is_file() {
         explicit
             .canonicalize()
@@ -164,8 +191,17 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     options.owner = Some(address as u32);
     options.overlay = Some(overlay);
     options.size = Some(span);
-    options.align = align;
-    options.asm = asm;
+    options.align = arguments.align;
+    options.first = arguments.first;
+    options.allocator_order = arguments.allocator_order;
+    options.asm = arguments.asm;
+    Ok((options, work))
+}
+pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
+    let Some(arguments) = Arguments::parse(argv)? else {
+        return Ok(0);
+    };
+    let (options, _work) = options_for(root, &arguments)?;
     let rendered = render(root, &options)?;
     println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
     print!("{}", rendered.stdout);
@@ -290,6 +326,70 @@ mod tests {
             assert!(run(root, &args).unwrap_err().contains(message));
         }
     }
+    /// The allocator and scheduling evidence CONTRIBUTING names has to reach
+    /// overlay owners: the parser used to reject both flags outright. This
+    /// checks they arrive in the options and that the renderer acts on them.
+    #[test]
+    fn scheduling_evidence_flags_reach_the_shared_renderer() {
+        let root = compiler_core::routing::root();
+        let arguments = |argv: &[&str]| {
+            Arguments::parse(&argv.iter().copied().map(str::to_owned).collect::<Vec<_>>())
+                .unwrap()
+                .unwrap()
+        };
+        let target = "resource_378:0200088c";
+        let (plain, _work) = options_for(root, &arguments(&[target])).unwrap();
+        assert_eq!(
+            (plain.align, plain.first, plain.allocator_order),
+            (false, false, false)
+        );
+        for (flag, expected) in [
+            ("--first", (true, true, false)),
+            ("--allocator-order", (true, false, true)),
+        ] {
+            let (options, _work) = options_for(root, &arguments(&[target, flag])).unwrap();
+            assert_eq!(
+                (options.align, options.first, options.allocator_order),
+                expected
+            );
+            assert_eq!(options.overlay.as_deref(), Some("resource_378"));
+        }
+
+        // The renderer has to act on both flags, not merely receive them. The
+        // candidate is a stub for a 4,080-byte owner, so it stays divergent
+        // however the maintained drafts move: no real owner becoming exact
+        // can turn these assertions into a failure.
+        let stub = tempfile::Builder::new().suffix(".c").tempfile().unwrap();
+        std::fs::write(
+            stub.path(),
+            "#include \"types.h\"\n\nvoid Func_0200088c(void)\n{\n}\n",
+        )
+        .unwrap();
+        let candidate = stub.path().to_string_lossy().into_owned();
+        let rendered = |flag: &str| {
+            let arguments = arguments(&[&candidate, "--owner", target, flag]);
+            let (options, _work) = options_for(root, &arguments).unwrap();
+            render(root, &options).unwrap().stdout
+        };
+        let (aligned, first, allocator) = (
+            rendered("--align"),
+            rendered("--first"),
+            rendered("--allocator-order"),
+        );
+        assert!(aligned.contains("candidate=2 reference=4080"), "{aligned}");
+        assert!(!aligned.contains("\nshowing="), "--align alone truncated");
+        assert!(first.contains("\nshowing="), "--first did not truncate");
+        assert!(first.lines().count() < aligned.lines().count());
+        assert!(
+            !aligned.contains("\ntriage_final="),
+            "--align alone reported a residual"
+        );
+        assert!(
+            allocator.contains("\ntriage_final="),
+            "--allocator-order reported no residual"
+        );
+    }
+
     fn owner(value: &str) -> SourceOwner {
         SourceOwner::parse_argument(value).unwrap()
     }

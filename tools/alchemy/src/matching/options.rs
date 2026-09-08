@@ -4,7 +4,7 @@ pub const MAX_ITERATIONS: usize = 100_000;
 pub const MAX_JOBS: usize = 64;
 pub const MAX_SOURCE_BYTES: usize = 8 * 1024 * 1024;
 
-pub const USAGE: &str = "usage: matching <candidate.c> [options]\n\
+pub const USAGE: &str = "usage: alchemy match <candidate.c> [options]\n\
   Decodes allocator evidence and searches a finite catalog over ordinary C.\n\
 \n\
   --iterations N       candidates to compile (default 1000; max 100000)\n\

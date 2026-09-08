@@ -364,7 +364,8 @@ or owner registers. Repair plans name one or two operations and enumerate at mos
 sixteen alternatives; a generated alternative is not a match or an adoption.
 Golden Sun owner lookup, adoption, scene-work reconstruction and command
 dispatch live in `tools/alchemy/src/decompile`. Golden Sun's repair catalog,
-trampoline guard and matching acceptance fixtures stay in the project integration.
+trampoline guard, search execution and matching acceptance fixtures live in
+`tools/alchemy/src/matching`, not a separate tool crate.
 Compiler policy, scored-report orchestration and search execution are still being
 separated from their repository assumptions;
 the existence of the Psynergy crate does not mean that extraction is finished.
@@ -524,7 +525,6 @@ libraries are not additional public command surfaces.
 | [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [diff](tools/diff/) | Project scoring and report orchestration; allocator/type residuals and repair guidance. Uses Psynergy's structural comparison and byte differences rather than maintaining another implementation. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
-| [matching](tools/matching/) | Project search execution: score Psynergy's finite, decoder-named C repairs using approved Golden Sun compilation. Owns the game catalog and trampoline guard, output receipts and byte-exact acceptance fixtures. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |

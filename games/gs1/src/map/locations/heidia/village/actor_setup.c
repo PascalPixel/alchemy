@@ -47,9 +47,129 @@ void Func_02006250(s32);
 s32 Func_0200ab12(s32);
 void Func_02006260(s32);
 
+extern s16 Data_02000240[];
+extern u8 Data_02009151[], Data_0200938d[], Data_02009a45[];
+void Func_0200a598();
+void Func_0200a7d0();
+void Func_0200a7d8();
+void Func_0200a7e0();
+s32 Func_0200a716();
+s32 Func_0200a72a();
+s32 Func_0200a73e();
+s32 Func_0200a752();
+void Func_0200a7b4();
+void Func_0200a7c8();
+void Func_0200a7dc();
+void Func_0200a7f0();
+void Func_0200a7f8();
+void Func_0200a816();
+struct ObjectRuntime *Func_0200a874();
+void Func_0200a812_setup();
+s32 Func_0200a842();
+void Func_0200a8e4();
+void Func_0200a854();
+void Func_0200a7f6();
+void Func_0200a7f4();
+void Func_0200a828();
+void Func_0200a7fe();
+s32 Func_0200a89c();
+void Func_02007300();
+void Func_02007314();
+void Func_0200a844();
+void Func_0200a8c4();
+struct ObjectRuntime *Func_0200a922();
+struct ObjectRuntime *Func_0200a92a();
+void Func_0200a8c8();
+void Func_0200a9f8();
+
 static __inline__ void Call1(void (*f)(), s32 value)
 {
     f(value);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+void FieldScene_SetupActorsForScene(void)
+{
+    struct ObjectRuntime *actor;
+
+    Func_0200a598();
+    Func_0200a7d0(9, 1);
+    Func_0200a7d8(10, 1);
+    Func_0200a7e0(17, 1);
+    if (Func_0200a716(0x94c)) {
+        Func_0200a7b4(15, 0, 0);
+    }
+    if (Func_0200a72a(0x949)) {
+        Func_0200a7c8(11, 0, 0);
+    }
+    if (Func_0200a73e(0x94b)) {
+        Func_0200a7dc(16, 0, 0);
+    }
+    if (Func_0200a752(0xf2e)) {
+        Func_0200a7f0(8, 0, 0);
+    }
+    switch (Data_02000240[225]) {
+    case 1:
+    case 2:
+    case 3:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Func_0200a7f8(0xe00);
+        Func_0200a7f6(Data_02009151, 3200);
+        Func_0200a7f4(1);
+        Func_0200a828();
+        Func_0200a7fe(1);
+        break;
+    case 10:
+    case 13:
+    case 20:
+    case 23:
+    case 24:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x209;
+        Func_0200a816(0xc00);
+        Func_0200a812_setup(Func_0200a874(24), 0);
+        if (Func_0200a842(0x314)) {
+            Call3(Func_0200a8e4, 25, 0x3680000, 0x780000);
+        }
+        break;
+    case 21:
+    case 22:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Func_0200a854(0xe00);
+        Func_0200a7f6(Data_0200938d, 3200);
+        Func_0200a7f4(1);
+        Func_0200a828();
+        Func_0200a7fe(1);
+        break;
+    case 11:
+    case 12:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        if (Func_0200a89c(0x94a)) {
+            Func_02007300();
+        }
+        break;
+    case 31:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Func_02007314();
+        break;
+    case 14:
+    case 15:
+    case 16:
+        Func_0200a844(Data_02009a45, 3200);
+        break;
+    default:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Func_0200a8c4(0xe00);
+        break;
+    }
+    actor = Func_0200a922(8);
+    Func_0200a8c8(Func_0200a92a(8), 0);
+    Func_0200a9f8(8, 1);
+    *(s32 *)&actor->unknown_18[0] = 0xc000;
+    *(s32 *)&actor->unknown_18[4] = 0xc000;
 }
 
 void FieldScene_RestoreActorsFromFlags(void)

@@ -149,6 +149,74 @@ void Func_020044f6();
 void Func_020044c4();
 
 
+void Func_02003eea();
+void Func_0200277e();
+void Func_02003f86();
+void Func_02003fb2();
+void Func_02003fc6();
+void Func_02003f88();
+void Func_0200401c();
+void Func_02004028();
+void Func_02003f56();
+void Func_02003b8e();
+void Func_0200408e();
+void Func_020017d6();
+void Func_02003f70();
+void Func_0200409e();
+void Func_02001910();
+void Func_02003f82();
+void Func_02003bbe();
+u32 Func_02003f4c();
+u32 Func_02003f5e();
+u32 Func_02003f70_a();
+u32 Func_02003f82_a();
+s32 Func_02003f8e();
+s32 Func_02003f98();
+s32 Func_02003fa2();
+s32 Func_02003fac();
+void Func_02004134();
+void Func_0200187c();
+void Func_02004016();
+void Func_02004144();
+void Func_020019b6();
+void Func_02004028_a();
+void Func_0200415c();
+void Func_020018a4();
+void Func_0200403e();
+void Func_0200416c();
+void Func_020019de();
+void Func_02004050();
+void Func_02004184();
+void Func_020018cc();
+void Func_02004066();
+void Func_02004194();
+void Func_02001a06();
+void Func_02004078();
+void Func_020041ac();
+void Func_020018f4();
+void Func_0200408e_a();
+void Func_020041bc();
+void Func_02001a2e();
+void Func_020040a0();
+void Func_02004080();
+void Func_0200412a();
+void Func_02003cfa();
+void Func_02004100();
+void Func_02004126();
+void Func_0200409c();
+void Func_020040a2();
+void Func_020040a8();
+void Func_020040ae();
+void Func_02004228();
+void Func_02004234();
+void Func_02004202();
+extern s16 Data_0200ade4, Data_0200addc, Data_0200ade0, Data_0200adec;
+extern s32 Data_0200ade8;
+void UpdateStatueLight1(void);
+void UpdateStatueLight2(void);
+void UpdateStatueLight3(void);
+void UpdateStatueLight4(void);
+
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -187,6 +255,91 @@ void FieldScene_PrepareStatueTransition(void)
     Func_02003d1c(32);
     Value2(Func_02003e14_b, 0x2051cc, 1);
     Func_02003e2a(24);
+}
+
+void FieldScene_RunClosingSequence(void)
+{
+    s32 i;
+    u8 *work;
+    Func_02003eea();
+    Func_0200277e();
+    Data_0200ade4 = 0;
+    Data_0200addc = 0;
+    Data_0200ade0 = 0;
+    Data_0200adec = 0;
+    Func_02003f86(4097);
+    Call3(Func_02003fb2, 16, 16384, 20);
+    Call3(Func_02003fc6, 16, 256, 0);
+    Func_02003f88(16, 6, 30);
+    Func_0200401c(37617664, -1, 11403264, 1);
+    Func_02004028();
+    Func_02003f56(30);
+    Func_02003b8e(32784, 20);
+    for (i = 0; i != 4; i++) {
+        Func_0200408e(246);
+        Func_020017d6();
+        Func_02003f70(12);
+        Func_0200409e(246);
+        Func_02001910();
+        Func_02003f82(12);
+    }
+    Func_02003bbe(32784, 6);
+    Data_0200ade4 = ((Func_02003f4c() * 60) >> 16) + 20;
+    Data_0200addc = ((Func_02003f5e() * 60) >> 16) + 20;
+    Data_0200ade0 = ((Func_02003f70_a() * 60) >> 16) + 20;
+    Data_0200adec = ((Func_02003f82_a() * 60) >> 16) + 20;
+    Data_0200ade8 = 0;
+    Value2(Func_02003f8e, (s32)UpdateStatueLight1, 3200);
+    Value2(Func_02003f98, (s32)UpdateStatueLight2, 3200);
+    Value2(Func_02003fa2, (s32)UpdateStatueLight3, 3200);
+    Value2(Func_02003fac, (s32)UpdateStatueLight4, 3200);
+    for (i = 0; i != 6; i++) {
+        Func_02004134(246);
+        Func_0200187c();
+        Func_02004016(5);
+        Func_02004144(246);
+        Func_020019b6();
+        Func_02004028_a(5);
+    }
+    for (i = 0; i != 8; i++) {
+        Func_0200415c(246);
+        Func_020018a4();
+        Func_0200403e(4);
+        Func_0200416c(246);
+        Func_020019de();
+        Func_02004050(4);
+    }
+    for (i = 0; i != 10; i++) {
+        Func_02004184(246);
+        Func_020018cc();
+        Func_02004066(3);
+        Func_02004194(246);
+        Func_02001a06();
+        Func_02004078(3);
+    }
+    for (i = 0; i != 12; i++) {
+        Func_020041ac(246);
+        Func_020018f4();
+        Func_0200408e_a(2);
+        Func_020041bc(246);
+        Func_02001a2e();
+        Func_020040a0(2);
+    }
+    Call6(Func_02004080, 45, 30, 34, 10, 4, 2);
+    Func_0200412a(16, 6, 40);
+    Func_02003cfa(32784, 6);
+    Call3(Func_02004100, 16, 131072, 65536);
+    Func_02004126(16, 576, 280);
+    Func_0200409c((s32)UpdateStatueLight1);
+    Func_020040a2((s32)UpdateStatueLight2);
+    Func_020040a8((s32)UpdateStatueLight3);
+    Func_020040ae((s32)UpdateStatueLight4);
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(work + 0x1c0) = 0x100;
+    *(s32 *)(work + 0x1c8) = 32;
+    Func_02004228();
+    Func_02004234();
+    Func_02004202(4);
 }
 
 void FieldScene_RunFlaggedSequence(void)

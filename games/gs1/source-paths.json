@@ -17780,6 +17780,10 @@
     "resource_3b4:02000f40": {
       "name": "RunScene_ApplyStagedCameraFade",
       "source": "overlays/scene_primary_script/run_scene_apply_staged_camera_fade.c"
+    },
+    "resource_38d:02000338": {
+      "name": "FieldScene_RunSceneEntryBranchSequence",
+      "source": "overlays/scene_setup/run_scene_entry_branch_sequence.c"
     }
   }
 }

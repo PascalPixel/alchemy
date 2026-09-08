@@ -35,7 +35,6 @@ version = "0.1.0"
 dependencies = [
  "build-asm",
  "build-claimed",
- "build-full",
  "candidate-compiler",
  "compiler-core",
  "coverage-map",
@@ -122,14 +121,6 @@ name = "build-claimed"
 version = "0.1.0"
 dependencies = [
  "candidate-compiler",
- "compiler-core",
- "serde_json",
-]
-
-[[package]]
-name = "build-full"
-version = "0.1.0"
-dependencies = [
  "compiler-core",
  "serde_json",
 ]

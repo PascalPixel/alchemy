@@ -21,7 +21,6 @@ sha1 = "0.10"
 sha2 = "0.10"
 build-asm = { path = "../build-asm" }
 build-claimed = { path = "../build-claimed" }
-build-full = { path = "../build-full" }
 coverage-map = { path = "../coverage-map" }
 overlay-adopt = { path = "../overlay-adopt" }
 tempfile = "3"

@@ -522,7 +522,7 @@ fn self_test() -> Result<(), String> {
         "games/gs1/sound/wave.wav",
         "games/gs1/assets/data/layout.json",
         "tools/compare-roms/src/main.rs",
-        "tools/build-full/src/main.rs",
+        "tools/alchemy/src/build_full.rs",
         "games/gs1/assets/data/resource_2_build_stamp.stamp",
         "games/gs1/assets/maps/town/metatiles.bin",
         "games/gs1/assets/maps/town/metatile_attributes.bin",

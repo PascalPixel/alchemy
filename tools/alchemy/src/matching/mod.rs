@@ -3,10 +3,10 @@ mod compile;
 mod options;
 mod runner;
 
-pub use options::{Options, USAGE};
+use options::{Options, USAGE};
 const CATALOG_VERSION: &str = "structural-v1";
 
-pub fn run(args: Vec<String>) -> Result<(), String> {
+pub fn run(args: &[String]) -> Result<(), String> {
     if args
         .iter()
         .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
@@ -17,5 +17,5 @@ pub fn run(args: Vec<String>) -> Result<(), String> {
     if args.iter().any(|argument| argument == "--acceptance-test") {
         return acceptance::run();
     }
-    runner::run(Options::parse(&args)?).map(drop)
+    runner::run(Options::parse(args)?).map(drop)
 }

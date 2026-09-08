@@ -15,6 +15,7 @@ mod flatten;
 mod font;
 mod generated_files;
 mod http;
+mod matching;
 mod music_debug;
 mod overlay;
 mod scaffold;
@@ -86,7 +87,7 @@ fn main() -> ExitCode {
             Err(error) => result(Err(error)),
         },
         "cross-edition" => result(cross_edition::run(rest)),
-        "match" => result(matching::run(rest.to_vec())),
+        "match" => result(matching::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

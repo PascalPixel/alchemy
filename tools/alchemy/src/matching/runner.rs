@@ -4,8 +4,8 @@ use std::path::{Component, Path, PathBuf};
 use compiler_core::routing::root;
 use serde_json::json;
 
-use crate::compile::{Score, Target};
-use crate::options::{Options, MAX_SOURCE_BYTES};
+use super::compile::{Score, Target};
+use super::options::{Options, MAX_SOURCE_BYTES};
 use psynergy::repair::Permutation;
 
 #[derive(Debug)]
@@ -215,7 +215,7 @@ fn save(
         .filter(|evaluation| evaluation.score.is_err())
         .count();
     let report = json!({
-        "catalog_version": crate::CATALOG_VERSION,
+        "catalog_version": super::CATALOG_VERSION,
         "dimensions": decoder.dimensions,
         "decoder": {
             "repair": repair,

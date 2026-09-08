@@ -12053,7 +12053,7 @@
       "overlay": "resource_3bf",
       "entry": "0x0200138c",
       "span_bytes": 304,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "evidence": "complete actor-seventeen interaction owner through return at 020014a6 and five trailing words ending 020014bc. Reuses the recovered actor-pair movement-state layout, flag-call interface and word-input halfword scene setter; retains the trigger-box call even though its result is ignored. The complete owner matches from the shared actor-scenes object."
     },
     {
       "overlay": "resource_3bf",

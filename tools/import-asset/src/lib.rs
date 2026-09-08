@@ -38,15 +38,6 @@ pub fn ascii(bytes: &[u8]) -> String {
     bytes.iter().map(|byte| (byte & 0x7f) as char).collect()
 }
 
-pub fn hex(bytes: &[u8]) -> String {
-    const DIGITS: &[u8; 16] = b"0123456789abcdef";
-    bytes
-        .iter()
-        .flat_map(|byte| [DIGITS[(byte >> 4) as usize], DIGITS[(byte & 15) as usize]])
-        .map(char::from)
-        .collect()
-}
-
 pub fn subarray(data: &[u8], start: usize, end: usize) -> &[u8] {
     let start = start.min(data.len());
     &data[start..end.clamp(start, data.len())]
@@ -251,8 +242,8 @@ fn be_u32(data: &[u8], at: usize) -> Option<u32> {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventBody {
-    Meta { meta: u8, data: String },
-    Sysex { status: u8, data: String },
+    Meta { meta: u8, data: Vec<u8> },
+    Sysex { status: u8, data: Vec<u8> },
     Channel { status: u8, data: Vec<u8> },
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -356,7 +347,7 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                     running = None;
                     EventBody::Meta {
                         meta,
-                        data: hex(value),
+                        data: value.to_vec(),
                     }
                 }
                 0xf0 | 0xf7 => {
@@ -370,7 +361,7 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                     running = None;
                     EventBody::Sysex {
                         status,
-                        data: hex(value),
+                        data: value.to_vec(),
                     }
                 }
                 0x80..=0xef => {
@@ -477,9 +468,6 @@ pub fn self_test() -> Result<String, AssetError> {
     Ok("self-test=ok".into())
 }
 
-/// Sequencer-specific meta prefix that marks a build directive in a MIDI conductor track.
-pub const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
-
 fn midi_vlq(mut value: usize) -> Vec<u8> {
     let mut bytes = vec![(value & 0x7f) as u8];
     while {
@@ -527,6 +515,27 @@ pub fn append_conductor_meta(midi: &[u8], meta: u8, payload: &[u8]) -> Result<Ve
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn midi_metadata_and_sysex_preserve_binary_payloads() {
+        let midi = b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x12\0\xff\x7f\x03\0\xff\x80\0\xf0\x04\0\x80\xff\xf7\0\xff\x2f\0";
+        let events = midi_events(midi).unwrap().events;
+        assert_eq!(
+            events[0].body,
+            EventBody::Meta {
+                meta: 0x7f,
+                data: vec![0, 255, 128]
+            }
+        );
+        assert_eq!(
+            events[1].body,
+            EventBody::Sysex {
+                status: 0xf0,
+                data: vec![0, 128, 255, 247]
+            }
+        );
+        assert_eq!(events.len(), 3);
+    }
 
     #[test]
     fn conductor_meta_events_are_appended_before_the_canonical_end() {

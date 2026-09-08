@@ -16,7 +16,7 @@ use gba_header::{build_gba_header_component, read_gba_header_source};
 use import_asset::import_tilemap;
 use import_asset::{
     append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, one_bit_tiles,
-    rgba_png, EventBody, GbaBpp, MidiEvent, MIDI_BUILD_DIRECTIVE,
+    rgba_png, EventBody, GbaBpp, MidiEvent,
 };
 use lz_codecs::{PaletteGroup, PaletteOperation};
 use serde_json::Value;
@@ -3334,18 +3334,7 @@ fn sequence_emission_resolves_forward_and_backward_labels_and_rejects_invalid_la
         .unwrap_err()
         .contains("unused sequence externals"));
 }
-fn midi_hex(data: &str) -> Result<Vec<u8>, String> {
-    if data.len() % 2 != 0 {
-        return Err("MIDI metadata has odd hexadecimal length".to_string());
-    }
-    (0..data.len())
-        .step_by(2)
-        .map(|index| {
-            u8::from_str_radix(&data[index..index + 2], 16)
-                .map_err(|_| "MIDI metadata is not hexadecimal".to_string())
-        })
-        .collect()
-}
+const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
 #[derive(Clone)]
 struct MidiNode {
     compact_tick: i64,
@@ -3366,9 +3355,9 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Value>, String> {
         match &event.body {
             EventBody::Meta { meta: 0x2f, .. } | EventBody::Meta { meta: 0x51, .. } => continue,
             EventBody::Meta { meta: 0x07, data } => {
-                let text = String::from_utf8(midi_hex(data)?)
-                    .map_err(|_| "MIDI cue is not UTF-8".to_string())?;
-                match text.as_str() {
+                let text =
+                    std::str::from_utf8(data).map_err(|_| "MIDI cue is not UTF-8".to_string())?;
+                match text {
                     "pattern+" => {
                         if depth == 0 {
                             bracket_start = event.tick;
@@ -3391,7 +3380,7 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Value>, String> {
                 if depth > 0 {
                     continue;
                 }
-                let value = serde_json::from_slice::<Value>(&midi_hex(data)?)
+                let value = serde_json::from_slice::<Value>(data)
                     .map_err(|e| format!("MIDI event marker: {e}"))?;
                 let index = nodes.len();
                 nodes.push(MidiNode {
@@ -3648,13 +3637,11 @@ fn encode_midi_track(events: &[MidiEvent]) -> Result<Vec<u8>, String> {
         tick = event.tick;
         match &event.body {
             EventBody::Meta { meta, data } => {
-                let data = midi_hex(data)?;
                 output.extend([0xff, *meta]);
                 output.extend(midi_variable(data.len()));
                 output.extend(data);
             }
             EventBody::Sysex { status, data } => {
-                let data = midi_hex(data)?;
                 output.push(*status);
                 output.extend(midi_variable(data.len()));
                 output.extend(data);
@@ -3751,15 +3738,11 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), 
         by_track.entry(event.track).or_default().push(event);
     }
     let conductor = by_track.get(&0).cloned().unwrap_or_default();
-    let midi_directive_data = conductor
-        .iter()
-        .find_map(|event| match &event.body {
-            EventBody::Meta { meta: 0x7f, data } => Some(midi_hex(data)),
-            _ => None,
-        })
-        .transpose()?;
+    let midi_directive_data = conductor.iter().find_map(|event| match &event.body {
+        EventBody::Meta { meta: 0x7f, data } => Some(data.as_slice()),
+        _ => None,
+    });
     let midi_directive = midi_directive_data
-        .as_deref()
         .and_then(|data| data.strip_prefix(MIDI_BUILD_DIRECTIVE))
         .map(|source| {
             serde_json::from_slice::<Value>(source)
@@ -3773,8 +3756,8 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), 
             _ => None,
         })
         .ok_or("MIDI conductor skeleton is missing")?;
-    let skeleton: Value = serde_json::from_slice(&midi_hex(marker)?)
-        .map_err(|e| format!("MIDI conductor skeleton: {e}"))?;
+    let skeleton: Value =
+        serde_json::from_slice(marker).map_err(|e| format!("MIDI conductor skeleton: {e}"))?;
     let skeleton_layout = skeleton
         .get("layout")
         .and_then(Value::as_array)

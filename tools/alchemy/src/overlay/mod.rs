@@ -254,7 +254,7 @@ fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64) -> Resu
     Ok(())
 }
 const USAGE: &str =
-    "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
+    "usage: alchemy overlay adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
 fn options_of(argv: &[String]) -> Result<Option<Options>, String> {
     let (mut span, mut id, mut source) = (None, String::new(), String::new());
     let (mut apply, mut where_) = (false, false);
@@ -506,4 +506,41 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         source_paths.repository_relative_path(owner).display()
     );
     Ok(0)
+}
+
+use compiler_core::routing::root;
+use std::process::ExitCode;
+
+const OVERLAY_USAGE: &str = "usage: alchemy overlay <adopt|park|audit> [args]";
+
+pub(crate) fn code(result: Result<i32, String>) -> ExitCode {
+    match result {
+        Ok(0) => ExitCode::SUCCESS,
+        Ok(_) => ExitCode::FAILURE,
+        Err(error) => {
+            eprintln!("{error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+pub fn entry(arguments: &[String]) -> ExitCode {
+    let Some(command) = arguments.first().map(String::as_str) else {
+        eprintln!("{OVERLAY_USAGE}");
+        return ExitCode::from(2);
+    };
+    let rest = &arguments[1..];
+    match command {
+        "adopt" => code(run(root(), rest)),
+        "park" => code(park::run(root(), rest)),
+        "audit" => code(park::run_audit(root(), rest)),
+        "-h" | "--help" => {
+            println!("{OVERLAY_USAGE}");
+            ExitCode::SUCCESS
+        }
+        _ => {
+            eprintln!("unknown overlay command: {command}\n{OVERLAY_USAGE}");
+            ExitCode::from(2)
+        }
+    }
 }

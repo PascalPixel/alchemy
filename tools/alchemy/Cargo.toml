@@ -19,7 +19,6 @@ import-asset = { path = "../import-asset" }
 sha1 = "0.10"
 sha2 = "0.10"
 coverage-map = { path = "../coverage-map" }
-overlay-adopt = { path = "../overlay-adopt" }
 tempfile = "3"
 
 [[bin]]

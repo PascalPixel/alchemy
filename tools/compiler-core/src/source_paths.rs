@@ -468,7 +468,7 @@ impl SourcePaths {
     pub fn main_sources(&self) -> Result<Vec<SourceFile>, String> {
         self.sources(Some(true), None, true)
     }
-    /// Missing mapped files are omitted so `overlay-adopt` can resolve a new
+    /// Missing mapped files are omitted so `alchemy overlay adopt` can resolve a new
     /// nested destination before it copies the proved candidate into place.
     pub fn overlay_sources(&self, overlay: &str) -> Result<Vec<SourceFile>, String> {
         self.sources(Some(false), Some(overlay), false)

@@ -3,6 +3,19 @@
   "comment": "Retained assembly regions, not function identities or original-source provenance. Proven ASM requires recorded proof that the approved compiler cannot emit the required form as ordinary C, plus byte-exact assembly. Scene reconstructions use structured_scene_module and remain Draft ASM. Complete owner bounds are reviewed in semantic/regions.json; historical dossier scores are not classification authority.",
   "regions": [
     {
+      "overlay": "resource_3c8",
+      "start": "0x02004610",
+      "end": "0x020047c0",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete reviewed 432-byte particle-wave sequence remains retained assembly; the ordinary C candidate is nonexact under canonical GCC 2.96.",
+        "Reference stack stores and the eight-argument spawner establish the shared ConfiguredEffectOptions record. The loop's six-argument call and both distinct legacy call identities are restored in the candidate.",
+        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
+      ]
+    },
+    {
       "overlay": "resource_385",
       "start": "0x02000350",
       "end": "0x02000400",

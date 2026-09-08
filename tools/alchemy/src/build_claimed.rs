@@ -1,5 +1,30 @@
 //! Compile, verify, cache, and manifest every exact C owner in the main image.
-pub mod cli;
+pub fn entry(arguments: &[String]) -> Result<()> {
+    if arguments.iter().any(|argument| argument == "--self-test") {
+        println!("{}", self_test()?);
+        return Ok(());
+    }
+    let options = match parse_args(arguments)? {
+        ParsedArgs::Help => {
+            println!("{}", usage_text());
+            return Ok(());
+        }
+        ParsedArgs::Run(options) => options,
+    };
+    let cwd = std::env::current_dir().map_err(|error| format!("cwd: {error}"))?;
+    let summary = build(&options, &root(), &cwd.to_string_lossy())?;
+    println!("{}", summary.summary_line());
+    for failure in &summary.failures {
+        println!("{failure}");
+    }
+    if !summary.failures.is_empty() {
+        return Err(format!(
+            "{} claimed C owners failed verification",
+            summary.failures.len()
+        ));
+    }
+    Ok(())
+}
 use candidate_compiler::verify::{
     verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
 };
@@ -224,7 +249,7 @@ pub enum ParsedArgs {
     Run(Box<Options>),
 }
 pub fn usage_text() -> &'static str {
-    "usage: build-claimed [-h] [--target GAME-EDITION] [--compile-only|--source-only] [--jobs JOBS] [--output OUTPUT] [rom]"
+    "usage: alchemy build claimed [-h] [--target GAME-EDITION] [--compile-only|--source-only] [--jobs JOBS] [--output OUTPUT] [rom]"
 }
 pub fn default_jobs() -> f64 {
     std::thread::available_parallelism().map_or(1, |n| n.get().min(16)) as f64

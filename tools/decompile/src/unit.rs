@@ -558,12 +558,14 @@ pub fn volatile_spelling(line: &str) -> String {
 }
 
 /// Lifts every function of a decoded window into C bodies.
-pub fn bodies(ins: &[Ins]) -> String {
-    split_functions(ins)
+pub fn bodies(ins: &[Ins]) -> (String, BTreeMap<String, String>) {
+    let mut tables = BTreeMap::new();
+    let body = split_functions(ins)
         .iter()
-        .map(|(entry, function)| function_source(*entry, &lift(function)))
+        .map(|(entry, function)| function_source(*entry, &lift(function, &mut tables)))
         .collect::<Vec<_>>()
-        .join("\n")
+        .join("\n");
+    (body, tables)
 }
 
 fn matching_paren(text: &str) -> Option<usize> {
@@ -616,7 +618,7 @@ fn symbols<'a>(body: &'a str, prefix: &str) -> Vec<(usize, &'a str)> {
 
 /// Composes the candidate unit around the lifted bodies. The entry function
 /// carries `name`; other functions keep their address names.
-pub fn compose(entry: u32, name: &str, body: &str) -> String {
+pub fn compose(entry: u32, name: &str, body: &str, tables: &BTreeMap<String, String>) -> String {
     let this = format!("Func_{entry:08x}");
     let body_lines: Vec<String> = body.lines().map(str::to_string).collect();
     let mut categories: BTreeMap<String, BTreeSet<&'static str>> = BTreeMap::new();
@@ -715,7 +717,7 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
         declarations.push_str(&format!("extern u8 {symbol}[];\n"));
     }
     // Typed table views the bodies index at constant positions.
-    for declaration in crate::lift::take_tables() {
+    for declaration in tables.values() {
         let name = declaration
             .split_whitespace()
             .nth(2)
@@ -820,13 +822,25 @@ mod tests {
     #[test]
     fn declarations_follow_use() {
         let body = "void Func_02000100(void)\n{\n    record = Func_02000200(1);\n    Call2(Func_02000300, 0x1000, 0);\n    if (Func_02000400() != 0) {\n    }\n}\n";
-        let unit = compose(0x02000100, "Scene_Run", body);
+        let unit = compose(0x02000100, "Scene_Run", body, &BTreeMap::new());
         assert!(unit.contains("s32 Func_02000200();"));
         assert!(unit.contains("void Func_02000300();"));
         assert!(unit.contains("s32 Func_02000400();"));
         assert!(unit.contains("void Scene_Run(void)"));
         assert!(unit.contains("static __inline__ void Call2("));
         assert!(!unit.contains("Call1("));
+    }
+
+    #[test]
+    fn composing_a_unit_does_not_consume_its_declarations() {
+        let tables = BTreeMap::from([(
+            "Data_08001000_t".into(),
+            "extern u8 Data_08001000_t[][4];".into(),
+        )]);
+        let body = "void Func_02000100(void) { a = Data_08001000_t[1][0]; }";
+        let first = compose(0x02000100, "Read", body, &tables);
+        assert!(first.contains("extern u8 Data_08001000_t[][4];"));
+        assert_eq!(first, compose(0x02000100, "Read", body, &tables));
     }
 }
 

@@ -248,18 +248,6 @@ pub fn main_mode() -> bool {
     MAIN_MODE.with(|m| m.get())
 }
 
-thread_local! {
-    /// Typed table views the lifted bodies index, by symbol name: the
-    /// declaration each needs at file scope.
-    static TABLES: std::cell::RefCell<BTreeMap<String, String>> =
-        const { std::cell::RefCell::new(BTreeMap::new()) };
-}
-
-/// The typed table declarations the bodies lifted so far need, drained.
-pub fn take_tables() -> Vec<String> {
-    TABLES.with(|t| t.borrow_mut().split_off("").into_values().collect())
-}
-
 fn width_bytes(c_type: &str) -> i64 {
     match c_type {
         "u8" | "s8" => 1,
@@ -320,6 +308,7 @@ struct SwitchTree {
 
 struct Lifter<'a> {
     ins: &'a [Ins],
+    tables: &'a mut BTreeMap<String, String>,
     value_sites: BTreeSet<usize>,
     direct_sites: BTreeSet<usize>,
     by_addr: HashMap<u32, usize>,
@@ -387,7 +376,7 @@ fn push_unique(list: &mut Vec<String>, name: &str) {
 }
 
 impl<'a> Lifter<'a> {
-    fn new(ins: &'a [Ins]) -> Self {
+    fn new(ins: &'a [Ins], tables: &'a mut BTreeMap<String, String>) -> Self {
         let sites = crate::sched::value_calls(ins);
         let by_addr = ins.iter().enumerate().map(|(i, x)| (x.addr, i)).collect();
         let mut targets = BTreeSet::new();
@@ -428,6 +417,7 @@ impl<'a> Lifter<'a> {
             .collect();
         let mut lifter = Lifter {
             ins,
+            tables,
             value_sites: sites.value,
             direct_sites: sites.direct,
             by_addr,
@@ -742,16 +732,13 @@ impl<'a> Lifter<'a> {
         }
         let name = format!("Data_{address:08x}_t");
         let declaration = format!("extern {c_type} {name}[][{}];", stride / w);
-        let accepted = TABLES.with(|t| {
-            let mut t = t.borrow_mut();
-            match t.get(&name) {
-                Some(existing) => *existing == declaration,
-                None => {
-                    t.insert(name.clone(), declaration);
-                    true
-                }
+        let accepted = match self.tables.get(&name) {
+            Some(existing) => *existing == declaration,
+            None => {
+                self.tables.insert(name.clone(), declaration);
+                true
             }
-        });
+        };
         accepted.then(|| format!("{name}[{k}][{}]", off / w))
     }
 
@@ -3248,8 +3235,8 @@ fn writes_only(kind: &Kind) -> bool {
 
 /// Lifts one function. Two passes: the first discovers goto targets so the
 /// second can place labels before their first use.
-pub fn lift(ins: &[Ins]) -> Draft {
-    let mut lifter = Lifter::new(ins);
+pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>) -> Draft {
+    let mut lifter = Lifter::new(ins, tables);
     lifter.run(0, ins.len());
     lifter.reset();
     lifter.run(0, ins.len());
@@ -3393,10 +3380,33 @@ mod tests {
     use super::*;
     use crate::decode::{decode_window, OVERLAY_BASE};
 
+    #[test]
+    fn table_shapes_are_shared_only_within_the_supplied_unit() {
+        let base = Val {
+            table: Some((0x08001000, 1, 2)),
+            ..Default::default()
+        };
+        let mut first = BTreeMap::new();
+        let mut second = BTreeMap::new();
+        assert!(Lifter::new(&[], &mut first)
+            .table_expr(&base, 0, Width::Word)
+            .is_some());
+        assert!(Lifter::new(&[], &mut first)
+            .table_expr(&base, 0, Width::Byte)
+            .is_none());
+        assert!(Lifter::new(&[], &mut second)
+            .table_expr(&base, 0, Width::Byte)
+            .is_some());
+        assert!(Lifter::new(&[], &mut first)
+            .table_expr(&base, 0, Width::Word)
+            .is_some());
+        assert_ne!(first, second);
+    }
+
     fn lifted(halves: &[u16]) -> String {
         let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
         let ins = decode_window(&image, OVERLAY_BASE, image.len() as u32);
-        lift(&ins).lines.join("\n")
+        lift(&ins, &mut BTreeMap::new()).lines.join("\n")
     }
 
     #[test]

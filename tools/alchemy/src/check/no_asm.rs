@@ -1,15 +1,15 @@
-//! Golden Sun repository scan orchestration; lexical policy lives in compiler-core.
+//! Golden Sun repository scan orchestration; lexical policy lives in compiler::no_asm.
 
-use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
-use compiler_core::no_asm::{
+use crate::compiler::no_asm::{
     find_forbidden, find_named_source_tool_leaks, find_preprocessed, self_test, source_files,
     Finding,
 };
-use compiler_core::routing::{
+use crate::compiler::routing::{
     cflags_for_target_source, root as compiler_root, uses_agbcc_compiler, CompilerTarget,
 };
-use compiler_core::source_paths::SourcePaths;
-use compiler_core::translation_units::TranslationUnits;
+use crate::compiler::source_paths::SourcePaths;
+use crate::compiler::translation_units::TranslationUnits;
+use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -40,7 +40,7 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
     }
     flags.push(format!("-D{}=1", target.edition_define));
     flags.extend(["-w".into(), "-E".into()]);
-    compiler_core::bundle::compiler_command_for_target(compiler, &flags)
+    crate::compiler::bundle::compiler_command_for_target(compiler, &flags)
 }
 
 fn jobs(root: &Path, target_ids: &[DecompTargetId]) -> Result<(Vec<Job>, usize), String> {

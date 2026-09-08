@@ -76,7 +76,7 @@ pub(crate) fn decode(
         &dir,
     )?;
     run(
-        &compiler_core::routing::compiler_assembly_command(
+        &crate::compiler::routing::compiler_assembly_command(
             &assembly.to_string_lossy(),
             &object.to_string_lossy(),
         ),

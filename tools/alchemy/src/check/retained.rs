@@ -238,7 +238,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
         eprintln!("{USAGE}");
         return ExitCode::from(2);
     }
-    match audit(compiler_core::routing::root()) {
+    match audit(crate::compiler::routing::root()) {
         Ok(audit) => {
             if arguments.iter().any(|argument| argument == "--json") {
                 println!("{}", serde_json::to_string_pretty(&audit.json()).unwrap());

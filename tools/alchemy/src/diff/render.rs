@@ -2,6 +2,10 @@ use crate::candidate::{
     compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
     CandidateCompilerConfiguration, ROM_BASE,
 };
+use crate::compiler::bundle::compiler_bundle_signature_checked;
+use crate::compiler::routing::CompilerTarget;
+use crate::compiler::source_inputs::source_tree_signature;
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::diff::{
     cli::Options,
     disasm::{disassemble, Rows},
@@ -9,10 +13,6 @@ use crate::diff::{
     triage::{classify, classify_with_topology},
 };
 use crate::overlay::assembly::OVERLAY_BASE;
-use compiler_core::bundle::compiler_bundle_signature_checked;
-use compiler_core::routing::CompilerTarget;
-use compiler_core::source_inputs::source_tree_signature;
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use psynergy::compare::{
     differing_offsets,
     insns::gas_function_insns,
@@ -118,7 +118,8 @@ pub fn region_size(root: &Path, address: u32) -> Option<usize> {
         "out/gs1-en/full/asm/manifest.json",
         "out/gs1-en/asm/manifest.json",
     ] {
-        let Ok(document) = compiler_core::build_io::read_json::<Value>(root.join(manifest)) else {
+        let Ok(document) = crate::compiler::build_io::read_json::<Value>(root.join(manifest))
+        else {
             continue;
         };
         let Some(regions) = document["regions"].as_array() else {
@@ -232,9 +233,9 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             as usize;
         let end = offset.saturating_add(size).min(rom.len());
         let (actual, expected) = if options.configuration.overlay_extent.is_some() {
-            let runtime = compiler_core::overlay::load(&rom, 0)?;
+            let runtime = crate::compiler::overlay::load(&rom, 0)?;
             (
-                compiler_core::overlay::load(&verification.actual, offset)?,
+                crate::compiler::overlay::load(&verification.actual, offset)?,
                 runtime[offset.min(end)..end].to_vec(),
             )
         } else {
@@ -365,7 +366,7 @@ fn topology_for_owner(
             + if main {
                 0
             } else {
-                compiler_core::overlay::RUNTIME_BASE - compiler_core::overlay::RESOURCE_BASE
+                crate::compiler::overlay::RUNTIME_BASE - crate::compiler::overlay::RESOURCE_BASE
             };
         return match crate::overlay::assembly::build_region_source(expected, i64::from(base)) {
             Ok(reference) => topology::compare_symbols_at(
@@ -686,7 +687,7 @@ fn source_cache_key(
     size: Option<usize>,
     patch: Option<&str>,
 ) -> Result<String, String> {
-    let executable = compiler_core::bundle::executable_signature()?;
+    let executable = crate::compiler::bundle::executable_signature()?;
     let bundle = compiler_bundle_signature_checked()?;
     source_cache_key_with_environment(
         source,
@@ -724,7 +725,7 @@ fn source_cache_key_with_environment(
     // delimiter bytes and a second hand-written binary schema are unnecessary.
     let identity = serde_json::json!({
         "version": "diff-cache-v9",
-        "source": source_input_signature(compiler_core::routing::root(), source, routing_source, compiler)?,
+        "source": source_input_signature(crate::compiler::routing::root(), source, routing_source, compiler)?,
         "route": routing_source,
         "owner": owner_stem,
         "implementation": executable,
@@ -735,11 +736,11 @@ fn source_cache_key_with_environment(
         "overlay_extent": configuration.overlay_extent,
         "owner_symbol": configuration.owner_symbol,
         "rom_path": rom_path,
-        "rom": compiler_core::sha256::hex(rom),
+        "rom": crate::compiler::sha256::hex(rom),
         "size": size,
         "patch": patch,
     });
-    Ok(compiler_core::sha256::hex(
+    Ok(crate::compiler::sha256::hex(
         &serde_json::to_vec(&identity).map_err(|error| error.to_string())?,
     ))
 }

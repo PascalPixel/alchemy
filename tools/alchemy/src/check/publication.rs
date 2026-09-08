@@ -583,7 +583,7 @@ fn fail(message: &str) -> ExitCode {
     ExitCode::FAILURE
 }
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
-    let root = compiler_core::routing::root();
+    let root = crate::compiler::routing::root();
     match arguments {
         [argument] if argument == "--documents" => {
             check_documents(root).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)

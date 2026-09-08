@@ -1,5 +1,5 @@
 use crate::candidate::CandidateCompilerConfiguration;
-use compiler_core::routing::CompilerTarget;
+use crate::compiler::routing::CompilerTarget;
 use std::path::Path;
 pub const USAGE: &str = "usage: alchemy diff <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: diff <candidate.c> [--rom FILE]";
@@ -81,7 +81,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                 options.configuration.owner_symbol = Some(format!("Func_{address:08x}"));
             }
             "--owner" => {
-                let owner = compiler_core::source_paths::SourceOwner::parse_argument(
+                let owner = crate::compiler::source_paths::SourceOwner::parse_argument(
                     next(&mut index).ok_or("--owner requires an address")?,
                 )?;
                 options.owner = Some(owner.address());
@@ -132,7 +132,7 @@ fn parse_size(value: &str) -> Result<usize, String> {
         .ok_or_else(|| "--size must be a positive decimal or 0x-prefixed byte count".into())
 }
 fn parse_address(value: &str) -> Result<u32, String> {
-    let owner = compiler_core::source_paths::SourceOwner::parse_argument(value)?;
+    let owner = crate::compiler::source_paths::SourceOwner::parse_argument(value)?;
     if !owner.is_main() {
         return Err("overlay owners must use the owner-aware alchemy diff route".into());
     }

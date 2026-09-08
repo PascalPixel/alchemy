@@ -5,7 +5,6 @@ use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
-pub const SOURCE_DIRECTORY: &str = "games/gs1/src";
 pub const SOURCE_PATHS_MANIFEST: &str = "games/gs1/source-paths.json";
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SourceOwner {
@@ -368,7 +367,7 @@ impl SourcePaths {
         if !manifest.exists() {
             return Ok(false);
         }
-        let mut value: Value = crate::build_io::read_json(&manifest)?;
+        let mut value: Value = crate::compiler::build_io::read_json(&manifest)?;
         let owners = value
             .get_mut("owners")
             .and_then(Value::as_object_mut)
@@ -466,22 +465,12 @@ impl SourcePaths {
         }
     }
     pub fn main_sources(&self) -> Result<Vec<SourceFile>, String> {
-        self.sources(Some(true), None, true)
-    }
-    /// Missing mapped files are omitted so `alchemy overlay adopt` can resolve a new
-    /// nested destination before it copies the proved candidate into place.
-    pub fn overlay_sources(&self, overlay: &str) -> Result<Vec<SourceFile>, String> {
-        self.sources(Some(false), Some(overlay), false)
+        self.sources(true)
     }
     pub fn all_sources(&self) -> Result<Vec<SourceFile>, String> {
-        self.sources(None, None, true)
+        self.sources(false)
     }
-    fn sources(
-        &self,
-        main: Option<bool>,
-        overlay: Option<&str>,
-        mapped_files_required: bool,
-    ) -> Result<Vec<SourceFile>, String> {
+    fn sources(&self, main_only: bool) -> Result<Vec<SourceFile>, String> {
         let mut found = BTreeMap::<SourceOwner, PathBuf>::new();
         let source_root = self.source_root();
         if source_root.exists() {
@@ -503,7 +492,7 @@ impl SourcePaths {
                 let Some(owner) = SourceOwner::from_legacy_stem(stem) else {
                     continue;
                 };
-                if !matches_filter(owner, main, overlay) {
+                if main_only && !owner.is_main() {
                     continue;
                 }
                 if self.mapped_relative_path(owner).is_some() {
@@ -519,19 +508,16 @@ impl SourcePaths {
             let Some(relative) = &record.path else {
                 continue;
             };
-            if !matches_filter(*owner, main, overlay) {
+            if main_only && !owner.is_main() {
                 continue;
             }
             let path = source_root.join(relative);
             if !path.is_file() {
-                if mapped_files_required {
-                    return Err(format!(
-                        "{} maps to missing source {}",
-                        owner.id(),
-                        path.display()
-                    ));
-                }
-                continue;
+                return Err(format!(
+                    "{} maps to missing source {}",
+                    owner.id(),
+                    path.display()
+                ));
             }
             if found.insert(*owner, path).is_some() {
                 return Err(format!("duplicate source owner {}", owner.id()));
@@ -591,10 +577,6 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     }
     let root = Path::new("games").join(game);
     Ok((root.join("src"), root.join("source-paths.json")))
-}
-fn matches_filter(owner: SourceOwner, main: Option<bool>, overlay: Option<&str>) -> bool {
-    main.is_none_or(|wanted| owner.is_main() == wanted)
-        && overlay.is_none_or(|wanted| owner.overlay_id().as_deref() == Some(wanted))
 }
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let path = Path::new(source);
@@ -675,6 +657,24 @@ mod tests {
         r#"{"format":3,"owners":{"main:080bbb0c":"battle/resolve_action.c","resource_39c:0200013c":{"source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}}}"#
     }
     #[test]
+    fn source_lists_require_mapped_files_and_filter_main_owners() {
+        let root = tempdir().unwrap();
+        let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
+        assert!(paths.main_sources().unwrap_err().contains("missing source"));
+        let main = root.path().join("games/gs1/src/battle/resolve_action.c");
+        fs::create_dir_all(main.parent().unwrap()).unwrap();
+        fs::write(&main, "void resolve_action(void) {}\n").unwrap();
+        assert_eq!(paths.main_sources().unwrap().len(), 1);
+        assert!(paths.all_sources().unwrap_err().contains("missing source"));
+        let overlay = root
+            .path()
+            .join("games/gs1/src/battle/effects/spawn_configured_effect.c");
+        fs::create_dir_all(overlay.parent().unwrap()).unwrap();
+        fs::write(&overlay, "void spawn_configured_effect(void) {}\n").unwrap();
+        assert_eq!(paths.all_sources().unwrap().len(), 2);
+        assert_eq!(paths.main_sources().unwrap().len(), 1);
+    }
+    #[test]
     fn parses_main_and_overlay_owner_ids() {
         assert_eq!(
             SourceOwner::parse("main:080bbb0c").unwrap(),
@@ -725,7 +725,7 @@ mod tests {
                 .registered_source_path(SourceOwner::Main(0x080b_bb0c))
                 .unwrap(),
             root.path()
-                .join(SOURCE_DIRECTORY)
+                .join("games/gs1/src")
                 .join("battle/resolve_action.c")
         );
     }

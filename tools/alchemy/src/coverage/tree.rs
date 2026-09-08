@@ -5,7 +5,7 @@ use std::process::Command;
 pub const ROM_BASE: i64 = 0x0800_0000;
 
 pub fn root() -> PathBuf {
-    compiler_core::routing::root().to_path_buf()
+    crate::compiler::routing::root().to_path_buf()
 }
 
 #[derive(Clone, Debug)]

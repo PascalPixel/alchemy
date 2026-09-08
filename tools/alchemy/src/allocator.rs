@@ -1,6 +1,6 @@
 //! Read GCC's pass dumps: pseudo creation, costs, conflicts, allocation and reloads.
 
-use compiler_core::{
+use crate::compiler::{
     routing::{cflags_for_target_source, CompilerTarget},
     source_paths::SourceOwner,
 };
@@ -58,7 +58,7 @@ fn run(args: &[String]) -> Result<(), String> {
         .get(1)
         .cloned()
         .unwrap_or_else(|| format!("games/gs1/recon/en/main/{owner}.c"));
-    let repo = compiler_core::routing::root();
+    let repo = crate::compiler::routing::root();
     let directory = repo.join("out/allocator");
     fs::create_dir_all(&directory).map_err(|e| e.to_string())?;
     let work = tempfile::Builder::new()
@@ -67,8 +67,8 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|e| e.to_string())?
         .keep();
     let src = repo.join(&source);
-    let bundle = compiler_core::routing::bundle();
-    let mut cpp = compiler_core::plan::direct_preprocessor_command(
+    let bundle = crate::compiler::routing::bundle();
+    let mut cpp = crate::compiler::plan::direct_preprocessor_command(
         &src.to_string_lossy(),
         &work.join("in.i").to_string_lossy(),
     )

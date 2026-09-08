@@ -3,9 +3,45 @@
 //! `routing_source` selects evidenced compiler policy; `input` is the file being
 //! compiled. Candidate sources need both names. Compiler family and ordered
 //! flags come only from routing; callers may supply local include paths or dumps.
-use crate::bundle::{compiler_command_for_target, validate_agbcc_bundle, validate_bundle};
-use crate::nodepath::{basename, extname};
-use crate::routing::{
+use crate::compiler::bundle::{
+    compiler_command_for_target, validate_agbcc_bundle, validate_bundle,
+};
+// POSIX filename semantics retained by the compiler argv contract.
+
+pub fn basename(path: &str) -> &str {
+    path.trim_end_matches('/').rsplit('/').next().unwrap_or("")
+}
+
+pub fn extname(path: &str) -> &str {
+    let name = basename(path);
+    match name.rfind('.') {
+        Some(index) if index > 0 && name != ".." => &name[index..],
+        _ => "",
+    }
+}
+
+#[test]
+fn posix_names_preserve_dotfiles_unicode_and_trailing_slashes() {
+    for (path, base, ext) in [
+        ("", "", ""),
+        ("///", "", ""),
+        ("a/.", ".", ""),
+        ("a/..//", "..", ""),
+        ("a/...", "...", "."),
+        ("a/.c", ".c", ""),
+        ("a/..c", "..c", ".c"),
+        ("a/.c.s/", ".c.s", ".s"),
+        ("a/b..", "b..", "."),
+        ("日本/場面.c//", "場面.c", ".c"),
+    ] {
+        assert_eq!((basename(path), extname(path)), (base, ext));
+    }
+    assert_eq!(
+        crate::compiler::plan::inferred_preprocessed_output("a.c/"),
+        "a..i"
+    );
+}
+use crate::compiler::routing::{
     agbcc_driver, bundle, cflags_for_target_source, include_flag, uses_agbcc_compiler,
     CompilerTarget,
 };
@@ -42,28 +78,6 @@ impl SourceToAssemblyPlanOptions {
         }
     }
 }
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CompilerCommandStep {
-    pub kind: StepKind,
-    pub command: Vec<String>,
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StepKind {
-    Preprocess,
-    Compile,
-}
-impl StepKind {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Preprocess => "preprocess",
-            Self::Compile => "compile",
-        }
-    }
-}
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SourceToAssemblyPlan {
-    pub steps: Vec<CompilerCommandStep>,
-}
 /// Preserves the pinned trailing-slash bug: `a.c/` becomes `a..i`. Fixing it
 /// would change a cache-visible intermediate name.
 pub fn inferred_preprocessed_output(output: &str) -> String {
@@ -74,9 +88,7 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
         format!("{}.i", &output[..output.len() - extension.len()])
     }
 }
-pub fn source_to_assembly_plan(
-    options: &SourceToAssemblyPlanOptions,
-) -> Result<SourceToAssemblyPlan> {
+pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<Vec<Vec<String>>> {
     if let Some(flag) = options.support_flags.iter().find(|flag| {
         !matches!(flag.as_str(), "-g" | "-dp" | "-dr" | "-dl" | "-dg" | "-da")
             && !flag.strip_prefix("-I").is_some_and(|path| !path.is_empty())
@@ -92,7 +104,7 @@ pub fn source_to_assembly_plan(
         .dumpbase
         .clone()
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
-    let mut steps: Vec<CompilerCommandStep> = Vec::new();
+    let mut steps = Vec::new();
     if old_agbcc {
         let driver = agbcc_driver();
         validate_agbcc_bundle()?;
@@ -102,16 +114,13 @@ pub fn source_to_assembly_plan(
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
         // old-agbcc identifies as 2.9.
         let gcc_minor = 9;
-        steps.push(CompilerCommandStep {
-            kind: StepKind::Preprocess,
-            command: direct_preprocessor_command_for_target_with_minor_and_flags(
-                options.target,
-                &options.input,
-                &compiler_input,
-                gcc_minor,
-                &options.preprocessor_flags,
-            )?,
-        });
+        steps.push(direct_preprocessor_command_for_target_with_minor_and_flags(
+            options.target,
+            &options.input,
+            &compiler_input,
+            gcc_minor,
+            &options.preprocessor_flags,
+        )?);
         let mut command = vec![
             driver.to_string_lossy().into_owned(),
             compiler_input.clone(),
@@ -121,10 +130,7 @@ pub fn source_to_assembly_plan(
         command.extend(flags.iter().cloned());
         command.push("-o".to_string());
         command.push(options.output.clone());
-        steps.push(CompilerCommandStep {
-            kind: StepKind::Compile,
-            command,
-        });
+        steps.push(command);
     } else {
         let mut arguments = flags.clone();
         arguments.extend(options.preprocessor_flags.iter().cloned());
@@ -132,12 +138,9 @@ pub fn source_to_assembly_plan(
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
         arguments.push(options.input.clone());
-        steps.push(CompilerCommandStep {
-            kind: StepKind::Compile,
-            command: compiler_command_for_target(options.target, &arguments)?,
-        });
+        steps.push(compiler_command_for_target(options.target, &arguments)?);
     }
-    Ok(SourceToAssemblyPlan { steps })
+    Ok(steps)
 }
 /// Direct hot-search preprocessing, defaulting the reported GCC minor to 96.
 pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<String>> {
@@ -198,7 +201,7 @@ mod tests {
             let canonical = cflags_for_target_source(options.target, source);
             options.support_flags = vec!["-da".into(), "-Ilocal-headers".into()];
             let plan = source_to_assembly_plan(&options).unwrap();
-            let command = &plan.steps.last().unwrap().command;
+            let command = plan.last().unwrap();
             assert!(command
                 .windows(canonical.len())
                 .any(|flags| flags == canonical));
@@ -222,12 +225,10 @@ mod tests {
         );
         options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
-        assert!(plan.steps[0]
-            .command
+        assert!(plan[0]
             .iter()
             .any(|argument| argument == "-DGS1_EDITION_JA=1"));
-        assert!(!plan.steps[1]
-            .command
+        assert!(!plan[1]
             .iter()
             .any(|argument| argument.starts_with("-DGS1_EDITION_")));
     }
@@ -241,9 +242,8 @@ mod tests {
         );
         options.preprocessor_flags = vec!["-DGS2_EDITION_IT=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
-        assert_eq!(plan.steps.len(), 1);
-        assert!(plan.steps[0]
-            .command
+        assert_eq!(plan.len(), 1);
+        assert!(plan[0]
             .iter()
             .any(|argument| argument == "-DGS2_EDITION_IT=1"));
     }
@@ -257,9 +257,8 @@ mod tests {
         );
         options.preprocessor_flags = vec!["-DGS2_EDITION_JA=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
-        assert!(plan.steps[1].command[0].ends_with("/agbcc/old_agbcc"));
-        assert!(plan.steps[0]
-            .command
+        assert!(plan[1][0].ends_with("/agbcc/old_agbcc"));
+        assert!(plan[0]
             .iter()
             .any(|argument| argument == "-DGS2_EDITION_JA=1"));
     }

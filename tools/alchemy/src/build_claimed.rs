@@ -27,22 +27,24 @@ pub fn entry(arguments: &[String]) -> Result<()> {
     Ok(())
 }
 use crate::candidate::{link_candidate_owned_routed_with_object, CandidateCompilerConfiguration};
+use crate::compiler::build_io::{
+    argv as strings, read, relative, rooted, text, write as write_file,
+};
+use crate::compiler::bundle::{compiler_bundle_signature, host_executable_signature};
+use crate::compiler::canonical_json::{canonical_json, write_canonical};
+use crate::compiler::plan::basename;
+use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
+use crate::compiler::routing::CompilerTarget;
+use crate::compiler::sha256::hex as digest;
+use crate::compiler::source_inputs::compiler_source_tree_signature;
+use crate::compiler::source_paths::{SourceFile, SourceOwner, SourcePaths};
+use crate::compiler::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
+use crate::compiler::translation_units::{
+    AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
+};
 use crate::targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompTarget, DecompTargetId,
     DEFAULT_TARGET,
-};
-use compiler_core::build_io::{argv as strings, read, relative, rooted, text, write as write_file};
-use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
-use compiler_core::canonical_json::{canonical_json, write_canonical};
-use compiler_core::nodepath::basename;
-use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
-use compiler_core::routing::CompilerTarget;
-use compiler_core::sha256::hex as digest;
-use compiler_core::source_inputs::compiler_source_tree_signature;
-use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths};
-use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
-use compiler_core::translation_units::{
-    AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
 };
 use psynergy::cache::SqliteCache;
 use serde_json::{json, Value};
@@ -58,7 +60,7 @@ pub const ROM_BASE: u32 = 0x0800_0000;
 pub type Result<T> = std::result::Result<T, String>;
 const BINUTILS: [&str; 2] = ["arm-none-eabi-as", "arm-none-eabi-nm"];
 pub fn root() -> String {
-    text(compiler_core::routing::root().to_path_buf())
+    text(crate::compiler::routing::root().to_path_buf())
 }
 fn address(value: &str) -> Option<u32> {
     u32::from_str_radix(value.trim_start_matches("0x"), 16).ok()
@@ -119,7 +121,7 @@ impl CacheSignatures {
         Ok(Self {
             compiler_bundle: compiler_bundle_signature(),
             binutils: host_executable_signature(&BINUTILS)?,
-            implementation: compiler_core::bundle::executable_signature()?,
+            implementation: crate::compiler::bundle::executable_signature()?,
         })
     }
 }
@@ -417,7 +419,7 @@ fn materialize_unit_owner(
     let assembly = object_dir.join(format!("{stem}.s"));
     let output = text(object_dir.join(format!("{stem}.o")));
     write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
-    let assembler = compiler_core::routing::compiler_assembly_command(&text(assembly), &output);
+    let assembler = crate::compiler::routing::compiler_assembly_command(&text(assembly), &output);
     run(&assembler, root)?;
     if link(&output)? != linked {
         return Err(format!("{}: emitted {stem} slice changed output", unit.id));
@@ -525,8 +527,7 @@ pub fn compile_source_for_owner(
         options.preprocessor_flags.push(bindings.to_string());
     }
     options.preprocessed_output = Some(text(Path::new(object_dir).join(format!("{name}.i"))));
-    let plan = source_to_assembly_plan(&options)?;
-    let commands: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
+    let commands = source_to_assembly_plan(&options)?;
     let source_inputs =
         compiler_source_tree_signature(Path::new(root), Path::new(source), &commands)?;
     let key = object_cache_key(
@@ -547,11 +548,11 @@ pub fn compile_source_for_owner(
             undefined_names,
         });
     }
-    for step in &plan.steps {
-        run(&step.command, root)?;
+    for command in &commands {
+        run(command, root)?;
     }
     run(
-        &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+        &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
         root,
     )?;
     let defined = last_fields(&run(
@@ -866,7 +867,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     write_file(&symbols_source, externals.as_bytes())?;
     run(
-        &compiler_core::routing::assembly_command(&text(&symbols_source), &text(&symbols_object)),
+        &crate::compiler::routing::assembly_command(&text(&symbols_source), &text(&symbols_object)),
         root,
     )?;
     let linker = output.join("claimed.ld");

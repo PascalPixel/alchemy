@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::{Component, Path, PathBuf};
 
-use compiler_core::routing::root;
+use crate::compiler::routing::root;
 use serde_json::json;
 
 use super::compile::{Score, Target};
@@ -25,7 +25,7 @@ pub(crate) struct RunSummary {
 }
 
 fn load(path: &Path) -> Result<(PathBuf, String), String> {
-    let path = compiler_core::build_io::rooted(root(), path);
+    let path = crate::compiler::build_io::rooted(root(), path);
     let source =
         fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
     if source.len() > MAX_SOURCE_BYTES {
@@ -64,7 +64,10 @@ fn allocator_report(path: &Path) -> Result<crate::diff::allocator::Report, Strin
 
 fn guard_call_via(source: &str) -> Result<(), String> {
     for register in 0..14 {
-        let symbol = format!("Func_{:08x}(", compiler_core::CALL_VIA_BASE + register * 4);
+        let symbol = format!(
+            "Func_{:08x}(",
+            crate::compiler::symbols::CALL_VIA_BASE + register * 4
+        );
         if source.contains(&symbol) {
             return Err(format!("semantic guard: {symbol} is a main-image call-via trampoline; model the typed indirect call first"));
         }
@@ -143,7 +146,7 @@ fn validate_output(path: &Path) -> Result<PathBuf, String> {
     if path.components().any(|part| part == Component::ParentDir) {
         return Err("output path must not contain ..".into());
     }
-    let path = compiler_core::build_io::rooted(root(), path);
+    let path = crate::compiler::build_io::rooted(root(), path);
     let roots = [root().join("out"), std::env::temp_dir()];
     if path.exists()
         || !roots
@@ -220,7 +223,7 @@ fn save(
         "dimensions": decoder.dimensions,
         "decoder": {
             "repair": repair,
-            "evidence_sha256": compiler_core::sha256::hex(decoder.text.as_bytes()),
+            "evidence_sha256": crate::compiler::sha256::hex(decoder.text.as_bytes()),
         },
         "raw_choices": permutation.raw_count(),
         "unique_choices": permutation.count(),
@@ -253,7 +256,7 @@ pub(crate) fn run(options: Options) -> Result<RunSummary, String> {
     let choices = choice_order(permutation.count(), options.iterations, options.seed);
     let default_output = root().join("out/matching").join(format!(
         "{}-seed-{}",
-        compiler_core::sha256::hex(source.as_bytes()),
+        crate::compiler::sha256::hex(source.as_bytes()),
         options.seed
     ));
     let output = validate_output(options.output.as_deref().unwrap_or(&default_output))?;

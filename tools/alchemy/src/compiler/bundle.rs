@@ -1,6 +1,6 @@
-use crate::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
-use crate::routing::{agbcc_driver, bundle, driver, root, CompilerTarget};
-use crate::sha256;
+use crate::compiler::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
+use crate::compiler::routing::{agbcc_driver, bundle, driver, root, CompilerTarget};
+use crate::compiler::sha256;
 use fs2::FileExt;
 use std::fs::{self, File, OpenOptions};
 use std::path::{Path, PathBuf};
@@ -457,6 +457,7 @@ fn resolve_host_executable(name: &str) -> Result<PathBuf> {
 }
 fn host_executable_signature_uncached_names(names: &[String]) -> Result<String> {
     let mut stream = Vec::new();
+    // Cache-format identity survives the former crate's removal.
     append_signature_frame(&mut stream, b"compiler-core host-executables v1");
     append_signature_frame(&mut stream, &(names.len() as u64).to_be_bytes());
     for name in names {

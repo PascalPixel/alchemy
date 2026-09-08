@@ -1,10 +1,10 @@
 use crate::candidate::{assemble, compile_to_assembly};
+use crate::compiler::routing::CompilerTarget;
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::symbols::symbol_is_thumb;
+use crate::compiler::translation_units::{TranslationUnit, TranslationUnits};
 use crate::overlay::compile::compile_declared_overlay_unit;
 use crate::overlay::compile::OverlayEditionPlacement;
-use compiler_core::routing::CompilerTarget;
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use compiler_core::symbol_is_thumb;
-use compiler_core::translation_units::{TranslationUnit, TranslationUnits};
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -621,8 +621,8 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
     )?;
     let object = output.join("owner.o");
     run_compiler(
-        &compiler_core::routing::compiler_assembly_command(&assembly, &object.to_string_lossy()),
-        compiler_core::routing::root(),
+        &crate::compiler::routing::compiler_assembly_command(&assembly, &object.to_string_lossy()),
+        crate::compiler::routing::root(),
     )?;
     Ok(object)
 }
@@ -673,7 +673,7 @@ fn edition_build_report(
         .map(|unit| {
             (
                 format!("{:08x}", unit.owners[0].address),
-                compiler_core::routing::root().join(&unit.source),
+                crate::compiler::routing::root().join(&unit.source),
             )
         })
         .unwrap_or_else(|| {
@@ -685,7 +685,7 @@ fn edition_build_report(
             )
         });
     let source_report_path = source_path
-        .strip_prefix(compiler_core::routing::root())
+        .strip_prefix(crate::compiler::routing::root())
         .unwrap_or(&source_path)
         .to_string_lossy()
         .replace('\\', "/");
@@ -821,9 +821,11 @@ fn bind_reference_literals(
     for relocation in relocations.iter().filter(|site| {
         site.external && site.kind == "R_ARM_ABS32" && !address_function(&site.symbol)
     }) {
-        let symbol =
-            compiler_core::external_symbol(&relocation.symbol, compiler_core::CALL_VIA_BASE)
-                .ok_or_else(|| format!("{}: no EN literal identity", relocation.symbol))?;
+        let symbol = crate::compiler::symbols::external_symbol(
+            &relocation.symbol,
+            crate::compiler::symbols::CALL_VIA_BASE,
+        )
+        .ok_or_else(|| format!("{}: no EN literal identity", relocation.symbol))?;
         let expected = (symbol.address as u32 | u32::from(symbol.thumb))
             .wrapping_add(relocation.addend as u32);
         let mut values = BTreeSet::new();
@@ -1500,7 +1502,7 @@ fn registers() -> Result<&'static Registers, String> {
     static REGISTERS: OnceLock<Result<Registers, String>> = OnceLock::new();
     REGISTERS
         .get_or_init(|| {
-            let root = compiler_core::routing::root();
+            let root = crate::compiler::routing::root();
             Ok(Registers {
                 sources: SourcePaths::load(root)?,
                 units: TranslationUnits::load(root)?,
@@ -1522,7 +1524,7 @@ pub(crate) fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>,
     let source = match registers
         .units
         .unit_for_game_owner("gs1", owner)
-        .map(|unit| compiler_core::routing::root().join(&unit.source))
+        .map(|unit| crate::compiler::routing::root().join(&unit.source))
     {
         Some(path) => path,
         None => match registers.sources.registered_source_path(owner) {
@@ -1532,7 +1534,7 @@ pub(crate) fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>,
     };
     let text =
         fs::read_to_string(&source).map_err(|error| format!("{}: {error}", source.display()))?;
-    let forbidden = compiler_core::no_asm::find_forbidden(&source.to_string_lossy(), &text);
+    let forbidden = crate::compiler::no_asm::find_forbidden(&source.to_string_lossy(), &text);
     Ok(forbidden.first().map(|finding| {
         format!(
             "compliance: nonordinary C ({} at line {})",

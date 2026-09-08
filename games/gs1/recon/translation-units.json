@@ -4,6 +4,66 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "scene-four-way-effect-sequence",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_381_c_020029a4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_381",
+      "absolute_symbols": {
+        "Func_0200b4f4": {
+          "address": "0x0200b4f4",
+          "kind": "thumb"
+        },
+        "Func_0200b5ec": {
+          "address": "0x0200b5ec",
+          "kind": "thumb"
+        },
+        "Func_0200b5f4": {
+          "address": "0x0200b5f4",
+          "kind": "thumb"
+        },
+        "Func_0200b624": {
+          "address": "0x0200b624",
+          "kind": "thumb"
+        },
+        "Func_0200b454": {
+          "address": "0x0200b454",
+          "kind": "thumb"
+        },
+        "Func_0200b444": {
+          "address": "0x0200b444",
+          "kind": "thumb"
+        },
+        "Func_0200b3e4": {
+          "address": "0x0200b3e4",
+          "kind": "thumb"
+        },
+        "Func_0200b5ac": {
+          "address": "0x0200b5ac",
+          "kind": "thumb"
+        },
+        "Func_0200b3ec": {
+          "address": "0x0200b3ec",
+          "kind": "thumb"
+        },
+        "Func_0200b3f4": {
+          "address": "0x0200b3f4",
+          "kind": "thumb"
+        },
+        "Func_02002ba0": {
+          "address": "0x0200aba0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020029a4",
+          "extent": 508,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "scene-two-phase-actor-sequence",
       "game": "gs1",
       "source": "games/gs1/recon/en/overlays/resource_381_c_02000054.c",

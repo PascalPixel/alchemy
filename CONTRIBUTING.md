@@ -359,6 +359,9 @@ platform. `tools/psynergy` currently owns portable Thumb decoding,
 lifetime analysis, candidate C recovery, instruction normalization, structural
 comparison, byte-difference counting, explicit subprocess execution and bounded
 C repairs. Its only external dependency is `regex`, used by the source repairs.
+Thumb BL decoding and byte-level relocation-site scanning are shared by the
+decompiler, overlay serialization and cross-edition comparison. These scans
+identify encoding patterns, not proof that every scanned byte is executable.
 It accepts instruction windows and explicit addresses rather than loading ROMs
 or owner registers. Repair plans name one or two operations and enumerate at most
 sixteen alternatives; a generated alternative is not a match or an adoption.

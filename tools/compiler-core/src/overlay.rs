@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 pub const RESOURCE_BASE: u32 = 0x0200_0000;
 pub const RUNTIME_BASE: u32 = 0x0200_8000;
 
-pub use crate::thumb::bl_displacement as displacement;
+use psynergy::thumb::bl_displacement as displacement;
 
 pub fn placeholder_addresses(assembly: &str) -> BTreeSet<u32> {
     assembly
@@ -132,7 +132,7 @@ pub fn call_sites(
         return Err("overlay owner boundary splits a loader relocation".into());
     }
     let (_, references) =
-        crate::thumb::relocation_info(body, u64::from(RESOURCE_BASE) + offset as u64);
+        psynergy::thumb::relocation_info(body, u64::from(RESOURCE_BASE) + offset as u64);
     let literals = references
         .iter()
         .filter(|site| site.0 == b'L')

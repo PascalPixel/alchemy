@@ -614,7 +614,7 @@ fn thumb_bl_target(
     let bytes = rom
         .get(rom_start + offset..rom_start + offset + 4)
         .ok_or_else(|| format!("call at 0x{offset:x} extends past the reference image"))?;
-    let displacement = compiler_core::thumb::bl_displacement(bytes)
+    let displacement = psynergy::thumb::bl_displacement(bytes)
         .ok_or_else(|| format!("reference relocation at 0x{offset:x} is not a Thumb BL"))?;
     let pc = address as i64 + offset as i64 + 4;
     u64::try_from(pc + i64::from(displacement))

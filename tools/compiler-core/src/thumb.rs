@@ -1,55 +1,3 @@
-pub fn bl_displacement(pair: &[u8]) -> Option<i32> {
-    let high = u16::from_le_bytes(pair.get(..2)?.try_into().ok()?);
-    let low = u16::from_le_bytes(pair.get(2..4)?.try_into().ok()?);
-    if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
-        return None;
-    }
-    let value = (i32::from(high & 0x7ff) << 12) | (i32::from(low & 0x7ff) << 1);
-    Some((value << 9) >> 9)
-}
-/// A Thumb relocation-bearing site: kind (`b'B'` call, `b'L'` literal load),
-/// instruction offset, affected byte offset, and the referenced value.
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub struct Reference(pub u8, pub usize, pub usize, pub u32);
-/// Mask the relocation-bearing bytes of a Thumb region that starts at the
-/// absolute address `base`: `bl` halfword pairs and the literal words reached
-/// by PC-relative loads. Returns the mask and the decoded reference sites.
-pub fn relocation_info(bytes: &[u8], base: u64) -> (Vec<bool>, Vec<Reference>) {
-    let mut mask = vec![false; bytes.len()];
-    let mut references = Vec::new();
-    for at in (0..bytes.len().saturating_sub(3)).step_by(2) {
-        if let Some(delta) = bl_displacement(&bytes[at..at + 4]) {
-            mask[at..at + 4].fill(true);
-            references.push(Reference(
-                b'B',
-                at,
-                at,
-                (base as i64 + at as i64 + 4 + i64::from(delta)) as u32,
-            ));
-        }
-    }
-    for at in (0..bytes.len().saturating_sub(1)).step_by(2) {
-        let instruction = u16::from_le_bytes([bytes[at], bytes[at + 1]]);
-        if instruction & 0xf800 != 0x4800 {
-            continue;
-        }
-        let pc = (base as usize + at + 4) & !3;
-        let target = pc + usize::from(instruction & 0xff) * 4;
-        let Some(literal) = target.checked_sub(base as usize) else {
-            continue;
-        };
-        if literal + 4 <= mask.len() {
-            mask[literal..literal + 4].fill(true);
-            references.push(Reference(
-                b'L',
-                at,
-                literal,
-                u32::from_le_bytes(bytes[literal..literal + 4].try_into().unwrap()),
-            ));
-        }
-    }
-    (mask, references)
-}
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct ThumbTransfer {
     load: bool,
@@ -146,22 +94,4 @@ pub fn standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
             (!paired_as_load && !paired_as_store).then_some(*line)
         })
         .collect()
-}
-#[cfg(test)]
-mod tests {
-    use super::relocation_info;
-    #[test]
-    fn masks_thumb_calls_and_reached_literals() {
-        let bytes = [0x00, 0xf0, 0x00, 0xf8, 0x00, 0x48, 0x70, 0x47, 1, 2, 3, 4];
-        let (mask, references) = relocation_info(&bytes, 0x0200_0000);
-        assert_eq!(
-            mask,
-            [true, true, true, true, false, false, false, false, true, true, true, true]
-        );
-        let core = mask.iter().filter(|masked| !**masked).count();
-        assert_eq!(core, 4);
-        assert_eq!(references.len(), 2);
-        assert_eq!(references[0].3, 0x0200_0004);
-        assert_eq!(references[1].3, 0x0403_0201);
-    }
 }

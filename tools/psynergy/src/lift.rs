@@ -1,10 +1,87 @@
-//! Symbolic lifting of one Thumb function into a C body that GCC 2.96 at
-//! -O2 recompiles to the same bytes. Values are tracked per register as
+//! Symbolic lifting of one Thumb function into a candidate C body. Byte equality
+//! requires independent compilation and comparison. Values are tracked per register as
 //! constants or C expressions; calls, stores, loops, and compares become
 //! statements in the spellings the compiler's idioms require.
 
 use crate::decode::{Alu, Cond, Ins, Kind, Offset, Shift, Width};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ReferenceKind {
+    Constant,
+    Shared { pool: bool },
+    Argument,
+    Dereference,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Symbol {
+    Function(u32),
+    Data(u32),
+    Volatile,
+}
+
+/// The integrating project decides which values are symbols or hardware accesses.
+/// Returning None keeps the numeric value; no image layout is assumed here.
+pub type SymbolResolver<'a> = dyn Fn(u32, ReferenceKind) -> Option<Symbol> + 'a;
+
+fn symbol_expression(symbol: Option<Symbol>) -> Option<String> {
+    match symbol? {
+        Symbol::Function(address) => Some(format!("(s32)Func_{address:08x}")),
+        Symbol::Data(address) => Some(format!("(s32)Data_{address:08x}")),
+        Symbol::Volatile => None,
+    }
+}
+
+#[test]
+fn caller_symbols_support_a_different_address_layout() {
+    let address = 0x1234_5000;
+    let symbols = |word, kind| {
+        if word != address {
+            return None;
+        }
+        Some(match kind {
+            ReferenceKind::Constant => Symbol::Data(word),
+            ReferenceKind::Shared { pool: true } | ReferenceKind::Argument => {
+                Symbol::Function(word)
+            }
+            ReferenceKind::Shared { pool: false } => return None,
+            ReferenceKind::Dereference => Symbol::Volatile,
+        })
+    };
+    assert_eq!(format_const(address as i32, &symbols), "(s32)Data_12345000");
+    assert_eq!(
+        absolute_deref("u16", address, &symbols),
+        "*(volatile u16 *)0x12345000"
+    );
+    assert_eq!(
+        absolute_deref("u16", address, &|_, _| None),
+        "*(u16 *)0x12345000"
+    );
+    assert_eq!(format_const(0x02000001, &|_, _| None), "0x2000001");
+    assert!(deref_named_at("u16", "base", 2, address, &symbols).contains("volatile"));
+    assert!(!deref_named_at("u16", "base", 2, 0x04000000, &|_, _| None).contains("volatile"));
+    let mut tables = BTreeMap::new();
+    let mut lifter = Lifter::new(&[], &mut tables, &symbols, &[]);
+    lifter.name_shared(&Val {
+        c: Some(address as i32),
+        pool: true,
+        ..Val::default()
+    });
+    assert!(lifter.out.join("\n").contains("(s32)Func_12345000"));
+    let mut image = vec![0x01, 0x49, 0x08, 0x60, 0x70, 0x47, 0xc0, 0x46];
+    image.extend_from_slice(&address.to_le_bytes());
+    let ins = crate::decode::decode_window_at(&image, 0x1000, 0x1000, image.len() as u32);
+    let draft = lift(&ins, &mut BTreeMap::new(), &symbols, &[])
+        .lines
+        .join("\n");
+    assert!(draft.contains("*(volatile s32 *)0x12345000"), "{draft}");
+    let numeric = lift(&ins, &mut BTreeMap::new(), &|_, _| None, &[])
+        .lines
+        .join("\n");
+    assert!(!numeric.contains("Data_"), "{numeric}");
+    assert!(!numeric.contains("volatile"), "{numeric}");
+}
 
 #[derive(Clone, Debug, Default)]
 pub struct Val {
@@ -241,27 +318,8 @@ fn width_bytes(c_type: &str) -> i64 {
     }
 }
 
-/// In the main image, a word inside the ROM or the work RAM is a relocated
-/// symbol: code when odd, data when even.
-fn main_symbol(c: i32, main: bool) -> Option<String> {
-    let word = c as u32;
-    if !main {
-        return None;
-    }
-    let rom = (0x0800_0000..0x0a00_0000).contains(&word);
-    let ram =
-        (0x0200_0000..0x0204_0000).contains(&word) || (0x0300_0000..0x0300_8000).contains(&word);
-    if rom && word % 2 == 1 {
-        Some(format!("(s32)Func_{:08x}", word & !1))
-    } else if rom || ram {
-        Some(format!("(s32)Data_{word:08x}"))
-    } else {
-        None
-    }
-}
-
-fn format_const(c: i32, main: bool) -> String {
-    if let Some(symbol) = main_symbol(c, main) {
+fn format_const(c: i32, symbols: &SymbolResolver<'_>) -> String {
+    if let Some(symbol) = symbol_expression(symbols(c as u32, ReferenceKind::Constant)) {
         return symbol;
     }
     if c < 0 {
@@ -293,7 +351,7 @@ struct SwitchTree {
 
 struct Lifter<'a> {
     ins: &'a [Ins],
-    main: bool,
+    symbols: &'a SymbolResolver<'a>,
     literal_bases: &'a [u32],
     tables: &'a mut BTreeMap<String, String>,
     value_sites: BTreeSet<usize>,
@@ -366,7 +424,7 @@ impl<'a> Lifter<'a> {
     fn new(
         ins: &'a [Ins],
         tables: &'a mut BTreeMap<String, String>,
-        main: bool,
+        symbols: &'a SymbolResolver<'a>,
         literal_bases: &'a [u32],
     ) -> Self {
         let sites = crate::sched::value_calls(ins);
@@ -409,7 +467,7 @@ impl<'a> Lifter<'a> {
             .collect();
         let mut lifter = Lifter {
             ins,
-            main,
+            symbols,
             literal_bases,
             tables,
             value_sites: sites.value,
@@ -647,7 +705,7 @@ impl<'a> Lifter<'a> {
             return self.ensure_result_var(&mut v);
         }
         if let Some(c) = v.c {
-            return format_const(c, self.main);
+            return format_const(c, self.symbols);
         }
         v.e.clone().unwrap_or_else(|| "?".to_string())
     }
@@ -816,18 +874,11 @@ impl<'a> Lifter<'a> {
         let unsigned = c as u32;
         let name = format!("base{}_{:x}", v.reg.unwrap_or(0), unsigned);
         push_unique(&mut self.consts, &name);
-        // Overlay addresses are relocated symbols: odd ones name code, even ones
-        // data; a literal would be a plain pool word the scheduler treats
-        // differently.
-        // A constant formed by `movs`/`adds` is a literal; only a pool word
-        // is a relocation.
-        let lit = if (0x0200_0000..0x0201_0000).contains(&unsigned) && unsigned % 2 == 1 {
-            format!("(s32){}", func_name(unsigned))
-        } else if v.pool && unsigned < 0x0201_0000 {
-            format!("(s32)Data_{unsigned:08x}")
-        } else {
-            format_const(c, self.main)
-        };
+        let lit = symbol_expression((self.symbols)(
+            unsigned,
+            ReferenceKind::Shared { pool: v.pool },
+        ))
+        .unwrap_or_else(|| format_const(c, self.symbols));
         let line = format!("{}{name} = {lit};", self.indent);
         match v.def_out {
             Some(at) if at <= self.out.len() => self.insert_line(at, line),
@@ -1539,7 +1590,7 @@ impl<'a> Lifter<'a> {
                         let line = format!(
                             "{}{name} = {};",
                             self.indent,
-                            format_const(imm as i32, self.main)
+                            format_const(imm as i32, self.symbols)
                         );
                         self.insert_line(at, line);
                         self.set_reg(rd, Val::expr(name));
@@ -1651,7 +1702,7 @@ impl<'a> Lifter<'a> {
                     let b = self.val_of(rm, Some(rd));
                     let left = self.arith(&a);
                     let text = match b.c {
-                        Some(c) => format!("({left} & {})", format_const(!c, self.main)),
+                        Some(c) => format!("({left} & {})", format_const(!c, self.symbols)),
                         None => format!("({left} & ~{})", self.arith(&b)),
                     };
                     self.set_reg(rd, Val::expr(text));
@@ -1942,8 +1993,8 @@ impl<'a> Lifter<'a> {
             let e = match self.table_expr(&base, i64::from(off), width) {
                 Some(e) => e,
                 None => match self.shared_base(&base) {
-                    Some(name) => deref_named_at(c_type, &name, off, c as u32),
-                    None => absolute_deref(c_type, (c as u32).wrapping_add(off), self.main),
+                    Some(name) => deref_named_at(c_type, &name, off, c as u32, self.symbols),
+                    None => absolute_deref(c_type, (c as u32).wrapping_add(off), self.symbols),
                 },
             };
             // A load into a callee-saved register is a value kept across calls,
@@ -2016,8 +2067,8 @@ impl<'a> Lifter<'a> {
             Some(c) => match self.table_expr(&base, i64::from(off), width) {
                 Some(e) => e,
                 None => match self.shared_base(&base) {
-                    Some(name) => deref_named_at(c_type, &name, off, c as u32),
-                    None => absolute_deref(c_type, (c as u32).wrapping_add(off), self.main),
+                    Some(name) => deref_named_at(c_type, &name, off, c as u32, self.symbols),
+                    None => absolute_deref(c_type, (c as u32).wrapping_add(off), self.symbols),
                 },
             },
             None => self.addr_expr(&base, i64::from(off), width),
@@ -2190,11 +2241,13 @@ impl<'a> Lifter<'a> {
             args.push(text);
         }
         for arg in args.iter_mut().take(n as usize) {
-            if let Some(hex) = arg.strip_prefix("0x0200") {
-                if hex.len() == 4 && hex.bytes().all(|b| b.is_ascii_hexdigit()) {
+            if let Some(hex) = arg.strip_prefix("0x") {
+                if hex.len() == 8 && hex.bytes().all(|b| b.is_ascii_hexdigit()) {
                     let value = u32::from_str_radix(&arg[2..], 16).unwrap_or(0);
-                    if value % 2 == 1 {
-                        *arg = format!("(s32){}", func_name(value));
+                    if let Some(symbol) =
+                        symbol_expression((self.symbols)(value, ReferenceKind::Argument))
+                    {
+                        *arg = symbol;
                     }
                 }
             }
@@ -2468,7 +2521,7 @@ impl<'a> Lifter<'a> {
             rx,
             Val::expr(format!(
                 "({dividend} / {})",
-                format_const(1i32 << k, self.main)
+                format_const(1i32 << k, self.symbols)
             )),
         );
         self.consumed.insert(shift_at);
@@ -3102,9 +3155,6 @@ fn contains_word(text: &str, name: &str) -> bool {
     false
 }
 
-/// An absolute access. An address inside the overlay image is a relocated
-/// data symbol: two such addresses stay two pool words, where two literals
-/// become one base and an offset.
 /// The computed address of a halfword store, `*(u16 *)(<expr>)`, when the
 /// expression is more than a name.
 fn half_store_address(lhs: &str) -> Option<String> {
@@ -3117,9 +3167,15 @@ fn half_store_address(lhs: &str) -> Option<String> {
 
 /// `deref_named` through a base kept in a register, volatile when the base
 /// is a hardware register block.
-fn deref_named_at(c_type: &str, name: &str, off: u32, address: u32) -> String {
+fn deref_named_at(
+    c_type: &str,
+    name: &str,
+    off: u32,
+    address: u32,
+    symbols: &SymbolResolver<'_>,
+) -> String {
     let text = deref_named(c_type, name, off);
-    if (0x0400_0000..0x0500_0000).contains(&address) {
+    if symbols(address, ReferenceKind::Dereference) == Some(Symbol::Volatile) {
         text.replacen(
             &format!("*({c_type} *)"),
             &format!("*(volatile {c_type} *)"),
@@ -3130,18 +3186,12 @@ fn deref_named_at(c_type: &str, name: &str, off: u32, address: u32) -> String {
     }
 }
 
-fn absolute_deref(c_type: &str, address: u32, main: bool) -> String {
-    if main_symbol(address as i32, main).is_some() {
-        return format!("*({c_type} *)Data_{address:08x}");
-    }
-    // A hardware register is volatile in the original: every access stays.
-    if (0x0400_0000..0x0500_0000).contains(&address) {
-        return format!("*(volatile {c_type} *)0x{address:08x}");
-    }
-    if (0x0200_0000..0x0201_0000).contains(&address) {
-        format!("*({c_type} *)Data_{address:08x}")
-    } else {
-        format!("*({c_type} *)0x{address:08x}")
+fn absolute_deref(c_type: &str, address: u32, symbols: &SymbolResolver<'_>) -> String {
+    match symbols(address, ReferenceKind::Dereference) {
+        Some(Symbol::Data(value)) => format!("*({c_type} *)Data_{value:08x}"),
+        Some(Symbol::Function(value)) => format!("*({c_type} *)Func_{value:08x}"),
+        Some(Symbol::Volatile) => format!("*(volatile {c_type} *)0x{address:08x}"),
+        None => format!("*({c_type} *)0x{address:08x}"),
     }
 }
 
@@ -3239,10 +3289,10 @@ fn writes_only(kind: &Kind) -> bool {
 pub fn lift(
     ins: &[Ins],
     tables: &mut BTreeMap<String, String>,
-    main: bool,
+    symbols: &SymbolResolver<'_>,
     literal_bases: &[u32],
 ) -> Draft {
-    let mut lifter = Lifter::new(ins, tables, main, literal_bases);
+    let mut lifter = Lifter::new(ins, tables, symbols, literal_bases);
     lifter.run(0, ins.len());
     lifter.reset();
     lifter.run(0, ins.len());
@@ -3319,16 +3369,16 @@ mod tests {
         };
         let mut first = BTreeMap::new();
         let mut second = BTreeMap::new();
-        assert!(Lifter::new(&[], &mut first, false, &[])
+        assert!(Lifter::new(&[], &mut first, &|_, _| None, &[])
             .table_expr(&base, 0, Width::Word)
             .is_some());
-        assert!(Lifter::new(&[], &mut first, false, &[])
+        assert!(Lifter::new(&[], &mut first, &|_, _| None, &[])
             .table_expr(&base, 0, Width::Byte)
             .is_none());
-        assert!(Lifter::new(&[], &mut second, false, &[])
+        assert!(Lifter::new(&[], &mut second, &|_, _| None, &[])
             .table_expr(&base, 0, Width::Byte)
             .is_some());
-        assert!(Lifter::new(&[], &mut first, false, &[])
+        assert!(Lifter::new(&[], &mut first, &|_, _| None, &[])
             .table_expr(&base, 0, Width::Word)
             .is_some());
         assert_ne!(first, second);
@@ -3337,7 +3387,7 @@ mod tests {
     fn lifted(halves: &[u16]) -> String {
         let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
         let ins = decode_window_at(&image, OVERLAY_BASE, OVERLAY_BASE, image.len() as u32);
-        lift(&ins, &mut BTreeMap::new(), false, &[])
+        lift(&ins, &mut BTreeMap::new(), &|_, _| None, &[])
             .lines
             .join("\n")
     }

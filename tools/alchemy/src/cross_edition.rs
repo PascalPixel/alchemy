@@ -2126,7 +2126,7 @@ fn overlay_window<'a>(
         .ok_or_else(|| format!("{edition}: resource {resource:03x} owner extends past container"))
 }
 fn overlay_mask(owner: &[u8], en_offset: usize) -> Vec<bool> {
-    compiler_core::thumb::relocation_info(owner, OVERLAY_BASE + en_offset as u64).0
+    psynergy::thumb::relocation_info(owner, OVERLAY_BASE + en_offset as u64).0
 }
 fn analyze_overlay_owner(
     owner: &OverlayOwner,
@@ -2802,17 +2802,11 @@ fn thumb_bl_target(owner: &[u8], start: usize, offset: usize) -> Result<u64, Str
     let bytes = owner
         .get(offset..offset + 4)
         .ok_or_else(|| format!("call at 0x{offset:x} extends past owner"))?;
-    let high = u16::from_le_bytes([bytes[0], bytes[1]]);
-    let low = u16::from_le_bytes([bytes[2], bytes[3]]);
-    if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
-        return Err(format!("relocation at 0x{offset:x} is not a Thumb BL"));
-    }
-    let mut displacement = (((high & 0x07ff) as i64) << 12) | (((low & 0x07ff) as i64) << 1);
-    if displacement & (1 << 22) != 0 {
-        displacement -= 1 << 23;
-    }
+    let displacement = psynergy::thumb::bl_displacement(bytes)
+        .ok_or_else(|| format!("relocation at 0x{offset:x} is not a Thumb BL"))?;
     let pc = ROM_BASE as i64 + start as i64 + offset as i64 + 4;
-    u64::try_from(pc + displacement).map_err(|_| format!("call at 0x{offset:x} is below ROM"))
+    u64::try_from(pc + i64::from(displacement))
+        .map_err(|_| format!("call at 0x{offset:x} is below ROM"))
 }
 fn core_diff_bytes(left: &[u8], right: &[u8], mask: &[bool]) -> usize {
     left.iter()

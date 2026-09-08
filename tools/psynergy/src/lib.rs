@@ -7,6 +7,7 @@ pub mod lift;
 pub mod process;
 pub mod repair;
 pub mod sched;
+pub mod thumb;
 pub mod unit;
 #[cfg(test)]
 mod tests {

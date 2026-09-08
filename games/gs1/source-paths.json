@@ -17776,6 +17776,10 @@
     "resource_370:02000d74": {
       "name": "SceneData_FillTileRamp",
       "source": "overlays/scene_script/fill_scene_tile_ramp.c"
+    },
+    "resource_3b4:02000f40": {
+      "name": "RunScene_ApplyStagedCameraFade",
+      "source": "overlays/scene_primary_script/run_scene_apply_staged_camera_fade.c"
     }
   }
 }

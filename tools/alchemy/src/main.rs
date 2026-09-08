@@ -14,6 +14,7 @@ mod font;
 mod generated_files;
 mod overlay;
 mod scaffold;
+mod targets;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   decompile OWNER       recover candidate C\n\

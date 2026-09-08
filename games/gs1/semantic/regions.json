@@ -1547,7 +1547,7 @@
       "overlay": "resource_37a",
       "entry": "0x02001510",
       "span_bytes": 640,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "evidence": "complete 640-byte statue-light closing scene, including the branch-around pool at 0x0200155c-0x02001573 and final pool through 0x0200178f; ordinary C is byte-exact with its preparation and flag-gated siblings in sol-shinden-statue-transition under the unchanged canonical compiler. The reconstruction restores four initial halfword clears, four random-delay halfword stores, the shared word clear, callback registration/removal and scene-work stores omitted from the historical draft. Serialized call words that resemble intra-owner addresses resolve to separate light-group helpers at 0x02000238 and 0x02000360. Four callback pointers use explicit loader-runtime Thumb bindings, not storage addresses."
     },
     {
       "overlay": "resource_37a",

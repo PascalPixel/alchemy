@@ -15391,7 +15391,8 @@
       "source": "overlays/scene_primary_script/run_scene_372_return_script.c"
     },
     "resource_37a:02001790": {
-      "name": "FieldScene_RunFlaggedSequence"
+      "name": "FieldScene_RunFlaggedSequence",
+      "source": "map/locations/sol_shinden/statue_transition.c"
     },
     "resource_37a:02001510": {
       "name": "FieldScene_RunClosingSequence"
@@ -15961,8 +15962,8 @@
       "source": "overlays/scene_primary_script/run_scene_377_02000e34.c"
     },
     "resource_37a:02001264": {
-      "name": "FieldScene_RunScene37a_02001264",
-      "source": "overlays/scene_primary_script/run_scene_37a_02001264.c"
+      "name": "FieldScene_PrepareStatueTransition",
+      "source": "map/locations/sol_shinden/statue_transition.c"
     },
     "resource_37a:02001be8": {
       "name": "FieldScene_RunActorPositionTransition"

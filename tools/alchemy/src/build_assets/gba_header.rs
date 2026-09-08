@@ -4,7 +4,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::compiler::canonical_json::is_canonical_json_text;
-use import_asset::indexed_png;
+use psynergy::assets::image::indexed_png;
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
 

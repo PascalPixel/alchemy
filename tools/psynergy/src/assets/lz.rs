@@ -1,16 +1,5 @@
 //! Explicit LZ stream codecs, independent of ROM layouts and resource tables.
-use std::fmt;
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct DecodeError(pub String);
-impl fmt::Display for DecodeError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.0)
-    }
-}
-impl std::error::Error for DecodeError {}
-fn err<T>(message: impl Into<String>) -> Result<T, DecodeError> {
-    Err(DecodeError(message.into()))
-}
+use super::{err, AssetError};
 /// `["l", n]` / `["c", length, distance]` from the TypeScript.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GeneralToken {
@@ -40,15 +29,15 @@ pub enum PaletteGroup {
 /// `get` is 12 bits and `fill` only runs when `count < requested`), so the
 /// `value | word << count` shift can never reach 32 and the two
 /// implementations drop the same high bits.
-pub struct LsbBits<'a> {
-    pub data: &'a [u8],
-    pub cursor: usize,
-    pub end: usize,
-    pub value: u32,
-    pub count: u32,
+struct LsbBits<'a> {
+    data: &'a [u8],
+    cursor: usize,
+    end: usize,
+    value: u32,
+    count: u32,
 }
 impl<'a> LsbBits<'a> {
-    pub fn new(data: &'a [u8], cursor: usize, end: usize) -> Result<Self, DecodeError> {
+    fn new(data: &'a [u8], cursor: usize, end: usize) -> Result<Self, AssetError> {
         let mut bits = LsbBits {
             data,
             cursor,
@@ -63,19 +52,19 @@ impl<'a> LsbBits<'a> {
         bits.fill()?;
         Ok(bits)
     }
-    pub fn need(&self, size: usize) -> Result<(), DecodeError> {
+    fn need(&self, size: usize) -> Result<(), AssetError> {
         if self.cursor + size > self.end {
             return err("compressed input ended before terminator");
         }
         Ok(())
     }
-    pub fn byte(&mut self) -> Result<u8, DecodeError> {
+    fn byte(&mut self) -> Result<u8, AssetError> {
         self.need(1)?;
         let value = self.data[self.cursor];
         self.cursor += 1;
         Ok(value)
     }
-    pub fn fill(&mut self) -> Result<(), DecodeError> {
+    fn fill(&mut self) -> Result<(), AssetError> {
         self.need(2)?;
         let word = u32::from(self.data[self.cursor]) | u32::from(self.data[self.cursor + 1]) << 8;
         self.value |= word.wrapping_shl(self.count);
@@ -83,7 +72,7 @@ impl<'a> LsbBits<'a> {
         self.count += 16;
         Ok(())
     }
-    pub fn get(&mut self, count: u32) -> Result<u32, DecodeError> {
+    fn get(&mut self, count: u32) -> Result<u32, AssetError> {
         while self.count < count {
             self.fill()?;
         }
@@ -105,12 +94,12 @@ fn bit_length(value: u32) -> u32 {
 // ---------------------------------------------------------------------------
 // general stream
 // ---------------------------------------------------------------------------
-pub fn append_copy(
+fn append_copy(
     output: &mut Vec<u8>,
     distance: u32,
     length: u32,
     maximum: u64,
-) -> Result<(), DecodeError> {
+) -> Result<(), AssetError> {
     if distance < 1 || u64::from(distance) > output.len() as u64 {
         return err(format!(
             "invalid back-reference distance at output offset 0x{:x}",
@@ -125,7 +114,7 @@ pub fn append_copy(
     }
     Ok(())
 }
-fn decode_length(bits: &mut LsbBits) -> Result<Option<u32>, DecodeError> {
+fn decode_length(bits: &mut LsbBits) -> Result<Option<u32>, AssetError> {
     if bits.get(1)? == 0 {
         return Ok(Some(2));
     }
@@ -156,7 +145,7 @@ fn decode_general_body(
     maximum: u64,
     prefill: usize,
     header: usize,
-) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), AssetError> {
     let mut bits = LsbBits::new(data, start + header, end)?;
     let mut output: Vec<u8> = vec![0; prefill];
     let mut tokens: Vec<GeneralToken> = Vec::new();
@@ -196,7 +185,7 @@ pub fn decode_general_trace(
     start: usize,
     end: usize,
     maximum: u64,
-) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), AssetError> {
     if start >= end || data[start] != 0 {
         return err("general stream is missing its kind-zero header");
     }
@@ -207,7 +196,7 @@ pub fn decode_general(
     start: usize,
     end: usize,
     maximum: u64,
-) -> Result<(Vec<u8>, usize), DecodeError> {
+) -> Result<(Vec<u8>, usize), AssetError> {
     let (output, cursor, _) = decode_general_trace(data, start, end, maximum)?;
     Ok((output, cursor))
 }
@@ -218,7 +207,7 @@ pub fn decode_general_prefill_trace(
     maximum: u64,
     prefill: usize,
     header: usize,
-) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), AssetError> {
     if start >= end {
         return err("general stream is empty");
     }
@@ -227,12 +216,12 @@ pub fn decode_general_prefill_trace(
     }
     decode_general_body(data, start, end, maximum, prefill, header)
 }
-pub fn put(bits: &mut Vec<u8>, value: u32, count: u32) {
+fn put(bits: &mut Vec<u8>, value: u32, count: u32) {
     for index in 0..count {
         bits.push(((value >> index) & 1) as u8);
     }
 }
-fn encode_length(bits: &mut Vec<u8>, length: u32) -> Result<(), DecodeError> {
+fn encode_length(bits: &mut Vec<u8>, length: u32) -> Result<(), AssetError> {
     put(bits, 0, 1);
     match length {
         2 => put(bits, 0, 1),
@@ -287,7 +276,7 @@ fn encode_general_inner(
     tokens: &[GeneralToken],
     prefill: usize,
     header: usize,
-) -> Result<Vec<u8>, DecodeError> {
+) -> Result<Vec<u8>, AssetError> {
     let mut bits: Vec<u8> = Vec::new();
     let mut replay: Vec<u8> = vec![0; prefill];
     let mut cursor: usize = 0;
@@ -357,7 +346,7 @@ fn encode_general_inner(
     }
     Ok(finish_bits(&bits, header))
 }
-pub fn encode_general(decoded: &[u8], tokens: &[GeneralToken]) -> Result<Vec<u8>, DecodeError> {
+pub fn encode_general(decoded: &[u8], tokens: &[GeneralToken]) -> Result<Vec<u8>, AssetError> {
     encode_general_inner(decoded, tokens, 0, 1)
 }
 pub fn encode_general_prefill(
@@ -365,7 +354,7 @@ pub fn encode_general_prefill(
     tokens: &[GeneralToken],
     prefill: usize,
     header: usize,
-) -> Result<Vec<u8>, DecodeError> {
+) -> Result<Vec<u8>, AssetError> {
     encode_general_inner(decoded, tokens, prefill, header)
 }
 // ---------------------------------------------------------------------------
@@ -376,7 +365,7 @@ pub fn decode_palette_trace(
     start: usize,
     end: usize,
     maximum: u64,
-) -> Result<(Vec<u8>, usize, Vec<PaletteGroup>), DecodeError> {
+) -> Result<(Vec<u8>, usize, Vec<PaletteGroup>), AssetError> {
     let mut cursor = start;
     let mut output: Vec<u8> = Vec::new();
     let mut groups: Vec<PaletteGroup> = Vec::new();
@@ -438,11 +427,11 @@ pub fn decode_palette(
     start: usize,
     end: usize,
     maximum: u64,
-) -> Result<(Vec<u8>, usize), DecodeError> {
+) -> Result<(Vec<u8>, usize), AssetError> {
     let (output, cursor, _) = decode_palette_trace(data, start, end, maximum)?;
     Ok((output, cursor))
 }
-pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>, DecodeError> {
+pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>, AssetError> {
     let mut output: Vec<u8> = Vec::new();
     let mut encoded: Vec<u8> = Vec::new();
     let mut cursor: usize = 0;
@@ -550,7 +539,7 @@ fn mtf4_index(table: &mut [u8; 16], value: u8) -> u32 {
 /// a literal is `1`, a two-bit width selector (`1` = 2 bits, `01` = 3 bits,
 /// `00` = 4 bits) and the low then high nibble as MTF indices, and a copy uses
 /// the general stream's length and position-dependent distance coding.
-pub fn encode_mtf4_lz(decoded: &[u8], tokens: &[Mtf4LzToken]) -> Result<Vec<u8>, DecodeError> {
+pub fn encode_mtf4_lz(decoded: &[u8], tokens: &[Mtf4LzToken]) -> Result<Vec<u8>, AssetError> {
     let mut bits: Vec<u8> = Vec::new();
     let mut table: [u8; 16] = std::array::from_fn(|index| index as u8);
     let mut cursor = 0usize;
@@ -659,21 +648,21 @@ fn mtf4_lz_streams_carry_the_tag_and_move_to_front_literals() {
 /// precede the literal block in `data`. A zero split stores the stream raw
 /// up to and including its zero terminator. Returns the decoded stream, the
 /// encoded length and the unused final flag bits.
-pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), DecodeError> {
+pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), AssetError> {
     let split = usize::from(u16::from_le_bytes([
         *data
             .get(offset)
-            .ok_or_else(|| DecodeError("arena split is truncated".into()))?,
+            .ok_or_else(|| AssetError("arena split is truncated".into()))?,
         *data
             .get(offset + 1)
-            .ok_or_else(|| DecodeError("arena split is truncated".into()))?,
+            .ok_or_else(|| AssetError("arena split is truncated".into()))?,
     ]));
     let base = offset + 2;
     if split == 0 {
         let end = data[base..]
             .iter()
             .position(|byte| *byte == 0)
-            .ok_or_else(|| DecodeError("raw arena stream has no terminator".into()))?;
+            .ok_or_else(|| AssetError("raw arena stream has no terminator".into()))?;
         return Ok((data[base..=base + end].to_vec(), 3 + end, 0));
     }
     if split < 2 || offset + split >= data.len() {
@@ -686,7 +675,7 @@ pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), 
     loop {
         let flags = *data
             .get(cursor)
-            .ok_or_else(|| DecodeError("arena flag group is truncated".into()))?;
+            .ok_or_else(|| AssetError("arena flag group is truncated".into()))?;
         cursor += 1;
         for bit in 0..8 {
             if flags & (1 << bit) != 0 {
@@ -700,10 +689,10 @@ pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), 
             let word = u16::from_be_bytes([
                 *data
                     .get(cursor)
-                    .ok_or_else(|| DecodeError("arena copy is truncated".into()))?,
+                    .ok_or_else(|| AssetError("arena copy is truncated".into()))?,
                 *data
                     .get(cursor + 1)
-                    .ok_or_else(|| DecodeError("arena copy is truncated".into()))?,
+                    .ok_or_else(|| AssetError("arena copy is truncated".into()))?,
             ]);
             cursor += 2;
             if word == 0 {
@@ -716,7 +705,7 @@ pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), 
             let length = if word >> 12 == 0 {
                 let extra = *data
                     .get(cursor)
-                    .ok_or_else(|| DecodeError("arena copy length is truncated".into()))?;
+                    .ok_or_else(|| AssetError("arena copy length is truncated".into()))?;
                 cursor += 1;
                 usize::from(extra) + 18
             } else {
@@ -725,7 +714,7 @@ pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), 
             let source = base
                 .checked_sub(distance)
                 .filter(|source| distance != 0 && source + length <= data.len())
-                .ok_or_else(|| DecodeError("arena copy is outside the encoded data".into()))?;
+                .ok_or_else(|| AssetError("arena copy is outside the encoded data".into()))?;
             for index in 0..length {
                 output.push(data[source + index]);
             }
@@ -741,7 +730,7 @@ pub fn encode_arena(
     tokens: Option<&[GeneralToken]>,
     final_flags: u8,
     arena: &[u8],
-) -> Result<Vec<u8>, DecodeError> {
+) -> Result<Vec<u8>, AssetError> {
     let Some(tokens) = tokens else {
         if decoded.last() != Some(&0) || decoded[..decoded.len() - 1].contains(&0) {
             return err("raw arena stream must end with its only zero byte");
@@ -791,7 +780,7 @@ pub fn encode_arena(
         return err("arena plan does not cover decoded input");
     }
     let split = u16::try_from(literals.len() + 2)
-        .map_err(|_| DecodeError("arena literal block exceeds the split halfword".into()))?;
+        .map_err(|_| AssetError("arena literal block exceeds the split halfword".into()))?;
     flags.push(false);
     payloads.push(vec![0, 0]);
     let used = (flags.len() - 1) % 8 + 1;
@@ -877,8 +866,8 @@ pub enum HalfwordToken {
 /// Each group is a flag halfword (bit 15 first) followed by up to sixteen
 /// halfwords: a literal unit, a copy `(distance << 5) | (length - 2)` with
 /// `distance` 1..=2047 and `length` 2..=33, or a flagged zero terminator.
-pub fn decode_halfword(data: &[u8]) -> Result<(Vec<u8>, Vec<HalfwordToken>), DecodeError> {
-    let read = |at: usize| -> Result<u16, DecodeError> {
+pub fn decode_halfword(data: &[u8]) -> Result<(Vec<u8>, Vec<HalfwordToken>), AssetError> {
+    let read = |at: usize| -> Result<u16, AssetError> {
         match data.get(at..at + 2) {
             Some(bytes) => Ok(u16::from_le_bytes([bytes[0], bytes[1]])),
             None => err("halfword stream ended inside a group"),
@@ -920,7 +909,7 @@ pub fn decode_halfword(data: &[u8]) -> Result<(Vec<u8>, Vec<HalfwordToken>), Dec
         }
     }
 }
-pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Result<Vec<u8>, DecodeError> {
+pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Result<Vec<u8>, AssetError> {
     if decoded.len() % 2 != 0 {
         return err("halfword pixels have an odd size");
     }
@@ -958,9 +947,9 @@ pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Result<Vec<u
             }
             match *operation {
                 HalfwordToken::Literal(_) => {
-                    let unit = *units.get(replay.len()).ok_or(DecodeError(
-                        "halfword literal crossed decoded pixels".into(),
-                    ))?;
+                    let unit = *units
+                        .get(replay.len())
+                        .ok_or(AssetError("halfword literal crossed decoded pixels".into()))?;
                     replay.push(unit);
                     words.push(unit);
                 }

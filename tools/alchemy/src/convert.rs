@@ -19,17 +19,22 @@ struct Options {
 fn encode(format: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     let text = || std::str::from_utf8(input).map_err(|error| error.to_string());
     match format {
-        "words2bin" => import_asset::import_words(text()?),
-        "pairs2bin" => import_asset::import_pairs(text()?),
-        "tilemap2bin" => import_asset::import_tilemap(text()?),
-        "png2bpp4" => import_asset::gba_tiles_from_png(input, import_asset::GbaBpp::Bpp4)
+        "words2bin" => psynergy::assets::text::import_words(text()?),
+        "pairs2bin" => psynergy::assets::text::import_pairs(text()?),
+        "tilemap2bin" => psynergy::assets::text::import_tilemap(text()?),
+        "png2bpp4" => psynergy::assets::image::gba_tiles_from_png(
+            input,
+            psynergy::assets::image::GbaBpp::Bpp4,
+        )
+        .map_err(|error| error.to_string()),
+        "png2bpp8" => psynergy::assets::image::gba_tiles_from_png(
+            input,
+            psynergy::assets::image::GbaBpp::Bpp8,
+        )
+        .map_err(|error| error.to_string()),
+        "png2bgr555" => psynergy::assets::image::bgr555_palette_from_png(input)
             .map_err(|error| error.to_string()),
-        "png2bpp8" => import_asset::gba_tiles_from_png(input, import_asset::GbaBpp::Bpp8)
-            .map_err(|error| error.to_string()),
-        "png2bgr555" => {
-            import_asset::bgr555_palette_from_png(input).map_err(|error| error.to_string())
-        }
-        "wav2pcm8" => import_asset::wav_pcm8(input)
+        "wav2pcm8" => psynergy::assets::wav::wav_pcm8(input)
             .map(|(_, samples)| samples)
             .map_err(|error| error.to_string()),
         _ => return Err(format!("unknown conversion {format}; expected {FORMATS}")),
@@ -114,16 +119,15 @@ fn convert(format: &str, input: &[u8], options: Options) -> Result<Vec<u8>, Stri
             let palette =
                 std::fs::read(&palette_path).map_err(|error| format!("{palette_path}: {error}"))?;
             let bpp = if format == "bpp42png" {
-                import_asset::GbaBpp::Bpp4
+                psynergy::assets::image::GbaBpp::Bpp4
             } else {
-                import_asset::GbaBpp::Bpp8
+                psynergy::assets::image::GbaBpp::Bpp8
             };
-            import_asset::png_from_gba_tiles(input, &palette, bpp, tiles_wide)
+            psynergy::assets::image::png_from_gba_tiles(input, &palette, bpp, tiles_wide)
                 .map_err(|error| error.to_string())
         }
-        "pcm82wav" => {
-            import_asset::pcm8_wav(input, require_rate(options)?).map_err(|error| error.to_string())
-        }
+        "pcm82wav" => psynergy::assets::wav::pcm8_wav(input, require_rate(options)?)
+            .map_err(|error| error.to_string()),
         _ => {
             require_no_options(options, format)?;
             encode(format, input)

@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 regex = "1"
+png = "0.17.1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 
 [dev-dependencies]

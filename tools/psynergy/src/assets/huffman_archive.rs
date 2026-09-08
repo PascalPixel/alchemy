@@ -1,7 +1,7 @@
 //! Context-modelled Huffman message archives: one canonical tree per preceding
 //! symbol, packed leaf tables, bank payloads with byte-run lengths and an
 //! address directory. No game addresses, command tables or bank counts.
-use crate::AssetError;
+use super::{err, AssetError};
 use std::collections::HashMap;
 
 /// A built archive and the addresses its self-referential header records.
@@ -22,10 +22,6 @@ struct Context {
     tree: Vec<bool>,
     leaves: Vec<u16>,
     paths: HashMap<u16, Vec<bool>>,
-}
-
-fn err<T>(message: &str) -> Result<T, AssetError> {
-    Err(AssetError(message.into()))
 }
 
 /// Bits are packed least-significant bit first; the last byte is zero padded.

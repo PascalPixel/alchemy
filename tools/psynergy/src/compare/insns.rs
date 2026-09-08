@@ -1,3 +1,58 @@
+use regex::Regex;
+
+pub fn alignment_key(instruction: &str) -> String {
+    let registered = without_register(instruction);
+    let text = registered.split('@').next().unwrap_or(&registered);
+    let mut out = String::new();
+    let mut chars = text.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '0' && chars.peek() == Some(&'x') {
+            chars.next();
+            out.push_str("0xN");
+            while chars.peek().is_some_and(|c| c.is_ascii_hexdigit()) {
+                chars.next();
+            }
+        } else if c.is_ascii_digit() {
+            out.push('N');
+            while chars.peek().is_some_and(char::is_ascii_digit) {
+                chars.next();
+            }
+        } else {
+            out.push(if c == '\t' { ' ' } else { c });
+        }
+    }
+    out.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+pub fn without_pc_offset(instruction: &str) -> String {
+    let mut out = instruction.to_string();
+    while let Some(start) = out.find("[pc, #") {
+        let end = out[start..]
+            .find(']')
+            .map_or(out.len() - start, |end| end + 1);
+        out = format!("{}[pc]{}", &out[..start], &out[start + end..]);
+    }
+    out
+}
+pub fn without_register(instruction: &str) -> String {
+    static REG: std::sync::OnceLock<Regex> = std::sync::OnceLock::new();
+    REG.get_or_init(|| Regex::new(r"(?i)\b(?:r(?:1[0-2]|[0-9])|fp|ip|sl)\b").unwrap())
+        .replace_all(instruction, "R")
+        .into_owned()
+}
+pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
+    super::alignment_indices(left, right, |left, right| {
+        usize::from(alignment_key(left) == alignment_key(right))
+    })
+    .into_iter()
+    .map(|(left_index, right_index)| {
+        (
+            left_index.map(|index| left[index].clone()),
+            right_index.map(|index| right[index].clone()),
+        )
+    })
+    .collect()
+}
+
 /// Read one function without letting out-of-line helpers steer its score.
 pub fn gas_function_insns(source: &str, symbol: &str) -> Vec<String> {
     let label = format!("{symbol}:");
@@ -136,6 +191,29 @@ fn lo(reg: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn diagnostic_alignment_ignores_operands_without_claiming_equality() {
+        let left = vec!["ldr r0, [pc, #4]".into(), "bx lr".into()];
+        let right = vec![
+            "ldr r7, [pc, #20]".into(),
+            "str r0, [r1]".into(),
+            "bx lr".into(),
+        ];
+        let pairs = align_streams(&left, &right);
+        assert_eq!(
+            pairs,
+            vec![
+                (Some(left[0].clone()), Some(right[0].clone())),
+                (None, Some(right[1].clone())),
+                (Some(left[1].clone()), Some(right[2].clone())),
+            ]
+        );
+        assert_ne!(pairs[0].0, pairs[0].1);
+        assert_eq!(without_register("add fp, ip, sl @ r12"), "add R, R, R @ R");
+        assert_eq!(without_pc_offset("ldr r0, [pc, #12]"), "ldr r0, [pc]");
+        assert_eq!(alignment_key("mov r1, #0xff @ note"), "mov R, #0xN");
+    }
 
     #[test]
     fn scopes_owner_and_ignores_pool_alignment_spelling() {

@@ -16442,8 +16442,8 @@
       "source": "overlays/scene_primary_script/run_scene_372_02000ec4.c"
     },
     "resource_3ab:020015bc": {
-      "name": "FieldScene_RunScene3ab_020015bc",
-      "source": "overlays/scene_primary_script/run_scene_3ab_020015bc.c"
+      "name": "FieldScene_RunLeaderMovementSequence",
+      "source": "overlays/scene_setup/story_actor_sequence.c"
     },
     "resource_3ad:02000384": {
       "name": "FieldScene_RunScene3ad_02000384",
@@ -17539,6 +17539,10 @@
     "resource_3bf:02004638": {
       "name": "FieldScene_SelectActorTwentyOneMessage",
       "source": "map/locations/heidia/village/actor_scenes.c"
+    },
+    "resource_3ab:02001668": {
+      "name": "FieldScene_InitializeStoryActors",
+      "source": "overlays/scene_setup/story_actor_sequence.c"
     }
   }
 }

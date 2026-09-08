@@ -15,12 +15,7 @@ use std::{
 use walkdir::WalkDir;
 const CLIENT: &str = include_str!("client.js");
 const STYLES: &str = include_str!("style.css");
-const TREES: [(&str, &str); 4] = [
-    ("core", "Main image"),
-    ("overlays", "Code overlays"),
-    ("images", "Graphics"),
-    ("music", "Sound"),
-];
+const TREES: [(&str, &str); 2] = [("code", "Code"), ("data", "Data")];
 const COVERAGE_DIRS: [&str; 12] = [
     "games/gs1/asm",
     "games/gs1/assets",

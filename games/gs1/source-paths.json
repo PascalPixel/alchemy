@@ -17680,6 +17680,10 @@
     "resource_395:02000088": {
       "name": "PaletteScene_RunActorRosterBranch",
       "source": "overlays/palette_scene/run_actor_roster_branch.c"
+    },
+    "resource_38e:020005dc": {
+      "name": "FieldScene_RunPairedActorStagedSequence",
+      "source": "overlays/scene_event_runtime/run_paired_actor_staged_sequence.c"
     }
   }
 }

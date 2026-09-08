@@ -17,7 +17,7 @@ CHECK := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- check
 COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
-HOSTS := alchemy
+HOSTS := alchemy psynergy
 PORTABLE_TOOLS := alchemy psynergy
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare

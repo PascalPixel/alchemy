@@ -10,7 +10,7 @@ pub fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .and_then(Path::parent)
-        .expect("decompile is under tools")
+        .expect("alchemy is under tools")
         .to_path_buf()
 }
 
@@ -252,9 +252,9 @@ mod owner_tests {
         assert!(span_for(root.path(), "resource_374", 0x02001000, Some(32)).is_err());
         let error = image_window(root.path(), "resource_374:02001010", Some(32)).unwrap_err();
         assert!(error.contains("reviewed"), "{error}");
-        assert!(crate::decompile::adopt::adopt(
+        assert!(crate::recovery::adopt::adopt(
             root.path(),
-            &crate::decompile::adopt::Request {
+            &crate::recovery::adopt::Request {
                 owner: "resource_374:02001010",
                 span: Some(32),
                 name: None,
@@ -274,7 +274,7 @@ pub fn main_extent(root: &Path, address: u32) -> Result<u32, String> {
     if !source.is_file() {
         return Err(format!("main:{address:08x} has no retained assembly"));
     }
-    let scratch = root.join("out/decompile/main/extent");
+    let scratch = root.join("out/recovery/main/extent");
     std::fs::create_dir_all(&scratch).map_err(|error| format!("{}: {error}", scratch.display()))?;
     let object = scratch.join(format!("{address:08x}.o"));
     let binary = scratch.join(format!("{address:08x}.bin"));

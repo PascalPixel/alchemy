@@ -1,4 +1,4 @@
-//! What an overlay's calls really reach. An overlay `bl` stores the target
+//! Resolve Golden Sun overlay calls. An overlay `bl` stores the target
 //! image offset minus two, not a PC-relative displacement, so the pseudo
 //! symbol a unit spells for a site (`Func_02004280`, the PC-relative decode)
 //! is particular to that site. The real target is `symbol - site - 2` into

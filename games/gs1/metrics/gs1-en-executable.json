@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1348978,
+  "total_union_bytes": 1349246,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -33759,8 +33759,8 @@
     {
       "id": "resource_3bf",
       "decoded_bytes": 30580,
-      "executable_bytes": 23998,
-      "excluded_bytes": 6582,
+      "executable_bytes": 24266,
+      "excluded_bytes": 6314,
       "audit": "complete",
       "intervals": [
         {
@@ -34532,6 +34532,24 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33574786,
+          "end": 33574788,
+          "kind": "executable_alignment",
+          "evidence": "resource_3bf:02004f60 alignment before the 18-entry switch table"
+        },
+        {
+          "start": 33574788,
+          "end": 33574860,
+          "kind": "literal_pool",
+          "evidence": "resource_3bf:02004f60 independently decoded linked switch targets at 02004f84-02004fcb"
+        },
+        {
+          "start": 33574860,
+          "end": 33575030,
+          "kind": "thumb",
+          "evidence": "resource_3bf:02004f60 switch bodies and shared tails decoded from reference words at 02004fcc-02005075"
+        },
+        {
           "start": 33575030,
           "end": 33575104,
           "kind": "thumb",
@@ -34542,6 +34560,12 @@
           "end": 33575116,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33575116,
+          "end": 33575140,
+          "kind": "literal_pool",
+          "evidence": "resource_3bf:02004f60 six callback literals referenced by decoded switch bodies at 020050cc-020050e3"
         },
         {
           "start": 33575140,

@@ -82,6 +82,28 @@ struct ObjectRuntime *Func_0200a92a();
 void Func_0200a8c8();
 void Func_0200a9f8();
 
+extern u8 Data_02009719[], Data_0200975d[], Data_020097bd[];
+extern u8 Data_02009529[], Data_020099e9[], Data_0200969d[];
+void Func_0200a3d6();
+s32 Func_0200a572();
+s32 Func_0200a57c();
+s32 Func_0200a586();
+s32 Func_0200a5b2();
+s32 Func_0200a5bc();
+void Func_0200a5ba();
+void Func_0200a5ee();
+void Func_0200a5c4();
+void Func_0200a620();
+void Func_0200a650();
+s32 Func_0200a602();
+void Func_0200a682();
+void Func_0200a772();
+void Func_0200a77a();
+void Func_0200a782();
+void Func_0200a78a();
+void Func_0200a792();
+void Func_0200a640();
+
 static __inline__ void Call1(void (*f)(), s32 value)
 {
     f(value);
@@ -90,6 +112,69 @@ static __inline__ void Call1(void (*f)(), s32 value)
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
+}
+
+/* Scheduler_AddOrUpdateCallback returns an index even when it is ignored. */
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+void FieldScene_InstallSceneTasks(void)
+{
+    Func_0200a3d6();
+    switch (Data_02000240[225]) {
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Value2(Func_0200a572, (s32)Data_02009719, 3200);
+        Value2(Func_0200a57c, (s32)Data_0200975d, 3200);
+        Value2(Func_0200a586, (s32)Data_020097bd, 3200);
+        Func_0200a650(0xe00);
+        break;
+    case 12:
+    case 19:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x209;
+        Func_0200a650(0xc00);
+        break;
+    case 16:
+    case 17:
+    case 18:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Value2(Func_0200a5b2, (s32)Data_02009529, 3200);
+        Value2(Func_0200a5bc, (s32)Data_020099e9, 3200);
+        Func_0200a5ba(1);
+        Func_0200a5ee();
+        Func_0200a5c4(1);
+        Call6(Func_0200a620, 101, 9, 10, 8, 110, 9);
+        Func_0200a650(0xe00);
+        break;
+    case 13:
+    case 14:
+    case 15:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Value2(Func_0200a602, (s32)Data_0200969d, 3200);
+        break;
+    default:
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        Func_0200a682(0xe00);
+        break;
+    }
+    Func_0200a772(18, 1);
+    Func_0200a77a(17, 1);
+    Func_0200a782(21, 1);
+    Func_0200a78a(12, 1);
+    Func_0200a792(13, 1);
+    Func_0200a640(1);
 }
 
 void FieldScene_SetupActorsForScene(void)

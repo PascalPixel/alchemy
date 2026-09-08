@@ -16477,6 +16477,10 @@
       "name": "FieldScene_RunScene373_02001490",
       "source": "overlays/scene_primary_script/run_scene_373_02001490.c"
     },
+    "resource_39d:02000928": {
+      "name": "FieldScene_RunActorFacingSnapAndOrient",
+      "source": "overlays/scene_primary_script/run_actor_facing_snap_and_orient.c"
+    },
     "resource_39d:020009fc": {
       "name": "FieldScene_RunScene39d_020009fc",
       "source": "overlays/scene_primary_script/run_scene_39d_020009fc.c"

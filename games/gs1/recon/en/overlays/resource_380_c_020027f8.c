@@ -680,7 +680,8 @@ void Lifted_020027f8(void)
     Func_020073ca(0, 1);
     {
         u8 *record = Func_02007308(0);
-        record[35] = 1 | record[35];
+        s32 flags = 1 | record[35];
+        record[35] = flags;
     }
     Func_020073a2(0, 0);
     {
@@ -810,7 +811,8 @@ void Lifted_020027f8(void)
     Func_02007828(9, 1);
     {
         u8 *record = Func_02007766_b(9);
-        record[35] = 1 | record[35];
+        s32 flags = 1 | record[35];
+        record[35] = flags;
     }
     Func_02007800(9, 0);
     {
@@ -1155,7 +1157,10 @@ void Lifted_020027f8(void)
     Call3(Func_02008468, 9, 0x1d7, 0x18b);
     Func_02008448_b(9, 1);
     Func_02008416(30);
-    *p9c = 1 | *p9c;
+    {
+        s32 flags = 1 | *p9c;
+        *p9c = flags;
+    }
     Call3(Func_02008516, 9, 0xc000, 60);
     Func_02008304(6);
     *(s32 *)(rec + 48) = 0x30000;

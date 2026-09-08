@@ -165,7 +165,9 @@ fn decompile_command(command: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         let usage = match command {
             "draft" => "decompile OWNER [--span BYTES] [--name NAME] [--out FILE]",
-            "adopt" => "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH]",
+            "adopt" => {
+                "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH] [--apply]"
+            }
             "disasm" => "disassemble OWNER [--span BYTES]",
             "imports" => "inspect OWNER [--span BYTES]",
             _ => return decompile::cli::entry(&["--help".to_string()]),

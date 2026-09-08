@@ -268,6 +268,7 @@ mod owner_tests {
                 name: None,
                 path: None,
                 source: None,
+                apply: false,
             }
         )
         .is_err());

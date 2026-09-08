@@ -12,9 +12,12 @@ struct Options {
     out: Option<PathBuf>,
     path: Option<String>,
     source: Option<PathBuf>,
+    apply: bool,
 }
 
-fn parse(arguments: &[String]) -> Result<Options, String> {
+/// `--apply` belongs to the main-image landing, so it is a flag of `adopt`
+/// alone; every other operation keeps rejecting it as unknown.
+fn parse(command: &str, arguments: &[String]) -> Result<Options, String> {
     let mut options = Options {
         positional: Vec::new(),
         span: None,
@@ -22,6 +25,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         out: None,
         path: None,
         source: None,
+        apply: false,
     };
     let mut iter = arguments.iter();
     while let Some(argument) = iter.next() {
@@ -42,6 +46,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
             "--out" => options.out = Some(PathBuf::from(value("--out")?)),
             "--path" => options.path = Some(value("--path")?),
             "--source" => options.source = Some(PathBuf::from(value("--source")?)),
+            "--apply" if command == "adopt" => options.apply = true,
             other if other.starts_with("--") => return Err(format!("unknown flag {other}")),
             other => options.positional.push(other.to_string()),
         }
@@ -77,7 +82,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     };
     let root = owners::root();
-    let result = parse(&arguments[1..]).and_then(|options| match command {
+    let result = parse(command, &arguments[1..]).and_then(|options| match command {
         "draft" => draft(&root, &options).map(|_| 0),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "imports" => imports_owner(&root, &options),
@@ -136,6 +141,7 @@ fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
         name: options.name.as_deref(),
         path: options.path.as_deref(),
         source: options.source.as_deref(),
+        apply: options.apply,
     };
     for line in crate::adopt::adopt(root, &request)? {
         println!("{line}");
@@ -154,4 +160,19 @@ fn imports_owner(root: &Path, options: &Options) -> Result<i32, String> {
         );
     }
     Ok(0)
+}
+
+#[cfg(test)]
+mod tests {
+    /// The landing switch reached the shared flag loop, where `draft`,
+    /// `disasm` and `imports` would have accepted and ignored it.
+    #[test]
+    fn the_landing_switch_belongs_to_adopt_alone() {
+        let apply = ["--apply".to_string()];
+        let parsed = |command| super::parse(command, &apply).map(|options| options.apply);
+        assert_eq!(parsed("adopt"), Ok(true));
+        for other in ["draft", "disasm", "imports"] {
+            assert_eq!(parsed(other), Err("unknown flag --apply".to_string()));
+        }
+    }
 }

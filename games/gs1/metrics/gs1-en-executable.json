@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1348458,
+  "total_union_bytes": 1348632,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -33759,8 +33759,8 @@
     {
       "id": "resource_3bf",
       "decoded_bytes": 30580,
-      "executable_bytes": 23478,
-      "excluded_bytes": 7102,
+      "executable_bytes": 23652,
+      "excluded_bytes": 6928,
       "audit": "complete",
       "intervals": [
         {
@@ -34406,6 +34406,24 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33572426,
+          "end": 33572428,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment between mov pc,r3 and its eight-entry switch table."
+        },
+        {
+          "start": 33572428,
+          "end": 33572460,
+          "kind": "literal_pool",
+          "evidence": "Eight runtime code pointers consumed by the indexed load at 02004646; cases resolve to 0200466c-02004694 after removing the loader runtime bias."
+        },
+        {
+          "start": 33572460,
+          "end": 33572568,
+          "kind": "thumb",
+          "evidence": "Switch case instructions through the branch/call paths to the common return at 020046d8; independently decoded and reproduced by the complete 204-byte C owner."
+        },
+        {
           "start": 33572568,
           "end": 33572572,
           "kind": "thumb",
@@ -34416,6 +34434,12 @@
           "end": 33572580,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33572580,
+          "end": 33572612,
+          "kind": "literal_pool",
+          "evidence": "Eight message constants referenced by PC-relative loads in the switch cases; bounded by the next exact owner at 02004704."
         },
         {
           "start": 33572612,

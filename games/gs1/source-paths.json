@@ -16302,8 +16302,8 @@
       "source": "overlays/scene_primary_script/run_scene_3bf_0200269c.c"
     },
     "resource_3bf:02004704": {
-      "name": "FieldScene_RunScene3bf_02004704",
-      "source": "overlays/scene_primary_script/run_scene_3bf_02004704.c"
+      "name": "FieldScene_RunActorTwentyOneSequence",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3c5:02002548": {
       "name": "FieldScene_RunScene3c5_02002548",
@@ -17490,6 +17490,10 @@
     },
     "resource_3bf:02000e80": {
       "name": "FieldScene_UpdateTableBObjectPair",
+      "source": "map/locations/heidia/village/actor_scenes.c"
+    },
+    "resource_3bf:02004638": {
+      "name": "FieldScene_SelectActorTwentyOneMessage",
       "source": "map/locations/heidia/village/actor_scenes.c"
     }
   }

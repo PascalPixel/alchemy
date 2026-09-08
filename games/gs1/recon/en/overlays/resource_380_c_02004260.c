@@ -18,8 +18,7 @@ extern u8 Data_0200cbe4[];
 
 s32 FieldScene_PresentItem(s32 item)
 {
-    s32 zero = 0;
-    u8 *buf;
+    u8 *buf = 0;
     u8 *obj = Func_02008b38(22);
     s32 text = Func_0200c95c(224);
     s32 size = Func_0200c954(text, 224);
@@ -27,13 +26,16 @@ s32 FieldScene_PresentItem(s32 item)
     u8 *p;
     s32 mask;
 
-    if (obj != 0) {
+    if (obj == 0) {
+        return text;
+    }
+    {
         Func_02008b50(obj, Data_0200cbe4);
         sprite = *(u8 **)(obj + 80);
         p = sprite + 38;
-        *p = zero;
+        *p = (u32)buf;
         p++;
-        *p = zero;
+        *p = (u32)buf;
         mask = 33;
         mask = -mask;
         sprite[5] &= mask;

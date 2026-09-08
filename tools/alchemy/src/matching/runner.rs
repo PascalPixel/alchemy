@@ -56,7 +56,7 @@ fn allocator_options(path: &Path, work: &Path) -> Result<Box<crate::score::cli::
 
 #[test]
 fn allocator_preflight_preserves_overlay_identity() {
-    let source = root().join("games/gs1/recon/en/overlays/resource_381_c_020029a4.c");
+    let source = root().join("games/gs1/src/overlays/scene_effect/four_way_sequence.c");
     let work = tempfile::tempdir().unwrap();
     let options = allocator_options(&source, work.path()).unwrap();
     assert_eq!(options.owner, Some(0x020029a4));

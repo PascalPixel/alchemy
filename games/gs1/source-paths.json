@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bf:02001528": {
+      "name": "FieldScene_UpdateActorEighteenInteraction",
+      "source": "map/locations/heidia/village/actor_scenes.c"
+    },
     "resource_3bf:0200138c": {
       "name": "FieldScene_UpdateActorSeventeenInteraction",
       "source": "map/locations/heidia/village/actor_scenes.c"

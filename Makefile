@@ -18,7 +18,7 @@ COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy
-PORTABLE_TOOLS := no-asm-c build-claimed build-asm build-full \
+PORTABLE_TOOLS := build-claimed build-asm build-full \
 	alchemy compiler-core candidate-compiler diff matching disassemble \
 	overlay-adopt coverage-map decompile
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,

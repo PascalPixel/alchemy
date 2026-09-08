@@ -1,8 +1,8 @@
 pub mod park;
 pub mod score;
+use compiler_core::no_asm::{expanded_forbidden, find_forbidden};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use disassemble::{assemble_overlay, OverlaySource, OVERLAY_BASE};
-use no_asm_c::{expanded_forbidden, find_forbidden};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;

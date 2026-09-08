@@ -29,16 +29,16 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "publication" | "check-publication" => publication::entry(rest),
-        "commit-progress" | "check-commit-progress" => commit_progress::entry(rest),
-        "owners" | "check-unmatchable" => owners::entry(rest),
-        "retained" | "core-retained-audit" => retained::entry(rest),
-        "coverage" | "coverage-map" => {
+        "publication" => publication::entry(rest),
+        "commit-progress" => commit_progress::entry(rest),
+        "owners" => owners::entry(rest),
+        "retained" => retained::entry(rest),
+        "coverage" => {
             coverage_map::entrypoint::entry(rest);
             ExitCode::SUCCESS
         }
-        "integrate" | "integrate-matches" => integrate::entry(rest),
-        "no-asm" | "no-asm-c" => no_asm_c::cli::entry(rest),
+        "integrate" => integrate::entry(rest),
+        "no-asm" => compiler_core::no_asm::entry(rest),
         "progress" => {
             coverage_map::progress::entry(rest);
             ExitCode::SUCCESS

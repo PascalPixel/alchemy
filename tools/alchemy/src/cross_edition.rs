@@ -1530,7 +1530,7 @@ pub(crate) fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>,
     };
     let text =
         fs::read_to_string(&source).map_err(|error| format!("{}: {error}", source.display()))?;
-    let forbidden = no_asm_c::find_forbidden(&source.to_string_lossy(), &text);
+    let forbidden = compiler_core::no_asm::find_forbidden(&source.to_string_lossy(), &text);
     Ok(forbidden.first().map(|finding| {
         format!(
             "compliance: nonordinary C ({} at line {})",

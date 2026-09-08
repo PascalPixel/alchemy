@@ -5,6 +5,7 @@ pub mod cache;
 pub mod call_via_data;
 pub mod canonical_json;
 pub mod decomp_targets;
+pub mod no_asm;
 pub mod nodepath;
 pub mod overlay;
 pub mod plan;

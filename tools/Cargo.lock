@@ -45,7 +45,6 @@ dependencies = [
  "extract-resource",
  "import-asset",
  "matching",
- "no-asm-c",
  "objdiff-core",
  "overlay-adopt",
  "png",
@@ -169,6 +168,7 @@ name = "compiler-core"
 version = "0.1.0"
 dependencies = [
  "fs2",
+ "regex",
  "rusqlite",
  "serde",
  "serde_json",
@@ -583,15 +583,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "no-asm-c"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "regex",
- "tempfile",
-]
-
-[[package]]
 name = "num-traits"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -658,7 +649,6 @@ dependencies = [
  "compiler-core",
  "diff",
  "disassemble",
- "no-asm-c",
  "serde",
  "serde_json",
  "tempfile",

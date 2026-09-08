@@ -483,12 +483,11 @@ libraries are not additional public command surfaces.
 | [build-full](tools/build-full/) | Compose claimed C, retained assembly, and assets into the ROM. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
-| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, the twelve decompilation targets, translation units, the build cache, and canonical JSON. |
+| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, ordinary-C policy (`alchemy check no-asm`), symbols, paths, the twelve decompilation targets, translation units, the build cache, and canonical JSON. |
 | [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
-| [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
 | [extract-resource](tools/extract-resource/) | Read resource payloads from approved ROMs; general, palette, halfword, arena and MTF4 LZ stream codecs. |
 | [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |
 

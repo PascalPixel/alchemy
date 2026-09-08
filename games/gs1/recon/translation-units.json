@@ -27865,6 +27865,86 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-entry-state-and-actor-setup",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_370_c_020003cc.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_370",
+      "absolute_symbols": {
+        "Func_0200939c": {
+          "address": "0x200939c",
+          "kind": "thumb"
+        },
+        "Func_0200938c": {
+          "address": "0x200938c",
+          "kind": "thumb"
+        },
+        "Func_020094ac": {
+          "address": "0x20094ac",
+          "kind": "thumb"
+        },
+        "Func_020093dc": {
+          "address": "0x20093dc",
+          "kind": "thumb"
+        },
+        "Func_020093ac": {
+          "address": "0x20093ac",
+          "kind": "thumb"
+        },
+        "Func_020094c4": {
+          "address": "0x20094c4",
+          "kind": "thumb"
+        },
+        "Func_02009494": {
+          "address": "0x2009494",
+          "kind": "thumb"
+        },
+        "Func_0200945c": {
+          "address": "0x200945c",
+          "kind": "thumb"
+        },
+        "Func_02009464": {
+          "address": "0x2009464",
+          "kind": "thumb"
+        },
+        "Func_02009474": {
+          "address": "0x2009474",
+          "kind": "thumb"
+        },
+        "Func_0200948c": {
+          "address": "0x200948c",
+          "kind": "thumb"
+        },
+        "Func_02009374": {
+          "address": "0x2009374",
+          "kind": "thumb"
+        },
+        "Func_02009314": {
+          "address": "0x2009314",
+          "kind": "thumb"
+        },
+        "Func_020094cc": {
+          "address": "0x20094cc",
+          "kind": "thumb"
+        },
+        "Func_020093d4": {
+          "address": "0x20093d4",
+          "kind": "thumb"
+        },
+        "Func_020093e4": {
+          "address": "0x20093e4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020003cc",
+          "extent": 2352,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

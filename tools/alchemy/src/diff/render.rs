@@ -1,3 +1,7 @@
+use crate::candidate::{
+    compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
+    CandidateCompilerConfiguration, ROM_BASE,
+};
 use crate::diff::{
     cli::Options,
     disasm::{disassemble, Rows},
@@ -5,10 +9,6 @@ use crate::diff::{
     triage::{classify, classify_with_topology},
 };
 use crate::overlay::assembly::OVERLAY_BASE;
-use candidate_compiler::verify::{
-    compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
-    CandidateCompilerConfiguration, ROM_BASE,
-};
 use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_inputs::source_tree_signature;

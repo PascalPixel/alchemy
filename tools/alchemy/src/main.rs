@@ -6,6 +6,7 @@ mod build_asm;
 mod build_assets;
 mod build_claimed;
 mod build_full;
+mod candidate;
 mod check;
 mod convert;
 mod cross_edition;

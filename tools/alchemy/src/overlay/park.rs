@@ -1,4 +1,6 @@
-use crate::{listing_offsets, overlay_assembly, overlay_offset, region_lines, retained_source};
+use crate::overlay::{
+    listing_offsets, overlay_assembly, overlay_offset, region_lines, retained_source,
+};
 pub(crate) use compiler_core::overlay::placeholder_block;
 use compiler_core::{
     overlay::space_size,
@@ -29,7 +31,7 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
     )
     .map_err(|e| e.to_string())?;
     let wanted: std::collections::BTreeSet<_> = overlays.iter().cloned().collect();
-    let owners: Vec<_> = crate::reviewed_spans(root)?
+    let owners: Vec<_> = crate::overlay::reviewed_spans(root)?
         .into_iter()
         .filter_map(|(owner, span)| {
             let overlay = owner.overlay_id()?;
@@ -273,9 +275,6 @@ pub(crate) fn reference_bytes(
     Ok(image[start..end].to_vec())
 }
 type AuditResult = Result<Vec<String>, String>;
-pub fn audit(root: &Path, overlay: &str) -> AuditResult {
-    audit_with_rom(root, overlay, None)
-}
 fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> AuditResult {
     let path = overlay_assembly(root, overlay);
     let assembly = fs::read_to_string(&path).map_err(|error| error.to_string())?;
@@ -349,7 +348,7 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
 }
 pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     if argv == ["--corpus"] {
-        return crate::score::audit_corpus(root);
+        return crate::overlay::score::audit_corpus(root);
     }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
@@ -616,7 +615,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let mut failures = 0;
     for row in rows {
-        let target = crate::score::resolve(root, &row)?;
+        let target = crate::overlay::score::resolve(root, &row)?;
         match park_one(root, target, apply) {
             Ok(parked) => println!(
                 "parked {}:{:08x} span={} lines={}{}",
@@ -636,8 +635,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 }
 #[cfg(test)]
 mod tests {
-    use super::{audit, thumb_standalone_wide_transfer_lines};
-    use crate::audited_span;
+    use super::{audit_with_rom, thumb_standalone_wide_transfer_lines};
+    use crate::overlay::audited_span;
     use std::fs;
     use tempfile::tempdir;
     #[test]
@@ -670,7 +669,7 @@ mod tests {
             "AlchemyC_0200dead:\n  .space 4\n",
         )
         .unwrap();
-        let findings = audit(root.path(), "resource_382").unwrap();
+        let findings = audit_with_rom(root.path(), "resource_382", None).unwrap();
         assert_eq!(findings.len(), 1);
         assert!(findings[0].contains("resource_382:0200dead\tMISSING_SOURCE\t"));
     }

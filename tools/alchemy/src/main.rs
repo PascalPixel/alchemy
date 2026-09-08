@@ -76,10 +76,7 @@ fn main() -> ExitCode {
         "overlay" => overlay::entry(rest),
         "decompile" | "adopt" | "disassemble" | "inspect" => decompile_command(command, rest),
         "diff" => match overlay_candidate(rest) {
-            Ok(true) => overlay::code(overlay_adopt::score::run(
-                compiler_core::routing::root(),
-                rest,
-            )),
+            Ok(true) => overlay::code(overlay::score::run(compiler_core::routing::root(), rest)),
             Ok(false) => {
                 diff::entrypoint::entry(rest);
                 ExitCode::SUCCESS

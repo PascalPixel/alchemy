@@ -15,11 +15,15 @@ Japanese and European-language editions of each game from the original
 cartridges, with Japanese as the canonical source base and the English
 _Golden Sun_ release as the first complete derived build target.
 
-## Status: 64.87% DONE
+## Status: 64.89% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=6876234edf977d41)
+![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=5cf5d551b88f1b33)
 
-![Data](games/gs1/assets/readme/gs1-en-data.svg?v=d6b524e58c957cd7)
+![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=5c3772ee9877d454)
+
+![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=673d1b297055937f)
+
+![Music and sound naming coverage](games/gs1/assets/readme/gs1-en-music.svg?v=7ce73069cc3be192)
 
 ## Details
 
@@ -32,18 +36,16 @@ evidence.
 The repository contains one shared source tree per game rather than a copy for
 every language. `make targets` checks all twelve edition routes; `make verify`
 is the authoritative full-ROM gate for the current `gs1-en` target. Progress
-is measured by reconstructed bytes. C compiles through the approved route
-to byte-identical output; Drafted is candidate C not yet exact. Assembly groups
-all retained assembly in the charts,
-including assembly still awaiting justification. Assembly counts as DONE only
-with positive evidence of handwritten or third-party assembly origin; compiler
-mismatches and draft classifications do not. Neither label claims access to Camelot's original
-source.
+is measured by reconstructed bytes. Proven C is C that compiles through the
+approved route to byte-identical output. Proven ASM is code whose required form
+cannot be emitted as ordinary C by the approved compiler model, with the reason
+recorded and the assembly reproduced byte-exactly. Neither label claims access
+to Camelot's original source. Draft classifications never count as DONE.
 
 This is a preservation and decompilation project—not a remake, ROM hack,
 emulator, or game distribution. No ROM is included. To build locally or help
 with the reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md), including its
-[tooling guide](CONTRIBUTING.md#tooling-index).
+[complete tooling index](CONTRIBUTING.md#tooling-index).
 
 ## Acknowledgements
 

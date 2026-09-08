@@ -17910,6 +17910,10 @@
     "resource_372:02000f38": {
       "name": "FieldScene_RunActorTwelveStagingSequence",
       "source": "overlays/scene_primary_script/run_actor_twelve_staging_sequence.c"
+    },
+    "resource_3b3:02002384": {
+      "name": "FieldScene_RunFlag203Sequence",
+      "source": "overlays/scene_primary_script/run_flag_203_sequence.c"
     }
   }
 }

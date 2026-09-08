@@ -1,5 +1,5 @@
-use crate::lift_owner;
-use crate::owners;
+use super::lift_owner;
+use super::owners;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
@@ -109,7 +109,7 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let start = (entry - base) as usize;
     std::fs::write(&binary, &image[start..start + span as usize]).map_err(|e| e.to_string())?;
     let rows = diff::disasm::disassemble(&binary.to_string_lossy(), f64::from(entry))?;
-    let calls = crate::imports::imports(root, owner, Some(span))?;
+    let calls = super::imports::imports(root, owner, Some(span))?;
     for offset in rows.keys() {
         let address = entry + offset as u32;
         let annotation = calls
@@ -130,14 +130,14 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
 
 fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
     let owner = owner_argument(options)?;
-    let request = crate::adopt::Request {
+    let request = super::adopt::Request {
         owner,
         span: options.span,
         name: options.name.as_deref(),
         path: options.path.as_deref(),
         source: options.source.as_deref(),
     };
-    for line in crate::adopt::adopt(root, &request)? {
+    for line in super::adopt::adopt(root, &request)? {
         println!("{line}");
     }
     Ok(())
@@ -147,7 +147,7 @@ fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
 /// object per line, for the humanizing passes that annotate the units.
 fn imports_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
-    for import in crate::imports::imports(root, owner, options.span)? {
+    for import in super::imports::imports(root, owner, options.span)? {
         println!(
             "{}",
             serde_json::to_string(&import).map_err(|error| error.to_string())?

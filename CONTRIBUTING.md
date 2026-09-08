@@ -354,6 +354,15 @@ batch; push only when requested.
 
 ## Tooling index
 
+Alchemy is the Golden Sun project; Psynergy is its reusable decompilation
+platform. `tools/psynergy` currently owns dependency-free Thumb decoding,
+lifetime analysis, and candidate C recovery. It accepts instruction windows
+and explicit addresses rather than loading ROMs or owner registers.
+Golden Sun owner lookup, adoption, scene-work reconstruction and command
+dispatch live in `tools/alchemy/src/decompile`. Compiler invocation, comparison
+and matching are still being separated from their repository assumptions;
+the existence of the Psynergy crate does not mean that extraction is finished.
+
 `alchemy dashboard` (or `make dashboard`) serves live coverage at
 `http://127.0.0.1:4650/`. Its four charts include sound coverage, not playback.
 `make dashboard-service-install` installs the macOS login LaunchAgent with
@@ -505,7 +514,7 @@ libraries are not additional public command surfaces.
 | Tool | Responsibility |
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
-| [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
+| [psynergy](tools/psynergy/) | Dependency-free Thumb decoder, lifetime analysis and C recovery. Caller-owned declaration tables and explicit image addresses; no Golden Sun owner lookup, scene helpers, repository I/O or adoption. Alchemy supplies that integration behind `alchemy decompile`. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |

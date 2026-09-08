@@ -350,7 +350,7 @@ fn params_in(lines: &[String]) -> Vec<String> {
 }
 
 /// One C function from a lifted draft.
-pub fn function_source(entry: u32, draft: &Draft, main: bool) -> String {
+pub fn function_source(entry: u32, draft: &Draft) -> String {
     let mut lines = draft.lines.clone();
     // A join or a loop can assign a variable to itself; nothing reads that.
     lines.retain(|line| {
@@ -502,59 +502,11 @@ pub fn function_source(entry: u32, draft: &Draft, main: bool) -> String {
     }
     text.push('\n');
     for line in &lines {
-        // Main-image globals are plain; the volatile record spelling belongs
-        // to the overlay scenes.
-        if main {
-            text.push_str(line);
-        } else {
-            // Stack objects are plain: a volatile access would materialise
-            // the frame address for every field instead of sharing one base.
-            let mut spelled = volatile_spelling(line);
-            for width in ["s32", "u32", "u16", "u8"] {
-                spelled = spelled
-                    .replace(
-                        &format!("*(volatile {width} *)(slot"),
-                        &format!("*({width} *)(slot"),
-                    )
-                    .replace(
-                        &format!("*(volatile {width} *)slot"),
-                        &format!("*({width} *)slot"),
-                    );
-            }
-            text.push_str(&spelled);
-        }
+        text.push_str(line);
         text.push('\n');
     }
     text.push_str("}\n");
     text
-}
-
-/// Word and halfword accesses through record and work pointers are volatile
-/// in the original: the scheduler orders a volatile store before a later
-/// volatile load or store, which the reference schedules show. Byte
-/// accesses already alias everything and stay as they are.
-pub fn volatile_spelling(line: &str) -> String {
-    let spelled = line
-        .replace("*(u16 *)", "*(volatile u16 *)")
-        .replace("*(s32 *)", "*(volatile s32 *)")
-        .replace("*(u32 *)", "*(volatile u32 *)")
-        .replace("*(u8 **)", "*(u8 *volatile *)");
-    // The scene work pointer is a volatile global, but the record it points
-    // at is plain: its field stores fold their offsets into the address.
-    let mut plain = spelled;
-    for width in ["u16", "s32", "u32"] {
-        for base in [
-            "(work + ",
-            "(*(u8 *volatile *)0x03001ebc + ",
-            "((*(u8 *volatile *)0x03001ebc + ",
-        ] {
-            plain = plain.replace(
-                &format!("*(volatile {width} *){base}"),
-                &format!("*({width} *){base}"),
-            );
-        }
-    }
-    plain
 }
 
 /// Lifts every function of a decoded window into C bodies.
@@ -562,7 +514,7 @@ pub fn bodies(ins: &[Ins], main: bool) -> (String, BTreeMap<String, String>) {
     let mut tables = BTreeMap::new();
     let body = split_functions(ins)
         .iter()
-        .map(|(entry, function)| function_source(*entry, &lift(function, &mut tables, main), main))
+        .map(|(entry, function)| function_source(*entry, &lift(function, &mut tables, main, &[])))
         .collect::<Vec<_>>()
         .join("\n");
     (body, tables)
@@ -618,13 +570,7 @@ fn symbols<'a>(body: &'a str, prefix: &str) -> Vec<(usize, &'a str)> {
 
 /// Composes the candidate unit around the lifted bodies. The entry function
 /// carries `name`; other functions keep their address names.
-pub fn compose(
-    entry: u32,
-    name: &str,
-    body: &str,
-    tables: &BTreeMap<String, String>,
-    main: bool,
-) -> String {
+pub fn compose(entry: u32, name: &str, body: &str, tables: &BTreeMap<String, String>) -> String {
     let this = format!("Func_{entry:08x}");
     let body_lines: Vec<String> = body.lines().map(str::to_string).collect();
     let mut categories: BTreeMap<String, BTreeSet<&'static str>> = BTreeMap::new();
@@ -701,21 +647,12 @@ pub fn compose(
             categories.remove(symbol);
         }
     }
-    let mut body = body
-        .replacen(&format!("void {this}("), &format!("void {name}("), 1)
-        // The scene work pointer lives at a symbol: a symbol address is a
-        // constant-pool load the scheduler keeps after the preceding call,
-        // where a literal is a free constant it would hoist.
-        .replace("0x03001ebc", "Data_03001ebc");
+    let mut body = body.replacen(&format!("void {this}("), &format!("void {name}("), 1);
     let mut declarations = String::new();
     let mut data: Vec<&str> = symbols(&body, "Data_")
         .into_iter()
         .map(|(_, s)| s)
         .collect();
-    // The step helper reads the scene work pointer in every overlay unit.
-    if !main {
-        data.push("Data_03001ebc");
-    }
     data.sort();
     data.dedup();
     for symbol in data {
@@ -796,27 +733,13 @@ pub fn compose(
             ));
         }
     }
-    let helper = if main {
-        String::new()
-    } else {
-        "/* The scene step counter at 0x1d8 of the shared scene work record. */\n\
-static __inline__ void bump_step(s32 amount)\n{\n    u8 *work = *(u8 **)Data_03001ebc;\n\n    \
-*(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);\n}\n\n"
-            .to_string()
-    };
-    let symbols_note = if main {
-        "/* Main-image symbols: every pool word inside the ROM or the work RAM. */\n"
-    } else {
-        "/* Loader-relocated overlay calls: each symbol names the pre-relocation call\n\
-\x20* word the image holds. */\n"
-    };
     format!(
-        "#include \"types.h\"\n\n#define {name} {this}\n\n{symbols_note}{declarations}\n\
+        "#include \"types.h\"\n\n#define {name} {this}\n\n{declarations}\n\
 /* Call sites spelled through these wrappers pass their constants straight\n\
 \x20* into the argument registers; a direct call precomputes a costly constant\n\
 \x20* into a pseudo that the compiler then shares with later uses in the block.\n\
 \x20* A value-returning call also sets r0 last of its arguments. */\n{wrappers}\n\
-{helper}{body}"
+{body}"
     )
 }
 
@@ -827,7 +750,7 @@ mod tests {
     #[test]
     fn declarations_follow_use() {
         let body = "void Func_02000100(void)\n{\n    record = Func_02000200(1);\n    Call2(Func_02000300, 0x1000, 0);\n    if (Func_02000400() != 0) {\n    }\n}\n";
-        let unit = compose(0x02000100, "Scene_Run", body, &BTreeMap::new(), false);
+        let unit = compose(0x02000100, "Scene_Run", body, &BTreeMap::new());
         assert!(unit.contains("s32 Func_02000200();"));
         assert!(unit.contains("void Func_02000300();"));
         assert!(unit.contains("s32 Func_02000400();"));
@@ -843,9 +766,9 @@ mod tests {
             "extern u8 Data_08001000_t[][4];".into(),
         )]);
         let body = "void Func_02000100(void) { a = Data_08001000_t[1][0]; }";
-        let first = compose(0x02000100, "Read", body, &tables, false);
+        let first = compose(0x02000100, "Read", body, &tables);
         assert!(first.contains("extern u8 Data_08001000_t[][4];"));
-        assert_eq!(first, compose(0x02000100, "Read", body, &tables, false));
+        assert_eq!(first, compose(0x02000100, "Read", body, &tables));
     }
 }
 

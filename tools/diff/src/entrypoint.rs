@@ -1,8 +1,18 @@
 use crate::{
     cli::{options_of, ParseOutcome, USAGE},
-    diff::self_test,
     render::{render, RenderOutput},
 };
+use psynergy::compare::differing_offsets;
+
+fn self_test() -> Result<String, String> {
+    if differing_offsets(&[0, 1, 2], &[0, 1, 2], 2).is_empty()
+        && differing_offsets(&[0, 1, 2], &[0, 1], 2) == [2].into()
+    {
+        Ok("candidate show self-test passed".into())
+    } else {
+        Err("candidate show self-test failed".into())
+    }
+}
 use compiler_core::{
     overlay_call_via_base,
     routing::root,

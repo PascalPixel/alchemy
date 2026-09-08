@@ -340,14 +340,6 @@ fn revert(
     }
     fs::write(assembly, original_text).map_err(|error| error.to_string())
 }
-pub(crate) fn differing_units(actual: &[u8], expected: &[u8], width: usize) -> usize {
-    actual
-        .chunks(width)
-        .zip(expected.chunks(width))
-        .filter(|(left, right)| left != right)
-        .count()
-        + actual.len().abs_diff(expected.len()).div_ceil(width)
-}
 fn differing_runs(actual: &[u8], expected: &[u8]) -> String {
     let mut runs = Vec::new();
     let mut start = None;
@@ -461,7 +453,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         }
     };
     if rebuilt.len() != baseline.len() || rebuilt != baseline {
-        let differing = differing_units(&rebuilt, &baseline, 1);
+        let differing = psynergy::compare::differing_offsets(&rebuilt, &baseline, 1).len();
         revert(&installed, &assembly, &preexisting, &original_text)?;
         println!(
             "adopt=rejected {} differing_bytes={} size={}/{}",

@@ -61,16 +61,12 @@ fn main() -> ExitCode {
         "check" => check::entry(rest),
         "convert" => result(convert::run(rest)),
         "overlay" => overlay::entry(rest),
-        "decompile" => decompile_command("draft", rest),
-        "adopt" => decompile_command("adopt", rest),
-        "disassemble" => decompile_command("disasm", rest),
-        "inspect" => decompile_command("imports", rest),
+        "decompile" | "adopt" | "disassemble" | "inspect" => decompile_command(command, rest),
         "diff" => match overlay_candidate(rest) {
-            Ok(true) => {
-                let mut args = vec!["score".to_string()];
-                args.extend_from_slice(rest);
-                overlay::entry(&args)
-            }
+            Ok(true) => overlay::code(overlay_adopt::score::run(
+                compiler_core::routing::root(),
+                rest,
+            )),
             Ok(false) => {
                 diff::entrypoint::entry(rest);
                 ExitCode::SUCCESS
@@ -164,10 +160,10 @@ mod command_tests {
 fn decompile_command(command: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         let usage = match command {
-            "draft" => "decompile OWNER [--span BYTES] [--name NAME] [--out FILE]",
+            "decompile" => "decompile OWNER [--span BYTES] [--name NAME] [--out FILE]",
             "adopt" => "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH]",
-            "disasm" => "disassemble OWNER [--span BYTES]",
-            "imports" => "inspect OWNER [--span BYTES]",
+            "disassemble" => "disassemble OWNER [--span BYTES]",
+            "inspect" => "inspect OWNER [--span BYTES]",
             _ => return decompile::cli::entry(&["--help".to_string()]),
         };
         println!(

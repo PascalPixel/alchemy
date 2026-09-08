@@ -108,7 +108,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             "--asm" => asm = true,
             "-h" | "--help" => {
                 println!(
-                    "usage: overlay score TARGET [--owner OWNER] [--span BYTES] [--align] [--asm]"
+                    "usage: alchemy diff TARGET [--owner OWNER] [--span BYTES] [--align] [--asm]"
                 );
                 return Ok(0);
             }

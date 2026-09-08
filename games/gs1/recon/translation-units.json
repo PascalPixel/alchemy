@@ -41183,6 +41183,22 @@
         }
       ],
       "local_symbols": []
+    },
+    {
+      "id": "overlay-object-integrate-velocities-3c0",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/overlay_object/integrate_velocities_3c0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000104",
+          "extent": 54,
+          "state": "exact-c"
+        }
+      ],
+      "local_symbols": []
     }
   ]
 }

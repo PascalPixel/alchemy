@@ -17947,6 +17947,10 @@
     "resource_3be:02000104": {
       "name": "OverlayObject_IntegrateVelocities",
       "source": "overlays/overlay_object/integrate_velocities_3be.c"
+    },
+    "resource_3c0:02000104": {
+      "name": "OverlayObject_IntegrateVelocities",
+      "source": "overlays/overlay_object/integrate_velocities_3c0.c"
     }
   }
 }

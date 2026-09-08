@@ -54,6 +54,12 @@ void Func_0200655a();
 void Func_02006564();
 void Func_02006596();
 void Func_02006702();
+s32 Func_02006492();
+void Func_02001cd4();
+void Func_02006652();
+void Func_020064aa();
+void Func_020064b4();
+void Func_020064e6();
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -187,6 +193,22 @@ void PlaceSceneObjectPairFromTableB(s32 table_index)
     Func_0200641c(0x37, 0x79, 1, 3, position_x, position_z);
     Func_0200642e(0x38, 0x79, 1, 1, position_x + 1, position_z);
     Func_02006442(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+}
+
+void FieldScene_UpdateTableBObjectPair(void)
+{
+    u8 *work;
+    s16 field;
+
+    work = *(volatile s32 *)Data_03001ebc;
+    if (Func_02006492(234) != -1) {
+        field = *(s16 *)((s32)work + 0x16c);
+        Func_02001cd4(field - 40);
+        Func_02006652(157);
+        Call3(Func_020064aa, 0x30000, 0x30000, 0x10000);
+        Call3(Func_020064b4, -1, -1, 0xe666);
+        Func_020064e6(field + 0x330);
+    }
 }
 
 void PlaceSceneObjectPairFromTableC(s32 table_index)

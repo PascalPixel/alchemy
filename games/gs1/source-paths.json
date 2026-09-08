@@ -8260,6 +8260,10 @@
       "name": "FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear",
       "source": "overlays/scene_setup/setup_with_descriptor_a0ac_when_flag_242_clear.c"
     },
+    "resource_375:02000be0": {
+      "name": "FieldScene_RunTwoActorStagingSequence",
+      "source": "overlays/scene_primary_script/run_two_actor_staging_sequence.c"
+    },
     "resource_3c3:02000030": {
       "name": "FieldScene_SetActor13Value1A",
       "source": "overlays/scene_script/actor_prompt_dialogue.c"

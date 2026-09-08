@@ -40682,6 +40682,135 @@
         }
       ],
       "local_symbols": []
+    },
+    {
+      "id": "field-scene-two-actor-staging-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_two_actor_staging_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_375",
+      "absolute_symbols": {
+        "Func_02002752": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02002752_a": {
+          "address": "0x02009acc",
+          "kind": "thumb"
+        },
+        "Func_0200282c": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Func_0200282c_a": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Func_0200289c": {
+          "address": "0x02009b7c",
+          "kind": "thumb"
+        },
+        "Func_0200289c_a": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Func_020028a8": {
+          "address": "0x02009b84",
+          "kind": "thumb"
+        },
+        "Func_020028a8_a": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Func_020028d2": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_020028d2_a": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Func_02002912": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Func_02002912_a": {
+          "address": "0x02009ad4",
+          "kind": "thumb"
+        },
+        "Func_02002a36": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02002a36_a": {
+          "address": "0x02009b34",
+          "kind": "thumb"
+        },
+        "Func_02002b94": {
+          "address": "0x02009b04",
+          "kind": "thumb"
+        },
+        "Func_02002b94_a": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02002ba8": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Func_02002ba8_a": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02002be4": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Func_02002be4_a": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Func_02002c0e": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Func_02002c0e_a": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02002c46": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "Func_02002c46_a": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Func_02002d10": {
+          "address": "0x02009ae4",
+          "kind": "thumb"
+        },
+        "Func_02002d10_a": {
+          "address": "0x02009ac4",
+          "kind": "thumb"
+        },
+        "Func_02002d20": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02002d20_a": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000be0",
+          "extent": 1728,
+          "state": "exact-c"
+        }
+      ],
+      "local_symbols": []
     }
   ]
 }

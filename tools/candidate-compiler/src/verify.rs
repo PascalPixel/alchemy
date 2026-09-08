@@ -5,9 +5,9 @@ use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use compiler_core::{external_symbol, ExternalSymbol, CALL_VIA_BASE};
+use psynergy::process::run;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
 #[derive(Debug, Clone, Default)]
 pub struct CandidateCompilerConfiguration {
@@ -35,30 +35,6 @@ pub fn source_stem(path: &str) -> String {
         .filter(|stem| !ext.is_empty() && !stem.is_empty())
         .unwrap_or(base)
         .to_string()
-}
-pub fn run<S: AsRef<str>>(command: &[S], cwd: &Path) -> Result<String, String> {
-    let program = command
-        .first()
-        .ok_or_else(|| "run: empty command".to_string())?
-        .as_ref();
-    let output = Command::new(program)
-        .args(command[1..].iter().map(|argument| argument.as_ref()))
-        .current_dir(cwd)
-        .output()
-        .map_err(|error| format!("{}: {error}", basename(program)))?;
-    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
-    if output.status.success() {
-        return Ok(stdout);
-    }
-    let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
-    let detail_source = if stderr.is_empty() { &stdout } else { &stderr };
-    let detail = detail_source.trim();
-    let name = basename(program);
-    if detail.is_empty() {
-        Err(format!("{name} failed"))
-    } else {
-        Err(format!("{name} failed: {detail}"))
-    }
 }
 pub fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     run(

@@ -8,6 +8,7 @@ name = "disassemble"
 path = "src/lib.rs"
 
 [dependencies]
+psynergy = { path = "../psynergy" }
 compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
 lz-codecs = { path = "../lz-codecs" }

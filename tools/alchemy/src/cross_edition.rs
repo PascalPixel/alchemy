@@ -1,4 +1,4 @@
-use candidate_compiler::verify::{assemble, compile_to_assembly, run as run_compiler};
+use candidate_compiler::verify::{assemble, compile_to_assembly};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::symbol_is_thumb;
@@ -8,6 +8,7 @@ use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
 };
+use psynergy::process::run as run_compiler;
 use serde::Serialize;
 use std::{
     collections::{BTreeMap, BTreeSet},

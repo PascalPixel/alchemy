@@ -1,5 +1,4 @@
 use crate::paths::{root, OverlaySource};
-use candidate_compiler::verify::run as checked;
 use compiler_core::overlay;
 use compiler_core::overlay::placeholder_addresses;
 pub use compiler_core::overlay::placeholder_extent;
@@ -11,6 +10,7 @@ use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{
     AbsoluteSymbol, AbsoluteSymbolKind, TranslationUnit, TranslationUnits,
 };
+use psynergy::process::run as checked;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};

@@ -1,4 +1,5 @@
 //! Compile, verify, cache, and manifest every exact C owner in the main image.
+use psynergy::process::run;
 pub fn entry(arguments: &[String]) -> Result<()> {
     if arguments.iter().any(|argument| argument == "--self-test") {
         println!("{}", self_test()?);
@@ -50,7 +51,6 @@ use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
     path::Path,
-    process::Command,
     sync::{
         atomic::{AtomicUsize, Ordering},
         Mutex,
@@ -322,26 +322,6 @@ pub fn parse_args(argv: &[String]) -> Result<ParsedArgs> {
     Ok(ParsedArgs::Run(Box::new(options)))
 }
 
-pub fn run(root: &str, command: &[String]) -> Result<String> {
-    let program = command.first().ok_or("run() requires a command")?;
-    let output = Command::new(program)
-        .args(&command[1..])
-        .current_dir(root)
-        .output()
-        .map_err(|e| format!("{}: {e}", basename(program)))?;
-    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
-    let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
-    if !output.status.success() {
-        let detail = if stderr.trim().is_empty() {
-            stdout.trim()
-        } else {
-            stderr.trim()
-        };
-        return Err(format!("{} failed: {detail}", basename(program)));
-    }
-    Ok(stdout)
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Compiled {
     pub object: String,
@@ -383,7 +363,7 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
         ));
     }
     let paths = SourcePaths::load_for_game(Path::new(root), &unit.game)?;
-    for name in last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", object]))?) {
+    for name in last_fields(&run(&strings(&["arm-none-eabi-nm", "-u", object]), root)?) {
         if symbols.contains_key(&name) || external_symbol(&name, CALL_VIA_BASE).is_some() {
             continue;
         }
@@ -440,11 +420,11 @@ fn materialize_unit_owner(
     let output = text(object_dir.join(format!("{stem}.o")));
     write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
     let assembler = compiler_core::routing::compiler_assembly_command(&text(assembly), &output);
-    run(root, &assembler)?;
+    run(&assembler, root)?;
     if link(&output)? != linked {
         return Err(format!("{}: emitted {stem} slice changed output", unit.id));
     }
-    let undefined_names = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &output]))?);
+    let undefined_names = last_fields(&run(&strings(&["arm-none-eabi-nm", "-u", &output]), root)?);
     for name in &undefined_names {
         if external_symbol(name, CALL_VIA_BASE).is_none() {
             return Err(format!("{}: unsupported slice import {name}", unit.id));
@@ -570,15 +550,15 @@ pub fn compile_source_for_owner(
         });
     }
     for step in &plan.steps {
-        run(root, &step.command)?;
+        run(&step.command, root)?;
     }
     run(
-        root,
         &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+        root,
     )?;
     let defined = last_fields(&run(
-        root,
         &strings(&["arm-none-eabi-nm", "-g", "--defined-only", &object]),
+        root,
     )?);
     let expected = format!("Func_{name}");
     if !defined.iter().any(|s| s == &expected) || defined.iter().any(|s| !function_name(s)) {
@@ -588,7 +568,7 @@ pub fn compile_source_for_owner(
             serde_json::to_string(&defined).unwrap()
         ));
     }
-    let undefined = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &object]))?);
+    let undefined = last_fields(&run(&strings(&["arm-none-eabi-nm", "-u", &object]), root)?);
     for name in &undefined {
         if external_symbol(name, CALL_VIA_BASE).is_none() && !allowed_undefined.contains(name) {
             return Err(format!("{}: unsupported external {name}", basename(source)));
@@ -888,8 +868,8 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     write_file(&symbols_source, externals.as_bytes())?;
     run(
-        root,
         &compiler_core::routing::assembly_command(&text(&symbols_source), &text(&symbols_object)),
+        root,
     )?;
     let linker = output.join("claimed.ld");
     let mut script = format!(
@@ -910,7 +890,6 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let elf = output.join("claimed.elf");
     let binary = output.join("claimed.bin");
     run(
-        root,
         &strings(&[
             "arm-none-eabi-ld",
             "-T",
@@ -919,9 +898,9 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             &text(elf.clone()),
             &text(symbols_object.clone()),
         ]),
+        root,
     )?;
     run(
-        root,
         &strings(&[
             "arm-none-eabi-objcopy",
             "-O",
@@ -929,10 +908,11 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             &text(elf.clone()),
             &text(binary.clone()),
         ]),
+        root,
     )?;
     let nm = run(
-        root,
         &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &text(elf)]),
+        root,
     )?;
     let mut symbols = BTreeMap::new();
     for line in nm.lines() {

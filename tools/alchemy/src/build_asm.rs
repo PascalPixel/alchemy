@@ -1,4 +1,5 @@
 //! Assemble retained source regions and emit their classified manifest.
+use psynergy::process::run;
 pub fn entry(arguments: &[String]) -> Result<(), String> {
     if arguments == ["--self-test"] {
         let sample = vec!["--source-only".to_string(), "--output=out/test".to_string()];
@@ -37,7 +38,6 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
-use std::process::Command;
 const ROM_BASE: u64 = 0x0800_0000;
 const ROM_SIZE: u64 = 0x0080_0000;
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -202,26 +202,6 @@ fn assembly_sources(directory: &Path) -> Result<Vec<PathBuf>, String> {
     }
     result.sort();
     Ok(result)
-}
-fn run(root: &Path, command: &[String]) -> Result<String, String> {
-    let program = command.first().ok_or("empty command")?;
-    let output = Command::new(program)
-        .args(&command[1..])
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("{program}: {error}"))?;
-    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
-    let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
-    if output.status.success() {
-        Ok(stdout)
-    } else {
-        let detail = if stderr.is_empty() { stdout } else { stderr };
-        let name = Path::new(program)
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or(program);
-        Err(format!("{name} failed: {}", detail.trim()))
-    }
 }
 fn integer(value: &Value, name: &str) -> Result<u64, String> {
     let parsed = match value {
@@ -499,7 +479,6 @@ fn build_region(
         });
     }
     run(
-        root,
         &argv(&[
             "arm-none-eabi-as",
             "-mcpu=arm7tdmi",
@@ -508,8 +487,9 @@ fn build_region(
             &text(&object),
             &text(source),
         ]),
+        root,
     )?;
-    let undefined = run(root, &argv(&["arm-none-eabi-nm", "-u", &text(&object)]))?;
+    let undefined = run(&argv(&["arm-none-eabi-nm", "-u", &text(&object)]), root)?;
     let names: Vec<String> = undefined
         .lines()
         .filter(|line| !line.is_empty())
@@ -541,7 +521,6 @@ fn build_region(
         }
         write(&symbols_source, body)?;
         run(
-            root,
             &argv(&[
                 "arm-none-eabi-as",
                 "-mcpu=arm7tdmi",
@@ -550,6 +529,7 @@ fn build_region(
                 &text(&symbols_object),
                 &text(&symbols_source),
             ]),
+            root,
         )?;
         objects.push(symbols_object);
     }
@@ -563,9 +543,8 @@ fn build_region(
         text(&elf),
     ];
     link.extend(objects.iter().map(text));
-    run(root, &link)?;
+    run(&link, root)?;
     run(
-        root,
         &argv(&[
             "arm-none-eabi-objcopy",
             "-O",
@@ -575,6 +554,7 @@ fn build_region(
             &text(&elf),
             &text(&binary),
         ]),
+        root,
     )?;
     let data = read(&binary)?;
     cache.put(&cache_key, &[("payload", &data)])?;

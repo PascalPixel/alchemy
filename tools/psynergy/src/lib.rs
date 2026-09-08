@@ -4,6 +4,7 @@
 pub mod compare;
 pub mod decode;
 pub mod lift;
+pub mod process;
 pub mod sched;
 pub mod unit;
 #[cfg(test)]

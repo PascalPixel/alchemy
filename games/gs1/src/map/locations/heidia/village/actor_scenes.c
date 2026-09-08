@@ -108,6 +108,16 @@ s32 Func_02002b72();
 void Func_020068a0();
 
 
+struct ObjectRuntime *Func_020069e6();
+void Func_02006afa();
+s32 Func_020069dc();
+s32 Func_02006a0e();
+s32 Func_02002756();
+s32 Func_02002dbc();
+s32 Func_02002d5a();
+s32 Func_02002d58();
+void Func_02006a96();
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -335,6 +345,47 @@ void FieldScene_UpdateActorPairInteraction(void)
             }
             if (Value1(Func_020067de, 0x214)) {
                 SetSceneValue(&scene[193], 91);
+            }
+        }
+    }
+}
+
+void FieldScene_UpdateActorSeventeenInteraction(void)
+{
+    struct ObjectRuntime *actor = Func_020069e6(17);
+    s32 *work = (s32 *)(*(u8 **)Data_03001e70 + 0x164);
+    s16 *scene = *(s16 **)(Data_03001e70 + 0x4c);
+
+    Func_02006afa(actor);
+    if (Data_03001e40 & 1) {
+        work[6] = 1;
+        work[7] = 1;
+    } else {
+        work[6] = -1;
+        work[7] = -1;
+    }
+    if (Func_020069dc(0x106) || scene[191] != 0 || scene[192] != 0) {
+        actor->movement_state = 1;
+    } else if (!Value1(Func_02006a0e, 0x214)) {
+        actor->movement_state = 0;
+        if (!Value1(Func_02006a0e, 0x214) && actor->movement_state == 0) {
+            work[8] = 0x3400000 - actor->x;
+            work[9] = 0x2400000 - actor->z;
+        }
+        if (!Func_02002756()) {
+            Func_02002dbc(17);
+            if (Func_02002d5a(17) && Data_02000240[294] != 0) {
+                SetSceneValue(&scene[191], (s32)&Value_00002092);
+                return;
+            }
+            if (Data_02000240[294] == 0) {
+                if (Func_02002d58(17)) {
+                    Func_02006a96(0x215);
+                    Func_02006a96(0x214);
+                }
+            }
+            if (Value1(Func_02006a0e, 0x214)) {
+                SetSceneValue(&scene[193], 92);
             }
         }
     }

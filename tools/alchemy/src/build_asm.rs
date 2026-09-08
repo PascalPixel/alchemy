@@ -1,5 +1,30 @@
 //! Assemble retained source regions and emit their classified manifest.
-pub mod cli;
+pub fn entry(arguments: &[String]) -> Result<(), String> {
+    if arguments == ["--self-test"] {
+        let sample = vec!["--source-only".to_string(), "--output=out/test".to_string()];
+        match parse_args(&sample)? {
+            ParseOutcome::Run(options) if options.source_only && options.output == "out/test" => {
+                println!("self-test=ok");
+                return Ok(());
+            }
+            _ => return Err("self-test failed".into()),
+        }
+    }
+    let options = match parse_args(arguments)? {
+        ParseOutcome::Help => {
+            println!("usage: alchemy build asm [-h] [--source-only] [--output OUTPUT] [--source SOURCE] [rom]");
+            return Ok(());
+        }
+        ParseOutcome::Run(options) => options,
+    };
+    let cwd = std::env::current_dir().map_err(|error| format!("cwd: {error}"))?;
+    let report = build(&repository_root(), &cwd, &options)?;
+    println!(
+        "regions={} bytes={}\n{}",
+        report.regions, report.bytes, report.counts
+    );
+    Ok(())
+}
 use compiler_core::cache::sqlite::SqliteCache;
 use compiler_core::canonical_json::write_canonical;
 use compiler_core::{

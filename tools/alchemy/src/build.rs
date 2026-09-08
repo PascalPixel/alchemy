@@ -16,14 +16,8 @@ pub fn entry(args: &[String]) -> ExitCode {
             ExitCode::SUCCESS
         }
         "compilers" => crate::make_target("compilers", &rest),
-        "asm" => {
-            build_asm::cli::entry(&rest);
-            ExitCode::SUCCESS
-        }
-        "claimed" => {
-            build_claimed::cli::entry(&rest);
-            ExitCode::SUCCESS
-        }
+        "asm" => crate::result(crate::build_asm::entry(&rest)),
+        "claimed" => crate::result(crate::build_claimed::entry(&rest)),
         "full" | "rom" => crate::result(crate::build_full::run(&rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

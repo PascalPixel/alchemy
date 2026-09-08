@@ -4,16 +4,36 @@
     "resource_372:020031ac": {
       "name": "FieldScene_RunActorGroupDepartureSequence"
     },
-    "resource_39c:02003d20": {"name": "Scene_RunSelectorEntry"},
-    "resource_3c9:020012c8": {"name": "FieldScene_RunActorEntrySequence"},
-    "resource_3a8:02000590": {"name": "FieldScene_RunStagedGroupSequence"},
-    "resource_3c8:02003068": {"name": "Scene_RunEntrySetup"},
-    "resource_3c9:02002360": {"name": "FieldScene_RunPairedActorEffectSequence"},
-    "resource_381:02001410": {"name": "FieldScene_RunExtendedEffectPresentation"},
-    "resource_38f:020008ec": {"name": "FieldScene_RunExtendedActorSequence"},
-    "resource_391:02000d3c": {"name": "FieldScene_RunBranchingFormationPresentation"},
-    "resource_3bd:020013f8": {"name": "FieldScene_RunExtendedActorPresentation"},
-    "resource_38b:02000db4": {"name": "SceneActor_PushPuzzleActor"},
+    "resource_39c:02003d20": {
+      "name": "Scene_RunSelectorEntry"
+    },
+    "resource_3c9:020012c8": {
+      "name": "FieldScene_RunActorEntrySequence"
+    },
+    "resource_3a8:02000590": {
+      "name": "FieldScene_RunStagedGroupSequence"
+    },
+    "resource_3c8:02003068": {
+      "name": "Scene_RunEntrySetup"
+    },
+    "resource_3c9:02002360": {
+      "name": "FieldScene_RunPairedActorEffectSequence"
+    },
+    "resource_381:02001410": {
+      "name": "FieldScene_RunExtendedEffectPresentation"
+    },
+    "resource_38f:020008ec": {
+      "name": "FieldScene_RunExtendedActorSequence"
+    },
+    "resource_391:02000d3c": {
+      "name": "FieldScene_RunBranchingFormationPresentation"
+    },
+    "resource_3bd:020013f8": {
+      "name": "FieldScene_RunExtendedActorPresentation"
+    },
+    "resource_38b:02000db4": {
+      "name": "SceneActor_PushPuzzleActor"
+    },
     "resource_385:02000f30": {
       "name": "SceneSetup_InitializeActorsAndFlags"
     },
@@ -17600,6 +17620,42 @@
     },
     "resource_3c4:0200259c": {
       "name": "FieldScene_InitializeActorGroups"
+    },
+    "resource_37f:0200056c": {
+      "name": "FieldScene_TransitionRecordByKind1",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_1.c"
+    },
+    "resource_37f:020005ac": {
+      "name": "FieldScene_TransitionRecordByKind2",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_2.c"
+    },
+    "resource_37f:020005ec": {
+      "name": "FieldScene_TransitionRecordByKind3",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_3.c"
+    },
+    "resource_37f:02000634": {
+      "name": "FieldScene_TransitionRecordByKind4",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_4.c"
+    },
+    "resource_37f:0200067c": {
+      "name": "FieldScene_TransitionRecordByKind5",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_5.c"
+    },
+    "resource_37f:020006c4": {
+      "name": "FieldScene_TransitionRecordByKind6",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_6.c"
+    },
+    "resource_37f:0200070c": {
+      "name": "FieldScene_TransitionRecordByKind7",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_7.c"
+    },
+    "resource_37f:02000754": {
+      "name": "FieldScene_TransitionRecordByKind8",
+      "source": "overlays/scene_state_interaction/transition_record_by_kind_8.c"
+    },
+    "resource_37f:02001ac8": {
+      "name": "SceneEffect_UpdateCountdownAndTrigger",
+      "source": "overlays/scene_effect_sequence/update_countdown_and_trigger.c"
     }
   }
 }

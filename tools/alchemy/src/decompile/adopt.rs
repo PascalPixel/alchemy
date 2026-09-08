@@ -4,7 +4,7 @@
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
 
-use crate::owners::{self, modules, parse_owner, score, tool_command};
+use super::owners::{self, modules, parse_owner, score, tool_command};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -170,7 +170,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         Some(source) => std::fs::read_to_string(source)
             .map_err(|e| format!("{}: {e}", source.display()))?
             .replace(&format!("Lifted_{entry:08x}"), &name),
-        None => crate::lift_owner(root, request.owner, Some(span), Some(&name))?.0,
+        None => super::lift_owner(root, request.owner, Some(span), Some(&name))?.0,
     };
     let destination = root.join("games/gs1/src").join(&relative);
     let existed = destination.exists();

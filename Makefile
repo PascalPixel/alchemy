@@ -19,7 +19,7 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy
 PORTABLE_TOOLS := alchemy compiler-core candidate-compiler diff matching disassemble \
-	overlay-adopt coverage-map decompile
+	overlay-adopt coverage-map psynergy
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.

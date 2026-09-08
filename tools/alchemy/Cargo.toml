@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 png = "0.17"
-decompile = { path = "../decompile" }
+psynergy = { path = "../psynergy" }
 candidate-compiler = { path = "../candidate-compiler" }
 diff = { path = "../diff" }
 compiler-core = { path = "../compiler-core" }

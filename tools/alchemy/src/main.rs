@@ -3,6 +3,7 @@ use std::process::ExitCode;
 mod allocator;
 mod build;
 mod build_assets;
+mod build_full;
 mod check;
 mod convert;
 mod cross_edition;

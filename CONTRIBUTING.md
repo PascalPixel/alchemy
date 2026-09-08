@@ -374,6 +374,10 @@ route, address map, owner register and asset formats are not portable defaults.
 Do not copy a framework for worker waves, template packs, inferred aggregate
 contexts or report inventories.
 
+The full-ROM composer belongs to `alchemy build full`; it runs the claimed,
+assembly and asset stages with that same executable. It is project integration,
+not a separate portable library or another Cargo command host.
+
 Alchemy also retains the dependencies its actual game build requires:
 `build assets` rebuilds maintained data from the asset descriptions under
 `games/` through format-named codecs; `overlay` handles the loader's
@@ -482,7 +486,6 @@ libraries are not additional public command surfaces.
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 | [build-asm](tools/build-asm/) | Assemble retained regions and emit their classified manifest. |
 | [build-claimed](tools/build-claimed/) | Compile, verify, cache, and manifest exact-C owners. |
-| [build-full](tools/build-full/) | Compose claimed C, retained assembly, and assets into the ROM. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, ordinary-C policy (`alchemy check no-asm`), symbols, paths, the twelve decompilation targets, translation units, the build cache, and canonical JSON. |

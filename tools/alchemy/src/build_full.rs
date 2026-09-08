@@ -1,5 +1,4 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
-pub mod cli;
 use compiler_core::build_io::{argv, read, read_json, rooted, text, write};
 use compiler_core::canonical_json::write_canonical;
 use compiler_core::decomp_targets::{
@@ -12,6 +11,24 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 const ROM_BASE: u64 = 0x0800_0000;
+
+pub fn run(arguments: &[String]) -> Result<(), String> {
+    if arguments == ["--self-test"] {
+        self_test()?;
+        println!("self-test=ok");
+        return Ok(());
+    }
+    let options = match parse_args(arguments)? {
+        ParseOutcome::Help => {
+            println!("usage: alchemy build full [-h] [--target GAME-EDITION] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] [--asm-output ASM_OUTPUT] [--asset-manifest ASSET_MANIFEST] [--asset-output ASSET_OUTPUT] [--jobs JOBS] [--source-only] [rom] | --self-test");
+            return Ok(());
+        }
+        ParseOutcome::Run(options) => options,
+    };
+    let cwd = std::env::current_dir().map_err(|error| format!("cwd: {error}"))?;
+    println!("{}", build(&repository_root(), &cwd, &options)?);
+    Ok(())
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Options {
     pub target: DecompTargetId,
@@ -210,7 +227,7 @@ fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
     }
     Ok(false)
 }
-fn run(root: &Path, command: &[String]) -> Result<(), String> {
+fn run_stage(root: &Path, command: &[String]) -> Result<(), String> {
     let (program, args) = command.split_first().ok_or("empty command")?;
     let status = Command::new(program)
         .args(args)
@@ -231,19 +248,10 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
     }
 }
 /// Run one stage through the unified contributor executable.
-fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
-    argv(&[
-        "cargo",
-        "run",
-        "--quiet",
-        "--release",
-        "--offline",
-        "--manifest-path",
-        &text(root.join("tools/alchemy/Cargo.toml")),
-        "--",
-        "build",
-        stage,
-    ])
+fn stage_command(stage: &str) -> Result<Vec<String>, String> {
+    let executable =
+        std::env::current_exe().map_err(|error| format!("alchemy executable: {error}"))?;
+    Ok(argv(&[&text(executable), "build", stage]))
 }
 fn value_u64(value: &Value, label: &str) -> Result<u64, String> {
     value
@@ -1177,7 +1185,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let mut rebuilt = rom.clone();
     let mut mask = vec![0u8; target.rom_size as usize];
     let claimed_dir = rooted(root, &options.claimed_output);
-    let mut command = cargo_child(root, "claimed");
+    let mut command = stage_command("claimed")?;
     command.extend(["--target".into(), target.id.to_string()]);
     if options.source_only {
         command.push("--source-only".into());
@@ -1190,7 +1198,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         "--output".into(),
         text(&claimed_dir),
     ]);
-    run(root, &command)?;
+    run_stage(root, &command)?;
     let claimed_document = read_json::<Value>(&claimed_dir.join("manifest.json"))?;
     let claimed_regions = regions(&claimed_document)?;
     let claimed_image = std::fs::read(claimed_dir.join("claimed.bin"))
@@ -1209,14 +1217,14 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let asm_dir = rooted(root, target.asm_dir);
     if asm_dir.exists() && has_assembly_sources(&asm_dir)? {
         let output = rooted(root, &options.asm_output);
-        let mut command = cargo_child(root, "asm");
+        let mut command = stage_command("asm")?;
         if options.source_only {
             command.push("--source-only".into());
         } else {
             command.push(text(&rom_path));
         }
         command.extend(["--output".into(), text(&output)]);
-        run(root, &command)?;
+        run_stage(root, &command)?;
         asm_regions = regions(&read_json::<Value>(&output.join("manifest.json"))?)?;
         validate_alignments(&claimed_regions, &asm_regions)?;
         place_regions(
@@ -1239,7 +1247,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let asset_manifest = rooted(root, &options.asset_manifest);
     if asset_manifest.exists() {
         let output = rooted(root, &options.asset_output);
-        let mut command = cargo_child(root, "assets");
+        let mut command = stage_command("assets")?;
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -1251,7 +1259,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             "--output".into(),
             text(&output),
         ]);
-        run(root, &command)?;
+        run_stage(root, &command)?;
         asset_regions = regions(&read_json::<Value>(&output.join("manifest.json"))?)?;
         place_regions(
             &asset_regions,

@@ -1,5 +1,4 @@
 //! Compile candidate C, link it at its ROM address, and return both byte spans.
-use crate::jsnum::{hex8, parse_hex};
 use compiler_core::nodepath::{basename, extname};
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::{root, CompilerTarget};
@@ -83,19 +82,22 @@ pub fn copy_text(object: &str, binary: &str) -> Result<(), String> {
     )
     .map(drop)
 }
-pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
-    let len = data.len() as f64;
-    let resolve = |relative: f64| -> usize {
-        let value = if relative.is_nan() {
-            0.0
-        } else {
-            relative.trunc()
-        };
-        (if value < 0.0 { len + value } else { value }).clamp(0.0, len) as usize
-    };
-    let start = resolve(begin);
-    let stop = resolve(end);
-    data.get(start..stop).unwrap_or_default().to_vec()
+fn parse_hex(value: &str) -> Result<u64, String> {
+    if value.is_empty() || !value.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Err(format!("invalid hexadecimal value: {value}"));
+    }
+    u64::from_str_radix(value, 16).map_err(|error| error.to_string())
+}
+
+fn byte_span(data: &[u8], offset: u64, size: u64) -> Result<Vec<u8>, String> {
+    let end = offset.checked_add(size).ok_or("byte span overflows")?;
+    if size == 0 || end > data.len() as u64 {
+        return Err(format!(
+            "byte span 0x{offset:x}+0x{size:x} is outside {} bytes",
+            data.len()
+        ));
+    }
+    Ok(data[offset as usize..end as usize].to_vec())
 }
 pub fn compile_to_assembly(
     source: &str,
@@ -208,16 +210,22 @@ pub fn verify_candidate_owned_routed_with_object(
     if configuration.overlay_extent.is_some() && configuration.reference_symbols {
         return Err("overlay calls require stable reference bindings, not candidate-position symbol inference".into());
     }
+    if !image_base.is_finite()
+        || image_base.fract() != 0.0
+        || !(0.0..=u32::MAX as f64).contains(&image_base)
+    {
+        return Err("image base must be a 32-bit unsigned address".into());
+    }
     let stem = owner_stem.to_string();
     let address = parse_hex(&stem)?;
     let canonical_symbol = configuration
         .owner_symbol
         .clone()
-        .unwrap_or_else(|| format!("Func_{}", hex8(address)));
+        .unwrap_or_else(|| format!("Func_{address:08x}"));
     let short_symbol = if configuration.owner_symbol.is_some() {
         canonical_symbol.clone()
     } else {
-        format!("Func_{}", hex8(address).trim_start_matches('0'))
+        format!("Func_{}", format!("{address:08x}").trim_start_matches('0'))
     };
     let out = Path::new(output_directory);
     let path = |suffix: &str| {
@@ -384,7 +392,7 @@ pub fn verify_candidate_owned_routed_with_object(
         &[
             "arm-none-eabi-ld",
             "--unresolved-symbols=ignore-all",
-            &format!("-Ttext=0x{}", hex8(link_address)),
+            &format!("-Ttext=0x{link_address:08x}"),
             "-e",
             symbol,
             "-o",
@@ -401,15 +409,19 @@ pub fn verify_candidate_owned_routed_with_object(
     let binary_bytes = std::fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
     let size = parse_hex(fields[1])?;
     let linked_symbol_address = parse_hex(fields.first().ok_or("missing linked symbol address")?)?;
-    let binary_offset = linked_symbol_address as f64 - link_address as f64;
-    let actual = js_subarray(&binary_bytes, binary_offset, binary_offset + size as f64);
-    let offset = address as f64 - image_base;
+    let binary_offset = linked_symbol_address
+        .checked_sub(link_address)
+        .ok_or("linked symbol precedes its section")?;
+    let actual = byte_span(&binary_bytes, binary_offset, size)?;
+    let offset = address
+        .checked_sub(image_base as u64)
+        .ok_or("owner precedes reference image")?;
     let actual = if configuration.overlay_extent.is_some() {
         compiler_core::overlay::encode(&actual, offset as usize)?
     } else {
         actual
     };
-    let expected = js_subarray(rom, offset, offset + size as f64);
+    let expected = byte_span(rom, offset, size)?;
     Ok(Verification { actual, expected })
 }
 fn symbol_fields<'a>(listing: &'a str, symbol: &str) -> Option<Vec<&'a str>> {
@@ -605,6 +617,26 @@ pub(crate) fn write(path: &str, bytes: &[u8]) -> Result<(), String> {
 #[cfg(test)]
 mod reference_symbol_tests {
     use super::*;
+
+    #[test]
+    fn hexadecimal_fields_accept_only_complete_ascii_digits() {
+        for value in ["0800ABCD", "0800abcd"] {
+            assert_eq!(parse_hex(value).unwrap(), 0x0800_abcd);
+        }
+        assert_eq!(parse_hex("F").unwrap(), 15);
+        for value in ["", "0x10", "１２", "١٢", " 10", "10\n"] {
+            assert!(parse_hex(value).is_err());
+        }
+    }
+
+    #[test]
+    fn comparison_spans_must_be_complete_and_nonempty() {
+        let data = [0, 1, 2, 3];
+        assert_eq!(byte_span(&data, 1, 3).unwrap(), [1, 2, 3]);
+        for (offset, size) in [(0, 0), (4, 1), (3, 2), (u64::MAX, 1)] {
+            assert!(byte_span(&data, offset, size).is_err());
+        }
+    }
     #[test]
     fn owner_symbols_require_a_defined_sized_nm_record() {
         let undefined = "         U Func_0808e5d8\n0808e5d8 A Func_0808e5d8\n";

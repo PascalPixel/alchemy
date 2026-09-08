@@ -42,7 +42,7 @@ fn basename(path: &Path) -> Result<String, String> {
         .ok_or_else(|| format!("{} has no UTF-8 filename", path.display()))
 }
 
-fn source_owner(path: &Path) -> Result<SourceOwner, String> {
+pub(super) fn source_owner(path: &Path) -> Result<SourceOwner, String> {
     if let Some(owner) = SourcePaths::load(&root())?.owner_for_path(path)? {
         return Ok(owner);
     }

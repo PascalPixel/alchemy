@@ -82,7 +82,7 @@ fn source_for(root: &Path, paths: &SourcePaths, owner: SourceOwner) -> Result<Pa
         .ok_or_else(|| format!("no source for {}", owner.id()))
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
-    let ParseOutcome::Options(mut options) = options_of(root, argv)? else {
+    let ParseOutcome::Options(options) = options_of(root, argv)? else {
         println!("{USAGE}");
         return Ok(0);
     };
@@ -94,6 +94,18 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     {
         return Err("overlay scoring currently requires the canonical GS1 reference".into());
     }
+    let rendered = render_options(root, options)?;
+    println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
+    print!("{}", rendered.stdout);
+    Ok(i32::from(
+        rendered.differing_halfwords != 0 || rendered.candidate_length != rendered.reference_length,
+    ))
+}
+
+pub(crate) fn render_options(
+    root: &Path,
+    mut options: Box<crate::diff::cli::Options>,
+) -> Result<crate::diff::render::RenderOutput, String> {
     let target = options.source.clone();
     let resolved = if let Some(address) = options.owner {
         let overlay = options
@@ -149,12 +161,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     options.owner = Some(address as u32);
     options.overlay = Some(overlay);
     options.size = Some(span);
-    let rendered = render(root, &options)?;
-    println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
-    print!("{}", rendered.stdout);
-    Ok(i32::from(
-        rendered.differing_halfwords != 0 || rendered.candidate_length != rendered.reference_length,
-    ))
+    render(root, &options)
 }
 pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     let directory = root.join("games/gs1/recon/en/overlays");

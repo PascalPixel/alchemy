@@ -6,24 +6,6 @@ pub const OVERLAY_BASE: u32 = 0x0200_0000;
 /// The main image lives here; decoding rebases through `decode_window_at`.
 pub const MAIN_BASE: u32 = 0x0800_0000;
 
-thread_local! {
-    /// The address of byte zero of the image being decoded.
-    static BASE: std::cell::Cell<u32> = const { std::cell::Cell::new(OVERLAY_BASE) };
-}
-
-/// The address of byte zero of the image being decoded on this thread.
-pub fn base() -> u32 {
-    BASE.with(|b| b.get())
-}
-
-/// Decodes a window of an image whose byte zero sits at `base`.
-pub fn decode_window_at(image: &[u8], base: u32, entry: u32, span: u32) -> Vec<Ins> {
-    let previous = BASE.with(|b| b.replace(base));
-    let ins = decode_window(image, entry, span);
-    BASE.with(|b| b.set(previous));
-    ins
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Cond {
     Eq,
@@ -421,8 +403,8 @@ pub fn word_at(bytes: &[u8], offset: usize) -> Option<u32> {
 
 /// Decodes one instruction at `pc`. `image` holds the whole overlay so pool
 /// words and branch targets resolve against real addresses.
-pub fn decode_one(image: &[u8], pc: u32) -> Option<Ins> {
-    let offset = pc.checked_sub(base())? as usize;
+pub fn decode_one(image: &[u8], base: u32, pc: u32) -> Option<Ins> {
+    let offset = pc.checked_sub(base)? as usize;
     let half = half_at(image, offset)?;
     let rd = |shift: u32| ((half >> shift) & 7) as u8;
     let kind = match half >> 13 {
@@ -526,7 +508,7 @@ pub fn decode_one(image: &[u8], pc: u32) -> Option<Ins> {
                 }
             } else if half & 0xf800 == 0x4800 {
                 let target = ((pc & !3) + 4 + ((half & 0xff) as u32) * 4) as usize;
-                let word = word_at(image, target - base() as usize)?;
+                let word = word_at(image, target - base as usize)?;
                 Kind::LdrPool { rd: rd(8), word }
             } else {
                 let rm = rd(6);
@@ -699,8 +681,9 @@ pub fn decode_one(image: &[u8], pc: u32) -> Option<Ins> {
 }
 
 /// Decodes the code reachable from `entry` inside `[entry, entry + span)`.
-/// Pool words and padding are skipped; the result is address ordered.
-pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
+/// `base` is the address of image byte zero. Pool words and padding are
+/// skipped; the result is address ordered.
+pub fn decode_window_at(image: &[u8], base: u32, entry: u32, span: u32) -> Vec<Ins> {
     let end = entry + span;
     let inside = |address: u32| address >= entry && address < end;
     let mut queue = vec![entry];
@@ -710,7 +693,7 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
         let mut pc = queue[head];
         head += 1;
         while inside(pc) && !seen.contains_key(&pc) {
-            let Some(ins) = decode_one(image, pc) else {
+            let Some(ins) = decode_one(image, base, pc) else {
                 break;
             };
             let size = ins.size;
@@ -746,7 +729,7 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
         .iter()
         .filter(|(_, x)| matches!(x.kind, Kind::LdrPool { .. }))
         .filter_map(|(pc, _)| {
-            let half = half_at(image, (*pc - base()) as usize)?;
+            let half = half_at(image, (*pc - base) as usize)?;
             Some((*pc & !3) + 4 + u32::from(half & 0xff) * 4)
         })
         .flat_map(|word| [word, word + 2])
@@ -761,14 +744,14 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
             cursor += 2;
             continue;
         }
-        let offset = (cursor - base()) as usize;
+        let offset = (cursor - base) as usize;
         let half = half_at(image, offset).unwrap_or(0);
         let after_return = seen
             .range(..cursor)
             .next_back()
             .is_some_and(|(_, x)| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }));
         if half & 0xff00 == 0xb500 && after_return {
-            let extra = decode_window(image, cursor, end - cursor);
+            let extra = decode_window_at(image, base, cursor, end - cursor);
             // Table words can look like a prologue: only a run that decodes
             // cleanly and returns is code.
             let clean = extra.iter().all(|x| !matches!(x.kind, Kind::Unknown(_)))
@@ -797,9 +780,25 @@ mod tests {
     }
 
     #[test]
+    fn literal_pools_follow_the_supplied_image_base() {
+        let bytes = image(&[0x4800, 0x4770, 0x1234, 0x5678]);
+        for base in [MAIN_BASE, OVERLAY_BASE, 0x03000000, MAIN_BASE] {
+            let rows = decode_window_at(&bytes, base, base, bytes.len() as u32);
+            assert_eq!(rows[0].addr, base);
+            assert_eq!(
+                rows[0].kind,
+                Kind::LdrPool {
+                    rd: 0,
+                    word: 0x56781234
+                }
+            );
+        }
+    }
+
+    #[test]
     fn decodes_common_forms() {
         let image = image(&[0xb510, 0x2001, 0x4800, 0x4700, 0x1234, 0x5678]);
-        let ins = decode_window(&image, OVERLAY_BASE, 12);
+        let ins = decode_window_at(&image, OVERLAY_BASE, OVERLAY_BASE, 12);
         let kinds: Vec<Kind> = ins.into_iter().map(|ins| ins.kind).collect();
         assert_eq!(
             kinds,
@@ -820,22 +819,22 @@ mod tests {
         let image = image(&[0xd001, 0xe7fd, 0xf000, 0xf802, 0x6813, 0x7053, 0x5c88]);
         let base = OVERLAY_BASE;
         assert_eq!(
-            decode_one(&image, base).unwrap().kind,
+            decode_one(&image, base, base).unwrap().kind,
             Kind::Bcond {
                 cond: Cond::Eq,
                 target: base + 6
             }
         );
         assert_eq!(
-            decode_one(&image, base + 2).unwrap().kind,
+            decode_one(&image, base, base + 2).unwrap().kind,
             Kind::B { target: base }
         );
         assert_eq!(
-            decode_one(&image, base + 4).unwrap().kind,
+            decode_one(&image, base, base + 4).unwrap().kind,
             Kind::Bl { target: base + 12 }
         );
         assert_eq!(
-            decode_one(&image, base + 8).unwrap().kind,
+            decode_one(&image, base, base + 8).unwrap().kind,
             Kind::Load {
                 width: Width::Word,
                 rd: 3,
@@ -844,7 +843,7 @@ mod tests {
             }
         );
         assert_eq!(
-            decode_one(&image, base + 10).unwrap().kind,
+            decode_one(&image, base, base + 10).unwrap().kind,
             Kind::Store {
                 width: Width::Byte,
                 rd: 3,
@@ -853,7 +852,7 @@ mod tests {
             }
         );
         assert_eq!(
-            decode_one(&image, base + 12).unwrap().kind,
+            decode_one(&image, base, base + 12).unwrap().kind,
             Kind::Load {
                 width: Width::Byte,
                 rd: 0,

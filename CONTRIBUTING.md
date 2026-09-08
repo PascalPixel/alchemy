@@ -287,7 +287,7 @@ to the build or evidence of current candidate status.
 
 ## Setup and the short development loop
 
-Install Rust, Ninja and `arm-none-eabi-binutils`. Supply approved ROMs under
+Install Rust, Ninja, Bun (browser-client tests) and `arm-none-eabi-binutils`. Supply approved ROMs under
 ignored `roms/` and the approved bundle under `out/compilers/dist/`.
 
 ```sh
@@ -353,6 +353,21 @@ checks run and gains proved. Commit completed work before starting another
 batch; push only when requested.
 
 ## Tooling index
+
+`alchemy dashboard` (or `make dashboard`) serves live coverage at
+`http://127.0.0.1:4650/`. Its four charts include sound coverage, not playback.
+`make dashboard-service-install` installs the macOS login LaunchAgent with
+automatic restart. It builds current source when launched; restart the service
+after server/client source changes. Coverage inputs are watched while running.
+
+`alchemy music-debug` (or `make music-debug`) is a separate, optional server at
+`http://127.0.0.1:4651/`, stopped with Ctrl-C. It serves the existing GS1/GS2
+catalog and approximate synthesizer; playback is not yet an in-game fidelity
+claim. It starts no coverage watcher, and the dashboard exposes no audio routes.
+Neither command starts the other. Both belong to Alchemy's project integration,
+not additional crates or portable decompilation machinery. Their two browser
+clients and client tests are the only JavaScript exception to Rust tooling;
+`make test` runs their regressions, and they remain inside the tooling ceiling.
 
 Use existing tools to close modules. New machinery must address a demonstrated
 recurring blocker, replace duplication where possible, and prove a real
@@ -489,7 +504,7 @@ libraries are not additional public command surfaces.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, and cross-edition commands. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |

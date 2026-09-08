@@ -9,9 +9,12 @@ mod build_full;
 mod check;
 mod convert;
 mod cross_edition;
+mod dashboard;
 mod flatten;
 mod font;
 mod generated_files;
+mod http;
+mod music_debug;
 mod overlay;
 mod scaffold;
 mod targets;
@@ -28,6 +31,8 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   build                 build compilers or ROM stages (asm, claimed, full, rom, assets)\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild and report ROM coverage\n\
+  dashboard             serve live coverage on localhost:4650\n\
+  music-debug           optionally serve the music debugger on localhost:4651\n\
   check                 run repository contract checks\n\
   convert               convert named file formats (see convert --help)\n\
   font                  rebuild the shared Golden Sun font\n\
@@ -57,6 +62,8 @@ fn main() -> ExitCode {
             }
         }
         "font" => font::entry(rest),
+        "dashboard" => result(dashboard::entry(rest)),
+        "music-debug" => result(music_debug::entry(rest)),
         "build" if rest.first().map(String::as_str) == Some("assets") => {
             build_assets::entry(&rest[1..])
         }

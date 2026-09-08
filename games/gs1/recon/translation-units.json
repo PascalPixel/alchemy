@@ -4,6 +4,102 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "scene-two-phase-actor-sequence",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_381_c_02000054.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_381",
+      "absolute_symbols": {
+        "Func_0200b484": {
+          "address": "0x0200b484",
+          "kind": "thumb"
+        },
+        "Func_0200b4cc": {
+          "address": "0x0200b4cc",
+          "kind": "thumb"
+        },
+        "Func_0200b4dc": {
+          "address": "0x0200b4dc",
+          "kind": "thumb"
+        },
+        "Func_0200b4ec": {
+          "address": "0x0200b4ec",
+          "kind": "thumb"
+        },
+        "Func_0200b4fc": {
+          "address": "0x0200b4fc",
+          "kind": "thumb"
+        },
+        "Func_0200b524": {
+          "address": "0x0200b524",
+          "kind": "thumb"
+        },
+        "Func_0200b534": {
+          "address": "0x0200b534",
+          "kind": "thumb"
+        },
+        "Func_0200b53c": {
+          "address": "0x0200b53c",
+          "kind": "thumb"
+        },
+        "Func_0200b544": {
+          "address": "0x0200b544",
+          "kind": "thumb"
+        },
+        "Func_0200b554": {
+          "address": "0x0200b554",
+          "kind": "thumb"
+        },
+        "Func_0200b55c": {
+          "address": "0x0200b55c",
+          "kind": "thumb"
+        },
+        "Func_0200b564": {
+          "address": "0x0200b564",
+          "kind": "thumb"
+        },
+        "Func_0200b58c": {
+          "address": "0x0200b58c",
+          "kind": "thumb"
+        },
+        "Func_0200b594": {
+          "address": "0x0200b594",
+          "kind": "thumb"
+        },
+        "Func_0200b59c": {
+          "address": "0x0200b59c",
+          "kind": "thumb"
+        },
+        "Func_0200b5ac": {
+          "address": "0x0200b5ac",
+          "kind": "thumb"
+        },
+        "Func_0200b5ec": {
+          "address": "0x0200b5ec",
+          "kind": "thumb"
+        },
+        "Func_0200b5f4": {
+          "address": "0x0200b5f4",
+          "kind": "thumb"
+        },
+        "Func_0200b5fc": {
+          "address": "0x0200b5fc",
+          "kind": "thumb"
+        },
+        "Func_0200b624": {
+          "address": "0x0200b624",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000054",
+          "extent": 3548,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "scene-item-presentation",
       "game": "gs1",
       "source": "games/gs1/recon/en/overlays/resource_380_c_02004260.c",

@@ -1,13 +1,13 @@
 use compiler_core::routing::root;
 use std::path::Path;
 
-use crate::options::Options;
+use super::options::Options;
 
 #[test]
 fn catalog_has_no_ungeneralized_recorded_repairs() {
-    const TEXT: &str = include_str!("../../../games/gs1/recon/compiler-repair-patterns.json");
+    const TEXT: &str = include_str!("../../../../games/gs1/recon/compiler-repair-patterns.json");
     let catalog: serde_json::Value = serde_json::from_str(TEXT).unwrap();
-    assert_eq!(catalog["catalog_version"], crate::CATALOG_VERSION);
+    assert_eq!(catalog["catalog_version"], super::CATALOG_VERSION);
     assert_eq!(catalog["search"]["max_edits_per_candidate"], 2);
     assert_eq!(catalog["generalization_backlog"], serde_json::json!([]));
     assert!(!TEXT.contains("recorded-not-generalized"));
@@ -69,7 +69,7 @@ fn run_case(case: &Case, directory: &Path) -> Result<(), String> {
     std::fs::write(&source, perturb(&exact, case.edits)?)
         .map_err(|error| format!("{}: {error}", source.display()))?;
     let output = directory.join("search");
-    let summary = crate::runner::run(Options {
+    let summary = super::runner::run(Options {
         candidate: source,
         iterations: 16,
         jobs: 4,

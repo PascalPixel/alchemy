@@ -7988,6 +7988,10 @@
       "name": "OverlayObject_CreateConfigured",
       "source": "overlays/overlay_object/create_configured_396.c"
     },
+    "resource_396:02000104": {
+      "name": "IntegrateEffectMotion",
+      "source": "overlays/effect/integrate_effect_motion.c"
+    },
     "resource_3cc:0200003c": {
       "name": "SceneData_GetTable81d8",
       "source": "overlays/scene_script/scene_3cc.c"

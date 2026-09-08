@@ -146,8 +146,11 @@ is a negative result, not permission for a larger identical wave.
 
 ### 5. Integrate and commit
 
-Use `alchemy adopt <owner> --source <candidate.c>` for supported standalone
-owners. Install a shared unit and retire its assembly only after every affected
+Use `alchemy adopt <overlay>:<address> --source <candidate.c>` for standalone
+overlay owners. For standalone main-image owners, register the name and source
+path, place accepted address-named candidates in a bounded `out/` directory,
+then use `alchemy check integrate <directory> --apply`. Both paths must verify
+the complete owner before retiring assembly. Install a shared unit only after every affected
 owner is exact from the shared object; isolated adoption cannot prove a unit.
 
 Consolidate related functions when the resulting compilation context is proven.
@@ -339,7 +342,7 @@ responsibilities in another wrapper or registry.
 | Recover and read code | `alchemy decompile`, `disassemble`, `inspect` |
 | Compile and compare | `alchemy diff` |
 | Bounded catalog search | `alchemy match` |
-| Install C / assemble units | `alchemy adopt`, `unit` |
+| Install C / assemble units | `alchemy adopt`, `check integrate`, `unit` |
 | ROM stages / assets / compilers | `alchemy build` |
 | Verify / coverage / contracts | `alchemy verify`, `coverage`, `check` |
 | Edition differences | `alchemy cross-edition` |

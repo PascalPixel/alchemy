@@ -179,6 +179,10 @@
     "main:080a5cc0": {
       "name": "Menu_ResolveSelectedAction"
     },
+    "main:080a6b64": {
+      "name": "PsynergyMenu_DrawActionPage",
+      "source": "psynergy_menu/draw_action_page.c"
+    },
     "main:080a9f10": {
       "name": "BattleEffect_ApplyToTargets"
     },
@@ -189,6 +193,10 @@
     "main:080ce85c": {
       "name": "BattleEffect_RunMemberOrbit",
       "source": "battle/effects/member_orbit/run.c"
+    },
+    "main:080b1bd0": {
+      "name": "Shop_SelectSellItem",
+      "source": "shop/select_sell_item.c"
     },
     "main:080b211c": {
       "name": "Shop_SelectRepairItem",

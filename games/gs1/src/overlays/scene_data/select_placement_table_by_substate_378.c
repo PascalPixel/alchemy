@@ -66,7 +66,7 @@
  * The `0xffff0000 | selector` first word is the three-word scene-script record
  * head HANDOVER records from resource_389/resource_38e, widened here to six
  * words.  The x/z field positions agree with the tracked byte-exact sibling
- * games/gs1/assets/code/resource_378_c_02000030.c, which reads +8 and +0x10 of a record
+ * games/gs1/asm/overlays/resource_378_c_02000030.c, which reads +8 and +0x10 of a record
  * as the two coordinates it differences.
  *
  * THE SELECTOR ADDRESS IS BUILT, NOT FOLDED.  The reference loads the pool

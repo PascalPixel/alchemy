@@ -16,7 +16,7 @@
  * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored displacement + 2),
  * never from the disassembler's annotations: 0x3f50 -> Scene_GetRecord,
  * 0x3dc8 -> Func_08000128 (twice), and this overlay's own Func_02003b48
- * (twice), whose byte-exact source is games/gs1/assets/code/resource_3bb_c_02003b48.c.
+ * (twice), whose byte-exact source is games/gs1/asm/overlays/resource_3bb_c_02003b48.c.
  *
  * That byte-exact sibling settles the interface: Func_02003b48 takes one
  * argument, the three-word position below, and returns the occupying slot
@@ -27,7 +27,7 @@
  *
  * The pool word 0x02000240 is below this overlay's 0x02008000 link base (base
  * witnessed by 0x02008715 = Func_02000714 + 1 in the byte-exact sibling
- * games/gs1/assets/code/resource_3bb_c_02000950.c), so it is a RAM global.  The scaled
+ * games/gs1/asm/overlays/resource_3bb_c_02000950.c), so it is a RAM global.  The scaled
  * index is built as 250 << 1 = 500, giving the same word at 0x02000434 that
  * Func_020002e8 reads.
  *
@@ -58,7 +58,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-/* This overlay's own lookup; byte-exact source in games/gs1/assets/code. */
+/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
 
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {

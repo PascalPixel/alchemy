@@ -9,7 +9,7 @@
  *
  * The mirror image of 0x02003fb4: same 32-frame counter at +0x64, same
  * anchor pointer at +0x68, same field layout (proven by the byte-exact
- * sibling `games/gs1/assets/code/resource_371_c_020004a0.c`).  Three differences, all
+ * sibling `games/gs1/asm/overlays/resource_371_c_020004a0.c`).  Three differences, all
  * of them sign flips or a different constant: the second amplitude store is
  * negated (`negs r3,r0`), the Z offset is subtracted rather than added, and
  * the fixed Z bias is 0x100000 (`movs #128 ; lsls #13`) rather than 0x80000.

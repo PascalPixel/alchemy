@@ -20,7 +20,7 @@
  * coordinate to integer pixels, and a further >> 4 converts to the 16-pixel
  * tile grid.  It is a single arithmetic shift, and it is signed.
  *
- * Call symbols are per-site, not per-import: the raw region (games/gs1/assets/code/
+ * Call symbols are per-site, not per-import: the raw region (games/gs1/asm/overlays/
  * resource_38b_overlay.s around line 1332) spells the three calls as
  * `bl sub_02001d90`, `bl sub_02001d5c`, `bl sub_02001d74` -- three distinct
  * local veneers, even though the latter two both eventually reach the same

@@ -14,7 +14,7 @@
  *
  * Link base, proved independently: seven of this overlay's byte-exact siblings
  * (0x02000030, 0x020000f8, 0x0200012c, 0x02000154, 0x02000184, 0x020001a4,
- * 0x020001c4) each appear in `games/gs1/assets/code/resource_38e_overlay.s` as an odd
+ * 0x020001c4) each appear in `games/gs1/asm/overlays/resource_38e_overlay.s` as an odd
  * pool word exactly 0x8000 above their file offset - 0x02008031, 0x020080f9,
  * 0x0200812d, 0x02008155, 0x02008185, 0x020081a5, 0x020081c5.  Seven
  * witnesses, one base.

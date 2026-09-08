@@ -45,7 +45,7 @@ typedef struct Position3 {
  * reproduces that multiset exactly; the inventory's `calls=13` agrees.
  *
  * LINK BASE 0x02008000, proven for this overlay by the byte-exact sibling
- * `games/gs1/assets/code/resource_3ba_c_02000158.c` (pool word 0x0200804d =
+ * `games/gs1/asm/overlays/resource_3ba_c_02000158.c` (pool word 0x0200804d =
  * Func_0200004c + the Thumb bit).  Applying the parity rule to the pool:
  *   0x0200c154  even -> in-image DATA at file offset 0x4154, the direction
  *                table indexed below;
@@ -78,7 +78,7 @@ typedef struct Position3 {
  *    greater than zero, so a negative code does not abort.  Elsewhere in the
  *    tree the value 2 means blocked.
  *  - Func_020038b0 is this overlay's own byte-exact lookup
- *    (`games/gs1/assets/code/resource_3ba_c_020038b0.c`) and takes a single argument;
+ *    (`games/gs1/asm/overlays/resource_3ba_c_020038b0.c`) and takes a single argument;
  *    all three sites also load r1 with a record pointer, which is not
  *    asserted as an argument.
  *  - The two Object_SetPosition calls reuse the same position block; the second is
@@ -108,7 +108,7 @@ void Func_020075e4(SceneRecord *, s32);
                                 /* wait n frames */
                                 /* play a cue */
 
-/* This overlay's own occupancy lookup; byte-exact source in games/gs1/assets/code. */
+/* This overlay's own occupancy lookup; byte-exact source in games/gs1/asm/overlays. */
 
 /* In-image dir table at file offset 0x4154 (0x0200c154 - 0x8000):
  * sixteen packed steps, high half x, low half z. */

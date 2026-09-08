@@ -4,7 +4,7 @@
  * Complete actor-11 dialogue wrapper through its one-word pool.
  *
  * Call symbols resolved directly against the raw region in
- * games/gs1/assets/code/resource_385_overlay.s (lines 753-765, still unadopted at the
+ * games/gs1/asm/overlays/resource_385_overlay.s (lines 753-765, still unadopted at the
  * time of writing): `bl sub_0200167a`, `bl sub_02001674`, then
  * `bl .L_020009d6` -- the third call targets a local branch label at
  * 0x020009d6, not the guessed 0x020004b4.

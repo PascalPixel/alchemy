@@ -37,7 +37,7 @@
  * a third independent witness for the 0x02008000 link base, alongside
  * 0x0200b459 = Func_02003458 + 1 in Func_02003ae4 and 0x02008715 =
  * Func_02000714 + 1 in the byte-exact sibling
- * games/gs1/assets/code/resource_3bb_c_02000950.c.  Under the same base 0x0200c194 is
+ * games/gs1/asm/overlays/resource_3bb_c_02000950.c.  Under the same base 0x0200c194 is
  * in-image data at file offset 0x4194.
  *
  * Shape: build a descriptor.  Func_08000148(59, 0x7170) returns the record

@@ -18,7 +18,7 @@
  *
  * The pool words 0x0200c834 and 0x0200c838 lie in this overlay's 0x02008000
  * link band (link base confirmed by the byte-exact sibling
- * games/gs1/assets/code/resource_3bb_c_02000950.c, whose 0x02008715 is this image's
+ * games/gs1/asm/overlays/resource_3bb_c_02000950.c, whose 0x02008715 is this image's
  * offset 0x714 plus the Thumb bit), so they are in-image words at file
  * offsets 0x4834 and 0x4838 rather than RAM globals.
  *

@@ -613,7 +613,7 @@ fn space_size(line: &str) -> Option<usize> {
     usize::from_str_radix(value.trim_start_matches("0x"), radix).ok()
 }
 fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
-    let directory = root.join("games/gs1/assets/code");
+    let directory = root.join("games/gs1/asm/overlays");
     let mut files = std::fs::read_dir(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
@@ -856,7 +856,7 @@ fn owner_inventory(
                         owner.id()
                     ));
                 }
-                let overlay = format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s");
+                let overlay = format!("games/gs1/asm/overlays/resource_{resource:03x}_overlay.s");
                 let artifact = if exact || declared {
                     json!({"source":overlay,"composition":if exact{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))})
                 } else {
@@ -906,13 +906,13 @@ fn owner_inventory(
         .filter(|(owner, _)| !registered.contains(owner))
         .flat_map(|(owner, spans)| {
             spans.iter().map(|(start, size)| {
-                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":format!("games/gs1/assets/code/{}_overlay.s",owner.overlay_id().unwrap_or_default()),"retention":"keep_structured_asm","evidence":"games/gs1/semantic/overlay-assembly.json"})
+                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":format!("games/gs1/asm/overlays/{}_overlay.s",owner.overlay_id().unwrap_or_default()),"retention":"keep_structured_asm","evidence":"games/gs1/semantic/overlay-assembly.json"})
             })
         })
         .collect::<Vec<_>>();
     Ok(json!({
         "format":1,"kind":"gs1-production-owner-inventory","scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
-        "target":"gs1-en","identity_authority":"games/gs1/source-paths.json","inputs":{"translation_units":"games/gs1/recon/translation-units.json","claimed_manifest":"out/gs1-en/full/claimed/manifest.json","asm_manifest":"out/gs1-en/full/asm/manifest.json","overlay_sources":"games/gs1/assets/code/resource_*_overlay.s","overlay_assembly_evidence":"games/gs1/semantic/overlay-assembly.json"},
+        "target":"gs1-en","identity_authority":"games/gs1/source-paths.json","inputs":{"translation_units":"games/gs1/recon/translation-units.json","claimed_manifest":"out/gs1-en/full/claimed/manifest.json","asm_manifest":"out/gs1-en/full/asm/manifest.json","overlay_sources":"games/gs1/asm/overlays/resource_*_overlay.s","overlay_assembly_evidence":"games/gs1/semantic/overlay-assembly.json"},
         "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"unknown_original_translation_units":registered.len(),"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
         "reconstruction_units":units,"owners":owners,"auxiliary_main_assembly_regions":auxiliary_regions,"auxiliary_overlay_structured_assembly_regions":auxiliary_overlay_regions
     }))

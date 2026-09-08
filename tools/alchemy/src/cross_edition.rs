@@ -2042,7 +2042,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             .ok_or_else(|| format!("{}: address is below overlay base", source.owner.id()))?
             as usize;
         if !assembly.contains_key(&resource) {
-            let source = format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s");
+            let source = format!("games/gs1/asm/overlays/resource_{resource:03x}_overlay.s");
             let text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
             assembly.insert(resource, text.lines().map(str::to_string).collect());
         }

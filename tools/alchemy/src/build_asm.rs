@@ -593,6 +593,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     let output = rooted(root, &options.output);
     std::fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
     let mut sources = assembly_sources(&root.join("games/gs1/asm"))?;
+    // These packages are assembled through the asset manifest, with their own
+    // placement and compression. They are not standalone main-image regions.
+    sources.retain(|source| {
+        !source.starts_with(root.join("games/gs1/asm/overlays"))
+            && !source.starts_with(root.join("games/gs1/asm/battle"))
+    });
     let mut stems = BTreeSet::new();
     for source in &sources {
         let name = stem(source);

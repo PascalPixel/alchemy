@@ -14,7 +14,7 @@
  * owner hands off to the import at 0x020081e4 and does nothing else.
  *
  * The field layout is the one proven by the byte-exact sibling
- * `games/gs1/assets/code/resource_371_c_020004a0.c`: +0x08 is X and +0x10 is Z, with
+ * `games/gs1/asm/overlays/resource_371_c_020004a0.c`: +0x08 is X and +0x10 is Z, with
  * +0x0c between them.  +0x68 is a pointer to the anchor object whose X and Z
  * this owner tracks; it is loaded unconditionally at 0x02003fc0, before the
  * limit test, and is a plain load with no side effect.

@@ -11,7 +11,7 @@ extern unsigned char Value_00001f00;
  * resolves here; the function is installed by data. Its Thumb pointer
  * (0x02000b99 + 0x8000 = 0x02008b99) appears at 0x02005a14, an entry of
  * the script-record table near the image end. It is in no inventory
- * row, not in games/gs1/assets/code, and `tools/overlay-unindexed` reports
+ * row, not in games/gs1/asm/overlays, and `tools/overlay-unindexed` reports
  * zero for this overlay.
  *
  * That last point is the finding worth carrying: after the queue's

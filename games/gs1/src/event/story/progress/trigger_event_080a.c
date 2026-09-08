@@ -10,7 +10,7 @@
  * 0x0000080a).
  *
  * Instruction-for-instruction the same guard as 0x0200008c and as the
- * byte-exact sibling `games/gs1/assets/code/resource_371_c_02000030.c`; only the two
+ * byte-exact sibling `games/gs1/asm/overlays/resource_371_c_02000030.c`; only the two
  * imports and the two constants (0x80a, 24) differ.  Workspace pointer and
  * field offsets come from that proven source.
  *

@@ -29,7 +29,7 @@
  * draft for what that error looks like when it reaches prose).
  *
  * NEAR-TWIN, and it was diffed before either was written: the exact-C
- * owner immediately before it, Func_02003600 (games/gs1/assets/code/
+ * owner immediately before it, Func_02003600 (games/gs1/asm/overlays/
  * resource_3c9_c_02003600.c), is the same body with the same field set
  * and the same -0x800 angle step. Three things genuinely differ and
  * none of them should be folded away:

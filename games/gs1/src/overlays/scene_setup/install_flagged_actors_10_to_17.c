@@ -16,7 +16,7 @@
  * Four near-identical "install or fallback" blocks, gated by
  * `Func_0200abNN((s32)&Value_XXXXXXXX)` checks against the same
  * `Value_XXXXXXXX` low-address family used throughout this overlay (see
- * games/gs1/assets/code/resource_3b1_c_02000b84.c). The second and fourth blocks
+ * games/gs1/asm/overlays/resource_3b1_c_02000b84.c). The second and fourth blocks
  * additionally stash the sentinel `0xffff0000` into the installed
  * object's `+24` field before the shared per-block finisher call.
  * `src` (the incoming argument) is threaded through every block

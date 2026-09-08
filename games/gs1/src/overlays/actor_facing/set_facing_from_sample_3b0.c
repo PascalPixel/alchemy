@@ -31,7 +31,7 @@
  *
  * `movs r3,#0xd0 / lsls r3,r3,#8` is the additive/shifted-constant habit: the
  * stored value is 0xd000, not 0xd0.  The halfword at object + 6 is the facing
- * angle used across this family (the tracked `games/gs1/assets/code` sources and the
+ * angle used across this family (the tracked `games/gs1/asm/overlays` sources and the
  * resource_3ae owners read the same field), so 0xd000 and 0xb000 are two fixed
  * headings.
  *

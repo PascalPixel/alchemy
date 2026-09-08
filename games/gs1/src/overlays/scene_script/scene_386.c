@@ -226,7 +226,7 @@ void Func_02000bbe(s32);
  *
  * LINK-BASE PROOF, and the strongest one available here.  The pool word
  * 0x02008031 is odd; under `offset = value - 0x8000` it is `0x30 + 1`, that
- * is `Func_02000030` plus the Thumb bit — and games/gs1/assets/code/resource_386_c_
+ * is `Func_02000030` plus the Thumb bit — and games/gs1/asm/overlays/resource_386_c_
  * 02000030.c is a tracked byte-exact source for exactly that address.  It is
  * passed to Func_080000d0, the per-frame task installer, so this word is a
  * task callback and not data.  That single word proves the base against

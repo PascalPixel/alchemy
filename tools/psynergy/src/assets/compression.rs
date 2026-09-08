@@ -1,5 +1,5 @@
 //! Pixel compression formats; no resource addresses or image-size defaults.
-use crate::{indexed_png, AssetError};
+use super::{image::indexed_png, AssetError};
 
 #[derive(Default)]
 struct Bits {

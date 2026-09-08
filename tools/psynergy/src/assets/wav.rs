@@ -1,4 +1,4 @@
-use crate::AssetError;
+use super::AssetError;
 
 /// Read canonical mono 8-bit PCM WAV, returning its rate and signed PCM bytes.
 pub fn wav_pcm8(data: &[u8]) -> Result<(u32, Vec<u8>), AssetError> {

@@ -147,19 +147,18 @@ fn branches(rows: &[(u32, u32, String)]) -> Vec<Branch> {
 }
 
 fn rows_of(binary: &Path) -> Result<Vec<(u32, u32, String)>, String> {
-    let rows = disassemble(&binary.to_string_lossy(), 0.0)?;
-    let mut keys: Vec<f64> = rows.keys().collect();
-    keys.sort_by(|left, right| left.partial_cmp(right).unwrap_or(std::cmp::Ordering::Equal));
+    let rows = disassemble(&binary.to_string_lossy(), 0)?;
+    let keys: Vec<u32> = rows.keys().copied().collect();
     Ok(keys
         .iter()
         .enumerate()
         .filter_map(|(index, key)| {
-            let offset = *key as u32;
+            let offset = *key;
             let width = keys
                 .get(index + 1)
-                .map(|next| (*next as u32).saturating_sub(offset))
+                .map(|next| next.saturating_sub(offset))
                 .unwrap_or(2);
-            rows.get(*key).map(|text| (offset, width, text.to_string()))
+            rows.get(key).map(|text| (offset, width, text.to_string()))
         })
         .collect())
 }

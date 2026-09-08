@@ -8,7 +8,7 @@ use crate::compiler::source_inputs::source_tree_signature;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::diff::{
     cli::Options,
-    disasm::{disassemble, Rows},
+    disasm::disassemble,
     patch::apply_unified_diff_in_tree,
     triage::{classify, classify_with_topology},
 };
@@ -410,10 +410,10 @@ fn render_bytes(
     for (path, bytes) in [(&candidate_path, &actual), (&reference_path, &expected)] {
         std::fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))?;
     }
-    let candidate_rows = disassemble(&candidate_path.to_string_lossy(), 0.0)?;
-    let reference_rows = disassemble(&reference_path.to_string_lossy(), 0.0)?;
-    let candidate = ordered_lines(&candidate_rows);
-    let reference = ordered_lines(&reference_rows);
+    let candidate_rows = disassemble(&candidate_path.to_string_lossy(), 0)?;
+    let reference_rows = disassemble(&reference_path.to_string_lossy(), 0)?;
+    let candidate: Vec<_> = candidate_rows.values().cloned().collect();
+    let reference: Vec<_> = reference_rows.values().cloned().collect();
     let differing = differing_offsets(&actual, &expected, 2);
     let residual = classify_with_topology(
         &candidate,
@@ -424,7 +424,7 @@ fn render_bytes(
         &topology,
     );
     let mut offsets: Vec<_> = candidate_rows.keys().chain(reference_rows.keys()).collect();
-    offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    offsets.sort_unstable();
     offsets.dedup();
     let wrong = residual.wrong_instructions;
     let class = residual.class.label();
@@ -465,16 +465,16 @@ fn render_bytes(
         }
         out.push_str("      offset  candidate                      reference\n");
         for offset in offsets {
-            let mark = if differing.contains(&(offset as usize)) {
+            let mark = if differing.contains(&(*offset as usize)) {
                 "!"
             } else {
                 " "
             };
             out.push_str(&format!(
                 "  {mark} {:04x}  {:<30.30} {}\n",
-                offset as u64,
-                candidate_rows.get(offset).unwrap_or(""),
-                reference_rows.get(offset).unwrap_or("")
+                offset,
+                candidate_rows.get(offset).map(String::as_str).unwrap_or(""),
+                reference_rows.get(offset).map(String::as_str).unwrap_or("")
             ));
         }
     }
@@ -596,13 +596,6 @@ fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
     } else {
         String::from_utf8_lossy(&output.stdout).into_owned()
     })
-}
-pub fn ordered_lines(rows: &Rows) -> Vec<String> {
-    let mut keys: Vec<_> = rows.keys().collect();
-    keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    keys.into_iter()
-        .map(|key| rows.get(key).unwrap_or("").to_string())
-        .collect()
 }
 pub fn side_by_side(pairs: &[(Option<String>, Option<String>)]) -> String {
     pairs

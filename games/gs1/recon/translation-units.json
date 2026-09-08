@@ -4,6 +4,18 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "scene-item-presentation",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_380_c_02004260.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Func_0200c95c": {"address": "0x0200c95c", "kind": "thumb"},
+        "Func_0200c954": {"address": "0x0200c954", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x02004260", "extent": 200, "state": "retained-assembly"}]
+    },
+    {
       "id": "heidia-village-actor-setup",
       "game": "gs1",
       "source": "games/gs1/src/map/locations/heidia/village/actor_setup.c",

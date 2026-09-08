@@ -1,6 +1,6 @@
 # One workspace, one lockfile, one shared artifact tree for every tool crate.
-# `alchemy` is the only binary; the other members are its libraries. A new
-# crate is a workspace member and a row in the CONTRIBUTING tooling index.
+# Alchemy owns project integration; Psynergy is also a standalone portable tool.
+# Each crate is a workspace member and a row in the CONTRIBUTING tooling index.
 [workspace]
 resolver = "2"
 members = ["*"]

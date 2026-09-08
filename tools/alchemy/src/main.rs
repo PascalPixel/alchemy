@@ -13,7 +13,6 @@ mod convert;
 mod coverage;
 mod cross_edition;
 mod dashboard;
-mod decompile;
 mod diff;
 mod flatten;
 mod font;
@@ -22,11 +21,12 @@ mod http;
 mod matching;
 mod music_debug;
 mod overlay;
+mod recovery;
 mod scaffold;
 mod targets;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
-  decompile OWNER       recover candidate C\n\
+  extract OWNER         extract reference bytes for psynergy decompile\n\
   disassemble OWNER     display reference instructions\n\
   inspect OWNER         inspect calls and symbols; allocator OWNER reads GCC dumps\n\
   diff SOURCE           compile and compare a candidate\n\
@@ -78,7 +78,7 @@ fn main() -> ExitCode {
         "check" => check::entry(rest),
         "convert" => result(convert::run(rest)),
         "overlay" => overlay::entry(rest),
-        "decompile" | "adopt" | "disassemble" | "inspect" => decompile_command(command, rest),
+        "extract" | "adopt" | "disassemble" | "inspect" => recovery_command(command, rest),
         "diff" => match overlay_candidate(rest) {
             Ok(true) => overlay::code(overlay::score::run(crate::compiler::routing::root(), rest)),
             Ok(false) => {
@@ -178,14 +178,14 @@ mod command_tests {
     }
 }
 
-fn decompile_command(command: &str, arguments: &[String]) -> ExitCode {
+fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         let usage = match command {
-            "decompile" => "decompile OWNER [--span BYTES] [--name NAME] [--out FILE]",
+            "extract" => "extract OWNER --out out/FILE [--span BYTES]",
             "adopt" => "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH]",
             "disassemble" => "disassemble OWNER [--span BYTES]",
             "inspect" => "inspect OWNER [--span BYTES]",
-            _ => return decompile::cli::entry(&["--help".to_string()]),
+            _ => return recovery::cli::entry(&["--help".to_string()]),
         };
         println!(
             "usage: alchemy {usage}\nOWNER is a main-ROM address or resource-qualified address."
@@ -194,7 +194,7 @@ fn decompile_command(command: &str, arguments: &[String]) -> ExitCode {
     }
     let mut args = vec![command.to_string()];
     args.extend_from_slice(arguments);
-    decompile::cli::entry(&args)
+    recovery::cli::entry(&args)
 }
 
 fn result(value: Result<(), String>) -> ExitCode {

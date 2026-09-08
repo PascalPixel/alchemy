@@ -1606,6 +1606,11 @@ impl<'a> Lifter<'a> {
                 if rd == rm {
                     return i + 1;
                 }
+                // ABI restoration is not a C assignment: r0 may still name
+                // the pre-restore value of this callee-saved register.
+                if (8..=11).contains(&rd) && self.epilogue_returns_r0(i + 1) {
+                    return i + 1;
+                }
                 let v = self.val_of(rm, Some(rd));
                 if (8..=11).contains(&rd) && v.c == Some(0) {
                     if self.read_in_flight(rm) {
@@ -2361,6 +2366,13 @@ impl<'a> Lifter<'a> {
                 let outer_vars = std::mem::take(&mut self.loop_vars);
                 let whole = self.ins.len();
                 let pre = self.loop_enter(l, from, from + 1, whole);
+                // A rotated test may contain calls, stores and early exits.
+                // Its entire prefix must execute on every iteration.
+                self.emit("for (;;) {");
+                let saved = self.indent.clone();
+                self.indent.push_str("    ");
+                let inner = self.indent.clone();
+                let body_out = self.out.len();
                 let mark = self.out.len();
                 // The test sits past the body: lifting it first must not
                 // move the cursor beyond the body, which comes next.
@@ -2382,12 +2394,8 @@ impl<'a> Lifter<'a> {
                 };
                 let ca = self.pop_call_condition(&ca, self.out.len() == mark + 1);
                 let text = cond_text(cond, &ca, &cb);
-                self.emit(format!("while ({text}) {{"));
-                let saved = self.indent.clone();
-                self.indent.push_str("    ");
-                let inner = self.indent.clone();
+                self.emit(format!("if (!({text})) break;"));
                 self.loops.push((t, from));
-                let body_out = self.out.len();
                 self.run(l, t);
                 self.loops.pop();
                 self.loop_exit(&pre, body_out, &inner, from + 1, whole);
@@ -2622,6 +2630,10 @@ impl<'a> Lifter<'a> {
                     list: 0b10,
                 } => return matches!(self.ins.get(k + 1).map(|n| &n.kind), Some(Kind::Bx(1))),
                 Kind::Pop { pc: false, .. } => {}
+                Kind::MovHi {
+                    rd: 8..=11,
+                    rm: 0..=7,
+                } => {}
                 _ => return false,
             }
             k += 1;
@@ -3419,6 +3431,55 @@ mod tests {
     }
 
     #[test]
+    fn rotated_test_repeats_its_side_effects_before_each_condition() {
+        let ins: Vec<Ins> = [
+            (0x1000, 2, Kind::B { target: 0x1008 }),
+            (0x1002, 4, Kind::Bl { target: 0x3000 }),
+            (0x1006, 2, Kind::Nop),
+            (0x1008, 4, Kind::Bl { target: 0x4000 }),
+            (0x100c, 4, Kind::Bl { target: 0x5000 }),
+            (0x1010, 2, Kind::CmpImm { rn: 0, imm: 0 }),
+            (
+                0x1012,
+                2,
+                Kind::Bcond {
+                    cond: Cond::Eq,
+                    target: 0x1002,
+                },
+            ),
+            (0x1014, 2, Kind::Bx(14)),
+        ]
+        .into_iter()
+        .map(|(addr, size, kind)| Ins {
+            addr,
+            size,
+            kind,
+            text: String::new(),
+        })
+        .collect();
+        let text = lift(&ins, &mut BTreeMap::new(), &|_, _| None, &[])
+            .lines
+            .join("\n");
+        let loop_start = text.find("for (;;) {").expect(&text);
+        let tick = text.find("Func_00004000").expect(&text);
+        let test = text.find("Func_00005000").expect(&text);
+        let exit = text.find("break;").expect(&text);
+        let body = text.find("Func_00003000").expect(&text);
+        assert!(
+            loop_start < tick && tick < test && test < exit && exit < body,
+            "{text}"
+        );
+        assert_eq!(text.matches("Func_00004000").count(), 1, "{text}");
+        assert!(
+            text.lines()
+                .find(|line| line.contains("Func_00004000"))
+                .unwrap()
+                .starts_with("        "),
+            "{text}"
+        );
+    }
+
+    #[test]
     fn derived_queue_index_survives_count_store() {
         // Load count, derive twice its old value, increment/store count,
         // then use the old derived value at another destination.
@@ -3466,6 +3527,47 @@ mod tests {
         assert!(text.contains("- 1"), "{text}");
         assert!(text.contains(">= 0"), "{text}");
         assert!(!text.contains("for (i = 0;"), "{text}");
+    }
+
+    #[test]
+    fn constant_return_ignores_callee_save_restore() {
+        let text = lifted(&[
+            0x2007, 0x4680, 0x4640, 0xb003, 0xbce8, 0x4698, 0xbce0, 0xbc02, 0x4708,
+        ]);
+        assert_eq!(text.trim(), "return 7;", "{text}");
+    }
+
+    #[test]
+    fn epilogue_does_not_return_the_restored_loop_carrier() {
+        let ins: Vec<Ins> = [
+            Kind::MovHi { rd: 0, rm: 8 },
+            Kind::Pop { pc: false, list: 8 },
+            Kind::MovHi { rd: 8, rm: 3 },
+            Kind::Pop { pc: false, list: 2 },
+            Kind::Bx(1),
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(i, kind)| Ins {
+            addr: 0x1000 + i as u32 * 2,
+            size: 2,
+            kind,
+            text: String::new(),
+        })
+        .collect();
+        let mut tables = BTreeMap::new();
+        let mut lifter = Lifter::new(&ins, &mut tables, &|_, _| None, &[]);
+        lifter.regs[8] = Some(Val::expr("v8"));
+        lifter.loop_vars.insert(8, "v8".into());
+        lifter.run(0, ins.len());
+        let text = lifter.out.join("\n");
+        assert_eq!(text.trim(), "return v8;", "{text}");
+    }
+
+    #[test]
+    fn high_register_call_argument_is_not_a_return_snapshot() {
+        let text = lifted(&[0x2007, 0x4680, 0x4640, 0xf000, 0xfff9, 0x4770]);
+        assert!(!text.contains("return_value"), "{text}");
     }
 
     /// `L: bl X; cmp r0, #0; bne cont; bl Y; b exit; cont: bl Z; adds r5, #1;

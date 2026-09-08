@@ -1,4 +1,4 @@
-//! Adoption of an exact candidate: the owner's source lands under
+//! Adopt an exact Golden Sun candidate: the owner's source lands under
 //! `games/gs1/src`, the registers learn its name and path, the retained
 //! records inside the span retire, and the overlay placeholder is applied
 //! through `overlay adopt`. Every step refuses before it mutates when the

@@ -17684,6 +17684,10 @@
     "resource_38e:020005dc": {
       "name": "FieldScene_RunPairedActorStagedSequence",
       "source": "overlays/scene_event_runtime/run_paired_actor_staged_sequence.c"
+    },
+    "resource_39a:02001d78": {
+      "name": "FieldScene_RunFlaggedActorSpawnCue",
+      "source": "overlays/scene_primary_script/run_flagged_actor_spawn_cue.c"
     }
   }
 }

@@ -111,7 +111,6 @@ void Func_080d2464(void *arg0, s32 arg1) {
     s32 var_fp_605;
     s32 var_r0_191;
     s32 var_r3_491;
-    s32 var_r3_602;
     s32 var_r3_631;
     s32 var_r6_288;
     s32 var_r6_947;
@@ -335,12 +334,11 @@ block_59:
         Func_080f9010(0x91);
     }
     if ((u32) (sp24 - 0x81) <= 0x2EU) {
-        var_r3_602 = 0;
         var_fp_605 = 0;
         var_r7_606 = 0;
         var_r5_608 = temp_r3_25 + 0x7080;
 loop_66:
-        if (var_r3_602 == 1) {
+        if (M2C_FIELD(var_r5_608, s32 *, 0x18) == -1) {
             temp_r8_618 = (0xFF & Func_08004458()) + 0x80;
             temp_r6_624 = (0x1FFF & Func_08004458()) + 0xFFFFB1E0;
             if (sp38 == 0) {
@@ -354,7 +352,6 @@ loop_66:
             M2C_FIELD(var_r5_608, s32 *, 0xC) = (s32) ((s32) (temp_r8_618 * Func_08002322(temp_r6_624)) >> 6);
             M2C_FIELD(var_r5_608, s32 *, 0x10) = (s32) ((s32) (temp_r8_618 * Func_0800231c(temp_r6_624)) >> 6);
             M2C_FIELD(var_r5_608, s32 *, 0x18) = 0;
-            var_r3_602 = 1;
             var_fp_605 += 1;
             if (var_fp_605 != 1) {
                 goto block_71;

@@ -1,7 +1,30 @@
 {
   "format": 1,
-  "comment": "Retained assembly regions, not function identities or original-source provenance. Proven ASM requires recorded proof that the approved compiler cannot emit the required form as ordinary C, plus byte-exact assembly. Scene reconstructions use structured_scene_module and remain Draft ASM. Complete owner bounds are reviewed in semantic/regions.json; historical dossier scores are not classification authority.",
+  "comment": "Retained assembly ranges, not proof of original-source language. Credit requires positive evidence of handwritten or third-party assembly; compiler mismatch or non-emission alone is insufficient. Strong entries remain unverified and eligible for ordinary C recovery. Complete owner bounds live in semantic/regions.json.",
   "regions": [
+    {
+      "overlay": "resource_38b",
+      "start": "0x02000db4",
+      "end": "0x02000ed8",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete reviewed 292-byte owner remains retained while its ordinary C candidate is nonexact. Numeric scene selectors are values, not fabricated absolute data symbols. This records unresolved reconstruction, not assembly origin."
+      ]
+    },
+    {
+      "overlay": "resource_3ae",
+      "start": "0x02000958",
+      "end": "0x02000ad2",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete reviewed 378-byte owner in semantic/regions.json, including pool and continuation at 0x02000a98. Branches at 0x020009ca and 0x02000a80 reach that continuation, which unwinds this entry frame.",
+        "Ordinary C recovery candidate remains unverified; no compiler-impossibility or DONE claim."
+      ]
+    },
     {
       "overlay": "resource_3c8",
       "start": "0x02004610",
@@ -13,19 +36,6 @@
         "Complete reviewed 432-byte particle-wave sequence remains retained assembly; the ordinary C candidate is nonexact under canonical GCC 2.96.",
         "Reference stack stores and the eight-argument spawner establish the shared ConfiguredEffectOptions record. The loop's six-argument call and both distinct legacy call identities are restored in the candidate.",
         "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
-      ]
-    },
-    {
-      "overlay": "resource_385",
-      "start": "0x02000350",
-      "end": "0x02000400",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 176-byte proximity and facing check remains unresolved assembly. The retained ordinary C candidate preserves control-flow topology but emits 184 bytes with different coordinate-pointer and range allocation.",
-        "This is a draft reconstruction, not evidence of compiler impossibility. No Proven ASM credit is claimed.",
-        "games/gs1/recon/en/dossiers.json#resource_385:02000350"
       ]
     },
     {
@@ -48,8 +58,10 @@
       "end": "0x02000238",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -59,8 +71,10 @@
       "end": "0x02000538",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -70,8 +84,10 @@
       "end": "0x02000154",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -81,8 +97,10 @@
       "end": "0x02004854",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -92,8 +110,10 @@
       "end": "0x020033d4",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -103,8 +123,10 @@
       "end": "0x02000c0c",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip",
         "explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT"
       ]
@@ -115,8 +137,10 @@
       "end": "0x02000c4c",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -126,8 +150,10 @@
       "end": "0x02000ddc",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip",
         "explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in all six editions; the JA counterpart starts at 0x02000d88 and the other five at 0x02000d9c"
       ]
@@ -138,8 +164,10 @@
       "end": "0x02000e1c",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -149,8 +177,10 @@
       "end": "0x02000a90",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -160,8 +190,10 @@
       "end": "0x02000fb4",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip",
         "explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT"
       ]
@@ -172,8 +204,10 @@
       "end": "0x02000ff4",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -183,8 +217,10 @@
       "end": "0x020018b8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip",
         "explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT"
       ]
@@ -195,8 +231,10 @@
       "end": "0x020018f8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -206,8 +244,10 @@
       "end": "0x02001bc8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -217,8 +257,10 @@
       "end": "0x02005158",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -228,8 +270,10 @@
       "end": "0x02003a44",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -239,8 +283,10 @@
       "end": "0x02001c1c",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -250,8 +296,10 @@
       "end": "0x0200101c",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -261,8 +309,10 @@
       "end": "0x02001d84",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -272,8 +322,10 @@
       "end": "0x02001fd4",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -283,8 +335,10 @@
       "end": "0x02002188",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -294,8 +348,10 @@
       "end": "0x020021b8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -305,8 +361,10 @@
       "end": "0x02002f64",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -316,8 +374,10 @@
       "end": "0x02003764",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -327,8 +387,10 @@
       "end": "0x02002450",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -338,8 +400,10 @@
       "end": "0x020031fc",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -349,8 +413,10 @@
       "end": "0x020039fc",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -360,8 +426,10 @@
       "end": "0x02002ee8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -371,8 +439,10 @@
       "end": "0x02003c94",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -382,8 +452,10 @@
       "end": "0x02004494",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -393,8 +465,10 @@
       "end": "0x02000cc4",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "first executable island of a complete audited owner whose reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -404,8 +478,10 @@
       "end": "0x02000cf8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "second executable island of a complete audited owner; it contains a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -415,8 +491,10 @@
       "end": "0x020038c8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "first executable island of a complete audited owner; it contains a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -426,8 +504,10 @@
       "end": "0x02003a30",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "second executable island of a complete audited owner whose reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -437,8 +517,10 @@
       "end": "0x02000100",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -448,8 +530,10 @@
       "end": "0x02001188",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -459,8 +543,10 @@
       "end": "0x02001314",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -470,8 +556,10 @@
       "end": "0x020004b0",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -481,8 +569,10 @@
       "end": "0x020006f8",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -492,8 +582,10 @@
       "end": "0x02000f08",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
         "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
       ]
     },
@@ -630,8 +722,10 @@
       "end": "0x020009f4",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 1388-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x02000494 targets intra-owner 0x020004ea, which the same entry also reaches by fallthrough from 0x020004e8",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -644,8 +738,9 @@
       "end": "0x020002f0",
       "kind": "compiler_allocation_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete ordinary-C reconstruction accounts for the shared animation-frame read, both map-object stores, and the success return with exact 36-byte owner extent",
         "candidate and reference have zero normalized structural rows; the two-halfword residual is only equivalent r2/r3 allocation for the shared-data pointer",
         "twenty-thousand-candidate safe exact-only search produced zero failures and left the two-halfword baseline unchanged",
@@ -659,8 +754,9 @@
       "end": "0x02000874",
       "kind": "actor_layout_dispatch_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete local-function reconstruction accounts for all scene-state layout branches, 46 calls, the shared actor loop, and terminal transition guard",
         "candidate and reference differ by sixteen bytes after all decoded control flow and arguments are represented; residual is approved GCC allocation and literal scheduling",
         "games/gs1/recon/en/dossiers.json#resource_3a5:020004e4"
@@ -686,8 +782,9 @@
       "end": "0x02000c1a",
       "kind": "actor_layout_dispatch_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete local-function reconstruction accounts for all scene-state layout branches, conditional helper, shared actor loop, and terminal transition guard",
         "candidate and reference differ by two bytes after all decoded control flow and arguments are represented; residual is approved GCC allocation and literal scheduling",
         "games/gs1/recon/en/dossiers.json#resource_3a5:0200088c"
@@ -699,8 +796,10 @@
       "end": "0x020035d8",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "334-byte executable island of the audited 0x02003068--0x02003fba module in games/gs1/semantic/regions.json",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by fallthrough immediately after the call at 0x0200351c",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -713,8 +812,10 @@
       "end": "0x02003c48",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 2716-byte whole owner in games/gs1/semantic/regions.json",
         "bl at 0x0200325a targets 0x02003390, which the same entry also reaches by fallthrough from 0x0200338e",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -755,8 +856,10 @@
       "end": "0x02002e36",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 976-byte whole owner in games/gs1/semantic/regions.json",
         "bl at 0x02002c60 targets 0x02002cfa, which the same entry also reaches by fallthrough from 0x02002cf8",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -769,8 +872,10 @@
       "end": "0x02002ee4",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "second executable span of the audited 976-byte owner in games/gs1/semantic/regions.json",
         "bl at 0x02002c60 targets 0x02002cfa, which the same owner also reaches by fallthrough",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -783,8 +888,10 @@
       "end": "0x02000b94",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 820-byte whole owner in games/gs1/semantic/regions.json",
         "five direct bl targets inside the owner are independently reachable from the entry; bl at 0x020008dc targets fallthrough-reachable 0x02000a06",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -797,8 +904,10 @@
       "end": "0x02000cec",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 784-byte whole owner in games/gs1/semantic/regions.json",
         "two direct bl targets inside the owner are independently reachable from the entry; bl at 0x02000ad8 targets fallthrough-reachable 0x02000c16",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -811,8 +920,10 @@
       "end": "0x02001638",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 716-byte whole owner in games/gs1/semantic/regions.json",
         "bl at 0x020013ac targets 0x0200144e, which the same entry also reaches by fallthrough from 0x0200144c",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -825,8 +936,10 @@
       "end": "0x020040dc",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 644-byte whole owner in games/gs1/semantic/regions.json",
         "bl at 0x02003fc0 targets 0x0200400a, which the same entry also reaches by fallthrough from 0x02004008",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -839,8 +952,10 @@
       "end": "0x02004520",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 612-byte whole owner in games/gs1/semantic/regions.json",
         "bl at 0x0200438e targets 0x020044a8, which the same entry also reaches by fallthrough from 0x020044a4",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -853,8 +968,10 @@
       "end": "0x02001f28",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 480-byte whole owner in games/gs1/semantic/regions.json",
         "bl at 0x02001dfc targets 0x02001e96, which the same entry also reaches by fallthrough from 0x02001e94",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -867,8 +984,10 @@
       "end": "0x02000d68",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 468-byte whole owner in games/gs1/semantic/regions.json",
         "three direct bl targets inside the owner are independently reachable from the entry; bl at 0x02000bb0 targets fallthrough-reachable 0x02000c3e",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -881,8 +1000,10 @@
       "end": "0x020002d8",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 400-byte whole owner in games/gs1/semantic/regions.json",
         "three direct bl targets inside the owner are independently reachable from the entry; bl at 0x020001d0 targets fallthrough-reachable 0x0200025e",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
@@ -895,8 +1016,10 @@
       "end": "0x020025a8",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 7356-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x02000b74 targets intra-owner 0x02001422 immediately after fallthrough instruction 0x02001420; a second call targets 0x02001458",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -941,8 +1064,10 @@
       "end": "0x02000cfc",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 2352-byte whole owner in games/gs1/semantic/regions.json",
         "three direct bl instructions target intra-owner sequences, including 0x020003e4 to fallthrough-adjacent 0x02000438",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -955,8 +1080,10 @@
       "end": "0x02001704",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 1060-byte whole owner in games/gs1/semantic/regions.json",
         "five direct bl instructions target intra-owner sequences, including 0x0200132a to fallthrough-adjacent 0x02001450",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -969,8 +1096,10 @@
       "end": "0x020007de",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 1006-byte whole owner in games/gs1/semantic/regions.json",
         "five direct bl instructions target intra-owner sequences, including 0x02000658 to fallthrough-adjacent 0x020006f2",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -983,8 +1112,10 @@
       "end": "0x0200226c",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 780-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x0200208a targets intra-owner 0x02002124 immediately after fallthrough instruction 0x02002122",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -997,8 +1128,10 @@
       "end": "0x02001498",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 744-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x0200124c targets intra-owner 0x0200143a immediately after fallthrough call at 0x02001436",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1011,8 +1144,10 @@
       "end": "0x02002a04",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 696-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x0200286a targets intra-owner 0x0200290c immediately after fallthrough instruction 0x0200290a",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1025,8 +1160,10 @@
       "end": "0x02002646",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "first executable span of the audited 616-byte owner at 0x0200247c",
         "two direct bl instructions target intra-owner sequences, including 0x02002544 to fallthrough-adjacent 0x0200259e",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1039,8 +1176,10 @@
       "end": "0x020026e4",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "second executable span of the audited 616-byte owner at 0x0200247c",
         "the owner contains two dual-entry intra-function call targets that the approved Thumb backend cannot outline",
         "ordinary C cannot call a local label",
@@ -1053,8 +1192,10 @@
       "end": "0x02002244",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 592-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x020020b4 targets intra-owner 0x0200210a immediately after fallthrough call at 0x02002106",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1081,8 +1222,10 @@
       "end": "0x02000f78",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 372-byte whole owner in games/gs1/semantic/regions.json",
         "two direct bl instructions target intra-owner sequences, including 0x02000e68 to fallthrough-adjacent 0x02000eb2",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1095,8 +1238,10 @@
       "end": "0x020010b8",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 320-byte whole owner in games/gs1/semantic/regions.json",
         "two direct bl instructions target intra-owner sequences, including 0x02000fb6 to fallthrough-adjacent 0x02001000",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1109,8 +1254,10 @@
       "end": "0x02001058",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 296-byte whole owner in games/gs1/semantic/regions.json",
         "direct bl at 0x02000f60 targets intra-owner 0x02001002 immediately after fallthrough instruction 0x02001000",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
@@ -1123,8 +1270,9 @@
       "end": "0x0200020c",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 140-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x02000208 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1137,8 +1285,9 @@
       "end": "0x02000ffc",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 288-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x02000ff8 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1151,8 +1300,9 @@
       "end": "0x02001268",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 664-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x02001264 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1165,8 +1315,9 @@
       "end": "0x020010b0",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 544-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x020010ac uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1179,8 +1330,9 @@
       "end": "0x020015d4",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 248-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x020015d0 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1193,8 +1345,9 @@
       "end": "0x02001d44",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 324-byte whole owner in games/gs1/semantic/regions.json",
         "two inline calls at 0x02001d40 and 0x02001d94 use mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1207,8 +1360,9 @@
       "end": "0x020021f2",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 832-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x02002344 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1221,8 +1375,9 @@
       "end": "0x020052d4",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 324-byte whole owner in games/gs1/semantic/regions.json",
         "two inline calls at 0x020052d0 and 0x02005324 use mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1235,8 +1390,9 @@
       "end": "0x02005782",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 832-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x020058d4 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1249,8 +1405,9 @@
       "end": "0x020037cc",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 280-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x020037c8 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1263,8 +1420,9 @@
       "end": "0x020001c4",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 554-byte whole owner in games/gs1/semantic/regions.json",
         "two inline calls at 0x020001c0 and 0x020001f8 use mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1277,8 +1435,9 @@
       "end": "0x02000ff8",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 340-byte whole owner in games/gs1/semantic/regions.json",
         "inline call at 0x02000ff4 uses mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
@@ -1291,8 +1450,9 @@
       "end": "0x02000242",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x020001c4 owner",
         "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1304,8 +1464,9 @@
       "end": "0x02001326",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x020010c4 owner",
         "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1317,8 +1478,9 @@
       "end": "0x02001d98",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x02001cb4 owner",
         "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1330,8 +1492,9 @@
       "end": "0x02001de4",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited executable island of the 0x02001cb4 owner",
         "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1343,8 +1506,9 @@
       "end": "0x02002348",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x02002030 owner, containing the IP-linked call at 0x02002344",
         "the approved Thumb indirect-call patterns emit a call-via-register thunk instead",
         "byte-exact decoded-overlay assembly round trip"
@@ -1356,8 +1520,9 @@
       "end": "0x02002368",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited executable island of the 0x02002030 owner",
         "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1369,8 +1534,9 @@
       "end": "0x02005328",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x02005244 owner, containing an IP-linked call",
         "the approved Thumb indirect-call patterns emit a call-via-register thunk instead",
         "byte-exact decoded-overlay assembly round trip"
@@ -1382,8 +1548,9 @@
       "end": "0x02005374",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited executable island of the 0x02005244 owner",
         "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1395,8 +1562,9 @@
       "end": "0x020058d8",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x020055c0 owner, containing the IP-linked call at 0x020058d4",
         "the approved Thumb indirect-call patterns emit a call-via-register thunk instead",
         "byte-exact decoded-overlay assembly round trip"
@@ -1408,8 +1576,9 @@
       "end": "0x020058f8",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited executable island of the 0x020055c0 owner",
         "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1421,8 +1590,9 @@
       "end": "0x020001fc",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x02000194 owner, containing an IP-linked call",
         "the approved Thumb indirect-call patterns emit a call-via-register thunk instead",
         "byte-exact decoded-overlay assembly round trip"
@@ -1434,8 +1604,9 @@
       "end": "0x0200035a",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited executable island of the 0x02000194 owner",
         "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
@@ -1447,24 +1618,11 @@
       "end": "0x020003be",
       "kind": "iwram_ip_link_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "fourth audited executable island of the 0x02000194 owner",
         "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_3b5",
-      "start": "0x0200007c",
-      "end": "0x02000170",
-      "kind": "intra_function_call_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete audited 244-byte semantic owner",
-        "direct bl at 0x020000a4 targets 0x020000e6, which the same owner also reaches by ordinary fallthrough from 0x020000e4",
-        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
         "byte-exact decoded-overlay assembly round trip"
       ]
     },
@@ -1474,8 +1632,10 @@
       "end": "0x0200429e",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited executable body of the complete 0x02004048--0x020042bc semantic owner",
         "direct bl at 0x0200413e targets 0x02004258, which the same owner also reaches by ordinary fallthrough from 0x02004256",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1488,8 +1648,10 @@
       "end": "0x020042bc",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "directly referenced literal pool of the complete 0x02004048--0x020042bc intra-function-call owner",
         "the already-retained alignment halfword at 0x0200429e--0x020042a0 is intentionally excluded",
         "the owner contains a direct bl to a label also reached by ordinary fallthrough, a shape the approved GCC 2.96 Thumb backend cannot emit",
@@ -1502,8 +1664,10 @@
       "end": "0x02003136",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1516,8 +1680,10 @@
       "end": "0x020033cc",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1530,8 +1696,10 @@
       "end": "0x0200340c",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1544,8 +1712,10 @@
       "end": "0x02003468",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1558,8 +1728,10 @@
       "end": "0x02003482",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1572,8 +1744,10 @@
       "end": "0x02003488",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1586,8 +1760,10 @@
       "end": "0x020037c2",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1600,8 +1776,10 @@
       "end": "0x020037d4",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1614,8 +1792,10 @@
       "end": "0x020037de",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1628,8 +1808,10 @@
       "end": "0x02003842",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1642,8 +1824,10 @@
       "end": "0x02003852",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1656,8 +1840,10 @@
       "end": "0x02003860",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1670,8 +1856,10 @@
       "end": "0x02003910",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1684,8 +1872,10 @@
       "end": "0x02003a9a",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1698,8 +1888,10 @@
       "end": "0x02003b54",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1712,8 +1904,10 @@
       "end": "0x02003b6c",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1726,8 +1920,10 @@
       "end": "0x02003fba",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
         "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
         "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
@@ -1740,8 +1936,10 @@
       "end": "0x020010d2",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries at 0x02000c6e 0x02000cae 0x02000cc0 and 0x02000cc6 target intra-owner 0x02001530 0x02000ef4 0x02001582 and 0x02001588, all also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1754,8 +1952,10 @@
       "end": "0x02001366",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1768,8 +1968,10 @@
       "end": "0x0200173e",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1782,8 +1984,10 @@
       "end": "0x02001bfa",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1796,8 +2000,10 @@
       "end": "0x02002002",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1810,8 +2016,10 @@
       "end": "0x02002532",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1824,8 +2032,10 @@
       "end": "0x0200274a",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1838,8 +2048,10 @@
       "end": "0x02002768",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
         "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1852,8 +2064,10 @@
       "end": "0x02001c0e",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
         "external direct bl entries at 0x0200117e and 0x0200136c target intra-owner 0x02002090 and 0x0200227e, both also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1866,8 +2080,10 @@
       "end": "0x02001d4a",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
         "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1880,8 +2096,10 @@
       "end": "0x02002602",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
         "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1894,8 +2112,10 @@
       "end": "0x02002aaa",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
         "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1908,8 +2128,10 @@
       "end": "0x02002c36",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
         "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -1922,8 +2144,10 @@
       "end": "0x02002c44",
       "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
         "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
         "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
@@ -2120,8 +2344,9 @@
       "end": "0x02000da4",
       "kind": "generated_presentation_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete owner reconstruction accounts for all 35 calls, five transition loops, palette ramps, blend-register setup, runtime handoff, and terminal enable state",
         "candidate and complete-owner reference differ by eight bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
         "games/gs1/recon/en/dossiers.json#resource_3ca:02000b34"
@@ -2437,8 +2662,9 @@
       "end": "0x02000186",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete ordinary-C reconstruction accounts for all seven calls, four literals, branches, and the sole actor-angle load",
         "the executable instruction sequence is preserved but approved GCC merges the mask into the terminal pool instead of selecting the ROM's non-required early pool boundary",
         "direct-expression, named-local, declaration-order, nested-else, and early-return source forms all retain the terminal pool",
@@ -2451,8 +2677,9 @@
       "end": "0x020001ba",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited Thumb island of the complete 0x0200015c owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:0200015c"
       ]
@@ -2463,8 +2690,9 @@
       "end": "0x020001f2",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete ordinary-C reconstruction accounts for all seven calls, four literals, branches, and the sole actor-angle load",
         "the executable instruction sequence is preserved but approved GCC merges the mask into the terminal pool instead of selecting the ROM's non-required early pool boundary",
         "the neighboring owner with identical source shape independently reproduces the same compiler-only pool displacement",
@@ -2477,8 +2705,9 @@
       "end": "0x02000226",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited Thumb island of the complete 0x020001c8 owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:020001c8"
       ]
@@ -2489,8 +2718,9 @@
       "end": "0x02000234",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited Thumb island of the complete 0x020001c8 owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:020001c8"
       ]
@@ -2501,8 +2731,9 @@
       "end": "0x02000276",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "first audited Thumb island of the complete 0x02000234 owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:02000234"
       ]
@@ -2513,8 +2744,9 @@
       "end": "0x02000298",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited Thumb island of the complete 0x02000234 owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:02000234"
       ]
@@ -2525,8 +2757,9 @@
       "end": "0x020002c6",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "first audited Thumb island of the complete 0x0200029c owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:0200029c"
       ]
@@ -2537,8 +2770,9 @@
       "end": "0x020002fa",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited Thumb island of the complete 0x0200029c owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:0200029c"
       ]
@@ -2549,8 +2783,9 @@
       "end": "0x020000f2",
       "kind": "literal_pool_placement_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "first audited Thumb island of the complete 0x020000c8 owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:020000c8"
       ]
@@ -2561,8 +2796,9 @@
       "end": "0x02000150",
       "kind": "literal_pool_and_argument_ordering_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited Thumb island of the complete 0x020000c8 owner",
         "games/gs1/recon/en/dossiers.json#resource_3c7:020000c8"
       ]
@@ -2573,8 +2809,9 @@
       "end": "0x020017f8",
       "kind": "compiler_allocation_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete reconstruction accounts for both global halfword stores, all eleven calls, every argument, and all terminal literals",
         "candidate and reference have identical owner extent; residual is low-register allocation plus one independent shift placement",
         "games/gs1/recon/en/dossiers.json#resource_3c8:02001780"
@@ -2586,8 +2823,9 @@
       "end": "0x02000358",
       "kind": "actor_presentation_flag_allocation_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete ordinary-C reconstruction is exactly 52 bytes with zero normalized structural rows",
         "the three-halfword residual is equivalent r2/r3 result allocation in two presentation-flag branches and immediately resynchronizes at each branch boundary",
         "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
@@ -2887,8 +3125,9 @@
       "end": "0x020026a8",
       "kind": "command_interpolation_renderer",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete reconstruction accounts for the command queue, three interpolation channels, four output modes, and both deferred-MMIO records",
         "games/gs1/recon/en/dossiers.json#resource_3ba:020021b8"
       ]
@@ -2899,8 +3138,9 @@
       "end": "0x02002940",
       "kind": "command_interpolation_renderer",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "independently address-mapped homolog preserves the complete renderer control flow and all ten calls",
         "games/gs1/recon/en/dossiers.json#resource_3bb:02002450"
       ]
@@ -2911,8 +3151,9 @@
       "end": "0x020033d8",
       "kind": "command_interpolation_renderer",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "independently address-mapped homolog preserves the complete renderer control flow and all ten calls",
         "games/gs1/recon/en/dossiers.json#resource_3bc:02002ee8"
       ]
@@ -2949,8 +3190,9 @@
       "end": "0x02002ed8",
       "kind": "structured_dispatcher_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "complete party-roster scene accounts for roster discovery, nine member candidates, the 21-entry dialogue table, member loop, reward, and flag clear",
         "games/gs1/recon/en/dossiers.json#resource_3af:02002c84"
       ]
@@ -2961,8 +3203,9 @@
       "end": "0x0200310a",
       "kind": "structured_dispatcher_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "post-table executable body of the complete party-roster scene",
         "games/gs1/recon/en/dossiers.json#resource_3af:02002c84"
       ]
@@ -2973,8 +3216,9 @@
       "end": "0x0200311c",
       "kind": "structured_dispatcher_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited executable pool fragment of the complete party-roster scene",
         "games/gs1/recon/en/dossiers.json#resource_3af:02002c84"
       ]
@@ -2985,8 +3229,9 @@
       "end": "0x02003150",
       "kind": "structured_dispatcher_module",
       "retention": "keep_structured_asm",
-      "confidence": "proven",
+      "confidence": "strong",
       "evidence": [
+        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited trailing pool fragment of the complete party-roster scene",
         "games/gs1/recon/en/dossiers.json#resource_3af:02002c84"
       ]
@@ -3384,7 +3629,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2006154..0x2006190 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3395,7 +3641,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2001ad0..0x2001b0c matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3406,7 +3653,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20011b8..0x20011f4 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3417,7 +3665,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2001518..0x2001554 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3428,7 +3677,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2002d2c..0x2002d68 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3439,7 +3689,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2000e8c..0x2000ec8 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3450,7 +3701,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2000ed4..0x2000f10 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3461,7 +3713,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x200261c..0x2002658 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3472,7 +3725,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2005c6c..0x2005ca8 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3483,7 +3737,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2003848..0x2003884 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3494,7 +3749,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2002ebc..0x2002ef8 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3505,7 +3761,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20014c0..0x20014fc matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3516,7 +3773,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2001e4c..0x2001e88 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3527,7 +3785,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2001d64..0x2001da0 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3538,7 +3797,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2003120..0x200315c matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3549,7 +3809,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2002bbc..0x2002bf8 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3560,7 +3821,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2002608..0x2002644 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3571,7 +3833,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2000e6c..0x2000ea8 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3582,7 +3845,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20019cc..0x2001a08 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3593,7 +3857,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2003e78..0x2003eb4 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3604,7 +3869,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20015dc..0x2001618 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3615,7 +3881,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20057b0..0x20057ec matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3626,7 +3893,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20031b4..0x20031f0 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3637,7 +3905,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2002f98..0x2002fd4 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3648,7 +3917,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2005004..0x2005040 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3659,7 +3929,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2005ed4..0x2005f10 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3670,7 +3941,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x20018ec..0x2001928 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3681,7 +3953,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "the audited-executable tail (38 bytes: bx r5 ... bx sp with nop padding, then bx lr) of the same 46-byte register-indexed interworking dispatch table registered 27 times elsewhere; its first two entries (bx r3; nop; bx r4; nop) lie in the 20-byte gap games/gs1/metrics/gs1-en-executable.json leaves unaudited between the preceding veneer block and this stretch, so only the audited bytes are claimed; byte-identical to the other instances from the third entry on (checksummed against the canonical ROM via `lifter score --diff`); no ordinary C construct emits a fixed enumerated dispatch over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2003e08..0x2003e44 matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains nine r5..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     },
     {
@@ -3692,7 +3965,8 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "the audited-executable tail (38 bytes: bx r5 ... bx sp with nop padding, then bx lr) of the same 46-byte register-indexed interworking dispatch table registered 27 times elsewhere; its first two entries (bx r3; nop; bx r4; nop) lie in the 20-byte gap games/gs1/metrics/gs1-en-executable.json leaves unaudited between the preceding veneer block and this stretch, so only the audited bytes are claimed; byte-identical to the other instances from the third entry on (checksummed against the canonical ROM via `lifter score --diff`); no ordinary C construct emits a fixed enumerated dispatch over every general-purpose register"
+        "The complete 60-byte runtime bank at 0x2004bb0..0x2004bec matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
+        "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains nine r5..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."
       ]
     }
   ]

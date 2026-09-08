@@ -34,15 +34,6 @@ fn err<T>(message: impl Into<String>) -> Result<T, AssetError> {
 
 pub const PNG_SIGNATURE: [u8; 8] = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 
-pub fn ascii(bytes: &[u8]) -> String {
-    bytes.iter().map(|byte| (byte & 0x7f) as char).collect()
-}
-
-pub fn subarray(data: &[u8], start: usize, end: usize) -> &[u8] {
-    let start = start.min(data.len());
-    &data[start..end.clamp(start, data.len())]
-}
-
 fn png_error(error: impl std::fmt::Display) -> AssetError {
     AssetError(error.to_string())
 }
@@ -283,21 +274,16 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
         if at + 8 > data.len() {
             return err("truncated MIDI chunk");
         }
-        let kind = ascii(&data[at..at + 4]);
+        let kind = &data[at..at + 4];
         let size = be_u32(data, at + 4).unwrap() as usize;
         at += 8;
-        let body = subarray(data, at, at.saturating_add(size));
+        let body = data
+            .get(at..at.saturating_add(size))
+            .ok_or_else(|| AssetError("truncated MIDI chunk payload".into()))?;
         at = at.saturating_add(size);
-        if body.len() != size {
-            return err("truncated MIDI chunk payload");
-        }
         chunks.push((kind, body));
     }
-    if chunks
-        .first()
-        .map(|(kind, body)| (kind.as_str(), body.len()))
-        != Some(("MThd", 6))
-    {
+    if chunks.first().map(|(kind, body)| (*kind, body.len())) != Some((b"MThd".as_slice(), 6)) {
         return err("invalid MIDI header");
     }
     let header = chunks[0].1;
@@ -310,7 +296,7 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     let tracks_data: Vec<&[u8]> = chunks
         .iter()
         .skip(1)
-        .filter(|(kind, _)| kind == "MTrk")
+        .filter(|(kind, _)| *kind == b"MTrk")
         .map(|(_, body)| *body)
         .collect();
     if tracks_data.len() != tracks as usize {
@@ -339,11 +325,10 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                         .ok_or_else(|| AssetError("truncated meta event".into()))?;
                     let (n, next) = vlq(bytes, at + 1)?;
                     at = next;
-                    let value = subarray(bytes, at, at.saturating_add(n as usize));
+                    let value = bytes
+                        .get(at..at.saturating_add(n as usize))
+                        .ok_or_else(|| AssetError("truncated meta payload".into()))?;
                     at += n as usize;
-                    if value.len() != n as usize {
-                        return err("truncated meta payload");
-                    }
                     running = None;
                     EventBody::Meta {
                         meta,
@@ -353,11 +338,10 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                 0xf0 | 0xf7 => {
                     let (n, next) = vlq(bytes, at)?;
                     at = next;
-                    let value = subarray(bytes, at, at.saturating_add(n as usize));
+                    let value = bytes
+                        .get(at..at.saturating_add(n as usize))
+                        .ok_or_else(|| AssetError("truncated system-exclusive payload".into()))?;
                     at += n as usize;
-                    if value.len() != n as usize {
-                        return err("truncated system-exclusive payload");
-                    }
                     running = None;
                     EventBody::Sysex {
                         status,
@@ -371,9 +355,11 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                     } else {
                         2
                     };
-                    let value = subarray(bytes, at, at + n);
+                    let value = bytes
+                        .get(at..at + n)
+                        .ok_or_else(|| AssetError("invalid channel event".into()))?;
                     at += n;
-                    if value.len() != n || value.iter().any(|byte| byte & 0x80 != 0) {
+                    if value.iter().any(|byte| byte & 0x80 != 0) {
                         return err("invalid channel event");
                     }
                     EventBody::Channel {
@@ -515,6 +501,20 @@ pub fn append_conductor_meta(midi: &[u8], meta: u8, payload: &[u8]) -> Result<Ve
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn midi_chunk_names_are_exact_and_payloads_are_bounded() {
+        let midi = b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x04\0\xff\x2f\0";
+        for index in [0, 1, 2, 3, 14, 15, 16, 17] {
+            let mut damaged = midi.to_vec();
+            damaged[index] |= 0x80;
+            assert!(midi_events(&damaged).is_err());
+        }
+        for end in 0..midi.len() {
+            assert!(midi_events(&midi[..end]).is_err());
+        }
+        assert!(midi_events(midi).is_ok());
+    }
 
     #[test]
     fn midi_metadata_and_sysex_preserve_binary_payloads() {

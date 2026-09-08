@@ -17784,6 +17784,10 @@
     "resource_38d:02000338": {
       "name": "FieldScene_RunSceneEntryBranchSequence",
       "source": "overlays/scene_setup/run_scene_entry_branch_sequence.c"
+    },
+    "resource_3a6:020016f0": {
+      "name": "FieldScene_RunSceneEntryDriver",
+      "source": "overlays/scene_primary_script/run_scene_entry_driver.c"
     }
   }
 }

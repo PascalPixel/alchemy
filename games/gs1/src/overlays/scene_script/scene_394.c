@@ -23,9 +23,11 @@ extern s16 *Data_020092c0;
 extern s16 *Data_020092c8;
 extern u16 *Data_020092c4;
 extern u8 Data_0202c000[];
+extern u8 Data_0200a0dc[];
 
 void Func_020001cc();
 s32 Func_02000bb4(s32, s32);
+s32 Func_02001394(void);
 void Func_02000c8a(s32);
 void Func_020010e4(s32, s32, s32, s32, s32, s32);
 void Func_0200118c(void);
@@ -362,6 +364,30 @@ void FieldScene_RepaintBoardRecords(void)
     }
 
     Func_020004a6();
+}
+
+void SceneState_ArmBackgroundScrollFromPreset(void)
+{
+    s32 record;
+    u16 vcount;
+    volatile s32 *src = (volatile s32 *)0x03001ad4;
+    volatile s32 *dst = (volatile s32 *)0x04000014;
+
+    vcount = *(volatile u16 *)0x04000006;
+    if (vcount != 227) {
+        if ((u32)vcount > 52) {
+            goto apply_scroll_preset;
+        }
+    }
+    record = Func_02001394();
+    if ((u32)((u32)(100 * record) >> 16) < *(volatile s32 *)Data_0200a0dc) {
+        src = (volatile s32 *)0x0200a0d0;
+    }
+apply_scroll_preset:
+    *dst = *src++;
+    dst = (volatile s32 *)0x04000018;
+    *dst++ = *src++;
+    *dst = *src;
 }
 
 void SceneState_CopyPresetA0d0WithOffsetB0(void)

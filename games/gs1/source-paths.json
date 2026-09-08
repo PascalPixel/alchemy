@@ -6718,6 +6718,10 @@
       "name": "FieldScene_RunActor17MessageBranch",
       "source": "overlays/scene_script/scene_390.c"
     },
+    "resource_394:0200036c": {
+      "name": "SceneState_ArmBackgroundScrollFromPreset",
+      "source": "overlays/scene_script/scene_394.c"
+    },
     "resource_394:020003c0": {
       "name": "SceneState_CopyPresetA0d0WithOffsetB0",
       "source": "overlays/scene_script/scene_394.c"

@@ -1,6 +1,8 @@
 #include "battle_types.h"
 #include "psynergy_menu.h"
 
+#define PsynergyMenu_DrawActionPage Func_080a6b64
+
 void UiWindow_Commit(s32 window);
 void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
@@ -12,7 +14,7 @@ struct BattleUnit *Func_08077008(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 extern u8 Value_00000333;
 
-s32 Func_080a6b64(s32 window, s32 unused, const struct MenuResult *state)
+s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
 {
     u32 first_entry;
     u32 visible_count;
@@ -45,21 +47,21 @@ s32 Func_080a6b64(s32 window, s32 unused, const struct MenuResult *state)
 
     row = 0;
     if (visible_count > row) {
-        cursor = first_entry * 2;
+        cursor = first_entry * 2 + 0x1c8;
         do {
             owner = Func_08077008(menu->owner_ids[0]);
-            ability = Ability_GetData(0x3fff & *(const u16 *)((u8 *)menu->psynergies + cursor));
+            ability = Ability_GetData(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
             if (ability->pp_cost > owner->pp) {
                 UiPalette_SetColor(2);
-            } else if (Func_080a735c(0x3fff & *(const u16 *)((u8 *)menu->psynergies + cursor)) != 0) {
+            } else if (Func_080a735c(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
                 UiPalette_SetColor(4);
             } else {
                 UiPalette_SetColor(15);
             }
 
             UiText_DrawAt(
-                (0x3fff & *(const u16 *)((u8 *)menu->psynergies + cursor)) + (s32)&Value_00000333,
+                (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&Value_00000333,
                 window, 16, row * 16 + 8);
             Func_080150a8(ability->pp_cost, 2, window, 104, row * 16 + 8);
             UiPalette_SetColor(15);

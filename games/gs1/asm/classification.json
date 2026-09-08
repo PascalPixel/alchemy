@@ -2245,11 +2245,10 @@
     "inline_assembly_compiler_barriers_and_copied_instruction_bytes_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 2,
-   "expected_bytes": 790,
+   "expected_files": 1,
+   "expected_bytes": 250,
    "files": [
-    "08090488",
-    "080b1bd0"
+    "08090488"
    ]
   },
   {

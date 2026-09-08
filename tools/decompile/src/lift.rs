@@ -233,21 +233,6 @@ fn negate(cond: Cond) -> Cond {
     }
 }
 
-thread_local! {
-    /// Whether the unit being lifted belongs to the main image, where every
-    /// pool word that is a ROM or RAM address is a symbol.
-    static MAIN_MODE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
-}
-
-/// Switches the lifter between the overlay and main-image spellings.
-pub fn set_main_mode(on: bool) {
-    MAIN_MODE.with(|m| m.set(on));
-}
-
-pub fn main_mode() -> bool {
-    MAIN_MODE.with(|m| m.get())
-}
-
 fn width_bytes(c_type: &str) -> i64 {
     match c_type {
         "u8" | "s8" => 1,
@@ -258,9 +243,9 @@ fn width_bytes(c_type: &str) -> i64 {
 
 /// In the main image, a word inside the ROM or the work RAM is a relocated
 /// symbol: code when odd, data when even.
-fn main_symbol(c: i32) -> Option<String> {
+fn main_symbol(c: i32, main: bool) -> Option<String> {
     let word = c as u32;
-    if !main_mode() {
+    if !main {
         return None;
     }
     let rom = (0x0800_0000..0x0a00_0000).contains(&word);
@@ -275,8 +260,8 @@ fn main_symbol(c: i32) -> Option<String> {
     }
 }
 
-fn format_const(c: i32) -> String {
-    if let Some(symbol) = main_symbol(c) {
+fn format_const(c: i32, main: bool) -> String {
+    if let Some(symbol) = main_symbol(c, main) {
         return symbol;
     }
     if c < 0 {
@@ -308,6 +293,7 @@ struct SwitchTree {
 
 struct Lifter<'a> {
     ins: &'a [Ins],
+    main: bool,
     tables: &'a mut BTreeMap<String, String>,
     value_sites: BTreeSet<usize>,
     direct_sites: BTreeSet<usize>,
@@ -376,7 +362,7 @@ fn push_unique(list: &mut Vec<String>, name: &str) {
 }
 
 impl<'a> Lifter<'a> {
-    fn new(ins: &'a [Ins], tables: &'a mut BTreeMap<String, String>) -> Self {
+    fn new(ins: &'a [Ins], tables: &'a mut BTreeMap<String, String>, main: bool) -> Self {
         let sites = crate::sched::value_calls(ins);
         let by_addr = ins.iter().enumerate().map(|(i, x)| (x.addr, i)).collect();
         let mut targets = BTreeSet::new();
@@ -417,6 +403,7 @@ impl<'a> Lifter<'a> {
             .collect();
         let mut lifter = Lifter {
             ins,
+            main,
             tables,
             value_sites: sites.value,
             direct_sites: sites.direct,
@@ -653,7 +640,7 @@ impl<'a> Lifter<'a> {
             return self.ensure_result_var(&mut v);
         }
         if let Some(c) = v.c {
-            return format_const(c);
+            return format_const(c, self.main);
         }
         v.e.clone().unwrap_or_else(|| "?".to_string())
     }
@@ -832,7 +819,7 @@ impl<'a> Lifter<'a> {
         } else if v.pool && unsigned < 0x0201_0000 {
             format!("(s32)Data_{unsigned:08x}")
         } else {
-            format_const(c)
+            format_const(c, self.main)
         };
         let line = format!("{}{name} = {lit};", self.indent);
         match v.def_out {
@@ -1542,7 +1529,11 @@ impl<'a> Lifter<'a> {
                     Some(at) if at + 1 == self.out.len() && self.read_straight(i + 1, rd) => {
                         let name = format!("v{rd}");
                         push_unique(&mut self.consts, &name);
-                        let line = format!("{}{name} = {};", self.indent, format_const(imm as i32));
+                        let line = format!(
+                            "{}{name} = {};",
+                            self.indent,
+                            format_const(imm as i32, self.main)
+                        );
                         self.insert_line(at, line);
                         self.set_reg(rd, Val::expr(name));
                     }
@@ -1653,7 +1644,7 @@ impl<'a> Lifter<'a> {
                     let b = self.val_of(rm, Some(rd));
                     let left = self.arith(&a);
                     let text = match b.c {
-                        Some(c) => format!("({left} & {})", format_const(!c)),
+                        Some(c) => format!("({left} & {})", format_const(!c, self.main)),
                         None => format!("({left} & ~{})", self.arith(&b)),
                     };
                     self.set_reg(rd, Val::expr(text));
@@ -1945,7 +1936,7 @@ impl<'a> Lifter<'a> {
                 Some(e) => e,
                 None => match self.shared_base(&base) {
                     Some(name) => deref_named_at(c_type, &name, off, c as u32),
-                    None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
+                    None => absolute_deref(c_type, (c as u32).wrapping_add(off), self.main),
                 },
             };
             // A load into a callee-saved register is a value kept across calls,
@@ -2019,7 +2010,7 @@ impl<'a> Lifter<'a> {
                 Some(e) => e,
                 None => match self.shared_base(&base) {
                     Some(name) => deref_named_at(c_type, &name, off, c as u32),
-                    None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
+                    None => absolute_deref(c_type, (c as u32).wrapping_add(off), self.main),
                 },
             },
             None => self.addr_expr(&base, i64::from(off), width),
@@ -2468,7 +2459,10 @@ impl<'a> Lifter<'a> {
         let dividend = self.arith(&Val::expr(a.to_string()));
         self.set_reg(
             rx,
-            Val::expr(format!("({dividend} / {})", format_const(1i32 << k))),
+            Val::expr(format!(
+                "({dividend} / {})",
+                format_const(1i32 << k, self.main)
+            )),
         );
         self.consumed.insert(shift_at);
         Some(t)
@@ -3129,8 +3123,8 @@ fn deref_named_at(c_type: &str, name: &str, off: u32, address: u32) -> String {
     }
 }
 
-fn absolute_deref(c_type: &str, address: u32) -> String {
-    if main_mode() && main_symbol(address as i32).is_some() {
+fn absolute_deref(c_type: &str, address: u32, main: bool) -> String {
+    if main_symbol(address as i32, main).is_some() {
         return format!("*({c_type} *)Data_{address:08x}");
     }
     // A hardware register is volatile in the original: every access stays.
@@ -3235,8 +3229,8 @@ fn writes_only(kind: &Kind) -> bool {
 
 /// Lifts one function. Two passes: the first discovers goto targets so the
 /// second can place labels before their first use.
-pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>) -> Draft {
-    let mut lifter = Lifter::new(ins, tables);
+pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>, main: bool) -> Draft {
+    let mut lifter = Lifter::new(ins, tables, main);
     lifter.run(0, ins.len());
     lifter.reset();
     lifter.run(0, ins.len());
@@ -3284,7 +3278,7 @@ pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>) -> Draft {
         // lines of the body.
         lines.push(format!("    /* unlifted: {} */", dropped.join(", ")));
     }
-    if !main_mode() {
+    if !main {
         rewrite_scene_work(&mut lines);
     }
     let mut consts = lifter.consts.clone();
@@ -3334,9 +3328,7 @@ fn rewrite_scene_work(lines: &mut Vec<String>) {
         }
         *line = line.replace("(*(s32 *)0x03001ebc + 0x", "(*(u8 **)0x03001ebc + 0x");
     }
-    if !main_mode() {
-        share_scene_work(lines);
-    }
+    share_scene_work(lines);
 }
 
 /// Consecutive statements through the scene work pointer read it once: the
@@ -3378,7 +3370,7 @@ fn share_scene_work(lines: &mut Vec<String>) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::decode::{decode_window, OVERLAY_BASE};
+    use crate::decode::{decode_window_at, OVERLAY_BASE};
 
     #[test]
     fn table_shapes_are_shared_only_within_the_supplied_unit() {
@@ -3388,16 +3380,16 @@ mod tests {
         };
         let mut first = BTreeMap::new();
         let mut second = BTreeMap::new();
-        assert!(Lifter::new(&[], &mut first)
+        assert!(Lifter::new(&[], &mut first, false)
             .table_expr(&base, 0, Width::Word)
             .is_some());
-        assert!(Lifter::new(&[], &mut first)
+        assert!(Lifter::new(&[], &mut first, false)
             .table_expr(&base, 0, Width::Byte)
             .is_none());
-        assert!(Lifter::new(&[], &mut second)
+        assert!(Lifter::new(&[], &mut second, false)
             .table_expr(&base, 0, Width::Byte)
             .is_some());
-        assert!(Lifter::new(&[], &mut first)
+        assert!(Lifter::new(&[], &mut first, false)
             .table_expr(&base, 0, Width::Word)
             .is_some());
         assert_ne!(first, second);
@@ -3405,8 +3397,8 @@ mod tests {
 
     fn lifted(halves: &[u16]) -> String {
         let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
-        let ins = decode_window(&image, OVERLAY_BASE, image.len() as u32);
-        lift(&ins, &mut BTreeMap::new()).lines.join("\n")
+        let ins = decode_window_at(&image, OVERLAY_BASE, OVERLAY_BASE, image.len() as u32);
+        lift(&ins, &mut BTreeMap::new(), false).lines.join("\n")
     }
 
     #[test]

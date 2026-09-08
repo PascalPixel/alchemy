@@ -133,6 +133,22 @@ targets: $(HISTORICAL_TARGETS)
 $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
+.PHONY: dashboard music-debug dashboard-service-install
+dashboard:
+	$(COMPILER) dashboard --bind 127.0.0.1:4650
+
+music-debug:
+	$(COMPILER) music-debug --bind 127.0.0.1:4651
+
+dashboard-service-install:
+	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
+	@sed -e 's|@ALCHEMY_ROOT@|$(CURDIR)|g' \
+		-e 's|@CARGO@|$(shell command -v $(CARGO))|g' \
+		tools/alchemy/src/dashboard/com.pascalpixel.alchemy-dashboard.plist.in \
+		> '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
+	@launchctl bootout 'gui/$(shell id -u)/com.pascalpixel.alchemy-dashboard' 2>/dev/null || true
+	@launchctl bootstrap 'gui/$(shell id -u)' '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
+
 progress:
 	$(CHECK) progress
 
@@ -347,14 +363,13 @@ register-shrink-check:
 		printf 'owner register shrank from %s to %s entries since verified tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
 	printf 'register shrink check ok: %s -> %s owners\n' "$$before" "$$after"
 
-# Tools are Rust. A TypeScript, JavaScript, Python, or shell implementation
-# file anywhere in the tracked tree fails the gate; the asset and source
-# directories carry no scripts either.
+# Tooling is Rust except the two browser clients and their regression tests.
+# Asset and game source directories carry no scripts.
 language-check:
 	@set -eu; \
-	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|js|mjs|cjs|py|sh)$$' || true); \
+	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|js|mjs|cjs|py|sh)$$' | grep -Ev '^tools/alchemy/src/(dashboard|music_debug)/client(\.test)?\.js$$' || true); \
 	if [ -n "$$scripts" ]; then printf 'TypeScript, JavaScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
-	printf 'language gate ok: Rust only\n'
+	printf 'language gate ok: Rust tooling and two browser clients\n'
 
 lint: lint-all-targets
 

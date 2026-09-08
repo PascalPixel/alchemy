@@ -350,7 +350,7 @@ fn params_in(lines: &[String]) -> Vec<String> {
 }
 
 /// One C function from a lifted draft.
-pub fn function_source(entry: u32, draft: &Draft) -> String {
+pub fn function_source(entry: u32, draft: &Draft, main: bool) -> String {
     let mut lines = draft.lines.clone();
     // A join or a loop can assign a variable to itself; nothing reads that.
     lines.retain(|line| {
@@ -504,7 +504,7 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     for line in &lines {
         // Main-image globals are plain; the volatile record spelling belongs
         // to the overlay scenes.
-        if crate::lift::main_mode() {
+        if main {
             text.push_str(line);
         } else {
             // Stack objects are plain: a volatile access would materialise
@@ -558,11 +558,11 @@ pub fn volatile_spelling(line: &str) -> String {
 }
 
 /// Lifts every function of a decoded window into C bodies.
-pub fn bodies(ins: &[Ins]) -> (String, BTreeMap<String, String>) {
+pub fn bodies(ins: &[Ins], main: bool) -> (String, BTreeMap<String, String>) {
     let mut tables = BTreeMap::new();
     let body = split_functions(ins)
         .iter()
-        .map(|(entry, function)| function_source(*entry, &lift(function, &mut tables)))
+        .map(|(entry, function)| function_source(*entry, &lift(function, &mut tables, main), main))
         .collect::<Vec<_>>()
         .join("\n");
     (body, tables)
@@ -618,7 +618,13 @@ fn symbols<'a>(body: &'a str, prefix: &str) -> Vec<(usize, &'a str)> {
 
 /// Composes the candidate unit around the lifted bodies. The entry function
 /// carries `name`; other functions keep their address names.
-pub fn compose(entry: u32, name: &str, body: &str, tables: &BTreeMap<String, String>) -> String {
+pub fn compose(
+    entry: u32,
+    name: &str,
+    body: &str,
+    tables: &BTreeMap<String, String>,
+    main: bool,
+) -> String {
     let this = format!("Func_{entry:08x}");
     let body_lines: Vec<String> = body.lines().map(str::to_string).collect();
     let mut categories: BTreeMap<String, BTreeSet<&'static str>> = BTreeMap::new();
@@ -707,7 +713,6 @@ pub fn compose(entry: u32, name: &str, body: &str, tables: &BTreeMap<String, Str
         .map(|(_, s)| s)
         .collect();
     // The step helper reads the scene work pointer in every overlay unit.
-    let main = crate::lift::main_mode();
     if !main {
         data.push("Data_03001ebc");
     }
@@ -822,7 +827,7 @@ mod tests {
     #[test]
     fn declarations_follow_use() {
         let body = "void Func_02000100(void)\n{\n    record = Func_02000200(1);\n    Call2(Func_02000300, 0x1000, 0);\n    if (Func_02000400() != 0) {\n    }\n}\n";
-        let unit = compose(0x02000100, "Scene_Run", body, &BTreeMap::new());
+        let unit = compose(0x02000100, "Scene_Run", body, &BTreeMap::new(), false);
         assert!(unit.contains("s32 Func_02000200();"));
         assert!(unit.contains("void Func_02000300();"));
         assert!(unit.contains("s32 Func_02000400();"));
@@ -838,9 +843,9 @@ mod tests {
             "extern u8 Data_08001000_t[][4];".into(),
         )]);
         let body = "void Func_02000100(void) { a = Data_08001000_t[1][0]; }";
-        let first = compose(0x02000100, "Read", body, &tables);
+        let first = compose(0x02000100, "Read", body, &tables, false);
         assert!(first.contains("extern u8 Data_08001000_t[][4];"));
-        assert_eq!(first, compose(0x02000100, "Read", body, &tables));
+        assert_eq!(first, compose(0x02000100, "Read", body, &tables, false));
     }
 }
 

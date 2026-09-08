@@ -1,5 +1,5 @@
 use super::jsnum::commas;
-use crate::coverage::model::{treemap, Area, Category, Rect, Tile};
+use crate::coverage::model::{treemap, Category, Rect, Tile};
 
 const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
     (Category::Unknown, "Unknown"),
@@ -21,7 +21,7 @@ use crate::coverage::pipeline::{source_container, CoverageMap};
 use crate::coverage::tree::root;
 use sha1::{Digest, Sha1};
 
-pub const BOX_TREES: [&str; 4] = ["core", "overlays", "images", "music"];
+pub const BOX_TREES: [&str; 2] = ["code", "data"];
 const CHART_BACKGROUND: &str = "#1f7f93";
 const UNKNOWN: &str = "#c9d5d5";
 const SOUND_TYPES: [(&str, &str); 5] = [
@@ -151,7 +151,7 @@ fn draw_tiles(
     parent_source: Option<&str>,
     reserved: &[Rect],
 ) {
-    let assets = matches!(tree, "images" | "music");
+    let assets = tree == "data";
     for placed in treemap(tiles, |tile| tile.bytes, frame) {
         let tile = tiles[placed.index];
         let rect = placed.rect;
@@ -364,10 +364,8 @@ fn base64(data: &[u8]) -> String {
 
 fn titles(tree: &str) -> (&'static str, &'static str) {
     match tree {
-        "core" => ("Main-image code", "Main game"),
-        "overlays" => ("Decoded code-overlay", "Code overlays"),
-        "music" => ("Sound", "Sound"),
-        "images" => ("Graphics", "Graphics"),
+        "code" => ("Code", "Code"),
+        "data" => ("Data", "Data"),
         _ => ("ROM contents", "ROM contents"),
     }
 }
@@ -389,33 +387,25 @@ fn fill(category: Category) -> String {
     };
     format!("fill:{color}")
 }
-fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>) {
-    let area = match tree {
-        "core" => &map.executable_areas[0],
-        "overlays" => &map.executable_areas[1],
-        _ => map
-            .rom_areas
+fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> Vec<&'a Tile> {
+    if tree == "code" {
+        map.executable_areas
             .iter()
-            .find(|a| a.id == "rom-data")
-            .unwrap_or(&map.rom_areas[0]),
-    };
-    let tiles = area
-        .tiles
-        .iter()
-        .filter(|tile| {
-            if !matches!(tree, "images" | "music") {
-                return true;
-            }
-            is_sound(tile) == (tree == "music")
-        })
-        .collect();
-    (area, tiles)
+            .flat_map(|area| area.tiles.iter())
+            .collect()
+    } else {
+        map.rom_areas
+            .iter()
+            .filter(|area| area.id == "rom-data")
+            .flat_map(|area| area.tiles.iter())
+            .collect()
+    }
 }
 pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
-    let (_area, tiles) = tree_tiles(map, tree);
+    let tiles = tree_tiles(map, tree);
     let (description, title) = titles(tree);
     let edge = CHART_BACKGROUND;
-    let assets = matches!(tree, "images" | "music");
+    let assets = tree == "data";
     let frame = Rect {
         x: 4.0,
         y: 32.0,
@@ -440,7 +430,7 @@ pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
                 + tile.categories[Category::ProvenAsm as usize]
         })
         .sum();
-    let corner = if matches!(tree, "core" | "overlays") {
+    let corner = if tree == "code" {
         format!(
             "{:.2}% DONE",
             100.0 * done_bytes as f64 / displayed_bytes.max(1) as f64
@@ -555,7 +545,8 @@ pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
 #[cfg(test)]
 mod tests {
     use super::{
-        content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, SOUND_TYPES,
+        content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, BOX_TREES,
+        SOUND_TYPES,
     };
     use crate::coverage::model::{Area, Category, Rect, Tile};
     use crate::coverage::pipeline::CoverageMap;
@@ -616,7 +607,7 @@ mod tests {
             let mut out = Vec::new();
             draw_tiles(
                 &mut out,
-                "music",
+                "data",
                 &grouped.iter().collect::<Vec<_>>(),
                 Rect {
                     x: 0.0,
@@ -673,84 +664,68 @@ mod tests {
     }
 
     #[test]
-    fn graphics_and_sound_partition_assets_by_type_not_label() {
-        for (kind, source, sound) in [
-            ("golden-sun-sound-sequence", None, true),
-            ("typed-table", Some("games/gs1/sound/song_table.json"), true),
-            ("golden-sun-pcm-wave", None, true),
-            ("typed-table", Some("games/gs1/sound/engine.json"), true),
-            (
-                "golden-sun-sound-sequence",
-                Some("games/gs1/sound/residuals.json"),
-                true,
-            ),
-            (
-                "typed-table",
-                Some("games/gs1/assets/data/menu.json"),
-                false,
-            ),
-            ("gba-palette", None, false),
-            ("", None, false),
-        ] {
-            let mut map = CoverageMap {
-                document: Value::Null,
-                executable_areas: Vec::new(),
-                rom_areas: vec![Area {
-                    id: "rom-data".into(),
-                    tiles: vec![Tile {
-                        label: if sound {
-                            "se_197.mid"
-                        } else {
-                            "sound_wave.png"
-                        }
-                        .into(),
-                        group: (!kind.is_empty()).then(|| kind.into()),
-                        source: source.map(String::from),
-                        address: Some(0x08182830),
-                        bytes: 564,
-                        categories: [0, 0, 0, 0, 0, 564],
-                        ..Tile::default()
-                    }],
+    fn code_and_data_combine_all_members_without_double_counting() {
+        let tile = |bytes, categories| Tile {
+            bytes,
+            categories,
+            ..Tile::default()
+        };
+        let map = CoverageMap {
+            document: Value::Null,
+            executable_areas: vec![
+                Area {
+                    tiles: vec![tile(100, [0, 0, 0, 0, 100, 0])],
                     ..Area::default()
-                }],
-            };
-            for (tree, title, included) in
-                [("images", "Graphics", !sound), ("music", "Sound", sound)]
-            {
-                assert_eq!(
-                    tree_tiles(&map, tree).1.len(),
-                    usize::from(included),
-                    "{kind}: {tree}"
-                );
-                let rendered = svg(tree, &map, 540.0);
-                assert!(rendered.contains("fill=\"#1f7f93\""));
-                assert!(rendered.contains("fill:#fff;text-shadow:1px 1px 0 #000;"));
-                assert!(rendered.contains(&format!("<title>{title}</title>")));
-                assert_eq!(rendered.contains("data-address=\"0x08182830\""), included);
-                if tree == "music" && included {
-                    let (name, color) = SOUND_TYPES[sound_type(&map.rom_areas[0].tiles[0])];
-                    assert!(rendered.contains(&format!("style=\"fill:{color}\"")));
-                    assert!(rendered.contains(&format!("{name} 100.0%")));
-                    assert!(!rendered.contains("Data 100.0%"));
-                }
-            }
-            let child = map.rom_areas[0].tiles[0].clone();
-            let parent = &mut map.rom_areas[0].tiles[0];
-            parent.children = vec![child];
-            parent.label = "catalog.tsv".into();
-            parent.address = None;
-            let tree = if sound { "music" } else { "images" };
-            let rendered = svg(tree, &map, 540.0);
-            assert!(rendered.contains("data-node=\"container\""));
-            assert!(rendered.contains("data-node=\"leaf\""));
-            assert_eq!(
-                leaves(&tree_tiles(&map, tree).1)
-                    .iter()
-                    .map(|tile| tile.bytes)
-                    .sum::<i64>(),
-                564
-            );
-        }
+                },
+                Area {
+                    tiles: vec![tile(300, [0, 0, 300, 0, 0, 0])],
+                    ..Area::default()
+                },
+            ],
+            rom_areas: vec![
+                Area {
+                    id: "rom-data".into(),
+                    tiles: vec![
+                        Tile {
+                            group: Some("golden-sun-pcm-wave".into()),
+                            ..tile(40, [0, 0, 0, 0, 0, 40])
+                        },
+                        Tile {
+                            source: Some("image.png".into()),
+                            ..tile(60, [0, 0, 0, 0, 0, 60])
+                        },
+                    ],
+                    ..Area::default()
+                },
+                Area {
+                    id: "compressed-code".into(),
+                    tiles: vec![tile(500, [0, 0, 0, 0, 0, 500])],
+                    ..Area::default()
+                },
+            ],
+        };
+        assert_eq!(BOX_TREES, ["code", "data"]);
+        assert_eq!(
+            tree_tiles(&map, "code")
+                .iter()
+                .map(|t| t.bytes)
+                .sum::<i64>(),
+            400
+        );
+        assert_eq!(
+            tree_tiles(&map, "data")
+                .iter()
+                .map(|t| t.bytes)
+                .sum::<i64>(),
+            100
+        );
+        let code = svg("code", &map, 540.0);
+        assert!(code.contains("<title>Code</title>"));
+        assert!(code.contains("25.00% DONE"));
+        let data = svg("data", &map, 540.0);
+        assert!(data.contains("<title>Data</title>"));
+        assert!(data.contains("PCM samples 40.0%"));
+        assert!(data.contains("Images 60.0%"));
     }
 
     #[test]
@@ -779,8 +754,8 @@ mod tests {
             rom_areas: Vec::new(),
             executable_areas: vec![area.clone(), area],
         };
-        let rendered = svg("core", &map, 540.0);
-        for tree in ["core", "overlays"] {
+        let rendered = svg("code", &map, 540.0);
+        for tree in ["code"] {
             let chart = svg(tree, &map, 540.0);
             assert!(chart.contains("fill=\"#1f7f93\""));
             assert!(chart.contains("class=\"chart-frame\""));

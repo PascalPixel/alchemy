@@ -402,7 +402,8 @@ The remaining analysis machinery still needs its portability boundaries reviewed
 the existence of Psynergy does not mean that extraction is finished.
 
 `alchemy dashboard` (or `make dashboard`) serves live coverage at
-`http://127.0.0.1:4650/`. Its four charts include sound coverage, not playback.
+`http://127.0.0.1:4650/`. Its Code chart combines main-image and overlay code;
+Data combines graphics, sound and other data. These show coverage, not playback.
 `make dashboard-service-install` installs the macOS login LaunchAgent with
 automatic restart. It builds current source when launched; restart the service
 after server/client source changes. Coverage inputs are watched while running.

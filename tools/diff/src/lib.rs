@@ -1,9 +1,0 @@
-pub mod allocator;
-pub mod cli;
-pub mod disasm;
-pub mod entrypoint;
-pub mod idioms;
-pub mod patch;
-pub mod render;
-pub mod structure;
-pub mod triage;

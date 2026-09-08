@@ -1,5 +1,4 @@
-use crate::paths::{basename, root, OverlaySource};
-use crate::regex::Regex;
+use crate::paths::{root, OverlaySource};
 use candidate_compiler::verify::run as checked;
 use compiler_core::overlay;
 use compiler_core::overlay::placeholder_addresses;
@@ -98,7 +97,7 @@ pub(crate) fn spawn_raw(command: &[String], cwd: &Path) -> Result<Vec<u8>, Strin
         .output()
         .map_err(|error| format!("{binary}: {error}"))?;
     if output.status.code() != Some(0) {
-        return Err(crate::regex::js_trim(&String::from_utf8_lossy(&output.stderr)).to_string());
+        return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
     }
     Ok(output.stdout)
 }
@@ -903,9 +902,7 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let work = tempdir().map_err(|error| error.to_string())?;
     let mut result = assemble_overlay_raw(source, base)?;
     let display = source.to_display_string();
-    let overlay = source
-        .overlay_id()
-        .unwrap_or_else(|| Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), ""));
+    let overlay = source.overlay_id().unwrap_or_default();
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
     for compiled in compile_production_overlay(source, work.path(), &overlay)? {
         let offset = compiled.address - base;
@@ -1068,7 +1065,7 @@ mod source_activation_tests {
     }
 }
 pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {
-    let body = crate::regex::js_trim(text);
+    let body = text.trim();
     let (negative, body) = match body.strip_prefix('-') {
         Some(rest) => (true, rest),
         None => (false, body.strip_prefix('+').unwrap_or(body)),

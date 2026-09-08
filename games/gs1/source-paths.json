@@ -17935,6 +17935,10 @@
     "resource_372:02001348": {
       "name": "FieldScene_RunActorFourteenStagingSequence",
       "source": "overlays/scene_primary_script/run_actor_fourteen_staging_sequence.c"
+    },
+    "resource_3b3:02000104": {
+      "name": "OverlayObject_ApplyVelocity",
+      "source": "overlays/overlay_object/apply_velocity_3b3.c"
     }
   }
 }

@@ -384,6 +384,9 @@ Instruction normalization and weighted sequence alignment belong to Psynergy's
 Alchemy retains residual classifications and command advice; the renderer and
 triage do not own or call each other's alignment machinery. Alignment preserves
 the original instruction text and cannot establish byte equality.
+Objdump text parsing also belongs to Psynergy and returns an ordinary map keyed
+by integer addresses. Alchemy owns the objdump invocation; no floating-point
+address map or renderer-specific ordering adapter is needed.
 Golden Sun coverage, progress and chart rendering live in
 `tools/alchemy/src/coverage`, shared by the checks and dashboard. They read the
 project's owner and asset manifests; they are not a portable coverage library.

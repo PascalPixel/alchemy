@@ -51,16 +51,16 @@ impl ResidualClass {
     pub fn next_command(&self) -> &'static str {
         match self {
             Self::Exact => "alchemy adopt {owner} --source {source} (complete-owner and production verification still required)",
-            Self::LayoutOnly => "alchemy diff {source} --align (layout drift: inspect pools and padding, not code)",
+            Self::LayoutOnly => "alchemy score {source} --align (layout drift: inspect pools and padding, not code)",
             Self::AllocationCovered => "alchemy match {source} (the decoder names a catalogued repair; do not hand-edit first)",
             Self::AllocationUncovered => {
                 "route to the smart queue; do not probe register roles by respelling source (measured: such probes regress)"
             }
             Self::SchedulingFloor => {
-                "alchemy inspect allocator {owner} (read the scheduling decision; no automatic repair is established)"
+                "alchemy build allocator {owner}, then psynergy inspect allocator DUMP_DIR (read the scheduling decision; no automatic repair is established)"
             }
             Self::TypeWidthMismatch => {
-                "alchemy diff {source} --align (recover widths and signedness from the access-width evidence)"
+                "alchemy score {source} --align (recover widths and signedness from the access-width evidence)"
             }
             Self::StructuralTopology => {
                 "smart queue: reconstruct the divergent blocks in the complete translation unit; only a decoder-named repair may enter search"
@@ -69,7 +69,7 @@ impl ResidualClass {
                 "smart queue: audit the complete owner extent and translation-unit membership before reconstructing missing or extra statements"
             }
             Self::FrameContext => {
-                "alchemy diff {source} --asm (build a stack-slot ledger and recover the missing local or translation-unit context)"
+                "alchemy score {source} --asm (build a stack-slot ledger and recover the missing local or translation-unit context)"
             }
             Self::Unclassified => "route to the smart queue with the full --align diff attached",
             Self::CallTargetMismatch => "smart queue: inspect call bindings and veneers in the full --align diff; no automatic repair",

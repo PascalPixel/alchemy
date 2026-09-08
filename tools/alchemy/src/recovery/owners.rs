@@ -148,7 +148,7 @@ pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score
     let extent_flag = if owner.is_main() { "--size" } else { "--span" };
     let output = tool_command(root, "")
         .current_dir(root)
-        .arg("diff")
+        .arg("score")
         .arg(source)
         .args([
             "--owner",

@@ -1,9 +1,11 @@
 //! Psynergy: portable Thumb decoding, C recovery, comparison and bounded repairs.
 //! Callers supply bytes and image addresses; repository ownership and game-specific
 //! source rewrites belong to the integrating project.
+pub mod allocator;
 pub mod assets;
 pub mod cache;
 pub mod compare;
+pub mod convert;
 pub mod decode;
 pub mod lift;
 pub mod process;

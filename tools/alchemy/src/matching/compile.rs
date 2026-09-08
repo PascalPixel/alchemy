@@ -169,7 +169,7 @@ impl Target {
             let expected = window(
                 &rom,
                 i64::from(owner.address()) - ROM_BASE as i64,
-                crate::diff::render::region_size(root(), owner.address()).ok_or_else(|| {
+                crate::score::render::region_size(root(), owner.address()).ok_or_else(|| {
                     format!("no audited manifest extent for {stem}; rebuild the owner inventory")
                 })?,
             )?;

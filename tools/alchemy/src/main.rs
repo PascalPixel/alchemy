@@ -2,7 +2,9 @@ use std::process::ExitCode;
 
 mod allocator;
 mod build;
+mod build_asm;
 mod build_assets;
+mod build_claimed;
 mod build_full;
 mod check;
 mod convert;

@@ -33,8 +33,6 @@ dependencies = [
 name = "alchemy"
 version = "0.1.0"
 dependencies = [
- "build-asm",
- "build-claimed",
  "candidate-compiler",
  "compiler-core",
  "coverage-map",
@@ -105,24 +103,6 @@ checksum = "6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f"
 dependencies = [
  "memchr",
  "serde_core",
-]
-
-[[package]]
-name = "build-asm"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "build-claimed"
-version = "0.1.0"
-dependencies = [
- "candidate-compiler",
- "compiler-core",
- "serde_json",
 ]
 
 [[package]]

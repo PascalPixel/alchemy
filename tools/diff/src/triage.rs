@@ -1,5 +1,5 @@
 use crate::render::{alignment_key, without_pc_offset, without_register};
-use crate::topology::Comparison;
+use psynergy::compare::topology::Comparison;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

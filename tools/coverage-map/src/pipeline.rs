@@ -671,7 +671,7 @@ fn overlay_tiles(
             continue;
         }
         let mut tile = code_tile(
-            format!("{short} · {} · Proven C", owner.label),
+            format!("{short} · {} · C", owner.label),
             &span,
             &span,
             &[],
@@ -685,7 +685,7 @@ fn overlay_tiles(
     }
     let residuals = [
         (
-            "Draft C",
+            "Drafted",
             intersect(&subtract(executable, &exact), semantic),
             semantic,
         ),
@@ -704,7 +704,7 @@ fn overlay_tiles(
             semantic,
         ),
         (
-            "Draft ASM",
+            "Assembly",
             subtract(
                 &intersect(executable, draft_assembly),
                 &[exact.clone(), semantic.to_vec(), retained.to_vec()].concat(),
@@ -712,7 +712,7 @@ fn overlay_tiles(
             &[] as &[Span],
         ),
         (
-            "Proven ASM",
+            "Assembly",
             subtract(&intersect(executable, retained), &exact),
             &[] as &[Span],
         ),

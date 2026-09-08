@@ -17,9 +17,9 @@ _Golden Sun_ release as the first complete derived build target.
 
 ## Status: 67.32% DONE
 
-![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=2ab93b7aeab5c510)
+![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=ccb73ce643521864)
 
-![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=e2dae73c69e08ddf)
+![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=838a60306469bc78)
 
 ![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=673d1b297055937f)
 
@@ -36,11 +36,13 @@ evidence.
 The repository contains one shared source tree per game rather than a copy for
 every language. `make targets` checks all twelve edition routes; `make verify`
 is the authoritative full-ROM gate for the current `gs1-en` target. Progress
-is measured by reconstructed bytes. Proven C is C that compiles through the
-approved route to byte-identical output. Proven ASM is code whose required form
-cannot be emitted as ordinary C by the approved compiler model, with the reason
-recorded and the assembly reproduced byte-exactly. Neither label claims access
-to Camelot's original source. Draft classifications never count as DONE.
+is measured by reconstructed bytes. C compiles through the approved route
+to byte-identical output; Drafted is candidate C not yet exact. Assembly groups
+all retained assembly in the charts,
+including assembly still awaiting justification. Only byte-exact assembly with
+recorded evidence that ordinary C cannot emit its required form counts as DONE;
+draft classifications do not. Neither label claims access to Camelot's original
+source.
 
 This is a preservation and decompilation project—not a remake, ROM hack,
 emulator, or game distribution. No ROM is included. To build locally or help

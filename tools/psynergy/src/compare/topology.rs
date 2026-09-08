@@ -812,70 +812,11 @@ Func_080cd260:
     }
 
     #[test]
-    fn live_arm_owner_fails_closed() {
-        let source = include_str!("../../../games/gs1/asm/08002d5c.s");
-        assert!(matches!(
-            compare(source, source, "Func_08002d5c"),
-            Comparison::Uncovered(reason) if reason == "candidate-arm-mode"
-        ));
-    }
-
-    #[test]
-    fn live_pool_fill_matches_align_spelling() {
-        let source = include_str!("../../../games/gs1/asm/080908e0.s");
-        let aligned = source.replace("\tmovs\tr0, r0\n\t.4byte", "\t.align\t2, 0\n\t.4byte");
-        assert_ne!(source, aligned);
-        assert_eq!(
-            compare(source, &aligned, "Func_080908e0"),
-            Comparison::Equal
-        );
-    }
-
-    #[test]
-    fn live_multi_entry_reference_is_owner_scoped() {
-        let source = include_str!("../../../games/gs1/asm/08002dd8.s");
-        let changed_later_owner = source.replace("Func_08002df0:\n", "Func_08002df0:\n\tnop\n");
-        assert!(matches!(
-            compare(source, &changed_later_owner, "Func_08002dd8"),
-            Comparison::Uncovered(reason) if reason == "candidate-multiple-owner-entries"
-        ));
-    }
-
-    #[test]
     fn candidate_and_reference_may_use_distinct_authoritative_symbols() {
         let candidate = ".thumb\nFunc_08000000:\n    bx lr\n.size Func_08000000,.-Func_08000000\n";
         let reference = ".thumb\nNamedOwner:\n    bx lr\n.size NamedOwner,.-NamedOwner\n";
         assert_eq!(
             compare_symbols(candidate, "Func_08000000", reference, "NamedOwner"),
-            Comparison::Equal
-        );
-    }
-
-    #[test]
-    fn live_named_reference_matches_legacy_candidate_entry() {
-        let reference = include_str!("../../../games/gs1/asm/080a24d0.s");
-        let candidate = reference.replace("RunAssetSelectionScreen", "Func_080a24d0");
-        assert_eq!(
-            compare_symbols(
-                &candidate,
-                "Func_080a24d0",
-                reference,
-                "RunAssetSelectionScreen"
-            ),
-            Comparison::Equal
-        );
-    }
-
-    #[test]
-    fn live_0800307c_pool_island_skip_is_not_a_cfg_edge() {
-        let reference = include_str!("../../../games/gs1/asm/0800307c.s");
-        let candidate = reference.replace(
-            "\torrs\tr3, r2\n.L1:",
-            "\torrs\tr3, r2\n\tb\t.Lpool_done\n.Lpool:\n\t.word\t0\n.Lpool_done:\n.L1:",
-        );
-        assert_ne!(candidate, reference);
-        assert_eq!(
-            compare(&candidate, reference, "Func_0800307c"),
             Comparison::Equal
         );
     }

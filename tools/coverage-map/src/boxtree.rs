@@ -1,5 +1,22 @@
 use crate::jsnum::commas;
-use crate::model::{treemap, Area, Category, Rect, Tile, CATEGORIES};
+use crate::model::{treemap, Area, Category, Rect, Tile};
+
+const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
+    (Category::Unknown, "Unknown"),
+    (Category::DraftC, "Drafted"),
+    (Category::ProvenAsm, "Assembly"),
+    (Category::ProvenC, "C"),
+    (Category::AssetData, "Data"),
+];
+
+fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
+    categories[category as usize]
+        + if category == Category::ProvenAsm {
+            categories[Category::DraftAsm as usize]
+        } else {
+            0
+        }
+}
 use crate::pipeline::{source_container, CoverageMap};
 use crate::sha1::sha1_hex;
 use crate::tree::root;
@@ -187,8 +204,8 @@ fn draw_tiles(
             out.push(format!("<rect data-content-type=\"{name}\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"fill:{color}\"/>", body.x, body.y, body.width, body.height));
         } else {
             let mut y = body.y + body.height;
-            for (category, _, _) in CATEGORIES {
-                let n = tile.categories[category as usize];
+            for (category, _) in DISPLAY_CATEGORIES {
+                let n = display_bytes(&tile.categories, category);
                 if n <= 0 {
                     continue;
                 }
@@ -461,15 +478,15 @@ pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
             .map(|((name, color), bytes)| (name, format!("fill:{color}"), bytes))
             .collect()
     } else {
-        CATEGORIES
+        DISPLAY_CATEGORIES
             .iter()
-            .map(|(category, _, name)| {
+            .map(|(category, name)| {
                 (
                     *name,
                     fill(*category),
                     tiles
                         .iter()
-                        .map(|tile| tile.categories[*category as usize])
+                        .map(|tile| display_bytes(&tile.categories, *category))
                         .sum(),
                 )
             })
@@ -736,7 +753,7 @@ mod tests {
     }
 
     #[test]
-    fn code_tree_uses_five_ordered_progress_states_and_done_corner() {
+    fn code_tree_combines_asm_without_changing_done() {
         let mut categories = [0; 6];
         categories[Category::Unknown as usize] = 25;
         categories[Category::DraftAsm as usize] = 15;
@@ -773,12 +790,16 @@ mod tests {
         }
         assert!(rendered.contains("50.00% DONE"));
         let unknown = rendered.find("Unknown 25.0%").unwrap();
-        let draft_asm = rendered.find("Draft ASM 15.0%").unwrap();
-        let draft_c = rendered.find("Draft C 10.0%").unwrap();
-        let proven_asm = rendered.find("Proven ASM 25.0%").unwrap();
-        let proven_c = rendered.find("Proven C 25.0%").unwrap();
-        assert!(unknown < draft_asm);
-        assert!(draft_asm < draft_c);
+        let draft_c = rendered.find("Drafted 10.0%").unwrap();
+        let proven_asm = rendered.find("Assembly 40.0%").unwrap();
+        let proven_c = rendered.find("C 25.0%").unwrap();
+        assert!(!rendered.contains("Draft ASM"));
+        assert!(!rendered.contains("Proven ASM"));
+        assert!(!rendered.contains("Proven C"));
+        assert!(!rendered.contains("Draft C"));
+        assert!(!rendered.contains("Exact C"));
+        assert_eq!(rendered.matches("Assembly 40.0%").count(), 1);
+        assert!(unknown < draft_c);
         assert!(draft_c < proven_asm);
         assert!(proven_asm < proven_c);
         assert!(rendered.contains("legend-label"));

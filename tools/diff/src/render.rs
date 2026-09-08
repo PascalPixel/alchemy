@@ -1,9 +1,7 @@
 use crate::{
     cli::Options,
     disasm::{disassemble, Rows},
-    insns::gas_function_insns,
     patch::apply_unified_diff_in_tree,
-    topology::{self, Comparison},
     triage::{classify, classify_with_topology},
 };
 use candidate_compiler::verify::{
@@ -15,6 +13,11 @@ use compiler_core::routing::CompilerTarget;
 use compiler_core::source_inputs::source_tree_signature;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use disassemble::OVERLAY_BASE;
+use psynergy::compare::{
+    differing_offsets,
+    insns::gas_function_insns,
+    topology::{self, Comparison},
+};
 use regex::Regex;
 use serde_json::Value;
 use std::{
@@ -411,7 +414,7 @@ fn render_bytes(
     let reference_rows = disassemble(&reference_path.to_string_lossy(), 0.0)?;
     let candidate = ordered_lines(&candidate_rows);
     let reference = ordered_lines(&reference_rows);
-    let differing = crate::diff::differing_offsets(&actual, &expected);
+    let differing = differing_offsets(&actual, &expected, 2);
     let residual = classify_with_topology(
         &candidate,
         &reference,

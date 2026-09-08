@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+psynergy = { path = "../psynergy" }
 candidate-compiler = { path = "../candidate-compiler" }
 serde_json = { version = "1", features = ["preserve_order"] }
 serde = { version = "1", features = ["derive"] }

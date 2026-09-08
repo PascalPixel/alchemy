@@ -1,6 +1,7 @@
 //! Psynergy: dependency-free Thumb decoding, lifetime analysis and candidate C recovery.
 //! Callers supply bytes and image addresses; repository ownership and game-specific
 //! source rewrites belong to the integrating project.
+pub mod compare;
 pub mod decode;
 pub mod lift;
 pub mod sched;

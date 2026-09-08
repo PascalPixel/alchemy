@@ -80,10 +80,10 @@ pub enum Category {
 }
 pub const CATEGORIES: [(Category, &str, &str); 6] = [
     (Category::Unknown, "unknown", "Unknown"),
-    (Category::DraftAsm, "draft_asm", "Draft ASM"),
-    (Category::DraftC, "draft_c", "Draft C"),
-    (Category::ProvenAsm, "proven_asm", "Proven ASM"),
-    (Category::ProvenC, "proven_c", "Proven C"),
+    (Category::DraftAsm, "draft_asm", "Assembly"),
+    (Category::DraftC, "draft_c", "Drafted"),
+    (Category::ProvenAsm, "proven_asm", "Assembly"),
+    (Category::ProvenC, "proven_c", "C"),
     (Category::AssetData, "asset_data", "Data"),
 ];
 #[derive(Clone, Debug, Default)]

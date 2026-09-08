@@ -336,7 +336,7 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
         };
         let assembled = &built[start..start + span as usize];
         if assembled != reference {
-            let differing = crate::differing_units(assembled, reference, 2);
+            let differing = psynergy::compare::differing_offsets(assembled, reference, 2).len();
             findings.push(format!("{overlay}:{address:08x}\tDIFFERS\treference={}\tassembled={}\tdiffering={differing}", reference.len(), assembled.len()));
         }
     }

@@ -17764,6 +17764,14 @@
     "resource_3be:02000630": {
       "name": "SceneActor_FindCollision",
       "source": "overlays/actor_search/find_scene_collision_3be.c"
+    },
+    "resource_370:02000cfc": {
+      "name": "SceneData_FillTileBlock",
+      "source": "overlays/scene_script/fill_scene_tile_block.c"
+    },
+    "resource_370:02000d74": {
+      "name": "SceneData_FillTileRamp",
+      "source": "overlays/scene_script/fill_scene_tile_ramp.c"
     }
   }
 }

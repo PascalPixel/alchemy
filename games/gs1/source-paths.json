@@ -6726,6 +6726,10 @@
       "name": "SceneState_CopyPresetA0d0WithOffsetB0",
       "source": "overlays/scene_script/scene_394.c"
     },
+    "resource_394:020007e0": {
+      "name": "FieldScene_RunEightActorSetupSequence",
+      "source": "overlays/scene_script/scene_394.c"
+    },
     "resource_3a8:020017e8": {
       "name": "SceneState_CheckFlags941And940",
       "source": "overlays/state_update/check_flags_941_and_940.c"

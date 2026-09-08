@@ -77,6 +77,26 @@ s32 Func_02001d64(s32, s32);
 void Func_02001e22(void);
 void Func_02001e06(void);
 void Func_02001fc0(s32, s32);
+void Func_02001882();
+void Func_02001888();
+void Func_020018b2();
+void Func_020018ba();
+void Func_020018ca();
+void Func_020018d4();
+void Func_020018d6();
+void Func_020018e4();
+void Func_020018ea();
+void Func_020018ee();
+void Func_020018fe();
+void Func_02001900();
+void Func_02001902();
+void Func_0200190e();
+void Func_0200191c();
+void Func_02001926();
+void Func_02001934();
+void Func_0200193a();
+void Func_02001974();
+void Func_0200197a();
 
 /*
  * resource_394 owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
@@ -405,6 +425,34 @@ void SceneState_CopyPresetA0d0WithOffsetB0(void)
     p[1] += 0xb0;
     p[3] += 0xb0;
     p[5] += 0xb0;
+}
+
+void FieldScene_RunEightActorSetupSequence(void)
+{
+    s32 v5;
+
+    Func_02001882();
+    Func_020018ca(0, 8);
+    Func_02001888(6);
+    Func_0200190e(239);
+    Call3(Func_020018ba, 8, 0x8000, 0x3333);
+    Func_020018ea(8, 2);
+    Func_020018d4(8, 72, 176);
+    Func_020018b2(6);
+    Func_02001902(0, 2);
+    Call3(Func_020018e4, 0, 0x4ccc, 0x3333);
+    Call3(Func_02001900, 0, -8, 0);
+    Func_020018d6(24);
+    Func_02001926(0, 1);
+    Func_0200191c(8);
+    Func_02001934(8, 1);
+    Call1(Func_02001974, 0x120);
+    v5 = 9;
+    Func_0200197a(213);
+    Call6(Func_020018ee, 5, 9, 1, 4, 6, v5);
+    Call6(Func_020018fe, 0, 0, 1, 4, 4, v5);
+    *Data_020092c4 = 1;
+    Func_0200193a();
 }
 
 void FieldScene_RunActorEightSequence(void)

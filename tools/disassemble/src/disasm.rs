@@ -3,7 +3,6 @@ use crate::paths::OverlaySource;
 use crate::regex::Regex;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::path::Path;
 use tempfile::tempdir;
 pub const ROM_BASE: i64 = 0x0800_0000;
 pub const OVERLAY_BASE: i64 = 0x0200_0000;
@@ -393,8 +392,4 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         }
     }
     Err("overlay reconstruction did not converge".to_string())
-}
-pub fn build_overlay_source_from_file(path: &Path, base: i64) -> Result<String, String> {
-    let data = fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    build_overlay_source(&data, base)
 }

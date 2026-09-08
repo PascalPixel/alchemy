@@ -852,27 +852,6 @@ fn compile_production_overlay(
     compiled.sort_by_key(|member| member.address);
     Ok(compiled)
 }
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Span {
-    pub start: i64,
-    pub end: i64,
-}
-pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Result<Vec<Span>, String> {
-    let display = source.to_display_string();
-    let overlay = source
-        .overlay_id()
-        .unwrap_or_else(|| Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), ""));
-    let work = tempdir().map_err(|error| error.to_string())?;
-    compile_production_overlay(source, work.path(), &overlay).map(|members| {
-        members
-            .into_iter()
-            .map(|member| Span {
-                start: member.address - base,
-                end: member.address - base + member.data.len() as i64,
-            })
-            .collect()
-    })
-}
 /// The listing assembled on its own: every `AlchemyC_` placeholder stays
 /// zero, no production C is composed in. A parked owner's window can be
 /// checked here without depending on every other owner still compiling.
@@ -1033,11 +1012,13 @@ mod source_activation_tests {
         assert!(placeholder_addresses("Func_02000104:\n  bx lr\n").is_empty());
     }
     #[test]
-    fn public_source_diagnostic_preserves_missing_source_errors() {
+    fn production_overlay_preserves_missing_source_errors() {
         let work = tempdir().unwrap();
         let assembly = work.path().join("resource_382_overlay.s");
         fs::write(&assembly, "AlchemyC_0200dead:\n  .space 4\n").unwrap();
-        let error = overlay_c_spans(&OverlaySource::path(assembly), 0x0200_0000).unwrap_err();
+        let error =
+            compile_production_overlay(&OverlaySource::path(assembly), work.path(), "resource_382")
+                .unwrap_err();
         assert!(
             error.contains("resource_382:0200dead has an AlchemyC placeholder"),
             "{error}"

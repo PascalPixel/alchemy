@@ -17696,6 +17696,74 @@
     "resource_39a:02001d78": {
       "name": "FieldScene_RunFlaggedActorSpawnCue",
       "source": "overlays/scene_primary_script/run_flagged_actor_spawn_cue.c"
+    },
+    "resource_392:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_392.c"
+    },
+    "resource_373:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_373.c"
+    },
+    "resource_389:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_389.c"
+    },
+    "resource_391:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_391.c"
+    },
+    "resource_393:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_393.c"
+    },
+    "resource_39f:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_39f.c"
+    },
+    "resource_3b2:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3b2.c"
+    },
+    "resource_3b4:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3b4.c"
+    },
+    "resource_3bd:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3bd.c"
+    },
+    "resource_3bf:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3bf.c"
+    },
+    "resource_3c4:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3c4.c"
+    },
+    "resource_3c5:0200034c": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3c5.c"
+    },
+    "resource_39b:02000630": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_39b.c"
+    },
+    "resource_39c:02000630": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_39c.c"
+    },
+    "resource_3a6:02000630": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3a6.c"
+    },
+    "resource_3b3:02000630": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3b3.c"
+    },
+    "resource_3be:02000630": {
+      "name": "SceneActor_FindCollision",
+      "source": "overlays/actor_search/find_scene_collision_3be.c"
     }
   }
 }

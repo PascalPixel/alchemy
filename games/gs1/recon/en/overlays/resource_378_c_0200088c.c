@@ -4,6 +4,9 @@
 
 /*
  * resource_378 scripted scene owner at 0x0200088c (4,080 bytes).
+ * Main-image calls bind through this overlay's unique ldr-r4/bx-r4
+ * veneers in the translation-unit manifest; direct ROM bindings bypass
+ * those shipped call sites. This candidate remains nonexact.
  *
  * Boundary evidence: `push {r5,lr}` at 0x0200088c; the only return is
  * `pop {r5} / pop {r0} / bx r0` at 0x0200186c-0x02001870.  The

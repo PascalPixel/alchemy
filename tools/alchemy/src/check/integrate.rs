@@ -5,14 +5,14 @@
 //! `--apply` performs the move and cleanup only after that proof.
 use candidate_compiler::verify::run as run_command;
 use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
+use compiler_core::no_asm::{find_forbidden, source_files};
 use compiler_core::plan::direct_preprocessor_command;
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::TranslationUnits;
-use no_asm_c::{find_forbidden, source_files};
 use std::fs;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: integrate-matches [-h] [--apply|--check] directory";
+const USAGE: &str = "usage: alchemy check integrate [-h] [--apply|--check] directory";
 const ROOT_OVERRIDE: &str = "ALCHEMY_INTEGRATE_ROOT";
 #[derive(Default)]
 struct PipelineReport {

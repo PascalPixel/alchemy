@@ -17664,6 +17664,10 @@
     "resource_3a7:02000b8c": {
       "name": "SceneEffect_SpawnObjectBurstAtSubjectPosition",
       "source": "overlays/scene_effect_sequence/spawn_object_burst_at_subject_position.c"
+    },
+    "resource_3c7:02000308": {
+      "name": "FieldScene_RunActor14BeatsAndFlashGate",
+      "source": "overlays/scene_script/run_actor14_beats_and_flash_gate.c"
     }
   }
 }

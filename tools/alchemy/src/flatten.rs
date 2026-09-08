@@ -135,13 +135,12 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     // Registered owners are not the full executable inventory: unregistered
     // code must also be closed before the overlay can be flattened as complete.
-    let tree = coverage_map::tree::work_tree_at(root.clone());
+    let tree = crate::coverage::tree::work_tree_at(root.clone());
     let coverage =
-        coverage_map::pipeline::build_coverage_map(&coverage_map::pipeline::BuildOptions {
+        crate::coverage::pipeline::build_coverage_map(&crate::coverage::pipeline::BuildOptions {
             target: format!("{game}-en"),
             exact: &tree,
             recon: None,
-            prefer_verified_assets: true,
         })?;
     check_overlay_coverage(&coverage.executable_areas, &overlay)?;
     owners.sort_by_key(|o| o.address);
@@ -1239,7 +1238,7 @@ mod tests {
 
     #[test]
     fn flatten_rejects_unregistered_holes_and_missing_coverage() {
-        use coverage_map::model::{area, Category, Tile};
+        use crate::coverage::model::{area, Category, Tile};
         let tile = |category: Category| {
             let mut tile = Tile {
                 bytes: 4,
@@ -1312,10 +1311,10 @@ mod tests {
 }
 
 fn check_overlay_coverage(
-    areas: &[coverage_map::model::Area],
+    areas: &[crate::coverage::model::Area],
     overlay: &str,
 ) -> Result<(), String> {
-    use coverage_map::model::Category;
+    use crate::coverage::model::Category;
     let group = overlay
         .strip_prefix("resource_")
         .ok_or("invalid overlay ID")?;

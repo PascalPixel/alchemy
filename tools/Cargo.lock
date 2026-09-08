@@ -34,7 +34,6 @@ name = "alchemy"
 version = "0.1.0"
 dependencies = [
  "compiler-core",
- "coverage-map",
  "import-asset",
  "lz-codecs",
  "objdiff-core",
@@ -134,15 +133,6 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
-]
-
-[[package]]
-name = "coverage-map"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "serde_json",
- "sha1",
 ]
 
 [[package]]

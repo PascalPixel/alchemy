@@ -29,6 +29,3 @@ pub fn round_half_up(n: i64, d: i64) -> f64 {
         ((n as f64 * 10_000.0 / d as f64) + 0.5).floor() / 100.0
     }
 }
-pub fn hex8(value: i64) -> String {
-    format!("{value:08x}")
-}

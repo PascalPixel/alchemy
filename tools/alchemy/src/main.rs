@@ -9,6 +9,7 @@ mod build_full;
 mod candidate;
 mod check;
 mod convert;
+mod coverage;
 mod cross_edition;
 mod dashboard;
 mod decompile;

@@ -332,11 +332,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -487,11 +482,11 @@ void FieldScene_RunExtendedSequence(void)
     Func_020042c2(30, base5_200ac90);
     Func_02004270_a(60);
     Func_02004320(12, 2);
-    Value3(Func_02003ece, 12, 0x7000, 10);
+    Func_02003ece(12, 0x7000, 10);
     Call2((void (*)())Func_02003f08_a, 12, 10);
     Func_02004384(11, 1);
     Func_020042e2(20);
-    Value3(Func_02003f38, 11, 0x1000, 10);
+    Func_02003f38(11, 0x1000, 10);
     Func_02004384_a(11, 3);
     Func_02003f30(11, 20);
     Func_0200438c(12, 3);
@@ -509,14 +504,14 @@ void FieldScene_RunExtendedSequence(void)
     Func_02004362(10);
     Call2(Func_020043aa, 12, 0x200ad74);
     Func_020043b8(12);
-    Value3(Func_02003fc6, 12, 0x3000, 120);
+    Func_02003fc6(12, 0x3000, 120);
     Func_0200442a(13, 2);
     Func_02004388(20);
     ((void (*)())Func_02003fc6_a)(13, 20);
     Func_02004496(0, 0, 0);
     Func_02003ff4(1, 0x9000, 20);
     Func_02004004(0, 0xc000, 10);
-    Value3(Func_02004014, 1, 0xb000, 10);
+    Func_02004014(1, 0xb000, 10);
     Func_02004458(0, 3);
     Func_020043d6(10);
     Func_0200446e(1, 3);
@@ -573,7 +568,7 @@ void FieldScene_RunExtendedSequence(void)
     Func_02004204(16, 10);
     Func_02004668(18, 3);
     Func_020046c0(18, 0);
-    Value3(Func_020046e2, 1, 0xd000, 0);
+    Func_020046e2(1, 0xd000, 0);
     Func_0200467a(18, 4);
     Func_020046da(18, 0);
     Func_020046a2_a(18, 3);
@@ -599,7 +594,7 @@ void FieldScene_RunExtendedSequence(void)
     Func_020042f2(15, 0xd000, 10);
     Func_020042e2_a(15, 10);
     Func_02004304(15, 0x9000, 20);
-    Value3(Func_0200430e, 15, 0x5000, 10);
+    Func_0200430e(15, 0x5000, 10);
     Func_02004752(11, 3);
     Func_0200475a(14, 3);
     Func_02004762(17, 3);

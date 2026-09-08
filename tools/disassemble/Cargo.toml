@@ -10,7 +10,7 @@ path = "src/lib.rs"
 [dependencies]
 compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
-extract-resource = { path = "../extract-resource" }
+lz-codecs = { path = "../lz-codecs" }
 regex = "1.13.1"
 serde_json = "1"
 tempfile = "3"

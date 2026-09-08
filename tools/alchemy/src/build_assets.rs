@@ -12,13 +12,13 @@ use compiler_core::sha256;
 use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use disassemble::{assemble_overlay, OverlaySource};
-use extract_resource::{PaletteGroup, PaletteOperation};
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use import_asset::import_tilemap;
 use import_asset::{
     append_conductor_meta, gba_graphics, gba_palette_rgba, indexed_png, midi_events, one_bit_tiles,
     rgba_png, EventBody, GbaBpp, MidiEvent, MIDI_BUILD_DIRECTIVE,
 };
+use lz_codecs::{PaletteGroup, PaletteOperation};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -1868,7 +1868,7 @@ fn tile_components_truncate_zero_canvas_tails() {
     }
 }
 
-fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralToken>, String> {
+fn parse_general_tokens(value: &Value) -> Result<Vec<lz_codecs::GeneralToken>, String> {
     value
         .as_array()
         .ok_or("general-LZ tokens are not an array".to_string())?
@@ -1882,11 +1882,11 @@ fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralTo
                 .and_then(Value::as_str)
                 .ok_or("general-LZ token has no tag".to_string())?;
             match tag {
-                "l" if values.len() == 2 => Ok(extract_resource::GeneralToken::Literal(number(
+                "l" if values.len() == 2 => Ok(lz_codecs::GeneralToken::Literal(number(
                     &values[1], "literal",
                 )?
                     as u32)),
-                "c" if values.len() == 3 => Ok(extract_resource::GeneralToken::Copy {
+                "c" if values.len() == 3 => Ok(lz_codecs::GeneralToken::Copy {
                     length: number(&values[1], "copy length")? as u32,
                     distance: number(&values[2], "copy distance")? as u32,
                 }),
@@ -1895,7 +1895,7 @@ fn parse_general_tokens(value: &Value) -> Result<Vec<extract_resource::GeneralTo
         })
         .collect()
 }
-fn parse_halfword_tokens(value: &Value) -> Result<Vec<extract_resource::HalfwordToken>, String> {
+fn parse_halfword_tokens(value: &Value) -> Result<Vec<lz_codecs::HalfwordToken>, String> {
     value
         .as_array()
         .ok_or("halfword-LZ tokens are not an array".to_string())?
@@ -1905,15 +1905,14 @@ fn parse_halfword_tokens(value: &Value) -> Result<Vec<extract_resource::Halfword
                 .as_array()
                 .ok_or("halfword-LZ token is not an array".to_string())?;
             match (values.first().and_then(Value::as_str), values.len()) {
-                (Some("l"), 2) => Ok(extract_resource::HalfwordToken::Literal(number(
+                (Some("l"), 2) => Ok(lz_codecs::HalfwordToken::Literal(number(
                     &values[1], "literal",
-                )?
-                    as u32)),
-                (Some("c"), 3) => Ok(extract_resource::HalfwordToken::Copy {
+                )? as u32)),
+                (Some("c"), 3) => Ok(lz_codecs::HalfwordToken::Copy {
                     length: number(&values[1], "copy length")? as u32,
                     distance: number(&values[2], "copy distance")? as u32,
                 }),
-                (Some("e"), 1) => Ok(extract_resource::HalfwordToken::End),
+                (Some("e"), 1) => Ok(lz_codecs::HalfwordToken::End),
                 _ => Err("unsupported halfword-LZ token".to_string()),
             }
         })
@@ -1942,19 +1941,19 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
         return Err("decoded components do not match plan size".to_string());
     }
     let mut built = match codec {
-        "golden-sun-general-lz-prefill" => extract_resource::encode_general_prefill(
+        "golden-sun-general-lz-prefill" => lz_codecs::encode_general_prefill(
             decoded,
             &parse_general_tokens(plan.get("tokens").ok_or("general-LZ tokens are missing")?)?,
             number(&plan["prefill"], "prefill")?,
             number(plan.get("header").unwrap_or(&Value::from(1)), "header")?,
         )
         .map_err(|e| e.to_string())?,
-        "golden-sun-general-lz" => extract_resource::encode_general(
+        "golden-sun-general-lz" => lz_codecs::encode_general(
             decoded,
             &parse_general_tokens(plan.get("tokens").ok_or("general-LZ tokens are missing")?)?,
         )
         .map_err(|e| e.to_string())?,
-        "golden-sun-halfword-lz" => extract_resource::encode_halfword(
+        "golden-sun-halfword-lz" => lz_codecs::encode_halfword(
             &decoded,
             &parse_halfword_tokens(plan.get("tokens").ok_or("halfword-LZ tokens are missing")?)?,
         )
@@ -1967,7 +1966,7 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
                 .iter()
                 .map(parse_group)
                 .collect::<Result<Vec<_>, _>>()?;
-            extract_resource::encode_palette(decoded, &groups).map_err(|e| e.to_string())?
+            lz_codecs::encode_palette(decoded, &groups).map_err(|e| e.to_string())?
         }
         "golden-sun-arena-lz" => {
             let tokens = plan.get("tokens").map(parse_general_tokens).transpose()?;
@@ -1976,7 +1975,7 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
                 .map(|value| number(value, "final_flags"))
                 .transpose()?
                 .unwrap_or(0);
-            extract_resource::encode_arena(
+            lz_codecs::encode_arena(
                 decoded,
                 tokens.as_deref(),
                 u8::try_from(final_flags).map_err(|_| "final flags exceed a byte")?,
@@ -2797,12 +2796,12 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 .map(|token| {
                     // A bare width is a literal; `[distance, length]` a copy.
                     if token.is_u64() {
-                        return Ok(extract_resource::Mtf4LzToken::Literal {
+                        return Ok(lz_codecs::Mtf4LzToken::Literal {
                             width: number(token, "tag-2 literal width")? as u32,
                         });
                     }
                     match token.as_array().map(Vec::as_slice) {
-                        Some([distance, length]) => Ok(extract_resource::Mtf4LzToken::Copy {
+                        Some([distance, length]) => Ok(lz_codecs::Mtf4LzToken::Copy {
                             length: number(length, "tag-2 copy length")? as u32,
                             distance: number(distance, "tag-2 copy distance")? as u32,
                         }),
@@ -2810,8 +2809,8 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                     }
                 })
                 .collect::<Result<Vec<_>, _>>()?;
-            let mut built = extract_resource::encode_mtf4_lz(&decoded, &tokens)
-                .map_err(|error| error.to_string())?;
+            let mut built =
+                lz_codecs::encode_mtf4_lz(&decoded, &tokens).map_err(|error| error.to_string())?;
             let lookahead = hex_bytes(
                 plan.get("lookahead").unwrap_or(&Value::from("")),
                 "tag-2 lookahead",

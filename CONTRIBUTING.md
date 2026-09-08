@@ -492,7 +492,7 @@ libraries are not additional public command surfaces.
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
-| [extract-resource](tools/extract-resource/) | Read resource payloads from approved ROMs; general, palette, halfword, arena and MTF4 LZ stream codecs. |
+| [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |
 | [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |
 
 ## Owners and names

@@ -368,6 +368,9 @@ trampoline guard, search execution and matching acceptance fixtures live in
 `tools/alchemy/src/matching`, not a separate tool crate.
 Owner-aware scoring and reports live in `tools/alchemy/src/diff`. They use
 Psynergy's shared comparisons and repair types; they are not a separate crate.
+Candidate compilation lives in `tools/alchemy/src/candidate.rs`: it applies
+Golden Sun owner names, symbol bindings and overlay serialization. Compile-only
+builds link without claiming reference equality; scoring compares supplied bytes.
 Compiler policy and the remaining analysis code still need their portability
 boundaries reviewed;
 the existence of the Psynergy crate does not mean that extraction is finished.
@@ -530,7 +533,6 @@ libraries are not additional public command surfaces.
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
-| [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
 | [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |

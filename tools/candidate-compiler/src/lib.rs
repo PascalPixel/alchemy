@@ -1,9 +1,0 @@
-//! Candidate compilation and complete byte-range comparison.
-
-pub mod verify;
-
-pub use compiler_core::routing::CompilerTarget;
-pub use verify::{
-    compile_to_assembly, verify_candidate_owned_routed, CandidateCompilerConfiguration,
-    Verification, ROM_BASE,
-};

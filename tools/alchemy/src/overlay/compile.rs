@@ -224,7 +224,7 @@ pub fn compile_overlay_c(
     options.support_flags = extra_flags.to_vec();
     let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
-    let configuration = candidate_compiler::CandidateCompilerConfiguration {
+    let configuration = crate::candidate::CandidateCompilerConfiguration {
         overlay_extent: Some(extent),
         absolute_symbols: unit
             .map(TranslationUnit::canonical_symbols)
@@ -268,7 +268,7 @@ pub fn compile_overlay_c(
             }
         }
     }
-    let data = candidate_compiler::verify_candidate_owned_routed(
+    let data = crate::candidate::verify_candidate_owned_routed(
         &source_display,
         &routing_source,
         &stem,

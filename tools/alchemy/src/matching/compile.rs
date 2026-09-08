@@ -1,9 +1,9 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use crate::candidate::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::compile_overlay_c;
-use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::build_io::read_json;
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};

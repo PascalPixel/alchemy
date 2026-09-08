@@ -1,4 +1,4 @@
-use candidate_compiler::verify::CandidateCompilerConfiguration;
+use crate::candidate::CandidateCompilerConfiguration;
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
 pub const USAGE: &str = "usage: alchemy diff <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";

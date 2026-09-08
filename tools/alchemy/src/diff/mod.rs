@@ -63,7 +63,7 @@ fn run(mut options: crate::diff::cli::Options) -> Result<String, String> {
         ));
     }
     if let Some(overlay) = unit.overlay.clone() {
-        if options.owner.is_none() {
+        if options.owner.is_none() && unit.exact() {
             return score_overlay_unit(&unit, &overlay);
         }
     }
@@ -254,6 +254,18 @@ fn fail(message: &str) -> ! {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn retained_overlay_unit_scores_without_an_owner_override() {
+        let work = tempfile::tempdir().unwrap();
+        let mut options = crate::diff::cli::Options::gs1(String::new());
+        options.unit = Some("retained-overlay-380-large-object-sequence".into());
+        options.work = Some(work.path().to_string_lossy().into_owned());
+        options.first = true;
+        let output = run(options).unwrap();
+        assert!(output.contains("scope=translation-unit"));
+        assert!(output.contains("owner=0x020027f8"));
+        assert!(output.contains("differing_halfwords="));
+    }
     #[test]
     fn entrypoint_contracts() {
         let output = |difference| RenderOutput {

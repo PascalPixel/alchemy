@@ -116,6 +116,7 @@ name = "candidate-compiler"
 version = "0.1.0"
 dependencies = [
  "compiler-core",
+ "psynergy",
  "tempfile",
 ]
 
@@ -232,6 +233,7 @@ dependencies = [
  "candidate-compiler",
  "compiler-core",
  "lz-codecs",
+ "psynergy",
  "regex",
  "serde_json",
  "tempfile",

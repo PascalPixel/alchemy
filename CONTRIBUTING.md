@@ -358,8 +358,9 @@ Alchemy is the Golden Sun project; Psynergy is its reusable decompilation
 platform. `tools/psynergy` currently owns portable Thumb decoding,
 lifetime analysis, candidate C recovery, instruction normalization, structural
 comparison, byte-difference counting, explicit subprocess execution and bounded
-C repairs and cache storage. Its external dependencies are `regex` for source
-repairs and `rusqlite` for transactional storage; tests also use `tempfile`.
+C repairs, cache storage and byte-oriented asset codecs. Its external dependencies
+are `regex` for source repairs, `rusqlite` for transactional storage and `png` for
+image containers; tests also use `tempfile`.
 Cache storage accepts explicit paths and keys and owns its connection lock.
 Alchemy retains cache locations, key construction and compiler fingerprints.
 Thumb BL decoding and byte-level relocation-site scanning are shared by the
@@ -384,8 +385,12 @@ Golden Sun compiler bundles, routes, ordinary-C policy, symbol bindings, owner
 paths and translation units live in `tools/alchemy/src/compiler`. These are
 project integration, not a portable compiler crate. Its policy tables are private
 to that module; the approved routes and hashes are unchanged by consolidation.
-The remaining analysis and asset machinery still needs its portability boundaries
-reviewed; the existence of Psynergy does not mean that extraction is finished.
+`psynergy::assets` owns explicit image, MIDI, WAV, text, pixel-compression,
+Huffman-archive and LZ codecs. Callers select formats and supply bytes, extents,
+palettes and encoding plans; the platform has no game resource lookup or default
+ROM. Alchemy owns file conversion commands, package layouts and manifests.
+The remaining analysis machinery still needs its portability boundaries reviewed;
+the existence of Psynergy does not mean that extraction is finished.
 
 `alchemy dashboard` (or `make dashboard`) serves live coverage at
 `http://127.0.0.1:4650/`. Its four charts include sound coverage, not playback.
@@ -544,9 +549,7 @@ libraries are not additional public command surfaces.
 | Tool | Responsibility |
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
-| [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution, transactional cache storage, atomic file writes and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
-| [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |
-| [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |
+| [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution, transactional cache storage, atomic file writes and bounded C repair enumeration, and explicit byte-oriented asset codecs under assets/. PNG/GBA tile and palette conversions, MIDI, WAV PCM, text, pixel compression, Huffman archives and LZ streams share one asset error type. No resource tables or game addresses. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
 
 ## Owners and names
 

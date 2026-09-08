@@ -48,8 +48,8 @@ pub fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<Vec<u8>
         .filter(|end| *end > start)
         .unwrap_or(rom.len());
     let (bytes, _) = match rom[start] {
-        0 => lz_codecs::decode_general(rom, start, end, 0x10_0000),
-        1 => lz_codecs::decode_palette(rom, start + 1, end, 0x10_0000),
+        0 => psynergy::assets::lz::decode_general(rom, start, end, 0x10_0000),
+        1 => psynergy::assets::lz::decode_palette(rom, start + 1, end, 0x10_0000),
         tag => return Err(format!("resource {resource:03x} has tag {tag}")),
     }
     .map_err(|error| error.0)?;

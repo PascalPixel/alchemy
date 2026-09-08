@@ -1512,16 +1512,124 @@
       ]
     },
     {
-      "id": "restored-overlays-actor-presentation-configure-and-place-actor-twelve",
+      "id": "staged-actor-scene-steps",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/actor_presentation/configure_and_place_actor_twelve.c",
+      "source": "games/gs1/src/overlays/staged_actor/scene_steps.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "Func_020090b8": {
+          "address": "0x020090b8",
+          "kind": "thumb"
+        },
+        "Func_0200a540": {
+          "address": "0x0200a540",
+          "kind": "thumb"
+        },
+        "Func_0200a5c8": {
+          "address": "0x0200a5c8",
+          "kind": "thumb"
+        },
+        "Func_0200a4d0": {
+          "address": "0x0200a4d0",
+          "kind": "thumb"
+        },
+        "Func_0200a508": {
+          "address": "0x0200a508",
+          "kind": "thumb"
+        },
+        "Func_0200a578": {
+          "address": "0x0200a578",
+          "kind": "thumb"
+        },
+        "Func_0200a520": {
+          "address": "0x0200a520",
+          "kind": "thumb"
+        },
+        "Func_0200a4d0_unprototyped": {
+          "address": "0x0200a4d0",
+          "kind": "thumb"
+        },
+        "Func_0200a578_unprototyped": {
+          "address": "0x0200a578",
+          "kind": "thumb"
+        },
+        "Func_0200a5e0": {
+          "address": "0x0200a5e0",
+          "kind": "thumb"
+        },
+        "Func_0200a580": {
+          "address": "0x0200a580",
+          "kind": "thumb"
+        },
+        "Func_0200a538": {
+          "address": "0x0200a538",
+          "kind": "thumb"
+        },
+        "Func_0200a510": {
+          "address": "0x0200a510",
+          "kind": "thumb"
+        },
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
       "owners": [
+        {
+          "address": "0x02001108",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001114",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001120",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200115c",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001198",
+          "extent": 64,
+          "state": "exact-c"
+        },
         {
           "address": "0x020011d8",
           "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001204",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001238",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200126c",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020012a0",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020012d4",
+          "extent": 52,
           "state": "exact-c"
         }
       ]
@@ -19301,63 +19409,6 @@
         {
           "address": "0x02000a48",
           "extent": 8,
-          "state": "exact-c"
-        }
-      ]
-    },
-    {
-      "id": "unnamed-leaf-run-048",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_setup/run_indexed_steps_3b4.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3b4",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02001108",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02001114",
-          "extent": 12,
-          "state": "exact-c"
-        }
-      ]
-    },
-    {
-      "id": "unnamed-leaf-run-049",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b4_value_steps.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3b4",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02001204",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02001238",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0200126c",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x020012a0",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x020012d4",
-          "extent": 52,
           "state": "exact-c"
         }
       ]

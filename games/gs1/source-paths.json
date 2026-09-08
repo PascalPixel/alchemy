@@ -7657,7 +7657,7 @@
     },
     "resource_3b4:02001204": {
       "name": "FieldScene_RunStep8ValueEe7",
-      "source": "overlays/scene_primary_script/run_scene_3b4_value_steps.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_398:02000168": {
       "name": "SceneState_ConfigureRegion0_0_21x14",
@@ -8649,7 +8649,7 @@
     },
     "resource_3b4:02001198": {
       "name": "SceneState_ApplyRectAndPlaceSlot12",
-      "source": "overlays/state_update/apply_rect_and_place_slot_12.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_3bb:020002e8": {
       "name": "SceneState_SendWord250With6",
@@ -8709,7 +8709,7 @@
     },
     "resource_3b4:02001114": {
       "name": "FieldScene_RunIndexedStep1",
-      "source": "overlays/scene_setup/run_indexed_steps_3b4.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_39a:020000ec": {
       "name": "SceneData_ReturnZero",
@@ -8845,7 +8845,7 @@
     },
     "resource_3b4:0200115c": {
       "name": "SceneState_ResetCounter412OnHeading4000",
-      "source": "overlays/state_update/reset_counter_412_on_heading_4000.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_3c4:02000dc8": {
       "name": "SceneActor_PassRaisedPointOfActorZero",
@@ -10015,7 +10015,7 @@
     },
     "resource_3b4:02001238": {
       "name": "FieldScene_RunStep9ValueEe8",
-      "source": "overlays/scene_primary_script/run_scene_3b4_value_steps.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_381:02002d94": {
       "name": "FieldScene_RunStepByRuntimeBits",
@@ -11462,7 +11462,7 @@
     },
     "resource_3b4:02001108": {
       "name": "FieldScene_RunIndexedStep0",
-      "source": "overlays/scene_setup/run_indexed_steps_3b4.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_3ae:0200019c": {
       "name": "SceneData_SelectSecondaryDataBySelectorAndFlags",
@@ -12224,7 +12224,7 @@
     },
     "resource_3b4:0200126c": {
       "name": "FieldScene_RunStep10ValueEe9",
-      "source": "overlays/scene_primary_script/run_scene_3b4_value_steps.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_38f:020000a0": {
       "name": "SceneData_InitRecordTable",
@@ -12689,7 +12689,7 @@
     },
     "resource_3b4:02001120": {
       "name": "SceneState_ResetCounter412OnHeading4000B",
-      "source": "overlays/scene_state_interaction/reset_counter_412_on_heading_4000_b_3b4.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_389:020002a8": {
       "name": "StagedActor_ResetMotionIfBlockedAhead",
@@ -12853,7 +12853,7 @@
     },
     "resource_3b4:020012a0": {
       "name": "FieldScene_RunStep11ValueEea",
-      "source": "overlays/scene_primary_script/run_scene_3b4_value_steps.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_39b:02001bc8": {
       "name": "OverlayObject_SpawnKind24AtActor",
@@ -14150,7 +14150,7 @@
     },
     "resource_3b4:020012d4": {
       "name": "FieldScene_RunStep12ValueEeb",
-      "source": "overlays/scene_primary_script/run_scene_3b4_value_steps.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_38c:02000038": {
       "name": "SceneData_ReturnZero",
@@ -14992,7 +14992,7 @@
     },
     "resource_3b4:020011d8": {
       "name": "ConfigureAndPlaceActorTwelve",
-      "source": "overlays/actor_presentation/configure_and_place_actor_twelve.c"
+      "source": "overlays/staged_actor/scene_steps.c"
     },
     "resource_3c5:02001158": {
       "name": "ResetSceneParametersAndFinishSetup",

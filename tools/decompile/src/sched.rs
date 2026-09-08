@@ -459,7 +459,7 @@ pub fn value_calls(ins: &[Ins]) -> Sites {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::decode::{decode_window, OVERLAY_BASE};
+    use crate::decode::{decode_window_at, OVERLAY_BASE};
 
     fn image(halves: &[u16]) -> Vec<u8> {
         halves.iter().flat_map(|h| h.to_le_bytes()).collect()
@@ -473,12 +473,12 @@ mod tests {
         let block = image(&[
             0x2100, 0x200c, 0xf000, 0xf810, 0x2007, 0xf000, 0xf810, 0x4770,
         ]);
-        let ins = decode_window(&block, OVERLAY_BASE, block.len() as u32);
+        let ins = decode_window_at(&block, OVERLAY_BASE, OVERLAY_BASE, block.len() as u32);
         assert_eq!(value_calls(&ins).value, BTreeSet::from([2]));
         let mismatch = image(&[
             0x200c, 0x2100, 0xf000, 0xf810, 0x2007, 0xf000, 0xf810, 0x4770,
         ]);
-        let ins = decode_window(&mismatch, OVERLAY_BASE, mismatch.len() as u32);
+        let ins = decode_window_at(&mismatch, OVERLAY_BASE, OVERLAY_BASE, mismatch.len() as u32);
         assert!(value_calls(&ins).value.is_empty());
     }
 }
@@ -486,7 +486,7 @@ mod tests {
 #[cfg(test)]
 mod direct_tests {
     use super::*;
-    use crate::decode::{decode_window, OVERLAY_BASE};
+    use crate::decode::{decode_window_at, OVERLAY_BASE};
 
     fn image(halves: &[u16]) -> Vec<u8> {
         halves.iter().flat_map(|h| h.to_le_bytes()).collect()
@@ -502,13 +502,13 @@ mod direct_tests {
             0x2280, 0x0212, 0x2001, 0x2100, 0xf000, 0xf80a, 0x2001, 0x2102, 0x2203, 0xf000, 0xf80a,
             0x4770,
         ]);
-        let ins = decode_window(&direct, OVERLAY_BASE, direct.len() as u32);
+        let ins = decode_window_at(&direct, OVERLAY_BASE, OVERLAY_BASE, direct.len() as u32);
         assert_eq!(value_calls(&ins).direct, BTreeSet::from([4]));
         let wrapper = image(&[
             0x2280, 0x2001, 0x2100, 0x0212, 0xf000, 0xf80a, 0x2001, 0x2102, 0x2203, 0xf000, 0xf80a,
             0x4770,
         ]);
-        let ins = decode_window(&wrapper, OVERLAY_BASE, wrapper.len() as u32);
+        let ins = decode_window_at(&wrapper, OVERLAY_BASE, OVERLAY_BASE, wrapper.len() as u32);
         assert!(value_calls(&ins).direct.is_empty());
     }
 }

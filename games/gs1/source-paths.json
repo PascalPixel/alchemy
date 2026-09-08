@@ -17943,6 +17943,10 @@
     "resource_3a5:02000104": {
       "name": "OverlayObject_IntegrateVelocitiesAndSpriteAngle",
       "source": "overlays/overlay_object/integrate_velocities_and_sprite_angle_3a5.c"
+    },
+    "resource_3be:02000104": {
+      "name": "OverlayObject_IntegrateVelocities",
+      "source": "overlays/overlay_object/integrate_velocities_3be.c"
     }
   }
 }

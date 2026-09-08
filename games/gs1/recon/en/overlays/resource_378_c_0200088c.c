@@ -135,6 +135,7 @@ void Func_0200088c(void)
     Func_0808a148(1, 0xb, 0); /* 0x0a5a */
     Func_0808a010(0x14); /* 0x0a60 */
     Func_0808a178(0xb, 0); /* 0x0a68 */
+    /* Each arm advances once, on its own side of the object-state call. */
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a010(0x14); /* 0x0a7a */
         Func_0808a110(0xb, 3); /* 0x0a82 */
@@ -145,8 +146,8 @@ void Func_0200088c(void)
         Func_0808a010(0x14); /* 0x0aa6 */
         Func_0808a110(0xb, 4); /* 0x0aae */
         Func_0808a010(0x14); /* 0x0ab4 */
-        Func_0808a180(0xb, 0); /* 0x0aca */
         SKIP_BEATS++;
+        Func_0808a180(0xb, 0); /* 0x0aca */
     }
     Func_0808a010(0x14); /* 0x0ad0 */
     Func_0808a138(9, 1); /* 0x0ad8 */
@@ -161,10 +162,10 @@ void Func_0200088c(void)
         Func_0808a110(9, 3); /* 0x0b24 */
         Func_0808a010(0x14); /* 0x0b2a */
         Func_0808a180(9, 0); /* 0x0b32 */
+        SKIP_BEATS++;
     } else {
         Func_0808a010(0x14); /* 0x0b62 */
         Func_0808a110(9, 4); /* 0x0b6a */
-        SKIP_BEATS++;
         Func_0808a010(0x14); /* 0x0b70 */
         SKIP_BEATS++;
         Func_0808a180(9, 0); /* 0x0b88 */

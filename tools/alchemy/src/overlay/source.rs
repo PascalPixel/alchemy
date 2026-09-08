@@ -1,7 +1,4 @@
 use std::path::PathBuf;
-pub fn root() -> PathBuf {
-    compiler_core::routing::root().to_path_buf()
-}
 #[derive(Debug, Clone)]
 pub enum OverlaySource {
     Path(PathBuf),

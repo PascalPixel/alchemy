@@ -428,6 +428,10 @@ game-specific asset crate: a package layout is data, and a codec is named
 for its format. Overlay adoption, parking and audits live alongside their command
 dispatch in `tools/alchemy/src/overlay`; they are not a separate library. The
 owner-aware `alchemy diff` path uses the same overlay scoring integration.
+Overlay compilation, canonical resource loading and assembly reconstruction also
+belong here, in `compile`, `rom`, `source` and `assembly` modules. The retired
+disassemble crate was this game integration, not a portable instruction decoder;
+Psynergy owns instruction decoding.
 
 Asset tooling is organized by format and conversion, never by resource number,
 ROM address or the first game asset that needed it. Name a directional converter
@@ -528,7 +532,6 @@ libraries are not additional public command surfaces.
 | [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
-| [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
 | [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |
 | [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |

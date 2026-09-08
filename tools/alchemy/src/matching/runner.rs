@@ -37,20 +37,42 @@ fn load(path: &Path) -> Result<(PathBuf, String), String> {
     Ok((path, source))
 }
 
-fn allocator_report(path: &Path) -> Result<crate::diff::allocator::Report, String> {
-    let work = tempfile::tempdir().map_err(|error| error.to_string())?;
+fn allocator_options(path: &Path, work: &Path) -> Result<Box<crate::diff::cli::Options>, String> {
     let arguments = [
         path.to_string_lossy().into_owned(),
+        "--owner".into(),
+        super::compile::source_owner(path)?.id(),
         "--allocator-order".into(),
         "--work".into(),
-        work.path().to_string_lossy().into_owned(),
+        work.to_string_lossy().into_owned(),
     ];
     let crate::diff::cli::ParseOutcome::Options(options) =
         crate::diff::cli::options_of(root(), &arguments)?
     else {
         return Err("allocator decoder options unexpectedly requested help".into());
     };
-    let report = crate::diff::render::render(root(), &options)?
+    Ok(options)
+}
+
+#[test]
+fn allocator_preflight_preserves_overlay_identity() {
+    let source = root().join("games/gs1/recon/en/overlays/resource_381_c_020029a4.c");
+    let work = tempfile::tempdir().unwrap();
+    let options = allocator_options(&source, work.path()).unwrap();
+    assert_eq!(options.owner, Some(0x020029a4));
+    assert_eq!(options.overlay.as_deref(), Some("resource_381"));
+    assert!(options.allocator_order);
+}
+
+fn allocator_report(path: &Path) -> Result<crate::diff::allocator::Report, String> {
+    let work = tempfile::tempdir().map_err(|error| error.to_string())?;
+    let options = allocator_options(path, work.path())?;
+    let rendered = if options.overlay.is_some() {
+        crate::overlay::score::render_options(root(), options)?
+    } else {
+        crate::diff::render::render(root(), &options)?
+    };
+    let report = rendered
         .allocator
         .ok_or("allocator decoder produced no report")?;
     if report.dimensions.is_empty() || report.repair.is_none() {

@@ -259,7 +259,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
             count[6] += 1;
             "unmapped"
         } else {
-            let ordinary = no_asm_c::ordinary_source(root, source)?;
+            let ordinary = compiler_core::no_asm::ordinary_source(root, source)?;
             count[5 - usize::from(ordinary)] += 1;
             ["nonordinary", "ordinary"][usize::from(ordinary)]
         };

@@ -9,7 +9,6 @@ decompile = { path = "../decompile" }
 candidate-compiler = { path = "../candidate-compiler" }
 diff = { path = "../diff" }
 compiler-core = { path = "../compiler-core" }
-no-asm-c = { path = "../no-asm-c" }
 objdiff-core = { version = "3.8.0", default-features = false, features = ["arm", "std"] }
 disassemble = { path = "../disassemble" }
 matching = { path = "../matching" }

@@ -1,6 +1,6 @@
 use crate::compile::{assemble_overlay, hex, spawn_raw, split_lines, strings};
 use crate::paths::OverlaySource;
-use crate::regex::Regex;
+use regex::Regex;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use tempfile::tempdir;
@@ -10,6 +10,34 @@ const ROW: &str = r"\s*([0-9a-f]+):\t((?:[0-9a-f]{2,4} )+)\s*(\S.*)";
 const TARGET: &str = r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble|bhs|blo)(\.[nw])?\s+0x([0-9a-f]+)\b";
 const ERRLINE: &str = r":(\d+): Error:";
 type Row = (i64, String);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn binutils_patterns_and_decoded_source_roundtrip() {
+        let branch = Regex::new(TARGET).unwrap();
+        assert_eq!(&branch.captures("beq.n 0x02000008").unwrap()[3], "02000008");
+        assert!(branch.captures("notbl 0x02000008").is_none());
+        assert_eq!(
+            &Regex::new(ERRLINE)
+                .unwrap()
+                .captures("input.s:12: Error: bad instruction")
+                .unwrap()[1],
+            "12"
+        );
+        // push {lr}; movs r0, #1; pop {pc}
+        let bytes = [0x00, 0xb5, 0x01, 0x20, 0x00, 0xbd];
+        let text = build_region_source(&bytes, OVERLAY_BASE).unwrap();
+        assert!(text.contains("push") && text.contains("pop"));
+        assert_eq!(
+            assemble_overlay(&OverlaySource::text(text), OVERLAY_BASE).unwrap(),
+            bytes
+        );
+    }
+}
+
 fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
     let binary = work.path().join("overlay.bin");
@@ -30,22 +58,18 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
         },
         work.path(),
     )?;
-    let row = Regex::new(ROW, "");
+    let row = Regex::new(ROW).unwrap();
     let mut rows: BTreeMap<i64, Row> = BTreeMap::new();
     let text = String::from_utf8_lossy(&stdout).to_string();
     for line in split_lines(&text) {
-        let Some(found) = row.exec(&line) else {
+        let Some(found) = row.captures(&line) else {
             continue;
         };
-        let address = crate::compile::js_parse_int_hex(found.group(&line, 1).expect("group 1"))
+        let address = crate::compile::js_parse_int_hex(&found[1])
             .ok_or_else(|| format!("objdump row address is not hex: {line}"))?;
-        let bytes = found.group(&line, 2).expect("group 2");
-        let count = crate::regex::js_trim(bytes)
-            .split(|c: char| crate::regex::is_js_space(c))
-            .filter(|part| !part.is_empty())
-            .count() as i64;
-        let mnemonic = found.group(&line, 3).expect("group 3");
-        let text = crate::regex::js_trim(mnemonic.split(';').next().unwrap_or("")).to_string();
+        let count = found[2].split_whitespace().count() as i64;
+        let mnemonic = &found[3];
+        let text = mnemonic.split(';').next().unwrap_or("").trim().to_string();
         rows.insert(address, (2 * count, text));
     }
     Ok(rows)
@@ -246,15 +270,15 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
             covered.insert(byte);
         }
     }
-    let target_pattern = Regex::new(TARGET, "");
+    let target_pattern = Regex::new(TARGET).unwrap();
     let mut labels: BTreeMap<i64, String> = BTreeMap::new();
     for address in instructions.keys() {
         let Some(row) = rows.get(address) else {
             continue;
         };
-        if let Some(found) = target_pattern.exec(&row.1) {
+        if let Some(found) = target_pattern.captures(&row.1) {
             let text = &row.1;
-            let target = crate::compile::js_parse_int_hex(found.group(text, 3).expect("group 3"))
+            let target = crate::compile::js_parse_int_hex(&found[3])
                 .ok_or_else(|| format!("branch target is not hex: {text}"))?;
             if instructions.contains_key(&target)
                 && instructions.get(&(target - 2)).copied() != Some(4)
@@ -279,7 +303,7 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         let at = offset as usize;
         decoded[at] as i64 | ((decoded[at + 1] as i64) << 8)
     };
-    let error_line = Regex::new(ERRLINE, "");
+    let error_line = Regex::new(ERRLINE).unwrap();
     for _attempt in 0..decoded.len() {
         let mut externals: BTreeMap<i64, String> = BTreeMap::new();
         let mut body: Vec<(i64, &'static str, String)> = Vec::new();
@@ -294,13 +318,11 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
             if !raw.contains(&cursor) && instructions.contains_key(&cursor) && whole_row_covered {
                 let row = row.expect("checked above");
                 let mnemonic = &row.1;
-                let retargeted = match target_pattern.exec(mnemonic) {
+                let retargeted = match target_pattern.captures(mnemonic) {
                     None => mnemonic.clone(),
                     Some(found) => {
-                        let target = crate::compile::js_parse_int_hex(
-                            found.group(mnemonic, 3).expect("group 3"),
-                        )
-                        .ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
+                        let target = crate::compile::js_parse_int_hex(&found[3])
+                            .ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
                         let replacement = match labels.get(&target) {
                             Some(local) => local.clone(),
                             None => {
@@ -352,12 +374,10 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         let built = match assemble_overlay(&OverlaySource::text(text.clone()), base) {
             Ok(built) => built,
             Err(error) => {
-                let Some(found) = error_line.exec(&error) else {
+                let Some(found) = error_line.captures(&error) else {
                     return Err(error);
                 };
-                let reported: i64 = found
-                    .group(&error, 1)
-                    .expect("group 1")
+                let reported: i64 = found[1]
                     .parse()
                     .map_err(|parse: std::num::ParseIntError| parse.to_string())?;
                 let index = reported - head.len() as i64 - 1;

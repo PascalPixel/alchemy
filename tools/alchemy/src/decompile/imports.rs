@@ -6,9 +6,9 @@
 //! from the main image, and a prologue names a function of the overlay
 //! itself. Registered names come from the source register.
 
-use crate::decode::{decode_window_at, Kind, MAIN_BASE, OVERLAY_BASE};
-use crate::owners::image_window;
+use super::owners::image_window;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use psynergy::decode::{decode_window_at, Kind, MAIN_BASE, OVERLAY_BASE};
 use std::path::Path;
 
 /// One call site of a lifted unit, resolved.

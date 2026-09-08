@@ -160,7 +160,7 @@ fn label_name(target: u32) -> String {
     format!("L_{target:08x}")
 }
 
-fn contains_call(line: &str) -> bool {
+pub fn contains_call(line: &str) -> bool {
     let mut rest = line;
     while let Some(at) = rest.find("Func_") {
         let tail = &rest[at + 5..];
@@ -294,6 +294,7 @@ struct SwitchTree {
 struct Lifter<'a> {
     ins: &'a [Ins],
     main: bool,
+    literal_bases: &'a [u32],
     tables: &'a mut BTreeMap<String, String>,
     value_sites: BTreeSet<usize>,
     direct_sites: BTreeSet<usize>,
@@ -362,7 +363,12 @@ fn push_unique(list: &mut Vec<String>, name: &str) {
 }
 
 impl<'a> Lifter<'a> {
-    fn new(ins: &'a [Ins], tables: &'a mut BTreeMap<String, String>, main: bool) -> Self {
+    fn new(
+        ins: &'a [Ins],
+        tables: &'a mut BTreeMap<String, String>,
+        main: bool,
+        literal_bases: &'a [u32],
+    ) -> Self {
         let sites = crate::sched::value_calls(ins);
         let by_addr = ins.iter().enumerate().map(|(i, x)| (x.addr, i)).collect();
         let mut targets = BTreeSet::new();
@@ -404,6 +410,7 @@ impl<'a> Lifter<'a> {
         let mut lifter = Lifter {
             ins,
             main,
+            literal_bases,
             tables,
             value_sites: sites.value,
             direct_sites: sites.direct,
@@ -836,12 +843,12 @@ impl<'a> Lifter<'a> {
 
     /// The name of a constant address a callee-saved register keeps across
     /// its uses: the original holds such an address in one pointer local, so
-    /// every access goes through the same pseudo. The scene work pointer
-    /// keeps its literal spelling, which the step helper recognises.
+    /// every access goes through the same pseudo. Caller-declared literal
+    /// bases remain available for subsequent source reconstruction.
     fn shared_base(&mut self, base: &Val) -> Option<String> {
         let c = base.c? as u32;
         let callee_saved = base.reg.is_some_and(|r| (4..=7).contains(&r));
-        if !base.shared || !callee_saved || c == 0x0300_1ebc {
+        if !base.shared || !callee_saved || self.literal_bases.contains(&c) {
             return None;
         }
         Some(self.name_shared(base))
@@ -3229,8 +3236,13 @@ fn writes_only(kind: &Kind) -> bool {
 
 /// Lifts one function. Two passes: the first discovers goto targets so the
 /// second can place labels before their first use.
-pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>, main: bool) -> Draft {
-    let mut lifter = Lifter::new(ins, tables, main);
+pub fn lift(
+    ins: &[Ins],
+    tables: &mut BTreeMap<String, String>,
+    main: bool,
+    literal_bases: &[u32],
+) -> Draft {
+    let mut lifter = Lifter::new(ins, tables, main, literal_bases);
     lifter.run(0, ins.len());
     lifter.reset();
     lifter.run(0, ins.len());
@@ -3278,9 +3290,6 @@ pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>, main: bool) -> D
         // lines of the body.
         lines.push(format!("    /* unlifted: {} */", dropped.join(", ")));
     }
-    if !main {
-        rewrite_scene_work(&mut lines);
-    }
     let mut consts = lifter.consts.clone();
     for slot in &lifter.slots {
         push_unique(&mut consts, slot);
@@ -3297,76 +3306,6 @@ pub fn lift(ins: &[Ins], tables: &mut BTreeMap<String, String>, main: bool) -> D
     }
 }
 
-/// The scene work record at 0x03001ebc: its step counter bump becomes the
-/// `bump_step` helper and its other fields read through a byte pointer.
-fn rewrite_scene_work(lines: &mut Vec<String>) {
-    const STEP: &str = "*(u16 *)((*(s32 *)0x03001ebc + 0x1d8))";
-    for line in lines.iter_mut() {
-        let trimmed = line.trim_start();
-        let lead = line.len() - trimmed.len();
-        if let Some(rest) = trimmed.strip_prefix(STEP) {
-            if let Some(rest) = rest.strip_prefix(" = (") {
-                if let Some(rest) = rest.strip_prefix(STEP) {
-                    if let Some(amount) =
-                        rest.strip_prefix(" + ").and_then(|r| r.strip_suffix(");"))
-                    {
-                        if amount.bytes().all(|b| b.is_ascii_digit()) {
-                            *line = format!("{}bump_step({amount});", &line[..lead]);
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-        if let Some(rest) = trimmed.strip_prefix(STEP) {
-            if let Some(amount) = rest.strip_prefix(" += ").and_then(|r| r.strip_suffix(';')) {
-                if amount.bytes().all(|b| b.is_ascii_digit()) {
-                    *line = format!("{}bump_step({amount});", &line[..lead]);
-                    continue;
-                }
-            }
-        }
-        *line = line.replace("(*(s32 *)0x03001ebc + 0x", "(*(u8 **)0x03001ebc + 0x");
-    }
-    share_scene_work(lines);
-}
-
-/// Consecutive statements through the scene work pointer read it once: the
-/// reference loads it into one register for the run, and a volatile read
-/// cannot be merged by the compiler, so the run names it.
-fn share_scene_work(lines: &mut Vec<String>) {
-    const WORK: &str = "(*(u8 **)0x03001ebc + 0x";
-    let uses_work = |line: &str| {
-        line.contains(WORK) && !contains_call(line) && !line.trim_start().starts_with("bump_step")
-    };
-    let mut at = 0;
-    while at < lines.len() {
-        if !uses_work(&lines[at]) {
-            at += 1;
-            continue;
-        }
-        let lead = lines[at].len() - lines[at].trim_start().len();
-        let mut end = at + 1;
-        while end < lines.len()
-            && uses_work(&lines[end])
-            && lines[end].len() - lines[end].trim_start().len() == lead
-        {
-            end += 1;
-        }
-        if end - at >= 2 {
-            for line in &mut lines[at..end] {
-                *line = line.replace(WORK, "(work + 0x");
-            }
-            lines.insert(
-                at,
-                format!("{}work = *(u8 **)0x03001ebc;", " ".repeat(lead)),
-            );
-            end += 1;
-        }
-        at = end;
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3380,16 +3319,16 @@ mod tests {
         };
         let mut first = BTreeMap::new();
         let mut second = BTreeMap::new();
-        assert!(Lifter::new(&[], &mut first, false)
+        assert!(Lifter::new(&[], &mut first, false, &[])
             .table_expr(&base, 0, Width::Word)
             .is_some());
-        assert!(Lifter::new(&[], &mut first, false)
+        assert!(Lifter::new(&[], &mut first, false, &[])
             .table_expr(&base, 0, Width::Byte)
             .is_none());
-        assert!(Lifter::new(&[], &mut second, false)
+        assert!(Lifter::new(&[], &mut second, false, &[])
             .table_expr(&base, 0, Width::Byte)
             .is_some());
-        assert!(Lifter::new(&[], &mut first, false)
+        assert!(Lifter::new(&[], &mut first, false, &[])
             .table_expr(&base, 0, Width::Word)
             .is_some());
         assert_ne!(first, second);
@@ -3398,7 +3337,9 @@ mod tests {
     fn lifted(halves: &[u16]) -> String {
         let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
         let ins = decode_window_at(&image, OVERLAY_BASE, OVERLAY_BASE, image.len() as u32);
-        lift(&ins, &mut BTreeMap::new(), false).lines.join("\n")
+        lift(&ins, &mut BTreeMap::new(), false, &[])
+            .lines
+            .join("\n")
     }
 
     #[test]

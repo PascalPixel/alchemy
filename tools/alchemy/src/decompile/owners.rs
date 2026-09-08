@@ -116,7 +116,6 @@ pub struct Score {
     pub candidate: u32,
     pub reference: u32,
     pub differing: u32,
-    pub report: String,
 }
 
 /// Re-enter the unified executable, falling back to Cargo before installation.
@@ -190,7 +189,6 @@ pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score
         candidate,
         reference,
         differing,
-        report,
     })
 }
 
@@ -199,12 +197,6 @@ pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score
 pub fn main_image(root: &Path) -> Result<Vec<u8>, String> {
     let path = root.join("roms/gs1-en.gba");
     std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
-}
-
-/// Resolve main owners with the same spelling rules as the public command.
-pub fn parse_main_owner(owner: &str) -> Option<u32> {
-    let owner = SourceOwner::parse_argument(owner).ok()?;
-    owner.is_main().then(|| owner.address())
 }
 
 /// Read one complete owner window, independent of its address space.
@@ -219,7 +211,7 @@ pub fn image_window(
         let extent = span_for(root, &overlay, entry, span)?;
         (
             overlay_image(root, &overlay)?,
-            crate::decode::OVERLAY_BASE,
+            psynergy::decode::OVERLAY_BASE,
             extent,
         )
     } else {
@@ -227,7 +219,7 @@ pub fn image_window(
             Some(span) => span,
             None => main_extent(root, entry)?,
         };
-        (main_image(root)?, crate::decode::MAIN_BASE, extent)
+        (main_image(root)?, psynergy::decode::MAIN_BASE, extent)
     };
     let end = entry
         .checked_sub(base)
@@ -260,9 +252,9 @@ mod owner_tests {
         assert!(span_for(root.path(), "resource_374", 0x02001000, Some(32)).is_err());
         let error = image_window(root.path(), "resource_374:02001010", Some(32)).unwrap_err();
         assert!(error.contains("reviewed"), "{error}");
-        assert!(crate::adopt::adopt(
+        assert!(crate::decompile::adopt::adopt(
             root.path(),
-            &crate::adopt::Request {
+            &crate::decompile::adopt::Request {
                 owner: "resource_374:02001010",
                 span: Some(32),
                 name: None,
@@ -272,16 +264,6 @@ mod owner_tests {
         )
         .is_err());
         assert!(!root.path().join("games/gs1/src").exists());
-    }
-
-    #[test]
-    fn main_addresses_share_the_register_parser() {
-        for spelling in ["080bbb0c", "0x080bbb0c", "main:080bbb0c"] {
-            assert_eq!(parse_main_owner(spelling), Some(0x080bbb0c));
-        }
-        for spelling in ["resource_3ba:02002910", "main:garbage", ""] {
-            assert_eq!(parse_main_owner(spelling), None);
-        }
     }
 }
 

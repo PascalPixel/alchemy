@@ -36,7 +36,6 @@ dependencies = [
  "candidate-compiler",
  "compiler-core",
  "coverage-map",
- "decompile",
  "diff",
  "disassemble",
  "import-asset",
@@ -45,6 +44,7 @@ dependencies = [
  "objdiff-core",
  "overlay-adopt",
  "png",
+ "psynergy",
  "serde",
  "serde_json",
  "sha1",
@@ -199,18 +199,6 @@ name = "cwdemangle"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2e06f9bce634a3c898eb1e5cb949ff63133cbb218af93cc9b38b31d6f3ea285"
-
-[[package]]
-name = "decompile"
-version = "0.1.0"
-dependencies = [
- "compiler-core",
- "diff",
- "disassemble",
- "serde",
- "serde_json",
- "tempfile",
-]
 
 [[package]]
 name = "diff"
@@ -686,6 +674,10 @@ dependencies = [
  "quote",
  "syn 2.0.119",
 ]
+
+[[package]]
+name = "psynergy"
+version = "0.1.0"
 
 [[package]]
 name = "quote"

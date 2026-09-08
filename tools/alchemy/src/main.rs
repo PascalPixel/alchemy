@@ -10,6 +10,7 @@ mod check;
 mod convert;
 mod cross_edition;
 mod dashboard;
+mod decompile;
 mod flatten;
 mod font;
 mod generated_files;

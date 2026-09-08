@@ -207,6 +207,40 @@ pub fn verify_candidate_owned_routed_with_object(
     configuration: &CandidateCompilerConfiguration,
     precompiled_object: Option<&str>,
 ) -> Result<Verification, String> {
+    let actual = link_candidate_owned_routed_with_object(
+        source,
+        routing_source,
+        owner_stem,
+        rom,
+        output_directory,
+        extra_compiler_flags,
+        image_base,
+        compiler,
+        configuration,
+        precompiled_object,
+    )?;
+    let offset = parse_hex(owner_stem)?
+        .checked_sub(image_base as u64)
+        .ok_or("owner precedes reference image")?;
+    let expected = byte_span(rom, offset, actual.len() as u64)?;
+    Ok(Verification { actual, expected })
+}
+
+/// Compile and link an owner without claiming reference equality. Reference
+/// bytes are used only by reference-symbol inference and overlay relocation.
+#[allow(clippy::too_many_arguments)]
+pub fn link_candidate_owned_routed_with_object(
+    source: &str,
+    routing_source: &str,
+    owner_stem: &str,
+    rom: &[u8],
+    output_directory: &str,
+    extra_compiler_flags: &[String],
+    image_base: f64,
+    compiler: CompilerTarget,
+    configuration: &CandidateCompilerConfiguration,
+    precompiled_object: Option<&str>,
+) -> Result<Vec<u8>, String> {
     if configuration.overlay_extent.is_some() && configuration.reference_symbols {
         return Err("overlay calls require stable reference bindings, not candidate-position symbol inference".into());
     }
@@ -421,8 +455,7 @@ pub fn verify_candidate_owned_routed_with_object(
     } else {
         actual
     };
-    let expected = byte_span(rom, offset, size)?;
-    Ok(Verification { actual, expected })
+    Ok(actual)
 }
 fn symbol_fields<'a>(listing: &'a str, symbol: &str) -> Option<Vec<&'a str>> {
     listing
@@ -617,6 +650,47 @@ pub(crate) fn write(path: &str, bytes: &[u8]) -> Result<(), String> {
 #[cfg(test)]
 mod reference_symbol_tests {
     use super::*;
+
+    #[test]
+    fn linking_without_a_reference_is_not_verification() {
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("08000000.c");
+        std::fs::write(&source, "int Func_08000000(void) { return 1; }\n").unwrap();
+        let source = source.to_str().unwrap();
+        let output = work.path().to_str().unwrap();
+        let config = CandidateCompilerConfiguration::default();
+        let linked = link_candidate_owned_routed_with_object(
+            source,
+            source,
+            "08000000",
+            &[],
+            output,
+            &[],
+            ROM_BASE,
+            CompilerTarget::Gs1,
+            &config,
+            None,
+        )
+        .unwrap();
+        assert!(!linked.is_empty());
+        let verify = |reference: &[u8]| {
+            verify_candidate_owned_routed_with_object(
+                source,
+                source,
+                "08000000",
+                reference,
+                output,
+                &[],
+                ROM_BASE,
+                CompilerTarget::Gs1,
+                &config,
+                None,
+            )
+        };
+        assert!(verify(&[]).unwrap_err().contains("outside 0 bytes"));
+        let verified = verify(&linked).unwrap();
+        assert_eq!(verified.actual, verified.expected);
+    }
 
     #[test]
     fn hexadecimal_fields_accept_only_complete_ascii_digits() {

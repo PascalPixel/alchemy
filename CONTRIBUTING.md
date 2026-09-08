@@ -489,11 +489,11 @@ libraries are not additional public command surfaces.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, and cross-edition commands. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
+| [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, and cross-edition commands. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [decompile](tools/decompile/) | Library behind `alchemy decompile`: recover candidate C from retained Thumb code, with owner-aware decoding and source recovery. |
-| [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
+| [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [diff](tools/diff/) | Score and explain structural, allocator, type, and code residuals. |
-| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, ordinary-C policy (`alchemy check no-asm`), symbols, paths, the twelve decompilation targets, translation units, the build cache, and canonical JSON. |
+| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
 | [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |

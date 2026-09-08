@@ -1,9 +1,9 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
-use compiler_core::build_io::{argv, read, read_json, rooted, text, write};
-use compiler_core::canonical_json::write_canonical;
-use compiler_core::decomp_targets::{
+use crate::targets::{
     parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
 };
+use compiler_core::build_io::{argv, read, read_json, rooted, text, write};
+use compiler_core::canonical_json::write_canonical;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
 use serde_json::{json, Number, Value};
@@ -1334,7 +1334,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let report = json!({
         "format":1,
         "target":target.id.to_string(),
-        "compiler":target.compiler.to_string(),
+        "compiler":target.compiler.as_str(),
         "rom_base":ROM_BASE,
         "rom_size":mask.len(),
         "code_regions":claimed_regions.len(),

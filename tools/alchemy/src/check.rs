@@ -2,6 +2,7 @@ use std::process::ExitCode;
 
 mod commit_progress;
 mod integrate;
+mod no_asm;
 mod owners;
 mod publication;
 mod retained;
@@ -38,7 +39,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             ExitCode::SUCCESS
         }
         "integrate" => integrate::entry(rest),
-        "no-asm" => compiler_core::no_asm::entry(rest),
+        "no-asm" => no_asm::entry(rest),
         "progress" => {
             coverage_map::progress::entry(rest);
             ExitCode::SUCCESS

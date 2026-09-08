@@ -1,4 +1,6 @@
-//! The twelve supported ROM targets and their isolated build paths.
+//! Golden Sun's twelve ROM targets and their isolated build paths.
+
+use compiler_core::routing::CompilerTarget;
 
 macro_rules! target_registry {
     ($($id:ident => ($name:literal, $rom:literal, $define:literal, $output:literal)),+ $(,)?) => {
@@ -39,23 +41,6 @@ impl std::fmt::Display for DecompTargetId {
     }
 }
 
-#[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum DecompCompilerTarget {
-    Gs1,
-    Gs2,
-}
-impl DecompCompilerTarget {
-    pub fn as_str(self) -> &'static str {
-        ["gs1", "gs2"][self as usize]
-    }
-}
-impl std::fmt::Display for DecompCompilerTarget {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum BuildSupport {
     CompileOnly,
@@ -67,7 +52,7 @@ pub struct DecompTarget {
     pub id: DecompTargetId,
     pub rom: &'static str,
     pub rom_size: u64,
-    pub compiler: DecompCompilerTarget,
+    pub compiler: CompilerTarget,
     pub build_support: BuildSupport,
     pub edition_define: &'static str,
     pub source_dir: &'static str,
@@ -76,16 +61,16 @@ pub struct DecompTarget {
     pub output_dir: &'static str,
 }
 
-const PRODUCTS: [(DecompCompilerTarget, u64, &str, &str, &str); 2] = [
+const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
     (
-        DecompCompilerTarget::Gs1,
+        CompilerTarget::Gs1,
         0x0080_0000,
         "games/gs1/src",
         "games/gs1/asm",
         "games/gs1/assets/manifest.json",
     ),
     (
-        DecompCompilerTarget::Gs2,
+        CompilerTarget::Gs2,
         0x0100_0000,
         "games/gs2/src",
         "games/gs2/asm",
@@ -134,18 +119,20 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         output_dir,
     }
 }
+#[cfg(test)]
 fn relative_path(path: &str) -> bool {
     !path.is_empty()
         && !path.starts_with(['/', '\\'])
         && !path.split(['/', '\\']).any(|part| part == "..")
 }
-pub fn self_test() -> Result<String, String> {
+#[cfg(test)]
+fn self_test() -> Result<String, String> {
     let mut outputs = std::collections::HashSet::new();
     for id in TARGET_IDS {
         let target = target_for(id);
         let root = match target.compiler {
-            DecompCompilerTarget::Gs1 => "games/gs1/",
-            DecompCompilerTarget::Gs2 => "games/gs2/",
+            CompilerTarget::Gs1 => "games/gs1/",
+            CompilerTarget::Gs2 => "games/gs2/",
         };
         if !relative_path(target.output_dir)
             || ![target.source_dir, target.asm_dir, target.asset_manifest]

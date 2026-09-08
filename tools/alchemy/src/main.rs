@@ -8,6 +8,7 @@ mod build_claimed;
 mod build_full;
 mod candidate;
 mod check;
+mod compiler;
 mod convert;
 mod coverage;
 mod cross_edition;
@@ -79,7 +80,7 @@ fn main() -> ExitCode {
         "overlay" => overlay::entry(rest),
         "decompile" | "adopt" | "disassemble" | "inspect" => decompile_command(command, rest),
         "diff" => match overlay_candidate(rest) {
-            Ok(true) => overlay::code(overlay::score::run(compiler_core::routing::root(), rest)),
+            Ok(true) => overlay::code(overlay::score::run(crate::compiler::routing::root(), rest)),
             Ok(false) => {
                 diff::entry(rest);
                 ExitCode::SUCCESS
@@ -109,7 +110,7 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     }
     match std::process::Command::new("make")
-        .current_dir(compiler_core::routing::root())
+        .current_dir(crate::compiler::routing::root())
         .arg(target)
         .status()
     {
@@ -120,7 +121,7 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
 }
 
 fn overlay_candidate(arguments: &[String]) -> Result<bool, String> {
-    use compiler_core::source_paths::{SourceOwner, SourcePaths};
+    use crate::compiler::source_paths::{SourceOwner, SourcePaths};
     if arguments.iter().any(|arg| arg == "--unit") {
         return Ok(false);
     }
@@ -135,7 +136,7 @@ fn overlay_candidate(arguments: &[String]) -> Result<bool, String> {
     }
     let path = std::path::Path::new(first);
     if path.is_file() {
-        let paths = SourcePaths::load(compiler_core::routing::root())?;
+        let paths = SourcePaths::load(crate::compiler::routing::root())?;
         return Ok(paths
             .owner_for_path(path)?
             .is_some_and(|owner| !owner.is_main()));

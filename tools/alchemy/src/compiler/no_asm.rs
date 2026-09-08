@@ -1,6 +1,6 @@
 //! Ordinary-C policy shared by candidate and production verification.
 
-use crate::plan::direct_preprocessor_command;
+use crate::compiler::plan::direct_preprocessor_command;
 use regex::{Captures, Regex};
 use std::fs;
 use std::io;

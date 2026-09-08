@@ -1,17 +1,17 @@
 //! Owner-register and retained-candidate classification checks.
 
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 fn root() -> PathBuf {
-    compiler_core::routing::root().to_path_buf()
+    crate::compiler::routing::root().to_path_buf()
 }
 
 fn json(path: &Path) -> Result<Value, String> {
-    compiler_core::build_io::read_json(path)
+    crate::compiler::build_io::read_json(path)
 }
 
 fn exact(root: &Path) -> Result<HashSet<String>, String> {
@@ -75,7 +75,7 @@ fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
 }
 
 fn audited(root: &Path) -> Result<HashSet<String>, String> {
-    let stems: HashSet<String> = compiler_core::translation_units::reviewed_overlay_spans(root)?
+    let stems: HashSet<String> = crate::compiler::translation_units::reviewed_overlay_spans(root)?
         .into_keys()
         .map(|owner| owner.legacy_stem())
         .collect();

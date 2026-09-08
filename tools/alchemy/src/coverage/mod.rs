@@ -6,10 +6,10 @@ pub(crate) mod progress;
 pub(crate) mod tree;
 
 use self::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TREES};
+use crate::compiler::canonical_json::canonical_json;
 use crate::coverage::jsnum::{commas, number};
 use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use crate::coverage::tree::{ref_tree, root, work_tree};
-use compiler_core::canonical_json::canonical_json;
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 const USAGE: &str = "usage: alchemy check coverage [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";

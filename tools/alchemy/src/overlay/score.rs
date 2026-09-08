@@ -1,3 +1,8 @@
+use crate::compiler::{
+    source_paths::{SourceOwner, SourcePaths},
+    symbols::overlay_call_via_base,
+    translation_units::{resolve_overlay_span, TranslationUnits},
+};
 use crate::diff::{
     cli::{options_of, ParseOutcome, USAGE},
     render::render,
@@ -6,11 +11,6 @@ use crate::overlay::compile::compile_overlay_c;
 use crate::overlay::{
     park::{placeholder_span, truth_window},
     retained_source,
-};
-use compiler_core::{
-    overlay_call_via_base,
-    source_paths::{SourceOwner, SourcePaths},
-    translation_units::{resolve_overlay_span, TranslationUnits},
 };
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -89,7 +89,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     if options.unit.is_some() {
         return Err("score complete translation units with alchemy diff --unit ID".into());
     }
-    if options.target != compiler_core::routing::CompilerTarget::Gs1
+    if options.target != crate::compiler::routing::CompilerTarget::Gs1
         || argv.iter().any(|arg| arg == "--rom")
     {
         return Err("overlay scoring currently requires the canonical GS1 reference".into());
@@ -242,7 +242,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
             count[6] += 1;
             "unmapped"
         } else {
-            let ordinary = compiler_core::no_asm::ordinary_source(root, source)?;
+            let ordinary = crate::compiler::no_asm::ordinary_source(root, source)?;
             count[5 - usize::from(ordinary)] += 1;
             ["nonordinary", "ordinary"][usize::from(ordinary)]
         };
@@ -256,7 +256,7 @@ mod tests {
     use super::*;
     #[test]
     fn explicit_score_span_cannot_override_a_pool_head_or_owner_extent() {
-        let root = compiler_core::routing::root();
+        let root = crate::compiler::routing::root();
         for (target, span, message) in [
             (
                 "resource_3c5:0200186c",

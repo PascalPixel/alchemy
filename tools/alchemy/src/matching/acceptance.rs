@@ -1,4 +1,4 @@
-use compiler_core::routing::root;
+use crate::compiler::routing::root;
 use std::path::Path;
 
 use super::options::Options;

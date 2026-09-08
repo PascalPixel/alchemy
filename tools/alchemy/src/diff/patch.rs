@@ -1,4 +1,4 @@
-use compiler_core::source_inputs::quoted_include;
+use crate::compiler::source_inputs::quoted_include;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 pub fn apply_unified_diff_in_tree(

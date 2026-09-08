@@ -1,7 +1,7 @@
 //! Owner lookup against the repository: the retained module register,
 //! the source register, the canonical ROM, and the overlay scorer.
 
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use serde::Deserialize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -49,7 +49,7 @@ fn parse_hex(text: &str) -> Result<u32, String> {
 /// Every retained overlay module, in register order.
 pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
     let path = root.join("games/gs1/semantic/overlay-assembly.json");
-    let assembly: Assembly = compiler_core::build_io::read_json(&path)?;
+    let assembly: Assembly = crate::compiler::build_io::read_json(&path)?;
     let sources = SourcePaths::load(root)?;
     let mut modules = Vec::new();
     for region in assembly.regions {
@@ -85,7 +85,7 @@ pub fn span_for(
     requested: Option<u32>,
 ) -> Result<u32, String> {
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
-    let reviewed = compiler_core::translation_units::reviewed_overlay_spans(root)?;
+    let reviewed = crate::compiler::translation_units::reviewed_overlay_spans(root)?;
     let paths = SourcePaths::load(root)?;
     let installed = if paths
         .mapped_source_path(owner)
@@ -94,11 +94,11 @@ pub fn span_for(
         let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
         let text = std::fs::read_to_string(&path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
-        compiler_core::overlay::placeholder_extent(&text, entry)
+        crate::compiler::overlay::placeholder_extent(&text, entry)
     } else {
         None
     };
-    let span = compiler_core::translation_units::resolve_overlay_span(
+    let span = crate::compiler::translation_units::resolve_overlay_span(
         &reviewed,
         owner,
         installed,

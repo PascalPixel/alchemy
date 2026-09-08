@@ -4,11 +4,11 @@
 //! by the corresponding hand-written assembly at the same ROM address.
 //! `--apply` performs the move and cleanup only after that proof.
 use crate::candidate::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
-use compiler_core::no_asm::{find_forbidden, source_files};
-use compiler_core::plan::direct_preprocessor_command;
-use compiler_core::routing::{root, CompilerTarget};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use compiler_core::translation_units::TranslationUnits;
+use crate::compiler::no_asm::{find_forbidden, source_files};
+use crate::compiler::plan::direct_preprocessor_command;
+use crate::compiler::routing::{root, CompilerTarget};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::translation_units::TranslationUnits;
 use psynergy::process::run as run_command;
 use std::fs;
 use std::path::{Path, PathBuf};

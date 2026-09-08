@@ -4,7 +4,7 @@
 //! family compiles with that family's one flag set. There is no per-file
 //! flag: a function that is not exact under its family's flags is not exact,
 //! and stays retained assembly until an ordinary C spelling reproduces it.
-use crate::routing_data::*;
+use crate::compiler::routing_data::*;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 /// Repository root: `<crate>/../..`.
@@ -143,9 +143,6 @@ fn source_stem_ref(source: &str) -> &str {
         _ => base,
     }
 }
-pub fn source_stem(source: &str) -> String {
-    source_stem_ref(source).to_string()
-}
 fn has(table: &'static [&'static str], value: &str) -> bool {
     table.contains(&value)
 }
@@ -167,13 +164,6 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
         return CompilerFamily::SoftFloatLibrary;
     }
     CompilerFamily::Game
-}
-pub fn cflags_for_source(source: &str) -> Vec<String> {
-    match family_for_source(CompilerTarget::Gs1, source) {
-        CompilerFamily::SoftFloatLibrary => soft_float_library_cflags(),
-        CompilerFamily::Agbcc => agbcc_cflags(),
-        CompilerFamily::Game => cflags(),
-    }
 }
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
     family_for_source(target, source) == CompilerFamily::Agbcc
@@ -223,7 +213,7 @@ mod target_tests {
             "games/gs1/src/resource_381_c_02002e0c.c",
         ] {
             assert_eq!(
-                cflags_for_source(owner),
+                cflags_for_target_source(CompilerTarget::Gs1, owner),
                 cflags(),
                 "per-file override for {owner}"
             );
@@ -237,7 +227,7 @@ mod target_tests {
             "games/gs1/src/resource_3bf_c_02005ae0.c",
             "games/gs1/src/resource_3a7_c_0200145c.c",
         ] {
-            let flags = cflags_for_source(owner);
+            let flags = cflags_for_target_source(CompilerTarget::Gs1, owner);
             assert!(!flags.iter().any(|flag| flag == "-mthumb-interwork"));
             assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-O2"));

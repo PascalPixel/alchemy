@@ -4,11 +4,11 @@ pub mod park;
 pub mod rom;
 pub mod score;
 pub mod source;
+use crate::compiler::no_asm::{expanded_forbidden, find_forbidden};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
-use compiler_core::no_asm::{expanded_forbidden, find_forbidden};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
@@ -247,11 +247,11 @@ pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<Str
     }))
 }
 pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    compiler_core::translation_units::reviewed_overlay_spans(root)
+    crate::compiler::translation_units::reviewed_overlay_spans(root)
 }
 fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64) -> Result<(), String> {
     let owner = SourceOwner::parse(&format!("{overlay}:{start:08x}"))?;
-    compiler_core::translation_units::resolve_overlay_span(
+    crate::compiler::translation_units::resolve_overlay_span(
         &reviewed_spans(root)?,
         owner,
         None,
@@ -492,7 +492,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = compiler_core::nodepath::basename(&options.source);
+        let source_base = crate::compiler::plan::basename(&options.source);
         println!(
             "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
             options.id,
@@ -514,7 +514,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     Ok(0)
 }
 
-use compiler_core::routing::root;
+use crate::compiler::routing::root;
 use std::process::ExitCode;
 
 const OVERLAY_USAGE: &str = "usage: alchemy overlay <adopt|park|audit> [args]";

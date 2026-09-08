@@ -27449,6 +27449,11 @@
           "state": "exact-c"
         },
         {
+          "address": "0x02000e80",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
           "address": "0x02000ee0",
           "extent": 80,
           "state": "exact-c"

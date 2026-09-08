@@ -17487,6 +17487,10 @@
     "resource_376:020010c0": {
       "name": "Scene_UpdateTimedActor",
       "source": "overlays/scene_script/timed_actor_events.c"
+    },
+    "resource_3bf:02000e80": {
+      "name": "FieldScene_UpdateTableBObjectPair",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     }
   }
 }

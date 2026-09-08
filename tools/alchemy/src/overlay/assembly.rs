@@ -1,5 +1,5 @@
-use crate::compile::{assemble_overlay, hex, spawn_raw, split_lines, strings};
-use crate::paths::OverlaySource;
+use crate::overlay::compile::{assemble_overlay, hex, spawn_raw, split_lines, strings};
+use crate::overlay::source::OverlaySource;
 use regex::Regex;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -65,7 +65,7 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
         let Some(found) = row.captures(&line) else {
             continue;
         };
-        let address = crate::compile::js_parse_int_hex(&found[1])
+        let address = crate::overlay::compile::js_parse_int_hex(&found[1])
             .ok_or_else(|| format!("objdump row address is not hex: {line}"))?;
         let count = found[2].split_whitespace().count() as i64;
         let mnemonic = &found[3];
@@ -278,7 +278,7 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         };
         if let Some(found) = target_pattern.captures(&row.1) {
             let text = &row.1;
-            let target = crate::compile::js_parse_int_hex(&found[3])
+            let target = crate::overlay::compile::js_parse_int_hex(&found[3])
                 .ok_or_else(|| format!("branch target is not hex: {text}"))?;
             if instructions.contains_key(&target)
                 && instructions.get(&(target - 2)).copied() != Some(4)
@@ -321,7 +321,7 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
                 let retargeted = match target_pattern.captures(mnemonic) {
                     None => mnemonic.clone(),
                     Some(found) => {
-                        let target = crate::compile::js_parse_int_hex(&found[3])
+                        let target = crate::overlay::compile::js_parse_int_hex(&found[3])
                             .ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
                         let replacement = match labels.get(&target) {
                             Some(local) => local.clone(),

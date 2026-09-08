@@ -1,8 +1,9 @@
-use crate::paths::{root, OverlaySource};
+use crate::overlay::source::OverlaySource;
 use compiler_core::overlay;
 use compiler_core::overlay::placeholder_addresses;
 pub use compiler_core::overlay::placeholder_extent;
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
+use compiler_core::routing::root;
 use compiler_core::routing::CompilerTarget;
 use compiler_core::sha256;
 use compiler_core::source_inputs::compiler_source_tree_signature;
@@ -205,7 +206,7 @@ pub fn compile_overlay_c(
     let (stem, address) = (owner.address_stem(), i64::from(owner.address()));
     let units = translation_units()?;
     let unit = units.unit_for_game_owner("gs1", owner);
-    let reference = crate::canonical_overlay(&root(), overlay)?;
+    let reference = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
     let routing_source = owner.routing_path().to_string_lossy().into_owned();
     let work_display = work.to_string_lossy().to_string();
     let at = |name: &str| work.join(name).to_string_lossy().to_string();
@@ -394,7 +395,7 @@ fn compile_overlay_unit(
     }
     let script = at("ld");
     let mut text = String::from("SECTIONS\n{\n");
-    let canonical = crate::canonical_overlay(&root(), overlay)?;
+    let canonical = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
     let reference = placement.map_or(canonical.as_slice(), |placement| placement.reference);
     let loaded = match placement {
         Some(_) => Some((overlay::load(&canonical, 0)?, overlay::load(reference, 0)?)),

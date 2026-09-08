@@ -108,7 +108,7 @@ pub fn span_for(
 }
 
 pub fn overlay_image(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    disassemble::rom::canonical_overlay(root, overlay)
+    crate::overlay::rom::canonical_overlay(root, overlay)
 }
 
 #[derive(Debug, Clone)]

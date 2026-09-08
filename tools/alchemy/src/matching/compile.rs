@@ -1,11 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use crate::overlay::assembly::OVERLAY_BASE;
+use crate::overlay::compile::compile_overlay_c;
 use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::build_io::read_json;
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use disassemble::{compile_overlay_c, OVERLAY_BASE};
 use serde::Serialize;
 use serde_json::Value;
 use tempfile::tempdir;
@@ -137,7 +138,7 @@ impl Target {
                 Some(&owner.routing_path()),
                 &local_flags(&source_path),
             )?;
-            let reference = disassemble::canonical_overlay(root(), &name)?;
+            let reference = crate::overlay::rom::canonical_overlay(root(), &name)?;
             let runtime = compiler_core::overlay::load(&reference, 0)?;
             let offset = compiled.address - OVERLAY_BASE;
             let expected = window(&runtime, offset, span)?;

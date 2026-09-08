@@ -1,6 +1,8 @@
 //! Native entry point for the asset build stage.
 mod gba_header;
 use crate::generated_files::{prune_files, unused_tracked_images};
+use crate::overlay::compile::assemble_overlay;
+use crate::overlay::source::OverlaySource;
 use compiler_core::build_io::relative;
 use compiler_core::bundle::{
     compiler_bundle_signature, executable_signature, host_executable_signature,
@@ -11,7 +13,6 @@ use compiler_core::routing::{cflags_for_target_source, CompilerTarget};
 use compiler_core::sha256;
 use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
-use disassemble::{assemble_overlay, OverlaySource};
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use import_asset::import_tilemap;
 use import_asset::{

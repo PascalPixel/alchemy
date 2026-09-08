@@ -1,4 +1,4 @@
-use crate::ROM_BASE;
+use crate::overlay::assembly::ROM_BASE;
 use std::path::Path;
 
 pub struct CanonicalRom(Vec<u8>, usize);

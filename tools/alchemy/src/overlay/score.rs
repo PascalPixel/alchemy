@@ -2,6 +2,7 @@ use crate::diff::{
     cli::{options_of, ParseOutcome, USAGE},
     render::render,
 };
+use crate::overlay::compile::compile_overlay_c;
 use crate::overlay::{
     park::{placeholder_span, truth_window},
     retained_source,
@@ -11,7 +12,6 @@ use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     translation_units::{resolve_overlay_span, TranslationUnits},
 };
-use disassemble::compile::compile_overlay_c;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -131,7 +131,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     };
     let work = tempdir().map_err(|error| error.to_string())?;
     let reference = work.path().join("reference.bin");
-    let image = disassemble::canonical_overlay(root, &overlay)?;
+    let image = crate::overlay::rom::canonical_overlay(root, &overlay)?;
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
     let units = TranslationUnits::load(root)?;
     options.source = source.to_string_lossy().into_owned();

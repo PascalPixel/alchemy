@@ -36,7 +36,6 @@ dependencies = [
  "candidate-compiler",
  "compiler-core",
  "coverage-map",
- "disassemble",
  "import-asset",
  "lz-codecs",
  "objdiff-core",
@@ -207,19 +206,6 @@ checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
  "block-buffer",
  "crypto-common",
-]
-
-[[package]]
-name = "disassemble"
-version = "0.1.0"
-dependencies = [
- "candidate-compiler",
- "compiler-core",
- "lz-codecs",
- "psynergy",
- "regex",
- "serde_json",
- "tempfile",
 ]
 
 [[package]]

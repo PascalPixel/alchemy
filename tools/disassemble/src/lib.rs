@@ -1,7 +1,6 @@
 pub mod compile;
 pub mod disasm;
 pub mod paths;
-pub mod regex;
 pub mod rom;
 pub use compile::{
     assemble_overlay, compile_declared_overlay_unit, compile_overlay_c, Compiled,

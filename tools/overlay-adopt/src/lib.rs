@@ -494,7 +494,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = disassemble::paths::basename(&options.source);
+        let source_base = compiler_core::nodepath::basename(&options.source);
         println!(
             "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
             options.id,

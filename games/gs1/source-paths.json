@@ -17672,6 +17672,10 @@
     "resource_382:02000104": {
       "name": "OverlayObject_IntegrateVelocitiesAndSpriteAngle",
       "source": "overlays/overlay_object/integrate_velocities_and_sprite_angle.c"
+    },
+    "resource_395:02000088": {
+      "name": "PaletteScene_RunActorRosterBranch",
+      "source": "overlays/palette_scene/run_actor_roster_branch.c"
     }
   }
 }

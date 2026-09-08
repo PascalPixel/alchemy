@@ -26,7 +26,6 @@ pub fn entry(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-use compiler_core::cache::sqlite::SqliteCache;
 use compiler_core::canonical_json::write_canonical;
 use compiler_core::{
     build_io::{argv, read, read_json, relative, rooted, text, write},
@@ -34,6 +33,7 @@ use compiler_core::{
     sha256,
     thumb::standalone_wide_transfer_lines,
 };
+use psynergy::cache::SqliteCache;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};

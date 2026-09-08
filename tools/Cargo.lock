@@ -130,7 +130,6 @@ dependencies = [
  "fs2",
  "psynergy",
  "regex",
- "rusqlite",
  "serde",
  "serde_json",
  "sha2",
@@ -616,6 +615,8 @@ name = "psynergy"
 version = "0.1.0"
 dependencies = [
  "regex",
+ "rusqlite",
+ "tempfile",
 ]
 
 [[package]]

@@ -358,7 +358,10 @@ Alchemy is the Golden Sun project; Psynergy is its reusable decompilation
 platform. `tools/psynergy` currently owns portable Thumb decoding,
 lifetime analysis, candidate C recovery, instruction normalization, structural
 comparison, byte-difference counting, explicit subprocess execution and bounded
-C repairs. Its only external dependency is `regex`, used by the source repairs.
+C repairs and cache storage. Its external dependencies are `regex` for source
+repairs and `rusqlite` for transactional storage; tests also use `tempfile`.
+Cache storage accepts explicit paths and keys and owns its connection lock.
+Alchemy retains cache locations, key construction and compiler fingerprints.
 Thumb BL decoding and byte-level relocation-site scanning are shared by the
 decompiler, overlay serialization and cross-edition comparison. These scans
 identify encoding patterns, not proof that every scanned byte is executable.
@@ -535,8 +538,8 @@ libraries are not additional public command surfaces.
 | Tool | Responsibility |
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
-| [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
-| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
+| [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution, transactional cache storage, atomic file writes and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
+| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
 | [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |
 | [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |

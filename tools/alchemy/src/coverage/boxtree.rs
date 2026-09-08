@@ -1,5 +1,5 @@
-use crate::jsnum::commas;
-use crate::model::{treemap, Area, Category, Rect, Tile};
+use super::jsnum::commas;
+use crate::coverage::model::{treemap, Area, Category, Rect, Tile};
 
 const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
     (Category::Unknown, "Unknown"),
@@ -17,9 +17,9 @@ fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
             0
         }
 }
-use crate::pipeline::{source_container, CoverageMap};
-use crate::sha1::sha1_hex;
-use crate::tree::root;
+use crate::coverage::pipeline::{source_container, CoverageMap};
+use crate::coverage::tree::root;
+use sha1::{Digest, Sha1};
 
 pub const BOX_TREES: [&str; 4] = ["core", "overlays", "images", "music"];
 const CHART_BACKGROUND: &str = "#1f7f93";
@@ -532,18 +532,19 @@ pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
     rendered.join("\n") + "\n"
 }
 
-pub fn render_box_trees(
-    map: &CoverageMap,
-    _tree: Option<&crate::tree::SourceTree>,
-    _verify: bool,
-) -> Result<Vec<(&'static str, String)>, String> {
-    Ok(BOX_TREES
+pub fn render_box_trees(map: &CoverageMap) -> Vec<(&'static str, String)> {
+    BOX_TREES
         .iter()
         .map(|tree| (*tree, svg(tree, map, 540.0)))
-        .collect())
+        .collect()
 }
 pub fn svg_cache_version(svg: &str) -> String {
-    sha1_hex(svg.as_bytes())[..16].into()
+    format!("{:x}", Sha1::digest(svg.as_bytes()))[..16].into()
+}
+
+#[test]
+fn content_version_uses_standard_sha1_prefix() {
+    assert_eq!(svg_cache_version("abc"), "a9993e364706816a");
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
@@ -556,8 +557,8 @@ mod tests {
     use super::{
         content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, SOUND_TYPES,
     };
-    use crate::model::{Area, Category, Rect, Tile};
-    use crate::pipeline::CoverageMap;
+    use crate::coverage::model::{Area, Category, Rect, Tile};
+    use crate::coverage::pipeline::CoverageMap;
     use serde_json::Value;
 
     #[test]

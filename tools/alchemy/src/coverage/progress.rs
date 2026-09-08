@@ -1,8 +1,8 @@
 //! Full-C reporting over the coverage map's shared audited interval model.
-use crate::jsnum::{commas, round_half_up};
-use crate::model::{bytes, normalize, Span};
-use crate::pipeline::{build_coverage_map, progress_tally, BuildOptions, ProgressTally};
-use crate::tree::{root, work_tree_at};
+use crate::coverage::jsnum::{commas, round_half_up};
+use crate::coverage::model::{bytes, normalize, Span};
+use crate::coverage::pipeline::{build_coverage_map, progress_tally, BuildOptions, ProgressTally};
+use crate::coverage::tree::{root, work_tree_at};
 use serde_json::{json, Value};
 use std::path::Path;
 
@@ -37,7 +37,6 @@ fn proven_assembly_bytes(root: &Path, target: &str) -> Result<i64, String> {
         target: target.into(),
         exact: &tree,
         recon: Some(&tree),
-        prefer_verified_assets: true,
     })?;
     map.document
         .pointer("/categories/proven_asm/bytes")
@@ -136,7 +135,6 @@ fn run(argv: &[String]) -> Result<String, String> {
         target: target.clone(),
         exact: &tree,
         recon: None,
-        prefer_verified_assets: true,
     })?;
     match action {
         "--check" => {

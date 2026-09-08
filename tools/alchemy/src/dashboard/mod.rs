@@ -1,6 +1,6 @@
 //! Live coverage only. Music playback is a separate optional process.
 use super::http::{self, root, Response};
-use coverage_map::{
+use crate::coverage::{
     boxtree::{render_box_trees, svg_cache_version, BOX_TREES},
     pipeline::{build_coverage_map, BuildOptions},
     tree::work_tree_at,
@@ -36,13 +36,13 @@ const COVERAGE_DIRS: [&str; 12] = [
     "out/gs1-en/reports",
 ];
 fn page_version() -> String {
-    coverage_map::sha1::sha1_hex(format!("{STYLES}\0{CLIENT}").as_bytes())[..16].into()
+    svg_cache_version(&format!("{STYLES}\0{CLIENT}"))
 }
 pub struct Live {
     revision: String,
     generated: String,
     trees: Vec<(&'static str, String)>,
-    map: Option<coverage_map::pipeline::CoverageMap>,
+    map: Option<crate::coverage::pipeline::CoverageMap>,
     summary: Value,
 }
 #[derive(Default)]
@@ -71,9 +71,8 @@ fn compute() -> Result<Live, String> {
         target: "gs1-en".into(),
         exact: &tree,
         recon: Some(&tree),
-        prefer_verified_assets: true,
     })?;
-    let trees = render_box_trees(&map, Some(&tree), true)?;
+    let trees = render_box_trees(&map);
     let mut live = live_from(map.document.clone(), trees)?;
     live.map = Some(map);
     Ok(live)
@@ -153,7 +152,7 @@ fn iso_now() -> String {
     )
 }
 fn number(value: f64) -> Value {
-    serde_json::from_str(&coverage_map::jsnum::number(value)).unwrap_or(Value::Null)
+    serde_json::from_str(&crate::coverage::jsnum::number(value)).unwrap_or(Value::Null)
 }
 fn snapshot_from(state: &State) -> Value {
     let mut document = json!({
@@ -268,7 +267,7 @@ fn response(path: &str) -> Response {
                         Some(width) => c
                             .map
                             .as_ref()
-                            .map(|map| coverage_map::boxtree::svg(id, map, f64::from(width))),
+                            .map(|map| crate::coverage::boxtree::svg(id, map, f64::from(width))),
                         None => c
                             .trees
                             .iter()

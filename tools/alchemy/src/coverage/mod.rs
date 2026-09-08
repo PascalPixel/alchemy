@@ -1,11 +1,18 @@
-use crate::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TREES};
-use crate::jsnum::{commas, number};
-use crate::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
-use crate::tree::{ref_tree, root, work_tree};
+pub(crate) mod boxtree;
+pub(crate) mod jsnum;
+pub(crate) mod model;
+pub(crate) mod pipeline;
+pub(crate) mod progress;
+pub(crate) mod tree;
+
+use self::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TREES};
+use crate::coverage::jsnum::{commas, number};
+use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
+use crate::coverage::tree::{ref_tree, root, work_tree};
 use compiler_core::canonical_json::canonical_json;
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";
+const USAGE: &str = "usage: alchemy check coverage [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -116,7 +123,7 @@ fn summary(doc: &Value) -> Result<String, String> {
         return Err("coverage map lacks executable totals".into());
     }
     let ceiling = executable - proven_asm;
-    let percent = crate::jsnum::round_half_up(proven_c as i64, ceiling as i64);
+    let percent = crate::coverage::jsnum::round_half_up(proven_c as i64, ceiling as i64);
     Ok(format!(
         "target={} rom={} executable={} proven_c={} ({}%) draft_c={} ({}%) c_target={} proven_c_of_target={}% draft_source={}",
         get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"),
@@ -222,7 +229,7 @@ fn update_readme(
 #[cfg(test)]
 mod tests {
     use super::{readme_metrics, update_readme};
-    use crate::pipeline::CoverageMap;
+    use crate::coverage::pipeline::CoverageMap;
     use serde_json::json;
     #[test]
     fn readme_metrics_reports_all_done_categories() {
@@ -285,7 +292,6 @@ fn run(argv: &[String]) -> Result<String, String> {
         target: o.target.clone(),
         exact: &exact,
         recon: semantic.as_ref(),
-        prefer_verified_assets: true,
     })?;
     if o.assembly_spans {
         let mut rows = map
@@ -301,7 +307,7 @@ fn run(argv: &[String]) -> Result<String, String> {
             .collect::<Vec<_>>()
             .join("\n"));
     }
-    let rendered = render_box_trees(&map, Some(&exact), true)?;
+    let rendered = render_box_trees(&map);
     let map_json = canonical_json(&tracked(&map.document));
     if o.check {
         for (id, svg) in &rendered {

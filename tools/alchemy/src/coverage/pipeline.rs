@@ -1,7 +1,7 @@
-use crate::model::{
+use super::model::{
     area, bytes, intersect, normalize, subtract, Area, Category, Span, Tile, CATEGORIES,
 };
-use crate::tree::{read_json, SourceTree, ROM_BASE};
+use crate::coverage::tree::{read_json, SourceTree, ROM_BASE};
 use compiler_core::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
 use serde_json::{json, Map, Value};
 use std::{collections::BTreeMap, path::Path};
@@ -18,7 +18,6 @@ pub struct BuildOptions<'a> {
     pub target: String,
     pub exact: &'a SourceTree,
     pub recon: Option<&'a SourceTree>,
-    pub prefer_verified_assets: bool,
 }
 pub struct CoverageMap {
     pub document: Value,
@@ -1066,7 +1065,7 @@ fn tile_json(tile: &Tile) -> Value {
 fn entry(bytes: i64, total: i64) -> Value {
     json!({
         "bytes": bytes,
-        "percent_of_executable": crate::jsnum::round_half_up(bytes, total)
+        "percent_of_executable": crate::coverage::jsnum::round_half_up(bytes, total)
     })
 }
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
@@ -1355,7 +1354,7 @@ mod tests {
     }
     #[test]
     fn sprite_series_exposes_packages_without_double_counting() {
-        let tree = crate::tree::work_tree();
+        let tree = crate::coverage::tree::work_tree();
         let span = Span::new(0x081a7020, 0x081e120c);
         let children = sprite_children(
             &tree,

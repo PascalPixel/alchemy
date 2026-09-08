@@ -35,13 +35,13 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "owners" => owners::entry(rest),
         "retained" => retained::entry(rest),
         "coverage" => {
-            coverage_map::entrypoint::entry(rest);
+            crate::coverage::entry(rest);
             ExitCode::SUCCESS
         }
         "integrate" => integrate::entry(rest),
         "no-asm" => no_asm::entry(rest),
         "progress" => {
-            coverage_map::progress::entry(rest);
+            crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS
         }
         "routes" => routes(rest),

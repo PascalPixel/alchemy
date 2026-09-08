@@ -17792,6 +17792,10 @@
     "resource_3a6:020016f0": {
       "name": "FieldScene_RunSceneEntryDriver",
       "source": "overlays/scene_primary_script/run_scene_entry_driver.c"
+    },
+    "resource_3b2:020012b4": {
+      "name": "HandleActorReachingEscapeColumn",
+      "source": "map/locations/heidia/prologue/handle_actor_reaching_escape_column.c"
     }
   }
 }

@@ -17,8 +17,6 @@ void Func_020043f6();
 void Func_02004370();
 void Func_020043b4();
 
-#define HandleActorReachingEscapeColumn Func_020012b4
-
 void HandleActorReachingEscapeColumn(void)
 {
     u8 *entity;
@@ -36,7 +34,7 @@ void HandleActorReachingEscapeColumn(void)
         slot = (s16 *) ((u8 *) Data_02000240 + off);
     }
     if (Func_02004344(*slot + ((s32) &Value_000008d2 - (s32) &Value_0000007e)) != 0) {
-        return;                             /* handled by 0x02001214 instead */
+        return;
     }
 
     entity[85] = 3;
@@ -50,7 +48,11 @@ void HandleActorReachingEscapeColumn(void)
     Func_020043f6(8, 3);
 
     entity[85] = 0;
-    entity[35] = (u8)(entity[35] | 2);
+    {
+        u8 value = *(volatile u8 *)&entity[35];
+
+        entity[35] = (u8)(value | 2);
+    }
 
     Func_02004370(42, 10, 1, 1, column, 10);
 

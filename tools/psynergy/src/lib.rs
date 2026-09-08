@@ -26,7 +26,15 @@ mod tests {
             0x01, 0x49, 0x08, 0x60, 0x70, 0x47, 0xc0, 0x46, 0x00, 0x10, 0x00, 0x08,
         ];
         let ins = decode::decode_window_at(&image, base, base, image.len() as u32);
-        let (body, tables) = unit::bodies(&ins, main);
+        let symbols = |address, kind| {
+            (main
+                && matches!(
+                    kind,
+                    lift::ReferenceKind::Constant | lift::ReferenceKind::Dereference
+                ))
+            .then_some(lift::Symbol::Data(address))
+        };
+        let (body, tables) = unit::bodies(&ins, &symbols);
         unit::compose(base, "ReadPointer", &body, &tables)
     }
 

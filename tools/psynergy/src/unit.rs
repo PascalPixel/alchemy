@@ -510,11 +510,16 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
 }
 
 /// Lifts every function of a decoded window into C bodies.
-pub fn bodies(ins: &[Ins], main: bool) -> (String, BTreeMap<String, String>) {
+pub fn bodies(
+    ins: &[Ins],
+    symbols: &crate::lift::SymbolResolver<'_>,
+) -> (String, BTreeMap<String, String>) {
     let mut tables = BTreeMap::new();
     let body = split_functions(ins)
         .iter()
-        .map(|(entry, function)| function_source(*entry, &lift(function, &mut tables, main, &[])))
+        .map(|(entry, function)| {
+            function_source(*entry, &lift(function, &mut tables, symbols, &[]))
+        })
         .collect::<Vec<_>>()
         .join("\n");
     (body, tables)

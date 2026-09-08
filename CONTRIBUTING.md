@@ -367,7 +367,11 @@ Thumb BL decoding and byte-level relocation-site scanning are shared by the
 decompiler, overlay serialization and cross-edition comparison. These scans
 identify encoding patterns, not proof that every scanned byte is executable.
 It accepts instruction windows and explicit addresses rather than loading ROMs
-or owner registers. Repair plans name one or two operations and enumerate at most
+or owner registers. C recovery asks a caller-supplied symbol resolver about
+constants, shared pool values, call arguments and memory accesses; it has no
+Golden Sun overlay window or implicit hardware-volatility policy. Alchemy owns
+that spelling policy in `decompile`, including its legacy tagged callback rules.
+Repair plans name one or two operations and enumerate at most
 sixteen alternatives; a generated alternative is not a match or an adoption.
 Golden Sun owner lookup, adoption, scene-work reconstruction and command
 dispatch live in `tools/alchemy/src/decompile`. Golden Sun's repair catalog,

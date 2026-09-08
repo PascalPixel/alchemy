@@ -7300,7 +7300,7 @@
     },
     "resource_38b:020001ec": {
       "name": "FieldScene_RunScriptedStep1472",
-      "source": "overlays/scene_primary_script/run_scripted_step_1472.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_377:02000090": "overlays/shared/get_tertiary_default_result.c",
     "resource_37b:020019e4": {
@@ -7798,7 +7798,7 @@
     },
     "resource_38b:02000208": {
       "name": "FieldScene_RunScriptedStep146E",
-      "source": "overlays/scene_primary_script/run_scripted_step_146e.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_37b:02001a04": {
       "name": "FieldScene_RunFiveValueStep11",
@@ -8098,7 +8098,7 @@
     },
     "resource_38b:02000308": {
       "name": "SceneDialogue_ShowLine16CC",
-      "source": "overlays/scene_dialogue/show_line_16cc.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_3c0:02000588": {
       "name": "FieldScene_RunActor12Step",
@@ -8487,7 +8487,7 @@
     },
     "resource_38b:020002c8": {
       "name": "SceneDialogue_ShowLine16BF",
-      "source": "overlays/scene_dialogue/show_line_16bf.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_373:02005c20": {
       "name": "OverlayObject_UpdateOnFrameBit1",
@@ -9878,7 +9878,7 @@
     },
     "resource_38b:02000224": {
       "name": "SceneDialogue_RunLine1470",
-      "source": "overlays/scene_dialogue/run_line_1470_38b.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_3ad:02000044": {
       "name": "SceneData_SelectTable9cc0ByState",
@@ -12348,7 +12348,7 @@
     },
     "resource_38b:02000288": {
       "name": "SceneDialogue_RunActorTwelveDialogue",
-      "source": "overlays/scene_dialogue/run_actor_twelve_dialogue_38b.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_39a:02000050": {
       "name": "SceneData_SelectTableBySceneId",
@@ -13793,7 +13793,7 @@
     },
     "resource_38b:020002a8": {
       "name": "SceneDialogue_RunActorFourteenDialogue",
-      "source": "overlays/scene_dialogue/run_actor_fourteen_dialogue_38b.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_3af:02003284": {
       "name": "SceneEffect_InitSlotsEightToNineteen",
@@ -14279,7 +14279,7 @@
     },
     "resource_38b:020002e8": {
       "name": "SceneDialogue_RunActorSixteenDialogue",
-      "source": "overlays/scene_dialogue/run_actor_sixteen_dialogue_38b.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_3b1:02000e14": {
       "name": "SceneDialogue_RunActorThirteenFlag300Branch",
@@ -16033,7 +16033,7 @@
     },
     "resource_38b:02000240": {
       "name": "FieldScene_RunScene38b_02000240",
-      "source": "overlays/scene_primary_script/run_scene_38b_02000240.c"
+      "source": "overlays/scene_dialogue/actor_dialogue_events.c"
     },
     "resource_38c:02000124": {
       "name": "FieldScene_RunActor17MessageBranch",

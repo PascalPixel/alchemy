@@ -3,6 +3,42 @@ use std::path::Path;
 
 use crate::options::Options;
 
+#[test]
+fn catalog_has_no_ungeneralized_recorded_repairs() {
+    const TEXT: &str = include_str!("../../../games/gs1/recon/compiler-repair-patterns.json");
+    let catalog: serde_json::Value = serde_json::from_str(TEXT).unwrap();
+    assert_eq!(catalog["catalog_version"], crate::CATALOG_VERSION);
+    assert_eq!(catalog["search"]["max_edits_per_candidate"], 2);
+    assert_eq!(catalog["generalization_backlog"], serde_json::json!([]));
+    assert!(!TEXT.contains("recorded-not-generalized"));
+    let recorded = catalog["recorded_repairs"].as_array().unwrap();
+    assert_eq!(recorded.len(), 4);
+    let known = std::collections::HashSet::from([
+        "preload_adjacent_halfwords_before_signed_carrier",
+        "materialize_indexed_message_and_merge_sentinel_carrier",
+        "split_opposite_side_and_scaled_offset_carriers",
+        "merge_nonoverlapping_carrier_phases",
+    ]);
+    for repair in recorded {
+        assert_eq!(repair["catalog_status"], "generalized");
+        assert!(repair["regression_fixture"].is_string());
+        let operations = repair
+            .get("operations")
+            .and_then(serde_json::Value::as_array)
+            .map(|values| values.iter().collect::<Vec<_>>())
+            .unwrap_or_else(|| vec![&repair["operation"]]);
+        assert!(!operations.is_empty());
+        assert!(operations.iter().all(|operation| operation
+            .as_str()
+            .is_some_and(|value| known.contains(value))));
+    }
+    let paired = recorded
+        .iter()
+        .find(|repair| repair["id"] == "paired-phase-carrier-merge")
+        .unwrap();
+    assert_eq!(paired["decoder_repairs"].as_array().unwrap().len(), 2);
+}
+
 type Edit = (&'static str, &'static str, usize);
 
 struct Case<'a> {

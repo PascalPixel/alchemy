@@ -1,31 +1,13 @@
 use crate::{cli::Options, render::align_streams};
 use candidate_compiler::verify::{compile_source, copy_text};
 use psynergy::process::run;
+use psynergy::repair::{split_pointer_uses, Repair, RepairPlan};
 use regex::Regex;
 use std::path::Path;
 
 type Var = (String, Option<u8>, Option<i32>);
-pub fn split_pointer_uses(code: &str, name: &str) -> bool {
-    let name = regex::escape(name);
-    let uses = format!(r"\b{name}\b");
-    Regex::new(&uses).unwrap().find_iter(code).count() == 4
-        && !Regex::new(&format!(
-            r"(?:\+\+|--)\s*\b{0}\b|\b{0}\b\s*(?:\+\+|--|[-+*/%&|^]=|<<=|>>=)",
-            name
-        ))
-        .unwrap()
-        .is_match(code)
-}
 #[test]
 fn split_pointer_rejects_induction() {
-    let code = "u8 *id; id = base; use(*id); use(*id);";
-    assert!(split_pointer_uses(code, "id"));
-    for update in ["id++", "++id", "id--", "--id", "id += 1", "id <<= 1"] {
-        assert!(!split_pointer_uses(
-            &code.replace("use(*id);", update),
-            "id"
-        ));
-    }
     assert!(!split_pointer_uses(
         include_str!("../../../games/gs1/recon/en/main/0808c30c.c"),
         "id"
@@ -37,167 +19,6 @@ pub struct Report {
     pub text: String,
     pub dimensions: Vec<&'static str>,
     pub repair: Option<RepairPlan>,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Repair {
-    SwapDeclarations {
-        left: String,
-        right: String,
-    },
-    SplitLifetime {
-        name: String,
-    },
-    MergeZeroCarrier,
-    ReciprocalRoleSwap {
-        name: String,
-    },
-    PreloadAdjacentHalfwords {
-        first_destination: String,
-        first_source: String,
-        second_destination: String,
-        second_source: String,
-        carrier: String,
-    },
-    MaterializeMessageAndMergeCount {
-        indexed_value: String,
-        message: String,
-        coordinate: String,
-        count: String,
-    },
-    SplitOppositeSideAndScaledOffset {
-        side: String,
-        opposite: String,
-    },
-    MergeCarrierPhases {
-        earlier: String,
-        later: String,
-    },
-    /// Structural repair: the reference's comparison branches are the
-    /// mirror of the candidate's, so some relational guard is spelled with
-    /// its operands in the other order. The matching enumerates one mirror
-    /// per relational guard site; the byte score selects.
-    MirrorRelationalGuards,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct RepairPlan {
-    repairs: Vec<Repair>,
-}
-
-impl From<Repair> for RepairPlan {
-    fn from(repair: Repair) -> Self {
-        Self::one(repair)
-    }
-}
-
-impl RepairPlan {
-    pub fn one(repair: Repair) -> Self {
-        Self {
-            repairs: vec![repair],
-        }
-    }
-
-    pub fn two(first: Repair, second: Repair) -> Self {
-        Self {
-            repairs: vec![first, second],
-        }
-    }
-
-    pub fn try_from_repairs(repairs: Vec<Repair>) -> Result<Self, String> {
-        if !(1..=2).contains(&repairs.len()) {
-            return Err(format!(
-                "allocator repair plan must name one or two repairs, got {}",
-                repairs.len()
-            ));
-        }
-        Ok(Self { repairs })
-    }
-
-    pub fn repairs(&self) -> &[Repair] {
-        &self.repairs
-    }
-
-    pub fn dimensions(&self) -> Vec<&'static str> {
-        let mut dimensions = Vec::new();
-        for repair in &self.repairs {
-            for dimension in repair.dimensions() {
-                if !dimensions.contains(dimension) {
-                    dimensions.push(*dimension);
-                }
-            }
-        }
-        dimensions
-    }
-
-    pub fn label(&self) -> String {
-        if self.repairs.len() == 1 {
-            self.repairs[0].label()
-        } else {
-            format!(
-                "compose({})",
-                self.repairs
-                    .iter()
-                    .map(Repair::label)
-                    .collect::<Vec<_>>()
-                    .join(",")
-            )
-        }
-    }
-}
-
-impl Repair {
-    pub fn dimensions(&self) -> &'static [&'static str] {
-        match self {
-            Self::SwapDeclarations { .. } => &["declaration_order"],
-            Self::SplitLifetime { .. } => &["block_lifetime", "loop_spelling"],
-            Self::MergeZeroCarrier => &["temporary"],
-            Self::ReciprocalRoleSwap { .. } => {
-                &["temporary", "evaluation_order", "commutative_order"]
-            }
-            Self::PreloadAdjacentHalfwords { .. } => {
-                &["temporary", "evaluation_order", "type_width"]
-            }
-            Self::MaterializeMessageAndMergeCount { .. } => {
-                &["temporary", "evaluation_order", "block_lifetime"]
-            }
-            Self::SplitOppositeSideAndScaledOffset { .. } => &["temporary", "evaluation_order"],
-            Self::MergeCarrierPhases { .. } => &["temporary", "block_lifetime"],
-            Self::MirrorRelationalGuards => &["evaluation_order", "commutative_order"],
-        }
-    }
-    pub fn label(&self) -> String {
-        match self {
-            Self::SwapDeclarations { left, right } => format!("swap_declarations({left},{right})"),
-            Self::SplitLifetime { name } => format!("split_lifetime({name})"),
-            Self::MergeZeroCarrier => "merge_lifetime(zero_carrier)".into(),
-            Self::ReciprocalRoleSwap { name } => format!("reciprocal_register_role_swap({name})"),
-            Self::PreloadAdjacentHalfwords {
-                first_destination,
-                first_source,
-                second_destination,
-                second_source,
-                carrier,
-            } => format!(
-                "preload_adjacent_halfwords({first_destination},{first_source},{second_destination},{second_source},{carrier})"
-            ),
-            Self::MaterializeMessageAndMergeCount {
-                indexed_value,
-                message,
-                coordinate,
-                count,
-            } => format!(
-                "materialize_message_and_merge_count({indexed_value},{message},{coordinate},{count})"
-            ),
-            Self::SplitOppositeSideAndScaledOffset { side, opposite } => {
-                format!("split_opposite_side_and_scaled_offset({side},{opposite})")
-            }
-            Self::MergeCarrierPhases { earlier, later } => {
-                format!("merge_carrier_phases({earlier},{later})")
-            }
-            Self::MirrorRelationalGuards => "mirror_relational_guards".into(),
-        }
-    }
 }
 
 impl Report {

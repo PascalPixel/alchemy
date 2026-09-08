@@ -1,7 +1,6 @@
 pub mod build_io;
 pub mod bundle;
 pub mod bundle_data;
-pub mod cache;
 pub mod call_via_data;
 pub mod canonical_json;
 pub mod no_asm;

@@ -7,7 +7,6 @@ use compiler_core::build_io::relative;
 use compiler_core::bundle::{
     compiler_bundle_signature, executable_signature, host_executable_signature,
 };
-use compiler_core::cache::write_cache_entry_atomically;
 use compiler_core::canonical_json::canonical_json;
 use compiler_core::routing::{cflags_for_target_source, CompilerTarget};
 use compiler_core::sha256;
@@ -20,6 +19,7 @@ use import_asset::{
     rgba_png, EventBody, GbaBpp, MidiEvent,
 };
 use lz_codecs::{PaletteGroup, PaletteOperation};
+use psynergy::cache::write_cache_entry_atomically;
 use serde_json::Value;
 use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet, HashMap};

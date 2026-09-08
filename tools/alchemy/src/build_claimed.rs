@@ -33,7 +33,6 @@ use crate::targets::{
 };
 use compiler_core::build_io::{argv as strings, read, relative, rooted, text, write as write_file};
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
-use compiler_core::cache::sqlite::SqliteCache;
 use compiler_core::canonical_json::{canonical_json, write_canonical};
 use compiler_core::nodepath::basename;
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
@@ -45,6 +44,7 @@ use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA
 use compiler_core::translation_units::{
     AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
 };
+use psynergy::cache::SqliteCache;
 use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},

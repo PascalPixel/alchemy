@@ -16,7 +16,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::{Mutex, OnceLock};
+use std::sync::OnceLock;
 use tempfile::tempdir;
 pub fn hex(value: i64, width: usize) -> String {
     if value < 0 {
@@ -30,12 +30,9 @@ fn overlay_c_cache_path() -> PathBuf {
         None => root().join("out/cache/overlay-c.sqlite3"),
     }
 }
-fn overlay_c_cache() -> Result<&'static Mutex<compiler_core::cache::sqlite::SqliteCache>, String> {
-    static CACHE: OnceLock<Result<Mutex<compiler_core::cache::sqlite::SqliteCache>, String>> =
-        OnceLock::new();
-    match CACHE.get_or_init(|| {
-        compiler_core::cache::sqlite::SqliteCache::open(&overlay_c_cache_path()).map(Mutex::new)
-    }) {
+fn overlay_c_cache() -> Result<&'static psynergy::cache::SqliteCache, String> {
+    static CACHE: OnceLock<Result<psynergy::cache::SqliteCache, String>> = OnceLock::new();
+    match CACHE.get_or_init(|| psynergy::cache::SqliteCache::open(&overlay_c_cache_path())) {
         Ok(cache) => Ok(cache),
         Err(error) => Err(error.clone()),
     }
@@ -55,7 +52,7 @@ fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> 
         &sha256::hex(text.as_bytes())[..16]
     ));
     if !fs::read(&path).is_ok_and(|bytes| bytes == text.as_bytes()) {
-        compiler_core::cache::write_cache_entry_atomically(&path, text.as_bytes())
+        psynergy::cache::write_cache_entry_atomically(&path, text.as_bytes())
             .map_err(|error| format!("{}: {error}", path.display()))?;
     }
     Ok(path)
@@ -259,9 +256,9 @@ pub fn compile_overlay_c(
     if extra_flags.is_empty() {
         if let Ok(cache) = overlay_c_cache() {
             let hit = cache
-                .lock()
+                .get(&cache_key)
                 .ok()
-                .and_then(|cache| cache.get(&cache_key).ok().flatten())
+                .flatten()
                 .and_then(|entries| entries.into_iter().find(|(kind, _)| kind == "payload"));
             if let Some((_, data)) = hit {
                 return Ok(Compiled { address, data });
@@ -283,9 +280,7 @@ pub fn compile_overlay_c(
     // Mirror the read-side guard above: never persist a flag-mutated compile.
     if extra_flags.is_empty() {
         if let Ok(cache) = overlay_c_cache() {
-            if let Ok(cache) = cache.lock() {
-                let _ = cache.put(&cache_key, &[("payload", &data)]);
-            }
+            let _ = cache.put(&cache_key, &[("payload", &data)]);
         }
     }
     Ok(Compiled { address, data })

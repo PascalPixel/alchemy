@@ -1,4 +1,4 @@
-use crate::{
+use crate::overlay::{
     park::{placeholder_span, truth_window},
     retained_source,
 };
@@ -116,7 +116,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         None
     };
     let span = resolve_overlay_span(
-        &crate::reviewed_spans(root)?,
+        &crate::overlay::reviewed_spans(root)?,
         resolved,
         installed,
         options.size,
@@ -169,7 +169,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         return Err("overlay reconstruction corpus is empty".into());
     }
     let paths = SourcePaths::load(root)?;
-    let reviewed = crate::reviewed_spans(root)?;
+    let reviewed = crate::overlay::reviewed_spans(root)?;
     let dossiers: Value = serde_json::from_slice(
         &std::fs::read(root.join("games/gs1/recon/en/dossiers.json"))
             .map_err(|error| error.to_string())?,
@@ -184,7 +184,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         let placeholder = placeholder_span(root, target)?;
         let span = placeholder.or_else(|| reviewed.get(&target).map(|span| *span as i64));
         let Some(span) = span else {
-            let kind = crate::audited_kind(root, &overlay, address)?;
+            let kind = crate::overlay::audited_kind(root, &overlay, address)?;
             let relationship = kind
                 .as_deref()
                 .and_then(|kind| nonowner_relationship(kind, target, &reviewed));

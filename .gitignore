@@ -86,6 +86,6 @@ target/
 # Worktree convenience symlink to the shared ROM set.
 /roms
 
-# Adoption's per-overlay lock (see OverlayLock in tools/overlay-adopt). Lives
+# Adoption's per-overlay lock (see tools/alchemy/src/overlay). Lives
 # beside the tracked assembly it guards, so it must never become committable.
 games/*/assets/code/*.adopt-lock

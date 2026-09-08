@@ -423,7 +423,9 @@ relocation format; `cross-edition` checks edition differences; `check`
 enforces source, classification, compiler and publication contracts. These
 are project integration, not tools to take to another game. There is no
 game-specific asset crate: a package layout is data, and a codec is named
-for its format.
+for its format. Overlay adoption, parking and audits live alongside their command
+dispatch in `tools/alchemy/src/overlay`; they are not a separate library. The
+owner-aware `alchemy diff` path uses the same overlay scoring integration.
 
 Asset tooling is organized by format and conversion, never by resource number,
 ROM address or the first game asset that needed it. Name a directional converter
@@ -525,7 +527,6 @@ libraries are not additional public command surfaces.
 | [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [diff](tools/diff/) | Project scoring and report orchestration; allocator/type residuals and repair guidance. Uses Psynergy's structural comparison and byte differences rather than maintaining another implementation. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
-| [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |
 | [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |

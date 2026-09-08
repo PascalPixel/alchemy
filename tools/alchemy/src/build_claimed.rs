@@ -25,17 +25,17 @@ pub fn entry(arguments: &[String]) -> Result<()> {
     }
     Ok(())
 }
+use crate::targets::{
+    decomp_target, parse_decomp_target, target_for, BuildSupport, DecompTarget, DecompTargetId,
+    DEFAULT_TARGET,
+};
 use candidate_compiler::verify::{
-    verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
+    link_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
 };
 use compiler_core::build_io::{argv as strings, read, relative, rooted, text, write as write_file};
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
 use compiler_core::cache::sqlite::SqliteCache;
 use compiler_core::canonical_json::{canonical_json, write_canonical};
-use compiler_core::decomp_targets::{
-    decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
-    DecompTarget, DecompTargetId, DEFAULT_TARGET,
-};
 use compiler_core::nodepath::basename;
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
@@ -415,8 +415,8 @@ fn materialize_unit_owner(
         ..Default::default()
     };
     let route = unit.source_owner(unit.owners[0].address)?.routing_path();
-    let verify = |object| {
-        verify_candidate_owned_routed_with_object(
+    let link = |object| {
+        link_candidate_owned_routed_with_object(
             &source,
             &route.to_string_lossy(),
             &stem,
@@ -429,9 +429,10 @@ fn materialize_unit_owner(
             Some(object),
         )
     };
-    let verification = verify(object)?;
-    if !(verification.actual.len() == extent
-        && (rom.is_none() || verification.actual == verification.expected))
+    let linked = link(object)?;
+    let start = owner.checked_sub(ROM_BASE).ok_or("owner precedes ROM")? as usize;
+    if linked.len() != extent
+        || rom.is_some_and(|rom| rom.get(start..start + extent) != Some(linked.as_slice()))
     {
         return Err(format!("{}: Func_{stem} is not byte-exact", unit.id));
     }
@@ -440,7 +441,7 @@ fn materialize_unit_owner(
     write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
     let assembler = compiler_core::routing::compiler_assembly_command(&text(assembly), &output);
     run(root, &assembler)?;
-    if verify(&output)?.actual != verification.actual {
+    if link(&output)? != linked {
         return Err(format!("{}: emitted {stem} slice changed output", unit.id));
     }
     let undefined_names = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &output]))?);
@@ -520,12 +521,6 @@ fn write_symbol_bindings(
     }
     Ok(path.to_string_lossy().into_owned())
 }
-fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
-    match target {
-        DecompCompilerTarget::Gs1 => CompilerTarget::Gs1,
-        DecompCompilerTarget::Gs2 => CompilerTarget::Gs2,
-    }
-}
 
 #[allow(clippy::too_many_arguments)]
 pub fn compile_source_for_owner(
@@ -534,7 +529,7 @@ pub fn compile_source_for_owner(
     object_cache: &SqliteCache,
     source: &str,
     object_dir: &str,
-    compiler: DecompCompilerTarget,
+    compiler: CompilerTarget,
     edition_define: &str,
     signatures: &CacheSignatures,
     allowed_undefined: &[String],
@@ -543,14 +538,9 @@ pub fn compile_source_for_owner(
     let name = format!("{owner:08x}");
     let object = text(Path::new(object_dir).join(format!("{name}.o")));
     let assembly = text(Path::new(object_dir).join(format!("{name}.s")));
-    let routing_source =
-        text(SourceOwner::Main(owner).routing_path_for_game(compiler_target(compiler).as_str()));
-    let mut options = SourceToAssemblyPlanOptions::new(
-        compiler_target(compiler),
-        routing_source,
-        source,
-        assembly.clone(),
-    );
+    let routing_source = text(SourceOwner::Main(owner).routing_path_for_game(compiler.as_str()));
+    let mut options =
+        SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
     options.preprocessor_flags = vec![format!("-D{edition_define}=1")];
     if let Some(bindings) = bindings {
         options.preprocessor_flags.push("-include".to_string());
@@ -689,7 +679,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             ));
         }
     }
-    let game = compiler_target(target.compiler).as_str();
+    let game = target.compiler.as_str();
     let source_paths = SourcePaths::load_for_game(Path::new(root), game)?;
     let sources = source_paths.main_sources()?;
     if sources.is_empty() {
@@ -814,7 +804,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                     owner.extent,
                     &base.object,
                     &object_dir,
-                    compiler_target(target.compiler),
+                    target.compiler,
                     rom.as_ref(),
                 )?);
             } else {
@@ -875,7 +865,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         let document = json!({
             "format": 1,
             "target": target.id.to_string(),
-            "compiler": target.compiler.to_string(),
+            "compiler": target.compiler.as_str(),
             "edition_define": target.edition_define,
             "verification": "compile_only",
             "translation_unit_compiles": unit_compiles,
@@ -1078,7 +1068,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let document = json!({
         "format": 1,
         "target": target.id.to_string(),
-        "compiler": target.compiler.to_string(),
+        "compiler": target.compiler.as_str(),
         "rom_base": ROM_BASE,
         "rom_size": target.rom_size,
         "verification": if options.source_only { "source_only" } else { "rom" },

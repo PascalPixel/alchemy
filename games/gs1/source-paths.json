@@ -17800,6 +17800,10 @@
     "resource_3b2:020013ac": {
       "name": "DispatchPrologueSceneSlot",
       "source": "map/locations/heidia/prologue/dispatch_prologue_scene_slot.c"
+    },
+    "resource_3c0:02000c00": {
+      "name": "FieldScene_RunActorPairFadeAndSelectedResult",
+      "source": "overlays/scene_primary_script/run_actor_pair_fade_and_selected_result.c"
     }
   }
 }

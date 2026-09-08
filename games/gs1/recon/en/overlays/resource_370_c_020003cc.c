@@ -226,7 +226,6 @@ s32 Func_020003cc(void)
     s32 value;
     s32 r10;
     s32 r8;
-    s32 r6;
     s32 r2;
     s32 r3;
     s32 base3_2000240;
@@ -245,19 +244,19 @@ s32 Func_020003cc(void)
     s32 none;
     s32 base5_c82;
     s32 v11;
-    u8 slot20[4];
+    s32 started;
     s32 slot8;
     s32 slot4;
     s32 slot12;
     s32 slot16;
-    u8 slot348[4];
+    u8 slot348[200];
     u8 slot28[320];
     u8 slot24[4];
 
-    (*(s32 *)slot20) = 0;
+    started = 0;
     Func_02000438();
     Value2(Func_0200171a, 0x20081fd, 0xc80);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = (*(s32 *)slot20);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = started;
     Func_020094ac();
     Func_020018c0();
     if (Data_02000240_t[225][0] == 2) {
@@ -289,7 +288,7 @@ s32 Func_020003cc(void)
         Value2(Func_02001822, slot12, 2);
         Func_020017c0(1);
     } else {
-        *(u8 *)0x03001ca0 = (*(s32 *)slot20);
+        *(u8 *)0x03001ca0 = started;
         v5 = -0x224;
         v7 = r8;
     }
@@ -305,35 +304,33 @@ s32 Func_020003cc(void)
             }
         }
         if (rec8 == 0) {
-            if ((*(s32 *)slot20) == 0) {
+            if (started == 0) {
                 Func_02001804(30);
                 Value2(Func_02001816, 0x2008155, 0xc80);
                 Func_02001814(1);
-                (*(s32 *)slot20) = 1;
+                started = 1;
             }
         }
         if (rec8 > 0) {
             rec8 = Value0(Func_020018c8);
         } else {
+            rec8 = 0;
         }
-        if (r6 != 0) {
+        if (rec8 != 0) {
             goto L_0200057a;
         }
         Func_02001956();
         base3_2000240 = (s32)Data_02000240;
         base2_2000240 = (s32)Data_02000240;
         Func_02001938(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
-        base7_0 = 0;
+        v7 = 0;
         v5 = 1;
         L_02000522:;
         Func_0200184a(6);
-        rec8 = Func_02001940(base7_0);
+        rec8 = Func_02001940(v7);
         if (rec8 != -1) {
-            v5 = 1;
-            v7 = base7_0;
             goto L_02000540;
         }
-        v7 = base7_0;
     } while (v7 == 0);
     v7 = (v7 - 1);
     goto L_02000522;
@@ -345,7 +342,7 @@ s32 Func_020003cc(void)
         v5 = 7;
     }
     v7 = (v7 + 1);
-    if ((v7 + 1) < v5) {
+    if (v7 < v5) {
         goto L_02000522;
     }
     Func_020019dc();
@@ -357,7 +354,7 @@ s32 Func_020003cc(void)
     }
     goto L_02000c96;
     L_0200057a:;
-    if (r6 != 1) {
+    if (rec8 != 1) {
     } else {
         rec8 = Value1(Func_02001978, 1);
         if (rec8 == -1) {
@@ -408,15 +405,15 @@ s32 Func_020003cc(void)
         Call1(Func_02001b00, 0x106);
         goto L_02000c96;
     }
-    if (r6 == 2) {
+    if (rec8 == 2) {
         Func_02001aa2();
         goto L_020004a8;
     }
-    if (r6 == 3) {
+    if (rec8 == 3) {
         Func_02001ab4();
         goto L_020004a8;
     }
-    if (r6 == 4) {
+    if (rec8 == 4) {
         rec8 = Func_02001b10(4);
         if (rec8 == -1) {
             goto L_020004a8;
@@ -453,7 +450,7 @@ s32 Func_020003cc(void)
         goto L_020008e0;
         L_020007ae:;
     } else {
-        if (r6 != 5) {
+        if (rec8 != 5) {
             goto L_020004a8;
         }
         do {

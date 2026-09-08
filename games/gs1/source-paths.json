@@ -1,11 +1,29 @@
 {
   "format": 3,
   "owners": {
-    "resource_385:02000c1c": {"name": "ActorPresentation_SetupActorSceneCells", "source": "overlays/actor_presentation/actor_scene_setup.c"},
-    "resource_385:02000350": {"name": "SceneActor_UpdateProximity"},
-    "resource_385:0200058c": {"name": "SceneDialogue_RunActorFourteenFlagDialogue", "source": "overlays/scene_script/actor_motion_events.c"},
-    "resource_385:02000864": {"name": "SceneDialogue_RunActorFifteenDialogue", "source": "overlays/scene_script/actor_motion_events.c"},
-    "resource_385:02000104": {"name": "SceneEffect_UpdateMotion", "source": "overlays/scene_script/actor_motion_events.c"},
+    "resource_3bf:02005324": {
+      "name": "FieldScene_RestoreActorsFromFlags",
+      "source": "map/locations/heidia/village/actor_setup.c"
+    },
+    "resource_385:02000c1c": {
+      "name": "ActorPresentation_SetupActorSceneCells",
+      "source": "overlays/actor_presentation/actor_scene_setup.c"
+    },
+    "resource_385:02000350": {
+      "name": "SceneActor_UpdateProximity"
+    },
+    "resource_385:0200058c": {
+      "name": "SceneDialogue_RunActorFourteenFlagDialogue",
+      "source": "overlays/scene_script/actor_motion_events.c"
+    },
+    "resource_385:02000864": {
+      "name": "SceneDialogue_RunActorFifteenDialogue",
+      "source": "overlays/scene_script/actor_motion_events.c"
+    },
+    "resource_385:02000104": {
+      "name": "SceneEffect_UpdateMotion",
+      "source": "overlays/scene_script/actor_motion_events.c"
+    },
     "resource_38a:020004f4": {
       "name": "SceneEffect_RunActorBurst",
       "source": "overlays/scene_script/actor_burst.c"
@@ -4070,16 +4088,16 @@
       "source": "map/locations/heidia/village/configure_actor_13_scene_resource.c"
     },
     "resource_3bf:02005470": {
-      "name": "ActivateThreeActorGroupFromFlags",
-      "source": "map/locations/heidia/village/activate_three_actor_group_from_flags.c"
+      "name": "FieldScene_ActivateThreeActorGroup",
+      "source": "map/locations/heidia/village/actor_setup.c"
     },
     "resource_3bf:020054b0": {
-      "name": "ActivateTwoActorGroupFromFlags",
-      "source": "map/locations/heidia/village/activate_two_actor_group_from_flags.c"
+      "name": "FieldScene_ActivateTwoActorGroup",
+      "source": "map/locations/heidia/village/actor_setup.c"
     },
     "resource_3bf:020054dc": {
-      "name": "ActivateSecondThreeActorGroupFromFlags",
-      "source": "map/locations/heidia/village/activate_second_three_actor_group_from_flags.c"
+      "name": "FieldScene_ActivateAlternateActorGroup",
+      "source": "map/locations/heidia/village/actor_setup.c"
     },
     "resource_3bf:02005520": {
       "name": "ActivateFiveActorGroupFromFlags",

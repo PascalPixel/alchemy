@@ -17668,6 +17668,10 @@
     "resource_3c7:02000308": {
       "name": "FieldScene_RunActor14BeatsAndFlashGate",
       "source": "overlays/scene_script/run_actor14_beats_and_flash_gate.c"
+    },
+    "resource_382:02000104": {
+      "name": "OverlayObject_IntegrateVelocitiesAndSpriteAngle",
+      "source": "overlays/overlay_object/integrate_velocities_and_sprite_angle.c"
     }
   }
 }

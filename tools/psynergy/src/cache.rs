@@ -2,8 +2,12 @@
 // timeout, and transactions make parallel readers/writers interruption-safe.
 
 use rusqlite::Connection;
+use std::fs;
+use std::io;
 use std::path::Path;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct SqliteCache {
     connection: Mutex<Connection>,
@@ -86,6 +90,30 @@ mod tests {
     use super::*;
 
     #[test]
+    fn failed_replacement_preserves_previous_entries() {
+        let directory = tempfile::tempdir().unwrap();
+        let cache = SqliteCache::open(&directory.path().join("cache.sqlite3")).unwrap();
+        cache.put("a", &[("object", b"original")]).unwrap();
+        assert!(cache
+            .put("a", &[("object", b"new"), ("object", b"duplicate")])
+            .is_err());
+        assert_eq!(
+            cache.get("a").unwrap().unwrap(),
+            vec![("object".into(), b"original".to_vec())]
+        );
+    }
+
+    #[test]
+    fn atomic_file_replacement_leaves_no_temporary_entries() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("entry.bin");
+        write_cache_entry_atomically(&path, b"old").unwrap();
+        write_cache_entry_atomically(&path, b"replacement").unwrap();
+        assert_eq!(fs::read(&path).unwrap(), b"replacement");
+        assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 1);
+    }
+
+    #[test]
     fn roundtrips_and_replaces_by_key() {
         let directory = tempfile::tempdir().unwrap();
         let path = directory.path().join("cache.sqlite3");
@@ -101,5 +129,40 @@ mod tests {
         cache.put("a", &[("object", b"three")]).unwrap();
         let replaced = cache.get("a").unwrap().unwrap();
         assert_eq!(replaced, vec![("object".to_string(), b"three".to_vec())]);
+    }
+}
+
+// Same-directory temporary write plus atomic rename prevents truncated cache
+// hits after interruption or concurrent writers. `.partial` files stay inert.
+
+static COUNTER: AtomicU64 = AtomicU64::new(0);
+
+/// The suffix is deliberately NOT `.bin`: a temporary left behind by a killed
+/// process must never be mistaken for an entry by a `*.bin` listing, and can
+/// never be found by a key lookup because the key names the final path.
+fn temporary_path(final_path: &Path) -> std::path::PathBuf {
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|elapsed| elapsed.subsec_nanos() as u64)
+        .unwrap_or(0);
+    let unique = COUNTER.fetch_add(1, Ordering::Relaxed);
+    let mut name = final_path.as_os_str().to_os_string();
+    name.push(format!(
+        ".{}-{nanos:x}{unique:x}.partial",
+        std::process::id()
+    ));
+    name.into()
+}
+
+/// Write `data` to `final_path` atomically. Never leaves a partial entry there.
+pub fn write_cache_entry_atomically(final_path: &Path, data: &[u8]) -> io::Result<()> {
+    let temporary = temporary_path(final_path);
+    match fs::write(&temporary, data).and_then(|()| fs::rename(&temporary, final_path)) {
+        Ok(()) => Ok(()),
+        Err(error) => {
+            // Best effort. A stray `.partial` is inert by construction.
+            let _ = fs::remove_file(&temporary);
+            Err(error)
+        }
     }
 }

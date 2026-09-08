@@ -1,3 +1,8 @@
+use crate::overlay::assembly::OVERLAY_BASE;
+use crate::overlay::compile::assemble_overlay;
+use crate::overlay::rom::canonical_overlay;
+use crate::overlay::rom::CanonicalRom;
+use crate::overlay::source::OverlaySource;
 use crate::overlay::{
     listing_offsets, overlay_assembly, overlay_offset, region_lines, retained_source,
 };
@@ -7,8 +12,6 @@ use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
 };
-use disassemble::compile::assemble_overlay;
-use disassemble::{canonical_overlay, CanonicalRom, OverlaySource, OVERLAY_BASE};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
@@ -494,7 +497,7 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
         }
         _ => {
             let image = canonical_overlay(root, &overlay)?;
-            let text = disassemble::build_overlay_source(&image, OVERLAY_BASE)?;
+            let text = crate::overlay::assembly::build_overlay_source(&image, OVERLAY_BASE)?;
             region_text(&define_dangling_labels(&text), address, span)?
         }
     };
@@ -514,7 +517,7 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
             }
         }
     }
-    let image = disassemble::compile::assemble_overlay_raw(
+    let image = crate::overlay::compile::assemble_overlay_raw(
         &OverlaySource::named(overlay.clone(), text.clone()),
         OVERLAY_BASE,
     )?;

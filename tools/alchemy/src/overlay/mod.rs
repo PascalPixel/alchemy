@@ -1,8 +1,14 @@
+pub mod assembly;
+pub mod compile;
 pub mod park;
+pub mod rom;
 pub mod score;
+pub mod source;
+use crate::overlay::assembly::OVERLAY_BASE;
+use crate::overlay::compile::assemble_overlay;
+use crate::overlay::source::OverlaySource;
 use compiler_core::no_asm::{expanded_forbidden, find_forbidden};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use disassemble::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;

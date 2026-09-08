@@ -4,6 +4,7 @@ use crate::diff::{
     patch::apply_unified_diff_in_tree,
     triage::{classify, classify_with_topology},
 };
+use crate::overlay::assembly::OVERLAY_BASE;
 use candidate_compiler::verify::{
     compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
     CandidateCompilerConfiguration, ROM_BASE,
@@ -12,7 +13,6 @@ use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_inputs::source_tree_signature;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use disassemble::OVERLAY_BASE;
 use psynergy::compare::{
     differing_offsets,
     insns::gas_function_insns,
@@ -367,7 +367,7 @@ fn topology_for_owner(
             } else {
                 compiler_core::overlay::RUNTIME_BASE - compiler_core::overlay::RESOURCE_BASE
             };
-        return match disassemble::build_region_source(expected, i64::from(base)) {
+        return match crate::overlay::assembly::build_region_source(expected, i64::from(base)) {
             Ok(reference) => topology::compare_symbols_at(
                 candidate,
                 &candidate_symbol,

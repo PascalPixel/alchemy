@@ -1,9 +1,10 @@
+use crate::overlay::compile::compile_declared_overlay_unit;
+use crate::overlay::compile::OverlayEditionPlacement;
 use candidate_compiler::verify::{assemble, compile_to_assembly};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::symbol_is_thumb;
 use compiler_core::translation_units::{TranslationUnit, TranslationUnits};
-use disassemble::{compile_declared_overlay_unit, OverlayEditionPlacement};
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -2093,17 +2094,20 @@ fn decode_overlay_resources(
     let mut decoded = BTreeMap::new();
     for edition in EDITIONS {
         let rom = &roms.images[edition];
-        let table =
-            disassemble::resource_table(rom).map_err(|error| format!("{edition}: {error}"))?;
+        let table = crate::overlay::rom::resource_table(rom)
+            .map_err(|error| format!("{edition}: {error}"))?;
         tables.insert(
             edition.to_string(),
             format!("0x{:08x}", ROM_BASE + table as u64),
         );
         let mut resources = BTreeMap::new();
         for resource in OVERLAY_FIRST..=OVERLAY_LAST {
-            let bytes =
-                disassemble::decode_overlay(rom, table, &format!("resource_{resource:03x}"))
-                    .map_err(|error| format!("{edition}: resource {resource:03x}: {error}"))?;
+            let bytes = crate::overlay::rom::decode_overlay(
+                rom,
+                table,
+                &format!("resource_{resource:03x}"),
+            )
+            .map_err(|error| format!("{edition}: resource {resource:03x}: {error}"))?;
             resources.insert(resource, bytes);
         }
         decoded.insert(edition, resources);

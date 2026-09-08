@@ -21,12 +21,12 @@ fn self_test() -> Result<String, String> {
         Err("candidate show self-test failed".into())
     }
 }
+use crate::overlay::rom::canonical_overlay;
 use compiler_core::{
     overlay_call_via_base,
     routing::root,
     translation_units::{TranslationUnit, TranslationUnits},
 };
-use disassemble::canonical_overlay;
 use std::path::Path;
 use std::process::Command;
 pub fn entry(arguments: &[String]) {
@@ -152,7 +152,7 @@ fn run(mut options: crate::diff::cli::Options) -> Result<String, String> {
 /// compiles once, every function is linked at its owner's address, and each
 /// member's bytes are compared with the canonical overlay image.
 fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
-    let compiled = disassemble::compile_declared_overlay_unit(unit, "en", None)?;
+    let compiled = crate::overlay::compile::compile_declared_overlay_unit(unit, "en", None)?;
     let reference = canonical_overlay(root(), overlay)?;
     let base = 0x0200_0000i64;
     let mut output = String::new();

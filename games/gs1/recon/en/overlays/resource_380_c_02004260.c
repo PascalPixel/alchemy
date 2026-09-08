@@ -1,48 +1,55 @@
 #include "types.h"
 
-#define FieldScene_RunOpeningAuxiliarySequence Func_02004260
+u8 *Func_02008b38(s32);
+s32 Func_0200c95c(s32);
+s32 Func_0200c954(s32, s32);
+void Func_02008b50(u8 *, void *);
+u8 *Func_02008b5e(s32, s32);
+void Func_02008c06(s32);
+void Func_02008b8c(s32, s32, u8 *);
+void Func_02008b8a(s32);
+void Func_02008e00(s32);
+void Func_02008df0(u8 *, s32);
+void Func_02008c80(s32, s32);
+void Func_02008c48(s32, s32);
+void Func_02008bd6(u8 *);
+void Func_02008d1e(s32, s32);
+extern u8 Data_0200cbe4[];
 
-/* Audited retained auxiliary scene body.
- * The complete executable span preserves 14 calls, 0 loop(s), and 10 explicit memory operation(s).
- * Approved GCC changes scheduling, allocation, control-flow lowering, and
- * literal placement, so the reviewed assembly remains authoritative. */
-
-void *Func_02008b38();
-void Func_02008b50();
-void Func_02008b5e();
-void Func_02008b8a();
-void Func_02008b8c();
-void Func_02008bd6();
-void Func_02008bd8();
-void Func_02008c06();
-void Func_02008c48();
-void Func_02008c80();
-void Func_02008d1e();
-void Func_02008df0();
-void Func_02008e00();
-
-void Func_02004260(void)
+s32 FieldScene_PresentItem(s32 item)
 {
-    void *p1;
+    s32 zero = 0;
+    u8 *buf;
+    u8 *obj = Func_02008b38(22);
+    s32 text = Func_0200c95c(224);
+    s32 size = Func_0200c954(text, 224);
+    u8 *sprite;
+    u8 *p;
+    s32 mask;
 
-    p1 = Func_02008b38(22);
-    Func_02008bd8(224);
-    Func_02008bd8();
-    Func_02008b50();
-    *(u8 *)((u8 *)(*(void **)(p1 + 80)) + 38) = 0;
-    *(u8 *)((u8 *)((u8 *)(*(void **)(p1 + 80)) + 38) + 1) = 0;
-    *(u8 *)((*(void **)(p1 + 80)) + 5) &= 0xffffffffffffffdf;
-    *(u8 *)((*(void **)(p1 + 80)) + 9) &= 0xf;
-    *(s32 *)(p1 + 40) = 163840;
-    *(s32 *)(p1 + 72) = 16384;
-    Func_02008b5e(17, 1544);
-    Func_02008c06();
-    Func_02008b8c();
-    Func_02008b8a(17);
-    Func_02008e00(83);
-    Func_02008df0();
-    Func_02008c80();
-    Func_02008c48();
-    Func_02008bd6();
-    Func_02008d1e(0, 1);
+    if (obj != 0) {
+        Func_02008b50(obj, Data_0200cbe4);
+        sprite = *(u8 **)(obj + 80);
+        p = sprite + 38;
+        *p = zero;
+        p++;
+        *p = zero;
+        mask = 33;
+        mask = -mask;
+        sprite[5] &= mask;
+        sprite[9] &= 0xf;
+        *(s32 *)(obj + 40) = 163840;
+        *(s32 *)(obj + 72) = 16384;
+        buf = Func_02008b5e(17, 1544);
+        Func_02008c06(item);
+        Func_02008b8c(sprite[28], 128, buf + 1024);
+        Func_02008b8a(17);
+        Func_02008e00(83);
+        Func_02008df0(obj, 3);
+        Func_02008c80(text, size);
+        Func_02008c48(text, item);
+        Func_02008bd6(obj);
+        Func_02008d1e(0, 1);
+    }
+    return text;
 }

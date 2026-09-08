@@ -579,7 +579,8 @@ Func_080d2464:
 	add	r5, sl
 .L37:
 	movs	r6, #1
-	.4byte 0x427669ab
+	ldr	r3, [r5, #24]
+	negs	r6, r6
 	cmp	r3, r6
 	bne.n	.L34
 	bl	Func_08004458

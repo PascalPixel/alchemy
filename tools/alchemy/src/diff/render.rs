@@ -1,4 +1,4 @@
-use crate::{
+use crate::diff::{
     cli::Options,
     disasm::{disassemble, Rows},
     patch::apply_unified_diff_in_tree,
@@ -30,8 +30,8 @@ pub struct RenderOutput {
     pub candidate_length: usize,
     pub reference_length: usize,
     pub differing_halfwords: usize,
-    pub allocator: Option<crate::allocator::Report>,
-    pub residual: crate::triage::ResidualReport,
+    pub allocator: Option<crate::diff::allocator::Report>,
+    pub residual: crate::diff::triage::ResidualReport,
 }
 
 struct SourceIdentity {
@@ -278,7 +278,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     };
     let mut score = render_bytes(actual, expected, compile, topology, options, &work)?;
     let allocator = if options.allocator_order {
-        let report = crate::allocator::decode(
+        let report = crate::diff::allocator::decode(
             root,
             options,
             &identity.routing,
@@ -288,7 +288,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &score.candidate,
             &score.reference,
         )?;
-        Some(crate::structure::augment(report, &work))
+        Some(crate::diff::structure::augment(report, &work))
     } else {
         None
     };
@@ -663,7 +663,7 @@ pub fn without_register(instruction: &str) -> String {
         .into_owned()
 }
 pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
-    crate::triage::alignment_indices(left, right, |left, right| {
+    crate::diff::triage::alignment_indices(left, right, |left, right| {
         usize::from(alignment_key(left) == alignment_key(right))
     })
     .into_iter()

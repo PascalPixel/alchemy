@@ -1,4 +1,12 @@
-use crate::{
+pub mod allocator;
+pub mod cli;
+pub mod disasm;
+pub mod patch;
+pub mod render;
+pub mod structure;
+pub mod triage;
+
+use crate::diff::{
     cli::{options_of, ParseOutcome, USAGE},
     render::{render, RenderOutput},
 };
@@ -38,7 +46,7 @@ pub fn entry(arguments: &[String]) {
         Err(error) => fail(&error),
     }
 }
-fn run(mut options: crate::cli::Options) -> Result<String, String> {
+fn run(mut options: crate::diff::cli::Options) -> Result<String, String> {
     let Some(id) = options.unit.clone() else {
         return render(root(), &options).map(|output| output.stdout);
     };
@@ -254,7 +262,7 @@ mod tests {
             reference_length: 4,
             differing_halfwords: difference,
             allocator: None,
-            residual: crate::triage::classify(&[], &[], 4, 4, difference),
+            residual: crate::diff::triage::classify(&[], &[], 4, 4, difference),
         };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));

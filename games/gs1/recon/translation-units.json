@@ -1379,7 +1379,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-3bf-020025f8",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_020025f8.c",
+      "source": "games/gs1/src/map/locations/heidia/village/scene_transition.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {},
@@ -2018,7 +2018,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-02002718",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02002718.c",
+      "source": "games/gs1/src/map/locations/heidia/village/party_animation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10023,12 +10023,32 @@
       "local_symbols": []
     },
     {
-      "id": "overlays-scene-primary-script-run-scene-3bf-sequence-a",
+      "id": "heidia-village-scene-triggers",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_sequence_a.c",
+      "source": "games/gs1/src/map/locations/heidia/village/scene_triggers.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Func_02002d10": {
+          "address": "0x02009660",
+          "kind": "thumb"
+        },
+        "Func_02002fae": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Func_02006cb8": {
+          "address": "0x0200d610",
+          "kind": "thumb"
+        },
+        "Func_02006cec": {
+          "address": "0x0200d618",
+          "kind": "thumb"
+        },
         "Func_02006cf4_a": {
           "address": "0x0200d618",
           "kind": "thumb"
@@ -10036,16 +10056,96 @@
         "Func_02006cf4_b": {
           "address": "0x0200d610",
           "kind": "thumb"
+        },
+        "Func_02003232": {
+          "address": "0x02009b24",
+          "kind": "thumb"
+        },
+        "Func_02006d4a": {
+          "address": "0x0200d638",
+          "kind": "thumb"
+        },
+        "Data_02000240": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Func_02003006": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Func_02006cd4": {
+          "address": "0x0200d598",
+          "kind": "thumb"
+        },
+        "Func_02003054": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Func_02006d28": {
+          "address": "0x0200d598",
+          "kind": "thumb"
+        },
+        "Func_02006d2e": {
+          "address": "0x0200d598",
+          "kind": "thumb"
+        },
+        "Func_02006d76": {
+          "address": "0x0200d610",
+          "kind": "thumb"
+        },
+        "Func_02006da2": {
+          "address": "0x0200d618",
+          "kind": "thumb"
+        },
+        "Func_020030b4": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Func_02006d88": {
+          "address": "0x0200d598",
+          "kind": "thumb"
+        },
+        "Func_02006d8e": {
+          "address": "0x0200d598",
+          "kind": "thumb"
+        },
+        "Func_02006dd6": {
+          "address": "0x0200d610",
+          "kind": "thumb"
+        },
+        "Func_02006e02": {
+          "address": "0x0200d618",
+          "kind": "thumb"
         }
       },
+      "local_symbols": [],
       "owners": [
         {
           "address": "0x0200169c",
           "extent": 108,
           "state": "exact-c"
+        },
+        {
+          "address": "0x02001708",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001718",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200175c",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020017bc",
+          "extent": 96,
+          "state": "exact-c"
         }
-      ],
-      "local_symbols": []
+      ]
     },
     {
       "id": "map-locations-heidia-village-run-actor-9-scripted-sequence",
@@ -10141,7 +10241,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-02001cf0",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02001cf0.c",
+      "source": "games/gs1/src/map/locations/heidia/village/actor_steps.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10207,7 +10307,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-supplemental-sequence-one",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_supplemental_sequence_one.c",
+      "source": "games/gs1/src/map/locations/heidia/village/supplemental_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10252,7 +10352,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-020021c4",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_020021c4.c",
+      "source": "games/gs1/src/map/locations/heidia/village/actor_pair_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10277,7 +10377,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-0200252c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_0200252c.c",
+      "source": "games/gs1/src/map/locations/heidia/village/scene_party_placement.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10302,7 +10402,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-story-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_story_scene.c",
+      "source": "games/gs1/src/map/locations/heidia/village/story_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10495,7 +10595,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-main-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_main_sequence.c",
+      "source": "games/gs1/src/map/locations/heidia/village/main_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -10968,7 +11068,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-02004794",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_02004794.c",
+      "source": "games/gs1/src/map/locations/heidia/village/conditional_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -11021,7 +11121,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bf-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3bf_sequence.c",
+      "source": "games/gs1/src/map/locations/heidia/village/scene_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {

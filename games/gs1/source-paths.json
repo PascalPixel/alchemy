@@ -3819,23 +3819,23 @@
     },
     "resource_3bf:02000b4c": {
       "name": "ConfigureSceneActor12",
-      "source": "map/locations/heidia/village/configure_scene_actor_12.c"
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:02000ba0": {
       "name": "RunSceneObjectSetup",
-      "source": "map/locations/heidia/village/run_scene_object_setup.c"
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:02000c90": {
       "name": "PlaceSceneObjectPairFromTableA",
-      "source": "map/locations/heidia/village/place_scene_object_pair_from_table_a.c"
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:02000e30": {
       "name": "PlaceSceneObjectPairFromTableB",
-      "source": "map/locations/heidia/village/place_scene_object_pair_from_table_b.c"
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:02000ee0": {
       "name": "PlaceSceneObjectPairFromTableC",
-      "source": "map/locations/heidia/village/place_scene_object_pair_from_table_c.c"
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:02000f94": {
       "name": "ShowLockedDoorMessageOnce",
@@ -15716,8 +15716,8 @@
       "source": "overlays/scene_primary_script/run_scene_385_supplemental_sequence_one.c"
     },
     "resource_3bf:02000ce0": {
-      "name": "FieldScene_RunSupplementalSequenceThree",
-      "source": "overlays/scene_primary_script/run_scene_3bf_supplemental_sequence_three.c"
+      "name": "FieldScene_UpdateObjectPairA",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_37f:02000420": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
@@ -16282,8 +16282,8 @@
       "source": "overlays/scene_primary_script/run_scene_3be_02001080.c"
     },
     "resource_3bf:02000bec": {
-      "name": "FieldScene_RunScene3bf_02000bec",
-      "source": "overlays/scene_primary_script/run_scene_3bf_02000bec.c"
+      "name": "FieldScene_UpdateActorTwelveTransition",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:02001cf0": {
       "name": "FieldScene_RunScene3bf_02001cf0",
@@ -16446,8 +16446,8 @@
       "source": "overlays/scene_primary_script/run_scene_3bb_02000b38.c"
     },
     "resource_3bf:02000bac": {
-      "name": "FieldScene_RunScene3bf_02000bac",
-      "source": "overlays/scene_primary_script/run_scene_3bf_02000bac.c"
+      "name": "FieldScene_StartActorTwelveTransition",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3bf:0200252c": {
       "name": "FieldScene_RunScene3bf_0200252c",
@@ -16654,8 +16654,8 @@
       "source": "overlays/scene_primary_script/run_scene_39b_0200116c.c"
     },
     "resource_3bf:02000f30": {
-      "name": "FieldScene_RunScene3bf_02000f30",
-      "source": "overlays/scene_primary_script/run_scene_3bf_02000f30.c"
+      "name": "FieldScene_UpdateObjectPairC",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3a4:02002428": {
       "name": "FieldScene_RunScene3a4_02002428",
@@ -17156,8 +17156,8 @@
       "source": "overlays/scene_primary_script/run_scene_373_sequence_d.c"
     },
     "resource_3bf:02000dcc": {
-      "name": "FieldScene_RunScene3bfSequenceD",
-      "source": "overlays/scene_primary_script/run_scene_3bf_sequence_d.c"
+      "name": "FieldScene_UpdateObjectPairB",
+      "source": "map/locations/heidia/village/actor_scenes.c"
     },
     "resource_3a3:020007b8": {
       "name": "FieldScene_RunScene3a3SequenceC",

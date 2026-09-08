@@ -17918,6 +17918,10 @@
     "resource_3b3:02001578": {
       "name": "OverlayDisplay_RefreshAffineRegisters",
       "source": "overlays/display/refresh_affine_registers.c"
+    },
+    "resource_3a5:0200041c": {
+      "name": "SceneData_SelectTableByScene59To5b",
+      "source": "overlays/scene_data/select_table_by_scene_59_to_5b.c"
     }
   }
 }

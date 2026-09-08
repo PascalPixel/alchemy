@@ -239,7 +239,7 @@ void Func_02001120();
  *
  * Signature.  The return address is popped into r1, not r0, so r0 survives and
  * is the result — and `movs r0,#0` immediately precedes the pop, so the owner
- * returns 0.  Same shape as the tracked byte-exact games/gs1/assets/code/
+ * returns 0.  Same shape as the tracked byte-exact games/gs1/asm/overlays/
  * resource_398_c_02000030.c, which is written `s32 Func_02000030(...)
  * { ...; return 0; }`.
  *
@@ -250,7 +250,7 @@ void Func_02001120();
  *
  * The selector itself is the cross-overlay Data_02000240 idiom: the signed
  * halfword at byte offset 448 (element 224), branched on.  The tracked
- * byte-exact games/gs1/assets/code/resource_398_c_02000040.c reads the same halfword and
+ * byte-exact games/gs1/asm/overlays/resource_398_c_02000040.c reads the same halfword and
  * tests it against the same three values, spelling them `(s32)&Value_00000031`
  * and so on — that is the exact reconstruction's constant-pooling device, and the plain
  * integers below are the same numbers.
@@ -288,7 +288,7 @@ void Func_02001120();
  * Coordinate views.  The s16 at +0x0a and +0x12 are the integer parts of the
  * 16.16 words at +0x08 and +0x10, so `(integer + (step >> 16)) >> 4` is the
  * neighbouring tile.  That is exactly the pair the tracked byte-exact
- * games/gs1/assets/code/resource_398_c_020007c4.c compares as `p[2] >> 20` and
+ * games/gs1/asm/overlays/resource_398_c_020007c4.c compares as `p[2] >> 20` and
  * `p[4] >> 20` — the lookup takes tile coordinates.
  *
  * Behaviour: find the actor one step ahead of the player; require the tile

@@ -36,7 +36,7 @@
  * immediate, which an ordinary integer literal cannot produce.
  *
  * Data_080ee058/080ee05c/080ee060 and Data_080ede5c are pre-existing ROM
- * tables already catalogued in games/gs1/assets/code/sentou_kouka_hyou_a.json
+ * tables already catalogued in games/gs1/assets/data/battle/sentou_kouka_hyou_a.json
  * (hyou_a_030/031/032 and hyou_a_001 respectively); Data_080ede48 in
  * games/gs1/recon/en/main/080dc1ec.c documents the extern-array convention
  * used for that same asset.

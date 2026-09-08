@@ -543,12 +543,12 @@ void Func_02002648(s32);
  * LINK-BASE WITNESS: 0x02009061 is ODD, so by the parity rule it is a Thumb
  * function entry, and 0x02009061 - 0x8000 - 1 = 0x1060, which is exactly
  * Func_02001060 -- a function this overlay already has byte-exact in
- * games/gs1/assets/code/resource_3a2_c_02001060.c.  That confirms the 0x02008000 link
+ * games/gs1/asm/overlays/resource_3a2_c_02001060.c.  That confirms the 0x02008000 link
  * base for resource_3a2 against tracked material, and identifies the pool word
  * as an installed per-entity callback rather than data.  It is stored into the
  * entity record at +0x6c.
  *
- * The byte-exact games/gs1/assets/code/resource_3a2_c_02001060.c gives that callback's
+ * The byte-exact games/gs1/asm/overlays/resource_3a2_c_02001060.c gives that callback's
  * own record layout: a `rank` s32 at +12 and a flags byte at +31 whose bit 1 it
  * sets or clears against the rank of Func_02002570(0) -- the printed name for
  * the same slot-record accessor this owner reaches as Scene_GetRecord.  So the
@@ -581,7 +581,7 @@ void Func_02002648(s32);
  * keep every import's interface open.
  */
 
-     /* installed callback, byte-exact in games/gs1/assets/code */
+     /* installed callback, byte-exact in games/gs1/asm/overlays */
 
 /* Two sites reach this one symbol with different arities; old-style so both
  * calls are legal. */

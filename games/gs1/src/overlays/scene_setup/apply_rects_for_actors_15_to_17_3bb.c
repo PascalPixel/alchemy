@@ -22,7 +22,7 @@
  * (three sites).  The same pair, with the same six-argument spelling of
  * Func_080091c0, appears in the neighbouring owners 0x02000258 and
  * 0x0200028c, and the byte-exact sibling
- * games/gs1/assets/code/resource_3bb_c_020002c0.c spells that call as
+ * games/gs1/asm/overlays/resource_3bb_c_020002c0.c spells that call as
  * Func_02004164(32, 37, 1, 4, 32, 77).
  *
  * Shape: one fixed line, then three lines whose fifth or sixth argument is a

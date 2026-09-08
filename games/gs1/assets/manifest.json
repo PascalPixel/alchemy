@@ -50,7 +50,7 @@
       "id": "residual_pcm_waves",
       "kind": "golden-sun-pcm-wave-series",
       "availability": "pending",
-      "index": "games/gs1/sound/direct_sound_samples/residual/index.json",
+      "index": "games/gs1/assets/sound/direct_sound_samples/residual/index.json",
       "expected_ranges": [{"address": "0x0811dac8",  "size": "0x70"}]
     }
   ],
@@ -59,7 +59,7 @@
       "address": "0x087fcd20",
       "size": "0x799",
       "kind": "golden-sun-general-lz",
-      "plan": "games/gs1/assets/code/resource_3ce_stream.lz.json",
+      "plan": "games/gs1/asm/overlays/resource_3ce_stream.lz.json",
       "selection": {
         "table": "0x0809f1a8",
         "record_index": 200,
@@ -75,7 +75,7 @@
           "kind": "golden-sun-thumb-overlay",
           "size": "0x168c",
           "base": "0x02000000",
-          "source": "games/gs1/assets/code/resource_3ce_overlay.s"
+          "source": "games/gs1/asm/overlays/resource_3ce_overlay.s"
         }
       ]
     },
@@ -1353,45 +1353,45 @@
       "address": "0x080eda78",
       "size": "0x78",
       "kind": "typed-table",
-      "source": "games/gs1/assets/code/sentou_kouka_keisu.json"
+      "source": "games/gs1/assets/data/battle/sentou_kouka_keisu.json"
     },
     {
       "address": "0x080edaf0",
       "size": "0x358",
       "kind": "golden-sun-thumb-overlay",
       "base": "0x080edaf0",
-      "source": "games/gs1/assets/code/sentou_kouka_gousei.s"
+      "source": "games/gs1/asm/battle/sentou_kouka_gousei.s"
     },
     {
       "address": "0x080ede48",
       "size": "0x46c",
       "kind": "typed-table",
-      "source": "games/gs1/assets/code/sentou_kouka_hyou_a.json"
+      "source": "games/gs1/assets/data/battle/sentou_kouka_hyou_a.json"
     },
     {
       "address": "0x080ee2b4",
       "size": "0x65c",
       "kind": "typed-table",
-      "source": "games/gs1/assets/code/sentou_kouka_kansuu_hyou.json"
+      "source": "games/gs1/assets/data/battle/sentou_kouka_kansuu_hyou.json"
     },
     {
       "address": "0x080ee910",
       "size": "0x694",
       "kind": "typed-table",
-      "source": "games/gs1/assets/code/sentou_kouka_hyou_b.json"
+      "source": "games/gs1/assets/data/battle/sentou_kouka_hyou_b.json"
     },
     {
       "address": "0x080eefa4",
       "size": "0x70",
       "kind": "golden-sun-thumb-overlay",
       "base": "0x080eefa4",
-      "source": "games/gs1/assets/code/sentou_kouka_gousei_iro.s"
+      "source": "games/gs1/asm/battle/sentou_kouka_gousei_iro.s"
     },
     {
       "address": "0x080ef014",
       "size": "0x40",
       "kind": "typed-table",
-      "source": "games/gs1/assets/code/sentou_kouka_bit_mask.json"
+      "source": "games/gs1/assets/data/battle/sentou_kouka_bit_mask.json"
     },
     {
       "address": "0x080ef054",
@@ -1404,7 +1404,7 @@
       "size": "0x254",
       "kind": "golden-sun-thumb-overlay",
       "base": "0x080f0000",
-      "source": "games/gs1/assets/code/sentou_kouka_tenkai.s"
+      "source": "games/gs1/asm/battle/sentou_kouka_tenkai.s"
     },
     {
       "address": "0x080f0a5c",
@@ -1428,61 +1428,61 @@
       "address": "0x080fb792",
       "size": "0xef2",
       "kind": "typed-table",
-      "source": "games/gs1/sound/engine.json"
+      "source": "games/gs1/assets/sound/engine.json"
     },
     {
       "address": "0x080fc684",
       "size": "0x9c0",
       "kind": "typed-table",
-      "source": "games/gs1/sound/song_table.json"
+      "source": "games/gs1/assets/sound/song_table.json"
     },
     {
       "address": "0x080fd044",
       "size": "0x4",
       "kind": "typed-table",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/0"
     },
     {
       "address": "0x081652d8",
       "size": "0x8",
       "kind": "typed-table",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/1"
     },
     {
       "address": "0x081810b8",
       "size": "0x8",
       "kind": "typed-table",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/2"
     },
     {
       "address": "0x081819b0",
       "size": "0x12",
       "kind": "golden-sun-sound-sequence",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/3"
     },
     {
       "address": "0x081841f8",
       "size": "0x8",
       "kind": "typed-table",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/4"
     },
     {
       "address": "0x08184358",
       "size": "0x8",
       "kind": "typed-table",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/5"
     },
     {
       "address": "0x08184698",
       "size": "0x968",
       "kind": "typed-table",
-      "source": "games/gs1/sound/residuals.json",
+      "source": "games/gs1/assets/sound/residuals.json",
       "pointer": "/regions/6"
     },
     {
@@ -2530,11 +2530,11 @@
   "series": [
     {
       "kind": "golden-sun-sound-sequence-series",
-      "index": "games/gs1/sound/sequences.tsv"
+      "index": "games/gs1/assets/sound/sequences.tsv"
     },
     {
       "kind": "golden-sun-pcm-wave-series",
-      "index": "games/gs1/sound/samples.tsv"
+      "index": "games/gs1/assets/sound/samples.tsv"
     },
     {
       "kind": "golden-sun-delta7-still-series",

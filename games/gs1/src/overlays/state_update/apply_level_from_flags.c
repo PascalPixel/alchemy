@@ -10,7 +10,7 @@
  * 0x02001318-0x02001324 (0x0000092b, 0x0000092a, 0x00000929) holds the
  * three low-address-variable operands taken by `&`, per the
  * `Value_XXXXXXXX` convention already used for this same address family
- * in games/gs1/assets/code/resource_3b1_c_02000b84.c (see its
+ * in games/gs1/asm/overlays/resource_3b1_c_02000b84.c (see its
  * `Value_0000092b`/`Value_0000092a`/`Value_00000929` declarations, same
  * `(s32)&Value_...` call-argument idiom). Pool ends exactly where the
  * next owner's `push {lr}` begins (0x02001324), so the span is

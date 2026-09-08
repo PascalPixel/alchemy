@@ -17,7 +17,7 @@
  * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
  * encoded `bl` address is an import identity, not a place to disassemble.
  * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/assets/code/resource_39a_c_02000030.c` declares `Func_02002442`), so
+ * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
  * imports are named by the address their call site computes and their
  * interfaces are left open.  Declarations are old-style because one name is
  * reached with different argument counts.

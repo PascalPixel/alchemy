@@ -133,7 +133,7 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
 fn pre_adoption_text(root: &Path, target: SourceOwner) -> Result<String, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
-    let relative = format!("games/gs1/assets/code/{overlay}_overlay.s");
+    let relative = format!("games/gs1/asm/overlays/{overlay}_overlay.s");
     let tag = format!("AlchemyC_{address:08x}:");
     let log = git(
         root,
@@ -355,7 +355,7 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
-        for entry in fs::read_dir(root.join("games/gs1/assets/code")).map_err(|e| e.to_string())? {
+        for entry in fs::read_dir(root.join("games/gs1/asm/overlays")).map_err(|e| e.to_string())? {
             let name = entry
                 .map_err(|e| e.to_string())?
                 .file_name()
@@ -665,7 +665,7 @@ mod tests {
     #[test]
     fn audit_reports_a_placeholder_without_exact_source() {
         let root = tempdir().unwrap();
-        let code = root.path().join("games/gs1/assets/code");
+        let code = root.path().join("games/gs1/asm/overlays");
         fs::create_dir_all(&code).unwrap();
         fs::write(
             code.join("resource_382_overlay.s"),

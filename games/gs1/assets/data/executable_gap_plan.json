@@ -112,112 +112,112 @@
       "address": "0x08009010",
       "size": 16,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009028",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009040",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009058",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009068",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009090",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x080090c0",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x080090d8",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x080090e8",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009120",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": []
     },
     {
       "address": "0x08009160",
       "size": 72,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": ["0x08009170", "0x08009178", "0x08009180", "0x08009188", "0x08009190", "0x08009198", "0x080091a0"]
     },
     {
       "address": "0x080091b8",
       "size": 32,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": ["0x080091b8", "0x080091c0", "0x080091c8", "0x080091d0"]
     },
     {
       "address": "0x080091e8",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": ["0x080091e8"]
     },
     {
       "address": "0x080091f8",
       "size": 40,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": ["0x080091f8", "0x08009208", "0x08009210"]
     },
     {
       "address": "0x08009258",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": ["0x08009258"]
     },
     {
       "address": "0x08009278",
       "size": 8,
       "classification": "veneer-slots",
-      "consumers": ["games/gs1/assets/code:overlay-call-table"],
+      "consumers": ["games/gs1/asm/overlays:overlay-call-table"],
       "veneer_addresses": ["0x08009278"]
     },
     {

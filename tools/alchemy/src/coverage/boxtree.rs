@@ -23,12 +23,12 @@ use sha1::{Digest, Sha1};
 
 pub const BOX_TREES: [&str; 2] = ["code", "data"];
 const CHART_BACKGROUND: &str = "#1f7f93";
-const UNKNOWN: &str = "#c9d5d5";
+const UNKNOWN: &str = "#d9d9d4";
 const SOUND_TYPES: [(&str, &str); 5] = [
-    ("MIDI music", "#99cbbb"),
-    ("SFX", "#cda3ad"),
-    ("PCM samples", "#d8bd8a"),
-    ("Tables", "#8fa4b0"),
+    ("MIDI music", "#81d6b2"),
+    ("SFX", "#f29b91"),
+    ("PCM samples", "#efbb82"),
+    ("Tables", "#9aa4c2"),
     ("Unclassified", UNKNOWN),
 ];
 /// Sound assets are the sequence and PCM kinds plus every table described
@@ -40,7 +40,7 @@ fn is_sound(tile: &Tile) -> bool {
     ) || tile
         .source
         .as_deref()
-        .is_some_and(|source| source.starts_with("games/gs1/sound/"))
+        .is_some_and(|source| source.starts_with("games/gs1/assets/sound/"))
 }
 fn sound_type(tile: &Tile) -> usize {
     match (tile.group.as_deref(), tile.subgroup.as_deref()) {
@@ -63,18 +63,18 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         || source.contains("/maps/")
         || source.contains("/map_resource_")
     {
-        return ("Maps", "#9bbfaf");
+        return ("Maps", "#b5cc82");
     }
     match kind {
-        "golden-sun-static-sprite-series" => ("Sprite sheets", "#afa6c6"),
-        "gba-palette" | "gba-palette-rgba" => ("Palettes", "#c8a2b0"),
-        "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#d6c58e"),
-        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", "#b6ccc1"),
+        "golden-sun-static-sprite-series" => ("Sprite sheets", "#b5a0de"),
+        "gba-palette" | "gba-palette-rgba" => ("Palettes", "#e8a6d3"),
+        "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#eadb83"),
+        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", "#85cbd2"),
         _ if source.contains("/fonts_") || source.contains("/text/localization_font") => {
-            ("Fonts", "#d6c58e")
+            ("Fonts", "#eadb83")
         }
-        _ if source.ends_with(".png") => ("Images", "#8eafc7"),
-        _ => ("Other data", "#92a8ac"),
+        _ if source.ends_with(".png") => ("Images", "#8fb7ec"),
+        _ => ("Other data", "#bda995"),
     }
 }
 fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {

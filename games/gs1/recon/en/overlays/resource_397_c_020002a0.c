@@ -12,17 +12,17 @@
  * 0x020002cc-0x020002e0 that closes the 64-byte span (0x03001e70,
  * 0x02008610, 0x02008614, 0x03001e40, 0x02008616).  The next owner's
  * prologue is at 0x020002e0, already tracked as
- * games/gs1/assets/code/resource_397_c_020002e0.c.  No calls -- matches
+ * games/gs1/asm/overlays/resource_397_c_020002e0.c.  No calls -- matches
  * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_397 02a0` reporting none.
  *
  * The three destinations -- Data_02008610 (s32), Data_02008614 (u16),
  * Data_02008616 (u16) -- are the exact symbols and types already declared in
- * the byte-exact sibling games/gs1/assets/code/resource_397_c_0200026c.c, which reads
+ * the byte-exact sibling games/gs1/asm/overlays/resource_397_c_0200026c.c, which reads
  * them back (`if (Data_04000006 >= Data_02008610) ...`), so this owner is
  * plausibly what arms the values that read consumes. Data_03001e70 keeps the
- * pointer typing established in games/gs1/assets/code/resource_373_c_02000244.c
+ * pointer typing established in games/gs1/asm/overlays/resource_373_c_02000244.c
  * (`extern u8 *Data_03001e70`), and Data_03001e40 keeps the `volatile s32`
- * typing established in games/gs1/assets/code/resource_371_c_02003f88.c.
+ * typing established in games/gs1/asm/overlays/resource_371_c_02003f88.c.
  *
  * The workspace record is read at fixed offsets +0x106 and +0x10a from
  * `Data_03001e70 + 0x104` -- no argument selects the offset, so this owner

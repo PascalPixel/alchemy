@@ -5301,7 +5301,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_36f_overlay.s",
+        "games/gs1/asm/overlays/resource_36f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -5574,7 +5574,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_370_overlay.s",
+        "games/gs1/asm/overlays/resource_370_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -6507,7 +6507,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_371_overlay.s",
+        "games/gs1/asm/overlays/resource_371_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -7170,7 +7170,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_372_overlay.s",
+        "games/gs1/asm/overlays/resource_372_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -7977,7 +7977,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_373_overlay.s",
+        "games/gs1/asm/overlays/resource_373_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -8412,7 +8412,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_374_overlay.s",
+        "games/gs1/asm/overlays/resource_374_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -8607,7 +8607,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_375_overlay.s",
+        "games/gs1/asm/overlays/resource_375_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -8808,7 +8808,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_376_overlay.s",
+        "games/gs1/asm/overlays/resource_376_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9219,7 +9219,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_377_overlay.s",
+        "games/gs1/asm/overlays/resource_377_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9612,7 +9612,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_378_overlay.s",
+        "games/gs1/asm/overlays/resource_378_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9699,7 +9699,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_379_overlay.s",
+        "games/gs1/asm/overlays/resource_379_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9978,7 +9978,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_37a_overlay.s",
+        "games/gs1/asm/overlays/resource_37a_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10431,7 +10431,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_37b_overlay.s",
+        "games/gs1/asm/overlays/resource_37b_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10464,7 +10464,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_37c_overlay.s",
+        "games/gs1/asm/overlays/resource_37c_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10497,7 +10497,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_37d_overlay.s",
+        "games/gs1/asm/overlays/resource_37d_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10530,7 +10530,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_37e_overlay.s",
+        "games/gs1/asm/overlays/resource_37e_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10785,7 +10785,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_37f_overlay.s",
+        "games/gs1/asm/overlays/resource_37f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -11220,7 +11220,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_380_overlay.s",
+        "games/gs1/asm/overlays/resource_380_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -11631,7 +11631,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_381_overlay.s",
+        "games/gs1/asm/overlays/resource_381_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -12114,7 +12114,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_382_overlay.s",
+        "games/gs1/asm/overlays/resource_382_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -12663,7 +12663,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_383_overlay.s",
+        "games/gs1/asm/overlays/resource_383_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -12708,7 +12708,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_384_overlay.s",
+        "games/gs1/asm/overlays/resource_384_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13089,7 +13089,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_385_overlay.s",
+        "games/gs1/asm/overlays/resource_385_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13170,7 +13170,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_386_overlay.s",
+        "games/gs1/asm/overlays/resource_386_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13449,7 +13449,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_387_overlay.s",
+        "games/gs1/asm/overlays/resource_387_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13482,7 +13482,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_388_overlay.s",
+        "games/gs1/asm/overlays/resource_388_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13719,7 +13719,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_389_overlay.s",
+        "games/gs1/asm/overlays/resource_389_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13860,7 +13860,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_38a_overlay.s",
+        "games/gs1/asm/overlays/resource_38a_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14073,7 +14073,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_38b_overlay.s",
+        "games/gs1/asm/overlays/resource_38b_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14202,7 +14202,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_38c_overlay.s",
+        "games/gs1/asm/overlays/resource_38c_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14505,7 +14505,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_38d_overlay.s",
+        "games/gs1/asm/overlays/resource_38d_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14634,7 +14634,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_38e_overlay.s",
+        "games/gs1/asm/overlays/resource_38e_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14943,7 +14943,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_38f_overlay.s",
+        "games/gs1/asm/overlays/resource_38f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14988,7 +14988,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_390_overlay.s",
+        "games/gs1/asm/overlays/resource_390_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15285,7 +15285,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_391_overlay.s",
+        "games/gs1/asm/overlays/resource_391_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15438,7 +15438,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_392_overlay.s",
+        "games/gs1/asm/overlays/resource_392_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15567,7 +15567,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_393_overlay.s",
+        "games/gs1/asm/overlays/resource_393_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15810,7 +15810,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_394_overlay.s",
+        "games/gs1/asm/overlays/resource_394_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16071,7 +16071,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_395_overlay.s",
+        "games/gs1/asm/overlays/resource_395_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16386,7 +16386,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_396_overlay.s",
+        "games/gs1/asm/overlays/resource_396_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16497,7 +16497,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_397_overlay.s",
+        "games/gs1/asm/overlays/resource_397_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16644,7 +16644,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_398_overlay.s",
+        "games/gs1/asm/overlays/resource_398_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -17019,7 +17019,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_399_overlay.s",
+        "games/gs1/asm/overlays/resource_399_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -17334,7 +17334,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_39a_overlay.s",
+        "games/gs1/asm/overlays/resource_39a_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -17961,7 +17961,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_39b_overlay.s",
+        "games/gs1/asm/overlays/resource_39b_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -19212,7 +19212,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_39c_overlay.s",
+        "games/gs1/asm/overlays/resource_39c_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -19683,7 +19683,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_39d_overlay.s",
+        "games/gs1/asm/overlays/resource_39d_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20160,7 +20160,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_39e_overlay.s",
+        "games/gs1/asm/overlays/resource_39e_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20535,7 +20535,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_39f_overlay.s",
+        "games/gs1/asm/overlays/resource_39f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20814,7 +20814,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a0_overlay.s",
+        "games/gs1/asm/overlays/resource_3a0_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20895,7 +20895,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a1_overlay.s",
+        "games/gs1/asm/overlays/resource_3a1_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -21084,7 +21084,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a2_overlay.s",
+        "games/gs1/asm/overlays/resource_3a2_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -21261,7 +21261,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a3_overlay.s",
+        "games/gs1/asm/overlays/resource_3a3_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -22104,7 +22104,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a4_overlay.s",
+        "games/gs1/asm/overlays/resource_3a4_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -22923,7 +22923,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a5_overlay.s",
+        "games/gs1/asm/overlays/resource_3a5_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -23358,7 +23358,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a6_overlay.s",
+        "games/gs1/asm/overlays/resource_3a6_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -23691,7 +23691,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a7_overlay.s",
+        "games/gs1/asm/overlays/resource_3a7_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24150,7 +24150,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a8_overlay.s",
+        "games/gs1/asm/overlays/resource_3a8_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24213,7 +24213,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3a9_overlay.s",
+        "games/gs1/asm/overlays/resource_3a9_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24366,7 +24366,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3aa_overlay.s",
+        "games/gs1/asm/overlays/resource_3aa_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24801,7 +24801,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ab_overlay.s",
+        "games/gs1/asm/overlays/resource_3ab_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24834,7 +24834,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ac_overlay.s",
+        "games/gs1/asm/overlays/resource_3ac_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -25041,7 +25041,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ad_overlay.s",
+        "games/gs1/asm/overlays/resource_3ad_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -25302,7 +25302,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ae_overlay.s",
+        "games/gs1/asm/overlays/resource_3ae_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -25989,7 +25989,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3af_overlay.s",
+        "games/gs1/asm/overlays/resource_3af_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -26232,7 +26232,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b0_overlay.s",
+        "games/gs1/asm/overlays/resource_3b0_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -27021,7 +27021,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b1_overlay.s",
+        "games/gs1/asm/overlays/resource_3b1_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -27492,7 +27492,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b2_overlay.s",
+        "games/gs1/asm/overlays/resource_3b2_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -28113,7 +28113,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b3_overlay.s",
+        "games/gs1/asm/overlays/resource_3b3_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -28788,7 +28788,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b4_overlay.s",
+        "games/gs1/asm/overlays/resource_3b4_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29043,7 +29043,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b5_overlay.s",
+        "games/gs1/asm/overlays/resource_3b5_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29280,7 +29280,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b6_overlay.s",
+        "games/gs1/asm/overlays/resource_3b6_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29499,7 +29499,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b7_overlay.s",
+        "games/gs1/asm/overlays/resource_3b7_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29922,7 +29922,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b8_overlay.s",
+        "games/gs1/asm/overlays/resource_3b8_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -30369,7 +30369,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3b9_overlay.s",
+        "games/gs1/asm/overlays/resource_3b9_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -30966,7 +30966,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ba_overlay.s",
+        "games/gs1/asm/overlays/resource_3ba_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -31785,7 +31785,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3bb_overlay.s",
+        "games/gs1/asm/overlays/resource_3bb_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -32682,7 +32682,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3bc_overlay.s",
+        "games/gs1/asm/overlays/resource_3bc_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -33345,7 +33345,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3bd_overlay.s",
+        "games/gs1/asm/overlays/resource_3bd_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -33750,7 +33750,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3be_overlay.s",
+        "games/gs1/asm/overlays/resource_3be_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -34677,7 +34677,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3bf_overlay.s",
+        "games/gs1/asm/overlays/resource_3bf_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -34968,7 +34968,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c0_overlay.s",
+        "games/gs1/asm/overlays/resource_3c0_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35025,7 +35025,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c1_overlay.s",
+        "games/gs1/asm/overlays/resource_3c1_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35184,7 +35184,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c2_overlay.s",
+        "games/gs1/asm/overlays/resource_3c2_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35289,7 +35289,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c3_overlay.s",
+        "games/gs1/asm/overlays/resource_3c3_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35856,7 +35856,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c4_overlay.s",
+        "games/gs1/asm/overlays/resource_3c4_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -36321,7 +36321,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c5_overlay.s",
+        "games/gs1/asm/overlays/resource_3c5_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -36540,7 +36540,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c6_overlay.s",
+        "games/gs1/asm/overlays/resource_3c6_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -36825,7 +36825,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c7_overlay.s",
+        "games/gs1/asm/overlays/resource_3c7_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -37500,7 +37500,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c8_overlay.s",
+        "games/gs1/asm/overlays/resource_3c8_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -38307,7 +38307,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3c9_overlay.s",
+        "games/gs1/asm/overlays/resource_3c9_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -38610,7 +38610,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ca_overlay.s",
+        "games/gs1/asm/overlays/resource_3ca_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -38937,7 +38937,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3cb_overlay.s",
+        "games/gs1/asm/overlays/resource_3cb_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39018,7 +39018,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3cc_overlay.s",
+        "games/gs1/asm/overlays/resource_3cc_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39111,7 +39111,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3cd_overlay.s",
+        "games/gs1/asm/overlays/resource_3cd_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39294,7 +39294,7 @@
         }
       ],
       "evidence": [
-        "games/gs1/assets/code/resource_3ce_overlay.s",
+        "games/gs1/asm/overlays/resource_3ce_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"

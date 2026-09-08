@@ -9,13 +9,13 @@ use std::{
 const CLIENT: &str = include_str!("client.js");
 const STYLES: &str = include_str!("style.css");
 fn music_dir() -> PathBuf {
-    root().join("games/gs1/sound/songs/midi")
+    root().join("games/gs1/assets/sound/songs/midi")
 }
 fn audio_dir() -> PathBuf {
-    root().join("games/gs1/sound")
+    root().join("games/gs1/assets/sound")
 }
 fn gs2_sound_dir() -> PathBuf {
-    root().join("games/gs2/sound")
+    root().join("games/gs2/assets/sound")
 }
 fn music_register() -> PathBuf {
     root().join("games/music.tsv")

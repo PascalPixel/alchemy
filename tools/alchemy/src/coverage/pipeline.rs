@@ -131,7 +131,7 @@ pub struct Owner {
     pub spans: Vec<Span>,
 }
 pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
-    let Some(source) = tree.read(&format!("games/gs1/assets/code/{name}")) else {
+    let Some(source) = tree.read(&format!("games/gs1/asm/overlays/{name}")) else {
         return Vec::new();
     };
     let Some(_id) = overlay_name(name) else {
@@ -183,7 +183,7 @@ pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
 }
 pub fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
-        .list("games/gs1/assets/code")
+        .list("games/gs1/asm/overlays")
         .into_iter()
         .filter_map(|name| overlay_name(&name).map(|id| (id, name)))
         .collect();
@@ -728,7 +728,7 @@ fn overlay_tiles(
                 Some(short.into()),
                 Some(span.start),
             );
-            tile.source = Some(format!("games/gs1/assets/code/{id}_overlay.s"));
+            tile.source = Some(format!("games/gs1/asm/overlays/{id}_overlay.s"));
             out.push(tile);
         }
     }
@@ -949,7 +949,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     };
     let sequence_classes = sound_sequence_classes(
         &tree
-            .read("games/gs1/sound/sequences.tsv")
+            .read("games/gs1/assets/sound/sequences.tsv")
             .unwrap_or_default(),
     );
     let mut groups: BTreeMap<String, Vec<Tile>> = BTreeMap::new();
@@ -974,7 +974,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             .or_else(|| sources.first().and_then(Value::as_str))
             .unwrap_or(&kind);
         let owner = if kind == "golden-sun-sound-sequence" {
-            "games/gs1/sound/sequences.tsv"
+            "games/gs1/assets/sound/sequences.tsv"
         } else {
             sources.first().and_then(Value::as_str).unwrap_or(source)
         };

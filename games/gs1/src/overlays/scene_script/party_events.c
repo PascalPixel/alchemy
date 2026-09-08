@@ -693,7 +693,7 @@ s32 Func_020034a2_a();
  * This is the overlay's scene dispatcher.  It re-enables two channels, then
  * switches on the signed halfword `Data_02000240[225]` - the neighbour of the
  * edition selector at index 224 that the byte-exact siblings
- * `games/gs1/assets/code/resource_3aa_c_02000030.c` and `_020000a4.c` test - and runs
+ * `games/gs1/asm/overlays/resource_3aa_c_02000030.c` and `_020000a4.c` test - and runs
  * one of three scene bodies.  Values other than 9, 10, 11 and 20 do nothing.
  *
  * The comparison chain is a compiled `switch`: `cmp #11 / bgt`, then

@@ -566,6 +566,13 @@ libraries are not additional public command surfaces.
 
 ## Owners and names
 
+Keep sound for both games under `assets/sound/`, alongside other non-executable
+content. GS1 overlay assembly and its lossless compression recipes live together
+under `asm/overlays/`; battle assembly lives under `asm/battle/`, while its
+non-executable tables belong in `assets/data/battle/`. Recipes describe how the
+assembly is packaged; they are not a second copy of executable source. Update
+build inputs, cache dependencies and coverage paths together when moving files.
+
 Production source paths describe modules and evidenced jobs, not addresses or
 one file per function. Use enough directories to express subsystems; do not
 invent a hierarchy for each tiny helper. Related functions belong together once

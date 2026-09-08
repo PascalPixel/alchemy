@@ -111,11 +111,11 @@ s32 Func_02002a56(void);
  * behaviour, not a decoding error.)
  *
  * Link base: resource_3cb is linked at 0x02008000, confirmed here by the
- * handler table at the tail of games/gs1/assets/code/resource_3cb_overlay.s, whose
+ * handler table at the tail of games/gs1/asm/overlays/resource_3cb_overlay.s, whose
  * entries 0x02009051, 0x02008861, 0x020082d9, 0x02008341 and 0x02009159 are
  * exactly Func_02001050, Func_02000860, Func_020002d8, FieldScene_ClearFlagsAndPlayCue2927 and
  * Func_02001158 plus the Thumb bit — and Func_02001050 is byte-exact in
- * games/gs1/assets/code.  Consequently the pool word 0x03001ebc here is NOT an in-image
+ * games/gs1/asm/overlays.  Consequently the pool word 0x03001ebc here is NOT an in-image
  * address: it is the IWRAM workspace-pointer cell the rest of the overlay
  * loads directly (0x03001e70 + 76), so r5 is the workspace base.
  *

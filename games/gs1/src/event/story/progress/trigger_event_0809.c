@@ -10,7 +10,7 @@
  * 0x00000809), reached only through `ldr rN, [pc, #imm]`.
  *
  * This is the same guard the byte-exact sibling
- * `games/gs1/assets/code/resource_371_c_02000030.c` implements: compare the progress
+ * `games/gs1/asm/overlays/resource_371_c_02000030.c` implements: compare the progress
  * word at `Data_02000240[284]` (a 32-bit read of the s16 table at element
  * 284, i.e. byte offset 568) against a scaled threshold derived from the
  * workspace word at +428, and act when the stored value is not below it.

@@ -1,17 +1,5 @@
-//! Port of `tools/lib/extract_resource.ts`.
-//!
-//! PORT NOTE: this crate has no dependency on the shared zlib crate; the two
-//! codecs here (the "general" LZ bitstream and the "palette" flag-byte codec)
-//! are self-contained, so no decompression seam had to be left open.
-//!
-//! PORT NOTE: the former implementation used `throw new DecodeError(...)` for
-//! stream problems and plain `Error` for CLI/usage problems. Rust mirrors that with
-//! [`DecodeError`] and, in `main.rs`, a separate usage-error path. Every
-//! message string is character-for-character identical to the former behavior.
-pub mod cli;
+//! Explicit LZ stream codecs, independent of ROM layouts and resource tables.
 use std::fmt;
-pub const ROM_BASE: u32 = 0x0800_0000;
-pub const TABLE: u32 = 0x0832_0000;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DecodeError(pub String);
 impl fmt::Display for DecodeError {
@@ -877,64 +865,6 @@ fn arena_streams_round_trip_and_check_their_dictionary() {
     assert!(encode_arena(&decoded[..6], Some(&tokens), 0, &arena).is_err());
 }
 // ---------------------------------------------------------------------------
-// dispatch
-// ---------------------------------------------------------------------------
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ResourceKind {
-    General,
-    Palette,
-}
-impl ResourceKind {
-    pub fn name(self) -> &'static str {
-        match self {
-            ResourceKind::General => "general",
-            ResourceKind::Palette => "palette",
-        }
-    }
-}
-impl fmt::Display for ResourceKind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(self.name())
-    }
-}
-pub fn decode(
-    data: &[u8],
-    start: usize,
-    end: usize,
-    maximum: u64,
-    kind: Option<ResourceKind>,
-) -> Result<(ResourceKind, Vec<u8>, usize), DecodeError> {
-    if let Some(kind) = kind {
-        let (output, cursor) = match kind {
-            ResourceKind::General => decode_general(data, start, end, maximum)?,
-            ResourceKind::Palette => decode_palette(data, start, end, maximum)?,
-        };
-        return Ok((kind, output, cursor));
-    }
-    let mut valid: Vec<(ResourceKind, Vec<u8>, usize)> = Vec::new();
-    let mut errors: Vec<String> = Vec::new();
-    for name in [ResourceKind::General, ResourceKind::Palette] {
-        let attempt = match name {
-            ResourceKind::General => decode_general(data, start, end, maximum),
-            ResourceKind::Palette => decode_palette(data, start, end, maximum),
-        };
-        match attempt {
-            Ok((output, cursor)) => valid.push((name, output, cursor)),
-            Err(error) => errors.push(format!("{}: {}", name.name(), error.0)),
-        }
-    }
-    if valid.len() == 1 {
-        return Ok(valid.remove(0));
-    }
-    if valid.is_empty() {
-        return err(format!(
-            "no decoder accepted stream ({})",
-            errors.join("; ")
-        ));
-    }
-    err("stream is ambiguous; specify --format general or palette")
-}
-// ---------------------------------------------------------------------------
 // halfword LZ: 16-flag groups over little-endian 16-bit units
 // ---------------------------------------------------------------------------
 /// `["l", n]` / `["c", length, distance]` / `["e"]` over halfword units.
@@ -1062,7 +992,8 @@ pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Result<Vec<u
 // ---------------------------------------------------------------------------
 // self-test
 // ---------------------------------------------------------------------------
-pub fn synthetic_general() -> Vec<u8> {
+#[cfg(test)]
+fn synthetic_general() -> Vec<u8> {
     let mut bits: Vec<u8> = Vec::new();
     for value in b"AB" {
         put(&mut bits, 1, 1);
@@ -1088,9 +1019,8 @@ pub fn synthetic_general() -> Vec<u8> {
     packed.push(0);
     packed
 }
-/// Mirrors the TypeScript `self_test`. Returns `Err` with the same message the
-/// TypeScript would have thrown.
-pub fn self_test() -> Result<(), String> {
+#[test]
+fn codec_round_trips_and_truncation() -> Result<(), String> {
     let general = synthetic_general();
     let (output, cursor, tokens) =
         decode_general_trace(&general, 0, general.len(), 4).map_err(|error| error.0)?;

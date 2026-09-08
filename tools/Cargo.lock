@@ -39,8 +39,8 @@ dependencies = [
  "decompile",
  "diff",
  "disassemble",
- "extract-resource",
  "import-asset",
+ "lz-codecs",
  "matching",
  "objdiff-core",
  "overlay-adopt",
@@ -241,7 +241,7 @@ version = "0.1.0"
 dependencies = [
  "candidate-compiler",
  "compiler-core",
- "extract-resource",
+ "lz-codecs",
  "regex",
  "serde_json",
  "tempfile",
@@ -277,10 +277,6 @@ dependencies = [
  "libc",
  "windows-sys",
 ]
-
-[[package]]
-name = "extract-resource"
-version = "0.1.0"
 
 [[package]]
 name = "fallible-iterator"
@@ -493,6 +489,10 @@ name = "log"
 version = "0.4.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ceec5bc11778974d1bcb055b18002eba7f4b3518b6a0081b3af5f21666da9ad"
+
+[[package]]
+name = "lz-codecs"
+version = "0.1.0"
 
 [[package]]
 name = "matching"

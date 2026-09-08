@@ -1,8 +1,8 @@
 [package]
-name = "extract-resource"
+name = "lz-codecs"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "extract_resource"
+name = "lz_codecs"
 path = "src/lib.rs"

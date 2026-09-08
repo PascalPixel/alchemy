@@ -21,7 +21,7 @@
 //! is reported and stops the run: it is the shared interface the unit forces
 //! into the open.
 
-use compiler_core::build_io::read_json;
+use crate::compiler::build_io::read_json;
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;

@@ -1,6 +1,6 @@
-use crate::routing::CompilerTarget;
-use crate::source_inputs::quoted_include;
-use crate::source_paths::{c_identifier, lower_hex, SourceOwner, SourcePaths};
+use crate::compiler::routing::CompilerTarget;
+use crate::compiler::source_inputs::quoted_include;
+use crate::compiler::source_paths::{c_identifier, lower_hex, SourceOwner, SourcePaths};
 use serde::{de::Error, Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
@@ -18,7 +18,7 @@ struct ReviewedRegion {
 }
 pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
     let path = root.join("games/gs1/semantic/regions.json");
-    let document: ReviewedRegions = crate::build_io::read_json(path)?;
+    let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
     let mut spans = BTreeMap::new();
     for region in document.manual_regions {
         let owner = SourceOwner::parse(&format!(
@@ -211,7 +211,10 @@ impl TranslationUnit {
                 AbsoluteSymbol {
                     address: u64::from(address)
                         + if self.overlay.is_some() {
-                            u64::from(crate::overlay::RUNTIME_BASE - crate::overlay::RESOURCE_BASE)
+                            u64::from(
+                                crate::compiler::overlay::RUNTIME_BASE
+                                    - crate::compiler::overlay::RESOURCE_BASE,
+                            )
                         } else {
                             0
                         },
@@ -234,7 +237,7 @@ pub struct TranslationUnits {
 impl TranslationUnits {
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join("games/gs1/recon/translation-units.json");
-        let mut document: Self = crate::build_io::read_json(&path)?;
+        let mut document: Self = crate::compiler::build_io::read_json(&path)?;
         if document.format != FORMAT
             || document.kind != "reconstruction-composition-contracts"
             || document.original_translation_units != "unknown"
@@ -444,7 +447,7 @@ fn validate_production_state(
                 .join(format!("{overlay}_overlay.s"));
             std::fs::read_to_string(&assembly)
                 .map_err(|error| format!("{}: {error}", assembly.display()))
-                .map(|text| crate::overlay::placeholder_addresses(&text))
+                .map(|text| crate::compiler::overlay::placeholder_addresses(&text))
         })
         .transpose()?;
     let reviewed = if retained_overlay_candidate {
@@ -620,7 +623,7 @@ mod tests {
     }
     #[test]
     fn loads_typed_main_and_overlay_units() {
-        let manifest = TranslationUnits::load(crate::routing::root()).unwrap();
+        let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
         assert!(manifest.unit("scheduler").unwrap().exact());
         let overlay = manifest.unit("scene-event-runtime").unwrap();
         assert_eq!(
@@ -634,7 +637,7 @@ mod tests {
         let owner = SourceOwner::Main(0x0800_40e8);
         assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
         assert!(manifest.unit_for_game_owner("gs2", owner).is_none());
-        let root = crate::routing::root();
+        let root = crate::compiler::routing::root();
         let names = SourcePaths::load_for_game(root, "gs1").unwrap();
         let candidate = manifest
             .unit("overlay-candidate-bindings-373-020015dc")

@@ -14,7 +14,7 @@
 //! agent's work, scored with diff --unit until every previously
 //! exact owner is exact again.
 
-use compiler_core::build_io::read_json;
+use crate::compiler::build_io::read_json;
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use std::fs;

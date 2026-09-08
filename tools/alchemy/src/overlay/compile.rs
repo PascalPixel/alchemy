@@ -1,16 +1,16 @@
-use crate::overlay::source::OverlaySource;
-use compiler_core::overlay;
-use compiler_core::overlay::placeholder_addresses;
-pub use compiler_core::overlay::placeholder_extent;
-use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
-use compiler_core::routing::root;
-use compiler_core::routing::CompilerTarget;
-use compiler_core::sha256;
-use compiler_core::source_inputs::compiler_source_tree_signature;
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use compiler_core::translation_units::{
+use crate::compiler::overlay;
+use crate::compiler::overlay::placeholder_addresses;
+pub use crate::compiler::overlay::placeholder_extent;
+use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
+use crate::compiler::routing::root;
+use crate::compiler::routing::CompilerTarget;
+use crate::compiler::sha256;
+use crate::compiler::source_inputs::compiler_source_tree_signature;
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::translation_units::{
     AbsoluteSymbol, AbsoluteSymbolKind, TranslationUnit, TranslationUnits,
 };
+use crate::overlay::source::OverlaySource;
 use psynergy::process::run as checked;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -80,7 +80,7 @@ fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
 }
 fn assemble_file(source: &str, object: &str, work: &Path) -> Result<(), String> {
     checked(
-        &compiler_core::routing::assembly_command(source, object),
+        &crate::compiler::routing::assembly_command(source, object),
         work,
     )
     .map(drop)
@@ -120,7 +120,7 @@ fn overlay_cache_key(
 ) -> Result<String, String> {
     let identity = (
         "overlay-c-cache-v5",
-        compiler_core::bundle::executable_signature()?,
+        crate::compiler::bundle::executable_signature()?,
         compiler_signature,
         host_signature,
         plan_signature,
@@ -219,8 +219,7 @@ pub fn compile_overlay_c(
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
     options.support_flags = extra_flags.to_vec();
-    let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
-    let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
+    let steps = source_to_assembly_plan(&options)?;
     let configuration = crate::candidate::CandidateCompilerConfiguration {
         overlay_extent: Some(extent),
         absolute_symbols: unit
@@ -241,10 +240,10 @@ pub fn compile_overlay_c(
     append_frame(&mut source_inputs, &reference);
     append_frame(&mut source_inputs, &extent.to_le_bytes());
     let plan_signature = sha256::hex(&command_identity(&steps, &work_display));
-    let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
+    let host_signature = crate::compiler::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
     let cache_key = overlay_cache_key(
-        &compiler_core::bundle::compiler_bundle_signature(),
+        &crate::compiler::bundle::compiler_bundle_signature(),
         &host_signature,
         &plan_signature,
         address,
@@ -338,8 +337,8 @@ fn compile_overlay_unit(
     options
         .preprocessor_flags
         .extend(["-include".into(), bindings.to_string_lossy().into_owned()]);
-    for step in source_to_assembly_plan(&options)?.steps {
-        checked(&step.command, work)?;
+    for command in source_to_assembly_plan(&options)? {
+        checked(&command, work)?;
     }
     let produced = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     // The unit's functions need not be contiguous in the image: retained
@@ -369,7 +368,7 @@ fn compile_overlay_unit(
         section_functions(&produced, &symbols).map_err(|error| format!("{}: {error}", unit.id))?;
     fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
     checked(
-        &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+        &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
         work,
     )?;
     let listing = checked(
@@ -940,7 +939,7 @@ pub(crate) fn split_lines(text: &str) -> Vec<String> {
 #[cfg(test)]
 mod source_activation_tests {
     use super::*;
-    use compiler_core::translation_units::{OwnerState, TranslationOwner};
+    use crate::compiler::translation_units::{OwnerState, TranslationOwner};
     use tempfile::tempdir;
     #[test]
     fn regional_overlay_calls_keep_canonical_names_and_take_regional_targets() {

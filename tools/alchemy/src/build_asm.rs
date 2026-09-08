@@ -26,8 +26,8 @@ pub fn entry(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-use compiler_core::canonical_json::write_canonical;
-use compiler_core::{
+use crate::compiler::canonical_json::write_canonical;
+use crate::compiler::{
     build_io::{argv, read, read_json, relative, rooted, text, write},
     bundle::host_executable_signature,
     sha256,
@@ -119,7 +119,7 @@ struct Count {
     bytes: usize,
 }
 pub fn repository_root() -> PathBuf {
-    compiler_core::routing::root().to_path_buf()
+    crate::compiler::routing::root().to_path_buf()
 }
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut options = Options {
@@ -428,7 +428,7 @@ pub fn region_cache_key_with_signatures(
 ) -> Result<String, String> {
     let identity = (
         "build-asm-cache-v3",
-        compiler_core::bundle::executable_signature()?,
+        crate::compiler::bundle::executable_signature()?,
         linked_address,
         binutils,
         sha256::hex(source),

@@ -221,7 +221,7 @@ Missing evidence stays unresolved rather than becoming "compiler limitation."
 Use the approved `agbcc` and `agscc` submodules and compiler bundle. Game code
 uses the canonical GCC 2.96 family; the recorded prebuilt-library families have
 their own single routes. Membership follows provenance, not which flags score
-best. `tools/compiler-core/src/routing.rs` owns the compiler and assembler
+best. `tools/alchemy/src/compiler/routing.rs` owns the compiler and assembler
 commands. No per-function flags, inline assembly, fixed-register variables,
 empty barriers, forced scheduling, output patches or selected lucky runs.
 
@@ -380,9 +380,12 @@ project's owner and asset manifests; they are not a portable coverage library.
 Candidate compilation lives in `tools/alchemy/src/candidate.rs`: it applies
 Golden Sun owner names, symbol bindings and overlay serialization. Compile-only
 builds link without claiming reference equality; scoring compares supplied bytes.
-Compiler policy and the remaining analysis code still need their portability
-boundaries reviewed;
-the existence of the Psynergy crate does not mean that extraction is finished.
+Golden Sun compiler bundles, routes, ordinary-C policy, symbol bindings, owner
+paths and translation units live in `tools/alchemy/src/compiler`. These are
+project integration, not a portable compiler crate. Its policy tables are private
+to that module; the approved routes and hashes are unchanged by consolidation.
+The remaining analysis and asset machinery still needs its portability boundaries
+reviewed; the existence of Psynergy does not mean that extraction is finished.
 
 `alchemy dashboard` (or `make dashboard`) serves live coverage at
 `http://127.0.0.1:4650/`. Its four charts include sound coverage, not playback.
@@ -542,7 +545,6 @@ libraries are not additional public command surfaces.
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
 | [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution, transactional cache storage, atomic file writes and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
-| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
 | [lz-codecs](tools/lz-codecs/) | Explicit general, palette, halfword, arena and MTF4 LZ stream codecs. No game addresses, resource tables, format guessing or standalone extraction interface. |
 | [import-asset](tools/import-asset/) | Convert PNG, text and WAV PCM into GBA formats; MTF4, delta7, zero-skip, tilemap-delta and Huffman archive codecs. |
 

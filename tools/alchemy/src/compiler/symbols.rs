@@ -4,9 +4,9 @@
 //! semantics. Call-via registers are exactly r0-r13; trailing text is rejected.
 //! Call-via bases differ between the main image and overlays.
 
-pub use crate::call_via_data::CALL_VIA_BASE;
-use crate::call_via_data::{CALL_VIA_REGISTERS, OVERLAY_CALL_VIA_BASE};
-use crate::source_paths::lower_hex;
+pub use crate::compiler::call_via_data::CALL_VIA_BASE;
+use crate::compiler::call_via_data::{CALL_VIA_REGISTERS, OVERLAY_CALL_VIA_BASE};
+use crate::compiler::source_paths::lower_hex;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ExternalSymbol {

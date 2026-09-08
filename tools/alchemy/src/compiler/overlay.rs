@@ -1,6 +1,6 @@
 //! The resource loader at 08002d5c rewrites every Thumb BL-shaped halfword pair,
 //! including pairs in literal pools. Owner addresses are resource coordinates.
-use crate::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
+use crate::compiler::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const RESOURCE_BASE: u32 = 0x0200_0000;
@@ -183,7 +183,7 @@ pub fn external(
     calls: &BTreeMap<String, BTreeSet<u64>>,
 ) -> Result<AbsoluteSymbol, String> {
     if name.starts_with("_call_via_") {
-        let register = crate::external_symbol(name, 0)
+        let register = crate::compiler::symbols::external_symbol(name, 0)
             .ok_or("invalid call-via register")?
             .address
             / 4;
@@ -225,8 +225,9 @@ pub fn external(
     if is_call && name.starts_with("Func_02") {
         return resolve_call(name, calls);
     }
-    let symbol = crate::external_symbol(name, crate::CALL_VIA_BASE)
-        .ok_or_else(|| format!("unsupported overlay symbol: {name}"))?;
+    let symbol =
+        crate::compiler::symbols::external_symbol(name, crate::compiler::symbols::CALL_VIA_BASE)
+            .ok_or_else(|| format!("unsupported overlay symbol: {name}"))?;
     Ok(AbsoluteSymbol {
         address: symbol.address,
         kind: if symbol.thumb {

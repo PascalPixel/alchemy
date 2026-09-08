@@ -21,12 +21,12 @@ fn self_test() -> Result<String, String> {
         Err("candidate show self-test failed".into())
     }
 }
-use crate::overlay::rom::canonical_overlay;
-use compiler_core::{
-    overlay_call_via_base,
+use crate::compiler::{
     routing::root,
+    symbols::overlay_call_via_base,
     translation_units::{TranslationUnit, TranslationUnits},
 };
+use crate::overlay::rom::canonical_overlay;
 use std::path::Path;
 use std::process::Command;
 pub fn entry(arguments: &[String]) {
@@ -79,7 +79,7 @@ fn run(mut options: crate::diff::cli::Options) -> Result<String, String> {
         let reference = canonical_overlay(root(), overlay)?;
         let path = Path::new(&work).join(format!(
             "reference-{}.bin",
-            compiler_core::sha256::hex(&reference)
+            crate::compiler::sha256::hex(&reference)
         ));
         std::fs::create_dir_all(&work).map_err(|error| format!("{work}: {error}"))?;
         std::fs::write(&path, reference).map_err(|error| format!("{}: {error}", path.display()))?;

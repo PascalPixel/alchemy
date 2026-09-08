@@ -1,6 +1,6 @@
 //! Golden Sun's twelve ROM targets and their isolated build paths.
 
-use compiler_core::routing::CompilerTarget;
+use crate::compiler::routing::CompilerTarget;
 
 macro_rules! target_registry {
     ($($id:ident => ($name:literal, $rom:literal, $define:literal, $output:literal)),+ $(,)?) => {

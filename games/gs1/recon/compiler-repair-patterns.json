@@ -281,8 +281,8 @@
     {
       "id": "call-via-is-indirect",
       "source_of_truth": [
-        "tools/compiler-core/src/call_via_data.rs",
-        "tools/compiler-core/src/symbols.rs"
+        "tools/alchemy/src/compiler/call_via_data.rs",
+        "tools/alchemy/src/compiler/symbols.rs"
       ],
       "match": "source directly calls Func_080072e4 through Func_08007318, the main-image r0-r13 call-via bank",
       "effect": "reject a direct-call model and require a typed indirect function-pointer call before mutation",

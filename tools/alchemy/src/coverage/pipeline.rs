@@ -1,8 +1,8 @@
 use super::model::{
     area, bytes, intersect, normalize, subtract, Area, Category, Span, Tile, CATEGORIES,
 };
+use crate::compiler::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
 use crate::coverage::tree::{read_json, SourceTree, ROM_BASE};
-use compiler_core::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
 use serde_json::{json, Map, Value};
 use std::{collections::BTreeMap, path::Path};
 type SpanMap = BTreeMap<String, Vec<Span>>;

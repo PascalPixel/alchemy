@@ -6,7 +6,7 @@ use std::{
     time::Duration,
 };
 pub fn root() -> PathBuf {
-    compiler_core::routing::root().to_path_buf()
+    crate::compiler::routing::root().to_path_buf()
 }
 pub fn bind(args: &[String], command: &str, port: u16) -> Result<Option<SocketAddr>, String> {
     if args == ["--help"] || args == ["-h"] {

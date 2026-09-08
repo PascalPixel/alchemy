@@ -1,3 +1,9 @@
+pub(crate) use crate::compiler::overlay::placeholder_block;
+use crate::compiler::{
+    overlay::space_size,
+    source_paths::{SourceOwner, SourcePaths},
+    thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
+};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::rom::canonical_overlay;
@@ -5,12 +11,6 @@ use crate::overlay::rom::CanonicalRom;
 use crate::overlay::source::OverlaySource;
 use crate::overlay::{
     listing_offsets, overlay_assembly, overlay_offset, region_lines, retained_source,
-};
-pub(crate) use compiler_core::overlay::placeholder_block;
-use compiler_core::{
-    overlay::space_size,
-    source_paths::{SourceOwner, SourcePaths},
-    thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
 };
 use std::fs;
 use std::path::Path;

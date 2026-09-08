@@ -2,11 +2,11 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::candidate::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
+use crate::compiler::build_io::read_json;
+use crate::compiler::routing::{root, CompilerTarget};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::compile_overlay_c;
-use compiler_core::build_io::read_json;
-use compiler_core::routing::{root, CompilerTarget};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde::Serialize;
 use serde_json::Value;
 use tempfile::tempdir;
@@ -121,7 +121,7 @@ fn score(actual: &[u8], expected: &[u8]) -> Score {
 
 impl Target {
     pub fn prepare(path: &Path, source: &str) -> Result<Self, String> {
-        let source_path = compiler_core::build_io::rooted(root(), path);
+        let source_path = crate::compiler::build_io::rooted(root(), path);
         let basename = basename(&source_path)?;
         let owner = source_owner(&source_path)?;
         let work = tempdir().map_err(|error| error.to_string())?;
@@ -139,12 +139,12 @@ impl Target {
                 &local_flags(&source_path),
             )?;
             let reference = crate::overlay::rom::canonical_overlay(root(), &name)?;
-            let runtime = compiler_core::overlay::load(&reference, 0)?;
+            let runtime = crate::compiler::overlay::load(&reference, 0)?;
             let offset = compiled.address - OVERLAY_BASE;
             let expected = window(&runtime, offset, span)?;
             (
                 expected,
-                compiler_core::overlay::load(&compiled.data, offset as usize)?,
+                crate::compiler::overlay::load(&compiled.data, offset as usize)?,
                 Kind::Overlay {
                     name,
                     address: compiled.address,
@@ -210,7 +210,7 @@ impl Target {
                         compiled.address
                     ));
                 }
-                compiler_core::overlay::load(&compiled.data, (*address - OVERLAY_BASE) as usize)?
+                crate::compiler::overlay::load(&compiled.data, (*address - OVERLAY_BASE) as usize)?
             }
             Kind::Main { rom } => {
                 verify_candidate_owned_routed(

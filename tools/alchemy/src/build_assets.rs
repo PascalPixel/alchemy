@@ -1,17 +1,17 @@
 //! Native entry point for the asset build stage.
 mod gba_header;
+use crate::compiler::build_io::relative;
+use crate::compiler::bundle::{
+    compiler_bundle_signature, executable_signature, host_executable_signature,
+};
+use crate::compiler::canonical_json::canonical_json;
+use crate::compiler::routing::{cflags_for_target_source, CompilerTarget};
+use crate::compiler::sha256;
+use crate::compiler::source_inputs::compiler_source_tree_signature;
+use crate::compiler::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use crate::generated_files::{prune_files, unused_tracked_images};
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
-use compiler_core::build_io::relative;
-use compiler_core::bundle::{
-    compiler_bundle_signature, executable_signature, host_executable_signature,
-};
-use compiler_core::canonical_json::canonical_json;
-use compiler_core::routing::{cflags_for_target_source, CompilerTarget};
-use compiler_core::sha256;
-use compiler_core::source_inputs::compiler_source_tree_signature;
-use compiler_core::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use import_asset::import_tilemap;
 use import_asset::{
@@ -4621,7 +4621,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         let document: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
         if document["kind"] != "integer-regions"
             || document["format"] != 1
-            || !compiler_core::canonical_json::is_canonical_json_text(&text, &document)
+            || !crate::compiler::canonical_json::is_canonical_json_text(&text, &document)
         {
             return Err("integer package source differs".into());
         }

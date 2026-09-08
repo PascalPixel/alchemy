@@ -5,7 +5,7 @@
 //! candidate is not exact or the span overlaps another registered region.
 
 use super::owners::{self, modules, parse_owner, score, tool_command};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 use std::process::Command;

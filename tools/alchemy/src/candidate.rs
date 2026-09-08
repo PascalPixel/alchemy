@@ -1,10 +1,10 @@
 //! Compile candidate C, link it at its ROM address, and return both byte spans.
-use compiler_core::nodepath::{basename, extname};
-use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
-use compiler_core::routing::{root, CompilerTarget};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
-use compiler_core::{external_symbol, ExternalSymbol, CALL_VIA_BASE};
+use crate::compiler::plan::{basename, extname};
+use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
+use crate::compiler::routing::{root, CompilerTarget};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::symbols::{external_symbol, ExternalSymbol, CALL_VIA_BASE};
+use crate::compiler::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use psynergy::process::run;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -38,7 +38,7 @@ pub fn source_stem(path: &str) -> String {
 }
 pub fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     run(
-        &compiler_core::routing::assembly_command(assembly, object),
+        &crate::compiler::routing::assembly_command(assembly, object),
         root(),
     )
     .map(drop)
@@ -121,8 +121,8 @@ pub fn compile_source(
             .to_string_lossy()
             .into_owned(),
     );
-    for step in source_to_assembly_plan(&options)?.steps {
-        run(&step.command, cwd)?;
+    for command in source_to_assembly_plan(&options)? {
+        run(&command, cwd)?;
     }
     Ok(())
 }
@@ -263,7 +263,7 @@ pub fn link_candidate_owned_routed_with_object(
             root(),
         )?;
         run(
-            &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+            &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
             cwd,
         )?;
     }
@@ -286,7 +286,7 @@ pub fn link_candidate_owned_routed_with_object(
     let runtime_address = if configuration.overlay_extent.is_some() {
         address
             + u64::from(
-                compiler_core::overlay::RUNTIME_BASE - compiler_core::overlay::RESOURCE_BASE,
+                crate::compiler::overlay::RUNTIME_BASE - crate::compiler::overlay::RESOURCE_BASE,
             )
     } else {
         address
@@ -317,9 +317,9 @@ pub fn link_candidate_owned_routed_with_object(
         .overlay_extent
         .map(|extent| {
             let offset = address
-                .checked_sub(u64::from(compiler_core::overlay::RESOURCE_BASE))
+                .checked_sub(u64::from(crate::compiler::overlay::RESOURCE_BASE))
                 .ok_or("overlay owner precedes resource base")? as usize;
-            compiler_core::overlay::call_symbols(rom, offset, extent)
+            crate::compiler::overlay::call_symbols(rom, offset, extent)
         })
         .transpose()?;
     let call_via_base = configuration.call_via_base.unwrap_or(CALL_VIA_BASE);
@@ -379,7 +379,7 @@ pub fn link_candidate_owned_routed_with_object(
             let is_call = owner_relocations
                 .get(name)
                 .is_some_and(|sites| sites.iter().any(|site| site.kind == "R_ARM_THM_CALL"));
-            let symbol = compiler_core::overlay::external(name, is_call, rom, calls)?;
+            let symbol = crate::compiler::overlay::external(name, is_call, rom, calls)?;
             (symbol.address, absolute_symbol_directive(symbol.kind))
         } else {
             let symbol = resolved
@@ -427,7 +427,7 @@ pub fn link_candidate_owned_routed_with_object(
         .checked_sub(image_base as u64)
         .ok_or("owner precedes reference image")?;
     let actual = if configuration.overlay_extent.is_some() {
-        compiler_core::overlay::encode(&actual, offset as usize)?
+        crate::compiler::overlay::encode(&actual, offset as usize)?
     } else {
         actual
     };

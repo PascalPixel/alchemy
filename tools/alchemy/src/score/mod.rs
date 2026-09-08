@@ -6,7 +6,7 @@ pub mod render;
 pub mod structure;
 pub mod triage;
 
-use crate::diff::{
+use crate::score::{
     cli::{options_of, ParseOutcome, USAGE},
     render::{render, RenderOutput},
 };
@@ -46,7 +46,7 @@ pub fn entry(arguments: &[String]) {
         Err(error) => fail(&error),
     }
 }
-fn run(mut options: crate::diff::cli::Options) -> Result<String, String> {
+fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
     let Some(id) = options.unit.clone() else {
         return render(root(), &options).map(|output| output.stdout);
     };
@@ -69,7 +69,7 @@ fn run(mut options: crate::diff::cli::Options) -> Result<String, String> {
     }
     options.source = unit.source.to_string_lossy().into_owned();
     options.configuration.absolute_symbols = unit.canonical_symbols()?;
-    let default_work = format!("scratch/diff/{id}");
+    let default_work = format!("scratch/score/{id}");
     let work = options.work.clone().unwrap_or(default_work);
     let work = root().join(work).to_string_lossy().into_owned();
     options.work = Some(work.clone());
@@ -257,7 +257,7 @@ mod tests {
     #[test]
     fn retained_overlay_unit_scores_without_an_owner_override() {
         let work = tempfile::tempdir().unwrap();
-        let mut options = crate::diff::cli::Options::gs1(String::new());
+        let mut options = crate::score::cli::Options::gs1(String::new());
         options.unit = Some("retained-overlay-380-large-object-sequence".into());
         options.work = Some(work.path().to_string_lossy().into_owned());
         options.first = true;
@@ -274,7 +274,7 @@ mod tests {
             reference_length: 4,
             differing_halfwords: difference,
             allocator: None,
-            residual: crate::diff::triage::classify(&[], &[], 4, 4, difference),
+            residual: crate::score::triage::classify(&[], &[], 4, 4, difference),
         };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));

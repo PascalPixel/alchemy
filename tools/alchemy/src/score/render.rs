@@ -6,13 +6,13 @@ use crate::compiler::bundle::compiler_bundle_signature_checked;
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_inputs::source_tree_signature;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
-use crate::diff::{
+use crate::overlay::assembly::OVERLAY_BASE;
+use crate::score::{
     cli::Options,
     disasm::disassemble,
     patch::apply_unified_diff_in_tree,
     triage::{classify, classify_with_topology},
 };
-use crate::overlay::assembly::OVERLAY_BASE;
 use psynergy::compare::{
     differing_offsets,
     insns::{align_streams, gas_function_insns},
@@ -29,8 +29,8 @@ pub struct RenderOutput {
     pub candidate_length: usize,
     pub reference_length: usize,
     pub differing_halfwords: usize,
-    pub allocator: Option<crate::diff::allocator::Report>,
-    pub residual: crate::diff::triage::ResidualReport,
+    pub allocator: Option<crate::score::allocator::Report>,
+    pub residual: crate::score::triage::ResidualReport,
 }
 
 struct SourceIdentity {
@@ -278,7 +278,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     };
     let mut score = render_bytes(actual, expected, compile, topology, options, &work)?;
     let allocator = if options.allocator_order {
-        let report = crate::diff::allocator::decode(
+        let report = crate::score::allocator::decode(
             root,
             options,
             &identity.routing,
@@ -288,7 +288,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &score.candidate,
             &score.reference,
         )?;
-        Some(crate::diff::structure::augment(report, &work))
+        Some(crate::score::structure::augment(report, &work))
     } else {
         None
     };
@@ -777,7 +777,7 @@ mod cache_key_tests {
                 contents,
                 None,
                 None,
-                b"diff",
+                b"score",
                 b"compiler-bundle",
             )
             .unwrap()

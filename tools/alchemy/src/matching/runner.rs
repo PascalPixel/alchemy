@@ -37,7 +37,7 @@ fn load(path: &Path) -> Result<(PathBuf, String), String> {
     Ok((path, source))
 }
 
-fn allocator_options(path: &Path, work: &Path) -> Result<Box<crate::diff::cli::Options>, String> {
+fn allocator_options(path: &Path, work: &Path) -> Result<Box<crate::score::cli::Options>, String> {
     let arguments = [
         path.to_string_lossy().into_owned(),
         "--owner".into(),
@@ -46,8 +46,8 @@ fn allocator_options(path: &Path, work: &Path) -> Result<Box<crate::diff::cli::O
         "--work".into(),
         work.to_string_lossy().into_owned(),
     ];
-    let crate::diff::cli::ParseOutcome::Options(options) =
-        crate::diff::cli::options_of(root(), &arguments)?
+    let crate::score::cli::ParseOutcome::Options(options) =
+        crate::score::cli::options_of(root(), &arguments)?
     else {
         return Err("allocator decoder options unexpectedly requested help".into());
     };
@@ -64,13 +64,13 @@ fn allocator_preflight_preserves_overlay_identity() {
     assert!(options.allocator_order);
 }
 
-fn allocator_report(path: &Path) -> Result<crate::diff::allocator::Report, String> {
+fn allocator_report(path: &Path) -> Result<crate::score::allocator::Report, String> {
     let work = tempfile::tempdir().map_err(|error| error.to_string())?;
     let options = allocator_options(path, work.path())?;
     let rendered = if options.overlay.is_some() {
         crate::overlay::score::render_options(root(), options)?
     } else {
-        crate::diff::render::render(root(), &options)?
+        crate::score::render::render(root(), &options)?
     };
     let report = rendered
         .allocator
@@ -188,7 +188,7 @@ fn save(
     evaluations: &[Evaluation],
     options: &Options,
     permutation: &Permutation,
-    decoder: &crate::diff::allocator::Report,
+    decoder: &crate::score::allocator::Report,
 ) -> Result<RunSummary, String> {
     let best = evaluations
         .iter()

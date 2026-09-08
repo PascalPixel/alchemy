@@ -9,11 +9,9 @@ mod build_full;
 mod candidate;
 mod check;
 mod compiler;
-mod convert;
 mod coverage;
 mod cross_edition;
 mod dashboard;
-mod diff;
 mod flatten;
 mod font;
 mod generated_files;
@@ -23,24 +21,23 @@ mod music_debug;
 mod overlay;
 mod recovery;
 mod scaffold;
+mod score;
 mod targets;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   extract OWNER         extract reference bytes for psynergy decompile\n\
-  disassemble OWNER     display reference instructions\n\
-  inspect OWNER         inspect calls and symbols; allocator OWNER reads GCC dumps\n\
-  diff SOURCE           compile and compare a candidate\n\
+  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions\n\
+  score SOURCE          compile through the approved route and compare the owner\n\
   adopt OWNER           verify and integrate candidate C\n\
   match SOURCE          search decoder-named, catalogued source repairs\n\
   unit                  scaffold or flatten translation units\n\
   cross-edition         compare historical editions\n\
-  build                 build compilers or ROM stages (asm, claimed, full, rom, assets)\n\
+  build                 build compilers, ROM stages, assets or allocator dumps\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild and report ROM coverage\n\
   dashboard             serve live coverage on localhost:4650\n\
   music-debug           optionally serve the music debugger on localhost:4651\n\
   check                 run repository contract checks\n\
-  convert               convert named file formats (see convert --help)\n\
   font                  rebuild the shared Golden Sun font\n\
   overlay               legacy overlay operations during migration";
 
@@ -52,9 +49,6 @@ fn main() -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "inspect" if rest.first().map(String::as_str) == Some("allocator") => {
-            allocator::entry(&rest[1..])
-        }
         "unit" if rest.first().map(String::as_str) == Some("scaffold") => {
             scaffold::entry(&rest[1..])
         }
@@ -70,19 +64,15 @@ fn main() -> ExitCode {
         "font" => font::entry(rest),
         "dashboard" => result(dashboard::entry(rest)),
         "music-debug" => result(music_debug::entry(rest)),
-        "build" if rest.first().map(String::as_str) == Some("assets") => {
-            build_assets::entry(&rest[1..])
-        }
         "build" => build::entry(rest),
         "verify" | "coverage" => make_target(command, rest),
         "check" => check::entry(rest),
-        "convert" => result(convert::run(rest)),
         "overlay" => overlay::entry(rest),
-        "extract" | "adopt" | "disassemble" | "inspect" => recovery_command(command, rest),
-        "diff" => match overlay_candidate(rest) {
+        "extract" | "adopt" | "inspect" => recovery_command(command, rest),
+        "score" => match overlay_candidate(rest) {
             Ok(true) => overlay::code(overlay::score::run(crate::compiler::routing::root(), rest)),
             Ok(false) => {
-                diff::entry(rest);
+                score::entry(rest);
                 ExitCode::SUCCESS
             }
             Err(error) => result(Err(error)),
@@ -183,8 +173,7 @@ fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {
         let usage = match command {
             "extract" => "extract OWNER --out out/FILE [--span BYTES]",
             "adopt" => "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH]",
-            "disassemble" => "disassemble OWNER [--span BYTES]",
-            "inspect" => "inspect OWNER [--span BYTES]",
+            "inspect" => "inspect OWNER [--span BYTES] [--asm]",
             _ => return recovery::cli::entry(&["--help".to_string()]),
         };
         println!(

@@ -4,6 +4,111 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "scene-actor-dialogue-events",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_dialogue/actor_dialogue_events.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38b",
+      "absolute_symbols": {
+        "Func_020090b8": {
+          "address": "0x020090b8",
+          "kind": "thumb"
+        },
+        "Func_02009090": {
+          "address": "0x02009090",
+          "kind": "thumb"
+        },
+        "Func_020090c0": {
+          "address": "0x020090c0",
+          "kind": "thumb"
+        },
+        "Func_02009098": {
+          "address": "0x02009098",
+          "kind": "thumb"
+        },
+        "Func_020090b8_unprototyped": {
+          "address": "0x020090b8",
+          "kind": "thumb"
+        },
+        "Func_020090a0": {
+          "address": "0x020090a0",
+          "kind": "thumb"
+        },
+        "Func_020090c0_unprototyped": {
+          "address": "0x020090c0",
+          "kind": "thumb"
+        },
+        "Func_02009130": {
+          "address": "0x02009130",
+          "kind": "thumb"
+        },
+        "Func_02009138": {
+          "address": "0x02009138",
+          "kind": "thumb"
+        },
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Func_02009130_args1": {
+          "address": "0x02009130",
+          "kind": "thumb"
+        },
+        "Func_02009148": {
+          "address": "0x02009148",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x020001ec",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000208",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000224",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000240",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000288",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002a8",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002c8",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002e8",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000308",
+          "extent": 32,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "scene-particle-wave-sequence",
       "game": "gs1",
       "source": "games/gs1/recon/en/overlays/resource_3c8_c_02004610.c",

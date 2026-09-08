@@ -4,6 +4,26 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "scene-particle-wave-sequence",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_3c8_c_02004610.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Func_02009612_setup": {
+          "address": "0x0200cfc4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02004610",
+          "extent": 432,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "scene-four-way-effect-sequence",
       "game": "gs1",
       "source": "games/gs1/recon/en/overlays/resource_381_c_020029a4.c",

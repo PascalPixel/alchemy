@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:02004610": {
+      "name": "FieldScene_RunParticleWaveSequence"
+    },
     "resource_370:020003cc": {
       "name": "FieldScene_InitializeEntryState"
     },

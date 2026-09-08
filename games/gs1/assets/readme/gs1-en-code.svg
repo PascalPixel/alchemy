@@ -14088,114 +14088,118 @@
 <rect x="278.0347446174804" y="227.07995559707487" width="1.831832209822518" height="1.2742002487377433" style="fill:#6cafb2"/>
 </g>
 </g>
-<g aria-label="resource_3c8_overlay.s: 10,082 bytes · 58 items" data-node="container" data-kind="file" data-bytes="10082" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
-<title>resource_3c8_overlay.s: 10,082 bytes · 58 items</title>
+<g aria-label="resource_3c8_overlay.s: 10,082 bytes · 59 items" data-node="container" data-kind="file" data-bytes="10082" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
+<title>resource_3c8_overlay.s: 10,082 bytes · 59 items</title>
 <rect class="container-frame" x="282.29077050833615" y="207.1165788100929" width="25.722173017158877" height="23.661770716752994" fill="#1f7f93"/>
 <path class="bevel-light" d="M282.29077050833615 230.7783495268459 V207.1165788100929 H308.012943525495" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M282.29077050833615 230.7783495268459 H308.012943525495 V207.1165788100929" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3c8 · Drafted 0x020017f8–0x02001808: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x020017f8" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Drafted 0x020017f8–0x02001808: 16 bytes</title>
-<rect x="284.3525806068349" y="209.17838890859167" width="0.12362019699754773" height="2.617826198663184" style="fill:#96c8c9"/>
+<rect x="284.3346207177787" y="209.16042901953548" width="3.7765701033981234" height="0.08770041888515415" style="fill:#96c8c9"/>
+</g>
+<g aria-label="3c8 · Drafted 0x02004610–0x020047aa: 410 bytes" data-node="leaf" data-kind="file" data-bytes="410" data-address="0x02004610" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
+<title>3c8 · Drafted 0x02004610–0x020047aa: 410 bytes</title>
+<rect x="284.79077050833615" y="209.7919796478632" width="2.8642705222832774" height="3.4946464678641496" style="fill:#96c8c9"/>
+</g>
+<g aria-label="3c8 · Drafted 0x020047ac–0x020047c0: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020047ac" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
+<title>3c8 · Drafted 0x020047ac–0x020047c0: 20 bytes</title>
+<rect x="284.37127614421706" y="213.86713175160827" width="0.16101127176180322" height="2.4700012947928216" style="fill:#96c8c9"/>
 </g>
 <g aria-label="3c8 · Unknown 0x020016a4–0x02001780: 220 bytes" data-node="leaf" data-kind="file" data-bytes="220" data-address="0x020016a4" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x020016a4–0x02001780: 220 bytes</title>
-<rect x="285.0380109023312" y="209.6165788100929" width="2.3995554174325626" height="1.741446395660732" style="fill:#d9d9d4"/>
+<rect x="285.11279305185974" y="214.28662611572736" width="2.542247978759671" height="1.6310125665546247" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x02001808–0x020018f8: 240 bytes" data-node="leaf" data-kind="file" data-bytes="240" data-address="0x02001808" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x02001808–0x020018f8: 240 bytes</title>
-<rect x="284.79077050833615" y="212.35802520575365" width="2.646795811427658" height="1.7879115888075243" style="fill:#d9d9d4"/>
+<rect x="288.5511202280257" y="209.51265800749917" width="5.625083643693905" height="0.7921583948125587" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x02001af0–0x02001d12: 546 bytes" data-node="leaf" data-kind="file" data-bytes="546" data-address="0x02001af0" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x02001af0–0x02001d12: 546 bytes</title>
-<rect x="288.4375663197638" y="209.6165788100929" width="3.183089313108195" height="4.529357984468256" style="fill:#d9d9d4"/>
+<rect x="288.65504103061943" y="211.20089559971802" width="3.0459747725456454" height="4.716743082563965" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x02001d14–0x02001d48: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02001d14" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x02001d14–0x02001d48: 52 bytes</title>
-<rect x="292.345285800991" y="209.34120897821194" width="2.0023671000158414" height="0.44926033623804584" style="fill:#d9d9d4"/>
+<rect x="292.4332584908943" y="210.93313828744718" width="1.9067818905024962" height="0.46448537545832214" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x020022c8–0x020023d4: 268 bytes" data-node="leaf" data-kind="file" data-bytes="268" data-address="0x020022c8" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x020022c8–0x020023d4: 268 bytes</title>
-<rect x="292.620655632872" y="210.51509948256898" width="1.4516274362538875" height="3.630837311992165" style="fill:#d9d9d4"/>
+<rect x="292.7010158031651" y="212.12986635063467" width="1.3712672659608183" height="3.7877723316473206" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x020026f8–0x02002b14: 1,052 bytes" data-node="leaf" data-kind="file" data-bytes="1052" data-address="0x020026f8" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x020026f8–0x02002b14: 1,052 bytes</title>
-<rect x="284.79077050833615" y="215.14593679456115" width="5.476737253862759" height="5.88079570347391" style="fill:#d9d9d4"/>
+<rect x="284.79077050833615" y="216.917638682282" width="7.584246995199054" height="4.191498554716842" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x02004520–0x020045f0: 208 bytes" data-node="leaf" data-kind="file" data-bytes="208" data-address="0x02004520" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x02004520–0x020045f0: 208 bytes</title>
-<rect x="291.26750776219893" y="215.14593679456115" width="2.804775306926982" height="1.31586651508507" style="fill:#d9d9d4"/>
+<rect x="293.2993338949329" y="216.84195507367966" width="0.8486327827953435" height="4.342865771921499" style="fill:#d9d9d4"/>
 </g>
-<g aria-label="3c8 · Unknown 0x02004610–0x020047aa: 410 bytes" data-node="leaf" data-kind="file" data-bytes="410" data-address="0x02004610" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
-<title>3c8 · Unknown 0x02004610–0x020047aa: 410 bytes</title>
-<rect x="291.26750776219893" y="217.46180330964623" width="2.804775306926982" height="3.56492918838884" style="fill:#d9d9d4"/>
-</g>
-<g aria-label="3c8 · Unknown 0x020047ac–0x02004a2c: 640 bytes" data-node="leaf" data-kind="file" data-bytes="640" data-address="0x020047ac" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
-<title>3c8 · Unknown 0x020047ac–0x02004a2c: 640 bytes</title>
-<rect x="284.79077050833615" y="222.02673249803507" width="2.7387318402871785" height="6.251617028810828" style="fill:#d9d9d4"/>
+<g aria-label="3c8 · Unknown 0x020047c0–0x02004a2c: 620 bytes" data-node="leaf" data-kind="file" data-bytes="620" data-address="0x020047c0" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
+<title>3c8 · Unknown 0x020047c0–0x02004a2c: 620 bytes</title>
+<rect x="284.79077050833615" y="222.10913723699883" width="2.663527464189448" height="6.169212289847069" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x02004bd8–0x02004d5e: 390 bytes" data-node="leaf" data-kind="file" data-bytes="390" data-address="0x02004bd8" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x02004bd8–0x02004d5e: 390 bytes</title>
-<rect x="288.52950234862334" y="222.02673249803507" width="4.003302903913724" height="2.302075611333502" style="fill:#d9d9d4"/>
+<rect x="288.4542979725256" y="222.10913723699883" width="4.060812132694341" height="2.264552024841076" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Unknown 0x02004d60–0x02004d9c: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02004d60" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Unknown 0x02004d60–0x02004d9c: 60 bytes</title>
-<rect x="293.4176747066843" y="221.91160195218228" width="0.7697389082944195" height="0.8812988973723315" style="fill:#d9d9d4"/>
+<rect x="293.40440334619643" y="221.99843047797532" width="0.778586481952976" height="0.853689530467562" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02000000–0x02000030: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x02000000" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02000000–0x02000030: 48 bytes</title>
-<rect x="293.3630128136704" y="223.5079778648352" width="0.8790626943221386" height="0.6604151222667004" style="fill:#6cafb2"/>
+<rect x="293.34156530770406" y="223.56786845190348" width="0.9042625589377367" height="0.6529104049682153" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02000116–0x02000118: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02000116" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02000116–0x02000118: 2 bytes</title>
-<rect x="293.0969501615616" y="224.56274545725978" width="0.12828981804906991" height="0.20191774308428023" style="fill:#6cafb2"/>
+<rect x="293.07999231204934" y="224.6121162661852" width="0.12976441365882932" height="0.1966907888252781" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x020005aa–0x020005ac: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x020005aa" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x020005aa–0x020005ac: 2 bytes</title>
-<rect x="293.35352979765975" y="224.56274545725978" width="0.12828981804906991" height="0.20191774308428023" style="fill:#6cafb2"/>
+<rect x="293.339521139367" y="224.6121162661852" width="0.12976441365882935" height="0.19669078882527807" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x0200069e–0x020006a0: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200069e" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x0200069e–0x020006a0: 2 bytes</title>
-<rect x="293.6101094337579" y="224.56274545725978" width="0.12828981804906991" height="0.20191774308428023" style="fill:#6cafb2"/>
+<rect x="293.5990499666846" y="224.6121162661852" width="0.12976441365882935" height="0.19669078882527807" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x0200090e–0x02000910: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200090e" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x0200090e–0x02000910: 2 bytes</title>
-<rect x="293.866689069856" y="224.56274545725978" width="0.12828981804906991" height="0.20191774308428023" style="fill:#6cafb2"/>
+<rect x="293.8585787940023" y="224.6121162661852" width="0.12976441365882932" height="0.1966907888252781" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x0200096a–0x0200096c: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200096a" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x0200096a–0x0200096c: 2 bytes</title>
-<rect x="294.12326870595416" y="224.56274545725978" width="0.12828981804906991" height="0.20191774308428023" style="fill:#6cafb2"/>
+<rect x="294.11810762131995" y="224.6121162661852" width="0.12976441365882935" height="0.19669078882527807" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x020009c6–0x020009c8: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x020009c6" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x020009c6–0x020009c8: 2 bytes</title>
-<rect x="294.3798483420523" y="224.56274545725978" width="0.12828981804906991" height="0.20191774308428023" style="fill:#6cafb2"/>
+<rect x="294.3776364486376" y="224.6121162661852" width="0.12976441365882935" height="0.19669078882527807" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02001780–0x020017f8: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02001780" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02001780–0x020017f8: 120 bytes</title>
-<rect x="288.3780931247157" y="225.17739888546092" width="0.6971815521846992" height="2.9485489870251405" style="fill:#6cafb2"/>
+<rect x="288.3068955391477" y="225.22628682846204" width="0.7051951332442935" height="2.8991066498381617" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x0200196a–0x0200196c: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200196a" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x0200196a–0x0200196c: 2 bytes</title>
-<rect x="288.0992205038418" y="228.54425680379688" width="0.13943631043693985" height="0.16437456783054635" style="fill:#6cafb2"/>
+<rect x="288.02481748585" y="228.5485105582468" width="0.1410390266488587" height="0.15931945527467894" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x0200199a–0x0200199c: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200199a" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x0200199a–0x0200199c: 2 bytes</title>
-<rect x="288.3780931247157" y="228.54425680379688" width="0.13943631043693985" height="0.16437456783054635" style="fill:#6cafb2"/>
+<rect x="288.3068955391477" y="228.5485105582468" width="0.1410390266488587" height="0.15931945527467894" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02001a12–0x02001a14: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02001a12" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02001a12–0x02001a14: 2 bytes</title>
-<rect x="288.65696574558956" y="228.54425680379688" width="0.13943631043693983" height="0.16437456783054638" style="fill:#6cafb2"/>
+<rect x="288.5889735924454" y="228.5485105582468" width="0.1410390266488587" height="0.15931945527467894" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02001a4e–0x02001a50: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02001a4e" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02001a4e–0x02001a50: 2 bytes</title>
-<rect x="288.93583836646343" y="228.54425680379688" width="0.13943631043693985" height="0.16437456783054635" style="fill:#6cafb2"/>
+<rect x="288.87105164574314" y="228.5485105582468" width="0.1410390266488587" height="0.15931945527467894" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02001d12–0x02001d14: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02001d12" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02001d12–0x02001d14: 2 bytes</title>
-<rect x="289.2147109873373" y="228.54425680379688" width="0.13943631043693985" height="0.16437456783054635" style="fill:#6cafb2"/>
+<rect x="289.15312969904085" y="228.5485105582468" width="0.1410390266488587" height="0.15931945527467894" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02001d48–0x02001f28: 480 bytes" data-node="leaf" data-kind="file" data-bytes="480" data-address="0x02001d48" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02001d48–0x02001f28: 480 bytes</title>
-<rect x="289.92386545299274" y="225.32880810936857" width="4.148417616133164" height="2.949541417477326" style="fill:#6cafb2"/>
+<rect x="289.8646882390142" y="225.3736892618399" width="4.207594830111706" height="2.904660265005993" style="fill:#6cafb2"/>
 </g>
 <g aria-label="3c8 · Assembly 0x02001f5e–0x0200226c: 782 bytes" data-node="leaf" data-kind="file" data-bytes="782" data-address="0x02001f5e" data-source="games/gs1/asm/overlays/resource_3c8_overlay.s">
 <title>3c8 · Assembly 0x02001f5e–0x0200226c: 782 bytes</title>

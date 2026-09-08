@@ -1,4 +1,5 @@
 #include "shared-aggregates.h"
+#include "effect_step.h"
 
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
@@ -87,7 +88,7 @@ void Func_080d2464(void *arg0, s32 arg1) {
     s32 sp30;
     s32 sp34;
     s32 sp38;
-    M2C_UNK sp3C;
+    struct EffectPosition pos;
     s32 *var_r3_174;
     s32 *var_r3_215;
     s32 *var_r5_1153;
@@ -161,7 +162,7 @@ void Func_080d2464(void *arg0, s32 arg1) {
     *(s16 *)0x0400000C = 0x784;
     Func_080ed408(0x2E, 7, 7, 3, 2);
     sp28 = absolute_03001ef0.field_0018;
-    Func_080ed408(0x2F, 7, 7, 3);
+    Func_080ed408(0x2F, 7, 7, 3, 3);
     sp2C = absolute_03001ef0.field_001c;
     temp_r0_59 = Func_08002f40(0x7D);
     copy((void *)0x05000000, temp_r0_59, 0x80);
@@ -182,16 +183,16 @@ void Func_080d2464(void *arg0, s32 arg1) {
         }
     }
     if (sp38 == 1) {
-        Func_080e396c(M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 8), &sp3C);
-        temp_r3_147 = M2C_FIELD(&sp3C, u32 *, 0);
-        M2C_FIELD(&sp3C, u32 *, 0) = (u32) ((s32) (temp_r3_147 + (temp_r3_147 >> 0x1F)) >> 1);
-        M2C_FIELD(&sp3C, s32 *, 4) = 0x42;
+        Func_080e396c(M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 8), &pos);
+        temp_r3_147 = pos.x;
+        pos.x = (s32) (temp_r3_147 + (temp_r3_147 >> 0x1F)) >> 1;
+        pos.y = 0x42;
         if (M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 4) == 1) {
             var_r3_158 = 0x4C;
         } else {
             var_r3_158 = 0x2C;
         }
-        M2C_FIELD(&sp3C, u32 *, 0) = var_r3_158;
+        pos.x = var_r3_158;
     }
     sp1C = 0xFFC40000;
     sp18 = 0xD40000;
@@ -200,7 +201,7 @@ void Func_080d2464(void *arg0, s32 arg1) {
     do {
         var_r7_172 += 1;
         *var_r3_174 = -1;
-        var_r3_174 += 0x1C;
+        var_r3_174 += 7;
     } while (var_r7_172 != 0x40);
     var_r7_182 = 0;
     var_r5_184 = temp_r3_25 + 0x7320;
@@ -221,7 +222,7 @@ void Func_080d2464(void *arg0, s32 arg1) {
     do {
         var_r7_216 += 1;
         *var_r3_215 = -1;
-        var_r3_215 += 0x1C;
+        var_r3_215 += 7;
     } while (var_r7_216 != 0x200);
     if (sp38 == 0) {
         Func_080d6750(M2C_FIELD(temp_r3_25, void **, 0x7828));
@@ -285,7 +286,7 @@ loop_23:
 loop_46:
         if ((var_r6_394->field_0018 != -1U) || (M2C_FIELD(var_r6_394, s32 *, 0) = (s32) (((0xFF & Func_08004458()) - 0x20) << 0x10), var_r6_394->field_0004 = 0x700000, temp_r5_417 = 3 & var_r7_395, var_r6_394->field_000c = ((Func_08004458() & 0x7F) + *(u8 *)(0x080EE184 + temp_r5_417)) << 9, temp_r0_431 = (0 - ((Func_08004458() & 0x7F) + *(u8 *)(0x080EE184 + temp_r5_417))) << 0xB, var_r6_394->field_0018 = 0, var_r6_394->field_0010 = temp_r0_431, var_r8_385 += 1, (var_r8_385 != sp10))) {
             var_r7_395 += 1;
-            var_r6_394 += 0x1C;
+            var_r6_394 = (void *)((u8 *)var_r6_394 + 0x1C);
             if (var_r7_395 != 0x200) {
                 goto loop_46;
             }
@@ -306,8 +307,8 @@ loop_53:
                     var_r3_491 = 0x460000;
                     M2C_FIELD(var_r5_465, s32 *, 0) = (s32) (((Func_08004458() & 7) + 0x4E) << 0x10);
                 } else {
-                    M2C_FIELD(var_r5_465, s32 *, 0) = (s32) ((((Func_08004458() & 7) + M2C_FIELD(&sp3C, u32 *, 0)) - 8) << 0x10);
-                    var_r3_491 = M2C_FIELD(&sp3C, s32 *, 4) << 0x10;
+                    M2C_FIELD(var_r5_465, s32 *, 0) = (s32) ((((Func_08004458() & 7) + (u32)pos.x) - 8) << 0x10);
+                    var_r3_491 = pos.y << 0x10;
                 }
                 M2C_FIELD(var_r5_465, s32 *, 4) = var_r3_491;
                 M2C_FIELD(var_r5_465, s32 *, 0xC) = (s32) ((s32) (temp_r8_476 * Func_08002322(temp_r6_482)) >> 9);
@@ -346,8 +347,8 @@ loop_66:
                 M2C_FIELD(var_r5_608, s32 *, 0) = 0x440000;
                 var_r3_631 = 0x400000;
             } else {
-                M2C_FIELD(var_r5_608, s32 *, 0) = (s32) (M2C_FIELD(&sp3C, u32 *, 0) << 0x10);
-                var_r3_631 = M2C_FIELD(&sp3C, s32 *, 4) << 0x10;
+                M2C_FIELD(var_r5_608, s32 *, 0) = (s32) ((u32)pos.x << 0x10);
+                var_r3_631 = pos.y << 0x10;
             }
             M2C_FIELD(var_r5_608, s32 *, 4) = var_r3_631;
             M2C_FIELD(var_r5_608, s32 *, 0xC) = (s32) ((s32) (temp_r8_618 * Func_08002322(temp_r6_624)) >> 6);
@@ -432,7 +433,7 @@ block_71:
                 }
             }
             var_r7_770 += 1;
-            var_r5_769 += 0x1C;
+            var_r5_769 = (void *)((u8 *)var_r5_769 + 0x1C);
         } while (var_r7_770 != 0x200);
     }
     if (sp24 == 0x80) {
@@ -541,7 +542,7 @@ loop_114:
         var_r5_1153 = temp_r3_25 + 0x77D8;
         do {
             temp_r0_1155 = *var_r5_1153;
-            var_r5_1153 += 4;
+            var_r5_1153 += 1;
             var_r7_1152 += 1;
             Func_08009038(temp_r0_1155);
         } while (var_r7_1152 != 8);

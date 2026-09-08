@@ -7064,6 +7064,10 @@
       "name": "FieldScene_RunSlotSubjectBranch",
       "source": "overlays/scene_setup/run_slot_subject_branch.c"
     },
+    "resource_38d:020006e0": {
+      "name": "FieldScene_SelectActorPresentationBranch",
+      "source": "overlays/scene_setup/select_actor_presentation_branch.c"
+    },
     "resource_3c3:020000e4": {
       "name": "SceneData_GetTertiaryTable",
       "source": "overlays/scene_script/actor_prompt_dialogue.c"

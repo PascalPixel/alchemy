@@ -40583,6 +40583,47 @@
         }
       ],
       "local_symbols": []
+    },
+    {
+      "id": "field-scene-select-actor-presentation-branch",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_setup/select_actor_presentation_branch.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38d",
+      "absolute_symbols": {
+        "Func_02002b74": {
+          "address": "0x0200a460",
+          "kind": "thumb"
+        },
+        "Func_02002b74_a": {
+          "address": "0x0200a450",
+          "kind": "thumb"
+        },
+        "Func_02002bf4": {
+          "address": "0x0200a450",
+          "kind": "thumb"
+        },
+        "Func_02002bf4_a": {
+          "address": "0x0200a438",
+          "kind": "thumb"
+        },
+        "Func_02002cd4": {
+          "address": "0x0200a4f8",
+          "kind": "thumb"
+        },
+        "Func_02002cd4_a": {
+          "address": "0x0200a498",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020006e0",
+          "extent": 480,
+          "state": "exact-c"
+        }
+      ],
+      "local_symbols": []
     }
   ]
 }

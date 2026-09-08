@@ -6,7 +6,7 @@ use serde_json::json;
 
 use crate::compile::{Score, Target};
 use crate::options::{Options, MAX_SOURCE_BYTES};
-use crate::Permutation;
+use psynergy::repair::Permutation;
 
 #[derive(Debug)]
 struct Evaluation {
@@ -59,6 +59,22 @@ fn allocator_report(path: &Path) -> Result<diff::allocator::Report, String> {
         ));
     }
     Ok(report)
+}
+
+fn guard_call_via(source: &str) -> Result<(), String> {
+    for register in 0..14 {
+        let symbol = format!("Func_{:08x}(", compiler_core::CALL_VIA_BASE + register * 4);
+        if source.contains(&symbol) {
+            return Err(format!("semantic guard: {symbol} is a main-image call-via trampoline; model the typed indirect call first"));
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn golden_sun_trampolines_require_typed_indirect_calls() {
+    assert!(guard_call_via("void f(void) { Func_080072e4(); }").is_err());
+    assert!(guard_call_via("void f(void) { callback(); }").is_ok());
 }
 
 fn mix(mut value: u64) -> u64 {
@@ -199,7 +215,7 @@ fn save(
         .filter(|evaluation| evaluation.score.is_err())
         .count();
     let report = json!({
-        "catalog_version": crate::perm::CATALOG_VERSION,
+        "catalog_version": crate::CATALOG_VERSION,
         "dimensions": decoder.dimensions,
         "decoder": {
             "repair": repair,
@@ -231,7 +247,8 @@ pub(crate) fn run(options: Options) -> Result<RunSummary, String> {
     let input = &options.candidate;
     let (path, source) = load(input)?;
     let decoder = allocator_report(&path)?;
-    let permutation = crate::perm::parse(&source, decoder.repair.as_ref().unwrap())?;
+    guard_call_via(&source)?;
+    let permutation = psynergy::repair::enumerate(&source, decoder.repair.as_ref().unwrap())?;
     let choices = choice_order(permutation.count(), options.iterations, options.seed);
     let default_output = root().join("out/matching").join(format!(
         "{}-seed-{}",

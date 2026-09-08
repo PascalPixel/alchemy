@@ -1,8 +1,179 @@
-use compiler_core::CALL_VIA_BASE;
-use diff::allocator::{Repair, RepairPlan};
+//! Finite, guarded C source repairs. Plans come from the caller's evidence;
+//! generated alternatives still require complete byte-exact verification.
 use regex::{Captures, Regex};
 use std::{collections::HashSet, ops::Range};
-pub const CATALOG_VERSION: &str = "structural-v1";
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Repair {
+    SwapDeclarations {
+        left: String,
+        right: String,
+    },
+    SplitLifetime {
+        name: String,
+    },
+    MergeZeroCarrier,
+    ReciprocalRoleSwap {
+        name: String,
+    },
+    PreloadAdjacentHalfwords {
+        first_destination: String,
+        first_source: String,
+        second_destination: String,
+        second_source: String,
+        carrier: String,
+    },
+    MaterializeMessageAndMergeCount {
+        indexed_value: String,
+        message: String,
+        coordinate: String,
+        count: String,
+    },
+    SplitOppositeSideAndScaledOffset {
+        side: String,
+        opposite: String,
+    },
+    MergeCarrierPhases {
+        earlier: String,
+        later: String,
+    },
+    /// Structural repair: the reference's comparison branches are the
+    /// mirror of the candidate's, so some relational guard is spelled with
+    /// its operands in the other order. The matching enumerates one mirror
+    /// per relational guard site; the byte score selects.
+    MirrorRelationalGuards,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RepairPlan {
+    repairs: Vec<Repair>,
+}
+
+impl From<Repair> for RepairPlan {
+    fn from(repair: Repair) -> Self {
+        Self::one(repair)
+    }
+}
+
+impl RepairPlan {
+    pub fn one(repair: Repair) -> Self {
+        Self {
+            repairs: vec![repair],
+        }
+    }
+
+    pub fn two(first: Repair, second: Repair) -> Self {
+        Self {
+            repairs: vec![first, second],
+        }
+    }
+
+    pub fn try_from_repairs(repairs: Vec<Repair>) -> Result<Self, String> {
+        if !(1..=2).contains(&repairs.len()) {
+            return Err(format!(
+                "allocator repair plan must name one or two repairs, got {}",
+                repairs.len()
+            ));
+        }
+        Ok(Self { repairs })
+    }
+
+    pub fn repairs(&self) -> &[Repair] {
+        &self.repairs
+    }
+
+    pub fn dimensions(&self) -> Vec<&'static str> {
+        let mut dimensions = Vec::new();
+        for repair in &self.repairs {
+            for dimension in repair.dimensions() {
+                if !dimensions.contains(dimension) {
+                    dimensions.push(*dimension);
+                }
+            }
+        }
+        dimensions
+    }
+
+    pub fn label(&self) -> String {
+        if self.repairs.len() == 1 {
+            self.repairs[0].label()
+        } else {
+            format!(
+                "compose({})",
+                self.repairs
+                    .iter()
+                    .map(Repair::label)
+                    .collect::<Vec<_>>()
+                    .join(",")
+            )
+        }
+    }
+}
+
+impl Repair {
+    pub fn dimensions(&self) -> &'static [&'static str] {
+        match self {
+            Self::SwapDeclarations { .. } => &["declaration_order"],
+            Self::SplitLifetime { .. } => &["block_lifetime", "loop_spelling"],
+            Self::MergeZeroCarrier => &["temporary"],
+            Self::ReciprocalRoleSwap { .. } => {
+                &["temporary", "evaluation_order", "commutative_order"]
+            }
+            Self::PreloadAdjacentHalfwords { .. } => {
+                &["temporary", "evaluation_order", "type_width"]
+            }
+            Self::MaterializeMessageAndMergeCount { .. } => {
+                &["temporary", "evaluation_order", "block_lifetime"]
+            }
+            Self::SplitOppositeSideAndScaledOffset { .. } => &["temporary", "evaluation_order"],
+            Self::MergeCarrierPhases { .. } => &["temporary", "block_lifetime"],
+            Self::MirrorRelationalGuards => &["evaluation_order", "commutative_order"],
+        }
+    }
+    pub fn label(&self) -> String {
+        match self {
+            Self::SwapDeclarations { left, right } => format!("swap_declarations({left},{right})"),
+            Self::SplitLifetime { name } => format!("split_lifetime({name})"),
+            Self::MergeZeroCarrier => "merge_lifetime(zero_carrier)".into(),
+            Self::ReciprocalRoleSwap { name } => format!("reciprocal_register_role_swap({name})"),
+            Self::PreloadAdjacentHalfwords {
+                first_destination,
+                first_source,
+                second_destination,
+                second_source,
+                carrier,
+            } => format!(
+                "preload_adjacent_halfwords({first_destination},{first_source},{second_destination},{second_source},{carrier})"
+            ),
+            Self::MaterializeMessageAndMergeCount {
+                indexed_value,
+                message,
+                coordinate,
+                count,
+            } => format!(
+                "materialize_message_and_merge_count({indexed_value},{message},{coordinate},{count})"
+            ),
+            Self::SplitOppositeSideAndScaledOffset { side, opposite } => {
+                format!("split_opposite_side_and_scaled_offset({side},{opposite})")
+            }
+            Self::MergeCarrierPhases { earlier, later } => {
+                format!("merge_carrier_phases({earlier},{later})")
+            }
+            Self::MirrorRelationalGuards => "mirror_relational_guards".into(),
+        }
+    }
+}
+
+pub fn split_pointer_uses(code: &str, name: &str) -> bool {
+    let name = regex::escape(name);
+    let uses = format!(r"\b{name}\b");
+    Regex::new(&uses).unwrap().find_iter(code).count() == 4
+        && !Regex::new(&format!(
+            r"(?:\+\+|--)\s*\b{0}\b|\b{0}\b\s*(?:\+\+|--|[-+*/%&|^]=|<<=|>>=)",
+            name
+        ))
+        .unwrap()
+        .is_match(code)
+}
 const MAX_CHOICES: usize = 16;
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Mutation {
@@ -237,9 +408,7 @@ fn split(source: &str, code: &str, name: &str) -> Mutations {
         .find_iter(&code[tail..])
         .map(|found| tail + found.start()..tail + found.end())
         .collect::<Vec<_>>();
-    if !diff::allocator::split_pointer_uses(&code[declaration.start..], name)
-        || uses.len() != 2
-        || !pure(expression)
+    if !split_pointer_uses(&code[declaration.start..], name) || uses.len() != 2 || !pure(expression)
     {
         return Err(format!(
             "split-lifetime repair found ambiguous uses of {name}"
@@ -797,12 +966,6 @@ fn guard_source(source: &str) -> Result<(), String> {
     if source.contains("PERM_GENERAL(") || source.contains("PERM_INT(") {
         return Err("source annotations are retired; pass ordinary C".into());
     }
-    for register in 0..14 {
-        let symbol = format!("Func_{:08x}(", CALL_VIA_BASE + register * 4);
-        if source.contains(&symbol) {
-            return Err(format!("semantic guard: {symbol} is a main-image call-via trampoline; model the typed indirect call first"));
-        }
-    }
     if source.lines().any(|line| {
         matches!(
             line.trim_start().split_whitespace().next(),
@@ -901,11 +1064,8 @@ fn mirror_guards(source: &str, code: &str) -> Mutations {
     }
     mutations.into_iter().collect()
 }
-pub fn parse(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
+pub fn enumerate(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
     guard_source(source)?;
-    if !(1..=2).contains(&plan.repairs().len()) {
-        return Err("decoder repair plan must contain one or two repairs".into());
-    }
     let mut generated = vec![Variant {
         source: source.into(),
         mutations: Vec::new(),
@@ -946,55 +1106,42 @@ pub fn parse(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
     })
 }
 #[cfg(test)]
-fn validate_catalog() {
-    const TEXT: &str = include_str!("../../../games/gs1/recon/compiler-repair-patterns.json");
-    let catalog: serde_json::Value = serde_json::from_str(TEXT).unwrap();
-    assert_eq!(catalog["catalog_version"], CATALOG_VERSION);
-    assert_eq!(catalog["search"]["max_edits_per_candidate"], 2);
-    assert_eq!(catalog["generalization_backlog"], serde_json::json!([]));
-    let recorded = catalog["recorded_repairs"].as_array().unwrap();
-    assert_eq!(recorded.len(), 4);
-    let known = HashSet::from([
-        "preload_adjacent_halfwords_before_signed_carrier",
-        "materialize_indexed_message_and_merge_sentinel_carrier",
-        "split_opposite_side_and_scaled_offset_carriers",
-        "merge_nonoverlapping_carrier_phases",
-    ]);
-    for repair in recorded {
-        assert_eq!(repair["catalog_status"], "generalized");
-        assert!(repair["regression_fixture"].is_string());
-        let operations = repair
-            .get("operations")
-            .and_then(serde_json::Value::as_array)
-            .map(|values| values.iter().collect::<Vec<_>>())
-            .unwrap_or_else(|| vec![&repair["operation"]]);
-        assert!(!operations.is_empty());
-        assert!(operations.iter().all(|operation| operation
-            .as_str()
-            .is_some_and(|value| known.contains(value))));
-    }
-    let paired = recorded
-        .iter()
-        .find(|repair| repair["id"] == "paired-phase-carrier-merge")
-        .unwrap();
-    assert_eq!(paired["decoder_repairs"].as_array().unwrap().len(), 2);
-}
-#[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn mirrors_are_bounded_and_preserve_noncode_text() {
+        let plan = RepairPlan::one(Repair::MirrorRelationalGuards);
+        let source = "void f(void) { /* if (a < b) */ if (x < y) run(); }";
+        let choices = enumerate(source, &plan).unwrap();
+        assert_eq!(choices.count(), 2);
+        assert_eq!(choices.evaluate(0).unwrap(), source);
+        assert_eq!(
+            choices.evaluate(1).unwrap(),
+            "void f(void) { /* if (a < b) */ if (y > x) run(); }"
+        );
+        assert!(choices.evaluate(2).is_err());
+        let crowded = format!("void f(void) {{ {} }}", "if (x < y) run(); ".repeat(16));
+        assert!(enumerate(&crowded, &plan)
+            .unwrap_err()
+            .contains("exceeds cap 16"));
+    }
+
+    #[test]
+    fn pointer_split_rejects_induction() {
+        let source = "u8 *id; id = base; use(*id); use(*id);";
+        assert!(split_pointer_uses(source, "id"));
+        for update in ["id++", "++id", "id--", "--id", "id += 1", "id <<= 1"] {
+            assert!(!split_pointer_uses(
+                &source.replace("use(*id);", update),
+                "id"
+            ));
+        }
+    }
     fn candidate(source: &str, repair: Repair) -> String {
-        let permutation = parse(source, &RepairPlan::one(repair)).unwrap();
+        let permutation = enumerate(source, &RepairPlan::one(repair)).unwrap();
         assert_eq!(permutation.count(), 2);
         assert_eq!(permutation.mutations(1).unwrap().len(), 1);
         permutation.evaluate(1).unwrap()
-    }
-    #[test]
-    fn catalog_has_no_ungeneralized_recorded_repairs() {
-        validate_catalog();
-        assert!(
-            !include_str!("../../../games/gs1/recon/compiler-repair-patterns.json")
-                .contains("recorded-not-generalized")
-        );
     }
     #[test]
     fn annotation_free_search_is_guarded_and_finite() {
@@ -1003,14 +1150,13 @@ mod tests {
             right: "b".into(),
         });
         let source = "void f(void)\n{\n    u32 a;\n    u32 b;\n}\n";
-        let permutation = parse(source, &plan).unwrap();
+        let permutation = enumerate(source, &plan).unwrap();
         assert_eq!(permutation.count(), 2);
         assert!(permutation
             .evaluate(1)
             .unwrap()
             .contains("u32 b;\n    u32 a;"));
-        assert!(parse("void f(void) { PERM_GENERAL(a,b); }", &plan).is_err());
-        assert!(parse("void f(void) { Func_080072e4(); }", &plan).is_err());
+        assert!(enumerate("void f(void) { PERM_GENERAL(a,b); }", &plan).is_err());
     }
     #[test]
     fn splits_pointer_to_volatile_object() {
@@ -1030,7 +1176,7 @@ mod tests {
             name: "left".into(),
         });
         let source = "extern u32 m[];\n\nvoid g(void)\n{\n    {\n        u32 left = m[i].x;\n\n        a[i] ^= left;\n        a[j] ^= m[i].y;\n    }\n}\n";
-        let permutation = parse(source, &plan).unwrap();
+        let permutation = enumerate(source, &plan).unwrap();
         assert_eq!(permutation.count(), 6);
         assert_eq!(
             permutation
@@ -1041,7 +1187,7 @@ mod tests {
             3
         );
         let crowded = source.replace("a[j] ^= m[i].y;", "a[j] ^= m[i].y;\n        b ^= c;");
-        assert_eq!(parse(&crowded, &plan).unwrap().count(), 5);
+        assert_eq!(enumerate(&crowded, &plan).unwrap().count(), 5);
     }
     #[test]
     fn preloads_adjacent_halfwords_before_signed_carrier() {
@@ -1076,14 +1222,14 @@ mod tests {
         assert!(output.contains("range = ability[8];"));
         assert!(output.contains("range--;"));
         let missing = source.replace("    s32 range;\n", "");
-        assert!(parse(&missing, &RepairPlan::one(repair.clone())).is_err());
+        assert!(enumerate(&missing, &RepairPlan::one(repair.clone())).is_err());
         let side_effect = source.replace("    ability =", "    SideEffect();\n    ability =");
-        assert!(parse(&side_effect, &RepairPlan::one(repair.clone())).is_err());
+        assert!(enumerate(&side_effect, &RepairPlan::one(repair.clone())).is_err());
         let nested = source.replace(
             "    Draw((item & mask) + message_base, y);",
             "    {\n        Draw((item & mask) + message_base, y);\n    }",
         );
-        assert!(parse(&nested, &RepairPlan::one(repair)).is_err());
+        assert!(enumerate(&nested, &RepairPlan::one(repair)).is_err());
     }
     #[test]
     fn splits_opposite_side_and_scaled_offset_carriers() {
@@ -1113,7 +1259,7 @@ mod tests {
                 later: "spawn_z".into(),
             },
         );
-        let permutation = parse(source, &plan).unwrap();
+        let permutation = enumerate(source, &plan).unwrap();
         assert_eq!(
             permutation.count(),
             2,

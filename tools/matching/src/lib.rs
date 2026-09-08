@@ -1,11 +1,10 @@
 mod acceptance;
 mod compile;
 mod options;
-mod perm;
 mod runner;
 
 pub use options::{Options, USAGE};
-pub use perm::{parse as parse_permutation, Permutation};
+const CATALOG_VERSION: &str = "structural-v1";
 
 pub fn run(args: Vec<String>) -> Result<(), String> {
     if args

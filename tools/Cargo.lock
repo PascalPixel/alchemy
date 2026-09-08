@@ -494,7 +494,7 @@ dependencies = [
  "compiler-core",
  "diff",
  "disassemble",
- "regex",
+ "psynergy",
  "serde",
  "serde_json",
  "tempfile",
@@ -682,6 +682,9 @@ dependencies = [
 [[package]]
 name = "psynergy"
 version = "0.1.0"
+dependencies = [
+ "regex",
+]
 
 [[package]]
 name = "quote"

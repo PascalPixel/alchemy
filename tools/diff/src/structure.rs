@@ -3,8 +3,9 @@
 
 use std::path::Path;
 
-use crate::allocator::{Repair, RepairPlan, Report};
+use crate::allocator::Report;
 use crate::disasm::disassemble;
+use psynergy::repair::{Repair, RepairPlan};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Divergence {

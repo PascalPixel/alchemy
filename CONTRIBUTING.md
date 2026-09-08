@@ -355,13 +355,18 @@ batch; push only when requested.
 ## Tooling index
 
 Alchemy is the Golden Sun project; Psynergy is its reusable decompilation
-platform. `tools/psynergy` currently owns dependency-free Thumb decoding,
+platform. `tools/psynergy` currently owns portable Thumb decoding,
 lifetime analysis, candidate C recovery, instruction normalization, structural
-comparison, byte-difference counting and explicit subprocess execution. It accepts instruction windows
-and explicit addresses rather than loading ROMs or owner registers.
+comparison, byte-difference counting, explicit subprocess execution and bounded
+C repairs. Its only external dependency is `regex`, used by the source repairs.
+It accepts instruction windows and explicit addresses rather than loading ROMs
+or owner registers. Repair plans name one or two operations and enumerate at most
+sixteen alternatives; a generated alternative is not a match or an adoption.
 Golden Sun owner lookup, adoption, scene-work reconstruction and command
-dispatch live in `tools/alchemy/src/decompile`. Compiler policy, scored-report orchestration
-and matching are still being separated from their repository assumptions;
+dispatch live in `tools/alchemy/src/decompile`. Golden Sun's repair catalog,
+trampoline guard and matching acceptance fixtures stay in the project integration.
+Compiler policy, scored-report orchestration and search execution are still being
+separated from their repository assumptions;
 the existence of the Psynergy crate does not mean that extraction is finished.
 
 `alchemy dashboard` (or `make dashboard`) serves live coverage at
@@ -515,11 +520,11 @@ libraries are not additional public command surfaces.
 | Tool | Responsibility |
 | --- | --- |
 | [alchemy](tools/alchemy/) | Unified build, verify, coverage, check, convert, font, decompile, disassemble, inspect, diff, adopt, match, cross-edition, dashboard, and optional music-debug commands. The two local servers share HTTP transport but no watcher, playback state, or routes. Owns Golden Sun's twelve-target build registry and repository scan orchestration. Verification and coverage retain their Makefile contracts. The check group owns the publication, commit-subject, owner-register, retained-assembly and integration gates; the asset build encodes the GBA cartridge header. The overlay subgroup is transitional until owner-aware dispatch replaces it. |
-| [psynergy](tools/psynergy/) | Dependency-free Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences and subprocess execution. Caller-owned declaration tables, image addresses, command arguments and working directories; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Alchemy supplies that integration. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
+| [psynergy](tools/psynergy/) | Portable Thumb decoder, lifetime analysis, C recovery, instruction normalization, structural comparison, byte differences, subprocess execution and bounded C repair enumeration. Owns the repair types shared by diagnosis and search. Caller-owned declaration tables, image addresses, commands and repair plans; no Golden Sun owner lookup, scene helpers, compiler selection or adoption. Production C, retained assembly and candidate builds use the same runner. Structural equality is not a byte-exact claim. |
 | [candidate-compiler](tools/candidate-compiler/) | Compile and link candidate C; separately compare complete byte ranges against a supplied reference. Compile-only builds use linking, never an empty-ROM verification result. |
 | [diff](tools/diff/) | Project scoring and report orchestration; allocator/type residuals and repair guidance. Uses Psynergy's structural comparison and byte differences rather than maintaining another implementation. |
 | [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, shared ordinary-C policy, symbols, paths, translation units, the build cache, and canonical JSON. The ordinary-C checker has no edition registry or repository scan driver; `alchemy check no-asm` supplies that integration. |
-| [matching](tools/matching/) | Execute finite, decoder-named source repairs. |
+| [matching](tools/matching/) | Project search execution: score Psynergy's finite, decoder-named C repairs using approved Golden Sun compilation. Owns the game catalog and trampoline guard, output receipts and byte-exact acceptance fixtures. |
 | [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
 | [disassemble](tools/disassemble/) | Disassemble and compile overlay-qualified owners. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics and SVG figures; report Proven C and DONE progress. |

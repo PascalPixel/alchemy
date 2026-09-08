@@ -8,7 +8,6 @@ void Func_080f9010(s32);
 void Func_08009080(void *, s32);
 void Func_080030f8(s32);
 void Func_080041d8(void (*)(void), s32);
-void Func_080072f8(void);
 void Func_08099738(void);
 void Func_08099678(void);
 
@@ -28,6 +27,7 @@ void RunBattleEffect10(void)
     Record *record = *(Record **)(object + 80);
     u8 *entry = *(u8 **)((u8 *)record + 40);
     u32 cycle;
+    void (*callback)(void);
 
     Func_080f9010(0x82);
     Func_08009080(object, 0);
@@ -47,10 +47,11 @@ void RunBattleEffect10(void)
     entry[5] = cycle;
     record->flag_b = 2;
     record->flag_a = 1;
-    Func_080041d8(Func_08099678, 0xc80);
+    callback = Func_08099678;
+    Func_080041d8(callback, 0xc80);
     index = 147;
     *(s16 *)&((s32 *)Data_02000240)[index] = 1;
-    Func_080072f8();
+    callback();
     if (*(s16 *)(state + 382) == 0x2092) {
         Func_08099738();
         *(s16 *)(state + 382) = cycle;

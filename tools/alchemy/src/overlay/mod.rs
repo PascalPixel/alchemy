@@ -404,7 +404,9 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     let stem = owner.address_stem();
     let assembly = overlay_assembly(root, overlay);
     let _lock = OverlayLock::acquire(&assembly)?;
-    let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;
+    // New TU declarations precede their C placeholders during adoption.
+    // Compare the completed overlay with the ROM, not that transitional tree.
+    let baseline = rom::canonical_overlay(root, overlay)?;
     let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     let lines: Vec<String> = original_text
         .split('\n')

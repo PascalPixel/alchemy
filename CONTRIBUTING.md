@@ -310,6 +310,12 @@ resolve main and resource-qualified owners. `overlay` retains only adoption,
 parking and audit integration; it is not an alternative scoring interface or an
 alternative around the adoption or catalog gates.
 
+Main-image and overlay candidate comparisons use the same `diff` options,
+including `--first`, `--allocator-order`, `--patch`, and `--work`. Use
+`--size` for an explicit complete extent; the legacy overlay `--span` spelling
+is accepted by the same parser. An overlay extent must still equal the reviewed
+boundary, and overlay comparisons currently require the canonical GS1 ROM.
+
 Before a normal commit, stage only intended files and run:
 
 ```sh

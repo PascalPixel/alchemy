@@ -1,7 +1,7 @@
 use candidate_compiler::verify::CandidateCompilerConfiguration;
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: diff <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: alchemy diff <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: diff <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -71,7 +71,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                     _ => return Err("--target must be gs1 or gs2".into()),
                 }
             }
-            "--size" => {
+            "--size" | "--span" => {
                 let value = next(&mut index).ok_or("--size requires a byte count")?;
                 options.size = Some(parse_size(value)?);
             }
@@ -81,9 +81,11 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                 options.configuration.owner_symbol = Some(format!("Func_{address:08x}"));
             }
             "--owner" => {
-                options.owner = Some(parse_address(
+                let owner = compiler_core::source_paths::SourceOwner::parse_argument(
                     next(&mut index).ok_or("--owner requires an address")?,
-                )?)
+                )?;
+                options.owner = Some(owner.address());
+                options.overlay = owner.overlay_id();
             }
             "--unit" => options.unit = next(&mut index).cloned(),
             "--reference-symbols" => options.configuration.reference_symbols = true,
@@ -155,6 +157,33 @@ fn default_work(root: &Path, source: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn overlay_identity_keeps_the_shared_render_options() {
+        let args = [
+            "candidate.c",
+            "--owner",
+            "resource_3ba:02002910",
+            "--size",
+            "0x20",
+            "--first",
+            "--allocator-order",
+            "--asm",
+            "--patch",
+            "edit.patch",
+            "--work",
+            "out/probe",
+        ]
+        .map(str::to_owned);
+        let ParseOutcome::Options(options) = options_of(Path::new("/repo"), &args).unwrap() else {
+            panic!("expected options")
+        };
+        assert_eq!(options.owner, Some(0x02002910));
+        assert_eq!(options.overlay.as_deref(), Some("resource_3ba"));
+        assert_eq!(options.size, Some(32));
+        assert!(options.first && options.allocator_order && options.align && options.asm);
+        assert_eq!(options.patch.as_deref(), Some("edit.patch"));
+        assert_eq!(options.work.as_deref(), Some("out/probe"));
+    }
     #[test]
     fn candidate_routes_cannot_be_overridden() {
         for flag in ["--flags", "--remove-flags", "--family"] {

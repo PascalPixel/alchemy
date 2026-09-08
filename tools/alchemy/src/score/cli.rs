@@ -1,8 +1,8 @@
 use crate::candidate::CandidateCompilerConfiguration;
 use crate::compiler::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: alchemy diff <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
-pub const SHORT_USAGE: &str = "usage: diff <candidate.c> [--rom FILE]";
+pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const SHORT_USAGE: &str = "usage: alchemy score <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
     pub source: String,
@@ -134,7 +134,7 @@ fn parse_size(value: &str) -> Result<usize, String> {
 fn parse_address(value: &str) -> Result<u32, String> {
     let owner = crate::compiler::source_paths::SourceOwner::parse_argument(value)?;
     if !owner.is_main() {
-        return Err("overlay owners must use the owner-aware alchemy diff route".into());
+        return Err("overlay owners must use the owner-aware alchemy score route".into());
     }
     Ok(owner.address())
 }
@@ -149,7 +149,7 @@ fn default_work(root: &Path, source: &str) -> String {
                     .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-'))
         })
         .unwrap_or("candidate");
-    root.join("scratch/diff")
+    root.join("scratch/score")
         .join(stem)
         .to_string_lossy()
         .into_owned()

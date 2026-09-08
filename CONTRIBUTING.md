@@ -72,8 +72,8 @@ Do not build a second decompiler or context registry during a recovery batch.
 ./alchemy extract <owner> --out out/owner.bin
 ./psynergy decompile out/owner.bin --base <address> --entry <address> --span <bytes> --out out/candidate.c
 ./alchemy inspect <owner>
-./alchemy diff <candidate.c> --owner <owner> --align --first
-./alchemy diff --unit <unit-id> --first
+./alchemy score <candidate.c> --owner <owner> --align --first
+./alchemy score --unit <unit-id> --first
 ```
 
 Keep one canonical candidate. Change one evidenced source hypothesis, compile
@@ -115,8 +115,9 @@ Fix the largest coherent disagreement first:
 
 The triage router's `next=` is advice, not authority over the reference.
 A `repair_hint=` admits a guarded experiment, not a global replacement.
-For allocation evidence use `alchemy inspect allocator <owner>` or
-`alchemy diff <candidate.c> --allocator-order`. GCC's `-da` dumps expose
+For allocation evidence use `alchemy score <candidate.c> --allocator-order`.
+To read native compiler decisions, run `alchemy build allocator <owner>`, then
+`psynergy inspect allocator <printed-dump-directory>`. GCC's `-da` dumps expose
 creation, CSE, combine, allocation, reload and scheduling. Never force registers,
 scheduling or compiler output.
 
@@ -205,7 +206,7 @@ organized into evidenced modules with shared interfaces.
 A coverage span is not automatically a function. Follow continuations, shared
 epilogues, inherited live registers and long-branch veneers through the complete
 owner, including pools. Never shorten its expected extent to fit a candidate.
-For reviewed main spans, use `diff --owner <head> --size <complete-bytes>`.
+For reviewed main spans, use `alchemy score SOURCE --owner <head> --size <complete-bytes>`.
 Read correctly aligned pool data and preserve address modulo four.
 
 Overlay identities are resource-qualified. Code links at the loader runtime
@@ -298,7 +299,7 @@ Initialize submodules only in the main checkout. Worktrees may symlink its ROMs
 and approved bundle. `alchemy build compilers` builds pinned sources without
 authorizing bundle replacement. The launcher builds current tooling offline.
 
-Use `diff` during source iteration and narrow builds when needed:
+Use `alchemy score` during source iteration and narrow builds when needed:
 `make build-claimed`, `make build-asm`, `make build-assets`,
 `make overlay-check`, `make check-owners`. Before committing, stage only the
 intended batch:
@@ -339,30 +340,57 @@ tool growth.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Golden Sun command dispatch, twelve-target registry, owner lookup/extraction, source recovery/adoption, scene integration, compiler routes and provenance, candidate compilation, bindings, translation units, residual classification, matching catalog, overlay loading/serialization/assembly/audits, ROM stages, asset manifests, coverage, publication checks, dashboard and optional music debugger. Its `compiler`, `recovery`, `diff`, `matching`, `overlay`, `coverage` and asset/build modules are integration, not extra public tools. |
-| [psynergy](tools/psynergy/) | Portable Thumb and objdump decoding, lifetime analysis, C recovery, normalization/alignment, structural and byte comparison, bounded C repair enumeration, explicit subprocess execution, atomic file writes, transactional cache storage, and byte-oriented image/MIDI/WAV/text/pixel/Huffman/LZ codecs. Callers supply addresses, symbols, paths, keys, formats and layouts; no Golden Sun owners, default ROMs or compiler routes. |
+| [alchemy](tools/alchemy/) | Golden Sun command dispatch, twelve-target registry, owner lookup/extraction, source adoption, scene integration, compiler routes and provenance, candidate compilation, bindings, translation units, residual classification, matching catalog, overlay loading/serialization/assembly/audits, ROM stages, asset manifests, coverage, publication checks, dashboard and optional music debugger. Its `compiler`, `recovery`, `score`, `matching`, `overlay`, `coverage` and asset/build modules are project integration. |
+| [psynergy](tools/psynergy/) | Portable Thumb and objdump decoding, lifetime analysis, C recovery, normalization/alignment, structural and byte comparison, bounded C repair enumeration, GCC allocation-dump reading, format conversion, explicit subprocess execution, atomic writes, transactional cache storage, and image/MIDI/WAV/text/pixel/Huffman/LZ codecs. Callers supply addresses, symbols, paths, keys, formats and layouts; no Golden Sun owners, default ROMs or compiler routes. |
 
-Psynergy's standalone `decompile` command uses the same library as Alchemy's
-internal recovery integration; there is no `alchemy decompile` alias.
+**The boundary is inputs and authority, not implementation language.** Psynergy
+operates on explicit files and parameters without a checkout. Alchemy resolves
+Golden Sun owners and applies project policy before calling the same portable
+libraries. A reusable operation belongs in Psynergy even if its first caller
+is Alchemy. Do not move game defaults into Psynergy or expose one operation
+through both hosts as aliases.
+
+Psynergy's commands use the same library as Alchemy's internal integration.
 Psynergy shares decoding and comparison across recovery, scoring and overlays;
 BL-shaped data is not automatically executable code. Its dependencies include
 `regex`, `rusqlite`, `png`, and test-only `tempfile`. Alchemy owns cache
 identity, project paths and compiler fingerprints. Do not duplicate these
 responsibilities in another wrapper or registry.
 
-| Operation | Command |
+| Portable command | Responsibility |
 | --- | --- |
-| Recover C from a bounded image | `psynergy decompile` |
-| Extract and inspect Golden Sun owners | `alchemy extract`, `disassemble`, `inspect` |
-| Compile and compare | `alchemy diff` |
-| Bounded catalog search | `alchemy match` |
-| Install C / assemble units | `alchemy adopt`, `check integrate`, `unit` |
-| ROM stages / assets / compilers | `alchemy build` |
-| Verify / coverage / contracts | `alchemy verify`, `coverage`, `check` |
-| Edition differences | `alchemy cross-edition` |
-| Overlay integration / audits | `alchemy overlay` (transitional; scoring uses `diff`) |
-| File conversion / font reconstruction | `alchemy convert`, `font` |
-| Coverage server / audio debugging | `alchemy dashboard`, `music-debug` |
+| `psynergy decompile` | Recover draft C from an image with explicit base, entry and span; optional name/output. |
+| `psynergy disassemble` | Read reachable Thumb instructions in the same explicit image window; no owner lookup or game symbol annotations. |
+| `psynergy diff` | Compare two supplied binary files, including length differences; `--width 1\|2\|4` sets the comparison unit. Exit 0 means equal bytes, 1 differences, 2 invalid input. No compilation or relocation. |
+| `psynergy repair` | Enumerate one or two caller-named, guarded source repairs. Report the finite space; `--choice N` emits one alternative, optionally to `--out FILE`. No scoring, compiler selection or adoption. |
+| `psynergy inspect allocator` | Read existing `.rtl`, `.lreg` and `.greg` GCC dumps from an explicit directory; no compiler invocation. |
+| `psynergy convert` | Convert files using the directional formats listed below. No ROM offsets, engine headers or asset manifests. |
+
+| Golden Sun command | Responsibility |
+| --- | --- |
+| `alchemy extract` | Resolve an owner and extract its reference bytes under ignored `out/`. |
+| `alchemy inspect` | Resolve project call sites and symbols; `--asm` adds annotated owner disassembly. |
+| `alchemy score` | Compile a candidate or whole declared unit with the approved route and compare its complete owner, including bindings and overlay serialization. |
+| `alchemy match` | Resolve an owner, obtain a decoder-named repair, then compile/score bounded Psynergy alternatives under project policy. `--acceptance-test` checks the five catalog fixtures. |
+| `alchemy adopt` | Verify and install a standalone overlay candidate; main integration uses `alchemy check integrate`. |
+| `alchemy unit` | `scaffold` declares a main unit; `flatten` consolidates a verified overlay under project ownership. |
+| `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets`, and `allocator`. The allocator stage generates canonical GCC dumps for Psynergy inspection. |
+| `alchemy verify` | Run the staged repository's verification contract. |
+| `alchemy coverage` | Rebuild and publish project coverage. |
+| `alchemy check` | `publication`, `commit-progress`, `owners`, `retained`, `coverage`, `integrate`, `no-asm`, `progress`, and `routes`: repository contracts, not portable file operations. |
+| `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
+| `alchemy overlay` | `adopt`, `park`, and `audit`: Golden Sun loader and resource integration. |
+| `alchemy font` | Reconstruct the shared Golden Sun font using its twelve-edition glyph layout and mappings. |
+| `alchemy dashboard` | Serve project coverage. |
+| `alchemy music-debug` | Optionally serve Golden Sun music debugging. |
+
+Retired entry points are rejected, not forwarded: `alchemy decompile`,
+`alchemy convert`, and `alchemy disassemble` now belong to Psynergy;
+owner-annotated disassembly is `alchemy inspect OWNER --asm`.
+The old `alchemy diff` is `alchemy score`, not `psynergy diff`.
+The old `alchemy inspect allocator` is split into dump generation and reading
+as shown above. Update maintained callers; historical dossiers retain their
+original command transcripts and are not instructions to resurrect aliases.
 
 Consult command help for supported arguments. No retired TypeScript entry
 points or invented family/wave commands. For another GBA game, carry portable
@@ -384,7 +412,7 @@ composition, pixel, text, sample and compression codecs. Preserve validation
 of ranges, extents, ordering, padding and reference round trips. A layout is
 data; renaming hard-coded game logic does not make a portable codec.
 
-`alchemy convert FORMAT INPUT OUTPUT [options]` supports `words2bin`,
+`psynergy convert FORMAT INPUT OUTPUT [options]` supports `words2bin`,
 `pairs2bin`, `tilemap2bin`, `png2bpp4`, `bpp42png`, `png2bpp8`,
 `bpp82png`, `png2bgr555`, `wav2pcm8`, and `pcm82wav`.
 Bpp formats are GBA tile-major pixels, BGR555 is little-endian palette data,

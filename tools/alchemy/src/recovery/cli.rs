@@ -3,9 +3,10 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy <extract|inspect|disassemble|adopt> OWNER [options]\nUse psynergy decompile for portable C recovery and alchemy diff to score.";
+const USAGE: &str = "usage: alchemy <extract|inspect|adopt> OWNER [options]\nUse psynergy for portable decompilation and disassembly; alchemy score compiles a project owner.";
 
 struct Options {
+    asm: bool,
     positional: Vec<String>,
     span: Option<u32>,
     name: Option<String>,
@@ -16,6 +17,7 @@ struct Options {
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut options = Options {
+        asm: false,
         positional: Vec::new(),
         span: None,
         name: None,
@@ -31,6 +33,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 .ok_or_else(|| format!("{flag} needs a value"))
         };
         match argument.as_str() {
+            "--asm" => options.asm = true,
             "--span" => {
                 options.span = Some(
                     value("--span")?
@@ -98,8 +101,8 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     let result = parse(&arguments[1..]).and_then(|options| match command {
         "extract" => extract(&root, &options).map(|_| 0),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
+        "inspect" if options.asm => disasm(&root, &options).map(|_| 0),
         "inspect" => imports_owner(&root, &options),
-        "disassemble" => disasm(&root, &options).map(|_| 0),
         "-h" | "--help" => {
             println!("{USAGE}");
             Ok(0)
@@ -126,7 +129,7 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let binary = work.path().join("owner.bin");
     let start = (entry - base) as usize;
     std::fs::write(&binary, &image[start..start + span as usize]).map_err(|e| e.to_string())?;
-    let rows = crate::diff::disasm::disassemble(&binary.to_string_lossy(), entry)?;
+    let rows = crate::score::disasm::disassemble(&binary.to_string_lossy(), entry)?;
     let calls = super::imports::imports(root, owner, Some(span))?;
     for (address, instruction) in rows {
         let annotation = calls

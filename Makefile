@@ -204,7 +204,7 @@ candidate-corpus-check:
 	@set -e; total=0; \
 	for route in $(CANDIDATE_SINGLE_OWNERS); do \
 		owner=$${route%%=*}; source=$${route#*=}; \
-		result=$$($(COMPILER) diff games/gs1/recon/en/units/$$source \
+		result=$$($(COMPILER) score games/gs1/recon/en/units/$$source \
 			--owner $$owner --first); \
 		diff=$$(printf '%s\n' "$$result" | sed -n 's/.*differing_halfwords=\([0-9][0-9]*\).*/\1/p' | head -n 1); \
 		if test -z "$$diff" || test "$$diff" -eq 0; then \
@@ -219,7 +219,7 @@ candidate-corpus-check:
 		games/gs1/recon/translation-units.json); \
 	for unit in $$units; do \
 		report=$$(mktemp /tmp/alchemy-tu-corpus.XXXXXX); \
-		$(COMPILER) diff --unit $$unit | \
+		$(COMPILER) score --unit $$unit | \
 			awk -F= '/^owner=/{owner=$$2} /^candidate=/{split($$0,a,"differing_halfwords="); print owner "\t" a[2]+0}' \
 			> "$$report"; \
 		for owner in $$(awk -F '"' -v unit="$$unit" '/"id":/{id=$$4} id==unit && /"state":"retained-assembly"/{print $$4}' \

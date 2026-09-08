@@ -1,5 +1,5 @@
 use crate::candidate::{compile_source, copy_text};
-use crate::diff::cli::Options;
+use crate::score::cli::Options;
 use psynergy::compare::insns::align_streams;
 use psynergy::process::run;
 use psynergy::repair::{split_pointer_uses, Repair, RepairPlan};

@@ -350,6 +350,10 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
     Ok(findings)
 }
 pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
+    if argv == ["--help"] || argv == ["-h"] {
+        println!("usage: alchemy overlay audit [RESOURCE ... | --all | --corpus]");
+        return Ok(0);
+    }
     if argv == ["--corpus"] {
         return crate::overlay::score::audit_corpus(root);
     }
@@ -607,7 +611,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         match argument.as_str() {
             "--apply" => apply = true,
             "-h" | "--help" => {
-                println!("usage: overlay park <overlay>:<addressHex> [...] [--apply]");
+                println!("usage: alchemy overlay park <overlay>:<addressHex> [...] [--apply]");
                 return Ok(0);
             }
             other => rows.push(other.to_string()),

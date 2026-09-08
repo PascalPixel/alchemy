@@ -3,14 +3,14 @@ use crate::compiler::{
     symbols::overlay_call_via_base,
     translation_units::{resolve_overlay_span, TranslationUnits},
 };
-use crate::diff::{
-    cli::{options_of, ParseOutcome, USAGE},
-    render::render,
-};
 use crate::overlay::compile::compile_overlay_c;
 use crate::overlay::{
     park::{placeholder_span, truth_window},
     retained_source,
+};
+use crate::score::{
+    cli::{options_of, ParseOutcome, USAGE},
+    render::render,
 };
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -87,7 +87,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         return Ok(0);
     };
     if options.unit.is_some() {
-        return Err("score complete translation units with alchemy diff --unit ID".into());
+        return Err("score complete translation units with alchemy score --unit ID".into());
     }
     if options.target != crate::compiler::routing::CompilerTarget::Gs1
         || argv.iter().any(|arg| arg == "--rom")
@@ -104,8 +104,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 
 pub(crate) fn render_options(
     root: &Path,
-    mut options: Box<crate::diff::cli::Options>,
-) -> Result<crate::diff::render::RenderOutput, String> {
+    mut options: Box<crate::score::cli::Options>,
+) -> Result<crate::score::render::RenderOutput, String> {
     let target = options.source.clone();
     let resolved = if let Some(address) = options.owner {
         let overlay = options

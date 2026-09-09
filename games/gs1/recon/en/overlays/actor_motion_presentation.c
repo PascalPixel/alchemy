@@ -1,8 +1,11 @@
 #include "types.h"
 
 extern u8 *Data_03001ebc;
+extern u8 Data_0200e590[];
+extern u8 Data_0200e5cc[];
+extern u8 Data_0200e614[];
 
-#define FieldScene_RunScriptedActorSequence Func_020015dc
+#define FieldScene_RunActorMotionPresentation Func_020015dc
 
 /* Retained scene draft. The complete call sequence is bound to runtime
  * targets; arguments, memory effects and source structure remain under audit. */
@@ -18,14 +21,14 @@ void Func_0200757a();
 void Func_02007588();
 void Func_02007598();
 void Func_020075a8();
-void *Func_020075aa();
+void Func_020075aa();
 void Func_020075da();
 void *Func_0200765e();
 void Func_020076d0();
 void Func_020076de();
 void Func_020076e4();
 void Func_020076ec();
-void *Func_020076f4();
+void Func_020076f4();
 void *Func_020076f8();
 void Func_020076fa();
 void Func_02007704();
@@ -37,7 +40,7 @@ void Func_02007740();
 void Func_02007748();
 void Func_0200774e();
 void Func_02007752();
-void *Func_02007768();
+void Func_02007768();
 void Func_02007774();
 void Func_02007776();
 void Func_02007782();
@@ -47,8 +50,8 @@ void Func_02007794();
 void Func_0200779a();
 void Func_020077b0();
 void Func_020077b8();
-void *Func_020077c4();
-void *Func_020077d0();
+void Func_020077c4();
+void Func_020077d0();
 void Func_020077d4();
 void Func_02007802();
 void Func_0200780a();
@@ -61,8 +64,8 @@ void Func_0200782e();
 void Func_0200783c();
 void Func_0200783c_a();
 void Func_0200784c();
-void *Func_02007852();
-void *Func_02007852_a();
+void Func_02007852();
+void Func_02007852_a();
 void Func_0200785a();
 void Func_0200785c();
 void Func_0200786c();
@@ -73,7 +76,7 @@ void Func_02007890();
 void Func_020078a0();
 void Func_020078a8();
 void Func_020078ae();
-void *Func_020078b4();
+void Func_020078b4();
 void *Func_020078b4_a();
 void Func_020078b6();
 void Func_020078b8();
@@ -301,7 +304,7 @@ void Func_020081d6();
 void Func_020081fa();
 void Func_02008206();
 void Func_0200820c();
-void *Func_02008212();
+void Func_02008212();
 void *Func_02008212_a();
 void Func_02008216();
 void Func_0200821c();
@@ -534,7 +537,12 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Func_020015dc(void)
+static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
+{
+    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+}
+
+void FieldScene_RunActorMotionPresentation(void)
 {
     u8 *rec8;
     u8 *record;
@@ -543,6 +551,8 @@ void Func_020015dc(void)
     s32 base5_0;
     u8 *slot28;
     u32 savedSceneState;
+    s32 script;
+    s32 clear;
 
     Func_020075aa();
     Call4(Func_020076e4, -1, -1, -1, 0);
@@ -569,15 +579,16 @@ void Func_020015dc(void)
     Call3(Func_0200778e, 1, 0x8000, 0);
     Call3(Func_0200779a, 5, 0x8000, 0);
     Func_0200773a(0, 11);
-    Func_020076f4(0, 0x200e590);
+    script = (s32)Data_0200e590;
+    Func_020076f4(0, script);
     Func_02004b66(23, 2, 1);
     *(s32 *)(((s32)Data_03001ebc + 0x1c0)) = none;
     *(s32 *)(((s32)Data_03001ebc + 0x1c8)) = 32;
     Func_0200782c();
     Call3(Func_02007722, 5, 0x8000, 0x4000);
     Call3(Func_02007730, 1, 0x8000, 0x4000);
-    Func_02007740(5, 0x200e614);
-    Func_02007748(1, 0x200e5cc);
+    Func_02007740(5, Data_0200e614);
+    Func_02007748(1, Data_0200e5cc);
     Func_02007752(0, 1);
     *(s32 *)((s32)rec8 + 24) = 0x10000;
     *(s32 *)((s32)rec8 + 28) = 0x10000;
@@ -605,7 +616,7 @@ void Func_020015dc(void)
     Func_020078a8(23, 0);
     Call3(Func_02007874, 23, 0x1860000, 0x34a0000);
     Func_02007884(0, 11);
-    Func_0200783c(0, 0x200e590);
+    Func_0200783c(0, script);
     Func_02007802(200);
     Call6(Func_02007794, 7, 102, 84, 41, 2, 1);
     Func_0200785c(0, 1);
@@ -631,7 +642,7 @@ void Func_020015dc(void)
     Func_02007986(23, 0);
     Func_02007950_a(23, 0, 0);
     Func_02007960(0, 11);
-    Func_02007918(0, 0x200e590);
+    Func_02007918(0, script);
     Func_020078de(200);
     Call6(Func_0200786e, 6, 102, 83, 41, 1, 1);
     Func_02007936(0, 1);
@@ -657,7 +668,7 @@ void Func_020015dc(void)
     Func_02007a6a(24, 0);
     Func_02007a34(24, 0, 0);
     Func_02007a44(0, 11);
-    Func_020079fc(0, 0x200e590);
+    Func_020079fc(0, script);
     Func_020079c2(200);
     Call6(Func_02007992_c, 5, 103, 82, 42, 1, 1);
     Func_02007a5a(0, 1);
@@ -854,6 +865,7 @@ void Func_020015dc(void)
     Func_020081ce(21, 4);
     Func_0200813c(10);
     Func_0200821c(21, 0);
+    clear = 0;
     if (Func_02008176(0, 0) == 1) {
         *(u16 *)(((s32)Data_03001ebc + 0x1d8)) += 1;
     }
@@ -868,10 +880,16 @@ void Func_020015dc(void)
     Func_0200825c(21, 3);
     Func_02008244_a(21, 7);
     Func_020081ba(5);
-    Func_020082dc(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, 0);
+    Call11(Func_020082dc, 21, 14, 2, 24, 2, 1, 10, 14, 4, 14, clear);
     rec8 = Func_02008212_a(21);
-    *(u8 *)(*(s32 *)((s32)rec8 + 80) + 38) = 0;
-    rec8[90] &= 254;
+    {
+        u8 *part = *(u8 **)(rec8 + 80);
+        u8 *flags = rec8 + 90;
+        u8 value = *flags;
+
+        part[38] = clear;
+        *flags = value & 254;
+    }
     Call3(Func_0200823c, 21, 0x30000, 0x18000);
     Call3(Func_02008280, 21, 0x16c, 0x32f);
     v5 = 0;

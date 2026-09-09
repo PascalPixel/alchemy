@@ -52,6 +52,10 @@ typedef struct {
     s32 unk18;
 } Particle;
 
+/* Fixed EWRAM scratch block holding the effect's particle records. */
+#define PARTICLE_POOL ((Particle *)0x02010000)
+#define PARTICLE_COUNT 64
+
 extern u8 Value_0000006e;
 extern u8 Value_000000b8;
 extern u8 Value_00000092;
@@ -119,19 +123,20 @@ void BattleEffect_RunParticleReveal(void *object)
     Func_080e3980(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24), spawn);
 
-    for (i = 0, p = (Particle *)0x02010000; i != 64; i++, p++) {
+    for (i = 0; i != PARTICLE_COUNT; i++) {
         s32 angle;
         s32 amp;
 
         angle = (Func_08004458() & 0x7FFF) + 0x4000;
         amp = (Func_08004458() & 0x1FF) + 0x80;
-        p->x = ((spawn[0] / 2 + (Func_08004458() & 0xF)) - 8) << 16;
-        p->y = (spawn[1] + 8) << 16;
-        p->vx = (Func_08002322(angle) * amp) >> 9;
-        p->vy = (Func_0800231c(angle) * amp) >> 6;
-        p->rot = Func_08004458() & 0x7F;
-        p->unk14 = Func_08004458() & 0x7F;
-        p->unk18 = (Func_08004458() & 0xF) + 32;
+        PARTICLE_POOL[i].x =
+            ((spawn[0] / 2 + (Func_08004458() & 0xF)) - 8) << 16;
+        PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
+        PARTICLE_POOL[i].vx = (Func_08002322(angle) * amp) >> 9;
+        PARTICLE_POOL[i].vy = (Func_0800231c(angle) * amp) >> 6;
+        PARTICLE_POOL[i].rot = Func_08004458() & 0x7F;
+        PARTICLE_POOL[i].unk14 = Func_08004458() & 0x7F;
+        PARTICLE_POOL[i].unk18 = (Func_08004458() & 0xF) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
@@ -161,7 +166,7 @@ void BattleEffect_RunParticleReveal(void *object)
             }
         }
 
-        for (i = 0, p = (Particle *)0x02010000; i != 64; i++, p++) {
+        for (i = 0, p = PARTICLE_POOL; i != PARTICLE_COUNT; i++, p++) {
             if (frame >= i / 4 + 4) {
                 s32 index;
                 s32 w;

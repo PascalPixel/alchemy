@@ -191,8 +191,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         Func_080e0524((s32)&Value_0000007d, SHEET, 1, 1);
         Func_080e0524((s32)&Value_00000073, aux, 0, 0);
         if (mode == 6) {
-            pal = (u16 *)0x05000000;
-            for (i = 0; i != 64; i++) {
+            for (i = 0, pal = (u16 *)0x05000000; i != 64; i++) {
                 lum = i / 4;
                 *pal = (u16)(((lum << 10) | (lum << 5)) | lum);
                 pal++;

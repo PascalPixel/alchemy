@@ -1,6 +1,15 @@
 #include "types.h"
 
-extern u8 *Data_03001ebc;
+struct SceneWork {
+    u8 unknown_000[0x1c0];
+    s32 request;
+    u8 unknown_1c4[4];
+    s32 setup;
+    u8 unknown_1cc[12];
+    u16 step;
+};
+
+extern struct SceneWork *Data_03001ebc;
 extern u8 Data_0200e590[];
 extern u8 Data_0200e5cc[];
 extern u8 Data_0200e614[];
@@ -157,7 +166,7 @@ void Func_02007bf4();
 void Func_02007bf4_a();
 void Func_02007bfc();
 void Func_02007c02();
-void Func_02007c10();
+s32 Func_02007c10();
 void Func_02007c24();
 void Func_02007c32();
 void Func_02007c42();
@@ -168,7 +177,7 @@ void Func_02007c88();
 void Func_02007c88_a();
 void Func_02007c8e();
 void Func_02007c90();
-void Func_02007c94();
+s32 Func_02007c94();
 void Func_02007cac();
 void Func_02007cac_a();
 void Func_02007cac_b();
@@ -307,7 +316,7 @@ void Func_0200820c();
 void Func_02008212();
 void *Func_02008212_a();
 void Func_02008216();
-void Func_0200821c();
+s32 Func_0200821c();
 void Func_02008232();
 void Func_0200823a();
 void Func_0200823c();
@@ -517,6 +526,11 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -582,8 +596,8 @@ void FieldScene_RunActorMotionPresentation(void)
     script = (s32)Data_0200e590;
     Func_020076f4(0, script);
     Func_02004b66(23, 2, 1);
-    *(s32 *)(((s32)Data_03001ebc + 0x1c0)) = none;
-    *(s32 *)(((s32)Data_03001ebc + 0x1c8)) = 32;
+    Data_03001ebc->request = none;
+    Data_03001ebc->setup = 32;
     Func_0200782c();
     Call3(Func_02007722, 5, 0x8000, 0x4000);
     Call3(Func_02007730, 1, 0x8000, 0x4000);
@@ -704,9 +718,9 @@ void FieldScene_RunActorMotionPresentation(void)
     Func_02007b22_a(40);
     Func_02007bc2(21, 4);
     Func_02007b30(20);
-    Func_02007c10(21, 0);
+    Value2(Func_02007c10, 21, 0);
     if (Func_02007b68(0, 0) == 0) {
-        *(u16 *)(((s32)Data_03001ebc + 0x1d8)) += 1;
+        Data_03001ebc->step += 1;
     }
     Func_02007bf4_a(21, 4);
     Func_02007b62(20);
@@ -719,9 +733,9 @@ void FieldScene_RunActorMotionPresentation(void)
     Func_02007b9e(20);
     Func_02007c90(21, 0, 20);
     Call3(Func_02007cac, 21, 0x5000, 30);
-    Func_02007c94(21, 0);
+    Value2(Func_02007c94, 21, 0);
     if (Func_02007bec(0, 0) == 1) {
-        *(u16 *)(((s32)Data_03001ebc + 0x1d8)) += 1;
+        Data_03001ebc->step += 1;
     }
     Func_02007bde(20);
     Func_02007cd0(21, 0, 20);
@@ -864,10 +878,10 @@ void FieldScene_RunActorMotionPresentation(void)
     Call3(Func_0200823e, 0, 0x105, 60);
     Func_020081ce(21, 4);
     Func_0200813c(10);
-    Func_0200821c(21, 0);
+    Value2(Func_0200821c, 21, 0);
     clear = 0;
     if (Func_02008176(0, 0) == 1) {
-        *(u16 *)(((s32)Data_03001ebc + 0x1d8)) += 1;
+        Data_03001ebc->step += 1;
     }
     Func_02008168(40);
     Func_0200825a(21, 0, 20);

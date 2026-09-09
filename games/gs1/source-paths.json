@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_372:020031ac": {
+      "name": "FieldScene_RunActorGroupDepartureSequence"
+    },
     "resource_39c:02003d20": {"name": "Scene_RunSelectorEntry"},
     "resource_3c9:020012c8": {"name": "FieldScene_RunActorEntrySequence"},
     "resource_3a8:02000590": {"name": "FieldScene_RunStagedGroupSequence"},

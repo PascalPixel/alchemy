@@ -150,11 +150,11 @@
     "source_probe": "games/gs1/src/battle/resolve_action.c",
     "method": "Compile the proved GS1 source with each locally approved compiler family, disassemble it and the GS2 owner, then measure exact mnemonic n-grams. This is a compiler-family diagnostic, not a claim that the GS1 source is exact GS2 source.",
     "mnemonic_ngram_coverage": {
-      "16": {
-        "gcc296_exact_route": "679/2476 (27.4%)",
-        "gcc296_default_route": "676/2473 (27.3%)",
-        "gcc3_without_fixed_r7": "73/2525 (2.9%)",
-        "gcc3_current_gs2_route": "243/2551 (9.5%)"
+      "8": {
+        "gcc296_exact_route": "1331/2476 (53.8%)",
+        "gcc296_default_route": "1316/2473 (53.2%)",
+        "gcc3_without_fixed_r7": "591/2525 (23.4%)",
+        "gcc3_current_gs2_route": "812/2551 (31.8%)"
       },
       "12": {
         "gcc296_exact_route": "887/2476 (35.8%)",
@@ -162,32 +162,117 @@
         "gcc3_without_fixed_r7": "124/2525 (4.9%)",
         "gcc3_current_gs2_route": "424/2551 (16.6%)"
       },
-      "8": {
-        "gcc296_exact_route": "1331/2476 (53.8%)",
-        "gcc296_default_route": "1316/2473 (53.2%)",
-        "gcc3_without_fixed_r7": "591/2525 (23.4%)",
-        "gcc3_current_gs2_route": "812/2551 (31.8%)"
+      "16": {
+        "gcc296_exact_route": "679/2476 (27.4%)",
+        "gcc296_default_route": "676/2473 (27.3%)",
+        "gcc3_without_fixed_r7": "73/2525 (2.9%)",
+        "gcc3_current_gs2_route": "243/2551 (9.5%)"
       }
     },
     "exact_shared_windows": {
-      "method": "Count unique even-aligned query windows appearing in the GS2 EN owner.",
-      "32": {
-        "gcc296_exact_route": 1,
-        "gcc3_without_fixed_r7": 0,
-        "gcc3_current_gs2_route": 0
+      "16": {
+        "gcc296_exact_route": 30,
+        "gcc3_without_fixed_r7": 6,
+        "gcc3_current_gs2_route": 32
       },
       "24": {
         "gcc296_exact_route": 8,
         "gcc3_without_fixed_r7": 0,
         "gcc3_current_gs2_route": 5
       },
-      "16": {
-        "gcc296_exact_route": 30,
-        "gcc3_without_fixed_r7": 6,
-        "gcc3_current_gs2_route": 32
-      }
+      "32": {
+        "gcc296_exact_route": 1,
+        "gcc3_without_fixed_r7": 0,
+        "gcc3_current_gs2_route": 0
+      },
+      "method": "Count unique even-aligned query windows appearing in the GS2 EN owner."
     },
     "register_evidence": "The ROM owner allocates r7 to ordinary live values outside the save/restore sequence, including ldrb at 081207b6, multiply input at 08120afe, and a stack reload at 08122060. The former GS2 route passed -ffixed-r7, so that route could not emit this owner. GCC 3 without -ffixed-r7 restores the entry save pattern but remains much farther from the unchanged GS1 blocks than GCC 2.96.",
-    "conclusion": "The GCC 3 GS2 route is rejected for this owner. GS2 now remains a distinct target configuration while using the approved GCC 2.96 family; GCC 3 is retained only as diagnostic evidence until the broader GS2 corpus settles its scope."
+    "conclusion": "The GCC 3 GS2 route is rejected for this owner. GS2 now remains a distinct target configuration while using the approved GCC 2.96 family; GCC 3 is retained only as diagnostic evidence until the broader GS2 corpus settles its scope. See indirect_call_lowering: the approved GCC 2.96 family cannot emit GS2's Thumb indirect-call form either, so no C route in this repository currently reaches GS2 game code that calls through a register.",
+    "gcc30_structural_rejection": {
+      "measured": "2026-09-09",
+      "question": "The pinned compiler is GCC 2.96 20000731. Does the next stock GCC major release, 3.0 of 2001-06-18, emit either of the two GS2 lowerings the pinned compilers cannot?",
+      "source": "Pristine upstream gcc-3.0.tar.gz from ftp.gnu.org, sha256 35dc9e39a2015157faab7ba16a1c0d8a2574334cb8750932b7f070737e3c97c0, gcc/version.c version_string 3.0. Read under ignored out/ and not adopted. No third-party Camelot compiler tree was consulted.",
+      "indirect_call": "Unchanged from 2.96. gcc/config/arm/arm.md:6536-6550 *call_indirect and :6552 *call_value_indirect under TARGET_THUMB return `bl _call_via_rN`, or `bl _interwork_call_via_rN` under TARGET_CALLER_INTERWORKING, which the approved flagset never sets. A scan of arm.md and arm.c for any template writing LR from a general register, or emitting a raw .short, 0xF800 or blx, returns nothing.",
+      "constant_materialization": "Unchanged from 2.96. The Thumb const_int splitters at arm.md:4108 admit only CONST_OK_FOR_THUMB_LETTER K values, and thumb_shiftable_const (arm.c:9340-9354) accepts a value only when it equals imm8 shifted left by 0 to 24. That yields the two-instruction movs plus lsls form and sends everything else to the minipool, whose machinery is present unchanged. The GS2 reference instead synthesizes non-shiftable constants in three instructions, movs then lsls then adds or subs, at 20 sites inside this owner and roughly 4145 across the image.",
+      "conclusion": "GCC 3.0 is rejected structurally, not merely on similarity. Both GS2 lowerings are additions the stock Thumb backend does not contain in 2.96 or 3.0, so moving forward one major release does not reach them. This supersedes the n-gram rejection above, which showed only that GCC 3 scored worse. A vendor-patched Thumb backend remains the shape of the open question, and identifying one is Pascal decision, not a contributor one.",
+      "gcc31_also_rejected": "GCC 3.1, released 2002-05-15 and the closest stock release to the Japanese Golden Sun 2 launch of 2002-06-28, is identical on both counts. Pristine upstream gcc-3.1.tar.gz, version_string 3.1: arm.md carries the same four call_via templates and no template writing LR from a general register, no raw .short, no 0xF800 and no blx in either arm.md or arm.c; thumb_shiftable_const at arm.c:9796 is the same imm8 shifted left 0 to 24 test. Stock 2.96, 3.0 and 3.1 are therefore all structurally incapable of the two GS2 lowerings.",
+      "date_proximity_is_a_weak_signal": "Release-date proximity misleads here, and this repository already calibrates by how much. Golden Sun 1 shipped in Japan on 2001-08-01, whose nearest stock releases are 3.0 and 3.0.1, yet GS1 is proved byte-exact with GCC 2.96 20000731, a snapshot from a year and a day before the game shipped. The same lag applied to GS2 points at mid-2001, not 2002. GS2 also links GS1-built objects verbatim, so the two builds share a toolchain lineage rather than a release date."
+    }
+  },
+  "indirect_call_lowering": {
+    "measured": "2026-09-09",
+    "question": "Which build route produced GS2's game code, and can the approved route reach it?",
+    "family_is_the_same": "GS2 was built by the same GCC 2.96 family as GS1, not a different toolchain. Prologue and epilogue byte sequences, high-register save and restore ordering, switch lowering, literal-pool placement, function alignment, long-call veneer islands (901 stubs in GS2 against 731 in GS1) and the division-helper call convention all match GS1's and reproduce byte for byte from out/compilers/dist/cc1, banner `gcc 2.96 20000731 (experimental) for ARM/elf`. The unusual -fcall-used-r4 ABI holds on both sides: 26 of 1095 measured gs1-en functions push r4 and 25 of those are AGBCC_SOURCES members; 29 of 1414 gs2-en functions push r4 and all 29 sit inside GS2's two inherited interworking islands. The GS2 owner's own prologue b5e0 465f 4656 464d b4e0 4647 b480 b09c is exactly what the staged cc1 emits at -O2 -fcall-used-r4.",
+    "three_route_differences": [
+      {
+        "id": "thumb_interwork",
+        "finding": "GS2 game code was compiled without -mthumb-interwork. Framed functions return through `pop {..., pc}`; agscc emits that only when TARGET_INTERWORK is clear (gcc/config/arm/arm.c:8263-8280, thumb_exit). Measured over a BL-target function corpus: gs1-en 1081 of 1095 functions return `pop {rN}; bx rN` and 0 use `pop {..., pc}`; gs2-en 1372 of 1414 use `pop {..., pc}` and 34 use `pop {rN}; bx rN`. Whole-image `add sp` adjacency counts: GS1 1962-1973 sites, GS2 72-74. The GS2 owner's epilogue b01c bce8 4698 46a9 46b2 46bb bde0 is byte for byte the staged cc1's no-interwork output, and GS1's owner epilogue is byte for byte its interwork output.",
+        "consequence": "cflags_for_target_source(Gs2, <game source>) currently returns base_cflags(Gs2), which includes -mthumb-interwork (tools/alchemy/src/compiler/routing.rs:99-113, 168-175). That flag is contradicted image-wide by the ROM, independently of the two unreachable differences below. The repository already models a flagset without it for CompilerFamily::SoftFloatLibrary (routing.rs:126-132). Changing a family route is Pascal's decision.",
+        "independent_reverification": "2026-09-09, three ways. (a) Corpus: locating function entries as BL targets landing on a push{...,lr} halfword gives gs1-en 1195 functions with 1174 interworking returns and 20 pop{pc}, against gs2-en 1581 functions with 1539 pop{pc} and 35 interworking returns; gs1-ja and gs2-ja match. (b) Compiler: out/work/routing/probe.c compiled with out/compilers/dist/xgcc under the canonical flags emits `add sp,sp,#104; pop {r3,r5,r6,r7}; mov r8,r3; mov r9,r5; mov sl,r6; mov fp,r7; pop {r5,r6,r7}; pop {r1}; bx r1` with -mthumb-interwork and `... pop {r5,r6,r7,pc}` without it. (c) Bytes: assembled, those are b01a bce8 4698 46a9 46b2 46bb bce0 bc02 4708 and b01a bce8 4698 46a9 46b2 46bb bde0. The gs1-en owner epilogue at 080bbb0c+0x1850 is b019 bce8 4698 46a9 46b2 46bb bce0 bc02 4708 and the gs2-en owner epilogue at 08120454+0x2054 is b01c bce8 4698 46a9 46b2 46bb bde0. Each matches its side byte for byte apart from the frame-size immediate.",
+        "resolved": {
+          "authorized": "Pascal, 2026-09-09",
+          "change": "base_cflags now adds -mthumb-interwork only for CompilerTarget::Gs1, through a documented interworks(target) predicate in tools/alchemy/src/compiler/routing.rs. GS2 Game code keeps every other canonical flag including -fcall-used-r4. The Agbcc family flag set is untouched, so the GS2 objects inherited from the GS1 build keep the interworking return they actually have.",
+          "owner_effect": "The candidate now emits the reference epilogue exactly: add sp,sp,#112; pop {r3,r5,r6,r7}; mov r8,r3; mov r9,r5; mov sl,r6; mov fp,r7; pop {r5,r6,r7,pc}.",
+          "rebaseline": "Fresh per-edition scores under the new route: en 8160/8300 with 3971 differing halfwords and 2493 wrong instructions, ja 8160/8300 and 2513, de 8160/8300 and 2519. Previously 8164/8300 with 2497/2517/2523. The aggregate halfword count does not move because the owner is still about 96 percent unmatched, but the four bytes the candidate lost were a too-long epilogue that had been compensating for missing code: the true whole-owner deficit is 140 bytes, not the 136 previously recorded.",
+          "still_blocked": "The two unreachable lowerings remain, so this does not make the owner exact. It removes the one route error that could be proved wrong and settles the register-allocation baseline before any source work."
+        },
+        "status": "resolved"
+      },
+      {
+        "id": "inline_register_call",
+        "reachable_today": false,
+        "finding": "Thumb calls through a register are lowered inline as `mov lr, rN` (0x4686 + (N << 3) for r0-r7, 0x46C6 + ((N - 8) << 3) above) followed by a lone BL-suffix halfword 0xF800, which branches to LR and captures the return address in the same four bytes a veneer call would take. Per ROM: GS1 ja/en/de/es/fr/it have 0 inline sites and 916/920/924/923/923/924 `bl _call_via_rN` calls; GS2 ja/en/de/es/fr/it have 2067/2075/2080/2080/2080/2081 inline sites and 23 veneer calls each. Both games ship a full _call_via bank of `bx rN; mov r8, r8` slots (gs1-en/ja 080072e4, gs1-fr 080072f4, gs1-de 08007314, gs1-it 08007324, gs1-es 08007344, gs2-en/ja 08017878, gs2-de/es/fr/it 080178a4), so GS2 is not a build that lacked the bank; it is a build that mostly stopped calling it.",
+        "unreachable_evidence": "agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148 gcc/config/arm/arm.md:5905-5936 (*call_indirect, *call_value_indirect) and agbcc da598c1d918402c42c0c0d7128ba14567f3175e9 gcc_arm/config/arm/thumb.md:1014-1058 emit only `bl _call_via_rN`, or `bl _interwork_call_via_rN` under TARGET_CALLER_INTERWORKING which the approved flagset never sets; thumb.md's own comment records that the earlier `mov lr, pc; bx rN` form was removed. Read at the pinned commits in the main checkout, where the submodules are initialized. Confirmed against the built binaries: cc1 holds exactly four indirect-call templates, all call-via, with no `blx` and no Thumb template that writes LR; old_agbcc holds two. Empirically, 35 optimization and flag combinations across both compilers, plus probes over __builtin_apply, nested-function trampolines, __builtin_setjmp, hi-register spills and every ordinary function-pointer spelling, produced only call-via forms."
+      },
+      {
+        "id": "inline_constant_synthesis",
+        "reachable_today": false,
+        "finding": "GS2 synthesizes non-shiftable integer constants inline as `movs rX, #imm8; lsls rX, rX, #s; adds|subs rX, #imm8`, where the approved compilers place a `.word` in a literal pool. Aligned whole-image scan for that three-instruction chain on one register: gs1 ja/en/de/es/fr/it = 9/11/11/11/11/12; gs2 ja/en/de/es/fr/it = 4134/4147/4146/4148/4146/4146. Inside this owner the reference has 148 synthesis chains totalling 632 bytes, of which 20 are three-instruction, against the candidate's 64 two-instruction chains totalling 256 bytes; 98 candidate pool loads carry a value absent from every reference pool, 94 of them plain integers below 0x10000, and the reference synthesizes 86 of those inline.",
+        "unreachable_evidence": "Probe values 573, 299, 65535 and 2152 pool under out/compilers/dist/cc1 at -O0, -O1, -O2, -O3 and -Os and under -msoft-float, -mno-thumb-interwork, -mapcs-32, -march=armv4t, -mstructure-size-boundary=8, -mshort-load-words, -mno-short-load-words, -fno-schedule-insns2, -mno-sched-prolog and -fno-function-cse; old_agbcc pools them too. cc1's complete ARM option list contains no minipool or constant-synthesis control. Only imm8<<n values are synthesized, and only as two-instruction chains.",
+        "weight": "This is the larger of the two unreachable differences. It makes the candidate 106 bytes larger than the reference (+236 pool, -130 code) and is the dominant cause of the pool-placement divergence the dossier previously attributed to branch-range tension."
+      }
+    ],
+    "owner_sites": {
+      "gs1_every_edition": 0,
+      "gs2_every_edition": 1,
+      "gs2_owner_offset": "009c",
+      "gs2_register": "r3",
+      "gs1_corresponding_site": "GS1 owner 080bbb0c expresses the same source construct at owner offset 0082: BATTLE_COPY_UNIT calls through a constant IWRAM address, ((BattleUnitCopyFn)0x03001388)(copy, target, size) in games/gs1/src/battle/action/resolve_target_action.c:154-155, and GS2 spells the identical shape as ((void (*)(void *, const void *, s32))0x03000730)(...) in games/gs2/recon/ja/main/battle_delta.h:433-435. GS1 +0x7a..+0x86 is 4baf 1c2a 9804 1c39 f74b fbaf, whose BL targets 080072f0 = bank + 3*4 = _call_via_r3; GS2 +0x94..+0xa0 is 4bb4 0052 9805 4641 469e f800. Same four bytes, same slot, same surrounding shape. One source construct, two lowerings."
+    },
+    "gs2_veneer_sites": [
+      "08016e4e",
+      "08016e5a",
+      "080170e0",
+      "080170f8",
+      "080171a6",
+      "08017260",
+      "080172b0",
+      "0801733c",
+      "0801739e",
+      "08017502",
+      "080175fa",
+      "0801767c",
+      "08017792",
+      "081c231a",
+      "081c232e",
+      "081c25a4",
+      "081c32f4",
+      "081c331e",
+      "081c3332"
+    ],
+    "gs2_veneer_sites_are_inherited": "The veneer callers that remain lie in code GS2 did not compile. Sixty-four-byte windows at gs2-en 08016e40 and 08017700 are byte-identical to gs1-en 080068ac and 0800716c, and the rest are inside the shared audio engine at 081c2168-081c3340 whose owners twelve_rom_transfer_scan already records as byte-identical to GS1's. Prebuilt objects carried into the GS2 link kept the veneer form and the interworking return; everything GS2 compiled itself did not. Counting the bank's sp slot adds four apparent targets at 08001f88-08001fe8, which are read as data coincidences since the compiler never calls through sp.",
+    "gs2_reach": "Attributing every gs2-en inline site to its nearest preceding `push {..., lr}` prologue within 4 KiB reaches 444 distinct prologues, with 224 sites unattributed by that heuristic. Both unreachable differences are image-wide, so they gate GS2 game-code recovery generally and not only this owner.",
+    "assembly_route_is_not_an_answer": "Retained assembly would reproduce these bytes and is otherwise an approved route, so the constraint is on the C route specifically. It is not a path to admission: no assembly is credited, the classification standard is withdrawn, and compiler-lowered calls and constants are not positive evidence of handwritten or third-party origin. games/gs2/asm is empty and GS2 has no ROM build.",
+    "origin_is_undetermined": "The evidence does not distinguish a machine-description difference from a size-preserving assembler-macro, post-assembly or link-time substitution. `bl _call_via_rN` and `mov lr, rN` + 0xF800 are both four bytes in the same slot, and the constant chains are likewise local rewrites. No historical compiler product is named here; nothing in this repository or in the two built compilers supports one.",
+    "not_the_binding_constraint": "The call form is four bytes of an 8300-byte owner and is size-neutral. Decomposing the current candidate (8164/8300 bytes, 3971 differing halfwords, 2497 wrong instructions, matched_prefix 70): reference 7896 code plus 404 pool bytes against candidate 7524 code plus 640 pool, so code delta +372 and pool delta -236 for the recorded net +136. By cause that is -106 bytes of constant materialization, +242 bytes of genuinely structural CSE and duplication work, and 756 bytes of byte-neutral register-allocation and scheduling substitution. The dossier's headline 136-byte deficit understates the missing control flow by roughly 1.8x.",
+    "conclusion": "GS2's game code came from the same GCC 2.96 family and the same -fcall-used-r4 ABI as GS1, under a build configuration that differs in three ways: one plain flag the approved route sets wrongly today, and two lowering rules the pinned compilers do not have. This is the evidence across a family that a route change or an output transformation would require; establishing either is Pascal's decision alone. Until then the GS2 battle owner stays a draft with zero DONE credit, and no compiler modification, veneer disguise or output patch is an admissible repair.",
+    "inherited_island_family": {
+      "measured": "2026-09-09",
+      "question": "GS2 carries an interworking island around 08016e0c-0801786a whose functions save r4 and return through pop {rN}; bx rN, neither of which the GS2 Game route can now produce. Which family is it?",
+      "finding": "It is the same Agbcc-built runtime block GS1 carries at 08006864 onward, relocated by a constant +0x10594. The delta holds at two widely separated anchors, gs2 08016e40 against gs1 080068ac and gs2 08017700 against gs1 0800716c, and a byte-identical run covers gs1 08006864-08006938 against gs2 08016df8-08016ecc before the first relocation difference ends it. The GS1 owners 08006878 and 08006910 inside that run are already AGBCC_SOURCES members and land at gs2 08016e0c and 08016ea4, the first of the r4-saving functions. Saving r4 and returning through bx are exactly the Agbcc flag set, which carries neither -fcall-used-r4 nor the GS2 Game route change.",
+      "routing_action": "None today. GS2_AGBCC_SOURCES routes sources, and GS2 has no source for this island; its entries would be added when the owners are reconstructed. Recorded here so the attribution is settled before that happens rather than after a family mismatch wastes a recovery attempt.",
+      "authority": "Family membership is provenance. Adding entries is Pascal, not a contributor decision."
+    }
   }
 }

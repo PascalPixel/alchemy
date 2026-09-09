@@ -17905,6 +17905,10 @@
     "resource_3c4:02000f4c": {
       "name": "SceneEffect_SpawnRandomizedAtActor",
       "source": "overlays/configurable_effect_spawn/spawn_randomized_at_actor.c"
+    },
+    "resource_372:02000f38": {
+      "name": "FieldScene_RunActorTwelveStagingSequence",
+      "source": "overlays/scene_primary_script/run_actor_twelve_staging_sequence.c"
     }
   }
 }

@@ -17859,6 +17859,10 @@
     "resource_3af:02000c28": {
       "name": "FieldScene_RunCueBySceneSelector",
       "source": "overlays/scene_primary_script/run_cue_by_scene_selector.c"
+    },
+    "resource_3bf:02000d54": {
+      "name": "FieldScene_RunScene3bfSequenceE",
+      "source": "overlays/scene_primary_script/run_scene_3bf_sequence_e.c"
     }
   }
 }

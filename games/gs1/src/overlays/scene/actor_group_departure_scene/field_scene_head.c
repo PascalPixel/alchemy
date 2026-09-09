@@ -11,19 +11,12 @@
 #define FieldScene_RunScene372SequenceA Func_0200150c
 #define FieldScene_RunScene372SequenceB Func_02001600
 #define FieldScene_RunScene372SequenceC Func_020016cc
+
 extern u8 Value_00000841;
 extern u8 Value_00000842;
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_03001ebc[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00000e5c[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00000e67[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00000ed0[];
 
 void Func_02004ac6(s32);
@@ -226,6 +219,9 @@ void Func_02005ec4();
 void Func_02005edc();
 void Func_02005ef2();
 void Func_02005f00();
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

@@ -7085,7 +7085,7 @@
     },
     "resource_374:0200010c": {
       "name": "FieldScene_RunSequence111F",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3ac:0200014c": {
       "name": "SceneDialogue_RunActor18Dialogue",
@@ -7349,7 +7349,7 @@
     },
     "resource_374:02002580": {
       "name": "FieldScene_RunStep15",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3ce:0200023c": {
       "name": "SceneData_GetTable9564",
@@ -7451,7 +7451,7 @@
     "resource_377:02000090": "overlays/shared/get_tertiary_default_result.c",
     "resource_37b:020019e4": {
       "name": "FieldScene_RunFiveValueStep9",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_3ca:02000168": {
       "name": "SceneState_CountDownEveryFortyTicks",
@@ -7856,7 +7856,7 @@
     },
     "resource_374:02002590": {
       "name": "FieldScene_RunStep17",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3c8:02004600": {
       "name": "FieldScene_RunStep230With44",
@@ -7949,7 +7949,7 @@
     },
     "resource_37b:02001a04": {
       "name": "FieldScene_RunFiveValueStep11",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_3cd:0200003c": {
       "name": "SceneData_GetTable8994",
@@ -8389,7 +8389,7 @@
     },
     "resource_374:020008dc": {
       "name": "FieldScene_RunStep7BThen8",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3a6:02000cd0": {
       "name": "SceneActor_WaitActorDescent",
@@ -8577,7 +8577,7 @@
     },
     "resource_37b:02001a44": {
       "name": "FieldScene_RunFiveValueStep15",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_3a1:02000570": {
       "name": "SceneData_SelectTable8d4cOr8a28",
@@ -8911,7 +8911,7 @@
     },
     "resource_385:02000d74": {
       "name": "FieldScene_SetActor21Values0And4",
-      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script.c"
     },
     "resource_3a4:02000098": {
       "name": "SceneActor_CopyActor8PositionWithFixedY",
@@ -9135,7 +9135,7 @@
     },
     "resource_378:0200014c": {
       "name": "SceneData_SelectTableBySceneIdAndFlags",
-      "source": "overlays/scene/facing_gated_actor_scene/scene_data_tail.c"
+      "source": "overlays/scene/facing_gated_actor_scene/scene_data.c"
     },
     "resource_39c:02003bd4": {
       "name": "SceneEffect_SpawnWithRandomOffset",
@@ -9283,7 +9283,7 @@
     },
     "resource_374:02000444": {
       "name": "FieldScene_RunActorTwentySixEffectPresentation",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3c6:0200004c": {
       "name": "SceneData_GetTable98c4",
@@ -9371,7 +9371,7 @@
     },
     "resource_374:020025a0": {
       "name": "FieldScene_RunStep20",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_37f:02001aac": {
       "name": "FieldScene_RunScriptedStep953",
@@ -9815,7 +9815,7 @@
     },
     "resource_374:020003b4": {
       "name": "SceneDialogue_RunFlagGatedMessageStep",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_371:02000570": {
       "name": "SceneState_ApplyValues151And25And54",
@@ -9951,7 +9951,7 @@
     },
     "resource_378:02000068": {
       "name": "SceneData_GetTableBbc8",
-      "source": "overlays/scene/facing_gated_actor_scene/scene_data_head.c"
+      "source": "overlays/scene/facing_gated_actor_scene/scene_data.c"
     },
     "resource_382:02000b3c": {
       "name": "ActorPresentation_RunActorSixteenSceneSetup",
@@ -10608,7 +10608,7 @@
     },
     "resource_378:0200005c": {
       "name": "SceneData_GetTableBaa8",
-      "source": "overlays/scene/facing_gated_actor_scene/scene_data_head.c"
+      "source": "overlays/scene/facing_gated_actor_scene/scene_data.c"
     },
     "resource_3b4:020009dc": {
       "name": "SceneActor_SetActor15ModeZero",
@@ -13474,7 +13474,7 @@
     },
     "resource_378:02000070": {
       "name": "SceneData_SelectPlacementTableBySubstate",
-      "source": "overlays/scene/facing_gated_actor_scene/scene_data_tail.c"
+      "source": "overlays/scene/facing_gated_actor_scene/scene_data.c"
     },
     "resource_3c8:02001628": {
       "name": "FieldScene_RunFiveCallSequence",
@@ -14356,7 +14356,7 @@
     },
     "resource_378:02000064": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/facing_gated_actor_scene/scene_data_head.c"
+      "source": "overlays/scene/facing_gated_actor_scene/scene_data.c"
     },
     "resource_3b5:02000954": {
       "name": "SceneState_SetValue30ThenCall",
@@ -14481,7 +14481,7 @@
     },
     "resource_385:02000640": {
       "name": "SceneDialogue_RunActorFifteenFacingPreservedDialogue",
-      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script.c"
     },
     "resource_381:02002970": {
       "name": "FieldScene_RunLateRandomHalfBranch",
@@ -15602,7 +15602,7 @@
     },
     "resource_37b:02001624": {
       "name": "FieldScene_RunClosingSequence",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_3c8:02001150": {
       "name": "FieldScene_RunScene3c8SequenceC",
@@ -15769,7 +15769,7 @@
     },
     "resource_374:02000248": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_37f:02000258": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
@@ -15796,7 +15796,7 @@
     },
     "resource_374:020004d4": {
       "name": "FieldScene_RunMiddleAuxiliarySequence",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3bc:020002f8": {
       "name": "FieldScene_RunClosingAuxiliarySequence",
@@ -15903,7 +15903,7 @@
     },
     "resource_374:02000750": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_37f:0200007c": {
       "name": "FieldScene_RunSupplementalSequenceOne",
@@ -15927,7 +15927,7 @@
     },
     "resource_385:02000804": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script.c"
     },
     "resource_3bf:02000ce0": {
       "name": "FieldScene_UpdateObjectPairA",
@@ -15994,7 +15994,7 @@
     },
     "resource_37b:0200101c": {
       "name": "FieldScene_RunPrimarySequenceHead",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_373:02000fbc": {
       "name": "FieldScene_RunPrimarySequenceSecond",
@@ -16006,27 +16006,27 @@
     },
     "resource_374:02000780": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_374:020007ec": {
       "name": "FieldScene_RunSupplementalSequenceThree",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_374:0200081c": {
       "name": "FieldScene_RunSupplementalSequenceFour",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_374:0200084c": {
       "name": "FieldScene_RunSupplementalSequenceFive",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_374:0200087c": {
       "name": "FieldScene_RunSupplementalSequenceSix",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_374:020008ac": {
       "name": "FieldScene_RunSupplementalSequenceSeven",
-      "source": "overlays/scene/extended_field_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/extended_field_scene/scene_primary_script.c"
     },
     "resource_3ab:020005f0": {
       "name": "FieldScene_RunOpeningSequence",
@@ -16145,11 +16145,11 @@
     },
     "resource_37b:02002244": {
       "name": "FieldScene_RunScene37b_02002244",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_37b:020022f4": {
       "name": "FieldScene_RunScene37b_020022f4",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_37f:02000d1c": {
       "name": "FieldScene_RunScene37f_02000d1c",
@@ -16177,11 +16177,11 @@
     },
     "resource_385:020009f8": {
       "name": "FieldScene_RunScene385_020009f8",
-      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script.c"
     },
     "resource_385:02000d84": {
       "name": "FieldScene_RunScene385_02000d84",
-      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script_tail.c"
+      "source": "overlays/scene/actor_motion_event_scene/scene_primary_script.c"
     },
     "resource_386:0200011c": {
       "name": "FieldScene_RunActor16Sequence",
@@ -17213,7 +17213,7 @@
     },
     "resource_37b:0200195c": {
       "name": "FieldScene_RunScene37bSequenceA",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_372:02001828": {
       "name": "FieldScene_RunScene372SequenceE",
@@ -17449,7 +17449,7 @@
     },
     "resource_37b:0200105c": {
       "name": "FieldScene_RunScene37bSequenceB",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "resource_3a6:02001300": {
       "name": "FieldScene_RunScene3a6SequenceC",
@@ -17541,7 +17541,7 @@
     },
     "resource_37b:020014b8": {
       "name": "FieldScene_RunScene37bSequenceC",
-      "source": "overlays/scene/guarded_step_scene/scene_primary_script_head.c"
+      "source": "overlays/scene/guarded_step_scene/scene_primary_script.c"
     },
     "main:08096960": {
       "name": "BattleEffect_DispatchRequestKind",

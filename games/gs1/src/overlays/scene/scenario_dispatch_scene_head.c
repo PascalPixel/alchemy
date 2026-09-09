@@ -6,6 +6,7 @@
 #define SceneDialogue_RunFlag81aMessageBranch Func_02000200
 #define FieldScene_RunOpeningAuxiliarySequence Func_02000258
 #define FieldScene_RunFlag821Dialogue Func_020003bc
+
 extern u8 Value_00000013;
 extern u8 Value_00000010;
 extern u8 Data_02009d04[];

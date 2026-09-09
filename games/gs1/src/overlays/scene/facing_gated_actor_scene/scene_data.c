@@ -1,7 +1,13 @@
 #include "types.h"
 
+#define SceneData_GetTableBaa8 Func_0200005c
+#define SceneData_ReturnZero Func_02000064
+#define SceneData_GetTableBbc8 Func_02000068
 #define SceneData_SelectPlacementTableBySubstate Func_02000070
 #define SceneData_SelectTableBySceneIdAndFlags Func_0200014c
+
+extern u8 Data_0200baa8;
+extern u8 Data_0200bbc8;
 extern u8 Data_0200bbf4[];   /* Empty table: place nothing. */
 extern u8 Data_0200bc0c[];
 extern u8 Data_0200bccc[];
@@ -17,9 +23,25 @@ extern u8 Data_0200c038[];
 extern u8 Data_0200c080[];
 extern u8 Data_0200c0ec[];
 
-/* One symbol per call site, named at the site's decoded address. */
 s32 Func_020037f8();
 s32 Func_02003806();
+
+/* One symbol per call site, named at the site's decoded address. */
+
+void *SceneData_GetTableBaa8(void)
+{
+    return &Data_0200baa8;
+}
+
+s32 SceneData_ReturnZero(void)
+{
+    return 0;
+}
+
+void *SceneData_GetTableBbc8(void)
+{
+    return &Data_0200bbc8;
+}
 
 /*
  * Select this scene's placement script from its stored sub-state.  The
@@ -50,7 +72,6 @@ s32 Func_02003806();
  * by value, distinct values ascending -- so the 20/21/50 arm comes third and
  * the 29 arm after the 32 arm, not in selector order.
  */
-
 void *SceneData_SelectPlacementTableBySubstate(void)
 {
     extern u8 Data_02000240[];

@@ -5,6 +5,7 @@
 #define SceneState_SetWorkAndFlag87d Func_020019a4
 #define SceneState_SetWorkAndFlag87e Func_020019e8
 #define SceneDialogue_RunActorSixteenDialogue Func_02001a2c
+
 extern u8 Data_0200a0ac[];
 
 void Func_020023ec();

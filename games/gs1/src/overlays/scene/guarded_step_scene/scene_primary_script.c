@@ -11,6 +11,12 @@
 #define FieldScene_RunPrimarySequenceHead Func_0200101c
 #define FieldScene_RunClosingSequence Func_02001624
 #define FieldScene_RunScene37bSequenceA Func_0200195c
+#define NULL ((void *)0)
+#define FieldScene_RunFiveValueStep9 Func_020019e4
+#define FieldScene_RunFiveValueStep11 Func_02001a04
+#define FieldScene_RunFiveValueStep15 Func_02001a44
+#define FieldScene_RunScene37b_02002244 Func_02002244
+#define FieldScene_RunScene37b_020022f4 Func_020022f4
 
 extern u8 Data_02000240[];
 extern u8 Data_0200aa50[];
@@ -122,6 +128,47 @@ void Func_02003e50();
 void Func_02003e64();
 void Func_02003e7c();
 void Func_02003edc();
+void Func_0200353a(s32, s32, s32, s32, s32);
+void Func_0200360e(void);
+void Func_0200355a(s32, s32, s32, s32, s32);
+void Func_0200372e_a(void);
+void Func_0200359a(s32, s32, s32, s32, s32);
+void Func_02003966(void);
+void Func_02002372();
+s32 Func_02004684();
+s32 Func_0200468e();
+void Func_0200469e();
+void Func_0200469e_a();
+void Func_020046ba();
+s32 Func_020046d4();
+s32 Func_02004706();
+void Func_02004708();
+void Func_02004712();
+void Func_0200473a();
+void Func_0200477e();
+void Func_02004798();
+void Func_020047a4();
+void Func_020047b4();
+void Func_020047ea();
+void Func_02002424();
+s32 Func_02004734();
+s32 Func_0200473e();
+void Func_0200474e();
+void Func_0200474e_a();
+void Func_0200476a();
+s32 Func_02004784();
+s32 Func_020047b8();
+void Func_020047ba();
+void Func_020047c4();
+void Func_020047ec();
+void Func_0200482e();
+void Func_02004848();
+void Func_02004854();
+void Func_02004866();
+void Func_0200489a();
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 
 /* Resolved engine calls: each pseudo symbol is the per-site call word the
  * overlay image holds (a word can serve two sites with different targets),
@@ -137,7 +184,6 @@ void Func_02003edc();
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
@@ -230,6 +276,15 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 static __inline__ s32 Value1_0200195c(s32 (*f)(), s32 a0)
 {
     return f(a0);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_020019e4(void (*f)(), s32 a0)
+{
+    f(a0);
 }
 
 /* If the code-2059 check passes, runs a short setup/configuration sequence
@@ -438,4 +493,76 @@ void FieldScene_RunScene37bSequenceA(void)
             Func_02003e30();
         }
     }
+}
+
+void FieldScene_RunFiveValueStep9(void)
+{
+    Func_0200353a(9, 31, 9, 30, 9);
+    Func_0200360e();
+}
+
+void FieldScene_RunFiveValueStep11(void)
+{
+    Func_0200355a(11, 40, 9, 41, 9);
+    Func_0200372e_a();
+}
+
+void FieldScene_RunFiveValueStep15(void)
+{
+    Func_0200359a(15, 40, 12, 41, 12);
+    Func_02003966();
+}
+
+void FieldScene_RunScene37b_02002244(void)
+{
+    u32 i;
+    s32 record;
+
+    Func_0200469e();
+    if (Value1(Func_02004684, 0x818) == 0) {
+        if (Value1(Func_0200468e, 0x816) == 0) {
+            Call2(Func_0200477e, 0x20000, 0x4000);
+            Call4(Func_02004798, 0x11e0000, -1, 0x920000, 1);
+            Func_020047a4();
+            Func_020047ea(186);
+            Call6(Func_0200469e_a, 0, 59, 15, 38, 4, 3);
+            if (Value1(Func_020046d4, 0x817) != 0) {
+                Call6(Func_020046ba, 8, 60, 17, 39, 2, 2);
+            }
+            Func_020047b4(0, 0, 0);
+            Func_02004712(30);
+            Call1_020019e4(Func_02004708, 0x816);
+            if (Value1(Func_02004706, 0x817) != 0) {
+                Func_02002372();
+            }
+        }
+    }
+    Func_0200473a();
+}
+
+void FieldScene_RunScene37b_020022f4(void)
+{
+    u32 i;
+    s32 record;
+
+    Func_0200474e();
+    if (Value1(Func_02004734, 0x818) == 0) {
+        if (Value1(Func_0200473e, 0x817) == 0) {
+            Call2(Func_0200482e, 0x20000, 0x4000);
+            Call4(Func_02004848, 0x11e0000, -1, 0x920000, 1);
+            Func_02004854();
+            Func_0200489a(186);
+            Call6(Func_0200474e_a, 4, 59, 17, 38, 4, 3);
+            if (Value1(Func_02004784, 0x816) != 0) {
+                Call6(Func_0200476a, 8, 60, 17, 39, 2, 2);
+            }
+            Call3(Func_02004866, 0, 0x8000, 0);
+            Func_020047c4(30);
+            Call1_020019e4(Func_020047ba, 0x817);
+            if (Value1(Func_020047b8, 0x816) != 0) {
+                Func_02002424();
+            }
+        }
+    }
+    Func_020047ec();
 }

@@ -4,16 +4,36 @@
     "resource_372:020031ac": {
       "name": "FieldScene_RunActorGroupDepartureSequence"
     },
-    "resource_39c:02003d20": {"name": "Scene_RunSelectorEntry"},
-    "resource_3c9:020012c8": {"name": "FieldScene_RunActorEntrySequence"},
-    "resource_3a8:02000590": {"name": "FieldScene_RunStagedGroupSequence"},
-    "resource_3c8:02003068": {"name": "Scene_RunEntrySetup"},
-    "resource_3c9:02002360": {"name": "FieldScene_RunPairedActorEffectSequence"},
-    "resource_381:02001410": {"name": "FieldScene_RunExtendedEffectPresentation"},
-    "resource_38f:020008ec": {"name": "FieldScene_RunExtendedActorSequence"},
-    "resource_391:02000d3c": {"name": "FieldScene_RunBranchingFormationPresentation"},
-    "resource_3bd:020013f8": {"name": "FieldScene_RunExtendedActorPresentation"},
-    "resource_38b:02000db4": {"name": "SceneActor_PushPuzzleActor"},
+    "resource_39c:02003d20": {
+      "name": "Scene_RunSelectorEntry"
+    },
+    "resource_3c9:020012c8": {
+      "name": "FieldScene_RunActorEntrySequence"
+    },
+    "resource_3a8:02000590": {
+      "name": "FieldScene_RunStagedGroupSequence"
+    },
+    "resource_3c8:02003068": {
+      "name": "Scene_RunEntrySetup"
+    },
+    "resource_3c9:02002360": {
+      "name": "FieldScene_RunPairedActorEffectSequence"
+    },
+    "resource_381:02001410": {
+      "name": "FieldScene_RunExtendedEffectPresentation"
+    },
+    "resource_38f:020008ec": {
+      "name": "FieldScene_RunExtendedActorSequence"
+    },
+    "resource_391:02000d3c": {
+      "name": "FieldScene_RunBranchingFormationPresentation"
+    },
+    "resource_3bd:020013f8": {
+      "name": "FieldScene_RunExtendedActorPresentation"
+    },
+    "resource_38b:02000db4": {
+      "name": "SceneActor_PushPuzzleActor"
+    },
     "resource_385:02000f30": {
       "name": "SceneSetup_InitializeActorsAndFlags"
     },
@@ -14848,7 +14868,8 @@
       "source": "overlays/scene_primary_script/run_scene_383_event_script01.c"
     },
     "resource_38d:020019b0": {
-      "name": "RunEventScript02"
+      "name": "RunEventScript02",
+      "source": "overlays/scene_primary_script/run_event_script_38d_020019b0.c"
     },
     "resource_38e:0200050c": {
       "name": "RunEventScript01"

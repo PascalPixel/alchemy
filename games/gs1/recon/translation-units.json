@@ -35727,6 +35727,11 @@
           "state": "exact-c"
         },
         {
+          "address": "0x020002a0",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
           "address": "0x020002e0",
           "extent": 36,
           "state": "exact-c"

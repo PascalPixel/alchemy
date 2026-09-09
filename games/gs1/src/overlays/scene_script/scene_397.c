@@ -15,8 +15,15 @@ struct SceneObject {
     u8 layer;
 };
 
+union SceneCell {
+    s32 w;
+    s16 h[2];
+};
+
 extern s32 Data_02000240[];
+extern u8 *Data_03001e70;
 extern u8 *Data_03001ebc;
+extern u32 Data_03001e40;
 extern s32 Data_03001ae8;
 extern s32 Data_03001b04;
 extern u16 Data_04000006;
@@ -366,6 +373,32 @@ void SceneEffect_UpdateBg3HofsByVcount(void)
     }
     value = *src;
     Data_0400001c = value;
+}
+
+/*
+ * resource_397 owner at 0x020002a0, 64 bytes: 42 bytes of code, the two-byte
+ * alignment halfword, and a five-word literal pool at 0x020002cc holding
+ * 0x03001e70, 0x02008610, 0x02008614, 0x03001e40 and 0x02008616.
+ *
+ * It prepares the three words that SceneEffect_UpdateBg3HofsByVcount consumes:
+ * a VCOUNT threshold at 0x02008610 and the two BG3HOFS values selected above
+ * and below it. 192 is the screen height, so the threshold is a scanline
+ * derived from a coordinate in the scene work record.
+ *
+ * The record cell is read as a union, not as bare halfwords. The word store to
+ * 0x02008610 and the halfword reads are only ordered against each other when
+ * they can alias, and the reference schedules the 0x02008614 address load ahead
+ * of the halfword read on exactly that dependence. Reading the cell through a
+ * halfword-only pointer disambiguates the two accesses and loses that order.
+ */
+void SceneEffect_SetBg3HofsSplit(void)
+{
+    union SceneCell *work = (union SceneCell *)(Data_03001e70 + 260);
+    s32 hofs;
+
+    Data_02008610 = 192 - work[1].h[1];
+    Data_02008614 = hofs = work[0].h[1];
+    Data_02008616 = hofs - (Data_03001e40 >> 2);
 }
 
 void SceneState_ApplyTables826dAnd82a1(void)

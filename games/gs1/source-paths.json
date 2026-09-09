@@ -17600,6 +17600,10 @@
     },
     "resource_3c4:0200259c": {
       "name": "FieldScene_InitializeActorGroups"
+    },
+    "resource_397:020002a0": {
+      "name": "SceneEffect_SetBg3HofsSplit",
+      "source": "overlays/scene_script/scene_397.c"
     }
   }
 }

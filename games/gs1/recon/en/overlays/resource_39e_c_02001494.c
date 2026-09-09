@@ -192,12 +192,8 @@ void FieldScene_RunSecondEnsembleBeat(void)
     rec[90] &= 0xfe;
     Call3(Func_0808a0d0, 16, 154 << 1, 136 << 1);
     Call1(Func_0808a010, 1);
-    {
-        u8 *record = Record1(Func_0808a080, 16);
-        u8 value = *(volatile u8 *)&record[90]; /* keeps the byte in its own register */
-
-        record[90] = (u8)(value | 1);
-    }
+    rec = Record1(Func_0808a080, 16);
+    rec[90] |= 1;
     Call3(Func_0808a188, 16, 0, 50);
     Call3(Func_0808a0f0, 17, 152 << 17, 216 << 16);
     Call3(Func_0808a0d0, 17, 152 << 1, 248);

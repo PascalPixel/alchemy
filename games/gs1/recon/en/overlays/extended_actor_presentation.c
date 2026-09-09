@@ -1,0 +1,905 @@
+#include "types.h"
+
+#define FieldScene_RunExtendedActorPresentation Func_020013f8
+
+extern const s32 Data_0200c478[];
+extern const s32 Data_0200c4c8[];
+extern const s32 Data_0200c518[];
+extern const s32 Data_0200c57c[];
+
+s32 Func_02003c90();
+s32 Func_02003ca0();
+void Func_02003cb0();
+void Func_02003de8();
+void Func_02003d40();
+void Func_02003ca8();
+void Func_02003d60();
+void Func_02003d70();
+void Func_02003cd0();
+void Func_02003d00();
+void Func_02003d78();
+void Func_02003d98();
+void Func_02003e38();
+void Func_02003d10();
+void Func_02003d80();
+void Func_02003d50();
+u8 *Func_02003cc8();
+void Func_02003e70();
+void Func_02003d30();
+void Func_02003d18();
+void Func_02003e48();
+void Func_02003e40();
+void Func_02003d20();
+void Func_02003c00();
+void Func_02003d38();
+void Func_02003d48();
+void Func_02003d28();
+s32 Func_02003d68();
+s32 Func_02003cc0();
+void Func_02003dc8();
+void Func_02003dd0();
+void Func_02003de0();
+void Func_02003dc0();
+void Func_02003dd8();
+void Func_02003d90();
+void Func_02003da0();
+void Func_02003e50();
+void Func_02003cd8();
+void Func_02003ce0();
+void Func_02003ce8();
+void Func_02003da8();
+void Func_02003cf0();
+void Func_02003df0();
+void Func_02003cb8();
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    return f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+void FieldScene_RunExtendedActorPresentation(void)
+{
+    s32 render_work;
+    u8 *actor;
+    u8 *object;
+    s32 work;
+    s32 cnt;
+    s32 step;
+    s32 fade_in;
+    s32 fade_out;
+    s32 script;
+
+    Value1(Func_02003c90, 0x962);
+    Func_02003ca0(237);
+    Func_02003cb0();
+    Func_02003de8();
+    Func_02003d40(8, 2);
+    Func_02003ca8(20);
+    Call1(Func_02003d60, 0x2183);
+    Func_02003d70(8, 0);
+    Call3(Func_02003cd0, 0, 0xcccc, 0x6666);
+    Func_02003d00(0, 232, 160);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Func_02003ca8(50);
+    Func_02003ca8(10);
+    Call4(Func_02003d98, 0x1080000, -1, 0xc80000, 1);
+    Call3(Func_02003cd0, 0, 0xcccc, 0x6666);
+    Call3(Func_02003d00, 0, 0x108, 208);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call4(Func_02003e38, 1, -16, 16, 0xc000);
+    Call4(Func_02003e38, 3, 0, 16, 0xc000);
+    Call4(Func_02003e38, 2, 16, 16, 0xc000);
+    Func_02003d10(1);
+    Func_02003ca8(20);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 8, 0x108, 40);
+    Func_02003d70(8, 0);
+    Func_02003ca8(10);
+    Func_02003d50(3, 2, 50);
+    Call3(Func_02003d78, 3, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    Func_02003ca8(20);
+    actor = Func_02003cc8(8);
+    Func_02003ca8(30);
+    Func_02003d40(8, 2);
+    Func_02003ca8(30);
+    Func_02003d40(8, 2);
+    Func_02003ca8(30);
+    Func_02003d40(8, 2);
+    Func_02003ca8(60);
+    Func_02003e70(17);
+    {
+        s32 target = *(s32 *)(actor + 80);
+        s32 shown = 0;
+
+        *(u16 *)(target + 30) = shown;
+    }
+    work = -13;
+    Func_02003d30(8, 10, 70);
+    cnt = 29;
+    do {
+        *(u8 *)(*(s32 *)(actor + 80) + 9) &= work;
+        Func_02003ca8(2);
+        *(u8 *)(*(s32 *)(actor + 80) + 9) = ((work & *(u8 *)(*(s32 *)(actor + 80) + 9)) | 8);
+        Func_02003ca8(2);
+        cnt = (cnt - 1);
+    } while (cnt >= 0);
+    Func_02003ca8(40);
+    {
+        s32 x;
+        s32 z;
+
+        object = Func_02003cc8(8);
+        x = *(s16 *)(object + 10);
+        object = Func_02003cc8(8);
+        z = *(s16 *)(object + 18);
+        Func_02003d18(8, 0, 0);
+        Func_02003d18(9, x << 16, z << 16);
+    }
+    *(u8 *)(*(s32 *)(actor + 80) + 38) = 0;
+    Func_02003e70(30);
+    Call3(Func_02003cd0, 9, 0xcccc, 0x6666);
+    Func_02003e48(9, 32, 32);
+    Call3(Func_02003d78, 9, 0x4000, 0);
+    step = 254;
+    Func_02003ca8(20);
+    *(u8 *)(Func_02003cc8(0) + 90) &= step;
+    *(u8 *)(Func_02003cc8(1) + 90) &= step;
+    *(u8 *)(Func_02003cc8(3) + 90) &= step;
+    *(u8 *)(Func_02003cc8(2) + 90) &= step;
+    Func_02003e40(0, 0, 16);
+    Func_02003e40(1, 0, 16);
+    Func_02003e40(3, 0, 16);
+    step = 1;
+    Func_02003e48(2, 0, 16);
+    *(u8 *)(Func_02003cc8(0) + 90) |= step;
+    *(u8 *)(Func_02003cc8(1) + 90) |= step;
+    *(u8 *)(Func_02003cc8(3) + 90) |= step;
+    {
+        u8 *object = Func_02003cc8(2);
+        u8 value = object[90];
+
+        object[90] = (u8)(value | step);
+    }
+    Func_02003d20(0, 1);
+    Func_02003d20(1, 1);
+    Func_02003d20(3, 1);
+    Func_02003d20(2, 1);
+    Func_02003c00(1);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Call3(Func_02003d78, 3, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003d38(0, 2);
+    Func_02003d38(1, 2);
+    Func_02003d38(3, 2);
+    Func_02003d40(2, 2);
+    Func_02003ca8(20);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x105, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 1, 0x100, 40);
+    Func_02003d30(1, 4, 13);
+    Func_02003d30(1, 4, 30);
+    Func_02003d70(1, 0);
+    Func_02003d48(2, 1, 30);
+    Call3(Func_02003d80, 2, 0x105, 40);
+    Func_02003d70(2, 0);
+    Func_02003d48(1, 2, 30);
+    Call3(Func_02003d80, 1, 0x102, 40);
+    Func_02003d70(1, 0);
+    Func_02003d28(9, 4);
+    Func_02003ca8(30);
+    Value2(Func_02003d68, 9, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    if (Value2(Func_02003cc0, 0, 0) == 0) {
+        Func_02003ca8(10);
+        Func_02003d28(9, 3);
+        Func_02003ca8(30);
+        Call1(Func_02003d60, 0x218a);
+        Func_02003d70(9, 0);
+    } else {
+        Call1(Func_02003d60, 0x218b);
+        Func_02003d70(9, 0);
+    }
+    Call1(Func_02003d60, 0x218c);
+    Func_02003ca8(10);
+    Func_02003d40(3, 2);
+    Func_02003ca8(20);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Func_02003d40(2, 2);
+    Func_02003ca8(20);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x101, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d50(1, 0, 0);
+    Func_02003d50(3, 2, 50);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Call3(Func_02003d78, 3, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Func_02003d28(1, 3);
+    Func_02003ca8(30);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Func_02003d28(9, 3);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 2, 0x101, 40);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d28(2, 3);
+    Func_02003ca8(30);
+    Func_02003d70(2, 0);
+    Func_02003ca8(20);
+    Call3(Func_02003cd0, 2, 0x10000, 0x8000);
+    Call3(Func_02003e48, 2, 0, -48);
+    Call3(Func_02003d78, 2, 0x8000, 0);
+    Func_02003ca8(40);
+    Func_02003dc8(141, 1);
+    Func_02003dd0(2, 9);
+    Func_02003de0();
+    Func_02003dc0(1);
+    Func_02003ca8(150);
+    Func_02003dc0(2);
+    Func_02003dd8();
+    Func_02003d20(2, 1);
+    Func_02003ca8(10);
+    Func_02003d40(2, 2);
+    Func_02003ca8(40);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 3, 0x101, 40);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 2, 0x102, 40);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 0, 0x102, 0);
+    Call3(Func_02003d80, 1, 0x102, 0);
+    Call3(Func_02003d80, 3, 0x102, 40);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 2, 0x4000, 0);
+    Func_02003ca8(30);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d30(9, 4, 13);
+    Func_02003d30(9, 4, 30);
+    Func_02003d78(9, 0, 0);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x102, 50);
+    Call3(Func_02003d78, 9, 0x4000, 0);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(20);
+    Call3(Func_02003d80, 9, 0x100, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d28(1, 3);
+    Func_02003ca8(30);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 3, 0x101, 40);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x101, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(50);
+    Func_02003d28(0, 3);
+    Func_02003ca8(10);
+    Func_02003d28(1, 3);
+    Func_02003ca8(10);
+    Func_02003d28(3, 3);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 2, 0x8000, 0);
+    Func_02003ca8(20);
+    Func_02003d28(2, 3);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(20);
+    Func_02003ca8(20);
+    Call3(Func_02003cd0, 2, 0x10000, 0x8000);
+    Func_02003e48(2, 0, 48);
+    Func_02003ca8(10);
+    Func_02003d50(1, 0, 0);
+    Func_02003d50(3, 2, 50);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Call3(Func_02003d78, 3, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    Func_02003ca8(50);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003d28(9, 4);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 2, 0x102, 40);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(30);
+    Func_02003d28(9, 3);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Func_02003d28(1, 4);
+    Func_02003ca8(20);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Func_02003d28(9, 4);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 0, 0x100, 0);
+    Call3(Func_02003d80, 1, 0x100, 0);
+    Call3(Func_02003d80, 3, 0x100, 0);
+    Call3(Func_02003d80, 2, 0x100, 80);
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 9, 0xc000, 0);
+    Func_02003ca8(50);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 2, 0x101, 40);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(20);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 3, 0x101, 40);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(20);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 1, 0x101, 40);
+    Value2(Func_02003d68, 1, 0);
+    if (Value2(Func_02003cc0, 0, 0) == 0) {
+        Call1(Func_02003d60, 0x21a4);
+        Func_02003d70(1, 0);
+    } else {
+        Call1(Func_02003d60, 0x21a5);
+        Func_02003d70(1, 0);
+    }
+    Call1(Func_02003d60, 0x21a6);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x100, 40);
+    Call3(Func_02003d78, 9, 0x4000, 0);
+    Func_02003ca8(10);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 1, 0x102, 40);
+    Func_02003ca8(10);
+    Func_02003d50(1, 0, 50);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Func_02003d20(0, 3);
+    Func_02003d28(1, 3);
+    Func_02003ca8(30);
+    Func_02003d68(9, 0);
+    Call1(Func_02003d60, 0x21a8);
+    Func_02003cc0(0, 0);
+    render_work = *(s32 *)0x03001ecc;
+    {
+        u16 *field = (u16 *)(render_work + 0x52a);
+        s32 shown = 32;
+
+        *field = shown;
+    }
+    fade_in = 0;
+    fade_out = 16;
+    do {
+        {
+            s32 shown = 0x3f42;
+
+            *(volatile u16 *)0x04000050 = shown;
+        }
+        *(volatile u16 *)0x04000052 = ((fade_in << 8) | fade_out);
+        fade_in = (fade_in + 1);
+        Func_02003c00(7);
+        fade_out = (fade_out - 1);
+    } while (fade_in <= 16);
+    {
+        u16 *field = (u16 *)(render_work + 0x536);
+        s32 shown = 0x3f3f;
+
+        *field = shown;
+    }
+    Call3(Func_02003d18, 10, 0x1180000, 0x1300000);
+    Call3(Func_02003d18, 11, 0x1280000, 0x1300000);
+    Func_02003d70(10, 0);
+    Call3(Func_02003d78, 2, 0x4000, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 3, 0x4000, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 1, 0x4000, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 0, 0x4000, 0);
+    Func_02003ca8(10);
+    Func_02003ca8(10);
+    Func_02003d90(10, 1);
+    Func_02003da0();
+    Func_02003ca8(70);
+    Call3(Func_02003d80, 11, 0x102, 40);
+    Func_02003d70(11, 0);
+    Func_02003e50(0, 10);
+    Func_02003e50(1, 10);
+    Func_02003e50(3, 10);
+    Func_02003e50(2, 10);
+    Call3(Func_02003cd0, 10, 0x16666, 0xb333);
+    Call3(Func_02003cd0, 11, 0x16666, 0xb333);
+    script = (s32)Data_0200c478;
+    Func_02003cd8(10, script);
+    Func_02003ca8(3);
+    Call3(Func_02003e48, 11, -16, 0);
+    Func_02003cd8(11, script);
+    Func_02003ce0(10);
+    Call3(Func_02003e48, 10, 0, -16);
+    Func_02003ce0(11);
+    Func_02003d78(10, 0, 0);
+    Func_02003d78(11, 0, 0);
+    Func_02003ce8(0);
+    Func_02003ce8(1);
+    Func_02003ce8(3);
+    Func_02003ce8(2);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Call3(Func_02003d78, 3, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    Call3(Func_02003d78, 9, 0x8000, 0);
+    Call4(Func_02003d98, 0xf80000, -1, 0xd80000, 1);
+    Func_02003da0();
+    Func_02003ca8(20);
+    Func_02003ca8(10);
+    Func_02003d40(10, 2);
+    Func_02003ca8(20);
+    Func_02003d70(10, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 9, 0x2000, 0);
+    Func_02003ca8(20);
+    Func_02003d40(9, 2);
+    Func_02003ca8(50);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 11, 0x101, 40);
+    Func_02003d70(11, 0);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 9, 0x8000, 0);
+    Func_02003ca8(10);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 10, 0x102, 40);
+    Func_02003d70(10, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x102, 40);
+    Func_02003d70(9, 0);
+    Func_02003e48(11, 16, 0);
+    Func_02003ca8(20);
+    Func_02003d40(11, 2);
+    Func_02003ca8(20);
+    Func_02003d70(11, 0);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(20);
+    Func_02003d70(9, 0);
+    Func_02003e48(10, 16, 0);
+    Func_02003ca8(20);
+    Func_02003d70(10, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x100, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d30(11, 4, 13);
+    Func_02003d30(11, 4, 30);
+    Func_02003d70(11, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x102, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d28(10, 3);
+    Func_02003ca8(30);
+    Func_02003d70(10, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 9, 0x2000, 0);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 10, 0x2000, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 11, 0x2000, 0);
+    Func_02003ca8(70);
+    Func_02003d78(11, 0, 0);
+    Func_02003ca8(10);
+    Func_02003d78(10, 0, 0);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 11, 0x101, 40);
+    Func_02003d70(11, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x102, 40);
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 9, 0x8000, 0);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d50(10, 11, 70);
+    Call3(Func_02003d78, 10, 0x2000, 0);
+    Call3(Func_02003d78, 11, 0x2000, 0);
+    Func_02003ca8(30);
+    Func_02003d28(10, 3);
+    Func_02003ca8(30);
+    Func_02003d28(11, 3);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Func_02003d40(11, 2);
+    Func_02003ca8(20);
+    Func_02003d70(11, 0);
+    Func_02003ca8(10);
+    Func_02003d50(1, 0, 0);
+    Func_02003d50(3, 2, 50);
+    Call3(Func_02003d78, 0, 0xc000, 0);
+    Call3(Func_02003d78, 1, 0xc000, 0);
+    Call3(Func_02003d78, 3, 0xc000, 0);
+    Call3(Func_02003d78, 2, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Func_02003d20(0, 3);
+    Func_02003d20(1, 3);
+    Func_02003d20(3, 3);
+    Func_02003d28(2, 3);
+    Func_02003ca8(30);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 11, 0x108, 40);
+    Func_02003d70(11, 0);
+    Func_02003ca8(10);
+    Func_02003d78(10, 0, 0);
+    Func_02003ca8(10);
+    Func_02003d78(11, 0, 0);
+    Func_02003ca8(30);
+    Func_02003d40(10, 2);
+    Func_02003ca8(20);
+    Func_02003d70(10, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x102, 40);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d20(10, 3);
+    Func_02003d28(11, 3);
+    Func_02003ca8(20);
+    Func_02003d28(9, 3);
+    Func_02003ca8(40);
+    Func_02003e50(0, 9);
+    Func_02003e50(1, 9);
+    Func_02003e50(3, 9);
+    Func_02003e50(2, 9);
+    Call3(Func_02003cd0, 9, 0x10000, 0x8000);
+    Call3(Func_02003e48, 9, -16, 0);
+    Func_02003e40(10, 0, 48);
+    Func_02003e40(11, 0, 48);
+    Call3(Func_02003e48, 9, -16, 0);
+    Func_02003e48(9, 0, 32);
+    Func_02003d20(10, 1);
+    Func_02003d20(11, 1);
+    Func_02003ce8(0);
+    Func_02003ce8(1);
+    Func_02003ce8(3);
+    Func_02003ce8(2);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 9, 0x100, 40);
+    Func_02003d78(9, 0, 0);
+    Func_02003ca8(20);
+    Func_02003d70(9, 0);
+    Call3(Func_02003d78, 10, 0xc000, 0);
+    Call3(Func_02003d78, 11, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003d40(1, 2);
+    Func_02003ca8(20);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Func_02003d48(1, 0, 30);
+    Func_02003d40(1, 2);
+    Func_02003ca8(20);
+    Func_02003d48(1, 9, 30);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Func_02003d28(2, 3);
+    Func_02003ca8(30);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d28(3, 3);
+    Func_02003ca8(30);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Func_02003d40(9, 2);
+    Func_02003ca8(20);
+    Func_02003d70(9, 0);
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 9, 0x4000, 0);
+    Func_02003ca8(70);
+    Func_02003d78(9, 0, 0);
+    Func_02003ca8(20);
+    Func_02003d70(9, 0);
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 9, 0x4000, 0);
+    Func_02003ca8(30);
+    Func_02003d28(9, 3);
+    Func_02003ca8(30);
+    Call2(Func_02003cd8, 11, (s32)Data_0200c4c8);
+    Call2(Func_02003cd8, 10, (s32)Data_0200c518);
+    Call2(Func_02003cd8, 9, (s32)Data_0200c57c);
+    Func_02003ca8(10);
+    Func_02003d50(1, 0, 0);
+    Func_02003d50(3, 2, 0);
+    Func_02003ce0(9);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 0, 0x100, 0);
+    Call3(Func_02003d80, 1, 0x100, 0);
+    Call3(Func_02003d80, 2, 0x100, 0);
+    Call3(Func_02003d80, 3, 0x100, 40);
+    Call3(Func_02003d78, 0, 0x4000, 0);
+    Call3(Func_02003d78, 1, 0x4000, 0);
+    Call3(Func_02003d78, 3, 0x4000, 0);
+    Call3(Func_02003d78, 2, 0x4000, 0);
+    Func_02003ca8(20);
+    Call4(Func_02003d98, 0xf80000, -1, 0xf80000, 1);
+    Func_02003da0();
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 9, 0xc000, 0);
+    Func_02003ca8(20);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d40(10, 2);
+    Func_02003ca8(20);
+    Call3(Func_02003d78, 10, 0x8000, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d78, 11, 0x8000, 0);
+    Func_02003ca8(20);
+    Func_02003d70(10, 0);
+    Func_02003ca8(10);
+    Func_02003d28(11, 4);
+    Func_02003ca8(30);
+    Func_02003d70(11, 0);
+    Func_02003ca8(20);
+    Call3(Func_02003d80, 9, 0x107, 40);
+    Func_02003d78(9, 0, 0);
+    Func_02003ca8(20);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 10, 0x102, 0);
+    Call3(Func_02003d80, 11, 0x102, 40);
+    Func_02003ca8(30);
+    Func_02003d48(10, 11, 60);
+    Call3(Func_02003d78, 10, 0x8000, 0);
+    Func_02003ca8(30);
+    Func_02003d28(10, 3);
+    Func_02003ca8(40);
+    Call3(Func_02003d78, 9, 0xc000, 0);
+    Func_02003ca8(30);
+    Func_02003d28(9, 3);
+    Func_02003ca8(30);
+    Func_02003d70(9, 0);
+    Func_02003ca8(10);
+    Func_02003d28(9, 3);
+    Func_02003ca8(30);
+    Func_02003d78(9, 0, 0);
+    Func_02003ca8(30);
+    Func_02003d28(9, 3);
+    Func_02003ca8(20);
+    Func_02003d20(10, 3);
+    Func_02003d28(11, 3);
+    Func_02003ca8(40);
+    Func_02003d78(10, 0, 0);
+    Func_02003ca8(20);
+    Func_02003d78(11, 0, 0);
+    Func_02003ca8(40);
+    Func_02003e40(9, 32, 0);
+    Func_02003e40(11, 0, 64);
+    Func_02003e48(10, 16, 0);
+    Func_02003e40(10, 0, 64);
+    Func_02003d10(9);
+    Func_02003e48(9, 0, 64);
+    Func_02003d18(9, 0, 0);
+    Func_02003d18(10, 0, 0);
+    Func_02003d18(11, 0, 0);
+    step = 0;
+    work = 16;
+    Func_02003ca8(20);
+    do {
+        {
+            s32 shown = 0x3f42;
+
+            *(volatile u16 *)0x04000050 = shown;
+        }
+        *(volatile u16 *)0x04000052 = ((work << 8) | step);
+        step = (step + 1);
+        Func_02003c00(7);
+        work = (work - 1);
+    } while (step <= 16);
+    {
+        u16 *field = (u16 *)(render_work + 0x52a);
+        s32 shown = 5;
+
+        *field = shown;
+    }
+    {
+        u16 *field = (u16 *)(render_work + 0x536);
+        s32 shown = 31;
+
+        *field = shown;
+    }
+    Func_02003c00(1);
+    {
+        u16 control;
+
+        control = 0x3f42;
+        *(volatile u16 *)0x04000050 = control;
+        control = 0xc04;
+        *(volatile u16 *)0x04000052 = control;
+    }
+    Func_02003da8(0, 1);
+    Func_02003da0();
+    Func_02003ca8(10);
+    Func_02003d40(1, 2);
+    Func_02003ca8(20);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Func_02003d28(2, 3);
+    Func_02003ca8(30);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 3, 0x102, 40);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Func_02003d48(1, 0, 0);
+    Func_02003ca8(20);
+    Value2(Func_02003d68, 1, 0);
+    Func_02003d48(3, 0, 0);
+    Func_02003d48(2, 0, 0);
+    if (Value2(Func_02003cc0, 0, 0) == 0) {
+        Func_02003ca8(10);
+        Func_02003d40(1, 2);
+        Func_02003ca8(20);
+        Call1(Func_02003d60, 0x21ce);
+        Func_02003d70(1, 0);
+    } else {
+        Func_02003ca8(10);
+        Func_02003d40(1, 2);
+        Func_02003ca8(20);
+        Call1(Func_02003d60, 0x21cf);
+        Func_02003d70(1, 0);
+    }
+    Call1(Func_02003d60, 0x21d0);
+    Func_02003ca8(10);
+    Func_02003d28(2, 4);
+    Func_02003ca8(30);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d28(3, 3);
+    Func_02003ca8(30);
+    Func_02003d70(3, 0);
+    Func_02003ca8(10);
+    Call3(Func_02003d80, 1, 0x102, 40);
+    Func_02003d70(1, 0);
+    Func_02003ca8(10);
+    Func_02003d28(2, 3);
+    Func_02003ca8(30);
+    Func_02003d70(2, 0);
+    Func_02003ca8(10);
+    Func_02003d40(3, 2);
+    Func_02003ca8(20);
+    Func_02003d70(3, 0);
+    Func_02003ca8(20);
+    Call3(Func_02003d80, 1, 0x100, 40);
+    Func_02003d70(1, 0);
+    Value2(Func_02003d68, 1, 0);
+    if (Value2(Func_02003cc0, 0, 0) == 0) {
+        Func_02003ca8(10);
+        Func_02003d28(1, 3);
+        Func_02003ca8(30);
+        Call1(Func_02003d60, 0x21d7);
+        Func_02003d70(1, 0);
+        Func_02003ca8(10);
+        Func_02003d50(3, 2, 50);
+        Call3(Func_02003d78, 3, 0xc000, 0);
+        Call3(Func_02003d78, 2, 0xc000, 0);
+        Func_02003ca8(30);
+        Func_02003d70(2, 0);
+        Func_02003ca8(20);
+        Func_02003d20(0, 3);
+        Func_02003d20(1, 3);
+        Func_02003d20(3, 3);
+        Func_02003d28(2, 3);
+        Func_02003ca8(30);
+    } else {
+        Func_02003ca8(10);
+        Func_02003d28(1, 4);
+        Func_02003ca8(30);
+        Call1(Func_02003d60, 0x21d9);
+        Func_02003d70(1, 0);
+        Func_02003ca8(10);
+        Func_02003d50(3, 2, 50);
+        Call3(Func_02003d78, 3, 0xc000, 0);
+        Call3(Func_02003d78, 2, 0xc000, 0);
+        Func_02003ca8(30);
+        Func_02003d70(2, 0);
+        Func_02003ca8(10);
+        Func_02003d28(0, 3);
+        Func_02003ca8(20);
+        Func_02003d28(2, 3);
+        Func_02003ca8(20);
+        Func_02003d28(3, 3);
+        Func_02003ca8(30);
+        Call3(Func_02003d80, 1, 0x102, 70);
+    }
+    Func_02003e70(17);
+    Call3(Func_02003cd0, 1, 0x13333, 0x9999);
+    Call3(Func_02003cd0, 2, 0x13333, 0x9999);
+    Call3(Func_02003cd0, 3, 0x13333, 0x9999);
+    Func_02003d20(1, 2);
+    object = Func_02003cc8(0);
+    if ((s32)object != 0) {
+        Func_02003cf0(1, *(s16 *)((s32)object + 10), *(s16 *)((s32)object + 18));
+    }
+    Func_02003d10(1);
+    Func_02003d18(1, 0, 0);
+    Func_02003d20(2, 2);
+    object = Func_02003cc8(0);
+    if ((s32)object != 0) {
+        Func_02003cf0(2, *(s16 *)((s32)object + 10), *(s16 *)((s32)object + 18));
+    }
+    Func_02003d10(2);
+    Func_02003d18(2, 0, 0);
+    Func_02003d20(3, 2);
+    object = Func_02003cc8(0);
+    if ((s32)object != 0) {
+        Func_02003cf0(3, *(s16 *)((s32)object + 10), *(s16 *)((s32)object + 18));
+    }
+    Func_02003d10(3);
+    Func_02003d18(3, 0, 0);
+    Func_02003df0();
+    Func_02003cb8();
+}

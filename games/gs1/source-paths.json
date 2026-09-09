@@ -17889,6 +17889,10 @@
     "main:0808ce74": {
       "name": "Map_GetFocusedObjectTile",
       "source": "map/get_focused_object_tile.c"
+    },
+    "main:0808e14c": {
+      "name": "Map_FindMatchingTrigger",
+      "source": "map/find_matching_trigger.c"
     }
   }
 }

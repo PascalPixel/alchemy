@@ -76,6 +76,10 @@
       "reason": "Func_080f9f3c consumes caller-held r4/r5 state, and the Func_080fa678 dependency reaches the call-via-r1 thunk. Convert the voice module jointly with explicit function-pointer and helper context.",
       "resolved": true,
       "resolution": "Converted as a whole module and registered in games/gs1/semantic/main-regions.json. Re-probed 2026-07-31 with the call_via thunk bank documented; for 080c1798 and 08095778 the blocker premise was disproved outright."
+    },
+    "080f9ef8": {
+      "class": "misrouted_compiler_family",
+      "reason": "MusicTrack_Stop is routed to the canonical Game family but the ROM says it is Agbcc. It begins 70b5 = push {r4,r5,r6,lr}, and the canonical route passes -fcall-used-r4, which cannot save r4. Its first 64 bytes are byte-identical to gs2-en 081c1b94, the shared prebuilt sound engine, and its immediate register neighbours 080f9a30, 080f9a50 and 080fa1fc are already members of AGBCC_SOURCES while 080f9ef8 is not. Measured 2026-09-09 while auditing GS2 compiler routing. Nothing compiles it today because the owner is still retained assembly, but the routing test game_code_always_compiles_with_the_canonical_flags in tools/alchemy/src/compiler/routing.rs names 080f9ef8.c in its canonical-flags list, so the first ordinary C written for it would be compiled by the wrong family and could not match. Family membership is provenance and only Pascal may change a family route; this entry records the evidence and proposes moving the owner to AGBCC_SOURCES and choosing a different example for that test."
     }
   }
 }

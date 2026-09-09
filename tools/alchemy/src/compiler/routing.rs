@@ -97,20 +97,39 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
             .display()
     )
 }
+/// Whether the game's own code was built to interwork with ARM callers.
+///
+/// This is a per-game build fact read off the shipped images, not a tuning.
+/// GS1 interworks: 1174 of its 1195 located gs1-en functions return through
+/// `pop {rN}; bx rN`. GS2 does not: 1539 of 1581 gs2-en functions return with
+/// `pop {..., pc}`, which arm.c `thumb_exit` reaches only when TARGET_INTERWORK
+/// is clear, and the battle owner's epilogue at 08120454+0x2054 matches that
+/// output byte for byte while GS1's owner matches the interworking output.
+/// GS2's remaining interworking returns sit in objects inherited from the GS1
+/// build, which keep the Agbcc family and its own flag set.
+fn interworks(target: CompilerTarget) -> bool {
+    match target {
+        CompilerTarget::Gs1 => true,
+        CompilerTarget::Gs2 => false,
+    }
+}
 fn base_cflags(target: CompilerTarget) -> Vec<String> {
-    let mut flags: Vec<String> = [
-        "-O2",
-        "-mthumb",
-        "-mthumb-interwork",
+    let mut flags: Vec<String> = ["-O2", "-mthumb"]
+        .iter()
+        .map(|s| (*s).to_string())
+        .collect();
+    if interworks(target) {
+        flags.push("-mthumb-interwork".to_string());
+    }
+    for flag in [
         "-mcpu=arm7tdmi",
         "-fno-builtin",
         "-nostdinc",
         "-ffreestanding",
         "-fcall-used-r4",
-    ]
-    .iter()
-    .map(|s| (*s).to_string())
-    .collect();
+    ] {
+        flags.push(flag.to_string());
+    }
     flags.push(include_flag(target));
     flags
 }
@@ -194,11 +213,30 @@ mod target_tests {
         assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
         assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
         assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
-        assert_eq!(&gs1[..gs1.len() - 1], &gs2[..gs2.len() - 1]);
+        let shared: Vec<&String> = gs1
+            .iter()
+            .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
+            .collect();
+        let derived: Vec<&String> = gs2.iter().filter(|flag| !flag.starts_with("-I")).collect();
+        assert_eq!(shared, derived);
         for flags in [&gs1, &gs2] {
             assert!(!flags
                 .iter()
                 .any(|flag| flag == "-mthumb-inline-register-call"));
+        }
+    }
+    /// The images disagree about interworking, so the two Game routes do too.
+    /// GS2 keeps the -fcall-used-r4 ABI: only 29 of 1414 measured gs2-en
+    /// functions save r4, and all of those are inherited Agbcc-family objects.
+    #[test]
+    fn only_gs1_game_code_interworks() {
+        let gs1 = cflags_for_target_source(CompilerTarget::Gs1, "080bbb0c.c");
+        let gs2 = cflags_for_target_source(CompilerTarget::Gs2, "08120454.c");
+        assert!(gs1.iter().any(|flag| flag == "-mthumb-interwork"));
+        assert!(!gs2.iter().any(|flag| flag == "-mthumb-interwork"));
+        for flags in [&gs1, &gs2] {
+            assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
+            assert!(flags.iter().any(|flag| flag == "-mthumb"));
         }
     }
     #[test]

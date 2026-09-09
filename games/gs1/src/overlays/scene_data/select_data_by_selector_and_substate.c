@@ -10,7 +10,8 @@ extern u8 Data_0200be94[];
 extern u8 Data_0200bf60[];
 extern u8 Data_0200be64[];
 
-s32 SceneData_SelectDataBySelectorAndSubstate(void) {
+s32 SceneData_SelectDataBySelectorAndSubstate(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_0000008d) {

@@ -11,7 +11,6 @@
 #define Data_03001ebc Data_03001ecc
 #endif
 
-/* Ordinary C field access retained from the reviewed disassembly dataflow. */
 extern u8 *Data_03001ebc;
 extern u8 Data_02000240[];
 extern u8 Value_0000003a;
@@ -19,14 +18,11 @@ extern u8 Value_0000003a;
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /*
- * resource_39d owner 0x02000b24..0x02001aef (0x0fcc = 4044 bytes).
- *
- * Reviewed scene-58 renderer setup: every call, conditional, pool constant,
- * record-field write, and workspace-counter update is retained from the local
- * overlay disassembly. Imported names are resolved with overlay_call_targets.ts;
- * old-style declarations are intentional where the image exposes no prototype.
- * The interworking epilogue is at 0x02001ad4..0x02001ad8; the 22-byte
- * literal/alignment tail ends immediately before the next prologue.
+ * resource_39d: scene-58 renderer setup.  The owner runs from 0x02000b24 to
+ * its interworking epilogue at 0x02001ad4 and includes the 22-byte literal and
+ * alignment tail that ends immediately before the next prologue, 4044 bytes in
+ * all.  The declarations below are old-style because the image exposes no
+ * prototype for these calls; call sites vary in arity.
  */
 
 extern void Func_02003208();
@@ -64,7 +60,10 @@ extern void Func_0808a250();
 extern void Func_0808a260();
 extern void Func_080f9010();
 
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
+/*
+ * Loader-relocated ROM calls: each name spells the pre-relocation call word
+ * the image holds, not a runtime address.
+ */
 void Func_020041d2();
 void Func_02004200();
 s32 Func_0200421e();
@@ -521,7 +520,8 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-void RunScene58Sequence(void) {
+void RunScene58Sequence(void)
+{
     void *temp_r0;
     void *temp_r0_10;
     void *temp_r0_11;
@@ -545,7 +545,7 @@ void RunScene58Sequence(void) {
 
     Call0(Func_02004200);
     temp_r0 = Value1(Func_0200421e, 0x11);
-    FIELD(temp_r0, u8 *, 0x55) = (u8) (0xFA & FIELD(temp_r0, u8 *, 0x55));
+    FIELD(temp_r0, u8 *, 0x55) = (u8)(0xFA & FIELD(temp_r0, u8 *, 0x55));
     Call3(Func_0200423a, 0, 0x0000cccc, 0x00006666);
     Call3(Func_02004244, 1, 0x0000cccc, 0x00006666);
     Call3(Func_0200424e, 2, 0x0000cccc, 0x00006666);
@@ -621,10 +621,10 @@ void RunScene58Sequence(void) {
         Call1(Func_0200448c, 0x14);
         Call3(Func_02004546, 1, 0, 0x14);
         temp_r2 = Data_03001ebc;
-        FIELD(temp_r2, u16 *, 0x1D8) = (u16) (FIELD(temp_r2, u16 *, 0x1D8) + 2);
+        FIELD(temp_r2, u16 *, 0x1D8) = (u16)(FIELD(temp_r2, u16 *, 0x1D8) + 2);
     } else {
         temp_r2_2 = Data_03001ebc;
-        FIELD(temp_r2_2, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_2, u16 *, 0x1D8) + 2);
+        FIELD(temp_r2_2, u16 *, 0x1D8) = (u16)(FIELD(temp_r2_2, u16 *, 0x1D8) + 2);
         Call1(Func_020044d0_a, 0x14);
         Call3(Func_020045a2, 3, 0x00000101, 0x3C);
         Call3(Func_0200459e, 1, 0x4000, 0xA);
@@ -787,7 +787,7 @@ void RunScene58Sequence(void) {
     Call2(Func_02004b42, 0x16, 0);
     Call1(Func_02004aa0, 0x14);
     temp_r0_5 = Value1(Func_02004ac6, 1);
-    FIELD(temp_r0_5, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_5, u8 *, 0x5A));
+    FIELD(temp_r0_5, u8 *, 0x5A) = (u8)(0xFE & FIELD(temp_r0_5, u8 *, 0x5A));
     Call3(Func_02004afe, 1, 0x148, 0xE0);
     Call3(Func_02004b0a, 0, 0x158, 0xE0);
     Call3(Func_02004b16_a, 2, 0x158, 0xE8);
@@ -859,7 +859,7 @@ void RunScene58Sequence(void) {
     Call3(Func_02004dec, 5, 0, 0x14);
     Call3(Func_02004df8, 0x15, 0x3000, 0x14);
     temp_r0_7 = Func_02004d66_a(0x15);
-    FIELD(temp_r0_7, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_7, u8 *, 0x5A));
+    FIELD(temp_r0_7, u8 *, 0x5A) = (u8)(0xFE & FIELD(temp_r0_7, u8 *, 0x5A));
     Call3(Func_02004da2, 0x15, 0x58, 0x98);
     temp_r0_8 = Value1(Func_02004d80, 0x15);
     bits = FIELD(temp_r0_8, u8 *, 0x5A) | flag;
@@ -872,7 +872,7 @@ void RunScene58Sequence(void) {
     FIELD(Value1(Func_02004dbe, 0x17), s32 *, 0x28) = 0x40000;
     Call1(Func_02004f1a, 0x98);
     temp_r0_9 = Value1(Func_02004dd0, 0x17);
-    FIELD(temp_r0_9, u8 *, 0x55) = (u8) (0x7E & FIELD(temp_r0_9, u8 *, 0x55));
+    FIELD(temp_r0_9, u8 *, 0x55) = (u8)(0x7E & FIELD(temp_r0_9, u8 *, 0x55));
     Call2(Func_02004d86, Func_02004de0(0x17), 0);
     FIELD(Func_02004dec_b(0x11), s8 *, 0x55) = 4;
     Call3(Func_02004e14, 0x17, 0x68, 0xA8);
@@ -917,7 +917,7 @@ void RunScene58Sequence(void) {
     Call3(Func_02005036, 1, 0x100, 0x3C);
     Call3(Func_02004fa4, 1, 0x20000, 0x10000);
     temp_r0_10 = Value1(Func_02004fa2, 1);
-    FIELD(temp_r0_10, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_10, u8 *, 0x5A));
+    FIELD(temp_r0_10, u8 *, 0x5A) = (u8)(0xFE & FIELD(temp_r0_10, u8 *, 0x5A));
     Call3(Func_02004fde, 1, 0x148, 0xE0);
     Call1(Func_02004f9c, 1);
     temp_r0_11 = Value1(Func_02004fc2, 1);
@@ -949,13 +949,13 @@ void RunScene58Sequence(void) {
         Value1(Func_02005066_b, 0x14);
         Call3(Func_02005120, 0x16, 0, 0x14);
         temp_r2_3 = Data_03001ebc;
-        FIELD(temp_r2_3, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_3, u16 *, 0x1D8) + 1);
+        FIELD(temp_r2_3, u16 *, 0x1D8) = (u16)(FIELD(temp_r2_3, u16 *, 0x1D8) + 1);
     } else {
         Call1(Func_02005098_a, 0x14);
         Call2(Func_02005108, 0x16, 4);
         Call1(Func_020050a6, 0x14);
         temp_r2_4 = Data_03001ebc;
-        FIELD(temp_r2_4, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_4, u16 *, 0x1D8) + 1);
+        FIELD(temp_r2_4, u16 *, 0x1D8) = (u16)(FIELD(temp_r2_4, u16 *, 0x1D8) + 1);
         Value3(Func_02005170, 0x16, 0, 0x14);
     }
     Call2(Func_02005140, 0x16, 2);
@@ -965,7 +965,7 @@ void RunScene58Sequence(void) {
     Call2(Func_02005164, 0x16, 2);
     Call3(Func_020051b0, 0x16, 0xB000, 0x14);
     temp_r0_12 = Value1(Func_0200511e, 0x16);
-    FIELD(temp_r0_12, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_12, u8 *, 0x5A));
+    FIELD(temp_r0_12, u8 *, 0x5A) = (u8)(0xFE & FIELD(temp_r0_12, u8 *, 0x5A));
     Call3(Func_0200515c, 0x16, 0x150, 0xD0);
     Call1(Func_0200511a, 1);
     temp_r0_13 = Func_02005140_a(0x16);

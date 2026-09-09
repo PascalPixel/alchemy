@@ -7,7 +7,8 @@ s32 Func_0808a348(s32);
 void Func_0800c62c(void);
 void Func_0800c880(void);
 
-void Graphics_EnableObjLayerAndCallbacks(void) {
+void Graphics_EnableObjLayerAndCallbacks(void)
+{
     Func_080042c8((u32)Func_0800c62c);
     Func_080042c8((u32)Func_0800c880);
     Func_0808a330(0x10000, 1);

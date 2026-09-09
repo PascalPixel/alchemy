@@ -629,110 +629,42 @@ s32 Func_02002382();
 s32 Func_02002384(void);
 s32 Func_02002418(void);
 
-/*
- * resource_3ce owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000034 holding 0x20093c8.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0xc. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000034 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x20093c8 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
- */
-
-/* Contiguous unnamed state-owner run for resource_3ce. */
+/* Scene state, dialogue and command-table steps for resource_3ce. */
 
 /*
- * resource_3ce owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000040 holding 0x20093f8.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x14. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000040 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x20093f8 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Table getter at 0x02000030. The eight-byte owner includes its one pool word
+ * at 0x02000034, which holds 0x020093c8; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
  */
 
 /*
- * resource_3ce owner at 0x02000044, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000048 holding 0x20093fc.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x1c. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000048 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x20093fc is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Table getter at 0x0200003c. The eight-byte owner includes its one pool word
+ * at 0x02000040, which holds 0x020093f8; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
  */
 
-/* 問い合わせが非零を返すまで毎回1で進行させる。判定は後置、入口は判定へ飛ぶ。 */
+/*
+ * Table getter at 0x02000044. The eight-byte owner includes its one pool word
+ * at 0x02000048, which holds 0x020093fc; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
+ */
+
+/* Step by one until the query returns non-zero. The test sits at the bottom of
+ * the loop and entry jumps to it. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call instead precomputes a costly constant
+ * into a pseudo shared with later uses in the block. A value-returning call
+ * sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
+/* Each symbol here is the per-site call word the overlay image holds -- one
+ * word can serve two sites with different targets -- and the macro keeps the
+ * site's own calling form. The names themselves are provisional. */
 
 /* Runs one setup call, then a long table of two-argument calls each passing
  * a slot index (0-3) and an associated code value, and finishes with a few
@@ -832,48 +764,59 @@ end:
     Func_020012b4(token, 2);
 }
 
-void SceneState_ApplyBlockC9b(void) {
+void SceneState_ApplyBlockC9b(void)
+{
     Func_020001b6((s32)&Value_00000c9b, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockCc6(void) {
+void SceneState_ApplyBlockCc6(void)
+{
     Func_020001ce((s32)&Value_00000cc6, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockCf1(void) {
+void SceneState_ApplyBlockCf1(void)
+{
     Func_020001e8((s32)&Value_00000cf1, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockD21(void) {
+void SceneState_ApplyBlockD21(void)
+{
     Func_02000206((s32)&Value_00000d21, (s32)&Value_00000d4c - (s32)&Value_00000d21);
 }
 
-void SceneState_ApplyBlockD4c(void) {
+void SceneState_ApplyBlockD4c(void)
+{
     Func_02000220((s32)&Value_00000d4c, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockD77(void) {
+void SceneState_ApplyBlockD77(void)
+{
     Func_02000240((s32)&Value_00000d77, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockDa2(void) {
+void SceneState_ApplyBlockDa2(void)
+{
     Func_02000260((s32)&Value_00000da2, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyOne(void) {
+void SceneState_ApplyOne(void)
+{
     Func_0200148e(1);
 }
 
-void SceneState_NoOp(void) {
+void SceneState_NoOp(void)
+{
 }
 
-void SceneState_QueryTwoValues(void) {
+void SceneState_QueryTwoValues(void)
+{
     s32 a;
     s32 b;
     Func_020014b2(&a, &b);
 }
 
-void SceneState_ApplyZero(void) {
+void SceneState_ApplyZero(void)
+{
     Func_0200142a(0);
 }
 
@@ -881,11 +824,13 @@ void CommandTable_NoOpCallback(void)
 {
 }
 
-void SceneState_SetRecordFlag53(void) {
+void SceneState_SetRecordFlag53(void)
+{
     Data_03001f30[0][0x35] = 1;
 }
 
-s32 SceneData_GetTable9564(void) {
+s32 SceneData_GetTable9564(void)
+{
     return (s32)Data_02009564;
 }
 
@@ -1111,7 +1056,8 @@ void FieldScene_GrantItemListToSlots(void)
     BattleUnit_Recalculate_4(2);
 }
 
-void CommandTable_ConfigureCommandGroups(void) {
+void CommandTable_ConfigureCommandGroups(void)
+{
     u8 buf[256];
     Func_02001a7e(0xc1d, 1);
     Func_02001b38(0, 0, 0);
@@ -1201,7 +1147,8 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     Func_02001dc6(2);
 }
 
-void FieldScene_AssignCodeSetAToSlots(void) {
+void FieldScene_AssignCodeSetAToSlots(void)
+{
     Func_02001d70(0xc1f, 1);
     Func_02001df8(0, 85);
     Func_02001e00(0, 84);
@@ -1303,7 +1250,8 @@ void FieldScene_AssignCodeSetBToSlots(void)
     Func_020022b6(2);
 }
 
-s32 CommandTable_ConfigureCommandList(void) {
+s32 CommandTable_ConfigureCommandList(void)
+{
     Func_02002306(5);
     Func_02002304(1);
     Func_0200230a(3);

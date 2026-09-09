@@ -9,7 +9,8 @@ void Func_08009128(void);
 void *Runtime_AllocateBlock(s32 id, s32 flag);
 void WaitFrames(s32);
 
-void Object_AttachWorkTargetToObject(s32 id, s32 flag) {
+void Object_AttachWorkTargetToObject(s32 id, s32 flag)
+{
     s32 obj;
     void *target;
     void *work;
@@ -23,9 +24,9 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag) {
         *p = (s32)((u8 *)target + 8);
         Func_080090e0(target, (void *)obj);
         if (flag == 0) {
-            FIELD_AT_OFFSET(target, s32 *, 8) = (s32) FIELD_AT_OFFSET(obj, s32 *, 8);
-            FIELD_AT_OFFSET(target, s32 *, 0xC) = (s32) FIELD_AT_OFFSET(obj, s32 *, 0xC);
-            FIELD_AT_OFFSET(target, s32 *, 0x10) = (s32) FIELD_AT_OFFSET(obj, s32 *, 0x10);
+            FIELD_AT_OFFSET(target, s32 *, 8) = (s32)FIELD_AT_OFFSET(obj, s32 *, 8);
+            FIELD_AT_OFFSET(target, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0xC);
+            FIELD_AT_OFFSET(target, s32 *, 0x10) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0x10);
             WaitFrames(1);
             if (FIELD_AT_OFFSET(work, s16 *, 0x19E) != 3) {
                 Func_08009128();

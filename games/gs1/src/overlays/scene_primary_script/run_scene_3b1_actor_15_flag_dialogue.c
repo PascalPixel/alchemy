@@ -28,7 +28,8 @@ extern u8 Value_00000929;
 extern u8 Value_0000093c;
 extern u8 Value_00000933;
 
-void FieldScene_RunActor15FlagDialogue(void) {
+void FieldScene_RunActor15FlagDialogue(void)
+{
     if (Func_02007454(0x300) != 0) {
         u8 *o = Func_02002298();
         u8 *p;

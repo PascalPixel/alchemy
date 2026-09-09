@@ -107,7 +107,6 @@ s32 Func_02002b3e();
 s32 Func_02002b72();
 void Func_020068a0();
 
-
 struct ObjectRuntime *Func_020069e6();
 void Func_02006afa();
 s32 Func_020069dc();

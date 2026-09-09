@@ -11,12 +11,13 @@ u8 Func_02003bd6(void *, s32);
 #define RunEffectAction3 Func_02003bcc
 #define RunEffectAction4 Func_02003bd6
 
-s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect) {
+s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
+{
     u32 action;
     u32 next_timer;
 
     if (effect->action_timer == 0) {
-        action = (u32) (SampleEffectAction() * 8) >> 0x10;
+        action = (u32)(SampleEffectAction() * 8) >> 0x10;
         switch (action) {
         case 0:
             RunEffectAction3(effect, 3);
@@ -26,11 +27,11 @@ s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect) {
             break;
         case 3:
         case 4:
-            effect->unknown_06 += (u32) (SampleEffectOffset() << 0xF) >> 0x10;
+            effect->unknown_06 += (u32)(SampleEffectOffset() << 0xF) >> 0x10;
             break;
         }
-        next_timer = (u32) (SampleEffectTimer() * 0x50) >> 0x10;
-        effect->action_timer = (s16) next_timer;
+        next_timer = (u32)(SampleEffectTimer() * 0x50) >> 0x10;
+        effect->action_timer = (s16)next_timer;
         if (next_timer != 0) {
             goto decrement_timer;
         }

@@ -19,7 +19,8 @@ extern s32 Func_08002dd8(s32);
 extern s32 Data_08029a10[];
 extern s32 Data_08029e00[];
 
-void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag) {
+void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag)
+{
     T *work;
 
     work = Runtime_AllocateHeapBlock(0x11, 0x608);

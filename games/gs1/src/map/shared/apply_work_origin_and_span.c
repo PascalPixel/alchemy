@@ -6,7 +6,8 @@
 s32 Func_08010000();
 s32 Func_08010230(s32, s32);
 
-void Map_ApplyWorkOriginAndSpan(void) {
+void Map_ApplyWorkOriginAndSpan(void)
+{
     s32 first;
     s32 third;
     s32 second;

@@ -17,7 +17,8 @@ struct State080a8034 {
 s32 Func_080a1814(void *);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 
-void Menu_InitSelectorCursorAndEntries(void) {
+void Menu_InitSelectorCursorAndEntries(void)
+{
     struct State080a8034 *state;
 
     state = *(struct State080a8034 **)ADDR_03001F2C;

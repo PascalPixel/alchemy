@@ -12,7 +12,8 @@ extern void Func_020040bc(s32);
 extern s32 Func_020040e4(s32, s32);
 extern void Func_02004008(void);
 
-void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void) {
+void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
+{
     struct Obj *o;
     u32 v;
 

@@ -6,7 +6,8 @@
 s32 Runtime_AllocateBlock(s32, s32);
 void ObjectMotion_PlaceWithinCameraBounds(s32, s32, s32, s32);
 
-void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1) {
+void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
+{
     void *obj;
 
     obj = ObjectTable_Get();

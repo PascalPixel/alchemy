@@ -1,18 +1,11 @@
 /*
- * resource_3c4 @ 0x020023a0 (112 bytes).
- *
- * One six-argument placement, then two identical follow-ups that pin an
- * overlay at the 12.20 grid cell of slots 8 and 9: the slot's +8 and +16
- * words are each shifted right by 20 (signed `asrs`) and passed as the two
+ * Setup step in resource_3c4. One six-argument placement, then two identical
+ * follow-ups that pin an overlay at the 12.20 grid cell of slots 8 and 9: the
+ * slot's +8 and +16 words are each shifted right by 20 and passed as the two
  * stack arguments of the placement call.
  *
- * Exact-reconstruction transcription: each `bl` site keeps its own raw overlay_show
- * target name (HANDOVER section 2), even though overlay_call_targets.ts
- * resolves all eight sites to the same three real veneers
- * (Func_080091c0 x3, Scene_GetRecord x4, Func_02000f10 x1) -- the raw address
- * IS the assembler's encoding, verbatim.
- *
- * `add sp,#8 ; pop {r5} ; pop {r0} ; bx r0` return: void.
+ * Several call sites reach the same routine, but each keeps its own call
+ * word; the sites must not be collapsed onto one alias.
  */
 #include "types.h"
 

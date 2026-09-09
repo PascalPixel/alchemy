@@ -11,7 +11,8 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Func_08097adc(void);
 extern u8 Data_08097645;
 
-void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
+void BattleEffect_FinishSceneAndReleaseHeapBlock(void)
+{
     void *work;
 
     work = *(void **)ADDR_03001EA8;

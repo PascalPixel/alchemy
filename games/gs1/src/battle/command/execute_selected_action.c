@@ -9,35 +9,41 @@ struct BattleCommandRuntime {
     u8 pad1a0[0xb26]; u8 resolving_action;
 };
 
-/* Declared struct BattleRuntime * to match the canonical extern in
- * battle_effect_runtime.h / main:0808e23c; this owner's own local view is
- * obtained with a cast below. */
+/*
+ * Declared struct BattleRuntime * to match the shared extern in
+ * battle_effect_runtime.h; the local view of the same storage is obtained by
+ * a cast below.
+ */
 extern struct BattleRuntime *Data_03001ebc;
 extern u8 Value_00000920;
-/* u8 *-returning to match the prototype the exact owner battle_owner_23.c
- * uses under its Ability_GetData alias; this owner casts the raw pointer to
- * its own local view below. */
+/*
+ * Returns u8 * to match the prototype shared with the other callers; the raw
+ * pointer is cast to the local action-definition view below.
+ */
 u8 *Func_08077080(s32);
-/* Declared void *-returning: main:0808e23c shares this symbol through a
- * different local view (struct BattleUnitObject, for the abilities table);
- * both callers cast the shared pointer to their own struct locally. */
+/*
+ * Returns void * because callers view the same record through different
+ * structs; each casts the shared pointer to its own view locally.
+ */
 void *Func_08077008(s32);
 void *Func_0808ba1c(s32);
 void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
 void Func_08015120(s32, s32); void Func_08015040(s32, s32);
 s32 Func_08091d84(s32); void Func_08015140(void);
-/* s32 parameter to match the exact owner's definition (battle_owner_23.c
- * defines Func_0808e5d8(s32 packedEffect)). */
+/* Takes an s32 to match the definition of the packed effect argument. */
 s32 Func_0808e5d8(s32);
 void Func_08077120(s32, s32);
-/* Matches the prototype agreed by the exact owners (battle_owner_23.c,
- * runtime_owner_207.c): s32-returning, u16 second parameter, void * out
- * parameter. Results here are cast back to struct BattleTargetCandidate *. */
+/*
+ * Matches the shared prototype: s32-returning, with a void * out parameter.
+ * Results are cast back to struct BattleTargetCandidate * here.
+ */
 s32 Func_0808e4b4(s32, s32, void *);
 void Func_080770c8(s32); s32 Func_0808df1c(s32, s32); void Func_0808b8e8(void);
 void Func_08096fb0(s32, s32); void Func_080970f8(s32, s32); void Func_0809728c(void);
-/* s32-returning to match the prototype in the exact owner battle_owner_23.c
- * (the return value is discarded at every call site, here and there). */
+/*
+ * Returns s32 to match the shared prototype, although every call site
+ * discards the value.
+ */
 s32 Func_08096b28(void *, s32, s32); void Func_08096960(void); void Func_08096810(void);
 void Func_08097174(void); void Func_08096ab0(void); void Func_08097194(void); void Func_0808b98c(void);
 
@@ -96,7 +102,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         cost = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->pp_cost;
         if (((struct BattleUnitRecord *)Func_08077008(actor))->pp < cost) {
             Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91e, 1);
-            if (specialResult) runtime->result_code = 0;
+            if (specialResult)runtime->result_code = 0;
             return 0;
         }
         Func_08077120(actor, -cost);

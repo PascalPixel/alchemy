@@ -8,7 +8,8 @@ s32 Menu_SelectResource(s32, s32);
 void Func_0802851c(void);
 void Func_0801c2e4(void);
 
-s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
+s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
+{
     Func_0801c2d0();
     Func_080284dc();
     Menu_AppendResourceEntry(1);

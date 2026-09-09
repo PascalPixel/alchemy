@@ -122,7 +122,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
         kind = 8;
     }
     Call3(Func_020080dc, kind, 0x105, 0);
-    while (Value0(Func_020081b0) != 0) {
+    while (Value0(Func_020081b0)!= 0) {
         Func_02007e44(1);
     }
     Func_020081b2(19);
@@ -168,12 +168,12 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     Func_02006be4(p11, 2);
     {
         u8 value = *(volatile u8 *)&rec[35];
-    
+
         rec[35] = (u8)(value | v5);
     }
     {
         s32 shown = 0x4000;
-    
+
         *(volatile u16 *)((s32)rec + 6) = shown;
     }
     Func_02006aa6((s32)rec, 3);

@@ -9,7 +9,8 @@ extern void Func_02003dc6(s32 a);
 extern void Func_02003dd8(s32 a);
 extern void Func_02003dee(s32 a);
 
-void SceneActor_BobActorZeroWhenAheadClear(void) {
+void SceneActor_BobActorZeroWhenAheadClear(void)
+{
     s32 pos[3];
     s32 *actor = Func_02003e40(0);
     u8 *fp = (u8 *)actor + 0x55;
@@ -18,7 +19,7 @@ void SceneActor_BobActorZeroWhenAheadClear(void) {
     pos[0] = (actor[2] & 0xfff00000) + 0x80000;
     pos[1] = actor[3];
     pos[2] = (actor[4] & 0xfff00000) + 0x280000;
-    if (Func_02001d82(pos) != 0) {
+    if (Func_02001d82(pos)!= 0) {
         Func_02003e5e();
         *fp = 0;
         Func_02003ec2_a(9, 7);

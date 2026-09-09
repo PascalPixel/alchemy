@@ -20,7 +20,8 @@ struct Runtime_080bb8e8 *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 s32 Func_080bac6c(s32);
 
-s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
+s32 BattleActor_DestroyTemporaryObject(s32 arg0)
+{
     s32 result;
     struct Creature_080bb8e8 *creature;
     struct Runtime_080bb8e8 *runtime;
@@ -36,5 +37,5 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
         runtime->field_28 = 0;
         return result;
     }
-    return (s32) creature;
+    return (s32)creature;
 }

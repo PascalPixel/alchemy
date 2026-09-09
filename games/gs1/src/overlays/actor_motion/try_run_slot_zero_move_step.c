@@ -13,7 +13,8 @@ extern void Func_02003a6c(s32 *p, s32 b);
 extern void Func_02003aac(s32 *p, s32 b);
 extern void Func_02003b04(void);
 
-s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg) {
+s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
+{
     s32 *p = Func_02003a98_a(0);
     u8 *f = (u8 *)p + 0x55;
     s32 saved = *f;

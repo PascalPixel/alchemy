@@ -2,7 +2,8 @@
 
 extern u8 *Data_03001ebc;
 
-s32 *FindActorAtWholeTilePosition(s32 *position) {
+s32 *FindActorAtWholeTilePosition(s32 *position)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 actor_index;
 

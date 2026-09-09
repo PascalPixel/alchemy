@@ -3,7 +3,8 @@
 
 void Func_080a9cbc(void);
 
-void InventoryMenu_OpenCategoryItems(s32 owner_id) {
+void InventoryMenu_OpenCategoryItems(s32 owner_id)
+{
     struct InventoryMenuState *menu;
 
     menu = Data_03001f2c;

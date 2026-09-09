@@ -5,7 +5,8 @@ extern u8 Value_000000ac;
 extern u8 Data_0200bc0c[];
 extern u8 Data_0200bef4[];
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     if (Data_02000240[224] == (s32)&Value_000000ac) {
         return (s32)Data_0200bc0c;
     }

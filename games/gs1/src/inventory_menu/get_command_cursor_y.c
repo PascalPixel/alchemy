@@ -1,6 +1,7 @@
 #include "inventory_menu.h"
 
-s32 InventoryMenu_GetCommandCursorY(s32 column, s32 row) {
+s32 InventoryMenu_GetCommandCursorY(s32 column, s32 row)
+{
     s32 y;
 
     (void)column;

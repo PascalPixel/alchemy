@@ -1,30 +1,21 @@
 #include "types.h"
 
 /*
- * resource_39f owner at 0x02001b84, 176 bytes: code 0x02001b84-0x02001c2d, an
- * alignment halfword at 0x02001c2e and the pool word 0xfffe0000 at 0x02001c30.
+ * Parking step for actor slot 13 in resource_39f. It marks the actor's own
+ * tile 0xff, clears the four orthogonally adjacent tiles, and once the actor
+ * stands on tile (45, 6) clears the record's mode byte and writes -2.0 in
+ * 16.16 into the words at +12 and +20.
  *
- * The twin of 0x02001520 for slot 13 and the parking tile (45, 6): it marks the
- * actor's own tile 0xff, clears the four orthogonally adjacent tiles, and when
- * the actor stands on that tile clears the record's mode byte and writes
- * -2.0 (0xfffe0000 in 16.16) into the words at +12 and +20.
- *
- * See resource_39f_c_02000030.c for the link base and the `bl` encoding rule,
- * and resource_39f_c_02001520.c for the byte-exact Func_02000244 interface the
- * five painting calls use.
- *
- * The epilogue is `add sp, #8 / pop {r3} / ... / pop {r0} / bx r0`, so the
- * owner is void.
+ * The 176-byte owner at 0x02001b84 runs past its code to include an alignment
+ * halfword and the pool word 0xfffe0000 at 0x02001c30.
  */
 
 void Func_02004932();
 s32 *Func_02004950();
 s32 *Func_02004958();
-/* Byte-exact-shaped: (layer, x, z, width, height, value). Each call site
- * keeps its own raw overlay_show target per HANDOVER's exact-reconstruction
- * transcription rule -- overlay_call_targets.ts resolves all five to the
- * established Func_02000244 interface, but the assembler encodes each site
- * independently. */
+/* The five tile-painting calls take (layer, x, z, width, height, value) and
+ * all reach the same routine, but each keeps its own call word: the encoding
+ * is per site, so they must not be collapsed onto one alias. */
 s32 Func_02001dfa();
 s32 Func_02001e0e();
 s32 Func_02001e20();

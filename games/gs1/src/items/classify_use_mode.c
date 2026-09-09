@@ -16,7 +16,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     masked &= 0x1ff;
     itemData = Func_08077018(masked);
 
-    if (Func_0808a490(masked) != 0) {
+    if (Func_0808a490(masked)!= 0) {
         return 0;
     }
 

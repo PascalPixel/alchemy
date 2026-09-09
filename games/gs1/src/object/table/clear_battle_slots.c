@@ -2,7 +2,8 @@
 
 extern u8 *Data_03001ebc;
 
-void ObjectTable_ClearBattleSlots(void) {
+void ObjectTable_ClearBattleSlots(void)
+{
     s32 *current;
     s32 offset;
     s32 zero;

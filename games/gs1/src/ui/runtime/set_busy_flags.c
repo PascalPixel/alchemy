@@ -4,7 +4,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void UiWork_SetBusyFlags(s32 flags) {
+void UiWork_SetBusyFlags(s32 flags)
+{
     void *work;
 
     work = *(void **)ADDR_03001E8C;

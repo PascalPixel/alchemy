@@ -6,7 +6,8 @@ s32 ScheduleCallback(s32);
 s32 UiWork_FinalizePending();
 extern u8 Data_080b00f5;
 
-void Inn_CleanupResources(void) {
+void Inn_CleanupResources(void)
+{
     struct InnRuntimeState *state;
 
     state = Data_03001f2c;

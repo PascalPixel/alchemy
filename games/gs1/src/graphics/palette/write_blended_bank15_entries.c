@@ -2,7 +2,8 @@
 
 s16 Func_0801cbd4(s32, s32, s32, s32);
 
-void Palette_WriteBlendedBank15Entries(s32 arg0) {
+void Palette_WriteBlendedBank15Entries(s32 arg0)
+{
     *(s16 *)0x050001E8 = Func_0801cbd4(arg0, 0xEEEE, 0xCCCC, 0x11110);
     *(s16 *)0x050001EA = Func_0801cbd4(arg0, 0xD555, 0xBBBB, 0xEEEE);
     *(s16 *)0x050001EC = Func_0801cbd4(arg0, 0xBBBB, 0xAAAA, 0xCCCC);

@@ -9,7 +9,8 @@ struct Record_080797fc {
 struct Record_080797fc *Func_08078ed8(s32);
 #include "preset_table.h"
 
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
+s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
+{
     s32 i;
     s32 *cursor;
 

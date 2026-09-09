@@ -1,23 +1,14 @@
 #include "types.h"
 
 /*
- * resource_3a4 owner at 0x02003724, 20 bytes: stamp a fixed value into the
- * caller's record at +102, then play sound cue 288.
- *
- * Complete owner: `push {lr}` at 0x02003724 through the matching
- * interworking return `pop {r0} / bx r0` at 0x02003734-0x02003736. No
- * literal pool. One argument (r0), void.
- *
- * Not found by the structural inventory walk (unindexed); one incoming
- * call site per overlay_unindexed.ts. This owner makes one outgoing call,
- * resolved with the `+2` rule against the raw image (this owner starts
- * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay-show resource_3a4 3724 |
- * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 3724 3736 --annotate`):
- *   0x2003730 -> veneer -> Audio_PlayCue(288)   established, play a sound cue (288 = 144 << 1)
+ * Stamp a fixed value into the caller's record at +102, then play sound cue
+ * 288. The owner at 0x02003724 in resource_3a4 is 20 bytes with no literal
+ * pool.
  */
 
-void Func_02007452();          /* play a sound cue, established (veneer to Audio_PlayCue) */
+/* Plays a sound cue; the name is this site's own call word, not a runtime
+ * address. */
+void Func_02007452();
 
 void SceneState_SetRecordWord102AndPlayCue288(u16 *record)
 {

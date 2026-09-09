@@ -1,25 +1,17 @@
 #include "types.h"
 
 /*
- * Resource 3b1 unindexed helper at 0x02005684 (88 bytes incl. pool,
- * 1 call).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,lr}` at 0x02005684, epilogue `pop {r5} / pop {r0} / bx r0` at
- * 0x020056d0-0x020056d4. The one-word literal pool at 0x020056d8
- * (0x00000929, the `Value_XXXXXXXX` family used throughout this
- * overlay) is included per the usual pool rule, immediately followed by
- * the next owner's push {r5,r6,lr} at 0x020056dc, already this
- * overlay's row `0x020056dc | 1 call`, so the span is
- * 0x02005684-0x020056dc, 88 bytes.
- *
- * A flat setter sequence, no branches.
- *
- * Raw callee naming.
+ * Set up actors 24 and 25 -- resource_3b1. A flat setter sequence with no
+ * branches; the owner includes its one literal pool word.
  */
 
+/* The pool word, referenced by address so that it is emitted. */
 extern u8 Value_00000929;
 
+/*
+ * The aliases name the call words encoded in the overlay image, and the
+ * declarations are old-style because the call sites vary in arity.
+ */
 s32 Func_0200a634();
 void Func_0200bb5a(void);
 void Func_02009f84();

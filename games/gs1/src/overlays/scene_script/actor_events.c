@@ -493,95 +493,33 @@ void Func_02002616(s32, s32, s32, s32, s32, s32);
 u8 *Func_0200266c();
 void Func_02002648(s32);
 
-/* Contiguous unnamed leaf-owner run for resource_3a2. */
+/* Scene event steps and table getters for resource_3a2. */
 
 /*
- * resource_3a2 owner at 0x020000b0, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20000b4 holding 0x20098ec.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x020000b0 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20098ec is image offset
- * 0x18ec under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Table getter at 0x020000b0. The eight-byte owner includes its one pool word
+ * at 0x020000b4, which holds 0x020098ec; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
  */
 
-/* Returns a value: the reference sets r1 before r0 at this site, which only a
- * value-returning callee does. */
+/* Value-returning: the reference sets r1 before r0 at this site. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call instead precomputes a costly constant
+ * into a pseudo shared with later uses in the block. A value-returning call
+ * sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /*
- * resource_3a2 owner at 0x020010b8, 140 bytes.  Complete owner:
- * `push {r5, r6, lr}` / `sub sp,#8` prologue at 0x020010b8 and the interworking
- * return `add sp,#8 / pop {r5, r6} / pop {r0} / bx r0` at 0x02001136.  r0 holds
- * the popped return address, so the owner returns nothing; it takes no
- * arguments.  Straight-line body, no branches.
- *
- * A one-word literal pool sits at 0x02001140 (0x0200113e is the alignment
- * halfword after the `bx`), inside the row's 140-byte span but never reached by
- * a control-flow walk from the prologue:
- *   0x02001140 = 0x02009061
- *
- * LINK-BASE WITNESS: 0x02009061 is ODD, so by the parity rule it is a Thumb
- * function entry, and 0x02009061 - 0x8000 - 1 = 0x1060, which is exactly
- * Func_02001060 -- a function this overlay already has byte-exact in
- * games/gs1/asm/overlays/resource_3a2_c_02001060.c.  That confirms the 0x02008000 link
- * base for resource_3a2 against tracked material, and identifies the pool word
- * as an installed per-entity callback rather than data.  It is stored into the
- * entity record at +0x6c.
- *
- * The byte-exact games/gs1/asm/overlays/resource_3a2_c_02001060.c gives that callback's
- * own record layout: a `rank` s32 at +12 and a flags byte at +31 whose bit 1 it
- * sets or clears against the rank of Func_02002570(0) -- the printed name for
- * the same slot-record accessor this owner reaches as Scene_GetRecord.  So the
- * bit-1 clears below (`& 0xfd`) are the same flag that callback later drives.
- *
- * Calls resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2 10b8
- * --json` (eleven sites, seven distinct veneer targets; the inventory's
- * `calls=11` counts sites here):
- *   0x10bc -> veneer 0x14f0 -> Func_0808a018
- *   0x10c2 -> veneer 0x1508 -> Scene_GetRecord
- *   0x10d4 -> veneer 0x1508 -> Scene_GetRecord
- *   0x10e2 -> veneer 0x1508 -> Scene_GetRecord
- *   0x10ee -> veneer 0x1508 -> Scene_GetRecord
- *   0x1106 -> veneer 0x14b8 -> Func_080091c0
- *   0x1118 -> veneer 0x14b8 -> Func_080091c0
- *   0x111e -> veneer 0x1498 -> Func_080000c0
- *   0x1126 -> veneer 0x14d8 -> GameFlag_Set
- *   0x112e -> veneer 0x15b0 -> Func_0808a1e0
- *   0x1132 -> veneer 0x14f8 -> Func_0808a020
- *
- * Behaviour: prepare entity 14 -- clear bit 1 of its bytes at +35 and +89,
- * clear the byte at +85, install the Func_02001060 callback at +0x6c -- then
- * repaint two tile spans through the six-argument Func_080091c0, run one screen
- * step (Func_080000c0(1)), post cue 512 (built as `movs r0,#128 / lsls r0,#2`)
- * and hand entity 14 to Func_0808a1e0 with mode 2.
- *
- * Uncertainty: r5 holds the mask 253 across both bit clears and r6 holds 0 for
- * the +85 store; nothing else survives.  No register is set before
- * Func_0808a018, so it takes no asserted arguments.  Old-style declarations
- * keep every import's interface open.
+ * Prepare actor 14 at 0x020010b8: clear bit 1 of the bytes at +35 and +89,
+ * clear the byte at +85, and install the callback at 0x02009061 in the record
+ * at +0x6c -- that pool word is odd, so it is a Thumb entry and not data. The
+ * zero stored at +85 is held in a local because a register carries it. The
+ * callback drives the same bit-1 flag the clears here touch.
  */
-
-     /* installed callback, byte-exact in games/gs1/asm/overlays */
 
 /* Two sites reach this one symbol with different arities; old-style so both
  * calls are legal. */
@@ -667,7 +605,8 @@ s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
     return 0;
 }
 
-s32 OverlayObject_SetFacingTowardObject10(void *self) {
+s32 OverlayObject_SetFacingTowardObject10(void *self)
+{
     void *obj;
 
     obj = Func_02001564(0xA);
@@ -675,7 +614,8 @@ s32 OverlayObject_SetFacingTowardObject10(void *self) {
     return 0;
 }
 
-s32 SceneData_SelectTable97b4ByState(void) {
+s32 SceneData_SelectTable97b4ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000004a) {
         return (s32)Data_02009844;
     }
@@ -692,7 +632,8 @@ u8 *SceneData_GetTable98ec(void)
     return (u8 *)0x020098ec;
 }
 
-s32 SceneData_SelectTable9918ByState(void) {
+s32 SceneData_SelectTable9918ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000004a) {
         return (s32)Data_02009a38;
     }
@@ -714,7 +655,7 @@ void SceneDialogue_RunMessage1958Step(void)
         Func_020016a4(10, 0);
     } else {
         work = Data_03001ebc;
-        *(u16 *) (work + 472) += 1;
+        *(u16 *)(work + 472) += 1;
         Func_020016ce(10, 0);
     }
 
@@ -1326,7 +1267,8 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
     Func_0200266c_a();
 }
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000004a) {
         return (s32)Data_02009c9c;
     }

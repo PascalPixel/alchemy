@@ -19,5 +19,5 @@ void *Func_0200ad8a();
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
     Func_0200ade4(a, b << 16, c << 16, d);
-    *(s16 *) ((u8 *) Func_0200ad8a(a) + 6) = d;
+    *(s16 *)((u8 *)Func_0200ad8a(a) + 6) = d;
 }

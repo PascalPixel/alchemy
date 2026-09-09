@@ -3,6 +3,7 @@
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void SceneState_SetRuntimeByte34(void) {
+void SceneState_SetRuntimeByte34(void)
+{
     FIELD_AT_OFFSET(*(void **)0x03001F30, s8 *, 0x34) = 1;
 }

@@ -9,7 +9,8 @@ void Func_080b0574(s32 message);
 s32 Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
-void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity) {
+void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity)
+{
     s32 replaced_slot;
     s32 remaining;
     s32 added_slot;

@@ -46,16 +46,15 @@ void BattlePresentation_AdvanceTransitionTimer(void)
     if (v || t)
     {
       v = 0;
-    }
-    else
+    } else
     {
       v = 0;
     }
   }
-  pos->field_02 = (s16) v;
+  pos->field_02 = (s16)v;
   if (t <= 0x50U)
   {
-    disp->field_36 = (s16) (((45 * t) * 8) + 0xAF80);
+    disp->field_36 = (s16)(((45 * t) * 8) + 0xAF80);
   }
   next = (*timer = (*timer) + 1);
   if (next <= 0x50U)

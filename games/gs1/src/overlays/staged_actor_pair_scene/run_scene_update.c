@@ -1,4 +1,3 @@
-
 #include "staged_actor_pair_scene.h"
 
 extern void Func_020014f4(void);

@@ -14,7 +14,7 @@ void UiText_DrawFourNumbersInRow(struct TextRenderWork *work, s32 base)
         cnt = 3;
         src = (volatile u8 *) (base + 0x28);
         do {
-            UiText_DrawNumberAtOffset((s8) *src, 2, work, pos, size);
+            UiText_DrawNumberAtOffset((s8)*src, 2, work, pos, size);
             src += 1;
             cnt -= 1;
             pos = pos + 0x18;

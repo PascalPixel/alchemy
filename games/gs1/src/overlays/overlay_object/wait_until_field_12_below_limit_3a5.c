@@ -1,12 +1,14 @@
 /*
- * BYTE-EXACT and adopted 2026-08-07 with no compiler flags: the countdown had
- * been written as `while (frames-- != 0)', which tests the pre-decrement value
- * and puts the `subs' ahead of the call.  The reference tests the counter at
- * the top of the loop and decrements it inside the body, after the call.
+ * Waits for an object field to fall to a limit -- resource_3a5.
  */
 #include "types.h"
 
 extern void Func_02001fc0();
+/*
+ * The countdown is tested at the top of the loop and decremented inside the
+ * body, after the call.  A post-decrement test would move the subtract ahead
+ * of the call.
+ */
 void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
 {
     s32 frames = 60;

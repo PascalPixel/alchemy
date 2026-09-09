@@ -10,7 +10,8 @@ extern u8 Data_0200b718[];
 extern u8 Data_0200b850[];
 extern u8 Data_0200b5f8[];
 
-s32 SelectSecondarySceneData(void) {
+s32 SelectSecondarySceneData(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000071) {

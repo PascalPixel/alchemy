@@ -16,7 +16,7 @@ void InventoryMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
         wrapped_index = 0;
     }
     stable_phase = *(volatile s32 *)&phase;
-    object = *(struct Object080a1c * volatile *)slot;
+    object = *(struct Object080a1c *volatile *)slot;
     wave = FixedPoint_Ratio(wrapped_index, stable_phase);
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =

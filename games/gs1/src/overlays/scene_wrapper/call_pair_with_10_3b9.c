@@ -1,22 +1,11 @@
 #include "types.h"
 
 /*
- * resource_3b9 owner at 0x02001c48, 12 bytes: two-call trampoline,
- * forwarding the argument to the first callee with a fixed second argument,
- * then a fixed-constant second call.
- *
- * Complete owner: `push {lr}` at 0x02001c48 through `pop {r0} / bx r0`
- * at 0x02001c56-0x02001c58, followed by one alignment halfword; the
- * next owner's prologue is at 0x02001c5c (this overlay's own
- * resource_3b9_c_02001c5c.c). the argument is never freshly loaded before the
- * first call, so it is a forwarded pass-through parameter; void return.
- *
- * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2`
- * rule -- the single highest call count in this mandate's sweep so far
- * (75 sites).
- *
- * Uncertainty: neither callee is identified beyond call shape.
+ * resource_3b9 owner at 0x02001c48, 12 bytes plus one alignment halfword: a
+ * two-call trampoline forwarding the argument to the first callee with a
+ * fixed second argument, then making a second call with a fixed constant.
+ * The argument is never freshly loaded before the first call, so it is a
+ * pass-through parameter.  Neither callee is identified beyond call shape.
  */
 
 extern void Func_020048f2(s32 no, s32 arg1);

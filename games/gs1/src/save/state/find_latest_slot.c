@@ -22,8 +22,8 @@ u32 SaveState_FindLatestSlot(s32 record_id)
     do {
         if ((FIELD_AT_OFFSET(slot_cursor, u8 *, 0) != 0) && (record_id == FIELD_AT_OFFSET(slot_cursor, u8 *, 0x10))) {
             sequence = *sequence_cursor;
-            if (latest_sequence < (u32) sequence) {
-                latest_sequence = (u32) sequence;
+            if (latest_sequence < (u32)sequence) {
+                latest_sequence = (u32)sequence;
                 latest_slot = slot_index;
             }
         }

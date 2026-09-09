@@ -24,7 +24,8 @@ void Func_080b0030(void *, s32, s32, s32);
 void Func_080030f8(s32);
 void Func_080f9010(s32);
 
-s32 Menu_RunWorkspaceSelectionLoop(void) {
+s32 Menu_RunWorkspaceSelectionLoop(void)
+{
     void *sp10;
     s32 spC;
     s32 sp8;

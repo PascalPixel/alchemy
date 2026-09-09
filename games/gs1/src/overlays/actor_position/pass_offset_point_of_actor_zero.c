@@ -3,7 +3,8 @@
 extern s32 *Func_02003e00(s32 a);
 extern void Func_02001d38(s32 *p);
 
-void SceneActor_PassOffsetPointOfActorZero(void) {
+void SceneActor_PassOffsetPointOfActorZero(void)
+{
     s32 v[3];
     s32 *p = Func_02003e00(0);
 

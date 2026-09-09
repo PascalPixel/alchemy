@@ -2,7 +2,8 @@
 
 u8 *Runtime_GetObject(s32);
 
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
+s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
+{
     u8 *state;
     s32 i;
     s32 zero;

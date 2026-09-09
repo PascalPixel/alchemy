@@ -37,7 +37,7 @@ loop:
         goto done;
     if (*(u8 *)0x02004c24 == 0)
         goto loop;
-    if ((u8)(*callee_slot)(local_argument) != local_expected)
+    if ((u8)(*callee_slot)(local_argument)!= local_expected)
         goto failure;
 
 done:

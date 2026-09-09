@@ -1,43 +1,20 @@
 /*
- * BYTE-EXACT and adopted 2026-08-07.  resource_3a7 carries a mirror copy of the
- * same soft-float library as resource_3bf, so this is the twin of the adopted
- * games/gs1/src/resource_3bf_c_02005af0.c: identical source, with the packer renamed to
- * its direct `bl' target in this overlay (0x02002a6a).  Same recipe -- one u64
- * significand field, and the stock non-interworking ABI with r4 callee-saved so
- * the leaf can return through `pop {r4, r5, pc}'.
- * Span is 124 bytes: 112 of code plus the three pool words at 0x020014cc.
+ * Signed integer to soft-float conversion in resource_3a7: build the
+ * library's unpacked record on the stack and hand it to the packer.
  */
 #include "types.h"
 
 /*
- * Resource 3bf signed-integer to soft-float conversion at 0x02005af0.
- *
- * Builds the library's 20-byte unpacked record on the stack and hands it to
- * the packing routine.  The record layout is fully visible here:
- *   +0  class   (2 = zero, 3 = finite)
- *   +4  sign    (r0 >> 31, i.e. 1 for a negative input)
- *   +8  exponent seed (60)
- *   +12 significand low word
- *   +16 significand high word
- *
- * Control flow:
- *   - a zero input sets class 2 and skips straight to the pack call;
- *   - the exact value 0x80000000 is special-cased and returns the literal
- *     pair r0 = 0xC1E00000, r1 = 0x00000000, i.e. -2147483648.0, without
- *     packing;  this is also the evidence that r0 carries the HIGH word of the
- *     packed double in this library, which is why the packed value is carried
- *     as SoftDouble (a u64 whose low half is the r0 word) and not as `double`;
- *   - otherwise the magnitude is placed in the significand with its sign
- *     extension in the high word and normalised by shifting the 64-bit
- *     significand left one bit at a time, decrementing the exponent, until the
- *     high word exceeds 0x0FFFFFFF.  The guard before the loop is an UNSIGNED
- *     compare (`bhi`), so a high word already above 0x0FFFFFFF skips
- *     normalisation entirely.
- *
- * Both ordinary paths join at the single local packer call at 0x02005c38.
+ * The packed double is carried as a u64 whose low half is the r0 word,
+ * because r0 holds the high word of the double here; a `double` would not
+ * spell that.
  */
 typedef u64 SoftDouble;
 
+/*
+ * The unpacked record is 20 bytes: class at +0 (2 = zero, 3 = finite),
+ * sign at +4, exponent seed at +8, and the significand at +12 and +16.
+ */
 typedef struct SoftFloatRecord {
     u32 cls;
     u32 sign;
@@ -47,6 +24,12 @@ typedef struct SoftFloatRecord {
 
 SoftDouble Func_02002a6a(SoftFloatRecord *record);
 
+/*
+ * Zero takes class 2 straight to the pack call; 0x80000000 returns the
+ * literal -2147483648.0 without packing. Otherwise normalisation loops on
+ * an unsigned compare, so a significand already above the threshold is
+ * left alone. The 124-byte owner includes its three pool words.
+ */
 SoftDouble SignedIntToSoftDouble(s32 value)
 {
     SoftFloatRecord record;

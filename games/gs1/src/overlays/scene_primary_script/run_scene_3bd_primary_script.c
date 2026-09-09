@@ -1,21 +1,8 @@
 #include "types.h"
 
 /*
- * resource_3bd cutscene owner 0x02002c44-0x020034bb (2168 bytes).
- *
- * The owner is a no-argument, void, almost-linear scene script.  Its only
- * choice is Func_0808a070(0, 0) at 0x02002f7c; the two arms rejoin at
- * 0x02003034.  Three final record lookups are null checked before their signed
- * coordinate halfwords at +10/+18 are forwarded to Func_0808a0b8.
- *
- * Control-flow-derived data ranges are 0x02002fd0-0x02002fe7 (24 bytes),
- * 0x020033e4-0x020033f3 (16 bytes), and 0x020034b4-0x020034bb (8 bytes).
- * Thus the owner contains 2120 executable bytes and 48 data bytes.
- *
- * All 251 call sites resolve to 28 import veneers under the overlay-specific
- * stored-displacement + 2 rule.  This source preserves every site separately;
- * repeated calls must not be folded because the byte-level call multiset is
- * part of the completeness proof.
+ * Primary cutscene script -- resource_3bd. A no-argument, void, almost-linear
+ * sequence whose one branch rejoins after both arms.
  */
 
 void Func_080770c8();
@@ -302,12 +289,12 @@ void Func_020070d0_a();
 void Func_020070da();
 void Func_020070e4();
 void Func_0200713c();
-u8 * Func_020070ea();
+u8 *Func_020070ea();
 void Func_02007124();
 s32 Func_0200714a();
 void Func_0200715c();
 void Func_0200716c();
-u8 * Func_0200711a();
+u8 *Func_0200711a();
 void Func_02007154();
 void Func_0200717a();
 void Func_0200718c();
@@ -319,11 +306,11 @@ void Func_020071bc();
 void Func_02007298();
 void Func_02007164();
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
+/*
+ * Each alias is the per-site call word the overlay image holds -- one word can
+ * serve two sites with different targets -- and the macro names the engine
+ * function the site reaches, keeping the site's own calling form. Names
+ * without a binding elsewhere in the tree are provisional.
  */
 #define GameFlag_Set_1(a0) Value1(Func_020068dc, a0)
 #define Audio_PlayCue_1(a0) Value1(Func_02006ac2, a0)
@@ -576,12 +563,6 @@ void Func_02007164();
 #define Audio_PlayCueForPartyMember_1() Call0(Func_02007298)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Call0(Func_02007164)
 
-/* Newly identified engine calls: named from the target's own reconstructed
- * source (see the trailing provisional comment on each), keeping the site's
- * existing calling form. */
-
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -632,10 +613,16 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-/* Signed coordinate halfwords within a placed-actor record (see header). */
+/* Signed coordinate halfwords in a placed-actor record, named by offset. */
 #define RECORD_COORD_X_OFFSET 10
 #define RECORD_COORD_Y_OFFSET 18
 
+/*
+ * Every call site is written out separately and repeated calls must not be
+ * folded: the sequence of distinct call words is what reproduces the
+ * reference. The three record lookups near the end are null checked before
+ * their stored coordinates are forwarded.
+ */
 void FieldScene_RunBranchingCutsceneSequence(void)
 {
     u8 *record;

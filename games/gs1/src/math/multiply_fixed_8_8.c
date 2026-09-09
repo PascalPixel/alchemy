@@ -1,6 +1,7 @@
 #include "types.h"
 
-s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
+s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1)
+{
     s16 left = arg0;
     s16 right = arg1;
     s32 product;

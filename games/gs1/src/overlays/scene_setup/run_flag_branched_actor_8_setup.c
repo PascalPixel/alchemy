@@ -27,7 +27,8 @@ extern u8 Value_00000929;
 extern u8 Value_00000935;
 extern u8 Value_0000092c;
 
-void SceneState_RunFlagBranchedActor8Setup(void) {
+void SceneState_RunFlagBranchedActor8Setup(void)
+{
     if (Func_02006d94(0x300) != 0) {
         u8 *obj = Func_02001bd8();
         u8 *p;

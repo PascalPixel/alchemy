@@ -1,27 +1,6 @@
 #include "types.h"
 
-/*
- * Sprite record setup for the menu selection list (0x0801bd98).
- *
- * Loads the graphic for `kind` through one of three tile loaders, records
- * the tile base, source slot and returned tile index in the list node, and
- * resets the node's render object: 2-bit/1-bit attribute fields cleared,
- * size field set to 1, tile index written.  The bitfield aggregate at
- * node + 0x28 is the same layout that the neighbouring owner 0x0801c0dc
- * (games/gs1/src/ui/text/resource/initialize.c) initialises; the source
- * addressed it through a pointer, which is what keeps every byte access
- * within Thumb's 5-bit offset range from one base register.
- *
- * The per-kind tile counts are loaded from the literal pool even for 0x1f,
- * which an integer literal cannot produce, so they are spelled as the
- * established small absolute link-time constants.
- *
- * The bitfield statements keep their original order.  `field_76 = 1` sits
- * before `field_56 = 0`: both share the 0x3f mask, and the reference copies
- * that constant (adds r3, r4, #0) before the byte-7 AND because the byte-5
- * AND still needs it afterwards.  The same byte-7-before-field_56 order
- * appears in the 0x0801c0dc initialiser.
- */
+/* Sprite record setup for the menu selection list. */
 
 struct Object_0801c0dc {
     u8 filler0[5];
@@ -62,6 +41,14 @@ extern u8 Value_0000001f;
 extern u8 Value_00000182;
 extern u8 Value_00000333;
 
+/*
+ * Load the graphic for kind through one of three tile loaders, record the
+ * tile base, source slot and returned tile index in the node, then reset the
+ * node's render object.  The object is reached through a pointer so that
+ * every byte access stays within Thumb's 5-bit offset range from one base
+ * register.  The per-kind tile counts are link-time constants; an integer
+ * literal cannot produce 0x1f here.
+ */
 void Func_0801bd98(u32 kind, s32 base, struct ListNode *node, s32 reuse)
 {
     s32 src;
@@ -101,6 +88,11 @@ void Func_0801bd98(u32 kind, s32 base, struct ListNode *node, s32 reuse)
     obj->field_52 = 0;
     obj->field_55 = 0;
     obj->field_54 = 0;
+    /*
+     * field_76 = 1 stays before field_56 = 0: both mask with 0x3f, and the
+     * mask is copied before the byte-7 store because the byte-5 store still
+     * needs it.
+     */
     obj->field_76 = 1;
     obj->field_56 = 0;
     obj->field_8c = 0;

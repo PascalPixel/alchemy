@@ -4,7 +4,8 @@ void Func_020000b2(void *, s32);
 void *Func_02004e4e(s32, s32, s32, s32);
 void Func_02004ed6(void *, s32);
 
-void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
     void *obj;
     u8 *p;
     s32 mask;

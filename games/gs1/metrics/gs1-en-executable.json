@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1352208,
+  "total_union_bytes": 1354302,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -17970,8 +17970,8 @@
     {
       "id": "resource_39c",
       "decoded_bytes": 28696,
-      "executable_bytes": 22200,
-      "excluded_bytes": 6496,
+      "executable_bytes": 24294,
+      "excluded_bytes": 4402,
       "audit": "complete",
       "intervals": [
         {
@@ -18642,75 +18642,111 @@
         },
         {
           "start": 33569380,
-          "end": 33570230,
+          "end": 33570080,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33570646,
+          "start": 33570080,
+          "end": 33570230,
+          "kind": "thumb",
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
+        },
+        {
+          "start": 33570230,
+          "end": 33570232,
+          "kind": "executable_alignment",
+          "evidence": "Complete Scene_RunSelectorEntry audit: executable_alignment; PC-load/return or branch-over bounds verified"
+        },
+        {
+          "start": 33570232,
+          "end": 33570292,
+          "kind": "literal_pool",
+          "evidence": "Complete Scene_RunSelectorEntry audit: jump_table indices 0..14"
+        },
+        {
+          "start": 33570292,
           "end": 33570694,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
+        },
+        {
+          "start": 33570694,
+          "end": 33570696,
+          "kind": "executable_alignment",
+          "evidence": "Complete Scene_RunSelectorEntry audit: executable_alignment; PC-load/return or branch-over bounds verified"
+        },
+        {
+          "start": 33570696,
+          "end": 33570732,
+          "kind": "literal_pool",
+          "evidence": "Complete Scene_RunSelectorEntry audit: jump_table indices 0..8"
+        },
+        {
+          "start": 33570732,
+          "end": 33570972,
+          "kind": "thumb",
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
         },
         {
           "start": 33570972,
-          "end": 33571020,
+          "end": 33571056,
           "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "evidence": "Complete Scene_RunSelectorEntry audit: literal_pool; PC-load/return or branch-over bounds verified"
         },
         {
-          "start": 33571044,
-          "end": 33571052,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33571316,
+          "start": 33571056,
           "end": 33571364,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
         },
         {
-          "start": 33571944,
-          "end": 33571956,
+          "start": 33571364,
+          "end": 33571428,
           "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "evidence": "Complete Scene_RunSelectorEntry audit: jump_table indices 0..15"
         },
         {
-          "start": 33572460,
+          "start": 33571428,
+          "end": 33571924,
+          "kind": "thumb",
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
+        },
+        {
+          "start": 33571924,
+          "end": 33571964,
+          "kind": "literal_pool",
+          "evidence": "Complete Scene_RunSelectorEntry audit: literal_pool; PC-load/return or branch-over bounds verified"
+        },
+        {
+          "start": 33571964,
           "end": 33572962,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
         },
         {
           "start": 33572962,
           "end": 33572964,
           "kind": "executable_alignment",
-          "evidence": "resource_39c_overlay.s:two-byte-zero-between-executable-spans"
+          "evidence": "Complete Scene_RunSelectorEntry audit: executable_alignment; PC-load/return or branch-over bounds verified"
         },
         {
           "start": 33572964,
-          "end": 33572972,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33573000,
           "end": 33573028,
           "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "evidence": "Complete Scene_RunSelectorEntry audit: literal_pool; PC-load/return or branch-over bounds verified"
         },
         {
           "start": 33573028,
           "end": 33573368,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited"
         },
         {
           "start": 33573368,
           "end": 33573384,
           "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "evidence": "Complete Scene_RunSelectorEntry audit: literal_pool; PC-load/return or branch-over bounds verified"
         },
         {
           "start": 33573384,

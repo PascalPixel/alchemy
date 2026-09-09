@@ -17885,6 +17885,10 @@
     "main:08028c04": {
       "name": "Menu_RunResourceModePrompt",
       "source": "menu/run_resource_mode_prompt.c"
+    },
+    "main:0808ce74": {
+      "name": "Map_GetFocusedObjectTile",
+      "source": "map/get_focused_object_tile.c"
     }
   }
 }

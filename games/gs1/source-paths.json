@@ -17855,6 +17855,10 @@
     "resource_3a8:02001ed8": {
       "name": "FieldScene_ScaleActorPairAndPrompt",
       "source": "overlays/scene_primary_script/scale_actor_pair_and_prompt.c"
+    },
+    "resource_3af:02000c28": {
+      "name": "FieldScene_RunCueBySceneSelector",
+      "source": "overlays/scene_primary_script/run_cue_by_scene_selector.c"
     }
   }
 }

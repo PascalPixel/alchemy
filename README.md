@@ -15,9 +15,9 @@ Japanese and European-language editions of each game from the original
 cartridges, with Japanese as the canonical source base and the English
 _Golden Sun_ release as the first complete derived build target.
 
-## Status: 63.71% DONE
+## Status: 43.56% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=754838c33af0fb08)
+![Code](games/gs1/assets/readme/gs1-en-code.svg?v=9df06a5cacf58eac)
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=d6b524e58c957cd7)
 
@@ -33,12 +33,13 @@ The repository contains one shared source tree per game rather than a copy for
 every language. `make targets` checks all twelve edition routes; `make verify`
 is the authoritative full-ROM gate for the current `gs1-en` target. Progress
 is measured by reconstructed bytes. C compiles through the approved route
-to byte-identical output; Drafted is candidate C not yet exact. Assembly groups
-all retained assembly in the charts,
-including assembly still awaiting justification. Assembly counts as DONE only
-with positive evidence of handwritten or third-party assembly origin; compiler
-mismatches and draft classifications do not. Neither label claims access to Camelot's original
-source.
+to byte-identical output; Drafted is candidate C not yet exact. Retained
+assembly earns no DONE credit at all: the standard that marked it was withdrawn
+because it did not establish handwritten or third-party origin, so every such
+byte now counts as Unknown until a replacement standard admits it. The
+classification records are still kept and validated, and the coverage map
+publishes their total as `withdrawn_assembly_bytes`. No label claims access to
+Camelot's original source.
 
 This is a preservation and decompilation project—not a remake, ROM hack,
 emulator, or game distribution. No ROM is included. To build locally or help

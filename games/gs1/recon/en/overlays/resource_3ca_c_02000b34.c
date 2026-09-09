@@ -18,17 +18,20 @@ void Func_02001f6c();
 void Func_02001f74();
 void Func_02001f90();
 void *Func_02001f92();
+void *Func_02001f92_a();
 void Func_02001f96();
 void Func_02001fa8();
 void Func_02001fae();
 void Func_02001fbe();
 void *Func_02001fc6();
+void *Func_02001fc6_a();
 void Func_0200200a();
 void Func_02002010();
 void Func_02002040();
 void Func_02002080();
 void Func_02002084();
 void Func_020020c2();
+void Func_020020c2_a();
 void Func_020020cc();
 void Func_02002106();
 void Func_02002124();
@@ -79,7 +82,7 @@ void Func_02000b34(void)
     Func_02001f90(65536, 65536, 65536);
     Func_02001fae(60);
     Func_02001fa8(131072, 131072, 65536);
-    Func_02001fc6(60);
+    Func_02001fc6_a(60);
     Func_02001fbe(196608, 196608, 65536);
     *(u32 *)0x02009808 = 0;
     Func_02001f60(33587561, 3200, 0, 33593332);
@@ -90,7 +93,7 @@ void Func_02000b34(void)
         phase += 0x3333;
         Func_02001f74(1);
     } while (phase <= 0xe666);
-    p22 = Func_02001f92(33587561);
+    p22 = Func_02001f92_a(33587561);
     *(u32 *)0x020097f8 = 0;
     *(volatile u16 *)0x04000052 = (*(volatile u16 *)0x04000052 & 0xfffc) | 0x0a;
     *(volatile u16 *)0x04000050 = (*(volatile u16 *)0x04000050 & 0xfffc) | 0x0a;
@@ -105,7 +108,7 @@ void Func_02000b34(void)
         Func_020020c2(1);
     }
     Func_020020cc(40);
-    Func_020020c2(-1, -1, 58982);
+    Func_020020c2_a(-1, -1, 58982);
     *(u32 *)0x02009804 = *(u32 *)(runtime + 320);
     *(u32 *)0x02009808 = *(u32 *)(runtime + 368);
     *(u32 *)0x020097fc = 1;

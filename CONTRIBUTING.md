@@ -35,10 +35,11 @@ batches capable of moving DONE by at least 0.1 points; do not skip small owners
 when many related matches make a useful batch.
 
 Record the starting owners, complete extents, sibling source, current residuals,
-expected gain and time budget before editing. Count Assembly-to-C conversions
-as new C, but subtract bytes already credited as Assembly when forecasting
-DONE. Renames, merges, new drafts, better similarity and tooling changes add no
-DONE credit. Do not favor overlays or main-image code merely because of layout.
+expected gain and time budget before editing. Count Assembly-to-C conversions as
+new C at their full extent: no byte is credited as Assembly any more, so nothing
+is subtracted when forecasting DONE. Renames, merges, new drafts, better
+similarity and tooling changes add no DONE credit. Do not favor overlays or
+main-image code merely because of layout.
 
 No credible sibling? Select a coherent module with understood calls and types.
 Recover one representative and then test its siblings. Do not launch blind
@@ -181,21 +182,29 @@ owner or explained nonfunction role. Exact C means ordinary production C emits
 the complete linked extent with zero differences under the approved route.
 Names, plausible behavior, matching size and fuzzy scores are not proof.
 
-Credited assembly requires positive evidence of real handwritten or third-party
-assembly, such as a verified match to historical assembly runtime source or an
-independently established hand-authored machine interface. Failure of the
-approved compiler to emit a shape is not, by itself, evidence of that origin.
-Search exhaustion, register mismatches, repeated scripts and large functions
-earn no Assembly credit. A C recovery invalidates incompatible
-ASM evidence across its complete range: reconcile it immediately without
-double-counting. Main evidence is exposed by the assembly manifest; overlay
-evidence lives in `games/gs1/semantic/overlay-assembly.json`. Entries marked
-`strong` remain Draft ASM. Reconstructed scenes use
-`structured_scene_module`, not the retired `generated_call_script_module`.
+**No assembly is credited.** The previous standard for marking a region as
+Assembly did not establish handwritten or third-party origin, so it is
+withdrawn: every retained-assembly byte counts as Unknown, and DONE is exact C
+alone. Do not reintroduce Assembly credit, do not mark a region `proven` to
+retire it from the queue, and do not treat a withdrawn mark as a reason to skip
+an owner. Search exhaustion, register mismatches, compiler non-emission,
+repeated scripts and large functions were never evidence of origin and are not
+evidence now.
 
-Report exact C, justified Assembly, unresolved bytes and complete-ROM target
-coverage separately. Historical Proven C/Proven ASM labels describe build
-routes, not knowledge of Camelot's original language. All twelve targets must
+The classification records remain: main evidence is exposed by the assembly
+manifest, overlay evidence lives in
+`games/gs1/semantic/overlay-assembly.json`, and both are still parsed and
+validated so a replacement standard reads the same inputs. The coverage map
+publishes their total as `withdrawn_assembly_bytes`. Reconstructed scenes use
+`structured_scene_module`, not the retired `generated_call_script_module`.
+Only Pascal may establish a replacement standard, and it requires positive
+evidence of real handwritten or third-party assembly, such as a verified match
+to historical assembly runtime source or an independently established
+hand-authored machine interface.
+
+Report exact C, unresolved bytes and complete-ROM target coverage separately.
+Historical Proven C/Proven ASM labels describe build routes, not knowledge of
+Camelot's original language. All twelve targets must
 eventually rebuild byte-identically from a clean checkout and approved local
 inputs. Correspondence checks and compile-only targets do not establish this.
 

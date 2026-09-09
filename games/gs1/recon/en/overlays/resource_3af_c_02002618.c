@@ -40,11 +40,13 @@ void Func_02006a80();
 void Func_02006aae();
 void Func_02006ac2();
 void Func_02006ac4();
+void Func_02006ac4_a();
 void Func_02006ac6();
 void Func_02006aea();
 void Func_02006afe();
 void *Func_02006b0e();
 void *Func_02006b22();
+void *Func_02006b22_a();
 void Func_02006b2e();
 void *Func_02006b36();
 void Func_02006b3c();
@@ -89,6 +91,7 @@ void Func_02006cf2();
 void Func_02006cfc();
 void Func_02006d36();
 void Func_02006dcc();
+void Func_02006dcc_a();
 
 void Func_02002618(void)
 {
@@ -147,7 +150,7 @@ void Func_02002618(void)
     *(s32 *)(p36 + 68) = 32768;
     Func_02006ac4(22, 393216, 196608, 33589441);
     Func_02006afe(22, 182, 618);
-    Func_02006ac4(22);
+    Func_02006ac4_a(22);
     Func_02006a62();
     Func_020061c8(0, 40960);
     Func_02006b56(0, 6, 80);
@@ -159,7 +162,7 @@ void Func_02002618(void)
     if (target != 0) {
         Func_02006b7c(1, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
     }
-    target = Func_02006b22(0);
+    target = Func_02006b22_a(0);
     if (target != 0) {
         Func_02006b90(2, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
     }
@@ -202,6 +205,6 @@ void Func_02002618(void)
     *(u16 *)0x02000406 = 30;
     *(u8 *)0x0200046b = 3;
     Func_02006dcc(109, 16);
-    Func_02006dcc(62, 3);
+    Func_02006dcc_a(62, 3);
     Func_02006c98();
 }

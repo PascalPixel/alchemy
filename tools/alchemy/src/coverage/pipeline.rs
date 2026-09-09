@@ -1133,9 +1133,20 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let exact_main = exact_main(options.exact, &options.target, &main_exec)?;
     let pairs = overlay_ids(options.exact);
     let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
-    let (retained_main, draft_main) = main_assembly_classification(options.exact);
-    let (retained_overlay, draft_overlay) =
+    // The standard that marked these spans Assembly did not establish
+    // handwritten or third-party origin, so it is withdrawn: every byte it
+    // covered returns to Unknown until a replacement standard admits one. The
+    // records are still read and validated here, and their total is published
+    // as withdrawn_assembly_bytes, so no byte leaves the map silently.
+    let (withdrawn_main, withdrawn_draft_main) = main_assembly_classification(options.exact);
+    let (withdrawn_overlay, withdrawn_draft_overlay) =
         overlay_assembly_classification(options.exact, &overlay_regions, &overlay_exec)?;
+    let withdrawn_assembly = bytes(&withdrawn_main)
+        + bytes(&withdrawn_draft_main)
+        + mapped_bytes(&withdrawn_overlay)
+        + mapped_bytes(&withdrawn_draft_overlay);
+    let (retained_main, draft_main): (Vec<Span>, Vec<Span>) = (Vec::new(), Vec::new());
+    let (retained_overlay, draft_overlay): (SpanMap, SpanMap) = (SpanMap::new(), SpanMap::new());
     let (candidate_main, candidate_main_sources) = options
         .recon
         .map(|tree| candidate_main(tree, &main_exec))
@@ -1343,7 +1354,8 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/gs1/recon/en/dossiers.json",
-            "proven_assembly_standard": "positive-handwritten-or-third-party-assembly",
+            "proven_assembly_standard": "withdrawn-pending-replacement",
+            "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/gs1-en/full/asm/manifest.json",
             "overlay_assembly_classification": "games/gs1/semantic/overlay-assembly.json",
             "draft_superseded_bytes": 0,

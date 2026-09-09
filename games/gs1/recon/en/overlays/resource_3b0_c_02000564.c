@@ -8,6 +8,7 @@
 
 void *Func_02001736();
 void *Func_0200178a();
+void *Func_0200178a_a();
 void Func_020017a0();
 s32 Func_020017c4();
 void Func_020017c8();
@@ -36,9 +37,12 @@ void *Func_020018e8();
 void Func_02001904();
 void Func_02001906();
 void Func_0200190c();
+void Func_0200190c_a();
+void Func_0200190c_b();
 void Func_02001910();
 void Func_02001912();
 void Func_02001914();
+void Func_02001914_a();
 void Func_0200191a();
 void Func_0200191c();
 void Func_0200193c();
@@ -77,7 +81,7 @@ void Func_02000564(void)
     p3 = Func_02001736(1);
     Func_0200180e(0, 15);
     scene_state = Func_020017c4(0);
-    Func_0200178a(scene_state, 0);
+    Func_0200178a_a(scene_state, 0);
     Func_020017e2(8, 33592220);
     *(s32 *)(Data_03001ebc + 448) = 515;
     Func_020018a0();
@@ -103,12 +107,12 @@ void Func_02000564(void)
     Func_020018ac(10, 5242880, 13762560);
     Func_020018b8(11, 5242880, 13762560);
     Func_020018c4(12, 5242880, 13762560);
-    Func_0200190c(10, 3);
+    Func_0200190c_a(10, 3);
     Func_02001914(11, 3);
     Func_0200191c(12, 3);
     Func_02001904(10, 3);
-    Func_0200190c(11, 3);
-    Func_02001914(12, 3);
+    Func_0200190c_b(11, 3);
+    Func_02001914_a(12, 3);
     p32 = Func_020018ca(10);
     *(s32 *)(p32 + 28) = 32768;
     *(s32 *)(p32 + 24) = 32768;

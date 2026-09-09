@@ -26,7 +26,9 @@ void Func_02005474();
 void Func_02005488();
 void Func_02005494();
 void Func_0200549a();
+void Func_0200549a_a();
 void Func_020054b4();
+void Func_020054b4_a();
 void Func_020054c0();
 void Func_020054c2();
 void Func_020054ca();
@@ -66,7 +68,7 @@ void Func_020016ec(s32 scene)
         Func_020054c0();
         Func_02005488(scene, 0);
         Func_0200447a(120, 72, 0);
-        Func_0200549a(scene, 0);
+        Func_0200549a_a(scene, 0);
         Func_02004546();
         Func_020053fc(15);
         Func_02004080(0, 984, 200);
@@ -85,7 +87,7 @@ void Func_020016ec(s32 scene)
         Func_02005494(10);
         Func_020054d2(0, 65536, 32768);
         Func_020054fe(0, 1192, 168);
-        Func_020054b4(10);
+        Func_020054b4_a(10);
         Func_02005578(0, 32768, 30);
         Func_02005594(0, 258, 60);
         Func_0200557c(scene, 0);

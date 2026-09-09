@@ -222,7 +222,8 @@ void Func_02000754(void)
 
 extern u8 *Data_03001ebc;
 
-s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z) {
+s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 

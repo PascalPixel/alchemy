@@ -21,30 +21,36 @@ void Func_02004c40(s32);
 void Func_02004c46(s32);
 void Func_02004d9c(s32);
 
-void SceneState_ApplyFlag815Branch(void) {
+void SceneState_ApplyFlag815Branch(void)
+{
     if (Func_02002f6a(0x815) != 0) {
         Func_0200314c(123);
         Func_0200101a(10);
     }
 }
 
-void SceneState_ApplyFlag90b(void) {
+void SceneState_ApplyFlag90b(void)
+{
     Func_02002f92(0x90b);
 }
 
-void SceneState_ApplyFlag90c(void) {
+void SceneState_ApplyFlag90c(void)
+{
     Func_02002fa2(0x90c);
 }
 
-void SceneState_ApplyFlag90d(void) {
+void SceneState_ApplyFlag90d(void)
+{
     Func_02002fb2(0x90d);
 }
 
-void SceneState_ApplyPair140And0(void) {
+void SceneState_ApplyPair140And0(void)
+{
     Func_02004d98(140, 0);
 }
 
-void SceneState_SetValues352_365_2116_2117_40(void) {
+void SceneState_SetValues352_365_2116_2117_40(void)
+{
     Func_02004c34(352);
     Func_02004c3a(0x16d);
     Func_02004c40(0x844);

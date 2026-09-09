@@ -2943,30 +2943,30 @@
     },
     "resource_371:0200011c": {
       "name": "StoryActor_AdvanceTimer",
-      "source": "overlays/scene/story_actor_transfer_scene/actors_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/actors.c"
     },
     "resource_371:0200013c": {
       "name": "StoryActor_ConfigureSpawnedObject",
-      "source": "overlays/scene/story_actor_transfer_scene/actors_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/actors.c"
     },
     "resource_371:02000250": {
       "name": "StoryActor_Initialize",
-      "source": "overlays/scene/story_actor_transfer_scene/actors_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/actors.c"
     },
     "resource_371:020002a4": {
       "name": "StoryActor_ApplyFlaggedMode",
-      "source": "overlays/scene/story_actor_transfer_scene/actors_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/actors.c"
     },
     "resource_371:020002cc": {
       "name": "initialize_story_actor_animation_frame"
     },
     "resource_371:02000314": {
       "name": "StoryActor_ResetPosition",
-      "source": "overlays/scene/story_actor_transfer_scene/actors_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/actors.c"
     },
     "resource_371:02000350": {
       "name": "StoryActor_ClearActiveFlag",
-      "source": "overlays/scene/story_actor_transfer_scene/actors_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/actors.c"
     },
     "resource_371:0200037c": {
       "name": "StoryScene_SelectPlacementTable",
@@ -8009,7 +8009,7 @@
     },
     "resource_371:020006dc": {
       "name": "FieldScene_RunStep74",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_3b6:02000030": {
       "name": "SceneData_GetTable8BB4",
@@ -8710,7 +8710,7 @@
     },
     "resource_371:02000580": {
       "name": "FieldScene_RunStep7D3B1E",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_39f:0200103c": {
       "name": "SceneActor_PassOffsetPointOfActorZero",
@@ -15238,7 +15238,7 @@
     },
     "resource_371:02002cb4": {
       "name": "FieldScene_RunActorPresentationSequence",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_3a5:020004e4": {
       "name": "FieldScene_ConfigureActorLayout"
@@ -15398,7 +15398,7 @@
     },
     "resource_371:020032f0": {
       "name": "FieldScene_RunActorEightApproach",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_372:02003fb0": {
       "name": "FieldScene_ConfigureActorTwentyTwoScene",
@@ -15591,7 +15591,7 @@
     },
     "resource_371:0200395c": {
       "name": "FieldScene_RunLateSequence",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_39e:02000e94": {
       "name": "FieldScene_RunPrimarySequence"
@@ -15816,7 +15816,7 @@
     },
     "resource_371:020036dc": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_3bc:020004a4": {
       "name": "FieldScene_RunFinalAuxiliarySequence",
@@ -16078,15 +16078,15 @@
     },
     "resource_371:02001680": {
       "name": "FieldScene_RunScene371_02001680",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02001c08": {
       "name": "FieldScene_RunScene371_02001c08",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02002274": {
       "name": "FieldScene_RunScene371_02002274",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_372:02000278": {
       "name": "FieldScene_RunScene372_02000278",
@@ -16537,27 +16537,27 @@
     },
     "resource_371:020017fc": {
       "name": "FieldScene_RunScene371_020017fc",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02001888": {
       "name": "FieldScene_RunScene371_02001888",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02001938": {
       "name": "FieldScene_RunScene371_02001938",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:020019e8": {
       "name": "FieldScene_RunScene371_020019e8",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02001a98": {
       "name": "FieldScene_RunScene371_02001a98",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02001b5c": {
       "name": "FieldScene_RunScene371_02001b5c",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_372:02003e48": {
       "name": "FieldScene_RunScene372_02003e48",
@@ -16629,7 +16629,7 @@
     },
     "resource_371:0200155c": {
       "name": "FieldScene_RunScene371_0200155c",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_372:02003c48": {
       "name": "FieldScene_RunScene372_02003c48",
@@ -16677,7 +16677,7 @@
     },
     "resource_371:0200357c": {
       "name": "FieldScene_RunScene371_0200357c",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_387:0200067c": {
       "name": "FieldScene_RunScene387SequenceA",
@@ -16685,11 +16685,11 @@
     },
     "resource_371:0200281c": {
       "name": "FieldScene_RunScene371_0200281c",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_371:02002858": {
       "name": "FieldScene_RunScene371_02002858",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_tail.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_38d:0200179c": {
       "name": "FieldScene_RunScene38d_0200179c",
@@ -16773,7 +16773,7 @@
     },
     "resource_371:020017a4": {
       "name": "FieldScene_RunScene371_020017a4",
-      "source": "overlays/scene/story_actor_transfer_scene/field_scene_head.c"
+      "source": "overlays/scene/story_actor_transfer_scene/field_scene.c"
     },
     "resource_3b8:0200049c": {
       "name": "FieldScene_RunScene3b8_0200049c",

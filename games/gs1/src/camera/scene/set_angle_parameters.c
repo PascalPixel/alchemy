@@ -21,7 +21,7 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
     first = Func_08002322(half);
     result = ((WorkFunc_08005208)0x0300013C)(
         first,
-        Func_0800231c(half) * 0x50
+        Func_0800231c(half)* 0x50
     );
     ((struct Work_08005208 *)ADDR_03001CE0)->param1 = param1;
     ((struct Work_08005208 *)ADDR_03001CE0)->result = result;

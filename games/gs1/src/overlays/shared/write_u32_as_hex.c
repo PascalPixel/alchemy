@@ -4,7 +4,8 @@ extern u8 Data_0200ce3c[];
 
 #define HexDigitCharacters Data_0200ce3c
 
-void WriteU32AsHex(u8 *hex_text, u32 value) {
+void WriteU32AsHex(u8 *hex_text, u32 value)
+{
     s32 digit_index;
 
     hex_text += 8;

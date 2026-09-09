@@ -57,7 +57,8 @@ void Func_02006294(s32, s32);
 void Func_02005cb0(s32);
 void Func_0200660c(s32, s32);
 
-void SceneState_InitStateWordsAndSlots(void) {
+void SceneState_InitStateWordsAndSlots(void)
+{
     s32 *p;
     u32 i;
 

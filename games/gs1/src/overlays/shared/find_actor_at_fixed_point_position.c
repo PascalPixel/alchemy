@@ -2,7 +2,8 @@
 
 extern u8 *Data_03001ebc;
 
-s32 *Func_0200006c(s32 *arg0) {
+s32 *Func_0200006c(s32 *arg0)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 

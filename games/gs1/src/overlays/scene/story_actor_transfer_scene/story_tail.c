@@ -5,6 +5,7 @@
 #define StoryScene_SetReferenceActor Func_020037bc
 #define StoryScene_ActivateSharedState Func_020037c8
 #define StoryScene_CompleteActor98 Func_020037d8
+
 /*
  * Complete selected-actor presentation/progress synchronizer.  It derives the
  * actor presentation from the shared phase word, applies the state-one scene
@@ -45,14 +46,15 @@ struct StorySelectionActor *Func_02007982(s32 actor);
 s32 Func_0200793e(s32 state);
 s32 Func_02007944(s32 flag);
 void Func_02007974(s32 state, s32 value);
-/* Complete reference-actor-54 selected-actor setup wrapper. */
-extern void Func_02006e9e(s32 reference_actor);
+void Func_02006e9e(s32 reference_actor);
 void *Func_02007b28(s32 actor);
 void Func_02007c22(s32 actor, s32 mode);
 void Func_02007c34(s32 actor, s32 mode);
 void Func_02007a90(s32 flag);
 void Func_02007a92(s32 flag);
 void Func_02007ab2(s32 flag, s32 value);
+
+/* Complete reference-actor-54 selected-actor setup wrapper. */
 
 s32 StoryReward_LookupBySelection(u32 selection)
 {

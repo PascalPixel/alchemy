@@ -28,7 +28,8 @@ extern u8 Value_00000929;
 extern u8 Value_0000093a;
 extern u8 Value_00000931;
 
-void SceneDialogue_RunActorThirteenFlag300Branch(void) {
+void SceneDialogue_RunActorThirteenFlag300Branch(void)
+{
     if (Func_020072bc(0x300) != 0) {
         u8 *o = Func_02002100();
         u8 *p;

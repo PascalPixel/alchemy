@@ -29,7 +29,8 @@
 
 s32 Func_080072f0(s32, s32, s32, s32);
 
-void Graphics_ResetFrameState(void) {
+void Graphics_ResetFrameState(void)
+{
     *(s8 *)ADDR_03001D00 = 0;
     Func_080072f0(ADDR_03001400, 0x400, ADDR_03001D00, 0x03000164);
 }

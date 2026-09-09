@@ -32,7 +32,7 @@ void Runtime_ApplyValueToWork7818(u32 arg2)
 {
   unsigned long val;
   s32 base;
-  base = *((s32 *) ADDR_03001EEC);
+  base = *((s32 *)ADDR_03001EEC);
   Func_080072f0(base + 0x7818, 8, val, 0x03000164);
   val = arg2;
 }

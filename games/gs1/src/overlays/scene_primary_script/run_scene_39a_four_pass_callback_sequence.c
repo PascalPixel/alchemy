@@ -1,33 +1,5 @@
 #include "types.h"
 
-/*
- * Resource 39a overlay sequence at 0x02001e08.
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus `mov r7, r8 / push {r7}`
- * and `sub sp, #8` at 0x02001e08, and the matching `add sp, #8 / pop {r3} /
- * mov r8, r3 / pop {r5, r6, r7} / pop {r0} / bx r0` at 0x02001ee6, so nothing
- * is returned.  Five pool words follow the return and are data.  All 25
- * distinct branch targets in the row are placed.
- *
- * 0x02009d79 is 0x02008000 + 0x1d79, i.e. the in-image routine 0x02001d78
- * plus the Thumb bit: a third witness for this overlay's 0x02008000 link
- * base.  It is handed to two imports as a callback.
- *
- * 0x02004224 and 0x0200412e are each reached with two different argument
- * counts, which is why the declarations are old-style.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
- */
-
 /* The callback, named by its in-image address. */
 void Func_02004224();
 void Func_02004224_a();
@@ -58,10 +30,37 @@ void Func_0200420c();
 void Func_020042e0();
 
 extern void Func_02009d78();
-extern 
+extern
 
 /* Imports. */
 
+/*
+ * Resource 39a overlay sequence at 0x02001e08.
+ *
+ * Complete owner: `push {r5, r6, r7, lr}` plus `mov r7, r8 / push {r7}`
+ * and `sub sp, #8` at 0x02001e08, and the matching `add sp, #8 / pop {r3} /
+ * mov r8, r3 / pop {r5, r6, r7} / pop {r0} / bx r0` at 0x02001ee6, so nothing
+ * is returned.  Five pool words follow the return and are data.  All 25
+ * distinct branch targets in the row are placed.
+ *
+ * 0x02009d79 is 0x02008000 + 0x1d79, i.e. the in-image routine 0x02001d78
+ * plus the Thumb bit: a third witness for this overlay's 0x02008000 link
+ * base.  It is handed to two imports as a callback.
+ *
+ * 0x02004224 and 0x0200412e are each reached with two different argument
+ * counts, which is why the declarations are old-style.
+ *
+ * Call convention used throughout this overlay: every `bl` computes an
+ * address in the band above the last code row.  The reconstruction's code ends
+ * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
+ * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
+ * encoded `bl` address is an import identity, not a place to disassemble.
+ * That is the convention the byte-exact sources in this overlay already use
+ * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
+ * imports are named by the address their call site computes and their
+ * interfaces are left open.  Declarations are old-style because one name is
+ * reached with different argument counts.
+ */
 void FieldScene_RunFourPassCallbackSequence(void)
 {
     s32 pass;

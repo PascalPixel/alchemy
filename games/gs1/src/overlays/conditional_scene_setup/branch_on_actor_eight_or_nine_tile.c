@@ -6,7 +6,8 @@ extern s32 *Func_02003f78();
 extern void Func_0200223c();
 extern void Func_0200408e();
 
-void SceneState_BranchOnActorEightOrNineTile(void) {
+void SceneState_BranchOnActorEightOrNineTile(void)
+{
     s32 *p = Func_02003f62(9);
 
     if ((Func_02003f6a(0)[2] >> 20) <= 12) {

@@ -3,7 +3,8 @@
 s32 Func_080b6c08(s32, void *);
 s32 Func_080b7b6c(void *, s32);
 
-void BattleParty_ListAllUnitsAndSubmit(void) {
+void BattleParty_ListAllUnitsAndSubmit(void)
+{
     u8 local[28];
     Func_080b6c08(3, local);
     Func_080b7b6c(local, 0);

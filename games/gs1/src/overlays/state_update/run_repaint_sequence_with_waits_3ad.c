@@ -1,5 +1,27 @@
 #include "types.h"
 
+/* Old-style declarations: overlay import arities vary per call site. */
+    /* scene obj record by selector */
+
+   /* frame wait */
+   /* six-argument tile/strip request, last two on the stack */
+   /* six-argument collision repaint, last two on the stack */
+
+extern u8 *Func_02001c18();
+extern void Func_02001c5a();
+extern void Func_02001be6();
+extern void Func_02001bf2();
+extern void Func_02001be8();
+extern void Func_02001c0c();
+extern void Func_02001c1e();
+extern void Func_02001c30();
+extern void Func_02001c26();
+extern void Func_02001c46();
+extern void Func_02001c3c();
+extern void Func_02001c42();
+extern void Func_02001c6c();
+extern void Func_02001c80();
+extern void Func_02001c92();
 /*
  * Resource 3ad, map-repaint sequence at 0x020000d4 (220 bytes, 15 call sites).
  *
@@ -27,29 +49,6 @@
  *   Func_080091e0 <- 0x02001af4;         Func_080091b8 <- 0x02001ae4;
  *   Func_080000c0 <- 0x02001ad4;         Func_080091c0 <- 0x02001aec.
  */
-
-/* Old-style declarations: overlay import arities vary per call site. */
-    /* scene obj record by selector */
-
-   /* frame wait */
-   /* six-argument tile/strip request, last two on the stack */
-   /* six-argument collision repaint, last two on the stack */
-
-extern u8 * Func_02001c18();
-extern void Func_02001c5a();
-extern void Func_02001be6();
-extern void Func_02001bf2();
-extern void Func_02001be8();
-extern void Func_02001c0c();
-extern void Func_02001c1e();
-extern void Func_02001c30();
-extern void Func_02001c26();
-extern void Func_02001c46();
-extern void Func_02001c3c();
-extern void Func_02001c42();
-extern void Func_02001c6c();
-extern void Func_02001c80();
-extern void Func_02001c92();
 void SceneState_RunRepaintSequenceWithWaits(void)
 {
     u8 *obj;

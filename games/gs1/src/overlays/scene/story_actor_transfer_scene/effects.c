@@ -26,7 +26,7 @@
  * and +0x1c.  The Z offset is `(0x10000 - amplitude) * 5` built as
  * `lsls #2 ; adds`, plus a fixed 0x80000.
  *
- * UNCERTAINTY: 0x0200817c is identified only by its use — one angle in, one
+ * UNCERTAINTY: 0x0200817c is identified only by its use -- one angle in, one
  * 16.16 magnitude out.  The mirrored owner at 0x02004004 calls 0x020081cc
  * the same way and negates the second store, which is consistent with a
  * sine/cosine pair, but neither import is resolved here.
@@ -66,7 +66,7 @@ struct StoryVerticalEffectActor {
  * the fixed Z bias is 0x100000 (`movs #128 ; lsls #13`) rather than 0x80000.
  *
  * UNCERTAINTY: 0x020081cc, like 0x0200817c in the mirrored owner, is
- * identified only by use — one angle in, one 16.16 magnitude out.
+ * identified only by use -- one angle in, one 16.16 magnitude out.
  *
  * Call-target convention: each `bl` is named by the address its call site
  * computes; that address is a per-call-site label for a

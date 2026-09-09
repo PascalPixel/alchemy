@@ -26,5 +26,5 @@ s32 Inn_CalculateRoomPrice(s32 mode)
         } while (index < *(s8 *)(global + 0x3A7));
     }
 
-    return factor * active;
+    return factor *active;
 }

@@ -5,6 +5,16 @@
  * documented DEAD-END FINGERPRINT (adjacent r5/r6-class register swap in an
  * asrs/str block), genuinely unfixed, do not hand-permute. */
 
+/* Per-site veneers (raw sub_ symbols from the overlay .s), each call site
+ * spelled with its own symbol even though several reach the same import. */
+void Func_020044ca();
+s32 *Func_02004598();
+void Func_020044e4();
+s32 *Func_020045b2();
+void Func_020044fe();
+s32 *Func_020045cc();
+void Func_0200451a();
+
 /*
  * resource_3bb owner at 0x0200062c, 112 bytes (0x0200062c-0x0200069b), all
  * code: the body loads no literal pool and no pool sits inside the span.
@@ -36,17 +46,6 @@
  * with 20 fractional bits.  What Func_080091c0's six arguments mean is not
  * established here.
  */
-
-/* Per-site veneers (raw sub_ symbols from the overlay .s), each call site
- * spelled with its own symbol even though several reach the same import. */
-void Func_020044ca();
-s32 *Func_02004598();
-void Func_020044e4();
-s32 *Func_020045b2();
-void Func_020044fe();
-s32 *Func_020045cc();
-void Func_0200451a();
-
 void SceneState_ApplyRectsForActors15To17(void)
 {
     s32 field;

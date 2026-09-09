@@ -6,9 +6,9 @@
  */
 #include "types.h"
 
-extern u8 * Func_02001e6e(s32);
-extern u8 * Func_02001e7e(s32);
-extern u8 * Func_02001e8e(s32);
+extern u8 *Func_02001e6e(s32);
+extern u8 *Func_02001e7e(s32);
+extern u8 *Func_02001e8e(s32);
 void SceneActor_SetActor8FlagByLeaderDepth(void)
 {
     u8 *obj = Func_02001e6e(0);

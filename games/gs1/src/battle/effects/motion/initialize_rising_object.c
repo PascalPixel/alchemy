@@ -20,7 +20,8 @@ struct RisingObjectState {
     u8 field_5a;
 };
 
-void BattleEffect_InitializeRisingObject(s32 arg0) {
+void BattleEffect_InitializeRisingObject(s32 arg0)
+{
     struct B5Context *context = Func_080b5098(arg0);
     struct RisingObjectState *object = context->object;
 

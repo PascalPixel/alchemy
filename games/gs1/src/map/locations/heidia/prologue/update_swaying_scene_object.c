@@ -25,7 +25,8 @@ extern s32 Func_02005e72(s32 arg0);
 extern s32 Func_02005e70(void);
 extern s32 Func_02005e76(void);
 
-s32 UpdateSwayingSceneObject(struct S *object) {
+s32 UpdateSwayingSceneObject(struct S *object)
+{
     struct T *sprite = object->f50;
     s32 vertical_offset = Func_02005e42(object->f30) * 2;
     s32 random_b;

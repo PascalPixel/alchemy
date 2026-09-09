@@ -7,7 +7,8 @@ extern void Func_020042e0(s32 a, s32 b);
 extern s32 Func_020041f8(s32 a, s32 b);
 extern void Func_020041f4(void);
 
-void FieldScene_RunStepFD4WithActor181(s32 a) {
+void FieldScene_RunStepFD4WithActor181(s32 a)
+{
     Func_020041c8_a(a);
     Func_02004222(16, 0, 0);
     Func_020041c8_b(4052);

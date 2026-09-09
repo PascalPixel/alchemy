@@ -8,7 +8,8 @@
 
 s32 Func_02002462(s32, s32);
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj) {
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+{
     s32 delta;
     u16 old;
     s32 angle;
@@ -16,8 +17,8 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj) {
 
     target = obj->facing_target;
     if (target != NULL) {
-        obj->facing_flags = (u8) (0xFE & obj->facing_flags);
-        angle = (u16) CalculateFacingAngle(target->position_z - obj->position_z, target->position_x - obj->position_x);
+        obj->facing_flags = (u8)(0xFE & obj->facing_flags);
+        angle = (u16)CalculateFacingAngle(target->position_z - obj->position_z, target->position_x - obj->position_x);
         old = obj->facing;
         delta = (s16)(angle - old);
         if (delta != 0) {
@@ -28,7 +29,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj) {
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            obj->facing = (u16) (old + delta);
+            obj->facing = (u16)(old + delta);
         }
     }
     return 1;

@@ -7,6 +7,18 @@ u8 *Func_02001d90();
 void Func_02001d5c(s32, s32, s32, s32, s32, s32);
 void Func_02001d74(s32, s32, s32, s32, s32, s32);
 
+/* Ten (x, z) tile pairs, in the overlay's own writable image at file offset
+ * 0x1d28.  Overlay data is EWRAM and is not const. */
+
+/* Slot accessor veneer at sub_02001d90: Func_02001d90(slot) returns the
+ * actor record, or NULL.  Typed as a byte pointer so the +0x08 / +0x10 field
+ * reads are explicit. */
+
+/* The established six-argument renderer ABI: four register arguments plus two
+ * stack words, here the tile x and tile z of the cell being repainted.  Two
+ * distinct per-site veneers (sub_02001d5c, sub_02001d74) both eventually
+ * reach the same main-image renderer at 0x080091c0. */
+
 /*
  * Resource 38b collision-map repaint at 0x02000cb4 (92 bytes, 2 distinct
  * callees over 3 call sites).
@@ -37,19 +49,6 @@ void Func_02001d74(s32, s32, s32, s32, s32, s32);
  * the veneers and produces a different (wrong) pc-relative displacement at
  * each site.  Use the exact local sub_ symbols instead, per the craft rule.
  */
-
-/* Ten (x, z) tile pairs, in the overlay's own writable image at file offset
- * 0x1d28.  Overlay data is EWRAM and is not const. */
-
-/* Slot accessor veneer at sub_02001d90: Func_02001d90(slot) returns the
- * actor record, or NULL.  Typed as a byte pointer so the +0x08 / +0x10 field
- * reads are explicit. */
-
-/* The established six-argument renderer ABI: four register arguments plus two
- * stack words, here the tile x and tile z of the cell being repainted.  Two
- * distinct per-site veneers (sub_02001d5c, sub_02001d74) both eventually
- * reach the same main-image renderer at 0x080091c0. */
-
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
     u8 *actor;
@@ -65,7 +64,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 
     /* Ten fixed cells from the table, then the actor's own cell.  The loop
      * counter is bumped before the call and tested against 19 after, so it
-     * runs for i = 2, 4, ... 20 — ten iterations.  The machine walks the
+     * runs for i = 2, 4, ... 20 -- ten iterations.  The machine walks the
      * table with the byte index itself (not a separate 0..9 counter scaled
      * by 2), so the C loop steps the byte offset directly. */
     for (i = 0; i < 20; i += 2) {
@@ -74,7 +73,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
         Func_02001d5c(1, 0, 1, 1, x, z);
     }
 
-    /* Same repaint with r0 = 0 rather than 1 — a different layer or kind
+    /* Same repaint with r0 = 0 rather than 1 -- a different layer or kind
      * selector; the exact meaning of that first argument is not established
      * here. */
     Func_02001d74(0, 0, 1, 1, tx, tz);

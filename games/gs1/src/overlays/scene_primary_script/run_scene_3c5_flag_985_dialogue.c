@@ -14,7 +14,8 @@ extern void Func_0200550a();
 extern void Func_02005524();
 extern void Func_02005480();
 
-void FieldScene_RunFlag985DialogueBranch(void) {
+void FieldScene_RunFlag985DialogueBranch(void)
+{
     u8 *base = Data_03001ebc;
     s16 *h;
 

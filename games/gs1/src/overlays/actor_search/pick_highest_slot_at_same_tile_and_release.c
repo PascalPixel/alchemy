@@ -1,19 +1,6 @@
 #include "types.h"
 
 /*
- * resource_3c8 owner at 0x020023d4, 168 bytes: among scene slots 8-13,
- * locate candidates sharing the selected slot's x/z tile, retain the highest
- * candidate at least one 16.16 unit above its y value, store that candidate id
- * at selected+100, then move/release the selected slot and run its local effect.
- *
- * Complete owner: high-register prologue and four-byte frame at 0x020023d4
- * through the sole interworking return at 0x02002468-0x02002474, followed by
- * alignment and one referenced pool word through 0x0200247b.  Eight static
- * calls across seven targets match independently; the two scene-accessor call
- * sites sit inside the bounded six-iteration loop.
- */
-
-/*
  * CALL SYMBOLS ARE PER-SITE: the raw assembly spells each of these eight
  * calls as a direct `bl sub_020072xx` to an address inside this overlay's
  * own 0x0200xxxx range (verified via `arm-none-eabi-objdump -dr -M
@@ -32,6 +19,18 @@ void Func_02007456();
 void Func_020072f2();
 void Func_02000b08();
 
+/*
+ * resource_3c8 owner at 0x020023d4, 168 bytes: among scene slots 8-13,
+ * locate candidates sharing the selected slot's x/z tile, retain the highest
+ * candidate at least one 16.16 unit above its y value, store that candidate id
+ * at selected+100, then move/release the selected slot and run its local effect.
+ *
+ * Complete owner: high-register prologue and four-byte frame at 0x020023d4
+ * through the sole interworking return at 0x02002468-0x02002474, followed by
+ * alignment and one referenced pool word through 0x0200247b.  Eight static
+ * calls across seven targets match independently; the two scene-accessor call
+ * sites sit inside the bounded six-iteration loop.
+ */
 void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
     u8 *cand;

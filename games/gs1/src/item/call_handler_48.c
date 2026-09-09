@@ -4,7 +4,8 @@
 
 s32 Func_08077048(s32);
 
-s32 Item_CallHandler48(s32 arg0, s32 arg1) {
+s32 Item_CallHandler48(s32 arg0, s32 arg1)
+{
     Func_08077048(arg1);
     return 0;
 }

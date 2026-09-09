@@ -24,7 +24,8 @@ s32 Func_0200294a(s32, s32);
 void Func_02002870(s32);
 void Func_02002894(void);
 
-void SceneDialogue_ShowLine1C13WithActor16Steps(void) {
+void SceneDialogue_ShowLine1C13WithActor16Steps(void)
+{
     Func_02002808();
     Func_020028aa(0x10, 0, 0xA);
     Func_020028d0(0x1C13);

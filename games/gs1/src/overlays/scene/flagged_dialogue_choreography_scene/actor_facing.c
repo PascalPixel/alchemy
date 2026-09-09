@@ -41,7 +41,8 @@ void Func_02004100(T *, s32);
 void Func_02004128(T *, s32);
 void Func_02004138(T *, s32);
 
-s32 OverlayObject_UpdateFacingTowardTarget(void *obj) {
+s32 OverlayObject_UpdateFacingTowardTarget(void *obj)
+{
     s32 delta;
     u16 old;
     s32 angle;

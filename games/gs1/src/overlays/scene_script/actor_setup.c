@@ -630,26 +630,6 @@ union SceneActor *Func_0200165e(s32);
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-/*
- * resource_3c2 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000044 holding 0x2008dd4.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000040 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008dd4 is image offset
- * 0xdd4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
 /* Contiguous unnamed state-owner run for resource_3c2. */
 
 /* Audited retained scene body: all 252 calls through the next owner boundary
@@ -754,6 +734,25 @@ u8 *SceneData_GetTable8da4(void)
     return (u8 *)0x02008da4;
 }
 
+/*
+ * resource_3c2 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
+ * one-word literal pool at 0x2000044 holding 0x2008dd4.
+ *
+ * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ *
+ * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
+ * `pc`-relative load at 0x02000040 reads it, so it belongs to this owner.
+ * Recording 4 would orphan a word and manufacture a phantom gap.
+ *
+ * The pool word is an ADDRESS -- 0x2008dd4 is image offset
+ * 0xdd4 under the base + 0x8000 spelling -- loaded and returned
+ * without being dereferenced, so this is a getter for an in-image table.
+ *
+ * One of the 191 rows sharing this exact body across the tree, and every
+ * one of them returns a DIFFERENT address. Identical bytes are not
+ * identical semantics; this row's pool word was resolved on its own.
+ */
 u8 *SceneData_GetTable8dd4(void)
 {
     extern u8 *Data_03001ebc;
@@ -761,7 +760,8 @@ u8 *SceneData_GetTable8dd4(void)
     return (u8 *)0x02008dd4;
 }
 
-s32 SceneData_SelectTable8e08ByFlag96f(void) {
+s32 SceneData_SelectTable8e08ByFlag96f(void)
+{
     extern u8 *Data_03001ebc;
 
     if (Func_02000b82(0x96f) != 0) {
@@ -830,7 +830,7 @@ void FieldScene_RunActorCueBranch(s32 obj)
 {
     extern u8 *Data_03001ebc;
 
-    s32 cue = (s32) &Value_00002624;
+    s32 cue = (s32)&Value_00002624;
     Func_02000da2(cue);
     Func_02000db2(obj, 0);
     if (Func_02000d4a(0, 0) == 0) {

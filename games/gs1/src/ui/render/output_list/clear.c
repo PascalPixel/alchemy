@@ -2,7 +2,8 @@
 
 void RenderOutput_Release(void *);
 
-void RenderOutput_ClearList(void *arg0) {
+void RenderOutput_ClearList(void *arg0)
+{
     void *next;
     void *node;
 

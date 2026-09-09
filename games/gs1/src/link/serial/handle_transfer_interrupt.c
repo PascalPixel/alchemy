@@ -39,7 +39,7 @@ void SerialRuntime_HandleTransferInterrupt(void)
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
     volatile union SerialDataRegisters serial_data;
-    union SerialDataRegisters * const __restrict serial_snapshot =
+    union SerialDataRegisters *const __restrict serial_snapshot =
         (union SerialDataRegisters *)&serial_data;
     volatile u32 *sio_control;
     s32 channel;

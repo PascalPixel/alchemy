@@ -10,7 +10,8 @@ s32 Func_080091e0(void *, s32);
 s32 EffectRuntime_FindSlotByObject();
 s32 Audio_PlayCue(s32);
 
-void EffectRuntime_SetMode7AndLaunch(void) {
+void EffectRuntime_SetMode7AndLaunch(void)
+{
     s32 slot;
     void *object;
 

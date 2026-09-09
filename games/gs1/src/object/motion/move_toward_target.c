@@ -55,7 +55,7 @@ s32 ObjectMotion_MoveTowardTarget(s32 arg0)
         if (deltaY < 0)
             deltaY += 0xffff;
         cellY = deltaY >> 16;
-        distance = Func_080072f0(cellX * cellX + cellY * cellY,
+        distance = Func_080072f0(cellX *cellX + cellY *cellY,
                                  (s32)target, cellY, squareRoot);
         arg0 = *(s16 *)(object + 0x64);
         if (distance >= arg0) {

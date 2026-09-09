@@ -3,7 +3,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Resource_ClearOwnerListAndCounters(void) {
+void Resource_ClearOwnerListAndCounters(void)
+{
     void *state;
 
     state = *(void **)ADDR_03001E98;

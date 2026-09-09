@@ -1,46 +1,5 @@
 #include "types.h"
 
-/*
- * resource_399 scripted step at 0x020002b8, 204 bytes.
- *
- * Complete owner: `push {lr}` at 0x020002b8 and the interworking return
- * `pop {r0} / bx r0` at 0x02000372.  The popped register is r0, so it holds
- * the return address and nothing is returned — the owner is `void`.  Bytes
- * 0x02000376-0x02000383 are alignment plus the three-word literal pool.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_399
- * 02b8 --annotate`; an overlay `bl` stores `target - 2`, so the disassembler's
- * own annotations are wrong.  23 sites, 11 distinct imports.  Per-target
- * multiset against the assembly, which is what the C below spells:
- *   Func_0808a018 x1, GameFlag_IsSet x1, Func_0808a170 x2, Func_0808a180 x3,
- *   Func_0808a1f0 x2, Func_0808a010 x4, Func_0808a100 x4, Func_0808a148 x2,
- *   Func_0808a190 x1, Func_0808a1b8 x2, Func_0808a020 x1.
- * (The inventory's calls=20 counts distinct-ish targets and predates the
- * corrected `bl` decoding; it is a lower bound, not a check.)
- *
- * Shape: one scripted section bracketed by Func_0808a018/Func_0808a020, with
- * the story-flag query GameFlag_IsSet(0x881) choosing between two arms.  The
- * two arms are the SAME sequence on channel 10 and differ in exactly two
- * places — the message id (0x163c against 0x152d) and one step call, where the
- * flag-set arm uses Func_0808a190(10, 0) and the flag-clear arm uses
- * Func_0808a180(10, 0).  They are written out separately rather than merged so
- * the call multiset stays exact; the near-identity is itself the check that
- * neither arm was mis-transcribed.
- *
- * Constants built by shifts: `movs r1,#129 ; lsls #1` is 258 (a pose id), and
- * `movs r1,#192 ; lsls #6` is 0x3000 — three sixteenths of a turn in the
- * 16-bit angle unit Func_0808a1b8 takes.
- *
- * Func_0808a190 returns a status value: other independently reconstructed call
- * sites test that value.  It is ignored here, but retaining the truthful s32
- * declaration is load-bearing because the return-register dataflow determines
- * the reference's r1-before-r0 argument order at this call.
- *
- * The typed inline wrappers around the two angle calls are also load-bearing.
- * Their parameters preserve the reference's `movs r1,#192 / movs r0,#10 /
- * lsls r1,#6' materialisation without changing either call's behavior.
- */
-
 /* Imports, named by the main-image address in the trailing word of the overlay
  * veneer each call site reaches.  Most remain old-style because arity varies. */
 void Func_020024ec();
@@ -87,6 +46,46 @@ static __inline__ void Call_02002684(s32 channel, s32 angle, s32 frames)
     Func_02002684(channel, angle, frames);
 }
 
+/*
+ * resource_399 scripted step at 0x020002b8, 204 bytes.
+ *
+ * Complete owner: `push {lr}` at 0x020002b8 and the interworking return
+ * `pop {r0} / bx r0` at 0x02000372.  The popped register is r0, so it holds
+ * the return address and nothing is returned -- the owner is `void`.  Bytes
+ * 0x02000376-0x02000383 are alignment plus the three-word literal pool.
+ *
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_399
+ * 02b8 --annotate`; an overlay `bl` stores `target - 2`, so the disassembler's
+ * own annotations are wrong.  23 sites, 11 distinct imports.  Per-target
+ * multiset against the assembly, which is what the C below spells:
+ *   Func_0808a018 x1, GameFlag_IsSet x1, Func_0808a170 x2, Func_0808a180 x3,
+ *   Func_0808a1f0 x2, Func_0808a010 x4, Func_0808a100 x4, Func_0808a148 x2,
+ *   Func_0808a190 x1, Func_0808a1b8 x2, Func_0808a020 x1.
+ * (The inventory's calls=20 counts distinct-ish targets and predates the
+ * corrected `bl` decoding; it is a lower bound, not a check.)
+ *
+ * Shape: one scripted section bracketed by Func_0808a018/Func_0808a020, with
+ * the story-flag query GameFlag_IsSet(0x881) choosing between two arms.  The
+ * two arms are the SAME sequence on channel 10 and differ in exactly two
+ * places -- the message id (0x163c against 0x152d) and one step call, where the
+ * flag-set arm uses Func_0808a190(10, 0) and the flag-clear arm uses
+ * Func_0808a180(10, 0).  They are written out separately rather than merged so
+ * the call multiset stays exact; the near-identity is itself the check that
+ * neither arm was mis-transcribed.
+ *
+ * Constants built by shifts: `movs r1,#129 ; lsls #1` is 258 (a pose id), and
+ * `movs r1,#192 ; lsls #6` is 0x3000 -- three sixteenths of a turn in the
+ * 16-bit angle unit Func_0808a1b8 takes.
+ *
+ * Func_0808a190 returns a status value: other independently reconstructed call
+ * sites test that value.  It is ignored here, but retaining the truthful s32
+ * declaration is load-bearing because the return-register dataflow determines
+ * the reference's r1-before-r0 argument order at this call.
+ *
+ * The typed inline wrappers around the two angle calls are also load-bearing.
+ * Their parameters preserve the reference's `movs r1,#192 / movs r0,#10 /
+ * lsls r1,#6' materialisation without changing either call's behavior.
+ */
 void SceneDialogue_RunActorTenFlag881Dialogue(void)
 {
     Func_020024ec();

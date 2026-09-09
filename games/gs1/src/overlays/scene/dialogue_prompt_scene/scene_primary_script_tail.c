@@ -1484,7 +1484,7 @@ void RunDialoguePromptScene(void)
     {
         u8 *record = Func_02008492(12);
         u8 value = *(volatile u8 *)&record[35];
-    
+
         record[35] = (u8)(value | 1);
     }
     Call3(Func_020084d0, 15, 0x368, 0x1a9);
@@ -1880,7 +1880,7 @@ void RunDialoguePromptScene(void)
         u16 *slot = (u16 *)((s32)p7 + 0x1d8);
         s32 saved = *(s16 *)slot;
 
-        if (Value0(Func_0200740e) != 0) {
+        if (Value0(Func_0200740e)!= 0) {
             Call1_020036f8(Func_020092a8, 0x132a);
             Func_020092c0(2, 0);
             Func_02007438();

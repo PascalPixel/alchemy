@@ -237,8 +237,8 @@ void SceneState_SetWorkAndFlag87d(void)
     Func_0200342c();
 
     work = Data_03001ebc;
-    *(u32 *) (work + 448) = 512;
-    *(u32 *) (work + 456) = 64;
+    *(u32 *)(work + 448) = 512;
+    *(u32 *)(work + 456) = 64;
 
     Func_02003430(0x87D);
     Func_02003560(12, 0);
@@ -255,8 +255,8 @@ void SceneState_SetWorkAndFlag87e(void)
     Func_02003470();
 
     work = Data_03001ebc;
-    *(u32 *) (work + 448) = 512;
-    *(u32 *) (work + 456) = 64;
+    *(u32 *)(work + 448) = 512;
+    *(u32 *)(work + 456) = 64;
 
     Func_02003474(0x87E);
     Func_020035a4(12, 1);

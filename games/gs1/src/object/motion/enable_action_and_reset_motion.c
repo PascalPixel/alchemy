@@ -10,7 +10,7 @@ void ObjectMotion_EnableActionAndResetMotion(void)
   if (object != ((void *) 0))
   {
     action_enabled = 1;
-    *((u8 *) (((u8 *) object) + 0x5A)) = (u8) (action_enabled | (*((u8 *) (((u8 *) object) + 0x5A))));
+    *((u8 *)(((u8 *)object) + 0x5A)) = (u8)(action_enabled | (*((u8 *)(((u8 *)object) + 0x5A))));
     Object_ResetMotion();
   }
 }

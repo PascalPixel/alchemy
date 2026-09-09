@@ -105,7 +105,8 @@ u8 *SceneData_GetMessageTable(void)
     return (u8 *)0x020083c8;
 }
 
-s32 SceneData_SelectActorTableByFlag96f(void) {
+s32 SceneData_SelectActorTableByFlag96f(void)
+{
     if (Func_020002e2(0x96f) != 0) {
         return 0x020084e0;
     }
@@ -114,7 +115,7 @@ s32 SceneData_SelectActorTableByFlag96f(void) {
 
 void FieldScene_RunActorCue25b8Branch(s32 obj)
 {
-    s32 cue = (s32) &Value_000025b8;
+    s32 cue = (s32)&Value_000025b8;
     Func_02000332(cue);
     Func_02000342(obj, 0);
     if (Func_02000332_a(0, 0) == 0) {
@@ -128,7 +129,7 @@ void FieldScene_RunActorCue25b8Branch(s32 obj)
 
 void FieldScene_RunActorCue25dcBranch(s32 obj)
 {
-    s32 cue = (s32) &Value_000025dc;
+    s32 cue = (s32)&Value_000025dc;
     Func_0200037a(cue);
     Func_0200038a(obj, 0);
     if (Func_0200037a_a(0, 0) == 0) {

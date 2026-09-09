@@ -23,21 +23,6 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-/*
- * resource_37e owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
 /* Contiguous unnamed leaf-owner run for resource_37e. */
 
 /*
@@ -105,6 +90,20 @@ u8 *SceneData_GetScriptTable(void)
     return RESOURCE37E_PRIMARY_TABLE;   /* image offset 0xc0 */
 }
 
+/*
+ * resource_37e owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
+ *
+ * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ * A leaf never does -- it saves no register and returns with `bx lr`.
+ *
+ * Complete owner: both instructions. No prologue, no stack frame, no
+ * literal pool, no callees, no argument read.
+ *
+ * One of the 70 rows sharing this exact body across the tree. The body is
+ * shared; the identity is not -- this row is bounded by ITS overlay's
+ * neighbours and published from ITS overlay's table.
+ */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -125,8 +124,8 @@ u8 *SceneData_GetEffectTable(void)
     return RESOURCE37E_QUATERNARY_TABLE;   /* image offset 0x148 */
 }
 
-
-s32 FieldScene_InitSceneRequestAndCameraZoom(void) {
+s32 FieldScene_InitSceneRequestAndCameraZoom(void)
+{
     struct Resource37deSceneRuntime *runtime;
     /* The three scale values are locals, not literals at the call, so that
        their materialisation sits in the entry block instead of the call's.

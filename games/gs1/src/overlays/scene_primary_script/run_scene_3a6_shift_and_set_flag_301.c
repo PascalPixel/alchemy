@@ -1,5 +1,17 @@
 #include "types.h"
 
+          /* in-overlay, three arguments */
+          /* event flag */
+          /* ROM dispatch stub table entry 0 */
+          /* in-overlay, no arguments */
+
+extern void Func_02003616();
+extern void Func_0200309c();
+extern void Func_020030a6();
+extern void Func_02003568();
+extern void Func_020034f6();
+extern void Func_0200304e();
+extern void Func_02003640();
 /*
  * Resource 3a6 camera-shift scene at 0x020018b4 (54 bytes, 7 calls).
  *
@@ -7,13 +19,13 @@
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in games/gs1/metrics/gs1-en-executable.json for `push {..,lr}`
  * prologues.  Walking from the prologue at 0x020018b4 the body is
- * straight-line — seven `bl`s, no conditional branch — and the walk stops at
+ * straight-line -- seven `bl`s, no conditional branch -- and the walk stops at
  * the interworking return `pop {r0} / bx r0` at 0x020018e6-0x020018e8.  So the
  * executable extent is exactly 0x020018b4-0x020018e9 (54 bytes).  The popped
  * register is r0, so the popped value is the return address and the owner is
  * `void`.
  *
- * Pool map — the walk never reaches these as instructions:
+ * Pool map -- the walk never reaches these as instructions:
  *   0x020018ea  0x0000       alignment
  *   0x020018ec  0x00000301   an identifier, not an address
  *   0x020018f0  0x00000121   an identifier, not an address
@@ -39,19 +51,6 @@
  * displacement pair (an axis and its opposite), not two unrelated magnitudes.
  * GameFlag_Set is the event-flag import, so 0x0301 is this scene's flag id.
  */
-
-          /* in-overlay, three arguments */
-          /* event flag */
-          /* ROM dispatch stub table entry 0 */
-          /* in-overlay, no arguments */
-
-extern void Func_02003616();
-extern void Func_0200309c();
-extern void Func_020030a6();
-extern void Func_02003568();
-extern void Func_020034f6();
-extern void Func_0200304e();
-extern void Func_02003640();
 void FieldScene_RunShiftAndSetFlag301(void)
 {
     Func_02003616(241);

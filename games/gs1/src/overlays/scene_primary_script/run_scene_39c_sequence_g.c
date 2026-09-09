@@ -42,7 +42,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-
 void Func_020016c4(s32 a0)
 {
     u32 i;

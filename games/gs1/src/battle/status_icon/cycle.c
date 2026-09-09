@@ -124,5 +124,5 @@ update:
         record->displayed_effect_id = 0;
 
 done:
-    ;
+;
 }

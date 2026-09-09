@@ -26,7 +26,8 @@ void Func_02003318(struct Ent *, s32);
 void Func_02003358(struct Ent *, s32);
 void Func_0200339c(struct Ent *, s32);
 
-void SceneEffect_UpdateScrollingSpriteRows(void) {
+void SceneEffect_UpdateScrollingSpriteRows(void)
+{
     s32 *cp = &Data_03001e70->x;
     struct Ent *e = Data_0200aa50;
     s32 sx = cp[0] / 65536;

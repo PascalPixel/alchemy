@@ -5,7 +5,8 @@ extern u8 *Data_03001f2c;
 extern s32 Data_03001e40;
 void Object_InitializeMode(void *, s32);
 
-void EquipmentMenu_UpdateCompatibilityIndicators(void) {
+void EquipmentMenu_UpdateCompatibilityIndicators(void)
+{
     u8 *menu;
     s8 member_index;
 

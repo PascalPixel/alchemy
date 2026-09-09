@@ -32,7 +32,8 @@ extern void Func_02005494(void);
 #define UpdateLeadActorState Func_020052a8_a
 #define FinalizeStagedActorUpdate Func_02005494
 
-void RunStagedActorTransition(void) {
+void RunStagedActorTransition(void)
+{
     s32 target_position[3];
     struct StagedActor *leader;
     struct StagedActor *actor;

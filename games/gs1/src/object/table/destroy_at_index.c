@@ -10,7 +10,8 @@ extern struct Fields_0808b64c *Data_03001ebc;
 
 void Object_Destroy(void *);
 
-void ObjectTable_DestroyAtIndex(s32 arg0) {
+void ObjectTable_DestroyAtIndex(s32 arg0)
+{
     struct Fields_0808b64c *state = Data_03001ebc;
     void *object = ObjectTable_Get(arg0);
     if (object != 0) {

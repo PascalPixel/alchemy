@@ -1,6 +1,7 @@
 #include "types.h"
 
-void AudioTrack_ResetSlotBuckets(void) {
+void AudioTrack_ResetSlotBuckets(void)
+{
     s32 index;
     s32 limit;
     s32 zero;

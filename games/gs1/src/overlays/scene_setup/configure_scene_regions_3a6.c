@@ -1,4 +1,3 @@
-
 /* Contiguous unnamed leaf-owner run for resource_3a6. */
 
 void Func_02002a44();

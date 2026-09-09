@@ -11,7 +11,8 @@ extern void Func_02005478(void);
 extern void Func_02005416(s32);
 extern void Func_0200567c(s32);
 
-void SceneState_SetWork448AndRunFlag915Step(void) {
+void SceneState_SetWork448AndRunFlag915Step(void)
+{
     *(s32 *)(Data_03001ebc + 448) = 516;
     if (Func_0200548e(0x915) != 0) {
         s32 k = 2;

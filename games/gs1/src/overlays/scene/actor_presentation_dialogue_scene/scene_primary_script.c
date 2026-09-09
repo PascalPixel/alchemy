@@ -110,7 +110,7 @@ void FieldScene_RunScene382_020004a0(void)
     Call1(Func_02001f98, 0x1327);
     Call3(Func_02001fba, 0x9002, 0, 20);
     Func_02001f82(0, 3);
-    if (Value0(Func_020009ae) != 0) {
+    if (Value0(Func_020009ae)!= 0) {
         Call1(Func_02001fb8, 0x132a);
         Func_02001fd0(2, 0);
         Func_020009d8();

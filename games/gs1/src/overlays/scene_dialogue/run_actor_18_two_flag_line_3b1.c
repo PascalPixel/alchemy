@@ -1,7 +1,8 @@
 void Func_02007a60(); void Func_02007a9e(); int Func_02007a3e(); int Func_02007a50();
 void Func_02007b50(); void Func_02007b62(); void Func_02007b6a(); void Func_02007b82();
 /* Second-phase story selector at 0x02001594, 84 bytes; eight calls. */
-void SceneDialogue_RunActor18TwoFlagLine(void) {
+void SceneDialogue_RunActor18TwoFlagLine(void)
+{
     Func_02007a60();
     if (Func_02007a3e(0x92c)) Func_02007b50(0x1edb);
     else if (Func_02007a50(0x935)) Func_02007b62(0x1edc);

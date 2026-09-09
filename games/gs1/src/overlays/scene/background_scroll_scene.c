@@ -185,7 +185,8 @@ s32 Func_020005f8(s32, s32);
  * body. Recording 4 would claim alignment as code and put a phantom
  * overlap in the next reader's arithmetic.
  */
-void SceneState_SetActorEightValue3d(void) {
+void SceneState_SetActorEightValue3d(void)
+{
     Func_0200037c(8, 0x3D);
 }
 

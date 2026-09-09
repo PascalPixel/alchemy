@@ -1,7 +1,8 @@
 #include "types.h"
 #include "motion_object.h"
 
-void ResetBattleObjectRecordGroups(struct MotionObject *object) {
+void ResetBattleObjectRecordGroups(struct MotionObject *object)
+{
     s32 storage_kind;
     s32 remaining;
     void **record_groups;

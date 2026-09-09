@@ -157,7 +157,7 @@ void FieldScene_RunFlagGatedActorDialogue(void)
     s32 unused_record;
     s32 script_data;
 
-    if (GameFlag_IsSet_1(DIALOGUE_GATE_FLAG) != 0) {
+    if (GameFlag_IsSet_1(DIALOGUE_GATE_FLAG)!= 0) {
     } else {
         GameFlag_Set_1(DIALOGUE_GATE_FLAG);
         BattleRuntime_Reset_1();

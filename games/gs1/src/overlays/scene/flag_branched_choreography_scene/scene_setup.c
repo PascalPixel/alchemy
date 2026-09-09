@@ -28,7 +28,8 @@ void Func_02002a46(s32, s32);
 void Func_02002964(s32);
 void Func_020029c8(void);
 
-s32 SceneData_SelectTableac9cByState(void) {
+s32 SceneData_SelectTableac9cByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000021) {
         return (s32)Data_0200aca8;
     }

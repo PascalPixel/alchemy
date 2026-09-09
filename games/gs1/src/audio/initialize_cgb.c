@@ -129,7 +129,7 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
     *(volatile u8 *)0x04000070 = 0;
     *(volatile u8 *)0x04000080 = 119;
 
-    state = *(struct AudioEngineState * volatile *)0x03007ff0;
+    state = *(struct AudioEngineState *volatile *)0x03007ff0;
     ident = state->ident;
     if (ident != 0x68736d53)
         return;

@@ -96,7 +96,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         cost = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->pp_cost;
         if (((struct BattleUnitRecord *)Func_08077008(actor))->pp < cost) {
             Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91e, 1);
-            if (specialResult) runtime->result_code = 0;
+            if (specialResult)runtime->result_code = 0;
             return 0;
         }
         Func_08077120(actor, -cost);

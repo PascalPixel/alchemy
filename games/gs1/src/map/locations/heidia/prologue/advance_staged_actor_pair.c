@@ -32,7 +32,8 @@ extern void Func_0200321c(struct StagedActor *arg0, s32 arg1);
 #define FinishStagedActorMove Func_02003204
 #define FinishStagedActorEffect Func_02003300
 #define SetStagedActorTransition Func_0200321c
-void AdvanceStagedActorPair(void) {
+void AdvanceStagedActorPair(void)
+{
     s32 destination[3];
     struct StagedActor *lead_actor;
     struct StagedActor *next_actor;

@@ -32,7 +32,8 @@ static __inline__ void ConfigureScene_02003a30(s32 actor, s32 x, s32 y, s32 mode
     Func_02003a30(actor, x, y, mode);
 }
 
-void FieldScene_CallWhenCheck9_31_9(void) {
+void FieldScene_CallWhenCheck9_31_9(void)
+{
     if (Func_02003166(9, 31, 9) != 0) {
         Func_0200319a();
     }
@@ -54,17 +55,20 @@ void Func_020015fc(void)
     }
 }
 
-void FieldScene_ApplyRect13_31_12_30_12(void) {
+void FieldScene_ApplyRect13_31_12_30_12(void)
+{
     Func_0200357a(13, 31, 12, 30, 12);
     Func_0200384a();
 }
 
-void FieldScene_ApplyRect10_14_7_13_7(void) {
+void FieldScene_ApplyRect10_14_7_13_7(void)
+{
     Func_020035ba(10, 14, 7, 13, 7);
     Func_02003cbe();
 }
 
-void FieldScene_ApplyRect12_21_7_22_7(void) {
+void FieldScene_ApplyRect12_21_7_22_7(void)
+{
     Func_0200362a(12, 21, 7, 22, 7);
     Func_02003dde();
 }

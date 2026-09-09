@@ -144,7 +144,7 @@ void UpdateStatueTrapActor(void)
     Func_02003608_a();
     Func_02003660(0, 0);
     Func_02003696((s32)&Value_00001000);
-    if (Func_020035fe(g1) != 0 || Func_02003608_b(0x80a) == 0) {
+    if (Func_020035fe(g1)!= 0 || Func_02003608_b(0x80a) == 0) {
         target_actor = Func_0200364a(0);
         if (target_actor != 0) {
             Func_02003688(16, target_actor->unk8, target_actor->unk10);
@@ -152,7 +152,7 @@ void UpdateStatueTrapActor(void)
         Func_0200363e_a(4);
         Func_02003674(16, s1, s2);
     } else {
-        if (Func_0200363e_b(g2) != 0) goto do1;
+        if (Func_0200363e_b(g2)!= 0) goto do1;
         h1 = 0x1540000;
         if (scene_actor->unk8 > h1) {
 do1:
@@ -161,7 +161,7 @@ do1:
             Func_020036ae(16, s3, s4);
         }
     }
-    if (Func_02003676(g3) != 0) goto do2;
+    if (Func_02003676(g3)!= 0) goto do2;
     h2 = 0x1540000;
     if (scene_actor->unk8 > h2) {
 do2:
@@ -174,7 +174,7 @@ do2:
     Func_0200377c_a(16, s5, 10);
     Func_0200377e(16, 0, 10);
     Func_02003746(0, 3);
-    if (Func_020036d6(g4) != 0 || Func_020036e0(0x80a) == 0) {
+    if (Func_020036d6(g4)!= 0 || Func_020036e0(0x80a) == 0) {
         Func_0200375c(16, 2);
         target_position = Func_0200372a(0);
         if (target_position != 0) {

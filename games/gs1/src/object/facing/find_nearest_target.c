@@ -56,7 +56,7 @@ struct FacingEntry *Func_08093af8(struct FacingEntry *self, s32 id)
         }
         dx = (entry->x - self->x) / 0x10000;
         dz = (entry->z - self->z) / 0x10000;
-        dist = ((s32 (*)(s32))0x030001d8)(dx * dx + dz * dz);
+        dist = ((s32 (*)(s32))0x030001d8)(dx *dx + dz *dz);
         if (dist >= best)
             continue;
         angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);

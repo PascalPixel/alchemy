@@ -5,7 +5,8 @@
 
 s32 Func_080ae778(s32, s32);
 
-s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self) {
+s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
+{
     s32 sp0;
     s32 cnt;
     s32 i;
@@ -15,7 +16,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self) {
     state = *(void **)ADDR_03001F2C;
     cnt = 0;
     i = 0;
-    if (cnt < (s32) FIELD_AT_OFFSET(state, u8 *, 0x219)) {
+    if (cnt < (s32)FIELD_AT_OFFSET(state, u8 *, 0x219)) {
         p = tbl;
         do {
             *p = 0;
@@ -28,7 +29,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self) {
             }
             i += 1;
             p += 1;
-        } while (i < (s32) FIELD_AT_OFFSET(state, u8 *, 0x219));
+        } while (i < (s32)FIELD_AT_OFFSET(state, u8 *, 0x219));
     }
     return cnt;
 }

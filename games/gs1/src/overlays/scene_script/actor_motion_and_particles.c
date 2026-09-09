@@ -524,7 +524,8 @@ void Func_020011d4(void);      /* site 0x8ce, was Func_02000904 */
 
 void Func_02001408(void);      /* site 0x8da, was Func_02000b2c */
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];
@@ -571,7 +572,8 @@ u8 *SceneData_SelectFlaggedTable(void)
     return Data_020093f4;
 }
 
-s32 SceneData_GetPrimaryTable(void) {
+s32 SceneData_GetPrimaryTable(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];
@@ -717,7 +719,7 @@ s32 SceneActor_IsSlotZeroAngleInRange(void)
 {
     struct Slot02000338 *slot = Func_02001206(0);
 
-    if ((u32) ((slot->angle + 0x5FFF) << 16) <= 0x3FFE0000) {
+    if ((u32)((slot->angle + 0x5FFF) << 16) <= 0x3FFE0000) {
         return 1;
     }
     return 0;
@@ -1172,7 +1174,7 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
     s32 clear = 0;
     u8 *attached;
 
-    *state = (u8) clear;
+    *state = (u8)clear;
     attached = actor->attached;
     clear -= 13;
     attached[9] = (clear & attached[9]) | 4;

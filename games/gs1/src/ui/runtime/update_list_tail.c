@@ -2,7 +2,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void UiWork_UpdateListTail(s32 *list) {
+void UiWork_UpdateListTail(s32 *list)
+{
     s32 *prev;
     s32 *node;
 

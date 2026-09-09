@@ -10,15 +10,15 @@
  * exactly 0x02000314-0x02000321 (14 bytes).  The popped register is r0, so the
  * popped value is the return address and the owner is `void`.
  *
- * Pool map: none — no literal is loaded.  The halfword at 0x02000322 is
+ * Pool map: none -- no literal is loaded.  The halfword at 0x02000322 is
  * `0x0000` alignment before the next prologue at 0x02000324
  * (`push {r5, lr} / movs r1,#0 / adds r5,r0,#0`), and the walk never reaches
  * it as an instruction.
  *
  * Nine overlays carry a prologue at 0x0314; five are one transposed 3-D
- * distance helper (see resource_385_c_02000314.c).  This is not one of them —
+ * distance helper (see resource_385_c_02000314.c).  This is not one of them --
  * it saves no register but lr, loads two small constants and tail-calls a
- * single import — and it is not the same routine as resource_3a0's 0x0314
+ * single import -- and it is not the same routine as resource_3a0's 0x0314
  * either, which passes three constants to a different import.
  *
  * The one call site was resolved with

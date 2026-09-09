@@ -3,7 +3,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-u32 SaveState_FindFreeSummarySlot(void) {
+u32 SaveState_FindFreeSummarySlot(void)
+{
     u32 i;
     u8 *p;
 

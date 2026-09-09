@@ -8,7 +8,7 @@
  * {r5,r6,lr}` at 0x02004670, epilogue `pop {r5,r6} / pop {r0} / bx r0` at
  * 0x020047b0-0x020047b4. The trailing four-word pool at
  * 0x020047b6-0x020047c8 (0x00000928, 0x00000929, 0xffff0000, 0x0000092a,
- * 0x0000092b — five words, one is a shared padding read) ends exactly
+ * 0x0000092b -- five words, one is a shared padding read) ends exactly
  * where the next owner's `push {r5,lr}` begins (0x020047cc, already this
  * overlay's row `0x020047cc | 1 call`), so the span is
  * 0x02004670-0x020047cc, 348 bytes.

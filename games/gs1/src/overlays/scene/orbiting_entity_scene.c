@@ -288,7 +288,8 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object) {
+s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
+{
     s32 delta;
     u16 old;
     s32 tgt;
@@ -296,8 +297,8 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object) {
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8) (0xFE & object->facing_flags);
-        tgt = (u16) CalculateFacingAngle(target->position_z - object->position_z, target->position_x - object->position_x);
+        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        tgt = (u16)CalculateFacingAngle(target->position_z - object->position_z, target->position_x - object->position_x);
         old = object->facing;
         delta = (s16)(tgt - old);
         if (delta != 0) {
@@ -308,7 +309,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object) {
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            object->facing = (u16) (old + delta);
+            object->facing = (u16)(old + delta);
         }
     }
     return 1;
@@ -392,7 +393,8 @@ void FieldScene_RunStepWithValue29de(void)
     Func_02000c20();
 }
 
-s32 SceneData_SelectTable8d24ByState(void) {
+s32 SceneData_SelectTable8d24ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000022) {
         return (s32)Data_02008d30;
     }

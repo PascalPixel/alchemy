@@ -4,6 +4,14 @@
  * (tiers: class, priority) -- matches the documented DEAD-END FINGERPRINT
  * (adjacent register swap in an asrs/str block), genuinely unfixed. */
 
+/* Per-site veneers (raw sub_ symbols from the overlay .s). */
+extern u8 *Func_02007168(s32 no);
+extern void Func_02006f74(void);
+extern void Func_02006f5c(u8 *obj, s32 x);
+extern void Func_02006f98(u8 *obj, s32 x, s32 z, s32 arg3);
+extern void Func_02006fa6(u8 *obj);
+extern void Func_02006f76(u8 *obj, s32 x);
+
 /*
  * resource_3bb owner at 0x020030e8, 80 bytes: spawn an object and run a
  * short fixed setup sequence on it.
@@ -22,15 +30,6 @@
  * cleared, 0xc read back for the position setup call) are inferred only
  * from this call shape.
  */
-
-/* Per-site veneers (raw sub_ symbols from the overlay .s). */
-extern u8 *Func_02007168(s32 no);
-extern void Func_02006f74(void);
-extern void Func_02006f5c(u8 *obj, s32 x);
-extern void Func_02006f98(u8 *obj, s32 x, s32 z, s32 arg3);
-extern void Func_02006fa6(u8 *obj);
-extern void Func_02006f76(u8 *obj, s32 x);
-
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 {
     u8 *obj = Func_02007168(no);

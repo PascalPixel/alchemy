@@ -10,7 +10,8 @@
 s16 Func_02003588(s32, s32);
 struct FacingObject *Func_0200364e(s16);
 
-s32 UpdateFacingFromResolvedObject(struct FacingObject *object) {
+s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
+{
     struct FacingObject *target;
 
     target = ResolveFacingObject(object->unknown_64);

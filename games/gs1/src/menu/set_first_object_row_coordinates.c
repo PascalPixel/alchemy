@@ -2,7 +2,8 @@
 
 extern u8 *Data_03001f2c;
 
-s32 Menu_SetFirstObjectRowCoordinates(s32 arg0) {
+s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
+{
     u8 *current;
     s32 value;
     s32 count;

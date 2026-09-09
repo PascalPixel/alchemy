@@ -23,7 +23,8 @@ s32 SceneData_SelectOverlayDataByRuntimeSelector(void)
 #include "select_overlay_data_by_runtime_selector_body.inc"
 }
 
-s32 SceneData_GetTable93FCWhenState20(void) {
+s32 SceneData_GetTable93FCWhenState20(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000020) {
         return (s32)Data_020093fc;
     }

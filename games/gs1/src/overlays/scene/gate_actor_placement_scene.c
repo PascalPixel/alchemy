@@ -29,21 +29,6 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-/*
- * resource_388 owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
 /* Contiguous unnamed leaf-owner run for resource_388. */
 
 /*
@@ -110,6 +95,20 @@ u8 *SceneData_GetPrimaryTable(void)
     return RESOURCE388_PRIMARY_TABLE;   /* image offset 0x108 */
 }
 
+/*
+ * resource_388 owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
+ *
+ * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ * A leaf never does -- it saves no register and returns with `bx lr`.
+ *
+ * Complete owner: both instructions. No prologue, no stack frame, no
+ * literal pool, no callees, no argument read.
+ *
+ * One of the 70 rows sharing this exact body across the tree. The body is
+ * shared; the identity is not -- this row is bounded by ITS overlay's
+ * neighbours and published from ITS overlay's table.
+ */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -130,7 +129,8 @@ u8 *SceneData_GetQuaternaryTable(void)
     return RESOURCE388_QUATERNARY_TABLE;   /* image offset 0x1c4 */
 }
 
-s32 FieldScene_PlaceActor8OnGate300(void) {
+s32 FieldScene_PlaceActor8OnGate300(void)
+{
     struct Resource388Runtime *work;
     /* state, arg5 and arg6 look gratuitous but are
        load-bearing: they keep the values out of the immediate operands of the

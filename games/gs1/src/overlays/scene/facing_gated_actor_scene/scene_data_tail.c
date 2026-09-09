@@ -136,13 +136,13 @@ s32 Func_02003806();
  * the default at 0x02000224.  Note 50 shares an arm with 20 and 21 while its
  * neighbours 48 and 49 do not -- a shape no sibling would have predicted.
  *
- * Case-arm ORDER is taken off the ROM (HANDOVER §5b5): group the entries by
+ * Case-arm ORDER is taken off the ROM (HANDOVER 5b5): group the entries by
  * value and sort the distinct values ascending, which puts the 20/21/50 arm
  * third and the 29 arm after the 32 arm, not in selector order.
  *
  * The default arm asks two questions in sequence and returns a different
  * table for each answer; the two `bl` sites carry per-site RAW names
- * (HANDOVER §5b3a), read off `overlay_show resource_378 0x14c`.
+ * (HANDOVER 5b3a), read off `overlay_show resource_378 0x14c`.
  */
 
 void *SceneData_SelectPlacementTableBySubstate(void)

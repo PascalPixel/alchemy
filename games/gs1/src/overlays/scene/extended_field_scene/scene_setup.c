@@ -36,7 +36,8 @@ s32 Func_02002d90(s32);
 void Func_02002f20(void);
 void Func_02002f0c(s32);
 
-void FieldScene_RunActorTwentyOneSetup(void) {
+void FieldScene_RunActorTwentyOneSetup(void)
+{
     struct Obj *p = Func_02002d3e(21);
     Func_02002d1c();
     p->f38 = 0x80000000;
@@ -60,7 +61,8 @@ void FieldScene_RunActorTwentyOneSetup(void) {
     Func_02002da4();
 }
 
-void SceneState_SetWork1c0AndRun(s32 no) {
+void SceneState_SetWork1c0AndRun(s32 no)
+{
     u8 *p;
     if (Func_02002d90(0x834) != 0) {
         Func_02002f20();

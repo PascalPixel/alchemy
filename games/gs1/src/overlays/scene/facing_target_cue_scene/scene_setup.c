@@ -23,7 +23,7 @@ void Func_0200329a(void);
 
 void FieldScene_RunActorCueBranch(s32 object)
 {
-    s32 cue = (s32) &Value_000022b9;
+    s32 cue = (s32)&Value_000022b9;
 
     Func_02001ae6(cue);
     Func_02001af6(object, 0);

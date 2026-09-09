@@ -4,6 +4,7 @@
 
 s32 Func_080792c4();
 
-s32 OwnerAction_CheckLevelThreshold(void) {
+s32 OwnerAction_CheckLevelThreshold(void)
+{
     return Func_080792c4();
 }

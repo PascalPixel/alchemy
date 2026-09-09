@@ -24,6 +24,36 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
+/* Import veneers, named by the main-image function each one reaches.
+ * Old-style declarations: arities vary between call sites in this overlay. */
+SceneRecord *Func_020075cc();
+SceneRecord *Func_020071f6(Position3 *, SceneRecord *);
+SceneRecord *Func_02007220(Position3 *, SceneRecord *);
+SceneRecord *Func_0200724c(Position3 *, SceneRecord *);
+s32 Func_020075e6(SceneRecord *, Position3 *);
+void Func_02007594(SceneRecord *, s32);
+void Func_020074fa(s32);
+void Func_020075da(SceneRecord *, s32, s32, s32);
+void Func_020075ea(SceneRecord *, s32, s32, s32);
+void Func_02007810(s32);
+void Func_020075fe(SceneRecord *);
+void Func_0200781e(s32);
+void Func_020075e4(SceneRecord *, s32);
+                                /* scene record for a subject handle */
+                                /* select presentation mode (record, mode) */
+                                /* place the record at (x, y, z) */
+                                /* re-attach the camera to a record */
+                                /* terrain probe; positive result blocks */
+                                /* wait n frames */
+                                /* play a cue */
+
+/* This overlay's own occupancy lookup; byte-exact source in games/gs1/asm/overlays. */
+
+/* In-image dir table at file offset 0x4154 (0x0200c154 - 0x8000):
+ * sixteen packed steps, high half x, low half z. */
+extern u32 Data_0200c154[];
+extern s16 Data_02000240[];
+
 /*
  * resource_3ba owner at 0x020038f8, 360 bytes (0x020038f8-0x02003a5f):
  * 344 bytes of code plus the four-word literal pool at 0x02003a50, which ends
@@ -55,7 +85,7 @@ typedef struct Position3 {
  *                `*(void **)&Data_02000240[250]` that resource_36f reads and
  *                that this overlay's 0x02003a60 also uses.
  *
- * SHAPE — the push interaction.  Take the active subject, turn its facing
+ * SHAPE -- the push interaction.  Take the active subject, turn its facing
  * halfword into a 0..15 direction index (`>> 12`), and read one packed delta
  * word from Data_0200c154: the high half is the x step and the low half,
  * shifted up 16, is the z step, both 16.16.  Probe the cell one step ahead of
@@ -84,37 +114,6 @@ typedef struct Position3 {
  *  - The two Object_SetPosition calls reuse the same position block; the second is
  *    reached with r0 reloaded from r8, so it moves the subject, not the target.
  */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-SceneRecord *Func_020075cc();
-SceneRecord *Func_020071f6(Position3 *, SceneRecord *);
-SceneRecord *Func_02007220(Position3 *, SceneRecord *);
-SceneRecord *Func_0200724c(Position3 *, SceneRecord *);
-s32 Func_020075e6(SceneRecord *, Position3 *);
-void Func_02007594(SceneRecord *, s32);
-void Func_020074fa(s32);
-void Func_020075da(SceneRecord *, s32, s32, s32);
-void Func_020075ea(SceneRecord *, s32, s32, s32);
-void Func_02007810(s32);
-void Func_020075fe(SceneRecord *);
-void Func_0200781e(s32);
-void Func_020075e4(SceneRecord *, s32);
-                                /* scene record for a subject handle */
-                                /* select presentation mode (record, mode) */
-                                /* place the record at (x, y, z) */
-                                /* re-attach the camera to a record */
-                                /* terrain probe; positive result blocks */
-                                /* wait n frames */
-                                /* play a cue */
-
-/* This overlay's own occupancy lookup; byte-exact source in games/gs1/asm/overlays. */
-
-/* In-image dir table at file offset 0x4154 (0x0200c154 - 0x8000):
- * sixteen packed steps, high half x, low half z. */
-extern u32 Data_0200c154[];
-extern s16 Data_02000240[];
-
 void StagedActor_PushActorAhead(void)
 {
     SceneRecord *subject;

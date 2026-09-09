@@ -5,7 +5,8 @@
 
 s32 Resource_ResetEntry(u16);
 
-void Menu_ResetTwoResourceEntries(void) {
+void Menu_ResetTwoResourceEntries(void)
+{
     void *state;
 
     state = *(void **)ADDR_03001F2C;

@@ -2,7 +2,7 @@
 
 #define FieldScene_RunScriptedSceneSequence Func_0200088c
 
-/* Calls use this overlay’s loader veneers. The early long branch shares
+/* Calls use this overlay's loader veneers. The early long branch shares
  * the dialogue tail and epilogue; the two timing loops each run six times. */
 
 extern u8 *Data_03001ebc;

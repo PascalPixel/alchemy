@@ -12,7 +12,8 @@ extern s32 Func_020056ba();
 extern s32 Func_020056be();
 extern void Func_02004e90();
 
-void SceneActor_RunSlotZeroFacingCheck(void) {
+void SceneActor_RunSlotZeroFacingCheck(void)
+{
     struct Obj *p = Func_0200558e(0);
     s32 x = Func_02004da4();
     s32 m = (p->f06 + 0x2000) & 0xc000;

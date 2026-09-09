@@ -13,7 +13,8 @@ extern s32 Func_02005442(s32);
 extern struct Obj *Func_02005494(s32);
 extern void Func_02003f50(void);
 
-void SceneState_ApplyFlagGatedActorEightSetup(void) {
+void SceneState_ApplyFlagGatedActorEightSetup(void)
+{
     struct Obj *o;
 
     if (Func_02005432(0xfd6) == 0) {

@@ -175,5 +175,4 @@ void SceneActor_SetModeByFrameBit1(s32 o)
             Func_02008710(o);
         }
     }
-
 }

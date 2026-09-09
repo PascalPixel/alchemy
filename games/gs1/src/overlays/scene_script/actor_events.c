@@ -667,7 +667,8 @@ s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
     return 0;
 }
 
-s32 OverlayObject_SetFacingTowardObject10(void *self) {
+s32 OverlayObject_SetFacingTowardObject10(void *self)
+{
     void *obj;
 
     obj = Func_02001564(0xA);
@@ -675,7 +676,8 @@ s32 OverlayObject_SetFacingTowardObject10(void *self) {
     return 0;
 }
 
-s32 SceneData_SelectTable97b4ByState(void) {
+s32 SceneData_SelectTable97b4ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000004a) {
         return (s32)Data_02009844;
     }
@@ -692,7 +694,8 @@ u8 *SceneData_GetTable98ec(void)
     return (u8 *)0x020098ec;
 }
 
-s32 SceneData_SelectTable9918ByState(void) {
+s32 SceneData_SelectTable9918ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000004a) {
         return (s32)Data_02009a38;
     }
@@ -714,7 +717,7 @@ void SceneDialogue_RunMessage1958Step(void)
         Func_020016a4(10, 0);
     } else {
         work = Data_03001ebc;
-        *(u16 *) (work + 472) += 1;
+        *(u16 *)(work + 472) += 1;
         Func_020016ce(10, 0);
     }
 
@@ -1326,7 +1329,8 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
     Func_0200266c_a();
 }
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000004a) {
         return (s32)Data_02009c9c;
     }

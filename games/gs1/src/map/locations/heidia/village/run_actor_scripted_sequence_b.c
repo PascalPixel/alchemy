@@ -21,7 +21,7 @@ extern u8 Value_0000241e;
  * sources under games/gs1/asm/overlays and this file keep the printed-offset spelling for
  * symbol names and the raw pool value for absolute data addresses, which is
  * self-consistent; nothing here depends on which of the two bases is real.  Note that Func_02007376 is reached twice with
- * different argument shapes — once as (handle, 0) and once as (identifier) —
+ * different argument shapes -- once as (handle, 0) and once as (identifier) --
  * which is why these services keep old-style declarations rather than being
  * given an invented common prototype.
  *

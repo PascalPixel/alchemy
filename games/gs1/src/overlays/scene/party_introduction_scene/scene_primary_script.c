@@ -1057,7 +1057,7 @@ void Func_0200178c(void)
     tbl += 216;
     left = 14;
     do {
-        u32 id = *(volatile u16 *)(tbl) & 0x1ff;
+        u32 id = *(volatile u16 *)(tbl)& 0x1ff;
         tbl = (tbl + 2);
         if (id - 220 > 1) {
             if (id != 223) {
@@ -1205,7 +1205,7 @@ void FieldScene_RunActorFourteenGuestScene(void)
     Func_020067e4(30);
     {
         u8 value = *(volatile u8 *)&rec[90];
-    
+
         rec[90] = (u8)(value | 1);
     }
     Func_02006874(14, 4);
@@ -1305,7 +1305,7 @@ void FieldScene_RunActorFourteenGuestScene(void)
     rec = Value1(Func_02006ad6, 1);
     {
         u8 value = *(volatile u8 *)&rec[90];
-    
+
         rec[90] = (u8)(value | 1);
     }
     *(volatile s32 *)((s32)rec + 48) = 0x30000;

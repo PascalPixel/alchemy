@@ -3,7 +3,8 @@
 extern s32 Data_020097f4;
 extern s32 Data_020097f0;
 
-void SceneState_CountDownEveryFortyTicks(void) {
+void SceneState_CountDownEveryFortyTicks(void)
+{
     s32 n = Data_020097f4 + 1;
 
     Data_020097f4 = n;

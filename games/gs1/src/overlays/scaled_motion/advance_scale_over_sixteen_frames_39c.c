@@ -1,6 +1,7 @@
 #include "types.h"
 
-s32 SceneEffect_AdvanceScaleOverSixteenFrames(u8 *o) {
+s32 SceneEffect_AdvanceScaleOverSixteenFrames(u8 *o)
+{
     u16 *c = (u16 *)(o + 100);
     s16 n;
 

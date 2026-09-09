@@ -7,7 +7,8 @@ void Func_02004968(s32, s32);
 void Func_02004972(s32, s32);
 void Func_02004768(s32);
 
-void OverlayObject_UpdateOnFrameBit1(s32 obj) {
+void OverlayObject_UpdateOnFrameBit1(s32 obj)
+{
     if ((*(volatile s32 *)0x03001e40 & 2) != 0) {
         Func_02004968(obj, 7);
     } else {

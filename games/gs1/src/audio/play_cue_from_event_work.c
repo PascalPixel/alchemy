@@ -9,6 +9,7 @@ extern struct Party Data_02000240;
 
 extern void Audio_PlayCue(s16 arg0);
 
-void Audio_PlayCueFromEventWork(void) {
+void Audio_PlayCueFromEventWork(void)
+{
     Audio_PlayCue(Data_02000240.cue);
 }

@@ -651,26 +651,6 @@ s32 Func_020034a2_a();
 
 /* Contiguous unnamed leaf-owner run for resource_3aa. */
 
-/*
- * resource_3aa owner at 0x02000064, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000068 holding 0x2009d9c.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000064 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009d9c is image offset
- * 0x1d9c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
@@ -841,13 +821,33 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
     *(u16 *)(*(u8 **)Data_03001ebc + 0x1d8) += amount;
 }
 
-s32 SceneData_SelectTable9bd4ByState(void) {
+s32 SceneData_SelectTable9bd4ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000067) {
         return (s32)Data_02009c04;
     }
     return (s32)Data_02009bd4;
 }
 
+/*
+ * resource_3aa owner at 0x02000064, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
+ * one-word literal pool at 0x2000068 holding 0x2009d9c.
+ *
+ * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ *
+ * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
+ * `pc`-relative load at 0x02000064 reads it, so it belongs to this owner.
+ * Recording 4 would orphan a word and manufacture a phantom gap.
+ *
+ * The pool word is an ADDRESS -- 0x2009d9c is image offset
+ * 0x1d9c under the base + 0x8000 spelling -- loaded and returned
+ * without being dereferenced, so this is a getter for an in-image table.
+ *
+ * One of the 191 rows sharing this exact body across the tree, and every
+ * one of them returns a DIFFERENT address. Identical bytes are not
+ * identical semantics; this row's pool word was resolved on its own.
+ */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -858,7 +858,8 @@ u8 *SceneData_GetTable9d9c(void)
     return (u8 *)0x02009d9c;
 }
 
-s32 SceneData_SelectTable9ddcByStateWithInit(void) {
+s32 SceneData_SelectTable9ddcByStateWithInit(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000067) {
         Func_02001b1a(Data_02009df4);
         return (s32)Data_02009df4;
@@ -866,7 +867,8 @@ s32 SceneData_SelectTable9ddcByStateWithInit(void) {
     return (s32)Data_02009ddc;
 }
 
-s32 SceneData_SelectTable9f2cByState(void) {
+s32 SceneData_SelectTable9f2cByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000067) {
         return (s32)Data_02009f38;
     }
@@ -946,7 +948,7 @@ s32 SceneState_SetWord448To209AndRun(void)
     extern u8 *Data_03001ebc;
 
     *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32) (u32) &Value_00000067) {
+    if (Data_02000240[224] == (s32)(u32)&Value_00000067) {
         Func_020004ae();
     }
     return 0;

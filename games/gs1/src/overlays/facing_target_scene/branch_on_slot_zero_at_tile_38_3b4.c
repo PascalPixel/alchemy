@@ -24,6 +24,15 @@
  */
 #include "types.h"
 
+/* Returns the record for a numbered slot. */
+s32 *Func_020040a6();
+s32 *Func_020040ae();
+void Func_02004174();
+void Func_0200417a();
+void Func_02003598();
+void Func_02001c78();
+void Func_02003680();
+
 /*
  * resource_3b4 owner at 0x02001b60, 100 bytes: code 0x02001b60-0x02001bbf and
  * the pool word 0x000fffff at 0x02001bc0.
@@ -37,16 +46,6 @@
  *
  * The epilogue is `pop {r5} / pop {r0} / bx r0`, so the owner is void.
  */
-
-/* Returns the record for a numbered slot. */
-s32 *Func_020040a6();
-s32 *Func_020040ae();
-void Func_02004174();
-void Func_0200417a();
-void Func_02003598();
-void Func_02001c78();
-void Func_02003680();
-
 void SceneActor_BranchOnSlotZeroAtTile38(void)
 {
     s32 *slot0 = Func_020040a6(0);

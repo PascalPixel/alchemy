@@ -12934,8 +12934,8 @@
     {
       "overlay": "resource_3c4",
       "entry": "0x0200259c",
-      "span_bytes": 2636,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "span_bytes": 102,
+      "evidence": "Complete two-switch actor initializer executable-audited fragment: 0x0200259c..0x02002602 (102 bytes). Remaining owner bytes currently remain unreviewed as unresolved gaps."
     },
     {
       "overlay": "resource_3c5",
@@ -14053,17 +14053,77 @@
       "span_bytes": 532,
       "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
     },
-    {"overlay":"resource_370","entry":"0x02000384","span_bytes":72,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_373","entry":"0x02005950","span_bytes":184,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_380","entry":"0x02000104","span_bytes":54,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_397","entry":"0x020002a0","span_bytes":64,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_39c","entry":"0x020003a8","span_bytes":384,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_39c","entry":"0x02001c9c","span_bytes":160,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_39e","entry":"0x02000104","span_bytes":54,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_3ba","entry":"0x02000540","span_bytes":752,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_3c9","entry":"0x02000104","span_bytes":54,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_3c9","entry":"0x02003600","span_bytes":96,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_3cb","entry":"0x02001050","span_bytes":28,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"},
-    {"overlay":"resource_3cd","entry":"0x020000c0","span_bytes":44,"evidence":"retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"}
+    {
+      "overlay": "resource_370",
+      "entry": "0x02000384",
+      "span_bytes": 72,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_373",
+      "entry": "0x02005950",
+      "span_bytes": 184,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_380",
+      "entry": "0x02000104",
+      "span_bytes": 54,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_397",
+      "entry": "0x020002a0",
+      "span_bytes": 64,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x020003a8",
+      "span_bytes": 384,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_39c",
+      "entry": "0x02001c9c",
+      "span_bytes": 160,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_39e",
+      "entry": "0x02000104",
+      "span_bytes": 54,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_3ba",
+      "entry": "0x02000540",
+      "span_bytes": 752,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_3c9",
+      "entry": "0x02000104",
+      "span_bytes": 54,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_3c9",
+      "entry": "0x02003600",
+      "span_bytes": 96,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_3cb",
+      "entry": "0x02001050",
+      "span_bytes": 28,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    },
+    {
+      "overlay": "resource_3cd",
+      "entry": "0x020000c0",
+      "span_bytes": 44,
+      "evidence": "retained candidate extent; exact-correspondence boundary independently confirmed by canonical disassembly and audited executable coverage; not an adoption or exactness claim"
+    }
   ]
 }

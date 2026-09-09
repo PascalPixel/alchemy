@@ -1,7 +1,15 @@
-#include "types.h"
+#include "object_runtime.h"
 
 #define FieldScene_RunScriptedActorPresentation Func_020008b4
 
+struct SceneWork {
+    u8 unknown_000[0x1c0];
+    s32 request;
+    u8 unknown_1c4[0x14];
+    u16 step;
+};
+
+extern struct SceneWork *Data_03001ebc;
 extern u8 Data_0200dfc4[];
 u8 *Func_02006612();
 void Func_02006600();
@@ -14,7 +22,7 @@ u8 *Func_02006664();
 void Func_020065ca();
 void Func_02006742();
 void Func_020066e0();
-u8 *Func_02006686();
+struct ObjectRuntime *Func_02006686();
 void Func_02006768();
 void Func_02006704();
 void Func_0200655a();
@@ -260,7 +268,6 @@ void Func_02006f60();
 void Func_02006f74();
 
 static __inline__ void Call1(void (*f)(), s32 a0) { f(a0); }
-static __inline__ s32 Value1(s32 (*f)(), s32 a0) { return f(a0); }
 static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a0) { return f(a0); }
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1) { f(a0, a1); }
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1) { return f(a0, a1); }
@@ -271,18 +278,17 @@ void FieldScene_RunScriptedActorPresentation(void)
 {
     s32 zero;
     u8 *actor;
-    u8 *lead_actor;
+    struct ObjectRuntime *lead_actor;
     u8 *record;
-    s32 none;
-    s32 v5;
-    s32 base6_4013;
-    s32 base5_2014;
-    s32 v6;
-    s32 base6_8015;
-    s32 base5_a014;
-    s32 base6_3001ebc;
-    s32 base5_8001;
-    u8 *action;
+    s32 initial_flags;
+    s32 active_mask;
+    s32 selector_4013;
+    s32 selector_2014;
+    s32 heading_scale;
+    s32 selector_8015;
+    s32 selector_a014;
+    s32 selector_8001;
+    u8 *action_script;
 
     actor = Pointer1(Func_02006612, 18);
     Func_02006600();
@@ -291,19 +297,19 @@ void FieldScene_RunScriptedActorPresentation(void)
     Func_02001b64(3, 0);
     Call4(Func_02006732, -1, -1, -1, 0);
     Func_020064f8(1);
-    none = 0;
-    actor[85] = none;
+    initial_flags = 0;
+    actor[85] = initial_flags;
     {
-        u8 value = *(u8 *)&actor[35];
-
-        actor[35] = (u8)(value | 2);
+        s32 value = 2;
+        value |= actor[35];
+        actor[35] = value;
     }
     record = Func_02006664(18);
     Func_020065ca(record, 0);
     Func_02006742(18, 1);
     Call3(Func_020066e0, 18, 0x2440000, 0x1520000);
-    lead_actor = Pointer1(Func_02006686, 0);
-    lead_actor[85] = none;
+    lead_actor = Func_02006686(0);
+    lead_actor->flags = initial_flags;
     Func_02006768(0, 1);
     Call3(Func_02006704, 0, 0x2450000, 0x1200000);
     Func_0200655a(1);
@@ -327,30 +333,30 @@ void FieldScene_RunScriptedActorPresentation(void)
     Func_02006734(20);
     Func_020067c4(0, 6);
     Func_020067da(0);
-    *(s32 *)(lead_actor + 8) = 0x2040000;
-    *(s32 *)(lead_actor + 12) = 0x80000;
-    *(s32 *)(lead_actor + 16) = 0x940000;
+    lead_actor->x = 0x2040000;
+    lead_actor->y = 0x80000;
+    lead_actor->z = 0x940000;
     {
         s32 shown = 0x8000;
 
-        *(u16 *)(lead_actor + 6) = shown;
+        *(u16 *)(lead_actor->unknown_00 + 6) = shown;
     }
-    lead_actor[85] = 3;
+    lead_actor->flags = 3;
     zero = 0;
     Func_02006908(152);
-    *(s32 *)(lead_actor + 40) = 0x40000;
+    lead_actor->velocity_y = 0x40000;
     Func_02006914(152);
     record = Func_0200679a(0);
     Func_02006700(record, 1);
     Call3(Func_020067ec, 0, 0x1f8, 148);
-    v5 = 1;
+    active_mask = 1;
     Func_02006792(10);
-    *(u8 *)(Func_020067d8(0) + 90) |= v5;
-    *(s32 *)(lead_actor + 12) = -0x200000;
+    *(u8 *)(Func_020067d8(0) + 90) |= active_mask;
+    lead_actor->y = -0x200000;
     {
         s32 shown = 0x4000;
 
-        *(u16 *)(lead_actor + 6) = shown;
+        *(u16 *)(lead_actor->unknown_00 + 6) = shown;
     }
     Func_020067d6(20);
     Call1(Func_0200697e, 0x134);
@@ -364,7 +370,7 @@ void FieldScene_RunScriptedActorPresentation(void)
         u8 *record = Func_02006840(0);
         u8 value = *(u8 *)&record[35];
 
-        record[35] = (u8)(value | v5);
+        record[35] = (u8)(value | active_mask);
     }
     Call3(Func_02006862, 0, 0xcccc, 0x6666);
     Func_02001d8e(1, 1);
@@ -383,10 +389,10 @@ void FieldScene_RunScriptedActorPresentation(void)
     Func_0200699e(3, 0x4000, 0);
     Func_02006934(18);
     Func_02006946(18, 0, 0);
-    base6_4013 = 0x4013;
+    selector_4013 = 0x4013;
     Call1(Func_02006a6e, 0x121);
     Call1(Func_0200699c, 0x2757);
-    Func_02001442(base6_4013);
+    Func_02001442(selector_4013);
     Func_020069cc(0, 0x8000, 0);
     Func_020069d6(1, 0x8000, 0);
     Func_020069e0(2, 0x8000, 0);
@@ -396,16 +402,16 @@ void FieldScene_RunScriptedActorPresentation(void)
     Call4(Func_02006a34, 0x1300000, 0x200000, 0x9e0000, 1);
     Func_02006a40();
     Func_0200692e(20);
-    base5_2014 = 0x2014;
+    selector_2014 = 0x2014;
     Func_020014ba(20, 0xd000);
     Func_020069f6(20, 1);
     Func_02006aec(61);
-    Func_020014ba_a(base5_2014);
+    Func_020014ba_a(selector_2014);
     Func_020069e2(19, 4);
-    Func_020014c8(base6_4013);
+    Func_020014c8(selector_4013);
     Func_020014ea(20, 0xb000);
     Call3(Func_02006a70, 20, 0x105, 40);
-    Func_020014e6(base5_2014);
+    Func_020014e6(selector_2014);
     Func_020014ec(21);
     Call3(Func_02006a88, 19, 0x100, 0);
     Call3(Func_02006a94, 20, 0x100, 20);
@@ -419,13 +425,13 @@ void FieldScene_RunScriptedActorPresentation(void)
     Call3(Func_02006a66, 21, 0x110, 200);
     Func_02006aae(20, 1);
     Func_02006a04(20);
-    Func_02001572(base5_2014);
+    Func_02001572(selector_2014);
     Call3(Func_02006b0c, 19, 0x103, 20);
     Func_02001582(19);
     Func_02006ab2(21, 3);
     Func_02001590(21);
     Call3(Func_02006b2a, 20, 0x101, 40);
-    Func_020015a0(base5_2014);
+    Func_020015a0(selector_2014);
     Func_02006ad0_a(21, 4);
     Func_020015ae(21);
     Call3(Func_02006b48, 19, 0x101, 60);
@@ -439,20 +445,20 @@ void FieldScene_RunScriptedActorPresentation(void)
     Call3(Func_02006b86, 19, 0x3000, 0);
     Func_02006b90(20, 0xb000, 40);
     Func_02006b60(21, 1);
-    v6 = 160;
+    heading_scale = 160;
     Func_0200161e(21);
     Call3(Func_02006bae, 20, 0x5000, 0);
-    Func_0200164a( 19, (v6 << 7));
+    Func_0200164a( 19, (heading_scale << 7));
     Call3(Func_02006bd2, 19, 0x108, 20);
     Func_02001648(0x2013);
     Call3(Func_02006be2, 21, 0x103, 20);
     Func_02006bd4(21, 0, 20);
     Func_02006be6(20, 0x8000, 40);
     Func_02006b96(20, 4);
-    Func_02006bf0(base5_2014, 0, 40);
+    Func_02006bf0(selector_2014, 0, 40);
     Func_02006ba8(21, 3);
     Func_02006c02(21, 0, 20);
-    Func_02006c14( 20, (v6 << 7), 20);
+    Func_02006c14( 20, (heading_scale << 7), 20);
     Func_02006bdc(21, 2);
     Func_020016a2(21);
     Call3(Func_02006c3c, 20, 0x105, 0);
@@ -469,7 +475,7 @@ void FieldScene_RunScriptedActorPresentation(void)
     Func_02006c28(21, 4);
     Func_02006c82(21, 0, 20);
     Call3(Func_02006ca4, 20, 0x105, 60);
-    Func_02006c96(base5_2014, 0, 20);
+    Func_02006c96(selector_2014, 0, 20);
     Func_0200173a(21, 0xb000);
     Func_02001772(21);
     Func_02001790( 6, 0x3000);
@@ -482,7 +488,7 @@ void FieldScene_RunScriptedActorPresentation(void)
     Func_02006cfa(21, 1);
     Func_020017b8(21);
     Func_02006ce8(20, 3);
-    Func_020017c6(base5_2014);
+    Func_020017c6(selector_2014);
     Func_02006cf6(21, 4);
     Func_020017d4(21);
     Call3(Func_02006d6e, 20, 0x101, 0);
@@ -492,26 +498,26 @@ void FieldScene_RunScriptedActorPresentation(void)
     Call2(Func_02006da4, 0x6666, 0xccc);
     Call4(Func_02006dbe, 0x1260000, -1, 0xb40000, 1);
     Call3(Func_02006d2a_a, 21, 0x106, 176);
-    base6_8015 = 0x8015;
+    selector_8015 = 0x8015;
     Func_02006dae(21, 0x8000, 40);
     Func_02006db8(21, 0, 20);
     Func_02006d80(21, 2);
-    Func_02001846(base6_8015);
+    Func_02001846(selector_8015);
     Call3(Func_02006de2, 19, 0x100, 20);
     Func_02001858(0x2013);
     Func_02006da0(21, 2);
-    Func_02001866(base6_8015);
+    Func_02001866(selector_8015);
     Call3(Func_02006e00, 20, 0x103, 40);
     Call3(Func_02006df2, 0xa014, 0, 20);
     Call3(Func_02006e14, 21, 0x105, 20);
-    Func_0200188a(base6_8015);
+    Func_0200188a(selector_8015);
     Call3(Func_02006e24, 19, 0x103, 20);
     Func_0200189a(0x2013);
     Call3(Func_02006e34, 21, 0x101, 40);
-    base5_a014 = 0xa014;
-    Func_020018ac(base6_8015);
+    selector_a014 = 0xa014;
+    Func_020018ac(selector_8015);
     Func_02006ddc(20, 4);
-    Func_020018ba(base5_a014);
+    Func_020018ba(selector_a014);
     Func_02006dea(19, 3);
     Func_020018c8(0x2013);
     Call3(Func_02006e62, 21, 0x103, 60);
@@ -519,53 +525,52 @@ void FieldScene_RunScriptedActorPresentation(void)
     Call3(Func_02006e5e, 0xa015, 0, 40);
     Call3(Func_02006e80, 6, 0x105, 120);
     Call3(Func_02006e8a, 20, 0x105, 60);
-    Func_02001900(base5_a014);
+    Func_02001900(selector_a014);
     Func_02006e8a_a(21, 0, 40);
     Func_02006e32(19, 3);
     Func_02001918(0x2013);
     Func_02006e68(21, 1);
-    Func_02006ea2(base6_8015, 0, 20);
-    Func_02001930(base5_a014);
+    Func_02006ea2(selector_8015, 0, 20);
+    Func_02001930(selector_a014);
     Call3(Func_02006ecc, 21, 0x100, 40);
     Func_02006e64(19, 4);
     Func_0200194a(0x2013);
     Call3(Func_02006ee4, 6, 0x105, 40);
     Call3(Func_02006ef0, 20, 0x108, 40);
-    Func_02001966(base5_a014);
+    Func_02001966(selector_a014);
     Call3(Func_02006f00, 19, 0x103, 20);
     Func_02001976(0x2013);
     Func_02006ec6(21, 1);
     Func_02006e1c(20);
     Func_02006ecc_a(20, 2);
-    Func_02001992(base5_a014);
+    Func_02001992(selector_a014);
     Func_02006eba(19, 4);
     Func_020019a0(0x2013);
-    base6_3001ebc = 0x3001ebc;
-    *(s32 *)((*(s32 *)base6_3001ebc + 0x1c0)) = 0x202;
+    Data_03001ebc->request = 0x202;
     Func_02006fba();
     Func_02006fc6();
     Call4(Func_02006f6e, 0x1f80000, -0x180000, 0xa80000, 0);
     Func_02006d34(1);
     Func_02006db8_a();
     Func_02006d3e(1);
-    base5_8001 = 0x8001;
+    selector_8001 = 0x8001;
     Func_02006fdc();
     Func_02006ff0();
     Func_02006e7e(20);
     Func_02006f36(1, 1);
-    Func_020019f4(base5_8001);
+    Func_020019f4(selector_8001);
     Call3(Func_02006f8e, 3, 0x101, 40);
     Func_02001a04(3);
     Func_02006f34(2, 3);
     Call3(Func_02006f8e_a, 0x1002, 0, 40);
     Func_02006f58(1, 2, 20);
-    Func_02001a26(base5_8001);
-    Value2(Func_02006f96, base5_8001, 0);
+    Func_02001a26(selector_8001);
+    Value2(Func_02006f96, selector_8001, 0);
     Func_02006fb8(0, 0, 0);
     Func_02006fc2(2, 0x4000, 0);
     Call3(Func_02006fce, 3, 0x2000, 0);
     if (Value2(Func_02006f06, 0, 0) == 1) {
-        *(u16 *)((*(s32 *)base6_3001ebc + 0x1d8)) += 1;
+        Data_03001ebc->step += 1;
     }
     (Func_02006f06_a)(20);
     Func_02001a74(1);
@@ -575,10 +580,10 @@ void FieldScene_RunScriptedActorPresentation(void)
     Func_02006fb8_a(1, 3);
     Func_02006fc0(2, 3);
     Func_02006fd0(3, 3);
-    action = Data_0200dfc4;
-    Func_02006f82(1, action);
-    Func_02006f8a( 2, action);
-    Func_02006faa(3, action);
+    action_script = Data_0200dfc4;
+    Func_02006f82(1, action_script);
+    Func_02006f8a( 2, action_script);
+    Func_02006faa(3, action_script);
     Func_02006f60(20);
     Func_02006f74();
 }

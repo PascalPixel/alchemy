@@ -1631,7 +1631,7 @@
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x020000dc\u20130x02000736 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "This segment preserves retained assembly from the historical 0x020000dc–0x02000736 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_375:020000dc"
       ]
@@ -1646,7 +1646,7 @@
       "evidence": [
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "02000f84 is a literal loaded by 02000f38 in owner02000b70; terminal return02000f80 precedes this pool and actual next head is02000f90.",
-        "The candidate has two for loops initialized0 with condition<0; reference loops at02001284\u201302001298 and020013e0\u2013020013f4 repeatedly call and inspect signed object halfword+100. Thus the recorded complete reconstruction is false.",
+        "The candidate has two for loops initialized0 with condition<0; reference loops at02001284–02001298 and020013e0–020013f4 repeatedly call and inspect signed object halfword+100. Thus the recorded complete reconstruction is false.",
         "games/gs1/recon/en/dossiers.json#resource_399:02000f84"
       ]
     },
@@ -1855,7 +1855,7 @@
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x02001db0\u20130x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3af:02001db0"
       ]
@@ -1868,7 +1868,7 @@
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x02001db0\u20130x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3af:02001db0"
       ]
@@ -1922,7 +1922,7 @@
       "confidence": "strong",
       "evidence": [
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "02000554 is a literal loaded by02000156; branch02000550 skips the interior pool to02000598. Existing candidate concatenates the first owner tail with the second head02000614. Claim ends at an interior pool/alignment after branch02000a14\u219202000a4c; second owner continues through02000c8c.",
+        "02000554 is a literal loaded by02000156; branch02000550 skips the interior pool to02000598. Existing candidate concatenates the first owner tail with the second head02000614. Claim ends at an interior pool/alignment after branch02000a14→02000a4c; second owner continues through02000c8c.",
         "Dossier claims0 memory operations, but reference stores at020005fe,02000604,02000626,0200062e are omitted by candidate; the two first stores use the first owner saved work values. Subsequent167-call owner is truncated: only112 calls lie before claim end and55 calls follow.",
         "games/gs1/recon/en/dossiers.json#resource_37b:02000554"
       ]
@@ -1963,20 +1963,7 @@
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x02000f90\u20130x020013a2 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "games/gs1/recon/en/dossiers.json#resource_377:02000f90"
-      ]
-    },
-    {
-      "overlay": "resource_377",
-      "start": "0x200133c",
-      "end": "0x20013a2",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "This segment preserves retained assembly from the historical 0x02000f90\u20130x020013a2 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "This segment preserves retained assembly from the historical 0x02000f90–0x020013a2 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_377:02000f90"
       ]
@@ -2029,7 +2016,7 @@
       "confidence": "strong",
       "evidence": [
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "02000708 is a literal loaded by020006cc; previous callback returns02000704 and actual next prologue is02000710. The claim stops02000ab6, immediately after branch02000ab4\u219202000c90, not at a return.",
+        "02000708 is a literal loaded by020006cc; previous callback returns02000704 and actual next prologue is02000710. The claim stops02000ab6, immediately after branch02000ab4→02000c90, not at a return.",
         "The candidate has only the first101 of actual owner177 call sites; remaining76calls, nested choices, shared tails and return02000dac are absent. Owner guard also omits the reference input0x962 to the flag test at02000714.",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02000708"
       ]
@@ -2610,7 +2597,7 @@
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x020001d8\u20130x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "This segment preserves retained assembly from the historical 0x020001d8–0x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3b7:020001d8"
       ]
@@ -2623,7 +2610,7 @@
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "This segment preserves retained assembly from the historical 0x020001d8\u20130x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
+        "This segment preserves retained assembly from the historical 0x020001d8–0x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/gs1/recon/en/dossiers.json#resource_3b7:020001d8"
       ]

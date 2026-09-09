@@ -11,7 +11,6 @@
 #define Data_03001ebc Data_03001ecc
 #endif
 
-/* Ordinary C field access retained from the reviewed disassembly dataflow. */
 extern u8 *Data_03001ebc;
 extern u8 Data_02000240[];
 extern u8 Value_0000003a;
@@ -19,14 +18,11 @@ extern u8 Value_0000003a;
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /*
- * resource_39d owner 0x02000b24..0x02001aef (0x0fcc = 4044 bytes).
- *
- * Reviewed scene-58 renderer setup: every call, conditional, pool constant,
- * record-field write, and workspace-counter update is retained from the local
- * overlay disassembly. Imported names are resolved with overlay_call_targets.ts;
- * old-style declarations are intentional where the image exposes no prototype.
- * The interworking epilogue is at 0x02001ad4..0x02001ad8; the 22-byte
- * literal/alignment tail ends immediately before the next prologue.
+ * resource_39d: scene-58 renderer setup.  The owner runs from 0x02000b24 to
+ * its interworking epilogue at 0x02001ad4 and includes the 22-byte literal and
+ * alignment tail that ends immediately before the next prologue, 4044 bytes in
+ * all.  The declarations below are old-style because the image exposes no
+ * prototype for these calls; call sites vary in arity.
  */
 
 extern void Func_02003208();
@@ -64,7 +60,10 @@ extern void Func_0808a250();
 extern void Func_0808a260();
 extern void Func_080f9010();
 
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
+/*
+ * Loader-relocated ROM calls: each name spells the pre-relocation call word
+ * the image holds, not a runtime address.
+ */
 void Func_020041d2();
 void Func_02004200();
 s32 Func_0200421e();

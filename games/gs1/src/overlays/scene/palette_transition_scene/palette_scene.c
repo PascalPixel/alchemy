@@ -66,11 +66,6 @@ struct OrbitingPaletteEffect {
     s16 heading;
 };
 
-/*
- * resource_395 owner at 0x0200172c, 60 bytes.
- * Two lookups, each of which can fail with -1; on success stores the caller's
- * halfword into the table at +216 of the record the first index names.
- */
 struct PaletteSceneRecord {
     u8 pad00[216];
     u16 values[1];                 /* +216 */
@@ -167,18 +162,6 @@ void Func_0200302a();
 void Func_0200300e();
 void Func_02003238();
 
-/* Return this overlay's state block. */
-
-/* The transition callback advances the polled state to 24. The palette
- * alternation runs four cycles; actor three follows the saved game flag. */
-
-/* Raw overlay relocation spellings for the five calls in this owner. */
-
-/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
-   them). All three reach the same ARM-mode IWRAM helper that scales a
-   channel by the adjustment, and each still needs its own name. */
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -209,38 +192,19 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 Func_020030ea();   /* 0x02000b44 */
+/* One symbol per call site, named at the site's decoded address. All three
+ * reach the same helper, which scales one channel by the adjustment, and each
+ * site still needs its own name. */
+s32 Func_020030ea();
 
-s32 Func_020030f8();   /* 0x02000b52 */
+s32 Func_020030f8();
 
-s32 Func_02003106();   /* 0x02000b60 */
+s32 Func_02003106();
 
 /*
- * resource_395 owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000034 holding 0x2009ba4.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0xc. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000034 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x2009ba4 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Returns the in-image table at 0x02009ba4. The eight-byte owner at 0x02000030
+ * includes its one pool word, which holds that address and is returned
+ * without being dereferenced.
  */
 u8 *PaletteScene_GetScriptData(void)
 {
@@ -248,31 +212,9 @@ u8 *PaletteScene_GetScriptData(void)
 }
 
 /*
- * resource_395 owner at 0x02000038, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x0200003c holding 0x2009c04.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x2c. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x0200003c after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x2009c04 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Returns the in-image table at 0x02009c04. The eight-byte owner at 0x02000038
+ * includes its one pool word, which holds that address and is returned
+ * without being dereferenced.
  */
 u8 *PaletteScene_GetMessageData(void)
 {
@@ -280,31 +222,9 @@ u8 *PaletteScene_GetMessageData(void)
 }
 
 /*
- * resource_395 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000044 holding 0x2009c24.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x14. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000044 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x2009c24 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Returns the in-image table at 0x02009c24. The eight-byte owner at 0x02000040
+ * includes its one pool word, which holds that address and is returned
+ * without being dereferenced.
  */
 u8 *PaletteScene_GetActorData(void)
 {
@@ -312,31 +232,9 @@ u8 *PaletteScene_GetActorData(void)
 }
 
 /*
- * resource_395 owner at 0x02000048, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x0200004c holding 0x2009c34.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x1c. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x0200004c after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x2009c34 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Returns the in-image table at 0x02009c34. The eight-byte owner at 0x02000048
+ * includes its one pool word, which holds that address and is returned
+ * without being dereferenced.
  */
 u8 *PaletteScene_GetEffectData(void)
 {
@@ -354,6 +252,7 @@ void PaletteScene_Initialize(void)
     Func_02001a14();
 }
 
+/* Returns this overlay's state block. */
 u8 *PaletteScene_GetState(void) { return (u8 *)0x02009d3c; }
 
 void PaletteScene_RunActorNineBranch(void)
@@ -392,6 +291,9 @@ void PaletteScene_RunFlaggedBranch(void)
     Func_02001c80();
 }
 
+/* The scene's actor transition sequence. Actor three takes part only when the
+ * saved flag reports it enabled, and the arms that skip it bump the step
+ * counter instead. */
 void PaletteScene_RunActorTransitionSequence(void)
 {
     s32 actorThreeEnabled;
@@ -816,6 +718,8 @@ void PaletteScene_SpawnEffect(void)
     Func_02002bd4(effect, Data_02009d9c);
 }
 
+/* Steps the shared transition counter, firing at 0 and at 20 and wrapping at
+ * 30. */
 void PaletteScene_AdvanceTransition(void)
 {
     s32 step = Data_02009dd4;
@@ -858,6 +762,8 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
     }
 }
 
+/* Two lookups, each of which can fail with -1; on success stores the caller's
+ * halfword into the table at +216 of the record the first index names. */
 void PaletteScene_SetRecordValue(s32 key, s32 value)
 {
     s32 slot = Func_020030b0(key);
@@ -871,7 +777,7 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
     }
 }
 
-/* Protected-window palette adjustment owner, 0x02001768-0x02000b23. */
+/* Applies the adjustment to palette RAM, skipping two protected windows. */
 void PaletteScene_AdjustPaletteWindow(s32 adjustment)
 {
     volatile u16 *palette = (volatile u16 *)0x05000000;
@@ -895,29 +801,9 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
 }
 
 /*
- * Apply the resource's asymmetric RGB555 colour adjustment.
- *
- * Control jumps over a mask literal inside the span and rejoins before the
- * common return.
- */
-/*
- * resource_395 owner at 0x020017d0, 104 bytes: apply the asymmetric RGB555 colour
- * adjustment.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
- * are the same routine shared verbatim: over all 52 halfwords they differ in
- * exactly 3 places, and all three are BL halfwords.  No pool word differs.
- *
- * What was changed:
- *  - the entry symbol;
- *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_395 0b24': three sites, ONE distinct target, the veneer publishing
- *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
- *    corrected 'bl' rule and spelled the three sites as three different callees
- *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
- *    is also what the code shape says - the same per-channel scale applied three
- *    times.  resource_394's own site resolves to the same import, so this is a
- *    correction inherited by the transposition rather than a per-overlay change.
+ * Applies the asymmetric RGB555 colour adjustment: red rises, green and blue
+ * fall. Control jumps over a mask literal inside the span and rejoins before
+ * the common return, so the literal belongs to this owner.
  */
 u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
 {

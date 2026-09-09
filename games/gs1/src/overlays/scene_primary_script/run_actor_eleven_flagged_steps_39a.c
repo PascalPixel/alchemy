@@ -24,41 +24,23 @@ void Func_02002f1a();
 void Func_02002fb2();
 
 /*
- * Resource 39a overlay scene step at 0x02000b04.
- *
- * Complete owner: `push {lr}` at 0x02000b04 and `pop {r0} / bx r0` at
- * 0x02000bae, so nothing is returned.  Five pool words follow the return.
- *
- * 0x02002e62 is reached both as a setter (0x310) and as a query (0x30c),
- * so its result is dropped at the setter site.  The first two arms share the
- * tail call 0x02002e9c(0x312) at 0x02000b70; it is written out in each arm.
- *
- * The final branch computes 0x02001e78, which falls inside the row at
- * 0x02001e08.  Like every other branch in this overlay it is recorded by
- * identity - see the note above - rather than resolved as a location.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
+ * Field scene step for overlay resource_39a.  Imports are named by the address
+ * their call site computes, not by a location in this image, and their
+ * interfaces are left open.  Func_02002e62 is reached both as a setter and as
+ * a query, so its result is dropped at the setter site.  The first two arms
+ * share one tail call, which is why Func_02002e9c is spelled out in each arm.
  */
 void FieldScene_RunActorElevenFlaggedSteps(void)
 {
     Func_02002f1a((s32)0xf1);
-    /* movs r0,#0xc2 / lsls r0,#2 builds 0x308. */
+    /* 0x308 is built by shifting a small immediate, not loaded whole. */
     if (Func_02002e2a((s32)0x308) != 0 || Func_02002e34((s32)0x30d) != 0) {
         Func_02000cac(11, 0, -64);
         Func_02002e5a((s32)0x30f);
         Func_02002e62((s32)0x310);
         Func_02002e60((s32)0x311);
         Func_02002e9c((s32)0x312);
-        /* movs r0,#0xc3 / lsls r0,#2 builds 0x30c. */
+        /* 0x30c is built by shifting a small immediate, not loaded whole. */
     } else if (Func_02002e62_a((s32)0x30c) != 0) {
         Func_02000cda(11, 0, -112);
         Func_02002e88((s32)0x30f);

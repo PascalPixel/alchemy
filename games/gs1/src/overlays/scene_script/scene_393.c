@@ -1,5 +1,13 @@
+/*
+ * resource_393 scene script: staged-actor motion, scene beats, and the
+ * overlay's palette adjustment.
+ */
 #include "types.h"
 
+/*
+ * Several aliases below resolve to the same relocation.  The spellings are
+ * call-site evidence and are deliberately kept distinct.
+ */
 #define StagedActorStepTable Data_02008f10
 #define GetStagedActor Func_02000f58
 #define FindNextStagedActor Func_02000176
@@ -143,35 +151,8 @@ void Func_02001a56(void);
 void Func_02001b98(s32, s32);
 
 /*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/* Contiguous unnamed leaf-owner run for resource_393. */
-
-/* Raw overlay relocation spellings.  They are call-site evidence, so the two
- * logical actor-access calls deliberately use different names. */
-
-/* Return this overlay's state block. */
-
-/* Contiguous unnamed state-owner run for resource_393. */
-
-/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
-   them). All three reach the same ARM-mode IWRAM helper that scales a
-   channel by the adjustment, and each still needs its own name. */
-
-/*
- * Apply the resource's asymmetric RGB555 colour adjustment.
- *
- * Control jumps over a mask literal inside the span and rejoins before the
- * common return.
+ * Six-argument draw wrapper.  Inlining it here preserves the reference's
+ * r2-before-r3 stacked-literal order at the call site.
  */
 
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
@@ -190,11 +171,26 @@ static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
     DrawSceneBeatRectangle(left, top, width, height, tile, palette);
 }
 
-s32 Func_02001b32();   /* 0x02000d14 */
+/*
+ * One symbol per call site, named at the site's own address.  All three
+ * reach the same ARM-mode IWRAM helper that scales a channel by the
+ * adjustment, and each still needs its own name.  The sites are 0x02000d14,
+ * 0x02000d22 and 0x02000d30.
+ */
 
-s32 Func_02001b40();   /* 0x02000d22 */
+s32 Func_02001b32();
 
-s32 Func_02001b4e();   /* 0x02000d30 */
+s32 Func_02001b40();
+
+s32 Func_02001b4e();
+
+/*
+ * Distance between two three-component 16.16 fixed-point positions.  Each
+ * argument walks three consecutive words in x, y, z order; the per-axis
+ * deltas are shifted down to integers, squared, summed, and passed to the
+ * resident IWRAM integer square root.  The walking-pointer form is
+ * load-bearing and must not become struct field access.
+ */
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
 {
@@ -487,6 +483,13 @@ u8 *MapStagedScene_SelectSecondaryData(void) { return (u8 *)0x02009028; }
 
 u8 *MapStagedScene_SelectTertiaryData(void) { return (u8 *)0x02009038; }
 
+/*
+ * Placement query followed by the tile-(10,12) scene transition.  The
+ * six-word result is one aggregate and its two-word tail is forwarded by
+ * value.  Keeping `zero' live across the draw is load-bearing: it lets the
+ * dead result pointer be reused for the following stack slot.
+ */
+
 void FieldScene_RunActorTenPlacementScene(void)
 {
     void Func_02001900(s32, s32); u8 *Func_020018de(s32);
@@ -574,17 +577,7 @@ void SceneActor_ApplyOffsetObjectPosition(void)
 
 u8 *SceneData_GetTable9098(void) { return (u8 *)0x02009098; }
 
-/*
- * Placement query followed by the tile-(10,12) scene transition.
- *
- * The six-word result is one aggregate, including the two-word tail forwarded
- * by value to Func_02000608.  This is the same source shape witnessed by the
- * resource_392 query wrapper.  The inline six-argument draw wrapper is also
- * witnessed by this overlay's exact 0x02000bf8 sibling: it preserves the ROM's
- * r2-before-r3 stacked-literal order.  Keeping zero live across that draw lets
- * the compiler reuse the dead r5 result pointer for the following stack slot.
- * Together these natural source lifetimes reproduce all 180 bytes.
- */
+/* Set workspace word 448 to 516, then run the scene's beat sequence. */
 s32 SceneState_SetRuntimeWord448To516(void)
 {
     void Func_02001900_a();
@@ -640,23 +633,9 @@ void SceneEffect_AdjustPaletteColors(s32 a)
 }
 
 /*
- * resource_393 owner at 0x02000cf4, 104 bytes: apply the asymmetric RGB555 colour
- * adjustment.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
- * are the same routine shared verbatim: over all 52 halfwords they differ in
- * exactly 3 places, and all three are BL halfwords.  No pool word differs.
- *
- * What was changed:
- *  - the entry symbol;
- *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_393 0cf4': three sites, ONE distinct target, the veneer publishing
- *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
- *    corrected 'bl' rule and spelled the three sites as three different callees
- *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
- *    is also what the code shape says - the same per-channel scale applied three
- *    times.  resource_394's own site resolves to the same import, so this is a
- *    correction inherited by the transposition rather than a per-overlay change.
+ * resource_393 owner at 0x02000cf4, 104 bytes: the asymmetric RGB555 colour
+ * adjustment.  Red rises while green and blue fall, each through the same
+ * per-channel scale.
  */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {

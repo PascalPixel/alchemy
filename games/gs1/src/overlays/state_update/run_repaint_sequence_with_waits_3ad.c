@@ -1,12 +1,11 @@
 #include "types.h"
 
+/*
+ * Overlay resource_3ad. Map repaint sequence: mark the record for slot ten,
+ * then run the tile and collision repaints with frame waits between them.
+ */
+
 /* Old-style declarations: overlay import arities vary per call site. */
-    /* scene obj record by selector */
-
-   /* frame wait */
-   /* six-argument tile/strip request, last two on the stack */
-   /* six-argument collision repaint, last two on the stack */
-
 extern u8 *Func_02001c18();
 extern void Func_02001c5a();
 extern void Func_02001be6();
@@ -23,36 +22,15 @@ extern void Func_02001c6c();
 extern void Func_02001c80();
 extern void Func_02001c92();
 /*
- * Resource 3ad, map-repaint sequence at 0x020000d4 (220 bytes, 15 call sites).
- *
- * Complete owner: `push {r5, r6, lr} / sub sp, #8` at 0x020000d4 and the
- * matching `add sp, #8 / pop {r5, r6} / pop {r0} / bx r0` at 0x020001a8.  The
- * popped branch register is r0, so it holds the return address and the owner is
- * `void`.  No literal pool lies inside the span.
- *
- * Close sibling of 0x02000384, which runs the same repaint sequence with the
- * same constants but a different lead-in and a different mix of frame waits.
- *
- * REGISTER TRAP worth recording: r5 is used for two unrelated things.  From
- * 0x020000e0 it holds the obj record returned by Scene_GetRecord(10); from
- * 0x0200013c it is reloaded with the constant 58 and is thereafter only a stack
- * argument.  The reassignment sits far from either set of uses, so r5 must be
- * tracked per-use rather than as one variable.  r6 is a plain constant holder
- * (21) for the whole body.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all are import
- * veneers.  Per-target multiset over the 15 sites: Func_080091b8 x5,
- * Func_080000c0 x4, Func_080091c0 x3, and one each of Scene_GetRecord,
- * Func_0808a100, Func_080091e0 - 15 C call expressions below, matching the
- * row's calls=15.
- *   Scene_GetRecord <- veneer 0x02001b3c;  Func_0808a100 <- 0x02001b74;
- *   Func_080091e0 <- 0x02001af4;         Func_080091b8 <- 0x02001ae4;
- *   Func_080000c0 <- 0x02001ad4;         Func_080091c0 <- 0x02001aec.
+ * The owner runs from 0x020000d4 for 220 bytes and holds no literal pool.
+ * Two of the calls spell their trailing argument pair as locals; that is how
+ * the reference puts those two values on the stack, so keep the spelling.
+ * Every call here goes through an import veneer in this overlay.
  */
 void SceneState_RunRepaintSequenceWithWaits(void)
 {
     u8 *obj;
-    int row;           /* r6; assigned at its first use, as the reference does */
+    int row;           /* Assigned at its first use, as the reference does. */
 
     obj = Func_02001c18(10);
     Func_02001c5a(10, 5);

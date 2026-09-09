@@ -1,39 +1,21 @@
 #include "types.h"
 
 /*
- * resource_39f owner at 0x02001244, 228 bytes: code 0x02001244-0x02001315, an
- * alignment halfword at 0x02001316 and the four pool words 0x00000103,
- * 0x00000301, 0x02000240 and 0x0000022b at 0x02001318-0x02001327.
- *
- * A full cutscene beat for slot 11: open the slot, place it at (408, 456),
- * publish an eight-argument piece through the overlay's Func_02000ae8, run the
- * presentation, then re-place the slot on the party's current heading readings
- * and set the engine byte at Data_02000240 + 0x22b to 3.
- *
- * The twin at 0x02001d04 is the same beat for slot 15.
- *
- * See resource_39f_c_02000030.c for the link base and the `bl` encoding rule.
- *
- * Data_02000240 is a genuine EWRAM global, not overlay data: this module is
- * linked at 0x02008000, so an address below that base cannot be in-image.  The
- * byte-exact sources in games/gs1/asm/overlays use the same symbol.
- *
- * The epilogue is `add sp, #16 / pop {r5} / pop {r0} / bx r0`, so the owner is
- * void.
- *
- * Uncertainty: r4 is written without being saved, although the prologue is only
- * `push {r5, lr}`.  It carries the constant 0 into three stack argument slots;
- * nothing observable depends on the register choice.
+ * Actor presentation beat for overlay resource_39f.  The twin at 0x02001d04
+ * is the same beat for slot 15.
  */
 
+/* An EWRAM global, not overlay data: the module is linked above this address,
+ * so it cannot be in-image. */
 extern s16 Data_02000240[];
 
-/* Returns a slot record; +8/+12/+16 are its position and +10/+18 are the
- * signed halfwords read from slot 0. */
+/* Returns a slot record.  Its fields are named by position and not verified:
+ * +8/+12/+16 read as the position and +10/+18 as signed halfwords. */
 u8 *Func_02004008();
 void Func_02003ff6();
 void Func_02002102();
 void Func_02001ffc();
+/* Four register arguments plus four stack words. */
 void Func_02001d72();
 void Func_020040e6();
 void Func_020040b8_a();
@@ -51,8 +33,13 @@ void Func_02004080();
 void Func_020040ea();
 void Func_02004184();
 
-/* Four register arguments plus four stack words. */
-
+/*
+ * A full cutscene beat for slot 11: opens the slot, places it at (408, 456),
+ * publishes an eight-argument piece, runs the presentation, then re-places the
+ * slot on the party's current heading readings and sets the engine byte at
+ * Data_02000240 + 0x22b to 3.  The 228-byte owner includes an alignment
+ * halfword and its four pool words.
+ */
 void FieldScene_RunActorElevenPresentationBeat(void)
 {
     u8 *slot;
@@ -60,7 +47,8 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
     slot = Func_02004008(11);
 
-    /* r0 still holds the record returned above. */
+    /* Reads the record left in r0 by the call above; it must not be respelled
+     * as a fresh fetch. */
     Func_02003ff6();
 
     Func_02002102(11, 0);

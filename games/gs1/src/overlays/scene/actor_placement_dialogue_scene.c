@@ -1,3 +1,8 @@
+/*
+ * Overlay resource_386: actor placement, per-actor dialogue lines and the
+ * scene initialiser that installs the per-frame task.
+ */
+
 #include "types.h"
 
 #define WORKSPACE (*(u8 **)0x03001ebc)
@@ -140,97 +145,14 @@ void Func_02000bc8(s32);
 void Func_02000bc0(s32, s32, u8 *);
 void Func_02000bbe(s32);
 
-/*
- * resource_386 owner at 0x02000074, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
+/* Each Func_ name is a loader-relocated call word, not a runtime address. */
 
 /*
- * resource_386 owner at 0x02000078, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200007c holding 0x20087cc.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000078 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20087cc is image offset
- * 0x7cc under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers. A direct call instead precomputes a costly
+ * constant into a temporary that is then shared with later uses in the same
+ * block. A value-returning call sets r0 last of its arguments.
  */
-
-/* Contiguous unnamed leaf-owner run for resource_386. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/*
- * Resource 386 overlay initialiser at 0x020004e4.
- *
- * This is the overlay's ROOT: entry 0 of the exported-entry veneer table at
- * file offset 0 is `ldr r4,[pc,#0] / bx r4 / .word 0x020084e5`, and
- * 0x020084e5 - 0x8000 = 0x4e5 = `FieldScene_InitSceneStateByStep + 1`.  Everything else in the
- * overlay is reached from here or from the handler pool this owner's mode
- * selects.
- *
- * Complete owner: `push {r5, lr}` at 0x020004e4 with `sub sp, #8` at
- * 0x020004fe for the two stacked arguments of Func_08009180; interworking
- * return `add sp, #8 / pop {r5} / pop {r1} / bx r1` at 0x0200055c-0x02000562.
- * The control-flow walk reaches every halfword to 0x02000562;
- * 0x02000564-0x0200056f is the literal pool (0x03001ebc, 0x02000240,
- * 0x02008031).  Next owner at 0x02000570.
- *
- * Signature.  The return address is popped into r1, NOT r0, so r0 survives
- * and IS the result (HANDOVER section 0).  r0 is set to 0 immediately before
- * the epilogue on every path, so the owner returns a constant 0 status.
- *
- * LINK-BASE PROOF, and the strongest one available here.  The pool word
- * 0x02008031 is odd; under `offset = value - 0x8000` it is `0x30 + 1`, that
- * is `Func_02000030` plus the Thumb bit -- and games/gs1/asm/overlays/resource_386_c_
- * 02000030.c is a tracked byte-exact source for exactly that address.  It is
- * passed to Func_080000d0, the per-frame task installer, so this word is a
- * task callback and not data.  That single word proves the base against
- * already-tracked material and names 0x02000030's role at the same time.
- *
- * The displacement/value trap, additive form (HANDOVER).  r2 is built as
- * 224 << 1 = 448 and used as the workspace displacement; `adds r2, #73`
- * turns the SAME register into the stored value 521; `subs r2, #71` then
- * turns it into the displacement 450 of the following load.  Reading it as
- * 448 - 71 or as a single running offset is the natural mistake, and nothing
- * else in the owner would catch it.
- *
- * Data_02000240 is the cross-overlay RAM global block, not an in-image
- * address: 0x02000240 lies BELOW the 0x02008000 link band, so it cannot be a
- * file offset here.  The signed halfword read out of it selects the scene.
- */
-
-/* Veneer declarations. OverlayObject_InitObject22 is called with three further registers
- * set that it does not read -- see that file. */
-
-                       /* veneer 0x664 -- actor record accessor */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -246,6 +168,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     u8 *work = *(u8 **)Data_03001ebc;
@@ -284,34 +207,21 @@ void SceneState_CheckPositionWindow(void)
 }
 
 /*
- * resource_386 owner at 0x0200006c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000070 holding 0x20086dc.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200006c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20086dc is image offset
- * 0x6dc under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner includes its one pool word, which holds the address
+ * returned here. The word is loaded and returned, never dereferenced.
  */
 u8 *SceneData_GetScriptTable(void)
 {
     return (u8 *)0x020086dc;
 }
 
+/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetMessageTable(void)
 {
     return (u8 *)0x020087cc;
@@ -566,25 +476,7 @@ void SceneDialogue_RunActor18FlaggedLine(void)
     Func_02000b0c();
 }
 
-/*
- * resource_386 owner at 0x020004dc, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20004e0 holding 0x200898c.
- *
- * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x020004dc reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x200898c is image offset
- * 0x98c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetEffectTable(void)
 {
     s32 Func_02000abe(s32);
@@ -592,6 +484,13 @@ u8 *SceneData_GetEffectTable(void)
     return (u8 *)0x0200898c;
 }
 
+/*
+ * Overlay entry point: selects the scene from the global block and runs the
+ * matching setup. It returns a constant zero status.
+ *
+ * Data_02000240 is the cross-overlay RAM global block rather than an in-image
+ * address, and the signed halfword read out of it selects the scene.
+ */
 s32 FieldScene_InitSceneStateByStep(void)
 {
     void Func_02000abe_a();
@@ -606,7 +505,10 @@ s32 FieldScene_InitSceneStateByStep(void)
         s32 fifth = 4;
         s32 sixth = 3;
 
-        /* Two arguments are passed on the stack: 4 then 3. */
+        /*
+         * The fifth and sixth arguments go on the stack. The two locals
+         * are what put them there, so they must stay locals.
+         */
         Func_02000b1a(0, 120, 8, 67, fifth, sixth);
         zero = 0;
         Func_02000b80(8)[0x55] = zero;
@@ -615,13 +517,20 @@ s32 FieldScene_InitSceneStateByStep(void)
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
         Func_02000abe_a(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-        /* 0x02008031 is Func_02000030 + 1; 200 << 4 is the period. */
+        /*
+         * 0x02008031 is Func_02000030 plus the Thumb bit, a task callback
+         * rather than data; 200 << 4 is the period.
+         */
         Func_02000b34(0x02008031, 0xc80);
     }
 
     return 0;
 }
 
+/*
+ * Prepare object 22 for display. Call sites set three further registers that
+ * this function does not read.
+ */
 void OverlayObject_InitObject22(s32 a)
 {
     u8 *o;

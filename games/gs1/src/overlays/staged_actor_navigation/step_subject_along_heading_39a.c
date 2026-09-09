@@ -2,8 +2,10 @@
 
 #define NULL ((void *)0)
 
-/* In-image table at 0x02008000 + 0x2464; 0x02000240 is below the link base
- * and is a resident table whose word at byte offset 500 selects the subject. */
+/*
+ * In-image heading table at 0x0200a464.  0x02000240 is below the link base,
+ * so it is a resident table; its word at byte offset 500 selects the subject.
+ */
 extern s16 Data_0200a464[];
 struct SharedData_02000240 {
     u8 pad_000[500];
@@ -31,10 +33,13 @@ struct Subject_02002094 {
     void *callback;
 };
 
-/* Installed callback at 0x02008000 + 0x2014, named by its linked address. */
+/* Installed callback, named by the linked address of its call word. */
 extern void Func_0200a014();
 
-/* Local veneer identities witnessed by this owner's encoded BL pairs. */
+/*
+ * Imports named by the address their call site computes, not by a runtime
+ * address.  Declarations are old-style because arity varies between sites.
+ */
 struct Subject_02002094 *Func_02004498();
 void Func_0200440a();
 s32 Func_020043ec();
@@ -58,35 +63,21 @@ void Func_02004568();
 
 static __inline__ void AdvanceProbe_02002094(s32 heading, s32 *probe)
 {
-    /* Keep this call as an inline boundary: GCC then rematerializes sp+8 for
-     * argument 2 before completing the split 0x100000 constant, as in ROM. */
+    /*
+     * Keep this call behind an inline boundary: it is what makes sp+8 be
+     * rematerialized for argument 2 before the split 0x100000 constant is
+     * completed.
+     */
     Func_02004450((s32)0x100000, heading, probe);
 }
 
 /*
- * resource_39a owner at 0x02002094, 452 bytes: the overlay's pathing step.
- *
- * Complete owner: the two-stage 'push {r5, r6, r7, lr}' / high-register push
- * prologue with 'sub sp, #20', and the matching
- * 'add sp, #20 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0'.  r0 holds the
- * popped return address, so nothing is returned.  Seven pool words follow the
- * return and are data.
- *
- * Clean-room transposition of resource_399:1fa4.  The local overlay bytes
- * witness the same 424-byte instruction body, with the heading table,
- * callback pointer, and veneer addresses translated to resource_39a.  The
- * complete owner is 424 bytes of code plus its 28-byte literal pool.
- *
- * The local call map has 20 sites and 19 distinct veneer addresses.  Repeated
- * semantic imports retain separate names where this overlay uses separate
- * veneers, while the two-argument command at 0x02002164 remains distinct from
- * the three-argument marker lookup sharing veneer address 0x02004406.
- *
- * Frame map: sp+0 holds the goal marker, sp+4 the heading, and sp+8..sp+19 the
- * three-word probe position handed to the stepping imports by address.
- * The witnessed x/z assignment order plus the inline stepping wrapper leave
- * only one independent high-register-copy/ALU pair; the already-supported
- * -fthumb-high-move-before-alu mode closes that pair byte-exactly.
+ * Pathing step for resource_39a.  r0 holds the popped return address, so
+ * nothing is returned, and the seven pool words after the return belong to
+ * the owner.  Frame: sp+0 is the goal marker, sp+4 the heading, and
+ * sp+8..sp+19 the three-word probe position handed to the stepping imports by
+ * address.  The x and z assignment order and the inline stepping wrapper are
+ * what reproduce the reference; do not reorder or respell them.
  */
 void SceneActor_StepSubjectAlongHeading(void)
 {
@@ -103,15 +94,17 @@ void SceneActor_StepSubjectAlongHeading(void)
 
     for (;;) {
         heading = Data_0200a464[(Data_03001ae8 >> 4) & 15];
-        /* The test is on heading << 16 against 0xffff0000, i.e. the signed
-         * halfword -1 meaning "no heading". */
+        /*
+         * The test is on heading << 16 against 0xffff0000, the signed
+         * halfword -1 meaning "no heading".
+         */
         if ((heading << 16) == (s32)0xffff0000) {
             return;
         }
         /* No argument register is written before this branch. */
         Func_0200440a();
 
-        /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
+        /* The 0x80000 bias is built by shifting, not loaded as a constant. */
         probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
         probe[1] = subject->y;
         probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
@@ -120,8 +113,10 @@ void SceneActor_StepSubjectAlongHeading(void)
         subject_id = (u8 *)subject;
         subject_id += 34;
         goal = Func_020043ec((s32)*subject_id, x, z);
-        /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
-         * passed by address and is advanced by the callee. */
+        /*
+         * 0x100000 is built by shifting, not loaded as a constant.  The probe
+         * block is passed by address and is advanced by the callee.
+         */
         Func_02004392((s32)0x100000, heading, probe);
 
         marker = Func_02004406((s32)*subject_id, probe[0], probe[2]);
@@ -139,8 +134,10 @@ void SceneActor_StepSubjectAlongHeading(void)
         subject->state_052 = 0x1999;
         subject->state_100 = 0;
         Func_02004426(subject, x, subject->y, z);
-        /* Same veneer address as the marker lookup, but a two-argument
-         * command with a distinct declaration. */
+        /*
+         * Same call word as the marker lookup, but a two-argument command, so
+         * it keeps its own declaration.
+         */
         Func_02004406_a(subject, 2);
         Func_02004416(subject, 48);
         Func_02004444(subject);
@@ -181,7 +178,7 @@ finish_probe:
 blocked:
     subject->callback = NULL;
     subject->flags_090 |= 1;
-    /* movs r3,#0x80 / lsls r3,#7 builds 0x4000. */
+    /* 0x4000 is built by shifting, not loaded as a constant. */
     subject->state_052 = 0x4000;
 
 tail:

@@ -1,3 +1,9 @@
+/*
+ * Inner sanctum data getters, published in the descriptor table at the head
+ * of overlay resource_37a. Sibling overlays share this layout but not the
+ * addresses returned.
+ */
+
 #include "types.h"
 
 #define GetSolShindenScriptData Func_02000030
@@ -6,39 +12,10 @@
 #define GetSolShindenActorData Func_02000044
 #define GetSolShindenEffectData Func_0200004c
 /*
- * resource_37a owner at 0x02000030, 8 bytes: a constant getter --
- * `ldr r0, [pc, #0] / bx lr` over its own one-word pool, returning the
- * in-image address 0x0200aafc (overlay offset 0x2afc).
- *
- * Complete owner: NO PROLOGUE. Saves nothing, no stack, lr never written,
- * bare `bx lr` at 0x02000032. The span is EIGHT bytes and not four:
- * the pool word sits PAST the `bx lr`, at 0x02000034, and belongs to
- * this owner. Measured to the return and then the pool, NOT inferred from
- * the shape -- the stub at 0x02000038 four bytes away has the same
- * cohort membership and a FOUR-byte span. Next owner at 0x02000038.
- * Takes no argument.
- *
- * Published, not called: its address is stored as the in-image spelling
- * 0x02008031 (offset + 0x8000, Thumb bit set) in exactly one word,
- * at overlay offset 0xc -- one field of a DESCRIPTOR TABLE filling this
- * overlay's first 0x30 bytes: five function pointers at 0xc, 0x14, 0x1c, 0x24
- * and 0x2c, stride 8, aimed at the five stubs beginning immediately after it
- * at 0x30. No `bl` anywhere in the image reaches any of them.
- *
- * SAME TABLE, SAME FIVE SLOTS, SAME FIVE BODIES as resource_37b -- and the
- * five ADDRESSES RETURNED ARE ALL DIFFERENT, which is the whole reason each
- * pool word is resolved per row instead of the shape being matched once.
- * 37b returns 0x0200a5c0/a698/a6bc/a80c; this overlay returns
- * 0x0200aafc/abec/ac14/ad34. Two overlays sharing a head layout is a fact
- * about the loader, not permission to copy an answer across.
- *
- * Reached by sweep B only: no `push` for C to key on and no `bl` for A,
- * so it lands in the "B leaf" class rather than the prologue-confirmed
- * population.
- *
- * Uncertainty: the returned address is a data pointer inside this overlay's
- * own image (0x2afc of 0x2ddc); what lives there is not established and
- * is deliberately not named.
+ * Returns 0x0200aafc, an address inside this overlay's image; its contents
+ * are not established. The eight-byte owner includes its one pool word,
+ * which sits past the bx lr. The address is published in the descriptor
+ * table, not reached by any call.
  */
 u8 *GetSolShindenScriptData(void)
 {
@@ -46,32 +23,10 @@ u8 *GetSolShindenScriptData(void)
 }
 
 /*
- * resource_37a owner at 0x02000038, 4 bytes: a return-zero stub --
- * `movs r0, #0 / bx lr`, the whole function.
- *
- * Complete owner: NO PROLOGUE, no stack, NO LITERAL POOL, lr never written,
- * bare `bx lr` at 0x0200003a. FOUR bytes, not eight, and that is the
- * point: its four neighbours in the same table are 8 because they carry a
- * pool word past the `bx lr`, and a constant that fits in an immediate
- * carries none. Next owner at 0x0200003c. Takes no argument.
- *
- * Published, not called: its address is stored as the in-image spelling
- * 0x02008039 (offset + 0x8000, Thumb bit set) in exactly one word,
- * at overlay offset 0x2c -- one field of a DESCRIPTOR TABLE filling this
- * overlay's first 0x30 bytes: five function pointers at 0xc, 0x14, 0x1c, 0x24
- * and 0x2c, stride 8, aimed at the five stubs beginning immediately after it
- * at 0x30. No `bl` anywhere in the image reaches any of them.
- *
- * SAME TABLE, SAME FIVE SLOTS, SAME FIVE BODIES as resource_37b -- and the
- * five ADDRESSES RETURNED ARE ALL DIFFERENT, which is the whole reason each
- * pool word is resolved per row instead of the shape being matched once.
- * 37b returns 0x0200a5c0/a698/a6bc/a80c; this overlay returns
- * 0x0200aafc/abec/ac14/ad34. Two overlays sharing a head layout is a fact
- * about the loader, not permission to copy an answer across.
- *
- * Uncertainty: whether the caller reads the zero as a null pointer or as an
- * integer is not established, so the return is left as the widest thing the
- * row proves -- a word set to zero.
+ * Returns zero. The four-byte owner carries no pool word, since a constant
+ * that fits in an immediate needs none, unlike its eight-byte neighbours in
+ * the same table. Whether the caller reads the zero as a null pointer or as
+ * an integer is not established.
  */
 s32 GetSolShindenInitialState(void)
 {
@@ -79,39 +34,10 @@ s32 GetSolShindenInitialState(void)
 }
 
 /*
- * resource_37a owner at 0x0200003c, 8 bytes: a constant getter --
- * `ldr r0, [pc, #0] / bx lr` over its own one-word pool, returning the
- * in-image address 0x0200abec (overlay offset 0x2bec).
- *
- * Complete owner: NO PROLOGUE. Saves nothing, no stack, lr never written,
- * bare `bx lr` at 0x0200003e. The span is EIGHT bytes and not four:
- * the pool word sits PAST the `bx lr`, at 0x02000040, and belongs to
- * this owner. Measured to the return and then the pool, NOT inferred from
- * the shape -- the stub at 0x02000038 four bytes away has the same
- * cohort membership and a FOUR-byte span. Next owner at 0x02000044.
- * Takes no argument.
- *
- * Published, not called: its address is stored as the in-image spelling
- * 0x0200803d (offset + 0x8000, Thumb bit set) in exactly one word,
- * at overlay offset 0x14 -- one field of a DESCRIPTOR TABLE filling this
- * overlay's first 0x30 bytes: five function pointers at 0xc, 0x14, 0x1c, 0x24
- * and 0x2c, stride 8, aimed at the five stubs beginning immediately after it
- * at 0x30. No `bl` anywhere in the image reaches any of them.
- *
- * SAME TABLE, SAME FIVE SLOTS, SAME FIVE BODIES as resource_37b -- and the
- * five ADDRESSES RETURNED ARE ALL DIFFERENT, which is the whole reason each
- * pool word is resolved per row instead of the shape being matched once.
- * 37b returns 0x0200a5c0/a698/a6bc/a80c; this overlay returns
- * 0x0200aafc/abec/ac14/ad34. Two overlays sharing a head layout is a fact
- * about the loader, not permission to copy an answer across.
- *
- * Reached by sweep B only: no `push` for C to key on and no `bl` for A,
- * so it lands in the "B leaf" class rather than the prologue-confirmed
- * population.
- *
- * Uncertainty: the returned address is a data pointer inside this overlay's
- * own image (0x2bec of 0x2ddc); what lives there is not established and
- * is deliberately not named.
+ * Returns 0x0200abec, an address inside this overlay's image; its contents
+ * are not established. The eight-byte owner includes its one pool word,
+ * which sits past the bx lr. The address is published in the descriptor
+ * table, not reached by any call.
  */
 u8 *GetSolShindenMessageData(void)
 {
@@ -119,39 +45,10 @@ u8 *GetSolShindenMessageData(void)
 }
 
 /*
- * resource_37a owner at 0x02000044, 8 bytes: a constant getter --
- * `ldr r0, [pc, #0] / bx lr` over its own one-word pool, returning the
- * in-image address 0x0200ac14 (overlay offset 0x2c14).
- *
- * Complete owner: NO PROLOGUE. Saves nothing, no stack, lr never written,
- * bare `bx lr` at 0x02000046. The span is EIGHT bytes and not four:
- * the pool word sits PAST the `bx lr`, at 0x02000048, and belongs to
- * this owner. Measured to the return and then the pool, NOT inferred from
- * the shape -- the stub at 0x02000038 four bytes away has the same
- * cohort membership and a FOUR-byte span. Next owner at 0x0200004c.
- * Takes no argument.
- *
- * Published, not called: its address is stored as the in-image spelling
- * 0x02008045 (offset + 0x8000, Thumb bit set) in exactly one word,
- * at overlay offset 0x1c -- one field of a DESCRIPTOR TABLE filling this
- * overlay's first 0x30 bytes: five function pointers at 0xc, 0x14, 0x1c, 0x24
- * and 0x2c, stride 8, aimed at the five stubs beginning immediately after it
- * at 0x30. No `bl` anywhere in the image reaches any of them.
- *
- * SAME TABLE, SAME FIVE SLOTS, SAME FIVE BODIES as resource_37b -- and the
- * five ADDRESSES RETURNED ARE ALL DIFFERENT, which is the whole reason each
- * pool word is resolved per row instead of the shape being matched once.
- * 37b returns 0x0200a5c0/a698/a6bc/a80c; this overlay returns
- * 0x0200aafc/abec/ac14/ad34. Two overlays sharing a head layout is a fact
- * about the loader, not permission to copy an answer across.
- *
- * Reached by sweep B only: no `push` for C to key on and no `bl` for A,
- * so it lands in the "B leaf" class rather than the prologue-confirmed
- * population.
- *
- * Uncertainty: the returned address is a data pointer inside this overlay's
- * own image (0x2c14 of 0x2ddc); what lives there is not established and
- * is deliberately not named.
+ * Returns 0x0200ac14, an address inside this overlay's image; its contents
+ * are not established. The eight-byte owner includes its one pool word,
+ * which sits past the bx lr. The address is published in the descriptor
+ * table, not reached by any call.
  */
 u8 *GetSolShindenActorData(void)
 {
@@ -159,39 +56,10 @@ u8 *GetSolShindenActorData(void)
 }
 
 /*
- * resource_37a owner at 0x0200004c, 8 bytes: a constant getter --
- * `ldr r0, [pc, #0] / bx lr` over its own one-word pool, returning the
- * in-image address 0x0200ad34 (overlay offset 0x2d34).
- *
- * Complete owner: NO PROLOGUE. Saves nothing, no stack, lr never written,
- * bare `bx lr` at 0x0200004e. The span is EIGHT bytes and not four:
- * the pool word sits PAST the `bx lr`, at 0x02000050, and belongs to
- * this owner. Measured to the return and then the pool, NOT inferred from
- * the shape -- the stub at 0x02000038 four bytes away has the same
- * cohort membership and a FOUR-byte span. Next owner at 0x02000054.
- * Takes no argument.
- *
- * Published, not called: its address is stored as the in-image spelling
- * 0x0200804d (offset + 0x8000, Thumb bit set) in exactly one word,
- * at overlay offset 0x24 -- one field of a DESCRIPTOR TABLE filling this
- * overlay's first 0x30 bytes: five function pointers at 0xc, 0x14, 0x1c, 0x24
- * and 0x2c, stride 8, aimed at the five stubs beginning immediately after it
- * at 0x30. No `bl` anywhere in the image reaches any of them.
- *
- * SAME TABLE, SAME FIVE SLOTS, SAME FIVE BODIES as resource_37b -- and the
- * five ADDRESSES RETURNED ARE ALL DIFFERENT, which is the whole reason each
- * pool word is resolved per row instead of the shape being matched once.
- * 37b returns 0x0200a5c0/a698/a6bc/a80c; this overlay returns
- * 0x0200aafc/abec/ac14/ad34. Two overlays sharing a head layout is a fact
- * about the loader, not permission to copy an answer across.
- *
- * Reached by sweep B only: no `push` for C to key on and no `bl` for A,
- * so it lands in the "B leaf" class rather than the prologue-confirmed
- * population.
- *
- * Uncertainty: the returned address is a data pointer inside this overlay's
- * own image (0x2d34 of 0x2ddc); what lives there is not established and
- * is deliberately not named.
+ * Returns 0x0200ad34, an address inside this overlay's image; its contents
+ * are not established. The eight-byte owner includes its one pool word,
+ * which sits past the bx lr. The address is published in the descriptor
+ * table, not reached by any call.
  */
 u8 *GetSolShindenEffectData(void)
 {

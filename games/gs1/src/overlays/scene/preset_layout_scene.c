@@ -93,155 +93,64 @@ void Func_02001e06(void);
 void Func_02001fc0(s32, s32);
 
 /*
- * resource_394 owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000034 holding 0x2009170.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000030 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009170 is image offset
- * 0x1170 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x02000030 includes its one pool word, which holds
+ * the returned table address 0x02009170.
  */
 
 /*
- * resource_394 owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000040 holding 0x20091d0.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200003c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20091d0 is image offset
- * 0x11d0 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x0200003c includes its one pool word, which holds
+ * the returned table address 0x020091d0.
  */
 
 /*
- * resource_394 owner at 0x02000044, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000048 holding 0x20091e0.
- *
- * LEAF RESIDUE. Published at image offset 0x1c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000044 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20091e0 is image offset
- * 0x11e0 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x02000044 includes its one pool word, which holds
+ * the returned table address 0x020091e0.
  */
 
 /*
- * resource_394 owner at 0x0200004c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000050 holding 0x2009240.
- *
- * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200004c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009240 is image offset
- * 0x1240 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x0200004c includes its one pool word, which holds
+ * the returned table address 0x02009240.
  */
 
 /*
- * Resource 394 board repaint at 0x02000194.
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus `mov r7,r8 / push {r7}` at
- * 0x02000194, and the matching `add sp,#8 / pop {r3} / mov r8,r3 /
- * pop {r5, r6, r7} / pop {r0} / bx r0` at 0x02000358.  472-byte row: 464 bytes
- * of code plus the two pool words 0x020092c0 and 0x020092c8 at
- * 0x02000364-0x0200036b.  Control-flow walk: every branch target is
- * 0x02000358 or below and the next owner's prologue is at 0x0200036c.  The
- * return address is popped into r0, so the owner is `void`.
- *
- * Called from the root 0x02000980 and reached again from 0x02000980's own
- * chain; it in turn calls 0x02000b3c twice and 0x02000150 once.
- *
- * 0x020092c0 and 0x020092c8 are pointer CELLS, not values -- the body always
- * loads through them twice.  tracked byte-exact games/gs1/asm/overlays/
- * resource_394_c_02000054.c reads `*(s32 *)0x020092C0` the same way, and
- * games/gs1/asm/overlays/resource_394_c_020008b0.c declares the neighbouring cell
- * `extern u16 *Data_020092c4`.
- *
- * The layout selector at `*Data_020092c8` is re-read four times rather
- * than cached, and each read is spelled out: the first two arms test it
- * against zero and the last against one, so folding them into one local would
- * not be faithful to the polarity changes.
- *
- * The two cells are declared as extern pointers rather than spelled as
- * literal addresses: 0x020092c8 is 0x020092c0 + 8, so the literal form lets
- * CSE derive the second pool word with `adds r3, #8' while the reference keeps
- * two distinct pool words.  The zero stored into piece[85] and into the else
- * arm's piece+12 is a function-scope local, which is what buys the reference's
- * fourth callee-saved register (r7).  The record pointer advances once, in the
- * loop's common tail, so both arms read the record fields unadvanced.
- *
- * The record list is the same twelve-byte-stride, -1-terminated array that
- * 0x02000a90 fills and 0x02000b3c stamps: id at +0, column at +2, row at +4,
- * orientation at +6 and the spawned object pointer at +8.
- *
- * Nineteen call sites, matching the row's advertised count.  Per-target,
- * assembly = C: Func_080091b8 10, Func_080091c0 4, Object_SetMode 2,
- * SceneState_StampRecordCells 2, SceneState_ApplyRectByLayoutSelector 1.
+ * Repaint the board records.  The owner at 0x02000194 includes its two pool
+ * words; 0x020092c0 and 0x020092c8 are pointer cells, declared extern rather
+ * than as literal addresses so that neither pool word derives the other.  The
+ * layout selector is re-read at every test and must not be folded into one
+ * local; the zero stored into piece[85] and piece + 12 is a function-scope
+ * local; the record pointer advances only in the loop's common tail.
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
 
-  /* place a fixture, first bank: (x, y, w, h, sx, sy) */
+  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
-  /* place a fixture, second bank */
+  /* Place a fixture, second bank. */
 
-  /* set object motion state */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* Resolved whole-owner call targets. */
-
-/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
-   them). All three reach the same ARM-mode IWRAM helper that scales a
-   channel by the adjustment, and each still needs its own name. */
+  /* Set object motion state. */
 
 /*
- * Apply the resource's asymmetric RGB555 colour adjustment.
- *
- * Owner span: 0x02000ecc-0x02000f34.  Control jumps over the mask literal at
- * 0x02000f14 and rejoins at 0x02000f18 before the common return.
+ * Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds, not a runtime address.
+ */
+
+/*
+ * Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call precomputes a costly constant into a
+ * pseudo shared with later uses in the block.  A value-returning call also
+ * sets r0 last of its arguments.
+ */
+
+/*
+ * One symbol per call site, named at the site's pc-relative-decoded address.
+ * All three reach the same ARM-mode IWRAM helper that scales a channel by the
+ * adjustment, and each still needs its own name.
+ */
+
+/*
+ * Apply the resource's asymmetric RGB555 color adjustment.  The owner spans
+ * 0x02000ecc-0x02000f34; control jumps over the mask literal at 0x02000f14 and
+ * rejoins at 0x02000f18 before the common return.
  */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {

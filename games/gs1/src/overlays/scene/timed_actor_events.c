@@ -1,6 +1,17 @@
+/*
+ * A run of unnamed leaf owners in resource_376: scene data getters, actor
+ * dialogue beats, numbered scene steps, and the long presentation
+ * sequence.
+ */
+
 #include "types.h"
 
 #define NULL ((void *)0)
+
+/*
+ * Each Func_ symbol names the pre-relocation call word the image holds,
+ * not a runtime address.
+ */
 #define CalculateFacingAngle Func_020011b6
 #define Scene_UpdateTimedActor Func_020010c0
 #define OverlayObject_UpdateFacingTowardTarget Func_02000030
@@ -49,6 +60,10 @@ union SceneActor {
     u16 halfwords[52];
 };
 
+/*
+ * The fields at 100 and 102 are consecutive halfwords, so this byte and
+ * halfword view needs two-byte layout rather than the default four.
+ */
 union SceneField {
     u16 value;
     u8 bytes[2];
@@ -440,93 +455,13 @@ s32 *Func_020022bc(s32);
 void Func_0200230a(s32, s32, s32);
 void Func_02002302(s32, void *);
 
-/* Contiguous unnamed leaf-owner run for resource_376. */
-
-/* Complete eight-byte in-image address getter, including its pool word. */
-
-/* Complete four-byte zero leaf. */
-
-/* Complete 36-byte flag-selected table getter through its three-word pool. */
-
-/* Complete 80-byte three-flag table selector through its seven-word pool. */
-
 /*
- * BYTE-EXACT and adopted 2026-08-07 with
- * -fthumb-call-literal-arg1-first-after-call: the last residual was a
- * two-literal argument sheet that opens right after a call, where the
- * reference writes r1 before r0 -- the same function writes later pairs in
- * register order, so the returning call is the discriminator.
- */
-
-/* Complete 44-byte actor-15 scene owner through its one-word pool. */
-
-/* Complete 44-byte actor-19 scene owner through its one-word pool. */
-
-/* Returns a value: the reference sets r1 before r0 at this site, which
-   only a value-returning callee does; the result is unused here. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
+ * Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* Complete 32-byte actor-16 dialogue owner through its one-word pool. */
-
-/* Complete 32-byte actor-10 dialogue owner through its one-word pool. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Complete 76-byte shared numbered-scene owner through its two-word pool. */
-
-/* Complete 12-byte wrapper for numbered scene 1. */
-
-/* Complete 12-byte wrapper for numbered scene 2. */
-
-/* Complete 12-byte wrapper for numbered scene 3. */
-
-/* Complete 12-byte wrapper for numbered scene 4. */
-
-/* Complete 12-byte wrapper for numbered scene 5. */
-
-/* Complete 12-byte wrapper for numbered scene 6. */
-
-/* Complete 12-byte wrapper for numbered scene 7. */
-
-/* Complete 12-byte wrapper for numbered scene 8. */
-
-/*
- * resource_376 owner at 0x020004dc, 128 bytes: choose the scene that follows
- * from actor zero's directional halfword and two story flags.
- *
- * Complete owner: `push {lr}` at 0x020004dc through the interworking return
- * at 0x0200053c-0x0200053f, followed by the seven referenced pool words at
- * 0x02000540-0x0200055b.  The next independent prologue starts at
- * 0x0200055c.
- *
- * The opening test is the same unsigned wrapped-range idiom established in
- * resource_39e at 0x02002508.  The u16 at actor+6 is increased by
- * 0xffff5fff (that is, reduced by 0xa001 modulo 2^32), then compared unsigned
- * with 0x3ffe.  Its fall-through therefore covers the closed original range
- * 0xa001..0xdfff.  Values below 0xa001 wrap high and take the other arm.
- *
- * In range, control is handed directly to Func_080b0008(1, 21).  Out of
- * range, a scripted sequence opens.  Flag 0x87a selects dialogue 0x1c06 and
- * the Func_0808a190 terminator.  Otherwise flag 0x815 selects dialogue
- * 0x11a2 instead of 0x0f53, and both choices use Func_0808a180(21, 0).
- * The scripted sequence then closes on both out-of-range paths.
- *
- * All eleven static call sites resolve independently under the overlay +2
- * branch rule.  The actor record is fetched before either path is chosen;
- * only its +6 halfword is read.  Flag identifiers and dialogue identifiers
- * are literal, while the higher-level meaning of the directional range is
- * not yet established.
+ * into a pseudo that the compiler then shares with later uses in the
+ * block. A value-returning call sets r0 last of its arguments, so a callee
+ * is declared to return a value here even where the result is unused.
  */
-
-/* Fields at 100 and 102 are consecutive halfwords. GCC's default union
- * layout is four bytes; these byte/halfword views need two-byte layout. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -549,6 +484,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
+/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     extern u8 Data_03001ebc[];
@@ -620,16 +556,19 @@ s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
     return 0;
 }
 
+/* The eight-byte owner includes its one pool word. */
 void *SceneData_GetTable9478(void)
 {
     return (void *)0x02009478;
 }
 
+/* A four-byte leaf that returns zero. */
 int SceneData_ReturnZero(void)
 {
     return 0;
 }
 
+/* The 36-byte owner includes its three pool words. */
 void *SceneData_SelectTable9568ByFlag(void)
 {
     if (Func_02001262(0x834) != 0)
@@ -652,6 +591,7 @@ void *SceneData_SelectFlaggedTable(void)
     return tbl;
 }
 
+/* The 80-byte owner includes its seven pool words. */
 void *SceneData_SelectTable9c00ByFlags(void)
 {
     if (Func_020012ca(0x834) != 0)
@@ -663,6 +603,7 @@ void *SceneData_SelectTable9c00ByFlags(void)
     return (void *)0x02009c00;
 }
 
+/* The 44-byte actor-15 scene owner includes its one pool word. */
 void SceneDialogue_RunActor15Message0f6d(void)
 {
     Func_02001330();
@@ -672,6 +613,7 @@ void SceneDialogue_RunActor15Message0f6d(void)
     Func_02001354();
 }
 
+/* The 44-byte actor-19 scene owner includes its one pool word. */
 void SceneDialogue_RunActor19Message0f73(void)
 {
     Func_0200135c();
@@ -703,6 +645,7 @@ void FieldScene_RunScene376_020001e8(void)
     Func_020013e4();
 }
 
+/* The 32-byte actor-16 dialogue owner includes its one pool word. */
 void SceneDialogue_RunActor16Message11be(void)
 {
     Func_020013f8();
@@ -711,6 +654,7 @@ void SceneDialogue_RunActor16Message11be(void)
     Func_02001412();
 }
 
+/* The 32-byte actor-10 dialogue owner includes its one pool word. */
 void SceneDialogue_RunActor10Message1c3d(void)
 {
     Func_02001418();
@@ -732,6 +676,7 @@ void FieldScene_RunScene376_02000298(void)
     Func_02001452();
 }
 
+/* The 76-byte shared numbered-scene owner includes its two pool words. */
 void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 {
     extern u8 *Data_03001ebc;
@@ -748,6 +693,7 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
     Func_020015a2_a(value);
 }
 
+/* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
 void FieldScene_RunIndexedStep1(void)
 {
     Func_020005ca(1);
@@ -853,6 +799,13 @@ s32 Func_02000368(void)
     return 0;
 }
 
+/*
+ * Choose what follows from actor zero's directional halfword at +6 and two
+ * story flags. The halfword is reduced by 0xa001 modulo 2^32 and compared
+ * unsigned with 0x3ffe, so the first arm covers 0xa001..0xdfff; what that
+ * range means is not established. The record is fetched before either path
+ * is chosen. The 128-byte owner includes its seven pool words.
+ */
 void FieldScene_RunByActorDirectionAndFlags(void)
 {
     void Func_020017e2(s32 arg0, s32 actor_id);

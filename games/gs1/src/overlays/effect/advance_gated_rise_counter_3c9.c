@@ -1,38 +1,13 @@
-/*
- * BYTE-EXACT and adopted 2026-08-07: the residual was a spurious register
- * copy the reference keeps around the counter test (`adds r2, r3, #0' before
- * `cmp r2, #0'). Reading the +98 byte directly in both tests and incrementing
- * it in place, instead of caching it in a `u32 c', reproduces it exactly.
- */
+/* The +98 byte is read directly in both tests and incremented in place rather
+ * than cached in a local; that shape is what the reference holds. */
 #include "types.h"
 
 /*
- * resource_3c9 owner at 0x020059f0, 56 bytes: gated by a byte flag at
- * +99 on its single object argument -- when set, recomputes a
- * fixed-point offset from a byte counter at +98 into a u32 field at
- * +12, calls a leaf helper, then advances that same counter while it
- * stays in (0, 31].
- *
- * Complete owner: `push {r5, lr}` at 0x020059f0 through `pop {r5} / pop
- * {r0} / bx r0` at 0x02005a20-0x02005a24, no literal pool; the next
- * owner's prologue is exactly at 0x02005a28, no gap. `obj` is read
- * (the +99 byte test) before being overwritten, so it is a real
- * argument; void return.
- *
- * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9
- * 59f0 5a28`'s `+2` rule: one call site, target 0x02005688. That target
- * is NOT itself a `push {..,lr}`-prologue function -- it is a leaf
- * routine reached only by `bl` and returning with a bare `bx lr` (never
- * touches lr), so the classifier's prologue heuristic misses it and it
- * would otherwise print as `unknown`. Confirmed by reading the bytes at
- * 0x02005688 directly: it zeroes/sets several fields on the pointer in
- * r0 (the same object this owner was called with) and returns via
- * `bx lr`. Declared here rather than drafted; worth flagging for
- * whoever indexes leaf (no-push) callees in this overlay.
- *
- * Uncertainty: none of +12/+76/+98/+99's layout is established beyond
- * these raw offsets.
+ * Gated by the byte flag at +99: recompute a fixed-point offset from the byte
+ * counter at +98 into the u32 field at +12, call a leaf helper, then advance
+ * that counter while it stays in (0, 31]. The 56-byte owner has no literal
+ * pool. obj is read before it is overwritten, so it is a real argument. The
+ * layout behind +12, +76, +98 and +99 is not established.
  */
 
 extern void Func_0200b096(void *record);

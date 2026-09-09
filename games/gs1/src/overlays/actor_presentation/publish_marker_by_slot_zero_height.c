@@ -1,31 +1,15 @@
 /*
- * resource_3b4 conventions used by this file.
+ * Actor presentation for resource_3b4.
  *
- * `bl` targets: an overlay `bl` stores the target's image offset minus two,
- * not a pc-relative displacement, so a disassembler's printed target is wrong.
- * Every call below was resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.  The band
- * 0x02002468-0x0200261f is an 8-byte-per-entry import veneer table
- * (`ldr r4,[pc,#0] / bx r4 / .word <main-image address>`); calls landing there
- * are named by that trailing word, as the semantic resource_39f sources do.
- * Calls landing on an overlay prologue keep the overlay's `Func_0200xxxx` name.
- *
- * Link base: resource_3b4 is linked at 0x02008000.  The image is 0x2f84 bytes
- * and the table at 0x02002d40-0x02002f84 holds 59 words of the form
- * `<function offset> + 0x8000 + 1` (Thumb bit), e.g. 0x02008ec9 = Func_02000ec8.
- * So a pool word in 0x02008000-0x0200af83 is in-image data at value - 0x8000.
- * `Data_02000240` lies below the base and is referenced by byte-exact sources
- * in many other overlays, so it is a shared EWRAM global, not overlay data.
- *
- * Return type: `pop {r0} / bx r0` pops the return address into r0, so nothing
- * is returned and the owner is void.
- *
- * Declarations are old-style because imports here are reached with differing
- * argument counts from different call sites.
+ * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
+ * main-image address held in the veneer's trailing word, not a runtime
+ * address the call reaches directly.  Declarations are old-style because
+ * those imports are reached with differing argument counts from different
+ * call sites.
  */
 #include "types.h"
 
-/* Returns the record for a numbered slot. */
-
+/* Slot record lookup, then the mode imports. */
 extern s32 *Func_02004422();
 extern s32 *Func_02004432();
 extern s32 *Func_0200443e();
@@ -39,23 +23,12 @@ extern s32 *Func_02004490();
 extern s32 *Func_0200449c();
 extern s32 *Func_020044a8();
 /*
- * resource_3b4 owner at 0x02001edc, 156 bytes: code 0x02001edc-0x02001f73 and
- * the pool word 0x000fffff at 0x02001f74.
- *
- * Publish one marker byte (+35) to slots 8, 10, 11 and 12 according to slot 0's
- * height word at +12.  Above 0x100000 (`movs r2,#128 / lsls r2,#13`) the marker
- * is 2 and slot 8 takes it unconditionally; otherwise the marker is 0 and slot
- * 10 is instead driven through Func_0808a1e0 with mode 3 when it is already at
- * height 0 and slot 0 stands past Z tile 56, and with mode 1 (plus its own
- * marker 1) in every other case.
- *
- * r5 carries the marker; the `movs r5,#0` at 0x02001f5e is branched over by the
- * high path, which is why that path keeps the value 2.  Slot 11's record is
- * fetched separately on each path -- both fetches join at the shared store --
- * so the two Scene_GetRecord(11) calls below are one per path, as in the
- * assembly.
- *
- * The epilogue is `pop {r5} / pop {r0} / bx r0`, so the owner is void.
+ * Publish one marker byte at +35 to slots 8, 10, 11 and 12 according to slot
+ * 0's height word at +12.  The 156-byte owner includes its one pool word,
+ * 0x000fffff, read by the tile division.  The marker local is what carries
+ * the value 2 across the high path, which branches over the clear to 0.
+ * Slot 11's record is fetched once on each path rather than once before
+ * them, and that duplication is what reproduces the reference.
  */
 void SceneActor_PublishMarkerBySlotZeroHeight(void)
 {

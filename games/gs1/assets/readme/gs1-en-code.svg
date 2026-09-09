@@ -1569,7 +1569,7 @@
 </g>
 <g aria-label="0x08022b44–0x08023178: 1,588 bytes" data-node="leaf" data-kind="file" data-bytes="1588" data-address="0x08022b44" data-source="games/gs1/asm/08022b44.s">
 <title>0x08022b44–0x08023178: 1,588 bytes</title>
-<rect x="51.142487630653385" y="178.7198603794714" width="7.627894087391729" height="12.206541477417877" style="fill:#d9d9d4"/>
+<rect x="51.142487630653385" y="178.7198603794714" width="7.627894087391729" height="12.206541477417877" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0x08023178–0x08023e70: 3,320 bytes" data-node="leaf" data-kind="file" data-bytes="3320" data-address="0x08023178" data-source="games/gs1/asm/08023178.s">
 <title>0x08023178–0x08023e70: 3,320 bytes</title>
@@ -3939,7 +3939,7 @@
 </g>
 <g aria-label="0x080e302c–0x080e38b8: 2,188 bytes" data-node="leaf" data-kind="file" data-bytes="2188" data-address="0x080e302c" data-source="games/gs1/asm/080e302c.s">
 <title>0x080e302c–0x080e38b8: 2,188 bytes</title>
-<rect x="82.5967923316224" y="262.0078179656624" width="14.687528665512128" height="9.007744105773805" style="fill:#d9d9d4"/>
+<rect x="82.5967923316224" y="262.0078179656624" width="14.687528665512128" height="9.007744105773805" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0x080e3994–0x080e3a14: 128 bytes" data-node="leaf" data-kind="file" data-bytes="128" data-address="0x080e3994" data-source="games/gs1/asm/080e3994.s">
 <title>0x080e3994–0x080e3a14: 128 bytes</title>
@@ -33697,9 +33697,9 @@
 </g>
 </g>
 <rect x="8" y="304" width="16" height="16" style="fill:#d9d9d4"/>
-<text class="weyard legend-label" x="28" y="312" dominant-baseline="middle">Unknown 34.1%</text>
+<text class="weyard legend-label" x="28" y="312" dominant-baseline="middle">Unknown 33.9%</text>
 <rect x="136" y="304" width="16" height="16" style="fill:#96c8c9"/>
-<text class="weyard legend-label" x="156" y="312" dominant-baseline="middle">Drafted 22.1%</text>
+<text class="weyard legend-label" x="156" y="312" dominant-baseline="middle">Drafted 22.4%</text>
 <rect x="264" y="304" width="16" height="16" style="fill:#326b7d"/>
 <text class="weyard legend-label" x="284" y="312" dominant-baseline="middle">C 43.7%</text>
 <g class="chart-frame" pointer-events="none">

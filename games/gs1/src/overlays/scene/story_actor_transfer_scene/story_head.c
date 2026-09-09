@@ -31,9 +31,6 @@ extern u8 Data_0200e3c4[];
 extern s16 Data_02000240[];
 extern struct StoryDialogueWork *Data_03001ebc;
 
-/* Each Func_ name identifies one call site's loader-relocated call word rather
- * than a runtime address, so several names here reach the same import. The
- * declarations are old-style because the interfaces are not established. */
 s32 Func_020046a8();
 s32 Func_020046b2();
 s32 Func_020046c0();
@@ -79,6 +76,10 @@ s32 Func_0200686a(s32 slot);
 s32 Func_02006872(s32 slot);
 s32 Func_0200687a(s32 slot);
 s32 Func_02006882(s32 slot);
+
+/* Each Func_ name identifies one call site's loader-relocated call word rather
+ * than a runtime address, so several names here reach the same import. The
+ * declarations are old-style because the interfaces are not established. */
 
 /*
  * Selects the placement and spawn table for the current scene. The selector is

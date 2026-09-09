@@ -1,11 +1,5 @@
 #include "types.h"
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define Scene_GetRecord_1(a0) Value1(Func_02006924, a0)
 #define Scene_GetRecord_2(a0) Value1(Func_0200692c, a0)
 #define BattleRuntime_Reset_1(args...) Func_020068fa(args)
@@ -55,12 +49,6 @@
 #define ObjectMotion_ArmCallback_3(args...) Func_02006c3c(args)
 #define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02006c48, a0, a1, a2)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006b80_a(args)
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define BattleRuntime_WaitIfModeZero_1_02001e80(args...) Func_02006bc4_a(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1_02001e80(args...) Func_02006c8c(args)
 #define BattleRuntime_WaitIfModeZero_2_02001e80(args...) Func_02006bd2_a(args)
@@ -77,14 +65,7 @@
 #define Object_LookupAndStep_1(args...) Func_02006ca4(args)
 #define Scene_GetRecord_1_02001e80(args...) Func_02006c92(args)
 #define Scene_GetRecord_2_02001e80(a0) Value1(Func_02006c9e, a0)
-/* The "shown" half word at +100 of an actor record. */
 #define ACTOR_SHOWN_OFFSET 100
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define Scene_GetRecord_1_02002fd4(a0) Value1(Func_02007d56, a0)
 #define BattleRuntime_Reset_1_02002fd4(args...) Func_02007d24(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1_02002fd4(a0, a1, a2) Call3(Func_02007dba, a0, a1, a2)
@@ -206,7 +187,6 @@
 #define ObjectMotion_SetSpeedParameters_7(args...) Func_02008580(args)
 #define BattleRuntime_WaitIfModeZero_22(args...) Func_02008416(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02002fd4(args...) Func_0200842a(args)
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 #define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))
 #define FieldScene_RunScene383SequenceB Func_02001ba0
 #define FieldScene_RunSteps107And250 Func_02001e64
@@ -216,27 +196,15 @@
 #define RunDialoguePromptScene Func_020036f8
 #define FieldScene_RunScene383_02004b2c Func_02004b2c
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00001299[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_000012a0[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_03001ebc[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_0200d17c[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00000000[];
 extern u8 Data_000012fc[];
 extern u8 Data_00001324[];
 extern u8 Data_0200d354[];
 extern u8 Data_0200d4c8[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_0200e4f8[];
 
 void Func_02006290();
@@ -974,6 +942,20 @@ void Func_020099ea();
 void Func_020099f6();
 void Func_02009a54();
 void Func_02009b68();
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+
+/* The "shown" half word at +100 of an actor record. */
+
+/* Phase/status word at 0x1c0 of the shared scene work record. */
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

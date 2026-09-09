@@ -3,6 +3,9 @@
 #define SceneDialogue_RunActorFifteenFacingPreservedDialogue Func_02000640
 #define FieldScene_RunSupplementalSequenceOne Func_02000804
 #define FieldScene_RunScene385_020009f8 Func_020009f8
+#define FieldScene_SetActor21Values0And4 Func_02000d74
+#define FieldScene_RunScene385_02000d84 Func_02000d84
+
 /* Complete actor-15 facing-preserving dialogue scene through its two-word pool. */
 struct Actor_02000640 {
     u8 reserved00[6];
@@ -47,6 +50,38 @@ void Func_02001b86();
 void Func_02001b92();
 void Func_02001bb2();
 void Func_02001bb4();
+void Func_02001f26(s32 actor, s32 mode, s32 value);
+void Func_02001e62();
+void Func_02001e74();
+void Func_02001e76();
+void Func_02001e98();
+void Func_02001eae();
+void Func_02001eb4();
+void Func_02001ec4();
+void Func_02001ed4();
+void Func_02001eda();
+void Func_02001ee0();
+void Func_02001ee4();
+void Func_02001ee6();
+void Func_02001f0c();
+void Func_02001f0e();
+void Func_02001f1e();
+void Func_02001f28();
+void Func_02001f2e();
+void Func_02001f4c();
+void Func_02001f9a();
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/*
+ * Complete actor-21 mode-four reset wrapper.
+ *
+ * Call symbol resolved directly against the raw region in
+ * games/gs1/asm/overlays/resource_385_overlay. s(`push {lr} / movs r0,#21 / movs r1,#0 /
+ * movs r2,#4 / bl sub_02001f26 / pop {r0} / bx r0`): the per-site overlay
+ * veneer is sub_02001f26, not a main-image address guessed from elsewhere.
+ */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -86,6 +121,15 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_02000d74(void (*f)(), s32 a0)
+{
+    f(a0);
 }
 
 void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
@@ -156,4 +200,35 @@ void FieldScene_RunScene385_020009f8(void)
         Call1(Func_02001b38, 0x867);
     }
     Func_02001b64();
+}
+
+void FieldScene_SetActor21Values0And4(void)
+{
+    Func_02001f26(21, 0, 4);
+}
+
+void FieldScene_RunScene385_02000d84(void)
+{
+    u32 i;
+    s32 record;
+
+    Func_02001e62(231);
+    Func_02001e76();
+    Func_02001e74(10);
+    Func_02001ee4(18, 2);
+    Call3(Func_02001eae, 18, 0xcccc, 0x6666);
+    Call3(Func_02001eda, 18, 216, 0x198);
+    Func_02001e98(10);
+    Call3(Func_02001f4c, 18, 0x4000, 20);
+    Func_02001f0e(18, 6, 0);
+    Func_02001eb4(30);
+    Func_02001f1e(18, 6, 0);
+    Func_02001ec4(30);
+    Func_02001f2e(18, 6, 0);
+    Func_02001ed4(30);
+    Call3(Func_02001f28, 18, 216, 0x188);
+    Func_02001ee6(10);
+    Call3(Func_02001f9a, 18, 0x4000, 20);
+    Call1_02000d74(Func_02001ee0, 0x858);
+    Func_02001f0c();
 }

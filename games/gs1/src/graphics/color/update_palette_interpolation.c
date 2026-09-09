@@ -13,7 +13,8 @@ typedef struct {
     s8 zero;
 } PaletteInterpolationState;
 
-void Graphics_UpdatePaletteInterpolation(s32 arg0) {
+void Graphics_UpdatePaletteInterpolation(s32 arg0)
+{
     PaletteInterpolationState *state = *(PaletteInterpolationState **)ADDR_03001ED0;
 
     if (state != 0) {

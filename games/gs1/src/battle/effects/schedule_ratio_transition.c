@@ -1,16 +1,11 @@
 /*
- * Correctness fix, veneer audit (2026-08-01).
- * 0x080072e4 begins the GCC `__call_via_rN` veneer bank -- fifteen four-byte
- * `bx rN; nop` entries, r0..lr, ending at 0x08007320 -- so a `bl` into that
- * range is an indirect call through the named register, not a call to a
- * function at the branch target. Resolved with tools/veneer_resolve.ts.
+ * Record a ratio-driven transition on the battle effect work block and
+ * schedule its callback.
  *
- * 0x0300013c is the relocated ARM ratio helper, established in
- * games/gs1/semantic/main/080e15e8.c as (numerator, denominator) -- TWO arguments.
- * This draft passed three, inventing a trailing zero. Checked against the ROM
- * rather than trusted: at the call, r0 takes arg0, r1 takes 0x10000 and r3
- * the callee, and NOTHING writes r2. Two it is, which independently
- * corroborates 080e15e8's reading at a second call site.
+ * The ratio helper is reached through a call-via-register veneer, so it is a
+ * typed indirect call rather than a call to a function at the branch target.
+ * It takes exactly two arguments, numerator and denominator; r2 is never set
+ * at the call site, so a third argument must not be added.
  */
 #include "types.h"
 #include "global_cells.h"

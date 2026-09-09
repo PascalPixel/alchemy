@@ -1,32 +1,15 @@
 #include "types.h"
 
-/*
- * BattlePlacement_GetStepPair - read one signed (x, y) pair out of the fixed step table at
- * 0x080c2a62.
- *
- * Manifest row 080b7410 is 20 bytes, classified `executable_gap_continuation`
- * / `merge_with_owner`.  The walk from the nearest preceding
- * non-continuation row, 080b6f44, ends at 0x080b7400 on that function's own
- * return, so this row is not its tail; the row has no prologue, takes three
- * arguments and ends in `bx lr`, which makes it an ordinary leaf rather than a
- * continuation.
- *
- * Its caller is UNKNOWN, not merely indirect.  `tools/main_xref.ts 080b7410`
- * finds no reference of any kind anywhere in the image: no call, no branch, no
- * pool word holding the address, and none holding address + 1.  It is reached
- * by a computed address, from data this scan does not cover, or not at all.
- * The reconstruction below is faithful to the bytes either way; only the
- * question of who runs them is open.
- *
- * Executable range 0x080b7410..0x080b7420, followed by the single pool word
- * holding the table base.
- *
- * The table is signed bytes in (x, y) pairs, so the index is doubled once and
- * the second component read at index+1.
- */
-
+/* Step table for battle placement: signed bytes in (x, y) pairs. */
 extern const s8 Data_080c2a62[];
 
+/*
+ * Read one (x, y) pair from the step table.  Entries are pairs, so the index
+ * is doubled and the second component read at index + 1.  A leaf with no
+ * prologue; the owner includes the single pool word holding the table base.
+ * No call site is known -- the address is reached by a computed value, or by
+ * nothing at all.
+ */
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
     index *= 2;

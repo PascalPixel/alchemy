@@ -386,122 +386,52 @@ void Func_0200221a();
 void Func_0200229c();
 s32 Func_020022bc();
 
-/* The import's main-image target is Func_0808a1f0. Tracked scene callers
- * identify its second argument (258) as a pose id. */
-
-/* Contiguous unnamed leaf-owner run for resource_3c7. */
-
 /*
- * resource_3c7 owner at 0x02000044, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000048 holding 0x2009438.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000044 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009438 is image offset
- * 0x1438 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The import's main-image target is Func_0808a1f0; its second argument is a
+ * pose id.
  */
 
 /*
- * resource_3c7 owner at 0x0200007c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000080 holding 0x20096d0.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200007c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20096d0 is image offset
- * 0x16d0 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x02000044 includes its one pool word, which holds
+ * the returned table address 0x02009438.
  */
 
 /*
- * Resource 3c7 script selector at 0x020004b0.
- *
- * Complete owner: `push {lr}` at 0x020004b0 through `pop {r1} / bx r1` at
- * 0x020004e6.  r0 is not the popped return address, so it survives and is the
- * result (HANDOVER §0).  0x020004ea is an alignment halfword and
- * 0x020004ec-0x02000507 is this owner's literal pool; neither is executed.
- *
- * This is the two-by-two sibling of 0x02000084: the same scene-id test and the
- * same 0x9a7 predicate, but here the predicate is evaluated on BOTH sides of
- * the scene-id test rather than only the matching one.  The two `bl` sites at
- * 0x020004c6 and 0x020004d8 reach the same import veneer with the same
- * argument, and are written as two calls because they are genuinely two sites
- * on disjoint paths (site count 2, matching `overlay_call_targets.ts`).
- *
- * Link base 0x02008000: the four returned pool words 0x0200a010 / 0x02009eb4 /
- * 0x02009ca4 / 0x02009a94 are in-image data at file offsets 0x2010 / 0x1eb4 /
- * 0x1ca4 / 0x1a94, all even and so data rather than Thumb entries.
- *
- * The scene-state block at 0x02000240 is the cross-overlay idiom; index 224
- * (byte offset 448) is the signed scene/progress id.
+ * The eight-byte owner at 0x0200007c includes its one pool word, which holds
+ * the returned table address 0x020096d0.
+ */
+
+/*
+ * Select the scene script at 0x020004b0.  The owner runs to 0x020004e6 and
+ * also owns the alignment halfword at 0x020004ea and the literal pool at
+ * 0x020004ec-0x02000507.  The 0x9a7 predicate is evaluated on both sides of
+ * the scene-id test, so the two calls stay separate -- they are two sites on
+ * disjoint paths.  Index 224 of the scene-state block at 0x02000240 is the
+ * signed scene id.
  */
 
 /* Four scripts embedded in this overlay's own data. */
 
-/* Import veneer; used in a condition, so the return type is stated and the
- * arity left open. */
-
-/* Audited retained scene body: all 306 calls through the next owner boundary
- * are represented in machine order. The approved compiler changes scheduling
- * and literal placement, so production retains the reviewed assembly. */
-
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
-
 /*
- * Resource 3c7 cutscene script at 0x02000eec.
- *
- * Complete owner: `push {lr}` at 0x02000eec through the interworking return
- * `pop {r0} / bx r0` at 0x0200103a.  r0 receives the popped return address, so
- * the owner returns nothing (HANDOVER §0).  r0's entry value is overwritten
- * before use, so the owner takes no arguments.
- *
- * Straight-line: the body contains no branch of any kind.  The only non-code
- * bytes in the span are the alignment halfword at 0x0200103e and the literal
- * pool 0x02001040-0x0200104b, all past the epilogue; a control-flow walk from
- * the prologue confirms nothing else is skipped.
- *
- * The three pool words are small constants (((s32) &Value_00002880), 0x0105, 0x2002), not
- * in-image addresses, so this owner is not a link-base witness either way.
- *
- * The script is a sequence of "act on channel N, then wait k frames" beats.
- * Func_0808a010 is the wait (its argument is a frame count), and channels 0,
- * 1, 2, 3, 11 and 12 are driven by Func_0808a110 / Func_0808a138 /
- * Func_0808a180.
- *
- * Call accounting, per target, against `overlay_call_targets.ts`
- * (46 sites, 9 distinct); each count was verified against the individual call
- * sites rather than inferred from the total:
- *   Func_0808a010  22   Func_0808a180  9    Func_0808a138  5
- *   Func_0808a110  4    Func_0808a148  2    Func_0808a170  1
- *   Func_0808a178  1    Func_0808a1b8  1    Func_0808a1e8  1
- *
- * Uncertainties: the channel ids and the beat constants are transcribed
- * literally; what each channel drives is not established here, and the meaning
- * of Func_0808a1e8's middle argument 0x105 (0x102 at the corresponding site in
- * Func_02000308) is unknown.
+ * Import veneer; used in a condition, so the return type is stated and the
+ * arity left open.
  */
 
-/* Import veneers.  Old-style declarations: one import name can take different
- * argument counts at different sites in this overlay, so no arity is asserted
- * and none of these results is used. */
+/*
+ * The calls appear in machine order; that order is what reproduces the
+ * reference.
+ */
+
+/*
+ * Loader-relocated ROM calls: each site names the pre-relocation call word the
+ * image holds, not a runtime address.
+ */
+
+/*
+ * Import veneers, declared old-style: one import name takes different argument
+ * counts at different sites in this overlay, so no arity is asserted and none
+ * of these results is used.
+ */
 
 static __inline__ void ConfigureActorPose(s32 actor, s32 pose)
 {
@@ -582,7 +512,8 @@ u8 *SceneData_GetTable9438(void)
     return (u8 *)0x02009438;
 }
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     if (Data_02000240[224] == (s32)&Value_000000b3) {
         return (s32)Data_02009690;
     }
@@ -596,7 +527,7 @@ u8 *SceneData_GetTable96d0(void)
 
 u8 *SceneData_SelectTableBySceneIdAndFlag9a7(void)
 {
-    if (Data_02000240[224] == (s32) &Value_000000b4) {
+    if (Data_02000240[224] == (s32)&Value_000000b4) {
         if (Func_02001278(0x9A7) != 0) {
             return Data_02009974;
         }
@@ -996,6 +927,14 @@ void FieldScene_RunPrimaryScript(void)
     Value0(Func_020020e0);
 }
 
+/*
+ * Cutscene script at 0x02000eec.  The owner runs to 0x0200103a and also owns
+ * the alignment halfword at 0x0200103e and the literal pool at
+ * 0x02001040-0x0200104b; the body is straight-line, with no branch.  The
+ * script is a sequence of "act on channel N, then wait k frames" beats.  The
+ * channel ids and beat constants are transcribed literally: what each channel
+ * drives is not established, and the middle argument 0x105 is unidentified.
+ */
 void FieldScene_RunSecondaryScript(void)
 {
     void Func_020021aa_a(s32);
@@ -1003,7 +942,7 @@ void FieldScene_RunSecondaryScript(void)
     void Func_020021f0_a(s32);
     void Func_0200220c_a(s32);
 
-    Func_0200216e(((s32) &Value_00002880));
+    Func_0200216e(((s32)&Value_00002880));
     Func_020020ec(20);
 
     Func_02002164(11, 2);

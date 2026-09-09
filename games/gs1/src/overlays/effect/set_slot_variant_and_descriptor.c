@@ -12,7 +12,8 @@ extern struct Obj *Func_02005ac6(s32);
 extern u32 Func_020059e2(void);
 extern void Func_02005a2e(struct Obj *, s32);
 
-void SceneEffect_SetSlotVariantAndDescriptor(s32 a) {
+void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
+{
     struct Obj *p;
     u32 t;
 

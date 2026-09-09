@@ -52,7 +52,38 @@
           "en_symbol": "Func_080072f0"
         }
       ],
-      "core_identical": true
+      "core_identical": true,
+      "linked_exactness": {
+        "measured": "2026-09-09",
+        "method": "Compile games/gs1/src/battle/action/resolve_target_action.c once through canonical-gcc296, relink that one object at each edition's owner start, and byte-compare the result against that edition's ROM. Commands: alchemy score --unit battle-action-resolution --first, and alchemy cross-edition 080bbb0c --edition-build FILE. The six per-edition compiles produce one identical object.",
+        "object_text_bytes": 6332,
+        "relocation_sites": 430,
+        "self_relocation_sites": 115,
+        "external_relocation_sites": 315,
+        "external_symbols": 101,
+        "external_symbol_classes": {
+          "function": 31,
+          "call_via_stub": 1,
+          "data": 10,
+          "value": 59
+        },
+        "byte_accounting": {
+          "compiler_output_bytes": 4612,
+          "self_relocation_bytes": 460,
+          "external_relocation_bytes": 1260
+        },
+        "differing_bytes": {
+          "ja": 0,
+          "en": 0,
+          "de": 0,
+          "es": 0,
+          "fr": 0,
+          "it": 0
+        },
+        "en_is_self_contained": "The unit score links EN against name-derived symbols only: the generated symbol file is 204 pure `.set` lines such as `.set Value_0000081d, 0x0000081d`. EN emits 6332/6332 bytes with zero differences and is additionally inside the full-ROM gate, so the EN owner is reproduced from first principles.",
+        "five_editions_are_weaker": "The other five are not five independent reproductions. derive_link_symbols (tools/alchemy/src/cross_edition.rs:1137) takes each edition's external symbol values by decoding that edition's own ROM at the offsets it then compares, and 78 of the 101 symbols have exactly one reference site, so 1260 of 6332 bytes cannot disagree with any object. link_owner_for_edition is also only attempted once core_identical already holds. What the five establish is the 5072 bytes that are not externally relocated: the 4612 bytes of compiler output are byte-identical in all six GS1 ROMs, the 105 self-relocated words resolve to start plus addend in each, and the 10 internal calls carry identical fields. FR further differs from ES in only 3 bytes, at offsets 0030, 0031 and 0084, all inside single-site relocation fields, so it is not a sixth independent string.",
+        "scope": "One 6332-byte owner, not six edition ROM builds and not a claim about any other owner. The honest summary is: the owner is reconstructed from first principles in EN, and its compiler output appears verbatim in the other five GS1 editions with per-edition symbol values supplied by those ROMs."
+      }
     }
   ],
   "candidate_owners": [

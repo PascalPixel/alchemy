@@ -1,37 +1,9 @@
 #include "types.h"
 
 /*
- * resource_3a7 soft-float double unpack at 0x02001770, 212 bytes.
- *
- * `overlay_twins resource_3a7 --semantic` proves that this owner and
- * resource_3bf:5e04 are byte-identical across all 106 halfwords.  The source
- * shape follows the generic GCC 2.96 `fp-bit.c` unpack routine in the local
- * compiler source, including its word-order swap and packed-bitfield reads.
- *
- * r0 addresses the packed pair, r1 the 20-byte record to fill.  The packed pair
- * is copied to the local sp+0/sp+4 slots purely so the exponent and sign can be
- * read back with narrower loads ('ldrh [sp,#6]', 'ldrb [sp,#7]'); those reads
- * confirm the library's word order, in which the FIRST word of the pair is the
- * IEEE high word carrying the sign and exponent.  That is why the packed value
- * is carried as SoftDouble (a u64 whose low half is the first word) rather than
- * as a native double.
- *
- * Record layout, which this routine defines for the whole family:
- *   +0  class (0 signalling NaN, 1 quiet NaN, 2 zero, 3 finite, 4 infinity)
- *   +4  sign (bit 31 of the high word)
- *   +8  unbiased exponent
- *   +12 significand low word
- *   +16 significand high word, normalised so bit 28 is set
- *
- * Four cases, in the assembly's order: biased exponent 0 with a zero
- * significand (class 2); biased exponent 0 with a non-zero significand, a
- * denormal seeded to -1022 and normalised with an UNSIGNED compare against
- * 0x0FFFFFFF; biased exponent 0x7ff (class 4 for infinity, else class 1 or 0 on
- * the quiet bit, both storing the significand UNSHIFTED); and anything else,
- * exponent minus 1023 with the implicit leading bit re-inserted.
- *
- * Uncertainty (inherited): the constant 0 loaded into r1 in the normal-number
- * path is never used before the routine returns, so it is left unmodelled.
+ * Soft-float double unpack -- resource_3a7.  Splits a packed pair into the
+ * class, sign, exponent and normalised significand record the rest of the
+ * family works on.
  */
 typedef float DoubleType __attribute__((mode(DF)));
 typedef unsigned int HalfFractionType __attribute__((mode(SI)));
@@ -45,6 +17,11 @@ typedef enum FloatClass {
     CLASS_INFINITY
 } FloatClass;
 
+/*
+ * Record layout: class (0 signalling NaN, 1 quiet NaN, 2 zero, 3 finite,
+ * 4 infinity), sign taken from bit 31 of the high word, unbiased exponent,
+ * then the significand normalised so that bit 28 of its high word is set.
+ */
 typedef struct SoftFloatRecord {
     FloatClass cls;
     unsigned int sign;
@@ -55,6 +32,11 @@ typedef struct SoftFloatRecord {
     } fraction;
 } SoftFloatRecord;
 
+/*
+ * The packed value is a pair of words whose first word is the high word
+ * carrying the sign and exponent, so it is copied into a local and read back
+ * through the narrower bitfields below.
+ */
 typedef union PackedDouble {
     DoubleType value;
     FractionType raw;
@@ -66,6 +48,13 @@ typedef union PackedDouble {
     } bits;
 } PackedDouble;
 
+/*
+ * The four cases are taken in this order: zero; a denormal, seeded to -1022
+ * and normalised with an unsigned compare; exponent 0x7ff, which stores the
+ * significand unshifted for both NaN classes; and the normal case, which
+ * re-inserts the implicit leading bit.  One constant materialised in the
+ * normal path is never used, so it is left unmodelled.
+ */
 void Runtime_UnpackSoftDouble(PackedDouble *source, SoftFloatRecord *record)
 {
     FractionType fraction;

@@ -9,7 +9,7 @@ s32 IsActorInteractionAvailable(s32 actor_id)
     if (Func_0200326a() == 0) {
         return 0;
     }
-    if (Func_02003114(actor_id) != 0) {
+    if (Func_02003114(actor_id)!= 0) {
         return 1;
     }
     {

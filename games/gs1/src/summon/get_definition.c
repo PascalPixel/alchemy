@@ -3,7 +3,8 @@
 
 extern const u8 Data_08084a9c[];
 
-s32 SummonDefinition_GetNear(u32 summon_id) {
+s32 SummonDefinition_GetNear(u32 summon_id)
+{
     if (summon_id > 0xFU) {
         return 0;
     }

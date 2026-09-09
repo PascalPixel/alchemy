@@ -2,7 +2,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void GraphicsPalette_DecrementSelectionWrap(void *base) {
+void GraphicsPalette_DecrementSelectionWrap(void *base)
+{
     s32 v;
     u16 t;
     s32 cur;

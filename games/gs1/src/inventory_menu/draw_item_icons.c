@@ -1,6 +1,7 @@
 #include "inventory_menu.h"
 
-void InventoryMenu_DrawItemIcons(u16 *items, s32 style) {
+void InventoryMenu_DrawItemIcons(u16 *items, s32 style)
+{
     s32 remaining;
     u16 *entries;
     struct InventoryMenuIcon **icons;

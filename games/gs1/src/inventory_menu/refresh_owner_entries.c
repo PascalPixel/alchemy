@@ -1,7 +1,8 @@
 #include "m7_interfaces.h"
 #include "global_cells.h"
 
-void InventoryMenu_RefreshOwnerEntries(s32 layout) {
+void InventoryMenu_RefreshOwnerEntries(s32 layout)
+{
     struct Object080a1c **slot;
     struct Object080a1c **scan;
     struct Object080a1c *object;

@@ -5,7 +5,8 @@ extern void Func_02003f8e(s32);
 extern s32 Func_02003fb6(s32, s32);
 extern void Func_02003eda(void);
 
-void SceneDialogue_RunActorNineteenDialogue(void) {
+void SceneDialogue_RunActorNineteenDialogue(void)
+{
     Func_02003ec0();
     Func_02003f8e(0x1a7c);
     Func_02003fb6(19, 0);

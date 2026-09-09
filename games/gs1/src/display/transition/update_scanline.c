@@ -3,7 +3,8 @@
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void DisplayTransition_UpdateScanline(void) {
+void DisplayTransition_UpdateScanline(void)
+{
     u32 line;
     u8 *state;
     u16 value;

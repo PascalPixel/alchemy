@@ -1,6 +1,7 @@
 #include "script_interpreter.h"
 
-u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
+u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
+{
     s32 index = interpreter->cursor;
     const s32 *table = interpreter->script;
     u32 value = table[index + 1];

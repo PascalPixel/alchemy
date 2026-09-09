@@ -37,7 +37,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
     duration = WINDOW_DURATION(window);
     remaining = duration - frame;
     scratch.scaled_part =
-        (s32)((u32)(frame * WINDOW_WIDTH(window)) << 16);
+        (s32)((u32)(frame *WINDOW_WIDTH(window)) << 16);
     scratch.scaled_duration = (s32)((u32)duration << 17);
     scratch.result =
         ((UiWindowScaleFunction)0x0300013c)(
@@ -45,14 +45,14 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
     x = (scratch.result >> 16) + WINDOW_X(window);
 
     scratch.scaled_part =
-        (s32)(((u32)remaining * WINDOW_WIDTH(window)) << 16);
+        (s32)(((u32)remaining *WINDOW_WIDTH(window)) << 16);
     scratch.result =
         ((UiWindowScaleFunction)0x0300013c)(
             scratch.scaled_duration, scratch.scaled_part);
     width = scratch.result >> 15;
 
     scratch.scaled_part =
-        (s32)((u32)(frame * WINDOW_HEIGHT(window)) << 16);
+        (s32)((u32)(frame *WINDOW_HEIGHT(window)) << 16);
     scratch.scaled_duration = (s32)((u32)WINDOW_DURATION(window) << 17);
     scratch.result =
         ((UiWindowScaleFunction)0x0300013c)(
@@ -60,7 +60,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
     y = (scratch.result >> 16) + WINDOW_Y(window);
 
     scratch.scaled_part =
-        (s32)(((u32)remaining * WINDOW_HEIGHT(window)) << 16);
+        (s32)(((u32)remaining *WINDOW_HEIGHT(window)) << 16);
     scratch.result =
         ((UiWindowScaleFunction)0x0300013c)(
             scratch.scaled_duration, scratch.scaled_part);

@@ -425,6 +425,8 @@
 #define ObjectMotion_SetHorizontalPositionWithTerrain_6(args...) Func_0200260a(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_020007c4(args...) Func_020025bc(args)
 #define SCENE_STEP (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
+/* A signed 16-bit field of an actor record returned by one of the record
+ * lookups. */
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
 #define SceneWork_SetStepValue_1_02001090(a0) Call1(Func_0200265e, a0)
 #define BattleRuntime_WaitIfModeZero_1_02001090(args...) Func_020025c4(args)
@@ -958,108 +960,18 @@ void Func_020027a6();
 void Func_02002802();
 s32 Func_02002706(s32);
 
-/* Contiguous unnamed leaf-owner run for resource_3c6. */
-
 /*
- * resource_3c6 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000044 holding 0x200975c.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000040 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x200975c is image offset
- * 0x175c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Each pseudo symbol above names the per-site call word the overlay image
+ * holds, not a runtime address -- one word can serve two sites with different
+ * targets -- and the macro names the function the site reaches through the
+ * veneers, keeping the site's own calling form. Names without a repository
+ * binding are provisional.
  */
-
-/*
- * resource_3c6 owner at 0x02000048, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
-/*
- * resource_3c6 owner at 0x0200004c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000050 holding 0x20098c4.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200004c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20098c4 is image offset
- * 0x18c4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
-/* Remaining raw call sites, named individually from the engine source their
- * main-image function reaches. */
-
-/* Runs the fixed call sequence for scene 3c6: a long, paced series of setup
- * and per-entity calls (position/pose/property triples keyed by entity id,
- * interleaved with timed single-argument steps), ending with a lookup of a
- * record whose s16 fields at +10 and +18 feed the last positioning call. */
-
-/* The step counter, addressed directly for the sites that read-modify-write
- * it inline instead of going through bump_step. */
-
-/* A signed 16-bit field read out of an actor record returned by one of the
- * Func_...() record lookups below. */
-
-/* Drives actors 0-3, 22 and 25 through a long timed sequence of pose, move,
- * and sprite-flag calls, gated by two condition checks that each pick one of
- * two call sequences and both bump the shared scene step counter. */
-
-/* Sets the s16 field at offset 0x1d8 of the shared scene work record
- * (the scene step counter, per bump_step below) directly to a value. */
-
-/* Calls ObjectMotion_SetVariantCallback(), then forwards arg0 into an
- * unnamed follow-up call. */
-
-/* Calls an unnamed function, then ObjectMotion_WaitForAnimationChange(arg0). */
-
-/* Runs a fixed, unbranching sequence of overlay calls with constant
- * arguments; no loop, no stored result, no use of the scene work record. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -1085,6 +997,8 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* The scene step counter at 0x1d8 of the shared scene work record. Some sites
+ * read-modify-write it inline instead of coming through here. */
 static __inline__ void bump_step(s32 amount)
 {
     extern u8 Data_03001ebc[];
@@ -1137,10 +1051,16 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void SceneActor_SetActor23Params2And6(void) {
+void SceneActor_SetActor23Params2And6(void)
+{
     Func_0200164a(0x17, 2, 6);
 }
 
+/*
+ * Returns the in-image table at 0x0200975c. The eight-byte owner includes its
+ * one pool word, which holds that address and is returned without being
+ * dereferenced.
+ */
 u8 *SceneData_GetTable975c(void)
 {
     return (u8 *)0x0200975c;
@@ -1151,6 +1071,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
+/*
+ * Returns the in-image table at 0x020098c4. The eight-byte owner includes its
+ * one pool word, which holds that address and is returned without being
+ * dereferenced.
+ */
 u8 *SceneData_GetTable98c4(void)
 {
     return (u8 *)0x020098c4;
@@ -1185,7 +1110,7 @@ void SceneActor_SetupActorForTable9638(s32 a0)
 
 void SceneActor_UpdateObjectWithCue28be(s32 obj)
 {
-    s32 cue = (s32) &Value_000028be;
+    s32 cue = (s32)&Value_000028be;
     Func_02001696(cue);
     Func_020016a6(obj, 0);
     if (Func_02001626(0, 0) == 0) {
@@ -1268,6 +1193,12 @@ void SceneState_SetWord1c8To16AndForward16c(void)
     Func_02001804(n);
 }
 
+/*
+ * Runs the fixed call sequence for this scene: a paced series of setup and
+ * per-entity calls -- position, pose and property triples keyed by entity id,
+ * interleaved with timed single-argument steps -- ending with a record lookup
+ * whose s16 fields at +10 and +18 feed the last positioning call.
+ */
 void FieldScene_RunPrimarySequence(void)
 {
     u8 *Func_02001ee4();
@@ -1457,6 +1388,11 @@ void FieldScene_RunPrimarySequence(void)
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }
 
+/*
+ * Drives actors 0 to 3, 22 and 25 through a long timed sequence of pose, move
+ * and sprite-flag calls, gated by two condition checks that each pick one of
+ * two call sequences and both bump the shared scene step counter.
+ */
 void FieldScene_RunSecondarySequence(void)
 {
     s32 Func_02001ee4();
@@ -1478,8 +1414,8 @@ void FieldScene_RunSecondarySequence(void)
     BattleRuntime_WaitIfModeZero_2_020007c4(10);
     ObjectMotion_ArmCallback_2_020007c4(0, 0x8000, 0);
     BattleRuntime_WaitIfModeZero_3_020007c4(10);
-    /* Branch selected by UiWork_WaitThenFinalizeCapacity_1_020007c4(0, 0); either path bumps the step
-     * counter once, in a different spot in its four calls. */
+    /* Either path bumps the step counter once, at a different point in its
+     * four calls. */
     if (UiWork_WaitThenFinalizeCapacity_2(0, 0) == 0) {
         BattleRuntime_WaitIfModeZero_4_020007c4(20);
         ObjectMotion_CallThenWaitForAnimationChange_1_020007c4(3, 4);
@@ -1516,7 +1452,7 @@ void FieldScene_RunSecondarySequence(void)
     ObjectMotion_ArmCallback_7_020007c4(22, 0x4000, 0);
     BattleRuntime_WaitIfModeZero_12_020007c4(80);
     ObjectMotion_SetSpeedParameters_2_020007c4(22, 0xcccc, 0x6666);
-    /* Set the byte at offset 85 of actor 22's record (from Func_02001ee4) to 2. */
+    /* Set the byte at offset 85 of actor 22's record to 2. */
     *(u8 *)(Scene_GetRecord_1_020007c4(22) + 85) = 2;
     ObjectMotion_SetActionVariant_1(22, 2);
     Call6(Func_02001eb6, 34, 0, 1, 2, 4, 18);
@@ -1588,7 +1524,7 @@ void FieldScene_RunSecondarySequence(void)
     ObjectMotion_ArmCallback_13_020007c4(1, 0xe000, 0);
     BattleRuntime_WaitIfModeZero_40_020007c4(20);
     ObjectMotion_SetSpeedParameters_3_020007c4(1, 0);
-    /* Same branch-and-bump shape as above, gated by UiWork_WaitThenFinalizeCapacity_3(0, 0). */
+    /* The same branch-and-bump shape as above. */
     if (UiWork_WaitThenFinalizeCapacity_4(0, 0) == 0) {
         BattleRuntime_WaitIfModeZero_41_020007c4(20);
         ObjectMotion_CallThenWaitForAnimationChange_10(22, 4);
@@ -1656,8 +1592,8 @@ void FieldScene_RunSecondarySequence(void)
     SCENE_STEP += 1;
     Func_02002326(242, 0);
     BattleRuntime_WaitIfModeZero_63_020007c4(10);
-    /* Clear bit 0 of the flag byte at offset 90 of the record from
-     * Func_02002342, then set it back via a second record accessor. */
+    /* Clear bit 0 of the flag byte at offset 90 of the record, then set it
+     * back through a second record accessor. */
     *(u8 *)(Scene_GetRecord_2(22) + 90) &= 254;
     ObjectMotion_CommitPositionAndActivate_6(22, 0, -16);
     {
@@ -1744,6 +1680,8 @@ void FieldScene_RunSecondarySequence(void)
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1_020007c4();
 }
 
+/* A fixed, unbranching sequence of overlay calls with constant arguments: no
+ * loop, no stored result, no use of the scene work record. */
 void FieldScene_RunScene3c6SequenceA(void)
 {
     u32 i;

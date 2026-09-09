@@ -12,7 +12,8 @@ void Func_0200451c(void *, s32);
 #define RunOverlayObjectCommand0  Func_02004424
 #define RunOverlayObjectCommand1  Func_0200443c
 #define RunOverlayObjectCommand14 Func_0200451c
-void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *overlay_object;
     void *object_record;
     s32 flags_mask;

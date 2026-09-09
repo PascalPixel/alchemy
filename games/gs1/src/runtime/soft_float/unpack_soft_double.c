@@ -1,23 +1,7 @@
 #include "types.h"
 
 /*
- * resource_3bf soft-float double unpack at 0x02005e04, 212 bytes.
- *
- * `overlay_twins resource_3bf --semantic` proves that this owner and
- * resource_3a7:1770 are byte-identical across all 106 halfwords.  The source
- * shape follows the generic GCC 2.96 `fp-bit.c` unpack routine in the local
- * compiler source, including its word-order swap and packed-bitfield reads.
- *
- * The packed pair is copied to a local union so the exponent and sign can be
- * read with the witnessed halfword and byte loads.  The first input word is
- * the IEEE high word carrying the sign and exponent.
- *
- * Record layout:
- *   +0  class (0 signalling NaN, 1 quiet NaN, 2 zero, 3 finite, 4 infinity)
- *   +4  sign
- *   +8  unbiased exponent
- *   +12 significand low word
- *   +16 significand high word, normalised so bit 28 is set
+ * Soft-float double unpack for overlay resource_3bf.
  */
 typedef float DoubleType __attribute__((mode(DF)));
 typedef unsigned int HalfFractionType __attribute__((mode(SI)));
@@ -31,6 +15,10 @@ typedef enum FloatClass {
     CLASS_INFINITY
 } FloatClass;
 
+/*
+ * The exponent is unbiased and the significand is normalised so that bit 28
+ * of its high half is set.
+ */
 typedef struct SoftFloatRecord {
     FloatClass cls;
     unsigned int sign;
@@ -52,6 +40,11 @@ typedef union PackedDouble {
     } bits;
 } PackedDouble;
 
+/*
+ * Unpacks a packed double into record. The pair is copied to a local union
+ * with its two words swapped, so the sign and exponent come from the IEEE
+ * high word and are read as packed bitfields rather than reassembled.
+ */
 void UnpackSoftDouble(PackedDouble *source, SoftFloatRecord *record)
 {
     FractionType fraction;

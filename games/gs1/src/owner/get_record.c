@@ -3,7 +3,8 @@
 
 extern const u8 Data_08080ec8[];
 
-const u8 *Owner_GetRecord(s32 selector) {
+const u8 *Owner_GetRecord(s32 selector)
+{
     u32 record_index;
 
     record_index = selector - 8;

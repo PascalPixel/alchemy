@@ -140,7 +140,7 @@ timer_ready:
             goto done;
 
         seconds = FixedPoint_Ratio(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
-        if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
+        if (seconds != 0 && seconds *FRAMES_PER_SECOND == timer)
             Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
 
         if (state->displayHandle != 0)

@@ -12,6 +12,6 @@ void Menu_AllocateSelectionWorkspace(void)
   if (1)
   {
   }
-  *((s16 *) (((u8 *) p) + 0x46)) = zero;
-  *((s16 *) (((u8 *) p) + 0x352)) = zero;
+  *((s16 *)(((u8 *)p) + 0x46)) = zero;
+  *((s16 *)(((u8 *)p) + 0x352)) = zero;
 }

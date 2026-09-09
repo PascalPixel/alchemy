@@ -59,6 +59,6 @@ mode_other:
             UiText_DrawCharacter(text, state->window, 18, 48);
         }
 done:
-        ;
+;
     }
 }

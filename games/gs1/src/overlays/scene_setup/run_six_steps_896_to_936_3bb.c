@@ -1,20 +1,11 @@
 #include "types.h"
 
 /*
- * resource_3bb owner at 0x02001fb8, 66 bytes: six calls to a family of
- * near-identical handler stubs (10 bytes apart, 0x2005eca..0x2005efc),
- * each with its own fixed id (896, 904, 912, 920, 928, 936 -- each 8
- * apart) and a second argument of 0.
- *
- * Complete owner: `push {lr}` at 0x02001fb8 through `pop {r0} / bx r0` at
- * 0x02001ff6-0x02001ff8, followed by one alignment halfword; the next
- * owner's prologue is at 0x02001ffc. No incoming arguments are read
- * before being overwritten, so `void`.
- *
- * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
- *
- * Uncertainty: none of the six callees are identified beyond call shape.
+ * resource_3bb: six steps, each calling its own near-identical handler stub
+ * with a fixed id -- 896 through 936, eight apart -- and a second argument of
+ * zero.  The owner at 0x02001fb8 is 66 bytes: its code plus one trailing
+ * alignment halfword.  It reads no incoming argument, so it takes none.  The
+ * six callees are identified by call shape only.
  */
 
 extern void Func_02005eca(s32 arg0, s32 arg1);

@@ -8,7 +8,7 @@ struct State_080935b0 {
     s32 fourth;
 };
 
-extern struct State_080935b0 * volatile Data_03001e70;
+extern struct State_080935b0 *volatile Data_03001e70;
 
 void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
 {

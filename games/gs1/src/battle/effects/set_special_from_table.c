@@ -3,7 +3,8 @@
 extern s16 Data_02000240[];
 extern s32 Data_0809e270[];
 
-void BattleEffect_SetSpecialFromTable(s32 arg0, s32 arg1) {
+void BattleEffect_SetSpecialFromTable(s32 arg0, s32 arg1)
+{
     s32 target = Data_02000240[224];
     s32 *table = Data_0809e270;
     s32 entry = *table++;

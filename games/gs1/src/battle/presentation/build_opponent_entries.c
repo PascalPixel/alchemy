@@ -5,7 +5,6 @@ u32 Func_08004458(void);
 u8 *Func_08077008(s32 unit_id);
 void Func_080bd424(void *entry, s32 arg1);
 
-
 struct BattlePresentationOpponentEntry {
     u16 unit_id;
     u16 unknown_02;
@@ -35,8 +34,8 @@ s32 BattlePresentation_BuildOpponentEntries(
     }
 
     for (i = 31; i >= 0; i--) {
-        u32 first = (u32)(unit_count * Func_08004458()) >> 16;
-        u32 second = (u32)(unit_count * Func_08004458()) >> 16;
+        u32 first = (u32)(unit_count *Func_08004458()) >> 16;
+        u32 second = (u32)(unit_count *Func_08004458()) >> 16;
         s32 swap = unit_ids[first];
         unit_ids[first] = unit_ids[second];
         unit_ids[second] = swap;

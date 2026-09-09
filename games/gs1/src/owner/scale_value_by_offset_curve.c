@@ -8,7 +8,7 @@ s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 no, s32 multiplier)
 
     product = (u32)Func_08079b24(
         (s32)((u32)no * 2 - 0xC8), 0) * (u32)value;
-    product = (u32)multiplier * product;
+    product = (u32)multiplier *product;
     result = (s32)product;
     if (result < 0) {
         result = (s32)((u32)result + 0xFFFF);

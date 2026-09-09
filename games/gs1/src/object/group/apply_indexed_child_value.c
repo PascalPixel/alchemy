@@ -5,7 +5,6 @@ extern u8 Data_0809ed80[];
 
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 {
-
     if ((object->kind & 0xf) == 1) {
         u8 child_value;
         u8 *container;

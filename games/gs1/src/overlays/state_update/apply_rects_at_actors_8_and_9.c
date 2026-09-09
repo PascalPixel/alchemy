@@ -9,7 +9,8 @@ extern void Func_02005650();
 extern s32 *Func_020056ce();
 extern void Func_0200566e();
 
-void SceneState_ApplyRectsAtActors8And9(void) {
+void SceneState_ApplyRectsAtActors8And9(void)
+{
     s32 *p = Func_02005678(8);
 
     Func_0200572a(8, 1);

@@ -63,12 +63,12 @@ loop:
         max_z = region->max_z;
         condition = region->condition;
         selected_value = region->value;
-        if (GameFlag_IsConditionActive(condition) != 0 &&
-            y >= FIXED_0808BDE0(min_y) &&
-            y < FIXED_0808BDE0(max_y) &&
-            x >= FIXED_0808BDE0(min_x) &&
-            x < FIXED_0808BDE0(max_x) &&
-            z >= FIXED_0808BDE0(min_z) &&
+        if (GameFlag_IsConditionActive(condition)!= 0 &&
+            y >= FIXED_0808BDE0(min_y)&&
+            y < FIXED_0808BDE0(max_y)&&
+            x >= FIXED_0808BDE0(min_x)&&
+            x < FIXED_0808BDE0(max_x)&&
+            z >= FIXED_0808BDE0(min_z)&&
             z < FIXED_0808BDE0(max_z)) {
             runtime->selected_region = (u16)selected_value;
             Audio_PlayCue(123);

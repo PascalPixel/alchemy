@@ -1,31 +1,8 @@
 #include "types.h"
 
 /*
- * Resource 3ad, scene-entry hook at 0x02001a0c (200 bytes, 19 call sites).
- *
- * Complete owner: `push {r5, lr}` at 0x02001a0c, `movs r0,#0 / pop {r5} /
- * pop {r1} / bx r1` at 0x02001ab0.  The popped branch register is r1, so r0
- * survives and is the result; it is unconditionally 0 on both paths, so the
- * owner returns s32 0.  A seven-word literal pool occupies 0x02001ab8-0x02001ad3,
- * past the return and never reached as code:
- *   0x03001ebc (the shared workspace pointer cell), 0x02000240 (the shared
- *   scene-state table), 0x6a, 0xf333, 0x201, 0x202, 0x203.
- *
- * `Data_02000240[224]` (the signed halfword at byte offset 448) against the
- * small constant 0x6a is the cross-overlay scene-id idiom; the byte-exact
- * sibling `games/gs1/asm/overlays/resource_3ad_c_02000044.c` tests the same halfword
- * against the same value, spelled there as `(s32)&Value_0000006a`.
- *
- * r5 is loaded once with 0x204 (`movs r5,#129 / lsls r5,#2`) and serves two
- * purposes: it is the word stored into the workspace at +448, and it is still
- * live 140 bytes later as the story-flag id at 0x02001a9e.  Reading it as dead
- * scratch there would drop an argument.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.  Per-target
- * multiset over the 19 sites: Scene_GetRecord x5, GameFlag_IsSet x5,
- * Func_080091e0 x4, Func_0808a100 x2, and one each of Func_02000210,
- * Func_02000384, Func_020000d4 - 19 C call expressions below, matching the
- * row's calls=19.
+ * Scene-entry hook for resource_3ad: seed the workspace scene id, then run
+ * the per-actor setup and the flag-gated steps for that scene.
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
@@ -48,16 +25,17 @@ s32 Func_02003594();
 void Func_02003610();
 s32 Func_020035a6();
 void Func_02003622();
-                        /* scene entity record by selector */
-
-                        /* test a story flag (used in a condition) */
-                        /* this overlay */
-                        /* this overlay */
-                        /* this overlay */
 
 extern s16 Data_02000240[];
 extern u8 Value_0000006a;
 
+/*
+ * The owner returns 0 on every path, and its 200 bytes include the seven
+ * pool words past the return.  0x204 is stored into the workspace at +448
+ * and read again later as a story-flag id, so both uses share one value.
+ * The scene id is compared against 0x6a spelled as the address of
+ * Value_0000006a; that spelling is what reproduces the reference.
+ */
 s32 FieldScene_RunSceneEntryHook(void)
 {
     u8 *workspace;
@@ -65,13 +43,12 @@ s32 FieldScene_RunSceneEntryHook(void)
     *(s32 *)(workspace + 448) = 0x204;
 
     if (Data_02000240[224] == (s32)&Value_0000006a) {
-
     Func_02003524(Func_02003566(8), 0);
     Func_02003530(Func_02003572(9), 0);
     Func_0200353c(Func_0200357e(10), 0);
     Func_02003548(Func_0200358a(11), 0);
 
-    /* Word field at +28 of entity 11; 0xf333 is pooled, not computed. */
+    /* Word field at +28 of record 11.  0xf333 comes from the pool. */
     *(s32 *)(Func_02003596(11) + 28) = 0xf333;
 
     if (Func_02003568(0x201) != 0) {
@@ -80,7 +57,7 @@ s32 FieldScene_RunSceneEntryHook(void)
     if (Func_02003576(0x202) != 0) {
         Func_02001dfe();
     }
-    /* 0x200 built as `movs r0,#128 / lsls r0,#2`. */
+    /* 0x200 is built here rather than taken from the pool. */
     if (Func_02003586(0x200) != 0) {
         Func_02001b5e();
     }

@@ -43,7 +43,7 @@ void ObjectGroup_UpdateMembers(
                 s32 object_index;
 
                 object_index = 0;
-                if (GROUP_OBJECT_COUNT(group) != 0) {
+                if (GROUP_OBJECT_COUNT(group)!= 0) {
                     void **objects;
 
                     objects = (void **)((u8 *)group + 0x28);

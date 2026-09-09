@@ -47,7 +47,7 @@ s32 BattlePresentation_RunAction(s16 *action)
     switch (action[3]) {
     case 99:
         UiText_ShowMessageAndWait((s32)&Value_00000843);
-        if (BattleEscape_PlayRun(action) != 0)
+        if (BattleEscape_PlayRun(action)!= 0)
             return 1;
         break;
     case 3:

@@ -12,14 +12,15 @@ void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
 
-void BattleEffect_SpawnRandomAngleTriplet(void *object) {
+void BattleEffect_SpawnRandomAngleTriplet(void *object)
+{
     s32 i;
     void *p;
     s32 phase = 2;
     s32 phase2;
     s16 *pp;
 
-    if ((s32) FIELD_AT_OFFSET(object, s32 *, 0xC) <= (s32) FIELD_AT_OFFSET(object, s32 *, 0x14)) {
+    if ((s32)FIELD_AT_OFFSET(object, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(object, s32 *, 0x14)) {
         FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
         Object_SetCallback(object, Data_0809f0b0);
         p = NULL;
@@ -33,7 +34,7 @@ void BattleEffect_SpawnRandomAngleTriplet(void *object) {
             FIELD_AT_OFFSET(p, s32 *, 0x18) = 0x8000;
             FIELD_AT_OFFSET(p, s8 *, 0x55) = 2;
             FIELD_AT_OFFSET(p, s32 *, 0x28) = 0x10000;
-            FIELD_AT_OFFSET(p, s32 *, 0x30) = (s32) (Rand() + 0x13333);
+            FIELD_AT_OFFSET(p, s32 *, 0x30) = (s32)(Rand() + 0x13333);
             ObjectMotion_SetTargetPositionFromMagnitudeAngle(
                 p, 0x200000, Rand());
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);

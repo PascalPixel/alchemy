@@ -3,7 +3,8 @@
 
 void UiWork_Finalize(struct Work *work, s32 release);
 
-void UiWork_FinalizeSharedSlot(void) {
+void UiWork_FinalizeSharedSlot(void)
+{
     struct Work **slot;
     struct Work *work;
 

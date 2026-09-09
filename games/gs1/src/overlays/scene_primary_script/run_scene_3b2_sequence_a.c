@@ -61,7 +61,7 @@ void FieldScene_RunScene3b2SequenceA(void)
         rec8[85] = 0;
         {
             u8 value = *(volatile u8 *)&rec8[35];
-        
+
             rec8[35] = (u8)(value | 2);
         }
         Call6(Func_020042b0, 42, 10, 1, 1, 40, 10);

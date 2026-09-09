@@ -24,7 +24,8 @@ u32 Random16(void);
 #define Rand Random16
 extern u8 Data_02000240[];
 
-s32 BattleEscape_CheckSuccess(void) {
+s32 BattleEscape_CheckSuccess(void)
+{
     s32 escaped;
     u8 *failed_attempts;
     s16 living_units[14];

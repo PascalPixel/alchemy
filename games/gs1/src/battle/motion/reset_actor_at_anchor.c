@@ -7,7 +7,8 @@ void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 s32 ArcTan2(s32, s32);
 
-void Actor_ResetMotionAtAnchor(s32 slot_id) {
+void Actor_ResetMotionAtAnchor(s32 slot_id)
+{
     s32 z; s32 zero;
     struct BattleObjectSlot *slot;
     struct MotionObject *object;

@@ -2,7 +2,8 @@
 
 s32 GameFlag_IsSet(s32);
 
-s32 Party_RemapCharacterIdByFlags(s32 arg0) {
+s32 Party_RemapCharacterIdByFlags(s32 arg0)
+{
     s32 result;
 
     result = arg0;

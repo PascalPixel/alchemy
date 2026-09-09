@@ -53,7 +53,7 @@ s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 
                 resource = object->resources;
                 pair = (struct ResourcePair_0801c7fc *)
-                    (output_count * sizeof(*pair) + (s32)output);
+                    (output_count *sizeof(*pair) + (s32)output);
                 do {
                     Ability_GetData(resource_id);
                     pair->object_id = id;

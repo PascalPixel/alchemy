@@ -7,7 +7,8 @@ void ScheduleCallbackAfterFrames(const void *, s32);
 void BattleRuntime_UpdateModeFromShoulderButtons(void);
 u32 GameFlag_Clear(s32);
 
-void BattleRuntime_Reset(void) {
+void BattleRuntime_Reset(void)
+{
     struct BattleRuntime *runtime = Data_03001ebc;
 
     Func_08015208();

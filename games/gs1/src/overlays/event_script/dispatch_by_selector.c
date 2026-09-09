@@ -3,46 +3,16 @@
 extern u8 Data_02000240[];
 
 /*
- * resource_3b9 owner at 0x02001a4c, 508 bytes: the parked 66-entry
- * message/event dispatcher.  Reads the s16 selector at 0x02000240+450
- * (0x020003c2), subtracts 5, and dispatches through the `mov pc, r3`
- * jump table at 0x02001a70 (link base 0x02009a70, the table's own pool
- * word being the free link-base witness per HANDOVER).  The 66 entries
- * collapse to 12 real arms plus the shared exit at 0x02001c2e:
- * selectors 5, 7, 12, 21, 31, 64, 65, 66, 67, 68, 69, 70 act;
- * everything else falls straight through.
- *
- * Complete owner: `push {lr}` at 0x02001a4c through `pop {r0} / bx r0`
- * at 0x02001c2e-0x02001c30, alignment halfword, then the literal pool
- * 0x02001c34-0x02001c47 (0x02000240, 0x02009a70, 0x109, 0x90e, 0x90f);
- * the next owner's prologue is at 0x02001c48.
- *
- * The arm bodies at 0x02001b78-0x02001c2d were left as raw `.4byte`
- * data by the reconstructed disassembly (reachable only through the
- * `mov pc` table, so the control-flow walk never entered them); they
- * were recovered here by re-disassembling those 182 bytes as Thumb at
- * their runtime address, which is where the twelve arms and all their
- * call targets below come from.
- *
- * CASE ORDER IS LOAD-BEARING, and it is not the selector order.  The arms
- * are written 5, 69, 7, 70, 64, 65, 66, 12, 21, 67, 68, 31 because that is
- * the order the reference lays their bodies out, and the jump table stores
- * their absolute addresses: written in ascending selector order the row is
- * 164 bytes wrong, and every one of those bytes is layout, not content.
- * The callee names are keyed to the reference's instruction addresses (the
- * `name = insn + 2 + target_offset` identity), so putting each arm back at
- * its reference address is what makes the names emit the right bl bytes --
- * the ordering and the naming are one fix, not two.
- *
- * The loader at 08002d5c relocates BL pairs. The raw encoded name
- * 020047ec collides: the call at offset 1b8e reaches the veneer at 2c5c
- * (ROM 0808a100), while 1c26 reaches 2bc4 (ROM 080770c8). Keep distinct
- * declarations; the _a suffix distinguishes the second container alias,
- * not a second entry point in one runtime function.
- * The 0x109 status id gates both
- * selector 12 and selector 69 (call first, act only when the check
- * returns zero); 0x90e/0x90f are passed ids from the pool.
+ * The message/event dispatcher for resource_3b9: read the selector from the
+ * shared table, subtract 5, and dispatch through a 66-entry jump table. Only
+ * twelve selectors act; the rest fall through. The 508-byte owner includes the
+ * alignment halfword and the five-word literal pool after the return.
  */
+
+/* A Func_ name here is a loader-relocated call word, not a runtime address.
+ * Func_020047ec and Func_020047ec_a share an encoded word but reach different
+ * veneers, so the two declarations must stay distinct; the suffix marks the
+ * second call word, not a second entry point. */
 
 extern void Func_020045de(s32 arg0);
 extern void Func_020047da(s32 arg0, s32 arg1);
@@ -74,6 +44,13 @@ extern void Func_020047f0(s32 arg0);
 extern void Func_020047f6(s32 arg0);
 extern void Func_02004590(void);
 
+/*
+ * The case order is load-bearing and it is not the selector order: the arms
+ * are laid out in the order the reference places their bodies, and the jump
+ * table stores their absolute addresses. Each callee name is keyed to the
+ * address of the instruction that calls it, so an arm moved out of place
+ * emits the wrong call word.
+ */
 void FieldScene_DispatchBySelector(void)
 {
     s32 no;

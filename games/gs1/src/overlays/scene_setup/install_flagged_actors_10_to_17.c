@@ -1,29 +1,6 @@
 #include "types.h"
 
-/*
- * Resource 3b1 unindexed helper at 0x02004670 (348 bytes incl. pool,
- * 7 calls).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,lr}` at 0x02004670, epilogue `pop {r5,r6} / pop {r0} / bx r0` at
- * 0x020047b0-0x020047b4. The trailing four-word pool at
- * 0x020047b6-0x020047c8 (0x00000928, 0x00000929, 0xffff0000, 0x0000092a,
- * 0x0000092b — five words, one is a shared padding read) ends exactly
- * where the next owner's `push {r5,lr}` begins (0x020047cc, already this
- * overlay's row `0x020047cc | 1 call`), so the span is
- * 0x02004670-0x020047cc, 348 bytes.
- *
- * Four near-identical "install or fallback" blocks, gated by
- * `Func_0200abNN((s32)&Value_XXXXXXXX)` checks against the same
- * `Value_XXXXXXXX` low-address family used throughout this overlay (see
- * games/gs1/asm/overlays/resource_3b1_c_02000b84.c). The second and fourth blocks
- * additionally stash the sentinel `0xffff0000` into the installed
- * object's `+24` field before the shared per-block finisher call.
- * `src` (the incoming argument) is threaded through every block
- * unmodified.
- *
- * Raw callee naming.
- */
+/* Scene setup for resource_3b1: installs actors 10 through 17. */
 
 extern u8 Value_00000928;
 extern u8 Value_00000929;
@@ -66,6 +43,14 @@ void Func_02009082();
 void Func_0200908c();
 void Func_02009096();
 
+/*
+ * Four "install or fallback" blocks, each gated by a flag check, then four
+ * unconditional installs.  src is threaded through every block unmodified,
+ * and blocks two and four store the 0xffff0000 sentinel into the installed
+ * object's +24 field.  The owner includes the trailing pool words that hold
+ * the flag addresses and the sentinel.  Callees are named by the address
+ * their call site computes, not by a runtime address.
+ */
 void FieldScene_InstallFlaggedActors10To17(u8 *src)
 {
     if (Func_0200ab18((s32)&Value_00000928) != 0) {

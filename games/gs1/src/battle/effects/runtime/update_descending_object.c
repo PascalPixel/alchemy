@@ -10,7 +10,8 @@ struct DescendingObjectState {
   u8 padding_20[0x34];
   s8 active;
 };
-void BattleEffect_UpdateDescendingObject(struct DescendingObjectState *state) {
+void BattleEffect_UpdateDescendingObject(struct DescendingObjectState *state)
+{
   u32 next_position;
   state->secondary_position -= 0x280;
   next_position = state->primary_position - 0x280;

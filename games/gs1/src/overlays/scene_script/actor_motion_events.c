@@ -122,7 +122,6 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
     Func_020016f6_a(0x307);
 }
 
-
 struct SceneActor *Func_0200196a(s32);
 void Func_02001960(void);
 void Func_020019e6(s32);

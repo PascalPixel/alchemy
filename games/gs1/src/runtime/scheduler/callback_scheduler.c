@@ -300,7 +300,7 @@ s32 Scheduler_DisableCallbacks(u32 callback)
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if (callback == 0 || task->callback == callback) {
-                    TASK_STATE_HIGH(task) &= (u8)~1;
+                    TASK_STATE_HIGH(task)&= (u8)~1;
                     result = i;
                 }
             }
@@ -327,7 +327,7 @@ s32 Scheduler_DisableOverlayCallbacks(void)
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if ((task->callback >> 24) == 2) {
-                    TASK_STATE_HIGH(task) &= (u8)~1;
+                    TASK_STATE_HIGH(task)&= (u8)~1;
                     result = i;
                 }
             }

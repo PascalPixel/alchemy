@@ -1,13 +1,13 @@
 /*
- * BYTE-EXACT and adopted 2026-08-07 with no compiler flags: same two facts as
- * the sibling owner in resource_3c4 -- the four callees are declared at the
- * in-overlay entry points the reference calls directly rather than at their
- * veneer addresses, and the +9 flag clear is written as a mask local that is
- * initialised first and ANDed with the loaded byte afterwards, which is what
- * puts the mask in r3 and the byte in r2.
+ * Spawns an overlay object and puts it into its configured state --
+ * resource_39f.
  */
 #include "types.h"
 
+/*
+ * The four callees are declared at the in-overlay entry points that are
+ * called directly, not at their veneer addresses.
+ */
 u8 *Func_0200373a(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003788(u8 *obj, s32 mode);
 void Func_02003860(u8 *obj, s32 mode);
@@ -20,6 +20,11 @@ u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);
+        /*
+         * The mask is a local initialised first and ANDed with the loaded
+         * byte afterwards; folding the clear into one expression swaps the
+         * two registers.
+         */
         u32 mask = ~12;
         mask = mask & rec[9];
         rec[9] = (u8)mask;

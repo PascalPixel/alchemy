@@ -4,7 +4,8 @@ extern u8 *Data_03001f2c;
 void Object_InitializeMode(void *, s32);
 s32 ScheduleCallback(s32);
 
-void EquipmentMenu_StartCompatibilityIndicators(void) {
+void EquipmentMenu_StartCompatibilityIndicators(void)
+{
     u8 *menu;
     s8 member_index;
 

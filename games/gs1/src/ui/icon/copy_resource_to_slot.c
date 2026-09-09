@@ -5,7 +5,8 @@ s32 Resource_CopyData(s32, s32, s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 s32 Func_0801a088(s32, s32);
 
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
+s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2)
+{
     s32 work;
 
     work = Runtime_AllocateHeapBlock(0x11, 0x608);

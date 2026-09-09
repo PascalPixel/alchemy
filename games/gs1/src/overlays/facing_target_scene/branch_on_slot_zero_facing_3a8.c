@@ -12,7 +12,8 @@ extern void Func_0200407a(s32);
 extern void Func_02004092(s32, s32);
 extern void Func_02003fc6(void);
 
-void SceneState_BranchOnSlotZeroFacing(void) {
+void SceneState_BranchOnSlotZeroFacing(void)
+{
     struct Obj *o;
     u32 v;
 

@@ -87,5 +87,3 @@ void FieldScene_RunPrimarySequence(void)
         Call8(Func_02001386, p6, *(volatile s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
     }
 }
-
-

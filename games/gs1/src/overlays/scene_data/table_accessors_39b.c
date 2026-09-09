@@ -1,4 +1,3 @@
-
 /* Contiguous unnamed leaf-owner run for resource_39b. */
 
 void *SceneData_GetTablea928(void) { return (void *)0x0200a928; }

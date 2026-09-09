@@ -17901,6 +17901,10 @@
     "resource_3c4:02000e20": {
       "name": "SceneState_LinkActorZeroToWork24BySubstateY",
       "source": "overlays/scene_state_interaction/link_actor_zero_to_work_24_by_substate_y.c"
+    },
+    "resource_3c4:02000f4c": {
+      "name": "SceneEffect_SpawnRandomizedAtActor",
+      "source": "overlays/configurable_effect_spawn/spawn_randomized_at_actor.c"
     }
   }
 }

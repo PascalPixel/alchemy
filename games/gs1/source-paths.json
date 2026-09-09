@@ -1,6 +1,8 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02003d20": {"name": "Scene_RunSelectorEntry"},
+    "resource_3c9:020012c8": {"name": "FieldScene_RunActorEntrySequence"},
     "resource_3a8:02000590": {"name": "FieldScene_RunStagedGroupSequence"},
     "resource_3c8:02003068": {"name": "Scene_RunEntrySetup"},
     "resource_3c9:02002360": {"name": "FieldScene_RunPairedActorEffectSequence"},
@@ -7494,7 +7496,7 @@
       "name": "FieldScene_RunClosingSequence"
     },
     "resource_381:02000054": {
-      "name": "RunEventScript01"
+      "name": "FieldScene_RunTwoPhaseActorSequence"
     },
     "resource_3af:020039ec": {
       "name": "FieldScene_RunStepThen10",

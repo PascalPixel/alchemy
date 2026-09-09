@@ -680,113 +680,14 @@
     {
       "overlay": "resource_39c",
       "start": "0x02003d20",
-      "end": "0x02003db6",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x02003f56",
-      "end": "0x02003f86",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x0200409c",
-      "end": "0x020040cc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x020040e4",
-      "end": "0x020040ec",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x020041f4",
-      "end": "0x02004224",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x02004468",
-      "end": "0x02004474",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x0200466c",
-      "end": "0x0200486c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x02004888",
       "end": "0x02004a08",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: pre-loader disassembly labels are not runtime call destinations.",
-        "Original call 0x020047ae resolves to resource 0x02000030, not displayed 0x020047e0; 0x0200300c resolves to 0x0200013c, not 0x0200314a; 0x02002986 resolves to 0x02000030, not 0x020029b8; 0x02002404 resolves to 0x02000048, not 0x0200244e.",
-        "The complete original byte ranges for owners 0x02003d20, 0x02002f68, 0x020028b0 and 0x02002318 contain 257, 135, 128 and 52 BL-shaped pairs respectively, including possible data. None resolves inside its containing owner after the resource loader transformation. Filtering literal-pool overlaps does not change that result.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
+        "Complete 3304-byte scene-entry owner has three selector jump tables, four branch-over/tail literal pools and a single return ending at 0x020049f8. Next owner begins at 0x02004a08.",
+        "All 257 original loader-resolved BL sites call 43 external destinations; switch arms previously omitted by linear inventory add 2094 function-extent bytes, including 1846 Thumb bytes and 248 associated table/pool/alignment bytes.",
+        "Ordinary C reconstructs every selector case and the four-actor flag loop. No handwritten assembly or compiler-impossibility claim; keep original bytes until the complete C owner is exact."
       ]
     },
     {

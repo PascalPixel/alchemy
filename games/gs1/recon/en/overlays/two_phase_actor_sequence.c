@@ -5,8 +5,8 @@ extern u8 *Data_03001ec4[];
 
 #define FieldScene_RunTwoPhaseActorSequence Func_02000054
 
-/* Retained scene draft. Call identities follow the complete reference owner;
- * arguments, memory effects and source structure still require recovery. */
+/* Set up the scene actors, run the two presentation phases, and dismiss the
+ * actors through the shared exit sequence. Retained pending an exact build. */
 
 void Func_0200b484(u8 *, s32);
 void Func_0200b4cc();
@@ -343,7 +343,7 @@ static __inline__ s32 InstallTask(s32 (*f)(void (*)(), s32), void (*callback)(),
     return f(callback, key);
 }
 
-void Func_02000054(void)
+void FieldScene_RunTwoPhaseActorSequence(void)
 {
     u32 i;
     struct FacingObject *rec7;

@@ -2008,32 +2008,8 @@ AlchemyC_020015fc:
 	.space 0x28
 AlchemyC_02001624:
 	.space 0x48
-	push	{r5, lr}
-	movs	r0, #0
-	bl	sub_02003ade
-	ldr	r3, [r0, #8]
-	movs	r0, #0
-	asrs	r5, r3, #20
-	bl	sub_02003ae8
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	cmp	r3, #7
-	bne.n	.L_0200169e
-	adds	r3, r5, #0
-	subs	r3, #13
-	cmp	r3, #1
-	bhi.n	.L_0200169e
-	movs	r1, #208
-	movs	r2, #224
-	movs	r0, #2
-	lsls	r1, r1, #16
-	lsls	r2, r2, #15
-	movs	r3, #255
-	bl	sub_02003ac0
-.L_0200169e:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_0200166c:
+	.space 0x38
 	push	{r5, lr}
 	movs	r0, #0
 	bl	sub_02003b16

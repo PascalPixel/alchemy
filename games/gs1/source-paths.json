@@ -17835,6 +17835,10 @@
     "resource_377:0200133c": {
       "name": "FieldScene_RunScene377SequenceA",
       "source": "overlays/scene_primary_script/run_scene_377_sequence_a.c"
+    },
+    "resource_37b:0200166c": {
+      "name": "FieldScene_CueActorTwoWhenCell13_7",
+      "source": "overlays/scene_script/scene_37b_steps.c"
     }
   }
 }

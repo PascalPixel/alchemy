@@ -37,7 +37,7 @@
       "name": "FieldScene_RunParticleWaveSequence"
     },
     "resource_370:020003cc": {
-      "name": "FieldScene_InitializeEntryState"
+      "name": "SaveMenu_Run"
     },
     "resource_38e:0200009c": {
       "name": "SceneData_SelectRecordByScene22",
@@ -17597,6 +17597,9 @@
     "resource_380:02000104": {
       "name": "SceneEffect_UpdateMotion",
       "source": "overlays/scene_effect/update_motion.c"
+    },
+    "resource_3c4:0200259c": {
+      "name": "FieldScene_InitializeActorGroups"
     }
   }
 }

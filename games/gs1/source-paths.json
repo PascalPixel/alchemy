@@ -17839,6 +17839,10 @@
     "resource_37b:0200166c": {
       "name": "FieldScene_CueActorTwoWhenCell13_7",
       "source": "overlays/scene_script/scene_37b_steps.c"
+    },
+    "resource_37f:020000ec": {
+      "name": "SceneData_SelectRecordBySceneAndSubRange",
+      "source": "overlays/scene_data/select_record_by_scene_and_sub_range.c"
     }
   }
 }

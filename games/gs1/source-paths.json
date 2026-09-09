@@ -17897,6 +17897,10 @@
     "resource_3a5:02000344": {
       "name": "SceneEffect_SpawnParticleEverySixteenFrames",
       "source": "overlays/effect/spawn_particle_every_sixteen_frames.c"
+    },
+    "resource_3c4:02000e20": {
+      "name": "SceneState_LinkActorZeroToWork24BySubstateY",
+      "source": "overlays/scene_state_interaction/link_actor_zero_to_work_24_by_substate_y.c"
     }
   }
 }

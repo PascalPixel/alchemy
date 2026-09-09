@@ -15002,6 +15002,10 @@
       "name": "RunOpeningEventSequence",
       "source": "overlays/scene_effect_sequence/run_opening_event_sequence.c"
     },
+    "resource_3b8:02000af8": {
+      "name": "RunMiddleEventSequence",
+      "source": "overlays/scene_effect_sequence/run_middle_event_sequence.c"
+    },
     "resource_3b8:02003df8": {
       "name": "RunSceneEffectSetup",
       "source": "overlays/scene_effect_sequence/run_scene_effect_setup.c"

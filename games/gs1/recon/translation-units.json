@@ -17933,6 +17933,103 @@
       "local_symbols": []
     },
     {
+      "id": "overlays-scene-effect-sequence-run-middle-event-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/run_middle_event_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b8",
+      "absolute_symbols": {
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Func_02004fac": {
+          "address": "0x0200c438",
+          "kind": "thumb"
+        },
+        "Func_02004fac_a": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        },
+        "Func_0200511a": {
+          "address": "0x0200c530",
+          "kind": "thumb"
+        },
+        "Func_0200511a_a": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        },
+        "Func_02005130": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        },
+        "Func_02005130_a": {
+          "address": "0x0200c3a0",
+          "kind": "thumb"
+        },
+        "Func_020052a2": {
+          "address": "0x0200c4b0",
+          "kind": "thumb"
+        },
+        "Func_020052a2_a": {
+          "address": "0x0200c468",
+          "kind": "thumb"
+        },
+        "Func_020052a2_b": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        },
+        "Func_02005218": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        },
+        "Func_02005218_a": {
+          "address": "0x0200c3a0",
+          "kind": "thumb"
+        },
+        "Func_0200532c": {
+          "address": "0x0200c4a8",
+          "kind": "thumb"
+        },
+        "Func_0200532c_a": {
+          "address": "0x0200c450",
+          "kind": "thumb"
+        },
+        "Func_020053ec": {
+          "address": "0x0200c528",
+          "kind": "thumb"
+        },
+        "Func_020053ec_a": {
+          "address": "0x0200c450",
+          "kind": "thumb"
+        },
+        "Func_020053bc": {
+          "address": "0x0200c4a8",
+          "kind": "thumb"
+        },
+        "Func_020053bc_a": {
+          "address": "0x0200c450",
+          "kind": "thumb"
+        },
+        "Func_02005384": {
+          "address": "0x0200c400",
+          "kind": "thumb"
+        },
+        "Func_02005384_a": {
+          "address": "0x0200c3a8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000af8",
+          "extent": 1280,
+          "state": "exact-c"
+        }
+      ],
+      "local_symbols": []
+    },
+    {
       "id": "overlays-scene-effect-sequence-run-primary-effect-sequence",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene_effect_sequence/run_primary_effect_sequence.c",

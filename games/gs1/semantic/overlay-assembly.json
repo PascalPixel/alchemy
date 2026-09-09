@@ -3,6 +3,18 @@
   "comment": "Retained assembly ranges, not proof of original-source language. Credit requires positive evidence of handwritten or third-party assembly; compiler mismatch or non-emission alone is insufficient. Strong entries remain unverified and eligible for ordinary C recovery. Complete owner bounds live in semantic/regions.json.",
   "regions": [
     {
+      "overlay": "resource_381",
+      "start": "0x02001410",
+      "end": "0x02002820",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 5136-byte owner checked from Thumb entry through the sole outer return and terminal literal pool. Fresh original-site inspection resolves all 525 calls; the ordinary C draft preserves their static target order.",
+        "Retain the original assembly while the complete C candidate remains nonexact. This is an unresolved reconstruction record, not evidence of handwritten assembly or compiler impossibility."
+      ]
+    },
+    {
       "overlay": "resource_3bd",
       "start": "0x020013f8",
       "end": "0x02002c44",

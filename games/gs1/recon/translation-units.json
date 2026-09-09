@@ -2612,9 +2612,9 @@
       ]
     },
     {
-      "id": "retained-scene-entry-flags-385",
+      "id": "scene-entry-flags-385",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/scene_entry_flags_385.c",
+      "source": "games/gs1/src/overlays/scene_setup/initialize_actors_and_flags_385.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_385",
       "absolute_symbols": {
@@ -2659,7 +2659,7 @@
         {
           "address": "0x02000f30",
           "extent": 296,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -35724,6 +35724,11 @@
         {
           "address": "0x0200026c",
           "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002a0",
+          "extent": 64,
           "state": "exact-c"
         },
         {

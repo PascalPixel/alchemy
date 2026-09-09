@@ -55,12 +55,13 @@ pub fn entry(args: &[String]) -> ExitCode {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    const USAGE: &str = "usage: alchemy unit flatten <game> <resource_NNN> --id <unit-id> --path <src-relative .c> [--apply]";
+    const USAGE: &str = "usage: alchemy unit flatten <game> <resource_NNN> --id <unit-id> --path <src-relative .c> [--owners <hex,hex,...>] [--partial] [--apply]";
     if args == ["--help"] || args == ["-h"] {
         println!("{USAGE}");
         return Ok(());
     }
     let apply = args.iter().any(|a| a == "--apply");
+    let partial = args.iter().any(|a| a == "--partial");
     let flag = |name: &str| {
         args.iter()
             .position(|a| a == name)
@@ -74,7 +75,7 @@ fn run(args: &[String]) -> Result<(), String> {
             continue;
         }
         if a.starts_with("--") {
-            skip = a != "--apply" && args.get(i + 1).is_some();
+            skip = a != "--apply" && a != "--partial" && args.get(i + 1).is_some();
             continue;
         }
         positional.push(a.clone());
@@ -127,8 +128,30 @@ fn run(args: &[String]) -> Result<(), String> {
             source: root.join(entry["registration"]["source_path"].as_str().unwrap_or("")),
         });
     }
-    if retained > 0 {
-        return Err(format!("{overlay}: {retained} owners are not exact C; this tool flattens wholly exact overlays only"));
+    if retained > 0 && !partial {
+        return Err(format!("{overlay}: {retained} owners are not exact C; pass --partial to consolidate the exact ones and leave the rest as assembly"));
+    }
+    if let Some(list) = flag("--owners") {
+        let wanted = list
+            .split(',')
+            .map(str::trim)
+            .filter(|value| !value.is_empty())
+            .map(|value| u32::from_str_radix(value.trim_start_matches("0x"), 16))
+            .collect::<Result<BTreeSet<u32>, _>>()
+            .map_err(|error| format!("--owners: {error}"))?;
+        let held: BTreeSet<u32> = owners.iter().map(|owner| owner.address).collect();
+        let absent: Vec<String> = wanted
+            .difference(&held)
+            .map(|address| format!("{address:08x}"))
+            .collect();
+        if !absent.is_empty() {
+            return Err(format!(
+                "--owners names {} address(es) {overlay} has no exact C for: {}",
+                absent.len(),
+                absent.join(",")
+            ));
+        }
+        owners.retain(|owner| wanted.contains(&owner.address));
     }
     if owners.is_empty() {
         return Err(format!("{overlay}: no owners"));
@@ -142,7 +165,13 @@ fn run(args: &[String]) -> Result<(), String> {
             exact: &tree,
             recon: None,
         })?;
-    check_overlay_coverage(&coverage.executable_areas, &overlay)?;
+    if partial {
+        if let Err(open) = check_overlay_coverage(&coverage.executable_areas, &overlay) {
+            println!("  partial: {open}");
+        }
+    } else {
+        check_overlay_coverage(&coverage.executable_areas, &overlay)?;
+    }
     owners.sort_by_key(|o| o.address);
 
     let mut files: Vec<PathBuf> = Vec::new();
@@ -157,6 +186,14 @@ fn run(args: &[String]) -> Result<(), String> {
         let text = expand_local_includes(file, &mut inlined)?;
         parsed.push((file.clone(), items(&text, file)));
     }
+    let split = split_call_aliases(
+        &root,
+        &overlay,
+        &owners,
+        &mut parsed,
+        &source_root,
+        &manifest,
+    )?;
 
     // Object-like aliases, `#define Name Func_xxxx`: two files declaring one
     // symbol under different names are reconciled by the symbol.
@@ -536,6 +573,7 @@ fn run(args: &[String]) -> Result<(), String> {
                     }
                 }
                 "function" => functions.push(it.clone()),
+                "dropped" => {}
                 _ => others.push(it.clone()),
             }
         }
@@ -769,7 +807,15 @@ fn run(args: &[String]) -> Result<(), String> {
         "source": format!("games/{game}/src/{unit_path}"),
         "compiler_route": "canonical-gcc296",
         "overlay": overlay,
-        "absolute_symbols": {},
+        "absolute_symbols": split
+            .iter()
+            .map(|(alias, (address, kind))| {
+                (
+                    alias.clone(),
+                    json!({"address": format!("0x{address:08x}"), "kind": kind}),
+                )
+            })
+            .collect::<Map<String, Value>>(),
         "local_symbols": [],
         "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent, "state": "exact-c"})).collect::<Vec<_>>(),
     });
@@ -948,6 +994,254 @@ fn rename_call(text: &str, from: &str, to: &str, first_only: bool) -> String {
     })
 }
 
+/// Overlay call identity is per owner. A legacy `Func_<addr>` name is derived
+/// from a reference call displacement, so one name can reach two runtime slots
+/// -- inside one owner, or across the owners now sharing a translation unit.
+/// Compiled alone, each owner carried its own declarations; the units this
+/// flatten supersedes hold them. Carry every superseded declaration forward,
+/// add the bindings only the merge makes visible, rename whatever collides,
+/// and return the complete alias -> runtime address map for the new unit.
+fn split_call_aliases(
+    root: &Path,
+    overlay: &str,
+    owners: &[Owner],
+    parsed: &mut [(PathBuf, Vec<Item>)],
+    source_root: &Path,
+    manifest: &Value,
+) -> Result<BTreeMap<String, (u64, String)>, String> {
+    use crate::compiler::overlay::{call_symbols, RESOURCE_BASE};
+    let addresses: BTreeSet<u32> = owners.iter().map(|owner| owner.address).collect();
+    let file_of: BTreeMap<u32, PathBuf> = owners
+        .iter()
+        .map(|owner| (owner.address, owner.source.clone()))
+        .collect();
+
+    // What each file already compiled against.
+    let mut effective: BTreeMap<PathBuf, BTreeMap<String, (u64, String)>> = BTreeMap::new();
+    for unit in manifest["units"].as_array().into_iter().flatten() {
+        if unit["overlay"] != overlay {
+            continue;
+        }
+        let members: Vec<u32> = unit["owners"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|member| {
+                u32::from_str_radix(
+                    member["address"]
+                        .as_str()
+                        .unwrap_or("")
+                        .trim_start_matches("0x"),
+                    16,
+                )
+                .ok()
+            })
+            .collect();
+        if !members.iter().any(|address| addresses.contains(address)) {
+            continue;
+        }
+        let Some(symbols) = unit["absolute_symbols"].as_object() else {
+            continue;
+        };
+        for address in members.iter().filter(|address| addresses.contains(address)) {
+            let Some(file) = file_of.get(address) else {
+                continue;
+            };
+            let map = effective.entry(file.clone()).or_default();
+            for (alias, symbol) in symbols {
+                let Some(value) = symbol["address"]
+                    .as_str()
+                    .and_then(|text| u64::from_str_radix(text.trim_start_matches("0x"), 16).ok())
+                else {
+                    return Err(format!("{}: {alias} has no address", unit["id"]));
+                };
+                let kind = symbol["kind"].as_str().unwrap_or("thumb").to_string();
+                if map
+                    .insert(alias.clone(), (value, kind))
+                    .is_some_and(|had| had.0 != value)
+                {
+                    return Err(format!(
+                        "{}: {alias} is declared twice with different addresses",
+                        rel(file, source_root)
+                    ));
+                }
+            }
+        }
+    }
+
+    // What the reference says each owner actually calls.
+    let image = crate::overlay::rom::canonical_overlay(root, overlay)?;
+    for owner in owners {
+        let offset = owner
+            .address
+            .checked_sub(RESOURCE_BASE)
+            .ok_or_else(|| format!("owner {:08x} precedes the overlay base", owner.address))?
+            as usize;
+        let map = effective.entry(owner.source.clone()).or_default();
+        for (name, found) in call_symbols(&image, offset, owner.extent)? {
+            if found.len() == 1 {
+                let target = *found.iter().next().unwrap();
+                if let Some((declared, _)) = map.get(&name) {
+                    if *declared != target && !map.values().any(|(address, _)| *address == target) {
+                        return Err(format!(
+                            "{}: {name} binds {target:08x} but its unit declares {declared:08x}",
+                            rel(&owner.source, source_root)
+                        ));
+                    }
+                    continue;
+                }
+                map.insert(name, (target, "thumb".into()));
+                continue;
+            }
+            // Several slots inside one owner: only that owner's own
+            // declarations can say which call site reaches which.
+            let variant = format!("{name}_");
+            let covered: BTreeSet<u64> = map
+                .iter()
+                .filter(|(alias, _)| **alias == name || alias.starts_with(&variant))
+                .map(|(_, (address, _))| *address)
+                .collect();
+            let missing: Vec<u64> = found.difference(&covered).copied().collect();
+            match missing.as_slice() {
+                [] => {}
+                [only] if !map.contains_key(&name) => {
+                    map.insert(name, (*only, "thumb".into()));
+                }
+                _ => println!(
+                    "  note: {name} reaches {} runtime slots inside {} and {} are declared",
+                    found.len(),
+                    rel(&owner.source, source_root),
+                    covered.len()
+                ),
+            }
+        }
+    }
+
+    // Merge. The first file to claim a name keeps it; a file that needs the
+    // same name for a different slot gets a fresh alias and is rewritten.
+    let mut declared: BTreeMap<String, (u64, String)> = BTreeMap::new();
+    let mut taken: BTreeSet<String> = BTreeSet::new();
+    let order: Vec<PathBuf> = parsed.iter().map(|(file, _)| file.clone()).collect();
+    for file in &order {
+        for alias in effective.get(file).into_iter().flat_map(|map| map.keys()) {
+            taken.insert(alias.clone());
+        }
+    }
+    let mut splits = 0;
+    for file in &order {
+        let Some(map) = effective.get(file).cloned() else {
+            continue;
+        };
+        for (name, (address, kind)) in map {
+            match declared.get(&name) {
+                None => {
+                    declared.insert(name.clone(), (address, kind));
+                    taken.insert(name);
+                }
+                Some((had, _)) if *had == address => {}
+                Some(_) => {
+                    let mut index = 0;
+                    let mut alias = format!("{name}_{}", suffix(index));
+                    while taken.contains(&alias) {
+                        index += 1;
+                        alias = format!("{name}_{}", suffix(index));
+                    }
+                    println!(
+                        "  split call {name} -> {alias} in {}",
+                        rel(file, source_root)
+                    );
+                    splits += 1;
+                    declared.insert(alias.clone(), (address, kind));
+                    taken.insert(alias.clone());
+                    for (at, list) in parsed.iter_mut() {
+                        if at != file {
+                            continue;
+                        }
+                        for item in list.iter_mut() {
+                            if item.kind == "include" {
+                                continue;
+                            }
+                            item.text = replace_word(&item.text, &name, &alias);
+                            if item.key == name {
+                                item.key = alias.clone();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if splits > 0 {
+        println!("  {splits} call aliases split across owners");
+    }
+    // Only names that actually needed a decision are worth declaring; a name
+    // with one binding everywhere still resolves from the reference.
+    let ambiguous: BTreeSet<String> = declared
+        .keys()
+        .filter(|alias| {
+            let base = alias
+                .rsplit_once('_')
+                .map_or(alias.as_str(), |(head, _)| head);
+            declared.keys().any(|other| {
+                other.as_str() != alias.as_str()
+                    && (other.as_str() == base || other.starts_with(&format!("{base}_")))
+            })
+        })
+        .cloned()
+        .collect();
+    Ok(declared
+        .into_iter()
+        .filter(|(alias, _)| ambiguous.contains(alias))
+        .collect())
+}
+
+/// `a`..`z`, then `aa`, `ab`, ... so a name with many bindings still reads.
+fn suffix(index: usize) -> String {
+    let mut value = index;
+    let mut out = String::new();
+    loop {
+        out.insert(0, (b'a' + (value % 26) as u8) as char);
+        if value < 26 {
+            return out;
+        }
+        value = value / 26 - 1;
+    }
+}
+
+/// `__attribute__((...))` may sit anywhere in a declarator. Remove every
+/// group with its balanced parentheses so the declared name is what remains.
+fn strip_attributes(head: &str) -> String {
+    let mut out = head.to_string();
+    while let Some(at) = out.find("__attribute__") {
+        let Some(open) = out[at..].find('(').map(|offset| at + offset) else {
+            out.replace_range(at..at + "__attribute__".len(), "");
+            continue;
+        };
+        let mut depth = 0i32;
+        let mut end = None;
+        for (offset, character) in out[open..].char_indices() {
+            match character {
+                '(' => depth += 1,
+                ')' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        end = Some(open + offset + 1);
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+        match end {
+            Some(close) => out.replace_range(at..close, ""),
+            None => {
+                out.replace_range(at..at + "__attribute__".len(), "");
+            }
+        }
+    }
+    out
+}
+
 fn replace_word(text: &str, word: &str, with: &str) -> String {
     replace_words(text, word, with, |_| true)
 }
@@ -1038,6 +1332,41 @@ fn expand_local_includes(path: &Path, inlined: &mut BTreeSet<PathBuf>) -> Result
 
 /// Top-level items of a source: preprocessor lines, comments, declarations
 /// ending in `;`, and brace blocks (records, wrappers, functions).
+/// A comment written above a declaration belongs to it. Merging owners must
+/// not strand it at the top of the module, so it travels inside the item it
+/// introduces, whatever blank lines separate the two.
+fn attach_comments(mut list: Vec<Item>) -> Vec<Item> {
+    let mut out: Vec<Item> = Vec::new();
+    let mut held: Vec<Item> = Vec::new();
+    for item in list.drain(..) {
+        if item.kind == "adjacent" {
+            continue;
+        }
+        if item.kind == "comment" {
+            held.push(item);
+            continue;
+        }
+        // Only a definition carries its comment. Declarations are reconciled
+        // by text and deduplicated across files, so a comment merged into one
+        // would make two identical declarations look like a conflict.
+        if held.is_empty() || !matches!(item.kind, "function" | "inline" | "struct" | "typedef") {
+            out.append(&mut held);
+            out.push(item);
+            continue;
+        }
+        let lead = held
+            .drain(..)
+            .map(|comment| comment.text)
+            .collect::<Vec<_>>()
+            .join("\n\n");
+        let mut item = item;
+        item.text = format!("{lead}\n{}", item.text);
+        out.push(item);
+    }
+    out.append(&mut held);
+    out
+}
+
 fn items(text: &str, file: &Path) -> Vec<Item> {
     let lines: Vec<&str> = text.lines().collect();
     let mut out = Vec::new();
@@ -1054,6 +1383,12 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
         let line = lines[i];
         let t = line.trim();
         if t.is_empty() {
+            out.push(Item {
+                kind: "adjacent",
+                key: String::new(),
+                text: String::new(),
+                from: file.to_path_buf(),
+            });
             i += 1;
             continue;
         }
@@ -1158,13 +1493,15 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
         let inline = head.contains("__inline__") || head.starts_with("static inline");
         let record = ["struct", "typedef struct", "union", "typedef union"]
             .iter()
-            .any(|prefix| head.starts_with(prefix));
+            .any(|prefix| head.starts_with(prefix))
+            && !head.split('{').next().unwrap_or(head).contains('(');
         if inline || (!record && head.contains('(') && !head.ends_with(';')) {
-            let name = head
+            let bare = strip_attributes(head);
+            let name = bare
                 .split('(')
                 .next()
                 .and_then(|h| h.split_whitespace().last())
-                .unwrap_or(head)
+                .unwrap_or(&bare)
                 .trim_start_matches('*')
                 .to_string();
             push(
@@ -1190,7 +1527,7 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
             push(&mut out, "other", block.join("\n"), block);
         }
     }
-    out
+    attach_comments(out)
 }
 
 fn header_still_used(source_root: &Path, header: &Path) -> Result<bool, String> {

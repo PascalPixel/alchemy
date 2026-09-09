@@ -2,7 +2,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 BattlePlacement_ContainsId(s16 *entries, s32 id) {
+s32 BattlePlacement_ContainsId(s16 *entries, s32 id)
+{
     s16 *entry;
     s32 target;
     u16 value;
@@ -15,7 +16,7 @@ s32 BattlePlacement_ContainsId(s16 *entries, s32 id) {
     }
     index = 0;
 loop_3:
-    value = (u16) *entry;
+    value = (u16)*entry;
     entry += 1;
     if (value != 0xFF) {
         if (value == target) {

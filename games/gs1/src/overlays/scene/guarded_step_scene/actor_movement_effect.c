@@ -6,7 +6,8 @@
 s32 *Func_02003f20(s32);
 void Func_0200360e(s32, s32, s32, s32, s32);
 
-void SceneActor_MoveActor10ByRow(void) {
+void SceneActor_MoveActor10ByRow(void)
+{
     s32 *p = Func_02003f20(10);
     if (p != NULL) {
         s32 v = p[4] >> 20;

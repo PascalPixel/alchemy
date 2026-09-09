@@ -1,28 +1,5 @@
 #include "types.h"
 
-/*
- * Resource 39a overlay scene step at 0x020007f0.
- *
- * Complete owner: `push {lr}` at 0x020007f0 and `pop {r0} / bx r0` at
- * 0x020008b4, so nothing is returned.  Five pool words follow the return.
- * All 23 distinct branch targets in the row are placed.
- *
- * The first three arms share the tail call 0x02002ba4(0x30e) at 0x02000878;
- * it is written out in each arm rather than introducing control flow the
- * original does not have.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
- */
-
 /* Imports; the queried ones are typed for their return value. */
 void Func_0200098c();
 void Func_020009b8();
@@ -50,6 +27,28 @@ void Func_02002bca();
 void Func_02002c06();
 void Func_02002cb8();
 
+/*
+ * Resource 39a overlay scene step at 0x020007f0.
+ *
+ * Complete owner: `push {lr}` at 0x020007f0 and `pop {r0} / bx r0` at
+ * 0x020008b4, so nothing is returned.  Five pool words follow the return.
+ * All 23 distinct branch targets in the row are placed.
+ *
+ * The first three arms share the tail call 0x02002ba4(0x30e) at 0x02000878;
+ * it is written out in each arm rather than introducing control flow the
+ * original does not have.
+ *
+ * Call convention used throughout this overlay: every `bl` computes an
+ * address in the band above the last code row.  The reconstruction's code ends
+ * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
+ * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
+ * encoded `bl` address is an import identity, not a place to disassemble.
+ * That is the convention the byte-exact sources in this overlay already use
+ * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
+ * imports are named by the address their call site computes and their
+ * interfaces are left open.  Declarations are old-style because one name is
+ * reached with different argument counts.
+ */
 void FieldScene_RunFlag308DialogueBranch(void)
 {
     Func_02002c06((s32)0xf1);

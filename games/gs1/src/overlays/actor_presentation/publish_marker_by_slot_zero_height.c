@@ -24,6 +24,20 @@
  */
 #include "types.h"
 
+/* Returns the record for a numbered slot. */
+
+extern s32 *Func_02004422();
+extern s32 *Func_02004432();
+extern s32 *Func_0200443e();
+extern s32 *Func_0200444a();
+extern s32 *Func_02004454();
+extern s32 *Func_0200445c();
+extern s32 *Func_02004468();
+extern void Func_020044e0();
+extern void Func_020044ea();
+extern s32 *Func_02004490();
+extern s32 *Func_0200449c();
+extern s32 *Func_020044a8();
 /*
  * resource_3b4 owner at 0x02001edc, 156 bytes: code 0x02001edc-0x02001f73 and
  * the pool word 0x000fffff at 0x02001f74.
@@ -43,21 +57,6 @@
  *
  * The epilogue is `pop {r5} / pop {r0} / bx r0`, so the owner is void.
  */
-
-/* Returns the record for a numbered slot. */
-
-extern s32 * Func_02004422();
-extern s32 * Func_02004432();
-extern s32 * Func_0200443e();
-extern s32 * Func_0200444a();
-extern s32 * Func_02004454();
-extern s32 * Func_0200445c();
-extern s32 * Func_02004468();
-extern void Func_020044e0();
-extern void Func_020044ea();
-extern s32 * Func_02004490();
-extern s32 * Func_0200449c();
-extern s32 * Func_020044a8();
 void SceneActor_PublishMarkerBySlotZeroHeight(void)
 {
     s32 *slot0 = Func_02004422(0);

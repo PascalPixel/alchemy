@@ -24,6 +24,28 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
+/* Import veneers, named by the main-image function each one reaches.
+ * Old-style declarations: arities vary between call sites in this overlay. */
+SceneRecord *Func_02007afc();
+SceneRecord *Func_02007726(Position3 *, SceneRecord *);
+SceneRecord *Func_02007750(Position3 *, SceneRecord *);
+SceneRecord *Func_0200777c(Position3 *, SceneRecord *);
+s32 Func_02007b0e(SceneRecord *, Position3 *);
+void Func_02007acc(SceneRecord *, s32);
+void Func_02007a2a(s32);
+void Func_02007b12(SceneRecord *, s32, s32, s32);
+void Func_02007b22(SceneRecord *, s32, s32, s32);
+void Func_02007d60(s32);
+void Func_02007b36(SceneRecord *);
+void Func_02007d6e(s32);
+void Func_02007b1c(SceneRecord *, s32);
+
+/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
+
+/* In-image dir table at file offset 0x43d4, sixteen packed steps. */
+extern u32 Data_0200c3d4[];
+extern s16 Data_02000240[];
+
 /*
  * resource_3bb owner at 0x02003b90, 360 bytes (0x02003b90-0x02003cf7):
  * 344 bytes of code plus the four-word literal pool at 0x02003ce8.
@@ -79,29 +101,6 @@ typedef struct Position3 {
  * position is never written back, so only the occupant's move is committed.
  * The sign of Object_CheckMovementCollision's result is tested with `bgt`, so it is signed.
  */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-SceneRecord *Func_02007afc();
-SceneRecord *Func_02007726(Position3 *, SceneRecord *);
-SceneRecord *Func_02007750(Position3 *, SceneRecord *);
-SceneRecord *Func_0200777c(Position3 *, SceneRecord *);
-s32 Func_02007b0e(SceneRecord *, Position3 *);
-void Func_02007acc(SceneRecord *, s32);
-void Func_02007a2a(s32);
-void Func_02007b12(SceneRecord *, s32, s32, s32);
-void Func_02007b22(SceneRecord *, s32, s32, s32);
-void Func_02007d60(s32);
-void Func_02007b36(SceneRecord *);
-void Func_02007d6e(s32);
-void Func_02007b1c(SceneRecord *, s32);
-
-/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
-
-/* In-image dir table at file offset 0x43d4, sixteen packed steps. */
-extern u32 Data_0200c3d4[];
-extern s16 Data_02000240[];
-
 void StagedActor_PushActorAhead(void)
 {
     SceneRecord *subject;

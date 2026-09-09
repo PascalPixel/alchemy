@@ -2,9 +2,9 @@
  * resource_3c4 @ 0x02000cd0 (248 bytes: 244 code + one pool word).
  *
  * Tries to move the actor record to the caller's target position.  It builds a
- * three-word 12.20 probe on the stack from the record's own position — the
+ * three-word 12.20 probe on the stack from the record's own position -- the
  * horizontal words are snapped to their whole-unit grid with the pool mask
- * 0xfff00000 and then lifted by half a unit (0x80 << 12 = 0x00080000) — asks
+ * 0xfff00000 and then lifted by half a unit (0x80 << 12 = 0x00080000) -- asks
  * the collision service about it, and gives up when either the probe or the
  * target is rejected.
  *
@@ -12,7 +12,7 @@
  * speed words written at +48, +52 and +40 (0x00030000, 0x00020000 and
  * 0x00040000), the flag byte at +85 masked with 0x7e, and finally the target
  * converted from 12.20 into the coarse tile coordinates the placement service
- * wants — `asrs #20`, `lsls #4`, `+8`, i.e. the centre of a sixteen-unit cell.
+ * wants -- `asrs #20`, `lsls #4`, `+8`, i.e. the centre of a sixteen-unit cell.
  * The flag byte is restored from its saved value (held in sl across the whole
  * body) before returning.
  *

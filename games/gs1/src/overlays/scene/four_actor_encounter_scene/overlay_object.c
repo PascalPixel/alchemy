@@ -19,7 +19,8 @@ void Func_02001b20(void *, s32);
 void Func_02001b38(void *, s32);
 void Func_02001bd0(void *, s32);
 
-void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind) {
+void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
+{
     void *obj;
     void *rec;
     s32 mask;

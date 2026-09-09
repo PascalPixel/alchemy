@@ -8,7 +8,8 @@ s32 Object_ResetMotion(void *);
 s32 Object_SetPosition(void *, s32, s32, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
-void BattleMotion_SetupEscapeObject(s32 object_id) {
+void BattleMotion_SetupEscapeObject(s32 object_id)
+{
     void *slot;
     void *object;
 

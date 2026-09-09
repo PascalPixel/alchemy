@@ -36,8 +36,8 @@
  * The argument shuffle is the whole point of the owner: r1 is saved into r5
  * *before* r1 is zeroed, so the second argument is carried across the first
  * call and delivered to the second.  All twelve call sites in this overlay
- * pass a small selector in r0 and a frame count in r1 — 0x0200099a passes
- * (1, 20) — which is the established `Func_02001446` "wait this many frames"
+ * pass a small selector in r0 and a frame count in r1 -- 0x0200099a passes
+ * (1, 20) -- which is the established `Func_02001446` "wait this many frames"
  * shape, here bracketed by a `Func_020014e8(selector, 0)` request of the same
  * family the resource_371 sources call as `Func_020014e8(8, 0)`.
  */

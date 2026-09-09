@@ -6,7 +6,8 @@ void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(s32);
 
-void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle) {
+void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle)
+{
     u8 *obj;
     s32 v;
 

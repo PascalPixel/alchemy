@@ -44,7 +44,7 @@ void FieldScene_RunGuardedStep9AA(void)
     s32 record;
 
     if (Value1(Func_020015d6, 0x9aa) == 0) {
-        if (Value0(Func_02000936) != 0) {
+        if (Value0(Func_02000936)!= 0) {
             if (Value1(Func_020015e8, 0x207) == 0) {
                 Func_02001642(80);
                 Func_02000906();

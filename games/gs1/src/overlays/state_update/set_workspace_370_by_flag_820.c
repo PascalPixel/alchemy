@@ -1,5 +1,17 @@
 #include "types.h"
 
+/* 0x03001ebc is the overlay's workspace pointer, loaded directly by several of
+ * its routines. */
+extern u8 *Data_03001ebc;
+
+/* Imports. Those used for their return value are typed. */
+
+extern void Func_02004294();
+extern s32 Func_0200427c();
+extern void Func_02004270();
+extern void Func_0200427a();
+extern s32 Func_02004290();
+extern void Func_020042da();
 /*
  * Resource 39a overlay routine at 0x02001f58.
  *
@@ -17,19 +29,6 @@
  * interfaces are left open.  Declarations are old-style because one name is
  * reached with different argument counts.
  */
-
-/* 0x03001ebc is the overlay's workspace pointer, loaded directly by several of
- * its routines. */
-extern u8 *Data_03001ebc;
-
-/* Imports. Those used for their return value are typed. */
-
-extern void Func_02004294();
-extern s32 Func_0200427c();
-extern void Func_02004270();
-extern void Func_0200427a();
-extern s32 Func_02004290();
-extern void Func_020042da();
 void SceneState_SetWorkspace370ByFlag820(void)
 {
     Func_02004294();

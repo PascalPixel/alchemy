@@ -40,7 +40,7 @@
  * Raw callee naming.
  */
 
-extern u8 * Func_020039ec();
+extern u8 *Func_020039ec();
 extern s32 Func_02001cc4();
 extern void Func_020039c8();
 extern void Func_02003970();

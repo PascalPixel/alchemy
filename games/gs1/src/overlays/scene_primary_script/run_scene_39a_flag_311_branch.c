@@ -1,5 +1,27 @@
 #include "types.h"
 
+/* Imports; the queried ones are typed for their return value. */
+void Func_02000aba();
+void Func_02000ae6();
+void Func_02000b0c();
+void Func_02001c82();
+void Func_02002c12();
+s32 Func_02002c44();
+void Func_02002c68();
+void Func_02002c6e();
+s32 Func_02002c70();
+s32 Func_02002c70_a();
+void Func_02002c94();
+void Func_02002c94_a();
+void Func_02002ca2();
+void Func_02002ca8();
+void Func_02002cba();
+void Func_02002cc2();
+void Func_02002cc8();
+void Func_02002cce();
+void Func_02002d36();
+void Func_02002dbc();
+
 /*
  * Resource 39a overlay scene step at 0x02000920.
  *
@@ -23,29 +45,6 @@
  * interfaces are left open.  Declarations are old-style because one name is
  * reached with different argument counts.
  */
-
-/* Imports; the queried ones are typed for their return value. */
-void Func_02000aba();
-void Func_02000ae6();
-void Func_02000b0c();
-void Func_02001c82();
-void Func_02002c12();
-s32 Func_02002c44();
-void Func_02002c68();
-void Func_02002c6e();
-s32 Func_02002c70();
-s32 Func_02002c70_a();
-void Func_02002c94();
-void Func_02002c94_a();
-void Func_02002ca2();
-void Func_02002ca8();
-void Func_02002cba();
-void Func_02002cc2();
-void Func_02002cc8();
-void Func_02002cce();
-void Func_02002d36();
-void Func_02002dbc();
-
 void FieldScene_RunFlag311DialogueBranch(void)
 {
     Func_02002d36((s32)0xf1);

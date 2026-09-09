@@ -179,13 +179,13 @@ s32 Func_02001dba(s32);
 u8 *Func_02001dc6(int);
 void Func_02001f28(void);
 u8 *Func_02001dde(int);
-void Func_02001e26(int,int,int,int);
+void Func_02001e26(int, int, int, int);
 void Func_02001f54(int);
 void Func_02001e0a(int);
 s32 Func_02001e10(int);
 void Func_02001f84(void);
-void Func_02001f3c(int,int);
-void Func_02001f44(int,int);
+void Func_02001f3c(int, int);
+void Func_02001f44(int, int);
 void Func_02001fa0(void);
 int Func_02001f7e(int);
 void Func_02001d64();
@@ -198,24 +198,24 @@ void Func_020020b4();
 void Func_020020d0();
 void Func_02002030(void);
 void Func_020020ce(int);
-void Func_020020a6(int,int);
-void Func_02001dcc(int,int,int);
-int Func_020020f0(int,int);
-int Func_02002078(int,int);
-void Func_0200211c(int,int);
+void Func_020020a6(int, int);
+void Func_02001dcc(int, int, int);
+int Func_020020f0(int, int);
+int Func_02002078(int, int);
+void Func_0200211c(int, int);
 void Func_02002080(void);
 void Func_0200208c(void);
 void Func_0200212a(int);
-void Func_02001e20(int,int,int);
-int Func_02002144(int,int);
-void Func_02002170(int,int);
+void Func_02001e20(int, int, int);
+int Func_02002144(int, int);
+void Func_02002170(int, int);
 void Func_020020d4(void);
 void Func_020020e0(void);
 void Func_0200217e(int);
-void Func_02001e74(int,int,int);
-int Func_02002198(int,int);
-int Func_02002120(int,int);
-void Func_020021c4(int,int);
+void Func_02001e74(int, int, int);
+int Func_02002198(int, int);
+int Func_02002120(int, int);
+void Func_020021c4(int, int);
 void Func_02002128(void);
 void Func_02002134(void);
 void Func_020021d2(int);
@@ -227,8 +227,8 @@ void Func_020010b4(int);
 void Func_0200216c(void);
 void Func_02002174(void);
 void Func_02002212(int);
-void Func_020021ea(int,int);
-void Func_02001f10(int,int,int);
+void Func_020021ea(int, int);
+void Func_02001f10(int, int, int);
 void Func_020021a0(void);
 void Func_02001f62(s32, s32, s32);
 void Func_02002148(s32);
@@ -252,8 +252,8 @@ void Func_02002326();
 s32 Func_02002350();
 void Func_02002362();
 void Func_020022ca(void);
-void Func_0200233a(int,int);
-void Func_02002060(int,int,int);
+void Func_0200233a(int, int);
+void Func_02002060(int, int, int);
 void Func_020022f0(void);
 s32 Func_02002322(void);
 void Func_0200230a(void);
@@ -262,9 +262,9 @@ void Func_02002310(s32);
 void Func_0200232c(void);
 void Func_02002338(void);
 void Func_020023d6(int);
-int Func_020023f0(int,int);
-int Func_02002378(int,int);
-void Func_0200241c(int,int);
+int Func_020023f0(int, int);
+int Func_02002378(int, int);
+void Func_0200241c(int, int);
 void Func_02002380(void);
 void Func_0200242a(int);
 void Func_020012ec(int);
@@ -295,17 +295,17 @@ void Func_0200251c(s32, s32);
 void Func_02002544(s32);
 void Func_020024f8(void);
 void Func_02002596(int);
-void Func_0200256e(int,int);
-void Func_02002294(int,int,int);
-int Func_020025b8(int,int);
-int Func_02002540(int,int);
-void Func_020025e4(int,int);
+void Func_0200256e(int, int);
+void Func_02002294(int, int, int);
+int Func_020025b8(int, int);
+int Func_02002540(int, int);
+void Func_020025e4(int, int);
 void Func_02002548(void);
 void Func_02002554(void);
 void Func_020025f2(int);
-void Func_020022e8(int,int,int);
-int Func_0200260c(int,int);
-int Func_02002594(int,int);
+void Func_020022e8(int, int, int);
+int Func_0200260c(int, int);
+int Func_02002594(int, int);
 void Func_0200259c(void);
 void Func_02002344(s32, s32, s32);
 s32 Func_0200259e(s32);
@@ -316,9 +316,9 @@ void Func_02002646(s32);
 void Func_02002670(s32, s32);
 void Func_02002610(void);
 void Func_020026ae(int);
-void Func_02002698(int,int);
+void Func_02002698(int, int);
 void Func_02002626(int);
-void Func_020026de(int,int);
+void Func_020026de(int, int);
 void Func_02002642(void);
 void Func_02002648(void);
 void Func_020026f0(int);
@@ -356,28 +356,28 @@ u8 *Func_020027f2(int);
 void Func_020027d6(void);
 int Func_020027cc(int);
 void Func_020028a6(int);
-void Func_02002856(int,int);
-void Func_020028be(int,int);
+void Func_02002856(int, int);
+void Func_020028be(int, int);
 void Func_02002822(void);
 void Func_020028de(int);
 void Func_020017cc(int);
 void Func_02002858(void);
 void Func_0200283e(int);
-void Func_02002812(int,int,int,int,int,int);
+void Func_02002812(int, int, int, int, int, int);
 void Func_0200286e(int);
-void Func_0200283a(int,int,int,int,int,int);
+void Func_0200283a(int, int, int, int, int, int);
 void Func_020028f4(s32, s32, s32);
 void Func_02002916(s32, s32, s32);
 void Func_020029ca(s32);
 void Func_02002a0a(int);
-void Func_0200288c(void *,int,int);
-void Func_02001e4e(int,int,int);
+void Func_0200288c(void *, int, int);
+void Func_02001e4e(int, int, int);
 void Func_02002a32(int);
-void Func_020028b4(void *,int,int);
-void Func_02001e76(int,int,int);
+void Func_020028b4(void *, int, int);
+void Func_02001e76(int, int, int);
 void Func_02002a5a(int);
-void Func_020028dc(void *,int,int);
-void Func_02001e9c(int,int,int);
+void Func_020028dc(void *, int, int);
+void Func_02001e9c(int, int, int);
 void Func_02001ef6(s32, s32, s32);
 void Func_02002910(const void *, s32, s32);
 void Func_02002936(s32, s32, s32, s32, s32, s32);
@@ -388,19 +388,19 @@ void Func_02002992(s32, s32, s32, s32, s32, s32);
 struct SceneActor *Func_020029f8(s32);
 void Func_02002aea(s32);
 void Func_02002b3a(int);
-void Func_020029bc(void *,int,int);
-void Func_02001f7a(int,int,int);
+void Func_020029bc(void *, int, int);
+void Func_02001f7a(int, int, int);
 void Func_0200207c(s32, s32, s32);
 void Func_02002a98(const void *, s32, s32);
 void Func_02002abe(s32, s32, s32, s32, s32, s32);
 void Func_02002c16(s32);
 void Func_02002c66(int);
-void Func_0200209e(int,int,int);
+void Func_0200209e(int, int, int);
 u8 *Func_02002ba2(int);
-void Func_02002bba(int,int,int);
-void Func_02002b40(u8 *,int);
-void Func_02002bea(int,int,int);
-void Func_02002b7c(u8 *,int);
+void Func_02002bba(int, int, int);
+void Func_02002b40(u8 *, int);
+void Func_02002bea(int, int, int);
+void Func_02002b7c(u8 *, int);
 void Func_0200243c();
 s32 Func_02002bd6();
 void Func_02002bf4();
@@ -435,9 +435,9 @@ void Func_02002d5a();
 void Func_02002d70();
 void Func_02002dbe();
 typedef s32(*IwramSqrt02001638)(s32);
-void Func_0200318c(s32,s32);
+void Func_0200318c(s32, s32);
 void Func_020030e2(s32);
-void Func_02003184(s32,s32,s32);
+void Func_02003184(s32, s32, s32);
 void Func_020030fa(s32);
 s32 Func_02003092();
 s32 Func_020030a0();
@@ -581,7 +581,8 @@ void SceneEffect_SetEffectRecordMode(struct EffectWork *work, s32 mode)
     work->record->mode = mode;
 }
 
-void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *obj;
     void *rec;
     s32 mask;
@@ -786,7 +787,7 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
 
 void ActorPresentation_RunActorSeventeenSceneSetup(void)
 {
-    int Func_020020cc(int,int);
+    int Func_020020cc(int, int);
 
     u8 *workspace;
 
@@ -824,7 +825,7 @@ void SceneDialogue_RunActor16Line(void) { Func_02002154(); Func_020021f2(0x122e)
 
 void SceneDialogue_RunActor19Line(void)
 {
-    void Func_0200223c(int,int);
+    void Func_0200223c(int, int);
 
     Func_02002174(); Func_02002212(0x1235); Func_020021ea(19, 0);
     Func_02001f10(19, 0, 2); Func_0200223c(19, 0); Func_020021a0();
@@ -885,7 +886,7 @@ void FieldScene_RunActor21Sequence(void)
 
 void SceneActor_RunActorStep(int actor)
 {
-    void Func_0200238c(int,int);
+    void Func_0200238c(int, int);
 
     Func_020022ca(); Func_0200233a(actor, 1); Func_02002060(actor, 0, 2);
     Func_0200238c(actor, 0); Func_020022f0();
@@ -909,7 +910,7 @@ void SceneActor_RunActorCommandWithFlag91(s32 x)
 
 void ActorPresentation_RunActorEightSceneSetup(void)
 {
-    void Func_020020cc_a(int,int,int);
+    void Func_020020cc_a(int, int, int);
 
     u8 *workspace;
     Func_02002338(); Func_020023d6(0x1330); Func_020020cc_a(8, 0, 2); Func_020023f0(8, 0);
@@ -981,7 +982,7 @@ void ActorPresentation_RunActorSixteenSceneSetup(void)
 
 void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 {
-    void Func_02002638(int,int);
+    void Func_02002638(int, int);
 
     u8 *workspace;
     Func_02002554(); Func_020025f2(0x133f); Func_020022e8(18, 0, 2); Func_0200260c(18, 0);
@@ -1012,7 +1013,7 @@ void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 
 void SceneDialogue_RunActor20Line(void)
 {
-    void Func_020023a4_a(int,int,int);
+    void Func_020023a4_a(int, int, int);
 
     Func_02002610(); Func_020026ae(0x137f); Func_020023a4_a(20, 0, 2); Func_02002698(20, 3);
     Func_02002626(20); Func_020026de(20, 0); Func_02002642();
@@ -1027,7 +1028,8 @@ void SceneDialogue_RunActor11FlaggedLine(void)
     Func_020015e6(11); Func_02002672();
 }
 
-void SceneDialogue_RunActor13FlaggedLine(void) {
+void SceneDialogue_RunActor13FlaggedLine(void)
+{
     BeginSceneStep();
     if (SceneFlagIsClear(0x855) == 0) {
         PlaySceneCueA(0x123b);
@@ -1208,12 +1210,12 @@ void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
     Func_0200207c(72, 160, 12);
 }
 
-void FieldScene_SetupScene13At152_264(void) { Func_02002c66(123); Func_0200209e(152,264,13); }
+void FieldScene_SetupScene13At152_264(void) { Func_02002c66(123); Func_0200209e(152, 264, 13); }
 
 void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
 {
     void Func_02002b24_a(int);
-    void Func_02002c1c(int,int,int);
+    void Func_02002c1c(int, int, int);
 
     u8 *record = Func_02002ba2(actor); int frames;
     Func_02002bba(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
@@ -1282,9 +1284,9 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
     s32 dz = (*a - *b) >> 16;
-    s32 dxsq = dx * dx;
-    s32 dysq = dy * dy;
-    s32 dzsq = dz * dz;
+    s32 dxsq = dx *dx;
+    s32 dysq = dy *dy;
+    s32 dzsq = dz *dz;
 
     return ((IwramSqrt02001638) 0x030001D8)(dxsq + dysq + dzsq);
 }

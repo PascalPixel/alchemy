@@ -3,7 +3,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void UiWork_SetAltFlagAndClearTable(s32 flag) {
+void UiWork_SetAltFlagAndClearTable(s32 flag)
+{
     s32 i;
     s32 j;
     s8 *p;

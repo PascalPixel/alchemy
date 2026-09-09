@@ -2,7 +2,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 UiText_GetWideStringWidth(u16 *text) {
+s32 UiText_GetWideStringWidth(u16 *text)
+{
     s32 width;
     u16 *p;
     u32 c;

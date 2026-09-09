@@ -15,7 +15,8 @@ void Func_0801f200(s32);
 void *Runtime_AllocateBlock(s32 flags, s32 arg1);
 s32 UiWindow_Create(u16, u16, u16, u16, s32);
 
-void UiWindow_CreateWithLayoutBounds(s32 flags) {
+void UiWindow_CreateWithLayoutBounds(s32 flags)
+{
     s32 zero;
     struct Window *window;
     s8 *busy;

@@ -141,26 +141,6 @@ void Func_02000bc0(s32, s32, u8 *);
 void Func_02000bbe(s32);
 
 /*
- * resource_386 owner at 0x0200006c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000070 holding 0x20086dc.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200006c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20086dc is image offset
- * 0x6dc under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
  * resource_386 owner at 0x02000074, 4 bytes: `movs r0, #0 / bx lr`.
  *
  * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
@@ -208,26 +188,6 @@ void Func_02000bbe(s32);
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /*
- * resource_386 owner at 0x020004dc, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20004e0 holding 0x200898c.
- *
- * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x020004dc reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x200898c is image offset
- * 0x98c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
  * Resource 386 overlay initialiser at 0x020004e4.
  *
  * This is the overlay's ROOT: entry 0 of the exported-entry veneer table at
@@ -249,7 +209,7 @@ void Func_02000bbe(s32);
  *
  * LINK-BASE PROOF, and the strongest one available here.  The pool word
  * 0x02008031 is odd; under `offset = value - 0x8000` it is `0x30 + 1`, that
- * is `Func_02000030` plus the Thumb bit — and games/gs1/asm/overlays/resource_386_c_
+ * is `Func_02000030` plus the Thumb bit -- and games/gs1/asm/overlays/resource_386_c_
  * 02000030.c is a tracked byte-exact source for exactly that address.  It is
  * passed to Func_080000d0, the per-frame task installer, so this word is a
  * task callback and not data.  That single word proves the base against
@@ -268,9 +228,9 @@ void Func_02000bbe(s32);
  */
 
 /* Veneer declarations. OverlayObject_InitObject22 is called with three further registers
- * set that it does not read — see that file. */
+ * set that it does not read -- see that file. */
 
-                       /* veneer 0x664 — actor record accessor */
+                       /* veneer 0x664 -- actor record accessor */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -309,19 +269,39 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-void SceneState_CheckPositionWindow(void) {
+void SceneState_CheckPositionWindow(void)
+{
     s32 v1;
     s32 v0;
 
     v0 = ((struct Resource386FirstView *)Resource386_GetFirstView(0))->sample_08;
-    v1 = (s32) ((struct Resource386SecondView *)Resource386_GetSecondView(0))->sample_10 >> 0x14;
-    if (((u32) ((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
+    v1 = (s32)((struct Resource386SecondView *)Resource386_GetSecondView(0))->sample_10 >> 0x14;
+    if (((u32)((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
         Resource386_OnWindowMatch(0x250);
         return;
     }
     Resource386_OnWindowMiss(0x250);
 }
 
+/*
+ * resource_386 owner at 0x0200006c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
+ * one-word literal pool at 0x2000070 holding 0x20086dc.
+ *
+ * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ *
+ * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
+ * `pc`-relative load at 0x0200006c reads it, so it belongs to this owner.
+ * Recording 4 would orphan a word and manufacture a phantom gap.
+ *
+ * The pool word is an ADDRESS -- 0x20086dc is image offset
+ * 0x6dc under the base + 0x8000 spelling -- loaded and returned
+ * without being dereferenced, so this is a getter for an in-image table.
+ *
+ * One of the 191 rows sharing this exact body across the tree, and every
+ * one of them returns a DIFFERENT address. Identical bytes are not
+ * identical semantics; this row's pool word was resolved on its own.
+ */
 u8 *SceneData_GetScriptTable(void)
 {
     return (u8 *)0x020086dc;
@@ -508,7 +488,7 @@ void FieldScene_RunActor19StepByPlace(void)
 
     u32 place;
 
-    place = *(u16 *) (Func_020009ea(0) + 6);
+    place = *(u16 *)(Func_020009ea(0) + 6);
     Func_020009c8_a();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -525,7 +505,7 @@ void FieldScene_RunActor20StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *) (Func_02000a32(0) + 6);
+    place = *(u16 *)(Func_02000a32(0) + 6);
     Func_02000a10();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -542,7 +522,7 @@ void FieldScene_RunActor21StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *) (Func_02000a7a(0) + 6);
+    place = *(u16 *)(Func_02000a7a(0) + 6);
     Func_02000a58();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -559,7 +539,7 @@ void FieldScene_RunActor22StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *) (Func_02000ac2(0) + 6);
+    place = *(u16 *)(Func_02000ac2(0) + 6);
     Func_02000aa0();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -586,6 +566,25 @@ void SceneDialogue_RunActor18FlaggedLine(void)
     Func_02000b0c();
 }
 
+/*
+ * resource_386 owner at 0x020004dc, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
+ * one-word literal pool at 0x20004e0 holding 0x200898c.
+ *
+ * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ *
+ * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
+ * `pc`-relative load at 0x020004dc reads it, so it belongs to this owner.
+ * Recording 4 would orphan a word and manufacture a phantom gap.
+ *
+ * The pool word is an ADDRESS -- 0x200898c is image offset
+ * 0x98c under the base + 0x8000 spelling -- loaded and returned
+ * without being dereferenced, so this is a getter for an in-image table.
+ *
+ * One of the 191 rows sharing this exact body across the tree, and every
+ * one of them returns a DIFFERENT address. Identical bytes are not
+ * identical semantics; this row's pool word was resolved on its own.
+ */
 u8 *SceneData_GetEffectTable(void)
 {
     s32 Func_02000abe(s32);

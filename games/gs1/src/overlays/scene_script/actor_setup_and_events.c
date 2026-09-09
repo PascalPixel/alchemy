@@ -397,30 +397,6 @@ void Func_02001a04(s32, s32, s32, s32, s32, s32);
 void Func_02001a3a(s32);
 
 /*
- * Resource 3b5, owner at 0x02000170 (152 bytes advertised; 144 bytes of code
- * plus an 8-byte literal pool at 0x02000200-0x02000207).
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus the high-register save at
- * 0x02000170-0x02000178, and the matching interworking return at
- * 0x020001f2-0x020001fe.  It pops into r1, so r0 survives and is the result;
- * the only value ever left in r0 is the `movs r0, #0` at 0x020001f0, so this
- * returns a constant 0.
- *
- * Role: this is a per-frame actor callback.  The overlay initialiser
- * Func_02000728 stores the pool word 0x02008171 into field +0x6c of actors 16
- * and 17; under this overlay's proven 0x02008000 link base that word is
- * SceneActor_UpdatePartnerProximity + the Thumb bit, which names this row's role before it is
- * disassembled.  Its argument is therefore the owning actor record.
- *
- * 0x03001e8c is a table of pointers; entry 12 is 0x03001ebc, the overlay
- * work pointer the rest of this overlay loads directly (see
- * Func_02000644, Func_02000894, Func_02000980).  Modelled that way rather than
- * as two unrelated globals.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.
- */
-
-/*
  * Old-style declarations: overlay import arities are not fixed per name.
  *
  * Each site names the veneer IT reaches, not the import behind it: the four
@@ -531,21 +507,6 @@ void Func_02001a3a(s32);
  * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/*
- * resource_3b5 owner at 0x020006e8, 62 bytes.
- *
- * Copies the player's two-bit mode into both mode fields of the given actor's
- * record and clears the actor's flag byte at +35.
- *
- * `f80` is a volatile pointer because the reference loads it again for the
- * second store, on a path where nothing can have changed it. Without the
- * qualifier the compiler keeps the first load in a register and the second
- * `ldr r0, [r5, #80]` disappears.
- *
- * The two mode writes are bitfields: the -13 mask stays 32-bit and is shared
- * between them, which explicit `(x & ~12) | bits` arithmetic does not produce.
- */
 
 /* Resolved engine calls: each pseudo symbol is the per-site call word the
  * overlay image holds (a word can serve two sites with different targets),
@@ -707,7 +668,8 @@ static __inline__ void bump_step_02000980(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void SceneState_SetValues31_2_4(void) {
+void SceneState_SetValues31_2_4(void)
+{
     Func_02000e96(0x1F, 2, 4);
 }
 
@@ -716,13 +678,36 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
     s32 dz = (*a - *b) >> 16;
-    s32 dxsq = dx * dx;
-    s32 dysq = dy * dy;
-    s32 dzsq = dz * dz;
+    s32 dxsq = dx *dx;
+    s32 dysq = dy *dy;
+    s32 dzsq = dz *dz;
 
     return ((IwramSqrt02000040) 0x030001D8)(dxsq + dysq + dzsq);
 }
 
+/*
+ * Resource 3b5, owner at 0x02000170 (152 bytes advertised; 144 bytes of code
+ * plus an 8-byte literal pool at 0x02000200-0x02000207).
+ *
+ * Complete owner: `push {r5, r6, r7, lr}` plus the high-register save at
+ * 0x02000170-0x02000178, and the matching interworking return at
+ * 0x020001f2-0x020001fe.  It pops into r1, so r0 survives and is the result;
+ * the only value ever left in r0 is the `movs r0, #0` at 0x020001f0, so this
+ * returns a constant 0.
+ *
+ * Role: this is a per-frame actor callback.  The overlay initialiser
+ * Func_02000728 stores the pool word 0x02008171 into field +0x6c of actors 16
+ * and 17; under this overlay's proven 0x02008000 link base that word is
+ * SceneActor_UpdatePartnerProximity + the Thumb bit, which names this row's role before it is
+ * disassembled.  Its argument is therefore the owning actor record.
+ *
+ * 0x03001e8c is a table of pointers; entry 12 is 0x03001ebc, the overlay
+ * work pointer the rest of this overlay loads directly (see
+ * Func_02000644, Func_02000894, Func_02000980).  Modelled that way rather than
+ * as two unrelated globals.
+ *
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.
+ */
 s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
     u8 **globals = (u8 **)0x03001e8c;
@@ -1057,6 +1042,20 @@ void SceneScript_SetupActors(void)
     Func_0200143a();
 }
 
+/*
+ * resource_3b5 owner at 0x020006e8, 62 bytes.
+ *
+ * Copies the player's two-bit mode into both mode fields of the given actor's
+ * record and clears the actor's flag byte at +35.
+ *
+ * `f80` is a volatile pointer because the reference loads it again for the
+ * second store, on a path where nothing can have changed it. Without the
+ * qualifier the compiler keeps the first load in a register and the second
+ * `ldr r0, [r5, #80]` disappears.
+ *
+ * The two mode writes are bitfields: the -13 mask stays 32-bit and is shared
+ * between them, which explicit `(x & ~12) | bits` arithmetic does not produce.
+ */
 void SceneActor_CopyPlayerModeToActor(struct Work_3b5 *work)
 {
     s32 bits;

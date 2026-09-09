@@ -33,6 +33,6 @@ void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
   int base;
   int fn;
   base = (fn = 0x02004000);
-  fn = *((s32 *) base);
+  fn = *((s32 *)base);
   Func_080072ec(arg0, arg1, fn);
 }

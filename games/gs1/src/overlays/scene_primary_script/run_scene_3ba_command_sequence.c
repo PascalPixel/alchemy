@@ -183,7 +183,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     record = Func_02004b28_a(0);
     {
         s32 shown = 0xc000;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     Func_02004be6(0, 0);

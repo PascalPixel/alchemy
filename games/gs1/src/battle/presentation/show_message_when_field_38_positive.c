@@ -9,7 +9,8 @@ void Func_08015118(void);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWait(s32);
 
-s32 BattlePresentation_ShowMessageWhenField38Positive(s16 *script) {
+s32 BattlePresentation_ShowMessageWhenField38Positive(s16 *script)
+{
     s32 object_id;
     s32 result;
     void *object;

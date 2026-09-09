@@ -13,7 +13,7 @@ extern SoundTableEntry Data_080fc684[];
 void Audio_ResumeSound(u16 audio_cue_id)
 {
     u32 table_offset = audio_cue_id;
-    void * volatile *players;
+    void *volatile *players;
     SoundTableEntry *audio_cue_table;
     SoundTableEntry *audio_cue;
     void *player;

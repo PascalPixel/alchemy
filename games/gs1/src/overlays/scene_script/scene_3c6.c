@@ -1137,7 +1137,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void SceneActor_SetActor23Params2And6(void) {
+void SceneActor_SetActor23Params2And6(void)
+{
     Func_0200164a(0x17, 2, 6);
 }
 
@@ -1185,7 +1186,7 @@ void SceneActor_SetupActorForTable9638(s32 a0)
 
 void SceneActor_UpdateObjectWithCue28be(s32 obj)
 {
-    s32 cue = (s32) &Value_000028be;
+    s32 cue = (s32)&Value_000028be;
     Func_02001696(cue);
     Func_020016a6(obj, 0);
     if (Func_02001626(0, 0) == 0) {

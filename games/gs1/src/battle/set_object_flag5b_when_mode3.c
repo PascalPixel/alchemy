@@ -5,7 +5,8 @@
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 s32 Func_08009230();
 
-void Battle_SetObjectFlag5bWhenMode3(void) {
+void Battle_SetObjectFlag5bWhenMode3(void)
+{
     void *work;
     void *blk;
 

@@ -1,6 +1,7 @@
 #include "types.h"
 
-void Graphics_TransposeCopy(s32 source_address, s32 destination_address, s32 row_size, s32 column_count) {
+void Graphics_TransposeCopy(s32 source_address, s32 destination_address, s32 row_size, s32 column_count)
+{
     s32 column_index;
     s32 row_index;
     s32 destination_column;

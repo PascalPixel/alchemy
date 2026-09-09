@@ -20,7 +20,8 @@ extern void Func_02003fda(s32, s32);
 extern void Func_0200402a(s32, s32);
 extern void Func_02003f5e(void);
 
-void FieldScene_RunSlotZeroFacingSequence(void) {
+void FieldScene_RunSlotZeroFacingSequence(void)
+{
     struct Obj *o;
     u32 v;
     u16 *q;

@@ -2,7 +2,8 @@
 
 extern u8 *Data_03001ebc;
 
-s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz) {
+s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 

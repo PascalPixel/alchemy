@@ -37,7 +37,8 @@
 
 s32 Func_080072e8();
 
-s32 RunFlashEraseVerifier(void) {
+s32 RunFlashEraseVerifier(void)
+{
     if (Func_080072e8() == 0) {
         return 0;
     }

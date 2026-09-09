@@ -23,7 +23,7 @@ extern u8 Data_02009740[];
  * three pool words.  The stack object passed as argument eight is reproduced
  * field-for-field from the stores in the owner.
  */
-extern u8 * Func_02001748();
+extern u8 *Func_02001748();
 extern void Func_020004f0();
 void SceneEffect_SpawnPeriodicEffect(void)
 {

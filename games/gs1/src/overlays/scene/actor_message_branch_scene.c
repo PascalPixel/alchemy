@@ -150,21 +150,6 @@ void Func_020009fc(s32);
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-/*
- * resource_38c owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
 /* Contiguous unnamed leaf-owner run for resource_38c. */
 
 /*
@@ -281,6 +266,20 @@ u8 *SceneData_GetPrimaryTable(void)
     return (u8 *)RESOURCE38C_PRIMARY_TABLE_ADDRESS;
 }
 
+/*
+ * resource_38c owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
+ *
+ * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ * A leaf never does -- it saves no register and returns with `bx lr`.
+ *
+ * Complete owner: both instructions. No prologue, no stack frame, no
+ * literal pool, no callees, no argument read.
+ *
+ * One of the 70 rows sharing this exact body across the tree. The body is
+ * shared; the identity is not -- this row is bounded by ITS overlay's
+ * neighbours and published from ITS overlay's table.
+ */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -291,7 +290,8 @@ u8 *SceneData_GetSecondaryTable(void)
     return (u8 *)RESOURCE38C_SECONDARY_TABLE_ADDRESS;
 }
 
-s32 SceneData_PrepareTable86b0(void) {
+s32 SceneData_PrepareTable86b0(void)
+{
     Func_02000574(0x020086B0);
     return 0x020086B0;
 }
@@ -302,7 +302,7 @@ void FieldScene_RunActor16MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *) (Func_0200059a(0) + 6);
+    dir = *(u16 *)(Func_0200059a(0) + 6);
     Func_02000580();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -325,7 +325,7 @@ void FieldScene_RunActor18MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *) (Func_020005fa(0) + 6);
+    dir = *(u16 *)(Func_020005fa(0) + 6);
     Func_020005e0();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -446,7 +446,7 @@ void FieldScene_RunActor19MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *) (Func_02000832(0) + 6);
+    dir = *(u16 *)(Func_02000832(0) + 6);
     Func_02000818();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -552,13 +552,13 @@ s32 FieldScene_SetupActor27OnEntry(void)
     u8 *record;
     s32 bits;
 
-    *(s32 *) (WORKSPACE + 448) = 521;
+    *(s32 *)(WORKSPACE + 448) = 521;
     actor = Func_02000a14_a(27);
     /* The stored zero is the mask's starting value: the reference builds
      * -13 by subtracting from the register the `strb` already set to 0
      * rather than materialising 0xf3 or negating 13. */
     actor[0x23] = bits = 0;
-    record = *(u8 **) (actor + 0x50);
+    record = *(u8 **)(actor + 0x50);
     bits -= 13;
     bits &= record[9];
     bits |= 8;

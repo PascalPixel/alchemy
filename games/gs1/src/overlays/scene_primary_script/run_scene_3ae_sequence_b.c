@@ -372,7 +372,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     {
         s32 target = *(volatile s32 *)((s32)record + 80);
         s32 shown = 0xc000;
-    
+
         *(volatile u16 *)(target + 30) = shown;
     }
     Call3(Func_02002a3a, 10, -12, 4);
@@ -380,7 +380,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     {
         u8 *record = Func_02002944(10);
         u8 value = *(volatile u8 *)&record[90];
-    
+
         record[90] = (u8)(value | v6);
     }
     Func_02002a62(159);

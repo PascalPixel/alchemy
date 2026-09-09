@@ -42,11 +42,11 @@ void MusicTrack_UpdateVolumePitch(
         s32 volume;
         s32 pan;
 
-        volume = (u32)(track->volume * track->volume_scale) >> 5;
+        volume = (u32)(track->volume *track->volume_scale) >> 5;
 
         if (track->modulation_type == 1)
             volume =
-                (u32)(volume * (track->modulation_delta + 128)) >> 7;
+                (u32)(volume *(track->modulation_delta + 128)) >> 7;
 
         pan = 2 * track->pan + track->pan_extra;
 
@@ -63,7 +63,7 @@ void MusicTrack_UpdateVolumePitch(
     }
 
     if (track->flags & 4) {
-        s32 bend = track->bend * track->bend_range;
+        s32 bend = track->bend *track->bend_range;
         s32 pitch = (track->tune + bend)
                   * 4
                   + (track->key_shift << 8)

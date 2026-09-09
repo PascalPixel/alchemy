@@ -186,7 +186,7 @@ void Func_02001fc0(s32, s32);
  * Called from the root 0x02000980 and reached again from 0x02000980's own
  * chain; it in turn calls 0x02000b3c twice and 0x02000150 once.
  *
- * 0x020092c0 and 0x020092c8 are pointer CELLS, not values — the body always
+ * 0x020092c0 and 0x020092c8 are pointer CELLS, not values -- the body always
  * loads through them twice.  tracked byte-exact games/gs1/asm/overlays/
  * resource_394_c_02000054.c reads `*(s32 *)0x020092C0` the same way, and
  * games/gs1/asm/overlays/resource_394_c_020008b0.c declares the neighbouring cell
@@ -289,7 +289,8 @@ u8 *SceneData_GetTable9240(void)
     return (u8 *)0x02009240;
 }
 
-void SceneState_ApplyRecordTable92c0(void) {
+void SceneState_ApplyRecordTable92c0(void)
+{
     Func_02000c8a(*(s32 *)0x020092C0);
     Func_020010e4(0, 0x40, 0x20, 0x20, 0, 0);
     Func_02000bb4(*(s32 *)0x020092C0, 0xFF);

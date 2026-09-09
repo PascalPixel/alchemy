@@ -24,7 +24,7 @@ s32 Func_020023c4();
  *
  * Complete owner: `push {r5, lr}` at 0x0200016c and the interworking return
  * `pop {r5} / pop {r1} / bx r1` at 0x020001c0.  The popped register is r1, so
- * r0 survives and IS the result — the owner returns the selected in-image data
+ * r0 survives and IS the result -- the owner returns the selected in-image data
  * pointer.  Bytes 0x020001c6-0x020001df are alignment plus the six-word
  * literal pool, reached only by `ldr rN, [pc, #imm]`.
  *
@@ -37,7 +37,7 @@ s32 Func_020023c4();
  * LINK BASE.  All three returned pool words (0x0200aad0, 0x0200aa58,
  * 0x0200a9e0) are EVEN and lie in the 0x0200axxx band, so under the project's
  * proven 0x02008000 overlay link base they are in-image data at file offsets
- * 0x2ad0, 0x2a58 and 0x29e0 — data blocks, not callbacks.  (Odd would mean a
+ * 0x2ad0, 0x2a58 and 0x29e0 -- data blocks, not callbacks.  (Odd would mean a
  * Thumb entry point.)  This owner is itself a witness for the base: the same
  * band holds this overlay's other script blocks.
  *
@@ -58,11 +58,12 @@ s32 Func_020023c4();
  * (`movs r3,#182 ; lsls #16` and `movs r3,#141 ; lsls #18`), which is the usual
  * way this compiler spells a 16.16 whole number.
  *
- * Uncertainty: the meaning of +0x4c is unverified — the value 2 is set only on
+ * Uncertainty: the meaning of +0x4c is unverified -- the value 2 is set only on
  * this path, and nothing in this overlay reads the field back.
  */
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000033) {
         return (s32)Data_0200a8a0;
     }
@@ -85,7 +86,7 @@ u8 *SceneData_SelectScriptByScene33AndFlag881(void)
 {
     u8 *script;
 
-    if (Data_02000240[224] == ((s32) &Value_00000033)) {
+    if (Data_02000240[224] == ((s32)&Value_00000033)) {
         script = Data_0200aad0;
         Func_020023c6(script);
         if (Func_0200239c(0x881) != 0) {
@@ -103,7 +104,8 @@ u8 *SceneData_SelectScriptByScene33AndFlag881(void)
     return Data_0200a9e0;
 }
 
-s32 SceneData_SelectTableByWord224B(void) {
+s32 SceneData_SelectTableByWord224B(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000033) {
         return (s32)Data_0200adb8;
     }

@@ -1,5 +1,15 @@
 #include "types.h"
 
+/* Per-site veneers (raw sub_ symbols from the overlay .s), both ultimately
+ * reaching the same main-image import but each is its own call-site symbol. */
+extern u8 Value_0000000a;
+void Func_02004716();
+void Func_02004724();
+
+/* In-image status words at file offsets 0x4834 and 0x4838. */
+extern volatile s32 Data_0200c834;
+extern volatile s32 Data_0200c838;
+
 /*
  * resource_3bb owner at 0x02000970, 64 bytes (0x02000970-0x020009af):
  * 54 bytes of code, two alignment bytes at 0x020009a6, and the two-word
@@ -44,17 +54,6 @@
  * first; the explicit preheader/body/test/done labels reproduce the
  * reference block order without any -freorder-blocks routing.
  */
-
-/* Per-site veneers (raw sub_ symbols from the overlay .s), both ultimately
- * reaching the same main-image import but each is its own call-site symbol. */
-extern u8 Value_0000000a;
-void Func_02004716();
-void Func_02004724();
-
-/* In-image status words at file offsets 0x4834 and 0x4838. */
-extern volatile s32 Data_0200c834;
-extern volatile s32 Data_0200c838;
-
 void SceneState_WaitForStatusWords(void)
 {
     s32 cnt;

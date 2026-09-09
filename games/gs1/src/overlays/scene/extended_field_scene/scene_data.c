@@ -50,14 +50,16 @@ u8 *SceneData_GetTableAfa0(void)
     return (u8 *)0x0200afa0;
 }
 
-void *SceneData_SelectTableByFlag834(void) {
+void *SceneData_SelectTableByFlag834(void)
+{
     if (Func_0200270e(0x834) != 0) {
         return Data_0200b144;
     }
     return Data_0200b108;
 }
 
-void *SceneData_SelectTableByFlags834And87a(void) {
+void *SceneData_SelectTableByFlags834And87a(void)
+{
     if (Func_02002732(0x834) != 0) {
         return Data_0200b380;
     }
@@ -70,7 +72,8 @@ void *SceneData_SelectTableByFlags834And87a(void) {
     return Data_0200b170;
 }
 
-void *SceneData_SelectTableByFlags87a_815_834(void) {
+void *SceneData_SelectTableByFlags87a_815_834(void)
+{
     if (Func_020027d2(0x87a) != 0) {
         return Data_0200bcec;
     }

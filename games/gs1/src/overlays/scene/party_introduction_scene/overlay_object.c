@@ -37,7 +37,8 @@ void OverlayObject_SetHandleFlagBits2And3(s32 obj, u32 v)
     h->f1 = v;
 }
 
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *obj;
     void *rec;
     s32 mask;

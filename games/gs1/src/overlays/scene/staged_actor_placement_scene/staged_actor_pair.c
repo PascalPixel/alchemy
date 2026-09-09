@@ -34,7 +34,8 @@ void Func_020015d4(struct StagedActor *arg0);
 void Func_020016f8(void);
 void Func_020015ec(struct StagedActor *arg0, s32 arg1);
 
-void StagedActor_AdvanceActorPair(void) {
+void StagedActor_AdvanceActorPair(void)
+{
     s32 dst[3];
     struct StagedActor *lead;
     struct StagedActor *next;

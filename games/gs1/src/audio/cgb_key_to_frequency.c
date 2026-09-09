@@ -42,6 +42,6 @@ s32 Cgb_KeyToFrequency(
         lower = Data_080fb9b0[lower & 15] >> (lower >> 4);
         upper = Data_080fb92c[key + 1];
         upper = Data_080fb9b0[upper & 15] >> (upper >> 4);
-        return lower + ((pitch * (upper - lower)) >> 8) + 0x800;
+        return lower + ((pitch *(upper - lower)) >> 8) + 0x800;
     }
 }

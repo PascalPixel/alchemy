@@ -7,7 +7,7 @@
 
 void StopFlashTimer(void)
 {
-    u16 * volatile *cursor = (u16 * volatile *)0x02004c28;
+    u16 *volatile *cursor = (u16 *volatile *)0x02004c28;
     u16 *record = *cursor;
 
     *record = 0;

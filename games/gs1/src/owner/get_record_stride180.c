@@ -6,7 +6,8 @@ typedef struct {
 
 extern Data_080844ec_Record Data_080844ec[];
 
-Data_080844ec_Record *Owner_GetRecordStride180(s32 index) {
+Data_080844ec_Record *Owner_GetRecordStride180(s32 index)
+{
     Data_080844ec_Record *base;
 
     base = Data_080844ec;

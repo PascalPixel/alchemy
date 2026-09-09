@@ -140,9 +140,9 @@ void Func_02001026(Query result);
 void Func_0200184c();
 void Func_0200184c_a();
 void Func_02001878(void);
-void Func_0200188e(s32,s32,s32);
-void Func_020018bc(s32,s32);
-s32 Func_0200187c(s32,s32);
+void Func_0200188e(s32, s32, s32);
+void Func_020018bc(s32, s32);
+s32 Func_0200187c(s32, s32);
 void Func_020008c0(s32 id);
 s32 Func_020018a2(s32 flagId);
 void Func_0200164e();
@@ -260,14 +260,15 @@ s32 SceneActor_CalculateFixedPointPositionDistance(s32 *a, s32 *b)
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
     s32 dz = (*a - *b) >> 16;
-    s32 dx2 = dx * dx;
-    s32 dy2 = dy * dy;
-    s32 dz2 = dz * dz;
+    s32 dx2 = dx *dx;
+    s32 dy2 = dy *dy;
+    s32 dz2 = dz *dz;
 
     return ((IwramIntegerSquareRoot) 0x030001D8)(dx2 + dy2 + dz2);
 }
 
-s32 *SceneActor_FindActorAtFixedPointPosition(s32 *arg0) {
+s32 *SceneActor_FindActorAtFixedPointPosition(s32 *arg0)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 
@@ -283,7 +284,8 @@ s32 *SceneActor_FindActorAtFixedPointPosition(s32 *arg0) {
     return 0;
 }
 
-void StagedActor_AdvancePair(void) {
+void StagedActor_AdvancePair(void)
+{
     extern u32 Data_02008ec8[];
 
     s32 dst[3];
@@ -355,7 +357,8 @@ void StagedActor_AdvancePair(void) {
     SetStagedActorTransition(lead, 1);
 }
 
-s32 SceneState_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5) {
+s32 SceneState_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+{
     u8 *g = Data_03001e70;
     u8 *base;
     u32 i;
@@ -521,7 +524,7 @@ found:
     if (cnt != 0) {
         s32 d = ActorSearchStep[sel];
         s32 m = d & 0xffff0000;
-        s32 v1 = m * cnt;
+        s32 v1 = m *cnt;
         s32 v2 = (d << 16) * cnt;
         u8 *oc = obj;
         a[2] = *(s32 *)(oc + 8) + v1;

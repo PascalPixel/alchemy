@@ -169,7 +169,6 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Func_0200731c();
 }
 
-
 typedef struct {
     unsigned lo : 24;
     unsigned mid : 24;
@@ -183,4 +182,3 @@ typedef struct {
     s32 f3;
     SceneTail tail;
 } SceneEvent;
-

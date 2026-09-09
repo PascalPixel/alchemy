@@ -9,7 +9,8 @@ extern void Func_02003d34(s32);
 extern void Func_02003d3a(s32);
 extern void Func_02003d40(s32);
 
-void SceneState_SetValues27Through34(void) {
+void SceneState_SetValues27Through34(void)
+{
     Func_02003d16(27);
     Func_02003d1c(28);
     Func_02003d22(29);

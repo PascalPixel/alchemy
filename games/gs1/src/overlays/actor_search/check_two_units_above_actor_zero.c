@@ -19,7 +19,7 @@ void SceneActor_CheckTwoUnitsAboveActorZero(void)
     target[0] = actor->x;
     target[1] = actor->y;
     target[2] = actor->z + 0x00200000;
-    if (Func_02002116(target) != 0) {
+    if (Func_02002116(target)!= 0) {
         Func_0200282e();
     }
 }

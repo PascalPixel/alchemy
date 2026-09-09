@@ -91,7 +91,7 @@ void Func_02001fb6();
 /*
  * Resource 37f, owner at 0x020003bc (76 bytes of code + a five-word literal
  * pool at 0x0200040c-0x0200041f).  `push {r5, lr}` at 0x020003bc, interworking
- * return `pop {r5} / pop {r0} / bx r0` at 0x02000404 — r0 is the popped return
+ * return `pop {r5} / pop {r0} / bx r0` at 0x02000404 -- r0 is the popped return
  * address, so the owner is `void`.
  *
  * All seven call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all
@@ -166,7 +166,8 @@ static __inline__ void Call3_02000258(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-s32 SceneData_SelectOverlayDataBySelector(void) {
+s32 SceneData_SelectOverlayDataBySelector(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];

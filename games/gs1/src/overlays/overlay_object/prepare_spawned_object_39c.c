@@ -13,7 +13,8 @@ void Func_02005bfc(void *, s32);
 #define RunOverlayObjectCommand1  Func_02005ac4
 #define RunOverlayObjectCommand14 Func_02005bfc
 
-void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *obj;
     void *rec;
     s32 mask;

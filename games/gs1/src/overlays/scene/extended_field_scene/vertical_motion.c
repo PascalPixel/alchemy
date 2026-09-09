@@ -30,7 +30,8 @@ void Func_020049e4(struct SceneVerticalEffect *);
 s32 Func_02004a1c(s32);
 void Func_02004a34(struct SceneVerticalEffect *);
 
-void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect) {
+void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
+{
     struct VerticalEffectAnchor *anchor;
     s32 frame;
     s32 amplitude;
@@ -38,7 +39,7 @@ void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect) {
 
     anchor = effect->anchor;
     effect->frame = effect->frame + 1;
-    frame = (s16) effect->frame;
+    frame = (s16)effect->frame;
     if (frame > 31) {
         Func_020049e4(effect);
         return;
@@ -53,7 +54,8 @@ void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect) {
     effect->z = anchor->z + (offset * 4 + offset) + 0x80000;
 }
 
-void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect) {
+void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
+{
     struct VerticalEffectAnchor *anchor;
     s32 frame;
     s32 amplitude;
@@ -61,7 +63,7 @@ void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect) {
 
     anchor = effect->anchor;
     effect->frame = effect->frame + 1;
-    frame = (s16) effect->frame;
+    frame = (s16)effect->frame;
     if (frame > 31) {
         Func_02004a34(effect);
         return;

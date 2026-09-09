@@ -7,7 +7,8 @@
 s32 Func_080056cc();
 s32 Func_08005c68();
 
-s32 SaveState_CountRecordsExcludingFlagged(s32 flag) {
+s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
+{
     s32 t;
     s32 i;
     s32 cnt;

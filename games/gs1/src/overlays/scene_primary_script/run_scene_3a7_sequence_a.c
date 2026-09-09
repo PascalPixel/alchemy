@@ -43,7 +43,7 @@ void FieldScene_RunScene3a7SequenceA(void)
     s32 record;
 
     if (Value1(Func_020014e6, 0x9a9) == 0) {
-        if (Value0(Func_02000722) != 0) {
+        if (Value0(Func_02000722)!= 0) {
             Call1(Func_02001500, 0x9a9);
             Func_0200154e(80);
             Func_0200079a();

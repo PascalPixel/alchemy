@@ -212,7 +212,8 @@ static __inline__ void Call1_020007ec(void (*f)(), s32 a0)
     f(a0);
 }
 
-void FieldScene_RunSequence111F(void) {
+void FieldScene_RunSequence111F(void)
+{
     Func_020027ac();
     Func_0200277c(0x111f, 1);
     Func_0200296a(126);
@@ -287,7 +288,8 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Func_02002a2c();
 }
 
-void SceneDialogue_RunFlagGatedMessageStep(void) {
+void SceneDialogue_RunFlagGatedMessageStep(void)
+{
     Func_02002a54();
     if (Func_02002a32(0x87a) != 0) {
         Func_02002b2c(0x1be8);
@@ -309,7 +311,8 @@ void SceneDialogue_RunFlagGatedMessageStep(void) {
     Func_02002aca();
 }
 
-void FieldScene_RunActorTwentySixEffectPresentation(void) {
+void FieldScene_RunActorTwentySixEffectPresentation(void)
+{
     Func_02002ae4();
     Func_02002b6c(26, 1);
     Func_02002b9e(26, 0, 20);

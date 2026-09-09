@@ -5,14 +5,14 @@
  *
  * Prologue at 0x02003764: `push {r5, r6, r7, lr}`, then the high-register save
  * `mov r7, fp / mov r6, sl / mov r5, r9 / push {r5, r6, r7}` and
- * `mov r7, r8 / push {r7}`, then `sub sp, #4` — eight registers (32 bytes)
+ * `mov r7, r8 / push {r7}`, then `sub sp, #4` -- eight registers (32 bytes)
  * plus a 4-byte frame.  The body ends at 0x02003820 with `add sp, #4` and a
  * `b.n` over the six-word literal pool at 0x02003822-0x0200383b to the unwind
  * at 0x0200383c..0x0200384a.  The next row, 0x0200384c, is a separate owner
  * whose byte-exact source is `games/gs1/asm/overlays/resource_3ba_c_0200384c.c`, so
  * nothing live crosses this row's end.
  *
- * `pop {r0} ; bx r0` — r0 holds the popped return address, so the owner
+ * `pop {r0} ; bx r0` -- r0 holds the popped return address, so the owner
  * returns nothing.
  *
  * SIGNATURE.  Seven arguments: r0-r3, then three incoming stack words.  With
@@ -40,7 +40,7 @@
  * `Func_080000d0(0x0200804d, 0xc80)`.  Note in passing that the byte-exact
  * `resource_3ba_c_0200384c.c` declares the analogous word 0x0200b1c1 as
  * `u8 Data_0200b1c1[]`; by the same parity rule it is Func_020031c0 + 1, a
- * callback, not data — a spelling worth correcting when that file is revisited.
+ * callback, not data -- a spelling worth correcting when that file is revisited.
  *
  * SHAPE.  Build a scene descriptor: allocate its record (Func_08000148),
  * reserve a 512-entry graphics handle (Func_08000170), stamp the seven

@@ -112,7 +112,8 @@ u8 *SceneData_GetEffectTable(void)
     return (u8 *)0x020096a4;
 }
 
-u16 SceneData_GetBufferCrc16(u32 count, u8 *p) {
+u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
+{
     u32 crc;
     u32 i;
     u32 j;

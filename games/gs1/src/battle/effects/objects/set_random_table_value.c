@@ -8,7 +8,8 @@ u32 Random16(void);
 #define Rand Random16
 void Func_08009240(s32, s8);
 
-void BattleEffect_SetRandomTableValueOnObject(s32 arg0) {
+void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
+{
     s8 *table = Data_0809f160;
     s32 index = Rand();
     Func_08009240(arg0, table[(u32)(index * 8) >> 16]);

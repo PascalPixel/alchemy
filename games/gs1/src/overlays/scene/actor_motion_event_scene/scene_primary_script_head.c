@@ -130,7 +130,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     {
         u8 *record = Func_02001952(14);
         s32 shown = 1;
-    
+
         *(volatile u16 *)((s32)record + 100) = shown;
     }
 }

@@ -258,7 +258,7 @@ void FieldScene_RunScene37aSequenceA(void)
     u32 i;
     s32 record;
 
-    if (Value0(Func_02002608) != 0) {
+    if (Value0(Func_02002608)!= 0) {
         record = Value1(Func_02002a16, 0x201);
         if (record != 0) {
             goto L_020000f0;
@@ -272,7 +272,7 @@ void FieldScene_RunScene37aSequenceA(void)
         if (Value1(Func_02002a46, 0x80a) == 0) {
             Func_02000a8e();
         }
-        if (Value0(Func_0200264e) != 0) {
+        if (Value0(Func_0200264e)!= 0) {
             if (Value1(Func_02002a5c, 0x811) == 0) {
                 Func_02001c98();
             }
@@ -313,7 +313,7 @@ void FieldScene_RunScene37aSequenceC(void)
     u32 i;
     s32 record;
 
-    if (Value0(Func_02002704) != 0) {
+    if (Value0(Func_02002704)!= 0) {
         record = Value1(Func_02002b14, 0x200);
         if (record != 0) {
             goto L_020001d6;

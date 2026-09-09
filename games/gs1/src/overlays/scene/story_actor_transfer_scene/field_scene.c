@@ -1,5 +1,15 @@
 #include "types.h"
 
+#define FieldScene_RunStep7D3B1E Func_02000580
+#define FieldScene_RunStep74 Func_020006dc
+#define FieldScene_RunScene371_0200155c Func_0200155c
+#define FieldScene_RunScene371_02001680 Func_02001680
+#define FieldScene_RunScene371_020017a4 Func_020017a4
+#define FieldScene_RunScene371_020017fc Func_020017fc
+#define FieldScene_RunScene371_02001888 Func_02001888
+#define FieldScene_RunScene371_02001938 Func_02001938
+#define FieldScene_RunScene371_020019e8 Func_020019e8
+#define FieldScene_RunScene371_02001a98 Func_02001a98
 #define BattleRuntime_Reset_1(args...) Func_020075d0(args)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020076fa, a0, a1, a2, a3)
 #define Object_SetModeById_1(args...) Func_02007678(args)
@@ -50,7 +60,148 @@ extern u8 Data_02002090[];
 extern u8 Data_04000208[];
 extern u8 Data_0200e7a0[];
 
+void Func_02000a7a(s32, s32, s32);
+void Func_020049bc(void);
+void Func_02004af2(s32);
+void Func_020056f6();
+void Func_0200570a();
+void Func_0200571e();
+void Func_02005732();
+void Func_02005746();
+void Func_0200575c();
+void Func_02005772();
+void Func_02005786();
+void Func_0200579a();
+void Func_020057ae();
+void Func_020057c2();
+void Func_020057d8();
+void Func_02005960();
+void Func_02005974();
+void Func_02005988();
+void Func_0200599c();
+void Func_020059b0();
+void Func_020059c6();
+void Func_020059dc();
+void Func_020059f0();
+void Func_02005a04();
+void Func_02005a18();
+void Func_02005a2c();
+void Func_02005a42();
+void Func_0200581a();
+void Func_0200582e();
+void Func_02005842();
+void Func_02005856();
+void Func_0200586a();
+void Func_02005880();
+void Func_02005896();
+void Func_020058aa();
+void Func_020058be();
+void Func_020058d2();
+void Func_020058e6();
+void Func_020058fc();
+void Func_02005a84();
+void Func_02005a98();
+void Func_02005aac();
+void Func_02005ac0();
+void Func_02005ad4();
+void Func_02005aea();
+void Func_02005b00();
+void Func_02005b14();
+void Func_02005b28();
+void Func_02005b3c();
+void Func_02005b50();
+void Func_02005b66();
+void Func_020059e0();
+s32 Func_02005a5e();
+void Func_02005a80();
+s32 Func_02005aa6();
+s32 Func_02005aae();
+void Func_02005c80();
+void Func_020059a4();
+void Func_02005ae4();
+void Func_02005af4();
+s32 Func_02005afe();
+void Func_02005b4e();
+void Func_02005b54();
+void Func_02005b86();
+void Func_02005b96();
+void Func_02005c0e();
+void Func_02005c1e();
+void Func_02005c72();
+void Func_02005c7a();
+void Func_02005c9a();
+void Func_02005ca6();
+void Func_02005a30();
+void Func_02005a54();
+void Func_02005a7e();
+void Func_02005b70();
+s32 Func_02005b8a();
+void Func_02005ba4();
+void Func_02005bf2();
+void Func_02005bfe();
+void Func_02005c08();
+void Func_02005c12();
+void Func_02005c1e_a();
+void Func_02005c9a_a();
+void Func_02005cbc();
+void Func_02005d18();
+void Func_02005d22();
+void Func_02005d4a();
+void Func_02005d56();
+void Func_02005ae0();
+void Func_02005b04();
+void Func_02005b2e();
+void Func_02005c20();
+s32 Func_02005c3a();
+void Func_02005c54();
+void Func_02005ca2();
+void Func_02005cae();
+void Func_02005cb8();
+void Func_02005cc2();
+void Func_02005cce();
+void Func_02005d4a_a();
+void Func_02005d6c();
+void Func_02005dc8();
+void Func_02005dd2();
+void Func_02005dfa();
+void Func_02005e06();
+void Func_02005b90();
+void Func_02005bb4();
+void Func_02005bde();
+void Func_02005cd0();
+s32 Func_02005cea();
 void Func_02005d04();
+void Func_02005d52();
+void Func_02005d5e();
+void Func_02005d68();
+void Func_02005d72();
+void Func_02005d7e();
+void Func_02005dfa_a();
+void Func_02005e1c();
+void Func_02005e78();
+void Func_02005e82();
+void Func_02005eaa();
+void Func_02005eb6();
+s32 Func_02004f1c();
+void Func_02005c40();
+void Func_02005c64();
+void Func_02005ca0();
+void Func_02005d80();
+s32 Func_02005d9a();
+void Func_02005dc6();
+void Func_02005e02();
+void Func_02005e20();
+void Func_02005e20_a();
+void Func_02005e22();
+void Func_02005e2a();
+void Func_02005e2e();
+void Func_02005eaa_a();
+void Func_02005ecc();
+void Func_02005f28();
+void Func_02005f44();
+void Func_02005f6c();
+void Func_02005f78();
+void Func_02005d04_a();
 void Func_02005d26();
 void Func_02005e44();
 s32 Func_02005e5e();
@@ -67,7 +218,7 @@ void Func_02005fe8();
 void Func_02005fea();
 void Func_0200600a();
 void Func_02006016();
-void Func_02005ecc();
+void Func_02005ecc_a();
 void Func_02005eea();
 void Func_02005ef0_a();
 void Func_02005f0e();
@@ -366,16 +517,22 @@ void Func_02008344();
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
 
-/* Phase/status word at 0x1c0 of the shared scene work record. */
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+static __inline__ void bump_step(s32 amount)
+{
+    u8 *work = *(u8 **)Data_03001ebc;
 
-/* The actor index every call in this scene step operates on. */
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -396,17 +553,71 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+static __inline__ void Call4_020017fc(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
+static __inline__ void Call4_02001888(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
+    f(a0, a1, a2, a3);
+}
 
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+static __inline__ void Call4_02001938(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ void Call4_020019e8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ s32 Value0(s32 (*f)())
+{
+    return f();
+}
+
+static __inline__ void Call1_02001a98(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call4_02001a98(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+
+/* Phase/status word at 0x1c0 of the shared scene work record. */
+
+/* The actor index every call in this scene step operates on. */
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_02001b5c(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call4_02001b5c(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
@@ -433,6 +644,269 @@ static __inline__ void Call2_020032f0(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
+void FieldScene_RunStep7D3B1E(void)
+{
+    Func_02000a7a(0x7D, 0x3B, 0x1E);
+}
+
+void FieldScene_RunStep74(void)
+{
+    Func_020049bc();
+    Func_02004af2(74);
+}
+
+void FieldScene_RunScene371_0200155c(void)
+{
+    u32 i;
+    s32 record;
+
+    Call4(Func_02005960, 0x160c0000, -1, 0x6f80000, 1);
+    Func_020056f6(4);
+    Call4(Func_02005974, 0x16040000, -1, 0x6fc0000, 1);
+    Func_0200570a(4);
+    Call4(Func_02005988, 0x160c0000, -1, 0x6f40000, 1);
+    Func_0200571e(4);
+    Call4(Func_0200599c, 0x160c0000, -1, 0x6fc0000, 1);
+    Func_02005732(4);
+    Call4(Func_020059b0, 0x16040000, -1, 0x6f40000, 1);
+    Func_02005746(4);
+    Call4(Func_020059c6, 0x16080000, -1, 0x6f80000, 1);
+    Func_0200575c(4);
+    Call4(Func_020059dc, 0x160a0000, -1, 0x6f80000, 1);
+    Func_02005772(4);
+    Call4(Func_020059f0, 0x16060000, -1, 0x6fa0000, 1);
+    Func_02005786(4);
+    Call4(Func_02005a04, 0x160a0000, -1, 0x6f60000, 1);
+    Func_0200579a(4);
+    Call4(Func_02005a18, 0x160a0000, -1, 0x6fa0000, 1);
+    Func_020057ae(4);
+    Call4(Func_02005a2c, 0x16060000, -1, 0x6f60000, 1);
+    Func_020057c2(4);
+    Call4(Func_02005a42, 0x16080000, -1, 0x6f80000, 1);
+    Func_020057d8(4);
+}
+
+void FieldScene_RunScene371_02001680(void)
+{
+    u32 i;
+    s32 record;
+
+    Call4(Func_02005a84, 0x15ec0000, -1, 0x6c80000, 1);
+    Func_0200581a(4);
+    Call4(Func_02005a98, 0x15e40000, -1, 0x6cc0000, 1);
+    Func_0200582e(4);
+    Call4(Func_02005aac, 0x15ec0000, -1, 0x6c40000, 1);
+    Func_02005842(4);
+    Call4(Func_02005ac0, 0x15ec0000, -1, 0x6cc0000, 1);
+    Func_02005856(4);
+    Call4(Func_02005ad4, 0x15e40000, -1, 0x6c40000, 1);
+    Func_0200586a(4);
+    Call4(Func_02005aea, 0x15e80000, -1, 0x6c80000, 1);
+    Func_02005880(4);
+    Call4(Func_02005b00, 0x15ea0000, -1, 0x6c80000, 1);
+    Func_02005896(4);
+    Call4(Func_02005b14, 0x15e60000, -1, 0x6ca0000, 1);
+    Func_020058aa(4);
+    Call4(Func_02005b28, 0x15ea0000, -1, 0x6c60000, 1);
+    Func_020058be(4);
+    Call4(Func_02005b3c, 0x15ea0000, -1, 0x6ca0000, 1);
+    Func_020058d2(4);
+    Call4(Func_02005b50, 0x15e60000, -1, 0x6c60000, 1);
+    Func_020058e6(4);
+    Call4(Func_02005b66, 0x15e80000, -1, 0x6c80000, 1);
+    Func_020058fc(4);
+}
+
+void FieldScene_RunScene371_020017a4(void)
+{
+    u32 i;
+    s32 rec7;
+    s32 record;
+
+    rec7 = Value1(Func_02005aa6, 15);
+    record = Value1(Func_02005aae, 14);
+    *(s32 *)(rec7 + 8) = *(s32 *)(record + 8);
+    *(s32 *)(rec7 + 16) = *(s32 *)(record + 16);
+    if (*(s32 *)(rec7 + 12) < 0xa0000) {
+        *(s32 *)(rec7 + 12) = 0xa0000;
+        if (Value1(Func_02005a5e, 0x200) == 0) {
+            Func_02005c80(145);
+            Func_020059e0(rec7, 3);
+            Call1(Func_02005a80, 0x200);
+            {
+                u16 *target = (u16 *)(rec7 + 100);
+                s32 shown = 1;
+
+                *target = shown;
+            }
+        }
+    }
+}
+
+void FieldScene_RunScene371_020017fc(void)
+{
+    u32 i;
+    s32 rec7;
+    s32 record;
+
+    rec7 = Value1(Func_02005afe, 8);
+    Func_02005ae4();
+    Call4_020017fc(Func_02005c0e, -1, -1, -1, 0);
+    Func_020059a4(1);
+    Func_02005b86(0, 0, 0);
+    *(s32 *)(rec7 + 28) = 0x14000;
+    *(s32 *)(rec7 + 24) = 0x14000;
+    Func_02005c1e(8, 1);
+    Func_02005c7a();
+    Call3(Func_02005b54, 8, 0x6666, 0x3333);
+    Call3(Func_02005b96, 8, 0x14a8, 0x918);
+    Func_02005c9a();
+    Func_02005ca6();
+    Call1(Func_02005af4, 0x927);
+    Func_02005c72(102);
+    Func_02005b4e();
+}
+
+void FieldScene_RunScene371_02001888(void)
+{
+    u32 i;
+    s32 rec7;
+    s32 record;
+
+    rec7 = Value1(Func_02005b8a, 8);
+    Func_02005b70();
+    Call4_02001888(Func_02005c9a_a, -1, -1, -1, 0);
+    Func_02005a30(1);
+    Func_02005c12(0, 0, 0);
+    Call3(Func_02005c1e_a, 8, 0x1f080000, 0xc80000);
+    *(s32 *)(rec7 + 24) = 0x14000;
+    *(s32 *)(rec7 + 28) = 0x14000;
+    Func_02005a54(1);
+    Func_02005cbc(8, 1);
+    Func_02005d18();
+    Call3(Func_02005bf2, 8, 0x9999, 0x4ccc);
+    {
+        s32 shown = 0;
+
+        *(u16 *)(rec7 + 100) = shown;
+    }
+    Func_02005c08(8, 0x200d158);
+    do {
+        Func_02005a7e(1);
+    } while (*(s16 *)(rec7 + 100) == 0);
+    Func_02005d4a();
+    Func_02005d56();
+    Call1(Func_02005ba4, 0x927);
+    Func_02005d22(103);
+    Func_02005bfe();
+}
+
+void FieldScene_RunScene371_02001938(void)
+{
+    u32 i;
+    s32 rec7;
+    s32 record;
+
+    rec7 = Value1(Func_02005c3a, 8);
+    Func_02005c20();
+    Call4_02001938(Func_02005d4a_a, -1, -1, -1, 0);
+    Func_02005ae0(1);
+    Func_02005cc2(0, 0, 0);
+    Call3(Func_02005cce, 8, 0x1f080000, 0xc80000);
+    *(s32 *)(rec7 + 24) = 0x14000;
+    *(s32 *)(rec7 + 28) = 0x14000;
+    Func_02005b04(1);
+    Func_02005d6c(8, 1);
+    Func_02005dc8();
+    Call3(Func_02005ca2, 8, 0x9999, 0x4ccc);
+    {
+        s32 shown = 0;
+
+        *(u16 *)(rec7 + 100) = shown;
+    }
+    Func_02005cb8(8, 0x200d158);
+    do {
+        Func_02005b2e(1);
+    } while (*(s16 *)(rec7 + 100) == 0);
+    Func_02005dfa();
+    Func_02005e06();
+    Call1(Func_02005c54, 0x927);
+    Func_02005dd2(104);
+    Func_02005cae();
+}
+
+void FieldScene_RunScene371_020019e8(void)
+{
+    u32 i;
+    s32 rec7;
+    s32 record;
+
+    rec7 = Value1(Func_02005cea, 8);
+    Func_02005cd0();
+    Call4_020019e8(Func_02005dfa_a, -1, -1, -1, 0);
+    Func_02005b90(1);
+    Func_02005d72(0, 0, 0);
+    Call3(Func_02005d7e, 8, 0x1f080000, 0xc80000);
+    *(s32 *)(rec7 + 24) = 0x14000;
+    *(s32 *)(rec7 + 28) = 0x14000;
+    Func_02005bb4(1);
+    Func_02005e1c(8, 1);
+    Func_02005e78();
+    Call3(Func_02005d52, 8, 0x9999, 0x4ccc);
+    {
+        s32 shown = 0;
+
+        *(u16 *)(rec7 + 100) = shown;
+    }
+    Func_02005d68(8, 0x200d158);
+    do {
+        Func_02005bde(1);
+    } while (*(s16 *)(rec7 + 100) == 0);
+    Func_02005eaa();
+    Func_02005eb6();
+    Call1(Func_02005d04, 0x927);
+    Func_02005e82(105);
+    Func_02005d5e();
+}
+
+void FieldScene_RunScene371_02001a98(void)
+{
+    u32 i;
+    s32 rec7;
+    s32 record;
+
+    rec7 = Value1(Func_02005d9a, 8);
+    Func_02005d80();
+    Call4_02001a98(Func_02005eaa_a, -1, -1, -1, 0);
+    Func_02005c40(1);
+    Func_02005e22(0, 0, 0);
+    Call3(Func_02005e2e, 8, 0x1f080000, 0xc80000);
+    *(s32 *)(rec7 + 24) = 0x14000;
+    *(s32 *)(rec7 + 28) = 0x14000;
+    Func_02005c64(1);
+    Func_02005ecc(8, 1);
+    Func_02005f28();
+    Call3(Func_02005e02, 8, 0x9999, 0x4ccc);
+    {
+        s32 shown = 0;
+
+        *(u16 *)(rec7 + 100) = shown;
+    }
+    if (Value0(Func_02004f1c) == 11) {
+        Func_02005e20(8, 0x200d1b8);
+    } else {
+        Func_02005e2a(8, 0x200d158);
+    }
+    do {
+        Func_02005ca0(1);
+    } while (*(s16 *)(rec7 + 100) == 0);
+    Func_02005f6c();
+    Func_02005f78();
+    Call1_02001a98(Func_02005dc6, 0x927);
+    Func_02005f44(106);
+    Func_02005e20_a();
+}
+
 void FieldScene_RunScene371_02001b5c(void)
 {
     u32 i;
@@ -441,8 +915,8 @@ void FieldScene_RunScene371_02001b5c(void)
 
     rec7 = Value1(Func_02005e5e, 8);
     Func_02005e44();
-    Call4(Func_02005f6e, -1, -1, -1, 0);
-    Func_02005d04(1);
+    Call4_02001b5c(Func_02005f6e, -1, -1, -1, 0);
+    Func_02005d04_a(1);
     Func_02005ee6(0, 0, 0);
     Call3(Func_02005ef0, 8, 0x13e80000, 0x9180000);
     *(s32 *)(rec7 + 28) = 0x14000;
@@ -454,8 +928,8 @@ void FieldScene_RunScene371_02001b5c(void)
     Call3(Func_02005f06, 8, 0x13c8, 0x918);
     Func_0200600a();
     Func_02006016();
-    Call1(Func_02005e64, 0x93e);
-    Call1(Func_02005e72, 0x927);
+    Call1_02001b5c(Func_02005e64, 0x93e);
+    Call1_02001b5c(Func_02005e72, 0x927);
     Func_02005fe8(107);
     Func_02005ec4_a();
 }
@@ -470,19 +944,19 @@ void FieldScene_RunScene371_02001c08(void)
     Func_020060ae();
     Func_0200607a();
     Func_02005faa(8, 2);
-    Call1(Func_02005fd0, 0xc66);
+    Call1_02001b5c(Func_02005fd0, 0xc66);
     Func_02005fe8_a(8, 0);
     Func_02005f0e(30);
     Func_020060e4(111);
-    Func_02005ecc(0, 2);
-    Call1(Func_02005eea, 0x16f);
-    Call1(Func_02005ef0_a, 0x171);
+    Func_02005ecc_a(0, 2);
+    Call1_02001b5c(Func_02005eea, 0x16f);
+    Call1_02001b5c(Func_02005ef0_a, 0x171);
     Func_020060f4();
     Func_02005fd6(8, 4, 30);
-    Call1(Func_0200600c, 0xc67);
+    Call1_02001b5c(Func_0200600c, 0xc67);
     Func_02006024(8, 0);
-    Call1(Func_02005f12, 0x16f);
-    Call1(Func_02005f10, 0x171);
+    Call1_02001b5c(Func_02005f12, 0x16f);
+    Call1_02001b5c(Func_02005f10, 0x171);
     Func_0200611c();
     Func_02005f5a(30);
     Func_020060a2_a(12, 6);
@@ -496,7 +970,7 @@ void FieldScene_RunScene371_02002274(void)
 
     rec7 = Value1(Func_02006576, 10);
     Func_0200655c();
-    Call4(Func_02006686, -1, -1, -1, 0);
+    Call4_02001b5c(Func_02006686, -1, -1, -1, 0);
     Func_0200641c(1);
     Func_020065fe(0, 0, 0);
     Func_0200642c(1);
@@ -517,12 +991,12 @@ void FieldScene_RunScene371_02002274(void)
     Func_02006650(10, 2);
     Call3(Func_0200662a_a, 10, 0x156d, 0x858);
     Call2(Func_020066ea, 0x6666, 0xccc);
-    Call4(Func_02006700, 0x15b80000, -1, 0x8580000, 1);
+    Call4_02001b5c(Func_02006700, 0x15b80000, -1, 0x8580000, 1);
     Call3(Func_0200664a, 10, 0x159e, 0x858);
     Call3(Func_02006654, 10, 0x15a8, 0x86e);
     Call3(Func_0200665e, 10, 0x15e8, 0x878);
     Func_02006696(10, 1);
-    Call1(Func_020067dc, 0x121);
+    Call1_02001b5c(Func_020067dc, 0x121);
     Func_02006612(20);
     Call3(Func_020066a4, 0, 0x15d80000, 0x8780000);
     Func_020064d2(1);
@@ -542,9 +1016,9 @@ void FieldScene_RunScene371_02002274(void)
     Call3(Func_02006712, 10, 0x1572, 0x858);
     Call3(Func_0200671c, 10, 0x1568, 0x838);
     Func_0200674e(10, 0, 0);
-    Call1(Func_0200689c, 0x121);
+    Call1_02001b5c(Func_0200689c, 0x121);
     Func_020066d2(40);
-    Call4(Func_02006800, 0x15d80000, -1, 0x8580000, 1);
+    Call4_02001b5c(Func_02006800, 0x15d80000, -1, 0x8580000, 1);
     Call3(Func_02006722, 0, 0xcccc, 0x6666);
     Call3(Func_02006764, 0, 0x15d8, 0x858);
     Func_02006868();
@@ -560,7 +1034,7 @@ void FieldScene_RunScene371_0200281c(void)
 
     Func_02006afc();
     Func_02006bb6(55, 0, 0);
-    Call1(Func_02006bd4, 0x2642);
+    Call1_02001b5c(Func_02006bd4, 0x2642);
     Value2(Func_02006bee, *(volatile s32 *)Data_0200e79c, 0);
     Call3(Func_02006c0a, 55, 0x3000, 0);
     Func_02006b2e();
@@ -573,7 +1047,7 @@ void FieldScene_RunScene371_02002858(void)
 
     Func_02006b38();
     Func_02006cbc();
-    Call1(Func_02006c0a_a, 0x2643);
+    Call1_02001b5c(Func_02006c0a_a, 0x2643);
     Value2(Func_02006c24, *(volatile s32 *)Data_0200e79c, 0);
     Func_02006cd8();
     Call3(Func_02006b8e, 0, 0x10000, 0x8000);
@@ -593,7 +1067,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Func_02006f44(*(u8 *)((base2_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
     Func_02006fa8();
     Call2(Func_02007164, 0x10000, 0x12c);
-    Call4(Func_020070de, -1, -1, -1, 0);
+    Call4_02001b5c(Func_020070de, -1, -1, -1, 0);
     Func_02007056(5, 19);
     Func_0200705e(8, 5);
     Func_02007060(0, 0, 0);
@@ -608,7 +1082,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Func_0200701e(40);
     Func_020070d6(5, 1);
     Func_0200702c(20);
-    Call1(Func_02007102, 0x2913);
+    Call1_02001b5c(Func_02007102, 0x2913);
     Func_02007124(5, 0, 20);
     Func_020070f4(8, 2);
     Func_0200704a(20);
@@ -660,7 +1134,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Call2(Func_02007238_a, 8, 0x200d01c);
     Func_020071fe_a(20);
     Call2(Func_0200731e, 0xb333, 0x1666);
-    Call4(Func_02007334, 0x1e380000, -1, 0xdc80000, 1);
+    Call4_02001b5c(Func_02007334, 0x1e380000, -1, 0xdc80000, 1);
     Func_0200725c(5, 0x200d0a8);
     do {
         Func_020072b4(10, 6);
@@ -677,7 +1151,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Func_0200729e(20);
     Func_02007202();
     Call2(Func_020073c6, 0x10000, 0x2000);
-    Call4(Func_020073dc, 0x1e580000, -1, 0xdc80000, 1);
+    Call4_02001b5c(Func_020073dc, 0x1e580000, -1, 0xdc80000, 1);
     Call3(Func_020073b8, 9, 0x3000, 0);
     Call3(Func_0200730a, 8, 0x19999, 0xcccc);
     Call3(Func_02007314, 5, 0x19999, 0xcccc);
@@ -776,7 +1250,7 @@ void FieldScene_RunScene371_0200357c(void)
     Func_02007a4c();
     Func_020078ea(120);
     Call2(Func_02007aac, 0x16666, 0x12c);
-    Call1(Func_020078fc, 0x10e);
+    Call1_02001b5c(Func_020078fc, 0x10e);
     *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c8) = 16;
     *(u16 *)0x05000000 = 0x7fff;
     Func_02007a7e();
@@ -817,7 +1291,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         *(volatile s32 *)((s32)rec7 + 40) = rec2;
         rec7[85] = 4;
         *(u8 *)(base + 498) = 2;
-        Call1(Func_02007a16, 0x2f0);
+        Call1_02001b5c(Func_02007a16, 0x2f0);
         Call2(Func_02007a38, 0x2f8, 180);
         Func_02007a74();
         *(u16 *)((*(u8 *volatile *)Data_03001ebc + 0x17c)) = rec2;
@@ -838,16 +1312,16 @@ void FieldScene_RunLateSequence(void)
         mode = (u32)(Func_02007b20() << 2) >> 16;
         switch (mode) {
         case 0:
-            Call4(Func_02007dc4, (sx << 16) - 0x10000, -1, (sy << 16) + 0x10000, 1);
+            Call4_02001b5c(Func_02007dc4, (sx << 16) - 0x10000, -1, (sy << 16) + 0x10000, 1);
             break;
         case 1:
             Func_02007dc4((sx << 16) + 0x10000, -1, (sy << 16) - 0x10000, 1);
             break;
         case 2:
-            Call4(Func_02007dc4, (sx << 16) + 0x10000, -1, (sy << 16) + 0x10000, 1);
+            Call4_02001b5c(Func_02007dc4, (sx << 16) + 0x10000, -1, (sy << 16) + 0x10000, 1);
             break;
         case 3:
-            Call4(Func_02007dda, (sx << 16) - 0x10000, -1, (sy << 16) - 0x10000, 1);
+            Call4_02001b5c(Func_02007dda, (sx << 16) - 0x10000, -1, (sy << 16) - 0x10000, 1);
             break;
         }
     }

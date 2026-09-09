@@ -7,7 +7,8 @@
 void ScheduleCallbackAfterFrames(s32, s32);
 void Func_08097868(void);
 
-void Ui_FillBank15PaletteGrey(void) {
+void Ui_FillBank15PaletteGrey(void)
+{
     volatile s16 *p;
 
     FIELD_AT_OFFSET(*(void **)ADDR_03001E8C, s8, RENDER_MODE_OFS) = 1;

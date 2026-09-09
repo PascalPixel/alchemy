@@ -15,7 +15,7 @@ void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
         return;
     }
     flag = selector + 2496;
-    if (Func_020035de(flag) != 0) {
+    if (Func_020035de(flag)!= 0) {
         return;
     }
     if (Func_020035d8(244) == -1) {

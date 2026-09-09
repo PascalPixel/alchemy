@@ -11,7 +11,7 @@
  * popped value is the return address and the owner is `void`.
  *
  * Pool map: none.  Both arguments are built with `movs` + `lsls`, and the next
- * prologue follows immediately at 0x02004600 with no alignment halfword — so
+ * prologue follows immediately at 0x02004600 with no alignment halfword -- so
  * the boundary cannot be taken from an interval start here.
  *
  * The one call site was resolved with
@@ -20,7 +20,7 @@
  * Func_02004520.  `overlay_show`'s printed 0x2008b1a is the pc-relative
  * misreading and is not used.
  *
- * `movs r0,#216 / lsls r0,#1` builds 432 as a VALUE, not a displacement — it
+ * `movs r0,#216 / lsls r0,#1` builds 432 as a VALUE, not a displacement -- it
  * is passed straight to the callee.  The immediately following owner at
  * 0x02004600 is the same three instructions with 560 and 44, so this is one of
  * a run of named constant pairs rather than a computation.

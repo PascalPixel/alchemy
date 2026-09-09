@@ -3,7 +3,8 @@
 
 s32 UiText_DrawAt(s32, s32, s32, s32);
 
-void InventoryMenu_DrawMessage(s32 unused, s32 message) {
+void InventoryMenu_DrawMessage(s32 unused, s32 message)
+{
     struct InventoryMenuState *menu;
 
     menu = Data_03001f2c;

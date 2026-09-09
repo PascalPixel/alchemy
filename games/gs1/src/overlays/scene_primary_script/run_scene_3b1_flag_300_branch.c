@@ -28,7 +28,8 @@ extern u8 Value_00000929;
 extern u8 Value_0000093b;
 extern u8 Value_00000932;
 
-void FieldScene_RunFlag300BranchDialogue(void) {
+void FieldScene_RunFlag300BranchDialogue(void)
+{
     if (Func_02007388(0x300) != 0) {
         u8 *o = Func_020021cc();
         u8 *p;

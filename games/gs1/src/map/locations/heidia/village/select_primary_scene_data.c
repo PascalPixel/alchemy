@@ -9,7 +9,8 @@ extern u8 Data_0200e4b4[];
 extern u8 Data_0200e754[];
 extern u8 Data_0200e814[];
 
-s32 SelectPrimarySceneData(void) {
+s32 SelectPrimarySceneData(void)
+{
     s16 scene_variant = Data_02000240[224];
 
     if (scene_variant == (s32)&Value_000000a0) {

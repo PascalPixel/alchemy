@@ -1,6 +1,7 @@
 #include "script_interpreter.h"
 
-s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
+s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
+{
     const s32 *arguments;
     s32 repeat_limit;
     s32 jump_key;
@@ -16,7 +17,7 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
         repeat_count = &interpreter->repeat_count;
         next_count = *repeat_count + 1;
         *repeat_count = next_count;
-        if ((s32) (u8) next_count < (s32) (s16) repeat_limit) {
+        if ((s32)(u8)next_count < (s32)(s16)repeat_limit) {
             interpreter->cursor = Func_0800d6d8(interpreter, jump_key);
         } else {
             *repeat_count = 0;

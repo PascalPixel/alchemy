@@ -13,7 +13,8 @@ void *Func_080150d8(s32, s32, s32, s32, s32, s32);
 void Func_080a8604(s32, s32, s32);
 s32 Func_080a9cf8(s32 resource);
 
-void Menu_CreateWindowAndEntryObjects(s32 resource) {
+void Menu_CreateWindowAndEntryObjects(s32 resource)
+{
     s32 created;
     s32 handle;
     void *object;

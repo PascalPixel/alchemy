@@ -5,7 +5,8 @@
 
 void Func_08004620(s32 out);
 
-s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
+s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
+{
     s16 *dst;
     s32 n;
     u8 *src;
@@ -16,7 +17,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
     n = 0xD;
     do {
         n -= 1;
-        *dst = (s16) *src;
+        *dst = (s16)*src;
         src += 1;
         dst += 1;
     } while (n >= 0);

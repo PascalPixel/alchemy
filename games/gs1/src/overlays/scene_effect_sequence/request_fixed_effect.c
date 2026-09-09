@@ -12,7 +12,7 @@
  * prologue begins immediately at 0x02000324 with no alignment halfword
  * between, which is why the span cannot be guessed from an interval boundary.
  *
- * Pool map: none — no literal is loaded.
+ * Pool map: none -- no literal is loaded.
  *
  * Nine overlays carry a prologue at 0x0314; five are one transposed 3-D
  * distance helper (see resource_385_c_02000314.c).  This is not one of them,

@@ -40,7 +40,7 @@ void Func_0200451a();
  *
  * Call-target convention: each `bl` is named by the address its call site
  * computes.  That address is a per-call-site label for a load-time-relocated
- * import — not a place to disassemble, and NOT a global identity.  This
+ * import -- not a place to disassemble, and NOT a global identity.  This
  * owner is the cheapest proof of the second half in the whole overlay:
  * 0x0200008c and 0x020000d4 are byte-identical over their full 72 bytes
  * except for two values, the immediate 42 vs 24 at +0x26 and the pool word

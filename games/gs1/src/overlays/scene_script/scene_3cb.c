@@ -81,7 +81,7 @@ s32 Func_02002a56(void);
  *
  * Complete owner: `push {r5, lr}` prologue at 0x02000340 and the matching
  * interworking return `pop {r5} / pop {r1} / bx r1` at 0x02000380.  The popped
- * return address goes to r1, so r0 survives and IS the result — the value
+ * return address goes to r1, so r0 survives and IS the result -- the value
  * returned by the final Func_0808a020 call.
  *
  * The sixteen bytes at 0x02000388-0x02000397 are this owner's literal pool
@@ -105,21 +105,21 @@ s32 Func_02002a56(void);
  * `push` opening: it is a genuine prologue-less leaf in this overlay's own
  * image, ending in `bx lr` at 0x02000138, that copies one word of a table
  * into a slot selected by a byte lookup.  It is an ordinary call, not a
- * hidden-context target — nothing of this owner's frame or register state is
+ * hidden-context target -- nothing of this owner's frame or register state is
  * required by it beyond r0.  (It also uses r4 as unsaved call-clobbered
- * scratch, the idiom HANDOVER §0 records for this family; that is the image's
+ * scratch, the idiom HANDOVER 0 records for this family; that is the image's
  * behaviour, not a decoding error.)
  *
  * Link base: resource_3cb is linked at 0x02008000, confirmed here by the
  * handler table at the tail of games/gs1/asm/overlays/resource_3cb_overlay.s, whose
  * entries 0x02009051, 0x02008861, 0x020082d9, 0x02008341 and 0x02009159 are
  * exactly Func_02001050, Func_02000860, Func_020002d8, FieldScene_ClearFlagsAndPlayCue2927 and
- * Func_02001158 plus the Thumb bit — and Func_02001050 is byte-exact in
+ * Func_02001158 plus the Thumb bit -- and Func_02001050 is byte-exact in
  * games/gs1/asm/overlays.  Consequently the pool word 0x03001ebc here is NOT an in-image
  * address: it is the IWRAM workspace-pointer cell the rest of the overlay
  * loads directly (0x03001e70 + 76), so r5 is the workspace base.
  *
- * Behaviour: reset one workspace field and issue the fixed teardown sequence —
+ * Behaviour: reset one workspace field and issue the fixed teardown sequence --
  * a table install through Func_02000128(4), three GameFlag_Clear flag clears
  * (512, 0x203, 0x205), a Func_0808a018 barrier, cue 0x2927 through
  * Func_0808a170, Func_0808a178(8, 0), and finally Func_0808a020 whose result
@@ -150,7 +150,8 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u32 SceneState_RunQueryWithInterruptMasterSaved(void) {
+u32 SceneState_RunQueryWithInterruptMasterSaved(void)
+{
     volatile u16 *ime = (volatile u16 *)0x04000208;
     u32 saved = *ime;
     u32 ret;
@@ -164,7 +165,8 @@ u32 SceneState_RunQueryWithInterruptMasterSaved(void) {
 
 u8 *SceneData_GetTable99f0(void) { return (u8 *)0x020099f0; }
 
-s32 SceneData_SelectTable9c04ByState(void) {
+s32 SceneData_SelectTable9c04ByState(void)
+{
     s16 v = Data_02000240[225];
 
     if (v == 11 || v == 9) {
@@ -201,7 +203,6 @@ s32 FieldScene_ClearFlagsAndPlayCue2927(void)
         u16 *p = (u16 *)((u32)work + 386);
         s32 val = 0;
         *p = (u16)val;
-
     }
 
     Func_02001bf0(0x2927);

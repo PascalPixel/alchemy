@@ -6,7 +6,8 @@
 s32 *Func_02003f90(s32);
 void Func_0200367e(s32, s32, s32, s32, s32);
 
-void SceneActor_RunSlot12ColumnStep(void) {
+void SceneActor_RunSlot12ColumnStep(void)
+{
     s32 *p = Func_02003f90(12);
     if (p != NULL) {
         s32 v = p[4] >> 20;

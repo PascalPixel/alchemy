@@ -9,7 +9,7 @@ s32 Party_CountActiveOwners()
     count = 0;
     owner = 0;
     do {
-        if (GameFlag_Test(owner) != 0) {
+        if (GameFlag_Test(owner)!= 0) {
             count += 1;
         }
         owner += 1;

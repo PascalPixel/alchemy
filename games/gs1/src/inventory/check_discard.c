@@ -1,6 +1,7 @@
 #include "inventory.h"
 
-s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
+s32 Inventory_CheckDiscard(s32 owner, s32 slot)
+{
     struct OwnerInventoryState *inv = OwnerState_Get(owner);
     s32 item_id = inv->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_GetDirect(item_id);

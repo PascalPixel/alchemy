@@ -1,6 +1,7 @@
 #include "effect_runtime.h"
 
-s32 EffectRuntime_FindSlotByObject(s32 object) {
+s32 EffectRuntime_FindSlotByObject(s32 object)
+{
     s32 index;
     s32 found;
     struct EffectRuntimeSlot *slot;

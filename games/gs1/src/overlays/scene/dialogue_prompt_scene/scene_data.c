@@ -27,7 +27,8 @@ u8 *SceneData_SelectTableE1fcBySceneRangeOrFlag855(void)
     return Data_0200de30;
 }
 
-u8 *SceneData_FindEntryAtPosition(s32 *o) {
+u8 *SceneData_FindEntryAtPosition(s32 *o)
+{
     s32 x = (o[0] + (s32)0xFFC00000) >> 19;
     s32 y = (o[2] + (s32)0xFD900000) >> 19;
     u8 *e = Data_0200cf2c;

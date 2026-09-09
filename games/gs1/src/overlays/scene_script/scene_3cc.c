@@ -35,21 +35,6 @@ void Func_0200015e(s32, s32, s32);
  */
 
 /*
- * resource_3cc owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
-/*
  * resource_3cc owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
  * one-word literal pool at 0x2000040 holding 0x20081d8.
  *
@@ -144,6 +129,20 @@ u8 *SceneData_GetTable81a8(void)
     return (u8 *)0x020081a8;
 }
 
+/*
+ * resource_3cc owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
+ *
+ * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ * A leaf never does -- it saves no register and returns with `bx lr`.
+ *
+ * Complete owner: both instructions. No prologue, no stack frame, no
+ * literal pool, no callees, no argument read.
+ *
+ * One of the 70 rows sharing this exact body across the tree. The body is
+ * shared; the identity is not -- this row is bounded by ITS overlay's
+ * neighbours and published from ITS overlay's table.
+ */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -159,22 +158,26 @@ u8 *SceneData_GetTable81ec(void)
     return (u8 *)0x020081ec;
 }
 
-void SceneState_ApplyValues8And0And0Then30(void) {
+void SceneState_ApplyValues8And0And0Then30(void)
+{
     Func_02000116(8, 0, 0);
     Func_02000114(0x30);
 }
 
-void SceneState_ApplyValues9And1And0Then44(void) {
+void SceneState_ApplyValues9And1And0Then44(void)
+{
     Func_0200012e(9, 1, 0);
     Func_0200012c(0x44);
 }
 
-void SceneState_ApplyValues10And2And0Then58(void) {
+void SceneState_ApplyValues10And2And0Then58(void)
+{
     Func_02000146(0xA, 2, 0);
     Func_02000144(0x58);
 }
 
-void SceneState_ApplyValues11And3And0Then6c(void) {
+void SceneState_ApplyValues11And3And0Then6c(void)
+{
     Func_0200015e(0xB, 3, 0);
     Func_0200015c(0x6C);
 }

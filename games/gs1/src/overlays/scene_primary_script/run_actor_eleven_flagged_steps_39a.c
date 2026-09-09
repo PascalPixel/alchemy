@@ -1,5 +1,28 @@
 #include "types.h"
 
+/* Imports; the queried ones are typed for their return value. */
+void Func_02000cac();
+void Func_02000cda();
+void Func_02000d02();
+void Func_02001e78();
+s32 Func_02002e2a();
+s32 Func_02002e34();
+void Func_02002e5a();
+void Func_02002e60();
+s32 Func_02002e62();
+s32 Func_02002e62_a();
+void Func_02002e88();
+void Func_02002e88_a();
+void Func_02002e96();
+void Func_02002e9c();
+void Func_02002ea8();
+void Func_02002eb8();
+void Func_02002ebe();
+void Func_02002ec4();
+void Func_02002e08();
+void Func_02002f1a();
+void Func_02002fb2();
+
 /*
  * Resource 39a overlay scene step at 0x02000b04.
  *
@@ -25,30 +48,6 @@
  * interfaces are left open.  Declarations are old-style because one name is
  * reached with different argument counts.
  */
-
-/* Imports; the queried ones are typed for their return value. */
-void Func_02000cac();
-void Func_02000cda();
-void Func_02000d02();
-void Func_02001e78();
-s32 Func_02002e2a();
-s32 Func_02002e34();
-void Func_02002e5a();
-void Func_02002e60();
-s32 Func_02002e62();
-s32 Func_02002e62_a();
-void Func_02002e88();
-void Func_02002e88_a();
-void Func_02002e96();
-void Func_02002e9c();
-void Func_02002ea8();
-void Func_02002eb8();
-void Func_02002ebe();
-void Func_02002ec4();
-void Func_02002e08();
-void Func_02002f1a();
-void Func_02002fb2();
-
 void FieldScene_RunActorElevenFlaggedSteps(void)
 {
     Func_02002f1a((s32)0xf1);

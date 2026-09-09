@@ -36,7 +36,7 @@ void ObjectMotion_PlaceWithinCameraBounds(s32 requested_x, s32 requested_y, s32 
     minimum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF0) + object_z_offset + 0x600000;
     maximum_x = FIELD_AT_OFFSET(camera_state, s32, 0xF4) + 0xFF880000;
     maximum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF8) + object_z_offset + 0xFFC00000;
-    FIELD_AT_OFFSET(camera_state, void **, 0) = (void *) (object + 8);
+    FIELD_AT_OFFSET(camera_state, void **, 0) = (void *)(object + 8);
     Object_ResetMotion(object);
     if (position_x == -1) {
         position_x = FIELD_AT_OFFSET(object, s32, 8);

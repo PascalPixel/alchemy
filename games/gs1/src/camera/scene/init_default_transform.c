@@ -52,7 +52,8 @@ void Func_08004c1c(s32);
 void Func_08004bd4(s32);
 void Func_080072f0(struct Local_080b7f9c *, struct State_080b7f9c *);
 
-void Camera_InitDefaultTransform(void) {
+void Camera_InitDefaultTransform(void)
+{
     struct State_080b7f9c *state = Data_03001e80;
     struct Local_080b7f9c transfer;
 

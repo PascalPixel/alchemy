@@ -3,7 +3,8 @@
 void Func_020000f6(void *, s32);
 void *Func_02004e8e(s32, s32, s32, s32);
 
-void *OverlayObject_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void *OverlayObject_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
     void *object;
     u8 *rec;
     s32 flags;

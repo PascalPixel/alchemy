@@ -100,7 +100,7 @@ found:
     if (advance_count != 0) {
         s32 step = Data_020096c0[direction];
         s32 step_x = step & 0xffff0000;
-        s32 offset_x = step_x * advance_count;
+        s32 offset_x = step_x *advance_count;
         s32 offset_z = (step << 16) * advance_count;
         u8 *actor_bytes = actor;
         search[2] = *(s32 *)(actor_bytes + 8) + offset_x;

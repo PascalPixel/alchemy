@@ -36,7 +36,8 @@ void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 extern char Value_00000927;
 
-s32 BattleEffect_RunEventAction(void *arg0, s32 arg1, s32 arg2) {
+s32 BattleEffect_RunEventAction(void *arg0, s32 arg1, s32 arg2)
+{
     s32 resource;
 
     if (arg0 != NULL) {

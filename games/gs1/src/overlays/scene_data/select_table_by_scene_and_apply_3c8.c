@@ -25,18 +25,18 @@ u8 *SceneData_SelectTableBySceneAndApply(void)
 
     tbl = Data_02000240;
     v = tbl[224];
-    if (v == (s32) (u32) &Value_000000b5) {
+    if (v == (s32)(u32)&Value_000000b5) {
         return Data_0200e904;
     }
-    if (v == (s32) (u32) &Value_000000b6) {
+    if (v == (s32)(u32)&Value_000000b6) {
         ret = Data_0200e9c4;
-    } else if (v == (s32) (u32) &Value_000000b7) {
+    } else if (v == (s32)(u32)&Value_000000b7) {
         ret = Data_0200eb74;
-    } else if (v == (s32) (u32) &Value_000000b8) {
+    } else if (v == (s32)(u32)&Value_000000b8) {
         ret = Data_0200ec04;
-    } else if (v == (s32) (u32) &Value_000000b9) {
+    } else if (v == (s32)(u32)&Value_000000b9) {
         ret = Data_0200ec64;
-    } else if (v == (s32) (u32) &Value_000000ba) {
+    } else if (v == (s32)(u32)&Value_000000ba) {
         ret = Data_0200ecf4;
     } else {
         goto no_match;

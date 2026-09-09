@@ -65,7 +65,7 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
         Func_0200b89e(&frame.packedB, recordB);
 
     /*
-     * `ldr r3,[r4,#4]; eors r3,r2(=1); str r3,[r4,#4]` — the sign word of the
+     * `ldr r3,[r4,#4]; eors r3,r2(=1); str r3,[r4,#4]` -- the sign word of the
      * unpacked second operand is toggled, turning the shared addition core
      * into a subtraction.  This is the only difference from the sibling at
      * 0x02005a40.

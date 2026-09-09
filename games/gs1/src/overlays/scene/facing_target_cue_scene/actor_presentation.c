@@ -16,7 +16,8 @@ s32 Func_02001cb2(s32, s32);
 void Func_02002c44(s32, s32, s32, s32, s32, s32);
 void Func_02002c76(s32, s32, s32, s32, s32, s32);
 
-void SceneDialogue_RunActorFourteenDialogue11AA(void) {
+void SceneDialogue_RunActorFourteenDialogue11AA(void)
+{
     void *work;
 
     Func_02001b94();
@@ -27,7 +28,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void) {
         Func_02001c88(0xE, 0);
     } else {
         work = *(void **)0x03001EBC;
-        FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16) (FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
+        FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
         Func_02001cb2(0xE, 0);
     }
     Func_02001be6();

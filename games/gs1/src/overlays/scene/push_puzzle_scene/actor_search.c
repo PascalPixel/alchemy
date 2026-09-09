@@ -3,7 +3,8 @@
 #define SceneActor_FindAtTileXZ Func_02000d80
 extern u8 *Data_03001ebc;
 
-s32 *SceneActor_FindAtTileXZ(s32 x, s32 z) {
+s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
+{
     s32 **tbl = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 

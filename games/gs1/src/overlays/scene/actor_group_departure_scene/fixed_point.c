@@ -15,7 +15,8 @@ struct FixedPointCountdown {
 u32 Func_020046fa(u32 value, u32 divisor);
 u32 Func_02004714(void);
 
-s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state) {
+s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
+{
     switch (state->countdown) {
     case 6:
         state->fixed_point_18 += (s32) 0xFFFFC000;
@@ -32,7 +33,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state) {
     case 0:
         state->fixed_point_18 = 0x10000;
         state->fixed_point_1c = 0x10000;
-        state->countdown = (s16) (UnsignedRemainder(NextRandomValue(), 90) + 60);
+        state->countdown = (s16)(UnsignedRemainder(NextRandomValue(), 90) + 60);
         break;
     }
     state->countdown--;

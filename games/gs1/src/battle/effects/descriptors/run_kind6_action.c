@@ -8,7 +8,8 @@ void Func_08091750(void);
 void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 
-s32 BattleEffect_RunKind6DescriptorAction(s32 arg0) {
+s32 BattleEffect_RunKind6DescriptorAction(s32 arg0)
+{
     s32 val;
     s32 ret;
     void *p;

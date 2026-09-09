@@ -21,7 +21,7 @@
  * 23 shares an arm with 4 while 22 does not, and the 15/17/19 arm skips 16,
  * 18 and 20 -- read entry by entry.
  *
- * Case-arm ORDER off the ROM (§5b5); per-site RAW callee names (§5b3a).
+ * Case-arm ORDER off the ROM (5b5); per-site RAW callee names (5b3a).
  *
  * 2208 is `movs r0, #138 ; lsls r0, #4` in the reference, so it is written as
  * the plain literal; 0x928 and 0x93e cannot be synthesised that way and are

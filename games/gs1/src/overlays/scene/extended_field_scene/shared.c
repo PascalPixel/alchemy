@@ -8,11 +8,13 @@ void Func_02004a44(s32, s32);
 void Func_0200496a(s32);
 void Func_02004dac(void);
 
-void FieldScene_RunSplitPairSteps(s32 a, s32 b) {
+void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+{
     Func_02004a44(a, 0);
     Func_0200496a(b);
 }
 
-void FieldScene_Forward4dac(void) {
+void FieldScene_Forward4dac(void)
+{
     Func_02004dac();
 }

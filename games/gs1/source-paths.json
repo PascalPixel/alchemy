@@ -1,6 +1,8 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c9:02002360": {"name": "FieldScene_RunPairedActorEffectSequence"},
+    "resource_381:02001410": {"name": "FieldScene_RunExtendedEffectPresentation"},
     "resource_38f:020008ec": {"name": "FieldScene_RunExtendedActorSequence"},
     "resource_391:02000d3c": {"name": "FieldScene_RunBranchingFormationPresentation"},
     "resource_3bd:020013f8": {"name": "FieldScene_RunExtendedActorPresentation"},
@@ -7472,7 +7474,7 @@
       "source": "overlays/scene_script/timed_actor_events.c"
     },
     "resource_373:020015dc": {
-      "name": "FieldScene_RunScriptedActorSequence"
+      "name": "FieldScene_RunActorMotionPresentation"
     },
     "resource_3c6:02000218": {
       "name": "FieldScene_RunPrimarySequence",

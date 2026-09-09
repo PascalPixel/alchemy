@@ -9,23 +9,23 @@ void ObjectDispatch_ApplyValueToKind200Children(int arg0)
   void *child;
   void *rec;
   void *obj;
-  obj = *((void **) ADDR_03001E64);
+  obj = *((void **)ADDR_03001E64);
   cnt = 0x3F;
   do
   {
     if (1)
     {
-      if ((*((s32 *) (((u8 *) obj) + 0))) != 0)
+      if ((*((s32 *)(((u8 *)obj) + 0))) != 0)
       {
-        kind = *(p = (u8 *) (((u8 *) obj) + 0x54));
+        kind = *(p = (u8 *)(((u8 *)obj) + 0x54));
         if (kind == 1)
         {
-          child = *((void **) (((u8 *) obj) + 0x50));
-          rec = *((void **) (((u8 *) child) + 0x28));
-          if ((*((s16 *) (((u8 *) rec) + 0))) == 0xC8)
+          child = *((void **)(((u8 *)obj) + 0x50));
+          rec = *((void **)(((u8 *)child) + 0x28));
+          if ((*((s16 *)(((u8 *)rec) + 0))) == 0xC8)
           {
-            *((s8 *) (((u8 *) rec) + 5)) = arg0;
-            *((u8 *) (((u8 *) child) + 0x25)) = kind;
+            *((s8 *)(((u8 *)rec) + 5)) = arg0;
+            *((u8 *)(((u8 *)child) + 0x25)) = kind;
           }
         }
       }

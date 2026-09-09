@@ -607,7 +607,8 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-void RunScene59Sequence(void) {
+void RunScene59Sequence(void)
+{
     s32 actor9_fixed_y;
     void *actor_one_record;
     void *scene_counter_initial;
@@ -736,10 +737,10 @@ void RunScene59Sequence(void) {
         Call2(Func_02005660, 1, 2);
         Call3(Func_020056a2, 1, 0, 0x14);
         scene_counter_initial = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_initial) = (u16) (SCENE_SKIP_COUNT(scene_counter_initial) + 1);
+        SCENE_SKIP_COUNT(scene_counter_initial) = (u16)(SCENE_SKIP_COUNT(scene_counter_initial) + 1);
     } else {
         scene_counter_initial_alt = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_initial_alt) = (u16) (SCENE_SKIP_COUNT(scene_counter_initial_alt) + 1);
+        SCENE_SKIP_COUNT(scene_counter_initial_alt) = (u16)(SCENE_SKIP_COUNT(scene_counter_initial_alt) + 1);
         Call2(Func_020056a8, 1, 1);
         Call3(Func_020056ea, 1, 0, 0x14);
     }
@@ -848,13 +849,13 @@ void RunScene59Sequence(void) {
         Call1(Func_0200597c, 0x1E);
         Call2(Func_02005a2c, 0x18, 0);
         scene_counter_first_a = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_first_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_first_a) + 1);
+        SCENE_SKIP_COUNT(scene_counter_first_a) = (u16)(SCENE_SKIP_COUNT(scene_counter_first_a) + 1);
     } else {
         Call1(Func_020059a4, 0x1E);
         /* This branch needs its own workspace load; stale register contents
          * are not a valid C dependency. */
         scene_counter_first_b = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_first_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_first_b) + 1);
+        SCENE_SKIP_COUNT(scene_counter_first_b) = (u16)(SCENE_SKIP_COUNT(scene_counter_first_b) + 1);
         Call2(Func_02005a64, 0x18, 0);
     }
     Call1(Func_020059c2, 0x14);
@@ -963,10 +964,10 @@ void RunScene59Sequence(void) {
             Func_02005d76_a(0x14);
             Call3(Func_02005e30, 0x16, 0, 0x14);
             scene_counter_system_a = FIELD(scene_system_cell, void **, 0x4C);
-            SCENE_SKIP_COUNT(scene_counter_system_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_a) + 1);
+            SCENE_SKIP_COUNT(scene_counter_system_a) = (u16)(SCENE_SKIP_COUNT(scene_counter_system_a) + 1);
         } else {
             scene_counter_system_b = FIELD(scene_system_cell, void **, 0x4C);
-            SCENE_SKIP_COUNT(scene_counter_system_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_b) + 1);
+            SCENE_SKIP_COUNT(scene_counter_system_b) = (u16)(SCENE_SKIP_COUNT(scene_counter_system_b) + 1);
             Call1(Func_02005db6, 0x14);
             Call3(Func_02005e70, 0x16, 0, 0x14);
         }
@@ -985,10 +986,10 @@ void RunScene59Sequence(void) {
         Func_02005e28_a(0x14);
         Call3(Func_02005ee2, 0x18, 0, 0x14);
         scene_counter_mid_a = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_mid_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_mid_a) + 1);
+        SCENE_SKIP_COUNT(scene_counter_mid_a) = (u16)(SCENE_SKIP_COUNT(scene_counter_mid_a) + 1);
     } else {
         scene_counter_mid_b = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_mid_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_mid_b) + 1);
+        SCENE_SKIP_COUNT(scene_counter_mid_b) = (u16)(SCENE_SKIP_COUNT(scene_counter_mid_b) + 1);
         Call1(Func_02005e5a, 0x14);
         Call2(Func_02005eda, 0x18, 1);
         Call1(Func_02005e68, 0x14);
@@ -1016,10 +1017,10 @@ void RunScene59Sequence(void) {
         Call1(Func_02005f22_a, 0x14);
         Call3(Func_02005fdc, 0x18, 0, 0x14);
         scene_counter_later_a = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_later_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_later_a) + 1);
+        SCENE_SKIP_COUNT(scene_counter_later_a) = (u16)(SCENE_SKIP_COUNT(scene_counter_later_a) + 1);
     } else {
         scene_counter_later_b = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_later_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_later_b) + 1);
+        SCENE_SKIP_COUNT(scene_counter_later_b) = (u16)(SCENE_SKIP_COUNT(scene_counter_later_b) + 1);
         Call2(Func_02005fbe, 0x18, 4);
         Call1(Func_02005f5c, 0x14);
         Call3(Func_02006016, 0x18, 0, 0x14);
@@ -1073,10 +1074,10 @@ void RunScene59Sequence(void) {
         Call1(Func_02006108_a, 0x14);
         Call3(Func_020061c2, 2, 0, 0x14);
         scene_counter_final_a = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_final_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_final_a) + 1);
+        SCENE_SKIP_COUNT(scene_counter_final_a) = (u16)(SCENE_SKIP_COUNT(scene_counter_final_a) + 1);
     } else {
         scene_counter_final_b = Data_03001ebc;
-        SCENE_SKIP_COUNT(scene_counter_final_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_final_b) + 1);
+        SCENE_SKIP_COUNT(scene_counter_final_b) = (u16)(SCENE_SKIP_COUNT(scene_counter_final_b) + 1);
         Call2(Func_020061c6, 2, 2);
         Call1(Func_02006154, 0x14);
         Call3(Func_0200620e, 2, 0, 0x14);
@@ -1104,7 +1105,7 @@ void RunScene59Sequence(void) {
     Call3(Func_0200626e, 3, 0x148, 0xD8);
     Call3(Func_020062ea, 2, 0xA000, 0);
     actor_one_record = Value1(Func_02006258, 1);
-    FIELD(actor_one_record, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor_one_record, u8 *, 0x5A));
+    FIELD(actor_one_record, u8 *, 0x5A) = (u8)(0xFE & FIELD(actor_one_record, u8 *, 0x5A));
     Call3(Func_0200628e, 1, 0x138, 0xC8);
     Call3(Func_0200629a, 3, 0x118, 0xD8);
     Call1(Func_020062b0, 1);

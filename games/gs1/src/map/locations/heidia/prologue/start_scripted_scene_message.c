@@ -7,7 +7,8 @@ extern void Func_02004058(s32 arg0, s32 arg1);
 extern s32 Func_02003fe0(s32 arg0, s32 arg1);
 extern void Func_02003fdc(void);
 
-void StartScriptedSceneMessage(s32 message_id) {
+void StartScriptedSceneMessage(s32 message_id)
+{
     Func_02003fb0_a(message_id);
     Func_02004002(8, 0, 0);
     Func_02003fb0_b(4055);

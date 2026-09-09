@@ -7,10 +7,11 @@ void Func_080984c0(void);
 void MapEvent_RunTileTriggerSequence(void);
 void FieldEvent_ShowStatusMessage(void);
 
-void FieldEvent_RunTypeHandler(void) {
+void FieldEvent_RunTypeHandler(void)
+{
     u32 type;
 
-    type = (s16) FIELD_AT_OFFSET(*(void **)ADDR_03001F30, s16 *, 0x1E);
+    type = (s16)FIELD_AT_OFFSET(*(void **)ADDR_03001F30, s16 *, 0x1E);
     switch (type) {
     case 8:
         Func_080984c0();

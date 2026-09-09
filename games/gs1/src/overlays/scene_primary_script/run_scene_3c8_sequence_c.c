@@ -75,7 +75,7 @@ void FieldScene_RunScene3c8SequenceC(void)
     {
         u8 *record = Func_02006074(0);
         u8 value = *(volatile u8 *)&record[90];
-    
+
         record[90] = (u8)(value | 1);
     }
     Func_02006064(20);

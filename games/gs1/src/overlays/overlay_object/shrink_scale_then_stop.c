@@ -1,6 +1,7 @@
 #include "types.h"
 
-s32 OverlayObject_ShrinkScaleThenStop(u8 *o) {
+s32 OverlayObject_ShrinkScaleThenStop(u8 *o)
+{
     u8 *t = *(u8 **)(o + 0x50);
 
     t[9] |= 12;

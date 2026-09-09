@@ -4,7 +4,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase) {
+void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
+{
     s32 i;
     struct Object080a9bd8 *obj;
     struct Object080a9bd8 **tbl;

@@ -6,7 +6,8 @@ s32 Func_08028574(s32);
 void Menu_AppendResourceEntry(s32 arg0);
 s32 Func_08028808(s32, s32, s32);
 
-s32 Menu_SelectEntry11To14(s32 arg0) {
+s32 Menu_SelectEntry11To14(s32 arg0)
+{
     s32 ret;
 
     Func_080284dc();

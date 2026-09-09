@@ -9,7 +9,7 @@ struct PcmDmaState {
 void AudioEngine_EnablePcmDma(void)
 {
     struct PcmDmaState *audio =
-        *(struct PcmDmaState * volatile *)0x03007ff0;
+        *(struct PcmDmaState *volatile *)0x03007ff0;
     u32 ident = audio->ident;
 
     if (ident != 0x68736d53) {

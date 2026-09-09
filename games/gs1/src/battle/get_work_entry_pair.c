@@ -17,7 +17,7 @@ struct Output_080b7eb4 {
     s32 second;
 };
 
-extern struct State_080b7eb4 * volatile Data_03001e74;
+extern struct State_080b7eb4 *volatile Data_03001e74;
 
 s32 Battle_GetWorkEntryPair(s32 no, struct Output_080b7eb4 *out)
 {

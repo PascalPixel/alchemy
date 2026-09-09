@@ -60,7 +60,6 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-
 void Func_02003864(s32 a0, s32 a1, s32 a2)
 {
     s32 p8;

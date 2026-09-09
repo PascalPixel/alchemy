@@ -35,7 +35,7 @@ void BlendTransition_Update(void)
             level = Data_03001ca8;
             delta = Data_03001aec - Data_03001ca8;
             step = *remaining;
-            level += Func_080022ec(delta * step, Data_03001c98);
+            level += Func_080022ec(delta *step, Data_03001c98);
             *(volatile u16 *)0x04000054 = level;
             if (*remaining == 0)
                 Data_03001c98 = 0;

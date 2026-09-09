@@ -4,7 +4,8 @@
 
 extern u8 Data_080c7420[];
 
-u32 Battle_GetEntryField2HighBits(u32 no) {
+u32 Battle_GetEntryField2HighBits(u32 no)
+{
     u32 bits;
     u32 ret;
     u8 *tbl;

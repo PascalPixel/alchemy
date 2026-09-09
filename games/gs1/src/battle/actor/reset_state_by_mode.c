@@ -5,7 +5,8 @@ void Func_08077128(s32);
 u8 *Item_GetData(u16);
 void BattleUnit_Recalculate(s32);
 
-void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
+void BattleUnit_ResetStateByMode(s32 id, s32 mode)
+{
     u8 *state;
 
     state = Runtime_GetObject(id);

@@ -1,50 +1,9 @@
 #include "types.h"
 
-/*
- * resource_3bb owner at 0x02003cf8, 160 bytes (0x02003cf8-0x02003d97):
- * 150 bytes of code, two alignment bytes at 0x02003d8e, and the two-word
- * literal pool at 0x02003d90.
- *
- * Prologue `push {r5, r6, r7, lr} / mov r7, r8 / push {r7} / sub sp, #12` at
- * 0x02003cf8; epilogue `add sp, #12 / pop {r3} / mov r8, r3 /
- * pop {r5, r6, r7} / pop {r1} / bx r1`.  The interworking return pops into r1,
- * not r0, so r0 survives the epilogue and IS the result: this owner returns
- * the value of its last Func_02003b48 call.
- *
- * All five `bl` sites are placed and reach three distinct callees, matching
- * the inventory row's calls=5.  Targets come from
- * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored displacement + 2),
- * never from the disassembler's annotations: 0x3f50 -> Scene_GetRecord,
- * 0x3dc8 -> Func_08000128 (twice), and this overlay's own Func_02003b48
- * (twice), whose byte-exact source is games/gs1/asm/overlays/resource_3bb_c_02003b48.c.
- *
- * That byte-exact sibling settles the interface: Func_02003b48 takes one
- * argument, the three-word position below, and returns the occupying slot
- * pointer or 0.  Both call sites here also load r1 with the record pointer;
- * since the callee's own reconstructed source takes a single parameter, the
- * extra register is not asserted as an argument.  Its result is what decides
- * whether the second probe runs and what this owner returns.
- *
- * The pool word 0x02000240 is below this overlay's 0x02008000 link base (base
- * witnessed by 0x02008715 = Func_02000714 + 1 in the byte-exact sibling
- * games/gs1/asm/overlays/resource_3bb_c_02000950.c), so it is a RAM global.  The scaled
- * index is built as 250 << 1 = 500, giving the same word at 0x02000434 that
- * Func_020002e8 reads.
- *
- * Shape: take the active subject's record, derive its facing as
- * `(record halfword at +6 + 0x2000) & 0xc000` - the biased quadrant, with no
- * sign extension here - then probe one step ahead at 0x100000 and, if nothing
- * occupies it, one step further at 0x200000.  Each probe rounds the record's
- * x and z words down to whole units (`& 0xfff00000`) and re-centres them by
- * half a unit (0x80000) while carrying y through unrounded.
- *
- * Uncertainties: only the record fields at +6 (halfword), +8, +12 and +16 are
- * asserted.  r8 merely caches the 0xfff00000 mask across the first call and
- * carries no other value.
- */
-
 /* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
+ * Old-style declarations: arities vary between call sites in this overlay.
+ * The occupancy lookups take the position block; the record pointer the call
+ * sites also pass is not asserted as an argument. */
 u8 *Func_02007c5c();
 void Func_02007b0e();
 s32 *Func_02007896();
@@ -53,13 +12,20 @@ s32 *Func_020078c8();
 
 extern s16 Data_02000240[];
 
+/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
 } ActiveSubjectSlot;
 
-/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
-
+/*
+ * Probe the two cells ahead of the active subject and return what occupies the
+ * nearer one, else the further one, else zero. The 160-byte owner includes its
+ * alignment bytes and two-word literal pool. Facing is the biased quadrant of
+ * the halfword at +6, with no sign extension; each probe rounds x and z down to
+ * whole units and re-centres them by half a unit, carrying y unrounded. Only
+ * the record fields at +6, +8, +12 and +16 are asserted.
+ */
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {
     u8 *record;

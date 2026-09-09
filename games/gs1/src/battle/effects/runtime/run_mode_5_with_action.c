@@ -7,7 +7,8 @@ s32 Object_SetMode(s32, s32);
 s32 Object_SetAction(s32, s32);
 s32 Func_080dea70(void *, s32);
 
-void BattleEffect_RunMode5WithAction(void *effect) {
+void BattleEffect_RunMode5WithAction(void *effect)
+{
     s32 object;
 
     object =

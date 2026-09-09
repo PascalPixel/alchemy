@@ -6,7 +6,8 @@
 s32 Object_SetMode(void *, s32);
 s32 Object_ResetMotion();
 
-void Object_ResetTargetAndSetMode1(void) {
+void Object_ResetTargetAndSetMode1(void)
+{
     void *temp_r0;
 
     temp_r0 = ObjectTable_Get();

@@ -2,6 +2,7 @@
 
 const u16 *Djinn_GetDefinition();
 
-u16 Djinn_GetDefinitionHeader(void) {
+u16 Djinn_GetDefinitionHeader(void)
+{
     return *Djinn_GetDefinition();
 }

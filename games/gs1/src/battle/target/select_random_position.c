@@ -5,7 +5,6 @@
 
 struct SlotArray { s16 items[64]; };
 
-
 s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 {
     u16 positions[6];

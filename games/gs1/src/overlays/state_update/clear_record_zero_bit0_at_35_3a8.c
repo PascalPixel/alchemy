@@ -2,7 +2,8 @@
 
 extern s32 Func_0200521a(s32);
 
-void SceneState_ClearRecordZeroBit0At35(void) {
+void SceneState_ClearRecordZeroBit0At35(void)
+{
     u8 *p;
     s32 v;
 

@@ -9,7 +9,8 @@ void Func_08002dd8(s32);
 void WaitFrames(u32);
 extern u8 Data_08028195;
 
-void Menu_EndResourceSelection(void) {
+void Menu_EndResourceSelection(void)
+{
     struct Work *child;
     s32 i;
     u16 *entry;

@@ -4,7 +4,8 @@ extern s32 Func_0200528c();
 extern void Func_0200526c();
 extern void Func_02005282();
 
-void ActorPresentation_SetSceneCellByFlag985(void) {
+void ActorPresentation_SetSceneCellByFlag985(void)
+{
     if (Func_0200528c(0x985) == 0) {
         s32 k5 = 17, k6 = 78;
 

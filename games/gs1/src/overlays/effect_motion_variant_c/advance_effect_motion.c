@@ -1,21 +1,7 @@
 #include "types.h"
 
 /*
- * resource_3c8 owner at 0x0200096c, 90 bytes.
- *
- * The per-frame integrator for an effect record: it adds the +68/+72/+76
- * velocity into the +8/+12/+16 position, decays two of the three velocities,
- * accumulates the two rates at +48/+52 into +24/+28, and advances the sprite's
- * angle by the record's per-frame step.
- *
- * The record layout is the one established by resource_3c8_c_02000ae8.c, whose
- * comment names this shape directly: "a leaf routine that adds the +68/+72/+76
- * velocity into the +8/+12/+16 position".  The three position words at +8, +12
- * and +16 fall inside that source's leading pad and are named here.
- *
- * `velocity_z -= velocity_z / 16` is spelled as a signed divide: the reference
- * biases by 15 when the value is negative and then arithmetic-shifts by 4,
- * which is what the compiler emits for a division by a power of two.
+ * Per-frame motion for an effect record in resource_3c8.
  */
 
 struct Sprite {
@@ -49,16 +35,26 @@ struct Effect {
     u32 callback;
 };
 
-/* Relocated IWRAM helper: turns a value and a duration into a per-frame step. */
+/*
+ * Alias for a loader-relocated call word into IWRAM, not a runtime address.
+ * It turns a value and a duration into a per-frame step.
+ */
 s32 Func_0200572a();
 
+/*
+ * Owner at 0x0200096c.  Add the velocity at +68/+72/+76 into the position at
+ * +8/+12/+16, decay the X and Z velocities, accumulate the rates at +48/+52
+ * into +24/+28, and advance the sprite angle by the record's step.  The Z
+ * decay must stay written as a signed divide by 16 -- the negative bias and
+ * arithmetic shift are what that division compiles to.
+ */
 void Func_0200096c(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* Macro-shaped block keeps the following Z load after the Y store. */
+    /* The block keeps the Z load after the Y store. */
     do {
         velocity_x = effect->velocity[0];
         effect->position[0] += velocity_x;

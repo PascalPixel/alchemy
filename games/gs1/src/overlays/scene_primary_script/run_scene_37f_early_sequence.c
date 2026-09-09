@@ -129,7 +129,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
     if (GameFlag_IsSet_1(3842) == 0) {
     } else {
-        if (GameFlag_IsSet_2(GATE_ID) != 0) {
+        if (GameFlag_IsSet_2(GATE_ID)!= 0) {
         } else {
             BattleRuntime_Reset_1();
             Value0(Func_020020fe);

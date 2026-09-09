@@ -18,7 +18,8 @@ extern struct State_080173f4 *Data_03001e8c;
 s32 Resource_CopyData(s32, s32, s32);
 void ScheduleCallbackAfterFrames(void *, s32);
 
-void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
+void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
+{
     struct State_080173f4 *state = Data_03001e8c;
     s32 size;
 

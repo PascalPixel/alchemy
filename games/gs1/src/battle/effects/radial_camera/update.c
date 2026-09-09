@@ -65,7 +65,7 @@ top:
         effect->flag = state;
         goto advance;
     } else if (state == 1) {
-        if (EffectSlot_HasReachedTarget(effect) != 0)
+        if (EffectSlot_HasReachedTarget(effect)!= 0)
             return;
         *state_pointer = (u8)*state_pointer + 1;
         goto top;

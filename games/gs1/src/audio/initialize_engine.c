@@ -87,7 +87,7 @@ void AudioEngine_Initialize(struct AudioEngineState *audio)
     *(volatile u32 *)0x040000c8 = (u32)audio->pcm_buffers[1];
     *(volatile u32 *)0x040000cc = 0x040000a4;
 
-    *(struct AudioEngineState * volatile *)0x03007ff0 = audio;
+    *(struct AudioEngineState *volatile *)0x03007ff0 = audio;
     zero = 0;
     Func_08006864(
         &zero,

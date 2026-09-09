@@ -9,7 +9,8 @@ extern s32 Func_08028574(s32);
 extern void Func_0802851c(void);
 extern s8 Data_0803740f[];
 
-s32 Menu_SelectSaveSlotAction(void) {
+s32 Menu_SelectSaveSlotAction(void)
+{
     s32 type;
     s32 ret;
     s32 initial;

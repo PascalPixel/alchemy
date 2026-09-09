@@ -5,7 +5,7 @@ struct State_080108c4 {
     u16 flags;
 };
 
-extern struct State_080108c4 * volatile Data_03001e70;
+extern struct State_080108c4 *volatile Data_03001e70;
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {

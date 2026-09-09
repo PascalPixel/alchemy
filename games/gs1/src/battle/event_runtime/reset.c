@@ -1,6 +1,7 @@
 #include "runtime_1e74.h"
 
-void BattleEventRuntime_Reset(void) {
+void BattleEventRuntime_Reset(void)
+{
     struct Runtime1e74 *runtime;
 
     runtime = Runtime1e74_Get();

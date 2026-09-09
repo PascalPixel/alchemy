@@ -12,7 +12,8 @@ extern void Func_020053f8(s32);
 extern s32 Func_02005406(s32);
 extern void Func_02003842(void);
 
-void SceneState_CheckFlags941And940(void) {
+void SceneState_CheckFlags941And940(void)
+{
     if (Func_020053c2(0x941) != 0) {
         Func_020053d4(0x321);
         Func_020053da(0x913);

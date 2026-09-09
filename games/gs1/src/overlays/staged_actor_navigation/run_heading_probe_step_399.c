@@ -2,48 +2,8 @@
 
 #define NULL ((void *)0)
 
-/*
- * resource_399 owner at 0x02001fa4, 452 bytes: the overlay's pathing step.
- *
- * Complete owner: the two-stage 'push {r5, r6, r7, lr}' / high-register push
- * prologue with 'sub sp, #20', and the matching
- * 'add sp, #20 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0'.  r0 holds the
- * popped return address, so nothing is returned.  Six pool words follow the
- * return and are data.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_39a_c_02002094.c.  The two owners
- * are the same routine shared verbatim: over all 226 halfwords they differ in
- * 22 places, 20 of which are the halves of the ten BL pairs and two of which are
- * the low halves of pool words.
- *
- * What was changed:
- *  - the heading table 0x0200a464 becomes 0x0200a430 (file offset 0x2430 under
- *    the 0x02008000 link base);
- *  - the installed per-frame callback 0x0200a015 becomes 0x02009f25, i.e. this
- *    overlay's own routine at file offset 0x1f24 plus the Thumb bit.  That
- *    offset does open a function ('push {r5, lr}', 0xb520), which is an
- *    independent check on the base and on the pointer's meaning;
- *  - all 20 calls were re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_399 1fa4': 20 sites over 11 distinct veneers, the same targets
- *    with the same multiplicities and in the same site order as resource_39a.
- *    The 39a source predates the corrected 'bl' rule and named the imports by
- *    their (wrongly decoded) displacements, which both split single imports
- *    across many names and merged two distinct ones under Func_02004406.  The
- *    corrected resolution is used here and it groups the calls sensibly: the
- *    three marker lookups are one import (0x080091b0), the two height probes
- *    another (0x080091a8), the three placements a third (0x08009150), and the
- *    2-argument site the 39a source shared with the 3-argument marker lookup is
- *    a genuinely different import (0x08009080).
- *
- * Frame map: sp+0 holds the goal marker, sp+4 the heading, and sp+8..sp+19 the
- * three-word probe position handed to the stepping imports by address.
- * The witnessed x/z assignment order plus the inline stepping wrapper leave
- * only one independent high-register-copy/ALU pair; the already-supported
- * -fthumb-high-move-before-alu mode closes that pair byte-exactly.
- */
-
-/* In-image table at 0x02008000 + 0x2430; 0x02000240 is below the link base
- * and is a resident table whose word at byte offset 500 selects the subject. */
+/* Data_0200a430 is this overlay's heading table.  Data_02000240 is a resident
+ * table; its word at byte offset 500 selects the subject. */
 extern s16 Data_0200a430[];
 struct SharedData_02000240 {
     u8 pad_000[500];
@@ -71,12 +31,12 @@ struct Subject_02001fa4 {
     void *callback;
 };
 
-/* The installed callback, named by its in-image address. */
+/* The per-frame callback installed on the subject, named by its address. */
 extern void Func_02009f24();
 
-/* Imports, named by the main-image address their veneer publishes.  Old-style
- * declarations are mandatory: 0x08009080 is reached with two arguments here
- * while its siblings take three or four. */
+/* Imports named by their relocated call words.  Old-style declarations are
+ * mandatory: one of these imports is reached with two arguments here while its
+ * other sites pass three or four. */
 struct Subject_02001fa4 *Func_02004358();
 void Func_02004212();
 s32 Func_0200420c();
@@ -100,19 +60,20 @@ void Func_02004370();
 
 static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
 {
-    /* Keep this call as an inline boundary: GCC then rematerializes sp+8 for
-     * argument 2 before completing the split 0x100000 constant, as in ROM. */
+    /* Keep this call behind an inline boundary: the third argument's address is
+     * then rematerialized before the split 0x100000 constant is completed. */
     Func_02004278((s32)0x100000, heading, probe);
 }
-                         /* subject record by table selector */
 
-                         /* tile marker at (x, z) */
-                         /* advance the probe block one step along a heading */
-                         /* tile height at (x, z) */
-                         /* place the subject at (x, y, z) */
-
-                         /* commit the placement */
-
+/*
+ * The overlay's pathing step for resource_399.  The six pool words after the
+ * return belong to this owner.
+ *
+ * Frame map: the goal marker, then the heading, then the three-word probe
+ * position that the stepping imports are handed by address.  The order of the x
+ * and z assignments, together with the inline stepping wrapper, is what leaves
+ * a single high-register copy before the arithmetic that follows it.
+ */
 void StagedActor_RunHeadingProbeStep(void)
 {
     struct Subject_02001fa4 *subject;
@@ -128,15 +89,15 @@ void StagedActor_RunHeadingProbeStep(void)
 
     for (;;) {
         heading = Data_0200a430[(Data_03001ae8 >> 4) & 15];
-        /* The test is on heading << 16 against 0xffff0000, i.e. the signed
-         * halfword -1 meaning "no heading". */
+        /* The test is on heading << 16 against 0xffff0000, that is on the
+         * signed halfword -1, which means "no heading". */
         if ((heading << 16) == (s32)0xffff0000) {
             return;
         }
-        /* No argument register is written before this branch. */
+        /* Nothing is placed in an argument register before this call. */
         Func_02004212();
 
-        /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
+        /* The 0x80000 bias is built from an immediate and a shift. */
         probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
         probe[1] = subject->y;
         probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
@@ -145,7 +106,7 @@ void StagedActor_RunHeadingProbeStep(void)
         p = (u8 *)subject;
         p += 34;
         goal = Func_0200420c((s32)*p, x, z);
-        /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
+        /* 0x100000 is built from an immediate and a shift.  The probe block is
          * passed by address and is advanced by the callee. */
         Func_020041ba((s32)0x100000, heading, probe);
 
@@ -157,7 +118,7 @@ void StagedActor_RunHeadingProbeStep(void)
             goto tail;
         }
 
-        /* Rewind the probe to the position it held before 0x02004392. */
+        /* Rewind the probe to the position it held before the step above. */
         probe[0] = x;
         probe[2] = z;
         subject->state_048 = 0x20000;
@@ -205,7 +166,7 @@ finishProbe:
 blocked:
     subject->callback = NULL;
     subject->flags_090 |= 1;
-    /* movs r3,#0x80 / lsls r3,#7 builds 0x4000. */
+    /* 0x4000 is built from an immediate and a shift. */
     subject->state_052 = 0x4000;
 
 tail:

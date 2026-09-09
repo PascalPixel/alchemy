@@ -2,7 +2,8 @@
 
 u8 *Runtime_GetObject(void);
 
-s32 BattleUnit_TickCounter13f(void) {
+s32 BattleUnit_TickCounter13f(void)
+{
     u8 *value = Runtime_GetObject() + 0x13F;
     if (*value != 0) {
         (*value)--;

@@ -10,7 +10,8 @@ extern s32 Func_0200279a();
 extern s32 Func_020027a0();
 extern s32 Func_020027c4();
 
-void SceneDialogue_RunActor20BranchScene(void) {
+void SceneDialogue_RunActor20BranchScene(void)
+{
     Func_02002784();
     if (Func_0200276a(3) != 0) {
         Func_02002864(0x1574);

@@ -4,7 +4,8 @@
 
 s32 Func_080091a8(s32, s32, s32);
 
-void ObjectMotion_SnapToTerrain(void *object) {
+void ObjectMotion_SnapToTerrain(void *object)
+{
     s32 angle;
 
     angle = Func_080091a8(0, FIELD_AT_OFFSET(object, s32 *, 8), FIELD_AT_OFFSET(object, s32 *, 0x10));

@@ -4,7 +4,8 @@
 
 s32 Func_080090f0(void *, s32, s32, s32);
 
-void BattleEffect_ShrinkObjectScaleUntilHalf(void *obj) {
+void BattleEffect_ShrinkObjectScaleUntilHalf(void *obj)
+{
     s32 scale;
 
     scale = FIELD_AT_OFFSET(obj, s32 *, 0x18) - 0x80;

@@ -35,7 +35,8 @@ extern void Func_02004ae4(struct S *arg0, s32 arg1);
 extern void Func_02004b2c(struct S *arg0, s32 arg1);
 extern void Func_02004b74(void);
 
-s32 TryPushBlockingSceneActor(struct S *actor) {
+s32 TryPushBlockingSceneActor(struct S *actor)
+{
     u8 *state = &actor->f55;
     s32 saved_state = *state;
     struct V destination;

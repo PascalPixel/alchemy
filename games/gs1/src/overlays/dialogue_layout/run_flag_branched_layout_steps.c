@@ -1,30 +1,11 @@
 #include "types.h"
 
-/*
- * Resource 39a overlay dialogue layout at 0x020015dc.
- *
- * Complete owner: `push {lr}` and `sub sp, #8` at 0x020015dc, and the
- * matching `add sp, #8 / pop {r0} / bx r0` at 0x020016fa, so nothing is
- * returned.  Three pool words follow the return and are data.  All 17
- * distinct branch targets in the row are placed.
- *
- * The eight bytes of frame are the fifth and sixth arguments of the
- * six-argument layout calls.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
- */
+/* Dialogue layout for resource_39a. */
 
-/* 0x02000240 is below the 0x02008000 link base, so it is a resident table;
- * entry 225 is read here as an unsigned halfword. */
+/*
+ * 0x02000240 is below the link base, so it is a resident table; entry 225 is
+ * read here as an unsigned halfword.
+ */
 extern u16 Data_02000240[];
 
 /* Imports; the queried ones are typed for their return value. */
@@ -46,11 +27,20 @@ extern void Func_020026c8();
 extern void Func_020039c8();
 extern void Func_020026e8();
 extern void Func_020039e8();
+/*
+ * Four flag-branched layout steps.  Nothing is returned; the three pool words
+ * after the return belong to the owner.  The eight bytes of frame are the
+ * fifth and sixth arguments of the six-argument layout calls.  Imports are
+ * named by the address their call site computes, and are old-style because
+ * arity varies between sites.
+ */
 void FieldScene_RunFlagBranchedLayoutSteps(void)
 {
-    /* movs r2,#0xe1 / lsls r2,#1 gives the byte offset 450, i.e. entry 225.
-     * The test is (u32)((entry - 1) << 16) <= 0x10000 with an unsigned
-     * compare, which selects exactly entries 1 and 2. */
+    /*
+     * The byte offset 450 is built by shifting, giving entry 225.  The test
+     * is (entry - 1) << 16 against 0x10000 with an unsigned compare, which
+     * selects exactly entries 1 and 2.
+     */
     if ((u32)((u32)(Data_02000240[225] - 1) << 16) <= (u32)0x10000) {
         { s32 f1 = 14; s32 g1 = 10; Func_020038f8(22, 20, 9, 8,  f1, g1); }
     } else {
@@ -65,7 +55,7 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
         { s32 f4 = 19; s32 g4 = 17; Func_02003956(19, 11, 3, 1,  f4, g4); }
     }
 
-    /* movs r0,#0xc5 / lsls r0,#2 builds 0x314. */
+    /* 0x314 is built by shifting. */
     if (Func_02003986((s32)0x314) != 0) {
         Func_02002680(9, 14, 16);
         { s32 f5 = 22; s32 g5 = 15; Func_02003980(16, 15, 1, 3,  f5, g5); }

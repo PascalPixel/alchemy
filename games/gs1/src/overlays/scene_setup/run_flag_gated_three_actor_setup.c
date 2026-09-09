@@ -1,18 +1,9 @@
 #include "types.h"
 
 /*
- * resource_3b1 owner at 0x02001a60, 212 bytes.  It is gated by flag 0x922,
- * returns through `pop {r0} / bx r0` at 0x02001b16-0x02001b18, includes the
- * alignment halfword at 0x02001b1a and six pool words at
- * 0x02001b1c-0x02001b33, and ends immediately before the next owner's
- * saved-register prologue at 0x02001b34.
- *
- * Per-site call veneers (raw asm confirms each callee slot uses its own
- * local stub, distinct from the generic main-image symbol name). One local
- * stub (`sub_02006336`) is reused verbatim across two call sites with
- * different argument counts (a 4-argument setter, then a later 2-argument
- * setter) -- both compile fine as old-style declarations since neither
- * call site is prototype-checked.
+ * Scene setup for resource_3b1.  The 212-byte owner at 0x02001a60 includes
+ * the alignment halfword at 0x02001b1a and the six pool words that follow it,
+ * ending before the next owner's prologue at 0x02001b34.
  */
 
 extern s32 Func_02007f06(s32 flag);
@@ -40,6 +31,11 @@ extern void Func_02006374(s32 id);
 extern void Func_02007fb8(s32 flag);
 extern void Func_02007fe4(void);
 
+/*
+ * Gated on flag 0x922.  Every callee slot has its own local call stub;
+ * Func_02006336 and Func_02006336_a are the same stub declared twice without
+ * a prototype, because the two call sites pass different argument counts.
+ */
 void FieldScene_RunFlagGatedThreeActorSetup(void)
 {
     if (Func_02007f06(0x922) == 0)

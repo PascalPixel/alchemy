@@ -13,7 +13,8 @@ u32 Random16();
 s32 Func_080a1d08(s32, s32, s32);
 s32 Audio_PlayCue(s32);
 
-void InventoryMenu_MaybeBreakSelectedItem(void) {
+void InventoryMenu_MaybeBreakSelectedItem(void)
+{
     void *menu;
 
     menu = *(void **)ADDR_03001F2C;

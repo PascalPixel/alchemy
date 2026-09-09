@@ -7,7 +7,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
     step->velocity_y =
         (s32)((u32)step->velocity_y + (u32)gravity);
     step->velocity_x =
-        (s32)((u32)step->velocity_x * (u32)damping) / 64;
+        (s32)((u32)step->velocity_x *(u32)damping) / 64;
     step->velocity_y =
-        (s32)((u32)step->velocity_y * (u32)damping) / 64;
+        (s32)((u32)step->velocity_y *(u32)damping) / 64;
 }

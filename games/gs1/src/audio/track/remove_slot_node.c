@@ -1,6 +1,7 @@
 #include "types.h"
 
-void AudioTrack_RemoveSlotNode(s32 slot) {
+void AudioTrack_RemoveSlotNode(s32 slot)
+{
     s32 next_node;
     s32 track_table;
     s32 slot_offset;

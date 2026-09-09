@@ -6,7 +6,8 @@
 
 s32 EffectRuntime_FindSlotByObject();
 
-void EffectRuntime_ClearCurrentFlags(void) {
+void EffectRuntime_ClearCurrentFlags(void)
+{
     s32 slot;
     void *object;
 

@@ -7,7 +7,8 @@ extern void Func_08097868(void);
 extern s32 Func_08015360(s32, s32);
 extern u8 Data_02000240[];
 
-void Ui_SetBank15PaletteAndClearRenderMode(void) {
+void Ui_SetBank15PaletteAndClearRenderMode(void)
+{
     void *work;
 
     work = *(void **)ADDR_03001E8C;

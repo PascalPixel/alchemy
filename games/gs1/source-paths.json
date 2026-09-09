@@ -17863,6 +17863,10 @@
     "resource_3bf:02000d54": {
       "name": "FieldScene_RunScene3bfSequenceE",
       "source": "overlays/scene_primary_script/run_scene_3bf_sequence_e.c"
+    },
+    "resource_37b:02001b44": {
+      "name": "SceneActor_PlaceActorPairAtCells",
+      "source": "overlays/scene_script/scene_37b_actor_steps.c"
     }
   }
 }

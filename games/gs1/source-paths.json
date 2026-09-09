@@ -17843,6 +17843,10 @@
     "resource_37f:020000ec": {
       "name": "SceneData_SelectRecordBySceneAndSubRange",
       "source": "overlays/scene_data/select_record_by_scene_and_sub_range.c"
+    },
+    "resource_39a:02001948": {
+      "name": "FieldScene_RunScene39aSequenceC",
+      "source": "overlays/scene_primary_script/run_scene_39a_sequence_c.c"
     }
   }
 }

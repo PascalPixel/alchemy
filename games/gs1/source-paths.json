@@ -17867,6 +17867,10 @@
     "resource_37b:02001b44": {
       "name": "SceneActor_PlaceActorPairAtCells",
       "source": "overlays/scene_script/scene_37b_actor_steps.c"
+    },
+    "resource_39e:02000104": {
+      "name": "IntegrateEffectMotion",
+      "source": "overlays/effect/integrate_motion.c"
     }
   }
 }

@@ -10270,6 +10270,14 @@
       "name": "FieldScene_RunSlot16WaypointSequence",
       "source": "overlays/scene_primary_script/run_scene_39f_slot_16_waypoints.c"
     },
+    "resource_39f:020015d0": {
+      "name": "FieldScene_RunActor12WaypointSequence",
+      "source": "overlays/scene_primary_script/run_actor_12_waypoint_sequence.c"
+    },
+    "resource_39f:020019b8": {
+      "name": "FieldScene_RunActorsNineAndElevenPlacementScene",
+      "source": "overlays/scene_primary_script/run_actors_nine_and_eleven_placement_scene.c"
+    },
     "resource_3ab:02000350": {
       "name": "SceneData_SelectTableBySelector224",
       "source": "overlays/scene_data/select_table_by_selector_224_3ab.c"
@@ -17812,6 +17820,10 @@
     "resource_3c0:02000c00": {
       "name": "FieldScene_RunActorPairFadeAndSelectedResult",
       "source": "overlays/scene_primary_script/run_actor_pair_fade_and_selected_result.c"
+    },
+    "resource_39f:02000f94": {
+      "name": "FieldScene_RunActorNinePlacementScene",
+      "source": "overlays/scene_script/scene_39f.c"
     }
   }
 }

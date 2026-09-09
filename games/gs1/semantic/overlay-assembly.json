@@ -2676,20 +2676,6 @@
       ]
     },
     {
-      "overlay": "resource_39e",
-      "start": "0x02000e94",
-      "end": "0x020012e0",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "The reviewed first owner is 236 bytes, ending at 0x02000f80; the historical 1100-byte draft appended later owners.",
-        "The four BL sites at 0x02000f02, 0x02000f1a, 0x02000f3c and 0x02000f58 all resolve to the separate SpawnEffect owner at resource offset 0x0200013c (runtime 0x0200813c), not intra-function fallthrough blocks.",
-        "Loader-backed literal values and the four eight-argument calls are recovered in bounded ordinary C. The failed historical draft does not prove compiler impossibility.",
-        "games/gs1/recon/en/dossiers.json#resource_39e:02000e94"
-      ]
-    },
-    {
       "overlay": "resource_3c3",
       "start": "0x020003c2",
       "end": "0x020003c4",

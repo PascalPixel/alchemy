@@ -2,6 +2,15 @@
 
 #define FieldScene_RunExtendedActorTransition Func_02004bec
 
+struct SceneWork {
+    u8 unknown_000[0x1c0];
+    s32 request;
+    u8 unknown_1c4[4];
+    s32 setup;
+};
+
+extern struct SceneWork *Data_03001ebc;
+
 void Func_02000400(u8 *);
 extern u8 Data_0200e324[];
 extern u8 Data_0200e360[];
@@ -296,7 +305,7 @@ void FieldScene_RunExtendedActorTransition(void)
     u8 *base5_200e3c0;
     u8 *base5_200e39c;
     s32 base5_3001ebc;
-    u8 *work;
+    struct SceneWork *work;
 
     v8 = 0;
     Call1(Func_0200a9f8, 0x282e);
@@ -603,10 +612,10 @@ void FieldScene_RunExtendedActorTransition(void)
     Call3(Func_0200b38c, 0, 0x110, 216);
     Call3(Func_0200b390, 0, 0x110, 254);
     Func_0200b32e(80);
-    base5_3001ebc = 0x3001ebc;
-    work = *(u8 **)base5_3001ebc;
-    *(s32 *)(work + 0x1c0) = 0x201;
-    *(s32 *)(work + 0x1c8) = 16;
+    base5_3001ebc = (u32)&Data_03001ebc;
+    work = *(struct SceneWork **)base5_3001ebc;
+    work->request = 0x201;
+    work->setup = 16;
     Func_0200b4ba();
     base5_3001ebc -= 48;
     Func_0200b4c8();

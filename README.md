@@ -15,9 +15,9 @@ Japanese and European-language editions of each game from the original
 cartridges, with Japanese as the canonical source base and the English
 _Golden Sun_ release as the first complete derived build target.
 
-## Status: 64.59% DONE
+## Status: 64.61% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=9e9ef26219f6c1e4)
+![Code](games/gs1/assets/readme/gs1-en-code.svg?v=70e7e1a76f2995a3)
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=d6b524e58c957cd7)
 

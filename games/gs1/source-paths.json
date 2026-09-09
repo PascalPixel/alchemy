@@ -17827,6 +17827,10 @@
     "resource_39f:02000f94": {
       "name": "FieldScene_RunActorNinePlacementScene",
       "source": "overlays/scene_script/scene_39f.c"
+    },
+    "resource_373:020010d8": {
+      "name": "FieldScene_RunScene373SequenceF",
+      "source": "overlays/scene_primary_script/run_scene_373_sequence_f.c"
     }
   }
 }

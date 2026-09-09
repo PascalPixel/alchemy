@@ -6,7 +6,8 @@
 
 u32 Random16(void);
 
-void Camera_ApplyShake(s32 random_mask, u32 shake_range) {
+void Camera_ApplyShake(s32 random_mask, u32 shake_range)
+{
     s32 display_y;
     s32 offset_x;
     s32 *remaining_frames;

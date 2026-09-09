@@ -4,7 +4,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Menu_CreateEightEntryObjects(s32 resource) {
+s32 Menu_CreateEightEntryObjects(s32 resource)
+{
     void **slot;
     void *obj;
     s32 i;

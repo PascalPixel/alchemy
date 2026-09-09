@@ -1,7 +1,8 @@
 #include "effect_0809b11c.h"
 #include "global_cells.h"
 
-void BattleEffect_UpdateAllSlots(void) {
+void BattleEffect_UpdateAllSlots(void)
+{
     s32 slot;
     s32 remaining_slots;
 

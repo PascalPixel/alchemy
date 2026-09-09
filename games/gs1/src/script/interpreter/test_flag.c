@@ -2,7 +2,8 @@
 
 s8 GameFlag_IsSet(s32);
 
-s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
+s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
+{
     interpreter->condition_result =
         GameFlag_IsSet(interpreter->script[interpreter->cursor + 1]);
     interpreter->cursor = (u16)interpreter->cursor + 2;

@@ -11,7 +11,8 @@ struct State_08097174 {
     u8 *object;
 };
 
-void EffectRuntime_StopCurrentObject(void) {
+void EffectRuntime_StopCurrentObject(void)
+{
     struct State_08097174 *state = *(void **)ADDR_03001F30;
     u8 *object = state->object;
 

@@ -178,10 +178,10 @@ void FieldScene_RunMiddleSequence(void)
         vb = (Func_02004fe2(10) + 100);
         *(volatile u16 *)(vb) = (*(volatile u16 *)(vb) + 1);
         v0 = (Func_02004ff0(11) + 100);
-        v3 = (*(volatile u16 *)(v0) - 1);
+        v3 = (*(volatile u16 *)(v0)- 1);
     } else {
         va = (Func_02004ffe(10) + 100);
-        v4 = (*(volatile u16 *)(va) - 1);
+        v4 = (*(volatile u16 *)(va)- 1);
         *(volatile u16 *)(va) = v4;
         v0 = (Func_0200500c(11) + 100);
         v3 = (*(volatile u16 *)(v0) + 1);

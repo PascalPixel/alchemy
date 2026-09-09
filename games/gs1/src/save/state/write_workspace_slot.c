@@ -1,33 +1,15 @@
 /*
- * VENEER AUDIT NOTE (2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
- *
- * This file is byte-exact, so nothing below is rewritten.  The note records
- * what the call sites actually are, so the next reader is not misled.
- *
- * 0x080072e4 begins the GCC `__call_via_rN` veneer bank: fifteen four-byte
- * `bx rN; nop` entries in register order r0..lr, ending at 0x08007320.  A
- * `bl` into that range is an INDIRECT CALL through the named register, not a
- * call to a function at the branch target.  The `Func_080072f*` prototype
- * this file declares is therefore a phantom, and the register load that
- * precedes each site -- which reads like dead code -- is the callee load.
- *
- * Why the file is still byte-identical while being wrong: a direct call to a
- * declared function at 0x080072f0 emits exactly the same `bl` the real
- * indirect call emits.  Converting to a function-pointer call would require
- * the compiler to choose the same register and therefore the same veneer
- * entry, which is a byte-exact source question and is deliberately NOT attempted
- * here.
- *
- * Sites in this owner, resolved with tools/veneer_resolve.ts:
- *
- *   0x0800587e  __call_via_r3  ->  loaded from memory [r2, #0]
- *     CONTEXT-DEPENDENT: a function-pointer table entry, struct field or
- *     stack slot. Must be read with the surrounding code; must NOT be
- *     pattern-matched against other files.
+ * Write one workspace slot of the save state, returning nonzero when
+ * either step reports a nonzero result.
  */
 #include "types.h"
 #include "global_cells.h"
 
+/*
+ * Func_080072f0 names a `bx rN` slot: the call is indirect through the
+ * register that slot selects, and the trailing argument is the callee
+ * address rather than a parameter of the callee.
+ */
 s32 Func_080072f0(s32, s32, s32, s32);
 s32 Func_08006c68(u16, s32);
 
@@ -36,6 +18,12 @@ struct Work_08005868 {
     s32 data;
 };
 
+/*
+ * The old-style definition is deliberate: with a prototype the u16
+ * parameter would arrive unpromoted and the mask below would change. The
+ * word at 0x02004C04 is the address called while its pointer is passed as
+ * an argument; the shift by 16 tests the low halfword of the result.
+ */
 u32 SaveState_WriteWorkspaceSlot(code)
 u16 code;
 {

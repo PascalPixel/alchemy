@@ -5,6 +5,7 @@
 
 void Func_02003be4();
 
-void FieldScene_RunSingleStep(void) {
+void FieldScene_RunSingleStep(void)
+{
     Func_02003be4();
 }

@@ -5,7 +5,8 @@ void Func_02002972();
 void Func_02002982();
 void Func_020028b6();
 
-void SceneDialogue_ShowLine156E(void) {
+void SceneDialogue_ShowLine156E(void)
+{
     Func_0200289c();
     Func_02002972(0x156e);
     Func_02002982(10, 0);

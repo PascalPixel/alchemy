@@ -1,25 +1,9 @@
 #include "types.h"
 
 /*
- * Resource 3b1 unindexed helper at 0x0200351c (336 bytes incl. pool,
- * 1 call).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,lr}` + `sl`/`r8` spill at 0x0200351c, epilogue `pop {r3,r5} /
- * mov r8,r3 / mov sl,r5 / pop {r5,r6} / pop {r0} / bx r0` at
- * 0x0200363e-0x02003648. The trailing pool at 0x0200364c-0x02003668
- * (0x0000093e, 0x0200e958, 0x0000020e, 0x0200e840, 0x00000928,
- * 0x00000925, 0x00000911, 0x00000922) ends exactly where the next
- * owner's `push {lr}` begins (0x0200366c, already this overlay's row
- * `0x0200366c | 1 call`), so the span is 0x0200351c-0x0200366c,
- * 336 bytes.
- *
- * A four-way cascade of `Value_XXXXXXXX`-gated blocks (same low-address
- * family as 0x02004670's blocks earlier in this overlay), each either
- * running its own setter sequence and returning, or falling through to
- * the next gate. All four share one exit.
- *
- * Raw callee naming.
+ * Flag-gated scene setup for overlay resource_3b1. Each callee name refers
+ * to that call site's own call word rather than to a shared runtime
+ * address.
  */
 
 extern u8 Value_0000093e;
@@ -56,6 +40,11 @@ s32 Func_02009ac4();
 void Func_02007f1a();
 void Func_02009b84();
 
+/*
+ * A four-way gated cascade. Each gate either runs its own setter sequence
+ * and returns or falls through to the next, and all four share one exit.
+ * The 336-byte owner at 0x0200351c includes its eight trailing pool words.
+ */
 void SceneState_RunFlagGatedSetupCascade(void)
 {
     if (Func_020099c8((s32)&Value_0000093e) != 0) {

@@ -4,7 +4,8 @@ s32 Func_0800231c(s32);
 s32 FixedPoint_Ratio(s32, s32);
 extern s32 Data_03001e40;
 
-void Palette_UpdatePulseBrightness(void) {
+void Palette_UpdatePulseBrightness(void)
+{
     u16 *palette;
     s32 i;
     s32 mask;

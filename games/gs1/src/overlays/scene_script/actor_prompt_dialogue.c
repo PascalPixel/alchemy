@@ -195,146 +195,65 @@ void Func_0200112e(s32, s32, s32);
 void Func_020010cc(s32);
 void Func_020010f0(void);
 
-/* Contiguous unnamed state-owner run for resource_3c3. */
-
 /*
- * resource_3c3 owner at 0x02000080, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
+ * The eight-byte owner at 0x02000084 includes its one pool word, which holds
+ * the returned table address 0x02008b48.
  */
 
 /*
- * resource_3c3 owner at 0x02000084, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000088 holding 0x2008b48.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000084 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008b48 is image offset
- * 0xb48 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
- * Resource 3c3, table selector at 0x0200008c (88 bytes, 1 call site).
- *
- * Complete owner: `push {lr}` at 0x0200008c, `pop {r1} / bx r1` at 0x020000be.
- * The popped branch register is r1, so r0 survives and IS the result — this
- * owner returns a pointer to an in-image script table.  Bytes 0x020000c4 to
- * 0x020000e3 are its literal pool (seven words), reached by no control path.
- *
- * This is the third of three sibling selectors in this overlay; 0x02000040 and
- * 0x020000e4 are already byte-exact in `games/gs1/asm/overlays/` and have exactly this
- * shape.  The difference here is the extra story-flag test in the 0xa9 arm,
- * which picks between two tables instead of one.
- *
- * The overlay is linked at 0x02008000, so a pool word 0x0200_8xxx names the
- * in-image offset `word - 0x8000`: 0x02008ba8 -> 0xba8, 0x02008c98 -> 0xc98,
- * 0x02008c50 -> 0xc50, 0x02008b90 -> 0xb90.  All four are even, so all four
- * are data (an odd word would be a Thumb entry point).  Confirmed against the
- * byte-exact sibling 0x02000040, whose 0x02008a40 / 0x02008ad0 / 0x02008998
- * words are the same kind of table.
- *
- * `Data_02000240` is the cross-overlay RAM global block; its signed halfword
- * at element 224 (byte offset 448) is the scene id this overlay keys on.  The
- * byte-exact siblings spell the compared constants `(s32)&Value_000000aa` —
- * that is the exact reconstruction's pooling device for a small integer, not a symbol,
- * so they are written here as the integers 0xaa and 0xa9.
- *
- * The single call site resolves through `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` to the
- * import veneer at 0x0200087c -> GameFlag_IsSet.  Per-target multiset:
- *   GameFlag_IsSet x1.
+ * Select a table from the scene id.  The 88-byte owner at 0x0200008c includes
+ * its seven-word literal pool at 0x020000c4-0x020000e3.  Element 224 of the
+ * cross-overlay block Data_02000240 is the signed scene id this overlay keys
+ * on.  The compared constants are spelled as the addresses of Value_000000aa
+ * and its neighbours: that is how a small integer is pooled here, and the
+ * names are not references to symbols.
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+/*
+ * Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds, not a runtime address.
+ */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/*
+ * Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call precomputes a costly constant into a
+ * pseudo shared with later uses in the block.  A value-returning call also
+ * sets r0 last of its arguments.
+ */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
+/*
+ * Engine calls: each pseudo symbol is the per-site call word the overlay image
+ * holds -- one word can serve two sites with different targets -- and the
+ * macro names the engine function the site reaches through the overlay veneer
+ * and the main-image veneer island, keeping the site's own calling form.
+ * Unbound names are provisional.
  */
-
-/* Runs a fixed sequence of setup calls, mostly in mirrored pairs for
- * entities 8 and 9, followed by two six-argument calls whose second and
- * last arguments match (entity 6/27 and entity 9/26). */
 
 /*
- * Resource 3c3, dialogue bracket at 0x02000730 (124 bytes, 11 call sites).
- *
- * Complete owner: `push {lr}` at 0x02000730, `pop {r0} / bx r0` at 0x02000798.
- * The popped branch register IS r0, so it holds the return address and the
- * owner is `void`.  Bytes 0x0200079c-0x020007ab are the four-word literal
- * pool: 0x0000089f (the story flag 0x020003c4 sets on its way out),
- * 0x00002668 and 0x0000264e (two dialogue line ids), and 0x03001ebc (the
- * work pointer cell).
- *
- * SHARED TAIL, spelled with a label rather than per-arm copies.  The
- * `Func_0808a180(9, 0)` at 0x02000772 is reached from two paths — the
- * already-seen arm branches to it over the whole body (`b.n 0x02000772` at
- * 0x02000746), and the unseen arm falls into it after Func_0808a110.  There
- * are exactly THREE Func_0808a180 sites in the assembly; writing the tail once
- * per arm would inflate the multiset to four.  The third site sits in the
- * skip-beat arm at 0x02000790 and is genuinely distinct.
- *
- * The skip-beat counter is the documented idiom: `movs r3,#236 / lsls r3,#1`
- * (byte offset 472) off the 0x03001ebc work pointer, bumped by 2 here
- * against the sibling 0x020003c4's 1.  `Data_03001ebc` is a pointer CELL, so
- * `ldr r3,[pc] / ldr r2,[r3]` is one dereference.
- *
- * The Func_0808a070 guard is tested for `!= 0` at this site (`bne`) — the
- * prompt idiom appears with both polarities, so the comparison is read per
- * call site rather than assumed.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 11 sites are
- * import veneers.  Per-target multiset, reproduced exactly by the C below:
- *   Func_0808a180 x3, Func_0808a170 x2, and one each of GameFlag_IsSet,
- *   Func_0808a018, Func_0808a020, Func_0808a070, Func_0808a110,
- *   Func_0808a178.
+ * Runs a fixed sequence of setup calls, mostly in mirrored pairs for entities
+ * 8 and 9, followed by two six-argument calls whose second and last arguments
+ * match (entity 6/27 and entity 9/26).
  */
 
-                        /* test a story flag (used in a condition) */
+                        /* Test a story flag; used in a condition. */
 
-                        /* open a scripted scene */
+                        /* Open a scripted scene. */
 
-                        /* close a scripted scene */
+                        /* Close a scripted scene. */
 
-                        /* dialogue prompt; result selects the branch */
+                        /* Dialogue prompt; the result selects the branch. */
 
-                        /* scene-presentation request */
+                        /* Scene-presentation request. */
 
-                        /* show a dialogue line by id */
+                        /* Show a dialogue line by id. */
 
-                        /* dialogue-line variant with a mode word */
+                        /* Dialogue-line variant with a mode word. */
 
-                        /* wait for the slot's action to finish */
+                        /* Wait for the slot's action to finish. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -393,13 +312,15 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-s32 Func_0200092a();    /* raw encoded call destination */
+s32 Func_0200092a();    /* Raw encoded call destination. */
 
-void FieldScene_SetActor13Value1A(void) {
+void FieldScene_SetActor13Value1A(void)
+{
     Func_0200099c(0xD, 0x1A);
 }
 
-s32 SceneData_GetPrimaryTable(void) {
+s32 SceneData_GetPrimaryTable(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];
@@ -443,7 +364,8 @@ s32 SceneData_GetSecondaryTable(void)
     return (s32)Data_02008b90;
 }
 
-s32 SceneData_GetTertiaryTable(void) {
+s32 SceneData_GetTertiaryTable(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];
@@ -681,6 +603,14 @@ void FieldScene_RunScene3c3SequenceA(void)
     Func_02000fb0();
 }
 
+/*
+ * Dialogue bracket at 0x02000730.  The 124-byte owner includes its four-word
+ * literal pool at 0x0200079c-0x020007ab.  The tail is shared through a label
+ * rather than copied into each arm: copying it would add a fourth call site
+ * where there are three.  The skip-beat counter sits at byte offset 472 off
+ * the Data_03001ebc pointer cell, which costs one dereference.  The guard is
+ * tested against zero at this site; the polarity is read per call site.
+ */
 void FieldScene_RunActorNinePromptDialogue(void)
 {
     extern u8 *Data_03001ebc;

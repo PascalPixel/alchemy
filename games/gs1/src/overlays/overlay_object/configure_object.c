@@ -7,7 +7,8 @@ void Func_02004f8c(void *, s32);
 #define RunOverlayObjectCommand0 Func_02004e8c
 #define RunOverlayObjectCommand1 Func_02004f8c
 
-void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter) {
+void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter)
+{
     object->unknown_55 = 0;
     object->unknown_59 = 8;
     RunOverlayObjectCommand0(object, 0);

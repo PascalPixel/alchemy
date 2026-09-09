@@ -19,8 +19,8 @@ void FieldScene_RunForwardArcBurst(void)
         angle = index << 12;
         *(u16 *)(*(u8 **)(record + 80) + 30) = (u16)angle;
         Func_02004f56((index - 4) * 2);
-        *(s32 *)(record + 8) += Func_02004f8c(angle) * 6;
-        *(s32 *)(record + 16) += Func_02004f96(angle) * 6;
+        *(s32 *)(record + 8) += Func_02004f8c(angle)* 6;
+        *(s32 *)(record + 16) += Func_02004f96(angle)* 6;
     }
 
     *(s32 *)(record + 12) = 0x120000;

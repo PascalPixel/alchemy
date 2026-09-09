@@ -7,7 +7,8 @@
 s32 Object_SetMode(s32, s32);
 s32 EffectRuntime_FindSlotByObject();
 
-void EffectRuntime_SetMode2(void) {
+void EffectRuntime_SetMode2(void)
+{
     s32 slot;
     s32 object;
 

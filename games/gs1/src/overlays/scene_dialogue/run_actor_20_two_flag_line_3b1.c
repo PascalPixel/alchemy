@@ -3,7 +3,8 @@ int Func_02007888(); void Func_02007988(); void Func_0200799a(); void Func_02007
 void Func_020079ba();
 /* Story selector owner at 0x020013cc, 84 bytes; eight calls. Per-site call
  * veneers (twin of 0x1324/0x1378 with distinct local stub addresses). */
-void SceneDialogue_RunActor20TwoFlagLine(void) {
+void SceneDialogue_RunActor20TwoFlagLine(void)
+{
     Func_02007898();
     if (Func_02007876(0x92e)) Func_02007988(0x1ece);
     else if (Func_02007888(0x937)) Func_0200799a(0x1ecf);

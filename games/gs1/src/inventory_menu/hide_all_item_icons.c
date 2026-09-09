@@ -1,6 +1,7 @@
 #include "inventory_menu.h"
 
-void InventoryMenu_HideAllItemIcons(void) {
+void InventoryMenu_HideAllItemIcons(void)
+{
     s32 hidden_state = 13;
     struct InventoryMenuIcon **icons = Data_03001f2c->entry_icons;
     s32 slot;

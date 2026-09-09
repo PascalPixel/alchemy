@@ -6,7 +6,8 @@
 void Object_SetAction(s32, s32);
 extern u8 Data_0200048a[];
 
-void ObjectGroup_SetActionForOthers(s32 excluded_object, s32 group_mode, s32 action) {
+void ObjectGroup_SetActionForOthers(s32 excluded_object, s32 group_mode, s32 action)
+{
     s16 *active_object_id;
     s32 object;
     s32 object_id;

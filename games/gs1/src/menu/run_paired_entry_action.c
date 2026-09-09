@@ -12,7 +12,8 @@
 
 s32 Func_080acab8(s32, s32, s32, u8, s32, s32, s32, s32, s32);
 
-s32 Menu_RunPairedEntryAction(s32 mode, s32 param) {
+s32 Menu_RunPairedEntryAction(s32 mode, s32 param)
+{
     s32 sp14;
     void *state;
 

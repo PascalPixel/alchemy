@@ -243,31 +243,26 @@ void Func_02001306();
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-
     return f(a0);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-
     return f(a0, a1, a2);
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-
     f(a0);
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-
     return f(a0, a1, a2, a3);
 }
 
@@ -282,37 +277,32 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 static __inline__ void SceneInit_Call1(void (*f)(), s32 a0)
 {
-
     f(a0);
 }
 
 static __inline__ s32 SceneInit_Value1(s32 (*f)(), s32 a0)
 {
-
     return f(a0);
 }
 
 static __inline__ void SceneInit_Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-
     f(a0, a1, a2);
 }
 
 static __inline__ void SceneInit_Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
 static __inline__ void Scene_Call1(void (*f)(s32), s32 a) { f(a); }
 
-static __inline__ s32 Scene_Value2(s32 (*f)(s32,s32), s32 a, s32 b) { return f(a,b); }
+static __inline__ s32 Scene_Value2(s32 (*f)(s32, s32), s32 a, s32 b) { return f(a, b); }
 
-static __inline__ void Scene_Call3(void (*f)(s32,s32,s32), s32 a, s32 b, s32 c) { f(a,b,c); }
+static __inline__ void Scene_Call3(void (*f)(s32, s32, s32), s32 a, s32 b, s32 c) { f(a, b, c); }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-
     return f(a0, a1);
 }
 
@@ -385,7 +375,8 @@ u8 *SceneData_GetTable8dac(void)
     return (u8 *)0x02008dac;
 }
 
-s32 SceneData_SelectTable8e00ByFlag(void) {
+s32 SceneData_SelectTable8e00ByFlag(void)
+{
     if (Func_02000a14(0x950) != 0) {
         return 0x02009040;
     }
@@ -445,7 +436,6 @@ void FieldScene_RunPrimarySequence(void)
 
 void FieldScene_RunScene3b6SequenceA(void)
 {
-
     u32 i;
     s32 rec7;
     s32 record;
@@ -587,7 +577,6 @@ s32 Scene_InitFacingActors(void)
 
 void SceneDialogue_RunFacingPrompt(s32 no)
 {
-
     u8 *actor = Func_02000f00(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
@@ -614,7 +603,6 @@ void SceneDialogue_RunFacingPrompt(s32 no)
 
 void SceneDialogue_RunFacingActionPrompt(s32 no)
 {
-
     u8 *actor = Func_02000fa8(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
@@ -644,7 +632,6 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
 
 void SceneDialogue_RunFacingAction(s32 no)
 {
-
     u8 *actor = Func_0200106c(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Func_0200110a(27, no);
@@ -773,7 +760,6 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 
 void FieldScene_RunScene3b6_02000898(s32 a0)
 {
-
     u32 i;
     s32 record;
 

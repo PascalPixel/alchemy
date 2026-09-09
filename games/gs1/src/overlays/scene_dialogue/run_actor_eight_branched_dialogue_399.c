@@ -9,7 +9,8 @@ void Func_02002936();
 void Func_02002946();
 void Func_0200287a();
 
-void SceneDialogue_RunActorEightBranchedDialogue(void) {
+void SceneDialogue_RunActorEightBranchedDialogue(void)
+{
     Func_0200283c();
     if (Func_02002822(0x82b) != 0) {
         Func_0200291c(0x156f);

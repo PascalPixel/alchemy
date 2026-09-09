@@ -4,7 +4,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void UiWork_CopyParamsToRenderWork(void *work) {
+void UiWork_CopyParamsToRenderWork(void *work)
+{
     u32 p2;
     s32 p1;
     s32 z1;
@@ -13,7 +14,7 @@ void UiWork_CopyParamsToRenderWork(void *work) {
     void *render;
 
     render = *(void **)ADDR_03001E8C;
-    p0 = (s32) (FIELD_AT_OFFSET(work, u16 *, 0x16)); FIELD_AT_OFFSET(render, u16 *, RENDER_PARAM_OFS) = (u16) p0;
-    p1 = (s32) (FIELD_AT_OFFSET(work, u16 *, 0x18)); (s32) z0 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD_OFS) = (u16) p1;
-    p2 = (FIELD_AT_OFFSET(work, u16 *, 0x1A)); (s32) z1 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD2_OFS) = (u16) p2;
+    p0 = (s32)(FIELD_AT_OFFSET(work, u16 *, 0x16)); FIELD_AT_OFFSET(render, u16 *, RENDER_PARAM_OFS) = (u16)p0;
+    p1 = (s32)(FIELD_AT_OFFSET(work, u16 *, 0x18)); (s32)z0 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD_OFS) = (u16)p1;
+    p2 = (FIELD_AT_OFFSET(work, u16 *, 0x1A)); (s32)z1 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD2_OFS) = (u16)p2;
 }

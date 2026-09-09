@@ -1,25 +1,9 @@
 #include "types.h"
 
 /*
- * Resource 3b1 unindexed helper at 0x02003f94 (340 bytes incl. pool,
- * 1 call).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {lr}` at 0x02003f94, epilogue `pop {r0} / bx r0` at
- * 0x020040c6-0x020040c8. The trailing pool at 0x020040cc-0x020040e4
- * (0x00006666, 0x00000ccc, 0x03001ebc, and the four
- * `Value_XXXXXXXX`-family gate constants 0x92b/0x92a/0x929/0x928) ends
- * exactly where the next owner's `push {lr}` begins (0x020040e8, already
- * this overlay's row `0x020040e8 | 1 call`), so the span is
- * 0x02003f94-0x020040e8, 340 bytes.
- *
- * A long flat setter cascade (~26 calls), one workspace-slot store using
- * the `offset<<1, +bias` idiom also seen in 0x020048e8's block at
- * 0x02004a90 (see a prior working note), followed by a
- * four-way `Value_XXXXXXXX` else-if chain (each arm one call, no further
- * nesting) with a final unconditional default arm.
- *
- * Raw callee naming.
+ * Flag-branched scene setup for overlay resource_3b1. Each callee name
+ * refers to that call site's own call word rather than to a shared runtime
+ * address.
  */
 
 extern u8 *Data_03001ebc;
@@ -68,6 +52,12 @@ s32 Func_0200a552();
 void Func_0200a6d4();
 void Func_0200a6dc();
 
+/*
+ * A flat setter cascade, one workspace-slot store, then a four-way gated
+ * chain ending in an unconditional default arm. The store spells both its
+ * offset and its stored value as 224 << 1 rather than folded constants.
+ * The 340-byte owner at 0x02003f94 includes its trailing pool words.
+ */
 void FieldScene_RunFlagBranchedSetupCascade(void)
 {
     Func_0200a460();

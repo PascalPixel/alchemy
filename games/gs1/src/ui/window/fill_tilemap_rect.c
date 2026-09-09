@@ -2,7 +2,8 @@
 #include "gs1_edition.h"
 #include "global_cells.h"
 
-void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height) {
+void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height)
+{
     u16 *map = *(u16 **)ADDR_03001E8C;
     s32 sum;
 

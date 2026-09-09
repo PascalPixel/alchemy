@@ -16,7 +16,8 @@ struct Obj {
 
 extern void Func_0200727e(void);
 
-void SceneEffect_UpdateMotionWithDamping(struct Obj *p) {
+void SceneEffect_UpdateMotionWithDamping(struct Obj *p)
+{
     s16 *h;
     s32 v;
     s32 a;

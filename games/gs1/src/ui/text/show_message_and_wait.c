@@ -2,7 +2,8 @@
 
 void WaitFrames(s32);
 s32 UiWork_IsComplete(void);
-void UiText_ShowMessageAndWaitCore(s32 argument) {
+void UiText_ShowMessageAndWaitCore(s32 argument)
+{
     UiText_PrepareMessageWork(argument);
     goto check;
 again:

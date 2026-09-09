@@ -3,7 +3,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Resource_FindFreeTransferEntry(s32 kind) {
+s32 Resource_FindFreeTransferEntry(s32 kind)
+{
     s32 z0;
     s32 s;
     s32 z1;
@@ -16,9 +17,9 @@ s32 Resource_FindFreeTransferEntry(s32 kind) {
     u16 *p;
     u32 v;
 
-    (s32) s = (*(s32 *)ADDR_03001E98); state = s;
+    (s32)s = (*(s32 *)ADDR_03001E98); state = s;
     if (kind != 0) {
-        (s32) i = 0;
+        (s32)i = 0;
         p = state + 0x1DE;
         off = 0;
 loop_2:
@@ -26,7 +27,7 @@ loop_2:
             return state + off + 0x1D4;
         }
         z0 = 0; i = i + 1;
-        (s32) p += 0x34;
+        (s32)p += 0x34;
         off = off + 0x34;
         if (i == 5) {
             goto block_10;
@@ -38,7 +39,7 @@ loop_2:
     q = state + 0x72;
 loop_7:
     v = *q;
-    (s32) q += 0x34;
+    (s32)q += 0x34;
     if (v == 0) {
         return ret;
     }

@@ -5,7 +5,8 @@
 
 s16 Func_080ac8fc(void *, s32, s32);
 
-s32 Menu_ComputeEntryValues(void *tbl) {
+s32 Menu_ComputeEntryValues(void *tbl)
+{
     void *state;
     s32 i;
     void *p;

@@ -13,5 +13,5 @@ u32 SaveState_DeleteRecord(s32 record_id)
         return 1U;
     }
     deletion_result = Func_08005b64(index);
-    return (u32) ((0 - deletion_result) | deletion_result) >> 0x1F;
+    return (u32)((0 - deletion_result) | deletion_result) >> 0x1F;
 }

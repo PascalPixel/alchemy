@@ -275,6 +275,11 @@ struct SceneRecord {
     u8 field_26;
 };
 
+/*
+ * Byte and field views of one actor share this union so that stores through
+ * the linked record do not make the pointer read disappear through alias
+ * analysis.
+ */
 union SceneActor {
     struct {
         u8 unk_00[12];
@@ -588,94 +593,16 @@ union SceneActor *Func_02001628(s32);
 union SceneActor *Func_02001636(s32);
 union SceneActor *Func_0200165e(s32);
 
-/* Contiguous unnamed leaf-owner run for resource_3c2. */
-
 /*
- * resource_3c2 owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000034 holding 0x2008c3c.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000030 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008c3c is image offset
- * 0xc3c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Each pseudo symbol above names the per-site call word the overlay image
+ * holds, not a runtime address -- one word can serve two sites with different
+ * targets -- and the macro names the function the site reaches through the
+ * veneers, keeping the site's own calling form. Names without a repository
+ * binding are provisional.
  */
-
-/*
- * resource_3c2 owner at 0x02000038, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200003c holding 0x2008da4.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000038 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008da4 is image offset
- * 0xda4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
- * resource_3c2 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000044 holding 0x2008dd4.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000040 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008dd4 is image offset
- * 0xdd4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* Contiguous unnamed state-owner run for resource_3c2. */
-
-/* Audited retained scene body: all 252 calls through the next owner boundary
- * are represented in machine order. The approved compiler changes scheduling
- * and literal placement, so production retains the reviewed assembly. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight into
- * the argument registers, matching the reviewed assembly's register order. */
-
-/* The scene step counter at +0x1d8 of the shared scene work record at 0x03001ebc. */
-
-/* Runs the primary script for this scene: a long, fixed sequence of calls
- * driving several numbered actors (10, 19, 20, 21, 30, 40) through position,
- * pose, and timing steps, guarded by an initial skip check. */
-
-/* Keep byte and field views on the same actor: stores through the linked
- * record must not make its next pointer read disappear through alias analysis. */
+ * the argument registers, in the order the reference uses. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -740,6 +667,11 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
+/*
+ * Returns the in-image script table at 0x02008c3c. The eight-byte owner
+ * includes its one pool word, which holds that address and is returned
+ * without being dereferenced.
+ */
 u8 *SceneData_GetScriptTable(void)
 {
     extern u8 *Data_03001ebc;
@@ -747,6 +679,11 @@ u8 *SceneData_GetScriptTable(void)
     return (u8 *)0x02008c3c;
 }
 
+/*
+ * Returns the in-image table at 0x02008da4. The eight-byte owner includes its
+ * one pool word, which holds that address and is returned without being
+ * dereferenced.
+ */
 u8 *SceneData_GetTable8da4(void)
 {
     extern u8 *Data_03001ebc;
@@ -754,6 +691,11 @@ u8 *SceneData_GetTable8da4(void)
     return (u8 *)0x02008da4;
 }
 
+/*
+ * Returns the in-image table at 0x02008dd4. The eight-byte owner includes its
+ * one pool word, which holds that address and is returned without being
+ * dereferenced.
+ */
 u8 *SceneData_GetTable8dd4(void)
 {
     extern u8 *Data_03001ebc;
@@ -761,7 +703,8 @@ u8 *SceneData_GetTable8dd4(void)
     return (u8 *)0x02008dd4;
 }
 
-s32 SceneData_SelectTable8e08ByFlag96f(void) {
+s32 SceneData_SelectTable8e08ByFlag96f(void)
+{
     extern u8 *Data_03001ebc;
 
     if (Func_02000b82(0x96f) != 0) {
@@ -830,7 +773,7 @@ void FieldScene_RunActorCueBranch(s32 obj)
 {
     extern u8 *Data_03001ebc;
 
-    s32 cue = (s32) &Value_00002624;
+    s32 cue = (s32)&Value_00002624;
     Func_02000da2(cue);
     Func_02000db2(obj, 0);
     if (Func_02000d4a(0, 0) == 0) {
@@ -853,6 +796,12 @@ void SceneState_ApplyCounter16cThenCall7b(void)
     Func_02000e68(0x7B);
 }
 
+/*
+ * Runs the primary script for this scene: a long fixed sequence driving
+ * actors 10, 19, 20, 21, 30 and 40 through position, pose and timing steps,
+ * guarded by an initial skip check. The calls are in machine order, and that
+ * order is what reproduces the reference.
+ */
 void FieldScene_RunPrimaryScript(void)
 {
     extern u8 *Data_03001ebc;
@@ -1144,6 +1093,7 @@ s32 Scene_InitActorRecords(void)
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     {
+        /* The mask is built in a local, not folded into the store. */
         struct SceneRecord *record = work->fields.record;
         s32 flags = ~12;
 

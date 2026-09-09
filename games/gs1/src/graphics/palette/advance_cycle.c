@@ -11,7 +11,8 @@ struct State080c1084 {
 
 extern s8 Data_080c5c10[];
 
-void Graphics_AdvancePaletteCycle(void) {
+void Graphics_AdvancePaletteCycle(void)
+{
     s32 _c0 = ADDR_03001E74;
     s8 *table;
     u16 index;
@@ -26,7 +27,7 @@ void Graphics_AdvancePaletteCycle(void) {
         *(s16 *)0x04000054 = table[state->index];
         index = state->index;
         next = (index + 1) & 0xF;
-        if ((u32) index > 0xEU) {
+        if ((u32)index > 0xEU) {
             next |= 0x10;
         }
         state->index = next;

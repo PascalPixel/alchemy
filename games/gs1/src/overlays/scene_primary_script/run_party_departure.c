@@ -1,6 +1,5 @@
 #include "types.h"
 
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_00002558[];

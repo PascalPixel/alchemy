@@ -6,7 +6,8 @@
 s32 BuildMotionCountdown(s32, s16);
 s32 GetMotionCountdownInput(void);
 
-s32 SceneEffect_UpdateCountdownMotion(struct Resource3afMotion *motion) {
+s32 SceneEffect_UpdateCountdownMotion(struct Resource3afMotion *motion)
+{
     switch (motion->countdown) {
     case 6:
         motion->component_a += (s32) 0xFFFFC000;
@@ -25,7 +26,7 @@ s32 SceneEffect_UpdateCountdownMotion(struct Resource3afMotion *motion) {
         motion->component_a = 0x10000;
         motion->component_b = 0x10000;
         motion->countdown =
-            (s16) (BuildMotionCountdown(GetMotionCountdownInput(), 90) + 60);
+            (s16)(BuildMotionCountdown(GetMotionCountdownInput(), 90) + 60);
         break;
     }
     motion->countdown--;

@@ -10,9 +10,9 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
   if (1)
   {
     *((s16 *) 0x04000000) = 0x40;
-    src = (u8 *) ((void *) 0x02000240);
-    p = (s32 *) ADDR_03001CB4;
-    *p = *((s32 *) (src + 4));
+    src = (u8 *)((void *) 0x02000240);
+    p = (s32 *)ADDR_03001CB4;
+    *p = *((s32 *)(src + 4));
   }
   Audio_PlayCue(9);
   Func_080f7460();

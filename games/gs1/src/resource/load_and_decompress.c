@@ -3,7 +3,8 @@
 
 void Func_08005340(void *, void *);
 
-void Resource_LoadAndDecompress(void *resource_id, void *destination, s32 destination_offset, s32 copy_palette) {
+void Resource_LoadAndDecompress(void *resource_id, void *destination, s32 destination_offset, s32 copy_palette)
+{
     u8 *resource = GetResource((s32)resource_id);
 
     if (copy_palette != 0) {

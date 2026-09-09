@@ -1,28 +1,14 @@
 #include "types.h"
 
-/*
- * Resource 39a overlay routine at 0x02001f58.
- *
- * Complete owner: `push {lr}` at 0x02001f58 and `pop {r0} / bx r0` at
- * 0x02001f9c, so nothing is returned.  Three pool words follow the return.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/asm/overlays/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
- */
-
-/* 0x03001ebc is the overlay's workspace pointer, loaded directly by several of
- * its routines. */
+/* 0x03001ebc is the overlay's workspace pointer. */
 extern u8 *Data_03001ebc;
 
-/* Imports. Those used for their return value are typed. */
+/*
+ * Imports. Each alias names the call word its site encodes, not a runtime
+ * address. Only those used for their return value are typed, and the
+ * declarations are old-style because one name is reached with different
+ * argument counts.
+ */
 
 extern void Func_02004294();
 extern s32 Func_0200427c();
@@ -30,6 +16,12 @@ extern void Func_02004270();
 extern void Func_0200427a();
 extern s32 Func_02004290();
 extern void Func_020042da();
+/*
+ * Branch on flag 0x820 -- resource_39a. One arm sets a record flag; the other
+ * sets a different flag and writes workspace halfword 370. Nothing is
+ * returned, and the owner extends through the three pool words that follow
+ * the epilogue.
+ */
 void SceneState_SetWorkspace370ByFlag820(void)
 {
     Func_02004294();
@@ -43,12 +35,11 @@ void SceneState_SetWorkspace370ByFlag820(void)
 
             /* movs r1,#0xb9 / lsls r1,#1 gives the byte offset 370. */
             /*
-             * The halfword store is written through a pointer local and an
-             * s32 value local, in that order.  Storing the literal directly
-             * makes gcc build the constant in HImode and load it from the
-             * literal pool (`ldrh r3, .L7'), which costs a pool word the
-             * reference does not have; splitting the address out first also
-             * fixes which of r2/r3 holds the address.
+             * The store goes through a pointer local and an s32 value local,
+             * in that order. Storing the literal directly builds the constant
+             * in HImode and loads it from the literal pool, costing a pool
+             * word; splitting the address out first also fixes which register
+             * holds it.
              */
             {
                 u16 *slot = (u16 *)(workspace + 370);

@@ -31,18 +31,10 @@ void Func_0808a548(void);
 /*
  * Open a modal menu screen and run its blocking interaction body.
  *
- * The allocated block shares OpenCharacterSelector's heap "kind" (55) and
- * size (0xa70), and the fields touched here at +0x24, +0x10c, and +0x219
- * line up with that sibling's screen_handle, selector_window, and
- * character_count -- this owner and OpenCharacterSelector (main:080a7380)
- * evidently share the same allocated state layout.  +0x178 is read here but
- * has no established name from other evidence.
- *
- * Data_03001e68 is shared with OpenCharacterSelector too: its "suspended"
- * field is toggled around the interaction, and the raw address of the
- * variable (not its pointed-to value) is reused as a base for two further
- * fixed-address fields at +0x24 and +0x54, matching the raw-address-table
- * idiom already established in field_owner_135.c for this same region.
+ * The address of Data_03001e68, not the pointer it holds, is the base for the
+ * two fixed-address fields at +0x24 and +0x54; only "suspended" is reached
+ * through the pointer itself.  The field read at +0x178 is named by position
+ * only and is not otherwise confirmed.
  */
 s32 Menu_OpenConfirmPrompt(void)
 {

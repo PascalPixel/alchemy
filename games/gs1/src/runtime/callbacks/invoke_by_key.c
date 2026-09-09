@@ -4,7 +4,8 @@
 typedef s32 (*KeyCallbackFn)(void);
 extern u8 Data_03001d34;
 extern u8 Data_03001a20[];
-void Runtime_InvokeCallbacksByKey(s32 arg0) {
+void Runtime_InvokeCallbacksByKey(s32 arg0)
+{
     s32 key = arg0;
     u8 *p = Data_03001a20;
     s32 i;

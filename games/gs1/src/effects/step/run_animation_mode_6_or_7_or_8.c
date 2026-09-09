@@ -1,6 +1,7 @@
 #include "effect_step.h"
 
-void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step) {
+void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step)
+{
     if (step->variant == 0) {
         EffectStep_RunAnimation(step, 6);
         return;

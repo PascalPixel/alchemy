@@ -6,7 +6,8 @@
 s32 Func_080091a8(s32, s32, s32);
 s32 EffectRuntime_FindSlotByObject();
 
-void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y) {
+void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y)
+{
     s32 slot;
     s32 angle;
     s32 objectX;

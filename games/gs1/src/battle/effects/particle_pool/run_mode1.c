@@ -2,6 +2,7 @@
 
 s32 Func_080ca1fc(s32, s32);
 
-void BattleEffect_RunParticlePoolMode1(s32 arg0) {
+void BattleEffect_RunParticlePoolMode1(s32 arg0)
+{
     Func_080ca1fc(arg0, 1);
 }

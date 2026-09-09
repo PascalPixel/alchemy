@@ -1,21 +1,6 @@
 /*
- * Resource 3b1 unindexed helper at 0x02005004 (52 bytes incl. pool,
- * 2 calls).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {lr}` at 0x02005004, epilogue `pop {r0} / bx r0` at
- * 0x02005028-0x0200502a. The trailing pool at 0x0200502c-0x02005034
- * (0x0000092c, 0x00000935, 0x00000917 -- plain numeric arguments, the
- * same constants seen as case values at 0x02004fa8 elsewhere in this
- * overlay, not the address-of `Value_XXXXXXXX` idiom) is included per
- * the usual pool rule, immediately followed by the next owner's push
- * {r5,r6,r7,lr} at 0x02005038, already this overlay's row
- * `0x02005038 | 4 calls`, so the span is 0x02005004-0x02005038,
- * 52 bytes.
- *
- * A flat setter sequence, no branches.
- *
- * Raw callee naming.
+ * Actor 8 flag setup for overlay resource_3b1. Each callee name refers to
+ * its own call word rather than to a shared runtime address.
  */
 
 void Func_0200a044();
@@ -23,6 +8,11 @@ void Func_0200a04c();
 void Func_0200a054();
 void Func_0200a05e();
 
+/*
+ * A flat setter sequence, no branches. The 52-byte owner at 0x02005004
+ * includes its three pool words, which are plain numeric arguments and not
+ * addresses of Value_ globals.
+ */
 void SceneState_ApplyActor8FourFlags(void)
 {
     Func_0200a044(8, 0x92c);

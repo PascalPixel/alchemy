@@ -113,4 +113,3 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
         }
     }
 }
-

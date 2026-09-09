@@ -6,7 +6,8 @@ struct Fields_080b7e04 {
     s32 field10;
 };
 
-void ResetMotionRecordGroup(void *owner) {
+void ResetMotionRecordGroup(void *owner)
+{
     s32 remaining;
     s32 zero;
     struct Fields_080b7e04 **items;

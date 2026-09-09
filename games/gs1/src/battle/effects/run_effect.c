@@ -101,7 +101,7 @@ void BattleEffect_Run(void)
 
         obj_id = Func_0808df1c(Data_02000240.selected_object, battle_mode);
         obj_id = BattleEffect_FilterObjectIdByFlags(obj_id);
-        if (Func_0808d5a4(obj_id) != 0) {
+        if (Func_0808d5a4(obj_id)!= 0) {
             BattleEffect_SetupObjectPair(Data_02000240.selected_object, obj_id);
             Func_0809ab98(obj_id);
             BattleEffect_PauseObject(obj_id);

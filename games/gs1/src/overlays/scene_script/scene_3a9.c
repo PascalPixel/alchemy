@@ -2,21 +2,25 @@
 
 #include "resource_3a9.h"
 
+/* Table selection, dialogue and arrival scripts for resource_3a9. */
+
 typedef struct Placement {
     u32 destination;
     u16 x;
     u16 y;
 } Placement;
 
-extern s16 Data_02000240[];
+extern s16 Data_02000240[];     /* The shared work area, in RAM. */
 extern u8 Value_00000064;
 extern u8 Value_00000065;
 extern u8 Data_020084d0[];
 extern u8 Data_020086c8[];
 extern u8 Data_020084a0[];
-extern Placement Data_02008ef8[];
+extern Placement Data_02008ef8[];   /* In-image placement table, four entries. */
 extern u8 *Data_03001ebc;
 
+/* Old-style declarations where an overlay import varies in arity between its
+ * call sites. */
 void Func_02000558(void);
 void Func_020005a6(s32);
 s32 Func_020005b6(s32, s32);
@@ -70,150 +74,9 @@ void Func_02000762(s32, s32, s32, s32, s32, s32);
 s32 Func_02000772();
 s32 Func_020007be();
 
-/* Contiguous unnamed leaf-owner run for resource_3a9. */
-
-/*
- * resource_3a9 owner at 0x02000074, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000078 holding 0x2008728.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000074 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008728 is image offset
- * 0x728 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* 0x02000626 serves two imports in sibling arms: the two-argument gesture in
- * the first and the one-argument message in the second. */
-
-/*
- * resource_3a9 owner at 0x02000240, 200 bytes: the scene arrival routine —
- * clear every scene slot's residue, look the current sub-state up in a small
- * in-image table, and place the player where that entry says.
- *
- * Role known in advance from the in-image scene-script tables: FOUR three-word
- * records name 0x02008241 as their callback — selectors 0x10 and 0x13 in one
- * table and 0x0c and 0x0d in another — and 0x02008241 - 0x8000 - 1 = 0x0240.
- * So one function serves four script selectors, which is why it re-reads the
- * sub-state itself rather than taking it as an argument.  Link-base evidence is
- * in the header of `games/gs1/semantic/overlays/resource_3a9_c_0200007c.c`.
- *
- * Complete owner.  Prologue `push {r5, r6, r7, lr}` at 0x02000240; single
- * epilogue `pop {r5, r6, r7} / pop {r0} / bx r0` at 0x020002fa, so the popped
- * word is the return address and the owner is **void**.  Code runs
- * 0x02000240..0x020002ff; the literal pool is the two words
- * 0x02000300..0x02000307 and 0x02000308 is the next (tracked byte-exact)
- * prologue.  200 bytes, matching the inventory row.
- *
- * All 13 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- * resource_3a9 0240` (an overlay `bl` stores target offset - 2).  Per-target:
- *   Func_0808a018 1   Scene_GetRecord 2   Audio_PlayCue 1   Func_08009178 1
- *   Func_0808a090 1   Func_0808a100 1   Func_0808a0d8 1   Func_0808a010 1
- *   Func_0808a248 1   Func_0808a368 1   Func_0808a370 1   Func_0808a020 1
- * The two Scene_GetRecord sites are the loop's per-slot fetch and the later
- * player fetch — distinct sites, not merged.
- *
- * The clearing loop runs slots 8..65 inclusive (`movs r5,#8` /
- * `cmp r5,#65 / bls`) and skips a slot whose record comes back null; the +85
- * byte it zeroes is the same field the tracked
- * `games/gs1/asm/overlays/resource_36f_c_02000054.c` clears on a scene record, so the
- * offset is evidence rather than inference.  The later single clear of the
- * player's own +85 byte does NOT test for null, and that asymmetry is in the
- * reference.
- *
- * The sub-state switch is a compare chain, not a jump table: 12, 13, 16 and 19
- * map to placement indices 0, 1, 2 and 3, and EVERY other value returns
- * immediately without touching anything.  Index times 8 addresses an 8-byte
- * entry `{u32, u16, u16}` in the in-image table at 0x02008ef8 (even pool word,
- * so data at file offset 0x0ef8), and the three fields go straight into
- * Func_08009178 — the same three-argument shape
- * `games/gs1/semantic/overlays/resource_3ce_c_02000cf4.c`'s family uses.
- *
- * `Func_0808a090(0, 0x00008000, 0x00004000)` is the documented fixed-point
- * scale setter: 0x8000 and 0x4000 against 0x10000 as one are 0.5 and 0.25.
- * `Func_0808a0d8(0, 3, -8)` builds its -8 as `movs r2,#8 / negs r2`, which is
- * a negation and not the AND-mask variant of that idiom.
- *
- * `+ 364` (built as `movs r2,#182 / lsls r2,r2,#1`, the documented
- * displacement-as-shifted-constant habit) is the s16 sub-state slot of the
- * workspace the pointer cell 0x03001ebc addresses — one dereference, as the
- * tracked `games/gs1/asm/overlays/resource_3a9_c_02000308.c` spells it.  It is read twice,
- * once for the switch and once for Func_0808a248, and both reads are kept.
- *
- * Uncertainty: 158 is a Audio_PlayCue cue id from its argument position.
- */
-
-/* Old-style declarations: overlay imports vary in arity between call sites. */
-
-/* In-image placement table: four 8-byte entries {u32, u16, u16}. */
-
-/*
- * resource_3a9 owner at 0x0200033c, 172 bytes: the per-sub-state slot cleanup
- * — decide which set of scene slots this sub-state leaves behind and clear
- * them.
- *
- * Unlike this overlay's other rows, 0x0200033c is NOT named by any in-image
- * pool word and no script-table record carries 0x0200833d, so nothing inside
- * the overlay references it and `overlay_call_targets.ts` reports no prologue
- * targets anywhere here.  It is nonetheless an ordinary, self-contained,
- * frame-balanced owner — one prologue, one interworking return, no live state
- * crossing either end — so it converts normally, exactly as the analogous
- * unreferenced owner in `games/gs1/semantic/overlays/resource_3ce_c_02000cf4.c` did.
- * Link-base evidence for the overlay is in the header of
- * `games/gs1/semantic/overlays/resource_3a9_c_0200007c.c`.
- *
- * Complete owner.  Prologue `push {lr}` at 0x0200033c with an 8-byte frame
- * (`sub sp,#8`) for the two stacked arguments of the six-argument call; single
- * epilogue `add sp,#8 / pop {r0} / bx r0` at 0x020003d8, so the popped word is
- * the return address and the owner is **void**.  Code runs
- * 0x0200033c..0x020003dd, the 2-byte zero at 0x020003de is the alignment word,
- * the literal pool is 0x020003e0..0x020003e7, and 0x020003e8 is the first
- * import veneer.  172 bytes, matching the inventory row.
- *
- * All 15 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- * resource_3a9 033c` (an overlay `bl` stores target offset - 2).  Per-target:
- *   Func_0808a088 11   GameFlag_IsSet 2   Func_08009180 1   Func_0808a158 1
- *
- * THE ELEVEN Func_0808a088 SITES ARE ELEVEN SITES, NOT A LOOP.  Nine of them
- * are a straight run of `movs r0,#k / bl` pairs with no counter, no back edge
- * and no compare, and the ids they pass are 10, 11, 12, 13, 14, 17, 18, 19, 15
- * — non-contiguous and ending out of order, which is the tell.  The other two
- * are on the unrelated final arm with ids 16 and 17.  Folding either run into a
- * loop would deflate the multiset by nine; that is the documented script-table
- * shape and it is written out here the same way.  The odd trailing 15 is
- * preserved rather than sorted, on the same grounds as the documented
- * non-sequential refresh orders.
- *
- * The sub-state dispatch is a three-way compare chain with a SHARED taken arm:
- * `> 15` falls to a `== 17` test, otherwise `>= 9` takes the same arm, and only
- * a bare `== 3` gets the six-argument call.  Everything else — including 16,
- * which sits inside the middle of the accepted range — goes to the last arm.
- * That hole is real and is why the test is not written as `9..17`.  The same
- * hole appears in Func_0200007c's window over the same halfword, which is a
- * free cross-check that both were read correctly.
- *
- * `Data_02000240 + 450` is the s16 sub-state slot of the shared work area,
- * `Data_02000240[225]`, as the tracked `games/gs1/asm/overlays/resource_3a9_c_02000308.c`
- * and the tracked resource_36f sources spell it.
- *
- * Uncertainties: 0x911 is read as an event-flag id from its argument position
- * on GameFlag_IsSet; the six-argument Func_08009180(30, 14, 30, 16, 4, 2) is the
- * established six-argument scripted-actor ABI, with the last two arguments
- * passed on the stack, and its argument meanings are not established here.
- */
-
-/* RAM: the shared work area. */
-
-s32 SceneData_SelectTableBySceneId(void) {
+/* Picks one of three scene tables by scene id. */
+s32 SceneData_SelectTableBySceneId(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000064) {
@@ -230,6 +93,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
+/*
+ * Returns the in-image table at 0x02008728. The eight-byte owner includes its
+ * one pool word, which holds that address and is returned without being
+ * dereferenced.
+ */
 u8 *SceneData_GetTable8728(void)
 {
     return (u8 *)0x02008728;
@@ -248,6 +116,8 @@ extern u8 Data_02008a48[];
 extern u8 Data_02008eb0[];
 extern u8 Data_02008a3c[];
 
+/* Picks a table by scene id and sub-state, and hands the chosen one to
+ * Func_020004d0 before returning it. */
 u8 *SceneData_SelectAndPrepareTable(void)
 {
     s32 id = Data_02000240[224];
@@ -278,6 +148,8 @@ u8 *SceneData_SelectAndPrepareTable(void)
     return Data_02008784;
 }
 
+/* The same selection without the hand-off. Sub-state 16 falls to the default
+ * arm even though it lies inside 9..17; that hole is deliberate. */
 u8 *SceneData_SelectSubStateTable(void)
 {
     s32 id = Data_02000240[224];
@@ -320,14 +192,16 @@ void SceneDialogue_RunActor16Dialogue(void)
     Func_0200059a();
 }
 
+/* Actor 8's dialogue, branched on flag 0x911. Func_02000626 and
+ * Func_02000626_b are two imports sharing one call word: the two-argument
+ * gesture in the first arm, the one-argument message in the second. */
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
     u8 *p = Func_020005ba(0);
 
-    /* Band guard: facing in 0x6001..0x9fff. The reference falls through to the
-     * short arm and branches away to the scene, so the test is spelled as the
-     * short arm's condition. */
-    if ((u16) (*(u16 *) (p + 6) - 0x6001) <= 0x3FFE) {
+    /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
+     * arm's condition, which is what reproduces the branch. */
+    if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
         Func_02000638(7, 8);
     } else {
         Func_020005be();
@@ -351,10 +225,9 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 
     u8 *p = Func_0200062a(0);
 
-    /* Band guard: facing in 0xa001..0xdfff. The reference falls through to the
-     * short arm and branches away to the scene, so the test is spelled as the
-     * short arm's condition. */
-    if ((u16) (*(u16 *) (p + 6) + 0x5FFF) <= 0x3FFE) {
+    /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
+     * arm's condition, which is what reproduces the branch. */
+    if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
         Func_0200069e(8);
     } else {
         Func_0200062c();
@@ -364,6 +237,14 @@ void SceneDialogue_RunActor8FacingDialogue(void)
     }
 }
 
+/*
+ * Scene arrival: clears the residue byte at +85 of every scene slot from 8 to
+ * 65, then looks the sub-state up in the placement table and places the
+ * player from that entry. Sub-states other than 12, 13, 16 and 19 return
+ * without touching anything. The loop skips a null record but the later clear
+ * of the player's own +85 does not test for null; that asymmetry is real.
+ * 158 is read as a cue id from its argument position and is not verified.
+ */
 void FieldScene_RunArrivalPlacement(void)
 {
     u8 *Func_0200067a_a();
@@ -383,6 +264,8 @@ void FieldScene_RunArrivalPlacement(void)
         }
     }
 
+    /* The sub-state slot is read twice, here and for Func_0200075c below, and
+     * both reads are kept. */
     switch (*(s16 *)(work + 364)) {         /* 182 << 1 */
     case 12: idx = 0; break;
     case 13: idx = 1; break;
@@ -393,6 +276,8 @@ void FieldScene_RunArrivalPlacement(void)
 
     Func_02000730(158);
 
+    /* The entry address is accumulated through these locals; folding them into
+     * one indexed expression does not reproduce the loads. */
     {
         u32 off = idx << 3;
         u32 value = (u32)Data_02008ef8;
@@ -421,15 +306,24 @@ void FieldScene_RunArrivalPlacement(void)
     Func_02000710();
 }
 
+/* Publishes 0x209 at +448 of the runtime record, and calls Func_0200065e for
+ * scene 0x64. */
 s32 SceneState_SetRuntimeWord448To521(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32) (u32) &Value_00000064) {
+    if (Data_02000240[224] == (s32)(u32)&Value_00000064) {
         Func_0200065e();
     }
     return 0;
 }
 
+/*
+ * Clears the set of scene slots this sub-state leaves behind. Sub-state 16
+ * takes the last arm even though it lies inside 9..17, so the test is not
+ * written as a range. 0x911 is read as an event-flag id from its argument
+ * position, and the six-argument call's argument meanings are not
+ * established.
+ */
 void SceneState_ClearSlotsBySubState(void)
 {
     s16 sub = Data_02000240[225];
@@ -437,6 +331,7 @@ void SceneState_ClearSlotsBySubState(void)
     switch (sub) {
     case 3:
     {
+        /* The last two arguments travel on the stack. */
         s32 fifth = 4;
         s32 sixth = 2;
         Func_02000762(30, 14, 30, 16, fifth, sixth);
@@ -457,8 +352,8 @@ void SceneState_ClearSlotsBySubState(void)
 
     /* sub is 9..15 or 17. */
     if (Func_02000772(0x911) != 0) {
-        /* Nine distinct sites; the trailing 15 is out of order in the
-         * reference and is kept that way. */
+        /* Nine distinct call sites, not a loop; the trailing 15 is out of
+         * order and is kept that way. */
         Func_020007b4(10);
         Func_020007ba(11);
         Func_020007c0(12);

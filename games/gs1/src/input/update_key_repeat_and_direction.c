@@ -50,14 +50,14 @@ void Input_UpdateKeyRepeatAndDirection(void)
             REG32(ADDR_03001D04) = flags & 0xf0;
             break;
         case 2:
-            if ((REG32(ADDR_03001D04) & *active) == 0)
+            if ((REG32(ADDR_03001D04)& *active) == 0)
                 REG32(ADDR_03001D04) = 0x30;
             *active &= REG32(ADDR_03001D04) ^ 0xffff;
             break;
         case 3:
-            if ((REG32(ADDR_03001D04) & 0x30) != 0)
+            if ((REG32(ADDR_03001D04)& 0x30) != 0)
                 sel = 0x30;
-            if ((REG32(ADDR_03001D04) & 0xc0) != 0)
+            if ((REG32(ADDR_03001D04)& 0xc0) != 0)
                 sel = 0xc0;
             mask = 0xffff ^ sel;
             REG32(ADDR_03001D04) = flags & mask;

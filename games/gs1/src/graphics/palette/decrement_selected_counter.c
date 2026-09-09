@@ -4,7 +4,8 @@
 
 extern u8 Data_02000240[];
 
-void GraphicsPalette_DecrementSelectedCounter(s32 work) {
+void GraphicsPalette_DecrementSelectedCounter(s32 work)
+{
     u8 *p;
     u16 sel;
     s32 off;

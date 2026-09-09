@@ -3,7 +3,8 @@
 
 s32 WaitFrames(s32);
 
-void Blend_WaitForTransition(void) {
+void Blend_WaitForTransition(void)
+{
     if (*(u8 *)ADDR_03001C98 != 0) {
         do {
             WaitFrames(1);

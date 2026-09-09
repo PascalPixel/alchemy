@@ -629,110 +629,42 @@ s32 Func_02002382();
 s32 Func_02002384(void);
 s32 Func_02002418(void);
 
-/*
- * resource_3ce owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000034 holding 0x20093c8.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0xc. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000034 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x20093c8 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
- */
-
-/* Contiguous unnamed state-owner run for resource_3ce. */
+/* Scene state, dialogue and command-table steps for resource_3ce. */
 
 /*
- * resource_3ce owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000040 holding 0x20093f8.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x14. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000040 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x20093f8 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Table getter at 0x02000030. The eight-byte owner includes its one pool word
+ * at 0x02000034, which holds 0x020093c8; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
  */
 
 /*
- * resource_3ce owner at 0x02000044, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000048 holding 0x20093fc.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x1c. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000048 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x20093fc is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Table getter at 0x0200003c. The eight-byte owner includes its one pool word
+ * at 0x02000040, which holds 0x020093f8; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
  */
 
-/* 問い合わせが非零を返すまで毎回1で進行させる。判定は後置、入口は判定へ飛ぶ。 */
+/*
+ * Table getter at 0x02000044. The eight-byte owner includes its one pool word
+ * at 0x02000048, which holds 0x020093fc; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
+ */
+
+/* Step by one until the query returns non-zero. The test sits at the bottom of
+ * the loop and entry jumps to it. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call instead precomputes a costly constant
+ * into a pseudo shared with later uses in the block. A value-returning call
+ * sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
+/* Each symbol here is the per-site call word the overlay image holds -- one
+ * word can serve two sites with different targets -- and the macro keeps the
+ * site's own calling form. The names themselves are provisional. */
 
 /* Runs one setup call, then a long table of two-argument calls each passing
  * a slot index (0-3) and an associated code value, and finishes with a few

@@ -1,10 +1,9 @@
 #include "types.h"
 
-/* STILL-OPEN: adopt --where differing_bytes=13/80. alchemist.ts refused
- * (tiers: class, priority) -- matches the documented DEAD-END FINGERPRINT
- * (adjacent register swap in an asrs/str block), genuinely unfixed. */
-
-/* Per-site veneers (raw sub_ symbols from the overlay .s). */
+/*
+ * One symbol per call site.  These names stand for loader-relocated call
+ * words in the overlay's veneer table, not runtime addresses.
+ */
 extern u8 *Func_02007168(s32 no);
 extern void Func_02006f74(void);
 extern void Func_02006f5c(u8 *obj, s32 x);
@@ -13,22 +12,12 @@ extern void Func_02006fa6(u8 *obj);
 extern void Func_02006f76(u8 *obj, s32 x);
 
 /*
- * resource_3bb owner at 0x020030e8, 80 bytes: spawn an object and run a
- * short fixed setup sequence on it.
- *
- * Complete owner: `push {r5, r6, r7, lr}` at 0x020030e8 through `pop
- * {r5, r6, r7} / pop {r0} / bx r0` at 0x02003130-0x02003134, followed by
- * one alignment halfword; the next owner's prologue is at 0x02003138.
- * Three arguments (r0, r1, r2), void. `r0` is never freshly loaded before
- * the first call, so it is the forwarded first argument.
- *
- * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
- *
- * Uncertainty: none of the six callees are identified beyond call shape;
- * `obj`'s fields (0x30/0x34, set to a fixed 0x14000/0xa000 pair, 0x5b
- * cleared, 0xc read back for the position setup call) are inferred only
- * from this call shape.
+ * resource_3bb owner at 0x020030e8, 80 bytes plus one alignment halfword:
+ * spawn an object and run a short fixed setup sequence on it.  `no' is
+ * forwarded unchanged -- it is never freshly loaded before the first call.
+ * The object's fields (0x30 and 0x34 taking the fixed 0x14000/0xa000 pair,
+ * 0x5b cleared, 0xc read back for the position call) are named by position
+ * from call shape alone and are not verified.
  */
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 {

@@ -1,3 +1,9 @@
+/*
+ * Overlay resource_397: a field scene that shifts its two tracked objects by
+ * whole blocks, blends the display for scene 9, and scrolls BG3 against the
+ * vertical counter.
+ */
+
 #include "types.h"
 
 #define NULL ((void *)0)
@@ -26,6 +32,7 @@
 
 #include "resource_397.h"
 
+/* The two tracked scene objects share this coordinate and terrain prefix. */
 struct SceneObject {
     u8 unknown_00[8];
     s32 x;
@@ -66,145 +73,33 @@ void Func_0200051e();
 void Func_020005f6(s32, s32, s32);
 s32 Func_020005f8(s32, s32);
 
-/*
- * resource_397 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000044 holding 0x200835c.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000040 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x200835c is image offset
- * 0x35c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
- * resource_397 owner at 0x02000048, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
-/*
- * resource_397 owner at 0x0200004c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000050 holding 0x200844c.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200004c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x200844c is image offset
- * 0x44c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
- * resource_397 owner at 0x02000054, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000058 holding 0x2008474.
- *
- * LEAF RESIDUE. Published at image offset 0x1c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000054 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008474 is image offset
- * 0x474 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* The two tracked scene objects share this coordinate/terrain prefix. */
-
-/*
- * resource_397 owner at 0x020001b4, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20001b8 holding 0x20084a4.
- *
- * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x020001b4 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20084a4 is image offset
- * 0x4a4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
- * resource_397 owner at 0x020001d0, 2 bytes: `bx lr` alone.
- *
- * SWEEP-D RESIDUE, and the reason sweep D exists. This row is in NO sweep:
- * it is not published anywhere in the image (the full spelling
- * 0x02000000 + 0x1d0 + 0x8000 + Thumb bit = 0x20081d1 appears in no word),
- * no `bl` in the image reaches it, and it has no `push` for a shape scan
- * to key on. It offers no key to sweeps A, B or C. It was found only as
- * unaccounted bytes between two exact-C owners -- 0x020001bc ends at
- * 0x020001ca and 0x020001d4 begins the next -- and the ten bytes in between
- * read as pad, stub, pad, stub, pad.
- *
- * An EMPTY HOOK, the same body resource_3bb's 0x02003228 has and the same
- * one this cohort's two-byte class is made of. It saves nothing, reads
- * nothing, writes nothing and returns at once. Nothing here establishes
- * what it would have done; only that it does nothing.
- *
- * SPAN 2, NOT 4. The `0x0000` halfword before it aligns the entry to four
- * bytes and the one after aligns the next, and neither is part of this
- * body. Recording 4 would claim alignment as code and put a phantom
- * overlap in the next reader's arithmetic.
- */
 void SceneState_SetActorEightValue3d(void)
 {
     Func_0200037c(8, 0x3D);
 }
 
+/*
+ * The eight-byte owner includes its one pool word, which holds the address
+ * returned here. The word is loaded and returned, never dereferenced.
+ */
 u8 *SceneData_GetTable835c(void)
 {
     return (u8 *)0x0200835c;   /* image offset 0x35c */
 }
 
+/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable844c(void)
 {
     return (u8 *)0x0200844c;   /* image offset 0x44c */
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable8474(void)
 {
     return (u8 *)0x02008474;   /* image offset 0x474 */
@@ -310,6 +205,7 @@ void SceneEffect_SetAlphaBlendForScene9(void)
     }
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable84a4(void)
 {
     return (u8 *)0x020084a4;   /* image offset 0x4a4 */
@@ -321,6 +217,11 @@ void FieldScene_RunTwoCallSequence(void)
     Func_020004f0();
 }
 
+/*
+ * Scene hook that does nothing. The owner is the two-byte return alone; the
+ * zero halfwords on either side align it and the entry that follows, and are
+ * not part of it.
+ */
 void SceneState_RunEmptyHook(void)
 {
 }

@@ -1,5 +1,11 @@
+/*
+ * Overlay resource_390: table getters, four actor message branches, and the
+ * entry step that lays out the map by selector.
+ */
+
 #include "types.h"
 
+/* The workspace pointer is a cell holding the scene work: one dereference. */
 #define MAP390_WORKSPACE (*(u8 **)0x03001ebc)
 #define SceneData_InitRecordTable Func_02000030
 #define SceneData_GetPrimaryTable Func_0200005c
@@ -21,6 +27,7 @@ struct Approach390Subject {
     u16 dir;                   /* 0x06, wrapped 16-bit */
 };
 
+/* The cross-overlay map selector block, in RAM rather than in the image. */
 extern u8 Data_02000240[];
 
 s32 Func_0200033e(s32);
@@ -60,29 +67,7 @@ void Func_02000576();
 void Func_02000580();
 void Func_0200058a();
 
-/*
- * resource_390 owner at 0x020001bc, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20001c0 holding 0x2008658.
- *
- * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x020001bc reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008658 is image offset
- * 0x658 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* Pointer CELL holding the scene work - one dereference, not two. */
-
-/* The cross-overlay map sel block. */
+/* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 {
     u32 i;
@@ -108,49 +93,22 @@ void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
     } while (i <= 0xE);
 }
 
+/*
+ * The eight-byte owner includes its one pool word, which holds the address
+ * returned here. The word is loaded and returned, never dereferenced.
+ */
 u8 *SceneData_GetPrimaryTable(void)
 {
     return (u8 *)0x02008318;
 }
 
-/*
- * resource_390 owner at 0x02000064, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
+/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/*
- * resource_390 owner at 0x02000068, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200006c holding 0x2008498.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000068 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008498 is image offset
- * 0x498 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetSecondaryTable(void)
 {
     return (u8 *)0x02008498;
@@ -168,29 +126,12 @@ u8 *SceneData_PrepareTable84d8(void)
     return buf;
 }
 
-/*
- * resource_390 owner at 0x0200005c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000060 holding 0x2008318.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200005c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008318 is image offset
- * 0x318 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
 void FieldScene_RunActor16MessageBranch(void)
 {
-    /* The local is wider than the field: read into a u16 the compiler reloads
-     * it signed and re-normalises across the call. */
+    /*
+     * The local must stay wider than the halfword field; as a u16 it is
+     * reloaded signed and renormalised across the call.
+     */
     u32 dir = Func_0200038a(0)->dir;
 
     Func_02000378();
@@ -207,8 +148,10 @@ void FieldScene_RunActor16MessageBranch(void)
 
 void FieldScene_RunActor17MessageBranch(void)
 {
-    /* The local is wider than the field: read into a u16 the compiler reloads
-     * it signed and re-normalises across the call. */
+    /*
+     * The local must stay wider than the halfword field; as a u16 it is
+     * reloaded signed and renormalised across the call.
+     */
     u32 dir = Func_020003d2(0)->dir;
 
     Func_020003c0();
@@ -225,8 +168,10 @@ void FieldScene_RunActor17MessageBranch(void)
 
 void FieldScene_RunActor18MessageBranch(void)
 {
-    /* The local is wider than the field: read into a u16 the compiler reloads
-     * it signed and re-normalises across the call. */
+    /*
+     * The local must stay wider than the halfword field; as a u16 it is
+     * reloaded signed and renormalised across the call.
+     */
     u32 dir = Func_0200041a(0)->dir;
 
     Func_02000408();
@@ -246,8 +191,10 @@ void FieldScene_RunActor19MessageBranch(void)
     void Func_020004a2(s32, s32);
     void Func_020004a2_a(s32, s32);
 
-    /* The local is wider than the field: read into a u16 the compiler reloads
-     * it signed and re-normalises across the call. */
+    /*
+     * The local must stay wider than the halfword field; as a u16 it is
+     * reloaded signed and renormalised across the call.
+     */
     u32 dir = Func_02000462(0)->dir;
 
     Func_02000450();
@@ -262,48 +209,24 @@ void FieldScene_RunActor19MessageBranch(void)
     Func_0200047e();
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable8658(void)
 {
     return (u8 *)0x02008658;
 }
 
 /*
- * resource_390 owner at 0x020001c4, 244 bytes: the map's entry step.  Publish
- * phase 0x209, put every record in the 8..22 range into presentation phase 0
- * the first time through, and then repaint three tile rectangles in one of two
- * variants chosen by the shared map sel - with a small extra flourish on
- * the second.
+ * Map entry step: publish phase 0x209, put every record from 8 to 22 into
+ * presentation phase 0 the first time through, then repaint three tile
+ * rectangles in one of two variants chosen by the map selector. It returns a
+ * constant zero.
  *
- * Complete owner: 'push {r5, r6, lr}', an 8-byte outgoing-argument frame for
- * the six-argument renderer, and the single interworking epilogue at
- * 0x0200029e.  Control-flow walk: a loop and two forward exits, all landing on
- * or before 0x0200029c, so the alignment halfword at 0x020002a6 and the four
- * pool words after it are unreachable.  226 code + 18 non-code = 244, the
- * advertised span.
+ * Slot +448 of the workspace is the s32 scene phase id, and 0x209 is the
+ * stored value; the displacement and the value are separate.
  *
- * Return type from the epilogue rule: 'pop {r1} ; bx r1' with N != 0, so r0
- * survives - the owner returns the constant 0.
- *
- * Calls: 12 sites over 5 targets, from
- * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_390 01c4'.  Note that the two
- * calls inside the record loop are ONE site each; the multiset counts sites,
- * not executions.
- *
- * The work store is the documented additive displacement/value pair in its
- * simplest form: 'movs r1,#224 / lsls #1' makes 448 the DISPLACEMENT, and the
- * value 0x209 comes from its own pool word.  Slot +448 is the established s32
- * scene/phase id.
- *
- * The sel test in the second arm is the documented windowed range idiom -
- * 'subs #8 / lsls #16 / cmp' against 128 << 9 is exactly (u16)(sel - 8)
- * <= 1, i.e. the two-value set {8, 9}.  Undo the shift or it reads as a
- * comparison against 0x10000.
- *
- * UNCERTAINTY: 'Data_02000240 + 450' is read BOTH ways in the same two
- * instructions - as an unsigned halfword into r2 and as a signed halfword into
- * r3 - and only the signed view is compared against 7 while only the unsigned
- * view feeds the window test.  Both views are kept here rather than collapsed,
- * because which one the family intends is not established.
+ * The selector at Data_02000240 + 450 is read both ways: signed for the
+ * comparison against 7 and unsigned for the window test below. Which reading
+ * the record intends is not established, so both are kept.
  */
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
@@ -341,6 +264,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
         Func_020004e0(34, 94, 18, 76, arg4, arg5);
         Func_020004f0(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
+        /* Shifted window test: the selector set is {8, 9}. */
         s32 arg5;
         s32 arg4;
         arg4 = 11;

@@ -1,25 +1,18 @@
 #include "types.h"
 
 /*
- * Resource 3b3 unindexed helper at 0x02000d78 (48 bytes, 1 call).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,lr}` at 0x02000d78, epilogue `pop {r5,r6} / pop {r0} / bx r0`
- * at 0x02000da2-0x02000da6, immediately followed with no gap by the
- * next function's `push {r5,r6,r7,lr}` at 0x02000da8 (not part of this
- * overlay's item-28 population, already indexed elsewhere), so the span
- * is exactly 0x02000d78-0x02000da8, 48 bytes.
- *
- * A poll-with-timeout: up to 60 iterations calling `Func_020037be(1)`
- * (presumably a one-frame wait) until `obj[+12] == obj[+20]`, then
- * resets `obj[+0x28]` to 0, `obj[+0x3c]` to 0x80000000, and mirrors
- * `obj[+20]` back into `obj[+12]`.
- *
- * Raw callee naming.
+ * Poll an overlay object until it settles, then reset it -- resource_3b3.
  */
 
+/* Declared without a prototype; the call site passes one argument. */
 void Func_020037be();
 
+/*
+ * Wait at most sixty polls for the object's +12 to reach its +20, then clear
+ * +0x28, set +0x3c, and mirror +20 back into +12. Func_020037be(1) is taken
+ * to be a one-frame wait, and the field offsets are named by position and
+ * not verified.
+ */
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
     s32 cnt = 60;

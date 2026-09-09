@@ -1,36 +1,9 @@
 #include "scene_effect_sequence.h"
 
 /*
- * Resource 3a0 owner at 0x02000e4c (228 bytes).
- *
- * Complete owner: `push {r5, lr}` at 0x02000e4c and `pop {r5} ; pop {r0} ;
- * bx r0` at 0x02000f0e -- the popped register IS r0, so the owner is
- * **void**.  0x02000e4c + 228 = 0x02000f30, where the next owner's
- * `push {r5, r6, lr}` begins.  The span decomposes as head and dispatcher
- * (0x02000e4c-0x02000e6d), a two-byte alignment halfword at 0x02000e6e,
- * 7-entry jump table (0x02000e70-0x02000e8b, data), seven case bodies and
- * the shared tail (0x02000e8c-0x02000f13) and the literal pool
- * (0x02000f14-0x02000f2f).
- *
- * Fifth of the nine dispatch sites the tree described nowhere; adopted with
- * `--span 228`.
- *
- * A DIFFERENT selector from the other seam rows: the scene table is reached
- * through the IWRAM pointer `Data_03001ebc` rather than through
- * `Data_02000240`, the index is [182] not [225], and the guard is
- * `subs #1 ; cmp #6 ; bhi` for the range 1..7.  The pointer is loaded before
- * the first call and held in r5 across all of them, so it is a function-top
- * local.
- *
- * ONE FALLTHROUGH, and it is a jump INTO the middle of a later arm: cases 2
- * and 3 set two registers and branch to 0x02000ee4, which is inside case 6's
- * body, so all three share case 6's final call.  Written as a `goto` to a
- * label inside the case-6 arm with the two shared arguments as locals --
- * 5b6's shared-tail lever, one level further in.
- *
- * Case-arm ORDER off the ROM (5b5); here the distinct table values ascending
- * happen to coincide with selector order, which was checked rather than
- * assumed.  Per-site RAW callee names (5b3a).
+ * Scene step dispatcher for resource_3a0.  The 228-byte owner includes its
+ * seven-entry jump table, an alignment halfword and its literal pool.  Each
+ * call site is spelled with its own import name.
  */
 
 extern u8 *Data_03001ebc;
@@ -57,6 +30,14 @@ void Func_02002272();
 void Func_02001cf0();
 void Func_020022d4();
 
+/*
+ * The scene table is reached through the IWRAM pointer Data_03001ebc, not
+ * through the resident workspace, and the selector is its halfword [182],
+ * guarded to the range 1..7.  The pointer is loaded before the first call and
+ * held across all of them, so it is a function-top local.  Cases 2 and 3 set
+ * the two shared arguments and jump into the middle of case 6 to share its
+ * final call; the goto and the two locals are what reproduce that.
+ */
 void SceneEffect_DispatchStep(void)
 {
     s16 *scene = (s16 *)Data_03001ebc;

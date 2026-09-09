@@ -1,23 +1,12 @@
 #include "types.h"
 
 /*
- * resource_396 owner at 0x0200185c, 90 bytes.
- *
- * The per-frame integrator for an effect record: it adds the +68/+72/+76
- * velocity into the +8/+12/+16 position, decays two of the three velocities,
- * accumulates the two rates at +48/+52 into +24/+28, and advances the sprite's
- * angle by the record's per-frame step.
- *
- * The record layout is the one established by resource_396_c_02000ae8.c, whose
- * comment names this shape directly: "a leaf routine that adds the +68/+72/+76
- * velocity into the +8/+12/+16 position".  The three position words at +8, +12
- * and +16 fall inside that source's leading pad and are named here.
- *
- * `velocity_z -= velocity_z / 16` is spelled as a signed divide: the reference
- * biases by 15 when the value is negative and then arithmetic-shifts by 4,
- * which is what the compiler emits for a division by a power of two.
+ * Per-frame integrator for an effect record -- resource_396. It adds the
+ * velocity at +68/+72/+76 into the position at +8/+12/+16, decays two of the
+ * three velocities, accumulates the rates at +48/+52, and turns the sprite.
  */
 
+/* Every field is named by offset; the layout is not verified. */
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -49,16 +38,24 @@ struct Effect {
     u32 callback;
 };
 
-/* Relocated IWRAM helper: turns a value and a duration into a per-frame step. */
+/*
+ * A loader-relocated call word rather than a runtime address; it turns a value
+ * and a duration into a per-frame step. Declared without a prototype, and the
+ * call site passes two arguments.
+ */
 s32 Func_0200328e();
 
+/*
+ * The decay of the Z velocity stays a signed divide by sixteen: that shape is
+ * what reproduces the negative bias and arithmetic shift in the reference.
+ */
 void Func_0200185c(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* Macro-shaped block keeps the following Z load after the Y store. */
+    /* This block orders the Z load after the Y store; do not flatten it. */
     do {
         velocity_x = effect->velocity[0];
         effect->position[0] += velocity_x;

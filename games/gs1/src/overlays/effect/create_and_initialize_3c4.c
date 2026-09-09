@@ -1,11 +1,9 @@
 /*
- * BYTE-EXACT and adopted 2026-08-07 with no compiler flags: the four callees
- * were declared at their ROM-space veneer addresses, so every `bl' went
- * through a veneer; they are now declared at the in-overlay entry points the
- * reference calls directly.  The +9 flag clear then had to be written as a
- * mask local that is initialised and only afterwards ANDed with the loaded
- * byte -- writing it as one expression puts the mask in r2 and the byte in
- * r3, the reverse of the reference.
+ * Create an object, clear the low bits of its owner record, and initialise it.
+ * The four callees are declared at their in-overlay entry points, not at
+ * veneers.  The +9 flag clear takes its mask from a local that is initialised
+ * first and only afterwards ANDed with the loaded byte; written as one
+ * expression it swaps which register holds the mask and which the byte.
  */
 #include "types.h"
 

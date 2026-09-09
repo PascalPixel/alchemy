@@ -1,35 +1,21 @@
 #include "types.h"
 
-/*
- * Resource 3b1 unindexed helper at 0x02001280 (92 bytes incl. pool,
- * 2 calls).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,r7,lr}` + a 12-byte stack buffer at 0x02001280, epilogue
- * `add sp,#12 / pop {r5,r6,r7} / pop {r1} / bx r1` at
- * 0x020012d0-0x020012d6. The one-word literal pool at 0x020012d8
- * (0x0200e668, the same packed `{s16 hi; s16 lo;}` bucket table used by
- * 0x02001190 earlier in this overlay) is included per the usual pool
- * rule, immediately followed by the next owner's push {r5,lr} at
- * 0x020012dc, already this overlay's row `0x020012dc | 9 calls`, so the
- * span is 0x02001280-0x020012dc, 92 bytes.
- *
- * A placement check: offsets `obj[+10]`/`obj[+18]` by the
- * bucket's packed hi/lo pair (the same `BucketTable_0200e668` as
- * 0x02001190), tests the candidate point with `Func_020023f0`, and on
- * success packs `{x<<16, obj[+12], z<<16}` into a stack struct and
- * runs a second check with `Func_0200773c`. Returns 1 only if both
- * checks pass (return 0 on either failure).
- *
- * Raw callee naming.
- */
+/* Actor placement check for resource_3b1. */
 
+/* Bucket offsets, packed as {s16 hi; s16 lo} per entry. */
 extern u32 Data_0200e668[];
 
 u8 *Func_02007772();
 s32 Func_020023f0();
 s32 Func_0200773c();
 
+/*
+ * Offset obj+10 and obj+18 by the bucket's packed hi/lo pair, test the
+ * candidate point, and on success pack {x << 16, obj+12, z << 16} into a
+ * stack struct for a second check.  Returns 1 only if both checks pass.  The
+ * owner includes its one pool word, the bucket table base.  Callees are named
+ * by the address their call site computes, not by a runtime address.
+ */
 s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
     u8 *obj = Func_02007772(0);

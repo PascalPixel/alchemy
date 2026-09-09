@@ -217,41 +217,37 @@ struct Struct5702 *Func_02005752(s32 arg0);
 struct Struct5702 *Func_0200577a(s32 arg0);
 
 /*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
+ * Distance between two three-component 16.16 fixed-point positions.  Each
+ * argument walks three consecutive words in x, y, z order; the per-axis deltas
+ * are shifted down to integers, squared, summed, and passed to the resident
+ * IWRAM integer square root.  The walking-pointer form is what reproduces the
+ * reference and must not become struct field access.
  */
 
 /* Clear the pending object cell after restoring its mode. */
 
 /*
- * BYTE-EXACT and adopted 2026-08-07 with no compiler flags: the clamp store
- * had to take its zero from a local.  Written as a literal it was materialised
- * from the literal pool, which both changed the store's source register and
- * added a pool word; a `u16 z = 0' gives the reference's `movs r3, #0'.  The
- * owner ends at 0x02000a4a -- the veneer that follows is not its code.
+ * The clamp store takes its zero from a local.  Written as a literal it is
+ * materialised from the literal pool, which changes the store's source
+ * register and costs a pool word.  The owner ends at 0x02000a4a; the veneer
+ * that follows is not part of it.
  */
-
-/* Contiguous unnamed leaf-owner run for resource_391. */
 
 /* Placement query followed by the tile-(10,20) scene transition. */
 
-/* Raw overlay relocation spellings for this owner's fifteen call sites. */
-
 /* Return this overlay's state block. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+/*
+ * Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds, not a runtime address.
+ */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/*
+ * These wrappers pass their constants straight into the argument registers.
+ * A direct call precomputes a costly constant into a pseudo that is then
+ * shared with later uses in the block.  A value-returning call also sets r0
+ * last of its arguments.
+ */
 
 /* The scene-transition phase flag in the field-scene table. */
 static __inline__ void DrawPlacement_02000a68(

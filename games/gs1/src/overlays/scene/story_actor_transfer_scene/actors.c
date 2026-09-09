@@ -1,5 +1,7 @@
 #include "types.h"
 
+/* Actor callbacks for the story transfer scene. */
+
 #define StoryActor_AdvanceTimer Func_0200011c
 #define StoryActor_ConfigureSpawnedObject Func_0200013c
 #define StoryActor_Initialize Func_02000250
@@ -39,8 +41,10 @@ void StoryActor_AdvanceTimer(u8 *actor)
 {
     u16 *timer = (u16 *)(actor + 0x64);
 
-    /* Arm order decides the branch sense: the reference falls through to the
-     * increment and branches away to the call, which is `bgt`. */
+    /*
+     * Arm order decides the branch sense: the fall-through is the increment
+     * and the taken branch is the call.  Swapping the arms inverts the test.
+     */
     if (*(s16 *)timer <= 0) {
         *timer = (u16)(*timer + 1);
     } else {
@@ -117,28 +121,6 @@ s32 StoryActor_Initialize(u8 *actor)
     return 0;
 }
 
-/*
- * Resource 371 owner at 0x02000350 (44 bytes, 0 calls).
- *
- * Complete owner: `push {lr}` at 0x02000350 and `pop {r1} ; bx r1` at
- * 0x02000372.  The popped register is r1, not r0, so r0 survives the return
- * and IS the result -- the constant 1 set at 0x02000370.  Bytes
- * 0x02000376-0x0200037b are alignment plus the single literal pool word
- * 0x03001e40; they are reached only by `ldr r3, [pc, #20]`.
- *
- * 0x03001e40 is an IWRAM word this overlay reads all over (see the sibling
- * owners at 0x02003f10/0x02003f4c/0x02003f88, which mask it with 1, 2 and
- * 0xf).  It is a live status/flag word, not overlay image data.
- *
- * The flag byte at object + 0x54 is cleared with `eors` against the same
- * bit that was just tested, which is a clear of bit 0 only.
- *
- * The range-proven `one` expression and the identical `flags` branches are
- * intentional source shape.  Since `value` is a byte, `value >> 8` is zero;
- * both branches perform the same clear and store.  This form makes the routed
- * GCC allocate the constant to r1, the loaded byte to r2, and the clear result
- * to r3 without changing the C behavior.
- */
 s32 StoryActor_ApplyFlaggedMode(u8 *actor)
 {
     Func_02000576();
@@ -166,6 +148,14 @@ s32 StoryActor_ResetPosition(u8 *actor)
     return 0;
 }
 
+/*
+ * The popped register is r1, so r0 survives the return and is the result.
+ * The owner includes its alignment halfword and its one pool word, the
+ * address of Data_03001e40 -- a live status word, not overlay image data.
+ * The exclusive or against the bit just tested clears bit 0 only.  value is
+ * a byte, so value >> 8 is zero and both branches do the same clear and
+ * store; that shape is deliberate and decides the register allocation.
+ */
 s32 StoryActor_ClearActiveFlag(u8 *actor)
 {
     u8 *active_flags = actor + 0x54;

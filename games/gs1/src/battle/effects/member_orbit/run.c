@@ -3,34 +3,9 @@
 #define BattleEffect_RunMemberOrbit Func_080ce85c
 
 /*
- * Battle-presentation sub-effect at 0x080ce85c: entry 34 of the effect
- * callback table at 0x080EE2B4, so the single argument is the effect state
- * pointer that the dispatcher republishes at work + 0x7828.
- *
- * The owner sets the BG2 affine scale, loads its palette and 4KB of 32x32
- * sprite frames into the kind-39 work block, prepares the two generated
- * rectangle-blit routines (heap kinds 46 and 47), and then runs
- * member_count * 16 + 48 frames.  Each frame rewrites the 160-entry
- * per-scanline table at work + 0x6980 from a sine sweep - two different
- * curves depending on state field 4 - and, for every listed party member
- * whose 60-frame window is open, draws four sprites orbiting that member's
- * projected screen position.  The sprite frame and the blit routine are both
- * selected from the frame counter.
- *
- * Field offsets and callee signatures follow the 0x03001eec "battle work"
- * subsystem already partly recovered in games/gs1/recon/en/main/080e7404.c
- * and games/gs1/recon/en/main/080d82b0.c.  Value_000000af is the established
- * spelling for a small absolute link-time constant: every one of the 124
- * retained call sites of Func_08002f40 loads its resource id from a literal
- * pool rather than an immediate, which an ordinary integer literal cannot
- * produce, and the same spelling is already used by
- * games/gs1/src/overlays/scene_state_interaction/.
- *
- * The `status` assignments are load-bearing, not leftovers.  Binding a
- * callee's result makes the compiler emit the call as a set of r0, which
- * gives the following argument setup an output dependency on r0 and is what
- * puts the reference's `mov r0, #46` and `mov r0, #47` last in their
- * argument groups.  Dropping them costs seven differing halfwords.
+ * Battle-presentation sub-effect: entry 34 of the effect callback table at
+ * 0x080ee2b4.  The single argument is the effect state pointer, which the
+ * owner republishes at work + 0x7828.
  */
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
@@ -39,6 +14,8 @@ typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
+/* A small absolute link-time constant.  The resource id must be built from a
+ * literal pool word, which an ordinary integer literal cannot produce. */
 extern u8 Value_000000af;
 
 void Func_080cd594(s32 mode);
@@ -58,6 +35,14 @@ void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);
 
+/*
+ * Sets the BG2 affine scale, loads the palette and the 32x32 sprite frames
+ * into the work block, prepares the two rectangle-blit routines, and runs
+ * member_count * 16 + 48 frames of a sine-swept scanline table with four
+ * sprites orbiting each member whose window is open.  Binding each callee's
+ * result to `status` is load-bearing: it makes the call a set of r0 and so
+ * fixes the order of the following argument setup.
+ */
 void BattleEffect_RunMemberOrbit(void *object)
 {
     void **heap_cache;

@@ -1,17 +1,10 @@
 /*
- * resource_3c4 @ 0x02002410 (112 bytes).
+ * Layout step in resource_3c4 for slots 10 and 11. One six-argument
+ * placement, then two grid-cell pins built from each slot's +8 and +16 words
+ * shifted right by 20.
  *
- * Sibling of 0x020023a0 for slots 10 and 11 with its own service set.
- * Same shape: one six-argument placement, then two grid-cell pins built from
- * each slot's +8 and +16 words shifted right by 20 (signed).
- *
- * Exact-reconstruction transcription: each `bl` site keeps its own raw overlay_show
- * target name (HANDOVER section 2), even though overlay_call_targets.ts
- * resolves all eight sites to the same three real veneers
- * (Func_080091c0 x3, Scene_GetRecord x4, Func_02000f10 x1) -- the raw address
- * IS the assembler's encoding, verbatim.
- *
- * `add sp,#8 ; pop {r5} ; pop {r0} ; bx r0` return: void.
+ * Several call sites reach the same routine, but each keeps its own call
+ * word; the sites must not be collapsed onto one alias.
  */
 #include "types.h"
 

@@ -44,7 +44,7 @@ extern s16 Data_02000240[];
 extern unsigned char Value_00000031;
 extern unsigned char Value_00000030;
 extern unsigned char Value_0000002f;
-extern s32 Data_02009064[]; /* packed direction steps, 16 entries */
+extern s32 Data_02009064[]; /* Packed direction steps, 16 entries. */
 extern u8 Data_02008c5c[];
 extern u8 Data_02008cbc[];
 extern u8 Data_02008c14[];
@@ -208,100 +208,39 @@ void Func_02001108();
 void Func_02001120();
 
 /*
- * resource_398 owner at 0x02000098, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200009c holding 0x2008bcc.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000098 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008bcc is image offset
- * 0xbcc under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Table getter at 0x02000098. The eight-byte owner includes its one pool word
+ * at 0x0200009c, which holds 0x02008bcc; the pc-relative load reads it. The
+ * word is an address, returned without being dereferenced.
  */
 
 /* 0x02000e9a serves two imports in sibling arms: the three-argument setter in
  * the first and the one-argument record accessor in the second. */
 
 /*
- * Resource 398 push-the-block interaction at 0x020007f8.
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus the high-register save
- * `mov r7,sl / mov r6,r9 / mov r5,r8 / push {r5, r6, r7}` at 0x020007f8, and
- * the matching unwind `add sp,#12 / pop {r3, r5, r6} / mov r8,r3 / mov r9,r5 /
- * mov sl,r6 / pop {r5, r6, r7} / pop {r0} / bx r0` at 0x020008e6.  268-byte
- * row: 254 bytes of code, an alignment halfword at 0x020008f6, and the three
- * pool words 0x02009064, 0xffff0000 and 0x00003333 filling
- * 0x020008f8-0x02000903.  Control-flow walk: every branch target is
- * 0x020008e6 or below and the bare `bx lr` leaf at 0x02000904 follows the
- * pool.  The return address is popped into r0, so the owner is `void`.
- *
- * Role.  Two interaction records name this address (pool word 0x020087f9 =
- * 0x0200_07f8 + the Thumb bit under the proven 0x02008000 link base), keyed
- * 0x00000202/0xffff000a and 0x00008602/0xffff000b.
- *
- * Direction table.  0x02009064 is in-image data at file offset 0x1064 (even
- * pool word, so data rather than a Thumb entry).  It is the packed-direction
- * family: indexed by `heading >> 12`, X step in the high halfword and Z step
- * in the low halfword, promoted back to 16.16 by `& 0xffff0000` and `<< 16`
- * rather than by multiply.
- *
- * Coordinate views.  The s16 at +0x0a and +0x12 are the integer parts of the
- * 16.16 words at +0x08 and +0x10, so `(integer + (step >> 16)) >> 4` is the
- * neighbouring tile.  That is exactly the pair the tracked byte-exact
- * games/gs1/asm/overlays/resource_398_c_020007c4.c compares as `p[2] >> 20` and
- * `p[4] >> 20` -- the lookup takes tile coordinates.
- *
- * Behaviour: find the actor one step ahead of the player; require the tile
- * beyond it to be empty; stage the pushed position in the three-word frame
- * slot, ask Object_CheckMovementCollision whether the move collides, and if it does not,
- * commit it and hand off to the paired-actor gate scene at 0x02000304.
- *
- * Imports resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (an overlay `bl` stores
- * `target_offset - 2`).  Twelve call sites against the row's advertised 11;
- * the manifest's `calls` field is a floor.  Per-target: Scene_GetRecord 1,
- * Func_020007c4 2, Object_CheckMovementCollision 1, Object_SetMode 2, Func_080000c0 1,
- * Audio_PlayCue 1, Object_SetPosition 2, Object_CommitPosition 1, Func_02000304 1.
- *
- * `blocker` is provably zero where it is stored at +0x24 and +0x2c -- the guard
- * above returns early otherwise -- but it is the register the assembly stores,
- * so it is spelled as itself rather than folded to a literal.
+ * Data_02009064 is indexed by heading >> 12, X step in the high halfword and Z
+ * step in the low, promoted back to 16.16 by masking and shifting rather than
+ * by multiply. The s16 at +0x0a and +0x12 are the integer parts of the 16.16
+ * words at +0x08 and +0x10, so the tile lookup takes tile coordinates.
+ */
+
+/*
+ * Push the actor one step ahead of the player. The 268-byte owner at
+ * 0x020007f8 includes its alignment halfword and its three pool words.
+ * `blocker` is zero wherever it is stored at +0x24 and +0x2c, but it is the
+ * register the reference stores, so it stays spelled as itself.
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
 
-                       /* actor record by slot id */
-
-                       /* overlay-local: actor occupying tile (x, z), or 0 */
-
-                       /* collision probe: >0 means the move is blocked */
-
-                       /* set actor motion state */
-
-                       /* audio cue */
-
-                       /* present message by id */
-
-                       /* start a slide to (x, y, z) */
-
-                       /* commit the slide */
-
-/* Deliberate no-op callback published immediately before the import bank. */
+/* Deliberate no-op callback. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call instead precomputes a costly constant
+ * into a pseudo shared with later uses in the block. A value-returning call
+ * sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -719,35 +658,11 @@ void SceneState_ClearRuntimeByte17(void)
 }
 
 /*
- * Resource 398 map-variant selector at 0x0200046c.
- *
- * Complete owner: `push {lr}` at 0x0200046c and the matching
- * `pop {r1} / bx r1` at 0x0200049e.  72-byte row: 54 bytes of code, an
- * alignment halfword at 0x020004a2, and four pool words (0x02000240,
- * 0x00000031, 0x00000030, 0x0000002f) filling 0x020004a4-0x020004b3.  The pool
- * map is from a control-flow walk: every branch in the body targets
- * 0x02000486, 0x02000492 or 0x0200049c, and nothing reaches 0x020004a2.
- *
- * Signature.  The return address is popped into r1, not r0, so r0 survives and
- * is the result -- and `movs r0,#0` immediately precedes the pop, so the owner
- * returns 0.  Same shape as the tracked byte-exact games/gs1/asm/overlays/
- * resource_398_c_02000030.c, which is written `s32 Func_02000030(...)
- * { ...; return 0; }`.
- *
- * ROOT.  This is entry 0 of the exported-entry veneer table at image offset 0:
- * `ldr r4,[pc,#0] / bx r4 / .word 0x0200846d`, which is 0x0200_046c + the Thumb
- * bit under the 0x02008000 link base.  Working the call graph root-down from
- * here reaches 0x020004b4, 0x020004e8 and 0x02000538 and nothing else.
- *
- * The selector itself is the cross-overlay Data_02000240 idiom: the signed
- * halfword at byte offset 448 (element 224), branched on.  The tracked
- * byte-exact games/gs1/asm/overlays/resource_398_c_02000040.c reads the same halfword and
- * tests it against the same three values, spelling them `(s32)&Value_00000031`
- * and so on -- that is the exact reconstruction's constant-pooling device, and the plain
- * integers below are the same numbers.
- *
- * Three call sites, matching the row's advertised count.  All three are
- * overlay-local prologues, not veneers.
+ * Map-variant selector, and the overlay's exported entry. The 72-byte owner at
+ * 0x0200046c includes its alignment halfword and four pool words, and returns
+ * 0. The selector is the signed halfword at byte offset 448 of Data_02000240;
+ * the three compared constants are spelled as addresses of Value_ symbols,
+ * which is what puts them in the literal pool.
  */
 s32 FieldScene_DispatchByScenarioId(void)
 {
@@ -794,7 +709,7 @@ void SceneState_SetRuntimeWord448To516(void)
     s32 *Func_0200101a();
 
     /* 448 is built as 224 << 1 and the stored 516 as that same register plus
-     * 68; reading it as one running offset is the natural mistake. */
+     * 68; the two are not one running offset. */
     *(s32 *)(Data_03001ebc + 448) = 516;
 
     Func_02000e86(8, 1);

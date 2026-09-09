@@ -3,39 +3,12 @@
 #define StoryEffect_AnimateVerticalPositive Func_02003fb4
 #define StoryEffect_AnimateVerticalNegative Func_02004004
 /*
- * Resource 371 owner at 0x02003fb4 (80 bytes, 2 calls).
- *
- * Complete owner: `push {r5, r6, lr}` at 0x02003fb4 and the interworking
- * return `pop {r5, r6} ; pop {r0} ; bx r0` at 0x02003ffe.  r0 holds the
- * popped return address, so the owner returns nothing.  No literal pool: all
- * constants are built with `movs`/`lsls`.
- *
- * Per-frame step of a 32-frame animation.  The halfword counter at +0x64 is
- * incremented in place, then sign-extended (`lsls #16 ; asrs #16`) before the
- * limit test, so the comparison is signed 16-bit.  Once it passes 31 the
- * owner hands off to the import at 0x020081e4 and does nothing else.
- *
- * The field layout is the one proven by the byte-exact sibling
- * `games/gs1/asm/overlays/resource_371_c_020004a0.c`: +0x08 is X and +0x10 is Z, with
- * +0x0c between them.  +0x68 is a pointer to the anchor object whose X and Z
- * this owner tracks; it is loaded unconditionally at 0x02003fc0, before the
- * limit test, and is a plain load with no side effect.
- *
- * `lsls r0,r0,#10` turns the 0..31 frame into a 0..0x7c00 angle, and the
- * import at 0x0200817c maps it to the 16.16 amplitude stored into both +0x18
- * and +0x1c.  The Z offset is `(0x10000 - amplitude) * 5` built as
- * `lsls #2 ; adds`, plus a fixed 0x80000.
- *
- * UNCERTAINTY: 0x0200817c is identified only by its use -- one angle in, one
- * 16.16 magnitude out.  The mirrored owner at 0x02004004 calls 0x020081cc
- * the same way and negates the second store, which is consistent with a
- * sine/cosine pair, but neither import is resolved here.
- *
- * Call-target convention: each `bl` is named by the address its call site
- * computes; that address is a per-call-site label for a
- * load-time-relocated import, not a place to disassemble and not a global
- * identity (see the note in resource_371_c_0200008c.c).  Old-style
- * declarations, because the interfaces are unknown.
+ * Per-frame step of a thirty-two frame rise -- resource_371.  The halfword
+ * counter at +0x64 is incremented in place and compared as a signed sixteen
+ * bit value; past 31 the effect is handed off and nothing else happens.  The
+ * anchor pointer at +0x68 is loaded before the frame test and must stay
+ * there.  The angle is the frame shifted left by ten, and the callee that
+ * turns it into a 16.16 amplitude is identified only by that use.
  */
 struct StoryVerticalEffectActor {
     u8 filler00[8];
@@ -52,27 +25,11 @@ struct StoryVerticalEffectActor {
 };
 
 /*
- * Resource 371 owner at 0x02004004 (82 bytes, 2 calls).
- *
- * Complete owner: `push {r5, r6, lr}` at 0x02004004 and the interworking
- * return `pop {r5, r6} ; pop {r0} ; bx r0` at 0x02004050.  r0 holds the
- * popped return address, so the owner returns nothing.  No literal pool.
- *
- * The mirror image of 0x02003fb4: same 32-frame counter at +0x64, same
- * anchor pointer at +0x68, same field layout (proven by the byte-exact
- * sibling `games/gs1/asm/overlays/resource_371_c_020004a0.c`).  Three differences, all
- * of them sign flips or a different constant: the second amplitude store is
- * negated (`negs r3,r0`), the Z offset is subtracted rather than added, and
- * the fixed Z bias is 0x100000 (`movs #128 ; lsls #13`) rather than 0x80000.
- *
- * UNCERTAINTY: 0x020081cc, like 0x0200817c in the mirrored owner, is
- * identified only by use -- one angle in, one 16.16 magnitude out.
- *
- * Call-target convention: each `bl` is named by the address its call site
- * computes; that address is a per-call-site label for a
- * load-time-relocated import, not a place to disassemble and not a global
- * identity (see the note in resource_371_c_0200008c.c).  Old-style
- * declarations, because the interfaces are unknown.
+ * The mirror of the rise: the same counter at +0x64 and anchor at +0x68,
+ * with the second amplitude store negated, the depth offset subtracted
+ * rather than added, and a fixed depth bias of 0x100000.  Its magnitude
+ * callee, like the one above, is identified only by use -- one angle in, one
+ * 16.16 magnitude out.
  */
 struct StoryVerticalEffectActor_02004004 {
     u8 filler00[8];
@@ -88,6 +45,11 @@ struct StoryVerticalEffectActor_02004004 {
     struct StoryVerticalEffectActor_02004004 *anchor;  /* 0x68 */
 };
 
+/*
+ * Each Func_ name labels the call word of one call site rather than a
+ * runtime address; the declarations stay old-style because the interfaces
+ * are unknown.
+ */
 void Func_020081e4();
 s32 Func_0200817c();
 void Func_02008234();

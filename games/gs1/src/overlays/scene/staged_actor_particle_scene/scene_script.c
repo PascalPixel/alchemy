@@ -164,97 +164,29 @@ s32 Func_02001b14(u8, s32, u8 *);
 void Func_02001b12(s32);
 
 /*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
+ * The Func_ symbols declared above name the pre-relocation call words the
+ * overlay image holds, not runtime addresses. A source reached from two
+ * sites carries two such names.
  */
-
-/* Constant getter; pool word belongs to the owner. */
-
-/* Contiguous unnamed leaf-owner run for resource_392. */
-
-/* Run the six-word placement query and forward a successful result. */
-
-/* Scene setup for slot 11 and effect 181. */
-
-/* Raw call-site relocation spellings from this overlay. */
 
 /*
- * resource_392 owner at 0x02000a68, 84 bytes: THE OVERLAY'S ENTRY
- * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay-driver resource_392), so the loader enters
- * here and no bl inside the image reaches it.
- *
- * Body: write 516 to the workspace's +448 s32; unless story flag
- * 0xfd3 is set, run Func_02000cb4(11) (this overlay's drafted row);
- * always run Func_02001358 on records 8, 9 and 10; unless flag 0x845
- * is set, run Func_02001564(11); return 0.  Both gates are
- * "flag clear -> act", which is the shape a scene uses for work that
- * must not repeat once its flag is raised.
- *
- * Complete owner: `push {lr}` at 0x02000a68 through `movs r0, #0 /
- * pop {r1} / bx r1` at 0x02000aaa-0x02000aae, then the three-word
- * literal pool 0x02000ab0-0x02000abb (0x03001ebc, 0xfd3, 0x845);
- * the next owner is 0x02000abc, which this driver itself calls.
- * Returns a literal 0.
- *
- * Local callees: Func_0200173a is already drafted
- * (resource_392_c_02000cb4.c); Func_02001352 and SceneEffect_AdjustPaletteWindow are
- * not yet owned and are declared here only.
- *
- * Uncertainty: the flag ids are literal, and the record ids 8/9/10
- * and 11 are passed through unexamined -- what Func_0200134c and
- * SceneEffect_AdjustPaletteWindow do with them is open until those rows are drafted.
+ * One symbol per call site, named at the site's PC-relative decoded
+ * address. All three reach the same ARM-mode IWRAM helper that scales one
+ * channel by the adjustment, and each still needs its own name.
  */
-
-/* Protected-window pal adj owner, 0x02000abc-0x02000b23. */
-
-/* Raw overlay relocation spellings for the five calls in this owner. */
-
-/*
- * resource_392 owner at 0x02000b24, 104 bytes: apply the asymmetric RGB555 colour
- * adj.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
- * are the same routine shared verbatim: over all 52 halfwords they differ in
- * exactly 3 places, and all three are BL halfwords.  No pool word differs.
- *
- * What was changed:
- *  - the entry symbol;
- *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_392 0b24': three sites, ONE distinct target, the veneer publishing
- *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
- *    corrected 'bl' rule and spelled the three sites as three different callees
- *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
- *    is also what the code shape says - the same per-channel scale applied three
- *    times.  resource_394's own site resolves to the same import, so this is a
- *    correction inherited by the transposition rather than a per-overlay change.
- */
-
-/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
-   them). All three reach the same ARM-mode IWRAM helper that scales a
-   channel by the adj, and each still needs its own name. */
-
-/*
- * Apply the resource's asymmetric RGB555 colour adj.
- *
- * Control jumps over a mask literal inside the span and rejoins before the
- * common return.
- */
-
-/* The no-argument source is reached from two sites, so it carries two names. */
 s32 Func_020018d2();   /* 0x02000b44 */
 
 s32 Func_020018e0();   /* 0x02000b52 */
 
 s32 Func_020018ee();   /* 0x02000b60 */
 
+/*
+ * Distance between two three-component 16.16 fixed-point positions. Each
+ * argument walks three consecutive words in x, y, z order; the per-axis
+ * deltas are shifted down to integers, squared, summed, and passed to the
+ * resident IWRAM integer square root. The walking-pointer form is what
+ * reproduces the reference and must not become struct field access.
+ */
 s32 SceneActor_CalculateFixedPointPositionDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
@@ -535,6 +467,7 @@ found:
     return ret;
 }
 
+/* Constant getter; the owner includes its own pool word. */
 u8 *SceneData_GetTable8f80(void) { return (u8 *)0x02008f80; }
 
 s32 SceneData_ReturnZero(void)
@@ -542,10 +475,13 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
+/* Constant getter; the owner includes its own pool word. */
 u8 *SceneData_GetTable8fe0(void) { return (u8 *)0x02008fe0; }
 
+/* Constant getter; the owner includes its own pool word. */
 u8 *SceneData_GetTable8ff0(void) { return (u8 *)0x02008ff0; }
 
+/* Runs the six-word placement query and forwards a successful result. */
 void SceneActor_RunPlacementQuery(void)
 {
     Query result;
@@ -555,6 +491,7 @@ void SceneActor_RunPlacementQuery(void)
     Func_02001846();
 }
 
+/* Scene setup for slot 11 and effect 181. */
 void FieldScene_SetupActor11Effect181(void)
 {
     Func_0200184c();
@@ -565,8 +502,16 @@ void FieldScene_SetupActor11Effect181(void)
     Func_02001878();
 }
 
+/* Constant getter; the owner includes its own pool word. */
 u8 *SceneData_GetTable9068(void) { return (u8 *)0x02009068; }
 
+/*
+ * The overlay's entry driver: the loader enters here through the header
+ * veneer, and no call inside the image reaches it. Sets the workspace +448
+ * word to 516, sets up records 8, 9 and 10, and runs two steps for slot 11
+ * that each act only while their flag is clear. The 84-byte owner includes
+ * its three pool words.
+ */
 s32 FieldScene_SetupEntryActors8To11(void)
 {
     void SceneEffect_AdjustPaletteWindow(s32 id);
@@ -585,6 +530,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
     return 0;
 }
 
+/* Applies the adjustment to the protected palette window only. */
 void SceneEffect_AdjustPaletteWindow(s32 adj)
 {
     volatile u16 *pal = (volatile u16 *)0x05000000;
@@ -607,6 +553,11 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
     Func_020016d2(); Func_020016b6(); Func_02001978(0x10000, 0);
 }
 
+/*
+ * Applies the asymmetric RGB555 colour adjustment: red rises, green and
+ * blue fall. Control jumps over a mask literal inside the span and rejoins
+ * before the common return.
+ */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
     s16 green = (s16)((color >> 5) & 31);

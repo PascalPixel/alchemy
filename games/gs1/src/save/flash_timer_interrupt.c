@@ -1,41 +1,20 @@
 #include "flash.h"
 
-/*
- * Owners at 0x080069a4 (Func_080069a4, tick handler) and 0x080069c8
- * (Func_080069c8, installer) -- 92 bytes total including both pools,
- * byte-exact under old_agbcc at -O2 (routed via AGBCC_SOURCES; the m4a
- * band's stock-compiler precedent extends here on an independent 92/92
- * proof). Adopted from the semantic draft games/gs1/semantic/main/080069a4.c
- * (same structure; that file's header documents the behavioural read).
- *
- * Exactness notes, all measured against the fork first:
- * - The whole pair is 23 halfwords short of exact under the fork
- *   (gcc296 pushes lr even in these call-free leaves and returns
- *   pop {r0}/bx r0 with interwork, pop {pc} without; the reference has
- *   no prologue at all and returns bare `bx lr`, which old_agbcc emits
- *   for a Thumb leaf).
- * - Every named RAM cell is volatile: the reference re-reads
- *   Data_02004c22 after the zero test (two back-to-back `ldrh` with no
- *   store between), and Func_080069c8 re-reads Data_02004c20 through
- *   `ldrb` immediately after its own `strb` when computing the timer
- *   register address.
- * - The decrement flows through an s32 local narrowed at the store
- *   (`strh`), and the just-reached-zero test is the register copy's
- *   `(v << 16) == 0`, not a re-read -- HANDOVER's "narrow at the store"
- *   rule; a u16 local instead pools a -1 word and re-widens.
- * - The guard arm order is `if (timerIndex > 3) return 1;` first:
- *   old_agbcc then places the return-1 arm after the mid-function pool,
- *   sharing the final `bx lr`, exactly as the reference lays it out.
- *
- * 0x04000100 + timerIndex * 4 walks the four TMxCNT_L hardware timer
- * count/reload registers; Data_02004c28 caches the chosen one.
- */
+/* The flash driver's timer tick handler and the installer that arms it. */
 
 extern volatile u16 Data_02004c22;
 extern volatile u8 Data_02004c24;
 extern volatile u8 Data_02004c20;
 extern volatile u32 Data_02004c28;
 
+/*
+ * Count one tick down and raise the expiry flag on the way through zero.
+ * Every named cell is volatile and each read is a separate access: the
+ * counter is read again inside the arm rather than reused from the test.
+ * The decrement runs through an s32 local that narrows at the store, and the
+ * reached-zero test is that local's (v << 16) == 0 rather than a fresh read;
+ * a u16 local would not produce the same code.
+ */
 void FlashTimerIntr(void)
 {
     if (Data_02004c22 != 0) {
@@ -49,6 +28,13 @@ void FlashTimerIntr(void)
     }
 }
 
+/*
+ * Point one of the four hardware timers at the tick handler.  The
+ * out-of-range arm is written first, and that source order is part of what
+ * reproduces the layout.  Data_02004c20 is read back after its own store to
+ * build the register address: 0x04000100 + index * 4 walks the four timer
+ * count/reload registers, and Data_02004c28 caches the chosen one.
+ */
 s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void))
 {
     if (timerIndex > 3) {

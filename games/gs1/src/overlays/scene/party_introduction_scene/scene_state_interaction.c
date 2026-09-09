@@ -2,61 +2,11 @@
 
 #define FieldScene_RunActorNineDialogueByFlags Func_02002674
 /*
- * resource_380 owner at 0x02002674, 108 bytes: the talk handler for
- * actor 9, one of a per-actor bank of seven published callbacks.
- *
- * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
- * pointer is written into a script record, so neither the call-graph
- * sweep nor `tools/overlay-unindexed` lists it. Found by
- * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_380`.
- *
- * IT CORROBORATES resource_380_c_0200227c.c. That owner enables and
- * places exactly six actors -- 5, 9, 11, 10, 14, 13 -- and this
- * contiguous published run hands one callback to each of them:
- *
- *     0x02002674   actor 9(this file, branching)
- *     0x020026e0   actor 5    (its twin, branching)
- *     0x0200274c   actor 10   (32-byte stub)
- *     0x0200276c   actor 11   (32-byte stub)
- *     0x0200278c   actor 13   (32-byte stub)
- *     0x020027ac   actor 14   (32-byte stub)
- *     0x020027cc   actor 9 again, a different line and a different tail
- *
- * The scene wiring and its interaction handlers were written together;
- * neither half is reachable from the other by a call.
- *
- * TWIN. 0x020026e0 is byte-identical to this owner apart from the actor
- * id (5 rather than 9) and the three dialogue ids (0x10c9/0x107a/0x107c
- * rather than 0x10cb/0x1079/0x107b). The two story-flag ids, 0x83e and
- * 0x83c, are the same in both. Diffed before drafting, per the
- * standing twin rule.
- *
- * Shape: the standard scripted-scene bracket (Func_0808a018 /
- * Func_0808a020) around a two-level story-flag test. If flag 0x83e is
- * set the actor says one line and the handler ends; otherwise flag
- * 0x83c chooses between two alternative lines, and the longer path
- * additionally runs Func_0808a150(actor, 0, 0), waits ten frames, and
- * then closes with the same Func_0808a180(actor, 0).
- *
- * Branch senses read individually rather than pattern-matched: `beq` at
- * 0x02002682 takes the else arm when the first test returns zero, and
- * `bne` at 0x0200269c takes the 0x107b arm when the second returns
- * nonzero. The polarities are opposite, which is exactly the trap this
- * overlay family sets.
- *
- * Complete owner: `push {lr}` at 0x02002674 through `pop {r0} / bx r0`
- * at 0x020026c8-0x020026ca, then the five-word literal pool
- * 0x020026cc-0x020026df (0x83e, 0x10cb, 0x83c, 0x1079, 0x107b); the
- * next owner's prologue -- its twin -- begins at 0x020026e0.
- *
- * All four `bl` targets resolved through the overlay's import-veneer
- * table under the +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --); the naive
- * pc-relative decode is wrong here as everywhere in this overlay.
- *
- * Uncertainty: the roles of Func_0808a150's second and third arguments
- * and of Func_0808a180's second are open; both are zero at every site
- * in this bank.
+ * resource_380: the talk handler for actor 9, one of a bank of per-actor
+ * published callbacks. The handler is published through a script record
+ * rather than called, so nothing here reaches it by name.
  */
+
 extern void Func_02007014(void);
 s32 Func_02006fe2(s32 flag);
 void Func_020070dc(s32 msg);
@@ -69,6 +19,14 @@ void Func_0200704e(s32 frames);
 void Func_02007126(s32 id, s32 arg1);
 void Func_0200706a(void);
 
+/*
+ * A scripted-scene bracket around a two-level story-flag test. When flag
+ * 0x83e is set the actor speaks one line and the handler ends; otherwise flag
+ * 0x83c chooses between two alternative lines and the longer path also plays
+ * a motion, waits ten frames and closes. The two tests read with opposite
+ * polarity. The trailing zero arguments have no established meaning. The
+ * 108-byte owner includes its five-word literal pool.
+ */
 void FieldScene_RunActorNineDialogueByFlags(void)
 {
     Func_02007014();

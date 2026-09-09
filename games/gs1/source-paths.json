@@ -17871,6 +17871,10 @@
     "resource_39e:02000104": {
       "name": "IntegrateEffectMotion",
       "source": "overlays/effect/integrate_motion.c"
+    },
+    "resource_39e:02000388": {
+      "name": "SceneData_SelectRecordByScene3cAndFlag895",
+      "source": "overlays/scene_data/select_record_by_scene_3c_and_flag_895.c"
     }
   }
 }

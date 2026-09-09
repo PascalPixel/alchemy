@@ -17847,6 +17847,10 @@
     "resource_39a:02001948": {
       "name": "FieldScene_RunScene39aSequenceC",
       "source": "overlays/scene_primary_script/run_scene_39a_sequence_c.c"
+    },
+    "resource_39a:02001a34": {
+      "name": "FieldScene_RunScene39aSequenceB",
+      "source": "overlays/scene_primary_script/run_scene_39a_sequence_b.c"
     }
   }
 }

@@ -17881,6 +17881,10 @@
     "main:08010704": {
       "name": "Graphics_CopyRectKeepLow",
       "source": "graphics/tile/copy_rect_keep_low.c"
+    },
+    "main:08028c04": {
+      "name": "Menu_RunResourceModePrompt",
+      "source": "menu/run_resource_mode_prompt.c"
     }
   }
 }

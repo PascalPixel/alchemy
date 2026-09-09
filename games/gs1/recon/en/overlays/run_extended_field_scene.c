@@ -1,9 +1,9 @@
 #include "types.h"
 
-#define FieldScene_RunExtendedSequence Func_020017c8
+#define FieldScene_RunExtendedActorSequence Func_020017c8
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+/* Site-resolved aliases use this overlay's runtime veneers and local helpers.
+ * The scene moves the actor groups before restoring the shared scene work. */
 extern u8 Data_0200ac00[];
 extern u8 Data_0200ac90[];
 extern u8 Data_0200adf0[];
@@ -49,23 +49,23 @@ void Func_02003e86();
 void Func_02003e92();
 void Func_02003e9e();
 void Func_02003eaa();
-s32 Func_02003ece();
+void Func_02003ece();
 u8 *Func_02003ed8();
 u8 *Func_02003ee4();
 u8 *Func_02003ef0();
 u8 *Func_02003efc();
 u8 *Func_02003f08();
-u8 *Func_02003f08_a();
+void Func_02003f08_a();
 u8 *Func_02003f14();
 void Func_02003f2c();
 void Func_02003f30();
-s32 Func_02003f38();
+void Func_02003f38();
 void Func_02003f86();
 void Func_02003f96();
 void Func_02003f9e();
 void Func_02003fb8();
-s32 Func_02003fc6();
-s32 Func_02003fc6_a();
+void Func_02003fc6();
+void Func_02003fc6_a();
 void Func_02003fe8();
 void Func_02003ff2();
 void Func_02003ff4();
@@ -76,7 +76,7 @@ void Func_0200400a();
 void Func_02004010();
 void Func_02004012();
 void Func_02004012_a();
-s32 Func_02004014();
+void Func_02004014();
 void Func_0200401c();
 void Func_02004020();
 void Func_0200402a();
@@ -127,11 +127,11 @@ void Func_020041fc();
 void Func_02004202();
 void Func_02004202_a();
 void Func_02004204();
-s32 Func_0200421a();
+u8 *Func_0200421a();
 void Func_02004228();
-s32 Func_02004234();
+u8 *Func_02004234();
 void Func_02004244();
-s32 Func_02004246();
+u8 *Func_02004246();
 void Func_0200424e();
 void Func_02004250();
 void Func_0200426c();
@@ -152,7 +152,7 @@ void Func_020042e8();
 void Func_020042f2();
 void Func_02004304();
 void Func_0200430a();
-s32 Func_0200430e();
+void Func_0200430e();
 void Func_02004318();
 void Func_02004320();
 void Func_02004326();
@@ -176,9 +176,9 @@ void Func_0200442a();
 void Func_02004440();
 s32 Func_02004448();
 void Func_02004458();
-s32 Func_0200445a();
+void Func_0200445a();
 void Func_0200446e();
-s32 Func_02004476();
+u8 *Func_02004476();
 void Func_0200447c();
 void Func_02004484();
 void Func_02004494();
@@ -231,7 +231,7 @@ void Func_020046c8();
 void Func_020046c8_a();
 void Func_020046d6();
 void Func_020046da();
-s32 Func_020046e2();
+void Func_020046e2();
 void Func_020046e4();
 void Func_020046ea();
 void Func_020046ec();
@@ -273,7 +273,7 @@ void Func_0200486e();
 void Func_02004878();
 void Func_02004882();
 void Func_0200488c();
-s32 Func_02004892();
+u8 *Func_02004892();
 void Func_02004896();
 void Func_020048a0();
 u8 *Func_020048a2();
@@ -302,17 +302,14 @@ void Func_02004a60();
 void Func_02004a9a();
 void Func_02004aa6();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* Call forms shared with the independently reconstructed scene scripts. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
 }
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a0)
 {
     return f(a0);
 }
@@ -342,15 +339,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-void FieldScene_RunExtendedSequence(void)
+void FieldScene_RunExtendedActorSequence(void)
 {
     u8 *record;
     u8 *work;
@@ -462,8 +451,8 @@ void FieldScene_RunExtendedSequence(void)
     Func_02003e20(11, 0x5000, 60);
     Func_0200426c(11, 3);
     Func_02003e18(11, 10);
-    record = Value1(Func_0200421a, 30);
-    if ((s32)record != 0) {
+    record = Pointer1(Func_0200421a, 30);
+    if (record != 0) {
         Func_02004278(31, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
     }
     v5 = 254;
@@ -483,7 +472,7 @@ void FieldScene_RunExtendedSequence(void)
     Func_02004270_a(60);
     Func_02004320(12, 2);
     Func_02003ece(12, 0x7000, 10);
-    Call2((void (*)())Func_02003f08_a, 12, 10);
+    Call2(Func_02003f08_a, 12, 10);
     Func_02004384(11, 1);
     Func_020042e2(20);
     Func_02003f38(11, 0x1000, 10);
@@ -497,7 +486,7 @@ void FieldScene_RunExtendedSequence(void)
     Call3(Func_02004364, 12, 0x26666, 0x13333);
     Call2(Func_02004374, 11, 0x200acf8);
     Func_0200433a(10);
-    Value2(Func_0200445a, 0x26666, 0x4ccc);
+    Call2(Func_0200445a, 0x26666, 0x4ccc);
     v6 = 0;
     *(u8 *)(Func_02004476() + 85) = v6;
     Call4(Func_0200447c, 0xd70000, 0x100000, 0x3210000, 1);
@@ -507,7 +496,7 @@ void FieldScene_RunExtendedSequence(void)
     Func_02003fc6(12, 0x3000, 120);
     Func_0200442a(13, 2);
     Func_02004388(20);
-    ((void (*)())Func_02003fc6_a)(13, 20);
+    Func_02003fc6_a(13, 20);
     Func_02004496(0, 0, 0);
     Func_02003ff4(1, 0x9000, 20);
     Func_02004004(0, 0xc000, 10);

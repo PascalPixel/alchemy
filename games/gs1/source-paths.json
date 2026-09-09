@@ -3400,7 +3400,8 @@
       "source": "overlays/actor_position/is_actor_9_at_tile_15_54.c"
     },
     "resource_3a8:020026c0": {
-      "name": "FieldScene_RunSecondaryGroupSequence"
+      "name": "FieldScene_RunSecondaryGroupSequence",
+      "source": "overlays/scene_script/secondary_group_sequence.c"
     },
     "resource_3a8:02003a3c": {
       "name": "InitializeOrbitingRenderEffect",
@@ -14820,7 +14821,7 @@
       "name": "RunEventScript02"
     },
     "resource_374:020017c8": {
-      "name": "FieldScene_RunExtendedSequence"
+      "name": "FieldScene_RunExtendedActorSequence"
     },
     "resource_375:020000dc": {
       "name": "RunEventScript01"
@@ -16882,7 +16883,8 @@
       "source": "overlays/event_script/run_event_script_01_380_02001450.c"
     },
     "resource_395:02000488": {
-      "name": "RunEventScript01Second"
+      "name": "PaletteScene_RunActorTransitionSequence",
+      "source": "overlays/palette_scene/actor_transition_sequence.c"
     },
     "resource_395:020002ec": {
       "name": "RunEventScript01",

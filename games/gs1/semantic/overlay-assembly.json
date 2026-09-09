@@ -2022,20 +2022,6 @@
       ]
     },
     {
-      "overlay": "resource_38e",
-      "start": "0x0200050c",
-      "end": "0x020005dc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/gs1/recon/en/dossiers.json#resource_38e:0200050c",
-        "End narrowed from 0x020008b6 to 0x020005dc: resource_38e:020005dc (780 B) is now exact C (candidate=780, differing_halfwords=0, RunPairedActorStagedSequence); reconciled per the C-recovery-invalidates-incompatible-ASM-evidence rule, no double-counting."
-      ]
-    },
-    {
       "overlay": "resource_372",
       "start": "0x02002dec",
       "end": "0x0200316a",

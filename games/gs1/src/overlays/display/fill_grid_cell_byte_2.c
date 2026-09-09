@@ -3,7 +3,8 @@
 extern u8 *Data_03001e70;
 extern u8 Data_02010000[];
 
-s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val) {
+s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
+{
     u8 *g = Data_03001e70;
     u8 *base;
     u32 i;

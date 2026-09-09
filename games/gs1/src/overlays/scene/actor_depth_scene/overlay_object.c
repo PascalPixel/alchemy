@@ -23,7 +23,8 @@ void Func_02001244(void *, s32);
 /* Wait at most sixty frames for the object to reach the requested height. */
 extern void Func_02001e54(s32 cnt);
 
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *obj;
     void *rec;
     s32 mask;

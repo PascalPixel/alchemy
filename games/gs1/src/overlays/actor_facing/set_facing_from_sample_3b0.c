@@ -8,7 +8,7 @@
  * Role known in advance, with no disassembly: the in-image script stream near
  * file offset 0x1900 holds the pair `(0x00000022, 0x0200807d)`, and under this
  * overlay's proven 0x02008000 link base 0x0200807d is file offset 0x007c plus
- * the Thumb bit — this function.  Its neighbour in the same stream is
+ * the Thumb bit -- this function.  Its neighbour in the same stream is
  * `(0x00000022, 0x020080c1)`, i.e. Func_020000c0, converted alongside it, so
  * command 0x22 takes an in-overlay callback and both callbacks take the object
  * as their single argument and return a "done" flag.  Link-base evidence is in
@@ -16,7 +16,7 @@
  *
  * Complete owner.  Prologue `push {r5, lr}` at 0x0200007c; single epilogue
  * `movs r0,#1 / pop {r5} / pop {r1} / bx r1` at 0x0200009a.  The popped
- * register is r1, not r0, so **r0 survives and IS the result** — the owner
+ * register is r1, not r0, so **r0 survives and IS the result** -- the owner
  * returns 1.  Code runs 0x0200007c..0x020000a1; there is no literal pool, and
  * the 2-byte zero at 0x020000a2 is the alignment word in front of the next
  * prologue and belongs to nobody.  38 bytes, matching the inventory row.
@@ -38,7 +38,7 @@
  * Uncertainty: Func_080000f8's result is treated as a sampled value here
  * because both consumers window it and compare it against small constants;
  * nothing in this overlay establishes what it samples.  When it is neither 6
- * nor 9 the facing is left alone — the owner still reports 1.
+ * nor 9 the facing is left alone -- the owner still reports 1.
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */

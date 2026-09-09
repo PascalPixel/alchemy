@@ -24,6 +24,24 @@
  */
 #include "types.h"
 
+/* Returns the record for a numbered slot. */
+
+/* Scene flag test: zero means not yet set. */
+
+/* Scene flag clear and set. */
+
+extern s32 *Func_02003e28();
+extern s32 Func_02003e00();
+extern void Func_02003de8();
+extern void Func_02003e2e();
+extern void Func_02003ef2();
+extern void Func_02003ef8();
+extern s32 Func_02003e3c();
+extern void Func_02003e24();
+extern void Func_02003e62();
+extern void Func_02003f1e();
+extern void Func_020034ca();
+extern void Func_02003f38();
 /*
  * resource_3b4 owner at 0x020018e0, 160 bytes: code 0x020018e0-0x02001977 and
  * the pool words 0x00000206 and 0x00000207 at 0x02001978.
@@ -41,25 +59,6 @@
  *
  * The epilogue is `add sp,#8 / pop {r0} / bx r0`, so the owner is void.
  */
-
-/* Returns the record for a numbered slot. */
-
-/* Scene flag test: zero means not yet set. */
-
-/* Scene flag clear and set. */
-
-extern s32 * Func_02003e28();
-extern s32 Func_02003e00();
-extern void Func_02003de8();
-extern void Func_02003e2e();
-extern void Func_02003ef2();
-extern void Func_02003ef8();
-extern s32 Func_02003e3c();
-extern void Func_02003e24();
-extern void Func_02003e62();
-extern void Func_02003f1e();
-extern void Func_020034ca();
-extern void Func_02003f38();
 void FieldScene_DispatchBySlotZeroFacing(void)
 {
     s32 *slot = Func_02003e28(0);

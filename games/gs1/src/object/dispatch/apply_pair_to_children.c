@@ -1,6 +1,7 @@
 #include "types.h"
 
-void ObjectDispatch_ApplyPairToChildren(void *arg0, s32 arg1, s32 arg2) {
+void ObjectDispatch_ApplyPairToChildren(void *arg0, s32 arg1, s32 arg2)
+{
     void **items;
     void *item;
     s32 count;

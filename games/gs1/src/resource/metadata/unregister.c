@@ -44,7 +44,7 @@ loop_4:
                 } while (later_index <= 3U);
             }
             if (later_slot_count == 0) {
-                FIELD_AT_OFFSET(state, s8, 0x27) = (s8) slot_index;
+                FIELD_AT_OFFSET(state, s8, 0x27) = (s8)slot_index;
             }
         }
     }

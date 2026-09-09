@@ -2,46 +2,6 @@
 
 #define NULL ((void *)0)
 
-/*
- * resource_399 owner at 0x02001fa4, 452 bytes: the overlay's pathing step.
- *
- * Complete owner: the two-stage 'push {r5, r6, r7, lr}' / high-register push
- * prologue with 'sub sp, #20', and the matching
- * 'add sp, #20 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0'.  r0 holds the
- * popped return address, so nothing is returned.  Six pool words follow the
- * return and are data.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_39a_c_02002094.c.  The two owners
- * are the same routine shared verbatim: over all 226 halfwords they differ in
- * 22 places, 20 of which are the halves of the ten BL pairs and two of which are
- * the low halves of pool words.
- *
- * What was changed:
- *  - the heading table 0x0200a464 becomes 0x0200a430 (file offset 0x2430 under
- *    the 0x02008000 link base);
- *  - the installed per-frame callback 0x0200a015 becomes 0x02009f25, i.e. this
- *    overlay's own routine at file offset 0x1f24 plus the Thumb bit.  That
- *    offset does open a function ('push {r5, lr}', 0xb520), which is an
- *    independent check on the base and on the pointer's meaning;
- *  - all 20 calls were re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_399 1fa4': 20 sites over 11 distinct veneers, the same targets
- *    with the same multiplicities and in the same site order as resource_39a.
- *    The 39a source predates the corrected 'bl' rule and named the imports by
- *    their (wrongly decoded) displacements, which both split single imports
- *    across many names and merged two distinct ones under Func_02004406.  The
- *    corrected resolution is used here and it groups the calls sensibly: the
- *    three marker lookups are one import (0x080091b0), the two height probes
- *    another (0x080091a8), the three placements a third (0x08009150), and the
- *    2-argument site the 39a source shared with the 3-argument marker lookup is
- *    a genuinely different import (0x08009080).
- *
- * Frame map: sp+0 holds the goal marker, sp+4 the heading, and sp+8..sp+19 the
- * three-word probe position handed to the stepping imports by address.
- * The witnessed x/z assignment order plus the inline stepping wrapper leave
- * only one independent high-register-copy/ALU pair; the already-supported
- * -fthumb-high-move-before-alu mode closes that pair byte-exactly.
- */
-
 /* In-image table at 0x02008000 + 0x2430; 0x02000240 is below the link base
  * and is a resident table whose word at byte offset 500 selects the subject. */
 extern s16 Data_0200a430[];
@@ -113,6 +73,45 @@ static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
 
                          /* commit the placement */
 
+/*
+ * resource_399 owner at 0x02001fa4, 452 bytes: the overlay's pathing step.
+ *
+ * Complete owner: the two-stage 'push {r5, r6, r7, lr}' / high-register push
+ * prologue with 'sub sp, #20', and the matching
+ * 'add sp, #20 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0'.  r0 holds the
+ * popped return address, so nothing is returned.  Six pool words follow the
+ * return and are data.
+ *
+ * TRANSPOSED from games/gs1/semantic/overlays/resource_39a_c_02002094.c.  The two owners
+ * are the same routine shared verbatim: over all 226 halfwords they differ in
+ * 22 places, 20 of which are the halves of the ten BL pairs and two of which are
+ * the low halves of pool words.
+ *
+ * What was changed:
+ *  - the heading table 0x0200a464 becomes 0x0200a430 (file offset 0x2430 under
+ *    the 0x02008000 link base);
+ *  - the installed per-frame callback 0x0200a015 becomes 0x02009f25, i.e. this
+ *    overlay's own routine at file offset 0x1f24 plus the Thumb bit.  That
+ *    offset does open a function ('push {r5, lr}', 0xb520), which is an
+ *    independent check on the base and on the pointer's meaning;
+ *  - all 20 calls were re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
+ *    resource_399 1fa4': 20 sites over 11 distinct veneers, the same targets
+ *    with the same multiplicities and in the same site order as resource_39a.
+ *    The 39a source predates the corrected 'bl' rule and named the imports by
+ *    their (wrongly decoded) displacements, which both split single imports
+ *    across many names and merged two distinct ones under Func_02004406.  The
+ *    corrected resolution is used here and it groups the calls sensibly: the
+ *    three marker lookups are one import (0x080091b0), the two height probes
+ *    another (0x080091a8), the three placements a third (0x08009150), and the
+ *    2-argument site the 39a source shared with the 3-argument marker lookup is
+ *    a genuinely different import (0x08009080).
+ *
+ * Frame map: sp+0 holds the goal marker, sp+4 the heading, and sp+8..sp+19 the
+ * three-word probe position handed to the stepping imports by address.
+ * The witnessed x/z assignment order plus the inline stepping wrapper leave
+ * only one independent high-register-copy/ALU pair; the already-supported
+ * -fthumb-high-move-before-alu mode closes that pair byte-exactly.
+ */
 void StagedActor_RunHeadingProbeStep(void)
 {
     struct Subject_02001fa4 *subject;

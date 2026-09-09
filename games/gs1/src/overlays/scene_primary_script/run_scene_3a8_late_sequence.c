@@ -175,4 +175,3 @@ void FieldScene_RunLateSequence(void)
         }
     }
 }
-

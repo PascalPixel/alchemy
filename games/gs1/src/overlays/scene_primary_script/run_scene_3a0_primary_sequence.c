@@ -261,7 +261,7 @@ void FieldScene_RunPrimarySequence(void)
     {
         u8 *record = Func_02001cd6(0);
         u8 value = *(volatile u8 *)&record[90];
-    
+
         record[90] = (u8)(value | 1);
     }
     Func_02001cdc();

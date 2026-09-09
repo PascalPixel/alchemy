@@ -10,7 +10,8 @@ void Func_020047a4(s32);
 s32 Func_0200496c(s32, s32);
 void Func_020049ec(s32, s32);
 
-void SceneEffect_UpdateByFrameBits(s32 no) {
+void SceneEffect_UpdateByFrameBits(s32 no)
+{
     volatile s32 *p = (volatile s32 *)0x03001e40;
     if ((*p & 1) != 0) {
         s32 t = Func_02004930((u32)*p >> 1, 6);
@@ -21,7 +22,8 @@ void SceneEffect_UpdateByFrameBits(s32 no) {
     }
 }
 
-void SceneEffect_UpdateByFrameBit(s32 no) {
+void SceneEffect_UpdateByFrameBit(s32 no)
+{
     volatile s32 *p = (volatile s32 *)0x03001e40;
     if ((*p & 1) != 0) {
         s32 t = Func_0200496c((u32)*p >> 1, 6);

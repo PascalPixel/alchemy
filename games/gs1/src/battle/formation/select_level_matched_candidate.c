@@ -93,7 +93,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
     if (match_count != 0) {
         struct FormationCandidate *chosen =
-            &pool[(match_count * Random16()) >> 16];
+            &pool[(match_count *Random16()) >> 16];
 
         result = chosen->record_id;
         *out_margin = chance - chosen->score;

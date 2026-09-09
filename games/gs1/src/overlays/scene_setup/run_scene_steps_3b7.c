@@ -46,7 +46,8 @@ extern u8 Value_000000bd;
 extern u8 Data_02009f30[];
 extern u8 Data_02009e1c[];
 
-s32 SceneData_SelectTable9e1cByState(void) {
+s32 SceneData_SelectTable9e1cByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_000000bd) {
         return (s32)Data_02009f30;
     }

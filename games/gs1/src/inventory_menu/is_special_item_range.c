@@ -1,6 +1,7 @@
 #include "inventory_menu.h"
 
-s32 InventoryMenu_IsSpecialItemRange(s32 item_id) {
+s32 InventoryMenu_IsSpecialItemRange(s32 item_id)
+{
     s32 result;
     s32 first;
 

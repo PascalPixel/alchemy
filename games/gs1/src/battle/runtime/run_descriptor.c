@@ -19,14 +19,15 @@ void Audio_PlayCue(s32);
 void Func_08094354(void);
 void Func_08094368(void);
 
-s32 BattleAction_RunDescriptor(s32 arg0) {
+s32 BattleAction_RunDescriptor(s32 arg0)
+{
     Obj *desc;
     Obj *desc2;
     s32 kind;
     s32 ret;
     Obj *work;
 
-    desc = (Obj *) Func_0808d48c(2, arg0);
+    desc = (Obj *)Func_0808d48c(2, arg0);
     ret = -1;
     work = *(Obj **)0x03001ebc;
     if ((desc != 0) && (desc->val8 != 0)) {
@@ -44,7 +45,7 @@ s32 BattleAction_RunDescriptor(s32 arg0) {
             goto block_17;
         }
     } else {
-        desc2 = (Obj *) Func_0808d48c(1, arg0);
+        desc2 = (Obj *)Func_0808d48c(1, arg0);
         if (desc2 != 0) {
             kind = desc2->flags & 0x30;
             switch (kind) {
@@ -52,7 +53,7 @@ s32 BattleAction_RunDescriptor(s32 arg0) {
             case 32: Audio_PlayCue(0x80); Func_08094354(); break;
             case 48: Audio_PlayCue(0x81); Func_08094368(); break;
             }
-            work->h170 = (s16) desc2->val8;
+            work->h170 = (s16)desc2->val8;
 block_17:
             ret = 0;
         }

@@ -6,7 +6,8 @@ extern void Func_020045a0(s32 arg0, s32 arg1);
 extern void Func_020045c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void Func_020045de(s32 arg0);
 
-void ConfigureSceneActor12(s32 actor_id) {
+void ConfigureSceneActor12(s32 actor_id)
+{
     s32 a = 0x500000;
     s32 b = 0x1700000;
     u8 *p = Func_020045d8(12);

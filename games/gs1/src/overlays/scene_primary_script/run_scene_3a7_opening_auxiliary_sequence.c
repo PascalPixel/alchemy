@@ -107,4 +107,3 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         }
     }
 }
-

@@ -5,6 +5,13 @@
 #define SceneActor_ApplyActorTwelveZCellPair Func_02001af4
 #define SceneActor_IsActorAtTile Func_02001be8
 
+   /* scene-record accessor */
+extern u8 *Func_02003ef8(s32 index);
+void Func_020035e6();
+s32 *Func_02003f68(s32);
+void Func_02003656(s32, s32, s32, s32, s32);
+s32 *Func_0200405c(s32);
+
 /*
  * resource_37b owner at 0x02001a84, 40 bytes: fetches scene record 10
  * and, if it exists, hands a coarse coordinate derived from it to a
@@ -41,14 +48,6 @@
  * it is declared old-style rather than given a signature this row cannot
  * establish.
  */
-
-   /* scene-record accessor */
-extern u8 * Func_02003ef8(s32 index);
-void Func_020035e6();
-s32 *Func_02003f68(s32);
-void Func_02003656(s32, s32, s32, s32, s32);
-s32 *Func_0200405c(s32);
-
 void SceneActor_UseActorTenCellAndNext(void)
 {
     u8 *record = Func_02003ef8(10);
@@ -62,7 +61,8 @@ void SceneActor_UseActorTenCellAndNext(void)
     Func_020035e6(10, 13, cell + 1, 13, cell);
 }
 
-void SceneActor_ApplyActorTwelveZCellPair(void) {
+void SceneActor_ApplyActorTwelveZCellPair(void)
+{
     s32 *p = Func_02003f68(12);
     if (p != NULL) {
         s32 v = p[4] >> 20;
@@ -70,7 +70,8 @@ void SceneActor_ApplyActorTwelveZCellPair(void) {
     }
 }
 
-s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z) {
+s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
+{
     s32 *p = Func_0200405c(no);
     if (p == NULL || (p[2] >> 20) != x) {
         return 0;

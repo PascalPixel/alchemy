@@ -44,7 +44,8 @@ u8 *SceneEventRuntime_GetEffectData(void)
     return SceneEventRuntime_EffectData;
 }
 
-s32 SceneEventRuntime_SelectInitialSceneByFlags(void) {
+s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
+{
     s32 no;
 
     if (Func_0200248e(0x818) != 0) {

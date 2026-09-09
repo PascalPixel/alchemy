@@ -58,8 +58,6 @@ static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6, a7);
 }
 
-
-
 void Func_020013b0(s32 a0)
 {
     s32 v68;

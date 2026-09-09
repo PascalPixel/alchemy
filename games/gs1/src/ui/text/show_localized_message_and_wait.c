@@ -19,12 +19,13 @@ s32 Func_0801965c(s32, s16 *, s32);
 #endif
 
 extern u8 Data_02000240[];
-extern void * volatile Data_03001e74;
+extern void *volatile Data_03001e74;
 extern volatile s32 Data_03001c94;
 extern void *Data_03001f34;
 extern char Value_00000845;
 
-s32 UiText_ShowLocalizedMessageAndWait(void) {
+s32 UiText_ShowLocalizedMessageAndWait(void)
+{
     s16 buffer[64];
     s32 work;
     s32 result;

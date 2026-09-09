@@ -33,7 +33,8 @@ s32 Func_080051d8(void *, void *);
 void Func_080072f0(void *);
 extern u8 Data_080c2a7c[];
 
-s32 Camera_ApplyTransformByFlag(void) {
+s32 Camera_ApplyTransformByFlag(void)
+{
     u8 *state = *(u8 **)ADDR_03001E80;
     Func_080049ac();
     if (GameFlag_IsSet(0x16B) != 0) {

@@ -198,7 +198,7 @@ void FieldScene_RunEarlySequence(void)
         Call3(Func_0200531e, p5, 0x8000, base5_3333);
         Func_0200549c(239);
         Func_020051e4(rec4, 2);
-        Func_0200522a(rec4, (((v9 * slot12) << 16) + *(volatile s32 *)(rec4 + 8)), 0, *(volatile s32 *)(rec4 + 16));
+        Func_0200522a(rec4, (((v9 *slot12) << 16) + *(volatile s32 *)(rec4 + 8)), 0, *(volatile s32 *)(rec4 + 16));
         Func_02005238(rec4);
         Value2(Func_02005208, rec4, 1);
         Func_02005246(rec2);

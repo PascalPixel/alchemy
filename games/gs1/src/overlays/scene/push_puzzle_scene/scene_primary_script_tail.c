@@ -241,7 +241,7 @@ void FieldScene_RunScene38bSequenceA(void)
             Call3(Func_02001d30, 10, 0x8e0000, 0x9c0000);
             {
                 s32 shown;
-            
+
                 target = *(volatile s32 *)((s32)rec8 + 80);
                 shown = 0x4000;
                 *(volatile u16 *)(target + 30) = shown;

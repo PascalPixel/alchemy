@@ -156,22 +156,26 @@ void FieldScene_RunSupplementalSequenceSeven(void)
     Call1(Func_02000fe2, 7);
 }
 
-void FieldScene_RunStep7BThen8(void) {
+void FieldScene_RunStep7BThen8(void)
+{
     Func_0200312e(123);
     Func_02000ffc(8);
 }
 
-void FieldScene_RunStep15(void) {
+void FieldScene_RunStep15(void)
+{
     Func_02004c4a(15);
     Func_020048be();
 }
 
-void FieldScene_RunStep17(void) {
+void FieldScene_RunStep17(void)
+{
     Func_02004c5a(17);
     Func_020048ce();
 }
 
-void FieldScene_RunStep20(void) {
+void FieldScene_RunStep20(void)
+{
     Func_02004c6a(20);
     Func_0200491a();
 }

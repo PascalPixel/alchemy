@@ -5,6 +5,7 @@
 
 void Func_02002442(s32, s32, s32);
 
-void SceneState_ApplyValues8And2And1(void) {
+void SceneState_ApplyValues8And2And1(void)
+{
     Func_02002442(8, 2, 1);
 }

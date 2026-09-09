@@ -14,7 +14,7 @@ struct Data_08091fa8 {
     u16 second_1d6;
 };
 
-extern struct State_08091fa8 * volatile Data_03001ebc;
+extern struct State_08091fa8 *volatile Data_03001ebc;
 extern struct Data_08091fa8 Data_02000240;
 
 void Event_SetPair1d4(u16 first, u16 second)

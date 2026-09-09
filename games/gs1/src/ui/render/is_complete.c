@@ -11,7 +11,8 @@ struct WorkSlot {
     u8 padding04[0x24];
 };
 
-s32 UiWork_IsComplete(void) {
+s32 UiWork_IsComplete(void)
+{
     s32 result;
     s32 channel_index;
     struct WorkSlot *channel;

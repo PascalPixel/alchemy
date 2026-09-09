@@ -1,4 +1,3 @@
-
 void NoOpActorCallback(void)
 {
 }

@@ -1,6 +1,7 @@
 #include "script_interpreter.h"
 
-s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
+s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
+{
     u32 *entries;
     s32 index;
     s16 *field = &interpreter->lookup_result;

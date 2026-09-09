@@ -1,6 +1,20 @@
 #include "types.h"
 
 /*
+ * Per-site call symbols: `overlay_call_targets.ts`'s `+2` rule resolves
+ * these three sites to the semantic imports (0x366c -> Scene_GetRecord,
+ * 0x367a -> Func_08000120 cosine, 0x369a -> Func_08000118 sine) but
+ * declaring externs at THOSE addresses does not reproduce the reference
+ * bytes -- byte-matching this overlay's `bl` needs the RAW pc-relative
+ * decode (standard Thumb BL semantics, no `+2` correction), which lands
+ * on these bogus-looking mid-veneer-chain addresses instead. Confirmed by
+ * direct calculation on the reference halfwords at 0x366c/0x367a/0x369a.
+ */
+u8 *Func_020093ba(s32 index);   /* scene-record accessor (Scene_GetRecord) */
+s32 Func_020092b8(s32 angle);   /* sine of a binary angle (Func_08000118) */
+s32 Func_020092a0(s32 angle);   /* cosine of a binary angle (Func_08000120) */
+
+/*
  * resource_3c9 owner at 0x02003660, 112 bytes: a per-frame orbit step
  * for one scene actor -- it reads a binary angle out of the actor's own
  * halfword at +100, places the actor on a circle around scene record
@@ -55,21 +69,6 @@
  * +98 a u8 counter, +100 the u16 angle. Nothing establishes which of
  * +8/+16 is which world axis, so they are not named x/y/z here.
  */
-
-/*
- * Per-site call symbols: `overlay_call_targets.ts`'s `+2` rule resolves
- * these three sites to the semantic imports (0x366c -> Scene_GetRecord,
- * 0x367a -> Func_08000120 cosine, 0x369a -> Func_08000118 sine) but
- * declaring externs at THOSE addresses does not reproduce the reference
- * bytes -- byte-matching this overlay's `bl` needs the RAW pc-relative
- * decode (standard Thumb BL semantics, no `+2` correction), which lands
- * on these bogus-looking mid-veneer-chain addresses instead. Confirmed by
- * direct calculation on the reference halfwords at 0x366c/0x367a/0x369a.
- */
-u8 *Func_020093ba(s32 index);   /* scene-record accessor (Scene_GetRecord) */
-s32 Func_020092b8(s32 angle);   /* sine of a binary angle (Func_08000118) */
-s32 Func_020092a0(s32 angle);   /* cosine of a binary angle (Func_08000120) */
-
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
     u8 *anchor = Func_020093ba(23);
@@ -82,12 +81,12 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 
     cosine = Func_020092a0(angle);
     along = *(s32 *)(anchor + 8)
-          + cosine * (*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
+          + cosine *(*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
     *(s32 *)(actor + 8) = along;
 
     sine = Func_020092b8(angle);
     across = *(s32 *)(anchor + 16)
-           + sine * (*(u8 *)(actor + 98) + 4);
+           + sine *(*(u8 *)(actor + 98) + 4);
     *(s32 *)(actor + 16) = across;
 
     *(s32 *)(actor + 56) = *(s32 *)(actor + 8);

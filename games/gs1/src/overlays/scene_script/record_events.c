@@ -164,14 +164,14 @@ void Func_0200017e(u16, s32);
 /* Contiguous unnamed leaf-owner run for resource_3cd. */
 
 /*
- * resource_3cd owner at 0x020000ec, 296 bytes: an interactive panel — open a
+ * resource_3cd owner at 0x020000ec, 296 bytes: an interactive panel -- open a
  * 30x9 window, draw three fixed caption lines plus the current item's icon and
  * count, then loop on the button latch until B closes it.
  *
  * Role known in advance from the in-image scene-script table, with no
  * disassembly: the three-word records at file offset 0x0450 hold
  * `(0xffff000b, 0x020080ed, 0)`, and under this overlay's link base
- * 0x020080ed is file offset 0x00ec plus the Thumb bit — this function.  So it
+ * 0x020080ed is file offset 0x00ec plus the Thumb bit -- this function.  So it
  * is the selector-0x0b entry, invoked with no arguments.  (Its sibling
  * 0x020084b1 is the selector-0x0c entry at 0x04b0, converted alongside it.)
  *
@@ -197,7 +197,7 @@ void Func_0200017e(u16, s32);
  *   0x0828 UiNumber_DrawAt x1   0x00c0 (prologue) x2      0x08c8 Audio_PlayCue x3
  *   0x07e8 Func_080000c0 x2   0x07f8 UiWindow_Close x1   0x0858 BattleUnit_Recalculate x4
  * The 0x00c0 prologue is the in-overlay helper whose byte-exact source is
- * tracked as `games/gs1/asm/overlays/resource_3cd_c_020000c0.c` — it walks a 16-entry list
+ * tracked as `games/gs1/asm/overlays/resource_3cd_c_020000c0.c` -- it walks a 16-entry list
  * and applies `arg` to each member.
  *
  * The Func_08015xxx family is the window/text layer established by the tracked
@@ -209,7 +209,7 @@ void Func_0200017e(u16, s32);
  * reads `entry[15]` off the same accessor.
  *
  * Closing with `BattleUnit_Recalculate` over slots 0, 1, 3, 2 is the documented
- * non-sequential refresh order — the same odd ordering two independently-read
+ * non-sequential refresh order -- the same odd ordering two independently-read
  * owners of resource_3ce use.  It is deliberate and is NOT sorted here.
  *
  * `redraw` is set by the prologue and by each of the two adjusting branches, so
@@ -258,31 +258,6 @@ void Func_0200017e(u16, s32);
  * Set the two scene-state words at +0x1c0 and +0x1c8, then run the local
  * follow-up service.  The literal word at 0x02000718 belongs to this owner
  * because its opening load references it directly.
- */
-
-/*
- * resource_3cd owner at 0x0200071c, 76 bytes: THE OVERLAY'S ENTRY
- * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay-driver resource_3cd), so the loader enters
- * here and no bl inside the image reaches it.  The smallest of the
- * twenty-one unowned drivers the audit turned up.
- *
- * It takes no branch at all: seed the workspace's +448 and +456 s32
- * cells with 516 and 24, give record 11 the same 0x19999 value in both
- * its +24 and +28 fields, then set modes on records 13 and 14 and
- * return 0.  Two separate Scene_GetRecord(11) calls fetch the same
- * record for the two stores, which is transcribed as compiled rather
- * than folded into one local.
- *
- * Complete owner: `push {r5, lr}` at 0x0200071c through `movs r0, #0 /
- * pop {r5} / pop {r1} / bx r1` at 0x02000756-0x0200075c, alignment
- * halfword, then the two-word literal pool 0x02000760-0x02000767
- * (0x03001ebc, 0x00019999); the next function's `push {r5, lr}`
- * follows at 0x02000768.  Returns a literal 0.
- *
- * Uncertainty: the workspace +448 value (516 here; neighbouring
- * overlays write 513, 514, 515 and 521 to the same cell) and the
- * record's +24/+28 fields are recorded by offset, roles open.
  */
 
 /* Create one scene handle and bind its three adjacent resource records. */
@@ -451,7 +426,7 @@ void FieldScene_RunCountAdjustPanel(void)
     record = Func_02000950(work[125]);
     win = Func_02000902(0, 0, 30, 9, 2);
 
-    msg = ((s32) &Value_00000c20);
+    msg = ((s32)&Value_00000c20);
     Func_02000922(msg, win, 0, 0);
     Func_02000930_a(msg + 1, win, 0, 16);
     msg += 2;
@@ -508,6 +483,30 @@ void SceneState_SetWorkWords1c0And1c8(void)
     Func_02000fca();
 }
 
+/*
+ * resource_3cd owner at 0x0200071c, 76 bytes: THE OVERLAY'S ENTRY
+ * DRIVER -- the target of the header veneer at image offset 4
+ * (bun tools/overlay-driver resource_3cd), so the loader enters
+ * here and no bl inside the image reaches it.  The smallest of the
+ * twenty-one unowned drivers the audit turned up.
+ *
+ * It takes no branch at all: seed the workspace's +448 and +456 s32
+ * cells with 516 and 24, give record 11 the same 0x19999 value in both
+ * its +24 and +28 fields, then set modes on records 13 and 14 and
+ * return 0.  Two separate Scene_GetRecord(11) calls fetch the same
+ * record for the two stores, which is transcribed as compiled rather
+ * than folded into one local.
+ *
+ * Complete owner: `push {r5, lr}` at 0x0200071c through `movs r0, #0 /
+ * pop {r5} / pop {r1} / bx r1` at 0x02000756-0x0200075c, alignment
+ * halfword, then the two-word literal pool 0x02000760-0x02000767
+ * (0x03001ebc, 0x00019999); the next function's `push {r5, lr}`
+ * follows at 0x02000768.  Returns a literal 0.
+ *
+ * Uncertainty: the workspace +448 value (516 here; neighbouring
+ * overlays write 513, 514, 515 and 521 to the same cell) and the
+ * record's +24/+28 fields are recorded by offset, roles open.
+ */
 s32 FieldScene_RunEntrySetup(void)
 {
     *(s32 *)((*(u8 **)Data_03001ebc) + 448) = 516;

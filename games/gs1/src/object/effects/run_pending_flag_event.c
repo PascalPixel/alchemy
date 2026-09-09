@@ -17,19 +17,19 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
     s32 result = 0;
     s32 flag = 0x120;
 
-    if (GameFlag_IsSet(flag) != 0) {
+    if (GameFlag_IsSet(flag)!= 0) {
         Func_08094380(24);
         GameFlag_Clear(flag);
         result = 1;
     } else {
         flag = 0x121;
-        if (GameFlag_IsSet(flag) != 0) {
+        if (GameFlag_IsSet(flag)!= 0) {
             Func_08094380(23);
             GameFlag_Clear(flag);
             result = 2;
         } else {
             flag = 0x122;
-            if (GameFlag_IsSet(flag) != 0) {
+            if (GameFlag_IsSet(flag)!= 0) {
                 s32 id;
                 void *obj;
 

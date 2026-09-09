@@ -96,13 +96,13 @@ s32 Func_020007be();
  * the first and the one-argument message in the second. */
 
 /*
- * resource_3a9 owner at 0x02000240, 200 bytes: the scene arrival routine —
+ * resource_3a9 owner at 0x02000240, 200 bytes: the scene arrival routine --
  * clear every scene slot's residue, look the current sub-state up in a small
  * in-image table, and place the player where that entry says.
  *
  * Role known in advance from the in-image scene-script tables: FOUR three-word
- * records name 0x02008241 as their callback — selectors 0x10 and 0x13 in one
- * table and 0x0c and 0x0d in another — and 0x02008241 - 0x8000 - 1 = 0x0240.
+ * records name 0x02008241 as their callback -- selectors 0x10 and 0x13 in one
+ * table and 0x0c and 0x0d in another -- and 0x02008241 - 0x8000 - 1 = 0x0240.
  * So one function serves four script selectors, which is why it re-reads the
  * sub-state itself rather than taking it as an argument.  Link-base evidence is
  * in the header of `games/gs1/semantic/overlays/resource_3a9_c_0200007c.c`.
@@ -120,7 +120,7 @@ s32 Func_020007be();
  *   Func_0808a090 1   Func_0808a100 1   Func_0808a0d8 1   Func_0808a010 1
  *   Func_0808a248 1   Func_0808a368 1   Func_0808a370 1   Func_0808a020 1
  * The two Scene_GetRecord sites are the loop's per-slot fetch and the later
- * player fetch — distinct sites, not merged.
+ * player fetch -- distinct sites, not merged.
  *
  * The clearing loop runs slots 8..65 inclusive (`movs r5,#8` /
  * `cmp r5,#65 / bls`) and skips a slot whose record comes back null; the +85
@@ -135,7 +135,7 @@ s32 Func_020007be();
  * immediately without touching anything.  Index times 8 addresses an 8-byte
  * entry `{u32, u16, u16}` in the in-image table at 0x02008ef8 (even pool word,
  * so data at file offset 0x0ef8), and the three fields go straight into
- * Func_08009178 — the same three-argument shape
+ * Func_08009178 -- the same three-argument shape
  * `games/gs1/semantic/overlays/resource_3ce_c_02000cf4.c`'s family uses.
  *
  * `Func_0808a090(0, 0x00008000, 0x00004000)` is the documented fixed-point
@@ -145,7 +145,7 @@ s32 Func_020007be();
  *
  * `+ 364` (built as `movs r2,#182 / lsls r2,r2,#1`, the documented
  * displacement-as-shifted-constant habit) is the s16 sub-state slot of the
- * workspace the pointer cell 0x03001ebc addresses — one dereference, as the
+ * workspace the pointer cell 0x03001ebc addresses -- one dereference, as the
  * tracked `games/gs1/asm/overlays/resource_3a9_c_02000308.c` spells it.  It is read twice,
  * once for the switch and once for Func_0808a248, and both reads are kept.
  *
@@ -158,15 +158,15 @@ s32 Func_020007be();
 
 /*
  * resource_3a9 owner at 0x0200033c, 172 bytes: the per-sub-state slot cleanup
- * — decide which set of scene slots this sub-state leaves behind and clear
+ * -- decide which set of scene slots this sub-state leaves behind and clear
  * them.
  *
  * Unlike this overlay's other rows, 0x0200033c is NOT named by any in-image
  * pool word and no script-table record carries 0x0200833d, so nothing inside
  * the overlay references it and `overlay_call_targets.ts` reports no prologue
  * targets anywhere here.  It is nonetheless an ordinary, self-contained,
- * frame-balanced owner — one prologue, one interworking return, no live state
- * crossing either end — so it converts normally, exactly as the analogous
+ * frame-balanced owner -- one prologue, one interworking return, no live state
+ * crossing either end -- so it converts normally, exactly as the analogous
  * unreferenced owner in `games/gs1/semantic/overlays/resource_3ce_c_02000cf4.c` did.
  * Link-base evidence for the overlay is in the header of
  * `games/gs1/semantic/overlays/resource_3a9_c_0200007c.c`.
@@ -186,7 +186,7 @@ s32 Func_020007be();
  * THE ELEVEN Func_0808a088 SITES ARE ELEVEN SITES, NOT A LOOP.  Nine of them
  * are a straight run of `movs r0,#k / bl` pairs with no counter, no back edge
  * and no compare, and the ids they pass are 10, 11, 12, 13, 14, 17, 18, 19, 15
- * — non-contiguous and ending out of order, which is the tell.  The other two
+ * -- non-contiguous and ending out of order, which is the tell.  The other two
  * are on the unrelated final arm with ids 16 and 17.  Folding either run into a
  * loop would deflate the multiset by nine; that is the documented script-table
  * shape and it is written out here the same way.  The odd trailing 15 is
@@ -195,8 +195,8 @@ s32 Func_020007be();
  *
  * The sub-state dispatch is a three-way compare chain with a SHARED taken arm:
  * `> 15` falls to a `== 17` test, otherwise `>= 9` takes the same arm, and only
- * a bare `== 3` gets the six-argument call.  Everything else — including 16,
- * which sits inside the middle of the accepted range — goes to the last arm.
+ * a bare `== 3` gets the six-argument call.  Everything else -- including 16,
+ * which sits inside the middle of the accepted range -- goes to the last arm.
  * That hole is real and is why the test is not written as `9..17`.  The same
  * hole appears in Func_0200007c's window over the same halfword, which is a
  * free cross-check that both were read correctly.
@@ -213,7 +213,8 @@ s32 Func_020007be();
 
 /* RAM: the shared work area. */
 
-s32 SceneData_SelectTableBySceneId(void) {
+s32 SceneData_SelectTableBySceneId(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000064) {
@@ -327,7 +328,7 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
     /* Band guard: facing in 0x6001..0x9fff. The reference falls through to the
      * short arm and branches away to the scene, so the test is spelled as the
      * short arm's condition. */
-    if ((u16) (*(u16 *) (p + 6) - 0x6001) <= 0x3FFE) {
+    if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
         Func_02000638(7, 8);
     } else {
         Func_020005be();
@@ -354,7 +355,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
     /* Band guard: facing in 0xa001..0xdfff. The reference falls through to the
      * short arm and branches away to the scene, so the test is spelled as the
      * short arm's condition. */
-    if ((u16) (*(u16 *) (p + 6) + 0x5FFF) <= 0x3FFE) {
+    if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
         Func_0200069e(8);
     } else {
         Func_0200062c();
@@ -424,7 +425,7 @@ void FieldScene_RunArrivalPlacement(void)
 s32 SceneState_SetRuntimeWord448To521(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32) (u32) &Value_00000064) {
+    if (Data_02000240[224] == (s32)(u32)&Value_00000064) {
         Func_0200065e();
     }
     return 0;

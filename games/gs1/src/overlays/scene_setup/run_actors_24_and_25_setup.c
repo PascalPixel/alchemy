@@ -10,7 +10,7 @@
  * (0x00000928, same `Value_XXXXXXXX` family as elsewhere in this
  * overlay) is included per the usual pool rule, immediately followed by
  * the next owner's push at 0x02004254 (the still-parked
- * `0x02004254 | 4 calls` row — this confirms that row's start boundary
+ * `0x02004254 | 4 calls` row -- this confirms that row's start boundary
  * from the other side), so the span is 0x02004218-0x02004254, 60 bytes.
  *
  * A flat setter sequence, no branches. The final call

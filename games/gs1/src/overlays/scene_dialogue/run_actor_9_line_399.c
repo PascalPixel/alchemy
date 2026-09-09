@@ -6,7 +6,8 @@ extern s32 Func_020025a0(s32);
 extern s32 Func_020025c0(s32, s32);
 extern s32 Func_020024e4(void);
 
-void SceneDialogue_RunActor9Line(void) {
+void SceneDialogue_RunActor9Line(void)
+{
     Func_020024c0();
     Func_0200257a(9, 0, 10);
     Func_020025a0(0x152a);

@@ -46,7 +46,7 @@ void FieldScene_RunGuardedStep9AAAfterSetup(void)
 
     Func_02000600();
     if (Value1(Func_02001596, 0x9aa) == 0) {
-        if (Value0(Func_020008f6) != 0) {
+        if (Value0(Func_020008f6)!= 0) {
             if (Value1(Func_020015a8, 0x207) == 0) {
                 Func_02001602(80);
                 Func_020008c6();

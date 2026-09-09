@@ -5,6 +5,7 @@ struct Runtime_080bb928 {
     s32 flags;
 };
 
-void Battle_SetRuntimeFlagBit0(struct Runtime_080bb928 *runtime) {
+void Battle_SetRuntimeFlagBit0(struct Runtime_080bb928 *runtime)
+{
     runtime->flags |= 1;
 }

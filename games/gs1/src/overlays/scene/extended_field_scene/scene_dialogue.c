@@ -65,7 +65,8 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void SceneDialogue_RunActor23Line(void) {
+void SceneDialogue_RunActor23Line(void)
+{
     Func_02002864();
     Func_02002932(0xf3c);
     Func_02002924(23, 0, 2);
@@ -73,7 +74,8 @@ void SceneDialogue_RunActor23Line(void) {
     Func_02002888();
 }
 
-void SceneDialogue_ShowLineF3F(void) {
+void SceneDialogue_ShowLineF3F(void)
+{
     Func_02002890();
     Func_0200295e(0xf3f);
     Func_02002950(24, 0, 2);
@@ -81,7 +83,8 @@ void SceneDialogue_ShowLineF3F(void) {
     Func_020028b4();
 }
 
-void SceneDialogue_ShowLineF44(void) {
+void SceneDialogue_ShowLineF44(void)
+{
     Func_020028bc();
     Func_0200298a(0xf44);
     Func_0200297c(15, 0, 2);
@@ -89,7 +92,8 @@ void SceneDialogue_ShowLineF44(void) {
     Func_020028e0();
 }
 
-void SceneDialogue_ShowLineEB1OrEB0(void) {
+void SceneDialogue_ShowLineEB1OrEB0(void)
+{
     Func_02002c88();
     Func_02002d42(16, 0, 10);
     if (Func_02002c72(0x840) != 0) {

@@ -152,17 +152,17 @@ void Func_0200367a(void);
 void Func_02003724(void);
 s32 Func_02000eea(struct PlacementResult_02000a68 *res);
 void Func_02001096(struct PlacementResult_02000a68 res);
-void Func_02003728(s32,s32);
-void Func_0200371c(s32,s32,s32);
+void Func_02003728(s32, s32);
+void Func_0200371c(s32, s32, s32);
 void Func_020036ba(s32);
 void Func_020037e0(s32);
-void Func_02003748(s32,s32);
+void Func_02003748(s32, s32);
 u8 *Func_020036ee(s32);
-void Func_020036c0(s32,s32,s32,s32,s32,s32);
-s32 Func_02000d3c(s32,s32,s32,s32,s32,s32);
+void Func_020036c0(s32, s32, s32, s32, s32, s32);
+s32 Func_02000d3c(s32, s32, s32, s32, s32, s32);
 void Func_020036fc(s32);
 u8 *Func_0200372a(s32);
-void Func_020036f8(u8 *,s32);
+void Func_020036f8(u8 *, s32);
 struct StagedActorEffect *Func_0200374e(s32 actor_index);
 void Func_02003750(void);
 void Func_020036f0(struct StagedActorEffect *actor, s32 mode);
@@ -282,14 +282,15 @@ s32 Func_02000030(s32 *first_position, s32 *second_position)
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
     s32 delta_z = (*first_position - *second_position) >> 16;
-    s32 delta_x_squared = delta_x * delta_x;
-    s32 delta_y_squared = delta_y * delta_y;
-    s32 delta_z_squared = delta_z * delta_z;
+    s32 delta_x_squared = delta_x *delta_x;
+    s32 delta_y_squared = delta_y *delta_y;
+    s32 delta_z_squared = delta_z *delta_z;
 
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_0200006c(s32 *arg0) {
+s32 *Func_0200006c(s32 *arg0)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 
@@ -305,7 +306,8 @@ s32 *Func_0200006c(s32 *arg0) {
     return 0;
 }
 
-void StagedActor_PushActorAhead(void) {
+void StagedActor_PushActorAhead(void)
+{
     extern u32 Data_0200ad68[];
 
     s32 dest[3];
@@ -377,7 +379,8 @@ void StagedActor_PushActorAhead(void) {
     SetStagedActorTransition(lead, 1);
 }
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5) {
+s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+{
     u8 *g = Data_03001e70;
     u8 *base;
     u32 i;
@@ -406,7 +409,6 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5) {
 
 s32 SceneActor_ResetMotionWhenAheadBlocked(Ent *a)
 {
-
     Desc d;
     u32 idx;
     s32 m;
@@ -448,7 +450,8 @@ done:
     return 0;
 }
 
-s32 FindStagedActorProbePosition(struct StagedActorProbe *probe) {
+s32 FindStagedActorProbePosition(struct StagedActorProbe *probe)
+{
     struct StagedActorProbePosition position;
     s32 direction;
     struct StagedActor *actor;
@@ -516,7 +519,7 @@ hit:
         + (s32)(StagedActorDirectionSteps[direction] & 0xffff0000) * step_count;
     probe->position_y = actor->y;
     probe->position_z = actor->z.value
-        + step_count * (s32)(StagedActorDirectionSteps[direction] << 16);
+        + step_count *(s32)(StagedActorDirectionSteps[direction] << 16);
     return 1;
 }
 
@@ -577,7 +580,8 @@ void FieldScene_RunTile10x20Transition(void)
     Func_02003724();
 }
 
-s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
+s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
+{
     struct StagedActorEffect *actor = GetStagedActorEffect(0);
     u8 *flags = &actor->motion_flags;
     u8 saved = *flags;
@@ -617,7 +621,8 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
     return 0;
 }
 
-void SceneActor_PassSubjectOffsetPosition(void) {
+void SceneActor_PassSubjectOffsetPosition(void)
+{
     extern u8 Data_02000240[];
 
     u32 buf[3];
@@ -667,17 +672,20 @@ s32 FieldScene_RunScene391_02000c68(void)
     return 0;
 }
 
-void FieldScene_RunSplitPairSteps(s32 a, s32 b) {
+void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+{
     Func_02005434(a, 0);
     Func_0200537a(b);
 }
 
-void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c) {
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+{
     Func_02005454(a, b, 0);
     Func_02005392(c);
 }
 
-s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p) {
+s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
+{
     p->field18 += 0x1eb8;
     if (p->field38 == (s32)0x80000000
         && p->field3c == (s32)0x80000000
@@ -687,7 +695,8 @@ s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p) {
     return 1;
 }
 
-void SceneEffect_SpawnObject26EveryEightFrames(void) {
+void SceneEffect_SpawnObject26EveryEightFrames(void)
+{
     extern s32 Data_03001e40;
 
     struct Obj *obj;
@@ -723,7 +732,8 @@ void SceneEffect_SpawnObject26EveryEightFrames(void) {
     Func_020053f6(obj, Data_0200b2d0);
 }
 
-s32 OverlayObject_SelectValueByFrameBit1(s32 obj) {
+s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
+{
     extern u32 Data_03001e40;
 
     if (((Data_03001e40 >> 1) & 1) != 0) {
@@ -734,7 +744,8 @@ s32 OverlayObject_SelectValueByFrameBit1(s32 obj) {
     return 0;
 }
 
-s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0) {
+s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0)
+{
     s32 x;
 
     if (Data_0200b394 != 0) {
@@ -770,7 +781,8 @@ hit:
     return 0;
 }
 
-void SceneActor_AlternateSlots13To16Field0c(void) {
+void SceneActor_AlternateSlots13To16Field0c(void)
+{
     extern u32 Data_03001e40;
 
     struct Struct5702 *p;

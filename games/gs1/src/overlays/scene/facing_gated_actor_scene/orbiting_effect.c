@@ -7,15 +7,15 @@
  * Derived span, not an inventory row: this owner has no row in
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in games/gs1/metrics/gs1-en-executable.json for `push {..,lr}`
- * prologues.  Walking from the prologue at 0x020026f0 — `push {r5, r6, lr}`
- * followed by r8 and sl through r5,r6 — the body is straight-line with no
+ * prologues.  Walking from the prologue at 0x020026f0 -- `push {r5, r6, lr}`
+ * followed by r8 and sl through r5,r6 -- the body is straight-line with no
  * conditional branch, and the walk stops at the matching high-register unwind
  * `pop {r3, r5} / mov r8,r3 / mov sl,r5 / pop {r5, r6} / pop {r0} / bx r0` at
  * 0x02002742-0x0200274c.  So the executable extent is exactly
  * 0x020026f0-0x0200274d (94 bytes).  The popped register is r0, so the popped
  * value is the return address and the owner is `void`.
  *
- * Pool map: none — this owner loads no literal at all; both displacements
+ * Pool map: none -- this owner loads no literal at all; both displacements
  * (100, 102) and both scale factors are built from immediates.  The halfword
  * at 0x0200274e is `0x0000` alignment before the next prologue at 0x02002750,
  * and the walk never reaches it as an instruction.
@@ -32,14 +32,14 @@
  * constants into two different axes, which is the shape of a cosine/sine pair;
  * which of the two is which is not settled here.
  *
- * `lsls #3 / subs / lsls #1` is *14 and `lsls #2 / adds / lsls #1` is *10 —
+ * `lsls #3 / subs / lsls #1` is *14 and `lsls #2 / adds / lsls #1` is *10 --
  * the two radii of an ellipse, not a fixed-point normalisation.  The anchor is
  * the pointer at +104, whose +8 and +16 are the centre the offsets are added
  * to; the result is published both to the object's own +8/+16 and to its
  * +56/+64 shadow pair.
  *
  * The angle lives at +100 and its per-frame step at +102, both u16, and the
- * step is added at the end — so the two halfwords are an angle/velocity pair
+ * step is added at the end -- so the two halfwords are an angle/velocity pair
  * in one word and must not be read as one 32-bit field.
  */
 s32 Func_02005c52();           /* site veneer -> ROM dispatch[12] -> Func_0800231c */
@@ -55,10 +55,10 @@ void SceneEffect_StepEllipseOrbit(u8 *obj)
     s32 z;
     s32 tmp;
 
-    x = *(s32 *)(anchor + 8) + Func_02005c52(theta) * 14;
+    x = *(s32 *)(anchor + 8) + Func_02005c52(theta)* 14;
     *(s32 *)(obj + 8) = x;
 
-    z = *(s32 *)(anchor + 16) + Func_02005c5e(theta) * 10;
+    z = *(s32 *)(anchor + 16) + Func_02005c5e(theta)* 10;
     tmp = *(s32 *)(obj + 8);
     *(s32 *)(obj + 16) = z;
     *(s32 *)(obj + 64) = z;

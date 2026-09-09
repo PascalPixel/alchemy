@@ -23,7 +23,7 @@ void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
     unsigned int i = 0;
 
     do {
-        if (Func_0200b4e4(a1) != 0) {
+        if (Func_0200b4e4(a1)!= 0) {
             Func_0200b59a(a0, 0, 0);
             break;
         }

@@ -49,8 +49,7 @@ void Graphics_AdjustPaletteBank(s32 arg0)
         if (iter == 0)
         {
             bank = 5;
-        }
-        else
+        } else
         {
             bank = 7;
             arg0 = -12;

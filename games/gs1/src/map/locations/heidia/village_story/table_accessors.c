@@ -4,7 +4,8 @@
 
 extern u8 Data_0200b9c8[];
 
-void *SceneData_GetTableb9c8(void) {
+void *SceneData_GetTableb9c8(void)
+{
     return Data_0200b9c8;
 }
 
@@ -15,7 +16,8 @@ extern u8 Data_0200b9d4[];
 
 void Func_020039f6(s32);
 
-void *SceneData_GetTableB9d4AfterStateCheck(void) {
+void *SceneData_GetTableB9d4AfterStateCheck(void)
+{
     if (Data_02000240[225] != 1) {
         Func_020039f6(0x253);
     }
@@ -26,6 +28,7 @@ void *SceneData_GetTableB9d4AfterStateCheck(void) {
 
 extern u8 Data_0200bbe4[];
 
-void *SceneData_GetTablebbe4(void) {
+void *SceneData_GetTablebbe4(void)
+{
     return Data_0200bbe4;
 }

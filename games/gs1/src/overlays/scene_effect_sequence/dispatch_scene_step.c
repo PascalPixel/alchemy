@@ -26,11 +26,11 @@
  * and 3 set two registers and branch to 0x02000ee4, which is inside case 6's
  * body, so all three share case 6's final call.  Written as a `goto` to a
  * label inside the case-6 arm with the two shared arguments as locals --
- * §5b6's shared-tail lever, one level further in.
+ * 5b6's shared-tail lever, one level further in.
  *
- * Case-arm ORDER off the ROM (§5b5); here the distinct table values ascending
+ * Case-arm ORDER off the ROM (5b5); here the distinct table values ascending
  * happen to coincide with selector order, which was checked rather than
- * assumed.  Per-site RAW callee names (§5b3a).
+ * assumed.  Per-site RAW callee names (5b3a).
  */
 
 extern u8 *Data_03001ebc;
@@ -59,7 +59,7 @@ void Func_020022d4();
 
 void SceneEffect_DispatchStep(void)
 {
-    s16 *scene = (s16 *) Data_03001ebc;
+    s16 *scene = (s16 *)Data_03001ebc;
     u8 *shared0;
     s32 shared1;
 

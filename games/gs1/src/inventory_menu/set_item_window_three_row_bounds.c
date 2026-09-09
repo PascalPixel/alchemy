@@ -4,7 +4,8 @@
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void InventoryMenu_SetItemWindowThreeRowBounds(void) {
+void InventoryMenu_SetItemWindowThreeRowBounds(void)
+{
     void *menu = *(void **)ADDR_03001F2C;
     struct WindowBounds *window =
         FIELD(menu, struct WindowBounds **, 0x20);

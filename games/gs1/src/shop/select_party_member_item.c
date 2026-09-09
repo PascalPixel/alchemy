@@ -22,7 +22,6 @@ s32 Func_080b362c(s32 unit_id);
 s32 Func_08077248(s32 unit_id);
 void Audio_PlayCue(s32 cue);
 
-
 /* Select a party member and then an item owned by that member. */
 s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
 {

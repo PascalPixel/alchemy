@@ -9,7 +9,8 @@ void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
 void Func_08002dd8(s32);
 
-void Ui_FinalizeWorkAndReleaseHeap13(void) {
+void Ui_FinalizeWorkAndReleaseHeap13(void)
+{
     u8 *state;
     u8 *unused;
     u16 *p;

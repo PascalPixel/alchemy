@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u8 * Func_020057c2();
+extern u8 *Func_020057c2();
 extern void Func_020057a0();
 extern void Func_0200226c(void);
 extern void Func_02001fde(void);

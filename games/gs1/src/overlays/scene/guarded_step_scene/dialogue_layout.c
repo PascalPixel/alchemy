@@ -16,7 +16,8 @@ void Func_02002542(s32, s32, s32, s32, s32, s32);
 void Func_02002578(s32);
 void Func_0200181c(void);
 
-void FieldScene_RunLoopedLayoutSequence(void) {
+void FieldScene_RunLoopedLayoutSequence(void)
+{
     s32 i;
 
     { s32 k5 = 2, k6 = 1; Func_020024b2(0, 28, 17, 8, k5, k6); }

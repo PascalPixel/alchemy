@@ -26,7 +26,7 @@ s32 BattleEffect_RollSuccess(
     u8 *flag_13b;
     u8 *flag_13c;
 
-    if (BattleEffect_IsRevive(effect_id) != 0 &&
+    if (BattleEffect_IsRevive(effect_id)!= 0 &&
         FIELD_AT_OFFSET(state, s16 *, 0x38) != 0) {
         return 0;
     }
@@ -91,7 +91,7 @@ action4_done:
     }
 
     for (attempt = 0; attempt < attempts; attempt++) {
-        if (FixedPoint_Ratio(score * success_scale, 100) >= BattleRandomPercent()) {
+        if (FixedPoint_Ratio(score *success_scale, 100) >= BattleRandomPercent()) {
             return 1;
         }
     }

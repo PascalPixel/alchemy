@@ -195,26 +195,6 @@ void Func_02005328(s32);
 
 /* Contiguous unnamed leaf-owner run for resource_38f. */
 
-/*
- * resource_38f owner at 0x020001d4, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20001d8 holding 0x200b040.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x020001d4 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x200b040 is image offset
- * 0x3040 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
@@ -236,7 +216,8 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-s32 SceneState_FlushPendingWordB698(s32 arg0) {
+s32 SceneState_FlushPendingWordB698(s32 arg0)
+{
     if (*(s32 *)0x0200B698 != 0) {
         Func_02002a02(arg0, 2);
         *(s32 *)0x0200B698 = 0;
@@ -244,7 +225,8 @@ s32 SceneState_FlushPendingWordB698(s32 arg0) {
     return 1;
 }
 
-s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p) {
+s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p)
+{
     s32 v = Func_02002a0a(p);
     s32 t = v * 100;
     s32 h = p->f64 + ((u32)t >> 16);
@@ -260,7 +242,8 @@ s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p) {
     return 1;
 }
 
-void SceneData_InitRecordTable(u8 *o) {
+void SceneData_InitRecordTable(u8 *o)
+{
     u8 *p = o + 72;
     u32 i;
     s32 normal;
@@ -280,7 +263,8 @@ void SceneData_InitRecordTable(u8 *o) {
     }
 }
 
-s32 SceneEffect_UpdateFallingObject(struct Obj *p) {
+s32 SceneEffect_UpdateFallingObject(struct Obj *p)
+{
     p->f08 += p->f24;
     p->f10 += p->f2c;
     p->f2c -= 2621;
@@ -296,7 +280,8 @@ s32 SceneEffect_UpdateFallingObject(struct Obj *p) {
     return 1;
 }
 
-s32 SceneActor_TurnTowardTarget(struct Ent *p) {
+s32 SceneActor_TurnTowardTarget(struct Ent *p)
+{
     struct Ent *q;
     u16 h;
     s32 t;
@@ -327,7 +312,8 @@ s32 SceneActor_TurnTowardTarget(struct Ent *p) {
     return 1;
 }
 
-s32 SceneData_SelectTableAe60BySelector(void) {
+s32 SceneData_SelectTableAe60BySelector(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000027) {
@@ -339,19 +325,40 @@ s32 SceneData_SelectTableAe60BySelector(void) {
     return (s32)Data_0200ae60;
 }
 
-s32 SceneData_GetTableB010ForSelector26(void) {
+s32 SceneData_GetTableB010ForSelector26(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000026) {
         return (s32)Data_0200b010;
     }
     return 0;
 }
 
+/*
+ * resource_38f owner at 0x020001d4, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
+ * one-word literal pool at 0x20001d8 holding 0x200b040.
+ *
+ * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
+ * word and, before 2026-08-01, discarded it for not opening with a `push`.
+ *
+ * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
+ * `pc`-relative load at 0x020001d4 reads it, so it belongs to this owner.
+ * Recording 4 would orphan a word and manufacture a phantom gap.
+ *
+ * The pool word is an ADDRESS -- 0x200b040 is image offset
+ * 0x3040 under the base + 0x8000 spelling -- loaded and returned
+ * without being dereferenced, so this is a getter for an in-image table.
+ *
+ * One of the 191 rows sharing this exact body across the tree, and every
+ * one of them returns a DIFFERENT address. Identical bytes are not
+ * identical semantics; this row's pool word was resolved on its own.
+ */
 u8 *SceneData_GetTableB040(void)
 {
     return (u8 *)0x0200b040;
 }
 
-s32 SceneData_SelectTableB080BySelector(void) {
+s32 SceneData_SelectTableB080BySelector(void)
+{
     s32 v = Data_02000240[224];
     if (v == (s32)&Value_00000024) {
         if (Func_02002c10(0x845) == 0) {
@@ -365,7 +372,8 @@ s32 SceneData_SelectTableB080BySelector(void) {
     return (s32)Data_0200b080;
 }
 
-void FieldScene_RunActor16MessageBranch(void) {
+void FieldScene_RunActor16MessageBranch(void)
+{
     struct Rec *q = Func_02002c8a(0);
     s32 v = q->f06;
     Func_02002c70(q);
@@ -378,11 +386,13 @@ void FieldScene_RunActor16MessageBranch(void) {
     Func_02002c9c();
 }
 
-void FieldScene_RunActor27Step(void) {
+void FieldScene_RunActor27Step(void)
+{
     Func_02002e3a(27, 0, 1);
 }
 
-s32 SceneData_SelectTableB3b0BySelector(void) {
+s32 SceneData_SelectTableB3b0BySelector(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000027) {
         return (s32)Data_0200b590;
     }
@@ -466,7 +476,8 @@ s32 FieldScene_SetupEntryBySelector(void)
     return 0;
 }
 
-void SceneActor_SetActors19To22HeightByFrameParity(void) {
+void SceneActor_SetActors19To22HeightByFrameParity(void)
+{
     struct Ent_02000800 *p;
 
     p = Func_0200325a(19);
@@ -513,7 +524,8 @@ void SceneActor_SetActors19To22HeightByFrameParity(void) {
     }
 }
 
-void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1) {
+void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1)
+{
     Func_02003444(141, 1);
     Func_02003454(arg0, arg1);
     Func_02003470();
@@ -521,23 +533,27 @@ void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1) {
     Func_0200326c(1);
 }
 
-void FieldScene_RunSequenceA(void) {
+void FieldScene_RunSequenceA(void)
+{
     Func_02003462(2);
     Func_0200347e();
     Func_0200348a();
 }
 
-void FieldScene_RunPairedStepA(s32 arg0, s32 arg1) {
+void FieldScene_RunPairedStepA(s32 arg0, s32 arg1)
+{
     Func_020050c4(arg0, 0);
     Func_02004fe2(arg1);
 }
 
-void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2) {
+void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
+{
     Func_020050ec(arg0, arg1, 0);
     Func_02004ffa(arg2);
 }
 
-s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p) {
+s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p)
+{
     p->f18 += 0x1eb8;
     if (p->f38 == 0x80000000 && p->f3c == p->f38 && p->f40 == p->f3c) {
         Func_02004fd6(p);
@@ -545,7 +561,8 @@ s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p) {
     return 1;
 }
 
-void SceneEffect_SpawnObject26EveryEightFrames(void) {
+void SceneEffect_SpawnObject26EveryEightFrames(void)
+{
     struct Obj_02002608 *p;
     struct Sub *q;
     s32 f;
@@ -585,7 +602,8 @@ void SceneEffect_SpawnObject26EveryEightFrames(void) {
     Func_02005054(p, Data_0200b5d8);
 }
 
-s32 SceneEffect_SetModeByFrameBit1(s32 arg0) {
+s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
+{
     if ((*(u32 *)0x03001e40 >> 1) & 1) {
         Func_020051ac(arg0, 10);
     } else {
@@ -594,7 +612,8 @@ s32 SceneEffect_SetModeByFrameBit1(s32 arg0) {
     return 0;
 }
 
-void FieldScene_RunFlag845And847Branches(void) {
+void FieldScene_RunFlag845And847Branches(void)
+{
     if (Func_02005334(0x845) == 0) {
         Func_020053da(8, 0, 0);
         { s32 k5 = 9, k6 = 18; Func_0200533e(9, 17, 5, 1, k5, k6); }

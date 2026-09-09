@@ -65,7 +65,6 @@ s32 FieldScene_RunSceneEntryHook(void)
     *(s32 *)(workspace + 448) = 0x204;
 
     if (Data_02000240[224] == (s32)&Value_0000006a) {
-
     Func_02003524(Func_02003566(8), 0);
     Func_02003530(Func_02003572(9), 0);
     Func_0200353c(Func_0200357e(10), 0);

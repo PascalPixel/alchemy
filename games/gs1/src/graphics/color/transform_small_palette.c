@@ -3,7 +3,8 @@
 
 s32 Graphics_TransformPaletteBuffer(s32, s32, s32, s32);
 
-void Graphics_TransformSmallPalette(s32 palette_index, s32 transform) {
+void Graphics_TransformSmallPalette(s32 palette_index, s32 transform)
+{
     s32 palette_buffer;
 
     palette_buffer = *(s32 *)ADDR_03001ED0;

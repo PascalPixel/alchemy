@@ -6,7 +6,8 @@
 extern u8 Data_08092981;
 void ObjectGroup_SetChildValue(void *, s32);
 
-void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1) {
+void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1)
+{
     s32 mode_flags;
     void *object;
 

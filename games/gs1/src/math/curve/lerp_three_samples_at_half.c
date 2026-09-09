@@ -23,7 +23,7 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position)
         pos = position;
         a -= b;
         pos -= CURVE_HALF_STEPS;
-        delta = a * pos;
+        delta = a *pos;
         if (delta < 0) {
             delta += CURVE_HALF_STEPS - 1;
         }

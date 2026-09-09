@@ -7,13 +7,13 @@
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in games/gs1/metrics/gs1-en-executable.json for `push {..,lr}`
  * prologues.  Walking from the prologue at 0x02000cec the body is
- * straight-line — four `bl`s, no conditional branch — and the walk stops at
+ * straight-line -- four `bl`s, no conditional branch -- and the walk stops at
  * the interworking return `pop {r0} / bx r0` at 0x02000d04-0x02000d06.  So the
  * executable extent is exactly 0x02000cec-0x02000d07 (28 bytes).  The popped
  * register is r0, so the popped value is the return address and the owner is
  * `void`.
  *
- * Pool map — the walk never reaches these as instructions:
+ * Pool map -- the walk never reaches these as instructions:
  *   0x02000d08  0x000017f7   a small identifier, not an address
  *   0x02000d0c                the next prologue (`push {r5, r6, r7, lr}`)
  * 0x000017f7 is far below the 0x02008000 link base and is passed as an

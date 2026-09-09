@@ -10,6 +10,7 @@ void FieldScene_Forward2188(void)
     Func_02002188();
 }
 
-void FieldScene_RunSingleStep(void) {
+void FieldScene_RunSingleStep(void)
+{
     Func_020009e4();
 }

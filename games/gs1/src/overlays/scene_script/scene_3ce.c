@@ -832,48 +832,59 @@ end:
     Func_020012b4(token, 2);
 }
 
-void SceneState_ApplyBlockC9b(void) {
+void SceneState_ApplyBlockC9b(void)
+{
     Func_020001b6((s32)&Value_00000c9b, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockCc6(void) {
+void SceneState_ApplyBlockCc6(void)
+{
     Func_020001ce((s32)&Value_00000cc6, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockCf1(void) {
+void SceneState_ApplyBlockCf1(void)
+{
     Func_020001e8((s32)&Value_00000cf1, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockD21(void) {
+void SceneState_ApplyBlockD21(void)
+{
     Func_02000206((s32)&Value_00000d21, (s32)&Value_00000d4c - (s32)&Value_00000d21);
 }
 
-void SceneState_ApplyBlockD4c(void) {
+void SceneState_ApplyBlockD4c(void)
+{
     Func_02000220((s32)&Value_00000d4c, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockD77(void) {
+void SceneState_ApplyBlockD77(void)
+{
     Func_02000240((s32)&Value_00000d77, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockDa2(void) {
+void SceneState_ApplyBlockDa2(void)
+{
     Func_02000260((s32)&Value_00000da2, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyOne(void) {
+void SceneState_ApplyOne(void)
+{
     Func_0200148e(1);
 }
 
-void SceneState_NoOp(void) {
+void SceneState_NoOp(void)
+{
 }
 
-void SceneState_QueryTwoValues(void) {
+void SceneState_QueryTwoValues(void)
+{
     s32 a;
     s32 b;
     Func_020014b2(&a, &b);
 }
 
-void SceneState_ApplyZero(void) {
+void SceneState_ApplyZero(void)
+{
     Func_0200142a(0);
 }
 
@@ -881,11 +892,13 @@ void CommandTable_NoOpCallback(void)
 {
 }
 
-void SceneState_SetRecordFlag53(void) {
+void SceneState_SetRecordFlag53(void)
+{
     Data_03001f30[0][0x35] = 1;
 }
 
-s32 SceneData_GetTable9564(void) {
+s32 SceneData_GetTable9564(void)
+{
     return (s32)Data_02009564;
 }
 
@@ -1111,7 +1124,8 @@ void FieldScene_GrantItemListToSlots(void)
     BattleUnit_Recalculate_4(2);
 }
 
-void CommandTable_ConfigureCommandGroups(void) {
+void CommandTable_ConfigureCommandGroups(void)
+{
     u8 buf[256];
     Func_02001a7e(0xc1d, 1);
     Func_02001b38(0, 0, 0);
@@ -1201,7 +1215,8 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     Func_02001dc6(2);
 }
 
-void FieldScene_AssignCodeSetAToSlots(void) {
+void FieldScene_AssignCodeSetAToSlots(void)
+{
     Func_02001d70(0xc1f, 1);
     Func_02001df8(0, 85);
     Func_02001e00(0, 84);
@@ -1303,7 +1318,8 @@ void FieldScene_AssignCodeSetBToSlots(void)
     Func_020022b6(2);
 }
 
-s32 CommandTable_ConfigureCommandList(void) {
+s32 CommandTable_ConfigureCommandList(void)
+{
     Func_02002306(5);
     Func_02002304(1);
     Func_0200230a(3);

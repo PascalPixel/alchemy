@@ -4,7 +4,8 @@
 
 s32 Owner_GetDefaultElement(void *state);
 
-s32 Item_GetEquippedElement(void) {
+s32 Item_GetEquippedElement(void)
+{
     struct ItemDefinition *item;
     void *owner;
 

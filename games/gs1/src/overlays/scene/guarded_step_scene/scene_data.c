@@ -13,7 +13,8 @@ void Func_02003de6(void);
 void Func_02003ee4(void);
 void Func_02003fcc(void);
 
-void SceneData_InitTableA980(void) {
+void SceneData_InitTableA980(void)
+{
     s32 *p = Data_0200a980;
     p[0] = 0;
     p[1] = 55;
@@ -67,7 +68,8 @@ void SceneData_InitTableA980(void) {
     Func_02003cec();
 }
 
-void SceneData_FillTableA980(void) {
+void SceneData_FillTableA980(void)
+{
     s32 *p = Data_0200a980;
     p[0] = 4;
     p[1] = 55;
@@ -121,7 +123,8 @@ void SceneData_FillTableA980(void) {
     Func_02003de6();
 }
 
-void SceneData_InitTableA980AndRunB(void) {
+void SceneData_InitTableA980AndRunB(void)
+{
     s32 *p = Data_0200a980;
     p[0] = 0;
     p[1] = 58;
@@ -175,7 +178,8 @@ void SceneData_InitTableA980AndRunB(void) {
     Func_02003ee4();
 }
 
-void SceneData_BuildTableA980(void) {
+void SceneData_BuildTableA980(void)
+{
     s32 *p = Data_0200a980;
     p[0] = 4;
     p[1] = 58;

@@ -227,38 +227,6 @@ void Func_02001120();
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-/*
- * Resource 398 map-variant selector at 0x0200046c.
- *
- * Complete owner: `push {lr}` at 0x0200046c and the matching
- * `pop {r1} / bx r1` at 0x0200049e.  72-byte row: 54 bytes of code, an
- * alignment halfword at 0x020004a2, and four pool words (0x02000240,
- * 0x00000031, 0x00000030, 0x0000002f) filling 0x020004a4-0x020004b3.  The pool
- * map is from a control-flow walk: every branch in the body targets
- * 0x02000486, 0x02000492 or 0x0200049c, and nothing reaches 0x020004a2.
- *
- * Signature.  The return address is popped into r1, not r0, so r0 survives and
- * is the result — and `movs r0,#0` immediately precedes the pop, so the owner
- * returns 0.  Same shape as the tracked byte-exact games/gs1/asm/overlays/
- * resource_398_c_02000030.c, which is written `s32 Func_02000030(...)
- * { ...; return 0; }`.
- *
- * ROOT.  This is entry 0 of the exported-entry veneer table at image offset 0:
- * `ldr r4,[pc,#0] / bx r4 / .word 0x0200846d`, which is 0x0200_046c + the Thumb
- * bit under the 0x02008000 link base.  Working the call graph root-down from
- * here reaches 0x020004b4, 0x020004e8 and 0x02000538 and nothing else.
- *
- * The selector itself is the cross-overlay Data_02000240 idiom: the signed
- * halfword at byte offset 448 (element 224), branched on.  The tracked
- * byte-exact games/gs1/asm/overlays/resource_398_c_02000040.c reads the same halfword and
- * tests it against the same three values, spelling them `(s32)&Value_00000031`
- * and so on — that is the exact reconstruction's constant-pooling device, and the plain
- * integers below are the same numbers.
- *
- * Three call sites, matching the row's advertised count.  All three are
- * overlay-local prologues, not veneers.
- */
-
 /* 0x02000e9a serves two imports in sibling arms: the three-argument setter in
  * the first and the one-argument record accessor in the second. */
 
@@ -289,7 +257,7 @@ void Func_02001120();
  * 16.16 words at +0x08 and +0x10, so `(integer + (step >> 16)) >> 4` is the
  * neighbouring tile.  That is exactly the pair the tracked byte-exact
  * games/gs1/asm/overlays/resource_398_c_020007c4.c compares as `p[2] >> 20` and
- * `p[4] >> 20` — the lookup takes tile coordinates.
+ * `p[4] >> 20` -- the lookup takes tile coordinates.
  *
  * Behaviour: find the actor one step ahead of the player; require the tile
  * beyond it to be empty; stage the pushed position in the three-word frame
@@ -302,8 +270,8 @@ void Func_02001120();
  * Func_020007c4 2, Object_CheckMovementCollision 1, Object_SetMode 2, Func_080000c0 1,
  * Audio_PlayCue 1, Object_SetPosition 2, Object_CommitPosition 1, Func_02000304 1.
  *
- * `blocker` is provably zero where it is stored at +0x24 and +0x2c — the guard
- * above returns early otherwise — but it is the register the assembly stores,
+ * `blocker` is provably zero where it is stored at +0x24 and +0x2c -- the guard
+ * above returns early otherwise -- but it is the register the assembly stores,
  * so it is spelled as itself rather than folded to a literal.
  */
 
@@ -398,7 +366,8 @@ extern u8 Data_02008c2c[];
 
 extern u8 Data_02008ea8[];
 
-s32 SceneState_ApplyArgMode0AndReturnZero(s32 no) {
+s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
+{
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
@@ -729,7 +698,8 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
     Func_02000d90(0x305);
 }
 
-void SceneState_SetGlobalByte17(void) {
+void SceneState_SetGlobalByte17(void)
+{
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
@@ -738,7 +708,8 @@ void SceneState_SetGlobalByte17(void) {
     FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 1;
 }
 
-void SceneState_ClearRuntimeByte17(void) {
+void SceneState_ClearRuntimeByte17(void)
+{
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
@@ -747,6 +718,37 @@ void SceneState_ClearRuntimeByte17(void) {
     FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 0;
 }
 
+/*
+ * Resource 398 map-variant selector at 0x0200046c.
+ *
+ * Complete owner: `push {lr}` at 0x0200046c and the matching
+ * `pop {r1} / bx r1` at 0x0200049e.  72-byte row: 54 bytes of code, an
+ * alignment halfword at 0x020004a2, and four pool words (0x02000240,
+ * 0x00000031, 0x00000030, 0x0000002f) filling 0x020004a4-0x020004b3.  The pool
+ * map is from a control-flow walk: every branch in the body targets
+ * 0x02000486, 0x02000492 or 0x0200049c, and nothing reaches 0x020004a2.
+ *
+ * Signature.  The return address is popped into r1, not r0, so r0 survives and
+ * is the result -- and `movs r0,#0` immediately precedes the pop, so the owner
+ * returns 0.  Same shape as the tracked byte-exact games/gs1/asm/overlays/
+ * resource_398_c_02000030.c, which is written `s32 Func_02000030(...)
+ * { ...; return 0; }`.
+ *
+ * ROOT.  This is entry 0 of the exported-entry veneer table at image offset 0:
+ * `ldr r4,[pc,#0] / bx r4 / .word 0x0200846d`, which is 0x0200_046c + the Thumb
+ * bit under the 0x02008000 link base.  Working the call graph root-down from
+ * here reaches 0x020004b4, 0x020004e8 and 0x02000538 and nothing else.
+ *
+ * The selector itself is the cross-overlay Data_02000240 idiom: the signed
+ * halfword at byte offset 448 (element 224), branched on.  The tracked
+ * byte-exact games/gs1/asm/overlays/resource_398_c_02000040.c reads the same halfword and
+ * tests it against the same three values, spelling them `(s32)&Value_00000031`
+ * and so on -- that is the exact reconstruction's constant-pooling device, and the plain
+ * integers below are the same numbers.
+ *
+ * Three call sites, matching the row's advertised count.  All three are
+ * overlay-local prologues, not veneers.
+ */
 s32 FieldScene_DispatchByScenarioId(void)
 {
     extern u8 *Data_03001ebc;
@@ -793,7 +795,7 @@ void SceneState_SetRuntimeWord448To516(void)
 
     /* 448 is built as 224 << 1 and the stored 516 as that same register plus
      * 68; reading it as one running offset is the natural mistake. */
-    *(s32 *) (Data_03001ebc + 448) = 516;
+    *(s32 *)(Data_03001ebc + 448) = 516;
 
     Func_02000e86(8, 1);
     Func_02000e8e(10, 2);
@@ -903,7 +905,8 @@ void FieldScene_RunScene398SequenceC(void)
     }
 }
 
-s32 *SceneActor_FindSlotAtTile(s32 x, s32 z) {
+s32 *SceneActor_FindSlotAtTile(s32 x, s32 z)
+{
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
@@ -992,5 +995,4 @@ void Resource398_ImportBankNoOp(void)
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
-
 }

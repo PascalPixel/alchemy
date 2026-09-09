@@ -86,9 +86,9 @@ void FieldScene_BuildFlaggedMapLayout(void)
     u32 i;
     u8 *record;
 
-    if (GameFlag_IsSet_1(GUARD_FLAG_1) != 0) {
+    if (GameFlag_IsSet_1(GUARD_FLAG_1)!= 0) {
     } else {
-        if (GameFlag_IsSet_2(GUARD_FLAG_2) != 0) {
+        if (GameFlag_IsSet_2(GUARD_FLAG_2)!= 0) {
         } else {
             ObjectMotion_SetHorizontalPositionWithTerrain_1(19, 0, 0);
             Audio_PlayCue_1(210);

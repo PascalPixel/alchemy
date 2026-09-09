@@ -32,7 +32,7 @@ void SceneState_InstallTask8714AndApplyTwoRects(void)
     /* The task is published as its entry address with the Thumb bit set. The
      * `.thumb_set` alias the exact reconstruction emits for a Thumb symbol already carries
      * bit 0, so adding it again here overshoots by one. */
-    Func_02004790((s32) Func_02008714);
+    Func_02004790((s32)Func_02008714);
 
     Func_0200487c(58, 28, 7, 1, 58, 13);
     Func_0200488e(57, 11, 1, 1, 58, 11);

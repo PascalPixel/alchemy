@@ -6,7 +6,8 @@ union Slot {
     void *p;
 };
 
-void OverlayObject_ApplyVelocity(union Slot *object) {
+void OverlayObject_ApplyVelocity(union Slot *object)
+{
     u16 *record;
 
     object[2].w += object[17].w;

@@ -44,7 +44,7 @@ void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *p = a + i;
-        if (Func_0200c876(p) != 0) {
+        if (Func_0200c876(p)!= 0) {
             Func_0200c890(p);
             break;
         }
@@ -53,7 +53,7 @@ void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *p = b + i;
-        if (Func_0200c896(p) != 0) {
+        if (Func_0200c896(p)!= 0) {
             Func_0200c8b0(p);
             break;
         }

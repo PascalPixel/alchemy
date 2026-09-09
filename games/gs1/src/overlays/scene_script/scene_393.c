@@ -105,12 +105,12 @@ void Func_0808a018(void); void Func_0808a020(void);
 void Func_02001872(void);
 s32 Func_02000e7a(struct PlacementResult *result);
 void Func_02001026(struct PlacementResult result);
-void Func_020018e0(s32,s32); void Func_020018dc(s32,s32,s32);
+void Func_020018e0(s32, s32); void Func_020018dc(s32, s32, s32);
 void Func_020018b2(s32); u8 *Func_02001918();
 void Func_02001918_a(s32);
-void Func_020018b8(s32,s32,s32,s32,s32,s32);
-s32 Func_02000ccc(s32,s32,s32,s32,s32,s32);
-void Func_020018f2(s32); void Func_020018ee(u8 *,s32);
+void Func_020018b8(s32, s32, s32, s32, s32, s32);
+s32 Func_02000ccc(s32, s32, s32, s32, s32, s32);
+void Func_020018f2(s32); void Func_020018ee(u8 *, s32);
 void Func_0200191a(void);
 struct StagedActorEffect *Func_0200193e(s32 actor_index);
 s32 Func_02001916(struct StagedActorEffect *actor,
@@ -155,44 +155,12 @@ void Func_02001b98(s32, s32);
 
 /* Contiguous unnamed leaf-owner run for resource_393. */
 
-/*
- * Placement query followed by the tile-(10,12) scene transition.
- *
- * The six-word result is one aggregate, including the two-word tail forwarded
- * by value to Func_02000608.  This is the same source shape witnessed by the
- * resource_392 query wrapper.  The inline six-argument draw wrapper is also
- * witnessed by this overlay's exact 0x02000bf8 sibling: it preserves the ROM's
- * r2-before-r3 stacked-literal order.  Keeping zero live across that draw lets
- * the compiler reuse the dead r5 result pointer for the following stack slot.
- * Together these natural source lifetimes reproduce all 180 bytes.
- */
-
 /* Raw overlay relocation spellings.  They are call-site evidence, so the two
  * logical actor-access calls deliberately use different names. */
 
 /* Return this overlay's state block. */
 
 /* Contiguous unnamed state-owner run for resource_393. */
-
-/*
- * resource_393 owner at 0x02000cf4, 104 bytes: apply the asymmetric RGB555 colour
- * adjustment.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
- * are the same routine shared verbatim: over all 52 halfwords they differ in
- * exactly 3 places, and all three are BL halfwords.  No pool word differs.
- *
- * What was changed:
- *  - the entry symbol;
- *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_393 0cf4': three sites, ONE distinct target, the veneer publishing
- *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
- *    corrected 'bl' rule and spelled the three sites as three different callees
- *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
- *    is also what the code shape says - the same per-channel scale applied three
- *    times.  resource_394's own site resolves to the same import, so this is a
- *    correction inherited by the transposition rather than a per-overlay change.
- */
 
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
    (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
@@ -209,7 +177,7 @@ void Func_02001b98(s32, s32);
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Func_02001900(s32,s32); u8 *Func_020018de(s32);
+    void Func_02001900(s32, s32); u8 *Func_020018de(s32);
 
     Func_020018b8(left, top, width, height, tile, palette);
 }
@@ -233,14 +201,15 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
     s32 dz = (*a - *b) >> 16;
-    s32 dx2 = dx * dx;
-    s32 dy2 = dy * dy;
-    s32 dz2 = dz * dz;
+    s32 dx2 = dx *dx;
+    s32 dy2 = dy *dy;
+    s32 dz2 = dz *dz;
 
     return ((IwramIntegerSquareRoot) 0x030001D8)(dx2 + dy2 + dz2);
 }
 
-s32 *SceneActor_FindAtTileXZ(s32 *arg0) {
+s32 *SceneActor_FindAtTileXZ(s32 *arg0)
+{
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 
@@ -256,7 +225,8 @@ s32 *SceneActor_FindAtTileXZ(s32 *arg0) {
     return 0;
 }
 
-void StagedActor_AdvancePair(void) {
+void StagedActor_AdvancePair(void)
+{
     extern u32 Data_02008f10[];
 
     s32 destination[3];
@@ -328,7 +298,8 @@ void StagedActor_AdvancePair(void) {
     SetStagedActorTransition(lead, 1);
 }
 
-s32 SceneState_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5) {
+s32 SceneState_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+{
     u8 *g = Data_03001e70;
     u8 *base;
     u32 i;
@@ -494,7 +465,7 @@ found:
     if (cnt != 0) {
         s32 d = ActorSearchStep[sel];
         s32 m = d & 0xffff0000;
-        s32 v1 = m * cnt;
+        s32 v1 = m *cnt;
         s32 v2 = (d << 16) * cnt;
         u8 *oc = obj;
         a[2] = *(s32 *)(oc + 8) + v1;
@@ -518,7 +489,7 @@ u8 *MapStagedScene_SelectTertiaryData(void) { return (u8 *)0x02009038; }
 
 void FieldScene_RunActorTenPlacementScene(void)
 {
-    void Func_02001900(s32,s32); u8 *Func_020018de(s32);
+    void Func_02001900(s32, s32); u8 *Func_020018de(s32);
 
     struct PlacementResult result;
     Func_02001872();
@@ -544,7 +515,8 @@ void FieldScene_RunActorTenPlacementScene(void)
     Func_0200191a();
 }
 
-s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
+s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
+{
     s32 Func_020019b4();
     s32 Func_020019b4_a();
 
@@ -602,6 +574,17 @@ void SceneActor_ApplyOffsetObjectPosition(void)
 
 u8 *SceneData_GetTable9098(void) { return (u8 *)0x02009098; }
 
+/*
+ * Placement query followed by the tile-(10,12) scene transition.
+ *
+ * The six-word result is one aggregate, including the two-word tail forwarded
+ * by value to Func_02000608.  This is the same source shape witnessed by the
+ * resource_392 query wrapper.  The inline six-argument draw wrapper is also
+ * witnessed by this overlay's exact 0x02000bf8 sibling: it preserves the ROM's
+ * r2-before-r3 stacked-literal order.  Keeping zero live across that draw lets
+ * the compiler reuse the dead r5 result pointer for the following stack slot.
+ * Together these natural source lifetimes reproduce all 180 bytes.
+ */
 s32 SceneState_SetRuntimeWord448To516(void)
 {
     void Func_02001900_a();
@@ -656,6 +639,25 @@ void SceneEffect_AdjustPaletteColors(s32 a)
     Func_02001b98(0x10000, 0);
 }
 
+/*
+ * resource_393 owner at 0x02000cf4, 104 bytes: apply the asymmetric RGB555 colour
+ * adjustment.
+ *
+ * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
+ * are the same routine shared verbatim: over all 52 halfwords they differ in
+ * exactly 3 places, and all three are BL halfwords.  No pool word differs.
+ *
+ * What was changed:
+ *  - the entry symbol;
+ *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
+ *    resource_393 0cf4': three sites, ONE distinct target, the veneer publishing
+ *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
+ *    corrected 'bl' rule and spelled the three sites as three different callees
+ *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
+ *    is also what the code shape says - the same per-channel scale applied three
+ *    times.  resource_394's own site resolves to the same import, so this is a
+ *    correction inherited by the transposition rather than a per-overlay change.
+ */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
     s32 Func_020019b4(s32, s32);

@@ -6,7 +6,8 @@ void Func_08002dd8(s32);
 u32 Func_080053e8(const void *, void *);
 extern s32 Data_08031864[];
 
-void RenderResource_LoadPair(s32 group_index, s32 resource_index) {
+void RenderResource_LoadPair(s32 group_index, s32 resource_index)
+{
     register s32 resource_address;
     void *staging_buffer;
 

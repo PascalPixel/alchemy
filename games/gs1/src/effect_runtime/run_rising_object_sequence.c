@@ -18,7 +18,8 @@ extern struct GlobalState Data_02000240;
 extern const u8 Data_0809e6c0[];
 extern u8 Data_0808eee5;
 
-void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
+void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
+{
     void *other;
 
     if (object != NULL) {

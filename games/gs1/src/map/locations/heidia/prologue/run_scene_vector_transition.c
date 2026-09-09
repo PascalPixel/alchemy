@@ -14,7 +14,8 @@ extern s32 Func_02001bc2(struct V6 *arg0);
 extern void Func_02001d6e(struct V6 arg0);
 extern void Func_020047e2(void);
 
-void RunSceneVectorTransition(void) {
+void RunSceneVectorTransition(void)
+{
     struct V6 transition;
 
     Func_020047b6();

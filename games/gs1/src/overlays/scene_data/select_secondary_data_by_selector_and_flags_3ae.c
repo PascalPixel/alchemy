@@ -1,5 +1,25 @@
 #include "types.h"
 
+/* Raw per-call-site labels for the relocated import. */
+s32 Func_02001704();
+s32 Func_0200171e();
+s32 Func_02001738();
+s32 Func_02001746();
+
+extern s16 Data_02000240[];
+extern u8 Value_0000006b;
+extern u8 Value_00000070;
+extern u8 Value_0000006c;
+
+extern u8 Data_02009e74[];
+extern u8 Data_0200a018[];
+extern u8 Data_0200a120[];
+extern u8 Data_02009e80[];
+extern u8 Data_02009fa0[];
+extern u8 Data_0200a24c[];
+extern u8 Data_0200a30c[];
+extern u8 Data_0200a390[];
+
 /*
  * Resource 3ae, owner at 0x0200019c (164 bytes including its 13-word pool at
  * 0x0200020c..0x0200023e).
@@ -13,7 +33,7 @@
  * arm loads a pool address into r0 and branches to the common epilogue.
  *
  * Selector: `ldr r3,[pc] (= 0x02000240) / movs r1,#224 / lsls r1,r1,#1 /
- * adds r3,r3,r1 / movs r1,#0 / ldrsh r2,[r3,r1]` — the signed halfword at byte
+ * adds r3,r3,r1 / movs r1,#0 / ldrsh r2,[r3,r1]` -- the signed halfword at byte
  * offset 448 of the cross-overlay workspace, i.e. `Data_02000240[224]`.  The
  * byte-exact sibling `games/gs1/asm/overlays/resource_3ae_c_02000040.c` selects on exactly
  * the same halfword against the same three constants (0x6b, 0x70, 0x6c) and
@@ -41,27 +61,6 @@
  * against a full word loaded from the pool while r2 came from `ldrsh`, so the
  * compare is signed 32-bit; the sibling at 0x02000040 has the same shape.
  */
-
-/* Raw per-call-site labels for the relocated import. */
-s32 Func_02001704();
-s32 Func_0200171e();
-s32 Func_02001738();
-s32 Func_02001746();
-
-extern s16 Data_02000240[];
-extern u8 Value_0000006b;
-extern u8 Value_00000070;
-extern u8 Value_0000006c;
-
-extern u8 Data_02009e74[];
-extern u8 Data_0200a018[];
-extern u8 Data_0200a120[];
-extern u8 Data_02009e80[];
-extern u8 Data_02009fa0[];
-extern u8 Data_0200a24c[];
-extern u8 Data_0200a30c[];
-extern u8 Data_0200a390[];
-
 s32 SceneData_SelectSecondaryDataBySelectorAndFlags(void)
 {
     s16 scene = Data_02000240[224];

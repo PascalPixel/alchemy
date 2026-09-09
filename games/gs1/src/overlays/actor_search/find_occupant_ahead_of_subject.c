@@ -1,5 +1,22 @@
 #include "types.h"
 
+/* Import veneers, named by the main-image function each one reaches.
+ * Old-style declarations: arities vary between call sites in this overlay. */
+u8 *Func_02007c5c();
+void Func_02007b0e();
+s32 *Func_02007896();
+void Func_02007b40();
+s32 *Func_020078c8();
+
+extern s16 Data_02000240[];
+
+typedef struct ActiveSubjectSlot {
+    u8 pad[500];
+    void *handle;
+} ActiveSubjectSlot;
+
+/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
+
 /*
  * resource_3bb owner at 0x02003cf8, 160 bytes (0x02003cf8-0x02003d97):
  * 150 bytes of code, two alignment bytes at 0x02003d8e, and the two-word
@@ -42,24 +59,6 @@
  * asserted.  r8 merely caches the 0xfff00000 mask across the first call and
  * carries no other value.
  */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_02007c5c();
-void Func_02007b0e();
-s32 *Func_02007896();
-void Func_02007b40();
-s32 *Func_020078c8();
-
-extern s16 Data_02000240[];
-
-typedef struct ActiveSubjectSlot {
-    u8 pad[500];
-    void *handle;
-} ActiveSubjectSlot;
-
-/* This overlay's own lookup; byte-exact source in games/gs1/asm/overlays. */
-
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {
     u8 *record;

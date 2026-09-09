@@ -172,29 +172,7 @@ void Func_02003238();
 /* The transition callback advances the polled state to 24. The palette
  * alternation runs four cycles; actor three follows the saved game flag. */
 
-/* Protected-window palette adjustment owner, 0x02001768-0x02000b23. */
-
 /* Raw overlay relocation spellings for the five calls in this owner. */
-
-/*
- * resource_395 owner at 0x020017d0, 104 bytes: apply the asymmetric RGB555 colour
- * adjustment.
- *
- * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
- * are the same routine shared verbatim: over all 52 halfwords they differ in
- * exactly 3 places, and all three are BL halfwords.  No pool word differs.
- *
- * What was changed:
- *  - the entry symbol;
- *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_395 0b24': three sites, ONE distinct target, the veneer publishing
- *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
- *    corrected 'bl' rule and spelled the three sites as three different callees
- *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
- *    is also what the code shape says - the same per-channel scale applied three
- *    times.  resource_394's own site resolves to the same import, so this is a
- *    correction inherited by the transposition rather than a per-overlay change.
- */
 
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
    (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
@@ -365,7 +343,8 @@ u8 *PaletteScene_GetEffectData(void)
     return (u8 *)0x02009c34;
 }
 
-void PaletteScene_Initialize(void) {
+void PaletteScene_Initialize(void)
+{
     void *scene;
 
     scene = *(void **)0x03001EBC;
@@ -801,7 +780,8 @@ s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
     return 1;
 }
 
-void PaletteScene_SpawnEffect(void) {
+void PaletteScene_SpawnEffect(void)
+{
     struct PaletteEffect *effect;
     struct EffectSprite *sprite;
     s32 phase;
@@ -891,6 +871,7 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
     }
 }
 
+/* Protected-window palette adjustment owner, 0x02001768-0x02000b23. */
 void PaletteScene_AdjustPaletteWindow(s32 adjustment)
 {
     volatile u16 *palette = (volatile u16 *)0x05000000;
@@ -918,6 +899,25 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
  *
  * Control jumps over a mask literal inside the span and rejoins before the
  * common return.
+ */
+/*
+ * resource_395 owner at 0x020017d0, 104 bytes: apply the asymmetric RGB555 colour
+ * adjustment.
+ *
+ * TRANSPOSED from games/gs1/semantic/overlays/resource_394_c_02000ecc.c.  The two owners
+ * are the same routine shared verbatim: over all 52 halfwords they differ in
+ * exactly 3 places, and all three are BL halfwords.  No pool word differs.
+ *
+ * What was changed:
+ *  - the entry symbol;
+ *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
+ *    resource_395 0b24': three sites, ONE distinct target, the veneer publishing
+ *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
+ *    corrected 'bl' rule and spelled the three sites as three different callees
+ *    (Func_02001ee2 / Func_02001ef0 / Func_02001efe); they are one import, which
+ *    is also what the code shape says - the same per-channel scale applied three
+ *    times.  resource_394's own site resolves to the same import, so this is a
+ *    correction inherited by the transposition rather than a per-overlay change.
  */
 u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
 {

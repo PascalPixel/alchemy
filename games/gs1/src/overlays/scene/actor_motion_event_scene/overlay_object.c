@@ -19,7 +19,8 @@ void Func_02001120(void *, s32);
 void Func_02001138(void *, s32);
 void Func_020011e8(void *, s32);
 
-void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth) {
+void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *obj;
     void *rec;
     s32 mask;

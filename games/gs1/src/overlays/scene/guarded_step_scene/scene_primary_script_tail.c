@@ -92,17 +92,20 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void FieldScene_RunFiveValueStep9(void) {
+void FieldScene_RunFiveValueStep9(void)
+{
     Func_0200353a(9, 31, 9, 30, 9);
     Func_0200360e();
 }
 
-void FieldScene_RunFiveValueStep11(void) {
+void FieldScene_RunFiveValueStep11(void)
+{
     Func_0200355a(11, 40, 9, 41, 9);
     Func_0200372e();
 }
 
-void FieldScene_RunFiveValueStep15(void) {
+void FieldScene_RunFiveValueStep15(void)
+{
     Func_0200359a(15, 40, 12, 41, 12);
     Func_02003966();
 }

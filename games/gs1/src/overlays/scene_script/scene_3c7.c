@@ -436,7 +436,7 @@ s32 Func_020022bc();
  *
  * Complete owner: `push {lr}` at 0x020004b0 through `pop {r1} / bx r1` at
  * 0x020004e6.  r0 is not the popped return address, so it survives and is the
- * result (HANDOVER §0).  0x020004ea is an alignment halfword and
+ * result (HANDOVER 0).  0x020004ea is an alignment halfword and
  * 0x020004ec-0x02000507 is this owner's literal pool; neither is executed.
  *
  * This is the two-by-two sibling of 0x02000084: the same scene-id test and the
@@ -464,40 +464,6 @@ s32 Func_020022bc();
  * and literal placement, so production retains the reviewed assembly. */
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
-
-/*
- * Resource 3c7 cutscene script at 0x02000eec.
- *
- * Complete owner: `push {lr}` at 0x02000eec through the interworking return
- * `pop {r0} / bx r0` at 0x0200103a.  r0 receives the popped return address, so
- * the owner returns nothing (HANDOVER §0).  r0's entry value is overwritten
- * before use, so the owner takes no arguments.
- *
- * Straight-line: the body contains no branch of any kind.  The only non-code
- * bytes in the span are the alignment halfword at 0x0200103e and the literal
- * pool 0x02001040-0x0200104b, all past the epilogue; a control-flow walk from
- * the prologue confirms nothing else is skipped.
- *
- * The three pool words are small constants (((s32) &Value_00002880), 0x0105, 0x2002), not
- * in-image addresses, so this owner is not a link-base witness either way.
- *
- * The script is a sequence of "act on channel N, then wait k frames" beats.
- * Func_0808a010 is the wait (its argument is a frame count), and channels 0,
- * 1, 2, 3, 11 and 12 are driven by Func_0808a110 / Func_0808a138 /
- * Func_0808a180.
- *
- * Call accounting, per target, against `overlay_call_targets.ts`
- * (46 sites, 9 distinct); each count was verified against the individual call
- * sites rather than inferred from the total:
- *   Func_0808a010  22   Func_0808a180  9    Func_0808a138  5
- *   Func_0808a110  4    Func_0808a148  2    Func_0808a170  1
- *   Func_0808a178  1    Func_0808a1b8  1    Func_0808a1e8  1
- *
- * Uncertainties: the channel ids and the beat constants are transcribed
- * literally; what each channel drives is not established here, and the meaning
- * of Func_0808a1e8's middle argument 0x105 (0x102 at the corresponding site in
- * Func_02000308) is unknown.
- */
 
 /* Import veneers.  Old-style declarations: one import name can take different
  * argument counts at different sites in this overlay, so no arity is asserted
@@ -582,7 +548,8 @@ u8 *SceneData_GetTable9438(void)
     return (u8 *)0x02009438;
 }
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     if (Data_02000240[224] == (s32)&Value_000000b3) {
         return (s32)Data_02009690;
     }
@@ -596,7 +563,7 @@ u8 *SceneData_GetTable96d0(void)
 
 u8 *SceneData_SelectTableBySceneIdAndFlag9a7(void)
 {
-    if (Data_02000240[224] == (s32) &Value_000000b4) {
+    if (Data_02000240[224] == (s32)&Value_000000b4) {
         if (Func_02001278(0x9A7) != 0) {
             return Data_02009974;
         }
@@ -996,6 +963,39 @@ void FieldScene_RunPrimaryScript(void)
     Value0(Func_020020e0);
 }
 
+/*
+ * Resource 3c7 cutscene script at 0x02000eec.
+ *
+ * Complete owner: `push {lr}` at 0x02000eec through the interworking return
+ * `pop {r0} / bx r0` at 0x0200103a.  r0 receives the popped return address, so
+ * the owner returns nothing (HANDOVER 0).  r0's entry value is overwritten
+ * before use, so the owner takes no arguments.
+ *
+ * Straight-line: the body contains no branch of any kind.  The only non-code
+ * bytes in the span are the alignment halfword at 0x0200103e and the literal
+ * pool 0x02001040-0x0200104b, all past the epilogue; a control-flow walk from
+ * the prologue confirms nothing else is skipped.
+ *
+ * The three pool words are small constants (((s32) &Value_00002880), 0x0105, 0x2002), not
+ * in-image addresses, so this owner is not a link-base witness either way.
+ *
+ * The script is a sequence of "act on channel N, then wait k frames" beats.
+ * Func_0808a010 is the wait (its argument is a frame count), and channels 0,
+ * 1, 2, 3, 11 and 12 are driven by Func_0808a110 / Func_0808a138 /
+ * Func_0808a180.
+ *
+ * Call accounting, per target, against `overlay_call_targets.ts`
+ * (46 sites, 9 distinct); each count was verified against the individual call
+ * sites rather than inferred from the total:
+ *   Func_0808a010  22   Func_0808a180  9    Func_0808a138  5
+ *   Func_0808a110  4    Func_0808a148  2    Func_0808a170  1
+ *   Func_0808a178  1    Func_0808a1b8  1    Func_0808a1e8  1
+ *
+ * Uncertainties: the channel ids and the beat constants are transcribed
+ * literally; what each channel drives is not established here, and the meaning
+ * of Func_0808a1e8's middle argument 0x105 (0x102 at the corresponding site in
+ * Func_02000308) is unknown.
+ */
 void FieldScene_RunSecondaryScript(void)
 {
     void Func_020021aa_a(s32);
@@ -1003,7 +1003,7 @@ void FieldScene_RunSecondaryScript(void)
     void Func_020021f0_a(s32);
     void Func_0200220c_a(s32);
 
-    Func_0200216e(((s32) &Value_00002880));
+    Func_0200216e(((s32)&Value_00002880));
     Func_020020ec(20);
 
     Func_02002164(11, 2);

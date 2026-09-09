@@ -2,7 +2,8 @@
 
 extern u8 Value_00020002;
 
-void DisplayScroll_BuildHblankWordTable(u32 *arg0) {
+void DisplayScroll_BuildHblankWordTable(u32 *arg0)
+{
     s32 count;
     u32 value = 0x01FF01FF;
     u32 step = 0x10000;

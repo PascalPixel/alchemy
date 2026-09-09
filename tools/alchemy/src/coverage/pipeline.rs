@@ -4,7 +4,10 @@ use super::model::{
 use crate::compiler::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
 use crate::coverage::tree::{read_json, SourceTree, ROM_BASE};
 use serde_json::{json, Map, Value};
-use std::{collections::BTreeMap, path::Path};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::Path,
+};
 type SpanMap = BTreeMap<String, Vec<Span>>;
 type OwnerMap = BTreeMap<String, Vec<Owner>>;
 
@@ -338,8 +341,44 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
         }
     }
     let mut spans = SpanMap::new();
-    let mut sources = 0;
+    let mut sources = BTreeSet::new();
+    let units = json(tree, "games/gs1/recon/translation-units.json").unwrap_or(Value::Null);
+    let mut registered = BTreeSet::new();
+    for unit in array(&units, "units") {
+        let source = text(unit, "source");
+        registered.insert(source.clone());
+        let id = text(unit, "overlay");
+        if text(unit, "game") != "gs1"
+            || !executable.contains_key(&id)
+            || !source.starts_with(&format!("{directory}/"))
+            || !source.ends_with(".c")
+            || !tree.read(&source).is_some_and(|code| canonical(&code))
+        {
+            continue;
+        }
+        for owner in array(unit, "owners") {
+            if text(owner, "state") != "retained-assembly" {
+                continue;
+            }
+            let (Some(entry), Some(size)) = (address(owner, "address"), integer(owner, "extent"))
+            else {
+                continue;
+            };
+            let Some(end) = entry.checked_add(size).filter(|end| *end > entry) else {
+                continue;
+            };
+            sources.insert(source.clone());
+            spans
+                .entry(id.clone())
+                .or_default()
+                .push(Span::new(entry, end));
+        }
+    }
     for name in tree.list(directory) {
+        let source = format!("{directory}/{name}");
+        if registered.contains(&source) {
+            continue;
+        }
         let Some(stem) = name.strip_suffix(".c") else {
             continue;
         };
@@ -349,10 +388,7 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
         let Some(entry) = hex(address) else {
             continue;
         };
-        if !tree
-            .read(&format!("{directory}/{name}"))
-            .is_some_and(|source| canonical(&source))
-        {
+        if !tree.read(&source).is_some_and(|source| canonical(&source)) {
             continue;
         }
         let record_size = records
@@ -361,7 +397,7 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
         let Some(size) = record_size.or_else(|| extents.get(&(id.into(), entry)).copied()) else {
             continue;
         };
-        sources += 1;
+        sources.insert(source);
         spans
             .entry(id.to_string())
             .or_insert_with(Vec::new)
@@ -370,7 +406,7 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
     for (id, found) in &mut spans {
         *found = intersect(&normalize(found), mapped(executable, id));
     }
-    (spans, sources)
+    (spans, sources.len())
 }
 fn exact_overlay(
     tree: &SourceTree,
@@ -1307,7 +1343,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/gs1/recon/en/dossiers.json",
-            "proven_assembly_standard": "approved-compiler-non-emittable-with-reasoning",
+            "proven_assembly_standard": "positive-handwritten-or-third-party-assembly",
             "main_assembly_classification": "out/gs1-en/full/asm/manifest.json",
             "overlay_assembly_classification": "games/gs1/semantic/overlay-assembly.json",
             "draft_superseded_bytes": 0,
@@ -1351,6 +1387,92 @@ mod tests {
     }
     fn no_inventory() -> BTreeMap<String, Vec<Region>> {
         BTreeMap::new()
+    }
+    #[test]
+    fn overlay_drafts_follow_units_with_legacy_filename_fallback() {
+        let root = tempfile::tempdir().unwrap();
+        let directory = "games/gs1/recon/en/overlays";
+        let write = |path: &str, source: &str| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, source).unwrap();
+        };
+        for name in [
+            "actor_sequence",
+            "unregistered",
+            "resource_test_c_02000160",
+            "resource_test_c_02000180",
+        ] {
+            write(
+                &format!("{directory}/{name}.c"),
+                "void Actor_Run(void) {}\n",
+            );
+        }
+        write(&format!("{directory}/uncanonical.c"), "M2C_ERROR\n");
+        let owner =
+            |entry, extent, state| json!({"address": entry, "extent": extent, "state": state});
+        let unit = |name, owners| {
+            json!({
+                "game": "gs1", "overlay": "resource_test",
+                "source": format!("{directory}/{name}.c"), "owners": owners
+            })
+        };
+        let named = unit(
+            "actor_sequence",
+            json!([
+                owner("0x02000100", 0x20, "retained-assembly"),
+                owner("0x02000120", 0x20, "retained-assembly"),
+                owner("0x02000140", 0x20, "exact-c")
+            ]),
+        );
+        write("games/gs1/recon/translation-units.json", &json!({"units": [
+            named.clone(), named,
+            unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "retained-assembly")])),
+            unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
+            unit("missing", json!([owner("0x02000190", 0x10, "retained-assembly")])),
+            unit("uncanonical", json!([owner("0x020001a0", 0x10, "retained-assembly")]))
+        ]}).to_string());
+        write("games/gs1/recon/en/dossiers.json", &json!({"records": {
+            "resource_test:02000100": {"span_bytes": 0x20},
+            "resource_test:02000160": {"span_bytes": 0x20},
+            "resource_test:02000180": {"span_bytes": 0x10},
+            "resource_test:020001c0": {"span_bytes": 0x10},
+            "resource_test:020001e0": {"span_bytes": 0x10, "source": format!("{directory}/unregistered.c")}
+        }}).to_string());
+        let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
+        let expected = vec![
+            Span::new(0x02000100, 0x02000140),
+            Span::new(0x02000160, 0x02000170),
+        ];
+        assert_eq!(
+            candidate_overlay(&tree, &executable()),
+            (
+                BTreeMap::from([("resource_test".into(), expected.clone())]),
+                2
+            )
+        );
+        write(
+            &format!("{directory}/resource_test_c_020001c0.c"),
+            "void Legacy_Run(void) {}\n",
+        );
+        let (found, sources) = candidate_overlay(&tree, &executable());
+        assert_eq!(sources, 3);
+        assert_eq!(
+            found["resource_test"],
+            [expected, vec![Span::new(0x020001c0, 0x020001d0)]].concat()
+        );
+        let tile = code_tile(
+            String::new(),
+            &executable()["resource_test"],
+            &[Span::new(0x02000100, 0x02000110)],
+            &found["resource_test"],
+            &[],
+            &[],
+            None,
+            None,
+        );
+        assert_eq!(tile.categories[Category::ProvenC as usize], 0x10);
+        assert_eq!(tile.categories[Category::DraftC as usize], 0x50);
     }
     #[test]
     fn sprite_series_exposes_packages_without_double_counting() {

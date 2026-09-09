@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_38f:020008ec": {"name": "FieldScene_RunExtendedActorSequence"},
+    "resource_391:02000d3c": {"name": "FieldScene_RunBranchingFormationPresentation"},
+    "resource_3bd:020013f8": {"name": "FieldScene_RunExtendedActorPresentation"},
     "resource_38b:02000db4": {"name": "SceneActor_PushPuzzleActor"},
     "resource_385:02000f30": {
       "name": "SceneSetup_InitializeActorsAndFlags"

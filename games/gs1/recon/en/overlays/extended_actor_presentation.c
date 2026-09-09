@@ -189,7 +189,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         u8 *object = Func_02003cc8(2);
         u8 value = object[90];
 
-        object[90] = (u8)(value | step);
+        object[90] = (u8)(step | value);
     }
     Func_02003d20(0, 1);
     Func_02003d20(1, 1);

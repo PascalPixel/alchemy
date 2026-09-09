@@ -41,9 +41,9 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
         s32 mode = 1;
         *(u16 *)(actor + 100) = mode;
     }
+    mode = 0;
     actor = SceneActor_Find(15);
     *(u32 *)(actor + 108) = 0x02008401;
-    mode = 0;
     *(u16 *)(SceneActor_Find(15) + 100) = mode;
     if (SceneFlag_Check(0x858))
         PlaceActor(SceneActor_Place, 18, 0xd80000, 0x1880000);

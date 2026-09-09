@@ -15,7 +15,8 @@
     "resource_3bd:020013f8": {"name": "FieldScene_RunExtendedActorPresentation"},
     "resource_38b:02000db4": {"name": "SceneActor_PushPuzzleActor"},
     "resource_385:02000f30": {
-      "name": "SceneSetup_InitializeActorsAndFlags"
+      "name": "SceneSetup_InitializeActorsAndFlags",
+      "source": "overlays/scene_setup/initialize_actors_and_flags_385.c"
     },
     "resource_3a2:020011b0": {
       "name": "FieldScene_RunActorEventSetup"

@@ -17888,6 +17888,51 @@
       "local_symbols": []
     },
     {
+      "id": "overlays-scene-effect-sequence-run-opening-event-sequence",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/run_opening_event_sequence.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b8",
+      "absolute_symbols": {
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Func_02004c9c": {
+          "address": "0x0200c530",
+          "kind": "thumb"
+        },
+        "Func_02004c9c_a": {
+          "address": "0x0200c4a8",
+          "kind": "thumb"
+        },
+        "Func_02004dd4": {
+          "address": "0x0200c4a8",
+          "kind": "thumb"
+        },
+        "Func_02004dd4_a": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        },
+        "Func_02004ea6": {
+          "address": "0x0200c400",
+          "kind": "thumb"
+        },
+        "Func_02004ea6_a": {
+          "address": "0x0200c3d8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000674",
+          "extent": 1156,
+          "state": "exact-c"
+        }
+      ],
+      "local_symbols": []
+    },
+    {
       "id": "overlays-scene-effect-sequence-run-primary-effect-sequence",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene_effect_sequence/run_primary_effect_sequence.c",

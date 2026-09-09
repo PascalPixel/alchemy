@@ -8016,6 +8016,10 @@
       "name": "SceneActor_ShiftActorEighteenByInputAndLeaderColumn",
       "source": "overlays/actor_position/shift_actor_eighteen_by_input_and_leader_column.c"
     },
+    "resource_3ba:02000540": {
+      "name": "FieldScene_RunFlag301TwoArmSequence",
+      "source": "overlays/scene_primary_script/run_flag_301_two_arm_sequence.c"
+    },
     "resource_39b:020023b8": {
       "name": "OverlayObject_ReleasePublishedAttachment",
       "source": "overlays/overlay_object/release_published_attachment.c"

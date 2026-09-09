@@ -17,7 +17,7 @@ _Golden Sun_ release as the first complete derived build target.
 
 ## Status: 43.71% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=e377db5670172a67)
+![Code](games/gs1/assets/readme/gs1-en-code.svg?v=63644abd89d632d7)
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=d6b524e58c957cd7)
 

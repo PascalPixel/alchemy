@@ -13414,8 +13414,8 @@
     {
       "overlay": "resource_3c8",
       "entry": "0x02003068",
-      "span_bytes": 3922,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "span_bytes": 3964,
+      "evidence": "Complete five-selector scene owner: shared epilogue at 0x02003fa6 through bx r1 at 0x02003fb8, alignment at 0x02003fba and ten referenced pool words at 0x02003fbc--0x02003fe4. Loads at 0x02003c8e, 0x02003ca2, 0x02003cc8, 0x02003cd2, 0x02003cd6, 0x02003d52, 0x02003dc8, 0x02003e3e, 0x02003edc and 0x02003f9e establish all pool destinations. The next exact owner starts at 0x02003fe4; the former 3922-byte extent stopped at the return and omitted this function-local pool."
     },
     {
       "overlay": "resource_3c8",

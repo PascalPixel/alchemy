@@ -1,6 +1,8 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a8:02000590": {"name": "FieldScene_RunStagedGroupSequence"},
+    "resource_3c8:02003068": {"name": "Scene_RunEntrySetup"},
     "resource_3c9:02002360": {"name": "FieldScene_RunPairedActorEffectSequence"},
     "resource_381:02001410": {"name": "FieldScene_RunExtendedEffectPresentation"},
     "resource_38f:020008ec": {"name": "FieldScene_RunExtendedActorSequence"},
@@ -3394,9 +3396,6 @@
     "resource_3a7:02000334": {
       "name": "IsActor9AtTile15x54",
       "source": "overlays/actor_position/is_actor_9_at_tile_15_54.c"
-    },
-    "resource_3a8:02000aac": {
-      "name": "FieldScene_RunStagedGroupSequence"
     },
     "resource_3a8:020026c0": {
       "name": "FieldScene_RunSecondaryGroupSequence"
@@ -15345,7 +15344,8 @@
       "source": "overlays/scene_primary_script/run_scene_39e_roof_ensemble_sequence.c"
     },
     "resource_378:0200088c": {
-      "name": "FieldScene_RunScriptedSceneSequence"
+      "name": "FieldScene_RunScriptedSceneSequence",
+      "source": "overlays/scene_script/scripted_scene_sequence.c"
     },
     "resource_378:0200187c": {
       "name": "FieldScene_RunActorUpdateSequence",

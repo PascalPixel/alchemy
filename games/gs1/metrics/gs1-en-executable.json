@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1349252,
+  "total_union_bytes": 1352208,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -23700,8 +23700,8 @@
     {
       "id": "resource_3a8",
       "decoded_bytes": 20788,
-      "executable_bytes": 15508,
-      "excluded_bytes": 5280,
+      "executable_bytes": 15536,
+      "excluded_bytes": 5252,
       "audit": "complete",
       "intervals": [
         {
@@ -23787,6 +23787,12 @@
           "end": 33559836,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33559836,
+          "end": 33559864,
+          "kind": "thumb",
+          "evidence": "Complete scene owner0x02000590: both early internal long branches enter this four-call tail and fall through to the common epilogue at0x02001538; this code was omitted by the earlier call-only walk."
         },
         {
           "start": 33559864,
@@ -36906,8 +36912,8 @@
     {
       "id": "resource_3c8",
       "decoded_bytes": 30732,
-      "executable_bytes": 17586,
-      "excluded_bytes": 13146,
+      "executable_bytes": 20514,
+      "excluded_bytes": 10218,
       "audit": "complete",
       "intervals": [
         {
@@ -37334,115 +37340,163 @@
           "start": 33566824,
           "end": 33567030,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
         },
         {
-          "start": 33567656,
+          "start": 33567030,
+          "end": 33567032,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
+        },
+        {
+          "start": 33567032,
+          "end": 33567136,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: function-local switch table, bounded by selector range and verified runtime branch targets."
+        },
+        {
+          "start": 33567136,
           "end": 33567692,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
         },
         {
-          "start": 33567732,
-          "end": 33567756,
+          "start": 33567692,
+          "end": 33567776,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: function-local switch table, bounded by selector range and verified runtime branch targets."
+        },
+        {
+          "start": 33567776,
+          "end": 33567822,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
         },
         {
-          "start": 33567768,
-          "end": 33567848,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "start": 33567822,
+          "end": 33567824,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
         },
         {
-          "start": 33567850,
-          "end": 33567874,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "start": 33567824,
+          "end": 33567884,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: every pool word is referenced by a PC-relative load; table and instruction ranges independently excluded."
         },
         {
-          "start": 33567878,
-          "end": 33567880,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
-        },
-        {
-          "start": 33567882,
+          "start": 33567884,
           "end": 33568216,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
         },
         {
-          "start": 33568700,
-          "end": 33568706,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "start": 33568216,
+          "end": 33568260,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: function-local switch table, bounded by selector range and verified runtime branch targets."
         },
         {
-          "start": 33568708,
-          "end": 33568724,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
-        },
-        {
-          "start": 33568726,
+          "start": 33568260,
           "end": 33568734,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
+        },
+        {
+          "start": 33568734,
+          "end": 33568736,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
+        },
+        {
+          "start": 33568736,
+          "end": 33568804,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: function-local switch table, bounded by selector range and verified runtime branch targets."
+        },
+        {
+          "start": 33568804,
+          "end": 33568810,
+          "kind": "thumb",
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
+        },
+        {
+          "start": 33568810,
+          "end": 33568812,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
         },
         {
           "start": 33568812,
-          "end": 33568824,
+          "end": 33568868,
           "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "evidence": "Complete scene entry owner 0x02003068: every pool word is referenced by a PC-relative load; table and instruction ranges independently excluded."
         },
         {
-          "start": 33568824,
-          "end": 33568834,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
-        },
-        {
-          "start": 33568838,
-          "end": 33568850,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
-        },
-        {
-          "start": 33568854,
-          "end": 33568864,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
-        },
-        {
-          "start": 33568866,
-          "end": 33569040,
-          "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
-        },
-        {
-          "start": 33569400,
+          "start": 33568868,
           "end": 33569434,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
+        },
+        {
+          "start": 33569434,
+          "end": 33569436,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
+        },
+        {
+          "start": 33569436,
+          "end": 33569516,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: function-local switch table, bounded by selector range and verified runtime branch targets."
+        },
+        {
+          "start": 33569516,
+          "end": 33569598,
+          "kind": "thumb",
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
+        },
+        {
+          "start": 33569598,
+          "end": 33569600,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
         },
         {
           "start": 33569600,
-          "end": 33569620,
+          "end": 33569648,
           "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "evidence": "Complete scene entry owner 0x02003068: every pool word is referenced by a PC-relative load; table and instruction ranges independently excluded."
         },
         {
-          "start": 33569636,
-          "end": 33569644,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+          "start": 33569648,
+          "end": 33569764,
+          "kind": "thumb",
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
         },
         {
-          "start": 33570726,
+          "start": 33569764,
+          "end": 33569772,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: every pool word is referenced by a PC-relative load; table and instruction ranges independently excluded."
+        },
+        {
+          "start": 33569772,
           "end": 33570746,
           "kind": "thumb",
-          "evidence": "resource_3c8_overlay.s:thumb"
+          "evidence": "Complete five-selector scene owner 0x02003068: switch targets and all224 calls audited, with shared epilogue at0x02003fa6; data pools and tables excluded from instructions."
+        },
+        {
+          "start": 33570746,
+          "end": 33570748,
+          "kind": "executable_alignment",
+          "evidence": "Halfword alignment within complete scene owner 0x02003068, before its associated table or literal pool."
+        },
+        {
+          "start": 33570748,
+          "end": 33570788,
+          "kind": "literal_pool",
+          "evidence": "Complete scene entry owner 0x02003068: every pool word is referenced by a PC-relative load; table and instruction ranges independently excluded."
         },
         {
           "start": 33570788,

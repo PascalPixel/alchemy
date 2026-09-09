@@ -1,11 +1,10 @@
 /*
- * BYTE-EXACT and adopted 2026-08-07 with no compiler flags: the three callees
- * are declared at the in-overlay entry points the reference calls directly
- * rather than at their veneer addresses, and both read-modify-writes take
- * their mask from a local that is initialised first and ANDed with the loaded
- * byte afterwards, which is what puts the mask in r3 and the byte in r2.  The
- * +0x23 mask stays byte-wide (0xfe) rather than ~1, which would widen it to a
- * negated 2.
+ * Spawn an object, clear the low bits of its owner record, and issue command
+ * 15.  The three callees are declared at their in-overlay entry points, not at
+ * veneers.  Each read-modify-write takes its mask from a local that is
+ * initialised first and ANDed with the loaded byte afterwards, which is what
+ * puts the mask in r3 and the byte in r2.  The +0x23 mask stays byte-wide as
+ * 0xfe rather than ~1, which would widen it to a negated 2.
  */
 #include "types.h"
 

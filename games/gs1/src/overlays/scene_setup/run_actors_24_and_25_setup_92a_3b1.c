@@ -1,23 +1,9 @@
 #include "types.h"
 
 /*
- * Resource 3b1 unindexed helper at 0x02005780 (108 bytes incl. pool,
- * 1 call).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,lr}` at 0x02005780, epilogue `pop {r5,r6} / pop {r0} / bx r0`
- * at 0x020057e0-0x020057e4. The one-word literal pool at 0x020057e8
- * (0x0000092a, the `Value_XXXXXXXX` family used throughout this
- * overlay) is included per the usual pool rule, immediately followed by
- * the next owner's push {r5,r6,lr} at 0x020057ec, already this
- * overlay's row `0x020057ec | 1 call`, so the span is
- * 0x02005780-0x020057ec, 108 bytes.
- *
- * A flat setter sequence, no branches. A close sibling of 0x020056dc
- * (same overall shape, one fewer field-setup pair).
- *
- * Per-site call veneers (raw asm confirms each callee slot uses its own
- * local stub, distinct from the generic main-image symbol name).
+ * Actors 24 and 25 setup for overlay resource_3b1. Each callee slot uses
+ * its own local veneer, so the names are per call site and not the shared
+ * main-image symbol.
  */
 
 extern u8 Value_0000092a;
@@ -35,6 +21,10 @@ void Func_0200aac8(void);
 void Func_0200bc82();
 void Func_0200bcae(void);
 
+/*
+ * A flat setter sequence, no branches. The 108-byte owner at 0x02005780
+ * includes its one pool word, the address taken as Value_0000092a.
+ */
 void FieldScene_RunActors24And25SetupWithValue92a(void)
 {
     s32 handle = Func_0200a730(0, 0);

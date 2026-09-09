@@ -14,12 +14,13 @@
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];
 extern u8 Data_02009efc[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00000fb0[];
 extern u8 Data_00000fbf[];
 extern u8 Data_03001ebc[];
 
+/* Each Func_ symbol names the loader-relocated call word the image holds for
+ * one call site, not a runtime address, so several names can reach the same
+ * target. Declarations are old-style where the arity varies between sites. */
 s32 Func_02001a9e(s32, s32);
 s32 Func_02001b0e(s32);
 s32 Func_02001b1c(s32);
@@ -283,7 +284,6 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -294,23 +294,9 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 }
 
 /*
- * resource_375 owner at 0x02000088, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200008c holding 0x2009cf4.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000088 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009cf4 is image offset
- * 0x1cf4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Returns the in-image table at 0x02009cf4. The eight-byte owner at
+ * 0x02000088 includes its one pool word, which holds that address and is
+ * returned without being dereferenced.
  */
 u8 *SceneData_GetTable9CF4(void)
 {
@@ -318,23 +304,9 @@ u8 *SceneData_GetTable9CF4(void)
 }
 
 /*
- * resource_375 owner at 0x02000094, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000098 holding 0x2009db4.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000094 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009db4 is image offset
- * 0x1db4 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Returns the in-image table at 0x02009db4. The eight-byte owner at
+ * 0x02000094 includes its one pool word, which holds that address and is
+ * returned without being dereferenced.
  */
 u8 *SceneData_GetTable9db4(void)
 {
@@ -342,29 +314,17 @@ u8 *SceneData_GetTable9db4(void)
 }
 
 /*
- * resource_375 owner at 0x0200009c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x20000a0 holding 0x2009ddc.
- *
- * LEAF RESIDUE. Published at image offset 0x1c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200009c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009ddc is image offset
- * 0x1ddc under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Returns the in-image table at 0x02009ddc. The eight-byte owner at
+ * 0x0200009c includes its one pool word, which holds that address and is
+ * returned without being dereferenced.
  */
 u8 *SceneData_GetTable9ddc(void)
 {
     return (u8 *)0x02009ddc;
 }
 
+/* Picks one of three tables by story progress, testing flags 0x87a then
+ * 0x834. */
 u8 *SceneData_SelectTable9efcByFlags(void)
 {
     if (Func_02001b0e(0x87A) != 0) {
@@ -376,6 +336,12 @@ u8 *SceneData_SelectTable9efcByFlags(void)
     return Data_02009efc;
 }
 
+/*
+ * Runs the scene's fixed position and pose sequence for actors 0, 1, 5 and
+ * 13, skipped entirely when flag 0x801 is set. Two of the record fields feed
+ * the placement calls as s16 values shifted into fixed point, and base5_fbf
+ * holds a base that later sites use as base + 1 and base + 2.
+ */
 void FieldScene_RunActorPositionSequence(void)
 {
     u8 *record;

@@ -1,7 +1,20 @@
+/*
+ * Overlay resource_3b5: shared scene work plus the actor setup, dialogue and
+ * event sequences that drive this scene, in address order.
+ */
+
 #include "types.h"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+
+/*
+ * Each macro below stands for one per-site call word held in the overlay
+ * image and names the engine function that site reaches through the veneers,
+ * keeping the site's own calling form. One word can serve two sites with
+ * different targets, so the bindings are per call and not per name. Names
+ * that have no binding in this tree are provisional.
+ */
 #define BattleRuntime_Reset_1(args...) Func_020016e0(args)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020017c2, a0, a1, a2, a3)
 #define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02001728, a0, a1, a2)
@@ -85,6 +98,11 @@
 #define ObjectMotion_SetHorizontalPositionWithTerrain_6(args...) Func_02001a2e(args)
 #define GameFlag_Set_1(a0) Call1(Func_020019ce, a0)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_020019ea(args)
+
+/*
+ * Object-id slot at 0x1f4 of the shared scene work record, set once below to
+ * the id of the object created earlier in the same function.
+ */
 #define SCENE_OBJECT_ID (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1f4))
 #define SceneState_SetValues31_2_4 Func_02000030
 #define SceneActor_GetPositionDistance Func_02000040
@@ -397,135 +415,25 @@ void Func_02001a04(s32, s32, s32, s32, s32, s32);
 void Func_02001a3a(s32);
 
 /*
- * Old-style declarations: overlay import arities are not fixed per name.
+ * These declarations are deliberately old-style: overlay import arities are
+ * not fixed per name, and each call site names the veneer it reaches rather
+ * than the import behind it, so one import reached from several sites carries
+ * several names.
  *
- * Each site names the veneer IT reaches, not the import behind it: the four
- * calls here are Scene_GetRecord, Func_0200007c, Scene_GetRecord, Func_0200007c,
- * and the reference reaches them through four DIFFERENT veneers.  Naming the
- * import instead made the linker synthesise fresh ones and every `bl` missed.
- * Same convention as 6e7d6a12e and games/gs1/src/resource_371_c_0200037c.c, where one
- * import reached from three sites carries three names.
+ * Func_0200026a is void because its result is discarded.
  *
- * Func_0200026a is `void` because its result is discarded (b7c1a35a0).
- *
- * Func_0200022a returns s32: the reference tests its result with `cmp r0, #0`
- * and never truncates it, so a u8 return costs an `lsls r0, r0, #24` the ROM
- * does not have.  An earlier reading measured that widening as expensive, but
- * that was against the conditional-expression form of the partner select
- * below; once that is a branch, the wide return is what matches.
+ * Func_0200022a returns s32 because callers test the result whole and never
+ * truncate it; a u8 return would add a widening shift that is not wanted.
  */
 
 /*
- * resource_3b5 owner at 0x02000208, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200020c holding 0x2009060.
+ * Each Func_ name is a loader-relocated call word, not a runtime address.
  *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000208 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009060 is image offset
- * 0x1060 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Call sites spelled through the wrappers below pass their constants straight
+ * into the argument registers. A direct call instead precomputes a costly
+ * constant into a temporary that is then shared with later uses in the same
+ * block. A value-returning call sets r0 last of its arguments.
  */
-
-/*
- * resource_3b5 owner at 0x02000210, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
-
-/* Contiguous unnamed leaf-owner run for resource_3b5. */
-
-/*
- * resource_3b5 owner at 0x02000214, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000218 holding 0x20091f8.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000214 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20091f8 is image offset
- * 0x11f8 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/*
- * resource_3b5 owner at 0x0200021c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000220 holding 0x2009238.
- *
- * LEAF RESIDUE. Published at image offset 0x1c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200021c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009238 is image offset
- * 0x1238 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* Shared scene work and address-ordered actor/event sequences for resource_3b5. */
-
-/* Loader-relocated overlay calls retain their audited per-call bindings. */
-
-/* Shared scene-call helpers preserve the existing argument evaluation model. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
-/* Newly named engine calls: the site's own calling form is kept; each name
- * states only what the engine function's own source shows it doing. */
-
-/* Object-id slot at 0x1f4 of the shared scene work record; set once below to
- * the id of the object created earlier in this function. */
-
-/* Sets up objects 29/30/32, branches on a query result to run one of two
- * near-identical setup sequences for objects 29/30/20 (with different
- * positions, sizes and speeds), then finishes with shared placement calls
- * on 29/30/32. */
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     extern u8 Data_03001ebc[];
@@ -686,27 +594,13 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 }
 
 /*
- * Resource 3b5, owner at 0x02000170 (152 bytes advertised; 144 bytes of code
- * plus an 8-byte literal pool at 0x02000200-0x02000207).
+ * Per-frame actor callback, whose argument is the owning actor record. The
+ * initialiser stores this address plus the Thumb bit into field +0x6c of
+ * actors 16 and 17. It returns a constant zero.
  *
- * Complete owner: `push {r5, r6, r7, lr}` plus the high-register save at
- * 0x02000170-0x02000178, and the matching interworking return at
- * 0x020001f2-0x020001fe.  It pops into r1, so r0 survives and is the result;
- * the only value ever left in r0 is the `movs r0, #0` at 0x020001f0, so this
- * returns a constant 0.
- *
- * Role: this is a per-frame actor callback.  The overlay initialiser
- * Func_02000728 stores the pool word 0x02008171 into field +0x6c of actors 16
- * and 17; under this overlay's proven 0x02008000 link base that word is
- * SceneActor_UpdatePartnerProximity + the Thumb bit, which names this row's role before it is
- * disassembled.  Its argument is therefore the owning actor record.
- *
- * 0x03001e8c is a table of pointers; entry 12 is 0x03001ebc, the overlay
- * work pointer the rest of this overlay loads directly (see
- * Func_02000644, Func_02000894, Func_02000980).  Modelled that way rather than
- * as two unrelated globals.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.
+ * The owner's eight-byte literal pool follows its return and belongs to it.
+ * 0x03001e8c is a table of pointers whose entry 12 is 0x03001ebc, the overlay
+ * work pointer the rest of this overlay loads directly.
  */
 s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
@@ -721,10 +615,8 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
 
     /*
      * Bit 0 of the actor's own flag halfword selects which partner to test.
-     * Written as two calls, not `Func_02000f1e(bit ? 17 : 16)`: the reference
-     * branches and joins on one `bl`, which is what cross-jumping the two calls
-     * produces.  As a conditional expression gcc folds it to `16 + (bit != 0)`
-     * and emits the negs/orrs/lsrs boolean instead.
+     * The branch must stay two calls: as a conditional expression the
+     * selector folds into arithmetic on the bit instead.
      */
     if ((*flags & 1) != 0) {
         partner = Func_02000f1e(17);
@@ -752,21 +644,28 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
     return 0;
 }
 
+/*
+ * The eight-byte owner includes its one pool word, which holds the address
+ * returned here. The word is loaded and returned, never dereferenced.
+ */
 u8 *SceneData_GetTable9060(void)
 {
     return (u8 *)0x02009060;
 }
 
+/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable91f8(void)
 {
     return (u8 *)0x020091f8;
 }
 
+/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable9238(void)
 {
     return (u8 *)0x02009238;
@@ -1043,18 +942,13 @@ void SceneScript_SetupActors(void)
 }
 
 /*
- * resource_3b5 owner at 0x020006e8, 62 bytes.
+ * Copy the player's two-bit mode into both mode fields of the given actor's
+ * record and clear its flag byte at +35.
  *
- * Copies the player's two-bit mode into both mode fields of the given actor's
- * record and clears the actor's flag byte at +35.
- *
- * `f80` is a volatile pointer because the reference loads it again for the
- * second store, on a path where nothing can have changed it. Without the
- * qualifier the compiler keeps the first load in a register and the second
- * `ldr r0, [r5, #80]` disappears.
- *
- * The two mode writes are bitfields: the -13 mask stays 32-bit and is shared
- * between them, which explicit `(x & ~12) | bits` arithmetic does not produce.
+ * f80 is volatile so that the pointer is loaded again for the second store;
+ * without that the first load is reused and the second one disappears. The
+ * two mode writes must stay bitfields so they share one 32-bit mask, which
+ * explicit mask-and-or arithmetic does not produce.
  */
 void SceneActor_CopyPlayerModeToActor(struct Work_3b5 *work)
 {
@@ -1170,6 +1064,11 @@ void SceneState_PassWorkHalfword16C(void)
     Func_020017aa(*cnt);
 }
 
+/*
+ * Set up objects 29, 30 and 32, branch on a query result to run one of two
+ * near-identical sequences for objects 29, 30 and 20 with different
+ * positions, sizes and speeds, then finish with shared placement calls.
+ */
 void FieldScene_RunPrimarySequence(void)
 {
     extern u8 Data_03001ebc[];

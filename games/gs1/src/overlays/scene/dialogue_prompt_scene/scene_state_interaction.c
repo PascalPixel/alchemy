@@ -72,31 +72,11 @@ s32 Func_0200514a(s32, s32);
 void Func_02005216(s32, s32);
 
 /*
- * resource_383 owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000034 holding 0x200d8f8.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0xc. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000034 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x200d8f8 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Head export stub at 0x02000030. The eight-byte owner includes its one pool
+ * word at 0x02000034, which the load reads and which sits past the return.
+ * The word is an address returned without being dereferenced, so this is a
+ * getter for an in-image table; it names bytes only while this overlay is
+ * resident at 0x02000000.
  */
 u8 *SceneData_GetTableD8f8(void)
 {
@@ -104,31 +84,11 @@ u8 *SceneData_GetTableD8f8(void)
 }
 
 /*
- * resource_383 owner at 0x02000038, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x0200003c holding 0x200da60.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x2c. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x0200003c after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x200da60 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Head export stub at 0x02000038. The eight-byte owner includes its one pool
+ * word at 0x0200003c, which the load reads and which sits past the return.
+ * The word is an address returned without being dereferenced, so this is a
+ * getter for an in-image table; it names bytes only while this overlay is
+ * resident at 0x02000000.
  */
 u8 *SceneData_GetTableDa60(void)
 {
@@ -136,31 +96,11 @@ u8 *SceneData_GetTableDa60(void)
 }
 
 /*
- * resource_383 owner at 0x02000040, 8 bytes: `ldr r0, [pc, #0] / bx lr`
- * plus the one-word literal pool at 0x02000044 holding 0x200da80.
- *
- * HEAD EXPORT STUB. Published from this overlay's own header word at image
- * offset 0x14. It lies BEFORE the first recorded owner, in the region
- * `gapsBetween` never read until 2026-08-01, and it is visible to the head
- * sweep only because the veneer predicate compares registers: `ldr r0,=X /
- * bx lr` is a LEAF, not a veneer, and the old predicate masked every one of
- * these as structure.
- *
- * SPAN IS 8 BYTES, NOT 4. The pool word sits PAST the `bx lr` and is read by
- * this row's own `ldr r0, [pc, #0]` -- pc 0x02000044 after alignment, plus 0 --
- * so it belongs to this owner. Recording 4 would orphan a word and
- * manufacture a phantom gap.
- *
- * The pool word 0x200da80 is an ADDRESS, loaded and returned WITHOUT being
- * dereferenced, so the row is a getter for an in-image table. One of the 29
- * head getters on ten overlays, and 28 of the 29 pool words are distinct.
- * The one repeat is 0x2009c34, returned by BOTH resource_395 0x48 and
- * resource_3ad 0x30 -- and that is a coincidence of ADDRESS, not shared
- * identity: only one overlay is resident at 0x02000000 at a time, so the
- * same VA designates different bytes depending on which is loaded.
- * Identical bytes are not identical semantics.
- *
- * 0 of 0 callees.
+ * Head export stub at 0x02000040. The eight-byte owner includes its one pool
+ * word at 0x02000044, which the load reads and which sits past the return.
+ * The word is an address returned without being dereferenced, so this is a
+ * getter for an in-image table; it names bytes only while this overlay is
+ * resident at 0x02000000.
  */
 u8 *SceneData_GetTableDa80(void)
 {

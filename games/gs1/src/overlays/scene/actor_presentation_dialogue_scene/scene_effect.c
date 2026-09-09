@@ -442,78 +442,20 @@ void Func_020030fa(s32);
 s32 Func_02003092();
 s32 Func_020030a0();
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
-
 /*
- * Resource 3b5, owner at 0x02000314 (152 bytes advertised; 144 bytes of code
- * plus an 8-byte literal pool at 0x02000200-0x02000207).
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus the high-register save at
- * 0x02000314-0x02000178, and the matching interworking return at
- * 0x020001f2-0x020001fe.  It pops into r1, so r0 survives and is the result;
- * the only value ever left in r0 is the `movs r0, #0` at 0x020001f0, so this
- * returns a constant 0.
- *
- * Role: this is a per-frame actor callback.  The overlay initialiser
- * Func_02000728 stores the pool word 0x02008171 into field +0x6c of actors 14
- * and 15; under this overlay's proven 0x02008000 link base that word is
- * SceneActor_UpdateProximityToLeader + the Thumb bit, which names this row's role before it is
- * disassembled.  Its argument is therefore the owning actor record.
- *
- * 0x03001e8c is a table of pointers; entry 12 is 0x03001ebc, the overlay
- * workspace pointer the rest of this overlay loads directly (see
- * Func_02000644, Func_02000894, Func_02000980).  Modelled that way rather than
- * as two unrelated globals.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.
+ * Every Func_ symbol above names a loader-relocated call word, not a runtime
+ * address. Declarations are old-style because an overlay import's arity is
+ * not fixed per name, and each call site names the veneer it reaches rather
+ * than the import behind it -- one import reached from several sites carries
+ * several names, and naming the import instead makes fresh veneers.
+ * Func_02001a06 is void because its result is discarded. Func_020019c6
+ * returns s32 so that testing it emits no narrowing shift.
  */
 
 /*
- * Old-style declarations: overlay import arities are not fixed per name.
- *
- * Each site names the veneer IT reaches, not the import behind it: the four
- * calls here are Scene_GetRecord, Func_0200007c, Scene_GetRecord, Func_0200007c,
- * and the reference reaches them through four DIFFERENT veneers.  Naming the
- * import instead made the linker synthesise fresh ones and every `bl` missed.
- * Same convention as 6e7d6a12e and games/gs1/src/resource_371_c_0200037c.c, where one
- * import reached from three sites carries three names.
- *
- * Func_02001a06 is `void` because its result is discarded (b7c1a35a0).
- *
- * Func_020019c6 returns s32: the reference tests its result with `cmp r0, #0`
- * and never truncates it, so a u8 return costs an `lsls r0, r0, #24` the ROM
- * does not have.  An earlier reading measured that widening as expensive, but
- * that was against the conditional-expression form of the partner select
- * below; once that is a branch, the wide return is what matches.
- */
-
-/*
- * BYTE-EXACT and adopted 2026-08-07.  The last residual was the epilogue, which
- * the reference returns through r1 (`pop {r1} ; bx r1') rather than r0: the
- * owner passes the result of its final call back to its caller, so r0 has to
- * survive the pop.  The tail call is written as `return Func_02001e10(2);' and
- * the owner's type changed from void to s32 to say so; the fall-through path
- * returns nothing, exactly as the reference does.
- */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Returns a value: the reference sets r1 before r0 at this site, which
-   only a value-returning callee does; the result is unused here. */
-
-/*
- * resource_382 owner at 0x02001754, 88 bytes.
- * Per-frame step for a projectile: advances x by its rate and mirrors it into
- * the shadow copy, then either follows the y rate or falls at a fixed rate
- * depending on the mode word at +100, and finally decays both rates.
+ * The wrapper helpers below pass their constants straight into the argument
+ * registers. A direct call precomputes an expensive constant into a value the
+ * compiler then shares with later uses in the same block.
  */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -522,6 +464,10 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
+/*
+ * A value-returning call sets r0 last of its arguments, so the callee must be
+ * spelled as returning a value even where the result is unused.
+ */
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     extern u8 Data_03001ebc[];
@@ -536,6 +482,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     extern u8 Data_03001ebc[];
@@ -632,6 +579,14 @@ void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 
 #include "configured_effect_spawn_body.inc"
 }
 
+/*
+ * Per-frame callback for one actor record, installed into field +0x6c of
+ * actors 14 and 15 by the overlay initialiser. Always returns 0. The pointer
+ * table at 0x03001e8c holds the scene record at entry 0 and the overlay
+ * workspace at entry 12; entry 12 is the same pointer the rest of this
+ * overlay loads as Data_03001ebc, and is modelled here as one global rather
+ * than two.
+ */
 s32 SceneActor_UpdateProximityToLeader(u8 *self)
 {
     u8 **globals = (u8 **)0x03001e8c;
@@ -645,10 +600,8 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
 
     /*
      * Bit 0 of the actor's own flag halfword selects which partner to test.
-     * Written as two calls, not `Func_02001d26(bit ? 15 : 14)`: the reference
-     * branches and joins on one `bl`, which is what cross-jumping the two calls
-     * produces.  As a conditional expression gcc folds it to `14 + (bit != 0)`
-     * and emits the negs/orrs/lsrs boolean instead.
+     * This must stay two calls rather than one call on a conditional
+     * expression: the conditional form folds to arithmetic on the flag.
      */
     if ((*flags & 1) != 0) {
         partner = Func_02001d26(15);
@@ -662,7 +615,7 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
     player = Func_02001d3c(0);
 
     /*
-     * Widen the test when the scene counter at workspace + 376 is already
+     * Widen the range when the scene counter at workspace + 376 is already
      * running, or when the scene byte at scene + 0x0ea4 is set.
      */
     if (*(s16 *)(workspace + 376) != 0 || scene[0x0ea4] != 0) {
@@ -723,6 +676,11 @@ int OverlayObject_GetObject2Byte280(void)
     return Func_02001dc6(2)[280];
 }
 
+/*
+ * The flagged path passes the result of its final call back to the caller, so
+ * this is spelled as a tail call and the return type is s32. The
+ * fall-through path returns nothing.
+ */
 s32 OverlayObject_RunObject2WhenFlagged(void)
 {
     Func_02001f28();
@@ -938,7 +896,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
     struct SceneActor *actor = Func_02002432(14);
     u16 *flags = &actor->presentation_flags;
     s16 saved = actor->temporary_state;
-    /* Keeps the original compiler's flag-result register lifetime. */
+    /* tmp keeps the flag result live in a register; do not fold it away. */
     s32 tmp;
 
     *flags = (tmp = *flags | 2);
@@ -1303,6 +1261,11 @@ void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay)
     Func_020030fa(delay);
 }
 
+/*
+ * Per-frame step for a projectile. Advance x by its rate and mirror it into
+ * the shadow copy, then either follow the vertical rate or fall at a fixed
+ * rate depending on the mode word, and finally decay both rates.
+ */
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect)
 {
     s32 horizontal_rate;

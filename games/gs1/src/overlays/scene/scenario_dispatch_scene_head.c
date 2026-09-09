@@ -19,12 +19,12 @@ extern u8 Data_0200a050[];
 extern u8 Data_0200a1b8[];
 extern u8 Data_0200a2a8[];
 extern s16 Data_02000240_t[][1];
-extern void Func_02001db0(void);  /* import veneer -> Func_0808a018 */
-extern s32 Func_02001d96();       /* import veneer -> GameFlag_IsSet, 1st site */
-extern void Func_02001d9a();      /* import veneer -> UiText_DrawMessage, 1st site */
-extern void Func_02001da4();      /* import veneer -> UiText_DrawMessage, 2nd site */
-extern s32 Func_02001db2();       /* import veneer -> GameFlag_IsSet, 2nd site */
-extern void Func_02001df0(void);  /* import veneer -> Func_0808a020 */
+extern void Func_02001db0(void);  /* Func_0808a018 veneer. */
+extern s32 Func_02001d96();       /* GameFlag_IsSet veneer, first site. */
+extern void Func_02001d9a();      /* UiText_DrawMessage veneer, first site. */
+extern void Func_02001da4();      /* UiText_DrawMessage veneer, second site. */
+extern s32 Func_02001db2();       /* GameFlag_IsSet veneer, second site. */
+extern void Func_02001df0(void);  /* Func_0808a020 veneer. */
 
 void Func_02001c70();
 void Func_02001c9e();
@@ -85,31 +85,26 @@ void Func_02001f6e();
 void Func_02001f82();
 void Func_02001fb6();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /*
- * Resource 37f, owner at 0x020003bc (76 bytes of code + a five-word literal
- * pool at 0x0200040c-0x0200041f).  `push {r5, lr}` at 0x020003bc, interworking
- * return `pop {r5} / pop {r0} / bx r0` at 0x02000404 -- r0 is the popped return
- * address, so the owner is `void`.
- *
- * All seven call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all
- * seven are import veneers.  GameFlag_IsSet(flag) is used only as a predicate.
- *
- * Near-identical sibling of 0x02000200: the same Func_0808a018 /
- * GameFlag_IsSet / UiText_DrawMessage / Func_0808a020 skeleton with flag ids
- * 0x821 / 0xf02 instead of 0x81a / 0xf01, and with the fall-through arm
- * spelled out separately rather than shared.
- *
- * r5 is loaded with the workspace pointer *before* the UiText_DrawMessage call and
- * used after it; that is why the owner saves r5 at all.
+ * Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds, not a runtime address.
  */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/*
+ * Resource 37f owner at 0x020003bc: 76 bytes of code plus a five-word literal
+ * pool at 0x0200040c-0x0200041f.  The interworking return pops the saved
+ * return address into r0, so the owner returns void.  All seven calls go
+ * through import veneers, and GameFlag_IsSet is used only as a predicate.  r5
+ * holds the workspace pointer, loaded before the message call and read after
+ * it; that is why the owner saves r5.
+ */
+
+/*
+ * These wrappers pass their constants straight into the argument registers.
+ * A direct call precomputes a costly constant into a pseudo that is then
+ * shared with later uses in the block.  A value-returning call also sets r0
+ * last of its arguments.
+ */
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern u8 Data_03001ebc[];
@@ -134,10 +129,12 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/*
+ * These wrappers pass their constants straight into the argument registers.
+ * A direct call precomputes a costly constant into a pseudo that is then
+ * shared with later uses in the block.  A value-returning call also sets r0
+ * last of its arguments.
+ */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     extern u8 Data_03001ebc[];
@@ -181,7 +178,10 @@ s32 SceneData_SelectOverlayDataBySelector(void)
     return (s32)Data_02009cd4;
 }
 
-/* Complete eight-byte literal-address getter, including its sole pool word. */
+/*
+ * Return the table at 0x02009f14.  The eight-byte owner includes its one
+ * pool word.
+ */
 u8 *SceneData_GetTable9F14(void)
 {
     return (u8 *)0x02009f14;
@@ -332,11 +332,11 @@ void FieldScene_RunFlag821Dialogue(void)
         Func_02001f6e(0x1031, 1);
         {
             /*
-             * The halfword store goes through a pointer local and then an s32 value local,
-             * in that order.  Storing the literal straight into the halfword makes gcc
-             * build the constant in HImode and fetch it from the literal pool
-             * (`ldrh r3, .L7'), which costs a pool word the reference does not have;
-             * splitting the address out first also fixes which register holds the address.
+             * The halfword store goes through a pointer local and then an
+             * s32 value local, in that order.  Storing the literal straight
+             * into the halfword builds the constant in HImode and fetches it
+             * from the literal pool, which costs a pool word; splitting the
+             * address out first also fixes which register holds it.
              */
             u16 *frame = (u16 *)(work + 370);
             s32 one = 1;

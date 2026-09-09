@@ -1,30 +1,24 @@
 #include "types.h"
 
 /*
- * Battle-presentation setup at 0x080ccaec, reached through the long-call
- * veneer Func_080c9038.
- *
- * Allocates the kind-39 work block (0x782c bytes) and the kind-40 block
- * (0x4000 bytes), resets the presentation through Func_080cd594, writes the
- * BG2PA identity scale and the 0x1010 blend coefficients, selects one of
- * five palette resources by the caller's kind, streams its 128 bytes into
- * palette RAM through the IWRAM word-copy kernel at 0x03001388, seeds three
- * work-block fields, then schedules Func_080cc960 and Func_080cd260 as frame
- * callbacks.  Field offsets follow the kind-39 work block already used by
- * games/gs1/src/battle/effects/puff_arc/run.c and member_orbit/run.c.
- *
- * Value_ symbols are the established spelling for a small resource id the
- * reference loads from its literal pool instead of materializing.
- *
- * Func_080041d8 is declared with its adopted s32 result
- * (games/gs1/src/runtime/scheduler/callback_scheduler.c).  The result is
- * unused here, but the value-returning call form is load-bearing: it makes
- * the call the last setter of r0, which is what places each callback's pool
- * load after the order argument's shift in the reference.  A void prototype
- * costs four differing halfwords.
+ * Battle presentation setup at 0x080ccaec.  Allocate the kind-39 and kind-40
+ * work blocks, reset the presentation, write the BG2PA identity scale and the
+ * blend coefficients, stream the palette selected by the caller's kind into
+ * palette RAM through the IWRAM word-copy kernel, seed three work-block
+ * fields, then schedule two frame callbacks.  The work-block offsets are
+ * taken by position and are not verified.
  */
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
+
+/*
+ * Value_ symbols name a small resource id the reference loads from its
+ * literal pool rather than materializing, so they must not be folded into
+ * constants.  Func_080041d8 is declared as returning s32 although the result
+ * is unused: the value-returning call form keeps the call the last setter of
+ * r0, which is what places each callback's pool load after the order
+ * argument's shift.
+ */
 
 extern u8 Value_000000c8;
 extern u8 Value_000000cf;

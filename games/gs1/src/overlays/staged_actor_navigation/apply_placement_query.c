@@ -1,43 +1,14 @@
-/*
- * BYTE-EXACT and adopted 2026-08-07, with no compiler flags: every residual was
- * a call target.  The five callees were declared at their veneer addresses in
- * ROM space, so each `bl' went through a veneer; the reference calls the
- * in-overlay entry points directly (0x2003a7c, 0x2001d54, 0x2003a5c,
- * 0x20014d4, 0x2003a18), which is how they are declared now.
- */
+/* The callees are declared at their in-overlay entry points. Declaring them at
+ * their veneer addresses in ROM space would route every call through a
+ * veneer. */
 #include "types.h"
 
 /*
- * Resource 3b3 unindexed helper at 0x02000f58 (116 bytes, 7 calls).
- * Converted from a parked scope note and drafted alongside its sibling
- * 0x02000ec8, which shares
- * the same out-param call shape against a different helper.
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,r7,lr}`, 48-byte stack frame at 0x02000f58, epilogue `add
- * sp,#48 / pop {r5,r6,r7} / pop {r1} / bx r1` at
- * 0x02000fc4-0x02000fca, immediately followed with no gap by the next
- * owner's push {r5,lr} at 0x02000fcc, already this overlay's row
- * `0x02000fcc` (drafted earlier in the reconstruction), so the span is exactly
- * 0x02000f58-0x02000fcc, 116 bytes.
- *
- * `Func_02001d54` is an opaque out-param helper: besides its return
- * code it fills two scalar slots (`out20`, `out16`) and a 24-byte
- * rec (only bytes +8/+16 of which -- `rec[2]`/`rec[4]` here
- * -- are ever read back), plus two more scalar out-params
- * (`out12`/`out8`) passed on the stack alongside it. Its exact field
- * semantics are not resolved here (not needed for a semantic draft --
- * every value is threaded through unchanged to the two finishing
- * calls in the same shape the reference uses); a `manual_regions`
- * caller only needs the argument wiring to be faithful, which this is.
- *
- * On success (`Func_02001d54(...) != 0`): combine `out12`/`out8` with
- * `rec[2]`/`rec[4]` into an x/z pair, run two finishing calls
- * with those plus the raw out-params, then poke the fetched object
- * (`Func_02003a18`, clear bit 1 of `+0x23`) and return 1. On failure,
- * return 0 without touching the object.
- *
- * Raw callee naming.
+ * Apply a placement query to an actor. Func_02001d54 is an out-param helper:
+ * it fills out20 and out16, a 24-byte record of which only rec[2] and rec[4]
+ * are read back, and out12 and out8 passed on the stack. Its field semantics
+ * are not established. On success the values thread unchanged into the two
+ * finishing calls in that shape; on failure the object is left untouched.
  */
 
 u8 *Func_02003a7c();

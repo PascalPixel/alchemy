@@ -1,3 +1,8 @@
+/*
+ * Scene script for overlay resource_3c1: data table getters, two actor cue
+ * branches, the indexed effect setups, and the entry state.
+ */
+
 #include "types.h"
 
 extern u8 Value_000025b8;
@@ -36,50 +41,6 @@ s32 Func_020004f6();
 void Func_0200035e();
 void Func_02000526();
 
-/*
- * resource_3c1 owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000034 holding 0x20082f0.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000030 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20082f0 is image offset
- * 0x2f0 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* Contiguous unnamed leaf-owner run for resource_3c1. */
-
-/*
- * resource_3c1 owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000040 holding 0x20083c8.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200003c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20083c8 is image offset
- * 0x3c8 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
-
-/* Contiguous unnamed state-owner run for resource_3c1. */
-
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
 {
     Func_02000446(actor, axis, offset);
@@ -90,6 +51,11 @@ static __inline__ void SetOffset_020004ba(s32 actor, s32 axis, s32 offset)
     Func_020004ba(actor, axis, offset);
 }
 
+/*
+ * Returns the in-image table address 0x020082f0, loaded and returned
+ * without being dereferenced. The eight-byte owner includes its one pool
+ * word, which sits past the bx lr.
+ */
 u8 *SceneData_GetScriptTable(void)
 {
     return (u8 *)0x020082f0;
@@ -100,6 +66,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
+/*
+ * Returns the in-image table address 0x020083c8, loaded and returned
+ * without being dereferenced. The eight-byte owner includes its one pool
+ * word, which sits past the bx lr.
+ */
 u8 *SceneData_GetMessageTable(void)
 {
     return (u8 *)0x020083c8;

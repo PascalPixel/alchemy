@@ -1,5 +1,10 @@
 #include "types.h"
 
+/*
+ * Staged actor cutscene tail -- resource_373. The long scene script plus the
+ * particle, sound, and vertical-motion effects it drives.
+ */
+
 #define FieldScene_RunStagedActorCutsceneSequence Func_02003fb0
 #define Effect_ConfigureSpawnedParticle Func_0200575c
 #define Effect_SpawnRisingDustBurst Func_020057fc
@@ -31,24 +36,7 @@ struct StagedParticle {
     u16 f5e;
 };
 
-/*
- * Resource 373: rising-dust burst played from a source entity.
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus the r8 save at 0x020057fc
- * through the single epilogue at 0x020058d6..0x020058de, followed by its
- * four-word literal pool at 0x020058e0.  Both counted loops fall into the
- * common tail; nothing stays live past the return.
- *
- * All twelve calls are placed.  None is an interworking `call_via rN` site.
- *
- * Both loops count down in r8 and test `bge`, so each body runs one more
- * time than the initial value suggests: 31 lift steps and 8 particles.
- *
- * UNCERTAINTY 1: the called service addresses are the ones encoded in the
- * overlay image (shared 0x02000000 namespace, load-time fixups).
- * UNCERTAINTY 2: 0x0200e6e4 is passed to Object_SetCallback as a plain pointer;
- * whether it is animation data or a callback is not established here.
- */
+/* Emitter fields are named by offset; the layout is not verified. */
 struct Resource373Emitter {
     u8 unknown_00[6];
     u16 field06;
@@ -96,8 +84,11 @@ struct StagedVerticalEffect {
 
 extern s32 Data_0200e6e0[];
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+/*
+ * Each alias names the loader-relocated call word the image holds, not a
+ * runtime address. The declarations are old-style because the call sites vary
+ * in arity.
+ */
 void Func_020078a2();
 void Func_02007b8a();
 void Func_02007c4a();
@@ -645,10 +636,12 @@ s32 Func_0200bb9c(s32);
 void Func_0200bc3c(s32);
 s32 Func_0200bbec_a(s32);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/*
+ * Calls spelled through these wrappers pass their constants straight into the
+ * argument registers. A direct call instead precomputes a costly constant into
+ * a pseudo shared with later uses in the block, and a value-returning call
+ * sets r0 last of its arguments.
+ */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -721,8 +714,11 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
     Func_02009f5e(0, 103, 82, 42, 1, 1);
     Call3(Func_0200a074, 21, 0x1880000, 0x3800000);
     turned = Func_0200a022(21);
-    /* Overwritten at once; its halfword zero temporary is what the
-     * record byte stores below reuse from a high register. */
+    /*
+     * Overwritten at once, but the store must stay: its zero halfword
+     * temporary is what the record byte stores below reuse out of a high
+     * register.
+     */
     *(u16 *)(turned + 6) = 0;
     turn_back = 0xc000;
     *(u16 *)(turned + 6) = turn_back;
@@ -798,7 +794,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
     Func_0200a20a(20);
     {
         u8 *record = Func_0200a240(0);
-        u8 value = *(volatile u8 *)&record[35]; /* keeps the byte in its own register */
+        u8 value = *(volatile u8 *)&record[35]; /* Keeps the byte in its own register. */
 
         record[35] = (u8)(value | 1);
     }
@@ -1087,7 +1083,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
     Call3(Func_0200ad6e, 0, 261, 60);
     Func_0200acfe(21, 4);
     Value2(Func_0200ad46, 21, 0);
-    none = 0; /* one zero for the placement call and the record byte store */
+    none = 0; /* One zero shared by the placement call and the byte store. */
     if (Func_0200aca0(0, 0) == 1) {
         bump_step(1);
     }
@@ -1144,7 +1140,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
         *(s32 *)(rec + 28) += 0x1999;
         Func_0200ae5e(1);
     }
-    none = 0; /* refreshed after the loops for the closing scene store */
+    none = 0; /* Refreshed after the loops for the closing scene store. */
     Func_0200ae68(60);
     Func_0200af20(1, 2);
     Call3(Func_0200af74, 1, 0x5000, 30);
@@ -1270,7 +1266,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
     Func_0200b3d6(21, 3);
     Func_0200b344(60);
     rec = Func_0200b37a_a(1);
-    flag = 1; /* one shared mark bit for the three record flags */
+    flag = 1; /* One shared mark bit for the three record flags. */
     rec[90] |= flag;
     rec = Func_0200b38e(5);
     rec[90] |= flag;
@@ -1350,6 +1346,13 @@ void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
     Func_0200b92e(0x8a);
 }
 
+/*
+ * Play a rising-dust burst from a source entity. The owner extends through its
+ * four literal pool words. Both loops count down inclusively, so they run 31
+ * lift steps and 8 particles. The address handed to Func_0200b760 is passed
+ * through as a plain pointer; whether it is animation data or a callback is
+ * not established.
+ */
 void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
 {
     s32 frame_countdown;
@@ -1357,9 +1360,9 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
     Func_0200b954(154);
 
     for (frame_countdown = 30; frame_countdown >= 0; frame_countdown--) {
-        emitter->y += 0x10000;              /* 0x80 << 9 */
-        emitter->field06 = (u16)(emitter->field06 + 0x2000);  /* 0x80 << 6 */
-        emitter->field18 += -2048;          /* pool word 0xfffff800 */
+        emitter->y += 0x10000;              /* 0x80 << 9. */
+        emitter->field06 = (u16)(emitter->field06 + 0x2000);  /* 0x80 << 6. */
+        emitter->field18 += -2048;          /* The pool word 0xfffff800. */
         emitter->field1c += -2048;
         Func_0200b6c0(1);
     }

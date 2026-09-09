@@ -40,51 +40,7 @@ struct SceneEntity {
     struct SceneHandle *h;     /* 0x50 */
 };
 
-/*
- * resource_38e owner at 0x0200090c, 102 bytes: the per-entity BEHAVIOUR
- * callback that walks one entity around a lobe of a sine/cosine figure and
- * advances its phase by a random step.
- *
- * Named before it was opened, by the already-converted installer.
- * games/gs1/semantic/overlays/resource_38e_c_02000974.c ends with
- *   entity->behaviour = (void (*)(void))0x0200890d;
- * and under the proven 0x02008000 link base 0x0200890d is file offset 0x090c
- * plus the Thumb bit.  That fixed both the role and the argument: the callback
- * receives the entity whose 0x6c field holds it, which is exactly what r0 is
- * used as here.  The installer's field map (handle at 0x50) is reused unchanged
- * and is corroborated by this owner reading the same offset.
- *
- * Complete owner: `push {r5, r6, r7, lr}` at 0x0200090c through the single
- * epilogue at 0x0200096c.  It ends `pop {r1} / bx r1`, so r0 survives and IS
- * the result; `movs r0, #0` immediately before it, so the callback returns 0.
- *
- * Pool map from a control-flow walk: every halfword from 0x0200090c to
- * 0x02000971 is reached as an instruction and the owner has NO literal pool at
- * all - it loads no constant wider than an 8-bit immediate plus a shift.  The
- * halfword 0x0000 at 0x02000972 is alignment ahead of the next owner
- * (0x02000974) and lies outside the row.  102 code + 0 pool = 102, matching the
- * inventory row's code_bytes and span_bytes, which are equal here for that
- * reason.
- *
- * Calls: 5 sites, matching the advertised 5:
- *   Func_080000f8  x2   0x94a 0x950   (random source)
- *   Func_08000120  x2   0x922 0x93c   (trig, sine lobe)
- *   Func_08000118  x1   0x914         (trig, cosine lobe)
- * The two Func_08000120 sites take DIFFERENT arguments - the raw phase and the
- * phase plus 0x8000 - so they are two sites, not a common subexpression.  The
- * two Func_080000f8 draws are likewise independent and are summed, not doubled.
- *
- * The vertical term is forced non-positive: `lsls #1` then `negs` only when the
- * result is greater than zero, so the entity travels on one lobe rather than a
- * full circle.  That asymmetry is real; symmetrising it would change the path.
- *
- * `if (v < 0) v += 7; v >>= 3` is division by 8 rounded toward zero, the same
- * bias-then-shift family as the tile-grid idiom.
- *
- * The phase step `(rand << 9) >> 16` twice, plus 1024, extracts bits 7..22 of
- * each draw as a 16-bit quantity - the shift pair is a field extraction, not a
- * scale.
- */
+/* Entity and handle as the lobe-orbit callback reads them. */
 struct SceneHandle_0200090c {
     u8 unknown_00[30];
     s16 field1e;                    /* 0x1e */
@@ -149,7 +105,7 @@ extern u8 Data_02008c64[];
 extern u8 Data_02008d30[];
 extern u8 Data_02008d24[];
 extern u8 Value_000013c0;
-extern s32 Func_020013a0(void);   /* random source, two call sites */
+extern s32 Func_020013a0(void);   /* Random source. */
 extern u8 Value_0200890d;
 
 s32 Func_02000aae(s32, s32);
@@ -206,59 +162,10 @@ void Func_02001492(s32);
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-/*
- * resource_38e owner at 0x020004bc, 80 bytes: the overlay's ENTRY-0 root -
- * seat scene entity 8 in its idle presentation and, when the shared scene
- * work says this is scene 0x22, run the scene body.
- *
- * The image's offset 0 is an exported-entry veneer table of the documented
- * `ldr r4,[pc,#0] / bx r4 / .word <target>` shape.  Its six words are
- * 0x020084bd, 0x02008089, 0x02008095, 0x0200809d, 0x02008155 and 0x02008091;
- * under the proven 0x02008000 link base entry 0 is file offset 0x04bc plus the
- * Thumb bit, which is this owner.  That made it the head of the call graph and
- * it was taken first.
- *
- * Link base, proved independently: seven of this overlay's byte-exact siblings
- * (0x02000030, 0x020000f8, 0x0200012c, 0x02000154, 0x02000184, 0x020001a4,
- * 0x020001c4) each appear in `games/gs1/asm/overlays/resource_38e_overlay.s` as an odd
- * pool word exactly 0x8000 above their file offset - 0x02008031, 0x020080f9,
- * 0x0200812d, 0x02008155, 0x02008185, 0x020081a5, 0x020081c5.  Seven
- * witnesses, one base.
- *
- * Complete owner: `push {r5, lr}` at 0x020004bc through the single epilogue at
- * 0x020004f8.  It ends `pop {r1} / bx r1`, so the return address lands in r1
- * and r0 survives - the owner returns a value, and `movs r0, #0` immediately
- * before it makes that value 0 (HANDOVER section-0 epilogue rule).
- *
- * Pool map from a control-flow walk: 0x020004bc-0x020004fd is reached as
- * instructions; 0x020004fe-0x0200050b is not.  That is 14 bytes - one alignment
- * halfword plus three words (0x03001ebc, 0x02000240, 0x00000022) - not the
- * customary 8 or 12.  66 code + 14 pool = 80, exactly the inventory row's
- * code_bytes and span_bytes.
- *
- * Calls: 2 sites, matching the advertised 2:
- *   Scene_GetRecord  x1   0x4ce
- *   Func_0200050c  x1   0x4f2   (this overlay's own owner, prologue site)
- *
- * 0x02000240 is the shared cross-overlay scene workspace, and the halfword read
- * here is byte offset 448 = index 224 - the exact cell the documented
- * `Data_02000240[224]` idiom names, read signed and branched on.  It is a RAM
- * address, not a file offset: it lies below the 0x02008000 link band.
- *
- * The handle mask `(flags09 & ~0x0c) | 0x04` is byte-for-byte the same
- * read-modify-write that games/gs1/semantic/overlays/resource_38e_c_02000974.c performs
- * on the same field of the same handle, which cross-validates the layout at no
- * cost.  Note the register trick that produces the mask: r3 is set to 0, stored
- * as flags23, and only then decremented by 13 to become ~0x0c - one register
- * carrying a stored VALUE and then a mask, the same family as the documented
- * displacement/value trap.
- */
-
-/* The shared cross-overlay scene workspace. */
-
-/* Pointer CELL holding the per-overlay workspace base, not the workspace. */
-
-/* Old-style declarations: overlay imports vary in arity between call sites. */
+/* Data_02000240 is the shared cross-overlay scene workspace; Data_03001ebc is
+ * a pointer cell holding the per-overlay workspace base, not the workspace
+ * itself. The imports above are old-style because their arity varies between
+ * call sites. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -305,7 +212,6 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The resource loader decodes the stored literal before use. */
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -316,23 +222,9 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 }
 
 /*
- * resource_38e owner at 0x02000088, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x200008c holding 0x2008c08.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000088 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008c08 is image offset
- * 0xc08 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Returns the in-image table at 0x02008c08. The eight-byte owner at
+ * 0x02000088 includes its one pool word, which holds that address and is
+ * returned without being dereferenced.
  */
 u8 *SceneData_GetTable8c08(void)
 {
@@ -340,23 +232,9 @@ u8 *SceneData_GetTable8c08(void)
 }
 
 /*
- * resource_38e owner at 0x02000094, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000098 holding 0x2008c50.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000094 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008c50 is image offset
- * 0xc50 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Returns the in-image table at 0x02008c50. The eight-byte owner at
+ * 0x02000094 includes its one pool word, which holds that address and is
+ * returned without being dereferenced.
  */
 u8 *SceneData_GetTable8C50(void)
 {
@@ -445,9 +323,14 @@ void FieldScene_RunScene38e_0200045c(void)
     Func_02000f8c();
 }
 
-                                         /* scene entity by selector */
-
-                                         /* this overlay, 0x0200050c */
+/*
+ * Entry-0 root: seats scene entity 8 in its idle presentation and, when the
+ * shared scene workspace says this is scene 0x22, runs the scene body.
+ *
+ * The handle mask is built from one register: zero is stored through fp first
+ * and only then decremented by 13 to become ~0x0c, so the local carries a
+ * stored value and then a mask, and must not be folded into two constants.
+ */
 s32 FieldScene_RunEntryZeroAndScene22Body(void)
 {
     extern u8 *Data_03001ebc;
@@ -483,6 +366,13 @@ void FieldScene_SetupWithDescriptor8BD4(void)
     Func_020013bc(0x200);
 }
 
+/*
+ * Walks one entity around a lobe of a sine and cosine figure and advances its
+ * phase by a random step. The vertical term is forced non-positive, so the
+ * path is one lobe rather than a full circle. The two trig calls take
+ * different arguments and the two random draws are independent and summed:
+ * neither pair is a common subexpression.
+ */
 s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
 {
     struct SceneHandle_0200090c *handle = entity->handle;
@@ -498,10 +388,11 @@ s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
 
     /* A quarter turn on from the position phase. */
     tilt = Func_020013aa(entity->phase + 0x8000);
+    /* Bias then shift: division by 8 rounded toward zero. */
     if (tilt < 0) tilt += 7;
     handle->field1e = (s16)(tilt >> 3);
 
-    /* `lsrs` in the original: the extraction is unsigned. */
+    /* The shift pair extracts a field, unsigned; it is not a scale. */
     step = (s32)(((u32)Func_020013a0() << 9) >> 16)
          + (s32)(((u32)Func_020013a6() << 9) >> 16);
     entity->phase = entity->phase + step + 1024;

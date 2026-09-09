@@ -1338,34 +1338,21 @@ void Func_02006af2();
 void Func_02006a36();
 
 /*
- * Resource 378 owner at 0x020002ec (116 bytes, through 0x0200035f).
- *
- * Its five pool words occupy 0x0200034c--0x0200035f; the next owner begins
- * at 0x02000360.  This is the sibling setup path to 0x0200027c: eleven
- * imported calls, the same signed scene halfword at +450, and three branch
- * sites.
+ * Each Func_ symbol names the pre-relocation call word the image holds, not
+ * a runtime address; a single word can serve two sites with different
+ * targets. Where a macro names an engine function, that is the function the
+ * site reaches through the overlay veneer and the main-image veneer island,
+ * keeping the site's own calling form. Names without a binding in the
+ * repository are provisional.
  */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Returns a value: the reference sets r1 before r0 at this site, which
-   only a value-returning callee does; the result is unused here. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
+/*
+ * Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers, while a direct call precomputes a costly
+ * constant into a local that later uses in the block share. A call that
+ * returns a value sets r0 last of its arguments; the Value wrappers spell
+ * those sites, and the result is sometimes unused.
  */
-
-/* Provisional per-site names below, from engine source available under
- * games/gs1/src. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     extern u8 Data_03001ebc[];
@@ -1462,15 +1449,11 @@ static __inline__ void bump_step_0200290c(s32 amount)
 }
 
 /*
- * Resource 378 owner at 0x0200027c (112 bytes, through 0x020002eb).
- *
- * The five literal words at 0x020002d8--0x020002eb are this owner's pool;
- * the next push, at 0x020002ec, starts the following owner.  The body has
- * ten imported calls and three conditional/unconditional branch sites.
- * The scene selector is the signed halfword at Data_02000240 + 450, built
- * as 225 * 2 by the original code.  The final two calls are deliberately
- * kept after that selector test: the second call's result is discarded by
- * the epilogue, which pops the return address into r0.
+ * Runs actor nine's flag-branched dialogue. The 112-byte owner includes its
+ * five pool words. The scene selector is the signed halfword at
+ * Data_02000240 + 450, reached as index 225. The last two calls must stay
+ * after the selector test: the epilogue pops the return address into r0, so
+ * the second call's result is discarded there.
  */
 void FieldScene_RunActorNineFlagDialogueA(void)
 {
@@ -1493,6 +1476,10 @@ void FieldScene_RunActorNineFlagDialogueA(void)
     Func_020038ca();
 }
 
+/*
+ * The sibling path to the dialogue above, reading the same selector
+ * halfword. The 116-byte owner includes its five pool words.
+ */
 void FieldScene_RunActorNineFlagDialogueB(void)
 {
     void Func_02003954(s32 id);
@@ -1626,32 +1613,9 @@ void FieldScene_RunScene378SequenceB(void)
 }
 
 /*
- * Resource 378 owner at 0x02000574 (88 bytes, through 0x020005cb).
- *
- * Eight imported calls and one conditional branch are present.  The two
- * literal words at 0x020005c4--0x020005cb are part of this owner; the next
- * entry-driver prologue begins at 0x020005cc.  The sole state write is the
- * same workspace +472 halfword increment used by the preceding owner.
- *
- * STILL-OPEN residual, 4 bytes at 0x02000590: the reference sets the fifth
- * call's arguments as `movs r1,#0` before `movs r0,#10`; this source emits
- * them the other way.  candidate_explain.ts shows the pair ties through
- * every rank_for_schedule tier (priority, class, dependent count) and is
- * decided by insn creation order, with arg0's setter created first -- so no
- * -fsched-* flag can flip it, -fthumb-call-arg1-before-arg0 provably cannot
- * fire (it only undoes inversions where arg1 has the LOWER uid), and
- * -fsched-high-dest-first would flip it but demonstrably breaks the three
- * other argument pairs in this function that are also creation-order
- * decided and currently match.  A local temporary for either argument (or
- * for the shared 10) is folded by constant propagation and re-materialized
- * in arg order, changing nothing.  Deeper root cause, verified in the gcc
- * source: Thumb force-disables the first scheduler pass (arm.c
- * OVERRIDE_OPTIONS), so sched2's chain-order tie-break sees expansion
- * order, and constant call arguments are expanded arg0-first (calls.c
- * load_register_parameters, ascending, LOAD_ARGS_REVERSED not defined).
- * The original must have made arg1 a non-deferred value at this one site;
- * that source shape is not yet identified.  Same fingerprint as
- * resource_39e:1d50's open residual.
+ * Steps actor ten and, when the check passes, increments the same workspace
+ * +472 halfword the preceding owner writes. The 88-byte owner includes its
+ * two pool words.
  */
 void FieldScene_RunActorTenCountStep(void)
 {
@@ -1671,10 +1635,11 @@ void FieldScene_RunActorTenCountStep(void)
     Func_02003bb6();
 }
 
-/* Steps a long, fixed sequence of actor position/pose/timing calls, driving
- * several numbered actor slots (repeatedly 0, 1, 8, 9, 10, 11, 12, 13) through
- * scripted moves and waits, with one loop that nudges a pair of per-actor
- * record fields down by a fixed amount 32 times. */
+/*
+ * Steps a fixed sequence of actor position, pose and timing calls over
+ * slots 0, 1, 8, 9, 10, 11, 12 and 13, including one loop that nudges a
+ * pair of per-actor record fields down 32 times.
+ */
 void FieldScene_RunActorUpdateSequence(void)
 {
     void Func_02005050();
@@ -1781,8 +1746,10 @@ void FieldScene_RunActorUpdateSequence(void)
     ObjectGroup_ConfigureChildValue_1(13, 0x100);
     Audio_PlayCue_5(17);
     Audio_PlayCue_6(0x134);
-    /* 32 repeats: step actor 13's animation, then subtract a fixed amount
-     * from a pair of record fields (+24 and +28) fetched from it. */
+    /*
+     * 32 repeats: step actor 13's animation, then subtract a fixed amount
+     * from the record fields at +24 and +28.
+     */
     for (i = 0; i < 32; i++) {
         Func_02004d8c(13);
         BattleRuntime_WaitIfModeZero_28(4);
@@ -2351,31 +2318,12 @@ void FieldScene_RunPairedActorChoreography(void)
 }
 
 /*
- * Resource 378 owner at 0x02003334 (296 bytes).
- *
- * Complete owner: `push {lr}` at 0x02003334 and `pop {r0} ; bx r0` at
- * 0x02003440.  The popped register IS r0, so the return value does not
- * survive the epilogue and the owner is **void**.  0x02003334 + 296 =
- * 0x0200345c, where the next owner's `push {lr}` begins; the span decomposes
- * as head and dispatcher (0x02003334-0x02003363), 41-entry jump table
- * (0x02003364-0x02003407, data), case bodies and shared tail
- * (0x02003408-0x02003443) and the literal pool (0x02003444-0x0200345b).
- *
- * Second of the nine dispatch sites the tree described nowhere, adopted with
- * `--span 296` because discovery never seeded it.
- *
- * Same selector as 0x0200014c and `resource_371:037c` -- `Data_02000240[225]`,
- * `subs #10 ; cmp #40 ; bhi` for the range 10..50 -- and a DIFFERENT table:
- * 10,12 -> 0x02003408; 11 -> 0x02003422; 20,21,50 -> 0x0200342a; everything
- * else to the default at 0x02003434.  Read entry by entry; the family
- * resemblance was not taken as evidence for any of it.
- *
- * The default arm is also the shared tail: the two arms that fall out of
- * `0x02003408` and `0x02003422` branch INTO 0x02003434, which is what the
- * `bhi` targets, so the tail statements sit after the switch and those arms
- * `break`.  The 20/21/50 arm instead branches to the epilogue and returns.
- *
- * Case-arm ORDER off the ROM (5b5); per-site RAW callee names (5b3a).
+ * Dispatches on the scene selector Data_02000240[225] over the range 10 to
+ * 50, through a 41-entry jump table. The epilogue pops the return address
+ * into r0, so no result survives it and the owner is void; the 296-byte
+ * owner covers dispatcher, table, case bodies and literal pool. The default
+ * arm doubles as the shared tail, so the arms that fall into it break while
+ * the 20/21/50 arm returns instead.
  */
 void FieldScene_DispatchBySceneId(void)
 {

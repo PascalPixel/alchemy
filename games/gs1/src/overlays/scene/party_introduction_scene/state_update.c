@@ -2,10 +2,9 @@
 
 #define SceneState_PumpUntilSlotsFree Func_02004328
 
-/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule). Repeated callees therefore appear
-   several times under different names: Func_08077030 is called four times
-   and UiText_DrawMessage and Ability_GetAvailability twice each. */
+/* One symbol per call site, named at that site's call word rather than at a
+ * runtime address. A callee reached from several sites therefore appears
+ * several times here under different names. */
 extern void Func_02008e52(s32 arg0);                        /* 0x0200433c -> 080f9010 */
 extern void Func_02008e4a(s32 arg0, s32 arg1);              /* 0x02004344 -> 0808a398 */
 extern void Func_02008c6a(s32 arg0, s32 arg1);              /* 0x0200434c -> 08015040 */
@@ -19,47 +18,12 @@ extern void Func_02008cde(s32 arg0);                        /* 0x02004390 -> 080
 extern void Func_02008ce4(s32 arg0);                        /* 0x02004396 -> 08077030 */
 extern void Func_02008cea(s32 arg0);                        /* 0x0200439c -> 08077030 */
 
-/* STILL-OPEN residual (36/148 differing bytes): confined entirely to the
- * bl-instruction displacement halfwords at every one of the 12 call sites
- * below (verified with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --'s +2 rule -- see
- * scratch diff at semantic history). The reference's stored displacement is
- * consistently 0x4000 larger than what this candidate links to. Renaming the
- * callees three different ways -- main-ROM Func_08xxxxxx names (this file),
- * per-site overlay-local Func_0200xxxx numeric veneer addresses, and the
- * same numeric addresses declared old-style (empty-paren K&R, matching
- * games/gs1/src/resource_3a7_c_02000944.c's "physical overlay veneer alias"
- * pattern) -- produced byte-IDENTICAL wrong displacements every time, so
- * this is not a call-symbol-naming problem. Every other instruction in the
- * function (all data ops, the do-while restructure, arg setup) matches the
- * reference exactly. Looks like a toolchain/link-time veneer-placement
- * quirk for this owner's freshly-referenced import slots, not something a
- * C-source edit can reach; escalate rather than re-attempt renaming. */
 /*
- * resource_380 owner at 0x02004328, 148 bytes: a drain-until-room
- * pump.  Saves the s16 counter at Data_03001ebc+472 (the same +472
- * counter idiom resource_3b9's giant touches), primes two channels,
- * then loops: while fewer than 4 of 30 slots are free, request more
- * (0x111c), pop an event pair with Func_080b0058, and hand any
- * non--1 result to Func_080772b0.  On exit it flushes four times with
- * id 224 and restores the saved counter.
- *
- * Complete owner: `push {r5,r6,r7,lr}` at 0x02004328 through
- * `pop {r0} / bx r0` at 0x020043ae, then the three-word literal pool
- * 0x020043b0-0x020043bb (0x03001ebc, 0x111b, 0x111c); next owner's
- * prologue at 0x020043bc.
- *
- * CORRECTION (name sweep): this file's callee names came from a naive
- * pc-relative decode and were wrong; they are resolved here through the
- * overlay's import-veneer table under the +2 rule
- * (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --) to their main-ROM identities.  The
- * earlier cross-file claim -- that this row's one-argument callee was
- * called with two arguments by the 0x020043bc sibling, forcing an
- * old-style declaration there -- is STRUCK: the two rows were never
- * calling the same function, only the same phantom name.  Both calls
- * here are Ability_GetAvailability, taking one argument.
- *
- * Uncertainty: callee roles beyond call shape remain open;
- * Audio_PlayCue receives only r0=0x53 here.
+ * Drain until room: save the s16 counter at scene workspace + 472, prime two
+ * channels, then loop while fewer than four of thirty slots are free,
+ * requesting more and passing on any event pair that is not -1. On exit it
+ * flushes four times with id 224 and restores the saved counter. The 148-byte
+ * owner includes its three-word literal pool. Callee roles are not established.
  */
 void SceneState_PumpUntilSlotsFree(void)
 {

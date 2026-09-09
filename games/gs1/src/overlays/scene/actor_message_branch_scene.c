@@ -131,80 +131,35 @@ void Func_020009f4(s32);
 void Func_020009fc(s32);
 
 /*
- * resource_38c owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000034 holding 0x2008598.
- *
- * LEAF RESIDUE. Published at image offset 0xc; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000030 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008598 is image offset
- * 0x598 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x02000030 includes its one pool word, which holds
+ * the returned table address 0x02008598.
  */
-
-/* Contiguous unnamed leaf-owner run for resource_38c. */
 
 /*
- * resource_38c owner at 0x0200003c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000040 holding 0x2008688.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200003c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2008688 is image offset
- * 0x688 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x0200003c includes its one pool word, which holds
+ * the returned table address 0x02008688.
  */
-
-/* Contiguous unnamed state-owner run for resource_38c. */
 
 /*
- * resource_38c owner at 0x0200011c, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000120 holding 0x20088f0.
- *
- * LEAF RESIDUE. Published at image offset 0x24; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x0200011c reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x20088f0 is image offset
- * 0x8f0 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * The eight-byte owner at 0x0200011c includes its one pool word, which holds
+ * the returned table address 0x020088f0.
  */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+/*
+ * Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds, not a runtime address.
+ */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/*
+ * Call sites spelled through these wrappers pass their constants straight into
+ * the argument registers; a direct call precomputes a costly constant into a
+ * pseudo shared with later uses in the block.  A value-returning call also
+ * sets r0 last of its arguments.
+ */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-/* The workspace pointer the overlay's own rows all reach through. */
+/* The workspace pointer this overlay reaches through. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     s32 Func_02000662();
@@ -266,20 +221,6 @@ u8 *SceneData_GetPrimaryTable(void)
     return (u8 *)RESOURCE38C_PRIMARY_TABLE_ADDRESS;
 }
 
-/*
- * resource_38c owner at 0x02000038, 4 bytes: `movs r0, #0 / bx lr`.
- *
- * LEAF RESIDUE. Published at image offset 0x2c; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- * A leaf never does -- it saves no register and returns with `bx lr`.
- *
- * Complete owner: both instructions. No prologue, no stack frame, no
- * literal pool, no callees, no argument read.
- *
- * One of the 70 rows sharing this exact body across the tree. The body is
- * shared; the identity is not -- this row is bounded by ITS overlay's
- * neighbours and published from ITS overlay's table.
- */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -554,9 +495,11 @@ s32 FieldScene_SetupActor27OnEntry(void)
 
     *(s32 *)(WORKSPACE + 448) = 521;
     actor = Func_02000a14_a(27);
-    /* The stored zero is the mask's starting value: the reference builds
-     * -13 by subtracting from the register the `strb` already set to 0
-     * rather than materialising 0xf3 or negating 13. */
+    /*
+     * The stored zero is also the mask's starting value: -13 is built by
+     * subtracting from the register the strb already set to zero, not by
+     * materializing 0xf3 or negating 13.
+     */
     actor[0x23] = bits = 0;
     record = *(u8 **)(actor + 0x50);
     bits -= 13;

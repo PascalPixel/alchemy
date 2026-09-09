@@ -76,6 +76,18 @@
  * regressed badly.  The remaining two want the same treatment as the first,
  * not a compiler explanation.
  *
+ * This owner is the exception in its class, not evidence against the class.
+ * All twenty-five scheduling-floor owners were compiled with both scheduling
+ * passes disabled: this one alone is unchanged, and the other twenty-four do
+ * change, so the schedulers really are producing their order.  Disabling the
+ * schedulers also moves those owners further from the reference rather than
+ * closer, measured on 0800383c (2 to 8 differing halfwords), 080fb670 (2 to
+ * 10, and the extent shrinks from 32 to 28), 080974d8 (2 to 19) and 08021e28
+ * (unchanged at 2).  The shipped code was therefore built with scheduling on,
+ * the canonical route is right for them, and scheduling-floor is an accurate
+ * label everywhere except here.  Do not read the fix below as a class-wide
+ * method.
+ *
  * Callee spellings follow the exact sibling: plain Func_<address> for every
  * target the owner register has no distinct name for.  `alchemy inspect`
  * reports source-file basenames for several of these, which are file names

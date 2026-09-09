@@ -17851,6 +17851,10 @@
     "resource_39a:02001a34": {
       "name": "FieldScene_RunScene39aSequenceB",
       "source": "overlays/scene_primary_script/run_scene_39a_sequence_b.c"
+    },
+    "resource_3a8:02001ed8": {
+      "name": "FieldScene_ScaleActorPairAndPrompt",
+      "source": "overlays/scene_primary_script/scale_actor_pair_and_prompt.c"
     }
   }
 }

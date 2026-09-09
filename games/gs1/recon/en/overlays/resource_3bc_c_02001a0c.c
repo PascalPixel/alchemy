@@ -25,8 +25,10 @@ s32 Func_0200656c();
 void Func_02006580();
 s32 Func_0200658c();
 void Func_02006590();
+void Func_02006590_a();
 void Func_02006598();
 void Func_020065a0();
+void Func_020065a0_a();
 void Func_020065a6();
 void Func_020065a8();
 s32 Func_020065ac();
@@ -48,6 +50,7 @@ void Func_02006628();
 void Func_02006630();
 void Func_02006632();
 void Func_0200663a();
+void Func_0200663a_a();
 void Func_0200663c();
 void Func_020066c4();
 
@@ -83,12 +86,12 @@ void Func_02001a0c(s32 scene)
     Func_020065b0(scene, 0);
     Func_02006580(scene, 2);
     Func_020065c0(scene, 0);
-    Func_02006590(scene, 2);
+    Func_02006590_a(scene, 2);
     Func_020065d0(scene, 0);
     Func_020065a0(scene, 2);
     Func_020065e0(scene, 0);
     Func_02006598(3, 3);
-    Func_020065a0(1, 3);
+    Func_020065a0_a(1, 3);
     Func_020065a8(2, 3);
     Func_020065b8(0, 3);
     Func_0200653e(6);
@@ -112,7 +115,7 @@ void Func_02001a0c(s32 scene)
     Func_02006632(2, 0, 0);
     Func_0200663c(3, 0, 0);
     Func_02006630(scene, x - 16, y - 16);
-    Func_0200663a(scene, x, y);
+    Func_0200663a_a(scene, x, y);
     Func_020066c4(scene, 49152, 10);
     Func_02006600();
 }

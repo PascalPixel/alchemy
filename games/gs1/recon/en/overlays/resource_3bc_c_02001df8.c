@@ -31,10 +31,12 @@ void Func_02006930();
 void Func_02006948();
 void Func_02006956();
 void Func_02006984();
+void Func_02006984_a();
 void Func_020069a4();
 void Func_020069a8();
 void Func_020069be();
 void Func_020069c6();
+void Func_020069c6_a();
 void Func_020069ca();
 void Func_020069e8();
 void Func_020069ea();
@@ -74,7 +76,7 @@ void Func_02001df8(s32 scene)
     Func_020069a4(0, 0, 15);
     Func_02006a08();
     Func_020069ea(-1, -1, -1, 0);
-    Func_020069c6(0, 16384, 15);
+    Func_020069c6_a(0, 16384, 15);
     Func_020069be(scene, 0);
     Func_02005960(96, 40, 0);
     Func_020059ce(128, 40, 10);
@@ -93,5 +95,5 @@ void Func_02001df8(s32 scene)
         Func_02006a2e(scene, 0);
     }
     Func_02004b24(state, scene, 2);
-    Func_02006984();
+    Func_02006984_a();
 }

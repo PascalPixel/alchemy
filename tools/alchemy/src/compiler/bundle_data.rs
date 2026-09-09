@@ -23,7 +23,17 @@ const GS1: &[ExecutableDigests] = &[
     ),
     (
         "as",
-        &["a3cd21bc5a51f11ec97909f6547719857e16e76fa361abe7520d9025be84730f"],
+        &[
+            "a3cd21bc5a51f11ec97909f6547719857e16e76fa361abe7520d9025be84730f",
+            // Second local host build of the same unmodified GNU gas 2.10
+            // source. Admitted on reproduction, not on provenance: with this
+            // assembler the complete GS1 EN ROM rebuilds byte-identically
+            // against the approved cartridge (1,354,302 executable bytes,
+            // unowned_bytes=0, rom_fallback_bytes=0). That establishes
+            // behavioural equivalence for this target; it is not evidence
+            // about which historical release produced the binary.
+            "de8c6568d5742acda7dff00acdfd501d50cb767770fb77fa6d688925bb7fec61",
+        ],
     ),
 ];
 const EMPTY_GS1: &[ExecutableDigests] = &[
@@ -49,6 +59,10 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             // Stock pret/agbcc da598c1: 300 identical objects across twelve
             // editions; all 4,178 claimed GS1 EN bytes independently linked.
             "1b871e9350265d6a530f26d6149818e3294a8b0231a574960226e506a7a5e677",
+            // Second local host build of the same stock pret/agbcc da598c1
+            // source, admitted on the same reproduction evidence as the gas
+            // entry above rather than on provenance.
+            "f63ca1c50e35c74b4074195fc9dc7029a950ac04eeaece75b38ae407d342bf67",
         ],
     ),
     ("darwin-x64", &[]),

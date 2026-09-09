@@ -16,6 +16,7 @@ void Func_020049ae();
 void Func_020049bc();
 void Func_020049c8();
 void Func_020049d2();
+void Func_020049d2_a();
 void Func_020049f4();
 void Func_02004a0c();
 void Func_02004a10();
@@ -53,7 +54,7 @@ void Func_02000a1c(void)
     Func_020049bc(10);
     Func_02004a2c(8, 3);
     Func_02004a3c(0, 3);
-    Func_020049d2(20);
+    Func_020049d2_a(20);
     Func_02004a10(0, 131072, 65536);
     Func_02004a1e(8, 131072, 65536);
     Func_02004a42(0, 112, 256);

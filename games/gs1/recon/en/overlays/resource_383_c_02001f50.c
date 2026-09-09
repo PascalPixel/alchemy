@@ -43,8 +43,11 @@ void Func_02006e1a();
 void Func_02006e20();
 void Func_02006e22();
 void Func_02006e30();
+void Func_02006e30_a();
 void Func_02006e3e();
 void Func_02006e48();
+void Func_02006e48_a();
+void Func_02006e48_b();
 void Func_02006e5a();
 void Func_02006e64();
 void Func_02006e6c();
@@ -114,7 +117,7 @@ void Func_02001f50(void)
     Func_02006e04(2, 1);
     Func_02006e3e(2, selected_actor, 0);
     Func_02006e48(1, 2, 0);
-    Func_02006e48(1, 2);
+    Func_02006e48_a(1, 2);
     Func_02006d8e(20);
     Func_02006e6c(4773);
     Func_02006654(1, 20);
@@ -137,7 +140,7 @@ void Func_02001f50(void)
     Func_02006ee4(2, 1, 0);
     Func_02006e22(20);
     Func_02006eca(2, 3);
-    Func_02006e30(40);
+    Func_02006e30_a(40);
     p51 = Func_02006e76(0);
     object = *(u8 **)(p51 + 80);
     object[9] = (object[9] & ~12) | 4;
@@ -152,7 +155,7 @@ void Func_02001f50(void)
     Func_02006fec();
     Func_02006ff8();
     Func_02004318();
-    Func_02006e48(14, 45, 3, 1, 14, 44);
+    Func_02006e48_b(14, 45, 3, 1, 14, 44);
     Func_02006e86(2131);
     p59 = Func_02006eec(24);
     *(u16 *)((u8 *)(p59) + 100) = 5;

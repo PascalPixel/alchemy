@@ -187,9 +187,11 @@ fn check_documents(root: &Path) -> Result<(), String> {
             let path = entry.path();
             let kind = entry.file_type().map_err(|e| e.to_string())?;
             if kind.is_dir() {
-                // External decompiler and compiler distributions are source inputs.
+                // External decompiler and compiler distributions are source inputs,
+                // and a nested checkout owns its own documents.
                 if entry.file_name() != ".git"
                     && path != root.join("m2c")
+                    && !path.join(".git").exists()
                     && !path.join("gcc/toplev.c").is_file()
                 {
                     pending.push(path);
@@ -639,6 +641,10 @@ mod tests {
         std::fs::create_dir_all(root.join("out/compiler/gcc")).unwrap();
         std::fs::write(root.join("out/compiler/gcc/toplev.c"), "compiler source").unwrap();
         std::fs::write(root.join("out/compiler/gcc/thumb.md"), "(define_insn)").unwrap();
+        std::fs::create_dir_all(root.join("worktrees/scene")).unwrap();
+        std::fs::write(root.join("worktrees/scene/.git"), "gitdir: ../../.git\n").unwrap();
+        std::fs::write(root.join("worktrees/scene/README.md"), "its own").unwrap();
+        std::fs::write(root.join("worktrees/scene/score.txt"), "its own").unwrap();
         assert!(check_documents(&root).is_ok());
         for name in ["out/verdict.md", "out/score.txt", "AGENTS.md"] {
             std::fs::write(root.join(name), "another guide").unwrap();

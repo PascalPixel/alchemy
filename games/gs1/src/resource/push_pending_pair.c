@@ -7,7 +7,7 @@ struct State_0801a7c0 {
     u16 cnt;
 };
 
-extern struct State_0801a7c0 * volatile Data_03001e98;
+extern struct State_0801a7c0 *volatile Data_03001e98;
 
 void Resource_PushPendingPair(u32 first, u32 second)
 {

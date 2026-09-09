@@ -164,7 +164,7 @@ void FieldScene_RunMiddleSequence(void)
             {
                 u8 *record = Func_02005606(11);
                 u8 value = *(volatile u8 *)&record[35];
-            
+
                 record[35] = (u8)(value | 2);
             }
         }
@@ -179,7 +179,7 @@ void FieldScene_RunMiddleSequence(void)
         record = Func_0200564e(10);
         {
             s32 shown = 0x5000;
-        
+
             *(volatile u16 *)((s32)record + 6) = shown;
         }
         Call6(Func_020055e8, 88, 48, 88, 45, 2, 3);

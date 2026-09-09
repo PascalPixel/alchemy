@@ -1,22 +1,14 @@
 #include "types.h"
 
 /*
- * Resource 3b1 unindexed helper at 0x0200486c (18 bytes, 179 calls).
- *
- * Derived span: no inventory row (item 28's unindexed population, found via
- * overlay_unindexed.ts's reference resolution: every overlay `bl` target
- * whose first halfword is `push {..,lr}` and has no index entry). `push
- * {lr}` at 0x0200486c, epilogue `pop {r0} / bx r0` at
- * 0x0200487a-0x0200487c returns r0 unmodified (void). The next owner starts
- * at 0x02004880 on a 4-byte boundary; the halfword at 0x0200487e is the
- * alignment pad, not part of this span.
- *
- * Raw callee naming (this overlay's sibling convention, e.g.
- * resource_3b1_c_0200012c.c): both calls resolve to addresses inside this
- * same unindexed cluster (0x0200ae2a, 0x0200ad38), neither yet named or
- * covered elsewhere.
+ * Shared helper for resource_3b1.  The owner at 0x0200486c is 18 bytes; the
+ * halfword before the next owner at 0x02004880 is alignment, not part of it.
  */
 
+/*
+ * Both callees live inside this overlay and are declared without a prototype,
+ * so each call site fixes its own arity.
+ */
 void Func_0200ae2a();
 void Func_0200ad38();
 

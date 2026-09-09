@@ -11,7 +11,7 @@ extern void Func_02001a6a(s32, s32);
 
 void FieldScene_RunPromptDialogueE19(s32 object)
 {
-    s32 cue = (s32) &Value_00000e19;
+    s32 cue = (s32)&Value_00000e19;
     Func_02001a2a(cue);
     Func_02001a3a(object, 0);
     if (Func_02001a0a(0, 0) == 0) {

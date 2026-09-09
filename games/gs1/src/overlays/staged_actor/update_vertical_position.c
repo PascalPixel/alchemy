@@ -6,14 +6,15 @@
 s32 GetDescendingMotionStep(void);
 s32 GetAscendingMotionStep(void);
 
-s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor) {
+s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
+{
     s16 vertical_motion_direction;
     s32 descending_y;
     s32 ascending_y;
 
     if (actor->vertical_motion_direction != 0) {
         descending_y = (actor->y
-            - ((u32) (GetDescendingMotionStep() << 0xF) >> 0x10)) + 0xFFFF8000;
+            - ((u32)(GetDescendingMotionStep() << 0xF) >> 0x10)) + 0xFFFF8000;
         actor->y = descending_y;
         if (descending_y < 0) {
             vertical_motion_direction = 0;
@@ -21,7 +22,7 @@ s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor) {
         }
     } else {
         ascending_y = actor->y
-            + ((u32) (GetAscendingMotionStep() << 0xF) >> 0x10) + 0x8000;
+            + ((u32)(GetAscendingMotionStep() << 0xF) >> 0x10) + 0x8000;
         actor->y = ascending_y;
         if (ascending_y > 0x80000) {
             vertical_motion_direction = 1;

@@ -5,7 +5,8 @@
 s32 Object_Destroy(s32);
 void *GetBattleObjectSlot(s32 arg0);
 
-void *BattleMotion_DestroyAllSlotObjects(void) {
+void *BattleMotion_DestroyAllSlotObjects(void)
+{
     s32 no;
     s32 i;
     void *slot;

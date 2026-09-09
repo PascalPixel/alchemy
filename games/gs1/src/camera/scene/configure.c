@@ -52,7 +52,8 @@ void Func_08005258(u32, u32, u32);
 void Func_080c0a24(u32, u32, s32, s32, u32);
 
 /* Keep the address symbol for the build map while exposing its role to C. */
-void Camera_ConfigureScene(s32 pos) {
+void Camera_ConfigureScene(s32 pos)
+{
     struct SceneCameraState *state = Data_03001e80.state;
     struct SceneCameraAuxiliary *secondary = Data_03001e80.secondary;
     struct SceneCameraTransfer local;

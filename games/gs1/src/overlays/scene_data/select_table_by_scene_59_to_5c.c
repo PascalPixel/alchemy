@@ -11,7 +11,8 @@ extern u8 Data_0200a234[];
 extern u8 Data_0200a2dc[];
 extern u8 Data_0200a12c[];
 
-s32 SceneData_SelectTableByScene59To5c(void) {
+s32 SceneData_SelectTableByScene59To5c(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000059) {

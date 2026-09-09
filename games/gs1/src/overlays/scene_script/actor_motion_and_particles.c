@@ -331,65 +331,15 @@ void Func_02001d5c();
 void Func_02001d78();
 void Func_02001d8e();
 
-/*
- * resource_3a3 owner at 0x02000074, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000078 holding 0x2009390.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000074 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009390 is image offset
- * 0x1390 under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
- */
+/* Each Func_ symbol names the call word the overlay image holds before loader
+ * relocation, not a runtime address. One word can serve two sites with
+ * different targets, so the sites stay separate and must not be merged onto a
+ * shared name. Names that describe what a target does are provisional. */
 
-/* Contiguous unnamed state-owner run for resource_3a3. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
-/* Newly named per-site calls: the engine function has no registered name yet,
- * but its own reconstructed source (recorded as "usource" in mains.json)
- * shows what it does. Each name states only what that source shows. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Runs one of two branches of a scene setup: a short branch that just moves
- * actor 14, or a longer branch that positions actor 18 and a second record
- * from their x/y/z fields at +8/+12/+16, clearing a byte at +85 on a
- * separately looked-up record along the way. */
-
-/* Contiguous unnamed leaf-owner run for resource_3a3. */
-
-/*
- * resource_3a3 flag-sync owner 0x02000874-0x02000903 (144 bytes).
- *
- * Three progress flags are mirrored into three scene flags, then the scene id
- * held at Data_02000240[224] selects one of two continuations.  Every call
- * leaves through its own import veneer; the sites are kept separate because
- * the byte-level call multiset is part of the completeness proof.
- */
-
+/* Calls spelled through these wrappers pass their constants straight into the
+ * argument registers. Spelling them as direct calls instead precomputes a
+ * costly constant into a temporary that is then shared with later uses in the
+ * same block. A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     void Func_0200115e();
@@ -426,6 +376,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     void Func_0200115e();
@@ -504,27 +455,28 @@ void Func_0200141e();       /* queues a cue / script id */
 
 void Func_020013ba();       /* closes the scripted sequence */
 
-s32 Func_02001702();           /* site 0x878, was GameFlag_IsSet(0x8fd) */
+s32 Func_02001702();           /* tests a progress flag */
 
-void Func_02001716();          /* site 0x884, was GameFlag_Set(0x240) */
+void Func_02001716();          /* sets a scene flag */
 
-s32 Func_02001714();           /* site 0x88a, was GameFlag_IsSet(0x8fe) [1st] */
+s32 Func_02001714();           /* tests a progress flag */
 
-s32 Func_0200171e();           /* site 0x894, was GameFlag_IsSet(0x907) [1st] */
+s32 Func_0200171e();           /* tests a progress flag */
 
-void Func_02001730();          /* site 0x89e, was GameFlag_Set(0x241) */
+void Func_02001730();          /* sets a scene flag */
 
-s32 Func_0200172e();           /* site 0x8a4, was GameFlag_IsSet(0x8fe) [2nd] */
+s32 Func_0200172e();           /* tests a progress flag, second site */
 
-s32 Func_02001738();           /* site 0x8ae, was GameFlag_IsSet(0x907) [2nd] */
+s32 Func_02001738();           /* tests a progress flag, second site */
 
-void Func_0200174a();          /* site 0x8b8, was GameFlag_Set(0x242) */
+void Func_0200174a();          /* sets a scene flag */
 
-void Func_020011d4(void);      /* site 0x8ce, was Func_02000904 */
+void Func_020011d4(void);      /* scene continuation */
 
-void Func_02001408(void);      /* site 0x8da, was Func_02000b2c */
+void Func_02001408(void);      /* scene continuation */
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];
@@ -543,6 +495,12 @@ s32 Func_02000070(void)
     return 0;
 }
 
+/*
+ * The owner at 0x02000074 is eight bytes and includes its one pool word at
+ * 0x02000078: the pc-relative load reads that word, so the word belongs to
+ * this owner. The word is an address returned without being dereferenced.
+ * Many getters share this body, but each returns a different address.
+ */
 u8 *SceneData_GetTable9390(void)
 {
     return (u8 *)0x02009390;
@@ -571,7 +529,8 @@ u8 *SceneData_SelectFlaggedTable(void)
     return Data_020093f4;
 }
 
-s32 SceneData_GetPrimaryTable(void) {
+s32 SceneData_GetPrimaryTable(void)
+{
     extern s16 Data_02000240[];
 
     s16 v = Data_02000240[224];
@@ -615,6 +574,12 @@ void SceneDialogue_ShowLine1918(void)
     Func_02001076();
 }
 
+/*
+ * One of two branches of the opening setup: a short branch that only moves
+ * actor 14, or a longer branch that positions actor 18 and a second record
+ * from their x/y/z fields at +8/+12/+16, clearing a byte at +85 of a
+ * separately looked-up record on the way.
+ */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     void Func_0200115e();
@@ -717,7 +682,7 @@ s32 SceneActor_IsSlotZeroAngleInRange(void)
 {
     struct Slot02000338 *slot = Func_02001206(0);
 
-    if ((u32) ((slot->angle + 0x5FFF) << 16) <= 0x3FFE0000) {
+    if ((u32)((slot->angle + 0x5FFF) << 16) <= 0x3FFE0000) {
         return 1;
     }
     return 0;
@@ -985,6 +950,11 @@ void SceneState_SetFlag906ByActorNineteenX(void)
     }
 }
 
+/*
+ * Mirror three progress flags into three scene flags, then let the scene id
+ * at Data_02000240[224] select one of two continuations. Every call here
+ * leaves through its own veneer, so the sites stay separate.
+ */
 s32 SceneState_SyncProgressFlagsAndDispatch(void)
 {
     extern s16 Data_02000240[];
@@ -1172,7 +1142,7 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
     s32 clear = 0;
     u8 *attached;
 
-    *state = (u8) clear;
+    *state = (u8)clear;
     attached = actor->attached;
     clear -= 13;
     attached[9] = (clear & attached[9]) | 4;

@@ -4,7 +4,8 @@
 
 extern u8 Data_02000240[];
 
-void GraphicsPalette_AdjustSelectionCounter(s32 arg0) {
+void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
+{
     u8 *sp;
     u16 sel;
     s32 off;
@@ -38,5 +39,6 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0) {
     (*sp)++;
 }
 
-void GraphicsPalette_ReservedNoOpCF44(void) {
+void GraphicsPalette_ReservedNoOpCF44(void)
+{
 }

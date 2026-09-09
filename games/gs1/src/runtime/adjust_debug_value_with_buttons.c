@@ -2,7 +2,7 @@
 
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001b04;
-extern u8 * volatile Data_03001e74;
+extern u8 *volatile Data_03001e74;
 extern volatile u32 Data_03001c94;
 
 void WaitFrames(s32);

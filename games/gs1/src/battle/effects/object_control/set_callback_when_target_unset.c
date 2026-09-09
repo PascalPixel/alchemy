@@ -12,7 +12,8 @@ struct Target_08097a54 {
     s32 z;
 };
 
-void BattleEffect_SetCallbackWhenTargetUnset(struct Target_08097a54 *target) {
+void BattleEffect_SetCallbackWhenTargetUnset(struct Target_08097a54 *target)
+{
     s32 ty;
     s32 tx;
 

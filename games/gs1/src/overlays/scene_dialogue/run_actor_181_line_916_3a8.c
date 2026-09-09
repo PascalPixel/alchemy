@@ -9,7 +9,8 @@ extern void Func_02005208(s32);
 extern void Func_02005378(s32, s32);
 extern s32 Func_02005248(s32, s32);
 
-void SceneDialogue_RunActor181Line916(void) {
+void SceneDialogue_RunActor181Line916(void)
+{
     Func_0200513a((s32)Data_0200b90d);
     Func_02005130(1);
     Func_0200529a(26, 0, 0);

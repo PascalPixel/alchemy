@@ -4,7 +4,8 @@
 
 void WaitFrames(s32);
 
-void ObjectDispatch_WaitForValue16(void *obj) {
+void ObjectDispatch_WaitForValue16(void *obj)
+{
     s32 cnt;
 
     cnt = 0;

@@ -1,27 +1,7 @@
 /*
- * resource_3c4 @ 0x02000cd0 (248 bytes: 244 code + one pool word).
- *
- * Tries to move the actor record to the caller's target position.  It builds a
- * three-word 12.20 probe on the stack from the record's own position — the
- * horizontal words are snapped to their whole-unit grid with the pool mask
- * 0xfff00000 and then lifted by half a unit (0x80 << 12 = 0x00080000) — asks
- * the collision service about it, and gives up when either the probe or the
- * target is rejected.
- *
- * When both pass it runs the move: a fixed sequence of service calls, three
- * speed words written at +48, +52 and +40 (0x00030000, 0x00020000 and
- * 0x00040000), the flag byte at +85 masked with 0x7e, and finally the target
- * converted from 12.20 into the coarse tile coordinates the placement service
- * wants — `asrs #20`, `lsls #4`, `+8`, i.e. the centre of a sixteen-unit cell.
- * The flag byte is restored from its saved value (held in sl across the whole
- * body) before returning.
- *
- * The return value is observable: `pop {r3, r5} ; ... ; pop {r1} ; bx r1`
- * preserves r0, so this returns 1 when the move was refused and 0 when it ran.
- *
- * Func_02003dec and Func_02003dca_a are each called twice with different
- * argument shapes, so they are declared without prototypes: only what the two
- * call sites jointly establish is asserted.
+ * Actor movement for overlay resource_3c4.  Declarations are left without
+ * prototypes because Func_02003dec and Func_02003dca are each called twice
+ * with different argument shapes.
  */
 #include "types.h"
 
@@ -62,6 +42,14 @@ void Func_02003dec_b();
 void Func_02003e4c();
 void Func_02003eaa();
 
+/*
+ * Tries to move actor 0 onto the caller's target.  It builds a three-word
+ * 12.20 probe from the record's own position -- the horizontal words snapped
+ * to their whole-unit grid and lifted by half a unit -- asks the collision
+ * service about it, and refuses when either the probe or the target is
+ * rejected.  Returns 1 when refused and 0 when the move ran.  The 248-byte
+ * owner includes its one pool word.
+ */
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
     Actor_02000cd0 *actor = Func_02003dec_a(0);
@@ -74,9 +62,8 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 
     Func_02003d6a(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
-    /* 両方の判定は末尾の共有ブロックへ分岐する。
-     * Both guards branch to one shared exit placed after the body; writing
-     * `return 1` twice puts an inline copy near the top instead. */
+    /* Both guards branch to one shared exit placed after the body.  Writing
+     * `return 1` twice would put an inline copy near the top instead. */
     if (Func_02003dca_a(actor, probe) == 1) {
         goto refuse;
     }
@@ -93,7 +80,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
-    actor->flags &= (u8)0x7e;   /* re-read from memory, not from the saved copy */
+    actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
 
     Func_02003e24(actor, 0);
     Func_02003eb4(0, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);

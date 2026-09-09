@@ -4,7 +4,8 @@
 
 extern u8 Data_080097b8[];
 
-void Runtime_RemapBytesByTable(u8 *buf, s32 cnt) {
+void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
+{
     s32 n;
     u8 *p;
     u8 *tbl;

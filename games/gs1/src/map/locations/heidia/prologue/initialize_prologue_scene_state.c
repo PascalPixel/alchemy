@@ -6,7 +6,8 @@ extern void Func_02003f86(s32 arg0, s32 arg1);
 extern void Func_02003f8e(s32 arg0, s32 arg1);
 extern void Func_02003f2a(void);
 
-void InitializePrologueSceneState(void) {
+void InitializePrologueSceneState(void)
+{
     u8 *base;
 
     Func_02003efc();

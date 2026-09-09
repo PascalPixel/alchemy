@@ -4,7 +4,8 @@
 
 s32 Func_080772b8(void *);
 
-s32 Battle_ClassifyEntryKind(const u8 *entry) {
+s32 Battle_ClassifyEntryKind(const u8 *entry)
+{
     s32 b3;
     s32 kind;
     s32 low;

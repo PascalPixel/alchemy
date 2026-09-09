@@ -2,7 +2,8 @@
 
 extern void Func_020052a6();
 
-void SceneState_ApplyRectAt32x78(void) {
+void SceneState_ApplyRectAt32x78(void)
+{
     {
         s32 k5 = 17, k6 = 78;
 

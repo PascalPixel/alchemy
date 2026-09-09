@@ -30,7 +30,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     target[1] = *(s32 *)(Func_020048b0(0) + 12);
     target[2] = *(s32 *)(Func_020048ba(0) + 16);
 
-    if (Func_020027d8(target) != 0) {
+    if (Func_020027d8(target)!= 0) {
         /* r0 still holds the nonzero result of the test above. */
         Func_020048b4();
 

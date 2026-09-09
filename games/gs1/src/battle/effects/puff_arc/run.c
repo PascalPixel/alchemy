@@ -2,20 +2,6 @@
 
 #define BattleEffect_RunPuffArc Func_080d9fc8
 
-/*
- * Effect sequence at 0x080d9fc8.
- *
- * Nine puffs are laid out along one sine/cosine arc across the top of the
- * screen, then animated for eighty frames.  Each puff plays a six-cell
- * sequence, four frames per cell, staggered four frames apart, and is drawn
- * once, twice or three times depending on the layer count the caller set.
- * The rectangle blitter is the kind-46 block Func_080ed408 loads, so every
- * draw goes through the entry cached in Data_03001e50[46].
- *
- * Aggregate names remain provisional; byte offsets into the kind-39 work
- * block are retained where no evidence-backed structure exists yet.
- */
-
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
    call through the cached kind-46 entry rather than a fixed callee. */
@@ -86,6 +72,19 @@ typedef struct Efx {
 
 #define WORK_EFX (*(Efx **)(work + 0x7828))
 
+/*
+ * Effect sequence at 0x080d9fc8.
+ *
+ * Nine puffs are laid out along one sine/cosine arc across the top of the
+ * screen, then animated for eighty frames.  Each puff plays a six-cell
+ * sequence, four frames per cell, staggered four frames apart, and is drawn
+ * once, twice or three times depending on the layer count the caller set.
+ * The rectangle blitter is the kind-46 block Func_080ed408 loads, so every
+ * draw goes through the entry cached in Data_03001e50[46].
+ *
+ * Aggregate names remain provisional; byte offsets into the kind-39 work
+ * block are retained where no evidence-backed structure exists yet.
+ */
 void BattleEffect_RunPuffArc(Efx *efx)
 {
     u32 *cache;
@@ -127,7 +126,7 @@ void BattleEffect_RunPuffArc(Efx *efx)
     tick = 0;
     puff = (Puff *)(work + 0x7080);
     do {
-        puff->x = ((sign * ((Func_08002322(ang) << 5) >> 16)) + org) + 20;
+        puff->x = ((sign *((Func_08002322(ang) << 5) >> 16)) + org) + 20;
         puff->y = ((Func_0800231c(ang) << 4) >> 16) + 40;
         puff->tick = tick;
         ang += 0x1000;

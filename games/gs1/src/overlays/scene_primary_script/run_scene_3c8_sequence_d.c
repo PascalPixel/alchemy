@@ -112,7 +112,7 @@ void FieldScene_RunScene3c8SequenceD(void)
     }
     {
         s32 shown = 1;
-    
+
         *(volatile u16 *)(((s32)p7 + 0xcb6)) = shown;
     }
     Func_020060c6();

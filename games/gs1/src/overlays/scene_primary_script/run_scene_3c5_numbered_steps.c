@@ -5,7 +5,8 @@ extern void Func_020022e4();
 extern void Func_020040c2();
 extern void Func_02003fd6();
 
-void FieldScene_RunStep11(void) {
+void FieldScene_RunStep11(void)
+{
     Func_02003fc0();
     Func_020022e4();
     Func_020040c2(11);
@@ -18,7 +19,8 @@ extern void Func_0200230c();
 extern void Func_020040ea();
 extern void Func_02003ffe();
 
-void FieldScene_RunStep12WithPosition(void) {
+void FieldScene_RunStep12WithPosition(void)
+{
     Func_02003fd8();
     Func_02001ba4(0x1d00000, 0, 0x1220000, 223);
     Func_0200230c();
@@ -35,8 +37,8 @@ extern void Func_02002344();
 extern void Func_02004122();
 extern void Func_02004036();
 
-void FieldScene_RunStep13WithTwoPositions(void) {
-
+void FieldScene_RunStep13WithTwoPositions(void)
+{
     Func_02004000();
     Func_02001bcc(0x8f0000, 0, 0x1220000, 223);
     Func_02001bdc(0x790000, 0, 0x11e0000, 253);
@@ -50,7 +52,8 @@ extern void Func_0200235c();
 extern void Func_0200413a();
 extern void Func_0200404e();
 
-void FieldScene_RunStep15(void) {
+void FieldScene_RunStep15(void)
+{
     Func_02004038();
     Func_0200235c();
     Func_0200413a(15);
@@ -62,7 +65,8 @@ extern void Func_020040b0();
 extern void Func_02004038_a();
 extern void Func_0200406c();
 
-void FieldScene_RunStepWithValue2693(void) {
+void FieldScene_RunStepWithValue2693(void)
+{
     Func_02004050();
     Func_020040b0(0, 1);
     Func_02004038_a(0x2693, 1);

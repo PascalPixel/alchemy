@@ -8,7 +8,8 @@ void ScheduleCallback(void *);
 s32 BattleEventRuntime_Reset(void);
 void Func_080bd898(void);
 
-s32 BattleEventRuntime_WaitForReady(void) {
+s32 BattleEventRuntime_WaitForReady(void)
+{
     s32 state;
     void *runtime;
 

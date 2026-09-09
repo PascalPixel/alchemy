@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u8 * volatile Data_03001e70;
+extern u8 *volatile Data_03001e70;
 
 void Map_ClearLayerEntryFlag(u32 no)
 {

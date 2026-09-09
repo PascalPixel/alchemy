@@ -4,7 +4,8 @@ void Func_02007912();
 /* Story selector owner at 0x02001324, 84 bytes; eight calls. Per-site call
  * veneers (raw asm confirms each callee slot uses a distinct local stub
  * even across the three near-identical "twin" owners at 0x1324/1378/13cc). */
-void SceneDialogue_ShowLine1ECETo1ED0(void) {
+void SceneDialogue_ShowLine1ECETo1ED0(void)
+{
     Func_020077f0();
     if (Func_020077ce(0x92c)) Func_020078e0(0x1ece);
     else if (Func_020077e0(0x935)) Func_020078f2(0x1ecf);

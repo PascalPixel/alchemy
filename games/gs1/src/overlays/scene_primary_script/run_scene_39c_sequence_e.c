@@ -114,8 +114,6 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-
-
 typedef struct {
     s32 f0;
     s32 f1;

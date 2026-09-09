@@ -4,7 +4,8 @@
 
 s32 Object_CommitPosition();
 
-void BattleEffect_SnapScaleToFull(void *obj) {
+void BattleEffect_SnapScaleToFull(void *obj)
+{
     s32 next;
     s32 scale;
 

@@ -25,7 +25,8 @@ extern u8 Data_0200c704[];
 extern u8 Data_0200c77c[];
 extern u8 Data_0200c164[];
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_0000004d) {

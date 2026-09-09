@@ -2,7 +2,8 @@
 #include "motion_object.h"
 
 void Func_08009038(void *);
-void ReleaseBattleObjectRecords(s32 object_id) {
+void ReleaseBattleObjectRecords(s32 object_id)
+{
     struct BattleObjectSlot *slot;
     struct MotionObject *object;
     s32 record_index;
@@ -19,7 +20,7 @@ void ReleaseBattleObjectRecords(s32 object_id) {
                 Func_08009038(record);
                 record_index += 1;
             }
-            object->record_storage_kind = (s8) record;
+            object->record_storage_kind = (s8)record;
             object->records = record;
         }
     }

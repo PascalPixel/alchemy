@@ -26,6 +26,6 @@ void Menu_AppendResourceEntry(s32 no)
         *(u16 *)(entry + 14) = flags;
         off = index + 132;
         *(u16 *)(entry + 18) = slot;
-        base[off] = (u8) no;
+        base[off] = (u8)no;
     }
 }

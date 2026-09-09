@@ -1,7 +1,7 @@
-typedef signed int s32;  
-extern void Func_02002946(s32,s32,s32,s32,s32,s32);
-extern void Func_02002958(s32,s32,s32,s32,s32,s32);
-extern void Func_0200296a(s32,s32,s32,s32,s32,s32);
+typedef signed int s32;
+extern void Func_02002946(s32, s32, s32, s32, s32, s32);
+extern void Func_02002958(s32, s32, s32, s32, s32, s32);
+extern void Func_0200296a(s32, s32, s32, s32, s32, s32);
 extern void Func_020029a8(s32);
 void SceneState_SetThreeCellsAt6x11AndFlag241(void)
 {

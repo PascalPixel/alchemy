@@ -4,7 +4,8 @@
 
 void InitializeStagedActorState(struct StagedActor *actor, s32 state);
 
-s32 ResetStagedActorState(struct StagedActor *actor) {
+s32 ResetStagedActorState(struct StagedActor *actor)
+{
     InitializeStagedActorState(actor, 1);
     actor->x.value = 0;
     actor->y = 0;

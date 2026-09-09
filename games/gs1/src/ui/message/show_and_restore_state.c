@@ -12,7 +12,8 @@ extern u8 Data_00000cc6[];
 extern u8 Data_00000cf1[];
 extern u8 Data_00000d4c[];
 
-void UiMessage_ShowAndRestoreState(s32 message_id) {
+void UiMessage_ShowAndRestoreState(s32 message_id)
+{
     s32 variant;
     s32 no;
     s8 mode;

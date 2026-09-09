@@ -31,7 +31,8 @@ extern s32 Func_020083fc(s32);
 extern s32 Func_02008410(s32);
 extern s32 Func_0200841e(s32);
 
-s32 SceneData_SelectTableD004ByStateAndFlags(void) {
+s32 SceneData_SelectTableD004ByStateAndFlags(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000008b) {
         if (Func_020083ee(0x950) != 0) {
             return (s32)Data_0200dad8;

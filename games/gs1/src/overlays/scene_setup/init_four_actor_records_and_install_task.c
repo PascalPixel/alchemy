@@ -1,67 +1,6 @@
 /*
- * resource_3b7 owner at 0x020016a8, 148 bytes (0x020016a8-0x0200173b).
- *
- * Scene initialiser: lays out four actor records from three parallel in-image
- * tables, resets a camera/state block, retags two slot records, and installs
- * the per-frame task at Func_02000e5c.
- *
- * Code runs 0x020016a8-0x0200171b.  The trailing 32 bytes,
- * 0x0200171c-0x0200173b, are a literal pool of eight words - 0x0200a070,
- * 0x0200a05a, 0x0200a0d0, 0x0200a062, 0x0200a05e, 0xffe20000, 0x00000c83,
- * 0x02008e5d.  They lie past the `bx r0` return and are read only by the
- * `ldr rN, [pc, ...]` loads, so they are data.  (The disassembler renders
- * 0x02001732 as a NEON `vmull.u32`, which is exactly the trap the pool guard
- * exists for.)
- *
- * LINK BASE - this owner supplies the decisive witness.  The pool word
- * 0x02008e5d is odd, i.e. a Thumb entry, and 0x02008e5d - 1 - 0x8000 = 0xe5c,
- * which is a real prologue in this overlay (the 2,124-byte row at
- * 0x02000e5c).  It is handed to Func_080000d0, the established task installer,
- * so it is a callback pointer.  That, together with 0x02009fc0 resolving to the
- * eight BLDALPHA halfwords Func_02000880 consumes and 0x0200a018 resolving to
- * the fifteen-word table Func_02000d70 indexes, fixes the overlay's link base
- * at 0x02008000 on three independent witnesses.
- *
- * Under that base the image occupies 0x02008000-0x0200a069 (decoded size
- * 0x206a).  So the five remaining pool addresses split cleanly:
- *   0x0200a05a, 0x0200a05e, 0x0200a062  -> file offsets 0x205a/0x205e/0x2062,
- *      inside the image, and `games/gs1/asm/overlays/resource_3b7_overlay.s` spells the
- *      bytes there literally: X tile coords 0x50, 0xa0, 0x50, 0x48; Z tile
- *      coords 0x20, 0x68, 0x44, 0x48; headings 0x0000, 0x0001, 0x0000, 0x8000
- *      - four entries each, which is exactly the loop trip count.
- *   0x0200a070, 0x0200a0d0 -> past the image end, i.e. the overlay's scratch
- *      EWRAM immediately above it.  These are written, never read here.
- *
- * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
- * `bl` stores `target_offset - 2`).  In program order:
- *   0x020016f8 -> veneer 0x0200193c -> Scene_GetRecord
- *   0x020016fe -> veneer 0x0200188c -> Object_SetMode
- *   0x02001704 -> veneer 0x0200193c -> Scene_GetRecord
- *   0x0200170a -> veneer 0x0200188c -> Object_SetMode
- *   0x02001712 -> veneer 0x0200186c -> Func_080000d0
- * Completeness: 5 sites over 3 distinct targets, matching the tool's
- * `sites=5 distinct_targets=3` and the inventory row's calls=5.
- *
- * The epilogue is `pop {r5, r6, r7} / pop {r0} / bx r0`, so r0 holds the popped
- * return address and the owner returns nothing: void.  r0 is written before any
- * read, so it takes no argument.
- *
- * Uncertainties:
- *  - r4 is written without being saved, although the prologue pushes only
- *    {r5, r6, r7, lr}.  It holds the Z-coordinate table cursor across the loop
- *    and no call happens inside the loop, so nothing observable depends on it.
- *    This is the same unsaved-r4 idiom already recorded for resource_371 and
- *    resource_372; it is noted rather than "fixed".
- *  - r0 is not reloaded between each Scene_GetRecord and the Object_SetMode that
- *    follows it, so the looked-up record is that call's first argument.  The
- *    record is not null-tested here, unlike at Func_02000dd0.
- *  - The field names below are descriptive only.  The `<< 16` promotion of a
- *    byte coordinate to 16.16 and the +0/+4/+8 word triple match the position
- *    layout established in games/gs1/semantic/overlays/resource_373_c_02002f14.c, but the
- *    24-byte stride and the four cleared halfwords at +14..+20 are read off the
- *    stores alone.
- *  - The second heading value is 0x0001 rather than a multiple of 0x4000; the
- *    bytes are not in doubt (0x2064 is `01 00`), only the meaning.
+ * Scene setup for resource_3b7: four actor records built from three parallel
+ * in-image tables, a camera block reset, and the per-frame task install.
  */
 
 #include "types.h"
@@ -80,6 +19,14 @@ void Func_02002f80();
 
 void Func_02000e5c();           /* the installed per-frame task */
 
+/*
+ * The 148-byte owner includes its eight-word literal pool: those words lie
+ * past the return and are read only by the pc-relative loads.
+ * Field names are descriptive only: the 24-byte record stride and the cleared
+ * halfwords at +14..+20 are read off the stores alone, and the second heading
+ * is 0x0001 rather than a multiple of 0x4000 -- the byte is certain, its
+ * meaning is not.
+ */
 void SceneState_InitFourActorRecordsAndInstallTask(void)
 {
     u8 *work = Data_0200a070;
@@ -123,6 +70,8 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     Func_02002f8c(Func_02003036(20), 2);
     Func_02002f98(Func_02003042(21), 2);
 
+    /* The task word names in-image code with the Thumb bit set, not a runtime
+     * address; the locals keep it and its rate built rather than folded. */
     {
         s32 budget = 0xc83;
         void (*task)(void) = (void (*)(void))0x02008e5d;

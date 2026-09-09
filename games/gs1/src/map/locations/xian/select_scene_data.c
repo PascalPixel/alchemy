@@ -6,7 +6,8 @@ extern u8 Data_0200cb90[];
 extern u8 Data_0200d184[];
 extern u8 Data_0200cd40[];
 
-s32 FieldScene_SelectData(void) {
+s32 FieldScene_SelectData(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000003c) {
         return (s32)Data_0200cb90;
     }

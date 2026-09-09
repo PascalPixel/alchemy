@@ -1,26 +1,18 @@
 #include "types.h"
 
 /*
- * Resource 3b3 unindexed helper at 0x02000da8 (52 bytes, 2 calls).
- *
- * Derived span: no inventory row (item 28's unindexed population). `push
- * {r5,r6,r7,lr}` at 0x02000da8, epilogue `pop {r5,r6,r7} / pop {r0} /
- * bx r0` at 0x02000dd4-0x02000dd8, immediately followed with no gap by
- * the next owner's push {r5,r6,r7,lr} plus r8 spill at 0x02000ddc,
- * already this overlay's row `0x02000ddc | 2 calls`, so the span is
- * exactly 0x02000da8-0x02000ddc, 52 bytes.
- *
- * A close sibling of 0x02000d78 (same 60-iteration poll-with-timeout
- * shape, same field offsets), but this variant takes an extra `limit`
- * argument and stops as soon as either `obj[+12] <= obj[+20]` or
- * `obj[+12] <= limit`; unlike 0x02000d78 it does not mirror
- * `obj[+20]` back into `obj[+12]` afterward.
- *
- * Raw callee naming.
+ * Staged actor height wait for overlay resource_3b3. The callee name refers
+ * to its own call word rather than to a shared runtime address.
  */
 
 void Func_020037f0();
 
+/*
+ * Polls for up to sixty ticks until the height at +12 falls to the target
+ * at +20 or to limit, then clears +0x28 and parks +0x3c. The height is not
+ * mirrored back from +20 afterwards. The owner at 0x02000da8 is 52 bytes
+ * and carries no pool.
+ */
 void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
 {
     s32 cnt = 60;

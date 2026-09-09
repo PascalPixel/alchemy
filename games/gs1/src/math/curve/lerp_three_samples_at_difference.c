@@ -20,7 +20,7 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end)
 
     if ((u32)start < CURVE_FULL_STEPS - 1) {
         delta = second - first;
-        difference = delta * start;
+        difference = delta *start;
         if (difference < 0)
             difference += CURVE_FULL_STEPS - 1;
         difference >>= 4;

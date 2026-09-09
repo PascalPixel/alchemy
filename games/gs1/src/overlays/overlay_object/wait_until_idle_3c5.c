@@ -2,7 +2,8 @@
 
 extern void Func_02003a5e();
 
-void OverlayObject_WaitUntilIdle(s32 *obj) {
+void OverlayObject_WaitUntilIdle(s32 *obj)
+{
     s32 i = 60;
 
     while (i != 0) {

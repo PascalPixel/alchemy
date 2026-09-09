@@ -9,7 +9,8 @@ extern u8 Data_020097fc[];
 extern u8 Data_02009874[];
 extern u8 Data_02009784[];
 
-s32 StagedActorPairScene_GetVariantData(void) {
+s32 StagedActorPairScene_GetVariantData(void)
+{
     s16 scene_id = Data_02000240[224];
 
     if (scene_id == (s32)&Value_00000098) {

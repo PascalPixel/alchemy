@@ -15,6 +15,7 @@
 #define RunEventScript01 Func_02000360
 #define ConfigureFourSceneChannelsAndHandoff Func_0200140c
 
+/* Signed halfword table in RAM; index 225 selects the scene. */
 extern s16 Data_02000240[];
 extern u8 Value_00000067;
 extern u8 Data_02009c04[];
@@ -649,103 +650,19 @@ void Func_0200349a_a();
 void Func_0200349a_b();
 s32 Func_020034a2_a();
 
-/* Contiguous unnamed leaf-owner run for resource_3aa. */
-
 /*
- * resource_3aa owner at 0x02000064, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the
- * one-word literal pool at 0x2000068 holding 0x2009d9c.
- *
- * LEAF RESIDUE. Published at image offset 0x14; sweep B resolved that
- * word and, before 2026-08-01, discarded it for not opening with a `push`.
- *
- * THE SPAN IS 8 BYTES, NOT 4. The pool word sits past the `bx lr`, and the
- * `pc`-relative load at 0x02000064 reads it, so it belongs to this owner.
- * Recording 4 would orphan a word and manufacture a phantom gap.
- *
- * The pool word is an ADDRESS -- 0x2009d9c is image offset
- * 0x1d9c under the base + 0x8000 spelling -- loaded and returned
- * without being dereferenced, so this is a getter for an in-image table.
- *
- * One of the 191 rows sharing this exact body across the tree, and every
- * one of them returns a DIFFERENT address. Identical bytes are not
- * identical semantics; this row's pool word was resolved on its own.
+ * Each Func_ symbol names the pre-relocation call word the image holds, not
+ * a runtime address; imports are named by the main-image address in the
+ * trailing word of the overlay veneer. Old-style declarations are required
+ * here, because the arity varies from site to site.
  */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Contiguous unnamed state-owner run for resource_3aa. */
-
 /*
- * resource_3aa owner at 0x02000264, 252 bytes: code 0x02000264-0x02000343 and
- * the seven-word literal pool at 0x02000344-0x0200035f.  The next inventory
- * row starts at 0x02000360, so the owner is exactly its advertised span; the
- * 8-byte outgoing-argument frame it opens with `sub sp, #8` is released by
- * `add sp, #8` before the return, so nothing live escapes.
- *
- * This is the overlay's scene dispatcher.  It re-enables two channels, then
- * switches on the signed halfword `Data_02000240[225]` - the neighbour of the
- * edition selector at index 224 that the byte-exact siblings
- * `games/gs1/asm/overlays/resource_3aa_c_02000030.c` and `_020000a4.c` test - and runs
- * one of three scene bodies.  Values other than 9, 10, 11 and 20 do nothing.
- *
- * The comparison chain is a compiled `switch`: `cmp #11 / bgt`, then
- * `cmp #10 / bge` for the 10-11 pair, then `cmp #9 / beq`, with 20 tested on
- * the greater-than side.  10 and 11 share one body.
- *
- * Return type, by the interworking-epilogue rule: `pop {r0} / bx r0` pops the
- * return address into r0, so the owner is void.  r0 is written with 1 before
- * the first branch, so the owner takes no arguments either.
- *
- * Call accounting: 18 `bl` sites, all resolved with
- * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3aa 0264` - 16 to import
- * veneers (10 distinct) and 2 to in-overlay prologues, at file offsets 0x1494
- * and 0x0360.  Every site appears below exactly once.  The disassembler's own
- * annotations are wrong in the usual overlay way and were not used.
- *
- * Import shapes, consistent with the already-converted overlays:
- *   GameFlag_IsSet(id)              -> queried predicate; its result is tested
- *                                     against zero at all five sites, so it is
- *                                     used purely as a condition here.
- *   Scene_GetRecord(selector)        -> rec pointer; the halfword at +6 of
- *                                     the returned rec is written straight
- *                                     after both calls (resource_373 and
- *                                     resource_39f fix the same shape).
- *   Func_0808a0f0(selector, x, z)  -> 16.16 position setter.
- *   Func_080091c0(a, b, c, d, e, f)-> the six-argument service whose spelling
- *                                     games/gs1/semantic/overlays/resource_39a already
- *                                     carries; the two stack words this owner
- *                                     stores at [sp,#0] and [sp,#4] before the
- *                                     0x02000302 and 0x02000316 branches are
- *                                     arguments five and six, so Func_08009180
- *                                     is called with the same six-argument
- *                                     shape.
- *
- * Uncertainties, recorded rather than guessed:
- *  - The pooled ids 0x941, 0x914, 0x321, 0x915 and 0x109 passed to
- *    GameFlag_IsSet are opaque here; only the sense of each test is recovered.
- *  - The halfword written at +6 of the Scene_GetRecord rec is 0x1000 in one
- *    arm and 0xd000 in the other, both built by shifting 0x80 / 0xd0.  Whether
- *    that field is an angle or a flag word is not established.
- *  - Func_0808a0f0(8, 0x038a0000, 0x01a60000) uses a pooled first coordinate
- *    and a shifted second (211 << 17); as 16.16 these are 906.0 and 211.0.
- *  - Both in-overlay branches (0x02001494 and 0x02000360) are taken with r0
- *    holding the zero result of the preceding GameFlag_IsSet, i.e. no argument
- *    is deliberately set, so they are called with none here.
+ * Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers, while a direct call precomputes a costly
+ * constant into a local that later uses in the block share. A call that
+ * returns a value sets r0 last of its arguments.
  */
-
-/* Imports, named by the main-image address in the trailing word of each
- * overlay veneer. Old-style declarations are mandatory in this overlay. */
-
-/* Signed halfword table in RAM; index 225 selects the scene. */
-
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern u8 Data_03001ebc[];
@@ -754,6 +671,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     extern u8 Data_03001ebc[];
@@ -841,7 +759,8 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
     *(u16 *)(*(u8 **)Data_03001ebc + 0x1d8) += amount;
 }
 
-s32 SceneData_SelectTable9bd4ByState(void) {
+s32 SceneData_SelectTable9bd4ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000067) {
         return (s32)Data_02009c04;
     }
@@ -853,12 +772,18 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
+/*
+ * Returns the in-image table address 0x02009d9c, loaded and returned
+ * without being dereferenced. The eight-byte owner includes its one pool
+ * word, which sits past the bx lr.
+ */
 u8 *SceneData_GetTable9d9c(void)
 {
     return (u8 *)0x02009d9c;
 }
 
-s32 SceneData_SelectTable9ddcByStateWithInit(void) {
+s32 SceneData_SelectTable9ddcByStateWithInit(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000067) {
         Func_02001b1a(Data_02009df4);
         return (s32)Data_02009df4;
@@ -866,7 +791,8 @@ s32 SceneData_SelectTable9ddcByStateWithInit(void) {
     return (s32)Data_02009ddc;
 }
 
-s32 SceneData_SelectTable9f2cByState(void) {
+s32 SceneData_SelectTable9f2cByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_00000067) {
         return (s32)Data_02009f38;
     }
@@ -946,12 +872,20 @@ s32 SceneState_SetWord448To209AndRun(void)
     extern u8 *Data_03001ebc;
 
     *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32) (u32) &Value_00000067) {
+    if (Data_02000240[224] == (s32)(u32)&Value_00000067) {
         Func_020004ae();
     }
     return 0;
 }
 
+/*
+ * The overlay's scene dispatcher, switching on the scene selector
+ * Data_02000240[225]: 10 and 11 share a body and any other value does
+ * nothing. The epilogue pops the return address into r0, so this is void
+ * and takes no arguments; the 252-byte owner includes its seven pool words.
+ * The locals holding the coordinates, the record's +6 halfword (named by
+ * position only) and the fifth and sixth arguments force those to be built.
+ */
 void FieldScene_DispatchSceneByIndex(void)
 {
     extern u8 *Data_03001ebc;

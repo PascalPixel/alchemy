@@ -3,7 +3,8 @@ extern void Func_02001440(void);
 extern void Func_020043f8(void);
 extern void Func_02002638(void);
 
-void RunPrologueSceneSetup(void) {
+void RunPrologueSceneSetup(void)
+{
     Func_020043e8();
     Func_02001440();
     Func_020043f8();

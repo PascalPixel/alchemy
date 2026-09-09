@@ -1,7 +1,8 @@
 #include "inventory_menu.h"
 #include "owner_state.h"
 
-s32 InventoryMenu_CountItems(s32 owner_id) {
+s32 InventoryMenu_CountItems(s32 owner_id)
+{
     s32 item_id;
     s32 remaining;
     s32 count;

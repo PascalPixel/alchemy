@@ -23,7 +23,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
         break;
     }
     for (i = 0; i < 9; i++) {
-        if (Func_0200744e(v) != 0) return id;
+        if (Func_0200744e(v)!= 0) return id;
         v++;
         id++;
     }

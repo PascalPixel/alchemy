@@ -7,7 +7,8 @@ void Func_02002538(s32);
 void Func_02002548(s32, s32);
 void Func_0200247c(void);
 
-void SceneDialogue_RunActorEightFlagGatedDialogue(void) {
+void SceneDialogue_RunActorEightFlagGatedDialogue(void)
+{
     Func_02002450();
     if (Func_02002436(3) != 0) {
         Func_02002530(0x1570);

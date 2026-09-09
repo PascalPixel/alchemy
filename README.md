@@ -15,9 +15,9 @@ Japanese and European-language editions of each game from the original
 cartridges, with Japanese as the canonical source base and the English
 _Golden Sun_ release as the first complete derived build target.
 
-## Status: 64.52% DONE
+## Status: 64.54% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=40f8a2f15ad09d36)
+![Code](games/gs1/assets/readme/gs1-en-code.svg?v=b3d1dc54f56b1207)
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=d6b524e58c957cd7)
 
@@ -35,9 +35,9 @@ is the authoritative full-ROM gate for the current `gs1-en` target. Progress
 is measured by reconstructed bytes. C compiles through the approved route
 to byte-identical output; Drafted is candidate C not yet exact. Assembly groups
 all retained assembly in the charts,
-including assembly still awaiting justification. Only byte-exact assembly with
-recorded evidence that ordinary C cannot emit its required form counts as DONE;
-draft classifications do not. Neither label claims access to Camelot's original
+including assembly still awaiting justification. Assembly counts as DONE only
+with positive evidence of handwritten or third-party assembly origin; compiler
+mismatches and draft classifications do not. Neither label claims access to Camelot's original
 source.
 
 This is a preservation and decompilation project—not a remake, ROM hack,

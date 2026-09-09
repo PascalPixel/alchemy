@@ -15235,7 +15235,8 @@
       "name": "FieldScene_ConfigureActorFormation"
     },
     "resource_3bb:020012f0": {
-      "name": "FieldScene_RunFirstActorInteraction"
+      "name": "FieldScene_RunFirstActorInteraction",
+      "source": "overlays/scene_primary_script/run_first_actor_interaction.c"
     },
     "resource_3bb:02001424": {
       "name": "FieldScene_RunSecondActorInteraction",

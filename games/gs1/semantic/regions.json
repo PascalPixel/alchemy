@@ -11735,7 +11735,7 @@
       "overlay": "resource_3bd",
       "entry": "0x020013f8",
       "span_bytes": 6220,
-      "evidence": "admitted instruction-complete reviewed reconstruction; saved-register scene owner starts at 0x020013f8 and returns through pop {r0}/bx r0 at 0x02002c32-0x02002c34. The six directly referenced literal words at 0x02002c38-0x02002c43 are included before the next owner prologue at 0x02002c44, establishing the 6220-byte whole-owner boundary. Ordered resolver audit finds 703 call sites to 44 imported targets, including the three conditional tails and two 17-iteration hardware-register loops. The C preserves all static call sites, branch-selected tails, object/workspace field offsets, halfword stores and 62 literal values in ordinary expressions; no inline assembly, fixed-register trick, or raw translator construct"
+      "evidence": "Complete saved-register scene function from 0x020013f8 through its sole pop {r0}/bx r0 return at 0x02002c32-0x02002c34, alignment, and three directly referenced literal words at 0x02002c38-0x02002c43. The next owner begins at 0x02002c44, establishing the complete 6220-byte boundary. Original-site resolver audit finds 703 calls to 44 imported targets. Boundary evidence does not claim that its C candidate is byte-exact."
     },
     {
       "overlay": "resource_3bd",

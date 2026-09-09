@@ -55,7 +55,6 @@ void Func_02007a92(s32 flag);
 void Func_02007ab2(s32 flag, s32 value);
 
 /* Complete reference-actor-54 selected-actor setup wrapper. */
-
 s32 StoryReward_LookupBySelection(u32 selection)
 {
     s32 flag_base = 0;

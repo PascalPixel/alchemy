@@ -1,11 +1,5 @@
 #include "types.h"
 
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define BattleRuntime_Reset_1(args...) Func_02005890(args)
 #define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_020058da, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_020058e4, a0, a1, a2)
@@ -63,23 +57,10 @@
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_02005b8e(args)
 #define Audio_PlayCueForPartyMember_1(args...) Func_02005cca(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02005b16(args)
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define ObjectMotion_SetSpeedParameters_1_020019a4(a0, a1, a2) Call3(Func_02006736, a0, a1, a2)
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_0200676c, a0, a1, a2)
 #define Audio_PlayCue_1_020019a4(a0) Value1(Func_020068f8, a0)
-/* Word at +456 of the shared scene work record. */
 #define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)0x03001ebc + 456))
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define ObjectMotion_SetSpeedParameters_1_020019e4(a0, a1, a2) Call3(Func_02006776, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_1_020019e4(a0, a1, a2) Call3(Func_020067b4, a0, a1, a2)
 #define GameFlag_IsSet_1_020019e4(args...) Func_0200671a(args)
@@ -88,15 +69,7 @@
 #define BattleEvent_RunActionAndWait_1_020019e4(a0, a1) Call2(Func_02006840, a0, a1)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_020019e4() Call0(Func_0200676c_a)
 #define Audio_PlayCue_1_020019e4(a0) Value1(Func_02006958, a0)
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
 #define SCENE_WORK_FIELD_456 (*(u32 *)(*(u8 **)0x03001ebc + 456))
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 #define Scene_GetRecord_1_02001a4c(args...) Func_020067d0(args)
 #define Scene_GetRecord_2_02001a4c(args...) Func_020067d8(args)
 #define BattleRuntime_Reset_1_02001a4c() Call0(Func_020067a6)
@@ -123,8 +96,6 @@
 #define GameFlag_Set_1_02001a4c(a0) Value1(Func_02006872, a0)
 #define GameFlag_Set_2_02001a4c(a0) Call1(Func_0200687a, a0)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02001a4c() Value0(Func_020068c4)
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
 #define RATIO_HI 52428
 #define RATIO_LO 26214
 #define FieldScene_RunScene383_02000428 Func_02000428
@@ -141,11 +112,7 @@ struct SceneRecord {
     u16 value100;
 };
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_03001ebc[];
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00001360[];
 extern u8 Value_00000854;
 extern u8 Value_000012c3;
@@ -218,8 +185,6 @@ void Func_020057c8();
 void Func_0200580e();
 void Func_02005822();
 void Func_0200586a();
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 void Func_02001b36();
 void Func_020051f2();
 void Func_02005222();
@@ -338,6 +303,24 @@ void Func_020068f2();
 void Func_020068fe();
 void Func_02006930();
 void *Func_020067d0();
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+
+/* Word at +456 of the shared scene work record. */
+
+/* Field at +456 of the shared scene work record, addressed through the
+ * loader-fixed pointer at 0x03001ebc. */
+
+/* Pair of ratio-like arguments shared by three setup calls below (each
+ * applied to a different index: 0, 1, 2). */
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

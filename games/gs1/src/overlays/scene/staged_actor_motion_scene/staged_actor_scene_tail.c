@@ -1,10 +1,5 @@
 #include "types.h"
 
-/*
- * Staged actor cutscene tail -- resource_373. The long scene script plus the
- * particle, sound, and vertical-motion effects it drives.
- */
-
 #define FieldScene_RunStagedActorCutsceneSequence Func_02003fb0
 #define Effect_ConfigureSpawnedParticle Func_0200575c
 #define Effect_SpawnRisingDustBurst Func_020057fc
@@ -12,6 +7,7 @@
 #define Effect_PlayStepSound Func_02005a08
 #define Effect_AnimateVerticalPositive Func_02005cc4
 #define Effect_AnimateVerticalNegative Func_02005d14
+
 struct SourceEntity {
     s32 f00;
     s32 f04;
@@ -84,11 +80,6 @@ struct StagedVerticalEffect {
 
 extern s32 Data_0200e6e0[];
 
-/*
- * Each alias names the loader-relocated call word the image holds, not a
- * runtime address. The declarations are old-style because the call sites vary
- * in arity.
- */
 void Func_020078a2();
 void Func_02007b8a();
 void Func_02007c4a();
@@ -635,6 +626,17 @@ void Func_0200bbec(s32);
 s32 Func_0200bb9c(s32);
 void Func_0200bc3c(s32);
 s32 Func_0200bbec_a(s32);
+
+/*
+ * Staged actor cutscene tail -- resource_373. The long scene script plus the
+ * particle, sound, and vertical-motion effects it drives.
+ */
+
+/*
+ * Each alias names the loader-relocated call word the image holds, not a
+ * runtime address. The declarations are old-style because the call sites vary
+ * in arity.
+ */
 
 /*
  * Calls spelled through these wrappers pass their constants straight into the

@@ -18,9 +18,6 @@ extern u8 Data_00000fb0[];
 extern u8 Data_00000fbf[];
 extern u8 Data_03001ebc[];
 
-/* Each Func_ symbol names the loader-relocated call word the image holds for
- * one call site, not a runtime address, so several names can reach the same
- * target. Declarations are old-style where the arity varies between sites. */
 s32 Func_02001a9e(s32, s32);
 s32 Func_02001b0e(s32);
 s32 Func_02001b1c(s32);
@@ -227,6 +224,10 @@ void Func_020024ac();
 void Func_020024ca();
 void Func_020024f0();
 void Func_020024fc();
+
+/* Each Func_ symbol names the loader-relocated call word the image holds for
+ * one call site, not a runtime address, so several names can reach the same
+ * target. Declarations are old-style where the arity varies between sites. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

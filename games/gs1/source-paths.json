@@ -17893,6 +17893,10 @@
     "main:0808e14c": {
       "name": "Map_FindMatchingTrigger",
       "source": "map/find_matching_trigger.c"
+    },
+    "resource_3a5:02000344": {
+      "name": "SceneEffect_SpawnParticleEverySixteenFrames",
+      "source": "overlays/effect/spawn_particle_every_sixteen_frames.c"
     }
   }
 }

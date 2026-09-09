@@ -17909,6 +17909,10 @@
     "resource_372:02000f38": {
       "name": "FieldScene_RunActorTwelveStagingSequence",
       "source": "overlays/scene_primary_script/run_actor_twelve_staging_sequence.c"
+    },
+    "resource_3c0:02000c00": {
+      "name": "FieldScene_RunActorPairFadeAndSelectedResult",
+      "source": "overlays/scene_primary_script/run_actor_pair_fade_and_selected_result.c"
     }
   }
 }

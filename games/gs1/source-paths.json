@@ -15091,7 +15091,8 @@
       "name": "BattleEffect_CleanupSceneObjects"
     },
     "main:080a1d08": {
-      "name": "InventoryMenu_ShowModalMessage"
+      "name": "InventoryMenu_ShowModalMessage",
+      "source": "inventory_menu/show_modal_message.c"
     },
     "main:080a24d0": {
       "name": "RunAssetSelectionScreen"

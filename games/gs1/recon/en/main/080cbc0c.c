@@ -2,636 +2,545 @@
 
 #define BattleEffect_RunTileAndPaletteAnimation Func_080cbc0c
 
-typedef void (*DrawRectangleFn)(
-    void *destination, const void *source, s32 x, s32 y,
-    s32 width, s32 height);
-typedef void (*MemoryTransferFn)();
-typedef void (*CopyWordsFn)(void *dst, const void *src, s32 size);
-typedef void (*FillWordsFn)(void *dst, s32 size, u32 word);
-void Func_080d6888(s32 set, s32 object, s32 group, s32 slot, s32 value);
-
 /*
- * This header contains macros emitted by m2c in "valid syntax" mode,
- * which can be enabled by passing `--valid-syntax` on the command line.
+ * Blocking battle effect scene at 0x080cbc0c.
  *
- * In this mode, unhandled types and expressions are emitted as macros so
- * that the output is compilable without human intervention.
+ * Allocates three heap blocks (scene work 0x782c, a 0x4000 staging surface and
+ * a 0x302 scratch), programs the background/window/blend registers, builds a
+ * 16-row by 8-column screen-block tilemap at 0x06003800 (one palette bank per
+ * row, tiles from 0x100 up) and loads the effect graphics, then
+ * runs 0x80 frames.  Each frame it fades the object palette towards the table
+ * at sys+0x544, rasterizes a growing ring into the 8bpp work buffer at
+ * 0x02010000 (tile-major, 256 px wide), blits 0x21 sprite pieces through the
+ * two routines published by Func_080ed408, and finally releases everything.
+ *
+ * Still uncertain: the meaning of the 0x1c-byte particle records at
+ * work+0x7080 (only offsets 0, 4, 0xc, 0x10 and 0x18 are touched here), the
+ * exact roles of the scene flags at work+0x7780/0x7784/0x7824, and the source
+ * tables at 0x080ee016 / 0x080ee037 / 0x080edf90 / 0x080edfb1 / 0x080edfd2.
+ * Those five tables are spelled as integer addresses because the unit declares
+ * no data symbols for them; that costs the reference's reload-and-index form
+ * in the sprite loop.  This is a measured draft, not an exact match.
  */
 
-#ifndef M2C_MACROS_H
-#define M2C_MACROS_H
+/* Fixed IWRAM helpers reached through a register; the ROM calls them through
+   the _call_via_rN veneers, so they are modelled as typed indirect calls. */
+typedef void (*ClearFn)(void *dst, s32 size);
+typedef void (*FillFn)(void *dst, s32 size, u32 value);
+typedef void (*CopyFn)(void *dst, const void *src, s32 size);
+/* Rectangle blitter published in absolute_03001e50 by Func_080ed408. */
+typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
 
-/* Unknown types */
-typedef s32 M2C_UNK;
-typedef s8  M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
-typedef s64 M2C_UNK64;
+#define IWRAM_CLEAR ((ClearFn)0x03000164)
+#define IWRAM_FILL ((FillFn)0x03000168)
+#define IWRAM_COPY ((CopyFn)0x03001388)
 
-/* Unknown field access, like `*(type_ptr) &expr->unk_offset` */
+/* 8bpp tile-major work buffer, 32 tiles across. */
+#define WORK_PIXELS 0x02010000
+
+/*
+ * A pixel offset inside that surface is (y / 8) * 0x800 + (x / 8) * 0x40
+ * + (y & 7) * 8 + (x & 7).  The ring plotter builds the column part once per
+ * column and the row part once per row, so the eight mirrored points of a
+ * Bresenham step share four subexpressions.
+ */
+#define PLOT_AT(off) (*(u8 *)(WORK_PIXELS + (off)) = 2)
+
+void *Func_080048b0(s32 id, s32 size);
+void Func_08002dd8(s32 id);
+void Func_080030f8(s32 arg0);
+void Func_080041d8(s32 entry, s32 arg1);
+void Func_08004278(s32 entry);
+s32 Func_08004458(void);
+void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
+void Func_080b5038(s32 a, s32 b, s32 c);
+void Func_080b5040(s32 a, s32 b, s32 c);
+void Func_080cd508(void);
+void Func_080cd52c(void);
+void Func_080d6888(s32 set, s32 object, s32 group, s32 slot, s32 value);
+void Func_080e0524(s32 id, void *dst, s32 arg2, s32 arg3);
+void Func_080e3908(void *ent, s32 arg1, s32 arg2);
+void Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
+void Func_080f9010(s32 id);
+
+/* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-/* Bitwise (reinterpret) cast */
-#define M2C_BITWISE(type, expr) ((type)(expr))
-
-/* Unaligned reads */
-#define M2C_LWL(expr) (expr)
-#define M2C_FIRST3BYTES(expr) (expr)
-#define M2C_UNALIGNED32(expr) (expr)
-
-/* Unhandled instructions */
-#define M2C_ERROR(desc) (0)
-#define M2C_TRAP_IF(cond) (0)
-#define M2C_BREAK() (0)
-#define M2C_SYNC() (0)
-
-#define GLUE_F64(a, b) (0.0)
-#define MULT_HI(a, b) (0)
-#define MULTU_HI(a, b) (0)
-#define DMULT_HI(a, b) (0)
-#define DMULTU_HI(a, b) (0)
-#define CLZ(x) (0)
-#define REVERSE_BITS(x) (0)
-#define ROTATE_RIGHT(x, shift) (0)
-#define ARM_RRX(x, carry) (0)
-#define BSWAP32(x) (0)
-#define BSWAP16(x) (0)
-#define BSWAP16X2(x) (0)
-
-/* Carry/overflow bits from partially-implemented instructions */
-#define M2C_CARRY 0
-#define M2C_OVERFLOW(a) (0)
-
-/* Memcpy patterns */
-#define M2C_MEMCPY_ALIGNED memcpy
-#define M2C_MEMCPY_UNALIGNED memcpy
-#define M2C_STRUCT_COPY memcpy
-
-/* Sh2 control register loads/stores */
-#define M2C_LOAD_SR() (0)
-#define M2C_LOAD_GBR() (0)
-#define M2C_LOAD_VBR() (0)
-#define M2C_STORE_SR(a)
-#define M2C_STORE_GBR(a)
-#define M2C_STORE_VBR(a)
-
-#define M2C_CMP_STR(a, b) (0)
-
-#endif
-
 void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
-    struct M2cAggregate_absolute_02010000 *sp28;
-    struct M2cAggregate_absolute_02010000 *sp24;
-    s32 sp20;
-    DrawRectangleFn routines[2];
-    MemoryTransferFn transfer;
-    struct M2cAggregate_deref_absolute_03001e74_0 *sp14;
-    s32 sp10;
-    s32 spC;
-    s32 sp8;
-    s16 *var_r0_1012;
-    s32 temp_lr_618;
-    s32 temp_r1_518;
-    s32 temp_r1_585;
-    s32 temp_r1_688;
-    s32 temp_r1_742;
-    s32 temp_r1_835;
-    s32 temp_r1_872;
-    s32 temp_r1_895;
-    s32 temp_r2_1182;
-    s32 temp_r2_299;
-    s32 temp_r2_800;
-    s32 temp_r3_529;
-    s32 temp_r3_652;
-    s32 temp_r3_721;
-    s32 temp_r3_797;
-    s32 temp_r3_817;
-    s32 temp_r3_912;
-    s32 temp_r4_526;
-    s32 temp_r4_586;
-    s32 temp_r4_656;
-    s32 temp_r5_671;
-    s32 temp_r5_801;
-    s32 temp_r5_934;
-    s32 temp_r6_672;
-    s32 temp_r7_655;
-    s32 temp_r7_818;
-    s32 temp_sl_762;
-    s32 var_fp_603;
-    s32 var_ip_132;
-    s32 var_r0_153;
-    s32 var_r0_516;
-    s32 var_r0_613;
-    s32 var_r0_701;
-    s32 var_r0_757;
-    s32 var_r0_847;
-    s32 var_r1_1017;
-    s32 var_r1_1139;
-    s32 var_r1_155;
-    s32 var_r1_681;
-    s32 var_r1_735;
-    s32 var_r1_828;
-    s32 var_r2_515;
-    s32 var_r2_617;
-    s32 var_r2_703;
-    s32 var_r2_761;
-    s32 var_r2_851;
-    s32 var_r3_1121;
-    s32 var_r3_638;
-    s32 var_r3_646;
-    s32 var_r3_665;
-    s32 var_r3_714;
-    s32 var_r3_783;
-    s32 var_r3_791;
-    s32 var_r3_811;
-    s32 var_r3_865;
-    s32 var_r3_888;
-    s32 var_r4_154;
-    s32 var_r4_619;
-    s32 var_r4_763;
-    s32 var_r5_509;
-    s32 var_r5_63;
-    s32 var_r6_1041;
-    s32 var_r6_1118;
-    s32 var_r6_295;
-    s32 var_r6_454;
-    s32 var_r6_616;
-    s32 var_r6_764;
-    s32 var_r6_953;
-    s32 var_r7_136;
-    s32 var_r9_602;
-    struct M2cAggregate_absolute_02010000 *var_r1_291;
-    struct M2cAggregate_absolute_02010000 *var_r5_1072;
-    struct M2cAggregate_absolute_02010000 *var_r5_1119;
-    struct M2cAggregate_absolute_02010000 *var_r5_954;
-    struct M2cAggregate_deref_absolute_03001e74_8c *temp_r9_36;
-    u16 *var_lr_453;
-    u16 *var_r9_457;
-    u16 temp_r3_506;
-    u16 temp_r3_514;
-    u16 temp_r4_1228;
-    u16 temp_r4_193;
-    u16 temp_r4_345;
-    u32 temp_r1_989;
-    u32 temp_r3_1131;
-    u32 temp_r3_300;
-    u32 temp_r3_510;
-    u32 temp_r3_519;
-    u32 temp_r4_522;
-    u32 temp_sl_521;
-    u32 var_r0_992;
-    u32 var_r1_1134;
-    u32 var_r6_1013;
-    u8 *var_r0_292;
-    u8 *var_r4_290;
-    void *temp_r3_116;
-    void *temp_r3_1237;
-    void *temp_r3_1240;
-    void *temp_r3_202;
-    void *temp_r3_205;
-    void *temp_r3_354;
-    void *temp_r3_357;
-    void *var_r6_129;
+    struct M2cAggregate_absolute_02010000 *work;
+    struct M2cAggregate_absolute_02010000 *canvas;
+    struct M2cAggregate_absolute_02010000 *ent;
+    struct M2cAggregate_deref_absolute_03001e74_0 *sys;
+    struct M2cAggregate_deref_absolute_03001e74_8c *ctl;
+    ClearFn clr;
+    FillFn fill;
+    BlitFn draw0;
+    BlitFn draw1;
+    s32 frame;
+    s32 rad;
+    s32 radMax;
+    s32 err;
+    s32 px;
+    s32 py;
+    s32 cnt;
+    s32 idx;
+    s32 col;
+    s32 row;
+    s32 pos;
+    s32 base;
+    s32 ent0;
+    s32 ent1;
+    s32 sx;
+    s32 sy;
+    s32 lvl;
+    s32 xa;
+    s32 xa0;
+    s32 xa2;
+    s32 xb;
+    s32 xb2;
+    s32 ya;
+    s32 yb;
+    s32 ua;
+    s32 ua0;
+    s32 ua2;
+    s32 ub;
+    s32 ub2;
+    s32 va;
+    s32 vb;
+    s32 oxa;
+    s32 oxb;
+    s32 hya;
+    s32 hyb;
+    s32 tya;
+    s32 tyb;
+    s32 oua;
+    s32 oub;
+    s32 hva;
+    s32 hvb;
+    s32 tva;
+    s32 tvb;
+    s32 r;
+    s32 g;
+    s32 b;
+    s32 tr;
+    s32 tg;
+    s32 tb;
+    u32 cur;
+    u32 tgt;
+    u32 span;
+    u8 *slot;
+    u8 *tblx;
+    u8 *tbly;
+    u16 *dst;
+    u16 *src;
+    s16 *pal;
+    s32 ime;
+    s32 qcnt;
 
-    sp28 = Func_080048b0(0x27, 0x782C);
-    sp24 = Func_080048b0(0x28, 0x4000);
+    work = Func_080048b0(0x27, 0x782C);
+    canvas = Func_080048b0(0x28, 0x4000);
     Func_080048b0(0x29, 0x302);
-    sp14 = absolute_03001e74.field_0000;
-    temp_r9_36 = absolute_03001e74.field_008c;
-    M2C_FIELD(sp28, void **, 0x7828) = arg0;
+    sys = absolute_03001e74.field_0000;
+    ctl = absolute_03001e74.field_008c;
+    M2C_FIELD(work, void **, 0x7828) = arg0;
     Func_080cd508();
-    temp_r9_36->field_000c = 1;
+    ctl->field_000c = 1;
     absolute_03001ad0.field_0006 = 0x20;
-    Func_080b5038(1, M2C_FIELD(sp14, u16 *, 0x648), 0);
+    Func_080b5038(1, M2C_FIELD(sys, u16 *, 0x648), 0);
     absolute_0400000c.field_0000 = 0x784;
     Func_080b5028(0, 0, 0, 0x64);
-    var_r5_63 = 0;
-    temp_r9_36->field_000c = 0;
-    absolute_04000028.field_0000 = 0;
+    idx = 0;
+    ctl->field_000c = 0;
+    *(s32 *)0x04000028 = 0;
     *(s32 *)0x0400002C = 0xFFFFF000;
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x80;
-    absolute_04000022.field_0000 = 0;
-    absolute_04000022.field_0002 = 0;
-    M2C_FIELD((void *)0x04000020, s16 *, 6) = 0x100;
-    absolute_04000040.field_0000 = 0xF0;
-    absolute_04000040.field_0004 = 0x1088;
-    temp_r3_116 = (u8 *)&absolute_04000040.field_0004 - 2;
-    M2C_FIELD(temp_r3_116, s16 *, 0) = 0xF0;
-    M2C_FIELD(temp_r3_116, s16 *, 4) = 0x1088;
-    absolute_04000048.field_0000 = 0x3537;
-    absolute_04000048.field_0002 = 0x3F21;
-    var_r6_129 = NULL;
-    var_ip_132 = 0;
-    var_r7_136 = 0;
+    *(s16 *)0x04000020 = 0x80;
+    *(s16 *)0x04000022 = 0;
+    *(s16 *)0x04000024 = 0;
+    *(s16 *)0x04000026 = 0x100;
+    *(s16 *)0x04000040 = 0xF0;
+    *(s16 *)0x04000044 = 0x1088;
+    *(s16 *)0x04000042 = 0xF0;
+    *(s16 *)0x04000046 = 0x1088;
+    *(s16 *)0x04000048 = 0x3537;
+    *(s16 *)0x0400004A = 0x3F21;
+
+    /* 16 rows of 8 map entries, one screen block at 0x06003800. */
+    pos = 0;
+    row = 0;
+    base = 0;
     do {
-        var_r0_153 = var_r7_136 + 0x100;
-        var_r4_154 = 0;
-        var_r1_155 = var_r5_63 * 2;
-loop_4:
-        var_r4_154 += 1;
-        *(s16 *)(0x06003800 + (s32) var_r6_129) = (s16) (var_r0_153 | var_r1_155);
-        var_r0_153 += 0x200;
-        var_r1_155 += 2;
-        var_r6_129 += 2;
-        if (var_r4_154 != 8) {
-            goto loop_4;
-        }
-        var_ip_132 += 1;
-        var_r7_136 += 0x1000;
-        var_r5_63 += 8;
-    } while (var_ip_132 != 0x10);
-    transfer = (MemoryTransferFn)0x03000164;
-    transfer(sp24, 0x4000);
-    transfer((struct M2cAggregate_absolute_02010000 *)0x06004000, 0x4000);
-    temp_r4_193 = *(u16 *)0x04000208;
+        ent0 = base + 0x100;
+        col = 0;
+        ent1 = idx * 2;
+        do {
+            col += 1;
+            *(s16 *)(0x06003800 + pos) = (s16) (ent0 | ent1);
+            ent0 += 0x200;
+            ent1 += 2;
+            pos += 2;
+        } while (col != 8);
+        row += 1;
+        base += 0x1000;
+        idx += 8;
+    } while (row != 0x10);
+
+    clr = IWRAM_CLEAR;
+    clr(canvas, 0x4000);
+    clr((void *)0x06004000, 0x4000);
+
+    ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    if ((s32) absolute_02002090.field_0000 <= 0x1F) {
-        temp_r3_202 = (absolute_02002090.field_0000 * 0xC) + (u8 *)&absolute_02002090;
-        absolute_02002090.field_0000 += 1;
-        temp_r3_205 = temp_r3_202 + 4;
-        M2C_FIELD(temp_r3_202, s32 *, 4) = 0x7741;
-        M2C_FIELD(temp_r3_205, s32 *, 4) = 0x04000000;
-        M2C_FIELD((temp_r3_205 + 4), s32 *, 4) = 0x20000;
+    qcnt = absolute_02002090.field_0000;
+    if (qcnt <= 0x1F) {
+        slot = (u8 *)&absolute_02002090 + (qcnt * 0xC);
+        absolute_02002090.field_0000 = qcnt + 1;
+        M2C_FIELD(slot, s32 *, 4) = 0x7741;
+        M2C_FIELD(slot, s32 *, 8) = 0x04000000;
+        M2C_FIELD(slot, s32 *, 12) = 0x20000;
     }
-    *(u16 *)0x04000208 = temp_r4_193;
+    *(u16 *)0x04000208 = (u16) ime;
+
     *(s16 *)0x04000052 = 0x1010;
     *(s16 *)0x04000050 = 0;
-    Func_080e0524(0x44, sp28, 1, 1);
-    M2C_FIELD(sp28, s32 *, 0x7780) = 1;
-    M2C_FIELD(sp28, s32 *, 0x7784) = 0;
+    Func_080e0524(0x44, work, 1, 1);
+    M2C_FIELD(work, s32 *, 0x7780) = 1;
+    M2C_FIELD(work, s32 *, 0x7784) = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080ed408(0x2E, 7, 7, 3, 1);
-    routines[0] = (DrawRectangleFn)absolute_03001e50.field_00b8;
+    draw0 = (BlitFn)absolute_03001e50.field_00b8;
     Func_080ed408(0x2F, 7, 7, 3, 2);
-    routines[1] = (DrawRectangleFn)absolute_03001e50.field_00bc;
-    spC = 0;
-    var_r4_290 = (u8 *)0x080EE037;
-    var_r1_291 = (void *)((u8 *)sp28 + 0x7080);
-    var_r0_292 = (u8 *)0x080EE016;
-    var_r6_295 = 0;
+    draw1 = (BlitFn)absolute_03001e50.field_00bc;
+
+    /* Seed the 0x21 pieces from the two byte tables of start coordinates. */
+    rad = 0;
+    tbly = (u8 *)0x080EE037;
+    ent = (void *)((u8 *)work + 0x7080);
+    tblx = (u8 *)0x080EE016;
+    cnt = 0;
     do {
-        temp_r2_299 = *var_r0_292 << 0x10;
-        temp_r3_300 = *var_r4_290 << 0x10;
-        M2C_FIELD(var_r1_291, s32 *, 0) = temp_r2_299;
-        var_r1_291->field_0004 = temp_r3_300;
-        var_r6_295 += 1;
-        var_r1_291->field_000c = (u32) ((s32) (temp_r2_299 + 0xFFE00000) >> 2);
-        var_r1_291->field_0010 = (u32) ((s32) (temp_r3_300 + 0xFFC40000) >> 2);
-        var_r0_292 += 1;
-        var_r4_290 += 1;
-        var_r1_291 = (void *)((u8 *)var_r1_291 + 0x1C);
-    } while (var_r6_295 != 0x21);
-    ((CopyWordsFn)0x03001388)(&absolute_02010000, (void *)0x06008000, 0x7800);
-    transfer = (MemoryTransferFn)0x03000164;
-    transfer(&absolute_02010000, 0x7800, 0x01010101);
-    temp_r9_36->field_0010 = 1;
-    M2C_FIELD(sp28, s32 *, 0x77A0) = (s32) absolute_03001ad0.field_0004;
-    M2C_FIELD(sp28, s32 *, 0x77A4) = (s32) absolute_03001ad0.field_0006;
+        sx = *tblx << 0x10;
+        sy = *tbly << 0x10;
+        M2C_FIELD(ent, s32 *, 0) = sx;
+        ent->field_0004 = sy;
+        cnt += 1;
+        ent->field_000c = (u32) ((s32) (sx + 0xFFE00000) >> 2);
+        ent->field_0010 = (u32) ((s32) (sy + 0xFFC40000) >> 2);
+        tblx += 1;
+        tbly += 1;
+        ent = (void *)((u8 *)ent + 0x1C);
+    } while (cnt != 0x21);
+
+    IWRAM_COPY(&absolute_02010000, (void *)0x06008000, 0x7800);
+    fill = IWRAM_FILL;
+    fill(&absolute_02010000, 0x7800, 0x01010101);
+    ctl->field_0010 = 1;
+    M2C_FIELD(work, s32 *, 0x77A0) = (s32) absolute_03001ad0.field_0004;
+    M2C_FIELD(work, s32 *, 0x77A4) = (s32) absolute_03001ad0.field_0006;
     absolute_03001ad0.field_0004 = 0;
-    temp_r4_345 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0;
-    if ((s32) absolute_02002090.field_0000 <= 0x1F) {
-        temp_r3_354 = (absolute_02002090.field_0000 * 0xC) + (u8 *)&absolute_02002090;
-        absolute_02002090.field_0000 += 1;
-        temp_r3_357 = temp_r3_354 + 4;
-        M2C_FIELD(temp_r3_354, s32 *, 4) = 0x1F81;
-        M2C_FIELD(temp_r3_357, struct M2cAggregate_absolute_0400000a **, 4) = &absolute_0400000a;
-        M2C_FIELD((temp_r3_357 + 4), s32 *, 4) = 0x20000;
+
+    ime = *(u16 *)0x04000208;
+    *(u16 *)0x04000208 = 0x04000208;
+    qcnt = absolute_02002090.field_0000;
+    if (qcnt <= 0x1F) {
+        slot = (u8 *)&absolute_02002090 + (qcnt * 0xC);
+        absolute_02002090.field_0000 = qcnt + 1;
+        M2C_FIELD(slot, s32 *, 4) = 0x1F81;
+        M2C_FIELD(slot, s32 *, 8) = (u32) &absolute_0400000a;
+        M2C_FIELD(slot, s32 *, 12) = 0x20000;
     }
-    *(u16 *)0x04000208 = temp_r4_345;
-    transfer((struct M2cAggregate_absolute_02010000 *)0x050000C0, 0x100, 0x7FFF7FFF);
+    *(u16 *)0x04000208 = (u16) ime;
+
+    fill((void *)0x050000C0, 0x100, 0x7FFF7FFF);
     Func_080f9010(0xD4);
-    Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), 7, 3, 0, 0x1E);
-    sp20 = 0;
-loop_14:
-    if (sp20 == 2) {
-        Func_080f9010(0xD4);
-    }
-    if (sp20 == 3) {
-        Func_080f9010(0xD4);
-    }
-    if (sp20 == 0x1C) {
-        Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), -1, 3, -1, 0);
-    }
-    if (sp20 == 0x20) {
-        Func_080f9010(0x95);
-    }
-    if (sp20 == 5) {
-        Func_080f9010(0x91);
-        absolute_03001ad0.field_0004 = (u16) M2C_FIELD(sp28, s32 *, 0x77A0);
-        Func_080b5040(1, M2C_FIELD(sp14, u16 *, 0x648), -1);
-    }
-    if (sp20 > 7) {
-        var_lr_453 = (u16 *)0x050000C0;
-        var_r6_454 = 0;
-        var_r9_457 = (u16 *)((u8 *)sp14 + 0x544);
-        do {
-            temp_r3_506 = *var_lr_453;
-            var_r5_509 = 0x1F & temp_r3_506;
-            temp_r3_510 = temp_r3_506 << 0x10;
-            temp_r3_514 = *var_r9_457;
-            var_r2_515 = (temp_r3_510 >> 0x15) & 0x1F;
-            var_r0_516 = (temp_r3_510 >> 0x1A) & 0x1F;
-            temp_r1_518 = 0x1F & temp_r3_514;
-            temp_r3_519 = temp_r3_514 << 0x10;
-            temp_sl_521 = temp_r3_519;
-            temp_r4_522 = temp_r3_519 >> 0x15;
-            var_r9_457 += 1;
-            temp_r4_526 = temp_r4_522 & 0x1F;
-            temp_r3_529 = (temp_sl_521 >> 0x1A) & 0x1F;
-            if (var_r5_509 < temp_r1_518) {
-                var_r5_509 += 1;
-            } else if (var_r5_509 > temp_r1_518) {
-                var_r5_509 -= 1;
-            }
-            if (var_r2_515 < temp_r4_526) {
-                var_r2_515 += 1;
-            } else if (var_r2_515 > temp_r4_526) {
-                var_r2_515 -= 1;
-            }
-            if (var_r0_516 < temp_r3_529) {
-                var_r0_516 += 1;
-            } else if (var_r0_516 > temp_r3_529) {
-                var_r0_516 -= 1;
-            }
-            var_r6_454 += 1;
-            *var_lr_453 = (var_r0_516 << 0xA) | (var_r2_515 << 5) | var_r5_509;
-            var_lr_453 += 1;
-        } while (var_r6_454 != 0x80);
-    }
-    if (sp20 == 4) {
-        ((FillWordsFn)0x03000168)((void *)0x06008000, 0x7800, 0x02020202);
-    }
-    if (sp20 > 3) {
+    Func_080d6888(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+                  7, 3, 0, 0x1E);
 
-    } else {
-        temp_r1_585 = (sp20 * 4) + 8;
-        temp_r4_586 = sp20 << 5;
-        sp10 = temp_r4_586;
-        *(s16 *)0x05000004 = (temp_r1_585 << 0xA) | (temp_r1_585 << 5) | temp_r1_585;
-        if (spC == temp_r4_586) {
-
-        } else {
-loop_46:
-            var_r9_602 = spC;
-            var_fp_603 = 0;
-            sp8 = spC;
-            if (spC < 0) {
-
-            } else {
-loop_48:
-                var_r0_613 = 0x60 - var_r9_602;
-                var_r6_616 = 0x3C - var_fp_603;
-                var_r2_617 = var_r9_602 + 0x60;
-                temp_lr_618 = var_r0_613;
-                var_r4_619 = var_fp_603 + 0x3C;
-                if (var_r6_616 < 0) {
-                    var_r6_616 = 0;
-                }
-                if (var_r4_619 > 0x77) {
-                    var_r4_619 = 0x77;
-                }
-                if (var_r0_613 < 0) {
-                    var_r0_613 = 0;
-                }
-                if (var_r2_617 > 0xFF) {
-                    var_r2_617 = 0xFF;
-                }
-                var_r3_638 = var_r2_617;
-                if (var_r2_617 < 0) {
-                    var_r3_638 = var_r2_617 + 7;
-                }
-                var_r3_646 = var_r4_619;
-                if (var_r4_619 < 0) {
-                    var_r3_646 = var_r4_619 + 7;
-                }
-                temp_r3_652 = (var_r3_646 >> 3) << 0xB;
-                temp_r7_655 = (7 & var_r4_619) * 8;
-                temp_r4_656 = ((var_r3_638 >> 3) << 6) + (7 & var_r2_617);
-                absolute_02010000.unknown_0000[temp_r7_655 + temp_r4_656 + temp_r3_652] = 2;
-                var_r3_665 = var_r6_616;
-                if (var_r6_616 < 0) {
-                    var_r3_665 = var_r6_616 + 7;
-                }
-                temp_r5_671 = (7 & var_r6_616) * 8;
-                temp_r6_672 = (var_r3_665 >> 3) << 0xB;
-                absolute_02010000.unknown_0000[temp_r6_672 + (temp_r5_671 + temp_r4_656)] = 2;
-                var_r1_681 = var_r0_613;
-                if (var_r0_613 < 0) {
-                    var_r1_681 = var_r0_613 + 7;
-                }
-                temp_r1_688 = ((var_r1_681 >> 3) << 6) + (7 & var_r0_613);
-                absolute_02010000.unknown_0000[temp_r7_655 + temp_r1_688 + temp_r3_652] = 2;
-                var_r0_701 = temp_lr_618 + 1;
-                absolute_02010000.unknown_0000[temp_r6_672 + (temp_r5_671 + temp_r1_688)] = 2;
-                var_r2_703 = var_r9_602 + 0x61;
-                if (var_r0_701 < 0) {
-                    var_r0_701 = 0;
-                }
-                if (var_r2_703 > 0xFF) {
-                    var_r2_703 = 0xFF;
-                }
-                var_r3_714 = var_r2_703;
-                if (var_r2_703 < 0) {
-                    var_r3_714 = var_r2_703 + 7;
-                }
-                temp_r3_721 = ((var_r3_714 >> 3) << 6) + (7 & var_r2_703);
-                absolute_02010000.unknown_0000[temp_r7_655 + temp_r3_721 + temp_r3_652] = 2;
-                absolute_02010000.unknown_0000[temp_r6_672 + (temp_r5_671 + temp_r3_721)] = 2;
-                var_r1_735 = var_r0_701;
-                if (var_r0_701 < 0) {
-                    var_r1_735 = var_r0_701 + 7;
-                }
-                temp_r1_742 = ((var_r1_735 >> 3) << 6) + (7 & var_r0_701);
-                absolute_02010000.unknown_0000[temp_r7_655 + temp_r1_742 + temp_r3_652] = 2;
-                absolute_02010000.unknown_0000[temp_r6_672 + (temp_r5_671 + temp_r1_742)] = 2;
-                var_r0_757 = 0x60 - var_fp_603;
-                var_r2_761 = var_fp_603 + 0x60;
-                temp_sl_762 = var_r0_757;
-                var_r4_763 = var_r9_602 + 0x3C;
-                var_r6_764 = 0x3C - var_r9_602;
-                if (var_r0_757 < 0) {
-                    var_r0_757 = 0;
-                }
-                if (var_r2_761 > 0xFF) {
-                    var_r2_761 = 0xFF;
-                }
-                if (var_r6_764 < 0) {
-                    var_r6_764 = 0;
-                }
-                if (var_r4_763 > 0x77) {
-                    var_r4_763 = 0x77;
-                }
-                var_r3_783 = var_r2_761;
-                if (var_r2_761 < 0) {
-                    var_r3_783 = var_r2_761 + 7;
-                }
-                var_r3_791 = var_r4_763;
-                if (var_r4_763 < 0) {
-                    var_r3_791 = var_r4_763 + 7;
-                }
-                temp_r3_797 = (var_r3_791 >> 3) << 0xB;
-                temp_r2_800 = (7 & var_r4_763) * 8;
-                temp_r5_801 = ((var_r3_783 >> 3) << 6) + (7 & var_r2_761);
-                absolute_02010000.unknown_0000[temp_r2_800 + temp_r5_801 + temp_r3_797] = 2;
-                var_r3_811 = var_r6_764;
-                if (var_r6_764 < 0) {
-                    var_r3_811 = var_r6_764 + 7;
-                }
-                temp_r3_817 = (var_r3_811 >> 3) << 0xB;
-                temp_r7_818 = (7 & var_r6_764) * 8;
-                absolute_02010000.unknown_0000[temp_r7_818 + temp_r5_801 + temp_r3_817] = 2;
-                var_r1_828 = var_r0_757;
-                if (var_r0_757 < 0) {
-                    var_r1_828 = var_r0_757 + 7;
-                }
-                temp_r1_835 = ((var_r1_828 >> 3) << 6) + (7 & var_r0_757);
-                absolute_02010000.unknown_0000[temp_r2_800 + temp_r1_835 + temp_r3_797] = 2;
-                var_r0_847 = temp_sl_762 + 1;
-                absolute_02010000.unknown_0000[temp_r7_818 + temp_r1_835 + temp_r3_817] = 2;
-                var_r2_851 = var_fp_603 + 0x61;
-                if (var_r0_847 < 0) {
-                    var_r0_847 = 0;
-                }
-                if (var_r2_851 > 0xFF) {
-                    var_r2_851 = 0xFF;
-                }
-                var_r3_865 = var_r2_851;
-                if (var_r2_851 < 0) {
-                    var_r3_865 = var_r2_851 + 7;
-                }
-                temp_r1_872 = ((var_r3_865 >> 3) << 6) + (var_r2_851 & 7);
-                absolute_02010000.unknown_0000[temp_r2_800 + temp_r1_872 + temp_r3_797] = 2;
-                absolute_02010000.unknown_0000[temp_r7_818 + temp_r1_872 + temp_r3_817] = 2;
-                var_r3_888 = var_r0_847;
-                if (var_r0_847 < 0) {
-                    var_r3_888 = var_r0_847 + 7;
-                }
-                temp_r1_895 = ((var_r3_888 >> 3) << 6) + (var_r0_847 & 7);
-                absolute_02010000.unknown_0000[temp_r2_800 + temp_r1_895 + temp_r3_797] = 2;
-                absolute_02010000.unknown_0000[temp_r7_818 + temp_r1_895 + temp_r3_817] = 2;
-                temp_r3_912 = (sp8 - (var_fp_603 * 2)) - 1;
-                sp8 = temp_r3_912;
-                if (temp_r3_912 < 0) {
-                    sp8 = (sp8 + (var_r9_602 * 2)) - 2;
-                    var_r9_602 -= 1;
-                }
-                var_fp_603 += 1;
-                if (var_r9_602 >= var_fp_603) {
-                    goto loop_48;
-                }
-            }
-            temp_r5_934 = spC + 1;
-            spC = temp_r5_934;
-            if (temp_r5_934 != sp10) {
-                goto loop_46;
-            }
+    frame = 0;
+    do {
+        if (frame == 2) {
+            Func_080f9010(0xD4);
         }
-        ((CopyWordsFn)0x03001388)((void *)0x06008000, &absolute_02010000, 0x7800);
-    }
-    if (sp20 <= 0x32) {
-        var_r6_953 = 0;
-        var_r5_954 = (void *)((u8 *)sp28 + 0x7080);
-        do {
-            routines[0](sp24, &sp28->unknown_0000[*(u16 *)(0x080EDFD2 + (var_r6_953 * 2))], M2C_FIELD(var_r5_954, s16 *, 2), M2C_FIELD(var_r5_954, s16 *, 6), (s32) *(u8 *)(0x080EDF90 + var_r6_953), (s32) *(u8 *)(0x080EDFB1 + var_r6_953));
-            if (sp20 > 3) {
-                Func_080e3908(var_r5_954, 0x40, 0x4000);
-            }
-            var_r6_953 += 1;
-            var_r5_954 = (void *)((u8 *)var_r5_954 + 0x1C);
-        } while (var_r6_953 != 0x21);
-    }
-    temp_r1_989 = sp20 - 8;
-    if (temp_r1_989 <= 0x2AU) {
-        var_r0_992 = temp_r1_989;
-        if ((s32) var_r0_992 > 0x1F) {
-            var_r0_992 = 0x1F;
+        if (frame == 3) {
+            Func_080f9010(0xD4);
         }
-        *(s16 *)0x05000002 = (var_r0_992 << 0xA) | (var_r0_992 << 5) | var_r0_992;
-    }
-    if (sp20 == 0x33) {
-        Func_080e0524(0x7D, sp28, 1, 0);
-        var_r0_1012 = (s16 *)0x05000002;
-        var_r6_1013 = 1;
-        do {
-            var_r1_1017 = (s32) (var_r6_1013 + (var_r6_1013 >> 0x1F)) >> 1;
-            if (var_r1_1017 < 0) {
-                var_r1_1017 = 0;
-            }
-            var_r6_1013 += 1;
-            *var_r0_1012 = (var_r1_1017 << 0xA) | (((s32) (var_r1_1017 + ((u32) var_r1_1017 >> 0x1F)) >> 1) << 5) | var_r1_1017;
-            var_r0_1012 += 1;
-        } while (var_r6_1013 != 0x40);
-        absolute_04000050.field_0000 = 0x3F44;
-        var_r6_1041 = 0;
-        var_r5_1072 = (void *)((u8 *)sp28 + 0x7080);
-        do {
-            M2C_FIELD(var_r5_1072, s32 *, 0) = (s32) (((Func_08004458() & 0x1F) + 0x20) << 0x10);
-            var_r5_1072->field_0004 = ((Func_08004458() & 0x1F) + 0x50) << 0x10;
-            var_r6_1041 += 1;
-            var_r5_1072->field_000c = ((0x1FF & Func_08004458()) + 0xFFFFFF00) << 0xC;
-            var_r5_1072->field_0010 = 0;
-            var_r5_1072->field_0018 = 0;
-            var_r5_1072 = (void *)((u8 *)var_r5_1072 + 0x1C);
-        } while (var_r6_1041 != 0x20);
-        M2C_FIELD(sp28, s32 *, 0x7780) = 2;
-        M2C_FIELD(sp28, s32 *, 0x7784) = 0x32;
-    }
-    if (sp20 > 0x34) {
-        var_r6_1118 = 0;
-        var_r5_1119 = (void *)((u8 *)sp28 + 0x7080);
-        do {
-            var_r3_1121 = var_r6_1118;
-            if (var_r6_1118 < 0) {
-                var_r3_1121 = var_r6_1118 + 3;
-            }
-            if (sp20 >= (s32) ((var_r3_1121 >> 2) + 0x34)) {
-                temp_r3_1131 = var_r5_1119->field_0018;
-                if ((s32) temp_r3_1131 <= 0x27) {
-                    var_r1_1134 = temp_r3_1131;
-                    if ((s32) var_r1_1134 < 0) {
-                        var_r1_1134 += 3;
-                    }
-                    var_r1_1139 = (s32) var_r1_1134 >> 2;
-                    if (var_r1_1139 > 5) {
-                        var_r1_1139 = 5;
-                    }
-                    routines[1](sp24, (u8 *)sp28 + (var_r1_1139 << 0xB), M2C_FIELD(var_r5_1119, s16 *, 2) - 0x10, M2C_FIELD(var_r5_1119, s16 *, 6) - 0x20, 0x20, 0x40);
-                    Func_080e3908(var_r5_1119, 0x3C, 0xFFFFF000);
-                    var_r5_1119->field_0018 += 1;
+        if (frame == 0x1C) {
+            Func_080d6888(
+                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+                -1, 3, -1, 0);
+        }
+        if (frame == 0x20) {
+            Func_080f9010(0x95);
+        }
+        if (frame == 5) {
+            Func_080f9010(0x91);
+            absolute_03001ad0.field_0004 = (u16) M2C_FIELD(work, s32 *, 0x77A0);
+            Func_080b5040(1, M2C_FIELD(sys, u16 *, 0x648), -1);
+        }
+
+        /* Step every object-palette entry one level towards its target. */
+        if (frame > 7) {
+            dst = (u16 *)0x050000C0;
+            cnt = 0;
+            src = (u16 *)((u8 *)sys + 0x544);
+            do {
+                cur = *dst;
+                r = cur & 0x1F;
+                cur <<= 0x10;
+                tgt = *src;
+                g = (cur >> 0x15) & 0x1F;
+                b = (cur >> 0x1A) & 0x1F;
+                tr = tgt & 0x1F;
+                tgt <<= 0x10;
+                span = tgt;
+                tg = (tgt >> 0x15) & 0x1F;
+                src += 1;
+                tb = (span >> 0x1A) & 0x1F;
+                if (r < tr) {
+                    r += 1;
+                } else if (r > tr) {
+                    r -= 1;
                 }
+                if (g < tg) {
+                    g += 1;
+                } else if (g > tg) {
+                    g -= 1;
+                }
+                if (b < tb) {
+                    b += 1;
+                } else if (b > tb) {
+                    b -= 1;
+                }
+                cnt += 1;
+                *dst = (b << 0xA) | (g << 5) | r;
+                dst += 1;
+            } while (cnt != 0x80);
+        }
+
+        if (frame == 4) {
+            IWRAM_FILL((void *)0x06008000, 0x7800, 0x02020202);
+        }
+
+        /* Frames 0..3 rasterize the opening ring into the work buffer. */
+        if (frame <= 3) {
+            lvl = (frame * 4) + 8;
+            radMax = frame << 5;
+            *(s16 *)0x05000004 = (lvl << 0xA) | (lvl << 5) | lvl;
+            if (rad != radMax) {
+                do {
+                    px = rad;
+                    py = 0;
+                    err = rad;
+                    if (px >= 0) {
+                        do {
+                            xa = 0x60 - px;
+                            ya = 0x3C - py;
+                            xb = px + 0x60;
+                            xa0 = xa;
+                            yb = py + 0x3C;
+                            if (ya < 0) {
+                                ya = 0;
+                            }
+                            if (yb > 0x77) {
+                                yb = 0x77;
+                            }
+                            if (xa < 0) {
+                                xa = 0;
+                            }
+                            if (xb > 0xFF) {
+                                xb = 0xFF;
+                            }
+                            oxb = (xb & 7) + ((xb / 8) << 6);
+                            hyb = (yb & 7) * 8;
+                            tyb = (yb / 8) << 0xB;
+                            PLOT_AT(hyb + oxb + tyb);
+                            hya = (ya & 7) * 8;
+                            tya = (ya / 8) << 0xB;
+                            PLOT_AT(tya + (hya + oxb));
+                            oxa = (xa & 7) + ((xa / 8) << 6);
+                            PLOT_AT(hyb + oxa + tyb);
+                            xa2 = xa0 + 1;
+                            PLOT_AT(tya + (hya + oxa));
+                            xb2 = px + 0x61;
+                            if (xa2 < 0) {
+                                xa2 = 0;
+                            }
+                            if (xb2 > 0xFF) {
+                                xb2 = 0xFF;
+                            }
+                            oxb = (xb2 & 7) + ((xb2 / 8) << 6);
+                            PLOT_AT(hyb + oxb + tyb);
+                            PLOT_AT(tya + (hya + oxb));
+                            oxa = (xa2 & 7) + ((xa2 / 8) << 6);
+                            PLOT_AT(hyb + oxa + tyb);
+                            PLOT_AT(tya + (hya + oxa));
+
+                            ua = 0x60 - py;
+                            ub = py + 0x60;
+                            ua0 = ua;
+                            vb = px + 0x3C;
+                            va = 0x3C - px;
+                            if (ua < 0) {
+                                ua = 0;
+                            }
+                            if (ub > 0xFF) {
+                                ub = 0xFF;
+                            }
+                            if (va < 0) {
+                                va = 0;
+                            }
+                            if (vb > 0x77) {
+                                vb = 0x77;
+                            }
+                            oub = (ub & 7) + ((ub / 8) << 6);
+                            hvb = (vb & 7) * 8;
+                            tvb = (vb / 8) << 0xB;
+                            PLOT_AT(hvb + oub + tvb);
+                            hva = (va & 7) * 8;
+                            tva = (va / 8) << 0xB;
+                            PLOT_AT(tva + (hva + oub));
+                            oua = (ua & 7) + ((ua / 8) << 6);
+                            PLOT_AT(hvb + oua + tvb);
+                            ua2 = ua0 + 1;
+                            PLOT_AT(tva + (hva + oua));
+                            ub2 = py + 0x61;
+                            if (ua2 < 0) {
+                                ua2 = 0;
+                            }
+                            if (ub2 > 0xFF) {
+                                ub2 = 0xFF;
+                            }
+                            oub = (ub2 & 7) + ((ub2 / 8) << 6);
+                            PLOT_AT(hvb + oub + tvb);
+                            PLOT_AT(tva + (hva + oub));
+                            oua = (ua2 & 7) + ((ua2 / 8) << 6);
+                            PLOT_AT(hvb + oua + tvb);
+                            PLOT_AT(tva + (hva + oua));
+
+                            err = (err - (py * 2)) - 1;
+                            if (err < 0) {
+                                err = (err + (px * 2)) - 2;
+                                px -= 1;
+                            }
+                            py += 1;
+                        } while (px >= py);
+                    }
+                    rad += 1;
+                } while (rad != radMax);
             }
-            var_r6_1118 += 1;
-            var_r5_1119 = (void *)((u8 *)var_r5_1119 + 0x1C);
-        } while (var_r6_1118 != 0x20);
-    }
-    Func_080cd52c();
-    M2C_FIELD(sp28, s32 *, 0x7824) = 1;
-    Func_080030f8(1);
-    temp_r2_1182 = sp20 + 1;
-    sp20 = temp_r2_1182;
-    if (temp_r2_1182 != 0x80) {
-        goto loop_14;
-    }
+            IWRAM_COPY((void *)0x06008000, &absolute_02010000, 0x7800);
+        }
+
+        if (frame <= 0x32) {
+            cnt = 0;
+            ent = (void *)((u8 *)work + 0x7080);
+            do {
+                draw0(canvas,
+                      &work->unknown_0000[*(u16 *)(0x080EDFD2 + (cnt * 2))],
+                      M2C_FIELD(ent, s16 *, 2), M2C_FIELD(ent, s16 *, 6),
+                      (s32) *(u8 *)(0x080EDF90 + cnt),
+                      (s32) *(u8 *)(0x080EDFB1 + cnt));
+                if (frame > 3) {
+                    Func_080e3908(ent, 0x40, 0x4000);
+                }
+                cnt += 1;
+                ent = (void *)((u8 *)ent + 0x1C);
+            } while (cnt != 0x21);
+        }
+
+        /* Frames 8..0x32 ramp the backdrop colour up to full white. */
+        span = frame - 8;
+        if (span <= 0x2AU) {
+            lvl = (s32) span;
+            if (lvl > 0x1F) {
+                lvl = 0x1F;
+            }
+            *(s16 *)0x05000002 = (lvl << 0xA) | (lvl << 5) | lvl;
+        }
+
+        if (frame == 0x33) {
+            Func_080e0524(0x7D, work, 1, 0);
+            pal = (s16 *)0x05000002;
+            cnt = 1;
+            do {
+                lvl = cnt / 2;
+                if (lvl < 0) {
+                    lvl = 0;
+                }
+                cnt += 1;
+                *pal = (lvl << 0xA) | ((lvl / 2) << 5) | lvl;
+                pal += 1;
+            } while (cnt != 0x40);
+            absolute_04000050.field_0000 = 0x3F44;
+            cnt = 0;
+            ent = (void *)((u8 *)work + 0x7080);
+            do {
+                M2C_FIELD(ent, s32 *, 0) =
+                    (s32) (((Func_08004458() & 0x1F) + 0x20) << 0x10);
+                ent->field_0004 = ((Func_08004458() & 0x1F) + 0x50) << 0x10;
+                cnt += 1;
+                ent->field_000c =
+                    ((0x1FF & Func_08004458()) + 0xFFFFFF00) << 0xC;
+                ent->field_0010 = 0;
+                ent->field_0018 = 0;
+                ent = (void *)((u8 *)ent + 0x1C);
+            } while (cnt != 0x20);
+            M2C_FIELD(work, s32 *, 0x7780) = 2;
+            M2C_FIELD(work, s32 *, 0x7784) = 0x32;
+        }
+
+        /* After frame 0x34 the pieces scatter, one released every four
+           frames, each stepping through six 0x800-byte sprite phases. */
+        if (frame > 0x34) {
+            cnt = 0;
+            ent = (void *)((u8 *)work + 0x7080);
+            do {
+                if (frame >= (cnt / 4) + 0x34) {
+                    span = ent->field_0018;
+                    if ((s32) span <= 0x27) {
+                        lvl = (s32) span / 4;
+                        if (lvl > 5) {
+                            lvl = 5;
+                        }
+                        draw1(canvas, (u8 *)work + (lvl << 0xB),
+                              M2C_FIELD(ent, s16 *, 2) - 0x10,
+                              M2C_FIELD(ent, s16 *, 6) - 0x20, 0x20, 0x40);
+                        Func_080e3908(ent, 0x3C, 0xFFFFF000);
+                        ent->field_0018 += 1;
+                    }
+                }
+                cnt += 1;
+                ent = (void *)((u8 *)ent + 0x1C);
+            } while (cnt != 0x20);
+        }
+
+        Func_080cd52c();
+        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        Func_080030f8(1);
+        frame += 1;
+    } while (frame != 0x80);
+
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
     Func_08004278(0x080CD261);
-    Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), -1, 1, -1, 0);
-    absolute_03001ad0.field_0004 = (u16) M2C_FIELD(sp28, s32 *, 0x77A0);
+    Func_080d6888(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+                  -1, 1, -1, 0);
+    absolute_03001ad0.field_0004 = (u16) M2C_FIELD(work, s32 *, 0x77A0);
     absolute_03001ad0.field_0006 = 0x20;
-    Func_080b5038(2, M2C_FIELD(sp14, u16 *, 0x648), 0);
+    Func_080b5038(2, M2C_FIELD(sys, u16 *, 0x648), 0);
     Func_080030f8(1);
-    temp_r4_1228 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0;
-    if ((s32) absolute_02002090.field_0000 <= 0x1F) {
-        temp_r3_1237 = (absolute_02002090.field_0000 * 0xC) + (u8 *)&absolute_02002090;
-        absolute_02002090.field_0000 += 1;
-        temp_r3_1240 = temp_r3_1237 + 4;
-        M2C_FIELD(temp_r3_1237, s32 *, 4) = 0x7541;
-        M2C_FIELD(temp_r3_1240, s32 *, 4) = 0x04000000;
-        M2C_FIELD((temp_r3_1240 + 4), s32 *, 4) = 0x20000;
+
+    ime = *(u16 *)0x04000208;
+    *(u16 *)0x04000208 = 0x04000208;
+    qcnt = absolute_02002090.field_0000;
+    if (qcnt <= 0x1F) {
+        slot = (u8 *)&absolute_02002090 + (qcnt * 0xC);
+        absolute_02002090.field_0000 = qcnt + 1;
+        M2C_FIELD(slot, s32 *, 4) = 0x7541;
+        M2C_FIELD(slot, s32 *, 8) = 0x04000000;
+        M2C_FIELD(slot, s32 *, 12) = 0x20000;
     }
-    *(u16 *)0x04000208 = temp_r4_1228;
+    *(u16 *)0x04000208 = (u16) ime;
+
     Func_08002dd8(0x29);
     Func_08002dd8(0x28);
     Func_08002dd8(0x27);

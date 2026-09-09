@@ -1,464 +1,479 @@
-#include "shared-aggregates.h"
+#include "types.h"
 
 /*
- * This header contains macros emitted by m2c in "valid syntax" mode,
- * which can be enabled by passing `--valid-syntax` on the command line.
+ * Battle-presentation scene driver for the 0x03001EEC "battle work" subsystem,
+ * same family as the already drafted owner 0x080d41a4 (games/gs1/recon/en/main/
+ * 080d41a4.c) and the adopted 0x080ce85c template: identical heap_cache layout
+ * (work / canvas / sprite_sheet at 0x03001EEC..0x03001EF4, blit routines at
+ * heap_cache[7] and heap_cache[8] via absolute_03001e50 + 0xb8/0xbc), identical
+ * work-block offsets (0x7780/0x7784/0x77A8/0x7824/0x7828) and the same shared
+ * 1024-entry 28-byte particle pool at 0x02010000.
  *
- * In this mode, unhandled types and expressions are emitted as macros so
- * that the output is compilable without human intervention.
+ * Shape of the scene, read from the owner's own reference:
+ *   - Create six drawable objects into work + 0x77FC (handles 9..14 of the
+ *     fifteen-handle table that starts at work + 0x77D8) and force their
+ *     blend field to 4.
+ *   - Reserve two graphics jobs (46 and 47), keeping their blit routines in
+ *     rectangle[0] / rectangle[1], then load two compressed images.
+ *   - Seed a six-entry falling-object array at work + 0x7080, a 58-entry
+ *     sprite array at work + 0x7128 and the whole 0x02010000 pool.
+ *   - Run at most 320 frames, aborting early when 0x03001B04 & 3 is set.
+ *     Each frame draws seven background objects from a byte-offset table,
+ *     sweeps two of the objects along a circle for the first 91 frames,
+ *     nudges three four-particle bursts at frames 94/134/174, advances and
+ *     redraws the falling objects, ages the first 56 of the 0x7128 sprites,
+ *     and on frame 260 re-poses every party member and refills the first 512
+ *     of the pool's 1024 entries.  Only those first 512 are drawn each frame.
+ *   - Tear down: release the fifteen handles, drop the scheduler callback and
+ *     both graphics jobs.
+ *
+ * `Func_080072f4` is not a real symbol: it is the r4 entry of the
+ * `_call_via_rN` trampoline block at games/gs1/asm/080072e4.s, so a `bl` there
+ * is an indirect call through the DrawRectangleFn value carried in r4. That
+ * finding is recorded in games/gs1/recon/en/dossiers.json#main:080dc1ec and is
+ * modelled here the way the 0x080d41a4 draft models it.
+ *
+ * Uncertain, left neutral: the roles of Func_080cd594/Func_080c9048/
+ * Func_080cd104/Func_080dbb24 and of the particle words at +0x08 and +0x14;
+ * the small link-time constants that the reference materialises from its
+ * literal pool rather than as immediates (0, 0x3C, 0x73, 0xC0) are spelled as
+ * `Value_<hex>` externs, which is the only ordinary-C reading that reproduces a
+ * pool load for a value that would otherwise fit in `movs`.
+ *
+ * This is a draft, not a match.  Every reference branch, loop, call, store and
+ * constant is represented, but the reference spills `work` to its frame and
+ * reloads it at roughly twenty sites while this source lets the compiler keep
+ * it in a callee-saved register; that one allocation choice renames registers
+ * through the whole body and shifts every frame offset.  The axis was searched
+ * twice without a new structural fact and is reported rather than reopened.
  */
+#define M2C_FIELD(expr, type_ptr, offset) \
+    (*(type_ptr)((u8 *)(expr) + (offset)))
 
-#ifndef M2C_MACROS_H
-#define M2C_MACROS_H
+typedef void (*DrawRectangleFn)(
+    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
-/* Unknown types */
-typedef s32 M2C_UNK;
-typedef s8  M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
-typedef s64 M2C_UNK64;
+/* 28-byte record shared by work + 0x7080, work + 0x7128 and the 0x02010000
+   pool.  Only the six words the owner touches are named. */
+typedef struct {
+    s32 x;
+    s32 y;
+    s32 unk_08;
+    s32 vx;
+    s32 vy;
+    s32 unk_14;
+    s32 timer;
+} SceneParticle;
 
-/* Unknown field access, like `*(type_ptr) &expr->unk_offset` */
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+/* The four fixed-point coordinates the frame loop carries.  The reference
+   keeps all four in memory and never propagates their constant initialisers,
+   which is what an ordinary aggregate local does under this compiler. */
+typedef struct {
+    s32 x;
+    s32 y;
+    s32 bg_x;
+    s32 bg_y;
+} SceneOrigin;
 
-/* Bitwise (reinterpret) cast */
-#define M2C_BITWISE(type, expr) ((type)(expr))
+extern u8 Value_00000000;
+extern u8 Value_0000003c;
+extern u8 Value_00000073;
+extern u8 Value_000000c0;
 
-/* Unaligned reads */
-#define M2C_LWL(expr) (expr)
-#define M2C_FIRST3BYTES(expr) (expr)
-#define M2C_UNALIGNED32(expr) (expr)
+extern s32 Data_080edac8[2];
+extern u16 Data_080ede48[];
+extern u8 Data_080eeed8[7];
+extern u8 Data_080eeee1[7];
+extern u16 Data_080eeeea[];
+extern u16 Data_080eeef8[];
 
-/* Unhandled instructions */
-#define M2C_ERROR(desc) (0)
-#define M2C_TRAP_IF(cond) (0)
-#define M2C_BREAK() (0)
-#define M2C_SYNC() (0)
+void Func_080cd594(s32 mode);
+void Func_080c9048(void);
+void Func_080041d8(void *callback, s32 interval);
+void Func_080cd104(s32 a, s32 b);
+void Func_080d6750(void *object);
+void Func_080dbb24(s32 a, s32 b, s32 c);
+void *Func_08009030(s32 id);
+s32 Func_080022fc(s32 a, s32 b);
+void Func_08009020(void *object, s32 value);
+void Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
+void Func_080030f8(s32 frames);
+void Func_080b5040(s32 a, s32 b, s32 c);
+void Func_080e0524(s32 id, void *dest, s32 a, s32 b);
+s32 Func_08004458(void);
+void Func_080f9010(s32 id);
+void Func_08009008(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
+s32 Func_08002322(s32 angle);
+s32 Func_0800231c(s32 angle);
+s32 Func_080022ec(s32 a, s32 b);
+void Func_080e3908(SceneParticle *particle, s32 a, s32 b);
+void Func_080b5088(s32 member, s32 a);
+void Func_080d6888(s32 member, s32 a, s32 b, s32 c, s32 d);
+void Func_080e155c(s32 a, s32 b);
+void Func_080cd52c(void);
+void Func_080b50e8(s32 id);
+void Func_080d67dc(void);
+void Func_08009038(s32 handle);
+void Func_08004278(void *callback);
+void Func_08002dd8(s32 id);
+void Func_080cdbc0(void);
 
-#define GLUE_F64(a, b) (0.0)
-#define MULT_HI(a, b) (0)
-#define MULTU_HI(a, b) (0)
-#define DMULT_HI(a, b) (0)
-#define DMULTU_HI(a, b) (0)
-#define CLZ(x) (0)
-#define REVERSE_BITS(x) (0)
-#define ROTATE_RIGHT(x, shift) (0)
-#define ARM_RRX(x, carry) (0)
-#define BSWAP32(x) (0)
-#define BSWAP16(x) (0)
-#define BSWAP16X2(x) (0)
+void Func_080e823c(void *object)
+{
+    void **cursor;
+    void *work;
+    void *canvas;
+    void *sprite_sheet;
+    void *rectangle[2];
+    void **rectangle_slot;
+    void *drawable;
+    s32 pos[4];
+    s32 clip[2];
+    s32 *pos_ptr;
+    s32 *clip_ptr;
+    u16 *io;
+    u8 *gfx;
+    u8 *group;
+    u8 *spawn_base;
+    SceneParticle *entry;
+    SceneParticle *spark;
+    s32 *handle;
+    s32 handle_off;
+    s32 frame;
+    SceneOrigin org;
+    s32 base;
+    s32 angle;
+    s32 speed;
+    s32 life;
+    s32 half;
+    s32 full;
+    s32 idx;
+    s32 vy;
+    s32 count;
+    s32 off;
+    u16 size;
+    u16 offset;
+    s32 i;
+    s32 n;
 
-/* Carry/overflow bits from partially-implemented instructions */
-#define M2C_CARRY 0
-#define M2C_OVERFLOW(a) (0)
-
-/* Memcpy patterns */
-#define M2C_MEMCPY_ALIGNED memcpy
-#define M2C_MEMCPY_UNALIGNED memcpy
-#define M2C_STRUCT_COPY memcpy
-
-/* Sh2 control register loads/stores */
-#define M2C_LOAD_SR() (0)
-#define M2C_LOAD_GBR() (0)
-#define M2C_LOAD_VBR() (0)
-#define M2C_STORE_SR(a)
-#define M2C_STORE_GBR(a)
-#define M2C_STORE_VBR(a)
-
-#define M2C_CMP_STR(a, b) (0)
-
-#endif
-
-void Func_080e823c(s32 arg0) {
-    u32 sp0;
-    s32 sp4;
-    u32 *sp8;
-    u32 *spC;
-    u32 *sp10;
-    u32 sp14;
-    s32 sp18;
-    s32 sp1C;
-    s32 sp20;
-    u32 sp24;
-    s32 sp28;
-    void *sp2C;
-    s32 sp30;
-    s32 sp34;
-    s32 sp38;
-    u32 sp3C;
-    u32 sp44;
-    s32 sp48;
-    s32 sp4C;
-    s32 sp50;
-    s32 *var_r2_339;
-    s32 *var_r3_254;
-    s32 *var_r3_267;
-    s32 *var_r5_930;
-    s32 *var_r6_362;
-    s32 temp_r0_381;
-    s32 temp_r0_710;
-    s32 temp_r0_719;
-    s32 temp_r0_934;
-    s32 temp_r2_578;
-    s32 temp_r3_468;
-    s32 temp_r3_596;
-    s32 temp_r5_806;
-    s32 temp_r5_819;
-    s32 temp_r5_856;
-    s32 temp_r7_910;
-    s32 var_r6_414;
-    s32 var_r6_71;
-    s32 var_r6_767;
-    s32 var_r7_222;
-    s32 var_r7_435;
-    s32 var_r7_608;
-    s32 var_r8_228;
-    s32 var_r8_252;
-    s32 var_r8_264;
-    s32 var_r8_413;
-    s32 var_r8_550;
-    s32 var_r8_707;
-    s32 var_r8_72;
-    s32 var_r8_758;
-    s32 var_r8_802;
-    s32 var_r8_848;
-    s32 var_r8_929;
-    struct M2cAggregate_absolute_02010000 *var_r5_708;
-    struct M2cAggregate_absolute_02010000 *var_r6_847;
-    struct M2cAggregate_absolute_02010000 *var_r7_801;
-    u16 temp_r4_723;
-    u16 temp_r5_392;
-    u16 temp_r6_810;
-    u32 *temp_r2_128;
-    u32 temp_r0_729;
-    u32 temp_r0_851;
-    u32 temp_r0_855;
-    u32 temp_r3_601;
-    u32 temp_r3_612;
-    void *temp_r0_77;
-    void *temp_r1_94;
-    void *temp_r2_135;
-    void *temp_r2_185;
-    void *temp_r2_20;
-    void *var_r5_230;
-    void *var_r5_437;
-    void *var_r5_552;
-    void *var_r6_610;
-    void *var_r8_361;
-    void *var_r9_553;
-    void *var_sl_415;
-
-    sp30 = M2C_FIELD(&absolute_03001ef0, s32 *, 0);
-    temp_r2_20 = *(void **)((u8 *)&absolute_03001ef0 - 4);
-    sp2C = temp_r2_20;
-    sp24 = absolute_03001ef0.field_0004;
-    M2C_FIELD(temp_r2_20, s32 *, 0x7828) = arg0;
+    cursor = (void **)0x03001EF0;
+    canvas = cursor[0];
+    work = cursor[-1];
+    sprite_sheet = cursor[1];
+    M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(0);
     Func_080c9048();
-    M2C_FIELD((void *)0x05000000, s16 *, 0) = 0;
-    M2C_FIELD((void *)0x05000000, s16 *, 2) = 0;
-    M2C_FIELD(sp2C, s32 *, 0x7780) = 0;
-    Func_080041d8(0x080CD261, 0x480);
+    *(u16 *)0x05000000 = (u16)(s32)&Value_00000000;
+    *(u16 *)0x05000002 = (u16)(s32)&Value_00000000;
+    M2C_FIELD(work, s32 *, 0x7780) = 0;
+    Func_080041d8((void *)0x080CD261, 0x480);
     Func_080cd104(1, 0);
-    Func_080d6750(M2C_FIELD(temp_r2_20, s32 *, 0x7828));
+    Func_080d6750(M2C_FIELD(work, void **, 0x7828));
     Func_080dbb24(9, 0x17B, 2);
-    var_r6_71 = 0x77FC;
-    var_r8_72 = 0;
-    do {
-        temp_r0_77 = Func_08009030(0x186);
-        *(void **)((u8 *)sp2C + var_r6_71) = temp_r0_77;
-        if (temp_r0_77 != NULL) {
-            M2C_FIELD(temp_r0_77, s8 *, 0x26) = 0;
-            Func_08009020(temp_r0_77, Func_080022fc(var_r8_72, 3));
-            temp_r1_94 = *(void **)((u8 *)sp2C + var_r6_71);
-            M2C_FIELD(temp_r1_94, u8 *, 9) = (u8) ((M2C_FIELD(temp_r1_94, u8 *, 9) & ~0xC) | 4);
-        }
-        var_r8_72 += 1;
-        var_r6_71 += 4;
-    } while (var_r8_72 != 6);
-    sp0 = 2;
-    Func_080ed408(0x2E, 7, 7, 3);
-    sp3C = absolute_03001e50.field_00b8;
-    sp0 = 3;
-    Func_080ed408(0x2F, 7, 7);
-    temp_r2_128 = &sp0 + 0x3C;
-    sp10 = temp_r2_128;
-    M2C_FIELD(temp_r2_128, u32 *, 4) = (u32) absolute_03001e50.field_00bc;
-    absolute_04000048.field_0000 = 0x2737;
-    temp_r2_135 = &absolute_04000048 - 8;
-    M2C_FIELD(temp_r2_135, s16 *, 0) = 0xF0;
-    M2C_FIELD(temp_r2_135, s16 *, 6) = 0x1088;
-    Func_080030f8(1);
-    Func_080b5040(1, 0x3C, 0);
-    Func_080cd104(1, 1);
-    Func_080e0524(0x73, sp24, 0, 0);
-    Func_080e0524(0xC0, (u32) sp2C, 1, 1);
-    M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
-    temp_r2_185 = (void *)0x04000000 + 0x20;
-    M2C_FIELD((void *)0x04000000, s16 *, 0x20) = 0x80;
-    M2C_FIELD(temp_r2_185, s16 *, 0x32) = 0x1010;
-    *(u16 *)((u8 *)temp_r2_185 + 0x30) = 0x3F44;
-    M2C_FIELD(sp2C, s32 *, 0x7780) = 2;
-    M2C_FIELD(sp2C, s32 *, 0x7784) = 0x32;
-    var_r7_222 = 0;
-    sp1C = 0xBC0000;
-    sp20 = 0x5C0000;
-    sp18 = 0x5C0000;
-    sp14 = 0xA00000;
-    var_r8_228 = 0;
-    var_r5_230 = sp2C + 0x7080;
-    do {
-        M2C_FIELD(var_r5_230, s32 *, 0) = (s32) ((0x7F & Func_08004458()) << 0x10);
-        var_r8_228 += 1;
-        M2C_FIELD(var_r5_230, s32 *, 4) = var_r7_222;
-        M2C_FIELD(var_r5_230, s32 *, 0xC) = 0;
-        M2C_FIELD(var_r5_230, s32 *, 0x10) = 0;
-        M2C_FIELD(var_r5_230, s32 *, 0x18) = 0;
-        var_r7_222 += 0xFFF00000;
-        var_r5_230 += 0x1C;
-    } while (var_r8_228 != 6);
-    var_r8_252 = 0;
-    var_r3_254 = sp2C + 0x7140;
-    do {
-        var_r8_252 += 1;
-        *var_r3_254 = 0x18;
-        var_r3_254 += 0x1C;
-    } while (var_r8_252 != 0x3A);
-    var_r8_264 = 0;
-    var_r3_267 = (s32 *)0x02010018;
-    do {
-        var_r8_264 += 1;
-        *var_r3_267 = -1;
-        var_r3_267 += 0x1C;
-    } while (var_r8_264 != 0x400);
-    M2C_FIELD(sp2C, s32 *, 0x77B4) = 0x18;
-    M2C_FIELD(sp2C, s32 *, 0x77B8) = 0;
-    sp28 = 0;
-    if (*(s32 *)0x03001B04 & 3) {
 
-    } else {
-        sp8 = &sp0 + 0x44;
-        spC = &sp0 + 0x34;
-loop_18:
-        if (sp28 == 0x5E) {
-            Func_080f9010(0x9C);
+    /* Six drawable objects into handles 9..14 of the work table. */
+    handle_off = 0x77FC;
+    for (i = 0; i != 6; i++) {
+        drawable = Func_08009030(390);
+        M2C_FIELD(work, void **, handle_off) = drawable;
+        if (drawable != NULL) {
+            M2C_FIELD(drawable, s8 *, 0x26) = 0;
+            Func_08009020(drawable, Func_080022fc(i, 3));
+            drawable = M2C_FIELD(work, void **, handle_off);
+            M2C_FIELD(drawable, u8 *, 9) =
+                (u8)((M2C_FIELD(drawable, u8 *, 9) & ~0xC) | 4);
         }
-        if (sp28 == 0x88) {
-            Func_080f9010(0x9C);
-        }
-        if (sp28 == 0xB2) {
-            Func_080f9010(0x9C);
-        }
-        if (sp28 == 0x104) {
-            Func_080f9010(0x91);
-        }
-        sp34 = M2C_FIELD((void *)0x080EDAC8, s32 *, 0);
-        sp38 = M2C_FIELD((void *)0x080EDAC8, s32 *, 4);
-        if ((u32) (sp28 - 0x60) <= 0x9BU) {
-            var_r2_339 = sp2C + 0x77A8;
-            goto block_30;
-        }
-        if ((u32) (sp28 + 0xFFFFFEFC) <= 3U) {
-            var_r2_339 = sp2C + 0x77A8;
-block_30:
-            *var_r2_339 = 1;
-        }
-        sp50 = 0;
-        sp48 = 0;
-        var_r8_361 = NULL;
-        var_r6_362 = sp2C + 0x77D8;
-        do {
-            M2C_FIELD(sp8, u32 *, 0) = (*(u8 *)(0x080EEED8 + (s32) var_r8_361) << 0x10) + sp1C + 0xFFE00000;
-            M2C_FIELD(sp8, s32 *, 8) = (s32) ((*(u8 *)(0x080EEEE1 + (s32) var_r8_361) << 0x10) + sp20 + 0xFFE00000);
-            temp_r0_381 = *var_r6_362;
-            var_r6_362 += 4;
-            Func_08009008(temp_r0_381, sp8, spC, 0);
-            var_r8_361 += 1;
-        } while (var_r8_361 != (void *)7);
-        if (sp28 <= 0x5A) {
-            temp_r5_392 = sp28 << 9;
-            sp14 = (Func_08002322(temp_r5_392) * 0x10) + 0x9C0000;
-            sp18 = (Func_0800231c(temp_r5_392) * 0x10) + 0x5C0000;
-        }
-        if (sp28 <= 0xC4) {
-            var_r8_413 = 0;
-            var_r6_414 = 0x5B;
-            var_sl_415 = sp2C;
-            do {
-                if ((sp28 >= var_r6_414) && (sp28 < (s32) (var_r6_414 + 4))) {
-                    sp18 += 0x80000;
-                }
-                if (sp28 == (var_r6_414 + 3)) {
-                    var_r7_435 = 0;
-                    var_r5_437 = var_sl_415 + 0x7128;
-                    do {
-                        M2C_FIELD(var_r5_437, s32 *, 0) = 0x400000;
-                        M2C_FIELD(var_r5_437, s32 *, 4) = 0x600000;
-                        M2C_FIELD(var_r5_437, s32 *, 0xC) = (s32) ((Func_08004458() - 0x7F) << 0xA);
-                        M2C_FIELD(var_r5_437, s32 *, 0x10) = (s32) ((Func_08004458() - 0x7F) << 0xA);
-                        var_r7_435 += 1;
-                        M2C_FIELD(var_r5_437, s32 *, 0x18) = (s32) (0xF & Func_08004458());
-                        var_r5_437 += 0x1C;
-                    } while (var_r7_435 != 4);
-                }
-                temp_r3_468 = var_r6_414 + 0x14;
-                if ((sp28 >= temp_r3_468) && (sp28 < (s32) (temp_r3_468 + 0x10))) {
-                    sp18 += 0xFFFE0000;
-                }
-                var_r8_413 += 1;
-                var_r6_414 += 0x28;
-                var_sl_415 += 0xE0;
-            } while (var_r8_413 != 3);
-        }
-        if ((u32) (sp28 - 0xF4) <= 7U) {
-            sp14 += 0xFFFF0000;
-        }
-        if ((u32) (sp28 - 0xFC) <= 0x17U) {
-            sp14 -= (sp28 - 0xFA) << 0x10;
-        }
-        if (sp28 <= 0x103) {
-            sp48 = 0xFF000000;
-            sp4C = sp18 + 0xFF000000;
-            sp44 = sp14;
-            Func_08009008(M2C_FIELD(sp2C, s32 *, 0x77F4), &sp44, spC, 0);
-            sp44 = sp14 + 0x200000;
-            Func_08009008(M2C_FIELD(sp2C, s32 *, 0x77F8), &sp44, spC, 0);
-        }
-        M2C_FIELD(sp8, s32 *, 4) = 0;
-        var_r8_550 = 0;
-        var_r5_552 = sp2C + 0x7080;
-        var_r9_553 = sp2C;
-loop_54:
-        if (M2C_FIELD(var_r5_552, s32 *, 0x18) == 2) {
-
-        } else {
-            M2C_FIELD(sp8, u32 *, 0) = M2C_FIELD(var_r5_552, u32 *, 0);
-            M2C_FIELD(sp8, s32 *, 8) = (s32) M2C_FIELD(var_r5_552, s32 *, 4);
-            Func_08009008(*(s32 *)((u8 *)sp2C + (var_r8_550 * 4) + 0x77FC), sp8, spC, 0);
-            M2C_FIELD(var_r5_552, u32 *, 0) = (u32) (M2C_FIELD(var_r5_552, u32 *, 0) + M2C_FIELD(var_r5_552, s32 *, 0xC));
-            temp_r2_578 = M2C_FIELD(var_r5_552, s32 *, 0x10);
-            M2C_FIELD(var_r5_552, s32 *, 4) = (s32) (M2C_FIELD(var_r5_552, s32 *, 4) + temp_r2_578);
-            if (sp28 > 0x60) {
-                M2C_FIELD(var_r5_552, s32 *, 0x10) = (s32) (temp_r2_578 + 0x4000);
-            }
-            if ((s32) M2C_FIELD(var_r5_552, s32 *, 4) > 0x780000) {
-                temp_r3_596 = M2C_FIELD(var_r5_552, s32 *, 0x18) + 1;
-                M2C_FIELD(var_r5_552, s32 *, 0x18) = temp_r3_596;
-                if (temp_r3_596 == 1) {
-                    temp_r3_601 = 0 - M2C_FIELD(var_r5_552, s32 *, 0x10);
-                    M2C_FIELD(var_r5_552, s32 *, 0x10) = (s32) ((s32) (temp_r3_601 + (temp_r3_601 >> 0x1F)) >> 1);
-                    var_r7_608 = 0;
-                    var_r6_610 = var_r9_553 + 0x73C8;
-                    do {
-                        temp_r3_612 = M2C_FIELD(var_r5_552, u32 *, 0);
-                        M2C_FIELD(var_r6_610, s32 *, 0) = (s32) ((s32) (temp_r3_612 + (temp_r3_612 >> 0x1F)) >> 1);
-                        M2C_FIELD(var_r6_610, s32 *, 4) = (s32) (M2C_FIELD(var_r5_552, s32 *, 4) + 0xFFE00000);
-                        M2C_FIELD(var_r6_610, s32 *, 0xC) = (s32) ((Func_08004458() - 0x7F) << 0xA);
-                        M2C_FIELD(var_r6_610, s32 *, 0x10) = (s32) ((Func_08004458() - 0x7F) << 0xA);
-                        var_r7_608 += 1;
-                        M2C_FIELD(var_r6_610, s32 *, 0x18) = (s32) (0xF & Func_08004458());
-                        var_r6_610 += 0x1C;
-                    } while (var_r7_608 != 2);
-                } else if (sp28 <= 0xC7) {
-                    M2C_FIELD(var_r5_552, s32 *, 4) = 0;
-                    M2C_FIELD(var_r5_552, s32 *, 0x10) = 0;
-                    M2C_FIELD(var_r5_552, s32 *, 0x18) = 0;
-                }
-            }
-        }
-        var_r8_550 += 1;
-        var_r5_552 += 0x1C;
-        var_r9_553 += 0x38;
-        if (var_r8_550 != 6) {
-            goto loop_54;
-        }
-        var_r8_707 = 0;
-        var_r5_708 = sp2C + 0x7128;
-        do {
-            temp_r0_710 = var_r5_708->field_0018;
-            if (temp_r0_710 >= 0) {
-                if ((u32) temp_r0_710 <= 0x17U) {
-                    temp_r0_719 = (Func_080022ec(temp_r0_710, 6) + 3) * 2;
-                    temp_r4_723 = *(u16 *)(0x080EEEF8 + temp_r0_719);
-                    temp_r0_729 = temp_r4_723 >> 1;
-                    sp0 = (u32) temp_r4_723;
-                    sp4 = (s32) temp_r4_723;
-                    Func_080072f4(sp30, (u8 *)sp2C + *(u16 *)(0x080EEEEA + temp_r0_719), M2C_FIELD(var_r5_708, s16 *, 2) - temp_r0_729, M2C_FIELD(var_r5_708, s16 *, 6) - temp_r0_729);
-                }
-                Func_080e3908(var_r5_708, 0x3C, 0xFFFFC000);
-                var_r5_708->field_0018 += 1;
-            }
-            var_r8_707 += 1;
-            var_r5_708 += 0x1C;
-        } while (var_r8_707 != 0x38);
-        if (sp28 == 0x104) {
-            var_r8_758 = 0;
-            if (M2C_FIELD(M2C_FIELD(sp2C, void **, 0x7828), s32 *, 0x14) != 0) {
-                var_r6_767 = 0x24;
-                do {
-                    Func_080b5088(*(s16 *)((u8 *)M2C_FIELD(sp2C, void **, 0x7828) + var_r6_767), 4);
-                    sp0 = 8;
-                    Func_080d6888(*(s16 *)((u8 *)M2C_FIELD(sp2C, void **, 0x7828) + var_r6_767), 7, -1, var_r8_758);
-                    var_r8_758 += 1;
-                    var_r6_767 += 2;
-                } while (var_r8_758 != M2C_FIELD(M2C_FIELD(sp2C, void **, 0x7828), s32 *, 0x14));
-            }
-            M2C_FIELD(sp2C, s32 *, 0x77A8) = 8;
-            if (sp28 == 0x104) {
-                var_r7_801 = &absolute_02010000;
-                var_r8_802 = 0;
-                do {
-                    temp_r5_806 = 0x3FF & Func_08004458();
-                    temp_r6_810 = (u16) Func_08004458();
-                    M2C_FIELD(var_r7_801, s32 *, 0) = 0x200000;
-                    var_r7_801->field_0004 = 0x5C0000;
-                    temp_r5_819 = temp_r5_806 + 0x20;
-                    var_r7_801->field_000c = (u32) ((s32) (temp_r5_819 * Func_08002322(temp_r6_810)) >> 7);
-                    var_r7_801->field_0010 = (u32) ((s32) (0 - (temp_r5_819 * Func_0800231c(temp_r6_810) * 2)) >> 7);
-                    var_r7_801->field_0018 = (0xF & Func_08004458()) + 0x20;
-                    var_r8_802 += 1;
-                    var_r7_801 += 0x1C;
-                } while (var_r8_802 != 0x200);
-            }
-        }
-        var_r6_847 = &absolute_02010000;
-        var_r8_848 = 0;
-        do {
-            temp_r0_851 = var_r6_847->field_0018;
-            if ((s32) temp_r0_851 >= 0) {
-                temp_r0_855 = ((s32) temp_r0_851 >> 3) + 1;
-                temp_r5_856 = temp_r0_855 * 2;
-                sp0 = temp_r0_855;
-                sp4 = temp_r5_856;
-                Func_080072f4(sp30, sp24 + *(u16 *)(0x080EDE48 + (s32) (temp_r5_856 - 2)), M2C_FIELD(var_r6_847, s16 *, 2) - ((s32) (temp_r0_855 + (temp_r0_855 >> 0x1F)) >> 1), M2C_FIELD(var_r6_847, s16 *, 6) - temp_r0_855);
-                Func_080e3908(var_r6_847, 0x3E, 0x1000);
-                var_r6_847->field_0018 -= 1;
-            }
-            var_r8_848 += 1;
-            var_r6_847 += 0x1C;
-        } while (var_r8_848 != 0x200);
-        Func_080e155c(8, 8);
-        Func_080cd52c();
-        M2C_FIELD(sp2C, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
-        temp_r7_910 = sp28 + 1;
-        sp28 = temp_r7_910;
-        if ((temp_r7_910 != 0x140) && !(*(u32 *)0x03001B04 & 3)) {
-            goto loop_18;
-        }
+        handle_off += 4;
     }
+
+    gfx = (u8 *)0x03001E50;
+    Func_080ed408(46, 7, 7, 3, 2);
+    rectangle[0] = *(void **)(gfx + 184);
+    Func_080ed408(47, 7, 7, 3, 3);
+    drawable = *(void **)(gfx + 188);
+    rectangle_slot = rectangle;
+    rectangle_slot[1] = drawable;
+
+    io = (u16 *)0x04000048;
+    *io = 0x2737;
+    io -= 4;
+    *io = 0xF0;
+    io += 3;
+    *io = 0x1088;
+    Func_080030f8(1);
+    Func_080b5040(1, (s32)&Value_0000003c, 0);
+    Func_080cd104(1, 1);
+    Func_080e0524((s32)&Value_00000073, sprite_sheet, 0, 0);
+    Func_080e0524((s32)&Value_000000c0, work, 1, 1);
+    *(u16 *)0x04000000 = 0x7741;
+    *(u16 *)0x04000020 = 0x80;
+    *(u16 *)0x04000052 = 0x1010;
+    *(u16 *)0x04000050 = 0x3F44;
+    M2C_FIELD(work, s32 *, 0x7780) = 2;
+    M2C_FIELD(work, s32 *, 0x7784) = 50;
+
+    org.bg_x = 0xBC0000;
+    org.bg_y = 0x5C0000;
+    org.y = 0x5C0000;
+    org.x = 0xA00000;
+
+    /* Six falling objects, stacked one screen apart above the view. */
+    entry = (SceneParticle *)((u8 *)work + 0x7080);
+    n = 0;
+    for (i = 0; i != 6; i++) {
+        entry->x = (Func_08004458() & 0x7F) << 16;
+        entry->y = n;
+        entry->vx = 0;
+        entry->vy = 0;
+        entry->timer = 0;
+        n += (s32)0xFFF00000;
+        entry++;
+    }
+
+    entry = (SceneParticle *)((u8 *)work + 0x7128);
+    for (i = 0; i != 58; i++) {
+        entry->timer = 24;
+        entry++;
+    }
+
+    entry = (SceneParticle *)0x02010000;
+    for (i = 0; i != 1024; i++) {
+        entry->timer = -1;
+        entry++;
+    }
+
+    M2C_FIELD(work, s32 *, 0x77B4) = 24;
+    M2C_FIELD(work, s32 *, 0x77B8) = 0;
+
+    frame = 0;
+    if ((*(s32 *)0x03001B04 & 3) == 0) {
+        pos_ptr = pos;
+        clip_ptr = clip;
+        do {
+            if (frame == 94) {
+                Func_080f9010(156);
+            }
+            if (frame == 136) {
+                Func_080f9010(156);
+            }
+            if (frame == 178) {
+                Func_080f9010(156);
+            }
+            if (frame == 260) {
+                Func_080f9010(145);
+            }
+            clip[0] = Data_080edac8[0];
+            clip[1] = Data_080edac8[1];
+            if ((u32)(frame - 96) <= 155U) {
+                M2C_FIELD(work, s32 *, 0x77A8) = 1;
+            } else if ((u32)(frame - 260) <= 3U) {
+                M2C_FIELD(work, s32 *, 0x77A8) = 1;
+            }
+
+            /* Seven fixed background objects from the byte-offset tables. */
+            pos[3] = 0;
+            pos[1] = 0;
+            handle = (s32 *)((u8 *)work + 0x77D8);
+            for (i = 0; i != 7; i++) {
+                pos_ptr[0] =
+                    (Data_080eeed8[i] << 16) + org.bg_x + (s32)0xFFE00000;
+                pos_ptr[2] =
+                    (Data_080eeee1[i] << 16) + org.bg_y + (s32)0xFFE00000;
+                Func_08009008(*handle++, pos_ptr, clip_ptr, 0);
+            }
+
+            /* Sweep the two lead objects around a circle. */
+            if (frame <= 90) {
+                angle = frame << 9;
+                org.x = (Func_08002322(angle) << 4) + 0x9C0000;
+                org.y = (Func_0800231c(angle) << 4) + 0x5C0000;
+            }
+
+            if (frame <= 196) {
+                group = (u8 *)work;
+                base = 91;
+                for (i = 0; i != 3; i++) {
+                    if (frame >= base && frame < base + 4) {
+                        org.y += 0x80000;
+                    }
+                    if (frame == base + 3) {
+                        spark = (SceneParticle *)(group + 0x7128);
+                        for (n = 0; n != 4; n++) {
+                            spark->x = 0x400000;
+                            spark->y = 0x600000;
+                            spark->vx =
+                                ((Func_08004458() & 0xFF) - 127) << 10;
+                            spark->vy =
+                                ((Func_08004458() & 0xFF) - 127) << 10;
+                            spark->timer = Func_08004458() & 15;
+                            spark++;
+                        }
+                    }
+                    if (frame >= base + 20 && frame < base + 36) {
+                        org.y += (s32)0xFFFE0000;
+                    }
+                    base += 40;
+                    group += 0xE0;
+                }
+            }
+
+            if ((u32)(frame - 244) <= 7U) {
+                org.x += (s32)0xFFFF0000;
+            }
+            if ((u32)(frame - 252) <= 23U) {
+                org.x -= (frame - 250) << 16;
+            }
+
+            if (frame <= 0x103) {
+                pos[1] = (s32)0xFF000000;
+                pos[2] = org.y + (s32)0xFF000000;
+                pos[0] = org.x;
+                Func_08009008(
+                    M2C_FIELD(work, s32 *, 0x77F4), pos, clip_ptr, 0);
+                pos[0] = org.x + 0x200000;
+                Func_08009008(
+                    M2C_FIELD(work, s32 *, 0x77F8), pos, clip_ptr, 0);
+            }
+
+            /* Advance and redraw the six falling objects. */
+            pos_ptr[1] = 0;
+            entry = (SceneParticle *)((u8 *)work + 0x7080);
+            spawn_base = (u8 *)work;
+            for (i = 0; i != 6; i++) {
+                if (entry->timer != 2) {
+                    pos_ptr[0] = entry->x;
+                    pos_ptr[2] = entry->y;
+                    Func_08009008(
+                        *(s32 *)((u8 *)work + (i * 4) + 0x77FC),
+                        pos_ptr, clip_ptr, 0);
+                    entry->x += entry->vx;
+                    vy = entry->vy;
+                    entry->y += vy;
+                    if (frame > 96) {
+                        entry->vy = vy + 0x4000;
+                    }
+                    if (entry->y > 0x780000) {
+                        entry->timer += 1;
+                        if (entry->timer == 1) {
+                            /* First landing: bounce and throw two sparks. */
+                            entry->vy = -entry->vy / 2;
+                            spark = (SceneParticle *)(spawn_base + 0x73C8);
+                            for (n = 0; n != 2; n++) {
+                                spark->x = entry->x / 2;
+                                spark->y = entry->y + (s32)0xFFE00000;
+                                spark->vx =
+                                    ((Func_08004458() & 0xFF) - 127) << 10;
+                                spark->vy =
+                                    ((Func_08004458() & 0xFF) - 127) << 10;
+                                spark->timer = Func_08004458() & 15;
+                                spark++;
+                            }
+                        } else if (frame <= 199) {
+                            entry->y = 0;
+                            entry->vy = 0;
+                            entry->timer = 0;
+                        }
+                    }
+                }
+                entry++;
+                spawn_base += 0x38;
+            }
+
+            /* Age and redraw the 58-entry sprite array. */
+            entry = (SceneParticle *)((u8 *)work + 0x7128);
+            for (i = 0; i != 56; i++) {
+                life = entry->timer;
+                if (life >= 0) {
+                    if ((u32)life <= 23U) {
+                        idx = Func_080022ec(life, 6) + 3;
+                        offset = Data_080eeeea[idx];
+                        size = Data_080eeef8[idx];
+                        ((DrawRectangleFn)rectangle[0])(
+                            canvas,
+                            (u8 *)work + offset,
+                            M2C_FIELD(entry, s16 *, 2) - (size >> 1),
+                            M2C_FIELD(entry, s16 *, 6) - (size >> 1),
+                            size, size);
+                    }
+                    Func_080e3908(entry, 60, (s32)0xFFFFC000);
+                    entry->timer += 1;
+                }
+                entry++;
+            }
+
+            if (frame == 260) {
+                n = 0;
+                count = M2C_FIELD(
+                    M2C_FIELD(work, void **, 0x7828), s32 *, 0x14);
+                if (count != 0) {
+                    off = 36;
+                    do {
+                        Func_080b5088(
+                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
+                                s16 *, off),
+                            4);
+                        Func_080d6888(
+                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
+                                s16 *, off),
+                            7, -1, n, 8);
+                        n++;
+                        off += 2;
+                    } while (n != M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x14));
+                }
+                M2C_FIELD(work, s32 *, 0x77A8) = 8;
+                if (frame == 260) {
+                    entry = (SceneParticle *)0x02010000;
+                    for (n = 0; n != 512; n++) {
+                        speed = Func_08004458() & 0x3FF;
+                        angle = Func_08004458() & 0xFFFF;
+                        entry->x = 0x200000;
+                        entry->y = 0x5C0000;
+                        speed += 32;
+                        entry->vx = (speed * Func_08002322(angle)) >> 7;
+                        entry->vy =
+                            -((speed * Func_0800231c(angle)) * 2) >> 7;
+                        entry->timer = (Func_08004458() & 15) + 32;
+                        entry++;
+                    }
+                }
+            }
+
+            /* Age and redraw the shared particle pool. */
+            entry = (SceneParticle *)0x02010000;
+            for (i = 0; i != 512; i++) {
+                life = entry->timer;
+                if (life >= 0) {
+                    half = (life >> 3) + 1;
+                    full = half * 2;
+                    ((DrawRectangleFn)rectangle_slot[i & 1])(
+                        canvas,
+                        (u8 *)sprite_sheet + Data_080ede48[half - 1],
+                        M2C_FIELD(entry, s16 *, 2) - (half / 2),
+                        M2C_FIELD(entry, s16 *, 6) - half,
+                        half, full);
+                    Func_080e3908(entry, 62, 0x1000);
+                    entry->timer -= 1;
+                }
+                entry++;
+            }
+
+            Func_080e155c(8, 8);
+            Func_080cd52c();
+            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            Func_080030f8(1);
+            frame++;
+        } while (frame != 320 && (*(s32 *)0x03001B04 & 3) == 0);
+    }
+
     Func_080b50e8(0x86);
     Func_080d67dc();
-    var_r8_929 = 0;
-    var_r5_930 = sp2C + 0x77D8;
-    do {
-        var_r8_929 += 1;
-        temp_r0_934 = *var_r5_930;
-        var_r5_930 += 4;
-        Func_08009038(temp_r0_934);
-    } while (var_r8_929 != 0xF);
-    Func_08004278(0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    handle = (s32 *)((u8 *)work + 0x77D8);
+    for (i = 0; i != 15; i++) {
+        Func_08009038(*handle++);
+    }
+    Func_08004278((void *)0x080CD261);
+    Func_08002dd8(47);
+    Func_08002dd8(46);
     Func_080cdbc0();
 }

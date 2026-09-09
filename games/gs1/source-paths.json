@@ -15367,7 +15367,8 @@
       "source": "overlays/scene_primary_script/run_scene_39c_actor_three_branch_sequence.c"
     },
     "resource_3ba:02001214": {
-      "name": "FieldScene_RunMapEntranceCoordinator"
+      "name": "FieldScene_RunMapEntranceCoordinator",
+      "source": "overlays/scene_primary_script/run_map_entrance_coordinator.c"
     },
     "resource_3bb:02001538": {
       "name": "FieldScene_RunSceneThreeCoordinator",

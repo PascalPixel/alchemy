@@ -4,7 +4,8 @@
 struct BattleObjectSlot *GetBattleObjectSlot(s32);
 void BattleMotion_ReservedNoOp83B0(void *, s32);
 
-void BattleMotion_ApplyPairMidpoint(s32 arg0, s32 arg1) {
+void BattleMotion_ApplyPairMidpoint(s32 arg0, s32 arg1)
+{
     struct BattleObjectSlot *second_slot;
     struct MotionObject *obj1;
     struct MotionObject *obj2;

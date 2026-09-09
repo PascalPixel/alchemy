@@ -14,7 +14,8 @@ extern void Func_02002ed8(void);
 extern void Func_02002f30(void);
 extern void Func_02002fc8(void);
 
-s32 FieldScene_DispatchBySceneId(void) {
+s32 FieldScene_DispatchBySceneId(void)
+{
     s32 v;
 
     Func_0200522e(0x87a);

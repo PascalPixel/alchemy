@@ -18,7 +18,8 @@ void BattleEffect_SpawnBurstParticle(void *, s32);
 void Object_CommitPosition(void *);
 void BattleEffect_PlayQueuedSound(void);
 
-void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
+void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action)
+{
     s32 next_y;
     s32 base_z;
     void *object;

@@ -15,7 +15,8 @@ struct Object_08092a1c {
 
 void Object_SetCallback(struct Object_08092a1c *, s32);
 
-void Object_SetTargetAndCallback(u32 arg0, s32 arg1, s32 arg2) {
+void Object_SetTargetAndCallback(u32 arg0, s32 arg1, s32 arg2)
+{
     struct Object_08092a1c *first = ObjectTable_Get(arg0);
     struct Object_08092a1c *second = ObjectTable_Get(arg1 & 0xff);
 

@@ -53,8 +53,7 @@ void CgbChannel_UpdatePanEnvelope(struct CgbChannel *channel)
             channel->pan = 0x0F;
             goto clamp;
         }
-    }
-    else
+    } else
     {
         if (((u8)left >> 1) >= (u8)right)
         {
@@ -76,6 +75,6 @@ clamp:
 
 done:
     channel->sustain_goal =
-        (channel->envelope_goal * channel->sustain + 15) >> 4;
+        (channel->envelope_goal *channel->sustain + 15) >> 4;
     channel->pan &= channel->pan_mask;
 }

@@ -11,7 +11,8 @@ extern u8 Data_0200e838[];
 extern u8 Data_0200e988[];
 extern u8 Data_0200e6e8[];
 
-s32 SceneData_SelectTableByWord224(void) {
+s32 SceneData_SelectTableByWord224(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000036) {

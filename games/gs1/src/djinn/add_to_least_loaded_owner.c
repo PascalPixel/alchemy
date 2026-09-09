@@ -19,7 +19,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
     s32 result;
     u8 *owners;
 
-    if (GameFlag_Test(entry) != 0)
+    if (GameFlag_Test(entry)!= 0)
         return -1;
 
     result = Party_CountActiveOwners();

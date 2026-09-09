@@ -28,7 +28,8 @@ extern u8 Value_00000929;
 extern u8 Value_00000937;
 extern u8 Value_0000092e;
 
-void SceneDialogue_RunActorTenFlaggedDialogue(void) {
+void SceneDialogue_RunActorTenFlaggedDialogue(void)
+{
     if (Func_02006e5c(0x300) != 0) {
         u8 *o = Func_02001ca0();
         u8 *p;

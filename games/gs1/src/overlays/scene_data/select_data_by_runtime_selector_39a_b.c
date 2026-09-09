@@ -17,7 +17,8 @@ extern u8 Data_0200b130[];
 extern u8 Data_0200b184[];
 extern u8 Data_0200abcc[];
 
-s32 SceneData_SelectDataByRuntimeSelectorB(void) {
+s32 SceneData_SelectDataByRuntimeSelectorB(void)
+{
     s16 v = Data_02000240[224];
 
     if (v == (s32)&Value_00000034) {

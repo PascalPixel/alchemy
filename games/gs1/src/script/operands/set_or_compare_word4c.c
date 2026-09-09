@@ -1,6 +1,7 @@
 #include "script_operands.h"
 
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value) {
+void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value)
+{
     s8 result;
 
     if (operation == 0) {

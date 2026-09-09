@@ -5,7 +5,8 @@ void WaitFrames(s32);
 void Func_080a1114(void *, s32);
 void Menu_ReleaseEntryObjects(void);
 
-void InventoryMenu_CloseWindows(void) {
+void InventoryMenu_CloseWindows(void)
+{
     u8 *menu;
     s8 *cursor;
 

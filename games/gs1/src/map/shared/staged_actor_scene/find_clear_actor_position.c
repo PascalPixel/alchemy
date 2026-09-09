@@ -96,7 +96,7 @@ found:
     if (step_count != 0) {
         s32 direction = Data_0200e190[direction_index];
         s32 direction_x = direction & 0xffff0000;
-        s32 offset_x = direction_x * step_count;
+        s32 offset_x = direction_x *step_count;
         s32 offset_z = (direction << 16) * step_count;
         u8 *actor_bytes = actor;
         request[2] = *(s32 *)(actor_bytes + 8) + offset_x;

@@ -7,7 +7,8 @@ extern u8 Value_0000008b;
 extern u8 Data_0200ca1c[];
 extern u8 Data_0200c614[];
 
-s32 SceneData_SelectTablec614ByState(void) {
+s32 SceneData_SelectTablec614ByState(void)
+{
     if (Data_02000240[224] == (s32)&Value_0000008b) {
         return (s32)Data_0200ca1c;
     }

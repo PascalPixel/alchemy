@@ -12,7 +12,8 @@ extern void Func_02004106(s32);
 extern void Func_0200411e(s32, s32);
 extern void Func_02004052(void);
 
-void FieldScene_RunActorTwentyFourAngleDialogue(void) {
+void FieldScene_RunActorTwentyFourAngleDialogue(void)
+{
     struct Obj *o;
     u32 v;
 

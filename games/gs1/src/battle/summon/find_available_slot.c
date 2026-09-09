@@ -3,7 +3,8 @@
 struct BattleActorDefinition;
 struct BattleActorDefinition *Runtime_GetObject(s32);
 
-s32 Summon_FindSlot(void) {
+s32 Summon_FindSlot(void)
+{
     s32 i;
     s32 id;
 

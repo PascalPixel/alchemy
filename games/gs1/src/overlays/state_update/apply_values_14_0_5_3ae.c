@@ -5,6 +5,7 @@
 
 void Func_020016ca(s32, s32, s32);
 
-void SceneState_ApplyValues14And0And5(void) {
+void SceneState_ApplyValues14And0And5(void)
+{
     Func_020016ca(0xE, 0, 5);
 }

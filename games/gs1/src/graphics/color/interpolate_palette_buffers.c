@@ -1,6 +1,7 @@
 #include "types.h"
 
-void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n) {
+void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
+{
     s32 index;
     s32 first;
     s32 second;

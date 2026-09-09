@@ -96,7 +96,7 @@ found:
     if (cnt != 0) {
         s32 d = Data_0200dd50[sel];
         s32 m = d & 0xffff0000;
-        s32 v1 = m * cnt;
+        s32 v1 = m *cnt;
         s32 v2 = (d << 16) * cnt;
         u8 *oc = obj;
         a[2] = *(s32 *)(oc + 8) + v1;

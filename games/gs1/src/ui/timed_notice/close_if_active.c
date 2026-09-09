@@ -7,7 +7,8 @@ s32 ScheduleCallback(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 void UiTimedNotice_Tick(void);
 
-void UiTimedNotice_CloseIfActive(void) {
+void UiTimedNotice_CloseIfActive(void)
+{
     void *work;
 
     work = FIELD_AT_OFFSET(*(void **)ADDR_03001EBC, void **, 0x230);

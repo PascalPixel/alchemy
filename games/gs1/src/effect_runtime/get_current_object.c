@@ -6,7 +6,8 @@
 
 s32 EffectRuntime_FindSlotByObject();
 
-s32 EffectRuntime_GetCurrentObject(void) {
+s32 EffectRuntime_GetCurrentObject(void)
+{
     s32 slot;
 
     slot = EffectRuntime_FindSlotByObject();

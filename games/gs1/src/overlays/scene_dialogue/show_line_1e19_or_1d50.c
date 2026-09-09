@@ -12,7 +12,8 @@ extern u8 Value_00000925;
 extern u8 Value_00001e19;
 extern u8 Value_00001d50;
 
-void SceneDialogue_ShowLine1E19Or1D50(void) {
+void SceneDialogue_ShowLine1E19Or1D50(void)
+{
     Func_02006d74();
     if (Func_02006d52((s32)&Value_00000925) != 0) {
         Func_02006e64((s32)&Value_00001e19);

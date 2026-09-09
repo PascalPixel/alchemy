@@ -2,7 +2,8 @@
 
 u8 *Runtime_GetObject(void);
 
-s32 BattleUnit_TickCounter146(void) {
+s32 BattleUnit_TickCounter146(void)
+{
     u8 *base = Runtime_GetObject();
     u8 *value = base + 0x146;
     if (*value != 0) {

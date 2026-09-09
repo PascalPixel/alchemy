@@ -6,7 +6,8 @@ s32 Resource_FindFreeSlot();
 s32 UiIcon_DrawWithFlags(s32, s32, s32, s32, s32);
 s32 UiIcon_LoadResourceIntoSlot(s32 arg0, s32 arg1);
 
-s32 UiIcon_CreateWithLoadedResource(s32 x, s32 y, s32 z, s32 resource_id) {
+s32 UiIcon_CreateWithLoadedResource(s32 x, s32 y, s32 z, s32 resource_id)
+{
     s32 slot;
 
     slot = Resource_FindFreeSlot();

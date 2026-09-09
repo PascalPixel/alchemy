@@ -18,7 +18,7 @@
         return right;
     }
     if (SoftFloatLeftIsInfinity(left)) {
-        if (SoftFloatRightIsInfinityWithLeftInfinity(right) &&
+        if (SoftFloatRightIsInfinityWithLeftInfinity(right)&&
             left->sign != right->sign) {
             return GetSoftFloatNaNRecord();
         }

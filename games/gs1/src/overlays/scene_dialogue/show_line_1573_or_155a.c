@@ -7,7 +7,8 @@ void Func_020029a4();
 void Func_020029b4();
 void Func_020028e8();
 
-void SceneDialogue_ShowLine1573Or155A(void) {
+void SceneDialogue_ShowLine1573Or155A(void)
+{
     Func_020028bc();
     if (Func_020028a2(3) != 0) {
         Func_0200299c(0x1573);

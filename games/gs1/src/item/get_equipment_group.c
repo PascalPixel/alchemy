@@ -1,6 +1,7 @@
 #include "item.h"
 
-s32 Item_GetEquipmentGroup(s32 item_id) {
+s32 Item_GetEquipmentGroup(s32 item_id)
+{
     s32 group;
     struct ItemDefinition *item;
 

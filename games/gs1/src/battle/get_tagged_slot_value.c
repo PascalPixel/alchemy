@@ -1,7 +1,8 @@
 #include "types.h"
 #include "global_cells.h"
 
-s16 Battle_GetTaggedSlotValue(s32 arg0) {
+s16 Battle_GetTaggedSlotValue(s32 arg0)
+{
     u8 *base = *(u8 **)ADDR_03001E74;
     s32 offset;
 

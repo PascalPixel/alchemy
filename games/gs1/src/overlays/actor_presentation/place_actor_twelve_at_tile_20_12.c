@@ -3,7 +3,8 @@
 extern s32 *Func_02005510();
 extern void Func_020054cc();
 
-void ActorPresentation_PlaceActorTwelveAtTile20And12(void) {
+void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
+{
     s32 *p = Func_02005510(12);
     s32 a = p[2] >> 20;
 

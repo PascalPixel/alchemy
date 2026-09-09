@@ -22,7 +22,8 @@ struct Work {
 void RenderOutput_PrepareForRedraw(void *work);
 void Func_08016178(u16 x, u16 y, u16 width, u16 height);
 
-void UiWork_Finalize(struct Work *work, s32 release) {
+void UiWork_Finalize(struct Work *work, s32 release)
+{
     u16 zero;
 
     if (work == 0)

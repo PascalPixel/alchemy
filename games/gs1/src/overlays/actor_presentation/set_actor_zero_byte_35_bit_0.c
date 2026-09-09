@@ -2,7 +2,8 @@
 
 extern s32 Func_02005202(s32);
 
-void SceneActor_SetActorZeroByte35Bit0(void) {
+void SceneActor_SetActorZeroByte35Bit0(void)
+{
     u8 *p;
     s32 v;
 

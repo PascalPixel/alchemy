@@ -21,7 +21,8 @@ extern void Func_02004cae(s32 arg0);
 extern void Func_02004d3a(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void Func_02004d4a(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
-void UpdateActor8ReturnRoute(void) {
+void UpdateActor8ReturnRoute(void)
+{
     s32 x = Func_02004d14(8)->f08 >> 20;
     s32 y = Func_02004d1e(8)->f10 >> 20;
     s32 z = Func_02004d28(12)->f08 >> 20;

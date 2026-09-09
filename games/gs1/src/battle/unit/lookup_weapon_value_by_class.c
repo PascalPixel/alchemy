@@ -9,7 +9,8 @@ extern u16 Data_080c2a38[];
 extern u16 Data_080c2a46[];
 extern u16 Data_080c2a54[];
 
-s32 BattleUnit_LookupWeaponValueByClass(s32 id) {
+s32 BattleUnit_LookupWeaponValueByClass(s32 id)
+{
     u8 *state;
     s32 entry;
     s32 result;

@@ -45,7 +45,7 @@ void FieldScene_RunFlag9a9GuardedScene(void)
 
     if (Value1(Func_0200146e, 0x9a9) == 0) {
         Func_020004e6();
-        if (Value0(Func_020006ae) != 0) {
+        if (Value0(Func_020006ae)!= 0) {
             Call1(Func_0200148c, 0x9a9);
             Func_020014da(80);
             Func_02000726();

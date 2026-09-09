@@ -5,7 +5,8 @@
 void Map_RenderAnimatedTileFrame(u8 *object, u32 pos);
 void WaitFrames(u32);
 
-void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt) {
+void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
+{
     u8 **top;
     u8 **p;
     s32 n;

@@ -7,7 +7,8 @@ extern void Func_02003c66(s32 no);
 extern void Func_02001ce8(s32 no);
 extern void Func_02003cfc(s32 no, s32 val);
 
-void FieldScene_RunSixCallSetupSequence(s32 no, s32 val) {
+void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
+{
     s32 v0 = 0x20000;
     s32 v1 = 0x4000;
 

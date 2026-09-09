@@ -127,7 +127,8 @@ void SceneEffect_SetRecordMode(struct EffectWork *work, s32 mode)
     work->record->mode = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+{
     void *obj;
     void *rec;
     s32 mask;
@@ -211,7 +212,8 @@ void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 
 #include "configured_effect_spawn_body.inc"
 }
 
-s32 SceneData_GetTable8818OrTable88d8(void) {
+s32 SceneData_GetTable8818OrTable88d8(void)
+{
     extern s16 Data_02000240[];
 
     if (Data_02000240[224] == (s32)&Value_0000001d) {
@@ -234,7 +236,8 @@ u8 *SceneData_GetTable8920(void)
     return Data_02008920;
 }
 
-s32 SceneData_GetTable8948OrTable8978(void) {
+s32 SceneData_GetTable8948OrTable8978(void)
+{
     extern s16 Data_02000240[];
 
     if (Data_02000240[224] == (s32)&Value_0000001d) {
@@ -266,7 +269,8 @@ void FieldScene_RunActor8AtCell24Sequence(void)
     }
 }
 
-s32 SceneData_GetTable8990OrTable89f0(void) {
+s32 SceneData_GetTable8990OrTable89f0(void)
+{
     extern s16 Data_02000240[];
 
     if (Data_02000240[224] == (s32)&Value_0000001d) {
@@ -370,7 +374,6 @@ void Func_020007ac();
 void Func_02000dd2(s32);
 void Func_02000dca(s32, s32);
 void Func_02000d86(void);
-
 
 #define SceneEffect_RunActorBurst Func_020004f4
 

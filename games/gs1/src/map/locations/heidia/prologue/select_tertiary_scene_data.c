@@ -13,7 +13,8 @@ extern u8 Data_0200bd48[];
 extern u8 Data_0200bd6c[];
 extern u8 Data_0200b880[];
 
-s32 SelectTertiarySceneData(void) {
+s32 SelectTertiarySceneData(void)
+{
     s16 scene_id = Data_02000240[224];
 
     if (scene_id == (s32)&Value_00000071) {

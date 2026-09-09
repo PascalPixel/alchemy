@@ -8,7 +8,8 @@ s32 Func_08017248(s32, s32, s32, s32, s32);
 void Func_080170f8(s32, s32, s32, s32);
 typedef void (*UiFillFn)(s32 dst, s32 size, s32 value);
 
-void UiWork_DrawByAttributes(void *arg0) {
+void UiWork_DrawByAttributes(void *arg0)
+{
     u32 attr;
     u32 tmp;
     u32 v0;

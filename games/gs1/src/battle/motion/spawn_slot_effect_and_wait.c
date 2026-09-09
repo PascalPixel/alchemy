@@ -7,7 +7,8 @@ void *Func_08009048(s32, s32);
 s32 Func_08009070(void *, s32);
 void **GetBattleObjectSlot();
 
-void BattleMotion_SpawnSlotEffectAndWait(void) {
+void BattleMotion_SpawnSlotEffectAndWait(void)
+{
     void *object;
     void *effect;
 

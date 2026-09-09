@@ -11,7 +11,8 @@ void Func_020029fc(s32);
 void Func_02002ad6(s32);
 void Func_02002af4(s32);
 
-void ActorPresentation_SetupActorEightForFlags308And309(void) {
+void ActorPresentation_SetupActorEightForFlags308And309(void)
+{
     Func_02002ad6(0xF1);
     Func_020029f6(0x308);
     Func_020029fc(0x309);

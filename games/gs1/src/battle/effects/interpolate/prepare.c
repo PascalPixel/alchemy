@@ -6,7 +6,8 @@
 void BattleEffect_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
 void BattleEffect_StartBufferInterpolation(s32 value);
 
-void BattleEffect_PrepareBufferInterpolation(void) {
+void BattleEffect_PrepareBufferInterpolation(void)
+{
     s32 value;
     u8 *state;
 

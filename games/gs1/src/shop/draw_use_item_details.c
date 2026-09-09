@@ -36,7 +36,7 @@ void Shop_DrawUseItemDetails(s32 window, s32 unit_id, s32 item_id)
             s32 total;
 
             qty = Shop_ComputeSalePrice(*(u16 *)(unit + slot_offset));
-            total = mult * qty;
+            total = mult *qty;
 
             UiText_DrawAt((s32)&Value_00000c8d, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);

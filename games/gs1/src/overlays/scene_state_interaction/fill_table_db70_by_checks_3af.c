@@ -21,7 +21,7 @@ void SceneState_FillTableDb70ByChecks(void)
         s32 t = 3;
 
         for (i = 0; i < 4; i++) {
-            if (Func_02006514(i) != 0) p[i] = Func_02006832(i);
+            if (Func_02006514(i)!= 0) p[i] = Func_02006832(i);
             else p[i] = t;
         }
     }

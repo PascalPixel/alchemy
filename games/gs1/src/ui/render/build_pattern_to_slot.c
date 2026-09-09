@@ -7,7 +7,8 @@ s32 Resource_CopyData(s32, s32, s32);
 s32 Runtime_AllocateHeapBlock(s32 no, s32 arg1);
 void Func_0801a4c0(u32 index);
 
-s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot) {
+s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot)
+{
     s32 work;
 
     work = Runtime_AllocateHeapBlock(0x11, 0x608);

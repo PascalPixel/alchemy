@@ -49,7 +49,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-
 void Func_02000aa0(void)
 {
     s32 i;

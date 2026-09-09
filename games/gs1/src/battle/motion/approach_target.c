@@ -22,10 +22,10 @@ void BattleMotion_ApproachTarget(
     s32 scale = 75;
     s32 difference_x = target->x - object->x;
     s32 start_x = object->x;
-    s32 delta_x = FixedPoint_Ratio(scale * difference_x, 100);
+    s32 delta_x = FixedPoint_Ratio(scale *difference_x, 100);
     s32 difference_z = target->z - object->z;
     s32 start_z = object->z;
-    s32 delta_z = FixedPoint_Ratio(scale * difference_z, 100);
+    s32 delta_z = FixedPoint_Ratio(scale *difference_z, 100);
     s32 x = start_x + delta_x;
     s32 z = start_z + delta_z;
     s32 short_x = delta_x >> 8;
@@ -33,7 +33,7 @@ void BattleMotion_ApproachTarget(
     s32 distance;
 
     distance = ((s32 (*)(s32))0x030001d8)(
-        short_x * short_x + short_z * short_z);
+        short_x *short_x + short_z *short_z);
     distance = FixedPoint_Ratio(distance << 8, travel_divisor);
     object->acceleration = distance;
     object->speed_limit = distance;

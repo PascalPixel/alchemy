@@ -1,35 +1,8 @@
 #include "types.h"
 
 /*
- * resource_39f owner at 0x02000ae8, 472 bytes: code 0x02000ae8-0x02000cb3 and
- * the three pool words 0x0200b058, 0x020080e1 and 0xffff0000 at
- * 0x02000cb4-0x02000cbf.
- *
- * The overlay's effect spawner, and the one routine every cutscene beat in this
- * overlay funnels through: 0x02000e18, 0x02001150, 0x02001244, 0x02001328,
- * 0x020015d0, 0x020016f0, 0x02001880, 0x02001d04, 0x02001de0, 0x02001ef0,
- * 0x02002078 and 0x020021b0 all call it with four register arguments and four
- * stack words.
- *
- * It creates an effect record at (x, y, z), gives it the constant velocity
- * (vx, vy, vz) that the per-frame handler at 0x02000ab0 integrates, and then
- * applies whichever of the optional fields `flags` selects from `options`.
- *
- * See resource_39f_c_02000030.c for the link base and the `bl` encoding rule.
- * Two further witnesses for the 0x02008000 base appear here: the installed
- * handler pool word 0x020080e1 is 0x02000ab0 plus the Thumb bit, and 0x2ab0
- * really is the start of a leaf routine that adds the +68/+72/+76 velocity into
- * the +8/+12/+16 position; and Data_0200d1d4 (file offset 0x3058) is a table
- * whose first three words, 0x0200afb0, 0x0200afe8 and 0x0200b020, are the
- * in-image descriptors at offsets 0x2fb0, 0x2fe8 and 0x3020.
- *
- * Func_03000380 is an ARM-mode helper relocated into IWRAM, reached through the
- * veneer at 0x02002ce4 - the same family as the 0x030001d8 square root used by
- * 0x02000030.  It is called with a distance and the descriptor's word at +12,
- * and its result becomes a per-frame step, so it is the division helper.
- *
- * The epilogue is `add sp, #8 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0`,
- * so the owner is void.
+ * Effect spawning for overlay resource_39f.  Every cutscene beat in the
+ * overlay creates its effects through this routine.
  */
 
 struct Sprite {
@@ -98,11 +71,12 @@ s32 Func_0200501a();
 void Func_02005068();
 void Func_02005078();
 
-/* Creates the effect record and returns it, or 0 on failure. */
-
-/* Relocated IWRAM helper: turns a distance and a descriptor duration into a
- * per-frame step. */
-
+/*
+ * Creates an effect at (x, y, z) with the constant velocity (vx, vy, vz) that
+ * the per-frame integrator applies, then sets whichever optional fields
+ * `flags` selects from `options`.  The 472-byte owner includes its three pool
+ * words 0x0200b058, 0x020080e1 and 0xffff0000.
+ */
 void SceneEffect_SpawnConfigured(s32 x, s32 y,
                    s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
                    const struct Options *options)
@@ -122,7 +96,7 @@ void SceneEffect_SpawnConfigured(s32 x, s32 y,
     s32 acc;
     party = Func_02004fe6(0);
 
-    /* 128 << 13.  With that bit set and an options block present the effect's
+    /* 128 << 13.  With this bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
     if ((flags & 0x100000) != 0 && options != 0) {
         effect = Func_02004f44(options->kind, x, y, z);
@@ -141,8 +115,8 @@ void SceneEffect_SpawnConfigured(s32 x, s32 y,
     effect->mode55 = 0;
     block->state26 = 0;
 
-    /* 0x020080e1 is Func_02000ab0 with the Thumb bit: the per-frame
-     * integrator. */
+    /* 0x020080e1 is the per-frame integrator's loader-relocated call word,
+     * not a runtime address. */
     effect->callback = 0x020080e1;
 
     effect->velocity_x = vx;
@@ -161,8 +135,8 @@ void SceneEffect_SpawnConfigured(s32 x, s32 y,
     effect->step64 = 0;
     tag = &effect->step64;
 
-    /* Everything below is optional detail: the whole block is skipped unless
-     * some high flag bit is set and an options record was supplied. */
+    /* The rest is optional detail, skipped unless a high flag bit is set and
+     * an options record was supplied. */
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
@@ -186,9 +160,10 @@ void SceneEffect_SpawnConfigured(s32 x, s32 y,
             Data_0200d1d4[off >> 2];
         s32 delta;
 
-        /* The 0x80000 test is the same register the previous block left live:
-         * with a destination supplied the step is measured from it, otherwise
-         * the target is biased by -1.0 in 16.16. */
+        /* This 0x80000 test reads the register the previous block left live
+         * and must not be respelled as a fresh load of `flags`.  With a
+         * destination supplied the step is measured from it, otherwise the
+         * target is biased by -1.0 in 16.16. */
         if ((flags & 0x80000) != 0) {
             delta0 = *(volatile const s32 *)&options->target30;
             acc = *(volatile const s32 *)&effect->accum18;
@@ -208,10 +183,9 @@ void SceneEffect_SpawnConfigured(s32 x, s32 y,
             delta += (s32)0xffff0000;
         }
 
-        /* Only the FIRST call is per-arm.  The `b.n 0x02000c4c` at the end of
-         * the first arm joins both arms onto the single second call site, so
-         * the second delta is computed in each arm and the call is spelled
-         * once. */
+        /* Only the first call is per-arm.  Both arms join onto one second
+         * call site, so each arm computes its own delta and the call is
+         * spelled once here. */
         effect->rate34 = Func_0200501a(delta, dur);
     }
 

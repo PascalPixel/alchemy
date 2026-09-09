@@ -6,7 +6,7 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter)
     ScriptCommand callback =
         (ScriptCommand)interpreter->script[initial + 1];
 
-    if (callback(interpreter) != 0)
+    if (callback(interpreter)!= 0)
         return 0;
     if (interpreter->cursor == initial)
         interpreter->cursor = (u16)interpreter->cursor + 2;

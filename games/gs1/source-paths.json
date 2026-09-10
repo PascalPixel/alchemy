@@ -15736,7 +15736,8 @@
       "source": "overlays/scene/facing_gated_actor_scene/scene_primary_script.c"
     },
     "resource_39e:02001494": {
-      "name": "FieldScene_RunSecondEnsembleBeat"
+      "name": "FieldScene_RunSecondEnsembleBeat",
+      "source": "overlays/scene_primary_script/run_scene_39e_second_ensemble_beat.c"
     },
     "resource_39e:02001dbc": {
       "name": "FieldScene_RunEnsembleStoryBeat",
@@ -17982,6 +17983,10 @@
     "resource_3b1:020048e8": {
       "name": "FieldScene_RunScene3b1SequenceE",
       "source": "overlays/scene_primary_script/run_scene_3b1_020048e8.c"
+    },
+    "resource_375:02000be0": {
+      "name": "FieldScene_RunScene375SequenceA",
+      "source": "overlays/scene_primary_script/run_scene_375_02000be0.c"
     }
   }
 }

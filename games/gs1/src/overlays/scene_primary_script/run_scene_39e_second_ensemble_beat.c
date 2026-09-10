@@ -193,7 +193,20 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Call3(Func_0808a0d0, 16, 154 << 1, 136 << 1);
     Call1(Func_0808a010, 1);
     rec = Record1(Func_0808a080, 16);
-    rec[90] |= 1;
+    {
+        /*
+         * A result temporary, not the compound or-assign the matching
+         * &= 0xfe case above uses. The reference writes the result into
+         * the mask register rather than the loaded value, and the
+         * two-address ORR only does that when the merged result is its
+         * own object; the compound form keeps the loaded value as
+         * destination. Same technique already adopted in the sibling
+         * owner resource_3bd:020013f8.
+         */
+        u8 merged = (u8)(rec[90] | 1);
+
+        rec[90] = merged;
+    }
     Call3(Func_0808a188, 16, 0, 50);
     Call3(Func_0808a0f0, 17, 152 << 17, 216 << 16);
     Call3(Func_0808a0d0, 17, 152 << 1, 248);

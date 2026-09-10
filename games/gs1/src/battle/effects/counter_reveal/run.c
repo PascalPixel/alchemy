@@ -5,7 +5,7 @@
  * "0x03001eec battle work" family already recovered in
  * games/gs1/src/battle/effects/member_orbit/run.c (owner 080ce85c) and
  * games/gs1/recon/en/main/080e7404.c: same heap_cache/work/canvas prologue,
- * the same M2C_FIELD(expr,type_ptr,offset) field-access idiom, and the same
+ * the same raw-offset field-access spelling, and the same
  * BG2-affine + rectangle-blit (Func_080ed408 heap kinds 46/47) setup.
  *
  * Unlike the member-orbit effect this owner drives a single fixed party
@@ -26,9 +26,6 @@
  * -- so each call is a genuine indirect call through a traced function
  * pointer, not a call to a real symbol at that address.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
-
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
@@ -46,7 +43,7 @@ s32 Func_080cdb24(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(s32 callback, s32 order);
 void Func_08004278(void *callback);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
@@ -87,10 +84,10 @@ void BattleEffect_RunCounterReveal(void *object)
     work = *cursor++;
     canvas = *cursor;
     zero_val = 0;
-    M2C_FIELD(work, void **, 0x7828) = object;
+    (*(void **)((u8 *)(work) + (0x7828))) = object;
     Func_080cdb24(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x32) = 0x1010;
+    (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
+    (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
     palette = Func_08002f40((s32)&Value_000000ab);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
@@ -104,12 +101,12 @@ void BattleEffect_RunCounterReveal(void *object)
     status = Func_080ed408(47, 7, 7, 7, 1);
     second_rectangle = heap_cache[8];
     rectangle[1] = second_rectangle;
-    Func_080041d8((void *)0x080DBB9D, 0x480);
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = zero_val;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Func_080041d8(0x080DBB9D, 0x480);
+    (*(s32 *)((u8 *)(work) + (0x7780))) = 1;
+    (*(s32 *)((u8 *)(work) + (0x7784))) = zero_val;
+    Func_080041d8(0x080CD261, 0x480);
     draw_enabled = 1;
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
+    if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
         curve[0] = -0x500000;
     } else {
         curve[0] = 0x700000;
@@ -132,7 +129,7 @@ void BattleEffect_RunCounterReveal(void *object)
             Func_080f9010(134);
         }
         if (frame == 32) {
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
                 curve[0] = -0x200000;
             } else {
                 curve[0] = 0x480000;
@@ -141,14 +138,14 @@ void BattleEffect_RunCounterReveal(void *object)
             draw_enabled = 0;
         }
         if (frame == 33) {
-            M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
+            (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = 0x1010;
             draw_enabled = 1;
         }
         if (frame == 64) {
             Func_080e396c(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+                (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 pos);
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
                 curve[0] = (pos[0] - 128) << 16;
             } else {
                 curve[0] = (pos[0] - 64) << 16;
@@ -157,7 +154,7 @@ void BattleEffect_RunCounterReveal(void *object)
             draw_enabled = 0;
         }
         if (frame == 65) {
-            M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
+            (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = 0x1010;
             draw_enabled = 1;
         }
         scanline = (s32 *)((u8 *)work + 0x6980);
@@ -165,13 +162,13 @@ void BattleEffect_RunCounterReveal(void *object)
         if (frame <= 31) {
             if (frame > 15) {
                 amp = (frame * 2) - 32;
-                M2C_FIELD((void *)0x04000052, s16 *, 0) =
+                (*(s16 *)((u8 *)((void *)0x04000052) + (0))) =
                     (s16)((31 - frame) | 0x1000);
             }
         } else if (frame <= 63) {
             if (frame > 47) {
                 amp = (frame * 2) - 96;
-                M2C_FIELD((void *)0x04000052, s16 *, 0) =
+                (*(s16 *)((u8 *)((void *)0x04000052) + (0))) =
                     (s16)((63 - frame) | 0x1000);
             }
         }
@@ -189,7 +186,7 @@ void BattleEffect_RunCounterReveal(void *object)
             angle += 0x800;
         }
         if (draw_enabled != 0) {
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 0) {
                 idx_a = 0;
                 idx_b = 0;
             } else {
@@ -197,19 +194,16 @@ void BattleEffect_RunCounterReveal(void *object)
                 idx_b = i >> 31;
             }
             if (frame <= 87) {
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                     canvas, work, Data_080ee10c[idx_a * 7],
                     Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
             } else {
                 if (frame <= 91) {
-                    ((DrawRectangleFn)rectangle[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                    ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, work, Data_080ee10c[idx_a * 7],
                         Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
                 }
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                     canvas, (u8 *)work + 0x15D2, Data_080ee10c[idx_a * 7 + 1],
                     Data_080ee11a[idx_b * 7 + 1] + screen_y, 99, 69);
                 if ((u32)(frame - 88) <= 1U) {
@@ -217,36 +211,31 @@ void BattleEffect_RunCounterReveal(void *object)
                         canvas, (void *)0x4000, (void *)0x3F3F3F3F);
                 }
                 if ((u32)(frame - 90) <= 1U) {
-                    ((DrawRectangleFn)rectangle[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                    ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (u8 *)work + 0x3081,
                         Data_080ee10c[idx_a * 7 + 2],
                         Data_080ee11a[idx_b * 7 + 2] + screen_y, 128, 91);
                 }
                 if ((u32)(frame - 92) <= 1U) {
-                    ((DrawRectangleFn)rectangle[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                    ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x02010000,
                         Data_080ee10c[idx_a * 7 + 3],
                         Data_080ee11a[idx_b * 7 + 3] + screen_y, 128, 91);
                 }
                 if ((u32)(frame - 94) <= 1U) {
-                    ((DrawRectangleFn)rectangle[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                    ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x02012D80,
                         Data_080ee10c[idx_a * 7 + 4],
                         Data_080ee11a[idx_b * 7 + 4] + screen_y, 128, 59);
                 }
                 if ((u32)(frame - 96) <= 1U) {
-                    ((DrawRectangleFn)rectangle[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                    ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x02014B00,
                         Data_080ee10c[idx_a * 7 + 5],
                         Data_080ee11a[idx_b * 7 + 5] + screen_y, 122, 29);
                 }
                 if ((u32)(frame - 98) <= 1U) {
-                    ((DrawRectangleFn)rectangle[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                    ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x020158D2,
                         Data_080ee10c[idx_a * 7 + 6],
                         Data_080ee11a[idx_b * 7 + 6] + screen_y, 76, 25);
@@ -254,33 +243,29 @@ void BattleEffect_RunCounterReveal(void *object)
             }
         }
         if (frame == 88) {
-            member_object = *Func_080b5098(M2C_FIELD(
-                M2C_FIELD(work, void **, 0x7828), s16 *, 0x24));
-            M2C_FIELD(member_object, s32 *, 0x28) = 0x10000;
-            M2C_FIELD(member_object, s32 *, 0x34) = 0x20000;
-            M2C_FIELD(member_object, s32 *, 0x30) = 0x20000;
-            M2C_FIELD(member_object, s32 *, 0x48) = 0;
-            M2C_FIELD(member_object, s8 *, 0x5A) = 0;
-            M2C_FIELD(member_object, s8 *, 0x58) = 0;
+            member_object = *Func_080b5098((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))));
+            (*(s32 *)((u8 *)(member_object) + (0x28))) = 0x10000;
+            (*(s32 *)((u8 *)(member_object) + (0x34))) = 0x20000;
+            (*(s32 *)((u8 *)(member_object) + (0x30))) = 0x20000;
+            (*(s32 *)((u8 *)(member_object) + (0x48))) = 0;
+            (*(s8 *)((u8 *)(member_object) + (0x5A))) = 0;
+            (*(s8 *)((u8 *)(member_object) + (0x58))) = 0;
             Func_08009150(member_object,
-                M2C_FIELD(member_object, s32 *, 8) << 1, 0,
-                M2C_FIELD(member_object, s32 *, 16));
+                (*(s32 *)((u8 *)(member_object) + (8))) << 1, 0,
+                (*(s32 *)((u8 *)(member_object) + (16))));
             Func_080d6888(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24), -1,
+                (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), -1,
                 5, -1, 0);
         }
         if (frame == 120) {
-            M2C_FIELD(
-                *Func_080b5098(M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s16 *, 0x24)),
-                s32 *, 0x48) = 0xAB85;
+            (*(s32 *)((u8 *)(*Func_080b5098((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))) + (0x48))) = 0xAB85;
         }
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         Func_080030f8(1);
     }
     Func_08004278((void *)0x080CD261);
     Func_08004278((void *)0x080DBB9D);
-    Func_080b5040(1, M2C_FIELD(Data_03001e74, u16 *, 0x648), 24);
+    Func_080b5040(1, (*(u16 *)((u8 *)(Data_03001e74) + (0x648))), 24);
     Func_08002dd8(47);
     Func_08002dd8(46);
     Func_080cdbc0();

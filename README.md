@@ -23,26 +23,27 @@ _Golden Sun_ release as the first complete derived build target.
 
 ## What this is
 
-Alchemy rebuilds both games from source code the way a studio would have kept
-it on disk: readable C, a little hand-written assembly where the original
-programmers clearly wrote it by hand, and named assets. Every build is checked
-byte for byte against the original cartridge, so a rebuilt edition is either
-identical to the real game or it is not counted.
+Alchemy is rebuilding both games from scratch, the way their makers would have
+kept them on their own computers: readable program text, a small amount of
+hand-written machine code where the original programmers clearly did that
+themselves, and every picture, tune and line of text under its own name. Each
+rebuild is compared against the original cartridge down to the last byte. A
+rebuilt edition either matches the real game exactly or it does not count.
 
-**DONE** is the share of the game's program that has been recovered as source
-and proven identical. The picture above shows it: solid blocks are recovered
-and proven, lighter blocks are drafts that do not yet match exactly, and the
+**DONE** is how much of the game's program has been recovered that way and
+proven to match. The picture above shows it: solid blocks are recovered and
+proven, lighter blocks are drafts that are close but not yet exact, and the
 rest is still unknown. The Data picture shows the same for graphics, sound and
 text.
 
-All twelve editions (six of each game) share one source tree per game rather
-than a copy per language. English _Golden Sun_ is the first edition rebuilt in
-full; the others are checked against it.
+All twelve editions (six of each game) are rebuilt from one shared set of
+files per game, not a separate copy for every language. English _Golden Sun_
+is the first edition rebuilt in full; the others are checked against it.
 
-This is a preservation and decompilation project — not a remake, ROM hack,
-emulator or game download. No game data is included, and nothing here comes
-from Camelot's original source. To build it yourself or help with the
-reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md).
+This is a preservation and study project — not a remake, a mod, an emulator
+or a download of the game. Nothing from the cartridges is included, and
+nothing here comes from Camelot's own files. To build it yourself or help
+with the reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Acknowledgements
 

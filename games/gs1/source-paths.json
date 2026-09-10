@@ -1479,7 +1479,8 @@
       "name": "BattleEffect_RunPhasedRadialParticleSequence"
     },
     "main:080e0c84": {
-      "name": "BattleEffect_RunParticleReveal"
+      "name": "BattleEffect_RunParticleReveal",
+      "source": "battle/effects/particle_reveal/run.c"
     },
     "main:080cfef4": {
       "name": "BattleEffect_RunCounterReveal"
@@ -16147,7 +16148,8 @@
       "source": "map/locations/sol_shinden/inner_sanctum_scene/field_scene.c"
     },
     "resource_37a:02001be8": {
-      "name": "FieldScene_RunActorPositionTransition"
+      "name": "FieldScene_RunActorPositionTransition",
+      "source": "map/locations/sol_shinden/inner_sanctum_scene/actor_position_transition.c"
     },
     "resource_37b:02002244": {
       "name": "FieldScene_RunScene37b_02002244",
@@ -17728,6 +17730,10 @@
     },
     "resource_3c4:0200259c": {
       "name": "FieldScene_InitializeActorGroups"
+    },
+    "resource_3b1:020048e8": {
+      "name": "FieldScene_RunScene3b1SequenceE",
+      "source": "overlays/scene_primary_script/run_scene_3b1_020048e8.c"
     }
   }
 }

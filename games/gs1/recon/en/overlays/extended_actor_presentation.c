@@ -185,11 +185,18 @@ void FieldScene_RunExtendedActorPresentation(void)
     *(u8 *)(Func_02003cc8(0) + 90) |= step;
     *(u8 *)(Func_02003cc8(1) + 90) |= step;
     *(u8 *)(Func_02003cc8(3) + 90) |= step;
+    /*
+     * The fourth actor is spelled with a result temporary, not the compound
+     * or-assign the three above use. The reference writes the result into the
+     * mask register rather than the loaded value, and the two-address ORR only
+     * does that when the merged result is its own object; the compound form
+     * and a swapped operand order both keep the loaded value as destination.
+     */
     {
         u8 *object = Func_02003cc8(2);
-        u8 value = object[90];
+        u8 merged = (u8)(object[90] | step);
 
-        object[90] = (u8)(value | step);
+        object[90] = merged;
     }
     Func_02003d20(0, 1);
     Func_02003d20(1, 1);
@@ -780,6 +787,18 @@ void FieldScene_RunExtendedActorPresentation(void)
         control = 0xc04;
         *(volatile u16 *)0x04000052 = control;
     }
+    /*
+     * RESIDUAL, TWO HALFWORDS. The reference materialises this call's first
+     * argument before its second; the draft emits them the other way round.
+     * Both argument insns tie on scheduling priority and on class relative to
+     * the last scheduled insn, so the post-reload list scheduler breaks the
+     * tie on dependent count, and the second argument register carries one
+     * extra dependence: nothing writes it between the following two calls, so
+     * the later call still depends on it, while the first argument register is
+     * rewritten in between. No spelling of this call, of its argument
+     * temporaries, of the preceding register writes, or of the declaration
+     * order changes that count. Not adopted.
+     */
     Func_02003da8(0, 1);
     Func_02003da0();
     Func_02003ca8(10);

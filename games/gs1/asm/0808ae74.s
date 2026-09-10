@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 敵遭遇の歩数計。旗 0x15f / 0xb0 / 0x161 (Func_080770c0) が立てば数えない。地域表
+@ (Data_02000240 + 28×r0) の遭遇率と Func_080772c8 の差 (0..5) を加え、乱数 4 つで
+@ 作った揺れ (0x03001ebc +0x1a8) を掛けた値を IwramRatioMulQ14 と IwramMulQ16 で歩幅 r1
+@ に応じて +0x238 へ積む。閾値 +0x1ac に達すると 8 個の重みで敵を選び、Func_0808b320 の
+@ 後に敵 id を返す。数えないときは 0。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0808ae74
@@ -48,6 +52,7 @@ Func_0808ae74:
 	cmp	r3, #0
 	beq.n	.L5
 	b.n	.L4
+@ 地域表の項: +0 遭遇率、+2 基準、+4.. 敵 id 8 個、+20.. 重み 8 個。
 .L5:
 	ldr	r2, [sp, #4]
 	lsls	r3, r2, #3
@@ -98,6 +103,7 @@ Func_0808ae74:
 .L2:
 	movs	r0, #0
 	b.n	.L4
+@ 揺れが 0 なら乱数 4 つの差の半分で作り直す。
 .L10:
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
@@ -134,10 +140,12 @@ Func_0808ae74:
 	adds	r0, r0, r3
 	lsls	r1, r1, #13
 	ldr	r3, [pc, #172]
+@ (率×16-16)×揺れ + 率<<20 を 0x100000 で割る (IwramRatioMulQ14, 0x0300013c)。
 	bl	Func_080072f0
 	ldr	r3, [pc, #172]
 	ldr	r1, [sp, #0]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp: × 歩幅。
 	mov	ip, pc
 	bx	r3
 	ldr	r3, [pc, #148]
@@ -154,6 +162,7 @@ Func_0808ae74:
 	movs	r0, #0
 	cmp	r2, r3
 	blt.n	.L4
+@ 到達: 積算を消し、重みの合計と乱数で敵を選ぶ。
 .L1:
 	movs	r2, #212
 	lsls	r2, r2, #1

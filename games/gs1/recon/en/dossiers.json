@@ -16287,7 +16287,7 @@
     "Mechanical repairs recovered the packed u8/u16 presentation tables at 0x080eed7e-0x080eeda6, the eleven object handles at work offset 0x77d8, and signed-halfword party-member IDs. No instruction bytes, inline assembly, fixed-register variables, barriers, or external decompilation sources were used.",
     "The owner builds a battle presentation from palette darkening, tile strips, eleven sprite objects, two particle fields, phase-controlled drawing, and party-member actions. A permanent source name is deferred until dispatch and resource-table evidence identifies the effect.",
     "2026-09-09: removed the inlined m2c valid-syntax macro preamble. The body only ever used M2C_FIELD and M2C_UNK, so those two spellings are now declared directly and the unused M2C_ERROR/M2C_TRAP_IF/CLZ/BSWAP stubs are gone: the draft can no longer compile a dropped instruction to a silent zero, and the coverage gate can read it as ordinary C. Scores are unchanged by the removal.",
-    "2026-09-09: repaired this draft and re-measured the complete owner. The claimed repair holds under independent measurement. I reproduced candidate=2188 reference=2188 differing_halfwords=995 wrong_instructions=934 class=structural-topology; the draft compiles and scores through the approved route, is canonical (no M2C_ERROR, __asm__, asm volatile, register-asm or .incbin), spells the owner symbol Func_080e302c, and covers 100% of the 2188-byte owner rather than 92%. The original defect is genuinely gone, not relocated. I verified the diagnosis from the reference disassembly rather than accepting it: the bl targets in 0x080072e4-0x08007318 are call-via-rN trampoline entries, the call at 080e30fc is preceded by the pool load of the 0x03001388 IWRAM copy routine, and 080e3290 / 080e32be load base+184 and base+188 into [sp,#32] and [sp,#36] between the two Func_080ed408 registrations. Those two loads are exactly the ones the previous draft dropped, which is where the 184 missing bytes went. The call multiset now matches the reference exactly: 12 indirect calls (_call_via_r3 x1, _call_via_r4 x9, _call_via_r5 x2 against the reference's 080072f0 x1, 080072f4 x2, 080072fc x5, 08007304 x2, 0800730c x2) and every direct callee at the reference count, including Func_08004458 x10, Func_080f9010 x3, Func_08002304 x3, Func_080022ec x2, Func_080022fc x2 and the singletons. Structural honesty checks against the reference all pass: the palette loop at 080e3106-080e3164 reproduces the redundant mask after the shift, the clamp order and the pre-store increment; the repack loop at 080e3170-080e31b4 correctly keeps the inner terminator as a re-load of Data_080eed90[i] while the zero test and source advance use *strip; the drop loop at 080e360a-080e3660 confirms the 28-byte stride, the 0x40 bound, the ldrsh accesses at +2 and +6, the unsigned halving the u32 size produces, 0xC0<<15 = 0x600000, and the byte-offset Data_080ede48 lookup; the spark seed at 080e3318-080e334a and the six-entry Data_080eedac run at 080e3356-080e3362 confirm the 28-byte stride and the u8 table type. The resource ids 0x73/0x7b/0x7c really do arrive through the literal pool, so the Value_xxxxxxxx spelling is evidenced rather than invented. Nothing is transcribed assembly and no struct exists only to chase score. It is not byte-exact and nowhere near it, so the retained-corpus gate is not at risk. I made only comment-only edits to games/gs1/recon/en/main/080e302c.c; no other tracked file was touched, scratch is under out/draft/rev_080e302c/, and nothing was staged or committed. Measured through the approved route: candidate 2188 bytes against a 2188-byte reference (100% of the owner), 995 differing halfwords, class structural-topology. Nonexact draft.",
+    "2026-09-09: repaired this draft and re-measured the complete owner. The claimed repair holds under independent measurement. I reproduced candidate=2188 reference=2188 differing_halfwords=995 wrong_instructions=934 class=structural-topology; the draft compiles and scores through the approved route, is canonical (no M2C_ERROR, __asm__, asm volatile, register-asm or .incbin), spells the owner symbol Func_080e302c, and covers 100% of the 2188-byte owner rather than 92%. The original defect is genuinely gone, not relocated. I verified the diagnosis from the reference disassembly rather than accepting it: the bl targets in 0x080072e4-0x08007318 are call-via-rN trampoline entries, the call at 080e30fc is preceded by the pool load of the 0x03001388 IWRAM copy routine, and 080e3290 / 080e32be load base+184 and base+188 into [sp,#32] and [sp,#36] between the two Func_080ed408 registrations. Those two loads are exactly the ones the previous draft dropped, which is where the 184 missing bytes went. The call multiset now matches the reference exactly: 12 indirect calls (_call_via_r3 x1, _call_via_r4 x9, _call_via_r5 x2 against the reference's 080072f0 x1, 080072f4 x2, 080072fc x5, 08007304 x2, 0800730c x2) and every direct callee at the reference count, including Func_08004458 x10, Func_080f9010 x3, Func_08002304 x3, Func_080022ec x2, Func_080022fc x2 and the singletons. Structural honesty checks against the reference all pass: the palette loop at 080e3106-080e3164 reproduces the redundant mask after the shift, the clamp order and the pre-store increment; the repack loop at 080e3170-080e31b4 correctly keeps the inner terminator as a re-load of Data_080eed90[i] while the zero test and source advance use *strip; the drop loop at 080e360a-080e3660 confirms the 28-byte stride, the 0x40 bound, the ldrsh accesses at +2 and +6, the unsigned halving the u32 size produces, 0xC0<<15 = 0x600000, and the byte-offset Data_080ede48 lookup; the spark seed at 080e3318-080e334a and the six-entry Data_080eedac run at 080e3356-080e3362 confirm the 28-byte stride and the u8 table type. The resource ids 0x73/0x7b/0x7c really do arrive through the literal pool, so the Value_xxxxxxxx spelling is evidenced rather than invented. Nothing is transcribed assembly and no struct exists only to chase score. It is not byte-exact and nowhere near it. Exactness here would be a win, not a gate violation: candidate-corpus-check asks for an exact candidate to be adopted out of the retained corpus. I made only comment-only edits to games/gs1/recon/en/main/080e302c.c; no other tracked file was touched, scratch is under out/draft/rev_080e302c/, and nothing was staged or committed. Measured through the approved route: candidate 2188 bytes against a 2188-byte reference (100% of the owner), 995 differing halfwords, class structural-topology. Nonexact draft.",
     "2026-09-09: reworded one header sentence. The coverage gate's ordinary-source test is purely lexical over the whole file, and a prose line describing the _call_via_rN trampoline bundle happened to contain the words register and asm plus a parenthesis on the same line, which the test reads as a register-asm declaration. The sentence now says the same thing without the coincidental collision. No code changed and the measured score is unaffected."
    ],
    "span_bytes": 2188,
@@ -16680,7 +16680,7 @@
     "The function initializes six battle objects and display state, advances a 320-frame presentation, updates particle banks, dispatches party-linked effects, and tears the scene down. Its permanent name remains unresolved until its battle-effect dispatch entry is proven.",
     "The next reconstruction pass must recover the reference 84-byte frame and shared battle-work aggregate before source-order or allocator work; the current 36-byte frame shows that this is not a register-floor candidate.",
     "2026-09-09: removed the inlined m2c valid-syntax macro preamble. The body only ever used M2C_FIELD and M2C_UNK, so those two spellings are now declared directly and the unused M2C_ERROR/M2C_TRAP_IF/CLZ/BSWAP stubs are gone: the draft can no longer compile a dropped instruction to a silent zero, and the coverage gate can read it as ordinary C. Scores are unchanged by the removal.",
-    "2026-09-09: repaired this draft and re-measured the complete owner. Measured independently: `./alchemy score games/gs1/recon/en/main/080e823c.c --owner 080e823c --first` gives candidate=1916 reference=1968 differing_halfwords=949 wrong_instructions=874 class=structural-topology, matching the repair agent's claim exactly. Coverage is 1916/1968 = 97.4%, so the original 88%-coverage defect is genuinely fixed, not moved. Canonical: no M2C_ERROR, __asm__, \"asm volatile\", register-asm or .incbin; only /* */ comments; declarations hoisted to function top; the entry is spelled Func_080e823c directly, which is why the scorer finds the object symbol.\n\nI verified coverage structurally rather than trusting the byte count. I regenerated the reference disassembly and the resolved call list into out/draft/rev_080e823c/ and read all 919 lines of ref.s against the C. Every reference block is represented: the six-object creation loop into work+0x77FC with the `& ~0xC | 4` blend field (I decoded `negs r7,r1` with r1=13 to confirm the mask is ~0xC, not ~13); both five-argument Func_080ed408 calls with the fifth argument in the outgoing slot at [sp,#0]; the 6/58/1024-entry seeding loops; the 320-frame loop with its 0x03001B04 & 3 abort; the four Func_080f9010 sound triggers at frames 94/136/178/260; the seven-object background sweep from Data_080eeed8/Data_080eeee1; the sin/cos sweep for frame <= 90; the three-group 0x7128 spark burst at base+3 stepping 0xE0; the falling-object bounce with its 0x73C8 two-spark burst stepping 0x38; the 56-entry sprite ageing with its indirect blit; the frame-260 party re-pose and 512-entry pool refill; the 512-entry pool draw; and the fifteen-handle teardown. I independently decoded the literal pool to confirm the work-relative offsets 0x7080, 0x7128, 0x73C8, 0x77B4, 0x77B8, 0x77D8, 0x77FC, 0x7824, 0x7828 and the callback address 0x080CD261 at both the install and remove sites. The call counts agree with alchemy inspect: 10 Func_08004458 sites, 4 Func_08009008 sites, 2 Func_080ed408 sites, 2 Func_080072f4 sites.\n\nThe two Func_080072f4 sites are correctly modelled as typed indirect calls through DrawRectangleFn (rectangle[0] and rectangle_slot[i & 1]); I confirmed the six-argument shape from the reference's two outgoing stack stores plus the r4 load at both sites. That matches CONTRIBUTING's rule to model a call-via slot as a typed indirect call.\n\nThe 52-byte shortfall is not dropped code. I dumped the full aligned diff (1087 lines: 160 candidate-only, 186 reference-only, 383 changed) and classified every reference-only instruction. They are entirely spill traffic and pool padding: 19 `ldr rN,[sp,#44]` reloads of `work`, ~20 `mov`/`add` high-register loop-counter moves, 8 `movs r0,r0` pool alignment words. No whole branch, loop, call or store is missing. The candidate-only side is the mirror image: 8 `add r2,fp`, 4 `add r6,fp`, 3 `add r3,fp`, 2 `add r5,fp`. Root cause is a single allocation fact — the reference spills `work` to its frame and reloads it, the candidate keeps it in fp — which frees low registers in the candidate, moves the loop counters out of r8, and shifts every [sp,#N] offset. That is one root, not many.\n\nThis is honest ordinary C, not transcribed assembly. Control flow is expressed as real loops and conditionals, the structs (SceneParticle, SceneOrigin) carry named fields the code actually uses with unknown words left as unk_08/unk_14, locals are period-neutral (pos, cnt-style short names, work, buf-style), and resolved call names come from the register. The one contrivance is the four Value_<hex> externs, which is a flagged hypothesis about link-time constants rather than a score chase, and it is the same spelling the drafted sibling 080d41a4 already uses.\n\nI made only comment repairs, both to the file I am permitted to write. Re-scored after the edits: identical numbers (compile=fresh, so it did recompile), confirming the changes are comment-only. Not byte-exact — differing_halfwords=949, so the retained-corpus gate is not at risk. No integrator action is required: the owner is absent from games/gs1/source-paths.json and games/gs1/recon/translation-units.json and scores standalone through the generated bindings and auto-emitted absolute symbols. If it is later registered, the entry is spelled Func_080e823c directly, so no #define alias is needed. Nothing outside games/gs1/recon/en/main/080e823c.c was touched; the other modified paths in git status belong to parallel workers. Nothing staged or committed. Scratch is in out/draft/rev_080e823c/ (ref.s, calls.jsonl, full.txt); no reference bytes entered the tracked tree. Measured through the approved route: candidate 1916 bytes against a 1968-byte reference (97% of the owner), 949 differing halfwords, class structural-topology. Nonexact draft."
+    "2026-09-09: repaired this draft and re-measured the complete owner. Measured independently: `./alchemy score games/gs1/recon/en/main/080e823c.c --owner 080e823c --first` gives candidate=1916 reference=1968 differing_halfwords=949 wrong_instructions=874 class=structural-topology, matching the repair agent's claim exactly. Coverage is 1916/1968 = 97.4%, so the original 88%-coverage defect is genuinely fixed, not moved. Canonical: no M2C_ERROR, __asm__, \"asm volatile\", register-asm or .incbin; only /* */ comments; declarations hoisted to function top; the entry is spelled Func_080e823c directly, which is why the scorer finds the object symbol.\n\nI verified coverage structurally rather than trusting the byte count. I regenerated the reference disassembly and the resolved call list into out/draft/rev_080e823c/ and read all 919 lines of ref.s against the C. Every reference block is represented: the six-object creation loop into work+0x77FC with the `& ~0xC | 4` blend field (I decoded `negs r7,r1` with r1=13 to confirm the mask is ~0xC, not ~13); both five-argument Func_080ed408 calls with the fifth argument in the outgoing slot at [sp,#0]; the 6/58/1024-entry seeding loops; the 320-frame loop with its 0x03001B04 & 3 abort; the four Func_080f9010 sound triggers at frames 94/136/178/260; the seven-object background sweep from Data_080eeed8/Data_080eeee1; the sin/cos sweep for frame <= 90; the three-group 0x7128 spark burst at base+3 stepping 0xE0; the falling-object bounce with its 0x73C8 two-spark burst stepping 0x38; the 56-entry sprite ageing with its indirect blit; the frame-260 party re-pose and 512-entry pool refill; the 512-entry pool draw; and the fifteen-handle teardown. I independently decoded the literal pool to confirm the work-relative offsets 0x7080, 0x7128, 0x73C8, 0x77B4, 0x77B8, 0x77D8, 0x77FC, 0x7824, 0x7828 and the callback address 0x080CD261 at both the install and remove sites. The call counts agree with alchemy inspect: 10 Func_08004458 sites, 4 Func_08009008 sites, 2 Func_080ed408 sites, 2 Func_080072f4 sites.\n\nThe two Func_080072f4 sites are correctly modelled as typed indirect calls through DrawRectangleFn (rectangle[0] and rectangle_slot[i & 1]); I confirmed the six-argument shape from the reference's two outgoing stack stores plus the r4 load at both sites. That matches CONTRIBUTING's rule to model a call-via slot as a typed indirect call.\n\nThe 52-byte shortfall is not dropped code. I dumped the full aligned diff (1087 lines: 160 candidate-only, 186 reference-only, 383 changed) and classified every reference-only instruction. They are entirely spill traffic and pool padding: 19 `ldr rN,[sp,#44]` reloads of `work`, ~20 `mov`/`add` high-register loop-counter moves, 8 `movs r0,r0` pool alignment words. No whole branch, loop, call or store is missing. The candidate-only side is the mirror image: 8 `add r2,fp`, 4 `add r6,fp`, 3 `add r3,fp`, 2 `add r5,fp`. Root cause is a single allocation fact — the reference spills `work` to its frame and reloads it, the candidate keeps it in fp — which frees low registers in the candidate, moves the loop counters out of r8, and shifts every [sp,#N] offset. That is one root, not many.\n\nThis is honest ordinary C, not transcribed assembly. Control flow is expressed as real loops and conditionals, the structs (SceneParticle, SceneOrigin) carry named fields the code actually uses with unknown words left as unk_08/unk_14, locals are period-neutral (pos, cnt-style short names, work, buf-style), and resolved call names come from the register. The one contrivance is the four Value_<hex> externs, which is a flagged hypothesis about link-time constants rather than a score chase, and it is the same spelling the drafted sibling 080d41a4 already uses.\n\nI made only comment repairs, both to the file I am permitted to write. Re-scored after the edits: identical numbers (compile=fresh, so it did recompile), confirming the changes are comment-only. Not byte-exact — differing_halfwords=949. Exactness here would be a win, not a gate violation: candidate-corpus-check asks for an exact candidate to be adopted out of the retained corpus. No integrator action is required: the owner is absent from games/gs1/source-paths.json and games/gs1/recon/translation-units.json and scores standalone through the generated bindings and auto-emitted absolute symbols. If it is later registered, the entry is spelled Func_080e823c directly, so no #define alias is needed. Nothing outside games/gs1/recon/en/main/080e823c.c was touched; the other modified paths in git status belong to parallel workers. Nothing staged or committed. Scratch is in out/draft/rev_080e823c/ (ref.s, calls.jsonl, full.txt); no reference bytes entered the tracked tree. Measured through the approved route: candidate 1916 bytes against a 1968-byte reference (97% of the owner), 949 differing halfwords, class structural-topology. Nonexact draft."
    ],
    "span_bytes": 1968,
    "score": {
@@ -22648,7 +22648,7 @@
     "class": "missing-extra-code"
    },
    "notes": [
-    "2026-09-09: new drafted C recovered from the complete reference through the short loop (extract, annotated disassembly, psynergy draft, evidenced repair, score), then independently re-measured. New drafted C for main:080b63c8, the battle entry point (allocate encounter blocks, DMA3-clear them, play the opening presentation, then run the round loop that rebuilds and replays the sixteen-byte action slots at +0x2ec of the work block until one of five exits). Compiles and scores through the approved route: candidate 1676 bytes against reference 1688 (99.3%), topology equal, 360 wrong instructions, 790 differing halfwords. Not byte-exact, so the retained-corpus gate is not at risk. Measured through the approved route: candidate 1668 bytes against a 1688-byte reference (99% of the owner), 771 differing halfwords, class missing-extra-code. Nonexact draft.",
+    "2026-09-09: new drafted C recovered from the complete reference through the short loop (extract, annotated disassembly, psynergy draft, evidenced repair, score), then independently re-measured. New drafted C for main:080b63c8, the battle entry point (allocate encounter blocks, DMA3-clear them, play the opening presentation, then run the round loop that rebuilds and replays the sixteen-byte action slots at +0x2ec of the work block until one of five exits). Compiles and scores through the approved route: candidate 1676 bytes against reference 1688 (99.3%), topology equal, 360 wrong instructions, 790 differing halfwords. Not byte-exact. Exactness here would be a win, not a gate violation: candidate-corpus-check asks for an exact candidate to be adopted out of the retained corpus. Measured through the approved route: candidate 1668 bytes against a 1688-byte reference (99% of the owner), 771 differing halfwords, class missing-extra-code. Nonexact draft.",
     "Residual: The remaining 360 wrong instructions are almost entirely one register-allocation permutation, not structure. The reference holds the work block in r8 and the acting unit id in sl; this draft holds them the other way round, and the return value lives in r7 rather than r5, so every `mov`/`str`/`add` naming one of those pseudos reads as a difference even where the operation is identical. Control flow, every branch, loop, call, call argument, access width, signedness and every pool constant agree. Two smaller items remain: GCC merges only one register per `stmia` in the DMA3 blocks instead of the reference's `{r0, r1, r2}`, because it does not allocate those three in ascending order; and the reference reserves 68 bytes of stack where this draft needs 20, of which 48 bytes are never touched by any reference instruction, so what the original declared there is not recoverable from the reference alone. That 12-byte shortfall plus the register swap is the whole residual. I stopped after five hypotheses (four of which landed) rather than searching register spellings blind."
    ]
   },
@@ -23010,7 +23010,7 @@
     "class": "scheduling-floor"
    },
    "notes": [
-    "2026-09-09: new drafted C recovered from the complete reference through the short loop (extract, annotated disassembly, psynergy draft, evidenced repair, score), then independently re-measured. Recovered a complete, compiling, scoring draft for main:080dbc30 as ordinary C89: a battle-presentation effect that runs 64 frames of a 64-record particle shower with eight per-mode variants. Extent matches exactly (1468/1468 bytes, 100%), the instruction multiset is identical (wrong_instructions=0, matched_prefix=100%), and only 9 halfwords differ, all from three local instruction-scheduling swaps. Deliberately NOT byte-exact, so the retained-corpus gate is not tripped. Measured through the approved route: candidate 1468 bytes against a 1468-byte reference (100% of the owner), 9 differing halfwords, class scheduling-floor. Nonexact draft.",
+    "2026-09-09: new drafted C recovered from the complete reference through the short loop (extract, annotated disassembly, psynergy draft, evidenced repair, score), then independently re-measured. Recovered a complete, compiling, scoring draft for main:080dbc30 as ordinary C89: a battle-presentation effect that runs 64 frames of a 64-record particle shower with eight per-mode variants. Extent matches exactly (1468/1468 bytes, 100%), the instruction multiset is identical (wrong_instructions=0, matched_prefix=100%), and only 9 halfwords differ, all from three local instruction-scheduling swaps. Not byte-exact. Exactness here would be a win, not a gate violation: candidate-corpus-check asks for an exact candidate to be adopted out of the retained corpus. Measured through the approved route: candidate 1468 bytes against a 1468-byte reference (100% of the owner), 9 differing halfwords, class scheduling-floor. Nonexact draft.",
     "Residual: scheduling-floor only. Nine differing halfwords come from three places where GCC issued an independent `movs` between a `lsls`/`add` constant-materialisation pair instead of after it: the two `movs r0,#160; lsls r0,r0,#19` materialisations of 0x05000000 (grey-ramp loop and palette copy) and the `movs r5,#225; lsls r5,r5,#7; add r5,r9` materialisation of work+0x7080 ahead of the inner particle loop. Every instruction, branch, call, argument and store otherwise matches the reference in order and operands. The tool's `next=` advice is `alchemy build allocator main:080dbc30` then `psynergy inspect allocator DUMP_DIR`; no source spelling tried here moved those three, and no automatic repair is established for this class.",
     "2026-09-10: last-mile pass closed nothing and the residual stands at 7 differing halfwords with wrong_instructions=0 over the complete 1468-byte extent. Recorded as an evidenced negative rather than left open, so the next wave does not rediscover it.",
     "Comparability was established first, because the scorer reports topology=uncovered:reference-indirect-dispatch-0x10c for this owner. That verdict is NOT a comparison gap: Comparison::Uncovered is produced only inside the control-flow-graph builder in tools/psynergy/src/compare/topology.rs, where a computed dispatch that is not the head of a recognised jump table makes the topology comparator fail closed and decline to build a CFG. It never touches the byte comparison. The flagged instruction at +0x10c is one of this owner's bl _call_via_rN indirect-call idioms. The differing_halfwords figure comes from the linked byte comparison of the complete extent, which CONTRIBUTING makes the authority: similarity and topology equality do not replace linked byte comparison.",
@@ -23105,6 +23105,3954 @@
     "The 88-byte shortfall is not dropped code and was checked rather than assumed: topology is equal, all 82 reference call sites appear one-for-one, and the twelve-word trailing literal pool is present in the same order. The reference is a GNU C nested-function parent, which the approved route cannot express: it computes the frame cell address once, holds it in sl and spells 36 window uses as a double indirection through it, and sets the Thumb static chain register before each of the six calls to Func_08022a7c, which reads the window back out of that chain. That is 4 + 72 + 24 = 100 bytes, against roughly 12 bytes bought back by the freed callee-saved registers.",
     "Func_08022a7c is a separately registered owner (games/gs1/asm/08022a7c.s, classified hidden_register_context_module) and nothing else in the image calls it, so spelling it as a nested function here would redefine another owner's symbol. This draft therefore calls it as an ordinary function and holds the window directly, following the precedent already set by games/gs1/recon/en/main/08027114.c. span_bytes records the complete owner because the draft covers it; the residual is a compiler-expressibility gap, not missing behaviour."
    ]
+  },
+  "main:080c9ca8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080c9ca8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1340,
+   "span_bytes": 1340,
+   "executable_mapped_bytes": 1340,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080bf678": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080bf678",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1324,
+   "span_bytes": 1324,
+   "executable_mapped_bytes": 1324,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080aa768": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080aa768",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1308,
+   "span_bytes": 1308,
+   "executable_mapped_bytes": 1308,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e1040": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e1040",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1308,
+   "span_bytes": 1308,
+   "executable_mapped_bytes": 1308,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e94b8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e94b8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1288,
+   "span_bytes": 1288,
+   "executable_mapped_bytes": 1288,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080b0aac": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b0aac",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1272,
+   "span_bytes": 1272,
+   "executable_mapped_bytes": 1272,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d05fc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d05fc",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1240,
+   "span_bytes": 1240,
+   "executable_mapped_bytes": 1240,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080ce034": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ce034",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1204,
+   "span_bytes": 1204,
+   "executable_mapped_bytes": 1204,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080a4924": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a4924",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1168,
+   "span_bytes": 1168,
+   "executable_mapped_bytes": 1168,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080191cc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080191cc",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1152,
+   "span_bytes": 1152,
+   "executable_mapped_bytes": 1152,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080beb08": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080beb08",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1104,
+   "span_bytes": 1104,
+   "executable_mapped_bytes": 1104,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080fae58": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fae58",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1098,
+   "span_bytes": 1098,
+   "executable_mapped_bytes": 1098,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e5e28": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e5e28",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1066,
+   "span_bytes": 1066,
+   "executable_mapped_bytes": 1066,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080ae2f4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ae2f4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1056,
+   "span_bytes": 1056,
+   "executable_mapped_bytes": 1056,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d77b4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d77b4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1054,
+   "span_bytes": 1054,
+   "executable_mapped_bytes": 1054,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:0808d9a4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808d9a4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1044,
+   "span_bytes": 1044,
+   "executable_mapped_bytes": 1044,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080bfba4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080bfba4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1044,
+   "span_bytes": 1044,
+   "executable_mapped_bytes": 1044,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080cb7f8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080cb7f8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 1044,
+   "span_bytes": 1044,
+   "executable_mapped_bytes": 1044,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:0801f200": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801f200",
+   "status": "surveyed-measured",
+   "owner_bytes": 980,
+   "span_bytes": 980,
+   "executable_mapped_bytes": 980,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 464,
+    "owner_halfwords": 490,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 464 of 490 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080a112c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a112c",
+   "status": "surveyed-measured",
+   "owner_bytes": 964,
+   "span_bytes": 964,
+   "executable_mapped_bytes": 964,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 461,
+    "owner_halfwords": 482,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 461 of 482 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080ec728": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ec728",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 914,
+   "span_bytes": 914,
+   "executable_mapped_bytes": 914,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e6288": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e6288",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 898,
+   "span_bytes": 898,
+   "executable_mapped_bytes": 898,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d7ea0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d7ea0",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 890,
+   "span_bytes": 890,
+   "executable_mapped_bytes": 890,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080c1ffc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080c1ffc",
+   "status": "surveyed-measured",
+   "owner_bytes": 876,
+   "span_bytes": 876,
+   "executable_mapped_bytes": 876,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 427,
+    "owner_halfwords": 438,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 427 of 438 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080ecae8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ecae8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 874,
+   "span_bytes": 874,
+   "executable_mapped_bytes": 874,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:0801c49c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801c49c",
+   "status": "surveyed-measured",
+   "owner_bytes": 864,
+   "span_bytes": 864,
+   "executable_mapped_bytes": 864,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 448,
+    "owner_halfwords": 432,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 448 of 432 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08028194": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08028194",
+   "status": "surveyed-measured",
+   "owner_bytes": 840,
+   "span_bytes": 840,
+   "executable_mapped_bytes": 840,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 515,
+    "owner_halfwords": 420,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 515 of 420 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08092c40": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08092c40",
+   "status": "surveyed-measured",
+   "owner_bytes": 836,
+   "span_bytes": 836,
+   "executable_mapped_bytes": 836,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 403,
+    "owner_halfwords": 418,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 403 of 418 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08097c3c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08097c3c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 836,
+   "span_bytes": 836,
+   "executable_mapped_bytes": 836,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08026b44": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08026b44",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 828,
+   "span_bytes": 828,
+   "executable_mapped_bytes": 828,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080be76c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080be76c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 816,
+   "span_bytes": 816,
+   "executable_mapped_bytes": 816,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e57b4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e57b4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 792,
+   "span_bytes": 792,
+   "executable_mapped_bytes": 792,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:0801e41c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801e41c",
+   "status": "surveyed-measured",
+   "owner_bytes": 768,
+   "span_bytes": 768,
+   "executable_mapped_bytes": 768,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 381,
+    "owner_halfwords": 384,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 381 of 384 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080e5afc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e5afc",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 754,
+   "span_bytes": 754,
+   "executable_mapped_bytes": 754,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080c2724": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080c2724",
+   "status": "surveyed-measured",
+   "owner_bytes": 740,
+   "span_bytes": 740,
+   "executable_mapped_bytes": 740,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 251,
+    "owner_halfwords": 370,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 251 of 370 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08096140": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08096140",
+   "status": "surveyed-measured",
+   "owner_bytes": 732,
+   "span_bytes": 732,
+   "executable_mapped_bytes": 732,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 359,
+    "owner_halfwords": 366,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 359 of 366 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808d0c8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808d0c8",
+   "status": "surveyed-measured",
+   "owner_bytes": 716,
+   "span_bytes": 716,
+   "executable_mapped_bytes": 716,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 350,
+    "owner_halfwords": 358,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 350 of 358 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808fefc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808fefc",
+   "status": "surveyed-measured",
+   "owner_bytes": 708,
+   "span_bytes": 708,
+   "executable_mapped_bytes": 708,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 353,
+    "owner_halfwords": 354,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 353 of 354 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080cd86c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080cd86c",
+   "status": "surveyed-measured",
+   "owner_bytes": 696,
+   "span_bytes": 696,
+   "executable_mapped_bytes": 696,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 328,
+    "owner_halfwords": 348,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 328 of 348 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080e4b4c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e4b4c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 656,
+   "span_bytes": 656,
+   "executable_mapped_bytes": 656,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e5504": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e5504",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 652,
+   "span_bytes": 652,
+   "executable_mapped_bytes": 652,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080ddb34": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ddb34",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 644,
+   "span_bytes": 644,
+   "executable_mapped_bytes": 644,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e17c4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e17c4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 644,
+   "span_bytes": 644,
+   "executable_mapped_bytes": 644,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080ec474": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ec474",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 640,
+   "span_bytes": 640,
+   "executable_mapped_bytes": 640,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080f07f0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f07f0",
+   "status": "surveyed-measured",
+   "owner_bytes": 620,
+   "span_bytes": 620,
+   "executable_mapped_bytes": 620,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 302,
+    "owner_halfwords": 310,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 302 of 310 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0807905c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0807905c",
+   "status": "surveyed-measured",
+   "owner_bytes": 616,
+   "span_bytes": 616,
+   "executable_mapped_bytes": 616,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 290,
+    "owner_halfwords": 308,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 290 of 308 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08018a50": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08018a50",
+   "status": "surveyed-measured",
+   "owner_bytes": 604,
+   "span_bytes": 604,
+   "executable_mapped_bytes": 604,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 300,
+    "owner_halfwords": 302,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 300 of 302 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080d7c08": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d7c08",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 596,
+   "span_bytes": 596,
+   "executable_mapped_bytes": 596,
+   "retention": "split_first",
+   "kind": "mixed_region",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:0801be80": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801be80",
+   "status": "surveyed-measured",
+   "owner_bytes": 580,
+   "span_bytes": 580,
+   "executable_mapped_bytes": 580,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 277,
+    "owner_halfwords": 290,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 277 of 290 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080aafb8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080aafb8",
+   "status": "surveyed-measured",
+   "owner_bytes": 572,
+   "span_bytes": 572,
+   "executable_mapped_bytes": 572,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 267,
+    "owner_halfwords": 286,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 267 of 286 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08078bf0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08078bf0",
+   "status": "surveyed-measured",
+   "owner_bytes": 568,
+   "span_bytes": 568,
+   "executable_mapped_bytes": 568,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 271,
+    "owner_halfwords": 284,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 271 of 284 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080c24f0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080c24f0",
+   "status": "surveyed-measured",
+   "owner_bytes": 564,
+   "span_bytes": 564,
+   "executable_mapped_bytes": 564,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 284,
+    "owner_halfwords": 282,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 284 of 282 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080b6148": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b6148",
+   "status": "surveyed-measured",
+   "owner_bytes": 560,
+   "span_bytes": 560,
+   "executable_mapped_bytes": 560,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 394,
+    "owner_halfwords": 280,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 394 of 280 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0802691c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0802691c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 552,
+   "span_bytes": 552,
+   "executable_mapped_bytes": 552,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08097644": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08097644",
+   "status": "surveyed-measured",
+   "owner_bytes": 548,
+   "span_bytes": 548,
+   "executable_mapped_bytes": 548,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 248,
+    "owner_halfwords": 274,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 248 of 274 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080de0d4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080de0d4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 548,
+   "span_bytes": 548,
+   "executable_mapped_bytes": 548,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08094e7c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08094e7c",
+   "status": "surveyed-measured",
+   "owner_bytes": 544,
+   "span_bytes": 544,
+   "executable_mapped_bytes": 544,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 258,
+    "owner_halfwords": 272,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 258 of 272 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801a088": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801a088",
+   "status": "surveyed-measured",
+   "owner_bytes": 540,
+   "span_bytes": 540,
+   "executable_mapped_bytes": 540,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 175,
+    "owner_halfwords": 270,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 175 of 270 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080b1260": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b1260",
+   "status": "surveyed-measured",
+   "owner_bytes": 528,
+   "span_bytes": 528,
+   "executable_mapped_bytes": 528,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 231,
+    "owner_halfwords": 264,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 231 of 264 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080ec264": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ec264",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 528,
+   "span_bytes": 528,
+   "executable_mapped_bytes": 528,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08018850": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08018850",
+   "status": "surveyed-measured",
+   "owner_bytes": 512,
+   "span_bytes": 512,
+   "executable_mapped_bytes": 512,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 255,
+    "owner_halfwords": 256,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 255 of 256 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080f9f6c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f9f6c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 512,
+   "span_bytes": 512,
+   "executable_mapped_bytes": 512,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080a8914": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a8914",
+   "status": "surveyed-measured",
+   "owner_bytes": 508,
+   "span_bytes": 508,
+   "executable_mapped_bytes": 508,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 218,
+    "owner_halfwords": 254,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 218 of 254 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08012b2c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08012b2c",
+   "status": "surveyed-measured",
+   "owner_bytes": 500,
+   "span_bytes": 500,
+   "executable_mapped_bytes": 500,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 225,
+    "owner_halfwords": 250,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 225 of 250 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808a6e4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808a6e4",
+   "status": "surveyed-measured",
+   "owner_bytes": 492,
+   "span_bytes": 492,
+   "executable_mapped_bytes": 492,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 246,
+    "owner_halfwords": 246,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 246 of 246 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08094bbc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08094bbc",
+   "status": "surveyed-measured",
+   "owner_bytes": 484,
+   "span_bytes": 484,
+   "executable_mapped_bytes": 484,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 274,
+    "owner_halfwords": 242,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 274 of 242 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0800f7f4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800f7f4",
+   "status": "surveyed-measured",
+   "owner_bytes": 472,
+   "span_bytes": 472,
+   "executable_mapped_bytes": 472,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 238,
+    "owner_halfwords": 236,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 238 of 236 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801ba68": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801ba68",
+   "status": "surveyed-measured",
+   "owner_bytes": 460,
+   "span_bytes": 460,
+   "executable_mapped_bytes": 460,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 232,
+    "owner_halfwords": 230,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 232 of 230 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080901c0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080901c0",
+   "status": "surveyed-measured",
+   "owner_bytes": 440,
+   "span_bytes": 440,
+   "executable_mapped_bytes": 440,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 220,
+    "owner_halfwords": 220,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 220 of 220 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08017e88": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08017e88",
+   "status": "surveyed-measured",
+   "owner_bytes": 432,
+   "span_bytes": 432,
+   "executable_mapped_bytes": 432,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 213,
+    "owner_halfwords": 216,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 213 of 216 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080b7738": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b7738",
+   "status": "surveyed-measured",
+   "owner_bytes": 428,
+   "span_bytes": 428,
+   "executable_mapped_bytes": 428,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 203,
+    "owner_halfwords": 214,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 203 of 214 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080cde90": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080cde90",
+   "status": "surveyed-measured",
+   "owner_bytes": 420,
+   "span_bytes": 420,
+   "executable_mapped_bytes": 420,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 201,
+    "owner_halfwords": 210,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 201 of 210 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080c1c54": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080c1c54",
+   "status": "surveyed-measured",
+   "owner_bytes": 416,
+   "span_bytes": 416,
+   "executable_mapped_bytes": 416,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 186,
+    "owner_halfwords": 208,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 186 of 208 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801d9d4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801d9d4",
+   "status": "surveyed-measured",
+   "owner_bytes": 412,
+   "span_bytes": 412,
+   "executable_mapped_bytes": 412,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 180,
+    "owner_halfwords": 206,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 180 of 206 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801f818": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801f818",
+   "status": "surveyed-measured",
+   "owner_bytes": 412,
+   "span_bytes": 412,
+   "executable_mapped_bytes": 412,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 200,
+    "owner_halfwords": 206,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 200 of 206 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080b1f4c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b1f4c",
+   "status": "surveyed-measured",
+   "owner_bytes": 412,
+   "span_bytes": 412,
+   "executable_mapped_bytes": 412,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 163,
+    "owner_halfwords": 206,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 163 of 206 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080d0468": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d0468",
+   "status": "surveyed-measured",
+   "owner_bytes": 404,
+   "span_bytes": 404,
+   "executable_mapped_bytes": 404,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 275,
+    "owner_halfwords": 202,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 275 of 202 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080cc960": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080cc960",
+   "status": "surveyed-measured",
+   "owner_bytes": 396,
+   "span_bytes": 396,
+   "executable_mapped_bytes": 396,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 116,
+    "owner_halfwords": 198,
+    "route": "canonical-gcc296",
+    "class": "near-miss"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 116 of 198 halfwords. Nothing adopted."
+   ],
+   "recommendation": "needs-new-structural-hypothesis"
+  },
+  "main:0801ccc0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801ccc0",
+   "status": "surveyed-measured",
+   "owner_bytes": 392,
+   "span_bytes": 392,
+   "executable_mapped_bytes": 392,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 180,
+    "owner_halfwords": 196,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 180 of 196 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08094820": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08094820",
+   "status": "surveyed-measured",
+   "owner_bytes": 392,
+   "span_bytes": 392,
+   "executable_mapped_bytes": 392,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 211,
+    "owner_halfwords": 196,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 211 of 196 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080f62b8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f62b8",
+   "status": "surveyed-measured",
+   "owner_bytes": 392,
+   "span_bytes": 392,
+   "executable_mapped_bytes": 392,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 178,
+    "owner_halfwords": 196,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 178 of 196 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080908e0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080908e0",
+   "status": "surveyed-measured",
+   "owner_bytes": 380,
+   "span_bytes": 380,
+   "executable_mapped_bytes": 380,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 199,
+    "owner_halfwords": 190,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 199 of 190 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08017aa4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08017aa4",
+   "status": "surveyed-measured",
+   "owner_bytes": 376,
+   "span_bytes": 376,
+   "executable_mapped_bytes": 376,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 187,
+    "owner_halfwords": 188,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 187 of 188 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080a1fd4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a1fd4",
+   "status": "surveyed-measured",
+   "owner_bytes": 368,
+   "span_bytes": 368,
+   "executable_mapped_bytes": 368,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 189,
+    "owner_halfwords": 184,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 189 of 184 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080e6d3c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e6d3c",
+   "status": "surveyed-measured",
+   "owner_bytes": 368,
+   "span_bytes": 368,
+   "executable_mapped_bytes": 368,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 186,
+    "owner_halfwords": 184,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 186 of 184 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080f9080": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f9080",
+   "status": "surveyed-measured",
+   "owner_bytes": 358,
+   "span_bytes": 358,
+   "executable_mapped_bytes": 358,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 175,
+    "owner_halfwords": 179,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 175 of 179 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0800bc70": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800bc70",
+   "status": "surveyed-measured",
+   "owner_bytes": 356,
+   "span_bytes": 356,
+   "executable_mapped_bytes": 356,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 168,
+    "owner_halfwords": 178,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 168 of 178 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080cd104": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080cd104",
+   "status": "surveyed-measured",
+   "owner_bytes": 348,
+   "span_bytes": 348,
+   "executable_mapped_bytes": 348,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 165,
+    "owner_halfwords": 174,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 165 of 174 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080228e4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080228e4",
+   "status": "surveyed-measured",
+   "owner_bytes": 340,
+   "span_bytes": 340,
+   "executable_mapped_bytes": 340,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 170,
+    "owner_halfwords": 170,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 170 of 170 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080170f8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080170f8",
+   "status": "surveyed-measured",
+   "owner_bytes": 336,
+   "span_bytes": 336,
+   "executable_mapped_bytes": 336,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 163,
+    "owner_halfwords": 168,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 163 of 168 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808ab74": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808ab74",
+   "status": "surveyed-measured",
+   "owner_bytes": 336,
+   "span_bytes": 336,
+   "executable_mapped_bytes": 336,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 179,
+    "owner_halfwords": 168,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 179 of 168 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808cf78": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808cf78",
+   "status": "surveyed-measured",
+   "owner_bytes": 336,
+   "span_bytes": 336,
+   "executable_mapped_bytes": 336,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 165,
+    "owner_halfwords": 168,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 165 of 168 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08029094": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08029094",
+   "status": "surveyed-measured",
+   "owner_bytes": 334,
+   "span_bytes": 334,
+   "executable_mapped_bytes": 334,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 173,
+    "owner_halfwords": 167,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 173 of 167 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08017c8c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08017c8c",
+   "status": "surveyed-measured",
+   "owner_bytes": 328,
+   "span_bytes": 328,
+   "executable_mapped_bytes": 328,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 164,
+    "owner_halfwords": 164,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 164 of 164 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0802938c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0802938c",
+   "status": "surveyed-measured",
+   "owner_bytes": 324,
+   "span_bytes": 324,
+   "executable_mapped_bytes": 324,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 168,
+    "owner_halfwords": 162,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 168 of 162 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080f731c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f731c",
+   "status": "surveyed-measured",
+   "owner_bytes": 324,
+   "span_bytes": 324,
+   "executable_mapped_bytes": 324,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 118,
+    "owner_halfwords": 162,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 118 of 162 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0800fd5c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800fd5c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 320,
+   "span_bytes": 320,
+   "executable_mapped_bytes": 320,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080a1e38": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a1e38",
+   "status": "surveyed-measured",
+   "owner_bytes": 314,
+   "span_bytes": 314,
+   "executable_mapped_bytes": 314,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 145,
+    "owner_halfwords": 157,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 145 of 157 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801b010": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801b010",
+   "status": "surveyed-measured",
+   "owner_bytes": 312,
+   "span_bytes": 312,
+   "executable_mapped_bytes": 312,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 153,
+    "owner_halfwords": 156,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 153 of 156 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08096ddc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08096ddc",
+   "status": "surveyed-measured",
+   "owner_bytes": 312,
+   "span_bytes": 312,
+   "executable_mapped_bytes": 312,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 146,
+    "owner_halfwords": 156,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 146 of 156 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0809b450": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0809b450",
+   "status": "surveyed-measured",
+   "owner_bytes": 312,
+   "span_bytes": 312,
+   "executable_mapped_bytes": 312,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 147,
+    "owner_halfwords": 156,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 147 of 156 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080cdd58": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080cdd58",
+   "status": "surveyed-measured",
+   "owner_bytes": 310,
+   "span_bytes": 310,
+   "executable_mapped_bytes": 310,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 136,
+    "owner_halfwords": 155,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 136 of 155 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808ddec": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808ddec",
+   "status": "surveyed-measured",
+   "owner_bytes": 304,
+   "span_bytes": 304,
+   "executable_mapped_bytes": 304,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 137,
+    "owner_halfwords": 152,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 137 of 152 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080799b0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080799b0",
+   "status": "surveyed-measured",
+   "owner_bytes": 296,
+   "span_bytes": 296,
+   "executable_mapped_bytes": 296,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 147,
+    "owner_halfwords": 148,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 147 of 148 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006e24": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006e24",
+   "status": "surveyed-measured",
+   "owner_bytes": 292,
+   "span_bytes": 292,
+   "executable_mapped_bytes": 292,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 146,
+    "owner_halfwords": 146,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 146 of 146 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801aeec": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801aeec",
+   "status": "surveyed-measured",
+   "owner_bytes": 292,
+   "span_bytes": 292,
+   "executable_mapped_bytes": 292,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 147,
+    "owner_halfwords": 146,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 147 of 146 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801b248": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801b248",
+   "status": "surveyed-measured",
+   "owner_bytes": 292,
+   "span_bytes": 292,
+   "executable_mapped_bytes": 292,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 143,
+    "owner_halfwords": 146,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 143 of 146 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080162d4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080162d4",
+   "status": "surveyed-measured",
+   "owner_bytes": 280,
+   "span_bytes": 280,
+   "executable_mapped_bytes": 280,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 138,
+    "owner_halfwords": 140,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 138 of 140 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080f91e8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f91e8",
+   "status": "surveyed-measured",
+   "owner_bytes": 276,
+   "span_bytes": 276,
+   "executable_mapped_bytes": 276,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 132,
+    "owner_halfwords": 138,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 132 of 138 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808ace0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808ace0",
+   "status": "surveyed-measured",
+   "owner_bytes": 272,
+   "span_bytes": 272,
+   "executable_mapped_bytes": 272,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 127,
+    "owner_halfwords": 136,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 127 of 136 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801a66c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801a66c",
+   "status": "surveyed-measured",
+   "owner_bytes": 268,
+   "span_bytes": 268,
+   "executable_mapped_bytes": 268,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 104,
+    "owner_halfwords": 134,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 104 of 134 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08095778": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08095778",
+   "status": "surveyed-measured",
+   "owner_bytes": 268,
+   "span_bytes": 268,
+   "executable_mapped_bytes": 268,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 155,
+    "owner_halfwords": 134,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 155 of 134 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08095938": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08095938",
+   "status": "surveyed-measured",
+   "owner_bytes": 268,
+   "span_bytes": 268,
+   "executable_mapped_bytes": 268,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 133,
+    "owner_halfwords": 134,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 133 of 134 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0800f1fa": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800f1fa",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 254,
+   "span_bytes": 254,
+   "executable_mapped_bytes": 254,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080dda3c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080dda3c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 248,
+   "span_bytes": 248,
+   "executable_mapped_bytes": 248,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080981b0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080981b0",
+   "status": "surveyed-measured",
+   "owner_bytes": 228,
+   "span_bytes": 228,
+   "executable_mapped_bytes": 228,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 112,
+    "owner_halfwords": 114,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 112 of 114 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080ec190": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ec190",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 212,
+   "span_bytes": 212,
+   "executable_mapped_bytes": 212,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08007220": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08007220",
+   "status": "surveyed-measured",
+   "owner_bytes": 196,
+   "span_bytes": 196,
+   "executable_mapped_bytes": 196,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 95,
+    "owner_halfwords": 98,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 95 of 98 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08098c08": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08098c08",
+   "status": "surveyed-measured",
+   "owner_bytes": 196,
+   "span_bytes": 196,
+   "executable_mapped_bytes": 196,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 93,
+    "owner_halfwords": 98,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 93 of 98 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080d76f0": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d76f0",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 196,
+   "span_bytes": 196,
+   "executable_mapped_bytes": 196,
+   "retention": "merge_with_function_owner",
+   "kind": "multi_region_function_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d40ec": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d40ec",
+   "status": "surveyed-measured",
+   "owner_bytes": 184,
+   "span_bytes": 184,
+   "executable_mapped_bytes": 184,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 84,
+    "owner_halfwords": 92,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 84 of 92 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08092878": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08092878",
+   "status": "surveyed-measured",
+   "owner_bytes": 172,
+   "span_bytes": 172,
+   "executable_mapped_bytes": 172,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 48,
+    "owner_halfwords": 86,
+    "route": "canonical-gcc296",
+    "class": "near-miss"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 48 of 86 halfwords. Nothing adopted."
+   ],
+   "recommendation": "needs-new-structural-hypothesis"
+  },
+  "main:080d12a8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d12a8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 168,
+   "span_bytes": 168,
+   "executable_mapped_bytes": 168,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08006f84": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006f84",
+   "status": "surveyed-measured",
+   "owner_bytes": 164,
+   "span_bytes": 164,
+   "executable_mapped_bytes": 164,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 58,
+    "owner_halfwords": 82,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 58 of 82 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080e1724": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e1724",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 160,
+   "span_bytes": 160,
+   "executable_mapped_bytes": 160,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08006d50": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006d50",
+   "status": "surveyed-measured",
+   "owner_bytes": 156,
+   "span_bytes": 156,
+   "executable_mapped_bytes": 156,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 75,
+    "owner_halfwords": 78,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 75 of 78 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801c34c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801c34c",
+   "status": "surveyed-measured",
+   "owner_bytes": 156,
+   "span_bytes": 156,
+   "executable_mapped_bytes": 156,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 96,
+    "owner_halfwords": 78,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 96 of 78 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0800f9f4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800f9f4",
+   "status": "surveyed-measured",
+   "owner_bytes": 152,
+   "span_bytes": 152,
+   "executable_mapped_bytes": 152,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 111,
+    "owner_halfwords": 76,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 111 of 76 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808c30c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808c30c",
+   "status": "surveyed-measured",
+   "owner_bytes": 152,
+   "span_bytes": 152,
+   "executable_mapped_bytes": 152,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 48,
+    "owner_halfwords": 76,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 48 of 76 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080b110c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b110c",
+   "status": "surveyed-measured",
+   "owner_bytes": 152,
+   "span_bytes": 152,
+   "executable_mapped_bytes": 152,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 76,
+    "owner_halfwords": 76,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 76 of 76 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006878": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006878",
+   "status": "surveyed-measured",
+   "owner_bytes": 150,
+   "span_bytes": 150,
+   "executable_mapped_bytes": 150,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 72,
+    "owner_halfwords": 75,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 72 of 75 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006910": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006910",
+   "status": "surveyed-measured",
+   "owner_bytes": 148,
+   "span_bytes": 148,
+   "executable_mapped_bytes": 148,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 63,
+    "owner_halfwords": 74,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 63 of 74 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808f498": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808f498",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 148,
+   "span_bytes": 148,
+   "executable_mapped_bytes": 148,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e4ab8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e4ab8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 148,
+   "span_bytes": 148,
+   "executable_mapped_bytes": 148,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:0800711c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800711c",
+   "status": "surveyed-measured",
+   "owner_bytes": 140,
+   "span_bytes": 140,
+   "executable_mapped_bytes": 140,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 62,
+    "owner_halfwords": 70,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 62 of 70 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080e53f4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e53f4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 136,
+   "span_bytes": 136,
+   "executable_mapped_bytes": 136,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e547c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e547c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 136,
+   "span_bytes": 136,
+   "executable_mapped_bytes": 136,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08007098": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08007098",
+   "status": "surveyed-measured",
+   "owner_bytes": 132,
+   "span_bytes": 132,
+   "executable_mapped_bytes": 132,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 65,
+    "owner_halfwords": 66,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 65 of 66 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080e1a48": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e1a48",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 132,
+   "span_bytes": 132,
+   "executable_mapped_bytes": 132,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08078320": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08078320",
+   "status": "surveyed-measured",
+   "owner_bytes": 130,
+   "span_bytes": 130,
+   "executable_mapped_bytes": 130,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 64,
+    "owner_halfwords": 65,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 64 of 65 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006ba8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006ba8",
+   "status": "surveyed-measured",
+   "owner_bytes": 124,
+   "span_bytes": 124,
+   "executable_mapped_bytes": 124,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 62,
+    "owner_halfwords": 62,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 62 of 62 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08019d2c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08019d2c",
+   "status": "surveyed-measured",
+   "owner_bytes": 124,
+   "span_bytes": 124,
+   "executable_mapped_bytes": 124,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 82,
+    "owner_halfwords": 62,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 82 of 62 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006a00": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006a00",
+   "status": "surveyed-measured",
+   "owner_bytes": 120,
+   "span_bytes": 120,
+   "executable_mapped_bytes": 120,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 54,
+    "owner_halfwords": 60,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 54 of 60 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080071a8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080071a8",
+   "status": "surveyed-measured",
+   "owner_bytes": 120,
+   "span_bytes": 120,
+   "executable_mapped_bytes": 120,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 53,
+    "owner_halfwords": 60,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 53 of 60 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006c68": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006c68",
+   "status": "surveyed-measured",
+   "owner_bytes": 116,
+   "span_bytes": 116,
+   "executable_mapped_bytes": 116,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 58,
+    "owner_halfwords": 58,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 58 of 58 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08006cdc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006cdc",
+   "status": "surveyed-measured",
+   "owner_bytes": 116,
+   "span_bytes": 116,
+   "executable_mapped_bytes": 116,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 51,
+    "owner_halfwords": 58,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 51 of 58 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080fb334": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb334",
+   "status": "surveyed-measured",
+   "owner_bytes": 116,
+   "span_bytes": 116,
+   "executable_mapped_bytes": 116,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 57,
+    "owner_halfwords": 58,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 57 of 58 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080f474a": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f474a",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 114,
+   "span_bytes": 114,
+   "executable_mapped_bytes": 114,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08007028": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08007028",
+   "status": "surveyed-measured",
+   "owner_bytes": 112,
+   "span_bytes": 112,
+   "executable_mapped_bytes": 112,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 54,
+    "owner_halfwords": 56,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 54 of 56 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0808b7b8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0808b7b8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 108,
+   "span_bytes": 108,
+   "executable_mapped_bytes": 108,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080bea9c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080bea9c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 108,
+   "span_bytes": 108,
+   "executable_mapped_bytes": 108,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080fb2cc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb2cc",
+   "status": "surveyed-measured",
+   "owner_bytes": 104,
+   "span_bytes": 104,
+   "executable_mapped_bytes": 104,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 50,
+    "owner_halfwords": 52,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 50 of 52 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080fb3a8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb3a8",
+   "status": "surveyed-measured",
+   "owner_bytes": 104,
+   "span_bytes": 104,
+   "executable_mapped_bytes": 104,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 51,
+    "owner_halfwords": 52,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 51 of 52 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080ba918": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ba918",
+   "status": "surveyed-measured",
+   "owner_bytes": 94,
+   "span_bytes": 94,
+   "executable_mapped_bytes": 94,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 46,
+    "owner_halfwords": 47,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 46 of 47 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080d8258": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d8258",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 88,
+   "span_bytes": 88,
+   "executable_mapped_bytes": 88,
+   "retention": "merge_with_owner",
+   "kind": "parent_function_fragment",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08029274": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08029274",
+   "status": "surveyed-measured",
+   "owner_bytes": 80,
+   "span_bytes": 80,
+   "executable_mapped_bytes": 80,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 37,
+    "owner_halfwords": 40,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 37 of 40 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0801c9c8": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0801c9c8",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 78,
+   "span_bytes": 78,
+   "executable_mapped_bytes": 78,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e1daa": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e1daa",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 78,
+   "span_bytes": 78,
+   "executable_mapped_bytes": 78,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080a9d3c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a9d3c",
+   "status": "surveyed-measured",
+   "owner_bytes": 72,
+   "span_bytes": 72,
+   "executable_mapped_bytes": 72,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 32,
+    "owner_halfwords": 36,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 32 of 36 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080de08c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080de08c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 72,
+   "span_bytes": 72,
+   "executable_mapped_bytes": 72,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080fa4cc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fa4cc",
+   "status": "surveyed-measured",
+   "owner_bytes": 72,
+   "span_bytes": 72,
+   "executable_mapped_bytes": 72,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 34,
+    "owner_halfwords": 36,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 34 of 36 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080fa514": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fa514",
+   "status": "surveyed-measured",
+   "owner_bytes": 72,
+   "span_bytes": 72,
+   "executable_mapped_bytes": 72,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 37,
+    "owner_halfwords": 36,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 37 of 36 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080b2720": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080b2720",
+   "status": "surveyed-measured",
+   "owner_bytes": 68,
+   "span_bytes": 68,
+   "executable_mapped_bytes": 68,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 34,
+    "owner_halfwords": 34,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 34 of 34 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080d7e5c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d7e5c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 68,
+   "span_bytes": 68,
+   "executable_mapped_bytes": 68,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080268da": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080268da",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 66,
+   "span_bytes": 66,
+   "executable_mapped_bytes": 66,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d5052": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d5052",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 66,
+   "span_bytes": 66,
+   "executable_mapped_bytes": 66,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080dbb9a": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080dbb9a",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 66,
+   "span_bytes": 66,
+   "executable_mapped_bytes": 66,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e72de": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e72de",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 66,
+   "span_bytes": 66,
+   "executable_mapped_bytes": 66,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080a3d9c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a3d9c",
+   "status": "surveyed-measured",
+   "owner_bytes": 64,
+   "span_bytes": 64,
+   "executable_mapped_bytes": 64,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 27,
+    "owner_halfwords": 32,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 27 of 32 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:0800f1bc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x0800f1bc",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 62,
+   "span_bytes": 62,
+   "executable_mapped_bytes": 62,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d821a": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d821a",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 62,
+   "span_bytes": 62,
+   "executable_mapped_bytes": 62,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e24fa": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e24fa",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 62,
+   "span_bytes": 62,
+   "executable_mapped_bytes": 62,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080f4ab2": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f4ab2",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 62,
+   "span_bytes": 62,
+   "executable_mapped_bytes": 62,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d126c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d126c",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 60,
+   "span_bytes": 60,
+   "executable_mapped_bytes": 60,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e21ae": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e21ae",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 58,
+   "span_bytes": 58,
+   "executable_mapped_bytes": 58,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e5dee": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e5dee",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 58,
+   "span_bytes": 58,
+   "executable_mapped_bytes": 58,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080f4eca": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f4eca",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 58,
+   "span_bytes": 58,
+   "executable_mapped_bytes": 58,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080c91a4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080c91a4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 56,
+   "span_bytes": 56,
+   "executable_mapped_bytes": 56,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080d7bd2": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080d7bd2",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 54,
+   "span_bytes": 54,
+   "executable_mapped_bytes": 54,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e6252": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e6252",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 54,
+   "span_bytes": 54,
+   "executable_mapped_bytes": 54,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080ec6f4": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ec6f4",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 52,
+   "span_bytes": 52,
+   "executable_mapped_bytes": 52,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080bef58": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080bef58",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 48,
+   "span_bytes": 48,
+   "executable_mapped_bytes": 48,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e4ddc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e4ddc",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 48,
+   "span_bytes": 48,
+   "executable_mapped_bytes": 48,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e5acc": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e5acc",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 48,
+   "span_bytes": 48,
+   "executable_mapped_bytes": 48,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080e660a": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080e660a",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 46,
+   "span_bytes": 46,
+   "executable_mapped_bytes": 46,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080ecaba": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ecaba",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 46,
+   "span_bytes": 46,
+   "executable_mapped_bytes": 46,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:080f9a50": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080f9a50",
+   "status": "surveyed-measured",
+   "owner_bytes": 46,
+   "span_bytes": 46,
+   "executable_mapped_bytes": 46,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 23,
+    "owner_halfwords": 23,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 23 of 23 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080ece52": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080ece52",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 42,
+   "span_bytes": 42,
+   "executable_mapped_bytes": 42,
+   "retention": "merge_with_owner",
+   "kind": "executable_gap_continuation",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
+  },
+  "main:08006b84": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08006b84",
+   "status": "surveyed-measured",
+   "owner_bytes": 34,
+   "span_bytes": 34,
+   "executable_mapped_bytes": 34,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 17,
+    "owner_halfwords": 17,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 17 of 17 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:08021e28": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x08021e28",
+   "status": "surveyed-measured",
+   "owner_bytes": 32,
+   "span_bytes": 32,
+   "executable_mapped_bytes": 32,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 6,
+    "owner_halfwords": 16,
+    "route": "canonical-gcc296",
+    "class": "near-miss"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 6 of 16 halfwords. Nothing adopted."
+   ],
+   "recommendation": "needs-new-structural-hypothesis"
+  },
+  "main:080fa280": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fa280",
+   "status": "surveyed-measured",
+   "owner_bytes": 32,
+   "span_bytes": 32,
+   "executable_mapped_bytes": 32,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 5,
+    "owner_halfwords": 16,
+    "route": "canonical-gcc296",
+    "class": "near-miss"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 5 of 16 halfwords. Nothing adopted."
+   ],
+   "recommendation": "needs-new-structural-hypothesis"
+  },
+  "main:080fb6ec": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb6ec",
+   "status": "surveyed-measured",
+   "owner_bytes": 18,
+   "span_bytes": 18,
+   "executable_mapped_bytes": 18,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 8,
+    "owner_halfwords": 9,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 8 of 9 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080fb700": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb700",
+   "status": "surveyed-measured",
+   "owner_bytes": 18,
+   "span_bytes": 18,
+   "executable_mapped_bytes": 18,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 8,
+    "owner_halfwords": 9,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 8 of 9 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080fb768": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb768",
+   "status": "surveyed-measured",
+   "owner_bytes": 18,
+   "span_bytes": 18,
+   "executable_mapped_bytes": 18,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 7,
+    "owner_halfwords": 9,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 7 of 9 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080fb77c": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080fb77c",
+   "status": "surveyed-measured",
+   "owner_bytes": 18,
+   "span_bytes": 18,
+   "executable_mapped_bytes": 18,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "score": {
+    "measured": "2026-09-10",
+    "differing_halfwords": 7,
+    "owner_halfwords": 9,
+    "route": "canonical-gcc296",
+    "class": "structurally-different-draft"
+   },
+   "notes": [
+    "Retained-assembly survey. A candidate was decompiled from the reference through the approved route and scored after two ordinary-C repairs: a table read spelled as a cast literal rewritten as a named array, and locals the decompiler declares and never uses removed. Residual 7 of 9 halfwords. Nothing adopted."
+   ],
+   "recommendation": "recommend-seal"
+  },
+  "main:080a8904": {
+   "schema_version": 1,
+   "namespace": "main",
+   "address": "0x080a8904",
+   "status": "surveyed-unmeasured",
+   "owner_bytes": 14,
+   "span_bytes": 14,
+   "executable_mapped_bytes": 14,
+   "retention": "c_candidate",
+   "kind": "compiler_output",
+   "measured": "2026-09-10",
+   "notes": [
+    "Retained-assembly survey. Ranked by executable-mapped bytes, which for this region equals its extent; not yet put through the decompile-and-score loop."
+   ],
+   "recommendation": "unmeasured"
   }
  }
 }

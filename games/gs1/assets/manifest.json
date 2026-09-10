@@ -33,10 +33,6 @@
           "size": "0x2f8"
         },
         {
-          "address": "0x0800731c",
-          "size": "0x04"
-        },
-        {
           "address": "0x08007320",
           "size": "0x38"
         },
@@ -126,32 +122,25 @@
       "pointer": "/gaps/0/sections/1/records/4/words"
     },
     {
-      "address": "0x0800731c",
-      "size": "0x04",
-      "kind": "le-u32-array",
-      "source": "games/gs1/asm/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/0/values"
-    },
-    {
       "address": "0x08007320",
       "size": "0x38",
       "kind": "le-u32-array",
       "source": "games/gs1/asm/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/1/values"
+      "pointer": "/gaps/2/sections/0/values"
     },
     {
       "address": "0x08007358",
       "size": "0x31e",
       "kind": "le-u16-array",
       "source": "games/gs1/asm/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/2/tables/0/values"
+      "pointer": "/gaps/2/sections/1/tables/0/values"
     },
     {
       "address": "0x08007676",
       "size": "0x106",
       "kind": "le-u16-array",
       "source": "games/gs1/asm/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/2/tables/1/values"
+      "pointer": "/gaps/2/sections/1/tables/1/values"
     },
     {
       "address": "0x080b5204",

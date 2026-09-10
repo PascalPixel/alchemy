@@ -1486,7 +1486,8 @@
       "source": "battle/effects/particle_reveal/run.c"
     },
     "main:080cfef4": {
-      "name": "BattleEffect_RunCounterReveal"
+      "name": "BattleEffect_RunCounterReveal",
+      "source": "battle/effects/counter_reveal/run.c"
     },
     "main:08098848": {
       "name": "BattleEffect_RunTargetedItemBreak"

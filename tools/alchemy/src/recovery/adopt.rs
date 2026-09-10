@@ -200,15 +200,8 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             request.owner, result.differing
         ));
     }
-    match repeatable(root, &destination, request.owner, span) {
-        Ok(line) => report.push(line),
-        Err(error) => {
-            if !existed {
-                let _ = std::fs::remove_file(&destination);
-            }
-            return Err(error);
-        }
-    }
+    // The repeat check runs inside `overlay adopt --apply`, which every
+    // overlay adoption passes through, so it is not repeated here.
 
     // Every register the sequence touches is snapshotted first: a failure
     // anywhere after this point restores all of them and removes the unit,
@@ -521,6 +514,12 @@ fn register_adoption(
     if !last.contains("adopt=applied") {
         return Err(format!("overlay adopt did not apply: {last}"));
     }
+    report.extend(
+        applied
+            .lines()
+            .filter(|line| line.starts_with("repeatability "))
+            .map(str::to_string),
+    );
     report.push(last);
 
     let mut staged: Vec<String> = [
@@ -564,7 +563,7 @@ fn register_adoption(
 /// rebuild in the shared bundle mid-check cannot pass as a result.
 const REPEAT_RUNS: usize = 30;
 
-fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<String, String> {
+pub fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<String, String> {
     let cc1 = crate::compiler::routing::bundle().join("cc1");
     let pin = |cc1: &Path| -> Result<String, String> {
         let bytes = std::fs::read(cc1).map_err(|e| format!("{}: {e}", cc1.display()))?;

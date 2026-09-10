@@ -12,19 +12,19 @@ void UiWindow_Close(s32, s32);
 s32 GameFlag_IsSet(s32);
 void Func_080a1ac0(s32, s32);
 void Func_080a1a40(s32, s32);
+extern u8 Value_00000182;
 
 s32 Func_080a524c(s32 item_id)
 {
     s32 selection;
     s32 window;
     s32 changed;
-    s32 msg;
 
     window = UiWindow_CreateFar(13, 3, 17, 10, 2);
     Item_Get(item_id & 0x1FF);
-    msg = item_id & 0x1FF;
-    msg += 0x182;
-    UiText_DrawAt(msg, window, 24, 0);
+    item_id &= 0x1FF;
+    item_id += (s32)&Value_00000182;
+    UiText_DrawAt(item_id, window, 24, 0);
     item_id = 0xAD4;
     UiText_DrawAt(item_id, window, 0, 16);
     item_id += 1;

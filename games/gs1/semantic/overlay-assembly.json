@@ -2145,7 +2145,7 @@
     {
       "overlay": "resource_3a4",
       "start": "0x02001d14",
-      "end": "0x02002006",
+      "end": "0x02002020",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",

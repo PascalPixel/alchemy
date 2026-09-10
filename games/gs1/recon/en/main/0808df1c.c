@@ -28,7 +28,6 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
     s32 verticalRange;
     s32 deltaX;
     s32 deltaZ;
-    s32 cellX;
     s32 cellZ;
     s32 zSquared;
     s32 xSquared;
@@ -55,9 +54,9 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 
         verticalRange = 0x80000;
         if (battleMode == 13)
-            verticalRange = 0x3000000;
+            verticalRange = 0x300000;
         if (battleMode == 5)
-            verticalRange = 0x4000000;
+            verticalRange = 0x400000;
         if (battleMode == 2)
             verticalRange = 0x100000;
 
@@ -66,7 +65,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
             if (deltaY >= 0) {
                 if (deltaY > verticalRange)
                     continue;
-            } else if (-deltaY > verticalRange) {
+            } else if (source->y - candidate->y > verticalRange) {
                 continue;
             }
         }
@@ -74,7 +73,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
         deltaX = candidate->x - source->x;
         if (deltaX < 0)
             deltaX += 0xffff;
-        cellX = deltaX >> 16;
+        deltaX >>= 16;
 
         deltaZ = candidate->z - source->z;
         if (deltaZ < 0)
@@ -82,7 +81,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
         cellZ = deltaZ >> 16;
 
         zSquared = cellZ * cellZ;
-        xSquared = cellX * cellX;
+        xSquared = deltaX * deltaX;
         squaredDistance = xSquared;
         squaredDistance += zSquared;
         distance = Func_080072f0(squaredDistance, zSquared, xSquared,

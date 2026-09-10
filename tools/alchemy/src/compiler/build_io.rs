@@ -68,3 +68,30 @@ mod tests {
         assert!(!rendered.contains("//"));
     }
 }
+
+/// Files whose contents are put back if a multi-file mutation fails, so a
+/// register sequence either completes or leaves nothing behind.
+pub struct Snapshot(Vec<(PathBuf, Option<Vec<u8>>)>);
+
+impl Snapshot {
+    pub fn take(paths: &[PathBuf]) -> Result<Self, String> {
+        let mut entries = Vec::new();
+        for path in paths {
+            let contents = match std::fs::read(path) {
+                Ok(bytes) => Some(bytes),
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+                Err(error) => return Err(format!("{}: {error}", path.display())),
+            };
+            entries.push((path.clone(), contents));
+        }
+        Ok(Snapshot(entries))
+    }
+    pub fn restore(&self) {
+        for (path, contents) in &self.0 {
+            let _ = match contents {
+                Some(bytes) => std::fs::write(path, bytes),
+                None => std::fs::remove_file(path),
+            };
+        }
+    }
+}

@@ -5,6 +5,7 @@
 //! candidate is not exact or the span overlaps another registered region.
 
 use super::owners::{self, modules, parse_owner, score, score_in, tool_command};
+use crate::compiler::build_io::Snapshot;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -287,32 +288,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     }
     report.push(format!("adopted {} as {name} at {relative}", request.owner));
     Ok(report)
-}
-
-/// Files whose contents are put back if the adoption sequence fails.
-struct Snapshot(Vec<(PathBuf, Option<Vec<u8>>)>);
-
-impl Snapshot {
-    fn take(paths: &[PathBuf]) -> Result<Self, String> {
-        let mut entries = Vec::new();
-        for path in paths {
-            let contents = match std::fs::read(path) {
-                Ok(bytes) => Some(bytes),
-                Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
-                Err(error) => return Err(format!("{}: {error}", path.display())),
-            };
-            entries.push((path.clone(), contents));
-        }
-        Ok(Snapshot(entries))
-    }
-    fn restore(&self) {
-        for (path, contents) in &self.0 {
-            let _ = match contents {
-                Some(bytes) => std::fs::write(path, bytes),
-                None => std::fs::remove_file(path),
-            };
-        }
-    }
 }
 
 struct Registration<'a> {

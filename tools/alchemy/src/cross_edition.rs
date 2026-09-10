@@ -25,7 +25,7 @@ const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 4;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
-const USAGE: &str = "usage: alchemy cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
+const USAGE: &str = "usage: alchemy cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --game gs2 [--rom-dir DIR] --edition-build FILE <8-digit-en-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
 #[derive(Debug, Serialize)]
 struct Report {
     schema_version: u32,
@@ -220,6 +220,7 @@ struct Options {
     write: Option<PathBuf>,
     edition_build: Option<PathBuf>,
     span: Option<usize>,
+    game: &'static str,
 }
 struct Registers {
     sources: SourcePaths,
@@ -362,6 +363,10 @@ struct OverlayOwnerEdition {
 }
 pub fn run(args: &[String]) -> Result<(), String> {
     let options = parse(args)?;
+    if options.game == "gs2" {
+        let owner = options.owner.as_deref().ok_or(USAGE)?;
+        return run_gs2_edition_build(&options, owner);
+    }
     let roms = read_roms(&options.rom_dir)?;
     if options.all_overlays {
         return run_all_overlays(&options, &roms);
@@ -1310,6 +1315,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
     let mut write = None;
     let mut edition_build = None;
     let mut span = None;
+    let mut game = "gs1";
     let mut index = 0;
     while index < args.len() {
         match args[index].as_str() {
@@ -1336,6 +1342,14 @@ fn parse(args: &[String]) -> Result<Options, String> {
             "--edition-build" => {
                 index += 1;
                 edition_build = Some(PathBuf::from(args.get(index).ok_or(USAGE)?));
+            }
+            "--game" => {
+                index += 1;
+                game = match args.get(index).map(String::as_str) {
+                    Some("gs1") => "gs1",
+                    Some("gs2") => "gs2",
+                    _ => return Err(format!("--game wants gs1 or gs2\n{USAGE}")),
+                };
             }
             "--span" => {
                 index += 1;
@@ -1402,6 +1416,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
         write,
         edition_build,
         span,
+        game,
     })
 }
 fn parse_explicit_overlay_owner(value: &str, span: Option<usize>) -> Result<OverlayOwner, String> {
@@ -2860,6 +2875,206 @@ fn print_report(report: &Report, calls: bool) {
         }
     }
 }
+/// GS2 owners relink from their per-edition sources rather than from one EN
+/// object: every edition file names its own owner symbol and the delta
+/// header retargets each callee to the address in its name, so the proof
+/// that a callee is bound correctly is that the ROM's BL field decodes to
+/// the address the symbol is named after.
+#[derive(serde::Deserialize)]
+struct Gs2Register {
+    owners: Vec<Gs2Owner>,
+}
+#[derive(serde::Deserialize)]
+struct Gs2Owner {
+    size: usize,
+    starts: BTreeMap<String, String>,
+}
+fn run_gs2_edition_build(options: &Options, owner: &str) -> Result<(), String> {
+    let path = options
+        .edition_build
+        .as_deref()
+        .ok_or("--game gs2 relinks only through --edition-build FILE")?;
+    if options.object.is_some() || options.calls || options.json || options.span.is_some() {
+        return Err(format!(
+            "--game gs2 takes only --rom-dir and --edition-build\n{USAGE}"
+        ));
+    }
+    let root = crate::compiler::routing::root();
+    let register: Gs2Register =
+        crate::compiler::build_io::read_json(root.join("games/gs2/recon/cross-edition.json"))?;
+    let entry = register
+        .owners
+        .iter()
+        .find(|entry| entry.starts.get("en").is_some_and(|start| start == owner))
+        .ok_or_else(|| format!("{owner}: not an EN owner in games/gs2/recon/cross-edition.json"))?;
+    let output_root = std::env::temp_dir()
+        .join("alchemy-cross-edition")
+        .join("gs2")
+        .join(owner);
+    let mut editions = Vec::with_capacity(EDITIONS.len());
+    for edition in EDITIONS {
+        let start_text = entry
+            .starts
+            .get(edition)
+            .ok_or_else(|| format!("{owner}: register lacks a {edition} start"))?;
+        let start = parse_rom_address(start_text)?;
+        let rom = read_rom(&options.rom_dir.join(format!("gs2-{edition}.gba")))?;
+        let source = root.join(format!("games/gs2/recon/{edition}/main/{start_text}.c"));
+        let built = build_gs2_edition(
+            &output_root,
+            edition,
+            start_text,
+            start,
+            &source,
+            entry.size,
+            &rom,
+        );
+        let (external_symbols, differing_bytes, size, error) = match built {
+            Ok((values, differing, size)) => (
+                values
+                    .into_iter()
+                    .map(|(name, value)| (name, format!("0x{value:08x}")))
+                    .collect(),
+                Some(differing),
+                size,
+                None,
+            ),
+            Err(error) => (BTreeMap::new(), None, entry.size, Some(error)),
+        };
+        editions.push(EditionBuildEntry {
+            edition: edition.into(),
+            start: format!("0x{:08x}", ROM_BASE + start as u64),
+            size,
+            external_symbols,
+            byte_exact: differing_bytes == Some(0),
+            differing_bytes,
+            error,
+        });
+    }
+    let build = EditionBuildReport {
+        schema_version: 1,
+        game: "gs2",
+        source_edition: "en",
+        source: format!("games/gs2/recon/en/main/{owner}.c"),
+        object: "compiled from each edition's own source".into(),
+        owner_symbol: format!("Func_{owner}"),
+        size: entry.size,
+        edition_variant: true,
+        all_exact: editions.iter().all(|edition| edition.byte_exact),
+        editions,
+    };
+    write_json(path, &build, "edition build")?;
+    for edition in &build.editions {
+        println!(
+            "  {} start={} size={} differing_bytes={} {}",
+            edition.edition,
+            edition.start,
+            edition.size,
+            edition
+                .differing_bytes
+                .map_or("-".to_string(), |bytes| bytes.to_string()),
+            edition
+                .error
+                .as_deref()
+                .unwrap_or(if edition.byte_exact { "exact" } else { "" })
+        );
+    }
+    println!(
+        "edition_build={} owner={} editions={} all_exact={}",
+        path.display(),
+        owner,
+        build.editions.len(),
+        build.all_exact
+    );
+    if build.all_exact {
+        Ok(())
+    } else {
+        Err("one or more editions are not byte-exact".into())
+    }
+}
+fn build_gs2_edition(
+    output_root: &Path,
+    edition: &str,
+    owner: &str,
+    start: usize,
+    source: &Path,
+    size: usize,
+    rom: &[u8],
+) -> Result<(BTreeMap<String, u64>, usize, usize), String> {
+    if !source.is_file() {
+        return Err(format!("{}: no edition source", source.display()));
+    }
+    let output = output_root.join("compiled").join(edition);
+    fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
+    let owner_address = u32::from_str_radix(owner, 16)
+        .map_err(|error| format!("invalid gs2 owner {owner}: {error}"))?;
+    let routing = SourceOwner::Main(owner_address)
+        .routing_path_for_game("gs2")
+        .to_string_lossy()
+        .into_owned();
+    let assembly = compile_to_assembly(
+        &source.to_string_lossy(),
+        &routing,
+        &output.to_string_lossy(),
+        &[],
+        CompilerTarget::Gs2,
+    )?;
+    let object = output.join("owner.o");
+    run_compiler(
+        &crate::compiler::routing::compiler_assembly_command(&assembly, &object.to_string_lossy()),
+        crate::compiler::routing::root(),
+    )?;
+    let (object_size, symbol_offset, _, _, relocations, _) = relocation_mask(&object, owner)?;
+    let reference = edition_reference(rom, start, size)?;
+    let owner_symbol = format!("Func_{owner}");
+    let locations = named_locations(&relocations, edition);
+    let values = derive_link_symbols(
+        &relocations,
+        reference,
+        start,
+        &owner_symbol,
+        false,
+        edition,
+        Some(&locations),
+    )?;
+    let linked = link_owner_for_edition(
+        &output_root.join("linked"),
+        edition,
+        &object,
+        &owner_symbol,
+        ROM_BASE + start as u64,
+        symbol_offset,
+        object_size,
+        &values,
+    )?;
+    let differing = reference
+        .iter()
+        .zip(&linked)
+        .filter(|(left, right)| left != right)
+        .count()
+        + reference.len().abs_diff(linked.len());
+    Ok((values, differing, object_size))
+}
+/// A GS2 callee named `Func_XXXXXXXX` or a literal named `Value_XXXXXXXX`
+/// is bound at the number in its name; the byte comparison of the linked
+/// owner against the ROM is what proves the binding.
+fn named_locations(relocations: &[RelocationSite], edition: &str) -> EditionLocations {
+    let mut locations = EditionLocations::new();
+    for site in relocations.iter().filter(|site| site.external) {
+        let named = site
+            .symbol
+            .strip_prefix("Func_")
+            .or_else(|| site.symbol.strip_prefix("Value_"))
+            .filter(|value| value.len() == 8 && value.bytes().all(|byte| byte.is_ascii_hexdigit()));
+        if let Some(address) = named.and_then(|value| u64::from_str_radix(value, 16).ok()) {
+            locations
+                .entry(site.symbol.clone())
+                .or_default()
+                .insert(edition.into(), address);
+        }
+    }
+    locations
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3316,5 +3531,31 @@ mod tests {
         assert_eq!((sites[0].offset, sites[0].size), (4, 4));
         assert_eq!((sites[1].offset, sites[1].size), (8, 4));
         assert_eq!((sites[2].offset, sites[2].size), (12, 2));
+    }
+}
+#[cfg(test)]
+mod gs2_tests {
+    use super::*;
+    #[test]
+    fn gs2_callees_are_proved_at_the_address_in_their_name() {
+        let site = |symbol: &str, external: bool| RelocationSite {
+            symbol: symbol.into(),
+            external,
+            kind: "R_ARM_THM_CALL".into(),
+            offset: 0,
+            size: 4,
+            addend: 0,
+        };
+        let sites = [
+            site("Func_08014d78", true),
+            site("BattleEvent_Push", true),
+            site("Value_00000c80", true),
+            site("Func_0812046c", false),
+        ];
+        let locations = named_locations(&sites, "de");
+        assert_eq!(locations.len(), 2);
+        assert_eq!(locations["Value_00000c80"]["de"], 0xc80);
+        assert_eq!(locations["Func_08014d78"]["de"], 0x0801_4d78);
+        assert!(!locations.contains_key("Func_0812046c"));
     }
 }

@@ -9,13 +9,13 @@ void Func_0200469a();
 s32 Func_020048b0();
 void Func_02004aaa();
 void Func_02004b24();
-void Func_020054a8();
+s32 Func_020054a8();
 void Func_02005766();
 void Func_02005960();
 void Func_020059ce();
 void Func_020059de();
 void Func_020059ee();
-void Func_02005a00();
+s32 Func_02005a00();
 void Func_02005a0c();
 void Func_02005a5c();
 void Func_02006814();
@@ -30,13 +30,12 @@ void Func_0200692e();
 void Func_02006930();
 void Func_02006948();
 void Func_02006956();
-void Func_02006984();
-void Func_02006984_a();
+void Func_0200cad0();
+void Func_0200ca08();
 void Func_020069a4();
 void Func_020069a8();
 void Func_020069be();
-void Func_020069c6();
-void Func_020069c6_a();
+void Func_0200cb30();
 void Func_020069ca();
 void Func_020069e8();
 void Func_020069ea();
@@ -67,16 +66,23 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    return f(a0, a1, a2);
+}
+
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
 }
 
+extern s16 Data_02000240[];
+
 void Func_02001df8(s32 scene)
 {
     s32 state;
 
-    if (*(s16 *)0x02000402 == 2) {
+    if (Data_02000240[225] == 2) {
         Func_0200469a();
         return;
     }
@@ -89,22 +95,22 @@ void Func_02001df8(s32 scene)
     Func_02006956();
     Func_0200684c(30);
     Func_0200691e(scene, 0);
-    Call3(Func_020054a8, 0, 280, 200);
+    Func_020054a8(0, 280, 200);
     Call3(Func_0200689e, 0, 98304, 49152);
-    Call3(Func_02005a00, 0, 280, 152);
+    Func_02005a00(0, 280, 152);
     Call3(Func_02005a0c, 0, 296, 152);
     Func_0200688a(10);
-    Func_020069c6();
+    Func_0200cb30();
     Call4(Func_020069a8, -1, -1, -1, 0);
-    Call3(Func_02006984, 0, 49152, 15);
+    Value3(Func_0200cad0, 0, 49152, 15);
     Func_020069e8();
     Call4(Func_020069ca, -1, -1, -1, 0);
-    Func_020069a4(0, 0, 15);
+    Value3(Func_020069a4, 0, 0, 15);
     Func_02006a08();
     Call4(Func_020069ea, -1, -1, -1, 0);
-    Call3(Func_020069c6_a, 0, 16384, 15);
+    Call3(Func_0200cad0, 0, 16384, 15);
     Func_020069be(scene, 0);
-    Func_02005960(96, 40, 0);
+    Value3(Func_02005960, 96, 40, 0);
     Func_020059ce(128, 40, 10);
     Func_02006910(30);
     Func_020059de(160, 40, 10);
@@ -120,6 +126,6 @@ void Func_02001df8(s32 scene)
         Call1(Func_02006a16, 0x20b6);
         Func_02006a2e(scene, 0);
     }
-    Func_02004b24(state, scene, 2);
-    Func_02006984_a();
+    Value3(Func_02004b24, state, scene, 2);
+    Func_0200ca08();
 }

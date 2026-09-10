@@ -1,5 +1,9 @@
 #include "types.h"
 
+extern u8 Value_000027ba[];
+
+extern u8 Value_000000bb[];
+
 #define FieldScene_RunActorEntrySequence Func_020012c8
 
 /* Complete scene owner 020012c8..020020db. The object effect loop runs
@@ -384,7 +388,15 @@ void FieldScene_RunActorEntrySequence(void)
     Call3(Func_02005d9c, 21, 0x148, 186);
     Func_02005d2c(20);
     Func_02005ddc(21, 2);
-    message = 0x27ba;
+    /*
+     * Spelled as the address of a Value_ symbol rather than the integer
+     * 0x27ba. A CONST_INT that fits an immediate is materialised with mov,
+     * and one that does not is still free to be hoisted and shared; a
+     * SYMBOL_REF has to come from the literal pool and stays where it is
+     * written. The reference loads this constant from the pool after the two
+     * preceding calls, which the integer spelling does not reproduce.
+     */
+    message = (s32)Value_000027ba;
     Call2(Func_02005cdc, message, 1);
     Call3(Func_02005d9c, 21, 0x136, 192);
     Func_02005e14(19, 0x8000, 0);
@@ -516,10 +528,30 @@ void FieldScene_RunActorEntrySequence(void)
     Func_02005d64(20, pairActions);
     Func_02005d64(21, groupActions);
     Func_02005d7c(6, groupActions);
+    /*
+     * RESIDUAL, EIGHT HALFWORDS AT 0x0200207a. Size, opcodes and pool
+     * contents all match; three orderings do not. The reference materialises
+     * the first argument of the Func_02005d7c call before the second and the
+     * second argument of the Func_02005e6c call before the first -- opposite
+     * orders for the same two-argument shape -- and it loads the 0xbb pool
+     * constant after the store below rather than into the load-latency gap
+     * ahead of it. Wrapper clones per call site, inline and out-of-line
+     * argument spellings, pointer and direct forms of this store, and moving
+     * the base address earlier all leave it unchanged. Not adopted.
+     */
     sharedData = (s32)Data_02000240;
     *(u8 *)((sharedData + 0x22b)) = 3;
-    Func_02005e6c(187, 2);
-    Func_02005e74(187, 9);
+    {
+        s32 actor = (s32)Value_000000bb;
+
+        /*
+         * Through Call2 rather than called directly: the wrapper's parameter
+         * pseudos fix the order the two argument registers are materialised
+         * in, and direct calls here emit them the other way round.
+         */
+        Call2(Func_02005e6c, actor, 2);
+        Call2(Func_02005e74, actor, 9);
+    }
     Func_02005e64(98, 1);
     Value1(Func_02005d14, 0x350);
 }

@@ -1,3 +1,19 @@
+/*
+ * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
+ * for a translation unit that cannot yet be declared: the reviewed complete
+ * extent in semantic/regions.json (924) and the evidence row in
+ * semantic/overlay-assembly.json (894) disagree, and the unit
+ * register must satisfy both. Declare these as absolute_symbols once the
+ * two registers agree on this owner.
+ *   Func_0200711c_a      0x0200ce5c
+ *   Func_0200711c_b      0x0200cd74
+ *   Func_02007182_a      0x0200ce9c
+ *   Func_02007182_b      0x0200cdfc
+ *   Func_02007196_a      0x0200ceac
+ *   Func_02007196_b      0x0200ce3c
+ *   Func_02007226_a      0x0200ce3c
+ *   Func_02007226_b      0x0200ce1c
+ */
 #include "types.h"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunConditionalActorSequence:
@@ -61,26 +77,22 @@ void Func_020070ee();
 void Func_020070f4();
 void Func_02007108();
 void Func_02007118();
-void Func_0200711a();
-s32 Func_0200711c();
+void Func_0200711a();s32 Func_0200711c_a(); s32 Func_0200711c_b();
 void Func_0200712c();
 void Func_02007136();
 s32 Func_02007148();
 void Func_02007158();
 void Func_02007168();
-void Func_02007172();
-void Func_02007182();
+void Func_02007172();void Func_02007182_a(); void Func_02007182_b();
 s32 Func_02007186();
-void Func_02007188();
-void Func_02007196();
+void Func_02007188();void Func_02007196_a(); void Func_02007196_b();
 void Func_020071a2();
 void Func_020071aa();
 void Func_020071ae();
 void Func_020071ba();
 void Func_020071e8();
 void Func_020071f4();
-void Func_0200720e();
-void Func_02007226();
+void Func_0200720e();void Func_02007226_a(); void Func_02007226_b();
 void Func_02007242();
 void Func_02007262();
 void Func_020072a4();
@@ -131,14 +143,14 @@ void Func_020021c8(void)
     Func_02007076(25, 7864320, 45613056);
     Func_020070c0(24, 25, 0);
     Func_02007108(0, 0);
-    Func_0200711c();
+    Func_0200711c_a();
     Func_02006f88();
     Func_02007006(30);
     workspace = *(u8 **)0x03001ebc;
     *(u32 *)(workspace + 456) = 24;
     *(u32 *)(workspace + 448) = 513;
-    Func_02007182();
-    Func_02007196();
+    Func_02007182_a();
+    Func_02007196_a();
     Func_0200702c(40);
     Func_020070f4(1, 1);
     Func_0200703a(10);
@@ -151,27 +163,27 @@ void Func_020021c8(void)
     Func_02006948(1, 2, 20);
     Func_02006982(2, 4, 20);
     Func_02007172(2, 0);
-    Func_02007196(0, 258, 0);
+    Func_02007196_b(0, 258, 0);
     Func_020071a2(1, 258, 0);
     Func_020070a8(60);
     Func_020069b2(2, 3, 20);
     Func_02006972(2, 30);
-    Func_02007182(1, 1);
+    Func_02007182_b(1, 1);
     Func_020070c8(20);
     Func_020069ba(0, 1, 20);
     Func_020071ba(1, 0);
     completed = 0;
-    if (Func_0200711c(0, 0) != 0 && Func_02007148(0, 0) != 0 && Func_02007186(2, 0) != 0) {
+    if (Func_0200711c_b(0, 0) != 0 && Func_02007148(0, 0) != 0 && Func_02007186(2, 0) != 0) {
         Func_020070ee(20);
         Func_020071ae(2, 2);
         Func_02006a00(1, 4, 30);
         Func_020071e8(1, 0);
         Func_0200711a(20);
-        Func_02007226(2, 258, 0);
+        Func_02007226_a(2, 258, 0);
         Func_0200712c(60);
         Func_020071f4(2, 2);
         Func_02006a26(0, 2, 20);
-        Func_02007226(2, 0);
+        Func_02007226_b(2, 0);
         Func_02007158(20);
         Func_02007262(2, 261, 0);
         Func_02007168(60);

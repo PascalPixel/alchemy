@@ -1,3 +1,15 @@
+/*
+ * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
+ * for a translation unit that cannot yet be declared: the reviewed complete
+ * extent in semantic/regions.json (940) and the evidence row in
+ * semantic/overlay-assembly.json (910) disagree, and the unit
+ * register must satisfy both. Declare these as absolute_symbols once the
+ * two registers agree on this owner.
+ *   Func_020025f0_a      0x02009d54
+ *   Func_020025f0_b      0x02009d14
+ *   Func_0200285e_a      0x02009da4
+ *   Func_0200285e_b      0x02009d14
+ */
 #include "types.h"
 
 /* AUDITED ACTOR-LAYOUT SCRIPT for FieldScene_ConfigureAlternateActorLayout:
@@ -6,8 +18,7 @@
 #define FieldScene_ConfigureAlternateActorLayout Func_0200088c
 
 void Func_020025dc();
-void Func_020025ee();
-void Func_020025f0();
+void Func_020025ee();void Func_020025f0_a(); void Func_020025f0_b();
 void Func_02002604();
 void Func_0200261c();
 void Func_02002628();
@@ -33,8 +44,7 @@ void Func_020027ae();
 void Func_020027c0();
 void Func_02002824();
 void Func_02002838();
-void Func_02002852();
-void Func_0200285e();
+void Func_02002852();void Func_0200285e_a(); void Func_0200285e_b();
 void Func_0200286c();
 void Func_02002872();
 void Func_0200287a();
@@ -57,12 +67,12 @@ void Func_0200088c(void)
     s32 i1;
     s16 scene_state;
 
-    Func_020025f0(512);
+    Func_020025f0_a(512);
     Func_020025ee(0x201);
     scene_state = *(s16 *)(0x02000240 + 448);
     if (scene_state == 89) {
     Func_020025dc(64, 126, 4, 2, 22, 7);
-    Func_020025f0(68, 126, 4, 2, 8, 10);
+    Func_020025f0_b(68, 126, 4, 2, 8, 10);
     Func_02002604(72, 126, 4, 2, 23, 21);
     Func_0200261c(72, 126, 4, 2, 23, 22);
     Func_02002628(76, 126, 4, 2, 16, 42);
@@ -88,7 +98,7 @@ void Func_0200088c(void)
     Func_0200279a(108, 126, 4, 2, 6, 46);
     Func_020027ae(112, 126, 4, 2, 27, 55);
     Func_020027c0(116, 126, 4, 2, 43, 56);
-    Func_0200285e(9, 23068672, 13369344);
+    Func_0200285e_a(9, 23068672, 13369344);
     Func_0200286c(10, 48234496, 25952256);
     Func_0200287a(11, 9437184, 24903680);
     Func_02002888(12, 37748736, 46923776);
@@ -97,7 +107,7 @@ void Func_0200088c(void)
     Func_02002824(64, 124, 4, 4, 8, 14);
     Func_02002838(68, 124, 4, 4, 6, 18);
     Func_02002852(68, 124, 4, 1, 6, 20);
-    Func_0200285e(72, 124, 4, 4, 10, 21);
+    Func_0200285e_b(72, 124, 4, 4, 10, 21);
     Func_02002872(10, 121, 5, 7, 8, 32);
     Func_02002884(5, 121, 5, 7, 43, 32);
     Func_02002898(0, 120, 3, 1, 9, 5);

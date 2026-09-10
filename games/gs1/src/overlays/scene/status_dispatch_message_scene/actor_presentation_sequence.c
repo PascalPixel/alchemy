@@ -84,6 +84,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
  * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c
  * already spells. */
 
+extern u8 Data_0200adac[];
 #define SCENE_WORK (*(u8 **)0x03001ebc)
 #define SCENE_PHASE (*(s32 *)(SCENE_WORK + 0x1c0))
 #define SCENE_FIELD_1C8 (*(s32 *)(SCENE_WORK + 0x1c8))
@@ -220,7 +221,7 @@ void Func_02003a00();
 /* 0x0200ab8c -> 0x080000c0, (arg0) */
 void Func_0200489c();
 /* 0x0200ac9c -> 0x0808a178, (id, arg1) */
-void Func_02004da2();
+s32 Func_02004da2();
 /* 0x0200acfc -> 0x0808a248, (arg0) */
 void Func_020050b2();
 /* 0x0200ad04 -> 0x0808a330, (arg0, arg1) */
@@ -359,7 +360,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     ObjectMotion_ArmCallback(0, 0, 0);
     ObjectMotion_ArmCallback(1, 0, 20);
     BattleEffect_SpawnLinkedResourceObject(11, 0x101, 60);
-    Func_02004da2(2, 0);
+    Value2(Func_02004da2, 2, 0);
     ObjectMotion_ArmCallback(0, 0x2000, 0);
     ObjectMotion_ArmCallback(1, 0xe000, 0);
     ObjectMotion_ArmCallback(2, 0xa000, 0);
@@ -409,9 +410,9 @@ void FieldScene_BuildActorPresentationSequence(void)
     ObjectMotion_SetSpeedParameters(1, 0x10000, 0x8000);
     ObjectMotion_SetSpeedParameters(2, 0x10000, 0x8000);
     ObjectMotion_SetSpeedParameters(3, 0x10000, 0x8000);
-    ObjectMotion_EnableActionAndSetCallback_1(1, 0x200adac);
-    ObjectMotion_EnableActionAndSetCallback_2(2, 0x200adac);
-    ObjectMotion_MarkActiveAndSetActionCallback(3, 0x200adac);
+    ObjectMotion_EnableActionAndSetCallback_1(1, (s32)Data_0200adac);
+    ObjectMotion_EnableActionAndSetCallback_2(2, (s32)Data_0200adac);
+    ObjectMotion_MarkActiveAndSetActionCallback(3, (s32)Data_0200adac);
     BattleRuntime_WaitIfModeZero(20);
     Func_02003a00(0, 0);
     ObjectMotion_CallThenWaitForAnimationChange(0, 3);

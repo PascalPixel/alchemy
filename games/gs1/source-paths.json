@@ -15553,7 +15553,8 @@
       "name": "FieldScene_RunMultiPhasePresentation"
     },
     "resource_3b9:02001cd4": {
-      "name": "FieldScene_BuildActorPresentationSequence"
+      "name": "FieldScene_BuildActorPresentationSequence",
+      "source": "overlays/scene/status_dispatch_message_scene/actor_presentation_sequence.c"
     },
     "resource_375:0200150c": {
       "name": "FieldScene_ConfigureProgressDependentActors"
@@ -15585,6 +15586,10 @@
     "resource_3b1:02001b34": {
       "name": "FieldScene_RunThreeActorPresentation",
       "source": "overlays/scene/extended_actor_choreography_scene/actor_sequence_head.c"
+    },
+    "resource_3b9:020006bc": {
+      "name": "FieldScene_RunScene3b9_020006bc",
+      "source": "overlays/scene/status_dispatch_message_scene/run_scene_06bc.c"
     },
     "resource_3b9:02000dcc": {
       "name": "FieldScene_RunLargeActorPresentationSetup"

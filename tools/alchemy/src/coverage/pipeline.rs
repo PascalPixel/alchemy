@@ -456,7 +456,9 @@ fn exact_overlay(
 }
 /// Kinds whose retained bytes count as proven assembly: the register credits
 /// them as library with proof beside the claim. A bare label credits
-/// nothing, and handwritten credit awaits Pascal's ruling.
+/// nothing. Handwritten credit needs the three-part record (no tool emits it,
+/// no library matches, a recognisable hand-coded idiom) that the pool owner
+/// writes into proof; the gate reads the fields, not the argument.
 fn credited_kinds(classification: &Value) -> BTreeSet<String> {
     // `groups` is an array of kind entries; an object of entries reads the same.
     let groups: Vec<Value> = match &classification["groups"] {
@@ -469,10 +471,12 @@ fn credited_kinds(classification: &Value) -> BTreeSet<String> {
         .chain(groups.iter())
         .filter(|entry| {
             let provenance = &entry["provenance"];
-            text(provenance, "credit") == "library"
-                && array(entry, "evidence")
-                    .iter()
-                    .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
+            matches!(
+                text(provenance, "credit").as_str(),
+                "library" | "handwritten"
+            ) && array(entry, "evidence")
+                .iter()
+                .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
                 && (!text(provenance, "proof").trim().is_empty()
                     || !text(provenance, "object").trim().is_empty())
         })
@@ -1391,7 +1395,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/gs1/recon/en/dossiers.json",
-            "proven_assembly_standard": "library-proven; handwritten pending ruling",
+            "proven_assembly_standard": "handwritten-or-library-proven",
             "credited_assembly_bytes": bytes(&retained_main),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/gs1-en/full/asm/manifest.json",
@@ -1428,13 +1432,14 @@ mod tests {
                 entry("no_proof", "library", json!(["tag"]), ""),
                 entry("pending", "library_pending_identification", json!(["tag"]), "x"),
                 entry("hand", "handwritten", json!(["tag"]), "x"),
+                entry("bare_hand", "handwritten", json!([]), "x"),
                 entry("grouped", "library", json!(["tag"]), "x")
             ]
         });
         let credited = credited_kinds(&document);
         assert_eq!(
             credited.into_iter().collect::<Vec<_>>(),
-            ["grouped", "thunks"]
+            ["grouped", "hand", "thunks"]
         );
         // The live register credits the libgcc call_via thunks, and the
         // pipeline counts exactly that region from the built manifest.
@@ -1442,11 +1447,22 @@ mod tests {
         let live = json(&tree, "games/gs1/asm/classification.json").unwrap();
         assert!(credited_kinds(&live).contains("runtime_thunk_bundle"));
         let (_, _, credited) = main_assembly_classification(&tree);
-        // Exactly the thunk bundle at 0x080072e4 (56 bytes until the register's
-        // extent correction lands, 60 after); nothing else is credited.
-        assert_eq!(credited.len(), 1, "credited spans: {credited:?}");
-        assert_eq!(credited[0].start, 0x0800_72e4);
-        assert!(matches!(bytes(&credited), 56 | 60));
+        // The thunk bundle at 0x080072e4 is credited, the credited spans do not
+        // overlap, and their total is what the register credits today; the
+        // register grows, so the count is not pinned.
+        let thunk = credited.iter().find(|span| span.start == 0x0800_72e4);
+        assert!(thunk.is_some(), "credited spans: {credited:?}");
+        assert!(matches!(
+            thunk.map(|span| span.end - span.start),
+            Some(56 | 60)
+        ));
+        for pair in credited.windows(2) {
+            assert!(
+                pair[0].end <= pair[1].start,
+                "overlapping credited spans: {pair:?}"
+            );
+        }
+        assert!(bytes(&credited) >= 60);
     }
     fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
         json!({

@@ -625,7 +625,9 @@ mod tests {
     fn loads_typed_main_and_overlay_units() {
         let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
         assert!(manifest.unit("scheduler").unwrap().exact());
-        let overlay = manifest.unit("scene-event-runtime").unwrap();
+        let overlay = manifest
+            .unit("guarded-step-scene-scene-event-runtime")
+            .unwrap();
         assert_eq!(
             overlay.source_owner(0x0200_0030).unwrap().id(),
             "resource_37b:02000030"

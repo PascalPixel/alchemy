@@ -16,6 +16,7 @@ pub enum ResidualClass {
     TypeWidthMismatch,
     StructuralTopology,
     MissingExtraCode,
+    InstructionSelection,
     FrameContext,
     CallTargetMismatch,
     Unclassified,
@@ -36,6 +37,7 @@ impl ResidualClass {
                 "missing-extra-code",
                 Some("reconstruct-missing-or-extra-code"),
             ),
+            Self::InstructionSelection => ("instruction-selection", Some("name-the-wall")),
             Self::FrameContext => ("frame-context", Some("recover-stack-local-context")),
             Self::CallTargetMismatch => ("call-target-mismatch", None),
             Self::Unclassified => ("unclassified", None),
@@ -64,6 +66,9 @@ impl ResidualClass {
             }
             Self::StructuralTopology => {
                 "smart queue: reconstruct the divergent blocks in the complete translation unit; only a decoder-named repair may enter search"
+            }
+            Self::InstructionSelection => {
+                "read the residual= and wall= lines: same code and size, instructions selected differently; no lever fires for a measured wall, record it instead of respelling"
             }
             Self::MissingExtraCode => {
                 "smart queue: audit the complete owner extent and translation-unit membership before reconstructing missing or extra statements"
@@ -137,6 +142,121 @@ pub struct ResidualFacts {
     pub type_width_fingerprints: Vec<TypeWidthFingerprint>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub repair_hints: Vec<RepairHint>,
+    #[serde(default)]
+    pub census: ResidualCensus,
+}
+/// The shapes of the unpaired runs between aligned instructions, named so a
+/// reader knows which residual class an owner is in without reading the
+/// listing, and which of them are measured walls.
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ResidualCensus {
+    pub runs: usize,
+    pub register_only: usize,
+    pub order_only: usize,
+    pub pool_versus_immediate: usize,
+    pub copy_versus_rematerialise: usize,
+    pub pool_placement: usize,
+    pub other: usize,
+}
+impl ResidualCensus {
+    pub fn line(&self) -> String {
+        format!(
+            "residual=runs:{} register_only:{} order_only:{} pool_versus_immediate:{} copy_versus_rematerialise:{} pool_placement:{} other:{}",
+            self.runs, self.register_only, self.order_only, self.pool_versus_immediate,
+            self.copy_versus_rematerialise, self.pool_placement, self.other
+        )
+    }
+    /// Measured boundaries, so nobody spends the hours finding them again.
+    pub fn walls(&self) -> Vec<&'static str> {
+        let mut walls = Vec::new();
+        if self.copy_versus_rematerialise > 0 {
+            walls.push("copy_versus_rematerialise: whole-function constant sharing is decided after CSE and allocation; four source spellings on two owners moved nothing (380:02000f8c, 374). Stop; record the boundary.");
+        }
+        if self.pool_placement > 0 {
+            walls.push("pool_placement: both sides pool the value and only the pool split point differs; no source lever is known. Stop; record the boundary.");
+        }
+        walls
+    }
+}
+fn is_pool_load(line: &str) -> bool {
+    mnemonic(line) == "ldr" && line.contains("[pc")
+}
+fn is_synthesis(line: &str) -> bool {
+    matches!(mnemonic(line), "movs" | "lsls" | "adds") && line.contains('#')
+}
+fn is_register_copy(line: &str) -> bool {
+    mnemonic(line) == "mov" && !line.contains('#') && !line.contains('[')
+}
+/// Buckets every unpaired run of the alignment by shape.
+fn residual_census(
+    left: &[String],
+    right: &[String],
+    pairs: &[(Option<usize>, Option<usize>)],
+) -> ResidualCensus {
+    let mut census = ResidualCensus::default();
+    let mut run: (Vec<&str>, Vec<&str>) = (Vec::new(), Vec::new());
+    let close = |run: &mut (Vec<&str>, Vec<&str>), census: &mut ResidualCensus| {
+        if run.0.is_empty() && run.1.is_empty() {
+            return;
+        }
+        census.runs += 1;
+        let (a, b) = (&run.0, &run.1);
+        let sorted = |xs: &[&str], key: fn(&str) -> String| {
+            let mut v: Vec<String> = xs.iter().map(|x| key(x)).collect();
+            v.sort();
+            v
+        };
+        let shape = if a.len() == b.len()
+            && a.iter()
+                .zip(b)
+                .all(|(x, y)| register_erased(x) == register_erased(y))
+        {
+            &mut census.register_only
+        } else if a.len() == b.len() && sorted(a, normalized) == sorted(b, normalized) {
+            &mut census.order_only
+        } else if !a.is_empty()
+            && !b.is_empty()
+            && a.iter().all(|x| is_pool_load(x))
+            && b.iter().all(|x| is_pool_load(x))
+        {
+            &mut census.pool_placement
+        } else if (a.iter().any(|x| is_pool_load(x)) && b.iter().all(|x| is_synthesis(x)))
+            || (b.iter().any(|x| is_pool_load(x)) && a.iter().all(|x| is_synthesis(x)))
+        {
+            &mut census.pool_versus_immediate
+        } else if (a.is_empty() || b.is_empty())
+            && a.iter()
+                .chain(b.iter())
+                .all(|x| is_synthesis(x) || is_register_copy(x) || is_pool_load(x))
+        {
+            // A constant produced at a different program point: one side
+            // holds it in a register from an earlier materialisation, the
+            // other rematerialises it where it is used. Decided by CSE and
+            // allocation over the whole function; no source lever reaches it.
+            &mut census.copy_versus_rematerialise
+        } else {
+            &mut census.other
+        };
+        *shape += 1;
+        run.0.clear();
+        run.1.clear();
+    };
+    for (l, r) in pairs {
+        match (l, r) {
+            (Some(i), Some(j)) if alignment_key(&left[*i]) == alignment_key(&right[*j]) => {
+                close(&mut run, &mut census)
+            }
+            (Some(i), None) => run.0.push(&left[*i]),
+            (None, Some(j)) => run.1.push(&right[*j]),
+            (Some(i), Some(j)) => {
+                run.0.push(&left[*i]);
+                run.1.push(&right[*j]);
+            }
+            (None, None) => {}
+        }
+    }
+    close(&mut run, &mut census);
+    census
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ResidualReport {
@@ -529,6 +649,7 @@ pub fn classify_with_topology(
         topology: TopologyEvidence::from(topology),
         type_width_fingerprints: width,
         repair_hints: repair_hints(left, right, actual_bytes, reference_bytes, topology),
+        census: residual_census(left, right, &pairs),
     };
     let class = if differing_halfwords == 0 && actual_bytes == reference_bytes {
         ResidualClass::Exact
@@ -546,6 +667,10 @@ pub fn classify_with_topology(
         ResidualClass::TypeWidthMismatch
     } else if branch_topology_different {
         ResidualClass::StructuralTopology
+    } else if streams_differ && actual_bytes == reference_bytes && branch_topology_equal {
+        // Same code, same size, same shape: instructions were selected or
+        // placed differently. Not missing code; the census names the runs.
+        ResidualClass::InstructionSelection
     } else if streams_differ || actual_bytes != reference_bytes {
         ResidualClass::MissingExtraCode
     } else if branch_topology_equal
@@ -578,6 +703,48 @@ mod tests {
     fn assert_route(left: &[&str], right: &[&str], differing: usize, class: ResidualClass) {
         assert_eq!(triage(left, right, differing).class, class);
     }
+    #[test]
+    fn census_names_moved_constants_and_selection_stays_distinct_from_missing_code() {
+        use ResidualClass::*;
+        // The measured wall on 380:02000f8c: the candidate hoists movs r5,#0
+        // early and the reference rematerialises movs r5,#1 late.
+        let left = [
+            "bl 0x20",
+            "movs r5, #0",
+            "ldr r3, [r6, #12]",
+            "adds r0, #35",
+            "ldrb r3, [r0, #0]",
+            "orrs r5, r3",
+        ];
+        let right = [
+            "bl 0x20",
+            "ldr r3, [r6, #12]",
+            "adds r0, #35",
+            "ldrb r3, [r0, #0]",
+            "movs r5, #1",
+            "orrs r5, r3",
+        ];
+        let report = triage(&left, &right, 4);
+        assert_eq!(report.class, InstructionSelection);
+        assert_eq!(report.facts.census.copy_versus_rematerialise, 2);
+        assert_eq!(report.facts.census.other, 0);
+        assert_eq!(report.facts.census.walls().len(), 1);
+        // A pool load against an inline synthesis of the same value.
+        let left = ["ldr r1, [pc, #8]", "cmp r0, r1"];
+        let right = [
+            "movs r1, #159",
+            "lsls r1, r1, #1",
+            "adds r1, #255",
+            "cmp r0, r1",
+        ];
+        let report = triage(&left, &right, 3);
+        assert_eq!(report.facts.census.pool_versus_immediate, 1);
+        assert_eq!(
+            report.class, MissingExtraCode,
+            "sizes differ, so not selection"
+        );
+    }
+
     #[test]
     fn routes_each_mechanical_residual() {
         use ResidualClass::*;
@@ -726,7 +893,7 @@ mod tests {
         let candidate = vec!["ldr r1, [r0]".into(), "bx lr".into()];
         let reference = vec!["ldmia r0!, {r1}".into(), "bx lr".into()];
         let report = classify_with_topology(&candidate, &reference, 4, 4, 1, &Comparison::Equal);
-        assert_eq!(report.class, ResidualClass::MissingExtraCode);
+        assert_eq!(report.class, ResidualClass::InstructionSelection);
         assert!(!serde_json::to_string(&report)
             .unwrap()
             .contains("unemittable"));

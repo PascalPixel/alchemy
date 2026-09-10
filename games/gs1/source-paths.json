@@ -27,7 +27,8 @@
       "source": "overlays/scene/extended_actor_sequence_scene/run_extended_actor_sequence.c"
     },
     "resource_391:02000d3c": {
-      "name": "FieldScene_RunBranchingFormationPresentation"
+      "name": "FieldScene_RunBranchingFormationPresentation",
+      "source": "overlays/scene/branching_formation_scene/run_branching_formation_presentation.c"
     },
     "resource_3bd:020013f8": {
       "name": "FieldScene_RunExtendedActorPresentation"
@@ -7785,7 +7786,8 @@
       "source": "overlays/scene/party_introduction_scene/overlay_object.c"
     },
     "resource_380:020027f8": {
-      "name": "MapScene_RunLargeObjectSequence"
+      "name": "MapScene_RunLargeObjectSequence",
+      "source": "overlays/scene/party_introduction_scene/run_large_object_sequence.c"
     },
     "resource_380:02000a98": {
       "name": "FieldScene_RunPartyIntroduction",

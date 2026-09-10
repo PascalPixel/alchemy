@@ -4,8 +4,7 @@
 #define FieldScene_RunScene38dSequenceA Func_020001b4
 #define FieldScene_RunActorSeventeenFlaggedDialogue Func_02000214
 #define FieldScene_RunScene38d_02000568 Func_02000568
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+
 extern u8 Data_03001ebc[];
 
 void Func_020025c4();
@@ -43,6 +42,9 @@ void Func_02002af4();
 void Func_02002af8();
 void Func_02002afc();
 void Func_02002b3a();
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

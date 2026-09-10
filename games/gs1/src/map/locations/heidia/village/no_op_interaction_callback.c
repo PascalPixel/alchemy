@@ -1,3 +1,0 @@
-void NoOpInteractionCallback(void)
-{
-}

@@ -6739,9 +6739,9 @@
       ]
     },
     {
-      "id": "retained-overlay-380-large-object-sequence",
+      "id": "overlay-380-run-large-object-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_380_c_020027f8.c",
+      "source": "games/gs1/src/overlays/scene/party_introduction_scene/run_large_object_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -7054,7 +7054,7 @@
         {
           "address": "0x020027f8",
           "extent": 5932,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []

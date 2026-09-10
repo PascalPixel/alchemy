@@ -7786,7 +7786,8 @@
       "source": "overlays/scene/party_introduction_scene/overlay_object.c"
     },
     "resource_380:020027f8": {
-      "name": "MapScene_RunLargeObjectSequence"
+      "name": "MapScene_RunLargeObjectSequence",
+      "source": "overlays/scene/party_introduction_scene/run_large_object_sequence.c"
     },
     "resource_380:02000a98": {
       "name": "FieldScene_RunPartyIntroduction",

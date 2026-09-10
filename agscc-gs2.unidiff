@@ -18,9 +18,10 @@ compiler's output (080bbb0c: 6332/6332, 0 differing). One compiler and one
 flag set per game; no per-file routing.
 
 diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config/arm/arm-protos.h agscc/gcc/config/arm/arm-protos.h
+diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config/arm/arm-protos.h agscc/gcc/config/arm/arm-protos.h
 --- a/gcc/config/arm/arm-protos.h	2026-09-10 01:59:11
-+++ b/gcc/config/arm/arm-protos.h	2026-09-10 10:05:59
-@@ -159,9 +159,13 @@
++++ b/gcc/config/arm/arm-protos.h	2026-09-10 12:23:47
+@@ -159,9 +159,14 @@
  extern int    is_called_in_ARM_mode	PARAMS ((tree));
  #endif
  extern int    thumb_shiftable_const	PARAMS ((unsigned HOST_WIDE_INT));
@@ -31,12 +32,13 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
  #ifdef RTX_CODE
  extern void   thumb_final_prescan_insn	PARAMS ((rtx));
 +extern const char * thumb_output_synth	PARAMS ((rtx *));
++extern int    thumb_synth_length	PARAMS ((rtx));
  extern const char * thumb_load_double_from_address
  					PARAMS ((rtx *));
  extern const char * thumb_output_move_mem_multiple
 diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config/arm/arm.c agscc/gcc/config/arm/arm.c
 --- a/gcc/config/arm/arm.c	2026-09-10 01:59:11
-+++ b/gcc/config/arm/arm.c	2026-09-10 10:02:18
++++ b/gcc/config/arm/arm.c	2026-09-10 12:23:40
 @@ -8584,7 +8584,7 @@
  
    if (val == 0) /* XXX */
@@ -46,7 +48,7 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
    for (i = 0; i < 25; i++)
      if ((val & (mask << i)) == val)
        return 1;
-@@ -8592,6 +8592,63 @@
+@@ -8592,6 +8592,83 @@
    return 0;
  }
  
@@ -83,11 +85,13 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
 +thumb_shift_add_offset (val)
 +     unsigned HOST_WIDE_INT val;
 +{
-+  if (val >= 256 && thumb_split_shift (val - 255))
++  if (val >= 256 && (val - 255 <= 255 || thumb_split_shift (val - 255)))
 +    return 255;
 +  return val & 0xff;
 +}
 +
++/* The shift of the synthesis, or 0 when the base already fits eight bits
++   and the form is the two-instruction mov then add.  */
 +int
 +thumb_shift_add_shift (val)
 +     unsigned HOST_WIDE_INT val;
@@ -97,6 +101,8 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
 +  if (val < 256 || thumb_shiftable_const (val))
 +    return 0;
 +  b = thumb_shift_add_offset (val);
++  if (val - b <= 255)
++    return 0;
 +  return thumb_split_shift (val - b);
 +}
 +
@@ -104,13 +110,29 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
 +thumb_shift_add_const (val)
 +     unsigned HOST_WIDE_INT val;
 +{
-+  return thumb_shift_add_shift (val) != 0;
++  unsigned HOST_WIDE_INT b;
++
++  if (val < 256 || thumb_shiftable_const (val))
++    return 0;
++  b = thumb_shift_add_offset (val);
++  return val - b <= 255 || thumb_split_shift (val - b) != 0;
++}
++
++/* Bytes of the synthesis insn: two instructions when no shift is needed.  */
++int
++thumb_synth_length (insn)
++     rtx insn;
++{
++  rtx set = single_set (insn);
++  rtx unspec = SET_SRC (set);
++
++  return thumb_shift_add_shift (INTVAL (XVECEXP (unspec, 0, 0))) ? 6 : 4;
 +}
 +
  /* Returns non-zero if the current function contains,
     or might contain a far jump.  */
  int
-@@ -9770,3 +9827,20 @@
+@@ -9770,3 +9847,24 @@
      }
  }
  #endif /* AOF_ASSEMBLER */
@@ -126,14 +148,18 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
 +  int shift = thumb_shift_add_shift (val);
 +  unsigned HOST_WIDE_INT offset = thumb_shift_add_offset (val);
 +
-+  sprintf (buffer, "mov\t%%0, #%lu\n\tlsl\t%%0, %%0, #%d\n\tadd\t%%0, %%0, #%lu",
-+	   (unsigned long) ((val - offset) >> shift), shift,
-+	   (unsigned long) offset);
++  if (shift == 0)
++    sprintf (buffer, "mov\t%%0, #%lu\n\tadd\t%%0, %%0, #%lu",
++	     (unsigned long) (val - offset), (unsigned long) offset);
++  else
++    sprintf (buffer, "mov\t%%0, #%lu\n\tlsl\t%%0, %%0, #%d\n\tadd\t%%0, %%0, #%lu",
++	     (unsigned long) ((val - offset) >> shift), shift,
++	     (unsigned long) offset);
 +  return buffer;
 +}
 diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config/arm/arm.md agscc/gcc/config/arm/arm.md
 --- a/gcc/config/arm/arm.md	2026-09-10 01:59:11
-+++ b/gcc/config/arm/arm.md	2026-09-10 10:13:41
++++ b/gcc/config/arm/arm.md	2026-09-10 12:23:42
 @@ -3789,6 +3789,18 @@
      }
    else /* TARGET_THUMB.... */
@@ -167,7 +193,7 @@ diff -ru --exclude=build --exclude=*.orig --exclude=*.rej ../../agscc/gcc/config
 +	(unspec:SI [(match_operand:SI 1 "const_int_operand" "i")] 9))]
 +  "TARGET_THUMB && ! TARGET_INTERWORK"
 +  "* return thumb_output_synth (operands);"
-+  [(set_attr "length" "6")]
++  [(set (attr "length") (symbol_ref "thumb_synth_length (insn)"))]
 +)
 +
  (define_expand "movaddr"

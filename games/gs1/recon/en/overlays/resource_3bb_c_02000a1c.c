@@ -94,7 +94,14 @@ void Func_02000a1c(void)
     Func_02004a76(0, 16);
     Func_02004a7e(8, 9);
     Func_02004a1c(10);
-    Func_02004b30(72, 3 - v);
+    /* The reference builds this argument as 2 - v and then adds 1 in a
+     * second instruction. Written as 3 - v, or as a fresh temporary that is
+     * then incremented, combine folds the pair. Reassigning the variable to
+     * a value that reads itself keeps the two instructions apart: combine
+     * refuses to reuse a destination that its merged pattern still reads. */
+    v = 2 - v;
+    v = v + 1;
+    Func_02004b30(72, v);
     ((u8 *)Data_02000240)[(s32)&Value_0000022b] = 3;
     slot = (s32)&Value_00000090;
     Func_02004b4c(slot, 4);

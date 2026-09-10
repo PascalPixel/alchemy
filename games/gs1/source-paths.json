@@ -17982,6 +17982,10 @@
     "resource_3b1:020048e8": {
       "name": "FieldScene_RunScene3b1SequenceE",
       "source": "overlays/scene_primary_script/run_scene_3b1_020048e8.c"
+    },
+    "main:080fb670": {
+      "name": "MusicTrack_DispatchStreamCommand",
+      "source": "audio/music/track/dispatch_stream_command.c"
     }
   }
 }

@@ -21,13 +21,23 @@ _Golden Sun_ release as the first complete derived build target.
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=22cc8a0789412d12)
 
-## Details
+## What this is
 
-Alchemy rebuilds the games from readable source code, retained assembly, and
-named assets while checking the result byte for byte against an approved
-cartridge image. The historical editions remain independent from the future
-`games/alchemy/` reintegration, so new work cannot weaken their preservation
-evidence.
+Alchemy rebuilds both games from source code the way a studio would have kept
+it on disk: readable C, a little hand-written assembly where the original
+programmers clearly wrote it by hand, and named assets. Every build is checked
+byte for byte against the original cartridge, so a rebuilt edition is either
+identical to the real game or it is not counted.
+
+**DONE** is the share of the game's program that has been recovered as source
+and proven identical. The picture above shows it: solid blocks are recovered
+and proven, lighter blocks are drafts that do not yet match exactly, and the
+rest is still unknown. The Data picture shows the same for graphics, sound and
+text.
+
+All twelve editions (six of each game) share one source tree per game rather
+than a copy per language. English _Golden Sun_ is the first edition rebuilt in
+full; the others are checked against it.
 
 ## Acknowledgements
 

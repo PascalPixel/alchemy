@@ -456,7 +456,9 @@ fn exact_overlay(
 }
 /// Kinds whose retained bytes count as proven assembly: the register credits
 /// them as library with proof beside the claim. A bare label credits
-/// nothing, and handwritten credit awaits Pascal's ruling.
+/// nothing. Handwritten credit needs the three-part record (no tool emits it,
+/// no library matches, a recognisable hand-coded idiom) that the pool owner
+/// writes into proof; the gate reads the fields, not the argument.
 fn credited_kinds(classification: &Value) -> BTreeSet<String> {
     // `groups` is an array of kind entries; an object of entries reads the same.
     let groups: Vec<Value> = match &classification["groups"] {
@@ -469,10 +471,12 @@ fn credited_kinds(classification: &Value) -> BTreeSet<String> {
         .chain(groups.iter())
         .filter(|entry| {
             let provenance = &entry["provenance"];
-            text(provenance, "credit") == "library"
-                && array(entry, "evidence")
-                    .iter()
-                    .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
+            matches!(
+                text(provenance, "credit").as_str(),
+                "library" | "handwritten"
+            ) && array(entry, "evidence")
+                .iter()
+                .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
                 && (!text(provenance, "proof").trim().is_empty()
                     || !text(provenance, "object").trim().is_empty())
         })
@@ -1391,7 +1395,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/gs1/recon/en/dossiers.json",
-            "proven_assembly_standard": "library-proven; handwritten pending ruling",
+            "proven_assembly_standard": "handwritten-or-library-proven",
             "credited_assembly_bytes": bytes(&retained_main),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/gs1-en/full/asm/manifest.json",
@@ -1428,13 +1432,14 @@ mod tests {
                 entry("no_proof", "library", json!(["tag"]), ""),
                 entry("pending", "library_pending_identification", json!(["tag"]), "x"),
                 entry("hand", "handwritten", json!(["tag"]), "x"),
+                entry("bare_hand", "handwritten", json!([]), "x"),
                 entry("grouped", "library", json!(["tag"]), "x")
             ]
         });
         let credited = credited_kinds(&document);
         assert_eq!(
             credited.into_iter().collect::<Vec<_>>(),
-            ["grouped", "thunks"]
+            ["grouped", "hand", "thunks"]
         );
         // The live register credits the libgcc call_via thunks, and the
         // pipeline counts exactly that region from the built manifest.

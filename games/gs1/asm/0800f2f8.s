@@ -1,5 +1,8 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 操作役者の移動。入力の方位で Func_0800447c の候補を作り、Func_080122ac の通行判定を
+@ ±0x1000..0x4000 の探り角で 2 段 (前進 8 回) 繰り返す。歩き方は Func_0800c300、移動は
+@ Func_0800d14c、IwramMulQ16 で速度を縮尺に合わせ、地面種別 (Func_08012204 の 9 / 6) で
+@ Func_0800c150 / Func_0800c2d8 / Func_0800ba30 を呼び、最後に Func_0800eaf8 で場面事象を確かめる。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800f2f8
@@ -82,6 +85,7 @@ Func_0800f2f8:
 	asrs	r3, r3, #16
 	str	r3, [sp, #4]
 	b.n	.L4
+@ 候補と探り角。
 .L3:
 	ldr	r3, [r6, #8]
 	add	r1, sp, #80
@@ -184,6 +188,7 @@ Func_0800f2f8:
 	cmp	r0, #0
 	bne.n	.L6
 	b.n	.L4
+@ 二段目の探り。
 .L6:
 	add	r3, sp, #12
 	mov	r0, fp
@@ -349,6 +354,7 @@ Func_0800f2f8:
 	lsls	r0, r0, #1
 	adds	r3, r3, r0
 	strh	r2, [r3, #0]
+@ 歩き方。
 .L10:
 	ldr	r1, [sp, #8]
 	cmp	r1, #0
@@ -421,6 +427,7 @@ Func_0800f2f8:
 	.4byte 0xffffd000
 	.4byte 0xffffc000
 	.4byte 0x03001ebc
+@ 移動と IwramMulQ16ReturnIp。
 .L14:
 	add	r3, sp, #80
 	ldr	r1, [r3, #0]
@@ -502,6 +509,7 @@ Func_0800f2f8:
 	bhi.n	.L22
 	ldrh	r3, [r1, #0]
 	subs	r2, r4, r3
+@ 地面種別。
 .L22:
 	adds	r3, r0, r2
 	strh	r3, [r1, #0]

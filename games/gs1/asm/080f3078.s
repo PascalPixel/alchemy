@@ -1,5 +1,8 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ パレットの色替え (7 方式、.L8 の表)。BGR555 の 3 成分 (0x7c00, 0x3e0, 0x1f) を分け、
+@ IwramSignedDivide (0x03000380) と IwramMulQ16 で目標色へ寄せ、Func_080f3898 / Func_080f38ac で
+@ 各色を組み直す。DMA3 で 0x040000d4 から書き戻し、DISPCNT の bit16 を落とす。
+@ 続きの処理は 0x080f3a2e / 0x080f3a6e / 0x080f39ee。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080f3078
@@ -99,6 +102,7 @@ Func_080f3078:
 	cmp	r0, #6
 	bls.n	.L8
 	b.n	.L9
+@ 方式の表。
 .L8:
 	ldr	r2, [pc, #808]
 	lsls	r3, r0, #2
@@ -121,6 +125,7 @@ Func_080f3078:
 .L10:
 	ldr	r6, [pc, #760]
 	mov	r5, r8
+@ IwramCopyWords 系 (Func_080072fc)。
 .L12:
 	mov	r1, sl
 	ldrh	r4, [r1, #0]
@@ -162,6 +167,7 @@ Func_080f3078:
 	movs	r1, #31
 	ldr	r2, [pc, #684]
 	mov	fp, r1
+@ IwramSignedDivide を経由呼出し。
 .L19:
 	mov	r3, sl
 	ldrh	r4, [r3, #0]
@@ -729,6 +735,7 @@ Func_080f3078:
 	str	r3, [sp, #16]
 	str	r1, [sp, #12]
 	str	r2, [sp, #8]
+@ IwramMulQ16ReturnIp で成分ごとに掛ける。
 .L43:
 	mov	r3, sl
 	ldrh	r4, [r3, #0]

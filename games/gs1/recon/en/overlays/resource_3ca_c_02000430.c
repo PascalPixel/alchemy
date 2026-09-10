@@ -5,6 +5,9 @@
 
 #define FieldScene_RunExtendedPresentationSequence Func_02000430
 
+extern u8 Data_03001e70[];
+extern u8 Value_00000000;
+
 void Func_020017e8();
 void *Func_020017f2();
 void Func_0200184e();
@@ -197,6 +200,8 @@ void Func_02001f54();
 void Func_02000430(void)
 {
     u8 *runtime;
+    u8 *scene;
+    s32 blank;
     void *p1;
     void *p17;
     void *p176;
@@ -388,23 +393,27 @@ void Func_02000430(void)
     Func_02001ef0(240);
     Func_02001cfc();
     Func_02001e0a_a(80);
+    scene = *(u8 **)Data_03001e70;
     p176 = Func_02001e34(8);
     *(s32 *)(p176 + 52) = 131;
     *(s32 *)(p176 + 48) = 131072;
-    Func_02001f0a(8, 60, 0, 4294955008);
-    Func_02001f18(8, 60, 0, 4294942720);
+    *(s32 *)(scene + 284) = -0x3000;
+    Func_02001f0a(8, 60, 0);
+    *(s32 *)(scene + 284) = -0x6000;
+    Func_02001f18(8, 60, 0);
     Func_02001e46_a(80);
     Func_02001e4c(100);
     Func_02001ee4(144179, 655);
     Func_02001efe(52953088, -1, 11010048, 1);
     Func_02001e6e(300);
-    runtime = *(u8 **)0x03001ebc;
-    *(u32 *)(runtime + 76 + 448) = 256;
-    *(volatile u16 *)0x05000000 = 0;
-    *(u32 *)(runtime + 76 + 456) = 96;
+    runtime = *(u8 **)(Data_03001e70 + 76);
+    *(u32 *)(runtime + 448) = 256;
+    blank = 0;
+    *(u16 *)0x05000000 = blank;
+    *(u32 *)(runtime + 456) = 96;
     Func_02001f48();
     Func_02001f54();
     Func_02001e9a(30);
     Func_02001e9a_a(282);
-    Func_02001f52();
+    Func_02001f52((s32)&Value_00000000, 9);
 }

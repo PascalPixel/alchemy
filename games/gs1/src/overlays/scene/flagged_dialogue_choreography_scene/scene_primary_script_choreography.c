@@ -113,6 +113,9 @@
  * source", so the remaining schedule residual is reported, not chased. */
 
 extern u8 Data_03001ebc[];
+extern u8 Data_0200a74c[];
+extern u8 Data_0200a5ec[];
+extern u8 Data_0200a760[];
 
 /* Veneers with no unambiguous reference site name over this owner. */
 void Data_0200a218();
@@ -317,12 +320,12 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Func_020032dc(1, 150, 234);
     Func_020032ee(2, 134, 234);
     Func_0200331e(1, 1);
-    tbl = 0x200a74c;
+    tbl = (s32)Data_0200a74c;
     Call3(Func_0200336a, 0, 0x10003, tbl);
     Call3(Func_02003374, 1, 0x10003, tbl);
     Call3(Func_0200337e, 2, 0x10003, tbl);
     Func_020033da();
-    tbl = 0x200a5ec;
+    tbl = (s32)Data_0200a5ec;
     Func_020032ec(9, tbl);
     Func_020032c2(40);
     Call2(Func_020033dc, 3, 0x102);
@@ -440,11 +443,16 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Func_020036ca(80);
     *(u8 *)(Func_020036f0(0) + ACTOR_FLAGS_OFFSET) |= 1;
     *(u8 *)(Func_02003700(1) + ACTOR_FLAGS_OFFSET) |= 1;
-    *(u8 *)(Func_02003270(2) + ACTOR_FLAGS_OFFSET) |= 1;
+    {
+        u8 *flags = (u8 *)(Func_02003270(2) + ACTOR_FLAGS_OFFSET);
+        u8 raised = (u8)(*flags | 1);
+
+        *flags = raised;
+    }
     Call3(Func_02003728, 0, 0xcccc, 0x6666);
     Call3(Func_02003732, 1, 0xcccc, 0x6666);
     Call3(Func_0200373c, 2, 0xcccc, 0x6666);
-    tbl = 0x200a760;
+    tbl = (s32)Data_0200a760;
     Func_0200374e(1, tbl);
     Func_0200376e(2, tbl);
     Func_020032c2(20);

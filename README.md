@@ -21,30 +21,28 @@ _Golden Sun_ release as the first complete derived build target.
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=22cc8a0789412d12)
 
-## Details
+## What this is
 
-Alchemy rebuilds the games from readable source code, retained assembly, and
-named assets while checking the result byte for byte against an approved
-cartridge image. The historical editions remain independent from the future
-`games/alchemy/` reintegration, so new work cannot weaken their preservation
-evidence.
+Alchemy rebuilds both games from source code the way a studio would have kept
+it on disk: readable C, a little hand-written assembly where the original
+programmers clearly wrote it by hand, and named assets. Every build is checked
+byte for byte against the original cartridge, so a rebuilt edition is either
+identical to the real game or it is not counted.
 
-The repository contains one shared source tree per game rather than a copy for
-every language. `make targets` checks all twelve edition routes; `make verify`
-is the authoritative full-ROM gate for the current `gs1-en` target. Progress
-is measured by reconstructed bytes. C compiles through the approved route
-to byte-identical output; Drafted is candidate C not yet exact. Retained
-assembly earns no DONE credit at all: the standard that marked it was withdrawn
-because it did not establish handwritten or third-party origin, so every such
-byte now counts as Unknown until a replacement standard admits it. The
-classification records are still kept and validated, and the coverage map
-publishes their total as `withdrawn_assembly_bytes`. No label claims access to
-Camelot's original source.
+**DONE** is the share of the game's program that has been recovered as source
+and proven identical. The picture above shows it: solid blocks are recovered
+and proven, lighter blocks are drafts that do not yet match exactly, and the
+rest is still unknown. The Data picture shows the same for graphics, sound and
+text.
 
-This is a preservation and decompilation project—not a remake, ROM hack,
-emulator, or game distribution. No ROM is included. To build locally or help
-with the reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md), including its
-[tooling guide](CONTRIBUTING.md#tooling-index).
+All twelve editions (six of each game) share one source tree per game rather
+than a copy per language. English _Golden Sun_ is the first edition rebuilt in
+full; the others are checked against it.
+
+This is a preservation and decompilation project — not a remake, ROM hack,
+emulator or game download. No game data is included, and nothing here comes
+from Camelot's original source. To build it yourself or help with the
+reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Acknowledgements
 

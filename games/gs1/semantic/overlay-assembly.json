@@ -1596,19 +1596,6 @@
     },
     {
       "overlay": "resource_3bc",
-      "start": "0x02001df8",
-      "end": "0x02001f90",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/gs1/recon/en/dossiers.json#resource_3bc:02001df8"
-      ]
-    },
-    {
-      "overlay": "resource_3bc",
       "start": "0x02001f90",
       "end": "0x020020f0",
       "kind": "structured_scene_module",

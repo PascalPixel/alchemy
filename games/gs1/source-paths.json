@@ -7809,7 +7809,8 @@
       "name": "FieldScene_RunDualArrivalSequence"
     },
     "resource_3bc:02001df8": {
-      "name": "FieldScene_RunSecondArrivalSequence"
+      "name": "FieldScene_RunSecondArrivalSequence",
+      "source": "overlays/scene_primary_script/run_scene_3bc_02001df8.c"
     },
     "resource_3bc:02001f90": {
       "name": "FieldScene_RunTimedArrivalSequence"

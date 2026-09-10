@@ -902,9 +902,9 @@ struct BattleWorkPage {
         s32 amt;                                                           \
                                                                            \
         heal = actor->hp;                                                  \
-        amt = dealt;                                                       \
         if (action->effect == EFX_DRAIN_HP_HALF)                           \
-            amt = dealt / 2;                                               \
+            dealt /= 2;                                                    \
+        amt = dealt;                                                       \
         dmg = amt;                                                         \
         heal += amt;                                                       \
         if (heal > actor->max_hp) {                                        \

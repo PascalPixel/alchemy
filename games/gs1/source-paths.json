@@ -18009,6 +18009,22 @@
     "main:080fb670": {
       "name": "MusicTrack_DispatchStreamCommand",
       "source": "audio/music/track/dispatch_stream_command.c"
+    },
+    "main:0808ce74": {
+      "name": "Object_GetTriggerTileAheadOfCurrent",
+      "source": "object/get_trigger_tile_ahead_of_current.c"
+    },
+    "main:08095938": {
+      "name": "BattleEffect_RunAngledApproachPhases",
+      "source": "battle/effects/objects/run_angled_approach_phases.c"
+    },
+    "main:080f91e8": {
+      "name": "MusicPlayer_StepVolumeAndPitchTowardTargets",
+      "source": "audio/music/player/step_volume_and_pitch_toward_targets.c"
+    },
+    "main:0801b010": {
+      "name": "Menu_OpenSelectionWindow",
+      "source": "menu/selection/open_window.c"
     }
   }
 }

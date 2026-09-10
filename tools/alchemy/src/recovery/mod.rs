@@ -1,5 +1,6 @@
 //! Golden Sun owner resolution, source integration and game-specific recovery.
 mod adopt;
+pub use adopt::repeatable;
 pub mod cli;
 mod imports;
 mod owners;

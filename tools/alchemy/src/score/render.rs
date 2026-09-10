@@ -437,6 +437,13 @@ fn render_bytes(
             hint.signal, hint.playbook, hint.detail
         ));
     }
+    if residual.facts.census.runs > 0 {
+        out.push_str(&residual.facts.census.line());
+        out.push('\n');
+        for wall in residual.facts.census.walls() {
+            out.push_str(&format!("wall={wall}\n"));
+        }
+    }
     if options.align {
         let pairs = align_streams(&candidate, &reference);
         let matched = pairs

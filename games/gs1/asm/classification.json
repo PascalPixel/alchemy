@@ -139,7 +139,43 @@
           "origin": "program_or_library_assembly",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 1,
+          "bytes": 5120,
+          "gs2_exact": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 1,
+            "bytes": 5120
+          }
+        },
+        "verdict": "mixed",
+        "credit": "none_yet",
+        "subregions": {
+          "division_runtime": "NOT agscc libgcc: assembled _udivsi3/_divsi3/_umodsi3/_modsi3 in ARM and Thumb builds; no match, longest common prefix 5 bytes at 0x08000af0; authorship compiler_vendor is unsupported",
+          "decompressor": "byte-identical in all six GS2 editions at 0x08000c50",
+          "word_copy_kernel_arm": "byte-identical in all six GS2 editions at 0x08000cec",
+          "irq_handler_table": "byte-identical in all six GS2 editions at 0x08000478 (data)",
+          "audio_work_area_zero_init": "byte-identical in GS2 (data, 0x08017fbc/0x08017fe8)",
+          "audio_mixer_arm": "no GS2 identity, exact or masked",
+          "audio_format_and_wave_helpers_arm": "no GS2 identity",
+          "audio_channel_update_thumb": "no GS2 identity",
+          "scheduled_math_clear_and_transform_kernels": "no GS2 identity",
+          "irq_entry": "no GS2 identity"
+        }
+      }
     },
     {
       "kind": "relocated_stack_arm_kernel",
@@ -184,7 +220,36 @@
       "expected_bytes": 56,
       "files": [
         "080072e4"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 1,
+          "bytes": 56,
+          "gs2_exact": {
+            "regions": 1,
+            "bytes": 56,
+            "addresses": [
+              "80072e4->8017878"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 0,
+            "bytes": 0
+          }
+        },
+        "verdict": "library_proven",
+        "credit": "library",
+        "object": "agscc gcc/config/arm/lib1funcs.asm:950-990 call_via macro (bx \\register; nop), built by t-arm-elf LIB1ASMFUNCS _call_via_rX",
+        "proof": "assembled every t-arm-elf LIB1ASMFUNCS member from agscc lib1funcs.asm with the bundle's cpp0/as (ARM and Thumb builds) and searched gs1-en: _call_via_rX (60 bytes) is byte-identical at 0x080072e4 in both builds; no other member matches anywhere in the ROM",
+        "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region"
+      }
     },
     {
       "kind": "bios_wrapper",
@@ -219,7 +284,35 @@
       "files": [
         "080f9674",
         "080f9a18"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 2,
+          "bytes": 954,
+          "gs2_exact": {
+            "regions": 2,
+            "bytes": 954,
+            "addresses": [
+              "80f9674->81c1310",
+              "80f9a18->81c16b4"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 0,
+            "bytes": 0
+          }
+        },
+        "verdict": "cross_product_identical_vendor_unidentified",
+        "credit": "library_pending_identification",
+        "reason": "both regions byte-identical in all six GS2 editions (080f9674 mixed Thumb/ARM audio mixer, 080f9a18); single-function mode switches are outside the approved route"
+      }
     },
     {
       "kind": "nonstandard_thumb_call_module",
@@ -251,7 +344,48 @@
         "080f9c2c",
         "080fa1d4",
         "080fa1e8"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 15,
+          "bytes": 348,
+          "gs2_exact": {
+            "regions": 14,
+            "bytes": 284,
+            "addresses": [
+              "80f9b40->81c17dc",
+              "80f9b4c->81c17e8",
+              "80f9b60->81c17fc",
+              "80f9b74->81c1810",
+              "80f9ba4->81c1840",
+              "80f9bb8->81c1854",
+              "80f9bcc->81c1868",
+              "80f9be0->81c187c",
+              "80f9bf4->81c1890",
+              "80f9c00->81c189c",
+              "80f9c18->81c18b4",
+              "80f9c2c->81c18c8",
+              "80fa1d4->81c0400",
+              "80fa1e8->81c0414"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 1,
+            "bytes": 64,
+            "addresses": [
+              "80f9a80->81c171c"
+            ]
+          },
+          "gs1_editions_only": {
+            "regions": 0,
+            "bytes": 0
+          }
+        },
+        "verdict": "mostly_gs1_editions_only",
+        "credit": "none"
+      }
     },
     {
       "kind": "hidden_register_context_module",
@@ -346,7 +480,33 @@
       "files": [
         "0800070c",
         "080f95f0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 2,
+          "bytes": 220,
+          "gs2_exact": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs2_masked": {
+            "regions": 1,
+            "bytes": 132,
+            "addresses": [
+              "80f95f0->81c128c"
+            ]
+          },
+          "gs1_editions_only": {
+            "regions": 1,
+            "bytes": 88
+          }
+        },
+        "verdict": "one_region_cross_product_masked_identical",
+        "credit": "none_yet"
+      }
     },
     {
       "kind": "armv4t_helper_bank",
@@ -370,7 +530,43 @@
         "08015afc",
         "08015d74",
         "08015e10"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 7,
+          "bytes": 2652,
+          "gs2_exact": {
+            "regions": 3,
+            "bytes": 912,
+            "addresses": [
+              "8015afc->8038b18",
+              "8015d74->8038d94",
+              "8015e10->8038e34"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 3,
+            "bytes": 948,
+            "addresses": [
+              "8015430->803843c",
+              "8015570->8038580",
+              "80158e8->8038900"
+            ]
+          },
+          "gs1_editions_only": {
+            "regions": 0,
+            "bytes": 0
+          }
+        },
+        "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
+        "credit": "library_pending_identification",
+        "reason": "ARM instruction set bodies (ldm/rrx/conditional execution) under the game's single -mthumb flag set; byte-identical in all six GS2 editions for 3 regions and pool-masked identical for 3 more; the vendor object is not identified, so proof (a) is incomplete",
+        "citations": [
+          "Kiki (battle-loop lane), 2026-09-10: arm.c output_thumb_prologue guarded by is_called_in_ARM_mode at arm.c:8806-8830 (attribute :3745/:3762/:8676) is the only ARM-mode output under -mthumb: the two-instruction interfacearm stub orr ip,pc,#1; bx ip"
+        ]
+      }
     },
     {
       "kind": "gba_arm_entry",
@@ -409,7 +605,35 @@
         "080f9afc",
         "080f9f3c",
         "080fa16c"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 4,
+          "bytes": 148,
+          "gs2_exact": {
+            "regions": 3,
+            "bytes": 132,
+            "addresses": [
+              "80f9afc->81c1798",
+              "80f9f3c->81c1bd8",
+              "80fa16c->81c0398"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 1,
+            "bytes": 16
+          }
+        },
+        "verdict": "mostly_gs1_editions_only",
+        "credit": "none"
+      }
     },
     {
       "kind": "link_free_continuation_dispatcher",
@@ -1204,7 +1428,35 @@
           "kind": "shared_literal_pool",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 2,
+          "bytes": 692,
+          "gs2_exact": {
+            "regions": 1,
+            "bytes": 76,
+            "addresses": [
+              "80f9c44->81c18e0"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 1,
+            "bytes": 616,
+            "addresses": [
+              "80f9c90->81c192c"
+            ]
+          },
+          "gs1_editions_only": {
+            "regions": 0,
+            "bytes": 0
+          }
+        },
+        "verdict": "cross_product_identical_vendor_unidentified",
+        "credit": "library_pending_identification"
+      }
     },
     {
       "kind": "iwram_runtime_veneer",
@@ -1221,7 +1473,32 @@
         "080022f4",
         "080022fc",
         "08002304"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 4,
+          "bytes": 32,
+          "gs2_exact": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 4,
+            "bytes": 32
+          }
+        },
+        "verdict": "not_toolchain_origin_unidentified",
+        "credit": "none",
+        "reason": "same citations as linker_veneer; the target is an IWRAM address, not a section symbol, so not a linker stub either; origin compiler_runtime is unsupported"
+      }
     },
     {
       "kind": "deliberate_math_primitive",
@@ -1389,7 +1666,44 @@
           "kind": "caller_bounded_arm_helpers",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 13,
+          "bytes": 6208,
+          "gs2_exact": {
+            "regions": 9,
+            "bytes": 2964,
+            "addresses": [
+              "8002544->80128ac",
+              "8002808->8012b74",
+              "8002cf4->8013064",
+              "8002d5c->80130d0",
+              "800a37c->8021708",
+              "800a418->80217a8",
+              "80b5138->8118164",
+              "80b520c->8118238",
+              "80b5258->8118284"
+            ]
+          },
+          "gs2_masked": {
+            "regions": 1,
+            "bytes": 708,
+            "addresses": [
+              "8009bb8->8020dac"
+            ]
+          },
+          "gs1_editions_only": {
+            "regions": 2,
+            "bytes": 1280
+          }
+        },
+        "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
+        "credit": "library_pending_identification",
+        "reason": "ARM instruction set (same citation as armv4t_helper_bank); 9 of 13 regions byte-identical at one offset across all six GS2 editions, one more pool-masked identical; vendor object not identified"
+      }
     },
     {
       "kind": "shared_literal_thumb_helper_module",
@@ -1540,7 +1854,32 @@
         "080c1470",
         "080e3994",
         "080f3078"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 50,
+          "bytes": 26866,
+          "gs2_exact": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 14,
+            "bytes": 5522
+          }
+        },
+        "verdict": "pending_compiler_citation",
+        "credit": "none_yet",
+        "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4"
+      }
     },
     {
       "kind": "multi_region_iwram_ip_link_call_owner",
@@ -1718,7 +2057,32 @@
           "kind": "intra_function_call_owner",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 10,
+          "bytes": 33948,
+          "gs2_exact": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 0,
+            "bytes": 0
+          }
+        },
+        "verdict": "pending_compiler_citation",
+        "credit": "none_yet",
+        "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl"
+      }
     },
     {
       "kind": "compiler_allocation_mismatch",
@@ -2195,7 +2559,33 @@
       ],
       "expected_files": 169,
       "expected_bytes": 65476,
-      "matcher": "thumb_standalone_wide_transfer"
+      "matcher": "thumb_standalone_wide_transfer",
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": {
+          "method": "exact byte search of each region in the other eleven ROMs (gs1 de/es/fr/it/ja, gs2 en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six GS2 editions",
+          "regions": 169,
+          "bytes": 65476,
+          "gs2_exact": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs2_masked": {
+            "regions": 0,
+            "bytes": 0,
+            "addresses": []
+          },
+          "gs1_editions_only": {
+            "regions": 74,
+            "bytes": 10310
+          }
+        },
+        "verdict": "pending_compiler_citation",
+        "credit": "none_yet",
+        "construct": "160 of 169 regions (64,968 bytes) are C-shaped functions containing inline: ldr rA,=DMA register block (0x040000b0/bc/c8/d4 in the pool); ldr r1,=source; ldr r2,=destination or control; stmia rA!, {r0,r1,r2}; subs rA, #12 — the base is restored although it dies, which is the mark of a macro that cannot know whether its caller still needs the base. Three regions are 24-32 byte leaves that are only this kick. 8 regions are unrolled 4-register stmia fill runs (468 bytes), 1 mixed (40 bytes).",
+        "reading": "not handwritten functions and not a library: C bodies with an inline-asm DMA kick or fill the approved route cannot express; no cross-product identity (74 regions identical across GS1 editions only, none in GS2)"
+      }
     },
     {
       "kind": "io_write_queue_scheduler_module",

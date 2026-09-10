@@ -1,3 +1,0 @@
-void NoOpActorCallback(void)
-{
-}

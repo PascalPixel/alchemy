@@ -54,7 +54,8 @@
         "startup_copy_to_iwram",
         "arm_irq_entry",
         "scheduled_math_and_clear_kernels",
-        "compiler_runtime_division"
+        "compiler_runtime_division",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
       ],
       "expected_files": 1,
       "expected_bytes": 5120,
@@ -173,7 +174,7 @@
           }
         },
         "verdict": "mixed",
-        "credit": "none_yet",
+        "credit": "by_subregion",
         "subregions": {
           "division_runtime": "NOT agscc libgcc: assembled _udivsi3/_divsi3/_umodsi3/_modsi3 in ARM and Thumb builds; no match, longest common prefix 5 bytes at 0x08000af0; authorship compiler_vendor is unsupported",
           "decompressor": "byte-identical in all six GS2 editions at 0x08000c50",
@@ -185,6 +186,12 @@
           "audio_channel_update_thumb": "no GS2 identity",
           "scheduled_math_clear_and_transform_kernels": "no GS2 identity",
           "irq_entry": "no GS2 identity"
+        },
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "subregion_credit": {
+          "credited_arm_subregions_bytes": 3428,
+          "list": "irq_entry 224 (mrs/msr CPSR, ARM), scheduled_math_clear_and_transform_kernels 616, division_runtime 576 (ARM; not agscc libgcc), decompressor 152 (GS2-identical), audio_mixer_arm 960, audio_format_and_wave_helpers_arm 780, word_copy_kernel_arm 120 (GS2-identical)",
+          "not_credited": "audio_channel_update_thumb 196 and audio_mode_bridge_thumb 16 (Thumb bodies, no citation yet), irq_handler_table 56 and audio_work_area_zero_init 1424 (data)"
         }
       }
     },
@@ -197,13 +204,20 @@
         "dma_copy_to_stack",
         "arm_instruction_set",
         "indirect_call_through_relocated_entry",
-        "signed_q16_three_term_dot_product"
+        "signed_q16_three_term_dot_product",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
       ],
       "expected_files": 1,
       "expected_bytes": 28,
       "files": [
         "08007994"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "library_shaped_proven_not_compiler",
+        "credit_basis": "28 bytes ARM, GS2-identical (Kiki's DMA-to-stack kernel model)",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
+      }
     },
     {
       "kind": "rom_dispatch_table",
@@ -291,7 +305,8 @@
         "unrolled_64_byte_clear",
         "single_function_switches_thumb_to_arm_and_back",
         "approved_ordinary_c_route_has_one_instruction_set_per_function",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
       ],
       "expected_files": 2,
       "expected_bytes": 954,
@@ -324,8 +339,10 @@
           }
         },
         "verdict": "cross_product_identical_vendor_unidentified",
-        "credit": "library_pending_identification",
-        "reason": "both regions byte-identical in all six GS2 editions (080f9674 mixed Thumb/ARM audio mixer, 080f9a18); single-function mode switches are outside the approved route"
+        "credit": "library_shaped_proven_not_compiler",
+        "reason": "both regions byte-identical in all six GS2 editions (080f9674 mixed Thumb/ARM audio mixer, 080f9a18); single-function mode switches are outside the approved route",
+        "credit_basis": "954 bytes; 080f9674 switches Thumb to ARM and back inside one function (572 ARM bytes) and both regions are GS2-identical; the route has one instruction set per function",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
       }
     },
     {
@@ -580,11 +597,13 @@
           }
         },
         "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
-        "credit": "library_pending_identification",
+        "credit": "library_shaped_proven_not_compiler",
         "reason": "ARM instruction set bodies (ldm/rrx/conditional execution) under the game's single -mthumb flag set; byte-identical in all six GS2 editions for 3 regions and pool-masked identical for 3 more; the vendor object is not identified, so proof (a) is incomplete",
         "citations": [
           "Kiki (battle-loop lane), 2026-09-10: arm.c output_thumb_prologue guarded by is_called_in_ARM_mode at arm.c:8806-8830 (attribute :3745/:3762/:8676) is the only ARM-mode output under -mthumb: the two-instruction interfacearm stub orr ip,pc,#1; bx ip"
-        ]
+        ],
+        "credit_basis": "2,652 bytes; 7 regions, 2,604 ARM instruction bytes; 3 exact and 3 masked GS2-identical",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
       }
     },
     {
@@ -597,13 +616,20 @@
         "arm_cpu_mode_switch",
         "fixed_irq_and_system_stack_setup",
         "approved_compiler_thumb_only",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
       ],
       "expected_files": 1,
       "expected_bytes": 68,
       "files": [
         "080003c0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten_proven_not_compiler",
+        "credit_basis": "68 bytes; ARM startup: msr CPSR_fc mode switches and stack setup have no C expression; GS1-only",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
+      }
     },
     {
       "kind": "nonstandard_thumb_branch_module",
@@ -1582,7 +1608,13 @@
       "expected_bytes": 16,
       "files": [
         "080f95e0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "library_shaped_proven_not_compiler",
+        "credit_basis": "16 bytes, ARM umull high word, GS2-identical",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
+      }
     },
     {
       "kind": "relocated_arm_runtime_module",
@@ -1728,8 +1760,10 @@
           }
         },
         "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
-        "credit": "library_pending_identification",
-        "reason": "ARM instruction set (same citation as armv4t_helper_bank); 9 of 13 regions byte-identical at one offset across all six GS2 editions, one more pool-masked identical; vendor object not identified"
+        "credit": "library_shaped_proven_not_compiler",
+        "reason": "ARM instruction set (same citation as armv4t_helper_bank); 9 of 13 regions byte-identical at one offset across all six GS2 editions, one more pool-masked identical; vendor object not identified",
+        "credit_basis": "6,208 bytes; 13 regions, 5,884 ARM instruction bytes; 9 regions byte-identical and 1 pool-masked identical in all six GS2 editions",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
       }
     },
     {

@@ -185,7 +185,7 @@
           }
         },
         "verdict": "mixed",
-        "credit": "by_subregion",
+        "credit": "library",
         "subregions": {
           "division_runtime": "NOT agscc libgcc: assembled _udivsi3/_divsi3/_umodsi3/_modsi3 in ARM and Thumb builds; no match, longest common prefix 5 bytes at 0x08000af0; authorship compiler_vendor is unsupported",
           "decompressor": "byte-identical in all six GS2 editions at 0x08000c50",
@@ -207,7 +207,9 @@
           "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written."
         },
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "Subregions decompressor, word-copy kernel, irq table and audio work-area tables byte-identical in all six GS2 editions (library); the ARM kernels, mixer and helpers are ARM bodies under -mthumb (arm.c:8806-8830) with mrs/msr that no arm.md template prints, GS1-only in the twelve-ROM scan, in a file of named entries and comments (handwritten); checked per subregion in subregion_credit."
+        "proof": "Two halves, both checked per subregion in subregion_credit: the decompressor, word-copy kernel, irq handler table and audio work-area tables are byte-identical in all six GS2 editions (twelve-ROM scan); the irq entry, math kernels, division routine, mixer and wave helpers are ARM-instruction-set bodies with mrs/msr that the compiler cannot emit under -mthumb (arm.c:8806-8830; no msr/mrs template in arm.md), GS1-only, hand-coded kernels in a file of named entries and comments; the division routine matches no agscc libgcc member.",
+        "credit_decision_kind_level": "Beans 2026-09-10: kind-level credit, records not split; credit=library names both halves, subregion_credit stays for the record.",
+        "object": "vendor object not named; credited on cross-product identity and compiler impossibility"
       }
     },
     {
@@ -2823,7 +2825,30 @@
         "credit": "none",
         "construct": "160 of 169 regions (64,968 bytes) are C-shaped functions containing inline: ldr rA,=DMA register block (0x040000b0/bc/c8/d4 in the pool); ldr r1,=source; ldr r2,=destination or control; stmia rA!, {r0,r1,r2}; subs rA, #12 — the base is restored although it dies, which is the mark of a macro that cannot know whether its caller still needs the base. Three regions are 24-32 byte leaves that are only this kick. 8 regions are unrolled 4-register stmia fill runs (468 bytes), 1 mixed (40 bytes).",
         "reading": "not handwritten functions and not a library: C bodies with an inline-asm DMA kick or fill the approved route cannot express; no cross-product identity (74 regions identical across GS1 editions only, none in GS2)",
-        "refusal": "Kiki 2026-09-10: no Thumb template prints a writeback stmia of ldr-loaded registers or any four-register list (arm.md:3751/3850/4730/4870, movmem8b/12b :5111-5141 via thumb_output_move_mem_multiple arm.c:9425-9465, movstrqi :5084/9478 copy-only). 160 of 169 regions are C-shaped functions with an inline DMA kick, 8 are fill runs; no cross-product identity. Neither handwritten functions nor a library; the approved route disallows the inline assembly that produced them."
+        "refusal": "Kiki 2026-09-10: no Thumb template prints a writeback stmia of ldr-loaded registers or any four-register list (arm.md:3751/3850/4730/4870, movmem8b/12b :5111-5141 via thumb_output_move_mem_multiple arm.c:9425-9465, movstrqi :5084/9478 copy-only). 160 of 169 regions are C-shaped functions with an inline DMA kick, 8 are fill runs; no cross-product identity. Neither handwritten functions nor a library; the approved route disallows the inline assembly that produced them.",
+        "macro_forms": {
+          "measured": "2026-09-10 over the four multiple-transfer kinds (174 files, 320 sites)",
+          "dma_register_words_per_file": {
+            "0x040000b0": 9,
+            "0x040000d4": 156
+          },
+          "kick": {
+            "sites": 296,
+            "form": "stmia r3!, {r0, r1, r2}\\n\\tsubs r3, #12",
+            "invariants": "base register r3 at all 296 sites; operand registers r0, r1, r2 at all 296 (source address, destination address, control word in that order = DMAxSAD/DAD/CNT); the base restore subs r3, #12 follows every site, including leaves where r3 then dies",
+            "operand_sources": "r3 = the DMA register block: a pool constant 0x040000b0/bc/c8/d4 (base set first at 168 sites, loaded earlier at the rest) or the same r3 reused after a previous kick (46 sites, i.e. consecutive kicks on one channel); r0/r1/r2 = any C expression: pool constants, adds, lsls, orrs, loads — the macro takes three values",
+            "reading": "one shared macro with three arguments and the DMA block as a fourth, its body binding the arguments to r0-r2 and the block to r3 (register-asm variables or explicit registers in the asm), emitting the stmia and the restore; the fixed r3 and the dead restore are what distinguish it from any compiler expansion"
+          },
+          "fill": {
+            "sites": 24,
+            "files": 8,
+            "form": "three consecutive stmia r0!, {r1, r2, r3, r4} after movs r1, #128; lsls r1, r1, #9; movs r2, #0; movs r3, #0; movs r4, #0",
+            "invariants": "writes {0x10000, 0, 0, 0} three times (48 bytes) at the address in r0 at every site; no restore",
+            "reading": "one shared macro (or inline) writing three 16-byte records of an identity value followed by three zeros; base r0, values r1-r4"
+          },
+          "distinct_forms": 2
+        },
+        "class_ruling": "Pascal 2026-09-10 (CONTRIBUTING on main): inline assembly is admitted as a shared macro header when the evidence shows Camelot used it; this class is C bodies around that header, a reconstruction task, not assembly credit."
       }
     },
     {

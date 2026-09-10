@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 地図の読み込み。DISPCNT の背景ビットを落とし、地図表 0x08013784 の第 r0 項から
+@ Func_08002f40 で見出しを展開し、各層を 0x02010000 / 0x0202c000 / 0x0202d000 / 0x0202de00 に
+@ Func_08005340 で広げる。記録 (Func_080048f4(8, 0x194)) を IwramClearWords (0x03000164) で消し、
+@ 範囲 (+236..+248)、3 層の記録 (48 バイトずつ) を見出しから写し、層の縮尺を IwramMulQ16 で
+@ 視点に掛けて初期位置とする。最後に BG3CNT を組んで Func_0800fd5c へ続く。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800fb38
@@ -36,11 +40,13 @@ Func_0800fb38:
 	adds	r1, r6, #0
 	ldr	r3, [pc, #444]
 	mov	r8, r0
+@ IwramClearWords で記録を消す。
 	bl	Func_080072f0
 	ldr	r2, [sp, #8]
 	ldr	r3, [pc, #436]
 	ldrh	r0, [r2, #0]
 	adds	r0, r0, r3
+@ 地図見出しの展開。
 	bl	Func_08002f40
 	adds	r5, r0, #0
 	ldr	r3, [r5, #36]
@@ -130,6 +136,7 @@ Func_0800fb38:
 	adds	r6, #12
 	mov	r9, r3
 	mov	fp, r2
+@ 層ごと: 位置、縮尺、視差、幅高さを写し、視点 × 縮尺 (IwramMulQ16ReturnIp) を初期位置に。
 .L2:
 	ldrb	r0, [r6, #0]
 	ldrb	r2, [r6, #1]
@@ -232,6 +239,7 @@ Func_0800fb38:
 	orrs	r3, r2
 	mov	r2, r8
 	strh	r3, [r2, #20]
+@ BG3CNT。
 .L5:
 	ldrb	r3, [r5, #7]
 	ldrb	r2, [r1, #0]

@@ -410,8 +410,8 @@ decoding, comparison, bounded recovery and compiler invocation plus its minimal
 build integration, not Golden Sun ownership, asset offsets or agent machinery.
 
 Portable tooling is capped at **50,000 Rust, TypeScript, JavaScript and CSS
-lines** by `make tooling-size`. Pascal owns that ceiling and scope. Do not
-raise it or hide code outside it. New tooling must resolve a demonstrated
+lines**, test modules excluded, by `make tooling-size`. Pascal owns that
+ceiling and scope. Do not raise it or hide code outside it. New tooling must resolve a demonstrated
 recurring blocker, reuse or replace existing machinery, and prove a conversion
 with regression coverage. Prefer using the tools to adding tools.
 

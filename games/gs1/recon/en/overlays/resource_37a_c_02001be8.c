@@ -58,6 +58,35 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+/*
+ * NOT REPRODUCIBLE. This draft compiles to the reference bytes, but not every
+ * time, so it must not be adopted.
+ *
+ * Measured on 2026-09-10 against the approved bundle: thirty raw cc1
+ * invocations on one fixed preprocessed input produced two distinct outputs,
+ * 27 and 3. The variance is in the compiler, not in this repository's tooling
+ * -- the runs bypassed alchemy entirely and reused a single .i file.
+ *
+ * The divergence is the pair of equal constants in the last Call3 below.
+ * The reference, and the 27-run majority, share the computed value:
+ *     mov r1, #201 / lsl r1, r1, #19 / mov r2, r1
+ * The 3-run minority declines to share it and computes the shift twice, which
+ * is one instruction longer and shifts every later byte in the owner.
+ *
+ * It is input-specific, not general: the same thirty-run measurement on
+ * resource_385:02000f30 produced one output thirty times.
+ *
+ * Making the sharing explicit does make the compile deterministic, but then it
+ * emits different bytes: a local assigned 0x6480000 (or 201 << 19, or a u32
+ * cast) is deterministic at three differing halfwords, and a wrapper that
+ * passes one value into both parameters reproduces the reference bytes but
+ * stays nondeterministic. Every shape measured is either exact-but-lucky or
+ * deterministic-but-wrong.
+ *
+ * This owner was promoted to exact C on 2026-09-09 and that credit is
+ * withdrawn here. Do not re-adopt it until a source shape is found that is
+ * both byte-exact and stable across repeated cold compiles.
+ */
 void FieldScene_RunActorPositionTransition(void)
 {
     u32 i;

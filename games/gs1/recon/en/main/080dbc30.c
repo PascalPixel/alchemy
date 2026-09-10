@@ -62,31 +62,32 @@
  * materialisation instead of after it (the 0x05000000 at the palette copy,
  * and the work + 0x7080 ahead of the particle loop).
  *
- * These are NOT a scheduling decision, contrary to the earlier note here and
- * to the scheduling-floor class the triage assigns.  Recompiling this owner
- * with -fno-schedule-insns and -fno-schedule-insns2 leaves the order
- * unchanged, so neither scheduling pass produces it; the order comes from RTL
- * emission, which source structure controls.  The grey-ramp loop was closed
- * on that basis by writing its initialisation as a comma expression with the
- * counter first, `for (i = 0, pal = (u16 *)0x05000000; ...)`, which put the
- * counter assignment between the two halves of the pointer constant and took
- * the residual from nine halfwords to seven.  Hoisting the callee, the source
- * pointer, and the destination out of the palette copy were each tried for
- * the second interleave and none moved it; the destination-comma form
- * regressed badly.  The remaining two want the same treatment as the first,
- * not a compiler explanation.
+ * Both are post-reload scheduling decisions, and the earlier note here that
+ * claimed otherwise was wrong: the canonical route runs only sched2 (the dump
+ * directory has an .23.sched2 and no sched1 file), and recompiling the very
+ * same preprocessed input with -fno-schedule-insns2 moves both regions, so
+ * sched2 does own their order.  The grey-ramp loop above was closed by
+ * writing its initialisation as `for (i = 0, pal = (u16 *)0x05000000; ...)`,
+ * and that worked by feeding sched2 a different instruction order, not by
+ * bypassing it: without sched2 the counter assignment sits before the pointer
+ * constant, and sched2 is what lifts `mov r0, #160` over it.
  *
- * This owner is the exception in its class, not evidence against the class.
- * All twenty-five scheduling-floor owners were compiled with both scheduling
- * passes disabled: this one alone is unchanged, and the other twenty-four do
- * change, so the schedulers really are producing their order.  Disabling the
- * schedulers also moves those owners further from the reference rather than
- * closer, measured on 0800383c (2 to 8 differing halfwords), 080fb670 (2 to
- * 10, and the extent shrinks from 32 to 28), 080974d8 (2 to 19) and 08021e28
- * (unchanged at 2).  The shipped code was therefore built with scheduling on,
- * the canonical route is right for them, and scheduling-floor is an accurate
- * label everywhere except here.  Do not read the fix below as a class-wide
- * method.
+ * What remains is a tie in sched2's ready list that source order cannot
+ * reach.  At the palette copy the ready set is {ldr r3, lsl r0, mov r2}, all
+ * of equal priority, and the tie is broken by original instruction order; the
+ * reference picks the pool load, which would need the callee address to be
+ * emitted before the destination constant.  calls.c forbids that: the arm
+ * port has SMALL_REGISTER_CLASSES, so a register argument whose rtx_cost
+ * exceeds two -- which 0x05000000 does -- is copied into a pseudo in the
+ * argument loop, and prepare_call_address only forces the callee address
+ * afterwards.  Hoisting the callee into a local (constant-propagated back)
+ * and hoisting the source pointer out of the argument list so no argument
+ * contains a call were both measured and left the residual at seven.  The
+ * particle-loop interleave is the same tie one block later, and there the
+ * reference also issues `add r5, r9` after the hoisted 32 and 64, which asks
+ * for the work-relative base to be emitted after the loop-invariant hoists
+ * rather than with the assignment.  Swapping `i = 0` and `spark = SPARKS`
+ * regressed to eight; the comma-and-for spelling measured seven.
  *
  * Callee spellings follow the exact sibling: plain Func_<address> for every
  * target the owner register has no distinct name for.  `alchemy inspect`

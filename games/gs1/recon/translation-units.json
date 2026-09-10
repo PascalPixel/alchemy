@@ -7602,9 +7602,9 @@
       ]
     },
     {
-      "id": "overlay-37a-actor-position-transition",
+      "id": "retained-overlay-37a-actor-position-transition",
       "game": "gs1",
-      "source": "games/gs1/src/map/locations/sol_shinden/inner_sanctum_scene/actor_position_transition.c",
+      "source": "games/gs1/recon/en/overlays/resource_37a_c_02001be8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -7622,7 +7622,7 @@
         {
           "address": "0x02001be8",
           "extent": 192,
-          "state": "exact-c"
+          "state": "retained-assembly"
         }
       ]
     },

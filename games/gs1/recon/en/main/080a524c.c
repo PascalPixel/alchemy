@@ -1,76 +1,81 @@
 #include "types.h"
-#include "item.h"
-#include "global_cells.h"
 
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-struct ItemDefinition *Item_Get(s32);
-void UiText_DrawAt(s32, s32, s32, s32);
-void Audio_PlayCue(s32);
-s32 Modulo(s32, s32);
-void WaitFrames(s32);
-void UiWindow_Close(s32, s32);
-s32 GameFlag_IsSet(s32);
-void Func_080a1ac0(s32, s32);
+extern volatile s32 Data_03001b04;
+extern volatile s32 Data_03001c94;
+extern u8 Data_00000182[];
+extern u8 Data_00000ad4[];
+extern u8 Data_00000b2c[];
+
+s32 Func_080022fc(s32, s32);
+void Func_080030f8(s32 frames);
+s32 Func_08015010(s32, s32, s32, s32, s32);
+void Func_08015018(s32, s32);
+void Func_08015080(s32, s32, s32, s32);
+void Func_08077018(s32);
+s32 Func_080770c0(s32);
 void Func_080a1a40(s32, s32);
-extern u8 Value_00000182;
+void Func_080a1ac0(s32, s32);
+void Func_080f9010(s32 cue);
 
-s32 Func_080a524c(s32 item_id)
+s32 Func_080a524c(s32 a0)
 {
-    s32 selection;
-    s32 window;
+    volatile s32 *pad;
+    s32 win;
+    s32 slot;
+    s32 text;
+    s32 label;
+    s32 sel;
     s32 changed;
 
-    window = UiWindow_CreateFar(13, 3, 17, 10, 2);
-    Item_Get(item_id & 0x1FF);
-    item_id &= 0x1FF;
-    item_id += (s32)&Value_00000182;
-    UiText_DrawAt(item_id, window, 24, 0);
-    item_id = 0xAD4;
-    UiText_DrawAt(item_id, window, 0, 16);
-    item_id += 1;
-    UiText_DrawAt(item_id, window, 0, 24);
-    item_id = 0xB2C;
-    UiText_DrawAt(item_id, window, 24, 40);
-    item_id += 1;
-    UiText_DrawAt(item_id, window, 24, 56);
-    selection = 1;
-    changed = selection;
+    win = Func_08015010(13, 3, 17, 10, 2);
+    slot = a0 & 0x1ff;
+    Func_08077018(slot);
+    Func_08015080(slot + (s32)Data_00000182, win, 24, 0);
+    text = (s32)Data_00000ad4;
+    Func_08015080(text, win, 0, 16);
+    text++;
+    Func_08015080(text, win, 0, 24);
+    label = (s32)Data_00000b2c;
+    Func_08015080(label, win, 24, 40);
+    label++;
+    Func_08015080(label, win, 24, 56);
+    sel = 1;
+    changed = 1;
     Func_080a1ac0(104, 86);
-
     for (;;) {
-        Func_080a1a40(104, selection * 16 + 70);
-        if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {
-            changed = 1;
-            selection -= 1;
-            Audio_PlayCue(111);
-        }
-        if ((*(volatile u32 *)ADDR_03001B04 & 0x80) != 0) {
-            changed = 1;
-            selection += 1;
-            Audio_PlayCue(111);
-        }
-        WaitFrames(1);
-
-        if (GameFlag_IsSet(0x150)) {
+        if (Func_080770c0(0x150) != 0) {
             break;
         }
-        if (changed != 0) {
+        if (changed) {
             changed = 0;
-            selection = Modulo(selection + 2, 2);
+            sel = Func_080022fc(sel + 2, 2);
         }
-        if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
-            Audio_PlayCue(112);
+        if (Data_03001c94 & 1) {
+            Func_080f9010(112);
             break;
         }
-        if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
-            Audio_PlayCue(113);
-            selection = 1;
+        if (Data_03001c94 & 2) {
+            Func_080f9010(113);
+            sel = 1;
             break;
         }
+        Func_080a1a40(104, (sel << 4) + 70);
+        pad = &Data_03001b04;
+        if (*pad & 64) {
+            sel -= 1;
+            changed = 1;
+            Func_080f9010(111);
+        }
+        if (*pad & 128) {
+            sel += 1;
+            changed = 1;
+            Func_080f9010(111);
+        }
+        Func_080030f8(1);
     }
-    if (GameFlag_IsSet(0x150)) {
-        selection = 1;
+    if (Func_080770c0(0x150) != 0) {
+        sel = 1;
     }
-    UiWindow_Close(window, 1);
-    return selection;
+    Func_08015018(win, 1);
+    return sel;
 }

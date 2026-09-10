@@ -1,52 +1,44 @@
 #include "types.h"
 
-void *Func_08077008(s32);
+u8 *Func_08077008(s32);
 
-s32 Func_080ac8fc(u16 *out, s32 id, s32 row_select)
+s32 Func_080ac8fc(u16 *out, s32 id, s32 group)
 {
-    void *record = Func_08077008(id);
-    s32 count = 0;
-    s32 bit;
-    s32 row;
+    u8 *rec;
+    s32 count;
+    s32 g;
+    s32 b;
+    s32 mask;
+    s32 v;
 
-    if (row_select == -1) {
-        s32 id_shifted = id << 8;
-        u32 *rows = (u32 *)((u8 *)record + 264);
-        for (row = 0; row <= 3; row++) {
-            u32 active = rows[row];
-            u32 secondary = *(u32 *)((u8 *)record + 248 + row * 4);
-            for (bit = 0; bit <= 19; bit++) {
-                u32 mask = 1u << bit;
-                s32 packed;
-                if (active & mask) {
-                    packed = (row << 5) | bit | (-0x8000) | id_shifted;
-                    out[count] = (u16)packed;
-                    count++;
-                } else if (secondary & mask) {
-                    packed = (row << 5) | bit | id_shifted;
-                    out[count] = (u16)packed;
-                    count++;
+    rec = Func_08077008(id);
+    count = 0;
+    if (group == -1) {
+        for (g = 0; g < 4; g++) {
+            mask = *(s32 *)(rec + 0x108 + g * 4);
+            for (b = 0; b < 20; b++) {
+                if (mask & (1 << b)) {
+                    v = (g << 5) | b | 0x8000 | (id << 8);
+                } else if (*(s32 *)(rec + 248 + g * 4) & (1 << b)) {
+                    v = (g << 5) | b | (id << 8);
+                } else {
+                    continue;
                 }
+                out[count++] = v;
             }
         }
     } else {
-        u32 active = *(u32 *)((u8 *)record + row_select * 4 + 264);
-        u32 secondary = *(u32 *)((u8 *)record + row_select * 4 + 248);
-        s32 row_shifted = row_select << 5;
-        for (bit = 0; bit <= 19; bit++) {
-            u32 mask = 1u << bit;
-            s32 packed;
-            if (active & mask) {
-                packed = row_shifted | bit | (-0x8000);
-                out[count] = (u16)packed;
-                count++;
-            } else if (secondary & mask) {
-                packed = row_shifted | bit;
-                out[count] = (u16)packed;
-                count++;
+        mask = *(s32 *)(rec + 0x108 + group * 4);
+        for (b = 0; b < 20; b++) {
+            if (mask & (1 << b)) {
+                v = (group << 5) | b | 0x8000;
+            } else if (*(s32 *)(rec + 248 + group * 4) & (1 << b)) {
+                v = (group << 5) | b;
+            } else {
+                continue;
             }
+            out[count++] = v;
         }
     }
-
     return count;
 }

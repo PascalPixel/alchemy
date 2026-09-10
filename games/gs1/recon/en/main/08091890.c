@@ -1,115 +1,116 @@
-#include "owner_state.h"
-#include "party_state.h"
+#include "types.h"
 
-extern s32 FixedPoint_Ratio(s32, s32);
-extern s32 Func_08077168(s32 character_id);
-extern void Event_ClearInvalidPackedValues(void);
-extern s32 Func_08077148(void);
+struct Rec {
+    u8 pad0[20];
+    s16 f20;
+    s16 f22;
+    u8 pad1[28];
+    s16 f52;
+    s16 f54;
+    s16 f56;
+    s16 f58;
+    u8 pad2[0x131 - 60];
+    u8 b131;
+};
+
+extern s32 Data_02000240[];
+
+s32 Func_080022ec(s32, s32);
+struct Rec *Func_08077008(s32);
+s32 Func_08077148(void);
+void Func_08077168(void);
+void Func_08091858(void);
 
 void Func_08091890(s32 id)
 {
-    u8 *obj;
-    s32 t;
-    s32 v14;
-    s32 v16;
-    s16 v34;
-    s32 v36;
-    s32 v38;
-    s32 v3A;
-    s32 one;
+    struct Rec *rec;
+    s32 v;
+    s32 i;
+    s32 n;
     s32 count;
-    s32 index;
-    s32 left;
-    s32 flagCount;
 
-    Func_08077168(id);
-    Event_ClearInvalidPackedValues();
-
-    obj = (u8 *)OwnerState_GetFar(id);
-    do {
-        *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);
-        *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
-    } while (0);
-
-    v34 = *(s16 *)(obj + 0x34);
-    t = FixedPoint_Ratio(v34 << 14, v34);
-    v14 = 0x4000;
-    if (t <= 0x4000) {
-        v14 = 0;
-        if (t >= 0) {
-            v14 = t;
-        }
-    }
-    *(s16 *)(obj + 0x14) = (s16)v14;
-    if (((v14 << 16) == 0) && (*(s16 *)(obj + 0x38) != 0)) {
-        one = 1;
-        *(s16 *)(obj + 0x14) = (s16)one;
-    }
-
-    t = FixedPoint_Ratio(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
-    v16 = 0x4000;
-    if (t <= 0x4000) {
-        v16 = 0;
-        if (t >= 0) {
-            v16 = t;
-        }
-    }
-    *(s16 *)(obj + 0x16) = (s16)v16;
-    if (((v16 << 16) == 0) && (*(s16 *)(obj + 0x3A) != 0)) {
-        one = 1;
-        *(s16 *)(obj + 0x16) = (s16)one;
-    }
-
-    *(s8 *)(obj + 0x131) = 0;
-
-    flagCount = 0;
-    count = Func_08077148();
-    if (flagCount < count) {
-        index = 0;
-        left = count;
-        do {
-            obj = (u8 *)OwnerState_GetFar(Data_02000240.active_owners[index++]);
-            if (*(s16 *)(obj + 0x38) != 0) {
-                flagCount++;
-            }
-            left--;
-        } while (left != 0);
-    }
-
-    if (flagCount == 0) {
-        obj = (u8 *)OwnerState_GetFar(Data_02000240.current_owner);
-        v38 = 1;
-        *(u16 *)(obj + 0x38) = v38;
-
-        v34 = *(s16 *)(obj + 0x34);
-        t = FixedPoint_Ratio(v38 << 14, v34);
-        v14 = 0x4000;
-        if (t <= 0x4000) {
-            v14 = 0;
-            if (t >= 0) {
-                v14 = t;
+    Func_08077168();
+    Func_08091858();
+    rec = Func_08077008(id);
+    rec->f56 = rec->f52;
+    rec->f58 = rec->f54;
+    v = Func_080022ec(rec->f56 << 14, rec->f52);
+    {
+        s32 w;
+    
+        w = 0x4000;
+        if (v <= 0x4000) {
+            w = 0;
+            if (v >= 0) {
+                w = v;
             }
         }
-        *(s16 *)(obj + 0x14) = (s16)v14;
-        if (((v14 << 16) == 0) && (*(s16 *)(obj + 0x38) != 0)) {
-            one = 1;
-            *(s16 *)(obj + 0x14) = (s16)one;
-        }
-
-        v3A = *(s16 *)(obj + 0x3A);
-        v36 = *(s16 *)(obj + 0x36);
-        t = FixedPoint_Ratio(v3A << 14, v36);
-        v16 = 0x4000;
-        if (t <= 0x4000) {
-            v16 = 0;
-            if (t >= 0) {
-                v16 = t;
+        rec->f20 = w;
+    }
+    if (rec->f20 == 0 && rec->f56 != 0) {
+        rec->f20 = 1;
+    }
+    v = Func_080022ec(rec->f58 << 14, rec->f54);
+    {
+        s32 w;
+    
+        w = 0x4000;
+        if (v <= 0x4000) {
+            w = 0;
+            if (v >= 0) {
+                w = v;
             }
         }
-        *(s16 *)(obj + 0x16) = (s16)v16;
-        if (((v16 << 16) == 0) && (*(s16 *)(obj + 0x3A) != 0)) {
-            one = 1;
-            *(s16 *)(obj + 0x16) = (s16)one;
+        rec->f22 = w;
+    }
+    if (rec->f22 == 0 && rec->f58 != 0) {
+        rec->f22 = 1;
+    }
+    rec->b131 = 0;
+    count = 0;
+    n = Func_08077148();
+    for (i = 0; i < n; i++) {
+        u8 *members = (u8 *)Data_02000240;
+
+        rec = Func_08077008(members[0x1f8 + i]);
+        if (rec->f56 != 0) {
+            count++;
+        }
+    }
+    if (count == 0) {
+        rec = Func_08077008(Data_02000240[125]);
+        rec->f56 = 1;
+        v = Func_080022ec(rec->f56 << 14, rec->f52);
+        {
+            s32 w;
+        
+            w = 0x4000;
+            if (v <= 0x4000) {
+                w = 0;
+                if (v >= 0) {
+                    w = v;
+                }
+            }
+            rec->f20 = w;
+        }
+        if (rec->f20 == 0 && rec->f56 != 0) {
+            rec->f20 = 1;
+        }
+        v = Func_080022ec(rec->f58 << 14, rec->f54);
+        {
+            s32 w;
+        
+            w = 0x4000;
+            if (v <= 0x4000) {
+                w = 0;
+                if (v >= 0) {
+                    w = v;
+                }
+            }
+            rec->f22 = w;
+        }
+        if (rec->f22 == 0 && rec->f58 != 0) {
+            rec->f22 = 1;
         }
     }
 }

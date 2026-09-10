@@ -2008,7 +2008,8 @@
         "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
         "byte_exact_reconstruction",
         "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
-        "no_cross_product_identity"
+        "no_cross_product_identity",
+        "handwritten_credit_after_source_form_pass_all_50_files"
       ],
       "expected_files": 50,
       "expected_bytes": 26866,
@@ -2086,8 +2087,11 @@
           }
         },
         "verdict": "not_compiler_no_cross_product_identity_not_proven_handwritten",
-        "credit": "none",
-        "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4"
+        "credit": "handwritten",
+        "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4",
+        "credit_rule": "Beans (merge lane), 2026-09-10, under Pascal's ruling: executable ROM code the approved compiler provably cannot have emitted has no origin other than hand or library, so its most likely original form is the .s; credited when the file reads as source.",
+        "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any GS2 edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across GS1 editions only, the rest GS1-en only.",
+        "file_check": "2026-09-10, all 50 files: named entry symbols, a header stating the job and why it stays assembly, block comments naming the IWRAM kernel each ip-linked call reaches (IwramMulQ16ReturnIp 0x03000118, IwramRatioMulQ14 0x0300013c, IwramSqrt 0x030001d8, IwramSignedDivide 0x03000380, IwramUnsignedDivide 0x030003f0, IwramTransformVector 0x03000250, IwramTransformMatrix 0x030002c0, IwramClearWords 0x03000164, IwramCopyWords 0x03001388); instruction and data lines untouched; byte-identical builds at each of seven batches (commits 36bf02e33 .. this one). One region, 0800ee14, is a continuation fragment without an entry and is headed as such."
       }
     },
     {

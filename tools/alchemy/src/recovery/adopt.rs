@@ -202,9 +202,157 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         }
     }
 
-    // The source register: keep an existing name, record the path.
+    // Every register the sequence touches is snapshotted first: a failure
+    // anywhere after this point restores all of them and removes the unit,
+    // so an adoption either completes or leaves nothing behind for a re-run
+    // to trip over.
     let manifest = root.join("games/gs1/source-paths.json");
-    let (mut register, _) = read_json(&manifest)?;
+    let assembly = root.join("games/gs1/semantic/overlay-assembly.json");
+    let dossiers = root.join("games/gs1/recon/en/dossiers.json");
+    let unmatchable = root.join("games/gs1/semantic/unmatchable.json");
+    let units = root.join("games/gs1/recon/translation-units.json");
+    let overlay_source: PathBuf = root.join(format!("games/gs1/asm/overlays/{overlay}_overlay.s"));
+    let stems: Vec<String> = {
+        let mut retired = vec![owner];
+        for m in modules(root)? {
+            if m.overlay == overlay
+                && m.entry != entry
+                && m.entry >= entry
+                && m.entry + m.span <= end
+            {
+                retired.push(SourceOwner::parse(&m.key())?);
+            }
+        }
+        retired.iter().map(|o| o.legacy_stem()).collect()
+    };
+    let drafts: Vec<PathBuf> = stems
+        .iter()
+        .map(|stem| root.join(format!("games/gs1/recon/en/overlays/{stem}.c")))
+        .collect();
+    let mut watched = vec![
+        manifest.clone(),
+        assembly.clone(),
+        dossiers.clone(),
+        unmatchable.clone(),
+        units.clone(),
+        overlay_source.clone(),
+    ];
+    watched.extend(drafts.iter().cloned());
+    let snapshot = Snapshot::take(&watched)?;
+    let outcome = register_adoption(
+        root,
+        request,
+        &mut report,
+        Registration {
+            owner,
+            overlay: &overlay,
+            entry,
+            end,
+            span,
+            name: &name,
+            relative: &relative,
+            destination: &destination,
+            manifest: &manifest,
+            assembly: &assembly,
+            dossiers: &dossiers,
+            unmatchable: &unmatchable,
+            units: &units,
+            overlay_source: &overlay_source,
+            drafts: &drafts,
+        },
+    );
+    if let Err(error) = outcome {
+        snapshot.restore();
+        if !existed {
+            let _ = std::fs::remove_file(&destination);
+        }
+        let mut paths: Vec<String> = watched
+            .iter()
+            .map(|path| path.to_string_lossy().into_owned())
+            .collect();
+        paths.push(destination.to_string_lossy().into_owned());
+        for path in &paths {
+            let _ = git(root, &["reset", "-q", "--", path]);
+        }
+        return Err(format!(
+            "{error}; nothing adopted, the registers and drafts are restored -- fix the cause and rerun the same adopt"
+        ));
+    }
+    report.push(format!("adopted {} as {name} at {relative}", request.owner));
+    Ok(report)
+}
+
+/// Files whose contents are put back if the adoption sequence fails.
+struct Snapshot(Vec<(PathBuf, Option<Vec<u8>>)>);
+
+impl Snapshot {
+    fn take(paths: &[PathBuf]) -> Result<Self, String> {
+        let mut entries = Vec::new();
+        for path in paths {
+            let contents = match std::fs::read(path) {
+                Ok(bytes) => Some(bytes),
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+                Err(error) => return Err(format!("{}: {error}", path.display())),
+            };
+            entries.push((path.clone(), contents));
+        }
+        Ok(Snapshot(entries))
+    }
+    fn restore(&self) {
+        for (path, contents) in &self.0 {
+            let _ = match contents {
+                Some(bytes) => std::fs::write(path, bytes),
+                None => std::fs::remove_file(path),
+            };
+        }
+    }
+}
+
+struct Registration<'a> {
+    owner: SourceOwner,
+    overlay: &'a str,
+    entry: u32,
+    end: u32,
+    span: u32,
+    name: &'a str,
+    relative: &'a str,
+    destination: &'a Path,
+    manifest: &'a Path,
+    assembly: &'a Path,
+    dossiers: &'a Path,
+    unmatchable: &'a Path,
+    units: &'a Path,
+    overlay_source: &'a Path,
+    drafts: &'a [PathBuf],
+}
+
+/// The register mutations of an adoption, in order. Any error leaves the
+/// caller to restore what came before.
+fn register_adoption(
+    root: &Path,
+    request: &Request,
+    report: &mut Vec<String>,
+    r: Registration,
+) -> Result<(), String> {
+    let Registration {
+        owner,
+        overlay,
+        entry,
+        end,
+        span,
+        name,
+        relative,
+        destination,
+        manifest,
+        assembly,
+        dossiers,
+        unmatchable,
+        units,
+        overlay_source,
+        drafts,
+    } = r;
+    // The source register: keep an existing name, record the path.
+    let (mut register, _) = read_json(manifest)?;
     let owners_map = register
         .get_mut("owners")
         .and_then(Value::as_object_mut)
@@ -214,13 +362,13 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         .and_then(|v| v.get("name"))
         .and_then(Value::as_str)
         .map(str::to_string)
-        .unwrap_or_else(|| name.clone());
+        .unwrap_or_else(|| name.to_string());
     set_source(
         owners_map.entry(owner.id()).or_insert(Value::Null),
         &registered_name,
         &relative,
     );
-    write_json(&manifest, &register, true, true)?;
+    write_json(manifest, &register, true, true)?;
 
     // The owner and every absorbed region lose their records. This reads the
     // retained regions before the ones inside the span are removed below;
@@ -235,12 +383,11 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     }
 
     // Retained regions inside the span retire.
-    let assembly = root.join("games/gs1/semantic/overlay-assembly.json");
-    let (mut regions, _) = read_json(&assembly)?;
+    let (mut regions, _) = read_json(assembly)?;
     if let Some(list) = regions.get_mut("regions").and_then(Value::as_array_mut) {
         let before = list.len();
         list.retain(|region| {
-            let same = region["overlay"].as_str() == Some(overlay.as_str());
+            let same = region["overlay"].as_str() == Some(overlay);
             let start = region["start"]
                 .as_str()
                 .and_then(|s| u32::from_str_radix(s.trim_start_matches("0x"), 16).ok());
@@ -248,22 +395,21 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         });
         report.push(format!("assembly regions {before} -> {}", list.len()));
     }
-    write_json(&assembly, &regions, true, true)?;
+    write_json(assembly, &regions, true, true)?;
 
     // An absorbed region's name leaves the source register: its bytes are
     // this function's, and an owner with a name but no source would be
     // asked for assembly evidence it no longer has.
     if retired.len() > 1 {
-        let (mut register, _) = read_json(&manifest)?;
+        let (mut register, _) = read_json(manifest)?;
         if let Some(map) = register.get_mut("owners").and_then(Value::as_object_mut) {
             for gone in retired.iter().skip(1) {
                 map.shift_remove(&gone.id());
             }
         }
-        write_json(&manifest, &register, true, true)?;
+        write_json(manifest, &register, true, true)?;
     }
-    let dossiers = root.join("games/gs1/recon/en/dossiers.json");
-    let (mut records, newline) = read_json(&dossiers)?;
+    let (mut records, newline) = read_json(dossiers)?;
     if let Some(map) = records.get_mut("records").and_then(Value::as_object_mut) {
         let mut removed = 0;
         for gone in &retired {
@@ -273,13 +419,12 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         }
         if removed > 0 {
             report.push(format!("dossiers removed: {removed}"));
-            write_json(&dossiers, &records, false, newline)?;
+            write_json(dossiers, &records, false, newline)?;
         }
     }
 
     let stems: Vec<String> = retired.iter().map(|o| o.legacy_stem()).collect();
-    let unmatchable = root.join("games/gs1/semantic/unmatchable.json");
-    let (mut withdrawn, _) = read_json(&unmatchable)?;
+    let (mut withdrawn, _) = read_json(unmatchable)?;
     if let Some(list) = withdrawn
         .get_mut("unmatchable")
         .and_then(Value::as_array_mut)
@@ -292,16 +437,55 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         });
         if list.len() != before {
             report.push("unmatchable entry removed".to_string());
-            write_json(&unmatchable, &withdrawn, true, true)?;
+            write_json(unmatchable, &withdrawn, true, true)?;
         }
     }
 
-    for stem in &stems {
-        let draft = root.join(format!("games/gs1/recon/en/overlays/{stem}.c"));
+    // A draft the adoption supersedes leaves the tree, and with it any
+    // retained translation unit whose source it was: a unit pointing at a
+    // deleted file fails every later register check. A unit that also owns
+    // bytes outside the span is not this adoption's to retire.
+    let mut removed_drafts = Vec::new();
+    for (stem, draft) in stems.iter().zip(drafts) {
         if draft.exists() {
-            git(root, &["rm", "-q", &draft.to_string_lossy()])?;
+            std::fs::remove_file(draft).map_err(|e| format!("{}: {e}", draft.display()))?;
+            removed_drafts.push(format!("games/gs1/recon/en/overlays/{stem}.c"));
             report.push(format!("draft removed: {stem}"));
         }
+    }
+    if !removed_drafts.is_empty() {
+        let (mut document, _) = read_json(units)?;
+        if let Some(list) = document.get_mut("units").and_then(Value::as_array_mut) {
+            let mut kept = Vec::new();
+            for unit in list.drain(..) {
+                let source = unit["source"].as_str().unwrap_or("");
+                if !removed_drafts.iter().any(|d| d == source) {
+                    kept.push(unit);
+                    continue;
+                }
+                let outside = unit["owners"].as_array().is_some_and(|owners| {
+                    owners.iter().any(|o| {
+                        let extent = o["extent"].as_u64().unwrap_or(0) as u32;
+                        o["address"]
+                            .as_str()
+                            .and_then(|s| u32::from_str_radix(s.trim_start_matches("0x"), 16).ok())
+                            .is_none_or(|a| a < entry || a + extent > end)
+                    })
+                });
+                if outside {
+                    return Err(format!(
+                        "translation unit {} owns bytes outside {}..{:08x}; split it before adopting",
+                        unit["id"], request.owner, end
+                    ));
+                }
+                report.push(format!(
+                    "translation unit retired: {}",
+                    unit["id"].as_str().unwrap_or("?")
+                ));
+            }
+            *list = kept;
+        }
+        write_json(units, &document, true, true)?;
     }
 
     let applied = run_tool(
@@ -323,16 +507,24 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     }
     report.push(last);
 
-    let overlay_source: PathBuf = root.join(format!("games/gs1/asm/overlays/{overlay}_overlay.s"));
-    let mut staged: Vec<String> = vec![
-        destination.to_string_lossy().into_owned(),
-        manifest.to_string_lossy().into_owned(),
-        assembly.to_string_lossy().into_owned(),
-        dossiers.to_string_lossy().into_owned(),
-        unmatchable.to_string_lossy().into_owned(),
-        overlay_source.to_string_lossy().into_owned(),
-    ];
-    let mut args = vec!["add".to_string()];
+    let mut staged: Vec<String> = [
+        destination,
+        manifest,
+        assembly,
+        dossiers,
+        unmatchable,
+        units,
+        overlay_source,
+    ]
+    .iter()
+    .map(|path| path.to_string_lossy().into_owned())
+    .collect();
+    staged.extend(
+        drafts
+            .iter()
+            .map(|path| path.to_string_lossy().into_owned()),
+    );
+    let mut args = vec!["add".to_string(), "-A".to_string(), "--".to_string()];
     args.append(&mut staged);
     let args: Vec<&str> = args.iter().map(String::as_str).collect();
     git(root, &args)?;
@@ -343,8 +535,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         return Err(format!("owner check failed after adoption: {verdict}"));
     }
     report.push(verdict);
-    report.push(format!("adopted {} as {name} at {relative}", request.owner));
-    Ok(report)
+    Ok(())
 }
 
 /// Compiles that must agree before an owner is adopted. Before the executor
@@ -363,13 +554,36 @@ fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Stri
         Ok(crate::compiler::sha256::hex(&bytes))
     };
     let before = pin(&cc1)?;
-    let mut exact = 1;
-    for _ in 1..REPEAT_RUNS {
-        let work = tempfile::tempdir().map_err(|e| e.to_string())?;
-        if score_in(root, source, owner, span, Some(work.path()))?.differing == 0 {
-            exact += 1;
-        }
-    }
+    // The runs are independent compiles in private directories, so they
+    // share the cores rather than the clock: one adoption costs one compile
+    // of wall time per core, not thirty in a row.
+    let workers = std::thread::available_parallelism().map_or(1, |n| n.get().min(REPEAT_RUNS - 1));
+    let next = std::sync::atomic::AtomicUsize::new(1);
+    let results = std::thread::scope(|scope| {
+        let handles: Vec<_> = (0..workers)
+            .map(|_| {
+                scope.spawn(|| {
+                    let mut exact = 0;
+                    while next.fetch_add(1, std::sync::atomic::Ordering::Relaxed) < REPEAT_RUNS {
+                        let work = tempfile::tempdir().map_err(|e| e.to_string())?;
+                        if score_in(root, source, owner, span, Some(work.path()))?.differing == 0 {
+                            exact += 1;
+                        }
+                    }
+                    Ok::<usize, String>(exact)
+                })
+            })
+            .collect();
+        handles
+            .into_iter()
+            .map(|handle| {
+                handle
+                    .join()
+                    .map_err(|_| "repeat worker panicked".to_string())?
+            })
+            .collect::<Result<Vec<usize>, String>>()
+    })?;
+    let exact = 1 + results.iter().sum::<usize>();
     let after = pin(&cc1)?;
     if before != after {
         return Err(format!(

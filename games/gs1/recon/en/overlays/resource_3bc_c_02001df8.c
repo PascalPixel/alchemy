@@ -46,6 +46,32 @@ void Func_02006a16();
 void Func_02006a2e();
 void Func_02006a42();
 
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
 void Func_02001df8(s32 scene)
 {
     s32 state;
@@ -57,26 +83,26 @@ void Func_02001df8(s32 scene)
     Func_02006814();
     state = Func_020048b0(scene, 2);
     if (state == 0) {
-    Func_020068da(8375);
-    Func_0200692e(196608, 24576);
-    Func_02006948(24641536, -1, 9961472, 1);
+    Call1(Func_020068da, 8375);
+    Call2(Func_0200692e, 196608, 24576);
+    Call4(Func_02006948, 24641536, -1, 9961472, 1);
     Func_02006956();
     Func_0200684c(30);
     Func_0200691e(scene, 0);
-    Func_020054a8(0, 280, 200);
-    Func_0200689e(0, 98304, 49152);
-    Func_02005a00(0, 280, 152);
-    Func_02005a0c(0, 296, 152);
+    Call3(Func_020054a8, 0, 280, 200);
+    Call3(Func_0200689e, 0, 98304, 49152);
+    Call3(Func_02005a00, 0, 280, 152);
+    Call3(Func_02005a0c, 0, 296, 152);
     Func_0200688a(10);
     Func_020069c6();
-    Func_020069a8(-1, -1, -1, 0);
-    Func_02006984(0, 49152, 15);
+    Call4(Func_020069a8, -1, -1, -1, 0);
+    Call3(Func_02006984, 0, 49152, 15);
     Func_020069e8();
-    Func_020069ca(-1, -1, -1, 0);
+    Call4(Func_020069ca, -1, -1, -1, 0);
     Func_020069a4(0, 0, 15);
     Func_02006a08();
-    Func_020069ea(-1, -1, -1, 0);
-    Func_020069c6_a(0, 16384, 15);
+    Call4(Func_020069ea, -1, -1, -1, 0);
+    Call3(Func_020069c6_a, 0, 16384, 15);
     Func_020069be(scene, 0);
     Func_02005960(96, 40, 0);
     Func_020059ce(128, 40, 10);
@@ -91,7 +117,7 @@ void Func_02001df8(s32 scene)
     Func_02006a42(0, 0);
     Func_02004aaa(scene, 2);
     } else if (state == 1) {
-        Func_02006a16(0x20b6);
+        Call1(Func_02006a16, 0x20b6);
         Func_02006a2e(scene, 0);
     }
     Func_02004b24(state, scene, 2);

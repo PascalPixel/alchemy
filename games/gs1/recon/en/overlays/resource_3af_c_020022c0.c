@@ -88,6 +88,32 @@ void Func_020069f8();
 void Func_02006a04();
 void Func_02006a24();
 
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
 void Func_020022c0(void)
 {
     s32 base;
@@ -109,22 +135,22 @@ void Func_020022c0(void)
     p2 = Func_02006670(0, 15);
     Func_020065de(0);
     p4 = Func_0200657c();
-    Func_020065da(33608032);
+    Call1(Func_020065da, 33608032);
     Func_02006540(1);
-    Func_020065e6(33608512);
+    Call1(Func_020065e6, 33608512);
     Func_0200654c(1);
-    Func_0200666a(22, 11534336, 45613056);
+    Call3(Func_0200666a, 22, 11534336, 45613056);
     p10 = Func_02006610(22);
     *(u16 *)(p10 + 6) = 53248;
-    Func_02006682(21, 17301504, 43384832, 53248);
+    Call4(Func_02006682, 21, 17301504, 43384832, 53248);
     p12 = Func_02006628(21);
     *(u16 *)(p12 + 6) = 45056;
-    Func_0200669c(24, 12058624, 44040192, 45056);
-    Func_020066aa(25, 13238272, 45350912);
-    Func_020066b6(26, 16515072, 42336256);
-    Func_020066c2(27, 16777216, 44957696);
-    Func_020066d0(28, 11272192, 41418752);
-    Func_020066dc(29, 16777216, 40763392);
+    Call4(Func_0200669c, 24, 12058624, 44040192, 45056);
+    Call3(Func_020066aa, 25, 13238272, 45350912);
+    Call3(Func_020066b6, 26, 16515072, 42336256);
+    Call3(Func_020066c2, 27, 16777216, 44957696);
+    Call3(Func_020066d0, 28, 11272192, 41418752);
+    Call3(Func_020066dc, 29, 16777216, 40763392);
     p19 = Func_02006682_a(24);
     *(u8 *)((u8 *)(p19) + 99) = 0;
     p20 = Func_0200668e(25);
@@ -134,12 +160,12 @@ void Func_020022c0(void)
     p22 = Func_020066a4(27);
     *(u8 *)((u8 *)(p22) + 99) = 2;
     Func_02006714(20, 0, 0, 2);
-    Func_020066d6(24, 33605828);
-    Func_02006702(25, 33605828);
-    Func_0200670c(26, 33605808);
-    Func_02006714_a(27, 33605808);
-    Func_0200671e(28, 33605848);
-    Func_02006726(29, 33605848);
+    Call2(Func_020066d6, 24, 33605828);
+    Call2(Func_02006702, 25, 33605828);
+    Call2(Func_0200670c, 26, 33605808);
+    Call2(Func_02006714_a, 27, 33605808);
+    Call2(Func_0200671e, 28, 33605848);
+    Call2(Func_02006726, 29, 33605848);
     Func_020067ae(24, 3);
     Func_020067b6(25, 3);
     Func_020067be(26, 3);
@@ -175,25 +201,25 @@ void Func_020022c0(void)
     Func_02006838(31, 0, 0);
     Func_020067de(30);
     Func_0200677c();
-    Func_020067fe(0, 104857, 52428);
+    Call3(Func_020067fe, 0, 104857, 52428);
     p49 = Func_020067f4(0);
     *(u8 *)((u8 *)(p49) + 85) = 0;
-    Func_02006842(0, 216, 612);
-    Func_02006824(30, 104857, 52428);
-    Func_02006860(30, 196, 600);
-    Func_0200686c(30, 216, 600);
+    Call3(Func_02006842, 0, 216, 612);
+    Call3(Func_02006824, 30, 104857, 52428);
+    Call3(Func_02006860, 30, 196, 600);
+    Call3(Func_0200686c, 30, 216, 600);
     Func_0200685a(28);
     Func_020067b8(1);
-    Func_02006882(28, 104857, 52428);
-    Func_02006894_a(28, 33605768);
-    Func_02005f7a(30, 53248);
+    Call3(Func_02006882, 28, 104857, 52428);
+    Call2(Func_02006894_a, 28, 33605768);
+    Call2(Func_02005f7a, 30, 53248);
     Func_02003136();
     Func_02006868(10);
-    Func_020068b0_a(30, 33605768);
+    Call2(Func_020068b0_a, 30, 33605768);
     Func_020068c6(29);
     Func_020067f4_a(1);
-    Func_020068be(29, 104857, 52428);
-    Func_020068e6(29, 33605768);
+    Call3(Func_020068be, 29, 104857, 52428);
+    Call2(Func_020068e6, 29, 33605768);
     Func_02006894_b(20);
     Func_020069f8();
     Func_02006a04();

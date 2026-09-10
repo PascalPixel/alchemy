@@ -34,6 +34,32 @@ void Func_02004b30();
 void Func_02004b4c();
 void Func_02004b5c();
 
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
 void Func_02000a1c(void)
 {
     s32 i1;
@@ -45,25 +71,25 @@ void Func_02000a1c(void)
     for (i1 = 9; i1 >= 0; i1--) {
         Func_020049a4(8);
     }
-    Func_020049ae(8, 65536, 32768);
-    Func_020049d2(8, 88, 256);
-    Func_020049c8(0, 65536, 32768);
-    Func_020049f4(0, 120, 256);
+    Call3(Func_020049ae, 8, 65536, 32768);
+    Call3(Func_020049d2, 8, 88, 256);
+    Call3(Func_020049c8, 0, 65536, 32768);
+    Call3(Func_020049f4, 0, 120, 256);
     Func_02004a14(8, 1);
     Func_02004a46(0, 8, 0);
     Func_020049bc(10);
     Func_02004a2c(8, 3);
     Func_02004a3c(0, 3);
     Func_020049d2_a(20);
-    Func_02004a10(0, 131072, 65536);
-    Func_02004a1e(8, 131072, 65536);
-    Func_02004a42(0, 112, 256);
-    Func_02004a56(8, 96, 256);
+    Call3(Func_02004a10, 0, 131072, 65536);
+    Call3(Func_02004a1e, 8, 131072, 65536);
+    Call3(Func_02004a42, 0, 112, 256);
+    Call3(Func_02004a56, 8, 96, 256);
     Func_02004a76(0, 16);
     Func_02004a7e(8, 9);
     Func_02004a1c(10);
     Func_02004b30(72, 3);
     Func_02004b4c();
     Func_02004b5c();
-    Func_02004a0c(282);
+    Call1(Func_02004a0c, 282);
 }

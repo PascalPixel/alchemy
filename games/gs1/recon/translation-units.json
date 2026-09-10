@@ -14464,26 +14464,26 @@
       ]
     },
     {
-      "id": "retained-overlay-3ba-020016ec",
+      "id": "overlay-3ba-run-scene-3ba-020016ec",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3ba_c_020016ec.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3ba_020016ec.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {
-        "Func_0200549a": {
-          "address": "0x0200bd70",
-          "kind": "thumb"
-        },
-        "Func_0200549a_a": {
+        "Func_0200bd40": {
           "address": "0x0200bd40",
           "kind": "thumb"
         },
-        "Func_020054b4": {
-          "address": "0x0200bd78",
+        "Func_0200bc98": {
+          "address": "0x0200bc98",
           "kind": "thumb"
         },
-        "Func_020054b4_a": {
-          "address": "0x0200bc98",
+        "Func_0200bd70": {
+          "address": "0x0200bd70",
+          "kind": "thumb"
+        },
+        "Func_0200bd78": {
+          "address": "0x0200bd78",
           "kind": "thumb"
         }
       },
@@ -14492,7 +14492,7 @@
         {
           "address": "0x020016ec",
           "extent": 428,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -14973,26 +14973,26 @@
       ]
     },
     {
-      "id": "retained-overlay-3b0-02000e78",
+      "id": "overlay-3b0-run-scene-3b0-02000e78",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/resource_3b0_c_02000e78.c",
+      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3b0_02000e78.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b0",
       "absolute_symbols": {
-        "Func_020021ca": {
-          "address": "0x020092ec",
-          "kind": "thumb"
-        },
-        "Func_020021ca_a": {
+        "Func_02009244": {
           "address": "0x02009244",
           "kind": "thumb"
         },
-        "Func_0200227a": {
-          "address": "0x020092b4",
+        "Func_0200926c": {
+          "address": "0x0200926c",
           "kind": "thumb"
         },
-        "Func_0200227a_a": {
-          "address": "0x0200926c",
+        "Func_020092ec": {
+          "address": "0x020092ec",
+          "kind": "thumb"
+        },
+        "Func_020092b4": {
+          "address": "0x020092b4",
           "kind": "thumb"
         }
       },
@@ -15001,7 +15001,7 @@
         {
           "address": "0x02000e78",
           "extent": 552,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

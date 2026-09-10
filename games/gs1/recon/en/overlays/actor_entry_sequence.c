@@ -537,7 +537,13 @@ void FieldScene_RunActorEntrySequence(void)
      * constant after the store below rather than into the load-latency gap
      * ahead of it. Wrapper clones per call site, inline and out-of-line
      * argument spellings, pointer and direct forms of this store, and moving
-     * the base address earlier all leave it unchanged. Not adopted.
+     * the base address earlier all leave it unchanged. Later attempts add:
+     * routing the Func_02005d7c call through Call2, hoisting the actor
+     * constant to function scope, and taking the store through a named u8
+     * pointer -- all byte-identical to this file. Moving the base address
+     * assignment above the call is worse (24 halfwords, 28 wrong). The owner
+     * is size-exact with zero wrong instructions, so the residual is three
+     * scheduling ties, not a wrong shape. Not adopted.
      */
     sharedData = (s32)Data_02000240;
     *(u8 *)((sharedData + 0x22b)) = 3;

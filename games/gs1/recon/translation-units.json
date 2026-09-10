@@ -1078,6 +1078,30 @@
         "Data_02000240": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "Value_000000b5": {
+          "address": "0x000000b5",
+          "kind": "data"
+        },
+        "Value_000000b6": {
+          "address": "0x000000b6",
+          "kind": "data"
+        },
+        "Value_000000b7": {
+          "address": "0x000000b7",
+          "kind": "data"
+        },
+        "Value_000000b8": {
+          "address": "0x000000b8",
+          "kind": "data"
+        },
+        "Value_000000b9": {
+          "address": "0x000000b9",
+          "kind": "data"
+        },
+        "Value_000000ba": {
+          "address": "0x000000ba",
+          "kind": "data"
         }
       },
       "owners": [

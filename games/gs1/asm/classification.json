@@ -40,10 +40,17 @@
       "retention": "adjacent_section_alignment",
       "confidence": "proven",
       "evidence": [
-        "two_byte_zero_alignment"
+        "two_byte_zero_alignment",
+        "refused_assembler_padding"
       ],
       "expected_files": 331,
-      "expected_bytes": 662
+      "expected_bytes": 662,
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "assembler_padding",
+        "credit": "none",
+        "reason": "331 two-byte zero alignment halfwords, 662 bytes, byte-identical everywhere trivially"
+      }
     }
   ],
   "groups": [
@@ -235,13 +242,20 @@
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_width_dispatch_entries"
+        "fixed_width_dispatch_entries",
+        "refused_data_table_reconstruction_shape_like_linker_veneer"
       ],
       "expected_files": 1,
       "expected_bytes": 768,
       "files": [
         "080000c0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "data_table_not_authored_code",
+        "credit": "none",
+        "reason": "768 bytes of fixed-width dispatch entries at 0x080000c0; GS1-only (identical in gs1-ja); a table the build should generate from its source form, the same reconstruction shape as the veneer table"
+      }
     },
     {
       "kind": "runtime_thunk_bundle",
@@ -1009,7 +1023,8 @@
       "confidence": "proven",
       "evidence": [
         "registered_main_region_alignment_padding",
-        "byte_exact_directive_data"
+        "byte_exact_directive_data",
+        "refused_assembler_padding"
       ],
       "expected_files": 6,
       "expected_bytes": 12,
@@ -1020,7 +1035,13 @@
         "0801ca16",
         "08021dfa",
         "080c0ea6"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "assembler_padding",
+        "credit": "none",
+        "reason": "12 bytes of registered alignment padding"
+      }
     },
     {
       "kind": "executable_gap_continuation",
@@ -1900,7 +1921,8 @@
       "evidence": [
         "registered_main_region_literal_pool",
         "pc_relative_reference_consumers",
-        "byte_exact_directive_data"
+        "byte_exact_directive_data",
+        "refused_literal_pool_data"
       ],
       "expected_files": 5,
       "expected_bytes": 144,
@@ -1910,7 +1932,13 @@
         "080bf1e8",
         "080dddb8",
         "080e5790"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "assembler_data_not_authored_code",
+        "credit": "none",
+        "reason": "five registered literal pools, 144 bytes; pool words the assembler emits for their functions"
+      }
     },
     {
       "kind": "deliberate_dma_kick_macro",

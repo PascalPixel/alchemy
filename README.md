@@ -9,11 +9,12 @@
 
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-Alchemy is an unofficial clean-room reconstruction of _Golden Sun_ and
-_Golden Sun: The Lost Age_ for the Game Boy Advance. It preserves all six
-Japanese and European-language editions of each game from the original
-cartridges, with Japanese as the canonical source base and the English
-_Golden Sun_ release as the first complete derived build target.
+Alchemy is an unofficial fan project rebuilding _Golden Sun_ and _Golden Sun:
+The Lost Age_ for the Game Boy Advance from the ground up, without any of the
+original makers' files. It preserves all six Japanese and European editions of
+each game as they shipped on the cartridge. The Japanese release is treated as
+the original and the others as its translations; English _Golden Sun_ is the
+first edition rebuilt in full.
 
 ## Status: 50.10% DONE
 

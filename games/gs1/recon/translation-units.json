@@ -1638,10 +1638,10 @@
         {
           "address": "0x02000d3c",
           "extent": 6700,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
-      "source": "games/gs1/recon/en/overlays/branching_formation_presentation.c",
+      "source": "games/gs1/src/overlays/scene/branching_formation_scene/run_branching_formation_presentation.c",
       "overlay": "resource_391",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
@@ -1816,6 +1816,74 @@
         "Func_02002c14": {
           "address": "0x0200ac14",
           "kind": "thumb"
+        },
+        "Data_0200b384": {
+          "address": "0x0200b384",
+          "kind": "data"
+        },
+        "Data_0200b388": {
+          "address": "0x0200b388",
+          "kind": "data"
+        },
+        "Data_0200b38c": {
+          "address": "0x0200b38c",
+          "kind": "data"
+        },
+        "Data_0200b390": {
+          "address": "0x0200b390",
+          "kind": "data"
+        },
+        "Data_0200b394": {
+          "address": "0x0200b394",
+          "kind": "data"
+        },
+        "Data_0200b398": {
+          "address": "0x0200b398",
+          "kind": "data"
+        },
+        "Data_0200a7c9": {
+          "address": "0x0200a7c9",
+          "kind": "data"
+        },
+        "Data_0200a975": {
+          "address": "0x0200a975",
+          "kind": "data"
+        },
+        "Data_0200aad9": {
+          "address": "0x0200aad9",
+          "kind": "data"
+        },
+        "Data_0200ae20": {
+          "address": "0x0200ae20",
+          "kind": "data"
+        },
+        "Data_0200ae54": {
+          "address": "0x0200ae54",
+          "kind": "data"
+        },
+        "Data_0200ae88": {
+          "address": "0x0200ae88",
+          "kind": "data"
+        },
+        "Data_0200aebc": {
+          "address": "0x0200aebc",
+          "kind": "data"
+        },
+        "Data_0200af48": {
+          "address": "0x0200af48",
+          "kind": "data"
+        },
+        "Data_0200af6c": {
+          "address": "0x0200af6c",
+          "kind": "data"
+        },
+        "Data_0200afc8": {
+          "address": "0x0200afc8",
+          "kind": "data"
+        },
+        "Data_0200b024": {
+          "address": "0x0200b024",
+          "kind": "data"
         }
       }
     },

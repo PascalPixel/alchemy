@@ -81,6 +81,24 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
+extern s32 Data_0200b384;
+extern s32 Data_0200b388;
+extern s32 Data_0200b38c;
+extern s32 Data_0200b390;
+extern s32 Data_0200b394;
+extern s32 Data_0200b398;
+extern u8 Data_0200a7c9[];
+extern u8 Data_0200a975[];
+extern u8 Data_0200aad9[];
+extern u8 Data_0200ae20[];
+extern u8 Data_0200ae54[];
+extern u8 Data_0200ae88[];
+extern u8 Data_0200aebc[];
+extern u8 Data_0200af48[];
+extern u8 Data_0200af6c[];
+extern u8 Data_0200afc8[];
+extern u8 Data_0200b024[];
+
 void FieldScene_RunBranchingFormationPresentation(void)
 {
     u8 *record;
@@ -90,6 +108,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     s32 flag;
     s32 motion_action;
     s32 *party_flag;
+    s32 *formation_flag;
+    s32 *sequence_flag;
+    s32 *finish_flag;
     s32 reset_action;
     s32 *effect_phase;
     s32 *formation_phase;
@@ -101,7 +122,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call4(Func_02002cec, -1, -1, -1, 0);
     Func_02002b84(1);
     Call4(Func_02002cec, 0xf60000, -1, 0x25c0000, 0);
-    flag_work = (s32 *)0x200b394;
+    flag_work = &Data_0200b394;
     flag = Value1(Func_02002bf4, 3);
     *flag_work = flag;
     record = Func_02002c24(13);
@@ -122,7 +143,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002bec((s32)record, 0);
     record = Func_02002c24(21);
     Func_02002bec((s32)record, 0);
-    entry_action = 0x200b024;
+    entry_action = (s32)Data_0200b024;
     Func_02002c34(17, entry_action);
     Func_02002c34(18, entry_action);
     Func_02002c34(19, entry_action);
@@ -152,8 +173,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Func_02002c7c(2, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
-    Call2(Func_02002c34, 1, 0x200ae20);
-    Func_02002c34(2, 0x200ae54);
+    Call2(Func_02002c34, 1, (s32)Data_0200ae20);
+    Func_02002c34(2, (s32)Data_0200ae54);
     if (*flag_work != 0) {
         Call3(Func_02002c2c, 3, 0x9999, 0x4ccc);
         {
@@ -163,7 +184,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
                 Func_02002c7c(3, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
             }
         }
-        Func_02002c34(3, 0x200ae88);
+        Func_02002c34(3, (s32)Data_0200ae88);
     }
     Func_02002c3c(2);
     Func_02002780(2, 0x2000, 40);
@@ -194,7 +215,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002780(1, 0x4000, 20);
     Func_02002780(0, 0x6000, 30);
     Func_02002780(1, 0x6000, 20);
-    Call3(Func_02002780, 0, 0xe000, 30);
+    Func_02002780(0, 0xe000, 30);
     Func_02002ca4(2, 2);
     Call3(Func_02002cdc, 2, 0x100, 0);
     Func_02002c04(40);
@@ -206,14 +227,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call2(Func_02002cf4, 0x7fff, 0);
     Func_02002cfc(1);
     Func_02002b84(1);
-    *(s32 *)0x0200b398 = 1;
-    Value2(Func_02002b8c, 0x200a7c9, 0xc80);
+    Data_0200b398 = 1;
+    Value2(Func_02002b8c, (s32)Data_0200a7c9, 0xc80);
     Func_02002b84(20);
     Call2(Func_02002cf4, 0x405210, 1);
     Call2(Func_02002cf4, 0x10000, 2);
     Func_02002cfc(120);
     Func_02002b84(60);
-    motion_action = 0x200aebc;
+    motion_action = (s32)Data_0200aebc;
     Func_02002c34(0, motion_action);
     Func_02002c34(1, motion_action);
     Func_02002c34(2, motion_action);
@@ -221,7 +242,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c04(100);
     Func_02002768(1, 20);
     Func_02002768(2, 40);
-    if (*(s32 *)0x0200b394 != 0) {
+    if (Data_0200b394 != 0) {
         Func_02002c04(40);
         Call3(Func_02002cdc, 3, 0x102, 0);
         Func_02002c04(40);
@@ -230,7 +251,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
     Func_02002c04(20);
-    party_flag = (s32 *)0x200b394;
+    party_flag = &Data_0200b394;
     if (*party_flag != 0) {
         value = 128;
         record = Func_02002c24(3);
@@ -238,7 +259,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Func_02002c04(10);
         Func_02002c2c(3, (value << 10), (value << 10));
         Call3(Func_02002c6c, 3, -2, 0);
-        Call2(Func_02002c34, 3, 0x200af48);
+        Call2(Func_02002c34, 3, (s32)Data_0200af48);
         record = Func_02002c24(3);
         Func_02002bec((s32)record, 0);
         Func_02002c84(3, 19);
@@ -249,7 +270,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *(s32 *)((s32)record + 40) = (value << 10);
     Func_02002c04(10);
     Call3(Func_02002c2c, 0, (value << 10), (value << 10));
-    reset_action = 0x200af48;
+    reset_action = (s32)Data_0200af48;
     Func_02002c34(0, reset_action);
     record = Func_02002c24(0);
     Func_02002bec((s32)record, 0);
@@ -270,20 +291,19 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c34(2, reset_action);
     record = Func_02002c24(2);
     Func_02002bec((s32)record, 0);
-    value = 0;
     Func_02002c84(2, 19);
-    *(s32 *)0x0200b398 = value;
+    Data_0200b398 = 0;
     Func_02002c04(160);
-    Value1(Func_02002b94, 0x200a7c9);
+    Value1(Func_02002b94, (s32)Data_0200a7c9);
     Func_02002c04(120);
     Call2(Func_02002cf4, 0x406218, 1);
     Func_02002cfc(60);
     Func_02002b84(60);
-    *(s32 *)0x0200b388 = value;
-    effect_phase = (s32 *)0x200b38c;
-    *(s32 *)0x0200b384 = 0x800000;
+    Data_0200b388 = 0;
+    effect_phase = &Data_0200b38c;
+    Data_0200b384 = 0x800000;
     *effect_phase = 1;
-    Value2(Func_02002b8c, 0x200a975, 0xc80);
+    Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
     Func_02002c04(180);
     Func_02002d24(21);
     Func_02002768(1, 80);
@@ -317,7 +337,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    formation_phase = (s32 *)0x200b38c;
+    formation_phase = &Data_0200b38c;
     *formation_phase = 3;
     *(u8 *)(Func_02002c24(0) + 35) &= 254;
     *(u8 *)(Func_02002c24(1) + 35) &= 254;
@@ -328,19 +348,19 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002cd4(2, 3);
     value = 0;
     Func_02002cd4(3, 3);
-    *(s32 *)0x0200b390 = value;
-    Value2(Func_02002b8c, 0x200aad9, 0xc80);
+    Data_0200b390 = value;
+    Value2(Func_02002b8c, (s32)Data_0200aad9, 0xc80);
     Func_02002d24(220);
     *(u8 *)(Func_02002c24(13) + 35) &= 254;
     Func_02002cd4(13, 2);
     Call3(Func_02002c7c, 13, 0xfd0000, 0x25b0000);
-    formation_action = 0x200af6c;
+    formation_action = (s32)Data_0200af6c;
     Func_02002c34(13, formation_action);
     *(u8 *)(Func_02002c24(14) + 35) &= 254;
     Func_02002cd4(14, 2);
     Call3(Func_02002c7c, 14, 0xe90000, 0x2750000);
     Func_02002c34(14, formation_action);
-    if (*(s32 *)0x0200b394 != 0) {
+    if (Data_0200b394 != 0) {
         *(u8 *)(Func_02002c24(15) + 35) &= 254;
         Func_02002cd4(15, 2);
         Call3(Func_02002c7c, 15, 0xcf0000, 0x2610000);
@@ -353,10 +373,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (*formation_phase != 0) {
         do {
             Func_02002b84(1);
-        } while (*formation_phase != 0);
+        } while (Data_0200b38c != 0);
     }
     Call1(Func_02002c04, 0x12c);
-    Value1(Func_02002b94, 0x200a975);
+    Value1(Func_02002b94, (s32)Data_0200a975);
     Func_02002c04(120);
     Func_02002d24(17);
     Call2(Func_02002cf4, 0x10000, 1);
@@ -364,16 +384,16 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002b84(60);
     Func_02002c44(13);
     Func_02002c44(14);
-    party_flag = (s32 *)0x200b394;
-    if (*party_flag != 0) {
+    formation_flag = &Data_0200b394;
+    if (*formation_flag != 0) {
         Func_02002c44(15);
     }
     Func_02002c44(16);
     Func_02002b84(1);
-    finish_action = 0x200afc8;
+    finish_action = (s32)Data_0200afc8;
     Func_02002c34(13, finish_action);
     Func_02002c34(14, finish_action);
-    if (*party_flag != 0) {
+    if (*formation_flag != 0) {
         Func_02002c34(15, finish_action);
     }
     Func_02002c4c(16, finish_action);
@@ -391,7 +411,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c04(20);
     Func_02002ca4(2, 2);
     Func_02002768(2, 20);
-    if (*party_flag != 0) {
+    if (*formation_flag != 0) {
         Func_02002ca4(3, 2);
         Func_02002c04(10);
         Call1(Func_02002cb4, 0x1488);
@@ -412,12 +432,12 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c94(1, 6, 0);
     Call3(Func_02002c6c, 1, -3, 0);
     Func_02002c84(1, 1);
-    Call3(Func_02002780, 1, 0x4000, 60);
+    Func_02002780(1, 0x4000, 60);
     Func_02002768(1, 20);
     Func_02002c9c(1, 2);
     Func_02002768(1, 10);
     Func_02002ca4(0, 3);
-    Call3(Func_02002780, 1, 0x2000, 20);
+    Func_02002780(1, 0x2000, 20);
     Call3(Func_02002cdc, 1, 0x101, 0);
     Func_02002c04(40);
     Func_02002780(1, 0x6000, 40);
@@ -431,7 +451,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c94(1, 4, 0);
     Func_02002c04(20);
     Func_02002768(1, 20);
-    if (*party_flag != 0) {
+    if (*formation_flag != 0) {
         Call3(Func_02002cdc, 3, 0x100, 0);
         Func_02002c04(60);
         Func_02002ca4(3, 2);
@@ -443,7 +463,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Func_02002c94(3, 4, 0);
         Call3(Func_02002c6c, 3, -2, 0);
         Func_02002c84(3, 1);
-        Call3(Func_02002780, 3, 0xe000, 60);
+        Func_02002780(3, 0xe000, 60);
         Func_02002ca4(3, 2);
         Func_02002c04(20);
         Func_02002768(3, 20);
@@ -474,9 +494,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002cd4(0, 2);
     {
         u8 *record = Func_02002c24(0);
-        u8 flags = record[35];
+        u8 flags = (u8)(value | record[35]);
 
-        record[35] = (u8)(flags | value);
+        record[35] = flags;
     }
     record = Func_02002c24(0);
     Func_02002bec((s32)record, 1);
@@ -486,7 +506,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call3(Func_02002cdc, 0, 0x105, 0);
     Call3(Func_02002cdc, 2, 0x105, 0);
     Func_02002c04(60);
-    Call3(Func_02002780, 0, 0xa000, 20);
+    Func_02002780(0, 0xa000, 20);
     Func_02002c8c(1, 3);
     Func_02002c8c(0, 3);
     Func_02002780(0, 0x6000, 10);
@@ -514,16 +534,16 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Func_02002c9c(1, 2);
         Func_02002cc4(1, 0);
     }
-    Call3(Func_02002780, 1, 0x4000, 10);
+    Func_02002780(1, 0x4000, 10);
     Func_02002c8c(1, 4);
     Func_02002768(1, 20);
-    Call3(Func_02002780, 2, 0xc000, 10);
+    Func_02002780(2, 0xc000, 10);
     Func_02002c8c(2, 3);
     Func_02002768(2, 10);
-    if (*(s32 *)0x0200b394 != 0) {
+    if (Data_0200b394 != 0) {
         Func_02002ca4(3, 2);
         Func_02002780(3, 0, 20);
-        Call3(Func_02002780, 3, 0x2000, 10);
+        Func_02002780(3, 0x2000, 10);
         Func_02002c84(3, 4);
         Func_02002768(3, 10);
     } else {
@@ -542,14 +562,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call3(Func_02002cdc, 0, 0x102, 0);
     Call3(Func_02002cdc, 1, 0x102, 0);
     Func_02002c04(80);
-    Call3(Func_02002780, 2, 0xe000, 10);
+    Func_02002780(2, 0xe000, 10);
     Func_02002c9c(2, 2);
     Func_02002768(2, 20);
     Call3(Func_02002ccc, 1, 0x2000, 0);
     Func_02002780(0, 0xa000, 40);
     Func_02002ccc(1, (value << 7), 0);
     Func_02002780(0, 0x6000, 10);
-    Call3(Func_02002780, 2, 0xc000, 10);
+    Func_02002780(2, 0xc000, 10);
     Func_02002c8c(2, 3);
     Func_02002768(2, 10);
     Call2(Func_02002ce4, 1, 0x102);
@@ -563,7 +583,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c84(2, 3);
     Func_02002768(2, 10);
     Func_02002ca4(1, 2);
-    Call3(Func_02002780, 1, 0x2000, 10);
+    Func_02002780(1, 0x2000, 10);
     Value2(Func_02002cbc, 1, 0);
     Func_02002ccc(0, 0xa000, 0);
     if (Value2(Func_02002c1c, 0, 0) == 0) {
@@ -579,11 +599,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call2(Func_02002cf4, 0x406218, 1);
     Func_02002cfc(60);
     Func_02002b84(60);
-    *(s32 *)0x0200b388 = 0;
-    sequence_phase = (s32 *)0x200b38c;
-    *(s32 *)0x0200b384 = 0x800000;
+    Data_0200b388 = 0;
+    Data_0200b384 = 0x800000;
+    sequence_phase = &Data_0200b38c;
     *sequence_phase = 1;
-    Value2(Func_02002b8c, 0x200a975, 0xc80);
+    Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
     Func_02002c04(80);
     Call2(Func_02002c9c, 0, 2);
     Func_02002c9c(1, 2);
@@ -595,8 +615,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002768(2, 10);
     Func_02002780(1, 0xc000, 10);
     Func_02002780(0, 0xc000, 10);
-    party_flag = (s32 *)0x200b394;
-    if (*party_flag != 0) {
+    sequence_flag = &Data_0200b394;
+    if (*sequence_flag != 0) {
         Func_02002780(3, 0xc000, 10);
     }
     *(u8 *)(Func_02002c24(0) + 35) &= 254;
@@ -610,11 +630,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *sequence_phase = 2;
     Func_02002d24(220);
     Call3(Func_02002c7c, 13, 0xfd0000, 0x25b0000);
-    formation_action = 0x200af6c;
+    formation_action = (s32)Data_0200af6c;
     Func_02002c34(13, formation_action);
     Call3(Func_02002c7c, 14, 0xe90000, 0x2750000);
     Func_02002c34(14, formation_action);
-    if (*party_flag != 0) {
+    if (*sequence_flag != 0) {
         Call3(Func_02002c7c, 15, 0xcf0000, 0x2610000);
         Func_02002c34(15, formation_action);
     }
@@ -624,7 +644,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *sequence_phase = 3;
     do {
         Func_02002b84(1);
-    } while (*sequence_phase != 0);
+    } while (Data_0200b38c != 0);
     Func_02002768(11, 80);
     Func_02002768(12, 20);
     Call3(Func_02002cdc, 0, 0x101, 0);
@@ -720,21 +740,21 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c04(60);
     Func_02002cc4(12, 0);
     Func_02002cc4(11, 0);
-    Value1(Func_02002b94, 0x200a975);
+    Value1(Func_02002b94, (s32)Data_0200a975);
     Func_02002c04(80);
     Call2(Func_02002cf4, 0x10000, 1);
     Func_02002cfc(60);
     Func_02002b84(80);
     Func_02002c44(13);
     Func_02002c44(14);
-    party_flag = (s32 *)0x200b394;
+    finish_flag = &Data_0200b394;
     Func_02002c44(15);
     Func_02002c44(16);
     Func_02002b84(1);
-    finish_action = 0x200afc8;
+    finish_action = (s32)Data_0200afc8;
     Func_02002c34(13, finish_action);
     Func_02002c34(14, finish_action);
-    if (*party_flag != 0) {
+    if (*finish_flag != 0) {
         Func_02002c34(15, finish_action);
     }
     Func_02002c4c(16, finish_action);
@@ -749,9 +769,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *(u8 *)(Func_02002c24(2) + 35) |= value;
     {
         u8 *record = Func_02002c24(3);
-        u8 flags = record[35];
+        u8 flags = (u8)(value | record[35]);
 
-        record[35] = (u8)(flags | value);
+        record[35] = flags;
     }
     Func_02002ca4(2, 2);
     Func_02002780(2, 0xe000, 10);
@@ -769,7 +789,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Call3(Func_02002cdc, 2, 0x101, 0);
             Call3(Func_02002cdc, 3, 0x101, 0);
             Func_02002c04(40);
-            Call3(Func_02002780, 1, 0x4000, 20);
+            Func_02002780(1, 0x4000, 20);
             Func_02002768(1, 10);
             Func_02002780(2, 0xc000, 20);
             Func_02002780(2, 0xe000, 20);
@@ -782,7 +802,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Call3(Func_02002cdc, 2, 0x102, 0);
             Call3(Func_02002cdc, 3, 0x102, 0);
             Func_02002c04(40);
-            Call3(Func_02002780, 1, 0x4000, 20);
+            Func_02002780(1, 0x4000, 20);
             Call1(Func_02002cb4, 0x14b4);
             Func_02002768(1, 20);
             Func_02002c8c(2, 3);
@@ -798,7 +818,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call1(Func_02002cb4, 0x14b6);
     Func_02002768(1, 10);
     Call3(Func_02002ccc, 1, 0x4000, 0);
-    Call3(Func_02002780, 0, 0x6000, 20);
+    Func_02002780(0, 0x6000, 20);
     Func_02002c84(1, 3);
     Func_02002c8c(0, 3);
     Func_02002c04(10);
@@ -811,7 +831,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Func_02002c04(40);
         Func_02002780(2, 0xe000, 10);
         Func_02002768(2, 10);
-        if (*party_flag != 0) {
+        if (*finish_flag != 0) {
             Func_02002780(3, 0, 10);
             Func_02002c9c(3, 3);
             Func_02002768(3, 20);
@@ -826,8 +846,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Call3(Func_02002cdc, 1, 0x105, 0);
         Func_02002c04(120);
         Func_02002768(2, 40);
-        if (*(s32 *)0x0200b394 != 0) {
-            Call3(Func_02002780, 3, 0x2000, 10);
+        if (Data_0200b394 != 0) {
+            Func_02002780(3, 0x2000, 10);
             Func_02002c8c(3, 4);
             Func_02002768(3, 10);
         } else {
@@ -835,7 +855,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         }
         Func_02002c04(60);
         Func_02002ca4(2, 2);
-        if (*(s32 *)0x0200b394 != 0) {
+        if (Data_0200b394 != 0) {
             Func_02002780(2, 0xa000, 40);
             Func_02002780(2, 0xe000, 20);
         }
@@ -857,7 +877,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002c8c(2, 3);
     Call1(Func_02002cb4, 0x14bf);
     Func_02002768(2, 20);
-    if (*party_flag != 0) {
+    if (*finish_flag != 0) {
         Func_02002780(3, 0, 10);
         Func_02002c9c(3, 1);
         Func_02002768(3, 20);
@@ -872,8 +892,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Call3(Func_02002cdc, 2, 0x105, 0);
     Func_02002c04(80);
     Func_02002768(2, 40);
-    if (*(s32 *)0x0200b394 != 0) {
-        Call3(Func_02002780, 3, 0x2000, 20);
+    if (Data_0200b394 != 0) {
+        Func_02002780(3, 0x2000, 20);
         Func_02002c84(3, 4);
         Func_02002768(3, 40);
     } else {
@@ -911,7 +931,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     Func_02002c74(2);
     Func_02002c7c(2, 0, 0);
-    if (*(s32 *)0x0200b394 != 0) {
+    if (Data_0200b394 != 0) {
         Func_02002c84(3, 2);
         {
             u8 *record = Record1(Func_02002c24, 0);

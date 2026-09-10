@@ -56,13 +56,37 @@
  *     plain `default:` alone would narrow the range test to 3.
  *
  * Residual: the instruction multiset is identical to the reference
- * (wrong_instructions=0) and the extent matches exactly at 1468 bytes; nine
- * halfwords differ, all from three local scheduling swaps where an
- * independent `movs` is issued between a `lsls`/`add` pair instead of after
- * it (the 0x05000000 materialisations at the grey-ramp loop and the palette
- * copy, and the work + 0x7080 materialisation ahead of the particle loop).
- * No source spelling tried here moved those three; they are a scheduling
- * decision, not a structural disagreement.
+ * (wrong_instructions=0) and the extent matches exactly at 1468 bytes; seven
+ * halfwords differ, from two remaining interleaves where the reference issues
+ * an independent instruction between the two halves of a constant
+ * materialisation instead of after it (the 0x05000000 at the palette copy,
+ * and the work + 0x7080 ahead of the particle loop).
+ *
+ * These are NOT a scheduling decision, contrary to the earlier note here and
+ * to the scheduling-floor class the triage assigns.  Recompiling this owner
+ * with -fno-schedule-insns and -fno-schedule-insns2 leaves the order
+ * unchanged, so neither scheduling pass produces it; the order comes from RTL
+ * emission, which source structure controls.  The grey-ramp loop was closed
+ * on that basis by writing its initialisation as a comma expression with the
+ * counter first, `for (i = 0, pal = (u16 *)0x05000000; ...)`, which put the
+ * counter assignment between the two halves of the pointer constant and took
+ * the residual from nine halfwords to seven.  Hoisting the callee, the source
+ * pointer, and the destination out of the palette copy were each tried for
+ * the second interleave and none moved it; the destination-comma form
+ * regressed badly.  The remaining two want the same treatment as the first,
+ * not a compiler explanation.
+ *
+ * This owner is the exception in its class, not evidence against the class.
+ * All twenty-five scheduling-floor owners were compiled with both scheduling
+ * passes disabled: this one alone is unchanged, and the other twenty-four do
+ * change, so the schedulers really are producing their order.  Disabling the
+ * schedulers also moves those owners further from the reference rather than
+ * closer, measured on 0800383c (2 to 8 differing halfwords), 080fb670 (2 to
+ * 10, and the extent shrinks from 32 to 28), 080974d8 (2 to 19) and 08021e28
+ * (unchanged at 2).  The shipped code was therefore built with scheduling on,
+ * the canonical route is right for them, and scheduling-floor is an accurate
+ * label everywhere except here.  Do not read the fix below as a class-wide
+ * method.
  *
  * Callee spellings follow the exact sibling: plain Func_<address> for every
  * target the owner register has no distinct name for.  `alchemy inspect`
@@ -191,8 +215,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         Func_080e0524((s32)&Value_0000007d, SHEET, 1, 1);
         Func_080e0524((s32)&Value_00000073, aux, 0, 0);
         if (mode == 6) {
-            pal = (u16 *)0x05000000;
-            for (i = 0; i != 64; i++) {
+            for (i = 0, pal = (u16 *)0x05000000; i != 64; i++) {
                 lum = i / 4;
                 *pal = (u16)(((lum << 10) | (lum << 5)) | lum);
                 pal++;

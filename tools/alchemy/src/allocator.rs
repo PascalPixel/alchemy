@@ -4,9 +4,10 @@ use crate::compiler::{
     routing::{cflags_for_target_source, CompilerTarget},
     source_paths::{SourceOwner, SourcePaths},
 };
+use psynergy::process::run as run_tool;
 use std::fs;
 use std::path::Path;
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
 #[cfg(test)]
 mod tests {
@@ -120,19 +121,10 @@ fn default_source(repo: &Path, owner: SourceOwner) -> Result<String, String> {
         |path| path.to_string_lossy().into_owned(),
     ))
 }
+/// The compiler runs through the shared tool executor so its dumps come from
+/// the same address-stable invocation production compiles use.
 fn checked(program: &Path, args: &[String], cwd: &Path) -> Result<(), String> {
-    let output = Command::new(program)
-        .args(args)
-        .current_dir(cwd)
-        .output()
-        .map_err(|e| format!("{}: {e}", program.display()))?;
-    if output.status.success() {
-        Ok(())
-    } else {
-        Err(format!(
-            "{} failed:\n{}",
-            program.display(),
-            String::from_utf8_lossy(&output.stderr)
-        ))
-    }
+    let mut command = vec![program.to_string_lossy().into_owned()];
+    command.extend(args.iter().cloned());
+    run_tool(&command, cwd).map(|_| ())
 }

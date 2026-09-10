@@ -19,7 +19,8 @@
         "fixed_ldr_r4_bx_r4_literal",
         "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
         "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
-        "callers_reach_targets_by_in_range_bl_entry_point_table_generator_unidentified"
+        "callers_reach_targets_by_in_range_bl_entry_point_table_generator_unidentified",
+        "reconstruction_task_table_data_writer_and_reader_not_a_label"
       ],
       "expected_files": 608,
       "expected_bytes": 4864,
@@ -27,9 +28,10 @@
         "scanned": "2026-09-10",
         "cross_rom": "259 of 608 entries byte-identical across GS1 editions only; one 8-byte chance hit in GS2",
         "verdict": "not_toolchain_origin_unidentified",
-        "credit": "none",
+        "credit": "none_until_reconstructed",
         "reason": "provably not GCC 2.96 Thumb output and provably not a GNU ld 2.10 stub (Kiki, battle-loop lane, 2026-09-10: arm.md:6047-6055 sibcall expanders are TARGET_ARM only, Thumb calls are bl _call_via_rN; binutils 2.10 bfd/elf32-arm.h:311-343 stubs use r12 or bx pc;nop;b, R_ARM_THM_PC22 overflow at :1324-1395 returns bfd_reloc_overflow); callers reach the targets by plain bl within range, so these are an entry-point table from an unidentified build step; not proven handwritten; whether a regenerable table counts as done is Pascal's pending question",
-        "previous_origin": "linker"
+        "previous_origin": "linker",
+        "reconstruction_task": "Pascal 2026-09-10: if Camelot had table data and a way to encode and read it, we make the same source — the data, the writer, the reader. 608 stable eight-byte entry points (ldr r4,[pc]; bx r4; .word target|1), reached by plain in-range bl from callers, provably not ld 2.10 and not GCC 2.96; a build step or hand-maintained table. Stays uncredited until that source form exists and the build regenerates the 4,864 bytes."
       }
     },
     {
@@ -56,7 +58,8 @@
         "scheduled_math_and_clear_kernels",
         "compiler_runtime_division",
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
-        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+        "no_msr_mrs_template_arm_md"
       ],
       "expected_files": 1,
       "expected_bytes": 5120,
@@ -192,8 +195,9 @@
         "subregion_credit": {
           "library": "decompressor 152, word_copy_kernel_arm 120, irq_handler_table 56 and audio_work_area_zero_init 1424 (tables): 1,752 bytes, all GS2-identical",
           "handwritten_arm": "irq_entry 224 (mrs/msr CPSR), gba startup is its own kind",
-          "pending": "audio_mixer_arm 960, audio_format_and_wave_helpers_arm 780, scheduled_math_clear_and_transform_kernels 616, division_runtime 576 (ARM, not agscc libgcc), audio_channel_update_thumb 196, audio_mode_bridge_thumb 16: absent from GS2 in any form, so the cross-game identity that makes the rest a library is missing; ARM-mode impossibility alone is recorded but Beans holds credit pending Pascal",
-          "not_credited": "none beyond pending"
+          "not_credited": "none beyond pending",
+          "handwritten": "irq_entry 224 (mrs/msr), scheduled_math_clear_and_transform_kernels 616, division_runtime 576, audio_mixer_arm 960, audio_format_and_wave_helpers_arm 780: ARM bodies, GS1-only, hand-coded kernels; 08000770.s has 919 instructions, 117 labels, 20 entry symbols and 19 comments and reads as source; credit=handwritten under Pascal's ruling (3,156 bytes). audio_channel_update_thumb 196 and audio_mode_bridge_thumb 16: the bridge is a single-function Thumb->ARM switch (deliberate_performance argument), credit=handwritten with it (212 bytes).",
+          "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written."
         },
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
@@ -291,14 +295,22 @@
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_software_interrupt_instruction"
+        "fixed_software_interrupt_instruction",
+        "no_swi_template_arm_md",
+        "gs2_identical_trivially_short"
       ],
       "expected_files": 2,
       "expected_bytes": 16,
       "files": [
         "08006864",
         "08006870"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "withheld_file_not_source_form",
+        "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
+        "file_check": "08006864.s carries no symbol or label, only five instructions after .thumb; fix the file (named entry points for the two wrappers) before credit; 08006870.s is fine"
+      }
     },
     {
       "kind": "deliberate_performance",
@@ -570,7 +582,8 @@
         "byte_exact_reconstruction",
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "byte_identical_in_all_six_gs2_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
-        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+        "gs1_only_region_080155d0_withheld_no_comments"
       ],
       "expected_files": 7,
       "expected_bytes": 2652,
@@ -621,7 +634,13 @@
         "credit_basis": "2,652 bytes; 7 regions, 2,604 ARM instruction bytes; 3 exact and 3 masked GS2-identical",
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "1,860 bytes (3 exact + 3 masked of 2,652)",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "handwritten": {
+          "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
+          "regions": "080155d0 792 bytes is the only GS1-only region",
+          "credit": "withheld_file_not_source_form",
+          "file_check": "196 ARM instructions, 21 labels, zero comments; a decompressor of this size needs its comments before it reads as source"
+        }
       }
     },
     {
@@ -635,7 +654,10 @@
         "fixed_irq_and_system_stack_setup",
         "approved_compiler_thumb_only",
         "byte_exact_reconstruction",
-        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "no_msr_mrs_template_arm_md",
+        "gs1_only_no_library_match",
+        "startup_mode_switch_and_stack_setup_hand_idiom"
       ],
       "expected_files": 1,
       "expected_bytes": 68,
@@ -644,9 +666,10 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "handwritten_proven_not_compiler",
-        "credit_basis": "68 bytes; ARM startup: msr CPSR_fc mode switches and stack setup have no C expression; GS1-only",
-        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
+        "credit": "handwritten",
+        "credit_basis": "68 bytes: (1) ARM body under -mthumb (arm.c:8806-8830) and no msr/mrs template anywhere in arm.md; (2) GS1-only; (3) supervisor/system mode switch, stack pointers and IRQ vector install",
+        "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
+        "file_check": "executable_gaps/080003c0.s: Entry_080003c0, mnemonics, four pool words; reads as source"
       }
     },
     {
@@ -1600,7 +1623,10 @@
         "approved_non_pic_thumb_route_has_no_local_label_address_materialization_pattern",
         "gcc_2_96_movaddr_is_target_arm_only_and_thumb_pc_add_address_pattern_requires_pic",
         "generic_thumb_addsi3_cannot_allocate_pc_as_an_ordinary_c_operand",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_branch_on_shift_carry_cbranchsi4_arm_md_5152_5202",
+        "gs1_only_no_library_match",
+        "carry_driven_sine_table_lookup_hand_idiom"
       ],
       "expected_files": 2,
       "expected_bytes": 568,
@@ -1627,7 +1653,14 @@
           "kind": "quarter_sine_table_u16",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten",
+        "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
+        "credit_basis": "568 bytes: (1) Kiki: every Thumb conditional branch is cbranchsi4 (arm.md:5152-5202) over a comparison; no Thumb pattern exposes a shift's carry to a branch; (2) identical across GS1 editions only, no GS2 or libgcc match; (3) carry-driven branching into a 128-entry quarter-sine table with mirror and negate",
+        "file_check": "0800230c.s / 0800231c.s: mnemonics, named entry symbols, .L_index/.L_return labels, the table as .hword rows under Data_08002344; reads as source"
+      }
     },
     {
       "kind": "mixed_mode_multiply_helper",
@@ -1667,7 +1700,8 @@
         "byte_exact_reconstruction",
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "byte_identical_in_all_six_gs2_editions_9_of_13_regions_vendor_object_unidentified",
-        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+        "gs1_only_regions_handwritten_credit_gs2_identical_regions_library_credit"
       ],
       "expected_files": 13,
       "expected_bytes": 6208,
@@ -1805,7 +1839,13 @@
         "credit_basis": "6,208 bytes; 13 regions, 5,884 ARM instruction bytes; 9 regions byte-identical and 1 pool-masked identical in all six GS2 editions",
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "3,672 bytes (9 exact + 1 masked GS2-identical regions of 6,208)",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "handwritten": {
+          "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
+          "regions": "08009e7c 636, 0800a0f8 644, 0800a494 1256 (2,536 bytes): ARM bodies (arm.c:8806-8830), no GS2 or libgcc match, hand-coded copy/transform kernels with labelled loops",
+          "file_check": "mnemonics with labels and entry symbols, 0-7 pool words each, two comments each; reads as source",
+          "credit": "handwritten"
+        }
       }
     },
     {
@@ -1882,13 +1922,22 @@
         "three_backend_stmia_negative",
         "family_argument_evacuation_fixed_register_signature",
         "approved_compiler_cannot_emit_reference_store_group_without_forbidden_register_constraints",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465",
+        "gs1_only_no_library_match"
       ],
       "expected_files": 1,
       "expected_bytes": 48,
       "files": [
         "080a22f4"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten",
+        "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
+        "credit_basis": "48 bytes: (1) Kiki A: no Thumb template prints a writeback stmia of ldr-loaded registers; (2) GS1 editions only; (3) two DMA register kicks with the base restored, a leaf of nothing else",
+        "file_check": "080a22f4.s: named symbol, mnemonics, six pool words; reads as source"
+      }
     },
     {
       "kind": "iwram_ip_link_call_module",
@@ -2095,7 +2144,10 @@
         "byte_exact_reconstruction",
         "far_jump_bl_is_compiler_thumb_jump_range_2048_2044_arm_c_thumb_far_jump_used_p_8598",
         "local_subroutine_bl_no_call_template_takes_label_arm_md_5905_6006",
-        "all_45_intra_owner_bl_targets_never_return_42_beyond_far_jump_range_3_within_range_unexplained"
+        "all_45_intra_owner_bl_targets_never_return_42_beyond_far_jump_range_3_within_range_unexplained",
+        "26_sites_are_cbranchsi4_far_form_b_cond_skip_then_bl_arm_md_5167_5202",
+        "19_sites_are_plain_thumb_jump_far_form",
+        "3_in_range_sites_not_derivable_from_branch_length_rules_final_c_930_950_1490_1530_origin_open"
       ],
       "expected_files": 10,
       "expected_bytes": 33948,
@@ -2194,10 +2246,10 @@
             "bytes": 0
           }
         },
-        "verdict": "compiler_far_jump_bl_42_sites_3_sites_open",
+        "verdict": "compiler_far_jump_forms_42_sites_3_sites_open_not_derivable",
         "credit": "none",
         "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl",
-        "analysis": "Kiki 2026-09-10: *thumb_jump prints `bl %l0` as a far jump when the distance is outside -2048..+2044 (length attribute) and thumb_far_jump_used_p (arm.c:8598) saves lr for it; a bl to a label whose target returns is not emit-able (no call template takes a label_ref, arm.md:5905-6006). Site classification over the 10 regions: 45 intra-owner bl sites, every target block reaches its end without bx lr or pop {pc} (none returns to the bl site); 42 sites are beyond -2048..+2044 measured pc+4-relative in the final layout, 3 sit inside it (0x08027bae -> .L39 at -1886, 0x0808f62a -> .L7 at +2018, 0x080a2a76 -> .L0 at +2008), within the far-jump range, and are unexplained: shorten_branches lengths only grow, so a jump that was ever far keeps a final distance at least as large (Kiki, 2026-09-10) — the attribute-relative distance for those 3 is being derived from the source rules. Reading for the 42: compiler far jumps; for the 3: open."
+        "analysis": "Kiki 2026-09-10: *thumb_jump prints `bl %l0` as a far jump when the distance is outside -2048..+2044 (length attribute) and thumb_far_jump_used_p (arm.c:8598) saves lr for it; a bl to a label whose target returns is not emit-able (no call template takes a label_ref, arm.md:5905-6006). Site classification over the 10 regions: 45 intra-owner bl sites, every target block reaches its end without bx lr or pop {pc} (none returns to the bl site); 42 sites are beyond -2048..+2044 measured pc+4-relative in the final layout, 3 sit inside it (0x08027bae -> .L39 at -1886, 0x0808f62a -> .L7 at +2018, 0x080a2a76 -> .L0 at +2008), within the far-jump range, and are unexplained: shorten_branches lengths only grow, so a jump that was ever far keeps a final distance at least as large (Kiki, 2026-09-10) — the attribute-relative distance for those 3 is being derived from the source rules. Reading for the 42: compiler far jumps; for the 3: open. Kiki 2026-09-10, from the source rules: the three in-range sites are cbranchsi4's length-8 conditional far form (b%D .LCB; bl %l3, arm.md:5167/5202) at distances +2016/+2014/-1880 by the compiler's own reference (final.c:930-950), inside the length-6 window; shorten_branches (final.c:1490-1530) shrinks as well as grows, so no fixed point emits length 8 there, and alignment fuzz (final.c:877-903) cannot bridge it. Not derivable; origin open. Site forms over all 45: 26 conditional-skip, 19 plain."
       }
     },
     {

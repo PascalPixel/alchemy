@@ -8,7 +8,8 @@
 
 void Func_02004b58();
 void *Func_02005894();
-void *Func_020058b6();
+struct SceneActorRecord;
+struct SceneActorRecord *Func_020058b6();
 void Func_020058c2();
 void *Func_020058da();
 void Func_02005964();
@@ -18,7 +19,7 @@ void Func_0200597c();
 void Func_0200597c_a();
 void Func_02005996();
 void Func_0200599e();
-void *Func_020059aa();
+void Func_020059aa();
 void Func_020059ac();
 void Func_020059b2();
 void Func_020059b6();
@@ -32,14 +33,14 @@ void *Func_020059f4();
 void Func_020059fe();
 void Func_02005a06();
 void Func_02005a0c();
-void Func_02005a0e();
+void *Func_02005a0e();
 void Func_02005a10();
 void Func_02005a18();
 void Func_02005a1a();
 void *Func_02005a20();
 void Func_02005a22();
 void Func_02005a3c();
-void Func_02005a46();
+void *Func_02005a46();
 void Func_02005a50();
 void Func_02005a68();
 void Func_02005a6c();
@@ -101,23 +102,34 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
+struct SceneActorRecord {
+    u8 pad00[72];
+    s32 value48;
+    u8 pad4c[15];
+    u8 flag5b;
+    u8 pad5c[8];
+    u16 value64;
+    u16 value66;
+    s32 value68;
+    s32 value6c;
+};
+
 void Func_02001d14(void)
 {
     volatile u32 *sequence_done;
     void *scene_actor;
-    void *p1;
-    void *p2;
+    struct SceneActorRecord *p1;
     void *p26;
-    void *p3;
     void *p31;
-    void *p4;
     void *p43;
-    s32 i1;
+    void *handle;
+    u8 flags;
+    u32 i1;
 
     p1 = Func_020058b6(10);
-    p2 = Func_02005894();
-    p3 = Func_020058da(10);
-    p4 = Func_020059aa(157286, 19660);
+    Func_02005894();
+    Func_020058da(10);
+    Func_020059aa(157286, 19660);
     Call4(Func_020059c2, 18284544, 4194304, 14155776, 1);
     Func_020059ce();
     Func_02005a6c(147);
@@ -128,16 +140,16 @@ void Func_02001d14(void)
     Call3(Func_020059ce_a, 10, 32768, 40);
     Call2(Func_020059fe, 52428, 6553);
     Call4(Func_02005a18, 8388608, 4194304, 13238272, 1);
-    *(s32 *)(p1 + 104) = 0;
-    *(u16 *)((u8 *)p1 + 100) = 0;
-    *(u16 *)((u8 *)p1 + 102) = 0;
-    *(s32 *)(p1 + 72) = 26214;
-    *(s32 *)(p1 + 108) = 33593201;
+    p1->value68 = 0;
+    p1->value64 = 0;
+    p1->value66 = 0;
+    p1->value48 = 26214;
+    p1->value6c = 33593201;
     Call4(Func_02005964_a, 10, 78643, 39321, 26214);
     Func_02005996(10, 212, 200);
     Func_020059ca(10, 103, 200);
-    *(s32 *)(p1 + 108) = 0;
-    *(u8 *)((u8 *)p1 + 91) = 0;
+    p1->value6c = 0;
+    p1->flag5b = 0;
     Func_0200597c(10);
     Func_02005a0c(10, 1);
     Func_02005b42(229);
@@ -148,17 +160,17 @@ void Func_02001d14(void)
     Call3(Func_02005aa6, 10, 20480, 40);
     p26 = Func_020059f4(10);
     *(u8 *)((u8 *)(p26) + 90) &= 0xfe;
-    Func_02005a10(10);
-    Func_02005a0e(10);
-    Func_020059ac();
+    Call3(Func_02005a10, 10, 78643, 39321);
+    handle = Func_02005a0e(10);
+    Func_020059ac(handle, 0);
     Func_02005ba2(153);
     p31 = Func_02005a20(10);
     *(s32 *)(p31 + 40) = 262144;
     Func_02005a86(10, 3);
     Func_02005a68(10, 86, 214);
     Func_02005a98(10, 1);
-    Func_02005a46(10);
-    Func_020059e4();
+    handle = Func_02005a46(10);
+    Func_020059e4(handle, 1);
     Func_02005a22(10);
     Func_02005be0(229);
     Call3(Func_02005a06, 131072, 0, 65536);
@@ -166,17 +178,18 @@ void Func_02001d14(void)
     Call3(Func_02005a1a, -1, -1, 58982);
     Func_02005a50(40);
     p43 = Func_02005a86_a(10);
-    *(u8 *)((u8 *)(p43) + 90) |= 0x1;
+    flags = (u8)(1 | *(u8 *)((u8 *)(p43) + 90));
+    *(u8 *)((u8 *)(p43) + 90) = flags;
     Call3(Func_02005b54, 10, 12288, 20);
     Func_02005b5e(10, 0, 40);
-    *(s32 *)(p1 + 104) = 0;
-    *(u16 *)((u8 *)p1 + 100) = 0;
-    *(u16 *)((u8 *)p1 + 102) = 0;
-    *(s32 *)(p1 + 108) = 33593201;
+    p1->value68 = 0;
+    p1->value64 = 0;
+    p1->value66 = 0;
+    p1->value6c = 33593201;
     Func_02005ac4(10);
     Func_02005af6(10, 120, 215);
-    *(s32 *)(p1 + 108) = 0;
-    *(u8 *)((u8 *)p1 + 91) = 0;
+    p1->value6c = 0;
+    p1->flag5b = 0;
     Func_02005b2e(10, 1);
     Func_02005aac(16);
     Func_02005c6a(229);
@@ -192,8 +205,15 @@ void Func_02001d14(void)
     Call4(Func_02004b58, 8519680, 0, 11010048, 0);
     Func_02005b16(60);
     sequence_done = (volatile u32 *)0x03001c94;
-    for (i1 = 0; *sequence_done == 0 && i1 <= 59; i1++) {
-        Func_02005b28(1);
+    i1 = 0;
+    if (*sequence_done == 0) {
+        do {
+            Func_02005b28(1);
+            i1++;
+            if (i1 > 59) {
+                break;
+            }
+        } while (*sequence_done == 0);
     }
     scene_actor = (void *)Func_02005b68(0);
     Call2(Func_02005c52, 314572, 39321);

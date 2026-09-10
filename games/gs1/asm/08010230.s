@@ -1,5 +1,8 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 地図タイルの転送。視点 (r0, r1) を 0x03001e70 の範囲 (+236..+248) に収めて +228/+232 に
+@ 置き、3 層 (+256.. の有効旗) それぞれで IwramMulQ16 による層の縮尺と視差の積算
+@ (+24..+36) から先頭タイルを求め、0x02010000 / 0x02020000 の地図語から 0x06002800 の
+@ 面 (層ごと 0x800) へ 16 タイル × (22 または 32) 列を写す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_08010230
@@ -68,6 +71,7 @@ Func_08010230:
 	str	r3, [sp, #12]
 	str	r0, [r3, #0]
 	str	r5, [sp, #28]
+@ 層ループ。
 .L13:
 	ldr	r1, [sp, #28]
 	movs	r2, #128
@@ -85,6 +89,7 @@ Func_08010230:
 	movs	r4, #22
 	ldr	r1, [r2, #16]
 	ldr	r3, [pc, #328]
+@ IwramMulQ16ReturnIp: X × 層の縮尺。
 	mov	ip, pc
 	bx	r3
 	ldr	r5, [sp, #12]
@@ -93,6 +98,7 @@ Func_08010230:
 	ldr	r1, [r2, #20]
 	ldr	r0, [r5, #0]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp: Z × 層の縮尺。
 	mov	ip, pc
 	bx	r3
 	mov	r3, lr
@@ -109,6 +115,7 @@ Func_08010230:
 	lsls	r3, r3, #19
 	orrs	r3, r1
 	ands	r7, r3
+@ 視差の積算とマスク。
 .L6:
 	mov	r3, lr
 	ldr	r2, [r3, #28]
@@ -175,6 +182,7 @@ Func_08010230:
 	movs	r3, #127
 	mov	r9, r3
 	mov	sl, r1
+@ 行ループ: 地図語からタイル番号を引き、VRAM の面へ 2 段ずつ書く。
 .L11:
 	ldr	r4, [sp, #8]
 	mov	r2, r9

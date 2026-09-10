@@ -29,6 +29,10 @@ struct AffinityPair {
 #define BATTLE_WORK BattleWorkPtr
 #endif
 
+#ifndef BATTLE_REFRAIN_TURNS
+#define BATTLE_REFRAIN_TURNS 7
+#endif
+
 #ifndef BATTLE_SURVIVES_KO
 #define BATTLE_SURVIVES_KO() 0
 #endif
@@ -350,11 +354,12 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
     target->res_modifier_turns = 7;                                                    \
 }
 
-#define SET_STATUS7(field, text)                                               \
+#define SET_STATUS_TURNS(field, text, turns)                                       \
 {                                                                              \
     BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
-    (field) = 7;                                                               \
+    (field) = (turns);                                                         \
 }
+#define SET_STATUS7(field, text) SET_STATUS_TURNS(field, text, 7)
 
 #ifndef BATTLE_HIT_EFFECTS
 /* Keep the first-entry test outside the remaining-entry scan macro scope. */
@@ -1445,7 +1450,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_REFRAIN:
-        SET_STATUS7(target->refrain, MSG_REFRAIN);
+        SET_STATUS_TURNS(target->refrain, MSG_REFRAIN, BATTLE_REFRAIN_TURNS);
         break;
 
     case EFX_REFLECT:

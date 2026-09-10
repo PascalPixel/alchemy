@@ -22,3 +22,4 @@
 	call_via fp
 	call_via ip
 	call_via sp
+	call_via lr

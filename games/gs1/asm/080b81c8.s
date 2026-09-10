@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 戦闘モーション: オブジェクトの尺度・速度欄を初期化し、
+@ [r6+12] × 0x14ccc を Q16 乗算した値で開始位置を設定する。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global BattleMotion_InitializeObject
@@ -11,6 +12,7 @@ Func_080b81c8:
 	bl	Func_080b7dd0
 	adds	r6, r0, #0
 	ldr	r5, [r6, #0]
+@ 尺度 0x10000、速度 0x40000、係数 0x9999、フラグ類を 0 に。
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r5, #52]
@@ -31,6 +33,7 @@ Func_080b81c8:
 	ldr	r0, [r6, #12]
 	ldr	r1, [pc, #40]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp。
 	mov	ip, pc
 	bx	r3
 	adds	r1, r0, #0

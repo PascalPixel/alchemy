@@ -1,5 +1,10 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 役者の一歩 (14 枠、記録 0x03001e64、112 バイトずつ)。目標 [56..64] があれば距離を
+@ IwramSqrt で測り (0x100 未満は IwramMulQ16 の二乗和と Func_080072ec)、速さ [52] / 距離を
+@ IwramRatioMulQ14 で取って速度 [36], [44] を寄せ、Func_080072f4 の大きさが上限 [48] を超えれば
+@ 縮める。目標が無ければ摩擦 [52] で減速する。縦は重力 [72] と跳躍 [68] (IwramMulQ16)。向き
+@ +86 (16/17/18) の軸で目標を追い越せば着ける。+85 bit0 なら速度の方位 (Func_080044d0) へ
+@ 向きを ±0x1000 ずつ回す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800d340
@@ -20,6 +25,7 @@ Func_0800d340:
 	adds	r2, #85
 	str	r0, [sp, #12]
 	str	r2, [sp, #0]
+@ 枠ループ。
 .L30:
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
@@ -46,6 +52,7 @@ Func_0800d340:
 	cmp	r3, r4
 	bne.n	.L4
 	b.n	.L5
+@ 目標への距離。
 .L4:
 	mov	r2, fp
 	subs	r0, r3, r2
@@ -105,6 +112,7 @@ Func_0800d340:
 	mov	fp, r3
 	mov	r9, r4
 	b.n	.L10
+@ 速度を寄せる: IwramRatioMulQ14、IwramMulQ16ReturnIp。
 .L9:
 	ldr	r1, [r5, #52]
 	ldr	r2, [pc, #388]
@@ -161,6 +169,7 @@ Func_0800d340:
 	mov	ip, pc
 	bx	r8
 	b.n	.L11
+@ 目標なし: 減速。
 .L5:
 	ldr	r6, [r5, #36]
 	ldr	r7, [r5, #44]
@@ -233,6 +242,7 @@ Func_0800d340:
 	str	r2, [r5, #40]
 	adds	r0, r2, #0
 	b.n	.L15
+@ 縦: 重力と跳躍。
 .L14:
 	ldr	r0, [r5, #40]
 	cmp	r0, #0
@@ -284,6 +294,7 @@ Func_0800d340:
 	cmp	r3, #18
 	beq.n	.L21
 	b.n	.L17
+@ 追い越し判定 (向きの軸)。
 .L20:
 	ldr	r2, [r5, #56]
 	cmp	fp, r2
@@ -371,6 +382,7 @@ Func_0800d340:
 	bne.n	.L26
 	cmp	r2, #0
 	beq.n	.L1
+@ 向きを速度の方位へ回す。
 .L26:
 	mov	r0, r9
 	mov	r1, fp

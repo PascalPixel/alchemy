@@ -1,5 +1,8 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 目標へ向かう移動。目標 obj[12] が未設定 (0x80000000) なら何もしない。obj+65 が立てば
+@ 距離を IwramSqrt で測り、0x80000 以内なら Func_0809ba5c で到着処理。それ以外は
+@ Func_080044d0 の方位へ向き (obj+48) を obj+50 の刻みで回し、速度 obj[28] を obj[36] ずつ
+@ obj[32] まで上げ、cos, sin との Q16 積で obj[4], obj[8] を進める。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0809b8f4
@@ -41,6 +44,7 @@ Func_0809b8f4:
 	adds	r3, r5, r2
 .L4:
 	adds	r2, r0, #0
+@ (dx>>16)² + (dz>>16)² を IwramSqrt (0x030001d8) で開く。
 	muls	r2, r0
 	asrs	r3, r3, #16
 	adds	r0, r2, #0
@@ -59,6 +63,7 @@ Func_0809b8f4:
 	adds	r0, r7, #0
 	adds	r1, r7, #0
 	movs	r0, r0
+@ 距離が 0x80 未満のときは Q16 の二乗和から Func_080045d4 で求め直す。
 	mov	ip, pc
 	bx	r4
 	adds	r3, r0, #0
@@ -80,6 +85,7 @@ Func_0809b8f4:
 	adds	r0, r6, #0
 	bl	Func_0809ba5c
 	b.n	.L1
+@ 方位を求め、必要なら回頭量を obj+50 で制限する。
 .L2:
 	adds	r0, r5, #0
 	adds	r1, r7, #0
@@ -124,6 +130,7 @@ Func_0809b8f4:
 	adds	r3, r2, r5
 	lsls	r3, r3, #16
 	asrs	r4, r3, #16
+@ 速度を更新し、向きの cos, sin と IwramMulQ16ReturnIp で位置を進める。
 .L6:
 	lsls	r3, r4, #16
 	lsrs	r0, r3, #16

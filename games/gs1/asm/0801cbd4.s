@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 色成分の合成。記録 r0 の +0x576, +0x578, +0x57a の u16 成分に r1, r2, r3 を
+@ Q16 乗算し、0..31 に飽和させて BGR555 に詰める。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0801cbd4
@@ -13,6 +14,7 @@ Func_0801cbd4:
 	ldrh	r0, [r2, #0]
 	ldr	r4, [pc, #100]
 	lsls	r0, r0, #16
+@ 成分 0x576 × r1。
 	mov	ip, pc
 	bx	r4
 	movs	r1, #175
@@ -23,6 +25,7 @@ Func_0801cbd4:
 	adds	r1, r6, #0
 	lsls	r0, r0, #16
 	movs	r0, r0
+@ 成分 0x578 × r2。
 	mov	ip, pc
 	bx	r4
 	ldr	r2, [pc, #76]
@@ -31,9 +34,11 @@ Func_0801cbd4:
 	ldrh	r0, [r5, #0]
 	adds	r1, r3, #0
 	lsls	r0, r0, #16
+@ 成分 0x57a × r3。
 	mov	ip, pc
 	bx	r4
 	asrs	r0, r0, #16
+@ 各成分を 0..31 に飽和。
 	cmp	r7, #0
 	bge.n	.L0
 	movs	r7, #0
@@ -58,6 +63,7 @@ Func_0801cbd4:
 	ble.n	.L5
 	movs	r0, #31
 .L5:
+@ BGR555 に詰める。
 	lsls	r3, r6, #5
 	lsls	r0, r0, #10
 	adds	r0, r0, r3

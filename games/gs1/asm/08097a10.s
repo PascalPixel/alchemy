@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 比率補正。y が 0 なら 0。y の上位4bitが立つ場合は符号を反転し、
+@ IwramRatioMulQ14(y, x) の上位16bitに y を Q16 乗算して x から引く。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_08097a10
@@ -21,12 +22,14 @@ Func_08097a10:
 	adds	r1, r6, #0
 	ldr	r3, [pc, #28]
 	adds	r0, r5, #0
+@ IwramRatioMulQ14 を経由呼出し (0x0300013c)。
 	bl	Func_080072f0
 	ldr	r3, [pc, #24]
 	ldr	r4, [pc, #24]
 	ands	r0, r3
 	adds	r1, r5, #0
 	movs	r0, r0
+@ 上位16bitのみを IwramMulQ16ReturnIp (0x03000118) で y 倍する。
 	mov	ip, pc
 	bx	r4
 	subs	r0, r6, r0

@@ -1,5 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 補間の一段。0x03001e70 の場面記録で、対象 (Func_080048f4(27, 0xccc)) の +91 が 0 で
+@ 残段数 +0x358 があれば、計数 +0x35a を進めて +0x350..+0x354 の差を段数で割った
+@ 分だけ進め、+0x348 との Q16 積を +0x34c に置く。計数が段数に達すれば自身を再登録する。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080935d4
@@ -52,6 +54,7 @@ Func_080935d4:
 	mov	r3, r8
 	movs	r2, #0
 	ldrsh	r1, [r3, r2]
+@ 差 × 計数 / 段数。
 	bl	Func_080022ec
 	adds	r2, r0, #0
 	movs	r0, #210
@@ -61,6 +64,7 @@ Func_080935d4:
 	ldr	r4, [pc, #80]
 	ldr	r0, [r3, #0]
 	adds	r1, r1, r2
+@ IwramMulQ16ReturnIp: +0x348 × 補間値。
 	mov	ip, pc
 	bx	r4
 	movs	r1, #211
@@ -85,6 +89,7 @@ Func_080935d4:
 	mov	r3, r8
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #36]
+@ 計数が段数に達した: 残段数を消し、自身 (Thumb bit 付き) を登録し直す。
 	bl	Func_08004278
 .L0:
 	pop	{r3, r5}

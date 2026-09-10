@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 戦闘モーション: 現在オブジェクトの位置を3語コピーして変換し、
+@ 結果を係数 [r6+24] で Q16 乗算する。戻り値 0。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global BattleMotion_ProjectPosition
@@ -19,6 +20,7 @@ Func_080b7f20:
 	bl	Func_080b7f70
 	adds	r6, r0, #0
 	bl	Func_080b7ed8
+@ 位置 (x,y,z) をスタックに写して変換へ渡す。
 	ldr	r3, [r5, #8]
 	mov	r0, sp
 	str	r3, [r0, #0]
@@ -31,6 +33,7 @@ Func_080b7f20:
 	ldr	r3, [pc, #24]
 	ldr	r1, [r6, #24]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp で係数を掛ける。
 	mov	ip, pc
 	bx	r3
 	add	sp, #12

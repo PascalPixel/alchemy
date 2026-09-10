@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 走査線ごとの投影表。r1 のベクトルを IwramTransformVector で回し、表 0x03001ce0 の
+@ 中心との差から 160 行分の尺度と偏りを求めて r2 に 20 バイトずつ書く。奥行が負の行は 0。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080123f4
@@ -24,6 +25,7 @@ Func_080123f4:
 	add	r1, sp, #16
 	str	r3, [r0, #8]
 	ldr	r3, [pc, #232]
+@ IwramTransformVector (0x03000250) を経由呼出し。
 	bl	Func_080072f0
 	mov	r2, sp
 	adds	r2, #16
@@ -32,6 +34,7 @@ Func_080123f4:
 	ldr	r0, [r2, #8]
 	ldr	r1, [sp, #12]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp: 奥行 × r0。
 	mov	ip, pc
 	bx	r3
 	ldr	r2, [sp, #0]
@@ -49,6 +52,7 @@ Func_080123f4:
 .L5:
 	ldr	r3, [pc, #192]
 	mov	r9, r3
+@ 行ループ (fp = 0..159)。行の高さ差を IwramRatioMulQ14 (0x0300013c) で割る。
 .L0:
 	mov	r2, r9
 	ldr	r1, [r2, #16]
@@ -105,6 +109,7 @@ Func_080123f4:
 	adds	r3, r3, r0
 	ldr	r2, [pc, #88]
 	adds	r0, r3, #0
+@ IwramSqrt (0x030001d8) を経由呼出し。
 	bl	Func_080072ec
 	lsls	r0, r0, #12
 	cmp	r5, #0
@@ -118,6 +123,7 @@ Func_080123f4:
 	bx	r6
 	str	r0, [r7, #4]
 	b.n	.L4
+@ 奥行が負: 尺度と偏りは 0。
 .L2:
 	movs	r3, #0
 	str	r3, [r7, #0]

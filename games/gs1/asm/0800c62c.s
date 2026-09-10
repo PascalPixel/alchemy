@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 役者の描画。DMA3 で 0x08009bb8 の ARM 核 (0x2c4 バイト) を Func_080048b0(52) の緩衝へ写し、
+@ 0x03001e70-12 の 64 役者 (112 バイトずつ) について、状態 +84 の下位 4 bit が 1 で視点からの
+@ 距離が範囲内なら、地図語から影と高さの旗を取り、obj[16], obj[20] に [r5+24] を IwramMulQ16 で
+@ 掛けた尺度と位置 3 語を組んで Func_0800b168 で描く。範囲外や非表示は Func_08003f78 で
+@ 絵を返し +37 に印を付ける。終わりに Func_08002dd8(52) で緩衝を返す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800c62c
@@ -40,6 +44,7 @@ Func_0800c62c:
 	ldr	r3, [pc, #492]
 	ldr	r0, [pc, #492]
 	orrs	r2, r5
+@ DMA3: ARM 核を緩衝へ。
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r3, #0
@@ -57,6 +62,7 @@ Func_0800c62c:
 	mov	fp, r3
 	mov	r8, r0
 	adds	r7, #8
+@ 役者ループ。
 .L16:
 	mov	r1, sl
 	ldr	r3, [r1, #0]
@@ -98,6 +104,7 @@ Func_0800c62c:
 	bl	Func_08003f78
 	strb	r6, [r5, #0]
 	b.n	.L1
+@ 距離の範囲判定。
 .L6:
 	ldr	r3, [sp, #4]
 	ldr	r0, [r7, #8]
@@ -165,6 +172,7 @@ Func_0800c62c:
 	orrs	r2, r0
 	strb	r2, [r5, #21]
 	b.n	.L10
+@ 地図語: 影 (bit 14-15) と高さ (bit 12-13)。
 .L9:
 	ldr	r4, [r1, #0]
 .L10:
@@ -179,6 +187,7 @@ Func_0800c62c:
 .L11:
 	ldr	r0, [r7, #16]
 	ldr	r1, [r5, #24]
+@ IwramMulQ16ReturnIp: obj[16] × 尺度、obj[20] × 尺度。
 	mov	ip, pc
 	bx	fp
 	str	r0, [sp, #20]
@@ -214,6 +223,7 @@ Func_0800c62c:
 	str	r3, [r1, #12]
 	mov	r4, lr
 	ldrb	r0, [r4, #0]
+@ 旗 2 / 4 で位置をずらす。
 .L12:
 	movs	r3, #4
 	ands	r3, r0
@@ -257,6 +267,7 @@ Func_0800c62c:
 	cmp	r3, #0
 	bne.n	.L1
 	ldrb	r2, [r5, #29]
+@ 非表示: 絵を返す。
 .L14:
 	adds	r3, r6, #0
 	ands	r3, r2

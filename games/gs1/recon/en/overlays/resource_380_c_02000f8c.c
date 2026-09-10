@@ -227,6 +227,34 @@ void FieldScene_RunActorFormation(void)
     Call3(Func_02005b3a, 8, 0x1d70000, 0x1220000);
     Func_02005c50_a(190);
     Func_02005bc8(12, 2);
+    /*
+     * RESIDUAL, 63 HALFWORDS, AND A MEASURED BOUNDARY RATHER THAN AN OPEN TASK.
+     *
+     * Two facts, one cause. The candidate emits an extra movs r5, #0 to
+     * initialise this counter, and later re-uses the constant 1 that the
+     * reference re-materialises at the flag update below. Both follow from
+     * one variable serving as counter and as or-accumulator, so GCC keeps a
+     * single pseudo in a callee-saved register across the whole function and
+     * shares the constant along it.
+     *
+     * The obvious repair does not work, and the reason is worth recording.
+     * Constant sharing here is decided after CSE and allocation, not by
+     * source variable identity: giving the two loops their own counter
+     * variable, disjoint from the accumulator, changes nothing at all --
+     * still 63 halfwords, still the same registers. Adding a named result
+     * temporary on top changes nothing. The compound or-assign is worse at
+     * 66, and scoping the neighbouring store's constant into its own block
+     * is far worse at 318.
+     *
+     * So the liveness reading is right about the mechanism -- the constant
+     * survives because its holder is callee-saved and never clobbered -- and
+     * wrong about the lever, because no source-level scoping or naming
+     * reaches that decision. The three techniques that closed owners tonight
+     * all act locally: a symbol address cannot be an immediate, a result
+     * temporary changes which operand owns the result, and a canonical call
+     * alias fixes a binding. None of them reaches a whole-function decision.
+     * Measured, not assumed.
+     */
     for (v5 = 0; v5 != 90; v5++) {
         *(s32 *)(rec8 + 12) += -0x1999;
         *(s32 *)(rec8 + 24) += 0x28f;

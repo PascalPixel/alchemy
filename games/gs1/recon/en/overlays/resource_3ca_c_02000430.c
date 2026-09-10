@@ -196,14 +196,12 @@ void Func_02001f54();
 
 void Func_02000430(void)
 {
-    u8 *scene_state;
     u8 *runtime;
     void *p1;
     void *p17;
     void *p176;
 
     p1 = Func_020017f2();
-    scene_state = *(u8 **)0x03001ebc;
     Func_02001894(-1, -1, -1, 0);
     Func_020017e8(18, 0, 3, 1, 18, 12);
     Func_0200187e(10494);
@@ -241,11 +239,11 @@ void Func_02000430(void)
         Func_02001928_a(30);
         Func_020019bc(1, 258, 50);
         Func_020019b4(1, 0);
-        (*(u16 *)(scene_state + 472))++;
+        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
     } else {
         Func_02001954(30);
         Func_020019e8(1, 258, 50);
-        (*(u16 *)(scene_state + 472))++;
+        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
         Func_020019f0(1, 0);
     }
     Func_0200197e(10);
@@ -282,14 +280,14 @@ void Func_02000430(void)
         Func_02001afa(1, 57344, 0);
         Func_02001a80(20);
         Func_02001b00(1, 0);
-        (*(u16 *)(scene_state + 472))++;
+        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
     } else {
         Func_02001aa0(20);
         Func_02001b08(1, 2);
         Func_02001aae(20);
         Func_02001b3a(1, 57344, 0);
         Func_02001ac0(20);
-        (*(u16 *)(scene_state + 472))++;
+        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
         Func_02001b50(1, 0);
     }
     Func_02001ade(10);
@@ -318,12 +316,12 @@ void Func_02000430(void)
         Func_02001bf2(3, 3);
         Func_02001ba0_b(20);
         Func_02001c20(3, 0);
-        (*(u16 *)(scene_state + 472))++;
+        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
     } else {
         Func_02001bcc(30);
         Func_02001c2c(3, 3);
         Func_02001bda(20);
-        (*(u16 *)(scene_state + 472))++;
+        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
         Func_02001c6a(3, 0);
     }
     Func_02001bf8(10);

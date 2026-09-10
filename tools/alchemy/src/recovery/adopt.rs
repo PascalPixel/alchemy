@@ -178,7 +178,15 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
     }
     std::fs::write(&destination, &unit).map_err(|e| format!("{}: {e}", destination.display()))?;
-    let result = score(root, &destination, request.owner, span)?;
+    let result = match score(root, &destination, request.owner, span) {
+        Ok(result) => result,
+        Err(error) => {
+            if !existed {
+                let _ = std::fs::remove_file(&destination);
+            }
+            return Err(format!("{error}; nothing adopted"));
+        }
+    };
     let mut report = vec![format!(
         "candidate={} reference={} differing_halfwords={} span={span}",
         result.candidate, result.reference, result.differing
@@ -192,15 +200,8 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             request.owner, result.differing
         ));
     }
-    match repeatable(root, &destination, request.owner, span) {
-        Ok(line) => report.push(line),
-        Err(error) => {
-            if !existed {
-                let _ = std::fs::remove_file(&destination);
-            }
-            return Err(error);
-        }
-    }
+    // The repeat check runs inside `overlay adopt --apply`, which every
+    // overlay adoption passes through, so it is not repeated here.
 
     // Every register the sequence touches is snapshotted first: a failure
     // anywhere after this point restores all of them and removes the unit,
@@ -239,6 +240,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     ];
     watched.extend(drafts.iter().cloned());
     let snapshot = Snapshot::take(&watched)?;
+    let staged = std::cell::Cell::new(false);
     let outcome = register_adoption(
         root,
         request,
@@ -259,6 +261,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             units: &units,
             overlay_source: &overlay_source,
             drafts: &drafts,
+            index_touched: &staged,
         },
     );
     if let Err(error) = outcome {
@@ -271,8 +274,12 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             .map(|path| path.to_string_lossy().into_owned())
             .collect();
         paths.push(destination.to_string_lossy().into_owned());
-        for path in &paths {
-            let _ = git(root, &["reset", "-q", "--", path]);
+        // Only what this run staged is unstaged: a colleague's earlier
+        // staged hunks in the same registers are theirs to keep.
+        if staged.get() {
+            for path in &paths {
+                let _ = git(root, &["reset", "-q", "--", path]);
+            }
         }
         return Err(format!(
             "{error}; nothing adopted, the registers and drafts are restored -- fix the cause and rerun the same adopt"
@@ -324,6 +331,7 @@ struct Registration<'a> {
     units: &'a Path,
     overlay_source: &'a Path,
     drafts: &'a [PathBuf],
+    index_touched: &'a std::cell::Cell<bool>,
 }
 
 /// The register mutations of an adoption, in order. Any error leaves the
@@ -350,6 +358,7 @@ fn register_adoption(
         units,
         overlay_source,
         drafts,
+        index_touched,
     } = r;
     // The source register: keep an existing name, record the path.
     let (mut register, _) = read_json(manifest)?;
@@ -505,6 +514,12 @@ fn register_adoption(
     if !last.contains("adopt=applied") {
         return Err(format!("overlay adopt did not apply: {last}"));
     }
+    report.extend(
+        applied
+            .lines()
+            .filter(|line| line.starts_with("repeatability "))
+            .map(str::to_string),
+    );
     report.push(last);
 
     let mut staged: Vec<String> = [
@@ -527,6 +542,7 @@ fn register_adoption(
     let mut args = vec!["add".to_string(), "-A".to_string(), "--".to_string()];
     args.append(&mut staged);
     let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    index_touched.set(true);
     git(root, &args)?;
 
     let checked = run_tool(root, "check", &["owners"])?;
@@ -547,7 +563,7 @@ fn register_adoption(
 /// rebuild in the shared bundle mid-check cannot pass as a result.
 const REPEAT_RUNS: usize = 30;
 
-fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<String, String> {
+pub fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<String, String> {
     let cc1 = crate::compiler::routing::bundle().join("cc1");
     let pin = |cc1: &Path| -> Result<String, String> {
         let bytes = std::fs::read(cc1).map_err(|e| format!("{}: {e}", cc1.display()))?;

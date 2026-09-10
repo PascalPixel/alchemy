@@ -42,6 +42,12 @@ void Func_02004fd4(void);
 void Func_02004fdc(s32);
 void Func_02004fec(s32);
 extern s16 Data_02000240[];
+extern u8 Value_000000b5;
+extern u8 Value_000000b6;
+extern u8 Value_000000b7;
+extern u8 Value_000000b8;
+extern u8 Value_000000b9;
+extern u8 Value_000000ba;
 
 /* The six-argument scene operations share the calling form already verified
  * in this overlay's primary scene sequences. */
@@ -77,7 +83,7 @@ s32 Scene_RunEntrySetup(void)
         Func_02000558();
     Func_02004e7c(0x110);
     WORD(WORK, 0x1c0) = 0x204;
-    if (SCENE[224] == 0xb5) {
+    if (SCENE[224] == (s32)&Value_000000b5) {
         WORD(WORK, 0x1c0) = 0x100;
         if (!Func_02004e74(0x981))
             Func_0200300c(8);
@@ -91,7 +97,7 @@ s32 Scene_RunEntrySetup(void)
         Func_02004f64(12, 2);
         Func_0200300c(13);
         Func_0200300c(14);
-    } else if (SCENE[224] == 0xb6) {
+    } else if (SCENE[224] == (s32)&Value_000000b6) {
         switch (SCENE[225]) {
         case 1: case 2:
             Func_0200300c(8);
@@ -146,7 +152,7 @@ s32 Scene_RunEntrySetup(void)
             }
             break;
         }
-    } else if (SCENE[224] == 0xb7) {
+    } else if (SCENE[224] == (s32)&Value_000000b7) {
         switch (SCENE[225]) {
         case 16:
             Func_02004e84(0x12f);
@@ -200,7 +206,7 @@ s32 Scene_RunEntrySetup(void)
         case 1: case 2: case 3: case 4: case 19:
             goto play_cue;
         }
-    } else if (SCENE[224] == 0xb8) {
+    } else if (SCENE[224] == (s32)&Value_000000b8) {
         switch (SCENE[225]) {
         case 2:
             Func_020007d8();
@@ -259,7 +265,7 @@ s32 Scene_RunEntrySetup(void)
         case 1:
             goto play_cue;
         }
-    } else if (SCENE[224] == 0xb9) {
+    } else if (SCENE[224] == (s32)&Value_000000b9) {
         switch (SCENE[225]) {
         case 19:
             Func_02004610();
@@ -332,7 +338,7 @@ s32 Scene_RunEntrySetup(void)
         case 6:
             goto play_cue;
         }
-    } else if (SCENE[224] == 0xba) {
+    } else if (SCENE[224] == (s32)&Value_000000ba) {
         switch (SCENE[225]) {
         case 1: case 2:
             if (Func_02004e74(0x109)) {

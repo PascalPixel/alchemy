@@ -346,7 +346,6 @@ static __inline__ s32 InstallTask(s32 (*f)(void (*)(), s32), void (*callback)(),
 void FieldScene_RunTwoPhaseActorSequence(void)
 {
     u32 i;
-    struct FacingObject *rec7;
     u8 *record;
     s32 base5_3001ec4;
     s32 base5_3001ebc;
@@ -452,7 +451,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Call2(Func_0200398c, 0x10000, 2);
     Func_0200399a(20);
     Func_0200b4cc(200);
-    Func_02003938(0x1001, 0);
+    Value2(Func_02003938, 0x1001, 0);
     if (Value2(Func_020038a0, 0, 0) == 0) {
         Call1(Func_02003942, 0x10d6);
     } else {
@@ -615,8 +614,8 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Call3(Func_0200b4fc, 11, 0x19999, 0xcccc);
     Call3(Func_02003f4c, 5, 0x13333, 0x9999);
     Call3(Func_02003f80, 11, 0x1db, 0x152);
-    rec7 = (struct FacingObject *)Func_02003f4e(11);
-    rec7->facing_flags = (u8)(254 & rec7->facing_flags);
+    record = Func_02003f4e(11);
+    ((struct FacingObject *)record)->facing_flags = (u8)(254 & ((struct FacingObject *)record)->facing_flags);
     Call3(Func_02003fa0, 11, 0x1db, 0x15c);
     Func_02003fe0(5, 1);
     Func_02003fda(5, 4, 0);
@@ -627,11 +626,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Func_02004058(13, 0, 30);
     Func_02004028(11, 1);
     Func_02003f9e(20);
-    {
-        u8 value = rec7->facing_flags;
-
-        rec7->facing_flags = (u8)(value | 1);
-    }
+    ((struct FacingObject *)record)->facing_flags |= 1;
     Call3(Func_02003fe4, 11, 0x10000, 0x8000);
     Call3(Func_02004018, 11, 0x1db, 0x14c);
     Call3(Func_0200409c, 11, 0xb000, 20);

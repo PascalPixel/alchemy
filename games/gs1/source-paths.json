@@ -16397,8 +16397,7 @@
       "source": "map/locations/sol_shinden/inner_sanctum_scene/field_scene.c"
     },
     "resource_37a:02001be8": {
-      "name": "FieldScene_RunActorPositionTransition",
-      "source": "map/locations/sol_shinden/inner_sanctum_scene/actor_position_transition.c"
+      "name": "FieldScene_RunActorPositionTransition"
     },
     "resource_37b:02002244": {
       "name": "FieldScene_RunScene37b_02002244",

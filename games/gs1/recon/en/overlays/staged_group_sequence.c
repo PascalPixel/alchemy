@@ -1,5 +1,8 @@
 #include "types.h"
 
+extern u8 Value_00001a9e[];
+extern u8 Value_00001aa2[];
+
 /* Two early long branches share the scene-skip tail. Four polling loops
  * wait on signed actor fields; calls bind at loader runtime addresses. */
 #define FieldScene_RunStagedGroupSequence Func_02000590
@@ -272,7 +275,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Func_02003d04(20, 258);
     Func_02003bec(60);
     Func_02003c84(20, 4);
-    messageId = 6814;
+    messageId = (s32)Value_00001a9e;
     Func_02003cbc(messageId);
     Func_02003cd4(20, 0, 40);
     Func_02001ed8();
@@ -338,7 +341,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Func_02003ce4(31, 0x5000, 10);
     Func_02003c9c(31, 1);
     Func_02003c84(31, 4);
-    messageId = 6818;
+    messageId = (s32)Value_00001aa2;
     Func_02003cbc(messageId);
     Func_02003cd4(31, 0, 10);
     Func_02001ea4(31);

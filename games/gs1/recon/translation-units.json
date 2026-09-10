@@ -152058,6 +152058,39 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "retained-draft-3a0-02000f30",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_3a0_c_02000f30.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a0",
+      "absolute_symbols": {
+        "Func_02002392_a": {
+          "address": "0x020093d0",
+          "kind": "thumb"
+        },
+        "Func_02002392_b": {
+          "address": "0x020093b8",
+          "kind": "thumb"
+        },
+        "Func_0200242c_a": {
+          "address": "0x02009448",
+          "kind": "thumb"
+        },
+        "Func_0200242c_b": {
+          "address": "0x02009440",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000f30",
+          "extent": 304,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

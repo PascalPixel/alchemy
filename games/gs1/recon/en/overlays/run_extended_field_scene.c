@@ -631,9 +631,9 @@ void FieldScene_RunExtendedActorSequence(void)
     *(u8 *)(Func_02004892(0) + 35) |= v5;
     {
         u8 *record = Func_020048a2(1);
-        u8 value = *(u8 *)&record[35];
+        u8 value = (u8)(v5 | record[35]);
 
-        record[35] = (u8)(value | v5);
+        record[35] = value;
     }
     Call3(Func_0200498e, 0, 0x102, 0);
     Call3(Func_0200499a, 1, 0x102, 80);

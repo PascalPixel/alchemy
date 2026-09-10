@@ -475,6 +475,58 @@ pub struct Parked {
     pub span: i64,
     pub lines: usize,
 }
+/// Marks a parked owner retained in every unit that owns it. A unit whose
+/// only owner this is becomes the retained unit again: `retained-` id, the
+/// parked draft as source, the owner state flipped, absolute symbols kept.
+/// A unit with other owners keeps its id and source and flips only this
+/// owner's state.
+fn retire_owner_in_units(
+    units_path: &Path,
+    overlay: &str,
+    address: u32,
+    parked_relative: &str,
+) -> Result<(), String> {
+    let text =
+        fs::read_to_string(units_path).map_err(|e| format!("{}: {e}", units_path.display()))?;
+    let mut manifest: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("{}: {e}", units_path.display()))?;
+    let wanted = format!("0x{address:08x}");
+    let mut changed = false;
+    for unit in manifest["units"].as_array_mut().into_iter().flatten() {
+        if unit["overlay"].as_str() != Some(overlay) {
+            continue;
+        }
+        let Some(owners) = unit["owners"].as_array_mut() else {
+            continue;
+        };
+        let count = owners.len();
+        let mut hit = false;
+        for owner in owners.iter_mut() {
+            if owner["address"].as_str() == Some(wanted.as_str()) {
+                owner["state"] = "retained-assembly".into();
+                hit = true;
+            }
+        }
+        if !hit {
+            continue;
+        }
+        changed = true;
+        if count == 1 {
+            let id = unit["id"].as_str().unwrap_or("").to_string();
+            if !id.starts_with("retained-") {
+                unit["id"] = format!("retained-{id}").into();
+            }
+            unit["source"] = parked_relative.into();
+        }
+    }
+    if !changed {
+        return Ok(());
+    }
+    let rendered = serde_json::to_string_pretty(&manifest).map_err(|e| e.to_string())?;
+    fs::write(units_path, format!("{rendered}\n"))
+        .map_err(|e| format!("{}: {e}", units_path.display()))
+}
+
 pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<Parked, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
@@ -596,6 +648,29 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
             let _ = fs::write(&assembly, &original);
             return Err(error);
         }
+        // The unit register mirrors the adoption edit in place rather than
+        // losing the unit: a unit pointing at a moved file is unscoreable,
+        // and rebuilding it later drops its absolute symbols.
+        let units = root.join("games/gs1/recon/translation-units.json");
+        let snapshot = crate::compiler::build_io::Snapshot::take(&[
+            units.clone(),
+            assembly.clone(),
+            installed.clone(),
+            parked.clone(),
+            root.join("games/gs1/source-paths.json"),
+        ])?;
+        let parked_relative = parked
+            .strip_prefix(root)
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_else(|_| parked.to_string_lossy().into_owned());
+        if let Err(error) =
+            retire_owner_in_units(&units, &overlay, target.address(), &parked_relative)
+        {
+            snapshot.restore();
+            return Err(format!(
+                "{error}; nothing parked, the assembly, source and registers are restored"
+            ));
+        }
     }
     Ok(Parked {
         overlay: overlay.to_string(),
@@ -642,6 +717,39 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 }
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn parking_mirrors_the_adoption_edit_on_the_unit_register() {
+        let root = tempdir().unwrap();
+        let units = root.path().join("translation-units.json");
+        fs::write(&units, r#"{"units":[
+{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/gs1/src/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
+{"id":"shared-37a","overlay":"resource_37a","source":"games/gs1/src/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
+{"id":"other-37b","overlay":"resource_37b","source":"games/gs1/src/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
+]}"#).unwrap();
+        super::retire_owner_in_units(
+            &units,
+            "resource_37a",
+            0x02001be8,
+            "games/gs1/recon/en/overlays/x.c",
+        )
+        .unwrap();
+        let after: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&units).unwrap()).unwrap();
+        let unit = &after["units"][0];
+        assert_eq!(unit["id"], "retained-overlay-37a-actor");
+        assert_eq!(unit["source"], "games/gs1/recon/en/overlays/x.c");
+        assert_eq!(unit["owners"][0]["state"], "retained-assembly");
+        assert_eq!(
+            unit["absolute_symbols"]["Func_02004698_a"]["address"],
+            "0x0200aa54"
+        );
+        let shared = &after["units"][1];
+        assert_eq!(shared["id"], "shared-37a");
+        assert_eq!(shared["source"], "games/gs1/src/b.c");
+        assert_eq!(shared["owners"][0]["state"], "retained-assembly");
+        assert_eq!(shared["owners"][1]["state"], "exact-c");
+        assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");
+    }
     use super::{audit_with_rom, thumb_standalone_wide_transfer_lines};
     use crate::overlay::audited_span;
     use std::fs;

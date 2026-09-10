@@ -11,7 +11,8 @@
       "name": "FieldScene_RunActorEntrySequence"
     },
     "resource_3a8:02000590": {
-      "name": "FieldScene_RunStagedGroupSequence"
+      "name": "FieldScene_RunStagedGroupSequence",
+      "source": "overlays/scene/staged_group_sequence_scene/run_staged_group_sequence.c"
     },
     "resource_3c8:02003068": {
       "name": "Scene_RunEntrySetup"

@@ -3200,6 +3200,110 @@
       ],
       "start": "0x0200259c",
       "end": "0x02002602"
+    },
+    {
+      "overlay": "resource_3b8",
+      "start": "0x02000af8",
+      "end": "0x02000ff8",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_3b8:02000af8"
+      ]
+    },
+    {
+      "overlay": "resource_374",
+      "start": "0x02000bbc",
+      "end": "0x02001084",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_374:02000bbc"
+      ]
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x02002108",
+      "end": "0x020025b0",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_37a:02002108"
+      ]
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x02001ca8",
+      "end": "0x02002108",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_37a:02001ca8"
+      ]
+    },
+    {
+      "overlay": "resource_370",
+      "start": "0x02000de4",
+      "end": "0x020011e4",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_370:02000de4"
+      ]
+    },
+    {
+      "overlay": "resource_39e",
+      "start": "0x0200071c",
+      "end": "0x02000abc",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_39e:0200071c"
+      ]
+    },
+    {
+      "overlay": "resource_380",
+      "start": "0x02000390",
+      "end": "0x020006f4",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_380:02000390"
+      ]
+    },
+    {
+      "overlay": "resource_374",
+      "start": "0x02001274",
+      "end": "0x020015b4",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
+        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
+        "games/gs1/recon/en/dossiers.json#resource_374:02001274"
+      ]
     }
   ]
 }

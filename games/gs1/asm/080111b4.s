@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 3D 視点の更新。記録 0x03001e80 の対象位置に揺れ (乱数 × +4/+8、+12 で減衰、IwramMulQ16) を
+@ 加え、0x100000 境界を跨いだら Func_08011164 / Func_080110e0 でタイルを流し込む。画面中心を
+@ 0x03001ce0 に置き、向き (+0x118/+0x11a) から Func_08004cb4 系で行列を作り、視点を
+@ IwramTransformVector で回す。向きが 0x03001e40 の控えと違えば cos, sin の IwramRatioMulQ14
+@ から Func_080123f4 で走査線表を作り直し、Func_080072f4 で面 (0x03001e50 の bit0) を切り替える。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080111b4
@@ -46,6 +50,7 @@ Func_080111b4:
 	cmp	r2, #0
 	bne.n	.L0
 	b.n	.L1
+@ 揺れ: 乱数の差 × 幅、幅 × 減衰 (IwramMulQ16ReturnIp)。
 .L0:
 	ldr	r3, [r2, #8]
 	mov	r8, r3
@@ -104,6 +109,7 @@ Func_080111b4:
 	bge.n	.L5
 	ldr	r0, [pc, #328]
 	add	r0, r8
+@ 境界跨ぎで列、行のタイルを流し込む。
 .L5:
 	movs	r2, #228
 	adds	r2, r2, r6
@@ -155,6 +161,7 @@ Func_080111b4:
 	mov	r1, r8
 	str	r7, [r3, #0]
 	str	r1, [r5, #0]
+@ 画面中心、視点の投影準備、向きの行列。
 .L1:
 	ldr	r2, [pc, #228]
 	movs	r3, #120
@@ -201,6 +208,7 @@ Func_080111b4:
 	str	r3, [r0, #8]
 	ldr	r1, [sp, #20]
 	ldr	r3, [pc, #136]
+@ IwramTransformVector (0x03000250) で視点を回す。
 	bl	Func_080072f0
 	bl	Func_080049ac
 	mov	r1, sl
@@ -222,12 +230,14 @@ Func_080111b4:
 	bl	Func_080072f0
 	mov	r1, sl
 	ldr	r2, [sp, #16]
+@ 向きが変わった: 走査線表を作り直す。
 	bl	Func_080123f4
 	ldr	r3, [pc, #88]
 	str	r7, [r3, #0]
 	ldrh	r3, [r6, #0]
 	mov	r1, r8
 	str	r3, [r1, #0]
+@ 面の切り替え。
 .L10:
 	ldr	r3, [pc, #80]
 	ldr	r2, [r3, #0]

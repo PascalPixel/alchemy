@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 粒子演出の準備。記録 0x03001f00 に有効を立て、Func_080048f4(39) の作業域に 16 粒子 (乱数の
+@ 角度と半径、IwramMulQ16 の cos, sin、寿命) と 3 本の尾 (0x5555 刻みの角度) を置き、計数を消す。
+@ 0x03001e50 の記録を IwramClearWords で消し、絵 0xc9 と r0 で選ぶ 0xc8..0xcb を Func_08002f40 で
+@ 展開して IwramCopyWords / DMA3 でパレットへ、Func_08005340 で作業域へ広げる。回転背景の
+@ レジスタを単位行列にし、Func_080c9000 で面を作り、描画 (Func_080c11ec) と更新の呼び戻しを登録する。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080c1470
@@ -33,6 +37,7 @@ Func_080c1470:
 	mov	sl, r1
 	add	r7, fp
 	mov	r9, r2
+@ 粒子ループ: IwramMulQ16ReturnIp で半径 × cos, sin。
 .L2:
 	bl	Func_08004458
 	adds	r5, r0, #0
@@ -114,6 +119,7 @@ Func_080c1470:
 	movs	r7, #0
 	add	r5, fp
 	mov	r9, r2
+@ 尾ループ。
 .L3:
 	adds	r0, r7, #0
 	bl	Func_0800231c
@@ -170,6 +176,7 @@ Func_080c1470:
 	lsls	r1, r1, #7
 	ldr	r0, [r3, #0]
 	ldr	r3, [pc, #224]
+@ IwramClearWords (0x03000164)。
 	bl	Func_080072f0
 	ldr	r6, [pc, #220]
 	adds	r0, r6, #0
@@ -181,6 +188,7 @@ Func_080c1470:
 	movs	r2, #128
 	lsls	r0, r0, #19
 	adds	r5, #128
+@ IwramCopyWords (0x03001388): パレット 128 語。
 	bl	Func_080072f0
 	mov	r1, fp
 	adds	r0, r5, #0
@@ -217,6 +225,7 @@ Func_080c1470:
 	adds	r0, r5, #0
 	lsls	r1, r1, #19
 	ldr	r2, [pc, #160]
+@ DMA3: 展開した絵をパレット域へ。
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r2, #0
@@ -239,6 +248,7 @@ Func_080c1470:
 	movs	r2, #7
 	movs	r0, #46
 	str	r3, [sp, #0]
+@ 面 46, 47 と呼び戻しの登録。
 	bl	Func_080c9000
 	movs	r5, #200
 	movs	r3, #2

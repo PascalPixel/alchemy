@@ -235,7 +235,8 @@
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "28 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "28 ARM bytes byte-identical in all six GS2 editions (arm.c:8806-8830 for the ARM body); checked by the twelve-ROM scan in cross_rom."
+        "proof": "28 ARM bytes byte-identical in all six GS2 editions (arm.c:8806-8830 for the ARM body); checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -383,7 +384,8 @@
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "954 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "Both regions byte-identical in all six GS2 editions and a single-function Thumb/ARM mode switch the route cannot express (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom."
+        "proof": "Both regions byte-identical in all six GS2 editions and a single-function Thumb/ARM mode switch the route cannot express (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -460,7 +462,8 @@
         "credit": "library",
         "credit_bytes": "64 bytes (080f9a80)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "080f9a80 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
+        "proof": "080f9a80 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -588,7 +591,8 @@
         "credit": "library",
         "credit_bytes": "132 bytes (080f95f0)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "080f95f0 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
+        "proof": "080f95f0 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -663,7 +667,8 @@
           "credit": "handwritten",
           "file_check": "080155d0.s: an ARM glyph blitter (character code, x, y, bold flag; 4-bit pixels masked into VRAM tiles at 0x06002500 from the font tables at 0x080370d4 and 0x08032224); header and seven block comments added, instruction and data lines untouched, byte-identical build"
         },
-        "proof": "Three regions byte-identical and three pool-masked identical in all six GS2 editions, ARM bodies under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom; the GS1-only region 080155d0 is credited handwritten on the same citation plus its file check."
+        "proof": "Three regions byte-identical and three pool-masked identical in all six GS2 editions, ARM bodies under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom; the GS1-only region 080155d0 is credited handwritten on the same citation plus its file check.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -746,7 +751,8 @@
         "credit": "library",
         "credit_bytes": "64 bytes (080fa16c)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "080fa16c byte-identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
+        "proof": "080fa16c byte-identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -772,7 +778,8 @@
         "credit": "library",
         "credit_bytes": "28 bytes (080f9ae0)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "28 bytes byte-identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
+        "proof": "28 bytes byte-identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -1594,7 +1601,8 @@
         "credit": "library",
         "credit_bytes": "692 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "080f9c44 byte-identical and 080f9c90 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
+        "proof": "080f9c44 byte-identical and 080f9c90 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -1721,7 +1729,8 @@
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "16 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "16 bytes with an ARM umull byte-identical in all six GS2 editions (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom."
+        "proof": "16 bytes with an ARM umull byte-identical in all six GS2 editions (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {
@@ -1882,7 +1891,8 @@
           "file_check": "mnemonics with labels and entry symbols, 0-7 pool words each, two comments each; reads as source",
           "credit": "handwritten"
         },
-        "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six GS2 editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom."
+        "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six GS2 editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom.",
+        "object": "vendor object not named; credited on cross-product identity in all six GS2 editions and compiler impossibility (arm.c:8806-8830)"
       }
     },
     {

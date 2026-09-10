@@ -175,34 +175,65 @@ void Func_020067ca();
 void Func_020067da();
 void Func_020067dc();
 
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+extern u16 Data_02000240[];
+extern u8 Value_00000015;
+extern u8 Value_0000022b;
+
 void Func_02001348(void)
 {
     s32 base;
 
     Func_02006090();
-    Func_020060da(0, 52428, 26214);
-    Func_020060e4(1, 52428, 26214);
-    Func_020060ee(2, 52428, 26214);
+    Call3(Func_020060da, 0, 52428, 26214);
+    Call3(Func_020060e4, 1, 52428, 26214);
+    Call3(Func_020060ee, 2, 52428, 26214);
     Func_0200616e(0, 3);
     Func_020060b4(20);
     base = 4805;
     Func_02006078(base, 1);
-    Func_0200619e(base + 1);
+    base = base + 1;
+    Func_0200619e(base);
     Func_020060cc(30);
     Func_0200616c(8, 1);
     Func_020060da_a(60);
     Func_020059e4(8, 3, 40);
-    Func_0200616a(0, 792, 440);
+    Call3(Func_0200616a, 0, 792, 440);
     Func_020059cc(0, 8, 20);
-    Func_0200619a(1, 51904512, 28835840);
-    Func_020061a8(2, 51904512, 28835840);
-    Func_02006196(1, 808, 432);
-    Func_020061a4(2, 792, 456);
+    Call3(Func_0200619a, 1, 51904512, 28835840);
+    Call3(Func_020061a8, 2, 51904512, 28835840);
+    Call3(Func_02006196, 1, 808, 432);
+    Call3(Func_020061a4, 2, 792, 456);
     Func_020061c2(1);
     Func_0200620c(1, 8, 0);
     Func_020061d2(2);
     Func_02005a24(2, 8, 60);
-    Func_02006260(8, 258, 0);
+    Call3(Func_02006260, 8, 258, 0);
     Func_02006166(60);
     Func_02005a26(8, 20);
     Func_0200620e(2, 3);
@@ -210,26 +241,26 @@ void Func_02001348(void)
     Func_02006248(8, 2);
     Func_0200618e(20);
     Func_02005a4e(8, 20);
-    Func_020062a2(2, 258, 0);
-    Func_020062ae(1, 258, 0);
+    Call3(Func_020062a2, 2, 258, 0);
+    Call3(Func_020062ae, 1, 258, 0);
     Func_020061b4(60);
-    Func_020062b0(8, 12288, 0);
+    Call3(Func_020062b0, 8, 12288, 0);
     Func_020061c6(10);
     Func_02005a86(8, 30);
-    Func_020062ca(8, 53248, 0);
+    Call3(Func_020062ca, 8, 53248, 0);
     Func_020061e0(30);
-    Func_020062ec(8, 256, 0);
+    Call3(Func_020062ec, 8, 256, 0);
     Func_020061f2(60);
-    Func_020062ee(8, 45056, 0);
+    Call3(Func_020062ee, 8, 45056, 0);
     Func_02006204(40);
-    Func_02006300(8, 53248, 0);
+    Call3(Func_02006300, 8, 53248, 0);
     Func_02006216(40);
     Func_02005af0(8, 0, 20);
     Func_02005b2a(8, 4, 30);
     Func_02005aea(8, 20);
     Func_020062fa(2, 1);
     Func_02005afa(2, 40);
-    Func_020062e0(10, 48758784, 26738688);
+    Call3(Func_020062e0, 10, 48758784, 26738688);
     Func_0200643e(61);
     Func_02005b16(10, 20);
     Func_0200631e(0, 1);
@@ -241,24 +272,24 @@ void Func_02001348(void)
     Func_02006360(1, 10, 0);
     Func_0200636a(2, 10, 0);
     Func_02005b7c(8, 10, 40);
-    Func_020062fe(10, 52428, 26214);
-    Func_0200630c(11, 98304, 49152);
-    Func_0200631a(12, 98304, 49152);
-    Func_02006370(11, 48758784, 26738688);
-    Func_0200637e(12, 48758784, 26738688);
-    Func_02006374(10, 792, 416);
-    Func_020063f8(10, 12288, 0);
+    Call3(Func_020062fe, 10, 52428, 26214);
+    Call3(Func_0200630c, 11, 98304, 49152);
+    Call3(Func_0200631a, 12, 98304, 49152);
+    Call3(Func_02006370, 11, 48758784, 26738688);
+    Call3(Func_0200637e, 12, 48758784, 26738688);
+    Call3(Func_02006374, 10, 792, 416);
+    Call3(Func_020063f8, 10, 12288, 0);
     Func_0200630e(70);
     Func_020063e0(0, 10, 0);
     Func_020063ea(1, 10, 0);
     Func_020063f4(2, 10, 0);
     Func_020063fe(8, 10, 0);
-    Func_0200638e(11, 33608264);
+    Call2(Func_0200638e, 11, 33608264);
     Func_02006344(40);
-    Func_0200639c(12, 33608364);
+    Call2(Func_0200639c, 12, 33608364);
     Func_020063aa(12);
-    Func_0200644e(11, 8192, 0);
-    Func_0200645a(12, 8192, 0);
+    Call3(Func_0200644e, 11, 8192, 0);
+    Call3(Func_0200645a, 12, 8192, 0);
     Func_02006370_a(40);
     Func_02005c7a(10, 4, 20);
     Func_02005c3a(10, 20);
@@ -268,14 +299,14 @@ void Func_02001348(void)
     Func_02006460(12, 1);
     Func_020063a6(10);
     Func_02005c66(12, 40);
-    Func_020064b8(2, 257, 0);
+    Call3(Func_020064b8, 2, 257, 0);
     Func_020063be(60);
     Func_02005cc8(10, 4, 20);
     Func_02005c88(10, 20);
-    Func_020064da(0, 257, 0);
-    Func_020064e4(1, 257, 0);
+    Call3(Func_020064da, 0, 257, 0);
+    Call3(Func_020064e4, 1, 257, 0);
     Func_020063ea_a(60);
-    Func_020064f6(8, 256, 0);
+    Call3(Func_020064f6, 8, 256, 0);
     Func_020063fc(40);
     Func_020064c4(8, 2);
     Func_0200640a(20);
@@ -290,7 +321,7 @@ void Func_02001348(void)
     Func_02006522(0, 2, 0);
     Func_02005d34(1, 2, 30);
     Func_02005d24(1, 20);
-    Func_02006578(8, 258, 0);
+    Call3(Func_02006578, 8, 258, 0);
     Func_0200647e(60);
     Func_02005d5a(8, 20);
     Func_0200656a(10, 1);
@@ -303,9 +334,9 @@ void Func_02001348(void)
     Func_02005da0(11, 20);
     Func_02005df2(12, 4, 20);
     Func_02005db2(12, 20);
-    Func_02006606(0, 258, 0);
-    Func_02006612(1, 258, 0);
-    Func_0200661e(2, 258, 0);
+    Call3(Func_02006606, 0, 258, 0);
+    Call3(Func_02006612, 1, 258, 0);
+    Call3(Func_0200661e, 2, 258, 0);
     Func_02006524(60);
     Func_02005e2e(10, 3, 20);
     Func_02006616(10, 0);
@@ -328,9 +359,10 @@ void Func_02001348(void)
         Func_02006678(10, 2);
         Func_020065be(20);
         Func_020066b0(10, 0);
+        base = base - 3;
         Func_020066a6(base);
     }
-    Func_020066d8(11, 259, 0);
+    Call3(Func_020066d8, 11, 259, 0);
     Func_020065de(60);
     Func_02005e9e(11, 20);
     Func_02005ef0(12, 4, 20);
@@ -341,16 +373,18 @@ void Func_02001348(void)
     Func_02005f06(10, 12, 30);
     Func_020066be(10, 3);
     Func_02005f30(12, 3, 40);
-    Func_0200672c(10, 12288, 0);
-    Func_02006738(11, 12288, 0);
-    Func_02006744(12, 12288, 0);
+    Call3(Func_0200672c, 10, 12288, 0);
+    Call3(Func_02006738, 11, 12288, 0);
+    Call3(Func_02006744, 12, 12288, 0);
     Func_0200665a(20);
     Func_02005f64(10, 4, 20);
     Func_02006754(10, 0);
-    Func_02006652(2132);
-    base = 21;
-    Func_020067ca(base, 17, 512, 50339964);
+    Call1(Func_02006652, 2132);
+    *(s32 *)(*(u8 **)0x03001ebc + 448) = 512;
+    base = (s32)&Value_00000015;
+    Func_020067ca(base, 17);
     Func_020067da(base, 16);
+    ((u8 *)Data_02000240)[(s32)&Value_0000022b] = 3;
     Func_020067dc(12, 5, 3);
     Func_020066b8();
 }

@@ -9,7 +9,7 @@
  * documented in games/gs1/src/battle/effects/member_orbit/run.c (owner
  * 080ce85c) and games/gs1/src/battle/effects/puff_arc/run.c (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
- * prologue, same M2C_FIELD(work,...,0x7828)=object republish, same
+ * prologue, same the +0x7828 field=object republish, same
  * Func_080cd594(0)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/
  * Func_08002dd8(id)/Func_080cdbc0() bracket, and the same
  * Func_080cef64(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
@@ -19,7 +19,7 @@
  * runs a 64-slot randomly-seeded particle pool (fixed-point x/y plus a
  * sin/cos velocity pair) alongside the 64-frame animation loop, and reads
  * every particle's fixed-point position back through the upper halfword of
- * its s32 field -- the same M2C_FIELD(ptr, s16*, 2)/M2C_FIELD(ptr, s16*, 6)
+ * its s32 field -- the same +2 / +6 halfword
  * idiom already confirmed in 080e01e4.c.
  *
  * Every `Func_080072f4`/`Func_08007314` call site is an indirect call
@@ -36,8 +36,6 @@
  * forces the same pool load even though the values (0x6e, 0xb8, 0x92) would
  * otherwise fit an 8-bit `movs` immediate.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
@@ -102,16 +100,16 @@ void BattleEffect_RunParticleReveal(void *object)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
+    (*(void **)((u8 *)(work) + (0x7828))) = object;
     Func_080cd594(0);
     Func_080de2f8(object, 1,
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), 2,
+        (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), 2,
         &screen_x, &screen_y);
     Func_080cef64(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), routine);
+        (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
     Func_080e0524((s32)&Value_0000006e, work, 1, 1);
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
+    (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
+    (*(s32 *)((u8 *)(work) + (0x7784))) = 75;
     {
         s32 interval;
         void *callback;
@@ -121,7 +119,7 @@ void BattleEffect_RunParticleReveal(void *object)
         Func_080041d8(callback, interval);
     }
     Func_080e3980(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24), spawn);
+        (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {
         s32 angle;
@@ -141,14 +139,14 @@ void BattleEffect_RunParticleReveal(void *object)
 
     for (frame = 0; frame != 64; frame++) {
         if (frame > 47) {
-            M2C_FIELD((void *)0x04000052, s16 *, 0) = (64 - frame) | 0x1000;
+            (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = (64 - frame) | 0x1000;
         }
         if (frame == 1) {
             Func_080e0524((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
             Func_080e0524((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
         }
 
-        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x1C) == 1) {
+        if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x1C))) == 1) {
             s32 orbit_angle;
             s32 x;
             s32 y;
@@ -175,28 +173,28 @@ void BattleEffect_RunParticleReveal(void *object)
                 index = (p->rot / 128) & 3;
                 routine[i & 1](
                     canvas, (u8 *)work + 0x400 + Data_080eec68[index],
-                    M2C_FIELD(p, s16 *, 2) - (w = Data_080eec5f[index]) / 2,
-                    M2C_FIELD(p, s16 *, 6) - (h = Data_080eec63[index]) / 2,
+                    (*(s16 *)((u8 *)(p) + (2))) - (w = Data_080eec5f[index]) / 2,
+                    (*(s16 *)((u8 *)(p) + (6))) - (h = Data_080eec63[index]) / 2,
                     w, h);
                 Func_080e38b8(p, 0x3F, 0x1000);
             }
         }
 
         if (frame == 8) {
-            M2C_FIELD(work, s32 *, 0x77A8) = frame;
+            (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
             Func_080b50e8(0x86);
             Func_080d6888(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+                (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 7, 5, 0, 16);
             Func_080b5088(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24), 3);
+                (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), 3);
         }
 
         clamp = frame * 4;
         if (clamp > 32) {
             clamp = 32;
         }
-        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 0) {
+        if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 0) {
             for (i = 0; i != 5; i++) {
                 routine[0](canvas, work, (i << 5) - (frame / 4 & 31),
                     120 - clamp, 32, 32);
@@ -210,7 +208,7 @@ void BattleEffect_RunParticleReveal(void *object)
 
         Func_080e155c(4, 8);
         Func_080cd52c();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         Func_080030f8(1);
     }
 

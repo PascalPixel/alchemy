@@ -45,9 +45,17 @@
  * 0x0200116e, already match byte for byte.  This is a commutative-operand and
  * register-allocation choice with no source evidence behind it; the triage
  * router classifies it as allocation-uncovered and warns against respelling
- * the source to probe register roles.  It must also stay open: these are the
- * only two differing halfwords, so closing them would make this draft
- * byte-exact, which the retained-corpus gate rejects for a draft.
+ * source to shave the tool triage number rather than to recover the real
+ * shape. That warning is not a rule to leave this open: reaching zero here
+ * with an honest, ordinary spelling is a good outcome, and the integrator
+ * adopts it via `alchemy adopt`, which retires the retained-assembly region.
+ * A prior version of this comment claimed the retained-corpus gate forbids a
+ * byte-exact candidate; that was wrong on the facts and is corrected here.
+ * candidate-corpus-check only scans routes registered in the Makefile
+ * CANDIDATE_SINGLE_OWNERS variable and units under games/gs1/recon/en/units/,
+ * and this file is registered in neither, so the gate does not even see it.
+ * Where the gate does apply, an exact result is the signal to adopt, not a
+ * reason to avoid closing.
  *
  * MODELLING ARTIFACTS carried over from the exact sibling, not recovered
  * source: the Call/Value function-pointer wrappers below, and the event ids
@@ -348,7 +356,20 @@ void FieldScene_RunGatedActorSequence(void)
     record = Func_020026e0(14);
     *(record + 90) |= 1;
     record = Func_020026e0(15);
-    *(record + 90) |= 1;
+    {
+        /*
+         * A result temporary, not the compound or-assign the first
+         * occurrence above uses. The reference writes the result into
+         * the mask register rather than the loaded value, and the
+         * two-address ORR only does that when the merged result is its
+         * own object; the compound form keeps the loaded value as
+         * destination. Same technique already adopted in the sibling
+         * owners resource_3bd:020013f8 and resource_39e:02001494.
+         */
+        u8 merged = (u8)(*(record + 90) | 1);
+
+        *(record + 90) = merged;
+    }
 
     Func_02002788(14, 0);
     Func_02002788(15, 0);

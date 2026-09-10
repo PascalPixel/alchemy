@@ -18025,6 +18025,66 @@
     "main:0801b010": {
       "name": "Menu_OpenSelectionWindow",
       "source": "menu/selection/open_window.c"
+    },
+    "resource_39c:020028b0": {
+      "name": "FieldScene_RunScene39cSequenceD"
+    },
+    "resource_371:020039fc": {
+      "name": "FieldScene_RunScene371SequenceA"
+    },
+    "resource_3b8:02000af8": {
+      "name": "FieldScene_RunScene3b8SequenceA"
+    },
+    "resource_374:02000bbc": {
+      "name": "FieldScene_RunScene374SequenceA"
+    },
+    "resource_37a:02002108": {
+      "name": "FieldScene_RunScene37aSequenceG"
+    },
+    "resource_37a:02001ca8": {
+      "name": "FieldScene_RunScene37aSequenceH"
+    },
+    "resource_3cb:020012e0": {
+      "name": "FieldScene_RunScene3cbSequenceA"
+    },
+    "resource_370:02000de4": {
+      "name": "FieldScene_RunScene370SequenceA"
+    },
+    "resource_394:020003f0": {
+      "name": "FieldScene_RunScene394SequenceA"
+    },
+    "resource_3bd:02003644": {
+      "name": "FieldScene_RunScene3bdSequenceA"
+    },
+    "resource_3c8:02002b14": {
+      "name": "FieldScene_RunScene3c8SequenceA"
+    },
+    "resource_3ba:020033a0": {
+      "name": "FieldScene_RunScene3baSequenceA"
+    },
+    "resource_3bb:02003638": {
+      "name": "FieldScene_RunScene3bbSequenceC"
+    },
+    "resource_3bc:020040d0": {
+      "name": "FieldScene_RunScene3bcSequenceB"
+    },
+    "resource_39e:0200071c": {
+      "name": "FieldScene_RunScene39eSequenceB"
+    },
+    "resource_3a5:020018a4": {
+      "name": "FieldScene_RunScene3a5SequenceA"
+    },
+    "resource_380:02000390": {
+      "name": "FieldScene_RunScene380SequenceA"
+    },
+    "resource_374:02001274": {
+      "name": "FieldScene_RunScene374SequenceB"
+    },
+    "resource_3cb:02000860": {
+      "name": "FieldScene_RunScene3cbSequenceB"
+    },
+    "resource_39b:02002030": {
+      "name": "FieldScene_RunScene39bSequenceA"
     }
   }
 }

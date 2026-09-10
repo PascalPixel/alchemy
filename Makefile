@@ -208,7 +208,7 @@ candidate-corpus-check:
 			--owner $$owner --first); \
 		diff=$$(printf '%s\n' "$$result" | sed -n 's/.*differing_halfwords=\([0-9][0-9]*\).*/\1/p' | head -n 1); \
 		if test -z "$$diff" || test "$$diff" -eq 0; then \
-			printf 'single-owner candidate is exact or unscored: %s %s\n' "$$owner" "$$source"; \
+			printf 'single-owner candidate is exact or unscored: %s %s -- if exact, run alchemy adopt to move it out of the retained corpus; if unscored, fix the score first\n' "$$owner" "$$source"; \
 			exit 1; \
 		fi; \
 		total=$$((total + 1)); \
@@ -226,7 +226,7 @@ candidate-corpus-check:
 			games/gs1/recon/translation-units.json); do \
 			diff=$$(awk -F '\t' -v owner="$$owner" '$$1==owner{print $$2}' "$$report"); \
 			if test -z "$$diff" || test "$$diff" -eq 0; then \
-				printf 'translation-unit retained owner is exact or unscored: %s %s\n' "$$unit" "$$owner"; \
+				printf 'translation-unit retained owner is exact or unscored: %s %s -- if exact, run alchemy adopt to move it out of the retained corpus; if unscored, fix the score first\n' "$$unit" "$$owner"; \
 				rm -f "$$report"; exit 1; \
 			fi; \
 			total=$$((total + 1)); \

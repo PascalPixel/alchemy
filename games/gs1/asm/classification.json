@@ -12,14 +12,25 @@
   "structural": [
     {
       "kind": "linker_veneer",
-      "origin": "linker",
+      "origin": "unidentified_build_step",
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_ldr_r4_bx_r4_literal"
+        "fixed_ldr_r4_bx_r4_literal",
+        "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
+        "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
+        "callers_reach_targets_by_in_range_bl_entry_point_table_generator_unidentified"
       ],
       "expected_files": 608,
-      "expected_bytes": 4864
+      "expected_bytes": 4864,
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": "259 of 608 entries byte-identical across GS1 editions only; one 8-byte chance hit in GS2",
+        "verdict": "not_toolchain_origin_unidentified",
+        "credit": "none",
+        "reason": "provably not GCC 2.96 Thumb output and provably not a GNU ld 2.10 stub (Kiki, battle-loop lane, 2026-09-10: arm.md:6047-6055 sibcall expanders are TARGET_ARM only, Thumb calls are bl _call_via_rN; binutils 2.10 bfd/elf32-arm.h:311-343 stubs use r12 or bx pc;nop;b, R_ARM_THM_PC22 overflow at :1324-1395 returns bfd_reloc_overflow); callers reach the targets by plain bl within range, so these are an entry-point table from an unidentified build step; not proven handwritten; whether a regenerable table counts as done is Pascal's pending question",
+        "previous_origin": "linker"
+      }
     },
     {
       "kind": "alignment_padding",
@@ -214,10 +225,12 @@
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "approved_compiler_call_via_symbols"
+        "approved_compiler_call_via_symbols",
+        "libgcc_call_via_rx_lib1funcs_asm_950_990_byte_identical_60_bytes",
+        "assembled_every_t_arm_elf_lib1asmfuncs_member_arm_and_thumb_only_call_via_rx_matches"
       ],
       "expected_files": 1,
-      "expected_bytes": 56,
+      "expected_bytes": 60,
       "files": [
         "080072e4"
       ],
@@ -248,7 +261,8 @@
         "credit": "library",
         "object": "agscc gcc/config/arm/lib1funcs.asm:950-990 call_via macro (bx \\register; nop), built by t-arm-elf LIB1ASMFUNCS _call_via_rX",
         "proof": "assembled every t-arm-elf LIB1ASMFUNCS member from agscc lib1funcs.asm with the bundle's cpp0/as (ARM and Thumb builds) and searched gs1-en: _call_via_rX (60 bytes) is byte-identical at 0x080072e4 in both builds; no other member matches anywhere in the ROM",
-        "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region"
+        "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region",
+        "extent_review": "2026-09-10: extent moved 56 -> 60; the lr thunk word 0x46c04770 at 0x0800731c was registered as boundary_word_0800731c in executable_gaps/index.json and is now the fifteenth call_via entry, matching lib1funcs.asm:972-986"
       }
     },
     {
@@ -397,7 +411,8 @@
         "ordinary_arguments_remain_in_standard_abi_registers",
         "approved_compiler_cannot_express_hidden_register_abi",
         "register_pins_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
       ],
       "expected_files": 16,
       "expected_bytes": 5900,
@@ -432,7 +447,8 @@
         "no_c_parameter_carries_the_hidden_context",
         "approved_compiler_cannot_express_hidden_register_call_contract",
         "register_pins_inline_assembly_and_compiler_modification_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
       ],
       "expected_files": 5,
       "expected_bytes": 4540,
@@ -454,7 +470,8 @@
         "no_c_parameter_or_initialization_defines_value",
         "approved_compiler_cannot_express_implicit_register_input",
         "register_pins_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
       ],
       "expected_files": 1,
       "expected_bytes": 120,
@@ -518,7 +535,9 @@
         "approved_compiler_thumb_only",
         "contiguous_seven_region_bank",
         "consumer_call_references",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "byte_identical_in_all_six_gs2_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified"
       ],
       "expected_files": 7,
       "expected_bytes": 2652,
@@ -720,7 +739,8 @@
         "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
         "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465"
       ],
       "expected_files": 1,
       "expected_bytes": 1226,
@@ -1460,11 +1480,14 @@
     },
     {
       "kind": "iwram_runtime_veneer",
-      "origin": "compiler_runtime",
+      "origin": "unidentified_build_step",
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_ldr_r3_bx_r3_iwram_target"
+        "fixed_ldr_r3_bx_r3_iwram_target",
+        "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
+        "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
+        "target_is_iwram_address_not_section_symbol"
       ],
       "expected_files": 4,
       "expected_bytes": 32,
@@ -1497,7 +1520,8 @@
         },
         "verdict": "not_toolchain_origin_unidentified",
         "credit": "none",
-        "reason": "same citations as linker_veneer; the target is an IWRAM address, not a section symbol, so not a linker stub either; origin compiler_runtime is unsupported"
+        "reason": "same citations as linker_veneer; the target is an IWRAM address, not a section symbol, so not a linker stub either; origin compiler_runtime is unsupported",
+        "previous_origin": "compiler_runtime"
       }
     },
     {
@@ -1551,7 +1575,8 @@
       "evidence": [
         "thumb_to_arm_pc_switch",
         "single_umull_high_word",
-        "approved_compiler_is_thumb_only"
+        "approved_compiler_is_thumb_only",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
       ],
       "expected_files": 1,
       "expected_bytes": 16,
@@ -1568,7 +1593,9 @@
         "caller_copy_source_and_size_boundaries",
         "arm_instruction_set",
         "approved_compiler_thumb_only",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "byte_identical_in_all_six_gs2_editions_9_of_13_regions_vendor_object_unidentified"
       ],
       "expected_files": 13,
       "expected_bytes": 6208,
@@ -1799,7 +1826,9 @@
         "approved_compiler_has_no_ip_linked_calling_convention",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+        "no_cross_product_identity"
       ],
       "expected_files": 50,
       "expected_bytes": 26866,
@@ -1876,8 +1905,8 @@
             "bytes": 5522
           }
         },
-        "verdict": "pending_compiler_citation",
-        "credit": "none_yet",
+        "verdict": "not_compiler_no_cross_product_identity_not_proven_handwritten",
+        "credit": "none",
         "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4"
       }
     },
@@ -1894,7 +1923,8 @@
         "approved_compiler_has_no_ip_linked_calling_convention",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub"
       ],
       "expected_files": 3,
       "expected_bytes": 2470,
@@ -1936,7 +1966,8 @@
         "approved_gcc_2_96_thumb_di_df_moves_emit_at_most_two_register_ldmia_stmia",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465"
       ],
       "expected_files": 3,
       "expected_bytes": 2818,
@@ -1980,7 +2011,10 @@
         "080ca60c_bl_080ca956_to_080cb17a_also_reached_by_branch_080cb174_and_bl_080cb176_to_fallthrough_080ca978",
         "080d1714_bl_080d2352_to_fallthrough_080d18a8",
         "080d6970_bl_080d75de_to_fallthrough_080d6b76",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "far_jump_bl_is_compiler_thumb_jump_range_2048_2044_arm_c_thumb_far_jump_used_p_8598",
+        "local_subroutine_bl_no_call_template_takes_label_arm_md_5905_6006",
+        "all_45_intra_owner_bl_targets_never_return_37_beyond_far_jump_range_8_within_range_consistent_with_monotone_shorten_branches"
       ],
       "expected_files": 10,
       "expected_bytes": 33948,
@@ -2079,9 +2113,10 @@
             "bytes": 0
           }
         },
-        "verdict": "pending_compiler_citation",
-        "credit": "none_yet",
-        "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl"
+        "verdict": "compiler_far_jump_bl_not_assembly",
+        "credit": "none",
+        "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl",
+        "analysis": "Kiki 2026-09-10: *thumb_jump prints `bl %l0` as a far jump when the distance is outside -2048..+2044 (length attribute) and thumb_far_jump_used_p (arm.c:8598) saves lr for it; a bl to a label whose target returns is not emit-able (no call template takes a label_ref, arm.md:5905-6006). Site classification over the 10 regions: 45 intra-owner bl sites, every target block reaches its end without bx lr or pop {pc} (none returns to the bl site); 37 sites are beyond +-2044 in the final layout, 8 sit at 1858-2042 where shorten_branches' monotone lengths can leave a grown far jump. Reading: these are compiler far jumps, so the kind is compiler output that the route reproduces only if its long functions grow the same jumps; retention keep_structured_asm rests on the owners not being reconstructed, not on assembly origin."
       }
     },
     {
@@ -2555,7 +2590,10 @@
         "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
         "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465",
+        "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
+        "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
       "expected_files": 169,
       "expected_bytes": 65476,

@@ -15160,6 +15160,14 @@
         "Func_02001e9a_a": {
           "address": "0x020093ac",
           "kind": "thumb"
+        },
+        "Data_03001e70": {
+          "address": "0x03001e70",
+          "kind": "data"
+        },
+        "Value_00000000": {
+          "address": "0x00000000",
+          "kind": "data"
         }
       },
       "local_symbols": [],

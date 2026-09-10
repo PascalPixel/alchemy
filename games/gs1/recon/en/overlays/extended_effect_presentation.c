@@ -141,9 +141,6 @@ void FieldScene_RunExtendedEffectPresentation(void)
     s32 tileX;
     s32 shortDelay;
     s32 actorStepCallback;
-    s32 savedHorizontalStep;
-    s32 savedActor0Sprite;
-    u8 *actor1Sprite;
     u8 *effectSprite;
 
     work = *(u8 **)0x03001ec4;
@@ -190,20 +187,15 @@ void FieldScene_RunExtendedEffectPresentation(void)
     Func_020034cc(40);
     actor0 = Pointer1(Func_020034ec, 0);
     actor1 = Pointer1(Func_020034ec, 1);
-    actor1Sprite = *(u8 **)(actor1 + 80);
     horizontalStep = 0x6000;
     actor0Sprite = *(s32 *)(actor0 + 80);
     do {
         *(u16 *)(actor0Sprite + 30) += 0x100;
-        *(u16 *)((s32)actor1Sprite + 30) += -256;
+        *(u16 *)((s32)*(u8 **)(actor1 + 80) + 30) += -256;
         *(s32 *)(actor0 + 8) += horizontalStep;
         *(s32 *)(actor1 + 8) = (*(s32 *)(actor1 + 8) - horizontalStep);
-        savedHorizontalStep = horizontalStep;
-        savedActor0Sprite = actor0Sprite;
         Func_020033e4(1);
         frame = (frame + 1);
-        horizontalStep = savedHorizontalStep;
-        actor0Sprite = savedActor0Sprite;
     } while ((u32)frame <= 19);
     Func_020034cc(40);
     Call3(Func_020034fc, 0, 0x20000, 0x10000);

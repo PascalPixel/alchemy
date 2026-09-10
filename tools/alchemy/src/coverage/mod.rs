@@ -122,10 +122,11 @@ fn summary(doc: &Value) -> Result<String, String> {
     if !executable.is_finite() || !proven_asm.is_finite() {
         return Err("coverage map lacks executable totals".into());
     }
-    let ceiling = executable - proven_asm;
-    let percent = crate::coverage::jsnum::round_half_up(proven_c as i64, ceiling as i64);
+    let done = crate::coverage::jsnum::done_bytes(proven_c as i64, proven_asm as i64);
+    let percent =
+        crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
     Ok(format!(
-        "target={} rom={} executable={} proven_c={} ({}%) draft_c={} ({}%) c_target={} proven_c_of_target={}% draft_source={}",
+        "target={} rom={} executable={} proven_c={} ({}%) draft_c={} ({}%) proven_asm={} done={} ({}%) draft_source={}",
         get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"),
         commas(field(doc, &["rom_bytes"]) as i64),
         commas(executable as i64),
@@ -133,7 +134,8 @@ fn summary(doc: &Value) -> Result<String, String> {
         number(field(doc, &["categories", "proven_c", "percent_of_executable"])),
         commas(draft_c as i64),
         number(field(doc, &["categories", "draft_c", "percent_of_executable"])),
-        commas(ceiling as i64),
+        commas(proven_asm as i64),
+        commas(done),
         number(percent),
         get(get(doc, "provenance").unwrap_or(&Value::Null), "draft_source").and_then(Value::as_str).unwrap_or("undefined")
     ))
@@ -170,12 +172,8 @@ fn update_readme(
     let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
     let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
     let executable = field(&map.document, &["executable_bytes"]);
-    let done = proven_c + proven_asm;
-    let percent = if executable == 0.0 {
-        0.0
-    } else {
-        done * 100.0 / executable
-    };
+    let percent =
+        crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
     let mut out = text.to_string();
     if let Some(start) = out.find("## Status:") {
         if let Some(end) = out[start..].find('\n') {

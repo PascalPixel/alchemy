@@ -40,10 +40,17 @@
       "retention": "adjacent_section_alignment",
       "confidence": "proven",
       "evidence": [
-        "two_byte_zero_alignment"
+        "two_byte_zero_alignment",
+        "refused_assembler_padding"
       ],
       "expected_files": 331,
-      "expected_bytes": 662
+      "expected_bytes": 662,
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "assembler_padding",
+        "credit": "none",
+        "reason": "331 two-byte zero alignment halfwords, 662 bytes, byte-identical everywhere trivially"
+      }
     }
   ],
   "groups": [
@@ -199,7 +206,8 @@
           "handwritten": "irq_entry 224 (mrs/msr), scheduled_math_clear_and_transform_kernels 616, division_runtime 576, audio_mixer_arm 960, audio_format_and_wave_helpers_arm 780: ARM bodies, GS1-only, hand-coded kernels; 08000770.s has 919 instructions, 117 labels, 20 entry symbols and 19 comments and reads as source; credit=handwritten under Pascal's ruling (3,156 bytes). audio_channel_update_thumb 196 and audio_mode_bridge_thumb 16: the bridge is a single-function Thumb->ARM switch (deliberate_performance argument), credit=handwritten with it (212 bytes).",
           "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written."
         },
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "Subregions decompressor, word-copy kernel, irq table and audio work-area tables byte-identical in all six GS2 editions (library); the ARM kernels, mixer and helpers are ARM bodies under -mthumb (arm.c:8806-8830) with mrs/msr that no arm.md template prints, GS1-only in the twelve-ROM scan, in a file of named entries and comments (handwritten); checked per subregion in subregion_credit."
       }
     },
     {
@@ -226,7 +234,8 @@
         "credit_basis": "28 bytes ARM, GS2-identical (Kiki's DMA-to-stack kernel model)",
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "28 bytes",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "28 ARM bytes byte-identical in all six GS2 editions (arm.c:8806-8830 for the ARM body); checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -235,13 +244,20 @@
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_width_dispatch_entries"
+        "fixed_width_dispatch_entries",
+        "refused_data_table_reconstruction_shape_like_linker_veneer"
       ],
       "expected_files": 1,
       "expected_bytes": 768,
       "files": [
         "080000c0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "data_table_not_authored_code",
+        "credit": "none",
+        "reason": "768 bytes of fixed-width dispatch entries at 0x080000c0; GS1-only (identical in gs1-ja); a table the build should generate from its source form, the same reconstruction shape as the veneer table"
+      }
     },
     {
       "kind": "runtime_thunk_bundle",
@@ -284,7 +300,7 @@
         "verdict": "library_proven",
         "credit": "library",
         "object": "agscc gcc/config/arm/lib1funcs.asm:950-990 call_via macro (bx \\register; nop), built by t-arm-elf LIB1ASMFUNCS _call_via_rX",
-        "proof": "assembled every t-arm-elf LIB1ASMFUNCS member from agscc lib1funcs.asm with the bundle's cpp0/as (ARM and Thumb builds) and searched gs1-en: _call_via_rX (60 bytes) is byte-identical at 0x080072e4 in both builds; no other member matches anywhere in the ROM",
+        "proof": "Byte-identical to libgcc _call_via_rX assembled from agscc gcc/config/arm/lib1funcs.asm:950-990 with the bundle cpp0/as; checked by searching the 60 assembled bytes in gs1-en at 0x080072e4 (scratchpad libgcc.ts, 2026-09-10).",
         "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region",
         "extent_review": "2026-09-10: extent moved 56 -> 60; the lr thunk word 0x46c04770 at 0x0800731c was registered as boundary_word_0800731c in executable_gaps/index.json and is now the fifteenth call_via entry, matching lib1funcs.asm:972-986"
       }
@@ -297,7 +313,8 @@
       "evidence": [
         "fixed_software_interrupt_instruction",
         "no_swi_template_arm_md",
-        "gs2_identical_trivially_short"
+        "gs2_identical_trivially_short",
+        "handwritten_credit_after_file_rewrite_named_entries"
       ],
       "expected_files": 2,
       "expected_bytes": 16,
@@ -307,9 +324,11 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "withheld_file_not_source_form",
+        "credit": "handwritten",
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
-        "file_check": "08006864.s carries no symbol or label, only five instructions after .thumb; fix the file (named entry points for the two wrappers) before credit; 08006870.s is fine"
+        "file_check": "08006864.s rewritten as source: named entries Func_08006864 (svc 11, CpuSet) and Func_0800686a (r0=0, svc 25); byte-identical build",
+        "credit_basis": "16 bytes: (1) no swi template in arm.md; (2) two-instruction wrappers, trivially identical across games; (3) BIOS call wrappers, a hand idiom",
+        "proof": "No swi template exists in arm.md (Kiki 2026-09-10), two-instruction BIOS call wrappers; file check in file_check after the rewrite to named entries."
       }
     },
     {
@@ -363,7 +382,8 @@
         "credit_basis": "954 bytes; 080f9674 switches Thumb to ARM and back inside one function (572 ARM bytes) and both regions are GS2-identical; the route has one instruction set per function",
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "954 bytes",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "Both regions byte-identical in all six GS2 editions and a single-function Thumb/ARM mode switch the route cannot express (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -439,7 +459,8 @@
         "verdict": "mostly_gs1_editions_only",
         "credit": "library",
         "credit_bytes": "64 bytes (080f9a80)",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "080f9a80 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -566,7 +587,8 @@
         "verdict": "one_region_cross_product_masked_identical",
         "credit": "library",
         "credit_bytes": "132 bytes (080f95f0)",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "080f95f0 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -583,7 +605,7 @@
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "byte_identical_in_all_six_gs2_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
         "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
-        "gs1_only_region_080155d0_withheld_no_comments"
+        "gs1_only_region_080155d0_handwritten_credit_after_comment_pass"
       ],
       "expected_files": 7,
       "expected_bytes": 2652,
@@ -638,9 +660,10 @@
         "handwritten": {
           "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
           "regions": "080155d0 792 bytes is the only GS1-only region",
-          "credit": "withheld_file_not_source_form",
-          "file_check": "196 ARM instructions, 21 labels, zero comments; a decompressor of this size needs its comments before it reads as source"
-        }
+          "credit": "handwritten",
+          "file_check": "080155d0.s: an ARM glyph blitter (character code, x, y, bold flag; 4-bit pixels masked into VRAM tiles at 0x06002500 from the font tables at 0x080370d4 and 0x08032224); header and seven block comments added, instruction and data lines untouched, byte-identical build"
+        },
+        "proof": "Three regions byte-identical and three pool-masked identical in all six GS2 editions, ARM bodies under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom; the GS1-only region 080155d0 is credited handwritten on the same citation plus its file check."
       }
     },
     {
@@ -669,7 +692,8 @@
         "credit": "handwritten",
         "credit_basis": "68 bytes: (1) ARM body under -mthumb (arm.c:8806-8830) and no msr/mrs template anywhere in arm.md; (2) GS1-only; (3) supervisor/system mode switch, stack pointers and IRQ vector install",
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
-        "file_check": "executable_gaps/080003c0.s: Entry_080003c0, mnemonics, four pool words; reads as source"
+        "file_check": "executable_gaps/080003c0.s: Entry_080003c0, mnemonics, four pool words; reads as source",
+        "proof": "ARM body under -mthumb (arm.c:8806-8830) with msr CPSR_fc that no arm.md template prints, GS1-only in the twelve-ROM scan, a startup mode switch and stack setup; file check in file_check."
       }
     },
     {
@@ -721,7 +745,8 @@
         "verdict": "mostly_gs1_editions_only",
         "credit": "library",
         "credit_bytes": "64 bytes (080fa16c)",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "080fa16c byte-identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -746,7 +771,8 @@
         "scanned": "2026-09-10",
         "credit": "library",
         "credit_bytes": "28 bytes (080f9ae0)",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "28 bytes byte-identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -1007,7 +1033,8 @@
       "confidence": "proven",
       "evidence": [
         "registered_main_region_alignment_padding",
-        "byte_exact_directive_data"
+        "byte_exact_directive_data",
+        "refused_assembler_padding"
       ],
       "expected_files": 6,
       "expected_bytes": 12,
@@ -1018,7 +1045,13 @@
         "0801ca16",
         "08021dfa",
         "080c0ea6"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "assembler_padding",
+        "credit": "none",
+        "reason": "12 bytes of registered alignment padding"
+      }
     },
     {
       "kind": "executable_gap_continuation",
@@ -1560,7 +1593,8 @@
         "verdict": "cross_product_identical_vendor_unidentified",
         "credit": "library",
         "credit_bytes": "692 bytes",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "080f9c44 byte-identical and 080f9c90 pool-masked identical in all six GS2 editions; checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -1659,7 +1693,8 @@
         "credit": "handwritten",
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
         "credit_basis": "568 bytes: (1) Kiki: every Thumb conditional branch is cbranchsi4 (arm.md:5152-5202) over a comparison; no Thumb pattern exposes a shift's carry to a branch; (2) identical across GS1 editions only, no GS2 or libgcc match; (3) carry-driven branching into a 128-entry quarter-sine table with mirror and negate",
-        "file_check": "0800230c.s / 0800231c.s: mnemonics, named entry symbols, .L_index/.L_return labels, the table as .hword rows under Data_08002344; reads as source"
+        "file_check": "0800230c.s / 0800231c.s: mnemonics, named entry symbols, .L_index/.L_return labels, the table as .hword rows under Data_08002344; reads as source",
+        "proof": "No Thumb template branches on a shift-set carry (cbranchsi4 arm.md:5152-5202, Kiki 2026-09-10), no GS2 or libgcc match in the twelve-ROM scan, and a hand-coded quarter-sine lookup with mirror and negate; file check in file_check."
       }
     },
     {
@@ -1685,7 +1720,8 @@
         "credit_basis": "16 bytes, ARM umull high word, GS2-identical",
         "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
         "credit_bytes": "16 bytes",
-        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
+        "proof": "16 bytes with an ARM umull byte-identical in all six GS2 editions (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom."
       }
     },
     {
@@ -1845,7 +1881,8 @@
           "regions": "08009e7c 636, 0800a0f8 644, 0800a494 1256 (2,536 bytes): ARM bodies (arm.c:8806-8830), no GS2 or libgcc match, hand-coded copy/transform kernels with labelled loops",
           "file_check": "mnemonics with labels and entry symbols, 0-7 pool words each, two comments each; reads as source",
           "credit": "handwritten"
-        }
+        },
+        "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six GS2 editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom."
       }
     },
     {
@@ -1898,7 +1935,8 @@
       "evidence": [
         "registered_main_region_literal_pool",
         "pc_relative_reference_consumers",
-        "byte_exact_directive_data"
+        "byte_exact_directive_data",
+        "refused_literal_pool_data"
       ],
       "expected_files": 5,
       "expected_bytes": 144,
@@ -1908,7 +1946,13 @@
         "080bf1e8",
         "080dddb8",
         "080e5790"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "assembler_data_not_authored_code",
+        "credit": "none",
+        "reason": "five registered literal pools, 144 bytes; pool words the assembler emits for their functions"
+      }
     },
     {
       "kind": "deliberate_dma_kick_macro",
@@ -1936,7 +1980,8 @@
         "credit": "handwritten",
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
         "credit_basis": "48 bytes: (1) Kiki A: no Thumb template prints a writeback stmia of ldr-loaded registers; (2) GS1 editions only; (3) two DMA register kicks with the base restored, a leaf of nothing else",
-        "file_check": "080a22f4.s: named symbol, mnemonics, six pool words; reads as source"
+        "file_check": "080a22f4.s: named symbol, mnemonics, six pool words; reads as source",
+        "proof": "No Thumb template prints a writeback stmia of ldr-loaded registers (arm.md:5111-5141, arm.c:9425-9465), GS1 editions only in the twelve-ROM scan, a leaf of two DMA register kicks; file check in file_check."
       }
     },
     {

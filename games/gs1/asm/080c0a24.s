@@ -1,5 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 床の走査線拡縮表 (H-blank 用) の作成。0x03001f00-136 の二面バッファを交互に使い、
+@ IwramRatioMulQ14 (Func_080072ec) と IwramMulQ16 で視点 r0, r1 と奥行 [sp+48] から
+@ 縮尺と偏りを求め、160 行に 0x3f8e / 0x478a 系の値を詰めて面を切り替える。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080c0a24
@@ -85,6 +87,7 @@ Func_080c0a24:
 	lsls	r1, r1, #9
 	ldr	r2, [pc, #196]
 	adds	r7, r3, #0
+@ 縮尺 = 奥行 / 0x10000 (IwramRatioMulQ14, 0x0300013c)。
 	bl	Func_080072ec
 	mov	r6, r9
 	adds	r6, #16
@@ -103,6 +106,7 @@ Func_080c0a24:
 	ldr	r4, [pc, #168]
 	mov	r0, sl
 	mov	r1, r8
+@ 以降の ip 呼出しは IwramMulQ16ReturnIp: 視点 × 縮尺、偏り × 縮尺。
 	mov	ip, pc
 	bx	r4
 	adds	r1, r0, #0
@@ -149,6 +153,7 @@ Func_080c0a24:
 	cmp	r0, #0
 	bne.n	.L6
 	ldr	r3, [pc, #44]
+@ 先頭 16 行は固定値。
 .L7:
 	adds	r5, #1
 	strh	r3, [r7, #0]
@@ -167,6 +172,7 @@ Func_080c0a24:
 	ldr	r3, [pc, #20]
 	lsrs	r2, r2, #16
 	orrs	r2, r3
+@ 床の見える行は縮尺付きの値。
 .L10:
 	adds	r5, #1
 	strh	r2, [r7, #0]
@@ -199,6 +205,7 @@ Func_080c0a24:
 	adds	r7, #2
 	cmp	r5, #135
 	bls.n	.L12
+@ 残りの行は空の値で埋める。
 .L11:
 	cmp	r5, #159
 	bhi.n	.L13
@@ -213,6 +220,7 @@ Func_080c0a24:
 	movs	r0, r0
 	.4byte 0x0000478e
 	.4byte 0x00003f8e
+@ 面を切り替える。
 .L13:
 	mov	r1, r9
 	ldr	r3, [r1, #0]

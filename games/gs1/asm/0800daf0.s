@@ -1,5 +1,8 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 追従移動。obj+104 の対象の位置を 0x03001e70 の範囲 (+236..+248) に収め、obj+100 が
+@ 立てば即座に置く。それ以外は距離を IwramSqrt (0x030001d8) で測り (0x8000 未満は
+@ Q16 二乗和と Func_080045d4)、歩幅 obj[48] の範囲で IwramRatioMulQ14 (Func_08007310)
+@ と IwramMulQ16 で X, Z を寄せ、Y は差の 1/4 ずつ寄せる。obj[4] を進めて 1 を返す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800daf0
@@ -66,6 +69,7 @@ Func_0800daf0:
 	str	r3, [r2, #56]
 	str	r3, [r2, #60]
 	str	r3, [r2, #64]
+@ 目標を範囲に収める。
 	cmp	fp, r7
 	bge.n	.L3
 	mov	fp, r7
@@ -97,6 +101,7 @@ Func_0800daf0:
 	ldr	r5, [sp, #4]
 	str	r5, [r4, #16]
 	b.n	.L1
+@ 距離。
 .L7:
 	mov	r2, r8
 	ldr	r3, [r2, #8]
@@ -147,6 +152,7 @@ Func_0800daf0:
 	mov	r0, sl
 	mov	r1, sl
 	movs	r0, r0
+@ 距離 0x8000 未満: Q16 二乗和を IwramMulQ16ReturnIp で組んで Func_080045d4。
 	mov	ip, pc
 	bx	r4
 	adds	r3, r0, #0
@@ -182,6 +188,7 @@ Func_0800daf0:
 	ldr	r2, [sp, #4]
 	str	r2, [r5, #16]
 	b.n	.L14
+@ 距離が歩幅を超えれば比率で縮める。
 .L13:
 	cmp	r7, r5
 	ble.n	.L15
@@ -213,6 +220,7 @@ Func_0800daf0:
 	ldr	r3, [r4, #16]
 	adds	r3, r3, r6
 	str	r3, [r4, #16]
+@ Y は差が 0x8000 を超えるとき 1/4 ずつ。
 .L14:
 	mov	r3, r9
 	cmp	r3, #0

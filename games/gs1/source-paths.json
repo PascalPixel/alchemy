@@ -7856,7 +7856,8 @@
       "name": "FieldScene_RunClosingSequence"
     },
     "resource_381:02000054": {
-      "name": "FieldScene_RunTwoPhaseActorSequence"
+      "name": "FieldScene_RunTwoPhaseActorSequence",
+      "source": "overlays/scene/extended_effect_presentation_scene/run_two_phase_actor_sequence.c"
     },
     "resource_3af:020039ec": {
       "name": "FieldScene_RunStepThen10",

@@ -10,7 +10,7 @@ void Func_02008b8c(s32, s32, u8 *);
 void Func_02008b8a(s32);
 void Func_02008e00(s32);
 void Func_02008df0(u8 *, s32);
-void Func_02008c80(s32, s32);
+s32 Func_02008c80(s32, s32);
 void Func_02008c48(s32, s32);
 void Func_02008bd6(u8 *);
 void Func_02008d1e(s32, s32);

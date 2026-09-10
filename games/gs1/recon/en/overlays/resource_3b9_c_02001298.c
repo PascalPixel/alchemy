@@ -1,3 +1,21 @@
+/*
+ * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
+ * for a translation unit that cannot yet be declared: the reviewed complete
+ * extent in semantic/regions.json (884) and the evidence row in
+ * semantic/overlay-assembly.json (852) disagree, and the unit
+ * register must satisfy both. Declare these as absolute_symbols once the
+ * two registers agree on this owner.
+ *   Func_02003ec6_a      0x0200aba4
+ *   Func_02003ec6_b      0x0200ab8c
+ *   Func_02003f98_a      0x0200ac54
+ *   Func_02003f98_b      0x0200abec
+ *   Func_02003ff2_a      0x0200ad34
+ *   Func_02003ff2_b      0x0200abec
+ *   Func_0200402c_a      0x0200ac4c
+ *   Func_0200402c_b      0x0200abec
+ *   Func_02004114_a      0x0200acbc
+ *   Func_02004114_b      0x0200abec
+ */
 #include "types.h"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_BuildActorPresentationGroup:
@@ -7,8 +25,7 @@
 #define FieldScene_BuildActorPresentationGroup Func_02001298
 
 void Func_02003128();
-void *Func_02003e9a();
-void Func_02003ec6();
+void *Func_02003e9a();void Func_02003ec6_a(); void Func_02003ec6_b();
 void Func_02003ed6();
 void Func_02003f22();
 void Func_02003f28();
@@ -26,14 +43,12 @@ void Func_02003f62();
 void Func_02003f6a();
 void Func_02003f6e();
 void Func_02003f72();
-void Func_02003f8a();
-void Func_02003f98();
+void Func_02003f8a();void Func_02003f98_a(); void Func_02003f98_b();
 void Func_02003f9c();
 void Func_02003fa0();
 void Func_02003fa6();
 void Func_02003fb4();
-void Func_02003fe4();
-void Func_02003ff2();
+void Func_02003fe4();void Func_02003ff2_a(); void Func_02003ff2_b();
 void Func_02003ff8();
 void Func_02004000();
 void Func_02004002();
@@ -41,8 +56,7 @@ void Func_0200400e();
 void Func_02004010();
 void Func_0200401c();
 void Func_0200401e();
-void Func_02004020();
-void Func_0200402c();
+void Func_02004020();void Func_0200402c_a(); void Func_0200402c_b();
 void Func_02004044();
 void Func_02004046();
 void Func_0200405c();
@@ -58,8 +72,7 @@ void Func_020040e6();
 void Func_020040f6();
 void Func_020040fc();
 void Func_02004106();
-void Func_02004108();
-void Func_02004114();
+void Func_02004108();void Func_02004114_a(); void Func_02004114_b();
 void Func_0200411e();
 void Func_0200412a();
 void Func_0200413a();
@@ -104,7 +117,7 @@ void Func_02001298(void)
 
     p1 = Func_02003e9a();
     Func_02003f9c(-1, -1, -1, 0);
-    Func_02003ff2(247);
+    Func_02003ff2_a(247);
     Func_02003f22(8, 2);
     Func_02003f2a(9, 2);
     p6 = Func_02003f32(10, 2);
@@ -117,13 +130,13 @@ void Func_02001298(void)
     Func_02003f6a(17, 0);
     Func_02003f72(18, 0);
     Func_02003f28(21);
-    Func_02003ec6(0);
+    Func_02003ec6_a(0);
     p17 = Func_02003f34(19);
     *(s32 *)(p17 + 24) = 0;
     p18 = Func_02003f3e(20);
     *(s32 *)(p18 + 24) = 0;
-    Func_02003ec6(1);
-    Func_02003f98(0, 0, 0);
+    Func_02003ec6_b(1);
+    Func_02003f98_a(0, 0, 0);
     Func_02003ed6(1);
     *(u32 *)(*(u32 *)0x03001ebc + 448) = 512;
     *(u32 *)(*(u32 *)0x03001ebc + 456) = 32;
@@ -136,17 +149,17 @@ void Func_02001298(void)
     Func_02003fe4(16, 164, 904);
     Func_02003f8a(20);
     Func_02004002(16, 9);
-    Func_02003f98(40);
+    Func_02003f98_b(40);
     Func_02004010(16, 10);
     Func_02003fa6(60);
     Func_0200401e(16, 1);
     Func_02003fb4(20);
     Func_02004020(16, 164, 920);
-    Func_0200402c(16, 185, 920);
+    Func_0200402c_a(16, 185, 920);
     Func_020040a8(16, 49152, 20);
     Func_02004044(16, 185, 916);
     Func_0200405c(16, 11);
-    Func_02003ff2(40);
+    Func_02003ff2_b(40);
     Func_0200408a(16, 1);
     Func_02004000(60);
     Func_02004098(16, 3);
@@ -154,9 +167,9 @@ void Func_02001298(void)
     Func_02004046(16, 0x020088af);
     Func_0200401c(80);
     Func_02004106(16, 258);
-    Func_0200402c(60);
+    Func_0200402c_b(60);
     Func_02004108(14, 53248, 0);
-    Func_02004114(15, 20480, 0);
+    Func_02004114_a(15, 20480, 0);
     Func_0200411e(17, 0, 0);
     Func_0200412a(18, 32768, 20);
     Func_02004144(14, 258);
@@ -181,7 +194,7 @@ void Func_02001298(void)
     Func_020040fc(60);
     Func_020041d6(16, 12288, 20);
     Func_0200417e(16, 8);
-    Func_02004114(20);
+    Func_02004114_b(20);
     Func_0200418c(14, 4);
     Func_02004194(15, 4);
     Func_0200419c(17, 4);

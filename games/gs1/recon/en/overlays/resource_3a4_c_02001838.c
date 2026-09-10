@@ -1,3 +1,27 @@
+/*
+ * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
+ * for a translation unit that cannot yet be declared: the reviewed complete
+ * extent in semantic/regions.json (1236) and the evidence row in
+ * semantic/overlay-assembly.json (1208) disagree, and the unit
+ * register must satisfy both. Declare these as absolute_symbols once the
+ * two registers agree on this owner.
+ *   Func_02005486_a      0x0200bb68
+ *   Func_02005486_b      0x0200bb38
+ *   Func_02005516_a      0x0200bc80
+ *   Func_02005516_b      0x0200bbf0
+ *   Func_02005546_a      0x0200bb68
+ *   Func_02005546_b      0x0200bb38
+ *   Func_0200567c_a      0x0200bc50
+ *   Func_0200567c_b      0x0200bb68
+ *   Func_0200567e_a      0x0200bbf0
+ *   Func_0200567e_b      0x0200bb28
+ *   Func_02005770_a      0x0200bc50
+ *   Func_02005770_b      0x0200bb38
+ *   Func_0200578a_a      0x0200bbf0
+ *   Func_0200578a_b      0x0200bb98
+ *   Func_020058a6_a      0x0200bd20
+ *   Func_020058a6_b      0x0200bc50
+ */
 #include "types.h"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_BuildMultiPhasePresentation:
@@ -11,8 +35,7 @@ void Func_020053be();
 void *Func_020053e0();
 void *Func_020053e6();
 void Func_02005462();
-void Func_02005472();
-void Func_02005486();
+void Func_02005472();void Func_02005486_a(); void Func_02005486_b();
 void *Func_02005488();
 void Func_02005496();
 void Func_020054a0();
@@ -22,10 +45,8 @@ void Func_020054ce();
 void Func_020054de();
 void *Func_020054e6();
 void Func_020054f2();
-void Func_020054fe();
-void Func_02005516();
-void Func_02005532();
-void Func_02005546();
+void Func_020054fe();void Func_02005516_a(); void Func_02005516_b();
+void Func_02005532();void Func_02005546_a(); void Func_02005546_b();
 void Func_02005568();
 void Func_0200557c();
 void Func_02005580();
@@ -53,9 +74,7 @@ void Func_0200564c();
 void Func_0200564e();
 void Func_02005668();
 void Func_0200566a();
-void Func_02005670();
-void Func_0200567c();
-void Func_0200567e();
+void Func_02005670();void Func_0200567c_a(); void Func_0200567c_b();void Func_0200567e_a(); void Func_0200567e_b();
 void Func_02005692();
 void Func_0200569c();
 void Func_020056b0();
@@ -76,10 +95,8 @@ void Func_0200574a();
 void Func_0200574e();
 void Func_02005752();
 void Func_0200575c();
-void Func_0200576c();
-void Func_02005770();
-void Func_0200577e();
-void *Func_0200578a();
+void Func_0200576c();void Func_02005770_a(); void Func_02005770_b();
+void Func_0200577e();void *Func_0200578a_a(); void *Func_0200578a_b();
 void Func_02005792();
 void Func_0200579c();
 void Func_020057a4();
@@ -95,8 +112,7 @@ void Func_0200582a();
 void *Func_0200583e();
 void Func_0200584e();
 void Func_02005874();
-void Func_0200589a();
-void Func_020058a6();
+void Func_0200589a();void Func_020058a6_a(); void Func_020058a6_b();
 void Func_020058de();
 void Func_020058f4();
 void Func_0200590c();
@@ -128,7 +144,7 @@ void Func_02001838(void)
     p7 = Func_02005488(10, 2);
     p8 = Func_020053e6(40);
     Func_020054fe(52428, 6553);
-    Func_02005516(19333120, 2097152, 13893632, 1);
+    Func_02005516_a(19333120, 2097152, 13893632, 1);
     *(s32 *)(p1 + 104) = 0;
     *(u16 *)((u8 *)p1 + 100) = 0;
     *(u16 *)((u8 *)(p1) + 102) = 0;
@@ -139,12 +155,12 @@ void Func_02001838(void)
     Func_020054a0(10, 311, 215);
     *(s32 *)(p1 + 108) = 0;
     *(u8 *)((u8 *)(p1) + 91) = 0;
-    Func_02005486(16);
-    Func_02005516(10, 1);
+    Func_02005486_a(16);
+    Func_02005516_b(10, 1);
     Func_0200564c(229);
     Func_02005472(65536, 0, 65536);
     Func_020054a8(4);
-    Func_02005486(-1, -1, 58982);
+    Func_02005486_b(-1, -1, 58982);
     Func_020054bc(40);
     Func_020055b0(10, 45056, 20);
     Func_020055bc(10, 32768, 40);
@@ -161,15 +177,15 @@ void Func_02001838(void)
     Func_0200558e(10, 340, 262);
     Func_0200559c(10, 374, 262);
     *(s32 *)(p1 + 108) = 0;
-    Func_02005546(16);
+    Func_02005546_a(16);
     Func_020055d6(10, 1);
     Func_0200570c(229);
     Func_02005532(65536, 0, 65536);
     Func_02005568(4);
-    Func_02005546(-1, -1, 58982);
+    Func_02005546_b(-1, -1, 58982);
     Func_0200557c(20);
     Func_02005670(10, 61440, 20);
-    Func_0200567c(10, 53248, 40);
+    Func_0200567c_a(10, 53248, 40);
     Func_02005752(153);
     p41 = Func_020055d0(10);
     *(s32 *)(p41 + 40) = 262144;
@@ -181,7 +197,7 @@ void Func_02001838(void)
     Func_020055da(4);
     Func_020055b8(-1, -1, 58982);
     Func_020055ee(6);
-    Func_0200567e(10, 1);
+    Func_0200567e_a(10, 1);
     Func_020055fc(40);
     Func_020056f0(10, 45056, 20);
     Func_020056fc(10, 32768, 40);
@@ -198,20 +214,20 @@ void Func_02001838(void)
     Func_02005632(65536, 0, 65536);
     Func_02005668(4);
     Func_02005646(-1, -1, 58982);
-    Func_0200567c(40);
-    Func_02005770(10, 32768, 40);
+    Func_0200567c_b(40);
+    Func_02005770_a(10, 32768, 40);
     p64 = Func_020056be(9);
     *(u8 *)((u8 *)(p64) + 85) = 0;
     Func_0200566a(3, 0, 1, 1, 17, 13);
-    Func_0200567e(3, 0, 1, 1, 18, 13);
+    Func_0200567e_b(3, 0, 1, 1, 18, 13);
     Func_02005692(3, 0, 1, 1, 19, 13);
     Func_02005714(10, 91750, 45875);
     Func_02005712(10);
     Func_020056b0();
-    Func_020058a6(153);
+    Func_020058a6_a(153);
     p72 = Func_02005724(10);
     *(s32 *)(p72 + 40) = 327680;
-    Func_0200578a(10, 3);
+    Func_0200578a_a(10, 3);
     Func_0200576c(10, 295, 215);
     Func_0200579c(10, 1);
     Func_0200574a(10);
@@ -222,7 +238,7 @@ void Func_02001838(void)
     Func_02005718(-1, -1, 58982);
     Func_0200574e(40);
     Func_0200590c(153);
-    p84 = Func_0200578a(10);
+    p84 = Func_0200578a_b(10);
     *(s32 *)(p84 + 40) = 327680;
     Func_020057ec(10, 3);
     Func_020057d0(10, 260, 215);
@@ -230,10 +246,10 @@ void Func_02001838(void)
     Func_02005936(229);
     Func_0200575c(65536);
     Func_02005792(4);
-    Func_02005770(-1, -1, 58982);
+    Func_02005770_b(-1, -1, 58982);
     Func_020057a6(40);
     Func_0200589a(10, 20480, 20);
-    Func_020058a6(10, 12288, 20);
+    Func_020058a6_b(10, 12288, 20);
     Func_0200597c(147);
     Func_02005874(10, 2);
     Func_020057d2(40);

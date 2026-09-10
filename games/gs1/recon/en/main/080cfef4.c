@@ -36,8 +36,11 @@ typedef void (*DrawRectangleFn)(
 extern u8 Value_000000ab;
 extern u8 Value_000000ac;
 extern u8 *Data_03001e74;
-extern const u8 Data_080ee10c[];
-extern const u8 Data_080ee11a[];
+/* The two seven-byte-stride rectangle tables are plain, non-const arrays:
+ * their element loads are ordered against the outgoing-argument stores at
+ * each blit call site, which a const spelling would let float away. */
+extern u8 Data_080ee10c[];
+extern u8 Data_080ee11a[];
 
 s32 Func_080cdb24(s32 mode);
 void *Func_08002f40(s32 id);
@@ -175,8 +178,10 @@ void BattleEffect_RunCounterReveal(void *object)
         if (amp < 0) {
             amp = 0;
         }
-        row_base = (6 - screen_x) << 8;
+        /* The counter is live from here, so it shares no register with
+         * screen_x, which dies in the row-base expression below. */
         i = 0;
+        row_base = (6 - screen_x) << 8;
         angle = frame << 11;
         for (; i != 160; i++) {
             *scanline++ =

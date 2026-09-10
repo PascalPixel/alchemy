@@ -2095,7 +2095,7 @@
         "byte_exact_reconstruction",
         "far_jump_bl_is_compiler_thumb_jump_range_2048_2044_arm_c_thumb_far_jump_used_p_8598",
         "local_subroutine_bl_no_call_template_takes_label_arm_md_5905_6006",
-        "all_45_intra_owner_bl_targets_never_return_37_beyond_far_jump_range_8_within_range_consistent_with_monotone_shorten_branches"
+        "all_45_intra_owner_bl_targets_never_return_42_beyond_far_jump_range_3_within_range_unexplained"
       ],
       "expected_files": 10,
       "expected_bytes": 33948,
@@ -2194,10 +2194,10 @@
             "bytes": 0
           }
         },
-        "verdict": "compiler_far_jump_bl_not_assembly",
+        "verdict": "compiler_far_jump_bl_42_sites_3_sites_open",
         "credit": "none",
         "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl",
-        "analysis": "Kiki 2026-09-10: *thumb_jump prints `bl %l0` as a far jump when the distance is outside -2048..+2044 (length attribute) and thumb_far_jump_used_p (arm.c:8598) saves lr for it; a bl to a label whose target returns is not emit-able (no call template takes a label_ref, arm.md:5905-6006). Site classification over the 10 regions: 45 intra-owner bl sites, every target block reaches its end without bx lr or pop {pc} (none returns to the bl site); 37 sites are beyond +-2044 in the final layout, 8 sit at 1858-2042 where shorten_branches' monotone lengths can leave a grown far jump. Reading: these are compiler far jumps, so the kind is compiler output that the route reproduces only if its long functions grow the same jumps; retention keep_structured_asm rests on the owners not being reconstructed, not on assembly origin."
+        "analysis": "Kiki 2026-09-10: *thumb_jump prints `bl %l0` as a far jump when the distance is outside -2048..+2044 (length attribute) and thumb_far_jump_used_p (arm.c:8598) saves lr for it; a bl to a label whose target returns is not emit-able (no call template takes a label_ref, arm.md:5905-6006). Site classification over the 10 regions: 45 intra-owner bl sites, every target block reaches its end without bx lr or pop {pc} (none returns to the bl site); 42 sites are beyond -2048..+2044 measured pc+4-relative in the final layout, 3 sit inside it (0x08027bae -> .L39 at -1886, 0x0808f62a -> .L7 at +2018, 0x080a2a76 -> .L0 at +2008), within the far-jump range, and are unexplained: shorten_branches lengths only grow, so a jump that was ever far keeps a final distance at least as large (Kiki, 2026-09-10) — the attribute-relative distance for those 3 is being derived from the source rules. Reading for the 42: compiler far jumps; for the 3: open."
       }
     },
     {

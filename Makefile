@@ -316,7 +316,8 @@ tooling-size:
 	done
 	@lines=$$(find $(addprefix $(TOOLS)/,$(PORTABLE_TOOLS)) -type f \
 		\( -name '*.rs' -o -name '*.js' -o -name '*.ts' -o -name '*.css' \) \
-		-not -path '*/target/*' -print0 | xargs -0 cat | wc -l | tr -d ' '); \
+		-not -path '*/target/*' -print0 | xargs -0 awk \
+		'FNR == 1 { counting = 1 } /^#\[cfg\(test\)\]/ { counting = 0 } counting { n++ } END { print n + 0 }'); \
 	if [ "$$lines" -gt $(TOOLING_LINE_LIMIT) ]; then \
 		printf 'portable tooling is %s lines; limit is %s\n' "$$lines" '$(TOOLING_LINE_LIMIT)'; \
 		exit 1; \

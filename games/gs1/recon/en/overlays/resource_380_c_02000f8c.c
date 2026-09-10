@@ -254,6 +254,16 @@ void FieldScene_RunActorFormation(void)
      * temporary changes which operand owns the result, and a canonical call
      * alias fixes a binding. None of them reaches a whole-function decision.
      * Measured, not assumed.
+     *
+     * Retested later against the levers that closed resource_3a8 and
+     * resource_38f, which do reach whole-function liveness rather than a
+     * single statement: carrying the zero into the loop through v5, with and
+     * without the two byte stores taking it too, costs sixteen bytes and 483
+     * halfwords. Splitting the loop counters off v5, giving the flag merge its
+     * own result local, declaring that result inside the block, spelling the
+     * merge as a compound or-assign, and moving the byte store past the block
+     * are all neutral or worse. The whole-function conclusion holds under the
+     * newer levers as well.
      */
     for (v5 = 0; v5 != 90; v5++) {
         *(s32 *)(rec8 + 12) += -0x1999;

@@ -36,6 +36,17 @@ const GS1: &[ExecutableDigests] = &[
         ],
     ),
 ];
+// GS2: the same source with agscc-gs2.unidiff applied by `make compilers-gs2`;
+// reconstructed from the image, not located (see the patch header).
+const GS2_XGCC: &str = "034c52208be7eaeb6c0df53e722da21eabcb5579272fc9d350222d463a2490b7";
+const GS2_CC1: &str = "90d155e8bfe75faf87e760cb8779f807b44d0cc418d693dbabc604b0937fb3a2";
+const GS2: &[ExecutableDigests] = &[
+    ("xgcc", &[GS2_XGCC]),
+    ("cpp0", GS1[1].1),
+    ("tradcpp0", GS1[2].1),
+    ("cc1", &[GS2_CC1]),
+    ("as", GS1[4].1),
+];
 const EMPTY_GS1: &[ExecutableDigests] = &[
     ("xgcc", &[]),
     ("cpp0", &[]),
@@ -46,7 +57,7 @@ const EMPTY_GS1: &[ExecutableDigests] = &[
 const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 
 pub static EXPECTED: &[HostTargets] = &[
-    ("darwin-arm64", &[("gs1", GS1), ("gs2", GS1)]),
+    ("darwin-arm64", &[("gs1", GS1), ("gs2", GS2)]),
     ("darwin-x64", EMPTY),
     // The old modified Linux bundle is not evidence for this restored route.
     ("linux-x64", EMPTY),

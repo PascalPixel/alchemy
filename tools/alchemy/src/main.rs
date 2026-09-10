@@ -13,11 +13,9 @@ mod coverage;
 mod cross_edition;
 mod dashboard;
 mod flatten;
-mod font;
 mod generated_files;
 mod http;
 mod matching;
-mod music_debug;
 mod overlay;
 mod recovery;
 mod scaffold;
@@ -36,9 +34,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild and report ROM coverage\n\
   dashboard             serve live coverage on localhost:4650\n\
-  music-debug           optionally serve the music debugger on localhost:4651\n\
   check                 run repository contract checks\n\
-  font                  rebuild the shared Golden Sun font\n\
   overlay               legacy overlay operations during migration";
 
 fn main() -> ExitCode {
@@ -61,9 +57,7 @@ fn main() -> ExitCode {
                 ExitCode::from(2)
             }
         }
-        "font" => font::entry(rest),
         "dashboard" => result(dashboard::entry(rest)),
-        "music-debug" => result(music_debug::entry(rest)),
         "build" => build::entry(rest),
         "verify" | "coverage" => make_target(command, rest),
         "check" => check::entry(rest),

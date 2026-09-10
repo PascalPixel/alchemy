@@ -2108,7 +2108,8 @@
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
         "byte_exact_reconstruction",
-        "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub"
+        "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+        "handwritten_credit_after_source_form_pass_3_regions"
       ],
       "expected_files": 3,
       "expected_bytes": 2470,
@@ -2136,7 +2137,14 @@
           "kind": "ip_link_call_owner_unresolved_fragment",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten",
+        "credit_rule": "Beans (merge lane), 2026-09-10, under Pascal's ruling: executable ROM code the approved compiler provably cannot have emitted has no origin other than hand or library; credited when the file reads as source.",
+        "proof": "Same construct as iwram_ip_link_call_module: no Thumb call template prints mov ip,pc (arm.c:9073; bl / bl _call_via_rN only, arm.md:5905-5936); the three regions (080e1acc, 080e1df8, 080e21e8) match no GS2 edition exact or pool-masked in the twelve-ROM scan.",
+        "file_check": "2026-09-10: three continuation regions of the branch-connected owner 0x080e15e8..0x080e2538, each headed as a region of that owner with what it does and why it stays assembly, block comments at the stage labels, .set externs kept; instruction and data lines untouched; byte-identical build."
+      }
     },
     {
       "kind": "multi_region_thumb_multiple_transfer_owner",

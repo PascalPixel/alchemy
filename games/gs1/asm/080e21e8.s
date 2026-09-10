@@ -1,5 +1,8 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 召喚演出の最終区間 (同じ持ち主の終わり)。効果物を四組取っては IWRAM 核の経由呼出し
+@ (sub_080072f4) と解放を繰り返し、乱数の粒子を正弦・余弦で置き、sub_080e3908 / sub_08007304 で
+@ 段階を進める。sub_080e6d3c、sub_080e155c、sub_080cd52c の仕上げと待ちの後、sub_080e1e4e へ
+@ 戻るか、控えを返して sub_08004278 に登録し、sub_08009038 で物を片付けて sub_080cdbc0 で終わる。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.set sub_0800231c, 0x0800231c
@@ -20,6 +23,7 @@
 	.set sub_080e6eac, 0x080e6eac
 	.set sub_080ed408, 0x080ed408
 	.global Region_080e21e8
+@ 効果物の四組。
 Region_080e21e8:
 	bl sub_080072f4
 	movs r0, #47
@@ -82,6 +86,7 @@ Region_080e21e8:
 	movs r0, #0
 	mov r8, r0
 	mov r9, r0
+@ 粒子ループ。
 .L_080e2278:
 	ldr r3, [r7, #24]
 	cmp r3, #0
@@ -145,6 +150,7 @@ Region_080e21e8:
 	ldr r5, [pc, #520]
 	mov r8, r2
 	mov r9, r3
+@ 段階の進み。
 .L_080e22fc:
 	ldr r3, [r5, #24]
 	cmp r3, #0
@@ -268,6 +274,7 @@ Region_080e21e8:
 	movs r7, #3
 	mov r10, r4
 	mov r8, r5
+@ 仕上げの粒子。
 .L_080e23e8:
 	mov r4, r9
 	ands r4, r7
@@ -363,6 +370,7 @@ Region_080e21e8:
 	cmp r4, #192
 	beq .L_080e24b4
 	b sub_080e1e4e
+@ 後片付け。
 .L_080e24b4:
 	movs r0, #46
 	bl sub_08002dd8

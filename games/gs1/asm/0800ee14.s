@@ -1,5 +1,10 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 役者移動の後半部 (Func_0800eba0 側から続く領域、入口は持たない)。呼び手の枠 (sp+4 の角度、
+@ sp+16/+20 の旗) を引き継ぎ、6 つの探り角で Func_0800447c と Func_080120dc により空きを探し、
+@ 見つからなければ元位置に戻して旗を立てる。次に 0x03001e64 の他の 63 役者を Func_0800eba0 で
+@ 調べ、押せる相手なら方位 (Func_080044d0) 前方 0xa0000 の 3 候補を通行判定して押し出す。
+@ 結果で歩き方 (Func_0800c300) と向きの回し方を決め、Func_0800d14c で動いてから
+@ IwramMulQ16 を経て Func_0800f1fa へ抜ける。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.set sub_0800447c, 0x0800447c
@@ -43,6 +48,7 @@ Region_0800ee14:
 	movs r3, #0
 	mov r9, r3
 	mov r8, r11
+@ 探り角ループ (6 回)。
 .L_0800ee50:
 	mov r0, r9
 	lsls r3, r0, #1
@@ -180,6 +186,7 @@ Region_0800ee14:
 	movs r3, #63
 	mov r9, r3
 	adds r6, #8
+@ 他役者ループ。
 .L_0800ef72:
 	ldrh r3, [r7, #32]
 	mov r0, r8
@@ -332,6 +339,7 @@ Region_0800ee14:
 	cmp r0, #0
 	blt .L_0800f0ae
 	b .L_0800ef72
+@ 結果の旗から歩き方を選ぶ。
 .L_0800f0ae:
 	ldr r1, [sp, #20]
 	cmp r1, #0
@@ -455,6 +463,7 @@ Region_0800ee14:
 	.4byte 0xff000200
 	.4byte 0x03001ebc
 	.4byte 0x02000240
+@ 移動と IwramMulQ16ReturnIp、Func_0800f1fa へ。
 .L_0800f1a4:
 	add r3, sp, #92
 	ldr r1, [r3, #0]

@@ -1,5 +1,8 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 召喚演出の一区間 (同じ持ち主の続き)。乱数 (sub_08004458) で粒子の角度と大きさを決め、
+@ 正弦・余弦で位置を置き、sub_080d6888 / sub_080b5088 で描画物を作る。IWRAM 核を
+@ sub_080072f4 / sub_080072fc の経由で呼び、効果音を段階で鳴らし、時点により sub_080e22e0 へ
+@ 飛ぶか、sub_080e21e8 へ続く。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.set sub_080022fc, 0x080022fc
@@ -19,6 +22,7 @@
 	.set sub_080f9010, 0x080f9010
 	.global Region_080e1df8
 Region_080e1df8:
+@ 乱数の初期値。
 .L_080e1df8:
 	bl sub_08004458
 	movs r3, #31
@@ -91,6 +95,7 @@ Region_080e1df8:
 	movs r1, #8
 	mov r8, r0
 	mov r11, r1
+@ 範囲判定と IWRAM 核の経由呼出し。
 .L_080e1e8e:
 	ldr r4, [sp, #116]
 	mov r3, r8
@@ -151,6 +156,7 @@ Region_080e1df8:
 	ldr r7, [pc, #696]
 	mov r10, r0
 	mov r9, r0
+@ 粒子ループ: 乱数の角度から正弦・余弦。
 .L_080e1f02:
 	ldr r3, [r7, #24]
 	cmp r3, #0
@@ -230,6 +236,7 @@ Region_080e1df8:
 	ldr r0, [pc, #560]
 	movs r6, #36
 	adds r5, r4, r0
+@ 描画物の生成。
 .L_080e1fa2:
 	ldr r3, [r5, #0]
 	ldrsh r0, [r3, r6]
@@ -280,6 +287,7 @@ Region_080e1df8:
 	movs r4, #80
 	mov r9, r3
 	mov r11, r4
+@ 二周目の粒子と描画物。
 .L_080e2002:
 	ldr r0, [sp, #116]
 	mov r5, r9
@@ -435,6 +443,7 @@ Region_080e1df8:
 	cmp r3, #30
 	beq .L_080e2144
 	b .L_080e2002
+@ 次の区間へ。
 .L_080e2144:
 	bl sub_08004458
 	movs r6, #7

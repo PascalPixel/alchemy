@@ -347,11 +347,11 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     Ok(report)
 }
 
-/// Exact runs required beyond the first before an owner is adopted. One
-/// exact compile can be luck: the approved cc1 hashed heap pointers under
-/// address-space randomisation and split 27 to 3 on one owner until the
-/// executor pinned the layout. Thirty is the standard the lanes measured
-/// against; each run compiles in an empty work directory so none answers
+/// Compiles that must agree before an owner is adopted. Before the executor
+/// pinned the address layout, the approved cc1 hashed heap pointers and split
+/// 27 to 3 on one owner, so thirty runs measured luck; now they should always
+/// agree and a split is a defect signal. Thirty is the standard the lanes
+/// measured against; each run compiles in an empty work directory so none answers
 /// from the cache, and the compiler binary is checked before and after so a
 /// rebuild in the shared bundle mid-check cannot pass as a result.
 const REPEAT_RUNS: usize = 30;
@@ -380,7 +380,7 @@ fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Stri
     }
     if exact != REPEAT_RUNS {
         return Err(format!(
-            "{owner}: exact in {exact} of {REPEAT_RUNS} compiles; nothing adopted -- record the split as an evidenced finding, the candidate is not repeatable"
+            "{owner}: exact in {exact} of {REPEAT_RUNS} compiles; nothing adopted. With the address layout pinned every compile should agree, so a split is a toolchain defect to diagnose, not bad luck to retry: keep the differing outputs from out/, record the distribution as an evidenced finding on the owner, and do not adopt until the cause is found"
         ));
     }
     Ok(format!(

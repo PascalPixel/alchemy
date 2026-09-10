@@ -492,6 +492,19 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         );
         return Ok(1);
     }
+    // One exact assembly is a sample; installation needs thirty fresh
+    // compiles to agree. The check runs here because every overlay
+    // adoption, direct or through `alchemy adopt`, passes through this apply.
+    if options.apply {
+        let width = u32::try_from(span).map_err(|_| format!("{}: span exceeds u32", options.id))?;
+        match crate::recovery::repeatable(root, &installed, &options.id, width) {
+            Ok(line) => println!("{line}"),
+            Err(error) => {
+                revert(&installed, &assembly, &preexisting, &original_text)?;
+                return Err(error);
+            }
+        }
+    }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
         let source_base = crate::compiler::plan::basename(&options.source);

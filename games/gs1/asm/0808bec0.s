@@ -1,5 +1,11 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 一歩ごとの処理。場面記録 0x03001ebc、隊列 (Data_02000240、Func_08077148 の人数) の各員の
+@ 状態を控え、足元の地図語 (場面状態 3 は 0x02020000 の 32 幅、他は 0x02010000 の層) を引いて
+@ +0x1b8 / +0x1bc に置く。地面種別 (+2) が立てば Func_0808bde0。移動量 [48] (旗 0x167 で倍) を
+@ Func_0808b048 / Func_0808b02c で歩数に換え、IwramMulQ16 で +0x1b0 に掛けて +0x1b4 へ積み、
+@ 0xffff を超えるごとに毒などの一歩分 (Func_0808c2dc、Func_0808c3a4) と Func_08091858 を行う。
+@ 特定地面 (250) の判定、時間 +0x232 の進みと Func_08093874、Func_0808c30c の定期処理、
+@ 戦闘不能者の並べ替え (+0x184..) を行う。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0808bec0
@@ -48,6 +54,7 @@ Func_0808bec0:
 	lsls	r3, r3, #1
 	add	r5, sp, #28
 	adds	r7, r7, r3
+@ 隊員の状態 (+56) を控える。
 .L3:
 	ldrb	r0, [r7, #0]
 	bl	Func_08077008
@@ -90,6 +97,7 @@ Func_0808bec0:
 	lsls	r3, r3, #2
 	adds	r0, r3, r1
 	b.n	.L7
+@ 足元の地図語。
 .L4:
 	mov	r2, fp
 	cmp	r2, #2
@@ -239,6 +247,7 @@ Func_0808bec0:
 	ldr	r0, [r3, #0]
 	ldr	r1, [r2, #48]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp: 歩数 × +0x1b0。
 	mov	ip, pc
 	bx	r4
 	cmp	r7, #0
@@ -276,6 +285,7 @@ Func_0808bec0:
 	bl	Func_08091858
 	bl	Func_0808c3a4
 	str	r0, [sp, #4]
+@ 地面 250 と時間の進み。
 .L25:
 	ldr	r4, [pc, #60]
 	ldr	r0, [pc, #88]
@@ -435,6 +445,7 @@ Func_0808bec0:
 	adds	r3, #1
 	str	r3, [sp, #4]
 	ldr	r4, [sp, #0]
+@ 何かが起きた: 隊列の並べ直し。
 .L33:
 	ldr	r0, [sp, #4]
 	cmp	r0, #0

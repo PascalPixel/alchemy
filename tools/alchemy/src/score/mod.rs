@@ -256,14 +256,35 @@ mod tests {
     use super::*;
     #[test]
     fn retained_overlay_unit_scores_without_an_owner_override() {
+        // Any overlay unit that is retained right now: naming one would break
+        // the test every time that owner is adopted.
+        let manifest = crate::compiler::translation_units::TranslationUnits::load(root()).unwrap();
+        let unit = manifest
+            .units
+            .iter()
+            .find(|unit| {
+                unit.overlay.is_some()
+                    && unit.owners.iter().any(|owner| {
+                        owner.state
+                            == crate::compiler::translation_units::OwnerState::RetainedAssembly
+                    })
+            })
+            .expect("a retained overlay unit exists");
+        let owner = unit
+            .owners
+            .iter()
+            .find(|owner| {
+                owner.state == crate::compiler::translation_units::OwnerState::RetainedAssembly
+            })
+            .unwrap();
         let work = tempfile::tempdir().unwrap();
         let mut options = crate::score::cli::Options::gs1(String::new());
-        options.unit = Some("retained-overlay-380-large-object-sequence".into());
+        options.unit = Some(unit.id.clone());
         options.work = Some(work.path().to_string_lossy().into_owned());
         options.first = true;
         let output = run(options).unwrap();
         assert!(output.contains("scope=translation-unit"));
-        assert!(output.contains("owner=0x020027f8"));
+        assert!(output.contains(&format!("owner=0x{:08x}", owner.address)));
         assert!(output.contains("differing_halfwords="));
     }
     #[test]

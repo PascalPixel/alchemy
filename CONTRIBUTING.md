@@ -456,8 +456,9 @@ a music format. Keep format names portable and directional.
 
 The dashboard at `http://127.0.0.1:4650/` combines main/overlay Code and
 graphics/sound Data; it has no music player. `make dashboard-service-install`
-installs its macOS login service. Restart after server/client changes; coverage
-inputs are watched. Its client is the JavaScript exception to Rust tooling,
+installs its macOS login service; `make dashboard-restart` restarts it. Coverage
+inputs are watched, but the service keeps the binary it started with, so restart
+it after any tooling merge or it computes DONE under the old rules. Its client is the JavaScript exception to Rust tooling,
 included in the ceiling and `make test`.
 
 ## Owners and names

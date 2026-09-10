@@ -63,13 +63,13 @@ fn check_build(root: &Path, target: &str) -> Result<(), String> {
 
 fn subject(report: &ProgressTally, proven_assembly: i64) -> Result<String, String> {
     let (exact, executable) = totals(report);
-    let done = exact + proven_assembly;
+    let done = crate::coverage::jsnum::done_bytes(exact, proven_assembly);
     if done < 0 || done > executable {
         return Err("DONE numerator exceeds executable denominator".into());
     }
     Ok(format!(
         "☀️ {}% –",
-        (done * 100 + executable / 2) / executable
+        crate::coverage::jsnum::done_percent_whole(exact, proven_assembly, executable)
     ))
 }
 

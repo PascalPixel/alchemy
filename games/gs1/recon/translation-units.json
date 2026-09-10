@@ -1820,9 +1820,9 @@
       }
     },
     {
-      "id": "retained-extended-actor-sequence-38f",
+      "id": "overlay-38f-run-extended-actor-sequence",
       "game": "gs1",
-      "source": "games/gs1/recon/en/overlays/run_extended_actor_sequence.c",
+      "source": "games/gs1/src/overlays/scene/extended_actor_sequence_scene/run_extended_actor_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
       "absolute_symbols": {
@@ -2013,13 +2013,77 @@
         "Func_02002a3c": {
           "address": "0x0200aa3c",
           "kind": "thumb"
+        },
+        "Data_0200b69c": {
+          "address": "0x0200b69c",
+          "kind": "data"
+        },
+        "Data_0200b68c": {
+          "address": "0x0200b68c",
+          "kind": "data"
+        },
+        "Data_0200b690": {
+          "address": "0x0200b690",
+          "kind": "data"
+        },
+        "Data_0200b694": {
+          "address": "0x0200b694",
+          "kind": "data"
+        },
+        "Data_0200b698": {
+          "address": "0x0200b698",
+          "kind": "data"
+        },
+        "Data_0200b6a0": {
+          "address": "0x0200b6a0",
+          "kind": "data"
+        },
+        "Data_02008801": {
+          "address": "0x02008801",
+          "kind": "data"
+        },
+        "Data_0200a609": {
+          "address": "0x0200a609",
+          "kind": "data"
+        },
+        "Data_0200a7ad": {
+          "address": "0x0200a7ad",
+          "kind": "data"
+        },
+        "Data_0200abd4": {
+          "address": "0x0200abd4",
+          "kind": "data"
+        },
+        "Data_0200ac08": {
+          "address": "0x0200ac08",
+          "kind": "data"
+        },
+        "Data_0200ac3c": {
+          "address": "0x0200ac3c",
+          "kind": "data"
+        },
+        "Data_0200ac70": {
+          "address": "0x0200ac70",
+          "kind": "data"
+        },
+        "Data_0200acfc": {
+          "address": "0x0200acfc",
+          "kind": "data"
+        },
+        "Data_0200ad20": {
+          "address": "0x0200ad20",
+          "kind": "data"
+        },
+        "Data_0200ad7c": {
+          "address": "0x0200ad7c",
+          "kind": "data"
         }
       },
       "owners": [
         {
           "address": "0x020008ec",
           "extent": 7356,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

@@ -112,20 +112,6 @@
       ]
     },
     {
-      "overlay": "resource_37a",
-      "start": "0x02001be8",
-      "end": "0x02001ca8",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 192-byte actor-position transition is retained as draft assembly because repeated fresh approved stock compiler invocations produce different bytes for its current C candidate.",
-        "Saved equal-input pass dumps first diverge during reload CSE constant sharing. This is a repeatability failure, not proof that ordinary C cannot emit the owner.",
-        "The C candidate and its distinct runtime call bindings remain in the retained translation unit; historical assembly is restored without changing the compiler or selecting successful output.",
-        "games/gs1/recon/en/dossiers.json#resource_37a:02001be8"
-      ]
-    },
-    {
       "overlay": "resource_36f",
       "start": "0x020001c0",
       "end": "0x02000238",

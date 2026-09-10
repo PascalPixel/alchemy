@@ -1,5 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 接近判定。場面記録 (0x03001ebc) の +0xcc0 が立てば +0xcba を減らし、対象物
+@ (Data_02000240[125]) との X 差を 0xd105 で Q16 乗算、Z 差 (obj[16]-obj[12]) と
+@ 二乗和が 3600 未満、または残数 0 のとき +0x17e に 0x2090 を書く。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080982dc
@@ -13,6 +15,7 @@ Func_080982dc:
 	lsls	r0, r0, #1
 	adds	r3, r3, r0
 	ldr	r0, [r3, #0]
+@ 対象物の記録を取る。
 	bl	Func_0808ba1c
 	movs	r1, #204
 	lsls	r1, r1, #4
@@ -46,6 +49,7 @@ Func_080982dc:
 	ldr	r3, [pc, #104]
 	subs	r0, r2, r0
 	ldr	r1, [pc, #104]
+@ IwramMulQ16ReturnIp: X 差 × 0xd105。
 	mov	ip, pc
 	bx	r3
 	ldr	r2, [pc, #100]
@@ -64,6 +68,7 @@ Func_080982dc:
 	asrs	r3, r0, #16
 	subs	r3, r6, r3
 	adds	r0, r3, #0
+@ 二乗和と 3600 を比べる。
 	muls	r0, r3
 	adds	r2, r1, #0
 	muls	r2, r1

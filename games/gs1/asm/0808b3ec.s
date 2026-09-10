@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 地図役者の配置。表 r0 (24 バイト項、id -1 で終わり) を場面記録 0x03001ebc の空き枠に登録し、
+@ 各項の出現旗 (Func_0808d428、id 48..127 は +80 の旗も) が立つものを Func_0808ba1c で探すか
+@ Func_080090c8 で作る。対の項 (+23 bit0) は絵を共有し、旗 33 と種別 18/19 は Func_08009228。
+@ 向き、位置 (+100/+102)、高さを置き、場面状態 3 では [r8+24] × 0xc000 を IwramMulQ16 で
+@ 縮尺に、それ以外は Func_080091a8 の地面高さを足す。物は記録 +20 の枠に控える。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0808b3ec
@@ -27,6 +31,7 @@ Func_0808b3ec:
 	mov	r0, r9
 	str	r7, [r0, #0]
 	b.n	.L0
+@ 表を空き枠 (4 つ) に登録する。
 .L1:
 	adds	r1, #1
 	cmp	r1, #3
@@ -46,6 +51,7 @@ Func_0808b3ec:
 	negs	r0, r0
 	ldrh	r2, [r7, #0]
 	b.n	.L2
+@ 項ループ (最大 65)。
 .L19:
 	lsls	r3, r2, #16
 	asrs	r3, r3, #16
@@ -87,6 +93,7 @@ Func_0808b3ec:
 	cmp	r0, #0
 	bne.n	.L7
 	b.n	.L6
+@ 既存の物を探し、無ければ作る。
 .L7:
 	movs	r3, #0
 	ldrsh	r0, [r7, r3]
@@ -182,6 +189,7 @@ Func_0808b3ec:
 	mov	r3, r8
 	adds	r3, #36
 	strb	r0, [r3, #0]
+@ 向き、位置、高さ。
 .L12:
 	ldrh	r3, [r7, #20]
 	adds	r2, r6, #0
@@ -250,11 +258,13 @@ Func_0808b3ec:
 	ldr	r3, [pc, #112]
 	lsls	r1, r1, #8
 	movs	r0, r0
+@ IwramMulQ16ReturnIp: 場面状態 3 の縮尺。
 	mov	ip, pc
 	bx	r3
 	mov	r2, r8
 	str	r0, [r2, #24]
 	b.n	.L17
+@ 地面高さ。
 .L16:
 	ldr	r1, [r6, #8]
 	ldr	r2, [r6, #16]

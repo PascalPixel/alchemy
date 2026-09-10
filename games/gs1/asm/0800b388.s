@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 役者の絵の組み立て。Func_08005268 で投影し、画面 (-32..272, -32..208) の外なら
+@ Func_08003f78 で絵を返す。縮尺は投影の尺度 × obj[24] を IwramMulQ16 で (旗 +29 bit1 は
+@ そのまま)、幅高さ (+32/+33) と傾き (+34/+35) を IwramMulQ16 で掛けて 0x1f800 に抑える。拡大や
+@ 倍寸なら Func_08003d28 で回転枠を取り、属性語を組んで Func_08003dec で OAM に書く。
+@ +38 bit0 なら影の絵も同じ手順で置く。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800b388
@@ -31,6 +35,7 @@ Func_0800b388:
 	mov	sl, r3
 	mov	r1, sl
 	ldr	r0, [sp, #20]
+@ 投影と画面範囲。
 	bl	Func_08005268
 	mov	r1, sl
 	ldr	r3, [r1, #8]
@@ -69,6 +74,7 @@ Func_0800b388:
 	beq.n	.L7
 	ldr	r5, [r7, #24]
 	b.n	.L8
+@ IwramMulQ16ReturnIp: 尺度 × obj[24]。
 .L7:
 	ldr	r3, [pc, #308]
 	adds	r0, r5, #0
@@ -93,6 +99,7 @@ Func_0800b388:
 	adds	r0, r7, #0
 	mov	r9, r2
 	str	r3, [sp, #4]
+@ 絵の番号。幅高さ × 縮尺 (IwramMulQ16ReturnIp)。
 	bl	Func_0800aa0c
 	movs	r1, #128
 	lsls	r1, r1, #3
@@ -154,6 +161,7 @@ Func_0800b388:
 	bgt.n	.L11
 	cmp	lr, r3
 	ble.n	.L12
+@ 拡大か倍寸: 回転枠。
 .L11:
 	ldr	r2, [sp, #8]
 	movs	r3, #3
@@ -237,6 +245,7 @@ Func_0800b388:
 	.4byte 0x0000ffff
 .L17:
 	movs	r5, #0
+@ 属性語を組む。
 .L16:
 	mov	r3, sl
 	ldr	r2, [r3, #0]
@@ -302,6 +311,7 @@ Func_0800b388:
 	adds	r0, r7, #0
 	ldr	r1, [sp, #88]
 	bl	Func_08003dec
+@ 影の絵。
 .L21:
 	adds	r3, r7, #0
 	adds	r3, #38
@@ -370,6 +380,7 @@ Func_0800b388:
 	ldr	r1, [sp, #88]
 	bl	Func_08003dec
 	b.n	.L22
+@ 画面外: 絵を返す。
 .L1:
 	ldrb	r2, [r7, #29]
 	movs	r5, #1

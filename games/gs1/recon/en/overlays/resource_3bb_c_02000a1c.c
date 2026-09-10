@@ -9,7 +9,7 @@
 
 void Func_02003c48();
 void Func_02003c6a();
-void Func_02003d70();
+s32 Func_02003d70();
 void Func_0200495c();
 void Func_020049a4();
 void Func_020049ae();
@@ -33,6 +33,10 @@ void Func_02004a7e();
 void Func_02004b30();
 void Func_02004b4c();
 void Func_02004b5c();
+
+extern u16 Data_02000240[];
+extern u8 Value_0000022b;
+extern u8 Value_00000090;
 
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -63,10 +67,12 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 void Func_02000a1c(void)
 {
     s32 i1;
+    s32 v;
+    s32 slot;
 
     Func_02003c48();
     Func_0200495c();
-    Func_02003d70(77, 89);
+    v = Func_02003d70(77, 89);
     Func_02003c6a();
     for (i1 = 9; i1 >= 0; i1--) {
         Func_020049a4(8);
@@ -88,8 +94,10 @@ void Func_02000a1c(void)
     Func_02004a76(0, 16);
     Func_02004a7e(8, 9);
     Func_02004a1c(10);
-    Func_02004b30(72, 3);
-    Func_02004b4c();
-    Func_02004b5c();
+    Func_02004b30(72, 3 - v);
+    ((u8 *)Data_02000240)[(s32)&Value_0000022b] = 3;
+    slot = (s32)&Value_00000090;
+    Func_02004b4c(slot, 4);
+    Func_02004b5c(slot, 5);
     Call1(Func_02004a0c, 282);
 }

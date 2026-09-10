@@ -47,6 +47,37 @@ const GS2: &[ExecutableDigests] = &[
     ("cc1", &[GS2_CC1]),
     ("as", GS1[4].1),
 ];
+// Restored agscc 5ec3e2e host build on linux-x64 (x86_64), unmodified GNU gas
+// 2.10, built from the committed sources on this host.
+const GS1_LINUX_X64: &[ExecutableDigests] = &[
+    (
+        "xgcc",
+        &["0beedb6fae344420b2a3c309a8edecfe99b74bfcf7d4d5be17b59624efbecdfc"],
+    ),
+    (
+        "cpp0",
+        &["a028c0165e02cfc5138a9bbc59fe64e0c95cfd0bb05aa90c00ffade283df3d7b"],
+    ),
+    (
+        "tradcpp0",
+        &["9e5194d67b4f6c1b0a7c0802166cff333c72e31ad0af1f2363d5a89f23140c87"],
+    ),
+    (
+        "cc1",
+        &["a3079e72f03e031b7d8baa27c3b6cc69c7c384a288642df16f730775dc8657fa"],
+    ),
+    (
+        "as",
+        &[
+            // Linux host build of the same unmodified GNU gas 2.10 source.
+            // Admitted on reproduction, not on provenance, in the same form as
+            // the darwin second `as` entry: if the complete GS1 EN ROM rebuilds
+            // byte-identically against the approved cartridge with this
+            // assembler, it is behaviourally equivalent for this target.
+            "8eb4386cb65b04ccfee4c9708501c981d2f0399712545844e0f376c5a3ab33df",
+        ],
+    ),
+];
 const EMPTY_GS1: &[ExecutableDigests] = &[
     ("xgcc", &[]),
     ("cpp0", &[]),
@@ -59,8 +90,11 @@ const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 pub static EXPECTED: &[HostTargets] = &[
     ("darwin-arm64", &[("gs1", GS1), ("gs2", GS2)]),
     ("darwin-x64", EMPTY),
-    // The old modified Linux bundle is not evidence for this restored route.
-    ("linux-x64", EMPTY),
+    // GS2 is admitted on linux-x64 only when its compiler is staged by
+    // `make compilers-gs2`; leave it empty here so a GS2 build still requires
+    // its own admission. GS1 is admitted on this host, pinned from a green
+    // full verify (byte-identical ROM).
+    ("linux-x64", &[("gs1", GS1_LINUX_X64), ("gs2", EMPTY_GS1)]),
     ("linux-arm64", EMPTY),
 ];
 pub static AGBCC_EXPECTED: &[HostDigests] = &[
@@ -79,7 +113,13 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
     ("darwin-x64", &[]),
     (
         "linux-x64",
-        &["9200c74552a980be35fd58c8afdbd07bb76c9b785b57bad78d8303e00d738af3"],
+        &[
+            "9200c74552a980be35fd58c8afdbd07bb76c9b785b57bad78d8303e00d738af3",
+            // Second local host build of the same stock pret/agbcc da598c1
+            // source on this box, admitted in the same reproduction form as
+            // the darwin second agbcc entry.
+            "f32b4f49660f05a124523080f10d9cfd5a3848197075ce87385d61c57dd5b962",
+        ],
     ),
     ("linux-arm64", &[]),
 ];

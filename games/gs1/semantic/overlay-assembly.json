@@ -64,18 +64,6 @@
       ]
     },
     {
-      "overlay": "resource_38f",
-      "start": "0x020008ec",
-      "end": "0x020025a8",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 7356-byte function independently checked from entry frame through sole return and trailing literal pool; former retained fragments are not separate owners.",
-        "Ordinary C reconstruction has original-site runtime call bindings and remains unverified until the complete linked owner is byte-exact. No original-assembly or compiler-impossibility claim."
-      ]
-    },
-    {
       "overlay": "resource_38b",
       "start": "0x02000db4",
       "end": "0x02000ed8",

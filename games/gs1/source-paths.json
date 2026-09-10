@@ -23,7 +23,8 @@
       "name": "FieldScene_RunExtendedEffectPresentation"
     },
     "resource_38f:020008ec": {
-      "name": "FieldScene_RunExtendedActorSequence"
+      "name": "FieldScene_RunExtendedActorSequence",
+      "source": "overlays/scene/extended_actor_sequence_scene/run_extended_actor_sequence.c"
     },
     "resource_391:02000d3c": {
       "name": "FieldScene_RunBranchingFormationPresentation"

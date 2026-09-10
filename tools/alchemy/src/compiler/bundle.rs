@@ -1,5 +1,5 @@
 use crate::compiler::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
-use crate::compiler::routing::{agbcc_driver, bundle, driver, root, CompilerTarget};
+use crate::compiler::routing::{agbcc_driver, bundle, bundle_for, root, CompilerTarget};
 use crate::compiler::sha256;
 use fs2::FileExt;
 use std::fs::{self, File, OpenOptions};
@@ -188,7 +188,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
         return Ok(());
     }
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
-    let bundle_dir = bundle();
+    let bundle_dir = bundle_for(target);
     let entries = EXPECTED
         .iter()
         .find(|(key, _)| *key == host)
@@ -217,7 +217,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
         }
     }
     smoke(&[
-        driver().to_string_lossy().into_owned(),
+        bundle_dir.join("xgcc").to_string_lossy().into_owned(),
         format!("-B{}/", bundle_dir.display()),
         "-S".into(),
         "-x".into(),
@@ -491,9 +491,9 @@ pub fn compiler_command_for_target(
     arguments: &[String],
 ) -> Result<Vec<String>> {
     validate_bundle(target)?;
-    let bundle_dir = bundle();
+    let bundle_dir = bundle_for(target);
     let mut argv = vec![
-        driver().to_string_lossy().into_owned(),
+        bundle_dir.join("xgcc").to_string_lossy().into_owned(),
         format!("-B{}/", bundle_dir.display()),
     ];
     argv.extend(arguments.iter().cloned());

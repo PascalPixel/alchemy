@@ -442,3 +442,14 @@ clean:
 	done
 	@find $(TOOLS) -type d -name target -prune -exec rm -rf -- {} +
 	@printf 'generated trees removed; roms/ untouched\n'
+
+# GS2's compiler: the pinned agscc source with agscc-gs2.unidiff applied, built
+# under out/ and staged beside the GS1 bundle. One compiler per game.
+.PHONY: compilers-gs2
+compilers-gs2:
+	rm -rf out/compilers/gs2-source && mkdir -p out/compilers/gs2-source out/compilers/gs2/dist
+	cp -R agscc/. out/compilers/gs2-source/ && rm -rf out/compilers/gs2-source/build
+	cd out/compilers/gs2-source && patch -p1 < "$(CURDIR)/agscc-gs2.unidiff"
+	sh out/compilers/gs2-source/build.sh
+	cp out/compilers/dist/cpp0 out/compilers/dist/tradcpp0 out/compilers/dist/as out/compilers/gs2/dist/
+	cp out/compilers/gs2-source/build/gcc/cc1 out/compilers/gs2-source/build/gcc/xgcc out/compilers/gs2/dist/

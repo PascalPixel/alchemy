@@ -132,9 +132,14 @@ targets: $(HISTORICAL_TARGETS)
 $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
-.PHONY: dashboard dashboard-service-install
+.PHONY: dashboard dashboard-service-install dashboard-restart
 dashboard:
 	$(COMPILER) dashboard --bind 127.0.0.1:4650
+
+# The service runs the binary it started with; restart it after tooling merges
+# or the dashboard keeps computing DONE under the old rules.
+dashboard-restart:
+	@launchctl kickstart -k 'gui/$(shell id -u)/com.pascalpixel.alchemy-dashboard'
 
 dashboard-service-install:
 	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'

@@ -10,7 +10,7 @@ void Func_020034de();
 s32 Func_020036f4();
 void Func_02003918();
 void Func_02003992();
-void Func_02004310();
+s32 Func_02004310();
 void Func_020045d4();
 void Func_02004902();
 void Func_02005628();
@@ -51,6 +51,37 @@ extern s16 Data_02000240[];
 
 #define SceneTransition_Phase Data_02000240[225]
 
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    return f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
 void Func_020016d4(s32 scene)
 {
     void *actor;
@@ -63,23 +94,23 @@ void Func_020016d4(s32 scene)
     Func_02005628();
     path = Func_020036f4(scene, 4);
     if (path == 0) {
-        Func_020056d6(8362);
-        Func_0200572a(196608, 24576);
-        Func_02005744(35127296, -1, 15728640, 1);
+        Call1(Func_020056d6, 8362);
+        Call2(Func_0200572a, 196608, 24576);
+        Call4(Func_02005744, 35127296, -1, 15728640, 1);
         Func_02005750();
         Func_0200565e(45);
-        Func_02005752(65536, 8192);
-        Func_0200576c(35127296, -1, 12582912, 1);
+        Call2(Func_02005752, 65536, 8192);
+        Call4(Func_0200576c, 35127296, -1, 12582912, 1);
         Func_0200577a();
         Func_0200573a(scene, 0);
         Func_02004310(0, 632, 264);
-        Func_020056d6_a(0, 65536, 32768);
+        Call3(Func_020056d6_a, 0, 65536, 32768);
         Func_02005702(0, 616, 264);
-        Func_0200577e(0, 49152, 20);
+        Value3(Func_0200577e, 0, 49152, 20);
         Func_020057ea();
-        Func_020057b6(16384, 2048);
-        Func_020057d0(35127296, -1, 10485760, 1);
-        Func_0200571e(0, 32768, 16384);
+        Call2(Func_020057b6, 16384, 2048);
+        Call4(Func_020057d0, 35127296, -1, 10485760, 1);
+        Call3(Func_0200571e, 0, 32768, 16384);
         Func_0200575e(0, 10);
         actor = Func_0200571c(0);
         Func_02005654(actor, *(s32 *)((u8 *)actor + 8),
@@ -87,21 +118,21 @@ void Func_020016d4(s32 scene)
             *(s32 *)((u8 *)actor + 16));
         Func_0200576a(0);
         Func_0200583e();
-        Func_02005818(-1, -1, -1, 0);
+        Call4(Func_02005818, -1, -1, -1, 0);
         Func_020057e0(scene, 0);
-        Func_0200576e(0, 98304, 49152);
-        Func_02004902(0, 488, 248);
-        Func_02005816(0, 16384, 20);
+        Call3(Func_0200576e, 0, 98304, 49152);
+        Value3(Func_02004902, 0, 488, 248);
+        Call3(Func_02005816, 0, 16384, 20);
         Func_020057e0_a(0, 6, 0);
-        Func_02005862(35127296, -1, 10485760, 1);
+        Call4(Func_02005862, 35127296, -1, 10485760, 1);
         Func_0200582a(scene, 0);
         Func_020045d4(0);
         Func_02005868(0, 0);
         Func_02003918(scene, 4);
     } else if (path == 1) {
-        Func_0200583c(8361);
+        Call1(Func_0200583c, 8361);
         Func_02005854(scene, 0);
     }
-    Func_02003992(path, scene, 4);
+    Value3(Func_02003992, path, scene, 4);
     Func_020057c2();
 }

@@ -15705,10 +15705,12 @@
       "source": "overlays/scene_primary_script/run_scene_3bb_scene_three_coordinator.c"
     },
     "resource_3ba:020016ec": {
-      "name": "FieldScene_RunSceneFourCoordinator"
+      "name": "FieldScene_RunSceneFourCoordinator",
+      "source": "overlays/scene_primary_script/run_scene_3ba_020016ec.c"
     },
     "resource_3b0:02000e78": {
-      "name": "FieldScene_RunSevenActorEnsemble"
+      "name": "FieldScene_RunSevenActorEnsemble",
+      "source": "overlays/scene_primary_script/run_scene_3b0_02000e78.c"
     },
     "resource_3bb:020016d4": {
       "name": "FieldScene_RunLiftedActorCoordinator"

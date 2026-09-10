@@ -258,12 +258,14 @@ mod tests {
     fn retained_overlay_unit_scores_without_an_owner_override() {
         let work = tempfile::tempdir().unwrap();
         let mut options = crate::score::cli::Options::gs1(String::new());
-        options.unit = Some("retained-overlay-380-large-object-sequence".into());
+        // A scheduling-floor owner measured invariant under every source
+        // restructuring, so this unit stays retained while others are adopted.
+        options.unit = Some("retained-actor-entry-sequence-3c9".into());
         options.work = Some(work.path().to_string_lossy().into_owned());
         options.first = true;
         let output = run(options).unwrap();
         assert!(output.contains("scope=translation-unit"));
-        assert!(output.contains("owner=0x020027f8"));
+        assert!(output.contains("owner=0x020012c8"));
         assert!(output.contains("differing_halfwords="));
     }
     #[test]

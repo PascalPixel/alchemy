@@ -476,10 +476,10 @@ pub struct Parked {
     pub lines: usize,
 }
 /// Marks a parked owner retained in every unit that owns it. A unit whose
-/// only owner this is becomes the retained unit again: `retained-` id, the
-/// parked draft as source, the owner state flipped, absolute symbols kept.
-/// A unit with other owners keeps its id and source and flips only this
-/// owner's state.
+/// only owner this is points its source at the parked draft with the owner
+/// state flipped and its absolute symbols kept; the id is not touched, since
+/// nothing keys off it and many units never carried a prefix. A unit with
+/// other owners keeps its source and flips only this owner.s state.
 fn retire_owner_in_units(
     units_path: &Path,
     overlay: &str,
@@ -512,10 +512,6 @@ fn retire_owner_in_units(
         }
         changed = true;
         if count == 1 {
-            let id = unit["id"].as_str().unwrap_or("").to_string();
-            if !id.starts_with("retained-") {
-                unit["id"] = format!("retained-{id}").into();
-            }
             unit["source"] = parked_relative.into();
         }
     }
@@ -527,7 +523,64 @@ fn retire_owner_in_units(
         .map_err(|e| format!("{}: {e}", units_path.display()))
 }
 
-pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<Parked, String> {
+/// Puts a retained-classification row back over a parked owner's span:
+/// the full build takes the non-exact branch for an overlay owner and
+/// requires one. The row claims no origin: it opens with the withdrawn
+/// standard's disclaimer and carries the operator's reason, in the shape
+/// of the rows written by hand for the same purpose. Adoption may have split
+/// rather than removed the original row, so a span that overlaps any
+/// existing row is refused rather than guessed at.
+fn restore_retained_row(
+    evidence_path: &Path,
+    overlay: &str,
+    start: i64,
+    span: i64,
+    reason: &str,
+) -> Result<(), String> {
+    let text = fs::read_to_string(evidence_path)
+        .map_err(|e| format!("{}: {e}", evidence_path.display()))?;
+    let mut document: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("{}: {e}", evidence_path.display()))?;
+    let end = start + span;
+    let regions = document["regions"]
+        .as_array_mut()
+        .ok_or("overlay-assembly.json: regions must be an array")?;
+    for row in regions.iter() {
+        if row["overlay"].as_str() != Some(overlay) {
+            continue;
+        }
+        let (Some(row_start), Some(row_end)) = (number(row, "start"), number(row, "end")) else {
+            continue;
+        };
+        if row_start < end && row_end > start {
+            return Err(format!(
+                "a retained row 0x{row_start:08x}-0x{row_end:08x} already overlaps 0x{start:08x}-0x{end:08x}; adoption split rather than removed it, restore the row by hand"
+            ));
+        }
+    }
+    regions.push(serde_json::json!({
+        "overlay": overlay,
+        "start": format!("0x{start:08x}"),
+        "end": format!("0x{end:08x}"),
+        "kind": "compiler_allocation_module",
+        "retention": "keep_structured_asm",
+        "confidence": "strong",
+        "evidence": [
+            "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+            format!("Parked by alchemy overlay park: {reason}"),
+        ],
+    }));
+    let rendered = serde_json::to_string_pretty(&document).map_err(|e| e.to_string())?;
+    fs::write(evidence_path, format!("{rendered}\n"))
+        .map_err(|e| format!("{}: {e}", evidence_path.display()))
+}
+
+pub(crate) fn park_one(
+    root: &Path,
+    target: SourceOwner,
+    apply: bool,
+    reason: Option<&str>,
+) -> Result<Parked, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
     let assembly = overlay_assembly(root, &overlay);
@@ -652,8 +705,10 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
         // losing the unit: a unit pointing at a moved file is unscoreable,
         // and rebuilding it later drops its absolute symbols.
         let units = root.join("games/gs1/recon/translation-units.json");
+        let evidence = root.join("games/gs1/semantic/overlay-assembly.json");
         let snapshot = crate::compiler::build_io::Snapshot::take(&[
             units.clone(),
+            evidence.clone(),
             assembly.clone(),
             installed.clone(),
             parked.clone(),
@@ -663,9 +718,10 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
             .strip_prefix(root)
             .map(|p| p.to_string_lossy().into_owned())
             .unwrap_or_else(|_| parked.to_string_lossy().into_owned());
-        if let Err(error) =
-            retire_owner_in_units(&units, &overlay, target.address(), &parked_relative)
-        {
+        let reason = reason.unwrap_or("no reason given");
+        let outcome = retire_owner_in_units(&units, &overlay, target.address(), &parked_relative)
+            .and_then(|()| restore_retained_row(&evidence, &overlay, address, span, reason));
+        if let Err(error) = outcome {
             snapshot.restore();
             return Err(format!(
                 "{error}; nothing parked, the assembly, source and registers are restored"
@@ -681,16 +737,22 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut apply = false;
+    let mut reason: Option<String> = None;
     let mut rows: Vec<String> = Vec::new();
-    for argument in argv {
+    let mut arguments = argv.iter();
+    while let Some(argument) = arguments.next() {
         match argument.as_str() {
             "--apply" => apply = true,
+            "--reason" => reason = arguments.next().cloned(),
             "-h" | "--help" => {
-                println!("usage: alchemy overlay park <overlay>:<addressHex> [...] [--apply]");
+                println!("usage: alchemy overlay park <overlay>:<addressHex> [...] [--apply --reason TEXT]");
                 return Ok(0);
             }
             other => rows.push(other.to_string()),
         }
+    }
+    if apply && reason.as_deref().is_none_or(str::is_empty) {
+        return Err("--apply needs --reason TEXT: why the credit is withdrawn, recorded on the retained row".to_string());
     }
     if rows.is_empty() {
         return Err("at least one <overlay>:<addressHex> row is required".to_string());
@@ -698,7 +760,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut failures = 0;
     for row in rows {
         let target = crate::overlay::score::resolve(root, &row)?;
-        match park_one(root, target, apply) {
+        match park_one(root, target, apply, reason.as_deref()) {
             Ok(parked) => println!(
                 "parked {}:{:08x} span={} lines={}{}",
                 parked.overlay,
@@ -718,6 +780,35 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 #[cfg(test)]
 mod tests {
     #[test]
+    fn parking_restores_a_neutral_retained_row_and_refuses_overlap() {
+        let root = tempdir().unwrap();
+        let evidence = root.path().join("overlay-assembly.json");
+        fs::write(&evidence, r#"{"format":1,"regions":[{"overlay":"resource_37a","start":"0x02001000","end":"0x02001100","kind":"structured_scene_module","retention":"keep_structured_asm","confidence":"strong","evidence":["x"]}]}"#).unwrap();
+        super::restore_retained_row(
+            &evidence,
+            "resource_37a",
+            0x02001be8,
+            192,
+            "not reproducible",
+        )
+        .unwrap();
+        let after: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&evidence).unwrap()).unwrap();
+        let row = &after["regions"][1];
+        assert_eq!(row["start"], "0x02001be8");
+        assert_eq!(row["end"], "0x02001ca8");
+        assert_eq!(row["retention"], "keep_structured_asm");
+        let text = row["evidence"].to_string();
+        assert!(text.contains("Credit withdrawn") && text.contains("not reproducible"));
+        let overlap =
+            super::restore_retained_row(&evidence, "resource_37a", 0x02001c00, 16, "again");
+        assert!(overlap.unwrap_err().contains("already overlaps"));
+        assert!(
+            super::restore_retained_row(&evidence, "resource_37b", 0x02001c00, 16, "other").is_ok()
+        );
+    }
+
+    #[test]
     fn parking_mirrors_the_adoption_edit_on_the_unit_register() {
         let root = tempdir().unwrap();
         let units = root.path().join("translation-units.json");
@@ -736,7 +827,7 @@ mod tests {
         let after: serde_json::Value =
             serde_json::from_str(&fs::read_to_string(&units).unwrap()).unwrap();
         let unit = &after["units"][0];
-        assert_eq!(unit["id"], "retained-overlay-37a-actor");
+        assert_eq!(unit["id"], "overlay-37a-actor");
         assert_eq!(unit["source"], "games/gs1/recon/en/overlays/x.c");
         assert_eq!(unit["owners"][0]["state"], "retained-assembly");
         assert_eq!(

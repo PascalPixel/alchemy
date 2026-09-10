@@ -15326,9 +15326,6 @@
       "name": "InitializeActorZeroMotion",
       "source": "overlays/scene/scripted_actor_presentation_scene/actor_motion.c"
     },
-    "resource_3b8:020006dc": {
-      "name": "RunEventScript01"
-    },
     "resource_3b8:02003df8": {
       "name": "RunSceneEffectSetup",
       "source": "overlays/scene/choice_dialogue_cutscene_scene/run_scene_effect_setup.c"
@@ -18032,8 +18029,13 @@
     "resource_371:020039fc": {
       "name": "FieldScene_RunScene371SequenceA"
     },
+    "resource_3b8:02000674": {
+      "name": "FieldScene_RunScene3b8SequenceB",
+      "source": "overlays/scene/choice_dialogue_cutscene_scene/scene_effect_sequence_mid.c"
+    },
     "resource_3b8:02000af8": {
-      "name": "FieldScene_RunScene3b8SequenceA"
+      "name": "FieldScene_RunScene3b8SequenceA",
+      "source": "overlays/scene/choice_dialogue_cutscene_scene/scene_effect_sequence_mid.c"
     },
     "resource_374:02000bbc": {
       "name": "FieldScene_RunScene374SequenceA"

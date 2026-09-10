@@ -136,6 +136,16 @@ fn run(args: &[String]) -> Result<(), String> {
         }
     }
     let out = format!("games/{game}/recon/en/units/{unit_id}.c");
+    // A declared unit refuses before the scaffold is written, so a refusal
+    // leaves no file behind.
+    if apply
+        && manifest["units"]
+            .as_array()
+            .is_some_and(|units| units.iter().any(|u| u["id"] == *unit_id.as_str()))
+    {
+        return Err(format!("unit {unit_id} already declared; nothing written"));
+    }
+    let existed = Path::new(&out).exists();
     fs::write(&out, format!("{}\n", lines.join("\n"))).map_err(|e| format!("{out}: {e}"))?;
     let entry = json!({
         "id": unit_id,
@@ -171,13 +181,17 @@ fn run(args: &[String]) -> Result<(), String> {
         let units = manifest["units"]
             .as_array_mut()
             .ok_or("manifest lacks units")?;
-        if units.iter().any(|u| u["id"] == *unit_id.as_str()) {
-            return Err(format!("unit {unit_id} already declared"));
-        }
         units.push(entry);
         let text = serde_json::to_string_pretty(&manifest).map_err(|e| e.to_string())?;
-        fs::write(&manifest_path, format!("{text}\n"))
-            .map_err(|e| format!("{manifest_path}: {e}"))?;
+        if let Err(e) = fs::write(&manifest_path, format!("{text}\n")) {
+            // The scaffold is not left behind without its declaration.
+            if !existed {
+                let _ = fs::remove_file(&out);
+            }
+            return Err(format!(
+                "{manifest_path}: {e}; nothing declared, {out} removed"
+            ));
+        }
         println!("declared {unit_id} in {manifest_path}");
     } else {
         println!(

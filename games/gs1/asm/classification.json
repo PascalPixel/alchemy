@@ -185,7 +185,7 @@
           }
         },
         "verdict": "mixed",
-        "credit": "by_subregion",
+        "credit": "library",
         "subregions": {
           "division_runtime": "NOT agscc libgcc: assembled _udivsi3/_divsi3/_umodsi3/_modsi3 in ARM and Thumb builds; no match, longest common prefix 5 bytes at 0x08000af0; authorship compiler_vendor is unsupported",
           "decompressor": "byte-identical in all six GS2 editions at 0x08000c50",
@@ -207,7 +207,9 @@
           "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written."
         },
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
-        "proof": "Subregions decompressor, word-copy kernel, irq table and audio work-area tables byte-identical in all six GS2 editions (library); the ARM kernels, mixer and helpers are ARM bodies under -mthumb (arm.c:8806-8830) with mrs/msr that no arm.md template prints, GS1-only in the twelve-ROM scan, in a file of named entries and comments (handwritten); checked per subregion in subregion_credit."
+        "proof": "Two halves, both checked per subregion in subregion_credit: the decompressor, word-copy kernel, irq handler table and audio work-area tables are byte-identical in all six GS2 editions (twelve-ROM scan); the irq entry, math kernels, division routine, mixer and wave helpers are ARM-instruction-set bodies with mrs/msr that the compiler cannot emit under -mthumb (arm.c:8806-8830; no msr/mrs template in arm.md), GS1-only, hand-coded kernels in a file of named entries and comments; the division routine matches no agscc libgcc member.",
+        "credit_decision_kind_level": "Beans 2026-09-10: kind-level credit, records not split; credit=library names both halves, subregion_credit stays for the record.",
+        "object": "vendor object not named; credited on cross-product identity and compiler impossibility"
       }
     },
     {

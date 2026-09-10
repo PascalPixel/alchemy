@@ -12,21 +12,22 @@ void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
 void WaitFrames(s32 frames);
 
-extern u8 Data_02000240[];
+extern s32 Data_02000240[];
 
 void Func_0801776c(s32 no, s32 flags)
 {
-    u8 *base;
+    u8 *base = *(u8 **)ADDR_03001E8C;
     s32 release;
     s32 pos[2] = {0, 0};
     s32 height;
     s32 width;
-    s32 y = 0;
-    s32 x = 0;
+    s32 y;
+    s32 x;
     struct Work *work;
+    s32 zero;
 
-    base = *(u8 **)ADDR_03001E8C;
     release = flags & 1;
+    y = x = 0;
 
     if (flags & 2)
     {
@@ -50,15 +51,15 @@ void Func_0801776c(s32 no, s32 flags)
     {
         s32 dy;
 
-        Func_0808a278(*(s32 *)(Data_02000240 + 500), pos);
+        Func_0808a278(Data_02000240[125], pos);
         dy = pos[1] >> 3;
-        if (dy <= 9)
+        if (dy > 9)
         {
-            y = dy + 4;
+            y = dy - 5;
         }
         else
         {
-            y = dy - 5;
+            y = dy + 4;
         }
     }
 
@@ -86,8 +87,9 @@ void Func_0801776c(s32 no, s32 flags)
         }
     }
 
-    *(u8 *)(base + RENDER_BUSY_OFS) = 0;
-    *(u16 *)(base + RENDER_RESULT_OFS) = 0;
-    *(u16 *)(base + RENDER_RESULT_OFS + 2) = 0;
+    zero = 0;
+    *(u8 *)(base + RENDER_BUSY_OFS) = zero;
+    *(u16 *)(base + RENDER_RESULT_OFS) = zero;
+    *(u16 *)(base + RENDER_RESULT_OFS + 2) = zero;
     WaitFrames(3);
 }

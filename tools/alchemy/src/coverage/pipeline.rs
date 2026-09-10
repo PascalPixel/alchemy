@@ -454,9 +454,41 @@ fn exact_overlay(
     }
     Ok((owners, spans))
 }
-fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>) {
+/// Kinds whose retained bytes count as proven assembly: the register credits
+/// them as library with proof beside the claim. A bare label credits
+/// nothing, and handwritten credit awaits Pascal's ruling.
+fn credited_kinds(classification: &Value) -> BTreeSet<String> {
+    // `groups` is an array of kind entries; an object of entries reads the same.
+    let groups: Vec<Value> = match &classification["groups"] {
+        Value::Array(entries) => entries.clone(),
+        Value::Object(map) => map.values().cloned().collect(),
+        _ => Vec::new(),
+    };
+    array(classification, "structural")
+        .iter()
+        .chain(groups.iter())
+        .filter(|entry| {
+            let provenance = &entry["provenance"];
+            text(provenance, "credit") == "library"
+                && array(entry, "evidence")
+                    .iter()
+                    .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
+                && (!text(provenance, "proof").trim().is_empty()
+                    || !text(provenance, "object").trim().is_empty())
+        })
+        .map(|entry| text(entry, "kind"))
+        .collect()
+}
+/// Withdrawn, draft, and credited main assembly: credited spans are the
+/// proven regions whose kind the register credits, and they leave the
+/// withdrawn list so they are counted once.
+fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let mut proven = Vec::new();
     let mut draft = Vec::new();
+    let mut credited = Vec::new();
+    let credited_kinds = json(tree, "games/gs1/asm/classification.json")
+        .map(|document| credited_kinds(&document))
+        .unwrap_or_default();
     if let Some(value) = json(tree, "out/gs1-en/full/asm/manifest.json") {
         for region in array(&value, "regions") {
             let retention = text(region, "retention");
@@ -482,10 +514,12 @@ fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>) {
                     (integer(region, "address"), integer(region, "size"))
                 {
                     let span = Span::new(address, address + size);
-                    if text(region, "confidence") == "proven" {
-                        proven.push(span);
-                    } else {
+                    if text(region, "confidence") != "proven" {
                         draft.push(span);
+                    } else if credited_kinds.contains(&kind) {
+                        credited.push(span);
+                    } else {
+                        proven.push(span);
                     }
                 }
             }
@@ -506,7 +540,7 @@ fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>) {
             }
         }
     }
-    (normalize(&proven), normalize(&draft))
+    (normalize(&proven), normalize(&draft), normalize(&credited))
 }
 fn overlay_assembly_classification(
     tree: &SourceTree,
@@ -1133,19 +1167,22 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let exact_main = exact_main(options.exact, &options.target, &main_exec)?;
     let pairs = overlay_ids(options.exact);
     let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
-    // The standard that marked these spans Assembly did not establish
-    // handwritten or third-party origin, so it is withdrawn: every byte it
-    // covered returns to Unknown until a replacement standard admits one. The
-    // records are still read and validated here, and their total is published
-    // as withdrawn_assembly_bytes, so no byte leaves the map silently.
-    let (withdrawn_main, withdrawn_draft_main) = main_assembly_classification(options.exact);
+    // Retained assembly is credited only when proven handwritten or library.
+    // The register credits library kinds with their proof; those proven
+    // spans count as assembly. Everything else the old standard marked is
+    // withdrawn: it returns to Unknown, and its total is published as
+    // withdrawn_assembly_bytes, so no byte leaves the map silently. The
+    // overlay register carries no credit field yet, so no overlay assembly is
+    // credited.
+    let (withdrawn_main, withdrawn_draft_main, retained_main) =
+        main_assembly_classification(options.exact);
     let (withdrawn_overlay, withdrawn_draft_overlay) =
         overlay_assembly_classification(options.exact, &overlay_regions, &overlay_exec)?;
     let withdrawn_assembly = bytes(&withdrawn_main)
         + bytes(&withdrawn_draft_main)
         + mapped_bytes(&withdrawn_overlay)
         + mapped_bytes(&withdrawn_draft_overlay);
-    let (retained_main, draft_main): (Vec<Span>, Vec<Span>) = (Vec::new(), Vec::new());
+    let draft_main: Vec<Span> = Vec::new();
     let (retained_overlay, draft_overlay): (SpanMap, SpanMap) = (SpanMap::new(), SpanMap::new());
     let (candidate_main, candidate_main_sources) = options
         .recon
@@ -1354,7 +1391,8 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/gs1/recon/en/dossiers.json",
-            "proven_assembly_standard": "withdrawn-pending-replacement",
+            "proven_assembly_standard": "library-proven; handwritten pending ruling",
+            "credited_assembly_bytes": bytes(&retained_main),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/gs1-en/full/asm/manifest.json",
             "overlay_assembly_classification": "games/gs1/semantic/overlay-assembly.json",
@@ -1379,6 +1417,36 @@ mod tests {
 
     fn classification(regions: Value) -> Value {
         json!({"format": 1, "regions": regions})
+    }
+    #[test]
+    fn only_library_credit_with_evidence_and_proof_is_credited() {
+        let entry = |kind: &str, credit: &str, evidence: Value, proof: &str| json!({"kind": kind, "evidence": evidence, "provenance": {"credit": credit, "proof": proof}});
+        let document = json!({
+            "structural": [entry("thunks", "library", json!(["lib1funcs_asm_950_990"]), "byte identical")],
+            "groups": [
+                entry("bare_label", "library", json!([]), "byte identical"),
+                entry("no_proof", "library", json!(["tag"]), ""),
+                entry("pending", "library_pending_identification", json!(["tag"]), "x"),
+                entry("hand", "handwritten", json!(["tag"]), "x"),
+                entry("grouped", "library", json!(["tag"]), "x")
+            ]
+        });
+        let credited = credited_kinds(&document);
+        assert_eq!(
+            credited.into_iter().collect::<Vec<_>>(),
+            ["grouped", "thunks"]
+        );
+        // The live register credits the libgcc call_via thunks, and the
+        // pipeline counts exactly that region from the built manifest.
+        let tree = crate::coverage::tree::work_tree();
+        let live = json(&tree, "games/gs1/asm/classification.json").unwrap();
+        assert!(credited_kinds(&live).contains("runtime_thunk_bundle"));
+        let (_, _, credited) = main_assembly_classification(&tree);
+        // Exactly the thunk bundle at 0x080072e4 (56 bytes until the register's
+        // extent correction lands, 60 after); nothing else is credited.
+        assert_eq!(credited.len(), 1, "credited spans: {credited:?}");
+        assert_eq!(credited[0].start, 0x0800_72e4);
+        assert!(matches!(bytes(&credited), 56 | 60));
     }
     fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
         json!({

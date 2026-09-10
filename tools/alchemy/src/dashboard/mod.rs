@@ -106,8 +106,8 @@ fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live
         "draftCBytes": number(n(&["categories", "draft_c", "bytes"])),
         "draftCPercent": number(n(&["categories", "draft_c", "percent_of_executable"])),
         "provenAsmBytes": number(proven_asm),
-        "doneBytes": number(proven_c + proven_asm),
-        "donePercent": number((proven_c + proven_asm) * 100.0 / executable.max(1.0)),
+        "doneBytes": number(crate::coverage::jsnum::done_bytes(proven_c as i64, proven_asm as i64) as f64),
+        "donePercent": number(crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64)),
         "historicalTargets": 12, "fullTargets": 1, "compileOnlyTargets": 11
     });
     Ok(Live {

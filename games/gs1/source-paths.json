@@ -27,7 +27,8 @@
       "source": "overlays/scene/extended_actor_sequence_scene/run_extended_actor_sequence.c"
     },
     "resource_391:02000d3c": {
-      "name": "FieldScene_RunBranchingFormationPresentation"
+      "name": "FieldScene_RunBranchingFormationPresentation",
+      "source": "overlays/scene/branching_formation_scene/run_branching_formation_presentation.c"
     },
     "resource_3bd:020013f8": {
       "name": "FieldScene_RunExtendedActorPresentation"

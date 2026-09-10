@@ -132,12 +132,9 @@ targets: $(HISTORICAL_TARGETS)
 $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
-.PHONY: dashboard music-debug dashboard-service-install
+.PHONY: dashboard dashboard-service-install
 dashboard:
 	$(COMPILER) dashboard --bind 127.0.0.1:4650
-
-music-debug:
-	$(COMPILER) music-debug --bind 127.0.0.1:4651
 
 dashboard-service-install:
 	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
@@ -363,13 +360,13 @@ register-shrink-check:
 		printf 'owner register shrank from %s to %s entries since verified tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
 	printf 'register shrink check ok: %s -> %s owners\n' "$$before" "$$after"
 
-# Tooling is Rust except the two browser clients and their regression tests.
+# Tooling is Rust except the dashboard browser client.
 # Asset and game source directories carry no scripts.
 language-check:
 	@set -eu; \
-	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|js|mjs|cjs|py|sh)$$' | grep -Ev '^tools/alchemy/src/(dashboard|music_debug)/client(\.test)?\.js$$' || true); \
+	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|js|mjs|cjs|py|sh)$$' | grep -Ev '^tools/alchemy/src/dashboard/client(\.test)?\.js$$' || true); \
 	if [ -n "$$scripts" ]; then printf 'TypeScript, JavaScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
-	printf 'language gate ok: Rust tooling and two browser clients\n'
+	printf 'language gate ok: Rust tooling and one browser client\n'
 
 lint: lint-all-targets
 

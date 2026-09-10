@@ -297,7 +297,8 @@
       "evidence": [
         "fixed_software_interrupt_instruction",
         "no_swi_template_arm_md",
-        "gs2_identical_trivially_short"
+        "gs2_identical_trivially_short",
+        "handwritten_credit_after_file_rewrite_named_entries"
       ],
       "expected_files": 2,
       "expected_bytes": 16,
@@ -307,9 +308,10 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "withheld_file_not_source_form",
+        "credit": "handwritten",
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
-        "file_check": "08006864.s carries no symbol or label, only five instructions after .thumb; fix the file (named entry points for the two wrappers) before credit; 08006870.s is fine"
+        "file_check": "08006864.s rewritten as source: named entries Func_08006864 (svc 11, CpuSet) and Func_0800686a (r0=0, svc 25); byte-identical build",
+        "credit_basis": "16 bytes: (1) no swi template in arm.md; (2) two-instruction wrappers, trivially identical across games; (3) BIOS call wrappers, a hand idiom"
       }
     },
     {
@@ -583,7 +585,7 @@
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "byte_identical_in_all_six_gs2_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
         "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
-        "gs1_only_region_080155d0_withheld_no_comments"
+        "gs1_only_region_080155d0_handwritten_credit_after_comment_pass"
       ],
       "expected_files": 7,
       "expected_bytes": 2652,
@@ -638,8 +640,8 @@
         "handwritten": {
           "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
           "regions": "080155d0 792 bytes is the only GS1-only region",
-          "credit": "withheld_file_not_source_form",
-          "file_check": "196 ARM instructions, 21 labels, zero comments; a decompressor of this size needs its comments before it reads as source"
+          "credit": "handwritten",
+          "file_check": "080155d0.s: an ARM glyph blitter (character code, x, y, bold flag; 4-bit pixels masked into VRAM tiles at 0x06002500 from the font tables at 0x080370d4 and 0x08032224); header and seven block comments added, instruction and data lines untouched, byte-identical build"
         }
       }
     },

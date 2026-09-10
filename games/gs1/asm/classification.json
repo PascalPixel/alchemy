@@ -12,14 +12,25 @@
   "structural": [
     {
       "kind": "linker_veneer",
-      "origin": "linker",
+      "origin": "unidentified_build_step",
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_ldr_r4_bx_r4_literal"
+        "fixed_ldr_r4_bx_r4_literal",
+        "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
+        "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
+        "callers_reach_targets_by_in_range_bl_entry_point_table_generator_unidentified"
       ],
       "expected_files": 608,
-      "expected_bytes": 4864
+      "expected_bytes": 4864,
+      "provenance": {
+        "scanned": "2026-09-10",
+        "cross_rom": "259 of 608 entries byte-identical across GS1 editions only; one 8-byte chance hit in GS2",
+        "verdict": "not_toolchain_origin_unidentified",
+        "credit": "none",
+        "reason": "provably not GCC 2.96 Thumb output and provably not a GNU ld 2.10 stub (Kiki, battle-loop lane, 2026-09-10: arm.md:6047-6055 sibcall expanders are TARGET_ARM only, Thumb calls are bl _call_via_rN; binutils 2.10 bfd/elf32-arm.h:311-343 stubs use r12 or bx pc;nop;b, R_ARM_THM_PC22 overflow at :1324-1395 returns bfd_reloc_overflow); callers reach the targets by plain bl within range, so these are an entry-point table from an unidentified build step; not proven handwritten; whether a regenerable table counts as done is Pascal's pending question",
+        "previous_origin": "linker"
+      }
     },
     {
       "kind": "alignment_padding",
@@ -43,7 +54,9 @@
         "startup_copy_to_iwram",
         "arm_irq_entry",
         "scheduled_math_and_clear_kernels",
-        "compiler_runtime_division"
+        "compiler_runtime_division",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 1,
       "expected_bytes": 5120,
@@ -162,7 +175,7 @@
           }
         },
         "verdict": "mixed",
-        "credit": "none_yet",
+        "credit": "by_subregion",
         "subregions": {
           "division_runtime": "NOT agscc libgcc: assembled _udivsi3/_divsi3/_umodsi3/_modsi3 in ARM and Thumb builds; no match, longest common prefix 5 bytes at 0x08000af0; authorship compiler_vendor is unsupported",
           "decompressor": "byte-identical in all six GS2 editions at 0x08000c50",
@@ -174,7 +187,15 @@
           "audio_channel_update_thumb": "no GS2 identity",
           "scheduled_math_clear_and_transform_kernels": "no GS2 identity",
           "irq_entry": "no GS2 identity"
-        }
+        },
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "subregion_credit": {
+          "library": "decompressor 152, word_copy_kernel_arm 120, irq_handler_table 56 and audio_work_area_zero_init 1424 (tables): 1,752 bytes, all GS2-identical",
+          "handwritten_arm": "irq_entry 224 (mrs/msr CPSR), gba startup is its own kind",
+          "pending": "audio_mixer_arm 960, audio_format_and_wave_helpers_arm 780, scheduled_math_clear_and_transform_kernels 616, division_runtime 576 (ARM, not agscc libgcc), audio_channel_update_thumb 196, audio_mode_bridge_thumb 16: absent from GS2 in any form, so the cross-game identity that makes the rest a library is missing; ARM-mode impossibility alone is recorded but Beans holds credit pending Pascal",
+          "not_credited": "none beyond pending"
+        },
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -186,13 +207,23 @@
         "dma_copy_to_stack",
         "arm_instruction_set",
         "indirect_call_through_relocated_entry",
-        "signed_q16_three_term_dot_product"
+        "signed_q16_three_term_dot_product",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 1,
       "expected_bytes": 28,
       "files": [
         "08007994"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "library",
+        "credit_basis": "28 bytes ARM, GS2-identical (Kiki's DMA-to-stack kernel model)",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "credit_bytes": "28 bytes",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+      }
     },
     {
       "kind": "rom_dispatch_table",
@@ -214,10 +245,12 @@
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "approved_compiler_call_via_symbols"
+        "approved_compiler_call_via_symbols",
+        "libgcc_call_via_rx_lib1funcs_asm_950_990_byte_identical_60_bytes",
+        "assembled_every_t_arm_elf_lib1asmfuncs_member_arm_and_thumb_only_call_via_rx_matches"
       ],
       "expected_files": 1,
-      "expected_bytes": 56,
+      "expected_bytes": 60,
       "files": [
         "080072e4"
       ],
@@ -248,7 +281,8 @@
         "credit": "library",
         "object": "agscc gcc/config/arm/lib1funcs.asm:950-990 call_via macro (bx \\register; nop), built by t-arm-elf LIB1ASMFUNCS _call_via_rX",
         "proof": "assembled every t-arm-elf LIB1ASMFUNCS member from agscc lib1funcs.asm with the bundle's cpp0/as (ARM and Thumb builds) and searched gs1-en: _call_via_rX (60 bytes) is byte-identical at 0x080072e4 in both builds; no other member matches anywhere in the ROM",
-        "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region"
+        "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region",
+        "extent_review": "2026-09-10: extent moved 56 -> 60; the lr thunk word 0x46c04770 at 0x0800731c was registered as boundary_word_0800731c in executable_gaps/index.json and is now the fifteenth call_via entry, matching lib1funcs.asm:972-986"
       }
     },
     {
@@ -277,7 +311,9 @@
         "unrolled_64_byte_clear",
         "single_function_switches_thumb_to_arm_and_back",
         "approved_ordinary_c_route_has_one_instruction_set_per_function",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 2,
       "expected_bytes": 954,
@@ -310,8 +346,12 @@
           }
         },
         "verdict": "cross_product_identical_vendor_unidentified",
-        "credit": "library_pending_identification",
-        "reason": "both regions byte-identical in all six GS2 editions (080f9674 mixed Thumb/ARM audio mixer, 080f9a18); single-function mode switches are outside the approved route"
+        "credit": "library",
+        "reason": "both regions byte-identical in all six GS2 editions (080f9674 mixed Thumb/ARM audio mixer, 080f9a18); single-function mode switches are outside the approved route",
+        "credit_basis": "954 bytes; 080f9674 switches Thumb to ARM and back inside one function (572 ARM bytes) and both regions are GS2-identical; the route has one instruction set per function",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "credit_bytes": "954 bytes",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -324,7 +364,8 @@
         "direct_bl_clobbers_lr",
         "no_lr_stack_save",
         "approved_compiler_call_prologue_mismatch",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 15,
       "expected_bytes": 348,
@@ -384,7 +425,9 @@
           }
         },
         "verdict": "mostly_gs1_editions_only",
-        "credit": "none"
+        "credit": "library",
+        "credit_bytes": "64 bytes (080f9a80)",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -397,7 +440,8 @@
         "ordinary_arguments_remain_in_standard_abi_registers",
         "approved_compiler_cannot_express_hidden_register_abi",
         "register_pins_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
       ],
       "expected_files": 16,
       "expected_bytes": 5900,
@@ -432,7 +476,8 @@
         "no_c_parameter_carries_the_hidden_context",
         "approved_compiler_cannot_express_hidden_register_call_contract",
         "register_pins_inline_assembly_and_compiler_modification_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
       ],
       "expected_files": 5,
       "expected_bytes": 4540,
@@ -454,7 +499,8 @@
         "no_c_parameter_or_initialization_defines_value",
         "approved_compiler_cannot_express_implicit_register_input",
         "register_pins_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
       ],
       "expected_files": 1,
       "expected_bytes": 120,
@@ -473,7 +519,8 @@
         "tail_branch_to_iwram_without_link",
         "iwram_target_restores_caller_frame",
         "approved_compiler_cannot_express_contract",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 2,
       "expected_bytes": 220,
@@ -505,7 +552,9 @@
           }
         },
         "verdict": "one_region_cross_product_masked_identical",
-        "credit": "none_yet"
+        "credit": "library",
+        "credit_bytes": "132 bytes (080f95f0)",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -518,7 +567,10 @@
         "approved_compiler_thumb_only",
         "contiguous_seven_region_bank",
         "consumer_call_references",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "byte_identical_in_all_six_gs2_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 7,
       "expected_bytes": 2652,
@@ -561,11 +613,15 @@
           }
         },
         "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
-        "credit": "library_pending_identification",
+        "credit": "library",
         "reason": "ARM instruction set bodies (ldm/rrx/conditional execution) under the game's single -mthumb flag set; byte-identical in all six GS2 editions for 3 regions and pool-masked identical for 3 more; the vendor object is not identified, so proof (a) is incomplete",
         "citations": [
           "Kiki (battle-loop lane), 2026-09-10: arm.c output_thumb_prologue guarded by is_called_in_ARM_mode at arm.c:8806-8830 (attribute :3745/:3762/:8676) is the only ARM-mode output under -mthumb: the two-instruction interfacearm stub orr ip,pc,#1; bx ip"
-        ]
+        ],
+        "credit_basis": "2,652 bytes; 7 regions, 2,604 ARM instruction bytes; 3 exact and 3 masked GS2-identical",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "credit_bytes": "1,860 bytes (3 exact + 3 masked of 2,652)",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -578,13 +634,20 @@
         "arm_cpu_mode_switch",
         "fixed_irq_and_system_stack_setup",
         "approved_compiler_thumb_only",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830"
       ],
       "expected_files": 1,
       "expected_bytes": 68,
       "files": [
         "080003c0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten_proven_not_compiler",
+        "credit_basis": "68 bytes; ARM startup: msr CPSR_fc mode switches and stack setup have no C expression; GS1-only",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2."
+      }
     },
     {
       "kind": "nonstandard_thumb_branch_module",
@@ -596,7 +659,8 @@
         "bare_bx_lr_return",
         "no_lr_save",
         "approved_compiler_prologue_mismatch",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 4,
       "expected_bytes": 148,
@@ -632,7 +696,9 @@
           }
         },
         "verdict": "mostly_gs1_editions_only",
-        "credit": "none"
+        "credit": "library",
+        "credit_bytes": "64 bytes (080fa16c)",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -645,13 +711,20 @@
         "incoming_lr_is_preserved_without_stack_save",
         "approved_compiler_emits_linked_calls",
         "inline_assembly_and_register_pins_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 1,
       "expected_bytes": 28,
       "files": [
         "080f9ae0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "library",
+        "credit_bytes": "28 bytes (080f9ae0)",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+      }
     },
     {
       "kind": "shared_stack_continuation_module",
@@ -720,13 +793,19 @@
         "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
         "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465"
       ],
       "expected_files": 1,
       "expected_bytes": 1226,
       "files": [
         "080f4f04"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "refused_see_thumb_multiple_transfer_module",
+        "credit": "none"
+      }
     },
     {
       "kind": "parent_function_fragment",
@@ -1389,7 +1468,8 @@
         "bl_call_target",
         "function_pointer_target",
         "fallthrough_continuation",
-        "cross_function_literal_pool"
+        "cross_function_literal_pool",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 2,
       "expected_bytes": 692,
@@ -1455,16 +1535,21 @@
           }
         },
         "verdict": "cross_product_identical_vendor_unidentified",
-        "credit": "library_pending_identification"
+        "credit": "library",
+        "credit_bytes": "692 bytes",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
       "kind": "iwram_runtime_veneer",
-      "origin": "compiler_runtime",
+      "origin": "unidentified_build_step",
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_ldr_r3_bx_r3_iwram_target"
+        "fixed_ldr_r3_bx_r3_iwram_target",
+        "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
+        "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
+        "target_is_iwram_address_not_section_symbol"
       ],
       "expected_files": 4,
       "expected_bytes": 32,
@@ -1497,7 +1582,8 @@
         },
         "verdict": "not_toolchain_origin_unidentified",
         "credit": "none",
-        "reason": "same citations as linker_veneer; the target is an IWRAM address, not a section symbol, so not a linker stub either; origin compiler_runtime is unsupported"
+        "reason": "same citations as linker_veneer; the target is an IWRAM address, not a section symbol, so not a linker stub either; origin compiler_runtime is unsupported",
+        "previous_origin": "compiler_runtime"
       }
     },
     {
@@ -1551,13 +1637,23 @@
       "evidence": [
         "thumb_to_arm_pc_switch",
         "single_umull_high_word",
-        "approved_compiler_is_thumb_only"
+        "approved_compiler_is_thumb_only",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 1,
       "expected_bytes": 16,
       "files": [
         "080f95e0"
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "library",
+        "credit_basis": "16 bytes, ARM umull high word, GS2-identical",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "credit_bytes": "16 bytes",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
+      }
     },
     {
       "kind": "relocated_arm_runtime_module",
@@ -1568,7 +1664,10 @@
         "caller_copy_source_and_size_boundaries",
         "arm_instruction_set",
         "approved_compiler_thumb_only",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+        "byte_identical_in_all_six_gs2_editions_9_of_13_regions_vendor_object_unidentified",
+        "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
       ],
       "expected_files": 13,
       "expected_bytes": 6208,
@@ -1701,8 +1800,12 @@
           }
         },
         "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
-        "credit": "library_pending_identification",
-        "reason": "ARM instruction set (same citation as armv4t_helper_bank); 9 of 13 regions byte-identical at one offset across all six GS2 editions, one more pool-masked identical; vendor object not identified"
+        "credit": "library",
+        "reason": "ARM instruction set (same citation as armv4t_helper_bank); 9 of 13 regions byte-identical at one offset across all six GS2 editions, one more pool-masked identical; vendor object not identified",
+        "credit_basis": "6,208 bytes; 13 regions, 5,884 ARM instruction bytes; 9 regions byte-identical and 1 pool-masked identical in all six GS2 editions",
+        "credit_rule": "Pascal's standard (b), 2026-09-10: a construct the approved compiler provably cannot emit, cited. Under the game's single -mthumb flag set GCC 2.96's only ARM-mode output is the two-instruction interfacearm entry stub (arm.c:8806-8830, Kiki); an ARM-instruction-set body is therefore assembly by construction. Handwritten versus library is decided by byte identity with GS2.",
+        "credit_bytes": "3,672 bytes (9 exact + 1 masked GS2-identical regions of 6,208)",
+        "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six GS2 editions and all six GS1 editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto."
       }
     },
     {
@@ -1799,7 +1902,9 @@
         "approved_compiler_has_no_ip_linked_calling_convention",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+        "no_cross_product_identity"
       ],
       "expected_files": 50,
       "expected_bytes": 26866,
@@ -1876,8 +1981,8 @@
             "bytes": 5522
           }
         },
-        "verdict": "pending_compiler_citation",
-        "credit": "none_yet",
+        "verdict": "not_compiler_no_cross_product_identity_not_proven_handwritten",
+        "credit": "none",
         "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4"
       }
     },
@@ -1894,7 +1999,8 @@
         "approved_compiler_has_no_ip_linked_calling_convention",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub"
       ],
       "expected_files": 3,
       "expected_bytes": 2470,
@@ -1936,7 +2042,8 @@
         "approved_gcc_2_96_thumb_di_df_moves_emit_at_most_two_register_ldmia_stmia",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
         "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465"
       ],
       "expected_files": 3,
       "expected_bytes": 2818,
@@ -1964,7 +2071,12 @@
           "kind": "multi_transfer_owner_unresolved_fragment",
           "authorship": "unknown"
         }
-      ]
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "verdict": "refused_see_thumb_multiple_transfer_module",
+        "credit": "none"
+      }
     },
     {
       "kind": "intra_function_call_module",
@@ -1980,7 +2092,10 @@
         "080ca60c_bl_080ca956_to_080cb17a_also_reached_by_branch_080cb174_and_bl_080cb176_to_fallthrough_080ca978",
         "080d1714_bl_080d2352_to_fallthrough_080d18a8",
         "080d6970_bl_080d75de_to_fallthrough_080d6b76",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "far_jump_bl_is_compiler_thumb_jump_range_2048_2044_arm_c_thumb_far_jump_used_p_8598",
+        "local_subroutine_bl_no_call_template_takes_label_arm_md_5905_6006",
+        "all_45_intra_owner_bl_targets_never_return_42_beyond_far_jump_range_3_within_range_unexplained"
       ],
       "expected_files": 10,
       "expected_bytes": 33948,
@@ -2079,9 +2194,10 @@
             "bytes": 0
           }
         },
-        "verdict": "pending_compiler_citation",
-        "credit": "none_yet",
-        "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl"
+        "verdict": "compiler_far_jump_bl_42_sites_3_sites_open",
+        "credit": "none",
+        "note": "no cross-product identity; bl to intra-owner labels (.L5/.L7 subroutines) alongside ordinary external bl",
+        "analysis": "Kiki 2026-09-10: *thumb_jump prints `bl %l0` as a far jump when the distance is outside -2048..+2044 (length attribute) and thumb_far_jump_used_p (arm.c:8598) saves lr for it; a bl to a label whose target returns is not emit-able (no call template takes a label_ref, arm.md:5905-6006). Site classification over the 10 regions: 45 intra-owner bl sites, every target block reaches its end without bx lr or pop {pc} (none returns to the bl site); 42 sites are beyond -2048..+2044 measured pc+4-relative in the final layout, 3 sit inside it (0x08027bae -> .L39 at -1886, 0x0808f62a -> .L7 at +2018, 0x080a2a76 -> .L0 at +2008), within the far-jump range, and are unexplained: shorten_branches lengths only grow, so a jump that was ever far keeps a final distance at least as large (Kiki, 2026-09-10) — the attribute-relative distance for those 3 is being derived from the source rules. Reading for the 42: compiler far jumps; for the 3: open."
       }
     },
     {
@@ -2555,7 +2671,10 @@
         "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
         "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
         "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
-        "byte_exact_reconstruction"
+        "byte_exact_reconstruction",
+        "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465",
+        "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
+        "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
       "expected_files": 169,
       "expected_bytes": 65476,
@@ -2581,10 +2700,11 @@
             "bytes": 10310
           }
         },
-        "verdict": "pending_compiler_citation",
-        "credit": "none_yet",
+        "verdict": "refused_c_bodies_with_inline_dma_or_fill_macro",
+        "credit": "none",
         "construct": "160 of 169 regions (64,968 bytes) are C-shaped functions containing inline: ldr rA,=DMA register block (0x040000b0/bc/c8/d4 in the pool); ldr r1,=source; ldr r2,=destination or control; stmia rA!, {r0,r1,r2}; subs rA, #12 — the base is restored although it dies, which is the mark of a macro that cannot know whether its caller still needs the base. Three regions are 24-32 byte leaves that are only this kick. 8 regions are unrolled 4-register stmia fill runs (468 bytes), 1 mixed (40 bytes).",
-        "reading": "not handwritten functions and not a library: C bodies with an inline-asm DMA kick or fill the approved route cannot express; no cross-product identity (74 regions identical across GS1 editions only, none in GS2)"
+        "reading": "not handwritten functions and not a library: C bodies with an inline-asm DMA kick or fill the approved route cannot express; no cross-product identity (74 regions identical across GS1 editions only, none in GS2)",
+        "refusal": "Kiki 2026-09-10: no Thumb template prints a writeback stmia of ldr-loaded registers or any four-register list (arm.md:3751/3850/4730/4870, movmem8b/12b :5111-5141 via thumb_output_move_mem_multiple arm.c:9425-9465, movstrqi :5084/9478 copy-only). 160 of 169 regions are C-shaped functions with an inline DMA kick, 8 are fill runs; no cross-product identity. Neither handwritten functions nor a library; the approved route disallows the inline assembly that produced them."
       }
     },
     {

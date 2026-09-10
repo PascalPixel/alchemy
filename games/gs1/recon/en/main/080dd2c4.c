@@ -28,12 +28,12 @@
  *      through that traced pointer, not as calls to a fictional
  *      "Func_080072f4".
  *
- * Several signed-halving sites keep the raw unsigned byte/loop-counter
- * value alongside the sign-extended one (matching the note already
- * recorded in games/gs1/recon/en/main/080e7404.c for the analogous u16
- * case); those are spelled out with the shifted-word idiom rather than an
- * s8/s16 cast.  Plain nonnegative loop-counter halvings use `/ 2` per the
- * family's sign-extension-bug guidance.
+ * The particle blits halve a signed table byte.  `(s8)Data_080eeb80[n] / 2`
+ * is enough: the compiler widens the u8 with `lsls #24` / `asrs #24` and
+ * then takes the rounding bit straight off the still-live shifted word with
+ * `lsrs #31`, which is exactly the retained `lsls/asrs/lsrs/adds/asrs`
+ * group.  Spelling that bias by hand adds nothing.  Halvings of a value
+ * already known nonnegative also use `/ 2`.
  *
  * Shape decisions recovered by measurement against the retained bytes:
  *
@@ -66,13 +66,31 @@
  *     lo-register copy of the r8 cursor between the two field loads; the
  *     reference makes two copies, and the temporary is what forces them.
  *
- * Open residual (differing_halfwords=73, topology equal, size exact): the
- * member-blit block still allocates `temp_r4_299` to r1 where the reference
- * uses r4, which pushes the `1 & i` scratch to r2 (the decoder's remaining
- * `pseudo 219 target=r1`) and swaps the Data_080eeb48/Data_080eeb4e and
- * Data_080eeb54/Data_080eeb58 literal-pool entries.  Statement order,
- * declaration order, temporaries, types and callee prototypes were all
- * searched over this block without moving that assignment.
+ * Open residual (differing_halfwords=73, topology equal, size exact, no
+ * instruction missing or extra).  Every remaining disagreement is register
+ * naming plus the scheduling that follows from it:
+ *
+ *   - `texture_index` lands in r1 where the reference holds it in r4.  That
+ *     one choice displaces the `1 & i` scratch copy to r2, reverses the two
+ *     literal-pool loads in both member-blit arms, and reverses the
+ *     Data_080eeb48/Data_080eeb4e and Data_080eeb54/Data_080eeb58 pool
+ *     entries.
+ *   - In the member-loop latch the reference advances `var_sl_273` before
+ *     `i`; we advance `i` first, so the 28 and the 1 trade r3 and r5.
+ *   - In the member-loop preheader the reference holds work+0x7080 in r2 and
+ *     the sp0C seed in r1; we hold them the other way round, and the seed's
+ *     `movs` schedules one slot later.
+ *   - In the particle blits the reference issues the Data_080eeb79 load
+ *     first; we start the Data_080eeb80 sign-extension chain first, which
+ *     also reverses those three pool entries.
+ *
+ * Searched without progress: swapping the latch increments (81); reusing
+ * var_r4_377 for the texture index, which the reference does share with r4
+ * (95); dropping temp_r4_315/temp_r4_348 and re-reading the table (448);
+ * expressing var_sl_273 as work + i * 0x1C so loop strength reduction owns
+ * the cursor (330); expressing the member-id offset as var_r6_367 * 2 + 0x24
+ * (356).  The catalogued swap_declarations(draw_destination, rectangle)
+ * repair is also neutral.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
@@ -156,9 +174,7 @@ void Func_080dd2c4(void *object, s32 arg1)
     s32 temp_r2_474;
     s32 temp_r7_481;
     s8 temp_r5_490;
-    u8 temp_r0_496;
     s8 temp_r4_498;
-    u8 temp_r0_514;
     s8 temp_r4_518;
     s32 temp_r3_538;
 
@@ -342,29 +358,21 @@ void Func_080dd2c4(void *object, s32 arg1)
                     }
                     temp_r5_490 = Data_080eeb79[temp_r7_481];
                     temp_r2_474 = M2C_FIELD(var_r8_471, s32 *, 0);
-                    temp_r0_496 = Data_080eeb80[temp_r7_481];
-                    temp_r4_498 = (s8)temp_r0_496;
+                    temp_r4_498 = (s8)Data_080eeb80[temp_r7_481];
                     ((DrawRectangleFn)rectangle[0])(
                         draw_destination,
                         (u8 *)work + (Data_080eeb88[temp_r7_481]
                             + (s32)var_sl_273),
                         temp_r2_474 - temp_r5_490,
-                        M2C_FIELD(var_r8_471, s32 *, 4)
-                            - ((temp_r4_498
-                                + (s32)((u32)(temp_r0_496 << 24) >> 31))
-                                >> 1),
+                        M2C_FIELD(var_r8_471, s32 *, 4) - temp_r4_498 / 2,
                         temp_r5_490, temp_r4_498);
-                    temp_r0_514 = Data_080eeb80[temp_r7_481];
-                    temp_r4_518 = (s8)temp_r0_514;
+                    temp_r4_518 = (s8)Data_080eeb80[temp_r7_481];
                     ((DrawRectangleFn)rectangle[1])(
                         draw_destination,
                         (u8 *)work + (Data_080eeb88[temp_r7_481]
                             + (s32)var_sl_273),
                         M2C_FIELD(var_r8_471, s32 *, 0),
-                        M2C_FIELD(var_r8_471, s32 *, 4)
-                            - ((temp_r4_518
-                                + (s32)((u32)(temp_r0_514 << 24) >> 31))
-                                >> 1),
+                        M2C_FIELD(var_r8_471, s32 *, 4) - temp_r4_518 / 2,
                         Data_080eeb79[temp_r7_481], temp_r4_518);
                     temp_r3_538 = M2C_FIELD(var_r8_471, s32 *, 0x18) + 1;
                     M2C_FIELD(var_r8_471, s32 *, 0x18) = temp_r3_538;

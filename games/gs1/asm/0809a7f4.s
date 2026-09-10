@@ -1,5 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 粒子の円運動。角度 obj+6 の cos, sin に半径 0x80000 を Q16 乗算し、親 obj+104 の
+@ 位置に足して obj[8], obj[16] を置く。角度は毎回 0x800 進み、計数 obj+100 が 121 で
+@ 初期化: 継続関数 Func_0809a739、係数 0x1999、速度 0x30000、乱数の角度。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0809a7f4
@@ -18,17 +20,21 @@ Func_0809a7f4:
 	mov	r9, r0
 	adds	r0, r6, #0
 	mov	sl, r2
+@ cos。
 	bl	Func_0800231c
 	ldr	r5, [pc, #112]
 	adds	r1, r0, #0
 	mov	r0, sl
+@ IwramMulQ16ReturnIp: 半径 × cos。
 	mov	ip, pc
 	bx	r5
 	mov	r8, r0
 	adds	r0, r6, #0
+@ sin。
 	bl	Func_08002322
 	adds	r1, r0, #0
 	mov	r0, sl
+@ IwramMulQ16ReturnIp: 半径 × sin。
 	mov	ip, pc
 	bx	r5
 	mov	r2, r9
@@ -49,6 +55,7 @@ Func_0809a7f4:
 	movs	r0, #242
 	adds	r3, #1
 	strh	r3, [r2, #0]
+@ 計数が 121 (0x79) に達したら再設定する。
 	lsls	r0, r0, #15
 	lsls	r3, r3, #16
 	movs	r1, #0

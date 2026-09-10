@@ -22,8 +22,12 @@ pub fn root() -> &'static Path {
 pub fn bundle() -> PathBuf {
     root().join("out/compilers/dist")
 }
-pub fn driver() -> PathBuf {
-    bundle().join("xgcc")
+/// Each game has its own compiler: GS2's is staged by `make compilers-gs2`.
+pub fn bundle_for(target: CompilerTarget) -> PathBuf {
+    match target {
+        CompilerTarget::Gs1 => bundle(),
+        CompilerTarget::Gs2 => root().join("out/compilers/gs2/dist"),
+    }
 }
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")

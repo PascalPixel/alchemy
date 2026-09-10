@@ -81,6 +81,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
+extern u8 Data_0200c3ec[];
+
 void RunEventScript01(void)
 {
     void *p8;
@@ -88,6 +90,7 @@ void RunEventScript01(void)
     void *p21;
     void *p22;
     void *p23;
+    s32 v;
 
     Func_020060a0();
     Call1(Func_020060b6, 33608032);
@@ -110,21 +113,23 @@ void RunEventScript01(void)
     Call3(Func_02006164, 0, 157286, 78643);
     Call3(Func_02006196, 0, 154, 609);
     Func_020062b4(146);
+    v = 0;
     p21 = Func_0200616a(24);
-    *(u16 *)((u8 *)(p21) + 100) = 0;
+    *(u16 *)((u8 *)(p21) + 100) = v;
     p22 = Func_02006176(25);
-    *(u16 *)((u8 *)(p22) + 100) = 0;
+    *(u16 *)((u8 *)(p22) + 100) = v;
     p23 = Func_02006180(26);
-    *(u16 *)((u8 *)(p23) + 100) = 0;
+    *(u16 *)((u8 *)(p23) + 100) = v;
     Call3(Func_020061f2, 24, 2097152, 31719424);
     Call3(Func_02006200, 25, 5505024, 32505856);
     Call3(Func_0200620e, 26, 1048576, 39059456);
     Call3(Func_020061c8, 24, 157286, 78643);
     Call3(Func_020061d2, 25, 157286, 78643);
     Call3(Func_020061dc, 26, 157286, 78643);
-    Call2(Func_020061ee, 24, 33604844);
-    Call2(Func_020061f6, 25, 33604844);
-    Call2(Func_020061fe, 26, 33604844);
+    v = (s32)Data_0200c3ec;
+    Func_020061ee(24, v);
+    Func_020061f6(25, v);
+    Func_020061fe(26, v);
     Func_02006286(24, 3);
     Func_0200628e(25, 3);
     Func_02006296(26, 3);
@@ -133,7 +138,7 @@ void RunEventScript01(void)
         p10 = Func_0200620a_a(24);
     } while (*(s16 *)(p10 + 100) == 0);
     Func_02002ac4();
-    Call3(Func_0200626c, 21, 196, 612);
+    Func_0200626c(21, 196, 612);
     Func_0200624a(24);
     Func_02006208(10);
     Func_0200636c();

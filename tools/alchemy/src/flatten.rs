@@ -21,7 +21,7 @@
 //! is reported and stops the run: it is the shared interface the unit forces
 //! into the open.
 
-use crate::compiler::build_io::read_json;
+use crate::compiler::build_io::{read_json, Snapshot};
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -826,19 +826,68 @@ fn run(args: &[String]) -> Result<(), String> {
         );
         return Ok(());
     }
+    // The unit is already written; the registers, the merged files and the
+    // manifest follow as one sequence. Any failure puts every one of them
+    // back, the flat unit included, and the index is touched once, last.
+    let mut watched: Vec<PathBuf> =
+        vec![target.clone(), register_path.clone(), manifest_path.clone()];
+    watched.extend(files.iter().cloned());
+    watched.extend(inlined.iter().cloned());
+    let snapshot = Snapshot::take(&watched)?;
+    let outcome = apply_flatten(
+        &root,
+        &source_root,
+        &unit_path,
+        &overlay,
+        &owners,
+        &aliases,
+        &files,
+        &inlined,
+        &mut register,
+        &register_path,
+        &mut manifest,
+        &manifest_path,
+        entry,
+    );
+    if let Err(error) = outcome {
+        snapshot.restore();
+        return Err(format!(
+            "{error}; nothing flattened, the unit, registers and merged files are restored -- fix the cause and rerun"
+        ));
+    }
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn apply_flatten(
+    root: &Path,
+    source_root: &Path,
+    unit_path: &str,
+    overlay: &str,
+    owners: &[Owner],
+    aliases: &[String],
+    files: &[PathBuf],
+    inlined: &BTreeSet<PathBuf>,
+    register: &mut Value,
+    register_path: &Path,
+    manifest: &mut Value,
+    manifest_path: &Path,
+    entry: Value,
+) -> Result<(), String> {
     // Register every owner to the flat file: overlay grouped sources carry the
     // shared path on every member.
     let owners_map = register["owners"]
         .as_object_mut()
         .ok_or("source-paths.json: owners must be an object")?;
-    for (o, alias) in owners.iter().zip(&aliases) {
+    for (o, alias) in owners.iter().zip(aliases) {
         let mut record = Map::new();
         record.insert("name".into(), Value::String(alias.clone()));
-        record.insert("source".into(), Value::String(unit_path.clone()));
+        record.insert("source".into(), Value::String(unit_path.to_string()));
         owners_map.insert(o.key.clone(), Value::Object(record));
     }
-    write_json(&register_path, &register)?;
+    write_json(register_path, register)?;
     let mut removed = 0;
+    let mut gone: Vec<PathBuf> = Vec::new();
     let still_registered: BTreeSet<String> = register["owners"]
         .as_object()
         .unwrap()
@@ -849,19 +898,21 @@ fn run(args: &[String]) -> Result<(), String> {
                 .or_else(|| v["source"].as_str().map(str::to_string))
         })
         .collect();
-    for file in &files {
-        let relative = rel(file, &source_root);
+    for file in files {
+        let relative = rel(file, source_root);
         if relative == unit_path || still_registered.contains(&relative) {
             continue;
         }
-        git_rm(&root, file)?;
+        fs::remove_file(file).map_err(|e| format!("{}: {e}", file.display()))?;
+        gone.push(file.clone());
         removed += 1;
     }
-    for header in &inlined {
-        if header_still_used(&source_root, header)? {
+    for header in inlined {
+        if header_still_used(source_root, header)? {
             continue;
         }
-        git_rm(&root, header)?;
+        fs::remove_file(header).map_err(|e| format!("{}: {e}", header.display()))?;
+        gone.push(header.clone());
         removed += 1;
     }
     let addresses: BTreeSet<u32> = owners.iter().map(|o| o.address).collect();
@@ -870,7 +921,7 @@ fn run(args: &[String]) -> Result<(), String> {
         .ok_or("translation-units.json: units must be an array")?;
     let before = units.len();
     units.retain(|u| {
-        !(u["overlay"] == overlay.as_str()
+        !(u["overlay"] == overlay
             && u["owners"].as_array().is_some_and(|members| {
                 members.iter().all(|m| {
                     u32::from_str_radix(
@@ -883,7 +934,16 @@ fn run(args: &[String]) -> Result<(), String> {
     });
     units.push(entry);
     let after = units.len();
-    write_json(&manifest_path, &manifest)?;
+    write_json(manifest_path, manifest)?;
+    // One staging step, after every file is in its final state: the removed
+    // files leave the index together with the unit and registers arriving.
+    let mut staged: Vec<PathBuf> = vec![
+        source_root.join(unit_path),
+        register_path.to_path_buf(),
+        manifest_path.to_path_buf(),
+    ];
+    staged.extend(gone);
+    git_add(root, &staged)?;
     println!(
         "registered {} owners to {unit_path}; removed {removed} files; units {before} -> {after}",
         owners.len()
@@ -1551,17 +1611,18 @@ fn header_still_used(source_root: &Path, header: &Path) -> Result<bool, String> 
     Ok(false)
 }
 
-fn git_rm(root: &Path, path: &Path) -> Result<(), String> {
+fn git_add(root: &Path, paths: &[PathBuf]) -> Result<(), String> {
     let status = Command::new("git")
         .current_dir(root)
-        .args(["rm", "-q", "-f"])
-        .arg(path)
+        .args(["add", "-A", "--"])
+        .args(paths)
         .status()
-        .map_err(|e| format!("git rm: {e}"))?;
-    if !status.success() {
-        fs::remove_file(path).map_err(|e| format!("{}: {e}", path.display()))?;
+        .map_err(|e| format!("git add: {e}"))?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err("git add failed".to_string())
     }
-    Ok(())
 }
 
 fn write_json(path: &Path, value: &Value) -> Result<(), String> {

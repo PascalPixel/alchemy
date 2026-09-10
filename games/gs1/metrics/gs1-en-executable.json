@@ -4,10 +4,10 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1354302,
+  "total_union_bytes": 1354306,
   "main": {
     "id": "main",
-    "executable_bytes": 548364,
+    "executable_bytes": 548368,
     "audit": "complete",
     "intervals": [
       {
@@ -492,7 +492,7 @@
       },
       {
         "start": 134247140,
-        "end": 134247196,
+        "end": 134247200,
         "kind": "veneer",
         "evidence": "games/gs1/asm/080072e4.s:runtime_thunk_bundle"
       },

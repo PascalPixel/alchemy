@@ -11,6 +11,7 @@
 #endif
 
 #define BATTLE_SECOND_ACTOR
+#define BATTLE_REFRAIN_TURNS 5
 
 /* Retarget the first shared semantic callees before the GS1 headers expand
  * them through GS1 owner symbols.  These bindings were measured at identical
@@ -882,12 +883,12 @@ struct BattleWorkPage {
  * and reports the gain from the target's side. */
 #define BATTLE_PP_LEECH_CASES                                              \
     case 0x54:                                                             \
-        dmg = Math_Div(target->max_pp, 10);                                \
+        dmg = (s16)Math_Div(target->max_pp, 10);                                \
         if (target->pp < dmg)                                              \
             dmg = target->pp;                                              \
         if (dmg == 0)                                                      \
             break;                                                         \
-        BattleEvent_Push(BATTLE_EVENT_VALUE, (u8)dmg);                     \
+        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);                     \
         if ((u32)target_id <= 7)                                           \
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0xcbb);                    \
         else                                                               \
@@ -898,14 +899,13 @@ struct BattleWorkPage {
 #define BATTLE_HP_DRAIN_BODY()                                             \
     {                                                                      \
         s32 heal;                                                          \
-        s32 drain;                                                         \
         s32 amt;                                                           \
                                                                            \
         heal = actor->hp;                                                  \
-        drain = dealt;                                                     \
+        amt = dealt;                                                       \
         if (action->effect == EFX_DRAIN_HP_HALF)                           \
-            drain /= 2;                                                    \
-        amt = drain;                                                       \
+            amt = dealt / 2;                                               \
+        dmg = amt;                                                         \
         heal += amt;                                                       \
         if (heal > actor->max_hp) {                                        \
             heal = actor->max_hp;                                          \
@@ -960,7 +960,7 @@ struct BattleWorkPage {
 
 #define BATTLE_DONE_PREP()                                                \
     {                                                                      \
-        if (*cmd != 9 && (s8)((u8 *)target)[0x143] != 0                   \
+        if (*cmd != 9 && *(s8 *)((u8 *)target + 0x143) != 0                \
             && action->target_mode == 1 && target->hp != 0) {             \
             *(s32 *)((u8 *)work + 0x858) = target_id;                      \
             *(s32 *)((u8 *)work + 0x85c) = actor_id;                       \

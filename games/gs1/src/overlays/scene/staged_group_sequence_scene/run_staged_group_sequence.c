@@ -79,8 +79,7 @@ void FieldScene_RunStagedGroupSequence(void)
     s32 actionEnabled;
     u8 *actor20PairedWait;
     u8 *actor21PairedWait;
-    u8 *actor21ClosingWait;
-    u8 *actor14ClosingWait;
+    u8 *closingWaitRecord;
     u8 *actor14FinalFacing;
     u8 *actor20FinalFacing;
     u8 *actor21FinalFacing;
@@ -478,9 +477,9 @@ void FieldScene_RunStagedGroupSequence(void)
     Func_02003c34(31, actionDescriptor);
     Func_02003c34(33, actionDescriptor);
     Func_02003c34(34, actionDescriptor);
-    actor21ClosingWait = Func_02003c1c(21);
+    closingWaitRecord = Func_02003c1c(21);
     {
-        u16 *state = (u16 *)(actor21ClosingWait + 100);
+        u16 *state = (u16 *)(closingWaitRecord + 100);
         s32 value = 0;
         *state = value;
     }
@@ -509,9 +508,9 @@ void FieldScene_RunStagedGroupSequence(void)
     Func_02003cd4(14, 0, 10);
     Func_02003c8c(14, 4, 40);
     Func_02003c2c(14, 78643, 39321);
-    actor14ClosingWait = Func_02003c1c(14);
+    closingWaitRecord = Func_02003c1c(14);
     {
-        u16 *state = (u16 *)(actor14ClosingWait + 100);
+        u16 *state = (u16 *)(closingWaitRecord + 100);
         s32 value = 0;
         *state = value;
     }

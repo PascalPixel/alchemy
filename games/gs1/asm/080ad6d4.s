@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 能力比較の画面。窓 (Func_08015278) を開き、隊員の記録 (Func_08077008) を IwramCopyWords で
+@ 控えて Func_080771b8 / a8 / b0 の表を当て、Func_080aae14 で前後を比べ、文言 (0x21a, 0x256, 0xba4..
+@ 0xbc1, 0x45f, 0x5001) を Func_08015080 / Func_08015280 で並べる。押し釦 (0x03001c94, 0x03001b04)
+@ で頁 (.L26 の表) を選び、Func_080a1ac0 の指し手と Func_080030f8 の待ちを回す。結果は
+@ Func_080acab8 の比較表と Func_080ad5f4 で描き、Func_08002df0 で控えを返す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080ad6d4
@@ -118,6 +122,7 @@ Func_080ad6d4:
 	cmp	r2, #1
 	bls.n	.L3
 	b.n	.L4
+@ 記録を控えて表を当てる。
 .L3:
 	movs	r0, #96
 	bl	Func_08004970
@@ -422,6 +427,7 @@ Func_080ad6d4:
 	cmp	r3, #3
 	bne.n	.L14
 	ldr	r0, [pc, #324]
+@ 文言の配置。
 .L13:
 	ldr	r1, [r5, #0]
 	movs	r2, #96
@@ -669,6 +675,7 @@ Func_080ad6d4:
 	cmp	r3, #18
 	bls.n	.L26
 	b.n	.L27
+@ 頁の表。
 .L26:
 	ldr	r2, [pc, #716]
 	lsls	r3, r3, #2
@@ -936,6 +943,7 @@ Func_080ad6d4:
 	b.n	.L41
 .L42:
 	movs	r7, #2
+@ 比較表の描画。
 .L41:
 	ldr	r4, [sp, #88]
 	cmp	r4, #0

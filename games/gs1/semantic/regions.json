@@ -7144,8 +7144,8 @@
     {
       "overlay": "resource_3a4",
       "entry": "0x02001d14",
-      "span_bytes": 754,
-      "evidence": "complete callable owner from the prologue at 0x02001d14 through the return at 0x02002004; all 68 calls, the bounded completion poll, repeated actor-state phases, terminal actor lookup, and coordinate forwarding are represented in the retained semantic reconstruction; the preceding eight bytes and following pool/alignment bytes are not part of the callable owner"
+      "span_bytes": 780,
+      "evidence": "complete callable owner from the prologue at 0x02001d14 through the return at 0x02002004; all 68 calls, the bounded completion poll, repeated actor-state phases, terminal actor lookup, and coordinate forwarding are represented in the retained semantic reconstruction; the preceding eight bytes and following pool/alignment bytes are not part of the callable owner 2026-09-10 extent review 754 -> 780: the function's own literal pool at 0x02002008..0x02002020 - carried in games/gs1/asm/overlays/resource_3a4_overlay.s as the function's .2byte alignment word plus six .4byte words (0xe666, 0x9999, 0x13333, 0x03001c94, 0x4cccc, 0x905), all six targeted by this owner's ldr [pc] loads - was registered to no owner (source-paths, translation-units and this register had no entry between 0x02002006 and the next tile at 0x02002020); a standalone C function emits its pool inside its own span, so 754 could never match a byte-exact candidate."
     },
     {
       "overlay": "resource_3a4",

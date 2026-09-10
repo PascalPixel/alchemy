@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 戦闘役者の準備。14 枠を Func_080b770c / Func_080b7b30 で確保し、表 r0 (s16 の id、255 で終わり、
+@ 254 は飛ばす) の各項について記録 (Func_080b7dd0) を用意する。種別 476 / 483 は二枚の絵を
+@ Func_08009030 で取り、IwramClearWords で表を消し、[r6+24] × [r7+24] を IwramMulQ16 で縮尺に置く。
+@ それ以外は一枚と付属 (+6, +8, +10) を Func_08009048 で取る。r1 が立てば Func_080b7aac を
+@ もう一度全項に掛ける。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080b7b6c
@@ -17,6 +21,7 @@ Func_080b7b6c:
 	str	r0, [sp, #24]
 	movs	r1, #0
 	mov	fp, r1
+@ 枠の確保。
 .L2:
 	ldr	r0, [sp, #24]
 	mov	r1, fp
@@ -56,6 +61,7 @@ Func_080b7b6c:
 .L4:
 	ldr	r1, [sp, #24]
 	str	r1, [sp, #8]
+@ 項ループ。
 .L21:
 	ldr	r2, [sp, #16]
 	cmp	r2, #254
@@ -96,6 +102,7 @@ Func_080b7b6c:
 	adds	r2, #7
 	cmp	r3, r2
 	bne.n	.L12
+@ 二枚絵の役者。
 .L11:
 	ldr	r3, [pc, #36]
 	ldr	r2, [r3, #0]
@@ -131,6 +138,7 @@ Func_080b7b6c:
 	ldr	r1, [r7, #24]
 	ldr	r3, [pc, #352]
 	movs	r0, r0
+@ IwramMulQ16ReturnIp: 縮尺の積。
 	mov	ip, pc
 	bx	r3
 	str	r0, [r6, #24]
@@ -171,6 +179,7 @@ Func_080b7b6c:
 	ldrb	r2, [r2, #0]
 	adds	r3, #38
 	b.n	.L16
+@ 一枚絵の役者と付属。
 .L12:
 	ldrh	r0, [r7, #4]
 	str	r1, [sp, #4]
@@ -270,6 +279,7 @@ Func_080b7b6c:
 	mov	fp, r3
 	cmp	r5, #255
 	beq.n	.L22
+@ 二周目。
 .L24:
 	ldr	r1, [sp, #24]
 	ldrsh	r3, [r3, r1]

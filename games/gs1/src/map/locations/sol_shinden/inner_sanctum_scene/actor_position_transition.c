@@ -59,33 +59,23 @@ static __inline__ void bump_step(s32 amount)
 }
 
 /*
- * NOT REPRODUCIBLE. This draft compiles to the reference bytes, but not every
- * time, so it must not be adopted.
+ * Withdrawn on 2026-09-10 as not reproducible, and reinstated the same night
+ * once the cause was found and removed.
  *
- * Measured on 2026-09-10 against the approved bundle: thirty raw cc1
- * invocations on one fixed preprocessed input produced two distinct outputs,
- * 27 and 3. The variance is in the compiler, not in this repository's tooling
- * -- the runs bypassed alchemy entirely and reused a single .i file.
+ * The pair of equal 0x6480000 arguments in the last call below made this
+ * owner's compile split: thirty raw cc1 runs on one fixed preprocessed input
+ * produced 27 of one output and 3 of another, the minority recomputing the
+ * shift instead of sharing it through mov r2, r1. Three sessions measured it
+ * independently and agreed.
  *
- * The divergence is the pair of equal constants in the last Call3 below.
- * The reference, and the 27-run majority, share the computed value:
- *     mov r1, #201 / lsl r1, r1, #19 / mov r2, r1
- * The 3-run minority declines to share it and computes the shift twice, which
- * is one instruction longer and shifts every later byte in the owner.
+ * The cause was not the source. GCC 2.96 hashes LABEL_REF by rtx address and
+ * SYMBOL_REF by the address of its name, so macOS ASLR reordered equal-constant
+ * discovery in CSE between runs. The toolchain now spawns compilers with
+ * _POSIX_SPAWN_DISABLE_ASLR and the split collapses to a single output.
  *
- * It is input-specific, not general: the same thirty-run measurement on
- * resource_385:02000f30 produced one output thirty times.
- *
- * Making the sharing explicit does make the compile deterministic, but then it
- * emits different bytes: a local assigned 0x6480000 (or 201 << 19, or a u32
- * cast) is deterministic at three differing halfwords, and a wrapper that
- * passes one value into both parameters reproduces the reference bytes but
- * stays nondeterministic. Every shape measured is either exact-but-lucky or
- * deterministic-but-wrong.
- *
- * This owner was promoted to exact C on 2026-09-09 and that credit is
- * withdrawn here. Do not re-adopt it until a source shape is found that is
- * both byte-exact and stable across repeated cold compiles.
+ * Kept as a marker: raw runs spawned outside the toolchain still split 27/3,
+ * so anyone measuring this owner by hand must disable ASLR or they will
+ * rediscover the artefact rather than a property of this C.
  */
 void FieldScene_RunActorPositionTransition(void)
 {

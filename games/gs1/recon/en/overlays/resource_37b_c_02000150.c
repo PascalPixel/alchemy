@@ -1,3 +1,29 @@
+/*
+ * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
+ * for a translation unit that cannot yet be declared: the reviewed complete
+ * extent in semantic/regions.json (1220) and the evidence row in
+ * semantic/overlay-assembly.json (1026) disagree, and the unit
+ * register must satisfy both. Declare these as absolute_symbols once the
+ * two registers agree on this owner.
+ *   Func_0200266e_a      0x0200a4dc
+ *   Func_0200266e_b      0x0200a494
+ *   Func_020026a0_a      0x0200a44c
+ *   Func_020026a0_b      0x0200a3bc
+ *   Func_020026b2_a      0x0200a544
+ *   Func_020026b2_b      0x0200a3a4
+ *   Func_020026c4_a      0x0200a514
+ *   Func_020026c4_b      0x0200a4c4
+ *   Func_02002734_a      0x0200a514
+ *   Func_02002734_b      0x0200a3fc
+ *   Func_0200283a_a      0x0200a4c4
+ *   Func_0200283a_b      0x0200a4b4
+ *   Func_0200285a_a      0x0200a4c4
+ *   Func_0200285a_b      0x0200a44c
+ *   Func_020028fa_a      0x0200a504
+ *   Func_020028fa_b      0x0200a4b4
+ *   Func_020028fc_a      0x0200a4f4
+ *   Func_020028fc_b      0x0200a4d4
+ */
 #include "types.h"
 
 #define RunEventScript01 Func_02000150
@@ -18,16 +44,12 @@ void Func_02002642();
 void Func_0200264a();
 void Func_0200264c();
 void Func_02002652();
-void Func_02002664();
-void Func_0200266e();
-void Func_02002686();
-void Func_020026a0();
+void Func_02002664();void Func_0200266e_a(); void Func_0200266e_b();
+void Func_02002686();void Func_020026a0_a(); void Func_020026a0_b();
 void Func_020026a6();
-void Func_020026ae();
-void Func_020026b2();
+void Func_020026ae();void Func_020026b2_a(); void Func_020026b2_b();
 void Func_020026c0();
-void Func_020026c2();
-void Func_020026c4();
+void Func_020026c2();void Func_020026c4_a(); void Func_020026c4_b();
 void Func_020026c6();
 void Func_020026da();
 void Func_020026dc();
@@ -39,8 +61,7 @@ void Func_02002706();
 void Func_02002710();
 void Func_02002722();
 void Func_0200272c();
-void Func_02002732();
-void Func_02002734();
+void Func_02002732();void Func_02002734_a(); void Func_02002734_b();
 void Func_0200273a();
 void Func_0200273e();
 void Func_0200274c();
@@ -63,14 +84,12 @@ void Func_0200280a();
 void Func_02002812();
 void Func_0200281c();
 void Func_0200281e();
-void Func_0200282c();
-void Func_0200283a();
+void Func_0200282c();void Func_0200283a_a(); void Func_0200283a_b();
 void Func_02002840();
 void Func_02002848();
 void Func_0200284a();
 void Func_02002850();
-void Func_02002858();
-void Func_0200285a();
+void Func_02002858();void Func_0200285a_a(); void Func_0200285a_b();
 void Func_0200285e();
 void Func_02002868();
 void Func_0200286a();
@@ -86,9 +105,7 @@ void Func_020028c4();
 void Func_020028ca();
 void Func_020028e2();
 void Func_020028e6();
-void Func_020028f0();
-void Func_020028fa();
-void Func_020028fc();
+void Func_020028f0();void Func_020028fa_a(); void Func_020028fa_b();void Func_020028fc_a(); void Func_020028fc_b();
 void Func_0200290c();
 void Func_0200291e();
 void Func_0200292c();
@@ -117,33 +134,33 @@ void Func_02002a46();
 void RunEventScript01(void)
 {
     Func_020025a8();
-    Func_020026b2();
+    Func_020026b2_a();
     Func_020026c6();
     Func_020025c4(20);
     Func_0200262a(8, 37748736, 15204352);
     Func_020025d8(1);
-    Func_0200266e();
+    Func_0200266e_a();
     Func_0200253e(8, 6);
     Func_0200264c(8, 37748736, 18350080);
-    Func_020026c4();
+    Func_020026c4_a();
     Func_020026dc();
     Func_02002642(8, 65536, 32768);
-    Func_0200266e(8, 576, 216);
+    Func_0200266e_b(8, 576, 216);
     Func_0200262c(20);
     Func_020026a6(5, 2, 0);
     Func_0200263c(30);
     Func_0200259c(5, 6);
-    Func_020026c4(8, 2);
+    Func_020026c4_b(8, 2);
     Func_02002652(6);
     Func_02002706(8, 36864, 0);
     Func_02002664(10);
-    Func_02002734();
+    Func_02002734_a();
     Func_0200274c();
     Func_02002758();
     Func_02002686(60);
     Func_02002766();
     Func_02002772();
-    Func_020026a0(20);
+    Func_020026a0_a(20);
     Func_02002710(8, 3);
     Func_020026ae(10);
     Func_02002762(8, 49152, 0);
@@ -159,18 +176,18 @@ void RunEventScript01(void)
     Func_0200281e();
     Func_020027f6();
     Func_020026da();
-    Func_020026a0(1);
+    Func_020026a0_b(1);
     Func_0200282c();
     Func_02002840();
     Func_0200273e(40);
     Func_020027a4(8, 27787264, 13107200);
     Func_020026c2(1);
-    Func_020026b2(8, 20);
+    Func_020026b2_b(8, 20);
     Func_0200285e();
     Func_0200286a();
     Func_020027c8(8, 37748736, 12058624);
     Func_02002850();
-    Func_02002734();
+    Func_02002734_b();
     Func_020026fa(1);
     Func_02002886();
     Func_0200289a();
@@ -179,11 +196,11 @@ void RunEventScript01(void)
     Func_02002880();
     Func_0200288c();
     Func_020027ba(20);
-    Func_0200283a(1, 2);
+    Func_0200283a_a(1, 2);
     Func_02002722(1, 20);
-    Func_0200283a(5, 3);
+    Func_0200283a_b(5, 3);
     Func_02002732(5, 6);
-    Func_0200285a(8, 2);
+    Func_0200285a_a(8, 2);
     Func_020027e8(40);
     Func_02002858(8, 4);
     Func_02002750(8, 80);
@@ -194,17 +211,17 @@ void RunEventScript01(void)
     Func_0200277c(8, 20);
     Func_020028e6(0);
     Func_020028f0(1);
-    Func_020028fa(5);
+    Func_020028fa_a(5);
     Func_02002848(60);
-    Func_020028fc(8, 49152, 0);
-    Func_0200285a(30);
+    Func_020028fc_a(8, 49152, 0);
+    Func_0200285a_b(30);
     Func_020028ca(8, 4);
     Func_020027c2(8, 6);
-    Func_020028fc(0, 1, 0);
+    Func_020028fc_b(0, 1, 0);
     Func_0200287a(40);
     Func_0200290c(0, 5, 0);
     Func_0200288a(40);
-    Func_020028fa(8, 3);
+    Func_020028fa_b(8, 3);
     Func_020027f2(8, 6);
     Func_0200294e(0, 16384, 0);
     Func_0200295a(5, 16384, 0);

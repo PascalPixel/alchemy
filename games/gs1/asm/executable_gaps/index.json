@@ -272,19 +272,9 @@
       ]
     },
     {
-      "address": "0x0800731c",
-      "size": 1120,
+      "address": "0x08007320",
+      "size": 1116,
       "sections": [
-        {
-          "address": "0x0800731c",
-          "size": 4,
-          "kind": "u32-values",
-          "name": "boundary_word_0800731c",
-          "value_type": "u32le",
-          "values": [
-            "0x46c04770"
-          ]
-        },
         {
           "address": "0x08007320",
           "size": 56,

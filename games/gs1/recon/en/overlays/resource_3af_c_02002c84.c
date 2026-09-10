@@ -1,3 +1,15 @@
+/*
+ * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
+ * for a translation unit that cannot yet be declared: the reviewed complete
+ * extent in semantic/regions.json (1228) and the evidence row in
+ * semantic/overlay-assembly.json (596) disagree, and the unit
+ * register must satisfy both. Declare these as absolute_symbols once the
+ * two registers agree on this owner.
+ *   Func_02000bb8        0x02008bb8
+ *   Func_02003150        0x0200b150
+ *   Func_020039ec        0x0200b9ec
+ *   Func_02003a00        0x0200ba00
+ */
 #include "types.h"
 
 #define FieldScene_RunPartyRosterScene Func_02002c84

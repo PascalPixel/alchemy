@@ -525,9 +525,11 @@ fn retire_owner_in_units(
 
 /// Puts a retained-classification row back over a parked owner's span:
 /// the full build takes the non-exact branch for an overlay owner and
-/// requires one. The row claims no origin: it opens with the withdrawn
-/// standard's disclaimer and carries the operator's reason, in the shape
-/// of the rows written by hand for the same purpose. Adoption may have split
+/// requires one. The row claims no origin and no cause: its kind says it is
+/// unclassified, it opens with the withdrawn standard's disclaimer and
+/// carries the operator's reason. Confidence is fixed at "strong", the
+/// non-crediting bucket (coverage/pipeline.rs treats only "proven" as
+/// credit), so a withdrawal can never be credited back by a later standard. Adoption may have split
 /// rather than removed the original row, so a span that overlaps any
 /// existing row is refused rather than guessed at.
 fn restore_retained_row(
@@ -562,7 +564,7 @@ fn restore_retained_row(
         "overlay": overlay,
         "start": format!("0x{start:08x}"),
         "end": format!("0x{end:08x}"),
-        "kind": "compiler_allocation_module",
+        "kind": "unclassified_retained_module",
         "retention": "keep_structured_asm",
         "confidence": "strong",
         "evidence": [

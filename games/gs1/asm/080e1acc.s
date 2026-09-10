@@ -1,5 +1,9 @@
-@ 呼出しグラフから到達した領域の再構築サム逆アセンブル。
-@ （コードとデータが混在）。build_asm.tsでバイト一致確認済み。
+@ 召喚演出の一区間 (0x080e15e8..0x080e2538 の分岐で繋がる持ち主の続き、入口は持たない)。
+@ 効果物 (sub_080ed408) を取り、正弦・余弦で円周に並べて sub_080e3944 で置き、IWRAM 核を
+@ sub_080072f4 / sub_080072f8 の経由で呼びながら sub_08002dd8 で控えを返す。待ち (sub_080030f8)
+@ の後に効果音 (sub_080f9010) を段階で鳴らし、sub_080e1848 へ戻るか、sub_080d67dc 系で
+@ 背景を差し替え、sub_08002f40 の展開と IwramCopyWords の転送を経て sub_080e1df8 へ続く。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.set sub_0800231c, 0x0800231c
@@ -59,6 +63,7 @@ Region_080e1acc:
 	mov r8, r4
 	add r6, sp, #160
 	mov r11, r0
+@ 円周ループ: 角度の正弦・余弦から位置を作る。
 .L_080e1b16:
 	mov r1, r9
 	lsls r5, r1, #9
@@ -145,6 +150,7 @@ Region_080e1acc:
 	adds r7, #30
 	adds r6, #49
 	mov r10, r3
+@ IWRAM 核の経由呼出しを繰り返す区間。
 .L_080e1bc4:
 	mov r0, r9
 	adds r3, r4, r0
@@ -243,6 +249,7 @@ Region_080e1acc:
 	bl sub_080072f4
 	movs r0, #47
 	bl sub_08002dd8
+@ 待ちと段階ごとの効果音。
 .L_080e1c90:
 	ldr r0, [sp, #128]
 	ldr r1, [pc, #296]
@@ -299,6 +306,7 @@ Region_080e1acc:
 	cmp r3, #0
 	bne .L_080e1d00
 	b sub_080e1848
+@ 背景の差し替えと展開。
 .L_080e1d00:
 	ldr r1, [sp, #132]
 	movs r3, #0
@@ -362,6 +370,7 @@ Region_080e1acc:
 	ldr r3, [pc, #104]
 	mov r9, r5
 	movs r1, #0
+@ 転送の完了待ち、次の区間へ。
 .L_080e1d90:
 	movs r0, #1
 	add r9, r0

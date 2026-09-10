@@ -455,8 +455,9 @@ fn exact_overlay(
     Ok((owners, spans))
 }
 /// Kinds whose retained bytes count as proven assembly: the register credits
-/// them as library with proof beside the claim. A bare label credits
-/// nothing, and handwritten credit awaits Pascal's ruling.
+/// them as library with proof or an object beside the claim, or as
+/// handwritten with proof and the source-form file check beside it. A bare
+/// label credits nothing.
 fn credited_kinds(classification: &Value) -> BTreeSet<String> {
     // `groups` is an array of kind entries; an object of entries reads the same.
     let groups: Vec<Value> = match &classification["groups"] {
@@ -469,12 +470,16 @@ fn credited_kinds(classification: &Value) -> BTreeSet<String> {
         .chain(groups.iter())
         .filter(|entry| {
             let provenance = &entry["provenance"];
-            text(provenance, "credit") == "library"
-                && array(entry, "evidence")
-                    .iter()
-                    .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
-                && (!text(provenance, "proof").trim().is_empty()
-                    || !text(provenance, "object").trim().is_empty())
+            let evidenced = array(entry, "evidence")
+                .iter()
+                .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()));
+            let proof = !text(provenance, "proof").trim().is_empty();
+            let library = text(provenance, "credit") == "library"
+                && (proof || !text(provenance, "object").trim().is_empty());
+            let handwritten = text(provenance, "credit") == "handwritten"
+                && proof
+                && !text(provenance, "file_check").trim().is_empty();
+            evidenced && (library || handwritten)
         })
         .map(|entry| text(entry, "kind"))
         .collect()
@@ -1419,8 +1424,9 @@ mod tests {
         json!({"format": 1, "regions": regions})
     }
     #[test]
-    fn only_library_credit_with_evidence_and_proof_is_credited() {
+    fn library_or_checked_handwritten_credit_with_evidence_and_proof_is_credited() {
         let entry = |kind: &str, credit: &str, evidence: Value, proof: &str| json!({"kind": kind, "evidence": evidence, "provenance": {"credit": credit, "proof": proof}});
+        let handwritten = |kind: &str, evidence: Value, proof: &str, file_check: &str| json!({"kind": kind, "evidence": evidence, "provenance": {"credit": "handwritten", "proof": proof, "file_check": file_check}});
         let document = json!({
             "structural": [entry("thunks", "library", json!(["lib1funcs_asm_950_990"]), "byte identical")],
             "groups": [
@@ -1428,13 +1434,17 @@ mod tests {
                 entry("no_proof", "library", json!(["tag"]), ""),
                 entry("pending", "library_pending_identification", json!(["tag"]), "x"),
                 entry("hand", "handwritten", json!(["tag"]), "x"),
+                handwritten("hand_checked", json!(["tag"]), "byte identical", "source form matches"),
+                handwritten("hand_unchecked", json!(["tag"]), "byte identical", ""),
+                handwritten("hand_no_proof", json!(["tag"]), "", "source form matches"),
+                handwritten("hand_bare_label", json!([]), "byte identical", "source form matches"),
                 entry("grouped", "library", json!(["tag"]), "x")
             ]
         });
         let credited = credited_kinds(&document);
         assert_eq!(
             credited.into_iter().collect::<Vec<_>>(),
-            ["grouped", "thunks"]
+            ["grouped", "hand_checked", "thunks"]
         );
         // The live register credits the libgcc call_via thunks, and the
         // pipeline counts exactly that region from the built manifest.

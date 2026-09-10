@@ -16397,6 +16397,10 @@
       "name": "FieldScene_PrepareStatueTransition",
       "source": "map/locations/sol_shinden/inner_sanctum_scene/field_scene.c"
     },
+    "resource_37a:02000488": {
+      "name": "FieldScene_RunScene37aSequenceF",
+      "source": "map/locations/sol_shinden/inner_sanctum_scene/scene_sequence_f.c"
+    },
     "resource_37a:02001be8": {
       "name": "FieldScene_RunActorPositionTransition",
       "source": "map/locations/sol_shinden/inner_sanctum_scene/actor_position_transition.c"

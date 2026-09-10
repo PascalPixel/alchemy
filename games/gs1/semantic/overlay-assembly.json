@@ -677,22 +677,6 @@
       ]
     },
     {
-      "overlay": "resource_37a",
-      "start": "0x02000488",
-      "end": "0x020009f4",
-      "kind": "intra_function_call_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
-        "audited 1388-byte whole owner in games/gs1/semantic/regions.json",
-        "direct bl at 0x02000494 targets intra-owner 0x020004ea, which the same entry also reaches by fallthrough from 0x020004e8",
-        "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
       "overlay": "resource_371",
       "start": "0x020002cc",
       "end": "0x020002f0",

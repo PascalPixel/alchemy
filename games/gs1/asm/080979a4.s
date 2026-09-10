@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 角度差の補正。Func_08097a10 で得た角度差 r4 を 0x3bffff / 0xff4c0000 の
+@ 閾値で三区分し、区間ごとの係数を Q16 乗算・Q14 比率乗算して返す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080979a4
@@ -10,6 +11,7 @@ Func_080979a4:
 	movs	r1, #180
 	lsls	r1, r1, #17
 	adds	r5, r2, #0
+@ 角度差を求める。
 	bl	Func_08097a10
 	ldr	r2, [pc, #72]
 	adds	r4, r0, #0
@@ -35,6 +37,7 @@ Func_080979a4:
 	lsls	r1, r1, #16
 	ldr	r3, [pc, #32]
 	subs	r1, r1, r4
+@ 共通経路: IwramMulQ16ReturnIp のあと IwramRatioMulQ14 (0x0300013c) を経由呼出し。
 .L1:
 	mov	ip, pc
 	bx	r3
@@ -44,6 +47,7 @@ Func_080979a4:
 	lsls	r0, r0, #14
 	bl	Func_080072f0
 	b.n	.L2
+@ 範囲外: 引数 r1 をそのまま返す。
 .L3:
 	adds	r0, r6, #0
 .L2:

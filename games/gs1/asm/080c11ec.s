@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 粒子と尾の描画。記録 0x03001e50 の 16 粒子 (28 バイト、+0x11c0) は寿命 +24 がある間、
+@ 速さ (Func_080045d4) が 0xfff を超えれば IwramRatioMulQ14 で正規化し、各軸に減衰 (v>>7) と
+@ IwramMulQ16 の重力を加えて進む。粒子数 +0x13bc が 24 以下なら乱数の角度と半径 (IwramMulQ16 の
+@ cos, sin) で新しく出す。粒子は Func_08007310 で 0x080c3620/0x080c3604 の絵、3 本の尾 (+0x1380)
+@ は 0x080c3628 の絵で描く。最後に計数を進めて +0x13c0 を立てる。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080c11ec
@@ -39,6 +43,7 @@ Func_080c11ec:
 	str	r2, [sp, #8]
 	mov	r9, r3
 	add	r7, sl
+@ 粒子ループ。
 .L12:
 	ldr	r0, [r7, #24]
 	cmp	r0, #0
@@ -70,6 +75,7 @@ Func_080c11ec:
 	movs	r1, #128
 	ldr	r3, [pc, #440]
 	lsls	r1, r1, #9
+@ IwramRatioMulQ14 (0x0300013c): 0x10000 / 速さ。
 	bl	Func_080072f0
 	ldr	r3, [r7, #24]
 	subs	r3, #1
@@ -79,6 +85,7 @@ Func_080c11ec:
 	mov	r8, r0
 	adds	r5, r7, #0
 	mov	lr, r2
+@ 軸ごと: IwramMulQ16ReturnIp で速度を縮め、重力を加える。
 .L3:
 	ldr	r4, [r5, #0]
 	negs	r0, r4
@@ -107,6 +114,7 @@ Func_080c11ec:
 	ldr	r0, [r7, #24]
 	cmp	r0, #0
 	bne.n	.L4
+@ 発生: 乱数の角度と半径。
 .L0:
 	ldr	r3, [pc, #368]
 	add	r3, sl
@@ -180,6 +188,7 @@ Func_080c11ec:
 .L5:
 	cmp	r0, #0
 	beq.n	.L8
+@ 描画: 大きさの段 0..6。
 .L4:
 	ldr	r3, [r7, #0]
 	asrs	r3, r3, #10
@@ -229,6 +238,7 @@ Func_080c11ec:
 	mov	fp, r3
 	add	r5, sl
 	movs	r7, #2
+@ 尾ループ。
 .L15:
 	ldr	r1, [r5, #0]
 	ldr	r3, [r5, #8]

@@ -1,3 +1,0 @@
-void NoOpSceneCallbackC(void)
-{
-}

@@ -1,0 +1,13 @@
+#include "types.h"
+
+#define TestActorPosition Func_020041b4
+#define ActorProbeOffsets Data_0200bf0c
+#define ActorSearchStep Data_0200beb4
+#define SceneActor_FindClearActorPosition Func_02000474
+
+#include "find_clear_actor_position.h"
+
+s32 SceneActor_FindClearActorPosition(s32 *a)
+{
+#include "find_clear_actor_position_body.inc"
+}

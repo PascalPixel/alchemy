@@ -1,8 +1,0 @@
-#include "types.h"
-
-extern void Func_0200359a(s32, s32);
-
-void SceneState_ApplyOffsetMinus32(void)
-{
-    Func_0200359a(-32, 0);
-}

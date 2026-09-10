@@ -1,5 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 配置探索、探り角の多い版。表 r6[0] の第 r6[4] 項から半径と最小距離を取り、乱数の距離と
+@ 角度 (IwramMulQ16 で半径を掛ける) で候補を最大 7 回作り、Func_0800d924 と Func_080120dc を
+@ 前方 0x80000 と角度 ±0x2000, ±0x4000 の副候補にも通し、obj+100 からの距離が最小距離を超えれば
+@ +89 bit1 を立てて Func_0800d14c で動く。全て失敗なら Func_080044d0 の逆方位で探し直し、
+@ bit1 を落として動く。obj[4] を進めて 1 を返す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_0800df04
@@ -86,6 +90,7 @@ Func_0800df04:
 	cmp	r3, #7
 	ble.n	.L5
 	b.n	.L4
+@ 候補: 距離 = 乱数 × 半径 (IwramMulQ16ReturnIp) + 基準。
 .L5:
 	bl	Func_08004458
 	ldr	r3, [pc, #624]
@@ -123,6 +128,7 @@ Func_0800df04:
 	bl	Func_0800447c
 	adds	r0, r6, #0
 	adds	r1, r7, #0
+@ 候補と副候補の通行判定。
 	bl	Func_0800d924
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
@@ -237,6 +243,7 @@ Func_0800df04:
 	cmp	r0, #0
 	beq.n	.L8
 	b.n	.L3
+@ 最小距離の判定。
 .L8:
 	ldr	r1, [r7, #0]
 	adds	r2, r1, #0
@@ -287,6 +294,7 @@ Func_0800df04:
 	adds	r3, r4, #0
 	bl	Func_0800d14c
 	b.n	.L12
+@ 逆方位で探し直す。
 .L4:
 	movs	r1, #0
 	mov	sl, r1
@@ -299,6 +307,7 @@ Func_0800df04:
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
 	str	r0, [sp, #12]
+@ 再試行ループ。
 .L13:
 	movs	r3, #1
 	add	sl, r3

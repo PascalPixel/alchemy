@@ -17980,6 +17980,10 @@
     "resource_3c4:0200259c": {
       "name": "FieldScene_InitializeActorGroups"
     },
+    "resource_399:02000f90": {
+      "name": "FieldScene_RunPrimaryScriptChoreography",
+      "source": "overlays/scene/flagged_dialogue_choreography_scene/scene_primary_script_choreography.c"
+    },
     "resource_3b1:020048e8": {
       "name": "FieldScene_RunScene3b1SequenceE",
       "source": "overlays/scene_primary_script/run_scene_3b1_020048e8.c"

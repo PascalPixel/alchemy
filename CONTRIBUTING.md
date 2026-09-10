@@ -8,6 +8,24 @@ editions; localizations are measured differences. GS1 English currently has a
 complete byte-identical production build. That is not a claim that all code is C
 or that all twelve target ROMs have been rebuilt.
 
+## The two directives
+
+1. **Never commit material that `pret` would not commit.** No ROM bytes, no
+   extracted data dressed as source, no copyrighted assets, no output patched
+   into place. Every file in the tree must be something a clean-room
+   decompilation project could publish. This directive outranks everything
+   below it, including the goal.
+2. **Reconstruct the source Camelot most likely wrote and had sitting on their
+   disk** — files, folders, names, types, macros, build, everything. Where the
+   evidence says Camelot wrote C, we write C; where it says a shared macro with
+   inline assembly, a hand-written `.s`, or a generated table with its writer
+   and reader, we write that. DONE measures how much of the executable image is
+   explained by such source.
+
+Every other rule in this document is a consequence of these two, kept because
+it has saved us from a specific mistake. When a rule and the evidence about
+what Camelot wrote disagree, the evidence wins and the rule is repaired here.
+
 ## The working method
 
 Start with the nearest verified example, not a blank page or another framework.
@@ -248,9 +266,12 @@ evidence, and proof of restored fidelity. Better matching, determinism, version
 strings or an approved pin are not historical provenance or authorization.
 
 Only Pascal may authorize justified changes to pins, executable hashes, family
-routes or output transformations. No per-function flags, inline assembly,
-fixed-register variables, empty barriers, forced scheduling, output patches
-or selected lucky runs. A different shipped compiler family requires evidence
+routes or output transformations. No per-function flags, fixed-register
+variables, empty barriers, forced scheduling, output patches or selected lucky
+runs. Inline assembly is admitted only as a shared macro header that the
+evidence shows Camelot used (a construct the approved compiler provably cannot
+emit, recurring across otherwise compiler-shaped C bodies), never per function
+and never to steer the compiler. A different shipped compiler family requires evidence
 across that family. Do not weaken guards or copy another project's workarounds.
 
 The approved bundle uses GNU GAS 2.10 for compiler output and unit slices,

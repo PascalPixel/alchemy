@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 回転行列の生成、積の順序が Func_08004ab0 と異なる版。三軸の sin, cos から 9 個の
+@ Q16 積を組み、IwramTransformMatrix (0x030002c0) に読み込ませる。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_08004d2c
@@ -16,6 +17,7 @@ Func_08004d2c:
 	ldr	r0, [r5, #0]
 	adds	r7, r1, #0
 	sub	sp, #48
+@ 三軸それぞれの sin と cos。
 	bl	Func_08002322
 	mov	sl, r0
 	ldr	r0, [r5, #0]
@@ -37,6 +39,7 @@ Func_08004d2c:
 	mov	r0, fp
 	mov	r1, lr
 	movs	r0, r0
+@ 以降の各 ip 呼出しは IwramMulQ16ReturnIp による Q16 積。
 	mov	ip, pc
 	bx	r3
 	mov	r5, sp
@@ -132,6 +135,7 @@ Func_08004d2c:
 	adds	r0, r5, #0
 	str	r3, [r5, #44]
 	ldr	r3, [pc, #24]
+@ IwramTransformMatrix へ渡す。
 	bl	Func_080072f0
 	add	sp, #48
 	pop	{r3, r5, r6, r7}

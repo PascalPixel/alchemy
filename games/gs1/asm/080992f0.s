@@ -1,5 +1,6 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ 正弦揺れ。obj+100 の角度カウンタから正弦を引き、0x40000 を Q16 乗算した
+@ 値を obj+56 に足して obj+8 へ書く。カウンタは +1 して ±64 の範囲に折り返す。
+@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
 	.global Func_080992f0
@@ -12,17 +13,20 @@ Func_080992f0:
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
 	lsls	r0, r0, #9
+@ 角度 <<9 で正弦表を引く。
 	bl	Func_08002322
 	adds	r1, r0, #0
 	movs	r0, #128
 	ldr	r3, [pc, #52]
 	lsls	r0, r0, #11
 	movs	r0, r0
+@ 0x40000 × sin を IwramMulQ16ReturnIp で求める。
 	mov	ip, pc
 	bx	r3
 	ldr	r3, [r5, #56]
 	adds	r3, r3, r0
 	str	r3, [r5, #8]
+@ 角度カウンタを進め、7bit 符号付きに丸める。
 	ldrh	r3, [r6, #0]
 	adds	r3, #1
 	strh	r3, [r6, #0]

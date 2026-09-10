@@ -52,18 +52,6 @@
       ]
     },
     {
-      "overlay": "resource_391",
-      "start": "0x02000d3c",
-      "end": "0x02002768",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 6700-byte function independently checked from entry frame through sole return and trailing literal pool; former retained fragments are not separate owners.",
-        "Ordinary C reconstruction has original-site runtime call bindings and remains unverified until the complete linked owner is byte-exact. No original-assembly or compiler-impossibility claim."
-      ]
-    },
-    {
       "overlay": "resource_38b",
       "start": "0x02000db4",
       "end": "0x02000ed8",
@@ -1709,19 +1697,6 @@
         "complete owner reconstruction accounts for all 35 calls, five transition loops, palette ramps, blend-register setup, runtime handoff, and terminal enable state",
         "candidate and complete-owner reference differ by eight bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
         "games/gs1/recon/en/dossiers.json#resource_3ca:02000b34"
-      ]
-    },
-    {
-      "overlay": "resource_380",
-      "start": "0x020027f8",
-      "end": "0x02003f24",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/gs1/recon/en/dossiers.json#resource_380:020027f8"
       ]
     },
     {

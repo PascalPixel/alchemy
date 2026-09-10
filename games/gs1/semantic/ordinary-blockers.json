@@ -92,6 +92,10 @@
     "080b6d30": {
       "class": "compiler_zero_rematerialization_mismatch",
       "reason": "See 080b9dc4. The same single equivalent zero materialisation, here mov r4, sl in the reference against movs r4, #0 in the candidate at +0x34, over a 256-byte owner that is otherwise exact. Recorded together so the pair is not re-attempted separately."
+    },
+    "0809a8c4": {
+      "class": "compiler_comparison_canonicalisation",
+      "reason": "Measured 2026-09-10. The owner reaches twelve differing halfwords over 468 bytes. Ten are a consistent r2/r3 role swap carrying identical values, which is the allocation-uncovered pattern the triage already tells contributors not to probe by respelling. The remaining two are a comparison the approved compiler does not appear able to emit from the obvious source: the reference ends its step loop with cmp r3, #11 then blt, while every spelling tried here produces cmp r2, #10 then ble. agscc combine.c:10140-10148 rewrites < C to <= (C - 1) whenever C is positive, and combine.c:10170-10178 rewrites >= C to > (C - 1) on the same condition, both unconditionally, so neither a less-than nor a negated greater-or-equal spelling can keep the constant at 11. Four forms were tried and all gave the narrowed pair: do-while with step < 11, the increment folded in as ++step < 11, the post-increment form step++ <= 10, and the negated !(step >= 11). This records that the obvious spellings are exhausted and why; it does not establish that the reference form is unreachable by every route, only that it does not come from a signed comparison against a positive literal in this source."
     }
   }
 }

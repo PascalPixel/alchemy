@@ -627,6 +627,120 @@ pub(crate) fn write(path: &str, bytes: &[u8]) -> Result<(), String> {
 mod reference_symbol_tests {
     use super::*;
 
+    /// Preprocessed source for resource_37a:02001be8. Under address-space
+    /// randomisation the approved cc1 compiled this to two different byte
+    /// strings across thirty runs (26 to 4), because its CSE tables hash the
+    /// heap addresses of symbol names and labels. The tool executor now
+    /// spawns compilers with randomisation off; this holds that invariant.
+    const ADDRESS_SENSITIVE_INPUT: &str = "\
+typedef signed char s8;
+typedef unsigned char u8;
+typedef signed short s16;
+typedef unsigned short u16;
+typedef signed int s32;
+typedef unsigned int u32;
+typedef signed long long s64;
+typedef unsigned long long u64;
+typedef int bool;
+extern u8 Value_0000100d[];
+extern u8 Value_0000102b[];
+extern u8 Value_000011b4[];
+extern u8 Data_03001ebc[];
+void Func_02004252();
+void Func_02004270();
+void Func_02004606();
+void Func_02004612();
+void Func_02004626();
+void Func_0200462c();
+void Func_02004630();
+void Func_02004636();
+void Func_02004654();
+void Func_0200465e();
+void Func_02004662();
+void Func_02004682();
+void Func_0200468c();
+void Func_02004698_a();
+void Func_02004698_b();
+void Func_0200469a();
+void Func_020046a8();
+void Func_020046aa();
+void Func_020046e2();
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+static __inline__ void bump_step(s32 amount)
+{
+    u8 *work = *(u8 **)Data_03001ebc;
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+void FieldScene_RunActorPositionTransition(void)
+{
+    u32 i;
+    s32 record;
+    Func_020046e2(21);
+    Call3(Func_02004606, 0, 0x178, 184);
+    Func_02004626(0, 0);
+    Call3(Func_0200462c, 16, 0x1780000, 0xb80000);
+    Call3(Func_02004612, 16, 0x10000, 0x8000);
+    Call3(Func_02004636, 16, 0x188, 168);
+    Call3(Func_020046aa, 16, 0x8000, 30);
+    Func_02004662(16, 1);
+    Call1(Func_02004698_a, (s32)Value_0000102b);
+    Func_02004682(16, 4, 30);
+    Func_02004252(16, 6);
+    Func_0200469a(0, 2);
+    Func_02004630(6);
+    Func_02004698_b(16, 3);
+    Func_02004270(16, 6);
+    Call3(Func_0200468c, 16, 0x178, 184);
+    Call3(Func_020046a8, 16, 0x6480000, 0x6480000);
+    Func_0200465e(4);
+    Call1(Func_02004654, 0x811);
+}
+";
+
+    #[test]
+    fn repeated_compiler_runs_produce_one_byte_string() {
+        let cc1 = crate::compiler::routing::bundle().join("cc1");
+        if !cc1.exists() {
+            return;
+        }
+        let work = tempfile::tempdir().unwrap();
+        let input = work.path().join("in.i");
+        std::fs::write(&input, ADDRESS_SENSITIVE_INPUT).unwrap();
+        let mut outputs = std::collections::BTreeSet::new();
+        for index in 0..12 {
+            let assembly = work.path().join(format!("run{index}.s"));
+            let command = [
+                cc1.to_string_lossy().into_owned(),
+                "-O2".into(),
+                "-mthumb".into(),
+                "-mthumb-interwork".into(),
+                "-mcpu=arm7tdmi".into(),
+                "-fno-builtin".into(),
+                "-ffreestanding".into(),
+                "-fcall-used-r4".into(),
+                "-quiet".into(),
+                "-o".into(),
+                assembly.to_string_lossy().into_owned(),
+                input.to_string_lossy().into_owned(),
+            ];
+            run(&command, work.path()).unwrap();
+            outputs.insert(std::fs::read(&assembly).unwrap());
+        }
+        assert_eq!(
+            outputs.len(),
+            1,
+            "the compiler produced {} different outputs for one input",
+            outputs.len()
+        );
+    }
+
     #[test]
     fn linking_without_a_reference_is_not_verification() {
         let work = tempfile::tempdir().unwrap();

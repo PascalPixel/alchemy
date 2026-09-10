@@ -689,6 +689,7 @@
         "Thirty raw cc1 invocations of the approved bundle on one fixed preprocessed input produced two distinct outputs, 27 and 3; the 27-run majority is the reference. The runs bypassed this repository's tooling and reused a single .i file, so the variance is in the compiler.",
         "The divergence is reload CSE constant sharing for the pair of equal 0x6480000 arguments: the majority shares the shifted value with mov r2, r1, the minority recomputes the shift and is one instruction longer.",
         "Input-specific rather than general: the same thirty-run measurement on resource_385:02000f30 produced one output thirty times.",
+        "Isolated rather than a class: every adopted overlay source carrying the same shape -- one call passing the same large constant into two argument registers -- was measured the same way. Forty-one owners, thirty cold compiles each, 1,230 compiles, all deterministic. That includes resource_37b:020019e4, which passes the identical 0x6480000 through the identical Call3(f, N, X, X) shape and does not split, so the source shape alone is not the whole trigger.",
         "Every source shape measured is exact-but-lucky or deterministic-but-wrong; see the reasoning recorded beside games/gs1/recon/en/overlays/resource_37a_c_02001be8.c."
       ]
     },

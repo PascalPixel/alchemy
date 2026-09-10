@@ -42,7 +42,7 @@ fn posix_names_preserve_dotfiles_unicode_and_trailing_slashes() {
     );
 }
 use crate::compiler::routing::{
-    agbcc_driver, bundle, cflags_for_target_source, include_flag, uses_agbcc_compiler,
+    agbcc_driver, bundle_for, cflags_for_target_source, include_flag, uses_agbcc_compiler,
     CompilerTarget,
 };
 pub type Result<T> = std::result::Result<T, String>;
@@ -161,7 +161,10 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 ) -> Result<Vec<String>> {
     validate_bundle(target)?;
     let mut command = vec![
-        bundle().join("cpp0").to_string_lossy().into_owned(),
+        bundle_for(target)
+            .join("cpp0")
+            .to_string_lossy()
+            .into_owned(),
         "-lang-c".into(),
         "-nostdinc".into(),
         "-D__GNUC__=2".into(),

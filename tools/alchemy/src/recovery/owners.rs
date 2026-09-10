@@ -144,21 +144,32 @@ pub fn tool_command(root: &Path, group: &str) -> Command {
 
 /// Scores a candidate source against an owner through the overlay scorer.
 pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score, String> {
+    score_in(root, source, owner, span, None)
+}
+
+/// Scores in a named work directory. An empty one holds no compile cache, so
+/// the compiler runs again rather than answering from an earlier result.
+pub fn score_in(
+    root: &Path,
+    source: &Path,
+    owner: &str,
+    span: u32,
+    work: Option<&Path>,
+) -> Result<Score, String> {
     let owner = SourceOwner::parse_argument(owner)?;
     let extent_flag = if owner.is_main() { "--size" } else { "--span" };
-    let output = tool_command(root, "")
-        .current_dir(root)
-        .arg("score")
-        .arg(source)
-        .args([
-            "--owner",
-            &owner.id(),
-            extent_flag,
-            &span.to_string(),
-            "--align",
-        ])
-        .output()
-        .map_err(|error| format!("diff: {error}"))?;
+    let mut command = tool_command(root, "");
+    command.current_dir(root).arg("score").arg(source).args([
+        "--owner",
+        &owner.id(),
+        extent_flag,
+        &span.to_string(),
+        "--align",
+    ]);
+    if let Some(work) = work {
+        command.arg("--work").arg(work);
+    }
+    let output = command.output().map_err(|error| format!("diff: {error}"))?;
     let report = format!(
         "{}{}",
         String::from_utf8_lossy(&output.stdout),

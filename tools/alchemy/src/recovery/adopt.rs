@@ -4,7 +4,7 @@
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
 
-use super::owners::{self, modules, parse_owner, score, tool_command};
+use super::owners::{self, modules, parse_owner, score, score_in, tool_command};
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -192,6 +192,15 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             request.owner, result.differing
         ));
     }
+    match repeatable(root, &destination, request.owner, span) {
+        Ok(line) => report.push(line),
+        Err(error) => {
+            if !existed {
+                let _ = std::fs::remove_file(&destination);
+            }
+            return Err(error);
+        }
+    }
 
     // The source register: keep an existing name, record the path.
     let manifest = root.join("games/gs1/source-paths.json");
@@ -336,6 +345,48 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     report.push(verdict);
     report.push(format!("adopted {} as {name} at {relative}", request.owner));
     Ok(report)
+}
+
+/// Exact runs required beyond the first before an owner is adopted. One
+/// exact compile can be luck: the approved cc1 hashed heap pointers under
+/// address-space randomisation and split 27 to 3 on one owner until the
+/// executor pinned the layout. Thirty is the standard the lanes measured
+/// against; each run compiles in an empty work directory so none answers
+/// from the cache, and the compiler binary is checked before and after so a
+/// rebuild in the shared bundle mid-check cannot pass as a result.
+const REPEAT_RUNS: usize = 30;
+
+fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<String, String> {
+    let cc1 = crate::compiler::routing::bundle().join("cc1");
+    let pin = |cc1: &Path| -> Result<String, String> {
+        let bytes = std::fs::read(cc1).map_err(|e| format!("{}: {e}", cc1.display()))?;
+        Ok(crate::compiler::sha256::hex(&bytes))
+    };
+    let before = pin(&cc1)?;
+    let mut exact = 1;
+    for _ in 1..REPEAT_RUNS {
+        let work = tempfile::tempdir().map_err(|e| e.to_string())?;
+        if score_in(root, source, owner, span, Some(work.path()))?.differing == 0 {
+            exact += 1;
+        }
+    }
+    let after = pin(&cc1)?;
+    if before != after {
+        return Err(format!(
+            "{owner}: the compiler changed during the repeat check ({} then {}); nothing adopted -- rerun once the bundle is still",
+            &before[..12],
+            &after[..12]
+        ));
+    }
+    if exact != REPEAT_RUNS {
+        return Err(format!(
+            "{owner}: exact in {exact} of {REPEAT_RUNS} compiles; nothing adopted -- record the split as an evidenced finding, the candidate is not repeatable"
+        ));
+    }
+    Ok(format!(
+        "repeatability runs={REPEAT_RUNS} exact={exact} compiler={}",
+        &before[..12]
+    ))
 }
 
 #[cfg(test)]

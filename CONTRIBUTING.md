@@ -392,9 +392,7 @@ responsibilities in another wrapper or registry.
 | `alchemy check` | `publication`, `commit-progress`, `owners`, `retained`, `coverage`, `integrate`, `no-asm`, `progress`, and `routes`: repository contracts, not portable file operations. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, and `audit`: Golden Sun loader and resource integration. |
-| `alchemy font` | Reconstruct the shared Golden Sun font using its twelve-edition glyph layout and mappings. |
 | `alchemy dashboard` | Serve project coverage. |
-| `alchemy music-debug` | Optionally serve Golden Sun music debugging. |
 
 Retired entry points are rejected, not forwarded: `alchemy decompile`,
 `alchemy convert`, and `alchemy disassemble` now belong to Psynergy;
@@ -410,8 +408,8 @@ decoding, comparison, bounded recovery and compiler invocation plus its minimal
 build integration, not Golden Sun ownership, asset offsets or agent machinery.
 
 Portable tooling is capped at **50,000 Rust, TypeScript, JavaScript and CSS
-lines** by `make tooling-size`. Pascal owns that ceiling and scope. Do not
-raise it or hide code outside it. New tooling must resolve a demonstrated
+lines**, test modules excluded, by `make tooling-size`. Pascal owns that
+ceiling and scope. Do not raise it or hide code outside it. New tooling must resolve a demonstrated
 recurring blocker, reuse or replace existing machinery, and prove a conversion
 with regression coverage. Prefer using the tools to adding tools.
 
@@ -438,10 +436,8 @@ a music format. Keep format names portable and directional.
 The dashboard at `http://127.0.0.1:4650/` combines main/overlay Code and
 graphics/sound Data; it has no music player. `make dashboard-service-install`
 installs its macOS login service. Restart after server/client changes; coverage
-inputs are watched. Optional `alchemy music-debug` runs separately on port
-4651 and stops with Ctrl-C. Its synthesizer is not an in-game fidelity claim.
-Neither server starts the other. Their two clients are the JavaScript exception
-to Rust tooling, included in the ceiling and `make test`.
+inputs are watched. Its client is the JavaScript exception to Rust tooling,
+included in the ceiling and `make test`.
 
 ## Owners and names
 

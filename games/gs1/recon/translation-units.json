@@ -110532,27 +110532,6 @@
       "overlay": null
     },
     {
-      "id": "menu-entry-place_entry_objects_in_grid",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/entry/place_entry_objects_in_grid.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a9b94",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a9bd8",
-          "extent": 228,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-psynergy_menu-classify_selected_psynergy",
       "game": "gs1",
       "source": "games/gs1/src/menu/psynergy_menu/classify_selected_psynergy.c",
@@ -111347,99 +111326,6 @@
       "overlay": "resource_3be"
     },
     {
-      "id": "menu-item_menu-use",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/item_menu/use.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a32b8",
-          "extent": 156,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3354",
-          "extent": 128,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "menu-item_menu-try_break",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/item_menu/try_break.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a4754",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a47b4",
-          "extent": 76,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "menu-item_menu-draw_stat",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/item_menu/draw_stat.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a4db4",
-          "extent": 108,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4e20",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4e44",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4e68",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4e90",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4eb8",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4ee0",
-          "extent": 752,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a51d0",
-          "extent": 868,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-item_menu-page_result",
       "game": "gs1",
       "source": "games/gs1/src/menu/item_menu/page_result.c",
@@ -111538,27 +111424,6 @@
         {
           "address": "0x08099738",
           "extent": 216,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "item-prepare_use_palette",
-      "game": "gs1",
-      "source": "games/gs1/src/item/prepare_use_palette.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a9e34",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a9e48",
-          "extent": 200,
           "state": "exact-c"
         }
       ],
@@ -160613,107 +160478,6 @@
       "overlay": null
     },
     {
-      "id": "menu-item_menu-hide_all_icons",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/item_menu/hide_all_icons.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a345c",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3480",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a34c0",
-          "extent": 156,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a355c",
-          "extent": 844,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a38a8",
-          "extent": 864,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3c08",
-          "extent": 144,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3c98",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3ce4",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3cf8",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3d24",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3d6c",
-          "extent": 112,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3ddc",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3e28",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3e88",
-          "extent": 648,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4110",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a413c",
-          "extent": 848,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a448c",
-          "extent": 320,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a45cc",
-          "extent": 232,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-character_menu-build_availability",
       "game": "gs1",
       "source": "games/gs1/src/menu/character_menu/build_availability.c",
@@ -161203,6 +160967,233 @@
         {
           "address": "0x080f91e8",
           "extent": 276,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "menu-entry-place_entry_objects_in_grid",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/entry/place_entry_objects_in_grid.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a9b94",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9bd8",
+          "extent": 228,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9cbc",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9cf8",
+          "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9d84",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9dc4",
+          "extent": 112,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9e34",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9e48",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "menu-item_menu-use",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/item_menu/use.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a32b8",
+          "extent": 156,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3354",
+          "extent": 128,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a33d4",
+          "extent": 136,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a345c",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3480",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a34c0",
+          "extent": 156,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a355c",
+          "extent": 844,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a38a8",
+          "extent": 864,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3c08",
+          "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3c98",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3ce4",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3cf8",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3d24",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3d6c",
+          "extent": 112,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3ddc",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3e28",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3e88",
+          "extent": 648,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4110",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a413c",
+          "extent": 848,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a448c",
+          "extent": 320,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a45cc",
+          "extent": 232,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a46b4",
+          "extent": 160,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4754",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a47b4",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4800",
+          "extent": 1460,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4db4",
+          "extent": 108,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4e20",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4e44",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4e68",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4e90",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4eb8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4ee0",
+          "extent": 752,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a51d0",
+          "extent": 868,
           "state": "exact-c"
         }
       ],

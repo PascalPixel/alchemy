@@ -678,7 +678,7 @@ void Scene_RunFlagGatedActorEightDialogue(void)
 
     Field_TestFlag961(0x961);
     Field_unk_020071e8();
-    Field_unk_0200729e(0x217d);
+    Field_TestFlag217d(0x217d);
     Field_unk_020072b6(8, 0);
     Field_unk_020071f4(10);
     Field_unk_02007294(0, 2);

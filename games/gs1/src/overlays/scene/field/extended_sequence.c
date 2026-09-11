@@ -82,14 +82,14 @@ extern s32 gIw;
 extern s32 gOv12;
 extern u8 gOv13[];
 
-struct Rec *Field_unk_02002c8a(s32);
+struct Rec *Field_GetRec(s32);
 
 struct Ent *Field_unk_0200325a(s32);
 struct Ent *Field_unk_02003282(s32);
 struct Ent *Field_unk_020032aa(s32);
 struct Ent *Field_unk_020032d2(s32);
 
-struct Obj *Field_unk_02005006(s32, s32, s32, s32);
+struct Obj *Field_CreateObj(s32, s32, s32, s32);
 
 /* Each Func_ symbol above names the call word the image holds before loader
  * relocation, not a runtime address. */
@@ -245,13 +245,13 @@ s32 SceneData_SelectTableB080BySelector(void)
 
 void Scene_RunActor16MessageBranch(void)
 {
-    struct Rec *q = Field_unk_02002c8a(0);
+    struct Rec *q = Field_GetRec(0);
     s32 v = q->f06;
     Field_unk_02002c70(q);
     if (v >= 0xa001 && v <= 0xdfff) {
         Field_unk_02002e10(16);
     } else {
-        Field_unk_02002d58(0x16b3);
+        Field_TestFlag16b3(0x16b3);
         Field_unk_02002d78(16, 0);
     }
     Field_unk_02002c9c();
@@ -451,7 +451,7 @@ void Effect_SpawnObject26EveryEightFrames(void)
     if (gOv12 != 0) {
         Field_unk_020051ee(200);
     }
-    p = Field_unk_02005006(26, c1, 0, c2);
+    p = Field_CreateObj(26, c1, 0, c2);
     if (p == 0) {
         return;
     }

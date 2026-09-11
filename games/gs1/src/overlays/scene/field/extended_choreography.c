@@ -318,7 +318,7 @@ void Field_unk_02007642();         /* site 0x1098 */
 
 void Field_unk_020075f8();         /* site 0x10a6 */
 
-u8 *Field_unk_02007596();          /* site 0x10ac; returns the actor record */
+u8 *Field_GetActorRecord();          /* site 0x10ac; returns the actor record */
 
 void Field_unk_020075d8();         /* site 0x10be */
 
@@ -540,11 +540,11 @@ void Scene_RunScene3b1(void)
     Field_unk_02006b3c();
     Field_unk_02006cc0();
     if (Field_Check(0x921) != 0) {
-        Field_unk_02006c30(0x1dd4);
+        Field_TestFlag1dd4(0x1dd4);
         Field_TestFlag924(10, 0);
     } else {
         if (Field_TestFlag922(0x922) != 0) {
-            Field_unk_02006c4a(0x1d91);
+            Field_TestFlag1d91(0x1d91);
             Field_unk_02006c5a(10, 0);
             if (Field_unk_02006b92(0, 0) == 0) {
                 Field_unk_020025f6();
@@ -554,7 +554,7 @@ void Scene_RunScene3b1(void)
             Field_unk_02006c84(10, 0);
             Field_unk_02006ca8(10, 0xd000, 0);
         } else {
-            Field_unk_02006c88(0x1d31);
+            Field_TestFlag1d31(0x1d31);
             Field_unk_02006ca0(10, 0);
         }
     }
@@ -580,7 +580,7 @@ void Scene_RunScene3b1(void)
 
     Field_unk_02006bf4();
     if (Field_unk_02006bd2(0x928) != 0) {
-        Field_unk_02006ce4(0x1eb2);
+        Field_TestFlag1eb2(0x1eb2);
         Field_unk_02004fae(8);
         Field_unk_02006d1e(8, 0xd000, 60);
         Field_unk_02006cb6(8, 4);
@@ -588,11 +588,11 @@ void Scene_RunScene3b1(void)
         Field_unk_02006cc4(8, 3);
     } else {
         if (Field_unk_02006c0c(0x925) != 0) {
-            Field_unk_02006d1e_a(0x1e06);
+            Field_TestFlag1e06(0x1e06);
             Field_unk_02006d36(8, 0);
         } else {
             if (Field_TestFlag921(0x921) != 0) {
-                Field_unk_02006d38(0x1dcd);
+                Field_TestFlag1dcd(0x1dcd);
                 Field_unk_02006d50(8, 0);
                 record = Field_unk_02006c3e(0x925);
                 if (record != 0) {
@@ -609,7 +609,7 @@ void Scene_RunScene3b1(void)
                     *target = shown;
                 }
             } else {
-                Field_unk_02006d6a(0x1d30);
+                Field_TestFlag1d30(0x1d30);
                 Field_unk_02006d82(8, 0);
             }
         }
@@ -629,7 +629,7 @@ void Scene_RunScene3b1(void)
     Field_unk_02006cc4_a();
     if (Field_unk_02006ca2(0x925) != 0) {
         Field_unk_02006d86(8, 2);
-        Field_unk_02006dbc(0x1e13);
+        Field_TestFlag1e13(0x1e13);
         Field_unk_02005086(8);
         Field_unk_02006dac(8, 0, 10);
         Field_unk_02006ddc(8, 0);
@@ -644,7 +644,7 @@ void Scene_RunScene3b1(void)
         Field_unk_02006e28(8, 0);
         Field_unk_02006e4c(8, 0x3000, 0);
     } else {
-        Field_unk_02006e2c(0x1d4e);
+        Field_TestFlag1d4e(0x1d4e);
         Field_unk_02006e44(8, 0);
     }
     L_0200088e:;
@@ -806,7 +806,7 @@ void Scene_RunScene3b1SequenceA(void)
     if (Field_unk_02007030(0x300) != 0) {
         rec7 = Field_unk_02001e74();
         Field_unk_02001d2e();
-        Field_unk_0200714c(0x1ea1);
+        Field_TestFlag1ea1(0x1ea1);
         Field_unk_02005416(12);
         Field_unk_02007102(rec7, 2);
         record = Field_unk_020070a0(0);
@@ -818,7 +818,7 @@ void Scene_RunScene3b1SequenceA(void)
     } else {
         Field_unk_02007164(12, 2);
         Field_unk_020070aa(20);
-        Field_unk_02007198(0x1e81);
+        Field_TestFlag1e81(0x1e81);
         Field_unk_020071a8(12, 0);
         if (Field_unk_020070e0(0, 0) == 0) {
             Field_unk_02005476(12);
@@ -865,7 +865,7 @@ void Scene_RunScene3b1SequenceB(void)
     if (Field_unk_02007174(0x300) != 0) {
         rec7 = Field_unk_02001fb8();
         Field_unk_02001e72();
-        Field_unk_02007290(0x1ea2);
+        Field_TestFlag1ea2(0x1ea2);
         Field_unk_0200555a(9);
         Field_unk_02007246(rec7, 2);
         record = Field_unk_020071e4(0);
@@ -875,7 +875,7 @@ void Scene_RunScene3b1SequenceB(void)
         ((void (*)())Field_unk_02007254)(rec7);
         Field_TestFlag936(rec7, 0, 0);
     } else {
-        Field_unk_020072ce(0x1e84);
+        Field_TestFlag1e84(0x1e84);
         ((void (*)())Field_unk_020072f0)(9, 0, 60);
         Field_unk_020072b8(9, 1);
         Field_unk_020072f0_a(9, 0);
@@ -1028,7 +1028,7 @@ void Scene_RunActor16FlagDialogue(void)
         Field_unk_0200590c(16);
         Field_unk_020075f8(obj, 2);
 
-        actor = Field_unk_02007596(0);
+        actor = Field_GetActorRecord(0);
         if (actor != 0) {
             Field_unk_020075d8(obj, *(s16 *)(actor + 10),
                           *(s16 *)(actor + 18));
@@ -1267,7 +1267,7 @@ void Dialogue_RunActor21FlaggedLine(void)
 {
     Field_unk_02007b5c();
     if (Field_unk_02007b3a(0x92f)) Field_unk_02007c4c(0x1ede);
-    else Field_unk_02007c54(0x1edf);
+    else Field_TestFlag1edf(0x1edf);
     Field_unk_02007c6c(21, 0); Field_unk_02007b88();
 }
 
@@ -1359,18 +1359,18 @@ void Scene_RunScene3b1SequenceC(void)
     } else {
         Field_unk_02007d9a();
         if (Field_TestFlag93e(0x93e) != 0) {
-            Field_unk_02007e8a(0x1f81);
+            Field_TestFlag1f81(0x1f81);
         } else {
             if (Field_TestFlag8a0(0x8a0) != 0) {
-                Field_unk_02007e9e(0x1f48);
+                Field_TestFlag1f48(0x1f48);
             } else {
                 if (Field_TestFlag928(0x928) != 0) {
-                    Field_unk_02007eb0(0x1f7f);
+                    Field_TestFlag1f7f(0x1f7f);
                 } else {
                     if (Field_TestFlag925(0x925) != 0) {
-                        Field_unk_02007ec2(0x1f7d);
+                        Field_TestFlag1f7d(0x1f7d);
                     } else {
-                        Field_unk_02007eca(0x1f7b);
+                        Field_TestFlag1f7b(0x1f7b);
                     }
                 }
             }
@@ -1431,7 +1431,7 @@ void Scene_RunFlagGatedThreeActorSetup(void)
     Field_unk_020080ba();
     Field_unk_02008072(0x19999, 0x3333);
     Field_unk_02006336(0xe0 << 17, -1, 0x027e0000, 0x10000028u);
-    Field_unk_02008038(0x1d26);
+    Field_TestFlag1d26(0x1d26);
 
     Field_unk_02006302(8);
     Field_unk_02006308(10);
@@ -1468,7 +1468,7 @@ void Scene_RunThreeActorPresentation(void)
         Field_unk_02008154(0x26666, 0x4ccc);
         Field_unk_02006418( 0x5b70000, -1, 0x1d00000, 0x10000014);
         Field_unk_020080f4(13, 1);
-        Field_unk_02008122(0x1d56);
+        Field_TestFlag1d56(0x1d56);
         Field_unk_020063f0(0x200d);
         Field_unk_02006412(12, 0xd000);
         request_a = 0x800c;
@@ -1591,7 +1591,7 @@ void Scene_RunExtendedActorChoreography(void)
     Field_unk_0200854e(0x26666, 0x4ccc);
     Field_unk_02006814(0x1c80000, -1, 0x2880000, 0x10000014);
     Field_unk_020084f0(9, 1);
-    Field_unk_0200851e(0x1d93);
+    Field_TestFlag1d93(0x1d93);
     Field_unk_020067e8(9);
     Field_unk_02008558(0, 0xd000, 0);
     Field_unk_02008564(10, 0xd000, 0);
@@ -1754,7 +1754,7 @@ void Scene_RunExtendedActorChoreography(void)
     Field_unk_02006da8_a(9, 0xb000);
     Field_unk_02008b1c(9, 0x100, 40);
     Field_unk_02008ab4(9, 2);
-    Field_unk_02006dae(0x8009);
+    Field_TestFlag8009(0x8009);
     Field_unk_02008b34(11, 0x101, 60);
     Field_unk_02006dbe(11);
     Field_unk_02008b46(12, 0x102, 20);
@@ -1837,7 +1837,7 @@ void Scene_RunBranchingActorPresentation(void)
     Field_unk_02008de4(8, 0x100, 40);
     request_a = 0x1008;
     Field_unk_02008d7e(8, 3);
-    Field_unk_02008db4(0x1ddb);
+    Field_TestFlag1ddb(0x1ddb);
     Field_unk_0200707e_a(request_a);
     Field_unk_02008d92(9, 1);
     Field_unk_02008d9a(12, 1);
@@ -1862,7 +1862,7 @@ void Scene_RunBranchingActorPresentation(void)
         Field_unk_02008e6e(9, 1);
         Field_unk_02007160(0x9009);
         Field_unk_02008e74(8, 2);
-        Field_unk_0200716e(0x9008);
+        Field_TestFlag9008(0x9008);
     }
     Field_unk_02008ef4(13, 0x105, 40);
     Field_unk_02008f0c(0xcccc, 0x1999);
@@ -2020,7 +2020,7 @@ void Scene_RunBranchingActorPresentation(void)
     Field_unk_020093c4(8, 3);
     Field_unk_020076d6(0x1008);
     Field_unk_020076f4(8, 0x8000);
-    Field_unk_020076e6(0x4008);
+    Field_TestFlag4008(0x4008);
     Field_unk_0200776c(2, 0, 0);
     Field_unk_020093dc(12, 3);
     Field_unk_020093e4(11, 3);
@@ -2200,7 +2200,7 @@ void Scene_RunFourActorCoordinatePresentation(void)
     Field_unk_02009ea8(0, 0x1a8, 148);
     Field_unk_02009f54(0, 0x4000, 20);
     Field_unk_02009f0c(27, 1);
-    Field_unk_02009f3a(0x1e27);
+    Field_TestFlag1e27(0x1e27);
     Field_unk_02008204(27);
     Field_unk_02009f20(8, 1);
     Field_unk_02008212(8);
@@ -2332,7 +2332,7 @@ void Scene_RunScene3b1(void)
     Field_unk_0200a2d2(8, 0x1d2, 0x270);
     Field_unk_0200862c(8, 0x5000);
     Field_unk_0200a32c_a(8, 2);
-    Field_unk_0200a362(0x1e3b);
+    Field_TestFlag1e3b(0x1e3b);
     Field_unk_0200a384(8, 0, 20);
     Field_unk_020086b6(9, 11, 0);
 }
@@ -2349,7 +2349,7 @@ void Scene_RunScene3b1(void)
     Field_unk_020086e2(15, 1, 1);
     Field_unk_0200a3d6(8, 0x5000, 40);
     Field_unk_0200a386(8, 2);
-    Field_unk_0200a3bc(0x1e3d);
+    Field_TestFlag1e3d(0x1e3d);
     Field_unk_0200a3de(8, 0, 20);
     Field_unk_02008710(9, 11, 0);
 }
@@ -2491,7 +2491,7 @@ void Scene_RunScene3b1(void)
     Field_unk_0200a578(1);
     Field_unk_02008a4a(15, 1, 1);
     Field_unk_0200a6ea(8, 1);
-    Field_unk_0200a718(0x1e43);
+    Field_TestFlag1e43(0x1e43);
     Field_unk_020089e2(8);
     Field_unk_0200a752_a(8, 0xd000, 40);
     Field_unk_02008a74(9, 15, 0);
@@ -3088,7 +3088,7 @@ void Scene_RunFormationAndEffectPresentation(void)
     Field_unk_0200b984(2, 0xa000, 0);
     Field_unk_0200b990(3, 0x2000, 40);
     Field_unk_02009cb2_a(2, 1, 20);
-    Field_unk_0200b978_a(0x1e6e);
+    Field_TestFlag1e6e(0x1e6e);
     Field_unk_02009c42(27);
     Field_unk_02009cce(1, 0xc000, 0);
     Field_unk_0200b9e6(0x26666, 0x4ccc);
@@ -3271,7 +3271,7 @@ void Scene_RunExtendedFormationPresentation(void)
     Field_unk_0200bee6(3, 0x102);
     Field_unk_0200bdbe(40);
     Field_unk_0200a186(3, 0x6000);
-    Field_unk_0200beb4(0x1ec1);
+    Field_TestFlag1ec1(0x1ec1);
     Field_unk_0200bed6(3, 0, 40);
     Field_unk_0200a188(27);
     Field_unk_0200bef8(0, 0x2000, 0);
@@ -3397,7 +3397,7 @@ void Scene_RunScene3b1(void)
     Field_unk_0200c7cc();
     Field_unk_0200c652(40);
     Field_unk_0200c71a(27, 1);
-    Field_unk_0200c748(0x1f78);
+    Field_TestFlag1f78(0x1f78);
     Field_unk_0200aa12(27);
     Field_unk_0200c726(rec2, 2);
     Field_unk_0200c72e(rec8, 2);

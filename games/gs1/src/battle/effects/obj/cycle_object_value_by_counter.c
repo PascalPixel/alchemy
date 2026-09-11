@@ -5,7 +5,7 @@ s32 Func_08002304(s32, s32);
 void Func_08009240(s32, s32);
 void Func_08096ddc(s32);
 
-void BattleEffect_CycleObjectValueByCounter(s32 arg0)
+void BattleFx_CycleObjectValueByCounter(s32 arg0)
 {
     if ((Data_03001e40 & 1) != 0) {
         s32 value = Func_08002304((s32)((unsigned int)Data_03001e40 >> 1), 6);

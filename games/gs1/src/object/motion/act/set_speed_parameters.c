@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-void ObjectMotion_SetSpeedParameters(u32 object_id, s32 speed_limit, s32 acceleration)
+void Motion_SetSpeed(u32 object_id, s32 speed_limit, s32 acceleration)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 

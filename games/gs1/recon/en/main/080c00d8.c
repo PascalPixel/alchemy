@@ -1,8 +1,8 @@
 #include "types.h"
 
-#define BattlePresentation_BuildTilemap Func_080c00d8
+#define BattlePres_BuildTilemap Func_080c00d8
 
-void BattlePresentation_BuildTilemap(s32 destination)
+void BattlePres_BuildTilemap(s32 destination)
 {
     s32 *cursor;
     s32 entry;

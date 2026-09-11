@@ -1,6 +1,6 @@
 #include "types.h"
 /* AUDITED GENERATED CALL SCRIPT: actor-19 presentation and story progression. */
-#define FieldScene_RunActorNineteenScript Func_02000f30
+#define Scene_RunActorNineteenScript Func_02000f30
 #define gFieldSceneWorkspace (*(u8 **)0x03001ebc)
 void Func_020010ca(); void Func_020010de(); void Func_020010f2(); void Func_02002298();
 void *Func_02002302(); void Func_02002304(); void Func_0200232a(); void Func_02002346();void *Func_02002392_a(); void *Func_02002392_b(); s32 Func_0200239e(); void Func_020023aa(); void Func_020023c8();

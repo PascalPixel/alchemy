@@ -16,10 +16,10 @@ void RotateVectorByMagnitude(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetCallback(void *, const void *);
 void WaitFrames(u32);
-void BattleEffect_PrepareBufferInterpolation(void);
+void BattleFx_PrepareBufferInterpolation(void);
 extern const u8 Data_0809f11c[];
 
-void BattleEffect_RunBurstParticles(void)
+void BattleFx_RunBurstParticles(void)
 {
     u8 *state = Data_03001f30;
     struct BurstParticleVector position;
@@ -53,5 +53,5 @@ void BattleEffect_RunBurstParticles(void)
         entry_count--;
     } while (entry_count >= 0);
     WaitFrames(0x1E);
-    BattleEffect_PrepareBufferInterpolation();
+    BattleFx_PrepareBufferInterpolation();
 }

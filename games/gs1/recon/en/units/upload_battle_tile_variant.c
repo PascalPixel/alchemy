@@ -1,8 +1,8 @@
 #include "types.h"
 
-#define BattlePresentation_UploadTileVariant Func_080c0184
+#define BattlePres_UploadTileVariant Func_080c0184
 
-void BattlePresentation_UploadTileVariant(void)
+void BattlePres_UploadTileVariant(void)
 {
     u32 index;
     u32 *dma;

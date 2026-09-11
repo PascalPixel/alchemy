@@ -24,7 +24,7 @@ s32 Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void ScheduleCallbackAfterFrames(const void *arg0, s32 arg1);
 extern u8 Data_080935d5;
 
-void BattleEffect_ScheduleRatioTransition(s32 arg0, s32 arg1)
+void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 {
     struct Work_080936a0 *state = *(struct Work_080936a0 **)ADDR_03001E70;
     s32 handle;

@@ -26,7 +26,7 @@ extern struct EffectObject *Func_0808ba1c(s32 object);
 extern u8 Data_02000240;
 extern void *Data_03001ebc;
 
-struct EffectDescriptor *BattleEffect_FindDescriptor(s32 kind, s32 value)
+struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
 {
     struct EffectDescriptorRuntime *runtime =
         (struct EffectDescriptorRuntime *)Data_03001ebc;

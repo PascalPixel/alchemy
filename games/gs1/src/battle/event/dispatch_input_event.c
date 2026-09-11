@@ -14,7 +14,7 @@ extern void *Data_03001ebc;
 extern u8 Data_02000240;
 extern volatile u32 Data_03001ae8;
 
-void BattleEffect_RunRisingObjectSequence(s32, s32, s32);
+void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 void Func_08093c00(void);
 void Func_08093e28(void);
 void Func_08093fa0(void);
@@ -27,7 +27,7 @@ s32 Battle_DispatchInputEvent(s32 event)
     switch (event) {
     case 0xFC:
         if (state->delay > 12 && (Data_03001ae8 & 0x80)) {
-            BattleEffect_RunRisingObjectSequence(selected_object, 6, 0);
+            BattleFx_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
         break;

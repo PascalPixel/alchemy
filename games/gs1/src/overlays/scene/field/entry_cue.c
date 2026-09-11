@@ -4,13 +4,13 @@
 #define SceneData_ReturnZero Func_02000038
 #define SceneData_GetMessageTable Func_0200003c
 #define SceneData_SelectActorTableByFlag96f Func_02000044
-#define FieldScene_RunActorCue25b8Branch Func_02000068
-#define FieldScene_RunActorCue25dcBranch Func_020000b0
-#define FieldScene_RunLayoutStepThenSet201 Func_020000f8
-#define SceneEffect_ConfigureIndexedEffect85e8 Func_02000120
-#define SceneEffect_ConfigureIndexedEffect85fe Func_02000194
+#define Scene_RunActorCue25b8Branch Func_02000068
+#define Scene_RunActorCue25dcBranch Func_020000b0
+#define Scene_RunLayoutStepThenSet201 Func_020000f8
+#define Effect_ConfigureIndexedEffect85e8 Func_02000120
+#define Effect_ConfigureIndexedEffect85fe Func_02000194
 #define SceneData_SelectTable8614ByFlag96f Func_02000208
-#define SceneState_InitEntryWorkspaceAndFlag96f Func_0200022c
+#define State_InitEntryWorkspaceAndFlag96f Func_0200022c
 extern u8 Value_000025b8;
 extern u8 Value_000025dc;
 extern s16 Data_020085d0[];
@@ -95,7 +95,7 @@ s32 SceneData_SelectActorTableByFlag96f(void)
     return 0x020083f0;
 }
 
-void FieldScene_RunActorCue25b8Branch(s32 obj)
+void Scene_RunActorCue25b8Branch(s32 obj)
 {
     s32 cue = (s32)&Value_000025b8;
     Func_02000332(cue);
@@ -109,7 +109,7 @@ void FieldScene_RunActorCue25b8Branch(s32 obj)
     Func_02000372(obj, 0);
 }
 
-void FieldScene_RunActorCue25dcBranch(s32 obj)
+void Scene_RunActorCue25dcBranch(s32 obj)
 {
     s32 cue = (s32)&Value_000025dc;
     Func_0200037a(cue);
@@ -123,7 +123,7 @@ void FieldScene_RunActorCue25dcBranch(s32 obj)
     Func_020003ba(obj, 0);
 }
 
-void FieldScene_RunLayoutStepThenSet201(void)
+void Scene_RunLayoutStepThenSet201(void)
 {
     s32 width = 4;
     s32 height = 9;
@@ -132,7 +132,7 @@ void FieldScene_RunLayoutStepThenSet201(void)
     Func_020003b4(0x201);
 }
 
-void SceneEffect_ConfigureIndexedEffect85e8(void)
+void Effect_ConfigureIndexedEffect85e8(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
     s32 no = *(s16 *)(work + 364);
@@ -146,7 +146,7 @@ void SceneEffect_ConfigureIndexedEffect85e8(void)
     Func_02000452(no);
 }
 
-void SceneEffect_ConfigureIndexedEffect85fe(void)
+void Effect_ConfigureIndexedEffect85fe(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
     s32 no = *(s16 *)(work + 364);
@@ -168,7 +168,7 @@ s32 SceneData_SelectTable8614ByFlag96f(void)
     return 0x02008614;
 }
 
-s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
+s32 State_InitEntryWorkspaceAndFlag96f(void)
 {
     u8 *work;
 

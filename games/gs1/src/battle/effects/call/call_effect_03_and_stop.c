@@ -4,7 +4,7 @@
 
 s32 Func_080994d0();
 
-void BattleEffect_CallEffect03AndStop(void)
+void BattleFx_CallEffect03AndStop(void)
 {
     Func_080994d0();
     EffectRuntime_StopCurrentObject();

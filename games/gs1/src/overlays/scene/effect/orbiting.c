@@ -10,20 +10,20 @@
 #define ConfigurePaletteTransfer Func_02001494
 #define ReleaseEffectTransfer Func_02001492
 #define UpdateOrbitingSceneObject Value_0200890d
-#define SceneActor_UpdateFacingTowardTarget Func_02000030
+#define Actor_UpdateFacingTowardTarget Func_02000030
 #define SceneData_GetTable8c08 Func_02000088
 #define SceneData_GetTable8C50 Func_02000094
 #define SceneData_SelectRecordByScene22 Func_0200009c
-#define FieldScene_RunStepWithValueFd2 Func_020000f8
-#define FieldScene_RunStepWithValue29de Func_0200012c
+#define Scene_RunStepWithValueFd2 Func_020000f8
+#define Scene_RunStepWithValue29de Func_0200012c
 #define SceneData_SelectTable8d24ByState Func_02000154
-#define SceneDialogue_RunActor9Message13c0 Func_02000184
-#define SceneDialogue_RunActor10Message13c3 Func_020001a4
-#define SceneDialogue_RunActor11Message1751 Func_020001c4
+#define Dialogue_RunActor9Message13c0 Func_02000184
+#define Dialogue_RunActor10Message13c3 Func_020001a4
+#define Dialogue_RunActor11Message1751 Func_020001c4
 #define FieldScene_RunScene38e_0200045c Func_0200045c
-#define FieldScene_RunEntryZeroAndScene22Body Func_020004bc
-#define FieldScene_SetupWithDescriptor8BD4 Func_020008e8
-#define SceneEffect_UpdateLobeOrbitEntity Func_0200090c
+#define Scene_RunEntryZeroAndScene22Body Func_020004bc
+#define Scene_SetupWithDescriptor8BD4 Func_020008e8
+#define Effect_UpdateLobeOrbitEntity Func_0200090c
 #define InitializeOrbitingSceneEntity Func_02000974
 
 #include "facing_object.h"
@@ -195,7 +195,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
+s32 Actor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
     s32 delta;
     u16 old;
@@ -253,7 +253,7 @@ u8 *SceneData_SelectRecordByScene22(void)
     return Data_02008c64;
 }
 
-void FieldScene_RunStepWithValueFd2(void)
+void Scene_RunStepWithValueFd2(void)
 {
     Func_02000bd0();
     Func_02000c2a(0xD, 0, 0);
@@ -263,7 +263,7 @@ void FieldScene_RunStepWithValueFd2(void)
     Func_02000bfc();
 }
 
-void FieldScene_RunStepWithValue29de(void)
+void Scene_RunStepWithValue29de(void)
 {
     Func_02000c04();
     Func_02000bdc(0x947, 1);
@@ -279,7 +279,7 @@ s32 SceneData_SelectTable8d24ByState(void)
     return (s32)Data_02008d24;
 }
 
-void SceneDialogue_RunActor9Message13c0(void)
+void Dialogue_RunActor9Message13c0(void)
 {
     Func_02000c5c();
     Func_02000ce2((s32)&Value_000013c0);
@@ -287,7 +287,7 @@ void SceneDialogue_RunActor9Message13c0(void)
     Func_02000c76();
 }
 
-void SceneDialogue_RunActor10Message13c3(void)
+void Dialogue_RunActor10Message13c3(void)
 {
     Func_02000c7c();
     Func_02000d02(0x13C3);
@@ -295,7 +295,7 @@ void SceneDialogue_RunActor10Message13c3(void)
     Func_02000c96();
 }
 
-void SceneDialogue_RunActor11Message1751(void)
+void Dialogue_RunActor11Message1751(void)
 {
     Func_02000c9c();
     Func_02000d22(0x1751);
@@ -331,7 +331,7 @@ void FieldScene_RunScene38e_0200045c(void)
  * and only then decremented by 13 to become ~0x0c, so the local carries a
  * stored value and then a mask, and must not be folded into two constants.
  */
-s32 FieldScene_RunEntryZeroAndScene22Body(void)
+s32 Scene_RunEntryZeroAndScene22Body(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -359,7 +359,7 @@ s32 FieldScene_RunEntryZeroAndScene22Body(void)
     return 0;
 }
 
-void FieldScene_SetupWithDescriptor8BD4(void)
+void Scene_SetupWithDescriptor8BD4(void)
 {
     Func_020014ba(0xBC);
     Func_0200138c(0x2008BD4, 0x34, 0xB);
@@ -373,7 +373,7 @@ void FieldScene_SetupWithDescriptor8BD4(void)
  * different arguments and the two random draws are independent and summed:
  * neither pair is a common subexpression.
  */
-s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
+s32 Effect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
 {
     struct SceneHandle_0200090c *handle = entity->handle;
     s32 vertical;

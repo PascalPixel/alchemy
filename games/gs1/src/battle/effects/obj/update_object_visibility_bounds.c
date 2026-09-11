@@ -6,7 +6,7 @@ s32 Object_GetById(u32);
 extern s32 Data_02000240[];
 extern u8 Data_03001ebc[];
 
-void BattleEffect_UpdateObjectVisibilityBounds(void)
+void BattleFx_UpdateObjectVisibilityBounds(void)
 {
     s32 object;
     s32 x;

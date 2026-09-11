@@ -1,8 +1,8 @@
 #include "types.h"
 
-s32 BattleEffect_RenderMode(s32, s32);
+s32 BattleFx_RenderMode(s32, s32);
 
-void BattleEffect_RenderMode2(s32 effect)
+void BattleFx_RenderMode2(s32 effect)
 {
-    BattleEffect_RenderMode(effect, 2);
+    BattleFx_RenderMode(effect, 2);
 }

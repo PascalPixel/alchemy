@@ -6,22 +6,22 @@
 #define SceneData_GetTable8dac Func_0200003c
 #define SceneData_SelectTable8e00ByFlag Func_02000044
 #define SceneData_SelectTable9310ByFlags Func_02000064
-#define SceneState_SetWork1c0AndRun Func_0200009c
-#define FieldScene_RunPrimarySequence Func_020000c0
-#define FieldScene_RunScene3b6SequenceA Func_0200013c
-#define FieldScene_RunActorsThirtyOneToThirtyThreeChoreography Func_02000328
+#define State_SetWork1c0AndRun Func_0200009c
+#define Scene_RunPrimarySequence Func_020000c0
+#define Scene_RunScene3b6SequenceA Func_0200013c
+#define Scene_RunActorsThirtyOneToThirtyThreeChoreography Func_02000328
 #define Scene_InitFacingActors Func_020003dc
-#define SceneDialogue_RunFacingPrompt Func_02000500
-#define SceneDialogue_RunFacingActionPrompt Func_020005a8
-#define SceneDialogue_RunFacingAction Func_0200066c
-#define SceneDialogue_RunMessage239eStep Func_020006ec
-#define SceneDialogue_RunActorLine23a1 Func_0200073c
-#define SceneDialogue_RunMessage1FBBStep Func_02000760
+#define Dialogue_RunFacingPrompt Func_02000500
+#define Dialogue_RunFacingActionPrompt Func_020005a8
+#define Dialogue_RunFacingAction Func_0200066c
+#define Dialogue_RunMessage239eStep Func_020006ec
+#define Dialogue_RunActorLine23a1 Func_0200073c
+#define Dialogue_RunMessage1FBBStep Func_02000760
 #define FieldScene_RunScene3b6_020007b0 Func_020007b0
-#define SceneDialogue_RunActor25FlaggedLine Func_0200085c
+#define Dialogue_RunActor25FlaggedLine Func_0200085c
 #define FieldScene_RunScene3b6_02000898 Func_02000898
-#define SceneDialogue_RunMessage23acStep Func_020008cc
-#define SceneDialogue_RunFacingMessage Func_0200091c
+#define Dialogue_RunMessage23acStep Func_020008cc
+#define Dialogue_RunFacingMessage Func_0200091c
 
 struct Ent { s32 a; u16 b; u16 c; };
 
@@ -393,7 +393,7 @@ u8 *SceneData_SelectTable9310ByFlags(void)
     return Data_02009310;
 }
 
-void SceneState_SetWork1c0AndRun(void)
+void State_SetWork1c0AndRun(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -404,7 +404,7 @@ void SceneState_SetWork1c0AndRun(void)
     Func_02000b16();
 }
 
-void FieldScene_RunPrimarySequence(void)
+void Scene_RunPrimarySequence(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -433,7 +433,7 @@ void FieldScene_RunPrimarySequence(void)
     Func_02000b8c(*(s16 *)p6);
 }
 
-void FieldScene_RunScene3b6SequenceA(void)
+void Scene_RunScene3b6SequenceA(void)
 {
     u32 i;
     s32 rec7;
@@ -495,7 +495,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     Func_02000cf0_a();
 }
 
-void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
+void Scene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
     void Func_02000d44(s32);
     void Func_02000d6a(s32);
@@ -574,7 +574,7 @@ s32 Scene_InitFacingActors(void)
     return 0;
 }
 
-void SceneDialogue_RunFacingPrompt(s32 no)
+void Dialogue_RunFacingPrompt(s32 no)
 {
     u8 *actor = Func_02000f00(0);
     s32 msg;
@@ -600,7 +600,7 @@ void SceneDialogue_RunFacingPrompt(s32 no)
     }
 }
 
-void SceneDialogue_RunFacingActionPrompt(s32 no)
+void Dialogue_RunFacingActionPrompt(s32 no)
 {
     u8 *actor = Func_02000fa8(0);
     s32 msg;
@@ -629,7 +629,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     }
 }
 
-void SceneDialogue_RunFacingAction(s32 no)
+void Dialogue_RunFacingAction(s32 no)
 {
     u8 *actor = Func_0200106c(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
@@ -648,7 +648,7 @@ void SceneDialogue_RunFacingAction(s32 no)
     }
 }
 
-void SceneDialogue_RunMessage239eStep(s32 subject)
+void Dialogue_RunMessage239eStep(s32 subject)
 {
     s32 message;
 
@@ -674,7 +674,7 @@ void SceneDialogue_RunMessage239eStep(s32 subject)
     Func_02001116();
 }
 
-void SceneDialogue_RunActorLine23a1(s32 no)
+void Dialogue_RunActorLine23a1(s32 no)
 {
     Func_02001122(no);
     Func_02001180(0x23A1);
@@ -682,7 +682,7 @@ void SceneDialogue_RunActorLine23a1(s32 no)
     Func_0200113c();
 }
 
-void SceneDialogue_RunMessage1FBBStep(s32 subject)
+void Dialogue_RunMessage1FBBStep(s32 subject)
 {
     s32 msg;
 
@@ -743,7 +743,7 @@ void FieldScene_RunScene3b6_020007b0(s32 a0)
     Func_02001226();
 }
 
-void SceneDialogue_RunActor25FlaggedLine(void)
+void Dialogue_RunActor25FlaggedLine(void)
 {
     void Func_02001240_begin(void);
 
@@ -769,7 +769,7 @@ void FieldScene_RunScene3b6_02000898(s32 a0)
     Func_020012a2();
 }
 
-void SceneDialogue_RunMessage23acStep(s32 subject)
+void Dialogue_RunMessage23acStep(s32 subject)
 {
     s32 message;
 
@@ -795,7 +795,7 @@ void SceneDialogue_RunMessage23acStep(s32 subject)
     Func_020012f6();
 }
 
-void SceneDialogue_RunFacingMessage(s32 no)
+void Dialogue_RunFacingMessage(s32 no)
 {
     s32 Func_02001312(s32 flag);
 

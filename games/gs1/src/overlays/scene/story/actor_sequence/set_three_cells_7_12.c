@@ -5,7 +5,7 @@ extern void Func_02002b32(s32, s32, s32, s32, s32, s32);
 extern void Func_02002b44(s32, s32, s32, s32, s32, s32);
 extern void Func_02002b56(s32, s32, s32, s32, s32, s32);
 
-void SceneState_SetThreeCellsAt7x12(void)
+void State_SetThreeCellsAt7x12(void)
 {
     Func_02002b32(7, 12, 1, 1, 7, 11);
     Func_02002b44(7, 12, 1, 1, 8, 11);

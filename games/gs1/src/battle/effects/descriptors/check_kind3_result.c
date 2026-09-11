@@ -1,6 +1,6 @@
 #include "types.h"
 
-u32 BattleEffect_CheckDescriptorKind3Result(s32 descriptor, s32 value)
+u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
 {
   u32 tmp;
   s32 kind;

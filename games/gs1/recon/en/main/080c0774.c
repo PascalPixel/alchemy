@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_ConfigurePaletteFade Func_080c0774
+#define BattlePres_ConfigurePaletteFade Func_080c0774
 
 struct DmaChannel3 {
     const void *source;
@@ -8,7 +8,7 @@ struct DmaChannel3 {
     u32 control;
 };
 
-void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
+void BattlePres_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
     s32 *transition = *(s32 **)0x03001f00;
     volatile struct DmaChannel3 *dma =

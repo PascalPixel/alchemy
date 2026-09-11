@@ -25,7 +25,7 @@ struct BattleEffectValueRecord {
     u16 value;
 };
 
-s32 BattleEffect_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
+s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
     struct BattleEffectRuntime *runtime =
         (struct BattleEffectRuntime *)Data_03001ebc;

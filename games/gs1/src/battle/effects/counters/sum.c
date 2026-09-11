@@ -1,6 +1,6 @@
 #include "battle_effect_counters.h"
 
-s32 BattleEffect_SumCounters(void)
+s32 BattleFx_SumCounters(void)
 {
     struct BattleEffectCounterState *state = Data_03001ebc;
 

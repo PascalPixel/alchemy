@@ -82,8 +82,8 @@ typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
 typedef s32 (*ScaleFixed)(s32 value, s32 scale);
 
 s32 Func_080022ec(s32 numerator, s32 denominator);
-s32 BattleEffect_ClampRgb555Channel(s32 value);
-s32 BattleEffect_ClampRgb555Component(s32 value);
+s32 BattleFx_ClampRgb555Channel(s32 value);
+s32 BattleFx_ClampRgb555Component(s32 value);
 
 /* Three contiguous 32-entry ramps indexed by a clamped channel value. */
 extern u16 Data_0809e92e[];
@@ -195,9 +195,9 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
                     r = r - (r >> 1) + 10;
                     g = (u32)((s32)g - Func_080022ec((s32)g, 3) + 8);
                     b = b - 7;
-                    r = (u32)BattleEffect_ClampRgb555Channel((s32)r);
-                    g = (u32)BattleEffect_ClampRgb555Channel((s32)g);
-                    b = (u32)BattleEffect_ClampRgb555Channel((s32)b);
+                    r = (u32)BattleFx_ClampRgb555Channel((s32)r);
+                    g = (u32)BattleFx_ClampRgb555Channel((s32)g);
+                    b = (u32)BattleFx_ClampRgb555Channel((s32)b);
                 }
                 *dst++ = Data_0809e9ae[b];
                 *dst++ = Data_0809e96e[g];
@@ -231,9 +231,9 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
                     b = 26;
                 g = g + 2;
                 b = b + 2;
-                r = BattleEffect_ClampRgb555Channel(r);
-                g = BattleEffect_ClampRgb555Channel(g);
-                b = BattleEffect_ClampRgb555Channel(b);
+                r = BattleFx_ClampRgb555Channel(r);
+                g = BattleFx_ClampRgb555Channel(g);
+                b = BattleFx_ClampRgb555Channel(b);
                 *dst++ = Data_0809e92e[b];
                 *dst++ = Data_0809e92e[g];
                 *dst++ = Data_0809e92e[r];
@@ -253,14 +253,14 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
                 r = (s32)(c & 31);
                 g = (s32)((c >> 5) & 31);
                 b = (s32)((c >> 10) & 31);
-                v = BattleEffect_ClampRgb555Channel(
+                v = BattleFx_ClampRgb555Channel(
                     Func_080022ec(r + g + b, 3));
                 r = (r >> 1) + v;
                 g = (g >> 1) + v;
                 b = (b >> 1) + v;
-                r = BattleEffect_ClampRgb555Channel(r);
-                g = BattleEffect_ClampRgb555Channel(g);
-                b = BattleEffect_ClampRgb555Channel(b);
+                r = BattleFx_ClampRgb555Channel(r);
+                g = BattleFx_ClampRgb555Channel(g);
+                b = BattleFx_ClampRgb555Channel(b);
                 dst[0] = Data_0809e9ae[b];
                 dst[1] = Data_0809e9ae[g];
                 dst[2] = Data_0809e9ae[r];
@@ -280,7 +280,7 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
                 g = (s32)((c >> 5) & 31);
                 b = (s32)((c >> 10) & 31);
                 r = (s32)(c & 31);
-                r = BattleEffect_ClampRgb555Channel(r + ((g >> 3) + (b >> 3)));
+                r = BattleFx_ClampRgb555Channel(r + ((g >> 3) + (b >> 3)));
                 g = g - Func_080022ec(g, 3);
                 b = b - Func_080022ec(b, 3);
                 dst[0] = Data_0809e92e[b];
@@ -305,9 +305,9 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
                 r = r - (r >> 1) + 6;
                 g = (u32)((s32)g - Func_080022ec((s32)g, 3) + 4);
                 b = b - 6;
-                r = (u32)BattleEffect_ClampRgb555Channel((s32)r);
-                g = (u32)BattleEffect_ClampRgb555Channel((s32)g);
-                b = (u32)BattleEffect_ClampRgb555Channel((s32)b);
+                r = (u32)BattleFx_ClampRgb555Channel((s32)r);
+                g = (u32)BattleFx_ClampRgb555Channel((s32)g);
+                b = (u32)BattleFx_ClampRgb555Channel((s32)b);
                 dst[0] = Data_0809e9ae[b];
                 dst[1] = Data_0809e96e[g];
                 dst[2] = Data_0809e92e[r];
@@ -356,9 +356,9 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
             rr = red * k;
             gg = green * k;
             bb = blue * k;
-            rr = BattleEffect_ClampRgb555Component(rr);
-            gg = BattleEffect_ClampRgb555Component(gg);
-            bb = BattleEffect_ClampRgb555Component(bb);
+            rr = BattleFx_ClampRgb555Component(rr);
+            gg = BattleFx_ClampRgb555Component(gg);
+            bb = BattleFx_ClampRgb555Component(bb);
             dst[0] = (u16)bb;
             dst[1] = (u16)gg;
             dst[2] = (u16)rr;
@@ -395,9 +395,9 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
                             (s32)(green << 16) >> 4);
             bb = (u32)scale((s32)(((blue * (u32)k) >> 4) << 16),
                             (s32)(blue << 16) >> 4);
-            rr = (u32)BattleEffect_ClampRgb555Channel((s32)(rr >> 16));
-            gg = (u32)BattleEffect_ClampRgb555Channel((s32)(gg >> 16));
-            bb = (u32)BattleEffect_ClampRgb555Channel((s32)(bb >> 16));
+            rr = (u32)BattleFx_ClampRgb555Channel((s32)(rr >> 16));
+            gg = (u32)BattleFx_ClampRgb555Channel((s32)(gg >> 16));
+            bb = (u32)BattleFx_ClampRgb555Channel((s32)(bb >> 16));
             *dst++ = Data_0809e92e[bb];
             *dst++ = Data_0809e92e[gg];
             *dst++ = Data_0809e92e[rr];

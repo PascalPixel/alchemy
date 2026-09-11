@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_BuildActions Func_080b9934
+#define BattlePres_BuildActions Func_080b9934
 
 struct BattleActionRecord {
     s16 unit_id;
@@ -37,7 +37,7 @@ struct CharacterRuntimeRecord *Func_08077008(s32 unit_id);
 void Func_080770d0(s32 id);
 void Func_080b7f9c(void);
 
-s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
+s32 BattlePres_BuildActions(struct BattleActionRecord *actions)
 {
     struct CharacterRuntimeRecord *character;
     u8 *battle;

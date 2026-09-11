@@ -100,84 +100,84 @@ void Func_02003f8a();
  * overlay veneer and the main-image veneer island, keeping the site's own
  * calling form. Names without a repository binding are provisional.
  */
-#define BattleRuntime_Reset_1(args...) Func_02003c48(args)
+#define Battle_Reset_1(args...) Func_02003c48(args)
 #define Scene_GetRecord_1(args...) Func_02003c6a(args)
 #define Scene_GetRecord_2(args...) Func_02003c76(args)
 #define Scene_GetRecord_3(args...) Func_02003c82(args)
 #define Scene_GetRecord_4(args...) Func_02003c8e(args)
-#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02003d66, a0, a1, a2, a3)
+#define Motion_CamBounds_1(a0, a1, a2, a3) Call4(Func_02003d66, a0, a1, a2, a3)
 #define Audio_PlayCue_1(args...) Func_02003e0c(args)
 #define Audio_PlayCue_2(a0) Call1(Func_02003e22, a0)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_02003dfa(args)
-#define ObjectMotion_SetSpeedParameters_1(args...) Func_02003e06(args)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_02003ce0(args)
+#define Battle_WaitMode0_1(args...) Func_02003dfa(args)
+#define Motion_SetSpeed_1(args...) Func_02003e06(args)
+#define Battle_WaitMode0_2(args...) Func_02003ce0(args)
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_02003dd4(args)
 #define RuntimeBlock_GetOffset1e0Pointer_2(args...) Func_02003dd4(args)
-#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02003dca, a0, a1)
-#define ObjectMotion_PlaceWithinCameraBounds_2(a0, a1, a2, a3) Call4(Func_02003de2, a0, a1, a2, a3)
+#define Motion_SetSpeedLim_1(a0, a1) Call2(Func_02003dca, a0, a1)
+#define Motion_CamBounds_2(a0, a1, a2, a3) Call4(Func_02003de2, a0, a1, a2, a3)
 #define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_02003dee(args)
-#define BattleEffect_ApplyColorToSourceBuffer_1(a0, a1) Call2(Func_02003e28, a0, a1)
-#define BattleRuntime_WaitIfModeZero_3(a0, a1) Call2(Func_02003e28_a, a0, a1)
-#define BattleRuntime_WaitIfModeZero_4(args...) Func_02003e3e(args)
-#define BattleRuntime_WaitIfModeZero_5(args...) Func_02003d24(args)
-#define BattleRuntime_WaitIfModeZero_6(a0, a1) Call2(Func_02003e3c, a0, a1)
-#define BattleRuntime_WaitIfModeZero_7(args...) Func_02003e52(args)
-#define BattleRuntime_WaitIfModeZero_8(args...) Func_02003d38(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_02003d9e, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_02003dac, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_02003dba, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_4(a0, a1, a2) Call3(Func_02003dc8, a0, a1, a2)
+#define BattleFx_ApplyColorToSourceBuffer_1(a0, a1) Call2(Func_02003e28, a0, a1)
+#define Battle_WaitMode0_3(a0, a1) Call2(Func_02003e28_a, a0, a1)
+#define Battle_WaitMode0_4(args...) Func_02003e3e(args)
+#define Battle_WaitMode0_5(args...) Func_02003d24(args)
+#define Battle_WaitMode0_6(a0, a1) Call2(Func_02003e3c, a0, a1)
+#define Battle_WaitMode0_7(args...) Func_02003e52(args)
+#define Battle_WaitMode0_8(args...) Func_02003d38(args)
+#define Motion_SetHPosTerrain_1(a0, a1, a2) Call3(Func_02003d9e, a0, a1, a2)
+#define Motion_SetHPosTerrain_2(a0, a1, a2) Call3(Func_02003dac, a0, a1, a2)
+#define Motion_SetHPosTerrain_3(a0, a1, a2) Call3(Func_02003dba, a0, a1, a2)
+#define Motion_SetHPosTerrain_4(a0, a1, a2) Call3(Func_02003dc8, a0, a1, a2)
 #define Object_SetModeById_1(args...) Func_02003de0(args)
 #define Object_SetModeById_2(args...) Func_02003de8(args)
 #define Object_SetModeById_3(args...) Func_02003df0(args)
-#define BattleRuntime_WaitIfModeZero_9(args...) Func_02003d96(args)
-#define BattleRuntime_WaitIfModeZero_10(a0, a1) Call2(Func_02003eb0, a0, a1)
-#define BattleRuntime_WaitIfModeZero_11(args...) Func_02003ec6(args)
-#define BattleRuntime_WaitIfModeZero_12(args...) Func_02003dac_a(args)
-#define BattleRuntime_WaitIfModeZero_13(args...) Func_02003db2(args)
+#define Battle_WaitMode0_9(args...) Func_02003d96(args)
+#define Battle_WaitMode0_10(a0, a1) Call2(Func_02003eb0, a0, a1)
+#define Battle_WaitMode0_11(args...) Func_02003ec6(args)
+#define Battle_WaitMode0_12(args...) Func_02003dac_a(args)
+#define Battle_WaitMode0_13(args...) Func_02003db2(args)
 #define Scene_GetRecord_5(args...) Func_02003dd8(args)
 #define Object_SetModeById_4(args...) Func_02003e26(args)
-#define BattleRuntime_WaitIfModeZero_14(args...) Func_02003dcc(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02003e3c_a(args)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02003e98, a0, a1, a2)
-#define ObjectMotion_SetVariantCallback_1(args...) Func_02003e58(args)
-#define BattleRuntime_WaitIfModeZero_15(args...) Func_02003dee_a(args)
+#define Battle_WaitMode0_14(args...) Func_02003dcc(args)
+#define Motion_CallWaitAnim_1(args...) Func_02003e3c_a(args)
+#define Motion_ArmCb_1(a0, a1, a2) Call3(Func_02003e98, a0, a1, a2)
+#define Motion_SetVarCb_1(args...) Func_02003e58(args)
+#define Battle_WaitMode0_15(args...) Func_02003dee_a(args)
 #define Scene_GetRecord_6(args...) Func_02003e14(args)
 #define Object_SetModeById_5(args...) Func_02003e62(args)
-#define BattleRuntime_WaitIfModeZero_16(args...) Func_02003e08(args)
-#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02003ecc, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_17(args...) Func_02003e1a(args)
-#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02003ede, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_18(args...) Func_02003e2c(args)
-#define ObjectMotion_ArmCallback_4(args...) Func_02003eee(args)
+#define Battle_WaitMode0_16(args...) Func_02003e08(args)
+#define Motion_ArmCb_2(a0, a1, a2) Call3(Func_02003ecc, a0, a1, a2)
+#define Battle_WaitMode0_17(args...) Func_02003e1a(args)
+#define Motion_ArmCb_3(a0, a1, a2) Call3(Func_02003ede, a0, a1, a2)
+#define Battle_WaitMode0_18(args...) Func_02003e2c(args)
+#define Motion_ArmCb_4(args...) Func_02003eee(args)
 #define Scene_GetRecord_7(args...) Func_02003e5c(args)
 #define Object_SetModeById_6(args...) Func_02003eaa(args)
-#define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3(Func_02003f0e, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_19(args...) Func_02003e5c_a(args)
+#define Motion_ArmCb_5(a0, a1, a2) Call3(Func_02003f0e, a0, a1, a2)
+#define Battle_WaitMode0_19(args...) Func_02003e5c_a(args)
 #define Scene_GetRecord_8(args...) Func_02003e82(args)
 #define Object_SetModeById_7(args...) Func_02003ed0(args)
-#define BattleRuntime_WaitIfModeZero_20(args...) Func_02003e76(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02003ee6(args)
-#define BattleRuntime_WaitIfModeZero_21(args...) Func_02003e84(args)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02003eb6, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02003ec0, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_02003eca, a0, a1, a2)
+#define Battle_WaitMode0_20(args...) Func_02003e76(args)
+#define Motion_CallWaitAnim_2(args...) Func_02003ee6(args)
+#define Battle_WaitMode0_21(args...) Func_02003e84(args)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_02003eb6, a0, a1, a2)
+#define Motion_SetSpeed_3(a0, a1, a2) Call3(Func_02003ec0, a0, a1, a2)
+#define Motion_SetSpeed_4(a0, a1, a2) Call3(Func_02003eca, a0, a1, a2)
 #define Object_SetModeById_8(args...) Func_02003f0a(args)
 #define Object_SetModeById_9(args...) Func_02003f12(args)
 #define Object_SetModeById_10(args...) Func_02003f1a(args)
 #define Scene_GetRecord_9(args...) Func_02003ee0(args)
-#define ObjectMotion_ResetAndSetPosition_1(args...) Func_02003f02(args)
+#define Motion_ResetAndSetPosition_1(args...) Func_02003f02(args)
 #define Scene_GetRecord_10(args...) Func_02003ef8(args)
-#define ObjectMotion_ResetAndSetPosition_2(args...) Func_02003f1a_a(args)
+#define Motion_ResetAndSetPosition_2(args...) Func_02003f1a_a(args)
 #define Scene_GetRecord_11(args...) Func_02003f10(args)
-#define ObjectMotion_ResetAndSetPosition_3(args...) Func_02003f32(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_02003f58(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_5(args...) Func_02003f6a(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_2(args...) Func_02003f68(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_6(args...) Func_02003f7a(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_3(args...) Func_02003f78(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_7(args...) Func_02003f8a(args)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02003f46(args)
+#define Motion_ResetAndSetPosition_3(args...) Func_02003f32(args)
+#define Motion_CommitPos_1(args...) Func_02003f58(args)
+#define Motion_SetHPosTerrain_5(args...) Func_02003f6a(args)
+#define Motion_CommitPos_2(args...) Func_02003f68(args)
+#define Motion_SetHPosTerrain_6(args...) Func_02003f7a(args)
+#define Motion_CommitPos_3(args...) Func_02003f78(args)
+#define Motion_SetHPosTerrain_7(args...) Func_02003f8a(args)
+#define Battle_SchedShoulder_1(args...) Func_02003f46(args)
 u8 *Func_02003c6a();
 u8 *Func_02003c76();
 u8 *Func_02003c82();
@@ -241,12 +241,12 @@ static __inline__ void bump_step(s32 amount)
 /* Configures four actor slots (0-3), advances the shared scene phase, then
  * drives handles 1-3 through a sequence of timed calls, some of which use
  * the two s16 fields read back from an actor slot record. */
-void FieldScene_RunFourActorPresentation(void)
+void Scene_RunFourActorPresentation(void)
 {
     u32 i;
     u8 *record;
 
-    BattleRuntime_Reset_1();
+    Battle_Reset_1();
     Func_02003c3c(); /* main:08077268 */
     record = Scene_GetRecord_1(0); /* main:0808a080 */
     Func_02003c10(record, 0); /* main:080091e0 */
@@ -256,7 +256,7 @@ void FieldScene_RunFourActorPresentation(void)
     Func_02003c28(record, 0); /* main:080091e0 */
     record = Scene_GetRecord_4(3); /* main:0808a080 */
     Func_02003c34(record, 0); /* main:080091e0 */
-    ObjectMotion_PlaceWithinCameraBounds_1(0x1300000, -1, 0x780000, 0);
+    Motion_CamBounds_1(0x1300000, -1, 0x780000, 0);
     Func_02003bec(1); /* main:080000c0 */
     Func_02003c38(); /* main:08009128 */
     Func_02003bf6(1); /* main:080000c0 */
@@ -265,86 +265,86 @@ void FieldScene_RunFourActorPresentation(void)
     Audio_PlayCue_2(0x121);
     Call3(Func_02003c90, -1, -1, 0xe666); /* main:080091f0 */
     SCENE_PHASE = 0x100;
-    BattleRuntime_WaitIfModeZero_1(); /* main:0808a360 */
-    ObjectMotion_SetSpeedParameters_1(); /* main:0808a370 */
+    Battle_WaitMode0_1(); /* main:0808a360 */
+    Motion_SetSpeed_1(); /* main:0808a370 */
     Func_02003cb2(); /* main:080091f8 */
-    BattleRuntime_WaitIfModeZero_2(30);
+    Battle_WaitMode0_2(30);
     /* Clear the byte at offset 85 of the record RuntimeBlock_GetOffset1e0Pointer_1() returns. */
     *(u8 *)(RuntimeBlock_GetOffset1e0Pointer_2() + 85) = 0;
-    ObjectMotion_SetSpeedLimitAndAcceleration_1(0xcccc, 0x1999); /* speed_limit, acceleration */
-    ObjectMotion_PlaceWithinCameraBounds_2(0x2000000, -0x180000, 0xa00000, 1);
+    Motion_SetSpeedLim_1(0xcccc, 0x1999); /* speed_limit, acceleration */
+    Motion_CamBounds_2(0x2000000, -0x180000, 0xa00000, 1);
     Object_CommitPositionThenWaitIfModeZero_1();
-    BattleEffect_ApplyColorToSourceBuffer_1(0x10000, 0);
-    BattleRuntime_WaitIfModeZero_3(0x10005, 0); /* main:0808a330 */
-    BattleRuntime_WaitIfModeZero_4(50); /* main:0808a348 */
-    BattleRuntime_WaitIfModeZero_5(50);
-    BattleRuntime_WaitIfModeZero_6(0x7fff, 0); /* main:0808a330 */
-    BattleRuntime_WaitIfModeZero_7(30); /* main:0808a348 */
-    BattleRuntime_WaitIfModeZero_8(30);
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(0, 0x1f80000, 0xa80000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_2(1, 0x2100000, 0x900000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_3(2, 0x1e80000, 0x900000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_4(3, 0x2000000, 0x980000);
+    BattleFx_ApplyColorToSourceBuffer_1(0x10000, 0);
+    Battle_WaitMode0_3(0x10005, 0); /* main:0808a330 */
+    Battle_WaitMode0_4(50); /* main:0808a348 */
+    Battle_WaitMode0_5(50);
+    Battle_WaitMode0_6(0x7fff, 0); /* main:0808a330 */
+    Battle_WaitMode0_7(30); /* main:0808a348 */
+    Battle_WaitMode0_8(30);
+    Motion_SetHPosTerrain_1(0, 0x1f80000, 0xa80000);
+    Motion_SetHPosTerrain_2(1, 0x2100000, 0x900000);
+    Motion_SetHPosTerrain_3(2, 0x1e80000, 0x900000);
+    Motion_SetHPosTerrain_4(3, 0x2000000, 0x980000);
     Object_SetModeById_12(0, 19); /* object 0, action 19 */
     Object_SetModeById_1(1, 19);
     Object_SetModeById_2(2, 19);
     Object_SetModeById_3(3, 19);
-    BattleRuntime_WaitIfModeZero_9(10);
-    BattleRuntime_WaitIfModeZero_10(0x10000, 0); /* main:0808a330 */
-    BattleRuntime_WaitIfModeZero_11(30); /* main:0808a348 */
-    BattleRuntime_WaitIfModeZero_12(30);
-    BattleRuntime_WaitIfModeZero_13(80);
+    Battle_WaitMode0_9(10);
+    Battle_WaitMode0_10(0x10000, 0); /* main:0808a330 */
+    Battle_WaitMode0_11(30); /* main:0808a348 */
+    Battle_WaitMode0_12(30);
+    Battle_WaitMode0_13(80);
     record = Scene_GetRecord_5(0);
     Func_02003d7e(record, 1); /* main:080091e0 */
     Object_SetModeById_4(0, 1);
-    BattleRuntime_WaitIfModeZero_14(30);
-    ObjectMotion_CallThenWaitForAnimationChange_1(0, 4);
-    ObjectMotion_ArmCallback_1(0, 0xc000, 20);
-    ObjectMotion_SetVariantCallback_1(0, 2);
-    BattleRuntime_WaitIfModeZero_15(60);
+    Battle_WaitMode0_14(30);
+    Motion_CallWaitAnim_1(0, 4);
+    Motion_ArmCb_1(0, 0xc000, 20);
+    Motion_SetVarCb_1(0, 2);
+    Battle_WaitMode0_15(60);
     record = Scene_GetRecord_6(1); /* main:0808a080 */
     Func_02003dba_a(record, 1); /* main:080091e0 */
     Object_SetModeById_5(1, 1);
-    BattleRuntime_WaitIfModeZero_16(20);
-    ObjectMotion_ArmCallback_2(1, 0x2000, 0);
-    BattleRuntime_WaitIfModeZero_17(20);
-    ObjectMotion_ArmCallback_3(1, 0x6000, 0);
-    BattleRuntime_WaitIfModeZero_18(20);
-    ObjectMotion_ArmCallback_4(1, 0, 0);
+    Battle_WaitMode0_16(20);
+    Motion_ArmCb_2(1, 0x2000, 0);
+    Battle_WaitMode0_17(20);
+    Motion_ArmCb_3(1, 0x6000, 0);
+    Battle_WaitMode0_18(20);
+    Motion_ArmCb_4(1, 0, 0);
     record = Scene_GetRecord_7(2);
     Func_02003e02(record, 1); /* main:080091e0 */
     Object_SetModeById_6(2, 1);
-    ObjectMotion_ArmCallback_5(1, 0x6000, 0);
-    BattleRuntime_WaitIfModeZero_19(40);
+    Motion_ArmCb_5(1, 0x6000, 0);
+    Battle_WaitMode0_19(40);
     record = Scene_GetRecord_8(3); /* main:0808a080 */
     Func_02003e28_b(record, 1); /* main:080091e0 */
     Object_SetModeById_7(3, 1);
-    BattleRuntime_WaitIfModeZero_20(20);
-    ObjectMotion_CallThenWaitForAnimationChange_2(3, 3);
-    BattleRuntime_WaitIfModeZero_21(20);
-    ObjectMotion_SetSpeedParameters_2(1, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_3(2, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_4(3, 0xcccc, 0x6666);
+    Battle_WaitMode0_20(20);
+    Motion_CallWaitAnim_2(3, 3);
+    Battle_WaitMode0_21(20);
+    Motion_SetSpeed_2(1, 0xcccc, 0x6666);
+    Motion_SetSpeed_3(2, 0xcccc, 0x6666);
+    Motion_SetSpeed_4(3, 0xcccc, 0x6666);
     Object_SetModeById_8(1, 2);
     Object_SetModeById_9(2, 2);
     Object_SetModeById_10(3, 2);
     record = Scene_GetRecord_9(0); /* main:0808a080 */
     if (record != 0) {
-        ObjectMotion_ResetAndSetPosition_1(1, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
+        Motion_ResetAndSetPosition_1(1, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
     }
     record = Scene_GetRecord_10(0); /* main:0808a080 */
     if (record != 0) {
-        ObjectMotion_ResetAndSetPosition_2(2, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
+        Motion_ResetAndSetPosition_2(2, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
     }
     record = Scene_GetRecord_11(0); /* main:0808a080 */
     if (record != 0) {
-        ObjectMotion_ResetAndSetPosition_3(3, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
+        Motion_ResetAndSetPosition_3(3, ACTOR_FIELD_0XA(record), ACTOR_FIELD_0X12(record));
     }
-    ObjectMotion_CommitCurrentPositionAndActivate_1(3);
-    ObjectMotion_SetHorizontalPositionWithTerrain_5(3, 0, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate_2(2);
-    ObjectMotion_SetHorizontalPositionWithTerrain_6(2, 0, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate_3(1);
-    ObjectMotion_SetHorizontalPositionWithTerrain_7(1, 0, 0);
-    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+    Motion_CommitPos_1(3);
+    Motion_SetHPosTerrain_5(3, 0, 0);
+    Motion_CommitPos_2(2);
+    Motion_SetHPosTerrain_6(2, 0, 0);
+    Motion_CommitPos_3(1);
+    Motion_SetHPosTerrain_7(1, 0, 0);
+    Battle_SchedShoulder_1();
 }

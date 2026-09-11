@@ -7,22 +7,22 @@
 #define SceneData_ReturnZero Func_02000038
 #define SceneData_GetSecondaryTable Func_0200003c
 #define SceneData_PrepareTable86b0 Func_02000044
-#define FieldScene_RunActor16MessageBranch Func_0200005c
-#define FieldScene_RunActor18MessageBranch Func_020000bc
+#define Scene_RunActor16MessageBranch Func_0200005c
+#define Scene_RunActor18MessageBranch Func_020000bc
 #define SceneData_GetTertiaryTable Func_0200011c
-#define FieldScene_RunActor17MessageBranch Func_02000124
-#define FieldScene_ConfigureActor21Scene Func_020001a8
-#define FieldScene_RunActor24Sequence Func_020001e0
-#define FieldScene_RunActor27Sequence Func_02000250
-#define FieldScene_RunActor8Message Func_020002b4
-#define FieldScene_RunActor13Message Func_020002d4
-#define FieldScene_RunActor19MessageBranch Func_020002f4
-#define FieldScene_RunActor21SequenceOnFlag300 Func_0200035c
-#define FieldScene_ConfigureActor22Scene Func_020003f4
-#define FieldScene_ConfigureActor23Scene Func_02000430
-#define FieldScene_RunActor27Message Func_02000470
-#define FieldScene_RunActor10MessageBranch Func_02000490
-#define FieldScene_SetupActor27OnEntry Func_020004c8
+#define Scene_RunActor17MessageBranch Func_02000124
+#define Scene_ConfigureActor21Scene Func_020001a8
+#define Scene_RunActor24Sequence Func_020001e0
+#define Scene_RunActor27Sequence Func_02000250
+#define Scene_RunActor8Message Func_020002b4
+#define Scene_RunActor13Message Func_020002d4
+#define Scene_RunActor19MessageBranch Func_020002f4
+#define Scene_RunActor21SequenceOnFlag300 Func_0200035c
+#define Scene_ConfigureActor22Scene Func_020003f4
+#define Scene_ConfigureActor23Scene Func_02000430
+#define Scene_RunActor27Message Func_02000470
+#define Scene_RunActor10MessageBranch Func_02000490
+#define Scene_SetupActor27OnEntry Func_020004c8
 
 #include "resource_38c.h"
 
@@ -237,7 +237,7 @@ s32 SceneData_PrepareTable86b0(void)
     return 0x020086B0;
 }
 
-void FieldScene_RunActor16MessageBranch(void)
+void Scene_RunActor16MessageBranch(void)
 {
     void Func_02000662(s32, s32);
 
@@ -260,7 +260,7 @@ void FieldScene_RunActor16MessageBranch(void)
     Func_020005c0();
 }
 
-void FieldScene_RunActor18MessageBranch(void)
+void Scene_RunActor18MessageBranch(void)
 {
     void Func_02000662(s32, s32);
 
@@ -288,7 +288,7 @@ u8 *SceneData_GetTertiaryTable(void)
     return (u8 *)RESOURCE38C_TERTIARY_TABLE_ADDRESS;
 }
 
-void FieldScene_RunActor17MessageBranch(void)
+void Scene_RunActor17MessageBranch(void)
 {
     s32 Func_02000662_a();
 
@@ -316,7 +316,7 @@ void FieldScene_RunActor17MessageBranch(void)
     Func_020006ac();
 }
 
-void FieldScene_ConfigureActor21Scene(void)
+void Scene_ConfigureActor21Scene(void)
 {
     Func_020006c4();
     Func_02000702(0x13ed);
@@ -326,7 +326,7 @@ void FieldScene_ConfigureActor21Scene(void)
     Func_020006f4();
 }
 
-void FieldScene_RunActor24Sequence(void)
+void Scene_RunActor24Sequence(void)
 {
     u32 i;
     s32 record;
@@ -345,7 +345,7 @@ void FieldScene_RunActor24Sequence(void)
     Func_02000760();
 }
 
-void FieldScene_RunActor27Sequence(void)
+void Scene_RunActor27Sequence(void)
 {
     void Func_0200081a();
 
@@ -365,7 +365,7 @@ void FieldScene_RunActor27Sequence(void)
     Func_020007c6();
 }
 
-void FieldScene_RunActor8Message(void)
+void Scene_RunActor8Message(void)
 {
     Func_020007d0();
     Func_0200080e(0x16E1);
@@ -373,7 +373,7 @@ void FieldScene_RunActor8Message(void)
     Func_020007ea();
 }
 
-void FieldScene_RunActor13Message(void)
+void Scene_RunActor13Message(void)
 {
     Func_020007f0();
     Func_0200082e(0x16EC);
@@ -381,7 +381,7 @@ void FieldScene_RunActor13Message(void)
     Func_0200080a();
 }
 
-void FieldScene_RunActor19MessageBranch(void)
+void Scene_RunActor19MessageBranch(void)
 {
     s32 Func_0200081a_a(s32);
 
@@ -403,7 +403,7 @@ void FieldScene_RunActor19MessageBranch(void)
     Func_02000860();
 }
 
-void FieldScene_RunActor21SequenceOnFlag300(void)
+void Scene_RunActor21SequenceOnFlag300(void)
 {
     void Func_02000958();
 
@@ -430,7 +430,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
     Func_02000904();
 }
 
-void FieldScene_ConfigureActor22Scene(void)
+void Scene_ConfigureActor22Scene(void)
 {
     void Func_02000958_a(s32, s32, s32);
     void Func_0200099a(s32, s32, s32);
@@ -444,7 +444,7 @@ void FieldScene_ConfigureActor22Scene(void)
     Func_02000946();
 }
 
-void FieldScene_ConfigureActor23Scene(void)
+void Scene_ConfigureActor23Scene(void)
 {
     void Func_020009d8(s32, s32, s32);
 
@@ -457,7 +457,7 @@ void FieldScene_ConfigureActor23Scene(void)
     Func_02000984();
 }
 
-void FieldScene_RunActor27Message(void)
+void Scene_RunActor27Message(void)
 {
     s32 Func_0200099a(s32);
     void Func_020009d8(void);
@@ -469,7 +469,7 @@ void FieldScene_RunActor27Message(void)
     Func_020009a6();
 }
 
-void FieldScene_RunActor10MessageBranch(void)
+void Scene_RunActor10MessageBranch(void)
 {
     s32 Func_0200099a_a(s32);
     void Func_020009d8_a(void);
@@ -485,7 +485,7 @@ void FieldScene_RunActor10MessageBranch(void)
     Func_020009d8_a();
 }
 
-s32 FieldScene_SetupActor27OnEntry(void)
+s32 Scene_SetupActor27OnEntry(void)
 {
     u8 *Func_02000a14_a(s32);
 

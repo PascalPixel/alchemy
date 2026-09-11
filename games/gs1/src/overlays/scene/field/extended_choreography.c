@@ -14,55 +14,55 @@
 #define SceneData_ReturnZero Func_02000370
 #define SceneData_GetTableEB94 Func_02000374
 #define SceneData_SelectTableBySceneIndexAndFlags Func_0200054c
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_0200b64e, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_0200b73a(args)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_0200b60c, a0, a1, a2)
+#define Motion_SetHPosTerrain_1(a0, a1, a2) Call3(Func_0200b64e, a0, a1, a2)
+#define Battle_WaitMode0_1(args...) Func_0200b73a(args)
+#define Motion_SetSpeed_1(a0, a1, a2) Call3(Func_0200b60c, a0, a1, a2)
 #define Object_SetModeById_1(args...) Func_0200b66c(args)
-#define ObjectMotion_SetPositionAndCommit_1(a0, a1, a2) Call3(Func_0200b648, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_2(a0, a1, a2) Call3(Func_0200b654, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_3(a0, a1, a2) Call3(Func_0200b660, a0, a1, a2)
+#define Motion_SetPositionAndCommit_1(a0, a1, a2) Call3(Func_0200b648, a0, a1, a2)
+#define Motion_SetPositionAndCommit_2(a0, a1, a2) Call3(Func_0200b654, a0, a1, a2)
+#define Motion_SetPositionAndCommit_3(a0, a1, a2) Call3(Func_0200b660, a0, a1, a2)
 #define Object_SetModeById_2(args...) Func_0200b698(args)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_0200b724, a0, a1, a2)
+#define Motion_ArmCb_1(a0, a1, a2) Call3(Func_0200b724, a0, a1, a2)
 #define Scene_GetRecord_1(a0) Value1(Func_0200b642, a0)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_0200b6b0(args)
+#define Motion_SetHPosTerrain_2(args...) Func_0200b6b0(args)
 #define Scene_GetRecord_2(a0) Value1(Func_0200b656, a0)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_0200b6c4(args)
+#define Motion_SetHPosTerrain_3(args...) Func_0200b6c4(args)
 #define Scene_GetRecord_3(a0) Value1(Func_0200b66a, a0)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_0200b6d8(args)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_0200b698_a, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_0200b6d4, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_0200b6ae, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Call3(Func_0200b6ea, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_0200b6c8, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_0200b70c, a0, a1, a2)
+#define Motion_SetHPosTerrain_4(args...) Func_0200b6d8(args)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_0200b698_a, a0, a1, a2)
+#define Motion_ResetPosMode2_1(a0, a1, a2) Call3(Func_0200b6d4, a0, a1, a2)
+#define Motion_SetSpeed_3(a0, a1, a2) Call3(Func_0200b6ae, a0, a1, a2)
+#define Motion_ResetPosMode2_2(a0, a1, a2) Call3(Func_0200b6ea, a0, a1, a2)
+#define Motion_SetSpeed_4(a0, a1, a2) Call3(Func_0200b6c8, a0, a1, a2)
+#define Motion_SetPosReset_1(a0, a1, a2) Call3(Func_0200b70c, a0, a1, a2)
 #define Object_SetModeById_3(args...) Func_0200b734(args)
 #define Object_SetModeById_4(args...) Func_0200b73c(args)
-#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_0200b7c8, a0, a1, a2)
-#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_0200b7d4, a0, a1, a2)
-#define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_0200b7e0, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_0200b6e8(args)
-#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_0200b83e, a0, a1)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_0200b7dc(args)
+#define Motion_ArmCb_2(a0, a1, a2) Call3(Func_0200b7c8, a0, a1, a2)
+#define Motion_ArmCb_3(a0, a1, a2) Call3(Func_0200b7d4, a0, a1, a2)
+#define Motion_ArmCb_4(a0, a1, a2) Call3(Func_0200b7e0, a0, a1, a2)
+#define Battle_WaitMode0_2(args...) Func_0200b6e8(args)
+#define Motion_SetSpeedLim_1(a0, a1) Call2(Func_0200b83e, a0, a1)
+#define Motion_SetVarCbObj_1(args...) Func_0200b7dc(args)
 #define SceneWork_SetStepValue_1(args...) Func_0200b816(args)
-#define ObjectMotion_ArmCallback_5(args...) Func_0200b84e(args)
-#define ObjectMotion_EnableActionAndSetCallback_1(args...) Func_0200b798(args)
-#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Func_0200b7a0, a0, a1)
-#define ObjectMotion_MarkActiveAndSetActionCallback_1(args...) Func_0200b7b8(args)
-#define BattleRuntime_WaitIfModeZero_3(args...) Func_0200b76e(args)
+#define Motion_ArmCb_5(args...) Func_0200b84e(args)
+#define Motion_EnableActCb_1(args...) Func_0200b798(args)
+#define Motion_EnableActCb_2(a0, a1) Value2(Func_0200b7a0, a0, a1)
+#define Motion_MarkActiveAndSetActionCallback_1(args...) Func_0200b7b8(args)
+#define Battle_WaitMode0_3(args...) Func_0200b76e(args)
 #define GameFlag_Set_1(a0) Call1(Func_0200b75c, a0)
 #define GameFlag_Clear_1(a0) Call1(Func_0200b774, a0)
 #define FieldScene_RunScene3b1_02000670 Func_02000670
 #define FieldScene_RunScene3b1_02000728 Func_02000728
 #define FieldScene_RunScene3b1_020007f8 Func_020007f8
-#define FieldScene_RunActor11FlagDialogue Func_02000a80
-#define FieldScene_RunScene3b1SequenceA Func_02000b84
-#define FieldScene_RunScene3b1SequenceB Func_02000cc8
-#define FieldScene_RunFlag300BranchDialogue Func_02000ee0
-#define FieldScene_RunActor15FlagDialogue Func_02000fac
-#define FieldScene_RunActor16FlagDialogue Func_02001078
-#define FieldScene_RunPrimarySequence Func_02001804
-#define FieldScene_RunScene3b1SequenceC Func_02001894
-#define FieldScene_RunScene3b1SequenceD Func_02001a08
+#define Scene_RunActor11FlagDialogue Func_02000a80
+#define Scene_RunScene3b1SequenceA Func_02000b84
+#define Scene_RunScene3b1SequenceB Func_02000cc8
+#define Scene_RunFlag300BranchDialogue Func_02000ee0
+#define Scene_RunActor15FlagDialogue Func_02000fac
+#define Scene_RunActor16FlagDialogue Func_02001078
+#define Scene_RunPrimarySequence Func_02001804
+#define Scene_RunScene3b1SequenceC Func_02001894
+#define Scene_RunScene3b1SequenceD Func_02001a08
 #define FieldScene_RunScene3b1_02003d10 Func_02003d10
 #define FieldScene_RunScene3b1_02003dec Func_02003dec
 #define FieldScene_RunScene3b1_02003e34 Func_02003e34
@@ -71,57 +71,57 @@
 #define FieldScene_RunScene3b1_0200413c Func_0200413c
 #define FieldScene_RunScene3b1_02004198 Func_02004198
 #define FieldScene_RunScene3b1_02005068 Func_02005068
-#define FieldScene_RunPositionTransferPresentation Func_020050e4
+#define Scene_RunPositionTransferPresentation Func_020050e4
 #define FieldScene_RunScene3b1_020056dc Func_020056dc
 #define FieldScene_RunScene3b1_02006110 Func_02006110
-#define SceneDialogue_RunActor12Line Func_02000708
-#define SceneDialogue_ShowLine1E19Or1D50 Func_020008a8
-#define SceneDialogue_ShowLine1ECETo1ED0 Func_02001324
-#define SceneDialogue_RunActor19TwoFlagLineA Func_02001378
-#define SceneDialogue_RunActor20TwoFlagLine Func_020013cc
-#define SceneDialogue_ShowLine1ED1Or1ED2 Func_02001420
-#define SceneDialogue_RunActor22TwoFlagLine Func_0200145c
-#define SceneDialogue_RunActor23BranchedDialogue Func_020014b0
-#define SceneDialogue_RunActor24BranchedDialogue Func_02001504
-#define SceneDialogue_RunActor25FlaggedLine Func_02001558
-#define SceneDialogue_RunActor18TwoFlagLine Func_02001594
-#define SceneDialogue_RunActor19TwoFlagLineB Func_020015e8
-#define SceneDialogue_ShowLine1EDBTo1EDDActor20 Func_0200163c
-#define SceneDialogue_RunActor21FlaggedLine Func_02001690
-#define SceneDialogue_RunActor22BranchedDialogue Func_020016cc
-#define SceneDialogue_ShowLine1EDBTo1EDDActor23 Func_02001720
-#define SceneDialogue_ShowLine1EDBTo1EDDActor24 Func_02001774
-#define SceneDialogue_ShowLine1EDEOr1EDF Func_020017c8
-#define SceneState_RunFlagBranchedActor8Setup Func_020008ec
-#define FieldScene_RunFlagGatedThreeActorSetup Func_02001a60
-#define FieldScene_RunFlagBranchedSetupCascade Func_02003f94
-#define FieldScene_RunActors24And25Setup Func_02004218
-#define FieldScene_InstallFlaggedActors10To17 Func_02004670
-#define FieldScene_RunActors24And25SetupWithValue929 Func_02005684
-#define FieldScene_RunActors24And25SetupWithValue92a Func_02005780
-#define SceneDialogue_RunActorTenFlaggedDialogue Func_020009b4
-#define SceneActor_SetFlagBit3ForActors28To35 Func_020037b4
+#define Dialogue_RunActor12Line Func_02000708
+#define Dialogue_ShowLine1E19Or1D50 Func_020008a8
+#define Dialogue_ShowLine1ECETo1ED0 Func_02001324
+#define Dialogue_RunActor19TwoFlagLineA Func_02001378
+#define Dialogue_RunActor20TwoFlagLine Func_020013cc
+#define Dialogue_ShowLine1ED1Or1ED2 Func_02001420
+#define Dialogue_RunActor22TwoFlagLine Func_0200145c
+#define Dialogue_RunActor23BranchedDialogue Func_020014b0
+#define Dialogue_RunActor24BranchedDialogue Func_02001504
+#define Dialogue_RunActor25FlaggedLine Func_02001558
+#define Dialogue_RunActor18TwoFlagLine Func_02001594
+#define Dialogue_RunActor19TwoFlagLineB Func_020015e8
+#define Dialogue_ShowLine1EDBTo1EDDActor20 Func_0200163c
+#define Dialogue_RunActor21FlaggedLine Func_02001690
+#define Dialogue_RunActor22BranchedDialogue Func_020016cc
+#define Dialogue_ShowLine1EDBTo1EDDActor23 Func_02001720
+#define Dialogue_ShowLine1EDBTo1EDDActor24 Func_02001774
+#define Dialogue_ShowLine1EDEOr1EDF Func_020017c8
+#define State_RunFlagBranchedActor8Setup Func_020008ec
+#define Scene_RunFlagGatedThreeActorSetup Func_02001a60
+#define Scene_RunFlagBranchedSetupCascade Func_02003f94
+#define Scene_RunActors24And25Setup Func_02004218
+#define Scene_InstallFlaggedActors10To17 Func_02004670
+#define Scene_RunActors24And25SetupWithValue929 Func_02005684
+#define Scene_RunActors24And25SetupWithValue92a Func_02005780
+#define Dialogue_RunActorTenFlaggedDialogue Func_020009b4
+#define Actor_SetFlagBit3ForActors28To35 Func_020037b4
 #define RunActorsEightAndNineMapEvent Func_02005ca4
-#define SceneDialogue_RunActorThirteenFlag300Branch Func_02000e14
-#define SceneActor_CheckBucketOffsetPoint Func_02001280
-#define SceneState_ApplyLevelFromFlags Func_020012dc
-#define SceneState_ApplyActor8FourFlags Func_02005004
-#define SceneState_ScanTwoArraysAndCrossNotify Func_020063ac
-#define FieldScene_RunThreeActorPresentation Func_02001b34
-#define FieldScene_RunExtendedActorChoreography Func_02001f3c
-#define FieldScene_RunBranchingActorPresentation Func_020027d8
-#define SceneState_RunFlagGatedSetupCascade Func_0200351c
+#define Dialogue_RunActorThirteenFlag300Branch Func_02000e14
+#define Actor_CheckBucketOffsetPoint Func_02001280
+#define State_ApplyLevelFromFlags Func_020012dc
+#define State_ApplyActor8FourFlags Func_02005004
+#define State_ScanTwoArraysAndCrossNotify Func_020063ac
+#define Scene_RunThreeActorPresentation Func_02001b34
+#define Scene_RunExtendedActorChoreography Func_02001f3c
+#define Scene_RunBranchingActorPresentation Func_020027d8
+#define State_RunFlagGatedSetupCascade Func_0200351c
 #define RunSceneSelectionChain Func_0200366c
-#define FieldScene_RunFourActorCoordinatePresentation Func_020038ac
-#define FieldScene_RunFormationAndEffectPresentation Func_020052f4
-#define FieldScene_RunExtendedFormationPresentation Func_020057ec
-#define FieldScene_RunStepThen10 Func_0200486c
-#define FieldScene_CallPairWith10 Func_02004880
-#define OverlayObject_SetPositionAndHeading Func_02004890
+#define Scene_RunFourActorCoordinatePresentation Func_020038ac
+#define Scene_RunFormationAndEffectPresentation Func_020052f4
+#define Scene_RunExtendedFormationPresentation Func_020057ec
+#define Scene_RunStepThen10 Func_0200486c
+#define Scene_CallPairWith10 Func_02004880
+#define OvObj_SetPositionAndHeading Func_02004890
 #define ConfigureSceneMotionFlags Func_020048ac
-#define FieldScene_RunSceneStep Func_020048e8
+#define Scene_RunSceneStep Func_020048e8
 #define FindActorNearPosition Func_02001144
-#define SceneActor_RunFirstMatchingSlot Func_02005038
+#define Actor_RunFirstMatchingSlot Func_02005038
 
 #include "staged_actor.h"
 
@@ -2644,7 +2644,7 @@ void FieldScene_RunScene3b1_02000670(void)
     Func_02006bbc();
 }
 
-void SceneDialogue_RunActor12Line(void)
+void Dialogue_RunActor12Line(void)
 {
     Func_02006bd4();
     Func_02006cba((s32)&Value_00001dd1);
@@ -2733,7 +2733,7 @@ void FieldScene_RunScene3b1_020007f8(void)
     Func_02006d60();
 }
 
-void SceneDialogue_ShowLine1E19Or1D50(void)
+void Dialogue_ShowLine1E19Or1D50(void)
 {
     Func_02006d74();
     if (Func_02006d52((s32)&Value_00000925) != 0) {
@@ -2776,7 +2776,7 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
  * its own local veneer, so the names are per call site and not the shared
  * main-image symbol.
  */
-void SceneState_RunFlagBranchedActor8Setup(void)
+void State_RunFlagBranchedActor8Setup(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -2807,7 +2807,7 @@ void SceneState_RunFlagBranchedActor8Setup(void)
     }
 }
 
-void SceneDialogue_RunActorTenFlaggedDialogue(void)
+void Dialogue_RunActorTenFlaggedDialogue(void)
 {
     if (Func_02006e5c(0x300) != 0) {
         u8 *o = Func_02001ca0();
@@ -2836,7 +2836,7 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
     }
 }
 
-void FieldScene_RunActor11FlagDialogue(void)
+void Scene_RunActor11FlagDialogue(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -2875,7 +2875,7 @@ void FieldScene_RunActor11FlagDialogue(void)
     }
 }
 
-void FieldScene_RunScene3b1SequenceA(void)
+void Scene_RunScene3b1SequenceA(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -2934,7 +2934,7 @@ void FieldScene_RunScene3b1SequenceA(void)
     Func_0200716c();
 }
 
-void FieldScene_RunScene3b1SequenceB(void)
+void Scene_RunScene3b1SequenceB(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -2993,7 +2993,7 @@ void FieldScene_RunScene3b1SequenceB(void)
     Func_020072b2();
 }
 
-void SceneDialogue_RunActorThirteenFlag300Branch(void)
+void Dialogue_RunActorThirteenFlag300Branch(void)
 {
     if (Func_020072bc(0x300) != 0) {
         u8 *o = Func_02002100();
@@ -3022,7 +3022,7 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
     }
 }
 
-void FieldScene_RunFlag300BranchDialogue(void)
+void Scene_RunFlag300BranchDialogue(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -3054,7 +3054,7 @@ void FieldScene_RunFlag300BranchDialogue(void)
     }
 }
 
-void FieldScene_RunActor15FlagDialogue(void)
+void Scene_RunActor15FlagDialogue(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -3094,7 +3094,7 @@ void FieldScene_RunActor15FlagDialogue(void)
  * setup call's third argument.  The 204-byte owner includes an alignment
  * halfword and its nine pool words.
  */
-void FieldScene_RunActor16FlagDialogue(void)
+void Scene_RunActor16FlagDialogue(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -3175,7 +3175,7 @@ struct SceneActor_02001144 *FindActorNearPosition(s32 x, s32 y)
  * owner includes its one pool word, the bucket table base.  Callees are named
  * by the address their call site computes, not by a runtime address.
  */
-s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
+s32 Actor_CheckBucketOffsetPoint(s32 bucket)
 {
     u8 *obj = Func_02007772(0);
     u32 ofs = Data_0200e668[bucket];
@@ -3217,7 +3217,7 @@ s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
  * 72-byte owner at 0x020012dc includes its three pool words, which are the
  * addresses taken as Value_0000092b, Value_0000092a and Value_00000929.
  */
-s32 SceneState_ApplyLevelFromFlags(void)
+s32 State_ApplyLevelFromFlags(void)
 {
     s32 ret = 0;
 
@@ -3235,7 +3235,7 @@ s32 SceneState_ApplyLevelFromFlags(void)
 /* Story selector owner at 0x02001324, 84 bytes; eight calls. Per-site call
  * veneers (raw asm confirms each callee slot uses a distinct local stub
  * even across the three near-identical "twin" owners at 0x1324/1378/13cc). */
-void SceneDialogue_ShowLine1ECETo1ED0(void)
+void Dialogue_ShowLine1ECETo1ED0(void)
 {
     Func_020077f0();
     if (Func_020077ce(0x92c)) Func_020078e0(0x1ece);
@@ -3246,7 +3246,7 @@ void SceneDialogue_ShowLine1ECETo1ED0(void)
 
 /* Story selector owner at 0x02001378, 84 bytes; eight calls. Per-site call
  * veneers (twin of 0x1324/0x13cc with distinct local stub addresses). */
-void SceneDialogue_RunActor19TwoFlagLineA(void)
+void Dialogue_RunActor19TwoFlagLineA(void)
 {
     Func_02007844();
     if (Func_02007822(0x92d)) Func_02007934(0x1ece);
@@ -3257,7 +3257,7 @@ void SceneDialogue_RunActor19TwoFlagLineA(void)
 
 /* Story selector owner at 0x020013cc, 84 bytes; eight calls. Per-site call
  * veneers (twin of 0x1324/0x1378 with distinct local stub addresses). */
-void SceneDialogue_RunActor20TwoFlagLine(void)
+void Dialogue_RunActor20TwoFlagLine(void)
 {
     Func_02007898();
     if (Func_02007876(0x92e)) Func_02007988(0x1ece);
@@ -3267,7 +3267,7 @@ void SceneDialogue_RunActor20TwoFlagLine(void)
 }
 
 /* Story selector owner at 0x02001420, 60 bytes; six calls. */
-void SceneDialogue_ShowLine1ED1Or1ED2(void)
+void Dialogue_ShowLine1ED1Or1ED2(void)
 {
     Func_020078ec();
     if (Func_020078ca(0x92f)) Func_020079dc(0x1ed1);
@@ -3276,7 +3276,7 @@ void SceneDialogue_ShowLine1ED1Or1ED2(void)
 }
 
 /* Story selector owner at 0x0200145c, 84 bytes; eight calls. */
-void SceneDialogue_RunActor22TwoFlagLine(void)
+void Dialogue_RunActor22TwoFlagLine(void)
 {
     Func_02007928();
     if (Func_02007908(0x930)) Func_02007a1a(0x1ece);
@@ -3286,7 +3286,7 @@ void SceneDialogue_RunActor22TwoFlagLine(void)
 }
 
 /* Story selector owner at 0x020014b0, 84 bytes; eight calls. */
-void SceneDialogue_RunActor23BranchedDialogue(void)
+void Dialogue_RunActor23BranchedDialogue(void)
 {
     Func_0200797c();
     if (Func_0200795a(0x931)) Func_02007a6c(0x1ece);
@@ -3296,7 +3296,7 @@ void SceneDialogue_RunActor23BranchedDialogue(void)
 }
 
 /* Story selector owner at 0x02001504, 84 bytes; eight calls. */
-void SceneDialogue_RunActor24BranchedDialogue(void)
+void Dialogue_RunActor24BranchedDialogue(void)
 {
     Func_020079d0();
     if (Func_020079ae(0x932)) Func_02007ac0(0x1ece);
@@ -3306,7 +3306,7 @@ void SceneDialogue_RunActor24BranchedDialogue(void)
 }
 
 /* Story selector owner at 0x02001558, 60 bytes; six calls. */
-void SceneDialogue_RunActor25FlaggedLine(void)
+void Dialogue_RunActor25FlaggedLine(void)
 {
     Func_02007a24();
     if (Func_02007a02(0x933)) Func_02007b14(0x1ed1);
@@ -3315,7 +3315,7 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 }
 
 /* Second-phase story selector at 0x02001594, 84 bytes; eight calls. */
-void SceneDialogue_RunActor18TwoFlagLine(void)
+void Dialogue_RunActor18TwoFlagLine(void)
 {
     Func_02007a60();
     if (Func_02007a3e(0x92c)) Func_02007b50(0x1edb);
@@ -3325,7 +3325,7 @@ void SceneDialogue_RunActor18TwoFlagLine(void)
 }
 
 /* Second-phase story selector at 0x020015e8, 84 bytes; eight calls. */
-void SceneDialogue_RunActor19TwoFlagLineB(void)
+void Dialogue_RunActor19TwoFlagLineB(void)
 {
     Func_02007ab4();
     if (Func_02007a92(0x92d)) Func_02007ba4(0x1edb);
@@ -3335,7 +3335,7 @@ void SceneDialogue_RunActor19TwoFlagLineB(void)
 }
 
 /* Second-phase story selector at 0x0200163c, 84 bytes; eight calls. */
-void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
+void Dialogue_ShowLine1EDBTo1EDDActor20(void)
 {
     Func_02007b08();
     if (Func_02007ae6(0x92e)) Func_02007bf8(0x1edb);
@@ -3345,7 +3345,7 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 }
 
 /* Second-phase story selector at 0x02001690, 60 bytes; six calls. */
-void SceneDialogue_RunActor21FlaggedLine(void)
+void Dialogue_RunActor21FlaggedLine(void)
 {
     Func_02007b5c();
     if (Func_02007b3a(0x92f)) Func_02007c4c(0x1ede);
@@ -3354,7 +3354,7 @@ void SceneDialogue_RunActor21FlaggedLine(void)
 }
 
 /* Second-phase story selector at 0x020016cc, 84 bytes; eight calls. */
-void SceneDialogue_RunActor22BranchedDialogue(void)
+void Dialogue_RunActor22BranchedDialogue(void)
 {
     Func_02007b98();
     if (Func_02007b78(0x930)) Func_02007c8a(0x1edb);
@@ -3364,7 +3364,7 @@ void SceneDialogue_RunActor22BranchedDialogue(void)
 }
 
 /* Second-phase story selector at 0x02001720, 84 bytes; eight calls. */
-void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
+void Dialogue_ShowLine1EDBTo1EDDActor23(void)
 {
     Func_02007bec();
     if (Func_02007bca(0x931)) Func_02007cdc(0x1edb);
@@ -3374,7 +3374,7 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 }
 
 /* Second-phase story selector at 0x02001774, 84 bytes; eight calls. */
-void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
+void Dialogue_ShowLine1EDBTo1EDDActor24(void)
 {
     Func_02007c40();
     if (Func_02007c1e(0x932)) Func_02007d30(0x1edb);
@@ -3384,7 +3384,7 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 }
 
 /* Second-phase story selector at 0x020017c8, 60 bytes; six calls. */
-void SceneDialogue_ShowLine1EDEOr1EDF(void)
+void Dialogue_ShowLine1EDEOr1EDF(void)
 {
     Func_02007c94();
     if (Func_02007c72(0x933)) Func_02007d84(0x1ede);
@@ -3392,7 +3392,7 @@ void SceneDialogue_ShowLine1EDEOr1EDF(void)
     Func_02007da4(25, 0); Func_02007cc0();
 }
 
-void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
+void Scene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -3421,7 +3421,7 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
     Func_02007d58();
 }
 
-void FieldScene_RunScene3b1SequenceC(void)
+void Scene_RunScene3b1SequenceC(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -3472,7 +3472,7 @@ void FieldScene_RunScene3b1SequenceC(void)
     L_0200194e:;
 }
 
-void FieldScene_RunScene3b1SequenceD(void)
+void Scene_RunScene3b1SequenceD(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -3502,7 +3502,7 @@ void FieldScene_RunScene3b1SequenceD(void)
  * the alignment halfword at 0x02001b1a and the six pool words that follow it,
  * ending before the next owner's prologue at 0x02001b34.
  */
-void FieldScene_RunFlagGatedThreeActorSetup(void)
+void Scene_RunFlagGatedThreeActorSetup(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -3537,7 +3537,7 @@ void FieldScene_RunFlagGatedThreeActorSetup(void)
     Func_02007fe4();
 }
 
-void FieldScene_RunThreeActorPresentation(void)
+void Scene_RunThreeActorPresentation(void)
 {
     s32 request_a;
     s32 request_b;
@@ -3663,7 +3663,7 @@ void FieldScene_RunThreeActorPresentation(void)
     }
 }
 
-void FieldScene_RunExtendedActorChoreography(void)
+void Scene_RunExtendedActorChoreography(void)
 {
     s32 request_a;
     s32 request_b;
@@ -3904,7 +3904,7 @@ void FieldScene_RunExtendedActorChoreography(void)
     Call1_02001f3c(Func_02008c26_a, 0x921);
 }
 
-void FieldScene_RunBranchingActorPresentation(void)
+void Scene_RunBranchingActorPresentation(void)
 {
     u8 *record;
     s32 request_a;
@@ -4152,7 +4152,7 @@ void FieldScene_RunBranchingActorPresentation(void)
  * and returns or falls through to the next, and all four share one exit.
  * The 336-byte owner at 0x0200351c includes its eight trailing pool words.
  */
-void SceneState_RunFlagGatedSetupCascade(void)
+void State_RunFlagGatedSetupCascade(void)
 {
     if (Func_020099c8((s32)&Value_0000093e) != 0) {
         Func_02009a7e(8, 0, 0);
@@ -4243,7 +4243,7 @@ void RunSceneSelectionChain(void)
     }
 }
 
-void SceneActor_SetFlagBit3ForActors28To35(void)
+void Actor_SetFlagBit3ForActors28To35(void)
 {
     u32 i;
     u32 bit;
@@ -4259,7 +4259,7 @@ void SceneActor_SetFlagBit3ForActors28To35(void)
     }
 }
 
-void FieldScene_RunFourActorCoordinatePresentation(void)
+void Scene_RunFourActorCoordinatePresentation(void)
 {
     u8 *record;
     s32 mode;
@@ -4491,7 +4491,7 @@ void FieldScene_RunScene3b1_02003eec(void)
  * offset and its stored value as 224 << 1 rather than folded constants.
  * The 340-byte owner at 0x02003f94 includes its trailing pool words.
  */
-void FieldScene_RunFlagBranchedSetupCascade(void)
+void Scene_RunFlagBranchedSetupCascade(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -4611,7 +4611,7 @@ void FieldScene_RunScene3b1_02004198(void)
  * The 60-byte owner at 0x02004218 includes its one pool word, the address
  * taken as Value_00000928.
  */
-void FieldScene_RunActors24And25Setup(void)
+void Scene_RunActors24And25Setup(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -4632,7 +4632,7 @@ void FieldScene_RunActors24And25Setup(void)
  * the flag addresses and the sentinel.  Callees are named by the address
  * their call site computes, not by a runtime address.
  */
-void FieldScene_InstallFlaggedActors10To17(u8 *src)
+void Scene_InstallFlaggedActors10To17(u8 *src)
 {
     extern u8 *Data_03001ebc;
 
@@ -4701,13 +4701,13 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
  * Shared helper for resource_3b1.  The owner at 0x0200486c is 18 bytes; the
  * halfword before the next owner at 0x02004880 is alignment, not part of it.
  */
-void FieldScene_RunStepThen10(s32 a)
+void Scene_RunStepThen10(s32 a)
 {
     Func_0200ae2a(a, 0);
     Func_0200ad38(10);
 }
 
-void FieldScene_CallPairWith10(s32 a, u16 b)
+void Scene_CallPairWith10(s32 a, u16 b)
 {
     Func_0200ae5a(a, b, 10);
 }
@@ -4724,7 +4724,7 @@ void FieldScene_CallPairWith10(s32 a, u16 b)
  * call but not masked, so they stay full `s32`. `Func_0200ad8a` returns a
  * pointer whose halfword at offset 6 is then set to `d`.
  */
-void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
+void OvObj_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
     Func_0200ade4(a, b << 16, c << 16, d);
     *(s16 *)((u8 *)Func_0200ad8a(a) + 6) = d;
@@ -4743,7 +4743,7 @@ void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
     Func_0200ad9c(selected);
 }
 
-void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
+void Scene_RunSceneStep(s32 step, u32 arg, u32 opt)
 {
     extern const s32 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -4954,7 +4954,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         Func_0200964a(9, 166, 0x1ea, 0x5000);
         Func_0200965a(10, 182, 0x1f8, 0x5000);
         Func_02009666(11, 118, 0x1f8, 0x3000);
-        FieldScene_RunSceneStep(14, 0, 0);
+        Scene_RunSceneStep(14, 0, 0);
         break;
     case 19:
         Func_0200967e(8, 0x1a0, 0x148, 0);
@@ -5020,7 +5020,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
  * includes its three pool words, which are plain numeric arguments and not
  * addresses of Value_ globals.
  */
-void SceneState_ApplyActor8FourFlags(void)
+void State_ApplyActor8FourFlags(void)
 {
     Func_0200a044(8, 0x92c);
     Func_0200a04c(8, 0x935);
@@ -5032,7 +5032,7 @@ void SceneState_ApplyActor8FourFlags(void)
  * Scan slots 0 through 8 inclusive.  On the first a1 that Func_0200b4e4
  * accepts, call Func_0200b59a and stop.  a0 and a1 advance together.
  */
-void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
+void Actor_RunFirstMatchingSlot(s32 a0, s32 a1)
 {
     unsigned int i = 0;
 
@@ -5079,7 +5079,7 @@ void FieldScene_RunScene3b1_02005068(void)
 /* Sets up three actor slots (2, 1, 3) with position/pose data pulled from a
  * per-slot lookup record (fields at +8 and +16), then drives a chain of
  * actor animation, camera, and text/dialog calls for the scene. */
-void FieldScene_RunPositionTransferPresentation(void)
+void Scene_RunPositionTransferPresentation(void)
 {
     extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
@@ -5091,66 +5091,66 @@ void FieldScene_RunPositionTransferPresentation(void)
     s32 base5_200e7c8;
 
     Func_020099a6(0x1b80000, -1, 0xb00000, 0x1000001);
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(0, 0x1b80000, 0x860000);
-    BattleRuntime_WaitIfModeZero_1(); /* main:0808a360 */
-    ObjectMotion_SetSpeedParameters_1(0, 0x19999, 0xcccc);
+    Motion_SetHPosTerrain_1(0, 0x1b80000, 0x860000);
+    Battle_WaitMode0_1(); /* main:0808a360 */
+    Motion_SetSpeed_1(0, 0x19999, 0xcccc);
     Object_SetModeById_1(0, 5);
-    ObjectMotion_SetPositionAndCommit_1(0, 0x198, 134);
-    ObjectMotion_SetPositionAndCommit_2(0, 0x198, 152);
-    ObjectMotion_SetPositionAndCommit_3(0, 0x1b0, 166);
+    Motion_SetPositionAndCommit_1(0, 0x198, 134);
+    Motion_SetPositionAndCommit_2(0, 0x198, 152);
+    Motion_SetPositionAndCommit_3(0, 0x1b0, 166);
     Object_SetModeById_2(0, 1);
-    ObjectMotion_ArmCallback_1(0, 0x4000, 0);
+    Motion_ArmCb_1(0, 0x4000, 0);
     record = Scene_GetRecord_1(0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_2(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Motion_SetHPosTerrain_2(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Scene_GetRecord_2(0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_3(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Motion_SetHPosTerrain_3(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Scene_GetRecord_3(1);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_4(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Motion_SetHPosTerrain_4(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Func_0200b5b6(1); /* main:080000c0 */
-    ObjectMotion_SetSpeedParameters_2(2, 0x19999, 0xcccc);
-    ObjectMotion_ResetAndSetPositionInMode2_1(2, 0x1a8, 152);
-    ObjectMotion_SetSpeedParameters_3(1, 0x19999, 0xcccc);
-    ObjectMotion_ResetAndSetPositionInMode2_2(1, 0x1c0, 168);
-    ObjectMotion_SetSpeedParameters_4(3, 0x20000, 0x10000);
-    ObjectMotion_SetPositionAndReset_1(3, 0x1ca, 152);
+    Motion_SetSpeed_2(2, 0x19999, 0xcccc);
+    Motion_ResetPosMode2_1(2, 0x1a8, 152);
+    Motion_SetSpeed_3(1, 0x19999, 0xcccc);
+    Motion_ResetPosMode2_2(1, 0x1c0, 168);
+    Motion_SetSpeed_4(3, 0x20000, 0x10000);
+    Motion_SetPosReset_1(3, 0x1ca, 152);
     Object_SetModeById_3(1, 1);
     Object_SetModeById_4(2, 1);
-    ObjectMotion_ArmCallback_2(2, 0x4000, 0);
-    ObjectMotion_ArmCallback_3(1, 0x4000, 0);
-    ObjectMotion_ArmCallback_4(3, 0x4000, 40);
+    Motion_ArmCb_2(2, 0x4000, 0);
+    Motion_ArmCb_3(1, 0x4000, 0);
+    Motion_ArmCb_4(3, 0x4000, 40);
     Func_0200b7ee(10); /* main:0808a1d8 */
     /* Text/dialog resource pointer, passed by base address and by base+1. */
     base5_1e46 = (s32)Data_00001e46;
     Func_0200b6b2(base5_1e46, 1, 10); /* main:08015210 */
-    BattleRuntime_WaitIfModeZero_2(10);
+    Battle_WaitMode0_2(10);
     Func_02009b1a(0, 0, 40);
     Value3(Func_02009b26, 1, 0x4000, 20);
-    ObjectMotion_SetSpeedLimitAndAcceleration_1(0x39999, 0x7333); /* main:0808a208 */
+    Motion_SetSpeedLim_1(0x39999, 0x7333); /* main:0808a208 */
     Call4(Func_02009b00, 0x1b80000, -1, 0x1400000, 0x10000014);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_1(8, 2); /* main:0808a138 */
+    Motion_SetVarCbObj_1(8, 2); /* main:0808a138 */
     Call2(Func_02009ae8, 8, 0xd000);
     SceneWork_SetStepValue_1((base5_1e46 + 1)); /* main:0808a170 */
     Func_02009ae0(8);
-    ObjectMotion_ArmCallback_5(8, 0, 20);
+    Motion_ArmCb_5(8, 0, 20);
     Call4(Func_02009b3a, 0x1b80000, -1, 0x860000, 0x10000000);
     /* Second text/dialog resource pointer, shared across three calls. */
     base5_200e7c8 = (s32)Data_0200e7c8;
-    ObjectMotion_EnableActionAndSetCallback_1(1, base5_200e7c8);
-    ObjectMotion_EnableActionAndSetCallback_2(2, base5_200e7c8);
-    ObjectMotion_MarkActiveAndSetActionCallback_1(3, base5_200e7c8); /* main:0808a0b0 */
-    BattleRuntime_WaitIfModeZero_3(40);
+    Motion_EnableActCb_1(1, base5_200e7c8);
+    Motion_EnableActCb_2(2, base5_200e7c8);
+    Motion_MarkActiveAndSetActionCallback_1(3, base5_200e7c8); /* main:0808a0b0 */
+    Battle_WaitMode0_3(40);
     GameFlag_Set_1(0x301);
     Func_02009ba6(23, 0, 0);
     GameFlag_Clear_1(0x12f);
 }
 
-void FieldScene_RunFormationAndEffectPresentation(void)
+void Scene_RunFormationAndEffectPresentation(void)
 {
     s32 action;
 
@@ -5241,7 +5241,7 @@ void FieldScene_RunFormationAndEffectPresentation(void)
     Func_0200bc58(4);
 }
 
-void FieldScene_RunActors24And25SetupWithValue929(void)
+void Scene_RunActors24And25SetupWithValue929(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -5296,7 +5296,7 @@ void FieldScene_RunScene3b1_020056dc(void)
  * A flat setter sequence, no branches. The 108-byte owner at 0x02005780
  * includes its one pool word, the address taken as Value_0000092a.
  */
-void FieldScene_RunActors24And25SetupWithValue92a(void)
+void Scene_RunActors24And25SetupWithValue92a(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -5315,7 +5315,7 @@ void FieldScene_RunActors24And25SetupWithValue92a(void)
     Func_0200bcae();
 }
 
-void FieldScene_RunExtendedFormationPresentation(void)
+void Scene_RunExtendedFormationPresentation(void)
 {
     s32 slot_b;
     s32 slot_c;
@@ -5541,7 +5541,7 @@ void FieldScene_RunScene3b1_02006110(void)
  * because every call reaches its target through its own local veneer and two
  * of the sites share one veneer.
  */
-void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
+void State_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 {
     s32 cnt_a = 0;
     s32 cnt_b = 0;

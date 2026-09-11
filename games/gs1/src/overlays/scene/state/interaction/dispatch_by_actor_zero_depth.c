@@ -11,7 +11,7 @@ extern struct Actor *Func_0200181a(s32);
 extern void Func_02000dfc(void);
 extern void Func_02000e32(void);
 
-void SceneState_DispatchByActorZeroDepth(void)
+void State_DispatchByActorZeroDepth(void)
 {
     struct Actor *p = Func_0200181a(0);
 

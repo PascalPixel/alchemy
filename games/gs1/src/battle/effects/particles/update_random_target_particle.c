@@ -23,7 +23,7 @@ void RotateVectorByMagnitude(
 void NormalizeVector(struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 
-void BattleEffect_UpdateRandomTargetParticle(struct EffectSlot *effect)
+void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 {
     struct EffectPositionSource *source;
     struct EffectVector position;

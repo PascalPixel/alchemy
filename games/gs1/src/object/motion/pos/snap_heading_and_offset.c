@@ -4,9 +4,9 @@ void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
-void ObjectMotion_SetActionVariant(u32 object_id, s32 action);
+void Motion_SetActionVariant(u32 object_id, s32 action);
 
-void ObjectMotion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
+void Motion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
 {
     struct ObjectRuntime *object;
     s16 current_angle;
@@ -30,7 +30,7 @@ void ObjectMotion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
             object->x + ((8 - angle_remainder) << 16),
             object->y, object->z);
         Object_CommitPosition(object);
-        ObjectMotion_SetActionVariant(object_id, action);
+        Motion_SetActionVariant(object_id, action);
         Object_SetPosition(object, object->x, object->y,
             object->z + (z_offset << 16));
     }

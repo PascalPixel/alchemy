@@ -27,7 +27,7 @@ u32 Random16(void);
 void RotateVectorByMagnitude(s32, s32, struct Output *);
 void Audio_PlayCue(s32);
 
-void BattleEffect_UpdateRadialLaunch(struct EffectSlot *effect)
+void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
 {
     struct Output position;
     struct PositionSource_0809b11c *source;

@@ -3,12 +3,12 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 struct EffectDescriptor *Func_0808d48c(s32, s32);
-void BattleRuntime_Reset(void);
+void Battle_Reset(void);
 void Func_08091750(void);
 void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 
-s32 BattleEffect_RunKind6DescriptorAction(s32 arg0)
+s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
 {
     s32 val;
     s32 ret;
@@ -20,7 +20,7 @@ s32 BattleEffect_RunKind6DescriptorAction(s32 arg0)
         val = FIELD_AT_OFFSET(p, s32 *, 8);
         if (val != 0) {
             if (val < 0x10000) {
-                BattleRuntime_Reset();
+                Battle_Reset();
                 Func_08092b94(FIELD_AT_OFFSET(p, s32 *, 8));
                 Func_08092f84(-1, 0);
                 ret = 0;

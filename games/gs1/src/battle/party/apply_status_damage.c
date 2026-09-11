@@ -6,8 +6,8 @@ s32 Func_08077148(void);
 u8 *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
 void Func_08077118(s32, s32);
-void BattleEffect_ApplyColorToSourceBuffer(void *, s32);
-void BattleEffect_StartBufferInterpolation(s32);
+void BattleFx_ApplyColorToSourceBuffer(void *, s32);
+void BattleFx_StartBufferInterpolation(s32);
 void Audio_PlayCue(s32);
 
 s32 BattleParty_ApplyStatusDamage(void)
@@ -55,8 +55,8 @@ s32 BattleParty_ApplyStatusDamage(void)
     }
 
     if (result != 0) {
-        BattleEffect_ApplyColorToSourceBuffer((void *)0x1ff, 0);
-        BattleEffect_StartBufferInterpolation(4);
+        BattleFx_ApplyColorToSourceBuffer((void *)0x1ff, 0);
+        BattleFx_StartBufferInterpolation(4);
         Audio_PlayCue(133);
     }
 

@@ -9,7 +9,7 @@ u32 Random16(void);
 #define Rand Random16
 s32 Object_SetCallback(void *, s32);
 
-void BattleEffect_UpdateDriftingFallObject(void *obj)
+void BattleFx_UpdateDriftingFallObject(void *obj)
 {
     s32 r;
 

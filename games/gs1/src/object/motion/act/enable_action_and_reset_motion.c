@@ -2,7 +2,7 @@
 #include "types.h"
 
 s32 Object_ResetMotion();
-void ObjectMotion_EnableActionAndResetMotion(void)
+void Motion_EnableReset(void)
 {
   void *object;
   unsigned char action_enabled;

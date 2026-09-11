@@ -6,7 +6,7 @@ s32 Func_0808ef70(s32, s32);
 s32 Object_GetById(u32);
 s32 Audio_PlayCue(s32);
 
-s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
+s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
 {
     s32 object;
     s32 result;

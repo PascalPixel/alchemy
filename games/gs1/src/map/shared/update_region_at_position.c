@@ -29,7 +29,7 @@ extern struct Runtime_0808bde0 *Data_03001ebc;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
-void BattleRuntime_InitializeRenderObject(void);
+void Battle_InitializeRenderObject(void);
 
 #define FIXED_0808BDE0(value) ((s32)((u32)(s32)(value) << 16))
 
@@ -72,7 +72,7 @@ loop:
             z < FIXED_0808BDE0(max_z)) {
             runtime->selected_region = (u16)selected_value;
             Audio_PlayCue(123);
-            BattleRuntime_InitializeRenderObject();
+            Battle_InitializeRenderObject();
             return;
         }
         runtime = Data_03001ebc;

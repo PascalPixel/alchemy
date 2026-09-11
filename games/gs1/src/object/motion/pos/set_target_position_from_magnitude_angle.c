@@ -10,7 +10,7 @@ struct Object_08096bec {
 void RotateVectorByMagnitude(s32, s32, s32 *);
 void Object_SetPosition(struct Object_08096bec *, s32, s32, s32);
 
-void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle)
 {
     s32 values[3];

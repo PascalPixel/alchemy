@@ -4,7 +4,7 @@
 
 s32 Func_08098cd8();
 
-void BattleEffect_CallEffect04(void)
+void BattleFx_CallEffect04(void)
 {
     Func_08098cd8();
 }

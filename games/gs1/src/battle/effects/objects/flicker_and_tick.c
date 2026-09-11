@@ -4,7 +4,7 @@ extern s32 Data_03001e40;
 void Func_08009240(s32, s32);
 void Func_08096ddc(s32);
 
-void BattleEffect_FlickerObjectAndTick(s32 arg0)
+void BattleFx_FlickerObjectAndTick(s32 arg0)
 {
     if ((Data_03001e40 & 2) != 0) {
         Func_08009240(arg0, 7);

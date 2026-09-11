@@ -12,12 +12,12 @@
 #define SceneData_ReturnZero Func_02000064
 #define SceneData_GetSecondaryTable Func_02000068
 #define SceneData_PrepareTable84d8 Func_02000070
-#define FieldScene_RunActor16MessageBranch Func_0200009c
-#define FieldScene_RunActor17MessageBranch Func_020000e4
-#define FieldScene_RunActor18MessageBranch Func_0200012c
-#define FieldScene_RunActor19MessageBranch Func_02000174
+#define Scene_RunActor16MessageBranch Func_0200009c
+#define Scene_RunActor17MessageBranch Func_020000e4
+#define Scene_RunActor18MessageBranch Func_0200012c
+#define Scene_RunActor19MessageBranch Func_02000174
 #define SceneData_GetTable8658 Func_020001bc
-#define FieldScene_SetupEntryLayoutsBySelector Func_020001c4
+#define Scene_SetupEntryLayoutsBySelector Func_020001c4
 
 #include "resource_390.h"
 #include "resource_390_table.h"
@@ -126,7 +126,7 @@ u8 *SceneData_PrepareTable84d8(void)
     return buf;
 }
 
-void FieldScene_RunActor16MessageBranch(void)
+void Scene_RunActor16MessageBranch(void)
 {
     /*
      * The local must stay wider than the halfword field; as a u16 it is
@@ -146,7 +146,7 @@ void FieldScene_RunActor16MessageBranch(void)
     Func_020003a6();
 }
 
-void FieldScene_RunActor17MessageBranch(void)
+void Scene_RunActor17MessageBranch(void)
 {
     /*
      * The local must stay wider than the halfword field; as a u16 it is
@@ -166,7 +166,7 @@ void FieldScene_RunActor17MessageBranch(void)
     Func_020003ee();
 }
 
-void FieldScene_RunActor18MessageBranch(void)
+void Scene_RunActor18MessageBranch(void)
 {
     /*
      * The local must stay wider than the halfword field; as a u16 it is
@@ -186,7 +186,7 @@ void FieldScene_RunActor18MessageBranch(void)
     Func_02000436();
 }
 
-void FieldScene_RunActor19MessageBranch(void)
+void Scene_RunActor19MessageBranch(void)
 {
     void Func_020004a2(s32, s32);
     void Func_020004a2_a(s32, s32);
@@ -228,7 +228,7 @@ u8 *SceneData_GetTable8658(void)
  * comparison against 7 and unsigned for the window test below. Which reading
  * the record intends is not established, so both are kept.
  */
-s32 FieldScene_SetupEntryLayoutsBySelector(void)
+s32 Scene_SetupEntryLayoutsBySelector(void)
 {
     s32 Func_020004a2_b();
 

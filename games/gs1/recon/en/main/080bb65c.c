@@ -1,11 +1,11 @@
 #include "types.h"
 
-#define BattlePresentation_WaitForAdvance Func_080bb65c
+#define BattlePres_WaitForAdvance Func_080bb65c
 
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001c94;
 
-void BattlePresentation_WaitForAdvance(void)
+void BattlePres_WaitForAdvance(void)
 {
     u8 prompt_buf[12];
     u8 *prompt = prompt_buf;

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunActorEventSetup Func_020011b0
+#define Scene_RunActorEventSetup Func_020011b0
 
 /* Complete 744-byte owner. The loader relocates the call at resource
  * 0x0200124c to 0x020081ec; its raw disassembly label is not an inner entry.
@@ -93,7 +93,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 FieldScene_RunActorEventSetup(void)
+s32 Scene_RunActorEventSetup(void)
 {
     u8 *record;
 

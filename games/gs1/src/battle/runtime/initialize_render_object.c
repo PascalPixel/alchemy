@@ -2,7 +2,7 @@
 
 s32 Object_SetMode(s32, s32);
 
-void BattleRuntime_InitializeRenderObject(void)
+void Battle_InitializeRenderObject(void)
 {
     struct BattleRenderObject *object;
 

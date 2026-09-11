@@ -47,10 +47,10 @@ void Func_08003f3c(s32 handle);
 void Func_0809202c(void);
 void Func_08002dd8(s32 asset_id);
 
-#define BattleEffect_CleanupSceneObjects Func_08097194
+#define BattleFx_CleanupSceneObjects Func_08097194
 
 /* Drain effect objects, restore the scene position, and release effect data. */
-void BattleEffect_CleanupSceneObjects(void)
+void BattleFx_CleanupSceneObjects(void)
 {
     struct BattleEffectScene **scene_cell;
     struct BattleEffectScene *scene;

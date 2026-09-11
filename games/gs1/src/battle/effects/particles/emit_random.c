@@ -17,7 +17,7 @@ extern struct GlobalData Data_02000240;
 extern char Value_fff80000;
 extern char Value_001ffffe;
 
-void BattleEffect_EmitRandomParticle(void)
+void BattleFx_EmitRandomParticle(void)
 {
     register s32 rel_x;
     register s32 rel_y;

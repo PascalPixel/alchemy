@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-#define FieldScene_RunScriptedActorPresentation Func_020008b4
+#define Scene_RunScriptedActorPresentation Func_020008b4
 
 struct SceneWork {
     u8 unknown_000[0x1c0];
@@ -274,7 +274,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1) { return f(a0, a1); }
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) { f(a0, a1, a2); }
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) { f(a0, a1, a2, a3); }
 
-void FieldScene_RunScriptedActorPresentation(void)
+void Scene_RunScriptedActorPresentation(void)
 {
     s32 zero;
     u8 *actor;

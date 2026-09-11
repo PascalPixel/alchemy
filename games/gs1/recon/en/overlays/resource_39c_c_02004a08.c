@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorCoordinateDialogueSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunActorCoordinateDialogueSequence:
  * 66 calls, one bounded dialogue loop, the actor-coordinate gate, and the
  * complete presentation sequence across the callable owner. */
 
-#define FieldScene_RunActorCoordinateDialogueSequence Func_02004a08
+#define Scene_RunActorCoordinateDialogueSequence Func_02004a08
 
 void Func_02004d70();
 void Func_02004d78();

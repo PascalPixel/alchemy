@@ -5,13 +5,13 @@
 #define SceneData_GetTable8728 Func_02000074
 #define SceneData_SelectAndPrepareTable Func_0200007c
 #define SceneData_SelectSubStateTable Func_020000e4
-#define SceneDialogue_RunActor12DialogueAndSetFlag910 Func_02000144
-#define SceneDialogue_RunActor16Dialogue Func_0200016c
-#define SceneDialogue_RunActor8FlaggedDialogue Func_0200018c
-#define SceneDialogue_RunActor8FacingDialogue Func_020001fc
-#define FieldScene_RunArrivalPlacement Func_02000240
-#define SceneState_SetRuntimeWord448To521 Func_02000308
-#define SceneState_ClearSlotsBySubState Func_0200033c
+#define Dialogue_RunActor12DialogueAndSetFlag910 Func_02000144
+#define Dialogue_RunActor16Dialogue Func_0200016c
+#define Dialogue_RunActor8FlaggedDialogue Func_0200018c
+#define Dialogue_RunActor8FacingDialogue Func_020001fc
+#define Scene_RunArrivalPlacement Func_02000240
+#define State_SetRuntimeWord448To521 Func_02000308
+#define State_ClearSlotsBySubState Func_0200033c
 #include "resource_3a9.h"
 
 /* Table selection, dialogue and arrival scripts for resource_3a9. */
@@ -184,7 +184,7 @@ u8 *SceneData_SelectSubStateTable(void)
     return Data_02008a3c;
 }
 
-void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
+void Dialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Func_02000558();
     Func_020005a6(0x1ADD);
@@ -193,7 +193,7 @@ void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
     Func_0200057a();
 }
 
-void SceneDialogue_RunActor16Dialogue(void)
+void Dialogue_RunActor16Dialogue(void)
 {
     Func_02000580();
     Func_020005ce(0x1AE3);
@@ -204,7 +204,7 @@ void SceneDialogue_RunActor16Dialogue(void)
 /* Actor 8's dialogue, branched on flag 0x911. Func_02000626 and
  * Func_02000626_b are two imports sharing one call word: the two-argument
  * gesture in the first arm, the one-argument message in the second. */
-void SceneDialogue_RunActor8FlaggedDialogue(void)
+void Dialogue_RunActor8FlaggedDialogue(void)
 {
     u8 *p = Func_020005ba(0);
 
@@ -228,7 +228,7 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor8FacingDialogue(void)
+void Dialogue_RunActor8FacingDialogue(void)
 {
     void Func_0200067a(int);
 
@@ -254,7 +254,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
  * of the player's own +85 does not test for null; that asymmetry is real.
  * 158 is read as a cue id from its argument position and is not verified.
  */
-void FieldScene_RunArrivalPlacement(void)
+void Scene_RunArrivalPlacement(void)
 {
     u8 *Func_0200067a_a();
 
@@ -317,7 +317,7 @@ void FieldScene_RunArrivalPlacement(void)
 
 /* Publishes 0x209 at +448 of the runtime record, and calls Func_0200065e for
  * scene 0x64. */
-s32 SceneState_SetRuntimeWord448To521(void)
+s32 State_SetRuntimeWord448To521(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 0x209;
     if (Data_02000240[224] == (s32)(u32)&Value_00000064) {
@@ -333,7 +333,7 @@ s32 SceneState_SetRuntimeWord448To521(void)
  * position, and the six-argument call's argument meanings are not
  * established.
  */
-void SceneState_ClearSlotsBySubState(void)
+void State_ClearSlotsBySubState(void)
 {
     s16 sub = Data_02000240[225];
 

@@ -125,7 +125,7 @@ u8 *SceneData_GetEffectTable(void)
     return RESOURCE37E_QUATERNARY_TABLE;   /* image offset 0x148 */
 }
 
-s32 FieldScene_InitSceneRequestAndCameraZoom(void) {
+s32 Scene_InitSceneRequestAndCameraZoom(void) {
     struct Resource37deSceneRuntime *runtime;
     /* The three scale values are locals, not literals at the call, so that
        their materialisation sits in the entry block instead of the call's.

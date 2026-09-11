@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_DispatchRequestKind Func_08096960
+#define BattleFx_DispatchRequestKind Func_08096960
 
 struct BattleEffectRequest {
     u8 reserved_000[0x14];
@@ -45,7 +45,7 @@ void Func_0809ade8(s32);
 void Func_0809ad90(s32);
 void Func_0809ab98(s32);
 
-void BattleEffect_DispatchRequestKind(void)
+void BattleFx_DispatchRequestKind(void)
 {
     struct BattleEffectRequest *request = Data_03001f30;
     struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&Data_03001f30 - 0x74);

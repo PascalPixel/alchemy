@@ -7,27 +7,27 @@
 #define Scene_RunActorExchange Func_02000b2c
 #define Scene_RunActorSequence Func_02000c30
 #define EventScript_PrepareActorRenderFlags Func_02000030
-#define OverlayObject_SetFacingTowardObject10 Func_02000054
+#define OvObj_SetFacingTowardObject10 Func_02000054
 #define SceneData_SelectTable97b4ByState Func_0200007c
 #define SceneData_ReturnZero Func_020000ac
 #define SceneData_GetTable98ec Func_020000b0
 #define SceneData_SelectTable9918ByState Func_020000b8
-#define SceneDialogue_RunMessage1958Step Func_020000e8
-#define SceneDialogue_RunActor11Message195d Func_02000140
-#define SceneDialogue_RunActor13Message1961 Func_02000160
-#define FieldScene_RunPrimaryScript Func_02000180
-#define FieldScene_RunScene3a2SequenceA Func_020001ec
-#define SceneDialogue_RunLine1956 Func_0200084c
+#define Dialogue_RunMessage1958Step Func_020000e8
+#define Dialogue_RunActor11Message195d Func_02000140
+#define Dialogue_RunActor13Message1961 Func_02000160
+#define Scene_RunPrimaryScript Func_02000180
+#define Scene_RunScene3a2SequenceA Func_020001ec
+#define Dialogue_RunLine1956 Func_0200084c
 #define ConfigureAndPlaceActorFourteen Func_02000870
 #define FieldScene_RunScene3a2_020008a8 Func_020008a8
-#define SceneDialogue_RunActorFifteenByLeaderHeading Func_020008e0
-#define FieldScene_RunScriptedSteps0And1A12 Func_02000fcc
-#define FieldScene_RunPairedLayoutStepsThenSetOne Func_02000ff0
-#define SceneState_RunRect6x28Step Func_02001028
-#define SceneActor_SetFlagBitByRankAgainstActorZero Func_02001060
-#define SceneActor_UpdateActorFourteenByDepth Func_02001090
-#define ActorPresentation_PrepareActorFourteenWithCallback Func_020010b8
-#define FieldScene_SetSlot15Byte89AndRunStep Func_02001144
+#define Dialogue_RunActorFifteenByLeaderHeading Func_020008e0
+#define Scene_RunScriptedSteps0And1A12 Func_02000fcc
+#define Scene_RunPairedLayoutStepsThenSetOne Func_02000ff0
+#define State_RunRect6x28Step Func_02001028
+#define Actor_SetFlagBitByRankAgainstActorZero Func_02001060
+#define Actor_UpdateActorFourteenByDepth Func_02001090
+#define ActorDraw_PrepareActorFourteenWithCallback Func_020010b8
+#define Scene_SetSlot15Byte89AndRunStep Func_02001144
 #define SceneData_SelectTableByWord224 Func_02001180
 
 struct EventActor {
@@ -604,7 +604,7 @@ s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
     return 0;
 }
 
-s32 OverlayObject_SetFacingTowardObject10(void *self)
+s32 OvObj_SetFacingTowardObject10(void *self)
 {
     void *obj;
 
@@ -639,7 +639,7 @@ s32 SceneData_SelectTable9918ByState(void)
     return (s32)Data_02009918;
 }
 
-void SceneDialogue_RunMessage1958Step(void)
+void Dialogue_RunMessage1958Step(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -661,7 +661,7 @@ void SceneDialogue_RunMessage1958Step(void)
     Func_0200162a();
 }
 
-void SceneDialogue_RunActor11Message195d(void)
+void Dialogue_RunActor11Message195d(void)
 {
     Func_02001634();
     Func_020016ca(0x195D);
@@ -669,7 +669,7 @@ void SceneDialogue_RunActor11Message195d(void)
     Func_0200164e();
 }
 
-void SceneDialogue_RunActor13Message1961(void)
+void Dialogue_RunActor13Message1961(void)
 {
     Func_02001654();
     Func_020016ea(0x1961);
@@ -677,7 +677,7 @@ void SceneDialogue_RunActor13Message1961(void)
     Func_0200166e();
 }
 
-void FieldScene_RunPrimaryScript(void)
+void Scene_RunPrimaryScript(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -695,7 +695,7 @@ void FieldScene_RunPrimaryScript(void)
     Func_020017b4(2);
 }
 
-void FieldScene_RunScene3a2SequenceA(void)
+void Scene_RunScene3a2SequenceA(void)
 {
     extern u8 Data_03001ebc[];
     void Func_02001d40();
@@ -883,7 +883,7 @@ void FieldScene_RunScene3a2SequenceA(void)
     Func_02001d2c_a();
 }
 
-void SceneDialogue_RunLine1956(void)
+void Dialogue_RunLine1956(void)
 {
     void Func_02001d40_a(void);
 
@@ -915,7 +915,7 @@ void FieldScene_RunScene3a2_020008a8(void)
     Func_02001e26(14, 0, 0);
 }
 
-void SceneDialogue_RunActorFifteenByLeaderHeading(void)
+void Dialogue_RunActorFifteenByLeaderHeading(void)
 {
     struct Slot020008e0 *Func_02001dee_a(s32);
 
@@ -1167,7 +1167,7 @@ void Scene_RunActorSequence(void)
     Func_02002588(6);
 }
 
-void FieldScene_RunScriptedSteps0And1A12(void)
+void Scene_RunScriptedSteps0And1A12(void)
 {
     Func_020024c0();
     Func_02002530(0, 1);
@@ -1175,7 +1175,7 @@ void FieldScene_RunScriptedSteps0And1A12(void)
     Func_020024dc();
 }
 
-void FieldScene_RunPairedLayoutStepsThenSetOne(void)
+void Scene_RunPairedLayoutStepsThenSetOne(void)
 {
     {
         s32 fifth = 1;
@@ -1192,7 +1192,7 @@ void FieldScene_RunPairedLayoutStepsThenSetOne(void)
     Func_02002508(1);
 }
 
-void SceneState_RunRect6x28Step(void)
+void State_RunRect6x28Step(void)
 {
     {
         s32 fifth = 1;
@@ -1209,7 +1209,7 @@ void SceneState_RunRect6x28Step(void)
     Func_02002540(1);
 }
 
-s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
+s32 Actor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
 {
     if (Func_02002570(0)->rank > actor->rank) {
         actor->flags |= 2;
@@ -1218,7 +1218,7 @@ s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
     }
 }
 
-void SceneActor_UpdateActorFourteenByDepth(void)
+void Actor_UpdateActorFourteenByDepth(void)
 {
     struct Actor *current = Func_0200259e(0);
     struct Actor *other = Func_020025a6(14);
@@ -1228,7 +1228,7 @@ void SceneActor_UpdateActorFourteenByDepth(void)
     }
 }
 
-void ActorPresentation_PrepareActorFourteenWithCallback(void)
+void ActorDraw_PrepareActorFourteenWithCallback(void)
 {
     u8 zero;
 
@@ -1249,7 +1249,7 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     Func_0200262c();
 }
 
-void FieldScene_SetSlot15Byte89AndRunStep(void)
+void Scene_SetSlot15Byte89AndRunStep(void)
 {
     u8 *slot;
 

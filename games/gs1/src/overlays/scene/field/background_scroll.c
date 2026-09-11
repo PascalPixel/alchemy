@@ -8,28 +8,28 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneState_SetActorEightValue3d Func_02000030
+#define State_SetActorEightValue3d Func_02000030
 #define SceneData_GetTable835c Func_02000040
 #define SceneData_ReturnZero Func_02000048
 #define SceneData_GetTable844c Func_0200004c
 #define SceneData_GetTable8474 Func_02000054
-#define SceneActor_ShiftObjectsByBlock Func_0200005c
-#define FieldScene_ApplyOffset0Pos5 Func_020000d8
-#define FieldScene_ApplyOffset0Neg5 Func_020000e8
-#define FieldScene_ApplyOffset0Pos5Second Func_020000f8
-#define FieldScene_ApplyOffset0Neg5Second Func_02000108
-#define FieldScene_ApplyOffset0Pos6 Func_02000118
-#define FieldScene_ApplyOffset0Neg6 Func_02000128
-#define SceneState_SetValue123ThenCounter16c Func_02000138
-#define SceneEffect_SetAlphaBlendForScene9 Func_0200015c
+#define Actor_ShiftObjectsByBlock Func_0200005c
+#define Scene_ApplyOffset0Pos5 Func_020000d8
+#define Scene_ApplyOffset0Neg5 Func_020000e8
+#define Scene_ApplyOffset0Pos5Second Func_020000f8
+#define Scene_ApplyOffset0Neg5Second Func_02000108
+#define Scene_ApplyOffset0Pos6 Func_02000118
+#define Scene_ApplyOffset0Neg6 Func_02000128
+#define State_SetValue123ThenCounter16c Func_02000138
+#define Effect_SetAlphaBlendForScene9 Func_0200015c
 #define SceneData_GetTable84a4 Func_020001b4
-#define FieldScene_RunTwoCallSequence Func_020001bc
-#define SceneState_RunEmptyHook Func_020001d0
+#define Scene_RunTwoCallSequence Func_020001bc
+#define State_RunEmptyHook Func_020001d0
 #define SceneData_InitHeader8590 Func_020001d4
-#define SceneState_SetRuntimeWord448To256 Func_02000200
-#define SceneEffect_UpdateBg3HofsByVcount Func_0200026c
-#define SceneEffect_SetBg3HofsSplit Func_020002a0
-#define SceneState_ApplyTables826dAnd82a1 Func_020002e0
+#define State_SetRuntimeWord448To256 Func_02000200
+#define Effect_UpdateBg3HofsByVcount Func_0200026c
+#define Effect_SetBg3HofsSplit Func_020002a0
+#define State_ApplyTables826dAnd82a1 Func_020002e0
 
 #include "resource_397.h"
 
@@ -82,7 +82,7 @@ void Func_0200051e();
 void Func_020005f6(s32, s32, s32);
 s32 Func_020005f8(s32, s32);
 
-void SceneState_SetActorEightValue3d(void)
+void State_SetActorEightValue3d(void)
 {
     Func_0200037c(8, 0x3D);
 }
@@ -114,7 +114,7 @@ u8 *SceneData_GetTable8474(void)
     return (u8 *)0x02008474;   /* image offset 0x474 */
 }
 
-void SceneActor_ShiftObjectsByBlock(s32 bx, s32 bz)
+void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 {
     u8 *work = *(u8 **)0x03001ebc;
     struct SceneObject *obj;
@@ -146,37 +146,37 @@ void SceneActor_ShiftObjectsByBlock(s32 bx, s32 bz)
     }
 }
 
-void FieldScene_ApplyOffset0Pos5(void)
+void Scene_ApplyOffset0Pos5(void)
 {
     Func_0200013c(0, 5);
 }
 
-void FieldScene_ApplyOffset0Neg5(void)
+void Scene_ApplyOffset0Neg5(void)
 {
     Func_0200014e(0, -5);
 }
 
-void FieldScene_ApplyOffset0Pos5Second(void)
+void Scene_ApplyOffset0Pos5Second(void)
 {
-    SceneActor_ShiftObjectsByBlock(0, 5);
+    Actor_ShiftObjectsByBlock(0, 5);
 }
 
-void FieldScene_ApplyOffset0Neg5Second(void)
+void Scene_ApplyOffset0Neg5Second(void)
 {
     Func_0200016e(0, -5);
 }
 
-void FieldScene_ApplyOffset0Pos6(void)
+void Scene_ApplyOffset0Pos6(void)
 {
     Func_0200017c(0, 6);
 }
 
-void FieldScene_ApplyOffset0Neg6(void)
+void Scene_ApplyOffset0Neg6(void)
 {
     Func_0200018e(0, -6);
 }
 
-void SceneState_SetValue123ThenCounter16c(void)
+void State_SetValue123ThenCounter16c(void)
 {
     u8 *state = Data_03001ebc;
     s16 *cnt;
@@ -186,7 +186,7 @@ void SceneState_SetValue123ThenCounter16c(void)
     Func_0200048c(*cnt);
 }
 
-void SceneEffect_SetAlphaBlendForScene9(void)
+void Effect_SetAlphaBlendForScene9(void)
 {
     u8 *disp;
 
@@ -220,7 +220,7 @@ u8 *SceneData_GetTable84a4(void)
     return (u8 *)0x020084a4;   /* image offset 0x4a4 */
 }
 
-void FieldScene_RunTwoCallSequence(void)
+void Scene_RunTwoCallSequence(void)
 {
     Func_020004e4();
     Func_020004f0();
@@ -231,7 +231,7 @@ void FieldScene_RunTwoCallSequence(void)
  * zero halfwords on either side align it and the entry that follows, and are
  * not part of it.
  */
-void SceneState_RunEmptyHook(void)
+void State_RunEmptyHook(void)
 {
 }
 
@@ -244,7 +244,7 @@ void SceneData_InitHeader8590(void)
     Func_020004fc(hdr, (u8 *)0x020085B0);
 }
 
-s32 SceneState_SetRuntimeWord448To256(void)
+s32 State_SetRuntimeWord448To256(void)
 {
     u8 **base = (u8 **)0x03001ebc;
     u8 *work;
@@ -285,7 +285,7 @@ s32 SceneState_SetRuntimeWord448To256(void)
     return 0;
 }
 
-void SceneEffect_UpdateBg3HofsByVcount(void)
+void Effect_UpdateBg3HofsByVcount(void)
 {
     u16 *src;
     u32 value;
@@ -304,7 +304,7 @@ void SceneEffect_UpdateBg3HofsByVcount(void)
  * halfword, and a five-word literal pool at 0x020002cc holding 0x03001e70,
  * 0x02008610, 0x02008614, 0x03001e40 and 0x02008616.
  *
- * It prepares the three words that SceneEffect_UpdateBg3HofsByVcount consumes:
+ * It prepares the three words that Effect_UpdateBg3HofsByVcount consumes:
  * a VCOUNT threshold at 0x02008610 and the two BG3HOFS values selected above
  * and below it. 192 is the screen height, so the threshold is a scanline
  * derived from a coordinate in the scene work record.
@@ -315,7 +315,7 @@ void SceneEffect_UpdateBg3HofsByVcount(void)
  * of the halfword read on exactly that dependence. Reading the cell through a
  * halfword-only pointer disambiguates the two accesses and loses that order.
  */
-void SceneEffect_SetBg3HofsSplit(void)
+void Effect_SetBg3HofsSplit(void)
 {
     union SceneCell *work = (union SceneCell *)(Data_03001e70 + 260);
     s32 hofs;
@@ -325,7 +325,7 @@ void SceneEffect_SetBg3HofsSplit(void)
     Data_02008616 = hofs - (Data_03001e40 >> 2);
 }
 
-void SceneState_ApplyTables826dAnd82a1(void)
+void State_ApplyTables826dAnd82a1(void)
 {
     Func_020005f6(1, 0, 0x0200826D);
     Func_020005f8(0x020082A1, 0xC80);

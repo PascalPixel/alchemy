@@ -22,7 +22,7 @@ s32 Object_GetById(u32);
 void RotateVectorByMagnitude(s32, s32, void *);
 void Object_Destroy();
 
-void BattleEffect_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
+void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
 {
     struct Triple08095fcc local;
     struct Object08095fcc *other;

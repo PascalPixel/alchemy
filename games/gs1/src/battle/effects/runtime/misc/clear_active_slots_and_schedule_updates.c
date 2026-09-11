@@ -7,7 +7,7 @@ void Func_08002dd8(s32);
 void WaitFrames(s32);
 extern u8 Data_08095885;
 
-void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void)
+void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
     u8 *slot = *(u8 **)ADDR_03001F30;
     u8 *active_flag;
@@ -28,7 +28,7 @@ void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void)
     WaitFrames(1);
 }
 
-void BattleEffect_AdvanceSpinAngle(void *object)
+void BattleFx_AdvanceSpinAngle(void *object)
 {
     *(u16 *)((u8 *)object + 6) += 0x2000;
 }

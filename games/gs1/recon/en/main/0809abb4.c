@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_RunFallbackObjectTransition Func_0809abb4
+#define BattleFx_RunFallbackObjectTransition Func_0809abb4
 
 struct BattleEffectMotionObject {
     u8 reserved_00[8];
@@ -44,7 +44,7 @@ void Func_08009248(struct BattleEffectMotionObject *, s32);
 void Func_080090d0(struct BattleEffectMotionObject *);
 extern u8 Data_0809aa99;
 
-void BattleEffect_RunFallbackObjectTransition(void)
+void BattleFx_RunFallbackObjectTransition(void)
 {
     struct BattleEffectMotionState *state = Data_03001f30;
     struct BattleEffectMotionObject *target = state->target;

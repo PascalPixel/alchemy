@@ -2,7 +2,7 @@
 
 void WaitFrames(s32);
 
-void ObjectMotion_WaitForAnimationChange(u32 object_id)
+void Motion_WaitForAnimationChange(u32 object_id)
 {
     struct ObjectRuntime *object;
     u8 *ptr;

@@ -4,7 +4,7 @@ extern void Func_020014ee(s32, s32, s32, s32, s32, s32);
 extern void Func_02001502(s32, s32, s32, s32, s32, s32);
 extern void Func_0200151c(s32, s32, s32, s32, s32, s32);
 
-void SceneState_ApplyThreeRectsRows9And10(void)
+void State_ApplyThreeRectsRows9And10(void)
 {
     s32 strip = 17;
 

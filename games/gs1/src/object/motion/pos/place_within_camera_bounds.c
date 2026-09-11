@@ -9,7 +9,7 @@ void WaitFrames(u32);
 void Func_08009128(void);
 void Object_SetPosition(void *, s32, s32, s32);
 
-void ObjectMotion_PlaceWithinCameraBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
+void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
     s32 should_use_setter;
     void *runtime_block;

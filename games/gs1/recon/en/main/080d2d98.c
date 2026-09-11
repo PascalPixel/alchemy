@@ -126,15 +126,15 @@ extern u8 Data_080ee1ac[];
 extern s32 Data_080ee1b4[];
 
 void Func_080cd594(s32 mode);
-void BattleEffect_FetchRectangleBlitters(s32 alternate, u32 *output);
+void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 s32 Func_08004458(void);
-void BattleEffect_SelectLivingTargets(void *argument);
+void BattleFx_SelectLivingTargets(void *argument);
 void Func_080030f8(s32 frames);
-void BattleEffect_SpawnObjects(s32 entry_count, s32 kind, s32 variant);
+void BattleFx_SpawnObjects(s32 entry_count, s32 kind, s32 variant);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_080e6d3c(s32 channel, s32 x, s32 y);
@@ -178,7 +178,7 @@ void BattleEffect_RunEmberShower(struct EffectArgument *object)
     Func_080cd594(0);
     *(s16 *)0x04000052 = 0x1010;
     rectangle_slot = rectangle;
-    BattleEffect_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
+    BattleFx_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
 
     palette = (u8 *)Func_08002f40((s32)&Value_0000006e);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
@@ -211,9 +211,9 @@ void BattleEffect_RunEmberShower(struct EffectArgument *object)
     for (i = 0; i != 1024; i++)
         ((Particle *)0x02010000)[i].life = -1;
 
-    BattleEffect_SelectLivingTargets(work->argument);
+    BattleFx_SelectLivingTargets(work->argument);
     Func_080030f8(1);
-    BattleEffect_SpawnObjects(12, 380, 2);
+    BattleFx_SpawnObjects(12, 380, 2);
 
     for (frame = 0; frame != 124; frame++) {
         if ((*(s32 *)0x03001B04 & 3) != 0) {

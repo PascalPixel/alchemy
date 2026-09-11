@@ -3,7 +3,7 @@
 void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
-void ObjectMotion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 z_offset)
+void Motion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 z_offset)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 

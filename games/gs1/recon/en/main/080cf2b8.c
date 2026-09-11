@@ -32,7 +32,7 @@
  *    "tile offset inside the work block", "width" and "height".
  *  - state fields 4, 20, 28 and the s16 member-id array at 36 follow the
  *    same kind-39 state layout member_orbit/run.c uses; no header owns it.
- *  - The second argument of BattleEffect_FetchRectangleBlitters is the
+ *  - The second argument of BattleFx_FetchRectangleBlitters is the
  *    two-entry blitter array; only entry 1 is consumed by the first draw,
  *    entry 0 by the later ones.
  *  - The two identical 40x40 draws for frame <= 3 are the reference's own
@@ -88,7 +88,7 @@ void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-void BattleEffect_FetchRectangleBlitters(s32 flag, void **pair);
+void BattleFx_FetchRectangleBlitters(s32 flag, void **pair);
 void Runtime_ReleaseHeapBlock(s32 id);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void **Func_080b5098(s32 member_id);
@@ -211,7 +211,7 @@ void BattleEffect_RunMemberBeam(void *object, s32 variant)
             angle = frame << 11;
             x = (((-Func_08002322(angle)) * 20) >> 16) + out_x + y_offset - 20;
             y = ((Func_0800231c(angle) * 4) >> 16) + out_y;
-            BattleEffect_FetchRectangleBlitters(
+            BattleFx_FetchRectangleBlitters(
                 FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
                     s32 *, 4) ^ flag,
                 rect);

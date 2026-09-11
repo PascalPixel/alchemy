@@ -314,7 +314,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void FieldScene_RunLongPresentationSequence(void)
+void Scene_RunLongPresentationSequence(void)
 {
     u32 i;
     s32 record;

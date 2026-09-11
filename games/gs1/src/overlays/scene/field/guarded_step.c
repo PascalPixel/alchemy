@@ -8,44 +8,44 @@
 #define SceneEventRuntime_GetActorData Func_02000044
 #define SceneEventRuntime_GetEffectData Func_0200004c
 #define SceneEventRuntime_SelectInitialSceneByFlags Func_02000054
-#define FieldScene_RunLoopedLayoutSequence Func_02000098
-#define SceneEffect_UpdateScrollingSpriteRows Func_02000eb0
-#define SceneState_RunWhenSlotZeroFacingC000 Func_02000fe4
-#define SceneState_RunWhenActorZeroFacing4000 Func_02001000
+#define Scene_RunLoopedLayoutSequence Func_02000098
+#define Effect_UpdateScrollingSpriteRows Func_02000eb0
+#define State_RunWhenSlotZeroFacingC000 Func_02000fe4
+#define State_RunWhenActorZeroFacing4000 Func_02001000
 #define GameFlag_IsSet_1(args...) Func_02003456_a(args)
-#define BattleRuntime_Reset_1() Call0(Func_0200347e)
+#define Battle_Reset_1() Call0(Func_0200347e)
 #define Scene_GetRecord_1(a0) Call1(Func_0200349c, a0)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_020034ae, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_020034da, a0, a1, a2)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Call0(Func_020034a6)
+#define Motion_SetSpeed_1(a0, a1, a2) Call3(Func_020034ae, a0, a1, a2)
+#define Motion_SetPosReset_1(a0, a1, a2) Call3(Func_020034da, a0, a1, a2)
+#define Battle_SchedShoulder_1() Call0(Func_020034a6)
 #define TARGET_ID 9
 #define GATE_CODE 2059
-#define FieldScene_RunPrimarySequenceHead Func_0200101c
-#define FieldScene_RunClosingSequence Func_02001624
-#define FieldScene_RunScene37bSequenceA Func_0200195c
-#define FieldScene_RunFiveValueStep9 Func_020019e4
-#define FieldScene_RunFiveValueStep11 Func_02001a04
-#define FieldScene_RunFiveValueStep15 Func_02001a44
+#define Scene_RunPrimarySequenceHead Func_0200101c
+#define Scene_RunClosingSequence Func_02001624
+#define Scene_RunScene37bSequenceA Func_0200195c
+#define Scene_RunFiveValueStep9 Func_020019e4
+#define Scene_RunFiveValueStep11 Func_02001a04
+#define Scene_RunFiveValueStep15 Func_02001a44
 #define FieldScene_RunScene37b_02002244 Func_02002244
 #define FieldScene_RunScene37b_020022f4 Func_020022f4
-#define FieldScene_CallWhenCheck9_31_9 Func_02001574
+#define Scene_CallWhenCheck9_31_9 Func_02001574
 #define ConfigureSceneAndCheckActors Func_020015d4
-#define FieldScene_ApplyRect13_31_12_30_12 Func_02001a24
-#define FieldScene_ApplyRect10_14_7_13_7 Func_02001a64
-#define FieldScene_ApplyRect12_21_7_22_7 Func_02001ad4
-#define FieldScene_RunGuardedStep11 Func_0200158c
-#define FieldScene_RunGuardedStep13 Func_020015a4
-#define FieldScene_RunGuardedStep15 Func_020015bc
-#define SceneActor_UseActorTenCellAndNext Func_02001a84
-#define SceneActor_ApplyActorTwelveZCellPair Func_02001af4
-#define SceneActor_IsActorAtTile Func_02001be8
-#define SceneActor_MoveActor10ByRow Func_02001aac
-#define SceneActor_RunSlot12ColumnStep Func_02001b1c
+#define Scene_ApplyRect13_31_12_30_12 Func_02001a24
+#define Scene_ApplyRect10_14_7_13_7 Func_02001a64
+#define Scene_ApplyRect12_21_7_22_7 Func_02001ad4
+#define Scene_RunGuardedStep11 Func_0200158c
+#define Scene_RunGuardedStep13 Func_020015a4
+#define Scene_RunGuardedStep15 Func_020015bc
+#define Actor_UseActorTenCellAndNext Func_02001a84
+#define Actor_ApplyActorTwelveZCellPair Func_02001af4
+#define Actor_IsActorAtTile Func_02001be8
+#define Actor_MoveActor10ByRow Func_02001aac
+#define Actor_RunSlot12ColumnStep Func_02001b1c
 #define SceneData_InitTableA980 Func_02001c14
 #define SceneData_FillTableA980 Func_02001d14
 #define SceneData_InitTableA980AndRunB Func_02001e10
 #define SceneData_BuildTableA980 Func_02001f0c
-#define FieldScene_RunSplitPairSteps Func_020023a4
+#define Scene_RunSplitPairSteps Func_020023a4
 
 struct Ent {
     s32 f00;
@@ -488,7 +488,7 @@ fail:
     return -1;
 }
 
-void FieldScene_RunLoopedLayoutSequence(void)
+void Scene_RunLoopedLayoutSequence(void)
 {
     s32 i;
 
@@ -509,7 +509,7 @@ void FieldScene_RunLoopedLayoutSequence(void)
     Func_0200181c();
 }
 
-void SceneEffect_UpdateScrollingSpriteRows(void)
+void Effect_UpdateScrollingSpriteRows(void)
 {
     extern struct Ent Data_0200aa50[];
 
@@ -558,7 +558,7 @@ void SceneEffect_UpdateScrollingSpriteRows(void)
     Data_0200a974 += 0x80;
 }
 
-void SceneState_RunWhenSlotZeroFacingC000(void)
+void State_RunWhenSlotZeroFacingC000(void)
 {
     u16 *p = Func_02003456(0);
     if (p[3] == 0xc000) {
@@ -566,7 +566,7 @@ void SceneState_RunWhenSlotZeroFacingC000(void)
     }
 }
 
-void SceneState_RunWhenActorZeroFacing4000(void)
+void State_RunWhenActorZeroFacing4000(void)
 {
     u16 *p = Func_02003472(0);
     if (p[3] == 0x4000) {
@@ -577,16 +577,16 @@ void SceneState_RunWhenActorZeroFacing4000(void)
 /* If the code-2059 check passes, runs a short setup/configuration sequence
  * for id 9: two no-argument calls bracket a select call and two calls each
  * taking a pair of numeric arguments. */
-void FieldScene_RunPrimarySequenceHead(void)
+void Scene_RunPrimarySequenceHead(void)
 {
     extern u8 Data_0200aa50[];
 
     if (GameFlag_IsSet_1(GATE_CODE) == 0) {
-        BattleRuntime_Reset_1();
+        Battle_Reset_1();
         Scene_GetRecord_1(TARGET_ID);
-        ObjectMotion_SetSpeedParameters_1(TARGET_ID, 13107, 0x00001999); /* object_id, speed_limit, acceleration */
-        ObjectMotion_SetPositionAndReset_1(TARGET_ID, 504, 152); /* object_id, x=504, z=152 */
-        BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+        Motion_SetSpeed_1(TARGET_ID, 13107, 0x00001999); /* object_id, speed_limit, acceleration */
+        Motion_SetPosReset_1(TARGET_ID, 504, 152); /* object_id, x=504, z=152 */
+        Battle_SchedShoulder_1();
     }
 }
 
@@ -747,28 +747,28 @@ void Func_020014b8(void)
     }
 }
 
-void FieldScene_CallWhenCheck9_31_9(void)
+void Scene_CallWhenCheck9_31_9(void)
 {
     if (Func_02003166(9, 31, 9) != 0) {
         Func_0200319a();
     }
 }
 
-void FieldScene_RunGuardedStep11(void)
+void Scene_RunGuardedStep11(void)
 {
     if (Func_0200317e(11, 40, 9) != 0) {
         Func_020032b2();
     }
 }
 
-void FieldScene_RunGuardedStep13(void)
+void Scene_RunGuardedStep13(void)
 {
     if (Func_02003196(13, 31, 12) != 0) {
         Func_020033c6();
     }
 }
 
-void FieldScene_RunGuardedStep15(void)
+void Scene_RunGuardedStep15(void)
 {
     if (Func_020031ae(15, 40, 12) != 0) {
         Func_020034da_a();
@@ -791,7 +791,7 @@ void Func_020015fc(void)
     }
 }
 
-void FieldScene_RunClosingSequence(void)
+void Scene_RunClosingSequence(void)
 {
     extern u8 Data_0200aa50[];
 
@@ -810,7 +810,7 @@ void FieldScene_RunClosingSequence(void)
     }
 }
 
-void FieldScene_RunScene37bSequenceA(void)
+void Scene_RunScene37bSequenceA(void)
 {
     extern u8 Data_0200aa50[];
 
@@ -836,7 +836,7 @@ void FieldScene_RunScene37bSequenceA(void)
     }
 }
 
-void FieldScene_RunFiveValueStep9(void)
+void Scene_RunFiveValueStep9(void)
 {
     extern u8 Data_0200aa50[];
 
@@ -844,7 +844,7 @@ void FieldScene_RunFiveValueStep9(void)
     Func_0200360e();
 }
 
-void FieldScene_RunFiveValueStep11(void)
+void Scene_RunFiveValueStep11(void)
 {
     extern u8 Data_0200aa50[];
 
@@ -852,13 +852,13 @@ void FieldScene_RunFiveValueStep11(void)
     Func_0200372e_a();
 }
 
-void FieldScene_ApplyRect13_31_12_30_12(void)
+void Scene_ApplyRect13_31_12_30_12(void)
 {
     Func_0200357a_a(13, 31, 12, 30, 12);
     Func_0200384a();
 }
 
-void FieldScene_RunFiveValueStep15(void)
+void Scene_RunFiveValueStep15(void)
 {
     extern u8 Data_0200aa50[];
 
@@ -866,7 +866,7 @@ void FieldScene_RunFiveValueStep15(void)
     Func_02003966();
 }
 
-void FieldScene_ApplyRect10_14_7_13_7(void)
+void Scene_ApplyRect10_14_7_13_7(void)
 {
     Func_020035ba_a(10, 14, 7, 13, 7);
     Func_02003cbe();
@@ -879,7 +879,7 @@ void FieldScene_ApplyRect10_14_7_13_7(void)
  * stack. The `>> 20` reduction to a cell index is by analogy with the rest of
  * the tree and is not verified, and the repeated 13 is as written.
  */
-void SceneActor_UseActorTenCellAndNext(void)
+void Actor_UseActorTenCellAndNext(void)
 {
     u8 *record = Func_02003ef8(10);
     s32 cell;
@@ -892,7 +892,7 @@ void SceneActor_UseActorTenCellAndNext(void)
     Func_020035e6(10, 13, cell + 1, 13, cell);
 }
 
-void SceneActor_MoveActor10ByRow(void)
+void Actor_MoveActor10ByRow(void)
 {
     s32 *p = Func_02003f20(10);
     if (p != NULL) {
@@ -901,13 +901,13 @@ void SceneActor_MoveActor10ByRow(void)
     }
 }
 
-void FieldScene_ApplyRect12_21_7_22_7(void)
+void Scene_ApplyRect12_21_7_22_7(void)
 {
     Func_0200362a(12, 21, 7, 22, 7);
     Func_02003dde();
 }
 
-void SceneActor_ApplyActorTwelveZCellPair(void)
+void Actor_ApplyActorTwelveZCellPair(void)
 {
     s32 *p = Func_02003f68(12);
     if (p != NULL) {
@@ -916,7 +916,7 @@ void SceneActor_ApplyActorTwelveZCellPair(void)
     }
 }
 
-void SceneActor_RunSlot12ColumnStep(void)
+void Actor_RunSlot12ColumnStep(void)
 {
     s32 *p = Func_02003f90(12);
     if (p != NULL) {
@@ -925,7 +925,7 @@ void SceneActor_RunSlot12ColumnStep(void)
     }
 }
 
-s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
+s32 Actor_IsActorAtTile(s32 no, s32 x, s32 z)
 {
     s32 *p = Func_0200405c(no);
     if (p == NULL || (p[2] >> 20) != x) {
@@ -1215,7 +1215,7 @@ void FieldScene_RunScene37b_020022f4(void)
     Func_020047ec();
 }
 
-void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+void Scene_RunSplitPairSteps(s32 a, s32 b)
 {
     Func_02004898(a, 0);
     Func_020047fe(b);

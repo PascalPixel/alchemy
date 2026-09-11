@@ -5,7 +5,7 @@
 
 s32 ArcTan2(s32, s32);
 
-s32 ObjectMotion_TurnTowardLinkedTarget(void *object)
+s32 Motion_TurnTowardLinkedTarget(void *object)
 {
     s16 turn_step;
     u16 current_angle;

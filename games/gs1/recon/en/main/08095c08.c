@@ -60,9 +60,9 @@ void RotateVectorByMagnitude(
 void NormalizeVector(void *position);
 void Audio_PlayCue(s32 cue);
 
-#define BattleEffect_UpdatePhasedRadialParticle Func_08095c08
+#define BattleFx_UpdatePhasedRadialParticle Func_08095c08
 
-void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
+void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
 {
     struct EffectPositionSource *source;
     struct EffectVector position;

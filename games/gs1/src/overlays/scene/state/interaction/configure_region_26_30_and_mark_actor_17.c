@@ -5,7 +5,7 @@ extern void Func_02001642(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_020016ac(s32);
 extern void Func_02001698(s32);
 
-void SceneState_ConfigureRegion26_30AndMarkActor17(void)
+void State_ConfigureRegion26_30AndMarkActor17(void)
 {
     u8 *rec = Func_0200168c(17);
     /* The two stack arguments each need their own local: the reference builds

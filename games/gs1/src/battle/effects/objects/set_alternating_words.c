@@ -3,7 +3,7 @@
 extern u32 Data_03001800;
 extern u32 Data_0809f0a4[];
 
-void BattleEffect_SetObjectAlternatingWords(u8 *object)
+void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
     u32 *table = Data_0809f0a4;
     u32 index = (Data_03001800 >> 2) & 1;

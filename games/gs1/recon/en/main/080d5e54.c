@@ -100,7 +100,7 @@
 #define STATE M2C_FIELD(work, void **, 0x7828)
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.  Both
-   entries come back from BattleEffect_FetchRectangleBlitters and are reached through the compiler
+   entries come back from BattleFx_FetchRectangleBlitters and are reached through the compiler
    runtime's bx r4 thunk, so they are typed indirect calls. */
 typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
@@ -123,7 +123,7 @@ extern const u8 Data_080ede96[];
 
 void Func_080cd594(s32 mode);
 void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);
-void BattleEffect_FetchRectangleBlitters(s32 alternate, void **output);
+void BattleFx_FetchRectangleBlitters(s32 alternate, void **output);
 void **Func_080b5098(s32 member_id);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
@@ -192,7 +192,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
     Func_080cd594(0);
     Func_080e0524((s32) &Value_00000092, work, 1, 1);
     Func_080e0524((s32) &Value_00000073, graphics, 0, 0);
-    BattleEffect_FetchRectangleBlitters(M2C_FIELD(STATE, s32 *, 4) ^ 1, blit);
+    BattleFx_FetchRectangleBlitters(M2C_FIELD(STATE, s32 *, 4) ^ 1, blit);
     actor = *Func_080b5098(M2C_FIELD(STATE, s32 *, 8));
     goal = *Func_080b5098(M2C_FIELD(STATE, s16 *, 36));
 

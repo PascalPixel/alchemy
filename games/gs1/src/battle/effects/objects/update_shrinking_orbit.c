@@ -11,7 +11,7 @@ extern s32 *Data_03001f30;
 void RotateVectorByMagnitude(s32, s32, struct Triple08099340 *);
 void Object_SetCallback(void *, void *);
 
-void BattleEffect_UpdateShrinkingOrbitObject(u8 *arg)
+void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
 {
     s32 *global = Data_03001f30;
     struct Triple08099340 local;

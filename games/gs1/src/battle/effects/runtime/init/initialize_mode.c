@@ -8,14 +8,14 @@ void Func_080eb754(s32 *);
 void Func_080dc968(s32 *);
 void Func_080d6970(s32 *);
 void Func_080ec100(s32 *);
-void BattleEffect_RenderAnimationMode0(s32 arg0);
+void BattleFx_RenderAnimationMode0(s32 arg0);
 void Func_080d1714(s32 *);
 void Func_080ea0d8(s32 *);
 void Func_080d765c(s32 *);
 void Func_080e7320(s32 arg0);
 void Func_080e15e8(s32 *);
 
-void BattleEffect_InitializeMode(s32 *arg0)
+void BattleFx_InitializeMode(s32 *arg0)
 {
     Runtime_AllocateHeapBlock(41, 0x302);
     Runtime_AllocateHeapBlock(39, 0x782c);
@@ -44,7 +44,7 @@ void BattleEffect_InitializeMode(s32 *arg0)
             Func_080ec100(arg0);
             break;
         case 7:
-            BattleEffect_RenderAnimationMode0(arg0);
+            BattleFx_RenderAnimationMode0(arg0);
             break;
         case 8:
             Func_080d1714(arg0);

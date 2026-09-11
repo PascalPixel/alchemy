@@ -4,7 +4,7 @@
  * resource_3b7 owner at 0x02000e5c, 2124 bytes (0x02000e5c-0x020016a7).
  *
  * Per-frame task of the resource_3b7 scene.  The neighbouring owner at
- * 0x020016a8 (SceneState_InitFourActorRecordsAndInstallTask) lays out the two
+ * 0x020016a8 (State_InitFourActorRecordsAndInstallTask) lays out the two
  * blocks this task drives and then installs 0x02008e5d - this entry - as the
  * frame callback, so the two owners share their data layout:
  *
@@ -48,7 +48,7 @@
  *   Func_02002bb4 -> main 0x08000118  angle -> x component
  *   Func_02002bd2 -> main 0x08000120  angle -> z component
  *   Func_02002e7a -> main 0x080f9010  sound cue
- *   Func_02001e20 -> overlay 0x02000e44 OverlayObject_SetField54
+ *   Func_02001e20 -> overlay 0x02000e44 OvObj_SetField54
  *   Func_020022e2 -> overlay 0x02000dd0 placement helper, five arguments
  * The two sites at 0x02000f12 and 0x0200147e are not direct calls: they reach
  * 0x020019d8, which is the `bx r3` slot of the retained GCC 2.96 interworking
@@ -90,12 +90,12 @@
  * left as an allocation residual rather than chased with further respellings.
  */
 
-#define FieldScene_RunSecondaryScript Func_02000e5c
+#define Scene_RunSecondaryScript Func_02000e5c
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 #define SceneActor_GetRecord Func_0200280e     /* main 0x0808a080 */
-#define SceneActor_SetMode Func_02002764       /* main 0x08009080 */
+#define Actor_SetMode Func_02002764       /* main 0x08009080 */
 #define SceneActor_SetPlacement Func_020022e2  /* overlay 0x02000dd0 */
 #define SceneActor_SetField54 Func_02001e20    /* overlay 0x02000e44 */
 #define FixedMath_Divide Func_02002778         /* iwram 0x03000380 */
@@ -105,7 +105,7 @@
 #define SceneAudio_PlayCue Func_02002e7a       /* main 0x080f9010 */
 
 u8 *SceneActor_GetRecord(s32 id);
-void SceneActor_SetMode(u8 *rec, s32 mode);
+void Actor_SetMode(u8 *rec, s32 mode);
 void SceneActor_SetPlacement(s32 id, void *pos, s32 angle, s32 frame, s32 unk);
 void SceneActor_SetField54(s32 id, s32 value);
 s32 FixedMath_Divide(s32 num, s32 den);
@@ -134,7 +134,7 @@ extern s32 Data_0200a138;  /* proximity band, 0 (closest) .. 4 */
 #define REC_REACT(rec) (*(s16 *)((rec) + 18))
 #define REC_COOL(rec) (*(s16 *)((rec) + 20))
 
-void FieldScene_RunSecondaryScript(void)
+void Scene_RunSecondaryScript(void)
 {
     u8 *work;
     u8 *rec;
@@ -187,9 +187,9 @@ void FieldScene_RunSecondaryScript(void)
                 /* Landing frame. */
                 *(s32 *)(work + 68) = 0;
                 if (Data_0200a0c0 == 1) {
-                    SceneActor_SetMode(SceneActor_GetRecord(17), 1);
+                    Actor_SetMode(SceneActor_GetRecord(17), 1);
                 } else {
-                    SceneActor_SetMode(SceneActor_GetRecord(12), 1);
+                    Actor_SetMode(SceneActor_GetRecord(12), 1);
                 }
             }
 
@@ -215,12 +215,12 @@ void FieldScene_RunSecondaryScript(void)
                 }
                 if (*(s32 *)(work + 64) == 0 && *(s32 *)(work + 72) == 0) {
                     if (Data_0200a0c0 == 1) {
-                        SceneActor_SetMode(SceneActor_GetRecord(17), 2);
+                        Actor_SetMode(SceneActor_GetRecord(17), 2);
                         SceneActor_SetField54(15, 0);
                         SceneActor_SetField54(14, 0);
                         SceneActor_SetField54(13, 0);
                     } else {
-                        SceneActor_SetMode(SceneActor_GetRecord(12), 2);
+                        Actor_SetMode(SceneActor_GetRecord(12), 2);
                         SceneActor_SetField54(10, 0);
                         SceneActor_SetField54(9, 0);
                         SceneActor_SetField54(8, 0);
@@ -352,15 +352,15 @@ void FieldScene_RunSecondaryScript(void)
             }
             if (REC_REACT(rec) > 0) {
                 if (i == 0) {
-                    SceneActor_SetMode(SceneActor_GetRecord(18), 3);
+                    Actor_SetMode(SceneActor_GetRecord(18), 3);
                 } else {
-                    SceneActor_SetMode(SceneActor_GetRecord(19), 3);
+                    Actor_SetMode(SceneActor_GetRecord(19), 3);
                 }
             } else {
                 if (i == 0) {
-                    SceneActor_SetMode(SceneActor_GetRecord(18), 1);
+                    Actor_SetMode(SceneActor_GetRecord(18), 1);
                 } else {
-                    SceneActor_SetMode(SceneActor_GetRecord(19), 1);
+                    Actor_SetMode(SceneActor_GetRecord(19), 1);
                 }
                 if (REC_HOLD(rec) != 0) {
                     REC_HOLD(rec) = REC_HOLD(rec) - 1;
@@ -399,9 +399,9 @@ void FieldScene_RunSecondaryScript(void)
                 step = step * 3;
             }
             if (REC_REACT(rec) > 0) {
-                SceneActor_SetMode(SceneActor_GetRecord(20), 3);
+                Actor_SetMode(SceneActor_GetRecord(20), 3);
             } else {
-                SceneActor_SetMode(SceneActor_GetRecord(20), 2);
+                Actor_SetMode(SceneActor_GetRecord(20), 2);
                 REC_X(rec) = FixedMath_Cos(REC_HEADING(rec)) * 48 + 0x700000;
                 REC_Z(rec) = FixedMath_Sin(REC_HEADING(rec)) * 40 + 0x480000;
                 REC_HEADING(rec) = REC_HEADING(rec) + step;
@@ -420,14 +420,14 @@ void FieldScene_RunSecondaryScript(void)
                 step = step * 3;
             }
             if (REC_REACT(rec) > 0) {
-                SceneActor_SetMode(SceneActor_GetRecord(21), 3);
+                Actor_SetMode(SceneActor_GetRecord(21), 3);
             } else if (phase <= 383) {
                 REC_X(rec) = FixedMath_Cos(REC_HEADING(rec)) * 52 + 0x700000;
                 REC_Z(rec) = FixedMath_Sin(REC_HEADING(rec)) * 24 + 0x480000;
                 REC_HEADING(rec) = REC_HEADING(rec) + step;
-                SceneActor_SetMode(SceneActor_GetRecord(21), 2);
+                Actor_SetMode(SceneActor_GetRecord(21), 2);
             } else {
-                SceneActor_SetMode(SceneActor_GetRecord(21), 3);
+                Actor_SetMode(SceneActor_GetRecord(21), 3);
             }
             REC_HOLD(rec) = REC_HOLD(rec) + 1;
         }
@@ -502,18 +502,18 @@ void FieldScene_RunSecondaryScript(void)
         SceneActor_SetPlacement(15, work + 16, 0, 0, 16);
         SceneActor_SetPlacement(14, work + 28, 0, 0, 16);
         SceneActor_SetPlacement(13, work + 40, 0, 0, 16);
-        SceneActor_SetMode(SceneActor_GetRecord(15), 4);
-        SceneActor_SetMode(SceneActor_GetRecord(14), 4);
-        SceneActor_SetMode(SceneActor_GetRecord(13), 4);
+        Actor_SetMode(SceneActor_GetRecord(15), 4);
+        Actor_SetMode(SceneActor_GetRecord(14), 4);
+        Actor_SetMode(SceneActor_GetRecord(13), 4);
     } else {
         SceneActor_SetPlacement(12, work + 4, 0, 0, 16);
         SceneActor_SetPlacement(11, work + 52, 0, 0, 16);
         SceneActor_SetPlacement(10, work + 16, 0, 0, 16);
         SceneActor_SetPlacement(9, work + 28, 0, 0, 16);
         SceneActor_SetPlacement(8, work + 40, 0, 0, 16);
-        SceneActor_SetMode(SceneActor_GetRecord(10), 4);
-        SceneActor_SetMode(SceneActor_GetRecord(9), 4);
-        SceneActor_SetMode(SceneActor_GetRecord(8), 4);
+        Actor_SetMode(SceneActor_GetRecord(10), 4);
+        Actor_SetMode(SceneActor_GetRecord(9), 4);
+        Actor_SetMode(SceneActor_GetRecord(8), 4);
     }
 
     if (*(s16 *)(work + 2) != -1) {

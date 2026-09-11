@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED GENERATED PRESENTATION FINALE for FieldScene_ClosePresentationSequence:
+/* AUDITED GENERATED PRESENTATION FINALE for Scene_ClosePresentationSequence:
  * 35 calls, palette ramps, blend-register setup, and runtime handoff. */
 
-#define FieldScene_ClosePresentationSequence Func_02000b34
+#define Scene_ClosePresentationSequence Func_02000b34
 
 void Func_02000c44();
 void Func_020011a8();

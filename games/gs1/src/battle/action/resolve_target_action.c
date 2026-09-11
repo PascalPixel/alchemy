@@ -162,8 +162,8 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
 #define BATTLE_HIT_PREP()
 #define BATTLE_BEFORE_EFFECTS()
 #define BATTLE_EFFECT_GATE()                                                 \
-    if (BattleEffect_Classify(action->effect) == 0 && target->hp == 0       \
-        && BattleEffect_OnDead(action->effect) == 0)                        \
+    if (BattleFx_Classify(action->effect) == 0 && target->hp == 0       \
+        && BattleFx_OnDead(action->effect) == 0)                        \
         goto done;                                                          \
     if (hit == 0)                                                           \
         goto done
@@ -239,10 +239,10 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
 #ifndef BATTLE_ATTACK_REPORT
 #define BATTLE_ATTACK_REPORT()                                               \
     {                                                                         \
-        BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);                \
-        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                       \
+        BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);                \
+        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);                       \
         BATTLE_ATTACK_HP -= dmg;                                              \
-        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);                            \
+        BattleEv_Push(BATTLE_EVENT_VALUE, dmg);                            \
     }
 #endif
 
@@ -265,15 +265,15 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
         text = (player);                                                       \
     else                                                                       \
         text = (enemy);                                                        \
-    BattleEvent_Push(BATTLE_EVENT_TEXT, text);                                 \
+    BattleEv_Push(BATTLE_EVENT_TEXT, text);                                 \
 }
 
 #define TEXT_SIDE(player, enemy)                                               \
 {                                                                              \
     if ((u32)target_id <= 7)                                                   \
-        BattleEvent_Push(BATTLE_EVENT_TEXT, (player));                         \
+        BattleEv_Push(BATTLE_EVENT_TEXT, (player));                         \
     else                                                                       \
-        BattleEvent_Push(BATTLE_EVENT_TEXT, (enemy));                          \
+        BattleEv_Push(BATTLE_EVENT_TEXT, (enemy));                          \
 }
 
 #define TAKE_PWR()                                                             \
@@ -288,13 +288,13 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
     if (target->hp <= dmg) {                                                   \
         dealt = target->hp;                                                    \
         target->hp = 0;                                                        \
-        BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);                  \
-        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                           \
+        BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);                  \
+        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);                           \
         TEXT_SIDE(ko_lo, ko_hi);                                               \
     } else {                                                                   \
         dealt = dmg;                                                           \
         target->hp = (s16)(target->hp - dmg);                                  \
-        BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);                   \
+        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);                   \
     }                                                                          \
 }
 
@@ -317,12 +317,12 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
     } else {                                                                   \
         (cur) = (s16)((cur) + dmg);                                            \
     }                                                                          \
-    BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                               \
+    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);                               \
     if ((cur) == (maxv))                                                       \
-        BattleEvent_Push(BATTLE_EVENT_TEXT, (full_text));                         \
+        BattleEv_Push(BATTLE_EVENT_TEXT, (full_text));                         \
     else {                                                                     \
-        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);                                \
-        BattleEvent_Push(BATTLE_EVENT_TEXT, (part_text));                         \
+        BattleEv_Push(BATTLE_EVENT_VALUE, dmg);                                \
+        BattleEv_Push(BATTLE_EVENT_TEXT, (part_text));                         \
     }                                                                          \
 }
 
@@ -340,8 +340,8 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
     (field) += (delta);                                                        \
     CLAMP_MOD(field);                                                          \
     BattleUnit_Recalculate(target_id);                                         \
-    BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
-    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
+    BattleEv_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
+    BattleEv_Push(BATTLE_EVENT_TEXT, (text));                                  \
     *BytePtr((u8 *)target + toff) = 7;                                          \
 }
 
@@ -349,14 +349,14 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
 {                                                                              \
     target->res_modifier += (delta);                                             \
     CLAMP_MOD(target->res_modifier);                                             \
-    BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                        \
-    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                               \
+    BattleEv_Push(BATTLE_EVENT_VALUE, (value_expr));                        \
+    BattleEv_Push(BATTLE_EVENT_TEXT, (text));                               \
     target->res_modifier_turns = 7;                                                    \
 }
 
 #define SET_STATUS_TURNS(field, text, turns)                                       \
 {                                                                              \
-    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
+    BattleEv_Push(BATTLE_EVENT_TEXT, (text));                                  \
     (field) = (turns);                                                         \
 }
 #define SET_STATUS7(field, text) SET_STATUS_TURNS(field, text, 7)
@@ -398,7 +398,7 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
         skip = 1;                                                            \
     } else if (action->effect == EFX_ACTOR_FLASH) {                          \
         if (actor->hp != 0)                                                  \
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);           \
+            BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);           \
     } else if (action->effect == EFX_DRAIN_PP) {                             \
         if (target->pp != 0)                                                 \
             nibble = 10;                                                     \
@@ -586,7 +586,7 @@ after_power:
         chance += 30;
         chance *= 0x28f;
         if (chance > (BattleRandom_Next() & 0xffff))
-            BattleEvent_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
+            BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
 
     BATTLE_BEFORE_HIT();
@@ -696,15 +696,15 @@ after_power:
                     } while (count != 0);
                 }
             }
-            BattleEvent_Push(BATTLE_EVENT_UNIT, rec);
+            BattleEv_Push(BATTLE_EVENT_UNIT, rec);
             if (action_id != 0x1f7)
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_APPEARS);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_APPEARS);
             else
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_OFF);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_OFF);
         } else if (action_id == 0x1f7) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_FAIL);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_FAIL);
         } else {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_NO_ONE_CAME);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_NO_ONE_CAME);
         }
     }
 #else
@@ -721,7 +721,7 @@ after_power:
 
     /* ダメージ種別。HP が残っているか、分類が非ゼロなら種別スイッチへ。 */
     if (BATTLE_DAMAGE_GATE() && skip == 0
-        && (target->hp != 0 || BattleEffect_Classify(action->effect) != 0)) {
+        && (target->hp != 0 || BattleFx_Classify(action->effect) != 0)) {
         s32 pp;
         s32 cur;
 
@@ -766,14 +766,14 @@ after_power:
                         dmg = dmg * 3 / 2;
                     dmg += (u8)Math_Mod(((u8 *)target)[15], 5) + 6;
                     if (pass == 0) {
-                        BattleEvent_Push(BATTLE_EVENT_MARK, 0);
+                        BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
                             s32 text;
 
                             text = MSG_CRITICAL;
                             if ((u32)target_id <= 7)
                                 text += 1;
-                            BattleEvent_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
+                            BattleEv_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
                         }
                     }
                 }
@@ -802,7 +802,7 @@ after_power:
                     text = MSG_DMG_EMPH_P + affinity;
                 else
                     text = MSG_DMG_EMPH_E + affinity;
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
             if (BATTLE_ATTACK_HP <= 0 && BATTLE_SURVIVES_KO())
                 BATTLE_ATTACK_HP = 1;
@@ -810,13 +810,13 @@ after_power:
 #ifdef BATTLE_KO_TAIL
                 BATTLE_KO_TAIL();
 #else
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 BATTLE_ATTACK_HP = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
 #endif
             } else
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - BATTLE_ATTACK_HP;
             target->hp = (s16)BATTLE_ATTACK_HP;
             BattleUnit_UpdateRatios(target_id);
@@ -845,9 +845,9 @@ after_power:
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
             BATTLE_PP_DAMAGE_LIMIT(dmg, pp);
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
 
@@ -855,12 +855,12 @@ after_power:
                     text = MSG_PP_LOSS_P;
                 else
                     text = MSG_PP_LOSS_E;
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->pp - pp;
             target->pp = pp;
             BattleUnit_UpdateRatios(target_id);
@@ -883,12 +883,12 @@ after_power:
                 cur = target->max_hp;
                 dmg = cur - target->hp;
             }
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             if (cur == target->max_hp)
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
             else {
-                BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
+                BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
             }
             dealt = target->hp - cur;
             target->hp = (s16)cur;
@@ -909,9 +909,9 @@ after_power:
             dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
 
@@ -919,12 +919,12 @@ after_power:
                     text = MSG_DMG_P;
                 else
                     text = MSG_DMG_E;
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             goto pp_store;
         }
 
@@ -966,9 +966,9 @@ after_power:
                 }
                 BATTLE_DAMAGE_ROUND++;
             } while (BATTLE_DAMAGE_ROUND <= 1);
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
 
@@ -976,15 +976,15 @@ after_power:
                     text = MSG_DMG_EMPH_P + affinity;
                 else
                     text = MSG_DMG_EMPH_E + affinity;
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
             if (cur <= 0 && BATTLE_SURVIVES_KO())
                 cur = 1;
             BATTLE_AFTER_DAMAGE(cur);
             if (cur <= 0) {
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 {
                     s32 text;
 
@@ -993,10 +993,10 @@ after_power:
                         text = MSG_GOES_DOWN;
                     else
                         text = MSG_FELLED;
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                    BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 }
             } else
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - cur;
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
@@ -1017,12 +1017,12 @@ after_power:
                 pp = target->max_pp;
                 dmg = pp - target->pp;
             }
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             if (pp == target->max_pp)
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
             else {
-                BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
+                BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
             }
 pp_store:
             target->pp = (s16)pp;
@@ -1049,9 +1049,9 @@ pp_store:
             dmg *= adjust;
             dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
             APPLY_GUARD();
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
 
@@ -1059,7 +1059,7 @@ pp_store:
                     text = MSG_DMG_P;
                 else
                     text = MSG_DMG_E;
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
             if (cur <= 0 && BATTLE_SURVIVES_KO())
@@ -1068,21 +1068,21 @@ pp_store:
 #ifdef BATTLE_KO_TAIL
                 BATTLE_KO_TAIL();
 #else
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
 #endif
             } else
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
 dealt = target->hp - cur;
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
             break;
             }
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_NO_EFFECT);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_NO_EFFECT);
             break;
 
         }
@@ -1090,7 +1090,7 @@ dealt = target->hp - cur;
 
     /* 付加効果 */
     BATTLE_BEFORE_EFFECTS();
-    BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
     BATTLE_EFFECT_GATE();
     if ((u32)(action->effect - 3) > BATTLE_EFFECT_MAX - 3)
         goto done;
@@ -1100,64 +1100,64 @@ dealt = target->hp - cur;
     case EFX_CURE_ALL:
         if (target->delusion != 0) {
             target->delusion = 0;
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_DELUSION);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_DELUSION);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->stun != 0) {
             target->stun = 0;
-            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_STUN);
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_STUN);
         }
         BATTLE_CURE_SLEEP_ALL();
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_SEAL);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_SEAL);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->death_count != 0) {
             target->death_count = 0;
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_CURSE);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_CURSE);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->evil_spirit != 0) {
             target->evil_spirit = 0;
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_SPIRIT);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_SPIRIT);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->poison != 0) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_POISON);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_POISON);
             target->poison = 0;
         }
-        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+        BattleEv_Push(BATTLE_EVENT_RESET, 0);
         break;
 
     case EFX_CURE_PART:
         if (target->delusion != 0) {
             target->delusion = 0;
-            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_DELUSION);
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_DELUSION);
         }
         if (target->stun != 0) {
             target->stun = 0;
-            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_STUN);
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_STUN);
         }
         BATTLE_CURE_SLEEP_PART();
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
-            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_SEAL);
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_SEAL);
         }
         if (target->death_count == 0)
             break;
         target->death_count = 0;
-        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_CURSE);
+        BattleEv_Push(BATTLE_EVENT_RESET, 0);
+        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_CURSE);
         break;
 
     case EFX_HEAL_60:
@@ -1187,10 +1187,10 @@ dealt = target->hp - cur;
         if (tmp == 0 && nibble != 1)
             break;
         if (heal == (s16)maxu)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
         else {
-            BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
+            BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
         }
         target->hp = (s16)heal;
         BattleUnit_UpdateRatios(target_id);
@@ -1217,10 +1217,10 @@ dealt = target->hp - cur;
         if (tmp == 0 && nibble != 11)
             break;
         if (heal == maxv)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
         else {
-            BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
+            BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
         }
         target->pp = (s16)heal;
         BattleUnit_UpdateRatios(target_id);
@@ -1232,8 +1232,8 @@ dealt = target->hp - cur;
         S8OF(target->agility_modifier) = 8;
         target->agility_modifier_turns = 5;
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AGI_UP);
+        BattleEv_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_AGI_UP);
         break;
 
     case EFX_AGI_SET_DOWN4:
@@ -1246,16 +1246,16 @@ dealt = target->hp - cur;
     }
         target->agility_modifier_turns = 5;
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AGI_DOWN);
+        BattleEv_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_AGI_DOWN);
         break;
 
     case EFX_ATK_DOWN1:
         target->attack_modifier += -1;
         CLAMP_MOD(target->attack_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
+        BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
         target->attack_modifier_turns = 7;
         break;
 
@@ -1263,8 +1263,8 @@ dealt = target->hp - cur;
         target->attack_modifier += -2;
         CLAMP_MOD(target->attack_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
+        BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
         target->attack_modifier_turns = 7;
         break;
 
@@ -1272,8 +1272,8 @@ dealt = target->hp - cur;
         target->attack_modifier += 1;
         CLAMP_MOD(target->attack_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
+        BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
         target->attack_modifier_turns = 7;
         break;
 
@@ -1281,8 +1281,8 @@ dealt = target->hp - cur;
         target->attack_modifier += 2;
         CLAMP_MOD(target->attack_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
+        BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
         target->attack_modifier_turns = 7;
         break;
 
@@ -1290,8 +1290,8 @@ dealt = target->hp - cur;
         target->defense_modifier += -1;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
+        BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
         target->defense_modifier_turns = 7;
         break;
 
@@ -1299,8 +1299,8 @@ dealt = target->hp - cur;
         target->defense_modifier += -2;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
+        BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
         target->defense_modifier_turns = 7;
         break;
 
@@ -1308,8 +1308,8 @@ dealt = target->hp - cur;
         target->defense_modifier += 1;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
+        BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
         target->defense_modifier_turns = 7;
         break;
 
@@ -1317,8 +1317,8 @@ dealt = target->hp - cur;
         target->defense_modifier += 2;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
+        BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
         target->defense_modifier_turns = 7;
         break;
 
@@ -1326,7 +1326,7 @@ dealt = target->hp - cur;
     case EFX_REVIVE_FULL:
         if (target->hp != 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_REVIVED);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_REVIVED);
         target->hp = target->max_hp;
         BattleUnit_UpdateRatios(target_id);
         break;
@@ -1334,7 +1334,7 @@ dealt = target->hp - cur;
     case EFX_REVIVE_HALF:
         if (target->hp != 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_REVIVED);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_REVIVED);
         target->hp = (s16)(target->max_hp / 2);
         BattleUnit_UpdateRatios(target_id);
         break;
@@ -1342,7 +1342,7 @@ dealt = target->hp - cur;
     case EFX_REVIVE_80:
         if (target->hp != 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_REVIVED);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_REVIVED);
         target->hp = (s16)Math_Div(target->max_hp * 8, 10);
         BattleUnit_UpdateRatios(target_id);
         break;
@@ -1351,7 +1351,7 @@ dealt = target->hp - cur;
 
     case EFX_CURE_POISON:
         if (target->poison != 0)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_POISON);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURE_POISON);
         target->poison = 0;
         break;
 
@@ -1366,8 +1366,8 @@ dealt = target->hp - cur;
             target->res_modifier = -4;
         if (target->res_modifier > 4)
             target->res_modifier = 4;
-        BattleEvent_Push(BATTLE_EVENT_VALUE, (copy->res_modifier - target->res_modifier) * 20);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_RES_DOWN);
+        BattleEv_Push(BATTLE_EVENT_VALUE, (copy->res_modifier - target->res_modifier) * 20);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_RES_DOWN);
         target->res_modifier_turns = 7;
     }
         break;
@@ -1383,8 +1383,8 @@ dealt = target->hp - cur;
             target->res_modifier = -4;
         if (target->res_modifier > 4)
             target->res_modifier = 4;
-        BattleEvent_Push(BATTLE_EVENT_VALUE, (target->res_modifier - copy->res_modifier) * 20);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_RES_UP);
+        BattleEv_Push(BATTLE_EVENT_VALUE, (target->res_modifier - copy->res_modifier) * 20);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_RES_UP);
         target->res_modifier_turns = 7;
     }
         break;
@@ -1392,14 +1392,14 @@ dealt = target->hp - cur;
     case EFX_POISON:
         if (target->poison != 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_POISONED);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_POISONED);
         target->poison = 1;
         break;
 
     case EFX_VENOM:
         if (target->poison > 1)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_VENOM);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_VENOM);
         target->poison = 2;
         break;
 
@@ -1438,13 +1438,13 @@ dealt = target->hp - cur;
     case EFX_INSTANT_DOWN:
         if (BATTLE_SURVIVES_KO())
             break;
-        BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+        BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_KO_DOWN);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_KO_DOWN);
         else if (action_id == 219)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SUFFOCATE);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_SUFFOCATE);
         else
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPIRIT_DRAIN);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_SPIRIT_DRAIN);
         target->hp = 0;
         BattleUnit_UpdateRatios(target_id);
         break;
@@ -1474,13 +1474,13 @@ dealt = target->hp - cur;
             heal = actor->max_hp;
             dmg = heal - actor->hp;
         }
-        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
+        BattleEv_Push(BATTLE_EVENT_RESET, 0);
+        BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
         if (heal == actor->max_hp)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
         else {
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
         }
         actor->hp = (s16)heal;
         BattleUnit_UpdateRatios(actor_id);
@@ -1500,13 +1500,13 @@ dealt = target->hp - cur;
             heal = actor->max_pp;
             amt = heal - actor->pp;
         }
-        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
+        BattleEv_Push(BATTLE_EVENT_RESET, 0);
+        BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
         if (heal == actor->max_pp)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
         else {
-            BattleEvent_Push(BATTLE_EVENT_VALUE, amt);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
+            BattleEv_Push(BATTLE_EVENT_VALUE, amt);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
         }
         actor->pp = (s16)heal;
         BattleUnit_UpdateRatios(actor_id);
@@ -1521,7 +1521,7 @@ dealt = target->hp - cur;
             dmg = actor->max_pp - actor->pp;
         if (dmg == 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+        BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
         TEXT_SIDE(MSG_LEECH_TAKE, MSG_LEECH_GAIN);
         BattleUnit_Drain(actor_id, dmg);
         break;
@@ -1547,35 +1547,35 @@ dealt = target->hp - cur;
         target->status_12d = 0;
         target->status_12e = 0;
         target->status_12f = 0;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_BUFFS_RESET);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_BUFFS_RESET);
         break;
 
     case EFX_EVIL_SPIRIT:
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_EVIL_SPIRIT);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_EVIL_SPIRIT);
         target->evil_spirit = 1;
         break;
 
     case EFX_DEATH_CURSE:
     BATTLE_DEATH_CASES
         if (target->death_count == 0) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEATH_CURSE);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEATH_CURSE);
             target->death_count = 7;
             break;
         }
         if (target->death_count <= 1)
             break;
         target->death_count -= 1;
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->death_count);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEATH_COUNT);
+        BattleEv_Push(BATTLE_EVENT_VALUE, target->death_count);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEATH_COUNT);
         break;
 
     case EFX_READY:
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_READIES);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_READIES);
         ((u8 *)target)[0x144] = 2;  /* ready_pose。構造体表記だと共有尾が壊れる */
         break;
 
     case EFX_CHALLENGE:
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CHALLENGE);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CHALLENGE);
         target->battle_end_state = 1;
         if ((u32)target_id <= 7)
             ((u8 *)work)[67] |= 2;
@@ -1583,13 +1583,13 @@ dealt = target->hp - cur;
 
     case EFX_IMMOBILIZE:
     BATTLE_IMMOBILIZE_CASES
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_IMMOBILE);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_IMMOBILE);
         target->cannot_move = 1;
         break;
 
     case EFX_GUARD1:
     BATTLE_GUARD1_CASES
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AURA);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_AURA);
         if (BATTLE_GUARD_VALUE(target) > 0)
             break;
         g1 = 1;
@@ -1600,7 +1600,7 @@ dealt = target->hp - cur;
 
     case EFX_GUARD2:
     BATTLE_GUARD2_CASES
-        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AURA_2);
+        BattleEv_Push(BATTLE_EVENT_TEXT, MSG_AURA_2);
         if (BATTLE_GUARD_VALUE(target) > BATTLE_GUARD2_THRESHOLD)
             break;
         S8OF(target->guard_level) = BATTLE_GUARD2_LEVEL;
@@ -1609,7 +1609,7 @@ dealt = target->hp - cur;
     BATTLE_POST_GUARD_CASES
 
     case EFX_TEXT_NONE:
-        BattleEvent_Push(BATTLE_EVENT_TEXT, (u32)-1);
+        BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
         break;
 
     BATTLE_AFTER_TEXT_CASES
@@ -1620,22 +1620,22 @@ dealt = target->hp - cur;
 
 done:
     /* 終了処理 */
-    BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+    BattleEv_Push(BATTLE_EVENT_RESET, 0);
     BATTLE_DONE_PREP();
     if (target->hp != 0) {
         if (target->sleep != 0)
         if (target->sleep <= 6
             && dealt > 0 && (3 & BattleRandom_Next()) == 0) {
             target->sleep = 0;
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_WAKES);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_WAKES);
         }
     }
     Sys_Free(copy);
     BattleUnit_Recalculate(target_id);
     Sys_SetMode(((u8 *)BATTLE_WORK)[65]);
     if (target->hp != 0)
-        BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (BATTLE_EVIL_SPIRIT_ACTIVE()
         && (BattleRandom_Next() & 3) == 0 && dealt > 0) {
         s32 share;

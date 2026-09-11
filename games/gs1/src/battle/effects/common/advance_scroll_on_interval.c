@@ -9,7 +9,7 @@ struct Position {
 extern u32 Data_03001eec;
 extern struct Position Data_03001ad0;
 
-void BattleEffect_AdvanceScrollOnInterval(void)
+void BattleFx_AdvanceScrollOnInterval(void)
 {
     u8 *base = (u8 *)Data_03001eec;
     u32 *counter = (u32 *)(base + 0x7790);

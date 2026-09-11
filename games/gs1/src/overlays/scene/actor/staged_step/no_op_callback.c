@@ -1,2 +1,2 @@
 /* Deliberate no-op callback. */
-void FieldScene_NoOpCallback(void) {}
+void Scene_NoOpCallback(void) {}

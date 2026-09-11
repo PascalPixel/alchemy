@@ -2,7 +2,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void BattleEffect_AdvanceObjectField6WithRamp(void *obj)
+void BattleFx_AdvanceObjectField6WithRamp(void *obj)
 {
     u32 step;
 

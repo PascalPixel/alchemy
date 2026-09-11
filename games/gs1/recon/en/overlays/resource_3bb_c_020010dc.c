@@ -20,11 +20,11 @@
  */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_ConfigureActorFormation:
+/* AUDITED GENERATED CALL SCRIPT for Scene_ConfigureActorFormation:
  * 47 calls, coordinate-relative placement, three actor lookups, and closing
  * position updates across the complete callable owner. */
 
-#define FieldScene_ConfigureActorFormation Func_020010dc
+#define Scene_ConfigureActorFormation Func_020010dc
 
 void Func_02005032();
 void *Func_0200503a();

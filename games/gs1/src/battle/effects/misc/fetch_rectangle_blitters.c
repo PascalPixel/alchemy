@@ -3,7 +3,7 @@
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 extern u8 Data_03001e50[];
 
-void BattleEffect_FetchRectangleBlitters(s32 alternate, u32 *output)
+void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output)
 {
     if (alternate == 0) {
         u8 *state;

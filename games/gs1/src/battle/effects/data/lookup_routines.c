@@ -12,24 +12,24 @@ s32 EffectRuntime_LookupByTableEntry(u32 index)
     return Func_0808ae74(table[index]);
 }
 
-s32 BattleEffect_LookupResult(void *);
+s32 BattleFx_LookupResult(void *);
 s32 Func_0808ae74(s32, s32);
 
-s32 BattleEffect_ApplyLookupResult(s32 arg0, s32 arg1)
+s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
 {
-    return Func_0808ae74(BattleEffect_LookupResult((void *)arg0), arg1);
+    return Func_0808ae74(BattleFx_LookupResult((void *)arg0), arg1);
 }
 
 extern u16 Data_0809c610[];
 
-u16 BattleEffect_GetWeightedResult(s32 arg0, s32 arg1)
+u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 {
     return Data_0809c610[(arg0 * 14) + arg1 + 2];
 }
 
-u16 BattleEffect_GetWeightedResult(s32 arg0, s32 arg1);
+u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 extern u8 Data_0809d8b0[];
-unsigned char BattleEffect_GetPhaseResult(s32 phase_index)
+unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 {
   s32 entry_offset;
   int entry_address;
@@ -44,7 +44,7 @@ unsigned char BattleEffect_GetPhaseResult(s32 phase_index)
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
   /* Exact GCC 2.96 output carries this call's result through r0. */
-  BattleEffect_GetWeightedResult(
+  BattleFx_GetWeightedResult(
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }
 
@@ -62,7 +62,7 @@ extern const struct SceneInteractionEntry Data_0809d9f0[];
 
 s32 GameFlag_IsSet(s32 flag);
 
-void FieldScene_ResolveInteractionResult(void)
+void Scene_ResolveInteractionResult(void)
 {
     s16 result = 18;
     s16 progress = Data_02000240[224];

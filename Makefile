@@ -420,7 +420,7 @@ compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \
 		case "$$repo" in \
 		  agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
-		  agscc) approved=5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148;; \
+		  agscc) approved=32fc0a03450f41ea69b9d0fa9ac466fbf1285fd2;; \
 		esac; \
 		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 		test "$$(git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \

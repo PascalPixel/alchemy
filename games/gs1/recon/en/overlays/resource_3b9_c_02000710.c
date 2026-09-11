@@ -48,7 +48,14 @@ extern u8 Data_0200ade4[];
  * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c
  * already spells. */
 
-#define SCENE_WORK (*(u8 **)0x03001ebc)
+extern u8 Data_03001ebc[];
+#define SCENE_WORK (*(u8 **)Data_03001ebc)
+static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
+{
+    u16 *step = (u16 *)(*(u8 **)Data_03001ebc + 0x1d8);
+
+    *step = *step + amount;
+}
 #define SCENE_FIELD_1C8 (*(s32 *)(SCENE_WORK + 0x1c8))
 #define SCENE_STEP (*(u16 *)(SCENE_WORK + 0x1d8))
 
@@ -340,7 +347,7 @@ void FieldScene_RunBranchingActorPresentation(void)
         Func_020039be();
         ObjectMotion_SetSpeedParameters();
     } else {
-        SCENE_STEP += 1;
+        bump_step(1);
         Call3(BattleEffect_SpawnLinkedResourceObject, 17, 0x102, 40);
         FieldScene_CallPairWith10(17);
         Call3(BattleEffect_SpawnLinkedResourceObject, 18, 0x102, 40);
@@ -391,7 +398,7 @@ void FieldScene_RunBranchingActorPresentation(void)
             Func_020039be();
             ObjectMotion_SetSpeedParameters();
         } else {
-            SCENE_STEP += 1;
+            bump_step(1);
             BattleRuntime_WaitIfModeZero(20);
             ObjectMotion_SetVariantCallback(1, 2);
             Func_020034c4(1, 0, 20);

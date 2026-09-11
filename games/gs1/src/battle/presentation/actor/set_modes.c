@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/presentation/actor/set_modes.h"
 
 extern u8 *gBattleWork;
 void WaitFrames(s32);

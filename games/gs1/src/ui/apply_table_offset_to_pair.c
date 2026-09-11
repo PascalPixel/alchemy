@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/apply_table_offset_to_pair.h"
 
 struct Object_080216b4 {
     struct Object_080216b4 *next;

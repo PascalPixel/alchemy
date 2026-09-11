@@ -4,7 +4,6 @@
  */
 #include "types.h"
 #include "scene.h"
-#include "abi/save/state/write_workspace_slot.h"
 #include "global_cells.h"
 
 /*

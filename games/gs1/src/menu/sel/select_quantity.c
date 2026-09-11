@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/sel/select_quantity.h"
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
@@ -19,14 +18,14 @@ s32 Menu_Run(s32 value)
 
     confirmState[5] = 13;
     window = Menu_SetRange(0, 0, 30, 10, 2);
-    Menu_Do(Menu_Run2);
+    Menu_Do(Menu_unk2_4);
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 13;
     }
-    Menu_Run3();
-    Menu_Do2(1);
+    Menu_unk3_3();
+    Menu_unk2_2(1);
 
     goto check_exit;
 
@@ -43,7 +42,7 @@ adjust:
             changed = 1;
         }
     }
-    Menu_Do2(1);
+    Menu_unk2_2(1);
 
 check_exit:
     if (Menu_Check(336) != 0)
@@ -68,15 +67,15 @@ check_exit:
     goto adjust;
 
 done:
-    Menu_Check2(window);
-    Menu_Do2(1);
+    Menu_unk2(window);
+    Menu_unk2_2(1);
     Menu_Apply3(window, 1);
-    Menu_Check2(*(s32 *)(menu + 16));
-    Menu_Do3(14);
+    Menu_unk2(*(s32 *)(menu + 16));
+    Menu_unk3_2(14);
     {
         s32 delay = 0xc80;
 
-        Menu_Apply4((const void *)Menu_Run2, delay);
+        Menu_Apply4((const void *)Menu_unk2_4, delay);
     }
 
     {

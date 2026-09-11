@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/transition/run_scene_primary_sequence.h"
 
 extern u8 gVal[];
 extern u8 gCell[];
@@ -18,10 +17,10 @@ s32 Actor_Run(void)
             goto L_0200178c;
         }
         Actor_Do(0x144);
-        Actor_Run2();
+        Actor_unk2_4();
     } else {
         L_0200178c:;
-        Actor_Run3();
+        Actor_unk3_4();
     }
     return 0;
 }

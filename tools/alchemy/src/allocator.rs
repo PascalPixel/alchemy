@@ -83,8 +83,12 @@ fn run(args: &[String]) -> Result<(), String> {
     // source carries no resource stem to infer an overlay from.
     fs::write(
         &bindings,
-        SourcePaths::load_for_game(&repo, CompilerTarget::Gs1.as_str())?
-            .symbol_bindings(parsed.overlay_id().as_deref()),
+        crate::compiler::source_bindings::production_bindings(
+            &repo,
+            &SourcePaths::load_for_game(&repo, CompilerTarget::Gs1.as_str())?
+                .symbol_bindings(parsed.overlay_id().as_deref()),
+            Some(&src),
+        )?,
     )
     .map_err(|e| e.to_string())?;
     cpp.splice(

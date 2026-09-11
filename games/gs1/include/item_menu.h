@@ -137,82 +137,8 @@ LAYOUT_SIZE_GUARD(
     struct ItemMenuState,
     0x25c);
 
-extern struct ItemMenuState *Data_03001f2c;
 extern char Value_00000ad7;
 
-s32 Func_080a3ce4(s32 item);
-void Func_080a38a8(s32 owner);
-void Func_080a3cf8(s32 unused, s32 message);
-void Func_080a3d24(const u16 *items);
-s32 Func_080a3d6c(s32 owner);
-s32 Func_080a3d9c(s32 owner, s32 item);
-u32 Func_080a3ddc(void *owner, u16 *items, s32 mode);
-void Func_080a3e28(u16 *items, s32 style);
-void Func_080a3e88(s32 owner, s32 mode);
-void Func_080a3eec(void);
-s32 Func_080a32b8(void);
-void Func_080a345c(void);
-void Func_080a3480(void);
-void Func_080a34c0(void);
-void Func_080a3354(void);
-s32 Func_080a355c(s32 party_slot);
-s32 Func_080a4110(s32 column, s32 row);
-s32 Func_080a413c(s32 column, s32 row);
-void Func_080a448c(s8 *command_states);
-void Func_080a45cc(void *command_states, s32 window);
-void Func_080a4754(void);
-s32 Func_080a47b4(s32 item_index);
-void Func_080a4db4(s32 delta, s32 unused, s32 window, s32 x, s32 y);
-void Func_080a4e20(void);
-void Func_080a4e44(void);
-void Func_080a4e68(void);
-void Func_080a4e90(void);
-void Func_080a4eb8(void);
-void Func_080a4ee0(void);
-void Func_080a51d0(void);
-s32 Func_080a9e48(s32 slot, s32 owner, s32 target);
-s32 Func_080a5578(struct MenuResult *result, s32 index);
-s32 Func_080a56c8(s32 window, s32 unused, const struct MenuResult *state);
-s32 Func_080a5780(void);
-void Func_080a9a5c(s32 window, s32 owner, s32 mode);
-void Func_08015298(s32 style, u16 item, u8 target, s32 flags);
-
-#define ItemMenu_IsSpecial   Func_080a3ce4
-#define ItemMenu_OpenCategory    Func_080a38a8
-#define ItemMenu_DrawMsg          Func_080a3cf8
-#define Menu_HideEmptyEntryIcons           Func_080a3d24
-#define ItemMenu_Count           Func_080a3d6c
-#define ItemMenu_GetQty      Func_080a3d9c
-#define ItemMenu_Collect         Func_080a3ddc
-#define ItemMenu_DrawIcons        Func_080a3e28
-#define ItemMenu_RefreshOwner    Func_080a3e88
-#define ItemMenu_NoOp                 Func_080a3eec
-#define ItemMenu_Use      Func_080a32b8
-#define ItemMenu_HideAllIcons     Func_080a345c
-#define ItemMenu_HidePageIcons   Func_080a3480
-#define ItemMenu_Close         Func_080a34c0
-#define ItemMenu_Init  Func_080a3354
-#define ItemMenu_PrepOwner    Func_080a355c
-#define ItemMenu_CmdCursorX    Func_080a4110
-#define ItemMenu_CmdCursorY    Func_080a413c
-#define ItemMenu_BuildCmd   Func_080a448c
-#define ItemMenu_DrawCmd    Func_080a45cc
-#define ItemMenu_TryBreak Func_080a4754
-#define ItemMenu_OpenDetail      Func_080a47b4
-#define ItemMenu_DrawStat        Func_080a4db4
-#define ItemMenu_SetItemWin5 Func_080a4e20
-#define ItemMenu_SetItemWin3 Func_080a4e44
-#define ItemMenu_SetMsgWin5 Func_080a4e68
-#define ItemMenu_SetMsgWin6 Func_080a4e90
-#define ItemMenu_SetMsgWin7 Func_080a4eb8
-#define ItemMenu_SetMsgWin3 Func_080a4ee0
-#define ItemMenu_DrawItemHead Func_080a51d0
-#define Item_Use                            Func_080a9e48
-#define ItemMenu_PageResult      Func_080a5578
-#define ItemMenu_DrawNamePage     Func_080a56c8
-#define ItemMenu_NamePageOk Func_080a5780
-#define ItemMenu_DrawCategory    Func_080a9a5c
-#define ItemMenu_DrawIcon         Func_08015298
 #define ItemMenu_EmptyMsg         Value_00000ad7
 
 #endif

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/text/draw/draw_quantity_pair_with_cue.h"
 
 void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/load_fixed_block_b_into_free_slot.h"
 
 s32 Resource_CopyData(s32, s32, s32);
 s32 Resource_FindFreeSlot();

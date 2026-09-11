@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/data/lookup_result.h"
 
 typedef struct Entry {
     s16 first;

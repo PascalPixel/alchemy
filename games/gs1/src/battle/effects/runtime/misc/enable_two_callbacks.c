@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/runtime/misc/enable_two_callbacks.h"
 
 extern u8 gRom;
 extern u8 gRom2;

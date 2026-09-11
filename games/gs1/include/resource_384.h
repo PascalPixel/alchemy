@@ -4,19 +4,6 @@
 #include "types.h"
 
 /* Behavior names for the address-stable overlay symbols. */
-#define Resource384_GetHeaderData       Func_02000030
-#define Resource384_NullCallback        Func_02000038
-#define Resource384_GetSceneLayout      Func_0200003c
-#define Resource384_SelectActorLayout   Func_02000044
-#define Resource384_SelectSceneScript   Func_0200006c
-#define Resource384_RunOpeningSequence  Func_02000094
-#define Resource384_RunActor9Intro       Func_02000110
-#define Resource384_RunActor10Intro      Func_02000140
-#define Resource384_RunActor8Beat        Func_02000170
-#define Resource384_RunActor9Beat        Func_02000190
-#define Resource384_RunActor10Beat       Func_020001b0
-#define Resource384_RunClosingBeat       Func_020001d0
-#define Resource384_UpdateScene          Func_020001e4
 
 enum Resource384ActorId {
     RESOURCE384_ACTOR_8 = 8,

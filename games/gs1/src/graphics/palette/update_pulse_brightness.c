@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/palette/update_pulse_brightness.h"
 
 s32 FixedPoint_Ratio(s32, s32);
 extern s32 gIw;

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/compute_eligible_member_average.h"
 #include "battle_formation.h"
 
 struct Object_080c1a34 {

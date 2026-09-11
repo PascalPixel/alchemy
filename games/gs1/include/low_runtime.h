@@ -3,6 +3,4 @@
 
 #include "types.h"
 
-void Func_080046c4(const u8 *source);
-
 #endif

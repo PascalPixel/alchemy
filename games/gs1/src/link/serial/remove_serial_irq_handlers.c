@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/link/serial/remove_serial_irq_handlers.h"
 #include "global_cells.h"
 
 #ifndef SERIAL_RUNTIME_TU

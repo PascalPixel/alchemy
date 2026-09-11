@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/data/lookup_routines.h"
 
 extern u8 *gWork;
 

@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/shop/cursor/set.h"
 #include "shop.h"
 
 extern u8 gVal[];

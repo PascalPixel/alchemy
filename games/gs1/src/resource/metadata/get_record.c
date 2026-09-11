@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/metadata/get_record.h"
 
 extern u8 gUnk[];
 

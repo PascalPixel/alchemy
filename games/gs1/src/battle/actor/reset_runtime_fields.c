@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/actor/reset_runtime_fields.h"
 
 u8 *Runtime_GetObject(s32);
 void BattleUnit_Recalculate(s32);

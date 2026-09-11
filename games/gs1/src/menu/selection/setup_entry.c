@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/selection/setup_entry.h"
 
 /* Sprite record setup for the menu selection list. */
 
@@ -63,13 +62,13 @@ void Menu_Run(u32 kind, s32 base, struct ListNode *node, s32 reuse)
     case 2:
         if (reuse != 0)
             src = node->src;
-        Menu_SetRange2(base, 1, &src, &tile, reuse);
+        Menu_unk2_5(base, 1, &src, &tile, reuse);
         node->end = base + (s32)&Value_00000182;
         break;
     case 4:
         if (reuse != 0)
             src = node->src;
-        Menu_SetRange3(base, 1, (s32)&src, (s32)&tile, reuse);
+        Menu_unk3_4(base, 1, (s32)&src, (s32)&tile, reuse);
         node->end = base + (s32)&Value_00000333;
         break;
     }

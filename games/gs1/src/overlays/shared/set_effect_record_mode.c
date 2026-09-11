@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/shared/set_effect_record_mode.h"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {

@@ -1,7 +1,6 @@
 #include "layout_guard.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/sel/open_character_selector.h"
 #include "gs1_edition.h"
 #include "item_menu.h"
 #include "character_menu.h"
@@ -91,12 +90,12 @@ s32 OpenCharacterSelector(void)
         state->row_positions[index] = 30;
     state->flags = 3;
 
-    result = Menu_Check2();
+    result = Menu_unk2();
 
-    Menu_Do2(state->screen_handle);
+    Menu_unk2_2(state->screen_handle);
     ItemMenu_Close();
     gIw->suspended = 0;
     WaitFrames(1);
-    Menu_Do3(55);
+    Menu_unk3_2(55);
     return result;
 }

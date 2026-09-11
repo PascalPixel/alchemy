@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/heavy_impact/finish.h"
 #include "fixed_math.h"
 
 extern s32 gCell[];
@@ -32,18 +31,18 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         }
         Battle_Run();
         base = (*((s32 *)0x03001F30));
-        Battle_Run2(0x20118C);
+        Battle_unk2_4(0x20118C);
         Audio_PlayCue(0xAD);
-        Battle_Run3(id, 1);
+        Battle_unk3_4(id, 1);
     }
     while (0);
     Audio_PlayCue(0xAE);
-    Battle_Run3(id, 1);
+    Battle_unk3_4(id, 1);
     /* A second boundary gives the third repeated call its observed order. */
     do
     {
         Audio_PlayCue(0xAF);
-        Battle_Run3(id, 1);
+        Battle_unk3_4(id, 1);
         WaitFrames(0x14);
         Audio_PlayCue(0x8C);
         (*((s32 *)(((s8 *)ctx) + 0x6C))) = 0x0809592D;
@@ -60,7 +59,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         count = 0x17;
         do
         {
-            Battle_Run4(work, 0x11C, pos.x, pos.z);
+            Battle_unk4_4(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, 0x08095939);
             /* This boundary keeps the work pointer ahead of the constant. */
             do
@@ -68,8 +67,8 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
-            Battle_Run5(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
-            value = (Battle_Run6(Random16(), 3) + 0x10000);
+            Battle_unk5_2(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            value = (Battle_unk6_2(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;
             count = (count - 1);
@@ -86,6 +85,6 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);
-    Battle_Run7();
+    Battle_unk7_2();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

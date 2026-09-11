@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/shared/find_scene_actor_at_fixed_point_position.h"
 
 extern u8 *gWork;
 

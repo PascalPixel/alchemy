@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/runtime/run_descriptor.h"
 
 typedef struct {
     s32 flags;
@@ -37,7 +36,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             Battle_Do(desc->val8);
             Battle_Apply(-1, 0);
             ret = 0;
-            Battle_Run2();
+            Battle_unk2_4();
         } else {
             ((void (*)(s32))desc->val8)(arg0);
             goto block_17;
@@ -48,8 +47,8 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             kind = desc2->flags & 0x30;
             switch (kind) {
             case 0: Audio_PlayCue(0x7B); break;
-            case 32: Audio_PlayCue(0x80); Battle_Run3(); break;
-            case 48: Audio_PlayCue(0x81); Battle_Run4(); break;
+            case 32: Audio_PlayCue(0x80); Battle_unk3_4(); break;
+            case 48: Audio_PlayCue(0x81); Battle_unk4_4(); break;
             }
             work->h170 = (s16)desc2->val8;
 block_17:

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/misc/schedule_callback_when_value24c_set.h"
 
 struct Fields_08099810 {
     u8 filler[0x24c];

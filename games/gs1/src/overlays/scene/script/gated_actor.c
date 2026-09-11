@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/script/gated_actor.h"
 
 /*
  * DRAFTED SCENE SCRIPT for Scene_RunGatedActorSequence.
@@ -21,7 +20,7 @@
  * destination, the single unambiguous spelling is reused for every call to
  * that destination.
  *
- * RESIDUAL / INTEGRATOR NOTE.  The pre-relocation word Script_Run3 is used
+ * RESIDUAL / INTEGRATOR NOTE.  The pre-relocation word Script_unk3_4 is used
  * at two sites in this owner and relocates to two different destinations:
  * 0x02000d22 -> runtime 0x02009b84 (main-image 0x0808a218) and 0x02000d52 ->
  * runtime 0x02009b54 (main-image 0x0808a1b8).  0x02009b84 is reachable through
@@ -32,7 +31,7 @@
  * the reference's call word, but it is a scoring workaround, not source.
  * The project's own convention for this case is the suffixed pair already used
  * by this overlay's other unit, games/gs1/src/overlays/scene/script/
- * run_actor_position_sequence.c: declare Script_Run4 and Script_Run5,
+ * run_actor_position_sequence.c: declare Script_unk4_4 and Script_unk5_3,
  * spell the 0x02000d22 site _a and the 0x02000d52 site _b, and record both in
  * the unit's `absolute_symbols` as 0x02009b84 and 0x02009b54, kind "thumb".
  * That table is integrator-owned, so the suffixed spellings do not bind from a
@@ -89,7 +88,7 @@
 /* 0x0808a070, two arguments, result tested */
 
 /* 0x0808a080, one argument, returns an object record or NULL */
-u8 *Script_Run6();
+u8 *Script_unk6_3();
 /* 0x0808a090, three arguments */
 
 /* 0x0808a0b8, three arguments */
@@ -154,172 +153,172 @@ void Scene_RunGatedActorSequence(void)
         return;
     }
 
-    Script_Run7();
-    Script_Run8(17);
+    Script_unk7_3();
+    Script_unk8_2(17);
     Script_Do(0x808);
 
     evt = (s32)gVal;
-    Script_Run9(evt);
-    Script_Run10(14, 0, 10);
+    Script_unk9_2(evt);
+    Script_unk10_2(14, 0, 10);
 
     Script_Place(0, 0x13333, 0x9999);
-    Script_Place2(0, 0x100, 30);
-    Script_Place3(0, 0x188, 0x148);
-    Script_Place4(0, 0x4000, 10);
+    Script_unk2_3(0, 0x100, 30);
+    Script_unk3_3(0, 0x188, 0x148);
+    Script_unk4_3(0, 0x4000, 10);
 
-    record = Script_Run6(0);
+    record = Script_unk6_3(0);
     x = *(s16 *)(record + 10);
     z = *(s16 *)(record + 18);
-    Script_Run11(5, x << 16, z << 16);
-    Script_Run11(1, x << 16, z << 16);
+    Script_unk11_2(5, x << 16, z << 16);
+    Script_unk11_2(1, x << 16, z << 16);
 
     Script_Place(5, 0x13333, 0x9999);
     Script_Place(1, 0x13333, 0x9999);
-    Script_Place5(5, 0x178, 0x148);
-    Script_Place3(1, 0x198, 0x148);
-    Script_Run12(0, 0);
-    Script_Run12(5, 0);
-    Script_Run12(1, 0);
-    Script_Place4(1, 0x8000, 0);
-    Script_Run13(5, 0, 20);
-    Script_Place2(0, 0x101, 0);
-    Script_Place2(1, 0x101, 0);
-    Script_Place2(5, 0x101, 30);
-    Script_Place4(0, 0x4000, 0);
-    Script_Place4(1, 0x4000, 0);
-    Script_Place4(5, 0x4000, 0);
+    Script_unk5_2(5, 0x178, 0x148);
+    Script_unk3_3(1, 0x198, 0x148);
+    Script_unk12_2(0, 0);
+    Script_unk12_2(5, 0);
+    Script_unk12_2(1, 0);
+    Script_unk4_3(1, 0x8000, 0);
+    Script_unk13_2(5, 0, 20);
+    Script_unk2_3(0, 0x101, 0);
+    Script_unk2_3(1, 0x101, 0);
+    Script_unk2_3(5, 0x101, 30);
+    Script_unk4_3(0, 0x4000, 0);
+    Script_unk4_3(1, 0x4000, 0);
+    Script_unk4_3(5, 0x4000, 0);
     Script_Run(0x60000, 0xc000);
-    Script_Run2(0xd70000, -1, 0x1590000, 1);
+    Script_unk2_4(0xd70000, -1, 0x1590000, 1);
     gOv();
-    Script_Run14(20);
-    Script_Run8(61);
+    Script_unk14_2(20);
+    Script_unk8_2(61);
 
-    Script_Run15(14, 4);
-    Script_Run12(14, 4);
-    Script_Run10(14, 0, 20);
-    Script_Run13(15, 0, 10);
-    Script_Run10(15, 0, 10);
-    Script_Run15(14, 3);
-    Script_Run10(14, 0, 10);
-    Script_Place4(15, 0x4000, 60);
-    Script_Run16(15, 1);
-    Script_Run10(15, 0, 20);
-    Script_Run15(14, 3);
-    Script_Run10(14, 0, 10);
-    Script_Run15(15, 4);
-    Script_Run10(15, 0, 6);
-    Script_Place2(14, 0x100, 0);
-    Script_Run16(14, 2);
-    Script_Run14(20);
-    Script_Run13(15, 0, 10);
-    Script_Place2(15, 0x101, 40);
-    Script_Run13(14, 0, 60);
-    Script_Place4(14, 0x8000, 40);
-    Script_Run13(14, 0, 40);
-    Script_Place3(14, 232, 0x168);
-    Script_Run13(14, 0, 10);
-    Script_Run15(15, 3);
-    Script_Run14(10);
-    Script_Place5(14, 0x188, 0x168);
-    Script_Place3(15, 216, 0x168);
-    Script_Place5(15, 0x178, 0x168);
-    Script_Place4(0, 0x4000, 0);
-    Script_Place4(1, 0x4000, 0);
-    Script_Place4(5, 0x4000, 0);
-    Script_Run2(0x1890000, -1, 0x1530000, 1);
-    Script_Place5(14, 0x188, 0x168);
-    Script_Place3(15, 0x178, 0x168);
-    Script_Run12(14, 0);
-    Script_Run12(15, 0);
-    Script_Place4(14, 0xd000, 0);
-    Script_Place4(15, 0xd000, 30);
-    Script_Run16(14, 2);
-    Script_Run10(14, 0, 10);
-    Script_Place2(1, 258, 60);
-    Script_Run16(1, 1);
-    Script_Run10(1, 0, 10);
-    Script_Run15(15, 4);
-    Script_Check2(0x100f, 0);
+    Script_unk15(14, 4);
+    Script_unk12_2(14, 4);
+    Script_unk10_2(14, 0, 20);
+    Script_unk13_2(15, 0, 10);
+    Script_unk10_2(15, 0, 10);
+    Script_unk15(14, 3);
+    Script_unk10_2(14, 0, 10);
+    Script_unk4_3(15, 0x4000, 60);
+    Script_unk16(15, 1);
+    Script_unk10_2(15, 0, 20);
+    Script_unk15(14, 3);
+    Script_unk10_2(14, 0, 10);
+    Script_unk15(15, 4);
+    Script_unk10_2(15, 0, 6);
+    Script_unk2_3(14, 0x100, 0);
+    Script_unk16(14, 2);
+    Script_unk14_2(20);
+    Script_unk13_2(15, 0, 10);
+    Script_unk2_3(15, 0x101, 40);
+    Script_unk13_2(14, 0, 60);
+    Script_unk4_3(14, 0x8000, 40);
+    Script_unk13_2(14, 0, 40);
+    Script_unk3_3(14, 232, 0x168);
+    Script_unk13_2(14, 0, 10);
+    Script_unk15(15, 3);
+    Script_unk14_2(10);
+    Script_unk5_2(14, 0x188, 0x168);
+    Script_unk3_3(15, 216, 0x168);
+    Script_unk5_2(15, 0x178, 0x168);
+    Script_unk4_3(0, 0x4000, 0);
+    Script_unk4_3(1, 0x4000, 0);
+    Script_unk4_3(5, 0x4000, 0);
+    Script_unk2_4(0x1890000, -1, 0x1530000, 1);
+    Script_unk5_2(14, 0x188, 0x168);
+    Script_unk3_3(15, 0x178, 0x168);
+    Script_unk12_2(14, 0);
+    Script_unk12_2(15, 0);
+    Script_unk4_3(14, 0xd000, 0);
+    Script_unk4_3(15, 0xd000, 30);
+    Script_unk16(14, 2);
+    Script_unk10_2(14, 0, 10);
+    Script_unk2_3(1, 258, 60);
+    Script_unk16(1, 1);
+    Script_unk10_2(1, 0, 10);
+    Script_unk15(15, 4);
+    Script_unk2(0x100f, 0);
 
-    if (Script_Check3(0, 0) == 0) {
-        Script_Run9(evt + 10);
+    if (Script_unk3(0, 0) == 0) {
+        Script_unk9_2(evt + 10);
     } else {
-        Script_Run9(evt + 11);
+        Script_unk9_2(evt + 11);
     }
 
-    Script_Place6(0x100f, 0, 10);
-    Script_Run16(1, 2);
+    Script_unk6_2(0x100f, 0, 10);
+    Script_unk16(1, 2);
 
     evt2 = (s32)gVal2;
-    Script_Run9(evt2);
-    Script_Run10(1, 0, 20);
-    Script_Run17(14, 15, 40);
-    Script_Place4(14, 0xd000, 0);
-    Script_Place4(15, 0xd000, 20);
-    Script_Run10(14, 0, 60);
-    Script_Run16(15, 1);
-    Script_Run14(10);
-    Script_Run15(15, 3);
-    Script_Place6(0x100f, 0, 10);
-    Script_Run16(5, 2);
-    Script_Run15(5, 3);
-    Script_Place6(0x1005, 0, 20);
-    Script_Run16(14, 2);
-    Script_Place4(14, 0xa000, 20);
-    Script_Check2(14, 0);
+    Script_unk9_2(evt2);
+    Script_unk10_2(1, 0, 20);
+    Script_unk17(14, 15, 40);
+    Script_unk4_3(14, 0xd000, 0);
+    Script_unk4_3(15, 0xd000, 20);
+    Script_unk10_2(14, 0, 60);
+    Script_unk16(15, 1);
+    Script_unk14_2(10);
+    Script_unk15(15, 3);
+    Script_unk6_2(0x100f, 0, 10);
+    Script_unk16(5, 2);
+    Script_unk15(5, 3);
+    Script_unk6_2(0x1005, 0, 20);
+    Script_unk16(14, 2);
+    Script_unk4_3(14, 0xa000, 20);
+    Script_unk2(14, 0);
 
-    if (Script_Check3(0, 0) == 0) {
-        Script_Run9(evt2 + 5);
+    if (Script_unk3(0, 0) == 0) {
+        Script_unk9_2(evt2 + 5);
     } else {
-        Script_Run9(evt2 + 6);
+        Script_unk9_2(evt2 + 6);
     }
 
-    Script_Run13(5, 0, 0);
-    Script_Place4(1, 0x8000, 20);
-    Script_Run16(14, 2);
-    Script_Run10(14, 0, 10);
-    Script_Run18(14, 1, 30);
-    Script_Run18(14, 5, 30);
-    Script_Place2(14, 0x105, 80);
-    Script_Run15(14, 4);
-    Script_Do2(0xf98);
-    Script_Run10(14, 0, 6);
-    Script_Place2(0, 0x100, 0);
-    Script_Place2(1, 0x100, 0);
-    Script_Place2(5, 0x100, 0);
-    Script_Run19(1, 1);
-    Script_Run19(5, 1);
-    Script_Run16(0, 1);
-    Script_Run14(40);
-    Script_Run16(5, 2);
-    Script_Place4(1, 0x4000, 0);
-    Script_Place4(5, 0x4000, 10);
-    Script_Place6(0x1005, 0, 10);
-    Script_Run16(15, 2);
-    Script_Run13(15, 0, 10);
-    Script_Place6(0x100f, 0, 10);
-    Script_Place4(14, 0x8000, 20);
-    Script_Run15(14, 4);
-    Script_Run10(14, 0, 10);
-    Script_Run16(15, 2);
-    Script_Run14(10);
-    Script_Place4(14, 0xb000, 0);
-    Script_Place4(15, 0xd000, 20);
+    Script_unk13_2(5, 0, 0);
+    Script_unk4_3(1, 0x8000, 20);
+    Script_unk16(14, 2);
+    Script_unk10_2(14, 0, 10);
+    Script_unk18(14, 1, 30);
+    Script_unk18(14, 5, 30);
+    Script_unk2_3(14, 0x105, 80);
+    Script_unk15(14, 4);
+    Script_unk2_2(0xf98);
+    Script_unk10_2(14, 0, 6);
+    Script_unk2_3(0, 0x100, 0);
+    Script_unk2_3(1, 0x100, 0);
+    Script_unk2_3(5, 0x100, 0);
+    Script_unk19(1, 1);
+    Script_unk19(5, 1);
+    Script_unk16(0, 1);
+    Script_unk14_2(40);
+    Script_unk16(5, 2);
+    Script_unk4_3(1, 0x4000, 0);
+    Script_unk4_3(5, 0x4000, 10);
+    Script_unk6_2(0x1005, 0, 10);
+    Script_unk16(15, 2);
+    Script_unk13_2(15, 0, 10);
+    Script_unk6_2(0x100f, 0, 10);
+    Script_unk4_3(14, 0x8000, 20);
+    Script_unk15(14, 4);
+    Script_unk10_2(14, 0, 10);
+    Script_unk16(15, 2);
+    Script_unk14_2(10);
+    Script_unk4_3(14, 0xb000, 0);
+    Script_unk4_3(15, 0xd000, 20);
     Script_Place(15, 0x8000, 0x4000);
     Script_Place(14, 0x8000, 0x4000);
 
-    record = Script_Run6(14);
+    record = Script_unk6_3(14);
     *(record + 90) &= 0xfe;
-    record = Script_Run6(15);
+    record = Script_unk6_3(15);
     *(record + 90) &= 0xfe;
 
-    Script_Place5(14, 0x188, 0x178);
-    Script_Place3(15, 0x178, 0x178);
-    Script_Run14(6);
+    Script_unk5_2(14, 0x188, 0x178);
+    Script_unk3_3(15, 0x178, 0x178);
+    Script_unk14_2(6);
 
-    record = Script_Run6(14);
+    record = Script_unk6_3(14);
     *(record + 90) |= 1;
-    record = Script_Run6(15);
+    record = Script_unk6_3(15);
     {
         /*
          * A result temporary, not the compound or-assign the first
@@ -335,35 +334,35 @@ void Scene_RunGatedActorSequence(void)
         *(record + 90) = merged;
     }
 
-    Script_Run12(14, 0);
-    Script_Run12(15, 0);
-    Script_Run14(20);
-    Script_Run16(1, 2);
-    Script_Run10(1, 0, 10);
-    Script_Run13(0, 1, 20);
-    Script_Run12(0, 3);
-    Script_Run15(1, 3);
-    Script_Run8(17);
+    Script_unk12_2(14, 0);
+    Script_unk12_2(15, 0);
+    Script_unk14_2(20);
+    Script_unk16(1, 2);
+    Script_unk10_2(1, 0, 10);
+    Script_unk13_2(0, 1, 20);
+    Script_unk12_2(0, 3);
+    Script_unk15(1, 3);
+    Script_unk8_2(17);
 
-    Script_Run12(1, 2);
-    record = Script_Run6(0);
+    Script_unk12_2(1, 2);
+    record = Script_unk6_3(0);
     if (record != 0) {
-        Script_Run20(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Script_unk20(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Script_Run21(1);
-    Script_Run11(1, 0, 0);
+    Script_unk21(1);
+    Script_unk11_2(1, 0, 0);
 
-    Script_Run12(5, 2);
-    record = Script_Run6(0);
+    Script_unk12_2(5, 2);
+    record = Script_unk6_3(0);
     if (record != 0) {
-        Script_Run20(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Script_unk20(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Script_Run21(5);
-    Script_Run11(5, 0, 0);
+    Script_unk21(5);
+    Script_unk11_2(5, 0, 0);
 
     tbl = (s32)gOv2;
-    Script_Place7(14, 0x10000, tbl);
-    Script_Place7(15, 0x10000, tbl);
-    Script_Run22();
-    Script_Run23();
+    Script_unk7_2(14, 0x10000, tbl);
+    Script_unk7_2(15, 0x10000, tbl);
+    Script_unk22();
+    Script_unk23();
 }

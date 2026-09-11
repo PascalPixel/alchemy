@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/window/clear_tile_attributes_in_rect.h"
 #include "gs1_edition.h"
 
 extern u8 *gIw;

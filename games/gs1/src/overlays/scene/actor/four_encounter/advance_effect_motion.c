@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/four_encounter/advance_effect_motion.h"
 
 /*
  * Per-frame integrator for an effect record -- resource_396. It adds the

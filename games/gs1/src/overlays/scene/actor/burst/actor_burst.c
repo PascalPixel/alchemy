@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/burst/actor_burst.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -45,11 +44,11 @@ void *CreateOverlayObject(s32, s32, s32, s32);
 
 u8 *Actor_Run();
 
-u8 *Actor_Run2();
+u8 *Actor_unk2_4();
 
-u8 *Actor_Run3();
+u8 *Actor_unk3_4();
 
-u8 *Actor_Run4();
+u8 *Actor_unk4_4();
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 
@@ -192,7 +191,7 @@ void Scene_RunActor8AtCell24Sequence(void)
     record = (s32 *)Actor_Check(8);
     value = record[2] / 0x100000;
     if (value == 24) {
-        Actor_Run5(8);
+        Actor_unk5_4(8);
         {
             u8 *record = Actor_Run(8);
             u8 value = *(volatile u8 *)&record[35];
@@ -200,8 +199,8 @@ void Scene_RunActor8AtCell24Sequence(void)
             record[35] = (u8)(value | 2);
         }
         Actor_SetRect(19, 74, 9, 3, 19, 17);
-        target = Actor_Run2(8);
-        Actor_Run6((s32)target, 0);
+        target = Actor_unk2_4(8);
+        Actor_unk6_4((s32)target, 0);
         Actor_Do(0x864);
     }
 }
@@ -227,21 +226,21 @@ s32 Scene_PlaceActor8OnEntry(void)
     base = gCell;
     if (*(s16 *)(base + 0x1c0) == (s32)gVal) {
         if (*(s16 *)(base + 0x1c2) == 5) {
-            Actor_Do2(0x12f);
+            Actor_unk2_2(0x12f);
         } else {
             {
-                u8 *record = Actor_Run3(8);
+                u8 *record = Actor_unk3_4(8);
                 u8 value = *(volatile u8 *)&record[89];
 
                 record[89] = (u8)(value | 16);
             }
-            if (Actor_Check2(0x864) != 0) {
+            if (Actor_unk2(0x864) != 0) {
                 Actor_Place(8, 0x15a0000, 0x1240000);
-                record = Actor_Run4(8);
-                Actor_Run7((s32)record, 0);
-                *(u8 *)(Actor_Check3(8) + 35) |= 2;
-                Actor_Run8(8, 2);
-                Actor_SetRect2(19, 74, 9, 3, 19, 17);
+                record = Actor_unk4_4(8);
+                Actor_unk7_4((s32)record, 0);
+                *(u8 *)(Actor_unk3(8) + 35) |= 2;
+                Actor_unk8_4(8, 2);
+                Actor_unk2_5(19, 74, 9, 3, 19, 17);
             }
         }
     }
@@ -260,7 +259,7 @@ void Actor_WaitObjectBelowHeight(u8 *object, s32 height)
     s32 frames = 60;
 
     while (frames != 0) {
-        Actor_Do3(1);
+        Actor_unk3_2(1);
         frames--;
         if (*(s32 *)(object + 12) <= height)
             break;
@@ -291,7 +290,7 @@ union SceneActor {
 };
 struct Vector { s32 x, y, z; };
 
-union SceneActor *Actor_Run9(s32);
+union SceneActor *Actor_unk9_4(s32);
 
 void Actor_SetSpeed();
 
@@ -306,38 +305,38 @@ void Effect_RunActorBurst(s32 no)
         u8 bytes[sizeof(struct ConfiguredEffectOptions)];
     } opt;
 
-    work = Actor_Run9(no);
+    work = Actor_unk9_4(no);
     work->fields.mode = 0;
     for (cnt = 0; cnt < 18; cnt++) {
-        Actor_Do4(1);
+        Actor_unk4_2(1);
         work->fields.sprite->angle -= 256;
-        work->fields.x -= Actor_Check4(work->fields.sprite->angle) / 2;
+        work->fields.x -= Actor_unk4(work->fields.sprite->angle) / 2;
         work->fields.field_38 = 0x80000000;
     }
     work->fields.callback = 0x020084c5;
-    Actor_Place2(no, 0x30000, 0x18000);
-    Actor_Place3(no, 376, 288);
+    Actor_unk2_3(no, 0x30000, 0x18000);
+    Actor_unk3_3(no, 376, 288);
     work->fields.velocity_y = 0xcccc;
     work->fields.mode = 3;
     work->fields.field_22 = 0;
-    Actor_Do5(no);
+    Actor_unk5_2(no);
     Actor_Apply(work, 0);
-    Actor_Do6(188);
-    Actor_Place4(0x50000, 0x50000, 0x10000);
-    Actor_Do7(141);
-    Actor_Place5(-1, -1, 0xe666);
+    Actor_unk6_2(188);
+    Actor_unk4_3(0x50000, 0x50000, 0x10000);
+    Actor_unk7_2(141);
+    Actor_unk5_3(-1, -1, 0xe666);
     for (cnt = 0; cnt < 17; cnt++) {
-        vec.x = Actor_Check4(cnt << 12);
+        vec.x = Actor_unk4(cnt << 12);
         vec.y = 0;
-        vec.z = Actor_Check5(cnt << 12);
+        vec.z = Actor_unk5(cnt << 12);
         vec.x -= vec.x / 4;
         vec.z -= vec.z / 2;
-        Actor_Run10(work->fields.x, work->fields.y, work->fields.z,
+        Actor_unk10_4(work->fields.x, work->fields.y, work->fields.z,
                      vec.x, vec.y, vec.z, 0, NULL);
     }
     work->fields.field_28 = 0x50000;
-    Actor_Place6(no, 346, 292);
-    Actor_Do8(no);
+    Actor_unk6_3(no, 346, 292);
+    Actor_unk8_2(no);
     Actor_Apply2(work, 0);
     work->fields.callback = 0;
     work->fields.sprite->angle = 0x1000;
@@ -346,8 +345,8 @@ void Effect_RunActorBurst(s32 no)
     opt.fields.accum1c = 0xcccc;
     opt.fields.target30 = 0x18000;
     opt.fields.target34 = 0x13333;
-    Actor_Run11(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0, 0x1c0000, &opt.fields);
-    Actor_Do9(154);
+    Actor_unk11_4(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0, 0x1c0000, &opt.fields);
+    Actor_unk9_2(154);
     Actor_Apply3(no, 3);
-    Actor_Run12();
+    Actor_unk12_4();
 }

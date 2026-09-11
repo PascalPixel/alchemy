@@ -2,7 +2,6 @@
 #include "scene.h"
 #include "global_cells.h"
 
-
 u32 SaveState_FindLatestSlot(s32 record_id)
 {
     u16 *sequence_cursor;

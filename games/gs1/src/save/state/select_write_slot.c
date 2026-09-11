@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/save/state/select_write_slot.h"
 #include "fixed_math.h"
 #include "global_cells.h"
 

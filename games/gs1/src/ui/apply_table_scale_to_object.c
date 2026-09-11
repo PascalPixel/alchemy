@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/apply_table_scale_to_object.h"
 
 struct Effect {
     unsigned x : 16;

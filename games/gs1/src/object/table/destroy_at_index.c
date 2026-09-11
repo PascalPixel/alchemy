@@ -1,7 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/object/table/destroy_at_index.h"
 
 struct Fields_0808b64c {
     u8 filler[20];

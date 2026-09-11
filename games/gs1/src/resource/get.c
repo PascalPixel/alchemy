@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/get.h"
 #include "resource.h"
 
 extern s32 gUnk[];

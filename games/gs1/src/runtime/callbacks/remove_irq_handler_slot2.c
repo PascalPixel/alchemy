@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/callbacks/remove_irq_handler_slot2.h"
 
 typedef void (*InterruptHandler)(void);
 

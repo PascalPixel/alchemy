@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/coordinator.h"
 
 typedef struct Sub {
     u8 pad00[0x28];
@@ -222,56 +221,56 @@ extern u8 HexDigits[];
 extern u8 gOv34[];
 extern u32 gOv35[];
 
-Obj *State_Run21(s32);
+Obj *State_unk21_4(s32);
 
-Obj *State_Run22(s32);
+Obj *State_unk22_4(s32);
 
 typedef void(*Task02000134)(void);
 
-Obj *State_Run23(s32);
+Obj *State_unk23_4(s32);
 
-Obj *State_Run24(s32);
+Obj *State_unk24_4(s32);
 
-Obj *State_Run25(s32);
-Obj *State_Run26(s32);
+Obj *State_unk25_4(s32);
+Obj *State_unk26_4(s32);
 
-Obj *State_Run27(s32);
+Obj *State_unk27_4(s32);
 
-Obj *State_Run28(s32);
+Obj *State_unk28_4(s32);
 
-Obj *State_Run29(s32);
-Obj *State_Run30(s32);
+Obj *State_unk29_4(s32);
+Obj *State_unk30_4(s32);
 
-Obj *State_Run31(s32);
+Obj *State_unk31_4(s32);
 
-Obj *State_Run32(void);
+Obj *State_unk32_4(void);
 
-Obj *State_Run33(s16);
+Obj *State_unk33_4(s16);
 
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 
-Rec *State_Run34(s32);
+Rec *State_unk34_4(s32);
 
-u8 *State_Run35();
+u8 *State_unk35_4();
 
-u8 *State_Run36();
+u8 *State_unk36_4();
 
-Obj *State_Run37(void);
+Obj *State_unk37_4(void);
 
-Obj *State_Run38(s32);
+Obj *State_unk38_4(s32);
 
-Obj *State_Run39(s32);
+Obj *State_unk39_4(s32);
 
-Obj *State_Run40(s32, s32, s32, s32);
+Obj *State_unk40_4(s32, s32, s32, s32);
 
-SceneRecord *State_Run41(Position3 *, SceneRecord *);
-SceneRecord *State_Run42(Position3 *, SceneRecord *);
-SceneRecord *State_Run43(Position3 *, SceneRecord *);
-u8 *State_Run44();
+SceneRecord *State_unk41_3(Position3 *, SceneRecord *);
+SceneRecord *State_unk42_3(Position3 *, SceneRecord *);
+SceneRecord *State_unk43_3(Position3 *, SceneRecord *);
+u8 *State_unk44_3();
 
-s32 *State_Run45();
+s32 *State_unk45_3();
 
-s32 *State_Run46();
+s32 *State_unk46_3();
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 
@@ -304,12 +303,12 @@ s32 *State_Run46();
 
 static inline void InitializeActorZero(void)
 {
-    State_Place47(0, 0x10000, 0x8000);
+    State_unk47_2(0, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    State_Place48(actorId, 0x10000, 0x8000);
+    State_unk48_2(actorId, 0x10000, 0x8000);
 }
 
 static __inline__ void bump_step(s32 amount)
@@ -319,79 +318,79 @@ static __inline__ void bump_step(s32 amount)
     extern struct ModeRecord gOv37;
     extern struct ModeRecord gOv38;
     extern u8 gWork[];
-    void State_Run47();
-    void State_Run48();
-    void State_Run49();
-    void State_Run50();
+    void State_unk47_3();
+    void State_unk48_3();
+    void State_unk49_3();
+    void State_unk50_3();
 
     u8 *work = *(u8 **)gWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-u8 *State_Run51();            /* allocate a record by (id, size) */
+u8 *State_unk51_3();            /* allocate a record by (id, size) */
 
-s32 State_Run52();            /* reserve a graphics handle */
+s32 State_unk52_3();            /* reserve a graphics handle */
 
-u8 *State_Run53();            /* scene record for an actor selector */
+u8 *State_unk53_3();            /* scene record for an actor selector */
 
-u8 *State_Run54();            /* scene record for an actor selector */
+u8 *State_unk54_3();            /* scene record for an actor selector */
 
-s32 State_Run55();            /* test a story flag */
+s32 State_unk55_3();            /* test a story flag */
 
-void State_Run56();           /* upload image data to a handle */
+void State_unk56_2();           /* upload image data to a handle */
 
-s32 State_Run57();            /* next palette slot index */
+s32 State_unk57_2();            /* next palette slot index */
 
-s32 State_Run58();            /* upload a palette ramp */
+s32 State_unk58_2();            /* upload a palette ramp */
 
-void State_Run59();           /* install a per-frame task (callback, rate) */
+void State_unk59();           /* install a per-frame task (callback, rate) */
 
-void State_Run60();           /* release a graphics handle */
+void State_unk60();           /* release a graphics handle */
 
-s32 State_Run61();           /* veneer to GameFlag_IsSet */
+s32 State_unk61();           /* veneer to GameFlag_IsSet */
 
-u8 *State_Run62();           /* veneer to Scene_GetRecord */
+u8 *State_unk62();           /* veneer to Scene_GetRecord */
 
-void State_Run63();          /* veneer to Object_SetPosition */
+void State_unk63();          /* veneer to Object_SetPosition */
 
-void State_Run64();          /* veneer to GameFlag_Set */
+void State_unk64();          /* veneer to GameFlag_Set */
 
-void State_Run65();          /* veneer to Object_SetCallback */
+void State_unk65();          /* veneer to Object_SetCallback */
 
-void State_Run49();          /* veneer to State_Run66 */
+void State_unk49_3();          /* veneer to State_unk66 */
 
-s32 State_Run67();           /* local thunk to Actor_ApplyValueAndMatchingSlots, site A */
+s32 State_unk67();           /* local thunk to Actor_ApplyValueAndMatchingSlots, site A */
 
-s32 State_Run68();           /* local thunk to Actor_ApplyValueAndMatchingSlots, site B */
+s32 State_unk68();           /* local thunk to Actor_ApplyValueAndMatchingSlots, site B */
 
-void State_Run69();          /* veneer to UiText_DrawQuantity, site A */
+void State_unk69();          /* veneer to UiText_DrawQuantity, site A */
 
-void State_Run70();          /* veneer to UiText_DrawQuantity, site B */
+void State_unk70();          /* veneer to UiText_DrawQuantity, site B */
 
-void State_Run71();          /* shared veneer, selector refresh + 0x96a */
+void State_unk71();          /* shared veneer, selector refresh + 0x96a */
 
-void State_Run50();          /* veneer to State_Run72 */
+void State_unk50_3();          /* veneer to State_unk72 */
 
-SceneRecord *State_Run73();   /* scene record for a subject handle */
+SceneRecord *State_unk73();   /* scene record for a subject handle */
 
-s32 State_Run74(SceneRecord *, Position3 *);  /* terrain probe */
+s32 State_unk74(SceneRecord *, Position3 *);  /* terrain probe */
 
-void State_Run75(SceneRecord *, s32);         /* select presentation mode */
+void State_unk75(SceneRecord *, s32);         /* select presentation mode */
 
-void State_Run76(s32);                        /* wait n frames */
+void State_unk76(s32);                        /* wait n frames */
 
-void State_Run77(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
+void State_unk77(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
 
-void State_Run78(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
+void State_unk78(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
 
-void State_Run79(s32);                        /* play a cue */
+void State_unk79(s32);                        /* play a cue */
 
-void State_Run80(SceneRecord *);              /* re-attach the camera */
+void State_unk80(SceneRecord *);              /* re-attach the camera */
 
-void State_Run81(s32);                        /* play a cue */
+void State_unk81(s32);                        /* play a cue */
 
-void State_Run82(SceneRecord *, s32);         /* select presentation mode */
+void State_unk82(SceneRecord *, s32);         /* select presentation mode */
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 u8 *SceneData_GetTableC194(void)
@@ -403,7 +402,7 @@ u8 *SceneData_GetTableC194(void)
     return gOv;
 }
 
-s32 State_Run83(void)
+s32 State_unk83(void)
 {
     return 0;
 }
@@ -438,25 +437,25 @@ void Scene_RunOpeningAuxiliarySequence(void)
     switch ((u32)AUX_COUNTDOWN) {
     case 66:
         State_SetRect(92, 31, 2, 2, 50, 38); /* main:080091c8 */
-        State_SetRect2(92, 31, 2, 2, 54, 38); /* main:080091c8 */
+        State_unk2_5(92, 31, 2, 2, 54, 38); /* main:080091c8 */
         Object_SetModeById_1(16, 10); /* object 16, action 10 */
         break;
     case 60:
-        State_SetRect3(92, 33, 2, 2, 50, 38); /* main:080091c8 */
-        State_SetRect4(92, 33, 2, 2, 54, 38); /* main:080091c8 */
-        State_SetRect5(50, 25, 6, 1, 50, 12); /* main:080091c0 */
+        State_unk3_5(92, 33, 2, 2, 50, 38); /* main:080091c8 */
+        State_unk4_5(92, 33, 2, 2, 54, 38); /* main:080091c8 */
+        State_unk5_5(50, 25, 6, 1, 50, 12); /* main:080091c0 */
         Object_SetModeById_2(16, 11); /* object 16, action 11 */
         break;
     case 6:
         State_SetRect(92, 31, 2, 2, 50, 38); /* main:080091c8 */
-        State_SetRect2(92, 31, 2, 2, 54, 38); /* main:080091c8 */
+        State_unk2_5(92, 31, 2, 2, 54, 38); /* main:080091c8 */
         Object_SetModeById_3(16, 10); /* object 16, action 10 */
         break;
     case 0:
-        State_SetRect6(92, 29, 2, 2, 50, 38); /* main:080091c8 */
-        State_SetRect7(92, 29, 2, 2, 54, 38); /* main:080091c8 */
+        State_unk6_5(92, 29, 2, 2, 50, 38); /* main:080091c8 */
+        State_unk7_5(92, 29, 2, 2, 54, 38); /* main:080091c8 */
         Object_SetModeById_4(16, 12); /* object 16, action 12 */
-        State_SetRect8(50, 24, 6, 1, 50, 12); /* main:080091c0 */
+        State_unk8_5(50, 24, 6, 1, 50, 12); /* main:080091c0 */
         AUX_COUNTDOWN = 120;
         break;
     }
@@ -473,7 +472,7 @@ void State_ResetCounterAndStartTask(void)
 
     gOv36 = 0;
     task = (Task02000134) 0x0200804D;
-    State_Do13(task);
+    State_unk13_2(task);
     task();
 }
 
@@ -498,11 +497,11 @@ void State_WaitUntilWordC41cIs22(void)
 
     s32 i;
 
-    State_Do14(10);
+    State_unk14_2(10);
     i = 0;
     if (gOv36 != 22) {
         do {
-            State_Do15(1);
+            State_unk15_2(1);
             i++;
             if (i > 119) {
                 break;
@@ -522,10 +521,10 @@ void State_ApplyRectsForActorsNineAndTen(void)
         s32 x = 23;
         s32 y = 12;
 
-        State_SetRect10(27, 13, 3, 1, x, y);
+        State_unk10_5(27, 13, 3, 1, x, y);
     }
-    o = State_Run23(9);
-    r = State_Place49(0, o->f08, o->f10);
+    o = State_unk23_4(9);
+    r = State_unk49_2(0, o->f08, o->f10);
     if (o->f0c == 0 && r == 0) {
         o->f23 = 2;
         o->f55 = 0;
@@ -533,10 +532,10 @@ void State_ApplyRectsForActorsNineAndTen(void)
             s32 x = o->f08 >> 20;
             s32 y = o->f10 >> 20;
 
-            State_SetRect11(14, 13, 1, 1, x, y);
+            State_unk11_5(14, 13, 1, 1, x, y);
         }
     }
-    o = State_Run24(10);
+    o = State_unk24_4(10);
     {
         s32 x = o->f08 >> 20;
 
@@ -546,7 +545,7 @@ void State_ApplyRectsForActorsNineAndTen(void)
             s32 x = o->f08 >> 20;
             s32 y = o->f10 >> 20;
 
-        State_SetRect12(14, 13, 1, 1, x, y);
+        State_unk12_5(14, 13, 1, 1, x, y);
     }
 }
 
@@ -554,8 +553,8 @@ void Scene_RunTwoCallSequence(void)
 {
     extern Ctl gOv40;
 
-    State_Run84();
-    State_Run85();
+    State_unk84();
+    State_unk85();
 }
 
 void State_ApplyRectAndSend303(void)
@@ -568,9 +567,9 @@ void State_ApplyRectAndSend303(void)
         s32 x = 47;
         s32 y = 12;
 
-        State_SetRect13(47, 24, 1, 1, x, y);
+        State_unk13_5(47, 24, 1, 1, x, y);
     }
-    State_Do16(0x303);
+    State_unk16_2(0x303);
 }
 
 void Scene_RunScene3ba(void)
@@ -587,25 +586,25 @@ void Scene_RunScene3ba(void)
 
     State_Do(0x301);
     rec7 = State_Check(13);
-    State_Run86();
+    State_unk86();
     State_Run(0x20000, 0x4000);
-    State_Run2(0x2580000, -1, 0xc80000, 1);
-    State_Run87((s32)rec7, 3);
-    State_Run88();
+    State_unk2_4(0x2580000, -1, 0xc80000, 1);
+    State_unk87((s32)rec7, 3);
+    State_unk88();
     none = 0;
     rec7[85] = none;
     *(s32 *)((s32)rec7 + 52) = 0x6666;
     *(s32 *)((s32)rec7 + 48) = 0xcccc;
-    State_Run3((s32)rec7, *(s32 *)((s32)rec7 + 8), 0x80000, *(s32 *)((s32)rec7 + 16));
-    rec7 = State_Check2(14);
+    State_unk3_4((s32)rec7, *(s32 *)((s32)rec7 + 8), 0x80000, *(s32 *)((s32)rec7 + 16));
+    rec7 = State_unk2(14);
     rec7[85] = none;
     *(s32 *)((s32)rec7 + 52) = 0x6666;
     *(s32 *)((s32)rec7 + 48) = 0xcccc;
-    State_Run4((s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
-    State_Run89((s32)rec7);
-    State_Run90(45);
-    State_SetRect9(43, 12, 1, 1, 41, 12);
-    State_Run91();
+    State_unk4_4((s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
+    State_unk89((s32)rec7);
+    State_unk90(45);
+    State_unk9_5(43, 12, 1, 1, 41, 12);
+    State_unk91();
 }
 
 void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
@@ -617,9 +616,9 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = State_Run25(gCell[125]);
-    q = State_Run26(a0);
-    State_Run92();
+    p = State_unk25_4(gCell[125]);
+    q = State_unk26_4(a0);
+    State_unk92();
     {
         x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
         y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
@@ -642,11 +641,11 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
     } else {
         State_Apply5(q, 3);
     }
-    State_Do17(226);
-    State_Do18(p);
+    State_unk17_2(226);
+    State_unk18_2(p);
     State_Apply6(q, 2);
-    State_Do19(288);
-    State_Run93();
+    State_unk19_2(288);
+    State_unk93();
 }
 
 void Actor_ShiftActorSeventeenByLeaderRow(void)
@@ -657,17 +656,17 @@ void Actor_ShiftActorSeventeenByLeaderRow(void)
     s32 v;
     s32 t;
 
-    o = State_Run27(gCell[125]);
+    o = State_unk27_4(gCell[125]);
     v = o->f10 >> 20;
     t = -48;
     if (v <= 8) {
         t = 48;
     }
-    State_SetRect14(67, 8, 3, 1, 64, v);
-    State_Place50(17, 0, t);
-    o = State_Run28(17);
+    State_unk14_5(67, 8, 3, 1, 64, v);
+    State_unk50_2(17, 0, t);
+    o = State_unk28_4(17);
     v = o->f10 >> 20;
-    State_SetRect15(64, 24, 3, 1, 64, v);
+    State_unk15_5(64, 24, 3, 1, 64, v);
 }
 
 void Actor_ShiftActorEighteenByInputAndLeaderColumn(void)
@@ -679,7 +678,7 @@ void Actor_ShiftActorEighteenByInputAndLeaderColumn(void)
     s32 b;
     s32 s;
 
-    o = State_Run29(gCell[125]);
+    o = State_unk29_4(gCell[125]);
     a = o->f08 >> 20;
     if ((gIw2 & 32) != 0) {
         s = -1;
@@ -687,7 +686,7 @@ void Actor_ShiftActorEighteenByInputAndLeaderColumn(void)
     if ((gIw2 & 16) != 0) {
         s = 1;
     }
-    o = State_Run30(17);
+    o = State_unk30_4(17);
     b = o->f10 >> 20;
     if (a == 63) {
         if (b == 11) {
@@ -707,11 +706,11 @@ void Actor_ShiftActorEighteenByInputAndLeaderColumn(void)
         }
         b = -b;
     }
-    State_SetRect16(72, 9, 1, 3, a, 9);
-    State_Place51(18, b, 0);
-    o = State_Run31(18);
+    State_unk16_5(72, 9, 1, 3, a, 9);
+    State_unk51_2(18, b, 0);
+    o = State_unk31_4(18);
     a = o->f08 >> 20;
-    State_SetRect17(63, 25, 1, 3, a, 9);
+    State_unk17_5(63, 25, 1, 3, a, 9);
 }
 
 void State_ApplyValue768(void)
@@ -720,17 +719,17 @@ void State_ApplyValue768(void)
     extern s32 gOv36;
     extern u8 *gWork;
 
-    State_Do20(768);
+    State_unk20_2(768);
 }
 
 void Scene_RunBranchedStep(void)
 {
     extern Ctl gOv40;
 
-    if (State_Check17() == 0) {
-        State_Run94();
+    if (State_unk17() == 0) {
+        State_unk94();
     } else {
-        State_Run95();
+        State_unk95();
     }
 }
 
@@ -751,25 +750,25 @@ void Scene_RunScene3ba(s32 a0)
     u32 i;
     s32 record;
 
-    State_Run96(24);
-    State_Run97(25);
-    State_Run98(1);
-    State_Run99();
+    State_unk96(24);
+    State_unk97(25);
+    State_unk98(1);
+    State_unk99();
     State_Place(8, 0x5280000, 0xc00000);
-    State_Place2(0, 0x5080000, 0xc00000);
-    State_Place3(8, 0x4000, 0);
-    State_Place4(0, 0x4000, 0);
+    State_unk2_3(0, 0x5080000, 0xc00000);
+    State_unk3_3(8, 0x4000, 0);
+    State_unk4_3(0, 0x4000, 0);
     if (a0 < 0) {
-        State_Run100(8, 10);
-        State_Run101(0, 35);
+        State_unk100(8, 10);
+        State_unk101(0, 35);
     } else {
-        State_Run102(8, 8);
-        State_Run103(0, 28);
+        State_unk102(8, 8);
+        State_unk103(0, 28);
     }
-    State_Run104(1);
-    State_Run5(0x5180000, 0, 0x800000, 0);
-    State_Run105(a0);
-    State_Run106();
+    State_unk104(1);
+    State_unk5_4(0x5180000, 0, 0x800000, 0);
+    State_unk105(a0);
+    State_unk106();
 }
 
 void Actor_MarkObjectAtTiles94To95(void)
@@ -780,7 +779,7 @@ void Actor_MarkObjectAtTiles94To95(void)
     s32 x;
     s32 y;
 
-    o = State_Run32();
+    o = State_unk32_4();
     if (o != 0) {
         x = o->f08 >> 19;
         y = o->f10 >> 19;
@@ -804,134 +803,134 @@ void Scene_RunCommandSequence(s32 a0)
     s32 p9b;
     s32 record;
 
-    record = State_Check18();
+    record = State_unk18();
     p9 = *(s16 *)(record + 10);
     p10 = *(s16 *)(record + 18);
-    State_Run107();
-    State_Place5(a0, 0x10000, 0x8000);
-    State_Place6(0, 0x10000, 0x8000);
-    State_Place7(1, 0x10000, 0x8000);
-    State_Place8(2, 0x10000, 0x8000);
-    State_Place9(3, 0x10000, 0x8000);
-    State_Place10(0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x300000));
-    State_Run108(1, ((s32)((s32)p9 << 16) + -0x100000), (-0x280000 + (s32)((s32)p10 << 16)));
-    State_Run109(2, ((s32)((s32)p9 << 16) + 0x100000), (-0x280000 + (s32)((s32)p10 << 16)));
-    State_Run110(3, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x200000));
-    State_Run111(a0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x500000));
-    record = State_Check19(0);
+    State_unk107();
+    State_unk5_3(a0, 0x10000, 0x8000);
+    State_unk6_3(0, 0x10000, 0x8000);
+    State_unk7_3(1, 0x10000, 0x8000);
+    State_unk8_3(2, 0x10000, 0x8000);
+    State_unk9_3(3, 0x10000, 0x8000);
+    State_unk10_3(0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x300000));
+    State_unk108(1, ((s32)((s32)p9 << 16) + -0x100000), (-0x280000 + (s32)((s32)p10 << 16)));
+    State_unk109(2, ((s32)((s32)p9 << 16) + 0x100000), (-0x280000 + (s32)((s32)p10 << 16)));
+    State_unk110(3, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x200000));
+    State_unk111(a0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x500000));
+    record = State_unk19(0);
     {
         s32 shown = 0xc000;
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    State_Run112(0, 0);
-    State_Run113();
-    State_Run114();
-    State_Do2(0x20cb);
-    State_Run115(a0, 0);
-    State_Place11(3, 0x101, 60);
-    State_Run116(3, 0);
-    State_Run117(a0, 3);
-    State_Run118(a0, 0);
-    State_Place12(2, 0x101, 60);
-    State_Run119(2, 0);
-    State_Run120(a0, 2, 0);
-    State_Run121(20);
-    State_Run122(a0, 3);
-    State_Run123(a0, 0);
-    State_Place13(1, 0x101, 60);
-    State_Run124(1, 0);
-    State_Place14(3, 0x101, 60);
-    State_Run125(3, 0);
-    State_Place15(a0, 0x102, 60);
-    if (State_Check3(a0, 0) != 0) {
+    State_unk112(0, 0);
+    State_unk113();
+    State_unk114();
+    State_unk2_2(0x20cb);
+    State_unk115(a0, 0);
+    State_unk11_3(3, 0x101, 60);
+    State_unk116(3, 0);
+    State_unk117(a0, 3);
+    State_unk118(a0, 0);
+    State_unk12_3(2, 0x101, 60);
+    State_unk119(2, 0);
+    State_unk120(a0, 2, 0);
+    State_unk121(20);
+    State_unk122(a0, 3);
+    State_unk123(a0, 0);
+    State_unk13_3(1, 0x101, 60);
+    State_unk124(1, 0);
+    State_unk14_3(3, 0x101, 60);
+    State_unk125(3, 0);
+    State_unk15_3(a0, 0x102, 60);
+    if (State_unk3(a0, 0) != 0) {
     } else {
         L_02000f28:;
-        State_Do3(0x20d5);
-        State_Run126(2, 3);
-        State_Run127(2);
-        State_Run128(1, 3);
-        State_Run129(2);
-        State_Run130(3, 3);
-        State_Run131(1);
-        State_Run132(0, 3);
-        State_Run133(a0, 3);
-        State_Run134(a0, 0);
-        State_Place16(a0, 0xa000, 0);
-        State_Run135(20);
-        State_Run136(a0, 0);
-        State_Run6(0x30000, 0x6000);
-        State_Run7(0x1380000, -1, 0x680000, 1);
-        State_Run137();
-        State_Run138(a0, 0);
-        State_Run8(0x18000, 0x3000);
-        State_Run9(0x3080000, -1, 0x680000, 1);
-        State_Run139(a0, 0);
-        State_Run140();
-        State_Run141(a0, 0);
-        State_Run10(0x30000, 0x6000);
-        State_Run11(0x4d80000, -1, 0xa80000, 1);
-        State_Run142();
-        State_Place17(a0, 0x6000, 0);
-        State_Run143(a0, 0);
-        State_Run12(0x5180000, -1, 0xa80000, 1);
-        State_Run144();
-        State_Run145(a0, 0, 0);
-        State_Run146(a0, 0);
-        State_Run147(a0, 0);
-        State_Run148(a0, 0);
-        State_Run149(0, 0);
-        State_Run150(a0, 2);
-        if (State_Check4(a0, 0) != 0) {
+        State_unk3_2(0x20d5);
+        State_unk126(2, 3);
+        State_unk127(2);
+        State_unk128(1, 3);
+        State_unk129(2);
+        State_unk130(3, 3);
+        State_unk131(1);
+        State_unk132(0, 3);
+        State_unk133(a0, 3);
+        State_unk134(a0, 0);
+        State_unk16_3(a0, 0xa000, 0);
+        State_unk135(20);
+        State_unk136(a0, 0);
+        State_unk6_4(0x30000, 0x6000);
+        State_unk7_4(0x1380000, -1, 0x680000, 1);
+        State_unk137();
+        State_unk138(a0, 0);
+        State_unk8_4(0x18000, 0x3000);
+        State_unk9_4(0x3080000, -1, 0x680000, 1);
+        State_unk139(a0, 0);
+        State_unk140();
+        State_unk141(a0, 0);
+        State_unk10_4(0x30000, 0x6000);
+        State_unk11_4(0x4d80000, -1, 0xa80000, 1);
+        State_unk142();
+        State_unk17_3(a0, 0x6000, 0);
+        State_unk143(a0, 0);
+        State_unk12_4(0x5180000, -1, 0xa80000, 1);
+        State_unk144();
+        State_unk145(a0, 0, 0);
+        State_unk146(a0, 0);
+        State_unk147(a0, 0);
+        State_unk148(a0, 0);
+        State_unk149(0, 0);
+        State_unk150(a0, 2);
+        if (State_unk4(a0, 0) != 0) {
             goto L_02000f28;
         }
-        State_Run151(a0, 2);
-        State_Do4(0x20d4);
-        State_Run152(a0, 0);
+        State_unk151(a0, 2);
+        State_unk4_2(0x20d4);
+        State_unk152(a0, 0);
     }
-    State_Do5(0x20e1);
-    State_Run153(a0, 2);
-    State_Run154(a0, 0);
-    State_Place18(0, 0x4000, 0);
-    State_Run155(1, 0, 0);
-    State_Place19(2, 0x8000, 0);
-    State_Run156(1, 2);
-    State_Run157(1, 0);
-    State_Run158(2, 2);
-    State_Run159(2, 0);
-    State_Run160(3, 3);
-    State_Run161(3, 0);
-    State_Run162(3, 3);
-    State_Run163(1);
-    State_Run164(1, 3);
-    State_Run165(2);
-    State_Run166(2, 3);
-    State_Run167(1);
-    State_Run168(0, 3);
-    State_Run169(6);
-    State_Run170(1, 2);
-    record = State_Check5(0);
+    State_unk5_2(0x20e1);
+    State_unk153(a0, 2);
+    State_unk154(a0, 0);
+    State_unk18_3(0, 0x4000, 0);
+    State_unk155(1, 0, 0);
+    State_unk19_3(2, 0x8000, 0);
+    State_unk156(1, 2);
+    State_unk157(1, 0);
+    State_unk158(2, 2);
+    State_unk159(2, 0);
+    State_unk160(3, 3);
+    State_unk161(3, 0);
+    State_unk162(3, 3);
+    State_unk163(1);
+    State_unk164(1, 3);
+    State_unk165(2);
+    State_unk166(2, 3);
+    State_unk167(1);
+    State_unk168(0, 3);
+    State_unk169(6);
+    State_unk170(1, 2);
+    record = State_unk5(0);
     if (record != 0) {
-        State_Run171(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        State_unk171(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    State_Run172(2, 2);
-    record = State_Check6(0);
+    State_unk172(2, 2);
+    record = State_unk6(0);
     if (record != 0) {
-        State_Run173(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        State_unk173(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    State_Run174(3, 2);
-    record = State_Check7(0);
+    State_unk174(3, 2);
+    record = State_unk7(0);
     if (record != 0) {
-        State_Run175(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        State_unk175(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    State_Run176(a0, (p9 - 16), (p10 - 64));
-    State_Run177(1, 0, 0);
-    State_Run178(2, 0, 0);
-    State_Run179(3, 0, 0);
-    State_Run180(a0, (p9 - 16), (p10 - 16));
-    State_Run181(a0, p9, p10);
-    State_Place20(a0, 0xc000, 10);
-    State_Run182();
+    State_unk176(a0, (p9 - 16), (p10 - 64));
+    State_unk177(1, 0, 0);
+    State_unk178(2, 0, 0);
+    State_unk179(3, 0, 0);
+    State_unk180(a0, (p9 - 16), (p10 - 16));
+    State_unk181(a0, p9, p10);
+    State_unk20_3(a0, 0xc000, 10);
+    State_unk182();
     p9b = (p9 - 16);
     p10b = ((s32)p9 << 16);
 }
@@ -949,39 +948,39 @@ void Scene_RunScene3ba(s32 a0)
     s32 record;
 
     if (gCell2[225][0] == 2) {
-        State_Run183();
+        State_unk183();
     } else {
-        State_Run184();
-        rec8 = State_Check8(a0, 3);
+        State_unk184();
+        rec8 = State_unk8(a0, 3);
         if (rec8 == 0) {
-            State_Do6(0x2095);
-            State_Run185();
-            State_Run13(0x30000, 0x6000);
-            State_Run14(0x3480000, -1, 0xd80000, 1);
-            ((void (*)())State_Check20)();
-            State_Run186(a0, 0);
-            State_Run187();
-            State_Run188(60);
-            State_Run189(a0, 0);
-            State_Place21(0, 0x2e0, 200);
-            State_Place22(0, 0, 0);
-            State_Run190();
-            State_Place23(0, 0x10000, 0x8000);
-            State_Place24(0, 0x330, 200);
-            State_Run191(30);
-            State_Place25(0, 0x105, 60);
-            State_Run192(a0, 0);
-            State_Run193(0);
-            State_Run194(0, 0);
-            State_Run195(a0, 3);
+            State_unk6_2(0x2095);
+            State_unk185();
+            State_unk13_4(0x30000, 0x6000);
+            State_unk14_4(0x3480000, -1, 0xd80000, 1);
+            ((void (*)())State_unk20)();
+            State_unk186(a0, 0);
+            State_unk187();
+            State_unk188(60);
+            State_unk189(a0, 0);
+            State_unk21_3(0, 0x2e0, 200);
+            State_unk22_3(0, 0, 0);
+            State_unk190();
+            State_unk23_3(0, 0x10000, 0x8000);
+            State_unk24_3(0, 0x330, 200);
+            State_unk191(30);
+            State_unk25_3(0, 0x105, 60);
+            State_unk192(a0, 0);
+            State_unk193(0);
+            State_unk194(0, 0);
+            State_unk195(a0, 3);
         } else {
             if (rec8 == 1) {
-                State_Do7(0x2094);
-                State_Run196(a0, 0);
+                State_unk7_2(0x2094);
+                State_unk196(a0, 0);
             }
         }
-        State_Place26(rec8, a0, 3);
-        State_Run197();
+        State_unk26_3(rec8, a0, 3);
+        State_unk197();
     }
 }
 
@@ -992,51 +991,51 @@ void Scene_RunSceneFourCoordinator(s32 scene)
     s32 path;
 
     if (SceneTransition_Phase == 2) {
-        State_Run198();
+        State_unk198();
         return;
     }
-    State_Run199();
-    path = State_Check21(scene, 4);
+    State_unk199();
+    path = State_unk21(scene, 4);
     if (path == 0) {
-        State_Do8(8345);
-        State_Run15(196608, 24576);
-        State_Run16(71303168, -1, 11010048, 1);
-        State_Run200();
-        State_Run201(scene, 0);
-        State_Place27(120, 72, 0);
-        State_Run202(scene, 0);
-        State_Run203();
-        State_Run204(15);
-        State_Place28(0, 984, 200);
-        State_Run205(0, 0, 10);
-        State_Run206(scene, 0);
-        State_Place29(0, 16384, 30);
-        State_Place30(0, 262, 60);
-        State_Place31(0, 98304, 49152);
-        State_Check22(0, 1000, 192);
-        State_Check23(0, 1000, 176);
-        State_Place32(0, 1016, 168);
-        State_Run207(15);
-        State_Place33(18, 160, 0);
-        State_Run17(71303168, -1, 11010048, 1);
-        State_Run208(0, 1);
-        State_Run209(10);
-        State_Place34(0, 65536, 32768);
-        State_Place35(0, 1192, 168);
-        State_Run210(10);
-        State_Place36(0, 32768, 30);
-        State_Place37(0, 258, 60);
-        State_Run211(scene, 0);
-        State_Run212(0);
-        State_Run213(0, 0);
-        State_Place38(18, 66584576, 11010048);
-        State_Run214(scene, 4);
+        State_unk8_2(8345);
+        State_unk15_4(196608, 24576);
+        State_unk16_4(71303168, -1, 11010048, 1);
+        State_unk200();
+        State_unk201(scene, 0);
+        State_unk27_3(120, 72, 0);
+        State_unk202(scene, 0);
+        State_unk203();
+        State_unk204(15);
+        State_unk28_3(0, 984, 200);
+        State_unk205(0, 0, 10);
+        State_unk206(scene, 0);
+        State_unk29_3(0, 16384, 30);
+        State_unk30_3(0, 262, 60);
+        State_unk31_3(0, 98304, 49152);
+        State_unk22(0, 1000, 192);
+        State_unk23(0, 1000, 176);
+        State_unk32_3(0, 1016, 168);
+        State_unk207(15);
+        State_unk33_3(18, 160, 0);
+        State_unk17_4(71303168, -1, 11010048, 1);
+        State_unk208(0, 1);
+        State_unk209(10);
+        State_unk34_3(0, 65536, 32768);
+        State_unk35_3(0, 1192, 168);
+        State_unk210(10);
+        State_unk36_3(0, 32768, 30);
+        State_unk37_3(0, 258, 60);
+        State_unk211(scene, 0);
+        State_unk212(0);
+        State_unk213(0, 0);
+        State_unk38_3(18, 66584576, 11010048);
+        State_unk214(scene, 4);
     } else if (path == 1) {
-        State_Do9(8344);
-        State_Run215(scene, 0);
+        State_unk9_2(8344);
+        State_unk215(scene, 0);
     }
-    State_Place39(path, scene, 4);
-    State_Run216();
+    State_unk39_3(path, scene, 4);
+    State_unk216();
 }
 
 void Actor_PlaceSlots1To3FromWork(void)
@@ -1044,34 +1043,34 @@ void Actor_PlaceSlots1To3FromWork(void)
     extern s32 gCell[];
 
     {
-        s32 x = State_Check24(896);
-        s32 y = State_Check25(904);
+        s32 x = State_unk24(896);
+        s32 y = State_unk25(904);
 
         x <<= 20;
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        State_Place52(1, x, y);
+        State_unk52_2(1, x, y);
     }
     {
-        s32 x = State_Check26(912);
-        s32 y = State_Check27(920);
+        s32 x = State_unk26(912);
+        s32 y = State_unk27(920);
 
         x <<= 20;
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        State_Place53(2, x, y);
+        State_unk53_2(2, x, y);
     }
     {
-        s32 x = State_Check28(928);
-        s32 y = State_Check29(936);
+        s32 x = State_unk28(928);
+        s32 y = State_unk29(936);
 
         x <<= 20;
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        State_Place54(3, x, y);
+        State_unk54_2(3, x, y);
     }
 }
 
@@ -1087,7 +1086,7 @@ void State_SetStateHalfword386To99WhenMatched(void)
     s32 sel = gCell[125];
 
     if (sel != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == sel
-        && State_Check30(321) != 0) {
+        && State_unk30(321) != 0) {
         u16 *p = (u16 *)(state + 386);
         s32 val = 99;
 
@@ -1107,14 +1106,14 @@ void Scene_RunNearestActor165Scene(void)
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gCell[125];
-    Obj *p = State_Run21(n);
+    Obj *p = State_unk21_4(n);
     s32 i;
     s32 *q;
     s32 base;
 
-    State_Run217();
+    State_unk217();
     for (i = 8; i <= 66; i++) {
-        Obj *o = State_Run22(i);
+        Obj *o = State_unk22_4(i);
 
         if (o != 0 && o->f54 == 1 && *o->f50->f28 == 165) {
             s32 dx = (p->f08 - o->f08) / 65536;
@@ -1134,32 +1133,32 @@ void Scene_RunNearestActor165Scene(void)
             }
         }
     }
-    State_Do21(0x2085);
+    State_unk21_2(0x2085);
     State_Apply7(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
     *(s32 *)(state + 456) = 15;
-    State_Run218(20);
-    State_Run219();
-    State_Run220();
+    State_unk218(20);
+    State_unk219();
+    State_unk220();
     base = n << 4;
     State_Apply8(base + 880, p->f08 >> 20);
     {
         s32 v = p->f10 >> 20;
 
-        State_Run221(base + 888, v);
+        State_unk221(base + 888, v);
     }
     n++;
     if (n > 3) {
-        State_Do22(10);
-        State_Do23(282);
+        State_unk22_2(10);
+        State_unk23_2(282);
     } else {
-        State_Do24(n);
-        State_Run222();
-        State_Run223();
+        State_unk24_2(n);
+        State_unk222();
+        State_unk223();
         *q = 0;
     }
-    State_Run224();
+    State_unk224();
 }
 
 void RunPartyCountInteraction(s32 actorId)
@@ -1214,7 +1213,7 @@ s32 Dialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
     s32 id;
     s32 r;
 
-    State_Run225();
+    State_unk225();
     State_Apply15(b, 5);
     v = gCell[224];
     if (v == (s32)&Value_0000008f) {
@@ -1224,13 +1223,13 @@ s32 Dialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
     } else {
         id = (s32)&Value_0000207a;
     }
-    State_Do25(id);
+    State_unk25_2(id);
     State_Apply16(a, 0);
-    if (State_Check31(b + 512) != 0) {
+    if (State_unk31(b + 512) != 0) {
         return 2;
     }
-    if (State_Check32(b + 520) != 0) {
-        r = State_Check33(0);
+    if (State_unk32(b + 520) != 0) {
+        r = State_unk33(0);
         if (r == 1) {
             return 2;
         }
@@ -1239,8 +1238,8 @@ s32 Dialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
         }
         return r;
     }
-    State_Do26(b + 520);
-    State_Do27((s32)&Value_0000207c);
+    State_unk26_2(b + 520);
+    State_unk27_2((s32)&Value_0000207c);
     State_Apply17(a, 0);
     return State_Apply18(0, 0);
 }
@@ -1265,7 +1264,7 @@ void State_SendIdBySceneId(s32 a, s32 b)
     } else {
         id = (s32)&Value_0000207a;
     }
-    State_Do28(id + 1);
+    State_unk28_2(id + 1);
     State_Apply20(a, 0);
 }
 
@@ -1288,98 +1287,98 @@ void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     s32 i;
     u8 buf[8];
 
-    rec = State_Check9(owner);
+    rec = State_unk9(owner);
     p9 = *(s16 *)(rec + 10);
     p11 = *(s16 *)(rec + 18);
     if (mode != 3) {
-        count = State_Run18();
+        count = State_unk18_4();
         for (i = 0; i < count; i++) {
             buf[i] = gCell[504 + i];
         }
         if (count <= 1) {
-            State_Run226(0x2083);
-            State_Run227(owner, 0);
+            State_unk226(0x2083);
+            State_unk227(owner, 0);
             return;
         }
-        if (State_Check10(base + 512) != 0) {
-            State_Run226(0x2084);
-            State_Run227(owner, 0);
+        if (State_unk10(base + 512) != 0) {
+            State_unk226(0x2084);
+            State_unk227(owner, 0);
             return;
         }
         if (mode == 2) {
             state = 0;
-            State_Run228(6);
+            State_unk228(6);
         } else {
-            State_Do10(0x207d);
-            State_Check11(owner, 0);
-            state = State_Check12(0, 0);
+            State_unk10_2(0x207d);
+            State_unk11(owner, 0);
+            state = State_unk12(0, 0);
         }
         if (state == 0) {
             if (state < count) {
                 for (i = 0; i < count; i++) {
-                    State_Run229((s32)(s8)buf[i]);
+                    State_unk229((s32)(s8)buf[i]);
                 }
             }
             for (i = 0; i < count; i++) {
                 if ((s32)(s8)buf[i] != 0) {
-                    State_Run230((s32)(s8)buf[i]);
+                    State_unk230((s32)(s8)buf[i]);
                 }
             }
-            obj = State_Run19();
+            obj = State_unk19_4();
             for (i = 0; i < count; i++) {
-                State_Run231((s32)(s8)buf[i]);
+                State_unk231((s32)(s8)buf[i]);
             }
             for (i = 0; i < count; i++) {
-                State_Run232((s32)(s8)buf[i]);
+                State_unk232((s32)(s8)buf[i]);
             }
             if (obj != -1) {
                 goto L_main;
             }
         }
     }
-    State_Run226(0x207e);
-    State_Run227(owner, 0);
+    State_unk226(0x207e);
+    State_unk227(owner, 0);
     return;
 L_main:
-    ((void (*)())State_Run233)(obj, 1);
-    State_Do11(0x207f);
-    State_Run234(owner, 0);
-    State_Place40(0, 0x10000, 0x8000);
-    State_Place41(obj, 0x10000, 0x8000);
-    State_Place42(owner, 0x10000, 0x8000);
-    record = State_Check13(0);
+    ((void (*)())State_unk233)(obj, 1);
+    State_unk11_2(0x207f);
+    State_unk234(owner, 0);
+    State_unk40_3(0, 0x10000, 0x8000);
+    State_unk41_2(obj, 0x10000, 0x8000);
+    State_unk42_2(owner, 0x10000, 0x8000);
+    record = State_unk13(0);
     if (record != 0) {
-        State_Run235(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        State_unk235(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
     hi = p11 + 16;
-    State_Run236(obj, p9, hi);
+    State_unk236(obj, p9, hi);
     lo = p9 + 16;
-    State_Place43(0, lo, hi);
-    ((void (*)())State_Check34)(obj, 0, 30);
-    State_Run237(obj, 3);
+    State_unk43_2(0, lo, hi);
+    ((void (*)())State_unk34)(obj, 0, 30);
+    State_unk237(obj, 3);
     tail = hi - 32;
-    State_Run238(0, 3);
-    State_Run239(owner, p9, tail);
-    State_Place44(owner, lo, tail);
-    State_Run240(0, obj);
-    State_Run241(obj, p9, tail);
-    State_Run242(owner, 1);
-    State_Place45(owner, 0x8000, 0);
-    State_Run243(obj, p9, p11 - 48);
-    State_Run244(owner, p9, tail);
-    State_Run245(owner, p9, p11);
-    State_Run246(obj);
-    ((void (*)())State_Check35)(base + 512);
-    rec = State_Check14(obj);
+    State_unk238(0, 3);
+    State_unk239(owner, p9, tail);
+    State_unk44_2(owner, lo, tail);
+    State_unk240(0, obj);
+    State_unk241(obj, p9, tail);
+    State_unk242(owner, 1);
+    State_unk45_2(owner, 0x8000, 0);
+    State_unk243(obj, p9, p11 - 48);
+    State_unk244(owner, p9, tail);
+    State_unk245(owner, p9, p11);
+    State_unk246(obj);
+    ((void (*)())State_unk35)(base + 512);
+    rec = State_unk14(obj);
     sx = *(volatile s32 *)(rec + 8) >> 20;
-    State_Run247((obj << 4) + 880, sx);
+    State_unk247((obj << 4) + 880, sx);
     sy = *(volatile s32 *)(rec + 16) >> 20;
-    State_Run248((obj << 4) + 888, sy);
+    State_unk248((obj << 4) + 888, sy);
 }
 
 void Actor_ApplyValueAndMatchingSlots(s32 a, s32 b)
 {
-    Rec *t = State_Run34(a);
+    Rec *t = State_unk34_4(a);
     s32 i;
 
     State_Apply21(a, b);
@@ -1427,47 +1426,47 @@ void Scene_RunTwoArmSequence(s32 a)
     extern u16 gOv39[];
 
     if (a == 0) {
-        State_Run249();
-        State_Run250();
-        State_Run251();
-        State_Do29(30);
-        State_Do30(89);
-        State_Do31(0);
+        State_unk249();
+        State_unk250();
+        State_unk251();
+        State_unk29_2(30);
+        State_unk30_2(89);
+        State_unk31_2(0);
         State_Apply24(1, 0);
-        State_Do32(120);
-        State_Run252();
+        State_unk32_2(120);
+        State_unk252();
     } else {
-        State_Do33(247);
-        State_Run253();
-        State_Run254();
-        State_Run255();
+        State_unk33_2(247);
+        State_unk253();
+        State_unk254();
+        State_unk255();
         gOv39[15] = a * 60;
-        State_Do34(30);
-        State_Do35(a + 90);
-        State_Do36(a);
+        State_unk34_2(30);
+        State_unk35_2(a + 90);
+        State_unk36_2(a);
         State_Apply25(1, 0);
-        State_Do37(120);
-        while (State_Check36() != 0) {
-            State_Do38(1);
+        State_unk37_2(120);
+        while (State_unk36() != 0) {
+            State_unk38_2(1);
         }
-        State_Do39(0x121);
-        State_Do40(5);
+        State_unk39_2(0x121);
+        State_unk40_2(5);
         State_Apply26(2, 0);
-        State_Do41(236);
-        State_Do42(60);
+        State_unk41(236);
+        State_unk42(60);
         State_Apply27(2, 1);
-        State_Do43(236);
-        State_Do44(60);
-        State_Do45(6);
+        State_unk43(236);
+        State_unk44(60);
+        State_unk45(6);
         State_Apply28(2, 0);
-        State_Do46(236);
-        State_Do47(60);
-        State_Do48(7);
+        State_unk46(236);
+        State_unk47(60);
+        State_unk48(7);
         State_Apply29(4, 0);
-        State_Do49(237);
-        State_Run256();
-        State_Run257();
-        State_Do50(0x123);
+        State_unk49(237);
+        State_unk256();
+        State_unk257();
+        State_unk50(0x123);
     }
 }
 
@@ -1478,49 +1477,49 @@ void Scene_RunLateSequence(s32 a0)
     extern struct ModeRecord gOv37;
     extern struct ModeRecord gOv38;
     extern u8 gWork[];
-    void State_Run47();
-    void State_Run48();
-    void State_Run49();
-    void State_Run50();
+    void State_unk47_3();
+    void State_unk48_3();
+    void State_unk49_3();
+    void State_unk50_3();
 
     s32 kind;
 
-    State_Run258(247);
-    State_Run259();
-    State_Run260();
+    State_unk258(247);
+    State_unk259();
+    State_unk260();
     gOv38.span = a0 * 60;
     gOv37.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        State_Run261(30);
-        State_Run262(86);
-        State_Run263(8);
-        State_Check15(3, 1);
-        State_Run264(-a0 * 60 + 60);
+        State_unk261(30);
+        State_unk262(86);
+        State_unk263(8);
+        State_unk15(3, 1);
+        State_unk264(-a0 * 60 + 60);
         kind = 0;
     } else {
-        State_Run265(30);
-        State_Run266(a0 + 90);
-        State_Run267(4);
-        State_Check16(3, 0);
-        State_Run268(a0 * 60 + 60);
+        State_unk265(30);
+        State_unk266(a0 + 90);
+        State_unk267(4);
+        State_unk16(3, 0);
+        State_unk268(a0 * 60 + 60);
         kind = 8;
     }
-    State_Place46(kind, 0x105, 0);
-    while (State_Run20()!= 0) {
-        State_Run269(1);
+    State_unk46_2(kind, 0x105, 0);
+    while (State_unk20_4()!= 0) {
+        State_unk269(1);
     }
-    State_Run270(19);
-    State_Run271(30);
-    State_Do12(0x121);
-    State_Run272();
-    State_Run273();
+    State_unk270(19);
+    State_unk271(30);
+    State_unk12_2(0x121);
+    State_unk272();
+    State_unk273();
 }
 
 void OvObj_ResetMotionFields(void)
 {
-    Obj6 *o = State_Run37();
+    Obj6 *o = State_unk37_4();
 
-    State_Do51(o);
+    State_unk51(o);
     o->f24 = 0;
     o->f2c = 0;
     o->f38 = 0x80000000;
@@ -1534,7 +1533,7 @@ void State_InitHalfwordC6a6Once(void)
     extern u8 *gWork;
 
     if (gOv14 == -1) {
-        gOv14 = State_Run274();
+        gOv14 = State_unk274();
     }
 }
 
@@ -1544,7 +1543,7 @@ void State_StoreParamsAndInitTable(s32 a, s32 b, s32 c)
     extern s32 gOv36;
     extern u8 *gWork;
 
-    State_Run275();
+    State_unk275();
     gOv16 = a;
     gOv17 = b;
     gOv18 = c & 3;
@@ -1582,14 +1581,14 @@ void State_ReleaseTableAndResetC6a6(void)
     extern s32 gOv36;
     extern u8 *gWork;
 
-    State_Do52(gOv15);
-    State_Do53(gOv14);
+    State_unk52(gOv15);
+    State_unk53(gOv14);
     gOv14 = -1;
 }
 
 void Actor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 {
-    Obj8 *o = State_Run39(a);
+    Obj8 *o = State_unk39_4(a);
 
     if (o != 0) {
         s32 v = 0x20000;
@@ -1598,7 +1597,7 @@ void Actor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
         o->f30 = v;
         o->f34 = v >> 1;
         o->f5b = z;
-        State_Do54(o);
+        State_unk54(o);
         State_Apply32(o, 5);
         State_SetMode3(o, b << 16, o->f0c, c << 16);
     }
@@ -1606,7 +1605,7 @@ void Actor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 
 void OvObj_PlaceWithScale14000(s32 a, s32 b, s32 c)
 {
-    Obj7 *o = State_Run38(a);
+    Obj7 *o = State_unk38_4(a);
 
     if (o != 0) {
         s32 v = 0x14000;
@@ -1615,10 +1614,10 @@ void OvObj_PlaceWithScale14000(s32 a, s32 b, s32 c)
         o->f30 = v;
         o->f34 = v >> 1;
         o->f5b = z;
-        State_Do55(o);
+        State_unk55(o);
         State_Apply33(o, 5);
         State_SetMode4(o, b << 16, o->f0c, c << 16);
-        State_Do56(o);
+        State_unk56(o);
         State_Apply34(o, 1);
     }
 }
@@ -1662,7 +1661,7 @@ void State_WaitUntilWord1000IsNine(void)
     s16 *p = &gOv40;
 
     while (*p != 9) {
-        State_Do57(1);
+        State_unk57(1);
     }
 }
 
@@ -1674,7 +1673,7 @@ void Effect_SpawnKind285AtRandomChance(Obj9 *a)
     if (a->f28 >= -255 && a->f28 <= 255) {
         a->f55 = 0;
     }
-    n = State_Run276();
+    n = State_unk276();
     if (n * 100 >> 16 <= 9) {
         Obj9 *o;
         s32 u;
@@ -1683,15 +1682,15 @@ void Effect_SpawnKind285AtRandomChance(Obj9 *a)
         t[0] = a->f08;
         t[1] = a->f0c;
         t[2] = a->f10;
-        u = State_Check37();
-        w = State_Check38();
-        State_Place55(u << 4, w, t);
+        u = State_unk37();
+        w = State_unk38();
+        State_unk55_2(u << 4, w, t);
         {
             s32 x = t[0];
             s32 y = t[1];
             s32 z = t[2];
 
-            o = State_Run40(285, x, y, z);
+            o = State_unk40_4(285, x, y, z);
         }
         if (o != 0) {
             o->f55 = 0;
@@ -1707,12 +1706,12 @@ s32 Actor_PlaceLinkedActorAbove(Obj5 *a)
 {
     extern s32 gCell[];
 
-    Obj5 *o = State_Run33(a->f64);
+    Obj5 *o = State_unk33_4(a->f64);
 
     State_SetMode5(o, a->f08, a->f0c + 0x240000, a->f10);
     o->f55 = 0;
     State_Apply39(o, (s32)gOv29);
-    State_Do58(83);
+    State_unk58(83);
     a->f64 = 0;
     return 0;
 }
@@ -1730,10 +1729,10 @@ s32 Scene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     u16 *cuep;
     s16 *waitp;
 
-    flag = State_Run61(0x211);
+    flag = State_unk61(0x211);
 
     shared = gCell;
-    rec = State_Run62(*(s32 *)(shared + 500));
+    rec = State_unk62(*(s32 *)(shared + 500));
 
     if (*(s32 *)(work + 232) < *(s32 *)(rec + 8)) {
         x = *(s32 *)(work + 232) + 0xc0000;
@@ -1754,26 +1753,26 @@ s32 Scene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     *(s32 *)(rec + 52) = 0x4000;
     *(s32 *)(rec + 48) = 0x10000;
 
-    State_Run63(rec, x, 0, z);
-    State_Run64(0x211);
-    State_Run65(rec, (void *)0x0200c6fc);
+    State_unk63(rec, x, 0, z);
+    State_unk64(0x211);
+    State_unk65(rec, (void *)0x0200c6fc);
 
     while (*waitp != 0) {
-        State_Run49(1);
+        State_unk49_3(1);
     }
 
     if (flag == 0) {
-        State_Run67(0, handle_a);
-        State_Run69(handle_a, 2);
+        State_unk67(0, handle_a);
+        State_unk69(handle_a, 2);
     } else {
-        State_Run68(0, handle_b);
-        State_Run70(handle_b, 2);
+        State_unk68(0, handle_b);
+        State_unk70(handle_b, 2);
     }
 
     shared = gCell;
-    State_Run71(*(s32 *)(shared + 500), 1);
-    State_Run277(0x96a, 3);
-    State_Run50(rec);
+    State_unk71(*(s32 *)(shared + 500), 1);
+    State_unk277(0x96a, 3);
+    State_unk50_3(rec);
 
     return flag;
 }
@@ -1797,8 +1796,8 @@ void Scene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     s32 handle;
     s32 pal;
 
-    desc = State_Run51(59, 0x7170);
-    handle = State_Run52(512);
+    desc = State_unk51_3(59, 0x7170);
+    handle = State_unk52_3(512);
 
     *(u16 *)(desc + 222) = (u16)first;
     *(u16 *)(desc + 224) = (u16)second;
@@ -1808,10 +1807,10 @@ void Scene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(s32 *)(desc + 232) = centre;
     *(s32 *)(desc + 236) = extra;
 
-    rec0 = State_Run53(first);
-    rec1 = State_Run54(second);
+    rec0 = State_unk53_3(first);
+    rec1 = State_unk54_3(second);
 
-    if (State_Run55(0x109) == 0) {
+    if (State_unk55_3(0x109) == 0) {
         *(s32 *)(rec1 + 8) =
             (centre << 1) - *(s32 *)(rec0 + 8);
         *(s32 *)(rec1 + 16) = *(s32 *)(rec0 + 16);
@@ -1820,15 +1819,15 @@ void Scene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(u16 *)(desc + 218) = 0;
     *(u16 *)(desc + 220) = 0;
 
-    State_Run56(gOv27, handle);
+    State_unk56_2(gOv27, handle);
 
-    pal = State_Run57();
+    pal = State_unk57_2();
     *(u16 *)(desc + 216) = (u16)pal;
-    State_Run58((s16)pal, 512, handle);
+    State_unk58_2((s16)pal, 512, handle);
 
-    State_Run59((s32)State_Run278 + 1, 0xc76);
+    State_unk59((s32)State_unk278 + 1, 0xc76);
 
-    State_Run60(handle);
+    State_unk60(handle);
 }
 
 void State_InitControlWhenFlag109Clear(void)
@@ -1838,8 +1837,8 @@ void State_InitControlWhenFlag109Clear(void)
     u8 *state = gIw;
     Ctl *m = &gOv40;
 
-    State_Apply40(State_Check39(), (s32)(state + 240));
-    if (State_Check40(0x109) == 0) {
+    State_Apply40(State_unk39(), (s32)(state + 240));
+    if (State_unk40(0x109) == 0) {
         m->f0 = 1;
         m->f2 = 1;
         m->f4 = *(u16 *)(state + 224);
@@ -1906,7 +1905,7 @@ void StagedActor_PushActorAhead(void)
     s32 handle;
 
     handle = *(s32 *)((u8 *)gCell + (idx << 1));
-    subject = State_Run73(handle);
+    subject = State_unk73(handle);
 
     dir = subject->facing >> 12;
 
@@ -1916,7 +1915,7 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = subject->z + (s32)step;
 
-    target = State_Run41(&pos, subject);
+    target = State_unk41_3(&pos, subject);
     if (target == 0) {
         return;
     }
@@ -1928,7 +1927,7 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = target->z + (s32)step;
 
-    blocker = State_Run42(&pos, target);
+    blocker = State_unk42_3(&pos, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
         return;
     }
@@ -1938,7 +1937,7 @@ void StagedActor_PushActorAhead(void)
     pos.y = target->y + 0x100000;      /* 128 << 13 */
     pos.z = target->z;
 
-    blocker = State_Run43(&pos, target);
+    blocker = State_unk43_3(&pos, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
         return;
     }
@@ -1952,32 +1951,32 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = target->z + (s32)step;
 
-    if (State_Run74(target, &pos) > 0) {
+    if (State_unk74(target, &pos) > 0) {
         return;
     }
 
-    State_Run75(subject, 8);
-    State_Run76(15);
+    State_unk75(subject, 8);
+    State_unk76(15);
 
     target->rate_x = 0x3333;
     target->rate_z = 0x3333;
-    State_Run77(target, pos.x, pos.y, pos.z);
+    State_unk77(target, pos.x, pos.y, pos.z);
 
     /* The same destination block, moved onto the subject this time. */
     subject->rate_x = 0x3333;
     subject->rate_z = 0x3333;
-    State_Run78(subject, pos.x, pos.y, pos.z);
+    State_unk78(subject, pos.x, pos.y, pos.z);
 
-    State_Run79(0xee);
-    State_Run80(target);
-    State_Run81(0x120);                                /* 144 << 1 */
+    State_unk79(0xee);
+    State_unk80(target);
+    State_unk81(0x120);                                /* 144 << 1 */
 
     target->x = pos.x;
     target->z = pos.z;
     target->motion_24 = zero;
     target->motion_2c = zero;
 
-    State_Run82(subject, 1);
+    State_unk82(subject, 1);
 }
 
 /* Import veneers, named by the main-image function each one reaches.
@@ -2002,7 +2001,7 @@ s32 *Actor_FindOccupantAheadOfSubject(void)
     s32 pos[3];
     s32 *hit;
 
-    rec = State_Run44(((ActiveSubjectSlot *)gCell)->handle);
+    rec = State_unk44_3(((ActiveSubjectSlot *)gCell)->handle);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
@@ -2010,16 +2009,16 @@ s32 *Actor_FindOccupantAheadOfSubject(void)
     pos[0] = (*(s32 *)(rec + 8) & 0xfff00000) + 0x80000;
     pos[1] = *(s32 *)(rec + 12);
     pos[2] = (*(s32 *)(rec + 16) & 0xfff00000) + 0x80000;
-    State_Run279(0x100000, facing, pos);          /* 128 << 13 */
+    State_unk279(0x100000, facing, pos);          /* 128 << 13 */
 
-    hit = State_Run45(pos, rec);
+    hit = State_unk45_3(pos, rec);
     if (hit == 0) {
         pos[0] = (*(s32 *)(rec + 8) & 0xfff00000) + 0x80000;
         pos[1] = *(s32 *)(rec + 12);
         pos[2] = (*(s32 *)(rec + 16) & 0xfff00000) + 0x80000;
-        State_Run280(0x200000, facing, pos);      /* 128 << 14 */
+        State_unk280(0x200000, facing, pos);      /* 128 << 14 */
 
-        hit = State_Run46(pos, rec);
+        hit = State_unk46_3(pos, rec);
     }
 
     return hit;

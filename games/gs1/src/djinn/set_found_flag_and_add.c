@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/djinn/set_found_flag_and_add.h"
 
 s32 GameFlag_Set(s32);
 

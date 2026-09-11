@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/render/drain_pending.h"
 
 void UiWork_Finalize(void *work, s32 release);
 void WaitFrames(u32);

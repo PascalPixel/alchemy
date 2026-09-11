@@ -1,7 +1,6 @@
 #include "object_factory.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/entry/create_eight_entry_objects.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

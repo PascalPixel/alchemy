@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/map/locations/colosso/log_rolling_stage/obj/cfg_secondary.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct SecondaryStageObject {
@@ -18,7 +17,7 @@ extern s16 gCell[];
 
 SecondaryStageObject *Map_Run();
 
-SecondaryStageObject *Map_Run2();
+SecondaryStageObject *Map_unk2_4();
 
 void Colosso_ConfigureSecondaryObjects(void)
 {
@@ -27,26 +26,26 @@ void Colosso_ConfigureSecondaryObjects(void)
 
     table = gCell;
 
-    Map_Run3(*(s32 *)&table[250], 1);
+    Map_unk3_4(*(s32 *)&table[250], 1);
 
     object = Map_Run(11);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
-    Map_Run4(object, object->x, 0x40000, object->z);
+    Map_unk4_4(object, object->x, 0x40000, object->z);
 
-    object = Map_Run2(10);
+    object = Map_unk2_4(10);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
-    Map_Run5(object, object->x, 0x200000, object->z);
+    Map_unk5_4(object, object->x, 0x200000, object->z);
 
-    Map_Run6(10);
+    Map_unk6_4(10);
     {
         s32 stack_first = 9;
         s32 stack_second = 12;
-        Map_Run7(0, 25, 1, 1, stack_first, stack_second);
+        Map_unk7_4(0, 25, 1, 1, stack_first, stack_second);
     }
-    Map_Run8(2);
-    Map_Run9(0x367);
+    Map_unk8_4(2);
+    Map_unk9_4(0x367);
 }

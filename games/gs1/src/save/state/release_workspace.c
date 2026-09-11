@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/save/state/release_workspace.h"
 #include "runtime_interfaces.h"
 
 typedef void (*InterruptHandler)(void);

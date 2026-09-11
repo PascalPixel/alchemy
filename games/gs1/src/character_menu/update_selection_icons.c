@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/character_menu/update_selection_icons.h"
 
 struct Entry_080a9dc4 {
     u8 padding[14];

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/display/blend/update_transition.h"
 
 extern u8 gIw;
 extern volatile u8 gIw2;

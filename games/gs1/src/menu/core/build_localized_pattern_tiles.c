@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/core/build_localized_pattern_tiles.h"
 
 struct TileMask {
     u32 word0;

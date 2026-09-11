@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ability/play_use_animation.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

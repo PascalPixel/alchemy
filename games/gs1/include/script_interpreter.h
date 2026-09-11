@@ -18,6 +18,4 @@ struct ScriptInterpreter {
     u8 delay;
 };
 
-s32 Func_0800d6d8(struct ScriptInterpreter *interpreter, u32 key);
-
 #endif

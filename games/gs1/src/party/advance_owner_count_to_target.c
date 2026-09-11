@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/advance_owner_count_to_target.h"
 
 struct State_080792fc {
     u8 padding[15];

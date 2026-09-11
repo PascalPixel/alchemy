@@ -1,8 +1,6 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/palette/advance_cycle.h"
 #include "global_cells.h"
-
 
 struct State080c1084 {
     u8 padding_000[0x64e];

@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/game_flags/refresh_lure_cap.h"
 #include "inventory.h"
 #include "game_flags.h"
 

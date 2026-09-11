@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/build_digit_tiles.h"
 
 struct OwnerState {
     u8 unknown_000[0xf8];

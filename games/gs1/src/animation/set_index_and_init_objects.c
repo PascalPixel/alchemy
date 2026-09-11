@@ -1,7 +1,6 @@
 #include "types.h"
 #include "scene.h"
 
-
 struct State_0800b7c0;
 
 s32 InitializeAnimationObjects(struct State_0800b7c0 *);

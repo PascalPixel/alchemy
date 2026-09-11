@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/sel/run_selection_for_value.h"
 
 struct State_0801c304 {
     u8 filler0[0x39e];
@@ -27,7 +26,7 @@ u32 Menu_RunSelectionForValue(u32 value)
     Menu_Run();
     Menu_Apply(0, 5);
     Resource_ScheduleOwnerResetDelayed();
-    result = Menu_Do2(1);
+    result = Menu_unk2_2(1);
     Resource_ResetOwnerEntries();
     return result;
 }

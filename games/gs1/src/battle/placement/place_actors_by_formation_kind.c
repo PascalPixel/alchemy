@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/placement/place_actors_by_formation_kind.h"
 
 struct BattleCells {
     u8 *actors;   /* 56-byte actor records */

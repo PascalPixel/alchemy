@@ -2,7 +2,6 @@
 #include "object_factory.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/entry/spawn_icon_entries.h"
 
 void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
 {

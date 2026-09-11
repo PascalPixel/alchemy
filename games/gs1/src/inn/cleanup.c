@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/inn/cleanup.h"
 #include "inn.h"
 
 s32 Resource_ResetEntry(u16);

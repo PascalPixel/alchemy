@@ -6,8 +6,6 @@
 
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/field/background_scroll.h"
-
 
 #include "resource_397.h"
 
@@ -100,7 +98,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Field_Check2((s32)obj->layer, obj->x, obj->z);
+        h = Field_unk2((s32)obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -143,7 +141,7 @@ void State_SetValue123ThenCounter16c(void)
 
     Field_Do(0x7B);
     cnt = (s16 *)(state + 0x16C);
-    Field_Do2(*cnt);
+    Field_unk2_2(*cnt);
 }
 
 void Effect_SetAlphaBlendForScene9(void)
@@ -151,7 +149,7 @@ void Effect_SetAlphaBlendForScene9(void)
     u8 *disp;
 
     /* Start the scene, then configure alpha blending for its display state. */
-    Field_Run2(9);
+    Field_unk2_4(9);
 
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
@@ -182,8 +180,8 @@ u8 *SceneData_GetTable84a4(void)
 
 void Scene_RunTwoCallSequence(void)
 {
-    Field_Run3();
-    Field_Run4();
+    Field_unk3_4();
+    Field_unk4_4();
 }
 
 /*
@@ -219,7 +217,7 @@ s32 State_SetRuntimeWord448To256(void)
     off -= 192;
     *scene = off;
 
-    Field_Run5(9);
+    Field_unk5_4(9);
 
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
@@ -241,7 +239,7 @@ s32 State_SetRuntimeWord448To256(void)
         *slot = value;
     }
 
-    Field_Run6();
+    Field_unk6_4();
     return 0;
 }
 

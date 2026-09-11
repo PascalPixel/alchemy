@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/renumber_filler_entries.h"
 
 extern u32 gUnk[];
 

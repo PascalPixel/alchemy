@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/blank_display_load_value_and_run.h"
 #include "global_cells.h"
 
 s32 Audio_PlayCue(s32);

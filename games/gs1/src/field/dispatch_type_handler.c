@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/field/dispatch_type_handler.h"
 
 void FieldEvent_RunTypeHandler(void);
 
@@ -10,7 +9,7 @@ void Field_DispatchTypeHandler(s32 kind)
     if (kind == 0) {
         Field_Check();
     } else if (kind == 1) {
-        Field_Check2();
+        Field_unk2();
     } else if (kind == 2) {
         Field_Run();
     } else if (kind == 3) {

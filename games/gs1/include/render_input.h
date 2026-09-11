@@ -37,7 +37,6 @@ struct RenderOutput {
     union RenderTableValue table;
 };
 
-struct RenderOutput *Func_0801eadc(
     s32 no,
     s32 flags,
     struct RenderInput *input,

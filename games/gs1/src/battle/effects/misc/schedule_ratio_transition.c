@@ -9,7 +9,6 @@
  */
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/misc/schedule_ratio_transition.h"
 #include "global_cells.h"
 
 typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);

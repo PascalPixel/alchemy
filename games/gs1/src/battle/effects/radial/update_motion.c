@@ -1,7 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/radial/update_motion.h"
 
 struct Position {
     s32 x;

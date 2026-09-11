@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/field/check_configured_keys_and_count.h"
-
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {

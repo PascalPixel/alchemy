@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/objects/update_descending_orbit.h"
 
 struct Triple08095fcc {
     s32 x;

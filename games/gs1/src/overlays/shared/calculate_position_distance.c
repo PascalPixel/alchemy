@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/shared/calculate_position_distance.h"
 
 typedef s32 (*IwramSqrt02000314)(s32);
 

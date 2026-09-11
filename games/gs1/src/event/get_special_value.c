@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/event/get_special_value.h"
 
 struct Fields_0808b248 {
     u8 filler[0x1d6];

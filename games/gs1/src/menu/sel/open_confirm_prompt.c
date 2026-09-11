@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/sel/open_confirm_prompt.h"
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
@@ -45,8 +44,8 @@ s32 Menu_OpenConfirmPrompt(void)
     FIELD(state, u8, 0x219) = (u8)Menu_Check((const u16 *)((u8 *)state + 0x208));
     Menu_SetMode2(0, 3, 0, 7);
     FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);
-    Menu_Do2(14);
-    Menu_Do3(0x06002500);
+    Menu_unk2_2(14);
+    Menu_unk3_2(0x06002500);
     Menu_CancelSoundReset();
     result = Menu_Place(
         &high, &unused, &low);
@@ -58,15 +57,15 @@ s32 Menu_OpenConfirmPrompt(void)
         flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }
-    Menu_Do4(FIELD(state, s32, 0x24));
+    Menu_unk4_2(FIELD(state, s32, 0x24));
     FIELD(FIELD(&gIw, void *, 0x24), u8, 0xea6) = 1;
     Menu_Run();
     Menu_SetMode(0, 0, 30, 20);
-    Menu_Do5(0x37);
+    Menu_unk5_2(0x37);
     gIw->suspended = 0;
     WaitFrames(1);
     Menu_SetMode3(0, 0, 30, 20);
     FIELD(FIELD(&gIw, void *, 0x24), u8, 0xea6) = 0;
-    Menu_Run2();
+    Menu_unk2_4();
     return result;
 }

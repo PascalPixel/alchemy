@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/topic/topic.h"
 
 /* overlays/scene/dialogue/topic/run_scene_steps.c */
 /* Contiguous unnamed leaf-owner run for resource_3b7. */
@@ -10,20 +9,20 @@ void Dialogue_RunMessage0e34(void)
     Talk_Run();
     Talk_Do(0xE34);
     Talk_Apply(-1, 0);
-    Talk_Run2();
+    Talk_unk2_4();
 }
 
 void Dialogue_RunMessage0e35(void)
 {
-    Talk_Run3();
-    Talk_Do2(0xE35);
+    Talk_unk3_4();
+    Talk_unk2_2(0xE35);
     Talk_Apply2(-1, 0);
-    Talk_Run4();
+    Talk_unk4_4();
 }
 
 void Scene_RunIndexedStep0(void)
 {
-    Talk_Do3(0);
+    Talk_unk3_2(0);
 }
 
 extern s16 gCell[];

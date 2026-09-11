@@ -2,7 +2,6 @@
 #include "scene.h"
 #include "global_cells.h"
 
-
 void BattleFx_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
 void BattleFx_StartBufferInterpolation(s32 value);
 

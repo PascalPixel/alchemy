@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)
 {

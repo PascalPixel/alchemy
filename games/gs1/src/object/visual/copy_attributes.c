@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 extern s32 Object_GetById(u32);
 

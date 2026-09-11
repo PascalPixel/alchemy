@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/formation/select_random_available_member.h"
 #include "fixed_math.h"
 #include "battle_formation.h"
 u32 Random16(void);
@@ -19,7 +21,7 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
         record_id = 1;
 
     choices_base = choices;
-    record = &Data_080c5c38[record_id];
+    record = &gRom[record_id];
     member_id = record->member_ids;
     maximum_count = record->maximum_counts;
     choice_cursor = choices_base;

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/misc/set_render_string.h"
 #include "runtime_interfaces.h"
 #include "global_cells.h"
 
@@ -24,6 +26,6 @@ s32 UiText_SetRenderString(const u8 *str)
     }
     offset = 0xEB0 + count * 2;
     *(u16 *)(base + offset) = 0;
-    Func_08018850(0, &count_out, &width_out, 0);
+    Ui_Run(0, &count_out, &width_out, 0);
     return count_out;
 }

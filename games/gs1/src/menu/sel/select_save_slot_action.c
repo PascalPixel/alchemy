@@ -1,13 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/select_save_slot_action.h"
 #include "gs1_edition.h"
 
-extern s32 Func_0801f77c(void);
-extern void *Func_080284dc(void);
+extern void *Menu_Run(void);
 extern void Menu_AppendResourceEntry(s32 arg0);
-extern void Func_08028808(s32, s32, s32);
-extern s32 Func_08028574(s32);
-extern void Func_0802851c(void);
-extern s8 Data_0803740f[];
+
+extern s8 gRom[];
 
 s32 Menu_SelectSaveSlotAction(void)
 {
@@ -18,7 +17,7 @@ s32 Menu_SelectSaveSlotAction(void)
 
     group = 0;
     initial = 0;
-    type = Func_0801f77c();
+    type = Menu_Check();
     if (type < 0) {
         return -1;
     }
@@ -34,7 +33,7 @@ s32 Menu_SelectSaveSlotAction(void)
     } else {
         initial = 1;
     }
-    Func_080284dc();
+    Menu_Run();
     if ((group == 0) || (group == 3)) {
         Menu_AppendResourceEntry(0x15);
     }
@@ -51,11 +50,11 @@ s32 Menu_SelectSaveSlotAction(void)
     if ((*(s16 *)0x02002010) != 0) {
         Menu_AppendResourceEntry(0x1E);
     }
-    Func_08028808(0x11, TYPE_MENU_WIDTH, 0);
-    ret = Func_08028574(initial);
-    Func_0802851c();
+    Menu_Place(0x11, TYPE_MENU_WIDTH, 0);
+    ret = Menu_Check2(initial);
+    Menu_Run2();
     if (ret >= 0) {
-        ret = Data_0803740f[ret + (group * 6)];
+        ret = gRom[ret + (group * 6)];
     }
     return ret;
 }

@@ -1,15 +1,17 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/get_record_stride180.h"
 
 typedef struct {
     u8 bytes[0xB4];
-} Data_080844ec_Record;
+} gRom;
 
-extern Data_080844ec_Record Data_080844ec[];
+extern gRom gRom2[];
 
-Data_080844ec_Record *Owner_GetRecordStride180(s32 index)
+gRom *Owner_GetRecordStride180(s32 index)
 {
-    Data_080844ec_Record *base;
+    gRom *base;
 
-    base = Data_080844ec;
+    base = gRom2;
     return &base[index];
 }

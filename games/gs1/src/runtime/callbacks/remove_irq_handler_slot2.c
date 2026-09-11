@@ -1,8 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/runtime/callbacks/remove_irq_handler_slot2.h"
 
 typedef void (*InterruptHandler)(void);
 
-void Func_0800307c(s32, s32, InterruptHandler);
 void Runtime_RemoveIrqHandlerSlot2(void)
 {
   int no;
@@ -10,5 +11,5 @@ void Runtime_RemoveIrqHandlerSlot2(void)
   handler = 2;
   no = handler;
   handler = 0;
-  Func_0800307c(no, 0, (InterruptHandler)handler);
+  Sys_Place(no, 0, (InterruptHandler)handler);
 }

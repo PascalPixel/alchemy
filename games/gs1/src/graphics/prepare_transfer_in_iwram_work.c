@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_08004fe4(s32, s32, s32);
+#include "scene.h"
+#include "abi/graphics/prepare_transfer_in_iwram_work.h"
 
 void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
 {
-    Func_08004fe4(src, dst, 0x03000350);
+    Sys_Place(src, dst, 0x03000350);
 }

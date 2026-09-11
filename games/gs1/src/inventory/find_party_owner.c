@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/inventory/find_party_owner.h"
 #include "inventory.h"
 
 s32 PartyInventory_FindOwner(s32 item_id)
@@ -8,8 +10,8 @@ s32 PartyInventory_FindOwner(s32 item_id)
     s16 *owner_cursor;
     s16 owner;
 
-    if (Inventory_Find(Data_02000240.current_owner, item_id) != -1)
-        return Data_02000240.current_owner;
+    if (Inventory_Find(gCell.current_owner, item_id) != -1)
+        return gCell.current_owner;
     owner_count = Party_ListActiveOwners(owners);
     owner_cursor = owners;
     owner_index = 0;

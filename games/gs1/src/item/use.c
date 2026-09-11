@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item/use.h"
 
 struct ItemOwner {
     u8 padding_000[0xd8];
@@ -19,13 +21,10 @@ struct ItemUseWork {
     u8 entry_count;
 };
 
-extern struct ItemUseWork *Data_03001f2c;
+extern struct ItemUseWork *gIw;
 
 struct ItemOwner *Runtime_GetObject(s32);
 struct ItemData *Item_GetData(s32);
-u8 Func_08077058(s32, s32);
-u32 Func_080a3ddc(struct ItemOwner *, u16 *, s32);
-s32 Func_080a9f10(s32, s32, s32, s32);
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
@@ -36,10 +35,10 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct ItemData *item;
 
     owner = Runtime_GetObject(owner_id);
-    work = Data_03001f2c;
+    work = gIw;
     item_id = 0x1ff & owner->items[slot];
     item = Item_GetData(item_id);
-    result = Func_080a9f10(
+    result = Item_SetMode(
         0x3fff & item->use_ability,
         owner_id,
         target_id,
@@ -47,9 +46,9 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     if (result != -1) {
         item = Item_GetData(owner->items[slot]);
         if (item->kind == 1) {
-            Func_08077058(owner_id, slot);
+            Item_Apply(owner_id, slot);
             work->entry_count =
-                Func_080a3ddc(owner, work->entries, 0);
+                Item_Place(owner, work->entries, 0);
         }
         if (item->kind == 4) {
             if (item_id == 0xb8)
@@ -61,7 +60,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     return result;
 }
 
-s32 Func_080a9f0c(void)
+s32 Item_Run(void)
 {
     return 1;
 }

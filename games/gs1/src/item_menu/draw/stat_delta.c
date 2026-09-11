@@ -1,12 +1,11 @@
+#include "scene.h"
+#include "abi/item_menu/draw/stat_delta.h"
 #include "item_menu.h"
 
-extern u8 Data_080af224;
-extern u8 Data_080af228;
-#define ItemMenu_IncreaseGlyph Data_080af224
-#define ItemMenu_DecreaseGlyph Data_080af228
+extern u8 ItemMenu_IncreaseGlyph;
+extern u8 ItemMenu_DecreaseGlyph;
 
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
-void Func_08015098(u8 *, s32, s32, s32);
 
 void ItemMenu_DrawStat(
     s32 delta, s32 unused, s32 window, s32 x, s32 y)
@@ -31,10 +30,10 @@ void ItemMenu_DrawStat(
         digits = 3;
     }
     if (delta > 0) {
-        Func_08015098(
+        Sys_SetMode(
             &ItemMenu_IncreaseGlyph, window, x - digits * 8 + 16, y);
     } else {
-        Func_08015098(
+        Sys_SetMode(
             &ItemMenu_DecreaseGlyph, window, x - digits * 8 + 16, y);
     }
 }

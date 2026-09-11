@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/init/init_counters_and_schedule_refresh.h"
 #include "gs1_edition.h"
 
 struct State_08017464 {
@@ -22,15 +24,15 @@ struct State_08017464 {
     u16 result;
 };
 
-extern struct State_08017464 *Data_03001e8c;
-extern u8 Data_0801789d;
+extern struct State_08017464 *gIw;
+extern u8 gRom;
 
 s32 Resource_CopyData(s32, s32, s32);
 void ScheduleCallbackAfterFrames(void *, s32);
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 {
-    struct State_08017464 *state = Data_03001e8c;
+    struct State_08017464 *state = gIw;
     s32 size;
 
     if (initialize != 0)
@@ -43,5 +45,5 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
     state->secondZero = 0;
     size = 200;
     size <<= 4;
-    ScheduleCallbackAfterFrames(&Data_0801789d, size);
+    ScheduleCallbackAfterFrames(&gRom, size);
 }

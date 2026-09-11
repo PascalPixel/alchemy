@@ -1,8 +1,8 @@
+#include "scene.h"
+#include "abi/shop/sel/sell.h"
 #include "shop.h"
 #include "battle_runtime.h"
 #include "sound_ids.h"
-
-#define Shop_SelSell Func_080b1bd0
 
 s32 Modulo(s32, s32);
 s32 FixedPoint_Ratio(s32, s32);
@@ -12,7 +12,6 @@ void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
 void Audio_PlayCue(s32);
 void UiMessage_ShowAndWait(s32);
-void Func_080b1f4c(s32, s32, s32);
 
 extern u8 Value_00000075;
 extern u8 Value_00000caa;
@@ -21,7 +20,7 @@ extern u8 Value_00000caa;
  * Sell flow reached from Shop_PickUnit when the shop's party action
  * is "sell": browse the chosen member's inventory, priced one slot at a
  * time, and hand a confirmed slot off to Shop_SelSellNum before
- * writing the sale back through Func_080b1f4c.
+ * writing the sale back through Sys_Place.
  */
 s32 Shop_SelSell(s32 unit_id)
 {
@@ -119,7 +118,7 @@ done:
 
         quantity = Shop_SelSellNum(unit_id, selection);
         if (quantity != -1)
-            Func_080b1f4c(unit_id, selection, quantity);
+            Sys_Place(unit_id, selection, quantity);
         UiMessage_ShowAndWait((s32)&Value_00000caa);
         if (Ability_GetAvailability(unit_id) == 0)
             break;

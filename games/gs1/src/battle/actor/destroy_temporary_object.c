@@ -1,6 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/actor/destroy_temporary_object.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct Creature_080bb8e8 {
     u8 padding_000[0x12a];
@@ -15,10 +16,9 @@ struct Runtime_080bb8e8 {
 
 s32 Object_Destroy(s32);
 struct Creature_080bb8e8 *Runtime_GetObject();
-s32 Func_08077130(void *, s32);
+
 struct Runtime_080bb8e8 *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-s32 Func_080bac6c(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
@@ -28,8 +28,8 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 
     creature = Runtime_GetObject();
     if (creature->field_12a == 1) {
-        Func_08077130(creature, 0);
-        Func_080bac6c(arg0);
+        Actor_Apply(creature, 0);
+        Actor_Check(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
         result = Object_Destroy(runtime->field_00);

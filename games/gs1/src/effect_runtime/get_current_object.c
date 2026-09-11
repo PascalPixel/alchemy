@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_runtime.h"
 #include "global_cells.h"
 

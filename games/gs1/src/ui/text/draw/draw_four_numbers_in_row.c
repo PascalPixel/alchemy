@@ -1,5 +1,6 @@
 #include "text_render_runtime.h"
 #include "types.h"
+#include "scene.h"
 
 void UiText_DrawFourNumbersInRow(struct TextRenderWork *work, s32 base)
 {

@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/field/store_assigned_key_value.h"
 #include "global_cells.h"
 
-extern u8 *Data_03001ebc;
+extern u8 *gWork;
 s32 GameFlag_IsSet(s32);
 
 static __inline__ void StoreHalfword(u8 *address, s32 value)
@@ -13,7 +15,7 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 {
     u32 no = value >> 14;
     u32 ret = 0x3FFF & value;
-    u8 *state = Data_03001ebc;
+    u8 *state = gWork;
 
     if (GameFlag_IsSet(0x107) != 0) {
         StoreHalfword(state + 0x182, 0xFA);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 WaitFrames(s32);
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);

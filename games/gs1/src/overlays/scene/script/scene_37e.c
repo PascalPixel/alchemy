@@ -4,6 +4,7 @@
  */
 
 #include "types.h"
+#include "scene.h"
 
 #include "resource_37e.h"
 #include "resource_37de_scene.h"

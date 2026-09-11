@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/runtime/misc/enable_two_callbacks.h"
 
-s32 Func_080042c8(u32 value);
-extern u8 Data_0808f52d;
-extern u8 Data_0808f499;
+extern u8 gRom;
+extern u8 gRom2;
 
 void BattleFx_EnableTwoCallbacks(void)
 {
-    Func_080042c8((u32)&Data_0808f52d);
-    Func_080042c8((u32)&Data_0808f499);
+    Battle_Check((u32)&gRom);
+    Battle_Check((u32)&gRom2);
 }

@@ -1,14 +1,16 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/res/layout_resource_entries.h"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
-extern u8 Data_03001f38;
+extern u8 gIw;
 
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
     u8 *state;
     s32 i;
 
-    state = *(u8 **)&Data_03001f38;
+    state = *(u8 **)&gIw;
 
     *(u16 *)(state + 144) = (u16)((u32)w + 2);
     *(u16 *)(state + 146) = (u16)h;

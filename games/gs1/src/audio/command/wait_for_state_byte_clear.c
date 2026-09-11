@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/command/wait_for_state_byte_clear.h"
 
 s32 WaitFrames(s32);
-s32 Func_080f9048(void);
 
 void AudioCommand_WaitForStateByteClear(void)
 {
-    while (Func_080f9048() != 0) {
+    while (Audio_Check() != 0) {
         WaitFrames(1);
     }
 }

@@ -1,12 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/shop/sel/use.h"
 #include "shop.h"
 #include "global_cells.h"
 #include "battle_calc.h"
 
-#define Shop_SelUse Func_080b362c
-
 s32 Ability_GetAvailability(s32);
-s32 Func_080772a8(s32, s32);
+
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePending(void);
@@ -77,7 +77,7 @@ s32 Shop_SelUse(s32 actor)
         WaitFrames(1);
 
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
-            status = Func_080772a8(actor, selection);
+            status = Sys_Apply(actor, selection);
             if (status == 0) {
                 Audio_PlayCue(112);
                 result = selection;

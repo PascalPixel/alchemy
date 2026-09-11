@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/map_init/wait_value_below_limit.h"
 
 struct Track02001038 {
     u8 head[12];
@@ -11,8 +13,6 @@ struct Track02001038 {
     s32 mark;
 };
 
-extern void Func_0200406a(s32);
-
 void Actor_WaitValueBelowLimit(struct Track02001038 *track)
 {
     s32 cnt = 60;
@@ -22,7 +22,7 @@ void Actor_WaitValueBelowLimit(struct Track02001038 *track)
         if (cnt != 0) {
             s32 value;
 
-            Func_0200406a(1);
+            Actor_Do(1);
             value = track->value;
             limit = track->limit;
             cnt--;

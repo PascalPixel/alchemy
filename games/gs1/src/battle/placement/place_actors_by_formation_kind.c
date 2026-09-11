@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define Battle_PlaceActorsByFormationKind Func_08012e28
+#include "scene.h"
+#include "abi/battle/placement/place_actors_by_formation_kind.h"
 
 struct BattleCells {
     u8 *actors;   /* 56-byte actor records */
@@ -16,14 +16,12 @@ struct Vec2 {
     s32 y;
 };
 
-extern struct BattleCells Data_03001e60;
-extern struct Vec2 Data_08013584;
-
-void Func_0800b168(void *object, s32 *position, s32 *scale, u32 mode);
+extern struct BattleCells gIw;
+extern struct Vec2 gRom;
 
 void Battle_PlaceActorsByFormationKind(void)
 {
-    u8 *actor = Data_03001e60.actors;
+    u8 *actor = gIw.actors;
     u32 kind = (*(u8 **)(actor + 40))[4];
     struct Vec2 scale;
     u8 *tbl;
@@ -33,8 +31,8 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 cnt;
     u32 i;
 
-    scale = Data_08013584;
-    tbl = Data_03001e60.work;
+    scale = gRom;
+    tbl = gIw.work;
 
     switch (kind) {
     case 3:
@@ -70,7 +68,7 @@ void Battle_PlaceActorsByFormationKind(void)
     }
 
     for (i = 0; i < cnt; i++) {
-        Func_0800b168(actor, (s32 *)(tbl + i * 16), (s32 *)&scale, angle);
+        Battle_SetMode(actor, (s32 *)(tbl + i * 16), (s32 *)&scale, angle);
         actor += 56;
         angle += step;
         if (i & 1)

@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/track/copy_buffered_bytes.h"
 
-extern u8 Data_0000443c[];
+extern u8 gVal[];
 
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
@@ -13,7 +15,7 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
     u32 count = *cnt_p;
 
     if (count != 0) {
-        u32 displacement = (u32)Data_0000443c;
+        u32 displacement = (u32)gVal;
         u32 *offset = (u32 *)(base + displacement);
         u32 *cnt_p2;
         u8 *source;

@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/fmt/format_play_time.h"
 
-u32 Func_080022f4(s32, s32);
-s32 Func_08002304(s32, s32);
 u8 *Text_FormatNumber(u8 *, s32, s32);
 
 void *Text_FormatPlayTime(s32 value, u8 *out)
@@ -13,12 +13,12 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
     u8 *s;
     u8 *p;
 
-    time = Func_080022f4(value, 0xe10);
+    time = Ui_Apply(value, 0xe10);
     if (time > 0xea5f)
         time = 0xea5f;
 
-    minutes = Func_080022f4(time, 60);
-    seconds = Func_08002304(time, 60);
+    minutes = Ui_Apply(time, 60);
+    seconds = Ui_Apply2(time, 60);
 
     s = Text_FormatNumber(buf, minutes, 3);
     *out = *s;

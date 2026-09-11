@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 *Runtime_ClearWordIfSet(s32 *value)
 {

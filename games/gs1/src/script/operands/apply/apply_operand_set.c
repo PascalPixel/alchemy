@@ -1,13 +1,15 @@
+#include "scene.h"
+#include "abi/script/operands/apply/apply_operand_set.h"
 #include "script_operands.h"
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc Data_080136e0[];
+extern OperandFunc gRom[];
 
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
     u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Data_080136e0[*(s32 *)entry];
+    OperandFunc callback = gRom[*(s32 *)entry];
 
     if (callback != 0)
         callback(work, 0, *(s32 *)(entry + 4));

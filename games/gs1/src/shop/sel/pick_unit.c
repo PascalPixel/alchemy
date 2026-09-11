@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/shop/sel/pick_unit.h"
 #include "shop.h"
 #include "gs1_edition.h"
 #include "sound_ids.h"
@@ -13,10 +15,7 @@ void WaitFrames(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
-void Func_080a1028(s32, s32, s32, s32, s32);
-void Func_080a1030(void);
-void Func_080b1bd0(s32);
-void Func_080b211c(s32);
+
 void Audio_PlayCue(s32);
 
 /*
@@ -37,7 +36,7 @@ s32 Shop_PickUnit(void)
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     shop->cursor.anchor->kind = 4;
     shop->mode = 12;
-    Func_080a1028(list_window, 2, 0, 8, 0);
+    Sys_SetRange(list_window, 2, 0, 8, 0);
 
     for (;;) {
         if (redraw != 0) {
@@ -62,9 +61,9 @@ s32 Shop_PickUnit(void)
             } else {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 if (shop->party_action == 1)
-                    Func_080b1bd0(unit_id);
+                    Sys_Do(unit_id);
                 else
-                    Func_080b211c(unit_id);
+                    Sys_Do2(unit_id);
                 shop->cursor.anchor->kind = 4;
                 shop->mode = 12;
                 redraw = 1;
@@ -74,7 +73,7 @@ s32 Shop_PickUnit(void)
 
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
-            Func_080a1030();
+            Sys_Run();
             UiWindow_Close(list_window, 2);
             UiWindow_Close(shop->item_window, 2);
             UiWindow_Close(shop->money_window, 2);

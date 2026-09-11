@@ -4,13 +4,9 @@
  */
 
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/gate_placement.h"
 
-#define SceneData_GetPrimaryTable Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetSecondaryTable Func_0200003c
-#define SceneData_GetTertiaryTable Func_02000044
-#define SceneData_GetQuaternaryTable Func_0200004c
-#define Scene_PlaceActor8OnGate300 Func_02000054
 #include "resource_388.h"
 #include "resource_388_runtime.h"
 

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(u32 object_id)

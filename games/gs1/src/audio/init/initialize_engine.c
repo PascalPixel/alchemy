@@ -1,5 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/init/initialize_engine.h"
 
 struct CgbChannel;
 struct MusicPlayerState;
@@ -54,7 +56,6 @@ struct AudioEngineState {
     u8 pcm_buffers[2][0x630];
 };
 
-void Func_08006864(const void *source, void *destination, u32 control);
 void MusicPlayer_CopyCommandTable(union AudioCommandSlot *destination);
 void MusicTrack_HandleNote(
     u32,
@@ -89,7 +90,7 @@ void AudioEngine_Initialize(struct AudioEngineState *audio)
 
     *(struct AudioEngineState *volatile *)0x03007ff0 = audio;
     zero = 0;
-    Func_08006864(
+    Audio_Place(
         &zero,
         audio,
         0x01000000 | 0x04000000 | (sizeof(*audio) / sizeof(u32)));

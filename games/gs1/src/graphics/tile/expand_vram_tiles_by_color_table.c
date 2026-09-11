@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/tile/expand_vram_tiles_by_color_table.h"
 
-extern u16 Data_06000600[];
-extern u16 Data_080372c0[];
+extern u16 gUnk[];
+extern u16 gRom[];
 
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {
@@ -15,7 +17,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 
         do {
             u16 *out = (u16 *)((u8 *)dst + dst_ofs);
-            u16 *src = (u16 *)((u8 *)Data_06000600 + (row << 5));
+            u16 *src = (u16 *)((u8 *)gUnk + (row << 5));
             s32 col = 0;
 
             do {
@@ -24,7 +26,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
                 s32 nibble = 0;
 
                 do {
-                    u32 color = Data_080372c0[
+                    u32 color = gRom[
                         (packed & 15) + pal_ofs
                     ] << (nibble * 4);
                     nibble++;

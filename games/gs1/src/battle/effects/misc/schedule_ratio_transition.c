@@ -8,6 +8,8 @@
  * at the call site, so a third argument must not be added.
  */
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/misc/schedule_ratio_transition.h"
 #include "global_cells.h"
 
 typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
@@ -22,7 +24,7 @@ struct Work_080936a0 {
 
 s32 Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void ScheduleCallbackAfterFrames(const void *arg0, s32 arg1);
-extern u8 Data_080935d5;
+extern u8 gRom;
 
 void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 {
@@ -41,5 +43,5 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    ScheduleCallbackAfterFrames(&Data_080935d5, 0xc94);
+    ScheduleCallbackAfterFrames(&gRom, 0xc94);
 }

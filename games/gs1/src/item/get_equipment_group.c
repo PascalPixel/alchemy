@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item.h"
 
 s32 Item_GetEquipmentGroup(s32 item_id)

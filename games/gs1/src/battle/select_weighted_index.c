@@ -1,6 +1,6 @@
 #include "types.h"
-
-s32 Func_080771a0(void);
+#include "scene.h"
+#include "abi/battle/select_weighted_index.h"
 
 /*
  * The r9 static-chain setup at the call sites and the callee's matching r9
@@ -19,7 +19,7 @@ static __inline__ s32 Scope_080bd3e4(void)
         s32 result;
         s32 index;
 
-        value = Func_080771a0() & 0xFF;
+        value = Battle_Check() & 0xFF;
         total = weights[0];
         result = 0;
         index = 0;

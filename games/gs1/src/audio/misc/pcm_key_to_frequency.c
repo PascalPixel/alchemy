@@ -1,9 +1,11 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/misc/pcm_key_to_frequency.h"
 
 s32 Math_UmulHigh32(s32, s32);
-extern u8 Data_080fb830[];
-extern u32 Data_080fb8e4[];
+extern u8 gRom[];
+extern u32 gRom2[];
 
 s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
 {
@@ -19,12 +21,12 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
         pitch_scale = 255 << 24;
     }
 
-    lower_frequency = Data_080fb830[key_index];
+    lower_frequency = gRom[key_index];
     lower_frequency =
-        Data_080fb8e4[lower_frequency & 15] >> (lower_frequency >> 4);
-    upper_frequency = Data_080fb830[key_index + 1];
+        gRom2[lower_frequency & 15] >> (lower_frequency >> 4);
+    upper_frequency = gRom[key_index + 1];
     upper_frequency =
-        Data_080fb8e4[upper_frequency & 15] >> (upper_frequency >> 4);
+        gRom2[upper_frequency & 15] >> (upper_frequency >> 4);
 
     return Math_UmulHigh32(*(s32 *)((u8 *)wave + 4),
         lower_frequency

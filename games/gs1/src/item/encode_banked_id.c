@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 u8 *Item_GetData(u32);
 

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "battle_random.h"
 
 u32 BattleRandom16(void)

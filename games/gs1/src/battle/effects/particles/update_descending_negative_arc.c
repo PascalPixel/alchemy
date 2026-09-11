@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/particles/update_descending_negative_arc.h"
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 extern u8 Value_00000001;
 
 void Object_Destroy(void);
@@ -16,7 +18,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(void *arg0)
     object = arg0;
     threshold = *(s32 *)(object + 0x14) + 0xA0000;
     source = *(u8 **)(object + 0x68);
-    if (Data_02000240[237] == (s32)&Value_00000001)
+    if (gCell[237] == (s32)&Value_00000001)
         threshold = *(s32 *)(object + 0x14) + 0x40000;
 
     position = *(s32 *)(object + 0x0C);

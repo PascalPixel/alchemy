@@ -1,10 +1,12 @@
+#include "scene.h"
+#include "abi/battle/effects/runtime/misc/find_definition.h"
 #include "battle_effect_runtime.h"
 
-extern struct BattleEffectEntry Data_0809e9f0[];
+extern struct BattleEffectEntry gRom[];
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 {
-    struct BattleEffectEntry *entry = Data_0809e9f0;
+    struct BattleEffectEntry *entry = gRom;
     u32 index = 0;
 
     if (entry->id != id) {

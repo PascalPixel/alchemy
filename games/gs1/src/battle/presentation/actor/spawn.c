@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/actor/spawn.h"
 
 typedef struct {
     /* 0x00 */ void *object;
@@ -35,18 +37,13 @@ typedef struct {
     /* 0x59 */ u8 field_59;
 } Object;
 
-Object *Func_080090c8(s32, s32, s32);
-void Func_08009098(Object *, const void *);
-Unit *Func_08077008(s32);
-s32 Func_08077078(Unit *, s32);
-s32 Func_080b6d30(s32);
-s32 Func_080b6eb4(s32);
-s32 Func_080c2384(s32);
-s32 Func_080c23a0(s32);
-s32 Func_080044d0(s32, s32);
-extern const u8 Data_080c5938[];
+Object *Actor_Run(s32, s32, s32);
 
-void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
+Unit *Actor_Run2(s32);
+
+extern const u8 gRom[];
+
+void Actor_Run3(Actor *actor, s32 unit, s32 x, s32 y)
 {
     s32 fixed_x;
     s32 fixed_y;
@@ -62,15 +59,15 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
 
     fixed_x = x << 16;
     fixed_y = y << 16;
-    object = Func_080090c8(0xf000, fixed_x, 0);
-    unit_record = Func_08077008(unit);
+    object = Actor_Run(0xf000, fixed_x, 0);
+    unit_record = Actor_Run2(unit);
     actor_flag = 0;
-    existing_sprite = Func_080b6d30(unit);
+    existing_sprite = Actor_Check(unit);
 
     if (unit_record->kind == 0) {
-        sprite = Func_080c2384(unit_record->class_id);
+        sprite = Actor_Check2(unit_record->class_id);
         if (existing_sprite == 0)
-            actor_flag = Func_080c23a0(unit_record->class_id);
+            actor_flag = Actor_Check3(unit_record->class_id);
         else
             sprite = existing_sprite;
     } else {
@@ -140,7 +137,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     actor->y = fixed_y;
     actor->flag = actor_flag;
     actor->sprite = sprite;
-    anim = Func_080b6eb4(unit);
+    anim = Actor_Check4(unit);
     actor->field_08 = 0;
     actor->field_20 = 0;
     actor->field_24 = 0;
@@ -150,7 +147,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     class_id = unit_record->class_id;
     actor->anim = anim;
 
-    if (class_id <= 1 && Func_08077078(unit_record, 1) == 15) {
+    if (class_id <= 1 && Actor_Apply(unit_record, 1) == 15) {
         if (unit_record->class_id == 0) {
             sprite = 480;
             actor->sprite = sprite;
@@ -164,7 +161,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     row = y;
     if (row < 0)
         row += 7;
-    position = Func_080044d0(row >> 3, x) + 0x8000;
+    position = Actor_Apply2(row >> 3, x) + 0x8000;
     object->field_06 = position;
     object->field_59 = 3;
     object->field_55 = 2;
@@ -175,5 +172,5 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
         object->field_18 = 0x10000;
         object->field_1c = 0x10000;
     }
-    Func_08009098(object, Data_080c5938);
+    Actor_Apply3(object, gRom);
 }

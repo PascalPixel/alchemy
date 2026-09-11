@@ -1,5 +1,6 @@
 /* resource_3bf soft-float library: 64-bit logical right shift at 0x02005c08. */
 #include "types.h"
+#include "scene.h"
 
 /*
  * r0/r1 hold the low and high words and r2 the count -- the ordinary pair

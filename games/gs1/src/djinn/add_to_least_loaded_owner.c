@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/djinn/add_to_least_loaded_owner.h"
 #include "game_flags.h"
 #include "owner_state.h"
 #include "party_state.h"
@@ -26,7 +28,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
     if (best_no < result) {
         s32 off = 252;
 
-        owners = (u8 *)&Data_02000240 + off * 2;
+        owners = (u8 *)&gCell + off * 2;
         count = result;
         do {
             u8 *p = OwnerState_Get(*owners);

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/* スクリプト演算ワーク。混在幅の値はROM上の配置どおりに保持する。 */
+/* Script operand work. Mixed widths stay as placed in the image. */
 struct ScriptOperands {
     u32 script_address;      /* 0x00 */
     u16 cursor;              /* 0x04; cast to s16 for signed interpretation */

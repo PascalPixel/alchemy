@@ -1,28 +1,23 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/event/wait_task.h"
 #include "colosso_log_rolling_stage.h"
-
-extern void Func_0200561a(s32);
-extern void Func_02005448(s32);
-extern void Func_020052d6(s32);
-extern void Func_020052ea(s32);
-extern void Func_020052fa(s32);
-extern void Func_02005310(s32);
 
 void Colosso_WaitForSceneEventTask(void)
 {
     s32 *status;
     s32 value;
 
-    Func_0200561a(28);
-    Func_02005448(0x361);
-    Func_020052d6(10);
+    Map_Do(28);
+    Map_Do2(0x361);
+    Map_Do3(10);
     value = *(s32 *)0x0200D480;
     if (value != 1 && value != 3) {
         status = (s32 *)0x0200D480;
         do {
-            Func_020052ea(1);
+            Map_Do4(1);
             value = *status;
         } while (value != 1 && value != 3);
     }
-    Func_020052fa(1);
-    Func_02005310(0x0200804D);
+    Map_Do5(1);
+    Map_Do6(0x0200804D);
 }

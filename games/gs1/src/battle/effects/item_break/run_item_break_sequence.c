@@ -1,16 +1,16 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/item_break/run_item_break_sequence.h"
 
 struct BattleEffectScene {
     u8 pad00[16];
     void *volatile main_object;
 };
 
-extern struct BattleEffectScene *Data_03001f30;
+extern struct BattleEffectScene *gIw;
 
-void Func_08097384(void);
 void *BattleFx_StartItemBreak(void *object);
-void Func_08098184(void *object);
-void Func_08009080(void *object, s32 mode);
+
 void WaitFrames(s32 frames);
 void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
@@ -21,16 +21,16 @@ void BattleFx_RunItemBreakSequence(void)
     struct BattleEffectScene *scene;
     void *object;
 
-    scene = Data_03001f30;
+    scene = gIw;
     object = scene->main_object;
 
     do {
-        Func_08097384();
+        Battle_Run();
     } while (0);
     object = BattleFx_StartItemBreak(object);
-    Func_08098184(object);
+    Battle_Do(object);
     if (object != 0) {
-        Func_08009080(object, 4);
+        Battle_Apply(object, 4);
         WaitFrames(30);
     }
     BattleFx_PrepareBufferInterpolation();

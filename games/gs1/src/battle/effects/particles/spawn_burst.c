@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/particles/spawn_burst.h"
 
 struct Child_08092624 {
     u8 pad_00[9];
@@ -28,17 +30,17 @@ struct Object_08092624 {
     void (*callback_6c)(void);
 };
 
-extern struct Object_08092624 *Func_080090c8(s32, s32, s32, s32);
+extern struct Object_08092624 *Battle_Run(s32, s32, s32, s32);
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 extern void Object_SetMode(struct Object_08092624 *, s32);
 extern void Object_SetCallback(struct Object_08092624 *, const void *);
 extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
-extern s32 Func_08002304(s32, s32);
-extern const u8 Data_0809fbec[];
-extern const u8 Data_0809fc04[];
-extern u8 Data_080925e1;
+
+extern const u8 gRom[];
+extern const u8 gRom2[];
+extern u8 gRom3;
 
 void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
 {
@@ -46,17 +48,17 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
     struct Child_08092624 *child;
     s32 value;
 
-    object = Func_080090c8(222, source->x, source->y, source->z);
+    object = Battle_Run(222, source->x, source->y, source->z);
     if (object != 0) {
         child = object->child;
         switch (Rand() & 1) {
         case 1:
             Object_SetMode(object, 2);
-            Object_SetCallback(object, Data_0809fbec);
+            Object_SetCallback(object, gRom);
             break;
         default:
             Object_SetMode(object, 1);
-            Object_SetCallback(object, Data_0809fc04);
+            Object_SetCallback(object, gRom2);
             break;
         }
 
@@ -64,13 +66,13 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
             ObjectGroup_SetChildValue(object);
 
         object->mode_55 = 0;
-        value = Func_08002304(Rand(), 10) + 5;
+        value = Battle_Apply(Rand(), 10) + 5;
         object->field_34 = -0x1999 * value;
-        value = Func_08002304(Rand(), 15) - 7;
+        value = Battle_Apply(Rand(), 15) - 7;
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;
-        object->callback_6c = (void (*)(void))&Data_080925e1;
+        object->callback_6c = (void (*)(void))&gRom3;
         child->field_26 = 0;
         child->copied_09 = source->child->copied_09;
     }

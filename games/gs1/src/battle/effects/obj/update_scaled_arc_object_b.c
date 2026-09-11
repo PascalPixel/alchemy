@@ -1,7 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/obj/update_scaled_arc_object_b.h"
 #include "object_efx.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void BattleFx_UpdateScaledArcObjectB(void *obj)
 {
@@ -14,10 +15,10 @@ void BattleFx_UpdateScaledArcObjectB(void *obj)
     *(volatile u16 *)((u8 *)obj + 0x64) = step;
     v = (s16)step;
     if (v > 0x1F) {
-        Object_SetCallback((s32)obj, Data_0809f0b0);
+        Object_SetCallback((s32)obj, gRom);
         return;
     }
-    v = Func_08002322(v << 10);
+    v = Battle_Run(v << 10);
     FIELD_AT_OFFSET(obj, s32 *, 0x18) = v;
     FIELD_AT_OFFSET(obj, s32 *, 0x1C) = -v;
     FIELD_AT_OFFSET(obj, s32 *, 8) = FIELD_AT_OFFSET(link, s32 *, 8);

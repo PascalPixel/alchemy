@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 ScheduleCallback(s32);
 s32 GameFlag_IsSet(s32);

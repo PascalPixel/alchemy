@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/particles/update_paired_arc_spawner.h"
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 extern u8 Value_00000001;
 
 s32 Modulo(s32, s32);
@@ -14,7 +16,7 @@ void BattleFx_UpdatePairedArcSpawner(void *arg0)
     field64 = *(s16 *)((u8 *)arg0 + 0x64);
     counter = (*(u16 *)((u8 *)arg0 + 0x66))++;
 
-    if (Data_02000240[237] == (s32)&Value_00000001) {
+    if (gCell[237] == (s32)&Value_00000001) {
         if (Modulo(counter, 7) == 0)
             BattleFx_SpawnPairedArcObjects(arg0);
     } else if (Modulo(counter, 5) == 0) {

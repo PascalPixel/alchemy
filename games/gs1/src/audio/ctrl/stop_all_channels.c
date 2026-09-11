@@ -1,13 +1,15 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/ctrl/stop_all_channels.h"
 
 typedef void (*DisableFunction)(u8);
 
-extern u8 *Data_03007ff0;
+extern u8 *gIw;
 
 void AudioEngine_StopAllChannels(void)
 {
-    u8 *audio = Data_03007ff0;
+    u8 *audio = gIw;
     u32 ident = *(u32 *)audio;
     s32 remaining;
     u8 *channel;

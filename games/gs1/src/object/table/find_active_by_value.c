@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/table/find_active_by_value.h"
 
 struct Inner {
     u8 unknown_000[40];
@@ -12,7 +14,7 @@ struct Object_08092be0 {
 };
 
 /*
- * This owner's view of Data_03001ebc. games/gs1/include/battle_effect_runtime.h declares
+ * This owner's view of gWork. games/gs1/include/battle_effect_runtime.h declares
  * the same global as `struct BattleRuntime` with a different layout; both are
  * per-owner views of one object and only the fields each owner reads are
  * evidence. Named for the owner so the two cannot be mistaken for one type.
@@ -22,11 +24,11 @@ struct Work_08092be0 {
     struct Object_08092be0 *objects[4096];
 };
 
-extern struct Work_08092be0 *Data_03001ebc;
+extern struct Work_08092be0 *gWork;
 
 s32 ObjectTable_FindActiveByValue(s32 value)
 {
-    struct Work_08092be0 *state = Data_03001ebc;
+    struct Work_08092be0 *state = gWork;
     s32 result = -1;
     s32 index = 8;
     struct Object_08092be0 *object = state->objects[index];

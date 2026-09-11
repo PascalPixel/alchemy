@@ -1,11 +1,8 @@
+#include "scene.h"
+#include "abi/shop/sel/buy_done.h"
 #include "shop.h"
 #include "sound_ids.h"
 
-s32 Func_08077028(s32, s32);
-s32 Func_08077228(s32, u8);
-s32 Func_08077230(s32);
-s32 Func_08077298(s16);
-void Func_080b0574(s32 message);
 s32 Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
@@ -19,18 +16,18 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
     remaining = quantity;
     item = Item_Get(item_id);
     added_slot = 0;
-    replaced_slot = Func_08077228(unit_id, item->type);
+    replaced_slot = Sys_Apply(unit_id, item->type);
     Audio_PlayCue(SOUND_SHOP_PURCHASE);
     if (added_slot < remaining) {
         do {
-            added_slot = Func_08077028(unit_id, item_id);
-            Func_08077230(0 - item->price);
+            added_slot = Sys_Apply2(unit_id, item_id);
+            Sys_Check(0 - item->price);
             remaining -= 1;
-            Func_08077298(item->price);
+            Sys_Check2(item->price);
             Shop_DrawMoney();
         } while (remaining != 0);
     }
-    Func_080b0574((s32)&Value_00000ca1);
+    Sys_Do((s32)&Value_00000ca1);
     if (Shop_ConfirmEquip(unit_id, added_slot) != 0) {
         Shop_SellOld(unit_id, replaced_slot);
     }

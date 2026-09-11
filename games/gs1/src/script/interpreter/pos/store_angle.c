@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_object_runtime.h"
 #include "fixed_math.h"
 

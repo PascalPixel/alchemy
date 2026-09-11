@@ -1,134 +1,18 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/message_branch.h"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 #define WORKSPACE (*(u8 **) 0x03001EBC)
-#define SceneData_GetPrimaryTable Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetSecondaryTable Func_0200003c
-#define SceneData_PrepareTable86b0 Func_02000044
-#define Scene_RunActor16MessageBranch Func_0200005c
-#define Scene_RunActor18MessageBranch Func_020000bc
-#define SceneData_GetTertiaryTable Func_0200011c
-#define Scene_RunActor17MessageBranch Func_02000124
-#define Scene_ConfigureActor21Scene Func_020001a8
-#define Scene_RunActor24Sequence Func_020001e0
-#define Scene_RunActor27Sequence Func_02000250
-#define Scene_RunActor8Message Func_020002b4
-#define Scene_RunActor13Message Func_020002d4
-#define Scene_RunActor19MessageBranch Func_020002f4
-#define Scene_RunActor21SequenceOnFlag300 Func_0200035c
-#define Scene_ConfigureActor22Scene Func_020003f4
-#define Scene_ConfigureActor23Scene Func_02000430
-#define Scene_RunActor27Message Func_02000470
-#define Scene_RunActor10MessageBranch Func_02000490
-#define Scene_SetupActor27OnEntry Func_020004c8
 
 #include "resource_38c.h"
 
-extern u8 Data_03001ebc[];
+extern u8 gWork[];
 
-void Func_02000574(s32);
-u8 *Func_0200059a(s32);
-void Func_02000580(void);
-void Func_02000602(s32, s32);
-s32 Func_02000582(s32);
-void Func_020005dc(s32);
-void Func_020005e4(s32);
-void Func_020005fc(s32, s32);
-void Func_020005c0(void);
-u8 *Func_020005fa(s32);
-void Func_020005e0(void);
-s32 Func_020005e2(s32);
-void Func_0200063c(s32);
-void Func_02000644(s32);
-void Func_0200065c(s32, s32);
-void Func_02000620(void);
-void Func_02000648();
-s32 Func_0200064a();
-void Func_02000674();
-void Func_020006a4();
-void Func_020006a6();
-void Func_020006ac();
-void Func_020006ca();
-void Func_020006d0();
-s32 Func_020006dc();
-void Func_020006e8();
-void Func_020006f0();
-void Func_020006c4(void);
-void Func_02000702(s32);
-void Func_02000704(s32, s32, s32);
-void Func_02000724(s32, s32);
-void Func_02000748(s32, s32, s32);
-void Func_020006f4(void);
-void Func_020006fc();
-void Func_02000714();
-void Func_0200073a();
-s32 Func_02000744();
-void Func_02000746();
-void Func_0200075c();
-void Func_02000760();
-s32 Func_02000764();
-void Func_02000790();
-void Func_020007b4();
-void Func_0200076c();
-void Func_0200077a();
-s32 Func_020007aa();
-void Func_020007aa_a();
-void Func_020007ac();
-void Func_020007c6();
-s32 Func_020007ca();
-void Func_020007f6();
-void Func_020007d0(void);
-void Func_0200080e(s32);
-s32 Func_02000836(s32, s32);
-void Func_020007ea(void);
-void Func_020007f0(void);
-void Func_0200082e(s32);
-s32 Func_02000856(s32, s32);
-void Func_0200080a(void);
-u8 *Func_02000832(s32);
-void Func_02000818(void);
-void Func_020008a2(s32, s32);
-void Func_02000874(s32);
-void Func_02000884(s32);
-void Func_0200089c(s32, s32);
-void Func_0200089c_a(s32, s32);
-void Func_02000860(void);
-s32 Func_02000868();
-void Func_02000878();
-void Func_020008b6();
-void Func_020008c2();
-void Func_020008c4();
-void Func_020008c4_a();
-void Func_020008d6();
-void Func_020008da();
-void Func_020008ee();
-void Func_020008fe();
-void Func_02000904();
-void Func_0200090e();
-void Func_0200090e_a();
-void Func_0200091c();
-void Func_02000920();
-void Func_02000934();
-void Func_02000910(void);
-void Func_0200094e(s32);
-void Func_02000966(s32, s32);
-void Func_02000978(s32, s32);
-void Func_02000946(void);
-void Func_0200094c(void);
-void Func_0200098a(s32);
-void Func_020009a2(s32, s32);
-void Func_02000994(s32, s32, s32);
-void Func_020009b4(s32, s32);
-void Func_02000984(void);
-void Func_0200098c(void);
-void Func_020009ca(s32);
-s32 Func_020009f2(s32, s32);
-void Func_020009a6(void);
-void Func_020009ac(void);
-void Func_020009f4(s32);
-void Func_020009fc(s32);
+u8 *Actor_Run2(s32);
+
+u8 *Actor_Run3(s32);
+
+u8 *Actor_Run4(s32);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -157,63 +41,18 @@ void Func_020009fc(s32);
  * sets r0 last of its arguments.
  */
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
 /* The workspace pointer this overlay reaches through. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    s32 Func_02000662();
-
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    s32 Func_02000662();
-
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    s32 Func_02000662();
-
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    s32 Func_02000662();
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void bump_step(s32 amount)
-{
-    s32 Func_02000662();
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
 
 static __inline__ void SetScale(s32 actor, s32 scale, s32 duration)
 {
-    Func_02000748(actor, scale, duration);
+    Actor_Place6(actor, scale, duration);
 }
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+static __inline__ void SetScale2(s32 actor, s32 scale, s32 duration)
 {
-    void Func_02000958();
+    void Actor_Run5(s32, s32, s32);
 
-    f(a0, a1);
-}
-
-static __inline__ void SetScale_020009d8(s32 actor, s32 scale, s32 duration)
-{
-    void Func_020009d8(s32, s32, s32);
-
-    Func_020009d8(actor, scale, duration);
+    Actor_Run5(actor, scale, duration);
 }
 
 u8 *SceneData_GetPrimaryTable(void)
@@ -233,54 +72,54 @@ u8 *SceneData_GetSecondaryTable(void)
 
 s32 SceneData_PrepareTable86b0(void)
 {
-    Func_02000574(0x020086B0);
+    Actor_Do8(0x020086B0);
     return 0x020086B0;
 }
 
 void Scene_RunActor16MessageBranch(void)
 {
-    void Func_02000662(s32, s32);
+    void Actor_Run6(s32, s32);
 
     u32 dir;
 
-    dir = *(u16 *)(Func_0200059a(0) + 6);
-    Func_02000580();
+    dir = *(u16 *)(Actor_Run2(0) + 6);
+    Actor_Run7();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_02000602(7, 16);
+        Actor_Apply(7, 16);
     } else {
-        if (Func_02000582(0x845) == 0) {
-            Func_020005dc(0x13E3);
+        if (Actor_Check9(0x845) == 0) {
+            Actor_Do9(0x13E3);
         } else {
-            Func_020005e4(0x16F5);
+            Actor_Do10(0x16F5);
         }
-        Func_020005fc(16, 0);
+        Actor_Apply2(16, 0);
     }
 
-    Func_020005c0();
+    Actor_Run8();
 }
 
 void Scene_RunActor18MessageBranch(void)
 {
-    void Func_02000662(s32, s32);
+    void Actor_Run6(s32, s32);
 
     u32 dir;
 
-    dir = *(u16 *)(Func_020005fa(0) + 6);
-    Func_020005e0();
+    dir = *(u16 *)(Actor_Run3(0) + 6);
+    Actor_Run9();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_02000662(9, 18);
+        Actor_Run6(9, 18);
     } else {
-        if (Func_020005e2(0x845) == 0) {
-            Func_0200063c(0x13E9);
+        if (Actor_Check10(0x845) == 0) {
+            Actor_Do11(0x13E9);
         } else {
-            Func_02000644(0x16F9);
+            Actor_Do12(0x16F9);
         }
-        Func_0200065c(18, 0);
+        Actor_Apply3(18, 0);
     }
 
-    Func_02000620();
+    Actor_Run10();
 }
 
 u8 *SceneData_GetTertiaryTable(void)
@@ -290,40 +129,40 @@ u8 *SceneData_GetTertiaryTable(void)
 
 void Scene_RunActor17MessageBranch(void)
 {
-    s32 Func_02000662_a();
+    s32 Actor_Run11();
 
     u32 i;
     s32 record;
     u8 *dir;
 
-    record = Value1(Func_02000662_a, 0);
+    record = Actor_Check(0);
     dir = *(volatile u16 *)(record + 6);
-    Func_02000648();
+    Actor_Run12();
     if ((u32)((s32)dir + -0xa001) <= 0x3ffe) {
-        Func_020006ca(8, 17);
+        Actor_Run13(8, 17);
     } else {
-        if (Value1(Func_0200064a, 0x845) == 0) {
-            Call1(Func_020006a4, 0x13e5);
-            Func_020006a6(17, 0, 0);
-            Func_02000674(10);
-            Value2(Func_020006dc, 17, 0);
-            Call3(Func_020006f0, 17, 0x3000, 10);
+        if (Actor_Check2(0x845) == 0) {
+            Actor_Do(0x13e5);
+            Actor_Run14(17, 0, 0);
+            Actor_Run15(10);
+            Actor_Check3(17, 0);
+            Actor_Place(17, 0x3000, 10);
         } else {
-            Call1(Func_020006d0, 0x16f7);
-            Func_020006e8(17, 0);
+            Actor_Do2(0x16f7);
+            Actor_Run16(17, 0);
         }
     }
-    Func_020006ac();
+    Actor_Run17();
 }
 
 void Scene_ConfigureActor21Scene(void)
 {
-    Func_020006c4();
-    Func_02000702(0x13ed);
-    Func_02000704(21, 0, 0);
-    Func_02000724(21, 0);
+    Actor_Run18();
+    Actor_Do13(0x13ed);
+    Actor_Place7(21, 0, 0);
+    Actor_Apply4(21, 0);
     SetScale(21, 0xc000, 10);
-    Func_020006f4();
+    Actor_Run19();
 }
 
 void Scene_RunActor24Sequence(void)
@@ -331,170 +170,170 @@ void Scene_RunActor24Sequence(void)
     u32 i;
     s32 record;
 
-    Func_020006fc();
-    Call1(Func_0200073a, 0x13f0);
-    Func_0200075c(24, 0, 20);
-    Func_02000746(24, 0, 0);
-    Func_02000714(10);
-    Value2(Func_02000764, 24, 0);
-    if (Value2(Func_02000744, 0, 0) != 0) {
+    Actor_Run20();
+    Actor_Do3(0x13f0);
+    Actor_Run21(24, 0, 20);
+    Actor_Run22(24, 0, 0);
+    Actor_Run23(10);
+    Actor_Check4(24, 0);
+    if (Actor_Check5(0, 0) != 0) {
         bump_step(1);
     }
-    Func_02000790(24, 0);
-    Call3(Func_020007b4, 24, 0x4000, 10);
-    Func_02000760();
+    Actor_Run24(24, 0);
+    Actor_Place2(24, 0x4000, 10);
+    Actor_Run25();
 }
 
 void Scene_RunActor27Sequence(void)
 {
-    void Func_0200081a();
+    void Actor_Run26();
 
     u32 i;
     s32 record;
 
-    Func_0200076c();
-    Call1(Func_020007aa_a, 0x13f6);
-    Func_020007ac(27, 0, 0);
-    Func_0200077a(10);
-    Value2(Func_020007ca, 27, 0);
-    if (Value2(Func_020007aa, 0, 0) != 0) {
+    Actor_Run27();
+    Actor_Do4(0x13f6);
+    Actor_Run28(27, 0, 0);
+    Actor_Run29(10);
+    Actor_Check6(27, 0);
+    if (Actor_Check7(0, 0) != 0) {
         bump_step(1);
     }
-    Func_020007f6(27, 0);
-    Call3(Func_0200081a, 27, 0x4000, 10);
-    Func_020007c6();
+    Actor_Run30(27, 0);
+    Actor_Place3(27, 0x4000, 10);
+    Actor_Run31();
 }
 
 void Scene_RunActor8Message(void)
 {
-    Func_020007d0();
-    Func_0200080e(0x16E1);
-    Func_02000836(8, 0);
-    Func_020007ea();
+    Actor_Run32();
+    Actor_Do14(0x16E1);
+    Actor_Apply5(8, 0);
+    Actor_Run33();
 }
 
 void Scene_RunActor13Message(void)
 {
-    Func_020007f0();
-    Func_0200082e(0x16EC);
-    Func_02000856(13, 0);
-    Func_0200080a();
+    Actor_Run34();
+    Actor_Do15(0x16EC);
+    Actor_Apply6(13, 0);
+    Actor_Run35();
 }
 
 void Scene_RunActor19MessageBranch(void)
 {
-    s32 Func_0200081a_a(s32);
+    s32 Actor_Run36(s32);
 
     u32 dir;
 
-    dir = *(u16 *)(Func_02000832(0) + 6);
-    Func_02000818();
+    dir = *(u16 *)(Actor_Run4(0) + 6);
+    Actor_Run37();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_020008a2(2, 19);
-    } else if (Func_0200081a_a(0x845) != 0) {
-        Func_02000874(0x16FB);
-        Func_0200089c(19, 0);
+        Actor_Apply7(2, 19);
+    } else if (Actor_Run36(0x845) != 0) {
+        Actor_Do16(0x16FB);
+        Actor_Apply8(19, 0);
     } else {
-        Func_02000884(0x13EB);
-        Func_0200089c_a(19, 0);
+        Actor_Do17(0x13EB);
+        Actor_Apply9(19, 0);
     }
 
-    Func_02000860();
+    Actor_Run38();
 }
 
 void Scene_RunActor21SequenceOnFlag300(void)
 {
-    void Func_02000958();
+    void Actor_Run39();
 
     u32 i;
     s32 record;
 
-    Func_02000878();
-    if (Value1(Func_02000868, 0x300) == 0) {
-        Call1(Func_020008c2, 0x16ff);
-        Func_020008da(21, 0);
-        Call3(Func_020008fe, 21, 0x8000, 20);
-        Func_020008ee(21, 0);
-        Func_020008d6(22, 2);
-        Call2(Func_02000920, 22, 0x102);
-        Func_020008b6(60);
-        Func_0200090e(22, 0);
-        Func_020008c4(10);
-        Call1(Func_020008c4_a, 0x300);
+    Actor_Run40();
+    if (Actor_Check8(0x300) == 0) {
+        Actor_Do5(0x16ff);
+        Actor_Run41(21, 0);
+        Actor_Place4(21, 0x8000, 20);
+        Actor_Run42(21, 0);
+        Actor_Run43(22, 2);
+        Actor_Run(22, 0x102);
+        Actor_Run44(60);
+        Actor_Run45(22, 0);
+        Actor_Run46(10);
+        Actor_Do6(0x300);
     }
-    Func_0200090e_a(21, 0, 0);
-    Call1(Func_0200091c, 0x1702);
-    Func_02000934(21, 0);
-    Call3(Func_02000958, 21, 0xc000, 10);
-    Func_02000904();
+    Actor_Run47(21, 0, 0);
+    Actor_Do7(0x1702);
+    Actor_Run48(21, 0);
+    Actor_Place5(21, 0xc000, 10);
+    Actor_Run49();
 }
 
 void Scene_ConfigureActor22Scene(void)
 {
-    void Func_02000958_a(s32, s32, s32);
-    void Func_0200099a(s32, s32, s32);
+    void Actor_Run50(s32, s32, s32);
+    void Actor_Run51(s32, s32, s32);
 
-    Func_02000910();
-    Func_0200094e(0x1703);
-    Func_02000966(0x16, 0);
-    Func_02000958_a(0x16, 0, 0);
-    Func_02000978(0x16, 0);
-    Func_0200099a(0x16, 0, 0xA);
-    Func_02000946();
+    Actor_Run52();
+    Actor_Do18(0x1703);
+    Actor_Apply10(0x16, 0);
+    Actor_Run50(0x16, 0, 0);
+    Actor_Apply11(0x16, 0);
+    Actor_Run51(0x16, 0, 0xA);
+    Actor_Run53();
 }
 
 void Scene_ConfigureActor23Scene(void)
 {
-    void Func_020009d8(s32, s32, s32);
+    void Actor_Run5(s32, s32, s32);
 
-    Func_0200094c();
-    Func_0200098a(0x1705);
-    Func_020009a2(23, 0);
-    Func_02000994(23, 0, 0);
-    Func_020009b4(23, 0);
-    SetScale_020009d8(23, 0xc000, 10);
-    Func_02000984();
+    Actor_Run54();
+    Actor_Do19(0x1705);
+    Actor_Apply12(23, 0);
+    Actor_Place8(23, 0, 0);
+    Actor_Apply13(23, 0);
+    SetScale2(23, 0xc000, 10);
+    Actor_Run55();
 }
 
 void Scene_RunActor27Message(void)
 {
-    s32 Func_0200099a(s32);
-    void Func_020009d8(void);
-    void Func_02000a14(s32, s32);
+    s32 Actor_Run51(s32);
+    void Actor_Run5(void);
+    void Actor_Run56(s32, s32);
 
-    Func_0200098c();
-    Func_020009ca(0x170A);
-    Func_020009f2(27, 0);
-    Func_020009a6();
+    Actor_Run57();
+    Actor_Do20(0x170A);
+    Actor_Apply14(27, 0);
+    Actor_Run58();
 }
 
 void Scene_RunActor10MessageBranch(void)
 {
-    s32 Func_0200099a_a(s32);
-    void Func_020009d8_a(void);
-    void Func_02000a14(s32, s32);
+    s32 Actor_Run59(s32);
+    void Actor_Run60(void);
+    void Actor_Run56(s32, s32);
 
-    Func_020009ac();
-    if (Func_0200099a_a(3) != 0) {
-        Func_020009f4(0x146F);
+    Actor_Run61();
+    if (Actor_Run59(3) != 0) {
+        Actor_Do21(0x146F);
     } else {
-        Func_020009fc(0x13D9);
+        Actor_Do22(0x13D9);
     }
-    Func_02000a14(10, 0);
-    Func_020009d8_a();
+    Actor_Run56(10, 0);
+    Actor_Run60();
 }
 
 s32 Scene_SetupActor27OnEntry(void)
 {
-    u8 *Func_02000a14_a(s32);
+    u8 *Actor_Run62(s32);
 
     u8 *actor;
     u8 *record;
     s32 bits;
 
     *(s32 *)(WORKSPACE + 448) = 521;
-    actor = Func_02000a14_a(27);
+    actor = Actor_Run62(27);
     /*
      * The stored zero is also the mask's starting value: -13 is built by
      * subtracting from the register the strb already set to zero, not by

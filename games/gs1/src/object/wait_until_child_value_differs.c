@@ -1,5 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
 
 struct Child_08091c44 {
     u8 padding[36];

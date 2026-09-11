@@ -1,6 +1,6 @@
 #include "types.h"
-
-void Func_080dbb98(void);
+#include "scene.h"
+#include "abi/battle/effects/common/run_no_effect_frames.h"
 
 void BattleFx_RunNoEffectFrames(s32 frame_count)
 {
@@ -10,7 +10,7 @@ void BattleFx_RunNoEffectFrames(s32 frame_count)
     if (frame_count != 0) {
         do {
             frame += 1;
-            Func_080dbb98();
+            Battle_Run();
         } while (frame != frame_count);
     }
 }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/locations/heidia/village/soft/sub.h"
 
 /*
  * Soft-float double subtraction for overlay resource_3bf.  A packed double is
@@ -12,10 +14,7 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-void Func_0200b894(const SoftDouble *packed, SoftFloatRecord *record);
-void Func_0200b89e(const SoftDouble *packed, SoftFloatRecord *record);
-SoftFloatRecord *Func_0200b298(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
-SoftDouble Func_0200b6e8(SoftFloatRecord *record);
+SoftFloatRecord *Map_Run(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
 
 /*
  * Unpacks both operands into 20-byte records, runs the shared addition core,
@@ -40,16 +39,16 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     packedBWords[0] = b0;
     packedBWords[1] = b1;
 
-    Func_0200b894(&frame.packedA, &frame.recordA);
+    Map_Apply(&frame.packedA, &frame.recordA);
     {
         SoftFloatRecord *recordB = &frame.recordB;
 
-        Func_0200b89e(&frame.packedB, recordB);
+        Map_Apply2(&frame.packedB, recordB);
 
         /* Toggling the sign word of the unpacked second operand turns the
          * shared addition core into a subtraction. */
         recordB->word[1] ^= 1u;
 
-        return Func_0200b6e8(Func_0200b298(&frame.recordA, recordB, &frame.result));
+        return Map_Do(Map_Run(&frame.recordA, recordB, &frame.result));
     }
 }

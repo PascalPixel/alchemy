@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Obj {
     u8 padding[4];

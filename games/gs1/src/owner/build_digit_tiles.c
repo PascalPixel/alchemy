@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/build_digit_tiles.h"
 
 struct OwnerState {
     u8 unknown_000[0xf8];
@@ -14,7 +16,7 @@ struct DigitOffsets {
     u16 second;
 };
 
-extern const struct DigitOffsets Data_08088df8[16];
+extern const struct DigitOffsets gRom[16];
 
 void *Owner_GetState(s32 owner);
 const u8 *Owner_GetRecord(s32 record);
@@ -38,7 +40,7 @@ u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
         i = 0;
         for (;;) {
             ((s32 *)destination)[i] =
-                Data_08088e38[index].values[i];
+                gRom2[index].values[i];
             i++;
             if (i > 3)
                 goto copied;
@@ -54,7 +56,7 @@ copied:
         s32 ones;
         s32 tens;
 
-        result = (u32)Data_08088df8;
+        result = (u32)gRom;
         value = values[i];
         ones = Modulo(value, 10);
         tens = FixedPoint_Ratio(value, 10);
@@ -64,9 +66,9 @@ copied:
         if (tens < 0)
             tens = 0;
 
-        destination[i][0] = Data_08088df8[tens].first + ones;
+        destination[i][0] = gRom[tens].first + ones;
         destination[i][1] =
-            ((volatile const struct DigitOffsets *)Data_08088df8)[tens].second + ones;
+            ((volatile const struct DigitOffsets *)gRom)[tens].second + ones;
         i++;
     } while (i < 4);
     return result;

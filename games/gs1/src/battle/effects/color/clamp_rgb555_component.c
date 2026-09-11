@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 BattleFx_ClampRgb555Component(s32 value)
 {

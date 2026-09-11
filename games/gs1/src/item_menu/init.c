@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/item_menu/init.h"
 #include "item_menu.h"
 
 s32 UiMenu_CreateCursor(void *menu);
@@ -6,7 +8,7 @@ s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void ItemMenu_Init(void)
 {
-    struct ItemMenuState *menu = Data_03001f2c;
+    struct ItemMenuState *menu = gIw;
     s32 index;
 
     InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);

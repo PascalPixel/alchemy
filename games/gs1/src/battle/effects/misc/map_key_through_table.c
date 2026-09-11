@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/misc/map_key_through_table.h"
 
-extern s16 Data_0809e686[];
+extern s16 gRom[];
 
 s32 BattleFx_MapKeyThroughTable(s32 key)
 {
-    s16 *entry = Data_0809e686;
+    s16 *entry = gRom;
     s32 result = 16;
     s32 current = *entry;
 

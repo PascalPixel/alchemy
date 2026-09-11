@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Graphics_TransposeCopy(s32 source_address, s32 destination_address, s32 row_size, s32 column_count)
 {

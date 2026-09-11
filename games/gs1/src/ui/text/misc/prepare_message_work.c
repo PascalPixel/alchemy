@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/misc/prepare_message_work.h"
 #include "gs1_edition.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -12,11 +14,11 @@ struct UiTextMessageWorkGlobals {
     void *control;
 };
 
-extern volatile struct UiTextMessageWorkGlobals Data_03001e8c;
+extern volatile struct UiTextMessageWorkGlobals gIw;
 
 s32 UiText_BuildRenderEntries(s32, s32);
 struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
-void Func_08017248(s32, s32, s32, s32, s32);
+
 struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
 void UiWork_Finalize(struct Work *, s32);
 
@@ -31,8 +33,8 @@ void UiText_PrepareMessageWork(s32 argument)
     void *state;
     void *control;
 
-    state = Data_03001e8c.state;
-    control = Data_03001e8c.control;
+    state = gIw.state;
+    control = gIw.control;
     result = 0;
     FIELD(state, s8, RENDER_MENU_STATE_OFS) = 2;
     index = UiText_BuildRenderEntries(argument, 1);
@@ -49,7 +51,7 @@ void UiText_PrepareMessageWork(s32 argument)
             work = UiWindow_Create(0, 15, 30, 6, 10);
             existing = work;
             FIELD(control, struct Work *, 0) = existing;
-            Func_08017248(0, 15, 30, 6, one);
+            Ui_SetRange(0, 15, 30, 6, one);
             FIELD(control, s32, 8) = result;
             goto have_work;
         }

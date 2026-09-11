@@ -1,14 +1,16 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/event/get_special_value.h"
 
 struct Fields_0808b248 {
     u8 filler[0x1d6];
     s16 value;
 };
 
-extern struct Fields_0808b248 Data_02000240;
+extern struct Fields_0808b248 gCell;
 
 s16 Event_GetSpecialValue(void)
 {
     /* 作業領域0x1d6の半語を返す。 */
-    return Data_02000240.value;
+    return gCell.value;
 }

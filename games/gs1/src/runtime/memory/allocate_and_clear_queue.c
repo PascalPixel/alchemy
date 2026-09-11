@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct SubQueueItem_08011b00 {
     u32 unknown_00;

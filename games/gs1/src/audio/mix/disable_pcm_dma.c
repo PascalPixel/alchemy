@@ -1,7 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
-
-void Func_08006864(s32 *, u8 *, void *);
+#include "scene.h"
+#include "abi/audio/mix/disable_pcm_dma.h"
 
 void AudioEngine_DisablePcmDma(void)
 {
@@ -23,6 +23,6 @@ void AudioEngine_DisablePcmDma(void)
             *dma_control = 0x400;
         }
         zero = 0;
-        Func_08006864(&zero, (u8 *)audio + 848, (void *)0x05000318);
+        Audio_Place(&zero, (u8 *)audio + 848, (void *)0x05000318);
     }
 }

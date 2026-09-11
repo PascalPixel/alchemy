@@ -1,8 +1,10 @@
+#include "scene.h"
+#include "abi/battle/effects/random_particle/play_cue_and_start_emitter_on_target.h"
 #include "effect_runtime.h"
 
 s32 WaitFrames(s32);
 s32 Object_SetMode(s32, s32);
-s32 Func_0808ef70(s32, s32);
+
 s32 Object_GetById(u32);
 s32 Audio_PlayCue(s32);
 
@@ -17,7 +19,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
         Audio_PlayCue(0x7C);
         Object_SetMode(object, 4);
         WaitFrames(0xC);
-        result = Func_0808ef70(effect, mode);
+        result = Battle_Apply(effect, mode);
     }
     return result;
 }

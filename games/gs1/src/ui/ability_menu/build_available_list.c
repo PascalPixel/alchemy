@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/ability_menu/build_available_list.h"
 
-s32 Func_08077238(s32);
 s32 Ability_GetMaximum(s32, s32);
 
-extern void *Data_03001f2c;
+extern void *gIw;
 
 s32 AbilityMenu_BuildAvailableList(void)
 {
@@ -14,13 +15,13 @@ s32 AbilityMenu_BuildAvailableList(void)
     s32 offset;
     s8 mode;
 
-    state = Data_03001f2c;
+    state = gIw;
     count = 0;
     index = 0;
     output = (s16 *)(state + 0x26c);
     do {
         mode = *(s8 *)(state + 0x3a9);
-        if (mode == Func_08077238(index)&&
+        if (mode == Ui_Check(index)&&
             Ability_GetMaximum(index, 0) != 0) {
             *output = index;
             count++;

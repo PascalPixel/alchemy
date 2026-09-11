@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct ResourceTableEntry {
     u16 value;

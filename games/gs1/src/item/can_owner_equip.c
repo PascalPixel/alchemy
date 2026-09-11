@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item.h"
 #include "owner_state.h"
 

@@ -1,18 +1,18 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/clear_second_object_row_and_schedule_update.h"
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 void ScheduleCallback(s32);
-void Func_080200cc(void);
-void Func_08009038(void *);
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
 {
-    u8 *base = Data_03001f2c;
+    u8 *base = gIw;
     s32 offset = 137;
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)Func_080200cc);
+    ScheduleCallback((s32)Menu_Run);
     zero = 0;
     offset *= 4;
     count = 3;
@@ -20,7 +20,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
         void *entry = *(void **)(offset + (unsigned int)base);
 
         if (entry != 0) {
-            Func_08009038(entry);
+            Menu_Do(entry);
             *(s32 *)(offset + (unsigned int)base) = zero;
         }
         count--;

@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/owner/refresh_active_ratios.h"
 #include "owner_state.h"
 #include "party_state.h"
 
@@ -16,7 +18,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = OwnerState_Get(Data_02000240.active_owners[n]);
+        obj = OwnerState_Get(gCell.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

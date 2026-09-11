@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/party/set_fields_1ce_1d0.h"
 
 struct SharedData_08091f90 {
     u8 data[0x1ce];
@@ -6,10 +8,10 @@ struct SharedData_08091f90 {
     u16 second;
 };
 
-extern struct SharedData_08091f90 Data_02000240;
+extern struct SharedData_08091f90 gCell;
 
 void Party_SetFields1ceAnd1d0(u16 first, u16 second)
 {
-    Data_02000240.first = first;
-    Data_02000240.second = second;
+    gCell.first = first;
+    gCell.second = second;
 }

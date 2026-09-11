@@ -1,30 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/effect/orbiting.h"
 
-#define NULL ((void *)0)
-#define CalculateFacingAngle Func_02000aae
-#define GetOrbitingSceneObject Func_02001474
-#define NormalizeOrbitingSceneObject Func_0200144e
-#define IsGameFlagSet Func_0200147c
-#define AllocateEffectTransfer Func_0200146c
-#define LoadEffectResource Func_020014ac
-#define ConfigurePaletteTransfer Func_02001494
-#define ReleaseEffectTransfer Func_02001492
-#define UpdateOrbitingSceneObject Value_0200890d
-#define Actor_UpdateFacingTowardTarget Func_02000030
-#define SceneData_GetTable8c08 Func_02000088
-#define SceneData_GetTable8C50 Func_02000094
-#define SceneData_SelectRecordByScene22 Func_0200009c
-#define Scene_RunStepWithValueFd2 Func_020000f8
-#define Scene_RunStepWithValue29de Func_0200012c
-#define SceneData_SelectTable8d24ByState Func_02000154
-#define Dialogue_RunActor9Message13c0 Func_02000184
-#define Dialogue_RunActor10Message13c3 Func_020001a4
-#define Dialogue_RunActor11Message1751 Func_020001c4
-#define FieldScene_RunScene38e_0200045c Func_0200045c
-#define Scene_RunEntryZeroAndScene22Body Func_020004bc
-#define Scene_SetupWithDescriptor8BD4 Func_020008e8
-#define Effect_UpdateLobeOrbitEntity Func_0200090c
-#define InitializeOrbitingSceneEntity Func_02000974
+#define UpdateOrbitingSceneObject Value
 
 #include "facing_object.h"
 
@@ -41,12 +19,12 @@ struct SceneEntity {
 };
 
 /* Entity and handle as the lobe-orbit callback reads them. */
-struct SceneHandle_0200090c {
+struct SceneHandle {
     u8 unknown_00[30];
     s16 field1e;                    /* 0x1e */
 };
 
-struct SceneEntity_0200090c {
+struct SceneEntity {
     u8 unknown_00[8];
     s32 x;                          /* 0x08 */
     s32 y;                          /* 0x0c */
@@ -56,7 +34,7 @@ struct SceneEntity_0200090c {
     s32 origin_x;                    /* 0x38 */
     s32 origin_y;                    /* 0x3c */
     u8 unknown_40[0x10];
-    struct SceneHandle_0200090c *handle;     /* 0x50 */
+    struct SceneHandle *handle;     /* 0x50 */
 };
 
 typedef struct OrbitingSceneObjectSprite {
@@ -98,102 +76,26 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 extern u8 Value_00000022;
-extern u8 Data_02008c7c[];
-extern u8 Data_02008c64[];
-extern u8 Data_02008d30[];
-extern u8 Data_02008d24[];
+extern u8 gOv[];
+extern u8 gOv2[];
+extern u8 gOv3[];
+extern u8 gOv4[];
 extern u8 Value_000013c0;
-extern s32 Func_020013a0(void);   /* Random source. */
-extern u8 Value_0200890d;
+extern s32 Effect_Run(void);   /* Random source. */
+extern u8 Value;
 
-s32 Func_02000aae(s32, s32);
-s32 Func_02000b68(s32);
-s32 Func_02000b7a(s32);
-void Func_02000bd0(void);
-s32 Func_02000c2a(s32, s32, s32);
-void Func_02000bc8(s32);
-void Func_02000cd8(s32, s32);
-s32 Func_02000c00(s32, s32);
-void Func_02000bfc(void);
-void Func_02000c04(void);
-void Func_02000bdc(s32, s32);
-void Func_02000be4(s32, s32);
-void Func_02000c20(void);
-void Func_02000c5c(void);
-void Func_02000ce2(s32);
-s32 Func_02000d0a(s32, s32);
-void Func_02000c76(void);
-void Func_02000c7c(void);
-void Func_02000d02(s32);
-s32 Func_02000d2a(s32, s32);
-void Func_02000c96(void);
-void Func_02000c9c(void);
-void Func_02000d22(s32);
-s32 Func_02000d4a(s32, s32);
-void Func_02000cb6(void);
-void Func_02000d58();
-s32 Func_02000f1c();
-void Func_02000f34();
-void Func_02000f72();
-void Func_02000f7a();
-void Func_02000f8c();
-void Func_02000fb4();
-void Func_02000fc0();
-void Func_02001050();
-struct SceneEntity *Func_02000fc4();
-void Func_02000a00(void);
-void Func_020014ba(s32);
-void Func_0200138c(s32, s32, s32);
-void Func_020013bc(s32);
-s32 Func_0200137a(s32);
-s32 Func_02001390(s32);
-s32 Func_020013aa(s32);
-s32 Func_020013a6(void);
-OrbitingSceneObject *Func_02001474(void);
-void Func_0200144e(OrbitingSceneObject *, s32);
-s32 Func_0200147c(s32);
-u8 *Func_0200146c(s32, s32);
-void Func_020014ac(s32);
-s32 Func_02001494(u8, s32, u8 *);
-void Func_02001492(s32);
+struct SceneEntity *Effect_Run2();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
+OrbitingSceneObject *GetOrbitingSceneObject(void);
 
-/* Data_02000240 is the shared cross-overlay scene workspace; Data_03001ebc is
+u8 *AllocateEffectTransfer(s32, s32);
+
+/* gCell is the shared cross-overlay scene workspace; gWork is
  * a pointer cell holding the per-overlay workspace base, not the workspace
  * itself. The imports above are old-style because their arity varies between
  * call sites. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_03001ebc[];
-
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern u8 Data_03001ebc[];
-
-    f(a0, a1, a2);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
 
 s32 Actor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
@@ -243,84 +145,84 @@ u8 *SceneData_GetTable8C50(void)
 
 u8 *SceneData_SelectRecordByScene22(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000022) {
-        if (Func_02000b68(0x84f) != 0)
-            Data_02008c7c[118] = 1;
-        if (Func_02000b7a(0x845) != 0)
-            Data_02008c7c[70] = 0;
-        return Data_02008c7c;
+    if (gCell[224] == (s32)&Value_00000022) {
+        if (Effect_Check2(0x84f) != 0)
+            gOv[118] = 1;
+        if (Effect_Check3(0x845) != 0)
+            gOv[70] = 0;
+        return gOv;
     }
-    return Data_02008c64;
+    return gOv2;
 }
 
 void Scene_RunStepWithValueFd2(void)
 {
-    Func_02000bd0();
-    Func_02000c2a(0xD, 0, 0);
-    Func_02000bc8(0xFD2);
-    Func_02000cd8(0xB5, 3);
-    Func_02000c00(0xB5, 0);
-    Func_02000bfc();
+    Effect_Run3();
+    Effect_Place3(0xD, 0, 0);
+    Effect_Do(0xFD2);
+    Effect_Apply(0xB5, 3);
+    Effect_Apply2(0xB5, 0);
+    Effect_Run4();
 }
 
 void Scene_RunStepWithValue29de(void)
 {
-    Func_02000c04();
-    Func_02000bdc(0x947, 1);
-    Func_02000be4(0x29DE, 1);
-    Func_02000c20();
+    Effect_Run5();
+    Effect_Apply3(0x947, 1);
+    Effect_Apply4(0x29DE, 1);
+    Effect_Run6();
 }
 
 s32 SceneData_SelectTable8d24ByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000022) {
-        return (s32)Data_02008d30;
+    if (gCell[224] == (s32)&Value_00000022) {
+        return (s32)gOv3;
     }
-    return (s32)Data_02008d24;
+    return (s32)gOv4;
 }
 
 void Dialogue_RunActor9Message13c0(void)
 {
-    Func_02000c5c();
-    Func_02000ce2((s32)&Value_000013c0);
-    Func_02000d0a(9, 0);
-    Func_02000c76();
+    Effect_Run7();
+    Effect_Do2((s32)&Value_000013c0);
+    Effect_Apply5(9, 0);
+    Effect_Run8();
 }
 
 void Dialogue_RunActor10Message13c3(void)
 {
-    Func_02000c7c();
-    Func_02000d02(0x13C3);
-    Func_02000d2a(10, 0);
-    Func_02000c96();
+    Effect_Run9();
+    Effect_Do3(0x13C3);
+    Effect_Apply6(10, 0);
+    Effect_Run10();
 }
 
 void Dialogue_RunActor11Message1751(void)
 {
-    Func_02000c9c();
-    Func_02000d22(0x1751);
-    Func_02000d4a(11, 0);
-    Func_02000cb6();
+    Effect_Run11();
+    Effect_Do4(0x1751);
+    Effect_Apply7(11, 0);
+    Effect_Run12();
 }
 
-void FieldScene_RunScene38e_0200045c(void)
+void Scene_RunScene38e(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 gWork[];
 
     u32 i;
     s32 record;
 
-    Func_02000f34();
-    if (Value1(Func_02000f1c, 0x200) == 0) {
-        Func_02000d58();
+    Effect_Run13();
+    if (Effect_Check(0x200) == 0) {
+        Effect_Run14();
     }
-    Call3(Func_02000f7a, 0, 0x8000, 0x4000);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
-    Func_02000fc0(0, 2);
-    Call3(Func_02000fb4, 0, 2, -16);
-    Func_02000f72(16);
-    Func_02001050(2);
-    Func_02000f8c();
+    Effect_Place(0, 0x8000, 0x4000);
+    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
+    Effect_Run15(0, 2);
+    Effect_Place2(0, 2, -16);
+    Effect_Run16(16);
+    Effect_Run17(2);
+    Effect_Run18();
 }
 
 /*
@@ -333,9 +235,9 @@ void FieldScene_RunScene38e_0200045c(void)
  */
 s32 Scene_RunEntryZeroAndScene22Body(void)
 {
-    extern u8 *Data_03001ebc;
+    extern u8 *gWork;
 
-    u8 *work = Data_03001ebc;
+    u8 *work = gWork;
     struct SceneEntity *ent;
     struct SceneHandle *h;
     u8 *fp;
@@ -343,7 +245,7 @@ s32 Scene_RunEntryZeroAndScene22Body(void)
 
     *(s32 *)(work + 448) = 256;            /* 128 << 1 */
 
-    ent = Func_02000fc4(8);
+    ent = Effect_Run2(8);
     fp = (u8 *)ent + 35;
     zero = 0;
     *fp = (u8)zero;
@@ -352,8 +254,8 @@ s32 Scene_RunEntryZeroAndScene22Body(void)
     zero -= 13;
     h->flags09 = (u8)((h->flags09 & zero) | 0x04);
 
-    if (Data_02000240[224] == (s32)&Value_00000022) {
-        Func_02000a00();
+    if (gCell[224] == (s32)&Value_00000022) {
+        Effect_Run19();
     }
 
     return 0;
@@ -361,9 +263,9 @@ s32 Scene_RunEntryZeroAndScene22Body(void)
 
 void Scene_SetupWithDescriptor8BD4(void)
 {
-    Func_020014ba(0xBC);
-    Func_0200138c(0x2008BD4, 0x34, 0xB);
-    Func_020013bc(0x200);
+    Effect_Do5(0xBC);
+    Effect_Place4(0x2008BD4, 0x34, 0xB);
+    Effect_Do6(0x200);
 }
 
 /*
@@ -373,28 +275,28 @@ void Scene_SetupWithDescriptor8BD4(void)
  * different arguments and the two random draws are independent and summed:
  * neither pair is a common subexpression.
  */
-s32 Effect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
+s32 Effect_UpdateLobeOrbitEntity(struct SceneEntity *entity)
 {
-    struct SceneHandle_0200090c *handle = entity->handle;
+    struct SceneHandle *handle = entity->handle;
     s32 vertical;
     s32 tilt;
     s32 step;
 
-    vertical = Func_0200137a(entity->phase) * 2;
+    vertical = Effect_Check4(entity->phase) * 2;
     if (vertical > 0) vertical = -vertical;
 
-    entity->x = entity->origin_x + Func_02001390(entity->phase) * 2;
+    entity->x = entity->origin_x + Effect_Check5(entity->phase) * 2;
     entity->y = entity->origin_y + vertical;
 
     /* A quarter turn on from the position phase. */
-    tilt = Func_020013aa(entity->phase + 0x8000);
+    tilt = Effect_Check6(entity->phase + 0x8000);
     /* Bias then shift: division by 8 rounded toward zero. */
     if (tilt < 0) tilt += 7;
     handle->field1e = (s16)(tilt >> 3);
 
     /* The shift pair extracts a field, unsigned; it is not a scale. */
-    step = (s32)(((u32)Func_020013a0() << 9) >> 16)
-         + (s32)(((u32)Func_020013a6() << 9) >> 16);
+    step = (s32)(((u32)Effect_Run() << 9) >> 16)
+         + (s32)(((u32)Effect_Check7() << 9) >> 16);
     entity->phase = entity->phase + step + 1024;
 
     return 0;

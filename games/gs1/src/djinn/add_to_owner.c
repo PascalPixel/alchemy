@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "owner_state.h"
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)

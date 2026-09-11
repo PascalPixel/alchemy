@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/descriptors/find_matching.h"
 
 struct EffectDescriptor {
     s32 flags;
@@ -20,27 +22,25 @@ struct EffectObject {
     u16 reference;
 };
 
-extern u32 Func_0808d458(s32 descriptor, s32 value);
-extern s32 Func_0808d428(s32 condition);
-extern struct EffectObject *Func_0808ba1c(s32 object);
-extern u8 Data_02000240;
-extern void *Data_03001ebc;
+extern struct EffectObject *Battle_Run(s32 object);
+extern u8 gCell;
+extern void *gWork;
 
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
 {
     struct EffectDescriptorRuntime *runtime =
-        (struct EffectDescriptorRuntime *)Data_03001ebc;
+        (struct EffectDescriptorRuntime *)gWork;
     struct EffectDescriptor *descriptor = runtime->descriptors;
     s32 state_index = 250;
     s32 flags;
     u32 reference =
-        Func_0808ba1c(*(u32 *)((s16 *)&Data_02000240 + state_index))->reference;
+        Battle_Run(*(u32 *)((s16 *)&gCell + state_index))->reference;
 
     flags = descriptor->flags;
     while (flags != -1) {
         if ((flags & 0xf) == kind && descriptor->value == value &&
-            (Func_0808d458(flags, descriptor->result) != 0 ||
-             (Func_0808d428(descriptor->condition) != 0 &&
+            (Battle_Apply(flags, descriptor->result) != 0 ||
+             (Battle_Check(descriptor->condition) != 0 &&
               (flags = descriptor->flags, 1)))) {
             s32 accepted = 0;
             s32 threshold = 12;

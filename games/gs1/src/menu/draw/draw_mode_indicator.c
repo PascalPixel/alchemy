@@ -1,14 +1,16 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/draw/draw_mode_indicator.h"
 
 void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
-extern u8 Data_03001f38;
+extern u8 gIw;
 extern u8 Value_00000c71;
 extern u8 Value_00000c73;
 
 void Menu_DrawModeIndicator(void)
 {
-    u8 *state = *(u8 **)&Data_03001f38;
+    u8 *state = *(u8 **)&gIw;
     s16 *shown = (s16 *)(state + 150);
     s16 *current = (s16 *)(state + 140);
 

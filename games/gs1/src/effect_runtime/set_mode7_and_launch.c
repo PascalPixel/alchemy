@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/effect_runtime/set_mode7_and_launch.h"
 #include "effect_runtime.h"
 #include "global_cells.h"
 
@@ -6,7 +8,7 @@
 
 s32 WaitFrames(s32);
 s32 Object_SetMode(void *, s32);
-s32 Func_080091e0(void *, s32);
+
 s32 EffectRuntime_FindSlotByObject();
 s32 Audio_PlayCue(s32);
 
@@ -25,7 +27,7 @@ void EffectRuntime_SetMode7AndLaunch(void)
         Audio_PlayCue(0x92);
         if (object != NULL) {
             FIELD_AT_OFFSET(object, s32 *, 0x28) = 0x80000;
-            Func_080091e0(object, 1);
+            Sys_Apply(object, 1);
         }
     }
 }

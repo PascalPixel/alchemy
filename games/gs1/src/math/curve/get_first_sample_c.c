@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "curve.h"
 
 s32 Curve_GetFirstSampleC(const s8 *samples)

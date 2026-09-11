@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/psynergy_menu/refresh_owner_entries_default.h"
 
-void Func_080a1bdc(s32 arg0, s32 arg1, s32 arg2);
 void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 {
   int val;
   val = 0x28;
-  Func_080a1bdc(0x6C, val, 8);
+  Sys_Place(0x6C, val, 8);
 }

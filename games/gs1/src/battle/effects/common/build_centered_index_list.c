@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 typedef struct {
     s32 reserved_00[3];

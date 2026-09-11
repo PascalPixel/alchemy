@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "psynergy_menu.h"
 #include "global_cells.h"
 

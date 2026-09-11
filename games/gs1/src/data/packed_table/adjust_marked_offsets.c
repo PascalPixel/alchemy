@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
 {

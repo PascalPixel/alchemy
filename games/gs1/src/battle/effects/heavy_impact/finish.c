@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/heavy_impact/finish.h"
 #include "fixed_math.h"
 
-extern s32 Data_02000240[];
+extern s32 gCell[];
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
@@ -28,20 +30,20 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         {
             return;
         }
-        Func_080958a8();
+        Battle_Run();
         base = (*((s32 *)0x03001F30));
-        Func_080b0048(0x20118C);
+        Battle_Run2(0x20118C);
         Audio_PlayCue(0xAD);
-        Func_080925cc(id, 1);
+        Battle_Run3(id, 1);
     }
     while (0);
     Audio_PlayCue(0xAE);
-    Func_080925cc(id, 1);
+    Battle_Run3(id, 1);
     /* A second boundary gives the third repeated call its observed order. */
     do
     {
         Audio_PlayCue(0xAF);
-        Func_080925cc(id, 1);
+        Battle_Run3(id, 1);
         WaitFrames(0x14);
         Audio_PlayCue(0x8C);
         (*((s32 *)(((s8 *)ctx) + 0x6C))) = 0x0809592D;
@@ -58,7 +60,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         count = 0x17;
         do
         {
-            Func_0809ba90(work, 0x11C, pos.x, pos.z);
+            Battle_Run4(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, 0x08095939);
             /* This boundary keeps the work pointer ahead of the constant. */
             do
@@ -66,8 +68,8 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
-            Func_08009248(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
-            value = (Func_080022f4(Random16(), 3) + 0x10000);
+            Battle_Run5(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            value = (Battle_Run6(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;
             count = (count - 1);
@@ -78,12 +80,12 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    Motion_ArmCb(Data_02000240[125], 0x4000, 0);
+    Motion_ArmCb(gCell[125], 0x4000, 0);
     WaitFrames(0x14);
-    Object_SetMode(Object_GetById(Data_02000240[125]), 0x1C);
+    Object_SetMode(Object_GetById(gCell[125]), 0x1C);
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);
-    Func_080b0050();
+    Battle_Run7();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

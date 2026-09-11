@@ -1,12 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/window/fit_on_screen.h"
 #include "runtime_interfaces.h"
 #include "gs1_edition.h"
 
-s32 Func_08018a50(s32 start, s32 *width, s32 *count, s32 mode);
+extern u8 *gIw;
 
-extern u8 *Data_03001e8c;
-
-void Func_0801868c(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
+void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
     u8 *base;
     s32 x;
@@ -17,16 +17,16 @@ void Func_0801868c(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 fla
     s32 over;
     s32 pos;
 
-    base = Data_03001e8c;
+    base = gIw;
     x = *px;
     y = *py;
     limit = 30;
 
     if (!(flags & 2)) {
         if (flags & 1)
-            Func_08018a50(no, (s32 *)pw, (s32 *)ph, mode);
+            Ui_SetMode(no, (s32 *)pw, (s32 *)ph, mode);
         else
-            Func_08018850(no, (s32 *)pw, (s32 *)ph, mode);
+            Ui_Run2(no, (s32 *)pw, (s32 *)ph, mode);
     }
 
     if (*pw == 0 && *ph == 0)

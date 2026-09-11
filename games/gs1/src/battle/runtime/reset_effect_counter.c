@@ -1,7 +1,8 @@
+#include "scene.h"
+#include "abi/battle/runtime/reset_effect_counter.h"
 #include "effect_runtime.h"
 #include "global_cells.h"
 
-s32 Func_0808e5d8(s32);
 void Battle_ResetEffectCounter(void)
 {
   void *runtime;
@@ -15,6 +16,6 @@ void Battle_ResetEffectCounter(void)
   *((s16 *)counter) = zero;
   if ((*((s16 *)(((u8 *)runtime) + 0xCB8))) != 0)
   {
-    Func_0808e5d8(0x2090);
+    Battle_Check(0x2090);
   }
 }

@@ -1,11 +1,8 @@
-#define RuntimeSelectorTable Data_02000240
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/select_data_by_runtime_selector.h"
 #define PrimaryRuntimeSelector Value_00000060
 #define SecondaryRuntimeSelector Value_00000061
 #define TertiaryRuntimeSelector Value_00000062
-#define PrimaryOverlayData Data_02009f98
-#define SecondaryOverlayData Data_0200a064
-#define TertiaryOverlayData Data_0200a190
-#define DefaultOverlayData Data_02009f8c
 
 #include "select_overlay_data_by_runtime_selector.h"
 

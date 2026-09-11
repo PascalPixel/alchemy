@@ -1,8 +1,8 @@
 #include "types.h"
-
-void Func_0801f5d4(void);
+#include "scene.h"
+#include "abi/ui/runtime/misc/close_and_release.h"
 
 void UiWork_CloseAndRelease(void)
 {
-    Func_0801f5d4();
+    Ui_Run();
 }

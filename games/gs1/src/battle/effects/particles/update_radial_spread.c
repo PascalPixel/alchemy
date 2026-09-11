@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/particles/update_radial_spread.h"
 #include "fixed_math.h"
 #include "effect_0809b11c.h"
 
@@ -12,8 +14,8 @@ struct PositionSource_08096048 {
     struct Output_08096048 position;
 };
 
-extern s32 Data_02000240[];
-extern u32 Data_03001800;
+extern s32 gCell[];
+extern u32 gIw;
 
 s32 Object_GetById(u32);
 u32 Random16(void);
@@ -31,7 +33,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     u32 random;
 
     source = (struct PositionSource_08096048 *)
-        Object_GetById(Data_02000240[125]);
+        Object_GetById(gCell[125]);
     state = effect->state;
 
     if (state == 0) {
@@ -61,13 +63,13 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         effect->flag42 = state;
         effect->state++;
 
-        if ((Data_03001800 & 1) != 0)
+        if ((gIw & 1) != 0)
             Audio_PlayCue(0x90);
     } else if (state == 1) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
             effect->state--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Func_0809bb34(effect);
+            Battle_Run(effect);
     }
 }

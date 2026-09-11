@@ -1,5 +1,7 @@
 #include "object_factory.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/create_eight_entry_objects.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -17,7 +19,7 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
     param = 0xA8;
     slot = (void **)(state + 0xC8);
     do {
-        obj = Func_080150d0(2, i, resource, 0xF8, param);
+        obj = Menu_Run(2, i, resource, 0xF8, param);
         i += 1;
         *slot = obj;
         slot += 1;

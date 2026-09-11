@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/update_second_object_row_positions.h"
 
 struct Root_080200cc {
     u8 pad_000[548];
@@ -6,13 +8,11 @@ struct Root_080200cc {
     s16 coords[8];
 };
 
-extern struct Root_080200cc *Data_03001f2c;
-
-void Func_08009008(void *object, s32 *position, s32 *scale, s32 flags);
+extern struct Root_080200cc *gIw;
 
 void Menu_UpdateSecondObjectRowPositions(void)
 {
-    struct Root_080200cc *root = Data_03001f2c;
+    struct Root_080200cc *root = gIw;
     s32 scale[2];
     s32 position[4];
     s32 index;
@@ -31,7 +31,7 @@ void Menu_UpdateSecondObjectRowPositions(void)
             position[1] = bias;
             position[2] = (root->coords[index + 4] << 16) + bias;
             position[3] = 0;
-            Func_08009008(object, position, scale, 0x4000);
+            Menu_SetMode(object, position, scale, 0x4000);
         }
         index++;
     } while (index <= 3);

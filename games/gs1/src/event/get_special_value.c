@@ -1,6 +1,8 @@
 #include "types.h"
 #include "scene.h"
+#include "object_lookup.h"
 
+/* event/get_special_value.c */
 /* event/get_special_value.c */
 /* event/get_special_value.c */
 struct Fields_0808b248 {
@@ -116,4 +118,24 @@ s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1)
         }
     }
     return result;
+}
+
+/* object/table/destroy_at_index.c */
+struct Fields_0808b64c {
+    u8 filler[20];
+    void *objects[1];
+};
+
+extern struct Fields_0808b64c *gWork;
+
+void Object_Destroy(void *);
+
+void ObjectTable_DestroyAtIndex(s32 arg0)
+{
+    struct Fields_0808b64c *state = gWork;
+    void *object = ObjectTable_Get(arg0);
+    if (object != 0) {
+        Object_Destroy(object);
+        state->objects[arg0] = 0;
+    }
 }

@@ -1330,7 +1330,7 @@
     },
     "main:08015e8c": {
       "name": "RenderOutput_AcquireFree",
-      "source": "ui/render_output_acquire_free.c"
+      "source": "ui/render/output_acquire_free.c"
     },
     "main:08015ec0": {
       "name": "RenderOutput_ReleaseFree"
@@ -5494,7 +5494,7 @@
     },
     "main:0801ce90": {
       "name": "GraphicsPalette_DecrementSelectedCounter",
-      "source": "graphics/palette/palette_decrement_selected_counter.c"
+      "source": "graphics/palette/decrement_selected_counter.c"
     },
     "main:0801cf48": {
       "name": "GraphicsPalette_LoadSelectionResourcesAndAdvance"

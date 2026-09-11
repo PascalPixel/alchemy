@@ -604,44 +604,44 @@ void Scene_RunExtendedActorSequence(void)
     if (*(s32 *)flag_addr != 0) {
         Field_unk_02002ae4(3, 0, 0);
     }
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002ad4(1, 1);
     Field_unk_02002b04(0x1473);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002ae4(0, 1, 0);
     Field_unk_02002ac4(0, 3);
-    Field_unk_02002a2c(30);
+    Field_TestFlag12c(30);
     Field_unk_02002a9c(2, 72, 0x11e);
     Field_unk_02002a9c(2, 72, 0x12e);
     Field_unk_02002a9c(2, 88, 0x136);
     Field_unk_02002adc(2, 1);
     Field_unk_02002ae4(2, 0, 0);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002ae4(0, 2, 0);
     Field_unk_02002ae4(1, 2, 0);
     if (*(s32 *)flag_addr != 0) {
         Field_unk_02002ae4(3, 2, 0);
     }
-    Field_unk_02002a2c(30);
+    Field_TestFlag12c(30);
     Field_unk_02002abc(1, 3);
     if (*(s32 *)flag_addr != 0) {
         Field_unk_02002abc(3, 3);
     }
     Field_unk_02002ac4(0, 3);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002ac4(2, 3);
-    Field_unk_02002a2c(30);
+    Field_TestFlag12c(30);
     Field_unk_02002b24(2, 0, 0);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Scene_StartEffect141Sequence(2, 9);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunSequenceA();
     Field_unk_02002b34(2, 0x100, 40);
     Field_unk_02002a64(2, 0x10000, 0x8000);
     Field_unk_02002a54(2)->action_flags &= 254;
     Field_unk_02002a9c(2, 80, 0x136);
     mask = 1;
-    Field_unk_02002a2c(1);
+    Field_TestFlag12c(1);
     Field_unk_02002a54(2)->action_flags |= mask;
     Field_unk_02002b34(1, 0x102, 40);
     Scene_RunPairedStepA(1, 20);
@@ -661,12 +661,12 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002a64(2, 0x8000, 0x4000);
     Field_unk_02002a54(2)->action_flags &= 254;
     Field_unk_02002a9c(2, 72, 0x11e);
-    Field_unk_02002a2c(1);
+    Field_TestFlag12c(1);
     Field_unk_02002a54(2)->action_flags |= mask;
     Field_unk_02002a6c(2, (s32)gOv23);
     if (*(s32 *)flag_addr != 0) {
         Field_unk_02002b34(3, 0x105, 0);
-        Field_unk_02002a2c(60);
+        Field_TestFlag12c(60);
         Scene_RunPairedStepA(3, 20);
         Field_unk_02002abc(3, 3);
     } else {
@@ -676,14 +676,14 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(0, 3);
     Field_unk_02002abc(1, 3);
     Field_unk_02002ac4(2, 3);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002b3c(1, 0x102);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Scene_RunPairedStepB(1, 0x2000, 10);
     Scene_RunPairedStepB(0, 0xa000, 10);
     Field_unk_02002b0c(1, 0);
     if (Field_unk_02002a4c(0, 0) == 0) {
-        Field_unk_02002a2c(20);
+        Field_TestFlag12c(20);
         Field_unk_02002abc(1, 3);
     } else {
         Field_unk_02002ac4(1, 4);
@@ -694,7 +694,7 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(2, 0x8000, 20);
     Scene_RunPairedStepB(2, 0x4000, 40);
     Field_unk_02002b34(2, 0x101, 0);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Field_unk_02002b24(1, 0x4000, 0);
     Scene_RunPairedStepB(0, 0x6000, 60);
     value = 160;
@@ -703,7 +703,7 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(0, (value << 8), 10);
     Field_unk_02002b34(1, 0x101, 0);
     Field_unk_02002b34(0, 0x101, 0);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002b24(1, 0x4000, 0);
     Scene_RunPairedStepB(0, 0x6000, 10);
     Field_unk_02002adc(1, 2);
@@ -720,7 +720,7 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(0, 0xe000, 30);
     Field_unk_02002adc(2, 2);
     Field_unk_02002b34(2, 0x100, 0);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002b24(1, 0x4000, 0);
     Scene_RunPairedStepB(0, 0x6000, 20);
     Scene_RunPairedStepB(2, 0xc000, 10);
@@ -741,62 +741,62 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002a6c(1, action_a);
     Field_unk_02002a6c(2, action_a);
     Field_unk_02002a6c(3, action_a);
-    Field_unk_02002a2c(100);
+    Field_TestFlag12c(100);
     Scene_RunPairedStepA(1, 20);
     Scene_RunPairedStepA(2, 40);
     if (gOv14 != 0) {
-        Field_unk_02002a2c(40);
+        Field_TestFlag12c(40);
         Field_unk_02002b3c(3, 0x102);
-        Field_unk_02002a2c(40);
+        Field_TestFlag12c(40);
         Scene_RunPairedStepA(3, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     if (gOv14 != 0) {
         value = 128;
         record = Field_unk_02002a54(3);
         record->velocity_y = (value << 10);
-        Field_unk_02002a2c(10);
+        Field_TestFlag12c(10);
         Field_unk_02002a64(3, (value << 10), (value << 10));
         Field_unk_02002aa4(3, -2, 0);
         Field_unk_02002a6c(3, (s32)gOv26);
         record = Field_unk_02002a54(3);
         Field_unk_02002a0c((s32)record, 0);
         Field_unk_02002abc(3, 19);
-        Field_unk_02002a2c(10);
+        Field_TestFlag12c(10);
     }
     value = 128;
     record = Field_unk_02002a54(0);
     record->velocity_y = (value << 10);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Field_unk_02002a64(0, (value << 10), (value << 10));
     action_b = (s32)gOv26;
     Field_unk_02002a6c(0, action_b);
     record = Field_unk_02002a54(0);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002abc(0, 19);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     record = Pointer1(Field_unk_02002a54, 1);
     record->velocity_y = (value << 10);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Field_unk_02002a64(1, (value << 10), (value << 10));
     Field_unk_02002a6c(1, action_b);
     record = Field_unk_02002a54(1);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002abc(1, 19);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     record = Pointer1(Field_unk_02002a54, 2);
     record->velocity_y = (value << 10);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Field_unk_02002a6c(2, action_b);
     record = Field_unk_02002a54(2);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002abc(2, 19);
     gOv12 = 0;
-    Field_unk_02002a2c(160);
+    Field_TestFlag12c(160);
     Field_unk_020029ac((s32)gOv20);
-    Field_unk_02002a2c(120);
+    Field_TestFlag12c(120);
     Field_unk_02002b64(0x406218, 1);
     Field_unk_02002b6c(60);
     Field_unk_0200299c(60);
@@ -805,7 +805,7 @@ void Scene_RunExtendedActorSequence(void)
     gOv15 = 0x800000;
     *(s32 *)step_addr = 1;
     Field_unk_020029a4((s32)gOv21, 0xc80);
-    Field_unk_02002a2c(180);
+    Field_TestFlag12c(180);
     Field_unk_02002bcc(21);
     Scene_RunPairedStepA(1, 80);
     Scene_RunPairedStepA(2, 40);
@@ -813,22 +813,22 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b3c(1, 0x102);
     Field_unk_02002b3c(2, 0x102);
     Field_unk_02002b3c(3, 0x102);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Scene_RunPairedStepA(2, 20);
     *(s32 *)step_addr = 2;
     Field_unk_02002ad4(2, 2);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002ad4(1, 1);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002ad4(0, 2);
     Field_unk_02002ad4(3, 1);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002ad4(2, 3);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002ad4(0, 1);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002ad4(1, 2);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002ad4(3, 2);
     Field_unk_02002b3c(1, 0x102);
     Scene_RunPairedStepA(1, 20);
@@ -878,7 +878,7 @@ void Scene_RunExtendedActorSequence(void)
     }
     Field_TestFlag12c(0x12c);
     Field_unk_020029ac((s32)gOv21);
-    Field_unk_02002a2c(120);
+    Field_TestFlag12c(120);
     Field_unk_02002bcc(17);
     Field_unk_02002b64(0x10000, 1);
     Field_unk_02002b6c(60);
@@ -897,9 +897,9 @@ void Scene_RunExtendedActorSequence(void)
         Field_unk_02002a6c(21, action_d);
     }
     Field_unk_02002a84(22, action_d);
-    Field_unk_02002a2c(80);
+    Field_TestFlag12c(80);
     Field_unk_02002adc(1, 2);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002b0c(1, 0);
     Field_unk_02002ab4(17, 0x570000, 0x8b0000);
     Field_unk_02002ab4(18, 0x570000, 0x8b0000);
@@ -908,23 +908,23 @@ void Scene_RunExtendedActorSequence(void)
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
     Field_unk_02002adc(0, 1);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002adc(2, 2);
     Scene_RunPairedStepA(2, 20);
     if (gOv14 != 0) {
         Field_unk_02002adc(3, 2);
-        Field_unk_02002a2c(10);
+        Field_TestFlag12c(10);
         Field_unk_02002b04(0x1488);
         Scene_RunPairedStepA(3, 40);
     }
     Field_unk_02002ad4(1, 1);
     Field_unk_02002b34(1, 0x101, 0);
-    Field_unk_02002a2c(80);
+    Field_TestFlag12c(80);
     Field_unk_02002adc(2, 2);
     Field_unk_02002b04(0x1489);
     Scene_RunPairedStepA(2, 40);
     Field_unk_02002adc(1, 3);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002b2c(1, 2);
     Field_unk_02002a54(1)->unknown_23 |= 1;
     record = Field_unk_02002a54(1);
@@ -938,23 +938,23 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002adc(0, 3);
     Scene_RunPairedStepB(1, 0x2000, 20);
     Field_unk_02002b34(1, 0x101, 0);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunPairedStepB(1, 0x6000, 40);
     Scene_RunPairedStepB(1, 0x2000, 20);
     Scene_RunPairedStepB(1, 0x6000, 20);
     Scene_RunPairedStepB(1, 0x2000, 10);
     Field_unk_02002acc(1, 2, 0);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002acc(1, 2, 0);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Field_unk_02002acc(1, 4, 0);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Scene_RunPairedStepA(1, 20);
     if (gOv14 != 0) {
         Field_unk_02002b34(3, 0x100, 0);
-        Field_unk_02002a2c(60);
+        Field_TestFlag12c(60);
         Field_unk_02002adc(3, 2);
-        Field_unk_02002a2c(80);
+        Field_TestFlag12c(80);
         Field_unk_02002b2c(3, 2);
         Field_unk_02002a54(3)->unknown_23 |= 1;
         record = Field_unk_02002a54(3);
@@ -964,7 +964,7 @@ void Scene_RunExtendedActorSequence(void)
         Field_unk_02002abc(3, 1);
         Scene_RunPairedStepB(3, 0xe000, 60);
         Field_unk_02002adc(3, 2);
-        Field_unk_02002a2c(20);
+        Field_TestFlag12c(20);
         Scene_RunPairedStepA(3, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
@@ -975,11 +975,11 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(1, 0x2000, 10);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002ac4(1, 3);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Field_unk_02002adc(2, 1);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002adc(2, 2);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     value = 1;
     Field_unk_02002b2c(2, 2);
     Field_unk_02002a54(2)->unknown_23 |= value;
@@ -989,7 +989,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(2, 1);
     Field_unk_02002b24(2, 0xc000, 0);
     Field_unk_02002adc(0, 2);
-    Field_unk_02002a2c(10);
+    Field_TestFlag12c(10);
     Field_unk_02002b2c(0, 2);
     Field_unk_02002a54(0)->unknown_23 |= value;
     record = Field_unk_02002a54(0);
@@ -999,7 +999,7 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(0, 0x6000, 60);
     Field_unk_02002b34(0, 0x105, 0);
     Field_unk_02002b34(2, 0x105, 0);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Scene_RunPairedStepB(0, 0xa000, 20);
     Field_unk_02002ac4(1, 3);
     Field_unk_02002ac4(0, 3);
@@ -1011,9 +1011,9 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(0, 3);
     Field_unk_02002abc(3, 3);
     Field_unk_02002ac4(1, 3);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002adc(2, 1);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002b0c(2, 0);
     Field_unk_02002abc(2, 3);
     Field_unk_02002b24(2, 0xe000, 0);
@@ -1048,11 +1048,11 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(0, 3);
     Field_unk_02002ac4(1, 3);
     value = 128;
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002b24(0, 0x6000, 0);
     Scene_RunPairedStepB(1, (value << 7), 10);
     Field_unk_02002ac4(2, 4);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002b34(0, 0x102, 0);
     Field_unk_02002b34(1, 0x102, 80);
     Scene_RunPairedStepB(2, 0xe000, 10);
@@ -1066,12 +1066,12 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002ac4(2, 3);
     Scene_RunPairedStepA(2, 10);
     Field_unk_02002b3c(1, 0x102);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002ac4(2, 3);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002b3c(1, 0x102);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002abc(2, 3);
     Scene_RunPairedStepA(2, 10);
@@ -1082,9 +1082,9 @@ void Scene_RunExtendedActorSequence(void)
     if (Field_unk_02002a4c(0, 0) == 0) {
         Field_unk_02002ac4(1, 3);
     } else {
-        Field_unk_02002a2c(20);
+        Field_TestFlag12c(20);
         Field_unk_02002adc(1, 2);
-        Field_unk_02002a2c(40);
+        Field_TestFlag12c(40);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
     Field_unk_02002b14(1, 0);
@@ -1097,12 +1097,12 @@ void Scene_RunExtendedActorSequence(void)
     step_next = (s32)&gOv17;
     *(s32 *)step_next = 1;
     Field_unk_020029a4((s32)gOv21, 0xc80);
-    Field_unk_02002a2c(80);
+    Field_TestFlag12c(80);
     Field_unk_02002ad4(0, 2);
     Field_unk_02002ad4(1, 2);
     Field_unk_02002ad4(3, 2);
     Field_unk_02002adc(2, 2);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Scene_RunPairedStepB(2, 0xc000, 10);
     Field_unk_02002b04(0x149d);
     Scene_RunPairedStepA(2, 10);
@@ -1132,7 +1132,7 @@ void Scene_RunExtendedActorSequence(void)
     }
     Field_unk_02002ab4(22, 0x5e0000, 0xe10000);
     Field_unk_02002a6c(22, action_c);
-    Field_unk_02002a2c(120);
+    Field_TestFlag12c(120);
     *(s32 *)step_next = 3;
     do {
         Field_unk_0200299c(1);
@@ -1143,7 +1143,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b34(1, 0x101, 0);
     Field_unk_02002b34(2, 0x101, 0);
     Field_unk_02002b34(3, 0x101, 0);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Scene_RunPairedStepA(18, 20);
     Field_unk_02002abc(0, 3);
     Field_unk_02002abc(1, 3);
@@ -1159,7 +1159,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b34(1, 0x100, 0);
     Field_unk_02002b34(2, 0x100, 0);
     Field_unk_02002b34(3, 0x100, 0);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunPairedStepA(17, 10);
     Field_unk_02002b24(0, 0x8000, 0);
     Field_unk_02002b24(1, 0x4000, 0);
@@ -1188,7 +1188,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(1, 4);
     Field_unk_02002abc(3, 4);
     Field_unk_02002ac4(2, 4);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Scene_RunPairedStepA(18, 10);
     Field_unk_02002abc(0, 3);
     Field_unk_02002abc(1, 3);
@@ -1218,7 +1218,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b3c(1, 0x102);
     Field_unk_02002b3c(3, 0x102);
     Field_unk_02002b3c(2, 0x102);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunPairedStepA(18, 10);
     Field_unk_02002b24(0, 0xc000, 0);
     Field_unk_02002b24(1, 0xc000, 0);
@@ -1229,11 +1229,11 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(1, 3);
     Field_unk_02002abc(3, 3);
     Field_unk_02002ac4(2, 3);
-    Field_unk_02002a2c(60);
+    Field_TestFlag12c(60);
     Field_unk_02002b14(18, 0);
     Field_unk_02002b14(17, 0);
     Field_unk_020029ac((s32)gOv21);
-    Field_unk_02002a2c(80);
+    Field_TestFlag12c(80);
     Field_unk_02002b64(0x10000, 1);
     Field_unk_02002b6c(60);
     Field_unk_0200299c(80);
@@ -1250,7 +1250,7 @@ void Scene_RunExtendedActorSequence(void)
         Field_unk_02002a6c(21, action_d);
     }
     Field_unk_02002a84(22, action_d);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Field_unk_02002b2c(0, 2);
     Field_unk_02002b2c(1, 2);
     Field_unk_02002b2c(2, 2);
@@ -1267,14 +1267,14 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b24(3, 0, 0);
     if (Field_unk_02002a4c(0, 0) == 0) {
         Field_unk_02002adc(1, 2);
-        Field_unk_02002a2c(10);
+        Field_TestFlag12c(10);
         Field_unk_02002b0c(1, 0);
         if (Field_unk_02002a4c(0, 0) == 0) {
             Scene_RunPairedStepB(3, 0, 20);
             Field_unk_02002b34(1, 0x101, 0);
             Field_unk_02002b34(2, 0x101, 0);
             Field_unk_02002b34(3, 0x101, 0);
-            Field_unk_02002a2c(40);
+            Field_TestFlag12c(40);
             Scene_RunPairedStepB(1, 0x4000, 20);
             Scene_RunPairedStepA(1, 10);
             Scene_RunPairedStepB(2, 0xc000, 20);
@@ -1296,24 +1296,24 @@ void Scene_RunExtendedActorSequence(void)
         Field_unk_02002abc(3, 3);
         Field_unk_02002ac4(1, 3);
     } else {
-        Field_unk_02002a2c(20);
+        Field_TestFlag12c(20);
         Field_unk_02002ac4(1, 3);
-        Field_unk_02002a2c(10);
+        Field_TestFlag12c(10);
         Field_unk_02002b04(0x14b6);
         Scene_RunPairedStepA(1, 10);
         Field_unk_02002b24(1, 0x4000, 0);
         Scene_RunPairedStepB(0, 0x6000, 20);
         Field_unk_02002abc(1, 3);
         Field_unk_02002ac4(0, 3);
-        Field_unk_02002a2c(10);
+        Field_TestFlag12c(10);
         Field_unk_02002ac4(2, 4);
         Field_unk_02002b0c(2, 0);
         if (Field_unk_02002a4c(0, 0) != 0) {
             goto L_0200239c;
         }
-        Field_unk_02002a2c(20);
+        Field_TestFlag12c(20);
         Field_unk_02002b34(2, 0x103, 0);
-        Field_unk_02002a2c(40);
+        Field_TestFlag12c(40);
         Scene_RunPairedStepB(2, 0xe000, 10);
         Scene_RunPairedStepA(2, 10);
         if (gOv14 != 0) {
@@ -1325,11 +1325,11 @@ void Scene_RunExtendedActorSequence(void)
         }
         Field_unk_02002b3c(0, 0x102);
         Field_unk_02002b3c(1, 0x102);
-        Field_unk_02002a2c(40);
+        Field_TestFlag12c(40);
         Field_unk_02002adc(1, 2);
         Scene_RunPairedStepA(1, 20);
         Field_unk_02002b34(1, 0x105, 0);
-        Field_unk_02002a2c(120);
+        Field_TestFlag12c(120);
         Scene_RunPairedStepA(2, 40);
         if (gOv14 != 0) {
             Scene_RunPairedStepB(3, 0x2000, 10);
@@ -1338,7 +1338,7 @@ void Scene_RunExtendedActorSequence(void)
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
-        Field_unk_02002a2c(60);
+        Field_TestFlag12c(60);
         Field_unk_02002adc(2, 2);
         if (gOv14 != 0) {
             Scene_RunPairedStepB(2, 0xa000, 40);
@@ -1347,18 +1347,18 @@ void Scene_RunExtendedActorSequence(void)
         Scene_RunPairedStepA(2, 10);
         Field_unk_02002ad4(0, 2);
         Field_unk_02002adc(1, 2);
-        Field_unk_02002a2c(40);
+        Field_TestFlag12c(40);
         Scene_RunPairedStepA(2, 20);
         Field_unk_02002ac4(0, 3);
         Field_unk_02002ac4(1, 3);
-        Field_unk_02002a2c(20);
+        Field_TestFlag12c(20);
         Field_unk_02002abc(3, 3);
     }
     Field_unk_02002ac4(2, 3);
     goto L_020024a0;
     L_0200239c:;
     Field_unk_02002b34(2, 0x105, 0);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002ac4(2, 3);
     Field_unk_02002b04(0x14bf);
     Scene_RunPairedStepA(2, 20);
@@ -1371,11 +1371,11 @@ void Scene_RunExtendedActorSequence(void)
     }
     Field_unk_02002b3c(1, 0x102);
     Field_unk_02002b3c(0, 0x102);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Field_unk_02002adc(1, 2);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002b34(2, 0x105, 0);
-    Field_unk_02002a2c(80);
+    Field_TestFlag12c(80);
     Scene_RunPairedStepA(2, 40);
     if (gOv14 != 0) {
         Scene_RunPairedStepB(3, 0x2000, 20);
@@ -1385,11 +1385,11 @@ void Scene_RunExtendedActorSequence(void)
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
     Field_unk_02002adc(2, 2);
-    Field_unk_02002a2c(20);
+    Field_TestFlag12c(20);
     Scene_RunPairedStepA(2, 20);
     Field_unk_02002ad4(1, 2);
     Field_unk_02002adc(0, 2);
-    Field_unk_02002a2c(40);
+    Field_TestFlag12c(40);
     Scene_RunPairedStepA(2, 20);
     L_020024a0:;
     Field_unk_02002bcc(17);

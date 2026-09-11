@@ -15,7 +15,7 @@ extern u8 gWork[];
 extern u16 gCell2[][1];
 extern s32 gEntTbl[];
 
-u16 *Field_unk_02003456(s32);
+u16 *GameFlag_IsSet_1(s32);
 
 u16 *Field_unk_02003472(s32);
 
@@ -39,7 +39,7 @@ static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
 
 static __inline__ void ConfigureScene2(s32 actor, s32 x, s32 y, s32 mode)
 {
-    Field_unk_02003a30(actor, x, y, mode);
+    Field_SetMode2(actor, x, y, mode);
 }
 
 u8 *SceneEventRuntime_GetScriptData(void)
@@ -160,7 +160,7 @@ void Effect_UpdateScrollingSpriteRows(void)
 
 void State_RunWhenSlotZeroFacingC000(void)
 {
-    u16 *p = Field_unk_02003456(0);
+    u16 *p = GameFlag_IsSet_1(0);
     if (p[3] == 0xc000) {
         Field_unk_0200352c();
     }
@@ -294,7 +294,7 @@ s32 Scene_RunGuardSequenceB(void)
     }
     if (Field_TestFlag814(0x814) != 0) {
         Field_unk_020039e0(141);
-        Field_unk_020038b0_a(0x10000, 0x10000, 0x10000);
+        Field_TestFlag30b(0x10000, 0x10000, 0x10000);
         Field_unk_020039d4();
     }
     return 0;
@@ -371,7 +371,7 @@ void Scene_RunGuardedStep13(void)
 void Scene_RunGuardedStep15(void)
 {
     if (Field_unk_020031ae(15, 40, 12) != 0) {
-        Field_unk_020034da_a();
+        Motion_SetPosReset_1();
     }
 }
 

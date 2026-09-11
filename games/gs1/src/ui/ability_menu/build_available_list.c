@@ -1,6 +1,9 @@
 #include "types.h"
 #include "scene.h"
+#include "global_cells.h"
+#include "inn.h"
 
+/* ui/ability_menu/build_available_list.c */
 s32 Ability_GetMaximum(s32, s32);
 
 extern void *gIw;
@@ -33,4 +36,32 @@ s32 AbilityMenu_BuildAvailableList(void)
     *(u16 *)(state + offset) = 0;
     *(u8 *)(state + 0x3a6) = count;
     return count;
+}
+
+/* shop/cursor/step.c */
+void Shop_StepCursor(void)
+{
+    Sys_CheckStep(*(s32 *)ADDR_03001F2C + 0x380);
+}
+
+/* inn/cleanup.c */
+s32 Resource_ResetEntry(u16);
+s32 ScheduleCallback(s32);
+s32 UiWork_FinalizePending();
+extern u8 gRom;
+
+void Inn_Cleanup(void)
+{
+    struct InnState *state;
+
+    state = gIw;
+    ScheduleCallback((s32)&gRom);
+    UiWork_FinalizePending();
+    Resource_ResetEntry(state->resource_entries[0]);
+    Resource_ResetEntry(state->resource_entries[1]);
+    Resource_ResetEntry(state->resource_entries[2]);
+    Resource_ResetEntry(state->resource_entries[3]);
+    Resource_ResetEntry(state->resource_entries[4]);
+    Resource_ResetEntry(state->resource_entries[5]);
+    Sys_CheckCleanup(0x37);
 }

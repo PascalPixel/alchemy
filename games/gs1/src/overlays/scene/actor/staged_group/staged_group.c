@@ -1507,7 +1507,7 @@ void Scene_RunLateSequence(void)
     }
 }
 
-void Actor_unk90_4(void)
+void Scene_RunScene3a8SequenceB(void)
 {
     s32 rec8;
     s32 rec4;
@@ -1681,7 +1681,7 @@ void Scene_RunSupplementalSequenceOne(s32 a0)
     }
 }
 
-void Actor_unk162_2(s32 a0, s32 a1, s32 a2)
+void Scene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 {
     s32 p8;
     u8 *rec7;

@@ -312,7 +312,7 @@ void ConfigureAndPlaceActorOneHundredTwo(void)
     PlaceActor(102, 0x00380000, 0x01a80000);
 }
 
-void Actor_unk12_4(void)
+void ConfigureAndHideActorOneHundredTwo(void)
 {
     s32 a = 3, b = 26;
     Actor_unk13_4(2, 25, 1, 1, a, b);
@@ -377,7 +377,7 @@ void Scene_RunSupplementalSequenceTwo(void)
     Actor_unk19_4();
 }
 
-void Actor_unk20_4(void)
+void Scene_RunScene3b5SequenceB(void)
 {
     extern u8 gWork[];
 
@@ -575,7 +575,7 @@ void Actor_CopyPlayerModeToActor(struct Work_3b5 *work)
     }
 }
 
-s32 Actor_unk56_4(s32 a0)
+s32 Scene_RunSupplementalSequenceOne(s32 a0)
 {
     extern u8 gWork[];
 

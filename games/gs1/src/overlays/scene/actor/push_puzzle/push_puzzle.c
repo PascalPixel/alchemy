@@ -4,6 +4,7 @@
 #include "select_overlay_data_by_runtime_selector.h"
 #include "select_overlay_data_by_runtime_selector_body.inc"
 
+/* overlays/scene/actor/push_puzzle/push_puzzle.c */
 /* overlays/scene/actor/push_puzzle/actor_facing.c */
 
 s32 Actor_UpdateFacingTowardTarget(struct FacingObject *object)
@@ -119,7 +120,7 @@ s32 *Actor_FindAtTileXZ(s32 x, s32 z)
 extern u8 gOv2[];
 
 /* Per-site raw names preserve the stock relocated branch operands; they
- * resolve to Actor_unk11_4, Object_SetCallback and Object_InitializeMode respectively. */
+ * resolve to Object_CreateFar, Object_SetCallback and Object_InitializeMode respectively. */
 extern u8 *Actor_unk12_4();
 
 void OvObj_SpawnKind24AtActor(u8 *actor)
@@ -761,4 +762,28 @@ void Scene_CallHelper(void)
 void State_SetValues9_3_0(void)
 {
     Actor_unk49_3(9, 3, 0);
+}
+
+/* overlays/scene/actor/push_puzzle/select_data_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_0000001e
+#define SecondaryRuntimeSelector Value_00000023
+#define TertiaryRuntimeSelector Value_00000020
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
+}
+
+/* overlays/scene/actor/push_puzzle/select_data_by_runtime_selector_b.c */
+#define PrimaryRuntimeSelector Value_0000001e
+#define SecondaryRuntimeSelector Value_00000023
+#define TertiaryRuntimeSelector Value_00000020
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectDataByRuntimeSelectorB(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
 }

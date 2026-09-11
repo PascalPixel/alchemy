@@ -5,7 +5,10 @@
 #include "find_clear_actor_position.h"
 #include "find_clear_actor_position_body.inc"
 #include "staged_actor.h"
+#include "staged_actor_movement.h"
+#include "run_staged_actor_movement_and_redraw_body.inc"
 
+/* overlays/scene/actor/map_init/map_init.c */
 /* overlays/scene/actor/map_init/actor_depth_effect.c */
 struct Actor { u8 unknown_00[8]; s32 x; s32 y; s32 z; u8 unknown_14[0xf]; u8 flags23; };
 
@@ -499,7 +502,7 @@ struct Effect {
  * The decay of the Z velocity stays a signed divide by sixteen: that shape is
  * what reproduces the negative bias and arithmetic shift in the reference.
  */
-void Actor_unk62_4(struct Effect *effect)
+void advance_effect_motion(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
@@ -1710,4 +1713,62 @@ void State_SetValue268bInScene(void)
     Actor_Apply20(0, 1);
     Actor_Apply21(0x268B, 1);
     Actor_unk210_2();
+}
+
+/* overlays/actor_move_and_redraw.c */
+/* overlays/scene/actor/map_init/move_and_redraw.c */
+void Actor_Run(
+    StagedActorMovementRequest request)
+{
+}
+
+/* overlays/shared/copy_mode_to_owner.c */
+/* Copy the low two mode bits into the object's owner record. */
+
+struct Owner {
+    u8 unk0[9];
+    u8 unk9_0 : 2;
+    u8 mode : 2;
+    u8 unk9_4 : 4;
+};
+
+    owner->mode = mode;
+}
+
+/* overlays/scene/actor/map_init/wait_value_below_limit.c */
+struct Track02001038 {
+    u8 head[12];
+    s32 value;
+    u8 gap16[4];
+    s32 limit;
+    u8 gap24[16];
+    s32 state;
+    u8 gap44[16];
+    s32 mark;
+};
+
+void Actor_WaitValueBelowLimit(struct Track02001038 *track)
+{
+    s32 cnt = 60;
+    s32 limit;
+
+    for (;;) {
+        if (cnt != 0) {
+            s32 value;
+
+            Actor_Do(1);
+            value = track->value;
+            limit = track->limit;
+            cnt--;
+            if (value <= limit) {
+                break;
+            }
+            continue;
+        }
+        limit = track->limit;
+        break;
+    }
+    track->state = 0;
+    track->value = limit;
+    track->mark = (s32) 0x80000000;
 }

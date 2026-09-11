@@ -133,7 +133,7 @@ u8 *SceneData_GetTable8BB4(void)
     return (u8 *)0x02008bb4;
 }
 
-s32 Talk_unk34_4(void)
+s32 get_default_result(void)
 {
     return 0;
 }

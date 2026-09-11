@@ -3,7 +3,9 @@
 #include "staged_actor.h"
 #include "staged_actor_probe.h"
 #include "staged_actor_effect.h"
+#include "staged_actor_movement.h"
 
+/* overlays/scene/story/branching_formation/branching_formation.c */
 /* overlays/scene/story/branching_formation/calculate_fixed.c */
 
 typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
@@ -1562,4 +1564,10 @@ void Scene_RunBranchingFormationPresentation(void)
     Story_unk39_4(12, 0, 0);
     Story_unk57_3();
     Story_unk58_3();
+}
+
+/* overlays/scene/story/branching_formation/move_and_redraw.c */
+void Story_Run(StagedActorMovementRequest request)
+{
+#include "run_staged_actor_movement_and_redraw_body.inc"
 }

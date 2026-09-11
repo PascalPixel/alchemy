@@ -92,7 +92,7 @@ u8 *SceneData_GetTableAfa0(void)
     return (u8 *)0x0200afa0;
 }
 
-s32 Field_unk3_4(void)
+s32 get_tertiary_default_result(void)
 {
     return 0;
 }

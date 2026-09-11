@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene.h"
 
+/* overlays/scene/dialogue/choice/choice.c */
 /* overlays/scene/dialogue/choice/branching_actor_sequence.c */
 /* DRAFT for Scene_RunBranchingActorSequence
  * (resource_3b8:0x020017e8, complete owner extent 2092 bytes).
@@ -2383,4 +2384,22 @@ s32 SceneData_SelectTableD004ByStateAndFlags(void)
         return (s32)gOv14;
     }
     return (s32)gOv15;
+}
+
+/* overlays/scene/dialogue/choice/run_scene_effect_setup.c */
+static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+{
+    Talk_Place(actor, axis, offset);
+}
+
+void RunSceneEffectSetup(void)
+{
+    Talk_Run();
+    Talk_unk2_4(0, 32768, 16384);
+    Talk_unk3_4(158);
+    Talk_unk4_4(33604944, 36, 10);
+    SetOffset(0, 2, -16);
+    Talk_unk5_4(16);
+    Talk_unk6_4(2);
+    Talk_unk7_4();
 }

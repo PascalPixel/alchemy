@@ -382,7 +382,7 @@ s32 *SceneData_GetTableCFA4(void)
     return gOv4;
 }
 
-void Story_unk94_3(void)
+void Scene_RunMultiStageEffectPresentation(void)
 {
     u32 i;
     s32 obj;
@@ -496,7 +496,7 @@ void Scene_RunSevenSceneChain(void)
     Story_unk158_3();
 }
 
-void Story_unk159_3(void)
+void Scene_RunPartyIntroduction(void)
 {
     u32 i;
     s32 obj;
@@ -733,7 +733,7 @@ void RunEventScript01(void)
     Story_unk40_3(12, 0xb000, 40);
 }
 
-void Story_unk260_2(void)
+void Scene_RunCountedActorSequence(void)
 {
     u8 *obj;
     s32 other;

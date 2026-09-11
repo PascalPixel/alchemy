@@ -16,12 +16,12 @@ u8 *SceneData_Run(void *);
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
  * the returned table address 0x020085f8.
  */
-u8 *SceneData_unk2_4(void)
+u8 *unnamed_variant(void)
 {
     return (u8 *)0x020085f8;
 }
 
-s32 SceneData_unk3_4(void)
+s32 unnamed_variant(void)
 {
     return 0;
 }
@@ -30,7 +30,7 @@ s32 SceneData_unk3_4(void)
  * The eight-byte owner at 0x0200003c includes its one pool word, which holds
  * the returned table address 0x02008628.
  */
-u8 *SceneData_unk4_4(void)
+u8 *unnamed_variant(void)
 {
     return (u8 *)0x02008628;
 }
@@ -39,7 +39,7 @@ u8 *SceneData_unk4_4(void)
  * The eight-byte owner at 0x02000044 includes its one pool word, which holds
  * the returned table address 0x0200862c.
  */
-u8 *SceneData_unk5_4(void)
+u8 *unnamed_variant(void)
 {
     return (u8 *)0x0200862c;
 }
@@ -48,12 +48,12 @@ u8 *SceneData_unk5_4(void)
  * The eight-byte owner at 0x0200004c includes its one pool word, which holds
  * the returned table address 0x02008644.
  */
-u8 *SceneData_unk6_3(void)
+u8 *unnamed_variant(void)
 {
     return (u8 *)0x02008644;
 }
 
-s32 SceneData_unk7_3(void)
+s32 unnamed_variant(void)
 {
     s32 wait;
     s16 mode = gCell[225];

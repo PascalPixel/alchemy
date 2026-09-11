@@ -1,6 +1,8 @@
 #include "types.h"
 #include "scene.h"
+#include "resource.h"
 
+/* graphics/tile/transpose_copy.c */
 void Graphics_TransposeCopy(s32 source_address, s32 destination_address, s32 row_size, s32 column_count)
 {
     s32 column_index;
@@ -31,4 +33,19 @@ void Graphics_TransposeCopy(s32 source_address, s32 destination_address, s32 row
             destination_column -= 1;
         } while (column_index != column_count);
     }
+}
+
+/* resource/load_and_decompress.c */
+void Resource_LoadAndDecompress(void *resource_id, void *destination, s32 destination_offset, s32 copy_palette)
+{
+    u8 *resource = GetResource((s32)resource_id);
+
+    if (copy_palette != 0) {
+        void (*copy)(void *, void *, s32) = (void (*)(void *, void *, s32))0x03001388;
+        copy((void *)0x05000000, resource, 0x80);
+    }
+    if (destination_offset != 0) {
+        resource += 0x80;
+    }
+    Sys_Apply(resource, destination);
 }

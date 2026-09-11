@@ -2,6 +2,7 @@
 #include "scene.h"
 #include "facing_object.h"
 
+/* overlays/scene/story/flag_branched/flag_branched.c */
 /* overlays/scene/story/flag_branched/conditional_scene_setup.c */
 
 void Scene_RunStepWithValue174d(void)
@@ -818,4 +819,485 @@ void Scene_RunActorSeventeenFlagDialogue(void)
 
     Story_unk215_2(17, 0);
     Story_unk216_2();
+}
+
+/* overlays/scene/story/flag_branched/run_actor_16_message.c */
+/* Contiguous unnamed leaf-owner run for resource_38d. */
+
+#include "types.h"
+#include "scene.h"
+
+    Story_Do(0x1750);
+    if (Story_Check(0x302) != 0) {
+        Story_unk2_2(0x1768);
+    }
+    Story_ApplyActor16Message(15, 0);
+    Story_unk3_2(0x302);
+    Story_RunActor16Message();
+}
+
+#include "types.h"
+
+void Dialogue_RunActor16Message1769(void)
+{
+    Story_unk2_4Actor16Message();
+    Story_unk4_2(0x1769);
+    Story_Apply2Actor16Message(16, 0);
+    Story_unk3_4Actor16Message();
+}
+
+/* overlays/scene/story/flag_branched/run_actor_15_flag_scene.c */
+extern u8 gWork[];
+
+void Dialogue_RunActor15Flag303Scene(void)
+{
+    u32 i;
+    s32 record;
+
+    Story_RunActor15Flag();
+    Story_Do(0x1756);
+    if (Story_Check(0x303) != 0) {
+        Story_unk2_2(0x176c);
+    }
+    Story_unk2_4Actor15Flag(15, 0);
+    Story_unk3_2(0x303);
+    Story_unk3_4Actor15Flag();
+}
+
+/* overlays/scene/script/cue_open_step.c */
+extern u8 gWork[];
+
+void Scene_RunCueCueOpenStep(void)
+{
+    u32 i;
+    s32 record;
+
+    if (Script_Check(0x84e) != 0) {
+        Script_Run();
+        Script_unk2_4(0, 19, 0);
+        Script_Place(19, 0x9999, 0x4ccc);
+        Script_unk2_3(19, 0x26e, 0x2fc);
+        Script_unk3_3(19, 0xf000, 20);
+        Script_unk3_4CueOpenStep(19, 3);
+        Script_unk4_4CueOpenStep(17, 3);
+        Script_unk5_3CueOpenStep(20);
+        Script_unk6_3CueOpenStep(19, 0, 0);
+        Script_unk7_3CueOpenStep(20);
+        Script_unk8_2CueOpenStep(19, 3);
+        Script_Do(0x1749);
+        Script_unk9_2CueOpenStep(19, 0, 10);
+        Script_unk4_3(19, 0xcccc, 0x6666);
+        Script_unk5_2(19, 0x23a, 0x2f6);
+        Script_unk10_2CueOpenStep(19, 0, 0);
+        *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x209;
+        Script_unk2_2(0x85e);
+        Script_unk3_2(0x333);
+        Script_unk11_2CueOpenStep();
+    }
+}
+
+/* overlays/scene/script/cue_close_step.c */
+extern u8 gWork[];
+
+void Scene_RunCueCueCloseStep(void)
+{
+    u32 i;
+    s32 record;
+
+    Script_unk3_4CueCloseStep();
+    Script_unk4_4CueCloseStep();
+    Script_unk5_3CueCloseStep();
+    Script_Place(19, 0x3000, 0);
+    Script_unk2_3(0, 0x9999, 0x4ccc);
+    Script_unk3_3(0, 0x100, 0x294);
+    Script_unk6_3CueCloseStep(20);
+    Script_Run(-1, -1, -1, 0);
+    Script_Do(0x200);
+    Script_unk7_3CueCloseStep(188);
+    Script_unk8_2CueCloseStep(1);
+    Script_unk9_2CueCloseStep(2);
+    Script_unk4_3(19, 0x1000000, 0x2780000);
+    Script_unk10_2CueCloseStep(1);
+    Script_unk5_2(19, 0x9999, 0x4ccc);
+    Script_unk6_2(19, 0x100, 0x284);
+    Script_unk11_2CueCloseStep(1);
+    Script_unk12_2(2);
+    Script_unk13_2(20);
+    Script_unk14_2(19, 2);
+    Script_unk2_2(0x145e);
+    Script_unk15(19, 0, 10);
+    Script_unk7_2(0, 0x100, 40);
+    Script_unk8(0, 0x108, 0x294);
+    Script_unk9(0, 0x8000, 0);
+    Script_unk10(19, 248, 0x294);
+    Script_unk11(19, 0x1000, 40);
+    Script_unk16(19, 4);
+    Script_unk17(19, 0);
+    Script_unk18(19, 3);
+    Script_Check(19, 0);
+    Script_unk19(19, 2);
+    Script_unk20(19, 0, 10);
+    Script_unk12(0, 0x101, 60);
+    Script_unk2_4(19, 0x102);
+    Script_unk21(60);
+    Script_unk22(19, 1);
+    Script_unk23(19, 0, 10);
+    Script_unk24(19, 3);
+    Script_unk25(19, 0);
+    Script_unk13(19, 0xcccc, 0x6666);
+    Script_unk14(19, 248, 0x304);
+    Script_unk26(19, 0, 0);
+    Script_unk3_2(0x12f);
+    Script_unk4_2(0x84f);
+    Script_unk27();
+}
+
+/* overlays/scene/story/flag_branched/run_event_script02.c */
+/* Second event script of resource_38d: a linear field-scene choreography that
+ * drives channels 0-3 and 18-20 through fades, motions, positions and message
+ * waits, branching six times on the saved flag 0x84f and on three actor
+ * lookups.
+ *
+ * Every branch, call and store below is taken from the complete decoded owner
+ * (2060 bytes, 186 calls). Roles of the called wrappers remain unknown, so
+ * they keep their address aliases; the two same-overlay callees are noted at
+ * their call sites.
+ *
+ * Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. That legacy spelling is a PC-relative reading of a
+ * word the loader rewrites, so it is not a stable identity. Eight of the words
+ * in this owner spell an alias that two different runtime veneers share. A
+ * ninth, Story_unk6_4, reads as a single unambiguous veneer here yet is still
+ * refused a binding by the scorer, and the cause is not established from this
+ * owner; the call word at 0x02002006 is an ordinary bl and the halfword before
+ * it is `movs r1,#3`, not pool data. So none of those nine can be bound on
+ * their own from this file. Each such call is
+ * written with another alias of the SAME runtime veneer, and the legacy word
+ * plus that veneer address is recorded at the call site. The intended per-site
+ * spelling is Func_<legacy>_a/_b with explicit runtime addresses, which needs
+ * an absolute_symbols block in this owner's translation unit; that block does
+ * not exist yet.
+ *
+ * The cleared state byte written into the record at +85 is held in its own
+ * local, so its value is established once at the top of the scene rather than
+ * rebuilt at the store; the fourth argument zero of the following call is an
+ * unrelated constant. */
+
+extern u8 gWork[];
+extern u8 gOv[];
+extern u8 gOv2EventScript02[];
+
+void *Story_unk7_4();
+
+void *Story_unk8_4();
+
+void *Story_unk9_4();
+
+void *Story_unk10_4();
+
+void *Story_unk11_4();
+void *Story_unk12_4();
+
+void *Story_unk13_4();
+
+/* Actor record returned by the three lookup helpers. The two halfword reads
+ * take the whole part of the matching 16.16 word. */
+typedef struct ActorPos {
+    u8 field_00[8];
+    s16 x_low;
+    s16 x;
+    s32 field_0c;
+    s16 y_low;
+    s16 y;
+} ActorPos;
+
+void RunEventScript02(void)
+{
+    u8 *work;
+    u8 *buf;
+    ActorPos *pos;
+    s32 flag;
+    u8 clear = 0;
+
+    Story_unk14_4();
+    Story_Run(-1, -1, -1, 0);
+    Story_unk15_4(1);
+    buf = (u8 *)Story_unk7_4();
+    buf[85] = clear;
+    Story_unk2_4(0x037e0000, -1, 0x02980000, 0);
+    Story_unk16_4(1);
+    Story_unk17_4(0, 0, 0);
+    Story_unk18_4();
+    Story_unk19_4(1);
+
+    work = *(u8 **)gWork;
+    *(s32 *)(work + 0x1c0) = 0x201;
+    *(s32 *)(work + 0x1c8) = 16;
+
+    Story_unk20_4();
+    Story_unk21_4EventScript02();
+    Story_unk22_4EventScript02(40);
+    Story_Place(19, 0x03780000, 0x031e0000);
+    Story_unk2_3(0, 0x03880000, 0x031e0000);
+    Story_unk3_4(0x9999, 0x1333);
+    /* legacy word Story_unk23_4EventScript02, veneer 0x0200a580 */
+    Story_unk2_4(0x037e0000, -1, 0x02ba0000, 1);
+    Story_unk3_3(19, 0xcccc, 0x6666);
+    Story_unk4_3(0, 0x9999, 0x4ccc);
+    Story_unk5_3(19, 888, 720);
+    Story_unk6_3(0, 904, 736);
+    Story_unk24_4EventScript02(60);
+    Story_unk25_4EventScript02(19);
+    Story_unk26_4EventScript02(19, 1);
+    Story_unk27_4EventScript02(0);
+    Story_unk28_4EventScript02(0, 1);
+    Story_unk29_4EventScript02(20);
+    /* legacy word Story_unk23_4EventScript02, veneer 0x0200a520 */
+    Story_unk30_4EventScript02(19, 2);
+    Story_Do(0x1728);
+
+    flag = 1;
+    if (Story_Check(0x84f) == 0) {
+        bump_step(1);
+        flag = 0;
+    }
+    Story_unk31_4EventScript02(19, 0);
+    if (flag != 0) {
+        bump_step(1);
+    }
+
+    Story_unk4_4(0x037e0000, -1, 0x02980000, 1);
+    Story_unk32_4EventScript02(19, gOv2EventScript02);
+    Story_unk7_3(0, 894, 684);
+
+    pos = (ActorPos *)Story_unk8_4(0);
+    if (pos != 0) {
+        Story_unk33_4EventScript02(1, *(s32 *)&pos->x_low, *(s32 *)&pos->y_low);
+    }
+    pos = (ActorPos *)Story_unk9_4(0);
+    if (pos != 0) {
+        Story_unk34_4EventScript02(2, *(s32 *)&pos->x_low, *(s32 *)&pos->y_low);
+    }
+    pos = (ActorPos *)Story_unk10_4(0);
+    if (pos != 0) {
+        Story_unk35_4EventScript02(3, *(s32 *)&pos->x_low, *(s32 *)&pos->y_low);
+    }
+
+    Story_unk8_3(1, 0x9999, 0x4ccc);
+    Story_unk9_3(2, 0x9999, 0x4ccc);
+    Story_unk10_3(3, 0x10000, 0x8000);
+    Story_unk36_4EventScript02(1, 2);
+    Story_unk37_4EventScript02(2, 2);
+    Story_unk38_4EventScript02(3, 2);
+    Story_unk11_3(1, -16, 16);
+    Story_unk39_4EventScript02(2, 16, 16);
+    Story_unk40_4EventScript02(3, 32, 16);
+    Story_unk41_4EventScript02(2);
+    Story_unk42_4EventScript02(1, 1);
+    Story_unk43_4EventScript02(2, 1);
+    Story_unk44_4EventScript02(3, 1);
+    Story_unk45_4EventScript02(10);
+    Story_unk12_3(1, 0xc000, 0);
+    Story_unk13_3(2, 0xc000, 0);
+    Story_unk46_4EventScript02(3);
+    Story_unk14_3(3, 0xa000, 0);
+    Story_unk47_4EventScript02(19);
+    Story_unk48_4EventScript02(20);
+
+    flag = 1;
+    if (Story_unk2(0x84f) == 0) {
+        bump_step(1);
+        flag = 0;
+    }
+    Story_unk30_4EventScript02(18, 3);
+    Story_unk15_3(0x2012, 0, 20);
+    if (flag != 0) {
+        bump_step(1);
+    }
+
+    flag = 1;
+    if (Story_unk3(0x84f) == 0) {
+        bump_step(1);
+        flag = 0;
+    }
+    Story_unk49_4EventScript02(18, 1);
+    Story_unk16_3(0x2012, 0, 10);
+    if (flag != 0) {
+        bump_step(1);
+    }
+
+    Story_unk50_4EventScript02(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+    Story_unk51_4EventScript02(20);
+    if (Story_unk4(0x84f) != 0) {
+        Story_unk17_3(0, 258, 60);
+        Story_unk18_3(1, 261, 40);
+    } else {
+        Story_unk52_3EventScript02(40);
+    }
+
+    Story_unk19_3(1, 0xc000, 10);
+    Story_unk20_3(0x4001, 0, 10);
+    Story_unk21_3(2, 0xc000, 10);
+    Story_unk53_3EventScript02(2, 3);
+    Story_unk5_4(0x4002, 0);
+    Story_unk22_3(3, 0xa000, 10);
+    Story_unk54_3EventScript02(3, 3);
+    /* legacy word Story_unk55_3EventScript02, veneer 0x0200a550 */
+    Story_unk23_3(0x4003, 0, 20);
+    Story_unk56_3EventScript02(18, 3);
+    Story_unk57_3EventScript02(20);
+    Story_unk23_3(0x2012, 0, 20);
+    Story_unk24_3(1, 259, 0);
+    Story_unk25_3(0, 258, 60);
+
+    if (Story_unk5(0x84f) != 0) {
+        Story_unk58_3EventScript02(18, 1);
+        /* legacy word Story_unk55_3EventScript02, veneer 0x0200a508 */
+        Story_unk56_3EventScript02(18, 4);
+        Story_unk6(0x2012, 0);
+        Story_unk59_3EventScript02(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+        flag = 1;
+        if (Story_unk9(0, 0) != 0) {
+            bump_step(1);
+            flag = 0;
+        }
+        Story_unk26_3(18, 0x5000, 0);
+        Story_unk60_3EventScript02(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+        Story_unk61_3EventScript02(10);
+        Story_unk27_3(0x2012, 0, 10);
+        if (flag != 0) {
+            bump_step(1);
+        }
+        /* legacy word Story_unk62_3EventScript02, veneer 0x0200a568 */
+        Story_unk25_3(18, 258, 60);
+    } else {
+        bump_step(4);
+    }
+
+    Story_unk7(0x2012, 0);
+    Story_unk63_3EventScript02(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+    if (Story_unk10(0, 0) == 0) {
+        /* legacy word Story_unk62_3EventScript02, veneer 0x0200a538 */
+        Story_unk2_2(0x1737);
+    } else {
+        Story_unk2_2(0x1738);
+    }
+
+    Story_unk64_3EventScript02(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+    Story_unk28_3(0x2012, 0, 20);
+    Story_unk65_3EventScript02(19, 1);
+    Story_unk3_2(0x1739);
+    Story_unk66_3EventScript02(19, 0, 10);
+    Story_unk29_3(0, 0x6000, 0);
+    Story_unk30_3(1, 0xe000, 0);
+    /* legacy word Story_unk67_3EventScript02, veneer 0x0200a560 */
+    Story_unk68_3EventScript02(2, 0, 0);
+    Story_unk31_3(3, 0x8000, 40);
+    Story_unk69_3EventScript02(18, 2);
+    Story_unk32_3(0x2012, 0, 10);
+    Story_unk33_3(0, 0xc000, 0);
+    Story_unk70_3EventScript02(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+    Story_unk71_3EventScript02(10);
+    Story_unk34_3(18, 261, 60);
+    /* legacy word Story_unk72_3EventScript02, veneer 0x0200a550 */
+    Story_unk32_3(0x2012, 0, 10);
+    Story_unk73_3EventScript02(0, 3);
+    Story_unk74_3EventScript02(1, 3);
+    /* legacy word Story_unk67_3EventScript02, veneer 0x0200a500 */
+    Story_unk74_3EventScript02(2, 3);
+    Story_unk75_3EventScript02(3, 3);
+    Story_unk76_3EventScript02(20);
+    Story_unk77_3EventScript02(18, 3);
+    Story_unk35_3(0x2012, 0, 10);
+    Story_unk36_3(18, 264, 60);
+    Story_unk37_3(0x2012, 0, 10);
+    Story_unk38_3(18, 0x3000, 10);
+    /* legacy word Story_unk78_3EventScript02, veneer 0x0200a550 */
+    Story_unk37_3(0x2012, 0, 10);
+    Story_unk79_3EventScript02(18, 3);
+    /* legacy word Story_unk78_3EventScript02, veneer 0x0200a540 */
+    Story_unk7(0x2012, 0);
+
+    Story_unk80_3EventScript02(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+    flag = 1;
+    if (Story_unk11(0, 0) == 1) {
+        bump_step(1);
+        flag = 0;
+    }
+    Story_unk81_3EventScript02(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+    Story_unk39_3(0x2012, 0, 10);
+    if (flag != 0) {
+        bump_step(1);
+    }
+
+    Story_unk40_3(18, 0x7000, 10);
+    Story_unk82_3EventScript02(19, 1);
+    /* legacy word Story_unk83_3EventScript02, veneer 0x0200a560 */
+    Story_unk40_3(19, 0x1000, 20);
+    Story_unk84_3EventScript02(18, 3);
+    /* legacy word Story_unk72_3EventScript02, veneer 0x0200a468 */
+    Story_unk85_3EventScript02(20);
+    Story_unk86_3EventScript02(19, 3);
+    Story_unk87_3EventScript02(19, 0, 10);
+    Story_unk41_3(19, 0x3000, 10);
+    Story_unk42_3(18, 0x3000, 20);
+    /* legacy word Story_unk83_3EventScript02, veneer 0x0200a520 */
+    Story_unk82_3EventScript02(18, 1);
+    Story_unk43_3(0x2012, 0, 10);
+    /* legacy word Story_unk6_4, veneer 0x0200a508; that alias resolves to one
+     * veneer here, but spelling it directly is still refused for want of a
+     * stable binding, so the same veneer is reached through another alias. */
+    Story_unk86_3EventScript02(18, 3);
+    Story_unk44_3(0x2012, 0, 10);
+    Story_unk88_3EventScript02(0, 3);
+    Story_unk89_3EventScript02(1, 3);
+    Story_unk90_3EventScript02(2, 3);
+    Story_unk91_3EventScript02(3, 3);
+    Story_unk85_3EventScript02(20);
+
+    Story_unk92_3EventScript02(1, 2);
+    pos = (ActorPos *)Story_unk11_4(0);
+    if (pos != 0) {
+        Story_unk93_3EventScript02(1, pos->x, pos->y);
+    }
+    Story_unk94_3EventScript02(2, 2);
+    pos = (ActorPos *)Story_unk12_4(0);
+    if (pos != 0) {
+        Story_unk95_3EventScript02(2, pos->x, pos->y);
+    }
+    Story_unk96_3EventScript02(3, 2);
+    pos = (ActorPos *)Story_unk13_4(0);
+    if (pos != 0) {
+        Story_unk97_3EventScript02(3, pos->x, pos->y);
+    }
+
+    Story_unk98_3EventScript02(1);
+    Story_unk99_3EventScript02(1, 0, 0);
+    Story_unk100_3EventScript02(2, 0, 0);
+    Story_unk101_3EventScript02(3);
+    Story_unk102_3EventScript02(3, 0, 0);
+    Story_unk103_3EventScript02(20);
+    Story_unk45_3(18, 0x5000, 0);
+    Story_unk46_3(0, 0x10013, (s32)gOv);
+    /* legacy word Story_unk104_3EventScript02, veneer 0x0200a4d8 */
+    Story_unk47_3(19, 852, 646);
+    Story_unk47_3(19, 852, 666);
+    Story_unk48_3(19, 864, 672);
+    Story_unk49_3(19, 0x1000, 10);
+    Story_unk105_3EventScript02(19, 1);
+    Story_unk106_3EventScript02(10);
+    Story_unk107_3EventScript02(19, 0, 10);
+    Story_unk50_3(19, 886, 708);
+    Story_unk51_3(19, 894, 764);
+    Story_unk52_2(0, 894, 764);
+    Story_unk108_3EventScript02();
+    Story_unk109_3EventScript02();
+    Story_unk4_2(802);
+    if (Story_unk8(0x84f) == 0) {
+        /* legacy word Story_unk104_3EventScript02, veneer 0x0200a458 */
+        Story_unk5_2(0x84f);
+        Story_unk5_2(0x84a);
+    }
+    Story_unk110_3EventScript02(6);
+    Story_unk111_3EventScript02();
 }

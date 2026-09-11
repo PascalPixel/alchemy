@@ -713,7 +713,7 @@ void Scene_RunScene385SequenceA(void)
     }
 }
 
-void Actor_unk55_4(int actor, int x, int z, int field40)
+void move_actor_and_wait(int actor, int x, int z, int field40)
 {
     extern u8 *gWork;
 

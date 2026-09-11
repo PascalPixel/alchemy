@@ -190,7 +190,7 @@ void Scene_RunPrimarySequenceHead(void)
     }
 }
 
-s32 Field_unk20_4(void)
+s32 Scene_RunGuardSequenceB(void)
 {
     extern u8 gFarStub[];
 
@@ -300,7 +300,7 @@ s32 Field_unk20_4(void)
     return 0;
 }
 
-void Field_unk34_4(void)
+void Scene_RunGuardSequenceC(void)
 {
     extern u8 gFarStub[];
 

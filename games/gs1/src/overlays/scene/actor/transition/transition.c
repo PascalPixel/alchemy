@@ -1,6 +1,8 @@
 #include "types.h"
 #include "scene.h"
 
+/* overlays/scene/actor/transition/transition.c */
+/* overlays/scene/actor/transition/transition.c */
 /* overlays/scene/actor/transition/actor_depth_effect.c */
 
 /* Three sites of one import, so three names. */
@@ -1478,4 +1480,193 @@ void State_SetWorkspace370ByFlag820(void)
         }
     }
     Actor_unk245_2();
+}
+
+/* overlays/scene/actor/transition/scene_run_steps30_f_to312.c */
+/* overlays/scene/actor/transition/run_steps_to.c */
+void Scene_RunSteps30FTo312(void)
+{
+    Actor_DoSteps30FTo312(0x30F);
+    Actor_unk2_2Steps30FTo312(0x310);
+    Actor_unk3_2Steps30FTo312(0x311);
+    Actor_unk4_2Steps30FTo312(0x312);
+}
+
+/* overlays/scene/actor/transition/run_actor_11_offset_sequence.c */
+/*
+ * Run this scene transition's six setup services.  The literal word following
+ * the return belongs to this owner and supplies 0x121 to Actor_RunSteps30FTo312.
+ */
+
+void Scene_RunActor11Offset128Sequence(void)
+{
+    Actor_DoSteps30FTo312(241);
+    Actor_PlaceSteps30FTo312(11, 0, 128);
+    Actor_unk2_4Steps30FTo312();
+    Actor_RunSteps30FTo312(0x121);
+    Actor_unk2_2Steps30FTo312(2);
+    Actor_unk3_4Steps30FTo312();
+}
+
+/* overlays/scene/actor/transition/run_actor_11_flags_312_sequence.c */
+void Scene_RunActor11Flags30fTo312Sequence(void)
+{
+    Actor_DoSteps30FTo312(0xF1);
+    Actor_PlaceSteps30FTo312(0xB, 0, -16);
+    Actor_unk2_2Steps30FTo312(0x121);
+    Actor_unk3_2Steps30FTo312(0x30F);
+    Actor_unk4_2Steps30FTo312(0x310);
+    Actor_unk5_2Steps30FTo312(0x311);
+    Actor_unk6_2Steps30FTo312(0x312);
+    Actor_unk7_2Steps30FTo312(2);
+    Actor_RunSteps30FTo312();
+}
+
+/* overlays/scene/actor/transition/run_actor_11_transition.c */
+void Scene_RunActor11Transition(void)
+{
+    Actor_RunActor11Transition(241);
+    Actor_PlaceActor11Transition(11, 0, 48);
+    Actor_DoActor11Transition(0x121);
+    Actor_unk2_4Actor11Transition();
+    Actor_unk2_2Actor11Transition(2);
+    Actor_unk3_4Actor11Transition();
+}
+
+/* overlays/scene/actor/transition/scene_run_actor8_transition313.c */
+/* overlays/scene/actor/transition/run_actor_8_transition.c */
+void Scene_RunActor8Transition313(void)
+{
+    Actor_DoActor8Transition313(0xF1);
+    Actor_PlaceActor8Transition313(8, 0, -112);
+    Actor_unk2_2Actor8Transition313(0x121);
+    Actor_unk3_2Actor8Transition313(0x313);
+    Actor_unk4_2Actor8Transition313(2);
+    Actor_RunActor8Transition313();
+}
+
+/* overlays/scene/actor/transition/run_actor_9_flag_sequence.c */
+void Scene_RunActor9Flag314Sequence(void)
+{
+    Actor_DoActor8Transition313(0xF1);
+    Actor_PlaceActor8Transition313(9, -128, 0);
+    Actor_unk2_2Actor8Transition313(0x121);
+    Actor_unk3_2Actor8Transition313(0x314);
+    Actor_unk4_2Actor8Transition313(2);
+    Actor_RunActor8Transition313();
+}
+
+/* overlays/scene/actor/transition/run_actor_10_flag_sequence.c */
+void Scene_RunActor10Flag315Sequence(void)
+{
+    Actor_Do10FlagSequence(241);
+    Actor_Place10FlagSequence(10, -160, 0);
+    Actor_unk2_210FlagSequence(0x121);
+    Actor_unk3_210FlagSequence(0x315);
+    Actor_unk4_210FlagSequence(2);
+    Actor_Run10FlagSequence();
+}
+
+/* overlays/scene/actor/transition/scene_set_actor9_values1_and2.c */
+void Scene_SetActor9Values1And2(void)
+{
+    Actor_ApplyActor9Values1And2(9, 1);
+    Actor_Apply2Actor9Values1And2(9, 2);
+}
+
+/* overlays/scene/actor/transition/run_scene_primary_sequence.c */
+extern u8 gVal[];
+extern u8 gCell[];
+extern u8 gWork[];
+extern s16 gCell2[][1];
+
+s32 Actor_RunPrimarySequence(void)
+{
+    u32 i;
+    s32 record;
+
+    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x204;
+    if (Actor_Check(0x109) == 0) {
+        if (gCell2[224][0] != (s32)gVal) {
+            goto L_0200178c;
+        }
+        Actor_Do(0x144);
+        Actor_unk2_4PrimarySequence();
+    } else {
+        L_0200178c:;
+        Actor_unk3_4PrimarySequence();
+    }
+    return 0;
+}
+
+/* overlays/scene/actor/transition/run_scene_sequence_a.c */
+extern u8 gWork[];
+
+void Scene_RunScene39aSequenceA(void)
+{
+    u32 i;
+    s32 record;
+
+    Actor_RunSequence();
+    record = Actor_CheckSequence(8);
+    Actor_unk2_4Sequence(record, 0);
+    Actor_unk3_4Sequence();
+    Actor_Place(0, 0x20000, 0x1999);
+    Actor_unk2_3(0, 0x108, 196);
+    Actor_unk4_4Sequence();
+}
+
+/* overlays/scene/script/talk_pair_step.c */
+/* overlays/scene/script/talk_pair_step.c */
+extern u8 gWork[];
+
+void Scene_RunTalk(s32 a0, s32 a1)
+{
+    u32 i;
+    s32 record;
+
+    Script_Run();
+    Script_Place(0, 0x28000, 0x14000);
+    Script_unk2_3(0, a0, a1);
+    Script_unk2_4(0, 4, 0);
+    Script_unk3_4(0, 7);
+    Script_unk4_4(0);
+    Script_unk5_3(0, 6);
+    Script_unk6_3();
+}
+
+/* overlays/scene/script/talk_flag_step.c */
+extern u8 gOvTalkPairStep[];
+
+void Scene_RunTalkTalkFlagStep(void)
+{
+    u8 *rec;
+    s32 rec7;
+    s32 record;
+    u8 *p6;
+
+    record = 0;
+    rec = Script_Check(22, 0xf80000, 0x80000, 0x980000);
+    if ((s32)rec != 0) {
+        p6 = *(volatile s32 *)((s32)rec + 80);
+        p6[38] = record;
+        *(u8 *)(((s32)p6 + 38) + 1) = record;
+        *((s8 *)p6 + 5) &= -33;
+        p6[9] &= 15;
+        rec[85] = record;
+        rec[92] = 1;
+        rec7 = Script_unk2(17, 0x608);
+        Script_RunTalkFlagStep(230);
+        Script_Place(p6[28], 128, (rec7 + 0x400));
+        Script_unk2_4TalkFlagStep(17);
+        *(volatile s32 *)gOvTalkPairStep = (s32)rec;
+    }
+}
+
+/* overlays/scene/actor/transition/run_scripted_step_17e3.c */
+void Scene_RunScriptedStep17E3(void)
+{
+    Actor_RunTalkPairStep();
+    Actor_ApplyTalkPairStep(0x17E3, 1);
+    Actor_unk2_4TalkPairStep();
 }

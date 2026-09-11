@@ -13,12 +13,12 @@ extern s16 gCell[];
 
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
 {
-    Field_unk_02000446(actor, axis, offset);
+    Field_SetOffset(actor, axis, offset);
 }
 
 static __inline__ void SetOffset2(s32 actor, s32 axis, s32 offset)
 {
-    Field_unk_020004ba(actor, axis, offset);
+    Field_SetOffset2(actor, axis, offset);
 }
 
 /*

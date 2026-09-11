@@ -151,8 +151,8 @@ void Scene_RunActor18MessageBranch(void)
 
 void Scene_RunActor19MessageBranch(void)
 {
-    void Field_unk_020004a2(s32, s32);
-    void Field_unk_020004a2_a(s32, s32);
+    void Field_TestFlag845(s32, s32);
+    void Field_TestFlag845(s32, s32);
 
     /*
      * The local must stay wider than the halfword field; as a u16 it is
@@ -163,10 +163,10 @@ void Scene_RunActor19MessageBranch(void)
     Field_unk_02000450();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Field_unk_020004a2(3, 19);
+        Field_TestFlag845(3, 19);
     } else {
         Field_unk_02000492(0x16B7);
-        Field_unk_020004a2_a(19, 0);
+        Field_TestFlag845(19, 0);
     }
 
     Field_unk_0200047e();

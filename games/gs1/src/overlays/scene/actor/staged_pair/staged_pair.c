@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_pair/staged_pair.h"
 #include "staged_actor_pair_scene.h"
 #include "staged_actor.h"
 
@@ -8,85 +7,85 @@
 
 void *Actor_Run();
 
-s32 *Actor_Run2();
+s32 *Actor_unk2_4();
 
-s32 *Actor_Run3();
+s32 *Actor_unk3_4();
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-    Actor_Place6(actor, x, y);
+    Actor_unk6_3(actor, x, y);
 }
 
 void ActorDraw_RunActorElevenRecoveryScene(void)
 {
-    Actor_Run4();
-    Actor_Run5(11, 0, 0);
-    Actor_Run6(0, 11, 0);
-    Actor_Run7(0, 1);
-    Actor_Run8(10);
-    Actor_Run9(0, 11, 0);
-    Actor_Run10(0x23d9);
-    Actor_Run11(11, 0);
-    Actor_Run12(11, 2);
+    Actor_unk4_4();
+    Actor_unk5_4(11, 0, 0);
+    Actor_unk6_4(0, 11, 0);
+    Actor_unk7_4(0, 1);
+    Actor_unk8_4(10);
+    Actor_unk9_4(0, 11, 0);
+    Actor_unk10_4(0x23d9);
+    Actor_unk11_4(11, 0);
+    Actor_unk12_4(11, 2);
     {
         s16 *position = Actor_Run(0);
 
         if (position != 0)
-            Actor_Run13(11, position[5], position[9]);
+            Actor_unk13_4(11, position[5], position[9]);
     }
-    Actor_Run14(11);
-    Actor_Run15(11, 0, 0);
-    Actor_Run16(20);
-    Actor_Run17(2464);
-    Actor_Run18();
+    Actor_unk14_4(11);
+    Actor_unk15_4(11, 0, 0);
+    Actor_unk16_4(20);
+    Actor_unk17_4(2464);
+    Actor_unk18_4();
 }
 
 void ActorDraw_SelectActorNineScript(void)
 {
-    if (Actor_Check17(2384) != 0 && Actor_Check18(2415) == 0)
-        Actor_Run19(9173);
+    if (Actor_unk17(2384) != 0 && Actor_unk18(2415) == 0)
+        Actor_unk19_4(9173);
     else
-        Actor_Run20(9170);
-    Actor_Run21(9, 0);
+        Actor_unk20_4(9170);
+    Actor_unk21_4(9, 0);
 }
 
 void ActorDraw_RunActorEightThresholdScene(void)
 {
-    Actor_Run22(8);
-    Actor_Run23();
+    Actor_unk22_4(8);
+    Actor_unk23_4();
     {
-        s32 *actor = Actor_Run2(8);
+        s32 *actor = Actor_unk2_4(8);
 
         if ((actor[2] >> 20) <= 30) {
-            Actor_Run24(8);
+            Actor_unk24_4(8);
             {
                 s32 x = 27;
                 s32 y = 19;
 
-                Actor_Run25(29, 19, 1, 1, x, y);
+                Actor_unk25_4(29, 19, 1, 1, x, y);
             }
-            Actor_Run26(2466);
+            Actor_unk26_4(2466);
         }
     }
-    Actor_Run27();
+    Actor_unk27_4();
 }
 
 void ActorDraw_RunActorNineThresholdScene(void)
 {
-    Actor_Run28();
-    if ((Actor_Run3(9)[2] >> 20) > 42) {
+    Actor_unk28_4();
+    if ((Actor_unk3_4(9)[2] >> 20) > 42) {
         s32 x = 107;
         s32 y = 17;
 
-        Actor_Run29(108, 17, 1, 1, x, y);
-        Actor_Run30(8);
-        Actor_Run31(9, 0, 0);
+        Actor_unk29_4(108, 17, 1, 1, x, y);
+        Actor_unk30_4(8);
+        Actor_unk31_4(9, 0, 0);
         PlaceActor(10, 45613056, 18874368);
-        Actor_Run32(10, 3);
-        Actor_Run33(154);
-        Actor_Run34(2469);
+        Actor_unk32_4(10, 3);
+        Actor_unk33_4(154);
+        Actor_unk34_4(2469);
     }
-    Actor_Run35();
+    Actor_unk35_4();
 }
 
 /* overlays/scene/actor/staged_pair/scene_primary_script.c */
@@ -109,7 +108,7 @@ extern u8 gWork[];
 extern s16 gCell2[][1];
 extern u8 gVal5[];
 
-s32 Actor_Run36(void)
+s32 Actor_unk36_4(void)
 {
     if (gCell2[224][0] == (s32)gVal2) {
         if (Actor_Check(0x96f) != 0) {
@@ -132,7 +131,7 @@ s32 Actor_Run36(void)
 s32 Scene_RunScene3beSequenceA(void)
 {
     if (gCell2[224][0] == (s32)gVal2) {
-        if (Actor_Check2(0x96f) != 0) {
+        if (Actor_unk2(0x96f) != 0) {
             return (s32)gOv8;
         }
         return (s32)gOv7;
@@ -153,48 +152,48 @@ void Scene_RunScene3beSequenceB(void)
 {
     s32 record;
 
-    if (Actor_Check3(0x98a) != 0) {
+    if (Actor_unk3(0x98a) != 0) {
     } else {
-        if (Actor_Check4(0x9a0) == 0) {
+        if (Actor_unk4(0x9a0) == 0) {
         } else {
-            Actor_Run37();
+            Actor_unk37_4();
             Actor_Place(11, 0x10000, 0x8000);
-            record = Actor_Check5(0);
+            record = Actor_unk5(0);
             if (record != 0) {
-                Actor_Run38(11, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+                Actor_unk38_4(11, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
             }
-            Actor_Place2(11, -8, 16);
-            Actor_Run39(11);
-            Actor_Place3(11, 0xd000, 0);
-            Actor_Run40(10);
-            Actor_Run41(0, 11, 0);
+            Actor_unk2_3(11, -8, 16);
+            Actor_unk39_4(11);
+            Actor_unk3_3(11, 0xd000, 0);
+            Actor_unk40_4(10);
+            Actor_unk41_4(0, 11, 0);
             Actor_Do(0x23da);
-            Actor_Check6(11, 0);
-            if (Actor_Check7(0, 0) == 0) {
-                Actor_Run42(11, 0);
-                Actor_Run43(11, 152, 232);
-                Actor_Do2(0x9a0);
-                Actor_Run44(11);
-                Actor_Run45(11, 1);
+            Actor_unk6(11, 0);
+            if (Actor_unk7(0, 0) == 0) {
+                Actor_unk42_4(11, 0);
+                Actor_unk43_4(11, 152, 232);
+                Actor_unk2_2(0x9a0);
+                Actor_unk44_4(11);
+                Actor_unk45_4(11, 1);
                 gCell2[226][0] = (s32)gVal;
                 gCell2[227][0] = 30;
             } else {
                 bump_step(1);
-                Actor_Run46(11, 0);
-                Actor_Run47(11, 2);
-                record = Actor_Check8(0);
+                Actor_unk46_4(11, 0);
+                Actor_unk47_4(11, 2);
+                record = Actor_unk8(0);
                 if (record != 0) {
-                    Actor_Run48(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                    Actor_unk48_4(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
                 }
-                Actor_Run49(11);
-                Actor_Run50(11, 0, 0);
-                Actor_Run51(30);
-                Actor_Run52(0, 2);
-                Actor_Run53(0, 0, 16);
-                Actor_Run54(0);
-                Actor_Run55(0, 1);
+                Actor_unk49_4(11);
+                Actor_unk50_4(11, 0, 0);
+                Actor_unk51_4(30);
+                Actor_unk52_4(0, 2);
+                Actor_unk53_4(0, 0, 16);
+                Actor_unk54_4(0);
+                Actor_unk55_4(0, 1);
             }
-            Actor_Run56();
+            Actor_unk56_4();
         }
     }
 }
@@ -206,18 +205,18 @@ void Scene_RunScene3be(void)
     s32 base5_23cc;
 
     base5_23cc = (s32)gVal5;
-    Actor_Run57(base5_23cc);
-    Actor_Check9(8, 0);
-    if (Actor_Check10(0, 0) == 0) {
-        if (Actor_Check11(0x950) != 0) {
-            if (Actor_Check12(0x96f) == 0) {
-                Actor_Run58((base5_23cc + 8));
+    Actor_unk57_4(base5_23cc);
+    Actor_unk9(8, 0);
+    if (Actor_unk10(0, 0) == 0) {
+        if (Actor_unk11(0x950) != 0) {
+            if (Actor_unk12(0x96f) == 0) {
+                Actor_unk58_4((base5_23cc + 8));
             }
         }
-        Actor_Run59(8, 0);
+        Actor_unk59_4(8, 0);
     } else {
         bump_step(1);
-        Actor_Run60(8, 0);
+        Actor_unk60_4(8, 0);
     }
 }
 
@@ -228,19 +227,19 @@ void Scene_RunScene3be(void)
     u8 *p5;
 
     p5 = *(volatile s32 *)gWork;
-    Actor_Run61();
-    if (Actor_Check13(0x204) != 0) {
-        Actor_Do3(0x9a3);
-        Actor_Do4(0x9a5);
-        Actor_Do5(0x9a4);
-        Actor_Do6(0x9a6);
-        Actor_Do7(0x9a5);
-        Actor_Do8(0x9a4);
+    Actor_unk61_4();
+    if (Actor_unk13(0x204) != 0) {
+        Actor_unk3_2(0x9a3);
+        Actor_unk4_2(0x9a5);
+        Actor_unk5_2(0x9a4);
+        Actor_unk6_2(0x9a6);
+        Actor_unk7_2(0x9a5);
+        Actor_unk8_2(0x9a4);
     }
-    Actor_Run62(*(s16 *)(((s32)p5 + 0x16c)));
-    Actor_Run63();
-    Actor_Run64();
-    Actor_Run65();
+    Actor_unk62_4(*(s16 *)(((s32)p5 + 0x16c)));
+    Actor_unk63_4();
+    Actor_unk64_4();
+    Actor_unk65_4();
 }
 
 s32 Scene_RunScene3be(void)
@@ -249,27 +248,27 @@ s32 Scene_RunScene3be(void)
     s32 record;
 
     if (gCell2[224][0] == (s32)gVal2) {
-        Actor_Do9(0x144);
-        if (Actor_Check14(0x9a0) != 0) {
-            Actor_Run66(11, 0, 0);
+        Actor_unk9_2(0x144);
+        if (Actor_unk14(0x9a0) != 0) {
+            Actor_unk66_4(11, 0, 0);
         }
     }
     if (gCell2[224][0] == (s32)gVal4) {
         if (gCell2[225][0] == 1) {
             Actor_SetRect(108, 17, 1, 1, 107, 17);
         }
-        if (Actor_Check15(0x9a2) != 0) {
-            Actor_Place4(8, 0x1b80000, 0x1340000);
-            Actor_Run67(8, 2);
-            Actor_SetRect2(29, 19, 1, 1, 27, 19);
+        if (Actor_unk15(0x9a2) != 0) {
+            Actor_unk4_3(8, 0x1b80000, 0x1340000);
+            Actor_unk67_4(8, 2);
+            Actor_unk2_5(29, 19, 1, 1, 27, 19);
         }
-        if (Actor_Check16(0x9a5) != 0) {
-            Actor_Run68(9, 0, 0);
-            Actor_Place5(10, 0x2b80000, 0x1200000);
-            Actor_Run69(10, 2);
+        if (Actor_unk16(0x9a5) != 0) {
+            Actor_unk68_4(9, 0, 0);
+            Actor_unk5_3(10, 0x2b80000, 0x1200000);
+            Actor_unk69_4(10, 2);
         }
-        record = Actor_Check19(12);
-        Actor_Run70(record, 0);
+        record = Actor_unk19(12);
+        Actor_unk70_4(record, 0);
     }
     return 0;
 }
@@ -373,23 +372,23 @@ extern u8 gOv15[];
 extern u8 gOv16[];
 extern u8 gOv17[];
 
-void *Actor_Run71(s32, s32, s32, s32);
+void *Actor_unk71_4(s32, s32, s32, s32);
 
-void *Actor_Run72(s32, s32, s32, s32);
+void *Actor_unk72_4(s32, s32, s32, s32);
 
-struct SceneEffect *Actor_Run73();
-struct SceneEffect *Actor_Run74();
+struct SceneEffect *Actor_unk73_4();
+struct SceneEffect *Actor_unk74_4();
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
 
-MovingActor *Actor_Run75(ScenePosition *, MovingActor *);
+MovingActor *Actor_unk75_4(ScenePosition *, MovingActor *);
 
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Actor_Run71(kind, x, y, z);
+    u8 *effect = Actor_unk71_4(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -412,7 +411,7 @@ void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Actor_Run72(kind, x, y, z);
+    u8 *effect = Actor_unk72_4(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -451,21 +450,21 @@ void StagedActorPairScene_SpawnConfiguredEffect(
     s32 duration;
     s32 first_delta;
     s32 accumulated;
-    source_effect = Actor_Run73(0);
+    source_effect = Actor_unk73_4(0);
 
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Actor_Run74(options->kind, x, y, z);
+        effect = Actor_unk74_4(options->kind, x, y, z);
     } else {
-        effect = Actor_Run74(222, x, y, z);
+        effect = Actor_unk74_4(222, x, y, z);
     }
     if (effect == 0) return;
 
     sprite = effect->sprite;
     mode_sprite = sprite;
 
-    Actor_Run76(effect, (flags + 1) & 15);
+    Actor_unk76_4(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
-    Actor_Run77(effect, gOv11[table_offset >> 2]);
+    Actor_unk77_4(effect, gOv11[table_offset >> 2]);
 
     effect->mode55 = 0;
     sprite->state = 0;
@@ -489,7 +488,7 @@ void StagedActorPairScene_SpawnConfiguredEffect(
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {
-        Actor_Run78(effect, options->mode);
+        Actor_unk78_4(effect, options->mode);
     }
 
     if ((flags & 0x20000) != 0) {
@@ -513,7 +512,7 @@ void StagedActorPairScene_SpawnConfiguredEffect(
             first_delta = *(volatile const s32 *)&options->target30;
             accumulated = *(volatile const s32 *)&effect->accum18;
             first_delta -= accumulated;
-            effect->rate_x = Actor_Check20(first_delta,
+            effect->rate_x = Actor_unk20(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
@@ -521,19 +520,19 @@ void StagedActorPairScene_SpawnConfiguredEffect(
         } else {
             first_delta = options->target30;
             first_delta += (s32)0xffff0000;
-            effect->rate_x = Actor_Check21(first_delta,
+            effect->rate_x = Actor_unk21(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
             delta += (s32)0xffff0000;
         }
 
-        effect->rate_y = Actor_Check22(delta, duration);
+        effect->rate_y = Actor_unk22(delta, duration);
     }
 
     if ((flags & 0x200000) != 0) {
-        Actor_Run79(effect, 1);
-        Actor_Run80(effect, options->callback_arg);
+        Actor_unk79_4(effect, 1);
+        Actor_unk80_4(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {
@@ -637,7 +636,7 @@ s32 StagedActorPairScene_StopBlockedMotion(MovingActor *actor)
     destination.y = actor->y;
     step = step << 16;
     destination.z = actor->z + step;
-    blocker = Actor_Run75(&destination, actor);
+    blocker = Actor_unk75_4(&destination, actor);
     if (blocker != 0) {
         u32 allowed_index = 0;
         s32 blocker_kind = *blocker->sprite->kind;
@@ -683,7 +682,7 @@ s32 StagedActorPairScene_FindClearPosition(s32 *search)
     s32 *candidate;
     s32 moved;
     search[5] = 0;
-    actor = (u8 *)Actor_Place7(&direction, search + 1, search);
+    actor = (u8 *)Actor_unk7_3(&direction, search + 1, search);
     if (actor == 0)
         return 0;
     collision_mode = actor + 0x22;
@@ -795,13 +794,13 @@ s32 StagedActorPairScene_GetInitialValue(void) { return 0; }
 
 void StagedActorPairScene_RunStep(void)
 {
-    Actor_Run81();
+    Actor_unk81_4();
 }
 
 void StagedActorPairScene_RunUpdate(void)
 {
-    Actor_Run82();
-    Actor_Run83();
+    Actor_unk82_4();
+    Actor_unk83_4();
 }
 
 void StagedActorPairScene_RotateActorPart(u8 *actor)
@@ -817,7 +816,7 @@ void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
     s32 frames = 40;
 
     while (frames != 0) {
-        Actor_Run84(1);
+        Actor_unk84_4(1);
         frames--;
         if (object->height <= limit) {
             break;
@@ -827,5 +826,5 @@ void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
 
 void StagedActorPairScene_RunActorTwelveCommand(void)
 {
-    Actor_Place8(12, 0, 0);
+    Actor_unk8_3(12, 0, 0);
 }

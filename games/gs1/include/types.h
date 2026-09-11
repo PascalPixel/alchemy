@@ -21,6 +21,4 @@ typedef int bool;
 
 #define NULL ((void *)0)
 
-#include "abi/main.h"
-
 #endif

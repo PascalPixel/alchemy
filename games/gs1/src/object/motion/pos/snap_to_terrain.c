@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/object/motion/pos/snap_to_terrain.h"
 #include "effect_runtime.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

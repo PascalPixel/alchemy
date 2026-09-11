@@ -2,7 +2,6 @@
 #include "scene.h"
 #include "global_cells.h"
 
-
 void Camera_AdvanceBg2Reference(void)
 {
     s32 cnt;

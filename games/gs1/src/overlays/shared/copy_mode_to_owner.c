@@ -1,7 +1,6 @@
 /* Copy the low two mode bits into the object's owner record. */
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/shared/copy_mode_to_owner.h"
 
 struct Owner {
     u8 unk0[9];

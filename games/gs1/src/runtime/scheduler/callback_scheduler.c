@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/scheduler/callback_scheduler.h"
 
 struct SchedulerTask {
     u32 callback;

@@ -10,6 +10,4 @@ struct BattleFormationRecord {
     u8 maximum_counts[5];
 };
 
-extern struct BattleFormationRecord Data_080c5c38[];
-
 #endif

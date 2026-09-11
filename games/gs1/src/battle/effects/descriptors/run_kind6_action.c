@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/descriptors/run_kind6_action.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -23,7 +22,7 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
                 Battle_Do(FIELD_AT_OFFSET(p, s32 *, 8));
                 Battle_Apply(-1, 0);
                 ret = 0;
-                Battle_Run2();
+                Battle_unk2_4();
             } else {
                 ((void (*)(s32))val)(arg0);
                 ret = 0;

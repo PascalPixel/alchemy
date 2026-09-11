@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/item_menu/draw/category.h"
 #include "item_menu.h"
 #include "owner_state.h"
 

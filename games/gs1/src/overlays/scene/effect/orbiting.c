@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/effect/orbiting.h"
 
 #define UpdateOrbitingSceneObject Value
 
@@ -86,7 +85,7 @@ extern u8 Value_000013c0;
 extern s32 Effect_Run(void);   /* Random source. */
 extern u8 Value;
 
-struct SceneEntity *Effect_Run2();
+struct SceneEntity *Effect_unk2_4();
 
 OrbitingSceneObject *GetOrbitingSceneObject(void);
 
@@ -146,9 +145,9 @@ u8 *SceneData_GetTable8C50(void)
 u8 *SceneData_SelectRecordByScene22(void)
 {
     if (gCell[224] == (s32)&Value_00000022) {
-        if (Effect_Check2(0x84f) != 0)
+        if (Effect_unk2(0x84f) != 0)
             gOv[118] = 1;
-        if (Effect_Check3(0x845) != 0)
+        if (Effect_unk3(0x845) != 0)
             gOv[70] = 0;
         return gOv;
     }
@@ -157,20 +156,20 @@ u8 *SceneData_SelectRecordByScene22(void)
 
 void Scene_RunStepWithValueFd2(void)
 {
-    Effect_Run3();
-    Effect_Place3(0xD, 0, 0);
+    Effect_unk3_4();
+    Effect_unk3_3(0xD, 0, 0);
     Effect_Do(0xFD2);
     Effect_Apply(0xB5, 3);
     Effect_Apply2(0xB5, 0);
-    Effect_Run4();
+    Effect_unk4_4();
 }
 
 void Scene_RunStepWithValue29de(void)
 {
-    Effect_Run5();
+    Effect_unk5_4();
     Effect_Apply3(0x947, 1);
     Effect_Apply4(0x29DE, 1);
-    Effect_Run6();
+    Effect_unk6_4();
 }
 
 s32 SceneData_SelectTable8d24ByState(void)
@@ -183,26 +182,26 @@ s32 SceneData_SelectTable8d24ByState(void)
 
 void Dialogue_RunActor9Message13c0(void)
 {
-    Effect_Run7();
-    Effect_Do2((s32)&Value_000013c0);
+    Effect_unk7_4();
+    Effect_unk2_2((s32)&Value_000013c0);
     Effect_Apply5(9, 0);
-    Effect_Run8();
+    Effect_unk8_4();
 }
 
 void Dialogue_RunActor10Message13c3(void)
 {
-    Effect_Run9();
-    Effect_Do3(0x13C3);
+    Effect_unk9_4();
+    Effect_unk3_2(0x13C3);
     Effect_Apply6(10, 0);
-    Effect_Run10();
+    Effect_unk10_4();
 }
 
 void Dialogue_RunActor11Message1751(void)
 {
-    Effect_Run11();
-    Effect_Do4(0x1751);
+    Effect_unk11_4();
+    Effect_unk4_2(0x1751);
     Effect_Apply7(11, 0);
-    Effect_Run12();
+    Effect_unk12_4();
 }
 
 void Scene_RunScene38e(void)
@@ -212,17 +211,17 @@ void Scene_RunScene38e(void)
     u32 i;
     s32 record;
 
-    Effect_Run13();
+    Effect_unk13_4();
     if (Effect_Check(0x200) == 0) {
-        Effect_Run14();
+        Effect_unk14_4();
     }
     Effect_Place(0, 0x8000, 0x4000);
     *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    Effect_Run15(0, 2);
-    Effect_Place2(0, 2, -16);
-    Effect_Run16(16);
-    Effect_Run17(2);
-    Effect_Run18();
+    Effect_unk15_4(0, 2);
+    Effect_unk2_3(0, 2, -16);
+    Effect_unk16_4(16);
+    Effect_unk17_4(2);
+    Effect_unk18_4();
 }
 
 /*
@@ -245,7 +244,7 @@ s32 Scene_RunEntryZeroAndScene22Body(void)
 
     *(s32 *)(work + 448) = 256;            /* 128 << 1 */
 
-    ent = Effect_Run2(8);
+    ent = Effect_unk2_4(8);
     fp = (u8 *)ent + 35;
     zero = 0;
     *fp = (u8)zero;
@@ -255,7 +254,7 @@ s32 Scene_RunEntryZeroAndScene22Body(void)
     h->flags09 = (u8)((h->flags09 & zero) | 0x04);
 
     if (gCell[224] == (s32)&Value_00000022) {
-        Effect_Run19();
+        Effect_unk19_4();
     }
 
     return 0;
@@ -263,9 +262,9 @@ s32 Scene_RunEntryZeroAndScene22Body(void)
 
 void Scene_SetupWithDescriptor8BD4(void)
 {
-    Effect_Do5(0xBC);
-    Effect_Place4(0x2008BD4, 0x34, 0xB);
-    Effect_Do6(0x200);
+    Effect_unk5_2(0xBC);
+    Effect_unk4_3(0x2008BD4, 0x34, 0xB);
+    Effect_unk6_2(0x200);
 }
 
 /*
@@ -282,21 +281,21 @@ s32 Effect_UpdateLobeOrbitEntity(struct SceneEntity *entity)
     s32 tilt;
     s32 step;
 
-    vertical = Effect_Check4(entity->phase) * 2;
+    vertical = Effect_unk4(entity->phase) * 2;
     if (vertical > 0) vertical = -vertical;
 
-    entity->x = entity->origin_x + Effect_Check5(entity->phase) * 2;
+    entity->x = entity->origin_x + Effect_unk5(entity->phase) * 2;
     entity->y = entity->origin_y + vertical;
 
     /* A quarter turn on from the position phase. */
-    tilt = Effect_Check6(entity->phase + 0x8000);
+    tilt = Effect_unk6(entity->phase + 0x8000);
     /* Bias then shift: division by 8 rounded toward zero. */
     if (tilt < 0) tilt += 7;
     handle->field1e = (s16)(tilt >> 3);
 
     /* The shift pair extracts a field, unsigned; it is not a scale. */
     step = (s32)(((u32)Effect_Run() << 9) >> 16)
-         + (s32)(((u32)Effect_Check7() << 9) >> 16);
+         + (s32)(((u32)Effect_unk7() << 9) >> 16);
     entity->phase = entity->phase + step + 1024;
 
     return 0;

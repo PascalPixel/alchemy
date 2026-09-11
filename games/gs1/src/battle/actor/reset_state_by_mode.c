@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/actor/reset_state_by_mode.h"
 
 u8 *Runtime_GetObject(s32);
 

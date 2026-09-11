@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/locations/heidia/village/scene/seq_tail.h"
 
 void Scene_RunSequenceTail(void)
 {

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/text/msg/show_localized_message_and_wait.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_JA)

@@ -14,6 +14,4 @@ struct State080a8088 {
     u16 mode;
 };
 
-void Func_080a33d4(struct State080a8088 *, s32);
-
 #endif

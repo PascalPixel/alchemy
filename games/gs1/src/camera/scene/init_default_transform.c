@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/camera/scene/init_default_transform.h"
 
 struct State_080b7f9c {
     u8 filler0[12];
@@ -45,8 +44,8 @@ void Camera_InitDefaultTransform(void)
 
     Sys_Run();
     Sys_Do(&state->field0c);
-    Sys_Do2(state->field36);
-    Sys_Do3(state->field34);
+    Sys_unk2_2(state->field36);
+    Sys_unk3_2(state->field34);
 
     transfer.first = 0;
     transfer.second = 0;

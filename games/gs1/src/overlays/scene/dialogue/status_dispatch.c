@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/status_dispatch.h"
 
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define SCENE_FIELD_1C8 (*(s32 *)(*(u8 **)0x03001ebc + 0x1c8))
@@ -64,7 +63,7 @@ void gOv11();
  * emits exactly the reference's instructions; two short runs sit in a
  * different order.
  *
- *   - at owner offset 0x42c the two constant arguments of the Talk_Check23
+ *   - at owner offset 0x42c the two constant arguments of the Talk_unk23
  *     call are set r0 before r1 where the reference sets r1 before r0;
  *   - the pc-relative load of 0x0200adac that the three action-callback calls
  *     share lands at owner offset 0x5f8, before the third
@@ -74,7 +73,7 @@ void gOv11();
  *     schedule fills the load-use gap with `movs r0, #1`, ours has no gap to
  *     fill.
  *
- * Neither survived respelling. Wrapping or prototyping the Talk_Check23 site
+ * Neither survived respelling. Wrapping or prototyping the Talk_unk23 site
  * leaves it unchanged. Spelling the first action-callback site through the
  * constant-passing wrapper below, or through a shared local, moves the load
  * but does not place it after the call: the wrapper form measures 8 differing
@@ -105,8 +104,8 @@ void gOv11();
  * their two targets. That is the case for the veneer at 0x0200ad0c: it is
  * reached only from 0x02001d28 and 0x02001d64, and each of those sits exactly
  * eight bytes before a site that calls the neighbouring veneer at 0x0200ad04,
- * so both aliases the reference offers for it - Talk_Run14 and
- * Talk_Run15 - name two targets and neither can bind. Every other target
+ * so both aliases the reference offers for it - Talk_unk14_4 and
+ * Talk_unk15_4 - name two targets and neither can bind. Every other target
  * in this owner has at least one alias of its own, and is declared under it
  * exactly once.
  *
@@ -257,7 +256,7 @@ s32 SceneData_SelectTableBySceneId(void)
     return (s32)gOv3;
 }
 
-s32 Talk_Run16(void)
+s32 Talk_unk16_4(void)
 {
     return 0;
 }
@@ -293,29 +292,29 @@ s32 SceneData_SelectDataBySelectorAndSubstate(void)
 /* Contiguous unnamed leaf-owner run for resource_3b9. */
 void Dialogue_RunActor10MessageByFlag962(void)
 {
-    Talk_Run17();
-    if (Talk_Check24(0x962)) {
-        Talk_Do17(0x2251);
+    Talk_unk17_4();
+    if (Talk_unk24(0x962)) {
+        Talk_unk17_2(0x2251);
         Talk_Apply(10, 0);
     } else {
-        Talk_Do18(0x2057);
+        Talk_unk18_2(0x2057);
         Talk_Apply2(10, 0);
     }
-    Talk_Run18();
+    Talk_unk18_4();
 }
 
 void Dialogue_RunActor13MessageByFlag962(void)
 {
-    Talk_Run19();
-    if (Talk_Check25(0x962)) {
-        Talk_Place91(13, 258, 40);
-        Talk_Do19(0x2254);
+    Talk_unk19_4();
+    if (Talk_unk25(0x962)) {
+        Talk_unk91_2(13, 258, 40);
+        Talk_unk19_2(0x2254);
         Talk_Apply3(13, 0);
     } else {
-        Talk_Do20(0x205c);
+        Talk_unk20_2(0x205c);
         Talk_Apply4(13, 0);
     }
-    Talk_Run20();
+    Talk_unk20_4();
 }
 
 void Scene_RunScene3b9(void)
@@ -325,20 +324,20 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run21();
+    Talk_unk21_4();
     if (Talk_Check(0x962) != 0) {
-        Talk_Run22(14, 2);
+        Talk_unk22_4(14, 2);
         Talk_Do(0x2256);
-        Talk_Run23(14);
-        Talk_Run24(14, 0, 0);
-        Talk_Run25(20);
-        Talk_Check2(14, 0);
-        Talk_Run26(14, 0);
+        Talk_unk23_4(14);
+        Talk_unk24_4(14, 0, 0);
+        Talk_unk25_4(20);
+        Talk_unk2(14, 0);
+        Talk_unk26_4(14, 0);
     } else {
-        Talk_Do2(0x205d);
-        Talk_Run27(14, 0);
+        Talk_unk2_2(0x205d);
+        Talk_unk27_4(14, 0);
     }
-    Talk_Run28();
+    Talk_unk28_4();
 }
 
 void Scene_RunScene3b9(void)
@@ -348,33 +347,33 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run29();
-    if (Talk_Check3(0x962) != 0) {
-        if (Talk_Check4(0x3c0) != 0) {
-            Talk_Do3(0x225e);
+    Talk_unk29_4();
+    if (Talk_unk3(0x962) != 0) {
+        if (Talk_unk4(0x3c0) != 0) {
+            Talk_unk3_2(0x225e);
         } else {
-            Talk_Do4(0x225a);
-            Talk_Check5(16, 0);
-            if (Talk_Check6(0, 0) == 0) {
+            Talk_unk4_2(0x225a);
+            Talk_unk5(16, 0);
+            if (Talk_unk6(0, 0) == 0) {
                 bump_step(1);
                 Talk_Place(16, 0x100, 40);
-                Talk_Check7(16, 0);
-                if (Talk_Check8(0, 0) == 0) {
+                Talk_unk7(16, 0);
+                if (Talk_unk8(0, 0) == 0) {
                     bump_step(1);
                 }
-                ((void (*)())Talk_Check26)(40);
-                Talk_Run30(16, 0);
-                Talk_Do5(0x3c0);
+                ((void (*)())Talk_unk26)(40);
+                Talk_unk30_4(16, 0);
+                Talk_unk5_2(0x3c0);
                 goto L_02000448;
             }
         }
-        Talk_Run31(16, 0);
+        Talk_unk31_4(16, 0);
     } else {
-        Talk_Do6(0x205e);
-        Talk_Run32(16, 0);
+        Talk_unk6_2(0x205e);
+        Talk_unk32_4(16, 0);
     }
     L_02000448:;
-    Talk_Run33();
+    Talk_unk33_4();
 }
 
 void Scene_RunScene3b9(void)
@@ -385,14 +384,14 @@ void Scene_RunScene3b9(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Talk_Check9(13);
-    Talk_Run34();
-    Talk_Run35(13);
-    Talk_Run36(13, 0, 20);
-    Talk_Do7(0x2114);
-    Talk_Run37(13);
-    Talk_Run38(13, 1);
-    Talk_Run39(13, 0);
+    rec7 = Talk_unk9(13);
+    Talk_unk34_4();
+    Talk_unk35_4(13);
+    Talk_unk36_4(13, 0, 20);
+    Talk_unk7_2(0x2114);
+    Talk_unk37_4(13);
+    Talk_unk38_4(13, 1);
+    Talk_unk39_4(13, 0);
     {
         u16 *target = (u16 *)(rec7 + 100);
         s32 shown = 0x2d0;
@@ -405,8 +404,8 @@ void Scene_RunScene3b9(void)
 
         *target = shown;
     }
-    Talk_Run40(13, 2);
-    Talk_Run41();
+    Talk_unk40_4(13, 2);
+    Talk_unk41_4();
 }
 
 void Scene_RunScene3b9(void)
@@ -416,28 +415,28 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run42();
+    Talk_unk42_4();
     Talk_Run(14, 0x102);
-    Talk_Run43(14, 2);
-    Talk_Do8(0x2116);
-    Talk_Run44(14);
-    Talk_Place2(14, 0x102, 40);
-    Talk_Run45(14, 0);
-    Talk_Run46();
+    Talk_unk43_4(14, 2);
+    Talk_unk8_2(0x2116);
+    Talk_unk44_4(14);
+    Talk_unk2_3(14, 0x102, 40);
+    Talk_unk45_4(14, 0);
+    Talk_unk46_4();
 }
 
 void Dialogue_ShowLine2118WithActor15Steps(void)
 {
-    Talk_Run47();
-    Talk_Run48(0x2118);
-    Talk_Run49(15);
-    Talk_Run50(15, 0, 20);
-    Talk_Run51(15);
-    Talk_Run52(15, 3);
-    Talk_Run53(15, 0);
-    Talk_Run54(15);
-    Talk_Run55(15, 20480);
-    Talk_Run56();
+    Talk_unk47_4();
+    Talk_unk48_4(0x2118);
+    Talk_unk49_4(15);
+    Talk_unk50_4(15, 0, 20);
+    Talk_unk51_4(15);
+    Talk_unk52_4(15, 3);
+    Talk_unk53_4(15, 0);
+    Talk_unk54_4(15);
+    Talk_unk55_4(15, 20480);
+    Talk_unk56_4();
 }
 
 void Scene_RunScene3b9(void)
@@ -447,42 +446,42 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run57();
-    Talk_Run58(16, 2);
-    Talk_Do9(0x211b);
-    Talk_Run59(16, 0, 20);
-    if (Talk_Check10(0x3c1) != 0) {
-        Talk_Run60(20);
+    Talk_unk57_4();
+    Talk_unk58_4(16, 2);
+    Talk_unk9_2(0x211b);
+    Talk_unk59_4(16, 0, 20);
+    if (Talk_unk10(0x3c1) != 0) {
+        Talk_unk60_4(20);
     } else {
-        Talk_Run61(17, 0);
-        Talk_Run62(17, 1);
-        Talk_Run63(17);
-        Talk_Run64(17, 0, 20);
-        Talk_Run65(17, 4);
-        Talk_Run66(17);
-        Talk_Place3(17, 0x105, 40);
-        Talk_Run67(17);
-        Talk_Run2(17, 0x5000);
-        Talk_Do10(0x3c1);
+        Talk_unk61_4(17, 0);
+        Talk_unk62_4(17, 1);
+        Talk_unk63_4(17);
+        Talk_unk64_4(17, 0, 20);
+        Talk_unk65_4(17, 4);
+        Talk_unk66_4(17);
+        Talk_unk3_3(17, 0x105, 40);
+        Talk_unk67_4(17);
+        Talk_unk2_4(17, 0x5000);
+        Talk_unk10_2(0x3c1);
     }
-    Talk_Run68();
+    Talk_unk68_4();
 }
 
 void Scene_RunActorSeventeenDialogueSteps(void)
 {
     extern u8 gWork[];
 
-    Talk_Run69();
-    Talk_Run70(17, 0, 20);
-    Talk_Run71(0x211f);
-    Talk_Run72(17);
-    Talk_Run73(0, 3);
-    Talk_Run74(17, 3);
-    Talk_Run75(17);
-    Talk_Run76(17, 1);
-    Talk_Run77(17);
-    Talk_Run78(17, 20480);
-    Talk_Run79();
+    Talk_unk69_4();
+    Talk_unk70_4(17, 0, 20);
+    Talk_unk71_4(0x211f);
+    Talk_unk72_4(17);
+    Talk_unk73_4(0, 3);
+    Talk_unk74_4(17, 3);
+    Talk_unk75_4(17);
+    Talk_unk76_4(17, 1);
+    Talk_unk77_3(17);
+    Talk_unk78_3(17, 20480);
+    Talk_unk79_3();
 }
 
 void Scene_RunScene3b9(void)
@@ -492,33 +491,33 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run80();
-    Talk_Run81(18, 0, 20);
-    Talk_Do11(0x2122);
-    Talk_Run82(18);
-    Talk_Place4(18, 0xd000, 20);
-    Talk_Place5(18, 0xb000, 20);
-    Talk_Place6(18, 0x8000, 40);
-    Talk_Run83(18, 0, 20);
-    Talk_Run84(18);
-    Talk_Run85(18, 3);
-    Talk_Run86(18);
-    Talk_Check11(18, 0x5000);
-    Talk_Run87();
+    Talk_unk80_3();
+    Talk_unk81_3(18, 0, 20);
+    Talk_unk11_2(0x2122);
+    Talk_unk82_3(18);
+    Talk_unk4_3(18, 0xd000, 20);
+    Talk_unk5_3(18, 0xb000, 20);
+    Talk_unk6_3(18, 0x8000, 40);
+    Talk_unk83_3(18, 0, 20);
+    Talk_unk84_3(18);
+    Talk_unk85_3(18, 3);
+    Talk_unk86_3(18);
+    Talk_unk11(18, 0x5000);
+    Talk_unk87_3();
 }
 
 void Scene_RunScene3b9(void)
 {
     extern u8 gWork[];
 
-    Talk_Run88();
-    Talk_Check27(8, 0, 20);
-    Talk_Run89((s32)&Value_00002125);
-    Talk_Check28(8, 0);
-    if (Talk_Check29(0, 0) != 0)
+    Talk_unk88_3();
+    Talk_unk27(8, 0, 20);
+    Talk_unk89_3((s32)&Value_00002125);
+    Talk_unk28(8, 0);
+    if (Talk_unk29(0, 0) != 0)
         bump_step(1);
-    Talk_Run90(8, 0);
-    Talk_Run91();
+    Talk_unk90_3(8, 0);
+    Talk_unk91_3();
 }
 
 /*
@@ -548,8 +547,8 @@ void State_ApplyFlags565And564(void)
     extern u8 gCell[];
     extern u8 *gWork;
 
-    Talk_Run92(0x235);
-    Talk_Run93(564);
+    Talk_unk92_3(0x235);
+    Talk_unk93_3(564);
 }
 
 /* Reads flag record 0x8a4; when set, runs one short setup on record 17.
@@ -569,7 +568,7 @@ void Scene_RunConditionalSceneSetup(void)
     if (flag_8a4 != 0) {
         Object_LinkPair_1(RECORD_17, 0, 40);
         SceneWork_SetStepValue_1(0x206f);
-        Talk_Run94(RECORD_17);
+        Talk_unk94_3(RECORD_17);
         Motion_ArmCb_1(RECORD_17, 0x3000, 20);
     } else {
         Motion_SetVarCb_1(RECORD_17, 2);
@@ -578,18 +577,18 @@ void Scene_RunConditionalSceneSetup(void)
         /* Byte at +85 of the record returned by RuntimeBlock_GetOffset1e0Pointer_1(); written
          * with the (already known zero) flag value here. */
         *(u8 *)(RuntimeBlock_GetOffset1e0Pointer_2() + 85) = flag_8a4;
-        Talk_Run95(1);
+        Talk_unk95_3(1);
         Motion_SetSpeedLim_1(0x66666, 0xcccc);
         Motion_CamBounds_1(0x21c0000, -1, 0xd00000, 1);
         Object_CommitPositionThenWaitIfModeZero_1();
         SCENE_PHASE = 0x200;
         SCENE_FIELD_1C8 = 32;
-        Talk_Run96();
+        Talk_unk96_3();
         Motion_SetSpeed_1();
         if (GameFlag_IsSet_2(0x8a3) != 0) {
-            Talk_Run97(70);
+            Talk_unk97_3(70);
         } else {
-            Talk_Run98(7);
+            Talk_unk98_3(7);
         }
     }
     Battle_SchedShoulder_1();
@@ -605,117 +604,117 @@ void Scene_BuildActorPresentationGroup(void)
     s32 phase;
     s32 field;
 
-    Talk_Run99();
-    Talk_Run3(-1, -1, -1, 0);
-    Talk_Run100(247);
-    Talk_Run101(8, 2);
-    Talk_Run102(9, 2);
-    Talk_Run103(10, 2);
-    Talk_Run104(11, 2);
-    Talk_Run105(12, 2);
-    Talk_Run106(13, 2);
-    Talk_Run107(14, 0);
-    Talk_Run108(15, 0);
-    Talk_Run109(16, 0);
-    Talk_Run110(17, 0);
-    Talk_Run111(18, 0);
-    rec2 = Talk_Check30(21);
-    Talk_Run112(rec2, 0);
-    rec2 = Talk_Check31(19);
+    Talk_unk99_3();
+    Talk_unk3_4(-1, -1, -1, 0);
+    Talk_unk100_3(247);
+    Talk_unk101_3(8, 2);
+    Talk_unk102_3(9, 2);
+    Talk_unk103_3(10, 2);
+    Talk_unk104_3(11, 2);
+    Talk_unk105_3(12, 2);
+    Talk_unk106_3(13, 2);
+    Talk_unk107_3(14, 0);
+    Talk_unk108_3(15, 0);
+    Talk_unk109_3(16, 0);
+    Talk_unk110_3(17, 0);
+    Talk_unk111_3(18, 0);
+    rec2 = Talk_unk30(21);
+    Talk_unk112_3(rec2, 0);
+    rec2 = Talk_unk31(19);
     *(volatile s32 *)(rec2 + 24) = -0x10000;
-    rec2 = Talk_Check12(20);
+    rec2 = Talk_unk12(20);
     *(volatile s32 *)(rec2 + 24) = -0x10000;
-    Talk_Run113(1);
-    Talk_Run114(0, 0, 0);
-    Talk_Run115(1);
+    Talk_unk113_3(1);
+    Talk_unk114_3(0, 0, 0);
+    Talk_unk115_3(1);
     work = *(u8 *volatile *)gWork;
     phase = 0x1c0;
     *(volatile s32 *)(work + phase) = 0x200;
     field = 0x1c8;
     *(volatile s32 *)(work + field) = 32;
-    Talk_Run116();
-    Talk_Run117();
-    Talk_Run118(40);
-    Talk_Run119(16, 1);
-    Talk_Run120(20);
-    Talk_Place7(16, 0xcccc, 0x6666);
-    Talk_Run121(16, 164, 0x388);
-    Talk_Run122(20);
-    Talk_Run123(16, 9);
-    Talk_Run124(40);
-    Talk_Run125(16, 10);
-    Talk_Run126(60);
-    Talk_Run127(16, 1);
-    Talk_Run128(20);
-    Talk_Place8(16, 164, 0x398);
-    Talk_Place9(16, 185, 0x398);
-    Talk_Place10(16, 0xc000, 20);
-    Talk_Place11(16, 185, 0x394);
-    Talk_Run129(16, 11);
-    Talk_Run130(40);
-    Talk_Run131(16, 1);
-    Talk_Run132(60);
-    Talk_Run133(16, 3);
-    Talk_Run134(40);
-    Talk_Run135(16, 0x200af88);
-    Talk_Run136(80);
-    Talk_Run4(16, 0x102);
-    Talk_Run137(60);
-    Talk_Place12(14, 0xd000, 0);
-    Talk_Place13(15, 0x5000, 0);
-    Talk_Run138(17, 0, 0);
-    Talk_Place14(18, 0x8000, 20);
-    Talk_Run5(14, 0x102);
-    Talk_Run6(15, 0x102);
-    Talk_Run7(17, 0x102);
-    Talk_Run8(18, 0x102);
-    Talk_Run139(60);
-    Talk_Place15(14, 0x3000, 0);
-    Talk_Place16(15, 0x3000, 0);
-    Talk_Place17(17, 0x3000, 0);
+    Talk_unk116_3();
+    Talk_unk117_3();
+    Talk_unk118_3(40);
+    Talk_unk119_3(16, 1);
+    Talk_unk120_3(20);
+    Talk_unk7_3(16, 0xcccc, 0x6666);
+    Talk_unk121_3(16, 164, 0x388);
+    Talk_unk122_3(20);
+    Talk_unk123_3(16, 9);
+    Talk_unk124_3(40);
+    Talk_unk125_3(16, 10);
+    Talk_unk126_3(60);
+    Talk_unk127_3(16, 1);
+    Talk_unk128_3(20);
+    Talk_unk8_3(16, 164, 0x398);
+    Talk_unk9_3(16, 185, 0x398);
+    Talk_unk10_3(16, 0xc000, 20);
+    Talk_unk11_3(16, 185, 0x394);
+    Talk_unk129_3(16, 11);
+    Talk_unk130_3(40);
+    Talk_unk131_3(16, 1);
+    Talk_unk132_3(60);
+    Talk_unk133_3(16, 3);
+    Talk_unk134_3(40);
+    Talk_unk135_3(16, 0x200af88);
+    Talk_unk136_3(80);
+    Talk_unk4_4(16, 0x102);
+    Talk_unk137_3(60);
+    Talk_unk12_3(14, 0xd000, 0);
+    Talk_unk13_3(15, 0x5000, 0);
+    Talk_unk138_3(17, 0, 0);
+    Talk_unk14_3(18, 0x8000, 20);
+    Talk_unk5_4(14, 0x102);
+    Talk_unk6_4(15, 0x102);
+    Talk_unk7_4(17, 0x102);
+    Talk_unk8_4(18, 0x102);
+    Talk_unk139_3(60);
+    Talk_unk15_3(14, 0x3000, 0);
+    Talk_unk16_3(15, 0x3000, 0);
+    Talk_unk17_3(17, 0x3000, 0);
     shift = 0x3000;
-    Talk_Check13(18, shift);
-    Talk_Run140(16);
-    rec2 = Talk_Check32(16);
+    Talk_unk13(18, shift);
+    Talk_unk140_3(16);
+    rec2 = Talk_unk32(16);
     {
         s32 shown = 0xd000;
         *(volatile u16 *)(rec2 + 6) = shown;
     }
     *(volatile s32 *)(rec2 + 24) = 0x10000;
     *(volatile s32 *)(rec2 + 28) = 0x10000;
-    Talk_Run141(20);
-    Talk_Run142(16, 0);
-    Talk_Run143(40);
-    Talk_Run144(19, 5);
-    Talk_Run145(20, 5);
-    Talk_Run146(60);
-    Talk_Run147(16, shift, 20);
-    Talk_Run148(16, 8);
-    Talk_Run149(20);
-    Talk_Run150(14, 4);
-    Talk_Run151(15, 4);
-    Talk_Run152(17, 4);
-    Talk_Run153(18, 4);
-    Talk_Run154(40);
-    Talk_Run155(16, 4);
-    Talk_Run156(10);
-    Talk_Place18(16, 0x20000, 0x10000);
-    Talk_Place19(16, 162, 0x394);
-    Talk_Run157(16, 162, 0x37a);
-    Talk_Run158(19, 1);
-    Talk_Run159(20, 1);
-    Talk_Place20(16, 184, 0x35f);
-    Talk_Place21(16, 184, 0x31c);
-    Talk_Run160(16, 0, 0);
+    Talk_unk141_3(20);
+    Talk_unk142_3(16, 0);
+    Talk_unk143_3(40);
+    Talk_unk144_3(19, 5);
+    Talk_unk145_3(20, 5);
+    Talk_unk146_3(60);
+    Talk_unk147_3(16, shift, 20);
+    Talk_unk148_3(16, 8);
+    Talk_unk149_3(20);
+    Talk_unk150_3(14, 4);
+    Talk_unk151_2(15, 4);
+    Talk_unk152_2(17, 4);
+    Talk_unk153_2(18, 4);
+    Talk_unk154_2(40);
+    Talk_unk155_2(16, 4);
+    Talk_unk156_2(10);
+    Talk_unk18_3(16, 0x20000, 0x10000);
+    Talk_unk19_3(16, 162, 0x394);
+    Talk_unk157_2(16, 162, 0x37a);
+    Talk_unk158_2(19, 1);
+    Talk_unk159_2(20, 1);
+    Talk_unk20_3(16, 184, 0x35f);
+    Talk_unk21_3(16, 184, 0x31c);
+    Talk_unk160_2(16, 0, 0);
     work = *(u8 *volatile *)gWork;
     *(volatile s32 *)(work + phase) = 0x201;
     *(volatile s32 *)(work + field) = 16;
-    Talk_Run161();
-    Talk_Run162();
+    Talk_unk161_2();
+    Talk_unk162_2();
     work = *(u8 *volatile *)gWork;
     *(volatile s32 *)(work + phase) = 0x100;
-    Talk_Run163(69);
-    Talk_Run164();
+    Talk_unk163_2(69);
+    Talk_unk164_2();
 }
 
 void State_SetRuntimeWord448To513(void)
@@ -723,26 +722,26 @@ void State_SetRuntimeWord448To513(void)
     extern u8 gCell[];
     extern u8 *gWork;
 
-    Talk_Run165();
+    Talk_unk165_2();
     *(s32 *)((u8 *)gWork + 448) = 513;
 
-    Talk_Run166();
-    Talk_Run167();
+    Talk_unk166_2();
+    Talk_unk167_2();
 
-    Talk_Run168(20);
-    Talk_Run169(17, 160 << 7);
-    Talk_Run170(0x206e);
+    Talk_unk168_2(20);
+    Talk_unk169_2(17, 160 << 7);
+    Talk_unk170_2(0x206e);
 
-    if (Talk_Check33(0x8a4) != 0) {
+    if (Talk_unk33(0x8a4) != 0) {
         *(u16 *)((u8 *)gWork + 472) =
             (u16)(*(u16 *)((u8 *)gWork + 472) + 1);
     }
 
-    Talk_Run171(17);
-    Talk_Run172(17, 192 << 6);
-    Talk_Run173(0x8a3);
+    Talk_unk171_2(17);
+    Talk_unk172_2(17, 192 << 6);
+    Talk_unk173_2(0x8a3);
 
-    Talk_Run174();
+    Talk_unk174_2();
 }
 
 /* Sets up actors 8-20 (position, pose, or movement/sprite flags), advances
@@ -761,7 +760,7 @@ void Scene_RunMiddleSequence(void)
     ObjectMotion_PlaceWithinCameraBounds_1(-1, -1, -1, 0);
     Audio_PlayCue_1(247);
     Object_SetModeById_1(8, 2);
-    Talk_Run9(9, 2);
+    Talk_unk9_4(9, 2);
     Object_SetModeById_2(10, 2);
     Object_SetModeById_3(11, 2);
     Object_SetModeById_4(12, 2);
@@ -772,14 +771,14 @@ void Scene_RunMiddleSequence(void)
     Object_SetModeById_8(17, 0);
     Object_SetModeById_9(18, 0);
     rec2 = Scene_GetRecord_1(21);
-    Talk_Run175(rec2, 0);
+    Talk_unk175_2(rec2, 0);
     rec2 = Scene_GetRecord_2(19);
     *(volatile s32 *)(rec2 + 24) = -0x10000;
     rec2 = Scene_GetRecord_3(20);
     *(volatile s32 *)(rec2 + 24) = -0x10000;
-    Talk_Run176(1);
+    Talk_unk176_2(1);
     Motion_SetHPosTerrain_2(0, 0, 0);
-    Talk_Run177(1);
+    Talk_unk177_2(1);
     /* Advance the scene phase/status word at +0x1c0 and its companion word
      * at +0x1c8 of the shared scene work record. */
     work = *(u8 *volatile *)gWork;
@@ -823,7 +822,7 @@ void Scene_RunMiddleSequence(void)
     Battle_WaitMode0_18(60);
     Motion_ArmCb_5(14, 0x3000, 0);
     Motion_ArmCb_6(15, 0x3000, 0);
-    Talk_Check14(18, 0x3000);
+    Talk_unk14(18, 0x3000);
     Battle_WaitMode0_19(17, 0x101);
     /* Clear the flag byte at +85, then step the +12 field back and forth
      * 20 times, waiting between each step. */
@@ -831,9 +830,9 @@ void Scene_RunMiddleSequence(void)
     rec[85] = 0;
     for (counter = 0; counter < 20; counter++) {
         *(volatile s32 *)(rec + 12) += 0x9999;
-        Talk_Run178(4);
+        Talk_unk178_2(4);
         *(volatile s32 *)(rec + 12) += -0x4ccc;
-        Talk_Run179(4);
+        Talk_unk179_2(4);
     }
     Object_SetModeById_14(19, 6);
     Object_SetModeById_15(20, 6);
@@ -853,11 +852,11 @@ void Scene_RunMiddleSequence(void)
     *(volatile s32 *)(rec + 28) = 0x10000;
     Battle_WaitMode0_22(10);
     Audio_PlayCue_2(107);
-    Talk_Run180(0x10000, 0x10000, 0x10000);
+    Talk_unk180_2(0x10000, 0x10000, 0x10000);
     Battle_WaitMode0_23(10);
     Audio_PlayCue_3(0x121);
-    Talk_Place22(-1, -1, 0xe666);
-    Talk_Run181();
+    Talk_unk22_3(-1, -1, 0xe666);
+    Talk_unk181_2();
     Motion_SetSpeed_3(17, 0x19999, 0xcccc);
     Motion_SetPosReset_5(17, 208, 0x3a0);
     Audio_PlayCue_4(92);
@@ -875,10 +874,10 @@ void Scene_RunMiddleSequence(void)
     work = *(u8 *volatile *)gWork;
     *(volatile s32 *)((work + 0x1c0)) = 0x201;
     *(volatile s32 *)((work + 0x1c8)) = 16;
-    Talk_Run182();
+    Talk_unk182_2();
     Motion_SetSpeed_4();
     GameFlag_Set_1(0x8a4);
-    Talk_Run183(69);
+    Talk_unk183_2(69);
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }
 
@@ -891,9 +890,9 @@ s32 State_DispatchByStatus448(void)
     s16 status = *(s16 *)(gCell + off);
 
     if (status == (s32)&Value_0000008c) {
-        Talk_Run184();
+        Talk_unk184_2();
     } else if (status == (s32)&Value_0000008e) {
-        Talk_Run185();
+        Talk_unk185_2();
     }
     return 0;
 }
@@ -906,7 +905,7 @@ s32 State_DispatchByStatus448(void)
  */
 
 /* A Func_ name here is a loader-relocated call word, not a runtime address.
- * Talk_Apply5 and Talk_Do21 share an encoded word but reach different
+ * Talk_Apply5 and Talk_unk21_2 share an encoded word but reach different
  * veneers, so the two declarations must stay distinct; the suffix marks the
  * second call word, not a second entry point. */
 
@@ -923,7 +922,7 @@ void Scene_DispatchBySelector(void)
 
     s32 no;
 
-    Talk_Do22(1);
+    Talk_unk22_2(1);
     {
         s32 off = 450;
 
@@ -937,52 +936,52 @@ void Scene_DispatchBySelector(void)
     case 69:
         Talk_Apply5(8, 2);
         Talk_Apply8(9, 2);
-        if (Talk_Check34(0x109) != 0)
+        if (Talk_unk34(0x109) != 0)
             break;
-        Talk_Run186();
+        Talk_unk186_2();
         break;
     case 7:
-        Talk_Run187();
+        Talk_unk187_2();
         break;
     case 70:
-        Talk_Run188();
+        Talk_unk188_2();
         break;
     case 64:
-        Talk_Run189();
-        Talk_Run190();
+        Talk_unk189_2();
+        Talk_unk190_2();
         break;
     case 65:
-        Talk_Run191();
+        Talk_unk191_2();
         break;
     case 66:
-        Talk_Run192();
+        Talk_unk192_2();
         break;
     case 12:
-        Talk_Do23(324);
-        Talk_Run193();
-        if (Talk_Check35(0x109) != 0)
+        Talk_unk23_2(324);
+        Talk_unk193_2();
+        if (Talk_unk35(0x109) != 0)
             break;
-        Talk_Run194();
+        Talk_unk194_2();
         break;
     case 21:
-        Talk_Do24(1);
-        Talk_Do25(2);
-        Talk_Do26(3);
-        Talk_Do27(0x90e);
-        Talk_Run195();
+        Talk_unk24_2(1);
+        Talk_unk25_2(2);
+        Talk_unk26_2(3);
+        Talk_unk27_2(0x90e);
+        Talk_unk195_2();
         break;
     case 67:
-        Talk_Run196();
+        Talk_unk196_2();
         break;
     case 68:
-        Talk_Run197();
+        Talk_unk197_2();
         break;
     case 31:
-        Talk_Do28(1);
-        Talk_Do29(2);
-        Talk_Do30(3);
-        Talk_Do21(0x90f);
-        Talk_Run198();
+        Talk_unk28_2(1);
+        Talk_unk29_2(2);
+        Talk_unk30_2(3);
+        Talk_unk21_2(0x90f);
+        Talk_unk198_2();
         break;
     default:
         break;
@@ -992,7 +991,7 @@ void Scene_DispatchBySelector(void)
 void Scene_CallPairWith10(s32 no)
 {
     Talk_Apply9(no, 0);
-    Talk_Do31(10);
+    Talk_unk31_2(10);
 }
 
 void State_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
@@ -1000,7 +999,7 @@ void State_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
     extern u8 gCell[];
     extern u8 *gWork;
 
-    Talk_Place92(arg0, (u16)arg1, 10);
+    Talk_unk92_2(arg0, (u16)arg1, 10);
 }
 
 /* resource_3b9 owner at 0x02001c6c, 100 bytes. Two alternative layouts. */
@@ -1009,18 +1008,18 @@ void State_ApplyRectsByFlags2384And962(void)
     s32 pair;
     s32 a, b;
 
-    if (Talk_Check36(2384) != 0) {
+    if (Talk_unk36(2384) != 0) {
         pair = 2;
-        Talk_Run199(64, 0, 48, 5, pair, pair);
+        Talk_unk199_2(64, 0, 48, 5, pair, pair);
         a = 16;
         b = 8;
-        Talk_Run200(14, 8, 2, 1, a, b);
+        Talk_unk200_2(14, 8, 2, 1, a, b);
     } else {
-        Talk_Run201(16, 2);
-        if (Talk_Check37(0x962) != 0) {
+        Talk_unk201_2(16, 2);
+        if (Talk_unk37(0x962) != 0) {
             a = 14;
             b = 11;
-            Talk_Run202(30, 22, 1, 2, a, b);
+            Talk_unk202_2(30, 22, 1, 2, a, b);
         }
     }
 }
@@ -1033,72 +1032,72 @@ void Scene_BuildActorPresentationSequence(void)
     Motion_SetHPosTerrain(1, 0x3180000, 0x880000);
     Motion_SetHPosTerrain(2, 0x3380000, 0x880000);
     Motion_SetHPosTerrain(3, 0x3280000, 0x980000);
-    Talk_Run203(1);
+    Talk_unk203_2(1);
     Motion_CamBounds(-1, -1, -1, 0);
     gOv11(0, 0);
-    Talk_Run204(0, 0);
-    Talk_Run205(1);
-    Talk_Run203(1);
+    Talk_unk204_2(0, 0);
+    Talk_unk205_2(1);
+    Talk_unk203_2(1);
     SCENE_PHASE = 515;
     SCENE_FIELD_1C8 = 1;
-    Talk_Run206();
-    Talk_Run207();
+    Talk_unk206_2();
+    Talk_unk207_2();
     gOv11(0, 0);
-    Talk_Run204(0x10002, 0);
-    Talk_Run205(40);
+    Talk_unk204_2(0x10002, 0);
+    Talk_unk205_2(40);
     Battle_WaitMode0(80);
     Motion_SetVarCbObj(8, 1);
     Battle_WaitMode0(20);
     Motion_SetVarCbObj(2, 2);
     Battle_WaitMode0(40);
-    Talk_Run208(8, 0x3000);
+    Talk_unk208_2(8, 0x3000);
     Motion_SetVarCbObj(8, 2);
     Battle_WaitMode0(20);
-    Talk_Run204(0x10000, 0);
-    Talk_Run205(40);
+    Talk_unk204_2(0x10000, 0);
+    Talk_unk205_2(40);
     Battle_WaitMode0(80);
     BattleFx_SpawnLinked(2, 0x100, 0);
     Motion_SetVarCbObj(2, 1);
     Battle_WaitMode0(20);
     SceneWork_SetStepValue(0x20f8);
-    Talk_Run209(2);
+    Talk_unk209_2(2);
     Motion_CallWaitAnim(8, 3);
-    Talk_Run209(8);
+    Talk_unk209_2(8);
     BattleFx_SpawnLinked(3, 0x102, 40);
-    Talk_Run209(3);
+    Talk_unk209_2(3);
     Motion_ArmCb(8, 0x8000, 0);
     Motion_ArmCb(9, 0, 40);
     Motion_ArmCb(8, 0x5000, 0);
-    Talk_Run208(9, 0x3000);
+    Talk_unk208_2(9, 0x3000);
     BattleFx_SpawnLinked(9, 0x105, 20);
-    Talk_Run209(9);
+    Talk_unk209_2(9);
     BattleFx_SpawnLinked(1, 0x103, 20);
     Motion_SetVarCb(1, 2);
-    Talk_Run209(1);
+    Talk_unk209_2(1);
     BattleFx_SpawnLinked(10, 0x102, 40);
-    Talk_Run209(10);
+    Talk_unk209_2(10);
     Motion_CallWaitAnim(11, 3);
-    Talk_Run209(11);
-    Talk_Run208(2, 0xa000);
+    Talk_unk209_2(11);
+    Talk_unk208_2(2, 0xa000);
     Motion_CallWaitAnim(2, 4);
-    Talk_Run209(2);
+    Talk_unk209_2(2);
     Motion_SetVarCbObj(3, 1);
-    Talk_Run209(3);
+    Talk_unk209_2(3);
     BattleFx_SpawnLinked(1, 0x103, 20);
-    Talk_Run208(1, 0);
+    Talk_unk208_2(1, 0);
     Motion_SetVarCb(1, 2);
-    Talk_Run209(1);
-    Talk_Run208(0, 0x6000);
+    Talk_unk209_2(1);
+    Talk_unk208_2(0, 0x6000);
     BattleFx_SpawnLinked(0, 0x102, 60);
     Motion_SetVarCbObj(2, 1);
-    Talk_Run208(2, 0x8000);
-    Talk_Run209(2);
+    Talk_unk208_2(2, 0x8000);
+    Talk_unk209_2(2);
     Object_SetModeById(3, 4);
     Battle_WaitMode0(20);
-    Talk_Run209(3);
+    Talk_unk209_2(3);
     Motion_SetVarCbObj(1, 1);
-    Talk_Run208(1, 0x2000);
-    Talk_Run209(1);
+    Talk_unk208_2(1, 0x2000);
+    Talk_unk209_2(1);
     BattleFx_SpawnLinked(2, 0x105, 60);
     Motion_ArmCb(2, 0x2000, 0);
     Motion_ArmCb(1, 0, 0);
@@ -1108,31 +1107,31 @@ void Scene_BuildActorPresentationSequence(void)
     BattleFx_SpawnLinked(3, 0x102, 80);
     BattleFx_SpawnLinked(2, 0x106, 0);
     Motion_SetVarCbObj(2, 1);
-    Talk_Run208(2, 0xc000);
-    Talk_Run209(2);
+    Talk_unk208_2(2, 0xc000);
+    Talk_unk209_2(2);
     Motion_ArmCb(0, 0xc000, 0);
     Motion_ArmCb(1, 0xc000, 0);
     Motion_ArmCb(3, 0xc000, 20);
-    Talk_Run208(8, 0x3000);
+    Talk_unk208_2(8, 0x3000);
     Motion_CallWaitAnim(8, 3);
-    Talk_Run209(8);
+    Talk_unk209_2(8);
     BattleFx_SpawnLinked(0, 0x100, 0);
     BattleFx_SpawnLinked(1, 0x100, 0);
     BattleFx_SpawnLinked(3, 0x100, 40);
     Motion_SetVarCbObj(9, 1);
-    Talk_Run209(9);
+    Talk_unk209_2(9);
     Motion_ArmCb(0, 0x6000, 0);
     Motion_ArmCb(1, 0xe000, 0);
     Motion_ArmCb(2, 0x6000, 0);
     Motion_ArmCb(3, 0xe000, 40);
     Motion_SetVarCbObj(10, 1);
-    Talk_Run209(10);
+    Talk_unk209_2(10);
     Motion_ArmCb(0, 0xc000, 0);
     Motion_ArmCb(1, 0xc000, 0);
     Motion_ArmCb(2, 0xc000, 0);
-    Talk_Run208(3, 0xc000);
+    Talk_unk208_2(3, 0xc000);
     Motion_CallWaitAnim(11, 3);
-    Talk_Run209(11);
+    Talk_unk209_2(11);
     Motion_ArmCb(0, 0x6000, 0);
     Motion_ArmCb(1, 0xe000, 0);
     Motion_ArmCb(2, 0x6000, 0);
@@ -1142,25 +1141,25 @@ void Scene_BuildActorPresentationSequence(void)
     BattleFx_SpawnLinked(3, 0x105, 80);
     BattleFx_SpawnLinked(2, 0x106, 0);
     Motion_SetVarCbObj(2, 1);
-    Talk_Run208(2, 0xe000);
-    Talk_Run209(2);
+    Talk_unk208_2(2, 0xe000);
+    Talk_unk209_2(2);
     Motion_ArmCb(0, 0, 0);
     Motion_ArmCb(1, 0, 20);
     BattleFx_SpawnLinked(11, 0x101, 60);
-    Talk_Check15(2, 0);
+    Talk_unk15(2, 0);
     Motion_ArmCb(0, 0x2000, 0);
     Motion_ArmCb(1, 0xe000, 0);
     Motion_ArmCb(2, 0xa000, 0);
     Motion_ArmCb(3, 0xc000, 0);
     flag = 0;
     if (UiWork_WaitThenFinalizeCapacity(0, 0) == 1) {
-        Talk_Run209(2);
+        Talk_unk209_2(2);
         flag = 1;
     } else {
         SCENE_STEP++;
         Motion_CallWaitAnim(2, 3);
-        Talk_Run208(2, 0xc000);
-        Talk_Run209(2);
+        Talk_unk208_2(2, 0xc000);
+        Talk_unk209_2(2);
     }
     if (flag != 0) {
         SCENE_STEP++;
@@ -1174,21 +1173,21 @@ void Scene_BuildActorPresentationSequence(void)
     BattleFx_SpawnLinked(10, 0x105, 0);
     BattleFx_SpawnLinked(11, 0x105, 60);
     Motion_SetVarCbObj(8, 1);
-    Talk_Run208(8, 0x3000);
-    Talk_Run209(8);
+    Talk_unk208_2(8, 0x3000);
+    Talk_unk209_2(8);
     Motion_ArmCb(0, 0xc000, 0);
     Motion_ArmCb(1, 0xc000, 0);
     Motion_ArmCb(2, 0xc000, 0);
     Motion_ArmCb(3, 0xc000, 20);
     Motion_SetVarCbObj(9, 1);
-    Talk_Run208(9, 0x3000);
-    Talk_Run209(9);
+    Talk_unk208_2(9, 0x3000);
+    Talk_unk209_2(9);
     Motion_SetVarCbObj(10, 1);
-    Talk_Run208(10, 0x5000);
-    Talk_Run209(10);
-    Talk_Run208(11, 0x8000);
+    Talk_unk208_2(10, 0x5000);
+    Talk_unk209_2(10);
+    Talk_unk208_2(11, 0x8000);
     Motion_CallWaitAnim(11, 3);
-    Talk_Run209(11);
+    Talk_unk209_2(11);
     Motion_ArmCb(1, 0xe000, 0);
     Motion_ArmCb(2, 0xa000, 20);
     Object_SetModeById(1, 3);
@@ -1201,7 +1200,7 @@ void Scene_BuildActorPresentationSequence(void)
     Motion_EnableActCb_2(2, (s32)gOv10);
     Motion_MarkActiveAndSetActionCallback(3, (s32)gOv10);
     Battle_WaitMode0(20);
-    Talk_Run208(0, 0);
+    Talk_unk208_2(0, 0);
     Motion_CallWaitAnim(0, 3);
     Motion_CallWaitAnim(11, 3);
     Motion_SetSpeed(11, 0x10000, 0x8000);
@@ -1218,9 +1217,9 @@ void Scene_BuildActorPresentationSequence(void)
     Battle_WaitMode0(60);
     SCENE_PHASE = 256;
     SCENE_FIELD_1C8 = 40;
-    Talk_Run210();
-    Talk_Run207();
-    Talk_Run211(64);
+    Talk_unk210_2();
+    Talk_unk207_2();
+    Talk_unk211_2(64);
 }
 
 void Scene_RunScene3b9(void)
@@ -1230,38 +1229,38 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    if (Talk_Check16(5) != 0) {
-        Talk_Do12(0x16d);
-        Talk_Run212(5);
-        Talk_Run213(3);
+    if (Talk_unk16(5) != 0) {
+        Talk_unk12_2(0x16d);
+        Talk_unk212_2(5);
+        Talk_unk213_2(3);
     }
-    Talk_Run214();
-    Talk_Place23(11, 0x2c80000, 0x24c0000);
-    Talk_Run215(1);
-    Talk_Run216(11, 1);
-    Talk_Place24(11, 0x19999, 0xcccc);
-    Talk_Place25(0, 0x19999, 0xcccc);
-    record = Talk_Check38(11);
+    Talk_unk214_2();
+    Talk_unk23_3(11, 0x2c80000, 0x24c0000);
+    Talk_unk215_2(1);
+    Talk_unk216_2(11, 1);
+    Talk_unk24_3(11, 0x19999, 0xcccc);
+    Talk_unk25_3(0, 0x19999, 0xcccc);
+    record = Talk_unk38(11);
     {
         s32 shown = 0;
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    Talk_Run217();
-    Talk_Run218(0, 2);
-    Talk_Run219(11, 2);
-    Talk_Place26(0, 0x30c, 0x24c);
-    Talk_Place27(11, 0x32c, 0x24c);
-    Talk_Place28(0, 0x370, 0x24c);
-    Talk_Place29(11, 0x390, 0x24c);
-    Talk_Place30(0, 0x3d4, 0x24c);
-    Talk_Place31(11, 0x3f4, 0x24c);
-    Talk_Run220();
-    Talk_Run221();
-    if (Talk_Check17(0x90f) != 0) {
-        Talk_Run222(31);
+    Talk_unk217_2();
+    Talk_unk218_2(0, 2);
+    Talk_unk219_2(11, 2);
+    Talk_unk26_3(0, 0x30c, 0x24c);
+    Talk_unk27_3(11, 0x32c, 0x24c);
+    Talk_unk28_3(0, 0x370, 0x24c);
+    Talk_unk29_3(11, 0x390, 0x24c);
+    Talk_unk30_3(0, 0x3d4, 0x24c);
+    Talk_unk31_3(11, 0x3f4, 0x24c);
+    Talk_unk220_2();
+    Talk_unk221_2();
+    if (Talk_unk17(0x90f) != 0) {
+        Talk_unk222_2(31);
     } else {
-        Talk_Run223(65);
+        Talk_unk223_2(65);
     }
 }
 
@@ -1273,26 +1272,26 @@ void Scene_RunScene3b9(void)
     s32 rec7;
     s32 record;
 
-    rec7 = Talk_Check18(13);
-    Talk_Run224();
-    Talk_Run225();
-    Talk_Run226();
-    Talk_Run227(40);
-    Talk_Run228(8, 2);
-    Talk_Run229(13);
-    Talk_Run230(1);
-    Talk_Place32(0, 0xe000, 0);
-    Talk_Run231(13, 1);
-    Talk_Place33(12, 0xd000, 0);
-    Talk_Run232(13, 0, 0);
-    Talk_Place34(14, 0x8000, 0);
-    Talk_Place35(15, 0xd000, 0);
-    Talk_Place36(16, 0x8000, 0);
-    Talk_Place37(17, 0xb000, 0);
-    Talk_Place38(18, 0xb000, 0);
-    Talk_Do13(0x2112);
-    Talk_Run233(8);
-    Talk_Run234(0, 3);
+    rec7 = Talk_unk18(13);
+    Talk_unk224_2();
+    Talk_unk225_2();
+    Talk_unk226_2();
+    Talk_unk227_2(40);
+    Talk_unk228_2(8, 2);
+    Talk_unk229_2(13);
+    Talk_unk230_2(1);
+    Talk_unk32_3(0, 0xe000, 0);
+    Talk_unk231_2(13, 1);
+    Talk_unk33_3(12, 0xd000, 0);
+    Talk_unk232_2(13, 0, 0);
+    Talk_unk34_3(14, 0x8000, 0);
+    Talk_unk35_3(15, 0xd000, 0);
+    Talk_unk36_3(16, 0x8000, 0);
+    Talk_unk37_3(17, 0xb000, 0);
+    Talk_unk38_3(18, 0xb000, 0);
+    Talk_unk13_2(0x2112);
+    Talk_unk233_2(8);
+    Talk_unk234_2(0, 3);
     {
         u16 *target = (u16 *)(rec7 + 100);
         s32 shown = 0x2d0;
@@ -1305,14 +1304,14 @@ void Scene_RunScene3b9(void)
 
         *target = shown;
     }
-    Talk_Run235(13, 2);
-    Talk_Place39(12, 0x3000, 0);
-    Talk_Place40(14, 0xb000, 0);
-    Talk_Place41(15, 0x5000, 0);
-    Talk_Run236(16, 0, 0);
-    Talk_Place42(17, 0x5000, 0);
-    Talk_Place43(18, 0x5000, 0);
-    Talk_Run237();
+    Talk_unk235_2(13, 2);
+    Talk_unk39_3(12, 0x3000, 0);
+    Talk_unk40_3(14, 0xb000, 0);
+    Talk_unk41_3(15, 0x5000, 0);
+    Talk_unk236_2(16, 0, 0);
+    Talk_unk42_3(17, 0x5000, 0);
+    Talk_unk43_3(18, 0x5000, 0);
+    Talk_unk237_2();
 }
 
 void Scene_RunScene3b9(void)
@@ -1322,19 +1321,19 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run238();
-    Talk_Place44(0, 0x19999, 0xcccc);
-    Talk_Run239();
-    Talk_Run240(0, 2);
-    Talk_Place45(0, 0x30c, 0x1ac);
-    Talk_Place46(0, 0x370, 0x1ac);
-    Talk_Place47(0, 0x3d4, 0x1ac);
-    Talk_Run241();
-    Talk_Run242();
-    if (Talk_Check19(0x90f) != 0) {
-        Talk_Run243(32);
+    Talk_unk238_2();
+    Talk_unk44_3(0, 0x19999, 0xcccc);
+    Talk_unk239_2();
+    Talk_unk240_2(0, 2);
+    Talk_unk45_3(0, 0x30c, 0x1ac);
+    Talk_unk46_3(0, 0x370, 0x1ac);
+    Talk_unk47_3(0, 0x3d4, 0x1ac);
+    Talk_unk241_2();
+    Talk_unk242_2();
+    if (Talk_unk19(0x90f) != 0) {
+        Talk_unk243_2(32);
     } else {
-        Talk_Run244(12);
+        Talk_unk244_2(12);
     }
 }
 
@@ -1346,52 +1345,52 @@ void Scene_RunScene3b9(void)
     s32 record;
     s32 base5_200adac;
 
-    Talk_Run245();
-    Talk_Place48(1, 0x3180000, 0x880000);
-    Talk_Place49(2, 0x3380000, 0x880000);
-    Talk_Place50(3, 0x3280000, 0x980000);
-    Talk_Run246();
-    Talk_Run247();
-    Talk_Run248(40);
-    Talk_Run249(8, 1);
-    Talk_Run250(8, 3);
-    Talk_Do14(0x2134);
-    Talk_Run251(8);
-    Talk_Run252(9, 1);
-    Talk_Run253(9);
-    Talk_Run254(10, 1);
-    Talk_Run255(10);
-    Talk_Run256(11, 1);
-    Talk_Run257(11, 3);
-    Talk_Run258(11);
-    Talk_Place51(1, 0xe000, 0);
-    Talk_Place52(2, 0xa000, 20);
-    Talk_Place53(1, 0x10000, 0x8000);
-    Talk_Place54(2, 0x10000, 0x8000);
-    Talk_Place55(3, 0x10000, 0x8000);
+    Talk_unk245_2();
+    Talk_unk48_3(1, 0x3180000, 0x880000);
+    Talk_unk49_3(2, 0x3380000, 0x880000);
+    Talk_unk50_3(3, 0x3280000, 0x980000);
+    Talk_unk246_2();
+    Talk_unk247_2();
+    Talk_unk248_2(40);
+    Talk_unk249_2(8, 1);
+    Talk_unk250_2(8, 3);
+    Talk_unk14_2(0x2134);
+    Talk_unk251_2(8);
+    Talk_unk252_2(9, 1);
+    Talk_unk253_2(9);
+    Talk_unk254_2(10, 1);
+    Talk_unk255_2(10);
+    Talk_unk256_2(11, 1);
+    Talk_unk257_2(11, 3);
+    Talk_unk258_2(11);
+    Talk_unk51_3(1, 0xe000, 0);
+    Talk_unk52_3(2, 0xa000, 20);
+    Talk_unk53_3(1, 0x10000, 0x8000);
+    Talk_unk54_3(2, 0x10000, 0x8000);
+    Talk_unk55_3(3, 0x10000, 0x8000);
     base5_200adac = (s32)gOv10;
-    Talk_Run259(1, base5_200adac);
-    Talk_Check20(2, base5_200adac);
-    Talk_Run260(3, base5_200adac);
-    Talk_Run261(20);
-    Talk_Run262(0, 0);
-    Talk_Run263(0, 3);
-    Talk_Run264(11, 3);
-    Talk_Place56(11, 0x10000, 0x8000);
-    Talk_Place57(0, 0x10000, 0x8000);
-    Talk_Run265(11, 2);
-    Talk_Place58(11, 0x33e, 152);
-    Talk_Place59(11, 0x328, 164);
-    Talk_Place60(11, 0x328, 0x138);
-    Talk_Run266(20);
-    Talk_Run10(0x6666, 0xccc);
-    Talk_Run11(0x3280000, -1, 0x1380000, 1);
-    Talk_Place61(0, 0x328, 164);
-    Talk_Place62(0, 0x328, 0x138);
-    Talk_Run267(60);
-    Talk_Run268();
-    Talk_Run269();
-    Talk_Run270(67);
+    Talk_unk259_2(1, base5_200adac);
+    Talk_unk20(2, base5_200adac);
+    Talk_unk260_2(3, base5_200adac);
+    Talk_unk261_2(20);
+    Talk_unk262_2(0, 0);
+    Talk_unk263_2(0, 3);
+    Talk_unk264_2(11, 3);
+    Talk_unk56_3(11, 0x10000, 0x8000);
+    Talk_unk57_3(0, 0x10000, 0x8000);
+    Talk_unk265_2(11, 2);
+    Talk_unk58_3(11, 0x33e, 152);
+    Talk_unk59_3(11, 0x328, 164);
+    Talk_unk60_3(11, 0x328, 0x138);
+    Talk_unk266_2(20);
+    Talk_unk10_4(0x6666, 0xccc);
+    Talk_unk11_4(0x3280000, -1, 0x1380000, 1);
+    Talk_unk61_3(0, 0x328, 164);
+    Talk_unk62_3(0, 0x328, 0x138);
+    Talk_unk267_2(60);
+    Talk_unk268_2();
+    Talk_unk269_2();
+    Talk_unk270_2(67);
 }
 
 void Scene_RunScene3b9(void)
@@ -1401,35 +1400,35 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    if (Talk_Check21(5) != 0) {
-        Talk_Do15(0x16d);
-        Talk_Run271(5);
-        Talk_Run272(3);
+    if (Talk_unk21(5) != 0) {
+        Talk_unk15_2(0x16d);
+        Talk_unk271_2(5);
+        Talk_unk272_2(3);
     }
-    Talk_Run273();
-    Talk_Place63(11, 0x3640000, 0x24c0000);
-    Talk_Run274(1);
-    Talk_Run275(11, 1);
-    Talk_Place64(11, 0x19999, 0xcccc);
-    Talk_Place65(0, 0x19999, 0xcccc);
-    record = Talk_Check39(11);
+    Talk_unk273_2();
+    Talk_unk63_3(11, 0x3640000, 0x24c0000);
+    Talk_unk274_2(1);
+    Talk_unk275_2(11, 1);
+    Talk_unk64_3(11, 0x19999, 0xcccc);
+    Talk_unk65_3(0, 0x19999, 0xcccc);
+    record = Talk_unk39(11);
     {
         s32 shown = 0x8000;
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    Talk_Run276();
-    Talk_Run277(0, 2);
-    Talk_Run278(11, 2);
-    Talk_Place66(0, 0x320, 0x24c);
-    Talk_Place67(11, 0x300, 0x24c);
-    Talk_Place68(0, 0x2bc, 0x24c);
-    Talk_Place69(11, 0x29c, 0x24c);
-    Talk_Place70(0, 0x258, 0x24c);
-    Talk_Place71(11, 0x238, 0x24c);
-    Talk_Run279();
-    Talk_Run280();
-    Talk_Run281(21);
+    Talk_unk276_2();
+    Talk_unk277_2(0, 2);
+    Talk_unk278_2(11, 2);
+    Talk_unk66_3(0, 0x320, 0x24c);
+    Talk_unk67_3(11, 0x300, 0x24c);
+    Talk_unk68_3(0, 0x2bc, 0x24c);
+    Talk_unk69_3(11, 0x29c, 0x24c);
+    Talk_unk70_3(0, 0x258, 0x24c);
+    Talk_unk71_3(11, 0x238, 0x24c);
+    Talk_unk279_2();
+    Talk_unk280();
+    Talk_unk281(21);
 }
 
 void Scene_RunScene3b9(void)
@@ -1439,16 +1438,16 @@ void Scene_RunScene3b9(void)
     u32 i;
     s32 record;
 
-    Talk_Run282();
-    Talk_Place72(0, 0x19999, 0xcccc);
-    Talk_Run283();
-    Talk_Run284(0, 2);
-    Talk_Place73(0, 0x320, 0x1ac);
-    Talk_Place74(0, 0x2bc, 0x1ac);
-    Talk_Place75(0, 0x258, 0x1ac);
-    Talk_Run285();
-    Talk_Run286();
-    Talk_Run287(22);
+    Talk_unk282();
+    Talk_unk72_3(0, 0x19999, 0xcccc);
+    Talk_unk283();
+    Talk_unk284(0, 2);
+    Talk_unk73_3(0, 0x320, 0x1ac);
+    Talk_unk74_3(0, 0x2bc, 0x1ac);
+    Talk_unk75_3(0, 0x258, 0x1ac);
+    Talk_unk285();
+    Talk_unk286();
+    Talk_unk287(22);
 }
 
 void Scene_RunScene3b9(void)
@@ -1459,67 +1458,67 @@ void Scene_RunScene3b9(void)
     s32 record;
     s32 base5_200adac;
 
-    Talk_Run288();
-    Talk_Place76(1, 0x3180000, 0x880000);
-    Talk_Place77(2, 0x3380000, 0x880000);
-    Talk_Place78(3, 0x3280000, 0x980000);
-    Talk_Run289();
-    Talk_Run290();
-    Talk_Run291(40);
-    Talk_Run292(8, 1);
-    Talk_Run293(8, 3);
-    Talk_Do16(SCENE_STEP_VALUE);
-    Talk_Run294(8);
-    Talk_Run295(9, 1);
-    Talk_Run296(9);
-    Talk_Run297(10, 1);
-    Talk_Run298(10);
-    Talk_Run299(11, 1);
-    Talk_Run300(11, 3);
-    Talk_Run301(11);
-    Talk_Place79(1, 0xe000, 0);
-    Talk_Place80(2, 0xa000, 20);
-    Talk_Place81(1, 0x10000, 0x8000);
-    Talk_Place82(2, 0x10000, 0x8000);
-    Talk_Place83(3, 0x10000, 0x8000);
+    Talk_unk288();
+    Talk_unk76_3(1, 0x3180000, 0x880000);
+    Talk_unk77_2(2, 0x3380000, 0x880000);
+    Talk_unk78_2(3, 0x3280000, 0x980000);
+    Talk_unk289();
+    Talk_unk290();
+    Talk_unk291(40);
+    Talk_unk292(8, 1);
+    Talk_unk293(8, 3);
+    Talk_unk16_2(SCENE_STEP_VALUE);
+    Talk_unk294(8);
+    Talk_unk295(9, 1);
+    Talk_unk296(9);
+    Talk_unk297(10, 1);
+    Talk_unk298(10);
+    Talk_unk299(11, 1);
+    Talk_unk300(11, 3);
+    Talk_unk301(11);
+    Talk_unk79_2(1, 0xe000, 0);
+    Talk_unk80_2(2, 0xa000, 20);
+    Talk_unk81_2(1, 0x10000, 0x8000);
+    Talk_unk82_2(2, 0x10000, 0x8000);
+    Talk_unk83_2(3, 0x10000, 0x8000);
     base5_200adac = (s32)gOv10;
-    Talk_Run302(1, base5_200adac);
-    Talk_Check22(2, base5_200adac);
-    Talk_Run303(3, base5_200adac);
-    Talk_Run304(20);
-    Talk_Run305(0, 0);
-    Talk_Run306(0, 3);
-    Talk_Run307(11, 3);
-    Talk_Place84(11, 0x10000, 0x8000);
-    Talk_Place85(0, 0x10000, 0x8000);
-    Talk_Run308(11, 2);
-    Talk_Place86(11, 0x33e, 152);
-    Talk_Place87(11, 0x328, 164);
-    Talk_Place88(11, 0x328, 0x138);
-    Talk_Run309(20);
-    Talk_Run12(0x6666, 0xccc);
-    Talk_Run13(0x3280000, -1, 0x1380000, 1);
-    Talk_Place89(0, 0x328, 164);
-    Talk_Place90(0, 0x328, 0x138);
-    Talk_Run310(60);
-    Talk_Run311();
-    Talk_Run312();
-    Talk_Run313(64);
+    Talk_unk302(1, base5_200adac);
+    Talk_unk22(2, base5_200adac);
+    Talk_unk303(3, base5_200adac);
+    Talk_unk304(20);
+    Talk_unk305(0, 0);
+    Talk_unk306(0, 3);
+    Talk_unk307(11, 3);
+    Talk_unk84_2(11, 0x10000, 0x8000);
+    Talk_unk85_2(0, 0x10000, 0x8000);
+    Talk_unk308(11, 2);
+    Talk_unk86_2(11, 0x33e, 152);
+    Talk_unk87_2(11, 0x328, 164);
+    Talk_unk88_2(11, 0x328, 0x138);
+    Talk_unk309(20);
+    Talk_unk12_4(0x6666, 0xccc);
+    Talk_unk13_4(0x3280000, -1, 0x1380000, 1);
+    Talk_unk89_2(0, 0x328, 164);
+    Talk_unk90_2(0, 0x328, 0x138);
+    Talk_unk310(60);
+    Talk_unk311();
+    Talk_unk312();
+    Talk_unk313(64);
 }
 
 void ActorDraw_SetActorsTwelveToEighteen(void)
 {
-    Talk_Run314(12, 3);
-    Talk_Run315(13, 0);
-    Talk_Run316(14, 4);
-    Talk_Run317(15, 1);
-    Talk_Run318(16, 5);
-    Talk_Run319(17, 2);
-    Talk_Run320(18, 6);
-    Talk_Run321(13, 10);
-    Talk_Run322(14, 20);
-    Talk_Run323(15, 0);
-    Talk_Run324(16, 40);
-    Talk_Run325(17, 50);
-    Talk_Run326(18, 60);
+    Talk_unk314(12, 3);
+    Talk_unk315(13, 0);
+    Talk_unk316(14, 4);
+    Talk_unk317(15, 1);
+    Talk_unk318(16, 5);
+    Talk_unk319(17, 2);
+    Talk_unk320(18, 6);
+    Talk_unk321(13, 10);
+    Talk_unk322(14, 20);
+    Talk_unk323(15, 0);
+    Talk_unk324(16, 40);
+    Talk_unk325(17, 50);
+    Talk_unk326(18, 60);
 }

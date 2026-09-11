@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/battle/runtime/reset_effect_counter.h"
 #include "effect_runtime.h"
 #include "global_cells.h"
 

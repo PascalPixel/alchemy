@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/depth.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -34,11 +33,11 @@ extern u8 gWork[];
 
 void *AcquireOverlayObject(s32, s32, s32, s32);
 
-struct OverlayActorPosition *Actor_Run3();
+struct OverlayActorPosition *Actor_unk3_4();
 
-struct OverlayActorState *Actor_Run4();
+struct OverlayActorState *Actor_unk4_4();
 
-u8 *Actor_Run5(s32 group);
+u8 *Actor_unk5_4(s32 group);
 
 /* Wait at most sixty frames for the object to reach the requested height. */
 
@@ -50,7 +49,7 @@ u8 *Actor_Run5(s32 group);
 
 /* resource_387 three-call story-flag wrapper at 0x020004d4. */
 
-void Actor_Run6();          /* Wait this many frames. */
+void Actor_unk6_4();          /* Wait this many frames. */
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
@@ -96,8 +95,8 @@ void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
  */
 void Scene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
-    Actor_Run7(selector, 0);
-    Actor_Run6(frames);
+    Actor_unk7_4(selector, 0);
+    Actor_unk6_4(frames);
 }
 
 /* Contiguous unnamed leaf-owner run for resource_387. */
@@ -134,15 +133,15 @@ void Scene_RunOpeningAuxiliarySequence(void)
     record = Actor_Check(9);
     v3 = *(volatile s32 *)(record + 8) / 0x100000;
     Actor_Do(0x861);
-    Actor_Do2(0x862);
+    Actor_unk2_2(0x862);
     if (v3 == 15) {
         Actor_SetRect(47, 18, 1, 2, 16, 18);
     } else if (v3 == 16) {
-        Actor_SetRect2(48, 18, 1, 2, v3, 18);
-        Actor_Do3(0x861);
+        Actor_unk2_5(48, 18, 1, 2, v3, 18);
+        Actor_unk3_2(0x861);
     } else {
-        Actor_SetRect3(47, 18, 1, 2, 16, 18);
-        Actor_Do4(0x862);
+        Actor_unk3_5(47, 18, 1, 2, 16, 18);
+        Actor_unk4_2(0x862);
     }
 }
 
@@ -152,16 +151,16 @@ void Scene_RunScene387SequenceC(void)
     s32 v3;
     s32 v5;
 
-    record = Actor_Check2(10);
+    record = Actor_unk2(10);
     v3 = *(volatile s32 *)(record + 8) / 0x100000;
     if (v3 == 23) {
-        Actor_Run8(10);
-        *(u8 *)(Actor_Check6(10) + 35) = 2;
+        Actor_unk8_4(10);
+        *(u8 *)(Actor_unk6(10) + 35) = 2;
         v5 = 0;
-        *(u8 *)(Actor_Check7(10) + 85) = v5;
-        Actor_Run9(Actor_Check8(10), 0);
-        Actor_SetRect4(54, 17, 1, 1, v3, 17);
-        Actor_Do5(0x863);
+        *(u8 *)(Actor_unk7(10) + 85) = v5;
+        Actor_unk9_4(Actor_unk8(10), 0);
+        Actor_unk4_5(54, 17, 1, 1, v3, 17);
+        Actor_unk5_2(0x863);
     }
 }
 
@@ -171,22 +170,22 @@ void Scene_RunScene387SequenceD(void)
     s32 v5;
 
     p5 = *(u8 **)gWork;
-    Actor_Run10();
-    Actor_Run11(0, 8);
-    Actor_Run12(20);
+    Actor_unk10_4();
+    Actor_unk11_4(0, 8);
+    Actor_unk12_4(20);
     Actor_Place(0, 0x3333, 0x1999);
-    Actor_Place2(9, 0x3333, 0x1999);
-    Actor_Run13(185);
+    Actor_unk2_3(9, 0x3333, 0x1999);
+    Actor_unk13_4(185);
     v5 = (11 - (*(s16 *)(p5 + 0x16c) << 1)) << 4;
-    Actor_Run14(0, v5, 0);
-    Actor_Run15(9, v5, 0);
-    Actor_Run16(0);
-    Actor_Run17(9);
-    Actor_Run18(20);
-    Actor_Run19(0, 1);
-    Actor_Run20();
-    Actor_Run21();
-    Actor_Run22();
+    Actor_unk14_4(0, v5, 0);
+    Actor_unk15_4(9, v5, 0);
+    Actor_unk16_4(0);
+    Actor_unk17_4(9);
+    Actor_unk18_4(20);
+    Actor_unk19_4(0, 1);
+    Actor_unk20_4();
+    Actor_unk21_4();
+    Actor_unk22_4();
 }
 
 /* resource_387 deliberate no-op leaf at 0x020004cc. */
@@ -201,9 +200,9 @@ void Resource387_NoOpCallbackB(void)
 
 void Scene_RunStepWithValue866(void)
 {
-    Actor_Run23();
-    Actor_Do8(0x866);
-    Actor_Run24();
+    Actor_unk23_4();
+    Actor_unk8_2(0x866);
+    Actor_unk24_4();
 }
 
 /* resource_387 prologue-less table getter, including its one-word pool. */
@@ -217,197 +216,197 @@ void Scene_RunScene387SequenceA(void)
     u32 i;
     s32 record;
 
-    Actor_Run25();
-    Actor_Run26();
-    Actor_Run27(30);
-    Actor_Do6(0x138f);
-    Actor_Place3(0, 0xcccc, 0x6666);
-    Actor_Place4(1, 0xcccc, 0x6666);
-    Actor_Place5(0, 0xe000, 20);
-    record = Actor_Check3(0);
+    Actor_unk25_4();
+    Actor_unk26_4();
+    Actor_unk27_4(30);
+    Actor_unk6_2(0x138f);
+    Actor_unk3_3(0, 0xcccc, 0x6666);
+    Actor_unk4_3(1, 0xcccc, 0x6666);
+    Actor_unk5_3(0, 0xe000, 20);
+    record = Actor_unk3(0);
     if (record != 0) {
-        Actor_Run28(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Actor_unk28_4(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    Actor_Place6(1, 0x108, 168);
-    Actor_Place7(1, 0x6000, 20);
-    Actor_Run29(20);
-    Actor_Run30(1, 4);
-    Actor_Run31(20);
-    Actor_Run32(1, 0, 20);
-    Actor_Run33(0, 3);
-    Actor_Run34(20);
-    if (Actor_Check4(0x855) == 0) {
-        Actor_Run35(1, 2);
-        record = Actor_Check5(0);
+    Actor_unk6_3(1, 0x108, 168);
+    Actor_unk7_3(1, 0x6000, 20);
+    Actor_unk29_4(20);
+    Actor_unk30_4(1, 4);
+    Actor_unk31_4(20);
+    Actor_unk32_4(1, 0, 20);
+    Actor_unk33_4(0, 3);
+    Actor_unk34_4(20);
+    if (Actor_unk4(0x855) == 0) {
+        Actor_unk35_4(1, 2);
+        record = Actor_unk5(0);
         if (record != 0) {
-            Actor_Run36(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_unk36_4(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Actor_Run37(1);
-        Actor_Run38(1, 0, 0);
-        Actor_Run39();
+        Actor_unk37_4(1);
+        Actor_unk38_4(1, 0, 0);
+        Actor_unk39_4();
     } else {
-        Actor_Place8(2, 0x1680000, 0xf80000);
-        Actor_Place9(2, 0xcccc, 0x6666);
-        Actor_Place10(2, 0x110, 248);
-        Actor_Place11(2, 0x110, 208);
-        Actor_Place12(2, 0xa000, 20);
-        Actor_Run40(2, 2);
-        Actor_Run41(20);
-        Actor_Run42(2, 0, 20);
-        Actor_Place13(0, 0x2000, 0);
-        Actor_Place14(1, 0x4000, 0);
-        Actor_Run43(20);
-        Actor_Place15(0, 0x100, 0);
-        Actor_Place16(1, 0x100, 60);
-        Actor_Run44(2, 3);
-        Actor_Place17(2, 0x108, 200);
-        Actor_Run45(0, 248, 168);
-        Actor_Run46(2, 248, 184);
-        Actor_Run47(0);
-        Actor_Place18(0, 0x6000, 0);
-        Actor_Place19(1, 0x6000, 0);
-        Actor_Run48(2, 232, 184);
-        Actor_Run49(20);
-        Actor_Place20(2, 0x105, 60);
-        Actor_Place21(2, 0xe000, 20);
-        Actor_Run50(2, 4);
-        Actor_Run51(20);
-        Actor_Run52(2, 0, 20);
-        Actor_Run53(0, 3);
-        Actor_Run54(1, 3);
-        Actor_Run55(20);
-        Actor_Place22(2, 0x8000, 20);
-        Actor_Run56(2, 0, 120);
-        Actor_Place23(0, 0x105, 0);
-        Actor_Place24(1, 0x105, 60);
-        Actor_Run57(0, 1, 0);
-        Actor_Run58(60);
-        Actor_Place25(0, 0x6000, 0);
-        Actor_Place26(1, 0x6000, 0);
-        Actor_Run59(60);
-        Actor_Place27(2, 0x106, 0);
-        Actor_Run60(2, 1);
-        Actor_Run61(30);
-        Actor_Run62(2, 0, 30);
-        Actor_Place28(2, 0xe000, 20);
-        Actor_Run63(0, 2);
-        Actor_Run64(1, 2);
-        Actor_Run65(20);
-        Actor_Run66(2, 0, 20);
-        Actor_Run67(0, 3);
-        Actor_Run68(1, 3);
-        Actor_Run69(20);
-        Actor_Run70(2, 3);
-        Actor_Run71(20);
-        Actor_Place29(2, 0x8000, 20);
-        Actor_Run72();
-        Actor_Run73(2, 1);
-        Actor_Run74(20);
-        Actor_Run75();
-        Actor_Place30(0, 0x100, 0);
-        Actor_Place31(1, 0x100, 60);
-        Actor_Run76(1, 2, 0);
-        Actor_Run77(20);
-        Actor_Run78(1, 20);
-        Actor_Place32(2, 0x108, 184);
-        Actor_Run79(10);
-        Actor_Run80(2, 1, 0);
-        Actor_Run81(1, 2, 0);
-        Actor_Run82(0, 2, 0);
-        Actor_Run83(20);
-        Actor_Run84(2, 3);
-        Actor_Run85(20);
-        Actor_Run86(2, 60);
-        Actor_Place33(0, 0x105, 0);
-        Actor_Place34(1, 0x105, 60);
-        Actor_Place35(0, 0x101, 0);
-        Actor_Place36(1, 0x101, 0);
-        Actor_Run87(60);
-        Actor_Place37(1, 0x8000, 0);
-        Actor_Run88(0, 0, 0);
-        Actor_Run89(60);
-        Actor_Place38(1, 0x4000, 0);
-        Actor_Place39(0, 0x2000, 0);
-        Actor_Run90(10);
-        Actor_Run91(1, 20);
-        Actor_Place40(2, 0x105, 0);
-        Actor_Run92(60);
-        Actor_Run93(2, 4);
-        Actor_Run94(20);
-        Actor_Run95(2, 20);
-        Actor_Run96(0, 2, 0);
-        Actor_Run97(1, 2, 0);
-        Actor_Place41(0, 0x102, 0);
-        Actor_Place42(1, 0x102, 0);
-        Actor_Run98(60);
-        Actor_Run99(2, 2);
-        Actor_Run100(20);
-        Actor_Run101(2, 30);
-        Actor_Place43(0, 0x101, 0);
-        Actor_Place44(1, 0x101, 0);
-        Actor_Run102(80);
-        Actor_Run103(2, 3);
-        Actor_Run104(20);
-        Actor_Run105(2, 20);
-        Actor_Run106(0, 1);
-        Actor_Run107(1, 1);
+        Actor_unk8_3(2, 0x1680000, 0xf80000);
+        Actor_unk9_3(2, 0xcccc, 0x6666);
+        Actor_unk10_3(2, 0x110, 248);
+        Actor_unk11_3(2, 0x110, 208);
+        Actor_unk12_3(2, 0xa000, 20);
+        Actor_unk40_4(2, 2);
+        Actor_unk41_4(20);
+        Actor_unk42_4(2, 0, 20);
+        Actor_unk13_3(0, 0x2000, 0);
+        Actor_unk14_3(1, 0x4000, 0);
+        Actor_unk43_4(20);
+        Actor_unk15_3(0, 0x100, 0);
+        Actor_unk16_3(1, 0x100, 60);
+        Actor_unk44_4(2, 3);
+        Actor_unk17_3(2, 0x108, 200);
+        Actor_unk45_4(0, 248, 168);
+        Actor_unk46_4(2, 248, 184);
+        Actor_unk47_4(0);
+        Actor_unk18_3(0, 0x6000, 0);
+        Actor_unk19_3(1, 0x6000, 0);
+        Actor_unk48_4(2, 232, 184);
+        Actor_unk49_4(20);
+        Actor_unk20_3(2, 0x105, 60);
+        Actor_unk21_3(2, 0xe000, 20);
+        Actor_unk50_4(2, 4);
+        Actor_unk51_4(20);
+        Actor_unk52_4(2, 0, 20);
+        Actor_unk53_4(0, 3);
+        Actor_unk54_4(1, 3);
+        Actor_unk55_4(20);
+        Actor_unk22_3(2, 0x8000, 20);
+        Actor_unk56_4(2, 0, 120);
+        Actor_unk23_3(0, 0x105, 0);
+        Actor_unk24_3(1, 0x105, 60);
+        Actor_unk57_4(0, 1, 0);
+        Actor_unk58_4(60);
+        Actor_unk25_3(0, 0x6000, 0);
+        Actor_unk26_3(1, 0x6000, 0);
+        Actor_unk59_4(60);
+        Actor_unk27_3(2, 0x106, 0);
+        Actor_unk60_4(2, 1);
+        Actor_unk61_4(30);
+        Actor_unk62_4(2, 0, 30);
+        Actor_unk28_3(2, 0xe000, 20);
+        Actor_unk63_4(0, 2);
+        Actor_unk64_4(1, 2);
+        Actor_unk65_4(20);
+        Actor_unk66_4(2, 0, 20);
+        Actor_unk67_4(0, 3);
+        Actor_unk68_4(1, 3);
+        Actor_unk69_4(20);
+        Actor_unk70_4(2, 3);
+        Actor_unk71_4(20);
+        Actor_unk29_3(2, 0x8000, 20);
+        Actor_unk72_4();
+        Actor_unk73_4(2, 1);
+        Actor_unk74_4(20);
+        Actor_unk75_4();
+        Actor_unk30_3(0, 0x100, 0);
+        Actor_unk31_3(1, 0x100, 60);
+        Actor_unk76_4(1, 2, 0);
+        Actor_unk77_4(20);
+        Actor_unk78_4(1, 20);
+        Actor_unk32_3(2, 0x108, 184);
+        Actor_unk79_4(10);
+        Actor_unk80_4(2, 1, 0);
+        Actor_unk81_4(1, 2, 0);
+        Actor_unk82_4(0, 2, 0);
+        Actor_unk83_4(20);
+        Actor_unk84_4(2, 3);
+        Actor_unk85_4(20);
+        Actor_unk86_4(2, 60);
+        Actor_unk33_3(0, 0x105, 0);
+        Actor_unk34_3(1, 0x105, 60);
+        Actor_unk35_3(0, 0x101, 0);
+        Actor_unk36_3(1, 0x101, 0);
+        Actor_unk87_4(60);
+        Actor_unk37_3(1, 0x8000, 0);
+        Actor_unk88_4(0, 0, 0);
+        Actor_unk89_4(60);
+        Actor_unk38_3(1, 0x4000, 0);
+        Actor_unk39_3(0, 0x2000, 0);
+        Actor_unk90_4(10);
+        Actor_unk91_4(1, 20);
+        Actor_unk40_3(2, 0x105, 0);
+        Actor_unk92_4(60);
+        Actor_unk93_4(2, 4);
+        Actor_unk94_4(20);
+        Actor_unk95_4(2, 20);
+        Actor_unk96_4(0, 2, 0);
+        Actor_unk97_4(1, 2, 0);
+        Actor_unk41_3(0, 0x102, 0);
+        Actor_unk42_3(1, 0x102, 0);
+        Actor_unk98_4(60);
+        Actor_unk99_4(2, 2);
+        Actor_unk100_4(20);
+        Actor_unk101_4(2, 30);
+        Actor_unk43_3(0, 0x101, 0);
+        Actor_unk44_3(1, 0x101, 0);
+        Actor_unk102_4(80);
+        Actor_unk103_4(2, 3);
+        Actor_unk104_4(20);
+        Actor_unk105_4(2, 20);
+        Actor_unk106_4(0, 1);
+        Actor_unk107_4(1, 1);
         Actor_Run(0, 0x102);
-        Actor_Run2(1, 0x102);
-        Actor_Run108(60);
-        Actor_Run109(2, 4);
-        Actor_Run110(20);
-        Actor_Run111(2, 20);
-        Actor_Run112(0, 0, 0);
-        Actor_Place45(1, 0x8000, 0);
-        Actor_Run113(80);
-        Actor_Run114(0, 2, 0);
-        Actor_Run115(1, 2, 0);
-        Actor_Run116(30);
-        Actor_Run117(2, 3);
-        Actor_Run118(20);
-        Actor_Run119(2, 30);
-        Actor_Run120(2, 4);
-        Actor_Run121(20);
-        Actor_Run122(2, 20);
-        Actor_Run123(0, 2);
-        Actor_Run124(1, 2);
-        Actor_Run125(20);
-        Actor_Run126(2, 3);
-        Actor_Run127(20);
-        Actor_Run128(2, 40);
-        Actor_Run129(0, 3);
-        Actor_Run130(1, 3);
-        Actor_Run131(20);
-        Actor_Run132(2, 1);
-        Actor_Run133(60);
-        Actor_Run134();
-        Actor_Run135(2, 1);
-        Actor_Run136(20);
-        Actor_Run137(2, 248, 184);
-        Actor_Run138(20);
-        Actor_Run139(2, 20);
-        Actor_Place46(0, 0x8000, 0);
-        Actor_Place47(1, 0x8000, 0);
-        Actor_Run140(120);
-        Actor_Run141(2, 30);
-        Actor_Run142(0, 2, 0);
-        Actor_Run143(1, 2, 0);
-        Actor_Run144(2, 0, 0);
-        Actor_Run145(20);
-        Actor_Run146(0, 3);
-        Actor_Run147(1, 3);
-        Actor_Run148(2, 3);
-        Actor_Run149(50);
-        Actor_Place48(1, 0xcccc, 0x6666);
-        Actor_Place49(2, 0xcccc, 0x6666);
-        Actor_Run150(1, 248, 168);
-        Actor_Run151(2, 248, 168);
-        Actor_Run152(2, 0, 0);
-        Actor_Run153(1);
-        Actor_Run154(1, 0, 0);
-        Actor_SetRect5(74, 11, 1, 1, 73, 11);
-        Actor_Do7(0x865);
-        Actor_Run155();
+        Actor_unk2_4(1, 0x102);
+        Actor_unk108_4(60);
+        Actor_unk109_4(2, 4);
+        Actor_unk110_4(20);
+        Actor_unk111_4(2, 20);
+        Actor_unk112_4(0, 0, 0);
+        Actor_unk45_3(1, 0x8000, 0);
+        Actor_unk113_4(80);
+        Actor_unk114_4(0, 2, 0);
+        Actor_unk115_4(1, 2, 0);
+        Actor_unk116_4(30);
+        Actor_unk117_4(2, 3);
+        Actor_unk118_4(20);
+        Actor_unk119_4(2, 30);
+        Actor_unk120_4(2, 4);
+        Actor_unk121_4(20);
+        Actor_unk122_4(2, 20);
+        Actor_unk123_4(0, 2);
+        Actor_unk124_4(1, 2);
+        Actor_unk125_4(20);
+        Actor_unk126_4(2, 3);
+        Actor_unk127_4(20);
+        Actor_unk128_4(2, 40);
+        Actor_unk129_4(0, 3);
+        Actor_unk130_4(1, 3);
+        Actor_unk131_3(20);
+        Actor_unk132_3(2, 1);
+        Actor_unk133_3(60);
+        Actor_unk134_3();
+        Actor_unk135_3(2, 1);
+        Actor_unk136_3(20);
+        Actor_unk137_3(2, 248, 184);
+        Actor_unk138_3(20);
+        Actor_unk139_3(2, 20);
+        Actor_unk46_3(0, 0x8000, 0);
+        Actor_unk47_3(1, 0x8000, 0);
+        Actor_unk140_3(120);
+        Actor_unk141_3(2, 30);
+        Actor_unk142_3(0, 2, 0);
+        Actor_unk143_3(1, 2, 0);
+        Actor_unk144_3(2, 0, 0);
+        Actor_unk145_3(20);
+        Actor_unk146_3(0, 3);
+        Actor_unk147_3(1, 3);
+        Actor_unk148_3(2, 3);
+        Actor_unk149_3(50);
+        Actor_unk48_3(1, 0xcccc, 0x6666);
+        Actor_unk49_3(2, 0xcccc, 0x6666);
+        Actor_unk150_3(1, 248, 168);
+        Actor_unk151_3(2, 248, 168);
+        Actor_unk152_3(2, 0, 0);
+        Actor_unk153_3(1);
+        Actor_unk154_3(1, 0, 0);
+        Actor_unk5_5(74, 11, 1, 1, 73, 11);
+        Actor_unk7_2(0x865);
+        Actor_unk155_2();
     }
 }
 
@@ -417,18 +416,18 @@ void Overlay387_ConfigureActorEightAtDepth(void)
     s32 span;
     struct OverlayActorState *state;
 
-    Actor_Run156();
-    depth = Actor_Run3(8)->depth_fixed >> 20;
+    Actor_unk156_2();
+    depth = Actor_unk3_4(8)->depth_fixed >> 20;
     if (depth == 11) {
-        Actor_Run157(8);
-        state = Actor_Run4(8);
+        Actor_unk157_2(8);
+        state = Actor_unk4_4(8);
         state->flags |= 2;
         span = 12;
-        Actor_Run158(39, 12, 3, 1, 8, span);
-        Actor_Run159(43, 11, 3, 1, span, depth);
-        Actor_Run160(2144);
+        Actor_unk158_2(39, 12, 3, 1, 8, span);
+        Actor_unk159_2(43, 11, 3, 1, span, depth);
+        Actor_unk160_2(2144);
     }
-    Actor_Run161();
+    Actor_unk161_2();
 }
 
 /* Turn the object's attached presentation state by one eighth-turn. */
@@ -444,7 +443,7 @@ void OvObj_WaitForHeight(u8 *obj, s32 height)
 {
     s32 cnt = 60;
     while (cnt != 0) {
-        Actor_Do9(1);
+        Actor_unk9_2(1);
         cnt--;
         if (*(s32 *)(obj + 12) <= height)
             break;
@@ -454,7 +453,7 @@ void OvObj_WaitForHeight(u8 *obj, s32 height)
 /* Apply a value to every matching member of a fifteen-slot group. */
 void Actor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
-    u8 *work = Actor_Run5(group);
+    u8 *work = Actor_unk5_4(group);
     s32 i;
     Actor_Apply(group, value);
     for (i = 0; i < 15; i++) {

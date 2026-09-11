@@ -5,8 +5,6 @@
 
 struct BattleStatusIconRecord;
 
-#define BattleStatusIcon_Cycle Func_080b7994
-
 s32 BattleStatusIcon_Cycle(struct BattleStatusIconRecord *record);
 
 #endif

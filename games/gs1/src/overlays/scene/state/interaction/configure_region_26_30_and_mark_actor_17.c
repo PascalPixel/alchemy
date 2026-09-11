@@ -1,10 +1,9 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/interaction/configure_region_26_30_and_mark_actor_17.h"
 
 extern u8 *State_Run(s32);
 
-extern u8 *State_Run2(s32);
+extern u8 *State_unk2_4(s32);
 
 void State_ConfigureRegion26_30AndMarkActor17(void)
 {
@@ -19,7 +18,7 @@ void State_ConfigureRegion26_30AndMarkActor17(void)
 
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
-        State_Run2(17)[85] = 0;
+        State_unk2_4(17)[85] = 0;
         rec[35] = 1;
     }
 

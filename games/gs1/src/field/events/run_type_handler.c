@@ -1,8 +1,6 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/field/events/run_type_handler.h"
 #include "global_cells.h"
-
 
 void MapEvent_RunTileTriggerSequence(void);
 void FieldEvent_ShowStatusMessage(void);

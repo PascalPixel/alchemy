@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/party_departure.h"
 
 #define ACTOR_FLAG(id) (0x4000 | (id))
 
@@ -37,19 +36,19 @@ extern u8 gVal7[];
 extern u8 gVal8[];
 extern u8 gVal9[];
 
-struct Rec_3ad *Story_Run3();
+struct Rec_3ad *Story_unk3_4();
 
-u8 *Story_Run4();
+u8 *Story_unk4_4();
 
-u8 *Story_Run5();
+u8 *Story_unk5_4();
 
-u8 *Story_Run6();
+u8 *Story_unk6_4();
 
-u8 *Story_Run7();
+u8 *Story_unk7_4();
 
-u8 *Story_Run8();
+u8 *Story_unk8_4();
 
-u8 *Story_Run9();
+u8 *Story_unk9_4();
 
 /*
  * Overlay resource_3ad. Map repaint sequence: mark the record for slot ten,
@@ -92,7 +91,7 @@ u8 *SceneData_GetTable9c34(void)
     return (u8 *)0x02009c34;
 }
 
-s32 Story_Run10(void)
+s32 Story_unk10_4(void)
 {
     return 0;
 }
@@ -126,7 +125,7 @@ u8 *SceneData_GetTable9dd4(void)
 
 void Actor_SetSlotEightMode0WhenPresent(void)
 {
-    s32 handle = Story_Check24(8);
+    s32 handle = Story_unk24(8);
 
     if (handle != 0) {
         Story_Apply(handle, 0);
@@ -135,7 +134,7 @@ void Actor_SetSlotEightMode0WhenPresent(void)
 
 void State_MarkActor9AndConfigureRegion7_32(void)
 {
-    struct Rec_3ad *rec = Story_Run3(9);
+    struct Rec_3ad *rec = Story_unk3_4(9);
     s32 p5, p6;
 
     if (rec != 0) {
@@ -145,8 +144,8 @@ void State_MarkActor9AndConfigureRegion7_32(void)
 
     p5 = 8;
     p6 = 32;
-    Story_Run11(7, 32, 1, 1, p5, p6);
-    Story_Do8(516);
+    Story_unk11_4(7, 32, 1, 1, p5, p6);
+    Story_unk8_2(516);
 }
 
 /*
@@ -160,30 +159,30 @@ void State_RunRepaintSequenceWithWaits(void)
     u8 *obj;
     int row;           /* Assigned at its first use, as the reference does. */
 
-    obj = Story_Run4(10);
-    Story_Run12(10, 5);
+    obj = Story_unk4_4(10);
+    Story_unk12_4(10, 5);
 
     if (obj != 0) {
-        Story_Run13(obj, 0);
+        Story_unk13_4(obj, 0);
         obj[0x23] = 1;
     }
 
     row = 21;
-    Story_Run14(41, 87, 2, 5, row, 59);
-    Story_Run15(4);
+    Story_unk14_4(41, 87, 2, 5, row, 59);
+    Story_unk15_4(4);
 
-    { s32 f1 = 24; s32 g1 = 62; Story_Run16(3, 93, 1, 1,  f1, g1); }
-    Story_Run17(1, 94, 1, 1, row, 55);
-    Story_Run18(43, 87, 2, 5, row, 58);
-    Story_Run19(4);
+    { s32 f1 = 24; s32 g1 = 62; Story_unk16_4(3, 93, 1, 1,  f1, g1); }
+    Story_unk17_4(1, 94, 1, 1, row, 55);
+    Story_unk18_4(43, 87, 2, 5, row, 58);
+    Story_unk19_4(4);
 
-    Story_Run20(41, 87, 2, 5, row, 58);
-    Story_Run21(4);
-    Story_Run22(4);
+    Story_unk20_4(41, 87, 2, 5, row, 58);
+    Story_unk21_4(4);
+    Story_unk22_4(4);
 
-    Story_Run23(21, 11, 2, 2, row, 13);
-    { s32 f2 = 22; s32 g2 = 15; Story_Run24(21, 11, 1, 1,  f2, g2); }
-    Story_Run25(19, 17, 1, 1, row, 14);
+    Story_unk23_4(21, 11, 2, 2, row, 13);
+    { s32 f2 = 22; s32 g2 = 15; Story_unk24_4(21, 11, 1, 1,  f2, g2); }
+    Story_unk25_4(19, 17, 1, 1, row, 14);
 }
 
 void Actor_MarkSlot10AndRunFlag202Step(void)
@@ -195,20 +194,20 @@ void Actor_MarkSlot10AndRunFlag202Step(void)
     rec7 = Story_Check(10);
     Story_Do(0x200);
     if ((s32)rec7 != 0) {
-        Story_Run26((s32)rec7, 0);
+        Story_unk26_4((s32)rec7, 0);
         rec7[35] = 1;
     }
-    if (Story_Check2(0x202) == 0) {
-        Story_Run27(157);
-        Story_Run28();
-        Story_Run29(80);
-        Story_Do2(0x202);
+    if (Story_unk2(0x202) == 0) {
+        Story_unk27_4(157);
+        Story_unk28_4();
+        Story_unk29_4(80);
+        Story_unk2_2(0x202);
     }
 }
 
 void State_ApplyFlag203(void)
 {
-    Story_Do9(0x203);
+    Story_unk9_2(0x203);
 }
 
 void Scene_RunOpeningAuxiliarySequence(void)
@@ -219,27 +218,27 @@ void Scene_RunOpeningAuxiliarySequence(void)
         /* Two paired setup/confirm calls, run twice with the last
          * argument stepped from 57 to 58. */
         Story_SetRect(41, 86, 2, 6, 21, 57); /* main:080091b8 */
-        Story_Check3(4); /* main:080000c0 */
-        Story_SetRect2(43, 86, 2, 6, 21, 57); /* main:080091b8 */
-        Story_Check4(4); /* main:080000c0 */
-        Story_SetRect3(41, 86, 2, 6, 21, 58); /* main:080091b8 */
-        Story_Check5(4); /* main:080000c0 */
-        Story_SetRect4(43, 86, 2, 6, 21, 58); /* main:080091b8 */
-        Story_Check6(4); /* main:080000c0 */
+        Story_unk3(4); /* main:080000c0 */
+        Story_unk2_5(43, 86, 2, 6, 21, 57); /* main:080091b8 */
+        Story_unk4(4); /* main:080000c0 */
+        Story_unk3_5(41, 86, 2, 6, 21, 58); /* main:080091b8 */
+        Story_unk5(4); /* main:080000c0 */
+        Story_unk4_5(43, 86, 2, 6, 21, 58); /* main:080091b8 */
+        Story_unk6(4); /* main:080000c0 */
     }
     /* Unconditional call block: two setup calls, a paired setup/confirm
      * pair, then a repeat of the same shape with different constants. */
-    Story_SetRect5(2, 93, 1, 1, 24, 62); /* main:080091b8 */
-    Story_SetRect6(2, 94, 1, 1, 21, 55); /* main:080091b8 */
-    Story_SetRect7(41, 86, 2, 6, 21, 59); /* main:080091b8 */
-    Story_Check7(4); /* main:080000c0 */
-    Story_SetRect8(1, 93, 1, 1, 24, 62); /* main:080091b8 */
-    Story_SetRect9(3, 94, 1, 1, 21, 55); /* main:080091b8 */
-    Story_SetRect10(43, 86, 2, 6, 21, 59); /* main:080091b8 */
-    Story_Check8(4); /* main:080000c0 */
+    Story_unk5_5(2, 93, 1, 1, 24, 62); /* main:080091b8 */
+    Story_unk6_5(2, 94, 1, 1, 21, 55); /* main:080091b8 */
+    Story_unk7_5(41, 86, 2, 6, 21, 59); /* main:080091b8 */
+    Story_unk7(4); /* main:080000c0 */
+    Story_unk8_5(1, 93, 1, 1, 24, 62); /* main:080091b8 */
+    Story_unk9_5(3, 94, 1, 1, 21, 55); /* main:080091b8 */
+    Story_unk10_5(43, 86, 2, 6, 21, 59); /* main:080091b8 */
+    Story_unk8(4); /* main:080000c0 */
     /* Final pair closing out the sequence. */
     Motion_SetActionVariant_1(10, 3);
-    Story_SetRect11(19, 17, 1, 1, 22, 15); /* main:080091c0 */
+    Story_unk11_5(19, 17, 1, 1, 22, 15); /* main:080091c0 */
 }
 
 void Scene_RunScene3adSequenceA(void)
@@ -247,13 +246,13 @@ void Scene_RunScene3adSequenceA(void)
     u32 i;
     s32 record;
 
-    if (Story_Check9(0x201) == 0) {
-        if (Story_Check10(0x200) == 0) {
+    if (Story_unk9(0x201) == 0) {
+        if (Story_unk10(0x200) == 0) {
             Story_Run(0x1528, 1);
-            Story_Run30(157);
-            Story_Run31();
-            Story_Do3(0x201);
-            Story_Do4(0x202);
+            Story_unk30_4(157);
+            Story_unk31_4();
+            Story_unk3_2(0x201);
+            Story_unk4_2(0x202);
         }
     }
 }
@@ -263,17 +262,17 @@ void Scene_RunScene3ad(void)
     u32 i;
     s32 record;
 
-    Story_SetRect12(41, 87, 2, 5, 21, 59);
-    Story_Run32(4);
-    Story_SetRect13(2, 93, 1, 1, 24, 62);
-    Story_SetRect14(2, 94, 1, 1, 21, 55);
-    Story_SetRect15(43, 87, 2, 5, 21, 58);
-    Story_Run33(4);
-    Story_SetRect16(3, 93, 1, 1, 24, 62);
-    Story_SetRect17(1, 94, 1, 1, 21, 55);
-    Story_SetRect18(41, 87, 2, 5, 21, 58);
-    Story_SetRect19(21, 11, 2, 2, 21, 13);
-    Story_SetRect20(19, 17, 1, 1, 21, 14);
+    Story_unk12_5(41, 87, 2, 5, 21, 59);
+    Story_unk32_4(4);
+    Story_unk13_5(2, 93, 1, 1, 24, 62);
+    Story_unk14_5(2, 94, 1, 1, 21, 55);
+    Story_unk15_5(43, 87, 2, 5, 21, 58);
+    Story_unk33_4(4);
+    Story_unk16_5(3, 93, 1, 1, 24, 62);
+    Story_unk17_5(1, 94, 1, 1, 21, 55);
+    Story_unk18_5(41, 87, 2, 5, 21, 58);
+    Story_unk19_5(21, 11, 2, 2, 21, 13);
+    Story_unk20_5(19, 17, 1, 1, 21, 14);
 }
 
 void Scene_RunGuardedLine1528Scene(void)
@@ -281,13 +280,13 @@ void Scene_RunGuardedLine1528Scene(void)
     u32 i;
     s32 record;
 
-    if (Story_Check11(0x200) == 0) {
-        if (Story_Check12(0x202) == 0) {
-            Story_Run2(0x1528, 1);
-            Story_Run34(157);
-            Story_Run35();
-            Story_Do5(0x202);
-            Story_Do6(0x201);
+    if (Story_unk11(0x200) == 0) {
+        if (Story_unk12(0x202) == 0) {
+            Story_unk2_4(0x1528, 1);
+            Story_unk34_4(157);
+            Story_unk35_4();
+            Story_unk5_2(0x202);
+            Story_unk6_2(0x201);
         }
     }
 }
@@ -405,11 +404,11 @@ void Scene_RunMultiActorPresentation(void)
         BattleEv_RunWait_8(12, 0);
         Motion_ResetPosMode2_6(12, 168, 0x1b0);
         Battle_WaitMode0_7(40);
-        Story_Run36();
+        Story_unk36_4();
         Motion_SetSpeed_8();
         Battle_WaitMode0_8(20);
         Battle_SchedShoulder_1();
-        Story_Run37();
+        Story_unk37_4();
     }
 }
 
@@ -438,9 +437,9 @@ void Scene_RunDialogueCameraChoreography(void)
     ObjectMotion_ArmCallback_6(12, 0, 0);
     Object_SetModeById_1(12, 1);
     Motion_SetPosReset_1(0, 0);
-    Story_Run38(1); /* main:080000c0 */
-    Story_Run39(); /* main:08009128 */
-    Story_Run40(1); /* main:080000c0 */
+    Story_unk38_4(1); /* main:080000c0 */
+    Story_unk39_4(); /* main:08009128 */
+    Story_unk40_4(1); /* main:080000c0 */
     BattleRuntime_WaitIfModeZero_1(); /* main:0808a360 */
     ObjectMotion_SetSpeedParameters_1(); /* main:0808a370 */
     BattleRuntime_WaitIfModeZero_2(20);
@@ -644,7 +643,7 @@ void Scene_RunDialogueCameraChoreography(void)
     BattleFx_SpawnLinked_17(2, 0x102, 40);
     SceneWork_SetStepValue_39((step_table_a + 38));
     ObjectMotion_SetSpeedParameters_3(ACTOR_FLAG(1), 0); /* main:0808a178 */
-    if (Story_Check13(0, 0) == 0) {
+    if (Story_unk13(0, 0) == 0) {
         SceneWork_SetStepValue_40((step_table_a + 39));
         BattleEv_RunWait_39(ACTOR_FLAG(12), 0);
     } else {
@@ -703,7 +702,7 @@ void Scene_RunDialogueCameraChoreography(void)
     Motion_SetAngleToward_30(12, 0, 0);
     Object_SetModeById_11(12, 3);
     Battle_WaitMode0_44(60);
-    Story_Run41();
+    Story_unk41_4();
 }
 
 void Scene_RunScene3ad(void)
@@ -714,33 +713,33 @@ void Scene_RunScene3ad(void)
     s32 base5_254b;
 
     base5_2547 = (s32)gVal5;
-    Story_Run42(base5_2547);
-    Story_Run43(12, 0);
-    Story_Run44(1, 0, 0);
-    Story_Run45((base5_2547 + 1));
-    Story_Check14(1, 0);
-    Story_Run46(2, 0, 0);
-    Story_Run47(3, 0, 0);
-    Story_Run48(13, 0, 0);
-    Story_Run49(12, 0, 0);
+    Story_unk42_4(base5_2547);
+    Story_unk43_4(12, 0);
+    Story_unk44_4(1, 0, 0);
+    Story_unk45_4((base5_2547 + 1));
+    Story_unk14(1, 0);
+    Story_unk46_4(2, 0, 0);
+    Story_unk47_4(3, 0, 0);
+    Story_unk48_4(13, 0, 0);
+    Story_unk49_4(12, 0, 0);
     L_0200120c:;
-    if ((Story_Check25() << 24) != 0) {
+    if ((Story_unk25() << 24) != 0) {
         L_02001216:;
-        if ((Story_Check26() << 24) == 0) {
+        if ((Story_unk26() << 24) == 0) {
             goto L_02001290;
         }
         v5 = 0;
-        if ((Story_Check27() << 24) == 0) {
+        if ((Story_unk27() << 24) == 0) {
             L_0200122c:;
             v5 = 1;
             L_0200122e:;
-            Story_Run50();
-            record = Story_Check15(0, 0);
+            Story_unk50_4();
+            record = Story_unk15(0, 0);
             if (record == 0) {
                 goto L_02001290;
             }
         }
-        if ((Story_Check28() << 24) != 0) {
+        if ((Story_unk28() << 24) != 0) {
             goto L_02001296;
         }
         if (v5 == 0) {
@@ -748,29 +747,29 @@ void Scene_RunScene3ad(void)
         }
         goto L_0200122e;
     } else {
-        if ((Story_Check29() << 24) != 0) {
-            if ((Story_Check30() << 24) != 0) {
+        if ((Story_unk29() << 24) != 0) {
+            if ((Story_unk30() << 24) != 0) {
                 goto L_02001296;
             }
             goto L_0200122c;
         } else {
-            if ((Story_Check31() << 24) != 0) {
+            if ((Story_unk31() << 24) != 0) {
                 goto L_02001216;
             }
             base5_254b = (s32)gVal6;
-            Story_Run51(base5_254b);
-            Story_Run52(2, 0);
-            Story_Run53((base5_254b + 1));
-            Story_Run54(1, 0);
+            Story_unk51_4(base5_254b);
+            Story_unk52_3(2, 0);
+            Story_unk53_3((base5_254b + 1));
+            Story_unk54_3(1, 0);
             goto L_0200120c;
             L_02001290:;
-            Story_Run55();
+            Story_unk55_3();
             goto L_0200129e;
         }
     }
     L_02001296:;
-    Story_Run56();
-    Story_Run57();
+    Story_unk56_3();
+    Story_unk57_3();
     L_0200129e:;
 }
 
@@ -781,14 +780,14 @@ s32 Dialogue_IsPromptResultZero(void)
 
 s32 Dialogue_AskMessage2549(void)
 {
-    Story_Do10(0x2549);
+    Story_unk10_2(0x2549);
     Story_Apply3(1, 0);
     return Story_Apply4(0, 0) == 0;
 }
 
 s32 Dialogue_AskMessage254d(void)
 {
-    Story_Do11(0x254D);
+    Story_unk11_2(0x254D);
     Story_Apply5(1, 0);
     return Story_Apply6(0, 0) == 0;
 }
@@ -800,21 +799,21 @@ s32 SceneData_ReturnOne(void)
 
 s32 Dialogue_AskMessage2557(void)
 {
-    Story_Do12(0x2557);
+    Story_unk12_2(0x2557);
     Story_Apply7(12, 0);
     return Story_Apply8(0, 0) == 0;
 }
 
 s32 Dialogue_ShowLine255DAndReturnOne(void)
 {
-    Story_Do13(0x255D);
+    Story_unk13_2(0x255D);
     Story_Apply9(1, 0);
     return 1;
 }
 
 s32 Dialogue_AskMessage254a(void)
 {
-    Story_Do14(0x254A);
+    Story_unk14_2(0x254A);
     Story_Apply10(3, 0);
     return Story_Apply11(0, 0) == 0;
 }
@@ -824,26 +823,26 @@ s32 Scene_RunScene3ad(void)
     s32 record;
     s32 base5_255e;
 
-    Story_Run58(2, 0, 0);
+    Story_unk58_3(2, 0, 0);
     Story_Place(2, 0x102, 60);
     base5_255e = (s32)gVal7;
-    Story_Run59(base5_255e);
-    Story_Run60(2, 0);
-    Story_Place2(12, 0x3000, 0);
-    Story_Run61(30);
-    Story_Run62(12, 4);
-    Story_Run63((base5_255e + 1));
-    Story_Run64(12, 0);
-    Story_Place3(3, 0x102, 60);
-    Story_Run65((base5_255e + 2));
-    Story_Check16(3, 0);
-    record = Story_Check17(0, 0);
+    Story_unk59_3(base5_255e);
+    Story_unk60_3(2, 0);
+    Story_unk2_3(12, 0x3000, 0);
+    Story_unk61_3(30);
+    Story_unk62_3(12, 4);
+    Story_unk63_3((base5_255e + 1));
+    Story_unk64_3(12, 0);
+    Story_unk3_3(3, 0x102, 60);
+    Story_unk65_3((base5_255e + 2));
+    Story_unk16(3, 0);
+    record = Story_unk17(0, 0);
     return !record;
 }
 
 s32 Dialogue_AskMessage255c(void)
 {
-    Story_Do15(0x255C);
+    Story_unk15_2(0x255C);
     Story_Apply12(1, 0);
     return Story_Apply13(0, 0) == 0;
 }
@@ -854,103 +853,103 @@ void Scene_RunLateScript(void)
     s32 record;
     s32 base5_254e;
 
-    Story_Place4(1, 0x105, 60);
-    Story_Run66(1, 0, 0);
+    Story_unk4_3(1, 0x105, 60);
+    Story_unk66_3(1, 0, 0);
     base5_254e = (s32)gVal8;
-    Story_Run67(base5_254e);
-    Story_Run68(1, 0);
-    Story_Run69(3, 1);
-    Story_Run70((base5_254e + 1));
-    Story_Run71(3, 0);
-    Story_Run72(2, 13, 0);
-    Story_Run73(60);
-    Story_Run74((base5_254e + 2));
-    Story_Run75(2, 0);
-    Story_Run76(13, 2, 0);
-    Story_Place5(13, 0x105, 70);
-    Story_Run77((base5_254e + 3));
-    Story_Run78(13, 0);
-    Story_Run79(12, 4);
-    Story_Run80((base5_254e + 4));
-    Story_Run81(12, 0);
-    Story_Place6(12, 0x3000, 0);
-    Story_Run82(20);
-    Story_Run83(12, 3);
-    Story_Run84(0, 3);
-    Story_Run85(1, 3);
-    Story_Run86(2, 3);
-    Story_Run87(3, 3);
-    Story_Run88(60);
-    Story_Place7(13, -16, 0);
-    Story_Run89(13);
-    Story_Run90(13, 1);
-    Story_Run91(40);
-    Story_Run92(13, 3);
-    Story_Place8(13, 0x5000, 0);
-    Story_Run93(30);
-    Story_Run94(0, 3);
-    Story_Run95(1, 3);
-    Story_Run96(2, 3);
-    Story_Run97(3, 3);
-    Story_Place9(12, 156, 0x210);
-    Story_Run98(20);
-    Story_Place10(13, 164, 0x210);
-    Story_Run99(12);
-    Story_Place11(12, 168, 0x280);
-    Story_Run100(13);
-    Story_Place12(13, 168, 0x280);
-    Story_Place13(0, 0x5000, 0);
-    Story_Place14(2, 0x5000, 0);
-    Story_Place15(3, 0x5000, 0);
-    Story_Place16(1, 0x5000, 0);
-    Story_Run101(20);
-    Story_Place17(0, 0x4000, 0);
-    Story_Place18(2, 0x4000, 0);
-    Story_Place19(3, 0x4000, 0);
-    Story_Place20(1, 0x4000, 0);
-    Story_Run102(60);
-    Story_Run103(13, 0, 0);
-    Story_Run104(12, 0, 0);
-    Story_Run105(110);
-    ((void (*)())Story_Check32)((base5_254e + 5));
-    Story_Run106(1, 0);
-    Story_Run107(3, 3);
-    Story_Run108(30);
-    Story_Run109((base5_254e + 6));
-    Story_Run110(3, 0);
-    Story_Run111(2, 3);
-    Story_Run112((base5_254e + 7));
-    Story_Run113(2, 0);
-    Story_Run114(140);
-    Story_Run115(1, 0, 0);
-    Story_Run116((base5_254e + 8));
-    Story_Run117(1, 0);
-    Story_Run118(1, 2);
-    record = Story_Check18(0);
+    Story_unk67_3(base5_254e);
+    Story_unk68_3(1, 0);
+    Story_unk69_3(3, 1);
+    Story_unk70_3((base5_254e + 1));
+    Story_unk71_3(3, 0);
+    Story_unk72_3(2, 13, 0);
+    Story_unk73_3(60);
+    Story_unk74_3((base5_254e + 2));
+    Story_unk75_3(2, 0);
+    Story_unk76_3(13, 2, 0);
+    Story_unk5_3(13, 0x105, 70);
+    Story_unk77_3((base5_254e + 3));
+    Story_unk78_3(13, 0);
+    Story_unk79_3(12, 4);
+    Story_unk80_3((base5_254e + 4));
+    Story_unk81_3(12, 0);
+    Story_unk6_3(12, 0x3000, 0);
+    Story_unk82_3(20);
+    Story_unk83_3(12, 3);
+    Story_unk84_3(0, 3);
+    Story_unk85_3(1, 3);
+    Story_unk86_3(2, 3);
+    Story_unk87_3(3, 3);
+    Story_unk88_3(60);
+    Story_unk7_3(13, -16, 0);
+    Story_unk89_3(13);
+    Story_unk90_3(13, 1);
+    Story_unk91_3(40);
+    Story_unk92_3(13, 3);
+    Story_unk8_3(13, 0x5000, 0);
+    Story_unk93_3(30);
+    Story_unk94_3(0, 3);
+    Story_unk95_3(1, 3);
+    Story_unk96_3(2, 3);
+    Story_unk97_3(3, 3);
+    Story_unk9_3(12, 156, 0x210);
+    Story_unk98_3(20);
+    Story_unk10_3(13, 164, 0x210);
+    Story_unk99_3(12);
+    Story_unk11_3(12, 168, 0x280);
+    Story_unk100_3(13);
+    Story_unk12_3(13, 168, 0x280);
+    Story_unk13_3(0, 0x5000, 0);
+    Story_unk14_3(2, 0x5000, 0);
+    Story_unk15_3(3, 0x5000, 0);
+    Story_unk16_3(1, 0x5000, 0);
+    Story_unk101_3(20);
+    Story_unk17_3(0, 0x4000, 0);
+    Story_unk18_3(2, 0x4000, 0);
+    Story_unk19_3(3, 0x4000, 0);
+    Story_unk20_3(1, 0x4000, 0);
+    Story_unk102_3(60);
+    Story_unk103_3(13, 0, 0);
+    Story_unk104_3(12, 0, 0);
+    Story_unk105_3(110);
+    ((void (*)())Story_unk32)((base5_254e + 5));
+    Story_unk106_3(1, 0);
+    Story_unk107_3(3, 3);
+    Story_unk108_3(30);
+    Story_unk109_3((base5_254e + 6));
+    Story_unk110_3(3, 0);
+    Story_unk111_3(2, 3);
+    Story_unk112_3((base5_254e + 7));
+    Story_unk113_3(2, 0);
+    Story_unk114_3(140);
+    Story_unk115_3(1, 0, 0);
+    Story_unk116_3((base5_254e + 8));
+    Story_unk117_3(1, 0);
+    Story_unk118_3(1, 2);
+    record = Story_unk18(0);
     if (record != 0) {
-        Story_Run119(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Story_unk119_3(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Story_Run120(1);
-    Story_Run121(1, 0, 0);
-    Story_Run122(2, 2);
-    record = Story_Check19(0);
+    Story_unk120_3(1);
+    Story_unk121_3(1, 0, 0);
+    Story_unk122_3(2, 2);
+    record = Story_unk19(0);
     if (record != 0) {
-        Story_Run123(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Story_unk123_3(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Story_Run124(2);
-    Story_Run125(2, 0, 0);
-    Story_Run126(3, 2);
-    record = Story_Check20(0);
+    Story_unk124_3(2);
+    Story_unk125_3(2, 0, 0);
+    Story_unk126_3(3, 2);
+    record = Story_unk20(0);
     if (record != 0) {
-        Story_Run127(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Story_unk127_3(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Story_Run128(3);
-    Story_Run129(3, 0, 0);
-    Story_Run130(30);
-    Story_Run131(0, 1);
-    Story_Run132();
-    Story_Run133(0, 0);
-    Story_Do7(0x94f);
+    Story_unk128_3(3);
+    Story_unk129_3(3, 0, 0);
+    Story_unk130_3(30);
+    Story_unk131_3(0, 1);
+    Story_unk132_3();
+    Story_unk133_3(0, 0);
+    Story_unk7_2(0x94f);
 }
 
 void SceneEvent_RunPartyDeparture(void)
@@ -958,89 +957,89 @@ void SceneEvent_RunPartyDeparture(void)
     s32 record;
     s32 msg;
 
-    Story_Place21(1, 0x5000, 0);
+    Story_unk21_3(1, 0x5000, 0);
     msg = (s32)gVal9;
-    Story_Run134(msg);
-    Story_Run135(1, 0);
-    Story_Run136(2, 3);
-    Story_Run137((msg + 1));
-    Story_Run138(2, 0);
-    Story_Run139(13, 2, 0);
-    Story_Run140(13, 3);
-    Story_Run141(20);
-    Story_Run142((msg + 2));
-    Story_Run143(13, 0);
-    Story_Place22(12, 0x3000, 0);
-    Story_Run144(12, 3);
-    Story_Run145(30);
-    Story_Run146((msg + 3));
-    Story_Run147(12, 0);
-    Story_Run148(13, 3);
-    Story_Run149(20);
-    Story_Run150(0, 3);
-    Story_Run151(1, 3);
-    Story_Run152(2, 3);
-    Story_Run153(3, 3);
-    Story_Run154(80);
-    Story_Place23(13, -16, 0);
-    Story_Run155(13);
-    Story_Run156(13, 1);
-    Story_Run157(40);
-    Story_Run158(13, 3);
-    Story_Place24(13, 0x5000, 0);
-    Story_Run159(30);
-    Story_Run160(0, 3);
-    Story_Run161(1, 3);
-    Story_Run162(2, 3);
-    Story_Run163(3, 3);
-    Story_Place25(12, 152, 0x210);
-    Story_Run164(20);
-    Story_Place26(13, 160, 0x210);
-    Story_Run165(12);
-    Story_Place27(12, 168, 0x280);
-    Story_Run166(13);
-    Story_Place28(13, 168, 0x280);
-    Story_Place29(0, 0x5000, 0);
-    Story_Place30(2, 0x5000, 0);
-    Story_Place31(3, 0x5000, 0);
-    Story_Place32(1, 0x5000, 0);
-    Story_Run167(20);
-    Story_Place33(0, 0x4000, 0);
-    Story_Place34(2, 0x4000, 0);
-    Story_Place35(3, 0x4000, 0);
-    Story_Place36(1, 0x4000, 0);
-    Story_Run168(200);
-    Story_Run169(13, 0, 0);
-    Story_Run170(12, 0, 0);
-    Story_Run171(1, 2);
-    record = Story_Check21(0);
+    Story_unk134_3(msg);
+    Story_unk135_3(1, 0);
+    Story_unk136_3(2, 3);
+    Story_unk137_3((msg + 1));
+    Story_unk138_3(2, 0);
+    Story_unk139_3(13, 2, 0);
+    Story_unk140_3(13, 3);
+    Story_unk141_3(20);
+    Story_unk142_3((msg + 2));
+    Story_unk143_3(13, 0);
+    Story_unk22_3(12, 0x3000, 0);
+    Story_unk144_3(12, 3);
+    Story_unk145_3(30);
+    Story_unk146_3((msg + 3));
+    Story_unk147_3(12, 0);
+    Story_unk148_3(13, 3);
+    Story_unk149_3(20);
+    Story_unk150_3(0, 3);
+    Story_unk151_3(1, 3);
+    Story_unk152_3(2, 3);
+    Story_unk153_3(3, 3);
+    Story_unk154_3(80);
+    Story_unk23_3(13, -16, 0);
+    Story_unk155_3(13);
+    Story_unk156_3(13, 1);
+    Story_unk157_3(40);
+    Story_unk158_3(13, 3);
+    Story_unk24_3(13, 0x5000, 0);
+    Story_unk159_3(30);
+    Story_unk160_3(0, 3);
+    Story_unk161_3(1, 3);
+    Story_unk162_3(2, 3);
+    Story_unk163_3(3, 3);
+    Story_unk25_3(12, 152, 0x210);
+    Story_unk164_3(20);
+    Story_unk26_3(13, 160, 0x210);
+    Story_unk165_3(12);
+    Story_unk27_3(12, 168, 0x280);
+    Story_unk166_3(13);
+    Story_unk28_3(13, 168, 0x280);
+    Story_unk29_3(0, 0x5000, 0);
+    Story_unk30_3(2, 0x5000, 0);
+    Story_unk31_3(3, 0x5000, 0);
+    Story_unk32_3(1, 0x5000, 0);
+    Story_unk167_3(20);
+    Story_unk33_3(0, 0x4000, 0);
+    Story_unk34_3(2, 0x4000, 0);
+    Story_unk35_3(3, 0x4000, 0);
+    Story_unk36_3(1, 0x4000, 0);
+    Story_unk168_3(200);
+    Story_unk169_3(13, 0, 0);
+    Story_unk170_3(12, 0, 0);
+    Story_unk171_3(1, 2);
+    record = Story_unk21(0);
     if (record != 0) {
-        Story_Run172(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Story_unk172_3(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Story_Run173(1);
-    Story_Run174(1, 0, 0);
-    Story_Run175(2, 2);
-    record = Story_Check22(0);
+    Story_unk173_3(1);
+    Story_unk174_3(1, 0, 0);
+    Story_unk175_3(2, 2);
+    record = Story_unk22(0);
     if (record != 0) {
-        Story_Run176(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Story_unk176_3(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Story_Run177(2);
-    Story_Run178(2, 0, 0);
-    Story_Run179(3, 2);
-    record = Story_Check23(0);
+    Story_unk177_3(2);
+    Story_unk178_3(2, 0, 0);
+    Story_unk179_3(3, 2);
+    record = Story_unk23(0);
     if (record != 0) {
-        Story_Run180(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Story_unk180_3(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Story_Run181(3);
-    Story_Run182(3, 0, 0);
-    Story_Run183(30);
-    Story_Place37(0, -16, 0);
-    Story_Run184(0);
-    Story_Run185(0, 1);
-    Story_Place38(0, 168, 0x280);
-    Story_Run186(60);
-    Story_Run187();
-    Story_Run188(3);
+    Story_unk181_3(3);
+    Story_unk182_3(3, 0, 0);
+    Story_unk183_3(30);
+    Story_unk37_3(0, -16, 0);
+    Story_unk184_3(0);
+    Story_unk185_3(0, 1);
+    Story_unk38_3(0, 168, 0x280);
+    Story_unk186_3(60);
+    Story_unk187_3();
+    Story_unk188_3(3);
 }
 
 /*
@@ -1064,29 +1063,29 @@ s32 Scene_RunSceneEntryHook(void)
     *(s32 *)(workspace + 448) = 0x204;
 
     if (gCell[224] == (s32)&Value_0000006a) {
-    Story_Run189(Story_Run5(8), 0);
-    Story_Run190(Story_Run6(9), 0);
-    Story_Run191(Story_Run7(10), 0);
-    Story_Run192(Story_Run8(11), 0);
+    Story_unk189_3(Story_unk5_4(8), 0);
+    Story_unk190_3(Story_unk6_4(9), 0);
+    Story_unk191_2(Story_unk7_4(10), 0);
+    Story_unk192_2(Story_unk8_4(11), 0);
 
     /* Word field at +28 of record 11.  0xf333 comes from the pool. */
-    *(s32 *)(Story_Run9(11) + 28) = 0xf333;
+    *(s32 *)(Story_unk9_4(11) + 28) = 0xf333;
 
-    if (Story_Check33(0x201) != 0) {
-        Story_Run193();
+    if (Story_unk33(0x201) != 0) {
+        Story_unk193_2();
     }
-    if (Story_Check34(0x202) != 0) {
-        Story_Run194();
+    if (Story_unk34(0x202) != 0) {
+        Story_unk194_2();
     }
     /* 0x200 is built here rather than taken from the pool. */
-    if (Story_Check35(0x200) != 0) {
-        Story_Run195();
+    if (Story_unk35(0x200) != 0) {
+        Story_unk195_2();
     }
-    if (Story_Check36(0x203) != 0) {
-        Story_Run196(11, 5);
+    if (Story_unk36(0x203) != 0) {
+        Story_unk196_2(11, 5);
     }
-    if (Story_Check37(0x204) != 0) {
-        Story_Run197(9, 5);
+    if (Story_unk37(0x204) != 0) {
+        Story_unk197_2(9, 5);
     }
     }
 

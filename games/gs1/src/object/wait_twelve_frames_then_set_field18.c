@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/wait_twelve_frames_then_set_field18.h"
 
 s32 WaitFrames(s32);
 

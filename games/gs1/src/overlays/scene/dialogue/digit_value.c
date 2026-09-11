@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/digit_value.h"
 
 extern s16 gCell[];
 extern u8 gOv[];
@@ -35,7 +34,7 @@ u32 State_RunQueryWithInterruptMasterSaved(void)
 
     *ime = (u16)(u32)ime;
     Talk_Run();
-    ret = Talk_Run2();
+    ret = Talk_unk2_4();
     *ime = saved;
     return ret;
 }
@@ -63,10 +62,10 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
     u16 *work = *(u16 **)0x03001ebc;
 
-    Talk_Run3(4);
-    Talk_Run4(512);
-    Talk_Run5(0x203);
-    Talk_Run6();
+    Talk_unk3_4(4);
+    Talk_unk4_4(512);
+    Talk_unk5_4(0x203);
+    Talk_unk6_4();
 
     {
         /*
@@ -82,15 +81,15 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
         *p = (u16)val;
     }
 
-    Talk_Run7(0x2927);
-    Talk_Run8(8, 0);
-    Talk_Run9(0x205);
+    Talk_unk7_4(0x2927);
+    Talk_unk8_4(8, 0);
+    Talk_unk9_4(0x205);
     return Talk_Check();
 }
 
 s32 SceneData_CopyUpToThreeEntries(u16 *dest)
 {
-    s32 cnt = Talk_Check2();
+    s32 cnt = Talk_unk2();
     if (cnt > 3) cnt = 3;
     if (cnt > 0) {
         s16 *p = gCell;
@@ -112,8 +111,8 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
 s32 State_ApplyValueAndGetResult(s32 arg0)
 {
     Talk_Do(arg0);
-    Talk_Do2(arg0);
-    return Talk_Check3();
+    Talk_unk2_2(arg0);
+    return Talk_unk3();
 }
 
 /* Deliberate no-op callback. */
@@ -124,33 +123,33 @@ u8 *SceneData_GetTable9e14(void) { return (u8 *)0x02009e14; }
 s32 Scene_ShowDialoguePair292a(void)
 {
     s32 handle;
-    Talk_Run10(85);
-    handle = Talk_Check4(0x292a, 5, 4, 1);
-    while (Talk_Check5() == 0)
-        Talk_Run11(1);
-    Talk_Run12();
-    Talk_Run13(handle, 1);
-    Talk_Run14(1);
-    handle = Talk_Check6(0x292b, 5, 4, 1);
-    while (Talk_Check7() == 0)
-        Talk_Run15(1);
-    return Talk_Check8(handle, 1);
+    Talk_unk10_4(85);
+    handle = Talk_unk4(0x292a, 5, 4, 1);
+    while (Talk_unk5() == 0)
+        Talk_unk11_4(1);
+    Talk_unk12_4();
+    Talk_unk13_4(handle, 1);
+    Talk_unk14_4(1);
+    handle = Talk_unk6(0x292b, 5, 4, 1);
+    while (Talk_unk7() == 0)
+        Talk_unk15_4(1);
+    return Talk_unk8(handle, 1);
 }
 
 s32 Scene_ShowDialoguePair292c(void)
 {
     s32 handle;
-    Talk_Run16(85);
-    handle = Talk_Check9(0x292c, 5, 4, 1);
-    while (Talk_Check10() == 0)
-        Talk_Run17(1);
-    Talk_Run18();
-    Talk_Run19(handle, 1);
-    Talk_Run20(1);
-    handle = Talk_Check11(0x292d, 5, 4, 1);
-    while (Talk_Check12() == 0)
-        Talk_Run21(1);
-    return Talk_Check13(handle, 1);
+    Talk_unk16_4(85);
+    handle = Talk_unk9(0x292c, 5, 4, 1);
+    while (Talk_unk10() == 0)
+        Talk_unk17_4(1);
+    Talk_unk18_4();
+    Talk_unk19_4(handle, 1);
+    Talk_unk20_4(1);
+    handle = Talk_unk11(0x292d, 5, 4, 1);
+    while (Talk_unk12() == 0)
+        Talk_unk21_4(1);
+    return Talk_unk13(handle, 1);
 }
 
 s32 Scene_DrawThreeDigitValue(s32 value)
@@ -168,5 +167,5 @@ s32 Scene_DrawThreeDigitValue(s32 value)
         value = Talk_Apply2(value, 10);
     }
 
-    return Talk_Check14();
+    return Talk_unk14();
 }

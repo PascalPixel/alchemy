@@ -1,7 +1,6 @@
 #include "owner_state.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/get_value_if_level_threshold_reached.h"
 
 struct Owner_080792c4 {
     u8 unknown_000[0x0f];

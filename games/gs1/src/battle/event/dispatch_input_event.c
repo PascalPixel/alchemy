@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/event/dispatch_input_event.h"
 
 struct RuntimeState_0808d8f0 {
     u8 padding0[0x19C];
@@ -40,9 +39,9 @@ s32 Battle_DispatchInputEvent(s32 event)
     case 0xFD:
         if (state->delay > 12) {
             if (gIw & 0x80) {
-                Battle_Run2();
+                Battle_unk2_4();
             } else if (gIw & 0x40) {
-                Battle_Run3();
+                Battle_unk3_4();
             }
             state->delay = 0;
         }

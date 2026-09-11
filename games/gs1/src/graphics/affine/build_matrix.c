@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/affine/build_matrix.h"
 
 typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
 
@@ -57,7 +56,7 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
         s32 cosine;
 
         sine = Sys_Check(angle);
-        cosine = Sys_Check2(angle);
+        cosine = Sys_unk2(angle);
         *coefficient = FixedPoint_Ratio(cosine, x_scale);
         coefficient++;
         *coefficient = FixedPoint_Ratio(sine, x_scale);

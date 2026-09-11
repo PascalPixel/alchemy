@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/event/show_value_1d8_at_position.h"
 
 struct State_08093168 {
     u8 padding[472];

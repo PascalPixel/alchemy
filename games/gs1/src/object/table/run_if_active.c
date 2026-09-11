@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/table/run_if_active.h"
 
 s32 ObjectTable_ReadActiveValue();
 

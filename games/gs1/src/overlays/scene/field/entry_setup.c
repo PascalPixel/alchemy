@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/field/entry_setup.h"
 
 #include "overlay_object.h"
 #include "staged_actor.h"
@@ -368,26 +367,26 @@ extern u8 gOv19[];
 extern u8 gOv20[];
 extern u8 gOv21[];
 
-void *Field_Run16(s32, s32, s32, s32);
+void *Field_unk16_4(s32, s32, s32, s32);
 
-void *Field_Run17(s32, s32, s32, s32);
-struct Effect *Field_Run18();
-struct Effect *Field_Run19();
+void *Field_unk17_4(s32, s32, s32, s32);
+struct Effect *Field_unk18_4();
+struct Effect *Field_unk19_4();
 
 typedef s32(*IwramSqrt020002f0)(s32);
-u8 *Field_Run20();
-u8 *Field_Run21();
+u8 *Field_unk20_4();
+u8 *Field_unk21_4();
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindActorAtPosition(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindActorAtForwardPosition(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindActorAbovePosition(s32 *arg0, struct StagedActor *arg1);
 
-struct EffectObject *Field_Run22(s32);
+struct EffectObject *Field_unk22_4(s32);
 
-struct SceneObject *Field_Run23(void);
+struct SceneObject *Field_unk23_4(void);
 
-struct EffectObject *Field_Run24(s32, s32, s32, s32);
+struct EffectObject *Field_unk24_4(s32, s32, s32, s32);
 
 u8 *Scene_GetRecord_1();
 
@@ -397,38 +396,38 @@ u8 *Motion_SetHPosTerrain_1();
 
 u8 *Scene_GetRecord_3();
 
-u8 *Field_Run25();
+u8 *Field_unk25_4();
 
-Struct_A *Field_Run26(s32);
+Struct_A *Field_unk26_4(s32);
 
-Struct_A *Field_Run27(s32);
+Struct_A *Field_unk27_4(s32);
 
-Struct_B *Field_Run28(s32);
+Struct_B *Field_unk28_4(s32);
 
-struct Actor *Field_Run29();
-struct Position *Field_Run30(s32);
-struct Position *Field_Run31(s32);
+struct Actor *Field_unk29_4();
+struct Position *Field_unk30_4(s32);
+struct Position *Field_unk31_4(s32);
 
-Struct_0ff0 *Field_Run32(s32);
+Struct_0ff0 *Field_unk32_4(s32);
 
-Struct_199c *Field_Run33(s32);
+Struct_199c *Field_unk33_4(s32);
 
-Struct_19c0 *Field_Run34(s32);
+Struct_19c0 *Field_unk34_4(s32);
 
-Struct_1a9c *Field_Run35(s32);
+Struct_1a9c *Field_unk35_4(s32);
 
-Struct_1a9c *Field_Run36(s32);
+Struct_1a9c *Field_unk36_4(s32);
 
-Struct_22a4b *Field_Run37(s32);
+Struct_22a4b *Field_unk37_4(s32);
 
-struct SceneObject *Field_Run38(s32);
+struct SceneObject *Field_unk38_4(s32);
 
-Struct_1644 *Field_Run39();
-Struct_1644 *Field_Run40();
+Struct_1644 *Field_unk39_4();
+Struct_1644 *Field_unk40_4();
 
-Struct_18f8 *Field_Run41(s32);
+Struct_18f8 *Field_unk41_4(s32);
 
-u8 *Field_Run42(s32);
+u8 *Field_unk42_4(s32);
 
 void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter)
 {
@@ -445,7 +444,7 @@ void *OvObj_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     s32 mask;
     u8 flag;
 
-    obj = Field_Run16(arg3, arg0, arg1, arg2);
+    obj = Field_unk16_4(arg3, arg0, arg1, arg2);
     if (obj != 0) {
         p = *(u8 **)((u8 *)obj + 0x50);
         mask = 13;
@@ -467,7 +466,7 @@ void *OvObj_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     s32 flags;
     s32 result;
 
-    object = Field_Run17(arg3, arg0, arg1, arg2);
+    object = Field_unk17_4(arg3, arg0, arg1, arg2);
     if (object != 0) {
         rec = *(u8 **)((u8 *)object + 0x50);
         flags = rec[9];
@@ -520,23 +519,23 @@ void Effect_SpawnConfigured(s32 x, s32 y,
     s32 dur;
     s32 delta0;
     s32 acc;
-    party = Field_Run18(0);
+    party = Field_unk18_4(0);
 
     /* 128 << 13.  With this bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Field_Run19(options->kind, x, y, z);
+        effect = Field_unk19_4(options->kind, x, y, z);
     } else {
-        effect = Field_Run19(222, x, y, z);
+        effect = Field_unk19_4(222, x, y, z);
     }
     if (effect == 0) return;
 
     block = effect->sprite;
     blk = block;
 
-    Field_Run43(effect, (flags + 1) & 15);
+    Field_unk43_4(effect, (flags + 1) & 15);
     off = (flags & 15) << 2;
-    Field_Run44(effect, gOv[off >> 2]);
+    Field_unk44_4(effect, gOv[off >> 2]);
 
     effect->mode55 = 0;
     block->state26 = 0;
@@ -566,7 +565,7 @@ void Effect_SpawnConfigured(s32 x, s32 y,
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
-        Field_Run45(effect, options->mode);
+        Field_unk45_4(effect, options->mode);
     }
 
     if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
@@ -594,7 +593,7 @@ void Effect_SpawnConfigured(s32 x, s32 y,
             delta0 = *(volatile const s32 *)&options->target30;
             acc = *(volatile const s32 *)&effect->accum18;
             delta0 -= acc;
-            effect->rate30 = Field_Check8(delta0,
+            effect->rate30 = Field_unk8(delta0,
                                            desc->dur);
             delta = options->target34;
             dur = desc->dur;
@@ -602,7 +601,7 @@ void Effect_SpawnConfigured(s32 x, s32 y,
         } else {
             delta0 = options->target30;
             delta0 += (s32)0xffff0000;
-            effect->rate30 = Field_Check9(delta0,
+            effect->rate30 = Field_unk9(delta0,
                                            desc->dur);
             delta = options->target34;
             dur = desc->dur;
@@ -612,12 +611,12 @@ void Effect_SpawnConfigured(s32 x, s32 y,
         /* Only the first call is per-arm.  Both arms join onto one second
          * call site, so each arm computes its own delta and the call is
          * spelled once here. */
-        effect->rate34 = Field_Check10(delta, dur);
+        effect->rate34 = Field_unk10(delta, dur);
     }
 
     if ((flags & 0x200000) != 0) {                  /* 128 << 14 */
-        Field_Run46(effect, 1);
-        Field_Run47(effect, options->callback_arg);
+        Field_unk46_4(effect, 1);
+        Field_unk47_4(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {                  /* 128 << 15 */
@@ -653,7 +652,7 @@ s32 Actor_CalculateFixedPointDistance(s32 *a, s32 *b)
  * linking) -- lifted verbatim, not the veneer-math final target names this
  * file used before. The one true indirect call (selector's local-effect
  * dispatch) is routed automatically through this overlay's own
- * `_call_via_rN` bank; Field_Run48 is correct for it, unchanged.
+ * `_call_via_rN` bank; Field_unk48_4 is correct for it, unchanged.
  */
 s32 *SceneData_FindSlotAtPosition(s32 *pos)
 {
@@ -810,7 +809,7 @@ s32 OvObj_UpdateEveryFourFrames(void *obj)
         Field_Apply7(obj, 0);
 
     if ((*(u32 *)0x03001e40 & 7) == 0)
-        Field_Do9(138);
+        Field_unk9_2(138);
     return 0;
 }
 
@@ -820,14 +819,14 @@ s32 Effect_SpawnRandomEveryEightFramesB(struct Object *object)
     s32 phase, x, y, speed;
     phase = *(u32 *)0x03001e40 & 7;
     if (phase != 0) goto done;
-    params.unk00 = 3 - (s32)((u32)(Field_Check11() * 2) >> 16);
+    params.unk00 = 3 - (s32)((u32)(Field_unk11() * 2) >> 16);
     params.color1 = 0x6666;
     params.color2 = 0x6666;
     params.mode = 14;
-    x = object->x + (((s32)((u32)(Field_Check12() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (s32)((u32)(Field_Check13() * 32) >> 16)) << 16);
-    speed = Field_Check14(((s32)((u32)(Field_Check15() * 5) >> 16) << 16) + 0x00050000, 10);
-    Field_Run49(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
+    x = object->x + (((s32)((u32)(Field_unk12() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - (s32)((u32)(Field_unk13() * 32) >> 16)) << 16);
+    speed = Field_unk14(((s32)((u32)(Field_unk15() * 5) >> 16) << 16) + 0x00050000, 10);
+    Field_unk49_4(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
 done:
     return 0;
 }
@@ -848,10 +847,10 @@ s32 Effect_SpawnTwoRandomizedParticles(struct Object2 *obj)
     params.color2 = 0x0000cccc;
     params.unk00 = 0;
 
-    speed = (s32)((u32)(Field_Check16() * 8) >> 16) * 0x3333;
+    speed = (s32)((u32)(Field_unk16() * 8) >> 16) * 0x3333;
     phase = gIw & 15;
 
-    Field_Check17(
+    Field_unk17(
         obj->x + ((8 - phase) << 16),
         obj->y + 0x001a0000,
         obj->z,
@@ -865,9 +864,9 @@ s32 Effect_SpawnTwoRandomizedParticles(struct Object2 *obj)
     if (phase == 0) {
         params.color1 = 0x00008000;
         params.color2 = 0x00008000;
-        Field_Check18(
+        Field_unk18(
             obj->x
-                + (((s32)((u32)(Field_Check19() * 9) >> 16) - 4) << 16),
+                + (((s32)((u32)(Field_unk19() * 9) >> 16) - 4) << 16),
             obj->y,
             obj->z,
             0,
@@ -886,22 +885,22 @@ void Effect_RunObjectZeroColorSequence(void)
     u8 *state;
 
     state = *(u8 **)0x03001ebc;
-    obj = Field_Run22(0);
-    Field_Run50();
-    Field_Do10(228);
+    obj = Field_unk22_4(0);
+    Field_unk50_4();
+    Field_unk10_2(228);
     obj->callback = 0x020086a1;
     obj->color = 0x3333;
     Field_Apply9(0, 2);
-    Field_Place5(0, 0, -6);
-    Field_Do11(0);
+    Field_unk5_3(0, 0, -6);
+    Field_unk11_2(0);
     Field_Apply10(0, 15);
-    Field_Apply11(Field_Check20(0), 0);
+    Field_Apply11(Field_unk20(0), 0);
     obj->callback = 0;
-    Field_Do12(30);
-    Field_Run51();
-    Field_Run52();
-    Field_Do13(*(s16 *)(state + 0x16c));
-    Field_Run53();
+    Field_unk12_2(30);
+    Field_unk51_4();
+    Field_unk52_4();
+    Field_unk13_2(*(s16 *)(state + 0x16c));
+    Field_unk53_4();
 }
 
 /* Runs a guarded one-shot setup on an entry record: only fires the first
@@ -929,7 +928,7 @@ void Scene_RunOpeningAuxiliarySequence(void)
         Motion_SetHPosTerrain_1(0, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
         ObjectGroup_ConfigureChildValue_1(0, 15);
         sub = Scene_GetRecord_2(0);
-        Field_Run54(sub, 0);
+        Field_unk54_4(sub, 0);
         Battle_WaitMode0_1();
         Motion_SetSpeed_1();
         Audio_PlayCue_1(228);
@@ -940,7 +939,7 @@ void Scene_RunOpeningAuxiliarySequence(void)
         Motion_CommitPositionAndActivate_1(0, 0, 8);
         ObjectGroup_ConfigureChildValue_2(0, 0);
         sub = Scene_GetRecord_3(0);
-        Field_Run55(sub, 1);
+        Field_unk55_4(sub, 1);
         Motion_CommitPositionAndActivate_2(0, 0, 8);
         entry[85] = 3;
         /* Restore the +108 override field to the original (unset) value. */
@@ -954,7 +953,7 @@ void State_StoreLookupZeroToWord24(void)
 {
     extern u8 *gWork;
 
-    *(s32 *)(*(u8 **)0x03001ee0 + 24) = Field_Check21(0);
+    *(s32 *)(*(u8 **)0x03001ee0 + 24) = Field_unk21(0);
 }
 
 void State_ClearWorkspaceWord24(void)
@@ -969,7 +968,7 @@ s32 Actor_SetFlagBitByRelativeDepth(struct Actor *actor)
     struct Actor *ref;
     u8 *fp;
     u8 flags;
-    ref = Field_Run29(0);
+    ref = Field_unk29_4(0);
     fp = &actor->flags23;
     flags = *fp | 2;
     *fp = flags;
@@ -993,8 +992,8 @@ void Actor_SwapPositionsByDepth(s32 group, s32 index)
     struct Position *second;
     s32 value;
 
-    first = Field_Run30(group);
-    second = Field_Run31(index);
+    first = Field_unk30_4(group);
+    second = Field_unk31_4(index);
     if (first->z <= second->z) {
         value = first->x;
         first->x = second->x;
@@ -1007,7 +1006,7 @@ void Actor_SwapPositionsByDepth(s32 group, s32 index)
         value = first->z;
         first->z = second->z;
         second->z = value;
-        Field_Do14(1);
+        Field_unk14_2(1);
     }
 }
 
@@ -1018,7 +1017,7 @@ void OvObj_WaitUntilIdle(struct BusyObject *obj)
 
     cnt = 60;
     while (cnt != 0) {
-        Field_Do15(1);
+        Field_unk15_2(1);
         busy = obj->busy;
         cnt--;
         if (busy == 0) break;
@@ -1037,7 +1036,7 @@ void OvObj_WaitUntilIdle(struct BusyObject *obj)
  * decay must stay written as a signed divide by 16 -- the negative bias and
  * arithmetic shift are what that division compiles to.
  */
-void Field_Run56(struct Effect *effect)
+void Field_unk56_4(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
@@ -1052,7 +1051,7 @@ void Field_Run56(struct Effect *effect)
     velocity_z = effect->velocity[2];
     effect->position[2] += velocity_z;
 
-    effect->velocity[0] = velocity_x - Field_Check22(velocity_x, 18);
+    effect->velocity[0] = velocity_x - Field_unk22(velocity_x, 18);
     effect->velocity[2] = velocity_z - velocity_z / 16;
 
     effect->accum18 += effect->rate30;
@@ -1081,20 +1080,20 @@ void Scene_RunSupplementalSequenceOne(s32 a0)
     u8 slot16[12];
 
     rec = Field_Check(0);
-    Field_Run57();
+    Field_unk57_4();
     Field_Run(-1, -1, -1, 0);
-    Field_Run58();
-    Field_Run59(1);
+    Field_unk58_4();
+    Field_unk59_4(1);
     *(volatile s32 *)(rec + 12) = 0x820000;
     *(volatile s32 *)(rec + 72) = 0x8000;
     *(volatile s32 *)(rec + 68) = 0;
     *(volatile u8 *)(rec + 85) = 0;
-    Field_Run60();
-    Field_Run61();
-    Field_Run62(30);
-    Field_Run63(204);
+    Field_unk60_4();
+    Field_unk61_4();
+    Field_unk62_4(30);
+    Field_unk63_4(204);
     *(volatile u8 *)(rec + 85) = 3;
-    Field_Run64(24);
+    Field_unk64_4(24);
     p10 = slot28;
     *(s32 *)(p10 + 4) = 7;
     *(s32 *)(p10 + 36) = 0x200896d;
@@ -1104,9 +1103,9 @@ void Scene_RunSupplementalSequenceOne(s32 a0)
     p16 = slot16;
     do {
         sh = v8 << 12;
-        *(s32 *)(p16) = Field_Check23(sh);
+        *(s32 *)(p16) = Field_unk23(sh);
         *(s32 *)(p16 + 4) = 0;
-        record = Field_Check24(sh);
+        record = Field_unk24(sh);
         *(s32 *)(p16 + 8) = record;
         half = *(s32 *)p16;
         *(s32 *)(p16) = half + half / 2;
@@ -1114,20 +1113,20 @@ void Scene_RunSupplementalSequenceOne(s32 a0)
         w2 = *(volatile s32 *)(rec + 16);
         w1 = *(volatile s32 *)(rec + 12);
         w4 = *(volatile s32 *)(p16 + 4);
-        Field_Run65(w0, w1, w2, (*(s32 *)p16), w4, record, 0x1090001, (s32)p10);
+        Field_unk65_4(w0, w1, w2, (*(s32 *)p16), w4, record, 0x1090001, (s32)p10);
         v8 = (v8 + 1);
     } while ((u32)v8 <= 16);
-    Field_Run66(188);
-    Field_Run2(0, 0x101);
-    Field_Run67(0, 22);
+    Field_unk66_4(188);
+    Field_unk2_4(0, 0x101);
+    Field_unk67_4(0, 22);
     Field_Place(0x50000, 0x50000, 0x10000);
-    Field_Place2(-1, -1, 0xe666);
-    Field_Run68();
-    Field_Run3(0, 0x100);
-    Field_Run69();
+    Field_unk2_3(-1, -1, 0xe666);
+    Field_unk68_4();
+    Field_unk3_4(0, 0x100);
+    Field_unk69_4();
     *(volatile s32 *)(rec + 72) = 0x10000;
     *(volatile s32 *)(rec + 68) = 0x4000;
-    Field_Run70();
+    Field_unk70_4();
 }
 
 void Effect_SpawnNineRadialEffects(void)
@@ -1140,20 +1139,20 @@ void Effect_SpawnNineRadialEffects(void)
     s32 x;
     s32 z;
 
-    object = Field_Run23();
+    object = Field_unk23_4();
     params.unk00 = 1;
     params.mode = 7;
     params.callback = 0x0200896d;
     for (i = 0; i <= 16; i += 2) {
         v = i << 12;
-        vec.x = Field_Check25(v);
+        vec.x = Field_unk25(v);
         vec.y = 0;
-        z = Field_Check26(v);
+        z = Field_unk26(v);
         x = vec.x;
         vec.z = z;
         x = x + Field_Apply12(x, 3);
         vec.x = x;
-        Field_SetRect25(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
+        Field_unk25_5(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
     }
 }
 
@@ -1168,9 +1167,9 @@ s32 Effect_SpawnRandomizedParticleEveryFourFrames(struct SceneObject *obj)
     if ((gIw & 3) != 0) {
         return 0;
     }
-    if ((u32)(Field_Check27() * 6) >> 16 == 0) {
+    if ((u32)(Field_unk27() * 6) >> 16 == 0) {
         if (obj->near != 0x80000000 || obj->far != 0x80000000) {
-            Field_Do16(246);
+            Field_unk16_2(246);
         }
     }
     y = 0;
@@ -1179,11 +1178,11 @@ s32 Effect_SpawnRandomizedParticleEveryFourFrames(struct SceneObject *obj)
     params.color2 = 0x10000;
     params.unk10 = -327;
     params.unk14 = -327;
-    rnd = Field_Check28();
+    rnd = Field_unk28();
     a = Field_Apply13(((((u32)(rnd * 9)) >> 16) - 4) << 16, 10);
-    rnd = Field_Check29();
+    rnd = Field_unk29();
     b = Field_Apply14(((((u32)(rnd * 9)) >> 16) - 4) << 16, 10);
-    Field_SetRect26(obj->x, obj->y, obj->z - 0x10000, a, y, b, 0x001c0001, &params);
+    Field_unk26_5(obj->x, obj->y, obj->z - 0x10000, a, y, b, 0x001c0001, &params);
     return 0;
 }
 
@@ -1195,7 +1194,7 @@ struct EffectObject *Effect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
 
     sx = x << 16;
     sz = z << 16;
-    obj = Field_Run24(284, sx, 0, sz);
+    obj = Field_unk24_4(284, sx, 0, sz);
     if (obj == 0) {
         return 0;
     }
@@ -1221,35 +1220,35 @@ s32 Actor_TryMoveActorZeroTwoTilesAhead(void)
     u8 old;
     s32 m;
 
-    obj = Field_Run38(0);
+    obj = Field_unk38_4(0);
     state = &obj->state;
     old = *state;
     vec.x = (obj->x & 0xfff00000) + 0x80000;
     vec.y = obj->y;
     vec.z = (obj->z & 0xfff00000) + 0x80000;
     m = (obj->angle + 0x2000) & 0xc000;
-    Field_Place6(0x100000, m, &vec);
+    Field_unk6_3(0x100000, m, &vec);
     if (Field_Apply18(obj, &vec) != 1 && Field_Apply19(&vec, obj) == 0) {
         vec.x = (obj->x & 0xfff00000) + 0x80000;
         vec.y = obj->y;
         vec.z = (obj->z & 0xfff00000) + 0x80000;
-        Field_Place7(0x200000, (obj->angle + 0x2000) & 0xc000, &vec);
+        Field_unk7_3(0x200000, (obj->angle + 0x2000) & 0xc000, &vec);
         if (Field_Apply20(&vec, obj) == 0 && Field_Apply21(obj, &vec) == 0) {
-            Field_Run71();
+            Field_unk71_4();
             Field_Apply22(obj, 6);
-            Field_Do17(6);
-            Field_Do18(152);
+            Field_unk17_2(6);
+            Field_unk18_2(152);
             Field_Apply23(obj, 7);
             obj->scale_x = 0x30000;
             obj->scale_y = 0x20000;
             obj->accel = 0x40000;
             *state &= 0x7e;
             Field_Apply24(obj, 0);
-            Field_Place8(0, ((union VecView *)&vec)->h[1], ((union VecView *)&vec)->h[5]);
+            Field_unk8_3(0, ((union VecView *)&vec)->h[1], ((union VecView *)&vec)->h[5]);
             Field_Apply25(obj, 6);
             Field_Apply26(obj, 1);
             *state = old;
-            Field_Run72();
+            Field_unk72_4();
             return 1;
         }
     }
@@ -1317,7 +1316,7 @@ u8 *SceneData_SelectTableBySceneAndApply(void)
     } else {
         goto no_match;
     }
-    Field_Do19(ret);
+    Field_unk19_2(ret);
     return ret;
 
 no_match:
@@ -1328,9 +1327,9 @@ void State_SetFlag953(void)
 {
     extern u8 *gWork;
 
-    Field_Run73();
+    Field_unk73_4();
     Field_Apply27(0x953, 1);
-    Field_Run74();
+    Field_unk74_4();
 }
 
 void Scene_RunActorEightTenStepLoop(void)
@@ -1342,58 +1341,58 @@ void Scene_RunActorEightTenStepLoop(void)
     s32 a;
     s32 b;
 
-    Field_Run75();
+    Field_unk75_4();
     Field_Apply28(8, 3);
-    Field_Do20(0x266d);
+    Field_unk20_2(0x266d);
     n = 10;
     w = 8;
-    Field_Place9(8, 0, 20);
+    Field_unk9_3(8, 0, 20);
     do {
         Field_Apply29(8, 15);
-        Field_Do21(2);
+        Field_unk21_2(2);
         Field_Apply30(8, 0);
-        Field_Do22(w);
+        Field_unk22_2(w);
         if (w > 3) {
             w--;
         }
         n--;
     } while (n != 0);
-    Field_Do23(0x981);
-    Field_Place10(8, 0, 0);
+    Field_unk23_2(0x981);
+    Field_unk10_3(8, 0, 0);
     a = 7;
     b = 16;
-    Field_SetRect27(7, 17, 2, 1, a, b);
-    Field_Run76();
+    Field_unk27_5(7, 17, 2, 1, a, b);
+    Field_unk76_4();
 }
 
 void Dialogue_RunActorElevenDialogue(void)
 {
-    Field_Run77();
-    Field_Do24(0x2670);
-    Field_Place11(11, 0, 20);
+    Field_unk77_4();
+    Field_unk24_2(0x2670);
+    Field_unk11_3(11, 0, 20);
     Field_Apply31(11, 2);
     Field_Apply32(11, 0);
-    Field_Run78();
+    Field_unk78_4();
 }
 
 void Scene_SetFlag987AtActorTwelveTile(void)
 {
     Struct_0ff0 *s;
 
-    s = Field_Run32(12);
-    Field_Run79();
+    s = Field_unk32_4(12);
+    Field_unk79_4();
     if (s->unk8 >> 20 == 54 || s->unk10 >> 20 == 6) {
-        Field_Do25(0x987);
+        Field_unk25_2(0x987);
     }
-    Field_Run80();
+    Field_unk80_4();
 }
 
 void Dialogue_RunLine2682(void)
 {
-    Field_Run81();
+    Field_unk81_4();
     Field_Apply33(0, 1);
     Field_Apply34(0x2682, 1);
-    Field_Run82();
+    Field_unk82_4();
 }
 
 void State_ApplySixRectsAfter161(void)
@@ -1405,19 +1404,19 @@ void State_ApplySixRectsAfter161(void)
     s32 a;
     s32 b;
 
-    Field_Do26(0x161);
+    Field_unk26_2(0x161);
     x = 23;
     y = 8;
-    Field_SetRect28(35, 8, 1, 3, x, y);
+    Field_unk28_5(35, 8, 1, 3, x, y);
     a = 3;
     b = 1;
-    Field_SetRect29(35, 8, 23, 8, b, a);
-    Field_SetRect30(99, 8, 87, 8, b, a);
+    Field_unk29_5(35, 8, 23, 8, b, a);
+    Field_unk30_5(99, 8, 87, 8, b, a);
     x = 46;
     y = 55;
-    Field_SetRect31(57, 55, 3, 3, x, y);
-    Field_SetRect32(57, 55, 46, 55, a, a);
-    Field_SetRect33(121, 55, 110, 55, a, a);
+    Field_unk31_5(57, 55, 3, 3, x, y);
+    Field_unk32_5(57, 55, 46, 55, a, a);
+    Field_unk33_5(121, 55, 110, 55, a, a);
 }
 
 void State_ApplySixRectsAfterFlag161(void)
@@ -1427,19 +1426,19 @@ void State_ApplySixRectsAfterFlag161(void)
     s32 a;
     s32 b;
 
-    Field_Do27(0x161);
+    Field_unk27_2(0x161);
     x = 23;
     y = 8;
-    Field_SetRect34(36, 8, 1, 3, x, y);
+    Field_unk34_5(36, 8, 1, 3, x, y);
     a = 3;
     b = 1;
-    Field_SetRect35(36, 8, 23, 8, b, a);
-    Field_SetRect36(100, 8, 87, 8, b, a);
+    Field_unk35_5(36, 8, 23, 8, b, a);
+    Field_unk36_5(100, 8, 87, 8, b, a);
     x = 46;
     y = 55;
-    Field_SetRect37(53, 55, 3, 3, x, y);
-    Field_SetRect38(53, 55, 46, 55, a, a);
-    Field_SetRect39(117, 55, 110, 55, a, a);
+    Field_unk37_5(53, 55, 3, 3, x, y);
+    Field_unk38_5(53, 55, 46, 55, a, a);
+    Field_unk39_5(117, 55, 110, 55, a, a);
 }
 
 void Scene_RunScene3c8SequenceC(void)
@@ -1451,36 +1450,36 @@ void Scene_RunScene3c8SequenceC(void)
     u8 *record;
     s32 v2;
 
-    rec7 = Field_Check2(0);
-    Field_Run83();
-    Field_Run4(0, 0x200d21c);
-    Field_Run84(0);
-    Field_Run85(0, 6);
+    rec7 = Field_unk2(0);
+    Field_unk83_4();
+    Field_unk4_4(0, 0x200d21c);
+    Field_unk84_4(0);
+    Field_unk85_4(0, 6);
     *(volatile s32 *)(rec7 + 40) = 0x40000;
-    Field_Place3(0, 0x40000, 0x20000);
+    Field_unk3_3(0, 0x40000, 0x20000);
     if ((*(volatile s32 *)(rec7 + 16) >> 20) <= 54) {
-        *(u8 *)(Field_Check30(0) + 90) &= 254;
+        *(u8 *)(Field_unk30(0) + 90) &= 254;
         v2 = 210;
     } else {
-        *(u8 *)(Field_Check31(0) + 90) &= 254;
+        *(u8 *)(Field_unk31(0) + 90) &= 254;
         v2 = 238;
     }
-    Field_Run86(0, *(s16 *)(rec7 + 10), (v2 << 2));
-    Field_Run87(1);
+    Field_unk86_4(0, *(s16 *)(rec7 + 10), (v2 << 2));
+    Field_unk87_4(1);
     {
-        u8 *record = Field_Run25(0);
+        u8 *record = Field_unk25_4(0);
         u8 value = *(volatile u8 *)&record[90];
 
         record[90] = (u8)(value | 1);
     }
-    Field_Run88(20);
+    Field_unk88_4(20);
     *(volatile s32 *)(rec7 + 108) = 0x20085e5;
-    Field_Place4(0, 0x102, 60);
-    Field_Run89(0, 4);
-    Field_Run90(0, 0);
-    Field_Run91(0, 4);
+    Field_unk4_3(0, 0x102, 60);
+    Field_unk89_4(0, 4);
+    Field_unk90_4(0, 0);
+    Field_unk91_4(0, 4);
     *(volatile s32 *)(rec7 + 108) = 0;
-    Field_Run92();
+    Field_unk92_4();
 }
 
 void Scene_RunScene3c8SequenceD(void)
@@ -1503,68 +1502,68 @@ void Scene_RunScene3c8SequenceD(void)
 
         *(volatile u16 *)(((s32)p7 + 0xcb6)) = shown;
     }
-    Field_Run93();
-    Field_Run94(0, 1);
-    Field_Run5(0x2688, 1);
-    Field_Run6(0x10000, 0);
-    Field_Run7(0x10005, 0);
-    Field_Run95(120);
-    Field_Run96(100);
-    Field_Run97(142);
-    Field_Run98(30);
-    Field_Run8(0x7fff, 0);
-    Field_Run99(60);
-    Field_Run100(70);
-    if (Field_Check3(0x982) == 0) {
-        if (Field_Check4(0x983) == 0) {
+    Field_unk93_4();
+    Field_unk94_4(0, 1);
+    Field_unk5_4(0x2688, 1);
+    Field_unk6_4(0x10000, 0);
+    Field_unk7_4(0x10005, 0);
+    Field_unk95_4(120);
+    Field_unk96_4(100);
+    Field_unk97_4(142);
+    Field_unk98_4(30);
+    Field_unk8_4(0x7fff, 0);
+    Field_unk99_4(60);
+    Field_unk100_4(70);
+    if (Field_unk3(0x982) == 0) {
+        if (Field_unk4(0x983) == 0) {
             if ((*(volatile s32 *)0x03001e40 & 1) != 0) {
                 Field_Do(0x982);
             } else {
-                Field_Do2(0x983);
+                Field_unk2_2(0x983);
             }
         }
     }
-    if (Field_Check5(0x982) == 0) {
-        Field_Do3(0x982);
-        Field_Do4(0x983);
+    if (Field_unk5(0x982) == 0) {
+        Field_unk3_2(0x982);
+        Field_unk4_2(0x983);
         Field_SetRect(103, 27, 89, 27, 7, 8);
-        Field_SetRect2(41, 90, 27, 92, 3, 2);
-        Field_SetRect3(41, 90, 29, 93, 3, 2);
-        Field_SetRect4(41, 90, 27, 94, 3, 2);
-        Field_SetRect5(41, 90, 27, 96, 3, 2);
-        Field_SetRect6(41, 90, 29, 97, 3, 2);
-        Field_SetRect7(41, 96, 25, 91, 3, 2);
-        Field_SetRect8(41, 92, 25, 93, 3, 2);
-        Field_SetRect9(41, 96, 25, 95, 3, 2);
-        Field_SetRect10(41, 96, 25, 97, 3, 2);
-        Field_SetRect11(41, 96, 27, 96, 3, 2);
-        Field_SetRect12(41, 96, 29, 97, 3, 2);
+        Field_unk2_6(41, 90, 27, 92, 3, 2);
+        Field_unk3_6(41, 90, 29, 93, 3, 2);
+        Field_unk4_6(41, 90, 27, 94, 3, 2);
+        Field_unk5_6(41, 90, 27, 96, 3, 2);
+        Field_unk6_6(41, 90, 29, 97, 3, 2);
+        Field_unk7_6(41, 96, 25, 91, 3, 2);
+        Field_unk8_6(41, 92, 25, 93, 3, 2);
+        Field_unk9_6(41, 96, 25, 95, 3, 2);
+        Field_unk10_5(41, 96, 25, 97, 3, 2);
+        Field_unk11_5(41, 96, 27, 96, 3, 2);
+        Field_unk12_5(41, 96, 29, 97, 3, 2);
     } else {
-        Field_Do5(0x983);
-        Field_Do6(0x982);
-        Field_SetRect13(111, 27, 89, 27, 7, 8);
-        Field_SetRect14(41, 90, 25, 91, 3, 2);
-        Field_SetRect15(41, 90, 25, 93, 3, 2);
-        Field_SetRect16(41, 90, 25, 95, 3, 2);
-        Field_SetRect17(41, 90, 25, 97, 3, 2);
-        Field_SetRect18(41, 90, 27, 96, 3, 2);
-        Field_SetRect19(41, 90, 29, 97, 3, 2);
-        Field_SetRect20(41, 94, 27, 92, 3, 2);
-        Field_SetRect21(41, 96, 29, 93, 3, 2);
-        Field_SetRect22(41, 94, 27, 94, 3, 2);
-        Field_SetRect23(41, 96, 27, 96, 3, 2);
-        Field_SetRect24(41, 96, 29, 97, 3, 2);
+        Field_unk5_2(0x983);
+        Field_unk6_2(0x982);
+        Field_unk13_5(111, 27, 89, 27, 7, 8);
+        Field_unk14_5(41, 90, 25, 91, 3, 2);
+        Field_unk15_5(41, 90, 25, 93, 3, 2);
+        Field_unk16_5(41, 90, 25, 95, 3, 2);
+        Field_unk17_5(41, 90, 25, 97, 3, 2);
+        Field_unk18_5(41, 90, 27, 96, 3, 2);
+        Field_unk19_5(41, 90, 29, 97, 3, 2);
+        Field_unk20_5(41, 94, 27, 92, 3, 2);
+        Field_unk21_5(41, 96, 29, 93, 3, 2);
+        Field_unk22_5(41, 94, 27, 94, 3, 2);
+        Field_unk23_5(41, 96, 27, 96, 3, 2);
+        Field_unk24_5(41, 96, 29, 97, 3, 2);
     }
-    Field_Run9(0x10000, 0);
-    Field_Run101(20);
-    Field_Run102(40);
-    Field_Run10(0x8000, 0x1000);
-    Field_Run11(0x1c80000, -1, 0x21e0000, 1);
-    Field_Run103();
-    Field_Run104(50);
-    Field_Run12(0x1c80000, -1, 0x1a70000, 1);
-    Field_Run105();
-    Field_Run106();
+    Field_unk9_4(0x10000, 0);
+    Field_unk101_4(20);
+    Field_unk102_4(40);
+    Field_unk10_4(0x8000, 0x1000);
+    Field_unk11_4(0x1c80000, -1, 0x21e0000, 1);
+    Field_unk103_4();
+    Field_unk104_4(50);
+    Field_unk12_4(0x1c80000, -1, 0x1a70000, 1);
+    Field_unk105_4();
+    Field_unk106_4();
     {
         volatile u16 *target = (volatile u16 *)((s32)p7 + 0xcb6);
         s32 shown = 0;
@@ -1590,56 +1589,56 @@ void Scene_RunFlag986ActorOneScene(void)
     m2 = 0x6666;
     h = 0x100;
     k = 0x338;
-    Field_Run107();
-    o = Field_Run26(12);
+    Field_unk107_4();
+    o = Field_unk26_4(12);
     if (o->unk8 >> 20 == 53) {
-        if (Field_Check32(g) == 0) {
-            Field_Run108(g);
-            o = Field_Run27(0);
+        if (Field_unk32(g) == 0) {
+            Field_unk108_4(g);
+            o = Field_unk27_4(0);
             if (o != 0) {
-                Field_Place12(1, o->unk8, o->unk10);
+                Field_unk12_3(1, o->unk8, o->unk10);
             }
-            Field_Run109(1, m1, m2);
-            Field_Place13(1, k, 88);
-            Field_Place14(1, k, 104);
-            Field_Place15(1, 0, 0);
-            Field_Run110(20);
+            Field_unk109_4(1, m1, m2);
+            Field_unk13_3(1, k, 88);
+            Field_unk14_3(1, k, 104);
+            Field_unk15_3(1, 0, 0);
+            Field_unk110_4(20);
             Field_Apply35(1, 4);
-            Field_Do28(20);
-            Field_Do29(0x2691);
-            Field_Place16(1, 0, 20);
-            Field_Place17(1, 0, 10);
-            Field_Place18(1, h, 60);
-            Field_Place19(1, 0, 0);
-            Field_Do30(20);
+            Field_unk28_2(20);
+            Field_unk29_2(0x2691);
+            Field_unk16_3(1, 0, 20);
+            Field_unk17_3(1, 0, 10);
+            Field_unk18_3(1, h, 60);
+            Field_unk19_3(1, 0, 0);
+            Field_unk30_2(20);
             Field_Apply36(1, 2);
-            Field_Do31(20);
-            Field_Place20(1, 0, 20);
+            Field_unk31_2(20);
+            Field_unk20_3(1, 0, 20);
             Field_Apply37(0, 3);
             Field_Apply38(1, 3);
-            Field_Do32(30);
-            Field_Place21(1, k, 88);
+            Field_unk32_2(30);
+            Field_unk21_3(1, k, 88);
             Field_Apply39(1, 2);
-            u = Field_Run28(0);
+            u = Field_unk28_4(0);
             if (u != 0) {
-                Field_Place22(1, u->unkA, u->unk12);
+                Field_unk22_3(1, u->unkA, u->unk12);
             }
-            Field_Do33(1);
-            Field_Place23(1, 0, 0);
-            Field_Run111();
+            Field_unk33_2(1);
+            Field_unk23_3(1, 0, 0);
+            Field_unk111_3();
         }
     }
 }
 
 void Scene_RunFiveCallSequence(void)
 {
-    void Field_Run112(s32, s32);
+    void Field_unk112_3(s32, s32);
 
-    Field_Run113();
-    Field_Run114();
-    Field_Do34(20);
-    Field_Run115();
-    Field_Run116();
+    Field_unk113_3();
+    Field_unk114_3();
+    Field_unk34_2(20);
+    Field_unk115_3();
+    Field_unk116_3();
 }
 
 void State_RunActor13AtColumn42Setup(void)
@@ -1649,26 +1648,26 @@ void State_RunActor13AtColumn42Setup(void)
     s32 a;
     s32 b;
 
-    obj = Field_Run39(13);
-    Field_Run117();
+    obj = Field_unk39_4(13);
+    Field_unk117_3();
     if (obj->unk8 >> 20 == 42) {
-        Field_Do35(30);
-        Field_Do36(188);
+        Field_unk35_2(30);
+        Field_unk36_2(188);
         obj->unk55 = 0;
         val = 0xfffe0000;
         obj->unk14 = val;
         obj->unkC = val;
-        Field_Run40(0x200);
+        Field_unk40_4(0x200);
         a = 3;
         b = 5;
-        Field_SetRect40(44, 117, 41, 117, a, b);
+        Field_unk40_5(44, 117, 41, 117, a, b);
     }
-    Field_Run118();
+    Field_unk118_3();
 }
 
 void Scene_PlaceAndPinSlots8To10(void)
 {
-    void Field_Run112(s32, s32);
+    void Field_unk112_3(s32, s32);
 
     u32 i;
     Struct_18f8 *rec;
@@ -1677,24 +1676,24 @@ void Scene_PlaceAndPinSlots8To10(void)
     s32 a;
     s32 b;
 
-    Field_Do37(8);
-    Field_Run119();
+    Field_unk37_2(8);
+    Field_unk119_3();
     x = 12;
     y = 44;
-    Field_SetRect41(19, 44, 4, 1, x, y);
+    Field_unk41_5(19, 44, 4, 1, x, y);
     x = 11;
     y = 51;
-    Field_SetRect42(17, 51, 2, 2, x, y);
+    Field_unk42_5(17, 51, 2, 2, x, y);
     i = 0;
     do {
-        rec = Field_Run41(i + 8);
+        rec = Field_unk41_4(i + 8);
         a = rec->unk8 >> 20;
         b = rec->unk10 >> 20;
-        Field_SetRect43(12, 50, 1, 1, a, b);
+        Field_unk43_5(12, 50, 1, 1, a, b);
         i++;
     } while (i <= 2);
-    Field_Run112(10, 9);
-    Field_Run120();
+    Field_unk112_3(10, 9);
+    Field_unk120_3();
 }
 
 void State_ApplyRectAt19_44AndRunThree(void)
@@ -1702,13 +1701,13 @@ void State_ApplyRectAt19_44AndRunThree(void)
     s32 x;
     s32 y;
 
-    Field_Run121();
+    Field_unk121_3();
     x = 12;
     y = 44;
-    Field_SetRect44(19, 44, 4, 1, x, y);
-    Field_Run122();
-    Field_Run123();
-    Field_Run124();
+    Field_unk44_5(19, 44, 4, 1, x, y);
+    Field_unk122_3();
+    Field_unk123_3();
+    Field_unk124_3();
 }
 
 void Actor_ApplyKind45AtActorsElevenAndTwelve(void)
@@ -1718,7 +1717,7 @@ void Actor_ApplyKind45AtActorsElevenAndTwelve(void)
 
     i = 0;
     do {
-        p = Field_Run33(i + 11);
+        p = Field_unk33_4(i + 11);
         i++;
         Field_SetMode(0, p->unk8, p->unk10, 45);
     } while (i <= 1);
@@ -1731,7 +1730,7 @@ void Actor_ApplyPositionsOfActors11And12(void)
 
     i = 0;
     do {
-        p = Field_Run34(i + 11);
+        p = Field_unk34_4(i + 11);
         if (p->unkC > -0x100000) {
             Field_SetMode2(0, p->unk8, p->unk10, 255);
         }
@@ -1741,15 +1740,15 @@ void Actor_ApplyPositionsOfActors11And12(void)
 
 void Scene_RunGuardedThreeStepSetup(void)
 {
-    void Field_Run112(s32, s32);
+    void Field_unk112_3(s32, s32);
 
-    Field_Run125();
-    if (Field_Check33() == 0) {
-        Field_Run126();
-        Field_Run127();
-        Field_Run128();
+    Field_unk125_3();
+    if (Field_unk33() == 0) {
+        Field_unk126_3();
+        Field_unk127_3();
+        Field_unk128_3();
     }
-    Field_Run129();
+    Field_unk129_3();
 }
 
 void State_MarkActorAndApplyRectAtTile(Struct_1a14 *obj)
@@ -1763,7 +1762,7 @@ void State_MarkActorAndApplyRectAtTile(Struct_1a14 *obj)
     obj->unk55 = 0;
     x = obj->unk8 >> 20;
     z = obj->unk10 >> 20;
-    Field_SetRect45(9, 24, 1, 1, x, z);
+    Field_unk45_5(9, 24, 1, 1, x, z);
 }
 
 void OvObj_ResetObjectWhenFlags12Set(Struct_1a50 *o)
@@ -1787,12 +1786,12 @@ void OvObj_ResetObjectWhenFlags12Set(Struct_1a50 *o)
         z = 0;
         o->unk44 = z;
         t = Field_SetMode3(o->unk8, 0, 0x2000000, 223);
-        Field_Do38(o);
+        Field_unk38_2(o);
         o->unk8 = z;
         o->unk10 = z;
-        Field_Do39(t);
+        Field_unk39_2(t);
     } else {
-        Field_Run130();
+        Field_unk130_3();
     }
 }
 
@@ -1800,22 +1799,22 @@ void Actor_UpdateSlots11And12ByTile(void)
 {
     Struct_1a9c *o;
 
-    Field_Run131();
-    o = Field_Run35(11);
+    Field_unk131_3();
+    o = Field_unk35_4(11);
     if (o->unk8 >> 20 == 8) {
-        Field_Run132();
-        Field_Do40(o);
+        Field_unk132_3();
+        Field_unk40_2(o);
     } else {
-        Field_Do41(o);
+        Field_unk41_2(o);
     }
-    o = Field_Run36(12);
+    o = Field_unk36_4(12);
     if (o->unk8 >> 20 == 7) {
-        Field_Run133();
-        Field_Do42(o);
+        Field_unk133_3();
+        Field_unk42_2(o);
     } else {
-        Field_Do43(o);
+        Field_unk43_2(o);
     }
-    Field_Run134();
+    Field_unk134_3();
 }
 
 void Scene_RunGuardedRectStep(void)
@@ -1823,36 +1822,36 @@ void Scene_RunGuardedRectStep(void)
     s32 x;
     s32 y;
 
-    Field_Run135();
-    if (Field_Check34() == 0) {
+    Field_unk135_3();
+    if (Field_unk34() == 0) {
         x = 45;
         y = 43;
-        Field_SetRect46(109, 43, 7, 5, x, y);
-        Field_Run136();
+        Field_unk46_5(109, 43, 7, 5, x, y);
+        Field_unk136_3();
     }
-    Field_Run137();
-    Field_Run138();
+    Field_unk137_3();
+    Field_unk138_3();
 }
 
 void State_RunConditionalStep(void)
 {
     extern u8 *gWork;
 
-    Field_Run139();
-    if (Field_Check35() == 0) {
+    Field_unk139_3();
+    if (Field_unk35() == 0) {
         s32 k5 = 44, k6 = 39;
-        Field_SetRect47(108, 39, 13, 7, k5, k6);
-        Field_Run140();
+        Field_unk47_5(108, 39, 13, 7, k5, k6);
+        Field_unk140_3();
     }
-    Field_Run141();
-    Field_Run142();
+    Field_unk141_2();
+    Field_unk142_2();
 }
 
 s32 Actor_SetHeightAboveLinkedRecord(Struct_22a4 *obj)
 {
     Struct_22a4b *rec;
 
-    rec = Field_Run37(((s16 *)obj)[50]);
+    rec = Field_unk37_4(((s16 *)obj)[50]);
     ((s32 *)obj)[3] = rec->unkC + 0x100000;
     return 0;
 }
@@ -1887,8 +1886,8 @@ void Actor_PickHighestSlotAtSameTileAndRelease(s32 selector)
             continue;
         }
 
-        cand = Field_Run20(no);
-        sel = Field_Run21(selector);
+        cand = Field_unk20_4(no);
+        sel = Field_unk21_4(selector);
 
         if ((*(s32 *)(cand + 8) >> 20)
                 != (*(s32 *)(sel + 8) >> 20)
@@ -1904,38 +1903,38 @@ void Actor_PickHighestSlotAtSameTileAndRelease(s32 selector)
         }
     }
 
-    Field_Run143(selector, 0x40000, 0x20000);
-    Field_Run144(sel,
+    Field_unk143_2(selector, 0x40000, 0x20000);
+    Field_unk144_2(sel,
                   *(s32 *)(sel + 8),
                   highest,
                   *(s32 *)(sel + 16));
-    Field_Run145(selector);
-    Field_Run146(188);
-    Field_Run48(selector);
-    Field_Run147(30);
+    Field_unk145_2(selector);
+    Field_unk146_2(188);
+    Field_unk48_4(selector);
+    Field_unk147_2(30);
 }
 
 void Scene_RunThreeCallSequence(void)
 {
-    void Field_Run112(s32, s32);
+    void Field_unk112_3(s32, s32);
 
-    Field_Run148();
-    Field_Run149();
-    Field_Run150();
+    Field_unk148_2();
+    Field_unk149_2();
+    Field_unk150_2();
 }
 
 void Scene_DrawTilesWhenCheckClear(void)
 {
-    void Field_Run112(s32, s32);
+    void Field_unk112_3(s32, s32);
 
-    Field_Run151();
-    if (Field_Check36() == 0) {
-        { s32 k5 = 5, k6 = 48; Field_SetRect48(69, 48, 4, 2, k5, k6); }
-        { s32 j5 = 9, j6 = 37; Field_SetRect49(73, 37, 9, 13, j5, j6); }
-        Field_Run152();
+    Field_unk151_2();
+    if (Field_unk36() == 0) {
+        { s32 k5 = 5, k6 = 48; Field_unk48_5(69, 48, 4, 2, k5, k6); }
+        { s32 j5 = 9, j6 = 37; Field_unk49_5(73, 37, 9, 13, j5, j6); }
+        Field_unk152_2();
     }
-    Field_Run153();
-    Field_Run154();
+    Field_unk153_2();
+    Field_unk154_2();
 }
 
 /* Runs a fixed sequence of setup calls with literal parameters; most share
@@ -1948,10 +1947,10 @@ void Scene_RunScene3c8SequenceB(void)
     ObjectMotion_SetSpeedParameters_1(0, 0x8000, 0x4000);
     Motion_SetPosReset_1(0, 0x208, 0x2c8);
     Motion_ArmCb_1(0, 0x4000, 10);
-    (void)Field_Check37(0x2080000, 0, 0x3100000, 223);
+    (void)Field_unk37(0x2080000, 0, 0x3100000, 223);
     BattleFx_RunRisingObjectSequence_1(0, 6, 0);
     BattleRuntime_WaitIfModeZero_1(60);
-    Field_Run155(20); /* main:0808a248 */
+    Field_unk155_2(20); /* main:0808a248 */
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }
 
@@ -1988,7 +1987,7 @@ void Actor_ClearActorModeAndSetState5(s32 no)
     u8 *p;
     s32 mask;
 
-    p = Field_Run42(no);
+    p = Field_unk42_4(no);
     p[0x55] = 0;
     mask = 252;
     mask &= p[0x59];
@@ -2011,7 +2010,7 @@ void State_ApplyStepToSlots15To18(void)
 
     i = 15;
     do {
-        Field_Do44(i);
+        Field_unk44_2(i);
         i++;
     } while (i <= 18);
 }
@@ -2024,7 +2023,7 @@ void State_PassZeroAndMinusOneRecord(void)
 
     args.first = 0;
     args.last = -1;
-    Field_Run156(&args);
+    Field_unk156_2(&args);
 }
 
 void State_PassRange0To1(void)
@@ -2035,7 +2034,7 @@ void State_PassRange0To1(void)
 
     args.first = 0;
     args.last = 1;
-    Field_Run157(&args);
+    Field_unk157_2(&args);
 }
 
 void State_PassRangeNeg1To0(void)
@@ -2046,7 +2045,7 @@ void State_PassRangeNeg1To0(void)
 
     args.first = -1;
     args.last = 0;
-    Field_Run158(&args);
+    Field_unk158_2(&args);
 }
 
 void State_CallHandlerWithFlagPair(void)
@@ -2057,11 +2056,11 @@ void State_CallHandlerWithFlagPair(void)
 
     args.first = 1;
     args.last = 0;
-    Field_Run159(&args);
+    Field_unk159_2(&args);
 }
 
 /*
- * Field_Run160 is the relocated call word for the in-overlay routine at
+ * Field_unk160_2 is the relocated call word for the in-overlay routine at
  * image offset 0x4520, not a runtime address.  The 16-byte owner loads no
  * literal, so it carries no pool word and no alignment halfword.  432 is
  * built from a shifted immediate and passed straight to the callee as a
@@ -2071,14 +2070,14 @@ void State_Call4520With432And32(void)
 {
     extern u8 *gWork;
 
-    Field_Run160(432, 32);
+    Field_unk160_2(432, 32);
 }
 
 void Scene_RunStep230With44(void)
 {
     extern u8 gWork[];
 
-    Field_Run161(0x230, 44);
+    Field_unk161_2(0x230, 44);
 }
 
 void Scene_RunScene3c8(void)
@@ -2094,67 +2093,67 @@ void Scene_RunScene3c8(void)
     s32 v2;
     s32 slot0;
 
-    rec = Field_Check6(0);
-    rec8 = Field_Check7(20);
-    Field_Run162();
-    Field_Run13(-1, -1, -1, 0);
-    Field_Run163();
-    Field_Run164(1);
+    rec = Field_unk6(0);
+    rec8 = Field_unk7(20);
+    Field_unk162_2();
+    Field_unk13_4(-1, -1, -1, 0);
+    Field_unk163_2();
+    Field_unk164_2(1);
     *(s32 *)(rec + 12) = 0x820000;
     *(s32 *)(rec + 72) = 0x8000;
     none = 0;
     *(s32 *)(rec + 68) = none;
     p8 = rec + 85;
     *p8 = none;
-    Field_Run165();
-    Field_Run166();
-    Field_Run167(204);
-    Field_Run168(30);
+    Field_unk165_2();
+    Field_unk166_2();
+    Field_unk167_2(204);
+    Field_unk168_2(30);
     *p8 = 3;
-    Field_Run169(24);
-    Field_Run14(0, 0x101);
-    Field_Run170(0, 22);
+    Field_unk169_2(24);
+    Field_unk14_4(0, 0x101);
+    Field_unk170_2(0, 22);
     *p8 &= 254;
     *(s32 *)((s32)rec8 + 12) += -0x30000;
     *(s32 *)(rec + 12) += -0x30000;
     *(s32 *)(rec + 20) += -0x30000;
-    Field_Run171(2);
+    Field_unk171_2(2);
     *(s32 *)((s32)rec8 + 12) += -0x20000;
     *(s32 *)(rec + 12) += -0x20000;
     *(s32 *)(rec + 20) += -0x20000;
-    Field_Run172(10);
+    Field_unk172_2(10);
     *(s32 *)((s32)rec8 + 12) += 0x20000;
     *(s32 *)(rec + 12) += 0x20000;
     *(s32 *)(rec + 20) += 0x20000;
-    Field_Run173(4);
+    Field_unk173_2(4);
     *(s32 *)((s32)rec8 + 12) += 0x20000;
     *(s32 *)(rec + 12) += 0x20000;
     *(s32 *)(rec + 20) += 0x20000;
-    Field_Run174(4);
+    Field_unk174_2(4);
     *(s32 *)((s32)rec8 + 12) += 0x10000;
     *(s32 *)(rec + 12) += 0x10000;
     *(s32 *)(rec + 20) += 0x10000;
     *p8 = none;
     rec8[85] = none;
-    Field_Run15(0, 0x100);
-    Field_Run175(0, 1);
-    Field_Run176(40);
+    Field_unk15_4(0, 0x100);
+    Field_unk175_2(0, 1);
+    Field_unk176_2(40);
     *(s32 *)(rec + 108) = 0x200c969;
-    Field_Run177(60);
-    Field_Run178(0, 1);
-    Field_Run179(20, 1);
-    Field_Run180(17);
-    Field_Do7(0x134);
-    Field_Do8(0x101);
+    Field_unk177_2(60);
+    Field_unk178_2(0, 1);
+    Field_unk179_2(20, 1);
+    Field_unk180_2(17);
+    Field_unk7_2(0x134);
+    Field_unk8_2(0x101);
     v2 = 0;
     do {
         *(s32 *)(rec + 12) += 0x10000;
         *(s32 *)(rec + 20) += 0x10000;
         *(s32 *)((s32)rec8 + 12) += 0x10000;
         slot0 = v2;
-        Field_Run181(1);
+        Field_unk181_2(1);
         v2 = slot0;
         v2 = (v2 + 1);
     } while ((u32)v2 <= 127);
-    Field_Run182(21);
+    Field_unk182_2(21);
 }

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/shared/measure_fixed_point_position_distance.h"
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.

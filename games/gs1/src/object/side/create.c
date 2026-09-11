@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/side/create.h"
 #include "gs1_edition.h"
 
 struct SideObjectRegistry {

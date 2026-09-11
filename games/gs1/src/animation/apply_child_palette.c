@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/animation/apply_child_palette.h"
 #include "effect_runtime.h"
 
 struct Item0808e0b0 {

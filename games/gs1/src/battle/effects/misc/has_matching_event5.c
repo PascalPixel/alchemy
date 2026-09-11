@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/battle/effects/misc/has_matching_event5.h"
 #include "effect_runtime.h"
 
 s32 BattleFx_HasMatchingEvent5(s32 effectId)

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/set_fields_1ce_1d0.h"
 
 struct SharedData_08091f90 {
     u8 data[0x1ce];

@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/menu/create_cursor.h"
-
 
 s32 UiIcon_CreateWithResourceVariant(s32 arg0, s32 arg1, s32 arg2);
 

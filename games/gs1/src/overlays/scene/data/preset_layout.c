@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/data/preset_layout.h"
-
 
 struct TileRun {
     s16 id;
@@ -87,9 +85,9 @@ extern u8 gUnk[];
 
 s32 SceneData_Run();   /* 0x02000eec */
 
-s32 SceneData_Run2();   /* 0x02000efa */
+s32 SceneData_unk2_4();   /* 0x02000efa */
 
-s32 SceneData_Run3();   /* 0x02000f08 */
+s32 SceneData_unk3_4();   /* 0x02000f08 */
 
 u8 *SceneData_GetTable9170(void)
 {
@@ -118,15 +116,15 @@ u8 *SceneData_GetTable9240(void)
 
 void State_ApplyRecordTable92c0(void)
 {
-    SceneData_Do2(*(s32 *)0x020092C0);
-    SceneData_SetRect3(0, 0x40, 0x20, 0x20, 0, 0);
+    SceneData_unk2_2(*(s32 *)0x020092C0);
+    SceneData_unk3_5(0, 0x40, 0x20, 0x20, 0, 0);
     SceneData_Apply(*(s32 *)0x020092C0, 0xFF);
-    SceneData_Run4();
+    SceneData_unk4_4();
 }
 
 void Scene_CallHelper(void)
 {
-    SceneData_Run5();
+    SceneData_unk5_4();
 }
 
 void State_ApplyRectByLayoutSelector(void)
@@ -134,11 +132,11 @@ void State_ApplyRectByLayoutSelector(void)
     if (**(s16 **)0x020092c4 == 1) {
         s32 fifth = 4;
         s32 sixth = 9;
-        SceneData_SetRect4(0, 0, 1, 4, fifth, sixth);
+        SceneData_unk4_5(0, 0, 1, 4, fifth, sixth);
     } else {
         s32 fifth = 6;
         s32 sixth = 9;
-        SceneData_SetRect5(0, 0, 1, 4, fifth, sixth);
+        SceneData_unk5_5(0, 0, 1, 4, fifth, sixth);
     }
 }
 
@@ -148,20 +146,20 @@ void Scene_RepaintBoardRecords(void)
     s16 *record = gOv;
 
     if (*gOv2 != 0) {
-        { s32 f1 = 79; s32 g1 = 29; SceneData_Run6(65, 53, 2, 1,  f1, g1); }
-        { s32 f2 = 15; s32 g2 = 28; SceneData_Run7(65, 40, 2, 4,  f2, g2); }
+        { s32 f1 = 79; s32 g1 = 29; SceneData_unk6_3(65, 53, 2, 1,  f1, g1); }
+        { s32 f2 = 15; s32 g2 = 28; SceneData_unk7_3(65, 40, 2, 4,  f2, g2); }
     } else {
-        { s32 f3 = 79; s32 g3 = 25; SceneData_Run8(65, 50, 2, 5,  f3, g3); }
+        { s32 f3 = 79; s32 g3 = 25; SceneData_unk8_3(65, 50, 2, 5,  f3, g3); }
     }
 
     if (*gOv2 != 0) {
-        { s32 f4 = 32; s32 g4 = 0; SceneData_Run9(0, 32, 32, 32,  f4, g4); }
-        { s32 f5 = 64; s32 g5 = 0; SceneData_Run10(32, 32, 32, 32,  f5, g5); }
-        { s32 f6 = 0; s32 g6 = 0; SceneData_Run11(0, 32, 32, 32,  f6, g6); }
+        { s32 f4 = 32; s32 g4 = 0; SceneData_unk9_3(0, 32, 32, 32,  f4, g4); }
+        { s32 f5 = 64; s32 g5 = 0; SceneData_unk10_3(32, 32, 32, 32,  f5, g5); }
+        { s32 f6 = 0; s32 g6 = 0; SceneData_unk11_3(0, 32, 32, 32,  f6, g6); }
     } else {
-        { s32 f7 = 32; s32 g7 = 0; SceneData_Run12(0, 64, 32, 32,  f7, g7); }
-        { s32 f8 = 64; s32 g8 = 0; SceneData_Run13(32, 64, 32, 32,  f8, g8); }
-        { s32 f9 = 0; s32 g9 = 0; SceneData_Run14(0, 64, 32, 32,  f9, g9); }
+        { s32 f7 = 32; s32 g7 = 0; SceneData_unk12_3(0, 64, 32, 32,  f7, g7); }
+        { s32 f8 = 64; s32 g8 = 0; SceneData_unk13_3(32, 64, 32, 32,  f8, g8); }
+        { s32 f9 = 0; s32 g9 = 0; SceneData_unk14_3(0, 64, 32, 32,  f9, g9); }
     }
 
     if (record[0] != -1) {
@@ -170,7 +168,7 @@ void Scene_RepaintBoardRecords(void)
             u8 *piece = *(u8 **)(record + 4);
 
             if (*gOv2 == 1) {
-                SceneData_Run15(piece, 4);
+                SceneData_unk15_3(piece, 4);
                 piece[35] = 3;
                 piece[85] = zero;
                 *(s32 *)(piece + 12) = 0x1a0000;
@@ -178,14 +176,14 @@ void Scene_RepaintBoardRecords(void)
                 if (record[3] != 0) {
                     s32 col = record[1];
                     s32 row = record[2];
-                    SceneData_Run16(68, 40, 1, 4, col + 32, row);
+                    SceneData_unk16_3(68, 40, 1, 4, col + 32, row);
                 } else {
                     s32 col = record[1];
                     s32 row = record[2];
-                    SceneData_Run17(70, 40, 4, 1, col + 32, row);
+                    SceneData_unk17_3(70, 40, 4, 1, col + 32, row);
                 }
             } else {
-                SceneData_Run18(piece, 1);
+                SceneData_unk18_3(piece, 1);
                 piece[35] = 1;
                 piece[85] = 2;
                 *(s32 *)(piece + 12) = zero;
@@ -194,17 +192,17 @@ void Scene_RepaintBoardRecords(void)
         } while (record[0] != -1);
     }
 
-    { s32 f10 = 10; s32 g10 = 50; SceneData_Run19(70, 42, 1, 1,  f10, g10); }
+    { s32 f10 = 10; s32 g10 = 50; SceneData_unk19_3(70, 42, 1, 1,  f10, g10); }
 
     if (*gOv2 == 1) {
-        { s32 f11 = 0; s32 g11 = 0; SceneData_Run20(0, 32, 32, 32,  f11, g11); }
+        { s32 f11 = 0; s32 g11 = 0; SceneData_unk20_3(0, 32, 32, 32,  f11, g11); }
         SceneData_Apply2(gOv, 254);
     } else {
-        { s32 f12 = 0; s32 g12 = 0; SceneData_Run21(0, 64, 32, 32,  f12, g12); }
+        { s32 f12 = 0; s32 g12 = 0; SceneData_unk21_3(0, 64, 32, 32,  f12, g12); }
         SceneData_Apply3(gOv, 255);
     }
 
-    SceneData_Run22();
+    SceneData_unk22_3();
 }
 
 void State_CopyPresetA0d0WithOffsetB0(void)
@@ -226,27 +224,27 @@ void State_CopyPresetA0d0WithOffsetB0(void)
 
 void Scene_RunActorEightSequence(void)
 {
-    SceneData_Run23();
-    SceneData_Run24(0, 8);
-    SceneData_Run25(6);
-    SceneData_Run26(239);
+    SceneData_unk23_3();
+    SceneData_unk24_3(0, 8);
+    SceneData_unk25_3(6);
+    SceneData_unk26_2(239);
     SceneData_Place(8, 0x8000, 0x3333);
-    SceneData_Run27(8, 2);
-    SceneData_Run28(8, 104, 176);
-    SceneData_Run29(6);
-    SceneData_Run30(0, 2);
-    SceneData_Place2(0, 0x4ccc, 0x3333);
-    SceneData_Run31(0, 8, 0);
-    SceneData_Run32(24);
-    SceneData_Run33(0, 1);
-    SceneData_Run34(8);
-    SceneData_Run35(8, 1);
+    SceneData_unk27_2(8, 2);
+    SceneData_unk28_2(8, 104, 176);
+    SceneData_unk29_2(6);
+    SceneData_unk30_2(0, 2);
+    SceneData_unk2_3(0, 0x4ccc, 0x3333);
+    SceneData_unk31_2(0, 8, 0);
+    SceneData_unk32_2(24);
+    SceneData_unk33_2(0, 1);
+    SceneData_unk34_2(8);
+    SceneData_unk35_2(8, 1);
     SceneData_Do(0x120);
-    SceneData_Run36(213);
+    SceneData_unk36_2(213);
     SceneData_SetRect(5, 9, 1, 4, 4, 9);
-    SceneData_SetRect2(0, 0, 1, 4, 6, 9);
+    SceneData_unk2_5(0, 0, 1, 4, 6, 9);
     *gOv3 = 0;
-    SceneData_Run37();
+    SceneData_unk37_2();
 }
 
 void State_StampRecordCells(s16 *records, s32 value)
@@ -320,7 +318,7 @@ void Effect_AdjustPaletteColors(s32 a)
 {
     u32 x;
 
-    SceneData_Run38();
+    SceneData_unk38_2();
     x = 0;
     do {
         u32 idx = x >> 16;
@@ -336,8 +334,8 @@ void Effect_AdjustPaletteColors(s32 a)
             }
         }
     } while (1);
-    SceneData_Run39();
-    SceneData_Run40();
+    SceneData_unk39_2();
+    SceneData_unk40_2();
     SceneData_Apply5(0x10000, 0);
 }
 
@@ -352,8 +350,8 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - SceneData_Run2(green, adj));
-    blue = (s16)(blue - SceneData_Run3(blue, adj));
+    green = (s16)(green - SceneData_unk2_4(green, adj));
+    blue = (s16)(blue - SceneData_unk3_4(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

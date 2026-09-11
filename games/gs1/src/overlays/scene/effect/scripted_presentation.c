@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/effect/scripted_presentation.h"
 
 #include "create_configured_overlay_object.h"
 #include "configured_effect_spawn.h"
@@ -106,41 +105,41 @@ extern unsigned char gOv4[];
 extern Spr *gOv5;
 extern s16 gCell[];
 
-void *Effect_Run13(s32, s32, s32, s32);
+void *Effect_unk13_4(s32, s32, s32, s32);
 
 typedef s32(*IwramIntegerSquareRoot)(s32);
-Spr *Effect_Run14(s32);
+Spr *Effect_unk14_4(s32);
 
-void *Effect_Run15();
+void *Effect_unk15_4();
 
-Spr *Effect_Run16(s32);
+Spr *Effect_unk16_4(s32);
 
-Spr *Effect_Run17(void);
+Spr *Effect_unk17_4(void);
 
-Spr *Effect_Run18(Spr *);
+Spr *Effect_unk18_4(Spr *);
 
-u8 *Effect_Run19(s32);
-u8 *Effect_Run20(s32);
-u8 *Effect_Run21(s32);
-u8 *Effect_Run22(s32);
-u8 *Effect_Run23(s32);
-u8 *Effect_Run24(s32);
-u8 *Effect_Run25(s32);
+u8 *Effect_unk19_4(s32);
+u8 *Effect_unk20_4(s32);
+u8 *Effect_unk21_4(s32);
+u8 *Effect_unk22_4(s32);
+u8 *Effect_unk23_4(s32);
+u8 *Effect_unk24_4(s32);
+u8 *Effect_unk25_3(s32);
 
-Spr *Effect_Run26(s32);
+Spr *Effect_unk26_3(s32);
 
-Spr *Effect_Run27(s32);
+Spr *Effect_unk27_3(s32);
 
-Spr *Effect_Run28(s32);
+Spr *Effect_unk28_3(s32);
 
-Spr *Effect_Run29(s32);
+Spr *Effect_unk29_3(s32);
 
-Spr *Effect_Run30(s32);
-Spr *Effect_Run31(s32);
-Spr *Effect_Run32(s32);
-Spr *Effect_Run33(s32);
+Spr *Effect_unk30_2(s32);
+Spr *Effect_unk31_2(s32);
+Spr *Effect_unk32_2(s32);
+Spr *Effect_unk33_2(s32);
 
-Spr *Effect_Run34(void);
+Spr *Effect_unk34_2(void);
 
 /*
  * resource_3c9: a scripted-scene bracket around three setup steps.
@@ -160,27 +159,27 @@ Spr *Effect_Run34(void);
  * call encodings, so leave the addresses as they are.
  */
 
-void Effect_Run35();  /* Effect_Run36 */
+void Effect_unk35_2();  /* Effect_unk36_2 */
 
-void Effect_Run37();  /* Effect_Run38, this overlay's own */
+void Effect_unk37_2();  /* Effect_unk38_2, this overlay's own */
 
-void Effect_Run39();  /* Scene_RunScene3c9, this overlay's own */
+void Effect_unk39_2();  /* Scene_RunScene3c9, this overlay's own */
 
-void Effect_Run40();  /* GameFlag_Set */
+void Effect_unk40_2();  /* GameFlag_Set */
 
-void Effect_Run41();  /* Effect_Run42 */
+void Effect_unk41_2();  /* Effect_unk42 */
 
-void Effect_Run43();  /* Effect_Run44 */
+void Effect_unk43();  /* Effect_unk44 */
 
-void Effect_Run45();  /* Effect_Run46 */
+void Effect_unk45();  /* Effect_unk46 */
 
-void Effect_Run47();  /* Effect_Run48 */
+void Effect_unk47();  /* Effect_unk48 */
 
-u8 *Effect_Run49(s32 index);   /* scene-record accessor (Scene_GetRecord) */
+u8 *Effect_unk49(s32 index);   /* scene-record accessor (Scene_GetRecord) */
 
-s32 Effect_Run50(s32 angle);   /* sine of a binary angle (Effect_Run51) */
+s32 Effect_unk50(s32 angle);   /* sine of a binary angle (Effect_unk51) */
 
-s32 Effect_Run52(s32 angle);   /* cosine of a binary angle (Effect_Run53) */
+s32 Effect_unk52(s32 angle);   /* cosine of a binary angle (Effect_unk53) */
 
 void OvObj_SetRecordField1(Obj *o, u32 v)
 {
@@ -199,7 +198,7 @@ void OvObj_SetRecordField1(Obj *o, u32 v)
  */
 void *OvObj_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *ret = Effect_Run13(kind, x, y, z);
+    u8 *ret = Effect_unk13_4(kind, x, y, z);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -251,7 +250,7 @@ s32 OvObj_StepScaleByCounter(Spr *s)
     case 0:
         s->unk18 += 0x800;
         s->unk1c += -0x400;
-        *p = Effect_Apply4(Effect_Check7(s), 80) + 80;
+        *p = Effect_Apply4(Effect_unk7(s), 80) + 80;
         break;
     }
     {
@@ -283,11 +282,11 @@ s32 OvObj_UpdateHeadingTimer(Spr2 *s)
 
     if (v == 0) {
         {
-            s32 t = ((u32)(Effect_Check8() << 15)) >> 16;
+            s32 t = ((u32)(Effect_unk8() << 15)) >> 16;
             s->unk06 = s->unk06 + t;
         }
         {
-            s32 n = ((u32)(Effect_Check9() * 80)) >> 16;
+            s32 n = ((u32)(Effect_unk9() * 80)) >> 16;
             *q = n;
             if (n == 0) {
                 goto out;
@@ -343,7 +342,7 @@ s32 Actor_FindNearestSlotOfKindF2(void)
     u32 i;
 
     limit = 640;
-    ref = Effect_Run14(0);
+    ref = Effect_unk14_4(0);
     i = 8;
     p = (Spr3 **)(work + 0x34);
     do {
@@ -369,84 +368,84 @@ void InitializeActorZeroMotion(void)
     s32 angle;
     u8 flags;
 
-    actor = Effect_Run15(0);
+    actor = Effect_unk15_4(0);
     angle = (actor->angle + 0x1000) & 0xe000;
     flags = actor->flags55;
     position[0] = (actor->x & 0xfff00000) + 0x80000;
     position[1] = actor->y;
     position[2] = (actor->z & 0xfff00000) + 0x80000;
-    Effect_Run54(0x200000, angle, position);
-    if (Effect_Check10(actor, position) == 0) {
-        Effect_Run55(592);
-        Effect_Run56();
-        Effect_Run57(actor, 6);
-        Effect_Run58(6);
-        Effect_Run59(actor, 7);
+    Effect_unk54(0x200000, angle, position);
+    if (Effect_unk10(actor, position) == 0) {
+        Effect_unk55(592);
+        Effect_unk56();
+        Effect_unk57(actor, 6);
+        Effect_unk58(6);
+        Effect_unk59(actor, 7);
         actor->motion30 = 0x30000;
         actor->motion34 = 0x20000;
-        Effect_Run60(152);
+        Effect_unk60(152);
         actor->motion28 = 0x40000;
         actor->flags55 &= 0x7e;
-        Effect_Run61(actor, 0);
-        Effect_Run62(0, (s16)(position[0] >> 16),
+        Effect_unk61(actor, 0);
+        Effect_unk62(0, (s16)(position[0] >> 16),
                          (s16)(position[2] >> 16));
-        Effect_Run63(actor, 6);
-        Effect_Run64(actor, 1);
+        Effect_unk63(actor, 6);
+        Effect_unk64(actor, 1);
         actor->flags55 = flags;
     }
 }
 
 void Effect_SpawnAndBobWithActorZero(void)
 {
-    Spr4 *a = Effect_Run16(0);
+    Spr4 *a = Effect_unk16_4(0);
     Spr4 *b;
     Spr4 *r;
     s32 k;
 
-    Effect_Run65();
-    r = Effect_Run17();
+    Effect_unk65();
+    r = Effect_unk17_4();
     gOv5 = r;
     if (r != 0) {
-        Effect_Do3(592);
-        b = Effect_Run18(gOv5);
+        Effect_unk3_2(592);
+        b = Effect_unk18_4(gOv5);
         b->unk55 = 0;
         a->unk55 &= 0xfe;
         b->unk0c += (s32)0xfffd0000;
         a->unk0c += (s32)0xfffd0000;
         a->unk14 += (s32)0xfffd0000;
-        Effect_Do4(2);
+        Effect_unk4_2(2);
         b->unk0c += (s32)0xfffe0000;
         a->unk0c += (s32)0xfffe0000;
         a->unk14 += (s32)0xfffe0000;
-        Effect_Do5(10);
+        Effect_unk5_2(10);
         k = 0x20000;
         b->unk0c += k;
         a->unk0c += k;
         a->unk14 += k;
-        Effect_Do6(4);
+        Effect_unk6_2(4);
         b->unk0c += k;
         a->unk0c += k;
         a->unk14 += k;
-        Effect_Do7(4);
+        Effect_unk7_2(4);
         b->unk0c += 0x10000;
         a->unk0c += 0x10000;
         a->unk14 += 0x10000;
     }
-    Effect_Run66();
+    Effect_unk66();
 }
 
 void Actor_SetByte55ForActorZeroAnd12To17(void)
 {
     s32 val;
 
-    *(Effect_Run19(0) + 0x55) = 3;
+    *(Effect_unk19_4(0) + 0x55) = 3;
     val = 4;
-    *(Effect_Run20(12) + 0x55) = val;
-    *(Effect_Run21(13) + 0x55) = val;
-    *(Effect_Run22(14) + 0x55) = val;
-    *(Effect_Run23(15) + 0x55) = val;
-    *(Effect_Run24(16) + 0x55) = val;
-    *(Effect_Run25(17) + 0x55) = val;
+    *(Effect_unk20_4(12) + 0x55) = val;
+    *(Effect_unk21_4(13) + 0x55) = val;
+    *(Effect_unk22_4(14) + 0x55) = val;
+    *(Effect_unk23_4(15) + 0x55) = val;
+    *(Effect_unk24_4(16) + 0x55) = val;
+    *(Effect_unk25_3(17) + 0x55) = val;
 }
 
 s32 SceneData_GetTableE6ec(void)
@@ -464,21 +463,21 @@ s32 Scene_InitActorsAndDispatchBySubstate(void)
     s16 mode;
     Spr5 *obj;
 
-    Effect_Do8(324);
-    Effect_Do9(1);
-    Effect_Do10(272);
-    Effect_Apply6(Effect_Run26(8), 0);
-    Effect_Apply7(Effect_Run27(9), 0);
-    Effect_Apply8(Effect_Run28(10), 0);
-    Effect_Apply9(Effect_Run29(11), 0);
+    Effect_unk8_2(324);
+    Effect_unk9_2(1);
+    Effect_unk10_2(272);
+    Effect_Apply6(Effect_unk26_3(8), 0);
+    Effect_Apply7(Effect_unk27_3(9), 0);
+    Effect_Apply8(Effect_unk28_3(10), 0);
+    Effect_Apply9(Effect_unk29_3(11), 0);
     v = (s32)0xffff0000;
-    Effect_Run30(10)->unk18 = v;
-    Effect_Run31(11)->unk18 = v;
+    Effect_unk30_2(10)->unk18 = v;
+    Effect_unk31_2(11)->unk18 = v;
     i = 12;
     z = 0;
     do {
-        obj = Effect_Run32(i);
-        Effect_Apply10(Effect_Run33(i), z);
+        obj = Effect_unk32_2(i);
+        Effect_Apply10(Effect_unk33_2(i), z);
         Effect_Apply11(i, 1);
         obj->unk55 = 4;
         obj->unk23 |= 2;
@@ -490,40 +489,40 @@ s32 Scene_InitActorsAndDispatchBySubstate(void)
 
     switch (mode) {
     case 1:
-        if (Effect_Check11(0x109) == 0) {
-            Effect_Run67();
+        if (Effect_unk11(0x109) == 0) {
+            Effect_unk67();
         }
         break;
     case 2:
-        Effect_Run68();
+        Effect_unk68();
         break;
     case 3:
-        Effect_Run69();
+        Effect_unk69();
         break;
     case 0x5d:
-        Effect_Run70();
+        Effect_unk70();
         break;
     case 4:
-        Effect_Run71();
+        Effect_unk71();
         break;
     case 9:
-        Effect_Run72();
-        if (Effect_Check12(0x345) != 0) {
+        Effect_unk72();
+        if (Effect_unk12(0x345) != 0) {
             Effect_Apply12(0, 65);
-        } else if (Effect_Check13(0x346) != 0) {
+        } else if (Effect_unk13(0x346) != 0) {
             Effect_Apply12(1, 65);
-        } else if (Effect_Check14(0x347) != 0) {
+        } else if (Effect_unk14(0x347) != 0) {
             Effect_Apply12(2, 65);
         } else {
             Effect_Apply13(3, 65);
         }
-        Effect_Do11(9);
+        Effect_unk11_2(9);
         break;
     }
 
-    if (Effect_Check15(0x109) != 0) {
-        if (Effect_Check16() != 0) {
-            Spr5 *p = Effect_Run34();
+    if (Effect_unk15(0x109) != 0) {
+        if (Effect_unk16() != 0) {
+            Spr5 *p = Effect_unk34_2();
             if (p != 0) {
                 p->unk55 = 0;
             }
@@ -535,12 +534,12 @@ s32 Scene_InitActorsAndDispatchBySubstate(void)
 void State_ApplyArgMode0AndSet10(s32 a)
 {
     Effect_Apply14(a, 0);
-    Effect_Do12(10);
+    Effect_unk12_2(10);
 }
 
 void Scene_CallPairWith10(s32 a, s32 b)
 {
-    Effect_Place29(a, b, 10);
+    Effect_unk29_2(a, b, 10);
 }
 
 void Scene_RunScene3c9(s32 a0, s32 a1)
@@ -551,14 +550,14 @@ void Scene_RunScene3c9(s32 a0, s32 a1)
     s32 record;
 
     if (a1 != 0) {
-        Effect_Run73(a0, 0);
-        record = Effect_Check17(a0);
-        Effect_Run74(record, 1);
+        Effect_unk73(a0, 0);
+        record = Effect_unk17(a0);
+        Effect_unk74(record, 1);
         Effect_Place(a0, 0xcccc, 0x6666);
     } else {
-        Effect_Run75(a0, 15);
-        record = Effect_Check18(a0);
-        Effect_Run76(record, 0);
+        Effect_unk75(a0, 15);
+        record = Effect_unk18(a0);
+        Effect_unk76(record, 0);
     }
 }
 
@@ -570,7 +569,7 @@ void Effect_UpdateObjectByFrameParity(s32 a)
         Effect_Apply16(a, 0);
     }
     if (Effect_Apply17(*(s32 *)0x03001e40, 15) == 0) {
-        Effect_Do13(a);
+        Effect_unk13_2(a);
     }
 }
 
@@ -582,7 +581,7 @@ void State_ForwardByRuntimeWordBits(s32 a)
         Effect_Apply18(a, Effect_Apply19(*p >> 1, 6));
     }
     if (Effect_Apply20(*p, 15) == 0) {
-        Effect_Do14(a);
+        Effect_unk14_2(a);
     }
 }
 
@@ -591,9 +590,9 @@ void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect)
     s32 *anchor = effect->f68;
     s32 frame = ++effect->f64;
     if (frame > 31) {
-        Effect_Do15((s32)effect);
+        Effect_unk15_2((s32)effect);
     } else {
-        s32 amplitude = Effect_Check19(frame << 10);
+        s32 amplitude = Effect_unk19(frame << 10);
         s32 offset;
         effect->f18 = amplitude;
         effect->f1c = amplitude;
@@ -609,9 +608,9 @@ void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
     s32 *anchor = effect->f68;
     s32 frame = ++effect->f64;
     if (frame > 31) {
-        Effect_Do16((s32)effect);
+        Effect_unk16_2((s32)effect);
     } else {
-        s32 amplitude = Effect_Check20(frame << 10);
+        s32 amplitude = Effect_unk20(frame << 10);
         s32 offset;
         effect->f18 = amplitude;
         effect->f1c = -amplitude;
@@ -629,28 +628,28 @@ void State_ApplyPair140And0(void)
 
 void Scene_ForwardValue81fc(s32 a)
 {
-    Effect_Do17(a);
+    Effect_unk17_2(a);
 }
 
 void Scene_RunStep6(void)
 {
     extern u8 gWork[];
 
-    Effect_Do18(6);
-    Effect_Run77();
+    Effect_unk18_2(6);
+    Effect_unk77();
 }
 
 void Scene_RunSetupSequence35c4(void)
 {
     extern u8 *gWork;
 
-    Effect_Do19(187);
+    Effect_unk19_2(187);
     Effect_Apply22(0x7fff, 1);
-    Effect_Do20(1);
-    Effect_Do21(4);
+    Effect_unk20_2(1);
+    Effect_unk21_2(4);
     Effect_Apply23(0x40250d, 1);
-    Effect_Do22(1);
-    Effect_Do23(1);
+    Effect_unk22_2(1);
+    Effect_unk23_2(1);
 }
 
 /*
@@ -663,7 +662,7 @@ void Scene_RunSetupSequence35c4(void)
  */
 void Effect_UpdateCounterDrivenOrbit(u8 *actor)
 {
-    u8 *anchor = Effect_Run49(23);
+    u8 *anchor = Effect_unk49(23);
     u16 *pangle = (u16 *)(actor + 100);
     s32 angle = *pangle;
     s32 cosine;
@@ -671,12 +670,12 @@ void Effect_UpdateCounterDrivenOrbit(u8 *actor)
     s32 along;
     s32 across;
 
-    cosine = Effect_Run52(angle);
+    cosine = Effect_unk52(angle);
     along = *(s32 *)(anchor + 8)
           + cosine *(*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
     *(s32 *)(actor + 8) = along;
 
-    sine = Effect_Run50(angle);
+    sine = Effect_unk50(angle);
     across = *(s32 *)(anchor + 16)
            + sine *(*(u8 *)(actor + 98) + 4);
     *(s32 *)(actor + 16) = across;
@@ -695,11 +694,11 @@ void Scene_RunThreeStepsInBracket(void)
 {
     extern u8 *gWork;
 
-    Effect_Run78();
-    Effect_Run79();
-    Effect_Run80();
-    Effect_Run81();
-    Effect_Run82();
+    Effect_unk78();
+    Effect_unk79();
+    Effect_unk80();
+    Effect_unk81();
+    Effect_unk82();
 }
 
 /*
@@ -715,20 +714,20 @@ void Scene_RunBracketedSceneWithFlag282(void)
 
     u8 *workspace;
 
-    Effect_Run35();
-    Effect_Run37();
-    Effect_Run39();
+    Effect_unk35_2();
+    Effect_unk37_2();
+    Effect_unk39_2();
     /* The flag id is built as 141 << 1 rather than folded. */
-    Effect_Run40(141 << 1);
+    Effect_unk40_2(141 << 1);
 
     workspace = gWork;
     *(s32 *)(workspace + 448) = 512;
     *(s32 *)(workspace + 456) = 24;
 
-    Effect_Run41();
-    Effect_Run43();
-    Effect_Run45(1);
-    Effect_Run47();
+    Effect_unk41_2();
+    Effect_unk43();
+    Effect_unk45(1);
+    Effect_unk47();
 }
 
 void Scene_RunScene3c9(void)
@@ -741,24 +740,24 @@ void Scene_RunScene3c9(void)
     u8 *work;
 
     rec4 = Effect_Check(0);
-    Effect_Run83();
-    *(u8 *)(Effect_Check21() + 85) = 0;
+    Effect_unk83();
+    *(u8 *)(Effect_unk21() + 85) = 0;
     Effect_SetRect(102, 4, 74, 4, 18, 23);
-    Effect_SetRect2(39, 72, 11, 72, 16, 20);
-    Effect_SetRect3(19, 6, 3, 7, 22, 6);
-    Effect_SetRect4(19, 6, 3, 7, 13, 6);
-    Effect_SetRect5(19, 6, 3, 7, 22, 13);
-    Effect_SetRect6(19, 6, 3, 7, 13, 13);
-    Effect_Run84(1);
+    Effect_unk2_5(39, 72, 11, 72, 16, 20);
+    Effect_unk3_5(19, 6, 3, 7, 22, 6);
+    Effect_unk4_5(19, 6, 3, 7, 13, 6);
+    Effect_unk5_5(19, 6, 3, 7, 22, 13);
+    Effect_unk6_5(19, 6, 3, 7, 13, 13);
+    Effect_unk84(1);
     Effect_Run(0xc00000, -0x400000, 0xee0000, 0);
-    Effect_Run85(1);
-    Effect_Run86();
-    Effect_Run87(1);
-    Effect_Run88(20);
-    Effect_Run89(19);
-    Effect_Run90(0, 19);
-    record = Effect_Check22(0);
-    Effect_Run91(record, 0);
+    Effect_unk85(1);
+    Effect_unk86();
+    Effect_unk87(1);
+    Effect_unk88(20);
+    Effect_unk89(19);
+    Effect_unk90(0, 19);
+    record = Effect_unk22(0);
+    Effect_unk91(record, 0);
     *(s32 *)(rec4 + 8) = 0x15a0000;
     *(s32 *)(rec4 + 16) = 0xcd0000;
     *(s32 *)(rec4 + 12) = 0x200000;
@@ -767,11 +766,11 @@ void Scene_RunScene3c9(void)
 
         *(u16 *)(rec4 + 6) = shown;
     }
-    Effect_Run92(rec4);
-    Effect_Run93(1, 18);
-    record = Effect_Check23(1);
-    Effect_Run94(record, 0);
-    record = Effect_Check24(1);
+    Effect_unk92(rec4);
+    Effect_unk93(1, 18);
+    record = Effect_unk23(1);
+    Effect_unk94(record, 0);
+    record = Effect_unk24(1);
     *(s32 *)(record + 8) = 0x1640000;
     *(s32 *)(record + 16) = 0xc00000;
     {
@@ -780,11 +779,11 @@ void Scene_RunScene3c9(void)
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 12) = 0x200000;
-    Effect_Run95();
-    Effect_Run96(2, 18);
-    record = Effect_Check25(2);
-    Effect_Run97(record, 0);
-    record = Effect_Check26(2);
+    Effect_unk95();
+    Effect_unk96(2, 18);
+    record = Effect_unk25(2);
+    Effect_unk97(record, 0);
+    record = Effect_unk26(2);
     *(s32 *)(record + 8) = 0x1680000;
     {
         s32 shown = 0x2000;
@@ -793,11 +792,11 @@ void Scene_RunScene3c9(void)
     }
     *(s32 *)(record + 12) = 0x200000;
     *(s32 *)(record + 16) = 0xde0000;
-    Effect_Run98();
-    Effect_Run99(3, 18);
-    record = Effect_Check27(3);
-    Effect_Run100(record, 0);
-    record = Effect_Check28(3);
+    Effect_unk98();
+    Effect_unk99(3, 18);
+    record = Effect_unk27(3);
+    Effect_unk100(record, 0);
+    record = Effect_unk28(3);
     *(s32 *)(record + 8) = 0x14e0000;
     {
         s32 shown = 0x8000;
@@ -806,42 +805,42 @@ void Scene_RunScene3c9(void)
     }
     *(s32 *)(record + 12) = 0x200000;
     *(s32 *)(record + 16) = 0xde0000;
-    Effect_Run101();
-    Effect_Place2(21, 0xc40000, 0xdc0000);
-    Effect_Run102(21, 5);
-    Effect_Place3(6, 0xbc0000, 0x13c0000);
-    Effect_Run2(6, 5);
-    record = Effect_Check29(6);
-    Effect_Run103(record, 0);
-    record = Effect_Check30(8);
+    Effect_unk101();
+    Effect_unk2_3(21, 0xc40000, 0xdc0000);
+    Effect_unk102(21, 5);
+    Effect_unk3_3(6, 0xbc0000, 0x13c0000);
+    Effect_unk2_4(6, 5);
+    record = Effect_unk29(6);
+    Effect_unk103(record, 0);
+    record = Effect_unk30(8);
     *(s32 *)(record + 8) += -0x100000;
-    Effect_Run104();
-    record = Effect_Check2(9);
+    Effect_unk104();
+    record = Effect_unk2(9);
     *(s32 *)(record + 8) += -0x100000;
-    Effect_Run105();
-    record = Effect_Check31(10);
+    Effect_unk105();
+    record = Effect_unk31(10);
     *(s32 *)(record + 8) += 0x100000;
-    Effect_Run106();
-    record = Effect_Check3(11);
+    Effect_unk106();
+    record = Effect_unk3(11);
     *(s32 *)(record + 8) += 0x100000;
-    Effect_Run107();
-    Effect_Place4(0x10000, 0x10000, 0x10000);
-    record = Effect_Check32(23);
-    Effect_Run108(record, 0);
-    *(u8 *)(Effect_Check33(23) + 85) = 4;
-    Effect_Run109(23, 4);
-    record = Effect_Check34(23);
+    Effect_unk107();
+    Effect_unk4_3(0x10000, 0x10000, 0x10000);
+    record = Effect_unk32(23);
+    Effect_unk108(record, 0);
+    *(u8 *)(Effect_unk33(23) + 85) = 4;
+    Effect_unk109(23, 4);
+    record = Effect_unk34(23);
     *(s32 *)(record + 12) = 0x280000;
-    Effect_Check4(0x200da29, 0xc80);
+    Effect_unk4(0x200da29, 0xc80);
     work = *(u8 *volatile *)gWork;
     *(s32 *)(((s32)work + 0x1c0)) = 0x200;
     *(s32 *)(((s32)work + 0x1c8)) = 24;
-    Effect_Run110();
-    Effect_Run111();
-    Effect_Run112(40);
-    Effect_Run113();
+    Effect_unk110();
+    Effect_unk111();
+    Effect_unk112(40);
+    Effect_unk113();
     Effect_Do(0x9a7);
-    Effect_Run114(2);
+    Effect_unk114(2);
 }
 
 void Scene_RunMultiActorPresentation(void)
@@ -850,110 +849,110 @@ void Scene_RunMultiActorPresentation(void)
     s32 request_a;
     s32 request_b;
 
-    Effect_Run115(1, 1);
-    Effect_Run116(20);
-    Effect_Run117(1, 0, 20);
-    Effect_Run118(2, 1);
-    Effect_Run119(20);
-    Effect_Check5(2, 0);
-    Effect_Place5(2, 0xc000, 0);
-    Effect_Run120(0, 0x4000);
+    Effect_unk115(1, 1);
+    Effect_unk116(20);
+    Effect_unk117(1, 0, 20);
+    Effect_unk118(2, 1);
+    Effect_unk119(20);
+    Effect_unk5(2, 0);
+    Effect_unk5_3(2, 0xc000, 0);
+    Effect_unk120(0, 0x4000);
     count_flag = 0;
-    if (Effect_Check6(0, 0) == 0) {
-        Effect_Run121(20);
-        Effect_Run122(2, 4);
+    if (Effect_unk6(0, 0) == 0) {
+        Effect_unk121(20);
+        Effect_unk122(2, 4);
         count_flag = 1;
     } else {
-        Effect_Run123(20);
-        Effect_Run124(2, 1);
+        Effect_unk123(20);
+        Effect_unk124(2, 1);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Effect_Run125(2);
+    Effect_unk125(2);
     if (count_flag != 0) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Effect_Place6(1, 0x19999, 0xcccc);
+    Effect_unk6_3(1, 0x19999, 0xcccc);
     request_a = 0x1001;
-    Effect_Place7(1, 0x141, 174);
-    Effect_Run126(1, 0x2000);
-    Effect_Run127(request_a);
-    Effect_Place8(0, 0xa000, 0);
-    Effect_Place9(2, 0xa000, 0);
-    Effect_Run128(3, 0xc000);
-    Effect_Run129(1, 0x4000);
-    Effect_Run130(request_a);
-    Effect_Place10(1, 0x105, 40);
-    Effect_Run131(1, 0x2000, 20);
-    Effect_Run132(request_a);
-    Effect_Place11(1, 0xa000, 40);
-    Effect_Place12(0x8001, 0, 40);
-    Effect_Run133(1, 0x2000, 20);
-    Effect_Run134(request_a);
-    Effect_Run135(17);
-    Effect_Run136(3, 4);
-    Effect_Run137(3);
-    Effect_Run138(1, 0x4000, 80);
-    Effect_Place13(3, 0x6000, 80);
-    Effect_Place14(3, 0x100, 40);
-    Effect_Place15(0, 0x6000, 60);
-    Effect_Run139(0, 2);
-    Effect_Run140(2, 0xc000);
-    Effect_Place16(2, 0x101, 60);
-    Effect_Place17(2, 0x6000, 40);
-    Effect_Run141(2, 4, 60);
-    Effect_Run142(1, 0x2000);
-    Effect_Place18(1, 0x101, 40);
-    Effect_Run143(request_a);
-    Effect_Place19(1, 0x6000, 40);
-    Effect_Place20(1, 0x100, 0);
-    Effect_Run144(1, 4, 40);
-    Effect_Run145(1);
-    Effect_Place21(21, 0xcccc, 0x6666);
-    Effect_Run146(21, 200, 188);
-    Effect_Run147(6, 200, 204);
-    Effect_Run3(0x33333, 0x6666);
-    Effect_Run4(0xfc0000, 0, 0xbe0000, 1);
-    Effect_Run148();
-    Effect_Run149(40);
-    Effect_Run150(23);
-    Effect_Run5(21, 0x102);
-    Effect_Run151(21);
-    Effect_Run152(21, 1);
-    Effect_Run153(20);
-    Effect_Run154(21);
-    Effect_Run155(21, 4);
-    Effect_Run156(21);
-    Effect_Place22(21, 0x3000, 20);
-    Effect_Run157(21);
-    Effect_Run6(6, 0x102);
+    Effect_unk7_3(1, 0x141, 174);
+    Effect_unk126(1, 0x2000);
+    Effect_unk127(request_a);
+    Effect_unk8_3(0, 0xa000, 0);
+    Effect_unk9_3(2, 0xa000, 0);
+    Effect_unk128(3, 0xc000);
+    Effect_unk129(1, 0x4000);
+    Effect_unk130(request_a);
+    Effect_unk10_3(1, 0x105, 40);
+    Effect_unk131(1, 0x2000, 20);
+    Effect_unk132(request_a);
+    Effect_unk11_3(1, 0xa000, 40);
+    Effect_unk12_3(0x8001, 0, 40);
+    Effect_unk133(1, 0x2000, 20);
+    Effect_unk134(request_a);
+    Effect_unk135(17);
+    Effect_unk136(3, 4);
+    Effect_unk137(3);
+    Effect_unk138(1, 0x4000, 80);
+    Effect_unk13_3(3, 0x6000, 80);
+    Effect_unk14_3(3, 0x100, 40);
+    Effect_unk15_3(0, 0x6000, 60);
+    Effect_unk139(0, 2);
+    Effect_unk140(2, 0xc000);
+    Effect_unk16_3(2, 0x101, 60);
+    Effect_unk17_3(2, 0x6000, 40);
+    Effect_unk141(2, 4, 60);
+    Effect_unk142(1, 0x2000);
+    Effect_unk18_3(1, 0x101, 40);
+    Effect_unk143(request_a);
+    Effect_unk19_3(1, 0x6000, 40);
+    Effect_unk20_3(1, 0x100, 0);
+    Effect_unk144(1, 4, 40);
+    Effect_unk145(1);
+    Effect_unk21_3(21, 0xcccc, 0x6666);
+    Effect_unk146(21, 200, 188);
+    Effect_unk147(6, 200, 204);
+    Effect_unk3_4(0x33333, 0x6666);
+    Effect_unk4_4(0xfc0000, 0, 0xbe0000, 1);
+    Effect_unk148();
+    Effect_unk149(40);
+    Effect_unk150(23);
+    Effect_unk5_4(21, 0x102);
+    Effect_unk151(21);
+    Effect_unk152(21, 1);
+    Effect_unk153(20);
+    Effect_unk154(21);
+    Effect_unk155(21, 4);
+    Effect_unk156(21);
+    Effect_unk22_3(21, 0x3000, 20);
+    Effect_unk157(21);
+    Effect_unk6_4(6, 0x102);
     request_b = 0x2003;
-    Effect_Run158(20);
-    Effect_Run159(3, 2);
-    Effect_Run160(request_b);
-    Effect_Run161(21, 2);
-    Effect_Run162(20);
-    Effect_Run163(0x2002);
-    Effect_Run164(21, 0xe000);
-    Effect_Run165(1, 1);
-    Effect_Run166(1);
-    Effect_Run167(21, 1);
-    Effect_Run168(21, 0, 20);
-    Effect_Run169(request_b);
-    Effect_Run170(21, 4);
-    Effect_Run171(21);
-    Effect_Run7(2, 0x102);
-    Effect_Run172(0x2002);
-    Effect_Run173(21, 3);
-    Effect_Run174(21);
-    Effect_Place23(1, 0x103, 40);
-    Effect_Run175(1, 2);
-    Effect_Run176(1);
-    Effect_Run177(21, 4);
-    Effect_Run178(21);
-    Effect_Place24(21, 0x5000, 20);
-    Effect_Run179(3, 4, 20);
-    Effect_Run180(request_b, 0, 20);
-    Effect_Place25(21, 0x103, 40);
+    Effect_unk158(20);
+    Effect_unk159(3, 2);
+    Effect_unk160(request_b);
+    Effect_unk161(21, 2);
+    Effect_unk162(20);
+    Effect_unk163(0x2002);
+    Effect_unk164(21, 0xe000);
+    Effect_unk165(1, 1);
+    Effect_unk166(1);
+    Effect_unk167(21, 1);
+    Effect_unk168(21, 0, 20);
+    Effect_unk169(request_b);
+    Effect_unk170(21, 4);
+    Effect_unk171(21);
+    Effect_unk7_4(2, 0x102);
+    Effect_unk172(0x2002);
+    Effect_unk173(21, 3);
+    Effect_unk174(21);
+    Effect_unk23_3(1, 0x103, 40);
+    Effect_unk175(1, 2);
+    Effect_unk176(1);
+    Effect_unk177(21, 4);
+    Effect_unk178(21);
+    Effect_unk24_3(21, 0x5000, 20);
+    Effect_unk179(3, 4, 20);
+    Effect_unk180(request_b, 0, 20);
+    Effect_unk25_2(21, 0x103, 40);
 }
 
 void Scene_RunScene3c9(void)
@@ -963,26 +962,26 @@ void Scene_RunScene3c9(void)
     u32 i;
     s32 record;
 
-    Effect_Do2(0x2829);
-    Effect_Run181(21);
-    Effect_Run182(62);
-    Effect_Place26(0x10000, 0x10000, 0x10000);
-    Effect_Run8(0x4cccc, 0x9999);
-    Effect_Run9(0x40000, 0x8000);
-    Effect_Run10(0xc00000, -0x400000, 0xee0000, 1);
-    Effect_Run183();
-    Effect_Run184(40);
-    Effect_Run185(21, 1);
-    Effect_Place27(0x2015, 0, 40);
-    Effect_Run186(6, 3);
-    Effect_Run187(6);
-    Effect_Run11(21, 0x102);
-    Effect_Run188(60);
-    Effect_Place28(0x2015, 0, 80);
-    Effect_Run12(6, 0x102);
-    Effect_Run189(40);
-    Effect_Run190(6, 2);
-    Effect_Run191(6);
+    Effect_unk2_2(0x2829);
+    Effect_unk181(21);
+    Effect_unk182(62);
+    Effect_unk26_2(0x10000, 0x10000, 0x10000);
+    Effect_unk8_4(0x4cccc, 0x9999);
+    Effect_unk9_4(0x40000, 0x8000);
+    Effect_unk10_4(0xc00000, -0x400000, 0xee0000, 1);
+    Effect_unk183();
+    Effect_unk184(40);
+    Effect_unk185(21, 1);
+    Effect_unk27_2(0x2015, 0, 40);
+    Effect_unk186(6, 3);
+    Effect_unk187(6);
+    Effect_unk11_4(21, 0x102);
+    Effect_unk188(60);
+    Effect_unk28_2(0x2015, 0, 80);
+    Effect_unk12_4(6, 0x102);
+    Effect_unk189(40);
+    Effect_unk190(6, 2);
+    Effect_unk191(6);
 }
 
 /*
@@ -1014,7 +1013,7 @@ void Effect_AdvanceGatedRiseCounter(u8 *obj)
 
         *(u32 *)(obj + 12) = *(u32 *)(obj + 76) + ((u32)(counter >> 2) << 16);
 
-        Effect_Do24(obj);
+        Effect_unk24_2(obj);
 
         {
             if (*(u8 *)(obj + 98) != 0) {
@@ -1038,9 +1037,9 @@ void Scene_RunScene3c9(u8 *a0)
 
     p10 = *(s32 *)(a0 + 104);
     p8 = *(u16 *)(a0 + 100);
-    record = Effect_Check35(p8);
+    record = Effect_unk35(p8);
     *(volatile s32 *)(a0 + 8) = (*(s32 *)(p10 + 8) + (record *(*(s32 *)(a0 + 48) + 28)));
-    value = Effect_Check36(p8);
+    value = Effect_unk36(p8);
     *(volatile s32 *)(a0 + 16) = ((value << 4) + 0xa40000);
     *(volatile s32 *)(a0 + 56) = *(s32 *)(a0 + 8);
     *(volatile s32 *)(a0 + 64) = ((value << 4) + 0xa40000);

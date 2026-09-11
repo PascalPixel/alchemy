@@ -29,7 +29,7 @@ extern void Func_02002736(s32);
 extern s32 Func_0200275e(s32, s32);
 extern void Func_02002682(void);
 
-void SceneDialogue_RunActor16Message1769(void)
+void Dialogue_RunActor16Message1769(void)
 {
     Func_02002668();
     Func_02002736(0x1769);

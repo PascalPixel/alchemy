@@ -16,8 +16,8 @@ s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080044d0(s32 deltaZ, s32 deltaX);
 
-#define BattleEffect_SelectNearbyTargetObject Func_0808df1c
-s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
+#define BattleFx_SelectNearbyTargetObject Func_0808df1c
+s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 {
     struct BattleTargetObject *source;
     struct BattleTargetObject *candidate;

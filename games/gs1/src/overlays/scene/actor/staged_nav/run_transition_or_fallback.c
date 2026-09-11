@@ -6,7 +6,7 @@ void Func_02004050(void);
 int Func_02002798(void);
 void Func_020018e0(void);
 
-void FieldScene_RunTransitionOrFallback(void)
+void Scene_RunTransitionOrFallback(void)
 {
     Func_02004038();
     if (Func_02002798() == 0)

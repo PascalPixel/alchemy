@@ -6,7 +6,7 @@ extern void Func_02003268(s32);
 extern void Func_02003186(s32);
 extern void Func_020030c4(s32);
 extern void Func_02002444(void);
-void FieldScene_RunActor10Flag315Sequence(void)
+void Scene_RunActor10Flag315Sequence(void)
 {
     Func_02003256(241);
     Func_02000fd2(10, -160, 0);

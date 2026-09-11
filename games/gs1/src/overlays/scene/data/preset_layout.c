@@ -7,17 +7,17 @@
 #define SceneData_GetTable91d0 Func_0200003c
 #define SceneData_GetTable91e0 Func_02000044
 #define SceneData_GetTable9240 Func_0200004c
-#define SceneState_ApplyRecordTable92c0 Func_02000054
-#define FieldScene_CallHelper118c Func_0200008c
-#define SceneState_ApplyRectByLayoutSelector Func_02000150
-#define FieldScene_RepaintBoardRecords Func_02000194
-#define SceneState_CopyPresetA0d0WithOffsetB0 Func_020003c0
-#define FieldScene_RunActorEightSequence Func_020008b0
-#define SceneState_StampRecordCells Func_02000b3c
+#define State_ApplyRecordTable92c0 Func_02000054
+#define Scene_CallHelper118c Func_0200008c
+#define State_ApplyRectByLayoutSelector Func_02000150
+#define Scene_RepaintBoardRecords Func_02000194
+#define State_CopyPresetA0d0WithOffsetB0 Func_020003c0
+#define Scene_RunActorEightSequence Func_020008b0
+#define State_StampRecordCells Func_02000b3c
 #define SceneData_FindTileRunAt Func_02000b8c
-#define SceneState_CheckFourCellRun Func_02000be4
-#define SceneEffect_AdjustPaletteColors Func_02000e64
-#define SceneEffect_AdjustColorChannels Func_02000ecc
+#define State_CheckFourCellRun Func_02000be4
+#define Effect_AdjustPaletteColors Func_02000e64
+#define Effect_AdjustColorChannels Func_02000ecc
 
 struct TileRun {
     s16 id;
@@ -198,7 +198,7 @@ u8 *SceneData_GetTable9240(void)
     return (u8 *)0x02009240;
 }
 
-void SceneState_ApplyRecordTable92c0(void)
+void State_ApplyRecordTable92c0(void)
 {
     Func_02000c8a(*(s32 *)0x020092C0);
     Func_020010e4(0, 0x40, 0x20, 0x20, 0, 0);
@@ -206,12 +206,12 @@ void SceneState_ApplyRecordTable92c0(void)
     Func_020001cc();
 }
 
-void FieldScene_CallHelper118c(void)
+void Scene_CallHelper118c(void)
 {
     Func_0200118c();
 }
 
-void SceneState_ApplyRectByLayoutSelector(void)
+void State_ApplyRectByLayoutSelector(void)
 {
     if (**(s16 **)0x020092c4 == 1) {
         s32 fifth = 4;
@@ -224,7 +224,7 @@ void SceneState_ApplyRectByLayoutSelector(void)
     }
 }
 
-void FieldScene_RepaintBoardRecords(void)
+void Scene_RepaintBoardRecords(void)
 {
     s32 zero;
     s16 *record = Data_020092c0;
@@ -289,7 +289,7 @@ void FieldScene_RepaintBoardRecords(void)
     Func_020004a6();
 }
 
-void SceneState_CopyPresetA0d0WithOffsetB0(void)
+void State_CopyPresetA0d0WithOffsetB0(void)
 {
     u32 *dst;
     const u32 *src;
@@ -306,7 +306,7 @@ void SceneState_CopyPresetA0d0WithOffsetB0(void)
     p[5] += 0xb0;
 }
 
-void FieldScene_RunActorEightSequence(void)
+void Scene_RunActorEightSequence(void)
 {
     Func_02001952();
     Func_0200199a(0, 8);
@@ -331,7 +331,7 @@ void FieldScene_RunActorEightSequence(void)
     Func_02001a08();
 }
 
-void SceneState_StampRecordCells(s16 *records, s32 value)
+void State_StampRecordCells(s16 *records, s32 value)
 {
     extern u8 Data_02010000[];
 
@@ -377,7 +377,7 @@ const struct TileRun *SceneData_FindTileRunAt(
     return 0;
 }
 
-s32 SceneState_CheckFourCellRun(s32 x, s32 z, s32 mode)
+s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 {
     extern struct Cell Data_02010000[];
 
@@ -398,7 +398,7 @@ s32 SceneState_CheckFourCellRun(s32 x, s32 z, s32 mode)
     return 0;
 }
 
-void SceneEffect_AdjustPaletteColors(s32 a)
+void Effect_AdjustPaletteColors(s32 a)
 {
     u32 x;
 
@@ -423,7 +423,7 @@ void SceneEffect_AdjustPaletteColors(s32 a)
     Func_02001fc0(0x10000, 0);
 }
 
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
+u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
     s16 green = (s16)((color >> 5) & 31);
     s16 red = (s16)(color & 31);

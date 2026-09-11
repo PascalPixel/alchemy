@@ -16,7 +16,7 @@ void Func_02008bd6(u8 *);
 void Func_02008d1e(s32, s32);
 extern u8 Data_0200cbe4[];
 
-s32 FieldScene_PresentItem(s32 item)
+s32 Scene_PresentItem(s32 item)
 {
     u8 *buf = 0;
     u8 *obj = Func_02008b38(22);

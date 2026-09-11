@@ -1,6 +1,6 @@
 #include "battle_effect_chance.h"
 
-s32 BattleEffect_GetBaseSuccessRate(s32 effect_id)
+s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
 {
     s32 battle_result;
     u32 entry_index;

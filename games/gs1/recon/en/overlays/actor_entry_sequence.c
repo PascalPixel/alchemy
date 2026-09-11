@@ -4,7 +4,7 @@ extern u8 Value_000027ba[];
 
 extern u8 Value_000000bb[];
 
-#define FieldScene_RunActorEntrySequence Func_020012c8
+#define Scene_RunActorEntrySequence Func_020012c8
 
 /* Complete scene owner 020012c8..020020db. The object effect loop runs
  * forty frames; flag-dependent branches preserve the shared step increments.
@@ -85,7 +85,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunActorEntrySequence(void)
+void Scene_RunActorEntrySequence(void)
 {
     s32 itemOwner;
     u8 *object;

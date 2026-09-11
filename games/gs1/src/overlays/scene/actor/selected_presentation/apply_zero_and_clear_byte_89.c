@@ -3,7 +3,7 @@
 void Func_02001568();
 
 /* Complete 24-byte entity reset owner. */
-s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj)
+s32 OvObj_ApplyZeroAndClearByte89(u8 *obj)
 {
     Func_02001568(obj, 0);
     obj[89] = 0;

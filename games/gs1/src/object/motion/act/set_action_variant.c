@@ -1,7 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
 
-void ObjectMotion_SetActionVariant(s32 arg0, s32 arg1)
+void Motion_SetActionVariant(s32 arg0, s32 arg1)
 {
     u32 object_address;
     u8 *object_state;

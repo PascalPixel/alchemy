@@ -57,7 +57,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunSupplementalSequenceOne(s32 a0)
+void Scene_RunSupplementalSequenceOne(s32 a0)
 {
     u32 i;
     s32 rec4;

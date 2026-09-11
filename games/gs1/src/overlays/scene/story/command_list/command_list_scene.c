@@ -200,32 +200,32 @@
 #define SceneData_ReturnZero Func_02000038
 #define SceneData_GetTable93f8 Func_0200003c
 #define SceneData_GetTable93fc Func_02000044
-#define SceneDialogue_ShowMessageAndWait Func_0200004c
+#define Dialogue_ShowMessageAndWait Func_0200004c
 #define CommandTable_RunDirectionalInput Func_0200007c
-#define SceneState_ApplyBlockC9b Func_02000130
-#define SceneState_ApplyBlockCc6 Func_02000148
-#define SceneState_ApplyBlockCf1 Func_02000160
-#define SceneState_ApplyBlockD21 Func_02000180
-#define SceneState_ApplyBlockD4c Func_02000198
-#define SceneState_ApplyBlockD77 Func_020001b8
-#define SceneState_ApplyBlockDa2 Func_020001d8
-#define SceneState_ApplyOne Func_020001f8
-#define SceneState_NoOp Func_02000204
-#define SceneState_QueryTwoValues Func_02000208
-#define SceneState_ApplyZero Func_0200021c
+#define State_ApplyBlockC9b Func_02000130
+#define State_ApplyBlockCc6 Func_02000148
+#define State_ApplyBlockCf1 Func_02000160
+#define State_ApplyBlockD21 Func_02000180
+#define State_ApplyBlockD4c Func_02000198
+#define State_ApplyBlockD77 Func_020001b8
+#define State_ApplyBlockDa2 Func_020001d8
+#define State_ApplyOne Func_020001f8
+#define State_NoOp Func_02000204
+#define State_QueryTwoValues Func_02000208
+#define State_ApplyZero Func_0200021c
 #define CommandTable_NoOpCallback Func_02000228
-#define SceneState_SetRecordFlag53 Func_0200022c
+#define State_SetRecordFlag53 Func_0200022c
 #define SceneData_GetTable9564 Func_0200023c
-#define FieldScene_ApplyTable9684ValueToFourSlots Func_02000244
-#define FieldScene_GrantItemListToSlots Func_0200029c
+#define Scene_ApplyTable9684ValueToFourSlots Func_02000244
+#define Scene_GrantItemListToSlots Func_0200029c
 #define CommandTable_ConfigureCommandGroups Func_020008c4
-#define FieldScene_ApplySlotOffsetsAndFlags Func_02000b10
-#define FieldScene_AssignCodeSetAToSlots Func_02000bb8
-#define SceneState_RunCall1c00 Func_02000f08
-#define FieldScene_AssignCodeSetBToSlots Func_02000f14
+#define Scene_ApplySlotOffsetsAndFlags Func_02000b10
+#define Scene_AssignCodeSetAToSlots Func_02000bb8
+#define State_RunCall1c00 Func_02000f08
+#define Scene_AssignCodeSetBToSlots Func_02000f14
 #define CommandTable_ConfigureCommandList Func_020010a8
-#define SceneState_GetFarResult2384 Func_02001170
-#define SceneState_GetFarResult2418 Func_0200117c
+#define State_GetFarResult2384 Func_02001170
+#define State_GetFarResult2418 Func_0200117c
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
@@ -736,7 +736,7 @@ u8 *SceneData_GetTable93fc(void)
     return (u8 *)0x020093fc;
 }
 
-void SceneDialogue_ShowMessageAndWait(s32 arg0)
+void Dialogue_ShowMessageAndWait(s32 arg0)
 {
     Func_02001242();
     Func_02001206(arg0, 5, 0, 0x22);
@@ -793,58 +793,58 @@ end:
     Func_020012b4(token, 2);
 }
 
-void SceneState_ApplyBlockC9b(void)
+void State_ApplyBlockC9b(void)
 {
     Func_020001b6((s32)&Value_00000c9b, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockCc6(void)
+void State_ApplyBlockCc6(void)
 {
     Func_020001ce((s32)&Value_00000cc6, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockCf1(void)
+void State_ApplyBlockCf1(void)
 {
     Func_020001e8((s32)&Value_00000cf1, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockD21(void)
+void State_ApplyBlockD21(void)
 {
     Func_02000206((s32)&Value_00000d21, (s32)&Value_00000d4c - (s32)&Value_00000d21);
 }
 
-void SceneState_ApplyBlockD4c(void)
+void State_ApplyBlockD4c(void)
 {
     Func_02000220((s32)&Value_00000d4c, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockD77(void)
+void State_ApplyBlockD77(void)
 {
     Func_02000240((s32)&Value_00000d77, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyBlockDa2(void)
+void State_ApplyBlockDa2(void)
 {
     Func_02000260((s32)&Value_00000da2, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
-void SceneState_ApplyOne(void)
+void State_ApplyOne(void)
 {
     Func_0200148e(1);
 }
 
-void SceneState_NoOp(void)
+void State_NoOp(void)
 {
 }
 
-void SceneState_QueryTwoValues(void)
+void State_QueryTwoValues(void)
 {
     s32 a;
     s32 b;
     Func_020014b2(&a, &b);
 }
 
-void SceneState_ApplyZero(void)
+void State_ApplyZero(void)
 {
     Func_0200142a(0);
 }
@@ -853,7 +853,7 @@ void CommandTable_NoOpCallback(void)
 {
 }
 
-void SceneState_SetRecordFlag53(void)
+void State_SetRecordFlag53(void)
 {
     Data_03001f30[0][0x35] = 1;
 }
@@ -863,7 +863,7 @@ s32 SceneData_GetTable9564(void)
     return (s32)Data_02009564;
 }
 
-void FieldScene_ApplyTable9684ValueToFourSlots(void)
+void Scene_ApplyTable9684ValueToFourSlots(void)
 {
     u32 i;
     s32 record;
@@ -882,7 +882,7 @@ void FieldScene_ApplyTable9684ValueToFourSlots(void)
     Func_020014ac(2);
 }
 
-void FieldScene_GrantItemListToSlots(void)
+void Scene_GrantItemListToSlots(void)
 {
     u32 tmp;
     s32 slot;
@@ -1149,7 +1149,7 @@ void CommandTable_ConfigureCommandGroups(void)
     Func_02001d22(2);
 }
 
-void FieldScene_ApplySlotOffsetsAndFlags(void)
+void Scene_ApplySlotOffsetsAndFlags(void)
 {
     u32 i;
     s32 record;
@@ -1176,7 +1176,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     Func_02001dc6(2);
 }
 
-void FieldScene_AssignCodeSetAToSlots(void)
+void Scene_AssignCodeSetAToSlots(void)
 {
     Func_02001d70(0xc1f, 1);
     Func_02001df8(0, 85);
@@ -1219,14 +1219,14 @@ void FieldScene_AssignCodeSetAToSlots(void)
     Func_02001f08(2);
 }
 
-void SceneState_RunCall1c00(void)
+void State_RunCall1c00(void)
 {
     void Func_02001c00_a(void);
 
     Func_02001c00_a();
 }
 
-void FieldScene_AssignCodeSetBToSlots(void)
+void Scene_AssignCodeSetBToSlots(void)
 {
     Func_020020cc(0xc1c, 1);
     Func_02002154(0, 0xb8);
@@ -1310,12 +1310,12 @@ s32 CommandTable_ConfigureCommandList(void)
     return 0;
 }
 
-s32 SceneState_GetFarResult2384(void)
+s32 State_GetFarResult2384(void)
 {
     return Func_02002384();
 }
 
-s32 SceneState_GetFarResult2418(void)
+s32 State_GetFarResult2418(void)
 {
     return Func_02002418();
 }

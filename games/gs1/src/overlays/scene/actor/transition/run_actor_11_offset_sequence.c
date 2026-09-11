@@ -11,7 +11,7 @@ extern void Func_020017d0(void);
 extern void Func_02002e74(s32);
 extern void Func_02001ee4(void);
 
-void FieldScene_RunActor11Offset128Sequence(void)
+void Scene_RunActor11Offset128Sequence(void)
 {
     Func_0200300a(241);
     Func_02000d84(11, 0, 128);

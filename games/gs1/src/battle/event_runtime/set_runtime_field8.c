@@ -3,7 +3,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void BattleEvent_SetRuntimeField8(void)
+void BattleEv_SetRuntimeField8(void)
 {
     FIELD_AT_OFFSET(*(void **)ADDR_03001EE4, s32 *, 8) = 1;
 }

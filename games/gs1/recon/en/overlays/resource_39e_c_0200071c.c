@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene39eSequenceB Func_0200071c
+#define Scene_RunScene39eSequenceB Func_0200071c
 
 void Func_0200486a();
 void Func_020048c8();
@@ -136,7 +136,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void FieldScene_RunScene39eSequenceB(void)
+void Scene_RunScene39eSequenceB(void)
 {
     u32 i;
     s32 rec7;

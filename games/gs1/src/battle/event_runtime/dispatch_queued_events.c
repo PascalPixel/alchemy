@@ -30,7 +30,7 @@ void Func_080b78e4(u32, u32);
 void Func_080b7aac(u32);
 u32 Func_080bdfec(void);
 
-u32 BattleEvent_DispatchQueued(void)
+u32 BattleEv_DispatchQueued(void)
 {
     struct BattleEventRuntime *runtime = (void *)(Data_03001e74 + 0x6b8);
     struct BattleEventQueue *queue = &runtime->queue;

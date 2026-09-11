@@ -2,7 +2,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void BattleEffect_UpdateSpinAngle(void *object)
+void BattleFx_UpdateSpinAngle(void *object)
 {
     u32 angle_step;
 

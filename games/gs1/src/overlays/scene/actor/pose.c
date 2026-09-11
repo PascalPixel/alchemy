@@ -1,17 +1,17 @@
 #include "types.h"
 
 #define SetActorPose Func_020012de
-#define SceneActor_SetActor14Pose258 Func_02000030
+#define Actor_SetActor14Pose258 Func_02000030
 #define SceneData_GetTable9438 Func_02000044
 #define SceneData_SelectTableByWord224 Func_0200004c
 #define SceneData_GetTable96d0 Func_0200007c
 #define SceneData_SelectTableBySceneIdAndFlag9a7 Func_02000084
-#define FieldScene_RunSequenceA Func_020003f4
-#define FieldScene_RunThreeCallSequence Func_02000468
-#define SceneState_ForwardWord16cAndApply7b Func_0200048c
+#define Scene_RunSequenceA Func_020003f4
+#define Scene_RunThreeCallSequence Func_02000468
+#define State_ForwardWord16cAndApply7b Func_0200048c
 #define SceneData_SelectScriptBySceneIdAndFlag9a7 Func_020004b0
-#define FieldScene_RunPrimaryScript Func_02000508
-#define FieldScene_RunSecondaryScript Func_02000eec
+#define Scene_RunPrimaryScript Func_02000508
+#define Scene_RunSecondaryScript Func_02000eec
 
 extern s16 Data_02000240[];
 extern u8 Value_000000b3;
@@ -511,7 +511,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-s32 SceneActor_SetActor14Pose258(void)
+s32 Actor_SetActor14Pose258(void)
 {
     ConfigureActorPose(14, 258);
     return 0;
@@ -546,7 +546,7 @@ u8 *SceneData_SelectTableBySceneIdAndFlag9a7(void)
     return Data_02009734;
 }
 
-void FieldScene_RunSequenceA(void)
+void Scene_RunSequenceA(void)
 {
     s32 Func_020016a4(s32, s32);
 
@@ -567,7 +567,7 @@ void FieldScene_RunSequenceA(void)
     Func_0200165e();
 }
 
-void FieldScene_RunThreeCallSequence(void)
+void Scene_RunThreeCallSequence(void)
 {
     void Func_02001708(s32, s32);
 
@@ -576,7 +576,7 @@ void FieldScene_RunThreeCallSequence(void)
     Func_02001708(0xC, 0);
 }
 
-void SceneState_ForwardWord16cAndApply7b(void)
+void State_ForwardWord16cAndApply7b(void)
 {
     u8 *work = Data_03001ebc;
     s16 *p = (s16 *)(work + 0x16C);
@@ -601,7 +601,7 @@ u8 *SceneData_SelectScriptBySceneIdAndFlag9a7(void)
     return Data_02009a94;
 }
 
-void FieldScene_RunPrimaryScript(void)
+void Scene_RunPrimaryScript(void)
 {
     void Func_02001708_a();
 
@@ -945,7 +945,7 @@ void FieldScene_RunPrimaryScript(void)
  * channel ids and beat constants are transcribed literally: what each channel
  * drives is not established, and the middle argument 0x105 is unidentified.
  */
-void FieldScene_RunSecondaryScript(void)
+void Scene_RunSecondaryScript(void)
 {
     void Func_020021aa_a(s32);
     void Func_020021d4_a(s32);

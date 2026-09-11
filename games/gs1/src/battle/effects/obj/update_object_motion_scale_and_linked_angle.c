@@ -1,6 +1,6 @@
 #include "types.h"
 
-void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(void *arg0)
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *arg0)
 {
     u8 *a = arg0;
 

@@ -12,7 +12,7 @@
  */
 #include "types.h"
 
-#define FieldScene_RunPartyRosterScene Func_02002c84
+#define Scene_RunPartyRosterScene Func_02002c84
 
 /*
  * resource_3af owner at 0x02002c84, 1228 bytes: the overlay's party

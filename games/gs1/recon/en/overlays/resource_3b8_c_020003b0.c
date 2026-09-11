@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunMiddleAuxiliarySequence Func_020003b0
+#define Scene_RunMiddleAuxiliarySequence Func_020003b0
 
 /* Audited retained auxiliary scene body.
  * The complete executable span preserves 42 calls, 0 loop(s), and 4 explicit memory operation(s).

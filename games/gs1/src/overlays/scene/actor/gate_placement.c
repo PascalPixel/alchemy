@@ -10,7 +10,7 @@
 #define SceneData_GetSecondaryTable Func_0200003c
 #define SceneData_GetTertiaryTable Func_02000044
 #define SceneData_GetQuaternaryTable Func_0200004c
-#define FieldScene_PlaceActor8OnGate300 Func_02000054
+#define Scene_PlaceActor8OnGate300 Func_02000054
 #include "resource_388.h"
 #include "resource_388_runtime.h"
 
@@ -47,7 +47,7 @@ u8 *SceneData_GetQuaternaryTable(void)
     return RESOURCE388_QUATERNARY_TABLE;   /* image offset 0x1c4 */
 }
 
-s32 FieldScene_PlaceActor8OnGate300(void)
+s32 Scene_PlaceActor8OnGate300(void)
 {
     struct Resource388Runtime *work;
     /*

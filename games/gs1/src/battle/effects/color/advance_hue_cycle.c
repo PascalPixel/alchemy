@@ -4,7 +4,7 @@ extern u8 *Data_03001ea8;
 
 extern void Func_08097948(s32 angle, s32 *out1, s32 *out2, s32 *out3);
 
-void BattleEffect_AdvanceHueCycle(void)
+void BattleFx_AdvanceHueCycle(void)
 {
     u8 *base = Data_03001ea8;
     s32 out1 = 0;

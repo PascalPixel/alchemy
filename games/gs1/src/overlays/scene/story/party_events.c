@@ -6,12 +6,12 @@
 #define SceneData_GetTable9d9c Func_02000064
 #define SceneData_SelectTable9ddcByStateWithInit Func_0200006c
 #define SceneData_SelectTable9f2cByState Func_020000a4
-#define SceneDialogue_RunActor13Message1b83 Func_020000d4
-#define SceneDialogue_RunActor16Message1b88 Func_020000f4
-#define FieldScene_RunActorEightTurnDialogue Func_02000114
+#define Dialogue_RunActor13Message1b83 Func_020000d4
+#define Dialogue_RunActor16Message1b88 Func_020000f4
+#define Scene_RunActorEightTurnDialogue Func_02000114
 #define FieldScene_RunScene3aa_02000184 Func_02000184
-#define SceneState_SetWord448To209AndRun Func_02000230
-#define FieldScene_DispatchSceneByIndex Func_02000264
+#define State_SetWord448To209AndRun Func_02000230
+#define Scene_DispatchSceneByIndex Func_02000264
 #define RunEventScript01 Func_02000360
 #define ConfigureFourSceneChannelsAndHandoff Func_0200140c
 
@@ -800,7 +800,7 @@ s32 SceneData_SelectTable9f2cByState(void)
     return (s32)Data_02009f2c;
 }
 
-void SceneDialogue_RunActor13Message1b83(void)
+void Dialogue_RunActor13Message1b83(void)
 {
     Func_02001b5c();
     Func_02001bea(0x1B83);
@@ -808,7 +808,7 @@ void SceneDialogue_RunActor13Message1b83(void)
     Func_02001b76();
 }
 
-void SceneDialogue_RunActor16Message1b88(void)
+void Dialogue_RunActor16Message1b88(void)
 {
     Func_02001b7c();
     Func_02001c0a(0x1B88);
@@ -816,7 +816,7 @@ void SceneDialogue_RunActor16Message1b88(void)
     Func_02001b96();
 }
 
-void FieldScene_RunActorEightTurnDialogue(void)
+void Scene_RunActorEightTurnDialogue(void)
 {
     void Func_02001c00_end(void);
 
@@ -868,7 +868,7 @@ void FieldScene_RunScene3aa_02000184(void)
     Func_02001cae();
 }
 
-s32 SceneState_SetWord448To209AndRun(void)
+s32 State_SetWord448To209AndRun(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -887,7 +887,7 @@ s32 SceneState_SetWord448To209AndRun(void)
  * The locals holding the coordinates, the record's +6 halfword (named by
  * position only) and the fifth and sixth arguments force those to be built.
  */
-void FieldScene_DispatchSceneByIndex(void)
+void Scene_DispatchSceneByIndex(void)
 {
     extern u8 *Data_03001ebc;
 

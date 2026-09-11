@@ -17,9 +17,9 @@ extern char Value_03000164;
     dma[2] = dma_control; \
 } while (0)
 
-#define BattlePresentation_InitializeTilePattern Func_080b5ad4
+#define BattlePres_InitializeTilePattern Func_080b5ad4
 
-s32 BattlePresentation_InitializeTilePattern(void)
+s32 BattlePres_InitializeTilePattern(void)
 {
     u32 control = 0x80000008;
 

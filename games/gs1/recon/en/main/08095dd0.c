@@ -1,7 +1,7 @@
 #include "types.h"
 #include "fixed_math.h"
 
-#define BattleEffect_RunPhasedRadialParticleSequence Func_08095dd0
+#define BattleFx_RunPhasedRadialParticleSequence Func_08095dd0
 
 extern s32 Data_02000240[];
 
@@ -19,7 +19,7 @@ struct PhasedRadialSequenceObject {
     void *callback;
 };
 
-void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
+void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
 {
     s8 *object_pointer;
     struct {
@@ -44,7 +44,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     effect_slots = *(void **)0x03001F30;
     Func_080b0048(0x201090);
     WaitFrames(30);
-    ObjectMotion_ArmCallback(arg, 0x4000, 0);
+    Motion_ArmCb(arg, 0x4000, 0);
     WaitFrames(20);
     do {
         Audio_PlayCue(173);
@@ -89,7 +89,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     } while (remaining >= 0);
 
     WaitFrames(60);
-    ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
+    Motion_ArmCb(Data_02000240[125], 0x4000, 0);
     WaitFrames(20);
     Object_SetMode(Object_GetById(Data_02000240[125]), 28);
     {
@@ -134,5 +134,5 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     target_object->scale_y = 0x10000;
     WaitFrames(30);
     Func_080b0050();
-    BattleEffect_ClearActiveSlotsAndScheduleUpdates();
+    BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

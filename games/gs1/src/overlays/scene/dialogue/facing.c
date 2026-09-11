@@ -5,19 +5,19 @@
 #define SceneData_GetTable8630 Func_0200003c
 #define SceneData_GetTable865c Func_02000044
 #define SceneData_SelectTableBySubStateAndFlag941 Func_0200004c
-#define SceneDialogue_RunActor17FlaggedDialogue Func_0200008c
-#define SceneDialogue_RunActor20DialogueA Func_020000fc
-#define SceneDialogue_RunActor20DialogueB Func_02000124
-#define SceneDialogue_RunActor18Dialogue Func_0200014c
-#define SceneDialogue_RunActor21FlaggedDialogue Func_0200016c
-#define SceneDialogue_RunActor16FlaggedDialogue Func_020001d8
-#define SceneDialogue_RunActor16FacingFlaggedDialogue Func_02000224
-#define SceneDialogue_RunActor14FlaggedDialogue Func_02000294
-#define SceneDialogue_RunActor14FacingFlaggedDialogue Func_020002d0
-#define SceneDialogue_RunActor15FlaggedDialogue Func_02000338
-#define SceneDialogue_RunActor15FacingFlaggedDialogue Func_02000374
-#define SceneState_SetRuntimeWord448To521 Func_020003dc
-#define SceneDialogue_RunActor22FacingDialogue Func_02000454
+#define Dialogue_RunActor17FlaggedDialogue Func_0200008c
+#define Dialogue_RunActor20DialogueA Func_020000fc
+#define Dialogue_RunActor20DialogueB Func_02000124
+#define Dialogue_RunActor18Dialogue Func_0200014c
+#define Dialogue_RunActor21FlaggedDialogue Func_0200016c
+#define Dialogue_RunActor16FlaggedDialogue Func_020001d8
+#define Dialogue_RunActor16FacingFlaggedDialogue Func_02000224
+#define Dialogue_RunActor14FlaggedDialogue Func_02000294
+#define Dialogue_RunActor14FacingFlaggedDialogue Func_020002d0
+#define Dialogue_RunActor15FlaggedDialogue Func_02000338
+#define Dialogue_RunActor15FacingFlaggedDialogue Func_02000374
+#define State_SetRuntimeWord448To521 Func_020003dc
+#define Dialogue_RunActor22FacingDialogue Func_02000454
 #include "resource_3ac.h"
 
 typedef struct {
@@ -174,7 +174,7 @@ u8 *SceneData_SelectTableBySubStateAndFlag941(void)
     return Data_02008824;
 }
 
-void SceneDialogue_RunActor17FlaggedDialogue(void)
+void Dialogue_RunActor17FlaggedDialogue(void)
 {
     T *p;
 
@@ -196,7 +196,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
     Func_0200059a();
 }
 
-void SceneDialogue_RunActor20DialogueA(void)
+void Dialogue_RunActor20DialogueA(void)
 {
     Func_020005b0();
     Func_020005ce(0x1bd5);
@@ -205,7 +205,7 @@ void SceneDialogue_RunActor20DialogueA(void)
     Func_020005d2();
 }
 
-void SceneDialogue_RunActor20DialogueB(void)
+void Dialogue_RunActor20DialogueB(void)
 {
     Func_020005d8();
     Func_020005f6(0x1bdb);
@@ -214,7 +214,7 @@ void SceneDialogue_RunActor20DialogueB(void)
     Func_020005fa();
 }
 
-void SceneDialogue_RunActor18Dialogue(void)
+void Dialogue_RunActor18Dialogue(void)
 {
     Func_02000600();
     Func_0200061e(0x24fe);
@@ -222,7 +222,7 @@ void SceneDialogue_RunActor18Dialogue(void)
     Func_0200061a();
 }
 
-void SceneDialogue_RunActor21FlaggedDialogue(void)
+void Dialogue_RunActor21FlaggedDialogue(void)
 {
     T *p;
 
@@ -242,7 +242,7 @@ void SceneDialogue_RunActor21FlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor16FlaggedDialogue(void)
+void Dialogue_RunActor16FlaggedDialogue(void)
 {
     if (Func_02000676_a(0x941) != 0) {
         Func_02000696();
@@ -257,7 +257,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor16FacingFlaggedDialogue(void)
+void Dialogue_RunActor16FacingFlaggedDialogue(void)
 {
     T *p;
 
@@ -277,7 +277,7 @@ void SceneDialogue_RunActor16FacingFlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor14FlaggedDialogue(void)
+void Dialogue_RunActor14FlaggedDialogue(void)
 {
     if (Func_02000732(0x941) != 0) {
         Func_0200076c(0x24f6);
@@ -288,7 +288,7 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor14FacingFlaggedDialogue(void)
+void Dialogue_RunActor14FacingFlaggedDialogue(void)
 {
     T *p;
     s32 v;
@@ -310,7 +310,7 @@ void SceneDialogue_RunActor14FacingFlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor15FlaggedDialogue(void)
+void Dialogue_RunActor15FlaggedDialogue(void)
 {
     if (Func_020007d6(0x941) != 0) {
         Func_02000810(0x24f8);
@@ -321,7 +321,7 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
     }
 }
 
-void SceneDialogue_RunActor15FacingFlaggedDialogue(void)
+void Dialogue_RunActor15FacingFlaggedDialogue(void)
 {
     T *p;
     s32 v;
@@ -343,7 +343,7 @@ void SceneDialogue_RunActor15FacingFlaggedDialogue(void)
     }
 }
 
-s32 SceneState_SetRuntimeWord448To521(void)
+s32 State_SetRuntimeWord448To521(void)
 {
     u8 *work;
     s32 *dst;
@@ -370,7 +370,7 @@ s32 SceneState_SetRuntimeWord448To521(void)
     return 0;
 }
 
-void SceneDialogue_RunActor22FacingDialogue(void)
+void Dialogue_RunActor22FacingDialogue(void)
 {
     T *p;
 

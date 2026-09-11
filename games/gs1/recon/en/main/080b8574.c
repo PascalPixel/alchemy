@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_BuildSortedUnitEntries Func_080b8574
+#define BattlePres_BuildSortedUnitEntries Func_080b8574
 
 struct BattleSortedUnitEntry {
     u16 unit_id;
@@ -18,7 +18,7 @@ struct DmaChannel {
     u32 control;
 };
 
-s32 BattlePresentation_BuildSortedUnitEntries(
+s32 BattlePres_BuildSortedUnitEntries(
     struct BattleSortedUnitEntry *entries)
 {
     volatile struct DmaChannel *dma =

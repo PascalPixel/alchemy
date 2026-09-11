@@ -1876,7 +1876,7 @@
     {
       "overlay": "resource_3b9",
       "start": "0x02000710",
-      "end": "0x02000ab6",
+      "end": "0x02000dcc",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
@@ -1885,7 +1885,8 @@
         "02000708 is a literal loaded by020006cc; previous callback returns02000704 and actual next prologue is02000710. The claim stops02000ab6, immediately after branch02000ab4→02000c90, not at a return.",
         "The candidate has only the first101 of actual owner177 call sites; remaining76calls, nested choices, shared tails and return02000dac are absent. Owner guard also omits the reference input0x962 to the flag test at02000714.",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02000708",
-        "2026-09-10: 0x020006bc..0x02000710 is a separate 84-byte function now exact C (run_scene_06bc.c); the region begins at the next entry 0x02000710, whose draft is at 7 differing halfwords."
+        "2026-09-10: 0x020006bc..0x02000710 is a separate 84-byte function now exact C (run_scene_06bc.c); the region begins at the next entry 0x02000710, whose draft is at 7 differing halfwords.",
+        "2026-09-11: end set to the next owner 0x02000dcc; the draft resource_3b9_c_02000710.c covers the full 1724-byte extent (7 differing halfwords)."
       ]
     },
     {
@@ -2198,14 +2199,15 @@
     {
       "overlay": "resource_3b9",
       "start": "0x02001298",
-      "end": "0x020015ec",
+      "end": "0x0200160c",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/gs1/recon/en/dossiers.json#resource_3b9:02001298"
+        "games/gs1/recon/en/dossiers.json#resource_3b9:02001298",
+        "2026-09-11: end set to the next owner 0x0200160c (884 bytes, the reviewed extent in semantic/regions.json); the draft covers the full extent."
       ]
     },
     {
@@ -3265,6 +3267,19 @@
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
         "games/gs1/recon/en/dossiers.json#resource_374:02001274"
+      ]
+    },
+    {
+      "overlay": "resource_3b8",
+      "start": "0x020040b4",
+      "end": "0x02004340",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences do not prove ordinary C impossible.",
+        "2026-09-11: the last code owner of the overlay, never registered before; 652-byte reviewed extent, decompiled through the approved route and scored as a measured draft.",
+        "games/gs1/recon/en/dossiers.json#resource_3b8:020040b4"
       ]
     }
   ]

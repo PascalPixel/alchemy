@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item_menu.h"
 
 s32 ItemMenu_CmdCursorY(s32 column, s32 row)

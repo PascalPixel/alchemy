@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/escape/play_run.h"
 #include "battle_msg.h"
 #include "battle_party.h"
 #include "battle_escape.h"
@@ -8,7 +10,7 @@ u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void WaitFrames(u32);
-void Func_080b8064(s32);
+
 void UiText_ShowMessageAndWait(s32);
 
 s32 BattleEscape_PlayRun(s16 *action)
@@ -27,7 +29,7 @@ s32 BattleEscape_PlayRun(s16 *action)
         if (party_size != 0) {
             member_slot = 0;
             do {
-                Func_080b8064(party_members[member_slot]);
+                Battle_Do(party_members[member_slot]);
                 animated++;
                 WaitFrames(8);
                 member_slot++;

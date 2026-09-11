@@ -1,5 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/init/initialize_music_player.h"
 
 struct MusicPlayerState;
 
@@ -34,7 +36,7 @@ struct AudioEngineState {
     struct MusicPlayerState *music_player_head;
 };
 
-extern u8 Data_080f9c91;
+extern u8 gRom;
 
 void MusicPlayer_Initialize(
     struct MusicPlayerState *player,
@@ -77,7 +79,7 @@ void MusicPlayer_Initialize(
     }
 
     audio->music_player_head = player;
-    audio->mplay_main_head = (PlayerMainCallback)&Data_080f9c91;
+    audio->mplay_main_head = (PlayerMainCallback)&gRom;
     audio->ident = 0x68736d53;
     player->ident = 0x68736d53;
 }

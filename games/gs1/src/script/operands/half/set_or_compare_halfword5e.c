@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_operands.h"
 
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s32 value)

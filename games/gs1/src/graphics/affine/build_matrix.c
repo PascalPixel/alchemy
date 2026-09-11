@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/affine/build_matrix.h"
 
 typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
 
@@ -14,12 +16,10 @@ union AffineMatrix {
     u32 rows[2];
 };
 
-s32 Func_0800231c(s32 angle);
-s32 Func_08002322(s32 angle);
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
-extern u8 Data_03001d00;
-extern union AffineMatrix Data_03001d40[];
+extern u8 gIw;
+extern union AffineMatrix gIw2[];
 
 s32 AffineMatrix_BuildForEffect(struct Effect *source)
 {
@@ -30,14 +30,14 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     s32 angle;
     u8 index;
 
-    index = Data_03001d00;
+    index = gIw;
     x_scale = (s16)source->x;
     y_scale = (s16)source->y;
     angle = source->angle;
     if (index > 31)
         return 0;
 
-    matrix = &Data_03001d40[index];
+    matrix = &gIw2[index];
     coefficient = matrix->coefficients;
     if ((x_scale == y_scale || -x_scale == y_scale) && angle == 0) {
         SignedDivide divide;
@@ -56,8 +56,8 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
         s32 sine;
         s32 cosine;
 
-        sine = Func_08002322(angle);
-        cosine = Func_0800231c(angle);
+        sine = Sys_Check(angle);
+        cosine = Sys_Check2(angle);
         *coefficient = FixedPoint_Ratio(cosine, x_scale);
         coefficient++;
         *coefficient = FixedPoint_Ratio(sine, x_scale);
@@ -67,6 +67,6 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
         *coefficient = FixedPoint_Ratio(cosine, y_scale);
     }
 
-    Data_03001d00 = index + 1;
+    gIw = index + 1;
     return index;
 }

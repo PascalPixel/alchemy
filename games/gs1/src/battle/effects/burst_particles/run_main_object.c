@@ -1,11 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/burst_particles/run_main_object.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_08098698(void);
 void Object_SetMode(s32, s32);
-void Func_080091e0(void *, s32);
+
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -18,10 +18,10 @@ void BattleFx_RunBurstParticleMainObject(void)
 
     object = FIELD_AT_OFFSET(*(void **)ADDR_03001F30, u8 **, 0x14);
     if (object != 0) {
-        Func_08098698();
+        Battle_Run();
         Object_SetMode((s32)object, 2);
         object[0x59] = 0;
-        Func_080091e0(object, 0);
+        Battle_Apply(object, 0);
         flags = object + 0x23;
         battle_value = 2;
         battle_value |= *flags;

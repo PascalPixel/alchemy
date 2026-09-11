@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/placement/update_entries.h"
 
 struct PlacementEntry {
     u8 x;
@@ -19,16 +21,11 @@ struct PlacementTable {
 
 struct BattleObjectSlot;
 
-s32 Func_080b6a60(u16 *owners);
-s32 Func_08077210(s32 id, s32 x, s32 y);
-struct PlacementTable *Func_08077000(s32 owner);
-void Func_080771c8(s32 id, s32 x, s32 y);
-s32 Func_080770c0(s32 message);
-struct BattleObjectSlot *Func_080b7dd0(s32 object_id);
-s32 Func_080771b0(s32 id, s32 x, s32 y);
-s32 Func_080771c0(s32 id, s32 x, s32 y);
+struct PlacementTable *Battle_Run(s32 owner);
 
-s32 Func_080b5c08(void)
+struct BattleObjectSlot *Battle_Run2(s32 object_id);
+
+s32 Battle_Run3(void)
 {
     u16 owners[10];
     s32 count;
@@ -37,14 +34,14 @@ s32 Func_080b5c08(void)
     s32 x;
     s32 y;
 
-    count = Func_080b6a60(owners);
+    count = Battle_Check(owners);
 
     for (i = 0; i < count; i++) {
         owner = owners[i];
         for (x = 0; x <= 3; x++) {
             for (y = 0; y <= 19; y++) {
-                if (Func_08077210(owner, x, y) != 0) {
-                    struct PlacementList *list = &Func_08077000((u32)owner > 7 ? 1 : 0)->list;
+                if (Battle_Place(owner, x, y) != 0) {
+                    struct PlacementList *list = &Battle_Run((u32)owner > 7 ? 1 : 0)->list;
                     s32 j;
 
                     for (j = 0; j < list->count; j++) {
@@ -52,17 +49,17 @@ s32 Func_080b5c08(void)
                             break;
                     }
                     if (j == list->count)
-                        Func_080771c8(owner, x, y);
+                        Battle_Place2(owner, x, y);
                 }
             }
         }
     }
 
-    if (Func_080770c0(364) != 0)
+    if (Battle_Check2(364) != 0)
         return;
 
     {
-        struct PlacementList *list = &Func_08077000(0)->list;
+        struct PlacementList *list = &Battle_Run(0)->list;
         struct PlacementEntry *entry;
 
         i = 0;
@@ -71,13 +68,13 @@ s32 Func_080b5c08(void)
 
             entry = list->entries;
             do {
-                if (entry->timer == permanent_timer && Func_080b7dd0(entry->id) == 0) {
+                if (entry->timer == permanent_timer && Battle_Run2(entry->id) == 0) {
                     u8 id = entry->id;
                     u8 ex = entry->x;
                     u8 ey = entry->y;
 
-                    Func_080771b0(id, ex, ey);
-                    Func_080771c0(id, ex, ey);
+                    Battle_Place3(id, ex, ey);
+                    Battle_Place4(id, ex, ey);
                 }
                 i++;
                 entry++;

@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_0801c49c();
+#include "scene.h"
+#include "abi/menu/sel/run_selection_hook.h"
 
 void Menu_RunSelectionHook(void)
 {
-    Func_0801c49c();
+    Menu_Check();
 }

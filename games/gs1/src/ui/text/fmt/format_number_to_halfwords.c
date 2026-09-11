@@ -1,9 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/fmt/format_number_to_halfwords.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-void Func_08004620(s32 out);
 
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {
@@ -12,7 +11,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
     u8 *src;
 
     dst = out;
-    Func_08004620(value);
+    Ui_Do(value);
     src = (u8 *)ADDR_03001F70;
     n = 0xD;
     do {

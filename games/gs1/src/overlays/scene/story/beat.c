@@ -1,122 +1,20 @@
 #include "types.h"
-
-#define DefaultActorLayout     Data_0200835c
-#define SpecialStepActorLayout Data_020083bc
-#define DefaultSceneScript     Data_020083ec
-#define SpecialStepSceneScript Data_020084a0
-#define BeginSceneSequence       Func_02000308
-#define StageActors8And9         Func_02000342
-#define WaitAfterFirstStaging    Func_02000310
-#define StageActors8And10        Func_02000352
-#define WaitAfterSecondStaging   Func_02000320
-#define PlayOpeningCue           Func_0200036e
-#define SelectActor8             Func_0200037e
-#define SetActor9Presentation    Func_0200035e
-#define SetActor10Presentation   Func_0200036e_b
-#define WaitForPresentation      Func_02000344
-#define ResetActor8Pose          Func_0200038e
-#define WaitAfterPoseReset       Func_02000354
-#define SetActor8Motion          Func_0200038c
-#define WaitAfterMotion          Func_02000362
-#define FinishActor8Motion       Func_020003ba
-#define EndSceneSequence         Func_0200037e_b
-#define BeginActor9Intro     Func_02000384
-#define SetActor9Mode        Func_020003b4
-#define WaitActor9Intro      Func_0200038a
-#define PlayActor9IntroCue   Func_020003d8
-#define FinishActor9Intro    Func_020003e8
-#define EndActor9Intro       Func_020003ac
-#define BeginActor10Intro    Func_020003b4_a
-#define SetActor10Mode       Func_020003d4
-#define WaitActor10Intro     Func_020003ba_a
-#define PlayActor10IntroCue  Func_02000408
-#define FinishActor10Intro   Func_02000418
-#define EndActor10Intro      Func_020003dc
-#define BeginActor8Beat    Func_020003e4
-#define PlayActor8BeatCue  Func_0200042a
-#define ApplyActor8Beat    Func_0200043a
-#define EndActor8Beat      Func_020003fe
-#define BeginActor9Beat    Func_02000404
-#define PlayActor9BeatCue  Func_0200044a
-#define ApplyActor9Beat    Func_0200045a
-#define EndActor9Beat      Func_0200041e
-#define BeginActor10Beat    Func_02000424
-#define PlayActor10BeatCue  Func_0200046a
-#define ApplyActor10Beat    Func_0200047a
-#define EndActor10Beat      Func_0200043e
-#define WaitForClosingBeat  Func_0200049e
-#define FinishClosingBeat   Func_0200049c
-#define ClearStoryFlag         Func_02000466
-#define GetMode10Actor         Func_02000492
-#define GetFirstDefaultActor   Func_020004a4
-#define GetSecondDefaultActor  Func_020004b4
-#define GetThirdDefaultActor   Func_020004c2
-#define SceneData_GetScriptTable Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetMessageTable Func_0200003c
-#define SceneData_SelectActorTableByStep10 Func_02000044
-#define SceneData_SelectSceneScriptByStep10 Func_0200006c
-#define Scene_RunActors8To10OpeningSequence Func_02000094
-#define Scene_RunActor9Intro Func_02000110
-#define Scene_RunActor10Intro Func_02000140
-#define Scene_RunActor8Beat Func_02000170
-#define Scene_RunActor9Beat Func_02000190
-#define Scene_RunActor10Beat Func_020001b0
-#define Scene_RunClosingBeat Func_020001d0
-#define Scene_InitSceneStateByStep Func_020001e4
+#include "scene.h"
+#include "abi/overlays/scene/story/beat.h"
 
 #include "resource_384.h"
 
-extern s16 Data_02000240[];
-extern u8 Data_0200835c[];
-extern u8 Data_020083bc[];
-extern u8 Data_020084a0[];
-extern u8 Data_020083ec[];
-extern u8 *Data_03001ebc;
+extern s16 gCell[];
+extern u8 DefaultActorLayout[];
+extern u8 SpecialStepActorLayout[];
+extern u8 SpecialStepSceneScript[];
+extern u8 DefaultSceneScript[];
+extern u8 *gWork;
 
-void Func_02000308(void);
-void Func_02000342(s32, s32, s32);
-void Func_02000310(s32);
-void Func_02000352(s32, s32, s32);
-void Func_02000320(s32);
-void Func_0200036e(s32);
-void Func_0200036e_b(s32, s32);
-void Func_0200037e(s32, s32);
-void Func_0200037e_b(void);
-void Func_0200035e(s32, s32);
-void Func_02000344(s32);
-void Func_0200038e(s32, s32, s32);
-void Func_02000354(s32);
-void Func_0200038c(s32, s32);
-void Func_02000362(s32);
-void Func_02000384(void);
-void Func_0200038a(s32);
-void Func_020003d8(s32);
-void Func_020003e8(s32, s32);
-void Func_020003ac(void);
-s32 Func_020003d4(s32, s32);
-void Func_02000408(s32);
-void Func_02000418(s32, s32);
-void Func_020003dc(void);
-void Func_020003e4(void);
-void Func_0200042a(s32);
-void Func_0200043a(s32, s32);
-void Func_020003fe(void);
-void Func_02000404(void);
-void Func_0200044a(s32);
-void Func_0200045a(s32, s32);
-void Func_0200041e(void);
-void Func_02000424(void);
-void Func_0200046a(s32);
-void Func_0200047a(s32, s32);
-void Func_0200043e(void);
-void Func_0200049e(s32);
-void Func_0200049c(s32);
-void Func_02000466(s32);
-u8 *Func_02000492(s32);
-u8 *Func_020004a4(s32);
-u8 *Func_020004b4(s32);
-u8 *Func_020004c2(s32);
+u8 *GetMode10Actor(s32);
+u8 *GetFirstDefaultActor(s32);
+u8 *GetSecondDefaultActor(s32);
+u8 *GetThirdDefaultActor(s32);
 
 /* Overlay-owned descriptor block exported through the header veneer table. */
 
@@ -134,7 +32,7 @@ u8 *Func_020004c2(s32);
  * the special-step branch; folding it into the root enables tail merging. */
 
 /* Publish this scene's script state, then update actor flags for the current
- * scene step. Data_02000240[225] is the shared signed scene-step field. */
+ * scene step. gCell[225] is the shared signed scene-step field. */
 static inline void SetActorFlag(u8 *record, u8 bits)
 {
     *record |= bits;
@@ -157,7 +55,7 @@ u8 *SceneData_GetMessageTable(void)
 
 u8 *SceneData_SelectActorTableByStep10(void)
 {
-    if (Data_02000240[225] == RESOURCE384_SPECIAL_STEP) {
+    if (gCell[225] == RESOURCE384_SPECIAL_STEP) {
         return SpecialStepActorLayout;
     }
     return DefaultActorLayout;
@@ -165,7 +63,7 @@ u8 *SceneData_SelectActorTableByStep10(void)
 
 u8 *SceneData_SelectSceneScriptByStep10(void)
 {
-    if (Data_02000240[225] == RESOURCE384_SPECIAL_STEP) {
+    if (gCell[225] == RESOURCE384_SPECIAL_STEP) {
         return SpecialStepSceneScript;
     }
     return DefaultSceneScript;
@@ -173,7 +71,7 @@ u8 *SceneData_SelectSceneScriptByStep10(void)
 
 void Scene_RunActors8To10OpeningSequence(void)
 {
-    void Func_020003ba(s32, s32);
+    void FinishActor8Motion(s32, s32);
 
     BeginSceneSequence();
 
@@ -203,7 +101,7 @@ void Scene_RunActors8To10OpeningSequence(void)
 
 void Scene_RunActor9Intro(void)
 {
-    s32 Func_020003b4(s32, s32);
+    s32 SetActor9Mode(s32, s32);
 
     BeginActor9Intro();
     SetActor9Mode(RESOURCE384_ACTOR_9, 2);
@@ -215,8 +113,8 @@ void Scene_RunActor9Intro(void)
 
 void Scene_RunActor10Intro(void)
 {
-    void Func_020003b4_a(void);
-    void Func_020003ba_a(s32);
+    void BeginActor10Intro(void);
+    void WaitActor10Intro(s32);
 
     BeginActor10Intro();
     SetActor10Mode(RESOURCE384_ACTOR_10, 4);
@@ -260,8 +158,8 @@ s32 Scene_InitSceneStateByStep(void)
 {
     s16 mode;
 
-    *(s32 *)(Data_03001ebc + 448) = RESOURCE384_SCRIPT_STATE;
-    mode = Data_02000240[225];
+    *(s32 *)(gWork + 448) = RESOURCE384_SCRIPT_STATE;
+    mode = gCell[225];
 
     if (mode == 2) {
         ClearStoryFlag(0x12f);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 s32 Modulo(s32 dividend, s32 divisor);

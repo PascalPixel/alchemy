@@ -1,11 +1,10 @@
 #include "types.h"
-
-s32 Func_080b6c08(s32, void *);
-s32 Func_080b7b6c(void *, s32);
+#include "scene.h"
+#include "abi/battle/party/list_all_units_and_submit.h"
 
 void BattleParty_ListAllUnitsAndSubmit(void)
 {
     u8 local[28];
-    Func_080b6c08(3, local);
-    Func_080b7b6c(local, 0);
+    Battle_Apply(3, local);
+    Battle_Apply2(local, 0);
 }

@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/init/init_free_list.h"
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 void UiWork_InitFreeList(void)
 {
@@ -9,7 +11,7 @@ void UiWork_InitFreeList(void)
     u8 *item;
     u8 *next;
 
-    base = Data_03001e8c;
+    base = gIw;
     /* 0x1cバイト単位の空きリストを初期化する。 */
     item = base + 0x698;
     *(u8 **)(base + 0xd98) = item;

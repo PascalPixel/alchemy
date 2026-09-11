@@ -4,8 +4,7 @@
 #include "types.h"
 
 /*
- * Data_02000240共有ワーク。
- * 用途ごとに配置が重なるため、各ビューを別の型として扱う。
+ * Shared cell work. Overlapping views stay as separate types.
  */
 struct EventValueWork {
     u8 unknown_000[0x1f4];
@@ -50,6 +49,6 @@ struct EventRuntime {
     s32 value_1c8;
 };
 
-extern struct EventRuntime *Data_03001ebc;
+extern struct EventRuntime *gWork;
 
 #endif

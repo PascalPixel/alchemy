@@ -1,10 +1,12 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/object/group/set_action_for_others.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Object_SetAction(s32, s32);
-extern u8 Data_0200048a[];
+extern u8 gOv[];
 
 void ObjectGroup_SetActionForOthers(s32 excluded_object, s32 group_mode, s32 action)
 {
@@ -13,7 +15,7 @@ void ObjectGroup_SetActionForOthers(s32 excluded_object, s32 group_mode, s32 act
     s32 object_id;
 
     object_id = 0;
-    active_object_id = (s16 *)Data_0200048a;
+    active_object_id = (s16 *)gOv;
     do {
         object = ObjectTable_Get(object_id);
         if ((object_id != *active_object_id) && (object != 0) && (object != excluded_object)) {

@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define BattleFx_RunPuffArc Func_080d9fc8
+#include "scene.h"
+#include "abi/battle/effects/puff_arc/run.h"
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
@@ -8,42 +8,22 @@
 typedef void (*DrawRectangle)(
     void *, const void *, s32, s32, s32, s32);
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gIw[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 and 46. */
-extern u8 Data_03001e50[];
+extern u8 gIw[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
 extern u8 Value_000000b4;
 
-void Func_080cd594(s32);
-void Func_080e0524(s32, void *, s32, s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
-s32 Func_08002322(s32);
-s32 Func_0800231c(s32);
-void Func_080041d8(s32, s32);
-void Func_080f9010(s32);
-void Func_080b50e8(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
-void Func_080cd52c(void);
-void Func_080030f8(s32);
-void Func_08002dd8(s32);
-void Func_08004278(s32);
-s32 Func_080cdbc0(void);
-
 /* Six animation cells, one entry each: width, height, vertical bias, and the
    byte offset of the cell inside the kind-39 work block.  The three byte
    tables sit six apart and every cell's width * height matches its source
    span, so the cells are 8bpp and the widths are also the source pitch. */
-extern u8 Data_080ede9f[];
-extern u8 Data_080edea5[];
-extern u8 Data_080edeab[];
-extern u16 Data_080edeb2[];
-
-#define CELL_W Data_080ede9f
-#define CELL_H Data_080edea5
-#define CELL_DY Data_080edeab
-#define CELL_SRC Data_080edeb2
+extern u8 CELL_W[];
+extern u8 CELL_H[];
+extern u8 CELL_DY[];
+extern u16 CELL_SRC[];
 
 /* One 28-byte record; the array starts at work + 0x7080. */
 typedef struct Puff {
@@ -79,8 +59,8 @@ typedef struct Efx {
  * screen, then animated for eighty frames.  Each puff plays a six-cell
  * sequence, four frames per cell, staggered four frames apart, and is drawn
  * once, twice or three times depending on the layer count the caller set.
- * The rectangle blitter is the kind-46 block Func_080ed408 loads, so every
- * draw goes through the entry cached in Data_03001e50[46].
+ * The rectangle blitter is the kind-46 block Battle_SetRange loads, so every
+ * draw goes through the entry cached in gIw[46].
  *
  * Aggregate names remain provisional; byte offsets into the kind-39 work
  * block are retained where no evidence-backed structure exists yet.
@@ -103,16 +83,16 @@ void BattleFx_RunPuffArc(Efx *efx)
     Puff *puff;
     Puff *cur;
 
-    cache = (u32 *)(Data_03001e50 + 39 * 4);
+    cache = (u32 *)(gIw + 39 * 4);
     entry = cache;
     work = (u8 *)*entry++;
     dst = (void *)*entry;
     WORK_EFX = efx;
-    Func_080cd594(0);
+    Battle_Do(0);
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
-    Func_080e0524((s32)&Value_000000b4, work, 1, 1);
-    Func_080ed408(46, 7, 7, 3, 3);
+    Battle_SetMode((s32)&Value_000000b4, work, 1, 1);
+    Battle_SetRange(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];
     if (WORK_EFX->actors[0] > 127) {
         org = 0;
@@ -126,8 +106,8 @@ void BattleFx_RunPuffArc(Efx *efx)
     tick = 0;
     puff = (Puff *)(work + 0x7080);
     do {
-        puff->x = ((sign *((Func_08002322(ang) << 5) >> 16)) + org) + 20;
-        puff->y = ((Func_0800231c(ang) << 4) >> 16) + 40;
+        puff->x = ((sign *((Battle_Check(ang) << 5) >> 16)) + org) + 20;
+        puff->y = ((Battle_Check2(ang) << 4) >> 16) + 40;
         puff->tick = tick;
         ang += 0x1000;
         tick -= 4;
@@ -140,12 +120,12 @@ void BattleFx_RunPuffArc(Efx *efx)
     } else {
         *(s32 *)(work + 0x7784) = 50;
     }
-    Func_080041d8(0x080CD261, 0x480);
-    Func_080f9010(0x88);
+    Battle_Apply(0x080CD261, 0x480);
+    Battle_Do2(0x88);
     frame = 0;
     do {
         if (frame == 24) {
-            Func_080b50e8(0x85);
+            Battle_Do3(0x85);
         }
         i = 0;
         cur = (Puff *)(work + 0x7080);
@@ -181,16 +161,16 @@ void BattleFx_RunPuffArc(Efx *efx)
         i = 0;
         while (i != WORK_EFX->cnt) {
             if (frame == (i * 8) + 16) {
-                Func_080d6888(WORK_EFX->actors[i], 10, 5, i, 12);
+                Battle_SetRange2(WORK_EFX->actors[i], 10, 5, i, 12);
             }
             i += 1;
         }
-        Func_080cd52c();
+        Battle_Run();
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        Battle_Do4(1);
         frame += 1;
     } while (frame != 80);
-    Func_08002dd8(46);
-    Func_08004278(0x080CD261);
-    Func_080cdbc0();
+    Battle_Do5(46);
+    Battle_Do6(0x080CD261);
+    Battle_Check3();
 }

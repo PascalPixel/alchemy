@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/get_world_map_terrain_behavior.h"
 #include "map.h"
 
-extern u8 Data_0801353c[];
+extern u8 gRom[];
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 {
@@ -29,5 +31,5 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
     if (*terrain_kind == 21)
         flag = 0x20;
 
-    return Data_0801353c[flag + selector];
+    return gRom[flag + selector];
 }

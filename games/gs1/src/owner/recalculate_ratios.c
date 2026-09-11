@@ -1,5 +1,6 @@
 #include "owner_state.h"
 #include "types.h"
+#include "scene.h"
 
 s32 FixedPoint_Ratio(s32, s32);
 

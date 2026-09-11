@@ -1,8 +1,10 @@
+#include "scene.h"
+#include "abi/equipment_menu/update_compatibility_indicators.h"
 #include "equipment_menu.h"
 #include "item.h"
 
-extern u8 *Data_03001f2c;
-extern s32 Data_03001e40;
+extern u8 *gIw;
+extern s32 gIw2;
 void Object_InitializeMode(void *, s32);
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
@@ -10,8 +12,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void)
     u8 *menu;
     s8 member_index;
 
-    menu = Data_03001f2c;
-    if ((Data_03001e40 & 31) == 0 && menu[0x219] != 0) {
+    menu = gIw;
+    if ((gIw2 & 31) == 0 && menu[0x219] != 0) {
         member_index = 0;
         do {
             s32 owner_offset = member_index * 2 + 520;

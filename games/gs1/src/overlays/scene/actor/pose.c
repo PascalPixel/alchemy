@@ -1,404 +1,30 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/pose.h"
 
-#define SetActorPose Func_020012de
-#define Actor_SetActor14Pose258 Func_02000030
-#define SceneData_GetTable9438 Func_02000044
-#define SceneData_SelectTableByWord224 Func_0200004c
-#define SceneData_GetTable96d0 Func_0200007c
-#define SceneData_SelectTableBySceneIdAndFlag9a7 Func_02000084
-#define Scene_RunSequenceA Func_020003f4
-#define Scene_RunThreeCallSequence Func_02000468
-#define State_ForwardWord16cAndApply7b Func_0200048c
-#define SceneData_SelectScriptBySceneIdAndFlag9a7 Func_020004b0
-#define Scene_RunPrimaryScript Func_02000508
-#define Scene_RunSecondaryScript Func_02000eec
-
-extern s16 Data_02000240[];
+extern s16 gCell[];
 extern u8 Value_000000b3;
-extern u8 Data_02009690[];
-extern u8 Data_020096b0[];
+extern u8 gOv[];
+extern u8 gOv2[];
 extern u8 Value_000000b4;
-extern u8 Data_02009734[];
-extern u8 Data_02009974[];
-extern u8 Data_0200989c[];
-extern u8 *Data_03001ebc;
-extern u8 Data_0200a010[];
-extern u8 Data_02009eb4[];
-extern u8 Data_02009ca4[];
-extern u8 Data_02009a94[];
+extern u8 gOv3[];
+extern u8 gOv4[];
+extern u8 gOv5[];
+extern u8 *gWork;
+extern u8 gOv6[];
+extern u8 gOv7[];
+extern u8 gOv8[];
+extern u8 gOv9[];
 extern u8 Value_00002880;
 
-void Func_020012de(s32 actor, s32 pose);
-s32 Func_02001278(s32);
-void Func_020015de(s32);
-void Func_020015fa(void);
-void Func_020016d6(void);
-void Func_020015fc(s32);
-void Func_020016c6(s32, s32, s32, s32);
-void Func_020016d2(void);
-void Func_02001618(s32);
-void Func_020016a6(s32);
-s32 Func_020016be(s32, s32);
-void Func_0200162c(s32);
-s32 Func_020016ae(s32, s32, s32);
-void Func_0200163c(s32);
-void Func_0200164a(s32);
-void Func_0200165e(void);
-void Func_02001652(s32);
-void Func_020016f0(s32);
-void Func_0200175a(s32);
-void Func_020017b0(s32);
-s32 Func_020016b6();
-void Func_02001590();
-void Func_020016fe();
-void Func_0200174a();
-void Func_02001764();
-void Func_02001774();
-void Func_02001780();
-void Func_020017ac();
-void Func_020017ae();
-void Func_020017b2();
-void Func_020017c0();
-void Func_020017c0_a();
-void Func_020017c4();
-void Func_020017ca();
-void Func_020017ce();
-void Func_020017d6();
-void Func_020017ec();
-void Func_020017ee();
-void Func_02001804();
-void Func_02001810();
-void Func_02001812();
-void Func_0200181c();
-void Func_02001820();
-void Func_0200182a();
-void Func_0200182e();
-void Func_0200183c();
-void Func_02001854();
-void Func_02001856();
-void Func_02001860();
-void Func_02001864();
-void Func_0200186c();
-void Func_0200186c_a();
-void Func_02001872();
-s32 Func_02001878(s32);
-s32 Func_02001878_a(s32);
-s32 Func_0200187a();
-s32 Func_0200187a_a();
-void Func_02001886();
-void Func_02001888();
-void Func_02001896();
-void Func_02001898();
-void Func_0200189e();
-void Func_020018a0();
-void Func_020018ae();
-void Func_020018b2();
-void Func_020018bc();
-void Func_020018be();
-void Func_020018ce();
-void Func_020018d6();
-void Func_020018e8();
-void Func_020018e8_a();
-void Func_020018f0();
-void Func_020018f6();
-void Func_02001904();
-void Func_02001904_a();
-void Func_02001912();
-void Func_02001918();
-void Func_02001920();
-void Func_02001922();
-void Func_0200192a();
-void Func_0200192e();
-void Func_0200193e();
-void Func_0200194e();
-void Func_0200194e_a();
-void Func_0200195c();
-void Func_0200195e();
-void Func_02001960();
-void Func_0200196a();
-void Func_02001978();
-void Func_02001978_a();
-void Func_0200197e();
-void Func_02001982();
-void Func_02001988();
-void Func_0200198a();
-void Func_0200198c();
-void Func_0200199a();
-void Func_020019a4();
-void Func_020019a8();
-void Func_020019b6();
-void Func_020019c0();
-void Func_020019c4();
-void Func_020019c6();
-void Func_020019d0();
-void Func_020019d2();
-void Func_020019d2_a();
-void Func_020019e0();
-void Func_020019f0();
-void Func_020019f6();
-void Func_020019fc();
-void Func_02001a02();
-void Func_02001a18();
-void Func_02001a1e();
-s32 Func_02001a26(s32, s32);
-void Func_02001a2c();
-void Func_02001a42();
-void Func_02001a48();
-void Func_02001a48_a();
-void Func_02001a54();
-void Func_02001a56();
-void Func_02001a64();
-void Func_02001a72();
-void Func_02001a74();
-void Func_02001a7e();
-void Func_02001a94();
-void Func_02001a9c();
-void Func_02001ab0();
-void Func_02001abe();
-void Func_02001ac4();
-void Func_02001ac4_a();
-void Func_02001ad0();
-void Func_02001ad2();
-void Func_02001adc();
-void Func_02001af0();
-void Func_02001af6();
-void Func_02001afe();
-void Func_02001b0c();
-void Func_02001b26();
-void Func_02001b2c();
-void Func_02001b2c_a();
-void Func_02001b40();
-void Func_02001b46();
-void Func_02001b4c();
-void Func_02001b58();
-void Func_02001b68();
-void Func_02001b7c();
-void Func_02001b82();
-void Func_02001b82_a();
-void Func_02001b90();
-void Func_02001b96();
-void Func_02001b9e();
-void Func_02001b9e_a();
-void Func_02001ba0();
-void Func_02001bac();
-void Func_02001bba();
-void Func_02001bd4();
-void Func_02001bd8();
-void Func_02001be0();
-void Func_02001be4();
-void Func_02001bea();
-void Func_02001bf2();
-void Func_02001bf2_a();
-void Func_02001bfe();
-void Func_02001c00();
-void Func_02001c0a();
-void Func_02001c12();
-void Func_02001c16();
-void Func_02001c16_a();
-void Func_02001c20();
-void Func_02001c2e();
-void Func_02001c30();
-void Func_02001c3c();
-void Func_02001c4a();
-void Func_02001c4c();
-void Func_02001c58();
-void Func_02001c66();
-void Func_02001c6a();
-void Func_02001c6a_a();
-void Func_02001c6e();
-void Func_02001c78();
-void Func_02001c7e();
-void Func_02001c84();
-void Func_02001c88();
-void Func_02001c92();
-void Func_02001cac();
-void Func_02001cac_a();
-void Func_02001cb2();
-void Func_02001cb4();
-void Func_02001cba();
-void Func_02001cce();
-void Func_02001cd4();
-void Func_02001ce6();
-void Func_02001cea();
-void Func_02001cf4();
-void Func_02001d04();
-void Func_02001d06();
-void Func_02001d0a();
-void Func_02001d20();
-void Func_02001d24();
-void Func_02001d2c();
-void Func_02001d2e();
-void Func_02001d3c();
-void Func_02001d44();
-void Func_02001d46();
-void Func_02001d4c();
-void Func_02001d62();
-void Func_02001d66();
-void Func_02001d68();
-void Func_02001d6e();
-void Func_02001d78();
-void Func_02001d80();
-void Func_02001d86();
-void Func_02001d86_a();
-void Func_02001d88();
-void Func_02001d94();
-void Func_02001da0();
-void Func_02001da6();
-void Func_02001dac();
-void Func_02001db2();
-void Func_02001db4();
-void Func_02001db4_a();
-void Func_02001dba();
-void Func_02001dbc();
-void Func_02001dc4();
-void Func_02001dcc();
-void Func_02001dce();
-void Func_02001dd6();
-void Func_02001de4();
-void Func_02001df2();
-void Func_02001dfe();
-void Func_02001e04();
-void Func_02001e12();
-void Func_02001e18();
-void Func_02001e1c();
-void Func_02001e2a();
-void Func_02001e38();
-void Func_02001e3e();
-void Func_02001e40();
-void Func_02001e46();
-void Func_02001e4a();
-void Func_02001e64();
-void Func_02001e66();
-void Func_02001e70();
-void Func_02001e76();
-void Func_02001e84();
-void Func_02001e92();
-void Func_02001e94();
-void Func_02001e9e();
-void Func_02001ea0();
-void Func_02001eae();
-void Func_02001eae_a();
-void Func_02001eb6();
-void Func_02001ebc();
-void Func_02001eca();
-void Func_02001eca_a();
-void Func_02001ee4();
-void Func_02001ef6();
-void Func_02001efa();
-void Func_02001efe();
-void Func_02001f04();
-void Func_02001f0a();
-void Func_02001f10();
-void Func_02001f16();
-void Func_02001f18();
-void Func_02001f26();
-void Func_02001f28();
-void Func_02001f2c();
-void Func_02001f40();
-void Func_02001f4c();
-void Func_02001f4e();
-void Func_02001f52();
-void Func_02001f56();
-void Func_02001f5c();
-void Func_02001f5e();
-void Func_02001f60();
-void Func_02001f6e();
-void Func_02001f6e_a();
-void Func_02001f72();
-void Func_02001f7c();
-void Func_02001f86();
-void Func_02001f8a();
-void Func_02001f8e();
-void Func_02001f96();
-void Func_02001f98();
-void Func_02001fa6();
-void Func_02001fa6_a();
-void Func_02001fb4();
-void Func_02001fb8();
-void Func_02001fc2();
-void Func_02001fca();
-void Func_02001fe6();
-void Func_02001fec();
-void Func_02001ff2();
-void Func_02001ffa();
-void Func_02002000();
-void Func_0200200e();
-void Func_02002018();
-void Func_0200201c();
-void Func_02002038();
-void Func_0200204a();
-void Func_02002054();
-void Func_02002054_a();
-void Func_02002054_b();
-void Func_0200205a();
-void Func_0200205e();
-void Func_02002062();
-u8 *Func_02002064(s32);
-void Func_0200206e();
-void Func_02002072();
-void Func_0200207a();
-void Func_02002086();
-void Func_0200208e(s32, s32, s32);
-u8 *Func_02002094(s32);
-void Func_02002096();
-void Func_020020a4();
-void Func_020020b6();
-void Func_020020be(s32, s32, s32);
-u8 *Func_020020c4(s32);
-void Func_020020c6();
-void Func_020020cc();
-void Func_020020d4();
-void Func_020020e0();
-void Func_020020e6();
-void Func_020020ee(s32, s32, s32);
-void Func_020020f6();
-void Func_02002104();
-void Func_02002116();
-void Func_0200216e();
-void Func_020020ec();
-void Func_02002164();
-void Func_020020fa();
-void Func_0200219a();
-void Func_02002108();
-void Func_0200218a();
-void Func_020021c4();
-void Func_02002122();
-void Func_020021ce();
-void Func_02002134();
-void Func_020021d4();
-void Func_02002142();
-void Func_020021aa();
-void Func_02002150();
-void Func_020021f0();
-void Func_0200215e();
-void Func_020021d6();
-void Func_0200216c();
-void Func_0200220c();
-void Func_0200217a();
-void Func_020021f2();
-void Func_02002188();
-void Func_02002228();
-void Func_02002196();
-void Func_0200220e();
-void Func_020021a4();
-void Func_02002222();
-void Func_020021b8();
-void Func_02002258();
-void Func_020021c6();
-void Func_0200222e();
-void Func_02002274();
-void Func_020021e2();
-void Func_0200224a();
-void Func_02002290();
-void Func_020021fe();
-void Func_02002266();
-void Func_020022ac();
-void Func_0200221a();
-void Func_0200229c();
-s32 Func_020022bc();
+u8 *Actor_Run107(s32);
+
+u8 *Actor_Run108(s32);
+
+u8 *Actor_Run109(s32);
 
 /*
- * The import's main-image target is Func_0808a1f0; its second argument is a
+ * The import's main-image target is Actor_Run110; its second argument is a
  * pose id.
  */
 
@@ -448,69 +74,6 @@ static __inline__ void ConfigureActorPose(s32 actor, s32 pose)
     SetActorPose(actor, pose);
 }
 
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    void Func_02001708();
-
-    f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    void Func_02001708();
-
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    void Func_02001708();
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Func_02001708();
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value0(s32 (*f)())
-{
-    void Func_02001708();
-
-    return f();
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    void Func_02001708();
-
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    void Func_02001708();
-
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    void Func_02001708();
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Func_02001708();
-
-    return f(a0, a1, a2, a3);
-}
-
 s32 Actor_SetActor14Pose258(void)
 {
     ConfigureActorPose(14, 258);
@@ -524,10 +87,10 @@ u8 *SceneData_GetTable9438(void)
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000b3) {
-        return (s32)Data_02009690;
+    if (gCell[224] == (s32)&Value_000000b3) {
+        return (s32)gOv;
     }
-    return (s32)Data_020096b0;
+    return (s32)gOv2;
 }
 
 u8 *SceneData_GetTable96d0(void)
@@ -537,404 +100,404 @@ u8 *SceneData_GetTable96d0(void)
 
 u8 *SceneData_SelectTableBySceneIdAndFlag9a7(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000b4) {
-        if (Func_02001278(0x9A7) != 0) {
-            return Data_02009974;
+    if (gCell[224] == (s32)&Value_000000b4) {
+        if (Actor_Check128(0x9A7) != 0) {
+            return gOv4;
         }
-        return Data_0200989c;
+        return gOv5;
     }
-    return Data_02009734;
+    return gOv3;
 }
 
 void Scene_RunSequenceA(void)
 {
-    s32 Func_020016a4(s32, s32);
+    s32 Actor_Run111(s32, s32);
 
-    Func_020015de(0x9BC);
-    Func_020015fa();
-    Func_020016d6();
-    Func_020015fc(0xA);
-    Func_020016c6(0x780000, -1, 0x600000, 1);
-    Func_020016d2();
-    Func_02001618(0x1E);
-    Func_020016a6(0x288B);
-    Func_020016be(0xC, 0);
-    Func_0200162c(0xA);
-    Func_020016ae(0, 0xC, 0);
-    Func_0200163c(0x1E);
-    Func_020016a4(0, 3);
-    Func_0200164a(0x1E);
-    Func_0200165e();
+    Actor_Do7(0x9BC);
+    Actor_Run112();
+    Actor_Run113();
+    Actor_Do8(0xA);
+    Actor_SetMode(0x780000, -1, 0x600000, 1);
+    Actor_Run114();
+    Actor_Do9(0x1E);
+    Actor_Do10(0x288B);
+    Actor_Apply2(0xC, 0);
+    Actor_Do11(0xA);
+    Actor_Place67(0, 0xC, 0);
+    Actor_Do12(0x1E);
+    Actor_Run111(0, 3);
+    Actor_Do13(0x1E);
+    Actor_Run115();
 }
 
 void Scene_RunThreeCallSequence(void)
 {
-    void Func_02001708(s32, s32);
+    void Actor_Run116(s32, s32);
 
-    Func_02001652(0x9BC);
-    Func_020016f0(0x288B);
-    Func_02001708(0xC, 0);
+    Actor_Do14(0x9BC);
+    Actor_Do15(0x288B);
+    Actor_Run116(0xC, 0);
 }
 
 void State_ForwardWord16cAndApply7b(void)
 {
-    u8 *work = Data_03001ebc;
+    u8 *work = gWork;
     s16 *p = (s16 *)(work + 0x16C);
 
-    Func_0200175a(*p);
-    Func_020017b0(0x7B);
+    Actor_Do16(*p);
+    Actor_Do17(0x7B);
 }
 
 u8 *SceneData_SelectScriptBySceneIdAndFlag9a7(void)
 {
-    s32 Func_020016a4_a();
+    s32 Actor_Run117();
 
-    if (Data_02000240[224] == (s32)&Value_000000b4) {
-        if (Func_020016a4_a(0x9a7) != 0) {
-            return Data_0200a010;
+    if (gCell[224] == (s32)&Value_000000b4) {
+        if (Actor_Run117(0x9a7) != 0) {
+            return gOv6;
         }
-        return Data_02009eb4;
+        return gOv7;
     }
-    if (Func_020016b6(0x9a7) != 0) {
-        return Data_02009ca4;
+    if (Actor_Check129(0x9a7) != 0) {
+        return gOv8;
     }
-    return Data_02009a94;
+    return gOv9;
 }
 
 void Scene_RunPrimaryScript(void)
 {
-    void Func_02001708_a();
+    void Actor_Run118();
 
-    Value0(Func_02001708_a);
-    Value1(Func_020016fe, 1);
-    Call3(Func_02001764, 0, 6291456, 12058624);
-    Call3(Func_020017c0, 0, 49152, 0);
-    Call3(Func_020017ca, 11, 0, 0);
-    Value3(Func_020017d6, 12, 32768, 0);
-    Call1(Func_020017c4, 10320);
-    Value0(Func_02001810);
-    Value0(Func_0200181c);
-    Value1(Func_0200174a, 10);
-    Call3(Func_02001780, 0, 65536, 32768);
-    Call3(Func_02001854, 0, 0, -16);
-    Value3(Func_020017ae, 0, 104, 136);
-    Value1(Func_02001774, 10);
-    Call4(Func_0200186c, 1, -16, 16, 49152);
-    Call4(Func_0200187a, 3, 0, 24, 49152);
-    Value4(Func_02001888, 2, 16, 16, 49152);
-    Value1(Func_020017ee, 1);
-    Value1(Func_020017ac, 20);
-    Value1(Func_020017b2, 10);
-    Value2(Func_0200182a, 2, 2);
-    Value1(Func_020017c0_a, 20);
-    Value2(Func_02001860, 2, 0);
-    Value1(Func_020017ce, 10);
-    Call3(Func_0200187a_a, 11, 16384, 0);
-    Value3(Func_02001886, 12, 16384, 0);
-    Value1(Func_020017ec, 30);
-    Call3(Func_0200189e, 11, 261, 70);
-    Value2(Func_02001896, 11, 0);
-    Value1(Func_02001804, 10);
-    Value2(Func_0200186c_a, 11, 4);
-    Value1(Func_02001812, 20);
-    Value2(Func_020018b2, 11, 0);
-    Value1(Func_02001820, 20);
-    Value2(Func_02001898, 11, 2);
-    Value1(Func_0200182e, 20);
-    Value2(Func_020018ce, 11, 0);
-    Value1(Func_0200183c, 20);
-    Call3(Func_020018f0, 12, 258, 40);
-    Value2(Func_020018e8, 12, 0);
-    Value1(Func_02001856, 10);
-    Value2(Func_020018be, 12, 4);
-    Value1(Func_02001864, 20);
-    Value2(Func_02001904, 12, 0);
-    Value1(Func_02001872, 20);
-    Call1(Func_02001878, 10);
-    Call3(Func_0200192a, 11, 261, 50);
-    Value2(Func_02001922, 11, 0);
-    if (Value1(Func_02001878_a, 2495) == 0) {
-        Value0(Func_02001590);
+    Actor_Run();
+    Actor_Check(1);
+    Actor_Place(0, 6291456, 12058624);
+    Actor_Place2(0, 49152, 0);
+    Actor_Place3(11, 0, 0);
+    Actor_Place4(12, 32768, 0);
+    Actor_Do(10320);
+    Actor_Run2();
+    Actor_Run3();
+    Actor_Check2(10);
+    Actor_Place5(0, 65536, 32768);
+    Actor_Place6(0, 0, -16);
+    Actor_Place7(0, 104, 136);
+    Actor_Check3(10);
+    Actor_Run4(1, -16, 16, 49152);
+    Actor_Check4(3, 0, 24, 49152);
+    Actor_Run5(2, 16, 16, 49152);
+    Actor_Check5(1);
+    Actor_Check6(20);
+    Actor_Check7(10);
+    Actor_Run6(2, 2);
+    Actor_Check8(20);
+    Actor_Run7(2, 0);
+    Actor_Check9(10);
+    Actor_Place8(11, 16384, 0);
+    Actor_Place9(12, 16384, 0);
+    Actor_Check10(30);
+    Actor_Place10(11, 261, 70);
+    Actor_Run8(11, 0);
+    Actor_Check11(10);
+    Actor_Run9(11, 4);
+    Actor_Check12(20);
+    Actor_Run10(11, 0);
+    Actor_Check13(20);
+    Actor_Run11(11, 2);
+    Actor_Check14(20);
+    Actor_Run12(11, 0);
+    Actor_Check15(20);
+    Actor_Place11(12, 258, 40);
+    Actor_Run13(12, 0);
+    Actor_Check16(10);
+    Actor_Run14(12, 4);
+    Actor_Check17(20);
+    Actor_Run15(12, 0);
+    Actor_Check18(20);
+    Actor_Do2(10);
+    Actor_Place12(11, 261, 50);
+    Actor_Run16(11, 0);
+    if (Actor_Check19(2495) == 0) {
+        Actor_Run17();
     } else {
-    Call1(Func_020018a0, 20);
-    Value2(Func_02001918, 11, 2);
-    Value1(Func_020018ae, 20);
-    Value2(Func_0200194e, 11, 0);
-    Value1(Func_020018bc, 10);
-    Call3(Func_0200193e, 1, 0, 50);
-    Call3(Func_02001978, 0, 261, 60);
-    Value1(Func_020018d6, 10);
-    Value3(Func_02001982, 1, 49152, 0);
-    Value1(Func_020018e8_a, 20);
-    Value2(Func_02001988, 1, 0);
-    Value1(Func_020018f6, 10);
-    Value2(Func_0200195e, 3, 4);
-    Value1(Func_02001904_a, 20);
-    Value2(Func_020019a4, 3, 0);
-    Value1(Func_02001912, 10);
-    Value2(Func_0200198a, 2, 2);
-    Value1(Func_02001920, 20);
-    Value2(Func_020019c0, 2, 0);
-    Value1(Func_0200192e, 20);
-    Call3(Func_020019e0, 12, 257, 40);
-    Value2(Func_020019d0, 12, 0);
-    Value2(Func_02001960, 0, 0);
-    Value1(Func_0200194e_a, 20);
-    Value2(Func_020019c6, 12, 2);
-    Value1(Func_0200195c, 20);
-    Value2(Func_020019fc, 12, 0);
-    Value1(Func_0200196a, 20);
-    Value2(Func_020019d2, 0, 3);
-    Value1(Func_02001978_a, 30);
-    Value1(Func_0200197e, 10);
-    Value2(Func_020019f6, 1, 2);
-    Value1(Func_0200198c, 20);
-    Value2(Func_02001a2c, 1, 0);
-    Value1(Func_0200199a, 10);
-    Value2(Func_02001a02, 3, 4);
-    Value1(Func_020019a8, 20);
-    Value2(Func_02001a48, 3, 0);
-    Value1(Func_020019b6, 10);
-    Value2(Func_02001a1e, 2, 3);
-    Value1(Func_020019c4, 30);
-    Value2(Func_02001a64, 2, 0);
-    Value1(Func_020019d2_a, 10);
-    Call3(Func_02001a54, 2, 0, 30);
-    Call2(Func_02001a74, 8194, 0);
+    Actor_Do3(20);
+    Actor_Run18(11, 2);
+    Actor_Check20(20);
+    Actor_Run19(11, 0);
+    Actor_Check21(10);
+    Actor_Place13(1, 0, 50);
+    Actor_Place14(0, 261, 60);
+    Actor_Check22(10);
+    Actor_Place15(1, 49152, 0);
+    Actor_Check23(20);
+    Actor_Run20(1, 0);
+    Actor_Check24(10);
+    Actor_Run21(3, 4);
+    Actor_Check25(20);
+    Actor_Run22(3, 0);
+    Actor_Check26(10);
+    Actor_Run23(2, 2);
+    Actor_Check27(20);
+    Actor_Run24(2, 0);
+    Actor_Check28(20);
+    Actor_Place16(12, 257, 40);
+    Actor_Run25(12, 0);
+    Actor_Run26(0, 0);
+    Actor_Check29(20);
+    Actor_Run27(12, 2);
+    Actor_Check30(20);
+    Actor_Run28(12, 0);
+    Actor_Check31(20);
+    Actor_Run29(0, 3);
+    Actor_Check32(30);
+    Actor_Check33(10);
+    Actor_Run30(1, 2);
+    Actor_Check34(20);
+    Actor_Run31(1, 0);
+    Actor_Check35(10);
+    Actor_Run32(3, 4);
+    Actor_Check36(20);
+    Actor_Run33(3, 0);
+    Actor_Check37(10);
+    Actor_Run34(2, 3);
+    Actor_Check38(30);
+    Actor_Run35(2, 0);
+    Actor_Check39(10);
+    Actor_Place17(2, 0, 30);
+    Actor_Run36(8194, 0);
     }
-    Call1(Func_02001a72, 10337);
-    Value1(Func_020019f0, 10);
-    Call3(Func_02001a9c, 0, 16384, 0);
-    Call3(Func_02001a7e, 1, 0, 20);
-    if (Value2(Func_02001a26, 0, 0) == 0) {
-    Value1(Func_02001a18, 20);
-    Call3(Func_02001ac4, 0, 49152, 0);
-    Call3(Func_02001ad0, 1, 49152, 0);
-    Value3(Func_02001adc, 2, 49152, 0);
-    Value1(Func_02001a42, 30);
-    Value1(Func_02001a48_a, 10);
-    Value2(Func_02001ab0, 11, 3);
-    Value1(Func_02001a56, 30);
-    Value2(Func_02001af6, 11, 0);
+    Actor_Do4(10337);
+    Actor_Check40(10);
+    Actor_Place18(0, 16384, 0);
+    Actor_Place19(1, 0, 20);
+    if (Actor_Apply(0, 0) == 0) {
+    Actor_Check41(20);
+    Actor_Place20(0, 49152, 0);
+    Actor_Place21(1, 49152, 0);
+    Actor_Place22(2, 49152, 0);
+    Actor_Check42(30);
+    Actor_Check43(10);
+    Actor_Run37(11, 3);
+    Actor_Check44(30);
+    Actor_Run38(11, 0);
     (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
     } else {
-    Call1(Func_02001a94, 20);
-    Call3(Func_02001b40, 0, 49152, 0);
-    Call3(Func_02001b4c, 1, 49152, 0);
-    Value3(Func_02001b58, 2, 49152, 0);
-    Value1(Func_02001abe, 30);
-    Value1(Func_02001ac4_a, 10);
-    Value2(Func_02001b2c, 11, 4);
-    Value1(Func_02001ad2, 20);
+    Actor_Do5(20);
+    Actor_Place23(0, 49152, 0);
+    Actor_Place24(1, 49152, 0);
+    Actor_Place25(2, 49152, 0);
+    Actor_Check45(30);
+    Actor_Check46(10);
+    Actor_Run39(11, 4);
+    Actor_Check47(20);
     (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
-    Call2(Func_02001b82, 11, 0);
+    Actor_Run40(11, 0);
     }
-    Value1(Func_02001af0, 10);
-    Value2(Func_02001b68, 11, 2);
-    Value1(Func_02001afe, 20);
-    Value2(Func_02001b9e, 11, 0);
-    Value1(Func_02001b0c, 10);
-    Call3(Func_02001b96, 1, 0, 0);
-    Value3(Func_02001ba0, 3, 2, 0);
-    Value1(Func_02001b26, 40);
-    Value1(Func_02001b2c_a, 10);
-    Call3(Func_02001be0, 11, 258, 40);
-    Value2(Func_02001bd8, 11, 0);
-    Value1(Func_02001b46, 10);
-    Call3(Func_02001bf2, 0, 49152, 0);
-    Call3(Func_02001bfe, 1, 49152, 0);
-    Call3(Func_02001c0a, 2, 49152, 0);
-    Value3(Func_02001c16, 3, 49152, 0);
-    Value1(Func_02001b7c, 50);
-    Value1(Func_02001b82_a, 10);
-    Value2(Func_02001bea, 11, 3);
-    Value1(Func_02001b90, 30);
-    Value2(Func_02001c30, 11, 0);
-    Value1(Func_02001b9e_a, 10);
-    Value2(Func_02001c16_a, 11, 2);
-    Value1(Func_02001bac, 20);
-    Value2(Func_02001c4c, 11, 0);
-    Value1(Func_02001bba, 10);
-    Call3(Func_02001c6e, 3, 256, 40);
-    Value2(Func_02001c66, 3, 0);
-    Value1(Func_02001bd4, 20);
-    Value3(Func_02001c7e, 11, 0, 0);
-    Value1(Func_02001be4, 20);
-    Value2(Func_02001c84, 11, 0);
-    Value1(Func_02001bf2_a, 10);
-    Value2(Func_02001c6a, 12, 2);
-    Value1(Func_02001c00, 20);
-    Value3(Func_02001cac, 12, 32768, 0);
-    Value1(Func_02001c12, 20);
-    Value2(Func_02001cb2, 12, 0);
-    Value1(Func_02001c20, 10);
-    Value2(Func_02001c88, 11, 4);
-    Value1(Func_02001c2e, 20);
-    Value2(Func_02001cce, 11, 0);
-    Value1(Func_02001c3c, 10);
-    Value2(Func_02001cb4, 2, 2);
-    Value1(Func_02001c4a, 20);
-    Value2(Func_02001cea, 2, 0);
-    Value1(Func_02001c58, 10);
-    Value3(Func_02001d04, 11, 16384, 0);
-    Value1(Func_02001c6a_a, 30);
-    Value2(Func_02001d0a, 11, 0);
-    Value1(Func_02001c78, 10);
-    Call3(Func_02001d2c, 12, 258, 50);
-    Value2(Func_02001d24, 12, 0);
-    Value1(Func_02001c92, 20);
-    Call3(Func_02001d44, 11, 257, 65);
-    Value3(Func_02001d46, 11, 0, 0);
-    Value1(Func_02001cac_a, 20);
-    Value2(Func_02001d4c, 11, 0);
-    Value1(Func_02001cba, 20);
-    Call3(Func_02001d6e, 12, 256, 40);
-    Value2(Func_02001d66, 12, 0);
-    Value1(Func_02001cd4, 20);
-    Value3(Func_02001d80, 12, 16384, 0);
-    Call1(Func_02001ce6, 40);
-    Value2(Func_02001d86, 12, 0);
-    Value1(Func_02001cf4, 10);
-    Value3(Func_02001da0, 11, 16384, 0);
-    Value1(Func_02001d06, 50);
-    Call3(Func_02001dba, 11, 262, 60);
-    Value2(Func_02001db2, 11, 0);
-    Value1(Func_02001d20, 10);
-    Value2(Func_02001d88, 11, 3);
-    Value1(Func_02001d2e, 30);
-    Value2(Func_02001dce, 11, 0);
-    Value1(Func_02001d3c, 10);
-    Call2(Func_02001dac, 0, 2);
-    Call2(Func_02001db4, 1, 2);
-    Call2(Func_02001dbc, 3, 2);
-    Value2(Func_02001dcc, 2, 2);
-    Value1(Func_02001d62, 30);
-    Value1(Func_02001d68, 10);
-    Value3(Func_02001e12, 11, 0, 0);
-    Value1(Func_02001d78, 20);
-    Value2(Func_02001e18, 11, 0);
-    Value1(Func_02001d86_a, 10);
-    Value2(Func_02001dfe, 12, 2);
-    Value1(Func_02001d94, 30);
-    Value3(Func_02001e40, 12, 32768, 0);
-    Value1(Func_02001da6, 20);
-    Value2(Func_02001e46, 12, 0);
-    Value1(Func_02001db4_a, 10);
-    Call3(Func_02001e66, 11, 257, 0);
-    Value1(Func_02001dc4, 10);
-    Value3(Func_02001e70, 1, 57344, 0);
-    Value1(Func_02001dd6, 30);
-    Value2(Func_02001e3e, 1, 4);
-    Value1(Func_02001de4, 20);
-    Value2(Func_02001e84, 1, 0);
-    Value1(Func_02001df2, 10);
-    Value3(Func_02001e9e, 12, 16384, 0);
-    Value1(Func_02001e04, 30);
-    Call3(Func_02001eb6, 12, 261, 60);
-    Value2(Func_02001eae, 12, 0);
-    Value1(Func_02001e1c, 10);
-    Value2(Func_02001e94, 1, 2);
-    Value1(Func_02001e2a, 20);
-    Value2(Func_02001eca, 1, 0);
-    Value1(Func_02001e38, 10);
-    Value3(Func_02001ee4, 11, 16384, 0);
-    Value1(Func_02001e4a, 40);
-    Call3(Func_02001efe, 11, 258, 40);
-    Value2(Func_02001ef6, 11, 0);
-    Value1(Func_02001e64, 10);
-    Value3(Func_02001f10, 2, 32768, 0);
-    Value1(Func_02001e76, 30);
-    Call3(Func_02001f28, 2, 263, 60);
-    Value3(Func_02001f2c, 2, 49152, 0);
-    Value1(Func_02001e92, 30);
-    Value2(Func_02001efa, 2, 4);
-    Value1(Func_02001ea0, 20);
-    Value2(Func_02001f40, 2, 0);
-    Value1(Func_02001eae_a, 10);
-    Value2(Func_02001f16, 11, 4);
-    Value1(Func_02001ebc, 20);
-    Value2(Func_02001f5c, 11, 0);
-    Value1(Func_02001eca_a, 10);
-    Call2(Func_02001f4e, 0, 2);
-    Call2(Func_02001f56, 1, 2);
-    Call2(Func_02001f5e, 3, 2);
-    Value2(Func_02001f6e, 2, 2);
-    Value1(Func_02001f04, 30);
-    Value1(Func_02001f0a, 10);
-    Value2(Func_02001f72, 11, 3);
-    Value1(Func_02001f18, 30);
-    Value2(Func_02001fb8, 11, 0);
-    Value1(Func_02001f26, 20);
-    Call2(Func_02001f86, 0, 3);
-    Call2(Func_02001f8e, 1, 3);
-    Call2(Func_02001f96, 3, 3);
-    Value2(Func_02001fa6, 2, 3);
-    Value1(Func_02001f4c, 30);
-    Value1(Func_02001f52, 10);
-    Value2(Func_02001fca, 11, 2);
-    Value1(Func_02001f60, 20);
-    Value2(Func_02002000, 11, 0);
-    Value1(Func_02001f6e_a, 10);
-    Value2(Func_02001fe6, 1, 2);
-    Value1(Func_02001f7c, 20);
-    Value2(Func_0200201c, 1, 0);
-    Value1(Func_02001f8a, 10);
-    Value2(Func_02001ff2, 11, 3);
-    Value1(Func_02001f98, 30);
-    Value2(Func_02002038, 11, 0);
-    Value1(Func_02001fa6_a, 20);
-    Value2(Func_0200200e, 3, 3);
-    Value1(Func_02001fb4, 30);
-    Value2(Func_02002054, 3, 0);
-    Value1(Func_02001fc2, 20);
-    Call3(Func_0200206e, 0, 16384, 0);
-    Call3(Func_0200207a, 1, 57344, 0);
-    Value3(Func_02002086, 2, 40960, 0);
-    Value1(Func_02001fec, 30);
-    Value2(Func_02002054_a, 0, 3);
-    Value1(Func_02001ffa, 10);
-    Call2(Func_0200205a, 1, 3);
-    Call2(Func_02002062, 2, 3);
-    Value2(Func_02002072, 3, 3);
-    Value1(Func_02002018, 30);
-    Call3(Func_0200204a, 1, 78643, 39321);
-    Call3(Func_02002054_b, 3, 78643, 39321);
-    Call3(Func_0200205e, 2, 78643, 39321);
-    Value2(Func_02002096, 1, 2);
+    Actor_Check48(10);
+    Actor_Run41(11, 2);
+    Actor_Check49(20);
+    Actor_Run42(11, 0);
+    Actor_Check50(10);
+    Actor_Place26(1, 0, 0);
+    Actor_Place27(3, 2, 0);
+    Actor_Check51(40);
+    Actor_Check52(10);
+    Actor_Place28(11, 258, 40);
+    Actor_Run43(11, 0);
+    Actor_Check53(10);
+    Actor_Place29(0, 49152, 0);
+    Actor_Place30(1, 49152, 0);
+    Actor_Place31(2, 49152, 0);
+    Actor_Place32(3, 49152, 0);
+    Actor_Check54(50);
+    Actor_Check55(10);
+    Actor_Run44(11, 3);
+    Actor_Check56(30);
+    Actor_Run45(11, 0);
+    Actor_Check57(10);
+    Actor_Run46(11, 2);
+    Actor_Check58(20);
+    Actor_Run47(11, 0);
+    Actor_Check59(10);
+    Actor_Place33(3, 256, 40);
+    Actor_Run48(3, 0);
+    Actor_Check60(20);
+    Actor_Place34(11, 0, 0);
+    Actor_Check61(20);
+    Actor_Run49(11, 0);
+    Actor_Check62(10);
+    Actor_Run50(12, 2);
+    Actor_Check63(20);
+    Actor_Place35(12, 32768, 0);
+    Actor_Check64(20);
+    Actor_Run51(12, 0);
+    Actor_Check65(10);
+    Actor_Run52(11, 4);
+    Actor_Check66(20);
+    Actor_Run53(11, 0);
+    Actor_Check67(10);
+    Actor_Run54(2, 2);
+    Actor_Check68(20);
+    Actor_Run55(2, 0);
+    Actor_Check69(10);
+    Actor_Place36(11, 16384, 0);
+    Actor_Check70(30);
+    Actor_Run56(11, 0);
+    Actor_Check71(10);
+    Actor_Place37(12, 258, 50);
+    Actor_Run57(12, 0);
+    Actor_Check72(20);
+    Actor_Place38(11, 257, 65);
+    Actor_Place39(11, 0, 0);
+    Actor_Check73(20);
+    Actor_Run58(11, 0);
+    Actor_Check74(20);
+    Actor_Place40(12, 256, 40);
+    Actor_Run59(12, 0);
+    Actor_Check75(20);
+    Actor_Place41(12, 16384, 0);
+    Actor_Do6(40);
+    Actor_Run60(12, 0);
+    Actor_Check76(10);
+    Actor_Place42(11, 16384, 0);
+    Actor_Check77(50);
+    Actor_Place43(11, 262, 60);
+    Actor_Run61(11, 0);
+    Actor_Check78(10);
+    Actor_Run62(11, 3);
+    Actor_Check79(30);
+    Actor_Run63(11, 0);
+    Actor_Check80(10);
+    Actor_Run64(0, 2);
+    Actor_Run65(1, 2);
+    Actor_Run66(3, 2);
+    Actor_Run67(2, 2);
+    Actor_Check81(30);
+    Actor_Check82(10);
+    Actor_Place44(11, 0, 0);
+    Actor_Check83(20);
+    Actor_Run68(11, 0);
+    Actor_Check84(10);
+    Actor_Run69(12, 2);
+    Actor_Check85(30);
+    Actor_Place45(12, 32768, 0);
+    Actor_Check86(20);
+    Actor_Run70(12, 0);
+    Actor_Check87(10);
+    Actor_Place46(11, 257, 0);
+    Actor_Check88(10);
+    Actor_Place47(1, 57344, 0);
+    Actor_Check89(30);
+    Actor_Run71(1, 4);
+    Actor_Check90(20);
+    Actor_Run72(1, 0);
+    Actor_Check91(10);
+    Actor_Place48(12, 16384, 0);
+    Actor_Check92(30);
+    Actor_Place49(12, 261, 60);
+    Actor_Run73(12, 0);
+    Actor_Check93(10);
+    Actor_Run74(1, 2);
+    Actor_Check94(20);
+    Actor_Run75(1, 0);
+    Actor_Check95(10);
+    Actor_Place50(11, 16384, 0);
+    Actor_Check96(40);
+    Actor_Place51(11, 258, 40);
+    Actor_Run76(11, 0);
+    Actor_Check97(10);
+    Actor_Place52(2, 32768, 0);
+    Actor_Check98(30);
+    Actor_Place53(2, 263, 60);
+    Actor_Place54(2, 49152, 0);
+    Actor_Check99(30);
+    Actor_Run77(2, 4);
+    Actor_Check100(20);
+    Actor_Run78(2, 0);
+    Actor_Check101(10);
+    Actor_Run79(11, 4);
+    Actor_Check102(20);
+    Actor_Run80(11, 0);
+    Actor_Check103(10);
+    Actor_Run81(0, 2);
+    Actor_Run82(1, 2);
+    Actor_Run83(3, 2);
+    Actor_Run84(2, 2);
+    Actor_Check104(30);
+    Actor_Check105(10);
+    Actor_Run85(11, 3);
+    Actor_Check106(30);
+    Actor_Run86(11, 0);
+    Actor_Check107(20);
+    Actor_Run87(0, 3);
+    Actor_Run88(1, 3);
+    Actor_Run89(3, 3);
+    Actor_Run90(2, 3);
+    Actor_Check108(30);
+    Actor_Check109(10);
+    Actor_Run91(11, 2);
+    Actor_Check110(20);
+    Actor_Run92(11, 0);
+    Actor_Check111(10);
+    Actor_Run93(1, 2);
+    Actor_Check112(20);
+    Actor_Run94(1, 0);
+    Actor_Check113(10);
+    Actor_Run95(11, 3);
+    Actor_Check114(30);
+    Actor_Run96(11, 0);
+    Actor_Check115(20);
+    Actor_Run97(3, 3);
+    Actor_Check116(30);
+    Actor_Run98(3, 0);
+    Actor_Check117(20);
+    Actor_Place55(0, 16384, 0);
+    Actor_Place56(1, 57344, 0);
+    Actor_Place57(2, 40960, 0);
+    Actor_Check118(30);
+    Actor_Run99(0, 3);
+    Actor_Check119(10);
+    Actor_Run100(1, 3);
+    Actor_Run101(2, 3);
+    Actor_Run102(3, 3);
+    Actor_Check120(30);
+    Actor_Place58(1, 78643, 39321);
+    Actor_Place59(3, 78643, 39321);
+    Actor_Place60(2, 78643, 39321);
+    Actor_Run103(1, 2);
     {
-        u8 *rec = Value1(Func_02002064, 0);
+        u8 *rec = Actor_Check121(0);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
-            Value3(Func_0200208e, 1, y, x);
+            Actor_Place61(1, y, x);
         }
     }
-    Value1(Func_020020a4, 1);
-    Call3(Func_020020b6, 1, 0, 0);
-    Value2(Func_020020c6, 3, 2);
+    Actor_Check122(1);
+    Actor_Place62(1, 0, 0);
+    Actor_Run104(3, 2);
     {
-        u8 *rec = Value1(Func_02002094, 0);
+        u8 *rec = Actor_Check123(0);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
-            Value3(Func_020020be, 3, y, x);
+            Actor_Place63(3, y, x);
         }
     }
-    Value1(Func_020020d4, 3);
-    Call3(Func_020020e6, 3, 0, 0);
-    Value2(Func_020020f6, 2, 2);
+    Actor_Check124(3);
+    Actor_Place64(3, 0, 0);
+    Actor_Run105(2, 2);
     {
-        u8 *rec = Value1(Func_020020c4, 0);
+        u8 *rec = Actor_Check125(0);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
-            Value3(Func_020020ee, 2, y, x);
+            Actor_Place65(2, y, x);
         }
     }
-    Value1(Func_02002104, 2);
-    Value3(Func_02002116, 2, 0, 0);
-    Value1(Func_020020cc, 10);
-    Value0(Func_020020e0);
+    Actor_Check126(2);
+    Actor_Place66(2, 0, 0);
+    Actor_Check127(10);
+    Actor_Run106();
 }
 
 /*
@@ -947,66 +510,66 @@ void Scene_RunPrimaryScript(void)
  */
 void Scene_RunSecondaryScript(void)
 {
-    void Func_020021aa_a(s32);
-    void Func_020021d4_a(s32);
-    void Func_020021f0_a(s32);
-    void Func_0200220c_a(s32);
+    void Actor_Run119(s32);
+    void Actor_Run120(s32);
+    void Actor_Run121(s32);
+    void Actor_Run122(s32);
 
-    Func_0200216e(((s32)&Value_00002880));
-    Func_020020ec(20);
+    Actor_Run123(((s32)&Value_00002880));
+    Actor_Run124(20);
 
-    Func_02002164(11, 2);
-    Func_020020fa(20);
-    Func_0200219a(11, 0);
-    Func_02002108(10);
+    Actor_Run125(11, 2);
+    Actor_Run126(20);
+    Actor_Run127(11, 0);
+    Actor_Run128(10);
 
-    Func_0200218a(1, 0, 50);
-    Func_020021c4(0, 0x105, 60);
-    Func_02002122(10);
-    Func_020021ce(1, 0xc000, 0);
-    Func_02002134(20);
-    Func_020021d4(1, 0);
-    Func_02002142(10);
+    Actor_Run129(1, 0, 50);
+    Actor_Run130(0, 0x105, 60);
+    Actor_Run131(10);
+    Actor_Run132(1, 0xc000, 0);
+    Actor_Run133(20);
+    Actor_Run134(1, 0);
+    Actor_Run135(10);
 
-    Func_020021aa(3, 4);
-    Func_02002150(20);
-    Func_020021f0(3, 0);
-    Func_0200215e(10);
+    Actor_Run136(3, 4);
+    Actor_Run137(20);
+    Actor_Run138(3, 0);
+    Actor_Run139(10);
 
-    Func_020021d6(2, 2);
-    Func_0200216c(20);
-    Func_0200220c(2, 0);
-    Func_0200217a(10);
+    Actor_Run140(2, 2);
+    Actor_Run141(20);
+    Actor_Run142(2, 0);
+    Actor_Run143(10);
 
-    Func_020021f2(12, 2);
-    Func_02002188(20);
-    Func_02002228(12, 0);
-    Func_02002196(20);
+    Actor_Run144(12, 2);
+    Actor_Run145(20);
+    Actor_Run146(12, 0);
+    Actor_Run147(20);
 
-    Func_0200220e(0, 2);
-    Func_020021a4(20);
-    Func_020021aa_a(25);
+    Actor_Run148(0, 2);
+    Actor_Run149(20);
+    Actor_Run119(25);
 
-    Func_02002222(1, 2);
-    Func_020021b8(30);
-    Func_02002258(1, 0);
-    Func_020021c6(30);
+    Actor_Run150(1, 2);
+    Actor_Run151(30);
+    Actor_Run152(1, 0);
+    Actor_Run153(30);
 
-    Func_0200222e(1, 4);
-    Func_020021d4_a(20);
-    Func_02002274(1, 0);
-    Func_020021e2(10);
+    Actor_Run154(1, 4);
+    Actor_Run120(20);
+    Actor_Run155(1, 0);
+    Actor_Run156(10);
 
-    Func_0200224a(3, 4);
-    Func_020021f0_a(20);
-    Func_02002290(3, 0);
-    Func_020021fe(10);
+    Actor_Run157(3, 4);
+    Actor_Run121(20);
+    Actor_Run158(3, 0);
+    Actor_Run159(10);
 
-    Func_02002266(2, 3);
-    Func_0200220c_a(30);
-    Func_020022ac(2, 0);
-    Func_0200221a(10);
+    Actor_Run160(2, 3);
+    Actor_Run122(30);
+    Actor_Run161(2, 0);
+    Actor_Run162(10);
 
-    Func_0200229c(2, 0, 30);
-    Func_020022bc(0x2002, 0);
+    Actor_Run163(2, 0, 30);
+    Actor_Check130(0x2002, 0);
 }

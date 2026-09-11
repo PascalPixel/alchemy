@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/game_flags/refresh_lure_cap.h"
 #include "inventory.h"
 #include "game_flags.h"
 
@@ -12,7 +14,7 @@ void GameFlag_RefreshLureCap(void)
         struct OwnerInventoryState *owner;
         s32 i;
 
-        owner = OwnerState_Get(Data_02000240.active_owners[n]);
+        owner = OwnerState_Get(gCell.active_owners[n]);
         for (i = 0; i < 15; i++) {
             if (owner->inventory[i] & 0x200) {
                 u8 *record;

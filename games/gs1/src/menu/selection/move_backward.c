@@ -1,9 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/selection/move_backward.h"
 
-void Func_0801b9a8(struct State_0801b9a8 *state, u32 index);
-void Func_0801b9ec(struct State_0801b9ec *state, u32 index);
-void Func_0801ba68(void *state, u32 mode);
-void Func_0801b010(u16 type, u32 value);
 void WaitFrames(u32 value);
 
 void Menu_MoveSelectionBackward(u8 *state)
@@ -13,7 +11,7 @@ void Menu_MoveSelectionBackward(u8 *state)
     if (*selection != 0) {
         u32 no;
 
-        Func_0801b9a8(state, *(u16 *)(state + 0x39e));
+        Menu_Apply(state, *(u16 *)(state + 0x39e));
         {
             u16 *status = (u16 *)(state + 0x3a2);
             u32 value = 33;
@@ -29,7 +27,7 @@ void Menu_MoveSelectionBackward(u8 *state)
                 *(u16 *)(state + 8) = value;
             }
             *(u16 *)selection += 0xffff;
-            Func_0801ba68(state, 0);
+            Menu_Apply2(state, 0);
             if (*(u16 *)selection == 0) {
                 *(u16 *)(state + 10) = 0;
             }
@@ -42,10 +40,10 @@ void Menu_MoveSelectionBackward(u8 *state)
             u32 value = 1;
 
             *status = value;
-            Func_0801b9ec(state, *(u16 *)(state + 0x39e));
+            Menu_Apply3(state, *(u16 *)(state + 0x39e));
         }
         WaitFrames(1);
-        Func_0801b010(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
+        Menu_Apply4(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
         WaitFrames(1);
     }
 }

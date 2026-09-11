@@ -1,5 +1,7 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/animation/initialize_objects.h"
 
 struct AnimationObject {
     s16 id;
@@ -43,15 +45,13 @@ struct AnimationSetupState {
     struct AnimationObject *objects[4];
 };
 
-extern s32 Func_0800b798(s32);
-
 s32 Animation_InitializeObjects(struct AnimationSetupState *state)
 {
     s32 index;
 
     for (index = 0; index < state->count; index++) {
         struct AnimationObject *object = state->objects[index];
-        struct AnimationMetadata *metadata = Func_08185000(object->id);
+        struct AnimationMetadata *metadata = Sys_Run(object->id);
         s32 frames;
         s32 animation;
 
@@ -68,7 +68,7 @@ s32 Animation_InitializeObjects(struct AnimationSetupState *state)
 
         frames = metadata->frames;
         if (frames == 0)
-            frames = Func_0800b798(object->id);
+            frames = Sys_Check(object->id);
 
         object->draw_kind = metadata->draw_kind;
         animation = metadata->animation;

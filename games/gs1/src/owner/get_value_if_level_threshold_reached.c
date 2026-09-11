@@ -1,5 +1,7 @@
 #include "owner_state.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/get_value_if_level_threshold_reached.h"
 
 struct Owner_080792c4 {
     u8 unknown_000[0x0f];
@@ -9,7 +11,6 @@ struct Owner_080792c4 {
 };
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
-s32 Func_0807905c();
 
 s32 Owner_GetValueIfLevelThresholdReached(s32 owner_no, s32 value)
 {
@@ -17,7 +18,7 @@ s32 Owner_GetValueIfLevelThresholdReached(s32 owner_no, s32 value)
 
     owner = (struct Owner_080792c4 *)Owner_GetState(owner_no);
     if ((owner->value_124 >= Owner_GetLevelThreshold(owner_no, owner->level + 1)) &&
-        (Func_0807905c(owner_no, value) != 0)) {
+        (Sys_Check(owner_no, value) != 0)) {
         return value;
     }
     return 0;

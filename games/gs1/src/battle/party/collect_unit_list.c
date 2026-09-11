@@ -1,10 +1,9 @@
+#include "scene.h"
+#include "abi/battle/party/collect_unit_list.h"
 #include "inventory.h"
 
-extern u8 *Data_03001e74;
-extern s8 Data_080c2a10[];
-
-s32 Func_080b6a60(u16 *out);
-s32 Func_080b6ae0(u16 *out);
+extern u8 *gBattleWork;
+extern s8 gRom[];
 
 void BattleParty_CollectUnitList(void)
 {
@@ -18,15 +17,15 @@ void BattleParty_CollectUnitList(void)
     s32 kind;
     u16 *out;
 
-    state = Data_03001e74;
-    count = Func_080b6a60(buf);
+    state = gBattleWork;
+    count = Battle_Check(buf);
     for (i = 0; i < count; i++) {
         *(u16 *)(state + 88 + i * 2) = buf[i];
     }
     offset = count * 2 + 88;
     *(u16 *)(state + offset) = 0xFF;
 
-    count = Func_080b6ae0(buf);
+    count = Battle_Check2(buf);
     kind = state[66];
     if (kind >= 0) {
         if (kind <= 1) {
@@ -38,7 +37,7 @@ void BattleParty_CollectUnitList(void)
         }
     }
     for (i = 0; i < count; i++) {
-        index = (Data_080c2a10[i] + count / 2) * 2 + 100;
+        index = (gRom[i] + count / 2) * 2 + 100;
         out = (u16 *)(state + 2);
         *(u16 *)((u8 *)out + index) = buf[i];
     }

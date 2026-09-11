@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_dispatch.h"
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)

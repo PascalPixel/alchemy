@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/run/run_effect.h"
 
 struct BattleEffectRequest {
     u8 reserved_000[0x18];
@@ -20,9 +22,8 @@ struct BattleEffectGlobals {
     s16 selected_id;
 };
 
-extern struct BattleEffectRequest *Data_03001f30;
-extern struct BattleEffectGlobals Data_02000240;
-#define RunBattleEffect01 Func_0809802c
+extern struct BattleEffectRequest *gIw;
+extern struct BattleEffectGlobals gCell;
 
 void RunBattleEffect01(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
@@ -40,13 +41,13 @@ void RunBattleEffect14(void);
 void BattleFx_RunEffect15(void);
 void RunBattleEffect16(void);
 void BattleFx_ResumeObject(s32 obj_id);
-s32 Func_0808df1c(s32 obj_id, s32 battle_mode);
+
 s32 BattleFx_FilterObjectIdByFlags(s32 obj_id);
-s32 Func_0808d5a4(s32 obj_id);
+
 void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
-void Func_0809ab98(s32 obj_id);
+
 void BattleFx_PauseObject(s32 obj_id);
-void Func_0809abb4(void);
+
 void ResetSceneTransitionEffect(void);
 
 void BattleFx_Run(void)
@@ -57,8 +58,8 @@ void BattleFx_Run(void)
     s32 target_id;
     s32 obj_id;
 
-    request = Data_03001f30;
-    battle = *(struct BattleEffectState **)((u8 *)&Data_03001f30 - 0x74);
+    request = gIw;
+    battle = *(struct BattleEffectState **)((u8 *)&gIw - 0x74);
     battle_mode = request->battle_mode;
     target_id = request->target_id;
 
@@ -94,20 +95,20 @@ void BattleFx_Run(void)
         RunBattleEffect13();
         return;
     case 9:
-        if (Data_02000240.selected_id != -1) {
-            BattleFx_ResumeObject(Data_02000240.selected_id);
-            Data_02000240.selected_id = -1;
+        if (gCell.selected_id != -1) {
+            BattleFx_ResumeObject(gCell.selected_id);
+            gCell.selected_id = -1;
         }
 
-        obj_id = Func_0808df1c(Data_02000240.selected_object, battle_mode);
+        obj_id = Battle_Apply(gCell.selected_object, battle_mode);
         obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
-        if (Func_0808d5a4(obj_id)!= 0) {
-            BattleFx_SetupObjectPair(Data_02000240.selected_object, obj_id);
-            Func_0809ab98(obj_id);
+        if (Battle_Check(obj_id)!= 0) {
+            BattleFx_SetupObjectPair(gCell.selected_object, obj_id);
+            Battle_Do(obj_id);
             BattleFx_PauseObject(obj_id);
-            Data_02000240.selected_id = obj_id;
+            gCell.selected_id = obj_id;
         } else {
-            Func_0809abb4();
+            Battle_Run();
         }
         return;
     case 2:

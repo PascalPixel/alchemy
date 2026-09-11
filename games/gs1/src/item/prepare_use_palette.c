@@ -1,12 +1,11 @@
 #include "types.h"
-
-void Func_080a22f4(void);
-void Func_080a2144(s32);
+#include "scene.h"
+#include "abi/item/prepare_use_palette.h"
 
 void Item_PrepareUsePalette(void)
 {
-    Func_080a22f4();
-    Func_080a2144(13);
+    Item_Run();
+    Item_Do(13);
 }
 
 void Item_UseNoOpCallback(void)

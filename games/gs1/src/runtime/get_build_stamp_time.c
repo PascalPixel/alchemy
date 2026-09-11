@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/runtime/get_build_stamp_time.h"
 #include "resource.h"
 
-extern volatile u8 Data_03001f54;
-extern u8 Data_00000002[];
+extern volatile u8 gIw;
+extern u8 gVal[];
 
 u16 Runtime_GetBuildStampTime(void)
 {
@@ -20,7 +22,7 @@ u16 Runtime_GetBuildStampTime(void)
     s32 shifted;
     s32 result;
 
-    digits = GetResource((s32)Data_00000002);
+    digits = GetResource((s32)gVal);
     hourTens = *digits;
     hours = (hourTens - '0') * 10;
     digits++;
@@ -41,7 +43,7 @@ u16 Runtime_GetBuildStampTime(void)
     shifted = 0x80 << 21;
     shifted |= packed << 16;
     result = shifted >> 16;
-    if (Data_03001f54 != 0) {
+    if (gIw != 0) {
         result |= (s32)0xffff8000;
     }
     return (u16)result;

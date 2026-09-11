@@ -1,5 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/object/effects/end_context_effect.h"
 
 typedef struct {
     u8 unknown00[5];
@@ -26,22 +28,22 @@ typedef struct {
     Context08094380 *ctx;
 } Object08094380;
 
-Effect08094380 *Func_08009048(Context08094380 *, s32);
+Effect08094380 *Obj_Run(Context08094380 *, s32);
 void Object_SetMode(Object08094380 *, s32);
 void WaitFrames(s32);
-void Func_08009060(void *);
+
 void Object_SetPosition(Object08094380 *, s32, s32, s32);
 void Object_CommitPosition(Object08094380 *);
 
-extern s32 Data_02000240[];
+extern s32 gCell[];
 
 void ObjectEffect_EndContextEffect(s32 arg0)
 {
     s32 zero;
     s32 mask;
-    Object08094380 *obj = ObjectTable_Get(Data_02000240[125]);
+    Object08094380 *obj = ObjectTable_Get(gCell[125]);
     Context08094380 *ctx = obj->ctx;
-    Effect08094380 *eff = Func_08009048(ctx, 27);
+    Effect08094380 *eff = Obj_Run(ctx, 27);
 
     zero = 0;
     mask = 0xfff00000;
@@ -52,7 +54,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     Object_SetMode(obj, arg0);
     WaitFrames(30);
     ctx->second_flag = 1;
-    Func_08009060(ctx->eff);
+    Obj_Do(ctx->eff);
     ctx->eff = (void *)zero;
     *(u8 *)((u8 *)ctx + 38) = 1;
     obj->speed34 = 0x10000;

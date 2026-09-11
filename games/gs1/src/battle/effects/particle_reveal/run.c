@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define BattleFx_RunParticleReveal Func_080e0c84
+#include "scene.h"
+#include "abi/battle/effects/particle_reveal/run.h"
 
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
@@ -10,9 +10,9 @@
  * 080ce85c) and games/gs1/src/battle/effects/puff_arc/run.c (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
- * Func_080cd594(0)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/
- * Func_08002dd8(id)/Func_080cdbc0() bracket, and the same
- * Func_080cef64(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
+ * Battle_Do(0)/Battle_Apply(0x080CD261,0x480)/Battle_Do2(0x080CD261)/
+ * Battle_Do3(id)/Battle_Run() bracket, and the same
+ * Battle_Apply2(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/gs1/recon/en/main/080e01e4.c.
  *
  * Unlike member_orbit's single 64-frame per-member sprite loop, this owner
@@ -22,14 +22,14 @@
  * its s32 field -- the same +2 / +6 halfword
  * idiom already confirmed in 080e01e4.c.
  *
- * Every `Func_080072f4`/`Func_08007314` call site is an indirect call
+ * Every `Battle_Run2`/`Battle_Run3` call site is an indirect call
  * through the value the reference loads into r4/r12 immediately before the
  * `bl`, not a real function -- both addresses fall inside the
  * `_call_via_rN` trampoline bank at games/gs1/asm/080072e4.s (r4 slot at
  * +0x10, ip/r12 slot at +0x30). All such call sites here go through
- * `routine[]`, a two-entry DrawRectangleFn array Func_080cef64 fills.
+ * `routine[]`, a two-entry DrawRectangleFn array Battle_Apply2 fills.
  *
- * All three Func_080e0524 id arguments are loaded from the reference's
+ * All three Battle_SetMode id arguments are loaded from the reference's
  * literal pool rather than built with a `movs` immediate, matching the
  * already-adopted Value_ idiom (puff_arc/run.c's Value_000000b4,
  * 080e01e4.c's Value_00000073/00000090/00000089): `(s32)&Value_XXXXXXXX`
@@ -57,29 +57,9 @@ typedef struct {
 extern u8 Value_0000006e;
 extern u8 Value_000000b8;
 extern u8 Value_00000092;
-extern u8 Data_080eec5f[];
-extern u8 Data_080eec63[];
-extern u16 Data_080eec68[];
-
-void Func_080cd594(s32 mode);
-void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
-void Func_080041d8(void *callback, s32 interval);
-void Func_080e3980(s16 a, s32 *out_pair);
-u32 Func_08004458(void);
-s32 Func_08002322(s32 angle);
-s32 Func_0800231c(s32 angle);
-void Func_080e38b8(void *particle, s32 a, s32 b);
-void Func_080b50e8(s32 id);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 b);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
-void Func_080030f8(s32 frames);
-void Func_08004278(void *callback);
-void Func_08002dd8(s32 id);
-void Func_080cdbc0(void);
+extern u8 gRom[];
+extern u8 gRom2[];
+extern u16 gRom3[];
 
 void BattleFx_RunParticleReveal(void *object)
 {
@@ -101,13 +81,13 @@ void BattleFx_RunParticleReveal(void *object)
     work = *cursor++;
     canvas = *cursor;
     (*(void **)((u8 *)(work) + (0x7828))) = object;
-    Func_080cd594(0);
-    Func_080de2f8(object, 1,
+    Battle_Do(0);
+    Battle_SetRect(object, 1,
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), 2,
         &screen_x, &screen_y);
-    Func_080cef64(
+    Battle_Apply2(
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
-    Func_080e0524((s32)&Value_0000006e, work, 1, 1);
+    Battle_SetMode((s32)&Value_0000006e, work, 1, 1);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
     (*(s32 *)((u8 *)(work) + (0x7784))) = 75;
     {
@@ -116,25 +96,25 @@ void BattleFx_RunParticleReveal(void *object)
 
         interval = 0x480;
         callback = (void *)0x080CD261;
-        Func_080041d8(callback, interval);
+        Battle_Apply(callback, interval);
     }
-    Func_080e3980(
+    Battle_Apply3(
         (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {
         s32 angle;
         s32 amp;
 
-        angle = (Func_08004458() & 0x7FFF) + 0x4000;
-        amp = (Func_08004458() & 0x1FF) + 0x80;
+        angle = (Battle_Run4() & 0x7FFF) + 0x4000;
+        amp = (Battle_Run4() & 0x1FF) + 0x80;
         PARTICLE_POOL[i].x =
-            ((spawn[0] / 2 + (Func_08004458() & 0xF)) - 8) << 16;
+            ((spawn[0] / 2 + (Battle_Run4() & 0xF)) - 8) << 16;
         PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
-        PARTICLE_POOL[i].vx = (Func_08002322(angle) * amp) >> 9;
-        PARTICLE_POOL[i].vy = (Func_0800231c(angle) * amp) >> 6;
-        PARTICLE_POOL[i].rot = Func_08004458() & 0x7F;
-        PARTICLE_POOL[i].unk14 = Func_08004458() & 0x7F;
-        PARTICLE_POOL[i].unk18 = (Func_08004458() & 0xF) + 32;
+        PARTICLE_POOL[i].vx = (Battle_Check(angle) * amp) >> 9;
+        PARTICLE_POOL[i].vy = (Battle_Check2(angle) * amp) >> 6;
+        PARTICLE_POOL[i].rot = Battle_Run4() & 0x7F;
+        PARTICLE_POOL[i].unk14 = Battle_Run4() & 0x7F;
+        PARTICLE_POOL[i].unk18 = (Battle_Run4() & 0xF) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
@@ -142,8 +122,8 @@ void BattleFx_RunParticleReveal(void *object)
             (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = (64 - frame) | 0x1000;
         }
         if (frame == 1) {
-            Func_080e0524((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
-            Func_080e0524((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
+            Battle_SetMode((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
+            Battle_SetMode((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
         }
 
         if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x1C))) == 1) {
@@ -152,9 +132,9 @@ void BattleFx_RunParticleReveal(void *object)
             s32 y;
 
             orbit_angle = frame << 11;
-            x = (((-Func_08002322(orbit_angle)) << 2) >> 16)
+            x = (((-Battle_Check(orbit_angle)) << 2) >> 16)
                 + screen_x / 2 - 10;
-            y = ((Func_0800231c(orbit_angle) << 1) >> 16) + screen_y - 22;
+            y = ((Battle_Check2(orbit_angle) << 1) >> 16) + screen_y - 22;
             if (frame > 0x45) {
                 y = (y - frame * 2) + 0x8A;
             }
@@ -172,21 +152,21 @@ void BattleFx_RunParticleReveal(void *object)
 
                 index = (p->rot / 128) & 3;
                 routine[i & 1](
-                    canvas, (u8 *)work + 0x400 + Data_080eec68[index],
-                    (*(s16 *)((u8 *)(p) + (2))) - (w = Data_080eec5f[index]) / 2,
-                    (*(s16 *)((u8 *)(p) + (6))) - (h = Data_080eec63[index]) / 2,
+                    canvas, (u8 *)work + 0x400 + gRom3[index],
+                    (*(s16 *)((u8 *)(p) + (2))) - (w = gRom[index]) / 2,
+                    (*(s16 *)((u8 *)(p) + (6))) - (h = gRom2[index]) / 2,
                     w, h);
-                Func_080e38b8(p, 0x3F, 0x1000);
+                Battle_Place(p, 0x3F, 0x1000);
             }
         }
 
         if (frame == 8) {
             (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
-            Func_080b50e8(0x86);
-            Func_080d6888(
+            Battle_Do4(0x86);
+            Battle_SetRange(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 7, 5, 0, 16);
-            Func_080b5088(
+            Battle_Apply4(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), 3);
         }
 
@@ -206,14 +186,14 @@ void BattleFx_RunParticleReveal(void *object)
             }
         }
 
-        Func_080e155c(4, 8);
-        Func_080cd52c();
+        Battle_Apply5(4, 8);
+        Battle_Run5();
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
-        Func_080030f8(1);
+        Battle_Do5(1);
     }
 
-    Func_08004278((void *)0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
-    Func_080cdbc0();
+    Battle_Do2((void *)0x080CD261);
+    Battle_Do3(0x2F);
+    Battle_Do3(0x2E);
+    Battle_Run();
 }

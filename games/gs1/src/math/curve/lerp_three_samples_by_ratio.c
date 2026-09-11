@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "curve.h"
 
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-u32 Runtime_BumpAllocate(s32 size); /* ワークをバンプ確保 */
+u32 Runtime_BumpAllocate(s32 size);
 void Func_08002df0(void *buffer); /* Sys_Alloc の解放 */
 /* Legacy register-call veneer declaration; new code must call the typed target. */
 void Func_080072f0(void *dst, void *src, s32 size, void *desc);

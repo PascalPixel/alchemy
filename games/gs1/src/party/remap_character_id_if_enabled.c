@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1)
 {

@@ -1,5 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/mix/set_pcm_rate.h"
 
 struct PcmRateState {
     u8 padding00[8];
@@ -12,7 +14,7 @@ struct PcmRateState {
     s32 half_period;
 };
 
-extern u16 Data_080fb914[];
+extern u16 gRom[];
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 void AudioEngine_EnablePcmDma(void);
@@ -29,7 +31,7 @@ void AudioEngine_SetPcmRate(u32 mode_bits)
     mode_bits = (mode_bits & 0x000f0000) >> 16;
     zero = 0;
     audio->rate = mode_bits;
-    pcm_samples_per_vblank = Data_080fb914[mode_bits - 1];
+    pcm_samples_per_vblank = gRom[mode_bits - 1];
     audio->pcm_samples_per_vblank = pcm_samples_per_vblank;
     audio->dma_period = FixedPoint_Ratio(0x630, pcm_samples_per_vblank);
     frequency = FixedPoint_Ratio(

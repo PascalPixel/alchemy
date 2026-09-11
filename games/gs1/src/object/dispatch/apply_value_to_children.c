@@ -1,6 +1,6 @@
+#include "scene.h"
+#include "abi/object/dispatch/apply_value_to_children.h"
 #include "object_dispatch.h"
-
-void Func_0800baf8(void *child, s32 value);
 
 void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 value)
 {
@@ -11,7 +11,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            Func_0800baf8(object->target.child, value);
+            Obj_Apply(object->target.child, value);
             return;
         case 2:
             children = object->target.children;
@@ -19,7 +19,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
             do {
                 child = *children++;
                 if (child != 0)
-                    Func_0800baf8(child, value);
+                    Obj_Apply(child, value);
                 count--;
             } while (count >= 0);
             break;

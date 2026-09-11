@@ -1,7 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/act/run_zero.h"
 
-volatile unsigned long long Func_080c0700(s32, s32);
 void BattlePres_RunWithZeroArguments(void)
 {
-  Func_080c0700((unsigned long) 0, 0);
+  Battle_Apply((unsigned long) 0, 0);
 }

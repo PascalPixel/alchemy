@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/window/update_interpolated_geometry.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define WINDOW_WIDTH(window) FIELD(window, u16, 0x08)
@@ -19,8 +21,6 @@ struct UiWindowInterpolationScratch {
 };
 
 typedef s32 (*UiWindowScaleFunction)(s32, s32);
-
-void Func_080170f8(s32, s32, s32, s32);
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 {
@@ -66,7 +66,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
             scratch.scaled_duration, scratch.scaled_part);
     height = scratch.result >> 15;
 
-    Func_080170f8(x, y, width, height);
+    Ui_SetMode(x, y, width, height);
     if (save_position != 0) {
         WINDOW_PREVIOUS_X(window) = x;
         WINDOW_PREVIOUS_Y(window) = y;

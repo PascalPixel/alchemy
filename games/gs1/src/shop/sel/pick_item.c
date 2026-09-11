@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/shop/sel/pick_item.h"
 #include "shop.h"
 
 #define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
@@ -7,19 +9,13 @@ s32 Modulo(s32 value, s32 divisor);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_Close(s32 window, s32 style);
-struct ShopCursorAnchor *Func_080150c8(
+struct ShopCursorAnchor *Sys_Run(
     u32 resource,
     u32 flags,
     s32 window,
     s32 x,
     s32 y);
-void Func_080a1028(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void Func_080a1030(void);
-void Func_080b010c(void);
-void Func_080b0204(void);
-void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
-s32 Func_080b362c(s32 unit_id);
-s32 Func_08077248(s32 unit_id);
+
 void Audio_PlayCue(s32 cue);
 
 /* Select a party member and then an item owned by that member. */
@@ -34,11 +30,11 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     s32 item_slot;
     s32 result = 0;
 
-    Func_080b010c();
+    Sys_Run2();
     shop = SHOP_RUNTIME;
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
-    cursor_anchor = Func_080150c8(
+    cursor_anchor = Sys_Run(
         *(u16 *)((u8 *)shop + 0x390),
         0x40000000,
         list_window,
@@ -46,10 +42,10 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         result);
     cursor_anchor->kind = 4;
     cursor_anchor->unknown_00[4] = result;
-    Func_080b0a20(&shop->cursor, -32, 112);
+    Sys_Place(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
-    Func_080a1028(list_window, 2, 0, 8, result);
+    Sys_SetRange(list_window, 2, 0, 8, result);
 
     for (;;) {
         if (redraw != 0) {
@@ -66,13 +62,13 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 
         WaitFrames(1);
         if ((INPUT_NEW_KEYS & 1) != 0) {
-            if (Func_08077248(unit_id) == 0) {
+            if (Sys_Check(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
             }
 
             Audio_PlayCue(0x70);
-            item_slot = Func_080b362c(unit_id);
+            item_slot = Sys_Check2(unit_id);
             if (item_slot == -1) {
                 shop->cursor.anchor->kind = 4;
                 shop->mode = 12;
@@ -106,10 +102,10 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     }
 
 done:
-    Func_080a1030();
+    Sys_Run3();
     UiWindow_Close(list_window, 2);
     UiWindow_Close(shop->item_window, 2);
     WaitFrames(1);
-    Func_080b0204();
+    Sys_Run4();
     return result;
 }

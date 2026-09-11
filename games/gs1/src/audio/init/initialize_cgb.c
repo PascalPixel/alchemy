@@ -1,5 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/init/initialize_cgb.h"
 
 struct MusicPlayerState;
 struct MusicTrackState;
@@ -92,7 +94,6 @@ struct AudioEngineState {
     union KeyToFrequencyCallbackSlot midi_key_to_cgb_freq;
 };
 
-void Func_08006864(const void *source, void *destination, u32 control);
 void MusicPlayer_ExecuteMemoryAccessCommand(
     struct MusicPlayerState *,
     struct MusicTrackState *);
@@ -154,7 +155,7 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
     state->max_lines = (u32)&Value_00000000;
 
     zero = 0;
-    Func_08006864(
+    Audio_Place(
         &zero,
         channels,
         0x01000000 | 0x04000000 |

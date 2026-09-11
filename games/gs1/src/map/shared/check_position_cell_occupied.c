@@ -1,5 +1,6 @@
 #include "map.h"
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 struct MapCollisionWork {

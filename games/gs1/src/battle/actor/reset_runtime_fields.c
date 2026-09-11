@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/actor/reset_runtime_fields.h"
 
 u8 *Runtime_GetObject(s32);
 void BattleUnit_Recalculate(s32);
 s32 GetBattleObjectSlot(s32);
-s32 Func_080b78e4(s32, s32);
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
@@ -47,5 +48,5 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state[0x148] = 0;
 
     BattleUnit_Recalculate(actor);
-    return Func_080b78e4(actor, GetBattleObjectSlot(actor));
+    return Actor_Apply(actor, GetBattleObjectSlot(actor));
 }

@@ -27,7 +27,7 @@ extern s32 Data_080c2b68[]; /* HPダメージ 種別3 */
 #define PpHealFalloff Data_080c2b50
 #define HpDmgFalloff Data_080c2b68
 
-/* ゼロ除算を避ける共有算術ルーチン。 */
+/* Shared arithmetic; callers must avoid divide-by-zero. */
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080022f4(s32 numerator, s32 denominator);
 

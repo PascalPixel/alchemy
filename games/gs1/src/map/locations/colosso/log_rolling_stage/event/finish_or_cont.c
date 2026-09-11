@@ -1,14 +1,12 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/event/finish_or_cont.h"
 #include "colosso_log_rolling_stage.h"
-
-extern s32 Func_02005518(void);
-extern void Func_020058c0(void);
-extern void Func_02001312(void);
 
 void Colosso_FinishOrContinueSceneEvent(void)
 {
-    if (Func_02005518() == 0) {
-        Func_020058c0();
+    if (Map_Check() == 0) {
+        Map_Run();
     } else {
-        Func_02001312();
+        Map_Run2();
     }
 }

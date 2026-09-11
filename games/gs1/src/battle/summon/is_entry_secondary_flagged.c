@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/summon/is_entry_secondary_flagged.h"
 
 struct Entry {
     u16 value;
@@ -7,11 +9,11 @@ struct Entry {
     u8 rest[4];
 };
 
-extern struct Entry Data_080c7420[];
+extern struct Entry gRom[];
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
     if ((u32)index > 171)
         return 0;
-    return ((u32)Data_080c7420[index].flags1 << 31) >> 31;
+    return ((u32)gRom[index].flags1 << 31) >> 31;
 }

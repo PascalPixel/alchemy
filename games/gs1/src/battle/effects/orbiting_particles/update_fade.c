@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/orbiting_particles/update_fade.h"
 #include "object_efx.h"
 
 s32 Object_SetCallback(void *, s32);
@@ -14,7 +16,7 @@ void BattleFx_UpdateOrbitingParticleFade(void *object)
     *((s32 *)(object_bytes + 0x18)) = primary_fade;
     if (primary_fade <= 0x1000)
     {
-      Object_SetCallback(object, Data_0809f0b0);
+      Object_SetCallback(object, gRom);
     }
   }
 }

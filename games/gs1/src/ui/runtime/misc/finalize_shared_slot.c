@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 void UiWork_Finalize(struct Work *work, s32 release);

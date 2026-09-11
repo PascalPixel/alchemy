@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "m7_interfaces.h"
 
 void WindowBounds_Set(struct WindowBounds *bounds, s32 right, s32 bottom,

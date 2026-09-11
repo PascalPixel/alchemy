@@ -1,9 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/djinn/mark_balanced_entries.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_080ae778(s32, s32);
 
 s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
 {
@@ -22,7 +21,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
             *p = 0;
             if (i != self) {
                 sp0 = cnt;
-                if (Func_080ae778(self, i) == 0) {
+                if (Sys_Apply(self, i) == 0) {
                     *p = 1;
                     cnt += 1;
                 }

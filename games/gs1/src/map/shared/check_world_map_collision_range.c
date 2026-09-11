@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "map.h"
 
 struct WorldPosition;

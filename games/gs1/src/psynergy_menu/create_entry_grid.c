@@ -1,12 +1,13 @@
+#include "scene.h"
+#include "abi/psynergy_menu/create_entry_grid.h"
 #include "psynergy_menu.h"
 #include "global_cells.h"
 
-s32 Func_080a1814(void *menu);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *Func_080a1778(s32, s32, s32);
-void *Func_080150d8(s32, s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *Func_080150d0(s32, s32, s32, s32, s32);
+struct PsynergyMenuIcon *Sys_Run(s32, s32, s32);
+void *Sys_Run2(s32, s32, s32, s32, s32, s32);
+struct PsynergyMenuIcon *Sys_Run3(s32, s32, s32, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
 {
@@ -19,7 +20,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     struct PsynergyMenuIcon **output;
 
     menu = *(struct PsynergyMenuState **)ADDR_03001F2C;
-    window = Func_080a1814(menu);
+    window = Sys_Check(menu);
     InitializeEntryObjects(window, 2, 2, 8, 0);
 
     window = UiWindow_CreateFar(0, 5, 30, 15, 2);
@@ -29,17 +30,17 @@ void PsynergyMenu_CreateEntryGrid(void)
     menu->column_count = 8;
     menu->row_count = 2;
 
-    cursor = Func_080a1778(window, 0, 4);
+    cursor = Sys_Run(window, 0, 4);
     cursor->state = 13;
     menu->entry_grid_cursor = cursor;
-    Func_080150d8(0, 0, 0, window, 0, 0);
+    Sys_Run2(0, 0, 0, window, 0, 0);
 
     y = 8;
     index = 0;
     output = &menu->entry_icons[0];
     x = 96;
     do {
-        *output++ = Func_080150d0(4, index, window, x, y);
+        *output++ = Sys_Run3(4, index, window, x, y);
         index++;
         x += 16;
     } while (index <= 7);
@@ -49,7 +50,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[8];
     x = 96;
     do {
-        *output++ = Func_080150d0(4, index, window, x, y);
+        *output++ = Sys_Run3(4, index, window, x, y);
         index++;
         x += 16;
     } while (index <= 15);

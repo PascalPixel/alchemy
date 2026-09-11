@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 #define REG32(address) (*(volatile u32 *)(address))

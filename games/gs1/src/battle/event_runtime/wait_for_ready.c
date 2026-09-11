@@ -1,12 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/event_runtime/wait_for_ready.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void WaitFrames(u32);
 void ScheduleCallback(void *);
 s32 BattleEventRuntime_Reset(void);
-void Func_080bd898(void);
 
 s32 BattleEventRuntime_WaitForReady(void)
 {
@@ -24,6 +24,6 @@ s32 BattleEventRuntime_WaitForReady(void)
             WaitFrames(1U);
         } while (FIELD_AT_OFFSET(runtime, s32 *, 0x800) != 4);
     }
-    ScheduleCallback((void *)Func_080bd898);
+    ScheduleCallback((void *)Battle_Run);
     return BattleEventRuntime_Reset();
 }

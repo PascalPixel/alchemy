@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/cam/update.h"
 #include "global_cells.h"
 
 struct SceneCameraState {
@@ -39,13 +41,7 @@ struct LinkWork {
 #define LINK_STAT (*(u16 *)0x03001f64)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
-void Func_080049ac(void);
-void Func_08004cb4(void *);
-void Func_08004c1c(s32);
-void Func_08004bd4(s32);
-void Func_080c0a24(u32, u32, s32, s32, u32);
-
-void Func_080b5864(void)
+void Battle_Run(void)
 {
     void **slot = (void **)ADDR_03001E80;
     struct SceneCameraState *state = slot[0];
@@ -83,10 +79,10 @@ void Func_080b5864(void)
         pos = state->field1c;
     }
 
-    Func_080049ac();
-    Func_08004cb4(pos);
-    Func_08004c1c((s16)state->field36);
-    Func_08004bd4((s16)state->field34);
+    Battle_Run2();
+    Battle_Do(pos);
+    Battle_Do2((s16)state->field36);
+    Battle_Do3((s16)state->field34);
 
     local.first = 0;
     local.second = 0;
@@ -94,6 +90,6 @@ void Func_080b5864(void)
     ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
 
     if (transition->flag == 0) {
-        Func_080c0a24(0x780000, 0x780000, 0, 0, 0x10000);
+        Battle_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }

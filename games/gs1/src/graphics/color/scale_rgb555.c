@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Graphics_ScaleRgb555(
     u16 *source,

@@ -1,28 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/data/empty.h"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneData_GetTable81a8 Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetTable81d8 Func_0200003c
-#define SceneData_GetTable81ec Func_02000044
-#define State_ApplyValues8And0And0Then30 Func_0200004c
-#define State_ApplyValues9And1And0Then44 Func_02000064
-#define State_ApplyValues10And2And0Then58 Func_0200007c
-#define State_ApplyValues11And3And0Then6c Func_02000094
-#define SceneData_GetTable8264 Func_020000ac
-#define Scene_RunEmptyScene Func_020000b4
 
 #include "resource_3cc.h"
-
-void Func_02000114(s32);
-void Func_02000116(s32, s32, s32);
-void Func_0200012c(s32);
-void Func_0200012e(s32, s32, s32);
-void Func_02000144(s32);
-void Func_02000146(s32, s32, s32);
-void Func_0200015c(s32);
-void Func_0200015e(s32, s32, s32);
 
 /*
  * Overlay resource_3cc: in-image table getters and the scene state helpers
@@ -58,26 +39,26 @@ u8 *SceneData_GetTable81ec(void)
 
 void State_ApplyValues8And0And0Then30(void)
 {
-    Func_02000116(8, 0, 0);
-    Func_02000114(0x30);
+    SceneData_Place(8, 0, 0);
+    SceneData_Do(0x30);
 }
 
 void State_ApplyValues9And1And0Then44(void)
 {
-    Func_0200012e(9, 1, 0);
-    Func_0200012c(0x44);
+    SceneData_Place2(9, 1, 0);
+    SceneData_Do2(0x44);
 }
 
 void State_ApplyValues10And2And0Then58(void)
 {
-    Func_02000146(0xA, 2, 0);
-    Func_02000144(0x58);
+    SceneData_Place3(0xA, 2, 0);
+    SceneData_Do3(0x58);
 }
 
 void State_ApplyValues11And3And0Then6c(void)
 {
-    Func_0200015e(0xB, 3, 0);
-    Func_0200015c(0x6C);
+    SceneData_Place4(0xB, 3, 0);
+    SceneData_Do4(0x6C);
 }
 
 /* The eight-byte owner includes the pool word holding this address. */

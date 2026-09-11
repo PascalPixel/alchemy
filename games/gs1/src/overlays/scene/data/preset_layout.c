@@ -1,23 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/data/preset_layout.h"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneData_GetTable9170 Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetTable91d0 Func_0200003c
-#define SceneData_GetTable91e0 Func_02000044
-#define SceneData_GetTable9240 Func_0200004c
-#define State_ApplyRecordTable92c0 Func_02000054
-#define Scene_CallHelper118c Func_0200008c
-#define State_ApplyRectByLayoutSelector Func_02000150
-#define Scene_RepaintBoardRecords Func_02000194
-#define State_CopyPresetA0d0WithOffsetB0 Func_020003c0
-#define Scene_RunActorEightSequence Func_020008b0
-#define State_StampRecordCells Func_02000b3c
-#define SceneData_FindTileRunAt Func_02000b8c
-#define State_CheckFourCellRun Func_02000be4
-#define Effect_AdjustPaletteColors Func_02000e64
-#define Effect_AdjustColorChannels Func_02000ecc
 
 struct TileRun {
     s16 id;
@@ -35,62 +19,10 @@ struct Cell {
     u8 type;
 };
 
-extern s16 *Data_020092c0;
-extern s16 *Data_020092c8;
-extern u16 *Data_020092c4;
-extern u8 Data_0202c000[];
-
-void Func_020001cc();
-s32 Func_02000bb4(s32, s32);
-void Func_02000c8a(s32);
-void Func_020010e4(s32, s32, s32, s32, s32, s32);
-void Func_0200118c(void);
-void Func_020011e4(s32, s32, s32, s32, s32, s32);
-void Func_020011fa(s32, s32, s32, s32, s32, s32);
-void Func_0200122a();
-void Func_0200123e();
-void Func_02001254();
-void Func_02001272();
-void Func_02001284();
-void Func_0200129c();
-void Func_020012a6();
-void Func_020012b8();
-void Func_020012d0();
-void Func_020012b6();
-void Func_02001324();
-void Func_02001340();
-void Func_02001312();
-void Func_02001378();
-void Func_0200139e();
-void Func_02000e70(s16 *records, s32 value);
-void Func_020013bc();
-void Func_02000e8e(s16 *records, s32 value);
-void Func_020004a6(void);
-void Func_02001952();
-void Func_02001958();
-void Func_02001982();
-void Func_0200198a();
-void Func_0200199a();
-void Func_020019a4();
-void Func_020019a4_a();
-void Func_020019b4();
-void Func_020019ba();
-void Func_020019ba_a();
-void Func_020019cc();
-void Func_020019ce();
-void Func_020019d2();
-void Func_020019de();
-void Func_020019ea();
-void Func_020019f4();
-void Func_02001a02();
-void Func_02001a08();
-void Func_02001a42();
-void Func_02001a48();
-void Func_02001d9e(void);
-s32 Func_02001d64(s32, s32);
-void Func_02001e22(void);
-void Func_02001e06(void);
-void Func_02001fc0(s32, s32);
+extern s16 *gOv;
+extern s16 *gOv2;
+extern u16 *gOv3;
+extern u8 gUnk[];
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -152,26 +84,12 @@ void Func_02001fc0(s32, s32);
  * 0x02000ecc-0x02000f34; control jumps over the mask literal at 0x02000f14 and
  * rejoins at 0x02000f18 before the common return.
  */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
 
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
+s32 SceneData_Run();   /* 0x02000eec */
 
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
+s32 SceneData_Run2();   /* 0x02000efa */
 
-s32 Func_02001ee2();   /* 0x02000eec */
-
-s32 Func_02001ef0();   /* 0x02000efa */
-
-s32 Func_02001efe();   /* 0x02000f08 */
+s32 SceneData_Run3();   /* 0x02000f08 */
 
 u8 *SceneData_GetTable9170(void)
 {
@@ -200,15 +118,15 @@ u8 *SceneData_GetTable9240(void)
 
 void State_ApplyRecordTable92c0(void)
 {
-    Func_02000c8a(*(s32 *)0x020092C0);
-    Func_020010e4(0, 0x40, 0x20, 0x20, 0, 0);
-    Func_02000bb4(*(s32 *)0x020092C0, 0xFF);
-    Func_020001cc();
+    SceneData_Do2(*(s32 *)0x020092C0);
+    SceneData_SetRect3(0, 0x40, 0x20, 0x20, 0, 0);
+    SceneData_Apply(*(s32 *)0x020092C0, 0xFF);
+    SceneData_Run4();
 }
 
-void Scene_CallHelper118c(void)
+void Scene_CallHelper(void)
 {
-    Func_0200118c();
+    SceneData_Run5();
 }
 
 void State_ApplyRectByLayoutSelector(void)
@@ -216,34 +134,34 @@ void State_ApplyRectByLayoutSelector(void)
     if (**(s16 **)0x020092c4 == 1) {
         s32 fifth = 4;
         s32 sixth = 9;
-        Func_020011e4(0, 0, 1, 4, fifth, sixth);
+        SceneData_SetRect4(0, 0, 1, 4, fifth, sixth);
     } else {
         s32 fifth = 6;
         s32 sixth = 9;
-        Func_020011fa(0, 0, 1, 4, fifth, sixth);
+        SceneData_SetRect5(0, 0, 1, 4, fifth, sixth);
     }
 }
 
 void Scene_RepaintBoardRecords(void)
 {
     s32 zero;
-    s16 *record = Data_020092c0;
+    s16 *record = gOv;
 
-    if (*Data_020092c8 != 0) {
-        { s32 f1 = 79; s32 g1 = 29; Func_0200122a(65, 53, 2, 1,  f1, g1); }
-        { s32 f2 = 15; s32 g2 = 28; Func_0200123e(65, 40, 2, 4,  f2, g2); }
+    if (*gOv2 != 0) {
+        { s32 f1 = 79; s32 g1 = 29; SceneData_Run6(65, 53, 2, 1,  f1, g1); }
+        { s32 f2 = 15; s32 g2 = 28; SceneData_Run7(65, 40, 2, 4,  f2, g2); }
     } else {
-        { s32 f3 = 79; s32 g3 = 25; Func_02001254(65, 50, 2, 5,  f3, g3); }
+        { s32 f3 = 79; s32 g3 = 25; SceneData_Run8(65, 50, 2, 5,  f3, g3); }
     }
 
-    if (*Data_020092c8 != 0) {
-        { s32 f4 = 32; s32 g4 = 0; Func_02001272(0, 32, 32, 32,  f4, g4); }
-        { s32 f5 = 64; s32 g5 = 0; Func_02001284(32, 32, 32, 32,  f5, g5); }
-        { s32 f6 = 0; s32 g6 = 0; Func_0200129c(0, 32, 32, 32,  f6, g6); }
+    if (*gOv2 != 0) {
+        { s32 f4 = 32; s32 g4 = 0; SceneData_Run9(0, 32, 32, 32,  f4, g4); }
+        { s32 f5 = 64; s32 g5 = 0; SceneData_Run10(32, 32, 32, 32,  f5, g5); }
+        { s32 f6 = 0; s32 g6 = 0; SceneData_Run11(0, 32, 32, 32,  f6, g6); }
     } else {
-        { s32 f7 = 32; s32 g7 = 0; Func_020012a6(0, 64, 32, 32,  f7, g7); }
-        { s32 f8 = 64; s32 g8 = 0; Func_020012b8(32, 64, 32, 32,  f8, g8); }
-        { s32 f9 = 0; s32 g9 = 0; Func_020012d0(0, 64, 32, 32,  f9, g9); }
+        { s32 f7 = 32; s32 g7 = 0; SceneData_Run12(0, 64, 32, 32,  f7, g7); }
+        { s32 f8 = 64; s32 g8 = 0; SceneData_Run13(32, 64, 32, 32,  f8, g8); }
+        { s32 f9 = 0; s32 g9 = 0; SceneData_Run14(0, 64, 32, 32,  f9, g9); }
     }
 
     if (record[0] != -1) {
@@ -251,8 +169,8 @@ void Scene_RepaintBoardRecords(void)
         do {
             u8 *piece = *(u8 **)(record + 4);
 
-            if (*Data_020092c8 == 1) {
-                Func_020012b6(piece, 4);
+            if (*gOv2 == 1) {
+                SceneData_Run15(piece, 4);
                 piece[35] = 3;
                 piece[85] = zero;
                 *(s32 *)(piece + 12) = 0x1a0000;
@@ -260,14 +178,14 @@ void Scene_RepaintBoardRecords(void)
                 if (record[3] != 0) {
                     s32 col = record[1];
                     s32 row = record[2];
-                    Func_02001324(68, 40, 1, 4, col + 32, row);
+                    SceneData_Run16(68, 40, 1, 4, col + 32, row);
                 } else {
                     s32 col = record[1];
                     s32 row = record[2];
-                    Func_02001340(70, 40, 4, 1, col + 32, row);
+                    SceneData_Run17(70, 40, 4, 1, col + 32, row);
                 }
             } else {
-                Func_02001312(piece, 1);
+                SceneData_Run18(piece, 1);
                 piece[35] = 1;
                 piece[85] = 2;
                 *(s32 *)(piece + 12) = zero;
@@ -276,17 +194,17 @@ void Scene_RepaintBoardRecords(void)
         } while (record[0] != -1);
     }
 
-    { s32 f10 = 10; s32 g10 = 50; Func_02001378(70, 42, 1, 1,  f10, g10); }
+    { s32 f10 = 10; s32 g10 = 50; SceneData_Run19(70, 42, 1, 1,  f10, g10); }
 
-    if (*Data_020092c8 == 1) {
-        { s32 f11 = 0; s32 g11 = 0; Func_0200139e(0, 32, 32, 32,  f11, g11); }
-        Func_02000e70(Data_020092c0, 254);
+    if (*gOv2 == 1) {
+        { s32 f11 = 0; s32 g11 = 0; SceneData_Run20(0, 32, 32, 32,  f11, g11); }
+        SceneData_Apply2(gOv, 254);
     } else {
-        { s32 f12 = 0; s32 g12 = 0; Func_020013bc(0, 64, 32, 32,  f12, g12); }
-        Func_02000e8e(Data_020092c0, 255);
+        { s32 f12 = 0; s32 g12 = 0; SceneData_Run21(0, 64, 32, 32,  f12, g12); }
+        SceneData_Apply3(gOv, 255);
     }
 
-    Func_020004a6();
+    SceneData_Run22();
 }
 
 void State_CopyPresetA0d0WithOffsetB0(void)
@@ -308,32 +226,32 @@ void State_CopyPresetA0d0WithOffsetB0(void)
 
 void Scene_RunActorEightSequence(void)
 {
-    Func_02001952();
-    Func_0200199a(0, 8);
-    Func_02001958(6);
-    Func_020019de(239);
-    Call3(Func_0200198a, 8, 0x8000, 0x3333);
-    Func_020019ba(8, 2);
-    Func_020019a4(8, 104, 176);
-    Func_02001982(6);
-    Func_020019d2(0, 2);
-    Call3(Func_020019b4, 0, 0x4ccc, 0x3333);
-    Func_020019ce(0, 8, 0);
-    Func_020019a4_a(24);
-    Func_020019f4(0, 1);
-    Func_020019ea(8);
-    Func_02001a02(8, 1);
-    Call1(Func_02001a42, 0x120);
-    Func_02001a48(213);
-    Call6(Func_020019ba_a, 5, 9, 1, 4, 4, 9);
-    Call6(Func_020019cc, 0, 0, 1, 4, 6, 9);
-    *Data_020092c4 = 0;
-    Func_02001a08();
+    SceneData_Run23();
+    SceneData_Run24(0, 8);
+    SceneData_Run25(6);
+    SceneData_Run26(239);
+    SceneData_Place(8, 0x8000, 0x3333);
+    SceneData_Run27(8, 2);
+    SceneData_Run28(8, 104, 176);
+    SceneData_Run29(6);
+    SceneData_Run30(0, 2);
+    SceneData_Place2(0, 0x4ccc, 0x3333);
+    SceneData_Run31(0, 8, 0);
+    SceneData_Run32(24);
+    SceneData_Run33(0, 1);
+    SceneData_Run34(8);
+    SceneData_Run35(8, 1);
+    SceneData_Do(0x120);
+    SceneData_Run36(213);
+    SceneData_SetRect(5, 9, 1, 4, 4, 9);
+    SceneData_SetRect2(0, 0, 1, 4, 6, 9);
+    *gOv3 = 0;
+    SceneData_Run37();
 }
 
 void State_StampRecordCells(s16 *records, s32 value)
 {
-    extern u8 Data_02010000[];
+    extern u8 gUnk2[];
 
     s16 *record = records;
     if (record[0] == -1) return;
@@ -344,7 +262,7 @@ void State_StampRecordCells(s16 *records, s32 value)
         s32 i;
         for (i = 3; i >= 0; i--) {
             u8 *cell;
-            cell = Data_02010000 + ((column + (row << 7)) << 2);
+            cell = gUnk2 + ((column + (row << 7)) << 2);
             cell[2] = (u8)value;
             if (along == 0) column++;
             else row++;
@@ -379,14 +297,14 @@ const struct TileRun *SceneData_FindTileRunAt(
 
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 {
-    extern struct Cell Data_02010000[];
+    extern struct Cell gUnk2[];
 
     s32 i;
 
     for (i = 0; i <= 3; i++) {
-        struct Cell *cell = &Data_02010000[x + (z << 7)];
+        struct Cell *cell = &gUnk2[x + (z << 7)];
 
-        if (cell->kind == 0xff || *(u8 *)((cell->type << 2) + (s32)Data_0202c000) != 0) {
+        if (cell->kind == 0xff || *(u8 *)((cell->type << 2) + (s32)gUnk) != 0) {
             return -1;
         }
         if (mode == 0) {
@@ -402,13 +320,13 @@ void Effect_AdjustPaletteColors(s32 a)
 {
     u32 x;
 
-    Func_02001d9e();
+    SceneData_Run38();
     x = 0;
     do {
         u32 idx = x >> 16;
         if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
             u16 *pal = (u16 *)(0x5000000 + idx * 2);
-            *pal = Func_02001d64(*pal, a);
+            *pal = SceneData_Apply4(*pal, a);
         }
         {
             u32 nx = x + 0x10000;
@@ -418,9 +336,9 @@ void Effect_AdjustPaletteColors(s32 a)
             }
         }
     } while (1);
-    Func_02001e22();
-    Func_02001e06();
-    Func_02001fc0(0x10000, 0);
+    SceneData_Run39();
+    SceneData_Run40();
+    SceneData_Apply5(0x10000, 0);
 }
 
 u16 Effect_AdjustColorChannels(u16 color, s32 adj)
@@ -430,12 +348,12 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Func_02001ee2(
+    red = (s16)(red + SceneData_Run(
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - Func_02001ef0(green, adj));
-    blue = (s16)(blue - Func_02001efe(blue, adj));
+    green = (s16)(green - SceneData_Run2(green, adj));
+    blue = (s16)(blue - SceneData_Run3(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

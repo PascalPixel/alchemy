@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)

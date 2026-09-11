@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item_menu/pos_category.h"
 #include "layout_guard.h"
 
 struct Object_080a9cbc {
@@ -18,12 +20,11 @@ LAYOUT_OFFSET_GUARD(
     State_080a9cbc_objects_offset, struct State_080a9cbc, objects, 72);
 LAYOUT_SIZE_GUARD(State_080a9cbc_size, struct State_080a9cbc, 200);
 
-extern struct State_080a9cbc *Data_03001f2c;
-void Func_080a17c4(void *obj);
+extern struct State_080a9cbc *gIw;
 
 void ItemMenu_PosCategory(void)
 {
-    struct State_080a9cbc *state = Data_03001f2c;
+    struct State_080a9cbc *state = gIw;
     s32 value1 = 248;
     struct Object_080a9cbc **entry = state->objects;
     s32 value2 = 168;
@@ -35,7 +36,7 @@ void ItemMenu_PosCategory(void)
         if (object != 0) {
             object->value1 = value1;
             object->value2 = value2;
-            Func_080a17c4(object);
+            Sys_Do(object);
         }
         remaining--;
     } while (remaining >= 0);

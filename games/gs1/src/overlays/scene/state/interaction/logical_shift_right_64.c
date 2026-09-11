@@ -3,6 +3,7 @@
  * carries its own copy of this library.
  */
 #include "types.h"
+#include "scene.h"
 
 /*
  * r0/r1 hold the low and high words and r2 the count -- the ordinary pair

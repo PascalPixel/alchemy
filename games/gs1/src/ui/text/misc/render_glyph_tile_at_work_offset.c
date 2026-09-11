@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/misc/render_glyph_tile_at_work_offset.h"
 
 struct Work_08017c1c {
     u8 pad_00[12];
@@ -6,9 +8,7 @@ struct Work_08017c1c {
     u16 y;
 };
 
-extern u8 *Data_03001e8c;
-
-s32 Func_0801de5c(u16 *, s32, s32, s32);
+extern u8 *gIw;
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
@@ -16,7 +16,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
     s32 offset_x,
     s32 offset_y)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gIw;
     s32 index;
     u32 cell;
 
@@ -39,7 +39,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
         dst = 0x06002000 + cell;
         src = (s32)base + cell;
 
-        Func_0801de5c(
+        Ui_SetMode(
             buffer,
             src,
             dst,

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "battle_runtime.h"
 #include "item.h"
 

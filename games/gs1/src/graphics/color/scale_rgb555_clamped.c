@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count)
 {

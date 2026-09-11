@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 s32 PartyInventory_CountItem(s32 item_id)

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "curve.h"
 
 s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position)

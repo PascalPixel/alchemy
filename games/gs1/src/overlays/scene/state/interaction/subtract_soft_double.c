@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/subtract_soft_double.h"
 
 /*
  * Soft-float double subtraction for resource_3a7.  It shares the addition
@@ -17,11 +19,8 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-void Func_02002b6c(const SoftDouble *packed, SoftFloatRecord *record);
-void Func_02002b76(const SoftDouble *packed, SoftFloatRecord *record);
-SoftFloatRecord *Func_02002570(SoftFloatRecord *left, SoftFloatRecord *right,
+SoftFloatRecord *State_Run(SoftFloatRecord *left, SoftFloatRecord *right,
                                SoftFloatRecord *result);
-SoftDouble Func_020029c0(SoftFloatRecord *result);
 
 SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
 {
@@ -40,11 +39,11 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     wb[0] = b0;
     wb[1] = b1;
 
-    Func_02002b6c(&frame.packed_a, &frame.record_a);
+    State_Apply(&frame.packed_a, &frame.record_a);
     {
         SoftFloatRecord *rb = &frame.record_b;
 
-        Func_02002b76(&frame.packed_b, rb);
+        State_Apply2(&frame.packed_b, rb);
 
         /*
          * Toggling the sign word of the unpacked second operand is what turns
@@ -53,6 +52,6 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
          */
         rb->word[1] ^= 1u;
 
-        return Func_020029c0(Func_02002570(&frame.record_a, rb, &frame.result));
+        return State_Do(State_Run(&frame.record_a, rb, &frame.result));
     }
 }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_nav/step_down_until_clamp.h"
 
 /*
  * Steps a record down by a tenth of a unit per frame until it reaches the
@@ -9,8 +11,8 @@
  * pc-relative load.
  */
 
-u8 *Func_02003c94();           /* Record fetch, returns the record. */
-void Func_02003bc4();          /* Dispatch stub table entry 0. */
+u8 *Actor_Run();           /* Record fetch, returns the record. */
+void Actor_Run2();          /* Dispatch stub table entry 0. */
 
 /*
  * Each Func_ name labels the call word of one call site rather than a
@@ -21,7 +23,7 @@ void Func_02003bc4();          /* Dispatch stub table entry 0. */
  */
 void StagedActor_StepDownUntilClamp(s32 index)
 {
-    u8 *obj = Func_02003c94(index);
+    u8 *obj = Actor_Run(index);
     u32 cnt;
 
     obj[0x55] = 0;
@@ -29,7 +31,7 @@ void StagedActor_StepDownUntilClamp(s32 index)
     cnt = 0;
     for (;;) {
         if (cnt > 31) return;
-        Func_02003bc4(1);
+        Actor_Run2(1);
         *(s32 *)(obj + 28) += -0x1999;
         *(s32 *)(obj + 12) += -0xcccc;
         cnt++;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 BattleObject_IsValidId(u32 object_id)
 {

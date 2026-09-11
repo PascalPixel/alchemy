@@ -1,5 +1,6 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
 
 void MusicTrack_Stop(void *, void *);
 

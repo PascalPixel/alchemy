@@ -1,5 +1,7 @@
 #include "b5_context.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/motion/initialize_rising_object.h"
 
 void Object_ResetMotion(void *);
 void Object_SetPosition(void *, s32, s32, s32);
@@ -22,7 +24,7 @@ struct RisingObjectState {
 
 void BattleFx_InitializeRisingObject(s32 arg0)
 {
-    struct B5Context *context = Func_080b5098(arg0);
+    struct B5Context *context = Battle_Run(arg0);
     struct RisingObjectState *object = context->object;
 
     object->field_34 = 0x20000;

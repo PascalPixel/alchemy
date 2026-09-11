@@ -1,6 +1,6 @@
 #include "types.h"
-
-s32 Func_08079b24(s32 selector, s32 mode);
+#include "scene.h"
+#include "abi/owner/scale_adjusted_amount.h"
 
 s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 selector)
 {
@@ -12,7 +12,7 @@ s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 sel
     if (amount < 0) {
         amount = 0;
     }
-    product = Func_08079b24(result, 1) * (amount + (adjustment * 2));
+    product = Sys_Apply(result, 1) * (amount + (adjustment * 2));
     if (product < 0) {
         product += 0x1FF;
     }

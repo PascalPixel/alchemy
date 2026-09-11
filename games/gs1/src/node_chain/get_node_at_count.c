@@ -1,5 +1,6 @@
 #include "node_chain.h"
 #include "types.h"
+#include "scene.h"
 
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state)
 {

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/resource/push_pending_pair.h"
 
 struct State_0801a7c0 {
     u8 filler0[0x354];
@@ -7,11 +9,11 @@ struct State_0801a7c0 {
     u16 cnt;
 };
 
-extern struct State_0801a7c0 *volatile Data_03001e98;
+extern struct State_0801a7c0 *volatile gIw;
 
 void Resource_PushPendingPair(u32 first, u32 second)
 {
-    struct State_0801a7c0 *state = Data_03001e98;
+    struct State_0801a7c0 *state = gIw;
     u16 cnt = state->cnt;
 
     if (cnt != 16) {

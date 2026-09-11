@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Math_IntegerSqrt(s32 value)
 {

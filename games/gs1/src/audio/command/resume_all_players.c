@@ -1,10 +1,8 @@
 #include "types.h"
-
-#define AudioCommand_ResumeAllPlayers Func_080f9564
-
-void Func_080fa490(void);
+#include "scene.h"
+#include "abi/audio/command/resume_all_players.h"
 
 void AudioCommand_ResumeAllPlayers(void)
 {
-    Func_080fa490();
+    Audio_Run();
 }

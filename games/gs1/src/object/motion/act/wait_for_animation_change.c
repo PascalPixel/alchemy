@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void WaitFrames(s32);

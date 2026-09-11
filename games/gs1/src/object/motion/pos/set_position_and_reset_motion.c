@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z)

@@ -1,13 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/finalize_work_and_release_heap13.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(void *arg0);
 void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
-void Func_08002dd8(s32);
 
 void Ui_FinalizeWorkAndReleaseHeap13(void)
 {
@@ -28,5 +28,5 @@ void Ui_FinalizeWorkAndReleaseHeap13(void)
         p = (u16 *)((u8 *)p + 2);
         Resource_ResetEntry(*p);
     }
-    Func_08002dd8(0x13);
+    Ui_Do(0x13);
 }

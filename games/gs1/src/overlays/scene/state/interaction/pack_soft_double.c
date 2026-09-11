@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/pack_soft_double.h"
 
 /*
  * Double-precision packer from the GCC soft-float runtime shape.  The overlay
@@ -37,11 +39,6 @@ typedef union SoftDoubleUnion {
     } bits;
 } SoftDoubleUnion;
 
-s32 Func_02002cfc(SoftFloatRecord *record);
-s32 Func_02002d24(SoftFloatRecord *record);
-s32 Func_02002d3e(SoftFloatRecord *record);
-u64 Func_02002b9a(u64 value, u32 count);
-
 SoftDouble Runtime_PackSoftDouble(SoftFloatRecord *src)
 {
     SoftDoubleUnion dst;
@@ -49,15 +46,15 @@ SoftDouble Runtime_PackSoftDouble(SoftFloatRecord *src)
     s32 sign = (s32)src->sign;
     s32 exp = 0;
 
-    if (Func_02002cfc(src)) {
+    if (State_Check(src)) {
         exp = 0x7ff;
         if (src->cls == CLASS_QNAN || 1) {
             fraction |= 0x8000000000000ULL;
         }
-    } else if (Func_02002d24(src)) {
+    } else if (State_Check2(src)) {
         exp = 0x7ff;
         fraction = 0;
-    } else if (Func_02002d3e(src)) {
+    } else if (State_Check3(src)) {
         exp = 0;
         fraction = 0;
     } else if (fraction == 0) {
@@ -71,7 +68,7 @@ SoftDouble Runtime_PackSoftDouble(SoftFloatRecord *src)
                 fraction = 0;
             } else {
                 s32 lowbit = (fraction & ((1 << shift) - 1)) ? 1 : 0;
-                fraction = Func_02002b9a(fraction, (u32)shift) | (u32)lowbit;
+                fraction = State_Apply(fraction, (u32)shift) | (u32)lowbit;
             }
             if ((fraction & 0xff) == 0x80) {
                 if (fraction & (1 << 8)) {

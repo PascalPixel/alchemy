@@ -1,12 +1,14 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/fmt/format_hex_to_work.h"
 #include "global_cells.h"
 
-extern const u8 Data_0800795c[];
+extern const u8 gRom[];
 
 void Text_FormatHexToWork(u32 value)
 {
     u8 *buffer = (u8 *)ADDR_03001F70;
-    const u8 *digits = Data_0800795c;
+    const u8 *digits = gRom;
     s32 index = 7;
 
     do {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Runtime_080bb928 {
     u8 padding_000[0x16c];

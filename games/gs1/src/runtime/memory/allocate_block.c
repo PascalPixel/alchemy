@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 void *Runtime_AllocateBlock(s32 kind, s32 size)

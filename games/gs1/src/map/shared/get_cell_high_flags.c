@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Map_GetCellHighFlags(s32 x, s32 y)
 {

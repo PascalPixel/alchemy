@@ -1,10 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/motion/act/set_mode_and_wait_animation.h"
 
-s32 Func_080924d4();
 s32 Motion_WaitForAnimationChange(s32);
 
 void Motion_SetModeAndWaitAnimation(s32 arg0)
 {
-    Func_080924d4();
+    Obj_Check();
     Motion_WaitForAnimationChange(arg0);
 }

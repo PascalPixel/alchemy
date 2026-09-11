@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/locations/heidia/village/soft/add.h"
 
 /*
  * Soft-float double addition for overlay resource_3bf.  A packed double is
@@ -12,10 +14,7 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-void Func_0200b85c(const SoftDouble *packed, SoftFloatRecord *record);
-void Func_0200b866(const SoftDouble *packed, SoftFloatRecord *record);
-SoftFloatRecord *Func_0200b258(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
-SoftDouble Func_0200b6a8(SoftFloatRecord *record);
+SoftFloatRecord *Map_Run(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
 
 /*
  * Unpacks both operands into 20-byte records, runs the arithmetic core, and
@@ -40,8 +39,8 @@ SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     packedBWords[0] = b0;
     packedBWords[1] = b1;
 
-    Func_0200b85c(&frame.packedA, &frame.recordA);
-    Func_0200b866(&frame.packedB, &frame.recordB);
+    Map_Apply(&frame.packedA, &frame.recordA);
+    Map_Apply2(&frame.packedB, &frame.recordB);
 
-    return Func_0200b6a8(Func_0200b258(&frame.recordA, &frame.recordB, &frame.result));
+    return Map_Do(Map_Run(&frame.recordA, &frame.recordB, &frame.result));
 }

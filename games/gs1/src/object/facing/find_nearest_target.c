@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/facing/find_nearest_target.h"
 #include "fixed_math.h"
 #include "global_cells.h"
 
@@ -22,7 +24,7 @@ struct FacingEntry {
 
 s32 ArcTan2(s32, s32);
 
-struct FacingEntry *Func_08093af8(struct FacingEntry *self, s32 id)
+struct FacingEntry *Obj_Run(struct FacingEntry *self, s32 id)
 {
     struct FacingEntry *entry;
     struct FacingEntry *found;

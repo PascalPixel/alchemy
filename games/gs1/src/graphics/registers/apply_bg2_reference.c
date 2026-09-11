@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 void Graphics_ApplyBg2ReferencePoint(void)

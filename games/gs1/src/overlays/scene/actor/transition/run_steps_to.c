@@ -1,14 +1,11 @@
 #include "types.h"
-
-extern void Func_02002ef6(s32);
-extern void Func_02002efe(s32);
-extern void Func_02002f04(s32);
-extern void Func_02002f0a(s32);
+#include "scene.h"
+#include "abi/overlays/scene/actor/transition/run_steps_to.h"
 
 void Scene_RunSteps30FTo312(void)
 {
-    Func_02002ef6(0x30F);
-    Func_02002efe(0x310);
-    Func_02002f04(0x311);
-    Func_02002f0a(0x312);
+    Actor_Do(0x30F);
+    Actor_Do2(0x310);
+    Actor_Do3(0x311);
+    Actor_Do4(0x312);
 }

@@ -1,8 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/misc/check_cancel_by_mode_input.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-s32 Func_080f9048();
 s32 UiWork_CheckCancelByModeInput(void *obj)
 {
   void *p;
@@ -15,7 +16,7 @@ s32 UiWork_CheckCancelByModeInput(void *obj)
   p = *((void **)ADDR_03001E8C);
   work = p;
   flag = 0;
-  if (((*((u8 *)(((u8 *)work) + RENDER_BUSY_OFS))) != 0) && (Func_080f9048() == 0))
+  if (((*((u8 *)(((u8 *)work) + RENDER_BUSY_OFS))) != 0) && (Ui_Check() == 0))
   {
     flag = 1;
   }

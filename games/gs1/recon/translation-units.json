@@ -110624,9 +110624,9 @@
       "overlay": null
     },
     {
-      "id": "shop-fill_selector",
+      "id": "shop-selection-fill",
       "game": "gs1",
-      "source": "games/gs1/src/shop/fill_selector.c",
+      "source": "games/gs1/src/shop/selection/fill.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],

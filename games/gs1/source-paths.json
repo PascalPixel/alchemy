@@ -6061,7 +6061,7 @@
     },
     "main:080967e4": {
       "name": "Field_DispatchTypeHandler",
-      "source": "field/dispatch_type_handler.c"
+      "source": "field/dispatch/type_handler.c"
     },
     "main:08096ab0": {
       "name": "BattleFx_ClearChildValueOnMismatch"
@@ -6280,7 +6280,7 @@
     },
     "main:080b06c0": {
       "name": "Shop_FillSelector",
-      "source": "shop/fill_selector.c"
+      "source": "shop/selection/fill.c"
     },
     "main:080b06ec": {
       "name": "Shop_CopyGlyphs"

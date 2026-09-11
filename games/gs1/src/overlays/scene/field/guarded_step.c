@@ -17,11 +17,11 @@ extern s32 gEntTbl[];
 
 u16 *GameFlag_IsSet_1(s32);
 
-u16 *Field_unk_02003472(s32);
+u16 *GameFlag_GetRecord2(s32);
 
 u8 *Field_unk_02003506();
 
-u8 *Field_unk_02003ef8(s32 index);
+u8 *Field_GetRecord(s32 index);
 
 s32 *Field_unk_02003f68(s32);
 
@@ -168,7 +168,7 @@ void State_RunWhenSlotZeroFacingC000(void)
 
 void State_RunWhenActorZeroFacing4000(void)
 {
-    u16 *p = Field_unk_02003472(0);
+    u16 *p = GameFlag_GetRecord2(0);
     if (p[3] == 0x4000) {
         Field_unk_02003548();
     }
@@ -478,7 +478,7 @@ void Scene_ApplyRect10_14_7_13_7(void)
  */
 void Actor_UseActorTenCellAndNext(void)
 {
-    u8 *record = Field_unk_02003ef8(10);
+    u8 *record = Field_GetRecord(10);
     s32 cell;
 
     if (record == 0) {

@@ -342,7 +342,7 @@ void State_SetDispcntBit9ByThreshold(void)
 /* overlays/scene/story/set_piece/effect.c */
 extern s32 gIw;
 extern s32 gOv2[3];   /* image offset 0x5240 */
-extern u8 *Story_unk61_3(s32 arg0, s32 arg1, s32 arg2, s32 arg3);  /* site veneer -> Story_unk62_3 */
+extern u8 *Story_unk61_3(s32 arg0, s32 arg1, s32 arg2, s32 arg3);  /* site veneer -> Object_CreateFar */
 extern void Story_unk63_3(u8 *obj);                             /* site veneer -> Actor_SetMode3AndRate4ccc */
 extern void Story_unk64_3(u8 *obj, s32 arg1);                   /* site veneer -> Object_SetMode */
 
@@ -445,7 +445,7 @@ void Scene_RunEarlySequence(void)
     Story_unk2_2(0x8fd);
 }
 
-void Story_unk84_3(void)
+void Scene_RunScene3a4SequenceH(void)
 {
     s32 i;
     u8 *p5;
@@ -478,7 +478,7 @@ void Story_unk84_3(void)
     Story_unk4_2(0x8fe);
 }
 
-void Story_unk93_3(void)
+void Scene_RunScene3a4SequenceI(void)
 {
     s32 i;
     u8 *p8;

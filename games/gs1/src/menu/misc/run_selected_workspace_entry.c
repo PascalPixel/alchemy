@@ -12,5 +12,5 @@ void Menu_RunSelectedWorkspaceEntry(void)
     index = *(u16 *)(base + 0x574);
     index *= 4;
     index += 0x610;
-    Menu_unk2_2(*(void **)(base + index));
+    Ui_ApplyTableScaleToObject(*(void **)(base + index));
 }

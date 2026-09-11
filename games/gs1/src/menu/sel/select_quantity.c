@@ -18,7 +18,7 @@ s32 Menu_Run(s32 value)
 
     confirmState[5] = 13;
     window = Menu_SetRange(0, 0, 30, 10, 2);
-    Menu_Do(Menu_unk2_4);
+    Menu_Do(Menu_UpdateEntryObjectTransforms);
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
@@ -75,7 +75,7 @@ done:
     {
         s32 delay = 0xc80;
 
-        Menu_Apply4((const void *)Menu_unk2_4, delay);
+        Menu_Apply4((const void *)Menu_UpdateEntryObjectTransforms, delay);
     }
 
     {

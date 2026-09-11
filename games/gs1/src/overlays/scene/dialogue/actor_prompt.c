@@ -151,7 +151,7 @@ s32 SceneData_GetTertiaryTable(void)
     return (s32)gOv10;
 }
 
-s32 Talk_unk9_4(void)
+s32 Scene_RunSupplementalSequenceOne(void)
 {
     extern u8 gCell[];
     extern u8 gWork[];
@@ -226,7 +226,7 @@ s32 Talk_unk9_4(void)
     return 0;
 }
 
-void Talk_unk16_4(void)
+void Scene_RunScene3c3SequenceC(void)
 {
     extern u8 gCell[];
     extern u8 gWork[];

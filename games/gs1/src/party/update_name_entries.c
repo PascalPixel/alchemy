@@ -37,7 +37,7 @@ s32 UpdateNameEntries(void)
         if (Party_Check() == -1) {
             break;
         }
-        Party_unk2();
+        SerialRuntime_WaitForTransferB();
         if (name_entry[298] != 0) {
             named_count += 1;
         }
@@ -70,7 +70,7 @@ s32 UpdateNameEntries(void)
     buffer = Runtime_BumpAllocateAlternatePool(320);
     Party_Run(1);
     if (Party_Check() != -1) {
-        Party_unk2();
+        SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }
     Party_Do(buffer);

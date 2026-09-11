@@ -44,8 +44,8 @@ void Camera_InitDefaultTransform(void)
 
     Sys_Run();
     Sys_Do(&state->field0c);
-    Sys_unk2_2(state->field36);
-    Sys_unk3_2(state->field34);
+    SceneTransform_ApplyYaw(state->field36);
+    SceneTransform_ApplyPitch(state->field34);
 
     transfer.first = 0;
     transfer.second = 0;

@@ -5,6 +5,8 @@
 #include "select_overlay_data_by_runtime_selector.h"
 #include "select_overlay_data_by_runtime_selector_body.inc"
 
+/* overlays/scene/story/selector_effect/selector_effect.c */
+/* overlays/scene/story/selector_effect/selector_effect.c */
 /* overlays/scene/story/selector_effect/actor_motion.c */
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
 
@@ -879,7 +881,7 @@ typedef struct {
     s32 t1;
 } SceneEvent;
 
-void Story_unk83_3(void)
+void Scene_RunSelSequenceE(void)
 {
     SceneEvent ev;
     s32 kind;
@@ -945,7 +947,7 @@ void Story_unk83_3(void)
 /* overlays/scene/story/selector_effect/run_scene_sequence_g.c */
 extern u8 gWork[];
 
-void Story_unk118_3(s32 a0)
+void Scene_RunSelSequenceG(s32 a0)
 {
     u32 i;
     s32 x;
@@ -1313,7 +1315,7 @@ Ent *Story_unk148_3(Desc *, Ent *);
 
 struct Rec_395 *Story_unk149_3();
 
-s32 Story_unk150_3(Ent *a)
+s32 stop_blocked_actor_motion(Ent *a)
 {
     Desc d;
     u32 idx;
@@ -1356,7 +1358,7 @@ done:
     return 0;
 }
 
-s32 Story_unk151_3(s32 *a)
+s32 find_clear_actor_position(s32 *a)
 {
     s32 sel;
     s32 buf[3];
@@ -1458,7 +1460,7 @@ found:
     return ret;
 }
 
-void Story_unk152_3(void)
+void Scene_AdvanceSelectedRecord(void)
 {
     u32 i;
     s32 rec7;
@@ -1488,3 +1490,321 @@ void Story_unk152_3(void)
         }
     }
 }
+
+/* overlays/scene/story/selector_effect/move_and_redraw.c */
+#define ValueMoveAndRedraw Value2
+
+#include "staged_actor_movement.h"
+
+void Story_RunMoveAndRedraw(StagedActorMovementRequest request)
+{
+#include "run_staged_actor_movement_and_redraw_body.inc"
+}
+
+/* overlays/scene/story/selector_effect/run_scene_sequence_c.c */
+#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+
+s32 Scene_RunScene39bSequenceC(s32 a0)
+{
+    s32 value;
+    s32 magic;
+    s32 base5_3001e40;
+    s32 none;
+    u8 storage[40];
+    u8 *rec = storage;
+
+    FIELD(rec, s32, 4) = 7;
+    base5_3001e40 = 0x3001e40;
+    if ((*(volatile s32 *)base5_3001e40 & 1) == 0) {
+        FIELD(rec, s32, 4) = 5;
+    }
+    FIELD(rec, s32, 8) = 0xcccc;
+    FIELD(rec, s32, 12) = 0xcccc;
+    none = 0;
+    FIELD(rec, s32, 0) = none;
+    value = Story_Check();
+    magic = -((((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) + (((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) << 4)) + ((((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) + (((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) << 4)) << 8));
+    Story_RunSequenceC((*(volatile s32 *)(a0 + 8) + ((8 - (*(volatile s32 *)base5_3001e40 & 15)) << 16)), (*(volatile s32 *)(a0 + 12) + 0x1a0000), *(volatile s32 *)(a0 + 16), none, magic, 0, 0xb0000, rec);
+    return 0;
+}
+
+/* overlays/scene/story/selector_effect/scene_call_helper_b.c */
+/* overlays/scene/story/selector_effect/helper_b.c */
+void Scene_CallHelper(void)
+{
+    Story_RunCallHelperB();
+}
+
+/* overlays/scene/story/selector_effect/forward.c */
+void Scene_Forward(void)
+{
+    Story_RunCallHelperB();
+}
+
+/* overlays/scene/story/selector_effect/run_single_step.c */
+void Scene_RunSingleStep(void)
+{
+    Story_RunCallHelperB();
+}
+
+/* overlays/scene/story/selector_effect/helper.c */
+void Scene_CallHelper(void)
+{
+    Story_RunCallHelperB();
+}
+
+/* overlays/scene/script/sel_open_step.c */
+extern u8 gWork[];
+
+void Scene_RunSelSelOpenStep(s32 a0)
+{
+    u32 i;
+    s32 record;
+
+    Script_RunSelOpenStep();
+    Script_unk2_4SelOpenStep(228);
+    Script_Place(0, 0x6666, 0x3333);
+    Script_unk3_4SelOpenStep(0, 2);
+    Script_unk2_3(0, 0, -8);
+    record = Script_Check(0);
+    Script_unk4_4SelOpenStep(record, 0);
+    Script_unk5_3SelOpenStep(8);
+    Script_unk6_3SelOpenStep(0, ((a0 << 19) + 0x80000), 0);
+    Script_unk7_3SelOpenStep(30);
+}
+
+/* overlays/scene/script/sel_place_step.c */
+extern u8 gWork[];
+
+void Scene_RunSelSelPlaceStep(void)
+{
+    u32 i;
+    s32 record;
+
+    if (Script_Check(0x310) != 0) {
+        record = Script_unk2(0x311);
+        if (record == 0) {
+            goto L_02001140;
+        }
+        record = Script_unk3(0x312);
+        if (record == 0) {
+            goto L_02001140;
+        }
+        Script_Do(0x876);
+        Script_RunSelPlaceStep(30);
+        Script_Place(0x10000, 0x10000, 0x10000);
+        Script_unk2_4SelPlaceStep(141);
+        Script_unk3_4SelPlaceStep(60);
+        *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
+        Script_unk4_4SelPlaceStep();
+        Script_unk5_3SelPlaceStep();
+        Script_unk2_2(0x121);
+        Script_unk2_3(-1, -1, 0xe666);
+        Script_unk6_3SelPlaceStep();
+        Script_unk7_3SelPlaceStep(13);
+    } else {
+        L_02001140:;
+        Script_unk3_2(0x876);
+    }
+}
+
+/* overlays/scene/script/sel_cam_step.c */
+extern u8 gWork[];
+
+u8 *Script_RunSelCamStep();
+
+void Scene_RunSelSelCamStep(void)
+{
+    u8 *p5;
+
+    p5 = *(volatile s32 *)gWork;
+    Script_unk2_4SelCamStep();
+    Script_Check(0x200ba65, 0xc80);
+    Script_Place(0, 0x28000, 0x14000);
+    Script_unk3_4SelCamStep(0, 1);
+    *(u8 *)(Script_unk2(0) + 90) &= 254;
+    Script_unk4_4SelCamStep(228);
+    if (*(s16 *)((s32)p5 + 0x16c) == 2) {
+        Script_unk2_3(0, 232, (154 << 2));
+    } else if (*(s16 *)((s32)p5 + 0x16c) == 3) {
+        Script_unk2_3(0, (180 << 1), (182 << 2));
+    } else if (*(s16 *)((s32)p5 + 0x16c) == 4) {
+        Script_unk2_3(0, 248, (198 << 2));
+    } else {
+        Script_unk3_3(0, 696, 592);
+        Script_unk4_3(0, 696, 600);
+        Script_Do(30);
+    }
+    Script_unk5_3SelCamStep(0);
+    {
+        u8 *record = Script_RunSelCamStep(0);
+        u8 value = *(volatile u8 *)&record[90];
+
+        record[90] = (u8)(value | 1);
+    }
+    Script_unk2_2(0x200ba65);
+    Script_unk6_3SelCamStep();
+}
+
+/* overlays/scene/script/sel_close_step.c */
+void Scene_RunSelSelCloseStep(void)
+{
+    s32 rec7;
+    s32 record;
+    s32 record2;
+    s16 v10;
+    s16 v18;
+
+    if (Script_Check(0x256) == 0) {
+        record = Script_unk2(0);
+        v10 = *(s16 *)(record + 10);
+        record2 = Script_unk3(0);
+        v18 = *(s16 *)(record2 + 18);
+        if ((u32)(v10 - 84) <= 7) {
+            if (v18 > 211) {
+                if (v18 <= 219) {
+                    Script_unk6(record2);
+                    Script_Do(0x256);
+                    Script_RunSelCloseStep(5);
+                    record = Script_unk7(0);
+                    *(volatile s32 *)(record + 12) += -0x20000;
+                    rec7 = Script_unk4(0);
+                    record = Script_unk5(0);
+                    *(volatile s32 *)(rec7 + 60) = *(volatile s32 *)(record + 12);
+                    Script_SetRect(5, 2, 5, 11, 1, 1);
+                    Script_unk2_4SelCloseStep(217);
+                    Script_Place(0x200e010, 9, 7);
+                    Script_unk3_4SelCloseStep();
+                }
+            }
+        }
+    }
+}
+
+/* overlays/scene/story/selector_effect/run_scene_supplemental_sequence_one.c */
+/* overlays/scene/story/selector_effect/run_scene_supplemental_sequence_one.c */
+extern u8 gWork[];
+
+void Scene_RunSupplementalSequenceOne(s32 a0)
+{
+    s32 *rec;
+    s32 outer;
+    s32 shift4;
+    s32 v8;
+    s32 inner;
+    s32 neg;
+    s32 nsh;
+    s32 va0;
+    s32 vb0;
+    s32 va;
+    s32 vb;
+    s32 next;
+    s32 slot20[10];
+
+    Story_SetRect(78, 59, 110, 36, 1, 1);
+    Story_unk2_5(76, 59, 109, 36, 1, 1);
+    rec = slot20;
+    rec[1] = 7;
+    rec[2] = 0x8000;
+    rec[3] = 0x8000;
+    outer = 0;
+    do {
+        shift4 = (outer << 4);
+        inner = 0;
+        nsh = -(outer << 20);
+        v8 = (0x2d80000 + nsh);
+        do {
+            if ((inner & 1) != 0) {
+                va0 = Story_unk2();
+                va = (((((((u32)(va0 << 3) >> 16) << 1) + ((u32)(va0 << 3) >> 16)) + (((((u32)(va0 << 3) >> 16) << 1) + ((u32)(va0 << 3) >> 16)) << 4)) + ((((((u32)(va0 << 3) >> 16) << 1) + ((u32)(va0 << 3) >> 16)) + (((((u32)(va0 << 3) >> 16) << 1) + ((u32)(va0 << 3) >> 16)) << 4)) << 8)) + -0xcccc);
+                neg = -inner;
+                vb0 = Story_unk3();
+                vb = (((((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) + (((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) << 4)) + ((((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) + (((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) << 4)) << 8)) + -0xcccc);
+                Story_Run(v8, 0, 0x2480000, va, 0, vb, 0x90000, (s32)rec);
+                Story_unk2_4(1);
+            } else {
+                neg = -inner;
+            }
+            Story_unk3_4SupplementalSequenceOne(((s32)((s32)(neg - shift4) << 16) + 0x2d80000), 0, 0x2480000);
+            inner = (inner + 1);
+            v8 = (v8 + -0x10000);
+        } while ((u32)inner <= 7);
+        Story_unk3_5(76, 59, (108 - outer), 36, 2, 1);
+        next = outer + 1;
+        Story_unk4_4SupplementalSequenceOne(a0, outer, next);
+        outer = next;
+    } while ((u32)next <= 1);
+    Story_unk5_4SupplementalSequenceOne(a0);
+    Story_unk6_4SupplementalSequenceOne(0, next, (next + 1));
+    Story_unk7_4SupplementalSequenceOne(211);
+    Story_Check(0x2009791, 0xc80);
+    Story_unk8_4SupplementalSequenceOne();
+}
+
+typedef struct {
+    unsigned lo : 24;
+    unsigned mid : 24;
+    unsigned hi : 16;
+} SceneTail;
+
+typedef struct {
+    s32 f0;
+    s32 f1;
+    s32 f2;
+    s32 f3;
+    SceneTail tail;
+} SceneEvent;
+
+/* overlays/scene/story/selector_effect/run_scene_sequence_f.c */
+extern u8 gWork[];
+
+void Scene_RunSelSequenceF(void)
+{
+    s32 *rec;
+    s32 outer;
+    s32 inner;
+    s32 base;
+    s32 raw;
+    s32 pos;
+    s32 shown;
+    s32 arr[10];
+
+    Story_SetRect(78, 58, 110, 36, 1, 1);
+    rec = arr;
+    rec[1] = 5;
+    rec[2] = 0x8000;
+    rec[3] = 0x8000;
+    outer = 0;
+    do {
+        base = -0x20000;
+        inner = 1;
+        do {
+            if ((inner & 1) != 0) {
+                raw = Story_Run();
+                shown = ((0x248 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
+                pos = (base - (outer << 19)) + 0x2d80000;
+                Story_unk3_4SequenceF(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
+                Story_unk4_4SequenceF(1);
+            }
+            inner = inner + 1;
+            base = base + -0x20000;
+        } while ((u32)inner <= 7);
+        Story_unk2_5(111, 35, (109 - outer), 36, 1, 1);
+        outer = outer + 1;
+    } while ((u32)outer <= 2);
+    Story_Do(0x2009791);
+}
+
+typedef struct {
+    unsigned lo : 24;
+    unsigned mid : 24;
+    unsigned hi : 16;
+} SceneTail;
+
+typedef struct {
+    s32 f0;
+    s32 f1;
+    s32 f2;
+    s32 f3;
+    SceneTail tail;
+} SceneEvent;

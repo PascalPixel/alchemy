@@ -110,7 +110,7 @@ s32 SceneData_SelectByRuntimeSelector(void)
     return (s32)DefaultOverlayData;
 }
 
-s32 Story_unk21_4(void)
+s32 get_followup_default_result(void)
 {
     extern u8 *gWork;
     s32 Story_unk17_4(s32, s32);

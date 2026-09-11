@@ -74,7 +74,7 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 
 /* map/locations/heidia/village_story/village_story_scene/orbiting_effect.c */
 
-void Map_unk261_2(u8 *work)
+void Effect_UpdateArcPosition(u8 *work)
 {
     s32 parent;
     s32 phase;
@@ -1506,7 +1506,7 @@ void Scene_RunScene39d(void)
 }
 
 /* map/locations/heidia/village_story/village_story_scene/shared.c */
-s32 Map_unk306_2(void)
+s32 get_runtime_default_result(void)
 {
     return 0;
 }

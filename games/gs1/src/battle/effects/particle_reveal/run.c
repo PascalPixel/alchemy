@@ -9,8 +9,8 @@
  * 080ce85c) and games/gs1/src/battle/effects/puff_arc/run.c (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
- * Battle_Do(0)/Battle_Apply(0x080CD261,0x480)/Battle_unk2_2(0x080CD261)/
- * Battle_unk3_2(id)/Battle_Run() bracket, and the same
+ * Battle_Do(0)/Battle_Apply(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
+ * Runtime_ReleaseHeapBlock(id)/Battle_Run() bracket, and the same
  * Battle_Apply2(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/gs1/recon/en/main/080e01e4.c.
  *
@@ -104,16 +104,16 @@ void BattleFx_RunParticleReveal(void *object)
         s32 angle;
         s32 amp;
 
-        angle = (Battle_unk4_4() & 0x7FFF) + 0x4000;
-        amp = (Battle_unk4_4() & 0x1FF) + 0x80;
+        angle = (random_16() & 0x7FFF) + 0x4000;
+        amp = (random_16() & 0x1FF) + 0x80;
         PARTICLE_POOL[i].x =
-            ((spawn[0] / 2 + (Battle_unk4_4() & 0xF)) - 8) << 16;
+            ((spawn[0] / 2 + (random_16() & 0xF)) - 8) << 16;
         PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
         PARTICLE_POOL[i].vx = (Battle_Check(angle) * amp) >> 9;
         PARTICLE_POOL[i].vy = (Battle_unk2(angle) * amp) >> 6;
-        PARTICLE_POOL[i].rot = Battle_unk4_4() & 0x7F;
-        PARTICLE_POOL[i].unk14 = Battle_unk4_4() & 0x7F;
-        PARTICLE_POOL[i].unk18 = (Battle_unk4_4() & 0xF) + 32;
+        PARTICLE_POOL[i].rot = random_16() & 0x7F;
+        PARTICLE_POOL[i].unk14 = random_16() & 0x7F;
+        PARTICLE_POOL[i].unk18 = (random_16() & 0xF) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
@@ -186,13 +186,13 @@ void BattleFx_RunParticleReveal(void *object)
         }
 
         Battle_Apply5(4, 8);
-        Battle_unk5_2();
+        ObjectGroup_TickMemberTimers();
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         Battle_unk5(1);
     }
 
-    Battle_unk2_2((void *)0x080CD261);
-    Battle_unk3_2(0x2F);
-    Battle_unk3_2(0x2E);
+    Scheduler_RemoveCallback((void *)0x080CD261);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     Battle_Run();
 }

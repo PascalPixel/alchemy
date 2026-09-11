@@ -28,7 +28,7 @@ struct Approach390Subject *Field_unk_0200041a(s32);
 
 struct Approach390Subject *Field_unk_02000462(s32);
 
-void *Field_unk_020004ce();
+void *Field_GetRecord();
 
 /* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
@@ -205,7 +205,7 @@ s32 Scene_SetupEntryLayoutsBySelector(void)
     if (Field_TestFlag845(0x845) == 0) {
         id = 8;
         do {
-            void *record = Field_unk_020004ce(id);
+            void *record = Field_GetRecord(id);
 
             id++;
             Field_unk_020004ae(record, 0);

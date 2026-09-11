@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/draw/draw_at_window_offset.h"
-
 
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
 {

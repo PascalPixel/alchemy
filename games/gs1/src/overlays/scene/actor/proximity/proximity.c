@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/proximity/proximity.h"
 
 /* overlays/scene/actor/proximity/actor_proximity.c */
 struct SceneActor {
@@ -56,7 +55,6 @@ s32 Actor_UpdatePlayerProximity(struct SceneActor *actor,
  * Overlay resource_3b5: shared scene work plus the actor setup, dialogue and
  * event sequences that drive this scene, in address order.
  */
-
 
 /*
  * Each macro below stands for one per-site call word held in the overlay
@@ -122,18 +120,18 @@ extern struct SceneSetup gOv4[];
 extern u8 gVal14[];
 
 typedef s32(*IwramSqrt02000040)(s32);
-u8 *Actor_Run2();
+u8 *Actor_unk2_4();
 
-u8 *Actor_Run3();
+u8 *Actor_unk3_4();
 
-u8 *Actor_Run4();
+u8 *Actor_unk4_4();
 
 s32 Dialogue_ShowMessage();
 s32 SceneFlag_Test();
 
-struct Work_3b5 *Actor_Run5();
+struct Work_3b5 *Actor_unk5_4();
 
-struct Actor *Actor_Run6(s32);
+struct Actor *Actor_unk6_4(s32);
 
 /*
  * These declarations are deliberately old-style: overlay import arities are
@@ -141,20 +139,20 @@ struct Actor *Actor_Run6(s32);
  * than the import behind it, so one import reached from several sites carries
  * several names.
  *
- * Actor_Run7 is void because its result is discarded.
+ * Actor_unk7_4 is void because its result is discarded.
  *
- * Actor_Check15 returns s32 because callers test the result whole and never
+ * Actor_unk15 returns s32 because callers test the result whole and never
  * truncate it; a u8 return would add a widening shift that is not wanted.
  */
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-    Actor_Place26(actor, x, y);
+    Actor_unk26_3(actor, x, y);
 }
 
 static __inline__ void PlaceActor2(s32 actor, s32 x, s32 y)
 {
-    Actor_Place27(actor, x, y);
+    Actor_unk27_3(actor, x, y);
 }
 
 static __inline__ void bump_step(s32 amount)
@@ -195,7 +193,7 @@ static __inline__ void bump_step4(s32 amount)
 
 void State_SetValues31_2_4(void)
 {
-    Actor_Place28(0x1F, 2, 4);
+    Actor_unk28_3(0x1F, 2, 4);
 }
 
 s32 Actor_GetPositionDistance(s32 *a, s32 *b)
@@ -236,15 +234,15 @@ s32 Actor_UpdatePartnerProximity(u8 *self)
      * selector folds into arithmetic on the bit instead.
      */
     if ((*flags & 1) != 0) {
-        partner = Actor_Run2(17);
+        partner = Actor_unk2_4(17);
     } else {
-        partner = Actor_Run2(16);
+        partner = Actor_unk2_4(16);
     }
-    if (Actor_Check15(self, partner, 32, 0) != 0) {
+    if (Actor_unk15(self, partner, 32, 0) != 0) {
         return 0;
     }
 
-    player = Actor_Run3(0);
+    player = Actor_unk3_4(0);
 
     /*
      * Widen the test when the scene counter at work + 376 is already
@@ -257,7 +255,7 @@ s32 Actor_UpdatePartnerProximity(u8 *self)
         }
     }
 
-    Actor_Run7(self, player, range, force);
+    Actor_unk7_4(self, player, range, force);
     return 0;
 }
 
@@ -291,8 +289,8 @@ u8 *SceneData_GetTable9238(void)
 void Scene_RunScene3b5(void)
 {
     extern u8 gWork[];
-    void Actor_Run8();
-    void Actor_Run9();
+    void Actor_unk8_4();
+    void Actor_unk9_4();
 
     u32 i;
     u8 *record;
@@ -301,8 +299,8 @@ void Scene_RunScene3b5(void)
     if ((s32)record != 0) {
         record[89] = 0;
     }
-    record = Actor_Run4(8);
-    Actor_Run10((s32)record, 0);
+    record = Actor_unk4_4(8);
+    Actor_unk10_4((s32)record, 0);
     Actor_Run(0, 0x2200000, 0x1200000, 253);
     Actor_Do(0x200);
 }
@@ -310,26 +308,26 @@ void Scene_RunScene3b5(void)
 void ConfigureAndPlaceActorOneHundredTwo(void)
 {
     s32 a = 3, b = 26;
-    Actor_Run11(3, 32, 1, 1, a, b);
+    Actor_unk11_4(3, 32, 1, 1, a, b);
     PlaceActor(102, 0x00380000, 0x01a80000);
 }
 
-void Actor_Run12(void)
+void Actor_unk12_4(void)
 {
     s32 a = 3, b = 26;
-    Actor_Run13(2, 25, 1, 1, a, b);
+    Actor_unk13_4(2, 25, 1, 1, a, b);
     PlaceActor2(102, -1, -1);
 }
 
 void Dialogue_RunMessage0e36(void)
 {
-    Actor_Do9(0x0E36);
+    Actor_unk9_2(0x0E36);
     Actor_Apply(-1, 0);
 }
 
 void Dialogue_RunMessage0e37(void)
 {
-    Actor_Do10(0x0E37);
+    Actor_unk10_2(0x0E37);
     Actor_Apply2(-1, 0);
 }
 
@@ -343,9 +341,9 @@ void Scene_RunSupplementalSequenceTwo(void)
     s32 msg;
 
     p5 = *(u8 **)gWork;
-    rec = Actor_Check16(16);
+    rec = Actor_unk16(16);
     p8 = *(s16 *)(rec + 6);
-    Actor_Run14();
+    Actor_unk14_4();
     {
         volatile u16 *flags = (volatile u16 *)(rec + 100);
         u16 value = *flags;
@@ -353,33 +351,33 @@ void Scene_RunSupplementalSequenceTwo(void)
         *flags = (u16)(value | 2);
     }
     if (*(s16 *)(p5 + 0x17e) == 0) {
-        if (Actor_Check17(0x950) != 0) {
+        if (Actor_unk17(0x950) != 0) {
             msg = (s32)gVal9;
-        } else if (Actor_Check18(0x962) != 0) {
+        } else if (Actor_unk18(0x962) != 0) {
             msg = (s32)gVal5;
         } else {
             msg = (s32)gVal;
         }
     } else {
-        if (Actor_Check19(0x950) != 0) {
+        if (Actor_unk19(0x950) != 0) {
             msg = (s32)gVal11;
-        } else if (Actor_Check20(0x962) != 0) {
+        } else if (Actor_unk20(0x962) != 0) {
             msg = (s32)gVal7;
         } else {
             msg = (s32)gVal3;
         }
     }
     Dialogue_ShowMessage(msg);
-    Actor_Run15(16, 0);
-    Actor_Run16(16, 0, 2);
-    Actor_Run17(16, 0, 10);
+    Actor_unk15_4(16, 0);
+    Actor_unk16_4(16, 0, 2);
+    Actor_unk17_4(16, 0, 10);
     *(volatile u16 *)(rec + 6) = p8;
-    Actor_Run18(1);
+    Actor_unk18_4(1);
     *(volatile u16 *)(rec + 100) &= 1;
-    Actor_Run19();
+    Actor_unk19_4();
 }
 
-void Actor_Run20(void)
+void Actor_unk20_4(void)
 {
     extern u8 gWork[];
 
@@ -389,9 +387,9 @@ void Actor_Run20(void)
     s32 msg;
 
     p5 = *(u8 **)gWork;
-    rec = Actor_Check21(17);
+    rec = Actor_unk21(17);
     p8 = *(s16 *)(rec + 6);
-    Actor_Run21();
+    Actor_unk21_4();
     {
         volatile u16 *flags = (volatile u16 *)(rec + 100);
         u16 value = *flags;
@@ -399,7 +397,7 @@ void Actor_Run20(void)
         *flags = (u16)(value | 2);
     }
     if (*(s16 *)(p5 + 0x17e) == 0) {
-        if (Actor_Check22(0x950) != 0) {
+        if (Actor_unk22(0x950) != 0) {
             msg = (s32)gVal10;
         } else if (SceneFlag_Test(0x962) != 0) {
             msg = (s32)gVal6;
@@ -407,30 +405,30 @@ void Actor_Run20(void)
             msg = (s32)gVal2;
         }
     } else {
-        if (Actor_Check23(0x950) != 0) {
+        if (Actor_unk23(0x950) != 0) {
             msg = (s32)gVal12;
-        } else if (Actor_Check24(0x962) != 0) {
+        } else if (Actor_unk24(0x962) != 0) {
             msg = (s32)gVal8;
         } else {
             msg = (s32)gVal4;
         }
     }
-    Actor_Run22(msg);
-    Actor_Run23(17, 0);
-    Actor_Run24(17, 0, 2);
-    Actor_Run25(17, 0, 10);
+    Actor_unk22_4(msg);
+    Actor_unk23_4(17, 0);
+    Actor_unk24_4(17, 0, 2);
+    Actor_unk25_4(17, 0, 10);
     *(volatile u16 *)(rec + 6) = p8;
-    Actor_Run26(1);
+    Actor_unk26_4(1);
     *(volatile u16 *)(rec + 100) &= 1;
-    Actor_Run27();
+    Actor_unk27_4();
 }
 
 u8 *SceneData_SelectTable94a8ByFlags(void)
 {
-    if (Actor_Check25(0x950) != 0) {
+    if (Actor_unk25(0x950) != 0) {
         return gOv;
     }
-    if (Actor_Check26(0x962) != 0) {
+    if (Actor_unk26(0x962) != 0) {
         return gOv2;
     }
     return gOv3;
@@ -438,18 +436,18 @@ u8 *SceneData_SelectTable94a8ByFlags(void)
 
 void Dialogue_RunActor15Message1f92(void)
 {
-    Actor_Run28();
-    Actor_Do11(0x1F92);
+    Actor_unk28_4();
+    Actor_unk11_2(0x1F92);
     Actor_Apply3(15, 0);
-    Actor_Run29();
+    Actor_unk29_4();
 }
 
 void Dialogue_RunActor24Message1f9d(void)
 {
-    Actor_Run30();
-    Actor_Do12(0x1F9D);
+    Actor_unk30_4();
+    Actor_unk12_2(0x1F9D);
     Actor_Apply4(24, 0);
-    Actor_Run31();
+    Actor_unk31_4();
 }
 
 void Scene_RunScene3b5(void)
@@ -459,13 +457,13 @@ void Scene_RunScene3b5(void)
     u32 i;
     s32 record;
 
-    Actor_Run32();
-    Actor_Run33((s32)gVal13);
+    Actor_unk32_4();
+    Actor_unk33_4((s32)gVal13);
     Actor_Place(25, 0xc000, 0);
-    Actor_Run34(25, 0);
-    Actor_Place2(25, 0x8000, 0);
-    Actor_Run35(25, 0);
-    Actor_Run36();
+    Actor_unk34_4(25, 0);
+    Actor_unk2_3(25, 0x8000, 0);
+    Actor_unk35_4(25, 0);
+    Actor_unk36_4();
 }
 
 void Scene_RunScene3b5(void)
@@ -475,53 +473,53 @@ void Scene_RunScene3b5(void)
     u32 i;
     s32 record;
 
-    Actor_Run37();
-    Actor_Place3(26, 0x4000, 0);
-    Actor_Run38(26, 2);
-    Actor_Do2(0x1fa2);
-    Actor_Run39(26, 0);
-    Actor_Run40();
+    Actor_unk37_4();
+    Actor_unk3_3(26, 0x4000, 0);
+    Actor_unk38_4(26, 2);
+    Actor_unk2_2(0x1fa2);
+    Actor_unk39_4(26, 0);
+    Actor_unk40_4();
 }
 
 void Dialogue_RunActor27Message1fa3(void)
 {
-    Actor_Run41();
-    Actor_Do13(0x1FA3);
+    Actor_unk41_4();
+    Actor_unk13_2(0x1FA3);
     Actor_Apply5(0x1B, 0);
-    Actor_Run42();
+    Actor_unk42_4();
 }
 
 void Dialogue_RunActor24Message235f(void)
 {
-    Actor_Run43();
-    Actor_Do14(0x235F);
+    Actor_unk43_4();
+    Actor_unk14_2(0x235F);
     Actor_Apply6(24, 0);
-    Actor_Run44();
+    Actor_unk44_4();
 }
 
 void Scene_RunScene3b5(void)
 {
     extern u8 gWork[];
-    void Actor_Run8();
-    void Actor_Run9();
+    void Actor_unk8_4();
+    void Actor_unk9_4();
 
     u32 i;
     s32 record;
 
-    Actor_Run45();
-    if (Actor_Check2(0x8bf) == 0) {
-        Actor_Do3(0x8bf);
-        Actor_Do4(0x2368);
-        Actor_Run46(19, 0);
-        Actor_Run47(233, 3);
-        Actor_Run48(19, 0);
-        Actor_Run8(0, 1);
-        Actor_Run49(233, 0);
+    Actor_unk45_4();
+    if (Actor_unk2(0x8bf) == 0) {
+        Actor_unk3_2(0x8bf);
+        Actor_unk4_2(0x2368);
+        Actor_unk46_4(19, 0);
+        Actor_unk47_4(233, 3);
+        Actor_unk48_4(19, 0);
+        Actor_unk8_4(0, 1);
+        Actor_unk49_4(233, 0);
     } else {
-        Actor_Do5(0x236a);
-        Actor_Run50(19, 0);
+        Actor_unk5_2(0x236a);
+        Actor_unk50_4(19, 0);
     }
-    Actor_Run51();
+    Actor_unk51_4();
 }
 
 void SceneScript_SetupActors(void)
@@ -533,7 +531,7 @@ void SceneScript_SetupActors(void)
     u32 no;
     s32 index;
 
-    Actor_Run52();
+    Actor_unk52_4();
     for (no = 8; no <= 65; no++) {
         u8 *actor = Actor_Find(no);
         if (actor != NULL) {
@@ -541,19 +539,19 @@ void SceneScript_SetupActors(void)
         }
     }
     index = *(s16 *)(work + 0x16c) - 1;
-    Actor_Do6(158);
-    Actor_Place4((s32)gOv4[index].commands, gOv4[index].first, gOv4[index].second);
-    Actor_Place5(0, 0x8000, 0x4000);
+    Actor_unk6_2(158);
+    Actor_unk4_3((s32)gOv4[index].commands, gOv4[index].first, gOv4[index].second);
+    Actor_unk5_3(0, 0x8000, 0x4000);
     Actor_Find(0)[85] = 0;
     Actor_Apply7(0, 2);
     if (index != 6) {
-        Actor_Place6(0, 2, -8);
-        Actor_Do15(10);
+        Actor_unk6_3(0, 2, -8);
+        Actor_unk15_2(10);
     }
-    Actor_Do16(*(s16 *)(work + 0x16c));
-    Actor_Run53();
-    Actor_Run54();
-    Actor_Run55();
+    Actor_unk16_2(*(s16 *)(work + 0x16c));
+    Actor_unk53_4();
+    Actor_unk54_4();
+    Actor_unk55_4();
 }
 
 /*
@@ -570,14 +568,14 @@ void Actor_CopyPlayerModeToActor(struct Work_3b5 *work)
     s32 bits;
 
     if (work != 0) {
-        bits = Actor_Run5(0)->f80->mode9;
+        bits = Actor_unk5_4(0)->f80->mode9;
         work->f35 = 0;
         work->f80->mode9 = bits;
         work->f80->mode15 = bits;
     }
 }
 
-s32 Actor_Run56(s32 a0)
+s32 Actor_unk56_4(s32 a0)
 {
     extern u8 gWork[];
 
@@ -587,9 +585,9 @@ s32 Actor_Run56(s32 a0)
     s32 hidden;
 
     *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    Actor_Place7(16, 0x1600000, 0x1600000);
-    Actor_Check3(16, 0x2008ec0);
-    record = Actor_Check4(16);
+    Actor_unk7_3(16, 0x1600000, 0x1600000);
+    Actor_unk3(16, 0x2008ec0);
+    record = Actor_unk4(16);
     handler = 0x2008171;
     {
         volatile u16 *target = (volatile u16 *)(record + 100);
@@ -599,36 +597,36 @@ s32 Actor_Run56(s32 a0)
     }
     *(volatile s32 *)(record + 108) = handler;
     hidden = 0;
-    Actor_Place8(17, 0x1700000, 0x1400000);
-    Actor_Check5(17, 0x2008f90);
-    record = Actor_Check6(17);
+    Actor_unk8_3(17, 0x1700000, 0x1400000);
+    Actor_unk5(17, 0x2008f90);
+    record = Actor_unk6(17);
     *(volatile u16 *)(record + 100) = hidden;
     *(volatile s32 *)(record + 108) = handler;
-    record = Actor_Check27(14);
+    record = Actor_unk27(14);
     *(volatile s32 *)(record + 108) = 0x20086e9;
-    if (Actor_Check7(0x8c1) != 0) {
-        Actor_Place9(28, 0x13c0000, 0x1480000);
+    if (Actor_unk7(0x8c1) != 0) {
+        Actor_unk9_3(28, 0x13c0000, 0x1480000);
     }
-    if (Actor_Check8(0x201) != 0) {
-        Actor_Run57();
+    if (Actor_unk8(0x201) != 0) {
+        Actor_unk57_4();
     }
-    if (Actor_Check9(0x200) != 0) {
-        Actor_Run58();
-        Actor_Run59(8, 4);
+    if (Actor_unk9(0x200) != 0) {
+        Actor_unk58_4();
+        Actor_unk59_4(8, 4);
     }
-    if (Actor_Check10(0x950) != 0) {
-        Actor_Place10(20, 0x2080000, 0x2300000);
-        Actor_Place11(21, 0x2080000, 0x2300000);
-        Actor_Place12(22, 0x2080000, 0x2300000);
-        Actor_Place13(24, 0x2080000, 0x2300000);
-        Actor_Place14(25, 0x2080000, 0x2300000);
-        Actor_Place15(26, 0x2080000, 0x2300000);
-        Actor_Place16(27, 0x2080000, 0x2300000);
+    if (Actor_unk10(0x950) != 0) {
+        Actor_unk10_3(20, 0x2080000, 0x2300000);
+        Actor_unk11_3(21, 0x2080000, 0x2300000);
+        Actor_unk12_3(22, 0x2080000, 0x2300000);
+        Actor_unk13_3(24, 0x2080000, 0x2300000);
+        Actor_unk14_3(25, 0x2080000, 0x2300000);
+        Actor_unk15_3(26, 0x2080000, 0x2300000);
+        Actor_unk16_3(27, 0x2080000, 0x2300000);
     } else {
-        if (Actor_Check11(0x962) != 0) {
-            Actor_Place17(27, 0x1180000, 0x500000);
-            Actor_Place18(27, 0x2000, 0);
-            Actor_Run60(27, 1);
+        if (Actor_unk11(0x962) != 0) {
+            Actor_unk17_3(27, 0x1180000, 0x500000);
+            Actor_unk18_3(27, 0x2000, 0);
+            Actor_unk60_4(27, 1);
         }
     }
     return 0;
@@ -637,37 +635,37 @@ s32 Actor_Run56(s32 a0)
 void Scene_RunScene3b5SequenceA(void)
 {
     extern u8 gWork[];
-    void Actor_Run8();
-    void Actor_Run9();
+    void Actor_unk8_4();
+    void Actor_unk9_4();
 
     u32 i;
     s32 record;
 
-    Actor_Run61();
-    Actor_Place19(0, 0x130, 0x138);
-    Actor_Place20(0, 0xc000, 0);
-    Actor_Place21(28, 0x4000, 0);
-    Actor_Run62(20);
-    Actor_Do7(0xe3d);
-    Actor_Check12(28, 0);
-    if (Actor_Check13(0, 0) == 0) {
+    Actor_unk61_4();
+    Actor_unk19_3(0, 0x130, 0x138);
+    Actor_unk20_3(0, 0xc000, 0);
+    Actor_unk21_3(28, 0x4000, 0);
+    Actor_unk62_4(20);
+    Actor_unk7_2(0xe3d);
+    Actor_unk12(28, 0);
+    if (Actor_unk13(0, 0) == 0) {
         bump_step(1);
-        Actor_Run63(28, 0);
-        Actor_Place22(28, 0x10000, 0x8000);
-        Actor_Place23(28, 0x140, 0x130);
-        Actor_Place24(28, 0x13c, 0x148);
-        Actor_Place25(28, 0xa000, 0);
-        Actor_Do8(0x8c1);
+        Actor_unk63_4(28, 0);
+        Actor_unk22_3(28, 0x10000, 0x8000);
+        Actor_unk23_3(28, 0x140, 0x130);
+        Actor_unk24_3(28, 0x13c, 0x148);
+        Actor_unk25_3(28, 0xa000, 0);
+        Actor_unk8_2(0x8c1);
     } else {
-        Actor_Run64(28, 0);
+        Actor_unk64_4(28, 0);
     }
-    Actor_Run65();
+    Actor_unk65_4();
 }
 
 void State_SetValue30ThenCall(void)
 {
-    Actor_Do17(30);
-    Actor_Run66();
+    Actor_unk17_2(30);
+    Actor_unk66_4();
 }
 
 void State_PassWorkHalfword16C(void)
@@ -676,7 +674,7 @@ void State_PassWorkHalfword16C(void)
 
     s16 *cnt = (s16 *)(gWork + 0x16C);
 
-    Actor_Do18(*cnt);
+    Actor_unk18_2(*cnt);
 }
 
 /*
@@ -702,7 +700,7 @@ void Scene_RunPrimarySequence(void)
     Motion_SetHPosTerrain_2(30, 0x380000, 0xd00000);
     ObjectGroup_ConfigureChildValue_1(32, 15);
     object32_id = Scene_GetRecord_1(32);
-    Actor_Run67(object32_id, 0); /* main:080091e0 */
+    Actor_unk67_4(object32_id, 0); /* main:080091e0 */
     Motion_SetHPosTerrain_3(32, 0x5f0000, 0x280000);
     Motion_ResetPosMode2_1(29, 72, 248);
     Motion_ResetPosMode2_2(30, 56, 248);
@@ -722,7 +720,7 @@ void Scene_RunPrimarySequence(void)
     Battle_WaitMode0_4(20);
     Motion_SetSpeed_3(29, 0); /* main:0808a178 */
     Battle_WaitMode0_5(25);
-    Actor_Check14(52, 0, 12, 7); /* main:080150f8 */
+    Actor_unk14(52, 0, 12, 7); /* main:080150f8 */
     UiWork_Create_1((list_00001fb6 + 3), 11, 12, 2);
     SCENE_OBJECT_ID = 32;
     if (UiWork_WaitThenFinalizeCapacity_1(0, 0) == 0) { /* object_id 0, force 0 */
@@ -786,7 +784,7 @@ void Scene_RunPrimarySequence(void)
 
 void Scene_ResetActor9AndDrawTiles(void)
 {
-    struct Actor *actor = Actor_Run6(9);
+    struct Actor *actor = Actor_unk6_4(9);
     if (actor != 0) {
         Actor_Apply8(actor, 0);
         actor->field23 = 2;
@@ -798,5 +796,5 @@ void Scene_ResetActor9AndDrawTiles(void)
         s32 v6 = 16;
         Actor_SetRect(36, 16, 1, 1, v5, v6);
     }
-    Actor_Do19(0x201);
+    Actor_unk19_2(0x201);
 }

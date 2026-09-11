@@ -1,7 +1,6 @@
 #include "b5_context.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/object/group/update_members.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define SET_OWNER(set) FIELD(set, void *, 0x00)
@@ -29,7 +28,7 @@ void ObjectGroup_UpdateMembers(
     u8 *state;
     s32 group_index;
 
-    set = Obj_Run2(set_id);
+    set = Obj_unk2_2(set_id);
     state = (u8 *)gIw;
     group_index = 0;
 

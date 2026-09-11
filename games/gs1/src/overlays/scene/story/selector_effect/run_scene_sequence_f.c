@@ -1,10 +1,9 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/selector_effect/run_scene_sequence_f.h"
 
 extern u8 gWork[];
 
-void Story_Run2(void)
+void Story_unk2_4(void)
 {
     s32 *rec;
     s32 outer;
@@ -29,13 +28,13 @@ void Story_Run2(void)
                 raw = Story_Run();
                 shown = ((0x248 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
                 pos = (base - (outer << 19)) + 0x2d80000;
-                Story_Run3(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
-                Story_Run4(1);
+                Story_unk3_4(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
+                Story_unk4_4(1);
             }
             inner = inner + 1;
             base = base + -0x20000;
         } while ((u32)inner <= 7);
-        Story_SetRect2(111, 35, (109 - outer), 36, 1, 1);
+        Story_unk2_5(111, 35, (109 - outer), 36, 1, 1);
         outer = outer + 1;
     } while ((u32)outer <= 2);
     Story_Do(0x2009791);

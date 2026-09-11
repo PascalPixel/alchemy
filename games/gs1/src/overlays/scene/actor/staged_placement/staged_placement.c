@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_placement/staged_placement.h"
 #include "find_clear_actor_position.h"
 #include "find_clear_actor_position_body.inc"
 #include "staged_actor.h"
@@ -34,7 +33,7 @@ void Effect_AdvancePositionByAxisMode(u8 *o)
 
 /* overlays/scene/actor/staged_placement/actor_position.c */
 
-u8 *Actor_Run9();
+u8 *Actor_unk9_4();
 
 void ConfigureSceneForActorEightColumn(void)
 {
@@ -43,36 +42,36 @@ void ConfigureSceneForActorEightColumn(void)
     s32 a4;
     s32 a5;
 
-    actor = Actor_Run9(8);
+    actor = Actor_unk9_4(8);
     x = *(s32 *)(actor + 8);
     if (x < 0)
         x += 0xfffff;
     x >>= 20;
-    Actor_Run10();
+    Actor_unk10_4();
     if (x == 20) {
         a4 = 18;
         a5 = 6;
-        Actor_Run11(18, 40, 6, 3, a4, a5);
-        Actor_Run12(0x302);
+        Actor_unk11_4(18, 40, 6, 3, a4, a5);
+        Actor_unk12_4(0x302);
     } else {
         a4 = 18;
         a5 = 6;
-        Actor_Run13(24, 40, 6, 3, a4, a5);
-        Actor_Run14(0x302);
+        Actor_unk13_4(24, 40, 6, 3, a4, a5);
+        Actor_unk14_4(0x302);
     }
-    Actor_Run15();
+    Actor_unk15_4();
 }
 
 /* overlays/scene/actor/staged_placement/actor_presentation.c */
 
 static __inline__ void ConfigureFirst(s32 actor, s32 angle, s32 zero)
 {
-    Actor_Place17(actor, angle, zero);
+    Actor_unk17_3(actor, angle, zero);
 }
 
 static __inline__ void ConfigureSecond(s32 actor, s32 mode, s32 zero)
 {
-    Actor_Place18(actor, mode, zero);
+    Actor_unk18_3(actor, mode, zero);
 }
 
 static __inline__ void ConfigureThird(s32 actor, s32 value)
@@ -114,35 +113,35 @@ extern u8 gWork[];
 extern s16 gCell[];
 extern u8 gOv[];
 
-u8 *Actor_Run16();
+u8 *Actor_unk16_4();
 
-u8 *Actor_Run17();
+u8 *Actor_unk17_4();
 
-u8 *Actor_Run18();
-u8 *Actor_Run19();
-u8 *Actor_Run20();
+u8 *Actor_unk18_4();
+u8 *Actor_unk19_4();
+u8 *Actor_unk20_4();
 
-u8 *Actor_Run21();
+u8 *Actor_unk21_4();
 
-u8 *Actor_Run22();
+u8 *Actor_unk22_4();
 
-u8 *Actor_Run23();
+u8 *Actor_unk23_4();
 
-u8 *Actor_Run24();
+u8 *Actor_unk24_4();
 
-u8 *Actor_Run25();
+u8 *Actor_unk25_4();
 
-u8 *Actor_Run26();
+u8 *Actor_unk26_4();
 
-u8 *Actor_Run27();
+u8 *Actor_unk27_4();
 
-u8 *Actor_Run28();
+u8 *Actor_unk28_4();
 
-u8 *Actor_Run29();
+u8 *Actor_unk29_4();
 
-u8 *Actor_Run30();
+u8 *Actor_unk30_4();
 
-u8 *Actor_Run31();
+u8 *Actor_unk31_4();
 
 void Scene_RunPrimarySequence(void)
 {
@@ -160,45 +159,45 @@ void Scene_RunPrimarySequence(void)
         v1a = Actor_Run();
         a0 = *(volatile s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
-        rec4 = Actor_Check25(9);
-        reca = (s32)Actor_Run16(9);
+        rec4 = Actor_unk25(9);
+        reca = (s32)Actor_unk16_4(9);
         a2 = *(volatile s32 *)(reca + 16);
         a2 = a2 + 0x60000;
-        v2a = Actor_Run2();
+        v2a = Actor_unk2_4();
         ta = (s32)((u32)((v2a << 2) + v2a) >> 16);
         ua = (((ta << 1) + ta) << 2) + ta;
         na = ua << 6;
         na = na - ua;
         na = na << 3;
         na = na + ta;
-        v3a = Actor_Check26();
+        v3a = Actor_unk26();
         na = -na;
         Actor_SetRect(a0, *(volatile s32 *)(rec4 + 12), a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
-            rec7b = Actor_Check2(9);
-            v1b = Actor_Run3();
+            rec7b = Actor_unk2(9);
+            v1b = Actor_unk3_4();
             a0 = *(volatile s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
-            rec4 = Actor_Check27(9);
-            recb = (s32)Actor_Run17(9);
+            rec4 = Actor_unk27(9);
+            recb = (s32)Actor_unk17_4(9);
             a2 = *(volatile s32 *)(recb + 16);
             a2 = a2 + 0x60000;
-            v2b = Actor_Run4();
+            v2b = Actor_unk4_4();
             tb = (s32)((u32)((v2b << 2) + v2b) >> 16);
             ub = (((tb << 1) + tb) << 2) + tb;
             nb = ub << 6;
             nb = nb - ub;
             nb = nb << 3;
             nb = nb + tb;
-            v3b = Actor_Check28();
+            v3b = Actor_unk28();
             nb = -nb;
-            Actor_SetRect2(a0, *(volatile s32 *)(rec4 + 12), a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
+            Actor_unk2_5(a0, *(volatile s32 *)(rec4 + 12), a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
         }
     }
 }
 
-void Actor_Run32(void)
+void Actor_unk32_4(void)
 {
     s32 kind;
     s32 zero;
@@ -210,73 +209,73 @@ void Actor_Run32(void)
     s32 rec7, v1, v2, v3, t, u, n;
     u8 *p0;
 
-    r1 = Actor_Check3(9);
+    r1 = Actor_unk3(9);
     kind = *(volatile s32 *)(r1 + 8) / 0x100000;
-    ((void (*)())Actor_Check29)();
+    ((void (*)())Actor_unk29)();
     if (kind == 25) {
-        p0 = Actor_Run18(11);
+        p0 = Actor_unk18_4(11);
         zero = 0;
         p0[34] = 1;
-        r2 = (s32)Actor_Run19(11);
-        Actor_Run33(r2, 0);
-        Actor_Run5(11, 14);
-        r3 = (s32)Actor_Run20(11);
-        Actor_Run34(r3, 1);
+        r2 = (s32)Actor_unk19_4(11);
+        Actor_unk33_4(r2, 0);
+        Actor_unk5_4(11, 14);
+        r3 = (s32)Actor_unk20_4(11);
+        Actor_unk34_4(r3, 1);
         Actor_Place(11, 0x19e0000, 0xf00000);
-        Actor_Run35(10);
-        base = (s32)Actor_Run36;
-        Actor_Run37(base, 0xc80);
-        Actor_Run38(141);
-        Actor_Run39(9, 1, 0);
+        Actor_unk35_4(10);
+        base = (s32)Actor_unk36_4;
+        Actor_unk37_4(base, 0xc80);
+        Actor_unk38_4(141);
+        Actor_unk39_4(9, 1, 0);
         Actor_Do(9);
-        Actor_Run40(10);
-        Actor_Run41(9, 2, 0);
-        Actor_Run42(9);
-        r4 = (s32)Actor_Run21(9);
+        Actor_unk40_4(10);
+        Actor_unk41_4(9, 2, 0);
+        Actor_unk42_4(9);
+        r4 = (s32)Actor_unk21_4(9);
         *(volatile s32 *)(r4 + 68) = zero;
-        r5 = (s32)Actor_Run28(9);
+        r5 = (s32)Actor_unk28_4(9);
         *(volatile s32 *)(r5 + 72) = 0x9999;
-        Actor_Run43(3);
-        Actor_Place2(9, 0x28000, 0x4000);
-        Actor_Do2(0x120);
-        Actor_Place3(9, 0x1a0, 200);
-        r6 = (s32)Actor_Run23(9);
-        Actor_Run44(r6, 0);
-        Actor_Run45(base);
-        Actor_Run46(12);
-        Actor_Run47(189);
-        rec7 = Actor_Check4(9);
-        v1 = Actor_Run6();
+        Actor_unk43_4(3);
+        Actor_unk2_3(9, 0x28000, 0x4000);
+        Actor_unk2_2(0x120);
+        Actor_unk3_3(9, 0x1a0, 200);
+        r6 = (s32)Actor_unk23_4(9);
+        Actor_unk44_4(r6, 0);
+        Actor_unk45_4(base);
+        Actor_unk46_4(12);
+        Actor_unk47_4(189);
+        rec7 = Actor_unk4(9);
+        v1 = Actor_unk6_4();
         a0 = *(volatile s32 *)(rec7 + 8);
         a0 = a0 + (s32)((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
-        rec4 = Actor_Check30(9);
-        r7 = (s32)Actor_Run24(9);
+        rec4 = Actor_unk30(9);
+        r7 = (s32)Actor_unk24_4(9);
         a2 = *(volatile s32 *)(r7 + 16);
         a2 = a2 + 0x60000;
-        v2 = Actor_Run7();
+        v2 = Actor_unk7_4();
         t = (s32)((u32)((v2 << 2) + v2) >> 16);
         u = (((t << 1) + t) << 2) + t;
         n = u << 6;
         n = n - u;
         n = n << 3;
         n = n + t;
-        v3 = Actor_Check31();
+        v3 = Actor_unk31();
         n = -n;
-        Actor_SetRect3(a0, *(volatile s32 *)(rec4 + 12), a2, zero, n, (s32)((u32)(v3 << 1) >> 16), zero);
-        Actor_Run48(20);
-        Actor_Run49(154);
-        Actor_Place4(0x50000, 0x50000, 0x10000);
-        Actor_Place5(-1, -1, 0xe666);
-        Actor_Run50();
-        Actor_Run51(9, 0, 0);
-        Actor_Place6(11, 0, 0);
-        Actor_Do3(0x300);
-        Actor_SetRect4(21, 45, 4, 2, 21, 11);
+        Actor_unk3_5(a0, *(volatile s32 *)(rec4 + 12), a2, zero, n, (s32)((u32)(v3 << 1) >> 16), zero);
+        Actor_unk48_4(20);
+        Actor_unk49_4(154);
+        Actor_unk4_3(0x50000, 0x50000, 0x10000);
+        Actor_unk5_3(-1, -1, 0xe666);
+        Actor_unk50_4();
+        Actor_unk51_4(9, 0, 0);
+        Actor_unk6_3(11, 0, 0);
+        Actor_unk3_2(0x300);
+        Actor_unk4_5(21, 45, 4, 2, 21, 11);
     }
-    Actor_Run52();
+    Actor_unk52_4();
 }
 
-void Actor_Run53(void)
+void Actor_unk53_4(void)
 {
     s32 a;
     s32 b;
@@ -285,52 +284,52 @@ void Actor_Run53(void)
     s32 q1, q2, q3, e1, e2;
     s32 g1a, g1b, g1c, g2a, g2b, g2c, g3a, g3b, g3c, g4a, g4b, g4c, g5a, g5b, g5c, g6a, g6b, g6c;
 
-    q1 = Actor_Check5(10);
+    q1 = Actor_unk5(10);
     a = *(volatile s32 *)(q1 + 8) / 0x100000;
-    q2 = Actor_Check6(10);
+    q2 = Actor_unk6(10);
     b = *(volatile s32 *)(q2 + 16) / 0x100000;
     if (a == 38) {
         if (b == 14) {
-            q3 = (s32)Actor_Run25(10);
+            q3 = (s32)Actor_unk25_4(10);
             *(volatile s32 *)(q3 + 12) = -0x20000;
-            e1 = Actor_Check7(10);
-            e2 = Actor_Check8(10);
+            e1 = Actor_unk7(10);
+            e2 = Actor_unk8(10);
             *(volatile s32 *)(e1 + 60) = *(volatile s32 *)(e2 + 12);
-            Actor_Run54(188);
-            g1a = Actor_Check9(10);
-            g1b = Actor_Check10(10);
-            g1c = (s32)Actor_Run26(10);
-            Actor_Run55(*(s32 *)(g1a + 8), *(s32 *)(g1b + 12),
+            Actor_unk54_4(188);
+            g1a = Actor_unk9(10);
+            g1b = Actor_unk10(10);
+            g1c = (s32)Actor_unk26_4(10);
+            Actor_unk55_4(*(s32 *)(g1a + 8), *(s32 *)(g1b + 12),
                   *(s32 *)(g1c + 16), 0x8000, 0, 0, 1);
-            g2a = Actor_Check11(10);
-            g2b = Actor_Check12(10);
-            g2c = (s32)Actor_Check32(10);
-            Actor_Run56(*(s32 *)(g2a + 8), *(s32 *)(g2b + 12),
+            g2a = Actor_unk11(10);
+            g2b = Actor_unk12(10);
+            g2c = (s32)Actor_unk32(10);
+            Actor_unk56_4(*(s32 *)(g2a + 8), *(s32 *)(g2b + 12),
                   *(s32 *)(g2c + 16), 0x6666, 0x6666, 0, 1);
-            g3a = Actor_Check13(10);
-            g3b = Actor_Check14(10);
-            g3c = (s32)Actor_Check33(10);
+            g3a = Actor_unk13(10);
+            g3b = Actor_unk14(10);
+            g3c = (s32)Actor_unk33(10);
             x0 = *(s32 *)(g3a + 8);
             x1 = *(s32 *)(g3b + 12);
             x2 = *(s32 *)(g3c + 16);
             c2 = -0x6666;
-            Actor_Run57(x0, x1, x2, c2, 0x6666, 0, 1);
-            g4a = Actor_Check15(10);
-            g4b = Actor_Check16(10);
-            g4c = (s32)Actor_Run27(10);
-            Actor_Run58(*(s32 *)(g4a + 8), *(s32 *)(g4b + 12),
+            Actor_unk57_4(x0, x1, x2, c2, 0x6666, 0, 1);
+            g4a = Actor_unk15(10);
+            g4b = Actor_unk16(10);
+            g4c = (s32)Actor_unk27_4(10);
+            Actor_unk58_4(*(s32 *)(g4a + 8), *(s32 *)(g4b + 12),
                   *(s32 *)(g4c + 16), -0x8000, 0, 0, 1);
-            g5a = Actor_Check17(10);
-            g5b = Actor_Check18(10);
-            g5c = (s32)Actor_Check34(10);
-            Actor_Run59(*(s32 *)(g5a + 8), *(s32 *)(g5b + 12),
+            g5a = Actor_unk17(10);
+            g5b = Actor_unk18(10);
+            g5c = (s32)Actor_unk34(10);
+            Actor_unk59_4(*(s32 *)(g5a + 8), *(s32 *)(g5b + 12),
                   *(s32 *)(g5c + 16), 0x6666, c2, 0, 1);
-            g6a = Actor_Check19(10);
-            g6b = Actor_Check20(10);
-            g6c = (s32)Actor_Check35(10);
-            Actor_Run60(*(s32 *)(g6a + 8), *(s32 *)(g6b + 12),
+            g6a = Actor_unk19(10);
+            g6b = Actor_unk20(10);
+            g6c = (s32)Actor_unk35(10);
+            Actor_unk60_4(*(s32 *)(g6a + 8), *(s32 *)(g6b + 12),
                   *(s32 *)(g6c + 16), c2, c2, 0, 1);
-            Actor_Check36(0x301);
+            Actor_unk36(0x301);
         }
     }
 }
@@ -340,29 +339,29 @@ void Scene_RunScene389(void)
     u32 i;
     u8 *record;
 
-    Actor_Do4(0x20090c9);
-    Actor_Run61();
-    Actor_Place7(13, 0x100, 30);
-    Actor_Run62(13, 2);
-    Actor_Place8(0, 0xa000, 0);
-    Actor_Do5(0x132f);
-    Actor_Run63(13, 0);
-    Actor_Run64(13, 3);
-    Actor_Run65(30);
-    *(u8 *)(Actor_Check37(10) + 35) &= 253;
-    Actor_Place9(13, 0x20000, 0x10000);
-    Actor_Place10(13, 0x258, 216);
-    Actor_Place11(13, 0x258, 248);
-    Actor_Place12(13, 0x238, 0x128);
-    Actor_Run66(13, 0, 0);
+    Actor_unk4_2(0x20090c9);
+    Actor_unk61_4();
+    Actor_unk7_3(13, 0x100, 30);
+    Actor_unk62_4(13, 2);
+    Actor_unk8_3(0, 0xa000, 0);
+    Actor_unk5_2(0x132f);
+    Actor_unk63_4(13, 0);
+    Actor_unk64_4(13, 3);
+    Actor_unk65_4(30);
+    *(u8 *)(Actor_unk37(10) + 35) &= 253;
+    Actor_unk9_3(13, 0x20000, 0x10000);
+    Actor_unk10_3(13, 0x258, 216);
+    Actor_unk11_3(13, 0x258, 248);
+    Actor_unk12_3(13, 0x238, 0x128);
+    Actor_unk66_4(13, 0, 0);
     {
-        u8 *record = Actor_Run29(10);
+        u8 *record = Actor_unk29_4(10);
         u8 value = *(volatile u8 *)&record[35];
 
         record[35] = (u8)(value | 2);
     }
-    Actor_Do6(0x869);
-    Actor_Run67();
+    Actor_unk6_2(0x869);
+    Actor_unk67_4();
 }
 
 s32 Scene_RunScene389(void)
@@ -374,56 +373,56 @@ s32 Scene_RunScene389(void)
     *(volatile s32 *)(((s32)work + 0x1c0)) = 0x204;
     *(volatile s32 *)(((s32)work + 0x1c8)) = 24;
     {
-        u8 *record = Actor_Run30(9);
+        u8 *record = Actor_unk30_4(9);
         u8 value = *(volatile u8 *)&record[89];
 
         record[89] = (u8)(value | 16);
     }
-    if (Actor_Check21(0x302) != 0) {
-        Actor_Place13(8, 0x1580000, 0x680000);
-        Actor_SetRect5(24, 40, 6, 3, 18, 6);
+    if (Actor_unk21(0x302) != 0) {
+        Actor_unk13_3(8, 0x1580000, 0x680000);
+        Actor_unk5_5(24, 40, 6, 3, 18, 6);
     } else {
-        Actor_SetRect6(18, 40, 6, 3, 18, 6);
+        Actor_unk6_5(18, 40, 6, 3, 18, 6);
     }
-    if (Actor_Check22(0x300) != 0) {
-        Actor_Run68(9, 0, 0);
-        Actor_SetRect7(21, 45, 4, 2, 21, 11);
+    if (Actor_unk22(0x300) != 0) {
+        Actor_unk68_4(9, 0, 0);
+        Actor_unk7_5(21, 45, 4, 2, 21, 11);
     }
-    if (Actor_Check23(0x301) != 0) {
-        Actor_Place14(10, 0x2680000, 0xe80000);
+    if (Actor_unk23(0x301) != 0) {
+        Actor_unk14_3(10, 0x2680000, 0xe80000);
         if ((u32)(((u16)gCell[225] - 2) << 16) > 0x10000) {
             goto L_0200131c;
         }
-        *(u8 *)(Actor_Check38(10) + 34) = 2;
-        record = Actor_Check24(10);
+        *(u8 *)(Actor_unk38(10) + 34) = 2;
+        record = Actor_unk24(10);
         *(volatile s32 *)((s32)record + 12) = (*(volatile s32 *)((s32)record + 12) - 1);
         {
             u8 mask = 2;
-            u8 *record = Actor_Run31(10);
+            u8 *record = Actor_unk31_4(10);
             u8 value = *(volatile u8 *)&record[35];
 
             record[35] = (u8)(value | mask);
         }
-        Actor_SetRect8(36, 48, 5, 1, 36, 14);
+        Actor_unk8_5(36, 48, 5, 1, 36, 14);
     } else {
     }
     L_0200131c:;
     if (gCell[225] == 99) {
-        Actor_Run69();
-        Actor_Run70();
-        Actor_Place15(9, 0x1800000, 0xc00000);
-        Actor_Run71(60);
-        *(u8 *)(Actor_Check39(9) + 34) = 2;
-        Actor_Place16(9, 0x198, 192);
-        Actor_Do7(60);
-        Actor_Run72();
+        Actor_unk69_4();
+        Actor_unk70_4();
+        Actor_unk15_3(9, 0x1800000, 0xc00000);
+        Actor_unk71_4(60);
+        *(u8 *)(Actor_unk39(9) + 34) = 2;
+        Actor_unk16_3(9, 0x198, 192);
+        Actor_unk7_2(60);
+        Actor_unk72_4();
     }
     if (gCell[282] != 0) {
         {
             s32 zero = 0;
             *(volatile s32 *)gOv = zero;
         }
-        Actor_Run8(0x20090c9, 0xc80);
+        Actor_unk8_4(0x20090c9, 0xc80);
     }
     return 0;
 }
@@ -432,24 +431,24 @@ s32 Scene_RunScene389(void)
 
 void Scene_RunThreeCallSequence(void)
 {
-    Actor_Run73();
-    Actor_Run74();
-    Actor_Run75();
+    Actor_unk73_4();
+    Actor_unk74_4();
+    Actor_unk75_4();
 }
 
 void Scene_RunFourStepSequence(void)
 {
-    Actor_Run76();
-    Actor_Run77();
-    Actor_Run78();
-    Actor_Run79();
+    Actor_unk76_4();
+    Actor_unk77_4();
+    Actor_unk78_4();
+    Actor_unk79_4();
 }
 
 /* overlays/scene/actor/staged_placement/shared.c */
 
 void Scene_Forward(void)
 {
-    Actor_Run80();
+    Actor_unk80_4();
 }
 
 /* overlays/scene/actor/staged_placement/staged_actor.c */

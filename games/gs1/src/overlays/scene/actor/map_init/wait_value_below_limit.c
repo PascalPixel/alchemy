@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/map_init/wait_value_below_limit.h"
 
 struct Track02001038 {
     u8 head[12];

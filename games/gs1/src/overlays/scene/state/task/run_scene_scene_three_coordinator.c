@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/run_scene_scene_three_coordinator.h"
 
 extern u8 gCell[];
 extern u8 gWork[];
@@ -13,50 +12,50 @@ void Scene_RunSceneThreeCoordinator(s32 a0)
     s32 record;
 
     if (gCell2[225][0] == 2) {
-        State_Run6();
+        State_unk6_4();
     } else {
-        State_Run7();
+        State_unk7_4();
         rec2 = State_Check(a0, 3);
         if (rec2 != 0) {
         } else {
             State_Do(0x20a6);
             State_Run(0x30000, 0x6000);
-            State_Run2(0x2f00000, -1, 0xc00000, 1);
-            State_Run8();
-            State_Run9(60);
-            State_Run3(0x10000, 0x2000);
-            State_Run4(0x2f00000, -1, 0xe00000, 1);
-            State_Run10();
-            State_Run11(a0, 0);
-            State_Run12(0, 0x358, 0x108);
-            State_Run13(10);
+            State_unk2_4(0x2f00000, -1, 0xc00000, 1);
+            State_unk8_4();
+            State_unk9_4(60);
+            State_unk3_4(0x10000, 0x2000);
+            State_unk4_4(0x2f00000, -1, 0xe00000, 1);
+            State_unk10_4();
+            State_unk11_4(a0, 0);
+            State_unk12_4(0, 0x358, 0x108);
+            State_unk13_4(10);
             State_Place(0, 0x18000, 0xc000);
-            State_Place2(0, 0x358, 0x108);
-            State_Place3(0, 0x358, 232);
-            State_Run14(a0, 0);
-            State_Place4(0, 0x348, 232);
-            State_Run15(10);
-            State_Place5(33, -64, 0);
-            State_Run5(0x2f00000, -1, 0xd80000, 1);
-            State_Run16(0, 1);
-            State_Run17(10);
-            State_Place6(0, 0x10000, 0x8000);
-            State_Place7(0, 0x2f8, 232);
-            State_Run18(10);
-            State_Place8(0, 0x4000, 30);
-            State_Run19(a0, 0);
-            State_Run20(0);
-            State_Run21(0, 0);
-            State_Place9(33, 0x3480000, 0xe80000);
-            State_Run22(a0, 3);
+            State_unk2_3(0, 0x358, 0x108);
+            State_unk3_3(0, 0x358, 232);
+            State_unk14_4(a0, 0);
+            State_unk4_3(0, 0x348, 232);
+            State_unk15_4(10);
+            State_unk5_3(33, -64, 0);
+            State_unk5_4(0x2f00000, -1, 0xd80000, 1);
+            State_unk16_4(0, 1);
+            State_unk17_4(10);
+            State_unk6_3(0, 0x10000, 0x8000);
+            State_unk7_3(0, 0x2f8, 232);
+            State_unk18_4(10);
+            State_unk8_3(0, 0x4000, 30);
+            State_unk19_4(a0, 0);
+            State_unk20_4(0);
+            State_unk21_4(0, 0);
+            State_unk9_3(33, 0x3480000, 0xe80000);
+            State_unk22_4(a0, 3);
             goto L_020016b0;
         }
         if (rec2 == 1) {
-            State_Do2(0x20a5);
-            State_Run23(a0, 0);
+            State_unk2_2(0x20a5);
+            State_unk23_4(a0, 0);
         }
         L_020016b0:;
-        State_Place10(rec2, a0, 3);
-        State_Run24();
+        State_unk10_3(rec2, a0, 3);
+        State_unk24_4();
     }
 }

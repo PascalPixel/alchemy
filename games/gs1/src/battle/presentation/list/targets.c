@@ -1,7 +1,6 @@
 #include "types.h"
 #include "scene.h"
 
-
 void *Runtime_GetObject(u8);
 
 s32 BattlePres_BuildTargetList(void *desc, void *output)

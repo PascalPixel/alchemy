@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/battle/effects/misc/execute_packed_ability_effect.h"
 #include "effect_runtime.h"
 #include "object_lookup.h"
 #include "battle_effect_runtime.h"
@@ -32,10 +31,10 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     second = (void *)Battle_Place(0x20000005, object, &output);
     Battle_Apply(index, 0);
     BattleFx_SetupObjectPair(gCell.object_id, output);
-    Battle_Place2(first, mode, output);
+    Battle_unk2_3(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();
-    Battle_Place2(second, mode, output);
+    Battle_unk2_3(second, mode, output);
     Battle_Run();
     return 0;
 }

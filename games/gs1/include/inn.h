@@ -37,6 +37,4 @@ LAYOUT_OFFSET_GUARD(
     special_active,
     0x3ac);
 
-extern struct InnState *Data_03001f2c;
-
 #endif

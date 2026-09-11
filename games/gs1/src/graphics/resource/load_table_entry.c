@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/resource/load_table_entry.h"
 
 void Resource_CopyData(void *, s32, void *);
 extern u8 gRom;

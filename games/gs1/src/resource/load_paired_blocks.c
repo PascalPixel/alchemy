@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/load_paired_blocks.h"
 #include "layout_guard.h"
 
 struct State_080a5534 {

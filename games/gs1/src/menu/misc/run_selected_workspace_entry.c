@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/misc/run_selected_workspace_entry.h"
 
 extern u8 *gIw;
 
@@ -13,5 +12,5 @@ void Menu_RunSelectedWorkspaceEntry(void)
     index = *(u16 *)(base + 0x574);
     index *= 4;
     index += 0x610;
-    Menu_Do2(*(void **)(base + index));
+    Menu_unk2_2(*(void **)(base + index));
 }

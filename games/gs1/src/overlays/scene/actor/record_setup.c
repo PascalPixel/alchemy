@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/record_setup.h"
 
 #define STEP_COUNTER (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
 
@@ -38,16 +37,16 @@ extern s16 gCell[];
 
 u16 *Actor_Run(s32);
 
-u16 *Actor_Run2(s32);
+u16 *Actor_unk2_4(s32);
 
 void SceneMessage_Show(s32);
 
-u16 *Actor_Run3(s32);
+u16 *Actor_unk3_4(s32);
 
-union SceneActor *Actor_Run4(s32);
-union SceneActor *Actor_Run5(s32);
-union SceneActor *Actor_Run6(s32);
-union SceneActor *Actor_Run7(s32);
+union SceneActor *Actor_unk4_4(s32);
+union SceneActor *Actor_unk5_4(s32);
+union SceneActor *Actor_unk6_4(s32);
+union SceneActor *Actor_unk7_4(s32);
 
 /*
  * Each pseudo symbol above names the per-site call word the overlay image
@@ -110,19 +109,19 @@ void Dialogue_HandleFacingChoice(s32 no)
     u16 facing = (Actor_Run(0)[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Actor_Apply(31, no);
-    } else if (Actor_Check2(0x96f)) {
+    } else if (Actor_unk2(0x96f)) {
         s32 msg = (s32)&SceneMessage_FacingChoiceBase;
         Actor_Do(msg);
         Actor_Apply2(no, 0);
         if (Actor_Apply3(0, 0) == 0) {
-            Actor_Do2(10);
-            Actor_Do3(msg + 1);
+            Actor_unk2_2(10);
+            Actor_unk3_2(msg + 1);
         } else {
-            Actor_Do4(msg + 2);
+            Actor_unk4_2(msg + 2);
         }
         Actor_Apply4(no, 0);
     } else {
-        Actor_Do5(0x25cf);
+        Actor_unk5_2(0x25cf);
         Actor_Apply5(no, 0);
     }
 }
@@ -131,14 +130,14 @@ void Dialogue_HandleFacingBranch(s32 no)
 {
     extern u8 *gWork;
 
-    u16 facing = (Actor_Run3(0)[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Actor_unk3_4(0)[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Actor_Apply6(10, no);
-    } else if (Actor_Check3(0x96f)) {
-        Actor_Do6(0x2620);
+    } else if (Actor_unk3(0x96f)) {
+        Actor_unk6_2(0x2620);
         Actor_Apply7(no, 0);
     } else {
-        Actor_Do7(0x25d1);
+        Actor_unk7_2(0x25d1);
         Actor_Apply8(no, 0);
     }
 }
@@ -147,11 +146,11 @@ void Dialogue_HandleFacingAction(s32 no)
 {
     extern u8 *gWork;
 
-    u16 facing = (Actor_Run2(0)[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Actor_unk2_4(0)[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Actor_Do8(no);
-    } else if (Actor_Check4(0x96f)) {
-        Actor_Do9(0x262c);
+        Actor_unk8_2(no);
+    } else if (Actor_unk4(0x96f)) {
+        Actor_unk9_2(0x262c);
         Actor_Apply9(no, 0);
     } else {
         SceneMessage_Show(0x25d5);
@@ -164,13 +163,13 @@ void Scene_RunActorCueBranch(s32 obj)
     extern u8 *gWork;
 
     s32 cue = (s32)&Value_00002624;
-    Actor_Do10(cue);
+    Actor_unk10_2(cue);
     Actor_Apply11(obj, 0);
     if (Actor_Apply12(0, 0) == 0) {
-        Actor_Do11(10);
-        Actor_Do12(cue + 1);
+        Actor_unk11_2(10);
+        Actor_unk12_2(cue + 1);
     } else {
-        Actor_Do13(cue + 2);
+        Actor_unk13_2(cue + 2);
     }
     Actor_Apply13(obj, 0);
 }
@@ -182,8 +181,8 @@ void State_ApplyCounter16cThenCall7b(void)
     u8 *state = gWork;
     s16 *cnt = (s16 *)(state + 0x16C);
 
-    Actor_Do14(*cnt);
-    Actor_Do15(0x7B);
+    Actor_unk14_2(*cnt);
+    Actor_unk15_2(0x7B);
 }
 
 /*
@@ -462,7 +461,7 @@ s32 SceneData_SelectTable9090ByFlag96f(void)
 {
     extern u8 *gWork;
 
-    if (Actor_Check5(0x96F) != 0) {
+    if (Actor_unk5(0x96F) != 0) {
         return 0x020091EC;
     }
     return 0x02009090;
@@ -474,12 +473,12 @@ s32 Scene_InitActorRecords(void)
 
     union SceneActor *work;
     if (gCell[225] == 90)
-        Actor_Do16(0x96f);
+        Actor_unk16_2(0x96f);
     gWork[112] = 521;
     gWork[114] = 24;
-    Actor_Run4(12)->bytes[89] |= 4;
-    Actor_Run5(13)->bytes[89] |= 4;
-    work = Actor_Run6(20);
+    Actor_unk4_4(12)->bytes[89] |= 4;
+    Actor_unk5_4(13)->bytes[89] |= 4;
+    work = Actor_unk6_4(20);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     {
@@ -490,7 +489,7 @@ s32 Scene_InitActorRecords(void)
         flags = flags & record->flags;
         record->flags = flags | 4;
     }
-    work = Actor_Run7(21);
+    work = Actor_unk7_4(21);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     work->bytes[85] = 2;

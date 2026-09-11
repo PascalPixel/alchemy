@@ -9,7 +9,4 @@ enum {
     CURVE_FULL_STEPS = 16,
 };
 
-extern u8 Data_080132fc[];
-extern u8 Data_080133fc[];
-
 #endif

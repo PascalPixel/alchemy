@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/run/run_event_action.h"
-
 
 /*
  * Battle_Apply names a bx rN veneer slot, so this is an indirect call

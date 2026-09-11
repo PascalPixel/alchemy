@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/effect/palette.h"
-
 
 #include "palette_scene.h"
 
@@ -65,13 +63,13 @@ extern s32 gIw;
 extern u8 gOv4[];
 extern u8 gWork[];
 
-u8 *Effect_Run15();
+u8 *Effect_unk15_4();
 
-struct PaletteEffect *Effect_Run16(s32, s32, s32, s32);
+struct PaletteEffect *Effect_unk16_4(s32, s32, s32, s32);
 
-struct PaletteSceneRecord *Effect_Run17();
+struct PaletteSceneRecord *Effect_unk17_4();
 
-u8 *Effect_Run18();
+u8 *Effect_unk18_4();
 
 /* One symbol per call site, named at the site's decoded address. All three
  * reach the same helper, which scales one channel by the adjustment, and each
@@ -132,10 +130,10 @@ void PaletteScene_Initialize(void)
     void *scene;
 
     scene = *(void **)0x03001EBC;
-    Effect_Run19();
-    Effect_Place11(0, 0, 0);
-    Effect_Do7(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
-    Effect_Run20();
+    Effect_unk19_4();
+    Effect_unk11_3(0, 0, 0);
+    Effect_unk7_2(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
+    Effect_unk20_4();
 }
 
 /* Returns this overlay's state block. */
@@ -146,19 +144,19 @@ void Scene_RunScene395(void)
     u32 i;
     s32 record;
 
-    Effect_Run21();
+    Effect_unk21_4();
     if (Effect_Check(0x845) != 0) {
-        Effect_Run22(10, 1);
+        Effect_unk22_4(10, 1);
         Effect_Do(0x151c);
-        Effect_Run23(8, 0);
-        Effect_Run24(10, 0);
+        Effect_unk23_4(8, 0);
+        Effect_unk24_4(10, 0);
     } else {
-        if (Effect_Check2(0x844) != 0) {
-            Effect_Run25(10, 1);
-            Effect_Do2(0x14eb);
-            Effect_Run26(8, 0);
-            Effect_Check3(10, 0);
-            record = Effect_Check9(184);
+        if (Effect_unk2(0x844) != 0) {
+            Effect_unk25_3(10, 1);
+            Effect_unk2_2(0x14eb);
+            Effect_unk26_3(8, 0);
+            Effect_unk3(10, 0);
+            record = Effect_unk9(184);
             if (record == -1) {
                 goto L_02000220;
             }
@@ -169,63 +167,63 @@ void Scene_RunScene395(void)
                 *target = shown;
             }
         } else {
-            Effect_Do3(0x14c9);
-            Effect_Run27(8, 0);
+            Effect_unk3_2(0x14c9);
+            Effect_unk27_3(8, 0);
             Effect_Run(0x406218, 1);
-            Effect_Run28(20);
-            Effect_Run29(40);
+            Effect_unk28_3(20);
+            Effect_unk29_3(40);
             Effect_Place(0x200e, 0, 10);
-            Effect_Run30(0, 2);
-            Effect_Run2(0x200e, 0);
-            Effect_Run3(0x10000, 1);
-            Effect_Run31(20);
-            Effect_Run32(40);
+            Effect_unk30_2(0, 2);
+            Effect_unk2_4(0x200e, 0);
+            Effect_unk3_4(0x10000, 1);
+            Effect_unk31_2(20);
+            Effect_unk32_2(40);
         }
     }
     L_02000220:;
-    Effect_Run33();
+    Effect_unk33_2();
 }
 
 void PaletteScene_RunActorNineBranch(void)
 {
     extern s32 gOv5;
 
-    Effect_Run34();
-    if (Effect_Check10(0x845) != 0) {
-        Effect_Do8(0x151F);
+    Effect_unk34_2();
+    if (Effect_unk10(0x845) != 0) {
+        Effect_unk8_2(0x151F);
     } else {
-        Effect_Do9(0x14C8);
+        Effect_unk9_2(0x14C8);
     }
     Effect_Apply(9, 0);
-    Effect_Run35();
+    Effect_unk35_2();
 }
 
 void PaletteScene_RunActorEightBranch(void)
 {
     extern s32 gOv5;
 
-    Effect_Run36();
-    if (Effect_Check11(0x845) != 0) {
-        Effect_Do10(0x151E);
+    Effect_unk36_2();
+    if (Effect_unk11(0x845) != 0) {
+        Effect_unk10_2(0x151E);
     } else {
-        Effect_Do11(0x14EC);
+        Effect_unk11_2(0x14EC);
     }
     Effect_Apply2(8, 0);
-    Effect_Run37();
+    Effect_unk37_2();
 }
 
 void PaletteScene_RunFlaggedBranch(void)
 {
     extern s32 gOv5;
 
-    Effect_Run38();
-    Effect_Run39();
-    if (Effect_Check12(0x844) == 0) {
-        Effect_Run40();
+    Effect_unk38_2();
+    Effect_unk39_2();
+    if (Effect_unk12(0x844) == 0) {
+        Effect_unk40_2();
     } else {
-        Effect_Run41();
+        Effect_unk41_2();
     }
-    Effect_Run42();
+    Effect_unk42();
 }
 
 void RunEventScript01(void)
@@ -237,57 +235,57 @@ void RunEventScript01(void)
     u8 *record;
     s32 base5_2009dd0;
 
-    rec8 = Effect_Check13(0);
-    Effect_Place2(0, 0xc000, 0);
-    Effect_Run4(0x406218, 1);
-    Effect_Run43(20);
-    Effect_Run44(40);
-    Effect_Run45(17);
+    rec8 = Effect_unk13(0);
+    Effect_unk2_3(0, 0xc000, 0);
+    Effect_unk4_4(0x406218, 1);
+    Effect_unk43(20);
+    Effect_unk44(40);
+    Effect_unk45(17);
     base5_2009dd0 = (s32)gOv5;
     *(volatile s32 *)base5_2009dd0 = 1;
-    Effect_Run5(0x2009219, 0xc80);
-    Effect_Run46(30);
+    Effect_unk5_4(0x2009219, 0xc80);
+    Effect_unk46(30);
     *(volatile s32 *)base5_2009dd0 = 0;
-    Effect_Run6(0x1480000, -1, 0xeb0000, 1);
-    Effect_Run47(0, 1);
-    *(u8 *)(Effect_Check14(0) + 90) &= 254;
-    Effect_Run48(0, 16);
-    Effect_Place3(0, 0x20000, 0x20000);
-    Effect_Run49(133);
+    Effect_unk6_4(0x1480000, -1, 0xeb0000, 1);
+    Effect_unk47(0, 1);
+    *(u8 *)(Effect_unk14(0) + 90) &= 254;
+    Effect_unk48(0, 16);
+    Effect_unk3_3(0, 0x20000, 0x20000);
+    Effect_unk49(133);
     *(volatile s32 *)(rec8 + 40) = 0x50000;
     *(volatile s32 *)(rec8 + 72) = 0x4000;
     *(volatile s32 *)(rec8 + 68) = 0xa000;
-    Effect_Place4(0, 0x14f, 0x102);
+    Effect_unk4_3(0, 0x14f, 0x102);
     if (*(volatile s32 *)(rec8 + 40) >= 0) {
         do {
-            Effect_Run50(1);
+            Effect_unk50(1);
         } while (*(volatile s32 *)(rec8 + 40) >= 0);
     }
     do {
-        Effect_Run51(1);
+        Effect_unk51(1);
     } while (*(volatile s32 *)(rec8 + 40) <= 0);
-    Effect_Run52(161);
-    Effect_Run53(0, 19);
-    Effect_Run54(120);
-    Effect_Do4(0x2009219);
-    Effect_Run55(40);
+    Effect_unk52(161);
+    Effect_unk53(0, 19);
+    Effect_unk54(120);
+    Effect_unk4_2(0x2009219);
+    Effect_unk55(40);
     *(volatile s32 *)(rec8 + 68) = 0x4000;
     {
-        u8 *record = Effect_Run18(0);
+        u8 *record = Effect_unk18_4(0);
         u8 value = *(volatile u8 *)&record[90];
 
         record[90] = (u8)(value | 1);
     }
-    Effect_Run56(80);
-    Effect_Do5(0x14cc);
-    Effect_Place5(0x200e, 0, 20);
-    Effect_Run57(0, 2);
-    Effect_Run58(20);
-    Effect_Run7(0x200e, 0);
-    Effect_Run59();
-    Effect_Run8(0x10000, 1);
-    Effect_Run60(20);
-    Effect_Run61(40);
+    Effect_unk56(80);
+    Effect_unk5_2(0x14cc);
+    Effect_unk5_3(0x200e, 0, 20);
+    Effect_unk57(0, 2);
+    Effect_unk58(20);
+    Effect_unk7_4(0x200e, 0);
+    Effect_unk59();
+    Effect_unk8_4(0x10000, 1);
+    Effect_unk60(20);
+    Effect_unk61(40);
     {
         s32 shown = 0xc000;
 
@@ -295,11 +293,11 @@ void RunEventScript01(void)
     }
     *(volatile s32 *)(rec8 + 72) = 0x10000;
     *(volatile s32 *)(rec8 + 68) = 0x4000;
-    Effect_Run62(0, 2);
-    Effect_Run63(40);
-    Effect_Run64(0, 4, 0);
-    Effect_Run65(0, 1);
-    Effect_Run66(20);
+    Effect_unk62(0, 2);
+    Effect_unk63(40);
+    Effect_unk64(0, 4, 0);
+    Effect_unk65(0, 1);
+    Effect_unk66(20);
 }
 
 /* The scene's actor transition sequence. Actor three takes part only when the
@@ -317,368 +315,368 @@ void PaletteScene_RunActorTransitionSequence(void)
     s32 effectCallback;
     const s32 *finalActions;
 
-    actorThreeEnabled = Effect_Check15(3);
-    Effect_Place6(0, 0x148, 212);
-    Effect_Place7(0, 0xc000, 20);
-    Effect_Run67(17);
-    Effect_Run9(0x14ed, 1);
-    Effect_Place8(1, 0x10000, 0x8000);
-    Effect_Place8(2, 0x10000, 0x8000);
-    object = Effect_Run15(0);
+    actorThreeEnabled = Effect_unk15(3);
+    Effect_unk6_3(0, 0x148, 212);
+    Effect_unk7_3(0, 0xc000, 20);
+    Effect_unk67(17);
+    Effect_unk9_4(0x14ed, 1);
+    Effect_unk8_3(1, 0x10000, 0x8000);
+    Effect_unk8_3(2, 0x10000, 0x8000);
+    object = Effect_unk15_4(0);
     if (object != 0) {
-        Effect_Run68(1, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Effect_unk68(1, *(s32 *)(object + 8), *(s32 *)(object + 16));
     }
-    object = Effect_Run15(0);
+    object = Effect_unk15_4(0);
     if (object != 0) {
-        Effect_Run68(2, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Effect_unk68(2, *(s32 *)(object + 8), *(s32 *)(object + 16));
     }
-    Effect_Run69(1, SceneAction_ActorOneEntry);
-    Effect_Run69(2, SceneAction_ActorTwoEntry);
+    Effect_unk69(1, SceneAction_ActorOneEntry);
+    Effect_unk69(2, SceneAction_ActorTwoEntry);
     if (actorThreeEnabled != 0) {
-        Effect_Place8(3, 0x10000, 0x8000);
-        object = Effect_Run15(0);
+        Effect_unk8_3(3, 0x10000, 0x8000);
+        object = Effect_unk15_4(0);
         if (object != 0) {
-            Effect_Run68(3, *(s32 *)(object + 8), *(s32 *)(object + 16));
+            Effect_unk68(3, *(s32 *)(object + 8), *(s32 *)(object + 16));
         }
-        Effect_Run69(3, SceneAction_ActorThreeEntry);
+        Effect_unk69(3, SceneAction_ActorThreeEntry);
     }
-    Effect_Run70(2);
-    Effect_Run71(40);
-    Effect_Run72(0);
-    Effect_Run73(32);
-    Effect_Run74(40);
+    Effect_unk70(2);
+    Effect_unk71(40);
+    Effect_unk72(0);
+    Effect_unk73(32);
+    Effect_unk74(40);
     transitionState = &gOv;
     *transitionState = 0;
-    Effect_Check4((s32)PaletteScene_AdvanceTransition, 0xc80);
-    Effect_Run71(40);
-    Effect_Place7(1, 0x6000, 20);
-    Effect_Run10(0x33333, 0x6666);
-    Effect_Run11(0x1000000, -1, 0xfe0000, 1);
-    Effect_Run75();
-    Effect_Run67(246);
-    Effect_Run71(40);
-    Effect_Place7(2, 0x2000, 20);
-    Effect_Run11(0x19d0000, -1, 0x1050000, 1);
-    Effect_Run75();
-    Effect_Run67(246);
-    Effect_Run71(40);
-    Effect_Place7(0, 0x4000, 0);
-    Effect_Place7(3, 0x4000, 20);
-    Effect_Run11(0x1460000, -1, 0x1800000, 1);
-    Effect_Run75();
-    Effect_Run67(246);
+    Effect_unk4((s32)PaletteScene_AdvanceTransition, 0xc80);
+    Effect_unk71(40);
+    Effect_unk7_3(1, 0x6000, 20);
+    Effect_unk10_4(0x33333, 0x6666);
+    Effect_unk11_4(0x1000000, -1, 0xfe0000, 1);
+    Effect_unk75();
+    Effect_unk67(246);
+    Effect_unk71(40);
+    Effect_unk7_3(2, 0x2000, 20);
+    Effect_unk11_4(0x19d0000, -1, 0x1050000, 1);
+    Effect_unk75();
+    Effect_unk67(246);
+    Effect_unk71(40);
+    Effect_unk7_3(0, 0x4000, 0);
+    Effect_unk7_3(3, 0x4000, 20);
+    Effect_unk11_4(0x1460000, -1, 0x1800000, 1);
+    Effect_unk75();
+    Effect_unk67(246);
     if (*transitionState != 24) {
         do {
-            Effect_Run74(1);
+            Effect_unk74(1);
         } while (*transitionState != 24);
     }
-    Effect_Check5((s32)PaletteScene_AdvanceTransition);
-    Effect_Run74(10);
+    Effect_unk5((s32)PaletteScene_AdvanceTransition);
+    Effect_unk74(10);
     cycle = 0;
     do {
-        Effect_Run72(0);
-        Effect_Run73(6);
-        Effect_Run74(6);
-        Effect_Run72(1);
-        Effect_Run73(6);
+        Effect_unk72(0);
+        Effect_unk73(6);
+        Effect_unk74(6);
+        Effect_unk72(1);
+        Effect_unk73(6);
         cycle = (cycle + 1);
-        Effect_Run74(6);
+        Effect_unk74(6);
     } while ((u32)cycle <= 3);
-    Effect_Run72(0);
-    Effect_Run73(40);
-    Effect_Run74(80);
-    Effect_Run11(0x1480000, 0x80000, 0xd40000, 1);
-    Effect_Run75();
-    Effect_Run71(40);
-    Effect_Run76(10, 1);
-    Effect_Run71(40);
-    Effect_Run67(7);
-    Effect_Do6(0x14ee);
-    Effect_Run77(8, 0);
-    Effect_Run78(0, 2);
-    Effect_Run78(1, 2);
-    Effect_Run78(3, 2);
-    Effect_Run79(2, 2);
-    Effect_Place7(0, 0xc000, 0);
-    Effect_Place7(1, 0xc000, 0);
-    Effect_Place7(3, 0xc000, 0);
-    Effect_Place7(2, 0xc000, 20);
-    Effect_Run76(10, 2);
-    Effect_Run71(20);
-    Effect_Run76(10, 3);
-    Effect_Run71(40);
-    Effect_Run76(10, 1);
-    Effect_Run71(20);
-    Effect_Run77(8, 0);
-    Effect_Place9(0, 0x105, 0);
-    Effect_Place9(1, 0x105, 0);
-    Effect_Place9(3, 0x105, 0);
-    Effect_Place9(2, 0x105, 40);
-    Effect_Run11(0xea0000, 0, 0xe80000, 1);
-    Effect_Run75();
-    Effect_Run71(40);
-    Effect_Run76(11, 1);
-    Effect_Run71(40);
-    Effect_Run76(11, 3);
-    Effect_Run71(20);
-    Effect_Place10(0x4009, 0, 20);
-    Effect_Run76(11, 2);
-    Effect_Run71(10);
-    Effect_Place7(0, 0x6000, 0);
-    Effect_Place7(1, 0x6000, 0);
-    Effect_Place7(2, 0x6000, 0);
-    Effect_Place7(3, 0x6000, 20);
-    Effect_Run76(11, 3);
-    Effect_Run71(20);
-    Effect_Run76(11, 2);
-    Effect_Run71(20);
-    Effect_Run76(11, 3);
-    Effect_Place10(0x4009, 0, 10);
-    Effect_Run76(10, 0);
-    Effect_Run71(20);
-    Effect_Run12(0x8008, 0);
-    Effect_Run76(10, 1);
-    Effect_Run71(20);
-    Effect_Check6(0x8008, 0);
-    Effect_Place7(0, 0xc000, 0);
-    Effect_Place7(1, 0xe000, 0);
-    Effect_Place7(2, 0xa000, 0);
-    Effect_Place7(3, 0xc000, 0);
-    if (Effect_Check7(0, 0) == 0) {
-        Effect_Run12(0x4009, 0);
-        Effect_Run12(0x8008, 0);
+    Effect_unk72(0);
+    Effect_unk73(40);
+    Effect_unk74(80);
+    Effect_unk11_4(0x1480000, 0x80000, 0xd40000, 1);
+    Effect_unk75();
+    Effect_unk71(40);
+    Effect_unk76(10, 1);
+    Effect_unk71(40);
+    Effect_unk67(7);
+    Effect_unk6_2(0x14ee);
+    Effect_unk77(8, 0);
+    Effect_unk78(0, 2);
+    Effect_unk78(1, 2);
+    Effect_unk78(3, 2);
+    Effect_unk79(2, 2);
+    Effect_unk7_3(0, 0xc000, 0);
+    Effect_unk7_3(1, 0xc000, 0);
+    Effect_unk7_3(3, 0xc000, 0);
+    Effect_unk7_3(2, 0xc000, 20);
+    Effect_unk76(10, 2);
+    Effect_unk71(20);
+    Effect_unk76(10, 3);
+    Effect_unk71(40);
+    Effect_unk76(10, 1);
+    Effect_unk71(20);
+    Effect_unk77(8, 0);
+    Effect_unk9_3(0, 0x105, 0);
+    Effect_unk9_3(1, 0x105, 0);
+    Effect_unk9_3(3, 0x105, 0);
+    Effect_unk9_3(2, 0x105, 40);
+    Effect_unk11_4(0xea0000, 0, 0xe80000, 1);
+    Effect_unk75();
+    Effect_unk71(40);
+    Effect_unk76(11, 1);
+    Effect_unk71(40);
+    Effect_unk76(11, 3);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4009, 0, 20);
+    Effect_unk76(11, 2);
+    Effect_unk71(10);
+    Effect_unk7_3(0, 0x6000, 0);
+    Effect_unk7_3(1, 0x6000, 0);
+    Effect_unk7_3(2, 0x6000, 0);
+    Effect_unk7_3(3, 0x6000, 20);
+    Effect_unk76(11, 3);
+    Effect_unk71(20);
+    Effect_unk76(11, 2);
+    Effect_unk71(20);
+    Effect_unk76(11, 3);
+    Effect_unk10_3(0x4009, 0, 10);
+    Effect_unk76(10, 0);
+    Effect_unk71(20);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk76(10, 1);
+    Effect_unk71(20);
+    Effect_unk6(0x8008, 0);
+    Effect_unk7_3(0, 0xc000, 0);
+    Effect_unk7_3(1, 0xe000, 0);
+    Effect_unk7_3(2, 0xa000, 0);
+    Effect_unk7_3(3, 0xc000, 0);
+    if (Effect_unk7(0, 0) == 0) {
+        Effect_unk12_4(0x4009, 0);
+        Effect_unk12_4(0x8008, 0);
     } else {
         sceneWorkSlot = 0x3001ebc;
         *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 2;
-        Effect_Place9(3, 0x103, 0);
-        Effect_Place9(1, 0x103, 0);
-        Effect_Place9(2, 0x103, 40);
-        Effect_Run80(1, 4);
-        Effect_Run77(1, 0);
+        Effect_unk9_3(3, 0x103, 0);
+        Effect_unk9_3(1, 0x103, 0);
+        Effect_unk9_3(2, 0x103, 40);
+        Effect_unk80(1, 4);
+        Effect_unk77(1, 0);
         if (actorThreeEnabled != 0) {
-            Effect_Run79(3, 2);
-            Effect_Run77(3, 0);
+            Effect_unk79(3, 2);
+            Effect_unk77(3, 0);
         } else {
             *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 1;
         }
-        Effect_Run81(2, 3);
-        Effect_Run77(2, 0);
-        Effect_Run12(0x4009, 0);
-        Effect_Run12(0x8008, 0);
+        Effect_unk81(2, 3);
+        Effect_unk77(2, 0);
+        Effect_unk12_4(0x4009, 0);
+        Effect_unk12_4(0x8008, 0);
     }
-    Effect_Run80(0, 3);
-    Effect_Run80(1, 3);
-    Effect_Run80(3, 3);
-    Effect_Run81(2, 3);
-    Effect_Run11(0x1480000, 0x80000, 0xd40000, 1);
-    Effect_Run75();
-    Effect_Run71(20);
-    Effect_Run76(10, 0);
-    Effect_Run71(20);
-    Effect_Run72(0);
-    Effect_Run73(1);
-    Effect_Run74(1);
-    Effect_Run13(0x406218, 1);
-    Effect_Run73(40);
-    Effect_Run71(60);
+    Effect_unk80(0, 3);
+    Effect_unk80(1, 3);
+    Effect_unk80(3, 3);
+    Effect_unk81(2, 3);
+    Effect_unk11_4(0x1480000, 0x80000, 0xd40000, 1);
+    Effect_unk75();
+    Effect_unk71(20);
+    Effect_unk76(10, 0);
+    Effect_unk71(20);
+    Effect_unk72(0);
+    Effect_unk73(1);
+    Effect_unk74(1);
+    Effect_unk13_4(0x406218, 1);
+    Effect_unk73(40);
+    Effect_unk71(60);
     gOv2 = 0;
     gOv3[0] = 0x1480000;
     gOv3[1] = 0x300000;
-    effectCallback = (s32)Effect_Run82;
+    effectCallback = (s32)Effect_unk82;
     gOv3[2] = 0xcd0000;
-    Effect_Check4(effectCallback, 0xc80);
-    Effect_Run71(100);
-    Effect_Check16(effectCallback);
-    Effect_Run13(0x7fff, 0);
-    Effect_Run73(60);
-    Effect_Run71(100);
-    Effect_Run72(0);
-    Effect_Run73(20);
-    Effect_Run71(40);
-    Effect_Run76(10, 1);
-    Effect_Run71(10);
-    Effect_Do6(0x14fb);
-    Effect_Run12(0x8008, 0);
-    Effect_Run80(0, 3);
-    Effect_Run80(1, 3);
-    Effect_Run80(3, 3);
-    Effect_Run81(2, 3);
-    Effect_Run11(0xea0000, 0, 0xe80000, 1);
-    Effect_Run75();
-    Effect_Run71(20);
-    Effect_Run12(0x4009, 0);
-    Effect_Place10(0x8008, 0, 10);
-    Effect_Run79(1, 2);
-    Effect_Place7(0, 0x6000, 0);
-    Effect_Place7(1, 0xe000, 10);
-    Effect_Check6(1, 0);
-    if (Effect_Check7(0, 0) == 0) {
-        Effect_Place9(1, 0x102, 40);
+    Effect_unk4(effectCallback, 0xc80);
+    Effect_unk71(100);
+    Effect_unk16(effectCallback);
+    Effect_unk13_4(0x7fff, 0);
+    Effect_unk73(60);
+    Effect_unk71(100);
+    Effect_unk72(0);
+    Effect_unk73(20);
+    Effect_unk71(40);
+    Effect_unk76(10, 1);
+    Effect_unk71(10);
+    Effect_unk6_2(0x14fb);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk80(0, 3);
+    Effect_unk80(1, 3);
+    Effect_unk80(3, 3);
+    Effect_unk81(2, 3);
+    Effect_unk11_4(0xea0000, 0, 0xe80000, 1);
+    Effect_unk75();
+    Effect_unk71(20);
+    Effect_unk12_4(0x4009, 0);
+    Effect_unk10_3(0x8008, 0, 10);
+    Effect_unk79(1, 2);
+    Effect_unk7_3(0, 0x6000, 0);
+    Effect_unk7_3(1, 0xe000, 10);
+    Effect_unk6(1, 0);
+    if (Effect_unk7(0, 0) == 0) {
+        Effect_unk9_3(1, 0x102, 40);
     } else {
-        Effect_Run81(1, 4);
+        Effect_unk81(1, 4);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Effect_Run77(1, 0);
-    Effect_Run76(10, 4);
-    Effect_Run71(20);
-    Effect_Do6(0x1501);
-    Effect_Run12(0x8008, 0);
-    Effect_Place7(0, 0xc000, 0);
-    Effect_Place7(1, 0xc000, 0);
-    Effect_Run12(0x8008, 0);
-    Effect_Run80(0, 3);
-    Effect_Run80(1, 3);
-    Effect_Run80(3, 3);
-    Effect_Run81(2, 3);
-    Effect_Run76(10, 4);
-    Effect_Run71(20);
-    Effect_Place10(0x8008, 0, 20);
-    Effect_Run76(11, 0);
-    Effect_Place10(0x4009, 0, 20);
-    Effect_Run76(11, 3);
-    Effect_Run71(40);
-    Effect_Run76(11, 1);
-    Effect_Run71(20);
-    Effect_Place10(0x4009, 0, 20);
-    Effect_Run76(10, 2);
-    Effect_Run71(20);
-    Effect_Run12(0x8008, 0);
-    Effect_Place9(0, 0x102, 0);
-    Effect_Place9(1, 0x102, 0);
-    Effect_Place9(3, 0x102, 0);
-    Effect_Place9(2, 0x102, 80);
-    Effect_Run76(11, 5);
-    Effect_Run71(60);
-    Effect_Run76(11, 3);
-    Effect_Run71(20);
-    Effect_Place10(0x4009, 0, 20);
-    Effect_Run76(10, 5);
-    Effect_Run71(40);
-    Effect_Run76(10, 2);
-    Effect_Run71(20);
-    Effect_Place10(0x4008, 0, 20);
-    Effect_Run79(1, 2);
-    Effect_Place7(1, 0x8000, 10);
-    Effect_Run77(1, 0);
-    Effect_Place7(2, 0x8000, 20);
-    Effect_Run12(0x8002, 0);
-    Effect_Run76(11, 4);
-    Effect_Run71(20);
-    Effect_Place10(0x4009, 0, 20);
-    Effect_Place7(1, 0xe000, 0);
-    Effect_Place7(0, 0x6000, 10);
-    Effect_Run83(1, 0, 20);
-    Effect_Run76(10, 1);
-    Effect_Place10(0x8008, 0, 10);
-    Effect_Run76(10, 2);
-    Effect_Run71(20);
-    Effect_Run76(11, 3);
-    Effect_Run71(40);
-    Effect_Run76(11, 0);
-    Effect_Run71(20);
-    Effect_Run72(0);
-    Effect_Run73(1);
-    Effect_Run74(1);
-    Effect_Run13(0x406218, 1);
-    Effect_Run73(40);
-    Effect_Run71(60);
+    Effect_unk77(1, 0);
+    Effect_unk76(10, 4);
+    Effect_unk71(20);
+    Effect_unk6_2(0x1501);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk7_3(0, 0xc000, 0);
+    Effect_unk7_3(1, 0xc000, 0);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk80(0, 3);
+    Effect_unk80(1, 3);
+    Effect_unk80(3, 3);
+    Effect_unk81(2, 3);
+    Effect_unk76(10, 4);
+    Effect_unk71(20);
+    Effect_unk10_3(0x8008, 0, 20);
+    Effect_unk76(11, 0);
+    Effect_unk10_3(0x4009, 0, 20);
+    Effect_unk76(11, 3);
+    Effect_unk71(40);
+    Effect_unk76(11, 1);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4009, 0, 20);
+    Effect_unk76(10, 2);
+    Effect_unk71(20);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk9_3(0, 0x102, 0);
+    Effect_unk9_3(1, 0x102, 0);
+    Effect_unk9_3(3, 0x102, 0);
+    Effect_unk9_3(2, 0x102, 80);
+    Effect_unk76(11, 5);
+    Effect_unk71(60);
+    Effect_unk76(11, 3);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4009, 0, 20);
+    Effect_unk76(10, 5);
+    Effect_unk71(40);
+    Effect_unk76(10, 2);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4008, 0, 20);
+    Effect_unk79(1, 2);
+    Effect_unk7_3(1, 0x8000, 10);
+    Effect_unk77(1, 0);
+    Effect_unk7_3(2, 0x8000, 20);
+    Effect_unk12_4(0x8002, 0);
+    Effect_unk76(11, 4);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4009, 0, 20);
+    Effect_unk7_3(1, 0xe000, 0);
+    Effect_unk7_3(0, 0x6000, 10);
+    Effect_unk83(1, 0, 20);
+    Effect_unk76(10, 1);
+    Effect_unk10_3(0x8008, 0, 10);
+    Effect_unk76(10, 2);
+    Effect_unk71(20);
+    Effect_unk76(11, 3);
+    Effect_unk71(40);
+    Effect_unk76(11, 0);
+    Effect_unk71(20);
+    Effect_unk72(0);
+    Effect_unk73(1);
+    Effect_unk74(1);
+    Effect_unk13_4(0x406218, 1);
+    Effect_unk73(40);
+    Effect_unk71(60);
     gOv2 = 0;
     gOv3[0] = 0x880000;
     gOv3[1] = 0x140000;
-    effectCallback = (s32)Effect_Run82;
+    effectCallback = (s32)Effect_unk82;
     gOv3[2] = 0x1020000;
-    Effect_Check4(effectCallback, 0xc80);
-    Effect_Run71(100);
-    Effect_Place7(0, 0x6000, 0);
-    Effect_Place7(1, 0x6000, 0);
-    Effect_Place7(3, 0x6000, 0);
-    Effect_Place7(2, 0x6000, 40);
-    Effect_Run78(2, 1);
-    Effect_Place9(2, 0x100, 20);
-    Effect_Place10(0x8002, 0, 10);
-    Effect_Run79(0, 2);
-    Effect_Place7(0, 0x2000, 10);
-    Effect_Run81(0, 3);
-    Effect_Run76(10, 4);
-    Effect_Run71(20);
-    Effect_Run12(0x8008, 0);
-    Effect_Place9(2, 0x101, 60);
-    Effect_Place7(2, 0xc000, 10);
-    Effect_Place10(0x8002, 0, 10);
-    Effect_Place7(0, 0xc000, 0);
-    Effect_Place7(3, 0xc000, 0);
-    Effect_Place7(1, 0xc000, 20);
-    Effect_Place10(0x8008, 0, 10);
-    Effect_Run80(0, 3);
-    Effect_Run80(1, 3);
-    Effect_Run80(3, 3);
-    Effect_Run81(2, 3);
-    Effect_Run71(10);
-    Effect_Place7(0, 0x6000, 0);
-    Effect_Place7(1, 0x6000, 0);
-    Effect_Place7(3, 0x6000, 0);
-    Effect_Place7(2, 0x6000, 120);
-    Effect_Check16(effectCallback);
-    Effect_Run71(60);
-    Effect_Run72(0);
-    Effect_Run73(40);
-    Effect_Run76(10, 2);
-    Effect_Run71(20);
-    Effect_Place10(0x8008, 0, 20);
-    Effect_Run76(11, 3);
-    Effect_Run12(0x4009, 0);
-    Effect_Run12(0x8008, 0);
-    Effect_Run76(11, 4);
-    Effect_Run71(20);
-    Effect_Place10(0x4009, 0, 10);
-    Effect_Run78(0, 2);
-    Effect_Run78(1, 2);
-    Effect_Run78(3, 2);
-    Effect_Run79(2, 2);
-    Effect_Run76(10, 1);
-    Effect_Check6(0x8008, 0);
-    Effect_Place7(0, 0xc000, 0);
-    Effect_Place7(1, 0xe000, 0);
-    Effect_Place7(3, 0xc000, 0);
-    Effect_Place7(2, 0xa000, 0);
-    if (Effect_Check7(0, 0) == 1) {
+    Effect_unk4(effectCallback, 0xc80);
+    Effect_unk71(100);
+    Effect_unk7_3(0, 0x6000, 0);
+    Effect_unk7_3(1, 0x6000, 0);
+    Effect_unk7_3(3, 0x6000, 0);
+    Effect_unk7_3(2, 0x6000, 40);
+    Effect_unk78(2, 1);
+    Effect_unk9_3(2, 0x100, 20);
+    Effect_unk10_3(0x8002, 0, 10);
+    Effect_unk79(0, 2);
+    Effect_unk7_3(0, 0x2000, 10);
+    Effect_unk81(0, 3);
+    Effect_unk76(10, 4);
+    Effect_unk71(20);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk9_3(2, 0x101, 60);
+    Effect_unk7_3(2, 0xc000, 10);
+    Effect_unk10_3(0x8002, 0, 10);
+    Effect_unk7_3(0, 0xc000, 0);
+    Effect_unk7_3(3, 0xc000, 0);
+    Effect_unk7_3(1, 0xc000, 20);
+    Effect_unk10_3(0x8008, 0, 10);
+    Effect_unk80(0, 3);
+    Effect_unk80(1, 3);
+    Effect_unk80(3, 3);
+    Effect_unk81(2, 3);
+    Effect_unk71(10);
+    Effect_unk7_3(0, 0x6000, 0);
+    Effect_unk7_3(1, 0x6000, 0);
+    Effect_unk7_3(3, 0x6000, 0);
+    Effect_unk7_3(2, 0x6000, 120);
+    Effect_unk16(effectCallback);
+    Effect_unk71(60);
+    Effect_unk72(0);
+    Effect_unk73(40);
+    Effect_unk76(10, 2);
+    Effect_unk71(20);
+    Effect_unk10_3(0x8008, 0, 20);
+    Effect_unk76(11, 3);
+    Effect_unk12_4(0x4009, 0);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk76(11, 4);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4009, 0, 10);
+    Effect_unk78(0, 2);
+    Effect_unk78(1, 2);
+    Effect_unk78(3, 2);
+    Effect_unk79(2, 2);
+    Effect_unk76(10, 1);
+    Effect_unk6(0x8008, 0);
+    Effect_unk7_3(0, 0xc000, 0);
+    Effect_unk7_3(1, 0xe000, 0);
+    Effect_unk7_3(3, 0xc000, 0);
+    Effect_unk7_3(2, 0xa000, 0);
+    if (Effect_unk7(0, 0) == 1) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Effect_Run71(10);
-    Effect_Run76(10, 2);
-    Effect_Run71(20);
-    Effect_Run76(11, 3);
-    Effect_Run71(40);
-    Effect_Run76(10, 1);
-    Effect_Run71(20);
-    Effect_Place10(0x8008, 0, 10);
-    Effect_Place7(0, 0x4000, 0);
-    Effect_Run84(1, 0, 0);
-    Effect_Place7(3, 0xc000, 0);
-    Effect_Place7(2, 0x8000, 10);
-    Effect_Run80(0, 3);
-    Effect_Run80(1, 3);
-    Effect_Run80(3, 3);
-    Effect_Run81(2, 3);
-    Effect_Run67(17);
+    Effect_unk71(10);
+    Effect_unk76(10, 2);
+    Effect_unk71(20);
+    Effect_unk76(11, 3);
+    Effect_unk71(40);
+    Effect_unk76(10, 1);
+    Effect_unk71(20);
+    Effect_unk10_3(0x8008, 0, 10);
+    Effect_unk7_3(0, 0x4000, 0);
+    Effect_unk84(1, 0, 0);
+    Effect_unk7_3(3, 0xc000, 0);
+    Effect_unk7_3(2, 0x8000, 10);
+    Effect_unk80(0, 3);
+    Effect_unk80(1, 3);
+    Effect_unk80(3, 3);
+    Effect_unk81(2, 3);
+    Effect_unk67(17);
     finalActions = SceneAction_GroupFinish;
-    Effect_Run69(1, finalActions);
+    Effect_unk69(1, finalActions);
     if (actorThreeEnabled != 0) {
-        Effect_Run69(3, finalActions);
+        Effect_unk69(3, finalActions);
     }
-    Effect_Run14(2, (s32)finalActions);
-    Effect_Run76(10, 4);
-    Effect_Run76(10, 4);
-    Effect_Run71(20);
-    Effect_Do6(0x1519);
-    Effect_Run12(0x8008, 0);
-    Effect_Run76(11, 4);
-    Effect_Run76(11, 4);
-    Effect_Run71(20);
-    Effect_Place10(0x4009, 0, 10);
-    Effect_Run81(0, 3);
-    Effect_Check8(0x845);
-    Effect_Run67(1);
+    Effect_unk14_4(2, (s32)finalActions);
+    Effect_unk76(10, 4);
+    Effect_unk76(10, 4);
+    Effect_unk71(20);
+    Effect_unk6_2(0x1519);
+    Effect_unk12_4(0x8008, 0);
+    Effect_unk76(11, 4);
+    Effect_unk76(11, 4);
+    Effect_unk71(20);
+    Effect_unk10_3(0x4009, 0, 10);
+    Effect_unk81(0, 3);
+    Effect_unk8(0x845);
+    Effect_unk67(1);
     PaletteScene_SetRecordValue(184, 185);
 }
 
@@ -690,7 +688,7 @@ s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
     if (frame->limit == 0x80000000) {
         if (frame->second_limit == frame->limit) {
             if (frame->third_limit == frame->second_limit) {
-                Effect_Do12(frame);
+                Effect_unk12_2(frame);
             }
         }
     }
@@ -714,8 +712,8 @@ void PaletteScene_SpawnEffect(void)
 
     phase = gIw & 3;
     if (phase != 0) return;
-    if (gOv5 != 0) Effect_Do13(200);
-    effect = Effect_Run16(26, spawn_x, spawn_y, spawn_z);
+    if (gOv5 != 0) Effect_unk13_2(200);
+    effect = Effect_unk16_4(26, spawn_x, spawn_y, spawn_z);
     if (effect == 0) return;
     sprite = effect->sprite;
     sprite->state = phase;
@@ -744,11 +742,11 @@ void PaletteScene_AdvanceTransition(void)
     s32 step = gOv;
 
     if (step == 0) {
-        Effect_Do14(0);
-        Effect_Do15(20);
+        Effect_unk14_2(0);
+        Effect_unk15_2(20);
     } else if (step == 20) {
-        Effect_Do16(1);
-        Effect_Do17(8);
+        Effect_unk16_2(1);
+        Effect_unk17_2(8);
     }
     step = gOv + 1;
     gOv = step;
@@ -770,7 +768,7 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
         position[1] = effect->anchor_y;
         position[2] = effect->anchor_z;
         heading = effect->heading;
-        Effect_Run85(step << 16, step * 768 + heading, position);
+        Effect_unk85(step << 16, step * 768 + heading, position);
         effect->x = position[0];
         effect->y = position[1];
         effect->z = position[2];
@@ -778,8 +776,8 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
         effect->angle_y += 0x147;
         effect->step++;
     } else {
-        Effect_Run86(effect->owner[0x1c]);
-        Effect_Run87(effect);
+        Effect_unk86(effect->owner[0x1c]);
+        Effect_unk87(effect);
     }
 }
 
@@ -789,13 +787,13 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
 {
     extern s32 gOv5;
 
-    s32 slot = Effect_Check17(key);
+    s32 slot = Effect_unk17(key);
 
     if (slot != -1) {
-        s32 index = Effect_Check18(slot, key);
+        s32 index = Effect_unk18(slot, key);
 
         if (index != -1) {
-            Effect_Run17(slot)->values[index] = value;
+            Effect_unk17_4(slot)->values[index] = value;
         }
     }
 }
@@ -808,7 +806,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
     volatile u16 *palette = (volatile u16 *)0x05000000;
     u32 phase;
     u32 next_phase;
-    Effect_Run88();
+    Effect_unk88();
     phase = 0;
     do {
         u32 index = phase >> 16;
@@ -822,7 +820,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
         next_phase = phase + 0x10000;
         phase = next_phase;
     } while (next_phase <= 0x00df0000);
-    Effect_Run89(); Effect_Run90(); Effect_Run91(0x10000, 0);
+    Effect_unk89(); Effect_unk90(); Effect_unk91(0x10000, 0);
 }
 
 /*
@@ -839,12 +837,12 @@ u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Effect_Check19(
+    red = (s16)(red + Effect_unk19(
         red,
         (s32)((u32)adjustment << 2)
     ));
-    green = (s16)(green - Effect_Check20(green, adjustment));
-    blue = (s16)(blue - Effect_Check21(blue, adjustment));
+    green = (s16)(green - Effect_unk20(green, adjustment));
+    blue = (s16)(blue - Effect_unk21(blue, adjustment));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

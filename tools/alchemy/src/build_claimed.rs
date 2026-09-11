@@ -522,10 +522,18 @@ pub fn compile_source_for_owner(
     let mut options =
         SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
     options.preprocessor_flags = vec![format!("-D{edition_define}=1")];
-    if let Some(bindings) = bindings {
-        options.preprocessor_flags.push("-include".to_string());
-        options.preprocessor_flags.push(bindings.to_string());
-    }
+    let register = bindings.unwrap_or("");
+    let binding_text = crate::compiler::source_bindings::production_bindings(
+        Path::new(root),
+        register,
+        Some(Path::new(source)),
+    )?;
+    let generated = Path::new(object_dir).join(format!("{name}.bindings.h"));
+    write_file(&generated, binding_text.as_bytes())?;
+    options.preprocessor_flags.push("-include".to_string());
+    options
+        .preprocessor_flags
+        .push(generated.to_string_lossy().into_owned());
     options.preprocessed_output = Some(text(Path::new(object_dir).join(format!("{name}.i"))));
     let commands = source_to_assembly_plan(&options)?;
     let source_inputs =

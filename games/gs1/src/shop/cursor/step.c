@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/shop/cursor/step.h"
 #include "global_cells.h"
 
 void Shop_StepCursor(void)

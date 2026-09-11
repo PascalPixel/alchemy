@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/fill_word_stream_with_f000.h"
 
 extern u16 *gIw;
 

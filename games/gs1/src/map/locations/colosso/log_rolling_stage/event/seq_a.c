@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/locations/colosso/log_rolling_stage/event/seq_a.h"
 
 extern u8 gVal[];
 
@@ -20,46 +19,46 @@ extern u8 gOv6[];
 extern u8 gWork[];
 extern u8 gCell2[][2];
 
-u8 *Map_Run2();
+u8 *Map_unk2_4();
 
-u8 *Map_Run3();
+u8 *Map_unk3_4();
 
 void Scene_RunScene3bcSequenceA(s32 a0)
 {
     s32 kind;
 
-    Map_Run4(247);
-    Map_Run5();
-    Map_Run6();
+    Map_unk4_4(247);
+    Map_unk5_4();
+    Map_unk6_4();
     gOv.span = a0 * 60;
     gOv2.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        Map_Run7(30);
-        Map_Run8(86);
-        Map_Run9(8);
+        Map_unk7_4(30);
+        Map_unk8_4(86);
+        Map_unk9_4(8);
         Map_Check(3, 1);
-        Map_Run10(-a0 * 60 + 60);
+        Map_unk10_4(-a0 * 60 + 60);
         kind = 0;
     } else {
-        Map_Run11(30);
-        Map_Run12(a0 + 90);
-        Map_Run13(4);
-        Map_Check2(3, 0);
-        Map_Run14(a0 * 60 + 60);
+        Map_unk11_4(30);
+        Map_unk12_4(a0 + 90);
+        Map_unk13_4(4);
+        Map_unk2(3, 0);
+        Map_unk14_4(a0 * 60 + 60);
         kind = 8;
     }
     Map_Place(kind, 0x105, 0);
     while (Map_Run()!= 0) {
-        Map_Run15(1);
+        Map_unk15_4(1);
     }
-    Map_Run16(19);
-    Map_Run17(30);
+    Map_unk16_4(19);
+    Map_unk17_4(30);
     Map_Do(0x121);
-    Map_Run18();
-    Map_Run19();
+    Map_unk18_4();
+    Map_unk19_4();
 }
 
-void Map_Run20(s32 a0, s32 a1, s32 a2)
+void Map_unk20_4(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
     s32 p10;
@@ -84,7 +83,7 @@ void Map_Run20(s32 a0, s32 a1, s32 a2)
     p11 = a0;
     p8 = a1;
     p10 = a2;
-    rec = Map_Run2();
+    rec = Map_unk2_4();
     p6[6] = 1;
     p6[7] = 4;
     *(volatile s32 *)gOv6 = *(volatile s32 *)((s32)rec + 8);
@@ -92,7 +91,7 @@ void Map_Run20(s32 a0, s32 a1, s32 a2)
     p9 = *(volatile s32 *)((s32)rec + 80);
     *(volatile s32 *)gOv5 = *(volatile u16 *)((s32)rec + 6);
     v5 = 1;
-    Map_Run21(p11, 2);
+    Map_unk21_4(p11, 2);
     {
         u8 value = *(volatile u8 *)&rec[35];
 
@@ -103,13 +102,13 @@ void Map_Run20(s32 a0, s32 a1, s32 a2)
 
         *(volatile u16 *)((s32)rec + 6) = shown;
     }
-    Map_Run22((s32)rec, 3);
-    Map_Run23((s32)rec, 0);
-    Map_Run24((s32)rec, 1);
+    Map_unk22_4((s32)rec, 3);
+    Map_unk23_4((s32)rec, 0);
+    Map_unk24_4((s32)rec, 1);
     p10b = ((s32)p10 << 16);
     p8b = ((s32)p8 << 16);
-    Map_Run25(p11, p8b, p10b);
-    Map_Run26(0, 0x4000, 0);
+    Map_unk25_4(p11, p8b, p10b);
+    Map_unk26_4(0, 0x4000, 0);
     base6_4000208 = 0x4000208;
     base4_2002090 = (s32)gOv3;
     v1 = *(volatile u16 *)base6_4000208;
@@ -125,7 +124,7 @@ void Map_Run20(s32 a0, s32 a1, s32 a2)
     p9[17] = ((s32)(-13 & p9[17]) | 4);
     slot0 = base4_2002090;
     v5 = 0;
-    Map_Run27(252);
+    Map_unk27_4(252);
     v4 = slot0;
     do {
         *(volatile s32 *)((s32)rec + 24) = ((v5 << 12) + 0x1000);
@@ -140,7 +139,7 @@ void Map_Run20(s32 a0, s32 a1, s32 a2)
         }
         *(volatile u16 *)base6_4000208 = v0;
         slot0 = v4;
-        Map_Run28(1);
+        Map_unk28_4(1);
         v5 = (v5 + 2);
         v4 = slot0;
     } while (v5 <= 15);
@@ -155,18 +154,18 @@ void Map_Run20(s32 a0, s32 a1, s32 a2)
     *(volatile u16 *)0x04000208 = v4;
     *(volatile s32 *)((s32)rec + 24) = 0x11000;
     *(volatile s32 *)((s32)rec + 28) = 0xf000;
-    Map_Run29(1);
+    Map_unk29_4(1);
     *(volatile s32 *)((s32)rec + 24) = 0x10000;
     *(volatile s32 *)((s32)rec + 28) = 0x10000;
-    Map_Run30(13);
+    Map_unk30_4(13);
     p9[5] &= -13;
     p9[17] &= -13;
-    Map_Run31(p11, 3);
-    Map_Run32(20);
+    Map_unk31_4(p11, 3);
+    Map_unk32_4(20);
     p9b = v5;
 }
 
-void Map_Run33(s32 a0)
+void Map_unk33_4(s32 a0)
 {
     u32 i;
     u8 *rec7;
@@ -174,14 +173,14 @@ void Map_Run33(s32 a0)
     u8 *p7;
 
     p7 = *(volatile s32 *)0x03001e68;
-    rec7 = Map_Run3();
+    rec7 = Map_unk3_4();
     if (gCell2[249][0] == 1) {
         gCell2[249][0] = 0;
-        Map_Run34(a0, 1);
+        Map_unk34_4(a0, 1);
     } else {
-        Map_Place2(a0, 0x4000, 30);
-        Map_Run35(a0, 3);
-        Map_Run36(30);
+        Map_unk2_3(a0, 0x4000, 30);
+        Map_unk35_4(a0, 3);
+        Map_unk36_4(30);
     }
     p7[7] = 0;
     p7[6] = 15;
@@ -196,8 +195,8 @@ void Map_Run33(s32 a0)
     rec7[34] = (s32)gVal;
     *(volatile s32 *)((s32)rec7 + 12) = 0;
     *(volatile s32 *)((s32)rec7 + 20) = 0;
-    Map_Run37((s32)rec7, 1);
-    Map_Run38((s32)rec7, 0);
-    Map_Run39((s32)rec7, 1);
-    Map_Run8(1);
+    Map_unk37_4((s32)rec7, 1);
+    Map_unk38_4((s32)rec7, 0);
+    Map_unk39_4((s32)rec7, 1);
+    Map_unk8_4(1);
 }

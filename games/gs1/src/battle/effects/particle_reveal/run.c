@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/particle_reveal/run.h"
 
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
@@ -10,8 +9,8 @@
  * 080ce85c) and games/gs1/src/battle/effects/puff_arc/run.c (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
- * Battle_Do(0)/Battle_Apply(0x080CD261,0x480)/Battle_Do2(0x080CD261)/
- * Battle_Do3(id)/Battle_Run() bracket, and the same
+ * Battle_Do(0)/Battle_Apply(0x080CD261,0x480)/Battle_unk2_2(0x080CD261)/
+ * Battle_unk3_2(id)/Battle_Run() bracket, and the same
  * Battle_Apply2(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/gs1/recon/en/main/080e01e4.c.
  *
@@ -22,7 +21,7 @@
  * its s32 field -- the same +2 / +6 halfword
  * idiom already confirmed in 080e01e4.c.
  *
- * Every `Battle_Run2`/`Battle_Run3` call site is an indirect call
+ * Every `Battle_unk2_4`/`Battle_unk3_4` call site is an indirect call
  * through the value the reference loads into r4/r12 immediately before the
  * `bl`, not a real function -- both addresses fall inside the
  * `_call_via_rN` trampoline bank at games/gs1/asm/080072e4.s (r4 slot at
@@ -105,16 +104,16 @@ void BattleFx_RunParticleReveal(void *object)
         s32 angle;
         s32 amp;
 
-        angle = (Battle_Run4() & 0x7FFF) + 0x4000;
-        amp = (Battle_Run4() & 0x1FF) + 0x80;
+        angle = (Battle_unk4_4() & 0x7FFF) + 0x4000;
+        amp = (Battle_unk4_4() & 0x1FF) + 0x80;
         PARTICLE_POOL[i].x =
-            ((spawn[0] / 2 + (Battle_Run4() & 0xF)) - 8) << 16;
+            ((spawn[0] / 2 + (Battle_unk4_4() & 0xF)) - 8) << 16;
         PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
         PARTICLE_POOL[i].vx = (Battle_Check(angle) * amp) >> 9;
-        PARTICLE_POOL[i].vy = (Battle_Check2(angle) * amp) >> 6;
-        PARTICLE_POOL[i].rot = Battle_Run4() & 0x7F;
-        PARTICLE_POOL[i].unk14 = Battle_Run4() & 0x7F;
-        PARTICLE_POOL[i].unk18 = (Battle_Run4() & 0xF) + 32;
+        PARTICLE_POOL[i].vy = (Battle_unk2(angle) * amp) >> 6;
+        PARTICLE_POOL[i].rot = Battle_unk4_4() & 0x7F;
+        PARTICLE_POOL[i].unk14 = Battle_unk4_4() & 0x7F;
+        PARTICLE_POOL[i].unk18 = (Battle_unk4_4() & 0xF) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
@@ -134,7 +133,7 @@ void BattleFx_RunParticleReveal(void *object)
             orbit_angle = frame << 11;
             x = (((-Battle_Check(orbit_angle)) << 2) >> 16)
                 + screen_x / 2 - 10;
-            y = ((Battle_Check2(orbit_angle) << 1) >> 16) + screen_y - 22;
+            y = ((Battle_unk2(orbit_angle) << 1) >> 16) + screen_y - 22;
             if (frame > 0x45) {
                 y = (y - frame * 2) + 0x8A;
             }
@@ -162,7 +161,7 @@ void BattleFx_RunParticleReveal(void *object)
 
         if (frame == 8) {
             (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
-            Battle_Do4(0x86);
+            Battle_unk4_2(0x86);
             Battle_SetRange(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 7, 5, 0, 16);
@@ -187,13 +186,13 @@ void BattleFx_RunParticleReveal(void *object)
         }
 
         Battle_Apply5(4, 8);
-        Battle_Run5();
+        Battle_unk5_2();
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
-        Battle_Do5(1);
+        Battle_unk5(1);
     }
 
-    Battle_Do2((void *)0x080CD261);
-    Battle_Do3(0x2F);
-    Battle_Do3(0x2E);
+    Battle_unk2_2((void *)0x080CD261);
+    Battle_unk3_2(0x2F);
+    Battle_unk3_2(0x2E);
     Battle_Run();
 }

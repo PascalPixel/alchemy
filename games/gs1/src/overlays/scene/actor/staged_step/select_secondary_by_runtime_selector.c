@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_step/select_secondary_by_runtime_selector.h"
 #define PrimaryRuntimeSelector Value_00000075
 #define SecondaryRuntimeSelector Value_00000076
 #define TertiaryRuntimeSelector Value_00000078

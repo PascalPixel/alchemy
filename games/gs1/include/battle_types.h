@@ -53,7 +53,7 @@ struct BattlePlan {
     u32 pending_amount_60;          /* 0x60 */
 };
 
-/* Static action definition returned by Func_08077080. */
+/* Static action definition returned by the battle action table lookup. */
 struct BattleAction {
     u8 target_mode;                 /* 0x00 */
     u8 target_flags;                /* 0x01 */
@@ -68,7 +68,7 @@ struct BattleAction {
 };
 
 /*
- * Live combatant record returned by Func_08077008.  Only fields established
+ * Live combatant record returned by Runtime_GetObject.  Only fields established
  * by multiple battle owners are named.  The unresolved condition bytes keep
  * offset-based names until their meanings are independently witnessed.
  */

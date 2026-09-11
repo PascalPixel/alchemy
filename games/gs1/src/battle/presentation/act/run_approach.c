@@ -1,7 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/presentation/act/run_approach.h"
 #include "battle_msg.h"
 #include "battle_motion.h"
 

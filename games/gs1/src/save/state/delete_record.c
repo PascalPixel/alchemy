@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/save/state/delete_record.h"
 
 u32 SaveState_DeleteRecord(s32 record_id)
 {

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_nav/step_down_until_clamp.h"
 
 /*
  * Steps a record down by a tenth of a unit per frame until it reaches the
@@ -12,7 +11,7 @@
  */
 
 u8 *Actor_Run();           /* Record fetch, returns the record. */
-void Actor_Run2();          /* Dispatch stub table entry 0. */
+void Actor_unk2_4();          /* Dispatch stub table entry 0. */
 
 /*
  * Each Func_ name labels the call word of one call site rather than a
@@ -31,7 +30,7 @@ void StagedActor_StepDownUntilClamp(s32 index)
     cnt = 0;
     for (;;) {
         if (cnt > 31) return;
-        Actor_Run2(1);
+        Actor_unk2_4(1);
         *(s32 *)(obj + 28) += -0x1999;
         *(s32 *)(obj + 12) += -0xcccc;
         cnt++;

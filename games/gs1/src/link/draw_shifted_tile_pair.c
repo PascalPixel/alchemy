@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/link/draw_shifted_tile_pair.h"
 #include "global_cells.h"
 
 extern u8 gRom[];

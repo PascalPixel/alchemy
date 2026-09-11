@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/reset_frame_state.h"
 #include "global_cells.h"
 
 /*

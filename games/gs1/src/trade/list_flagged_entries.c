@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/trade/list_flagged_entries.h"
 
 struct State_0807977c {
     u32 flags;

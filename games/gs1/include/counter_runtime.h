@@ -23,7 +23,5 @@ struct CounterRuntime {
 };
 
 /* 呼出し時のr0をそのまま渡すため、引数型は確定まで省略する。 */
-struct CounterRuntime *Func_08077008();
-s32 Func_080bf208(s32 object_id, s32 count, s32 bias);
 
 #endif

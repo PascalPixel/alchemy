@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/motion/release_object_slot_by_value.h"
 #include "global_cells.h"
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)

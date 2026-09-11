@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/selector_effect/selector_effect.h"
 #include "create_configured_overlay_object.h"
 #include "create_configured_overlay_object_body.inc"
 #include "select_overlay_data_by_runtime_selector.h"
@@ -11,26 +10,26 @@
 
 extern u8 Value;
 
-u8 *Story_Run3(s32);
+u8 *Story_unk3_4(s32);
 
 void Actor_RunActorZeroHandledMotion(s32 a)
 {
-    u8 *v = Story_Run3(0);
-    Story_Run4();
-    Story_Do5(0xe4);
+    u8 *v = Story_unk3_4(0);
+    Story_unk4_4();
+    Story_unk5_2(0xe4);
     F(v, s32, 0x6c) = (s32)&Value;
     F(v, s32, 0x30) = 0x3333;
     Story_Apply(0, 2);
-    Story_Place14(0, 0, -6);
-    Story_Do6(0);
+    Story_unk14_3(0, 0, -6);
+    Story_unk6_2(0);
     Story_Apply2(0, 15);
-    Story_Apply3(Story_Check10(0), 0);
+    Story_Apply3(Story_unk10(0), 0);
     F(v, s32, 0x6c) = 0;
-    Story_Do7(30);
-    Story_Run5();
-    Story_Run6();
-    Story_Do8(a);
-    Story_Run7();
+    Story_unk7_2(30);
+    Story_unk5_4();
+    Story_unk6_4();
+    Story_unk8_2(a);
+    Story_unk7_4();
 }
 
 /* overlays/scene/story/selector_effect/actor_position.c */
@@ -39,15 +38,15 @@ void Actor_RunActorZeroHandledMotion(s32 a)
 extern u8 gOv[];
 extern u8 Value_00000874;
 
-u8 *Story_Run8(s32);
-u8 *Story_Run9(s32);
+u8 *Story_unk8_4(s32);
+u8 *Story_unk9_4(s32);
 
-u8 *Story_Run10(s32);
-u8 *Story_Run11(s32);
-u8 *Story_Run12(s32);
-u8 *Story_Run13(s32);
+u8 *Story_unk10_4(s32);
+u8 *Story_unk11_4(s32);
+u8 *Story_unk12_4(s32);
+u8 *Story_unk13_4(s32);
 
-s32 *Story_Run14(s32);
+s32 *Story_unk14_4(s32);
 
 void Scene_RunActorElevenAtTile5And13(void)
 {
@@ -55,35 +54,35 @@ void Scene_RunActorElevenAtTile5And13(void)
     s32 y;
     u8 *p;
 
-    x = F(Story_Run8(11), s32, 8) / 0x100000;
-    y = F(Story_Run9(11), s32, 16) / 0x100000;
-    Story_Run15();
+    x = F(Story_unk8_4(11), s32, 8) / 0x100000;
+    y = F(Story_unk9_4(11), s32, 16) / 0x100000;
+    Story_unk15_4();
     if (x == 5 && y == 13) {
-        F(Story_Run10(11), s32, 12) += 0xfffe0000;
-        p = Story_Run11(11);
-        F(p, s32, 0x3c) = F(Story_Run13(11), s32, 12);
-        Story_SetRect12(5, 2, 5, 11, 1, 1);
-        Story_Do9(0xd9);
-        Story_Place15((s32)gOv, 9, 7);
+        F(Story_unk10_4(11), s32, 12) += 0xfffe0000;
+        p = Story_unk11_4(11);
+        F(p, s32, 0x3c) = F(Story_unk13_4(11), s32, 12);
+        Story_unk12_5(5, 2, 5, 11, 1, 1);
+        Story_unk9_2(0xd9);
+        Story_unk15_3((s32)gOv, 9, 7);
         {
             s32 s0 = 9;
             s32 s1 = 10;
-            Story_SetRect13(9, 5, 1, 1, s0, s1);
+            Story_unk13_5(9, 5, 1, 1, s0, s1);
         }
-        Story_Run12((s32)&Value_00000874);
+        Story_unk12_4((s32)&Value_00000874);
     }
-    Story_Run16();
+    Story_unk16_4();
 }
 
 void Actor_UseActorNinePositionWithYOffset(void)
 {
-    s32 *p = Story_Run14(9);
-    u32 v = Story_Run17();
+    s32 *p = Story_unk14_4(9);
+    u32 v = Story_unk17_4();
 
     s32 b = p[3] + (((v << 2) >> 16) << 16);
     s32 c = p[4];
 
-    Story_Place16(p[2], b, c);
+    Story_unk16_3(p[2], b, c);
 }
 
 /* overlays/scene/story/selector_effect/effect.c */
@@ -116,17 +115,17 @@ struct Work_39c {
 
 extern u32 gIw;
 
-s32 *Story_Run18(s32);
+s32 *Story_unk18_4(s32);
 
 void Effect_SpawnParticleRowsByMode(s32 mode)
 {
     s32 buf[10];
     u32 i, j;
 
-    Story_SetRect14(0x70, 0x39, 0x71, 0x2a, 1, 1);
-    Story_SetRect15(0x75, 0x3a, 0x70, 0x2e, 1, 1);
-    Story_SetRect16(0x75, 0x39, 0x74, 0x2c, 1, 1);
-    Story_Do10(0x121);
+    Story_unk14_5(0x70, 0x39, 0x71, 0x2a, 1, 1);
+    Story_unk15_5(0x75, 0x3a, 0x70, 0x2e, 1, 1);
+    Story_unk16_5(0x75, 0x39, 0x74, 0x2c, 1, 1);
+    Story_unk10_2(0x121);
     buf[1] = 5;
     buf[2] = 0x8000;
     buf[3] = 0x8000;
@@ -134,27 +133,27 @@ void Effect_SpawnParticleRowsByMode(s32 mode)
         for (i = 1; i <= 7; i++) {
             if ((i & 1) != 0) {
                 if (mode == 0) {
-                    Story_SetRect17((0x319 - ((Story_Run19() * 5) >> 16)) << 16, 0,
+                    Story_unk17_5((0x319 - ((Story_unk19_4() * 5) >> 16)) << 16, 0,
                                   (((j << 2) + i) << 17) + 0x02b70000, 0,
                                   mode, 0x4000, 0x90000, buf);
                 } else if (mode == 1) {
-                    Story_SetRect18((((j << 2) + i) << 17) + 0x03120000, 0,
-                                  (((((u32 (*)(void))Story_Run20)() * 5) >> 16) << 16) + 0x2e80000, 0x4000,
+                    Story_unk18_5((((j << 2) + i) << 17) + 0x03120000, 0,
+                                  (((((u32 (*)(void))Story_unk20_4)() * 5) >> 16) << 16) + 0x2e80000, 0x4000,
                                   0, 0, 0x90000, buf);
                 } else {
-                    Story_SetRect19(0x3380000 - (i << 17) - (j << 19), 0,
-                                  (((Story_Run21() * 5) >> 16) << 16) + 0x2c80000, 0x4000,
+                    Story_unk19_5(0x3380000 - (i << 17) - (j << 19), 0,
+                                  (((Story_unk21_4() * 5) >> 16) << 16) + 0x2c80000, 0x4000,
                                   0, 0, 0x90000, buf);
                 }
-                Story_Do11(1);
+                Story_unk11_2(1);
             }
         }
         if (mode == 0)
-            Story_SetRect20(0x70, 0x3a, 0x71, j + 43, 1, 1);
+            Story_unk20_5(0x70, 0x3a, 0x71, j + 43, 1, 1);
         else if (mode == 1)
-            Story_SetRect21(0x70, 0x3a, j + 113, 0x2e, mode, mode);
+            Story_unk21_5(0x70, 0x3a, j + 113, 0x2e, mode, mode);
         else
-            Story_SetRect22(0x70, 0x3a, 115 - j, 0x2c, 1, 1);
+            Story_unk22_5(0x70, 0x3a, 115 - j, 0x2c, 1, 1);
     }
 }
 
@@ -163,44 +162,44 @@ void Effect_SpawnParticleRowsAndDrawTiles(void)
     s32 buf[10];
     u32 i, j;
 
-    Story_SetRect23(0x4a, 0x3a, 0x46, 0x22, 1, 1);
+    Story_unk23_5(0x4a, 0x3a, 0x46, 0x22, 1, 1);
     buf[1] = 7;
     buf[2] = 0x8000;
     buf[3] = 0x8000;
     for (j = 0; j <= 1; j++) {
         for (i = 0; i <= 7; i++) {
             if ((i & 1) != 0) {
-                s32 a = ((Story_Run22() << 3) >> 16) * 0x3333 + 0xffff3334;
-                s32 b = ((Story_Run23() << 3) >> 16) * 0x3333 + 0xffff3334;
+                s32 a = ((Story_unk22_4() << 3) >> 16) * 0x3333 + 0xffff3334;
+                s32 b = ((Story_unk23_4() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-                Story_SetRect24(0x690000, 0, ((-i - (j << 4)) << 16) + 0x2200000,
+                Story_unk24_5(0x690000, 0, ((-i - (j << 4)) << 16) + 0x2200000,
                               a, 0, b, 0x90000, buf);
-                Story_Do12(1);
+                Story_unk12_2(1);
             }
         }
-        Story_SetRect25(0x4a, 0x3b, 0x46, 34 - j, 1, 1);
-        Story_SetRect26(0x4a, 0x3a, 0x46, 33 - j, 1, 1);
+        Story_unk25_5(0x4a, 0x3b, 0x46, 34 - j, 1, 1);
+        Story_unk26_5(0x4a, 0x3a, 0x46, 33 - j, 1, 1);
     }
 }
 
 void Effect_SpawnParticleEveryFourthFrame(void)
 {
     s32 buf[10];
-    s32 *p = Story_Run18(0);
+    s32 *p = Story_unk18_4(0);
     s32 m = gIw & 3;
 
     if (m == 0) {
         buf[1] = 7;
-        if ((((Story_Run24() << 1) >> 16) & 1) == 0)
+        if ((((Story_unk24_4() << 1) >> 16) & 1) == 0)
             buf[1] = 5;
         buf[2] = 0xb333;
         buf[3] = 0xb333;
         {
-            s32 y = p[3] + (((Story_Run25() << 2) >> 16) << 16);
-            s32 a = ((Story_Run26() << 3) >> 16) * 0x3333 + 0xffff3334;
-            s32 b = ((Story_Run27() << 3) >> 16) * 0x3333 + 0xffff3334;
+            s32 y = p[3] + (((Story_unk25_4() << 2) >> 16) << 16);
+            s32 a = ((Story_unk26_4() << 3) >> 16) * 0x3333 + 0xffff3334;
+            s32 b = ((Story_unk27_4() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-            Story_SetRect27(p[2], y, p[4], a, b, m, 0x90000, buf);
+            Story_unk27_5(p[2], y, p[4], a, b, m, 0x90000, buf);
         }
     }
 }
@@ -212,15 +211,15 @@ void Effect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z)
 
     if (m == 0) {
         buf[1] = 7;
-        if ((((Story_Run28() << 1) >> 16) & 1) == 0)
+        if ((((Story_unk28_4() << 1) >> 16) & 1) == 0)
             buf[1] = 5;
         buf[2] = 0xb333;
         buf[3] = 0xb333;
         {
-            s32 a = ((Story_Run29() << 3) >> 16) * 0x3333 + 0xffff3334;
-            s32 b = ((Story_Run30() << 3) >> 16) * 0x3333 + 0xffff3334;
+            s32 a = ((Story_unk29_4() << 3) >> 16) * 0x3333 + 0xffff3334;
+            s32 b = ((Story_unk30_4() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-            Story_SetRect28(x, y, z, a, b, m, 0x90000, buf);
+            Story_unk28_5(x, y, z, a, b, m, 0x90000, buf);
         }
     }
 }
@@ -234,10 +233,10 @@ void Effect_SpawnWithRandomOffset(s32 x, s32 y, s32 z)
     buf[2] = 0xb333;
     buf[3] = 0xb333;
     {
-        s32 a = x + (((Story_Run31() << 4) >> 16) << 16) + 0xfff80000;
-        s32 b = z + (((Story_Run32() << 3) >> 16) << 16) + 0xfffc0000;
+        s32 a = x + (((Story_unk31_4() << 4) >> 16) << 16) + 0xfff80000;
+        s32 b = z + (((Story_unk32_4() << 3) >> 16) << 16) + 0xfffc0000;
 
-        Story_SetRect29(a, y, b, 0, 0, 0, 0xb0000, buf);
+        Story_unk29_5(a, y, b, 0, 0, 0, 0xb0000, buf);
     }
 }
 
@@ -251,7 +250,7 @@ s32 Effect_AdvanceAnchoredRiseFrame(struct Work_39c *work)
         return 0;
     }
 
-    seed = Story_Check11(step << 10);
+    seed = Story_unk11(step << 10);
     work->f24 = seed;
     work->f28 = seed;
     work->f8 = src->f8;
@@ -316,8 +315,8 @@ struct EffectDescriptor {
 
 extern struct EffectDescriptor *gOv2[];
 
-struct BattleEffect *Story_Run33();
-struct BattleEffect *Story_Run34();
+struct BattleEffect *Story_unk33_4();
+struct BattleEffect *Story_unk34_4();
 
 void BattleFx_SpawnConfigured(s32 x, s32 y,
                    s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
@@ -336,21 +335,21 @@ void BattleFx_SpawnConfigured(s32 x, s32 y,
     s32 duration;
     s32 first_delta;
     s32 accumulated;
-    ref = Story_Run33(0);
+    ref = Story_unk33_4(0);
 
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Story_Run34(options->kind, x, y, z);
+        effect = Story_unk34_4(options->kind, x, y, z);
     } else {
-        effect = Story_Run34(222, x, y, z);
+        effect = Story_unk34_4(222, x, y, z);
     }
     if (effect == 0) return;
 
     effect_sprite = effect->sprite;
     sprite0 = effect_sprite;
 
-    Story_Run35(effect, (flags + 1) & 15);
+    Story_unk35_4(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
-    Story_Run36(effect, gOv2[table_offset >> 2]);
+    Story_unk36_4(effect, gOv2[table_offset >> 2]);
 
     effect->motion_mode = 0;
     effect_sprite->state26 = 0;
@@ -374,7 +373,7 @@ void BattleFx_SpawnConfigured(s32 x, s32 y,
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {
-        Story_Run37(effect, options->battle_mode);
+        Story_unk37_4(effect, options->battle_mode);
     }
 
     if ((flags & 0x20000) != 0) {
@@ -398,7 +397,7 @@ void BattleFx_SpawnConfigured(s32 x, s32 y,
             first_delta = *(volatile const s32 *)&options->target30;
             accumulated = *(volatile const s32 *)&effect->position_x;
             first_delta -= accumulated;
-            effect->velocity_rate_x = Story_Check12(first_delta,
+            effect->velocity_rate_x = Story_unk12(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
@@ -406,19 +405,19 @@ void BattleFx_SpawnConfigured(s32 x, s32 y,
         } else {
             first_delta = options->target30;
             first_delta += (s32)0xffff0000;
-            effect->velocity_rate_x = Story_Check13(first_delta,
+            effect->velocity_rate_x = Story_unk13(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
             delta += (s32)0xffff0000;
         }
 
-        effect->velocity_rate_y = Story_Check14(delta, duration);
+        effect->velocity_rate_y = Story_unk14(delta, duration);
     }
 
     if ((flags & 0x200000) != 0) {
-        Story_Run38(effect, 1);
-        Story_Run39(effect, options->callback_arg);
+        Story_unk38_4(effect, 1);
+        Story_unk39_4(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {
@@ -462,10 +461,10 @@ static __inline__ void bump_step(s32 amount)
 
 void Scene_RunFourSteps(void)
 {
-    Story_Run40();
-    Story_Run41();
-    Story_Run42();
-    Story_Run43();
+    Story_unk40_4();
+    Story_unk41_4();
+    Story_unk42_4();
+    Story_unk43_4();
 }
 
 void Scene_RunSelSequenceA(void)
@@ -477,18 +476,18 @@ void Scene_RunSelSequenceA(void)
     s32 record;
 
     if (Story_Check(0x256) != 0) {
-        Story_Run44();
+        Story_unk44_4();
         Story_Do(0x256);
-        record = Story_Check15(0);
+        record = Story_unk15(0);
         *(volatile s32 *)(record + 12) += 0x20000;
-        rec7 = Story_Check2(0);
-        record = Story_Check3(0);
+        rec7 = Story_unk2(0);
+        record = Story_unk3(0);
         *(volatile s32 *)(rec7 + 60) = *(volatile s32 *)(record + 12);
-        Story_Run45(5);
+        Story_unk45_4(5);
         Story_SetRect(8, 29, 10, 23, 1, 1);
-        Story_Run46(217);
+        Story_unk46_4(217);
         Story_Place(0x200e08e, 10, 18);
-        Story_Run47();
+        Story_unk47_4();
     }
 }
 
@@ -549,50 +548,50 @@ void Scene_RunActorThreeBranchSequence(void)
 
 void Scene_RunScriptedSteps0And1576(void)
 {
-    Story_Run48();
+    Story_unk48_4();
     Story_Apply4(0, 1);
     Story_Apply5(0x1576, 1);
-    Story_Run49();
+    Story_unk49_4();
 }
 
 void Scene_RunScriptedSteps0And953(void)
 {
-    Story_Run50();
+    Story_unk50_4();
     Story_Apply6(0, 1);
     Story_Apply7(0x953, 1);
-    Story_Run51();
+    Story_unk51_4();
 }
 
 void Scene_RunFlag881Dialogue(void)
 {
     extern u8 *gWork;
 
-    Story_Run52();
+    Story_unk52_3();
     Story_Apply8(0, 1);
-    if (Story_Check16(0x881) == 0)
+    if (Story_unk16(0x881) == 0)
         Story_Apply9(0x1636, 1);
     else
         Story_Apply10(0x1635, 1);
-    if (Story_Check17(0xb9) != -1) {
+    if (Story_unk17(0xb9) != -1) {
         s16 *slot = (s16 *)gWork + 185;
         s32 one = 1;
 
         *slot = one;
     }
-    Story_Run53();
+    Story_unk53_3();
 }
 
 void Scene_RunActor184Sequence(void)
 {
-    Story_Run54();
-    Story_Do13(0x53);
+    Story_unk54_3();
+    Story_unk13_2(0x53);
     Story_Apply11(0xb8, 3);
     Story_Apply12(0xb9, 0xb8);
-    Story_Apply13(Story_Check18(0xb8), 1);
+    Story_Apply13(Story_unk18(0xb8), 1);
     Story_Apply14(0xb8, 2);
     Story_Apply15(0x1638, 1);
-    Story_Do14(512);
-    Story_Run55();
+    Story_unk14_2(512);
+    Story_unk55_3();
 }
 
 void Scene_RunSelSequenceB(void)
@@ -602,27 +601,27 @@ void Scene_RunSelSequenceB(void)
     u32 i;
     s32 record;
 
-    Story_Run56();
+    Story_unk56_3();
     if (gCell[224][0] == (s32)gVal) {
-        Story_Place2(0, 0x1d8, 0x258);
-        Story_Place3(0, 0x4000, 10);
+        Story_unk2_3(0, 0x1d8, 0x258);
+        Story_unk3_3(0, 0x4000, 10);
         Story_Run(0x1d00000, -1, 0x2900000, 1);
-        record = Story_Check19(0);
-        Story_Run57(record, 0);
-        record = Story_Check20(0);
-        (void)Story_Check21(*(volatile s32 *)(record + 8), 0, 0x2be0000, 223);
-        Story_SetRect2(92, 46, 92, 40, 3, 2);
-        record = Story_Check22(0);
+        record = Story_unk19(0);
+        Story_unk57_3(record, 0);
+        record = Story_unk20(0);
+        (void)Story_unk21(*(volatile s32 *)(record + 8), 0, 0x2be0000, 223);
+        Story_unk2_5(92, 46, 92, 40, 3, 2);
+        record = Story_unk22(0);
         *(volatile s32 *)(record + 72) = 0x8000;
-        Story_Run58(0, 2);
-        Story_Place4(0, 6, -1);
+        Story_unk58_3(0, 2);
+        Story_unk4_3(0, 6, -1);
         *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x203;
-        Story_Run59(60);
-        Story_Run60(8);
+        Story_unk59_3(60);
+        Story_unk60_3(8);
     } else {
-        Story_Place5(0, 6, -1);
+        Story_unk5_3(0, 6, -1);
     }
-    Story_Run61();
+    Story_unk61_3();
 }
 
 void Scene_RunScene39b(void)
@@ -634,35 +633,35 @@ void Scene_RunScene39b(void)
     s32 rec8;
     s32 record;
 
-    rec7 = Story_Check4(0);
-    rec8 = Story_Check5(0x109);
+    rec7 = Story_unk4(0);
+    rec8 = Story_unk5(0x109);
     if (rec8 == 0) {
-        Story_Run62();
-        Story_Run2(-1, -1, -1, 0);
+        Story_unk62_3();
+        Story_unk2_4(-1, -1, -1, 0);
         rec7[85] = rec8;
-        Story_Place6(0, (*(s16 *)((s32)rec7 + 10) << 16), ((*(s16 *)((s32)rec7 + 18) << 16) + -0x100000));
-        Story_Run63(0, 15);
-        record = Story_Check23(0);
-        Story_Run64(record, 0);
-        Story_Run65();
-        Story_Run66();
-        Story_Run67(228);
+        Story_unk6_3(0, (*(s16 *)((s32)rec7 + 10) << 16), ((*(s16 *)((s32)rec7 + 18) << 16) + -0x100000));
+        Story_unk63_3(0, 15);
+        record = Story_unk23(0);
+        Story_unk64_3(record, 0);
+        Story_unk65_3();
+        Story_unk66_3();
+        Story_unk67_3(228);
         *(volatile s32 *)((s32)rec7 + 108) = 0x2008cd1;
-        Story_Place7(0, 0x6666, 0x3333);
-        Story_Run68(0, 0, 8);
-        Story_Run69(0, 0);
-        record = Story_Check24(0);
-        Story_Run70(record, 1);
+        Story_unk7_3(0, 0x6666, 0x3333);
+        Story_unk68_3(0, 0, 8);
+        Story_unk69_3(0, 0);
+        record = Story_unk24(0);
+        Story_unk70_3(record, 1);
         {
             u8 *rec9 = (u8 *)*(volatile s32 *)((s32)rec7 + 80);
             s32 mask = -13;
             rec9[9] = (mask & rec9[9]) | 4;
         }
-        Story_Run71(0, 0, 10);
+        Story_unk71_3(0, 0, 10);
         rec7[85] = 3;
         *(volatile s32 *)((s32)rec7 + 108) = rec8;
-        Story_Run72();
-        Story_Run73();
+        Story_unk72_3();
+        Story_unk73_3();
     }
 }
 
@@ -673,15 +672,15 @@ void Scene_RunSel(void)
     u8 v;
 
     p5 = *(volatile s32 *)0x03001f30;
-    Story_Place8(11, 0x3480000, 0x2580000);
-    Story_Run74(93, 1);
-    Story_Run75(3, 11);
+    Story_unk8_3(11, 0x3480000, 0x2580000);
+    Story_unk74_3(93, 1);
+    Story_unk75_3(3, 11);
     addr = p5 + 0x71c;
     v = *addr | 8;
     *addr = v;
-    Story_Run76();
-    Story_Run77(1);
-    Story_Run78();
+    Story_unk76_3();
+    Story_unk77_3(1);
+    Story_unk78_3();
 }
 
 /* overlays/scene/story/selector_effect/overlay_object.c */
@@ -689,9 +688,9 @@ void Scene_RunSel(void)
 
 void *AcquireOverlayObject(s32, s32, s32, s32);
 
-u8 *Story_Run79(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+u8 *Story_unk79_3(s32 kind, s32 arg1, s32 arg2, s32 arg3);
 
-u8 **Story_Run80(s32 group, s32 slot);
+u8 **Story_unk80_3(s32 group, s32 slot);
 
 /*
  * Spawns a kind-24 object from three fields of the caller's object, sets
@@ -732,7 +731,7 @@ void OvObj_SpawnKind24AtObject(u8 *src)
     u8 *obj;
     u8 *rec;
 
-    obj = Story_Run79(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
+    obj = Story_unk79_3(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
     if (obj == 0) {
         return;
     }
@@ -769,7 +768,7 @@ s32 OvObj_StepScaleUpSixteenFrames(u8 *o)
 /* Release the scene object's optional attachment and clear its slot. */
 void OvObj_ReleasePublishedAttachmentB(void)
 {
-    u8 **slot = Story_Run80(35, 4);
+    u8 **slot = Story_unk80_3(35, 4);
     u8 *state;
     u8 *obj;
 
@@ -781,7 +780,7 @@ void OvObj_ReleasePublishedAttachmentB(void)
     if (obj == 0)
         return;
 
-    Story_Do15(obj);
+    Story_unk15_2(obj);
     *(u8 **)(state + 20) = 0;
 }
 
@@ -847,25 +846,25 @@ void Scene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
     s32 v;
 
     if (a0 != 0) {
-        Story_Run81(219);
+        Story_unk81_3(219);
     }
     i = (u32)a1;
     if (i < (u32)a2) {
         do {
-            Story_SetRect3(45 - (s32)(i << 1), 32, 44 - (s32)(i << 1), 32, (s32)(i + 1), 6);
-            Story_SetRect4(45 - (s32)i, 51, 45 - (s32)i, 32, 1, 6);
+            Story_unk3_5(45 - (s32)(i << 1), 32, 44 - (s32)(i << 1), 32, (s32)(i + 1), 6);
+            Story_unk4_5(45 - (s32)i, 51, 45 - (s32)i, 32, 1, 6);
             v = 109 - (s32)i;
-            Story_SetRect5(v, 32, 108 - (s32)i, 32, 1, 4);
-            Story_SetRect6(v, 51, v, 32, 1, 4);
+            Story_unk5_5(v, 32, 108 - (s32)i, 32, 1, 4);
+            Story_unk6_5(v, 51, v, 32, 1, 4);
             if (a0 != 0) {
-                Story_Place9(0x50000, 0x50000, 0x10000);
-                Story_Place10(-1, -1, 0xe666);
-                Story_Run82(a0);
+                Story_unk9_3(0x50000, 0x50000, 0x10000);
+                Story_unk10_3(-1, -1, 0xe666);
+                Story_unk82_3(a0);
             }
             i = i + 1;
         } while (i < (u32)a2);
     }
-    Story_SetRect7(42, 52, 4, 5, 42, 33);
+    Story_unk7_5(42, 52, 4, 5, 42, 33);
 }
 
 /* overlays/scene/story/selector_effect/run_scene_sequence_e.c */
@@ -880,73 +879,73 @@ typedef struct {
     s32 t1;
 } SceneEvent;
 
-void Story_Run83(void)
+void Story_unk83_3(void)
 {
     SceneEvent ev;
     s32 kind;
     s32 shape;
     s32 three;
 
-    Story_Run84();
-    if (Story_Check25(&ev) != 0) {
+    Story_unk84_3();
+    if (Story_unk25(&ev) != 0) {
         kind = ev.f1;
         if (kind == 8) {
             shape = ev.f2;
             if ((shape >> 20) == 11) {
-                Story_Run85(ev);
-                Story_Run86(30);
-                Story_Run87(211);
-                Story_Run88();
+                Story_unk85_3(ev);
+                Story_unk86_3(30);
+                Story_unk87_3(211);
+                Story_unk88_3();
                 three = 3;
-                Story_Run89(76, 60, 74, 38, three, 1);
-                Story_Run90(77, 60, 76, 38, 2, 1);
-                Story_Run91(75, 58, 86, 41, 1, three);
-                Story_Run92(75, 59, 86, 43, 1, 2);
-                Story_Run93(76, 59, 80, 49, 2, 1);
-                Story_Run94(77, 59, 82, 49, 2, 1);
-                Story_Run95(0x302);
+                Story_unk89_3(76, 60, 74, 38, three, 1);
+                Story_unk90_3(77, 60, 76, 38, 2, 1);
+                Story_unk91_3(75, 58, 86, 41, 1, three);
+                Story_unk92_3(75, 59, 86, 43, 1, 2);
+                Story_unk93_3(76, 59, 80, 49, 2, 1);
+                Story_unk94_3(77, 59, 82, 49, 2, 1);
+                Story_unk95_3(0x302);
             } else {
                 ev.t1 = 0x200b949;
-                Story_Run96(75, 57, 86, 41, 1, 1);
-                Story_Run97(71, 59, 86, 42, 1, 1);
-                Story_Run98(71, 59, 86, 43, 1, 1);
-                Story_Run99(71, 59, 86, 44, 1, 1);
-                Story_Run100(71, 59, 80, 49, 1, 1);
-                Story_Run101(71, 59, 81, 49, 1, 1);
-                Story_Run102(71, 59, 82, 49, 1, 1);
-                Story_Run103(78, 58, 83, 49, 1, 1);
-                Story_Run104(ev);
-                Story_Run105(0x302);
+                Story_unk96_3(75, 57, 86, 41, 1, 1);
+                Story_unk97_3(71, 59, 86, 42, 1, 1);
+                Story_unk98_3(71, 59, 86, 43, 1, 1);
+                Story_unk99_3(71, 59, 86, 44, 1, 1);
+                Story_unk100_3(71, 59, 80, 49, 1, 1);
+                Story_unk101_3(71, 59, 81, 49, 1, 1);
+                Story_unk102_3(71, 59, 82, 49, 1, 1);
+                Story_unk103_3(78, 58, 83, 49, 1, 1);
+                Story_unk104_3(ev);
+                Story_unk105_3(0x302);
             }
         } else if (kind == 10) {
             if ((ev.t0 >> 20) == 40) {
-                Story_Run106(ev);
-                if (Story_Check6(0x307) == 0) {
-                    Story_Run107(0x18000, 0x3000);
-                    Story_Run108(0x2ca0000, -1, 0x2500000, 1);
-                    Story_Run109();
-                    Story_Do2(0x307);
-                    Story_Run110(5);
-                    Story_Run111(50);
+                Story_unk106_3(ev);
+                if (Story_unk6(0x307) == 0) {
+                    Story_unk107_3(0x18000, 0x3000);
+                    Story_unk108_3(0x2ca0000, -1, 0x2500000, 1);
+                    Story_unk109_3();
+                    Story_unk2_2(0x307);
+                    Story_unk110_3(5);
+                    Story_unk111_3(50);
                 } else {
-                    Story_Run112(5);
+                    Story_unk112_3(5);
                 }
-                Story_Run113(0x306);
+                Story_unk113_3(0x306);
             } else if ((ev.t0 >> 20) == 42) {
                 ev.t1 = 0x20098f9;
-                Story_Run114(ev);
-                Story_Run115(5);
-                Story_Run116(0x306);
+                Story_unk114_3(ev);
+                Story_unk115_3(5);
+                Story_unk116_3(0x306);
             }
         }
     }
-    Story_Run117();
+    Story_unk117_3();
 }
 
 /* overlays/scene/story/selector_effect/run_scene_sequence_g.c */
 extern u8 gWork[];
 
-void Story_Run118(s32 a0)
+void Story_unk118_3(s32 a0)
 {
     u32 i;
     s32 x;
@@ -955,30 +954,30 @@ void Story_Run118(s32 a0)
     s32 six;
     s32 pos;
     s32 four;
-    Story_Run119(219);
+    Story_unk119_3(219);
     six = 6;
     i = 0;
     x = 41;
     y = 40;
     do {
-        Story_SetRect8(y, 32, x, 32, 3 - (s32)i, six);
+        Story_unk8_5(y, 32, x, 32, 3 - (s32)i, six);
         k = 2;
-        Story_SetRect9(39, 51, y, 32, 1, six);
+        Story_unk9_5(39, 51, y, 32, 1, six);
         pos = (s32)i + 106;
         four = 4;
-        Story_Run120(105, 51, pos, 32, k, four);
+        Story_unk120_3(105, 51, pos, 32, k, four);
         if (a0 != 0) {
-            Story_Place11(0x50000, 0x50000, 0x10000);
-            Story_Place12(-1, -1, 0xe666);
-            Story_Run121(a0);
+            Story_unk11_3(0x50000, 0x50000, 0x10000);
+            Story_unk12_3(-1, -1, 0xe666);
+            Story_unk121_3(a0);
         }
         i = i + 1;
         x = x + 2;
         y = y + 2;
     } while (i <= 2);
-    Story_Do3(0x120);
-    Story_SetRect10(106, 33, 4, 5, 42, 33);
-    Story_Run122();
+    Story_unk3_2(0x120);
+    Story_unk10_5(106, 33, 4, 5, 42, 33);
+    Story_unk122_3();
 }
 
 /* overlays/scene/story/selector_effect/scaled_motion.c */
@@ -1069,7 +1068,7 @@ s32 SceneData_LoadBlockA2c5(void)
 
 s32 SceneData_ApplyTableA2c5AndReturnZero(void)
 {
-    Story_Do16((s32)gOv8);
+    Story_unk16_2((s32)gOv8);
     return 0;
 }
 
@@ -1078,19 +1077,19 @@ s32 SceneData_ApplyTableA2c5AndReturnZero(void)
 /* Complete scene-entry wrapper through return, alignment and its sole pool. */
 void Dialogue_RunLine1637(void)
 {
-    Story_Run123();
-    Story_Run124(0x1637, 1);
-    Story_Run125();
+    Story_unk123_3();
+    Story_unk124_3(0x1637, 1);
+    Story_unk125_3();
 }
 
 void Dialogue_RunActor3TimedLine(void)
 {
-    Story_Run126();
+    Story_unk126_3();
     Story_Apply19(3, 4);
-    Story_Do17(20);
-    Story_Do18(0x157d);
-    Story_Place17(3, 0, 20);
-    Story_Run127();
+    Story_unk17_2(20);
+    Story_unk18_2(0x157d);
+    Story_unk17_3(3, 0, 20);
+    Story_unk127_3();
 }
 
 /* overlays/scene/story/selector_effect/scene_effect_sequence.c */
@@ -1101,7 +1100,7 @@ void Effect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
     s32 tmp[3];
     u32 i;
 
-    Story_Do19(0xd8);
+    Story_unk19_2(0xd8);
     i = 0;
     do {
         if ((i & 1) != 0) {
@@ -1113,15 +1112,15 @@ void Effect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
             tmp[0] = 0;
             tmp[1] = 0;
             tmp[2] = 0;
-            Story_Place18((6 - (i >> 1)) * 0x1999, w, tmp);
+            Story_unk18_3((6 - (i >> 1)) * 0x1999, w, tmp);
             {
-                s32 a = x + ((6 - ((Story_Run128() * 6) >> 16)) << 16);
-                s32 b = z + ((6 - ((Story_Run129() * 6) >> 16)) << 16);
+                s32 a = x + ((6 - ((Story_unk128_3() * 6) >> 16)) << 16);
+                s32 b = z + ((6 - ((Story_unk129_3() * 6) >> 16)) << 16);
 
-                Story_SetRect30(a, y, b, tmp[0], tmp[1], tmp[2], 0x90000, desc);
+                Story_unk30_5(a, y, b, tmp[0], tmp[1], tmp[2], 0x90000, desc);
             }
         }
-        Story_Do20(2);
+        Story_unk20_2(2);
         i++;
     } while (i <= 11);
 }
@@ -1131,23 +1130,23 @@ extern u8 gUnk[];
 
 void Scene_RunFourCallSequence(void)
 {
-    Story_Run130();
-    Story_Run131();
-    Story_Run132();
-    Story_Run133();
+    Story_unk130_3();
+    Story_unk131_3();
+    Story_unk132_3();
+    Story_unk133_3();
 }
 
 void Scene_ApplyTable2b20000(void)
 {
-    Story_Place19((s32)gUnk, 0, 0x2480000);
+    Story_unk19_3((s32)gUnk, 0, 0x2480000);
 }
 
 void Scene_RunFourStepSequence(void)
 {
-    Story_Run134();
-    Story_Run135();
-    Story_Run136();
-    Story_Run137();
+    Story_unk134_3();
+    Story_unk135_3();
+    Story_unk136_3();
+    Story_unk137_3();
 }
 
 /* overlays/scene/story/selector_effect/scene_state_interaction.c */
@@ -1177,7 +1176,7 @@ void State_ClearCurrentRecordAndReleaseTarget(void)
     }
 
     rec[0] = 0;
-    Story_Do21(0x161);
+    Story_unk21_2(0x161);
 
     target = (s32 *)rec[5];
     if (target != 0) {
@@ -1192,14 +1191,14 @@ void State_ClearCurrentRecordAndReleaseTarget(void)
 extern u8 *gWork;
 extern u8 gOv9[];
 
-s32 *Story_Run138(s32);
-s32 *Story_Run139(s32);
+s32 *Story_unk138_3(s32);
+s32 *Story_unk139_3(s32);
 
-s32 *Story_Run140(s32);
-s32 *Story_Run141(s32);
-s32 *Story_Run108(s32);
+s32 *Story_unk140_3(s32);
+s32 *Story_unk141_3(s32);
+s32 *Story_unk108_3(s32);
 
-s32 *Story_Run142(s32);
+s32 *Story_unk142_3(s32);
 
 /*
  * resource_39c owner at 0x02000cc0, 16 bytes: invoke one fixed two-value
@@ -1210,7 +1209,7 @@ s32 *Story_Run142(s32);
  * m2c_guard independently measures those 14 code bytes and finds no
  * seeding hazard.  The zero halfword at 0x02000cce is alignment before
  * the next owner's prologue at 0x02000cd0, making the whole span 16 bytes.
- * Its sole call resolves through the overlay veneer to Story_Run143.
+ * Its sole call resolves through the overlay veneer to Story_unk143_3.
  * The constants' game-level meanings are not established by this owner.
  */
 
@@ -1221,55 +1220,55 @@ void State_ApplyPair12And21(void)
 
 void State_ApplyWork16cMinus50A(void)
 {
-    Story_Do22(*(s16 *)(gWork + 0x16c) - 50);
+    Story_unk22_2(*(s16 *)(gWork + 0x16c) - 50);
 }
 
 void State_ApplyWork16cMinus50(void)
 {
-    Story_Do23(*(s16 *)(gWork + 0x16c) - 50);
+    Story_unk23_2(*(s16 *)(gWork + 0x16c) - 50);
 }
 
 void State_ApplyWork16cMinus50B(void)
 {
-    Story_Do24(*(s16 *)(gWork + 0x16c) - 50);
+    Story_unk24_2(*(s16 *)(gWork + 0x16c) - 50);
 }
 
 void State_RunWhenActor8AtTile10x23(void)
 {
-    s32 x = Story_Run138(8)[2] / 0x100000;
-    s32 y = Story_Run139(8)[4] / 0x100000;
+    s32 x = Story_unk138_3(8)[2] / 0x100000;
+    s32 y = Story_unk139_3(8)[4] / 0x100000;
 
-    Story_Run144();
+    Story_unk144_3();
     if (x == 10 && y == 23) {
         s32 *p;
-        Story_Run140(8)[3] += 0xfffe0000;
-        p = Story_Run141(8);
-        p[15] = Story_Run108(8)[3];
-        Story_SetRect31(6, 29, 10, 23, 1, 1);
-        Story_Do25(0xd9);
-        Story_Place20((s32)gOv9, 10, 18);
-        Story_SetRect32(10, 16, 1, 1, x, 19);
-        Story_Do26(0x878);
+        Story_unk140_3(8)[3] += 0xfffe0000;
+        p = Story_unk141_3(8);
+        p[15] = Story_unk108_3(8)[3];
+        Story_unk31_5(6, 29, 10, 23, 1, 1);
+        Story_unk25_2(0xd9);
+        Story_unk20_3((s32)gOv9, 10, 18);
+        Story_unk32_5(10, 16, 1, 1, x, 19);
+        Story_unk26_2(0x878);
     }
-    Story_Run145();
+    Story_unk145_3();
 }
 
 void State_ApplyRectWhenActor20AtColumn28(void)
 {
     s32 col;
 
-    Story_Run146();
-    col = Story_Run142(20)[2] / 0x100000;
+    Story_unk146_3();
+    col = Story_unk142_3(20)[2] / 0x100000;
     if (col == 28) {
-        Story_Do27(840);
+        Story_unk27_2(840);
         {
             s32 a = 31;
             s32 b = 20;
 
-            Story_SetRect33(29, 20, 1, 1, a, b);
+            Story_unk33_5(29, 20, 1, 1, a, b);
         }
     }
-    Story_Run147();
+    Story_unk147_3();
 }
 
 /* overlays/scene/story/selector_effect/story_effect_sequence.c */
@@ -1310,11 +1309,11 @@ extern s32 gOv11[];
 extern s32 gOv12[];
 extern u8 gWork[];
 
-Ent *Story_Run148(Desc *, Ent *);
+Ent *Story_unk148_3(Desc *, Ent *);
 
-struct Rec_395 *Story_Run149();
+struct Rec_395 *Story_unk149_3();
 
-s32 Story_Run150(Ent *a)
+s32 Story_unk150_3(Ent *a)
 {
     Desc d;
     u32 idx;
@@ -1327,7 +1326,7 @@ s32 Story_Run150(Ent *a)
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Story_Run148(&d, a);
+    r = Story_unk148_3(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
@@ -1357,7 +1356,7 @@ done:
     return 0;
 }
 
-s32 Story_Run151(s32 *a)
+s32 Story_unk151_3(s32 *a)
 {
     s32 sel;
     s32 buf[3];
@@ -1371,7 +1370,7 @@ s32 Story_Run151(s32 *a)
     s32 *b;
     s32 ret;
     a[5] = 0;
-    obj = (u8 *)Story_Place21(&sel, a + 1, a);
+    obj = (u8 *)Story_unk21_3(&sel, a + 1, a);
     if (obj == 0)
         return 0;
     p = obj + 0x22;
@@ -1459,33 +1458,33 @@ found:
     return ret;
 }
 
-void Story_Run152(void)
+void Story_unk152_3(void)
 {
     u32 i;
     s32 rec7;
     s32 record;
 
-    if (Story_Check7(0x256) != 0) {
-        Story_Run153();
-        Story_Do4(0x256);
-        record = Story_Check26(0);
+    if (Story_unk7(0x256) != 0) {
+        Story_unk153_3();
+        Story_unk4_2(0x256);
+        record = Story_unk26(0);
         *(volatile s32 *)(record + 12) += 0x20000;
-        rec7 = Story_Check8(0);
-        record = Story_Check9(0);
+        rec7 = Story_unk8(0);
+        record = Story_unk9(0);
         *(volatile s32 *)(rec7 + 60) = *(volatile s32 *)(record + 12);
-        Story_Run154(5);
-        Story_SetRect11(7, 2, 5, 11, 1, 1);
-        Story_Run155(217);
-        Story_Place13(0x200e03a, 9, 7);
-        Story_Run156();
+        Story_unk154_3(5);
+        Story_unk11_5(7, 2, 5, 11, 1, 1);
+        Story_unk155_3(217);
+        Story_unk13_3(0x200e03a, 9, 7);
+        Story_unk156_3();
     }
 }
 
     if (slot != -1) {
-        s32 index = Story_Check27(slot, key);
+        s32 index = Story_unk27(slot, key);
 
         if (index != -1) {
-            Story_Run149(slot)->tbl[index] = value;
+            Story_unk149_3(slot)->tbl[index] = value;
         }
     }
 }

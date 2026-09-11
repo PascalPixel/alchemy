@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/selection/open_window.h"
 
 struct UiWork {
     u8 pad0[8];
@@ -29,9 +28,9 @@ extern u8 gVal2[];
 
 struct UiWork *Menu_Run(s32, s32, s32, s32, s32);
 
-struct Node *Menu_Run2(struct Screen *, u32);
+struct Node *Menu_unk2_4(struct Screen *, u32);
 
-void Menu_Run3(s32 mode, u32 count)
+void Menu_unk3_3(s32 mode, u32 count)
 {
     struct Screen *screen;
     struct Node *node;
@@ -39,7 +38,7 @@ void Menu_Run3(s32 mode, u32 count)
     struct UiWork *window;
 
     screen = gIw;
-    node = Menu_Run2(screen, count);
+    node = Menu_unk2_4(screen, count);
     slot = &screen->window;
     window = *slot;
     if (window == 0) {

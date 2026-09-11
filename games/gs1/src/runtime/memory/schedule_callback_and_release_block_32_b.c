@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/memory/schedule_callback_and_release_block_32_b.h"
 
 s32 ScheduleCallback(s32);
 extern u8 gRom;

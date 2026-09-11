@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/puff_arc/run.h"
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
@@ -107,7 +106,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     puff = (Puff *)(work + 0x7080);
     do {
         puff->x = ((sign *((Battle_Check(ang) << 5) >> 16)) + org) + 20;
-        puff->y = ((Battle_Check2(ang) << 4) >> 16) + 40;
+        puff->y = ((Battle_unk2(ang) << 4) >> 16) + 40;
         puff->tick = tick;
         ang += 0x1000;
         tick -= 4;
@@ -121,11 +120,11 @@ void BattleFx_RunPuffArc(Efx *efx)
         *(s32 *)(work + 0x7784) = 50;
     }
     Battle_Apply(0x080CD261, 0x480);
-    Battle_Do2(0x88);
+    Battle_unk2_2(0x88);
     frame = 0;
     do {
         if (frame == 24) {
-            Battle_Do3(0x85);
+            Battle_unk3_2(0x85);
         }
         i = 0;
         cur = (Puff *)(work + 0x7080);
@@ -161,16 +160,16 @@ void BattleFx_RunPuffArc(Efx *efx)
         i = 0;
         while (i != WORK_EFX->cnt) {
             if (frame == (i * 8) + 16) {
-                Battle_SetRange2(WORK_EFX->actors[i], 10, 5, i, 12);
+                Battle_unk2_5(WORK_EFX->actors[i], 10, 5, i, 12);
             }
             i += 1;
         }
         Battle_Run();
         *(s32 *)(work + 0x7824) = 1;
-        Battle_Do4(1);
+        Battle_unk4_2(1);
         frame += 1;
     } while (frame != 80);
-    Battle_Do5(46);
-    Battle_Do6(0x080CD261);
-    Battle_Check3();
+    Battle_unk5(46);
+    Battle_unk6(0x080CD261);
+    Battle_unk3();
 }

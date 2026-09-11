@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/effect/spawn_sequence.h"
 
 #include "scene_effect_sequence.h"
 
@@ -94,36 +93,36 @@ extern u8 gOv6[];
 extern u8 gOv7[];
 extern u8 gOv8[];
 
-void *Effect_Run6(s32, s32, s32, s32);
+void *Effect_unk6_4(s32, s32, s32, s32);
 
-void *Effect_Run7(s32, s32, s32, s32);
+void *Effect_unk7_4(s32, s32, s32, s32);
 
-struct Effect *Effect_Run8();
-struct Effect *Effect_Run9();
+struct Effect *Effect_unk8_4();
+struct Effect *Effect_unk9_4();
 
-u8 *Effect_Run10();
-u8 *Effect_Run11();
+u8 *Effect_unk10_4();
+u8 *Effect_unk11_4();
 
 typedef s32(*IwramIntegerSquareRoot)(s32);
 
-u8 *Effect_Run12(s32 actorId);
+u8 *Effect_unk12_4(s32 actorId);
 
-u8 *Effect_Run13();
+u8 *Effect_unk13_4();
 
-u8 *Effect_Run14();
+u8 *Effect_unk14_4();
 
-u8 *Effect_Run15();
+u8 *Effect_unk15_4();
 
-u8 *Effect_Run16();
+u8 *Effect_unk16_4();
 
-u8 *Effect_Run17();
-u8 *Effect_Run18();
+u8 *Effect_unk17_4();
+u8 *Effect_unk18_4();
 
-u8 *Effect_Run19();
+u8 *Effect_unk19_4();
 
-u8 *Effect_Run20();
+u8 *Effect_unk20_4();
 
-u8 *Effect_Run21();
+u8 *Effect_unk21_4();
 
 /* Named shorthand for one fixed effect request, in overlay resource_3a0. */
 
@@ -158,9 +157,9 @@ u8 *Effect_Run21();
  * call site is spelled with its own import name.
  */
 
-void Effect_Run22();          /* scene open */
+void Effect_unk22_4();          /* scene open */
 
-void Effect_Run23();          /* scene close */
+void Effect_unk23_4();          /* scene close */
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
@@ -171,7 +170,7 @@ void *Effect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 {
     extern u8 *gWork;
 
-    u8 *effect = Effect_Run6(kind, x, y, z);
+    u8 *effect = Effect_unk6_4(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -196,7 +195,7 @@ void *Effect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
 {
     extern u8 *gWork;
 
-    u8 *effect = Effect_Run7(kind, x, y, z);
+    u8 *effect = Effect_unk7_4(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -237,21 +236,21 @@ void Effect_SpawnConfigured(s32 x, s32 y,
     s32 duration;
     s32 first_delta;
     s32 accumulated;
-    party = Effect_Run8(0);
+    party = Effect_unk8_4(0);
 
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Effect_Run9(options->kind, x, y, z);
+        effect = Effect_unk9_4(options->kind, x, y, z);
     } else {
-        effect = Effect_Run9(222, x, y, z);
+        effect = Effect_unk9_4(222, x, y, z);
     }
     if (effect == 0) return;
 
     block = effect->sprite;
     mode_block = block;
 
-    Effect_Run24(effect, (flags + 1) & 15);
+    Effect_unk24_4(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
-    Effect_Run25(effect, gOv[table_offset >> 2]);
+    Effect_unk25_3(effect, gOv[table_offset >> 2]);
 
     effect->mode55 = 0;
     block->state26 = 0;
@@ -275,7 +274,7 @@ void Effect_SpawnConfigured(s32 x, s32 y,
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {
-        Effect_Run26(effect, options->mode);
+        Effect_unk26_3(effect, options->mode);
     }
 
     if ((flags & 0x20000) != 0) {
@@ -299,7 +298,7 @@ void Effect_SpawnConfigured(s32 x, s32 y,
             first_delta = *(volatile const s32 *)&options->target30;
             accumulated = *(volatile const s32 *)&effect->accum18;
             first_delta -= accumulated;
-            effect->rate30 = Effect_Check26(first_delta,
+            effect->rate30 = Effect_unk26(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
@@ -307,19 +306,19 @@ void Effect_SpawnConfigured(s32 x, s32 y,
         } else {
             first_delta = options->target30;
             first_delta += (s32)0xffff0000;
-            effect->rate30 = Effect_Check27(first_delta,
+            effect->rate30 = Effect_unk27(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
             delta += (s32)0xffff0000;
         }
 
-        effect->rate34 = Effect_Check28(delta, duration);
+        effect->rate34 = Effect_unk28(delta, duration);
     }
 
     if ((flags & 0x200000) != 0) {
-        Effect_Run27(effect, 1);
-        Effect_Run28(effect, options->callback_arg);
+        Effect_unk27_3(effect, 1);
+        Effect_unk28_3(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {
@@ -338,14 +337,14 @@ void Effect_SpawnConfigured(s32 x, s32 y,
 /*
  * The 16-byte owner at 0x02000314 loads no literal, so it carries no pool
  * word and no alignment halfword.  All three arguments are immediates, and
- * Effect_Run29 spells the overlay's own relocated call word rather than a
+ * Effect_unk29_3 spells the overlay's own relocated call word rather than a
  * runtime address.
  */
 void Effect_RequestFixedEffect(void)
 {
     extern u8 *gWork;
 
-    Effect_Run29(22, 1, 2);
+    Effect_unk29_3(22, 1, 2);
 }
 
 /* Complete entity-19 sprite-counter adjustment. */
@@ -353,7 +352,7 @@ void Effect_AdvanceRotatingSprite(void)
 {
     extern u8 *gWork;
 
-    u8 *entity = Effect_Run10(19);
+    u8 *entity = Effect_unk10_4(19);
     u8 *sprite = *(u8 **)(entity + 80);
     *(u16 *)(sprite + 30) += 0x1400;
 }
@@ -362,7 +361,7 @@ void Effect_SpawnPeriodicEffect(void)
 {
     extern u8 *gWork;
 
-    u8 *entity = Effect_Run11(14);
+    u8 *entity = Effect_unk11_4(14);
 
     if ((gIw & 3) == 0) {
         struct PeriodicEffectConfig config;
@@ -370,7 +369,7 @@ void Effect_SpawnPeriodicEffect(void)
         config.variant = 9;
         config.id = 169;
         config.data = gOv2;
-        Effect_Run30(
+        Effect_unk30_2(
             *(s32 *)(entity + 8),
             *(s32 *)(entity + 12),
             *(s32 *)(entity + 16) - 0x10000,
@@ -423,7 +422,7 @@ s32 Effect_PrepareState(void)
 {
     extern u8 *gWork;
 
-    if (Effect_Check29(0x895) != 0)
+    if (Effect_unk29(0x895) != 0)
         gOv3[0xbe] = 0;
     return (s32)gOv3;
 }
@@ -432,10 +431,10 @@ void Effect_ShowActorSetupMessage(void)
 {
     extern u8 *gWork;
 
-    Effect_Run31();
-    Effect_Do5(0x17e8);
+    Effect_unk31_2();
+    Effect_unk5_2(0x17e8);
     Effect_Apply6(9, 0);
-    Effect_Run32();
+    Effect_unk32_2();
 }
 
 void Scene_RunPrimarySequence(void)
@@ -456,85 +455,85 @@ void Scene_RunPrimarySequence(void)
     s32 lo;
 
     rec8 = Effect_Check(20);
-    Effect_Run33();
+    Effect_unk33_2();
     v7 = 0;
-    record = Effect_Run13(18);
+    record = Effect_unk13_4(18);
     *(volatile s32 *)((s32)record + 108) = v7;
-    if (Effect_Check2(0x200) == 0) {
-        record = Effect_Check3(18);
+    if (Effect_unk2(0x200) == 0) {
+        record = Effect_unk3(18);
         if ((*(volatile s32 *)((s32)record + 8) >> 20) > 19) {
             goto L_020006a2;
         }
     }
-    record = Effect_Run14(18);
+    record = Effect_unk14_4(18);
     p5 = *(u16 *)((s32)record + 6);
-    Effect_Run34(18, 0, 0);
-    Effect_Run35(10);
+    Effect_unk34_2(18, 0, 0);
+    Effect_unk35_2(10);
     Effect_Do(0x17fb);
-    if (Effect_Check4(0x200) == 0) {
+    if (Effect_unk4(0x200) == 0) {
         bump_step(1);
-        Effect_Run36(18, 0);
-        *(volatile u16 *)(Effect_Check30(18) + 100) = v7;
-        record = Effect_Check5(18);
+        Effect_unk36_2(18, 0);
+        *(volatile u16 *)(Effect_unk30(18) + 100) = v7;
+        record = Effect_unk5(18);
         *(volatile u16 *)((s32)record + 6) = p5;
     } else {
-        Effect_Run37(18, 0);
+        Effect_unk37_2(18, 0);
         Effect_Place(18, 0x8000, 20);
     }
-    record = Effect_Run15(18);
+    record = Effect_unk15_4(18);
     *(volatile s32 *)((s32)record + 108) = 0x2008501;
     Effect_Run();
     goto L_02000916;
     L_020006a2:;
-    record = Effect_Check6(0);
+    record = Effect_unk6(0);
     if ((*(volatile s32 *)((s32)record + 16) >> 19) > 27) {
-        record = Effect_Check7(0);
+        record = Effect_unk7(0);
         if ((*(volatile s32 *)((s32)record + 16) >> 19) <= 29) {
-            record = Effect_Check8(0);
+            record = Effect_unk8(0);
             if ((*(volatile s32 *)((s32)record + 8) >> 20) != 26) {
-                Effect_Place2(0, 0x8000, 0x4000);
-                Effect_Place3(0, 18, 0);
-                Effect_Run38(5);
-                rec7 = Effect_Check9(0);
-                record = Effect_Run16(18);
+                Effect_unk2_3(0, 0x8000, 0x4000);
+                Effect_unk3_3(0, 18, 0);
+                Effect_unk38_2(5);
+                rec7 = Effect_unk9(0);
+                record = Effect_unk16_4(18);
                 if (*(volatile s32 *)(rec7 + 8) < *(volatile s32 *)((s32)record + 8)) {
-                    *(u8 *)(Effect_Check31(0) + 90) &= 254;
-                    record = Effect_Check10(18);
-                    Effect_Run39(0, (((*(volatile s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
+                    *(u8 *)(Effect_unk31(0) + 90) &= 254;
+                    record = Effect_unk10(18);
+                    Effect_unk39_2(0, (((*(volatile s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
                     v7 = 1;
                 } else {
-                    *(u8 *)(Effect_Check32(0) + 90) &= 254;
-                    record = Effect_Check11(18);
-                    Effect_Run40(0, (((*(volatile s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
+                    *(u8 *)(Effect_unk32(0) + 90) &= 254;
+                    record = Effect_unk11(18);
+                    Effect_unk40_2(0, (((*(volatile s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
                 }
-                Effect_Run41(0);
+                Effect_unk41_2(0);
             }
         }
     }
     v5 = 128;
-    record = Effect_Run18(18);
+    record = Effect_unk18_4(18);
     *(volatile s32 *)((s32)record + 56) = (v5 << 24);
-    record = Effect_Check12(18);
+    record = Effect_unk12(18);
     *(volatile s32 *)((s32)record + 60) = (v5 << 24);
-    record = Effect_Run19(18);
+    record = Effect_unk19_4(18);
     *(volatile s32 *)((s32)record + 64) = (v5 << 24);
-    Effect_Run42(18, 1);
-    Effect_Run43(18, 1);
-    Effect_Run44(18, 2);
-    Effect_Run45(10);
-    Effect_Run46(228);
+    Effect_unk42(18, 1);
+    Effect_unk43(18, 1);
+    Effect_unk44(18, 2);
+    Effect_unk45(10);
+    Effect_unk46(228);
     *(s32 *)(rec8 + 24) = 0x4ccc;
     *(s32 *)(rec8 + 28) = 0x4ccc;
-    record = Effect_Check13(18);
+    record = Effect_unk13(18);
     q1 = *(volatile s32 *)((s32)record + 8);
-    record = Effect_Check14(18);
+    record = Effect_unk14(18);
     t2 = *(volatile s32 *)((s32)record + 16) >> 20;
-    Effect_Run47(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
-    record = Effect_Check15(18);
+    Effect_unk47(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
+    record = Effect_unk15(18);
     q2 = *(volatile s32 *)((s32)record + 8);
-    record = Effect_Check16(18);
+    record = Effect_unk16(18);
     Effect_SetRect(16, 16, 1, 1, (q2 >> 20), (*(volatile s32 *)((s32)record + 16) >> 20));
-    Effect_Run48(20, 2);
+    Effect_unk48(20, 2);
     {
         u8 *flags = (u8 *)(rec8 + 35);
         u8 value = *(volatile u8 *)flags;
@@ -542,53 +541,53 @@ void Scene_RunPrimarySequence(void)
         *flags = (u8)(value | 2);
     }
     do {
-        Effect_Run49(3);
+        Effect_unk49(3);
         hi = *(s32 *)(rec8 + 28);
         lo = *(s32 *)(rec8 + 24);
         *(s32 *)(rec8 + 28) = hi + 0x1999;
         lo += 0x1999;
         *(s32 *)(rec8 + 24) = lo;
     } while (lo <= 0xffff);
-    Effect_Place4(18, 0x105, 70);
-    Effect_Run50(18, 0, 0);
-    Effect_Run51(20);
-    Effect_Place5(18, 0x103, 0);
-    Effect_Run52(18, 2);
-    Effect_Run53(70);
-    Effect_Do2(0x17fa);
-    Effect_Run54(18, 0, 20);
-    Effect_Run55();
-    record = Effect_Check17(0);
+    Effect_unk4_3(18, 0x105, 70);
+    Effect_unk50(18, 0, 0);
+    Effect_unk51(20);
+    Effect_unk5_3(18, 0x103, 0);
+    Effect_unk52(18, 2);
+    Effect_unk53(70);
+    Effect_unk2_2(0x17fa);
+    Effect_unk54(18, 0, 20);
+    Effect_unk55();
+    record = Effect_unk17(0);
     if ((*(volatile s32 *)((s32)record + 8) >> 20) == 26) {
-        record = Effect_Check18(0);
+        record = Effect_unk18(0);
         if ((*(volatile s32 *)((s32)record + 16) >> 20) > 13) {
             v7 = 1;
         }
     }
     if (v7 != 0) {
-        Effect_Place6(0, 0xcccc, 0x6666);
-        Effect_Place7(0, 0xc000, 10);
-        *(u8 *)(Effect_Check33(0) + 90) &= 254;
-        Effect_Run56(0, 2);
-        Effect_Run57(0, 0, 16);
-        Effect_Run58(0);
-        Effect_Run59(0, 1);
+        Effect_unk6_3(0, 0xcccc, 0x6666);
+        Effect_unk7_3(0, 0xc000, 10);
+        *(u8 *)(Effect_unk33(0) + 90) &= 254;
+        Effect_unk56(0, 2);
+        Effect_unk57(0, 0, 16);
+        Effect_unk58(0);
+        Effect_unk59(0, 1);
     }
-    Effect_Place8(18, 0xcccc, 0x6666);
-    record = Effect_Check19(18);
+    Effect_unk8_3(18, 0xcccc, 0x6666);
+    record = Effect_unk19(18);
     if ((*(volatile s32 *)((s32)record + 16) >> 20) != 14) {
-        record = Effect_Run20(18);
-        Effect_Run60(18, *(s16 *)((s32)record + 10), 232);
+        record = Effect_unk20_4(18);
+        Effect_unk60(18, *(s16 *)((s32)record + 10), 232);
     }
-    Effect_Place9(18, 0x118, 232);
-    Effect_Do3(0x200);
+    Effect_unk9_3(18, 0x118, 232);
+    Effect_unk3_2(0x200);
     {
-        u8 *record = Effect_Run21(0);
+        u8 *record = Effect_unk21_4(0);
         u8 value = *(volatile u8 *)&record[90];
 
         record[90] = (u8)(value | 1);
     }
-    Effect_Run61();
+    Effect_unk61();
     L_02000916:;
 }
 
@@ -596,7 +595,7 @@ void Effect_ActivateNearbyActor(void)
 {
     extern u8 *gWork;
 
-    u8 *leader = Effect_Run12(0);
+    u8 *leader = Effect_unk12_4(0);
     if ((*(s32 *)(leader + 16) >> 20) <= 13)
         Effect_Apply7(20, 1);
 }
@@ -610,18 +609,18 @@ void Scene_RunScene3a0(void)
     s32 v5;
     u8 *p5;
 
-    Effect_Run62();
-    *(u8 *)(Effect_Check34(20) + 35) &= 253;
+    Effect_unk62();
+    *(u8 *)(Effect_unk34(20) + 35) &= 253;
     v5 = 0;
-    *(u8 *)(Effect_Check35(20) + 85) = v5;
-    record = Effect_Check20(20);
+    *(u8 *)(Effect_unk35(20) + 85) = v5;
+    record = Effect_unk20(20);
     p5 = *(volatile s32 *)(record + 8);
-    record = Effect_Check21(20);
-    Effect_SetRect2(3, 17, 1, 1, ((s32)p5 >> 20), (*(volatile s32 *)(record + 16) >> 20));
-    Effect_Run2(0x2008325, 0xc80);
-    Effect_Do4(0x201);
-    Effect_Run63(20, 2);
-    Effect_Run64();
+    record = Effect_unk21(20);
+    Effect_unk2_5(3, 17, 1, 1, ((s32)p5 >> 20), (*(volatile s32 *)(record + 16) >> 20));
+    Effect_unk2_4(0x2008325, 0xc80);
+    Effect_unk4_2(0x201);
+    Effect_unk63(20, 2);
+    Effect_unk64();
 }
 
 /*
@@ -633,10 +632,10 @@ void Effect_RunActorSceneMessage(void)
 {
     extern u8 *gWork;
 
-    Effect_Run22();
-    Effect_Run65(0x17f7);
-    Effect_Check36(17, 0);
-    Effect_Run23();
+    Effect_unk22_4();
+    Effect_unk65(0x17f7);
+    Effect_unk36(17, 0);
+    Effect_unk23_4();
 }
 
 void Scene_RunScene3a0(s32 a0)
@@ -646,16 +645,16 @@ void Scene_RunScene3a0(s32 a0)
     u32 i;
     s32 record;
 
-    *(u8 *)(Effect_Check37(0) + 85) = 0;
-    Effect_Place10(0, 0x8000, 0x4000);
+    *(u8 *)(Effect_unk37(0) + 85) = 0;
+    Effect_unk10_3(0, 0x8000, 0x4000);
     if (a0 == 6) {
-        Effect_Run66(0, 2);
-        Effect_Place11(0, 0, -16);
+        Effect_unk66(0, 2);
+        Effect_unk11_3(0, 0, -16);
     } else {
-        Effect_Place12(0, 2, -16);
+        Effect_unk12_3(0, 2, -16);
     }
     *(s32 *)((*(u8 *volatile *)gWork + 0x1c8)) = 16;
-    Effect_Run67(a0);
+    Effect_unk67(a0);
 }
 
 /*
@@ -674,48 +673,48 @@ void Effect_DispatchStep(void)
     u8 *shared0;
     s32 shared1;
 
-    Effect_Run68();
+    Effect_unk68();
 
     switch (scene[182]) {
     case 1:
-        Effect_Run69(158);
-        Effect_Run70(gOv4, 81, 18);
+        Effect_unk69(158);
+        Effect_unk70(gOv4, 81, 18);
         break;
     case 2:
-        Effect_Run71(158);
+        Effect_unk71(158);
         shared0 = gOv5;
         shared1 = 83;
         goto shared;
     case 3:
-        Effect_Run72(158);
+        Effect_unk72(158);
         shared0 = gOv5;
         shared1 = 86;
         goto shared;
     case 4:
-        Effect_Run73(158);
-        Effect_Run74(gOv6, 84, 24);
+        Effect_unk73(158);
+        Effect_unk74(gOv6, 84, 24);
         break;
     case 5:
-        Effect_Run75(158);
-        Effect_Run76(gOv6, 72, 7);
+        Effect_unk75(158);
+        Effect_unk76(gOv6, 72, 7);
         break;
     case 6:
-        Effect_Run77(188);
+        Effect_unk77(188);
         shared0 = gOv7;
         shared1 = 69;
     shared:
-        Effect_Run78(shared0, shared1, 11);
+        Effect_unk78(shared0, shared1, 11);
         break;
     case 7:
-        Effect_Run79(158);
-        Effect_Run80(gOv8, 83, 7);
+        Effect_unk79(158);
+        Effect_unk80(gOv8, 83, 7);
         break;
     default:
         break;
     }
 
-    Effect_Run81(scene[182]);
-    Effect_Run82();
+    Effect_unk81(scene[182]);
+    Effect_unk82();
 }
 
 void Scene_RunScene3a0(void)
@@ -725,36 +724,36 @@ void Scene_RunScene3a0(void)
     u32 i;
     s32 record;
 
-    Effect_Run83();
-    Effect_Run3(18, 1);
-    record = Effect_Check38(18);
+    Effect_unk83();
+    Effect_unk3_4(18, 1);
+    record = Effect_unk38(18);
     *(volatile s32 *)(record + 108) = 0;
-    record = Effect_Check39(18);
+    record = Effect_unk39(18);
     *(volatile s32 *)(record + 56) = -0x80000000;
-    record = Effect_Check22(18);
+    record = Effect_unk22(18);
     *(volatile s32 *)(record + 64) = -0x80000000;
-    record = Effect_Check23(18);
+    record = Effect_unk23(18);
     *(volatile s32 *)(record + 36) = 0;
-    record = Effect_Check24(18);
+    record = Effect_unk24(18);
     *(volatile s32 *)(record + 44) = 0;
-    record = Effect_Check25(18);
+    record = Effect_unk25(18);
     *(volatile s32 *)(record + 48) = 0;
-    record = Effect_Check40(18);
+    record = Effect_unk40(18);
     *(volatile s32 *)(record + 52) = 0;
-    Effect_Place13(18, 0x103, 0);
-    Effect_Run84(18, 2);
-    Effect_Run85(60);
-    Effect_Place14(18, 0x18000, 0xc000);
-    Effect_Place15(0, 0x18000, 0xc000);
-    Effect_Place16(18, 0x118, 232);
-    Effect_Place17(0, 0x128, 232);
-    Effect_Run86(18);
-    Effect_Place18(0, 0x8000, 20);
-    Effect_Place19(0, 0x102, 60);
-    Effect_Run4(18, 0x20095b0);
-    record = Effect_Check41(18);
+    Effect_unk13_3(18, 0x103, 0);
+    Effect_unk84(18, 2);
+    Effect_unk85(60);
+    Effect_unk14_3(18, 0x18000, 0xc000);
+    Effect_unk15_3(0, 0x18000, 0xc000);
+    Effect_unk16_3(18, 0x118, 232);
+    Effect_unk17_3(0, 0x128, 232);
+    Effect_unk86(18);
+    Effect_unk18_3(0, 0x8000, 20);
+    Effect_unk19_3(0, 0x102, 60);
+    Effect_unk4_4(18, 0x20095b0);
+    record = Effect_unk41(18);
     *(volatile s32 *)(record + 108) = 0x2008501;
-    Effect_Run5();
+    Effect_unk5_4();
 }
 
 u8 *Effect_GetTertiaryData(void)

@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/display/scroll/disarm_hblank_dma.h"
-
 
 void Scheduler_RemoveCallback(void *callback);
 extern u8 DisplayScroll_ArmHBlankDma_Entry;

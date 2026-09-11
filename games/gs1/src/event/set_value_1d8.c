@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/event/set_value_1d8.h"
 #include "event_runtime.h"
 
 struct EventRuntime1d8 {

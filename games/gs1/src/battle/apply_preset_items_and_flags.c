@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/apply_preset_items_and_flags.h"
 #include "gs1_edition.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))

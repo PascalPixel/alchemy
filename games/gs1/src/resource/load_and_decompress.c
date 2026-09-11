@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/load_and_decompress.h"
 #include "resource.h"
 
 void Resource_LoadAndDecompress(void *resource_id, void *destination, s32 destination_offset, s32 copy_palette)

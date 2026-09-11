@@ -27,7 +27,7 @@ extern u8 Data_00000ff2[];
  *
  * Calls are spelled as the pre-relocation call word the image holds, the
  * convention the adopted sibling
- * games/gs1/src/overlays/scene_primary_script/run_scene_37a_sequence_a.c uses,
+ * games/gs1/src/overlays/scene/script/run_scene_37a_sequence_a.c uses,
  * so one target reached from several sites appears under several spellings.
  *
  * RESIDUAL (all 32 remaining differing halfwords).  Eight of those spellings
@@ -43,7 +43,7 @@ extern u8 Data_00000ff2[];
  * The four ids handed to the Func_0808a170 message service are spelled as
  * `Data_00000<id>` externs, the convention the adopted overlay scene scripts
  * already use for this family (see
- * games/gs1/src/overlays/scene_primary_script/run_scene_372_sequence_a.c,
+ * games/gs1/src/overlays/scene/script/run_scene_372_sequence_a.c,
  * which declares `extern u8 Data_00000e67[]` and casts it to s32 at the call).
  * The reference forces that reading for 0xff0: every other pooled constant in
  * this owner (0x101, 0x105, 0x2005, 0x6666 ...) is one GCC cannot synthesize,

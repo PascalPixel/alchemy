@@ -5975,7 +5975,7 @@
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/run_scene_four_pass_callback_sequence.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/run_scene_four_pass_callback_sequence.c",
       "absolute_symbols": {
         "Func_02004224": {
           "address": "0x0200a410",
@@ -6008,7 +6008,7 @@
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/run_actor_eleven_flagged_steps.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/run_actor_eleven_flagged_steps.c",
       "absolute_symbols": {
         "Func_02002e62": {
           "address": "0x0200a328",
@@ -6041,7 +6041,7 @@
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39a_02001ad0.c",
+      "source": "games/gs1/src/overlays/scene/script/run_39a_02001ad0.c",
       "absolute_symbols": {
         "Func_02003e7a": {
           "address": "0x0200a380",
@@ -8428,7 +8428,7 @@
     {
       "id": "overlay-37d-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_script/scene_37d.c",
+      "source": "games/gs1/src/overlays/scene/script/scene_37d.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37d",
       "absolute_symbols": {},
@@ -8469,7 +8469,7 @@
     {
       "id": "overlay-37e-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_script/scene_37e.c",
+      "source": "games/gs1/src/overlays/scene/script/scene_37e.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37e",
       "absolute_symbols": {},
@@ -8510,7 +8510,7 @@
     {
       "id": "overlay-38a-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_burst_scene/actor_burst.c",
+      "source": "games/gs1/src/overlays/scene/actor/burst/actor_burst.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38a",
       "absolute_symbols": {
@@ -10037,7 +10037,7 @@
     {
       "id": "minimal-scene-entry",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/minimal_scene_entry.c",
+      "source": "games/gs1/src/overlays/scene/data/minimal.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_36f",
       "absolute_symbols": {
@@ -10264,7 +10264,7 @@
     {
       "id": "timed-actor-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/timed_actor_events.c",
+      "source": "games/gs1/src/overlays/scene/actor/timed_events.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {
@@ -11956,7 +11956,7 @@
     {
       "id": "conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/conditional_scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/data/conditional_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_379",
       "absolute_symbols": {
@@ -13155,7 +13155,7 @@
     {
       "id": "scene-table-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_table_state_update.c",
+      "source": "games/gs1/src/overlays/scene/state/table_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37c",
       "absolute_symbols": {
@@ -13217,7 +13217,7 @@
     {
       "id": "story-beat-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_beat_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/beat.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_384",
       "absolute_symbols": {
@@ -13482,7 +13482,7 @@
     {
       "id": "actor-placement-dialogue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_placement_dialogue_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/placement.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_386",
       "absolute_symbols": {
@@ -14105,7 +14105,7 @@
     {
       "id": "gate-actor-placement-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/gate_actor_placement_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/gate_placement.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_388",
       "absolute_symbols": {
@@ -14179,7 +14179,7 @@
     {
       "id": "actor-message-branch-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_message_branch_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/message_branch.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38c",
       "absolute_symbols": {
@@ -14743,7 +14743,7 @@
     {
       "id": "entry-layout-selector-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/entry_layout_selector_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/entry_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_390",
       "absolute_symbols": {
@@ -14966,7 +14966,7 @@
     {
       "id": "preset-layout-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/preset_layout_scene.c",
+      "source": "games/gs1/src/overlays/scene/data/preset_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_394",
       "absolute_symbols": {
@@ -15274,7 +15274,7 @@
     {
       "id": "orbiting-entity-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/orbiting_entity_scene.c",
+      "source": "games/gs1/src/overlays/scene/effect/orbiting.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38e",
       "absolute_symbols": {
@@ -15565,7 +15565,7 @@
     {
       "id": "background-scroll-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/background_scroll_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/background_scroll.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_397",
       "absolute_symbols": {
@@ -15767,7 +15767,7 @@
     {
       "id": "scenario-region-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scenario_region_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/region.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_398",
       "absolute_symbols": {
@@ -16561,7 +16561,7 @@
     {
       "id": "actor-transition-presentation-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -16698,7 +16698,7 @@
     {
       "id": "actor-transition-presentation-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {},
@@ -16734,7 +16734,7 @@
     {
       "id": "actor-transition-presentation-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -16804,7 +16804,7 @@
     {
       "id": "actor-transition-presentation-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -17318,7 +17318,7 @@
     {
       "id": "actor-transition-presentation-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -17368,7 +17368,7 @@
     {
       "id": "actor-transition-presentation-scene-field-scene-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/field_scene_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/field_scene_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18015,7 +18015,7 @@
     {
       "id": "actor-transition-presentation-scene-actor-depth-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/actor_depth_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/actor_depth_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18064,7 +18064,7 @@
     {
       "id": "actor-transition-presentation-scene-conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/conditional_scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/conditional_scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18194,7 +18194,7 @@
     {
       "id": "actor-transition-presentation-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18232,7 +18232,7 @@
     {
       "id": "actor-transition-presentation-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {},
@@ -18248,7 +18248,7 @@
     {
       "id": "actor-transition-presentation-scene-dialogue-layout",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/dialogue_layout.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/dialogue_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18696,7 +18696,7 @@
     {
       "id": "actor-transition-presentation-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18754,7 +18754,7 @@
     {
       "id": "actor-transition-presentation-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18783,7 +18783,7 @@
     {
       "id": "actor-transition-presentation-scene-staged-actor-navigation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_transition_presentation_scene/staged_actor_navigation.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition/staged_actor_navigation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -18884,7 +18884,7 @@
     {
       "id": "flagged-dialogue-object-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_dialogue_object_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a1",
       "absolute_symbols": {
@@ -19274,7 +19274,7 @@
     {
       "id": "actor-event-setup-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_event_setup_scene/actor_event_setup_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/event_setup/actor_event_setup_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a2",
       "absolute_symbols": {
@@ -21149,7 +21149,7 @@
     {
       "id": "actor-motion-particle-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_motion_particle_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/motion_particle.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {
@@ -22367,7 +22367,7 @@
     {
       "id": "scene-id-selected-actor-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_id_selected_actor_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/selected_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a5",
       "absolute_symbols": {
@@ -22759,7 +22759,7 @@
     {
       "id": "actor-arrival-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_arrival_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/arrival.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a9",
       "absolute_symbols": {
@@ -23051,7 +23051,7 @@
     {
       "id": "party-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/party_events.c",
+      "source": "games/gs1/src/overlays/scene/story/party_events.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3aa",
       "absolute_symbols": {
@@ -25638,7 +25638,7 @@
     {
       "id": "facing-dialogue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_dialogue_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ac",
       "absolute_symbols": {
@@ -26120,7 +26120,7 @@
     {
       "id": "facing-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_events.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_events.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b6",
       "absolute_symbols": {
@@ -27089,7 +27089,7 @@
     {
       "id": "entry-cue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/entry_cue_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/entry_cue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c1",
       "absolute_symbols": {
@@ -27276,7 +27276,7 @@
     {
       "id": "actor-record-setup-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_record_setup_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/record_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c2",
       "absolute_symbols": {
@@ -28528,7 +28528,7 @@
     {
       "id": "actor-prompt-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_prompt_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/actor_prompt.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c3",
       "absolute_symbols": {
@@ -29237,7 +29237,7 @@
     {
       "id": "flagged-cue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_cue_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_cue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c6",
       "absolute_symbols": {
@@ -31332,7 +31332,7 @@
     {
       "id": "actor-pose-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_pose_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/pose.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c7",
       "absolute_symbols": {
@@ -32903,7 +32903,7 @@
     {
       "id": "table-load-audio-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/table_load_audio_scene.c",
+      "source": "games/gs1/src/overlays/scene/effect/table_audio.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ca",
       "absolute_symbols": {
@@ -33016,7 +33016,7 @@
     {
       "id": "digit-value-dialogue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/digit_value_dialogue_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/digit_value.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cb",
       "absolute_symbols": {
@@ -33253,7 +33253,7 @@
     {
       "id": "empty-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/empty_scene.c",
+      "source": "games/gs1/src/overlays/scene/data/empty.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cc",
       "absolute_symbols": {
@@ -33347,7 +33347,7 @@
     {
       "id": "record-count-panel-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/record_count_panel_scene.c",
+      "source": "games/gs1/src/overlays/scene/data/record_count.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cd",
       "absolute_symbols": {
@@ -33615,7 +33615,7 @@
     {
       "id": "command-list-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/command_list_scene/command_list_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/command_list/command_list_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ce",
       "absolute_symbols": {
@@ -36133,7 +36133,7 @@
     {
       "id": "actor-motion-event-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_motion_event_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/motion_event.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_385",
       "absolute_symbols": {
@@ -37465,7 +37465,7 @@
     {
       "id": "extended-effect-presentation-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_effect_presentation_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_381",
       "absolute_symbols": {
@@ -39315,7 +39315,7 @@
     {
       "id": "party-introduction-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/party_introduction_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/party_intro.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -44581,7 +44581,7 @@
     {
       "id": "scene-state-coordinator-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_coordinator_scene.c",
+      "source": "games/gs1/src/overlays/scene/state/coordinator.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {
@@ -46896,7 +46896,7 @@
     {
       "id": "status-dispatch-message-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/status_dispatch_message_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/status_dispatch.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b9",
       "absolute_symbols": {
@@ -50122,7 +50122,7 @@
     {
       "id": "object-scale-update-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/object_scale_update_scene.c",
+      "source": "games/gs1/src/overlays/scene/effect/object_scale.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b0",
       "absolute_symbols": {
@@ -51329,7 +51329,7 @@
     {
       "id": "story-actor-transfer-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_transfer_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_transfer.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -54858,7 +54858,7 @@
     {
       "id": "actor-group-departure-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_group_departure_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/group_departure.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_372",
       "absolute_symbols": {
@@ -59616,7 +59616,7 @@
     {
       "id": "extended-field-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_field_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/extended.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
@@ -60739,7 +60739,7 @@
     {
       "id": "guarded-step-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/guarded_step_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/guarded_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
@@ -61766,7 +61766,7 @@
     {
       "id": "dialogue-prompt-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/dialogue_prompt_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/prompt.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -66613,7 +66613,7 @@
     {
       "id": "actor-depth-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_depth_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/depth.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_387",
       "absolute_symbols": {
@@ -67734,7 +67734,7 @@
     {
       "id": "palette-transition-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/palette_transition_scene.c",
+      "source": "games/gs1/src/overlays/scene/effect/palette.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_395",
       "absolute_symbols": {
@@ -69529,7 +69529,7 @@
     {
       "id": "flagged-dialogue-choreography-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_dialogue_choreography_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_choreography.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_399",
       "absolute_symbols": {
@@ -76822,7 +76822,7 @@
     {
       "id": "effect-spawn-sequence-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/effect_spawn_sequence_scene.c",
+      "source": "games/gs1/src/overlays/scene/effect/spawn_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a0",
       "absolute_symbols": {
@@ -77579,7 +77579,7 @@
     {
       "id": "party-departure-prompt-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/party_departure_prompt_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/party_departure.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ad",
       "absolute_symbols": {
@@ -80480,7 +80480,7 @@
     {
       "id": "extended-actor-choreography-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_choreography_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_choreography.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b1",
       "absolute_symbols": {
@@ -88266,7 +88266,7 @@
     {
       "id": "scene-entry-setup-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_entry_setup_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/entry_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c8",
       "absolute_symbols": {
@@ -90299,7 +90299,7 @@
     {
       "id": "scripted-actor-presentation-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scripted_actor_presentation_scene.c",
+      "source": "games/gs1/src/overlays/scene/effect/scripted_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -91761,7 +91761,7 @@
     {
       "id": "overlay-3a8-run-staged-group-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/run_staged_group_sequence.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/run_staged_group_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -91946,7 +91946,7 @@
     {
       "id": "staged-group-sequence-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92125,7 +92125,7 @@
     {
       "id": "staged-group-sequence-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92179,7 +92179,7 @@
     {
       "id": "staged-group-sequence-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92204,7 +92204,7 @@
     {
       "id": "staged-group-sequence-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {},
@@ -92240,7 +92240,7 @@
     {
       "id": "staged-group-sequence-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92445,7 +92445,7 @@
     {
       "id": "staged-group-sequence-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92528,7 +92528,7 @@
     {
       "id": "staged-group-sequence-scene-facing-target-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/facing_target_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/facing_target_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92598,7 +92598,7 @@
     {
       "id": "staged-group-sequence-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92648,7 +92648,7 @@
     {
       "id": "staged-group-sequence-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -92677,7 +92677,7 @@
     {
       "id": "staged-group-sequence-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -94156,7 +94156,7 @@
     {
       "id": "staged-group-sequence-scene-scene-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -95217,7 +95217,7 @@
     {
       "id": "staged-group-sequence-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {},
@@ -95233,7 +95233,7 @@
     {
       "id": "staged-group-sequence-scene-scene-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/scene_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/scene_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {},
@@ -95249,7 +95249,7 @@
     {
       "id": "staged-group-sequence-scene-orbiting-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_group_sequence_scene/orbiting_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group/orbiting_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -95355,7 +95355,7 @@
           "state": "exact-c"
         }
       ],
-      "source": "games/gs1/src/overlays/scene/branching_formation_scene/run_branching_formation_presentation.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_formation/run_branching_formation_presentation.c",
       "overlay": "resource_391",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
@@ -95604,7 +95604,7 @@
     {
       "id": "branching-formation-scene-calculate-fixed",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_formation_scene/calculate_fixed.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_formation/calculate_fixed.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_391",
       "absolute_symbols": {
@@ -96096,7 +96096,7 @@
     {
       "id": "overlay-38f-run-extended-actor-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_sequence_scene/run_extended_actor_sequence.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_sequence/run_extended_actor_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
       "absolute_symbols": {
@@ -96364,7 +96364,7 @@
     {
       "id": "extended-actor-sequence-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_sequence_scene/extended_actor_sequence_scene.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_sequence/extended_actor_sequence_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
       "absolute_symbols": {
@@ -102666,7 +102666,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-39c-sequence-g",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/run_scene_sequence_g.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/run_scene_sequence_g.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {},
@@ -102681,7 +102681,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-39c-020010c0",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39c_020010c0.c",
+      "source": "games/gs1/src/overlays/scene/script/run_39c_020010c0.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {},
@@ -102696,7 +102696,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-39c-sequence-e",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/run_scene_sequence_e.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/run_scene_sequence_e.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -102721,7 +102721,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-39c-020014cc",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_39c_020014cc.c",
+      "source": "games/gs1/src/overlays/scene/script/run_39c_020014cc.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -102746,7 +102746,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-39c-opening-auxiliary-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/run_scene_opening_auxiliary_sequence.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/run_scene_opening_auxiliary_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -102771,7 +102771,7 @@
     {
       "id": "selector-story-effect-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -102856,7 +102856,7 @@
     {
       "id": "selector-story-effect-scene-effects",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/effects.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/effects.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -102913,7 +102913,7 @@
     {
       "id": "selector-story-effect-scene-story-effect-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/story_effect_sequence.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/story_effect_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103017,7 +103017,7 @@
     {
       "id": "selector-story-effect-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103143,7 +103143,7 @@
     {
       "id": "selector-story-effect-scene-field-scene-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/field_scene_tail.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/field_scene_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103681,7 +103681,7 @@
     {
       "id": "selector-story-effect-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {},
@@ -103712,7 +103712,7 @@
     {
       "id": "selector-story-effect-scene-scene-data-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scene_data_tail.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scene_data_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103747,7 +103747,7 @@
     {
       "id": "selector-story-effect-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103805,7 +103805,7 @@
     {
       "id": "selector-story-effect-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103878,7 +103878,7 @@
     {
       "id": "selector-story-effect-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -103941,7 +103941,7 @@
     {
       "id": "selector-story-effect-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -104023,7 +104023,7 @@
     {
       "id": "selector-story-effect-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -104205,7 +104205,7 @@
     {
       "id": "selector-story-effect-scene-palette-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/palette_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/palette_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {},
@@ -104226,7 +104226,7 @@
     {
       "id": "selector-story-effect-scene-scene-effect-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scene_effect_sequence.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scene_effect_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -104267,7 +104267,7 @@
     {
       "id": "selector-story-effect-scene-scaled-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scaled_motion.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scaled_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {},
@@ -104283,7 +104283,7 @@
     {
       "id": "selector-story-effect-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selector_story_effect_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -105778,7 +105778,7 @@
     {
       "id": "overlays-scene-state-interaction-position-active-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/position_active_actor.c",
+      "source": "games/gs1/src/overlays/scene/state/task/position_active_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -105811,7 +105811,7 @@
     {
       "id": "overlays-scene-state-interaction-spawn-random-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/spawn_random_scene_effect.c",
+      "source": "games/gs1/src/overlays/scene/state/task/spawn_random_scene_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -105836,7 +105836,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3bb-middle-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/run_scene_middle_sequence.c",
+      "source": "games/gs1/src/overlays/scene/state/task/run_scene_middle_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -105885,7 +105885,7 @@
     {
       "id": "state-interaction-task-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/state/task/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {},
@@ -105916,7 +105916,7 @@
     {
       "id": "state-interaction-task-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/state/task/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -105951,7 +105951,7 @@
     {
       "id": "state-interaction-task-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/state/task/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -106207,7 +106207,7 @@
     {
       "id": "state-interaction-task-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/state/task/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -106360,7 +106360,7 @@
     {
       "id": "state-interaction-task-scene-scene-state-interaction-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/scene_state_interaction_head.c",
+      "source": "games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -106587,7 +106587,7 @@
     {
       "id": "state-interaction-task-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/state/task/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -106656,7 +106656,7 @@
     {
       "id": "state-interaction-task-scene-scene-primary-script-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/scene_primary_script_head.c",
+      "source": "games/gs1/src/overlays/scene/state/task/scene_primary_script_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -106984,7 +106984,7 @@
     {
       "id": "state-interaction-task-scene-party",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/party.c",
+      "source": "games/gs1/src/overlays/scene/state/task/party.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -107069,7 +107069,7 @@
     {
       "id": "state-interaction-task-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/state/task/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -107098,7 +107098,7 @@
     {
       "id": "state-interaction-task-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/state/task/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -107123,7 +107123,7 @@
     {
       "id": "state-interaction-task-scene-scene-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/scene_motion.c",
+      "source": "games/gs1/src/overlays/scene/state/task/scene_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {},
@@ -107139,7 +107139,7 @@
     {
       "id": "state-interaction-task-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/state/task/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -107164,7 +107164,7 @@
     {
       "id": "state-interaction-task-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/state/task/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -107226,7 +107226,7 @@
     {
       "id": "state-interaction-task-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/state/task/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -107268,7 +107268,7 @@
     {
       "id": "state-interaction-task-scene-staged-actor-movement",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state_interaction_task_scene/staged_actor_movement.c",
+      "source": "games/gs1/src/overlays/scene/state/task/staged_actor_movement.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -109530,7 +109530,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-37f-late-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scenario_dispatch_scene/run_scene_late_sequence.c",
+      "source": "games/gs1/src/overlays/scene/story/scenario_dispatch/run_scene_late_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -109663,7 +109663,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-37f-early-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scenario_dispatch_scene/run_scene_early_sequence.c",
+      "source": "games/gs1/src/overlays/scene/story/scenario_dispatch/run_scene_early_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -109696,7 +109696,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-37f-0200092c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37f_0200092c.c",
+      "source": "games/gs1/src/overlays/scene/script/run_37f_0200092c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -109721,7 +109721,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-37f-02000d1c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_37f_02000d1c.c",
+      "source": "games/gs1/src/overlays/scene/script/run_37f_02000d1c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -109806,7 +109806,7 @@
     {
       "id": "scenario-dispatch-scene-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scenario_dispatch_scene/scenario_dispatch_scene_head.c",
+      "source": "games/gs1/src/overlays/scene/story/scenario_dispatch/scenario_dispatch_scene_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -110109,7 +110109,7 @@
     {
       "id": "overlays-staged-actor-movement-move-and-redraw-3b4",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -110134,7 +110134,7 @@
     {
       "id": "staged-actor-step-scene-staged-actor-pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/staged_actor_pair.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -110203,7 +110203,7 @@
     {
       "id": "staged-actor-step-scene-staged-actor-navigation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/staged_actor_navigation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/staged_actor_navigation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -110228,7 +110228,7 @@
     {
       "id": "staged-actor-step-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -110516,7 +110516,7 @@
     {
       "id": "staged-actor-step-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -110628,7 +110628,7 @@
     {
       "id": "staged-actor-step-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -110654,7 +110654,7 @@
     {
       "id": "staged-actor-step-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -110679,7 +110679,7 @@
     {
       "id": "staged-actor-step-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -111684,7 +111684,7 @@
     {
       "id": "staged-actor-step-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -111793,7 +111793,7 @@
     {
       "id": "staged-actor-step-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -111939,7 +111939,7 @@
     {
       "id": "staged-actor-step-scene-scene-wrapper",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/scene_wrapper.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/scene_wrapper.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -111969,7 +111969,7 @@
     {
       "id": "staged-actor-step-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -112082,7 +112082,7 @@
     {
       "id": "staged-actor-step-scene-display",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/display.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/display.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -112103,7 +112103,7 @@
     {
       "id": "staged-actor-step-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -112202,7 +112202,7 @@
     {
       "id": "staged-actor-step-scene-facing-target-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/facing_target_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/facing_target_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -112281,7 +112281,7 @@
     {
       "id": "staged-actor-step-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_step_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {},
@@ -112297,7 +112297,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-branching-actor-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/branching_actor_sequence.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/branching_actor_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -112442,7 +112442,7 @@
     {
       "id": "overlays-scene-effect-sequence-run-main-cutscene-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/run_main_cutscene_sequence.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/run_main_cutscene_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -113023,7 +113023,7 @@
     {
       "id": "overlays-scene-effect-sequence-run-supplemental-sequence-one",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/run_supplemental_sequence_one.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/run_supplemental_sequence_one.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -113064,7 +113064,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -113104,7 +113104,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -113232,7 +113232,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-scene-effect-sequence-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/scene_effect_sequence_head.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/scene_effect_sequence_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -114499,7 +114499,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-scene-effect-sequence-mid",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/scene_effect_sequence_mid.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/scene_effect_sequence_mid.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -114621,7 +114621,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -115022,7 +115022,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-dialogue-layout",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/dialogue_layout.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/dialogue_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -115096,7 +115096,7 @@
     {
       "id": "choice-dialogue-cutscene-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/choice_dialogue_cutscene_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -115137,7 +115137,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-38d-long-branching-choreography",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/run_scene_long_branching_choreography.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/run_scene_long_branching_choreography.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115306,7 +115306,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-38d-0200179c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_38d_0200179c.c",
+      "source": "games/gs1/src/overlays/scene/script/run_38d_0200179c.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115371,7 +115371,7 @@
     {
       "id": "flag-branched-choreography-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {},
@@ -115387,7 +115387,7 @@
     {
       "id": "flag-branched-choreography-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115422,7 +115422,7 @@
     {
       "id": "flag-branched-choreography-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115513,7 +115513,7 @@
     {
       "id": "flag-branched-choreography-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115570,7 +115570,7 @@
     {
       "id": "flag-branched-choreography-scene-conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/conditional_scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/conditional_scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115701,7 +115701,7 @@
     {
       "id": "flag-branched-choreography-scene-scene-channel",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/scene_channel.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/scene_channel.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115747,7 +115747,7 @@
     {
       "id": "flag-branched-choreography-scene-scene-primary-script-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flag_branched_choreography_scene/scene_primary_script_head.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched/scene_primary_script_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -115939,7 +115939,7 @@
     {
       "id": "overlays-staged-actor-movement-move-and-redraw-39f",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -115964,7 +115964,7 @@
     {
       "id": "waypoint-actor-motion-scene-staged-actor-pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/staged_actor_pair.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -116033,7 +116033,7 @@
     {
       "id": "waypoint-actor-motion-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -116058,7 +116058,7 @@
     {
       "id": "waypoint-actor-motion-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -116131,7 +116131,7 @@
     {
       "id": "waypoint-actor-motion-scene-configurable-effect-spawn",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/configurable_effect_spawn.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/configurable_effect_spawn.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -116188,7 +116188,7 @@
     {
       "id": "waypoint-actor-motion-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -116254,7 +116254,7 @@
     {
       "id": "waypoint-actor-motion-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -116627,7 +116627,7 @@
     {
       "id": "waypoint-actor-motion-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -117790,7 +117790,7 @@
     {
       "id": "waypoint-actor-motion-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -117831,7 +117831,7 @@
     {
       "id": "waypoint-actor-motion-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {},
@@ -117857,7 +117857,7 @@
     {
       "id": "waypoint-actor-motion-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -117927,7 +117927,7 @@
     {
       "id": "waypoint-actor-motion-scene-orbiting-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/waypoint_actor_motion_scene/orbiting_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint/orbiting_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -117997,7 +117997,7 @@
     {
       "id": "overlays-staged-actor-movement-move-and-redraw-3a6",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118022,7 +118022,7 @@
     {
       "id": "staged-actor-pair-region-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118072,7 +118072,7 @@
     {
       "id": "staged-actor-pair-region-scene-staged-actor-pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/staged_actor_pair.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118257,7 +118257,7 @@
     {
       "id": "staged-actor-pair-region-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {},
@@ -118273,7 +118273,7 @@
     {
       "id": "staged-actor-pair-region-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {},
@@ -118289,7 +118289,7 @@
     {
       "id": "staged-actor-pair-region-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118314,7 +118314,7 @@
     {
       "id": "staged-actor-pair-region-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {},
@@ -118340,7 +118340,7 @@
     {
       "id": "staged-actor-pair-region-scene-scene-data-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/scene_data_tail.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/scene_data_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {},
@@ -118361,7 +118361,7 @@
     {
       "id": "staged-actor-pair-region-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118429,7 +118429,7 @@
     {
       "id": "staged-actor-pair-region-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118876,7 +118876,7 @@
     {
       "id": "staged-actor-pair-region-scene-scene-audio",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/scene_audio.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/scene_audio.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118901,7 +118901,7 @@
     {
       "id": "staged-actor-pair-region-scene-dialogue-layout",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/dialogue_layout.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/dialogue_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118942,7 +118942,7 @@
     {
       "id": "staged-actor-pair-region-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118967,7 +118967,7 @@
     {
       "id": "staged-actor-pair-region-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_region_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -118992,7 +118992,7 @@
     {
       "id": "overlays-staged-actor-movement-move-actor-zero-to-target",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/move_actor_zero_to_target.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/move_actor_zero_to_target.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119025,7 +119025,7 @@
     {
       "id": "map-actor-initializer-scene-staged-actor-pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/staged_actor_pair.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119094,7 +119094,7 @@
     {
       "id": "map-actor-initializer-scene-staged-actor-navigation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/staged_actor_navigation.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/staged_actor_navigation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119119,7 +119119,7 @@
     {
       "id": "map-actor-initializer-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119144,7 +119144,7 @@
     {
       "id": "map-actor-initializer-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119202,7 +119202,7 @@
     {
       "id": "map-actor-initializer-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119245,7 +119245,7 @@
     {
       "id": "map-actor-initializer-scene-configurable-effect-spawn",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/configurable_effect_spawn.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/configurable_effect_spawn.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119302,7 +119302,7 @@
     {
       "id": "map-actor-initializer-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119545,7 +119545,7 @@
     {
       "id": "map-actor-initializer-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119699,7 +119699,7 @@
     {
       "id": "map-actor-initializer-scene-actor-depth-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/actor_depth_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/actor_depth_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {},
@@ -119715,7 +119715,7 @@
     {
       "id": "map-actor-initializer-scene-effect-motion-variant-a",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/effect_motion_variant_a.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/effect_motion_variant_a.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {},
@@ -119731,7 +119731,7 @@
     {
       "id": "map-actor-initializer-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {},
@@ -119767,7 +119767,7 @@
     {
       "id": "map-actor-initializer-scene-dialogue-layout",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/dialogue_layout.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/dialogue_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -119866,7 +119866,7 @@
     {
       "id": "map-actor-initializer-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -120688,7 +120688,7 @@
     {
       "id": "map-actor-initializer-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -120717,7 +120717,7 @@
     {
       "id": "map-actor-initializer-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -120783,7 +120783,7 @@
     {
       "id": "map-actor-initializer-scene-conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/conditional_scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/conditional_scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -120808,7 +120808,7 @@
     {
       "id": "map-actor-initializer-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -121045,7 +121045,7 @@
     {
       "id": "map-actor-initializer-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/map_actor_initializer_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -121092,7 +121092,7 @@
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/move_and_redraw.c",
       "absolute_symbols": {
         "Func_020035c8": {
           "address": "0x0200abb4",
@@ -121115,7 +121115,7 @@
     {
       "id": "staged-actor-navigation-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -121183,7 +121183,7 @@
     {
       "id": "staged-actor-navigation-scene-staged-actor-navigation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/staged_actor_navigation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/staged_actor_navigation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -121377,7 +121377,7 @@
     {
       "id": "staged-actor-navigation-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -121926,7 +121926,7 @@
     {
       "id": "staged-actor-navigation-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {},
@@ -121962,7 +121962,7 @@
     {
       "id": "staged-actor-navigation-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -122004,7 +122004,7 @@
     {
       "id": "staged-actor-navigation-scene-coordinate-preset",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/coordinate_preset.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/coordinate_preset.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {},
@@ -122020,7 +122020,7 @@
     {
       "id": "staged-actor-navigation-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {},
@@ -122036,7 +122036,7 @@
     {
       "id": "staged-actor-navigation-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -122078,7 +122078,7 @@
     {
       "id": "staged-actor-navigation-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -122108,7 +122108,7 @@
     {
       "id": "staged-actor-navigation-scene-configurable-effect-spawn",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/configurable_effect_spawn.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/configurable_effect_spawn.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -122145,7 +122145,7 @@
     {
       "id": "staged-actor-navigation-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -122186,7 +122186,7 @@
     {
       "id": "staged-actor-navigation-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_navigation_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -122221,7 +122221,7 @@
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/move_and_redraw.c",
       "absolute_symbols": {
         "Func_0200445e": {
           "address": "0x0200bcc8",
@@ -122244,7 +122244,7 @@
     {
       "id": "extended-actor-presentation-scene-staged-actor-pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/staged_actor_pair.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -122313,7 +122313,7 @@
     {
       "id": "extended-actor-presentation-scene-actor-movement-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/actor_movement_effect.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/actor_movement_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -122338,7 +122338,7 @@
     {
       "id": "extended-actor-presentation-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -122363,7 +122363,7 @@
     {
       "id": "extended-actor-presentation-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123458,7 +123458,7 @@
     {
       "id": "extended-actor-presentation-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
@@ -123494,7 +123494,7 @@
     {
       "id": "extended-actor-presentation-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
@@ -123510,7 +123510,7 @@
     {
       "id": "extended-actor-presentation-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123659,7 +123659,7 @@
     {
       "id": "extended-actor-presentation-scene-display",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/display.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/display.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123692,7 +123692,7 @@
     {
       "id": "extended-actor-presentation-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123737,7 +123737,7 @@
     {
       "id": "extended-actor-presentation-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123779,7 +123779,7 @@
     {
       "id": "extended-actor-presentation-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123804,7 +123804,7 @@
     {
       "id": "extended-actor-presentation-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/extended_actor_presentation_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -123875,7 +123875,7 @@
     {
       "id": "staged-actor-movement-refresh",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -123900,7 +123900,7 @@
     {
       "id": "staged-actor-motion-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -124073,7 +124073,7 @@
     {
       "id": "staged-actor-motion-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -124114,7 +124114,7 @@
     {
       "id": "staged-actor-motion-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -124183,7 +124183,7 @@
     {
       "id": "staged-actor-motion-scene-field-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/field_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/field_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -126568,7 +126568,7 @@
     {
       "id": "staged-actor-motion-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -126794,7 +126794,7 @@
     {
       "id": "staged-actor-motion-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -126871,7 +126871,7 @@
     {
       "id": "staged-actor-motion-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -126929,7 +126929,7 @@
     {
       "id": "staged-actor-motion-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -126958,7 +126958,7 @@
     {
       "id": "staged-actor-motion-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {},
@@ -126974,7 +126974,7 @@
     {
       "id": "staged-actor-motion-scene-geometry",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/geometry.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/geometry.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {},
@@ -126990,7 +126990,7 @@
     {
       "id": "staged-actor-motion-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -127015,7 +127015,7 @@
     {
       "id": "staged-actor-motion-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -127048,7 +127048,7 @@
     {
       "id": "staged-actor-motion-scene-orbiting-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/orbiting_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/orbiting_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -127118,7 +127118,7 @@
     {
       "id": "staged-actor-motion-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -127147,7 +127147,7 @@
     {
       "id": "staged-actor-motion-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -127189,7 +127189,7 @@
     {
       "id": "staged-actor-motion-scene-staged-actor-scene-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_motion_scene/staged_actor_scene_tail.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_motion/staged_actor_scene_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -129400,7 +129400,7 @@
     {
       "id": "scripted-scene-sequence-378",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/scripted_scene_sequence.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/scripted_scene_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129569,7 +129569,7 @@
     {
       "id": "facing-gated-actor-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129594,7 +129594,7 @@
     {
       "id": "facing-gated-actor-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129663,7 +129663,7 @@
     {
       "id": "facing-gated-actor-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129705,7 +129705,7 @@
     {
       "id": "facing-gated-actor-scene-orbiting-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/orbiting_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/orbiting_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129730,7 +129730,7 @@
     {
       "id": "facing-gated-actor-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {},
@@ -129746,7 +129746,7 @@
     {
       "id": "facing-gated-actor-scene-facing-target-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/facing_target_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/facing_target_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129803,7 +129803,7 @@
     {
       "id": "facing-gated-actor-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -129918,7 +129918,7 @@
     {
       "id": "facing-gated-actor-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -132830,7 +132830,7 @@
     {
       "id": "facing-gated-actor-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_gated_actor_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -132875,7 +132875,7 @@
     {
       "id": "staged-actor-refresh-and-grid-redraw",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -132900,7 +132900,7 @@
     {
       "id": "branching-actor-event-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -132942,7 +132942,7 @@
     {
       "id": "branching-actor-event-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -132967,7 +132967,7 @@
     {
       "id": "branching-actor-event-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -133031,7 +133031,7 @@
     {
       "id": "branching-actor-event-scene-configurable-effect-spawn",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/configurable_effect_spawn.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/configurable_effect_spawn.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -133088,7 +133088,7 @@
     {
       "id": "branching-actor-event-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -133160,7 +133160,7 @@
     {
       "id": "branching-actor-event-scene-effect-motion-variant-b",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/effect_motion_variant_b.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/effect_motion_variant_b.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {},
@@ -133176,7 +133176,7 @@
     {
       "id": "branching-actor-event-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -133674,7 +133674,7 @@
     {
       "id": "branching-actor-event-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {},
@@ -133700,7 +133700,7 @@
     {
       "id": "branching-actor-event-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -133771,7 +133771,7 @@
     {
       "id": "branching-actor-event-scene-conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/conditional_scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/conditional_scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -133808,7 +133808,7 @@
     {
       "id": "branching-actor-event-scene-event-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/event_script.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/event_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -135886,7 +135886,7 @@
     {
       "id": "branching-actor-event-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -135928,7 +135928,7 @@
     {
       "id": "branching-actor-event-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/branching_actor_event_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -135965,7 +135965,7 @@
     {
       "id": "staged-actor-movement-and-grid-redraw",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_particle_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_particle/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
       "absolute_symbols": {
@@ -135990,7 +135990,7 @@
     {
       "id": "staged-actor-particle-scene-scene-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_particle_scene/scene_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_particle/scene_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
       "absolute_symbols": {
@@ -136312,7 +136312,7 @@
     {
       "id": "staged-actor-move-and-redraw",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_palette_scene/move_and_redraw.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_palette/move_and_redraw.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
       "absolute_symbols": {
@@ -136337,7 +136337,7 @@
     {
       "id": "overlay-393-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_palette_scene/scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_palette/scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
       "absolute_symbols": {
@@ -136470,7 +136470,7 @@
     {
       "id": "unnamed-leaf-run-099",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/topic_prompt_scene/table_accessors.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/topic/table_accessors.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b7",
       "absolute_symbols": {},
@@ -136491,7 +136491,7 @@
     {
       "id": "unnamed-leaf-run-100",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/topic_prompt_scene/run_scene_steps.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/topic/run_scene_steps.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b7",
       "absolute_symbols": {},
@@ -136522,7 +136522,7 @@
     {
       "id": "scene-actor-setup-and-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_proximity_event_scene/actor_setup_and_events.c",
+      "source": "games/gs1/src/overlays/scene/actor/proximity/actor_setup_and_events.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -136784,7 +136784,7 @@
     {
       "id": "actor-proximity-event-scene-actor-proximity",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_proximity_event_scene/actor_proximity.c",
+      "source": "games/gs1/src/overlays/scene/actor/proximity/actor_proximity.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -136841,7 +136841,7 @@
     {
       "id": "facing-target-cue-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {},
@@ -136857,7 +136857,7 @@
     {
       "id": "facing-target-cue-scene-facing-target-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/facing_target_scene.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/facing_target_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {},
@@ -136873,7 +136873,7 @@
     {
       "id": "facing-target-cue-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -136932,7 +136932,7 @@
     {
       "id": "facing-target-cue-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137019,7 +137019,7 @@
     {
       "id": "facing-target-cue-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137393,7 +137393,7 @@
     {
       "id": "facing-target-cue-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137455,7 +137455,7 @@
     {
       "id": "facing-target-cue-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137566,7 +137566,7 @@
     {
       "id": "facing-target-cue-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137661,7 +137661,7 @@
     {
       "id": "facing-target-cue-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137703,7 +137703,7 @@
     {
       "id": "facing-target-cue-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137745,7 +137745,7 @@
     {
       "id": "facing-target-cue-scene-actor-effect-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/actor_effect_motion.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/actor_effect_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -137770,7 +137770,7 @@
     {
       "id": "facing-target-cue-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/facing_target_cue_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {},
@@ -137786,7 +137786,7 @@
     {
       "id": "actor-presentation-dialogue-scene-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_presentation_dialogue_scene/scene_effect.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/actor_presentation/scene_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
       "absolute_symbols": {
@@ -139367,7 +139367,7 @@
     {
       "id": "actor-presentation-dialogue-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor_presentation_dialogue_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/actor_presentation/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
       "absolute_symbols": {
@@ -139492,7 +139492,7 @@
     {
       "id": "staged-actor-placement-scene-staged-actor-pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/staged_actor_pair.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -139561,7 +139561,7 @@
     {
       "id": "staged-actor-placement-scene-staged-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/staged_actor.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/staged_actor.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -139586,7 +139586,7 @@
     {
       "id": "staged-actor-placement-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -139615,7 +139615,7 @@
     {
       "id": "staged-actor-placement-scene-actor-effect-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/actor_effect_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/actor_effect_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {},
@@ -139631,7 +139631,7 @@
     {
       "id": "staged-actor-placement-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {},
@@ -139647,7 +139647,7 @@
     {
       "id": "staged-actor-placement-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {},
@@ -139683,7 +139683,7 @@
     {
       "id": "staged-actor-placement-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -139728,7 +139728,7 @@
     {
       "id": "staged-actor-placement-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -140289,7 +140289,7 @@
     {
       "id": "staged-actor-placement-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -140339,7 +140339,7 @@
     {
       "id": "staged-actor-placement-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_placement_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {},
@@ -140355,7 +140355,7 @@
     {
       "id": "push-puzzle-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {},
@@ -140371,7 +140371,7 @@
     {
       "id": "push-puzzle-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {},
@@ -140387,7 +140387,7 @@
     {
       "id": "push-puzzle-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -140608,7 +140608,7 @@
     {
       "id": "push-puzzle-scene-scene-wrapper",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/scene_wrapper.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/scene_wrapper.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {},
@@ -140624,7 +140624,7 @@
     {
       "id": "push-puzzle-scene-scene-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/scene_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/scene_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -140726,7 +140726,7 @@
     {
       "id": "push-puzzle-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {},
@@ -140742,7 +140742,7 @@
     {
       "id": "push-puzzle-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -140771,7 +140771,7 @@
     {
       "id": "push-puzzle-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -140808,7 +140808,7 @@
     {
       "id": "push-puzzle-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -140837,7 +140837,7 @@
     {
       "id": "push-puzzle-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {},
@@ -140863,7 +140863,7 @@
     {
       "id": "push-puzzle-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/push_puzzle_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -141654,7 +141654,7 @@
     {
       "id": "four-actor-encounter-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/four_actor_encounter_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {
@@ -141704,7 +141704,7 @@
     {
       "id": "four-actor-encounter-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/four_actor_encounter_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {},
@@ -141740,7 +141740,7 @@
     {
       "id": "four-actor-encounter-scene-field-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/four_actor_encounter_scene/field_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter/field_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {
@@ -141941,7 +141941,7 @@
     {
       "id": "four-actor-encounter-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/four_actor_encounter_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {
@@ -142007,7 +142007,7 @@
     {
       "id": "four-actor-encounter-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/four_actor_encounter_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {
@@ -142668,7 +142668,7 @@
     {
       "id": "four-actor-encounter-scene-palette-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/four_actor_encounter_scene/palette_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter/palette_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {},
@@ -142684,7 +142684,7 @@
     {
       "id": "progress-dependent-actor-scene-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/progress_dependent_actor_scene/progress_dependent_actor_scene_head.c",
+      "source": "games/gs1/src/overlays/scene/story/progress_actor/progress_dependent_actor_scene_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {
@@ -143550,7 +143550,7 @@
     {
       "id": "progress-dependent-actor-scene-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/progress_dependent_actor_scene/progress_dependent_actor_scene_tail.c",
+      "source": "games/gs1/src/overlays/scene/story/progress_actor/progress_dependent_actor_scene_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {
@@ -143891,7 +143891,7 @@
     {
       "id": "staged-actor-effect-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -143981,7 +143981,7 @@
     {
       "id": "staged-actor-effect-scene-staged-actor-effect-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/staged_actor_effect_sequence.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144199,7 +144199,7 @@
     {
       "id": "staged-actor-effect-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144569,7 +144569,7 @@
     {
       "id": "staged-actor-effect-scene-scene-audio",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/scene_audio.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/scene_audio.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {},
@@ -144585,7 +144585,7 @@
     {
       "id": "staged-actor-effect-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144614,7 +144614,7 @@
     {
       "id": "staged-actor-effect-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144644,7 +144644,7 @@
     {
       "id": "staged-actor-effect-scene-scene-wrapper",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/scene_wrapper.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/scene_wrapper.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144674,7 +144674,7 @@
     {
       "id": "staged-actor-effect-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144727,7 +144727,7 @@
     {
       "id": "staged-actor-effect-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -144793,7 +144793,7 @@
     {
       "id": "staged-actor-effect-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_effect_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {},
@@ -144809,7 +144809,7 @@
     {
       "id": "set-piece-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -144933,7 +144933,7 @@
     {
       "id": "set-piece-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {},
@@ -144949,7 +144949,7 @@
     {
       "id": "set-piece-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -145079,7 +145079,7 @@
     {
       "id": "set-piece-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {},
@@ -145095,7 +145095,7 @@
     {
       "id": "set-piece-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {},
@@ -145126,7 +145126,7 @@
     {
       "id": "set-piece-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -145151,7 +145151,7 @@
     {
       "id": "set-piece-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -145249,7 +145249,7 @@
     {
       "id": "set-piece-scene-display",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/display.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/display.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {},
@@ -145265,7 +145265,7 @@
     {
       "id": "set-piece-scene-field-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/field_scene.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/field_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -147120,7 +147120,7 @@
     {
       "id": "set-piece-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -147178,7 +147178,7 @@
     {
       "id": "set-piece-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -147207,7 +147207,7 @@
     {
       "id": "set-piece-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -147268,7 +147268,7 @@
     {
       "id": "set-piece-scene-scene-audio",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/scene_audio.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/scene_audio.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -147298,7 +147298,7 @@
     {
       "id": "set-piece-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/set_piece_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -147699,7 +147699,7 @@
     {
       "id": "scene-state-interaction-scene-actor-search",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/actor_search.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/actor_search.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {},
@@ -147715,7 +147715,7 @@
     {
       "id": "scene-state-interaction-scene-state-update-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/state_update_head.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/state_update_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -147816,7 +147816,7 @@
     {
       "id": "scene-state-interaction-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -147859,7 +147859,7 @@
     {
       "id": "scene-state-interaction-scene-conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/conditional_scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/conditional_scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -147900,7 +147900,7 @@
     {
       "id": "scene-state-interaction-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -148021,7 +148021,7 @@
     {
       "id": "scene-state-interaction-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -148360,7 +148360,7 @@
     {
       "id": "scene-state-interaction-scene-scene-state-interaction-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/scene_state_interaction_tail.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/scene_state_interaction_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {},
@@ -148381,7 +148381,7 @@
     {
       "id": "scene-state-interaction-scene-callbacks",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/scene_state_interaction_scene/callbacks.c",
+      "source": "games/gs1/src/overlays/scene/state/interaction/callbacks.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {},
@@ -148397,7 +148397,7 @@
     {
       "id": "story-actor-sequence-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -148447,7 +148447,7 @@
     {
       "id": "story-actor-sequence-scene-orbiting-effect-spawn",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/orbiting_effect_spawn.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/orbiting_effect_spawn.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -148529,7 +148529,7 @@
     {
       "id": "story-actor-sequence-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {},
@@ -148560,7 +148560,7 @@
     {
       "id": "story-actor-sequence-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -149553,7 +149553,7 @@
     {
       "id": "story-actor-sequence-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -149888,7 +149888,7 @@
     {
       "id": "story-actor-sequence-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -149917,7 +149917,7 @@
     {
       "id": "story-actor-sequence-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -150084,7 +150084,7 @@
     {
       "id": "story-actor-sequence-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -150145,7 +150145,7 @@
     {
       "id": "story-actor-sequence-scene-scene-wrapper",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/scene_wrapper.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/scene_wrapper.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {},
@@ -150161,7 +150161,7 @@
     {
       "id": "story-actor-sequence-scene-orbiting-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story_actor_sequence_scene/orbiting_effect.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence/orbiting_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -150206,7 +150206,7 @@
     {
       "id": "flagged-actor-message-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -150236,7 +150236,7 @@
     {
       "id": "flagged-actor-message-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -150300,7 +150300,7 @@
     {
       "id": "flagged-actor-message-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {},
@@ -150316,7 +150316,7 @@
     {
       "id": "flagged-actor-message-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -151810,7 +151810,7 @@
     {
       "id": "flagged-actor-message-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -152034,7 +152034,7 @@
     {
       "id": "flagged-actor-message-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -152091,7 +152091,7 @@
     {
       "id": "flagged-actor-message-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -152136,7 +152136,7 @@
     {
       "id": "flagged-actor-message-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/flagged_actor_message_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -154468,7 +154468,7 @@
     {
       "id": "staged-actor-pair-scene-staged-actor-pair-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_scene/staged_actor_pair_scene.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair/staged_actor_pair_scene.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3be",
       "absolute_symbols": {
@@ -154701,7 +154701,7 @@
     {
       "id": "staged-actor-pair-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3be",
       "absolute_symbols": {
@@ -155011,7 +155011,7 @@
     {
       "id": "staged-actor-pair-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/staged_actor_pair_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3be",
       "absolute_symbols": {
@@ -155195,7 +155195,7 @@
     {
       "id": "selected-actor-presentation-scene-overlay-object-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/overlay_object_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/overlay_object_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -155245,7 +155245,7 @@
     {
       "id": "selected-actor-presentation-scene-selected-actor-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/selected_actor_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/selected_actor_effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -155323,7 +155323,7 @@
     {
       "id": "selected-actor-presentation-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -155344,7 +155344,7 @@
     {
       "id": "selected-actor-presentation-scene-scene-data-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/scene_data_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/scene_data_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -155370,7 +155370,7 @@
     {
       "id": "selected-actor-presentation-scene-scene-data-tail",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/scene_data_tail.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/scene_data_tail.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -155391,7 +155391,7 @@
     {
       "id": "selected-actor-presentation-scene-scene-primary-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/scene_primary_script.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/scene_primary_script.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -155711,7 +155711,7 @@
     {
       "id": "selected-actor-presentation-scene-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -155834,7 +155834,7 @@
     {
       "id": "selected-actor-presentation-scene-encounter-palette",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/selected_actor_presentation_scene/encounter_palette.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/encounter_palette.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {},
@@ -155850,7 +155850,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-3af-02001a98",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3af_02001a98.c",
+      "source": "games/gs1/src/overlays/scene/script/run_3af_02001a98.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {},
@@ -155865,7 +155865,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-configure-four-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/run_scene_configure_four_actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/run_scene_configure_four_actor_presentation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -155898,7 +155898,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-configure-lead-actors",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/run_scene_configure_lead_actors.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/run_scene_configure_lead_actors.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -155931,7 +155931,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-02001b58",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3af_02001b58.c",
+      "source": "games/gs1/src/overlays/scene/script/run_3af_02001b58.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -155956,7 +155956,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-02001c14",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_primary_script/run_scene_3af_02001c14.c",
+      "source": "games/gs1/src/overlays/scene/script/run_3af_02001c14.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -155981,7 +155981,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-three-actor-encounter",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/run_scene_three_actor_encounter.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/run_scene_three_actor_encounter.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156030,7 +156030,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-encounter-closing-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/run_scene_encounter_closing_sequence.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/run_scene_encounter_closing_sequence.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156063,7 +156063,7 @@
     {
       "id": "multi-actor-encounter-scene-scene-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/scene_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/scene_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156088,7 +156088,7 @@
     {
       "id": "multi-actor-encounter-scene-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/state_update.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/state_update.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156134,7 +156134,7 @@
     {
       "id": "multi-actor-encounter-scene-actor-motion",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/actor_motion.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/actor_motion.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156168,7 +156168,7 @@
     {
       "id": "multi-actor-encounter-scene-actor-facing",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/actor_facing.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/actor_facing.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {},
@@ -156184,7 +156184,7 @@
     {
       "id": "multi-actor-encounter-scene-overlay-object",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/overlay_object.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/overlay_object.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156218,7 +156218,7 @@
     {
       "id": "multi-actor-encounter-scene-scene-data",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/scene_data.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/scene_data.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -156309,7 +156309,7 @@
     {
       "id": "multi-actor-encounter-scene-field-scene-head",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/field_scene_head.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/field_scene_head.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -157347,7 +157347,7 @@
     {
       "id": "multi-actor-encounter-scene-scene-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/scene_dialogue.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/scene_dialogue.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -157380,7 +157380,7 @@
     {
       "id": "multi-actor-encounter-scene-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/scene_setup.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/scene_setup.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -157691,7 +157691,7 @@
     {
       "id": "multi-actor-encounter-scene-actor-position",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/actor_position.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/actor_position.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -157768,7 +157768,7 @@
     {
       "id": "multi-actor-encounter-scene-effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/effect.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -157959,7 +157959,7 @@
     {
       "id": "multi-actor-encounter-scene-scene-state-interaction",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/scene_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/scene_state_interaction.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -158016,7 +158016,7 @@
     {
       "id": "multi-actor-encounter-scene-dialogue-layout",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/dialogue_layout.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/dialogue_layout.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -158041,7 +158041,7 @@
     {
       "id": "multi-actor-encounter-scene-shared",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/multi_actor_encounter_scene/shared.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/shared.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {

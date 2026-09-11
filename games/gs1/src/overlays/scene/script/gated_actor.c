@@ -14,7 +14,7 @@
  *
  * Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds, following the exact sibling
- * games/gs1/src/overlays/scene_primary_script/run_actor_position_sequence.c.
+ * games/gs1/src/overlays/scene/script/run_actor_position_sequence.c.
  * Where several pre-relocation words in this owner share one relocated
  * destination, the single unambiguous spelling is reused for every call to
  * that destination.
@@ -29,7 +29,7 @@
  * literal runtime address with the Thumb bit set), which compiles and emits
  * the reference's call word, but it is a scoring workaround, not source.
  * The project's own convention for this case is the suffixed pair already used
- * by this overlay's other unit, games/gs1/src/overlays/scene_primary_script/
+ * by this overlay's other unit, games/gs1/src/overlays/scene/script/
  * run_actor_position_sequence.c: declare Func_020028a8_a and Func_020028a8_b,
  * spell the 0x02000d22 site _a and the 0x02000d52 site _b, and record both in
  * the unit's `absolute_symbols` as 0x02009b84 and 0x02009b54, kind "thumb".

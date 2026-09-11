@@ -19,7 +19,7 @@ const GS1: &[ExecutableDigests] = &[
     ),
     (
         "cc1",
-        &["341996a29bbf5620d4c16982369597189f0c973945f3f526904eb93ef778427e"],
+        &["84a470f973bf8b5268890fec449f4c23716f1cc185c5a354ba77cdbec6b7fd4b"],
     ),
     (
         "as",
@@ -39,9 +39,15 @@ const GS1: &[ExecutableDigests] = &[
 // GS2: the same source with agscc-gs2.unidiff applied by `make compilers-gs2`;
 // reconstructed from the image, not located (see the patch header).
 const GS2_XGCC: &str = "034c52208be7eaeb6c0df53e722da21eabcb5579272fc9d350222d463a2490b7";
-const GS2_CC1: &str = "aa243961d5bbac94c12ba531970e428f49d0e80d4f65c78ae4310c99a8081f13";
+const GS2_CC1: &str = "f574397245c50ba2b7d19e53a702406fb8666930c9ba47303155b46a80619f8d";
 const GS2: &[ExecutableDigests] = &[
-    ("xgcc", &[GS2_XGCC]),
+    (
+        "xgcc",
+        &[
+            GS2_XGCC,
+            "b88448aff89149183847ee37e0443f12ca4e147878893a7fe8bb490694e970a9",
+        ],
+    ),
     ("cpp0", GS1[1].1),
     ("tradcpp0", GS1[2].1),
     ("cc1", &[GS2_CC1]),

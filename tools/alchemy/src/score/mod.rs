@@ -306,12 +306,12 @@ mod tests {
         let _ = std::fs::remove_dir_all(&work);
         std::fs::create_dir_all(&work).unwrap();
         let patch = work.join("unit-relative-include.patch");
-        std::fs::write(&patch, "diff --git a/scene_event_runtime.c b/scene_event_runtime.c\n--- a/scene_event_runtime.c\n+++ b/scene_event_runtime.c\n@@ -1 +1 @@\n-#include \"types.h\"\n+#include \"../../../../include/types.h\"\n").unwrap();
+        std::fs::write(&patch, "diff --git a/actor_motion_particle_scene.c b/actor_motion_particle_scene.c\n--- a/actor_motion_particle_scene.c\n+++ b/actor_motion_particle_scene.c\n@@ -1 +1 @@\n-#include \"types.h\"\n+#include \"../../../include/types.h\"\n").unwrap();
         let arguments = [
             "--unit",
-            "guarded-step-scene-scene-event-runtime",
+            "actor-motion-particle-scene",
             "--owner",
-            "0200003c",
+            "02000074",
             "--patch",
             patch.to_str().unwrap(),
             "--first",
@@ -327,12 +327,12 @@ mod tests {
         let output = run(*options).unwrap();
         let staged = root()
             .join(&work)
-            .join("try/games/gs1/src/overlays/scene/guarded_step_scene/scene_event_runtime.c");
+            .join("try/games/gs1/src/overlays/scene/actor_motion_particle_scene.c");
         assert!(std::fs::read_to_string(staged)
             .unwrap()
-            .contains("../../../../include/types.h"));
+            .contains("../../../include/types.h"));
         assert_eq!(output.matches("scope=translation-unit").count(), 1);
-        assert_eq!(output.matches("owner=0x0200003c").count(), 1);
+        assert_eq!(output.matches("owner=0x02000074").count(), 1);
         assert_eq!(output.matches("differing_halfwords=0").count(), 1);
         assert_eq!(output.matches("compile=fresh").count(), 0);
         assert_eq!(output.matches("compile=shared-object").count(), 1);

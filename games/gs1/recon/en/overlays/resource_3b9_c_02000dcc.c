@@ -27,12 +27,12 @@ void Func_020039de();
 void Func_02003a0c();
 void Func_02003a50();
 void Func_02003a54();
-void Func_02003a5e();
+s32 Func_02003a5e();
 void Func_02003ac0();
 void Func_02003ace();
 void Func_02003ade();
 void Func_02003aee();
-void *Func_02003af6();
+void Func_02003af6();
 void Func_02003af8();
 void Func_02003afa();
 void *Func_02003b10();
@@ -108,9 +108,22 @@ void Func_02003d5a();
 void Func_02003dfe();
 void Func_02003e3c();
 
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
 void Func_02000dcc(void)
 {
-    void *p7;
+    s32 flag;
     void *p75;
     void *p78;
     void *p8;
@@ -120,31 +133,32 @@ void Func_02000dcc(void)
     } else {
         Func_020039aa(565);
         Func_020039de();
-        Func_02003a0c(0, 65536, 32768);
+        Call3(Func_02003a0c, 0, 0x10000, 0x8000);
         Func_02003a50(0, 872, 120);
         Func_02002a6e(0, 40960);
-        p7 = Func_02003af6(104857, 13107);
-        p8 = Func_02003b10(53477376, -1, 7340032, 1);
+        Func_02003af6(0x19999, 0x3333);
+        Call4(Func_02003b10, 0x3300000, -1, 0x700000, 1);
         Func_02003b1c();
-        Func_02003af8(8, 12288, 20);
+        Call3(Func_02003af8, 8, 0x3000, 20);
         Func_02003ac0(8, 1);
         Func_02003ade(8485);
-        Func_02003aee(32776, 0);
-        Func_02003a5e(0, 0);
+        Call2(Func_02003aee, 0x8008, 0);
+        flag = Func_02003a5e(0, 0);
+        if (flag == 0) {
         Func_02003a54(20);
         Func_02002ad2(12, 53248);
         Func_02003afa(12, 1);
         Func_02003b18(8491);
         Func_02002ad4(16396);
         Func_02002af2(17, 0);
-        Func_02002afa(0, 32768);
+        Func_02002afa(0, 0x8000);
         Func_02003b12(17, 3);
         Func_02003b1a(0, 3);
         Func_02003b12_a(15, 1);
         Func_02003b7c(15, 53248, 20);
         Func_02003b44(15, 1);
         Func_02002b16(15);
-        Func_02002b32(16, 32768);
+        Func_02002b32(16, 0x8000);
         Func_02003b4a(16, 3);
         Func_02003b62(17, 2);
         Func_02002b4c(17, 40960);
@@ -152,7 +166,7 @@ void Func_02000dcc(void)
         Func_02002b5c(18, 45056);
         Func_02003b7c_a(18, 2);
         Func_02002b56(16402);
-        Func_02002b74(11, 12288);
+        Call2(Func_02002b74, 11, 0x3000);
         Func_02003bee(11, 258);
         Func_02003b14(60);
         Func_02003ba4(11, 2);
@@ -164,7 +178,7 @@ void Func_02000dcc(void)
         Func_02003bd6(16, 2);
         Func_02003b4c(20);
         Func_02003c26(13, 0, 0);
-        Func_02003c30(14, 32768, 0);
+        Call3(Func_02003c30, 14, 0x8000, 0);
         Func_02003c3a(16, 45056, 40);
         Func_02003be2(13, 3);
         Func_02003bea(14, 3);
@@ -183,10 +197,10 @@ void Func_02000dcc(void)
         Func_02003c30_a(14, 33599068);
         Func_02003bf6(20);
         Func_02003cd0(8, 0, 0);
-        Func_02003cda(11, 32768, 40);
+        Call3(Func_02003cda, 11, 0x8000, 40);
         Func_02003c82(8, 3);
         Func_02003c9a_a(11, 3);
-        Func_02003d24(52953088, -1, 5636096, 1);
+        Call4(Func_02003d24, 0x3280000, -1, 0x560000, 1);
         Func_02003d30();
         Func_02003cc8(8, 2);
         Func_02002c9a(8);
@@ -200,12 +214,12 @@ void Func_02000dcc(void)
         Func_02002cf4(8, 0);
         Func_02003cc2(13);
         p81 = Func_02003cb0(13);
-        *(s32 *)(p81 + 108) = 0;
-        *(u16 *)((u8 *)(p81) + 100) = 0;
-        *(u16 *)((u8 *)((u8 *)(p81) + 100) + 2) = 0;
-        *(s32 *)(p81 + 36) = 0;
-        *(s32 *)(p81 + 40) = 0;
-        *(s32 *)(p81 + 44) = 0;
+        *(s32 *)(p81 + 108) = flag;
+        *(u16 *)((u8 *)(p81) + 100) = flag;
+        *(u16 *)((u8 *)((u8 *)(p81) + 100) + 2) = flag;
+        *(s32 *)(p81 + 36) = flag;
+        *(s32 *)(p81 + 40) = flag;
+        *(s32 *)(p81 + 44) = flag;
         *(s32 *)(p81 + 56) = 2147483648;
         *(s32 *)(p81 + 60) = 2147483648;
         *(s32 *)(p81 + 64) = 2147483648;
@@ -227,7 +241,8 @@ void Func_02000dcc(void)
         Func_02003d50(0, 33599268);
         Func_02003d26_a(80);
         Func_02003e3c(66);
-        Func_02003dfe(32776, 0);
+        Call2(Func_02003dfe, 0x8008, 0);
         Func_02003d5a();
+        }
     }
 }

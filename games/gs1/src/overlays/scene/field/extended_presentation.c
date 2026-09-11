@@ -41,7 +41,7 @@ typedef struct {
 extern s32 ActorSearchStep[];
 extern s32 gOv[];
 
-Ent *Field_unk_02000342(Desc *, Ent *);
+Ent *Ent_FindAt(Desc *, Ent *);
 
 s32 Actor_ResetMotionIfBlockedAhead(Ent *a)
 {
@@ -56,7 +56,7 @@ s32 Actor_ResetMotionIfBlockedAhead(Ent *a)
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Field_unk_02000342(&d, a);
+    r = Ent_FindAt(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
@@ -804,7 +804,7 @@ typedef struct {
     s32 z;
 } Vec;
 
-Ent *Field_unk_02004a2c(s32);
+Ent *Ent_Get(s32);
 
 u8 *Field_unk_02004a64(s32);
 
@@ -813,7 +813,7 @@ u8 *Field_unk_02004a64(s32);
 void State_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)0x03001f30;
-    Ent *p = Field_unk_02004a2c(11);
+    Ent *p = Ent_Get(11);
     Vec v;
 
     v.x = p->unk8;

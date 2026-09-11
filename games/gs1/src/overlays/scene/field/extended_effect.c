@@ -102,7 +102,7 @@ u8 *Field_unk_02003f4e(s32);
 
 Ent *Field_unk_02005d12(s32);
 
-u8 *Field_unk_0200b454(s32, s32, s32, s32);
+u8 *Field_CreateObj(s32, s32, s32, s32);
 
 Ent *Field_unk_020061fc(s32);
 
@@ -759,7 +759,7 @@ void Scene_RunFourWayEffectSequence(u32 mode)
         case 3: x += 0x2c70000; z = 0x1d00000; break;
         }
         gOv7[i] = zero;
-        obj = Field_unk_0200b454(284, x, y, z);
+        obj = Field_CreateObj(284, x, y, z);
         gOv8[i] = obj;
         obj[85] = zero;
         sprite = *(u8 **)(obj + 80);

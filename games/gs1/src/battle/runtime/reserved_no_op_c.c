@@ -1,5 +1,5 @@
 #include "types.h"
 
-void BattleRuntime_ReservedNoOpF674(void)
+void Battle_ReservedNoOpF674(void)
 {
 }

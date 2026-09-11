@@ -1,5 +1,5 @@
 #include "types.h"
 
-void BattleRuntime_ReservedNoOp2A08(void)
+void Battle_ReservedNoOp2A08(void)
 {
 }

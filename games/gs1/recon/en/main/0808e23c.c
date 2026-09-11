@@ -12,7 +12,7 @@
  *   Item_GetData (item.h), not Ability_GetData, so the low field is an item
  *   id, not an ability id; this is the item-use sibling of that dispatcher.
  * - Func_0808e14c (called here with item_id) walks the same
- *   runtime->events[] table as the exact-adjacent BattleEffect_FindMatchingEvent
+ *   runtime->events[] table as the exact-adjacent BattleFx_FindMatchingEvent
  *   (main:0808e4b4), filtering kind==4 (item) where 0808e4b4 filters kind==5
  *   (ability). Its 12-byte record shape (s32 flags, u16 metadata, s16 unk,
  *   u32 effect) is taken from that sibling.
@@ -72,14 +72,14 @@ void UiText_DrawMessage(s32 message, s32 mode);
 s32 Func_08091d84(s32 mode);
 void UiWork_FinalizePending(void);
 s32 Func_0808ddec(s32 object_id);
-void BattleRuntime_Reset(void);
+void Battle_Reset(void);
 void Func_08092b94(s32 effect_id);
 void Func_08092f84(s32 value, s32 flag);
 void Func_08091750(void);
 void Func_08096fb0(s32 action_id, s32 mode);
 void Func_08096810(void); /* RunBattleEffect (battle/effects/run/run_effect.c) */
-void Func_08097194(void); /* named BattleEffect_CleanupSceneObjects in source-paths.json */
-#define BattleEffect_CleanupSceneObjects Func_08097194
+void Func_08097194(void); /* named BattleFx_CleanupSceneObjects in source-paths.json */
+#define BattleFx_CleanupSceneObjects Func_08097194
 u8 Func_08077058(s32 actor, s32 slot);
 
 /*
@@ -172,7 +172,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         }
         if (event->effect < 0x10000) {
             s32 objref = Func_0808ddec(Data_02000240.object_id);
-            BattleRuntime_Reset();
+            Battle_Reset();
             Func_08092b94(event->effect);
             Func_08092f84(objref, 0);
             Func_08091750();
@@ -218,7 +218,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             *rt = 1;
             Func_08096810();
             *rt = 0;
-            BattleEffect_CleanupSceneObjects();
+            BattleFx_CleanupSceneObjects();
 
             if (Item_GetData(item_id)->use_type & 1)
                 GameFlag_Set(0x143);

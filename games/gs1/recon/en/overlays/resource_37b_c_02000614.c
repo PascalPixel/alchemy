@@ -18,7 +18,7 @@
  *
  * Uncertain: the roles of the individual calls. Their runtime entry points are
  * unnamed apart from one - the eighteen sites whose loader binding is 0200a3a4
- * reach FieldScene_RunSplitPairSteps (resource 020023a4) - so the wording above
+ * reach Scene_RunSplitPairSteps (resource 020023a4) - so the wording above
  * describes argument shapes, not proven behaviour. Every site nonetheless keeps
  * its legacy Func_<pre-relocation-word> spelling, including those eighteen:
  * alchemy binds an overlay call from that spelling, and refuses a project name

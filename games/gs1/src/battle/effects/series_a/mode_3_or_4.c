@@ -4,7 +4,7 @@
 
 s32 BattleEffectA(void *, s32);
 
-void BattleEffect_RunSeriesAMode3Or4(void *effect)
+void BattleFx_RunSeriesAMode3Or4(void *effect)
 {
     if (FIELD_AT_OFFSET(effect, s32 *, 0x18) == 0) {
         BattleEffectA(effect, 3);

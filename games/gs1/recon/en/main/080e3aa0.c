@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_RunBeamScene Func_080e3aa0
+#define BattlePres_RunBeamScene Func_080e3aa0
 
 /*
  * Battle-presentation beam scene at 0x080e3aa0 (1540 bytes).
@@ -64,7 +64,7 @@
  * setting work + 0x7824 and waiting one frame.  Afterwards the callback
  * is removed, blits 0x2F and 0x2E are released, the finished loop
  * counter (32) is written back over the 0x03001AD6 halfword and the
- * scene closes through BattleEffect_SetTransitionFlagAndDisplay.
+ * scene closes through BattleFx_SetTransitionFlagAndDisplay.
  *
  * `Func_080072f0` and `Func_080072f4` are not real function symbols: they
  * are entries of the `_call_via_rN` trampoline bundle at
@@ -226,7 +226,7 @@ void Func_080b5088(s32 member, s32 kind);
 struct Member **Func_080b5098(s32 member);
 void Func_080b50e8(s32 id);
 void Func_080c9048(void);
-void Func_080cdd14(void);   /* BattleEffect_SetTransitionFlagAndDisplay */
+void Func_080cdd14(void);   /* BattleFx_SetTransitionFlagAndDisplay */
 void Func_080cdd58(void);
 void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
 void Func_080e38b8(struct Spark *spark, s32 a, s32 b); /* advance_with_gravity_3d */
@@ -234,7 +234,7 @@ void Func_080e3958(s32 value, s32 *out);             /* apply_animation_and_y_of
 void Func_080e396c(s32 value, s32 *out);             /* apply_step_and_y_offset */
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 
-void BattlePresentation_RunBeamScene(void *object)
+void BattlePres_RunBeamScene(void *object)
 {
     void **heap;
     void **cursor;

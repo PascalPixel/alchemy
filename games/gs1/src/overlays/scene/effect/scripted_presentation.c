@@ -3,15 +3,15 @@
 #define CreateOverlayObject Func_02005d1e
 #define SetOverlayObjectMode Func_02005d88
 #define SetOverlayObjectSlot Func_02005ed0
-#define OverlayObject_SetRecordField1 Func_02000030
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define OverlayObject_StepScaleByCounter Func_02000314
-#define OverlayObject_DecayRecordField1e Func_02000400
-#define OverlayObject_UpdateHeadingTimer Func_02000424
+#define OvObj_SetRecordField1 Func_02000030
+#define OvObj_CreateConfiguredObject Func_020000a0
+#define OvObj_StepScaleByCounter Func_02000314
+#define OvObj_DecayRecordField1e Func_02000400
+#define OvObj_UpdateHeadingTimer Func_02000424
 #define NULL ((void *)0)
-#define OverlayObject_CreateAndInitialize Func_02000048
-#define SceneEffect_UpdateObjectByFrameParity Func_020020dc
-#define SceneEffect_AdvanceGatedRiseCounter Func_020059f0
+#define OvObj_CreateAndInitialize Func_02000048
+#define Effect_UpdateObjectByFrameParity Func_020020dc
+#define Effect_AdvanceGatedRiseCounter Func_020059f0
 #define EffectDescriptorTable Data_0200dfb8
 #define GetPartyEffect Func_02005eaa
 #define SpawnEffect Func_02005df0
@@ -23,36 +23,36 @@
 #define ScaleEffectVerticalDelta Func_02005e8e
 #define SetEffectCallbackMode Func_02005f14
 #define SetEffectCallbackArgument Func_02005f24
-#define SceneEffect_SpawnConfigured Func_0200013c
+#define Effect_SpawnConfigured Func_0200013c
 #define SceneData_GetTablee3d4 Func_02000464
 #define SceneData_ReturnZero Func_0200046c
 #define SceneData_GetTablee464 Func_02000470
 #define SceneData_GetTablee478 Func_02000478
 #define SceneData_GetTableE6ec Func_02000714
 #define MeasureFixedPointPositionDistance Func_02000480
-#define SceneActor_FindNearestSlotOfKindF2 Func_020004bc
+#define Actor_FindNearestSlotOfKindF2 Func_020004bc
 #define InitializeActorZeroMotion Func_02000518
-#define SceneActor_ParkRecord Func_02005688
-#define SceneEffect_SpawnAndBobWithActorZero Func_020005ec
-#define SceneActor_SetByte55ForActorZeroAnd12To17 Func_020006c0
-#define FieldScene_InitActorsAndDispatchBySubstate Func_0200071c
-#define FieldScene_RunSetupSequence35c4 Func_020035c4
-#define FieldScene_RunThreeStepsInBracket Func_020038c0
-#define FieldScene_RunBracketedSceneWithFlag282 Func_020038dc
-#define SceneState_ApplyArgMode0AndSet10 Func_02000894
-#define SceneState_ForwardByRuntimeWordBits Func_0200211c
-#define SceneState_ApplyPair140And0 Func_02002334
-#define FieldScene_CallPairWith10 Func_020008a8
-#define FieldScene_ForwardValue81fc Func_02002344
+#define Actor_ParkRecord Func_02005688
+#define Effect_SpawnAndBobWithActorZero Func_020005ec
+#define Actor_SetByte55ForActorZeroAnd12To17 Func_020006c0
+#define Scene_InitActorsAndDispatchBySubstate Func_0200071c
+#define Scene_RunSetupSequence35c4 Func_020035c4
+#define Scene_RunThreeStepsInBracket Func_020038c0
+#define Scene_RunBracketedSceneWithFlag282 Func_020038dc
+#define State_ApplyArgMode0AndSet10 Func_02000894
+#define State_ForwardByRuntimeWordBits Func_0200211c
+#define State_ApplyPair140And0 Func_02002334
+#define Scene_CallPairWith10 Func_020008a8
+#define Scene_ForwardValue81fc Func_02002344
 #define FieldScene_RunScene3c9_02001280 Func_02001280
-#define FieldScene_RunStep6 Func_02002350
+#define Scene_RunStep6 Func_02002350
 #define FieldScene_RunScene3c9_02003924 Func_02003924
 #define FieldScene_RunScene3c9_02004b28 Func_02004b28
 #define FieldScene_RunScene3c9_02005b90 Func_02005b90
 #define Effect_AnimateVerticalPositive Func_0200215c
 #define Effect_AnimateVerticalNegative Func_020021ac
-#define SceneEffect_UpdateCounterDrivenOrbit Func_02003660
-#define FieldScene_RunMultiActorPresentation Func_02003e9c
+#define Effect_UpdateCounterDrivenOrbit Func_02003660
+#define Scene_RunMultiActorPresentation Func_02003e9c
 
 #include "create_configured_overlay_object.h"
 #include "configured_effect_spawn.h"
@@ -586,7 +586,7 @@ s32 Func_020092b8(s32 angle);   /* sine of a binary angle (Func_08000118) */
 
 s32 Func_020092a0(s32 angle);   /* cosine of a binary angle (Func_08000120) */
 
-void OverlayObject_SetRecordField1(Obj *o, u32 v)
+void OvObj_SetRecordField1(Obj *o, u32 v)
 {
     o->sub->f1 = v;
 }
@@ -601,7 +601,7 @@ void OverlayObject_SetRecordField1(Obj *o, u32 v)
  * pool. obj is read before it is overwritten, so it is a real argument. The
  * layout behind +12, +76, +98 and +99 is not established.
  */
-void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
+void *OvObj_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret = Func_02005cc6(kind, x, y, z);
 
@@ -624,18 +624,18 @@ void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
     return NULL;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "create_configured_overlay_object_body.inc"
 }
 
-void SceneEffect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
+void Effect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct ConfiguredEffectOptions *options)
 {
 #include "configured_effect_spawn_body.inc"
 }
 
-s32 OverlayObject_StepScaleByCounter(Spr *s)
+s32 OvObj_StepScaleByCounter(Spr *s)
 {
     s16 *p = (s16 *)((u8 *)s + 100);
 
@@ -666,7 +666,7 @@ s32 OverlayObject_StepScaleByCounter(Spr *s)
     return 1;
 }
 
-void OverlayObject_DecayRecordField1e(Spr_02000400 *s)
+void OvObj_DecayRecordField1e(Spr_02000400 *s)
 {
     Obj_02000400 *o = s->obj;
     u16 h = o->unk1e;
@@ -679,7 +679,7 @@ void OverlayObject_DecayRecordField1e(Spr_02000400 *s)
     }
 }
 
-s32 OverlayObject_UpdateHeadingTimer(Spr_02000424 *s)
+s32 OvObj_UpdateHeadingTimer(Spr_02000424 *s)
 {
     u16 *q = (u16 *)((u8 *)s + 0x66);
     s32 c = *q;
@@ -737,7 +737,7 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot)0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 SceneActor_FindNearestSlotOfKindF2(void)
+s32 Actor_FindNearestSlotOfKindF2(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
     Spr_020004bc **p;
@@ -800,7 +800,7 @@ void InitializeActorZeroMotion(void)
     }
 }
 
-void SceneEffect_SpawnAndBobWithActorZero(void)
+void Effect_SpawnAndBobWithActorZero(void)
 {
     Spr_020005ec *a = Func_0200633e(0);
     Spr_020005ec *b;
@@ -839,7 +839,7 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
     Func_020063e6();
 }
 
-void SceneActor_SetByte55ForActorZeroAnd12To17(void)
+void Actor_SetByte55ForActorZeroAnd12To17(void)
 {
     s32 val;
 
@@ -858,7 +858,7 @@ s32 SceneData_GetTableE6ec(void)
     return (s32)Data_0200e6ec;
 }
 
-s32 FieldScene_InitActorsAndDispatchBySubstate(void)
+s32 Scene_InitActorsAndDispatchBySubstate(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -936,13 +936,13 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     return z;
 }
 
-void SceneState_ApplyArgMode0AndSet10(s32 a)
+void State_ApplyArgMode0AndSet10(s32 a)
 {
     Func_0200669e(a, 0);
     Func_020065cc(10);
 }
 
-void FieldScene_CallPairWith10(s32 a, s32 b)
+void Scene_CallPairWith10(s32 a, s32 b)
 {
     Func_020066c2(a, b, 10);
 }
@@ -966,7 +966,7 @@ void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
     }
 }
 
-void SceneEffect_UpdateObjectByFrameParity(s32 a)
+void Effect_UpdateObjectByFrameParity(s32 a)
 {
     if (*(s32 *)0x03001e40 & 2) {
         Func_02007dc4(a, 7);
@@ -978,7 +978,7 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
     }
 }
 
-void SceneState_ForwardByRuntimeWordBits(s32 a)
+void State_ForwardByRuntimeWordBits(s32 a)
 {
     volatile u32 *p = (u32 *)0x03001e40;
 
@@ -1026,17 +1026,17 @@ void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
     }
 }
 
-void SceneState_ApplyPair140And0(void)
+void State_ApplyPair140And0(void)
 {
     Func_020081e8(140, 0);
 }
 
-void FieldScene_ForwardValue81fc(s32 a)
+void Scene_ForwardValue81fc(s32 a)
 {
     Func_020081fc(a);
 }
 
-void FieldScene_RunStep6(void)
+void Scene_RunStep6(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -1044,7 +1044,7 @@ void FieldScene_RunStep6(void)
     Func_02004476();
 }
 
-void FieldScene_RunSetupSequence35c4(void)
+void Scene_RunSetupSequence35c4(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -1065,7 +1065,7 @@ void FieldScene_RunSetupSequence35c4(void)
  * both -- and must not be unified. The actor layout is raw offsets: nothing
  * establishes which of +8 and +16 is which world axis, so they are unnamed.
  */
-void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
+void Effect_UpdateCounterDrivenOrbit(u8 *actor)
 {
     u8 *anchor = Func_020093ba(23);
     u16 *pangle = (u16 *)(actor + 100);
@@ -1095,7 +1095,7 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
     }
 }
 
-void FieldScene_RunThreeStepsInBracket(void)
+void Scene_RunThreeStepsInBracket(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -1113,7 +1113,7 @@ void FieldScene_RunThreeStepsInBracket(void)
  * word. No incoming argument is read before being overwritten, so this is
  * void.
  */
-void FieldScene_RunBracketedSceneWithFlag282(void)
+void Scene_RunBracketedSceneWithFlag282(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -1248,7 +1248,7 @@ void FieldScene_RunScene3c9_02003924(void)
     Func_02009a00(2);
 }
 
-void FieldScene_RunMultiActorPresentation(void)
+void Scene_RunMultiActorPresentation(void)
 {
     s32 count_flag;
     s32 request_a;
@@ -1397,7 +1397,7 @@ void FieldScene_RunScene3c9_02004b28(void)
  * stamped into three position-family fields at once and then tested for
  * equality; the roles of +36, +40 and +44 are not established.
  */
-void SceneActor_ParkRecord(u8 *record)
+void Actor_ParkRecord(u8 *record)
 {
     /* The sentinel is built as 128 shifted left by 24, not pooled. */
     *(s32 *)(record + 56) = (s32)0x80000000;
@@ -1411,7 +1411,7 @@ void SceneActor_ParkRecord(u8 *record)
     *(u16 *)(record + 100) = 0;
 }
 
-void SceneEffect_AdvanceGatedRiseCounter(u8 *obj)
+void Effect_AdvanceGatedRiseCounter(u8 *obj)
 {
     if (*(u8 *)(obj + 99) != 0) {
         u8 counter = *(u8 *)(obj + 98);

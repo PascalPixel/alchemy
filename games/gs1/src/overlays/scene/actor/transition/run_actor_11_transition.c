@@ -6,7 +6,7 @@ extern void Func_020018ea(void);
 extern void Func_02002f88(s32);
 extern void Func_02001ff8(void);
 
-void FieldScene_RunActor11Transition(void)
+void Scene_RunActor11Transition(void)
 {
     Func_0200311e(241);
     Func_02000e98(11, 0, 48);

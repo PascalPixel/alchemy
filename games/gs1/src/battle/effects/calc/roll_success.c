@@ -9,7 +9,7 @@ u8 *Owner_GetState(s32);
 s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);
 
-s32 BattleEffect_RollSuccess(
+s32 BattleFx_RollSuccess(
     s32 caster,
     s32 target,
     s32 resistance_category,
@@ -26,7 +26,7 @@ s32 BattleEffect_RollSuccess(
     u8 *flag_13b;
     u8 *flag_13c;
 
-    if (BattleEffect_IsRevive(effect_id)!= 0 &&
+    if (BattleFx_IsRevive(effect_id)!= 0 &&
         FIELD_AT_OFFSET(state, s16 *, 0x38) != 0) {
         return 0;
     }
@@ -73,7 +73,7 @@ action4_done:
         return 0;
     }
 
-    score = BattleEffect_GetBaseSuccessRate(effect_id);
+    score = BattleFx_GetBaseSuccessRate(effect_id);
     if (score > 0) {
         s32 difference = Owner_GetResistanceValue(caster, resistance_category) -
             Owner_GetResistanceValue(target, resistance_category) -

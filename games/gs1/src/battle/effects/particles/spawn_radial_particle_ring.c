@@ -7,7 +7,7 @@ s32 Func_08002322(s32);
 void Func_0809a484(s32, s32, s32, s32, s32, s32, s32, s32 *);
 extern u8 Data_0809a65d;
 
-void BattleEffect_SpawnRadialParticleRing(void *origin)
+void BattleFx_SpawnRadialParticleRing(void *origin)
 {
     s32 particle_config[10];
     volatile u8 stack_padding[8];

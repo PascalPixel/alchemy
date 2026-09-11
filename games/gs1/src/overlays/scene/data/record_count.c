@@ -5,17 +5,17 @@
 #define SceneData_ReturnZero Func_02000038
 #define SceneData_GetTable8994 Func_0200003c
 #define SceneData_GetTable8998 Func_02000044
-#define FieldScene_RunActor13Mode102Step Func_0200004c
-#define FieldScene_RunActor13Mode105Step Func_02000070
+#define Scene_RunActor13Mode102Step Func_0200004c
+#define Scene_RunActor13Mode105Step Func_02000070
 #define SceneData_GetTable8a58 Func_02000098
-#define SceneState_AddToRecordCount Func_020000a0
-#define FieldScene_RunCountAdjustPanel Func_020000ec
-#define SceneState_SetWorkWords1c0And1c8 Func_020006f8
-#define FieldScene_RunEntrySetup Func_0200071c
-#define FieldScene_DrawThreeCaptionWindow Func_02000768
-#define SceneState_SetRecordFlag53 Func_020007b8
-#define SceneState_GetFarResult100c Func_020007c8
-#define SceneState_GetFarResult1020 Func_020007d4
+#define State_AddToRecordCount Func_020000a0
+#define Scene_RunCountAdjustPanel Func_020000ec
+#define State_SetWorkWords1c0And1c8 Func_020006f8
+#define Scene_RunEntrySetup Func_0200071c
+#define Scene_DrawThreeCaptionWindow Func_02000768
+#define State_SetRecordFlag53 Func_020007b8
+#define State_GetFarResult100c Func_020007c8
+#define State_GetFarResult1020 Func_020007d4
 
 extern u8 Data_03001ebc[];
 extern u8 Data_02008a58;
@@ -203,7 +203,7 @@ u8 *SceneData_GetTable8998(void)
     return (u8 *)0x02008998;
 }
 
-void FieldScene_RunActor13Mode102Step(void)
+void Scene_RunActor13Mode102Step(void)
 {
     u32 i;
     s32 record;
@@ -213,7 +213,7 @@ void FieldScene_RunActor13Mode102Step(void)
     Func_0200090e_a(13, 0);
 }
 
-void FieldScene_RunActor13Mode105Step(void)
+void Scene_RunActor13Mode105Step(void)
 {
     void Func_02000930(s32, s32);
 
@@ -229,7 +229,7 @@ void *SceneData_GetTable8a58(void)
     return &Data_02008a58;
 }
 
-void SceneState_AddToRecordCount(s32 arg0, s32 arg1)
+void State_AddToRecordCount(s32 arg0, s32 arg1)
 {
     u8 *entry = Func_020008f8(arg0);
 
@@ -254,7 +254,7 @@ void Scene_AddToListedRecordCounts(s32 arg)
     }
 }
 
-void FieldScene_RunCountAdjustPanel(void)
+void Scene_RunCountAdjustPanel(void)
 {
     void Func_02000930_a();
 
@@ -319,7 +319,7 @@ loop:
     }
 }
 
-void SceneState_SetWorkWords1c0And1c8(void)
+void State_SetWorkWords1c0And1c8(void)
 {
     *(s32 *)((*(u8 **)Data_03001ebc) + 0x1c0) = 0x201;
     *(s32 *)((*(u8 **)Data_03001ebc) + 0x1c8) = 24;
@@ -334,7 +334,7 @@ void SceneState_SetWorkWords1c0And1c8(void)
  * once per store, and must not be folded into one local.  The workspace +448
  * value and the record's +24 and +28 fields are recorded by offset only.
  */
-s32 FieldScene_RunEntrySetup(void)
+s32 Scene_RunEntrySetup(void)
 {
     *(s32 *)((*(u8 **)Data_03001ebc) + 448) = 516;
     *(s32 *)((*(u8 **)Data_03001ebc) + 456) = 24;
@@ -345,7 +345,7 @@ s32 FieldScene_RunEntrySetup(void)
     return 0;
 }
 
-void FieldScene_DrawThreeCaptionWindow(void)
+void Scene_DrawThreeCaptionWindow(void)
 {
     /*
      * The frame is 36 bytes: 4 for the stacked fifth argument, plus a 32-byte
@@ -360,19 +360,19 @@ void FieldScene_DrawThreeCaptionWindow(void)
     Func_02000fb8(&Data_02008958, handle, 0, 16);
 }
 
-void SceneState_SetRecordFlag53(void)
+void State_SetRecordFlag53(void)
 {
     u8 *record = *(u8 **)0x03001f30;
 
     record[53] = 1;
 }
 
-int SceneState_GetFarResult100c(void)
+int State_GetFarResult100c(void)
 {
     return Func_0200100c();
 }
 
-int SceneState_GetFarResult1020(void)
+int State_GetFarResult1020(void)
 {
     return Func_02001020();
 }

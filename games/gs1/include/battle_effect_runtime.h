@@ -29,7 +29,7 @@ struct BattleRuntime {
     s32 unknown_1c8;
     /*
      * Two-state, driven by the shoulder buttons off the 0x03001c94 latch:
-     * BattleRuntime_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
+     * Battle_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
      * and to -1 on R (0x100), and
      * Func_080916b0 initialises it to 0. Func_0809163c calls Func_080030f8
      * only while it is 0. That is the whole of the evidence -- what the two
@@ -82,6 +82,6 @@ extern struct BattleWork Data_02000240;
 
 void Func_080937b8(s32 resource_id, s32 flags, s32 state);
 
-#define BattleEffect_SpawnLinkedResourceObject Func_080937b8
+#define BattleFx_SpawnLinked Func_080937b8
 
 #endif

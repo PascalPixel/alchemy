@@ -4,7 +4,7 @@
 
 s32 Func_080091a8(s32, s32, s32);
 
-void ObjectMotion_SnapToTerrain(void *object)
+void Motion_SnapToTerrain(void *object)
 {
     s32 angle;
 

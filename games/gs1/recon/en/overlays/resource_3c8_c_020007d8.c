@@ -9,7 +9,7 @@ u8 *Scene_GetRecord_1();
 void Func_020056b0();
 u8 *Scene_GetRecord_2();
 void Func_02005702();
-u8 *ObjectMotion_SetHorizontalPositionWithTerrain_1();
+u8 *Motion_SetHPosTerrain_1();
 void Func_02005720();
 void Func_0200575a();
 void Func_0200578a();
@@ -29,21 +29,21 @@ void Func_02005874();
  */
 #define Scene_GetRecord_1(args...) Func_0200568a(args)
 #define GameFlag_IsSet_1(a0) Value1(Func_0200565a, a0)
-#define BattleRuntime_Reset_1(args...) Func_02005684(args)
-#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_0200578a, a0, a1, a2, a3)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(args...) Func_02005712(args)
+#define Battle_Reset_1(args...) Func_02005684(args)
+#define Motion_CamBounds_1(a0, a1, a2, a3) Call4(Func_0200578a, a0, a1, a2, a3)
+#define Motion_SetHPosTerrain_1(args...) Func_02005712(args)
 #define ObjectGroup_ConfigureChildValue_1(args...) Func_0200575a(args)
 #define Scene_GetRecord_2(args...) Func_020056d8(args)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_020057fa(args)
-#define ObjectMotion_SetSpeedParameters_1(args...) Func_0200580e(args)
+#define Battle_WaitMode0_1(args...) Func_020057fa(args)
+#define Motion_SetSpeed_1(args...) Func_0200580e(args)
 #define Audio_PlayCue_1(args...) Func_0200583c(args)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02005702, a0, a1, a2)
-#define ObjectMotion_CommitPositionAndActivate_1(args...) Func_0200583c_a(args)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_02005702, a0, a1, a2)
+#define Motion_CommitPositionAndActivate_1(args...) Func_0200583c_a(args)
 #define ObjectGroup_ConfigureChildValue_2(args...) Func_02005794(args)
 #define Scene_GetRecord_3(args...) Func_02005712_a(args)
-#define ObjectMotion_CommitPositionAndActivate_2(args...) Func_0200585a(args)
-#define BattleEffect_PlayQueuedSound_1(args...) Func_02005874(args)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02005720(args)
+#define Motion_CommitPositionAndActivate_2(args...) Func_0200585a(args)
+#define BattleFx_PlayQueuedSound_1(args...) Func_02005874(args)
+#define Battle_SchedShoulder_1(args...) Func_02005720(args)
 u8 *Func_0200568a();
 u8 *Func_02005712();
 u8 *Func_020056d8();
@@ -81,7 +81,7 @@ static __inline__ void bump_step(s32 amount)
  * time (while a global 0x109 lookup is still unset), positions the entry
  * from its own stored coordinates, drives an effect/param sequence, then
  * writes a stage byte and an override field on the entry before returning. */
-void FieldScene_RunOpeningAuxiliarySequence(void)
+void Scene_RunOpeningAuxiliarySequence(void)
 {
     u32 i;
     u8 *entry;
@@ -91,32 +91,32 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     entry = Scene_GetRecord_1(0);
     guard = GameFlag_IsSet_1(0x109);
     if (guard == 0) {
-        BattleRuntime_Reset_1();
-        ObjectMotion_PlaceWithinCameraBounds_1(-1, -1, -1, 0);
+        Battle_Reset_1();
+        Motion_CamBounds_1(-1, -1, -1, 0);
         /* Stage byte at +85 of the entry record. */
         entry[85] = guard;
         /* Position, from the entry's own s16 coordinates at +10/+18
          * (converted to 16.16 fixed point; the y term is offset by -16.0). */
-        ObjectMotion_SetHorizontalPositionWithTerrain_1(0, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
+        Motion_SetHPosTerrain_1(0, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
         ObjectGroup_ConfigureChildValue_1(0, 15);
         sub = Scene_GetRecord_2(0);
         Func_02005676(sub, 0);
-        BattleRuntime_WaitIfModeZero_1();
-        ObjectMotion_SetSpeedParameters_1();
+        Battle_WaitMode0_1();
+        Motion_SetSpeed_1();
         Audio_PlayCue_1(228);
         /* Override field at +108 of the entry record; holds an EWRAM
          * address while the effect sequence below runs. */
         *(s32 *)(entry + 108) = 0x20086a1;
-        ObjectMotion_SetSpeedParameters_2(0, 0x6666, 0x3333);
-        ObjectMotion_CommitPositionAndActivate_1(0, 0, 8);
+        Motion_SetSpeed_2(0, 0x6666, 0x3333);
+        Motion_CommitPositionAndActivate_1(0, 0, 8);
         ObjectGroup_ConfigureChildValue_2(0, 0);
         sub = Scene_GetRecord_3(0);
         Func_020056b0(sub, 1);
-        ObjectMotion_CommitPositionAndActivate_2(0, 0, 8);
+        Motion_CommitPositionAndActivate_2(0, 0, 8);
         entry[85] = 3;
         /* Restore the +108 override field to the original (unset) value. */
         *(s32 *)(entry + 108) = guard;
-        BattleEffect_PlayQueuedSound_1();
-        BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+        BattleFx_PlayQueuedSound_1();
+        Battle_SchedShoulder_1();
     }
 }

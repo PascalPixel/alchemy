@@ -2,7 +2,7 @@
 
 extern s16 Data_0809e686[];
 
-s32 BattleEffect_MapKeyThroughTable(s32 key)
+s32 BattleFx_MapKeyThroughTable(s32 key)
 {
     s16 *entry = Data_0809e686;
     s32 result = 16;

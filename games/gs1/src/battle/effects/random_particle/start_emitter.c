@@ -56,7 +56,7 @@ void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 void Runtime_ReleaseHeapBlock(s32 kind);
 void EmitRandomParticleEffect(void);
-void BattleEffect_SpawnRandomParticleAtPosition(const void *src);
+void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
 #define EfxWork Data_03001ebc
 #define EmitterData Data_0809e6c0
@@ -64,7 +64,7 @@ void BattleEffect_SpawnRandomParticleAtPosition(const void *src);
 #define EfxPool (*(struct EfxObj **)((u8 *)&Data_03001ebc - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 
-struct EfxObj *BattleEffect_StartRandomParticleEmitter(s32 obj_id, s32 item)
+struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 {
     struct EfxObj *obj;
     /* GCC shape: work holds the state base, then the pool count. */
@@ -95,7 +95,7 @@ struct EfxObj *BattleEffect_StartRandomParticleEmitter(s32 obj_id, s32 item)
 
         do {
             if (ent->data != 0) {
-                if (ent->proc == (void (*)(void))BattleEffect_SpawnRandomParticleAtPosition) {
+                if (ent->proc == (void (*)(void))BattleFx_SpawnRandomParticleAtPosition) {
                     Object_Destroy(ent);
                 }
                 if (ent->data == (s32)ParticleData) {

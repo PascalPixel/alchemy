@@ -2,17 +2,17 @@
 
 #define SceneData_GetTable9948 Func_02000030
 #define SceneData_ReturnZero Func_02000038
-#define SceneState_RunQueryWithInterruptMasterSaved Func_0200003c
+#define State_RunQueryWithInterruptMasterSaved Func_0200003c
 #define SceneData_GetTable99f0 Func_02000058
 #define SceneData_SelectTable9c04ByState Func_02000060
-#define FieldScene_ClearFlagsAndPlayCue2927 Func_02000340
+#define Scene_ClearFlagsAndPlayCue2927 Func_02000340
 #define SceneData_CopyUpToThreeEntries Func_0200053c
-#define SceneState_ApplyValueAndGetResult Func_02000f18
-#define SceneState_NoOp Func_02000f88
+#define State_ApplyValueAndGetResult Func_02000f18
+#define State_NoOp Func_02000f88
 #define SceneData_GetTable9e14 Func_020011b4
-#define FieldScene_ShowDialoguePair292a Func_020011bc
-#define FieldScene_ShowDialoguePair292c Func_02001228
-#define FieldScene_DrawThreeDigitValue Func_02001294
+#define Scene_ShowDialoguePair292a Func_020011bc
+#define Scene_ShowDialoguePair292c Func_02001228
+#define Scene_DrawThreeDigitValue Func_02001294
 extern s16 Data_02000240[];
 extern u8 Data_02009c04[];
 extern u8 Data_020099f4[];
@@ -79,7 +79,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u32 SceneState_RunQueryWithInterruptMasterSaved(void)
+u32 State_RunQueryWithInterruptMasterSaved(void)
 {
     volatile u16 *ime = (volatile u16 *)0x04000208;
     u32 saved = *ime;
@@ -111,7 +111,7 @@ s32 SceneData_SelectTable9c04ByState(void)
  * includes its alignment bytes and four pool words, one of which is
  * 0x03001ebc -- the IWRAM workspace-pointer cell, not an in-image address.
  */
-s32 FieldScene_ClearFlagsAndPlayCue2927(void)
+s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
     u16 *work = *(u16 **)0x03001ebc;
 
@@ -161,7 +161,7 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
     return cnt;
 }
 
-s32 SceneState_ApplyValueAndGetResult(s32 arg0)
+s32 State_ApplyValueAndGetResult(s32 arg0)
 {
     Func_02002762(arg0);
     Func_020027f0(arg0);
@@ -169,11 +169,11 @@ s32 SceneState_ApplyValueAndGetResult(s32 arg0)
 }
 
 /* Deliberate no-op callback. */
-void SceneState_NoOp(void) {}
+void State_NoOp(void) {}
 
 u8 *SceneData_GetTable9e14(void) { return (u8 *)0x02009e14; }
 
-s32 FieldScene_ShowDialoguePair292a(void)
+s32 Scene_ShowDialoguePair292a(void)
 {
     s32 handle;
     Func_02002aa6(85);
@@ -189,7 +189,7 @@ s32 FieldScene_ShowDialoguePair292a(void)
     return Func_020029cc(handle, 1);
 }
 
-s32 FieldScene_ShowDialoguePair292c(void)
+s32 Scene_ShowDialoguePair292c(void)
 {
     s32 handle;
     Func_02002b12(85);
@@ -205,7 +205,7 @@ s32 FieldScene_ShowDialoguePair292c(void)
     return Func_02002a38(handle, 1);
 }
 
-s32 FieldScene_DrawThreeDigitValue(s32 value)
+s32 Scene_DrawThreeDigitValue(s32 value)
 {
     s32 col;
 

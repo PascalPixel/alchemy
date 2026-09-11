@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
+void Motion_SetActionCallback(struct ObjectRuntime *, s32);
 void Func_08009148(struct ObjectRuntime *);
 
 void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
@@ -11,7 +11,7 @@ void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
         s32 value = 1;
         value |= object->action_flags;
         object->action_flags = value;
-        ObjectMotion_SetActionCallback(object, action);
+        Motion_SetActionCallback(object, action);
         Func_08009148(object);
     }
 }

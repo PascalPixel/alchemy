@@ -34,7 +34,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void SceneDialogue_RunActor15Flag303Scene(void)
+void Dialogue_RunActor15Flag303Scene(void)
 {
     u32 i;
     s32 record;

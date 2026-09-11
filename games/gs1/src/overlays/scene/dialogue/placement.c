@@ -6,29 +6,29 @@
 #include "types.h"
 
 #define WORKSPACE (*(u8 **)0x03001ebc)
-#define SceneState_CheckPositionWindow Func_02000030
+#define State_CheckPositionWindow Func_02000030
 #define SceneData_GetScriptTable Func_0200006c
 #define SceneData_ReturnZero Func_02000074
 #define SceneData_GetMessageTable Func_02000078
 #define SceneData_InitAndGetTable87f4 Func_02000080
-#define SceneActor_RunActorStep Func_02000098
-#define SceneDialogue_RunActor9Line Func_020000bc
-#define SceneDialogue_RunActor11Line Func_020000dc
-#define SceneDialogue_RunActor12Line Func_020000fc
-#define FieldScene_RunActor16Sequence Func_0200011c
-#define SceneDialogue_RunActor16Line Func_020001c4
-#define SceneDialogue_RunActor23Line Func_020001e4
-#define FieldScene_RunActor18FlaggedSequence Func_02000204
-#define SceneActor_RunActor16StepWithFlag91 Func_020002fc
-#define FieldScene_RunActor18ConditionalCue Func_02000338
-#define FieldScene_RunActor19StepByPlace Func_02000380
-#define FieldScene_RunActor20StepByPlace Func_020003c8
-#define FieldScene_RunActor21StepByPlace Func_02000410
-#define FieldScene_RunActor22StepByPlace Func_02000458
-#define SceneDialogue_RunActor18FlaggedLine Func_020004a0
+#define Actor_RunActorStep Func_02000098
+#define Dialogue_RunActor9Line Func_020000bc
+#define Dialogue_RunActor11Line Func_020000dc
+#define Dialogue_RunActor12Line Func_020000fc
+#define Scene_RunActor16Sequence Func_0200011c
+#define Dialogue_RunActor16Line Func_020001c4
+#define Dialogue_RunActor23Line Func_020001e4
+#define Scene_RunActor18FlaggedSequence Func_02000204
+#define Actor_RunActor16StepWithFlag91 Func_020002fc
+#define Scene_RunActor18ConditionalCue Func_02000338
+#define Scene_RunActor19StepByPlace Func_02000380
+#define Scene_RunActor20StepByPlace Func_020003c8
+#define Scene_RunActor21StepByPlace Func_02000410
+#define Scene_RunActor22StepByPlace Func_02000458
+#define Dialogue_RunActor18FlaggedLine Func_020004a0
 #define SceneData_GetEffectTable Func_020004dc
-#define FieldScene_InitSceneStateByStep Func_020004e4
-#define OverlayObject_InitObject22 Func_02000570
+#define Scene_InitSceneStateByStep Func_020004e4
+#define OvObj_InitObject22 Func_02000570
 
 #include "resource_386_state.h"
 
@@ -192,7 +192,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-void SceneState_CheckPositionWindow(void)
+void State_CheckPositionWindow(void)
 {
     s32 v1;
     s32 v0;
@@ -235,7 +235,7 @@ u8 *SceneData_InitAndGetTable87f4(void)
     return slot;
 }
 
-void SceneActor_RunActorStep(s32 arg0)
+void Actor_RunActorStep(s32 arg0)
 {
     Func_020006da(arg0);
     Func_0200071a(arg0, 1);
@@ -243,28 +243,28 @@ void SceneActor_RunActorStep(s32 arg0)
     Func_020006f6();
 }
 
-void SceneDialogue_RunActor9Line(void)
+void Dialogue_RunActor9Line(void)
 {
     Func_02000756(0x1CC9);
     Func_02000758(9, 0, 2);
     Func_0200016a(9);
 }
 
-void SceneDialogue_RunActor11Line(void)
+void Dialogue_RunActor11Line(void)
 {
     Func_02000776(0x1CCD);
     Func_02000778(11, 0, 2);
     Func_0200018a(11);
 }
 
-void SceneDialogue_RunActor12Line(void)
+void Dialogue_RunActor12Line(void)
 {
     Func_02000796(0x1CD0);
     Func_02000798(12, 0, 2);
     Func_020001aa(12);
 }
 
-void FieldScene_RunActor16Sequence(void)
+void Scene_RunActor16Sequence(void)
 {
     u32 i;
     s32 record;
@@ -289,7 +289,7 @@ void FieldScene_RunActor16Sequence(void)
     Func_020007f4();
 }
 
-void SceneDialogue_RunActor16Line(void)
+void Dialogue_RunActor16Line(void)
 {
     void Func_02000880(s32, s32, s32);
 
@@ -298,7 +298,7 @@ void SceneDialogue_RunActor16Line(void)
     Func_02000272(16);
 }
 
-void SceneDialogue_RunActor23Line(void)
+void Dialogue_RunActor23Line(void)
 {
     void Func_02000880(s32, s32, s32);
 
@@ -307,7 +307,7 @@ void SceneDialogue_RunActor23Line(void)
     Func_02000292(23);
 }
 
-void FieldScene_RunActor18FlaggedSequence(void)
+void Scene_RunActor18FlaggedSequence(void)
 {
     void Func_02000880_a();
     void Func_0200089e_a();
@@ -353,7 +353,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
     Func_02000926();
 }
 
-void SceneActor_RunActor16StepWithFlag91(void)
+void Actor_RunActor16StepWithFlag91(void)
 {
     u8 *Func_02000976_a(s32);
     u8 *Func_02000986(s32);
@@ -372,7 +372,7 @@ void SceneActor_RunActor16StepWithFlag91(void)
     Func_0200099c(16, 2);
 }
 
-void FieldScene_RunActor18ConditionalCue(void)
+void Scene_RunActor18ConditionalCue(void)
 {
     void Func_02000986_a(s32);
     void Func_020009c8(s32, s32);
@@ -392,7 +392,7 @@ void FieldScene_RunActor18ConditionalCue(void)
     Func_020009ba();
 }
 
-void FieldScene_RunActor19StepByPlace(void)
+void Scene_RunActor19StepByPlace(void)
 {
     void Func_020009c8_a(void);
 
@@ -411,7 +411,7 @@ void FieldScene_RunActor19StepByPlace(void)
     Func_020009f6();
 }
 
-void FieldScene_RunActor20StepByPlace(void)
+void Scene_RunActor20StepByPlace(void)
 {
     u32 place;
 
@@ -428,7 +428,7 @@ void FieldScene_RunActor20StepByPlace(void)
     Func_02000a3e();
 }
 
-void FieldScene_RunActor21StepByPlace(void)
+void Scene_RunActor21StepByPlace(void)
 {
     u32 place;
 
@@ -445,7 +445,7 @@ void FieldScene_RunActor21StepByPlace(void)
     Func_02000a86();
 }
 
-void FieldScene_RunActor22StepByPlace(void)
+void Scene_RunActor22StepByPlace(void)
 {
     u32 place;
 
@@ -462,7 +462,7 @@ void FieldScene_RunActor22StepByPlace(void)
     Func_02000ace();
 }
 
-void SceneDialogue_RunActor18FlaggedLine(void)
+void Dialogue_RunActor18FlaggedLine(void)
 {
     s32 Func_02000abe(s32);
 
@@ -491,7 +491,7 @@ u8 *SceneData_GetEffectTable(void)
  * Data_02000240 is the cross-overlay RAM global block rather than an in-image
  * address, and the signed halfword read out of it selects the scene.
  */
-s32 FieldScene_InitSceneStateByStep(void)
+s32 Scene_InitSceneStateByStep(void)
 {
     void Func_02000abe_a();
 
@@ -531,7 +531,7 @@ s32 FieldScene_InitSceneStateByStep(void)
  * Prepare object 22 for display. Call sites set three further registers that
  * this function does not read.
  */
-void OverlayObject_InitObject22(s32 a)
+void OvObj_InitObject22(s32 a)
 {
     u8 *o;
     u8 *q;

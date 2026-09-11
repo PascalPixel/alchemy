@@ -2,7 +2,7 @@
 
 extern u8 *Func_02001870(s32);
 
-void SceneState_SetEntries16To21Byte35(void)
+void State_SetEntries16To21Byte35(void)
 {
     s32 index = 16;
     s32 flag = 1;

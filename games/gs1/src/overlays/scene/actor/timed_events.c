@@ -14,32 +14,32 @@
  */
 #define CalculateFacingAngle Func_020011b6
 #define Scene_UpdateTimedActor Func_020010c0
-#define OverlayObject_UpdateFacingTowardTarget Func_02000030
+#define OvObj_UpdateFacingTowardTarget Func_02000030
 #define AdvancePositionScaleAndVelocity Func_02000088
 #define SceneData_GetTable9478 Func_020000cc
 #define SceneData_ReturnZero Func_020000d4
 #define SceneData_SelectTable9568ByFlag Func_020000d8
 #define SceneData_SelectFlaggedTable Func_020000fc
 #define SceneData_SelectTable9c00ByFlags Func_02000140
-#define SceneDialogue_RunActor15Message0f6d Func_02000190
-#define SceneDialogue_RunActor19Message0f73 Func_020001bc
+#define Dialogue_RunActor15Message0f6d Func_02000190
+#define Dialogue_RunActor19Message0f73 Func_020001bc
 #define FieldScene_RunScene376_020001e8 Func_020001e8
-#define SceneDialogue_RunActor16Message11be Func_02000258
-#define SceneDialogue_RunActor10Message1c3d Func_02000278
+#define Dialogue_RunActor16Message11be Func_02000258
+#define Dialogue_RunActor10Message1c3d Func_02000278
 #define FieldScene_RunScene376_02000298 Func_02000298
-#define SceneState_SetRuntimeWord448To521AndRun Func_020002bc
-#define FieldScene_RunIndexedStep1 Func_02000308
-#define FieldScene_RunIndexedStep2 Func_02000314
-#define FieldScene_RunIndexedStep3 Func_02000320
-#define FieldScene_RunIndexedStep4 Func_0200032c
-#define FieldScene_RunIndexedStep5 Func_02000338
-#define FieldScene_RunIndexedStep6 Func_02000344
-#define FieldScene_RunIndexedStep7 Func_02000350
-#define FieldScene_RunIndexedStep8 Func_0200035c
-#define FieldScene_RunByActorDirectionAndFlags Func_020004dc
+#define State_SetRuntimeWord448To521AndRun Func_020002bc
+#define Scene_RunIndexedStep1 Func_02000308
+#define Scene_RunIndexedStep2 Func_02000314
+#define Scene_RunIndexedStep3 Func_02000320
+#define Scene_RunIndexedStep4 Func_0200032c
+#define Scene_RunIndexedStep5 Func_02000338
+#define Scene_RunIndexedStep6 Func_02000344
+#define Scene_RunIndexedStep7 Func_02000350
+#define Scene_RunIndexedStep8 Func_0200035c
+#define Scene_RunByActorDirectionAndFlags Func_020004dc
 #define FieldScene_RunScene376_0200055c Func_0200055c
 #define FieldScene_RunScene376_020005d4 Func_020005d4
-#define FieldScene_RunLongPresentationSequence Func_02000658
+#define Scene_RunLongPresentationSequence Func_02000658
 
 #include "facing_object.h"
 
@@ -518,7 +518,7 @@ static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a
     f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+s32 OvObj_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
     s32 delta;
     u16 old;
@@ -604,7 +604,7 @@ void *SceneData_SelectTable9c00ByFlags(void)
 }
 
 /* The 44-byte actor-15 scene owner includes its one pool word. */
-void SceneDialogue_RunActor15Message0f6d(void)
+void Dialogue_RunActor15Message0f6d(void)
 {
     Func_02001330();
     Func_020013de(0xf6d);
@@ -614,7 +614,7 @@ void SceneDialogue_RunActor15Message0f6d(void)
 }
 
 /* The 44-byte actor-19 scene owner includes its one pool word. */
-void SceneDialogue_RunActor19Message0f73(void)
+void Dialogue_RunActor19Message0f73(void)
 {
     Func_0200135c();
     Func_0200140a(0xf73);
@@ -646,7 +646,7 @@ void FieldScene_RunScene376_020001e8(void)
 }
 
 /* The 32-byte actor-16 dialogue owner includes its one pool word. */
-void SceneDialogue_RunActor16Message11be(void)
+void Dialogue_RunActor16Message11be(void)
 {
     Func_020013f8();
     Func_020014a6(0x11be);
@@ -655,7 +655,7 @@ void SceneDialogue_RunActor16Message11be(void)
 }
 
 /* The 32-byte actor-10 dialogue owner includes its one pool word. */
-void SceneDialogue_RunActor10Message1c3d(void)
+void Dialogue_RunActor10Message1c3d(void)
 {
     Func_02001418();
     Func_020014c6(0x1c3d);
@@ -677,7 +677,7 @@ void FieldScene_RunScene376_02000298(void)
 }
 
 /* The 76-byte shared numbered-scene owner includes its two pool words. */
-void SceneState_SetRuntimeWord448To521AndRun(s32 value)
+void State_SetRuntimeWord448To521AndRun(s32 value)
 {
     extern u8 *Data_03001ebc;
     void Func_020015a2_a(s32 value);
@@ -694,42 +694,42 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 }
 
 /* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
-void FieldScene_RunIndexedStep1(void)
+void Scene_RunIndexedStep1(void)
 {
     Func_020005ca(1);
 }
 
-void FieldScene_RunIndexedStep2(void)
+void Scene_RunIndexedStep2(void)
 {
     Func_020005d6(2);
 }
 
-void FieldScene_RunIndexedStep3(void)
+void Scene_RunIndexedStep3(void)
 {
     Func_020005e2(3);
 }
 
-void FieldScene_RunIndexedStep4(void)
+void Scene_RunIndexedStep4(void)
 {
     Func_020005ee(4);
 }
 
-void FieldScene_RunIndexedStep5(void)
+void Scene_RunIndexedStep5(void)
 {
     Func_020005fa(5);
 }
 
-void FieldScene_RunIndexedStep6(void)
+void Scene_RunIndexedStep6(void)
 {
     Func_02000606(6);
 }
 
-void FieldScene_RunIndexedStep7(void)
+void Scene_RunIndexedStep7(void)
 {
     Func_02000612(7);
 }
 
-void FieldScene_RunIndexedStep8(void)
+void Scene_RunIndexedStep8(void)
 {
     Func_0200061e(8);
 }
@@ -806,7 +806,7 @@ s32 Func_02000368(void)
  * range means is not established. The record is fetched before either path
  * is chosen. The 128-byte owner includes its seven pool words.
  */
-void FieldScene_RunByActorDirectionAndFlags(void)
+void Scene_RunByActorDirectionAndFlags(void)
 {
     void Func_020017e2(s32 arg0, s32 actor_id);
 
@@ -893,7 +893,7 @@ void FieldScene_RunScene376_020005d4(void)
     }
 }
 
-void FieldScene_RunLongPresentationSequence(void)
+void Scene_RunLongPresentationSequence(void)
 {
     extern u8 Data_03001ebc[];
     void Func_0200220e();

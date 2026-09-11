@@ -42,7 +42,7 @@ void Func_0809163c(s32 state);
 void Func_0809376c(void);
 extern const u8 Data_0809fc2c[];
 
-void BattleEffect_SpawnLinkedResourceObject(
+void BattleFx_SpawnLinked(
     s32 resource_id,
     s32 flags,
     s32 state)

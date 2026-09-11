@@ -402,7 +402,7 @@ u8 *SceneData_GetTableC194(void)
     return gOv;
 }
 
-s32 State_unk83(void)
+s32 get_default_result(void)
 {
     return 0;
 }

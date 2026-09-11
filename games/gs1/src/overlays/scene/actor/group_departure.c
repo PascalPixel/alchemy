@@ -260,7 +260,7 @@ void State_SetFlag210AndConfigureRegion40_84(void)
 
 void State_SetFlag210AndConfigureRegion40_89(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     s32 a;
     s32 b;
@@ -273,7 +273,7 @@ void State_SetFlag210AndConfigureRegion40_89(void)
 
 void State_SetWork1c0AndRunObject(u8 *o)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     u8 *state;
 
@@ -297,7 +297,7 @@ void Scene_SetupDescriptorD774(void)
 
 void State_SetValue123Mode1(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     Actor_unk33_2(0x7B);
     Actor_unk34_2(1);
@@ -305,7 +305,7 @@ void State_SetValue123Mode1(void)
 
 void State_ApplyValues123And3(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     Actor_unk35_2(0x7B);
     Actor_unk36_2(3);
@@ -313,10 +313,10 @@ void State_ApplyValues123And3(void)
 
 void State_SetValue123Mode4(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     Actor_unk37_2(0x7B);
-    Actor_unk66_4(4);
+    Scene_SetupDescriptorD7b6(4);
 }
 
 void Scene_RunStep7BAndCheckFlags841And842(void)
@@ -939,7 +939,7 @@ void Scene_RunOpeningAuxiliarySequence(void)
 
 void State_ApplyFourRects(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     s32 a = 0x2a;
     s32 b;
@@ -2147,7 +2147,7 @@ void Scene_BuildPlacementGrid(void)
 
 void State_SetWords1c0And1c8AndRun(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     u8 *state;
 
@@ -2163,7 +2163,7 @@ void State_SetWords1c0And1c8AndRun(void)
 
 void State_SetWorkWordsAndFlag87f(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     u8 *state;
 
@@ -2276,7 +2276,7 @@ void OvObj_UpdateArcFromParent(Obj *o)
 
 void State_SetValue140Mode0(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     Actor_Apply112(140, 0);
 }
@@ -2304,7 +2304,7 @@ void Scene_RunFourPairedSteps(void)
 
 void State_SetValue19ThenCall(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     Actor_unk101_2(19);
     Actor_unk382();
@@ -2325,7 +2325,7 @@ void OvObj_CopyRecordField1ToSlots22And8(void)
 
 void State_SetValueEe4(void)
 {
-    void Actor_unk66_4(s32);
+    void Scene_SetupDescriptorD7b6(s32);
 
     Actor_unk383();
     Actor_Apply113(0xee4, 1);

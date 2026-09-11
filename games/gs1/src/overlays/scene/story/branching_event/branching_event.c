@@ -9,6 +9,7 @@
 #include "find_clear_actor_position.h"
 #include "find_clear_actor_position_body.inc"
 
+/* overlays/scene/story/branching_event/branching_event.c */
 /* overlays/scene/story/branching_event/actor_facing.c */
 struct Obj {
     u8 pad00[6];
@@ -270,7 +271,7 @@ struct Effect {
  * The decay of the Z velocity stays a signed divide by sixteen: that shape is
  * what reproduces the negative bias and arithmetic shift in the reference.
  */
-void Story_unk33_4(struct Effect *effect)
+void advance_effect_motion(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
@@ -1310,4 +1311,28 @@ void State_ApplyRectsAtActors8And9(void)
 
         Story_unk480(3, 3, 1, 1, k5, k6);
     }
+}
+
+/* overlays/scene/story/branching_event/select_data_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_000000b0
+#define SecondaryRuntimeSelector Value_000000af
+#define TertiaryRuntimeSelector Value_000000ae
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
+}
+
+/* overlays/scene/story/branching_event/select_table_b91c_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_000000b0
+#define SecondaryRuntimeSelector Value_000000af
+#define TertiaryRuntimeSelector Value_000000ae
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectTableB91cByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
 }

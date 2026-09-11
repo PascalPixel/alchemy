@@ -73,6 +73,6 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
     {
         s32 delay_frames = 200;
         delay_frames <<= 4;
-        ScheduleCallbackAfterFrames(Sys_unk2_4, delay_frames);
+        ScheduleCallbackAfterFrames(Menu_UpdateEntryObjectTransforms, delay_frames);
     }
 }

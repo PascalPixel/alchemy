@@ -1,7 +1,9 @@
 #include "types.h"
 #include "scene.h"
 #include "staged_actor.h"
+#include "staged_actor_movement.h"
 
+/* map/locations/heidia/prologue/prologue_route_scene/prologue_route_scene.c */
 /* map/locations/heidia/prologue/prologue_route_scene/actor_activation.c */
 typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
 
@@ -2295,7 +2297,7 @@ extern s16 gCell2[][1];
 
 u8 *Map_unk166_3();
 
-s32 Map_unk167_3(void)
+s32 Scene_RunPrimarySequence(void)
 {
     u8 *rec7;
     s32 scene;
@@ -2577,4 +2579,10 @@ void InitializeEscapeSceneActors(void)
     Map_SetMode17(0x13, 4, 0x1E, 0x22);
     Map_SetMode18(0xE, 5, 0x1E, 0x23);
     Map_SetMode19(0x10, 6, 0x1E, 0x24);
+}
+
+/* map/locations/heidia/prologue/prologue_route_scene/move_and_redraw.c */
+void Map_Run(StagedActorMovementRequest request)
+{
+#include "run_staged_actor_movement_and_redraw_body.inc"
 }

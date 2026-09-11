@@ -64,5 +64,5 @@ void ObjectPlacement_CreateGroup(struct PlacementOrigin *origin, s32 x, s32 y,
 
     duration = 200;
     duration <<= 4;
-    ScheduleCallbackAfterFrames((s32)Obj_unk2_2, duration);
+    ScheduleCallbackAfterFrames((s32)Menu_UpdateFirstObjectRowPositions, duration);
 }

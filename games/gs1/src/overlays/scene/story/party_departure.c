@@ -91,7 +91,7 @@ u8 *SceneData_GetTable9c34(void)
     return (u8 *)0x02009c34;
 }
 
-s32 Story_unk10_4(void)
+s32 get_default_result(void)
 {
     return 0;
 }

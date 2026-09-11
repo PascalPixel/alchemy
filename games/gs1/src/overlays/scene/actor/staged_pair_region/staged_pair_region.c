@@ -217,7 +217,7 @@ extern u8 RuntimeSelectorTable[];
 /* Mirror the preceding transition on the negative grid axis, latch its event
  * flag, wait for the map update, and close on the paired sound cue. */
 
-s32 Actor_unk9_4(s32 a0)
+s32 Scene_RunPrimarySequence(s32 a0)
 {
     s32 box[3];
     u8 *rec;
@@ -572,7 +572,7 @@ void AdvanceStagedActorPair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Actor_unk74_4(Ent *a)
+s32 stop_blocked_actor_motion(Ent *a)
 {
     extern s32 Actor_Far2[];
 
@@ -617,7 +617,7 @@ done:
     return 0;
 }
 
-s32 Actor_unk75_4(s32 *a)
+s32 find_clear_actor_position(s32 *a)
 {
     extern s32 Actor_Far2[];
 
@@ -721,7 +721,7 @@ found:
     return ret;
 }
 
-void Actor_unk76_4(s32 a0, s32 a1, s32 a2)
+void position_actor_pair(s32 a0, s32 a1, s32 a2)
 {
     Obj *p;
     Obj *q;

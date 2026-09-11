@@ -294,7 +294,7 @@ void OvObj_UpdateThreeStateMotion(void *obj)
 
 /* overlays/scene/field/extended_presentation/move_and_redraw.c */
 
-void Field_unk6_4(StagedActorMovementRequest request)
+void Actor_MoveAndRedraw(StagedActorMovementRequest request)
 {
 }
 

@@ -1036,7 +1036,7 @@ void OvObj_WaitUntilIdle(struct BusyObject *obj)
  * decay must stay written as a signed divide by 16 -- the negative bias and
  * arithmetic shift are what that division compiles to.
  */
-void Field_unk56_4(struct Effect *effect)
+void advance_effect_motion(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
@@ -1632,7 +1632,7 @@ void Scene_RunFlag986ActorOneScene(void)
 
 void Scene_RunFiveCallSequence(void)
 {
-    void Field_unk112_3(s32, s32);
+    void State_RunConditionalStep(s32, s32);
 
     Field_unk113_3();
     Field_unk114_3();
@@ -1667,7 +1667,7 @@ void State_RunActor13AtColumn42Setup(void)
 
 void Scene_PlaceAndPinSlots8To10(void)
 {
-    void Field_unk112_3(s32, s32);
+    void State_RunConditionalStep(s32, s32);
 
     u32 i;
     Struct_18f8 *rec;
@@ -1692,7 +1692,7 @@ void Scene_PlaceAndPinSlots8To10(void)
         Field_unk43_5(12, 50, 1, 1, a, b);
         i++;
     } while (i <= 2);
-    Field_unk112_3(10, 9);
+    State_RunConditionalStep(10, 9);
     Field_unk120_3();
 }
 
@@ -1740,7 +1740,7 @@ void Actor_ApplyPositionsOfActors11And12(void)
 
 void Scene_RunGuardedThreeStepSetup(void)
 {
-    void Field_unk112_3(s32, s32);
+    void State_RunConditionalStep(s32, s32);
 
     Field_unk125_3();
     if (Field_unk33() == 0) {
@@ -1916,7 +1916,7 @@ void Actor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
 void Scene_RunThreeCallSequence(void)
 {
-    void Field_unk112_3(s32, s32);
+    void State_RunConditionalStep(s32, s32);
 
     Field_unk148_2();
     Field_unk149_2();
@@ -1925,7 +1925,7 @@ void Scene_RunThreeCallSequence(void)
 
 void Scene_DrawTilesWhenCheckClear(void)
 {
-    void Field_unk112_3(s32, s32);
+    void State_RunConditionalStep(s32, s32);
 
     Field_unk151_2();
     if (Field_unk36() == 0) {

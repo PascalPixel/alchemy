@@ -90,12 +90,12 @@ s32 OpenCharacterSelector(void)
         state->row_positions[index] = 30;
     state->flags = 3;
 
-    result = Menu_unk2();
+    result = CharacterSelector_Run();
 
     Menu_unk2_2(state->screen_handle);
     ItemMenu_Close();
     gIw->suspended = 0;
     WaitFrames(1);
-    Menu_unk3_2(55);
+    Runtime_ReleaseHeapBlock(55);
     return result;
 }

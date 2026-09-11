@@ -526,7 +526,7 @@
     },
     "main:08020b14": {
       "name": "UiText_SetRenderString",
-      "source": "ui/text/work/set_render_string.c"
+      "source": "ui/text/misc/set_render_string.c"
     },
     "main:08020b64": {
       "name": "UiText_DrawPaddedLabel",
@@ -886,19 +886,19 @@
     "main:08096cdc": "object/group/set_action_for_others.c",
     "main:0809ba34": {
       "name": "BattleEffect_HasReachedTarget",
-      "source": "battle/effects/runtime/work/has_reached_target.c"
+      "source": "battle/effects/runtime/misc/has_reached_target.c"
     },
     "main:0809ba5c": {
       "name": "EffectSlot_SetPosition",
-      "source": "battle/effects/runtime/work/set_position.c"
+      "source": "battle/effects/runtime/misc/set_position.c"
     },
     "main:0809ba70": {
       "name": "EffectSlot_SetObjectMode",
-      "source": "battle/effects/runtime/work/set_object_mode.c"
+      "source": "battle/effects/runtime/misc/set_object_mode.c"
     },
     "main:0809ba7c": {
       "name": "EffectSlot_SetCallback",
-      "source": "battle/effects/runtime/work/set_callback.c"
+      "source": "battle/effects/runtime/misc/set_callback.c"
     },
     "main:0809b804": {
       "name": "EffectSlot_Update",
@@ -910,7 +910,7 @@
     },
     "main:080958e4": {
       "name": "BattleEffect_ClearActiveSlotsAndScheduleUpdates",
-      "source": "battle/effects/runtime/work/clear_active_slots_and_schedule_updates.c"
+      "source": "battle/effects/runtime/misc/clear_active_slots_and_schedule_updates.c"
     },
     "main:0809b0b0": {
       "name": "BattleEffect_UpdateSpinAngle",
@@ -937,7 +937,7 @@
     },
     "main:0809b588": {
       "name": "BattleEffect_UpdateEffect16State",
-      "source": "battle/effects/work/update_effect16_state.c"
+      "source": "battle/effects/misc/update_effect16_state.c"
     },
     "main:0809a65c": {
       "name": "BattleEffect_UpdateParticleMotionAndScale",
@@ -954,7 +954,7 @@
     "main:0809b648": "field/events/show_status_message.c",
     "main:0809bcd4": {
       "name": "BattleEffect_CleanupResourcesAndWindow",
-      "source": "battle/effects/work/cleanup_resources_and_window.c"
+      "source": "battle/effects/misc/cleanup_resources_and_window.c"
     },
     "main:0809c314": {
       "name": "BattleEffect_UpdateObjectVisibilityBounds",
@@ -966,7 +966,7 @@
     },
     "main:0809088c": {
       "name": "BattleEffect_InterpolateBuffers",
-      "source": "battle/effects/work/interpolate_buffers.c"
+      "source": "battle/effects/misc/interpolate_buffers.c"
     },
     "main:0809748c": {
       "name": "BattleEffect_PrepareBufferInterpolation",
@@ -1091,7 +1091,7 @@
     },
     "main:080174f8": {
       "name": "UiText_PrepareMessageWork",
-      "source": "ui/text/work/prepare_message_work.c"
+      "source": "ui/text/misc/prepare_message_work.c"
     },
     "main:080175a0": {
       "name": "UiText_ShowMessageAndWaitCore",
@@ -1280,7 +1280,7 @@
     "main:08096c80": "object/spawn.c",
     "main:080fb518": {
       "name": "MusicPlayer_ExecuteMemoryAccessCommand",
-      "source": "audio/work/execute_memory_access_command.c"
+      "source": "audio/misc/execute_memory_access_command.c"
     },
     "main:080f7db4": {
       "name": "AudioTrack_ResetSlotBuckets",
@@ -1565,7 +1565,7 @@
     },
     "main:080cd358": {
       "name": "BattleEffect_FlushPendingGraphicsTransfer",
-      "source": "battle/effects/runtime/work/flush_pending_graphics_transfer.c"
+      "source": "battle/effects/runtime/misc/flush_pending_graphics_transfer.c"
     },
     "main:080d6888": "object/group/update_members.c",
     "main:080c0e38": {
@@ -1680,7 +1680,7 @@
     },
     "main:080fb790": {
       "name": "Audio_DummyCallback",
-      "source": "audio/work/dummy_callback.c"
+      "source": "audio/misc/dummy_callback.c"
     },
     "main:080b5e14": "party/update_name_entries.c",
     "main:080b26c8": "field/event_table/get_row_limit.c",
@@ -1782,7 +1782,7 @@
     },
     "main:08017394": {
       "name": "UiWork_IsIdle",
-      "source": "ui/runtime/work/is_idle.c"
+      "source": "ui/runtime/misc/is_idle.c"
     },
     "main:080187ac": {
       "name": "UiText_GetResourceDimensions",
@@ -1952,7 +1952,7 @@
     },
     "main:080d6660": {
       "name": "BattleEffect_DispatchMode",
-      "source": "battle/effects/runtime/work/dispatch_mode.c"
+      "source": "battle/effects/runtime/misc/dispatch_mode.c"
     },
     "main:080d6750": {
       "name": "BattleEffect_SelectLivingTargets",
@@ -2077,19 +2077,19 @@
     "main:0808f304": "effect_runtime/is_active.c",
     "main:08091560": {
       "name": "BattleEffect_FindDefinition",
-      "source": "battle/effects/runtime/work/find_definition.c"
+      "source": "battle/effects/runtime/misc/find_definition.c"
     },
     "main:08091584": {
       "name": "BattleEffect_GetAnimationValue",
-      "source": "battle/effects/runtime/work/get_animation_value.c"
+      "source": "battle/effects/runtime/misc/get_animation_value.c"
     },
     "main:080915ac": {
       "name": "BattleEffect_GetResourceId",
-      "source": "battle/effects/runtime/work/get_resource_id.c"
+      "source": "battle/effects/runtime/misc/get_resource_id.c"
     },
     "main:080915dc": {
       "name": "BattleEffect_GetFlags",
-      "source": "battle/effects/runtime/work/get_flags.c"
+      "source": "battle/effects/runtime/misc/get_flags.c"
     },
     "main:080915ec": {
       "name": "BattleRuntime_UpdateModeFromShoulderButtons",
@@ -2819,11 +2819,11 @@
     },
     "main:080fa1c8": {
       "name": "MusicTrack_ReadCommandByte",
-      "source": "audio/work/read_track_command_byte.c"
+      "source": "audio/misc/read_track_command_byte.c"
     },
     "main:080fa1fc": {
       "name": "Pcm_KeyToFrequency",
-      "source": "audio/work/pcm_key_to_frequency.c"
+      "source": "audio/misc/pcm_key_to_frequency.c"
     },
     "main:080fa2a0": {
       "name": "Audio_Initialize",
@@ -2917,15 +2917,15 @@
     },
     "main:080fab7c": {
       "name": "MusicPlayer_UpdateFade",
-      "source": "audio/work/update_music_player_fade.c"
+      "source": "audio/misc/update_music_player_fade.c"
     },
     "main:080fac44": {
       "name": "MusicTrack_UpdateVolumePitch",
-      "source": "audio/work/update_track_volume_pitch.c"
+      "source": "audio/misc/update_track_volume_pitch.c"
     },
     "main:080facf8": {
       "name": "Cgb_KeyToFrequency",
-      "source": "audio/work/cgb_key_to_frequency.c"
+      "source": "audio/misc/cgb_key_to_frequency.c"
     },
     "main:080fada0": {
       "name": "Cgb_StopOscillator",
@@ -2933,7 +2933,7 @@
     },
     "main:080fadf0": {
       "name": "CgbChannel_UpdatePanEnvelope",
-      "source": "audio/work/update_cgb_pan_envelope.c"
+      "source": "audio/misc/update_cgb_pan_envelope.c"
     },
     "resource_371:02000030": {
       "name": "StoryProgress_TriggerEvent0808",
@@ -5190,15 +5190,15 @@
     },
     "main:08016230": {
       "name": "UiWork_DrawByAttributes",
-      "source": "ui/runtime/work/draw_work_by_attributes.c"
+      "source": "ui/runtime/misc/draw_work_by_attributes.c"
     },
     "main:080163ec": {
       "name": "UiWork_WaitUntilField1aClear",
-      "source": "ui/runtime/work/wait_until_field1a_clear.c"
+      "source": "ui/runtime/misc/wait_until_field1a_clear.c"
     },
     "main:0801656c": {
       "name": "UiWork_UpdateListTail",
-      "source": "ui/runtime/work/update_list_tail.c"
+      "source": "ui/runtime/misc/update_list_tail.c"
     },
     "main:0801671c": {
       "name": "Ui_ClearVramBlock",
@@ -5214,7 +5214,7 @@
     },
     "main:080167ac": {
       "name": "UiWork_CopyParamsToRenderWork",
-      "source": "ui/runtime/work/copy_params_to_render_work.c"
+      "source": "ui/runtime/misc/copy_params_to_render_work.c"
     },
     "main:080173ac": {
       "name": "UiWork_ResetCounters",
@@ -5230,7 +5230,7 @@
     },
     "main:080174d8": {
       "name": "UiWork_FinalizeSharedSlot",
-      "source": "ui/runtime/work/finalize_shared_slot.c"
+      "source": "ui/runtime/misc/finalize_shared_slot.c"
     },
     "main:08017620": {
       "name": "UiWork_SetBusyFlags",
@@ -5246,7 +5246,7 @@
     },
     "main:08017c1c": {
       "name": "UiText_RenderGlyphTileAtWorkOffset",
-      "source": "ui/text/work/render_glyph_tile_at_work_offset.c"
+      "source": "ui/text/misc/render_glyph_tile_at_work_offset.c"
     },
     "main:08018790": {
       "name": "UiText_MeasureResourceEntries",
@@ -5269,23 +5269,23 @@
     },
     "main:080198dc": {
       "name": "UiWork_ClearValueNameTables",
-      "source": "ui/runtime/work/clear_value_name_tables.c"
+      "source": "ui/runtime/misc/clear_value_name_tables.c"
     },
     "main:08019908": {
       "name": "UiWork_PushValueSlot",
-      "source": "ui/runtime/work/push_value_slot.c"
+      "source": "ui/runtime/misc/push_value_slot.c"
     },
     "main:0801999c": {
       "name": "UiWork_CheckCancelByInput",
-      "source": "ui/runtime/work/check_cancel_by_input.c"
+      "source": "ui/runtime/misc/check_cancel_by_input.c"
     },
     "main:080199ec": {
       "name": "UiWork_CheckCancelByModeInput",
-      "source": "ui/runtime/work/check_cancel_by_mode_input.c"
+      "source": "ui/runtime/misc/check_cancel_by_mode_input.c"
     },
     "main:08019ba0": {
       "name": "UiText_BuildRenderEntriesMode1",
-      "source": "ui/text/work/build_render_entries_mode1.c"
+      "source": "ui/text/misc/build_render_entries_mode1.c"
     },
     "main:08019d0c": {
       "name": "UiWork_SetTwoEntriesTo999",
@@ -5297,7 +5297,7 @@
     },
     "main:08019e48": {
       "name": "UiWork_FinalizeEntityMatchingLocalizedId",
-      "source": "ui/runtime/work/finalize_entity_matching_localized_id.c"
+      "source": "ui/runtime/misc/finalize_entity_matching_localized_id.c"
     },
     "main:08019ebc": {
       "name": "Ui_CountIconTableEntries",
@@ -5397,11 +5397,11 @@
     },
     "main:0801c2e4": {
       "name": "UiWork_CloseAndRelease",
-      "source": "ui/runtime/work/close_and_release.c"
+      "source": "ui/runtime/misc/close_and_release.c"
     },
     "main:0801c2f0": {
       "name": "Ui_ClearWorkStateAndWaitFrame",
-      "source": "ui/runtime/work/clear_work_state_and_wait_frame.c"
+      "source": "ui/runtime/misc/clear_work_state_and_wait_frame.c"
     },
     "main:0801c304": {
       "name": "Menu_RunSelectionForValue",
@@ -5421,7 +5421,7 @@
     },
     "main:0801c930": {
       "name": "Menu_AllocateSelectionWorkspace",
-      "source": "menu/work/allocate_selection_workspace.c"
+      "source": "menu/misc/allocate_selection_workspace.c"
     },
     "main:0801c954": {
       "name": "Ui_FinalizeWorkAndReleaseHeap13",
@@ -5441,7 +5441,7 @@
     },
     "main:0801ce6c": {
       "name": "Menu_AdvanceWorkspaceIndexModulo3",
-      "source": "menu/work/advance_workspace_index_modulo3.c"
+      "source": "menu/misc/advance_workspace_index_modulo3.c"
     },
     "main:0801ce90": {
       "name": "GraphicsPalette_DecrementSelectedCounter",
@@ -5457,7 +5457,7 @@
     },
     "main:0801d94c": {
       "name": "Menu_RunSelectedWorkspaceEntry",
-      "source": "menu/work/run_selected_workspace_entry.c"
+      "source": "menu/misc/run_selected_workspace_entry.c"
     },
     "main:0801d9bc": {
       "name": "Runtime_ScheduleCallbackAndReleaseBlock20A",
@@ -5501,7 +5501,7 @@
     },
     "main:0801f5d4": {
       "name": "UiWork_FinalizeAndReleaseBlock16",
-      "source": "ui/runtime/work/finalize_and_release_block16.c"
+      "source": "ui/runtime/misc/finalize_and_release_block16.c"
     },
     "main:0801f680": {
       "name": "Text_FormatPlayTime",
@@ -5725,7 +5725,7 @@
     },
     "main:08029504": {
       "name": "Menu_RunWorkspaceResultLoop",
-      "source": "menu/work/run_workspace_result_loop.c"
+      "source": "menu/misc/run_workspace_result_loop.c"
     },
     "main:08077320": {
       "name": "Owner_RefreshAndResetZero",
@@ -5863,7 +5863,7 @@
     },
     "main:0808ddb8": {
       "name": "BattleEffect_MapKeyThroughTable",
-      "source": "battle/effects/work/map_key_through_table.c"
+      "source": "battle/effects/misc/map_key_through_table.c"
     },
     "main:0808e078": {
       "name": "BattleEffect_PlayCueAndStartEmitterOnTarget",
@@ -5879,19 +5879,19 @@
     },
     "main:0808e5d8": {
       "name": "BattleEffect_ExecutePackedAbilityEffect",
-      "source": "battle/effects/work/execute_packed_ability_effect.c"
+      "source": "battle/effects/misc/execute_packed_ability_effect.c"
     },
     "main:0808e96c": {
       "name": "BattleEffect_HasMatchingEvent5",
-      "source": "battle/effects/work/has_matching_event5.c"
+      "source": "battle/effects/misc/has_matching_event5.c"
     },
     "main:0808e990": {
       "name": "BattleEffect_HasTrigger",
-      "source": "battle/effects/work/has_trigger.c"
+      "source": "battle/effects/misc/has_trigger.c"
     },
     "main:0808feb0": {
       "name": "BattleEffect_EnableTwoCallbacks",
-      "source": "battle/effects/runtime/work/enable_two_callbacks.c"
+      "source": "battle/effects/runtime/misc/enable_two_callbacks.c"
     },
     "main:080911e8": {
       "name": "Runtime_ScheduleCallbackAndReleaseBlock32B",
@@ -5907,7 +5907,7 @@
     },
     "main:08091750": {
       "name": "BattleEffect_FinishAction",
-      "source": "battle/effects/work/finish_action.c"
+      "source": "battle/effects/misc/finish_action.c"
     },
     "main:08093fa0": {
       "name": "battle_owner_69"
@@ -6070,7 +6070,7 @@
     },
     "main:080936a0": {
       "name": "BattleEffect_ScheduleRatioTransition",
-      "source": "battle/effects/work/schedule_ratio_transition.c"
+      "source": "battle/effects/misc/schedule_ratio_transition.c"
     },
     "main:08093710": {
       "name": "Event_WaitForDisplayField358Clear",
@@ -6146,7 +6146,7 @@
     },
     "main:08096ab0": {
       "name": "BattleEffect_ClearChildValueOnMismatch",
-      "source": "battle/effects/work/clear_child_value_on_mismatch.c"
+      "source": "battle/effects/misc/clear_child_value_on_mismatch.c"
     },
     "main:08096b28": {
       "name": "BattleEffect_RunEventAction",
@@ -6174,7 +6174,7 @@
     },
     "main:08096f8c": {
       "name": "BattleEffect_UpdateAllEffectSlots",
-      "source": "battle/effects/work/update_all_effect_slots.c"
+      "source": "battle/effects/misc/update_all_effect_slots.c"
     },
     "main:08097608": {
       "name": "BattleEffect_FinishSceneAndReleaseHeapBlock",
@@ -6202,7 +6202,7 @@
     },
     "main:08097b54": {
       "name": "BattleEffect_GetCycledTableWord",
-      "source": "battle/effects/work/get_cycled_table_word.c"
+      "source": "battle/effects/misc/get_cycled_table_word.c"
     },
     "main:08098184": {
       "name": "BattleEffect_SnapScaleToFull",
@@ -6226,7 +6226,7 @@
     },
     "main:08099810": {
       "name": "BattleEffect_ScheduleCallbackWhenValue24cSet",
-      "source": "battle/effects/work/schedule_callback_when_value24c_set.c"
+      "source": "battle/effects/misc/schedule_callback_when_value24c_set.c"
     },
     "main:08099920": {
       "name": "BattleEffect_SpawnRandomAngleTriplet",
@@ -6250,7 +6250,7 @@
     },
     "main:0809ab98": {
       "name": "BattleEffect_MarkChildAndRunFallbackTransition",
-      "source": "battle/effects/work/mark_child_and_run_fallback_transition.c"
+      "source": "battle/effects/misc/mark_child_and_run_fallback_transition.c"
     },
     "main:0809ad70": {
       "name": "BattleEffect_SetRandomTableValueOnObject",
@@ -6453,7 +6453,7 @@
     },
     "main:080b606c": {
       "name": "Text_CopyFiveCharsPaddingUnderscore",
-      "source": "ui/text/work/copy_five_chars_padding_underscore.c"
+      "source": "ui/text/misc/copy_five_chars_padding_underscore.c"
     },
     "main:080b63b0": {
       "name": "Battle_ApplyValueToWork2224",
@@ -6845,7 +6845,7 @@
     },
     "main:080ccbdc": {
       "name": "BattleEffect_ScheduleCallbacksAndReleaseBlocks",
-      "source": "battle/effects/runtime/work/schedule_callbacks_and_release_blocks.c"
+      "source": "battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c"
     },
     "main:080ccc20": {
       "name": "BattleEffect_RunTwoResourceMode0",
@@ -6881,7 +6881,7 @@
     },
     "main:080cef64": {
       "name": "BattleEffect_FetchRectangleBlitters",
-      "source": "battle/effects/work/fetch_rectangle_blitters.c"
+      "source": "battle/effects/misc/fetch_rectangle_blitters.c"
     },
     "main:080cefd4": {
       "name": "BattleEffect_RunFortyEightFrameMode1",
@@ -6945,7 +6945,7 @@
     },
     "main:080d6960": {
       "name": "BattleEffect_InitTilemapAndFlushQueue",
-      "source": "battle/effects/work/init_tilemap_and_flush_queue.c"
+      "source": "battle/effects/misc/init_tilemap_and_flush_queue.c"
     },
     "main:080dd2ac": {
       "name": "BattleEffect_RunDualTableMode0",
@@ -6977,7 +6977,7 @@
     },
     "main:080ece7c": {
       "name": "BattleEffect_WaitThenSetField18To4",
-      "source": "battle/effects/work/wait_then_set_field18.c"
+      "source": "battle/effects/misc/wait_then_set_field18.c"
     },
     "main:080eceac": {
       "name": "Object_WaitTwelveFramesThenSetField18",
@@ -14985,7 +14985,7 @@
     },
     "main:0808e4b4": {
       "name": "BattleEffect_FindMatchingEvent",
-      "source": "battle/effects/work/find_matching_event.c"
+      "source": "battle/effects/misc/find_matching_event.c"
     },
     "main:0808e23c": {
       "name": "BattleCommand_ExecuteSelectedItem"
@@ -17801,7 +17801,7 @@
     },
     "main:0801db70": {
       "name": "Menu_RunWorkspaceSelectionLoop",
-      "source": "menu/work/run_workspace_selection_loop.c"
+      "source": "menu/misc/run_workspace_selection_loop.c"
     },
     "resource_3c8:020009c8": {
       "name": "FieldScene_RunSupplementalSequenceOne",

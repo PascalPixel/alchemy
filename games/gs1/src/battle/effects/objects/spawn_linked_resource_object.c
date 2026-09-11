@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/objects/spawn_linked_resource_object.h"
 #include "battle_effect_runtime.h"
 
 struct BattleEffectVisual {
@@ -28,19 +30,13 @@ struct BattleEffectLinkedObject {
     void (*callback)(void);
 };
 
-struct BattleEffectLinkedObject *Func_080090c8(
+struct BattleEffectLinkedObject *Battle_Run(
     s32 kind,
     s32 x,
     s32 y,
     s32 z);
-void Func_08009098(
-    struct BattleEffectLinkedObject *object,
-    const void *configuration);
-void Func_08009080(struct BattleEffectLinkedObject *object, s32 mode);
-void Func_080f9010(s32 cue);
-void Func_0809163c(s32 state);
-void Func_0809376c(void);
-extern const u8 Data_0809fc2c[];
+
+extern const u8 gRom[];
 
 void BattleFx_SpawnLinked(
     s32 resource_id,
@@ -50,21 +46,21 @@ void BattleFx_SpawnLinked(
     struct BattleEffectResource *resource;
 
     if ((flags & 0xff) == 6) {
-        Func_080f9010(110);
+        Battle_Do(110);
     }
 
     resource = ObjectTable_Get(resource_id);
     if (resource != 0) {
         struct BattleEffectLinkedObject *object =
-            Func_080090c8(21, resource->x, resource->y, resource->z);
+            Battle_Run(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
-            Func_08009098(object, Data_0809fc2c);
-            Func_08009080(object, flags & 15);
+            Battle_Apply(object, gRom);
+            Battle_Apply2(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;
             object->resource_id = resource_id;
-            object->callback = Func_0809376c;
+            object->callback = Battle_Run2;
             object->visual->value_26 = 0;
             object->resource = resource;
 
@@ -90,6 +86,6 @@ void BattleFx_SpawnLinked(
                 object->visual->flags = clear_mask;
             }
         }
-        Func_0809163c(state);
+        Battle_Do2(state);
     }
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "item.h"
 
 s32 Equipment_GetUnleashRateBonus(s32 owner)

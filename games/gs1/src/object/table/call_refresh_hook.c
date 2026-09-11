@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_08093168();
+#include "scene.h"
+#include "abi/object/table/call_refresh_hook.h"
 
 void ObjectTable_CallRefreshHook(void)
 {
-    Func_08093168();
+    Obj_Check();
 }

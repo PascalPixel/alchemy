@@ -1,12 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/color/advance_hue_cycle.h"
 
-extern u8 *Data_03001ea8;
-
-extern void Func_08097948(s32 angle, s32 *out1, s32 *out2, s32 *out3);
+extern u8 *gIw;
 
 void BattleFx_AdvanceHueCycle(void)
 {
-    u8 *base = Data_03001ea8;
+    u8 *base = gIw;
     s32 out1 = 0;
     s32 out2 = 0;
     s32 out3 = 0;
@@ -15,7 +15,7 @@ void BattleFx_AdvanceHueCycle(void)
     u8 *p1;
     u8 *p2;
 
-    Func_08097948((s32)(*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
+    Battle_SetMode((s32)(*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
 
     offset = 0x28B;
     p0 = base + offset;

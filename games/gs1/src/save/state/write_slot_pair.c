@@ -1,10 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/save/state/write_slot_pair.h"
 #include "runtime_interfaces.h"
 
-s32 Func_080056cc(void);
-s32 Func_08005920(s32, void *);
-void Func_0801776c(s32, s32);
-extern char Data_02000000;
+extern char gOv;
 extern char Value_0000000a;
 extern char Value_0000000b;
 
@@ -13,21 +12,21 @@ s32 SaveState_WriteSlotPair(s32 arg0)
     s32 found;
     s16 result = 0;
 
-    found = Func_080056cc();
+    found = State_Check();
     if (found != 0) {
-        Func_0801776c((s32)&Value_0000000a, 1);
+        State_Apply((s32)&Value_0000000a, 1);
         result = -9;
     } else {
-        void *base = &Data_02000000;
+        void *base = &gOv;
 
-        found = Func_08005920(arg0, base);
+        found = State_Apply2(arg0, base);
         base = (char *)base + 0x1000;
-        found |= Func_08005920(arg0 + 3, base);
+        found |= State_Apply2(arg0 + 3, base);
         if (found != 0) {
-            Func_0801776c((s32)&Value_0000000b, 1);
+            State_Apply((s32)&Value_0000000b, 1);
             result = -3;
         }
     }
-    Func_08005cf8();
+    State_Run();
     return result;
 }

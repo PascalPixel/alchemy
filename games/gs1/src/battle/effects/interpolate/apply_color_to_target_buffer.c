@@ -1,12 +1,12 @@
+#include "scene.h"
+#include "abi/battle/effects/interpolate/apply_color_to_target_buffer.h"
 #include "battle_effect_runtime.h"
-
-s32 Func_08090a5c(s32, s32, s32, s32);
 
 void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)
 {
-    struct BattleEffectBuffers *buffers = Data_03001ed0;
+    struct BattleEffectBuffers *buffers = gIw;
 
     if (buffers != NULL) {
-        Func_08090a5c(value, (s32)buffers, (s32)buffers->buffer_e00, mode);
+        Battle_SetMode(value, (s32)buffers, (s32)buffers->buffer_e00, mode);
     }
 }

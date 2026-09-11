@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 struct ItemDefinition *Inventory_GetEquippedDefinition(

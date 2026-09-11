@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/calc/target_is_weak.h"
 #include "battle_effect_chance.h"
 #include "runtime_interfaces.h"
-
-s32 Func_08079ad8(s32 arg0);
 
 s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
 {
@@ -32,7 +32,7 @@ first_loop:
 
     offset = 0x129;
     field = state + offset;
-    entries = Func_08079ad8(*field) + 0x50;
+    entries = Battle_Check(*field) + 0x50;
     entry_index = 0;
 second_loop:
     battle_value = *entries++;

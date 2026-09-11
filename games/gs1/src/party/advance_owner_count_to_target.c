@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/party/advance_owner_count_to_target.h"
 
 struct State_080792fc {
     u8 padding[15];
@@ -6,8 +8,6 @@ struct State_080792fc {
 };
 
 void *Owner_GetState(s32);
-s32 Func_0807905c();
-void Func_08077428(s32);
 
 void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
 {
@@ -15,8 +15,8 @@ void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
     s32 count = ((struct State_080792fc *)Owner_GetState(owner))->count;
 
     while (count < target) {
-        Func_0807905c(owner, buf);
+        Party_Check(owner, buf);
         count++;
     }
-    Func_08077428(owner);
+    Party_Do(owner);
 }

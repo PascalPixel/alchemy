@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "game_flags.h"
 
 void GameFlag_SetNibble(s32 flag, s32 value)

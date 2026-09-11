@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/particles/spawn_falling.h"
 #include "object_effect.h"
 #include "object_efx.h"
 
@@ -32,9 +34,8 @@ typedef char Source_08099d18_x_offset[
 typedef char State_08099d18_source_offset[
     STATE_08099D18_OFFSET(struct State_08099d18, source) == 0x14 ? 1 : -1
 ];
-#undef STATE_08099D18_OFFSET
 
-extern struct State_08099d18 *Data_03001f30;
+extern struct State_08099d18 *gIw;
 
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -52,7 +53,7 @@ void BattleFx_SpawnFallingParticles(void)
     u16 *timer;
     s32 timer_value;
 
-    source = Data_03001f30->source;
+    source = gIw->source;
     position.x = source->x;
     position.y = (s32)((u32)source->y -
         Rand() * 16 + 0x180000);
@@ -73,6 +74,6 @@ void BattleFx_SpawnFallingParticles(void)
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        Object_SetCallback(object, Data_0809f0b0);
+        Object_SetCallback(object, gRom);
     }
 }

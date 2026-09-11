@@ -1,5 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/events/run_tile_trigger_sequence.h"
 
 struct Controller_08099738 {
     u8 pad_00[5];
@@ -28,7 +30,7 @@ struct Global_08099738 {
     u16 field_24c;
 };
 
-extern struct Global_08099738 Data_02000240;
+extern struct Global_08099738 gCell;
 
 void Audio_PlayCue(s32);
 s32 ScheduleCallback(void (*callback)(void));
@@ -43,7 +45,7 @@ void MapEvent_RunTileTriggerSequence(void)
     struct Controller_08099738 *controller;
     u32 i;
 
-    object = ObjectTable_Get(Data_02000240.object_id);
+    object = ObjectTable_Get(gCell.object_id);
     state = object->state;
     controller = state->controller;
 
@@ -73,5 +75,5 @@ void MapEvent_RunTileTriggerSequence(void)
     }
 
     state->field_26 = 1;
-    Data_02000240.field_24c = 0;
+    gCell.field_24c = 0;
 }

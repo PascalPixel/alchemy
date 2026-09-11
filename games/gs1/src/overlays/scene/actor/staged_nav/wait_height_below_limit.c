@@ -1,11 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_nav/wait_height_below_limit.h"
 
 /*
  * Staged actor height wait for overlay resource_3b3. The callee name refers
  * to its own call word rather than to a shared runtime address.
  */
-
-void Func_020037f0();
 
 /*
  * Polls for up to sixty ticks until the height at +12 falls to the target
@@ -21,7 +21,7 @@ void Actor_WaitHeightBelowLimit(u8 *obj, s32 limit)
         if (cnt == 0) {
             break;
         }
-        Func_020037f0(1);
+        Actor_Run(1);
         if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20)) {
             break;
         }

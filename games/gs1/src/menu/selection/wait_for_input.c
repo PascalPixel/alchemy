@@ -1,11 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/selection/wait_for_input.h"
 #include "global_cells.h"
 #include "sound_ids.h"
 
 extern void WaitFrames(u32);
 extern void Audio_PlayCue(u32);
-extern void Func_0801b664(void *);
-extern void Func_0801b810(void *);
 
 u32 Menu_WaitForSelectionInput(u32 value)
 {
@@ -22,10 +22,10 @@ again:
         input = (u32 *)ADDR_03001B04;
         if (*input & 0x10) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Func_0801b664(state);
+            Menu_Do(state);
         } else if (*input & 0x20) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Func_0801b810(state);
+            Menu_Do2(state);
         }
 
         if (*(u32 *)ADDR_03001C94 & 1) {

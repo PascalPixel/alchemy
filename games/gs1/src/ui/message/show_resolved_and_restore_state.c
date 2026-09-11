@@ -1,13 +1,14 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/message/show_resolved_and_restore_state.h"
 
-s32 Func_0808a540(u16);
 void UiWork_FinalizePending(void);
-s32 Func_080b2884(s32 value);
+
 void UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void WaitFrames(u32);
 
-extern void *Data_03001f2c;
+extern void *gIw;
 
 struct State080b2928 {
     u8 padding0[0x380];
@@ -23,11 +24,11 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
     s32 value;
     u8 saved;
 
-    state = Data_03001f2c;
+    state = gIw;
     slot = &state->mode_state;
     saved = *(u8 *)((u8 *)*slot + 5);
-    value = Func_0808a540(state->value);
-    arg0 = Func_080b2884(arg0);
+    value = Ui_Check(state->value);
+    arg0 = Ui_Check2(arg0);
     *(u8 *)((u8 *)*slot + 5) = 13;
     UiWork_FinalizePending();
     UiWork_Create(arg0, 5, 0, (value << 16) | 0x22);

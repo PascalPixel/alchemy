@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void ObjectDispatch_SetSingleChildField26(u8 *arg0, u32 arg1)
 {

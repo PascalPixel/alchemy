@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "battle_effect_chance.h"
 
 s32 BattleFx_IsRevive(s32 effect_id)

@@ -1,7 +1,7 @@
+#include "scene.h"
 #include "shop.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Shop_PlaceCursor(void *window, s32 x, s32 y)
 {

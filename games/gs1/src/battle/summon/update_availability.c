@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/summon/update_availability.h"
 #include "battle_summon.h"
 #include "battle_party.h"
 #include "owner_state.h"
@@ -6,7 +8,7 @@ struct PartyDjinnTotals {
     u8 by_element[4];
 };
 
-struct BattleSummonState *Func_08077000(s32 side);
+struct BattleSummonState *Battle_Run(s32 side);
 
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 {
@@ -64,7 +66,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
     } while (element <= 31);
 
     {
-        struct BattleSummonState *state = Func_08077000(0);
+        struct BattleSummonState *state = Battle_Run(0);
         state->available_mask = available_mask;
         return state;
     }

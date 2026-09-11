@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "runtime_1e74.h"
 
 void BattleEventRuntime_Reset(void)

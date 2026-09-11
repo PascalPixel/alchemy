@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_0809b11c.h"
 
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)

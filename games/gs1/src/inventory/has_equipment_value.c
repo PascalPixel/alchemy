@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 s32 Equipment_HasValue(s32 owner, s32 value)

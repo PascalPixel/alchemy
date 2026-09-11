@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/item_break/start.h"
 #include "object_efx.h"
 #include "sound_ids.h"
 
@@ -48,7 +50,7 @@ void *BattleFx_StartItemBreak(void *source)
                               *(s32 *)((s8 *)source + 12) + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            Object_SetCallback(child, &Data_0809f0d4);
+            Object_SetCallback(child, &gRom);
             fragment_scale = Rand() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
             *(s32 *)((s8 *)child + 0x30) = fragment_scale;

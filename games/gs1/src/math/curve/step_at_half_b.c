@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "curve.h"
 
 s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position)

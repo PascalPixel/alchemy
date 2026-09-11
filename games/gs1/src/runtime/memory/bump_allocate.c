@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 u32 Runtime_BumpAllocate(s32 size)

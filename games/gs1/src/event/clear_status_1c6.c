@@ -1,11 +1,11 @@
+#include "scene.h"
+#include "abi/event/clear_status_1c6.h"
 #include "event_runtime.h"
-
-u32 Func_080901c0(s32 first, s32 second);
 
 void Event_ClearStatus1c6(void)
 {
-    struct EventRuntime *runtime = Data_03001ebc;
+    struct EventRuntime *runtime = gWork;
 
-    Func_080901c0(runtime->value_1c0, runtime->value_1c8);
+    Sys_Apply(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 0;
 }

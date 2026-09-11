@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/init/init_counters_with_resource_and_schedule_refresh.h"
 
 struct State_080173f4 {
     u8 filler0[0xEA8];
@@ -13,14 +15,14 @@ struct State_080173f4 {
     u16 result;
 };
 
-extern struct State_080173f4 *Data_03001e8c;
+extern struct State_080173f4 *gIw;
 
 s32 Resource_CopyData(s32, s32, s32);
 void ScheduleCallbackAfterFrames(void *, s32);
 
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 {
-    struct State_080173f4 *state = Data_03001e8c;
+    struct State_080173f4 *state = gIw;
     s32 size;
 
     state->result = Resource_CopyData(95, 128 << 6, 0);

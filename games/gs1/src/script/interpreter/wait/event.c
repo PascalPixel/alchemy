@@ -1,6 +1,6 @@
+#include "scene.h"
+#include "abi/script/interpreter/wait/event.h"
 #include "script_interpreter.h"
-
-s32 Func_0800ca98(void *);
 
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
@@ -8,7 +8,7 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
         interpreter->delay = 0;
         goto block_3;
     }
-    if (Func_0800ca98(interpreter)!= 0) {
+    if (Script_Check(interpreter)!= 0) {
 block_3:
         interpreter->cursor = (u16)interpreter->cursor + 1;
         return 1;

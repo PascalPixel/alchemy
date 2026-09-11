@@ -1,20 +1,20 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/select_entry_20_to_21.h"
 
-void *Func_080284dc(void);
-void Func_0802851c(void);
-s32 Func_08028574(s32);
+void *Menu_Run(void);
+
 void Menu_AppendResourceEntry(s32 arg0);
-s32 Func_08028808(s32, s32, s32);
 
 s32 Menu_SelectEntry20To21(s32 arg0)
 {
     s32 ret;
 
-    Func_080284dc();
+    Menu_Run();
     Menu_AppendResourceEntry(0x20);
     Menu_AppendResourceEntry(0x21);
-    Func_08028808(0x11, 9, 0);
-    ret = Func_08028574(arg0);
-    Func_0802851c();
+    Menu_Place(0x11, 9, 0);
+    ret = Menu_Check(arg0);
+    Menu_Run2();
     return ret;
 }

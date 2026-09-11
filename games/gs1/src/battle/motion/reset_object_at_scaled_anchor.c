@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
 #include "motion_object.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Object_ResetMotion(void *);
 s32 Object_SetPosition(void *, s32, s32, s32);

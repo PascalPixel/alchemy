@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "game_flags.h"
 
 u8 GameFlag_IncrementByte(s32 flag)

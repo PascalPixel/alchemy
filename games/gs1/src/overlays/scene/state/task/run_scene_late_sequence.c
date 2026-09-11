@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/task/run_scene_late_sequence.h"
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-extern u8 Data_00000000[];
+extern u8 gVal[];
 
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
@@ -10,127 +10,56 @@ struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
-extern struct ModeRecord Data_0200cac8;
-extern struct ModeRecord Data_0200c0f6;
-extern u8 Data_02000240[];
-extern u8 Data_02002090[];
-extern u8 Data_0200cbfc[];
-extern u8 Data_0200cc28[];
-extern u8 Data_0200cca4[];
-extern u8 Data_03001ebc[];
-extern u8 Data_02000240_t[][2];
-void Func_02004eda();
-void Func_02004f06();
-s32 Func_02005466();
-s32 Func_02005492();
-void Func_0200690c();
-void Func_02006a42();
-void Func_02006a56();
-void Func_02006a5e();
-void Func_02006a62();
-void Func_02006a6c();
-void Func_02006a76();
-void Func_02006a8a();
-void Func_02006aa6();
-void Func_02006ab0();
-u8 *Func_02006b14();
-void Func_02006b48();
-void Func_02006b5c();
-void Func_02006b64();
-void Func_02006b94();
-void Func_02006bba();
-void Func_02006bc8();
-void Func_02006be4();
-void Func_02006bec();
-void Func_02006bf2();
-void Func_02006bf4();
-void Func_02006bfe();
-s32 Func_02006c28();
-void Func_02006c2a();
-void Func_02006c36();
-void Func_02006c4e();
-void Func_02006c5c();
-void Func_02006c62();
-void Func_02006c6a();
-void Func_02006c80();
-void Func_02006cb2();
-u8 *Func_02006cde();
-void Func_02006cea();
-void Func_02006d00();
-void Func_02006d36();
-void Func_02006d42();
-void Func_02006d62();
-void Func_02006db2();
+extern struct ModeRecord gOv;
+extern struct ModeRecord gOv2;
+extern u8 gCell[];
+extern u8 gOv3[];
+extern u8 gOv4[];
+extern u8 gOv5[];
+extern u8 gOv6[];
+extern u8 gWork[];
+extern u8 gCell2[][2];
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+u8 *State_Run2();
 
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
+u8 *State_Run3();
 
 void Scene_RunLateSequence(s32 a0)
 {
     s32 kind;
 
-    Func_02006b94(247);
-    Func_02006b48();
-    Func_02006b5c();
-    Data_0200cac8.span = a0 * 60;
-    Data_0200c0f6.span = (a0 < 0 ? -a0 : a0) * 60;
+    State_Run4(247);
+    State_Run5();
+    State_Run6();
+    gOv.span = a0 * 60;
+    gOv2.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        Func_02006a42(30);
-        Func_02006bc8(86);
-        Func_02004eda(8);
-        Value2(Func_02005466, 3, 1);
-        Func_02006a62(-a0 * 60 + 60);
+        State_Run7(30);
+        State_Run8(86);
+        State_Run9(8);
+        State_Check(3, 1);
+        State_Run10(-a0 * 60 + 60);
         kind = 0;
     } else {
-        Func_02006a6c(30);
-        Func_02006bf4(a0 + 90);
-        Func_02004f06(4);
-        Value2(Func_02005492, 3, 0);
-        Func_02006a8a(a0 * 60 + 60);
+        State_Run11(30);
+        State_Run12(a0 + 90);
+        State_Run13(4);
+        State_Check2(3, 0);
+        State_Run14(a0 * 60 + 60);
         kind = 8;
     }
-    Call3(Func_02006b64, kind, 0x105, 0);
-    while (Value0(Func_02006c28)!= 0) {
-        Func_0200690c(1);
+    State_Place(kind, 0x105, 0);
+    while (State_Run()!= 0) {
+        State_Run15(1);
     }
-    Func_02006c2a(19);
-    Func_02006ab0(30);
-    Call1(Func_02006c36, 0x121);
-    Func_02006bf2();
-    Func_02006bfe();
+    State_Run16(19);
+    State_Run17(30);
+    State_Do(0x121);
+    State_Run18();
+    State_Run19();
 }
 
-void Func_02002ba8(s32 a0, s32 a1, s32 a2)
+void State_Run20(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
     s32 p10;
@@ -155,15 +84,15 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     p11 = a0;
     p8 = a1;
     p10 = a2;
-    rec = Func_02006b14();
+    rec = State_Run2();
     p6[6] = 1;
     p6[7] = 4;
-    *(volatile s32 *)Data_0200cca4 = *(volatile s32 *)((s32)rec + 8);
-    *(volatile s32 *)Data_0200cbfc = *(volatile s32 *)((s32)rec + 16);
+    *(volatile s32 *)gOv6 = *(volatile s32 *)((s32)rec + 8);
+    *(volatile s32 *)gOv4 = *(volatile s32 *)((s32)rec + 16);
     p9 = *(volatile s32 *)((s32)rec + 80);
-    *(volatile s32 *)Data_0200cc28 = *(volatile u16 *)((s32)rec + 6);
+    *(volatile s32 *)gOv5 = *(volatile u16 *)((s32)rec + 6);
     v5 = 1;
-    Func_02006be4(p11, 2);
+    State_Run21(p11, 2);
     {
         u8 value = *(volatile u8 *)&rec[35];
 
@@ -174,15 +103,15 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
 
         *(volatile u16 *)((s32)rec + 6) = shown;
     }
-    Func_02006aa6((s32)rec, 3);
-    Func_02006a56((s32)rec, 0);
-    Func_02006a5e((s32)rec, 1);
+    State_Run22((s32)rec, 3);
+    State_Run23((s32)rec, 0);
+    State_Run24((s32)rec, 1);
     p10b = ((s32)p10 << 16);
     p8b = ((s32)p8 << 16);
-    Func_02006bba(p11, p8b, p10b);
-    Func_02006bec(0, 0x4000, 0);
+    State_Run25(p11, p8b, p10b);
+    State_Run26(0, 0x4000, 0);
     base6_4000208 = 0x4000208;
-    base4_2002090 = (s32)Data_02002090;
+    base4_2002090 = (s32)gOv3;
     v1 = *(volatile u16 *)base6_4000208;
     *(volatile u16 *)base6_4000208 = base6_4000208;
     if (*(volatile u16 *)base4_2002090 <= 31) {
@@ -196,7 +125,7 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     p9[17] = ((s32)(-13 & p9[17]) | 4);
     slot0 = base4_2002090;
     v5 = 0;
-    Func_02006d36(252);
+    State_Run27(252);
     v4 = slot0;
     do {
         *(volatile s32 *)((s32)rec + 24) = ((v5 << 12) + 0x1000);
@@ -211,33 +140,33 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
         }
         *(volatile u16 *)base6_4000208 = v0;
         slot0 = v4;
-        Func_02006a76(1);
+        State_Run28(1);
         v5 = (v5 + 2);
         v4 = slot0;
     } while (v5 <= 15);
     v4 = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0x4000208;
-    if (*(volatile u16 *)Data_02002090 <= 31) {
-        *(volatile u16 *)Data_02002090 += 1;
-        *(volatile s32 *)((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4)) = 16;
-        *(volatile s32 *)(((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
-        *(volatile s32 *)(((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
+    if (*(volatile u16 *)gOv3 <= 31) {
+        *(volatile u16 *)gOv3 += 1;
+        *(volatile s32 *)((((((*(volatile u16 *)gOv3 << 1) + *(volatile u16 *)gOv3) << 2) + 0x2002090) + 4)) = 16;
+        *(volatile s32 *)(((((((*(volatile u16 *)gOv3 << 1) + *(volatile u16 *)gOv3) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
+        *(volatile s32 *)(((((((*(volatile u16 *)gOv3 << 1) + *(volatile u16 *)gOv3) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
     }
     *(volatile u16 *)0x04000208 = v4;
     *(volatile s32 *)((s32)rec + 24) = 0x11000;
     *(volatile s32 *)((s32)rec + 28) = 0xf000;
-    Func_02006c4e(1);
+    State_Run29(1);
     *(volatile s32 *)((s32)rec + 24) = 0x10000;
     *(volatile s32 *)((s32)rec + 28) = 0x10000;
-    Func_02006c5c(13);
+    State_Run30(13);
     p9[5] &= -13;
     p9[17] &= -13;
-    Func_02006cea(p11, 3);
-    Func_02006c80(20);
+    State_Run31(p11, 3);
+    State_Run32(20);
     p9b = v5;
 }
 
-void Func_02002d84(s32 a0)
+void State_Run33(s32 a0)
 {
     u32 i;
     u8 *rec7;
@@ -245,30 +174,30 @@ void Func_02002d84(s32 a0)
     u8 *p7;
 
     p7 = *(volatile s32 *)0x03001e68;
-    rec7 = Func_02006cde();
-    if (Data_02000240_t[249][0] == 1) {
-        Data_02000240_t[249][0] = 0;
-        Func_02006d42(a0, 1);
+    rec7 = State_Run3();
+    if (gCell2[249][0] == 1) {
+        gCell2[249][0] = 0;
+        State_Run34(a0, 1);
     } else {
-        Call3(Func_02006db2, a0, 0x4000, 30);
-        Func_02006d62(a0, 3);
-        Func_02006d00(30);
+        State_Place2(a0, 0x4000, 30);
+        State_Run35(a0, 3);
+        State_Run36(30);
     }
     p7[7] = 0;
     p7[6] = 15;
-    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)Data_0200cca4;
-    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)Data_0200cbfc;
-    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)Data_0200cc28;
+    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)gOv6;
+    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)gOv4;
+    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)gOv5;
     *(volatile s32 *)((s32)rec7 + 56) = -0x80000000;
     *(volatile s32 *)((s32)rec7 + 64) = -0x80000000;
     *(volatile s32 *)((s32)rec7 + 36) = 0;
     *(volatile s32 *)((s32)rec7 + 44) = 0;
     rec7[85] = 3;
-    rec7[34] = (s32)Data_00000000;
+    rec7[34] = (s32)gVal;
     *(volatile s32 *)((s32)rec7 + 12) = 0;
     *(volatile s32 *)((s32)rec7 + 20) = 0;
-    Func_02006cb2((s32)rec7, 1);
-    Func_02006c62((s32)rec7, 0);
-    Func_02006c6a((s32)rec7, 1);
-    Func_02006bc8(1);
+    State_Run37((s32)rec7, 1);
+    State_Run38((s32)rec7, 0);
+    State_Run39((s32)rec7, 1);
+    State_Run8(1);
 }

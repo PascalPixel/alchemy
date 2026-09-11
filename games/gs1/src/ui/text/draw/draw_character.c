@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_character.h"
 #include "gs1_edition.h"
 
 struct TextPosition_0801e7c0 {
@@ -7,10 +9,9 @@ struct TextPosition_0801e7c0 {
     u16 y;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
-s32 Func_0801de5c(u16 *text, s32 map_address, s32 vram_address, s32 phase);
 
 void UiText_DrawCharacter(
     s32 character,
@@ -26,7 +27,7 @@ void UiText_DrawCharacter(
     u8 *base;
     u16 *counter;
 
-    base = Data_03001e8c;
+    base = gIw;
     counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     zero = 0;
     *counter = zero;
@@ -42,7 +43,7 @@ void UiText_DrawCharacter(
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
         text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
-        Func_0801de5c(
+        Ui_SetMode(
             text,
             (s32)(base + byte_offset),
             vram_address,

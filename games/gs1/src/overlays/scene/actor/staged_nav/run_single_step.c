@@ -1,7 +1,7 @@
-void Func_02004bd4();
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_nav/run_single_step.h"
 
-/* Complete one-call wrapper through interworking return and alignment. */
 void Scene_RunSingleStep(void)
 {
-    Func_02004bd4();
+    Actor_Run();
 }

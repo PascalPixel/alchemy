@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/inventory/party_has_space.h"
 #include "inventory.h"
 
 s32 PartyInventory_HasSpace(void)
@@ -7,7 +9,7 @@ s32 PartyInventory_HasSpace(void)
     s32 owner_index;
     s16 *owner_cursor;
 
-    if (Inventory_Count(Data_02000240.current_owner) != 15)
+    if (Inventory_Count(gCell.current_owner) != 15)
         return 1;
     owner_count = Party_ListActiveOwners(owners);
     owner_cursor = owners;

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/run_simple_presentation.h"
 #include "fixed_math.h"
 #include "battle_motion.h"
 
@@ -41,22 +43,19 @@ struct MotionRecord {
     struct MotionRecordValue *child;
 };
 
-extern s32 *Data_03001f00;
+extern s32 *gIw;
 
 struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
 void WaitFrames(s32 frames);
-void Func_080c10e8(u16 *actors, s32 mode);
-void Func_080b9d34(void *input, struct BattlePresentationWork *work);
+
 void Runtime_GetObject(s32 id);
 struct MotionRecord *GetMotionRecord(
     struct PresentationObject *object, s32 entry_index);
-s32 Func_08009260(s32 battle_value, s32 second, s32 third);
+
 void Object_SetAction(struct PresentationObject *object, s32 action);
-void Func_080b8178(s32 id);
+
 void Actor_ResetMotionAtAnchor(s32 id);
-void Func_080c9008(struct BattlePresentationWork *work);
-void Func_080bb938(void);
 
 s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
 {
@@ -73,7 +72,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
     s32 divisor;
     s32 scripted;
 
-    facing = Data_03001f00;
+    facing = gIw;
     saved_input = input;
     object = GetBattleObjectSlot(saved_input->primary_id)->object;
     z = object->z;
@@ -93,15 +92,15 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         WaitFrames(20);
     }
 
-    Func_080c10e8(0, 0);
-    Func_080b9d34(saved_input, &work);
+    Battle_Apply(0, 0);
+    Battle_Apply2(saved_input, &work);
     Runtime_GetObject(work.primary_id);
     Runtime_GetObject(saved_input->secondary_id);
 
     scripted = flags & 2;
     record = GetMotionRecord(
         GetBattleObjectSlot(saved_input->primary_id)->object, 0);
-    divisor = Func_08009260(record->child->battle_value, 2, 1);
+    divisor = Battle_Place(record->child->battle_value, 2, 1);
     BattleMotion_ApproachTarget(
         work.primary_id,
         saved_input->secondary_id,
@@ -116,14 +115,14 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         work.secondary_is_low_id = 0;
     if (scripted != 0) {
         WaitFrames(10);
-        Func_080b8178(saved_input->secondary_id);
+        Battle_Do(saved_input->secondary_id);
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     } else {
-        Func_080c9008(&work);
-        Func_080bb938();
+        Battle_Do2(&work);
+        Battle_Run();
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     }
     Actor_ResetMotionAtAnchor(work.primary_id);

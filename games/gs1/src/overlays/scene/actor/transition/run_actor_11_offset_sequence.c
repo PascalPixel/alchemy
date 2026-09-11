@@ -1,22 +1,18 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/transition/run_actor_11_offset_sequence.h"
 
 /*
  * Run this scene transition's six setup services.  The literal word following
- * the return belongs to this owner and supplies 0x121 to Func_0200301e.
+ * the return belongs to this owner and supplies 0x121 to Actor_Run.
  */
-
-extern void Func_0200300a(s32);
-extern void Func_02000d84(s32, s32, s32);
-extern void Func_020017d0(void);
-extern void Func_02002e74(s32);
-extern void Func_02001ee4(void);
 
 void Scene_RunActor11Offset128Sequence(void)
 {
-    Func_0200300a(241);
-    Func_02000d84(11, 0, 128);
-    Func_020017d0();
-    Func_0200301e(0x121);
-    Func_02002e74(2);
-    Func_02001ee4();
+    Actor_Do(241);
+    Actor_Place(11, 0, 128);
+    Actor_Run2();
+    Actor_Run(0x121);
+    Actor_Do2(2);
+    Actor_Run3();
 }

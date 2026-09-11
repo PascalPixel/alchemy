@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/item_menu/draw/name_page.h"
 #include "item_menu.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
@@ -12,11 +14,8 @@
 
 extern u8 Value_00000182;
 
-void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_Commit(s32 window);
-void Func_080a21b0(s32 window, s32 count, s32 page_size, s32 page, s32 style);
-void Func_080a2324(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
 s32 ItemMenu_DrawNamePage(
     s32 window,
@@ -34,7 +33,7 @@ s32 ItemMenu_DrawNamePage(
     (void)unused;
 
     UiWindow_Commit(window);
-    Func_08015070(window, 0, 11, 16, 11);
+    Sys_SetRange(window, 0, 11, 16, 11);
 
     page = state->page;
     first_entry = page * 5;
@@ -43,8 +42,8 @@ s32 ItemMenu_DrawNamePage(
         visible_count = 5;
     }
 
-    Func_080a2324(5, first_entry, window, PAGE_X, 34);
-    Func_080a21b0(window, state->entry_count, 5, state->page, 15);
+    Sys_SetRange2(5, first_entry, window, PAGE_X, 34);
+    Sys_SetRange3(window, state->entry_count, 5, state->page, 15);
 
     row = 0;
     if (visible_count > row) {

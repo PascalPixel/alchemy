@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "game_flags.h"
 #include "party_state.h"
 

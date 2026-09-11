@@ -1,34 +1,13 @@
 #include "types.h"
-
-#define NULL ((void *)0)
-#define CreateOverlayObject Func_020006de
-#define SetOverlayObjectMode Func_02000710
-#define SetOverlayObjectSlot Func_02000770
-#define OvObj_SetEntryField Func_02000030
-#define OvObj_SpawnWithMode14 Func_02000048
-#define OvObj_CreateConfigured Func_020000a0
-#define OvObj_IntegrateVelocities Func_02000104
-#define Effect_SpawnConfiguredEffect Func_0200013c
-#define SceneData_GetTable8778 Func_02000314
-#define SceneData_ReturnZero Func_0200031c
-#define SceneData_GetTable8868 Func_02000320
-#define SceneData_SelectTable89c8Or8890 Func_02000328
-#define Dialogue_RunActor14FlaggedDialogue Func_0200035c
-#define Dialogue_RunActor15FlaggedDialogue Func_020003bc
-#define Dialogue_RunActor16FlaggedDialogue Func_0200041c
-#define Dialogue_RunActor17FlaggedDialogue Func_02000484
-#define Dialogue_RunActor10Dialogue Func_020004e4
-#define Dialogue_RunActor12Dialogue Func_02000504
-#define Dialogue_RunActor9MotionDialogue Func_02000524
-#define SceneData_SelectTable8d4cOr8a28 Func_02000570
-#define State_SetRuntimeWord448To521 Func_02000598
+#include "scene.h"
+#include "abi/overlays/scene/dialogue/flagged_object.h"
 
 typedef struct {
     u8 pad[9];
     u8 lo:2;
     u8 field:2;
     u8 hi:4;
-} Object_02000030;
+} Object;
 
 union Slot {
     s32 w;
@@ -88,80 +67,29 @@ struct Descriptor {
     s32 dur;
 };
 
-extern struct Descriptor *Data_0200876c[];
-extern u8 Data_02008778[];
-extern u8 Data_02008868[];
-extern s16 Data_02000240[];
-extern u8 Data_020089c8[];
-extern u8 Data_02008890[];
+extern struct Descriptor *gOv[];
+extern u8 gOv2[];
+extern u8 gOv3[];
+extern s16 gCell[];
+extern u8 gOv4[];
+extern u8 gOv5[];
 extern u8 Value_00001a40;
-extern u8 Data_02008d4c[];
-extern u8 Data_02008a28[];
-extern u8 *Data_03001ebc;
+extern u8 gOv6[];
+extern u8 gOv7[];
+extern u8 *gWork;
 
-void Func_020006b4(void *, s32);
-void Func_020006cc(void *, s32);
-void Func_02000714(void *, s32);
-void *Func_020006de(s32, s32, s32, s32);
-void Func_02000710(void *, s32);
-void Func_02000770(void *, s32);
-struct Effect *Func_020007d2(s32 slot);
-struct Effect *Func_020007b0(s32 kind, s32 x, s32 y, s32 z);
-void Func_020007ba(struct Effect *effect, s32 mode);
-void Func_020007d4(struct Effect *effect, struct Descriptor *desc);
-void Func_020008a6(struct Effect *effect, s32 mode);
-s32 Func_02000890(s32 delta, s32 dur);
-s32 Func_020008a8(s32 delta, s32 dur);
-s32 Func_020008b6(s32 delta, s32 dur);
-void Func_020008d4(struct Effect *effect, s32 mode);
-void Func_020008e4(struct Effect *effect, s32 callback_arg);
-void Func_020009b0(void *);
-u16 *Func_020009d6(s32);
-void Func_020009c4(void);
-void Func_02000a2e(s32, s32);
-s32 Func_020009c6(s32);
-void Func_02000a20(s32);
-void Func_02000a28(s32);
-void Func_02000a38(s32, s32);
-void Func_02000a04(void);
-u16 *Func_02000a36(s32);
-void Func_02000a24(void);
-void Func_02000a8e(s32, s32);
-s32 Func_02000a26(s32);
-void Func_02000a80(s32);
-void Func_02000a88(s32);
-void Func_02000a98(s32, s32);
-void Func_02000a64(void);
-u16 *Func_02000a96(s32);
-void Func_02000a84(void);
-void Func_02000aee(s32, s32);
-s32 Func_02000a86(s32);
-void Func_02000ae0(s32);
-void Func_02000b10(s32, s32);
-void Func_02000acc(void);
-u16 *Func_02000afe(s32);
-void Func_02000aec(void);
-void Func_02000b60(s32, s32);
-void Func_02000b4a(s32);
-void Func_02000b52(s32);
-void Func_02000b62(s32, s32);
-void Func_02000b2e(void);
-void Func_02000b44(void);
-void Func_02000b82(s32);
-void Func_02000b5e(void);
-void Func_02000b64(void);
-void Func_02000b7e(void);
-void Func_02000b84(void);
-void Func_02000bdc(s32, s32, s32);
-s32 Func_02000bc6(s32, s32, s32);
-void Func_02000b9c(s32);
-s32 Func_02000bd6(s32, s32, s32);
-void Func_02000bac(s32);
-void Func_02000bfc(s32, s32);
-void Func_02000bc8(void);
-s32 Func_02000678(s32, s32, s32, s32);
-void Func_02000c3e(s32);
-void Func_02000c76(s32, s32);
+void *CreateOverlayObject(s32, s32, s32, s32);
+
+struct Effect *Talk_Run(s32 slot);
+struct Effect *Talk_Run2(s32 kind, s32 x, s32 y, s32 z);
+
+u16 *Talk_Run3(s32);
+
+u16 *Talk_Run4(s32);
+
+u16 *Talk_Run5(s32);
+
+u16 *Talk_Run6(s32);
 
 /*
  * resource_3a1 configurable spawn/copy owner at 0x0200013c. The code ends
@@ -172,16 +100,16 @@ void Func_02000c76(s32, s32);
  */
 void OvObj_SetEntryField(void *arg0, s32 arg1)
 {
-    Object_02000030 *obj = *(Object_02000030 **)((u8 *)arg0 + 0x50);
+    Object *obj = *(Object **)((u8 *)arg0 + 0x50);
 
     obj->field = arg1;
 }
 
 void *OvObj_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    void *Func_02000686(s32, s32, s32, s32);
+    void *Talk_Run7(s32, s32, s32, s32);
 
-    u8 *ret = Func_02000686(arg3, arg0, arg1, arg2);
+    u8 *ret = Talk_Run7(arg3, arg0, arg1, arg2);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -194,9 +122,9 @@ void *OvObj_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         obj[9] = mask;
         ret[0x55] = 0;
         ret[0x59] = 8;
-        Func_020006b4(ret, 0);
-        Func_02000714(ret, 14);
-        Func_020006cc(ret, 1);
+        Talk_Apply(ret, 0);
+        Talk_Apply2(ret, 14);
+        Talk_Apply3(ret, 1);
         return ret;
     }
     return NULL;
@@ -257,11 +185,11 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     s32 d1;
     s32 acc;
 
-    party = Func_020007d2(0);
+    party = Talk_Run(0);
     if ((flags & 0x100000) != 0 && opt != 0) {
-        effect = Func_020007b0(opt->kind, x, y, z);
+        effect = Talk_Run2(opt->kind, x, y, z);
     } else {
-        effect = Func_020007b0(222, x, y, z);
+        effect = Talk_Run2(222, x, y, z);
     }
     if (effect == 0)
         return;
@@ -269,9 +197,9 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     block = effect->sprite;
     mblock = block;
 
-    Func_020007ba(effect, (flags + 1) & 15);
+    Talk_Apply4(effect, (flags + 1) & 15);
     off = (flags & 15) << 2;
-    Func_020007d4(effect, Data_0200876c[off >> 2]);
+    Talk_Apply5(effect, gOv[off >> 2]);
 
     effect->mode55 = 0;
     block->state26 = 0;
@@ -296,7 +224,7 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
         return;
 
     if ((flags & 0x10000) != 0)
-        Func_020008a6(effect, opt->mode);
+        Talk_Apply6(effect, opt->mode);
 
     if ((flags & 0x20000) != 0) {
         effect->flags23 &= 0xfe;
@@ -312,14 +240,14 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
     if ((flags & 0x40000) != 0) {
         const struct Descriptor *desc =
-            Data_0200876c[off >> 2];
+            gOv[off >> 2];
         s32 delta;
 
         if ((flags & 0x80000) != 0) {
             d1 = *(volatile const s32 *)&opt->target30;
             acc = *(volatile const s32 *)&effect->accum18;
             d1 -= acc;
-            effect->rate30 = Func_02000890(d1,
+            effect->rate30 = Talk_Apply7(d1,
                                            desc->dur);
             delta = opt->target34;
             dur = desc->dur;
@@ -327,19 +255,19 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
         } else {
             d1 = opt->target30;
             d1 += (s32)0xffff0000;
-            effect->rate30 = Func_020008a8(d1,
+            effect->rate30 = Talk_Apply8(d1,
                                            desc->dur);
             delta = opt->target34;
             dur = desc->dur;
             delta += (s32)0xffff0000;
         }
 
-        effect->rate34 = Func_020008b6(delta, dur);
+        effect->rate34 = Talk_Apply9(delta, dur);
     }
 
     if ((flags & 0x200000) != 0) {
-        Func_020008d4(effect, 1);
-        Func_020008e4(effect, opt->callback_arg);
+        Talk_Apply10(effect, 1);
+        Talk_Apply11(effect, opt->callback_arg);
     }
 
     if ((flags & 0x400000) != 0)
@@ -352,7 +280,7 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
 s32 SceneData_GetTable8778(void)
 {
-    return (s32)Data_02008778;
+    return (s32)gOv2;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -362,158 +290,158 @@ s32 SceneData_ReturnZero(void)
 
 s32 SceneData_GetTable8868(void)
 {
-    return (s32)Data_02008868;
+    return (s32)gOv3;
 }
 
 s32 SceneData_SelectTable89c8Or8890(void)
 {
-    if (Data_02000240[225] == 8) {
-        return (s32)Data_020089c8;
+    if (gCell[225] == 8) {
+        return (s32)gOv4;
     }
-    Func_020009b0(Data_02008890);
-    return (s32)Data_02008890;
+    Talk_Do(gOv5);
+    return (s32)gOv5;
 }
 
 void Dialogue_RunActor14FlaggedDialogue(void)
 {
-    u16 *state = Func_020009d6(0);
+    u16 *state = Talk_Run3(0);
     u32 value = state[3];
 
-    Func_020009c4();
+    Talk_Run8();
     if (value >= 0xa001 && value <= 0xdfff) {
-        Func_02000a2e(16, 14);
+        Talk_Apply12(16, 14);
     } else {
-        if (Func_020009c6(0x895) == 0) {
-            Func_02000a20(0x1817);
+        if (Talk_Check(0x895) == 0) {
+            Talk_Do2(0x1817);
         } else {
-            Func_02000a28(0x1a46);
+            Talk_Do3(0x1a46);
         }
-        Func_02000a38(14, 0);
+        Talk_Apply13(14, 0);
     }
-    Func_02000a04();
+    Talk_Run9();
 }
 
 void Dialogue_RunActor15FlaggedDialogue(void)
 {
-    u16 *state = Func_02000a36(0);
+    u16 *state = Talk_Run4(0);
     u32 value = state[3];
 
-    Func_02000a24();
+    Talk_Run10();
     if (value >= 0xa001 && value <= 0xdfff) {
-        Func_02000a8e(17, 15);
+        Talk_Apply14(17, 15);
     } else {
-        if (Func_02000a26(0x895) == 0) {
-            Func_02000a80(0x1819);
+        if (Talk_Check2(0x895) == 0) {
+            Talk_Do4(0x1819);
         } else {
-            Func_02000a88(0x1a48);
+            Talk_Do5(0x1a48);
         }
-        Func_02000a98(15, 0);
+        Talk_Apply15(15, 0);
     }
-    Func_02000a64();
+    Talk_Run11();
 }
 
 void Dialogue_RunActor16FlaggedDialogue(void)
 {
-    void Func_02000af0();
-    void Func_02000af0_a(s32);
+    void Talk_Run12();
+    void Talk_Run13(s32);
 
-    u16 *state = Func_02000a96(0);
+    u16 *state = Talk_Run5(0);
     u32 value = state[3];
 
-    Func_02000a84();
+    Talk_Run14();
     if (value >= 0xa001 && value <= 0xdfff) {
-        Func_02000aee(18, 16);
-    } else if (Func_02000a86(0x895) == 0) {
-        Func_02000ae0(0x181b);
-        Func_02000af0(16, 0);
+        Talk_Apply16(18, 16);
+    } else if (Talk_Check3(0x895) == 0) {
+        Talk_Do6(0x181b);
+        Talk_Run12(16, 0);
     } else {
-        Func_02000af0_a(0x1a4a);
-        Func_02000b10(16, 0);
+        Talk_Run13(0x1a4a);
+        Talk_Apply17(16, 0);
     }
-    Func_02000acc();
+    Talk_Run15();
 }
 
 void Dialogue_RunActor17FlaggedDialogue(void)
 {
-    s32 Func_02000af0_b(s32);
+    s32 Talk_Run16(s32);
 
-    u16 *state = Func_02000afe(0);
+    u16 *state = Talk_Run6(0);
     u32 value = state[3];
 
-    Func_02000aec();
+    Talk_Run17();
     if (value < 0x2000 || value > 0xe000) {
-        Func_02000b60(5, 17);
+        Talk_Apply18(5, 17);
     } else {
-        if (Func_02000af0_b(0x895) == 0) {
-            Func_02000b4a(0x181d);
+        if (Talk_Run16(0x895) == 0) {
+            Talk_Do7(0x181d);
         } else {
-            Func_02000b52(0x1a4e);
+            Talk_Do8(0x1a4e);
         }
-        Func_02000b62(17, 0);
+        Talk_Apply19(17, 0);
     }
-    Func_02000b2e();
+    Talk_Run18();
 }
 
 void Dialogue_RunActor10Dialogue(void)
 {
-    s32 Func_02000ba2(s32, s32);
+    s32 Talk_Run19(s32, s32);
 
-    Func_02000b44();
-    Func_02000b82(0x1a3a);
-    Func_02000ba2(10, 0);
-    Func_02000b5e();
+    Talk_Run20();
+    Talk_Do9(0x1a3a);
+    Talk_Run19(10, 0);
+    Talk_Run21();
 }
 
 void Dialogue_RunActor12Dialogue(void)
 {
-    void Func_02000ba2_a(s32);
-    s32 Func_02000bc2(s32, s32);
+    void Talk_Run22(s32);
+    s32 Talk_Run23(s32, s32);
 
-    Func_02000b64();
-    Func_02000ba2_a((s32)&Value_00001a40);
-    Func_02000bc2(12, 0);
-    Func_02000b7e();
+    Talk_Run24();
+    Talk_Run22((s32)&Value_00001a40);
+    Talk_Run23(12, 0);
+    Talk_Run25();
 }
 
 void Dialogue_RunActor9MotionDialogue(void)
 {
-    void Func_02000bc2_a(s32);
+    void Talk_Run26(s32);
 
-    Func_02000b84();
-    Func_02000bc2_a(0x1a64);
-    Func_02000bdc(9, 0, 20);
-    Func_02000bc6(9, 10, 0);
-    Func_02000b9c(60);
-    Func_02000bd6(9, 0, 0);
-    Func_02000bac(20);
-    Func_02000bfc(9, 0);
-    Func_02000bc8();
+    Talk_Run27();
+    Talk_Run26(0x1a64);
+    Talk_Place(9, 0, 20);
+    Talk_Place2(9, 10, 0);
+    Talk_Do10(60);
+    Talk_Place3(9, 0, 0);
+    Talk_Do11(20);
+    Talk_Apply20(9, 0);
+    Talk_Run28();
 }
 
 s32 SceneData_SelectTable8d4cOr8a28(void)
 {
-    if (Data_02000240[225] == 8) {
-        return (s32)Data_02008d4c;
+    if (gCell[225] == 8) {
+        return (s32)gOv6;
     }
-    return (s32)Data_02008a28;
+    return (s32)gOv7;
 }
 
 s32 State_SetRuntimeWord448To521(void)
 {
-    void Func_02000686_a(s32, s32, s32, s32);
+    void Talk_Run29(s32, s32, s32, s32);
 
     s16 scene;
 
-    *(s32 *)(Data_03001ebc + 448) = 521;
-    scene = Data_02000240[225];
+    *(s32 *)(gWork + 448) = 521;
+    scene = gCell[225];
     if (scene == 4 || scene == 7) {
-        Func_02000686_a(0x00f80000, 0, 0x01a10000, 20);
+        Talk_Run29(0x00f80000, 0, 0x01a10000, 20);
     } else if (scene == 6) {
-        Func_02000678(0x01cc0000, 0, 0x02380000, 20);
-        Func_02000686_a(0x01e40000, 0, 0x02380000, 20);
+        Talk_SetMode(0x01cc0000, 0, 0x02380000, 20);
+        Talk_Run29(0x01e40000, 0, 0x02380000, 20);
     } else if (scene == 8) {
-        Func_02000c3e(0x12f);
-        Func_02000c76(10, 6);
+        Talk_Do12(0x12f);
+        Talk_Apply21(10, 6);
     }
     return 0;
 }

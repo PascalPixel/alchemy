@@ -1,19 +1,21 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/init/initialize_runtime_defaults.h"
 
 void Audio_Initialize(void);
-extern u8 Data_02003000;
-extern u8 Data_02003004;
-extern u16 Data_02003008;
-extern u16 Data_0200300c;
-extern u16 Data_02003010;
-extern u8 Data_02003014;
-extern u16 Data_02003020;
-extern u16 Data_02003030;
-extern u16 Data_02003034;
-extern u16 Data_02003038;
-extern u8 Data_0200303c;
-extern u8 Data_02003040;
+extern u8 gOv;
+extern u8 gOv2;
+extern u16 gOv3;
+extern u16 gOv4;
+extern u16 gOv5;
+extern u8 gOv6;
+extern u16 gOv7;
+extern u16 gOv8;
+extern u16 gOv9;
+extern u16 gOv10;
+extern u8 gOv11;
+extern u8 gOv12;
 
 void Audio_InitializeRuntimeDefaults(void)
 {
@@ -21,18 +23,18 @@ void Audio_InitializeRuntimeDefaults(void)
     s32 remaining;
 
     Audio_Initialize();
-    Data_0200303c = 0xff;
-    Data_02003000 = 0;
-    Data_02003034 = 0x100;
-    Data_02003008 = 0x100;
-    Data_02003010 = 4;
-    Data_02003030 = 0x100;
-    Data_02003038 = 0x100;
-    Data_0200300c = 4;
-    Data_02003014 = 0;
-    Data_02003040 = 0;
-    player_volume = &Data_02003020;
-    Data_02003004 = 0;
+    gOv11 = 0xff;
+    gOv = 0;
+    gOv9 = 0x100;
+    gOv3 = 0x100;
+    gOv5 = 4;
+    gOv8 = 0x100;
+    gOv10 = 0x100;
+    gOv4 = 4;
+    gOv6 = 0;
+    gOv12 = 0;
+    player_volume = &gOv7;
+    gOv2 = 0;
     remaining = 7;
     do {
         remaining--;

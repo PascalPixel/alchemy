@@ -1,8 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/get_entry_field2_high_bits.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-extern u8 Data_080c7420[];
+extern u8 gRom[];
 
 u32 Battle_GetEntryField2HighBits(u32 no)
 {
@@ -13,7 +14,7 @@ u32 Battle_GetEntryField2HighBits(u32 no)
     if (no > 0xABU) {
         return 0U;
     }
-    tbl = Data_080c7420;
+    tbl = gRom;
     bits = tbl[(no * 8) + 2] >> 5;
     if (bits != 0) {
         ret = bits;

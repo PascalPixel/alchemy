@@ -1,10 +1,11 @@
 #include "text_render_runtime.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_prefixed_number_at_offset.h"
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
-void Func_0801de5c(s16 *text, s32 source, s32 destination, s32 phase);
 
 void UiText_DrawPrefixedNumberAtOffset(
     s32 value,
@@ -24,7 +25,7 @@ void UiText_DrawPrefixedNumberAtOffset(
     s32 dst;
     s32 phase;
 
-    base = Data_03001e8c;
+    base = gIw;
     text = Text_FormatNumber(formatted, value, 4);
     if (variant == 0) {
         output[0] = 0xf01d;
@@ -45,7 +46,7 @@ void UiText_DrawPrefixedNumberAtOffset(
         dst = vram + cell;
         src = (s32)base + cell;
         phase = offset_x & 7;
-        Func_0801de5c(
+        Ui_SetMode(
             output,
             src,
             dst,

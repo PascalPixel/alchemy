@@ -1,10 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/party/check_member_value_total.h"
 
-extern u8 Data_02000240[];
+extern u8 gCell[];
 extern u8 Value_0000097d;
 
-extern s32 Func_08077148(s32);
-extern s32 Func_080772d8(u8, s32);
 extern void UiText_DrawQuantity(s32, s32);
 extern void UiText_DrawMessage(void *, s32);
 
@@ -17,14 +17,14 @@ s32 Party_CheckMemberValueTotal(s32 id)
     s32 sum = offset;
     u8 *p;
 
-    count = Func_08077148(id);
+    count = Party_Check(id);
     if (sum < count) {
         offset = 252;
         offset <<= 1;
-        p = Data_02000240 + offset;
+        p = gCell + offset;
         cnt = count;
         do {
-            value = Func_080772d8(*p, id);
+            value = Party_Apply(*p, id);
             cnt--;
             p++;
             sum += value;

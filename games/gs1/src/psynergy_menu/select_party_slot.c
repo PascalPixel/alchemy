@@ -1,22 +1,19 @@
 #include "types.h"
-
-#define PsynergyMenu_SelectPartySlot Func_080a602c
+#include "scene.h"
+#include "abi/psynergy_menu/select_party_slot.h"
 
 struct Rec5 { u8 pad[5]; unsigned int flag : 8; };
 struct Cur { unsigned short mark : 8; };
 
-extern void *Data_03001f2c;
+extern void *gIw;
 
-void *Func_08077008(s32);
-s32 Func_080a1ac0(s32, s32);
-s32 Func_080a68ec(void *, void *, s32);
-s32 Func_080a60d4(void *, void *);
-void Func_080a17c4(void *cursor);
+void *Sys_Run(s32);
+
 void WaitFrames(s32);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {
-    void *menu = Data_03001f2c;
+    void *menu = gIw;
     s32 offset = party_slot + 28;
     s32 cursor_offset = party_slot * 4 + 20;
     void *icon;
@@ -47,20 +44,20 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
         combined_offset = 0;
     } else {
         combined_offset = owner_index * 2;
-        Func_080a1ac0(owner_index * 24 - 10, 16);
+        Sys_Apply(owner_index * 24 - 10, 16);
     }
 
     obj_off = combined_offset + 520;
     obj_id = *(u16 *)(menu + obj_off);
-    obj_ptr = Func_08077008(obj_id);
+    obj_ptr = Sys_Run(obj_id);
     p456 = menu + 456;
-    badge = Func_080a68ec(obj_ptr, p456, 2);
+    badge = Sys_Place(obj_ptr, p456, 2);
     *(u8 *)(menu + 536) = (u8)badge;
-    result = Func_080a60d4(menu + 520, p456);
+    result = Sys_Apply2(menu + 520, p456);
 
     cursor_offset2 = party_slot * 4 + 20;
     icon = *(void **)(menu + cursor_offset2);
-    Func_080a17c4(icon);
+    Sys_Do(icon);
     WaitFrames(1);
     return result;
 }

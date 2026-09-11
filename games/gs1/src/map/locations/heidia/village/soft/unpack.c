@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /*
  * Soft-float double unpack for overlay resource_3bf.

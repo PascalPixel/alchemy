@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_string_in_window.h"
 
 s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
-void Func_08017c8c(u16 *, s32, s32, s32);
-void Func_08002df0(u16 *);
 
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {
@@ -17,6 +17,6 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     x >>= 3;
     y >>= 3;
-    Func_08017c8c(buffer, arg1, x, y);
-    Func_08002df0(buffer);
+    Ui_SetMode(buffer, arg1, x, y);
+    Ui_Do(buffer);
 }

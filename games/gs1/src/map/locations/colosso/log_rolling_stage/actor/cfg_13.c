@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/actor/cfg_13.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct StageActor {
@@ -5,19 +7,16 @@ typedef struct StageActor {
     s32 x;
 } StageActor;
 
-extern StageActor *Func_02004fac(s32);
-extern void Func_02004f72(s32, s32);
-extern void Func_02004ef6(s32, s32, s32, s32, s32, s32);
-extern void Func_02004f06(s32, s32, s32, s32, s32, s32);
+extern StageActor *Actor_Run(s32);
 
 void Colosso_ConfigureActorThirteen(void)
 {
     StageActor *actor;
     s32 x;
 
-    actor = Func_02004fac(13);
+    actor = Actor_Run(13);
     x = actor->x >> 20;
-    Func_02004f72(880, x);
-    Func_02004ef6(18, 10, 3, 1, 18, 11);
-    Func_02004f06(17, 11, 1, 1, x, 11);
+    Actor_Apply(880, x);
+    Actor_SetRect(18, 10, 3, 1, 18, 11);
+    Actor_SetRect2(17, 11, 1, 1, x, 11);
 }

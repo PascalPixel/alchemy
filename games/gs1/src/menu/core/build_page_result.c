@@ -1,5 +1,7 @@
 #include "menu_result.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/core/build_page_result.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
 
@@ -9,7 +11,7 @@
 #define GROUP_LEN 5
 #endif
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 s32 Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);

@@ -1,7 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/group/apply_random_child_values.h"
 
-extern volatile s32 Data_03001e40;
-s32 Func_08002304(s32, s32) __attribute__((const));
+extern volatile s32 gIw;
 
 void ObjectGroup_ApplyRandomChildValues(void *owner)
 {
@@ -21,12 +22,12 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
         if (target != 0 && (*(u8 *)((u8 *)target + 29) & state) == 0) {
             initial_count = *(u8 *)((u8 *)target + 39);
             if (initial_count != 0) {
-                global = &Data_03001e40;
+                global = &gIw;
                 entry = (void **)((u8 *)target + 40);
                 count = initial_count;
                 do {
                     current = *entry++;
-                    value = Func_08002304(*global, 6);
+                    value = Obj_Apply(*global, 6);
                     count--;
                     *(u8 *)((u8 *)current + 5) = value;
                 } while (count != 0);

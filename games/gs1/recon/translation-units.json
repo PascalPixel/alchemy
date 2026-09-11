@@ -5975,7 +5975,7 @@
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
-      "source": "games/gs1/src/overlays/scene/script/run_39a_02001ad0.c",
+      "source": "games/gs1/src/overlays/scene/script/talk_pair_step.c",
       "absolute_symbols": {
         "Func_02003e7a": {
           "address": "0x0200a380",
@@ -89372,7 +89372,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-39c-020010c0",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_39c_020010c0.c",
+      "source": "games/gs1/src/overlays/scene/script/sel_place_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {},
@@ -89387,7 +89387,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-39c-020014cc",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_39c_020014cc.c",
+      "source": "games/gs1/src/overlays/scene/script/sel_close_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -89470,7 +89470,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-37f-0200092c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_37f_0200092c.c",
+      "source": "games/gs1/src/overlays/scene/script/gate_open_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -89495,7 +89495,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-37f-02000d1c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_37f_02000d1c.c",
+      "source": "games/gs1/src/overlays/scene/script/gate_close_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -89580,7 +89580,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-38d-0200179c",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_38d_0200179c.c",
+      "source": "games/gs1/src/overlays/scene/script/cue_close_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -89645,7 +89645,7 @@
     {
       "id": "restored-overlays-scene-primary-script-run-scene-3af-02001a98",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_3af_02001a98.c",
+      "source": "games/gs1/src/overlays/scene/script/fx_entry_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {},
@@ -89660,7 +89660,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-02001b58",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_3af_02001b58.c",
+      "source": "games/gs1/src/overlays/scene/script/fx_mid_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -89685,7 +89685,7 @@
     {
       "id": "overlays-scene-primary-script-run-scene-3af-02001c14",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/script/run_3af_02001c14.c",
+      "source": "games/gs1/src/overlays/scene/script/fx_pair_step.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {

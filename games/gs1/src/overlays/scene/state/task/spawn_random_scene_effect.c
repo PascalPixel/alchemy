@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/task/spawn_random_scene_effect.h"
 
 typedef struct Obj {
     s32 f00;
@@ -12,19 +14,11 @@ typedef struct Obj {
     u8 f55;
 } Obj;
 
-extern u8 Data_0200c264[];
+extern u8 gOv[];
 
-extern u32 Func_02007030(void);
-extern s32 Func_0200704c(void);
-extern s32 Func_02007052(void);
-extern void Func_0200706e(s32, s32, s32 *);
-extern Obj *Func_0200710a(s32, s32, s32, s32);
-extern void Func_02007166(Obj *, s32);
-extern void Func_0200711e(Obj *, s32);
-extern void Func_0200711e_a(Obj *, s32);
-extern void Func_02007126(Obj *, s32);
+extern Obj *State_Run(s32, s32, s32, s32);
 
-void Func_0200325c(Obj *a)
+void State_Run2(Obj *a)
 {
     s32 t[3];
     u32 n;
@@ -32,7 +26,7 @@ void Func_0200325c(Obj *a)
     if (a->f28 >= -255 && a->f28 <= 255) {
         a->f55 = 0;
     }
-    n = Func_02007030();
+    n = State_Run3();
     if (n * 100 >> 16 <= 9) {
         Obj *o;
         s32 u;
@@ -41,22 +35,22 @@ void Func_0200325c(Obj *a)
         t[0] = a->f08;
         t[1] = a->f0c;
         t[2] = a->f10;
-        u = Func_0200704c();
-        w = Func_02007052();
-        Func_0200706e(u << 4, w, t);
+        u = State_Check();
+        w = State_Check2();
+        State_Place(u << 4, w, t);
         {
             s32 x = t[0];
             s32 y = t[1];
             s32 z = t[2];
 
-            o = Func_0200710a(285, x, y, z);
+            o = State_Run(285, x, y, z);
         }
         if (o != 0) {
             o->f55 = 0;
-            Func_02007166(o, 0);
-            Func_0200711e(o, (s32)Data_0200c264);
-            Func_0200711e_a(o, 1);
-            Func_02007126(o, 0);
+            State_Apply(o, 0);
+            State_Apply2(o, (s32)gOv);
+            State_Apply3(o, 1);
+            State_Apply4(o, 0);
         }
     }
 }

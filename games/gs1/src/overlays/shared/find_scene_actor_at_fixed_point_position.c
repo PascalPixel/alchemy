@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/shared/find_scene_actor_at_fixed_point_position.h"
 
-extern u8 *Data_03001ebc;
+extern u8 *gWork;
 
-s32 *Func_02000350(s32 *arg0)
+s32 *Sys_Run(s32 *arg0)
 {
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {

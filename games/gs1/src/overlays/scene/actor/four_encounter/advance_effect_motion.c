@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/four_encounter/advance_effect_motion.h"
 
 /*
  * Per-frame integrator for an effect record -- resource_396. It adds the
@@ -43,13 +45,12 @@ struct Effect {
  * and a duration into a per-frame step. Declared without a prototype, and the
  * call site passes two arguments.
  */
-s32 Func_0200328e();
 
 /*
  * The decay of the Z velocity stays a signed divide by sixteen: that shape is
  * what reproduces the negative bias and arithmetic shift in the reference.
  */
-void Func_0200185c(struct Effect *effect)
+void Actor_Run(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
@@ -64,7 +65,7 @@ void Func_0200185c(struct Effect *effect)
     velocity_z = effect->velocity[2];
     effect->position[2] += velocity_z;
 
-    effect->velocity[0] = velocity_x - Func_0200328e(velocity_x, 18);
+    effect->velocity[0] = velocity_x - Actor_Check(velocity_x, 18);
     effect->velocity[2] = velocity_z - velocity_z / 16;
 
     effect->accum18 += effect->rate30;

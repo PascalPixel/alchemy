@@ -1,6 +1,8 @@
+#include "scene.h"
+#include "abi/equipment_menu/start_compatibility_indicators.h"
 #include "equipment_menu.h"
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 void Object_InitializeMode(void *, s32);
 s32 ScheduleCallback(s32);
 
@@ -9,7 +11,7 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
     u8 *menu;
     s8 member_index;
 
-    menu = Data_03001f2c;
+    menu = gIw;
     if (menu[0x219] != 0) {
         member_index = 0;
         do {

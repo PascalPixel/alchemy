@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void MusicPlayer_SetPitch(u8 *state, u32 mask, u32 value);
 void MusicCommand_SetPitch(s16 pitch)

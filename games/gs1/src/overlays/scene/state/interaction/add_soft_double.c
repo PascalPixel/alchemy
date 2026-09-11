@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/add_soft_double.h"
 
 /*
  * Soft-float double addition for resource_3a7.  Both operands are unpacked into
@@ -17,11 +19,8 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-void Func_02002b34(const SoftDouble *packed, SoftFloatRecord *record);
-void Func_02002b3e(const SoftDouble *packed, SoftFloatRecord *record);
-SoftFloatRecord *Func_02002530(SoftFloatRecord *left, SoftFloatRecord *right,
+SoftFloatRecord *State_Run(SoftFloatRecord *left, SoftFloatRecord *right,
                                SoftFloatRecord *result);
-SoftDouble Func_02002980(SoftFloatRecord *result);
 
 SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
 {
@@ -40,8 +39,8 @@ SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     wb[0] = b0;
     wb[1] = b1;
 
-    Func_02002b34(&frame.packed_a, &frame.record_a);
-    Func_02002b3e(&frame.packed_b, &frame.record_b);
+    State_Apply(&frame.packed_a, &frame.record_a);
+    State_Apply2(&frame.packed_b, &frame.record_b);
 
-    return Func_02002980(Func_02002530(&frame.record_a, &frame.record_b, &frame.result));
+    return State_Do(State_Run(&frame.record_a, &frame.record_b, &frame.result));
 }

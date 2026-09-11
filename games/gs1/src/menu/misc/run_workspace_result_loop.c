@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/misc/run_workspace_result_loop.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE)
@@ -7,10 +9,6 @@
 #define RESULT_CELL_ADDR 0x03001CC8
 #endif
 
-s32 Func_0801db70(void);
-s32 Func_080207c4(void);
-void Func_0801776c(s32, s32);
-s32 Func_0801d4cc(void);
 extern char Value_00000c2a;
 
 s32 Menu_RunWorkspaceResultLoop(void)
@@ -18,19 +16,19 @@ s32 Menu_RunWorkspaceResultLoop(void)
     s32 result;
 
 retry:
-    result = Func_0801db70();
+    result = Menu_Check();
     if (result == -1) {
         return -1;
     }
     if (result == 0) {
-        if (Func_080207c4() == -1) {
+        if (Menu_Check2() == -1) {
             goto retry;
         }
     } else if (result == 1) {
-        Func_0801776c((s32)&Value_00000c2a, 1);
+        Menu_Apply((s32)&Value_00000c2a, 1);
         *(u8 *)RESULT_CELL_ADDR = result;
     } else if (result == 2) {
-        if (Func_0801d4cc() == -1) {
+        if (Menu_Check3() == -1) {
             goto retry;
         }
     }

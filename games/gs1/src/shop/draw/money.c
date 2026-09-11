@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "shop.h"
 
 void UiText_DrawAt(s32, s32, s32, s32);

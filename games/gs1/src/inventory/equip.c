@@ -1,7 +1,6 @@
+#include "scene.h"
+#include "abi/inventory/equip.h"
 #include "inventory.h"
-
-void Func_08078bf0(s32 owner);
-void Func_08077428(s32 owner);
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
@@ -45,7 +44,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
     }
 
     inv->inventory[slot] |= 0x200;
-    Func_08078bf0(owner);
-    Func_08077428(owner);
+    Sys_Do(owner);
+    Sys_Do2(owner);
     return 0;
 }

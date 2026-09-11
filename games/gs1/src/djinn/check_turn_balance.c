@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/djinn/check_turn_balance.h"
 
-void Func_080ae7fc(s8 *);
-
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 
 s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 {
@@ -13,7 +13,7 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
     s32 difference;
     s32 balanced;
 
-    work = Data_03001f2c;
+    work = gIw;
     Djinn_CountTurns(counts);
     counts[from] -= 1;
     counts[to] += 1;

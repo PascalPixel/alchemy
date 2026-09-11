@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/set_object_flag5b_when_mode3.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-s32 Func_08009230();
 
 void Battle_SetObjectFlag5bWhenMode3(void)
 {
@@ -20,6 +20,6 @@ void Battle_SetObjectFlag5bWhenMode3(void)
             FIELD_AT_OFFSET(blk, s8 *, 0x53D) = 0;
         }
         FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x1E0), s8 *, 0x5B) = 1;
-        Func_08009230();
+        Battle_Check();
     }
 }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/vram/upload_block.h"
 
 struct State {
     u8 unknown[156];
@@ -6,20 +8,19 @@ struct State {
     u32 source;
 };
 
-extern struct State Data_03001e50;
-u32 Func_080054e4(void *, void *, u32);
+extern struct State gIw;
 
 u32 Graphics_UploadVramBlock(void)
 {
-    void *source = (void *)Data_03001e50.source;
-    u8 *context = (u8 *)Data_03001e50.context;
+    void *source = (void *)gIw.source;
+    u8 *context = (u8 *)gIw.context;
 
     if (source != 0) {
         u32 *active = (u32 *)(context + 0x13C0);
 
         if (*active != 0) {
             *active = 0;
-            return Func_080054e4(source, (void *)0x06004000, 0x4000);
+            return Sys_Place(source, (void *)0x06004000, 0x4000);
         }
     }
     return (u32)source;

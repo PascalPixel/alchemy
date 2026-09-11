@@ -1,5 +1,7 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/resource/metadata/register.h"
 
 struct MetadataSlotState {
     u8 padding0[24];
@@ -23,8 +25,6 @@ struct MetadataRecord {
     u8 fourth;
 };
 
-extern s32 Func_0800bbc0(s32);
-
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
 {
     s32 value = state->slots[0];
@@ -44,11 +44,11 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
     }
     if (index == 4)
         return -1;
-    value = Func_0800bbc0(id);
+    value = Sys_Check(id);
     if (value == 0)
         return 0;
     state->slots[index] = value;
-    metadata = Func_08185000(id);
+    metadata = Sys_Run(id);
     if (state->count == 0) {
         state->first = metadata->first;
         state->second = metadata->second;

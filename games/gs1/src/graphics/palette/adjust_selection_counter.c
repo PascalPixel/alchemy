@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/palette/adjust_selection_counter.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 Data_02000240[];
+extern u8 gCell[];
 
 void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
 {
@@ -14,21 +16,21 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
     switch (sel) {
     case 0:
         off = 0x20C;
-        sp = &Data_02000240[off];
+        sp = &gCell[off];
         if (*sp <= 1) {
             break;
         }
         return;
     case 1:
         off = 0x205;
-        sp = &Data_02000240[off];
+        sp = &gCell[off];
         if (*sp <= 23) {
             break;
         }
         return;
     case 2:
         off = 0x206;
-        sp = &Data_02000240[off];
+        sp = &gCell[off];
         if (*sp <= 14) {
             break;
         }

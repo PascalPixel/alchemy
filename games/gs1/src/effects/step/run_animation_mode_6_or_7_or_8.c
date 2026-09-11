@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_step.h"
 
 void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step)

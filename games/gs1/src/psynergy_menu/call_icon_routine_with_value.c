@@ -1,8 +1,8 @@
 #include "types.h"
-
-void Func_080150e0(s32, s32, s32);
+#include "scene.h"
+#include "abi/psynergy_menu/call_icon_routine_with_value.h"
 
 void PsynergyMenu_CallIconRoutineWithValue(s32 arg0, s32 arg1)
 {
-    Func_080150e0(0, arg1, 0);
+    Sys_Place(0, arg1, 0);
 }

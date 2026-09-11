@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/party/compute_eligible_member_average.h"
 #include "battle_formation.h"
 
 struct Object_080c1a34 {
@@ -6,7 +8,7 @@ struct Object_080c1a34 {
     u8 value;
 };
 
-struct Object_080c1a34 *Func_08077198(s32 id);
+struct Object_080c1a34 *Party_Run(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
@@ -20,7 +22,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 
     eligible_count = 0;
     level_sum = 0;
-    record = &Data_080c5c38[record_id];
+    record = &gRom[record_id];
     (void)scratch;
 
     member_index = 0;
@@ -45,7 +47,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
             s32 member;
 
             member = record->member_ids[member_index];
-            object = Func_08077198(member + 8);
+            object = Party_Run(member + 8);
             if (object != 0) {
                 if (object->value <= 3 ||
                     GameFlag_IsSet(372) != 0 ||

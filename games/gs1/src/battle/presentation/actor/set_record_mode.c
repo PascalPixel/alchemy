@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/actor/set_record_mode.h"
 
 struct EffectActorRecord {
     u8 reserved_00[5];
@@ -21,11 +23,11 @@ struct EffectActorSlot {
     struct EffectActorObject *object;
 };
 
-struct EffectActorSlot *Func_080b7dd0(s32);
+struct EffectActorSlot *Actor_Run(s32);
 
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 {
-    struct EffectActorSlot *slot = Func_080b7dd0(actor_id);
+    struct EffectActorSlot *slot = Actor_Run(actor_id);
     struct EffectActorObject *object;
     struct EffectActorRecord *record;
     struct EffectActorRecord **records;

@@ -1,6 +1,6 @@
 #include "types.h"
-
-void Func_080b50e0(u16 *, s32);
+#include "scene.h"
+#include "abi/menu/selection/send_node_count_list.h"
 
 void Menu_SendNodeCountList(u8 *arg0)
 {
@@ -13,5 +13,5 @@ void Menu_SendNodeCountList(u8 *arg0)
         count++;
     }
     data[count] = 0xff;
-    Func_080b50e0(data, 0);
+    Menu_Apply(data, 0);
 }

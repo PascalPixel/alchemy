@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/script/interpreter/pos/absolute.h"
 #include "object_commands.h"
 #include "script_interpreter.h"
 
@@ -15,7 +17,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Func_0800d14c(interpreter, first, second, third);
+    Script_Run(interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }

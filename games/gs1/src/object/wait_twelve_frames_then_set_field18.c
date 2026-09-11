@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/wait_twelve_frames_then_set_field18.h"
 
 s32 WaitFrames(s32);
-s32 Func_080b5078(s32, s16, s32, s32);
-s32 Func_080d4604(void *, s32);
 
 struct Object080eceac {
   u8 padding_00[8];
@@ -15,8 +15,8 @@ struct Object080eceac {
 
 void Object_WaitTwelveFramesThenSetField18(struct Object080eceac *obj)
 {
-  Func_080b5078(obj->field_08, obj->field_24, 0x18, 0x73333);
+  Obj_SetMode(obj->field_08, obj->field_24, 0x18, 0x73333);
  do { WaitFrames(0xC); } while (0);
   obj->field_18 = 3;
-  Func_080d4604(obj, 2);
+  Obj_Apply(obj, 2);
 }

@@ -1,34 +1,33 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/data/lookup_routines.h"
 
-extern u8 *Data_03001ebc;
-
-extern s32 Func_0808ae74();
+extern u8 *gWork;
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
-    u8 *table = Data_03001ebc + 0x1a0;
+    u8 *table = gWork + 0x1a0;
 
     /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
-    return Func_0808ae74(table[index]);
+    return SceneData_Apply(table[index]);
 }
 
 s32 BattleFx_LookupResult(void *);
-s32 Func_0808ae74(s32, s32);
 
 s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
 {
-    return Func_0808ae74(BattleFx_LookupResult((void *)arg0), arg1);
+    return SceneData_Apply(BattleFx_LookupResult((void *)arg0), arg1);
 }
 
-extern u16 Data_0809c610[];
+extern u16 gRom[];
 
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 {
-    return Data_0809c610[(arg0 * 14) + arg1 + 2];
+    return gRom[(arg0 * 14) + arg1 + 2];
 }
 
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-extern u8 Data_0809d8b0[];
+extern u8 gRom2[];
 unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 {
   s32 entry_offset;
@@ -38,8 +37,8 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
   u8 *entry;
   u8 *weighted_row_address;
   entry_offset = phase_index * 4;
-  entry = ((u8 *)entry_offset) + (s32)Data_0809d8b0;
-  weighted_index_address = entry_offset + (s32)Data_0809d8b0;
+  entry = ((u8 *)entry_offset) + (s32)gRom2;
+  weighted_index_address = entry_offset + (s32)gRom2;
   weighted_row_address = entry;
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
@@ -48,7 +47,7 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 
 struct SceneInteractionEntry {
     s16 id;
@@ -58,17 +57,17 @@ struct SceneInteractionEntry {
     s16 result;
 };
 
-extern const struct SceneInteractionEntry Data_0809d9f0[];
+extern const struct SceneInteractionEntry gRom3[];
 
 s32 GameFlag_IsSet(s32 flag);
 
 void Scene_ResolveInteractionResult(void)
 {
     s16 result = 18;
-    s16 progress = Data_02000240[224];
-    s16 sub = Data_02000240[225];
-    s16 alt = Data_02000240[230];
-    const struct SceneInteractionEntry *entry = Data_0809d9f0;
+    s16 progress = gCell[224];
+    s16 sub = gCell[225];
+    s16 alt = gCell[230];
+    const struct SceneInteractionEntry *entry = gRom3;
 
     for (; entry->id != -1; entry++) {
         if (entry->alt_source) {
@@ -98,5 +97,5 @@ void Scene_ResolveInteractionResult(void)
         }
     }
 
-    Data_02000240[248] = result;
+    gCell[248] = result;
 }

@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/item_menu/open_detail.h"
 #include "item_menu.h"
 
 struct ItemMenuDetailsState {
@@ -7,18 +9,13 @@ struct ItemMenuDetailsState {
     u16 item_ids[0x100];
 };
 
-s32 Func_080a10d0(s32 *, s32, s32, s32, s32, s32);
-void Func_080a22f4(void);
-void Func_080a4924(s32, s32);
-#define ItemMenu_DrawItemDetails Func_080a4924
-
 s32 ItemMenu_OpenDetail(s32 item_index)
 {
     struct ItemMenuDetailsState *menu =
-        (struct ItemMenuDetailsState *)Data_03001f2c;
+        (struct ItemMenuDetailsState *)gIw;
 
-    Func_080a10d0(&menu->details_window, 0, 0, 13, 10, 2);
-    Func_080a22f4();
+    Sys_SetRect(&menu->details_window, 0, 0, 13, 10, 2);
+    Sys_Run();
 
     if (menu->item_ids[item_index] != 0)
         ItemMenu_DrawItemDetails(

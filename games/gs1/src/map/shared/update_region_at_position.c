@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/update_region_at_position.h"
 #include "map.h"
 
 struct Region_0808bde0 {
@@ -24,8 +26,8 @@ struct RuntimeServices_0808bde0 {
     RegionProvider_0808bde0 region_provider;
 };
 
-extern struct RuntimeServices_0808bde0 Data_02008000;
-extern struct Runtime_0808bde0 *Data_03001ebc;
+extern struct RuntimeServices_0808bde0 gOv;
+extern struct Runtime_0808bde0 *gWork;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
@@ -52,9 +54,9 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
     x = position_x;
     y = position_y;
     z = position_z;
-    region = Data_02008000.region_provider();
+    region = gOv.region_provider();
     if (region != 0 &&
-        (runtime = Data_03001ebc, min_x = region->min_x, min_x != -1)) {
+        (runtime = gWork, min_x = region->min_x, min_x != -1)) {
 loop:
         min_y = region->min_y;
         min_z = region->min_z;
@@ -75,7 +77,7 @@ loop:
             Battle_InitializeRenderObject();
             return;
         }
-        runtime = Data_03001ebc;
+        runtime = gWork;
         region++;
         min_x = region->min_x;
         if (min_x != -1)

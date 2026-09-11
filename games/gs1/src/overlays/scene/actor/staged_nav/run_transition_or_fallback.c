@@ -1,15 +1,13 @@
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_nav/run_transition_or_fallback.h"
 /* Begin a scene, attempt the forward transition, and fall back to pushing the
  * obstructing actor when the transition cannot run.  Complete 28-byte owner
  * from the prologue at 0x02001528 through return/alignment at 0x02001543. */
-void Func_02004038(void);
-void Func_02004050(void);
-int Func_02002798(void);
-void Func_020018e0(void);
 
 void Scene_RunTransitionOrFallback(void)
 {
-    Func_02004038();
-    if (Func_02002798() == 0)
-        Func_020018e0();
-    Func_02004050();
+    Actor_Run();
+    if (Actor_Run2() == 0)
+        Actor_Run3();
+    Actor_Run4();
 }

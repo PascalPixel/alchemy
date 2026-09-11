@@ -1,12 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/motion/initialize_actor_records.h"
 
 u8 *Runtime_GetObject(s32);
 s32 *GetBattleObjectSlot(s32);
 u8 *GetMotionRecord(s32, s32);
 void Object_InitializeMode(void *, s32);
 void WaitFrames(s32);
-void Func_080bac6c(s32);
-void Func_08009108(void **, s32);
+
 void ActivateBattleObjectSlot(s32);
 
 void BattleMotion_InitializeActorRecords(s32 id)
@@ -37,8 +38,8 @@ void BattleMotion_InitializeActorRecords(s32 id)
             index++;
         }
         WaitFrames(4);
-        Func_080bac6c(id);
-        Func_08009108(items, index);
+        Battle_Do(id);
+        Battle_Apply(items, index);
         ActivateBattleObjectSlot(id);
     }
 }

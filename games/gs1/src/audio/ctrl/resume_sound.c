@@ -1,5 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/ctrl/resume_sound.h"
 
 typedef struct {
     u32 header;
@@ -7,8 +9,8 @@ typedef struct {
 } SoundTableEntry;
 
 void Audio_ResumePlayer(void *player);
-extern void *Data_080fc624[];
-extern SoundTableEntry Data_080fc684[];
+extern void *gRom[];
+extern SoundTableEntry gRom2[];
 
 void Audio_ResumeSound(u16 audio_cue_id)
 {
@@ -23,8 +25,8 @@ void Audio_ResumeSound(u16 audio_cue_id)
     u32 player_slot;
 
     table_offset <<= 16;
-    players = Data_080fc624;
-    audio_cue_table = Data_080fc684;
+    players = gRom;
+    audio_cue_table = gRom2;
     table_offset >>= 13;
     audio_cue = (SoundTableEntry *)((unsigned char *)audio_cue_table + table_offset);
     player_id = audio_cue->player;

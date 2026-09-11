@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item_menu.h"
 
 s32 ItemMenu_IsSpecial(s32 item_id)

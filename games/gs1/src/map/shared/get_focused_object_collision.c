@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/get_focused_object_collision.h"
 #include "map.h"
 
 /* 注目オブジェクトの座標を補正してマップセルを引き、衝突コードを返す。
@@ -31,8 +33,8 @@ struct Position_0808bd24 {
 
 void RotateVectorByMagnitude(s32, u32, struct Position_0808bd24 *);
 
-extern struct Global_0808bd24 Data_02000240;
-extern struct Runtime_0808bd24 *Data_03001ebc;
+extern struct Global_0808bd24 gCell;
+extern struct Runtime_0808bd24 *gWork;
 
 u8 GetFocusedObjectCollision(void)
 {
@@ -46,9 +48,9 @@ u8 GetFocusedObjectCollision(void)
     s32 x;
     s32 y;
 
-    runtime_slot_address = (u32)&Data_03001ebc;
-    runtime = Data_03001ebc;
-    offset = (Data_02000240.object_id * 4) + 0x14;
+    runtime_slot_address = (u32)&gWork;
+    runtime = gWork;
+    offset = (gCell.object_id * 4) + 0x14;
     object = *(struct Object_0808bd24 **)((u8 *)runtime + offset);
     /* マップ状態のポインタ枠は実行時ポインタ枠の19語手前。 */
     map = *(struct MapState **)(runtime_slot_address - 76);

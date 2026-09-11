@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item_menu.h"
 #include "m7_interfaces.h"
 #include "global_cells.h"

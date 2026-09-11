@@ -1,10 +1,9 @@
 #include "types.h"
-
-s32 Func_08077d38();
-s32 Func_0808a008(s32);
+#include "scene.h"
+#include "abi/owner/refresh_and_reset_zero.h"
 
 void Owner_RefreshAndResetZero(void)
 {
-    Func_08077d38();
-    Func_0808a008(0);
+    Sys_Check();
+    Sys_Check2(0);
 }

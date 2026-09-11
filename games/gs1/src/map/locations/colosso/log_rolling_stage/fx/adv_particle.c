@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct SceneParticle {

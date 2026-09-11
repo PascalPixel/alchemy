@@ -1,15 +1,15 @@
+#include "scene.h"
+#include "abi/item_menu/icon/hide_empty.h"
 #include "item_menu.h"
-
-void Func_080a17c4(void *icon);
 
 void Menu_HideEmptyEntryIcons(const u16 *items)
 {
-    struct ItemMenuState *menu = Data_03001f2c;
+    struct ItemMenuState *menu = gIw;
     s32 slot;
 
     for (slot = 0; slot < 32; slot++) {
         if (items[slot] == 0) {
-            Func_080a17c4(menu->entry_icons[slot]);
+            Sys_Do(menu->entry_icons[slot]);
             menu->entry_icons[slot]->state = 13;
         }
     }

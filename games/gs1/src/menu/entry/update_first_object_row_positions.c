@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/update_first_object_row_positions.h"
 
-extern u8 *Data_03001f2c;
-s32 Func_08009008(s32, void *, void *, s32);
+extern u8 *gIw;
 
 void Menu_UpdateFirstObjectRowPositions(void)
 {
-    u8 *base = Data_03001f2c;
+    u8 *base = gIw;
     s16 *offsets = (s16 *)(base + 0x134);
     s32 *entries = (s32 *)(base + 0x114);
     s32 source[2];
@@ -22,7 +23,7 @@ void Menu_UpdateFirstObjectRowPositions(void)
             request[1] = 0x01F40000;
             request[2] = (offsets[index + 8] << 16) + 0x01F40000;
             request[3] = 0;
-            Func_08009008(handle, request, source, 0x4000);
+            Menu_SetMode(handle, request, source, 0x4000);
         }
         index += 1;
         if (index > 3) {

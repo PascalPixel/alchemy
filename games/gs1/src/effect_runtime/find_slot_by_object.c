@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_runtime.h"
 
 s32 EffectRuntime_FindSlotByObject(s32 object)

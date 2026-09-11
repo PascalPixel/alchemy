@@ -11,7 +11,7 @@ extern const u8 Data_0809ff18[];
 extern const u8 Data_0809ff2c[];
 extern const u8 Data_0809fe04[];
 
-void ObjectMotion_SetActionCallback(s8 *object, s32 kind)
+void Motion_SetActionCallback(s8 *object, s32 kind)
 {
     s32 index;
     switch ((u32)(kind - 1)) {

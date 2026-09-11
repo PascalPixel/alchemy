@@ -8,7 +8,7 @@ extern u8 Value_00000036;
 extern u8 Value_00000037;
 extern u8 Value_00000039;
 
-void BattleEffect_SelectResultPointer(s32 arg0)
+void BattleFx_SelectResultPointer(s32 arg0)
 {
     u16 value;
 

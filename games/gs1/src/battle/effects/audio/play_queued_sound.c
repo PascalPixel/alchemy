@@ -8,7 +8,7 @@ struct BattleEventState {
 extern struct BattleEventState *Data_03001ebc;
 void Audio_PlayCue(s32);
 
-void BattleEffect_PlayQueuedSound(void)
+void BattleFx_PlayQueuedSound(void)
 {
     s16 sound_id = Data_03001ebc->queued_sound;
 

@@ -6,12 +6,12 @@
 #define SceneData_ReturnZero Func_02000038
 #define SceneData_GetTable81d8 Func_0200003c
 #define SceneData_GetTable81ec Func_02000044
-#define SceneState_ApplyValues8And0And0Then30 Func_0200004c
-#define SceneState_ApplyValues9And1And0Then44 Func_02000064
-#define SceneState_ApplyValues10And2And0Then58 Func_0200007c
-#define SceneState_ApplyValues11And3And0Then6c Func_02000094
+#define State_ApplyValues8And0And0Then30 Func_0200004c
+#define State_ApplyValues9And1And0Then44 Func_02000064
+#define State_ApplyValues10And2And0Then58 Func_0200007c
+#define State_ApplyValues11And3And0Then6c Func_02000094
 #define SceneData_GetTable8264 Func_020000ac
-#define FieldScene_RunEmptyScene Func_020000b4
+#define Scene_RunEmptyScene Func_020000b4
 
 #include "resource_3cc.h"
 
@@ -56,25 +56,25 @@ u8 *SceneData_GetTable81ec(void)
     return (u8 *)0x020081ec;
 }
 
-void SceneState_ApplyValues8And0And0Then30(void)
+void State_ApplyValues8And0And0Then30(void)
 {
     Func_02000116(8, 0, 0);
     Func_02000114(0x30);
 }
 
-void SceneState_ApplyValues9And1And0Then44(void)
+void State_ApplyValues9And1And0Then44(void)
 {
     Func_0200012e(9, 1, 0);
     Func_0200012c(0x44);
 }
 
-void SceneState_ApplyValues10And2And0Then58(void)
+void State_ApplyValues10And2And0Then58(void)
 {
     Func_02000146(0xA, 2, 0);
     Func_02000144(0x58);
 }
 
-void SceneState_ApplyValues11And3And0Then6c(void)
+void State_ApplyValues11And3And0Then6c(void)
 {
     Func_0200015e(0xB, 3, 0);
     Func_0200015c(0x6C);
@@ -90,7 +90,7 @@ u8 *SceneData_GetTable8264(void)
  * Overlay entry point, reached through the loader-relocated call word at
  * image offset 4. It sequences nothing and returns zero.
  */
-s32 FieldScene_RunEmptyScene(void)
+s32 Scene_RunEmptyScene(void)
 {
     return 0;
 }

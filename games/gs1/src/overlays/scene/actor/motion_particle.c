@@ -1,54 +1,54 @@
 #include "types.h"
 
-#define BattleRuntime_Reset_1(args...) Func_0200107c(args)
+#define Battle_Reset_1(args...) Func_0200107c(args)
 #define GameFlag_IsSet_1(a0) Value1(Func_02001062, a0)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_02001114, a0)
 #define BattleEventRuntime_ProcessAction_1(args...) Func_0200113c(args)
 #define Object_SetModeById_1(args...) Func_020010f6(args)
 #define SceneWork_SetStepValue_2(a0) Call1(Func_0200112c, a0)
-#define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_0200114e(args)
+#define Battle_RunThenWaitIfModeZero_1(args...) Func_0200114e(args)
 #define GameFlag_IsSet_2(a0) Value1(Func_02001094, a0)
 #define Scene_GetRecord_1(args...) Func_020010e0(args)
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_020011a6(args)
-#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_0200119e, a0, a1)
-#define ObjectMotion_PlaceWithinCameraBounds_1(args...) Func_020011b2(args)
-#define ObjectMotion_SetAngleToward_1(a0, a1, a2) Call3(Func_0200115e, a0, a1, a2)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_020011aa, a0, a1, a2)
+#define Motion_SetSpeedLim_1(a0, a1) Call2(Func_0200119e, a0, a1)
+#define Motion_CamBounds_1(args...) Func_020011b2(args)
+#define Motion_SetAngleToward_1(a0, a1, a2) Call3(Func_0200115e, a0, a1, a2)
+#define Motion_ArmCb_1(a0, a1, a2) Call3(Func_020011aa, a0, a1, a2)
 #define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_020011d6(args)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_020010fc(args)
+#define Battle_WaitMode0_1(args...) Func_020010fc(args)
 #define Scene_GetRecord_2(args...) Func_0200112a(args)
-#define ObjectMotion_PlaceWithinCameraBounds_2(args...) Func_020011e8(args)
+#define Motion_CamBounds_2(args...) Func_020011e8(args)
 #define Object_CommitPositionThenWaitIfModeZero_2(args...) Func_020011f4(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02001184(args)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02001130(args)
+#define Motion_CallWaitAnim_1(args...) Func_02001184(args)
+#define Battle_SchedShoulder_1(args...) Func_02001130(args)
 #define SceneData_SelectTableByWord224 Func_02000030
 #define SceneData_GetTable9390 Func_02000074
 #define SceneData_SelectFlaggedTable Func_0200007c
 #define SceneData_GetPrimaryTable Func_0200011c
-#define FieldScene_RunActorEightPromptDialogue Func_0200015c
-#define SceneDialogue_ShowLine1918 Func_020001b0
-#define FieldScene_RunOpeningAuxiliarySequence Func_020001d0
-#define SceneDialogue_RunActor17Message1924 Func_02000298
-#define SceneDialogue_RunActor9Message1932 Func_020002b8
-#define SceneDialogue_RunActor10Message18d9 Func_020002d8
-#define SceneDialogue_RunActor14Message18e1 Func_020002f8
-#define SceneDialogue_RunActor21Message194a Func_02000318
-#define SceneActor_IsSlotZeroAngleInRange Func_02000338
-#define FieldScene_RunActorFifteenFlagBranch Func_02000360
-#define FieldScene_RunActorTwentyFlagBranch Func_020003d4
-#define FieldScene_RunActorTwentyOneFlagBranch Func_02000448
-#define FieldScene_RunFacingGatedDialogue18 Func_020004bc
-#define FieldScene_RunEarlySequence Func_02000524
-#define FieldScene_RunScene3a3SequenceB Func_020006a4
+#define Scene_RunActorEightPromptDialogue Func_0200015c
+#define Dialogue_ShowLine1918 Func_020001b0
+#define Scene_RunOpeningAuxiliarySequence Func_020001d0
+#define Dialogue_RunActor17Message1924 Func_02000298
+#define Dialogue_RunActor9Message1932 Func_020002b8
+#define Dialogue_RunActor10Message18d9 Func_020002d8
+#define Dialogue_RunActor14Message18e1 Func_020002f8
+#define Dialogue_RunActor21Message194a Func_02000318
+#define Actor_IsSlotZeroAngleInRange Func_02000338
+#define Scene_RunActorFifteenFlagBranch Func_02000360
+#define Scene_RunActorTwentyFlagBranch Func_020003d4
+#define Scene_RunActorTwentyOneFlagBranch Func_02000448
+#define Scene_RunFacingGatedDialogue18 Func_020004bc
+#define Scene_RunEarlySequence Func_02000524
+#define Scene_RunScene3a3SequenceB Func_020006a4
 #define SceneMotion_UpdateTimedActor Func_020006f0
-#define FieldScene_RunScene3a3SequenceC Func_020007b8
-#define SceneState_SetFlag906ByActorNineteenX Func_0200084c
-#define SceneState_SyncProgressFlagsAndDispatch Func_02000874
-#define FieldScene_RunMiddleSequence Func_02000904
-#define FieldScene_RunScene3a3SequenceD Func_02000b2c
-#define SceneActor_ResetStateAndSpan Func_02000c0c
-#define SceneEffect_UpdateDriftingParticle Func_02000c44
-#define SceneEffect_SpawnDriftingParticle Func_02000d08
+#define Scene_RunScene3a3SequenceC Func_020007b8
+#define State_SetFlag906ByActorNineteenX Func_0200084c
+#define State_SyncProgressFlagsAndDispatch Func_02000874
+#define Scene_RunMiddleSequence Func_02000904
+#define Scene_RunScene3a3SequenceD Func_02000b2c
+#define Actor_ResetStateAndSpan Func_02000c0c
+#define Effect_UpdateDriftingParticle Func_02000c44
+#define Effect_SpawnDriftingParticle Func_02000d08
 #define FieldScene_RunScene3a3_02000d58 Func_02000d58
 
 struct Slot02000338 {
@@ -544,7 +544,7 @@ s32 SceneData_GetPrimaryTable(void)
     return (s32)Data_02009724;
 }
 
-void FieldScene_RunActorEightPromptDialogue(void)
+void Scene_RunActorEightPromptDialogue(void)
 {
     extern s16 Data_02000240[];
 
@@ -566,7 +566,7 @@ void FieldScene_RunActorEightPromptDialogue(void)
     Func_02001050();
 }
 
-void SceneDialogue_ShowLine1918(void)
+void Dialogue_ShowLine1918(void)
 {
     Func_0200105c();
     Func_020010ea(0x1918);
@@ -580,7 +580,7 @@ void SceneDialogue_ShowLine1918(void)
  * from their x/y/z fields at +8/+12/+16, clearing a byte at +85 of a
  * separately looked-up record on the way.
  */
-void FieldScene_RunOpeningAuxiliarySequence(void)
+void Scene_RunOpeningAuxiliarySequence(void)
 {
     void Func_0200115e();
     void Func_02001184();
@@ -590,35 +590,35 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     u8 *ready_flag;
     u8 *record;
 
-    BattleRuntime_Reset_1();
+    Battle_Reset_1();
     if (GameFlag_IsSet_1(0x909) != 0) {
         SceneWork_SetStepValue_1(0x191f);
         BattleEventRuntime_ProcessAction_1(14, 0); /* object 14, action 0 */
     } else {
         Object_SetModeById_1(14, 4); /* object 14, action 4 */
         SceneWork_SetStepValue_2(0x18c7);
-        BattleRuntime_RunThenWaitIfModeZero_1(14, 0, 10);
+        Battle_RunThenWaitIfModeZero_1(14, 0, 10);
         ready_flag = GameFlag_IsSet_2(0x8ff);
         if (ready_flag == 0) {
             rec18 = Scene_GetRecord_1(18);
             /* Clear the byte at +85 of the lookup result. */
             *(u8 *)(RuntimeBlock_GetOffset1e0Pointer_1() + 85) = ready_flag;
-            ObjectMotion_SetSpeedLimitAndAcceleration_1(0x10000, 0x2000);
-            ObjectMotion_PlaceWithinCameraBounds_1(*(s32 *)(rec18 + 8), *(s32 *)(rec18 + 12), *(s32 *)(rec18 + 16), 1); /* use_setter 1 */
-            ObjectMotion_SetAngleToward_1(0, 0x4000, 0);
-            ObjectMotion_ArmCallback_1(14, 0x3000, 0);
+            Motion_SetSpeedLim_1(0x10000, 0x2000);
+            Motion_CamBounds_1(*(s32 *)(rec18 + 8), *(s32 *)(rec18 + 12), *(s32 *)(rec18 + 16), 1); /* use_setter 1 */
+            Motion_SetAngleToward_1(0, 0x4000, 0);
+            Motion_ArmCb_1(14, 0x3000, 0);
             Object_CommitPositionThenWaitIfModeZero_1();
-            BattleRuntime_WaitIfModeZero_1(120); /* should_wait 120 */
+            Battle_WaitMode0_1(120); /* should_wait 120 */
             record = Scene_GetRecord_2(0);
-            ObjectMotion_PlaceWithinCameraBounds_2(*(s32 *)(record + 8), *(s32 *)(record + 12), *(s32 *)(record + 16), 1); /* use_setter 1 */
+            Motion_CamBounds_2(*(s32 *)(record + 8), *(s32 *)(record + 12), *(s32 *)(record + 16), 1); /* use_setter 1 */
             Object_CommitPositionThenWaitIfModeZero_2();
         }
-        ObjectMotion_CallThenWaitForAnimationChange_1(14, 4);
+        Motion_CallWaitAnim_1(14, 4);
     }
-    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+    Battle_SchedShoulder_1();
 }
 
-void SceneDialogue_RunActor17Message1924(void)
+void Dialogue_RunActor17Message1924(void)
 {
     void Func_0200115e_local(void);
     void Func_02001184(void);
@@ -630,7 +630,7 @@ void SceneDialogue_RunActor17Message1924(void)
     Func_0200115e_local();
 }
 
-void SceneDialogue_RunActor9Message1932(void)
+void Dialogue_RunActor9Message1932(void)
 {
     void Func_0200115e(void);
     void Func_02001184(void);
@@ -642,7 +642,7 @@ void SceneDialogue_RunActor9Message1932(void)
     Func_0200117e();
 }
 
-void SceneDialogue_RunActor10Message18d9(void)
+void Dialogue_RunActor10Message18d9(void)
 {
     void Func_0200115e(void);
     void Func_02001184_local(void);
@@ -654,7 +654,7 @@ void SceneDialogue_RunActor10Message18d9(void)
     Func_0200119e_local();
 }
 
-void SceneDialogue_RunActor14Message18e1(void)
+void Dialogue_RunActor14Message18e1(void)
 {
     void Func_0200115e(void);
     void Func_02001184(void);
@@ -666,7 +666,7 @@ void SceneDialogue_RunActor14Message18e1(void)
     Func_020011be();
 }
 
-void SceneDialogue_RunActor21Message194a(void)
+void Dialogue_RunActor21Message194a(void)
 {
     void Func_0200115e(void);
     void Func_02001184(void);
@@ -678,7 +678,7 @@ void SceneDialogue_RunActor21Message194a(void)
     Func_020011de();
 }
 
-s32 SceneActor_IsSlotZeroAngleInRange(void)
+s32 Actor_IsSlotZeroAngleInRange(void)
 {
     struct Slot02000338 *slot = Func_02001206(0);
 
@@ -688,7 +688,7 @@ s32 SceneActor_IsSlotZeroAngleInRange(void)
     return 0;
 }
 
-void FieldScene_RunActorFifteenFlagBranch(void)
+void Scene_RunActorFifteenFlagBranch(void)
 {
     void Func_020012de();
     void Func_02001342();
@@ -716,7 +716,7 @@ void FieldScene_RunActorFifteenFlagBranch(void)
     Func_0200126a();
 }
 
-void FieldScene_RunActorTwentyFlagBranch(void)
+void Scene_RunActorTwentyFlagBranch(void)
 {
     void Func_020012a4_local(void);
     void Func_020012de_local(void);
@@ -744,7 +744,7 @@ void FieldScene_RunActorTwentyFlagBranch(void)
     Func_020012de_local();
 }
 
-void FieldScene_RunActorTwentyOneFlagBranch(void)
+void Scene_RunActorTwentyOneFlagBranch(void)
 {
     if (Func_020012d8(0x240) == 0) {
         Func_02001300();
@@ -768,7 +768,7 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
     Func_02001354();
 }
 
-void FieldScene_RunFacingGatedDialogue18(void)
+void Scene_RunFacingGatedDialogue18(void)
 {
     u8 *rec;
 
@@ -792,7 +792,7 @@ void FieldScene_RunFacingGatedDialogue18(void)
     Func_020013ba();
 }
 
-void FieldScene_RunEarlySequence(void)
+void Scene_RunEarlySequence(void)
 {
     u32 i;
     u8 *work;
@@ -856,7 +856,7 @@ void FieldScene_RunEarlySequence(void)
     Func_02001538();
 }
 
-void FieldScene_RunScene3a3SequenceB(void)
+void Scene_RunScene3a3SequenceB(void)
 {
     u32 i;
     s32 record;
@@ -907,7 +907,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
         work->timer = 0;
 }
 
-void FieldScene_RunScene3a3SequenceC(void)
+void Scene_RunScene3a3SequenceC(void)
 {
     u32 i;
     s32 record;
@@ -937,7 +937,7 @@ void FieldScene_RunScene3a3SequenceC(void)
     Func_02001732(18, 1);
 }
 
-void SceneState_SetFlag906ByActorNineteenX(void)
+void State_SetFlag906ByActorNineteenX(void)
 {
     extern s16 Data_02000240[];
 
@@ -955,7 +955,7 @@ void SceneState_SetFlag906ByActorNineteenX(void)
  * at Data_02000240[224] select one of two continuations. Every call here
  * leaves through its own veneer, so the sites stay separate.
  */
-s32 SceneState_SyncProgressFlagsAndDispatch(void)
+s32 State_SyncProgressFlagsAndDispatch(void)
 {
     extern s16 Data_02000240[];
 
@@ -983,7 +983,7 @@ s32 SceneState_SyncProgressFlagsAndDispatch(void)
     return 0;
 }
 
-void FieldScene_RunMiddleSequence(void)
+void Scene_RunMiddleSequence(void)
 {
     extern u8 Data_02000240[];
 
@@ -1075,7 +1075,7 @@ void FieldScene_RunMiddleSequence(void)
     Func_02001924(1);
 }
 
-void FieldScene_RunScene3a3SequenceD(void)
+void Scene_RunScene3a3SequenceD(void)
 {
     u32 i;
     u8 *record;
@@ -1134,7 +1134,7 @@ void FieldScene_RunScene3a3SequenceD(void)
     }
 }
 
-void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
+void Actor_ResetStateAndSpan(struct Actor02000c0c *actor)
 {
     void Func_02001aaa_local(struct Actor02000c0c *, s32);
 
@@ -1152,7 +1152,7 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
     actor->reach = 0x4CCC;
 }
 
-void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
+void Effect_UpdateDriftingParticle(struct SceneMotion *work)
 {
     u32 Func_02001aaa(void);
 
@@ -1179,7 +1179,7 @@ void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
     }
 }
 
-void SceneEffect_SpawnDriftingParticle(void)
+void Effect_SpawnDriftingParticle(void)
 {
     u32 Func_02001aaa(void);
 

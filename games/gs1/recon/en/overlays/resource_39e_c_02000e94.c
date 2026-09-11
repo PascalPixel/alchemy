@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunPrimarySequence Func_02000e94
+#define Scene_RunPrimarySequence Func_02000e94
 
 void Func_02001040();
 void Func_02001058();
@@ -10,7 +10,7 @@ void Func_020051f8();
 void *Func_020052a6();
 void Func_02005462();
 
-void FieldScene_RunPrimarySequence(void)
+void Scene_RunPrimarySequence(void)
 {
     void *scene;
     s32 actor;

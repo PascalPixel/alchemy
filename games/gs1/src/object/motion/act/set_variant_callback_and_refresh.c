@@ -1,10 +1,10 @@
 #include "types.h"
 
 s32 Func_080920e8(s32);
-s32 ObjectMotion_SetVariantCallback();
+s32 Motion_SetVarCb();
 
-void ObjectMotion_SetVariantCallbackAndRefresh(s32 arg0)
+void Motion_SetVarCbAndRefresh(s32 arg0)
 {
-    ObjectMotion_SetVariantCallback();
+    Motion_SetVarCb();
     Func_080920e8(arg0);
 }

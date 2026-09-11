@@ -15,8 +15,8 @@ void Func_02005218();
  */
 #define EffectRuntime_SetCurrentPosition_1(a0, a1, a2) Call3(Func_0200520a, a0, a1, a2)
 #define EffectRuntime_SetCurrentPosition_2(a0, a1, a2) Call3(Func_02005218, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_020051ca, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_020051d4, a0, a1, a2)
+#define Motion_SetHPosTerrain_1(a0, a1, a2) Call3(Func_020051ca, a0, a1, a2)
+#define Motion_SetHPosTerrain_2(a0, a1, a2) Call3(Func_020051d4, a0, a1, a2)
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -30,12 +30,12 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 /* Two six-argument calls whose first and fifth arguments repeat the same id
  * (8 and 49 respectively), followed by four three-argument calls each keyed
  * by an id with a trailing pair of values (-1, -1 or 0, 0). */
-void FieldScene_RunLateSequenceSecond(void)
+void Scene_RunLateSequenceSecond(void)
 {
     Call6(Func_020050f2, 8, 113, 1, 1, 8, 49);
     Call6(Func_02005104, 49, 107, 1, 1, 49, 43);
     EffectRuntime_SetCurrentPosition_1(100, -1, -1);
     EffectRuntime_SetCurrentPosition_2(101, -1, -1);
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(15, 0, 0);
-    ObjectMotion_SetHorizontalPositionWithTerrain_2(16, 0, 0);
+    Motion_SetHPosTerrain_1(15, 0, 0);
+    Motion_SetHPosTerrain_2(16, 0, 0);
 }

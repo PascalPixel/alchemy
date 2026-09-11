@@ -13,7 +13,7 @@ void Func_020037f0();
  * mirrored back from +20 afterwards. The owner at 0x02000da8 is 52 bytes
  * and carries no pool.
  */
-void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
+void Actor_WaitHeightBelowLimit(u8 *obj, s32 limit)
 {
     s32 cnt = 60;
 

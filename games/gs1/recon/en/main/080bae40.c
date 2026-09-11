@@ -161,7 +161,7 @@ u32 Random16(void);
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BattleEffect_Classify((action)->effect) == 0)                  \
+            && BattleFx_Classify((action)->effect) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
             (damage_class) = ((action)->target_flags & 0x0f) - 1;             \

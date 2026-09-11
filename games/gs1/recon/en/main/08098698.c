@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_SpawnBurstParticleField Func_08098698
+#define BattleFx_SpawnBurstParticleField Func_08098698
 
 struct BurstParticleVisual {
     u8 reserved_00[5];
@@ -56,7 +56,7 @@ void Func_08009150(struct BurstParticleObject *, s32, s32, s32);
 void Func_080f9010(s32);
 void Func_080030f8(s32);
 
-void BattleEffect_SpawnBurstParticleField(void)
+void BattleFx_SpawnBurstParticleField(void)
 {
     struct BurstParticleState *state;
     struct BurstParticleObject *target;

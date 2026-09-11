@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene370SequenceA Func_02000de4
+#define Scene_RunScene370SequenceA Func_02000de4
 
 s32 Func_020022c2();
 s32 Func_020022da();

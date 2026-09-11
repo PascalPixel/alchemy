@@ -46,17 +46,17 @@
 #define Runtime_ReleaseHeapBlock       Func_08002dd8
 #define Battle_SetObjectFlag5bWhenMode3   Func_0808c44c
 #define Battle_ClearObjectFlag5bWhenMode3 Func_0808c4c0
-#define BattleEffect_InitializeBuffers Func_08091174
+#define BattleFx_InitializeBuffers Func_08091174
 #define Party_ResolveTablePair         Func_0808b1d8
 #define Party_CheckMemberValueTotal    Func_080919d8
 #define PartyInventory_GiveItem        Func_08091a58
 #define ObjectEffect_RunPendingFlagEvent Func_08094428
-#define BattleEffect_ScheduleCallbackWhenValue24cSet Func_08099810
+#define BattleFx_ScheduleCallbackWhenValue24cSet Func_08099810
 #define BattleAction_RunDescriptor     Func_0808d828
 #define Battle_DispatchInputEvent      Func_0808d8f0
-#define BattleEffect_FindDescriptorWithOverride Func_0808d5a4
-#define BattleEffect_RunDescriptorAction Func_0808d5dc
-#define BattleEffect_RunKind6DescriptorAction Func_0808d7d8
+#define BattleFx_FindDescriptorWithOverride Func_0808d5a4
+#define BattleFx_RunDescriptorAction Func_0808d5dc
+#define BattleFx_RunKind6DescriptorAction Func_0808d7d8
 #define BattleCommand_ExecuteSelectedAction Func_0808e680
 #define BattleCommand_ExecuteSelectedItem   Func_0808e23c
 #define Battle_ResetEffectCounter      Func_0808e118
@@ -202,7 +202,7 @@ s32 Func_0808c4f8(void)
     FIELD_AT_OFFSET(work, s16 *, 0x19E) = mode;
     Func_08009078(mode);
     Func_08015000();
-    BattleEffect_ResetCounters();
+    BattleFx_ResetCounters();
     FIELD_AT_OFFSET(work, s32 *, 0x10) =
         Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 36));
     Func_0808cf78();
@@ -222,8 +222,8 @@ s32 Func_0808c4f8(void)
         Func_08009128();
     }
     Func_0808e9c0();
-    BattleEffect_InitializeBuffers();
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    BattleFx_InitializeBuffers();
+    BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
 
     FIELD_AT_OFFSET(work, s32 *, 0x1C0) = 256;
     FIELD_AT_OFFSET(work, s32 *, 0x1C8) = 16;
@@ -243,7 +243,7 @@ s32 Func_0808c4f8(void)
         FIELD_AT_OFFSET(g, u16 *, 0x24A) = 0xFFFF;
         FIELD_AT_OFFSET(g, u16 *, 0x24C) = 0;
     }
-    BattleEffect_ScheduleCallbackWhenValue24cSet();
+    BattleFx_ScheduleCallbackWhenValue24cSet();
     FIELD_AT_OFFSET(work, u16 *, 0xCC8) = 0xFFFF;
     Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 4));
 
@@ -254,7 +254,7 @@ s32 Func_0808c4f8(void)
     }
 
     GameFlag_Clear(0x109);
-    if (BattleEffect_SumCounters() == 0) {
+    if (BattleFx_SumCounters() == 0) {
         if (FIELD_AT_OFFSET(work, u16 *, 0x1C6) == 0) {
             Func_0808fefc(FIELD_AT_OFFSET(work, s32 *, 0x1C0),
                           FIELD_AT_OFFSET(work, s32 *, 0x1C8));
@@ -297,7 +297,7 @@ s32 Func_0808c4f8(void)
             FIELD_AT_OFFSET(actor, u16 *, 6);
         Data_0200042c = FIELD_AT_OFFSET(actor, u8 *, 34);
 
-        while (BattleEffect_SumCounters() != 0) {
+        while (BattleFx_SumCounters() != 0) {
             result = FIELD_AT_OFFSET(work, s16 *, 0x170);
             if (result != 0) {
                 FIELD_AT_OFFSET(work, u16 *, 0x170) = 0;
@@ -307,7 +307,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0xCB6) = 1;
                 sel = FIELD_AT_OFFSET(work, s16 *, 0x182);
                 if (sel == -1) {
-                    BattleRuntime_InitializeRenderObject();
+                    Battle_InitializeRenderObject();
                     Battle_SetObjectFlag5bWhenMode3();
                     for (i = 0; i < FIELD_AT_OFFSET(work, s16 *, 0x184); i++) {
                         Object_SetMode(actor, 22);
@@ -363,18 +363,18 @@ s32 Func_0808c4f8(void)
                     }
                     Battle_ClearObjectFlag5bWhenMode3();
                 } else if (sel == -888) {
-                    BattleRuntime_InitializeRenderObject();
+                    Battle_InitializeRenderObject();
                     Func_0809c138(0x1B);
                 } else if (sel == -889) {
-                    BattleRuntime_InitializeRenderObject();
-                    BattleEffect_RunVisibilityTransition();
+                    Battle_InitializeRenderObject();
+                    BattleFx_RunVisibilityTransition();
                 } else {
-                    BattleEffect_RunKind6DescriptorAction();
+                    BattleFx_RunKind6DescriptorAction();
                 }
                 FIELD_AT_OFFSET(work, u16 *, 0xCB6) = 0;
                 FIELD_AT_OFFSET(work, u16 *, 0x182) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x17C) != 0) {
-                BattleRuntime_InitializeRenderObject();
+                Battle_InitializeRenderObject();
                 Func_0808ba38();
                 FIELD_AT_OFFSET(g, u16 *, 0x21E) = 0xFFFF;
                 FIELD_AT_OFFSET(g, u16 *, 0x1C0) = 510;
@@ -397,7 +397,7 @@ s32 Func_0808c4f8(void)
                 v = Func_0808ddec(Data_02000434);
                 ok = 0;
                 if (v != -1) {
-                    ok = BattleEffect_FindDescriptorWithOverride() != 0;
+                    ok = BattleFx_FindDescriptorWithOverride() != 0;
                 }
                 if (ok != 0) {
                     FIELD_AT_OFFSET(work, u16 *, 0x178) = v | 0x1000;
@@ -414,7 +414,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0x174) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x172) != 0) {
                 Func_08015208();
-                BattleRuntime_InitializeRenderObject();
+                Battle_InitializeRenderObject();
                 Audio_PlayCue(111);
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
@@ -434,7 +434,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0x172) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x178) != 0) {
                 Battle_SetObjectFlag5bWhenMode3();
-                BattleEffect_RunDescriptorAction(
+                BattleFx_RunDescriptorAction(
                     FIELD_AT_OFFSET(work, u16 *, 0x178) & 0xFFF);
                 Battle_ClearObjectFlag5bWhenMode3();
                 FIELD_AT_OFFSET(work, u16 *, 0x178) = 0;
@@ -459,7 +459,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0x180) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x176) != 0) {
                 Audio_PlayCue(111);
-                BattleRuntime_InitializeRenderObject();
+                Battle_InitializeRenderObject();
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
                 if (Data_03001f54 != 0 && (Data_03001ae8 & 2) != 0) {
@@ -523,7 +523,7 @@ s32 Func_0808c4f8(void)
                               FIELD_AT_OFFSET(actor, s32 *, 12),
                               FIELD_AT_OFFSET(actor, s32 *, 16));
             }
-        } while (BattleEffect_SumCounters() == 0);
+        } while (BattleFx_SumCounters() == 0);
     }
 
 done:

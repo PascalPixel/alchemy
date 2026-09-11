@@ -5,7 +5,7 @@
 
 s16 *Func_0808d394(s16);
 
-s32 BattleEffect_CopyLinkedObjectPosition(void *obj)
+s32 BattleFx_CopyLinkedObjectPosition(void *obj)
 {
     void *link;
 

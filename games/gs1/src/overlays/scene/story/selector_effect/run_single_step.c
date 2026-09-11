@@ -1,7 +1,7 @@
 void Func_020064c0();
 
 /* Complete one-call wrapper through interworking return and alignment. */
-void FieldScene_RunSingleStep(void)
+void Scene_RunSingleStep(void)
 {
     Func_020064c0();
 }

@@ -35,28 +35,28 @@ struct OverlayObject {
 typedef char OverlayObjectRecord_flags_offset[
     ((u32)&(((struct OverlayObjectRecord *)0)->flags)) == 0x09 ? 1 : -1
 ];
-typedef char OverlayObject_record_offset[
+typedef char OvObj_record_offset[
     OVERLAY_OBJECT_OFFSET(record) == 0x50 ? 1 : -1
 ];
-typedef char OverlayObject_angle_offset[
+typedef char OvObj_angle_offset[
     OVERLAY_OBJECT_OFFSET(angle) == 0x06 ? 1 : -1
 ];
-typedef char OverlayObject_coordinate_08_offset[
+typedef char OvObj_coordinate_08_offset[
     OVERLAY_OBJECT_OFFSET(coordinate_08) == 0x08 ? 1 : -1
 ];
-typedef char OverlayObject_coordinate_10_offset[
+typedef char OvObj_coordinate_10_offset[
     OVERLAY_OBJECT_OFFSET(coordinate_10) == 0x10 ? 1 : -1
 ];
-typedef char OverlayObject_unknown_55_offset[
+typedef char OvObj_unknown_55_offset[
     OVERLAY_OBJECT_OFFSET(unknown_55) == 0x55 ? 1 : -1
 ];
-typedef char OverlayObject_unknown_59_offset[
+typedef char OvObj_unknown_59_offset[
     OVERLAY_OBJECT_OFFSET(unknown_59) == 0x59 ? 1 : -1
 ];
-typedef char OverlayObject_unknown_5a_offset[
+typedef char OvObj_unknown_5a_offset[
     OVERLAY_OBJECT_OFFSET(unknown_5a) == 0x5a ? 1 : -1
 ];
-typedef char OverlayObject_linked_object_offset[
+typedef char OvObj_linked_object_offset[
     OVERLAY_OBJECT_OFFSET(linked_object) == 0x68 ? 1 : -1
 ];
 #undef OVERLAY_OBJECT_OFFSET

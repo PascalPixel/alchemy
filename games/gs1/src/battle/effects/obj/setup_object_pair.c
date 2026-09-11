@@ -4,7 +4,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void RotateVectorByMagnitude(s32, s32, void *);
-void BattleEffect_SetupObjectPair(s32 first_object_id, s32 second_object_id)
+void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 {
     void *first_object; void *second_object; s32 facing_quadrant; void *state;
     state = *(void **)ADDR_03001F30;

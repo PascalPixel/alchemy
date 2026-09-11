@@ -21,6 +21,6 @@ s32 Func_080772b8(s32 effect_id);
 #define BattleAction_GetDirect  Func_08078b9c
 #define BattleFlag_Test         Func_080770c0
 #define BattleRandom_Next       Func_080771a0
-#define BattleEffect_Classify   Func_080772b8
+#define BattleFx_Classify   Func_080772b8
 
 #endif

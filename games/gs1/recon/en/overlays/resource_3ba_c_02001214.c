@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunMapEntranceCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunMapEntranceCoordinator:
  * A phase-two fast path, full-presentation and short-revisit branches, and
  * all 46 calls across the complete map-entrance owner. */
 
-#define FieldScene_RunMapEntranceCoordinator Func_02001214
+#define Scene_RunMapEntranceCoordinator Func_02001214
 
 void Func_02002d86();
 s32 Func_02002f9c();

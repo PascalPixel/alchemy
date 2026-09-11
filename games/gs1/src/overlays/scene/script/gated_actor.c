@@ -1,7 +1,7 @@
 #include "types.h"
 
 /*
- * DRAFTED SCENE SCRIPT for FieldScene_RunGatedActorSequence.
+ * DRAFTED SCENE SCRIPT for Scene_RunGatedActorSequence.
  *
  * One progress-gated field cutscene.  The owner returns immediately when
  * progress flag 0x808 is already set; otherwise it sets that flag and plays a
@@ -74,7 +74,7 @@
  * coordinates, and the flag byte at 90.
  */
 
-#define FieldScene_RunGatedActorSequence Func_02000be0
+#define Scene_RunGatedActorSequence Func_02000be0
 
 /* 0x080770c0, one argument, result tested */
 s32 Func_0200264a();
@@ -178,7 +178,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunGatedActorSequence(void)
+void Scene_RunGatedActorSequence(void)
 {
     u8 *record;
     s32 x, z;

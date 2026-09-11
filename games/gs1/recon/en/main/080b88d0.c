@@ -1,11 +1,11 @@
 #include "types.h"
 
-#define BattlePresentation_RunPairedUnitTransition Func_080b88d0
+#define BattlePres_RunPairedUnitTransition Func_080b88d0
 
 #define FIELD16(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define FIELD32(base, offset) (*(u32 *)((u8 *)(base) + (offset)))
 
-s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
+s32 BattlePres_RunPairedUnitTransition(s16 *action)
 {
     u16 visible_units[14];
     u8 context[0x54];

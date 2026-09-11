@@ -1,8 +1,8 @@
 #include "types.h"
 
-#define BattleEffect_InitializeSharedScene Func_08097384
+#define BattleFx_InitializeSharedScene Func_08097384
 
-void BattleEffect_InitializeSharedScene(void)
+void BattleFx_InitializeSharedScene(void)
 {
     volatile u32 *dma = (volatile u32 *)0x040000d4;
     u8 **state = (u8 **)0x03001ebc;

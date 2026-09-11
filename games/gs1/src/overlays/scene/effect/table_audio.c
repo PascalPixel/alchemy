@@ -6,15 +6,15 @@
 #define SceneData_GetTable9710 Func_0200003c
 #define SceneData_GetTable971c Func_02000044
 #define PlayWorkspaceCueAndClearPaletteZero Func_0200004c
-#define FieldScene_Forward11fc Func_02000070
-#define FieldScene_ConfigureFixedPointValues Func_0200007c
+#define Scene_Forward11fc Func_02000070
+#define Scene_ConfigureFixedPointValues Func_0200007c
 #define SceneData_GetTable97AC Func_020000a8
-#define SceneState_CountDownEveryFortyTicks Func_02000168
-#define SceneState_StoreSlotZeroField12 Func_020003c0
+#define State_CountDownEveryFortyTicks Func_02000168
+#define State_StoreSlotZeroField12 Func_020003c0
 #define SceneData_StoreRecord1Field12 Func_020003dc
-#define SceneState_StoreSlotThreeField12 Func_020003f8
+#define State_StoreSlotThreeField12 Func_020003f8
 #define SceneData_StoreRecord2Field12 Func_02000414
-#define SceneEffect_LoadTablesAndStopDma0 Func_02001188
+#define Effect_LoadTablesAndStopDma0 Func_02001188
 
 typedef struct {
     u8 filler0[12];
@@ -96,19 +96,19 @@ void PlayWorkspaceCueAndClearPaletteZero(void)
     } while (0);
 }
 
-void FieldScene_Forward11fc(void)
+void Scene_Forward11fc(void)
 {
     Func_020011fc();
 }
 
-void FieldScene_ConfigureFixedPointValues(void)
+void Scene_ConfigureFixedPointValues(void)
 {
     Func_02001172(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
 u8 *SceneData_GetTable97AC(void) { return (u8 *)0x020097ac; }
 
-void SceneState_CountDownEveryFortyTicks(void)
+void State_CountDownEveryFortyTicks(void)
 {
     s32 n = Data_020097f4 + 1;
 
@@ -121,7 +121,7 @@ void SceneState_CountDownEveryFortyTicks(void)
     }
 }
 
-s32 SceneState_StoreSlotZeroField12(void)
+s32 State_StoreSlotZeroField12(void)
 {
     s32 *d;
     T *p;
@@ -143,7 +143,7 @@ s32 SceneData_StoreRecord1Field12(void)
     return 0;
 }
 
-s32 SceneState_StoreSlotThreeField12(void)
+s32 State_StoreSlotThreeField12(void)
 {
     s32 *d;
     T *p;
@@ -165,7 +165,7 @@ s32 SceneData_StoreRecord2Field12(void)
     return 0;
 }
 
-void SceneEffect_LoadTablesAndStopDma0(void)
+void Effect_LoadTablesAndStopDma0(void)
 {
     volatile u16 *reg;
 

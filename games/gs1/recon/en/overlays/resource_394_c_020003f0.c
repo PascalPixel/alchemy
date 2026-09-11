@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene394SequenceA Func_020003f0
+#define Scene_RunScene394SequenceA Func_020003f0
 
 extern u8 Data_00000001[];
 void Func_020006de();
@@ -112,7 +112,7 @@ static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6);
 }
 
-void FieldScene_RunScene394SequenceA(void)
+void Scene_RunScene394SequenceA(void)
 {
     u32 i;
     s32 record;

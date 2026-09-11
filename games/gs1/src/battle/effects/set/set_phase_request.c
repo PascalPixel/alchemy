@@ -21,14 +21,14 @@ extern struct RuntimeState_08091f14 *Data_03001ebc;
 extern struct SharedData_08091f14 Data_02000240;
 
 void Func_0809537c(s32 flags);
-s16 BattleEffect_GetPhaseResult(s32 value);
-s32 BattleEffect_LookupResult(void *object);
+s16 BattleFx_GetPhaseResult(s32 value);
+s32 BattleFx_LookupResult(void *object);
 void *ObjectTable_Get(u32 object);
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 #define ObjectTable_Get Func_0808ba1c
 s32 Func_0808b320(s32 first, s32 second);
 
-void BattleEffect_SetPhaseRequest(s32 flags, s32 value)
+void BattleFx_SetPhaseRequest(s32 flags, s32 value)
 {
     struct RuntimeState_08091f14 *state;
     struct SharedData_08091f14 *shared;
@@ -43,11 +43,11 @@ void BattleEffect_SetPhaseRequest(s32 flags, s32 value)
 
     shared = &Data_02000240;
     shared->request = (value + 0x12c) | high;
-    state->value = BattleEffect_GetPhaseResult(value);
+    state->value = BattleFx_GetPhaseResult(value);
     if (state->mode == 3) {
         void *object = ObjectTable_Get(shared->object);
 
-        BattleEffect_LookupResult((u8 *)object + 8);
+        BattleFx_LookupResult((u8 *)object + 8);
     }
     Func_0808b320(0, 0);
 }

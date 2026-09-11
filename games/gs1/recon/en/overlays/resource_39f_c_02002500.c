@@ -172,8 +172,8 @@ void Func_020057be(); /* main:0808a158 */
 void Func_0200568c(); /* main:080000c0 */
 u8 *Func_02005762(); /* main:0808a080  Scene_GetRecord */
 void Func_02003276(); /* overlay 0x020008c0 */
-void Func_02003414(); /* OverlayObject_SpawnConfiguredWithMode15 */
-void Func_02003420(); /* OverlayObject_SpawnConfiguredWithMode15 */
+void Func_02003414(); /* OvObj_SpawnConfiguredWithMode15 */
+void Func_02003420(); /* OvObj_SpawnConfiguredWithMode15 */
 void Func_0200329a(); /* overlay 0x020008c0 */
 void Func_020032a0(); /* overlay 0x020008c0 */
 s32 Func_02005772(); /* main:080770c0  GameFlag_IsSet */
@@ -207,7 +207,7 @@ void Func_0200585a(); /* main:080091e0 */
 s32 Func_02005890(); /* main:080770c0  GameFlag_IsSet */
 void Func_0200590a(); /* main:0808a0f0 */
 void Func_02005918(); /* main:0808a0f0 */
-void Func_0200475c(); /* FieldScene_RunSupplementalSequenceOne */
+void Func_0200475c(); /* Scene_RunSupplementalSequenceOne */
 void Func_020058fe(); /* main:? */
 s32 Func_020058c4(); /* main:080770c0  GameFlag_IsSet */
 s32 Func_020058ce(); /* main:080770c0  GameFlag_IsSet */

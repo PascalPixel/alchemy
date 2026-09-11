@@ -8,21 +8,21 @@
 #define SceneData_SelectTableByFlags834And87a Func_020000b8
 #define SceneData_SelectTableByFlags87a_815_834 Func_02000158
 #define Audio_PlayCue_1(a0) Call1(Func_02002fa2, a0)
-#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_02002e66, a0, a1, a2)
+#define Motion_ResetPosMode2_1(a0, a1, a2) Call3(Func_02002e66, a0, a1, a2)
 #define Audio_PlayCue_1_02000780(a0) Call1(Func_02002fd4, a0)
-#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_02002ec8, a0, a1, a2)
-#define ObjectMotion_SetActionVariant_1(a0, a1) Call2(Func_02002f60, a0, a1)
-#define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02002ede, a0, a1, a2)
+#define Motion_SetPosReset_1(a0, a1, a2) Call3(Func_02002ec8, a0, a1, a2)
+#define Motion_SetActionVariant_1(a0, a1) Call2(Func_02002f60, a0, a1)
+#define Motion_SetPosReset_2(a0, a1, a2) Call3(Func_02002ede, a0, a1, a2)
 #define Audio_PlayCue_1_020007ec(a0) Call1(Func_0200303e, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1_020007ec(a0, a1, a2) Call3(Func_02002f02, a0, a1, a2)
-#define FieldScene_RunSequence111F Func_0200010c
-#define FieldScene_RunOpeningAuxiliarySequence Func_02000248
-#define SceneDialogue_RunFlagGatedMessageStep Func_020003b4
-#define FieldScene_RunActorTwentySixEffectPresentation Func_02000444
-#define FieldScene_RunMiddleAuxiliarySequence Func_020004d4
-#define FieldScene_RunSupplementalSequenceOne Func_02000750
-#define FieldScene_RunSupplementalSequenceTwo Func_02000780
-#define FieldScene_RunSupplementalSequenceThree Func_020007ec
+#define Scene_RunSequence111F Func_0200010c
+#define Scene_RunOpeningAuxiliarySequence Func_02000248
+#define Dialogue_RunFlagGatedMessageStep Func_020003b4
+#define Scene_RunActorTwentySixEffectPresentation Func_02000444
+#define Scene_RunMiddleAuxiliarySequence Func_020004d4
+#define Scene_RunSupplementalSequenceOne Func_02000750
+#define Scene_RunSupplementalSequenceTwo Func_02000780
+#define Scene_RunSupplementalSequenceThree Func_020007ec
 #define Audio_PlayCue_1_0200081c(a0) Call1(Func_0200306e, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1_0200081c(a0, a1, a2) Call3(Func_02002f34, a0, a1, a2)
 #define Audio_PlayCue_1_0200084c(a0) Call1(Func_0200309e, a0)
@@ -31,35 +31,35 @@
 #define ObjectMotion_ResetAndSetPositionInMode2_1_0200087c(a0, a1, a2) Call3(Func_02002f92, a0, a1, a2)
 #define Audio_PlayCue_1_020008ac(a0) Call1(Func_020030fe, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1_020008ac(a0, a1, a2) Call3(Func_02002fc4, a0, a1, a2)
-#define FieldScene_RunSupplementalSequenceFour Func_0200081c
-#define FieldScene_RunSupplementalSequenceFive Func_0200084c
-#define FieldScene_RunSupplementalSequenceSix Func_0200087c
-#define FieldScene_RunSupplementalSequenceSeven Func_020008ac
-#define FieldScene_RunStep7BThen8 Func_020008dc
-#define FieldScene_RunStep15 Func_02002580
-#define FieldScene_RunStep17 Func_02002590
-#define FieldScene_RunStep20 Func_020025a0
-#define SceneDialogue_RunActor23Line Func_020001c4
-#define SceneDialogue_ShowLineF3F Func_020001f0
-#define SceneDialogue_ShowLineF44 Func_0200021c
-#define SceneDialogue_ShowLineEB1OrEB0 Func_020005e8
-#define SceneDialogue_RunActorElevenFlaggedDialogue Func_02000634
-#define FieldScene_RunActorTwentyOneSetup Func_02000674
-#define SceneState_SetWork1c0AndRun Func_02000714
-#define SceneState_ApplyFlag815Branch Func_020008f0
-#define SceneState_ApplyFlag90b Func_02000910
-#define SceneState_ApplyFlag90c Func_02000920
-#define SceneState_ApplyFlag90d Func_02000930
-#define SceneState_ApplyPair140And0 Func_02002564
-#define SceneState_SetValues352_365_2116_2117_40 Func_020025b0
-#define FieldScene_RunSplitPairSteps Func_020022c8
-#define FieldScene_Forward4dac Func_02002574
-#define SceneActor_SetPairZeroAndValue Func_020022e0
-#define OverlayObject_UpdateOnFrameBit1 Func_020022f8
-#define SceneEffect_UpdateByFrameBits Func_02002334
-#define SceneEffect_UpdateByFrameBit Func_02002370
-#define SceneEffect_AnimateVerticalPositive Func_0200239c
-#define SceneEffect_AnimateVerticalNegative Func_020023ec
+#define Scene_RunSupplementalSequenceFour Func_0200081c
+#define Scene_RunSupplementalSequenceFive Func_0200084c
+#define Scene_RunSupplementalSequenceSix Func_0200087c
+#define Scene_RunSupplementalSequenceSeven Func_020008ac
+#define Scene_RunStep7BThen8 Func_020008dc
+#define Scene_RunStep15 Func_02002580
+#define Scene_RunStep17 Func_02002590
+#define Scene_RunStep20 Func_020025a0
+#define Dialogue_RunActor23Line Func_020001c4
+#define Dialogue_ShowLineF3F Func_020001f0
+#define Dialogue_ShowLineF44 Func_0200021c
+#define Dialogue_ShowLineEB1OrEB0 Func_020005e8
+#define Dialogue_RunActorElevenFlaggedDialogue Func_02000634
+#define Scene_RunActorTwentyOneSetup Func_02000674
+#define State_SetWork1c0AndRun Func_02000714
+#define State_ApplyFlag815Branch Func_020008f0
+#define State_ApplyFlag90b Func_02000910
+#define State_ApplyFlag90c Func_02000920
+#define State_ApplyFlag90d Func_02000930
+#define State_ApplyPair140And0 Func_02002564
+#define State_SetValues352_365_2116_2117_40 Func_020025b0
+#define Scene_RunSplitPairSteps Func_020022c8
+#define Scene_Forward4dac Func_02002574
+#define Actor_SetPairZeroAndValue Func_020022e0
+#define OvObj_UpdateOnFrameBit1 Func_020022f8
+#define Effect_UpdateByFrameBits Func_02002334
+#define Effect_UpdateByFrameBit Func_02002370
+#define Effect_AnimateVerticalPositive Func_0200239c
+#define Effect_AnimateVerticalNegative Func_020023ec
 
 #include "facing_object.h"
 
@@ -524,7 +524,7 @@ void *SceneData_SelectTableByFlags834And87a(void)
     return Data_0200b170;
 }
 
-void FieldScene_RunSequence111F(void)
+void Scene_RunSequence111F(void)
 {
     Func_020027ac();
     Func_0200277c(0x111f, 1);
@@ -554,7 +554,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
     return Data_0200b938;
 }
 
-void SceneDialogue_RunActor23Line(void)
+void Dialogue_RunActor23Line(void)
 {
     Func_02002864();
     Func_02002932(0xf3c);
@@ -563,7 +563,7 @@ void SceneDialogue_RunActor23Line(void)
     Func_02002888();
 }
 
-void SceneDialogue_ShowLineF3F(void)
+void Dialogue_ShowLineF3F(void)
 {
     Func_02002890();
     Func_0200295e_a(0xf3f);
@@ -572,7 +572,7 @@ void SceneDialogue_ShowLineF3F(void)
     Func_020028b4();
 }
 
-void SceneDialogue_ShowLineF44(void)
+void Dialogue_ShowLineF44(void)
 {
     Func_020028bc();
     Func_0200298a(0xf44);
@@ -581,7 +581,7 @@ void SceneDialogue_ShowLineF44(void)
     Func_020028e0();
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+void Scene_RunOpeningAuxiliarySequence(void)
 {
     u32 i;
     s32 base5_1197;
@@ -644,7 +644,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Func_02002a2c();
 }
 
-void SceneDialogue_RunFlagGatedMessageStep(void)
+void Dialogue_RunFlagGatedMessageStep(void)
 {
     Func_02002a54();
     if (Func_02002a32(0x87a) != 0) {
@@ -667,7 +667,7 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
     Func_02002aca();
 }
 
-void FieldScene_RunActorTwentySixEffectPresentation(void)
+void Scene_RunActorTwentySixEffectPresentation(void)
 {
     Func_02002ae4();
     Func_02002b6c(26, 1);
@@ -686,7 +686,7 @@ void FieldScene_RunActorTwentySixEffectPresentation(void)
     Func_02002b60();
 }
 
-void FieldScene_RunMiddleAuxiliarySequence(void)
+void Scene_RunMiddleAuxiliarySequence(void)
 {
     u32 i;
     s32 p8;
@@ -732,7 +732,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Func_02002c74();
 }
 
-void SceneDialogue_ShowLineEB1OrEB0(void)
+void Dialogue_ShowLineEB1OrEB0(void)
 {
     Func_02002c88();
     Func_02002d42(16, 0, 10);
@@ -746,7 +746,7 @@ void SceneDialogue_ShowLineEB1OrEB0(void)
     Func_02002cc8();
 }
 
-void SceneDialogue_RunActorElevenFlaggedDialogue(void)
+void Dialogue_RunActorElevenFlaggedDialogue(void)
 {
     u32 i;
     s32 record;
@@ -762,7 +762,7 @@ void SceneDialogue_RunActorElevenFlaggedDialogue(void)
     Func_02002d06();
 }
 
-void FieldScene_RunActorTwentyOneSetup(void)
+void Scene_RunActorTwentyOneSetup(void)
 {
     struct Obj *p = Func_02002d3e(21);
     Func_02002d1c();
@@ -787,7 +787,7 @@ void FieldScene_RunActorTwentyOneSetup(void)
     Func_02002da4();
 }
 
-void SceneState_SetWork1c0AndRun(s32 no)
+void State_SetWork1c0AndRun(s32 no)
 {
     u8 *p;
     if (Func_02002d90(0x834) != 0) {
@@ -801,11 +801,11 @@ void SceneState_SetWork1c0AndRun(s32 no)
 
 /* Runs four fixed scene-helper calls in sequence, one of them passed the
  * address of Value_0200beb4 as its first argument. */
-void FieldScene_RunSupplementalSequenceOne(void)
+void Scene_RunSupplementalSequenceOne(void)
 {
     Audio_PlayCue_1(158);
     Call3(Func_02002d9c, (s32)&Value_0200beb4, 44, 7);
-    ObjectMotion_ResetAndSetPositionInMode2_1(0, 248, 0x117);
+    Motion_ResetPosMode2_1(0, 248, 0x117);
     Call1_02000750(Func_02000e84, 1);
 }
 
@@ -813,22 +813,22 @@ void FieldScene_RunSupplementalSequenceOne(void)
  * and 2 sharing the same trailing four values, followed by a pair of
  * 3-argument calls sharing the same leading two arguments, and a closing
  * 1-argument call. */
-void FieldScene_RunSupplementalSequenceTwo(void)
+void Scene_RunSupplementalSequenceTwo(void)
 {
     Audio_PlayCue_1_02000780(188);
     Call6(Func_02002dde, 0, 63, 51, 8, 2, 2);
     Call1_02000780(Func_02002d8c, 10);
     Call6(Func_02002df4, 2, 63, 51, 8, 2, 2);
     Call1_02000780(Func_02002da2, 10);
-    ObjectMotion_SetPositionAndReset_1(0, 352, 306);
-    ObjectMotion_SetActionVariant_1(0, 3);
-    ObjectMotion_SetPositionAndReset_2(0, 352, 296);
+    Motion_SetPosReset_1(0, 352, 306);
+    Motion_SetActionVariant_1(0, 3);
+    Motion_SetPosReset_2(0, 352, 296);
     Call1_02000780(Func_02000ef4, 2);
 }
 
 /* Runs four fixed scene-helper calls in sequence, one of them passed the
  * address of Value_0200beb4 as its first argument. */
-void FieldScene_RunSupplementalSequenceThree(void)
+void Scene_RunSupplementalSequenceThree(void)
 {
     Audio_PlayCue_1_020007ec(158);
     Call3(Func_02002e38, (s32)&Value_0200beb4, 43, 15); /* main:08009178 */
@@ -839,7 +839,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
 /* Runs four scene calls in sequence: a single-argument call, a call that
  * passes the address of Value_0200beb4 with two more values, a call that
  * passes 0, 374, and 0x1a3, and a final single-argument call. */
-void FieldScene_RunSupplementalSequenceFour(void)
+void Scene_RunSupplementalSequenceFour(void)
 {
     Audio_PlayCue_1_0200081c(158);
     Call3(Func_02002e68, (s32)&Value_0200beb4, 52, 18); /* main:08009178 */
@@ -850,7 +850,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
 /* Runs a fixed sequence of four scripted calls: one keyed off Value_0200beb4
  * with two small numeric arguments, one with a 0x222 argument, and two plain
  * single-argument calls. */
-void FieldScene_RunSupplementalSequenceFive(void)
+void Scene_RunSupplementalSequenceFive(void)
 {
     Audio_PlayCue_1_0200084c(158);
     Call3(Func_02002e98, (s32)&Value_0200beb4, 41, 32); /* main:08009178 */
@@ -862,7 +862,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
  * call, a 3-argument call whose first argument is the address of
  * Value_0200beb4, another 3-argument call, and a closing single-argument
  * call. */
-void FieldScene_RunSupplementalSequenceSix(void)
+void Scene_RunSupplementalSequenceSix(void)
 {
     Audio_PlayCue_1_0200087c(158);
     Call3(Func_02002ec8_a, (s32)&Value_0200beb4, 35, 36); /* main:08009178 */
@@ -872,7 +872,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
 
 /* Runs four scripted scene calls in sequence, passing a byte's address and a
  * handful of small immediate constants to each. */
-void FieldScene_RunSupplementalSequenceSeven(void)
+void Scene_RunSupplementalSequenceSeven(void)
 {
     Audio_PlayCue_1_020008ac(158);
     Call3(Func_02002ef8, (s32)&Value_0200beb4, 51, 39); /* main:08009178 */
@@ -880,13 +880,13 @@ void FieldScene_RunSupplementalSequenceSeven(void)
     Call1_0200081c(Func_02000fe2, 7);
 }
 
-void FieldScene_RunStep7BThen8(void)
+void Scene_RunStep7BThen8(void)
 {
     Func_0200312e(123);
     Func_02000ffc(8);
 }
 
-void SceneState_ApplyFlag815Branch(void)
+void State_ApplyFlag815Branch(void)
 {
     if (Func_02002f6a(0x815) != 0) {
         Func_0200314c(123);
@@ -894,34 +894,34 @@ void SceneState_ApplyFlag815Branch(void)
     }
 }
 
-void SceneState_ApplyFlag90b(void)
+void State_ApplyFlag90b(void)
 {
     Func_02002f92_a(0x90b);
 }
 
-void SceneState_ApplyFlag90c(void)
+void State_ApplyFlag90c(void)
 {
     Func_02002fa2_a(0x90c);
 }
 
-void SceneState_ApplyFlag90d(void)
+void State_ApplyFlag90d(void)
 {
     Func_02002fb2(0x90d);
 }
 
-void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+void Scene_RunSplitPairSteps(s32 a, s32 b)
 {
     Func_02004a44(a, 0);
     Func_0200496a(b);
 }
 
-void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+void Actor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
     Func_02004a74(a, b, 0);
     Func_02004982(c);
 }
 
-void OverlayObject_UpdateOnFrameBit1(s32 obj)
+void OvObj_UpdateOnFrameBit1(s32 obj)
 {
     if ((*(volatile s32 *)0x03001e40 & 2) != 0) {
         Func_02004968(obj, 7);
@@ -933,7 +933,7 @@ void OverlayObject_UpdateOnFrameBit1(s32 obj)
     }
 }
 
-void SceneEffect_UpdateByFrameBits(s32 no)
+void Effect_UpdateByFrameBits(s32 no)
 {
     volatile s32 *p = (volatile s32 *)0x03001e40;
     if ((*p & 1) != 0) {
@@ -945,7 +945,7 @@ void SceneEffect_UpdateByFrameBits(s32 no)
     }
 }
 
-void SceneEffect_UpdateByFrameBit(s32 no)
+void Effect_UpdateByFrameBit(s32 no)
 {
     volatile s32 *p = (volatile s32 *)0x03001e40;
     if ((*p & 1) != 0) {
@@ -954,7 +954,7 @@ void SceneEffect_UpdateByFrameBit(s32 no)
     }
 }
 
-void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
+void Effect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
 {
     struct VerticalEffectAnchor *anchor;
     s32 frame;
@@ -978,7 +978,7 @@ void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
     effect->z = anchor->z + (offset * 4 + offset) + 0x80000;
 }
 
-void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
+void Effect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
 {
     struct VerticalEffectAnchor *anchor;
     s32 frame;
@@ -1002,35 +1002,35 @@ void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
     effect->z = anchor->z - (offset * 4 + offset) + 0x100000;
 }
 
-void SceneState_ApplyPair140And0(void)
+void State_ApplyPair140And0(void)
 {
     Func_02004d98(140, 0);
 }
 
-void FieldScene_Forward4dac(void)
+void Scene_Forward4dac(void)
 {
     Func_02004dac();
 }
 
-void FieldScene_RunStep15(void)
+void Scene_RunStep15(void)
 {
     Func_02004c4a(15);
     Func_020048be();
 }
 
-void FieldScene_RunStep17(void)
+void Scene_RunStep17(void)
 {
     Func_02004c5a(17);
     Func_020048ce();
 }
 
-void FieldScene_RunStep20(void)
+void Scene_RunStep20(void)
 {
     Func_02004c6a(20);
     Func_0200491a();
 }
 
-void SceneState_SetValues352_365_2116_2117_40(void)
+void State_SetValues352_365_2116_2117_40(void)
 {
     Func_02004c34(352);
     Func_02004c3a(0x16d);

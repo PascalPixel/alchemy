@@ -10,9 +10,9 @@
 #define CreateOverlayObject Func_02001132
 #define SetOverlayObjectMode Func_0200117c
 #define SetOverlayObjectSlot Func_02001244
-#define OverlayObject_CreateConfigured Func_02000048
-#define OverlayObject_CreateConfiguredObjectB Func_020000a0
-#define SceneEffect_UpdateMotion Func_02000104
+#define OvObj_CreateConfigured Func_02000048
+#define OvObj_CreateConfiguredObjectB Func_020000a0
+#define Effect_UpdateMotion Func_02000104
 #define EffectDescriptorTable Data_0200929c
 #define GetPartyEffect Func_0200125e
 #define SpawnEffect Func_02001204
@@ -24,10 +24,10 @@
 #define ScaleEffectVerticalDelta Func_020012fa
 #define SetEffectCallbackMode Func_02001328
 #define SetEffectCallbackArgument Func_02001338
-#define SceneDialogue_RunActorFifteenDialogue Func_02000864
-#define SceneDialogue_RunActorFourteenFlagDialogue Func_0200058c
+#define Dialogue_RunActorFifteenDialogue Func_02000864
+#define Dialogue_RunActorFourteenFlagDialogue Func_0200058c
 #define CalculateFixedPointPositionDistance Func_02000314
-#define SceneActor_UpdateProximity Func_02000350
+#define Actor_UpdateProximity Func_02000350
 #define Scene_GetPartnerActor Func_02001532
 #define Actor_CheckProximity Func_0200078e
 #define Scene_GetPlayerActor Func_02001548
@@ -39,38 +39,38 @@
 #define SceneData_GetTable95A0 Func_020004a4
 #define SceneData_GetTable95D8 Func_020004ac
 #define SceneData_GetTable97dc Func_02000f28
-#define ActorPresentation_SetupActorSceneCells Func_02000c1c
-#define ActorPresentation_RunActorModeOneThenZero Func_020004b4
-#define ActorPresentation_RunActor13AcceptanceDialogue Func_020007d4
-#define ActorPresentation_SetupActorEighteenAt312_304 Func_02000af0
-#define ActorPresentation_SetupActorZeroForSceneEight Func_02000b40
-#define ActorPresentation_SetupActorZeroForSceneNine Func_02000b9c
-#define ActorPresentation_SetupActorZeroForSceneTwelve Func_02000cc8
-#define ActorPresentation_SetFlag200AndSceneCell23 Func_02000d4c
-#define ActorPresentation_SetPairedSceneCells Func_02000e30
-#define ActorPresentation_SetAlternatePairedSceneCells Func_02000e60
-#define FieldScene_RunActorEighteenDialogue Func_02000e90
-#define SceneDialogue_RunActor8FlagScene Func_020004d8
-#define SceneDialogue_RunActor11Line Func_0200050c
-#define SceneDialogue_RunActor12TwoFlagScene Func_0200052c
-#define SceneDialogue_ShowLine1CB0ForActor13 Func_0200056c
-#define SceneDialogue_RunActor16CountedDialogue Func_020006b4
-#define SceneDialogue_RunActorEightTimedDialogue Func_02000710
-#define SceneDialogue_RunActor11AcceptanceDialogue Func_02000754
-#define SceneDialogue_RunActor12TimedTwoFlagScene Func_02000784
-#define SceneDialogue_RunActorFifteenFacingPreservedDialogue Func_02000640
-#define FieldScene_RunSupplementalSequenceOne Func_02000804
+#define ActorDraw_SetupActorSceneCells Func_02000c1c
+#define ActorDraw_RunActorModeOneThenZero Func_020004b4
+#define ActorDraw_RunActor13AcceptanceDialogue Func_020007d4
+#define ActorDraw_SetupActorEighteenAt312_304 Func_02000af0
+#define ActorDraw_SetupActorZeroForSceneEight Func_02000b40
+#define ActorDraw_SetupActorZeroForSceneNine Func_02000b9c
+#define ActorDraw_SetupActorZeroForSceneTwelve Func_02000cc8
+#define ActorDraw_SetFlag200AndSceneCell23 Func_02000d4c
+#define ActorDraw_SetPairedSceneCells Func_02000e30
+#define ActorDraw_SetAlternatePairedSceneCells Func_02000e60
+#define Scene_RunActorEighteenDialogue Func_02000e90
+#define Dialogue_RunActor8FlagScene Func_020004d8
+#define Dialogue_RunActor11Line Func_0200050c
+#define Dialogue_RunActor12TwoFlagScene Func_0200052c
+#define Dialogue_ShowLine1CB0ForActor13 Func_0200056c
+#define Dialogue_RunActor16CountedDialogue Func_020006b4
+#define Dialogue_RunActorEightTimedDialogue Func_02000710
+#define Dialogue_RunActor11AcceptanceDialogue Func_02000754
+#define Dialogue_RunActor12TimedTwoFlagScene Func_02000784
+#define Dialogue_RunActorFifteenFacingPreservedDialogue Func_02000640
+#define Scene_RunSupplementalSequenceOne Func_02000804
 #define FieldScene_RunScene385_020009f8 Func_020009f8
-#define FieldScene_SetActor21Values0And4 Func_02000d74
+#define Scene_SetActor21Values0And4 Func_02000d74
 #define FieldScene_RunScene385_02000d84 Func_02000d84
-#define FieldScene_SetupDescriptor9740 Func_02000ac8
-#define FieldScene_SetupWithDescriptor976C Func_02000b18
-#define FieldScene_SetupWithDescriptor97AE Func_02000bf8
-#define SceneState_SetFlag200AndConfigureRegion55_26 Func_02000d24
-#define SceneState_SetFlag947AndValue29dc Func_02000f00
+#define Scene_SetupDescriptor9740 Func_02000ac8
+#define Scene_SetupWithDescriptor976C Func_02000b18
+#define Scene_SetupWithDescriptor97AE Func_02000bf8
+#define State_SetFlag200AndConfigureRegion55_26 Func_02000d24
+#define State_SetFlag947AndValue29dc Func_02000f00
 #define SpawnConfiguredEffect Func_0200013c
-#define FieldScene_RunScene385SequenceA Func_020008a8
-#define SceneSetup_InitializeActorsAndFlags Func_02000f30
+#define Scene_RunScene385SequenceA Func_020008a8
+#define Setup_InitializeActorsAndFlags Func_02000f30
 
 #include "create_configured_overlay_object.h"
 #include "configured_effect_spawn.h"
@@ -199,7 +199,7 @@ extern u8 Data_00001cc0[];
 extern const u8 Data_02009740[];
 extern const u8 Data_0200976c[];
 extern const u8 Data_020097ae[];
-extern s16 SceneState_Table[];
+extern s16 State_Table[];
 
 void *Func_020010da(s32, s32, s32, s32);
 void Func_02001120(void *, s32);
@@ -422,9 +422,9 @@ s32 SceneFlag_Check(s32 flag);
 void SceneFlag_Set(s32 flag);
 void SceneMap_UpdateRect(s32, s32, s32, s32, s32, s32);
 void SceneMap_CopyRect(s32, s32, s32, s32, s32, s32);
-void SceneState_SetMode(s32 mode);
-u8 *SceneActor_Find(s32 actor);
-void SceneActor_Place(s32 actor, s32 x, s32 z);
+void State_SetMode(s32 mode);
+u8 *Actor_Find(s32 actor);
+void Actor_Place(s32 actor, s32 x, s32 z);
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -650,7 +650,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
     work->record->mode = mode;
 }
 
-void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth)
+void *OvObj_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth)
 {
     void *obj;
     void *rec;
@@ -671,12 +671,12 @@ void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourt
     return NULL;
 }
 
-void *OverlayObject_CreateConfiguredObjectB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_CreateConfiguredObjectB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "create_configured_overlay_object_body.inc"
 }
 
-void SceneEffect_UpdateMotion(union MotionWork *work)
+void Effect_UpdateMotion(union MotionWork *work)
 {
     extern u8 Data_03001ebc[];
 
@@ -710,7 +710,7 @@ s32 Func_02000314(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target,
+s32 Actor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target,
                   s32 range, s32 force)
 {
     s32 result = 0;
@@ -793,7 +793,7 @@ const void *SceneData_GetTable95D8(void)
     return Data_020095d8;
 }
 
-void ActorPresentation_RunActorModeOneThenZero(s32 actor)
+void ActorDraw_RunActorModeOneThenZero(s32 actor)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -803,7 +803,7 @@ void ActorPresentation_RunActorModeOneThenZero(s32 actor)
     Func_020015be();
 }
 
-void SceneDialogue_RunActor8FlagScene(void)
+void Dialogue_RunActor8FlagScene(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -815,7 +815,7 @@ void SceneDialogue_RunActor8FlagScene(void)
     Func_020015ee();
 }
 
-void SceneDialogue_RunActor11Line(void)
+void Dialogue_RunActor11Line(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -835,7 +835,7 @@ void Func_0200167a(s32 dialogue);
     Func_020009d6(11);
 }
 
-void SceneDialogue_RunActor12TwoFlagScene(void)
+void Dialogue_RunActor12TwoFlagScene(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -859,7 +859,7 @@ void Func_02001618(void);
     Func_02001648();
 }
 
-void SceneDialogue_ShowLine1CB0ForActor13(void)
+void Dialogue_ShowLine1CB0ForActor13(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -877,7 +877,7 @@ void Func_020016da(s32 dialogue);
     Func_02000a36(13);
 }
 
-void SceneDialogue_RunActorFourteenFlagDialogue(void)
+void Dialogue_RunActorFourteenFlagDialogue(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -909,7 +909,7 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
     Func_020016f6_a(0x307);
 }
 
-void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
+void Dialogue_RunActorFifteenFacingPreservedDialogue(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -930,7 +930,7 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
     actor->state_flags = 0;
 }
 
-void SceneDialogue_RunActor16CountedDialogue(void)
+void Dialogue_RunActor16CountedDialogue(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -946,7 +946,7 @@ void SceneDialogue_RunActor16CountedDialogue(void)
     Func_020017f0();
 }
 
-void SceneDialogue_RunActorEightTimedDialogue(void)
+void Dialogue_RunActorEightTimedDialogue(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -960,7 +960,7 @@ void SceneDialogue_RunActorEightTimedDialogue(void)
     Func_02001836();
 }
 
-void SceneDialogue_RunActor11AcceptanceDialogue(void)
+void Dialogue_RunActor11AcceptanceDialogue(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -970,7 +970,7 @@ void SceneDialogue_RunActor11AcceptanceDialogue(void)
     Func_02001872(11)->accepted = 0;
 }
 
-void SceneDialogue_RunActor12TimedTwoFlagScene(void)
+void Dialogue_RunActor12TimedTwoFlagScene(void)
 {
     extern struct SceneWork_020006b4 *Data_03001ebc;
 
@@ -985,7 +985,7 @@ void SceneDialogue_RunActor12TimedTwoFlagScene(void)
     Func_020018b0();
 }
 
-void ActorPresentation_RunActor13AcceptanceDialogue(void)
+void ActorDraw_RunActor13AcceptanceDialogue(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -995,7 +995,7 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
     Func_020018f2(13)->accepted = 0;
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+void Scene_RunSupplementalSequenceOne(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -1025,7 +1025,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     }
 }
 
-void SceneDialogue_RunActorFifteenDialogue(void)
+void Dialogue_RunActorFifteenDialogue(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -1044,7 +1044,7 @@ void SceneDialogue_RunActorFifteenDialogue(void)
     }
 }
 
-void FieldScene_RunScene385SequenceA(void)
+void Scene_RunScene385SequenceA(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -1129,14 +1129,14 @@ void PlaceActorAndSetSceneDelay(s32 x, s32 y, s32 delay)
     Func_02001c56(delay);
 }
 
-void FieldScene_SetupDescriptor9740(void)
+void Scene_SetupDescriptor9740(void)
 {
     Func_02001c7e(158);
     Func_02001b60(Data_02009740, 56, 19);
     Func_02001566(408, 320, 5);
 }
 
-void ActorPresentation_SetupActorEighteenAt312_304(void)
+void ActorDraw_SetupActorEighteenAt312_304(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1145,14 +1145,14 @@ void ActorPresentation_SetupActorEighteenAt312_304(void)
     Func_0200158e(312, 304, 6);
 }
 
-void FieldScene_SetupWithDescriptor976C(void)
+void Scene_SetupWithDescriptor976C(void)
 {
     Func_02001cce(158);
     Func_02001bb0(Data_0200976c, 44, 17);
     Func_020015b4_a(216, 288, 7);
 }
 
-void ActorPresentation_SetupActorZeroForSceneEight(void)
+void ActorDraw_SetupActorZeroForSceneEight(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1175,7 +1175,7 @@ void ActorPresentation_SetupActorZeroForSceneEight(void)
     Func_0200160e(376, 224, 8);
 }
 
-void ActorPresentation_SetupActorZeroForSceneNine(void)
+void ActorDraw_SetupActorZeroForSceneNine(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1198,14 +1198,14 @@ void ActorPresentation_SetupActorZeroForSceneNine(void)
     Func_0200166a(296, 176, 9);
 }
 
-void FieldScene_SetupWithDescriptor97AE(void)
+void Scene_SetupWithDescriptor97AE(void)
 {
     Func_02001dae(158);
     Func_02001c90(Data_020097ae, 38, 6);
     Func_02001692(120, 144, 10);
 }
 
-void ActorPresentation_SetupActorSceneCells(void)
+void ActorDraw_SetupActorSceneCells(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1232,7 +1232,7 @@ void ActorPresentation_SetupActorSceneCells(void)
     Func_02001738(64, 272, 11);
 }
 
-void ActorPresentation_SetupActorZeroForSceneTwelve(void)
+void ActorDraw_SetupActorZeroForSceneTwelve(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1255,7 +1255,7 @@ void ActorPresentation_SetupActorZeroForSceneTwelve(void)
     Func_02001794(72, 160, 12);
 }
 
-void SceneState_SetFlag200AndConfigureRegion55_26(void)
+void State_SetFlag200AndConfigureRegion55_26(void)
 {
     Func_02001df6(0x200);
     {
@@ -1265,7 +1265,7 @@ void SceneState_SetFlag200AndConfigureRegion55_26(void)
     }
 }
 
-void ActorPresentation_SetFlag200AndSceneCell23(void)
+void ActorDraw_SetFlag200AndSceneCell23(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1277,7 +1277,7 @@ void ActorPresentation_SetFlag200AndSceneCell23(void)
     }
 }
 
-void FieldScene_SetActor21Values0And4(void)
+void Scene_SetActor21Values0And4(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -1312,7 +1312,7 @@ void FieldScene_RunScene385_02000d84(void)
     Func_02001f0c();
 }
 
-void ActorPresentation_SetPairedSceneCells(void)
+void ActorDraw_SetPairedSceneCells(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1323,7 +1323,7 @@ void ActorPresentation_SetPairedSceneCells(void)
     Func_02001ee8(40, 42, 12, 22, 3, 3);
 }
 
-void ActorPresentation_SetAlternatePairedSceneCells(void)
+void ActorDraw_SetAlternatePairedSceneCells(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1334,7 +1334,7 @@ void ActorPresentation_SetAlternatePairedSceneCells(void)
     Func_02001f18(36, 42, 12, 22, 3, 3);
 }
 
-void FieldScene_RunActorEighteenDialogue(void)
+void Scene_RunActorEighteenDialogue(void)
 {
     extern struct SceneWork_02000e90 *Data_03001ebc;
 
@@ -1353,7 +1353,7 @@ void FieldScene_RunActorEighteenDialogue(void)
     Func_02001fdc();
 }
 
-void SceneState_SetFlag947AndValue29dc(void)
+void State_SetFlag947AndValue29dc(void)
 {
     Func_02001fec();
     Func_02001fbc(0x947, 1);
@@ -1366,7 +1366,7 @@ const u8 *SceneData_GetTable97dc(void)
     return Data_020097dc;
 }
 
-s32 SceneSetup_InitializeActorsAndFlags(void)
+s32 Setup_InitializeActorsAndFlags(void)
 {
     void *Func_020000a0(s32, s32, s32, s32);
 
@@ -1376,27 +1376,27 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 
     if (SceneFlag_Check(0x200))
         UpdateRect(SceneMap_UpdateRect, 55, 26, 4, 2, 23, 26);
-    OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
+    OvObj_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
     SceneMap_CopyRect(45, 41, 8, 45, 3, 3);
-    SceneState_SetMode(1);
-    actor = SceneActor_Find(14);
+    State_SetMode(1);
+    actor = Actor_Find(14);
     *(u32 *)(actor + 108) = 0x02008401;
     {
-        u8 *actor = SceneActor_Find(14);
+        u8 *actor = Actor_Find(14);
         s32 mode = 1;
         *(u16 *)(actor + 100) = mode;
     }
     mode = 0;
-    actor = SceneActor_Find(15);
+    actor = Actor_Find(15);
     *(u32 *)(actor + 108) = 0x02008401;
-    *(u16 *)(SceneActor_Find(15) + 100) = mode;
+    *(u16 *)(Actor_Find(15) + 100) = mode;
     if (SceneFlag_Check(0x858))
-        PlaceActor(SceneActor_Place, 18, 0xd80000, 0x1880000);
-    if (SceneState_Table[225] <= 2 && !SceneFlag_Check(52) && !SceneFlag_Check(0x109))
+        PlaceActor(Actor_Place, 18, 0xd80000, 0x1880000);
+    if (State_Table[225] <= 2 && !SceneFlag_Check(52) && !SceneFlag_Check(0x109))
         SceneFlag_Set(0x867);
     if (SceneFlag_Check(0x867) && !SceneFlag_Check(52))
-        PlaceActor(SceneActor_Place, 21, 0x1980000, 0x780000);
-    scene = SceneState_Table;
+        PlaceActor(Actor_Place, 21, 0x1980000, 0x780000);
+    scene = State_Table;
     if (scene[225] == 11)
         SceneFlag_Set(0x12f);
     if (scene[225] == 13)

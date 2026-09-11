@@ -18,10 +18,10 @@
  * reactions it triggers.  Behaviour:
  *
  *   - mode 7 allocates the kind-46 and kind-47 rectangle blitters itself,
- *     with a shape pair BattleEffect_FetchRectangleBlitters never produces
+ *     with a shape pair BattleFx_FetchRectangleBlitters never produces
  *     (kind 47 as 7,7,7,2 rather than 7,7,3,3 or 7,7,7,3), and keeps both
  *     entries so the draw below can pick between them by side; every other
- *     mode takes the pair through BattleEffect_FetchRectangleBlitters.
+ *     mode takes the pair through BattleFx_FetchRectangleBlitters.
  *   - the shared sheet is decompressed into work + 0xC56.  Modes 5 and 7
  *     use their own sheets and stop there; the rest also decompress the
  *     kind-41 block and then install a palette -- mode 6 writes a sixty-four
@@ -122,7 +122,7 @@ extern u8 Value_000000ce;
 
 void Func_080cd594(s32);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
-void BattleEffect_FetchRectangleBlitters(s32, u32 *);
+void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void Func_080e0524(s32, void *, s32, s32);
 void *Func_08002f40(s32);
 void Func_080041d8(s32, s32);
@@ -204,7 +204,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         Func_080ed408(47, 7, 7, 7, 2);
         blit[1] = (void *)cache[47 - 40];
     } else {
-        BattleEffect_FetchRectangleBlitters(WORK_EFX->side, (u32 *)blit);
+        BattleFx_FetchRectangleBlitters(WORK_EFX->side, (u32 *)blit);
     }
 
     Func_080e0524((s32)&Value_000000ce, work, 1, 0);

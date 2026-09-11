@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_RunBurstScene Func_080e2974
+#define BattlePres_RunBurstScene Func_080e2974
 
 /*
  * Battle-presentation burst scene at 0x080e2974.
@@ -188,7 +188,7 @@ void Func_080cd52c(void);                        /* ObjectGroup_TickMemberTimers
 void Func_08004278(s32 callback);                /* Scheduler_RemoveCallback */
 void Func_080cdbc0(void);
 
-void BattlePresentation_RunBurstScene(void *object, s32 scene)
+void BattlePres_RunBurstScene(void *object, s32 scene)
 {
     void **heap;
     void **cursor;

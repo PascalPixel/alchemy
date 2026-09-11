@@ -175,12 +175,12 @@ void Func_080c9048(void);
 void Func_080cd104(s32 a, s32 b);
 void Func_080cd594(s32 mode);
 s32 Func_080cdbc0(void);
-/* BattleEffect_SelectLivingTargets */
+/* BattleFx_SelectLivingTargets */
 void Func_080d6750(void *object);
 void Func_080d67dc(void);
 /* object/group/update_members.c */
 void Func_080d6888(s32 member, s32 b, s32 c, s32 d, s32 e);
-/* BattleEffect_SpawnObjects */
+/* BattleFx_SpawnObjects */
 void Func_080dbb24(s32 a, s32 b, s32 c);
 /* Resource_LoadAndDecompress */
 void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);

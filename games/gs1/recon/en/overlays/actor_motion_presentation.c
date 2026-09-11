@@ -14,7 +14,7 @@ extern u8 Data_0200e590[];
 extern u8 Data_0200e5cc[];
 extern u8 Data_0200e614[];
 
-#define FieldScene_RunActorMotionPresentation Func_020015dc
+#define Scene_RunActorMotionPresentation Func_020015dc
 
 /* Retained scene draft. The complete call sequence is bound to runtime
  * targets; arguments, memory effects and source structure remain under audit. */
@@ -556,7 +556,7 @@ static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a
     f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
 }
 
-void FieldScene_RunActorMotionPresentation(void)
+void Scene_RunActorMotionPresentation(void)
 {
     u8 *rec8;
     u8 *record;

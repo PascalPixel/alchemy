@@ -2,26 +2,26 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define BattleRuntime_Reset_1() Call0(Func_02000bd6)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02000c04, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02000c12, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_02000c2e, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_02000c42, a0, a1, a2)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02000cbe, a0, a1, a2)
-#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02000cca, a0, a1, a2)
+#define Battle_Reset_1() Call0(Func_02000bd6)
+#define Motion_SetSpeed_1(a0, a1, a2) Call3(Func_02000c04, a0, a1, a2)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_02000c12, a0, a1, a2)
+#define Motion_ResetPosMode2_1(a0, a1, a2) Call3(Func_02000c2e, a0, a1, a2)
+#define Motion_SetPosReset_1(a0, a1, a2) Call3(Func_02000c42, a0, a1, a2)
+#define Motion_ArmCb_1(a0, a1, a2) Call3(Func_02000cbe, a0, a1, a2)
+#define Motion_ArmCb_2(a0, a1, a2) Call3(Func_02000cca, a0, a1, a2)
 #define Object_SetModeById_1(a0, a1) Call2(Func_02000c82, a0, a1)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Call0(Func_02000c5c)
-#define FieldScene_SetActor13Value1A Func_02000030
+#define Battle_SchedShoulder_1() Call0(Func_02000c5c)
+#define Scene_SetActor13Value1A Func_02000030
 #define SceneData_GetPrimaryTable Func_02000040
 #define SceneData_ReturnZero Func_02000080
 #define SceneData_GetTable8B48 Func_02000084
 #define SceneData_GetSecondaryTable Func_0200008c
 #define SceneData_GetTertiaryTable Func_020000e4
-#define SceneDialogue_ShowMessages8fbAnd8fc Func_020002f8
-#define FieldScene_RunPrimarySequence Func_02000334
-#define FieldScene_RunScene3c3SequenceA Func_020003c4
-#define FieldScene_RunActorNinePromptDialogue Func_02000730
-#define FieldScene_RunActorTenRepeatedMotion Func_020007ac
+#define Dialogue_ShowMessages8fbAnd8fc Func_020002f8
+#define Scene_RunPrimarySequence Func_02000334
+#define Scene_RunScene3c3SequenceA Func_020003c4
+#define Scene_RunActorNinePromptDialogue Func_02000730
+#define Scene_RunActorTenRepeatedMotion Func_020007ac
 
 extern u8 Value_000000aa;
 extern u8 Value_000000ab;
@@ -313,7 +313,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 s32 Func_0200092a();    /* Raw encoded call destination. */
 
-void FieldScene_SetActor13Value1A(void)
+void Scene_SetActor13Value1A(void)
 {
     Func_0200099c(0xD, 0x1A);
 }
@@ -473,7 +473,7 @@ void Func_02000288(void)
     Func_02000c46(arg);
 }
 
-void SceneDialogue_ShowMessages8fbAnd8fc(void)
+void Dialogue_ShowMessages8fbAnd8fc(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -485,22 +485,22 @@ void SceneDialogue_ShowMessages8fbAnd8fc(void)
     Func_02000c7a(token);
 }
 
-void FieldScene_RunPrimarySequence(void)
+void Scene_RunPrimarySequence(void)
 {
-    BattleRuntime_Reset_1();
-    ObjectMotion_SetSpeedParameters_1(8, 65536, 32768);
-    ObjectMotion_SetSpeedParameters_2(9, 65536, 32768);
-    ObjectMotion_ResetAndSetPositionInMode2_1(8, 136, 384);
-    ObjectMotion_SetPositionAndReset_1(9, 152, 384);
-    ObjectMotion_ArmCallback_1(8, 16384, 0);
-    ObjectMotion_ArmCallback_2(9, 16384, 0);
+    Battle_Reset_1();
+    Motion_SetSpeed_1(8, 65536, 32768);
+    Motion_SetSpeed_2(9, 65536, 32768);
+    Motion_ResetPosMode2_1(8, 136, 384);
+    Motion_SetPosReset_1(9, 152, 384);
+    Motion_ArmCb_1(8, 16384, 0);
+    Motion_ArmCb_2(9, 16384, 0);
     Object_SetModeById_1(8, 1);
     Call6(Func_02000c0e, 6, 27, 1, 1, 7, 27);
     Call6(Func_02000c20, 9, 26, 2, 1, 7, 26);
-    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+    Battle_SchedShoulder_1();
 }
 
-void FieldScene_RunScene3c3SequenceA(void)
+void Scene_RunScene3c3SequenceA(void)
 {
     extern u8 Data_03001ebc[];
     void Func_02000fb6();
@@ -610,7 +610,7 @@ void FieldScene_RunScene3c3SequenceA(void)
  * the Data_03001ebc pointer cell, which costs one dereference.  The guard is
  * tested against zero at this site; the polarity is read per call site.
  */
-void FieldScene_RunActorNinePromptDialogue(void)
+void Scene_RunActorNinePromptDialogue(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000fb6();
@@ -654,7 +654,7 @@ done:
     Func_0200103a();
 }
 
-void FieldScene_RunActorTenRepeatedMotion(void)
+void Scene_RunActorTenRepeatedMotion(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000fb6();

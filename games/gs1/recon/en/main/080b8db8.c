@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_ApplyUnitDamage Func_080b8db8
+#define BattlePres_ApplyUnitDamage Func_080b8db8
 #define Character_GetRuntimeRecord Func_08077008
 #define GetBattleObjectSlot Func_080b7dd0
 
@@ -22,7 +22,7 @@ void Func_08015120(s32 value, s32 mode);
 void Func_080151c8(s32 message_id);
 void Func_080b8ec4(s32 unit_id);
 
-void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage,
+void BattlePres_ApplyUnitDamage(u32 unit_id, s32 damage,
                                         s32 show_message, void *context)
 {
     u8 local_context[4];

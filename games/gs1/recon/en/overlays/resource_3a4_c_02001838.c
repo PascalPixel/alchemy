@@ -24,11 +24,11 @@
  */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_BuildMultiPhasePresentation:
+/* AUDITED GENERATED CALL SCRIPT for Scene_BuildMultiPhasePresentation:
  * 107 calls, repeated actor-state phases, and terminal coordinate forwarding
  * across the complete decoded owner. */
 
-#define FieldScene_BuildMultiPhasePresentation Func_02001838
+#define Scene_BuildMultiPhasePresentation Func_02001838
 
 void Func_02004678();
 void Func_020053be();

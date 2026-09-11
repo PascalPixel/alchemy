@@ -1,13 +1,13 @@
 #include "types.h"
 
-#define BattleEffect_PositionSprite Func_080a1a40
+#define BattleFx_PositionSprite Func_080a1a40
 
 extern u8 Data_080af294[];
 extern u8 Data_080af29d[];
 extern volatile u32 Data_03001e40;
 extern u8 *Data_03001f2c;
 
-void BattleEffect_PositionSprite(s32 x_offset, s32 y_offset)
+void BattleFx_PositionSprite(s32 x_offset, s32 y_offset)
 {
     u8 *state;
     u8 *anchor;

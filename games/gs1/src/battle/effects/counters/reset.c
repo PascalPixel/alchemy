@@ -1,6 +1,6 @@
 #include "battle_effect_counters.h"
 
-void BattleEffect_ResetCounters(void)
+void BattleFx_ResetCounters(void)
 {
   short cleared_value;
   struct BattleEffectCounterState *state;

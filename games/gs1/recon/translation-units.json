@@ -109200,58 +109200,6 @@
       "overlay": null
     },
     {
-      "id": "battle-random16",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/random16.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08079bc4",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079be8",
-          "extent": 16,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-effects-calc-fx_get_base_success_rate",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/calc/fx_get_base_success_rate.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08079d7c",
-          "extent": 288,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079e9c",
-          "extent": 92,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079ef8",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079f10",
-          "extent": 444,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-effects-data-fx_get_resource_group",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/data/fx_get_resource_group.c",
@@ -109293,37 +109241,6 @@
         {
           "address": "0x08096ab0",
           "extent": 64,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-effects-fx_finish_scene_and_release_heap_block",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/fx_finish_scene_and_release_heap_block.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08097608",
-          "extent": 700,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080978c4",
-          "extent": 132,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097948",
-          "extent": 268,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097a54",
-          "extent": 40,
           "state": "exact-c"
         }
       ],
@@ -109613,83 +109530,6 @@
         {
           "address": "0x0809b5dc",
           "extent": 108,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-effects-effect_slot_update",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/effect_slot_update.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0809b804",
-          "extent": 560,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809ba34",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809ba5c",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809ba70",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809ba7c",
-          "extent": 600,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809bcd4",
-          "extent": 1600,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809c314",
-          "extent": 144,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809c3a4",
-          "extent": 19628,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-presentation_update_camera",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/presentation_update_camera.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080b5864",
-          "extent": 248,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b595c",
-          "extent": 176,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b5a0c",
-          "extent": 200,
           "state": "exact-c"
         }
       ],
@@ -110005,27 +109845,6 @@
         {
           "address": "0x080c0228",
           "extent": 112,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-presentation-trans-pres_setup_transition_scene",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/trans/pres_setup_transition_scene.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080c0cec",
-          "extent": 264,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080c0df4",
-          "extent": 68,
           "state": "exact-c"
         }
       ],
@@ -110635,37 +110454,6 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-particle_field-fx_run_particle_field_variant0",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/particle_field/fx_run_particle_field_variant0.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080dfa18",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080dfa24",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080dfa30",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080dfa3c",
-          "extent": 928,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-selection-set_node_coordinates",
       "game": "gs1",
       "source": "games/gs1/src/menu/selection/set_node_coordinates.c",
@@ -110681,52 +110469,6 @@
         {
           "address": "0x0801b228",
           "extent": 324,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "menu-selection-selection_loop",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/selection/selection_loop.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801b398",
-          "extent": 140,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b424",
-          "extent": 200,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b4ec",
-          "extent": 212,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b5c0",
-          "extent": 1000,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b9a8",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b9ec",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801ba34",
-          "extent": 512,
           "state": "exact-c"
         }
       ],
@@ -110811,63 +110553,6 @@
       "overlay": null
     },
     {
-      "id": "menu-reserved_status_zero",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/reserved_status_zero.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080aa534",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080aa538",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080aa544",
-          "extent": 1856,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "psynergy_menu-psynergy_menu_reserved_no_op",
-      "game": "gs1",
-      "source": "games/gs1/src/psynergy_menu/psynergy_menu_reserved_no_op.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a1bc8",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1bcc",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1bdc",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1c2c",
-          "extent": 64,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "psynergy_menu-psynergy_menu_classify_selected_psynergy",
       "game": "gs1",
       "source": "games/gs1/src/psynergy_menu/psynergy_menu_classify_selected_psynergy.c",
@@ -110939,32 +110624,6 @@
       "overlay": null
     },
     {
-      "id": "psynergy_menu-psynergy_menu_draw_range",
-      "game": "gs1",
-      "source": "games/gs1/src/psynergy_menu/psynergy_menu_draw_range.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a8cc0",
-          "extent": 640,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a8f40",
-          "extent": 1076,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a9374",
-          "extent": 548,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "shop-fill_selector",
       "game": "gs1",
       "source": "games/gs1/src/shop/fill_selector.c",
@@ -110985,107 +110644,6 @@
         {
           "address": "0x080b0894",
           "extent": 36,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "shop-place_cursor",
-      "game": "gs1",
-      "source": "games/gs1/src/shop/place_cursor.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080b0a6c",
-          "extent": 1336,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b0fa4",
-          "extent": 296,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b10cc",
-          "extent": 216,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b11a4",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b11c4",
-          "extent": 684,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b1470",
-          "extent": 204,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b153c",
-          "extent": 680,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b17e4",
-          "extent": 132,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b1868",
-          "extent": 260,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b196c",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b19cc",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b1a14",
-          "extent": 444,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b1bd0",
-          "extent": 540,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b1dec",
-          "extent": 148,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b1e80",
-          "extent": 616,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b20e8",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b2110",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b211c",
-          "extent": 1452,
           "state": "exact-c"
         }
       ],
@@ -111154,69 +110712,6 @@
       "overlay": null
     },
     {
-      "id": "runtime-scheduler-scheduler_schedule_callback_a_after_frames",
-      "game": "gs1",
-      "source": "games/gs1/src/runtime/scheduler/scheduler_schedule_callback_a_after_frames.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801fd84",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801fd98",
-          "extent": 16,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "runtime-scheduler-scheduler_disable_overlay_callbacks_with_flags",
-      "game": "gs1",
-      "source": "games/gs1/src/runtime/scheduler/scheduler_disable_overlay_callbacks_with_flags.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a1050",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1070",
-          "extent": 96,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "resource-clear_owner_list_and_counters",
-      "game": "gs1",
-      "source": "games/gs1/src/resource/clear_owner_list_and_counters.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801a778",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801a7c0",
-          "extent": 332,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "resource-find_free_transfer_entry",
       "game": "gs1",
       "source": "games/gs1/src/resource/find_free_transfer_entry.c",
@@ -111237,90 +110732,6 @@
         {
           "address": "0x0801a97c",
           "extent": 1684,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "resource-load_by_mode",
-      "game": "gs1",
-      "source": "games/gs1/src/resource/load_by_mode.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801bc34",
-          "extent": 160,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801bcd4",
-          "extent": 196,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "resource-copy_fixed_block_b",
-      "game": "gs1",
-      "source": "games/gs1/src/resource/copy_fixed_block_b.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08020aec",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08020b00",
-          "extent": 20,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-text-fmt-text_format_hex_to_work",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/text/fmt/text_format_hex_to_work.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080045f0",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004620",
-          "extent": 120,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-text-draw-text_draw_hex_right_aligned",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/text/draw/text_draw_hex_right_aligned.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08004718",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800473c",
-          "extent": 252,
           "state": "exact-c"
         }
       ],
@@ -111595,188 +111006,6 @@
       "overlay": null
     },
     {
-      "id": "ui-icon-icon_build_ability_icon_tiles",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/icon/icon_build_ability_icon_tiles.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801a404",
-          "extent": 188,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801a4c0",
-          "extent": 696,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-window-window_copy_tilemap_region",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/window/window_copy_tilemap_region.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080209d0",
-          "extent": 144,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08020a60",
-          "extent": 140,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-text-text_set_render_string",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/text/text_set_render_string.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08020b14",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08020b64",
-          "extent": 2044,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-load_entry_for_kind",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/load_entry_for_kind.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08021b80",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021bc8",
-          "extent": 108,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-text_show_message_and_wait_complete",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/text_show_message_and_wait_complete.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08021e48",
-          "extent": 2676,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080228bc",
-          "extent": 380,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08022a38",
-          "extent": 10056,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-fill_bank15_palette_grey",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/fill_bank15_palette_grey.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08097a7c",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097adc",
-          "extent": 120,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "ui-window_update_or_create",
-      "game": "gs1",
-      "source": "games/gs1/src/ui/window_update_or_create.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a10d0",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1114",
-          "extent": 988,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a14f0",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a153c",
-          "extent": 180,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a15f0",
-          "extent": 316,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a172c",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1778",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a17c4",
-          "extent": 64,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "ui-text_draw_work_value_with_label",
       "game": "gs1",
       "source": "games/gs1/src/ui/text_draw_work_value_with_label.c",
@@ -111828,27 +111057,6 @@
         {
           "address": "0x080b0664",
           "extent": 48,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "graphics-prepare_transfer_in_iwram_work",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/prepare_transfer_in_iwram_work.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080051d8",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080051e8",
-          "extent": 32,
           "state": "exact-c"
         }
       ],
@@ -111938,53 +111146,6 @@
       "overlay": null
     },
     {
-      "id": "graphics-registers-set_bg1_priority3",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/registers/set_bg1_priority3.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08021dfc",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021e14",
-          "extent": 52,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "graphics-blend-fade_alpha_out",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/blend/fade_alpha_out.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080c0e38",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080c0e70",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080c0ea8",
-          "extent": 16,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "graphics-upload_block",
       "game": "gs1",
       "source": "games/gs1/src/graphics/upload_block.c",
@@ -112005,27 +111166,6 @@
         {
           "address": "0x080c1724",
           "extent": 752,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "graphics-registers-reset_bg2_pa",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/registers/reset_bg2_pa.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080ec0e0",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ec0f0",
-          "extent": 16,
           "state": "exact-c"
         }
       ],
@@ -112067,67 +111207,6 @@
         {
           "address": "0x0800c3ec",
           "extent": 28,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "object-dispatch-dispatch_register_child_metadata",
-      "game": "gs1",
-      "source": "games/gs1/src/object/dispatch/dispatch_register_child_metadata.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800c430",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c454",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c46c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c47c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c48c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c49c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4ac",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4bc",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4ec",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c528",
-          "extent": 32,
           "state": "exact-c"
         }
       ],
@@ -112247,27 +111326,6 @@
       "overlay": null
     },
     {
-      "id": "party-remap_character_id_by_flags",
-      "game": "gs1",
-      "source": "games/gs1/src/party/remap_character_id_by_flags.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0808b398",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b3d0",
-          "extent": 636,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "overlays-shared-2",
       "game": "gs1",
       "source": "games/gs1/src/overlays/shared/shared_2.c",
@@ -112289,27 +111347,6 @@
       "overlay": "resource_3be"
     },
     {
-      "id": "item_menu-item_menu_pos_owner",
-      "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_pos_owner.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a1c6c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1cb0",
-          "extent": 88,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "item_menu-item_menu_use",
       "game": "gs1",
       "source": "games/gs1/src/item_menu/item_menu_use.c",
@@ -112325,108 +111362,6 @@
         {
           "address": "0x080a3354",
           "extent": 128,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "item_menu-item_menu_hide_all_icons",
-      "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_hide_all_icons.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a345c",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3480",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a34c0",
-          "extent": 156,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a355c",
-          "extent": 844,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a38a8",
-          "extent": 864,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "item_menu-item_menu_is_special",
-      "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_is_special.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a3ce4",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3cf8",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3d24",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3d6c",
-          "extent": 112,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3ddc",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3e28",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3e88",
-          "extent": 648,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a4110",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a413c",
-          "extent": 848,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a448c",
-          "extent": 320,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a45cc",
-          "extent": 232,
           "state": "exact-c"
         }
       ],
@@ -112582,150 +111517,6 @@
         {
           "address": "0x0800bfa4",
           "extent": 288,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "map-shared-apply_work_origin_and_span",
-      "game": "gs1",
-      "source": "games/gs1/src/map/shared/apply_work_origin_and_span.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800fe9c",
-          "extent": 184,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800ff54",
-          "extent": 2416,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080108c4",
-          "extent": 1156,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08010d48",
-          "extent": 920,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080110e0",
-          "extent": 132,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011164",
-          "extent": 640,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "map-shared-load_default_cells_and_update_block",
-      "game": "gs1",
-      "source": "games/gs1/src/map/shared/load_default_cells_and_update_block.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801173c",
-          "extent": 364,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080118a8",
-          "extent": 220,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011984",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080119a8",
-          "extent": 36,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "map-shared-get_cell_attribute_low_nibble",
-      "game": "gs1",
-      "source": "games/gs1/src/map/shared/get_cell_attribute_low_nibble.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08011fd8",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08012038",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08012078",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080120b4",
-          "extent": 232,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801219c",
-          "extent": 104,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08012204",
-          "extent": 168,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080122ac",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080122c8",
-          "extent": 104,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "map-shared-get_focused_object_collision",
-      "game": "gs1",
-      "source": "games/gs1/src/map/shared/get_focused_object_collision.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0808bd24",
-          "extent": 188,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808bde0",
-          "extent": 1276,
           "state": "exact-c"
         }
       ],
@@ -113077,32 +111868,6 @@
       "overlay": null
     },
     {
-      "id": "save-state-state_confirm_and_process_selected_slot",
-      "game": "gs1",
-      "source": "games/gs1/src/save/state/state_confirm_and_process_selected_slot.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801fb48",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801fba8",
-          "extent": 220,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801fc84",
-          "extent": 256,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "save-write_selected_slot",
       "game": "gs1",
       "source": "games/gs1/src/save/write_selected_slot.c",
@@ -113139,94 +111904,6 @@
         {
           "address": "0x0800eaf8",
           "extent": 168,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "field-event_table-get_row_limit",
-      "game": "gs1",
-      "source": "games/gs1/src/field/event_table/get_row_limit.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080b26c8",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b26cc",
-          "extent": 152,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b2764",
-          "extent": 20,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "camera-scene-set_angle_parameters",
-      "game": "gs1",
-      "source": "games/gs1/src/camera/scene/set_angle_parameters.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08005208",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005258",
-          "extent": 1140,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "audio-track_reset_slot_buckets",
-      "game": "gs1",
-      "source": "games/gs1/src/audio/track_reset_slot_buckets.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080f7db4",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7df0",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7e34",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7e60",
-          "extent": 208,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7f30",
-          "extent": 4792,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f91e8",
-          "extent": 276,
           "state": "exact-c"
         }
       ],
@@ -113569,98 +112246,6 @@
       "overlay": null
     },
     {
-      "id": "effects-run_animation_mode_6_or_7_or",
-      "game": "gs1",
-      "source": "games/gs1/src/effects/run_animation_mode_6_or_7_or.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080e28f4",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e291c",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e2928",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e2934",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e2940",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e294c",
-          "extent": 3948,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e38b8",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e3908",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e3944",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e3958",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e396c",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e3980",
-          "extent": 148,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "equipment_menu-equipment_menu_update_compatibility_indicators",
-      "game": "gs1",
-      "source": "games/gs1/src/equipment_menu/equipment_menu_update_compatibility_indicators.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080a3c08",
-          "extent": 144,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a3c98",
-          "extent": 76,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "overlays-scene-dialogue-topic-dialogue_pick_topic_variant_id",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/dialogue/topic/dialogue_pick_topic_variant_id.c",
@@ -113680,78 +112265,6 @@
         }
       ],
       "overlay": "resource_3b7"
-    },
-    {
-      "id": "owner-scale_adjusted_amount",
-      "game": "gs1",
-      "source": "games/gs1/src/owner/scale_adjusted_amount.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08079bf8",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079c30",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079c5c",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079c8c",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079cbc",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079d1c",
-          "extent": 96,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "object-table-clear_battle_slots",
-      "game": "gs1",
-      "source": "games/gs1/src/object/table/clear_battle_slots.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0808b9f8",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808ba1c",
-          "extent": 552,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808bc44",
-          "extent": 88,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808bc9c",
-          "extent": 136,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
     },
     {
       "id": "menu-input-cancel_sound_tick",
@@ -113835,37 +112348,6 @@
         {
           "address": "0x080bbb0c",
           "extent": 6332,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "display-scroll-scroll_build_hblank_word_table",
-      "game": "gs1",
-      "source": "games/gs1/src/display/scroll/scroll_build_hblank_word_table.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080f037c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f03c0",
-          "extent": 11000,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f2eb8",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f2ebc",
-          "extent": 2240,
           "state": "exact-c"
         }
       ],
@@ -114034,69 +112516,6 @@
       "overlay": null
     },
     {
-      "id": "graphics-fill_word_stream_with_f000",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/fill_word_stream_with_f000.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08004698",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080046c4",
-          "extent": 84,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "runtime-remap_bytes_by_table",
-      "game": "gs1",
-      "source": "games/gs1/src/runtime/remap_bytes_by_table.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800f9cc",
-          "extent": 192,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800fa8c",
-          "extent": 1040,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "item-call_handler48",
-      "game": "gs1",
-      "source": "games/gs1/src/item/call_handler48.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801c458",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c46c",
-          "extent": 912,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-run_selection_hook",
       "game": "gs1",
       "source": "games/gs1/src/menu/run_selection_hook.c",
@@ -114165,27 +112584,6 @@
       "overlay": null
     },
     {
-      "id": "link-create_countdown_label_window",
-      "game": "gs1",
-      "source": "games/gs1/src/link/create_countdown_label_window.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08021c34",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021c64",
-          "extent": 292,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "game_flags-refresh_lure_cap",
       "game": "gs1",
       "source": "games/gs1/src/game_flags/refresh_lure_cap.c",
@@ -114231,57 +112629,6 @@
         {
           "address": "0x08077cb8",
           "extent": 128,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "djinn-get_definition",
-      "game": "gs1",
-      "source": "games/gs1/src/djinn/get_definition.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0807a0cc",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a0f4",
-          "extent": 192,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a1b4",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a2bc",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a2e4",
-          "extent": 108,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a350",
-          "extent": 88,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a3a8",
-          "extent": 176,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807a458",
-          "extent": 64,
           "state": "exact-c"
         }
       ],
@@ -114372,27 +112719,6 @@
       "overlay": null
     },
     {
-      "id": "item-play_use_animation",
-      "game": "gs1",
-      "source": "games/gs1/src/item/play_use_animation.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080aa448",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080aa460",
-          "extent": 212,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-core-compute_entry_values",
       "game": "gs1",
       "source": "games/gs1/src/menu/core/compute_entry_values.c",
@@ -114429,89 +112755,6 @@
         {
           "address": "0x080ae958",
           "extent": 152,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "shop-service_price",
-      "game": "gs1",
-      "source": "games/gs1/src/shop/service_price.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080b2778",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b27b0",
-          "extent": 92,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b280c",
-          "extent": 120,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b2884",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b28d4",
-          "extent": 84,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b2928",
-          "extent": 128,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "graphics-tile-transpose_copy",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/tile/transpose_copy.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080dfddc",
-          "extent": 1864,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e0524",
-          "extent": 1888,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "object-group-probe_keys_when_field24_high",
-      "game": "gs1",
-      "source": "games/gs1/src/object/group/probe_keys_when_field24_high.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080e3a14",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080e3a3c",
-          "extent": 3452,
           "state": "exact-c"
         }
       ],
@@ -114559,27 +112802,6 @@
         {
           "address": "0x080f40e8",
           "extent": 24,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "runtime-blank_display_load_value_and_run",
-      "game": "gs1",
-      "source": "games/gs1/src/runtime/blank_display_load_value_and_run.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080f6008",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f6038",
-          "extent": 7548,
           "state": "exact-c"
         }
       ],
@@ -120632,32 +118854,6 @@
         {
           "address": "0x0800baf8",
           "extent": 336,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "animation-set_state_field5_bits2_to3",
-      "game": "gs1",
-      "source": "games/gs1/src/animation/set_state_field5_bits2_to3.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800c548",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c570",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c598",
-          "extent": 28,
           "state": "exact-c"
         }
       ],
@@ -131312,127 +129508,6 @@
       "overlay": "resource_3bf"
     },
     {
-      "id": "display-blend-blend_run_script",
-      "game": "gs1",
-      "source": "games/gs1/src/display/blend/blend_run_script.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080119cc",
-          "extent": 276,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011ae0",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011af0",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011b00",
-          "extent": 200,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011bc8",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011be0",
-          "extent": 256,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011ce0",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011cec",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011d10",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011d34",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011d60",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011d94",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011ddc",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011e2c",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011e50",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011e6c",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011e88",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011ed0",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011f14",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011f28",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011f3c",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011f48",
-          "extent": 144,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-sel-run_top_selection",
       "game": "gs1",
       "source": "games/gs1/src/menu/sel/run_top_selection.c",
@@ -132757,47 +130832,6 @@
         {
           "address": "0x080970f8",
           "extent": 124,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-effects-fx_get_cycled_table_word",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/fx_get_cycled_table_word.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08097b54",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097b70",
-          "extent": 1040,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097f80",
-          "extent": 172,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809802c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08098070",
-          "extent": 276,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08098184",
-          "extent": 272,
           "state": "exact-c"
         }
       ],
@@ -161559,6 +159593,1620 @@
         }
       ],
       "overlay": "resource_3c5"
+    },
+    {
+      "id": "ui-text-fmt-text_format_hex_to_work",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/text/fmt/text_format_hex_to_work.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080045f0",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08004620",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08004698",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080046c4",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08004718",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800473c",
+          "extent": 252,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "graphics-prepare_transfer_in_iwram_work",
+      "game": "gs1",
+      "source": "games/gs1/src/graphics/prepare_transfer_in_iwram_work.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080051d8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080051e8",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005208",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005258",
+          "extent": 1140,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "object-dispatch-dispatch_register_child_metadata",
+      "game": "gs1",
+      "source": "games/gs1/src/object/dispatch/dispatch_register_child_metadata.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0800c430",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c454",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c46c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c47c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c48c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c49c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c4ac",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c4bc",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c4ec",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c528",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c548",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c570",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c598",
+          "extent": 28,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "runtime-remap_bytes_by_table",
+      "game": "gs1",
+      "source": "games/gs1/src/runtime/remap_bytes_by_table.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0800f9cc",
+          "extent": 192,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800fa8c",
+          "extent": 1040,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800fe9c",
+          "extent": 184,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800ff54",
+          "extent": 2416,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080108c4",
+          "extent": 1156,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08010d48",
+          "extent": 920,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080110e0",
+          "extent": 132,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011164",
+          "extent": 640,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "map-shared-load_default_cells_and_update_block",
+      "game": "gs1",
+      "source": "games/gs1/src/map/shared/load_default_cells_and_update_block.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801173c",
+          "extent": 364,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080118a8",
+          "extent": 220,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011984",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080119a8",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080119cc",
+          "extent": 276,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011ae0",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011af0",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011b00",
+          "extent": 200,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011bc8",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011be0",
+          "extent": 256,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011ce0",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011cec",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011d10",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011d34",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011d60",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011d94",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011ddc",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011e2c",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011e50",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011e6c",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011e88",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011ed0",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011f14",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011f28",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011f3c",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011f48",
+          "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011fd8",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08012038",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08012078",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080120b4",
+          "extent": 232,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801219c",
+          "extent": 104,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08012204",
+          "extent": 168,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080122ac",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080122c8",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "ui-icon-icon_build_ability_icon_tiles",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/icon/icon_build_ability_icon_tiles.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801a404",
+          "extent": 188,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801a4c0",
+          "extent": 696,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801a778",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801a7c0",
+          "extent": 332,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "menu-selection-selection_loop",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/selection/selection_loop.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801b398",
+          "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b424",
+          "extent": 200,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b4ec",
+          "extent": 212,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b5c0",
+          "extent": 1000,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b9a8",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b9ec",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801ba34",
+          "extent": 512,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801bc34",
+          "extent": 160,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801bcd4",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "menu-sel-run_top_selection",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/sel/run_top_selection.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801c458",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c46c",
+          "extent": 912,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "save-state-state_confirm_and_process_selected_slot",
+      "game": "gs1",
+      "source": "games/gs1/src/save/state/state_confirm_and_process_selected_slot.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801fb48",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801fba8",
+          "extent": 220,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801fc84",
+          "extent": 256,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801fd84",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801fd98",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "ui-window-window_copy_tilemap_region",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/window/window_copy_tilemap_region.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080209d0",
+          "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08020a60",
+          "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08020aec",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08020b00",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08020b14",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08020b64",
+          "extent": 2044,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "graphics-tile-merge_shifted_tile_rows",
+      "game": "gs1",
+      "source": "games/gs1/src/graphics/tile/merge_shifted_tile_rows.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08021b80",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08021bc8",
+          "extent": 108,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08021c34",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08021c64",
+          "extent": 292,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "graphics-registers-set_bg1_priority3",
+      "game": "gs1",
+      "source": "games/gs1/src/graphics/registers/set_bg1_priority3.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08021dfc",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08021e14",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08021e48",
+          "extent": 2676,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080228bc",
+          "extent": 380,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08022a38",
+          "extent": 10056,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-random16",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/random16.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08079bc4",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079be8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079bf8",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079c30",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079c5c",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079c8c",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079cbc",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079d1c",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079d7c",
+          "extent": 288,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079e9c",
+          "extent": 92,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079ef8",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079f10",
+          "extent": 444,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a0cc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a0f4",
+          "extent": 192,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a1b4",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a2bc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a2e4",
+          "extent": 108,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a350",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a3a8",
+          "extent": 176,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807a458",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "event-get_special_value",
+      "game": "gs1",
+      "source": "games/gs1/src/event/get_special_value.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0808b398",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808b3d0",
+          "extent": 636,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "object-table-clear_battle_slots",
+      "game": "gs1",
+      "source": "games/gs1/src/object/table/clear_battle_slots.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0808b9f8",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808ba1c",
+          "extent": 552,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808bc44",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808bc9c",
+          "extent": 136,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808bd24",
+          "extent": 188,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808bde0",
+          "extent": 1276,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-effects-fx_finish_scene_and_release_heap_block",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/fx_finish_scene_and_release_heap_block.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08097608",
+          "extent": 700,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080978c4",
+          "extent": 132,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097948",
+          "extent": 268,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097a54",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097a7c",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097adc",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097b54",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097b70",
+          "extent": 1040,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08097f80",
+          "extent": 172,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809802c",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08098070",
+          "extent": 276,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08098184",
+          "extent": 272,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-effects-effect_slot_update",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/effect_slot_update.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0809b804",
+          "extent": 560,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba34",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba5c",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba70",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba7c",
+          "extent": 600,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809bcd4",
+          "extent": 1600,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809c314",
+          "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809c3a4",
+          "extent": 19628,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1050",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1070",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a10d0",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1114",
+          "extent": 988,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a14f0",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a153c",
+          "extent": 180,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a15f0",
+          "extent": 316,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a172c",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1778",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a17c4",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "psynergy_menu-psynergy_menu_reserved_no_op",
+      "game": "gs1",
+      "source": "games/gs1/src/psynergy_menu/psynergy_menu_reserved_no_op.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a1bc8",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1bcc",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1bdc",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1c2c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1c6c",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1cb0",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "item_menu-item_menu_hide_all_icons",
+      "game": "gs1",
+      "source": "games/gs1/src/item_menu/item_menu_hide_all_icons.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a345c",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3480",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a34c0",
+          "extent": 156,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a355c",
+          "extent": 844,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a38a8",
+          "extent": 864,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3c08",
+          "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3c98",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3ce4",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3cf8",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3d24",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3d6c",
+          "extent": 112,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3ddc",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3e28",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3e88",
+          "extent": 648,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a4110",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a413c",
+          "extent": 848,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a448c",
+          "extent": 320,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a45cc",
+          "extent": 232,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "character_menu-build_availability",
+      "game": "gs1",
+      "source": "games/gs1/src/character_menu/build_availability.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a8cc0",
+          "extent": 640,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a8f40",
+          "extent": 1076,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a9374",
+          "extent": 548,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "item-play_use_animation",
+      "game": "gs1",
+      "source": "games/gs1/src/item/play_use_animation.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080aa448",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aa460",
+          "extent": 212,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aa534",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aa538",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aa544",
+          "extent": 1856,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "shop-place_cursor",
+      "game": "gs1",
+      "source": "games/gs1/src/shop/place_cursor.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b0a6c",
+          "extent": 1336,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0fa4",
+          "extent": 296,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b10cc",
+          "extent": 216,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b11a4",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b11c4",
+          "extent": 684,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b1470",
+          "extent": 204,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b153c",
+          "extent": 680,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b17e4",
+          "extent": 132,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b1868",
+          "extent": 260,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b196c",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b19cc",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b1a14",
+          "extent": 444,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b1bd0",
+          "extent": 540,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b1dec",
+          "extent": 148,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b1e80",
+          "extent": 616,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b20e8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b2110",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b211c",
+          "extent": 1452,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b26c8",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b26cc",
+          "extent": 152,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b2764",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b2778",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b27b0",
+          "extent": 92,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b280c",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b2884",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b28d4",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b2928",
+          "extent": 128,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "shop-effect-reset",
+      "game": "gs1",
+      "source": "games/gs1/src/shop/effect/reset.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b5864",
+          "extent": 248,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b595c",
+          "extent": 176,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b5a0c",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-presentation-trans-pres_setup_transition_scene",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/presentation/trans/pres_setup_transition_scene.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080c0cec",
+          "extent": 264,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c0df4",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c0e38",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c0e70",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c0ea8",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-effects-particle_field-fx_run_particle_field_variant0",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/particle_field/fx_run_particle_field_variant0.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080dfa18",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080dfa24",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080dfa30",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080dfa3c",
+          "extent": 928,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080dfddc",
+          "extent": 1864,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e0524",
+          "extent": 1888,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "effects-run_animation_mode_6_or_7_or",
+      "game": "gs1",
+      "source": "games/gs1/src/effects/run_animation_mode_6_or_7_or.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080e28f4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e291c",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e2928",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e2934",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e2940",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e294c",
+          "extent": 3948,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e38b8",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e3908",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e3944",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e3958",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e396c",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e3980",
+          "extent": 148,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e3a14",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e3a3c",
+          "extent": 3452,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "object-group-store_object_and_run_step7",
+      "game": "gs1",
+      "source": "games/gs1/src/object/group/store_object_and_run_step7.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080ec0e0",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080ec0f0",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-effects-misc-wait_then_set_field18",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/misc/wait_then_set_field18.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080f037c",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f03c0",
+          "extent": 11000,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f2eb8",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f2ebc",
+          "extent": 2240,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "runtime-blank_display_load_value_and_run",
+      "game": "gs1",
+      "source": "games/gs1/src/runtime/blank_display_load_value_and_run.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080f6008",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f6038",
+          "extent": 7548,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7db4",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7df0",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7e34",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7e60",
+          "extent": 208,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7f30",
+          "extent": 4792,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f91e8",
+          "extent": 276,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

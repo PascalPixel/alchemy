@@ -457,8 +457,7 @@
       "name": "Trade_GetOfferState"
     },
     "main:0807a0cc": {
-      "name": "Djinn_GetDefinition",
-      "source": "djinn/get_definition.c"
+      "name": "Djinn_GetDefinition"
     },
     "main:0807a0f4": {
       "name": "Djinn_AddToLeastLoadedOwner"
@@ -559,8 +558,7 @@
       "source": "ui/text/msg/show_localized_message_and_wait.c"
     },
     "main:08020b14": {
-      "name": "UiText_SetRenderString",
-      "source": "ui/text/text_set_render_string.c"
+      "name": "UiText_SetRenderString"
     },
     "main:08020b64": {
       "name": "UiText_DrawPaddedLabel"
@@ -1245,8 +1243,7 @@
       "name": "PsynergyMenu_PositionOwnerEntry"
     },
     "main:080a1c6c": {
-      "name": "ItemMenu_PosOwner",
-      "source": "item_menu/item_menu_pos_owner.c"
+      "name": "ItemMenu_PosOwner"
     },
     "main:080a1cb0": {
       "name": "ItemMenu_RefreshEntry"
@@ -1388,8 +1385,7 @@
       "name": "Menu_MoveSelectionBackward"
     },
     "main:080a10d0": {
-      "name": "UiWindow_UpdateOrCreate",
-      "source": "ui/window_update_or_create.c"
+      "name": "UiWindow_UpdateOrCreate"
     },
     "main:080a1114": {
       "name": "UiWindow_CloseIfOpen"
@@ -1474,8 +1470,7 @@
       "name": "MusicPlayer_ExecuteMemoryAccessCommand"
     },
     "main:080f7db4": {
-      "name": "AudioTrack_ResetSlotBuckets",
-      "source": "audio/track_reset_slot_buckets.c"
+      "name": "AudioTrack_ResetSlotBuckets"
     },
     "main:080f7df0": {
       "name": "AudioTrack_InsertSlotNode"
@@ -1753,8 +1748,7 @@
       "name": "update_members"
     },
     "main:080c0e38": {
-      "name": "Graphics_FadeAlphaOut",
-      "source": "graphics/blend/fade_alpha_out.c"
+      "name": "Graphics_FadeAlphaOut"
     },
     "main:080c0e70": {
       "name": "Graphics_FadeAlphaIn"
@@ -1812,8 +1806,7 @@
     },
     "main:080df9d0": "graphics/tile/pack_rows.c",
     "main:080dfddc": {
-      "name": "transpose_copy",
-      "source": "graphics/tile/transpose_copy.c"
+      "name": "transpose_copy"
     },
     "main:0808ba1c": {
       "name": "get"
@@ -1926,8 +1919,7 @@
     },
     "main:080b5e14": "party/update_name_entries.c",
     "main:080b26c8": {
-      "name": "get_row_limit",
-      "source": "field/event_table/get_row_limit.c"
+      "name": "get_row_limit"
     },
     "main:080a8b8c": {
       "name": "Menu_BuildPageResult"
@@ -1983,8 +1975,7 @@
       "source": "camera/apply_shake.c"
     },
     "main:080119cc": {
-      "name": "DisplayBlend_RunScript",
-      "source": "display/blend/blend_run_script.c"
+      "name": "DisplayBlend_RunScript"
     },
     "main:08003d28": {
       "name": "AffineMatrix_BuildForEffect"
@@ -2552,8 +2543,7 @@
       "name": "Item_RollWeaponUnleash"
     },
     "main:08079d7c": {
-      "name": "BattleFx_GetBaseSuccessRate",
-      "source": "battle/effects/calc/fx_get_base_success_rate.c"
+      "name": "BattleFx_GetBaseSuccessRate"
     },
     "main:0808e680": {
       "name": "BattleCommand_ExecuteSelectedAction"
@@ -2571,8 +2561,7 @@
       "name": "BattleFx_RollSuccess"
     },
     "main:0808bd24": {
-      "name": "get_focused_object_collision",
-      "source": "map/shared/get_focused_object_collision.c"
+      "name": "get_focused_object_collision"
     },
     "main:0808bde0": {
       "name": "update_region_at_position"
@@ -2728,15 +2717,13 @@
       "name": "ItemMenu_OpenCategory"
     },
     "main:080a3c08": {
-      "name": "EquipmentMenu_UpdateCompatibilityIndicators",
-      "source": "equipment_menu/equipment_menu_update_compatibility_indicators.c"
+      "name": "EquipmentMenu_UpdateCompatibilityIndicators"
     },
     "main:080a3c98": {
       "name": "EquipmentMenu_StartCompatibilityIndicators"
     },
     "main:080a3ce4": {
-      "name": "ItemMenu_IsSpecial",
-      "source": "item_menu/item_menu_is_special.c"
+      "name": "ItemMenu_IsSpecial"
     },
     "main:080a3cf8": {
       "name": "ItemMenu_DrawMsg"
@@ -4924,15 +4911,13 @@
       "name": "Text_FormatSignedDecimalToWork"
     },
     "main:08004698": {
-      "name": "Graphics_FillWordStreamWithF000",
-      "source": "graphics/fill_word_stream_with_f000.c"
+      "name": "Graphics_FillWordStreamWithF000"
     },
     "main:080046c4": {
       "name": "Runtime_WriteDebugTextTiles"
     },
     "main:08004718": {
-      "name": "Text_DrawHexRightAligned",
-      "source": "ui/text/draw/text_draw_hex_right_aligned.c"
+      "name": "Text_DrawHexRightAligned"
     },
     "main:0800473c": {
       "name": "Text_DrawSignedDecimalRightAligned"
@@ -4952,8 +4937,7 @@
       "name": "Graphics_PrepareTransferAndRun"
     },
     "main:08005208": {
-      "name": "Camera_SetAngleParameters",
-      "source": "camera/scene/set_angle_parameters.c"
+      "name": "Camera_SetAngleParameters"
     },
     "main:08005258": {
       "name": "Camera_StoreSceneParameters"
@@ -5093,8 +5077,7 @@
       "name": "ObjectDispatch_SetSingleChildField26"
     },
     "main:0800c548": {
-      "name": "Animation_SetStateField5Bits2To3",
-      "source": "animation/set_state_field5_bits2_to3.c"
+      "name": "Animation_SetStateField5Bits2To3"
     },
     "main:0800c570": {
       "name": "Animation_SetStateField1dBit1"
@@ -5187,8 +5170,7 @@
       "name": "Graphics_RenumberFillerEntries"
     },
     "main:0800fe9c": {
-      "name": "Map_ApplyWorkOriginAndSpan",
-      "source": "map/shared/apply_work_origin_and_span.c"
+      "name": "Map_ApplyWorkOriginAndSpan"
     },
     "main:080108c4": {
       "name": "Map_SetWorkFlagBits9To11"
@@ -5270,8 +5252,7 @@
       "name": "Curve_GetFirstSampleC"
     },
     "main:08011fd8": {
-      "name": "Map_GetCellAttributeLowNibble",
-      "source": "map/shared/get_cell_attribute_low_nibble.c"
+      "name": "Map_GetCellAttributeLowNibble"
     },
     "main:080120b4": {
       "name": "Map_GetCellHighFlags"
@@ -5431,8 +5412,7 @@
       "name": "Ui_PrepareTransferFromTableEntry"
     },
     "main:0801a778": {
-      "name": "Resource_ClearOwnerListAndCounters",
-      "source": "resource/clear_owner_list_and_counters.c"
+      "name": "Resource_ClearOwnerListAndCounters"
     },
     "main:0801a7c0": {
       "name": "Resource_PushPendingPair"
@@ -5462,8 +5442,7 @@
       "name": "Menu_SendNodeCountList"
     },
     "main:0801bc34": {
-      "name": "Resource_LoadByMode",
-      "source": "resource/load_by_mode.c"
+      "name": "Resource_LoadByMode"
     },
     "main:0801bcd4": {
       "name": "Resource_LoadByModeIntoSlot"
@@ -5485,8 +5464,7 @@
       "name": "Menu_RunSelectionForValue"
     },
     "main:0801c458": {
-      "name": "Item_CallHandler48",
-      "source": "item/call_handler48.c"
+      "name": "Item_CallHandler48"
     },
     "main:0801c46c": {
       "name": "Party_AdjustByte205ByDirection"
@@ -5592,8 +5570,7 @@
       "name": "SaveState_DeleteSelectedSlot"
     },
     "main:0801fd84": {
-      "name": "Scheduler_ScheduleCallbackAAfterFrames",
-      "source": "runtime/scheduler/scheduler_schedule_callback_a_after_frames.c"
+      "name": "Scheduler_ScheduleCallbackAAfterFrames"
     },
     "main:0801fd98": {
       "name": "Scheduler_ScheduleCallbackA"
@@ -5625,8 +5602,7 @@
       "source": "resource/load_fixed_block_b_into_free_slot.c"
     },
     "main:08020aec": {
-      "name": "Resource_CopyFixedBlockB",
-      "source": "resource/copy_fixed_block_b.c"
+      "name": "Resource_CopyFixedBlockB"
     },
     "main:08020b00": {
       "name": "Resource_CopyFixedBlockA"
@@ -5666,15 +5642,13 @@
       "name": "Resource_LoadIndexedEntryToBuffer"
     },
     "main:08021b80": {
-      "name": "Ui_LoadEntryForKind",
-      "source": "ui/load_entry_for_kind.c"
+      "name": "Ui_LoadEntryForKind"
     },
     "main:08021bc8": {
       "name": "Ui_GetTableWordZero"
     },
     "main:08021c34": {
-      "name": "Link_CreateCountdownLabelWindow",
-      "source": "link/create_countdown_label_window.c"
+      "name": "Link_CreateCountdownLabelWindow"
     },
     "main:08021c64": {
       "name": "Resource_LoadIndexedIntoBuffer"
@@ -5687,8 +5661,7 @@
       "name": "Graphics_ClearBg1ControlBit2"
     },
     "main:08021e48": {
-      "name": "UiText_ShowMessageAndWaitComplete",
-      "source": "ui/text_show_message_and_wait_complete.c"
+      "name": "UiText_ShowMessageAndWaitComplete"
     },
     "main:080228bc": {
       "name": "UiText_FormatNumberToHalfwords"
@@ -5793,8 +5766,7 @@
       "name": "Owner_GetRecordStride84"
     },
     "main:08079bf8": {
-      "name": "Owner_ScaleAdjustedAmount",
-      "source": "owner/scale_adjusted_amount.c"
+      "name": "Owner_ScaleAdjustedAmount"
     },
     "main:08079c30": {
       "name": "Owner_ScaleValueByCurve"
@@ -5830,8 +5802,7 @@
       "name": "BattleFx_SetSpecialFromTable"
     },
     "main:0808b398": {
-      "name": "Party_RemapCharacterIdByFlags",
-      "source": "party/remap_character_id_by_flags.c"
+      "name": "Party_RemapCharacterIdByFlags"
     },
     "main:0808b3d0": {
       "name": "Party_RemapCharacterIdIfEnabled"
@@ -6132,15 +6103,13 @@
       "name": "BattleFx_SetCallbackWhenTargetUnset"
     },
     "main:08097a7c": {
-      "name": "Ui_FillBank15PaletteGrey",
-      "source": "ui/fill_bank15_palette_grey.c"
+      "name": "Ui_FillBank15PaletteGrey"
     },
     "main:08097adc": {
       "name": "Ui_SetBank15PaletteAndClearRenderMode"
     },
     "main:08097b54": {
-      "name": "BattleFx_GetCycledTableWord",
-      "source": "battle/effects/fx_get_cycled_table_word.c"
+      "name": "BattleFx_GetCycledTableWord"
     },
     "main:08098184": {
       "name": "BattleFx_SnapScaleToFull"
@@ -6188,8 +6157,7 @@
       "name": "BattleFx_RunEffect13Hook"
     },
     "main:080a1050": {
-      "name": "Scheduler_DisableOverlayCallbacksWithFlags",
-      "source": "runtime/scheduler/scheduler_disable_overlay_callbacks_with_flags.c"
+      "name": "Scheduler_DisableOverlayCallbacksWithFlags"
     },
     "main:080a1070": {
       "name": "Scheduler_EnableOverlayCallbacksWithFlags"
@@ -6244,8 +6212,7 @@
       "name": "StatusMenu_ShowOwnerProgressMessage"
     },
     "main:080a8cc0": {
-      "name": "PsynergyMenu_DrawRange",
-      "source": "psynergy_menu/psynergy_menu_draw_range.c"
+      "name": "PsynergyMenu_DrawRange"
     },
     "main:080a8f40": {
       "name": "PsynergyMenu_DrawListPage"
@@ -6268,8 +6235,7 @@
       "source": "menu/entry/create_eight_entry_objects.c"
     },
     "main:080aa534": {
-      "name": "Menu_ReservedStatusZero",
-      "source": "menu/reserved_status_zero.c"
+      "name": "Menu_ReservedStatusZero"
     },
     "main:080aa538": {
       "name": "Menu_GetModuloOfSum"
@@ -6323,8 +6289,7 @@
       "name": "Shop_InitEffect"
     },
     "main:080b2778": {
-      "name": "Shop_ServicePrice",
-      "source": "shop/service_price.c"
+      "name": "Shop_ServicePrice"
     },
     "main:080b280c": {
       "name": "Shop_CountUnits"
@@ -6762,8 +6727,7 @@
       "name": "BattleFx_RunDualTableMode1"
     },
     "main:080e3a14": {
-      "name": "ObjectGroup_ProbeKeysWhenField24High",
-      "source": "object/group/probe_keys_when_field24_high.c"
+      "name": "ObjectGroup_ProbeKeysWhenField24High"
     },
     "main:080e3a3c": {
       "name": "BattleFx_DispatchByIdRange"
@@ -6773,8 +6737,7 @@
       "source": "object/group/store_object_and_run_step7.c"
     },
     "main:080ec0e0": {
-      "name": "Graphics_ResetBg2Pa",
-      "source": "graphics/registers/reset_bg2_pa.c"
+      "name": "Graphics_ResetBg2Pa"
     },
     "main:080ec0f0": {
       "name": "Graphics_SetBg2AffineScaleHalf"
@@ -6793,8 +6756,7 @@
       "name": "BattleFx_RunRevealColumnMode2"
     },
     "main:080f037c": {
-      "name": "DisplayScroll_BuildHblankWordTable",
-      "source": "display/scroll/scroll_build_hblank_word_table.c"
+      "name": "DisplayScroll_BuildHblankWordTable"
     },
     "main:080f03c0": {
       "name": "DisplayScroll_StepPositionEveryFourFrames"
@@ -16055,8 +16017,7 @@
       "name": "UiWork_ProcessDirectWork"
     },
     "main:080b5864": {
-      "name": "BattlePresentation_UpdateCamera",
-      "source": "battle/presentation_update_camera.c"
+      "name": "BattlePresentation_UpdateCamera"
     },
     "main:08093af8": {
       "name": "Object_FindNearestFacingTarget"

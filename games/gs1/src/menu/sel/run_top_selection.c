@@ -4,6 +4,7 @@
 #include "global_cells.h"
 
 /* menu/sel/run_top_selection.c */
+/* menu/sel/run_top_selection.c */
 #if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || \
     defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
 #define HAS_LOCALIZED_MENU_GUARD 1
@@ -164,4 +165,25 @@ void UiTimedNotice_CloseIfActive(void)
         UiWork_Finalize(work, 2);
         ScheduleCallback((s32)UiTimedNotice_Tick);
     }
+}
+
+/* item/call_handler48.c */
+/* item/call_handler48.c */
+s32 Item_CallHandler48(s32 arg0, s32 arg1)
+{
+    Item_Check(arg1);
+    return 0;
+}
+
+/* party/adjust_byte205_by_direction.c */
+extern u8 gCell[];
+
+void Party_AdjustByte205ByDirection(s32 arg0)
+{
+    u8 value = gCell[0x205];
+    if (arg0 & 0x20)
+        value += 0xff;
+    else
+        value += 1;
+    gCell[0x205] = value;
 }

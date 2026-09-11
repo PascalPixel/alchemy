@@ -1,6 +1,8 @@
 #include "types.h"
 #include "scene.h"
 
+/* overlays/scene/state/task/task.c */
+/* overlays/scene/state/task/task.c */
 /* overlays/scene/state/task/actor_motion.c */
 typedef struct Obj {
     s32 f00;
@@ -996,7 +998,7 @@ void Scene_SetFlag333AndDrawTiles(void)
     }
 }
 
-void State_unk106(void)
+void mark_scene_progress(void)
 {
     extern s32 gCell[];
 
@@ -1012,7 +1014,7 @@ void State_unk106(void)
     }
 }
 
-void State_unk107(void)
+void select_nearest_scene_actor(void)
 {
     extern s32 gCell[];
 
@@ -1075,7 +1077,7 @@ void State_unk107(void)
     State_unk115();
 }
 
-s32 State_unk116(s32 a, s32 b)
+s32 run_state_interaction(s32 a, s32 b)
 {
     extern s16 gCell[];
 
@@ -1458,4 +1460,688 @@ void State_WaitUntilStatusNine(void)
     while (*status != 9) {
         State_unk31_2(1);
     }
+}
+
+/* overlays/scene/state/task/no_op_handler.c */
+/*
+ * resource_3bb owner at 0x0200004c: two bytes, `bx lr', with no prologue and
+ * no pool.  Two data-table slots install it as a handler, so the empty body
+ * is deliberate rather than padding.  Whether those slots expect a void
+ * handler or an identity is not settled here -- `bx lr' leaves r0 untouched,
+ * so a caller reading a result gets back whatever it passed in.
+ */
+
+void Resource3bb_NoOpHandler(void)
+{
+}
+
+/* overlays/scene/state/task/run_scene_scene_three_coordinator.c */
+extern u8 gCell[];
+extern u8 gWork[];
+extern s16 gCell2[][1];
+
+void Scene_RunSceneThreeCoordinator(s32 a0)
+{
+    u32 i;
+    s32 rec2;
+    s32 record;
+
+    if (gCell2[225][0] == 2) {
+        State_unk6_4ThreeCoordinator();
+    } else {
+        State_unk7_4ThreeCoordinator();
+        rec2 = State_Check(a0, 3);
+        if (rec2 != 0) {
+        } else {
+            State_Do(0x20a6);
+            State_Run(0x30000, 0x6000);
+            State_unk2_4(0x2f00000, -1, 0xc00000, 1);
+            State_unk8_4ThreeCoordinator();
+            State_unk9_4ThreeCoordinator(60);
+            State_unk3_4(0x10000, 0x2000);
+            State_unk4_4(0x2f00000, -1, 0xe00000, 1);
+            State_unk10_4ThreeCoordinator();
+            State_unk11_4ThreeCoordinator(a0, 0);
+            State_unk12_4ThreeCoordinator(0, 0x358, 0x108);
+            State_unk13_4ThreeCoordinator(10);
+            State_Place(0, 0x18000, 0xc000);
+            State_unk2_3(0, 0x358, 0x108);
+            State_unk3_3(0, 0x358, 232);
+            State_unk14_4ThreeCoordinator(a0, 0);
+            State_unk4_3(0, 0x348, 232);
+            State_unk15_4ThreeCoordinator(10);
+            State_unk5_3(33, -64, 0);
+            State_unk5_4(0x2f00000, -1, 0xd80000, 1);
+            State_unk16_4ThreeCoordinator(0, 1);
+            State_unk17_4ThreeCoordinator(10);
+            State_unk6_3(0, 0x10000, 0x8000);
+            State_unk7_3(0, 0x2f8, 232);
+            State_unk18_4ThreeCoordinator(10);
+            State_unk8_3(0, 0x4000, 30);
+            State_unk19_4ThreeCoordinator(a0, 0);
+            State_unk20_4ThreeCoordinator(0);
+            State_unk21_4ThreeCoordinator(0, 0);
+            State_unk9_3(33, 0x3480000, 0xe80000);
+            State_unk22_4ThreeCoordinator(a0, 3);
+            goto L_020016b0;
+        }
+        if (rec2 == 1) {
+            State_unk2_2(0x20a5);
+            State_unk23_4ThreeCoordinator(a0, 0);
+        }
+        L_020016b0:;
+        State_unk10_3(rec2, a0, 3);
+        State_unk24_4ThreeCoordinator();
+    }
+}
+
+/* overlays/scene/state/task/initialize_state_interaction.c */
+extern s16 gCell[];
+extern u8 Value_0000008f;
+extern u8 Value_00000090;
+extern u8 Value_00002076;
+extern u8 Value_00002078;
+extern u8 Value_0000207a;
+
+void State_RunInitializeStateInteraction(s32 a, s32 b)
+{
+    s32 v;
+    s32 id;
+
+    State_ApplyInitializeStateInteraction(b, 5);
+    v = gCell[224];
+    if (v == (s32)&Value_0000008f) {
+        id = (s32)&Value_00002076;
+    } else if (v == (s32)&Value_00000090) {
+        id = (s32)&Value_00002078;
+    } else {
+        id = (s32)&Value_0000207a;
+    }
+    State_Do(id + 1);
+    State_Apply2InitializeStateInteraction(a, 0);
+}
+
+/* overlays/scene/state/task/initialize_mode_task.c */
+/* overlays/scene/state/task/initialize_mode_task.c */
+/*
+ * Mode task setup for resource_3bb.  It seeds a second per-instance task's
+ * state and picks which of five addresses that task dispatches through.  The
+ * 144-byte owner includes its 15-word literal pool.
+ */
+
+extern u16 gOvInitializeModeTask;
+extern u16 gOv2InitializeModeTask;
+extern u16 gOv3InitializeModeTask;
+extern s32 gOv4InitializeModeTask;
+extern u16 gOv5InitializeModeTask;
+extern u16 gOv6InitializeModeTask;
+extern s32 gOv7InitializeModeTask;
+
+extern s32 gOv8InitializeModeTask;   /* Default handler. */
+extern s32 gOv9InitializeModeTask;   /* Handler for mode 2. */
+extern s32 gOv10InitializeModeTask;   /* Handler for mode 4. */
+extern s32 gOv11InitializeModeTask;   /* Handler for mode 3 with param set. */
+extern s32 gOv12InitializeModeTask;   /* Handler for mode 3 with param zero. */
+
+/*
+ * 0x0200a451 is the installed callback, a routine in this overlay.  The branch
+ * chain picks one of five addresses by mode, consulting param only when mode is
+ * 3; whether those five are code or per-mode records is not resolved, so they
+ * are typed as plain addresses.  The four stores that follow reset the rest of
+ * the task's state block, three as halfwords and one as a word.
+ */
+void State_RunInitializeModeTask(u32 mode, u32 param)
+{
+    s32 handler;
+
+    gOvInitializeModeTask = (u16)mode;
+    gOv2InitializeModeTask = (u16)(param << 4);
+
+    {
+        s32 budget = 0xc80;
+        s32 task = 0x0200a451;
+        State_ApplyInitializeModeTask(task, budget);
+    }
+
+    handler = (s32)&gOv8InitializeModeTask;
+    if (mode == 2) {
+        handler = (s32)&gOv9InitializeModeTask;
+    }
+    if (mode == 4) {
+        handler = (s32)&gOv10InitializeModeTask;
+    }
+    if (mode == 3) {
+        if (param != 0) {
+            handler = (s32)&gOv11InitializeModeTask;
+        } else {
+            handler = (s32)&gOv12InitializeModeTask;
+        }
+    }
+
+    gOv3InitializeModeTask = 0;
+    gOv4InitializeModeTask = handler;
+    gOv5InitializeModeTask = 0;
+    gOv6InitializeModeTask = 0;
+    gOv7InitializeModeTask = 0;
+}
+
+/* overlays/scene/state/task/run_scripted_transition.c */
+/*
+ * resource_3bb scripted transition owner at 0x020029d0, 268 bytes including
+ * alignment and its three-word pool.  Mode zero is the short opening; every
+ * other mode runs the complete multi-stage transition and publishes flag
+ * 0x123 when it closes.
+ *
+ * Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at every occurrence, including every repeated State_RunInitializeModeTask,
+ * Audio_PlayCue, State_unk2_4, State_unk3_4InitializeModeTask, State_unk4_4/360/370/020
+ * call) -- declared/named as the literal per-site targets, not the shared
+ * ultimate-destination symbol.
+ */
+
+extern void State_unk5_4(void);              /* State_unk4_4 veneer #1 (mode==0 arm) */
+extern void State_unk6_4InitializeModeTask(void);              /* State_unk7_4InitializeModeTask veneer #1 */
+extern void State_unk8_4InitializeModeTask(void);              /* State_unk9_4InitializeModeTask veneer #1 */
+extern void State_unk10_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #1 */
+extern void State_unk11_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #1 */
+extern void State_unk12_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #1 */
+extern void State_unk13_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #1 */
+extern void State_unk14_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #2 */
+extern void State_unk15_4InitializeModeTask(void);              /* State_unk16_4InitializeModeTask veneer #1 */
+
+extern void State_unk17_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
+extern void State_unk18_4InitializeModeTask(void);              /* State_unk4_4 veneer #2 */
+extern void State_unk19_4InitializeModeTask(void);              /* State_unk7_4InitializeModeTask veneer #2 */
+extern void State_unk20_4InitializeModeTask(void);              /* State_unk9_4InitializeModeTask veneer #2 */
+extern void State_unk21_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #3 */
+extern void State_unk22_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #3 */
+extern void State_unk23_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #2 */
+extern void State_unk24_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #2 */
+extern void State_unk25_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #4 */
+
+extern void State_unk26_4InitializeModeTask(s32 frames);        /* State_unk27_4InitializeModeTask veneer (loop body) */
+extern s32 State_unk28_4InitializeModeTask(void);               /* State_unk29_4InitializeModeTask veneer (loop check) */
+
+extern void State_unk30_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #4 */
+extern void State_unk31_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #3 */
+extern void State_unk32_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #3 */
+extern void State_unk33_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #5 */
+extern void State_unk34_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #5 */
+extern void State_unk35_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #4 */
+extern void State_unk36_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #6 */
+extern void State_unk37_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #6 */
+extern void State_unk38_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #4 */
+extern void State_unk39_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #5 */
+extern void State_unk40_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #7 */
+extern void State_unk41_3InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #7 */
+extern void State_unk42_3InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #5 */
+extern void State_unk43_3InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #6 */
+extern void State_unk44_3InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #8 */
+extern void State_unk45_3InitializeModeTask(void);              /* State_unk46_3InitializeModeTask veneer */
+extern void State_unk47_3InitializeModeTask(void);              /* State_unk16_4InitializeModeTask veneer #2 */
+extern void State_unk48_3InitializeModeTask(s32 flag);          /* GameFlag_Set veneer */
+
+        State_unk6_4InitializeModeTask();
+        State_unk8_4InitializeModeTask();
+        State_unk10_4InitializeModeTask(30);
+        State_unk11_4InitializeModeTask(0x59);
+        State_unk12_4InitializeModeTask(0);
+        State_unk13_4InitializeModeTask(1, 0);
+        State_unk14_4InitializeModeTask(120);
+        State_unk15_4InitializeModeTask();
+        return;
+    }
+
+    State_unk17_4InitializeModeTask(0xf7);
+    State_unk18_4InitializeModeTask();
+    State_unk19_4InitializeModeTask();
+    State_unk20_4InitializeModeTask();
+    {
+        s16 *base = (s16 *)0x0200ca1e;
+        *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
+    }
+    State_unk21_4InitializeModeTask(30);
+    State_unk22_4InitializeModeTask(mode + 0x5a);
+    State_unk23_4InitializeModeTask(mode);
+    State_unk24_4InitializeModeTask(1, 0);
+    State_unk25_4InitializeModeTask(120);
+
+    goto check_transition;
+wait_transition:
+    State_unk26_4InitializeModeTask(1);
+check_transition:
+    if (State_unk28_4InitializeModeTask() != 0)
+        goto wait_transition;
+
+    State_unk30_4InitializeModeTask(0x121);
+    State_unk31_4InitializeModeTask(5);
+    State_unk32_4InitializeModeTask(2, 0);
+    State_unk33_4InitializeModeTask(0xec);
+    State_unk34_4InitializeModeTask(60);
+    State_unk35_4InitializeModeTask(2, 1);
+    State_unk36_4InitializeModeTask(0xec);
+    State_unk37_4InitializeModeTask(60);
+    State_unk38_4InitializeModeTask(6);
+    State_unk39_4InitializeModeTask(2, 0);
+    State_unk40_4InitializeModeTask(0xec);
+    State_unk41_3InitializeModeTask(60);
+    State_unk42_3InitializeModeTask(7);
+    State_unk43_3InitializeModeTask(4, 0);
+    State_unk44_3InitializeModeTask(0xed);
+    State_unk45_3InitializeModeTask();
+    State_unk47_3InitializeModeTask();
+    State_unk48_3InitializeModeTask(0x123);
+}
+
+/* overlays/scene/state/task/run_scene_late_sequence.c */
+extern u8 gVal[];
+
+/* The two mode records the entry point seeds; the halfword at +26 holds the
+ * per-mode span in sixtieths. */
+struct ModeRecord {
+    u8 pad[26];
+    u16 span;
+};
+extern struct ModeRecord gOvInitializeModeTask;
+extern struct ModeRecord gOv2InitializeModeTask;
+extern u8 gCell[];
+extern u8 gOv3InitializeModeTask[];
+extern u8 gOv4InitializeModeTask[];
+extern u8 gOv5InitializeModeTask[];
+extern u8 gOv6InitializeModeTask[];
+extern u8 gWork[];
+extern u8 gCell2[][2];
+
+u8 *State_unk2_4();
+
+u8 *State_unk3_4InitializeModeTask();
+
+void Scene_RunLateSequence(s32 a0)
+{
+    s32 kind;
+
+    State_unk4_4(247);
+    State_unk5_4();
+    State_unk6_4InitializeModeTask();
+    gOvInitializeModeTask.span = a0 * 60;
+    gOv2InitializeModeTask.span = (a0 < 0 ? -a0 : a0) * 60;
+    if (a0 < 0) {
+        State_unk7_4InitializeModeTask(30);
+        State_unk8_4InitializeModeTask(86);
+        State_unk9_4InitializeModeTask(8);
+        State_Check(3, 1);
+        State_unk10_4InitializeModeTask(-a0 * 60 + 60);
+        kind = 0;
+    } else {
+        State_unk11_4InitializeModeTask(30);
+        State_unk12_4InitializeModeTask(a0 + 90);
+        State_unk13_4InitializeModeTask(4);
+        State_unk2(3, 0);
+        State_unk14_4InitializeModeTask(a0 * 60 + 60);
+        kind = 8;
+    }
+    State_Place(kind, 0x105, 0);
+    while (State_RunInitializeModeTask()!= 0) {
+        State_unk15_4InitializeModeTask(1);
+    }
+    State_unk16_4InitializeModeTask(19);
+    State_unk17_4InitializeModeTask(30);
+    State_Do(0x121);
+    State_unk18_4InitializeModeTask();
+    State_unk19_4InitializeModeTask();
+}
+
+void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
+{
+    u32 i;
+    s32 p10;
+    s32 p10b;
+    s32 p11;
+    s32 p8;
+    s32 p8b;
+    u8 *p9;
+    s32 p9b;
+    u8 *rec;
+    s32 record;
+    s32 v5;
+    s32 base6_4000208;
+    s32 v1;
+    s32 base4_2002090;
+    s32 v4;
+    s32 v0;
+    s32 slot0;
+    u8 *p6;
+
+    p6 = *(volatile s32 *)0x03001e68;
+    p11 = a0;
+    p8 = a1;
+    p10 = a2;
+    rec = State_unk2_4();
+    p6[6] = 1;
+    p6[7] = 4;
+    *(volatile s32 *)gOv6InitializeModeTask = *(volatile s32 *)((s32)rec + 8);
+    *(volatile s32 *)gOv4InitializeModeTask = *(volatile s32 *)((s32)rec + 16);
+    p9 = *(volatile s32 *)((s32)rec + 80);
+    *(volatile s32 *)gOv5InitializeModeTask = *(volatile u16 *)((s32)rec + 6);
+    v5 = 1;
+    State_unk21_4InitializeModeTask(p11, 2);
+    {
+        u8 value = *(volatile u8 *)&rec[35];
+
+        rec[35] = (u8)(value | v5);
+    }
+    {
+        s32 shown = 0x4000;
+
+        *(volatile u16 *)((s32)rec + 6) = shown;
+    }
+    State_unk22_4InitializeModeTask((s32)rec, 3);
+    State_unk23_4InitializeModeTask((s32)rec, 0);
+    State_unk24_4InitializeModeTask((s32)rec, 1);
+    p10b = ((s32)p10 << 16);
+    p8b = ((s32)p8 << 16);
+    State_unk25_4InitializeModeTask(p11, p8b, p10b);
+    State_unk26_4InitializeModeTask(0, 0x4000, 0);
+    base6_4000208 = 0x4000208;
+    base4_2002090 = (s32)gOv3InitializeModeTask;
+    v1 = *(volatile u16 *)base6_4000208;
+    *(volatile u16 *)base6_4000208 = base6_4000208;
+    if (*(volatile u16 *)base4_2002090 <= 31) {
+        *(volatile u16 *)base4_2002090 += 1;
+        *(volatile s32 *)((((((*(volatile u16 *)base4_2002090 << 1) + *(volatile u16 *)base4_2002090) << 2) + base4_2002090) + 4)) = 0xf00;
+        *(volatile s32 *)(((((((*(volatile u16 *)base4_2002090 << 1) + *(volatile u16 *)base4_2002090) << 2) + base4_2002090) + 4) + 4)) = 0x4000050;
+        *(volatile s32 *)(((((((*(volatile u16 *)base4_2002090 << 1) + *(volatile u16 *)base4_2002090) << 2) + base4_2002090) + 4) + 4) + 4) = 0x20000;
+    }
+    *(volatile u16 *)base6_4000208 = v1;
+    p9[5] = ((s32)(-13 & p9[5]) | 4);
+    p9[17] = ((s32)(-13 & p9[17]) | 4);
+    slot0 = base4_2002090;
+    v5 = 0;
+    State_unk27_4InitializeModeTask(252);
+    v4 = slot0;
+    do {
+        *(volatile s32 *)((s32)rec + 24) = ((v5 << 12) + 0x1000);
+        *(volatile s32 *)((s32)rec + 28) = (0x1f000 - (v5 << 12));
+        v0 = *(volatile u16 *)base6_4000208;
+        *(volatile u16 *)base6_4000208 = base6_4000208;
+        if (*(volatile u16 *)(v4) <= 31) {
+            *(volatile u16 *)(v4) += 1;
+            *(volatile s32 *)(((v4 + (((*(volatile u16 *)(v4) << 1) + *(volatile u16 *)(v4)) << 2)) + 4)) = (((15 - v5) << 8) | (v5 + 1));
+            *(volatile s32 *)((((v4 + (((*(volatile u16 *)(v4) << 1) + *(volatile u16 *)(v4)) << 2)) + 4) + 4)) = 0x4000052;
+            *(volatile s32 *)((((v4 + (((*(volatile u16 *)(v4) << 1) + *(volatile u16 *)(v4)) << 2)) + 4) + 4) + 4) = 0x20000;
+        }
+        *(volatile u16 *)base6_4000208 = v0;
+        slot0 = v4;
+        State_unk28_4InitializeModeTask(1);
+        v5 = (v5 + 2);
+        v4 = slot0;
+    } while (v5 <= 15);
+    v4 = *(volatile u16 *)0x04000208;
+    *(volatile u16 *)0x04000208 = 0x4000208;
+    if (*(volatile u16 *)gOv3InitializeModeTask <= 31) {
+        *(volatile u16 *)gOv3InitializeModeTask += 1;
+        *(volatile s32 *)((((((*(volatile u16 *)gOv3InitializeModeTask << 1) + *(volatile u16 *)gOv3InitializeModeTask) << 2) + 0x2002090) + 4)) = 16;
+        *(volatile s32 *)(((((((*(volatile u16 *)gOv3InitializeModeTask << 1) + *(volatile u16 *)gOv3InitializeModeTask) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
+        *(volatile s32 *)(((((((*(volatile u16 *)gOv3InitializeModeTask << 1) + *(volatile u16 *)gOv3InitializeModeTask) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
+    }
+    *(volatile u16 *)0x04000208 = v4;
+    *(volatile s32 *)((s32)rec + 24) = 0x11000;
+    *(volatile s32 *)((s32)rec + 28) = 0xf000;
+    State_unk29_4InitializeModeTask(1);
+    *(volatile s32 *)((s32)rec + 24) = 0x10000;
+    *(volatile s32 *)((s32)rec + 28) = 0x10000;
+    State_unk30_4InitializeModeTask(13);
+    p9[5] &= -13;
+    p9[17] &= -13;
+    State_unk31_4InitializeModeTask(p11, 3);
+    State_unk32_4InitializeModeTask(20);
+    p9b = v5;
+}
+
+void State_unk33_4InitializeModeTask(s32 a0)
+{
+    u32 i;
+    u8 *rec7;
+    s32 record;
+    u8 *p7;
+
+    p7 = *(volatile s32 *)0x03001e68;
+    rec7 = State_unk3_4InitializeModeTask();
+    if (gCell2[249][0] == 1) {
+        gCell2[249][0] = 0;
+        State_unk34_4InitializeModeTask(a0, 1);
+    } else {
+        State_unk2_3(a0, 0x4000, 30);
+        State_unk35_4InitializeModeTask(a0, 3);
+        State_unk36_4InitializeModeTask(30);
+    }
+    p7[7] = 0;
+    p7[6] = 15;
+    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)gOv6InitializeModeTask;
+    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)gOv4InitializeModeTask;
+    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)gOv5InitializeModeTask;
+    *(volatile s32 *)((s32)rec7 + 56) = -0x80000000;
+    *(volatile s32 *)((s32)rec7 + 64) = -0x80000000;
+    *(volatile s32 *)((s32)rec7 + 36) = 0;
+    *(volatile s32 *)((s32)rec7 + 44) = 0;
+    rec7[85] = 3;
+    rec7[34] = (s32)gVal;
+    *(volatile s32 *)((s32)rec7 + 12) = 0;
+    *(volatile s32 *)((s32)rec7 + 20) = 0;
+    State_unk37_4InitializeModeTask((s32)rec7, 1);
+    State_unk38_4InitializeModeTask((s32)rec7, 0);
+    State_unk39_4InitializeModeTask((s32)rec7, 1);
+    State_unk8_4InitializeModeTask(1);
+}
+
+/* overlays/scene/state/task/seed_marker_and_install_task.c */
+/* Seed the marker cycle directly from caller coordinates and install it. */
+extern u16 gOvAndInstallTask;
+extern u16 gOv2AndInstallTask;
+extern u16 gOv3AndInstallTask;
+extern u16 gOv4AndInstallTask;
+extern u16 gOv5AndInstallTask;
+
+/* Per-site veneers (raw sub_ symbols from the overlay .s). */
+
+void Effect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
+{
+    State_PlaceAndInstallTask(x, y, style);
+
+    gOvAndInstallTask = (u16)x;
+    gOv2AndInstallTask = (u16)y;
+    gOv3AndInstallTask = (u16)(style & 3);
+    gOv4AndInstallTask = 0;
+    gOv5AndInstallTask = 0;
+
+    {
+        s32 budget = 0xc80;
+        State_ApplyAndInstallTask(0x0200ae85, budget);
+    }
+}
+
+/* overlays/scene/state/task/empty_hook_d.c */
+/* Complete two-byte empty hook plus its alignment halfword. */
+void Resource3bb_EmptyHook(void)
+{
+}
+
+/* overlays/scene/state/task/spawn_random_scene_effect.c */
+typedef struct Obj {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+    u8 f14[20];
+    s32 f28;
+    u8 f2c[41];
+    u8 f55;
+} Obj;
+
+extern u8 gOvSpawnRandomEffect[];
+
+extern Obj *State_RunSpawnRandomEffect(s32, s32, s32, s32);
+
+void spawn_random_scene_effect(Obj *a)
+{
+    s32 t[3];
+    u32 n;
+
+    if (a->f28 >= -255 && a->f28 <= 255) {
+        a->f55 = 0;
+    }
+    n = State_unk3_4SpawnRandomEffect();
+    if (n * 100 >> 16 <= 9) {
+        Obj *o;
+        s32 u;
+        s32 w;
+
+        t[0] = a->f08;
+        t[1] = a->f0c;
+        t[2] = a->f10;
+        u = State_Check();
+        w = State_unk2();
+        State_PlaceSpawnRandomEffect(u << 4, w, t);
+        {
+            s32 x = t[0];
+            s32 y = t[1];
+            s32 z = t[2];
+
+            o = State_RunSpawnRandomEffect(285, x, y, z);
+        }
+        if (o != 0) {
+            o->f55 = 0;
+            State_ApplySpawnRandomEffect(o, 0);
+            State_Apply2SpawnRandomEffect(o, (s32)gOvSpawnRandomEffect);
+            State_Apply3SpawnRandomEffect(o, 1);
+            State_Apply4SpawnRandomEffect(o, 0);
+        }
+    }
+}
+
+/* overlays/scene/state/task/raise_linked_scene_effect.c */
+/* overlays/scene/state/task/raise_linked_scene_effect.c */
+typedef struct Obj {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+    u8 f14[65];
+    u8 f55;
+    u8 f56[14];
+    s16 f64;
+} Obj;
+
+extern u8 gOvRaiseLinkedEffect[];
+
+extern Obj *State_Run(s16);
+
+    State_SetModeRaiseLinkedEffect(o, a->f08, a->f0c + 0x240000, a->f10);
+    o->f55 = 0;
+    State_ApplyRaiseLinkedEffect(o, (s32)gOvRaiseLinkedEffect);
+    State_DoRaiseLinkedEffect(83);
+    a->f64 = 0;
+    return 0;
+}
+
+/* overlays/scene/state/task/position_active_actor.c */
+#if defined(GS1_EDITION_JA)
+#define SCENE_TEXT_VALUE 0x98f
+#elif defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define SCENE_TEXT_VALUE 0xa5a
+#else
+#define SCENE_TEXT_VALUE 0x96a
+#endif
+#if defined(GS1_EDITION_DE)
+#define SCENE_WORK_PTR 0x03001f4c
+#else
+#define SCENE_WORK_PTR 0x03001f3c
+#endif
+#if defined(GS1_EDITION_FR)
+#define SCENE_CALLBACK 0x0200cbcc
+#else
+#define SCENE_CALLBACK 0x0200cb9c
+#endif
+
+extern u8 gCell[];
+
+s32 State_RunPositionActiveActor();           /* veneer to GameFlag_IsSet */
+u8 *State_unk2_4RaiseLinkedEffect();           /* veneer to Scene_GetRecord */
+
+void State_unk3_4();          /* veneer to Object_SetPosition */
+void State_unk4_4RaiseLinkedEffect();          /* veneer to Object_SetCallback */
+void State_unk5_4RaiseLinkedEffect();          /* veneer to State_unk6_4 */
+s32 State_unk7_4();           /* local thunk to State_unk8_4, site A */
+s32 State_unk9_4();           /* local thunk to State_unk8_4, site B */
+void State_unk10_4();          /* veneer to UiText_DrawQuantity, site A */
+void State_unk11_4();          /* veneer to UiText_DrawQuantity, site B */
+void State_unk12_4();          /* shared veneer, selector refresh + 0x96a */
+
+void State_unk13_4();          /* veneer to State_unk14_4 */
+
+s32 position_active_actor(s32 handleA, s32 handleB)
+{
+    u8 *workspace = *(u8 **)SCENE_WORK_PTR;
+    u8 *shared;
+    u8 *record;
+    s32 flag;
+    s32 x;
+    s32 z;
+    u16 *cuep;
+    s16 *waitp;
+
+    flag = State_RunPositionActiveActor(0x211);
+
+    shared = gCell;
+    record = State_unk2_4RaiseLinkedEffect(*(s32 *)(shared + 500));
+
+    if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
+        x = *(s32 *)(workspace + 232) + 0xc0000;
+    } else {
+        x = *(s32 *)(workspace + 232) - 0xc0000;
+    }
+
+    if (flag != 0) {
+        z = *(s32 *)(workspace + 236) + 0x100000;
+        cuep = (u16 *)(workspace + 228);
+    } else {
+        z = *(s32 *)(workspace + 236) - 0x100000;
+        cuep = (u16 *)(workspace + 226);
+    }
+
+    waitp = (s16 *)(record + 100);
+    *waitp = *cuep;
+    *(s32 *)(record + 52) = 0x4000;
+    *(s32 *)(record + 48) = 0x10000;
+
+    State_unk3_4(record, x, 0, z);
+    State_unk16_4RaiseLinkedEffect(0x211);
+    State_unk4_4RaiseLinkedEffect(record, (void *)SCENE_CALLBACK);
+
+    while (*waitp != 0) {
+        State_unk5_4RaiseLinkedEffect(1);
+    }
+
+    if (flag == 0) {
+        State_unk7_4(0, handleA);
+        State_unk10_4(handleA, 2);
+    } else {
+        State_unk9_4(0, handleB);
+        State_unk11_4(handleB, 2);
+    }
+
+    shared = gCell;
+    State_unk12_4(*(s32 *)(shared + 500), 1);
+    State_unk17_4RaiseLinkedEffect(SCENE_TEXT_VALUE, 3);
+    State_unk13_4(record);
+
+    return flag;
+}
+
+/* overlays/scene/state/task/set_work_halfword_dc.c */
+void State_SetWorkHalfwordDc(s16 v)
+{
+    FIELD_AT_OFFSET(*(void **)0x03001F3C, s16 *, 0xDC) = v;
 }

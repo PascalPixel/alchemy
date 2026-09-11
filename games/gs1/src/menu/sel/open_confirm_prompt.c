@@ -61,7 +61,7 @@ s32 Menu_OpenConfirmPrompt(void)
     FIELD(FIELD(&gIw, void *, 0x24), u8, 0xea6) = 1;
     Menu_Run();
     Menu_SetMode(0, 0, 30, 20);
-    Menu_unk5_2(0x37);
+    Runtime_ReleaseHeapBlock(0x37);
     gIw->suspended = 0;
     WaitFrames(1);
     Menu_SetMode3(0, 0, 30, 20);

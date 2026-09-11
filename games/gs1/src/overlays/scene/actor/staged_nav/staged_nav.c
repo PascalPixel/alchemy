@@ -8,6 +8,7 @@
 #include "staged_actor.h"
 #include "configured_effect_spawn_body.inc"
 
+/* overlays/scene/actor/staged_nav/staged_nav.c */
 /* overlays/scene/actor/staged_nav/actor_position.c */
 u8 *Actor_unk3_4(s32 slot);
 u8 *Actor_unk4_4();
@@ -421,7 +422,7 @@ u8 *Actor_unk15_4();
 
 void Scene_RunPrimarySequence(void)
 {
-    s32 Actor_unk19();
+    s32 Scene_RunScene3b3SequenceD();
 
     s32 rec;
     s32 flag;
@@ -869,7 +870,7 @@ void AdvanceStagedActorPair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Actor_unk70_4(Ent *a)
+s32 stop_blocked_actor_motion(Ent *a)
 {
     extern s32 Actor_Far2[];
 
@@ -914,7 +915,7 @@ done:
     return 0;
 }
 
-s32 Actor_unk71_4(s32 *a)
+s32 find_clear_actor_position(s32 *a)
 {
     extern s32 Actor_Far2[];
 
@@ -1107,4 +1108,109 @@ void State_ClearWord24AndObjectByte62(void)
 
     *(s32 *)(gIw2 + 24) = 0;
     obj[0x62] = 0;
+}
+
+/* overlays/scene/actor/staged_nav/wait_height_below_limit.c */
+/*
+ * Staged actor height wait for overlay resource_3b3. The callee name refers
+ * to its own call word rather than to a shared runtime address.
+ */
+
+/*
+ * Polls for up to sixty ticks until the height at +12 falls to the target
+ * at +20 or to limit, then clears +0x28 and parks +0x3c. The height is not
+ * mirrored back from +20 afterwards. The owner at 0x02000da8 is 52 bytes
+ * and carries no pool.
+ */
+void Actor_WaitHeightBelowLimit(u8 *obj, s32 limit)
+{
+    s32 cnt = 60;
+
+    for (;;) {
+        if (cnt == 0) {
+            break;
+        }
+        Actor_RunHeightBelowLimit(1);
+        if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20)) {
+            break;
+        }
+        if (*(s32 *)(obj + 12) <= limit) {
+            break;
+        }
+        cnt--;
+    }
+
+    *(u32 *)(obj + 0x28) = 0;
+    *(u32 *)(obj + 0x3c) = 0x80000000;
+}
+
+/* overlays/scene/actor/staged_nav/step_down_until_clamp.c */
+/*
+ * Steps a record down by a tenth of a unit per frame until it reaches the
+ * clamp at 0x1999 -- resource_3b3.  The eighty-byte owner includes its
+ * alignment halfword and four pool words: the clamp 0x1999, -0x1999,
+ * -0xcccc and the loop bound 0x1998, which is one less than the clamp.
+ * None of them is an address, and each is reached only through a
+ * pc-relative load.
+ */
+
+u8 *Actor_RunDownUntilClamp();           /* Record fetch, returns the record. */
+void Actor_unk2_4DownUntilClamp();          /* Dispatch stub table entry 0. */
+
+/*
+ * Each Func_ name labels the call word of one call site rather than a
+ * runtime address.  The first call is made before r0 is disturbed, so the
+ * index is passed straight through instead of being materialised again.  The
+ * two exits differ: the thirty-two frame cap returns without pinning, while
+ * the clamp path pins the record to exactly 0x1999.
+ */
+void StagedActor_StepDownUntilClamp(s32 index)
+{
+    u8 *obj = Actor_RunDownUntilClamp(index);
+    u32 cnt;
+
+    obj[0x55] = 0;
+
+    cnt = 0;
+    for (;;) {
+        if (cnt > 31) return;
+        Actor_unk2_4DownUntilClamp(1);
+        *(s32 *)(obj + 28) += -0x1999;
+        *(s32 *)(obj + 12) += -0xcccc;
+        cnt++;
+        if (*(s32 *)(obj + 28) <= 0x1998) {
+            *(s32 *)(obj + 28) = 0x1999;
+            return;
+        }
+    }
+}
+
+/* overlays/scene/actor/staged_nav/apply_counter_low_bits_as_mode.c */
+/* Apply the actor's low four counter bits as its animation mode. */
+#include "types.h"
+#include "scene.h"
+
+s32 Actor_ApplyCounterLowBitsAsMode(u8 *actor)
+{
+    Actor_ApplyBitsAsMode(actor, *(u16 *)(actor + 100) & 15);
+    return 0;
+}
+
+/* overlays/scene/actor/staged_nav/run_transition_or_fallback.c */
+/* Begin a scene, attempt the forward transition, and fall back to pushing the
+ * obstructing actor when the transition cannot run.  Complete 28-byte owner
+ * from the prologue at 0x02001528 through return/alignment at 0x02001543. */
+
+void Scene_RunTransitionOrFallback(void)
+{
+    Actor_RunTransitionOrFallback();
+    if (Actor_unk2_4TransitionOrFallback() == 0)
+        Actor_unk3_4TransitionOrFallback();
+    Actor_unk4_4TransitionOrFallback();
+}
+
+/* overlays/scene/actor/staged_nav/run_single_step.c */
+void Scene_RunSingleStep(void)
+{
+    Actor_RunSingleStep();
 }

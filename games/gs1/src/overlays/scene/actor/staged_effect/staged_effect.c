@@ -6,6 +6,7 @@
 #include "staged_actor.h"
 #include "configured_effect_spawn_body.inc"
 
+/* overlays/scene/actor/staged_effect/staged_effect.c */
 /* overlays/scene/actor/staged_effect/actor_facing.c */
 u8 *Actor_unk6_4(s32 id);
 
@@ -576,7 +577,7 @@ void AdvanceStagedActorPair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Actor_unk73_4(Ent *a)
+s32 stop_blocked_actor_motion(Ent *a)
 {
     extern s32 StagedActorStepTable[];
 
@@ -621,7 +622,7 @@ done:
     return 0;
 }
 
-s32 Actor_unk74_4(s32 *a)
+s32 find_clear_actor_position(s32 *a)
 {
     extern s32 StagedActorStepTable[];
 
@@ -750,7 +751,7 @@ found:
  * arguments; its parameter meaning is unverified, so each call is left as
  * compiled rather than unified.
  */
-void Actor_unk79_4(void)
+void clear_linked_scene_record(void)
 {
     s32 *record = *gIw;
     s32 *target;
@@ -769,4 +770,15 @@ void Actor_unk79_4(void)
         Actor_Apply7(target, 7);
         record[5] = 0;
     }
+}
+
+/* overlays/scene/actor/staged_effect/move_and_redraw.c */
+#define ValueMoveAndRedraw Value2
+
+#include "staged_actor_movement.h"
+
+void Actor_Run(
+    StagedActorMovementRequest request)
+{
+#include "run_staged_actor_movement_and_redraw_body.inc"
 }

@@ -16,7 +16,7 @@ u8 *Talk_Run();
 
 u8 *Talk_unk2_4();
 
-void Talk_unk3_4();           /* the installed per-frame task */
+void Scene_RunSecondaryScript();           /* the installed per-frame task */
 
 /*
  * The 148-byte owner includes its eight-word literal pool: those words lie

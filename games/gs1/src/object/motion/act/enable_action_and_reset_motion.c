@@ -1,5 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
 
 s32 Object_ResetMotion();
 void Motion_EnableReset(void)

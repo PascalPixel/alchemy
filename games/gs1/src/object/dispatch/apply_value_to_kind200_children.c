@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 void ObjectDispatch_ApplyValueToKind200Children(int arg0)

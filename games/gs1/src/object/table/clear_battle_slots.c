@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/table/clear_battle_slots.h"
 
-extern u8 *Data_03001ebc;
+extern u8 *gWork;
 
 void ObjectTable_ClearBattleSlots(void)
 {
@@ -11,7 +13,7 @@ void ObjectTable_ClearBattleSlots(void)
     offset = 0x8C;
     zero = 0;
     count = 0x41;
-    current = (s32 *)(Data_03001ebc + offset * 2);
+    current = (s32 *)(gWork + offset * 2);
     do {
         count--;
         *current = zero;

@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/renumber_filler_entries.h"
 
-extern u32 Data_02010000[];
+extern u32 gUnk[];
 
 void Graphics_RenumberFillerEntries(void)
 {
-    u32 *p = Data_02010000;
+    u32 *p = gUnk;
     u32 cnt = 128 << 7;
     u32 mask = 0xfff;
     s32 no = -1;

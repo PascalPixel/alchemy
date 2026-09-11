@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/motion/set_mode5_and_activate_slot.h"
 
 struct Creature_080b8ec4 {
   u8 padding_00[0x38];
@@ -28,7 +30,7 @@ struct Runtime_080b8ec4 {
 
 s32 WaitFrames(s32);
 s32 Object_InitializeMode(void *, s32);
-s32 Func_08009100(void *);
+
 struct Creature_080b8ec4 *Runtime_GetObject();
 struct Runtime_080b8ec4 *GetBattleObjectSlot(s32);
 s32 ActivateBattleObjectSlot(s32);
@@ -44,7 +46,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 arg0)
     actor_data->field_05 = 6;
     actor_data->field_16 = 0xFF;
     WaitFrames(4);
-    Func_08009100(object);
+    Battle_Check(object);
     ActivateBattleObjectSlot(arg0);
   }
 }

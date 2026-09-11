@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "fixed_math.h"
 
 struct Values_0808f28c {

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/selection/reload_node_resource.h"
 
 struct Node_0801b9a8 {
     u8 filler0[4];
@@ -15,8 +17,7 @@ struct State_0801b9a8 {
     struct Node_0801b9a8 *head;
 };
 
-extern u8 Data_0000001f;
-void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
+extern u8 gVal;
 
 void Menu_ReloadNodeResource(struct State_0801b9a8 *state, u32 index)
 {
@@ -29,9 +30,9 @@ void Menu_ReloadNodeResource(struct State_0801b9a8 *state, u32 index)
         node = node->next;
     }
     if (node->type == 1 || node->type == 6) {
-        u32 first = node->base - (u32)&Data_0000001f;
+        u32 first = node->base - (u32)&gVal;
 
         value = node->value;
-        Func_08019ee4(first, 0, &value, &output, 1);
+        Menu_SetRange(first, 0, &value, &output, 1);
     }
 }

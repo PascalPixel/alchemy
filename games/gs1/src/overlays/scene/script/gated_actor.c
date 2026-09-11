@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/script/gated_actor.h"
 
 /*
  * DRAFTED SCENE SCRIPT for Scene_RunGatedActorSequence.
@@ -19,18 +21,18 @@
  * destination, the single unambiguous spelling is reused for every call to
  * that destination.
  *
- * RESIDUAL / INTEGRATOR NOTE.  The pre-relocation word Func_020028a8 is used
+ * RESIDUAL / INTEGRATOR NOTE.  The pre-relocation word Script_Run3 is used
  * at two sites in this owner and relocates to two different destinations:
  * 0x02000d22 -> runtime 0x02009b84 (main-image 0x0808a218) and 0x02000d52 ->
  * runtime 0x02009b54 (main-image 0x0808a1b8).  0x02009b84 is reachable through
  * no other pre-relocation word here, so a standalone candidate cannot bind it;
  * `alchemy score` reports "ambiguous overlay call identity".  It is spelled
- * here as Data_02009b85 (Data_ bypasses the call-name resolver and binds the
+ * here as gOv (Data_ bypasses the call-name resolver and binds the
  * literal runtime address with the Thumb bit set), which compiles and emits
  * the reference's call word, but it is a scoring workaround, not source.
  * The project's own convention for this case is the suffixed pair already used
  * by this overlay's other unit, games/gs1/src/overlays/scene/script/
- * run_actor_position_sequence.c: declare Func_020028a8_a and Func_020028a8_b,
+ * run_actor_position_sequence.c: declare Script_Run4 and Script_Run5,
  * spell the 0x02000d22 site _a and the 0x02000d52 site _b, and record both in
  * the unit's `absolute_symbols` as 0x02009b84 and 0x02009b54, kind "thumb".
  * That table is integrator-owned, so the suffixed spellings do not bind from a
@@ -74,109 +76,71 @@
  * coordinates, and the flag byte at 90.
  */
 
-#define Scene_RunGatedActorSequence Func_02000be0
-
 /* 0x080770c0, one argument, result tested */
-s32 Func_0200264a();
+
 /* 0x080770c8, one argument */
-void Func_02002668();
+
 /* 0x0808a010, one argument (frame count) */
-void Func_020027a6();
+
 /* 0x0808a018, no arguments */
-void Func_02002674();
+
 /* 0x0808a020, no arguments */
-void Func_02002d0a();
+
 /* 0x0808a070, two arguments, result tested */
-s32 Func_0200299e();
+
 /* 0x0808a080, one argument, returns an object record or NULL */
-u8 *Func_020026e0();
+u8 *Script_Run6();
 /* 0x0808a090, three arguments */
-void Func_020026bc();
+
 /* 0x0808a0b8, three arguments */
-void Func_02002ce0();
+
 /* 0x0808a0c8, three arguments */
-void Func_020028fe();
+
 /* 0x0808a0d0, three arguments */
-void Func_02002706();
+
 /* 0x0808a0e8, one argument */
-void Func_02002cfe();
+
 /* 0x0808a0f0, three arguments */
-void Func_0200273e();
+
 /* 0x0808a100, two arguments */
-void Func_02002788();
+
 /* 0x0808a110, two arguments */
-void Func_0200285a();
+
 /* 0x0808a130, two arguments */
-void Func_02002b9c();
+
 /* 0x0808a138, two arguments */
-void Func_02002890();
+
 /* 0x0808a148, three arguments */
-void Func_02002b4c();
+
 /* 0x0808a150, three arguments */
-void Func_02002a90();
+
 /* 0x0808a168, three arguments, third is a table address */
-void Func_02002d8e();
+
 /* 0x0808a170, one argument (event id) */
-void Func_02002730();
+
 /* 0x0808a178, two arguments, returned value discarded at both call sites */
-s32 Func_02002b20();
+
 /* 0x0808a188, three arguments */
-void Func_0200288e();
+
 /* 0x0808a1b8, three arguments */
-void Func_02002792();
+
 /* 0x0808a1e8, three arguments */
-void Func_02002780();
+
 /* 0x0808a208, two arguments */
-void Func_02002884();
+
 /* 0x0808a210, four arguments */
-void Func_020029fa();
+
 /* 0x0808a218, no arguments; see the integrator note above */
-void Data_02009b85();
+void gOv();
 /* 0x0808a4f0, no arguments */
-void Func_02002e46();
+
 /* 0x080f9010, one argument (sound id) */
-void Func_020027ca();
 
 /* Event ids the reference keeps live in a register across the sequence. */
-extern u8 Data_00000f85[];
-extern u8 Data_00000f91[];
+extern u8 gVal[];
+extern u8 gVal2[];
 /* Overlay table passed to the last two calls. */
-extern u8 Data_02009ce0[];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
+extern u8 gOv2[];
 
 void Scene_RunGatedActorSequence(void)
 {
@@ -186,176 +150,176 @@ void Scene_RunGatedActorSequence(void)
     s32 evt2;
     s32 tbl;
 
-    if (Value1(Func_0200264a, 0x808) != 0) {
+    if (Script_Check(0x808) != 0) {
         return;
     }
 
-    Func_02002674();
-    Func_020027ca(17);
-    Call1(Func_02002668, 0x808);
+    Script_Run7();
+    Script_Run8(17);
+    Script_Do(0x808);
 
-    evt = (s32)Data_00000f85;
-    Func_02002730(evt);
-    Func_0200288e(14, 0, 10);
+    evt = (s32)gVal;
+    Script_Run9(evt);
+    Script_Run10(14, 0, 10);
 
-    Call3(Func_020026bc, 0, 0x13333, 0x9999);
-    Call3(Func_02002780, 0, 0x100, 30);
-    Call3(Func_02002706, 0, 0x188, 0x148);
-    Call3(Func_02002792, 0, 0x4000, 10);
+    Script_Place(0, 0x13333, 0x9999);
+    Script_Place2(0, 0x100, 30);
+    Script_Place3(0, 0x188, 0x148);
+    Script_Place4(0, 0x4000, 10);
 
-    record = Func_020026e0(0);
+    record = Script_Run6(0);
     x = *(s16 *)(record + 10);
     z = *(s16 *)(record + 18);
-    Func_0200273e(5, x << 16, z << 16);
-    Func_0200273e(1, x << 16, z << 16);
+    Script_Run11(5, x << 16, z << 16);
+    Script_Run11(1, x << 16, z << 16);
 
-    Call3(Func_020026bc, 5, 0x13333, 0x9999);
-    Call3(Func_020026bc, 1, 0x13333, 0x9999);
-    Call3(Func_020028fe, 5, 0x178, 0x148);
-    Call3(Func_02002706, 1, 0x198, 0x148);
-    Func_02002788(0, 0);
-    Func_02002788(5, 0);
-    Func_02002788(1, 0);
-    Call3(Func_02002792, 1, 0x8000, 0);
-    Func_02002792(5, 0, 20);
-    Call3(Func_02002780, 0, 0x101, 0);
-    Call3(Func_02002780, 1, 0x101, 0);
-    Call3(Func_02002780, 5, 0x101, 30);
-    Call3(Func_02002792, 0, 0x4000, 0);
-    Call3(Func_02002792, 1, 0x4000, 0);
-    Call3(Func_02002792, 5, 0x4000, 0);
-    Call2(Func_02002884, 0x60000, 0xc000);
-    Call4(Func_020029fa, 0xd70000, -1, 0x1590000, 1);
-    Data_02009b85();
-    Func_020027a6(20);
-    Func_020027ca(61);
+    Script_Place(5, 0x13333, 0x9999);
+    Script_Place(1, 0x13333, 0x9999);
+    Script_Place5(5, 0x178, 0x148);
+    Script_Place3(1, 0x198, 0x148);
+    Script_Run12(0, 0);
+    Script_Run12(5, 0);
+    Script_Run12(1, 0);
+    Script_Place4(1, 0x8000, 0);
+    Script_Run13(5, 0, 20);
+    Script_Place2(0, 0x101, 0);
+    Script_Place2(1, 0x101, 0);
+    Script_Place2(5, 0x101, 30);
+    Script_Place4(0, 0x4000, 0);
+    Script_Place4(1, 0x4000, 0);
+    Script_Place4(5, 0x4000, 0);
+    Script_Run(0x60000, 0xc000);
+    Script_Run2(0xd70000, -1, 0x1590000, 1);
+    gOv();
+    Script_Run14(20);
+    Script_Run8(61);
 
-    Func_0200285a(14, 4);
-    Func_02002788(14, 4);
-    Func_0200288e(14, 0, 20);
-    Func_02002792(15, 0, 10);
-    Func_0200288e(15, 0, 10);
-    Func_0200285a(14, 3);
-    Func_0200288e(14, 0, 10);
-    Call3(Func_02002792, 15, 0x4000, 60);
-    Func_02002890(15, 1);
-    Func_0200288e(15, 0, 20);
-    Func_0200285a(14, 3);
-    Func_0200288e(14, 0, 10);
-    Func_0200285a(15, 4);
-    Func_0200288e(15, 0, 6);
-    Call3(Func_02002780, 14, 0x100, 0);
-    Func_02002890(14, 2);
-    Func_020027a6(20);
-    Func_02002792(15, 0, 10);
-    Call3(Func_02002780, 15, 0x101, 40);
-    Func_02002792(14, 0, 60);
-    Call3(Func_02002792, 14, 0x8000, 40);
-    Func_02002792(14, 0, 40);
-    Call3(Func_02002706, 14, 232, 0x168);
-    Func_02002792(14, 0, 10);
-    Func_0200285a(15, 3);
-    Func_020027a6(10);
-    Call3(Func_020028fe, 14, 0x188, 0x168);
-    Call3(Func_02002706, 15, 216, 0x168);
-    Call3(Func_020028fe, 15, 0x178, 0x168);
-    Call3(Func_02002792, 0, 0x4000, 0);
-    Call3(Func_02002792, 1, 0x4000, 0);
-    Call3(Func_02002792, 5, 0x4000, 0);
-    Call4(Func_020029fa, 0x1890000, -1, 0x1530000, 1);
-    Call3(Func_020028fe, 14, 0x188, 0x168);
-    Call3(Func_02002706, 15, 0x178, 0x168);
-    Func_02002788(14, 0);
-    Func_02002788(15, 0);
-    Call3(Func_02002792, 14, 0xd000, 0);
-    Call3(Func_02002792, 15, 0xd000, 30);
-    Func_02002890(14, 2);
-    Func_0200288e(14, 0, 10);
-    Call3(Func_02002780, 1, 258, 60);
-    Func_02002890(1, 1);
-    Func_0200288e(1, 0, 10);
-    Func_0200285a(15, 4);
-    Value2(Func_02002b20, 0x100f, 0);
+    Script_Run15(14, 4);
+    Script_Run12(14, 4);
+    Script_Run10(14, 0, 20);
+    Script_Run13(15, 0, 10);
+    Script_Run10(15, 0, 10);
+    Script_Run15(14, 3);
+    Script_Run10(14, 0, 10);
+    Script_Place4(15, 0x4000, 60);
+    Script_Run16(15, 1);
+    Script_Run10(15, 0, 20);
+    Script_Run15(14, 3);
+    Script_Run10(14, 0, 10);
+    Script_Run15(15, 4);
+    Script_Run10(15, 0, 6);
+    Script_Place2(14, 0x100, 0);
+    Script_Run16(14, 2);
+    Script_Run14(20);
+    Script_Run13(15, 0, 10);
+    Script_Place2(15, 0x101, 40);
+    Script_Run13(14, 0, 60);
+    Script_Place4(14, 0x8000, 40);
+    Script_Run13(14, 0, 40);
+    Script_Place3(14, 232, 0x168);
+    Script_Run13(14, 0, 10);
+    Script_Run15(15, 3);
+    Script_Run14(10);
+    Script_Place5(14, 0x188, 0x168);
+    Script_Place3(15, 216, 0x168);
+    Script_Place5(15, 0x178, 0x168);
+    Script_Place4(0, 0x4000, 0);
+    Script_Place4(1, 0x4000, 0);
+    Script_Place4(5, 0x4000, 0);
+    Script_Run2(0x1890000, -1, 0x1530000, 1);
+    Script_Place5(14, 0x188, 0x168);
+    Script_Place3(15, 0x178, 0x168);
+    Script_Run12(14, 0);
+    Script_Run12(15, 0);
+    Script_Place4(14, 0xd000, 0);
+    Script_Place4(15, 0xd000, 30);
+    Script_Run16(14, 2);
+    Script_Run10(14, 0, 10);
+    Script_Place2(1, 258, 60);
+    Script_Run16(1, 1);
+    Script_Run10(1, 0, 10);
+    Script_Run15(15, 4);
+    Script_Check2(0x100f, 0);
 
-    if (Value2(Func_0200299e, 0, 0) == 0) {
-        Func_02002730(evt + 10);
+    if (Script_Check3(0, 0) == 0) {
+        Script_Run9(evt + 10);
     } else {
-        Func_02002730(evt + 11);
+        Script_Run9(evt + 11);
     }
 
-    Call3(Func_0200288e, 0x100f, 0, 10);
-    Func_02002890(1, 2);
+    Script_Place6(0x100f, 0, 10);
+    Script_Run16(1, 2);
 
-    evt2 = (s32)Data_00000f91;
-    Func_02002730(evt2);
-    Func_0200288e(1, 0, 20);
-    Func_02002a90(14, 15, 40);
-    Call3(Func_02002792, 14, 0xd000, 0);
-    Call3(Func_02002792, 15, 0xd000, 20);
-    Func_0200288e(14, 0, 60);
-    Func_02002890(15, 1);
-    Func_020027a6(10);
-    Func_0200285a(15, 3);
-    Call3(Func_0200288e, 0x100f, 0, 10);
-    Func_02002890(5, 2);
-    Func_0200285a(5, 3);
-    Call3(Func_0200288e, 0x1005, 0, 20);
-    Func_02002890(14, 2);
-    Call3(Func_02002792, 14, 0xa000, 20);
-    Value2(Func_02002b20, 14, 0);
+    evt2 = (s32)gVal2;
+    Script_Run9(evt2);
+    Script_Run10(1, 0, 20);
+    Script_Run17(14, 15, 40);
+    Script_Place4(14, 0xd000, 0);
+    Script_Place4(15, 0xd000, 20);
+    Script_Run10(14, 0, 60);
+    Script_Run16(15, 1);
+    Script_Run14(10);
+    Script_Run15(15, 3);
+    Script_Place6(0x100f, 0, 10);
+    Script_Run16(5, 2);
+    Script_Run15(5, 3);
+    Script_Place6(0x1005, 0, 20);
+    Script_Run16(14, 2);
+    Script_Place4(14, 0xa000, 20);
+    Script_Check2(14, 0);
 
-    if (Value2(Func_0200299e, 0, 0) == 0) {
-        Func_02002730(evt2 + 5);
+    if (Script_Check3(0, 0) == 0) {
+        Script_Run9(evt2 + 5);
     } else {
-        Func_02002730(evt2 + 6);
+        Script_Run9(evt2 + 6);
     }
 
-    Func_02002792(5, 0, 0);
-    Call3(Func_02002792, 1, 0x8000, 20);
-    Func_02002890(14, 2);
-    Func_0200288e(14, 0, 10);
-    Func_02002b4c(14, 1, 30);
-    Func_02002b4c(14, 5, 30);
-    Call3(Func_02002780, 14, 0x105, 80);
-    Func_0200285a(14, 4);
-    Call1(Func_02002730, 0xf98);
-    Func_0200288e(14, 0, 6);
-    Call3(Func_02002780, 0, 0x100, 0);
-    Call3(Func_02002780, 1, 0x100, 0);
-    Call3(Func_02002780, 5, 0x100, 0);
-    Func_02002b9c(1, 1);
-    Func_02002b9c(5, 1);
-    Func_02002890(0, 1);
-    Func_020027a6(40);
-    Func_02002890(5, 2);
-    Call3(Func_02002792, 1, 0x4000, 0);
-    Call3(Func_02002792, 5, 0x4000, 10);
-    Call3(Func_0200288e, 0x1005, 0, 10);
-    Func_02002890(15, 2);
-    Func_02002792(15, 0, 10);
-    Call3(Func_0200288e, 0x100f, 0, 10);
-    Call3(Func_02002792, 14, 0x8000, 20);
-    Func_0200285a(14, 4);
-    Func_0200288e(14, 0, 10);
-    Func_02002890(15, 2);
-    Func_020027a6(10);
-    Call3(Func_02002792, 14, 0xb000, 0);
-    Call3(Func_02002792, 15, 0xd000, 20);
-    Call3(Func_020026bc, 15, 0x8000, 0x4000);
-    Call3(Func_020026bc, 14, 0x8000, 0x4000);
+    Script_Run13(5, 0, 0);
+    Script_Place4(1, 0x8000, 20);
+    Script_Run16(14, 2);
+    Script_Run10(14, 0, 10);
+    Script_Run18(14, 1, 30);
+    Script_Run18(14, 5, 30);
+    Script_Place2(14, 0x105, 80);
+    Script_Run15(14, 4);
+    Script_Do2(0xf98);
+    Script_Run10(14, 0, 6);
+    Script_Place2(0, 0x100, 0);
+    Script_Place2(1, 0x100, 0);
+    Script_Place2(5, 0x100, 0);
+    Script_Run19(1, 1);
+    Script_Run19(5, 1);
+    Script_Run16(0, 1);
+    Script_Run14(40);
+    Script_Run16(5, 2);
+    Script_Place4(1, 0x4000, 0);
+    Script_Place4(5, 0x4000, 10);
+    Script_Place6(0x1005, 0, 10);
+    Script_Run16(15, 2);
+    Script_Run13(15, 0, 10);
+    Script_Place6(0x100f, 0, 10);
+    Script_Place4(14, 0x8000, 20);
+    Script_Run15(14, 4);
+    Script_Run10(14, 0, 10);
+    Script_Run16(15, 2);
+    Script_Run14(10);
+    Script_Place4(14, 0xb000, 0);
+    Script_Place4(15, 0xd000, 20);
+    Script_Place(15, 0x8000, 0x4000);
+    Script_Place(14, 0x8000, 0x4000);
 
-    record = Func_020026e0(14);
+    record = Script_Run6(14);
     *(record + 90) &= 0xfe;
-    record = Func_020026e0(15);
+    record = Script_Run6(15);
     *(record + 90) &= 0xfe;
 
-    Call3(Func_020028fe, 14, 0x188, 0x178);
-    Call3(Func_02002706, 15, 0x178, 0x178);
-    Func_020027a6(6);
+    Script_Place5(14, 0x188, 0x178);
+    Script_Place3(15, 0x178, 0x178);
+    Script_Run14(6);
 
-    record = Func_020026e0(14);
+    record = Script_Run6(14);
     *(record + 90) |= 1;
-    record = Func_020026e0(15);
+    record = Script_Run6(15);
     {
         /*
          * A result temporary, not the compound or-assign the first
@@ -371,35 +335,35 @@ void Scene_RunGatedActorSequence(void)
         *(record + 90) = merged;
     }
 
-    Func_02002788(14, 0);
-    Func_02002788(15, 0);
-    Func_020027a6(20);
-    Func_02002890(1, 2);
-    Func_0200288e(1, 0, 10);
-    Func_02002792(0, 1, 20);
-    Func_02002788(0, 3);
-    Func_0200285a(1, 3);
-    Func_020027ca(17);
+    Script_Run12(14, 0);
+    Script_Run12(15, 0);
+    Script_Run14(20);
+    Script_Run16(1, 2);
+    Script_Run10(1, 0, 10);
+    Script_Run13(0, 1, 20);
+    Script_Run12(0, 3);
+    Script_Run15(1, 3);
+    Script_Run8(17);
 
-    Func_02002788(1, 2);
-    record = Func_020026e0(0);
+    Script_Run12(1, 2);
+    record = Script_Run6(0);
     if (record != 0) {
-        Func_02002ce0(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Script_Run20(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Func_02002cfe(1);
-    Func_0200273e(1, 0, 0);
+    Script_Run21(1);
+    Script_Run11(1, 0, 0);
 
-    Func_02002788(5, 2);
-    record = Func_020026e0(0);
+    Script_Run12(5, 2);
+    record = Script_Run6(0);
     if (record != 0) {
-        Func_02002ce0(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Script_Run20(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Func_02002cfe(5);
-    Func_0200273e(5, 0, 0);
+    Script_Run21(5);
+    Script_Run11(5, 0, 0);
 
-    tbl = (s32)Data_02009ce0;
-    Call3(Func_02002d8e, 14, 0x10000, tbl);
-    Call3(Func_02002d8e, 15, 0x10000, tbl);
-    Func_02002e46();
-    Func_02002d0a();
+    tbl = (s32)gOv2;
+    Script_Place7(14, 0x10000, tbl);
+    Script_Place7(15, 0x10000, tbl);
+    Script_Run22();
+    Script_Run23();
 }

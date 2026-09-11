@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/motion/interpolate_position.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern s8 Data_03001cd4;
+extern s8 gIw;
 
 s32 FixedPoint_Ratio(s32, s32);
 void Object_SetPosition(void *, s32, s32, s32);

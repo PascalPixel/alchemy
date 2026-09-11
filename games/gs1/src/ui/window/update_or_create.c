@@ -1,5 +1,6 @@
 #include "far_runtime.h"
 #include "types.h"
+#include "scene.h"
 
 s32 UiWindow_CreateFar(s32 first, s32 second, s32 third, s32 fourth, s32 flags);
 

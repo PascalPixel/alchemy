@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Graphics_ClampRgb555Channel(s32 val)
 {

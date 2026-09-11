@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/render/output_list/release_free.h"
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 void RenderOutput_ReleaseFree(u32 arg0)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gIw;
     /* 管理領域内の要素だけを空きリストへ戻す。 */
     if (arg0 >= (u32)(base + 0x698) && arg0 < (u32)(base + 0xd98)) {
         u32 old = *(u32 *)(base + 0xd9c);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 #ifndef SERIAL_RUNTIME_TU
 union SerialDataRegisters {

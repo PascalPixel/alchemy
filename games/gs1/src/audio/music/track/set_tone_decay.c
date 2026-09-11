@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "audio_engine.h"
 
 /* 戻り値は未使用だが、更新後位置を返す形でレジスタ順が一致する。 */

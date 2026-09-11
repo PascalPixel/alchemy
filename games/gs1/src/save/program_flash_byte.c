@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/save/program_flash_byte.h"
 /*
  * Program one byte of flash: issue the unlock sequence, store the byte,
  * then call through the word at 0x02004C00.
@@ -5,11 +7,10 @@
 #include "flash.h"
 
 /*
- * Func_080072f0 names a `bx rN` slot: the call is indirect through the
+ * Sys_SetMode names a `bx rN` slot: the call is indirect through the
  * register that slot selects, and the trailing argument is the callee
  * address rather than a parameter of the callee.
  */
-extern s32 Func_080072f0(s32 mode, u8 *destination, u8 value, s32 status);
 
 /*
  * The word at 0x02004C00 is the address called, not data. The source byte
@@ -23,5 +24,5 @@ u16 ProgramFlashByte(u8 *source, u8 *destination)
   *(volatile u8 *) 0x0E005555 = 0xA0;
   *destination = *source;
   status = (s32 *) 0x02004C00;
-  return Func_080072f0(1, destination, *source, *status);
+  return Sys_SetMode(1, destination, *source, *status);
 }

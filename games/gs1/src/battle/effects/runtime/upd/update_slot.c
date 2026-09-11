@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/runtime/upd/update_slot.h"
 #include "effect_0809b11c.h"
 
 void EffectSlot_Update(struct EffectSlot *effect)
@@ -10,9 +12,9 @@ void EffectSlot_Update(struct EffectSlot *effect)
             effect->callback(effect);
         if (effect->active != 0) {
             if (effect->update_motion != 0)
-                Func_0809b8f4(effect);
+                Battle_Run(effect);
             if (effect->render != 0)
-                Func_0809b86c(effect);
+                Battle_Run2(effect);
         }
     }
 }

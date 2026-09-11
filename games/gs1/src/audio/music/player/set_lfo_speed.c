@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void MusicTrack_ClearModulation(u8 *entry);
 

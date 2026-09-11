@@ -1,44 +1,44 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/display/blend/update_transition.h"
 
-extern u8 Data_03001ac0;
-extern volatile u8 Data_03001ca8;
-extern u8 Data_03001aec;
-extern volatile u8 Data_03001c98;
-extern u8 Data_03001cd4;
-extern u16 Data_03001cf8;
-
-s32 Func_080022ec(s32 numerator, s32 denominator);
+extern u8 gIw;
+extern volatile u8 gIw2;
+extern u8 gIw3;
+extern volatile u8 gIw4;
+extern u8 gIw5;
+extern u16 gIw6;
 
 void BlendTransition_Update(void)
 {
-    if (Data_03001c98 != 0) {
+    if (gIw4 != 0) {
         {
             volatile u16 *blend_control;
             u32 control;
 
-            if (Data_03001cd4 != 0) {
-                control = Data_03001cf8 | 0x80;
+            if (gIw5 != 0) {
+                control = gIw6 | 0x80;
                 blend_control = (volatile u16 *)0x04000050;
             } else {
-                control = Data_03001cf8 | 0xc0;
+                control = gIw6 | 0xc0;
                 blend_control = (volatile u16 *)0x04000050;
             }
             *blend_control = control;
         }
         {
-            u8 *remaining = &Data_03001ac0;
+            u8 *remaining = &gIw;
             s32 delta;
             s32 level;
             s32 step;
 
             (*remaining)--;
-            level = Data_03001ca8;
-            delta = Data_03001aec - Data_03001ca8;
+            level = gIw2;
+            delta = gIw3 - gIw2;
             step = *remaining;
-            level += Func_080022ec(delta *step, Data_03001c98);
+            level += Sys_Apply(delta *step, gIw4);
             *(volatile u16 *)0x04000054 = level;
             if (*remaining == 0)
-                Data_03001c98 = 0;
+                gIw4 = 0;
         }
     }
 }

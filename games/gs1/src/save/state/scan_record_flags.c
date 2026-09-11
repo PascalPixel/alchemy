@@ -1,11 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/save/state/scan_record_flags.h"
 #include "runtime_interfaces.h"
 #include "global_cells.h"
 
-extern volatile s16 Data_0200200c;
-
-s32 Func_080056cc(void);
-s32 Func_08005c68(void);
+extern volatile s16 gOv;
 
 s32 SaveState_ScanRecordFlags(void)
 {
@@ -13,7 +12,7 @@ s32 SaveState_ScanRecordFlags(void)
     s32 cnt;
     s32 ret;
 
-    err = Func_080056cc();
+    err = State_Check();
     cnt = 0;
     ret = -9;
     if (err == 0) {
@@ -23,9 +22,9 @@ s32 SaveState_ScanRecordFlags(void)
         void *p;
         s32 addr;
 
-        i = Func_08005c68();
+        i = State_Check2();
         p = (void *)*(volatile s32 *)ADDR_03001F1C;
-        q = (s16 *)&Data_0200200c;
+        q = (s16 *)&gOv;
         t = 0x02002010;
         *(volatile s16 *)t = 0;
         addr = t;
@@ -39,7 +38,7 @@ s32 SaveState_ScanRecordFlags(void)
                 cnt++;
             }
             if (*(s8 *)((s8 *)p + 2) != 0) {
-                Data_0200200c = 1;
+                gOv = 1;
             }
         }
 
@@ -47,7 +46,7 @@ s32 SaveState_ScanRecordFlags(void)
             *(volatile s16 *)0x02002010 = 0;
         }
     }
-    Func_08005cf8();
+    State_Run();
     if (ret != 0 && cnt == ret) {
         return ret + 100;
     }

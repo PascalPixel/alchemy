@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_0809ae64();
+#include "scene.h"
+#include "abi/battle/effects/run/run_effect13_hook.h"
 
 void BattleFx_RunEffect13Hook(void)
 {
-    Func_0809ae64();
+    Battle_Check();
 }

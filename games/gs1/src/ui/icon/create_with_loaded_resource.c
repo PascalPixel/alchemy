@@ -1,6 +1,6 @@
 #include "types.h"
+#include "scene.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Resource_FindFreeSlot();
 s32 UiIcon_DrawWithFlags(s32, s32, s32, s32, s32);

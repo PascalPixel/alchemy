@@ -1,9 +1,10 @@
+#include "scene.h"
+#include "abi/shop/draw/party.h"
 #include "shop.h"
 
 void Object_InitializeMode(void *, s32);
-s32 Func_08077220(s16, s32);
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 
 union ShopPartyMemberId {
     s32 word;
@@ -19,7 +20,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
     s32 offset;
     s16 unit_id;
 
-    shop = Data_03001f2c;
+    shop = gIw;
     if (window != 0) {
         index = 0;
         if (index < *(s8 *)(shop + 0x3a7)) {
@@ -34,7 +35,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
                 icon_entry[16] = 0x10000;
                 unit_id = ((union ShopPartyMemberId *)(
                     party_member_base + offset))->half[0];
-                if (Func_08077220(unit_id, requirement) == 0)
+                if (Sys_Apply(unit_id, requirement) == 0)
                     icon_entry[16] = 0xcccc;
                 index++;
                 offset += 2;

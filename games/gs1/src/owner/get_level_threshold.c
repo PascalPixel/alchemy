@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/get_level_threshold.h"
 
 struct State_08079008 {
     u8 padding[0x128];
@@ -7,7 +9,7 @@ struct State_08079008 {
 };
 
 void *Owner_GetState(s32);
-extern u32 Data_0807a830[];
+extern u32 gRom[];
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
@@ -18,7 +20,7 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
             return 0;
         }
         if (level <= 99 && state->type <= 7) {
-            return Data_0807a830[state->type * 99 + level - 1];
+            return gRom[state->type * 99 + level - 1];
         }
     }
     return (u32)-1;

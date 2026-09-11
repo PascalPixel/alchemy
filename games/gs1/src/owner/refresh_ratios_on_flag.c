@@ -1,9 +1,11 @@
+#include "scene.h"
+#include "abi/owner/refresh_ratios_on_flag.h"
 #include "owner_state.h"
 #include "party_state.h"
 #include "game_flags.h"
 
 extern s32 FixedPoint_Ratio(s32, s32);
-extern const u8 Data_0807a828[];
+extern const u8 gRom[];
 
 void Owner_RefreshRatiosOnFlag(void)
 {
@@ -24,8 +26,8 @@ void Owner_RefreshRatiosOnFlag(void)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        ownerId = Data_02000240.active_owners[n];
-        group = Data_0807a828[ownerId];
+        ownerId = gCell.active_owners[n];
+        group = gRom[ownerId];
         doRefresh = 0;
         if (group == 0) {
             if (GameFlag_Test(0x110) || GameFlag_Test(0x112)) {

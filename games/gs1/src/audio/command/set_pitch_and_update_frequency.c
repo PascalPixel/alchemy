@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void MusicPlayer_SetPitchAndUpdateFrequency(s32 address, u16 value);
 

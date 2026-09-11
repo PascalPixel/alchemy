@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/selection/load_node_resource.h"
 
 struct Node_0801b9ec {
     u8 filler0[4];
@@ -15,8 +17,8 @@ struct State_0801b9ec {
     struct Node_0801b9ec *head;
 };
 
-extern u8 Data_0000001f;
-void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
+extern u8 gVal;
+
 void Menu_LoadSelectedResource(void);
 
 void Menu_LoadSelectionNodeResource(struct State_0801b9ec *state, u32 index)
@@ -30,10 +32,10 @@ void Menu_LoadSelectionNodeResource(struct State_0801b9ec *state, u32 index)
         node = node->next;
     }
     if (node->type == 1 || node->type == 6) {
-        u32 id = node->base - (u32)&Data_0000001f;
+        u32 id = node->base - (u32)&gVal;
 
         value = node->value;
-        Func_08019ee4(id, 0, &value, &res, 1);
+        Menu_SetRange(id, 0, &value, &res, 1);
         Menu_LoadSelectedResource();
     }
 }

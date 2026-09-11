@@ -1,7 +1,7 @@
+#include "scene.h"
+#include "abi/psynergy_menu/draw_psynergy_icons.h"
 #include "psynergy_menu.h"
 #include "global_cells.h"
-
-void Func_08015298(s32 style, u16 action, u8 target, s32 flags);
 
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
 {
@@ -17,7 +17,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
     do {
         psynergy_id = *p++;
         if (psynergy_id != 0) {
-            Func_08015298(
+            Sys_SetMode(
                 4, psynergy_id, (*icons)->render_target, 0);
         }
         icons++;

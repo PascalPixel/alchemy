@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/actor/clear_field_12b_for_group.h"
 
 struct ActorState_080b90ac {
     u8 padding_000[0x12b];
     u8 field_12b;
 };
 
-s32 Func_080b6c08(s32 groups, u16 *ids);
 struct ActorState_080b90ac *Runtime_GetObject(u16 id);
 void BattleUnit_Recalculate(u16 id);
 
@@ -15,7 +16,7 @@ void BattleUnit_ClearField12bForGroup(void)
     s32 count;
     s32 index;
 
-    count = Func_080b6c08(3, ids);
+    count = Actor_Apply(3, ids);
     for (index = 0; index < count; index++) {
         struct ActorState_080b90ac *actor;
 

@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
 #include "gs1_edition.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 

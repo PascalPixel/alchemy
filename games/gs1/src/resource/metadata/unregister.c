@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/resource/metadata/unregister.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void Func_0800bc48(void *destination);
 
 void ResourceMetadata_Unregister(void *state, s32 handle)
 {
@@ -15,7 +15,7 @@ void ResourceMetadata_Unregister(void *state, s32 handle)
     u32 slot_offset;
 
     if ((state != 0) && (handle != 0)) {
-        Func_0800bc48(handle);
+        Sys_Do(handle);
         slot_index = 0;
         if (handle != FIELD_AT_OFFSET(state, s32, 0x28)) {
             slot_cursor = (s32 *)((u8 *)state + 0x28);

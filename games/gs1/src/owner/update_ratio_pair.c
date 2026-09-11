@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct OwnerRatioPairState {
     u8 padding0[20];

@@ -1,16 +1,18 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/inn/room_price.h"
 
-extern u8 *Data_03001f2c;
-extern s8 Data_080b4ab6[];
+extern u8 *gIw;
+extern s8 gRom[];
 
 u8 *Runtime_GetObject(s32);
 
 s32 Inn_RoomPrice(s32 mode)
 {
-    u8 *global = Data_03001f2c;
+    u8 *global = gIw;
     u8 *base;
     s32 active = 0;
-    s32 factor = Data_080b4ab6[mode];
+    s32 factor = gRom[mode];
     s32 index = 0;
     s32 offset;
 

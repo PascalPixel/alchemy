@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Entry_080bd3c8 {
     u8 unknown_00[9];

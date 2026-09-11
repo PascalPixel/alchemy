@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 struct DescendingObjectState {
   u8 padding_00[6];
   u16 angle;

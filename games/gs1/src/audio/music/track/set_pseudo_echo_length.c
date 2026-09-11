@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "audio_engine.h"
 
 const u8 *MusicTrack_SetPseudoEchoLength(

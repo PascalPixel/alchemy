@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/runtime/misc/flush_pending_graphics_transfer.h"
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
@@ -13,10 +15,6 @@ static __inline__ void FillWords(
 {
     ((WordCopyFn)0x03000168)(destination, (void *)size, value);
 }
-
-void Func_08005534(const void *source, void *destination, s32 size);
-void Func_080054e4(const void *source, void *destination, s32 size);
-void Func_08005490(const void *source, s32 mode, void *destination, s32 size);
 
 /* Flush the battle compositor's pending display transfer. */
 void BattleFx_FlushPendingGraphicsTransfer(void)
@@ -43,13 +41,13 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
         break;
     case 2:
         if (*(s32 *)(work + 0x7784) == 50) {
-            Func_08005534(source, (void *)0x06008000, 0x7800);
+            Battle_Place(source, (void *)0x06008000, 0x7800);
         } else {
-            Func_080054e4(source, (void *)0x06008000, 0x7800);
+            Battle_Place2(source, (void *)0x06008000, 0x7800);
         }
         break;
     case 3:
-        Func_08005490(source, *(s32 *)(work + 0x7784),
+        Battle_SetMode(source, *(s32 *)(work + 0x7784),
             (void *)0x06008000, 0x7800);
         break;
     }

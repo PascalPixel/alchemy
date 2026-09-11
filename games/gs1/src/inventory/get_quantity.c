@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 s32 Inventory_GetQuantity(s32 owner, s32 slot)

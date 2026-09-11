@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
 #include "battle_random.h"
 #include "battle_effect_chance.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s32 FixedPoint_Ratio(s32, s32);
 u8 *Owner_GetState(s32);

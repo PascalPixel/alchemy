@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/advance_counter_and_check_chance.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Runtime_GetObject(s32);
-s32 Func_080bf208(s32 id, s32 arg1, s32 arg2);
 
 s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 {
@@ -32,7 +32,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
         t3 = cnt;
         if (t3 != 0) {
             if ((u32)t3 <= 7U &&
-                Func_080bf208(id, FIELD_AT_OFFSET(obj, u8 *, 0x13D), 0x1E) != 0) {
+                Battle_Place(id, FIELD_AT_OFFSET(obj, u8 *, 0x13D), 0x1E) != 0) {
                 FIELD_AT_OFFSET(obj, u8 *, 0x13D) = 0U;
                 return 1;
             }

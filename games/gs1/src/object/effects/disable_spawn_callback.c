@@ -1,9 +1,8 @@
 #include "types.h"
-
-s32 Func_0800439c(u32 callback);
-void Func_080912b8(void);
+#include "scene.h"
+#include "abi/object/effects/disable_spawn_callback.h"
 
 void Object_DisableEffectSpawnCallback(void)
 {
-    Func_0800439c((u32)Func_080912b8);
+    Obj_Check((u32)Obj_Run);
 }

@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/save/wait_for_flash_write.h"
 #include "flash.h"
 
 /*
@@ -5,7 +7,7 @@
  * indirect-call veneer, so it takes one real argument.  The explicit byte
  * narrowing mirrors the three byte-valued inputs at the call boundary.
  */
-typedef s32 (*Callee_02004c1c)(s32 argument);
+typedef s32 (*Callee)(s32 argument);
 
 void StartFlashTimer(s32 timing_index);
 
@@ -16,13 +18,13 @@ s32 WaitForFlashWrite(u8 value, s32 argument, u8 expected)
     s32 local_argument = argument;
     u32 local_expected = expected;
     s32 result;
-    Callee_02004c1c *callee_slot;
+    Callee *callee_slot;
 
     narrowed = (narrowed << 24) >> 24;
     local_expected = (local_expected << 24) >> 24;
     result = 0;
     StartFlashTimer(narrowed);
-    callee_slot = (Callee_02004c1c *)0x02004c1c;
+    callee_slot = (Callee *)0x02004c1c;
     packed = (narrowed | 0xc000) << 16;
     goto loop;
 

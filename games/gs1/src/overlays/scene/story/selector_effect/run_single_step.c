@@ -1,7 +1,7 @@
-void Func_020064c0();
+#include "scene.h"
+#include "abi/overlays/scene/story/selector_effect/run_single_step.h"
 
-/* Complete one-call wrapper through interworking return and alignment. */
 void Scene_RunSingleStep(void)
 {
-    Func_020064c0();
+    Story_Run();
 }

@@ -1,5 +1,6 @@
 #include "render_input.h"
 #include "types.h"
+#include "scene.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE)

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "far_runtime.h"
 #include "shop.h"
 

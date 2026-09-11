@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/task/raise_linked_scene_effect.h"
 
 typedef struct Obj {
     s32 f00;
@@ -12,21 +14,14 @@ typedef struct Obj {
     s16 f64;
 } Obj;
 
-extern u8 Data_0200c288[];
+extern u8 gOv[];
 
-extern Obj *Func_02007254(s16);
-extern void Func_0200718e(Obj *, s32, s32, s32);
-extern void Func_02007176(Obj *, s32);
-extern void Func_020073dc(s32);
+extern Obj *State_Run(s16);
 
-s32 Func_020032f0(Obj *a)
-{
-    Obj *o = Func_02007254(a->f64);
-
-    Func_0200718e(o, a->f08, a->f0c + 0x240000, a->f10);
+    State_SetMode(o, a->f08, a->f0c + 0x240000, a->f10);
     o->f55 = 0;
-    Func_02007176(o, (s32)Data_0200c288);
-    Func_020073dc(83);
+    State_Apply(o, (s32)gOv);
+    State_Do(83);
     a->f64 = 0;
     return 0;
 }

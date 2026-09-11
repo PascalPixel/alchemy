@@ -1,199 +1,32 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/dialogue/actor_prompt.h"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define Battle_Reset_1() Call0(Func_02000bd6)
-#define Motion_SetSpeed_1(a0, a1, a2) Call3(Func_02000c04, a0, a1, a2)
-#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_02000c12, a0, a1, a2)
-#define Motion_ResetPosMode2_1(a0, a1, a2) Call3(Func_02000c2e, a0, a1, a2)
-#define Motion_SetPosReset_1(a0, a1, a2) Call3(Func_02000c42, a0, a1, a2)
-#define Motion_ArmCb_1(a0, a1, a2) Call3(Func_02000cbe, a0, a1, a2)
-#define Motion_ArmCb_2(a0, a1, a2) Call3(Func_02000cca, a0, a1, a2)
-#define Object_SetModeById_1(a0, a1) Call2(Func_02000c82, a0, a1)
-#define Battle_SchedShoulder_1() Call0(Func_02000c5c)
-#define Scene_SetActor13Value1A Func_02000030
-#define SceneData_GetPrimaryTable Func_02000040
-#define SceneData_ReturnZero Func_02000080
-#define SceneData_GetTable8B48 Func_02000084
-#define SceneData_GetSecondaryTable Func_0200008c
-#define SceneData_GetTertiaryTable Func_020000e4
-#define Dialogue_ShowMessages8fbAnd8fc Func_020002f8
-#define Scene_RunPrimarySequence Func_02000334
-#define Scene_RunScene3c3SequenceA Func_020003c4
-#define Scene_RunActorNinePromptDialogue Func_02000730
-#define Scene_RunActorTenRepeatedMotion Func_020007ac
 
 extern u8 Value_000000aa;
 extern u8 Value_000000ab;
-extern u8 Data_02008a40[];
-extern u8 Data_02008ad0[];
-extern u8 Data_02008998[];
+extern u8 gOv[];
+extern u8 gOv2[];
+extern u8 gOv3[];
 extern u8 Value_000000a9;
-extern u8 Data_02008ba8[];
-extern u8 Data_02008c98[];
-extern u8 Data_02008c50[];
-extern u8 Data_02008b90[];
-extern u8 Data_02008ddc[];
-extern u8 Data_02008e54[];
-extern u8 Data_02008d10[];
-extern u8 Data_00000069[];
-extern u8 Data_000000a9[];
-extern u8 Data_000000aa[];
+extern u8 gOv4[];
+extern u8 gOv5[];
+extern u8 gOv6[];
+extern u8 gOv7[];
+extern u8 gOv8[];
+extern u8 gOv9[];
+extern u8 gOv10[];
+extern u8 gVal[];
+extern u8 gVal2[];
+extern u8 gVal3[];
 
-void Func_0200099c(s32, s32);
-s32 Func_020009a8();
-s32 Func_020009da();
-s32 Func_020009fc();
-s32 Func_02000a16();
-void Func_02000a40();
-s32 Func_02000a4c();
-void Func_02000a4e();
-void Func_02000a54();
-void Func_02000a58();
-void Func_02000a80();
-void Func_02000ab6();
-s32 Func_02000ae6();
-void Func_02000b00();
-void Func_02000b08();
-void Func_02000b10();
-void Func_02000b18();
-void Func_02000b1e();
-void Func_02000b20();
-void Func_02000b20_a();
-void Func_02000b34();
-void Func_02000b36();
-s32 Func_02000b52();
-s32 Func_02000bc0();
-void Func_02000c16();
-void Func_02000c46();
-void Func_02000c78(s32);
-void Func_02000b9e(s32);
-void Func_02000ba4(s32);
-void Func_02000c7a(s32);
-void Func_02000bd6();
-void Func_02000c04();
-void Func_02000c0e();
-void Func_02000c12();
-void Func_02000c20();
-void Func_02000c2e();
-void Func_02000c42();
-void Func_02000c5c();
-void Func_02000c82();
-void Func_02000cbe();
-void Func_02000cca();
-void Func_02000c62();
-void Func_02000c66();
-void Func_02000c90();
-s32 Func_02000ca6();
-void Func_02000cb4();
-void Func_02000ccc();
-void Func_02000cec();
-void Func_02000cee();
-void Func_02000d30();
-void Func_02000d6a();
-void Func_02000d6a_a();
-void Func_02000d74();
-void Func_02000d7e();
-void Func_02000d82();
-void Func_02000d88();
-void Func_02000d8c();
-void Func_02000d96();
-void Func_02000d98();
-void Func_02000d98_a();
-void Func_02000da2();
-void Func_02000daa();
-void Func_02000dc4();
-void Func_02000dc8();
-void Func_02000dce();
-void Func_02000ddc();
-void Func_02000df0();
-s32 Func_02000df6();
-s32 Func_02000df6_a();
-void Func_02000dfc();
-void Func_02000dfe();
-void Func_02000e14();
-void Func_02000e14_a();
-void Func_02000e16();
-void Func_02000e28();
-void Func_02000e2e();
-void Func_02000e44();
-void Func_02000e46();
-void Func_02000e4c();
-void Func_02000e58();
-void Func_02000e62();
-void Func_02000e76();
-void Func_02000e92();
-void Func_02000ea0();
-void Func_02000eae();
-void Func_02000ec4();
-void Func_02000ece();
-void Func_02000ece_a();
-void Func_02000ed8();
-void Func_02000edc();
-void Func_02000ee8();
-void Func_02000ef6();
-void Func_02000f00();
-void Func_02000f06();
-void Func_02000f12();
-void Func_02000f20();
-void Func_02000f22();
-void Func_02000f24();
-void Func_02000f28();
-void Func_02000f36();
-void Func_02000f4a();
-void Func_02000f4c();
-void Func_02000f4e();
-void Func_02000f5c();
-void Func_02000f68();
-s32 Func_02000f6e();
-s32 Func_02000f6e_a();
-s32 Func_02000f6e_b();
-void Func_02000f76();
-void Func_02000f80();
-void Func_02000f8c();
-void Func_02000f90();
-void Func_02000f92();
-void Func_02000f98();
-void Func_02000fa0();
-void Func_02000fa8();
-void Func_02000fb0();
-void Func_02000fb2();
-void Func_02000fc8();
-void Func_02000fca();
-void Func_02000fe0();
-void Func_02000fe6();
-void Func_02000fd0();
-void Func_02001060();
-void Func_02001068();
-s32 Func_02001078();
-s32 Func_02001008();
-void Func_02001094();
-void Func_0200106c();
-void Func_020010a4();
-void Func_020010be();
-void Func_0200103a();
-void Func_0200104c(void);
-void Func_020010d2(s32);
-void Func_020010f4(s32, s32, s32);
-void Func_020010de(s32, s32);
-void Func_0200104a(u8 *, s32);
-u8 *Func_02001084(s32);
-void Func_02001038(s32);
-void Func_020010f8(s32, s32);
-void Func_02001064(u8 *, s32);
-u8 *Func_0200109e(s32);
-void Func_02001054(s32);
-void Func_0200111a(s32, s32);
-void Func_02001086(u8 *, s32);
-u8 *Func_020010c0(s32);
-void Func_02001074(s32);
-void Func_02001134(s32, s32);
-void Func_020010a0(u8 *, s32);
-u8 *Func_020010da(s32);
-void Func_02001090(s32);
-void Func_0200112e(s32, s32, s32);
-void Func_020010cc(s32);
-void Func_020010f0(void);
+u8 *Talk_Run4(s32);
+
+u8 *Talk_Run5(s32);
+
+u8 *Talk_Run6(s32);
+
+u8 *Talk_Run7(s32);
 
 /*
  * The eight-byte owner at 0x02000084 includes its one pool word, which holds
@@ -203,7 +36,7 @@ void Func_020010f0(void);
 /*
  * Select a table from the scene id.  The 88-byte owner at 0x0200008c includes
  * its seven-word literal pool at 0x020000c4-0x020000e3.  Element 224 of the
- * cross-overlay block Data_02000240 is the signed scene id this overlay keys
+ * cross-overlay block gCell is the signed scene id this overlay keys
  * on.  The compared constants are spelled as the addresses of Value_000000aa
  * and its neighbours: that is how a small integer is pooled here, and the
  * names are not references to symbols.
@@ -222,8 +55,6 @@ void Func_020010f0(void);
  * pseudo shared with later uses in the block.  A value-returning call also
  * sets r0 last of its arguments.
  */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /*
  * Engine calls: each pseudo symbol is the per-site call word the overlay image
@@ -254,88 +85,32 @@ void Func_020010f0(void);
                         /* Dialogue-line variant with a mode word. */
 
                         /* Wait for the slot's action to finish. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
 
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
-    return f(a0);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void bump_step(s32 amount)
-{
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-static __inline__ void Call0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-s32 Func_0200092a();    /* Raw encoded call destination. */
+s32 Talk_Run8();    /* Raw encoded call destination. */
 
 void Scene_SetActor13Value1A(void)
 {
-    Func_0200099c(0xD, 0x1A);
+    Talk_Apply(0xD, 0x1A);
 }
 
 s32 SceneData_GetPrimaryTable(void)
 {
-    extern s16 Data_02000240[];
+    extern s16 gCell[];
 
-    s16 v = Data_02000240[224];
+    s16 v = gCell[224];
 
     if (v == (s32)&Value_000000aa) {
-        return (s32)Data_02008a40;
+        return (s32)gOv;
     }
     if (v == (s32)&Value_000000ab) {
-        return (s32)Data_02008ad0;
+        return (s32)gOv2;
     }
-    return (s32)Data_02008998;
+    return (s32)gOv3;
 }
 
 s32 SceneData_ReturnZero(void)
 {
-    extern s16 Data_02000240[];
+    extern s16 gCell[];
 
     return 0;
 }
@@ -347,51 +122,51 @@ u8 *SceneData_GetTable8B48(void)
 
 s32 SceneData_GetSecondaryTable(void)
 {
-    extern s16 Data_02000240[];
+    extern s16 gCell[];
 
-    s16 scene = Data_02000240[224];
+    s16 scene = gCell[224];
 
     if (scene == (s32)&Value_000000aa) {
-        return (s32)Data_02008ba8;
+        return (s32)gOv4;
     }
     if (scene == (s32)&Value_000000a9) {
-        if (Func_0200092a(0x96f) != 0) {
-            return (s32)Data_02008c98;
+        if (Talk_Run8(0x96f) != 0) {
+            return (s32)gOv5;
         }
-        return (s32)Data_02008c50;
+        return (s32)gOv6;
     }
-    return (s32)Data_02008b90;
+    return (s32)gOv7;
 }
 
 s32 SceneData_GetTertiaryTable(void)
 {
-    extern s16 Data_02000240[];
+    extern s16 gCell[];
 
-    s16 v = Data_02000240[224];
+    s16 v = gCell[224];
 
     if (v == (s32)&Value_000000aa) {
-        return (s32)Data_02008ddc;
+        return (s32)gOv8;
     }
     if (v == (s32)&Value_000000ab) {
-        return (s32)Data_02008e54;
+        return (s32)gOv9;
     }
-    return (s32)Data_02008d10;
+    return (s32)gOv10;
 }
 
-s32 Func_02000124(void)
+s32 Talk_Run9(void)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
+    extern u8 gCell[];
+    extern u8 gWork[];
 
     s16 *q;
     s16 *p;
     s16 *r;
     s32 v;
 
-    if (Value1(Func_020009a8, 0x89f) != 0) {
-        s32 a = (s32)Data_00000069;
+    if (Talk_Check(0x89f) != 0) {
+        s32 a = (s32)gVal;
 
-        q = (s16 *)Data_02000240;
+        q = (s16 *)gCell;
         q[226] = a;
         {
             s16 *t = q + 227;
@@ -400,14 +175,14 @@ s32 Func_02000124(void)
             *t = shown;
         }
     }
-    p = (s16 *)Data_02000240;
+    p = (s16 *)gCell;
     v = p[224];
-    if (v == (s32)Data_000000a9) {
-        if (Value1(Func_020009da, 0x897) != 0) {
-            Func_02000a58(10, 0, 0);
+    if (v == (s32)gVal2) {
+        if (Talk_Check2(0x897) != 0) {
+            Talk_Run10(10, 0, 0);
         }
         if (p[225] == 3) {
-            if (Value1(Func_020009fc, 0x8fb) != 0) {
+            if (Talk_Check3(0x8fb) != 0) {
                 p[288] = v;
                 {
                     s16 *t = p + 289;
@@ -416,7 +191,7 @@ s32 Func_02000124(void)
                     *t = shown;
                 }
             }
-            if (Value1(Func_02000a16, 0x8fc) != 0) {
+            if (Talk_Check4(0x8fc) != 0) {
                 p[288] = v;
                 {
                     s16 *t = p + 289;
@@ -425,64 +200,64 @@ s32 Func_02000124(void)
                     *t = shown;
                 }
             }
-            Call1(Func_02000a40, 0x12f);
+            Talk_Do(0x12f);
         }
-        r = (s16 *)Data_02000240;
+        r = (s16 *)gCell;
         if (r[225] == 1) {
-            Call1(Func_02000a4e, 0x8fb);
-            if (Value1(Func_02000a4c, 0x96f) == 0) {
-                Call6(Func_02000a54, 6, 0, 2, 1, 8, 27);
+            Talk_Do2(0x8fb);
+            if (Talk_Check5(0x96f) == 0) {
+                Talk_SetRect(6, 0, 2, 1, 8, 27);
             }
         }
         if (r[225] != 5) {
             goto L_0200024c;
         }
-        Call1(Func_02000a80, 0x8fc);
+        Talk_Do3(0x8fc);
     } else {
-        if (v == (s32)Data_000000aa) {
-            Func_02000b00(8, 4);
-            Func_02000b08(9, 4);
-            Func_02000b10(10, 3);
-            Func_02000b18(11, 4);
-            Func_02000b20(12, 3);
-            *(volatile s32 *)(Func_02000ae6(15) + 28) = 0x19999;
-            Call6(Func_02000ab6, 108, 38, 1, 1, 102, 56);
+        if (v == (s32)gVal3) {
+            Talk_Run11(8, 4);
+            Talk_Run12(9, 4);
+            Talk_Run13(10, 3);
+            Talk_Run14(11, 4);
+            Talk_Run15(12, 3);
+            *(volatile s32 *)(Talk_Check9(15) + 28) = 0x19999;
+            Talk_SetRect2(108, 38, 1, 1, 102, 56);
         }
     }
     L_0200024c:;
     return 0;
 }
 
-void Func_02000288(void)
+void Talk_Run16(void)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
+    extern u8 gCell[];
+    extern u8 gWork[];
 
     s32 arg;
     s32 v5;
 
-    arg = *(s16 *)(*(u8 **)Data_03001ebc + 0x16c);
-    *(u8 *)(Func_02000b52(0) + 85) = 0;
+    arg = *(s16 *)(*(u8 **)gWork + 0x16c);
+    *(u8 *)(Talk_Check10(0) + 85) = 0;
     v5 = 2;
-    Func_02000c16(158);
-    Call6(Func_02000b20_a, 66, 36, 71, 8, v5, v5);
-    Func_02000b1e(4);
-    Call6(Func_02000b36, 68, 36, 71, 8, v5, v5);
-    Func_02000b34(4);
-    Value3(Func_02000bc0, 0, 3, -16);
-    Func_02000c46(arg);
+    Talk_Run17(158);
+    Talk_SetRect3(66, 36, 71, 8, v5, v5);
+    Talk_Run18(4);
+    Talk_SetRect4(68, 36, 71, 8, v5, v5);
+    Talk_Run19(4);
+    Talk_Place(0, 3, -16);
+    Talk_Run20(arg);
 }
 
 void Dialogue_ShowMessages8fbAnd8fc(void)
 {
-    extern u8 *Data_03001ebc;
+    extern u8 *gWork;
 
-    s16 token = *(s16 *)(Data_03001ebc + 364);
+    s16 token = *(s16 *)(gWork + 364);
 
-    Func_02000c78(123);
-    Func_02000b9e(0x8FB);
-    Func_02000ba4(0x8FC);
-    Func_02000c7a(token);
+    Talk_Do6(123);
+    Talk_Do7(0x8FB);
+    Talk_Do8(0x8FC);
+    Talk_Do9(token);
 }
 
 void Scene_RunPrimarySequence(void)
@@ -495,111 +270,111 @@ void Scene_RunPrimarySequence(void)
     Motion_ArmCb_1(8, 16384, 0);
     Motion_ArmCb_2(9, 16384, 0);
     Object_SetModeById_1(8, 1);
-    Call6(Func_02000c0e, 6, 27, 1, 1, 7, 27);
-    Call6(Func_02000c20, 9, 26, 2, 1, 7, 26);
+    Talk_SetRect5(6, 27, 1, 1, 7, 27);
+    Talk_SetRect6(9, 26, 2, 1, 7, 26);
     Battle_SchedShoulder_1();
 }
 
 void Scene_RunScene3c3SequenceA(void)
 {
-    extern u8 Data_03001ebc[];
-    void Func_02000fb6();
+    extern u8 gWork[];
+    void Talk_Run21();
 
     u32 i;
     s32 record;
     s32 v5;
 
-    Func_02000c66();
-    Call3(Func_02000c90, 0, 0x19999, 0xcccc);
-    Call3(Func_02000cb4, 0, 120, 0x1b6);
-    Call3(Func_02000d30, 0, 0xc000, 0);
-    record = Value1(Func_02000ca6, 0);
+    Talk_Run22();
+    Talk_Place2(0, 0x19999, 0xcccc);
+    Talk_Place3(0, 120, 0x1b6);
+    Talk_Place4(0, 0xc000, 0);
+    record = Talk_Check6(0);
     if (record != 0) {
-        Func_02000cec(11, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Talk_Run23(11, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    Func_02000c62(1);
-    Call3(Func_02000ccc, 11, 0x19999, 0xcccc);
-    Call3(Func_02000cee, 11, 108, 0x1af);
-    Call3(Func_02000d6a, 11, 0xd000, 10);
-    Call3(Func_02000d7e, 11, 0x100, 20);
-    Call3(Func_02000d82, 11, 0xd000, 20);
-    Func_02000d8c(11, 0, 40);
-    Call3(Func_02000d98, 11, 0xd000, 40);
-    Func_02000da2(11, 0, 20);
-    Func_02000d6a_a(11, 2);
-    Call1(Func_02000d88, 0x2654);
-    Func_02000daa(11, 0, 40);
-    Call3(Func_02000dce, 8, 0x100, 0);
-    Func_02000d96(8, 2);
-    Func_02000dc8(8, 0, 10);
-    Call3(Func_02000d74, 11, 132, 0x1a4);
-    Call3(Func_02000df0, 11, 0xd000, 0);
-    Call3(Func_02000dfc, 0, 0xe000, 0);
-    Call3(Func_02000d98_a, 11, 138, 0x1a0);
-    Call3(Func_02000e14, 11, 0xb000, 10);
-    Func_02000ddc(11, 2);
-    Func_02000e16(11, 0, 40);
-    ((void (*)())Func_02000df6)(8, 2);
-    Func_02000e28(8, 0, 40);
-    Call3(Func_02000e4c, 9, 0x100, 20);
-    Func_02000e14_a(9, 2);
-    Func_02000e46(9, 0, 20);
-    Call3(Func_02000e62, 0, 0xc000, 0);
-    Call3(Func_02000dfe, 11, 144, 0x1a4);
-    Func_02000dc4(20);
-    Func_02000e44(9, 2);
-    Func_02000e76(9, 0, 20);
-    Call2(Func_02000ea0, 9, 0x102);
-    Func_02000e58(9, 3);
-    Func_02000e92(9, 0, 20);
-    Call3(Func_02000eae, 11, 0x5000, 20);
-    Func_02000eae_a(11, 0);
-    if (Value1(Func_02000df6_a, 0x9b0) != 0) {
-        Call3(Func_02000ece, 11, 0xd000, 40);
-        Call2(Func_02000ee8, 11, 0x102);
-        Func_02000e2e(40);
-        Func_02000ed8(11, 0, 10);
+    Talk_Run24(1);
+    Talk_Place5(11, 0x19999, 0xcccc);
+    Talk_Place6(11, 108, 0x1af);
+    Talk_Place7(11, 0xd000, 10);
+    Talk_Place8(11, 0x100, 20);
+    Talk_Place9(11, 0xd000, 20);
+    Talk_Run25(11, 0, 40);
+    Talk_Place10(11, 0xd000, 40);
+    Talk_Run26(11, 0, 20);
+    Talk_Run27(11, 2);
+    Talk_Do4(0x2654);
+    Talk_Run28(11, 0, 40);
+    Talk_Place11(8, 0x100, 0);
+    Talk_Run29(8, 2);
+    Talk_Run30(8, 0, 10);
+    Talk_Place12(11, 132, 0x1a4);
+    Talk_Place13(11, 0xd000, 0);
+    Talk_Place14(0, 0xe000, 0);
+    Talk_Place15(11, 138, 0x1a0);
+    Talk_Place16(11, 0xb000, 10);
+    Talk_Run31(11, 2);
+    Talk_Run32(11, 0, 40);
+    ((void (*)())Talk_Check11)(8, 2);
+    Talk_Run33(8, 0, 40);
+    Talk_Place17(9, 0x100, 20);
+    Talk_Run34(9, 2);
+    Talk_Run35(9, 0, 20);
+    Talk_Place18(0, 0xc000, 0);
+    Talk_Place19(11, 144, 0x1a4);
+    Talk_Run36(20);
+    Talk_Run37(9, 2);
+    Talk_Run38(9, 0, 20);
+    Talk_Run(9, 0x102);
+    Talk_Run39(9, 3);
+    Talk_Run40(9, 0, 20);
+    Talk_Place20(11, 0x5000, 20);
+    Talk_Run41(11, 0);
+    if (Talk_Check7(0x9b0) != 0) {
+        Talk_Place21(11, 0xd000, 40);
+        Talk_Run2(11, 0x102);
+        Talk_Run42(40);
+        Talk_Run43(11, 0, 10);
     } else {
         bump_step(1);
     }
-    Call3(Func_02000f06, 11, 0x5000, 10);
-    Func_02000f00(11, 0, 40);
-    Call3(Func_02000f24, 11, 0x100, 40);
-    Call3(Func_02000f28, 11, 0xb000, 10);
-    Func_02000f22(11, 0, 10);
-    Call3(Func_02000ece_a, 11, 138, 0x1a0);
-    Call3(Func_02000f4a, 11, 0xb000, 20);
-    Func_02000f12(8, 2);
-    Func_02000f4c(8, 0, 10);
-    Call2(Func_02000f76, 11, 0x102);
-    Func_02000f36(11, 1);
-    Func_02000ec4(20);
-    ((void (*)())Func_02000f6e)(11, 0, 20);
-    Func_02000f4e(9, 2);
-    Func_02000edc(20);
-    Call3(Func_02000f98, 0, 0xe000, 10);
-    Func_02000f68(9, 1);
-    Func_02000ef6(20);
-    Func_02000fa0(9, 0, 10);
-    Func_02000f80(8, 2);
-    Func_02000fb2(8, 0, 20);
-    Func_02000f92(11, 1);
-    Func_02000f20(20);
-    Func_02000fca(11, 0, 20);
-    Call3(Func_02000fe6, 11, 0x5000, 10);
-    Func_02000fe0(11, 0, 10);
-    Func_02000fa8(11, 2);
-    record = Value1(Func_02000f6e_a, 0);
+    Talk_Place22(11, 0x5000, 10);
+    Talk_Run44(11, 0, 40);
+    Talk_Place23(11, 0x100, 40);
+    Talk_Place24(11, 0xb000, 10);
+    Talk_Run45(11, 0, 10);
+    Talk_Place25(11, 138, 0x1a0);
+    Talk_Place26(11, 0xb000, 20);
+    Talk_Run46(8, 2);
+    Talk_Run47(8, 0, 10);
+    Talk_Run3(11, 0x102);
+    Talk_Run48(11, 1);
+    Talk_Run49(20);
+    ((void (*)())Talk_Check12)(11, 0, 20);
+    Talk_Run50(9, 2);
+    Talk_Run51(20);
+    Talk_Place27(0, 0xe000, 10);
+    Talk_Run52(9, 1);
+    Talk_Run53(20);
+    Talk_Run54(9, 0, 10);
+    Talk_Run55(8, 2);
+    Talk_Run56(8, 0, 20);
+    Talk_Run57(11, 1);
+    Talk_Run58(20);
+    Talk_Run59(11, 0, 20);
+    Talk_Place28(11, 0x5000, 10);
+    Talk_Run60(11, 0, 10);
+    Talk_Run61(11, 2);
+    record = Talk_Check8(0);
     if (record != 0) {
-        Func_02000f90(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Talk_Run62(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Func_02000fb6(11);
+    Talk_Run21(11);
     v5 = 7;
-    Func_02000fc8(11, 0, 0);
-    Call6(Func_02000f5c, 6, 27, 1, 1, v5, 27);
-    Call6(Func_02000f6e_b, 9, 26, 2, 1, v5, 26);
-    Call1(Func_02000f8c, 0x89f);
-    Func_02000fb0();
+    Talk_Run63(11, 0, 0);
+    Talk_SetRect7(6, 27, 1, 1, v5, 27);
+    Talk_SetRect8(9, 26, 2, 1, v5, 26);
+    Talk_Do5(0x89f);
+    Talk_Run64();
 }
 
 /*
@@ -607,92 +382,92 @@ void Scene_RunScene3c3SequenceA(void)
  * literal pool at 0x0200079c-0x020007ab.  The tail is shared through a label
  * rather than copied into each arm: copying it would add a fourth call site
  * where there are three.  The skip-beat counter sits at byte offset 472 off
- * the Data_03001ebc pointer cell, which costs one dereference.  The guard is
+ * the gWork pointer cell, which costs one dereference.  The guard is
  * tested against zero at this site; the polarity is read per call site.
  */
 void Scene_RunActorNinePromptDialogue(void)
 {
-    extern u8 *Data_03001ebc;
-    s32 Func_02000fb6();
-    s32 Func_02000fb6_a();
+    extern u8 *gWork;
+    s32 Talk_Run21();
+    s32 Talk_Run65();
 
     u8 *work;
 
-    Func_02000fd0();
+    Talk_Run66();
 
-    if (Func_02000fb6_a(0x89f) != 0) {
-        Func_02001060(0x2668);
+    if (Talk_Run65(0x89f) != 0) {
+        Talk_Run67(0x2668);
         goto close;
     }
 
-    Func_02001068(0x264e);
+    Talk_Run68(0x264e);
     {
         s32 mode = 0;
         s32 no = 9;
 
-        Func_02001078(no, mode);
+        Talk_Check13(no, mode);
     }
 
-    if (Func_02001008(0, 0) != 0) {
+    if (Talk_Check14(0, 0) != 0) {
         goto skip;
     }
 
-    Func_02001094(9, 0);
-    Func_0200106c(9, 4);
+    Talk_Run69(9, 0);
+    Talk_Run70(9, 4);
 
 close:
-    Func_020010a4(9, 0);
+    Talk_Run71(9, 0);
     goto done;
 
 skip:
     /* Skip-beat counter, two beats' worth. */
-    work = Data_03001ebc;
+    work = gWork;
     *(u16 *)(work + 472) += 2;
-    Func_020010be(9, 0);
+    Talk_Run72(9, 0);
 
 done:
-    Func_0200103a();
+    Talk_Run73();
 }
 
 void Scene_RunActorTenRepeatedMotion(void)
 {
-    extern u8 *Data_03001ebc;
-    s32 Func_02000fb6();
+    extern u8 *gWork;
+    s32 Talk_Run21();
 
     unsigned int beat;
 
-    Func_0200104c();
+    Talk_Run74();
 
-    Func_020010d2(0x266d);
-    Func_020010f4(10, 0, 10);
+    Talk_Do10(0x266d);
+    Talk_Place29(10, 0, 10);
 
     beat = 0;
     do {
-        Func_020010de(10, 0);
-        Func_0200104a(Func_02001084(10), 1);
-        Func_02001038(4);
+        Talk_Apply2(10, 0);
+        Talk_Apply3(Talk_Run4(10), 1);
+        Talk_Do11(4);
 
-        Func_020010f8(10, 15);
-        Func_02001064(Func_0200109e(10), 0);
+        Talk_Apply4(10, 15);
+        Talk_Apply5(Talk_Run5(10), 0);
         beat++;
-        Func_02001054(4);
+        Talk_Do12(4);
     } while (beat <= 5);
 
     beat = 0;
     do {
-        Func_0200111a(10, 0);
-        Func_02001086(Func_020010c0(10), 1);
-        Func_02001074(2);
+        Talk_Apply6(10, 0);
+        Talk_Apply7(Talk_Run6(10), 1);
+        Talk_Do13(2);
 
-        Func_02001134(10, 15);
-        Func_020010a0(Func_020010da(10), 0);
+        Talk_Apply8(10, 15);
+        Talk_Apply9(Talk_Run7(10), 0);
         beat++;
-        Func_02001090(2);
+        Talk_Do14(2);
     } while (beat <= 11);
 
-    Func_0200112e(10, 0, 0);
+    Talk_Place30(10, 0, 0);
 
-    Func_020010cc(0x897);
+    Talk_Do15(0x897);
 
-    Func_020010f0();
+    Talk_Run75();
 }

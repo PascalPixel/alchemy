@@ -1,30 +1,31 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/motion/four_object/initialize_bottom_row.h"
 #include "four_object_motion.h"
 
-extern s32 Data_080af304[];
+extern s32 gRom[];
 
-void Func_08009038(void *);
-void *Func_08009030(s32);
+void *Obj_Run(s32);
 void Object_InitializeMode(void *, s32);
-void Func_080ad40c(void);
+
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
 
 void FourObjectMotion_InitializeBottomRow(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gIw;
     s32 index;
 
     for (index = 0; index < 4; index++) {
         void *object = state->objects[index];
 
         if (object != NULL) {
-            Func_08009038(object);
+            Obj_Do(object);
             state->objects[index] = NULL;
         }
     }
 
     for (index = 0; index < 4; index++) {
-        void *object = Func_08009030(Data_080af304[index]);
+        void *object = Obj_Run(gRom[index]);
 
         if (object != NULL) {
             Object_InitializeMode(object, 2);
@@ -34,5 +35,5 @@ void FourObjectMotion_InitializeBottomRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0xc8;
     }
-    ScheduleCallbackAfterFrames(Func_080ad40c, 0xc80);
+    ScheduleCallbackAfterFrames(Obj_Run2, 0xc80);
 }

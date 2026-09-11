@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/animation/select_object_animation.h"
 
 struct AnimationMetadata {
     u8 width;
@@ -36,7 +38,7 @@ struct AnimationSetupState {
     struct AnimationObject *entries[4];
 };
 
-extern struct AnimationMetadata *Func_08185000(s32 id);
+extern struct AnimationMetadata *Sys_Run(s32 id);
 
 s32 AnimationObjects_SelectAnimation(struct AnimationSetupState *state, s32 flags)
 {
@@ -60,7 +62,7 @@ entry_loop:
             if (entry->animation_table == 0)
                 goto next_entry;
 
-            metadata = Func_08185000(entry->id);
+            metadata = Sys_Run(entry->id);
             if (flags >= metadata->animation_count)
                 goto next_entry;
 

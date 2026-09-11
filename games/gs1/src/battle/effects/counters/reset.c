@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/counters/reset.h"
 #include "battle_effect_counters.h"
 
 void BattleFx_ResetCounters(void)
@@ -5,7 +7,7 @@ void BattleFx_ResetCounters(void)
   short cleared_value;
   struct BattleEffectCounterState *state;
   cleared_value = 0;
-  state = Data_03001ebc;
+  state = gWork;
   state->counters[0] = cleared_value;
   state->counters[1] = 0;
   state->counters[2] = 0;

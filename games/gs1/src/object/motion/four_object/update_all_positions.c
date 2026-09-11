@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/motion/four_object/update_all_positions.h"
 #include "four_object_motion.h"
 
 #define FIXED_ONE 0x10000u
@@ -6,11 +8,9 @@
 
 struct ObjectFlags_080ad35c { s8 flags; };
 
-s32 Func_08009008(u32 object, u32 *request, u32 *motion, u32 limit);
-
 void FourObjectMotion_UpdateAllPositions(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gIw;
     s32 index;
     u32 motion[2];
     u32 request[4];
@@ -29,7 +29,7 @@ void FourObjectMotion_UpdateAllPositions(void)
             request[1] = vertical;
             request[2] = ((u32)(s32)state->positions_y[index] << 16) + vertical;
             request[3] = 0;
-            Func_08009008(object, request, motion, 0x4000);
+            Obj_SetMode(object, request, motion, 0x4000);
         }
         index += 1;
         if (index > 3)

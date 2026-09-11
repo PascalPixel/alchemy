@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/camera/scene/init_default_transform.h"
 
 struct State_080b7f9c {
     u8 filler0[12];
@@ -19,22 +21,17 @@ struct Local_080b7f9c {
     s32 third;
 };
 
-extern struct State_080b7f9c *Data_03001e80;
+extern struct State_080b7f9c *gIw;
 
-void Func_080049ac(void);
-void Func_08004cb4(void *);
-void Func_08004c1c(s32);
-void Func_08004bd4(s32);
 /*
  * The tail call below is a typed indirect call to the relocated routine at
- * 0x03000250, whose argument count is not established. Func_080072f0 names
+ * 0x03000250, whose argument count is not established. Sys_Apply names
  * the bx rN veneer slot that reaches it, not a routine at that address.
  */
-void Func_080072f0(struct Local_080b7f9c *, struct State_080b7f9c *);
 
 void Camera_InitDefaultTransform(void)
 {
-    struct State_080b7f9c *state = Data_03001e80;
+    struct State_080b7f9c *state = gIw;
     struct Local_080b7f9c transfer;
 
     state->field36 = 192 << 6;
@@ -46,10 +43,10 @@ void Camera_InitDefaultTransform(void)
     state->field1c = 0;
     state->field18 = 0;
 
-    Func_080049ac();
-    Func_08004cb4(&state->field0c);
-    Func_08004c1c(state->field36);
-    Func_08004bd4(state->field34);
+    Sys_Run();
+    Sys_Do(&state->field0c);
+    Sys_Do2(state->field36);
+    Sys_Do3(state->field34);
 
     transfer.first = 0;
     transfer.second = 0;

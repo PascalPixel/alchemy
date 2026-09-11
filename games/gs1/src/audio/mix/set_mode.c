@@ -1,5 +1,6 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
 
 void AudioEngine_SetPcmRate(u32);
 void AudioEngine_DisablePcmDma(void);

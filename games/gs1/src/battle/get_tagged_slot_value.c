@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 s16 Battle_GetTaggedSlotValue(s32 arg0)

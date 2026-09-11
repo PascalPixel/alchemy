@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                    s32 value)

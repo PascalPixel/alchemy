@@ -1,10 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/save/state/select_write_slot.h"
 #include "fixed_math.h"
 #include "global_cells.h"
 
 u32 Random16(void);
-s32 Func_08002304(s32, s32);
-u32 Func_08005b24(s32);
 
 u32 SaveState_SelectWriteSlot(s32 mode)
 {
@@ -28,11 +28,11 @@ u32 SaveState_SelectWriteSlot(s32 mode)
     if (count != 0) {
         if (count == 1) {
             index = empty[0];
-            if (Func_08005b24(mode) == 0x10) {
+            if (State_Do(mode) == 0x10) {
                 index = 0x10;
             }
         } else {
-            index = Func_08002304(Random16(), count);
+            index = State_Apply(Random16(), count);
             index = empty[index];
         }
     }

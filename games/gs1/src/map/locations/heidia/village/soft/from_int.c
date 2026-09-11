@@ -4,6 +4,8 @@
  * the non-interworking ABI, with r4 callee-saved.
  */
 #include "types.h"
+#include "scene.h"
+#include "abi/map/locations/heidia/village/soft/from_int.h"
 
 /*
  * The 20-byte unpacked record the library packs from:
@@ -27,7 +29,6 @@ typedef struct SoftFloatRecord {
 } SoftFloatRecord;
 
 /* The packer, reached by a direct call rather than through a veneer. */
-SoftDouble Func_0200b792(SoftFloatRecord *record);
 
 /*
  * A zero input takes class 2 straight to the pack call, and 0x80000000
@@ -66,5 +67,5 @@ SoftDouble SignedIntToSoftDouble(s32 value)
     }
 
 pack:
-    return Func_0200b792(&record);
+    return Map_Do(&record);
 }

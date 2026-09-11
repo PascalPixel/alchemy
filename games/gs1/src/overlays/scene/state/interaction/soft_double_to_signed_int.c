@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/soft_double_to_signed_int.h"
 
 typedef u64 SoftDouble;
 
@@ -17,12 +19,6 @@ typedef struct SoftFloatRecord {
     u64 fraction;
 } SoftFloatRecord;
 
-void Func_02002c5a(FloUnion *packed, SoftFloatRecord *rec);
-u32 Func_02002a54(SoftFloatRecord *rec);
-u32 Func_02002a3e(SoftFloatRecord *rec);
-u32 Func_02002a5c(SoftFloatRecord *rec);
-u64 Func_02002aa6(u64 fraction, u32 count);
-
 s32 Runtime_SoftDoubleToSignedInt(u32 high, u32 low)
 {
     SoftFloatRecord rec;
@@ -34,15 +30,15 @@ s32 Runtime_SoftDoubleToSignedInt(u32 high, u32 low)
     p = &u;
     p->words.lo = high;
     p->words.hi = low;
-    Func_02002c5a((FloUnion *)p, &rec);
+    State_Apply((FloUnion *)p, &rec);
 
-    if (Func_02002a54(&rec) != 0u) {
+    if (State_Do(&rec) != 0u) {
         return 0;
     }
-    if (Func_02002a3e(&rec) != 0u) {
+    if (State_Do2(&rec) != 0u) {
         return 0;
     }
-    if (Func_02002a5c(&rec) == 0u) {
+    if (State_Do3(&rec) == 0u) {
         exp = rec.exp;
         if (exp < 0) {
             return 0;
@@ -54,7 +50,7 @@ s32 Runtime_SoftDoubleToSignedInt(u32 high, u32 low)
     return 0x7fffffff + (s32)(rec.sign != 0u);
 
 convert:
-    frac = Func_02002aa6(rec.fraction, (u32)(60 - exp));
+    frac = State_Apply2(rec.fraction, (u32)(60 - exp));
     if (rec.sign != 0u) {
         return -(s32)frac;
     }

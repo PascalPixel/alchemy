@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1)
 {

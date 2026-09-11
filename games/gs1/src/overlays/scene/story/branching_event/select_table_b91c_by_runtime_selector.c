@@ -1,11 +1,8 @@
-#define RuntimeSelectorTable Data_02000240
+#include "scene.h"
+#include "abi/overlays/scene/story/branching_event/select_table_b91c_by_runtime_selector.h"
 #define PrimaryRuntimeSelector Value_000000b0
 #define SecondaryRuntimeSelector Value_000000af
 #define TertiaryRuntimeSelector Value_000000ae
-#define PrimaryOverlayData Data_0200b91c
-#define SecondaryOverlayData Data_0200b9e8
-#define TertiaryOverlayData Data_0200bac0
-#define DefaultOverlayData Data_0200bc28
 
 #include "select_overlay_data_by_runtime_selector.h"
 

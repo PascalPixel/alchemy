@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/core/build_pattern_tiles.h"
 
 struct TileMask {
     u32 word0;
@@ -12,9 +14,8 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
     return word ^ mask;
 }
 
-extern const struct TileMask Data_080af23c[];
+extern const struct TileMask MaskTbl[];
 
-#define MaskTbl Data_080af23c
 #define FillWords ((FillProc)0x03000168)
 
 void Menu_BuildPatternTiles(void)

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/act/run.h"
 #include "battle_msg.h"
 #include "battle_escape.h"
 #include "battle_presentation.h"
@@ -11,16 +13,12 @@ struct BattlePresentationTransition {
     s32 flag;
 };
 
-extern struct BattlePresentationTransition *Data_03001f00;
+extern struct BattlePresentationTransition *gIw;
 
 u8 *Runtime_GetObject(s32);
-void Func_08015118(void);
+
 void UiText_ShowMessageAndWait(s32);
 void WaitFrames(s32);
-s32 Func_080b8888(s16 *);
-s32 Func_080b8c1c(s16 *);
-s32 Func_080b88d0(s16 *);
-void Func_08015220(void);
 
 s32 BattlePres_RunAction(s16 *action)
 {
@@ -35,14 +33,14 @@ s32 BattlePres_RunAction(s16 *action)
         return -1;
 
     action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
-    transition = Data_03001f00;
+    transition = gIw;
     if (action[0] > 4)
         battle_mode = -0x2000;
     else
         battle_mode = 0x2000;
     transition->battle_value = battle_mode;
     transition->timer = 60;
-    Func_08015118();
+    Battle_Run();
 
     switch (action[3]) {
     case 99:
@@ -52,25 +50,25 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 3:
         WaitFrames(45);
-        Func_080b8888(action);
+        Battle_Check(action);
         break;
     case 2:
         WaitFrames(45);
-        Func_080b8c1c(action);
+        Battle_Check2(action);
         break;
     case 0:
     default: {
-        struct BattlePresentationTransition *tr = Data_03001f00;
+        struct BattlePresentationTransition *tr = gIw;
         tr->flag = 0;
-        Func_080b8c1c(action);
+        Battle_Check2(action);
         tr->flag = 0;
         break;
     }
     case 1:
-        Func_080b88d0(action);
+        Battle_Check3(action);
         break;
     }
 
-    Func_08015220();
+    Battle_Run2();
     return 0;
 }

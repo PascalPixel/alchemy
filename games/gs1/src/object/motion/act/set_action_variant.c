@@ -1,5 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
 
 void Motion_SetActionVariant(s32 arg0, s32 arg1)
 {

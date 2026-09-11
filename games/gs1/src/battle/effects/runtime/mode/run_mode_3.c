@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_080dea70(s32, s32);
+#include "scene.h"
+#include "abi/battle/effects/runtime/mode/run_mode_3.h"
 
 void BattleFx_RunMode3(s32 arg0)
 {
-    Func_080dea70(arg0, 3);
+    Battle_Apply(arg0, 3);
 }

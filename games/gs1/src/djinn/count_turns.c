@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/djinn/count_turns.h"
 
 u8 *Runtime_GetObject(s32);
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 
 void Djinn_CountTurns(u8 *counts)
 {
@@ -18,7 +20,7 @@ void Djinn_CountTurns(u8 *counts)
     u32 mask;
     u32 one;
 
-    work = Data_03001f2c;
+    work = gIw;
     owner_index = 0;
     if (owner_index < work[0x219]) {
         one = 1;

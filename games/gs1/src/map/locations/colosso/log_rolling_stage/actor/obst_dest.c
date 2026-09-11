@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/actor/obst_dest.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct StageActor {
@@ -7,29 +9,28 @@ typedef struct StageActor {
     s32 z;
 } StageActor;
 
-extern s32 Func_02004fea(s32, s32, s32);
-extern StageActor *Func_020050da(s32);
-extern StageActor *Func_020050f4(s32);
-extern StageActor *Func_0200510a(s32);
+extern StageActor *Actor_Run(s32);
+extern StageActor *Actor_Run2(s32);
+extern StageActor *Actor_Run3(s32);
 
 s32 Colosso_CheckObstacleDestination(s32 x, s32 z)
 {
     StageActor *actor;
 
-    if (Func_02004fea(0, x, z) == 255) {
+    if (Actor_Place(0, x, z) == 255) {
         return -2;
     }
-    actor = Func_020050da(15);
+    actor = Actor_Run(15);
     x = x >> 20;
     z = z >> 20;
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }
-    actor = Func_020050f4(16);
+    actor = Actor_Run2(16);
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }
-    actor = Func_0200510a(17);
+    actor = Actor_Run3(17);
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }

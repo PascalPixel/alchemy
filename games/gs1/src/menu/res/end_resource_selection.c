@@ -1,13 +1,15 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/res/end_resource_selection.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void ScheduleCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
-void Func_08002dd8(s32);
+
 void WaitFrames(u32);
-extern u8 Data_08028195;
+extern u8 gRom;
 
 void Menu_EndResourceSelection(void)
 {
@@ -17,7 +19,7 @@ void Menu_EndResourceSelection(void)
     void *work;
 
     work = *(void **)ADDR_03001F38;
-    ScheduleCallback(&Data_08028195);
+    ScheduleCallback(&gRom);
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
     if (child != 0) {
         UiWork_Finalize(child, 2);
@@ -28,6 +30,6 @@ void Menu_EndResourceSelection(void)
         Resource_ResetEntry(*entry);
         i += 1;
     }
-    Func_08002dd8(0x3A);
+    Menu_Do(0x3A);
     WaitFrames(1U);
 }

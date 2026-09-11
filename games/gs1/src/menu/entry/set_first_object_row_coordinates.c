@@ -1,13 +1,15 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/set_first_object_row_coordinates.h"
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 
 s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
 {
     u8 *current;
     s32 value;
     s32 count;
-    current = Data_03001f2c + 0x134;
+    current = gIw + 0x134;
     arg0 += 0x3D;
     value = 0x20;
     count = 3;

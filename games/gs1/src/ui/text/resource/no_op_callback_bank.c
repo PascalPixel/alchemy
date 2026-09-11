@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /* Empty callback slots retained by the text-resource dispatcher. */
 void UiTextResource_NoOpCallback0(void)

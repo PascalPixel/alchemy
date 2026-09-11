@@ -1,9 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/update_entry_object_transforms.h"
 
-extern u8 *Data_03001f2c;
-
-s32 Func_08077148(void);
-void Func_08009008(void *, s32 *, s32 *, s32);
+extern u8 *gIw;
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
@@ -16,8 +15,8 @@ void Menu_UpdateEntryObjectTransforms(void)
     s32 i;
     s32 cnt;
 
-    p = Data_03001f2c;
-    cnt = (u16)Func_08077148();
+    p = gIw;
+    cnt = (u16)Menu_Check();
     i = 0;
     if (i < cnt) {
         pp = pos;
@@ -38,7 +37,7 @@ void Menu_UpdateEntryObjectTransforms(void)
                 tp[0] = hp[0] << 16;
                 tp[2] = (hp[8] << 16) + top;
                 tp[3] = 0;
-                Func_08009008(obj, (s32 *)tp, pp, 0x4000);
+                Menu_SetMode(obj, (s32 *)tp, pp, 0x4000);
             }
             i++;
             hp++;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32 parity)
 {

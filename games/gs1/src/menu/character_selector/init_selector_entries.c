@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/character_selector/init_selector_entries.h"
 #include "global_cells.h"
 
 struct State080a8034 {
@@ -14,7 +16,6 @@ struct State080a8034 {
     s8 field_113;
 };
 
-s32 Func_080a1814(void *);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 
 void Menu_InitSelectorCursorAndEntries(void)
@@ -22,7 +23,7 @@ void Menu_InitSelectorCursorAndEntries(void)
     struct State080a8034 *state;
 
     state = *(struct State080a8034 **)ADDR_03001F2C;
-    InitializeEntryObjects(Func_080a1814(state), 2, 2, 8, 0);
+    InitializeEntryObjects(Menu_Check(state), 2, 2, 8, 0);
     state->field_28 = 0;
     state->field_24 = 0;
     state->field_2c = 0;

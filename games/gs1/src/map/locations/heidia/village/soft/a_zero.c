@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 SoftFloatRecordAIsZero(s32 *state)
 {

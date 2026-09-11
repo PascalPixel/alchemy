@@ -1,6 +1,6 @@
 #include "types.h"
+#include "scene.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void RenderOutput_RedrawSavedRect(void *);
 s32 RenderOutput_ClearList(void *);

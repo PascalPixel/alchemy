@@ -1,11 +1,8 @@
-#define RuntimeSelectorTable Data_02000240
+#include "scene.h"
+#include "abi/overlays/scene/actor/push_puzzle/select_data_by_runtime_selector.h"
 #define PrimaryRuntimeSelector Value_0000001e
 #define SecondaryRuntimeSelector Value_00000023
 #define TertiaryRuntimeSelector Value_00000020
-#define PrimaryOverlayData Data_02009498
-#define SecondaryOverlayData Data_02009600
-#define TertiaryOverlayData Data_020096f0
-#define DefaultOverlayData Data_02009480
 
 #include "select_overlay_data_by_runtime_selector.h"
 

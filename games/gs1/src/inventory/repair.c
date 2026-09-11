@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 s32 Inventory_Repair(s32 owner, s32 slot)

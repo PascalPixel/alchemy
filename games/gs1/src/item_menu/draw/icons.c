@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/item_menu/draw/icons.h"
 #include "item_menu.h"
 
 void ItemMenu_DrawIcons(u16 *items, s32 style)
@@ -7,7 +9,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
     struct ItemMenuIcon **icons;
     s32 item_id;
 
-    icons = Data_03001f2c->entry_icons;
+    icons = gIw->entry_icons;
     entries = items;
     remaining = 14;
     do {

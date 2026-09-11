@@ -1,5 +1,7 @@
 #include "layout_guard.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/open_character_selector.h"
 #include "gs1_edition.h"
 #include "item_menu.h"
 #include "character_menu.h"
@@ -56,18 +58,13 @@ LAYOUT_OFFSET_GUARD(
     flags,
     0x220);
 
-extern struct MenuObjectControl *Data_03001e68;
+extern struct MenuObjectControl *gIw;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
-void Func_08002dd8(s32);
+
 void WaitFrames(s32);
-void Func_08015278(s32);
-void Func_08015408(s32, s32, s32, s32);
+
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-s32 Func_08077158(const u16 *);
-void Func_080a1090(s32);
-void Func_080a8034(s32, s32, s32, s32);
-s32 Func_080a7440(void);
 
 /*
  * Open the compact character selector, run its blocking interaction body,
@@ -81,25 +78,25 @@ s32 OpenCharacterSelector(void)
     s32 result;
     s32 index;
 
-    Data_03001e68->suspended = 1;
-    Func_08015408(0, 0, 30, 20);
+    gIw->suspended = 1;
+    Menu_SetMode(0, 0, 30, 20);
     WaitFrames(1);
-    Func_080a1090(0);
+    Menu_Do(0);
 
     state->character_count =
-        (u8)Func_08077158(state->character_ids);
-    Func_080a8034(0, 3, 0, 7);
+        (u8)Menu_Check(state->character_ids);
+    Menu_SetMode2(0, 3, 0, 7);
     state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < ROW_CNT; index++)
         state->row_positions[index] = 30;
     state->flags = 3;
 
-    result = Func_080a7440();
+    result = Menu_Check2();
 
-    Func_08015278(state->screen_handle);
+    Menu_Do2(state->screen_handle);
     ItemMenu_Close();
-    Data_03001e68->suspended = 0;
+    gIw->suspended = 0;
     WaitFrames(1);
-    Func_08002dd8(55);
+    Menu_Do3(55);
     return result;
 }

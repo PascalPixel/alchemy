@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/script/interpreter/pos/relative.h"
 #include "object_commands.h"
 #include "script_object_runtime.h"
 
@@ -9,7 +11,7 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
     s32 second = *cursor++;
     s32 third = *cursor;
 
-    Func_0800d14c(object, object->x + first,
+    Script_Run(object, object->x + first,
         object->y + second, object->z + third);
     object->script_cursor += 4;
     return 1;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Menu_AdvanceWorkspaceIndexModulo3(void *arg0)
 {

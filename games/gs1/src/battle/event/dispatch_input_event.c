@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/event/dispatch_input_event.h"
 
 struct RuntimeState_0808d8f0 {
     u8 padding0[0x19C];
@@ -10,23 +12,20 @@ struct GlobalData_0808d8f0 {
     s32 selected_object;
 };
 
-extern void *Data_03001ebc;
-extern u8 Data_02000240;
-extern volatile u32 Data_03001ae8;
+extern void *gWork;
+extern u8 gCell;
+extern volatile u32 gIw;
 
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
-void Func_08093c00(void);
-void Func_08093e28(void);
-void Func_08093fa0(void);
 
 s32 Battle_DispatchInputEvent(s32 event)
 {
-    struct RuntimeState_0808d8f0 *state = (struct RuntimeState_0808d8f0 *)Data_03001ebc;
-    s32 selected_object = ((struct GlobalData_0808d8f0 *)&Data_02000240)->selected_object;
+    struct RuntimeState_0808d8f0 *state = (struct RuntimeState_0808d8f0 *)gWork;
+    s32 selected_object = ((struct GlobalData_0808d8f0 *)&gCell)->selected_object;
 
     switch (event) {
     case 0xFC:
-        if (state->delay > 12 && (Data_03001ae8 & 0x80)) {
+        if (state->delay > 12 && (gIw & 0x80)) {
             BattleFx_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
@@ -34,16 +33,16 @@ s32 Battle_DispatchInputEvent(s32 event)
     case 0xF9:
     case 0xFE:
         if (state->delay > 12) {
-            Func_08093c00();
+            Battle_Run();
             state->delay = 0;
         }
         break;
     case 0xFD:
         if (state->delay > 12) {
-            if (Data_03001ae8 & 0x80) {
-                Func_08093e28();
-            } else if (Data_03001ae8 & 0x40) {
-                Func_08093fa0();
+            if (gIw & 0x80) {
+                Battle_Run2();
+            } else if (gIw & 0x40) {
+                Battle_Run3();
             }
             state->delay = 0;
         }

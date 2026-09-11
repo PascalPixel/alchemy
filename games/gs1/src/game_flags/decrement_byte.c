@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "game_flags.h"
 
 u8 GameFlag_DecrementByte(s32 flag)

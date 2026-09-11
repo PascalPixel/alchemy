@@ -1,6 +1,6 @@
 #include "types.h"
-
-s32 Func_080bf5a8();
+#include "scene.h"
+#include "abi/battle/placement/update_timed_entries_twenty_times.h"
 
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
 {
@@ -9,7 +9,7 @@ s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
     cnt = 0x13;
     do {
         cnt -= 1;
-        Func_080bf5a8();
+        Battle_Check();
     } while (cnt >= 0);
     return 0;
 }

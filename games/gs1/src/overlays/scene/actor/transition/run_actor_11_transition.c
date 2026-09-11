@@ -1,17 +1,13 @@
 #include "types.h"
-
-extern void Func_0200312e(s32);
-extern void Func_02000e98(s32, s32, s32);
-extern void Func_020018ea(void);
-extern void Func_02002f88(s32);
-extern void Func_02001ff8(void);
+#include "scene.h"
+#include "abi/overlays/scene/actor/transition/run_actor_11_transition.h"
 
 void Scene_RunActor11Transition(void)
 {
-    Func_0200311e(241);
-    Func_02000e98(11, 0, 48);
-    Func_0200312e(0x121);
-    Func_020018ea();
-    Func_02002f88(2);
-    Func_02001ff8();
+    Actor_Run(241);
+    Actor_Place(11, 0, 48);
+    Actor_Do(0x121);
+    Actor_Run2();
+    Actor_Do2(2);
+    Actor_Run3();
 }

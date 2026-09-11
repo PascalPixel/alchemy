@@ -1,17 +1,18 @@
+#include "scene.h"
+#include "abi/inn/cleanup.h"
 #include "inn.h"
 
-s32 Func_08002dd8(s32);
 s32 Resource_ResetEntry(u16);
 s32 ScheduleCallback(s32);
 s32 UiWork_FinalizePending();
-extern u8 Data_080b00f5;
+extern u8 gRom;
 
 void Inn_Cleanup(void)
 {
     struct InnState *state;
 
-    state = Data_03001f2c;
-    ScheduleCallback((s32)&Data_080b00f5);
+    state = gIw;
+    ScheduleCallback((s32)&gRom);
     UiWork_FinalizePending();
     Resource_ResetEntry(state->resource_entries[0]);
     Resource_ResetEntry(state->resource_entries[1]);
@@ -19,5 +20,5 @@ void Inn_Cleanup(void)
     Resource_ResetEntry(state->resource_entries[3]);
     Resource_ResetEntry(state->resource_entries[4]);
     Resource_ResetEntry(state->resource_entries[5]);
-    Func_08002dd8(0x37);
+    Sys_Check(0x37);
 }

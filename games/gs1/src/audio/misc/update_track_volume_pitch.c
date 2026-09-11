@@ -3,6 +3,7 @@
 // Names and layout were checked against this ROM region and exact compiler output.
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
 
 struct MusicPlayerState;
 

@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/track/insert_slot_node.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-extern void *Data_02004c00;
+extern void *gOv;
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
@@ -15,7 +17,7 @@ void AudioTrack_InsertSlotNode(s32 index)
     void **node;
     void *next;
 
-    base = (s32)Data_02004c00;
+    base = (s32)gOv;
     node_off = index * 12;
     tbl_off = index * 4 + 0x3404;
     bucket = *(s32 *)(base + tbl_off) * 4;

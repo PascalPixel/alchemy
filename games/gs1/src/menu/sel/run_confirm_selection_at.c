@@ -1,12 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/run_confirm_selection_at.h"
 
-extern u8 Data_00000024[];
+extern u8 gVal[];
 
-void *Func_080284dc(void);
+void *Menu_Run(void);
 void Menu_AppendResourceEntry(s32 arg0);
-void Func_080288a8(s32 a0, s32 a1, s32 a2, s32 a3);
-s32 Func_08028574(s32);
-void Func_0802851c(void);
 
 s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -14,13 +13,13 @@ s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
     u8 *p;
 
     ret = arg2;
-    p = Data_00000024;
-    Func_080284dc();
+    p = gVal;
+    Menu_Run();
     Menu_AppendResourceEntry(5);
     Menu_AppendResourceEntry(6);
-    Func_080288a8(arg0, arg1, 3, p);
-    ret = Func_08028574(ret);
-    Func_0802851c();
+    Menu_SetMode(arg0, arg1, 3, p);
+    ret = Menu_Check(ret);
+    Menu_Run2();
     if (ret == -1) {
         ret = 1;
     }

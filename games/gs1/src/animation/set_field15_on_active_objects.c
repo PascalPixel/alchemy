@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void AnimationObjects_SetField15OnActive(u8 *grp, s32 val)
 {

@@ -1,10 +1,9 @@
 #include "types.h"
-
-s32 Func_080cdb24(s32);
-s32 Func_080cdbc0();
+#include "scene.h"
+#include "abi/battle/effects/misc/init_tilemap_and_flush_queue.h"
 
 void BattleFx_InitTilemapAndFlushQueue(void)
 {
-    Func_080cdb24(1);
-    Func_080cdbc0();
+    Battle_Check(1);
+    Battle_Check2();
 }

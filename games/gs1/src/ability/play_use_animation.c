@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ability/play_use_animation.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Ability_GetData();
-void Func_080a2438(s32);
 
 void Ability_PlayUseAnimation(void)
 {
@@ -15,19 +16,19 @@ void Ability_PlayUseAnimation(void)
     animation_type = 0xf & FIELD(ability, u8 *, 1);
     switch (animation_type) {
     case 1:
-        Func_080a2438(0x7e);
+        Sys_Do(0x7e);
 
     case 11:
-        Func_080a2438(0x7e);
+        Sys_Do(0x7e);
         return;
     default:
         target_type = FIELD(ability, u8 *, 3) - 1;
         switch (target_type) {
         case 4:
-            Func_080a2438(0x52);
+            Sys_Do(0x52);
             return;
         case 2:
-            Func_080a2438(0x54);
+            Sys_Do(0x54);
             return;
         default:
         case 3:
@@ -56,7 +57,7 @@ void Ability_PlayUseAnimation(void)
         case 27:
         case 28:
         case 29:
-            Func_080a2438(0x5b);
+            Sys_Do(0x5b);
 
         case 0:
         case 1:

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "owner_state.h"
 
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)

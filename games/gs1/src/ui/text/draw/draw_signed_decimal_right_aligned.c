@@ -1,7 +1,7 @@
+#include "scene.h"
+#include "abi/ui/text/draw/draw_signed_decimal_right_aligned.h"
 #include "low_runtime.h"
 #include "global_cells.h"
-
-void Func_08004620(s32);
 
 void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
 {
@@ -11,6 +11,6 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
     if ((u32)(count - 1) > 9U) {
         count = 0xA;
     }
-    Func_08004620(value);
-    Func_080046c4((const u8 *)(ADDR_03001F7A - count));
+    Ui_Do(value);
+    Ui_Run((const u8 *)(ADDR_03001F7A - count));
 }

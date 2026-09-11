@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/load_character_entry_for_slot.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
 
@@ -14,7 +16,6 @@
 
 s32 GameFlag_IsSet(s32);
 s32 Localization_LookupEntryId(s32);
-void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
 
 void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 {
@@ -46,6 +47,6 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
         }
         offset = SLOT_VALUE_OFS + slot * 2;
         current = *(u16 *)(state + offset);
-        Func_0801a4fc(character_id, value, &current, &result, slot + 0xe, 1);
+        Ui_SetRect(character_id, value, &current, &result, slot + 0xe, 1);
     }
 }

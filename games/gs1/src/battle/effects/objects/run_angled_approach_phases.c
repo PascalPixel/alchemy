@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/objects/run_angled_approach_phases.h"
 
 struct Vec {
     s32 x;
@@ -26,19 +28,16 @@ struct Target {
     struct Vec pos;
 };
 
-extern s32 Data_02000240[];
+extern s32 gCell[];
 
-void Func_0800447c(s32, s32, struct Vec *);
-struct Target *Func_08092054(s32);
-void Func_080974d8(struct Vec *);
-void Func_0809bb34(struct Actor *);
+struct Target *Battle_Run(s32);
 
-void Func_08095938(struct Actor *actor)
+void Battle_Run2(struct Actor *actor)
 {
     struct Target *target;
     struct Vec pos;
 
-    target = Func_08092054(Data_02000240[125]);
+    target = Battle_Run(gCell[125]);
     if (actor->phase == 0) {
         actor->yaw += 1;
         actor->pitch += 1;
@@ -57,7 +56,7 @@ void Func_08095938(struct Actor *actor)
         pos.x = target->pos.x;
         pos.y = target->pos.y + 0x140000;
         pos.z = target->pos.z;
-        Func_080974d8(&pos);
+        Battle_Do(&pos);
         actor->x += (pos.x - actor->x) / 8;
         actor->z += (pos.z - actor->z) / 8;
         if (actor->timer == 40) {
@@ -72,11 +71,11 @@ void Func_08095938(struct Actor *actor)
             actor->phase += 1;
         }
     } else if (actor->phase == 4) {
-        Func_0809bb34(actor);
+        Battle_Do2(actor);
     }
     pos.x = actor->x;
     pos.z = actor->z;
-    Func_0800447c(actor->yaw << 16, actor->pitch << 11, &pos);
+    Battle_Place(actor->yaw << 16, actor->pitch << 11, &pos);
     actor->screenX = pos.x;
     actor->screenZ = pos.z;
 }

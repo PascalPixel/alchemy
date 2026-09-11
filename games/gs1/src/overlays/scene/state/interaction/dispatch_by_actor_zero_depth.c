@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/dispatch_by_actor_zero_depth.h"
 
 struct Actor {
     s32 f00;
@@ -7,17 +9,15 @@ struct Actor {
     s32 f0c;
 };
 
-extern struct Actor *Func_0200181a(s32);
-extern void Func_02000dfc(void);
-extern void Func_02000e32(void);
+extern struct Actor *State_Run(s32);
 
 void State_DispatchByActorZeroDepth(void)
 {
-    struct Actor *p = Func_0200181a(0);
+    struct Actor *p = State_Run(0);
 
     if (p->f0c >= 0x100000) {
-        Func_02000dfc();
+        State_Run2();
     } else {
-        Func_02000e32();
+        State_Run3();
     }
 }

@@ -4,8 +4,9 @@
  */
 
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/table_update.h"
 
-#define Resource37c_Run Func_02000054
 #include "resource_37c.h"
 #include "resource_37c_runtime.h"
 
@@ -13,31 +14,31 @@
  * The eight-byte owner includes its one pool word, which holds the address
  * returned here. The word is loaded and returned, never dereferenced.
  */
-u8 *Func_02000030(void)
+u8 *State_Run(void)
 {
     return RESOURCE37C_PRIMARY_TABLE;   /* image offset 0xc8 */
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
-s32 Func_02000038(void)
+s32 State_Run2(void)
 {
     return 0;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *Func_0200003c(void)
+u8 *State_Run3(void)
 {
     return RESOURCE37C_SECONDARY_TABLE;   /* image offset 0x110 */
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *Func_02000044(void)
+u8 *State_Run4(void)
 {
     return RESOURCE37C_TERTIARY_TABLE;   /* image offset 0x11c */
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *Func_0200004c(void)
+u8 *State_Run5(void)
 {
     return RESOURCE37C_QUATERNARY_TABLE;   /* image offset 0x134 */
 }

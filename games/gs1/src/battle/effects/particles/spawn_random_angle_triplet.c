@@ -1,8 +1,9 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/particles/spawn_random_angle_triplet.h"
 #include "object_efx.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -22,7 +23,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
 
     if ((s32)FIELD_AT_OFFSET(object, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(object, s32 *, 0x14)) {
         FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
-        Object_SetCallback(object, Data_0809f0b0);
+        Object_SetCallback(object, gRom);
         p = NULL;
         FIELD_AT_OFFSET(object, void **, 0x6C) = p;
         for (i = 0; i <= 2; i++) {
@@ -40,7 +41,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
             phase2 = 6;
             *pp = phase2;
-            Object_SetCallback(p, Data_0809f0b0);
+            Object_SetCallback(p, gRom);
         }
     }
 }

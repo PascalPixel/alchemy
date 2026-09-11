@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/inn/sleep.h"
 
 struct FieldEffectState {
     u8 padding0[0x1C0];
@@ -15,18 +17,14 @@ struct FieldObject {
     u16 y;
 };
 
-extern struct FieldEffectState *Data_03001ebc;
+extern struct FieldEffectState *gWork;
 
-s32 Func_08077158(s16 *);
-void Func_08077230(s32);
 struct FieldObject *Runtime_GetObject(s32);
-void Func_08077128(s32);
+
 void WaitFrames(s32);
-void Func_0808a368(void);
-void Func_0808a370(void);
+
 void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
-void Func_0808a360(void);
 
 void Inn_PlaySleep(s32 room_price)
 {
@@ -36,29 +34,29 @@ void Inn_PlaySleep(s32 room_price)
     struct FieldObject *object;
     struct FieldEffectState *state;
 
-    count = Func_08077158(objects);
-    Func_08077230(-room_price);
+    count = Sys_Check(objects);
+    Sys_Do(-room_price);
 
     for (index = 0; index < count; index++) {
         object = Runtime_GetObject(objects[index]);
         if (object->x != 0) {
             object->x = object->saved_x;
             object->y = object->saved_y;
-            Func_08077128(objects[index]);
+            Sys_Do2(objects[index]);
         }
     }
 
-    state = Data_03001ebc;
+    state = gWork;
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
-    Func_0808a368();
-    Func_0808a370();
+    Sys_Run();
+    Sys_Run2();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
-    Func_0808a360();
-    Func_0808a370();
+    Sys_Run3();
+    Sys_Run2();
     WaitFrames(30);
-    Data_03001ebc->delay = 16;
+    gWork->delay = 16;
 }

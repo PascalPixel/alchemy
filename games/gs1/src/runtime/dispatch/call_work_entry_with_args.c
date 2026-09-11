@@ -2,13 +2,14 @@
  * Call a work entry through the runtime's indirect-call slot.
  */
 #include "types.h"
+#include "scene.h"
+#include "abi/runtime/dispatch/call_work_entry_with_args.h"
 
 /*
- * Func_080072ec names a `bx rN` slot: the call is an indirect call through
+ * Sys_Place names a `bx rN` slot: the call is an indirect call through
  * the register that slot selects, not a call to a function at that
  * address. The declaration stands in for the typed slot.
  */
-s32 Func_080072ec(s32, s32, s32);
 
 /*
  * The callee word is read from 0x02004000 and carried into the call as the
@@ -21,5 +22,5 @@ void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
   int fn;
   base = (fn = 0x02004000);
   fn = *((s32 *)base);
-  Func_080072ec(arg0, arg1, fn);
+  Sys_Place(arg0, arg1, fn);
 }

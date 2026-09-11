@@ -1,0 +1,8 @@
+#ifndef ALCHEMY_ABI_BATTLE_EFFECTS_OBJECT_CONTROL_SET_CALLBACK_WHEN_TARGET_UNSET
+#define ALCHEMY_ABI_BATTLE_EFFECTS_OBJECT_CONTROL_SET_CALLBACK_WHEN_TARGET_UNSET
+
+/* Binding layer — not production source. Address / far-call ABI only. */
+
+#define gRom Data_080a0128
+
+#endif

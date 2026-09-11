@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct OwnerFirstValueState { u8 padding[0x34]; s16 max; s16 unk; s16 pos; };
 struct OwnerFirstValueState *Owner_GetState(s32);

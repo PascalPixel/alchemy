@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/core/compute_entry_values.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s16 Func_080ac8fc(void *, s32, s32);
 
 s32 Menu_ComputeEntryValues(void *tbl)
 {
@@ -22,7 +22,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
         src = (u16 *)((u8 *)state + 0x208);
         p = tbl;
         do {
-            v = Func_080ac8fc(p, *src, -1);
+            v = Menu_Place(p, *src, -1);
             cnt = FIELD_AT_OFFSET(state, u8, 0x219);
             i += 1;
             *dst = v;

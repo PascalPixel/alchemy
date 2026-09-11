@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Graphics_ClearBg0Vofs(void)
 {

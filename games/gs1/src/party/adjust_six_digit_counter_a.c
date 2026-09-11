@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Work_08079700 {
     u8 unknown_00[0x10];

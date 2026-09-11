@@ -1,7 +1,7 @@
+#include "scene.h"
+#include "abi/battle/effects/calc/select_living_targets.h"
 #include "battle_runtime.h"
 #include "battle_types.h"
-
-void Func_080b5010(s16 *targets, s32 mode);
 
 struct BattleEffectTargetArgument {
     u8 reserved_00[36];
@@ -29,5 +29,5 @@ void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument)
         }
     }
     targets[count] = 0xff;
-    Func_080b5010(targets, 0);
+    Battle_Apply(targets, 0);
 }

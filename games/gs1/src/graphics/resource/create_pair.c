@@ -1,5 +1,7 @@
 #include "render_input.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/resource/create_pair.h"
 
 s32 Resource_FindFreeSlot(void);
 void RenderResource_LoadPair(s32 arg0, s32 arg1);
@@ -18,9 +20,9 @@ void *RenderResource_CreatePair(
         return NULL;
 
     RenderResource_LoadPair(arg0, index);
-    first = Func_0801eadc(index, 0x80004000, arg1, arg2, arg3);
+    first = Sys_Run(index, 0x80004000, arg1, arg2, arg3);
     first->sentinel = 0xFD;
-    second = Func_0801eadc(index, 0x80004000, arg1, arg2 + 32, arg3);
+    second = Sys_Run(index, 0x80004000, arg1, arg2 + 32, arg3);
     second->sentinel = 0xFD;
     second->table.bits.index += 8;
     return first;

@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/resource/metadata/release_slot.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void Func_0800bc48(void *destination);
+
 void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
 {
     void **p;
@@ -15,7 +17,7 @@ void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
         off = (no * 4) + 0x28;
         v = FIELD_AT_OFFSET(rec, void *, off);
         if (v != 0) {
-            Func_0800bc48(v);
+            Sys_Do(v);
             FIELD_AT_OFFSET(rec, void *, off) = NULL;
             i = no + 1;
             cnt = 0;

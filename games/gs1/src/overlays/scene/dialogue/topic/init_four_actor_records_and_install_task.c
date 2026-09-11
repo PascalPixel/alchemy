@@ -4,20 +4,20 @@
  */
 
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/dialogue/topic/init_four_actor_records_and_install_task.h"
 
-extern u8 Data_0200a05a[];      /* in-image 0x205a: four X tile coordinates */
-extern u8 Data_0200a05e[];      /* in-image 0x205e: four Z tile coordinates */
-extern u16 Data_0200a062[];     /* in-image 0x2062: four headings */
-extern u8 Data_0200a070[];      /* scratch EWRAM above the image */
-extern u8 Data_0200a0d0[];      /* scratch EWRAM above the image: 4 x 24 bytes */
+extern u8 gOv[];      /* in-image 0x205a: four X tile coordinates */
+extern u8 gOv2[];      /* in-image 0x205e: four Z tile coordinates */
+extern u16 gOv3[];     /* in-image 0x2062: four headings */
+extern u8 gOv4[];      /* scratch EWRAM above the image */
+extern u8 gOv5[];      /* scratch EWRAM above the image: 4 x 24 bytes */
 
-u8 *Func_02003036();
-void Func_02002f8c();
-u8 *Func_02003042();
-void Func_02002f98();
-void Func_02002f80();
+u8 *Talk_Run();
 
-void Func_02000e5c();           /* the installed per-frame task */
+u8 *Talk_Run2();
+
+void Talk_Run3();           /* the installed per-frame task */
 
 /*
  * The 148-byte owner includes its eight-word literal pool: those words lie
@@ -29,17 +29,17 @@ void Func_02000e5c();           /* the installed per-frame task */
  */
 void State_InitFourActorRecordsAndInstallTask(void)
 {
-    u8 *work = Data_0200a070;
+    u8 *work = gOv4;
     s32 i = 0;
     u8 *xtbl;
     u16 *htbl;
     u8 *rec;
     u8 *ztbl;
 
-    xtbl = Data_0200a05a;
-    rec = Data_0200a0d0;
-    htbl = Data_0200a062;
-    ztbl = Data_0200a05e;
+    xtbl = gOv;
+    rec = gOv5;
+    htbl = gOv3;
+    ztbl = gOv2;
 
     do {
         *(s32 *)(rec + 0) = (s32)*xtbl << 16;
@@ -67,8 +67,8 @@ void State_InitFourActorRecordsAndInstallTask(void)
     *(s32 *)(work + 76) = 0;
 
     /* r0 carries each lookup's result straight into the retag call. */
-    Func_02002f8c(Func_02003036(20), 2);
-    Func_02002f98(Func_02003042(21), 2);
+    Talk_Run4(Talk_Run(20), 2);
+    Talk_Run5(Talk_Run2(21), 2);
 
     /* The task word names in-image code with the Thumb bit set, not a runtime
      * address; the locals keep it and its rate built rather than folded. */
@@ -76,6 +76,6 @@ void State_InitFourActorRecordsAndInstallTask(void)
         s32 budget = 0xc83;
         void (*task)(void) = (void (*)(void))0x02008e5d;
 
-        Func_02002f80(task, budget);
+        Talk_Run6(task, budget);
     }
 }

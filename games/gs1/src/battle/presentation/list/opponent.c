@@ -1,9 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/list/opponent.h"
 
-s32 Func_080b6b40(s32 side, u16 *out_units);
-u32 Func_08004458(void);
-u8 *Func_08077008(s32 unit_id);
-void Func_080bd424(void *entry, s32 arg1);
+u8 *Battle_Run(s32 unit_id);
 
 struct BattlePresentationOpponentEntry {
     u16 unit_id;
@@ -28,21 +27,21 @@ s32 BattlePres_BuildOpponentEntries(
         return 0;
     }
 
-    unit_count = Func_080b6b40(2, unit_ids);
+    unit_count = Battle_Apply(2, unit_ids);
     if (unit_count == 0) {
         return 0;
     }
 
     for (i = 31; i >= 0; i--) {
-        u32 first = (u32)(unit_count *Func_08004458()) >> 16;
-        u32 second = (u32)(unit_count *Func_08004458()) >> 16;
+        u32 first = (u32)(unit_count *Battle_Run2()) >> 16;
+        u32 second = (u32)(unit_count *Battle_Run2()) >> 16;
         s32 swap = unit_ids[first];
         unit_ids[first] = unit_ids[second];
         unit_ids[second] = swap;
     }
 
     if (battle[0x45] == 2) {
-        s32 limit = ((u32)(Func_08004458() * 5) >> 16) + 1;
+        s32 limit = ((u32)(Battle_Run2() * 5) >> 16) + 1;
 
         if (limit <= 1) {
             limit = 2;
@@ -54,7 +53,7 @@ s32 BattlePres_BuildOpponentEntries(
 
     for (i = 0; i < unit_count; i++) {
         s32 unit_id = unit_ids[i];
-        u8 *unit = Func_08077008(unit_id);
+        u8 *unit = Battle_Run(unit_id);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
@@ -74,7 +73,7 @@ s32 BattlePres_BuildOpponentEntries(
                 entry->mode = 0;
                 entry->height = 0x100;
             } else {
-                Func_080bd424(entry, 0);
+                Battle_Apply2(entry, 0);
             }
 
             entry_count++;

@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/icon/set_grid_column_byte5.h"
 
-extern u8 *Data_03001e60;
+extern u8 *gIw;
 
 void Ui_SetGridColumnByte5(s32 slot, s32 value)
 {
-    u8 *base = Data_03001e60;
+    u8 *base = gIw;
     s32 offset = (slot & 3) * 4 + 40;
     s32 count = 9;
 

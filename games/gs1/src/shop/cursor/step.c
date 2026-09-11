@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/shop/cursor/step.h"
 #include "global_cells.h"
-
-s32 Func_080b08b8(s32);
 
 void Shop_StepCursor(void)
 {
-    Func_080b08b8(*(s32 *)ADDR_03001F2C + 0x380);
+    Sys_Check(*(s32 *)ADDR_03001F2C + 0x380);
 }

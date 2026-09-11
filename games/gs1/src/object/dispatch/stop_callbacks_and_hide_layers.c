@@ -1,12 +1,10 @@
 #include "types.h"
-
-s32 Func_0800439c(u32 value);
-void Func_0800c62c(void);
-void Func_0800c880(void);
+#include "scene.h"
+#include "abi/object/dispatch/stop_callbacks_and_hide_layers.h"
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-    Func_0800439c((u32)Func_0800c62c);
-    Func_0800439c((u32)Func_0800c880);
+    Obj_Check((u32)Obj_Run);
+    Obj_Check((u32)Obj_Run2);
     *(u16 *)0x04000000 &= 0xE1FF;
 }

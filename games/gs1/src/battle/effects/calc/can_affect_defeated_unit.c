@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define BattleFx_CanAffectDefeatedUnit Func_080bbae8
+#include "scene.h"
+#include "abi/battle/effects/calc/can_affect_defeated_unit.h"
 
 s32 BattleFx_CanAffectDefeatedUnit(s32 effect)
 {

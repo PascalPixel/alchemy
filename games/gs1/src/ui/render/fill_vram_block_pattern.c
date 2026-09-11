@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 typedef s32 (*FillWordsFn)(void *dst, s32 size, s32 value);
 

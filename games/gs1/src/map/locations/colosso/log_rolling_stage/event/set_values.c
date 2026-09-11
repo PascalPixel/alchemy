@@ -1,15 +1,12 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/event/set_values.h"
 #include "colosso_log_rolling_stage.h"
-
-extern void Func_0200534e(s32);
-extern void Func_0200534c(s32);
-extern void Func_020055d4(s32);
-extern void Func_020055da(s32);
 
 s32 Colosso_SetSceneEventValues(void)
 {
-    Func_0200534e(1);
-    Func_0200534c(2);
-    Func_020055d4(288);
-    Func_020055da(217);
+    Map_Do(1);
+    Map_Do2(2);
+    Map_Do3(288);
+    Map_Do4(217);
     return 0;
 }

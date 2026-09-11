@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/party/add_active_owner.h"
 #include "game_flags.h"
 #include "party_state.h"
 
@@ -9,11 +11,11 @@ s32 Party_AddActiveOwner(s32 value)
     GameFlag_Set(value);
     index = 0;
     while (index < count) {
-        if (Data_02000240.active_owners[index] == value) {
+        if (gCell.active_owners[index] == value) {
             return count;
         }
         index++;
     }
-    Data_02000240.active_owners[index] = value;
+    gCell.active_owners[index] = value;
     return count + 1;
 }

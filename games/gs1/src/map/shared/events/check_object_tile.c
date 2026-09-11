@@ -1,5 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/events/check_object_tile.h"
 #include "map.h"
 
 struct MapObject {
@@ -23,8 +25,8 @@ struct ObjectGlobals {
     u32 active_object_id;
 };
 
-extern struct ObjectGlobals Data_02000240;
-extern struct MapEventRuntime *Data_03001ebc;
+extern struct ObjectGlobals gCell;
+extern struct MapEventRuntime *gWork;
 
 void CheckObjectMapTile(void)
 {
@@ -35,9 +37,9 @@ void CheckObjectMapTile(void)
     s32 x;
     s32 y;
 
-    runtime_slot_address = (u32)&Data_03001ebc;
-    runtime = Data_03001ebc;
-    object = ObjectTable_Get(Data_02000240.active_object_id);
+    runtime_slot_address = (u32)&gWork;
+    runtime = gWork;
+    object = ObjectTable_Get(gCell.active_object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 

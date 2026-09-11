@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/placement/create_group.h"
 
 struct PlacementOrigin {
     u8 pad_00[0x0c];
@@ -31,24 +33,22 @@ struct RuntimeObject {
     s8 field_26;
 };
 
-extern struct PlacementState *Data_03001f2c;
+extern struct PlacementState *gIw;
 
-s32 Func_0808a5f0(s8 kind, s8 variant);
-struct RuntimeObject *Func_08009030(s32);
+struct RuntimeObject *Obj_Run(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
-void Func_0801ff58(void);
 
 void ObjectPlacement_CreateGroup(struct PlacementOrigin *origin, s32 x, s32 y,
                                  struct PlacementDescriptor *descriptor)
 {
-    struct PlacementState *state = Data_03001f2c;
+    struct PlacementState *state = gIw;
     s32 i;
     s32 duration;
 
     for (i = 0; i < 4 && descriptor->kinds[i] != -1; i++) {
         struct RuntimeObject *object =
-            Func_08009030(Func_0808a5f0(descriptor->kinds[i],
+            Obj_Run(Obj_Apply(descriptor->kinds[i],
                                         descriptor->variant));
 
         if (object != 0) {
@@ -65,5 +65,5 @@ void ObjectPlacement_CreateGroup(struct PlacementOrigin *origin, s32 x, s32 y,
 
     duration = 200;
     duration <<= 4;
-    ScheduleCallbackAfterFrames((s32)Func_0801ff58, duration);
+    ScheduleCallbackAfterFrames((s32)Obj_Run2, duration);
 }

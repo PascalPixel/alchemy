@@ -1,11 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/set_cell_collision.h"
 #include "map.h"
 
-extern struct MapState *Data_03001e70;
+extern struct MapState *gCam;
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 {
-    struct MapState *state = Data_03001e70;
+    struct MapState *state = gCam;
 
     x >>= 20;
     y >>= 20;

@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/party/apply_status_damage.h"
 
-extern u8 Data_02000240[];
+extern u8 gCell[];
 
-s32 Func_08077148(void);
 u8 *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
-void Func_08077118(s32, s32);
+
 void BattleFx_ApplyColorToSourceBuffer(void *, s32);
 void BattleFx_StartBufferInterpolation(s32);
 void Audio_PlayCue(s32);
@@ -13,7 +14,7 @@ void Audio_PlayCue(s32);
 s32 BattleParty_ApplyStatusDamage(void)
 {
     s32 result = 0;
-    s32 count = Func_08077148();
+    s32 count = Battle_Check();
 
     if (result < count) {
         s32 offset = 252;
@@ -21,7 +22,7 @@ s32 BattleParty_ApplyStatusDamage(void)
         s32 remaining;
 
         offset <<= 1;
-        entry = Data_02000240 + offset;
+        entry = gCell + offset;
         remaining = count;
 
         do {
@@ -49,7 +50,7 @@ s32 BattleParty_ApplyStatusDamage(void)
             }
 
             remaining--;
-            Func_08077118(*entry, amount);
+            Battle_Apply(*entry, amount);
             entry++;
         } while (remaining != 0);
     }

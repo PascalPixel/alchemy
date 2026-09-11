@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/select_resource.h"
 #include "sound_ids.h"
 
 struct MenuSelectionState {
@@ -12,9 +14,9 @@ struct MenuSelectionState {
     s16 resource_base;
 };
 
-extern struct MenuSelectionState *Data_03001f38;
-extern u8 Data_080373ef[];
-extern u8 Data_0000001f;
+extern struct MenuSelectionState *gIw;
+extern u8 gRom[];
+extern u8 gVal;
 
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacter(s32 resource_id, void *work, s32 x, s32 y);
@@ -41,7 +43,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     const u8 *tbl;
     struct MenuSelectionState *state;
 
-    state = Data_03001f38;
+    state = gIw;
     step = 1;
     delay = 12;
     state->selection = (s16)start;
@@ -55,12 +57,12 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         if (resource_base != 0) {
             resource_id = resource_base + state->selection;
         } else {
-            resource_id = state->resource_ids[state->selection] + (s32)&Data_0000001f;
+            resource_id = state->resource_ids[state->selection] + (s32)&gVal;
         }
         UiText_DrawCharacter(resource_id, state->work, 0, 0);
 
         cur = state->selection;
-        tbl = Data_080373ef;
+        tbl = gRom;
         diff = cur - goal;
         dist = AbsoluteDifference(diff, cur, goal);
         WaitFrames(tbl[dist] + delay);

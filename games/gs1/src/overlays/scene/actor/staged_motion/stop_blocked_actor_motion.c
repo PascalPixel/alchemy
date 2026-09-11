@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_motion/stop_blocked_actor_motion.h"
 
 typedef struct StagedMoveTarget { s32 unk0; s32 unk4; s32 unk8; } StagedMoveTarget;
 typedef struct StagedActorRecord { u8 filler0[0x28]; s16 *unk28; } StagedActorRecord;
@@ -20,10 +22,9 @@ typedef struct StagedActor {
     StagedActorRecord *unk50;
 } StagedActor;
 
-extern s32 Data_0200e190[];
-extern s32 Data_0200e1d0[];
-extern StagedActor *Func_02000342(StagedMoveTarget *, StagedActor *);
-extern s32 Func_02006266(StagedActor *, StagedMoveTarget *);
+extern s32 gOv[];
+extern s32 gOv2[];
+extern StagedActor *Actor_Run(StagedMoveTarget *, StagedActor *);
 
 s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
 {
@@ -33,16 +34,16 @@ s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
     StagedActor *blocking_actor;
 
     direction_index = actor->unk6 >> 12;
-    direction_step = Data_0200e190[direction_index];
+    direction_step = gOv[direction_index];
     target.unk0 = actor->unk8 + (direction_step & 0xffff0000);
     target.unk4 = actor->unkC;
     direction_step = direction_step << 16;
     target.unk8 = actor->unk10 + direction_step;
-    blocking_actor = Func_02000342(&target, actor);
+    blocking_actor = Actor_Run(&target, actor);
     if (blocking_actor != 0) {
         u32 kind_index = 0;
         s32 blocking_kind = *blocking_actor->unk50->unk28;
-        s32 *p = Data_0200e1d0;
+        s32 *p = gOv2;
 
         do {
             if (blocking_kind == *p++) goto done;
@@ -53,12 +54,12 @@ s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
         actor->unk38 = 0x80000000;
         actor->unk40 = 0x80000000;
     }
-    direction_step = Data_0200e190[direction_index];
+    direction_step = gOv[direction_index];
     target.unk0 = actor->unk8 + (direction_step & 0xffff0000);
     target.unk4 = actor->unkC;
     direction_step = direction_step << 16;
     target.unk8 = actor->unk10 + direction_step;
-    if (Func_02006266(actor, &target) > 0) {
+    if (Actor_Apply(actor, &target) > 0) {
         actor->unk24 = 0;
         actor->unk2C = 0;
         actor->unk38 = 0x80000000;

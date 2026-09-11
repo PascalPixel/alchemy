@@ -1,9 +1,9 @@
+#include "scene.h"
+#include "abi/effect_runtime/set_current_position.h"
 #include "effect_runtime.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_080091a8(s32, s32, s32);
 s32 EffectRuntime_FindSlotByObject();
 
 void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y)
@@ -32,7 +32,7 @@ void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y)
             }
             FIELD_AT_OFFSET(object, s32 *, 8) = objectX;
             FIELD_AT_OFFSET(object, s32 *, 0x10) = objectY;
-            angle = Func_080091a8(0, objectX, objectY);
+            angle = Sys_Place(0, objectX, objectY);
             FIELD_AT_OFFSET(object, s32 *, 0x14) = angle;
             FIELD_AT_OFFSET(object, s32 *, 0xC) = angle;
         }

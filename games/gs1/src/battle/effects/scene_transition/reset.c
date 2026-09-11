@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/scene_transition/reset.h"
 #include "sound_ids.h"
 
 typedef struct {
@@ -21,21 +23,19 @@ typedef struct {
 
 void WaitFrames(s32 frames);
 void ScheduleCallback(void (*callback)(void));
-void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
+void *Battle_Run(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 void BattleFx_StartBufferInterpolation(s32 battle_value);
-s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
-void Func_08098294(s32 battle_value);
-void Func_080982dc(void);
+
 void Audio_PlayCue(s32 no);
 
-extern SceneTransitionContext *Data_03001f30;
-extern s32 Data_02000240[];
+extern SceneTransitionContext *gIw;
+extern s32 gCell[];
 
 void ResetSceneTransitionEffect(void)
 {
-    SceneTransitionContext **cell = &Data_03001f30;
+    SceneTransitionContext **cell = &gIw;
     SceneTransitionContext *ctx = *cell;
     SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)cell - 0x64);
     SceneTransitionState *state = *(SceneTransitionState **)((u8 *)cell - 0x74);
@@ -45,12 +45,12 @@ void ResetSceneTransitionEffect(void)
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
-        ScheduleCallback(Func_080982dc);
+        ScheduleCallback(Battle_Run2);
 
         zero = 0;
         state->active = zero;
         state->transition_timer = zero;
-        Func_08098294(0);
+        Battle_Do(0);
 
         BattleFx_ApplyColorToTargetBuffer(0x10000, 1);
         BattleFx_StartBufferInterpolation(1);
@@ -59,9 +59,9 @@ void ResetSceneTransitionEffect(void)
         BattleFx_StartBufferInterpolation(30);
         WaitFrames(1);
 
-        resource = Func_0808e4b4(0x40000005, 8, &size);
+        resource = Battle_Run(0x40000005, 8, &size);
         if (resource != NULL)
-            Func_08096b28(resource, Data_02000240[125], size);
+            Battle_Place(resource, gCell[125], size);
 
         if (ctx->field34 == 0) {
             scene->transition_phase = 0;

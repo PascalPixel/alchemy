@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 u8 *Trade_GetOfferState(s32);
 

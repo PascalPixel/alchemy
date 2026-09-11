@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/render/activate_channel.h"
 #include "gs1_edition.h"
 
 struct Work {
@@ -25,7 +27,7 @@ struct Slot {
     u16 field26;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 void UiWork_ResetChannelTransition(void *);
 
 struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
@@ -37,7 +39,7 @@ struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
     u16 zero;
     u32 index;
 
-    slot = (struct Slot *)(Data_03001e8c + RENDER_CHANNEL_OFS);
+    slot = (struct Slot *)(gIw + RENDER_CHANNEL_OFS);
     selected = 0;
     for (index = 0; index != 3; slot++, index++) {
         if (slot->work == 0 || slot->work->state != 0) {

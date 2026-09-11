@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void UiWork_SetByte15Inverted(void *arg0, s32 arg1)
 {

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/proc/process_direct_work.h"
 #include "gs1_edition.h"
 
 struct Work {
@@ -20,15 +22,14 @@ struct Work {
     s16 previous_height;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void Func_08016230(void *arg0);
 
 void UiWork_ProcessDirectWork(void)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gIw;
     struct Work *work = (struct Work *)(base + 0x500);
     s32 index = 0;
     u8 dirty;
@@ -39,7 +40,7 @@ loop:
             UiWindow_UpdateInterpolatedGeometry(work, 0);
             work->frame--;
         } else if (work->duration != 0) {
-            Func_08016230(work);
+            Ui_Do(work);
         }
     } else if (work->duration != 0) {
         if (work->frame != work->duration) {

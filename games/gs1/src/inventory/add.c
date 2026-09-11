@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 /* 所持品追加。積み重ね可能な品は同一番号の枠を探して個数を増やし、

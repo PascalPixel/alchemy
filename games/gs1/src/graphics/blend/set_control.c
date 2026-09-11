@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /*
  * Blend control setup.  The eight-byte owner at 0x080c0ea8 includes its two

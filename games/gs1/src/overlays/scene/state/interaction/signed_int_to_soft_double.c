@@ -3,6 +3,8 @@
  * library's unpacked record on the stack and hand it to the packer.
  */
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/signed_int_to_soft_double.h"
 
 /*
  * The packed double is carried as a u64 whose low half is the r0 word,
@@ -21,8 +23,6 @@ typedef struct SoftFloatRecord {
     s32 exponent;
     u64 fraction;
 } SoftFloatRecord;
-
-SoftDouble Func_02002a6a(SoftFloatRecord *record);
 
 /*
  * Zero takes class 2 straight to the pack call; 0x80000000 returns the
@@ -61,5 +61,5 @@ SoftDouble SignedIntToSoftDouble(s32 value)
     }
 
 pack:
-    return Func_02002a6a(&record);
+    return State_Do(&record);
 }

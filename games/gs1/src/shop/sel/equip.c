@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/shop/sel/equip.h"
 #include "shop.h"
 
 struct ShopMenuState_080b1868 {
@@ -6,30 +8,19 @@ struct ShopMenuState_080b1868 {
     s32 value_20;
 };
 
-struct BattleActorDefinition *Func_08077008(s32 actor_id);
-s32 Func_08077218(s32 unit_id, s32 item_id);
-s32 Func_08077228(s32 unit_id, u8 kind);
-void Func_08077050(s32 unit_id, s32 slot);
-void Func_08015120(u32 unit_id, u32 mode);
-void Func_080b04dc(s32 message);
-s32 Func_080b0634(s32 value);
-void Func_080b1dec(s32 value, s32 unit_id);
-void Func_080f9010(s32 cue);
-void Func_08015140(void);
-s32 Func_08015038(s32 a, s32 b, s32 c, s32 d);
-s32 Func_08015048(void);
-void Func_080b0574(s32 message);
+struct BattleActorDefinition *Sys_Run(s32 actor_id);
+
 void WaitFrames(s32 frames);
 
-extern struct ShopMenuState_080b1868 *Data_03001f2c;
+extern struct ShopMenuState_080b1868 *gIw;
 extern char Value_00000ca2;
 extern char Value_00000ca3;
 extern u8 Value_00000ad0[];
 
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
-    struct ShopMenuState_080b1868 *menu = Data_03001f2c;
-    u8 *unit = (u8 *)Func_08077008(unit_id);
+    struct ShopMenuState_080b1868 *menu = gIw;
+    u8 *unit = (u8 *)Sys_Run(unit_id);
     s32 slot_offset = slot * 2 + 216;
     s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
     struct ItemDefinition *info = Item_Get(masked);
@@ -39,10 +30,10 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     if (*(volatile u16 *)(unit + slot_offset) & 0x200)
         return 0;
 
-    if (Func_08077218(unit_id, masked) == 0)
+    if (Sys_Apply(unit_id, masked) == 0)
         return 0;
 
-    replaced = Func_08077228(unit_id, info->type);
+    replaced = Sys_Apply2(unit_id, info->type);
     if (replaced != -1) {
         s32 old_offset = replaced * 2 + 216;
         u16 old_raw = *(u16 *)(unit + old_offset);
@@ -52,25 +43,25 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
             return 0;
     }
 
-    Func_08015120(unit_id, 1);
-    Func_080b04dc((s32)&Value_00000ca2);
-    if (Func_080b0634(0) != 0)
+    Sys_Apply3(unit_id, 1);
+    Sys_Do((s32)&Value_00000ca2);
+    if (Sys_Check(0) != 0)
         return 0;
 
-    Func_08077050(unit_id, slot);
+    Sys_Apply4(unit_id, slot);
     menu_value = menu->value_20;
     if (menu_value != 0)
-        Func_080b1dec(menu_value, unit_id);
+        Sys_Apply5(menu_value, unit_id);
 
     if (info->flags & 1) {
-        Func_080f9010(103);
-        Func_08015140();
-        Func_08015038((s32)Value_00000ad0, 8, 4, 2);
-        while (Func_08015048() == 0) {
+        Sys_Do2(103);
+        Sys_Run2();
+        Sys_SetMode((s32)Value_00000ad0, 8, 4, 2);
+        while (Sys_Check2() == 0) {
             WaitFrames(1);
         }
     }
 
-    Func_080b0574((s32)&Value_00000ca3);
+    Sys_Do3((s32)&Value_00000ca3);
     return 1;
 }

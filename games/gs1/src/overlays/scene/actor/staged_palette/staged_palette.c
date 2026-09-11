@@ -1,75 +1,19 @@
 #include "staged_actor_movement.h"
 #include "run_staged_actor_movement_and_redraw_body.inc"
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_palette/staged_palette.h"
 #include "staged_actor.h"
 #include "staged_actor_probe_state.h"
 #include "staged_actor_effect.h"
 #include "resource_393.h"
 
 /* overlays/scene/actor/staged_palette/move_and_redraw.c */
-#define Data_0200e1e8 Data_02008f68
-#define Data_0200e190 Data_02008f10
-#define Func_02006610 Func_020014b0
-#define Func_0200661c Func_020014bc
-#define Func_020066b4 Func_02001554
-#define Func_02006714 Func_0200157c
-#define Func_0200668a Func_02001542
-#define Func_0200672c Func_0200159c
-#define Func_020066ea Func_0200158a
-#define Func_020066c4 Func_0200157c_a
-#define RefreshStagedActor Func_020015dc
-#define Func_02006614 Func_0200154c
-#define Func_0200661e Func_02001556
-#define Func_0200687c Func_020015fc
-#define Func_02006658 Func_02001570
-#define Func_02006776 Func_020015e6
-#define Func_0200678e Func_020015f6
-#define Func_02006740 Func_020015e0
-#define Func_020067a4 Func_02001614
-#define Func_020067bc Func_0200162c
-#define Func_020067d4 Func_0200163c
-#define Func_0200677a Func_0200161a
-#define Func_020068f4 Func_02001674
-#define Func_020068fa Func_0200167a
-#define Func_020066b8 Func_020015f0
-#define Func_02006752 Func_0200165a
-#define Func_020067ae Func_020016b6
-#define Func_020069d0 Func_02001750
 
-
-
-void Func_02000608(
+void Actor_Run(
     StagedActorMovementRequest request)
 {
 }
-#undef Data_0200e1e8
-#undef Data_0200e190
-#undef Func_02006610
-#undef Func_0200661c
-#undef Func_020066b4
-#undef Func_02006714
-#undef Func_0200668a
-#undef Func_0200672c
-#undef Func_020066ea
-#undef Func_020066c4
-#undef RefreshStagedActor
-#undef Func_02006614
-#undef Func_0200661e
-#undef Func_0200687c
-#undef Func_02006658
-#undef Func_02006776
-#undef Func_0200678e
-#undef Func_02006740
-#undef Func_020067a4
-#undef Func_020067bc
-#undef Func_020067d4
-#undef Func_0200677a
-#undef Func_020068f4
-#undef Func_020068fa
-#undef Func_020066b8
-#undef Func_02006752
-#undef Func_020067ae
-#undef Func_020069d0
 
 /* overlays/scene/actor/staged_palette/scene.c */
 /*
@@ -81,60 +25,7 @@ void Func_02000608(
  * Several aliases below resolve to the same relocation.  The spellings are
  * call-site evidence and are deliberately kept distinct.
  */
-#define StagedActorStepTable Data_02008f10
-#define GetStagedActor Func_02000f58
-#define FindNextStagedActor Func_02000176
-#define FindBlockingStagedActor Func_020001a2
-#define FindElevatedBlockingStagedActor Func_020001ce
-#define CanStartStagedActorMove Func_02000fec
-#define SetStagedActorMode Func_02000fe4
-#define SelectStagedActorSlot Func_02000fe4
-#define StartStagedActorEffect Func_02001092
-#define StartNextStagedActorMove Func_0200100a
-#define StartLeadStagedActorMove Func_0200101a
-#define FinishStagedActorMove Func_02001028
-#define FinishStagedActorEffect Func_020010b4
-#define SetStagedActorTransition Func_02001050
-#define StagedActorDirectionSteps Data_02008f10
-#define StagedActorProbeValues Data_02008f50
-#define FindStagedActorAtProbe Func_02000342
-#define CheckStagedActorProbePosition Func_0200116e
-#define TestActorPosition Func_020013a8
-#define ActorProbeOffsets Data_02008f68
-#define ActorSearchStep Data_02008f10
-#define ResolveActorSearchContext Func_020007de
-#define GetStagedActorEffect Func_0200193e
-#define CanStartStagedActorEffect Func_02001916
-#define BeginStagedActorEffect Func_02001948
-#define SetStagedActorEffectMode Func_02001908
-#define SelectStagedActorEffectSlot Func_02001906
-#define StartStagedActorEffectSound Func_020019b4
-#define SetStagedActorMotionMode Func_0200191c
-#define PrepareStagedActorEffect Func_02001966
-#define TestStagedActorEffectCell Func_020019b4_a
-#define StartStagedActorEffectMove Func_02001954
-#define SetStagedActorEffectTransition Func_02001984
-#define WaitStagedActorEffect Func_020019e8
-#define AdvanceStagedActorEffect Func_02001974
-#define WaitSceneFrames Func_02001986
-#define RestoreStagedActorEffect Func_0200199c
-#define FinishStagedActorEffect_02000aac Func_02001a08
-#define GetResource393Object Func_02001a38
-#define ApplyResource393Position Func_0200168a
-#define Resource393SharedWork Data_02000240
 #define SCENE_WORKSPACE (*(u8 **)0x03001ebc)
-#define RunSceneBeat10 Func_020014ce
-#define IsSceneFlag0201Set Func_02001a70
-#define GetSceneBeatSubject Func_02001aa2
-#define DrawSceneBeatRectangle Func_02001a7c
-#define FillSceneTileAttributes Func_02000e90
-#define GetScenePresentationSubject Func_02001ad6
-#define SetScenePresentationMode Func_02001aac
-#define RunSceneBeat8 Func_0200151e
-#define RunSceneBeat9 Func_02001524
-#define IsSceneFlag0845Set Func_02001ac6
-#define RunPhase516Followup Func_02001900_a
-
 
 struct PlacementTail {
     s32 fifth;
@@ -154,70 +45,32 @@ struct SceneBeatSubject {
     u8 marker;
 };
 
-extern u8 *Data_03001ebc;
-extern u8 *Data_03001e70;
-extern u8 Data_02010000[];
-extern s32 Data_02008f50[];
-extern s32 Data_02008f68[];
+extern u8 *gWork;
+extern u8 *gCam;
+extern u8 gUnk[];
+extern s32 StagedActorProbeValues[];
+extern s32 Actor_Far[];
 
 typedef s32(*IwramIntegerSquareRoot)(s32);
-struct StagedActor *Func_02000f58(s32 arg0);
-struct StagedActor *Func_02000176(s32 *arg0, struct StagedActor *arg1);
-struct StagedActor *Func_020001a2(s32 *arg0, struct StagedActor *arg1);
-struct StagedActor *Func_020001ce(s32 *arg0, struct StagedActor *arg1);
-s32 Func_02000fec(struct StagedActor *arg0, s32 *arg1);
-void Func_02000fe4();
-void Func_02000fe4_a(s32);
-void Func_02001092(s32 arg0);
-void Func_0200100a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_0200101a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_02001028(struct StagedActor *arg0);
-void Func_020010b4(void);
-void Func_02001050(struct StagedActor *arg0, s32 arg1);
-struct StagedActor *Func_02000342(struct StagedActorProbePoint *, struct StagedActor *);
-s32 Func_0200116e(struct StagedActor *, struct StagedActorProbePoint *);
-s32 Func_020007de(s32 *, s32 *, s32 *);
-s32 Func_020013a8(u8 *, s32 *);
-void Func_0808a018(void); void Func_0808a020(void);
-void Func_02001872(void);
-s32 Func_02000e7a(struct PlacementResult *result);
-void Func_02001026(struct PlacementResult result);
-void Func_020018e0(s32, s32); void Func_020018dc(s32, s32, s32);
-void Func_020018b2(s32); u8 *Func_02001918();
-void Func_02001918_a(s32);
-void Func_020018b8(s32, s32, s32, s32, s32, s32);
-s32 Func_02000ccc(s32, s32, s32, s32, s32, s32);
-void Func_020018f2(s32); void Func_020018ee(u8 *, s32);
-void Func_0200191a(void);
-struct StagedActorEffect *Func_0200193e(s32 actor_index);
-s32 Func_02001916(struct StagedActorEffect *actor,
-                         struct StagedActorEffectRequest *request);
-void Func_02001948(void);
-void Func_02001908(struct StagedActorEffect *actor, s32 mode);
-void Func_02001906(s32 actor_index);
-void Func_0200191c(struct StagedActorEffect *actor, s32 mode);
-void Func_02001966(struct StagedActorEffect *actor, s32 mode);
-void Func_02001954(struct StagedActorEffect *actor, s32 mode);
-void Func_02001984(struct StagedActorEffect *actor, s32 mode);
-void Func_020019e8(s32 frames, s32 mode);
-void Func_02001974(s32 mode);
-void Func_02001986(s32 frames);
-void Func_0200199c(s32 mode);
-void Func_02001a08(void);
-s32 Func_020014ce();
-s32 Func_02001a70();
-struct SceneBeatSubject *Func_02001aa2();
-void Func_02001a7c();
-s32 Func_02000e90();
-struct SceneBeatSubject *Func_02001ad6();
-void Func_02001aac();
-void Func_0200151e();
-void Func_02001524();
-s32 Func_02001ac6();
-void Func_020019ee(void);
-void Func_02001a72(void);
-void Func_02001a56(void);
-void Func_02001b98(s32, s32);
+struct StagedActor *GetStagedActor(s32 arg0);
+struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);
+struct StagedActor *FindBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
+struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
+
+struct StagedActor *FindStagedActorAtProbe(struct StagedActorProbePoint *, struct StagedActor *);
+
+void Actor_Run2(void); void Actor_Run3(void);
+
+void Actor_Run4(s32, s32); void Actor_Run5(s32, s32, s32);
+void Actor_Run6(s32); u8 *Actor_Run7();
+
+void Actor_Run8(s32); void Actor_Run9(u8 *, s32);
+
+struct StagedActorEffect *GetStagedActorEffect(s32 actor_index);
+
+struct SceneBeatSubject *GetSceneBeatSubject();
+
+struct SceneBeatSubject *GetScenePresentationSubject();
 
 /*
  * Six-argument draw wrapper.  Inlining it here preserves the reference's
@@ -227,15 +80,15 @@ void Func_02001b98(s32, s32);
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Func_02001900(s32, s32); u8 *Func_020018de(s32);
+    void Actor_Run10(s32, s32); u8 *Actor_Run11(s32);
 
-    Func_020018b8(left, top, width, height, tile, palette);
+    Actor_SetRect(left, top, width, height, tile, palette);
 }
 
 static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Func_02001900();
+    void Actor_Run10();
 
     DrawSceneBeatRectangle(left, top, width, height, tile, palette);
 }
@@ -246,12 +99,6 @@ static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
  * adjustment, and each still needs its own name.  The sites are 0x02000d14,
  * 0x02000d22 and 0x02000d30.
  */
-
-s32 Func_02001b32();
-
-s32 Func_02001b40();
-
-s32 Func_02001b4e();
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.  Each
@@ -275,7 +122,7 @@ s32 Actor_CalculateFixedPointDistance(s32 *a, s32 *b)
 
 s32 *Actor_FindAtTileXZ(s32 *arg0)
 {
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -292,7 +139,7 @@ s32 *Actor_FindAtTileXZ(s32 *arg0)
 
 void StagedActor_AdvancePair(void)
 {
-    extern u32 Data_02008f10[];
+    extern u32 Actor_Far2[];
 
     s32 destination[3];
     struct StagedActor *lead;
@@ -340,7 +187,7 @@ void StagedActor_AdvancePair(void)
 
     SelectStagedActorSlot(lead, 8);
     rate = 0x3333;
-    Func_02000fe4_a(15);
+    Actor_Do(15);
     StartStagedActorEffect(185);
     next->move_rate_x = rate;
     next->move_rate_z = rate;
@@ -365,7 +212,7 @@ void StagedActor_AdvancePair(void)
 
 s32 State_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
-    u8 *g = Data_03001e70;
+    u8 *g = gCam;
     u8 *base;
     u32 i;
     u32 j;
@@ -376,7 +223,7 @@ s32 State_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32
 
             base = *(u8 **)(g + off);
         } else {
-            base = Data_02010000;
+            base = gUnk;
         }
         base += (arg1 + (arg2 << 7)) * 4;
         for (i = 0; i < arg4; i++) {
@@ -393,7 +240,7 @@ s32 State_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32
 
 s32 StagedActor_CheckProbe(struct StagedActor *actor)
 {
-    extern s32 Data_02008f10[];
+    extern s32 Actor_Far2[];
 
     struct StagedActorProbePoint probe;
     u32 dir;
@@ -439,7 +286,7 @@ done:
 
 s32 StagedActor_FindClearPosition(s32 *a)
 {
-    extern s32 Data_02008f10[];
+    extern s32 Actor_Far2[];
 
     s32 sel;
     s32 buf[3];
@@ -561,36 +408,36 @@ u8 *MapStagedScene_SelectTertiaryData(void) { return (u8 *)0x02009038; }
 
 void Scene_RunActorTenPlacementScene(void)
 {
-    void Func_02001900(s32, s32); u8 *Func_020018de(s32);
+    void Actor_Run10(s32, s32); u8 *Actor_Run11(s32);
 
     struct PlacementResult result;
-    Func_02001872();
-    if (Func_02000e7a(&result)) {
-        Func_02001026(result);
+    Actor_Run12();
+    if (Actor_Check(&result)) {
+        Actor_Do2(result);
         if (result.second == 10 && (result.third >> 20) == 12) {
             u8 *actor;
             s32 zero;
-            Func_020018e0(10, 3);
-            Func_020018dc(10, -18, 6);
-            Func_020018b2(30);
-            Func_02001918_a(240);
-            Func_02001900(10, 8);
-            Func_020018de(10)[35] = 2;
+            Actor_Run4(10, 3);
+            Actor_Run5(10, -18, 6);
+            Actor_Run6(30);
+            Actor_Do3(240);
+            Actor_Run10(10, 8);
+            Actor_Run11(10)[35] = 2;
             zero = 0;
             DrawPlacement(32, 20, 2, 4, 11, 16);
-            Func_02000ccc(2, 12, 16, 1, 4, zero);
-            Func_020018f2(0x201);
-            actor = Func_02001918(10);
-            Func_020018ee(actor, 0);
+            Actor_SetRect2(2, 12, 16, 1, 4, zero);
+            Actor_Run8(0x201);
+            actor = Actor_Run7(10);
+            Actor_Run9(actor, 0);
         }
     }
-    Func_0200191a();
+    Actor_Run13();
 }
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
-    s32 Func_020019b4();
-    s32 Func_020019b4_a();
+    s32 StartStagedActorEffectSound();
+    s32 TestStagedActorEffectCell();
 
     struct StagedActorEffect *actor = GetStagedActorEffect(0);
     u8 *flags = &actor->motion_flags;
@@ -625,7 +472,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         actor->position_x += 0x10000;
         actor->position_z += 0x10000;
         *flags = saved;
-        FinishStagedActorEffect_02000aac();
+        FinishStagedActorEffect();
         return 1;
     }
     return 0;
@@ -649,7 +496,7 @@ u8 *SceneData_GetTable9098(void) { return (u8 *)0x02009098; }
 /* Set workspace word 448 to 516, then run the scene's beat sequence. */
 s32 State_SetRuntimeWord448To516(void)
 {
-    void Func_02001900_a();
+    void RunPhase516Followup();
 
     u8 *work = SCENE_WORKSPACE;
 
@@ -676,17 +523,17 @@ s32 State_SetRuntimeWord448To516(void)
 
 void Effect_AdjustPaletteColors(s32 a)
 {
-    s32 Func_020019b4_b(s32, s32);
+    s32 Actor_Run14(s32, s32);
 
     u32 x;
 
-    Func_020019ee();
+    Actor_Run15();
     x = 0;
     do {
         u32 idx = x >> 16;
         if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
             u16 *pal = (u16 *)(0x5000000 + idx * 2);
-            *pal = Func_020019b4_b(*pal, a);
+            *pal = Actor_Run14(*pal, a);
         }
         {
             u32 nx = x + 0x10000;
@@ -696,9 +543,9 @@ void Effect_AdjustPaletteColors(s32 a)
             }
         }
     } while (1);
-    Func_02001a72();
-    Func_02001a56();
-    Func_02001b98(0x10000, 0);
+    Actor_Run16();
+    Actor_Run17();
+    Actor_Apply(0x10000, 0);
 }
 
 /*
@@ -708,19 +555,19 @@ void Effect_AdjustPaletteColors(s32 a)
  */
 u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
-    s32 Func_020019b4(s32, s32);
+    s32 StartStagedActorEffectSound(s32, s32);
 
     s16 green = (s16)((color >> 5) & 31);
     s16 red = (s16)(color & 31);
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Func_02001b32(
+    red = (s16)(red + Actor_Check2(
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - Func_02001b40(green, adj));
-    blue = (s16)(blue - Func_02001b4e(blue, adj));
+    green = (s16)(green - Actor_Check3(green, adj));
+    blue = (s16)(blue - Actor_Check4(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)
@@ -730,56 +577,3 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
     return (u16)packed;
 }
-#undef StagedActorStepTable
-#undef GetStagedActor
-#undef FindNextStagedActor
-#undef FindBlockingStagedActor
-#undef FindElevatedBlockingStagedActor
-#undef CanStartStagedActorMove
-#undef SetStagedActorMode
-#undef SelectStagedActorSlot
-#undef StartStagedActorEffect
-#undef StartNextStagedActorMove
-#undef StartLeadStagedActorMove
-#undef FinishStagedActorMove
-#undef FinishStagedActorEffect
-#undef SetStagedActorTransition
-#undef StagedActorDirectionSteps
-#undef StagedActorProbeValues
-#undef FindStagedActorAtProbe
-#undef CheckStagedActorProbePosition
-#undef TestActorPosition
-#undef ActorProbeOffsets
-#undef ActorSearchStep
-#undef ResolveActorSearchContext
-#undef GetStagedActorEffect
-#undef CanStartStagedActorEffect
-#undef BeginStagedActorEffect
-#undef SetStagedActorEffectMode
-#undef SelectStagedActorEffectSlot
-#undef StartStagedActorEffectSound
-#undef SetStagedActorMotionMode
-#undef PrepareStagedActorEffect
-#undef TestStagedActorEffectCell
-#undef StartStagedActorEffectMove
-#undef SetStagedActorEffectTransition
-#undef WaitStagedActorEffect
-#undef AdvanceStagedActorEffect
-#undef WaitSceneFrames
-#undef RestoreStagedActorEffect
-#undef FinishStagedActorEffect_02000aac
-#undef GetResource393Object
-#undef ApplyResource393Position
-#undef Resource393SharedWork
-#undef SCENE_WORKSPACE
-#undef RunSceneBeat10
-#undef IsSceneFlag0201Set
-#undef GetSceneBeatSubject
-#undef DrawSceneBeatRectangle
-#undef FillSceneTileAttributes
-#undef GetScenePresentationSubject
-#undef SetScenePresentationMode
-#undef RunSceneBeat8
-#undef RunSceneBeat9
-#undef IsSceneFlag0845Set
-#undef RunPhase516Followup

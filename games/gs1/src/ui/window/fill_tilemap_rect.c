@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "gs1_edition.h"
 #include "global_cells.h"
 

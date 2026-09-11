@@ -1,13 +1,10 @@
 #include "types.h"
-
-#define FieldScene_RunScene39b_02000cc0 Func_02000cd0
-
-void Func_02000e7a();
-s32 Func_02006692();
+#include "scene.h"
+#include "abi/overlays/scene/story/selector_effect/run_scene_sequence_c.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-s32 FieldScene_RunScene39b_02000cc0(s32 a0)
+s32 Scene_RunScene39b(s32 a0)
 {
     s32 value;
     s32 magic;
@@ -25,8 +22,8 @@ s32 FieldScene_RunScene39b_02000cc0(s32 a0)
     FIELD(rec, s32, 12) = 0xcccc;
     none = 0;
     FIELD(rec, s32, 0) = none;
-    value = Func_02006692();
+    value = Story_Check();
     magic = -((((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) + (((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) << 4)) + ((((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) + (((((u32)(value << 3) >> 16) << 1) + ((u32)(value << 3) >> 16)) << 4)) << 8));
-    Func_02000e7a((*(volatile s32 *)(a0 + 8) + ((8 - (*(volatile s32 *)base5_3001e40 & 15)) << 16)), (*(volatile s32 *)(a0 + 12) + 0x1a0000), *(volatile s32 *)(a0 + 16), none, magic, 0, 0xb0000, rec);
+    Story_Run((*(volatile s32 *)(a0 + 8) + ((8 - (*(volatile s32 *)base5_3001e40 & 15)) << 16)), (*(volatile s32 *)(a0 + 12) + 0x1a0000), *(volatile s32 *)(a0 + 16), none, magic, 0, 0xb0000, rec);
     return 0;
 }

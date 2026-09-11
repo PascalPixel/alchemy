@@ -1,19 +1,21 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/event/show_value_1d8_at_position.h"
 
 struct State_08093168 {
     u8 padding[472];
     s16 counter;
 };
 
-extern struct State_08093168 *Data_03001ebc;
+extern struct State_08093168 *gWork;
 extern s32 UiWork_Create(s32, s32, s32, s32);
-extern s32 Func_08015050(s32);
+
 extern void WaitFrames(s32);
 
 void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;
-    struct State_08093168 *state = Data_03001ebc;
+    struct State_08093168 *state = gWork;
     s32 py = y;
     s32 px = x0;
     s32 min_x = 8;
@@ -35,7 +37,7 @@ void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
         py = 220;
 
     ret = UiWork_Create(state->counter, px, py, 1);
-    while (Func_08015050(ret) == 0)
+    while (Sys_Check(ret) == 0)
         WaitFrames(1);
     state->counter++;
 }

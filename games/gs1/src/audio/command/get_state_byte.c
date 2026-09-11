@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define AudioCommand_GetStateByte Func_080f954c
+#include "scene.h"
+#include "abi/audio/command/get_state_byte.h"
 
 u8 AudioCommand_GetStateByte(void)
 {

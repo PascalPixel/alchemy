@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Object_08095348 {
     u8 filler0[8];

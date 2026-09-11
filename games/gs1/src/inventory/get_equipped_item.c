@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type)

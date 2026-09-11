@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/actor/clamp_off.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct StageActor {
@@ -10,14 +12,9 @@ typedef struct StageActor {
     s32 move_rate_z;
 } StageActor;
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 
-extern StageActor *Func_02005556(s32);
-extern void Func_02005440(StageActor *, s32);
-extern void Func_02005486(StageActor *, s32, s32, s32);
-extern void Func_02005494(StageActor *);
-extern void Func_0200566e(s32, s32);
-extern void Func_02005620(s32, s32, s32);
+extern StageActor *Actor_Run(s32);
 
 void Colosso_ClampAndOffsetActiveActor(void)
 {
@@ -26,18 +23,18 @@ void Colosso_ClampAndOffsetActiveActor(void)
     s32 *slot;
     s32 z;
 
-    table = Data_02000240;
+    table = gCell;
     slot = (s32 *)&table[250];
-    actor = Func_02005556(*slot);
+    actor = Actor_Run(*slot);
     if (actor->x > 0x2980000) {
         actor->x = 0x2980000;
     }
     actor->move_rate_z = 0x10000;
     actor->move_rate_x = 0x20000;
-    Func_02005440(actor, 5);
+    Actor_Apply(actor, 5);
     z = actor->z & 0xFFF00000;
-    Func_02005486(actor, actor->x, actor->y, z + 0xC0000);
-    Func_02005494(actor);
-    Func_0200566e(*slot, 258);
-    Func_02005620(*slot, 6, 0);
+    Actor_SetMode(actor, actor->x, actor->y, z + 0xC0000);
+    Actor_Do(actor);
+    Actor_Apply2(*slot, 258);
+    Actor_Place(*slot, 6, 0);
 }

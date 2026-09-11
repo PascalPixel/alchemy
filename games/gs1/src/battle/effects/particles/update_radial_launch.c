@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/particles/update_radial_launch.h"
 #include "fixed_math.h"
 #include "effect_0809b11c.h"
 
@@ -17,8 +19,8 @@ struct RuntimeState_0809b11c {
     struct PositionSource_0809b11c *position_source;
 };
 
-extern struct RuntimeState_0809b11c *Data_03001f30;
-extern u32 Data_03001e40;
+extern struct RuntimeState_0809b11c *gIw;
+extern u32 gIw2;
 
 void NormalizeVector(struct Output *);
 u32 Random16(void);
@@ -34,7 +36,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
     s32 state;
     u32 first_random;
 
-    source = Data_03001f30->position_source;
+    source = gIw->position_source;
     state = effect->state;
 
     if (state == 0) {
@@ -65,13 +67,13 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         effect->flag42 = state;
         effect->state++;
 
-        if ((Data_03001e40 & 2) != 0)
+        if ((gIw2 & 2) != 0)
             Audio_PlayCue(0xf6);
     } else if (state == 1) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
             effect->state--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Func_0809bb34(effect);
+            Battle_Run(effect);
     }
 }

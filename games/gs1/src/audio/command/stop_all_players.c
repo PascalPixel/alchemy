@@ -1,10 +1,8 @@
 #include "types.h"
-
-#define AudioCommand_StopAllPlayers Func_080f9558
-
-void Func_080fa458(void);
+#include "scene.h"
+#include "abi/audio/command/stop_all_players.h"
 
 void AudioCommand_StopAllPlayers(void)
 {
-    Func_080fa458();
+    Audio_Run();
 }

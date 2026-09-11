@@ -1,16 +1,17 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/icon/set_grid_column_number.h"
 
-extern u8 *Data_03001e60;
-void Func_0800b868(void *);
+extern u8 *gIw;
 
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {
-    u8 *base = Data_03001e60;
+    u8 *base = gIw;
     s32 offset;
     s32 count;
 
-    Func_08185000(no);
+    Ui_Run(no);
     offset = (slot & 3) * 4 + 40;
     count = 9;
     do {
@@ -18,7 +19,7 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no)
 
         count--;
         *(u16 *)entry = no;
-        Func_0800b868(entry);
+        Ui_Do(entry);
         base += 56;
     } while (count >= 0);
 }

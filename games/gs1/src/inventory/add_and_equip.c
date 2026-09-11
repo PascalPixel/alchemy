@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 
 void Inventory_AddAndEquip(s32 owner, s32 target)

@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/radial_camera/update.h"
 
 struct EffectPosition {
     s32 x;
@@ -31,7 +33,7 @@ struct RadialCameraEffect {
     u8 flag;
 };
 
-extern struct EffectCamera *Data_03001f30;
+extern struct EffectCamera *gIw;
 
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -39,7 +41,6 @@ extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct EffectPosition *);
 extern void NormalizeVector(struct EffectPosition *);
 extern s32 EffectSlot_HasReachedTarget(struct RadialCameraEffect *);
-extern void Func_0809bb34(struct RadialCameraEffect *);
 
 void UpdateRadialCameraEffect(struct RadialCameraEffect *effect)
 {
@@ -49,7 +50,7 @@ void UpdateRadialCameraEffect(struct RadialCameraEffect *effect)
     s16 angle;
     s32 state;
 
-    camera = Data_03001f30;
+    camera = gIw;
     state_pointer = &effect->state;
 top:
     state = *state_pointer;
@@ -84,7 +85,7 @@ advance:
         return;
     } else if (state == 3) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Func_0809bb34(effect);
+            Battle_Do(effect);
         return;
     } else {
         return;

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "shop.h"
 
 s32 Shop_RepairPrice(s32 item_id)

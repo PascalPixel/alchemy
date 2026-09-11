@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void UiWork_SetByte5AndResetHalfwordC(void *arg0, int arg1)
 {

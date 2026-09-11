@@ -225,8 +225,7 @@
       "name": "Map_UpdateCurrentTileBlockUntilBlocked"
     },
     "main:080a4800": {
-      "name": "Menu_SelectQuantity",
-      "source": "menu/selection/select_quantity.c"
+      "name": "Menu_SelectQuantity"
     },
     "main:080a5b94": {
       "name": "Menu_OpenConfirmPrompt",
@@ -1262,12 +1261,10 @@
       "source": "ui/menu/create_cursor.c"
     },
     "main:080a9cbc": {
-      "name": "ItemMenu_PosCategory",
-      "source": "menu/item_menu/pos_category.c"
+      "name": "ItemMenu_PosCategory"
     },
     "main:080a9d84": {
-      "name": "ItemMenu_ResetCategory",
-      "source": "menu/item_menu/reset_category.c"
+      "name": "ItemMenu_ResetCategory"
     },
     "main:080f3898": {
       "name": "Graphics_ClampRgb555Channel"
@@ -2048,8 +2045,7 @@
       "name": "BattleEventRuntime_ProcessAction"
     },
     "main:080a9e34": {
-      "name": "Item_PrepareUsePalette",
-      "source": "item/prepare_use_palette.c"
+      "name": "Item_PrepareUsePalette"
     },
     "main:080a9e48": {
       "name": "Item_Use"
@@ -2102,8 +2098,7 @@
       "name": "Menu_BuildLocalizedPatternTiles"
     },
     "main:080a9dc4": {
-      "name": "CharacterMenu_UpdateSelectionIcons",
-      "source": "menu/character_menu/update_selection_icons.c"
+      "name": "CharacterMenu_UpdateSelectionIcons"
     },
     "main:080b7424": {
       "name": "Summon_LayoutPositions"
@@ -2698,8 +2693,7 @@
       "source": "menu/item_menu/use.c"
     },
     "main:080a345c": {
-      "name": "ItemMenu_HideAllIcons",
-      "source": "menu/item_menu/hide_all_icons.c"
+      "name": "ItemMenu_HideAllIcons"
     },
     "main:080a3480": {
       "name": "ItemMenu_HidePageIcons"
@@ -2753,15 +2747,13 @@
       "name": "ItemMenu_DrawCmd"
     },
     "main:080a4754": {
-      "name": "ItemMenu_TryBreak",
-      "source": "menu/item_menu/try_break.c"
+      "name": "ItemMenu_TryBreak"
     },
     "main:080a47b4": {
       "name": "ItemMenu_OpenDetail"
     },
     "main:080a4db4": {
-      "name": "ItemMenu_DrawStat",
-      "source": "menu/item_menu/draw_stat.c"
+      "name": "ItemMenu_DrawStat"
     },
     "main:080a4e20": {
       "name": "ItemMenu_SetItemWin5"
@@ -6199,8 +6191,7 @@
       "name": "UiPalette_SetColor4"
     },
     "main:080a33d4": {
-      "name": "Menu_SpawnIconEntries",
-      "source": "menu/entry/spawn_icon_entries.c"
+      "name": "Menu_SpawnIconEntries"
     },
     "main:080a8034": {
       "name": "Menu_InitSelectorCursorAndEntries"
@@ -6231,8 +6222,7 @@
       "name": "Menu_PlaceEntryObjectInGrid"
     },
     "main:080a9cf8": {
-      "name": "Menu_CreateEightEntryObjects",
-      "source": "menu/entry/create_eight_entry_objects.c"
+      "name": "Menu_CreateEightEntryObjects"
     },
     "main:080aa534": {
       "name": "Menu_ReservedStatusZero"
@@ -15995,8 +15985,7 @@
       "source": "overlays/scene/dialogue/choice.c"
     },
     "main:080a46b4": {
-      "name": "Item_ClassifyUseMode",
-      "source": "item/classify_use_mode.c"
+      "name": "Item_ClassifyUseMode"
     },
     "main:080ccaec": {
       "name": "BattlePresentation_PrepareScene",

@@ -177,7 +177,7 @@ s32 Actor_TurnTowardTarget(struct Ent *p)
         v = 0xfe;
         v &= *b;
         *b = v;
-        h = Field_unk_02002af2(q->f10 - p->f10, q->f08 - p->f08);
+        h = Field_HeadingFromDelta(q->f10 - p->f10, q->f08 - p->f08);
         t = h;
         t -= p->f06;
         t <<= 16;
@@ -503,7 +503,7 @@ void Scene_RunFlag845And847Branches(void)
 
 /* overlays/scene/field/extended_sequence/run_extended_actor_sequence.c */
 
-struct ObjectRuntime *Field_unk_02002a54();
+struct ObjectRuntime *ObjectRuntime_Get();
 
 /* The inline adapters retain argument lifetimes at constant-valued calls.
  * Their return types follow the target helpers. */
@@ -548,13 +548,13 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002a34();
     flag_addr = (s32)&gOv14;
     *(s32 *)flag_addr = Field_Check(3);
-    record = Field_unk_02002a54(19);
+    record = ObjectRuntime_Get(19);
     Field_unk_02002a0c((s32)record, 0);
-    record = Field_unk_02002a54(20);
+    record = ObjectRuntime_Get(20);
     Field_unk_02002a0c((s32)record, 0);
-    record = Field_unk_02002a54(21);
+    record = ObjectRuntime_Get(21);
     Field_unk_02002a0c((s32)record, 0);
-    record = Field_unk_02002a54(22);
+    record = ObjectRuntime_Get(22);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002b4c(0x680000, -1, 0x1000000, 0);
     Field_unk_020029e4();
@@ -566,11 +566,11 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002a9c(0, 121, 238);
     Field_unk_02002a64(1, 0x9999, 0x4ccc);
     Field_unk_02002a64(2, 0x9999, 0x4ccc);
-    record = Pointer1(Field_unk_02002a54, 0);
+    record = Pointer1(ObjectRuntime_Get, 0);
     if ((s32)record != 0) {
         Field_unk_02002ab4(1, record->x, record->z);
     }
-    record = Pointer1(Field_unk_02002a54, 0);
+    record = Pointer1(ObjectRuntime_Get, 0);
     if ((s32)record != 0) {
         Field_unk_02002ab4(2, record->x, record->z);
     }
@@ -578,27 +578,27 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002a6c(2, (s32)gOv23);
     if (*(s32 *)flag_addr != 0) {
         Field_unk_02002a64(3, 0x9999, 0x4ccc);
-        record = Pointer1(Field_unk_02002a54, 0);
+        record = Pointer1(ObjectRuntime_Get, 0);
         if ((s32)record != 0) {
             Field_unk_02002ab4(3, record->x, record->z);
         }
         Field_unk_02002a6c(3, (s32)gOv24);
     }
     Field_unk_02002a74(2);
-    Field_unk_02002b24(0, 0xe000, 20);
-    Field_unk_02002b24(2, 0xe000, 20);
-    Field_unk_02002b24(1, 0x2000, 20);
+    Field_SetActorFacing(0, 0xe000, 20);
+    Field_SetActorFacing(2, 0xe000, 20);
+    Field_SetActorFacing(1, 0x2000, 20);
     flag_addr = (s32)&gOv14;
     if (*(s32 *)flag_addr != 0) {
-        Field_unk_02002b24(3, 0x2000, 0);
+        Field_SetActorFacing(3, 0x2000, 0);
     }
-    Field_unk_02002b24(0, 0x2000, 20);
-    Field_unk_02002b24(2, 0x2000, 20);
-    Field_unk_02002b24(1, 0xe000, 60);
+    Field_SetActorFacing(0, 0x2000, 20);
+    Field_SetActorFacing(2, 0x2000, 20);
+    Field_SetActorFacing(1, 0xe000, 60);
     if (*(s32 *)flag_addr != 0) {
-        Field_unk_02002b24(3, 0xe000, 0);
+        Field_SetActorFacing(3, 0xe000, 0);
     }
-    Field_unk_02002b24(0, 0x8000, 0);
+    Field_SetActorFacing(0, 0x8000, 0);
     Field_unk_02002ae4(2, 0, 0);
     Field_unk_02002ae4(1, 0, 0);
     if (*(s32 *)flag_addr != 0) {
@@ -631,18 +631,18 @@ void Scene_RunExtendedActorSequence(void)
     Field_TestFlag12c(20);
     Field_unk_02002ac4(2, 3);
     Field_TestFlag12c(30);
-    Field_unk_02002b24(2, 0, 0);
+    Field_SetActorFacing(2, 0, 0);
     Field_TestFlag12c(20);
     Scene_StartEffect141Sequence(2, 9);
     Field_TestFlag12c(40);
     Scene_RunSequenceA();
     Field_unk_02002b34(2, 0x100, 40);
     Field_unk_02002a64(2, 0x10000, 0x8000);
-    Field_unk_02002a54(2)->action_flags &= 254;
+    ObjectRuntime_Get(2)->action_flags &= 254;
     Field_unk_02002a9c(2, 80, 0x136);
     mask = 1;
     Field_TestFlag12c(1);
-    Field_unk_02002a54(2)->action_flags |= mask;
+    ObjectRuntime_Get(2)->action_flags |= mask;
     Field_unk_02002b34(1, 0x102, 40);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002b34(2, 0x102, 40);
@@ -652,17 +652,17 @@ void Scene_RunExtendedActorSequence(void)
     }
     Field_unk_02002aec(2, 1, 60);
     if (*(s32 *)flag_addr != 0) {
-        Field_unk_02002b24(3, 0xc000, 0);
+        Field_SetActorFacing(3, 0xc000, 0);
     }
-    Field_unk_02002b24(1, 0xc000, 0);
-    Field_unk_02002b24(0, 0xe000, 0);
+    Field_SetActorFacing(1, 0xc000, 0);
+    Field_SetActorFacing(0, 0xe000, 0);
     Field_unk_02002ad4(1, 1);
     Scene_RunPairedStepA(1, 20);
     Field_unk_02002a64(2, 0x8000, 0x4000);
-    Field_unk_02002a54(2)->action_flags &= 254;
+    ObjectRuntime_Get(2)->action_flags &= 254;
     Field_unk_02002a9c(2, 72, 0x11e);
     Field_TestFlag12c(1);
-    Field_unk_02002a54(2)->action_flags |= mask;
+    ObjectRuntime_Get(2)->action_flags |= mask;
     Field_unk_02002a6c(2, (s32)gOv23);
     if (*(s32 *)flag_addr != 0) {
         Field_unk_02002b34(3, 0x105, 0);
@@ -695,16 +695,16 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(2, 0x4000, 40);
     Field_unk_02002b34(2, 0x101, 0);
     Field_TestFlag12c(60);
-    Field_unk_02002b24(1, 0x4000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
     Scene_RunPairedStepB(0, 0x6000, 60);
     value = 160;
     Scene_RunPairedStepB(3, 0x2000, 10);
-    Field_unk_02002b24(1, 0x2000, 0);
+    Field_SetActorFacing(1, 0x2000, 0);
     Scene_RunPairedStepB(0, (value << 8), 10);
     Field_unk_02002b34(1, 0x101, 0);
     Field_unk_02002b34(0, 0x101, 0);
     Field_TestFlag12c(40);
-    Field_unk_02002b24(1, 0x4000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
     Scene_RunPairedStepB(0, 0x6000, 10);
     Field_unk_02002adc(1, 2);
     Field_unk_02002b04(0x147b);
@@ -721,7 +721,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002adc(2, 2);
     Field_unk_02002b34(2, 0x100, 0);
     Field_TestFlag12c(40);
-    Field_unk_02002b24(1, 0x4000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
     Scene_RunPairedStepB(0, 0x6000, 20);
     Scene_RunPairedStepB(2, 0xc000, 10);
     Field_unk_02002bcc(17);
@@ -755,42 +755,42 @@ void Scene_RunExtendedActorSequence(void)
     Field_TestFlag12c(20);
     if (gOv14 != 0) {
         value = 128;
-        record = Field_unk_02002a54(3);
+        record = ObjectRuntime_Get(3);
         record->velocity_y = (value << 10);
         Field_TestFlag12c(10);
         Field_unk_02002a64(3, (value << 10), (value << 10));
         Field_unk_02002aa4(3, -2, 0);
         Field_unk_02002a6c(3, (s32)gOv26);
-        record = Field_unk_02002a54(3);
+        record = ObjectRuntime_Get(3);
         Field_unk_02002a0c((s32)record, 0);
         Field_unk_02002abc(3, 19);
         Field_TestFlag12c(10);
     }
     value = 128;
-    record = Field_unk_02002a54(0);
+    record = ObjectRuntime_Get(0);
     record->velocity_y = (value << 10);
     Field_TestFlag12c(10);
     Field_unk_02002a64(0, (value << 10), (value << 10));
     action_b = (s32)gOv26;
     Field_unk_02002a6c(0, action_b);
-    record = Field_unk_02002a54(0);
+    record = ObjectRuntime_Get(0);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002abc(0, 19);
     Field_TestFlag12c(20);
-    record = Pointer1(Field_unk_02002a54, 1);
+    record = Pointer1(ObjectRuntime_Get, 1);
     record->velocity_y = (value << 10);
     Field_TestFlag12c(10);
     Field_unk_02002a64(1, (value << 10), (value << 10));
     Field_unk_02002a6c(1, action_b);
-    record = Field_unk_02002a54(1);
+    record = ObjectRuntime_Get(1);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002abc(1, 19);
     Field_TestFlag12c(40);
-    record = Pointer1(Field_unk_02002a54, 2);
+    record = Pointer1(ObjectRuntime_Get, 2);
     record->velocity_y = (value << 10);
     Field_TestFlag12c(10);
     Field_unk_02002a6c(2, action_b);
-    record = Field_unk_02002a54(2);
+    record = ObjectRuntime_Get(2);
     Field_unk_02002a0c((s32)record, 0);
     Field_unk_02002abc(2, 19);
     gOv12 = 0;
@@ -840,10 +840,10 @@ void Scene_RunExtendedActorSequence(void)
     }
     work_addr = (s32)&gOv17;
     *(s32 *)work_addr = 3;
-    Field_unk_02002a54(0)->unknown_23 &= 254;
-    Field_unk_02002a54(1)->unknown_23 &= 254;
-    Field_unk_02002a54(2)->unknown_23 &= 254;
-    Field_unk_02002a54(3)->unknown_23 &= 254;
+    ObjectRuntime_Get(0)->unknown_23 &= 254;
+    ObjectRuntime_Get(1)->unknown_23 &= 254;
+    ObjectRuntime_Get(2)->unknown_23 &= 254;
+    ObjectRuntime_Get(3)->unknown_23 &= 254;
     Field_unk_02002b2c(0, 3);
     Field_unk_02002b2c(1, 3);
     Field_unk_02002b2c(2, 3);
@@ -852,22 +852,22 @@ void Scene_RunExtendedActorSequence(void)
     gOv18 = value;
     Field_unk_020029a4((s32)gOv19, 0xc80);
     Field_unk_02002bcc(220);
-    Field_unk_02002a54(19)->unknown_23 &= 254;
+    ObjectRuntime_Get(19)->unknown_23 &= 254;
     Field_unk_02002b2c(19, 2);
     Field_unk_02002ab4(19, 0x780000, 0xf80000);
     action_c = (s32)gOv27;
     Field_unk_02002a6c(19, action_c);
-    Field_unk_02002a54(20)->unknown_23 &= 254;
+    ObjectRuntime_Get(20)->unknown_23 &= 254;
     Field_unk_02002b2c(20, 2);
     Field_unk_02002ab4(20, 0x640000, 0x1120000);
     Field_unk_02002a6c(20, action_c);
     if (gOv14 != 0) {
-        Field_unk_02002a54(21)->unknown_23 &= 254;
+        ObjectRuntime_Get(21)->unknown_23 &= 254;
         Field_unk_02002b2c(21, 2);
         Field_unk_02002ab4(21, 0x4a0000, 0xfe0000);
         Field_unk_02002a6c(21, action_c);
     }
-    Field_unk_02002a54(22)->unknown_23 &= 254;
+    ObjectRuntime_Get(22)->unknown_23 &= 254;
     Field_unk_02002b2c(22, 2);
     Field_unk_02002ab4(22, 0x5e0000, 0xe10000);
     Field_unk_02002a6c(22, action_c);
@@ -926,8 +926,8 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002adc(1, 3);
     Field_TestFlag12c(40);
     Field_unk_02002b2c(1, 2);
-    Field_unk_02002a54(1)->unknown_23 |= 1;
-    record = Field_unk_02002a54(1);
+    ObjectRuntime_Get(1)->unknown_23 |= 1;
+    record = ObjectRuntime_Get(1);
     Field_unk_02002a0c((s32)record, 1);
     Field_unk_02002acc(1, 6, 0);
     Field_unk_02002abc(1, 1);
@@ -956,8 +956,8 @@ void Scene_RunExtendedActorSequence(void)
         Field_unk_02002adc(3, 2);
         Field_TestFlag12c(80);
         Field_unk_02002b2c(3, 2);
-        Field_unk_02002a54(3)->unknown_23 |= 1;
-        record = Field_unk_02002a54(3);
+        ObjectRuntime_Get(3)->unknown_23 |= 1;
+        record = ObjectRuntime_Get(3);
         Field_unk_02002a0c((s32)record, 1);
         Field_unk_02002acc(3, 4, 0);
         Field_unk_02002aa4(3, -2, 0);
@@ -982,17 +982,17 @@ void Scene_RunExtendedActorSequence(void)
     Field_TestFlag12c(20);
     value = 1;
     Field_unk_02002b2c(2, 2);
-    Field_unk_02002a54(2)->unknown_23 |= value;
-    record = Field_unk_02002a54(2);
+    ObjectRuntime_Get(2)->unknown_23 |= value;
+    record = ObjectRuntime_Get(2);
     Field_unk_02002a0c((s32)record, 1);
     Field_unk_02002acc(2, 4, 0);
     Field_unk_02002abc(2, 1);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Field_unk_02002adc(0, 2);
     Field_TestFlag12c(10);
     Field_unk_02002b2c(0, 2);
-    Field_unk_02002a54(0)->unknown_23 |= value;
-    record = Field_unk_02002a54(0);
+    ObjectRuntime_Get(0)->unknown_23 |= value;
+    record = ObjectRuntime_Get(0);
     Field_unk_02002a0c((s32)record, 1);
     Field_unk_02002acc(0, 4, 0);
     Field_unk_02002abc(0, 1);
@@ -1005,7 +1005,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002ac4(0, 3);
     Scene_RunPairedStepB(0, 0x6000, 10);
     Scene_RunPairedStepB(1, 0x4000, 10);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Field_unk_02002ac4(2, 3);
     Scene_RunPairedStepA(2, 20);
     Field_unk_02002abc(0, 3);
@@ -1016,8 +1016,8 @@ void Scene_RunExtendedActorSequence(void)
     Field_TestFlag12c(20);
     Field_unk_02002b0c(2, 0);
     Field_unk_02002abc(2, 3);
-    Field_unk_02002b24(2, 0xe000, 0);
-    Field_unk_02002b24(1, 0x2000, 0);
+    Field_SetActorFacing(2, 0xe000, 0);
+    Field_SetActorFacing(1, 0x2000, 0);
     if (Field_unk_02002a4c(0, 0) == 0) {
         Field_unk_02002abc(2, 3);
         Field_unk_02002ac4(1, 3);
@@ -1043,13 +1043,13 @@ void Scene_RunExtendedActorSequence(void)
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Field_unk_02002b24(1, 0x2000, 0);
+    Field_SetActorFacing(1, 0x2000, 0);
     Scene_RunPairedStepB(0, 0xa000, 10);
     Field_unk_02002abc(0, 3);
     Field_unk_02002ac4(1, 3);
     value = 128;
     Field_TestFlag12c(20);
-    Field_unk_02002b24(0, 0x6000, 0);
+    Field_SetActorFacing(0, 0x6000, 0);
     Scene_RunPairedStepB(1, (value << 7), 10);
     Field_unk_02002ac4(2, 4);
     Field_TestFlag12c(20);
@@ -1058,9 +1058,9 @@ void Scene_RunExtendedActorSequence(void)
     Scene_RunPairedStepB(2, 0xe000, 10);
     Field_unk_02002ad4(2, 2);
     Scene_RunPairedStepA(2, 20);
-    Field_unk_02002b24(1, 0x2000, 0);
+    Field_SetActorFacing(1, 0x2000, 0);
     Scene_RunPairedStepB(0, 0xa000, 40);
-    Field_unk_02002b24(1, (value << 7), 0);
+    Field_SetActorFacing(1, (value << 7), 0);
     Scene_RunPairedStepB(0, 0x6000, 10);
     Scene_RunPairedStepB(2, 0xc000, 10);
     Field_unk_02002ac4(2, 3);
@@ -1078,7 +1078,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002adc(1, 2);
     Scene_RunPairedStepB(1, 0x2000, 10);
     Field_unk_02002b0c(1, 0);
-    Field_unk_02002b24(0, 0xa000, 0);
+    Field_SetActorFacing(0, 0xa000, 0);
     if (Field_unk_02002a4c(0, 0) == 0) {
         Field_unk_02002ac4(1, 3);
     } else {
@@ -1111,10 +1111,10 @@ void Scene_RunExtendedActorSequence(void)
     if (gOv14 != 0) {
         Scene_RunPairedStepB(3, 0xc000, 10);
     }
-    Field_unk_02002a54(0)->unknown_23 &= 254;
-    Field_unk_02002a54(1)->unknown_23 &= 254;
-    Field_unk_02002a54(2)->unknown_23 &= 254;
-    Field_unk_02002a54(3)->unknown_23 &= 254;
+    ObjectRuntime_Get(0)->unknown_23 &= 254;
+    ObjectRuntime_Get(1)->unknown_23 &= 254;
+    ObjectRuntime_Get(2)->unknown_23 &= 254;
+    ObjectRuntime_Get(3)->unknown_23 &= 254;
     Field_unk_02002b2c(0, 3);
     Field_unk_02002b2c(1, 3);
     Field_unk_02002b2c(2, 3);
@@ -1161,28 +1161,28 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b34(3, 0x100, 0);
     Field_TestFlag12c(40);
     Scene_RunPairedStepA(17, 10);
-    Field_unk_02002b24(0, 0x8000, 0);
-    Field_unk_02002b24(1, 0x4000, 0);
-    Field_unk_02002b24(3, 0, 0);
+    Field_SetActorFacing(0, 0x8000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
+    Field_SetActorFacing(3, 0, 0);
     Scene_RunPairedStepB(2, 0xc000, 40);
     Scene_RunPairedStepA(18, 10);
     Field_unk_02002b3c(0, 0x102);
     Field_unk_02002b3c(1, 0x102);
     Field_unk_02002b3c(2, 0x102);
     Field_unk_02002b3c(3, 0x102);
-    Field_unk_02002b24(0, 0xc000, 0);
-    Field_unk_02002b24(1, 0xc000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(0, 0xc000, 0);
+    Field_SetActorFacing(1, 0xc000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Scene_RunPairedStepB(3, 0xc000, 80);
     Scene_RunPairedStepA(18, 10);
-    Field_unk_02002b24(0, 0x8000, 0);
-    Field_unk_02002b24(1, 0x4000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(0, 0x8000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Scene_RunPairedStepB(3, 0, 40);
     Scene_RunPairedStepA(17, 10);
-    Field_unk_02002b24(0, 0xc000, 0);
-    Field_unk_02002b24(1, 0xc000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(0, 0xc000, 0);
+    Field_SetActorFacing(1, 0xc000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Scene_RunPairedStepB(3, 0xc000, 10);
     Field_unk_02002abc(0, 4);
     Field_unk_02002abc(1, 4);
@@ -1195,23 +1195,23 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002abc(3, 3);
     Field_unk_02002ac4(2, 3);
     Scene_RunPairedStepA(18, 20);
-    Field_unk_02002b24(0, 0x8000, 0);
-    Field_unk_02002b24(1, 0x4000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(0, 0x8000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Scene_RunPairedStepB(3, 0, 20);
     Scene_RunPairedStepA(18, 10);
     Field_unk_02002ad4(0, 2);
     Field_unk_02002ad4(1, 2);
     Field_unk_02002ad4(3, 2);
     Field_unk_02002adc(2, 2);
-    Field_unk_02002b24(0, 0xc000, 0);
-    Field_unk_02002b24(1, 0xc000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
-    Field_unk_02002b24(3, 0xc000, 0);
+    Field_SetActorFacing(0, 0xc000, 0);
+    Field_SetActorFacing(1, 0xc000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
+    Field_SetActorFacing(3, 0xc000, 0);
     Scene_RunPairedStepA(18, 20);
-    Field_unk_02002b24(0, 0x8000, 0);
-    Field_unk_02002b24(1, 0x4000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(0, 0x8000, 0);
+    Field_SetActorFacing(1, 0x4000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Scene_RunPairedStepB(3, 0, 20);
     Scene_RunPairedStepA(17, 20);
     Field_unk_02002b3c(0, 0x102);
@@ -1220,9 +1220,9 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b3c(2, 0x102);
     Field_TestFlag12c(40);
     Scene_RunPairedStepA(18, 10);
-    Field_unk_02002b24(0, 0xc000, 0);
-    Field_unk_02002b24(1, 0xc000, 0);
-    Field_unk_02002b24(2, 0xc000, 0);
+    Field_SetActorFacing(0, 0xc000, 0);
+    Field_SetActorFacing(1, 0xc000, 0);
+    Field_SetActorFacing(2, 0xc000, 0);
     Scene_RunPairedStepB(3, 0xc000, 10);
     Scene_RunPairedStepA(18, 10);
     Field_unk_02002abc(0, 3);
@@ -1256,15 +1256,15 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002b2c(2, 2);
     value = 1;
     Field_unk_02002b2c(3, 2);
-    Field_unk_02002a54(0)->unknown_23 |= value;
-    Field_unk_02002a54(1)->unknown_23 |= value;
-    Field_unk_02002a54(2)->unknown_23 |= value;
-    Field_unk_02002a54(3)->unknown_23 |= value;
+    ObjectRuntime_Get(0)->unknown_23 |= value;
+    ObjectRuntime_Get(1)->unknown_23 |= value;
+    ObjectRuntime_Get(2)->unknown_23 |= value;
+    ObjectRuntime_Get(3)->unknown_23 |= value;
     Field_unk_02002adc(2, 2);
     Scene_RunPairedStepB(2, 0xe000, 10);
     Field_unk_02002b0c(2, 0);
-    Field_unk_02002b24(1, 0x2000, 0);
-    Field_unk_02002b24(3, 0, 0);
+    Field_SetActorFacing(1, 0x2000, 0);
+    Field_SetActorFacing(3, 0, 0);
     if (Field_unk_02002a4c(0, 0) == 0) {
         Field_unk_02002adc(1, 2);
         Field_TestFlag12c(10);
@@ -1301,7 +1301,7 @@ void Scene_RunExtendedActorSequence(void)
         Field_TestFlag12c(10);
         Field_unk_02002b04(0x14b6);
         Scene_RunPairedStepA(1, 10);
-        Field_unk_02002b24(1, 0x4000, 0);
+        Field_SetActorFacing(1, 0x4000, 0);
         Scene_RunPairedStepB(0, 0x6000, 20);
         Field_unk_02002abc(1, 3);
         Field_unk_02002ac4(0, 3);
@@ -1397,14 +1397,14 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002a64(2, 0x13333, 0x9999);
     Field_unk_02002a64(3, 0x13333, 0x9999);
     Field_unk_02002abc(1, 2);
-    record = Pointer1(Field_unk_02002a54, 0);
+    record = Pointer1(ObjectRuntime_Get, 0);
     if ((s32)record != 0) {
         Field_unk_02002a8c(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
     }
     Field_unk_02002aac(1);
     Field_unk_02002ab4(1, 0, 0);
     Field_unk_02002abc(2, 2);
-    record = Pointer1(Field_unk_02002a54, 0);
+    record = Pointer1(ObjectRuntime_Get, 0);
     if ((s32)record != 0) {
         Field_unk_02002a8c(2, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
     }
@@ -1414,7 +1414,7 @@ void Scene_RunExtendedActorSequence(void)
     Field_unk_02002ab4(18, 0, 0);
     if (gOv14 != 0) {
         Field_unk_02002abc(3, 2);
-        record = Pointer1(Field_unk_02002a54, 0);
+        record = Pointer1(ObjectRuntime_Get, 0);
         if ((s32)record != 0) {
             Field_unk_02002a8c(3, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }

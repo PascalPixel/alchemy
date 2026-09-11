@@ -120,7 +120,7 @@ static __inline__ s32 InstallTask(s32 (*f)(void (*)(), s32), void (*callback)(),
     void Field_unk_0200b5ac();
     void Field_unk_0200b5ec();
     void Field_unk_0200b5f4();
-    void Field_unk_0200b624();
+    void Field_TestFlag121();
 
     return f(callback, key);
 }
@@ -179,7 +179,7 @@ void Scene_RunTwoPhaseActorSequence(void)
     void Field_unk_0200b5ac();
     void Field_unk_0200b5ec();
     void Field_unk_0200b5f4();
-    void Field_unk_0200b624();
+    void Field_TestFlag121();
 
     u32 i;
     u8 *record;
@@ -220,7 +220,7 @@ void Scene_RunTwoPhaseActorSequence(void)
     Field_unk_0200374c(0x7fff, 0);
     Field_unk_0200375a(4);
     Field_unk_02003638(16);
-    Field_unk_0200b624(144);
+    Field_TestFlag121(144);
     Field_unk_02003768(0x10000, 0);
     Field_unk_02003776(4);
     Field_unk_02003654(4);
@@ -729,7 +729,7 @@ void Scene_RunFourWayEffectSequence(u32 mode)
     void Field_unk_0200b5ac(s32, s32, s32);
     void Field_unk_0200b5ec(s32, s32);
     void Field_unk_0200b5f4(s32);
-    void Field_unk_0200b624(s32);
+    void Field_TestFlag121(s32);
 
     u32 i, zero;
     s32 x, y, z;
@@ -745,7 +745,7 @@ void Scene_RunFourWayEffectSequence(u32 mode)
     case 3: Field_unk_0200b5ec(0x403a52, 1); break;
     }
     Field_unk_0200b5f4(60);
-    Field_unk_0200b624(214);
+    Field_TestFlag121(214);
     i = 0;
     zero = i;
     for (pos = &gOv6[0][0]; i <= 9; i++, pos += 2) {
@@ -774,7 +774,7 @@ void Scene_RunFourWayEffectSequence(u32 mode)
     }
     Field_unk_0200b3e4(20);
     Field_unk_0200b3ec(Effect_AdvanceTenEntryTimers, 3200);
-    Field_unk_0200b624(246);
+    Field_TestFlag121(246);
     gOv7[0] = 1; Field_unk_0200b3e4(6);
     gOv7[1] = 1; Field_unk_0200b3e4(6);
     gOv7[2] = 1; Field_unk_0200b3e4(6);

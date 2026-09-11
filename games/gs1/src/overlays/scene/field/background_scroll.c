@@ -38,11 +38,11 @@ extern u16 gOv2;
 extern u16 gOv3;
 extern u16 gUnk2;
 
-u8 *Field_Run();
+u8 *Field_unk_020003ac();
 
 void State_SetActorEightValue3d(void)
 {
-    Field_Apply(8, 0x3D);
+    Field_unk_0200037c(8, 0x3D);
 }
 
 /*
@@ -81,7 +81,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 h;
 
     /* Block coordinates become 16.16 fixed-point shifts of sixteen tiles. */
-    obj = (struct SceneObject *)Field_Run(gCell[125]);
+    obj = (struct SceneObject *)Field_unk_020003ac(gCell[125]);
     dx <<= 20;
     dz <<= 20;
 
@@ -98,7 +98,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Field_unk2((s32)obj->layer, obj->x, obj->z);
+        h = Field_unk_020003da((s32)obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -106,12 +106,12 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 
 void Scene_ApplyOffset0Pos5(void)
 {
-    Field_Apply2(0, 5);
+    Field_unk_0200013c(0, 5);
 }
 
 void Scene_ApplyOffset0Neg5(void)
 {
-    Field_Apply3(0, -5);
+    Field_unk_0200014e(0, -5);
 }
 
 void Scene_ApplyOffset0Pos5Second(void)
@@ -121,17 +121,17 @@ void Scene_ApplyOffset0Pos5Second(void)
 
 void Scene_ApplyOffset0Neg5Second(void)
 {
-    Field_Apply4(0, -5);
+    Field_unk_0200016e(0, -5);
 }
 
 void Scene_ApplyOffset0Pos6(void)
 {
-    Field_Apply5(0, 6);
+    Field_unk_0200017c(0, 6);
 }
 
 void Scene_ApplyOffset0Neg6(void)
 {
-    Field_Apply6(0, -6);
+    Field_unk_0200018e(0, -6);
 }
 
 void State_SetValue123ThenCounter16c(void)
@@ -139,9 +139,9 @@ void State_SetValue123ThenCounter16c(void)
     u8 *state = gWork;
     s16 *cnt;
 
-    Field_Do(0x7B);
+    Field_unk_02000496(0x7B);
     cnt = (s16 *)(state + 0x16C);
-    Field_unk2_2(*cnt);
+    Field_unk_0200048c(*cnt);
 }
 
 void Effect_SetAlphaBlendForScene9(void)
@@ -149,7 +149,7 @@ void Effect_SetAlphaBlendForScene9(void)
     u8 *disp;
 
     /* Start the scene, then configure alpha blending for its display state. */
-    Field_unk2_4(9);
+    Field_unk_020004ae(9);
 
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
@@ -180,8 +180,8 @@ u8 *SceneData_GetTable84a4(void)
 
 void Scene_RunTwoCallSequence(void)
 {
-    Field_unk3_4();
-    Field_unk4_4();
+    Field_unk_020004e4();
+    Field_unk_020004f0();
 }
 
 /*
@@ -199,7 +199,7 @@ void SceneData_InitHeader8590(void)
 
     hdr[0] = gIw2;
     hdr[1] = gIw3;
-    Field_Apply7(hdr, (u8 *)0x020085B0);
+    Field_unk_020004fc(hdr, (u8 *)0x020085B0);
 }
 
 s32 State_SetRuntimeWord448To256(void)
@@ -217,7 +217,7 @@ s32 State_SetRuntimeWord448To256(void)
     off -= 192;
     *scene = off;
 
-    Field_unk5_4(9);
+    Field_unk_02000560(9);
 
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
@@ -239,7 +239,7 @@ s32 State_SetRuntimeWord448To256(void)
         *slot = value;
     }
 
-    Field_unk6_4();
+    Field_unk_0200051e();
     return 0;
 }
 
@@ -285,6 +285,6 @@ void Effect_SetBg3HofsSplit(void)
 
 void State_ApplyTables826dAnd82a1(void)
 {
-    Field_Place(1, 0, 0x0200826D);
-    Field_Apply8(0x020082A1, 0xC80);
+    Field_unk_020005f6(1, 0, 0x0200826D);
+    Field_unk_020005f8(0x020082A1, 0xC80);
 }

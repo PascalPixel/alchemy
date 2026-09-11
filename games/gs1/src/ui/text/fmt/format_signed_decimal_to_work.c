@@ -1,8 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/fmt/format_signed_decimal_to_work.h"
 
-extern s32 Func_080022f4(u32, s32);
-extern u8 Data_08007970[];
-extern u8 Data_03001f70[];
+extern u8 gRom[];
+extern u8 gIw[];
 
 void Text_FormatSignedDecimalToWork(s32 arg0)
 {
@@ -16,9 +17,9 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
 
     result = arg0;
     val = result;
-    tbl = (u32 *)Data_08007970;
+    tbl = (u32 *)gRom;
     sign = 0x20;
-    out = (s8 *)Data_03001f70;
+    out = (s8 *)gIw;
     if (val < 0) {
         val = -val;
         sign = 0x2D;
@@ -38,7 +39,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
     if (count != 0) {
         do {
             word = *tbl++;
-            result = Func_080022f4((u32)val, word);
+            result = Ui_Apply((u32)val, word);
             *out++ = result + 0x30;
             val -= result *word;
             count -= 1;

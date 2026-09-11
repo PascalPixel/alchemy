@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/table/read_active_value.h"
 
 struct ObjectValueSource {
     u8 unknown_000[40];
@@ -31,15 +33,14 @@ typedef char ObjectTableEntry_active_offset[
 typedef char ObjectTableState_objects_offset[
     OBJECT_08092BA8_OFFSET(struct ObjectTableState, objects) == 0x14 ? 1 : -1
 ];
-#undef OBJECT_08092BA8_OFFSET
 
-extern struct ObjectTableState *Data_03001ebc;
+extern struct ObjectTableState *gWork;
 
 s32 ObjectTable_ReadActiveValue(s32 key)
 {
     s32 result = -1;
     struct ObjectTableEntry *entry =
-        Data_03001ebc->objects[(u32)key & 0x0fff];
+        gWork->objects[(u32)key & 0x0fff];
 
     if (entry != 0 && entry->active == 1) {
         result = *entry->value_source->value;

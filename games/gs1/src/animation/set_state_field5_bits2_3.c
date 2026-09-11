@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Value_0800c548 {
     u8 padding[5];

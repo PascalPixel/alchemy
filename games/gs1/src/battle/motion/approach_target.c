@@ -1,5 +1,6 @@
 #include "battle_motion.h"
 #include "types.h"
+#include "scene.h"
 #include "motion_object.h"
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32);

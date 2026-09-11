@@ -1,17 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/arrival.h"
 
-#define SceneData_SelectTableBySceneId Func_02000030
-#define SceneData_ReturnZero Func_02000070
-#define SceneData_GetTable8728 Func_02000074
-#define SceneData_SelectAndPrepareTable Func_0200007c
-#define SceneData_SelectSubStateTable Func_020000e4
-#define Dialogue_RunActor12DialogueAndSetFlag910 Func_02000144
-#define Dialogue_RunActor16Dialogue Func_0200016c
-#define Dialogue_RunActor8FlaggedDialogue Func_0200018c
-#define Dialogue_RunActor8FacingDialogue Func_020001fc
-#define Scene_RunArrivalPlacement Func_02000240
-#define State_SetRuntimeWord448To521 Func_02000308
-#define State_ClearSlotsBySubState Func_0200033c
 #include "resource_3a9.h"
 
 /* Table selection, dialogue and arrival scripts for resource_3a9. */
@@ -21,77 +11,29 @@ typedef struct Placement {
     u16 y;
 } Placement;
 
-extern s16 Data_02000240[];     /* The shared work area, in RAM. */
+extern s16 gCell[];     /* The shared work area, in RAM. */
 extern u8 Value_00000064;
 extern u8 Value_00000065;
-extern u8 Data_020084d0[];
-extern u8 Data_020086c8[];
-extern u8 Data_020084a0[];
-extern Placement Data_02008ef8[];   /* In-image placement table, four entries. */
-extern u8 *Data_03001ebc;
-extern s16 Data_02000240[];
-extern u8 Data_020088d4[];
-extern u8 Data_0200879c[];
-extern u8 Data_02008a0c[];
-extern u8 Data_02008784[];
-extern u8 Data_02008c88[];
-extern u8 Data_02008a48[];
-extern u8 Data_02008eb0[];
-extern u8 Data_02008a3c[];
+extern u8 gOv[];
+extern u8 gOv2[];
+extern u8 gOv3[];
+extern Placement gOv4[];   /* In-image placement table, four entries. */
+extern u8 *gWork;
+extern s16 gCell[];
+extern u8 gOv5[];
+extern u8 gOv6[];
+extern u8 gOv7[];
+extern u8 gOv8[];
+extern u8 gOv9[];
+extern u8 gOv10[];
+extern u8 gOv11[];
+extern u8 gOv12[];
 
-void Func_02000558(void);
-void Func_020005a6(s32);
-s32 Func_020005b6(s32, s32);
-void Func_0200055e(s32);
-void Func_0200057a(void);
-void Func_02000580(void);
-void Func_020005ce(s32);
-s32 Func_020005e6(s32, s32);
-void Func_0200059a(void);
-u8 *Func_020005ba(s32);
-void Func_02000638(s32, s32);
-void Func_020005be(void);
-s32 Func_020005ac(s32);
-void Func_02000616(s32);
-void Func_02000626(s32, s32);
-void Func_02000626_b(s32);
-void Func_0200063e(s32, s32);
-void Func_020005de(s32);
-void Func_020005fa(void);
-u8 *Func_0200062a(int);
-void Func_0200069e(int);
-void Func_0200062c(void);
-void Func_0200068a(int, int);
-void Func_02000646(void);
-void Func_02000658();
-void Func_02000710();
-u8 *Func_020006e6();
-void Func_020006e6_a(s32);
-void Func_020006f0();
-void Func_02000718();
-void Func_02000714();
-void Func_0200075c();
-void Func_02000768();
-void Func_02000774();
-void Func_02000692(u32, u32, u32);
-void Func_02000730();
-void Func_0200065e(void);
-void Func_020007b4();
-void Func_020007ba();
-void Func_020007c0();
-void Func_020007c6();
-void Func_020007cc();
-void Func_020007d2();
-void Func_020007d8();
-void Func_020007de();
-void Func_020007e4();
-void Func_02000800();
-void Func_02000806();
-void Func_0200080e();
-void Func_02000762(s32, s32, s32, s32, s32, s32);
-s32 Func_02000772();
-s32 Func_020007be();
-void Func_020004d0(void *);
+u8 *Actor_Run(s32);
+
+u8 *Actor_Run2(int);
+
+u8 *Actor_Run3();
 
 /* Old-style declarations where an overlay import varies in arity between its
  * call sites. */
@@ -99,15 +41,15 @@ void Func_020004d0(void *);
 /* Picks one of three scene tables by scene id. */
 s32 SceneData_SelectTableBySceneId(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gCell[224];
 
     if (v == (s32)&Value_00000064) {
-        return (s32)Data_020084d0;
+        return (s32)gOv;
     }
     if (v == (s32)&Value_00000065) {
-        return (s32)Data_020086c8;
+        return (s32)gOv2;
     }
-    return (s32)Data_020084a0;
+    return (s32)gOv3;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -126,12 +68,12 @@ u8 *SceneData_GetTable8728(void)
 }
 
 /* Picks a table by scene id and sub-state, and hands the chosen one to
- * Func_020004d0 before returning it. */
+ * Actor_Do before returning it. */
 u8 *SceneData_SelectAndPrepareTable(void)
 {
-    s32 id = Data_02000240[224];
+    s32 id = gCell[224];
     if (id == (s32)&Value_00000064) {
-        s32 state = Data_02000240[225];
+        s32 state = gCell[225];
         u8 *tbl;
         switch (state) {
         case 9:
@@ -142,28 +84,28 @@ u8 *SceneData_SelectAndPrepareTable(void)
         case 14:
         case 15:
         case 17:
-            tbl = Data_020088d4;
+            tbl = gOv5;
             break;
         default:
-            tbl = Data_0200879c;
+            tbl = gOv6;
             break;
         }
-        Func_020004d0(tbl);
+        Actor_Do(tbl);
         return tbl;
     }
     if (id == (s32)&Value_00000065) {
-        return Data_02008a0c;
+        return gOv7;
     }
-    return Data_02008784;
+    return gOv8;
 }
 
 /* The same selection without the hand-off. Sub-state 16 falls to the default
  * arm even though it lies inside 9..17; that hole is deliberate. */
 u8 *SceneData_SelectSubStateTable(void)
 {
-    s32 id = Data_02000240[224];
+    s32 id = gCell[224];
     if (id == (s32)&Value_00000064) {
-        s32 state = Data_02000240[225];
+        s32 state = gCell[225];
         switch (state) {
         case 9:
         case 10:
@@ -173,76 +115,76 @@ u8 *SceneData_SelectSubStateTable(void)
         case 14:
         case 15:
         case 17:
-            return Data_02008c88;
+            return gOv9;
         default:
-            return Data_02008a48;
+            return gOv10;
         }
     }
     if (id == (s32)&Value_00000065) {
-        return Data_02008eb0;
+        return gOv11;
     }
-    return Data_02008a3c;
+    return gOv12;
 }
 
 void Dialogue_RunActor12DialogueAndSetFlag910(void)
 {
-    Func_02000558();
-    Func_020005a6(0x1ADD);
-    Func_020005b6(0xC, 0);
-    Func_0200055e(0x910);
-    Func_0200057a();
+    Actor_Run4();
+    Actor_Do2(0x1ADD);
+    Actor_Apply(0xC, 0);
+    Actor_Do3(0x910);
+    Actor_Run5();
 }
 
 void Dialogue_RunActor16Dialogue(void)
 {
-    Func_02000580();
-    Func_020005ce(0x1AE3);
-    Func_020005e6(16, 0);
-    Func_0200059a();
+    Actor_Run6();
+    Actor_Do4(0x1AE3);
+    Actor_Apply2(16, 0);
+    Actor_Run7();
 }
 
-/* Actor 8's dialogue, branched on flag 0x911. Func_02000626 and
- * Func_02000626_b are two imports sharing one call word: the two-argument
+/* Actor 8's dialogue, branched on flag 0x911. Actor_Apply3 and
+ * Actor_Do5 are two imports sharing one call word: the two-argument
  * gesture in the first arm, the one-argument message in the second. */
 void Dialogue_RunActor8FlaggedDialogue(void)
 {
-    u8 *p = Func_020005ba(0);
+    u8 *p = Actor_Run(0);
 
     /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
     if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
-        Func_02000638(7, 8);
+        Actor_Apply4(7, 8);
     } else {
-        Func_020005be();
+        Actor_Run8();
 
-        if (Func_020005ac(0x911) != 0) {
-            Func_02000616(0x1AFB);
-            Func_02000626(8, 0);
+        if (Actor_Check(0x911) != 0) {
+            Actor_Do6(0x1AFB);
+            Actor_Apply3(8, 0);
         } else {
-            Func_02000626_b(0x1AD7);
-            Func_0200063e(8, 0);
-            Func_020005de(0x910);           /* 145 << 4 */
+            Actor_Do5(0x1AD7);
+            Actor_Apply5(8, 0);
+            Actor_Do7(0x910);           /* 145 << 4 */
         }
 
-        Func_020005fa();
+        Actor_Run9();
     }
 }
 
 void Dialogue_RunActor8FacingDialogue(void)
 {
-    void Func_0200067a(int);
+    void Actor_Run10(int);
 
-    u8 *p = Func_0200062a(0);
+    u8 *p = Actor_Run2(0);
 
     /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
     if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
-        Func_0200069e(8);
+        Actor_Do8(8);
     } else {
-        Func_0200062c();
-        Func_0200067a(0x1A8F);
-        Func_0200068a(8, 0);
-        Func_02000646();
+        Actor_Run11();
+        Actor_Run10(0x1A8F);
+        Actor_Apply6(8, 0);
+        Actor_Run12();
     }
 }
 
@@ -256,24 +198,24 @@ void Dialogue_RunActor8FacingDialogue(void)
  */
 void Scene_RunArrivalPlacement(void)
 {
-    u8 *Func_0200067a_a();
+    u8 *Actor_Run13();
 
     u8 *work = *(u8 **)0x03001ebc;
     u32 slot;
     s32 idx;
     u8 *p;
 
-    Func_02000658();
+    Actor_Run14();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *rec = Func_0200067a_a(slot);
+        u8 *rec = Actor_Run13(slot);
 
         if (rec != 0) {
             rec[85] = 0;
         }
     }
 
-    /* The sub-state slot is read twice, here and for Func_0200075c below, and
+    /* The sub-state slot is read twice, here and for Actor_Run15 below, and
      * both reads are kept. */
     switch (*(s16 *)(work + 364)) {         /* 182 << 1 */
     case 12: idx = 0; break;
@@ -283,13 +225,13 @@ void Scene_RunArrivalPlacement(void)
     default: return;
     }
 
-    Func_02000730(158);
+    Actor_Run16(158);
 
     /* The entry address is accumulated through these locals; folding them into
      * one indexed expression does not reproduce the loads. */
     {
         u32 off = idx << 3;
-        u32 value = (u32)Data_02008ef8;
+        u32 value = (u32)gOv4;
         u32 addr = off + 4;
         u16 x = *(volatile u16 *)(value + addr);
         u16 y;
@@ -297,31 +239,31 @@ void Scene_RunArrivalPlacement(void)
         addr += value;
         y = *(volatile u16 *)(addr + 2);
         value = *(volatile u32 *)(value + off);
-        Func_02000692(value, x, y);
+        Actor_Place(value, x, y);
     }
 
-    Func_020006f0(0, 0x00008000, 0x00004000);
+    Actor_Run17(0, 0x00008000, 0x00004000);
 
-    p = Func_020006e6(0);
+    p = Actor_Run3(0);
     p[85] = 0;
 
-    Func_02000714(0, 2);
-    Func_02000718(0, 3, -8);
-    Func_020006e6_a(10);
+    Actor_Run18(0, 2);
+    Actor_Run19(0, 3, -8);
+    Actor_Do9(10);
 
-    Func_0200075c(*(s16 *)(work + 364));
-    Func_02000768();
-    Func_02000774();
-    Func_02000710();
+    Actor_Run15(*(s16 *)(work + 364));
+    Actor_Run20();
+    Actor_Run21();
+    Actor_Run22();
 }
 
-/* Publishes 0x209 at +448 of the runtime record, and calls Func_0200065e for
+/* Publishes 0x209 at +448 of the runtime record, and calls Actor_Run23 for
  * scene 0x64. */
 s32 State_SetRuntimeWord448To521(void)
 {
-    *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32)(u32)&Value_00000064) {
-        Func_0200065e();
+    *(s32 *)(gWork + 448) = 0x209;
+    if (gCell[224] == (s32)(u32)&Value_00000064) {
+        Actor_Run23();
     }
     return 0;
 }
@@ -335,7 +277,7 @@ s32 State_SetRuntimeWord448To521(void)
  */
 void State_ClearSlotsBySubState(void)
 {
-    s16 sub = Data_02000240[225];
+    s16 sub = gCell[225];
 
     switch (sub) {
     case 3:
@@ -343,7 +285,7 @@ void State_ClearSlotsBySubState(void)
         /* The last two arguments travel on the stack. */
         s32 fifth = 4;
         s32 sixth = 2;
-        Func_02000762(30, 14, 30, 16, fifth, sixth);
+        Actor_SetRect(30, 14, 30, 16, fifth, sixth);
         return;
     }
     case 9:
@@ -360,26 +302,26 @@ void State_ClearSlotsBySubState(void)
     }
 
     /* sub is 9..15 or 17. */
-    if (Func_02000772(0x911) != 0) {
+    if (Actor_Check2(0x911) != 0) {
         /* Nine distinct call sites, not a loop; the trailing 15 is out of
          * order and is kept that way. */
-        Func_020007b4(10);
-        Func_020007ba(11);
-        Func_020007c0(12);
-        Func_020007c6(13);
-        Func_020007cc(14);
-        Func_020007d2(17);
-        Func_020007d8(18);
-        Func_020007de(19);
-        Func_020007e4(15);
+        Actor_Run24(10);
+        Actor_Run25(11);
+        Actor_Run26(12);
+        Actor_Run27(13);
+        Actor_Run28(14);
+        Actor_Run29(17);
+        Actor_Run30(18);
+        Actor_Run31(19);
+        Actor_Run32(15);
     } else {
-        Func_0200080e(13, 2);
+        Actor_Run33(13, 2);
     }
     return;
 
 other:
-    if (Func_020007be(0x911) != 0) {
-        Func_02000800(16);
-        Func_02000806(17);
+    if (Actor_Check3(0x911) != 0) {
+        Actor_Run34(16);
+        Actor_Run35(17);
     }
 }

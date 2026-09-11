@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_operands.h"
 
 s32 Script_ClearByte54(struct ScriptOperands *work)

@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/shop/unit/hilite.h"
 
 void Object_InitializeMode(void *, s32);
-s32 Func_080b27b0(s32, s32);
 
-extern u8 *Data_03001f2c;
+extern u8 *gIw;
 
 void Shop_HiliteUnit(s32 enabled, s32 selected)
 {
@@ -15,7 +16,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
     s32 variant;
     s16 id;
 
-    state = Data_03001f2c;
+    state = gIw;
     variant = *(s8 *)(state + 0x3aa);
     if (enabled != 0) {
         index = 0;
@@ -30,7 +31,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
                     Object_InitializeMode((void *)*item, 1);
                 item[16] = 0x10000;
                 id = *(s16 *)(half_base + offset);
-                if (Func_080b27b0(id, variant) == 0)
+                if (Sys_Apply(id, variant) == 0)
                     item[16] = 0xb333;
                 index++;
                 offset += 2;

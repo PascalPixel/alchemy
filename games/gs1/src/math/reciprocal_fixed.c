@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s16 FixedPoint_Ratio(s32, s16);
 

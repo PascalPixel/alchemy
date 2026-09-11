@@ -1,10 +1,12 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/obj/update_object_visibility_bounds.h"
 
 s32 Object_GetById(u32);
 
-extern s32 Data_02000240[];
-extern u8 Data_03001ebc[];
+extern s32 gCell[];
+extern u8 gWork[];
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {
@@ -17,9 +19,9 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     s32 bottom;
     u32 id;
 
-    object = Data_02000240[125];
+    object = gCell[125];
     Object_GetById(object);
-    object = *(s32 *)(*(u8 **)Data_03001ebc + 480);
+    object = *(s32 *)(*(u8 **)gWork + 480);
     x = *(s32 *)(object + 8);
     left = x + 0xFEC00000;
     right = x + 0x01400000;

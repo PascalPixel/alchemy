@@ -1,5 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/play/play_sound_if_inactive.h"
 
 struct SoundTableEntry {
     u32 header;
@@ -14,13 +16,13 @@ struct MusicPlayerView {
 };
 
 void MusicPlayer_StartSong(struct MusicPlayerView *, u32);
-extern struct MusicPlayerView *Data_080fc624[];
-extern struct SoundTableEntry Data_080fc684[];
+extern struct MusicPlayerView *gRom[];
+extern struct SoundTableEntry gRom2[];
 
 void Audio_PlaySoundIfInactive(u16 audio_cue_id)
 {
-    struct MusicPlayerView **players = Data_080fc624;
-    struct SoundTableEntry *audio_cue_table = Data_080fc684;
+    struct MusicPlayerView **players = gRom;
+    struct SoundTableEntry *audio_cue_table = gRom2;
     struct SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     struct MusicPlayerView *player = players[audio_cue->player * 3];
 

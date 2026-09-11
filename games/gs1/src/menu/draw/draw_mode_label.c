@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/draw/draw_mode_label.h"
 
 struct MenuModeLabelState {
     u8 pad_000[124];
@@ -9,18 +11,17 @@ struct MenuModeLabelState {
     s16 previous_mode;
 };
 
-extern struct State_08028aa8 *Data_03001f38;
+extern struct State_08028aa8 *gIw;
 
-extern void Func_080164d4(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacter(const u8 *, void *, s32, s32);
 
 void Menu_DrawModeLabel(void)
 {
-    struct MenuModeLabelState *state = Data_03001f38;
+    struct MenuModeLabelState *state = gIw;
 
     if (state->previous_mode != state->mode) {
         state->previous_mode = state->mode;
-        Func_080164d4(state->window, 8, 40, 144, 80);
+        Menu_SetRange(state->window, 8, 40, 144, 80);
 
         if (state->mode != 1) {
             if (state->mode > 1)

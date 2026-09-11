@@ -1,11 +1,11 @@
 #include "text_render_runtime.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_string_at_offset.h"
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
-s32 Func_08002df0(s16 *);
 s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
-s32 Func_0801de5c(s16 *, s32, s32, s32);
 
 void UiText_DrawStringAtOffset(
     u8 *text,
@@ -23,7 +23,7 @@ void UiText_DrawStringAtOffset(
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    base = Data_03001e8c;
+    base = gIw;
     output = buffer;
     if (*text != 0) {
         do {
@@ -43,11 +43,11 @@ void UiText_DrawStringAtOffset(
         dst = vram + cell;
         src = (s32)base + cell;
         phase = offset_x & 7;
-        Func_0801de5c(
+        Ui_SetMode(
             buffer,
             src,
             dst,
             phase);
-        Func_08002df0(buffer);
+        Ui_Check(buffer);
     }
 }

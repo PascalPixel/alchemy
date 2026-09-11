@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 void *ObjectTable_GetSlotAddress(u32 index)

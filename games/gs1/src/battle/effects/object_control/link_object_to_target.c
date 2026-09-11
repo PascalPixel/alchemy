@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/object_control/link_object_to_target.h"
 #include "object_effect.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -10,7 +12,7 @@ void BattleFx_LinkObjectToTarget(void *target, s32 keep_current_position)
 
     object = FIELD_AT_OFFSET(Runtime_AllocateBlock(0x1B, 0xCCC), void **, 0x1E0);
     if (target != NULL) {
-        Func_080090e0(object, NULL);
+        Battle_Run(object, NULL);
         FIELD_AT_OFFSET(object, void **, 0x68) = target;
         if (keep_current_position == 0) {
             FIELD_AT_OFFSET(object, s32 *, 8) = FIELD_AT_OFFSET(target, s32 *, 8);

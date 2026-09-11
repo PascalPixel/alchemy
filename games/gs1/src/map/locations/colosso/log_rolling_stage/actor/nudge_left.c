@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/actor/nudge_left.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct StageActor {
@@ -7,18 +9,18 @@ typedef struct StageActor {
     s32 z;
 } StageActor;
 
-extern s16 Data_02000240[];
-extern u8 *Data_03001ebc;
+extern s16 gCell[];
+extern u8 *gWork;
 
-StageActor *Func_02004c36();
+StageActor *Actor_Run();
 
 void Colosso_NudgeActorsLeft(void)
 {
-    u8 *workspace = Data_03001ebc;
-    s16 *table = Data_02000240;
+    u8 *workspace = gWork;
+    s16 *table = gCell;
     s32 id = *(s32 *)&table[250];
     StageActor *subject = *(StageActor **)(workspace + 480);
-    StageActor *actor = Func_02004c36(id);
+    StageActor *actor = Actor_Run(id);
     s32 z = *(s16 *)((u8 *)actor + 0x12);
 
     /* Nudge both records left while the actor occupies rows 183 through 186. */

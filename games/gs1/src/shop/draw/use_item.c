@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/shop/draw/use_item.h"
 #include "shop.h"
 
 extern u8 Value_00000182;
@@ -6,16 +8,11 @@ extern u8 Value_00000c94;
 extern u8 Value_00000c95;
 extern u8 Value_00000c8d;
 
-void *Func_08077008(s32);
-void Func_08015270(s32);
-void Func_08015080(s32, s32, s32, s32);
-s32 Func_080772a8(s32, s32);
-s32 Func_080b19cc(s32);
-void Func_080150b0(s32, s32, s32, s32, s32);
+void *Sys_Run(s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit = Func_08077008(unit_id);
+    u8 *unit = Sys_Run(unit_id);
     s32 slot_offset = item_id * 2 + 216;
     s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
     s32 mult = (*(volatile u16 *)(unit + slot_offset) >> 11) + 1;
@@ -26,7 +23,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         UiWindow_Commit(window);
         UiText_DrawAt(masked + (s32)&Value_00000182, window, 0, 0);
 
-        result = Func_080772a8(unit_id, item_id);
+        result = Sys_Apply(unit_id, item_id);
         if (result == -4) {
             UiText_DrawAt((s32)&Value_00000c94, window, 0, 8);
         } else if (result == -3) {

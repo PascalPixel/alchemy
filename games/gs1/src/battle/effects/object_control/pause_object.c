@@ -1,8 +1,9 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/object_control/pause_object.h"
 
 void Object_SetAction(u8 *, s32);
-void Func_0809ad71(void);
 
 struct GlobalState {
     u8 unknown_000[0x249];
@@ -11,7 +12,7 @@ struct GlobalState {
     u32 saved_callback;
 };
 
-extern struct GlobalState Data_02000240;
+extern struct GlobalState gCell;
 
 void BattleFx_PauseObject(s32 arg0)
 {
@@ -20,15 +21,15 @@ void BattleFx_PauseObject(s32 arg0)
 
     object = ObjectTable_Get(arg0);
     if (object != NULL) {
-        Data_02000240.saved_callback = *(u32 *)(object + 0x6C);
-        Data_02000240.saved_byte = 0;
+        gCell.saved_callback = *(u32 *)(object + 0x6C);
+        gCell.saved_byte = 0;
         if (object[0x54] == 1) {
             entry = *(u8 **)(*(u8 **)(object + 0x50) + 0x28);
             if (entry != NULL) {
-                Data_02000240.saved_byte = entry[5];
+                gCell.saved_byte = entry[5];
             }
         }
-        *(u32 *)(object + 0x6C) = (u32)Func_0809ad71;
+        *(u32 *)(object + 0x6C) = (u32)Battle_Run;
         object[0x5B] = 1;
         Object_SetAction(object, 0);
     }

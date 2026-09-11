@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 BattleEffectI(s32, s32);
 

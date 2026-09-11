@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/summon/get_entry_flag1_field.h"
 
 struct Entry {
     u16 value;
@@ -7,11 +9,11 @@ struct Entry {
     u8 rest[4];
 };
 
-extern struct Entry Data_080c7420[];
+extern struct Entry gRom[];
 
 s32 Summon_GetEntryFlag1Field(s32 index)
 {
     if ((u32)index > 171)
-        return Data_080c7420[0].value;
-    return ((u32)Data_080c7420[index].flags1 << 27) >> 28;
+        return gRom[0].value;
+    return ((u32)gRom[index].flags1 << 27) >> 28;
 }

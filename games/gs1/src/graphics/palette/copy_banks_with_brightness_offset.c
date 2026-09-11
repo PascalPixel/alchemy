@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Palette_CopyBanksWithBrightnessOffset(s32 arg0)
 {

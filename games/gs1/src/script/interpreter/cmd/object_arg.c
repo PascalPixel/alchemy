@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_commands.h"
 #include "script_interpreter.h"
 

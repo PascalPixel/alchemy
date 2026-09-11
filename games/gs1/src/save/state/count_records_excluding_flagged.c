@@ -1,11 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/save/state/count_records_excluding_flagged.h"
 #include "runtime_interfaces.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Func_080056cc();
-s32 Func_08005c68();
 
 s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 {
@@ -14,10 +13,10 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
     s32 cnt;
     volatile u8 *p;
 
-    if (Func_080056cc() != 0) {
+    if (State_Check() != 0) {
         cnt = -9;
     } else {
-        cnt = Func_08005c68();
+        cnt = State_Check2();
         if (flag != 0) {
             p = (volatile u8 *)(*(s32 *)ADDR_03001F1C + 0x1071);
             i = 2;
@@ -31,6 +30,6 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
             } while (i >= 0);
         }
     }
-    Func_08005cf8();
+    State_Run();
     return cnt;
 }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/motion/run_value_sequence.h"
 
 struct ObjectSlot_080babdc {
     void *object;
@@ -9,16 +11,14 @@ struct Runtime_080babdc {
     u8 mode;
 };
 
-extern struct Runtime_080babdc *Data_03001e74;
+extern struct Runtime_080babdc *gBattleWork;
 
 void *Runtime_GetObject(s32 id);
 struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
 void Object_SetMode(void *object, s32 mode);
-void Func_080152b8(u16 *selection);
+
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
 void WaitFrames(s32 frames);
-s32 Func_080b6cd0(s32 id);
-void Func_08015130(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)
 {
@@ -36,16 +36,16 @@ void BattleMotion_RunValueSequence(s32 id)
         target = 0xff;
         sel[1] = target;
         sel[0] = id;
-        Func_080152b8(sel);
+        Battle_Do(sel);
         BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, 7);
         WaitFrames(2);
 
         sel[0] = id;
-        Func_080152b8(sel);
-        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, Func_080b6cd0(id));
+        Battle_Do(sel);
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, Battle_Check(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);
 
-    Func_08015130(Data_03001e74->mode);
+    Battle_Do2(gBattleWork->mode);
 }

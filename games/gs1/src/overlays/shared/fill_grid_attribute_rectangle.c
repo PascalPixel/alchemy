@@ -1,11 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/shared/fill_grid_attribute_rectangle.h"
 
-extern u8 *Data_03001e70;
-extern u8 Data_02010000[];
+extern u8 *gCam;
+extern u8 gUnk[];
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 Sys_Run(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
-    u8 *g = Data_03001e70;
+    u8 *g = gCam;
     u8 *base;
     u32 i;
     u32 j;
@@ -16,7 +18,7 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 
             base = *(u8 **)(g + off);
         } else {
-            base = Data_02010000;
+            base = gUnk;
         }
         base += (arg1 + (arg2 << 7)) * 4;
         for (i = 0; i < arg4; i++) {

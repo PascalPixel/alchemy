@@ -1,9 +1,9 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/animation/init_work_from_metadata.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Func_0800b798(s32 arg0);
 
 void Animation_InitWorkFromMetadata(void *work)
 {
@@ -12,11 +12,11 @@ void Animation_InitWorkFromMetadata(void *work)
     void *info;
 
     if (work != NULL) {
-        info = Func_08185000(FIELD_AT_OFFSET(work, s16, 0));
+        info = Sys_Run(FIELD_AT_OFFSET(work, s16, 0));
         if (FIELD_AT_OFFSET(info, u8, 0) != 0) {
             value = FIELD_AT_OFFSET(info, s32, 0x0c);
             if (value == 0) {
-                value = Func_0800b798(FIELD_AT_OFFSET(work, s16, 0));
+                value = Sys_Check(FIELD_AT_OFFSET(work, s16, 0));
             }
             FIELD_AT_OFFSET(work, u8, 4) = FIELD_AT_OFFSET(info, u8, 4);
             FIELD_AT_OFFSET(work, s32, 0x0c) = FIELD_AT_OFFSET(info, s32, 0x10);

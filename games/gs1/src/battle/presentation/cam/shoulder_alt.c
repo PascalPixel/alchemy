@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/cam/shoulder_alt.h"
 #include "global_cells.h"
-
-void Func_080c0a24(u32, u32, s32, s32, u32);
 
 extern u16 Value_fffffe00;
 
@@ -19,6 +19,6 @@ void BattlePres_AdjustCameraByShoulderKeysAlt(void)
         *(u16 *)(cam + 54) += (u16)(u32)&Value_fffffe00;
     }
     if (*(u32 *)(trans + 20) == 0) {
-        Func_080c0a24(0x780000, 0x780000, 0, 0, 0x10000);
+        Battle_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }

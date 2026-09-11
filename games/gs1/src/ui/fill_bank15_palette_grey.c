@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/fill_bank15_palette_grey.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void ScheduleCallbackAfterFrames(s32, s32);
-void Func_08097868(void);
 
 void Ui_FillBank15PaletteGrey(void)
 {
@@ -36,6 +37,6 @@ void Ui_FillBank15PaletteGrey(void)
     *p = 0x739C;
     {
         s32 n = 0x480;
-        ScheduleCallbackAfterFrames((s32)Func_08097868, n);
+        ScheduleCallbackAfterFrames((s32)Ui_Run, n);
     }
 }

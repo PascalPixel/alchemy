@@ -1,5 +1,6 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
 
 s32 MusicPlayer_BeginFadeOut(s32, u16);
 

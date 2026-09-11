@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/trans/draw_rows.h"
 
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
-extern u8 Data_03001ef8[];
+extern u8 gDisp[];
 
 void BattlePres_DrawTransitionRows(void)
 {
@@ -12,7 +14,7 @@ void BattlePres_DrawTransitionRows(void)
     u32 row;
     u16 *p;
 
-    rec = *(s32 *)(*(s32 *)Data_03001ef8);
+    rec = *(s32 *)(*(s32 *)gDisp);
     if ((u32)rec <= 79) {
         tile = (7 & rec) + 0xf081;
         if (rec >= 0) {

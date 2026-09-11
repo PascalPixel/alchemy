@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Object_SetMode(s32, s32);
 s32 Object_ResetMotion(s32);

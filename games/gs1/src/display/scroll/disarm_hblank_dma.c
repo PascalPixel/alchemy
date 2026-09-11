@@ -1,9 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/display/scroll/disarm_hblank_dma.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-#define DisplayScroll_ArmHBlankDma_Entry Data_080944ed
-#define DisplayScroll_BuildAndSwapHBlankPage_Entry Data_08094545
 
 void Scheduler_RemoveCallback(void *callback);
 extern u8 DisplayScroll_ArmHBlankDma_Entry;

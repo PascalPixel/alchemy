@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/resource_transfer/load_selected.h"
 #include "resource.h"
 
 struct SelectionNode_0801c188 {
@@ -24,20 +26,19 @@ struct ResourceBuffer_0801c188 {
     void *resource;
 };
 
-extern u8 *Data_03001e98;
+extern u8 *gIw;
 extern u8 Value_000000f1;
 
-struct SelectionNode_0801c188 *Func_0801b36c(void *state);
+struct SelectionNode_0801c188 *Menu_Run(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
-void Func_080053e8(void *source, void *destination);
+
 u16 Resource_FindFreeSlot(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
-void Func_08002dd8(s32 owner);
 
 void Menu_LoadSelectedResource(void)
 {
-    u8 *state = Data_03001e98;
-    struct SelectionNode_0801c188 *selection = Func_0801b36c(state);
+    u8 *state = gIw;
+    struct SelectionNode_0801c188 *selection = Menu_Run(state);
     struct TransferState_0801c188 *transfer;
     struct ResourceBuffer_0801c188 *buffer;
     u8 *tbl;
@@ -57,7 +58,7 @@ void Menu_LoadSelectedResource(void)
             + *(u16 *)(tbl + selection->no * 2);
         *destination = resource;
     }
-    Func_080053e8(resource, buffer);
+    Menu_Apply(resource, buffer);
 
     if (transfer->active == 0)
         transfer->handle = Resource_FindFreeSlot();
@@ -68,5 +69,5 @@ void Menu_LoadSelectedResource(void)
     transfer->x = 40;
     transfer->y = 40;
     transfer->width = 240;
-    Func_08002dd8(17);
+    Menu_Do(17);
 }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/get_default_element.h"
 #include "runtime_interfaces.h"
 
 struct OwnerElementState {
@@ -21,5 +23,5 @@ s32 Owner_GetDefaultElement(struct OwnerElementState *state)
 
     if ((u32)value > 43)
         value = 0;
-    return Data_08088e38[value].first;
+    return gRom[value].first;
 }

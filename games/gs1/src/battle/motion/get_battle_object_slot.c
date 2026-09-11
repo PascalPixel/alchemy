@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "motion_object.h"
 #include "global_cells.h"
 

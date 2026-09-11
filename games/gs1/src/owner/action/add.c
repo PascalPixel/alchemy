@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/action/add.h"
 
 struct Slot08078e28 {
     u16 value;
@@ -11,7 +13,6 @@ struct State08078e28 {
 };
 
 void *Owner_GetState(s32);
-void Func_08078bf0(s32);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
@@ -44,7 +45,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
         }
     }
 
-    Func_08078bf0(state_index);
+    Sys_Do(state_index);
     for (index = 0; index <= 31; index++) {
         if (state->slots[index].value == key) {
             break;

@@ -1,5 +1,6 @@
 #include "text_render_runtime.h"
 #include "types.h"
+#include "scene.h"
 
 u8 *Text_FormatNumber(u8 *, s32, s32);
 

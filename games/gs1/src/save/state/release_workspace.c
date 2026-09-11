@@ -1,10 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/save/state/release_workspace.h"
 #include "runtime_interfaces.h"
 
 typedef void (*InterruptHandler)(void);
 
-u32 Func_08002dd8(s32);
-void Func_0800307c(s32, s32, InterruptHandler);
 u32 SaveState_ReleaseWorkspace(void)
 {
   int fn;
@@ -15,6 +15,6 @@ u32 SaveState_ReleaseWorkspace(void)
   fn = 0;
   id = (tmp = (no = 0x33));
   arg = 0;
-  Func_0800307c(5, arg, (InterruptHandler)fn);
- return Func_08002dd8(id);
+  State_Place(5, arg, (InterruptHandler)fn);
+ return State_Do(id);
 }

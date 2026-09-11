@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3)
 {

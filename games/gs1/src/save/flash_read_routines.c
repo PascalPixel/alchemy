@@ -1,3 +1,4 @@
+#include "scene.h"
 /*
  * Retire the two halfwords at the cartridge-interface cursor, mask its
  * interrupt, and install the tiny relocated copy loop that follows it.

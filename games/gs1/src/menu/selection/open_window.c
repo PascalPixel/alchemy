@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/selection/open_window.h"
 
 struct UiWork {
     u8 pad0[8];
@@ -21,56 +23,54 @@ struct Screen {
     u16 f3b8;
 };
 
-extern struct Screen *Data_03001e98;
-extern u8 Data_00000050[];
-extern u8 Data_00000051[];
+extern struct Screen *gIw;
+extern u8 gVal[];
+extern u8 gVal2[];
 
-struct UiWork *Func_080162d4(s32, s32, s32, s32, s32);
-void Func_08016418(struct UiWork *, s32);
-void Func_08016478(struct UiWork *);
-struct Node *Func_0801b36c(struct Screen *, u32);
-void Func_0801e7c0(s32, struct UiWork *, s32, s32);
+struct UiWork *Menu_Run(s32, s32, s32, s32, s32);
 
-void Func_0801b010(s32 mode, u32 count)
+struct Node *Menu_Run2(struct Screen *, u32);
+
+void Menu_Run3(s32 mode, u32 count)
 {
     struct Screen *screen;
     struct Node *node;
     struct UiWork **slot;
     struct UiWork *window;
 
-    screen = Data_03001e98;
-    node = Func_0801b36c(screen, count);
+    screen = gIw;
+    node = Menu_Run2(screen, count);
     slot = &screen->window;
     window = *slot;
     if (window == 0) {
         if (mode == 6) {
             if (screen->f3b8 != 0) {
-                *slot = Func_080162d4(17, 17, 5, 3, mode);
+                *slot = Menu_Run(17, 17, 5, 3, mode);
             } else {
-                *slot = Func_080162d4(17, 0, 5, 3, mode);
+                *slot = Menu_Run(17, 0, 5, 3, mode);
             }
             screen->f3a0 = 0;
             screen->f3b8 = 999;
         } else {
-            *slot = Func_080162d4(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
+            *slot = Menu_Run(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
         }
-        Func_08016478(screen->window);
+        Menu_Do(screen->window);
     } else {
         if (count != 0 && window->x != count + 2) {
-            Func_08016418(window, 2);
-            *slot = Func_080162d4(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
+            Menu_Apply(window, 2);
+            *slot = Menu_Run(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
         }
-        Func_08016478(screen->window);
+        Menu_Do(screen->window);
     }
     if (screen->f394 != 0) {
-        Func_0801e7c0(node->glyph, screen->window, 0, 0);
+        Menu_SetMode(node->glyph, screen->window, 0, 0);
     } else {
         switch (mode) {
         case 4:
-            Func_0801e7c0((s32)Data_00000051, screen->window, 0, 0);
+            Menu_SetMode((s32)gVal2, screen->window, 0, 0);
             break;
         case 2:
-            Func_0801e7c0((s32)Data_00000050, screen->window, 0, 0);
+            Menu_SetMode((s32)gVal, screen->window, 0, 0);
             break;
         }
     }

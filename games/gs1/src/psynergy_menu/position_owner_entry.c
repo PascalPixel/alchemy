@@ -1,6 +1,7 @@
+#include "scene.h"
+#include "abi/psynergy_menu/position_owner_entry.h"
 #include "m7_interfaces.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
@@ -23,5 +24,5 @@ void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =
         (s16)((Modulo(wrapped_index, phase) * 0x10) + origin_x);
-    Func_080a17c4(object);
+    Sys_Run(object);
 }

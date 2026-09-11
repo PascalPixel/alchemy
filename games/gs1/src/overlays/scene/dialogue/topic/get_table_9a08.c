@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /*
  * resource_3b7 owner at 0x02000030: a leaf that loads its literal pool word

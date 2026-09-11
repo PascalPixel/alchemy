@@ -1,7 +1,8 @@
 #include "render_input.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/render/create_output_from_resource.h"
 
-s32 Func_0801bc34(s32 mode, s32 value);
 void *RenderOutput_CreateFromResource(
     s32 arg0,
     s32 arg1,
@@ -11,7 +12,7 @@ void *RenderOutput_CreateFromResource(
 {
     s32 no;
 
-    no = Func_0801bc34(arg0, arg1);
+    no = Ui_Apply(arg0, arg1);
     if (no < 0) {
         return NULL;
     }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/apply_preset_items_and_flags.h"
 #include "gs1_edition.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -10,7 +12,7 @@
 #endif
 
 /*
- * This owner's view of Data_02000240, which games/gs1/include/battle_effect_runtime.h
+ * This owner's view of gCell, which games/gs1/include/battle_effect_runtime.h
  * declares as `struct BattleWork`. Two fields are evidence here; the paddings
  * are arithmetic to reach them.
  */
@@ -21,24 +23,21 @@ struct Work_080b0444 {
     s8 value11c;
 };
 
-extern struct Work_080b0444 Data_02000240;
+extern struct Work_080b0444 gCell;
 
-void Func_08077050(s32, s32);
-void Func_080b0278(s32, s32);
-s32 Func_08077028(s32, s32);
 void *Runtime_GetObject(s32);
 
 /* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {
-    Data_02000240.value10 = 0x30d40;
-    Data_02000240.value11c = 0x1c;
-    Func_08077050(1, Func_08077028(1, 0x48d));
-    Func_08077050(0, Func_08077028(0, 0x40b));
-    Func_08077028(2, 0xe7);
+    gCell.value10 = 0x30d40;
+    gCell.value11c = 0x1c;
+    Battle_Apply(1, Battle_Apply2(1, 0x48d));
+    Battle_Apply(0, Battle_Apply2(0, 0x40b));
+    Battle_Apply2(2, 0xe7);
     FIELD((void *)Runtime_GetObject(3), s8 *, 0x131) = 1;
     FIELD((void *)Runtime_GetObject(5), s8 *, 0x131) = 1;
     FIELD((void *)Runtime_GetObject(2), s8 *, 0x140) = 1;
-    Func_080b0278(FINAL_ARG, 0x1e);
+    Battle_Apply3(FINAL_ARG, 0x1e);
     return 0;
 }

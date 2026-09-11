@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {

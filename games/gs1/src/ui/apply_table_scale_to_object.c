@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/apply_table_scale_to_object.h"
 
 struct Effect {
     unsigned x : 16;
@@ -22,13 +24,13 @@ struct Object {
     u16 rest_22 : 2;
 };
 
-extern volatile u32 Data_03001800;
-extern s32 Data_08037230[];
+extern volatile u32 gIw;
+extern s32 gRom[];
 s32 AffineMatrix_BuildForEffect(struct Effect *efx);
 
 void Ui_ApplyTableScaleToObject(struct Object *obj)
 {
-    s32 v = Data_08037230[(Data_03001800 >> 1) & 7];
+    s32 v = gRom[(gIw >> 1) & 7];
     struct Effect efx;
 
     if (v < 0)

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/character_selector/move_entry.h"
 
 struct CharacterSelectorOrderState {
     u8 unknown_000[0x208];
@@ -6,10 +8,6 @@ struct CharacterSelectorOrderState {
     u8 unknown_218;
     volatile u8 character_count;
 };
-
-s32 Func_08077150(s32 character_id);
-s32 Func_08077158(const u16 *character_ids);
-s32 Func_08077168(s32 character_id);
 
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
@@ -55,11 +53,11 @@ s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
     }
 
     for (index = 0; index < state->character_count; index++) {
-        Func_08077168(state->character_ids[index]);
+        Menu_Check(state->character_ids[index]);
     }
     for (index = 0; index < state->character_count; index++) {
-        Func_08077150(reordered[index]);
+        Menu_Check2(reordered[index]);
     }
-    *(u8 *)&state->character_count = Func_08077158(state->character_ids);
+    *(u8 *)&state->character_count = Menu_Check3(state->character_ids);
     return 1;
 }

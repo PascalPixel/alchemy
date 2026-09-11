@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/shared/measure_fixed_point_position_distance.h"
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -13,8 +15,7 @@
 
 typedef s32 (*IwramIntegerSquareRoot)(s32);
 
-#define CalculateFixedPointPositionDistance Func_02000030
-s32 Func_02000030(s32 *first_position, s32 *second_position)
+s32 CalculateFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;

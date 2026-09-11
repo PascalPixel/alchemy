@@ -1,7 +1,7 @@
+#include "scene.h"
 #include "battle_party.h"
 #include "battle_runtime.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
 {

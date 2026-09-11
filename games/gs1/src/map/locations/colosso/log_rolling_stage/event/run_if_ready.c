@@ -1,11 +1,10 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/event/run_if_ready.h"
 #include "colosso_log_rolling_stage.h"
-
-extern s32 Func_02005504(void);
-extern void Func_020058ac(void);
 
 void Colosso_RunSceneEventIfReady(void)
 {
-    if (Func_02005504() == 0) {
-        Func_020058ac();
+    if (Map_Check() == 0) {
+        Map_Run();
     }
 }

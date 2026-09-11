@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_step.h"
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)

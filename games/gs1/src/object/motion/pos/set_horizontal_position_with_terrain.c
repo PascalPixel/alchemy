@@ -1,7 +1,8 @@
+#include "scene.h"
+#include "abi/object/motion/pos/set_horizontal_position_with_terrain.h"
 #include "object_runtime.h"
 
 void Object_ResetMotion(struct ObjectRuntime *);
-s32 Func_080091a8(u8, s32, s32);
 
 void Motion_SetHPosTerrain(u32 object_id, s32 x, s32 z)
 {
@@ -33,7 +34,7 @@ void Motion_SetHPosTerrain(u32 object_id, s32 x, s32 z)
                 tile_z += 0xFFFF;
             }
             tile_z = tile_z >> 0x10;
-            terrain_height = Func_080091a8(terrain_id, tile_x, tile_z) << 0x10;
+            terrain_height = Obj_Place(terrain_id, tile_x, tile_z) << 0x10;
             object->y = (object->y - object->terrain_height) + terrain_height;
             object->terrain_height = terrain_height;
         }

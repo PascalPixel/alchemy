@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "low_runtime.h"
 #include "global_cells.h"
 

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item_menu/reset_category.h"
 #include "layout_guard.h"
 
 struct Object_080a9d84 {
@@ -20,12 +22,11 @@ LAYOUT_OFFSET_GUARD(
     State_080a9d84_objects_offset, struct State_080a9d84, objects, 200);
 LAYOUT_SIZE_GUARD(State_080a9d84_size, struct State_080a9d84, 328);
 
-extern struct State_080a9d84 *Data_03001f2c;
-void Func_080a17c4(void *obj);
+extern struct State_080a9d84 *gIw;
 
 void ItemMenu_ResetCategory(void)
 {
-    struct State_080a9d84 *state = Data_03001f2c;
+    struct State_080a9d84 *state = gIw;
     s32 index;
 
     for (index = 0; index < 5; index++) {
@@ -35,7 +36,7 @@ void ItemMenu_ResetCategory(void)
             object->value1 = 248;
             object->value2 = 168;
             object->flag = 240;
-            Func_080a17c4(object);
+            Sys_Do(object);
         }
     }
 }

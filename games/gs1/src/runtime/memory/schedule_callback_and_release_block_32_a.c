@@ -1,11 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/runtime/memory/schedule_callback_and_release_block_32_a.h"
 
 s32 ScheduleCallback(s32);
-s32 Func_08002dd8(s32);
-extern u8 Data_080f2f11;
+
+extern u8 gRom;
 
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
-    ScheduleCallback((s32)&Data_080f2f11);
-    Func_08002dd8(0x20);
+    ScheduleCallback((s32)&gRom);
+    Sys_Check(0x20);
 }

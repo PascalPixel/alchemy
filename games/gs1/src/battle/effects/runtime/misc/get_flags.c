@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "battle_effect_runtime.h"
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id);

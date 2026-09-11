@@ -1,10 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/link/serial/remove_serial_irq_handlers.h"
 #include "global_cells.h"
 
 #ifndef SERIAL_RUNTIME_TU
 typedef void (*InterruptHandler)(void);
 
-void Func_0800307c(s32, s32, InterruptHandler);
 #endif
 
 void SerialRuntime_RemoveIrqHandlers(void)
@@ -17,8 +18,8 @@ void SerialRuntime_RemoveIrqHandlers(void)
         do {
         } while (0);
         *work = 0;
-        Func_0800307c(7, 0, (InterruptHandler)(handler = 0));
+        Sys_Place(7, 0, (InterruptHandler)(handler = 0));
     } while (0);
     handler = 6;
-    Func_0800307c(handler, 0, 0);
+    Sys_Place(handler, 0, 0);
 }

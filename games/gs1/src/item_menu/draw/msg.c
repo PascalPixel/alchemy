@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/item_menu/draw/msg.h"
 #include "far_runtime.h"
 #include "item_menu.h"
 
@@ -7,7 +9,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 {
     struct ItemMenuState *menu;
 
-    menu = Data_03001f2c;
+    menu = gIw;
     UiWindow_Commit(menu->message_window);
     UiText_DrawAt(message, menu->message_window, 0, 0);
 }

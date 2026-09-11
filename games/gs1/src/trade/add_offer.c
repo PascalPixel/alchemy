@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 Trade_RemoveOffer(s32 kind, s32 first, s32 second);
 s32 Trade_GetOfferState(s32 arg0);

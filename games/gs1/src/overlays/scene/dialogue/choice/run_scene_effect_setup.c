@@ -1,27 +1,20 @@
 #include "types.h"
-
-void Func_0200817a();
-void Func_020081dc();
-void Func_02008204();
-void Func_02008212();
-void Func_0200821e();
-void Func_02008266(s32, s32, s32);
-void Func_02008312();
-void Func_02008358();
+#include "scene.h"
+#include "abi/overlays/scene/dialogue/choice/run_scene_effect_setup.h"
 
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
 {
-    Func_02008266(actor, axis, offset);
+    Talk_Place(actor, axis, offset);
 }
 
 void RunSceneEffectSetup(void)
 {
-    Func_020081dc();
-    Func_02008212(0, 32768, 16384);
-    Func_02008358(158);
-    Func_0200817a(33604944, 36, 10);
+    Talk_Run();
+    Talk_Run2(0, 32768, 16384);
+    Talk_Run3(158);
+    Talk_Run4(33604944, 36, 10);
     SetOffset(0, 2, -16);
-    Func_02008204(16);
-    Func_02008312(2);
-    Func_0200821e();
+    Talk_Run5(16);
+    Talk_Run6(2);
+    Talk_Run7();
 }

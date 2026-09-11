@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 

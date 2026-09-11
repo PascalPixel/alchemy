@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/runtime/run_descriptor.h"
 
 typedef struct {
     s32 flags;
@@ -10,14 +12,10 @@ typedef struct {
     s16 h19c;
 } Obj;
 
-struct EffectDescriptor *Func_0808d48c(s32, s32);
+struct EffectDescriptor *Battle_Run(s32, s32);
 void Battle_Reset(void);
-void Func_08092b94(s32);
-void Func_08092f84(s32, s32);
-void Func_08091750(void);
+
 void Audio_PlayCue(s32);
-void Func_08094354(void);
-void Func_08094368(void);
 
 s32 BattleAction_RunDescriptor(s32 arg0)
 {
@@ -27,7 +25,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
     s32 ret;
     Obj *work;
 
-    desc = (Obj *)Func_0808d48c(2, arg0);
+    desc = (Obj *)Battle_Run(2, arg0);
     ret = -1;
     work = *(Obj **)0x03001ebc;
     if ((desc != 0) && (desc->val8 != 0)) {
@@ -36,22 +34,22 @@ s32 BattleAction_RunDescriptor(s32 arg0)
         }
         if (desc->val8 < 0x10000) {
             Battle_Reset();
-            Func_08092b94(desc->val8);
-            Func_08092f84(-1, 0);
+            Battle_Do(desc->val8);
+            Battle_Apply(-1, 0);
             ret = 0;
-            Func_08091750();
+            Battle_Run2();
         } else {
             ((void (*)(s32))desc->val8)(arg0);
             goto block_17;
         }
     } else {
-        desc2 = (Obj *)Func_0808d48c(1, arg0);
+        desc2 = (Obj *)Battle_Run(1, arg0);
         if (desc2 != 0) {
             kind = desc2->flags & 0x30;
             switch (kind) {
             case 0: Audio_PlayCue(0x7B); break;
-            case 32: Audio_PlayCue(0x80); Func_08094354(); break;
-            case 48: Audio_PlayCue(0x81); Func_08094368(); break;
+            case 32: Audio_PlayCue(0x80); Battle_Run3(); break;
+            case 48: Audio_PlayCue(0x81); Battle_Run4(); break;
             }
             work->h170 = (s16)desc2->val8;
 block_17:

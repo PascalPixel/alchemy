@@ -1,8 +1,6 @@
 #include "types.h"
-
-extern void Func_020014ee(s32, s32, s32, s32, s32, s32);
-extern void Func_02001502(s32, s32, s32, s32, s32, s32);
-extern void Func_0200151c(s32, s32, s32, s32, s32, s32);
+#include "scene.h"
+#include "abi/overlays/scene/state/interaction/apply_three_rects_rows_9_and_10.h"
 
 void State_ApplyThreeRectsRows9And10(void)
 {
@@ -12,8 +10,8 @@ void State_ApplyThreeRectsRows9And10(void)
         s32 p5 = 80;
         s32 p6 = 9;
 
-        Func_020014ee(90, 9, 2, 3, p5, p6);
+        State_SetRect(90, 9, 2, 3, p5, p6);
     }
-    Func_02001502(27, 10, 1, 2, strip, 10);
-    Func_0200151c(17, 10, 1, 1, strip, 11);
+    State_SetRect2(27, 10, 1, 2, strip, 10);
+    State_SetRect3(17, 10, 1, 1, strip, 11);
 }

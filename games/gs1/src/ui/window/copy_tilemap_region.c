@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/window/copy_tilemap_region.h"
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 struct UiWindowTilemapRegion {
     u8 padding0[8];
@@ -11,19 +13,17 @@ struct UiWindowTilemapRegion {
 };
 
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
-u32 Func_08005340(const void *source, void *destination);
-void Func_08002df0(void *buffer);
 
 void UiWindow_CopyTilemapRegion(const struct UiWindowTilemapRegion *window, const void *source)
 {
-    s16 *mirror = (s16 *)Data_03001e8c;
+    s16 *mirror = (s16 *)gIw;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *input = buffer;
     u32 cell;
     s16 *vram;
     s32 row;
 
-    Func_08005340(source, buffer);
+    Ui_Apply(source, buffer);
     cell = window->y * 32 + window->x;
     vram = (s16 *)0x06002000 + cell;
     mirror += cell;
@@ -40,5 +40,5 @@ void UiWindow_CopyTilemapRegion(const struct UiWindowTilemapRegion *window, cons
         vram += 32 - window->width;
         mirror += 32 - window->width;
     }
-    Func_08002df0(buffer);
+    Ui_Do(buffer);
 }

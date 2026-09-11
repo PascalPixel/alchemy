@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3)
 {

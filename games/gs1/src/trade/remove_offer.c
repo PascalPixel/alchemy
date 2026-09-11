@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct TradeOffer {
     u8 index;

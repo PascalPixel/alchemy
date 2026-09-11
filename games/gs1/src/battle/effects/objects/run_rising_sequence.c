@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 #define FIELD_S32(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 #define OBJECT_X(object) FIELD_S32(object, 0x08)

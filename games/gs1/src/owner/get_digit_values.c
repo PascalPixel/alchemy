@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/get_digit_values.h"
 #include "runtime_interfaces.h"
 
 struct Record_080797fc {
@@ -6,7 +8,7 @@ struct Record_080797fc {
     u8 values[148];
 };
 
-struct Record_080797fc *Func_08078ed8(s32);
+struct Record_080797fc *Sys_Run(s32);
 #include "preset_table.h"
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
@@ -24,7 +26,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
         i = 0;
         cursor = output;
         for (; i <= 3; i++)
-            *cursor++ = Data_08088e38[index].digits[i] * 10;
+            *cursor++ = gRom[index].digits[i] * 10;
     } else {
         cursor = output;
         source += 36;
@@ -36,7 +38,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
         if (record <= 7) {
             for (i = 0; i <= 3; i++) {
-                *output += Func_08078ed8(record)->values[144 + i];
+                *output += Sys_Run(record)->values[144 + i];
                 output++;
             }
         }

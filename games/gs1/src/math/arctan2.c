@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/math/arctan2.h"
 #include "fixed_math.h"
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
-extern const u16 Data_08007676[];
+extern const u16 gRom[];
 
 u16 ArcTan2(s32 x, s32 y)
 {
@@ -26,7 +28,7 @@ u16 ArcTan2(s32 x, s32 y)
         ratio = FixedPoint_Ratio(value << 8, ratio);
         result = 0x4000;
         if (ratio <= 0xFB6A) {
-            table = Data_08007676;
+            table = gRom;
             result = 0;
 
             value = *table;

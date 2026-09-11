@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_08002dd8(s32);
+#include "scene.h"
+#include "abi/runtime/memory/release_heap_block_10.h"
 
 void Runtime_ReleaseHeapBlock10(void)
 {
-    Func_08002dd8(0xA);
+    Sys_Check(0xA);
 }

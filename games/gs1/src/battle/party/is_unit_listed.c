@@ -1,6 +1,6 @@
 #include "types.h"
-
-s32 Func_080b6c08(s32, u16 *);
+#include "scene.h"
+#include "abi/battle/party/is_unit_listed.h"
 
 u32 BattleParty_IsUnitListed(u32 arg0)
 {
@@ -13,7 +13,7 @@ u32 BattleParty_IsUnitListed(u32 arg0)
     if (arg0 > 7) {
         count = 2;
     }
-    total = Func_080b6c08(count, values);
+    total = Battle_Apply(count, values);
 
     for (i = 0; i < total; i++) {
         if (values[i] == arg0) {

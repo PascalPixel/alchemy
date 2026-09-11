@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/misc/clear_child_value_on_mismatch.h"
 
 struct Child_08096ab0 {
     u8 padding[91];
@@ -19,17 +21,16 @@ struct Global_08096ab0 {
     s16 value;
 };
 
-extern struct State_08096ab0 *Data_03001f30;
-extern struct Global_08096ab0 Data_02000240;
-void Func_08097608(void);
+extern struct State_08096ab0 *gIw;
+extern struct Global_08096ab0 gCell;
 
 void BattleFx_ClearChildValueOnMismatch(void)
 {
-    struct State_08096ab0 *state = Data_03001f30;
+    struct State_08096ab0 *state = gIw;
 
     if (state->mode == 2) {
-        Func_08097608();
-        if (Data_02000240.value != state->value) {
+        Battle_Run();
+        if (gCell.value != state->value) {
             state->child->value = 0;
         }
     }

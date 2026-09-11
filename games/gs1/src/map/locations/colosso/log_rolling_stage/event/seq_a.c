@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/event/seq_a.h"
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-extern u8 Data_00000000[];
+extern u8 gVal[];
 
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
@@ -10,129 +10,56 @@ struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
-extern struct ModeRecord Data_0200da50;
-extern struct ModeRecord Data_0200cce2;
-extern u8 Data_02000240[];
-extern u8 Data_02002090[];
-extern u8 Data_0200cbfc[];
-extern u8 Data_0200cc28[];
-extern u8 Data_0200cca4[];
-extern u8 Data_03001ebc[];
-extern u8 Data_02000240_t[][2];
-void Func_0200640a();
-void Func_02006436();
-s32 Func_02006996();
-s32 Func_020069c2();
-void Func_02007e44();
-void Func_02007fa2();
-void Func_02006a56();
-void Func_02006a5e();
-void Func_02007fc2();
-void Func_02007fcc();
-void Func_02006a76();
-void Func_02007fea();
-void Func_02006aa6();
-void Func_02008010();
-u8 *Func_02006b14();
-void Func_020080d0();
-void Func_020080e4();
-void Func_020080dc();
-void Func_0200811c();
-void Func_02006bba();
-void Func_02008150();
-void Func_02006be4();
-void Func_02006bec();
-void Func_0200817a();
-void Func_0200817c();
-void Func_02008186();
-s32 Func_020081b0();
-void Func_020081b2();
-void Func_020081be();
-void Func_02006c4e();
-void Func_02006c5c();
-void Func_02006c62();
-void Func_02006c6a();
-void Func_02006c80();
-void Func_02006cb2();
-u8 *Func_02006cde();
-void Func_02006cea();
-void Func_02006d00();
-void Func_02006d36();
-void Func_02006d42();
-void Func_02006d62();
-void Func_02006db2();
+extern struct ModeRecord gOv;
+extern struct ModeRecord gOv2;
+extern u8 gCell[];
+extern u8 gOv3[];
+extern u8 gOv4[];
+extern u8 gOv5[];
+extern u8 gOv6[];
+extern u8 gWork[];
+extern u8 gCell2[][2];
 
-void Func_02002ba8();
-void Func_02002d84();
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+u8 *Map_Run2();
 
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
+u8 *Map_Run3();
 
 void Scene_RunScene3bcSequenceA(s32 a0)
 {
     s32 kind;
 
-    Func_0200811c(247);
-    Func_020080d0();
-    Func_020080e4();
-    Data_0200da50.span = a0 * 60;
-    Data_0200cce2.span = (a0 < 0 ? -a0 : a0) * 60;
+    Map_Run4(247);
+    Map_Run5();
+    Map_Run6();
+    gOv.span = a0 * 60;
+    gOv2.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        Func_02007fa2(30);
-        Func_02008150(86);
-        Func_0200640a(8);
-        Value2(Func_02006996, 3, 1);
-        Func_02007fc2(-a0 * 60 + 60);
+        Map_Run7(30);
+        Map_Run8(86);
+        Map_Run9(8);
+        Map_Check(3, 1);
+        Map_Run10(-a0 * 60 + 60);
         kind = 0;
     } else {
-        Func_02007fcc(30);
-        Func_0200817c(a0 + 90);
-        Func_02006436(4);
-        Value2(Func_020069c2, 3, 0);
-        Func_02007fea(a0 * 60 + 60);
+        Map_Run11(30);
+        Map_Run12(a0 + 90);
+        Map_Run13(4);
+        Map_Check2(3, 0);
+        Map_Run14(a0 * 60 + 60);
         kind = 8;
     }
-    Call3(Func_020080dc, kind, 0x105, 0);
-    while (Value0(Func_020081b0)!= 0) {
-        Func_02007e44(1);
+    Map_Place(kind, 0x105, 0);
+    while (Map_Run()!= 0) {
+        Map_Run15(1);
     }
-    Func_020081b2(19);
-    Func_02008010(30);
-    Call1(Func_020081be, 0x121);
-    Func_0200817a();
-    Func_02008186();
+    Map_Run16(19);
+    Map_Run17(30);
+    Map_Do(0x121);
+    Map_Run18();
+    Map_Run19();
 }
 
-void Func_02002ba8(s32 a0, s32 a1, s32 a2)
+void Map_Run20(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
     s32 p10;
@@ -157,15 +84,15 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     p11 = a0;
     p8 = a1;
     p10 = a2;
-    rec = Func_02006b14();
+    rec = Map_Run2();
     p6[6] = 1;
     p6[7] = 4;
-    *(volatile s32 *)Data_0200cca4 = *(volatile s32 *)((s32)rec + 8);
-    *(volatile s32 *)Data_0200cbfc = *(volatile s32 *)((s32)rec + 16);
+    *(volatile s32 *)gOv6 = *(volatile s32 *)((s32)rec + 8);
+    *(volatile s32 *)gOv4 = *(volatile s32 *)((s32)rec + 16);
     p9 = *(volatile s32 *)((s32)rec + 80);
-    *(volatile s32 *)Data_0200cc28 = *(volatile u16 *)((s32)rec + 6);
+    *(volatile s32 *)gOv5 = *(volatile u16 *)((s32)rec + 6);
     v5 = 1;
-    Func_02006be4(p11, 2);
+    Map_Run21(p11, 2);
     {
         u8 value = *(volatile u8 *)&rec[35];
 
@@ -176,15 +103,15 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
 
         *(volatile u16 *)((s32)rec + 6) = shown;
     }
-    Func_02006aa6((s32)rec, 3);
-    Func_02006a56((s32)rec, 0);
-    Func_02006a5e((s32)rec, 1);
+    Map_Run22((s32)rec, 3);
+    Map_Run23((s32)rec, 0);
+    Map_Run24((s32)rec, 1);
     p10b = ((s32)p10 << 16);
     p8b = ((s32)p8 << 16);
-    Func_02006bba(p11, p8b, p10b);
-    Func_02006bec(0, 0x4000, 0);
+    Map_Run25(p11, p8b, p10b);
+    Map_Run26(0, 0x4000, 0);
     base6_4000208 = 0x4000208;
-    base4_2002090 = (s32)Data_02002090;
+    base4_2002090 = (s32)gOv3;
     v1 = *(volatile u16 *)base6_4000208;
     *(volatile u16 *)base6_4000208 = base6_4000208;
     if (*(volatile u16 *)base4_2002090 <= 31) {
@@ -198,7 +125,7 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     p9[17] = ((s32)(-13 & p9[17]) | 4);
     slot0 = base4_2002090;
     v5 = 0;
-    Func_02006d36(252);
+    Map_Run27(252);
     v4 = slot0;
     do {
         *(volatile s32 *)((s32)rec + 24) = ((v5 << 12) + 0x1000);
@@ -213,33 +140,33 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
         }
         *(volatile u16 *)base6_4000208 = v0;
         slot0 = v4;
-        Func_02006a76(1);
+        Map_Run28(1);
         v5 = (v5 + 2);
         v4 = slot0;
     } while (v5 <= 15);
     v4 = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0x4000208;
-    if (*(volatile u16 *)Data_02002090 <= 31) {
-        *(volatile u16 *)Data_02002090 += 1;
-        *(volatile s32 *)((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4)) = 16;
-        *(volatile s32 *)(((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
-        *(volatile s32 *)(((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
+    if (*(volatile u16 *)gOv3 <= 31) {
+        *(volatile u16 *)gOv3 += 1;
+        *(volatile s32 *)((((((*(volatile u16 *)gOv3 << 1) + *(volatile u16 *)gOv3) << 2) + 0x2002090) + 4)) = 16;
+        *(volatile s32 *)(((((((*(volatile u16 *)gOv3 << 1) + *(volatile u16 *)gOv3) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
+        *(volatile s32 *)(((((((*(volatile u16 *)gOv3 << 1) + *(volatile u16 *)gOv3) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
     }
     *(volatile u16 *)0x04000208 = v4;
     *(volatile s32 *)((s32)rec + 24) = 0x11000;
     *(volatile s32 *)((s32)rec + 28) = 0xf000;
-    Func_02006c4e(1);
+    Map_Run29(1);
     *(volatile s32 *)((s32)rec + 24) = 0x10000;
     *(volatile s32 *)((s32)rec + 28) = 0x10000;
-    Func_02006c5c(13);
+    Map_Run30(13);
     p9[5] &= -13;
     p9[17] &= -13;
-    Func_02006cea(p11, 3);
-    Func_02006c80(20);
+    Map_Run31(p11, 3);
+    Map_Run32(20);
     p9b = v5;
 }
 
-void Func_02002d84(s32 a0)
+void Map_Run33(s32 a0)
 {
     u32 i;
     u8 *rec7;
@@ -247,30 +174,30 @@ void Func_02002d84(s32 a0)
     u8 *p7;
 
     p7 = *(volatile s32 *)0x03001e68;
-    rec7 = Func_02006cde();
-    if (Data_02000240_t[249][0] == 1) {
-        Data_02000240_t[249][0] = 0;
-        Func_02006d42(a0, 1);
+    rec7 = Map_Run3();
+    if (gCell2[249][0] == 1) {
+        gCell2[249][0] = 0;
+        Map_Run34(a0, 1);
     } else {
-        Call3(Func_02006db2, a0, 0x4000, 30);
-        Func_02006d62(a0, 3);
-        Func_02006d00(30);
+        Map_Place2(a0, 0x4000, 30);
+        Map_Run35(a0, 3);
+        Map_Run36(30);
     }
     p7[7] = 0;
     p7[6] = 15;
-    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)Data_0200cca4;
-    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)Data_0200cbfc;
-    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)Data_0200cc28;
+    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)gOv6;
+    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)gOv4;
+    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)gOv5;
     *(volatile s32 *)((s32)rec7 + 56) = -0x80000000;
     *(volatile s32 *)((s32)rec7 + 64) = -0x80000000;
     *(volatile s32 *)((s32)rec7 + 36) = 0;
     *(volatile s32 *)((s32)rec7 + 44) = 0;
     rec7[85] = 3;
-    rec7[34] = (s32)Data_00000000;
+    rec7[34] = (s32)gVal;
     *(volatile s32 *)((s32)rec7 + 12) = 0;
     *(volatile s32 *)((s32)rec7 + 20) = 0;
-    Func_02006cb2((s32)rec7, 1);
-    Func_02006c62((s32)rec7, 0);
-    Func_02006c6a((s32)rec7, 1);
-    Func_02008150(1);
+    Map_Run37((s32)rec7, 1);
+    Map_Run38((s32)rec7, 0);
+    Map_Run39((s32)rec7, 1);
+    Map_Run8(1);
 }

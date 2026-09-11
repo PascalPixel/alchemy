@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/mix/set_work_pair_b.h"
 
-extern u16 Data_02003030;
-extern u16 Data_0200300c;
+extern u16 gOv;
+extern u16 gOv2;
 
 void Audio_SetWorkPairB(u16 primary, u16 secondary)
 {
-    Data_02003030 = primary;
-    Data_0200300c = secondary;
+    gOv = primary;
+    gOv2 = secondary;
 }

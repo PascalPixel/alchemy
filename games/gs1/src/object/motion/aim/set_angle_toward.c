@@ -1,6 +1,7 @@
 #include "object_lookup.h"
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
 
 struct Object_0809280c {
     u8 padding_00[6];

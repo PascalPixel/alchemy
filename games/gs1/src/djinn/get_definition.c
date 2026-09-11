@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/djinn/get_definition.h"
 
-extern const u16 Data_0808926c[];
+extern const u16 gRom[];
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index)
 {
@@ -10,5 +12,5 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
     if ((group <= 3U) && (index <= 0x13U)) {
         entry = (group * 0x14) + index;
     }
-    return (const u16 *)((u8 *)Data_0808926c + entry * 0xC);
+    return (const u16 *)((u8 *)gRom + entry * 0xC);
 }

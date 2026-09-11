@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "inventory.h"
 #include "battle_random.h"
 

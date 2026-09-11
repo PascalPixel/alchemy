@@ -1,7 +1,9 @@
+#include "scene.h"
+#include "abi/object/group/apply_indexed_child_value.h"
 #include "object_dispatch.h"
 
-extern u32 Data_03001e40;
-extern u8 Data_0809ed80[];
+extern u32 gIw;
+extern u8 gRom[];
 
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 {
@@ -10,7 +12,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
         u8 *container;
         u8 child_count;
 
-        child_value = Data_0809ed80[(Data_03001e40 >> 1) & 3];
+        child_value = gRom[(gIw >> 1) & 3];
         container = object->target.child;
         child_count = *(container + 0x27);
         if (child_count != 0) {

@@ -1,50 +1,38 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/select_quantity.h"
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
 struct ItemMenuState;
-extern struct ItemMenuState *Data_03001f2c;
-extern volatile s32 Data_03001b04;
-extern volatile u32 Data_03001c94;
-void Func_080a19a0(void);
+extern struct ItemMenuState *gIw;
+extern volatile s32 gIw2;
+extern volatile u32 gIw3;
 
-s32 Func_08015010(s32, s32, s32, s32, s32);
-void Func_08004278(void (*callback)(void));
-void Func_080a22f4(void);
-void Func_080030f8(s32);
-s32 Func_080770c0(s32);
-s32 Func_080022fc(s32, s32);
-void Func_080a4924(s32, s32);
-s32 Func_08015270(s32);
-void Func_08015018(s32, s32);
-void Func_080a2144(s32);
-void Func_080041d8(const void *, s32);
-void Func_08015408(s32, s32, s32, s32);
-
-s32 Func_080a4800(s32 value)
+s32 Menu_Run(s32 value)
 {
     s32 changed = 1;
-    u8 *menu = (u8 *)Data_03001f2c;
+    u8 *menu = (u8 *)gIw;
     u8 *confirmState = MENU_SUBOBJECT(menu, 540);
     s32 window;
     s32 quantity = 0;
 
     confirmState[5] = 13;
-    window = Func_08015010(0, 0, 30, 10, 2);
-    Func_08004278(Func_080a19a0);
+    window = Menu_SetRange(0, 0, 30, 10, 2);
+    Menu_Do(Menu_Run2);
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 13;
     }
-    Func_080a22f4();
-    Func_080030f8(1);
+    Menu_Run3();
+    Menu_Do2(1);
 
     goto check_exit;
 
 adjust:
     {
-        volatile s32 *keys = &Data_03001b04;
+        volatile s32 *keys = &gIw2;
 
         if (*keys & 0x40) {
             quantity -= 1;
@@ -55,20 +43,20 @@ adjust:
             changed = 1;
         }
     }
-    Func_080030f8(1);
+    Menu_Do2(1);
 
 check_exit:
-    if (Func_080770c0(336) != 0)
+    if (Menu_Check(336) != 0)
         goto done;
 
     if (changed != 0) {
         changed = 0;
-        quantity = Func_080022fc(quantity + 5, 5);
-        Func_080a4924(window, value);
+        quantity = Menu_Apply(quantity + 5, 5);
+        Menu_Apply2(window, value);
     }
 
     {
-        volatile u32 *keys = &Data_03001c94;
+        volatile u32 *keys = &gIw3;
 
         if (*keys & 1)
             goto done;
@@ -80,22 +68,22 @@ check_exit:
     goto adjust;
 
 done:
-    Func_08015270(window);
-    Func_080030f8(1);
-    Func_08015018(window, 1);
-    Func_08015270(*(s32 *)(menu + 16));
-    Func_080a2144(14);
+    Menu_Check2(window);
+    Menu_Do2(1);
+    Menu_Apply3(window, 1);
+    Menu_Check2(*(s32 *)(menu + 16));
+    Menu_Do3(14);
     {
         s32 delay = 0xc80;
 
-        Func_080041d8((const void *)Func_080a19a0, delay);
+        Menu_Apply4((const void *)Menu_Run2, delay);
     }
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 1;
     }
-    Func_08015408(13, 0, 17, 10);
+    Menu_SetMode(13, 0, 17, 10);
 
     return quantity;
 }

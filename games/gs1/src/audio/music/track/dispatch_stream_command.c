@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/music/track/dispatch_stream_command.h"
 
 /* Handler per stream command byte, indexed by the byte itself. */
-extern s32 Data_080fba48[];
-
-void Func_080072ec();
+extern s32 gRom[];
 
 /*
  * Take the next byte of the track's command stream, advance the read
@@ -15,5 +15,5 @@ void MusicTrack_DispatchStreamCommand(s32 player, s32 track)
 
     command = *(u8 *)(*(s32 *)(track + 64));
     *(s32 *)(track + 64) += 1;
-    Func_080072ec(player, track, Data_080fba48[command]);
+    Audio_Run(player, track, gRom[command]);
 }

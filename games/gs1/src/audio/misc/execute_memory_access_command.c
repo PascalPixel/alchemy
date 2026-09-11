@@ -1,3 +1,4 @@
+#include "scene.h"
 /*
  * Execute an M4A memory-access command.
  *

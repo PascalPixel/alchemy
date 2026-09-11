@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "owner_state.h"
 
 s32 Trade_CanOfferDjinn(s32, s32, s32);

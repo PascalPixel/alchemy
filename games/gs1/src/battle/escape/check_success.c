@@ -1,10 +1,11 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/escape/check_success.h"
 #include "global_cells.h"
 #include "battle_party.h"
 #include "battle_escape.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct BattleEscapeState {
     u8 reserved_00[0x45];
@@ -22,7 +23,7 @@ s32 FixedPoint_Ratio(s32, s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern u8 Data_02000240[];
+extern u8 gCell[];
 
 s32 BattleEscape_CheckSuccess(void)
 {
@@ -66,7 +67,7 @@ s32 BattleEscape_CheckSuccess(void)
         }
         *failed_attempts += 1;
     }
-    if (Data_02000240[0x22B] == 2) {
+    if (gCell[0x22B] == 2) {
         escaped = 0;
     }
     return escaped;

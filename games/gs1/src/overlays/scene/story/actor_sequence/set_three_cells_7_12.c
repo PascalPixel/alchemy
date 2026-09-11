@@ -1,13 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/story/actor_sequence/set_three_cells_7_12.h"
 
 /* Three adjacent collision cells used by the scene's lower doorway. */
-extern void Func_02002b32(s32, s32, s32, s32, s32, s32);
-extern void Func_02002b44(s32, s32, s32, s32, s32, s32);
-extern void Func_02002b56(s32, s32, s32, s32, s32, s32);
 
 void State_SetThreeCellsAt7x12(void)
 {
-    Func_02002b32(7, 12, 1, 1, 7, 11);
-    Func_02002b44(7, 12, 1, 1, 8, 11);
-    Func_02002b56(7, 12, 1, 1, 9, 11);
+    Story_SetRect(7, 12, 1, 1, 7, 11);
+    Story_SetRect2(7, 12, 1, 1, 8, 11);
+    Story_SetRect3(7, 12, 1, 1, 9, 11);
 }

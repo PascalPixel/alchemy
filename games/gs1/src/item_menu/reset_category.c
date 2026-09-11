@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/item_menu/reset_category.h"
 #include "layout_guard.h"
 
 struct Object_080a9d84 {

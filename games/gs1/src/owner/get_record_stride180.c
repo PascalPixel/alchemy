@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/get_record_stride180.h"
 
 typedef struct {
     u8 bytes[0xB4];

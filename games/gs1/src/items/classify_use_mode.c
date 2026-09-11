@@ -1,12 +1,11 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/items/classify_use_mode.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 struct ItemDefinition *Sys_Run(s32);
 
-void *Sys_Run2(s32);
+void *Sys_unk2_4(s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
 {
@@ -22,7 +21,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     }
 
     {
-        void *abilityData = Sys_Run2(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
+        void *abilityData = Sys_unk2_4(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
 
         if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
             if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {

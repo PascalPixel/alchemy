@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/facing_events.h"
-
 
 struct Ent { s32 a; u16 b; u16 c; };
 
@@ -20,15 +18,15 @@ extern u8 Value_000023ac;
 
 u8 *Talk_Run();
 
-u8 *Talk_Run2();
+u8 *Talk_unk2_4();
 
-u8 *Talk_Run3(s32 no);
+u8 *Talk_unk3_4(s32 no);
 
-u8 *Talk_Run4(s32 no);
+u8 *Talk_unk4_4(s32 no);
 
-u8 *Talk_Run5(s32 no);
+u8 *Talk_unk5_4(s32 no);
 
-u8 *Talk_Run6(s32 no);
+u8 *Talk_unk6_4(s32 no);
 
 /* Contiguous unnamed leaf-owner run for resource_3b6. */
 
@@ -76,66 +74,66 @@ static __inline__ s32 Scene_Value2(s32 (*f)(s32, s32), s32 a, s32 b) { return f(
 
 static __inline__ void Scene_Call3(void (*f)(s32, s32, s32), s32 a, s32 b, s32 c) { f(a, b, c); }
 
-void Talk_Run7(); /* begin step */
+void Talk_unk7_4(); /* begin step */
 
-void Talk_Run8(); /* present message by id */
+void Talk_unk8_4(); /* present message by id */
 
-s32 Talk_Run9();  /* act on the subject, variant used before the branch */
+s32 Talk_unk9_4();  /* act on the subject, variant used before the branch */
 
-s32 Talk_Run10();  /* branch predicate; nonzero selects the second arm */
+s32 Talk_unk10_4();  /* branch predicate; nonzero selects the second arm */
 
-void Talk_Run11(); /* wait / delay by count */
+void Talk_unk11_4(); /* wait / delay by count */
 
-void Talk_Run12(); /* present message, first arm */
+void Talk_unk12_4(); /* present message, first arm */
 
-void Talk_Run13(); /* present message, second arm */
+void Talk_unk13_4(); /* present message, second arm */
 
-void Talk_Run14(); /* act on the subject */
+void Talk_unk14_4(); /* act on the subject */
 
-void Talk_Run15(); /* end step */
+void Talk_unk15_4(); /* end step */
 
-void Talk_Run16(); /* begin step */
+void Talk_unk16_4(); /* begin step */
 
-void Talk_Run17(); /* present message by id */
+void Talk_unk17_4(); /* present message by id */
 
-s32 Talk_Run18();  /* act on the subject, variant used before the branch */
+s32 Talk_unk18_4();  /* act on the subject, variant used before the branch */
 
-s32 Talk_Run19();  /* branch predicate; nonzero selects the second arm */
+s32 Talk_unk19_4();  /* branch predicate; nonzero selects the second arm */
 
-void Talk_Run20(); /* wait / delay by count */
+void Talk_unk20_4(); /* wait / delay by count */
 
-void Talk_Run21(); /* present message, first arm */
+void Talk_unk21_4(); /* present message, first arm */
 
-void Talk_Run22(); /* present message, second arm */
+void Talk_unk22_4(); /* present message, second arm */
 
-void Talk_Run23(); /* act on the subject */
+void Talk_unk23_4(); /* act on the subject */
 
-void Talk_Run24(); /* end step */
+void Talk_unk24_4(); /* end step */
 
-void Talk_Run25(); /* begin step */
+void Talk_unk25_4(); /* begin step */
 
-void Talk_Run26(); /* present message by id */
+void Talk_unk26_4(); /* present message by id */
 
-s32 Talk_Run27();  /* act on the subject, variant used before the branch */
+s32 Talk_unk27_4();  /* act on the subject, variant used before the branch */
 
-s32 Talk_Run28();  /* branch predicate; nonzero selects the second arm */
+s32 Talk_unk28_4();  /* branch predicate; nonzero selects the second arm */
 
-void Talk_Run29(); /* wait / delay by count */
+void Talk_unk29_4(); /* wait / delay by count */
 
-void Talk_Run30(); /* present message, first arm */
+void Talk_unk30_4(); /* present message, first arm */
 
-void Talk_Run31(); /* present message, second arm */
+void Talk_unk31_4(); /* present message, second arm */
 
-void Talk_Run32(); /* act on the subject */
+void Talk_unk32_4(); /* act on the subject */
 
-void Talk_Run33(); /* end step */
+void Talk_unk33_4(); /* end step */
 
 u8 *SceneData_GetTable8BB4(void)
 {
     return (u8 *)0x02008bb4;
 }
 
-s32 Talk_Run34(void)
+s32 Talk_unk34_4(void)
 {
     return 0;
 }
@@ -147,7 +145,7 @@ u8 *SceneData_GetTable8dac(void)
 
 s32 SceneData_SelectTable8e00ByFlag(void)
 {
-    if (Talk_Check7(0x950) != 0) {
+    if (Talk_unk7(0x950) != 0) {
         return 0x02009040;
     }
     return 0x02008E00;
@@ -155,10 +153,10 @@ s32 SceneData_SelectTable8e00ByFlag(void)
 
 u8 *SceneData_SelectTable9310ByFlags(void)
 {
-    if (Talk_Check8(0x950) != 0) {
+    if (Talk_unk8(0x950) != 0) {
         return gOv;
     }
-    if (Talk_Check9(0x962) != 0) {
+    if (Talk_unk9(0x962) != 0) {
         return gOv2;
     }
     return gOv3;
@@ -172,7 +170,7 @@ void State_SetWork1c0AndRun(void)
 
     *(s32 *)(state + 0x1C0) = 0x201;
     *(s32 *)(state + 0x1C8) = 24;
-    Talk_Run35();
+    Talk_unk35_4();
 }
 
 void Scene_RunPrimarySequence(void)
@@ -193,12 +191,12 @@ void Scene_RunPrimarySequence(void)
     }
     p6 = p6 + 0x16c;
     n = *(s16 *)p6 - 14;
-    Talk_Run36(158);
+    Talk_unk36_4(158);
     Talk_Place(gOv4[n].a, gOv4[n].b, gOv4[n].c);
-    Talk_Place2(0, 0x8000, 0x4000);
-    *(u8 *)(Talk_Check10(0) + 85) = 0;
-    Talk_Run37(0, 2);
-    Talk_Run38(*(s16 *)p6);
+    Talk_unk2_3(0, 0x8000, 0x4000);
+    *(u8 *)(Talk_unk10(0) + 85) = 0;
+    Talk_unk37_4(0, 2);
+    Talk_unk38_4(*(s16 *)p6);
 }
 
 void Scene_RunScene3b6SequenceA(void)
@@ -207,96 +205,96 @@ void Scene_RunScene3b6SequenceA(void)
     s32 rec7;
     s32 record;
 
-    Talk_Run39();
+    Talk_unk39_4();
     Talk_Do(0x2394);
-    Talk_Run40(40);
-    rec7 = Talk_Check2(0x11c, 0x2580000, 0, 0x3380000);
-    Talk_Run41(rec7, 0);
-    Talk_Run42(rec7, 6);
-    Talk_Run43(10);
-    Talk_Run44(rec7, 1);
-    Talk_Run45(40);
-    Talk_Run46(rec7);
-    Talk_Run47(2);
-    Talk_Place3(25, 0x100, 50);
-    Talk_Place4(25, 0x10000, 0x8000);
-    Talk_Place5(25, 0x258, 0x350);
-    Talk_Place6(25, 0xc000, 0);
-    Talk_Run48(40);
-    Talk_Run49(25, 0);
-    Talk_Run50(25, 2);
-    Talk_Run51(30);
-    Talk_Place7(25, 0x238, 0x350);
-    Talk_Place8(25, 0xc000, 0);
-    Talk_Run52(30);
-    Talk_Place9(25, 0x108, 50);
-    Talk_Run53(20);
-    Talk_Place10(0, 0, -16);
-    Talk_Run54(20);
-    Talk_Place11(25, 0x3000, 0);
-    Talk_Run55(30);
-    Talk_Run56(25, 2);
-    Talk_Run57(20);
-    Talk_Run58(25, 0);
-    Talk_Run59(20);
-    Talk_Place12(0, 0x101, 50);
-    Talk_Run60(20);
-    Talk_Run61(25, 4);
-    Talk_Run62(20);
-    Talk_Run63(25, 0);
-    Talk_Run64(30);
-    Talk_Place13(25, 0x102, 50);
-    Talk_Run65(25, 0);
-    Talk_Place14(25, 0x16666, 0xb333);
-    Talk_Run66(25, 16, 0);
-    Talk_Run67(25, 0, 32);
-    Talk_Run68(20);
-    Talk_Run69(25, 3);
-    Talk_Run70(20);
-    Talk_Run71(25, 0);
-    Talk_Run72(0, 16, 0);
-    Talk_Place15(0, 0x8000, 0);
-    Talk_Run73(20);
-    Talk_Place16(25, 0x1cccc, 0xe666);
-    Talk_Run74(25, 0, 48);
-    Talk_Run75(25, 0, 0);
-    Talk_Run76();
+    Talk_unk40_4(40);
+    rec7 = Talk_unk2(0x11c, 0x2580000, 0, 0x3380000);
+    Talk_unk41_4(rec7, 0);
+    Talk_unk42_4(rec7, 6);
+    Talk_unk43_4(10);
+    Talk_unk44_4(rec7, 1);
+    Talk_unk45_4(40);
+    Talk_unk46_4(rec7);
+    Talk_unk47_4(2);
+    Talk_unk3_3(25, 0x100, 50);
+    Talk_unk4_3(25, 0x10000, 0x8000);
+    Talk_unk5_3(25, 0x258, 0x350);
+    Talk_unk6_3(25, 0xc000, 0);
+    Talk_unk48_4(40);
+    Talk_unk49_4(25, 0);
+    Talk_unk50_4(25, 2);
+    Talk_unk51_4(30);
+    Talk_unk7_3(25, 0x238, 0x350);
+    Talk_unk8_3(25, 0xc000, 0);
+    Talk_unk52_4(30);
+    Talk_unk9_3(25, 0x108, 50);
+    Talk_unk53_4(20);
+    Talk_unk10_3(0, 0, -16);
+    Talk_unk54_4(20);
+    Talk_unk11_3(25, 0x3000, 0);
+    Talk_unk55_4(30);
+    Talk_unk56_4(25, 2);
+    Talk_unk57_4(20);
+    Talk_unk58_4(25, 0);
+    Talk_unk59_4(20);
+    Talk_unk12_3(0, 0x101, 50);
+    Talk_unk60_4(20);
+    Talk_unk61_4(25, 4);
+    Talk_unk62_4(20);
+    Talk_unk63_4(25, 0);
+    Talk_unk64_4(30);
+    Talk_unk13_3(25, 0x102, 50);
+    Talk_unk65_4(25, 0);
+    Talk_unk14_3(25, 0x16666, 0xb333);
+    Talk_unk66_4(25, 16, 0);
+    Talk_unk67_4(25, 0, 32);
+    Talk_unk68_4(20);
+    Talk_unk69_4(25, 3);
+    Talk_unk70_4(20);
+    Talk_unk71_4(25, 0);
+    Talk_unk72_4(0, 16, 0);
+    Talk_unk15_3(0, 0x8000, 0);
+    Talk_unk73_4(20);
+    Talk_unk16_3(25, 0x1cccc, 0xe666);
+    Talk_unk74_4(25, 0, 48);
+    Talk_unk75_4(25, 0, 0);
+    Talk_unk76_4();
 }
 
 void Scene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
-    void Talk_Run77(s32);
-    void Talk_Run78(s32);
+    void Talk_unk77_3(s32);
+    void Talk_unk78_3(s32);
 
-    Talk_Run79();
-    Talk_Run78(0x23A4);
-    Talk_Do6(30);
+    Talk_unk79_3();
+    Talk_unk78_3(0x23A4);
+    Talk_unk6_2(30);
     /* Same import, same first two arguments, differing only in the third.
      * Two call sites, not a loop. */
-    Talk_Place18(31, 4, 13);
-    Talk_Place19(31, 4, 30);
+    Talk_unk18_3(31, 4, 13);
+    Talk_unk19_3(31, 4, 30);
     Talk_Apply(31, 0);
-    Talk_Do7(10);
+    Talk_unk7_2(10);
     /* r1 = 129 << 1 = 0x102. Argument registers are set r1, r2, r0. */
-    Talk_Place20(32, 0x102, 50);
-    Talk_Run77(10);
+    Talk_unk20_3(32, 0x102, 50);
+    Talk_unk77_3(10);
     Talk_Apply2(32, 3);
-    Talk_Do8(30);
+    Talk_unk8_2(30);
     Talk_Apply3(32, 0);
-    Talk_Do9(10);
+    Talk_unk9_2(10);
     Talk_Apply4(33, 4);
-    Talk_Do10(20);
+    Talk_unk10_2(20);
     Talk_Apply5(33, 0);
-    Talk_Do11(10);
+    Talk_unk11_2(10);
     Talk_Apply6(31, 2);
-    Talk_Do12(20);
+    Talk_unk12_2(20);
     Talk_Apply7(31, 0);
-    Talk_Do13(10);
+    Talk_unk13_2(10);
     /* Repeats the (32, 3) call made above; a second site, deliberately not
      * folded with the first. */
     Talk_Apply8(32, 3);
-    Talk_Do14(30);
-    Talk_Run80();
+    Talk_unk14_2(30);
+    Talk_unk80_3();
 }
 
 /* Keep the first byte store and zero initialization as one assignment. */
@@ -308,35 +306,35 @@ s32 Scene_InitFacingActors(void)
     s32 none;
 
     *(s32 *)((*(u8 **)gWork + 0x1c0)) = 0x209;
-    if (SceneInit_Value1(Talk_Check11, 0x950) != 0) {
-        SceneInit_Call6(Talk_Run81, 51, 47, 3, 1, 51, 45);
+    if (SceneInit_Value1(Talk_unk11, 0x950) != 0) {
+        SceneInit_Call6(Talk_unk81_3, 51, 47, 3, 1, 51, 45);
         record = Talk_Run(31);
         record[35] = none = 0;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        record = Talk_Run2(32);
+        record = Talk_unk2_4(32);
         record[35] = none;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        if (SceneInit_Value1(Talk_Check12, 0x8bc) != 0) {
-            SceneInit_Call3(Talk_Run82, 25, 0x2300000, 0x2a80000);
-            SceneInit_Call3(Talk_Run83, 25, 0x8000, 0);
+        if (SceneInit_Value1(Talk_unk12, 0x8bc) != 0) {
+            SceneInit_Call3(Talk_unk82_3, 25, 0x2300000, 0x2a80000);
+            SceneInit_Call3(Talk_unk83_3, 25, 0x8000, 0);
         }
         if (gCell2[225][0] == 19) {
-            if (SceneInit_Value1(Talk_Check13, 0x8bc) == 0) {
-                SceneInit_Call1(Talk_Run84, 0x8bc);
-                Talk_Run85();
-                Talk_Run86();
+            if (SceneInit_Value1(Talk_unk13, 0x8bc) == 0) {
+                SceneInit_Call1(Talk_unk84_3, 0x8bc);
+                Talk_unk85_3();
+                Talk_unk86_3();
             }
         }
         if (gCell2[225][0] == 16) {
-            if (SceneInit_Value1(Talk_Check14, 0x300) == 0) {
-                SceneInit_Call1(Talk_Run87, 0x300);
-                Talk_Run88();
-                Talk_Run89();
+            if (SceneInit_Value1(Talk_unk14, 0x300) == 0) {
+                SceneInit_Call1(Talk_unk87_3, 0x300);
+                Talk_unk88_3();
+                Talk_unk89_3();
             }
         }
-        if (SceneInit_Value1(Talk_Check15, 0x8ab) != 0) {
-            Talk_Run90(35, 0, 0);
-            Talk_Run91(36, 0, 0);
+        if (SceneInit_Value1(Talk_unk15, 0x8ab) != 0) {
+            Talk_unk90_3(35, 0, 0);
+            Talk_unk91_3(36, 0, 0);
         }
     }
     return 0;
@@ -344,25 +342,25 @@ s32 Scene_InitFacingActors(void)
 
 void Dialogue_RunFacingPrompt(s32 no)
 {
-    u8 *actor = Talk_Run3(0);
+    u8 *actor = Talk_unk3_4(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
         Talk_Apply9(28, no);
-    } else if (Talk_Check16(0x950) != 0) {
-        Scene_Call1(Talk_Do15, 0x238d);
+    } else if (Talk_unk16(0x950) != 0) {
+        Scene_Call1(Talk_unk15_2, 0x238d);
         Talk_Apply10(no, 0);
-    } else if (Talk_Check17(0x962) != 0) {
-        Scene_Call1(Talk_Do15, 0x221b);
+    } else if (Talk_unk17(0x962) != 0) {
+        Scene_Call1(Talk_unk15_2, 0x221b);
         Talk_Apply10(no, 0);
     } else {
         msg = (s32)gVal;
-        Talk_Do16(msg);
+        Talk_unk16_2(msg);
         Scene_Value2(Talk_Apply11, no, 0);
         if (Scene_Value2(Talk_Apply12, 0, 0) == 0) {
-            Talk_Do17(10);
-            Talk_Do18(msg + 1);
+            Talk_unk17_2(10);
+            Talk_unk18_2(msg + 1);
         } else {
-            Talk_Do19(msg + 2);
+            Talk_unk19_2(msg + 2);
         }
         Talk_Apply13(no, 0);
     }
@@ -370,47 +368,47 @@ void Dialogue_RunFacingPrompt(s32 no)
 
 void Dialogue_RunFacingActionPrompt(s32 no)
 {
-    u8 *actor = Talk_Run4(0);
+    u8 *actor = Talk_unk4_4(0);
     s32 msg;
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Talk_Apply14(26, no);
-    } else if (Talk_Check18(0x950) != 0) {
+    } else if (Talk_unk18(0x950) != 0) {
         msg = (s32)gVal2;
-        Talk_Do20(msg);
+        Talk_unk20_2(msg);
         Scene_Value2(Talk_Apply15, no, 0);
         if (Scene_Value2(Talk_Apply16, 0, 0) == 0) {
-            Talk_Do21(10);
-            Talk_Do22(msg + 1);
+            Talk_unk21_2(10);
+            Talk_unk22_2(msg + 1);
         } else {
-            Talk_Do23(msg + 2);
+            Talk_unk23_2(msg + 2);
         }
         Talk_Apply17(no, 0);
-    } else if (Talk_Check19(0x962) != 0) {
-        Scene_Call1(Talk_Do22, 0x2219);
+    } else if (Talk_unk19(0x962) != 0) {
+        Scene_Call1(Talk_unk22_2, 0x2219);
         Talk_Apply17(no, 0);
     } else {
-        Scene_Call1(Talk_Do24, 0x1fd2);
+        Scene_Call1(Talk_unk24_2, 0x1fd2);
         Talk_Apply18(no, 0);
-        Scene_Call3(Talk_Place21, no, 0x106, 0);
-        Talk_Do25(40);
+        Scene_Call3(Talk_unk21_3, no, 0x106, 0);
+        Talk_unk25_2(40);
         Talk_Apply19(no, 0);
     }
 }
 
 void Dialogue_RunFacingAction(s32 no)
 {
-    u8 *actor = Talk_Run5(0);
+    u8 *actor = Talk_unk5_4(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Talk_Apply20(27, no);
     } else {
-        if (Talk_Check20(0x950) != 0) {
-            Scene_Call1(Talk_Do26, 0x238f);
+        if (Talk_unk20(0x950) != 0) {
+            Scene_Call1(Talk_unk26_2, 0x238f);
             Talk_Apply21(no, 0);
-        } else if (Talk_Check21(0x962) != 0) {
-            Scene_Call1(Talk_Do26, 0x221d);
+        } else if (Talk_unk21(0x962) != 0) {
+            Scene_Call1(Talk_unk26_2, 0x221d);
             Talk_Apply21(no, 0);
         } else {
-            Talk_Do27(0x1fd9);
+            Talk_unk27_2(0x1fd9);
             Talk_Apply22(no, 0);
         }
     }
@@ -420,109 +418,109 @@ void Dialogue_RunMessage239eStep(s32 subject)
 {
     s32 message;
 
-    Talk_Run7();
+    Talk_unk7_4();
 
     message = (s32)&Value_0000239e;
-    Talk_Run8(message);
-    Talk_Run9(subject, 0);
+    Talk_unk8_4(message);
+    Talk_unk9_4(subject, 0);
 
     /*
      * Both arguments are set to zero immediately before the call, so the
      * predicate is queried with no state from this owner.  Its meaning is not
      * established; the two arms present consecutive ids off the same base.
      */
-    if (Talk_Run10(0, 0) == 0) {
-        Talk_Run11(10);
-        Talk_Run12(message + 1);
+    if (Talk_unk10_4(0, 0) == 0) {
+        Talk_unk11_4(10);
+        Talk_unk12_4(message + 1);
     } else {
-        Talk_Run13(message + 2);
+        Talk_unk13_4(message + 2);
     }
 
-    Talk_Run14(subject, 0);
-    Talk_Run15();
+    Talk_unk14_4(subject, 0);
+    Talk_unk15_4();
 }
 
 void Dialogue_RunActorLine23a1(s32 no)
 {
-    Talk_Do28(no);
-    Talk_Do29(0x23A1);
+    Talk_unk28_2(no);
+    Talk_unk29_2(0x23A1);
     Talk_Apply23(no, 0);
-    Talk_Run92();
+    Talk_unk92_3();
 }
 
 void Dialogue_RunMessage1FBBStep(s32 subject)
 {
     s32 msg;
 
-    Talk_Run16();
+    Talk_unk16_4();
 
     msg = (s32)&Value_00001fbb;
-    Talk_Run17(msg);
-    Talk_Run18(subject, 0);
+    Talk_unk17_4(msg);
+    Talk_unk18_4(subject, 0);
 
     /*
      * Both arguments are set to zero immediately before the call, so the
      * predicate is queried with no state from this owner.  Its meaning is not
      * established; the two arms present consecutive ids off the same base.
      */
-    if (Talk_Run19(0, 0) == 0) {
-        Talk_Run20(10);
-        Talk_Run21(msg + 1);
+    if (Talk_unk19_4(0, 0) == 0) {
+        Talk_unk20_4(10);
+        Talk_unk21_4(msg + 1);
     } else {
-        Talk_Run22(msg + 2);
+        Talk_unk22_4(msg + 2);
     }
 
-    Talk_Run23(subject, 0);
-    Talk_Run24();
+    Talk_unk23_4(subject, 0);
+    Talk_unk24_4();
 }
 
 void Scene_RunScene3b6(s32 a0)
 {
-    void Talk_Run93();
+    void Talk_unk93_3();
 
     u32 i;
     s32 record;
     s32 base5_2399;
 
-    Talk_Run94();
-    if (Talk_Check3(0x8bd) == 0) {
+    Talk_unk94_3();
+    if (Talk_unk3(0x8bd) == 0) {
         base5_2399 = (s32)gVal3;
-        Talk_Run95(base5_2399);
-        Talk_Check4(a0, 0);
-        if (Talk_Check5(0, 0) == 0) {
-            Talk_Run96(10);
-            Talk_Run97((base5_2399 + 1));
+        Talk_unk95_3(base5_2399);
+        Talk_unk4(a0, 0);
+        if (Talk_unk5(0, 0) == 0) {
+            Talk_unk96_3(10);
+            Talk_unk97_3((base5_2399 + 1));
         } else {
-            Talk_Run98((base5_2399 + 2));
+            Talk_unk98_3((base5_2399 + 2));
         }
-        Talk_Run93(a0, 0);
+        Talk_unk93_3(a0, 0);
     } else {
-        if (Talk_Check6(0x8be) == 0) {
-            Talk_Do2(0x8be);
-            Talk_Do3(0x239c);
-            Talk_Run99(a0, 0);
-            Talk_Run100(10);
-            Talk_Run101(a0, 2);
-            Talk_Run102(20);
+        if (Talk_unk6(0x8be) == 0) {
+            Talk_unk2_2(0x8be);
+            Talk_unk3_2(0x239c);
+            Talk_unk99_3(a0, 0);
+            Talk_unk100_3(10);
+            Talk_unk101_3(a0, 2);
+            Talk_unk102_3(20);
         }
-        Talk_Do4(0x239d);
-        Talk_Run103(a0, 0);
+        Talk_unk4_2(0x239d);
+        Talk_unk103_3(a0, 0);
     }
-    Talk_Run104();
+    Talk_unk104_3();
 }
 
 void Dialogue_RunActor25FlaggedLine(void)
 {
-    void Talk_Run105(void);
+    void Talk_unk105_3(void);
 
-    Talk_Run105();
-    if (Talk_Check22(0x8BE) == 0) {
-        Talk_Do30(0x23B3);
+    Talk_unk105_3();
+    if (Talk_unk22(0x8BE) == 0) {
+        Talk_unk30_2(0x23B3);
     } else {
-        Talk_Do31(0x23B4);
+        Talk_unk31_2(0x23B4);
     }
     Talk_Apply24(25, 0);
-    Talk_Run106();
+    Talk_unk106_3();
 }
 
 void Scene_RunScene3b6(s32 a0)
@@ -530,55 +528,55 @@ void Scene_RunScene3b6(s32 a0)
     u32 i;
     s32 record;
 
-    Talk_Run107();
-    Talk_Do5(0x23a8);
-    Talk_Place17(31, 0x103, 40);
-    Talk_Run108(a0, 0);
-    Talk_Run109();
+    Talk_unk107_3();
+    Talk_unk5_2(0x23a8);
+    Talk_unk17_3(31, 0x103, 40);
+    Talk_unk108_3(a0, 0);
+    Talk_unk109_3();
 }
 
 void Dialogue_RunMessage23acStep(s32 subject)
 {
     s32 message;
 
-    Talk_Run25();
+    Talk_unk25_4();
 
     message = (s32)&Value_000023ac;
-    Talk_Run26(message);
-    Talk_Run27(subject, 0);
+    Talk_unk26_4(message);
+    Talk_unk27_4(subject, 0);
 
     /*
      * Both arguments are set to zero immediately before the call, so the
      * predicate is queried with no state from this owner.  Its meaning is not
      * established; the two arms present consecutive ids off the same base.
      */
-    if (Talk_Run28(0, 0) == 0) {
-        Talk_Run29(10);
-        Talk_Run30(message + 1);
+    if (Talk_unk28_4(0, 0) == 0) {
+        Talk_unk29_4(10);
+        Talk_unk30_4(message + 1);
     } else {
-        Talk_Run31(message + 2);
+        Talk_unk31_4(message + 2);
     }
 
-    Talk_Run32(subject, 0);
-    Talk_Run33();
+    Talk_unk32_4(subject, 0);
+    Talk_unk33_4();
 }
 
 void Dialogue_RunFacingMessage(s32 no)
 {
-    s32 Talk_Run110(s32 flag);
+    s32 Talk_unk110_3(s32 flag);
 
-    u8 *actor = Talk_Run6(0);
+    u8 *actor = Talk_unk6_4(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
-        Talk_Do32(no);
+        Talk_unk32_2(no);
     } else {
-        if (Talk_Run110(0x950) != 0) {
-            Scene_Call1(Talk_Do33, 0x23bf);
+        if (Talk_unk110_3(0x950) != 0) {
+            Scene_Call1(Talk_unk33_2, 0x23bf);
             Talk_Apply25(no, 0);
-        } else if (Talk_Check23(0x962) != 0) {
-            Scene_Call1(Talk_Do33, 0x2231);
+        } else if (Talk_unk23(0x962) != 0) {
+            Scene_Call1(Talk_unk33_2, 0x2231);
             Talk_Apply25(no, 0);
         } else {
-            Talk_Do34(0x1feb);
+            Talk_unk34_2(0x1feb);
             Talk_Apply26(no, 0);
         }
     }

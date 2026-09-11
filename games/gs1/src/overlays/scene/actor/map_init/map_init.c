@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/map_init/map_init.h"
 #include "spawn_configured_effect.h"
 #include "spawn_configured_effect_body.inc"
 #include "find_clear_actor_position.h"
@@ -10,14 +9,14 @@
 /* overlays/scene/actor/map_init/actor_depth_effect.c */
 struct Actor { u8 unknown_00[8]; s32 x; s32 y; s32 z; u8 unknown_14[0xf]; u8 flags23; };
 
-struct Actor *Actor_Run10();
+struct Actor *Actor_unk10_4();
 
 s32 Actor_SetFlagBitByRelativeDepth(struct Actor *actor)
 {
     struct Actor *ref;
     u8 *fp;
     u8 flag;
-    ref = Actor_Run10(0);
+    ref = Actor_unk10_4(0);
     fp = &actor->flags23;
     flag = *fp | 2;
     *fp = flag;
@@ -62,29 +61,29 @@ typedef struct Slot {
     s32 z;                 /* +16, 12.20 fixed point */
 } Slot;
 
-struct Actor *Actor_Run11(s32);
+struct Actor *Actor_unk11_4(s32);
 
-struct Actor *Actor_Run12(s32);
+struct Actor *Actor_unk12_4(s32);
 
-Record *Actor_Run13(s32);
-Record *Actor_Run14(s32);
-Record *Actor_Run15(s32);
-Record *Actor_Run16(s32);
-struct Actor *Actor_Run17(s32);
+Record *Actor_unk13_4(s32);
+Record *Actor_unk14_4(s32);
+Record *Actor_unk15_4(s32);
+Record *Actor_unk16_4(s32);
+struct Actor *Actor_unk17_4(s32);
 
-struct Actor *Actor_Run18(s32);
+struct Actor *Actor_unk18_4(s32);
 
-Slot *Actor_Run19();
-Slot *Actor_Run20();
-Slot *Actor_Run21();
-Slot *Actor_Run22();
-Slot *Actor_Run23();
-Slot *Actor_Run24();
-Slot *Actor_Run25();
+Slot *Actor_unk19_4();
+Slot *Actor_unk20_4();
+Slot *Actor_unk21_4();
+Slot *Actor_unk22_4();
+Slot *Actor_unk23_4();
+Slot *Actor_unk24_4();
+Slot *Actor_unk25_4();
 
-Slot *Actor_Run26();
-Slot *Actor_Run27();
-Slot *Actor_Run28();
+Slot *Actor_unk26_4();
+Slot *Actor_unk27_4();
+Slot *Actor_unk28_4();
 
 /*
  * Each site names the call word it holds, so the same slot accessor appears
@@ -95,34 +94,34 @@ Slot *Actor_Run28();
 void Actor_PassRaisedPointOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor *p = Actor_Run11(0);
+    struct Actor *p = Actor_unk11_4(0);
 
     pos[0] = p->f08;
     pos[1] = p->f0c;
     pos[2] = p->f10 + 0x200000;
-    Actor_Do5(pos);
+    Actor_unk5_2(pos);
 }
 
 void Actor_PassActorZeroOffsetPoint(void)
 {
     s32 pos[3];
-    struct Actor *actor = Actor_Run12(0);
+    struct Actor *actor = Actor_unk12_4(0);
 
     pos[0] = actor->f08;
     pos[1] = actor->f0c;
     pos[2] = actor->f10 + 0xFFE00000;
-    Actor_Do6(pos);
+    Actor_unk6_2(pos);
 }
 
 s32 Actor_CopyActor8PositionWhenAtRow10(Record *record)
 {
-    Record *ref = Actor_Run13(0);
+    Record *ref = Actor_unk13_4(0);
 
     if (ref->w12 > (s32)0xffd00000
-        && (Actor_Run14(8)->w16 >> 20) == 10) {
-        record->w8 = Actor_Run15(8)->w8;
+        && (Actor_unk14_4(8)->w16 >> 20) == 10) {
+        record->w8 = Actor_unk15_4(8)->w8;
         record->w12 = (s32)0xffe00000;
-        record->w16 = Actor_Run16(8)->w16;
+        record->w16 = Actor_unk16_4(8)->w16;
     } else {
         record->w8 = 0;
         record->w12 = 0;
@@ -134,23 +133,23 @@ s32 Actor_CopyActor8PositionWhenAtRow10(Record *record)
 void Actor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor *actor = Actor_Run17(0);
+    struct Actor *actor = Actor_unk17_4(0);
 
     point[0] = actor->f08 + 0xFFE00000;
     point[1] = actor->f0c;
     point[2] = actor->f10;
-    Actor_Do7(point);
+    Actor_unk7_2(point);
 }
 
 void Actor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor *actor = Actor_Run18(0);
+    struct Actor *actor = Actor_unk18_4(0);
 
     pos[0] = actor->f08 + 0x200000;
     pos[1] = actor->f0c;
     pos[2] = actor->f10;
-    Actor_Do8(pos);
+    Actor_unk8_2(pos);
 }
 
 /*
@@ -171,60 +170,60 @@ void Actor_LandOnHighestPlatform(s32 subject)
 
         if (slot == subject) continue;
 
-        if ((Actor_Run19(slot)->x >> 20) != (Actor_Run20(subject)->x >> 20)) continue;
-        if ((Actor_Run21(slot)->z >> 20) != (Actor_Run22(subject)->z >> 20)) continue;
+        if ((Actor_unk19_4(slot)->x >> 20) != (Actor_unk20_4(subject)->x >> 20)) continue;
+        if ((Actor_unk21_4(slot)->z >> 20) != (Actor_unk22_4(subject)->z >> 20)) continue;
 
         /*
          * 0x00100000 is one whole unit above the candidate's own height. The
          * comparison is signed, and a tie updates the best.
          */
-        if (best > Actor_Run23(slot)->y + 0x100000) continue;
+        if (best > Actor_unk23_4(slot)->y + 0x100000) continue;
 
-        best = Actor_Run24(slot)->y + 0x100000;
-        *(u16 *)((u8 *)Actor_Run25(subject) + 100) = (u16)slot;
+        best = Actor_unk24_4(slot)->y + 0x100000;
+        *(u16 *)((u8 *)Actor_unk25_4(subject) + 100) = (u16)slot;
     }
 
-    Actor_Run29(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
+    Actor_unk29_4(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
 
     /*
      * Three separate lookups of the same record, in this order. The locals
      * fix the sequence, which argument evaluation order would not.
      */
     {
-        Slot *target = Actor_Run26(subject);
-        Slot *from = Actor_Run27(subject);
-        s32 z = Actor_Run28(subject)->z;
+        Slot *target = Actor_unk26_4(subject);
+        Slot *from = Actor_unk27_4(subject);
+        s32 z = Actor_unk28_4(subject)->z;
 
-        Actor_Run30(target, from->x, best, z);
+        Actor_unk30_4(target, from->x, best, z);
     }
 
-    Actor_Run31(subject);
-    Actor_Run32(188);
-    Actor_Run33(subject);
-    Actor_Run34(30);
+    Actor_unk31_4(subject);
+    Actor_unk32_4(188);
+    Actor_unk33_4(subject);
+    Actor_unk34_4(30);
 }
 
 /* overlays/scene/actor/map_init/actor_presentation.c */
 
-u8 *Actor_Run35(s32);
-u8 *Actor_Run36(s32);
-u8 *Actor_Run37(s32);
-u8 *Actor_Run38(s32);
+u8 *Actor_unk35_4(s32);
+u8 *Actor_unk36_4(s32);
+u8 *Actor_unk37_4(s32);
+u8 *Actor_unk38_4(s32);
 
-u8 *Actor_Run39(s32);
+u8 *Actor_unk39_4(s32);
 
 void Actor_SetActor14Field98ByFlag200(void)
 {
     u8 *p;
     u8 val;
 
-    Actor_Check49(0x201);
-    if (Actor_Check50(0x200) != 0) {
-        Actor_Run35(14)[98] = 0;
-        Actor_Run36(14)[89] &= (u8)0xf7;
+    Actor_unk49(0x201);
+    if (Actor_unk50(0x200) != 0) {
+        Actor_unk35_4(14)[98] = 0;
+        Actor_unk36_4(14)[89] &= (u8)0xf7;
     } else {
-        Actor_Run37(14)[98] = 1;
-        p = Actor_Run38(14);
+        Actor_unk37_4(14)[98] = 1;
+        p = Actor_unk38_4(14);
         p += 89;
         val = 8;
         val |= *p;
@@ -239,9 +238,9 @@ void ActorDraw_ConfigureActorTwentyAndFlag200(void)
     Actor_Apply(20, 1);
     Actor_Apply2(20, 0);
     Actor_Apply3(20, 2);
-    flags = Actor_Run39(20) + 35;
+    flags = Actor_unk39_4(20) + 35;
     *flags &= 0xFD;
-    Actor_Do9(0x200);
+    Actor_unk9_2(0x200);
 }
 
 /* overlays/scene/actor/map_init/actor_search.c */
@@ -252,18 +251,18 @@ struct Actor02001424 {
     s32 z;
 };
 
-struct Actor02001424 *Actor_Run40(s32);
+struct Actor02001424 *Actor_unk40_4(s32);
 
 void Actor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Actor_Run40(0);
+    struct Actor02001424 *actor = Actor_unk40_4(0);
     s32 target[3];
 
     target[0] = actor->x;
     target[1] = actor->y;
     target[2] = actor->z + 0x00200000;
-    if (Actor_Check51(target)!= 0) {
-        Actor_Run41();
+    if (Actor_unk51(target)!= 0) {
+        Actor_unk41_4();
     }
 }
 
@@ -276,14 +275,14 @@ struct Actor {
     s32 f10;
 };
 
-struct Actor *Actor_Run42(s32);
+struct Actor *Actor_unk42_4(s32);
 
 void State_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor *actor = Actor_Run42(0);
+    struct Actor *actor = Actor_unk42_4(0);
 
     if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
-        Actor_Run43();
+        Actor_unk43_4();
     }
 }
 
@@ -303,11 +302,11 @@ typedef struct Slot2 {
     s32 row;               /* +16, 12.20 fixed point */
 } Slot2;
 
-Slot2 *Actor_Run44();
-Slot2 *Actor_Run45();
+Slot2 *Actor_unk44_4();
+Slot2 *Actor_unk45_4();
 
-Slot2 *Actor_Run46();
-Slot2 *Actor_Run47();
+Slot2 *Actor_unk46_4();
+Slot2 *Actor_unk47_4();
 
 /*
  * Layout step in resource_3c4 for slots 10 and 11. One six-argument
@@ -320,30 +319,30 @@ Slot2 *Actor_Run47();
 
 void Scene_RunLayoutAt93By30(void)
 {
-    Actor_Run48();
+    Actor_unk48_4();
     {
         s32 width = 29;
         s32 height = 30;
 
-        Actor_SetRect21(93, 30, 6, 5, width, height);
+        Actor_unk21_5(93, 30, 6, 5, width, height);
     }
-    Actor_Run49();
-    Actor_Run50();
-    Actor_Run51();
+    Actor_unk49_4();
+    Actor_unk50_4();
+    Actor_unk51_4();
 }
 
 void Scene_RunLayoutAt83By45(void)
 {
-    Actor_Run52();
+    Actor_unk52_4();
     {
         s32 width = 19;
         s32 height = 45;
 
-        Actor_SetRect22(83, 45, 11, 8, width, height);
+        Actor_unk22_5(83, 45, 11, 8, width, height);
     }
-    Actor_Run53();
-    Actor_Run54();
-    Actor_Run55();
+    Actor_unk53_4();
+    Actor_unk54_4();
+    Actor_unk55_4();
 }
 
 void Scene_PlaceAndPinSlots10And11(void)
@@ -352,20 +351,20 @@ void Scene_PlaceAndPinSlots10And11(void)
 
     {
         s32 k5 = 29, k6 = 30;
-        Actor_Run56(93, 30, 6, 5, k5, k6);
+        Actor_unk56_4(93, 30, 6, 5, k5, k6);
     }
-    Actor_Run57(11, 10);
+    Actor_unk57_4(11, 10);
 
     {
-        s32 col20 = Actor_Run44(10)->column >> 20;
-        row = Actor_Run45(10)->row >> 20;
-        Actor_Run58(2, 36, 1, 1, col20, row);
+        s32 col20 = Actor_unk44_4(10)->column >> 20;
+        row = Actor_unk45_4(10)->row >> 20;
+        Actor_unk58_4(2, 36, 1, 1, col20, row);
     }
 
     {
-        s32 col20 = Actor_Run46(11)->column >> 20;
-        row = Actor_Run47(11)->row >> 20;
-        Actor_Run59(2, 36, 1, 1, col20, row);
+        s32 col20 = Actor_unk46_4(11)->column >> 20;
+        row = Actor_unk47_4(11)->row >> 20;
+        Actor_unk59_4(2, 36, 1, 1, col20, row);
     }
 }
 
@@ -390,9 +389,9 @@ struct EffectParams {
     s32 callback;
 };
 
-u8 *Actor_Run60(s32 kind, s32 x, s32 y, s32 z);
+u8 *Actor_unk60_4(s32 kind, s32 x, s32 y, s32 z);
 
-struct SceneObject *Actor_Run61(void);
+struct SceneObject *Actor_unk61_4(void);
 
 /*
  * Create an object, clear the low bits of its owner record, and initialise it.
@@ -405,7 +404,7 @@ struct SceneObject *Actor_Run61(void);
 u8 *OvObj_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret;
-    u8 *obj = Actor_Run60(kind, x, y, z);
+    u8 *obj = Actor_unk60_4(kind, x, y, z);
 
     if (obj != 0) {
         u8 *owner = *(u8 **)(obj + 80);
@@ -434,20 +433,20 @@ void Effect_SpawnNineRadialEffects(void)
     s32 x;
     s32 z;
 
-    object = Actor_Run61();
+    object = Actor_unk61_4();
     params.unk00 = 1;
     params.mode = 7;
     params.callback = 0x02009069;
     for (i = 0; i <= 16; i += 2) {
         v = i << 12;
-        vec.x = Actor_Check52(v);
+        vec.x = Actor_unk52(v);
         vec.y = 0;
-        z = Actor_Check53(v);
+        z = Actor_unk53(v);
         x = vec.x;
         vec.z = z;
         x = x + Actor_Apply7(x, 3);
         vec.x = x;
-        Actor_SetRect23(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
+        Actor_unk23_5(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
     }
 }
 
@@ -500,7 +499,7 @@ struct Effect {
  * The decay of the Z velocity stays a signed divide by sixteen: that shape is
  * what reproduces the negative bias and arithmetic shift in the reference.
  */
-void Actor_Run62(struct Effect *effect)
+void Actor_unk62_4(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
@@ -515,7 +514,7 @@ void Actor_Run62(struct Effect *effect)
     velocity_z = effect->velocity[2];
     effect->position[2] += velocity_z;
 
-    effect->velocity[0] = velocity_x - Actor_Check54(velocity_x, 18);
+    effect->velocity[0] = velocity_x - Actor_unk54(velocity_x, 18);
     effect->velocity[2] = velocity_z - velocity_z / 16;
 
     effect->accum18 += effect->rate30;
@@ -528,7 +527,7 @@ void Actor_Run62(struct Effect *effect)
 /* overlays/scene/actor/map_init/move_actor_zero_to_target.c */
 /*
  * Actor movement for overlay resource_3c4.  Declarations are left without
- * prototypes because Actor_Run63 and Actor_Run64 are each called twice
+ * prototypes because Actor_unk63_4 and Actor_unk64_4 are each called twice
  * with different argument shapes.
  */
 
@@ -553,7 +552,7 @@ typedef struct Target {
     s32 z;                 /* +8, 12.20 fixed point */
 } Target;
 
-Actor *Actor_Run65();
+Actor *Actor_unk65_4();
 
 /*
  * Tries to move actor 0 onto the caller's target.  It builds a three-word
@@ -565,7 +564,7 @@ Actor *Actor_Run65();
  */
 s32 Actor_MoveActorZeroToTarget(const Target *target)
 {
-    Actor *actor = Actor_Run65(0);
+    Actor *actor = Actor_unk65_4(0);
     u8 saved = actor->flags;
     s32 probe[3];
 
@@ -573,36 +572,36 @@ s32 Actor_MoveActorZeroToTarget(const Target *target)
     probe[1] = actor->y;
     probe[2] = (actor->z & (s32)0xfff00000) + 0x00080000;
 
-    Actor_Check55(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
+    Actor_unk55(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
     /* Both guards branch to one shared exit placed after the body.  Writing
      * `return 1` twice would put an inline copy near the top instead. */
-    if (Actor_Check56(actor, probe) == 1) {
+    if (Actor_unk56(actor, probe) == 1) {
         goto refuse;
     }
-    if (Actor_Check57(actor, target) != 0) {
+    if (Actor_unk57(actor, target) != 0) {
         goto refuse;
     }
 
-    Actor_Run66();
-    Actor_Run67(actor, 6);
-    Actor_Run68(6);
-    Actor_Run69(152);
-    Actor_Run70(actor, 7);
+    Actor_unk66_4();
+    Actor_unk67_4(actor, 6);
+    Actor_unk68_4(6);
+    Actor_unk69_4(152);
+    Actor_unk70_4(actor, 7);
 
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
     actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
 
-    Actor_Run71(actor, 0);
-    Actor_Run72(0, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
-    Actor_Run73(actor, 6);
-    Actor_Run74(actor, 1);
-    Actor_Check58(6);
+    Actor_unk71_4(actor, 0);
+    Actor_unk72_4(0, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
+    Actor_unk73_4(actor, 6);
+    Actor_unk74_4(actor, 1);
+    Actor_unk58(6);
 
     actor->flags = saved;
-    Actor_Run75();
+    Actor_unk75_4();
     return 0;
 
 refuse:
@@ -617,9 +616,9 @@ struct Actor {
     s32 f0c;
 };
 
-u8 *Actor_Run76(s32 kind, s32 x, s32 y, s32 z);
+u8 *Actor_unk76_4(s32 kind, s32 x, s32 y, s32 z);
 
-struct Actor *Actor_Run77(s32);
+struct Actor *Actor_unk77_4(s32);
 
 /*
  * Spawn an object and prepare its owner record and flags.  The three callees
@@ -633,7 +632,7 @@ struct Actor *Actor_Run77(s32);
 u8 *OvObj_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret;
-    u8 *obj = Actor_Run76(kind, x, y, z);
+    u8 *obj = Actor_unk76_4(kind, x, y, z);
 
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);
@@ -670,7 +669,7 @@ void OvObj_IntegrateVelocities(void *arg0)
 s32 OvObj_SetYAboveLinkedActor(u8 *owner)
 {
     s16 *id = (s16 *)(owner + 100);
-    struct Actor *actor = Actor_Run77(*id);
+    struct Actor *actor = Actor_unk77_4(*id);
 
     *(s32 *)(owner + 12) = actor->f0c + 0x100000;
     return 0;
@@ -723,7 +722,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
     } else {
         tbl = gOv6;
     }
-    Actor_Do10(tbl);
+    Actor_unk10_2(tbl);
     return tbl;
 }
 
@@ -739,31 +738,31 @@ s32 SceneData_SelectTableByWord224(void)
 
 void Dialogue_RunFlag982Or983Dialogue(void)
 {
-    Actor_Run78();
+    Actor_unk78_4();
     Actor_Apply10(0, 1);
-    if (Actor_Check59(0x982) != 0 || Actor_Check60(0x983) != 0) {
+    if (Actor_unk59(0x982) != 0 || Actor_unk60(0x983) != 0) {
         Actor_Apply11(0x268A, 1);
     } else {
         Actor_Apply12(0x2689, 1);
     }
-    Actor_Run79();
+    Actor_unk79_4();
 }
 
 /* overlays/scene/actor/map_init/scene_primary_script.c */
 
 extern u8 gWork[];
 
-u8 *Actor_Run80();
+u8 *Actor_unk80_4();
 
-u8 *Actor_Run81();
+u8 *Actor_unk81_4();
 
-u8 *Actor_Run82();
+u8 *Actor_unk82_4();
 
-u8 *Actor_Run83();
+u8 *Actor_unk83_4();
 
 void Scene_RunStepWith6(void)
 {
-    Actor_Place13(0, 6, 0);
+    Actor_unk13_3(0, 6, 0);
 }
 
 void Scene_RunSupplementalSequenceTwo(void)
@@ -778,55 +777,55 @@ void Scene_RunSupplementalSequenceTwo(void)
     u8 slot16[40];
     u8 *frame;
 
-    Actor_Run84();
+    Actor_unk84_4();
     record = Actor_Check(18);
     if ((*(volatile s32 *)((s32)record + 8) >> 20) != 46) {
     } else {
-        Actor_Run85(30);
-        rec2 = Actor_Check61(0x2e80000, 0, 0xb80000, 253);
+        Actor_unk85_4(30);
+        rec2 = Actor_unk61(0x2e80000, 0, 0xb80000, 253);
         frame = slot16;
         *(s32 *)(frame + 8) = 0x9999;
         *(s32 *)(frame + 12) = 0x9999;
         *(s32 *)(frame + 4) = 7;
-        *(u8 *)(Actor_Check62(18) + 85) = 0;
-        Actor_Run86(185);
+        *(u8 *)(Actor_unk62(18) + 85) = 0;
+        Actor_unk86_4(185);
         for (i = 0; i < 16; i++) {
-            Actor_Run87(3);
-            record = Actor_Run80(18);
+            Actor_unk87_4(3);
+            record = Actor_unk80_4(18);
             *(volatile s32 *)((s32)record + 12) += -0x10000;
             rec7 = Actor_Run();
             rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
-            value = Actor_Run2();
-            Actor_Run88(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000, frame);
+            value = Actor_unk2_4();
+            Actor_unk88_4(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000, frame);
         }
         Actor_SetRect(51, 8, 1, 1, 49, 8);
-        Actor_Run89(30);
+        Actor_unk89_4(30);
         {
-            u8 *record = Actor_Run81(18);
+            u8 *record = Actor_unk81_4(18);
             u8 value = *(volatile u8 *)&record[35];
 
             record[35] = (u8)(value | 2);
         }
-        Actor_Run90(18, 3);
-        Actor_Run91(rec2);
-        Actor_SetRect2(45, 4, 1, 1, 46, 8);
+        Actor_unk90_4(18, 3);
+        Actor_unk91_4(rec2);
+        Actor_unk2_5(45, 4, 1, 1, 46, 8);
         Actor_Place(20, 0x2e80000, 0x880000);
         v5 = 1;
         v6 = 3;
-        Actor_Run92(188);
-        Actor_SetRect3(58, 8, 49, 8, v5, v6);
-        Actor_Place2(0, 0x50000, 0x10000);
-        Actor_Place3(-1, -1, 0xe666);
-        Actor_Run93(20);
-        Actor_Run94(188);
-        Actor_SetRect4(59, 8, 49, 8, v5, v6);
-        Actor_Place4(0, 0x50000, 0x10000);
-        Actor_Place5(-1, -1, 0xe666);
-        Actor_Run95();
-        Actor_Run96(10);
+        Actor_unk92_4(188);
+        Actor_unk3_5(58, 8, 49, 8, v5, v6);
+        Actor_unk2_3(0, 0x50000, 0x10000);
+        Actor_unk3_3(-1, -1, 0xe666);
+        Actor_unk93_4(20);
+        Actor_unk94_4(188);
+        Actor_unk4_5(59, 8, 49, 8, v5, v6);
+        Actor_unk4_3(0, 0x50000, 0x10000);
+        Actor_unk5_3(-1, -1, 0xe666);
+        Actor_unk95_4();
+        Actor_unk96_4(10);
         Actor_Do(0x971);
     }
-    Actor_Run97();
+    Actor_unk97_4();
 }
 
 void Scene_RunSupplementalSequenceOne(s32 a0)
@@ -843,59 +842,59 @@ void Scene_RunSupplementalSequenceOne(s32 a0)
     u8 slot16[40];
     u8 *slot;
 
-    Actor_Run98(a0);
-    record = Actor_Check2(19);
+    Actor_unk98_4(a0);
+    record = Actor_unk2(19);
     if ((*(volatile s32 *)((s32)record + 8) >> 20) != 48) {
     } else {
-        if (Actor_Check3(0x202) == 0) {
+        if (Actor_unk3(0x202) == 0) {
         } else {
-            Actor_Run99(30);
-            rec2 = Actor_Check63(0x3020000, 0, 0x1120000, 223);
+            Actor_unk99_4(30);
+            rec2 = Actor_unk63(0x3020000, 0, 0x1120000, 223);
             slot = slot16;
             *(s32 *)(slot + 8) = 0x9999;
             *(s32 *)(slot + 12) = 0x9999;
             *(s32 *)(slot + 4) = 7;
-            *(u8 *)(Actor_Check64(19) + 85) = 0;
-            Actor_Run100(185);
+            *(u8 *)(Actor_unk64(19) + 85) = 0;
+            Actor_unk100_4(185);
             for (i = 0; i < 16; i++) {
-                Actor_Run101(3);
-                record = Actor_Run82(19);
+                Actor_unk101_4(3);
+                record = Actor_unk82_4(19);
                 *(volatile s32 *)((s32)record + 12) += -0x10000;
-                rec7 = Actor_Run3();
+                rec7 = Actor_unk3_4();
                 arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
-                value = Actor_Run4();
+                value = Actor_unk4_4();
                 arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
-                Actor_Run102(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
+                Actor_unk102_4(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
             }
-            Actor_SetRect5(51, 8, 1, 1, 45, 14);
-            Actor_Run103(30);
+            Actor_unk5_5(51, 8, 1, 1, 45, 14);
+            Actor_unk103_4(30);
             {
-                u8 *record = Actor_Run83(19);
+                u8 *record = Actor_unk83_4(19);
                 u8 value = *(volatile u8 *)&record[35];
 
                 record[35] = (u8)(value | 2);
             }
-            Actor_Run104(19, 3);
-            Actor_Run105(rec2);
-            Actor_SetRect6(45, 4, 1, 1, 48, 14);
-            Actor_Place6(21, 0x3080000, 0xe80000);
+            Actor_unk104_4(19, 3);
+            Actor_unk105_4(rec2);
+            Actor_unk6_5(45, 4, 1, 1, 48, 14);
+            Actor_unk6_3(21, 0x3080000, 0xe80000);
             v5 = 1;
             v6 = 3;
-            Actor_Run106(188);
-            Actor_SetRect7(58, 8, 45, 14, v5, v6);
-            Actor_Place7(0, 0x50000, 0x10000);
-            Actor_Place8(-1, -1, 0xe666);
-            Actor_Run107(20);
-            Actor_Run108(188);
-            Actor_SetRect8(59, 8, 45, 14, v5, v6);
-            Actor_Place9(0, 0x50000, 0x10000);
-            Actor_Place10(-1, -1, 0xe666);
-            Actor_Run109();
-            Actor_Run110(10);
-            Actor_Do2(0x972);
+            Actor_unk106_4(188);
+            Actor_unk7_5(58, 8, 45, 14, v5, v6);
+            Actor_unk7_3(0, 0x50000, 0x10000);
+            Actor_unk8_3(-1, -1, 0xe666);
+            Actor_unk107_4(20);
+            Actor_unk108_4(188);
+            Actor_unk8_5(59, 8, 45, 14, v5, v6);
+            Actor_unk9_3(0, 0x50000, 0x10000);
+            Actor_unk10_3(-1, -1, 0xe666);
+            Actor_unk109_4();
+            Actor_unk110_4(10);
+            Actor_unk2_2(0x972);
         }
     }
-    Actor_Run111();
+    Actor_unk111_4();
 }
 
 void Scene_SetActor19TableB3B8(void)
@@ -924,106 +923,106 @@ void Scene_RunMiddleSequence(void)
     s32 vb;
     s32 v3;
 
-    Actor_Run112();
+    Actor_unk112_4();
     outer = 0;
     frame = (s32)saved;
     zero = outer;
     base = 12;
     L_02001d20:;
-    rec = Actor_Check4(base);
+    rec = Actor_unk4(base);
     if ((12 & *(u8 *)(*(volatile s32 *)(rec + 80) + 9)) == 12) {
         slot = outer + 0x200;
-        if (Actor_Check5(slot) == 0) {
-            Actor_Run113(base);
-            Actor_Run114();
-            Actor_Run115(base, 0, 0);
-            Actor_Run116(slot);
+        if (Actor_unk5(slot) == 0) {
+            Actor_unk113_4(base);
+            Actor_unk114_4();
+            Actor_unk115_4(base, 0, 0);
+            Actor_unk116_4(slot);
             goto L_02001f40;
         }
     }
     goto L_02001de4;
     L_02001d5e:;
-    rec = Actor_Check6(base);
+    rec = Actor_unk6(base);
     *(s32 *)(frame + 8) = *(volatile s32 *)(rec + 8);
-    rec = Actor_Check7(base);
+    rec = Actor_unk7(base);
     *(s32 *)(frame + 12) = *(volatile s32 *)(rec + 12);
-    rec = Actor_Check8(base);
+    rec = Actor_unk8(base);
     *(s32 *)(frame + 16) = *(volatile s32 *)(rec + 16);
-    dst = Actor_Check65(base);
+    dst = Actor_unk65(base);
     pa = inner + 12;
-    rec = Actor_Check9(pa);
+    rec = Actor_unk9(pa);
     *(volatile s32 *)(dst + 8) = *(volatile s32 *)(rec + 8);
-    dst = Actor_Check10(base);
-    rec = Actor_Check11(pa);
+    dst = Actor_unk10(base);
+    rec = Actor_unk11(pa);
     *(volatile s32 *)(dst + 12) = *(volatile s32 *)(rec + 12);
-    dst = Actor_Check12(base);
-    rec = Actor_Check13(pa);
+    dst = Actor_unk12(base);
+    rec = Actor_unk13(pa);
     *(volatile s32 *)(dst + 16) = *(volatile s32 *)(rec + 16);
-    rec = Actor_Check66(pa);
+    rec = Actor_unk66(pa);
     *(volatile s32 *)(rec + 8) = *(s32 *)(frame + 8);
-    rec = Actor_Check67(pa);
+    rec = Actor_unk67(pa);
     *(volatile s32 *)(rec + 12) = *(s32 *)(frame + 12);
     found = inner;
-    rec = Actor_Check68(pa);
+    rec = Actor_unk68(pa);
     *(volatile s32 *)(rec + 16) = *(s32 *)(frame + 16);
     goto L_02001e56;
     L_02001de4:;
-    rec = Actor_Check14(base);
+    rec = Actor_unk14(base);
     if ((*(volatile s32 *)(rec + 16) >> 20) != 9) {
         goto L_02001f36;
     }
-    tmp = Actor_Check15(outer + 0x200);
+    tmp = Actor_unk15(outer + 0x200);
     if (tmp != 0) {
         goto L_02001f36;
     }
-    rec = Actor_Check16(base);
+    rec = Actor_unk16(base);
     *(volatile s32 *)(rec + 20) = tmp;
-    rec = Actor_Check17(base);
+    rec = Actor_unk17(base);
     *(volatile s32 *)(rec + 40) = tmp;
-    rec = Actor_Check69(base);
+    rec = Actor_unk69(base);
     *(volatile s32 *)(rec + 60) = -0x80000000;
-    *(u8 *)(Actor_Check70(base) + 85) = tmp;
-    *(volatile u16 *)(Actor_Check71(base) + 100) = tmp;
+    *(u8 *)(Actor_unk70(base) + 85) = tmp;
+    *(volatile u16 *)(Actor_unk71(base) + 100) = tmp;
     found = outer;
     for (inner = 0; inner < outer; inner++) {
-        if (Actor_Check18(0x200 + inner) == 0) {
+        if (Actor_unk18(0x200 + inner) == 0) {
             goto L_02001d5e;
         }
     }
     L_02001e56:;
     pb = found + 12;
-    rec = Actor_Check72(pb);
+    rec = Actor_unk72(pb);
     *(volatile s32 *)(rec + 20) = zero;
-    rec = Actor_Check73(pb);
+    rec = Actor_unk73(pb);
     *(volatile s32 *)(rec + 40) = zero;
-    rec = Actor_Check74(pb);
+    rec = Actor_unk74(pb);
     *(volatile s32 *)(rec + 60) = -0x80000000;
-    *(u8 *)(Actor_Check75(pb) + 85) = zero;
-    *(volatile u16 *)(Actor_Check76(pb) + 100) = zero;
-    Actor_Check19(0x30000, 0x6000);
-    *(u8 *)(Actor_Check77() + 85) = zero;
-    Actor_Run5(0xa80000, 0x80000, 0xb80000, 1);
-    Actor_Run117();
-    Actor_Run118(pb);
-    rec = Actor_Check20(pb);
+    *(u8 *)(Actor_unk75(pb) + 85) = zero;
+    *(volatile u16 *)(Actor_unk76(pb) + 100) = zero;
+    Actor_unk19(0x30000, 0x6000);
+    *(u8 *)(Actor_unk77() + 85) = zero;
+    Actor_unk5_4(0xa80000, 0x80000, 0xb80000, 1);
+    Actor_unk117_4();
+    Actor_unk118_4(pb);
+    rec = Actor_unk20(pb);
     if ((*(volatile s32 *)(rec + 8) >> 20) == 8) {
-        vb = (Actor_Check78(10) + 100);
+        vb = (Actor_unk78(10) + 100);
         *(volatile u16 *)(vb) = (*(volatile u16 *)(vb) + 1);
-        v0 = (Actor_Check79(11) + 100);
+        v0 = (Actor_unk79(11) + 100);
         v3 = (*(volatile u16 *)(v0)- 1);
     } else {
-        va = (Actor_Check80(10) + 100);
+        va = (Actor_unk80(10) + 100);
         v4 = (*(volatile u16 *)(va)- 1);
         *(volatile u16 *)(va) = v4;
-        v0 = (Actor_Check81(11) + 100);
+        v0 = (Actor_unk81(11) + 100);
         v3 = (*(volatile u16 *)(v0) + 1);
     }
     *(volatile u16 *)(v0) = v3;
-    rec = Actor_Check82(pb);
+    rec = Actor_unk82(pb);
     *(volatile s32 *)(rec + 108) = 0x2009a99;
-    Actor_Run119(40);
-    *(u8 *)(Actor_Check83(pb) + 35) |= 2;
-    Actor_Run120(0x200 + found);
+    Actor_unk119_4(40);
+    *(u8 *)(Actor_unk83(pb) + 35) |= 2;
+    Actor_unk120_4(0x200 + found);
     goto L_02001f40;
     L_02001f36:;
     outer = outer + 1;
@@ -1032,7 +1031,7 @@ void Scene_RunMiddleSequence(void)
         goto L_02001d20;
     }
     L_02001f40:;
-    Actor_Run121();
+    Actor_unk121_4();
 }
 
 /* Runs six queued setup calls for this scene: two paired 6-argument calls
@@ -1042,8 +1041,8 @@ void Scene_RunMiddleSequence(void)
  * value (198<<18) equals the first call's end value. */
 void Scene_RunLateSequenceHead(void)
 {
-    Actor_SetRect9(72, 49, 1, 1, 8, 49); /* main:080091c0 */
-    Actor_SetRect10(113, 43, 1, 1, 49, 43); /* main:080091c0 */
+    Actor_unk9_5(72, 49, 1, 1, 8, 49); /* main:080091c0 */
+    Actor_unk10_5(113, 43, 1, 1, 49, 43); /* main:080091c0 */
     EffectRuntime_SetCurrentPosition_1(100, 0, 0);
     EffectRuntime_SetCurrentPosition_2(101, 0, 0);
     Motion_SetHPosTerrain_1(15, 8912896, 51904512); /* 136<<16, 198<<18 */
@@ -1055,8 +1054,8 @@ void Scene_RunLateSequenceHead(void)
  * by an id with a trailing pair of values (-1, -1 or 0, 0). */
 void Scene_RunLateSequenceSecond(void)
 {
-    Actor_SetRect11(8, 113, 1, 1, 8, 49);
-    Actor_SetRect12(49, 107, 1, 1, 49, 43);
+    Actor_unk11_5(8, 113, 1, 1, 8, 49);
+    Actor_unk12_5(49, 107, 1, 1, 49, 43);
     EffectRuntime_SetCurrentPosition_1(100, -1, -1);
     EffectRuntime_SetCurrentPosition_2(101, -1, -1);
     ObjectMotion_SetHorizontalPositionWithTerrain_1(15, 0, 0);
@@ -1071,111 +1070,111 @@ void Scene_RunScene3c4SequenceA(s32 a0)
     s32 q;
 
     v6 = 0;
-    Actor_Run122(a0);
-    Actor_SetRect13(83, 45, 11, 8, 19, 45);
-    record = Actor_Check21(19);
+    Actor_unk122_4(a0);
+    Actor_unk13_5(83, 45, 11, 8, 19, 45);
+    record = Actor_unk21(19);
     p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Actor_Check22(19) + 16);
+    q = *(volatile s32 *)(Actor_unk22(19) + 16);
     q >>= 20;
     p5 >>= 20;
-    Actor_Run123(20, 56, 1, 1, p5, q);
-    record = Actor_Check23(20);
+    Actor_unk123_4(20, 56, 1, 1, p5, q);
+    record = Actor_unk23(20);
     p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Actor_Check24(20) + 16);
+    q = *(volatile s32 *)(Actor_unk24(20) + 16);
     q >>= 20;
     p5 >>= 20;
-    Actor_Run124(20, 56, 1, 1, p5, q);
-    record = Actor_Check25(21);
+    Actor_unk124_4(20, 56, 1, 1, p5, q);
+    record = Actor_unk25(21);
     p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Actor_Check26(21) + 16);
+    q = *(volatile s32 *)(Actor_unk26(21) + 16);
     q >>= 20;
     p5 >>= 20;
-    Actor_Run125(20, 56, 1, 1, p5, q);
-    record = Actor_Check27(22);
+    Actor_unk125_4(20, 56, 1, 1, p5, q);
+    record = Actor_unk27(22);
     p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Actor_Check28(22) + 16);
+    q = *(volatile s32 *)(Actor_unk28(22) + 16);
     q >>= 20;
     p5 >>= 20;
-    Actor_Run126(20, 56, 1, 1, p5, q);
-    record = Actor_Check29(23);
+    Actor_unk126_4(20, 56, 1, 1, p5, q);
+    record = Actor_unk29(23);
     p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Actor_Check30(23) + 16);
+    q = *(volatile s32 *)(Actor_unk30(23) + 16);
     q >>= 20;
     p5 >>= 20;
-    Actor_Run127(20, 56, 1, 1, p5, q);
-    record = Actor_Check31(19);
+    Actor_unk127_4(20, 56, 1, 1, p5, q);
+    record = Actor_unk31(19);
     if ((*(volatile s32 *)(record + 8) >> 20) == 25) {
-        record = Actor_Check32(19);
+        record = Actor_unk32(19);
         if ((*(volatile s32 *)(record + 16) >> 20) == 49) {
             v6 = 1;
         }
     }
-    record = Actor_Check33(20);
+    record = Actor_unk33(20);
     if ((*(volatile s32 *)(record + 8) >> 20) == 23) {
-        record = Actor_Check34(20);
+        record = Actor_unk34(20);
         if ((*(volatile s32 *)(record + 16) >> 20) == 49) {
             v6 = (v6 + 1);
         }
     }
-    record = Actor_Check35(21);
+    record = Actor_unk35(21);
     if ((*(volatile s32 *)(record + 8) >> 20) == 25) {
-        record = Actor_Check36(21);
+        record = Actor_unk36(21);
         if ((*(volatile s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
-    record = Actor_Check37(22);
+    record = Actor_unk37(22);
     if ((*(volatile s32 *)(record + 8) >> 20) == 23) {
-        record = Actor_Check38(22);
+        record = Actor_unk38(22);
         if ((*(volatile s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
-    record = Actor_Check39(23);
+    record = Actor_unk39(23);
     if ((*(volatile s32 *)(record + 8) >> 20) == 24) {
-        record = Actor_Check40(23);
+        record = Actor_unk40(23);
         if ((*(volatile s32 *)(record + 16) >> 20) == 48) {
             v6 = (v6 + 1);
         }
     }
     if (v6 == 5) {
-        if (Actor_Check41(0x984) != 0) {
-            Actor_Run128();
+        if (Actor_unk41(0x984) != 0) {
+            Actor_unk128_4();
             goto L_020022e4;
         }
-        Actor_Run129(20);
-        Actor_Run6(0xcccc, 0x1999);
-        Actor_Run7(0x1d80000, -1, 0x30c0000, 1);
-        Actor_Run130();
-        Actor_Run131(30);
-        Actor_Do3(0x984);
-        Actor_Run132(158);
-        Actor_Place11(0x200b3ec, 32, 46);
-        Actor_SetRect14(24, 60, 1, 1, 32, 47);
-        Actor_Run133(40);
+        Actor_unk129_4(20);
+        Actor_unk6_4(0xcccc, 0x1999);
+        Actor_unk7_4(0x1d80000, -1, 0x30c0000, 1);
+        Actor_unk130_4();
+        Actor_unk131_3(30);
+        Actor_unk3_2(0x984);
+        Actor_unk132_3(158);
+        Actor_unk11_3(0x200b3ec, 32, 46);
+        Actor_unk14_5(24, 60, 1, 1, 32, 47);
+        Actor_unk133_3(40);
     } else {
-        if (Actor_Check42(0x984) != 0) {
-            Actor_Run134(20);
-            Actor_Run8(0xcccc, 0x1999);
-            Actor_Run9(0x1d80000, -1, 0x30c0000, 1);
-            Actor_Run135();
-            Actor_Run136(30);
-            Actor_Do4(0x984);
-            Actor_Run137(159);
-            Actor_Place12(0x200b40c, 32, 46);
-            Actor_SetRect15(31, 47, 1, 1, 32, 47);
-            Actor_Run138(40);
+        if (Actor_unk42(0x984) != 0) {
+            Actor_unk134_3(20);
+            Actor_unk8_4(0xcccc, 0x1999);
+            Actor_unk9_4(0x1d80000, -1, 0x30c0000, 1);
+            Actor_unk135_3();
+            Actor_unk136_3(30);
+            Actor_unk4_2(0x984);
+            Actor_unk137_3(159);
+            Actor_unk12_3(0x200b40c, 32, 46);
+            Actor_unk15_5(31, 47, 1, 1, 32, 47);
+            Actor_unk138_3(40);
         }
     }
-    Actor_Run139();
+    Actor_unk139_3();
     L_020022e4:;
 }
 
 void Scene_RunScriptedStep953(void)
 {
-    Actor_Run140();
+    Actor_unk140_3();
     Actor_Apply14(0x953, 1);
-    Actor_Run141();
+    Actor_unk141_3();
 }
 
 void Scene_RunScene3c4(void)
@@ -1183,24 +1182,24 @@ void Scene_RunScene3c4(void)
     s32 record;
     s32 p5;
 
-    Actor_SetRect16(89, 49, 3, 2, 25, 49);
-    Actor_SetRect17(89, 51, 8, 5, 25, 51);
-    *(u8 *)(Actor_Check84(14) + 34) = 1;
-    record = Actor_Check43(12);
+    Actor_unk16_5(89, 49, 3, 2, 25, 49);
+    Actor_unk17_5(89, 51, 8, 5, 25, 51);
+    *(u8 *)(Actor_unk84(14) + 34) = 1;
+    record = Actor_unk43(12);
     p5 = *(volatile s32 *)(record + 8);
-    record = Actor_Check44(12);
+    record = Actor_unk44(12);
     p5 = p5 >> 20;
-    Actor_SetRect18(22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
-    record = Actor_Check45(13);
+    Actor_unk18_5(22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
+    record = Actor_unk45(13);
     p5 = *(volatile s32 *)(record + 8);
-    record = Actor_Check46(13);
+    record = Actor_unk46(13);
     p5 = p5 >> 20;
-    Actor_SetRect19(22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
-    record = Actor_Check47(14);
+    Actor_unk19_5(22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
+    record = Actor_unk47(14);
     p5 = *(volatile s32 *)(record + 8);
-    record = Actor_Check48(14);
+    record = Actor_unk48(14);
     p5 = p5 >> 20;
-    Actor_SetRect20(22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
+    Actor_unk20_5(22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
 }
 
 /* overlays/scene/actor/map_init/scene_setup.c */
@@ -1220,24 +1219,24 @@ typedef struct Slot4 {
     s32 row;               /* +16, 12.20 fixed point */
 } Slot4;
 
-u8 *Actor_Run142(s32);
+u8 *Actor_unk142_3(s32);
 
-u8 *Actor_Run143();
+u8 *Actor_unk143_3();
 
-Slot3 *Actor_Run144();
-Slot3 *Actor_Run145();
+Slot3 *Actor_unk144_3();
+Slot3 *Actor_unk145_3();
 
-u8 *Actor_Run146();
-u8 *Actor_Run147();
-u8 *Actor_Run148();
+u8 *Actor_unk146_3();
+u8 *Actor_unk147_3();
+u8 *Actor_unk148_3();
 
 typedef s32(*Handler)(struct Record *record);
 
-Slot4 *Actor_Run149();
-Slot4 *Actor_Run150();
+Slot4 *Actor_unk149_3();
+Slot4 *Actor_unk150_3();
 
-Slot4 *Actor_Run151();
-Slot4 *Actor_Run152();
+Slot4 *Actor_unk151_3();
+Slot4 *Actor_unk152_3();
 
 /*
  * Slot nine setup for overlay resource_3c4.
@@ -1245,7 +1244,7 @@ Slot4 *Actor_Run152();
 
 /*
  * Every call site branches through its own veneer, so the callees are named
- * per site. Actor_Run153 serves two sites with different argument shapes
+ * per site. Actor_unk153_3 serves two sites with different argument shapes
  * and is declared without a prototype.
  */
 
@@ -1263,32 +1262,32 @@ struct Record;
 
 void Scene_RunFourCallSequenceB(void)
 {
-    Actor_Run154();
-    Actor_Run155();
-    Actor_Run156();
-    Actor_Run157();
+    Actor_unk154_3();
+    Actor_unk155_2();
+    Actor_unk156_2();
+    Actor_unk157_2();
 }
 
 void Scene_RunFourStepSequenceA(void)
 {
-    Actor_Run158();
-    Actor_Run159();
-    Actor_Run160();
-    Actor_Run161();
+    Actor_unk158_2();
+    Actor_unk159_2();
+    Actor_unk160_2();
+    Actor_unk161_2();
 }
 
 void Scene_RunTwoStepSequence(void)
 {
-    Actor_Run162();
-    Actor_Run163();
+    Actor_unk162_2();
+    Actor_unk163_2();
 }
 
 void Scene_RunFourStepSequenceB(void)
 {
-    Actor_Run164();
+    Actor_unk164_2();
     OvObj_SetYAboveLinkedActor();
-    Actor_Run165();
-    Actor_Run166();
+    Actor_unk165_2();
+    Actor_unk166_2();
 }
 
 void Actor_InstallSlotNineHandler(void)
@@ -1296,8 +1295,8 @@ void Actor_InstallSlotNineHandler(void)
     u8 *owner;
 
     Actor_Apply15(8, 0x0200B3B8);
-    Actor_Do11(0x203);
-    owner = Actor_Run142(9);
+    Actor_unk11_2(0x203);
+    owner = Actor_unk142_3(9);
     *(s32 *)(owner + 108) = 0x02008FE9;
 }
 
@@ -1306,7 +1305,7 @@ void Actor_InstallSlotNineHandler(void)
  * publish selector 0x204, pin an overlay at slot 9's 12.20 grid cell, then
  * install one handler on slots 9 and 8. The 136-byte owner at 0x02001a10
  * includes its alignment halfword and its one pool word; that word is an
- * odd Thumb pointer, so the handler is Actor_Check85. The bit-clear folds
+ * odd Thumb pointer, so the handler is Actor_unk85. The bit-clear folds
  * +35 into the returned pointer through the address local, not into a copy.
  */
 void Actor_SetupSlotNineAndInstallHandler(void)
@@ -1315,45 +1314,45 @@ void Actor_SetupSlotNineAndInstallHandler(void)
     s32 col;
     s32 row;
 
-    Actor_Run167();
-    Actor_Run168(9, 1);
-    Actor_Run169(9, 1);
-    Actor_Run170(9, 0);
-    Actor_Run171(9, 2);
+    Actor_unk167_2();
+    Actor_unk168_2(9, 1);
+    Actor_unk169_2(9, 1);
+    Actor_unk170_2(9, 0);
+    Actor_unk171_2(9, 2);
 
     {
-        u8 *flag = Actor_Run143(9) + 35;
+        u8 *flag = Actor_unk143_3(9) + 35;
         *flag &= (u8)0xfd;
     }
 
-    Actor_Run172(0x204);
+    Actor_unk172_2(0x204);
 
-    col = Actor_Run144(9)->col;
-    row = Actor_Run145(9)->row >> 20;
-    Actor_Run173(26, 8, 1, 1, col >> 20, row);
+    col = Actor_unk144_3(9)->col;
+    row = Actor_unk145_3(9)->row >> 20;
+    Actor_unk173_2(26, 8, 1, 1, col >> 20, row);
 
-    desc = Actor_Run146(9);
-    *(Handler *)(desc + 108) = Actor_Check85;
+    desc = Actor_unk146_3(9);
+    *(Handler *)(desc + 108) = Actor_unk85;
 
-    desc = Actor_Run148(8);
-    *(Handler *)(desc + 108) = Actor_Check85;
+    desc = Actor_unk148_3(8);
+    *(Handler *)(desc + 108) = Actor_unk85;
 
-    Actor_Run147(desc);
+    Actor_unk147_3(desc);
 }
 
 void Scene_RunThreeStepSequence(void)
 {
-    Actor_Run174();
-    Actor_Run175();
-    Actor_Run176();
+    Actor_unk174_2();
+    Actor_unk175_2();
+    Actor_unk176_2();
 }
 
 void Scene_RunFourCallSequence(void)
 {
-    Actor_Run177();
-    Actor_Run178();
-    Actor_Run179();
-    Actor_Run180();
+    Actor_unk177_2();
+    Actor_unk178_2();
+    Actor_unk179_2();
+    Actor_unk180_2();
 }
 
 void Scene_PlaceAndPinSlots8And9(void)
@@ -1362,20 +1361,20 @@ void Scene_PlaceAndPinSlots8And9(void)
 
     {
         s32 p5 = 9, p6 = 38;
-        Actor_Run181(73, 38, 5, 5, p5, p6);
+        Actor_unk181_2(73, 38, 5, 5, p5, p6);
     }
-    Actor_Run182(9, 8);
+    Actor_unk182_2(9, 8);
 
     {
-        s32 col = Actor_Run149(8)->column >> 20;
-        row = Actor_Run150(8)->row >> 20;
-        Actor_Run183(2, 36, 1, 1, col, row);
+        s32 col = Actor_unk149_3(8)->column >> 20;
+        row = Actor_unk150_3(8)->row >> 20;
+        Actor_unk183_2(2, 36, 1, 1, col, row);
     }
 
     {
-        s32 col = Actor_Run151(9)->column >> 20;
-        row = Actor_Run152(9)->row >> 20;
-        Actor_Run184(2, 36, 1, 1, col, row);
+        s32 col = Actor_unk151_3(9)->column >> 20;
+        row = Actor_unk152_3(9)->row >> 20;
+        Actor_unk184_2(2, 36, 1, 1, col, row);
     }
 }
 
@@ -1400,7 +1399,7 @@ typedef struct {
 extern s32 ActorSearchStep[];
 extern s32 gOv9[];
 
-Ent *Actor_Run185(Desc *, Ent *);
+Ent *Actor_unk185_2(Desc *, Ent *);
 
 s32 Actor_CheckAheadTileAndStop(Ent *obj)
 {
@@ -1415,7 +1414,7 @@ s32 Actor_CheckAheadTileAndStop(Ent *obj)
     d.unk4 = obj->unkC;
     m = m << 16;
     d.unk8 = obj->unk10 + m;
-    hit = Actor_Run185(&d, obj);
+    hit = Actor_unk185_2(&d, obj);
     if (hit != 0) {
         u32 i = 0;
         s32 v = *hit->unk50->unk28;
@@ -1549,20 +1548,20 @@ typedef struct Slot5 {
     s32 w8;                /* +8, 12.20 fixed point */
 } Slot5;
 
-struct Slot02000f10 *Actor_Run186(s32);
-struct Slot02000f10 *Actor_Run187(s32);
+struct Slot02000f10 *Actor_unk186_2(s32);
+struct Slot02000f10 *Actor_unk187_2(s32);
 
-u8 *Actor_Run188(s32);
-u8 *Actor_Run189(s32);
-u8 *Actor_Run190(s32);
-u8 *Actor_Run191(s32);
+u8 *Actor_unk188_2(s32);
+u8 *Actor_unk189_2(s32);
+u8 *Actor_unk190_2(s32);
+u8 *Actor_unk191_2(s32);
 
-struct Actor *Actor_Run192(s32);
+struct Actor *Actor_unk192_2(s32);
 
-u8 *Actor_Run193(s32);
+u8 *Actor_unk193_2(s32);
 
-Slot5 *Actor_Run194(s32 slot);
-Slot5 *Actor_Run195(s32 slot);
+Slot5 *Actor_unk194_2(s32 slot);
+Slot5 *Actor_unk195_2(s32 slot);
 
 /*
  * resource_3c4 @ 0x02001f70 (84 bytes: 72 code + alignment + two pool words).
@@ -1583,8 +1582,8 @@ s32 State_ApplyArgMode0AndReturnZero(s32 no)
 
 void State_SwapSlotPairByRank(s32 first, s32 second)
 {
-    struct Slot02000f10 *a = Actor_Run186(first);
-    struct Slot02000f10 *b = Actor_Run187(second);
+    struct Slot02000f10 *a = Actor_unk186_2(first);
+    struct Slot02000f10 *b = Actor_unk187_2(second);
 
     if (a->rank <= b->rank) {
         s32 t;
@@ -1592,34 +1591,34 @@ void State_SwapSlotPairByRank(s32 first, s32 second)
         t = a->x;    a->x    = b->x;    b->x    = t;
         t = a->y;    a->y    = b->y;    b->y    = t;
         t = a->rank; a->rank = b->rank; b->rank = t;
-        Actor_Do12(1);
+        Actor_unk12_2(1);
     }
 }
 
 void State_RunRect73x38Step(void)
 {
-    Actor_Run196();
+    Actor_unk196_2();
     {
         s32 width = 9;
         s32 height = 38;
 
-        Actor_SetRect24(73, 38, 5, 5, width, height);
+        Actor_unk24_5(73, 38, 5, 5, width, height);
     }
-    Actor_Run197();
-    Actor_Run198();
-    Actor_Run199();
+    Actor_unk197_2();
+    Actor_unk198_2();
+    Actor_unk199_2();
 }
 
 void State_ApplyTwoRectsAndRunThree(void)
 {
     s32 lead = 25;
 
-    Actor_Run200();
-    Actor_SetRect25(89, 49, 3, 2, lead, 49);
-    Actor_SetRect26(89, 51, 8, 5, lead, 51);
-    Actor_Run201();
-    Actor_Run202();
-    Actor_Run203();
+    Actor_unk200_2();
+    Actor_unk25_5(89, 49, 3, 2, lead, 49);
+    Actor_unk26_5(89, 51, 8, 5, lead, 51);
+    Actor_unk201_2();
+    Actor_unk202_2();
+    Actor_unk203_2();
 }
 
 /*
@@ -1639,13 +1638,13 @@ void Actor_MirrorFlag201IntoSlot14(void)
     u8 *flags;
     u8 value;
 
-    Actor_Do13(0x200);
-    if (Actor_Check86(0x201) != 0) {
-        Actor_Run188(14)[98] = 0;
-        Actor_Run189(14)[89] &= (u8)0xf7;
+    Actor_unk13_2(0x200);
+    if (Actor_unk86(0x201) != 0) {
+        Actor_unk188_2(14)[98] = 0;
+        Actor_unk189_2(14)[89] &= (u8)0xf7;
     } else {
-        Actor_Run190(14)[98] = 1;
-        flags = Actor_Run191(14);
+        Actor_unk190_2(14)[98] = 1;
+        flags = Actor_unk191_2(14);
         flags += 89;
         value = 8;
         value |= *flags;
@@ -1655,22 +1654,22 @@ void Actor_MirrorFlag201IntoSlot14(void)
 
 void State_ApplyFlag970(void)
 {
-    Actor_Do14(0x970);
+    Actor_unk14_2(0x970);
 }
 
 void State_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor *actor = Actor_Run192(0);
+    struct Actor *actor = Actor_unk192_2(0);
 
     if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
-        Actor_Run204();
+        Actor_unk204_2();
     }
 }
 
 void State_SetValue202ThenCall(void)
 {
-    Actor_Do15(0x202);
-    Actor_Run205();
+    Actor_unk15_2(0x202);
+    Actor_unk205_2();
 }
 
 void Actor_ConfigureSlot21AndSetFlag201(void)
@@ -1680,35 +1679,35 @@ void Actor_ConfigureSlot21AndSetFlag201(void)
     Actor_Apply17(21, 1);
     Actor_Apply18(21, 0);
     Actor_Apply19(21, 2);
-    flags = Actor_Run193(21) + 35;
+    flags = Actor_unk193_2(21) + 35;
     *flags &= 0xFD;
-    Actor_Do16(0x201);
+    Actor_unk16_2(0x201);
 }
 
 void State_SetSlot17And18Selectors(void)
 {
-    Actor_Run206();
+    Actor_unk206_2();
 
-    if ((Actor_Run194(17)->w8 >> 20) == 45) {
-        Actor_Do17(0x974);
+    if ((Actor_unk194_2(17)->w8 >> 20) == 45) {
+        Actor_unk17_2(0x974);
     } else {
-        Actor_Do18(0x974);
+        Actor_unk18_2(0x974);
     }
 
-    if ((Actor_Run195(18)->w8 >> 20) == 46) {
-        Actor_Do19(0x975);
+    if ((Actor_unk195_2(18)->w8 >> 20) == 46) {
+        Actor_unk19_2(0x975);
     } else {
-        Actor_Do20(0x975);
+        Actor_unk20_2(0x975);
     }
 
-    Actor_Run207();
-    Actor_Run208();
+    Actor_unk207_2();
+    Actor_unk208_2();
 }
 
 void State_SetValue268bInScene(void)
 {
-    Actor_Run209();
+    Actor_unk209_2();
     Actor_Apply20(0, 1);
     Actor_Apply21(0x268B, 1);
-    Actor_Run210();
+    Actor_unk210_2();
 }

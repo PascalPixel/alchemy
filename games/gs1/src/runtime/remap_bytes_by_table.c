@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/remap_bytes_by_table.h"
-
 
 extern u8 gRom[];
 

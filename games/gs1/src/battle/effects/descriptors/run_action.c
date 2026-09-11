@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/descriptors/run_action.h"
 
 struct ActionDescriptor_0808d5dc {
     s16 id;
@@ -29,8 +28,8 @@ struct BattleActionObject {
 };
 
 extern struct ActionDescriptor *Battle_Run(s32);
-extern struct EffectDescriptor *Battle_Run2(s32, s32);
-extern struct BattleActionObject *Battle_Run3(s32);
+extern struct EffectDescriptor *Battle_unk2_4(s32, s32);
+extern struct BattleActionObject *Battle_unk3_4(s32);
 
 extern u8 gCell;
 
@@ -39,7 +38,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
     struct ActionDescriptor_0808d5dc *action =
         (struct ActionDescriptor_0808d5dc *)Battle_Run(id);
     s32 result = -1;
-    struct BattleActionObject *object = Battle_Run3(id);
+    struct BattleActionObject *object = Battle_unk3_4(id);
     struct EffectDescriptor_0808d5dc *descriptor;
     s32 special = 0;
     u32 saved_value;
@@ -50,27 +49,27 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 
     if (*(s16 *)((u8 *)&gCell + selected_offset) == id) {
         special = 1;
-        descriptor = (struct EffectDescriptor_0808d5dc *)Battle_Run2(7, id);
+        descriptor = (struct EffectDescriptor_0808d5dc *)Battle_unk2_4(7, id);
         if (descriptor == 0) {
-            descriptor = (struct EffectDescriptor_0808d5dc *)Battle_Run2(0, id);
+            descriptor = (struct EffectDescriptor_0808d5dc *)Battle_unk2_4(0, id);
             used_fallback = 1;
             if (descriptor == 0) {
                 return -1;
             }
             if (descriptor->result >= 0x10000) {
                 s32 index = Battle_Check(id);
-                u32 random = Battle_Run4();
+                u32 random = Battle_unk4_4();
                 s32 message =
                     0x0e0b + index * 2 + (random * 2 >> 16);
-                Battle_Run5();
+                Battle_unk5_2();
                 Battle_Do(message);
                 Battle_Apply(id, 0);
-                Battle_Run6();
+                Battle_unk6_2();
                 goto finish;
             }
         }
     } else {
-        descriptor = (struct EffectDescriptor_0808d5dc *)Battle_Run2(0, id);
+        descriptor = (struct EffectDescriptor_0808d5dc *)Battle_unk2_4(0, id);
     }
 
     if (descriptor == 0)
@@ -89,7 +88,7 @@ run_descriptor:
             s32 object_index = 250;
             s32 *object_slot =
                 (s32 *)((s16 *)&gCell + object_index);
-            struct BattleActionObject *linked = Battle_Run3(*object_slot);
+            struct BattleActionObject *linked = Battle_unk3_4(*object_slot);
             *(void **)((u8 *)linked + 56) = *(void **)((u8 *)linked + 8);
             *(void **)((u8 *)linked + 60) = *(void **)((u8 *)linked + 12);
             *(void **)((u8 *)linked + 64) = *(void **)((u8 *)linked + 16);
@@ -100,14 +99,14 @@ run_descriptor:
         }
     }
     if (descriptor->result < 0x10000) {
-        Battle_Do2(used_fallback);
-        Battle_Run5();
+        Battle_unk2_2(used_fallback);
+        Battle_unk5_2();
         Battle_Do(descriptor->result);
         Battle_Apply(id, 0);
-        Battle_Run6();
+        Battle_unk6_2();
     } else {
         typedef void (*EffectRunner)(s32);
-        Battle_Run7();
+        Battle_unk7_2();
         ((EffectRunner)descriptor->result)(id);
     }
     if (!special) {
@@ -116,7 +115,7 @@ run_descriptor:
                 s32 object_index = 250;
                 s32 object_id =
                     *(s32 *)((s16 *)&gCell + object_index);
-                object->linked_object = Battle_Run3(object_id);
+                object->linked_object = Battle_unk3_4(object_id);
                 object->flags_5a |= 1;
                 Battle_Apply3(object, (void *)0x0809ff40);
             } else if (action->mode == 1) {
@@ -133,7 +132,7 @@ finish:
         s32 finish_selected_offset = 0x24a;
         s16 *selected =
             (s16 *)((u8 *)&gCell + finish_selected_offset);
-        Battle_Do3(*selected);
+        Battle_unk3_2(*selected);
         cleared_selection = 0xffff;
         *selected = cleared_selection;
     }

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/inventory/prompt_and_set_object_mode.h"
 
 struct Entry_08091c7c {
     u8 unknown_00[10];

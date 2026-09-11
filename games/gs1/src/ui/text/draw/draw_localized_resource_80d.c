@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/text/draw/draw_localized_resource_80d.h"
 
 /*
  * The r9 static chain and matching save identify this as a GNU C nested

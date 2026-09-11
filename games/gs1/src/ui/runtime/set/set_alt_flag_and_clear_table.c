@@ -2,7 +2,6 @@
 #include "scene.h"
 #include "global_cells.h"
 
-
 void UiWork_SetAltFlagAndClearTable(s32 flag)
 {
     s32 i;

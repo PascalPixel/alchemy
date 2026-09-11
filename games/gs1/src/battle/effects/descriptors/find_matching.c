@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/descriptors/find_matching.h"
 
 struct EffectDescriptor {
     s32 flags;

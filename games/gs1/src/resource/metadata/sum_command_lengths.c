@@ -1,7 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/metadata/sum_command_lengths.h"
 
 struct EventInfo {
     u8 pad0[5];

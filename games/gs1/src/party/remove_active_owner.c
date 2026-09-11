@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/party/remove_active_owner.h"
 #include "game_flags.h"
 #include "party_state.h"
 

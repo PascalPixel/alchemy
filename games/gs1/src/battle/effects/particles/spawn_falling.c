@@ -1,7 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/particles/spawn_falling.h"
 #include "object_effect.h"
 #include "object_efx.h"
 

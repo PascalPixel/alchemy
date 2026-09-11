@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/branching_event/push_actor_ahead.h"
 #include "staged_actor.h"
 
 extern u32 StagedActorStepTable[];

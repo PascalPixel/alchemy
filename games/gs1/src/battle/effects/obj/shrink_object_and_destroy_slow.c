@@ -1,7 +1,6 @@
 #include "types.h"
 #include "scene.h"
 
-
 void Object_Destroy();
 
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj)

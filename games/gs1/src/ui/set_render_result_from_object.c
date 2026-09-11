@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/set_render_result_from_object.h"
 #include "gs1_edition.h"
 
 struct State08093304 {

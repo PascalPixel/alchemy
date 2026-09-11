@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/get_record.h"
 #include "runtime_interfaces.h"
 
 extern const u8 gRom[];

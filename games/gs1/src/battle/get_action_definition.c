@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/battle/get_action_definition.h"
 #include "battle_runtime.h"
 
 extern const u8 gRom[];

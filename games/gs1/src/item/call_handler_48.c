@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/item/call_handler_48.h"
-
 
 s32 Item_CallHandler48(s32 arg0, s32 arg1)
 {

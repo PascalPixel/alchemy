@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/graphics/tile/expand_vram_tiles_by_color_table.h"
 
 extern u16 gUnk[];
 extern u16 gRom[];

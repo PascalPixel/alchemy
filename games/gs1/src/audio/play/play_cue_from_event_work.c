@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/audio/play/play_cue_from_event_work.h"
 
 struct Party {
     u8 unk00[0x1f0];

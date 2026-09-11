@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/group/store_object_and_run_step7.h"
 #include "global_cells.h"
 
 void ObjectGroup_StoreObjectAndRunStep7(void *obj)

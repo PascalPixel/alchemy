@@ -1,7 +1,6 @@
 #include "types.h"
 #include "scene.h"
 
-
 void SerialRuntime_EnableTransferTimer(void)
 {
     s32 state = 0x02002240;

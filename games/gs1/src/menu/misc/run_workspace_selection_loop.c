@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/misc/run_workspace_selection_loop.h"
 
 /* Owner-local field access until this runtime workspace layout is recovered
  * elsewhere; other menu owners reach the same 0x03001EA0 pointer. */
@@ -11,7 +10,7 @@ extern s8 gRom[];
 
 void *Menu_Run(void);
 
-void *Menu_Run2(s32, void *, s32, s32);
+void *Menu_unk2_4(s32, void *, s32, s32);
 
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {
@@ -38,14 +37,14 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     var_fp_21 = 3;
     temp_r0_22 = Menu_Check(0x17E);
     sp4 = 0;
-    Menu_Run3();
+    Menu_unk3_3();
     temp_sl_29 = gIw;
     sp10 = Menu_Run();
     var_r4_35 = -0x18;
     if (gIw2 != 0) {
         var_r4_35 = -0x10;
     }
-    sp8 = (s32)Menu_Run2(6, sp10, 0x28, var_r4_35);
+    sp8 = (s32)Menu_unk2_4(6, sp10, 0x28, var_r4_35);
     Menu_Do(1);
     var_r8_51 = FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574);
     if (temp_r0_22 != 0) {
@@ -67,7 +66,7 @@ loop_6:
             do {
                 temp_r5_90 = ((void **)((u8 *)temp_sl_29 + 0x610))[i];
                 FIELD_AT_OFFSET(temp_r5_90, u8 *, 0xF) = 0xFB;
-                Menu_Do2(temp_r5_90);
+                Menu_unk2_2(temp_r5_90);
                 temp_e = FIELD_AT_OFFSET(temp_r5_90, u8 *, 0xE);
                 var_r2_101 = 0;
                 if (i != FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574)) {
@@ -87,28 +86,28 @@ loop_6:
             var_r4_35,
             3);
     }
-    Menu_Do3((void *)sp8);
+    Menu_unk3_2((void *)sp8);
     Menu_Do(1);
     if (*(volatile s32 *)0x03001C94 & 1) {
         var_r5_144 = var_r8_51;
-        Menu_Do4(0x70);
+        Menu_unk4_2(0x70);
     } else if (*(volatile s32 *)0x03001C94 & 0xA) {
         var_r5_144 = -1;
-        Menu_Do4(0x71);
+        Menu_unk4_2(0x71);
     } else {
         if (*(volatile s32 *)0x03001B04 & 0x40) {
-            Menu_Do4(0x6F);
+            Menu_unk4_2(0x6F);
             var_r8_51 -= 1;
             spC = 1;
         } else if (*(volatile s32 *)0x03001B04 & 0x80) {
-            Menu_Do4(0x6F);
+            Menu_unk4_2(0x6F);
             var_r8_51 += 1;
             spC = 1;
         }
         goto loop_6;
     }
     Menu_Apply2(sp10, 2);
-    Menu_Run4();
+    Menu_unk4_3();
     Menu_Do(1);
     if (var_r5_144 >= 0) {
         var_r5_144 += sp4;

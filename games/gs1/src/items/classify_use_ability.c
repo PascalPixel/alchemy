@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/items/classify_use_ability.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 

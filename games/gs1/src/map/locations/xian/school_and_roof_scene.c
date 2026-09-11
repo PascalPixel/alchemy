@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/locations/xian/school_and_roof_scene.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -130,12 +129,12 @@ extern u8 gVal[];
 
 void *AcquireOverlayObject(s32, s32, s32, s32);
 
-void *Map_Run12(s32, s32, s32, s32);
+void *Map_unk12_4(s32, s32, s32, s32);
 
-struct Effect *Map_Run13();
-struct Effect *Map_Run14();
+struct Effect *Map_unk13_4();
+struct Effect *Map_unk14_4();
 
-void *Map_Run15(s32);
+void *Map_unk15_4(s32);
 
 u8 *ClearSceneExitGateAtEntry(s32 slot);
 u8 *GetSceneExitPendingWork(s32 slot);
@@ -146,28 +145,28 @@ u8 *SetSceneExitGate(s32 slot);
 u8 *SetSceneExitHeading(s32 slot);
 u8 *ClearSceneExitGateBeforeDescriptor(s32 slot);
 
-u8 *Map_Run16();
+u8 *Map_unk16_4();
 
-u8 *Map_Run17(s32 id);
+u8 *Map_unk17_4(s32 id);
 
-u8 *Map_Run18(s32 slot);
-u8 *Map_Run19(s32 slot);
+u8 *Map_unk18_4(s32 slot);
+u8 *Map_unk19_4(s32 slot);
 
 struct SceneActor *GetSceneRecord(s32 slot);
 
-u8 *Map_Run20();
+u8 *Map_unk20_4();
 
-u8 *Map_Run21();
+u8 *Map_unk21_4();
 
-u8 *Map_Run22(s32 arg0);
+u8 *Map_unk22_4(s32 arg0);
 
-u8 *Map_Run23(s32 id);
+u8 *Map_unk23_4(s32 id);
 
-u8 *Map_Run24(s32 id);
-u8 *Map_Run25(s32 id);
-u8 *Map_Run26(s32 id);
-u8 *Map_Run27(s32 id);
-u8 *Map_Run28(s32 id);
+u8 *Map_unk24_4(s32 id);
+u8 *Map_unk25_4(s32 id);
+u8 *Map_unk26_4(s32 id);
+u8 *Map_unk27_4(s32 id);
+u8 *Map_unk28_4(s32 id);
 
 u8 *Map_Far5();
 
@@ -179,7 +178,7 @@ u8 *Scene_GetRecord_3();
 
 u8 *Scene_GetRecord_4();
 
-u8 *Map_Run29();
+u8 *Map_unk29_4();
 u8 *Scene_GetRecord_5();
 u8 *Battle_WaitMode0_88();
 
@@ -190,21 +189,21 @@ u8 *Battle_WaitMode0_88();
  * shared scene-script helper block, then a two-stage story branch.
  *
  *   - the opening call sets story flag 0x89a;
- *   - stage 1 (Map_Run30(0, 0) == 0) joins with id 16 and sets flag 0x898
+ *   - stage 1 (Map_unk30_4(0, 0) == 0) joins with id 16 and sets flag 0x898
  *     -- the flag the dispatcher at 0x020012e0 tests and 0x02001dbc clears;
  *   - stage 1 otherwise bumps the step counter at +472 of the scene work
  *     record and runs stage 2: its ==0 arm joins with id 18 and also sets
  *     0x898, its else arm bumps that counter again and sets flag 0x899.
  *
- * Both join arms share the tail at 0x02001cb4: Map_Run31(id, 0, 20) with
- * the id carried in r0, then Map_Run32(0x898).
+ * Both join arms share the tail at 0x02001cb4: Map_unk31_4(id, 0, 20) with
+ * the id carried in r0, then Map_unk32_4(0x898).
  *
  * Midway the beat clears then sets bit 0 of byte +90 of record 16 around a
- * Map_Run33 reposition, plays sounds 158/159 with Map_Run34 text
- * calls, runs the slot-19/20 sequence (Map_Run35(19/20, 232 << 16,
+ * Map_unk33_4 reposition, plays sounds 158/159 with Map_unk34_4 text
+ * calls, runs the slot-19/20 sequence (Map_unk35_4(19/20, 232 << 16,
  * 168 << 16), record +12 = 0xc0000, +60 = 0x80000000, +24 = 0xcccc, +30 of
  * the +80 sub-object = 0x8000, sound 124) that also closes the owners at
- * 0x02001160 and 0x02001dbc, and ends with Map_Run36(12, 0x0200c638) as
+ * 0x02001160 and 0x02001dbc, and ends with Map_unk36_4(12, 0x0200c638) as
  * 0x02001dbc does.
  *
  * Complete owner: `push {r5, lr}` at 0x02001494 through `pop {r5} / pop {r0} /
@@ -244,12 +243,12 @@ u8 *Battle_WaitMode0_88();
 
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
 {
-    Map_Place24(actor, horizontal, vertical);
+    Map_unk24_3(actor, horizontal, vertical);
 }
 
 static __inline__ void SetPosition(s32 actor, s32 horizontal, s32 vertical)
 {
-    Map_Place25(actor, horizontal, vertical);
+    Map_unk25_3(actor, horizontal, vertical);
 }
 
 /* Field cleared to 0 on each actor record below. */
@@ -298,7 +297,7 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
 
 void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *result = Map_Run12(arg3, arg0, arg1, arg2);
+    u8 *result = Map_unk12_4(arg3, arg0, arg1, arg2);
 
     if (result != NULL) {
         u8 *object = *(u8 **)(result + 0x50);
@@ -337,21 +336,21 @@ void SpawnEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
     s32 first_delta;
     s32 accumulated;
 
-    party = Map_Run13(0);
+    party = Map_unk13_4(0);
 
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Map_Run14(options->kind, x, y, z);
+        effect = Map_unk14_4(options->kind, x, y, z);
     } else {
-        effect = Map_Run14(222, x, y, z);
+        effect = Map_unk14_4(222, x, y, z);
     }
     if (effect == 0) return;
 
     block = effect->sprite;
     mode_block = block;
 
-    Map_Run37(effect, (flags + 1) & 15);
+    Map_unk37_4(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
-    Map_Run38(effect, gOv[table_offset >> 2]);
+    Map_unk38_4(effect, gOv[table_offset >> 2]);
 
     effect->mode55 = 0;
     block->state26 = 0;
@@ -375,7 +374,7 @@ void SpawnEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {
-        Map_Run39(effect, options->mode);
+        Map_unk39_4(effect, options->mode);
     }
 
     if ((flags & 0x20000) != 0) {
@@ -399,24 +398,24 @@ void SpawnEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
             first_delta = *(volatile const s32 *)&options->target30;
             accumulated = *(volatile const s32 *)&effect->accum18;
             first_delta -= accumulated;
-            effect->rate30 = Map_Check11(first_delta, descriptor->duration);
+            effect->rate30 = Map_unk11(first_delta, descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
             delta -= effect->accum1c;
         } else {
             first_delta = options->target30;
             first_delta += (s32)0xffff0000;
-            effect->rate30 = Map_Check12(first_delta, descriptor->duration);
+            effect->rate30 = Map_unk12(first_delta, descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
             delta += (s32)0xffff0000;
         }
-        effect->rate34 = Map_Check13(delta, duration);
+        effect->rate34 = Map_unk13(delta, duration);
     }
 
     if ((flags & 0x200000) != 0) {
-        Map_Run40(effect, 1);
-        Map_Run41(effect, options->callback_arg);
+        Map_unk40_4(effect, 1);
+        Map_unk41_4(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {
@@ -440,7 +439,7 @@ s32 StopXianActor(void *actor)
 
 s32 FaceXianActorToPlayer(void *actor)
 {
-    void *player = Map_Run15(0);
+    void *player = Map_unk15_4(0);
     FIELD(actor, u16, 6) = Map_Apply4(FIELD(player, s32, 0x10) - FIELD(actor, s32, 0x10), FIELD(player, s32, 8) - FIELD(actor, s32, 8));
     return 0;
 }
@@ -470,32 +469,32 @@ void Scene_RunScene39e(void)
     u32 i;
     s32 record;
 
-    Map_Run42();
+    Map_unk42_4();
     Map_Do(0x178a);
     if (Map_Check(0x890) != 0) {
         bump_step(4);
     }
-    Map_Check2(8, 0);
-    if (Map_Check3(0, 0) == 0) {
-        Map_Do2(0x890);
+    Map_unk2(8, 0);
+    if (Map_unk3(0, 0) == 0) {
+        Map_unk2_2(0x890);
     } else {
         bump_step(1);
     }
-    Map_Run43(8, 0);
-    Map_Run44();
+    Map_unk43_4(8, 0);
+    Map_unk44_4();
 }
 
 void Scene_RunFlag88FBranch(void)
 {
     extern u8 *gWork;
 
-    Map_Run45();
-    if (Map_Check14(0x88F) != 0) {
-        Map_Do13(0x17D6);
+    Map_unk45_4();
+    if (Map_unk14(0x88F) != 0) {
+        Map_unk13_2(0x17D6);
         Map_Apply5(12, 0);
-        Map_Run46();
+        Map_unk46_4();
     } else {
-        Map_Do14(0x1794);
+        Map_unk14_2(0x1794);
         Map_Apply6(12, 0);
         if (Map_Apply7(0, 0) == 1) {
             u16 *q = (u16 *)(gWork + 0x1D8);
@@ -507,7 +506,7 @@ void Scene_RunFlag88FBranch(void)
             }
         }
         Map_Apply10(12, 0);
-        Map_Run47();
+        Map_unk47_4();
     }
 }
 
@@ -515,20 +514,20 @@ void Scene_ShowDialogue17B1(void)
 {
     extern u8 *gWork;
 
-    Map_Run48();
-    Map_Do15(0x17B1);
+    Map_unk48_4();
+    Map_unk15_2(0x17B1);
     Map_Apply11(8, 0);
-    Map_Run49();
+    Map_unk49_4();
 }
 
 void Scene_ShowDialogue1825(void)
 {
     extern u8 *gWork;
 
-    Map_Run50();
-    Map_Do16(0x1825);
+    Map_unk50_4();
+    Map_unk16_2(0x1825);
     Map_Apply12(9, 0);
-    Map_Run51();
+    Map_unk51_4();
 }
 
 void Scene_RunRoofSceneExit(void)
@@ -579,42 +578,42 @@ void Scene_ShowDialogue182D(void)
 {
     extern u8 *gWork;
 
-    Map_Run52();
-    Map_Do17(0x182d);
+    Map_unk52_4();
+    Map_unk17_2(0x182d);
     Map_Apply13(15, 0);
-    Map_Run53();
+    Map_unk53_4();
 }
 
 void Scene_RunForwardArcBurst(void)
 {
     extern u8 *gWork;
 
-    u8 *record = Map_Run16(19);
+    u8 *record = Map_unk16_4(19);
     u32 index;
     s32 angle;
 
     for (index = 8; index > 3; index--) {
         angle = index << 12;
         *(u16 *)(*(u8 **)(record + 80) + 30) = (u16)angle;
-        Map_Run54((index - 4) * 2);
-        *(s32 *)(record + 8) += Map_Check15(angle)* 6;
-        *(s32 *)(record + 16) += Map_Check16(angle)* 6;
+        Map_unk54_4((index - 4) * 2);
+        *(s32 *)(record + 8) += Map_unk15(angle)* 6;
+        *(s32 *)(record + 16) += Map_unk16(angle)* 6;
     }
 
     *(s32 *)(record + 12) = 0x120000;
     *(s32 *)(record + 60) = 0x120000;
 
-    Map_Run55(227);
+    Map_unk55_4(227);
 
-    Map_Run56(*(s32 *)(record + 8) - 0xc0000,
+    Map_unk56_4(*(s32 *)(record + 8) - 0xc0000,
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
                   0xffffcccd, 0x6666, 0, 0, 0);
-    Map_Run57(*(s32 *)(record + 8),
+    Map_unk57_4(*(s32 *)(record + 8),
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
                   0xffff3334, 0x4ccc, 0, 0, 0);
-    Map_Run58(*(s32 *)(record + 8) + 0xa0000,
+    Map_unk58_4(*(s32 *)(record + 8) + 0xa0000,
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
                   0xffff0000, 0x3333, 0, 0, 0);
@@ -624,12 +623,12 @@ void Scene_RunDescentBurst(void)
 {
     extern u8 *gWork;
 
-    u8 *record = Map_Run17(19);
+    u8 *record = Map_unk17_4(19);
     u32 i = 0;
     s32 step = 8;
     s32 zero;
     do {
-        Map_Do18(step);
+        Map_unk18_2(step);
         *(s32 *)(record + 16) += 0xffff0000;
         *(u32 *)(record + 64) = 0x80000000;
         i++;
@@ -637,17 +636,17 @@ void Scene_RunDescentBurst(void)
     } while (i <= 3);
     zero = 0;
     *(u16 *)(*(u8 **)(record + 80) + 30) = (u16)zero;
-    Map_Do19(227);
+    Map_unk19_2(227);
     Map_SetRect(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0xfff80000, 0xffff3334,
                   0, 0xffffcccd, 0, 0);
-    Map_SetRect2(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Map_unk2_5(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0xfff80000, 0x0000cccc,
                   0, 0xffffcccd, 0, 0);
-    Map_SetRect3(*(s32 *)(record + 8) + 0xfffa0000, *(s32 *)(record + 12),
+    Map_unk3_5(*(s32 *)(record + 8) + 0xfffa0000, *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + (160 << 12), 0x00003333,
                   0, 0xffff0000, 0, 0);
-    Map_SetRect4(*(s32 *)(record + 8) + (192 << 11), *(s32 *)(record + 12),
+    Map_unk4_5(*(s32 *)(record + 8) + (192 << 11), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + (160 << 12), 0x00003333,
                   0, 0xffff0000, 0, 0);
 }
@@ -656,22 +655,22 @@ void Scene_DispatchApproachByFacing(void)
 {
     extern u8 *gWork;
 
-    Map_Run59();
+    Map_unk59_4();
 
-    if (*(u16 *)(Map_Run18(0) + 6) > (128 << 7)
-        && *(u16 *)(Map_Run19(0) + 6) < (192 << 8)) {
-        Map_Run60();
+    if (*(u16 *)(Map_unk18_4(0) + 6) > (128 << 7)
+        && *(u16 *)(Map_unk19_4(0) + 6) < (192 << 8)) {
+        Map_unk60_4();
     } else {
-        Map_Run61();
+        Map_unk61_4();
     }
 
-    if (Map_Check17(0x898) != 0) {
-        Map_Run62();
+    if (Map_unk17(0x898) != 0) {
+        Map_unk62_4();
     } else {
-        Map_Do20(0);
+        Map_unk20_2(0);
     }
 
-    Map_Run63();
+    Map_unk63_4();
 }
 
 void Scene_DispatchByFacing(void)
@@ -706,48 +705,48 @@ void Scene_DispatchByFacingAndFlags(void)
 {
     extern u8 *gWork;
 
-    u8 *record = Map_Run20(0);
+    u8 *record = Map_unk20_4(0);
     u16 facing;
 
-    Map_Run64();
+    Map_unk64_4();
 
     facing = *(u16 *)(record + 6);
     if ((u16)(facing - 0x2000) <= 0x3fff) {
-        Map_Run65();
+        Map_unk65_4();
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
-        Map_Run66();
+        Map_unk66_4();
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {
-        Map_Run67();
+        Map_unk67_4();
     } else {
-        Map_Run68();
+        Map_unk68_4();
     }
 
-    Map_Run69(0x10000, 0x2000);
-    Map_Run70(20, 1);
-    Map_Run71();
+    Map_unk69_4(0x10000, 0x2000);
+    Map_unk70_4(20, 1);
+    Map_unk71_4();
 
     if (*(s16 *)(record + 18) <= 209) {
-        if (Map_Check18(0x89a) == 0) goto scene0;
-        if (Map_Check19(0x89b) != 0) goto scene0;
+        if (Map_unk18(0x89a) == 0) goto scene0;
+        if (Map_unk19(0x89b) != 0) goto scene0;
         goto scene1;
 scene0:
-        Map_Run72(0);
+        Map_unk72_4(0);
         goto firstSceneComplete;
 scene1:
-        Map_Run73();
+        Map_unk73_4();
 firstSceneComplete:
-        Map_Run74();
+        Map_unk74_4();
         return;
     }
 
-    if (Map_Check20(0x89b) != 0) {
-        Map_Run75(2);
-    } else if (Map_Check21(0x89a) == 0) {
-        Map_Run76();
+    if (Map_unk20(0x89b) != 0) {
+        Map_unk75_4(2);
+    } else if (Map_unk21(0x89a) == 0) {
+        Map_unk76_4();
     } else {
-        Map_Run77();
+        Map_unk77_4();
     }
-    Map_Run78();
+    Map_unk78_4();
 }
 
 void Scene_RunSecondEnsembleBeat(void)
@@ -755,44 +754,44 @@ void Scene_RunSecondEnsembleBeat(void)
     s32 id;
     u8 *rec;
 
-    Map_Do3(0x89a);
-    Map_Do4(30);
+    Map_unk3_2(0x89a);
+    Map_unk4_2(30);
     Map_Place(13, 0, 0);
     Map_Place(15, 0, 0);
     Map_Place(16, 0, 0);
-    Map_Do4(20);
-    Map_Place2(13, 128 << 1, 0);
-    Map_Place2(15, 128 << 1, 0);
-    Map_Place2(16, 128 << 1, 0);
-    Map_Do4(60);
-    Map_Do5(0x183b);
-    Map_Place3(13, 0, 20);
+    Map_unk4_2(20);
+    Map_unk2_3(13, 128 << 1, 0);
+    Map_unk2_3(15, 128 << 1, 0);
+    Map_unk2_3(16, 128 << 1, 0);
+    Map_unk4_2(60);
+    Map_unk5_2(0x183b);
+    Map_unk3_3(13, 0, 20);
     Map_Place(0, 13, 0);
     Map_Run(15, 1);
-    Map_Do4(20);
-    Map_Place3(15, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(15, 0, 20);
     Map_Place(0, 15, 0);
     Map_Run(16, 2);
-    Map_Do4(20);
+    Map_unk4_2(20);
     Map_Place(0, 16, 0);
-    Map_Run2(16, 0);
-    Map_Do4(50);
-    Map_Run3(16, 1);
-    Map_Place4(16, 0xcccc, 0x6666);
-    Map_Place5(16, 176, 248);
-    Map_Place5(16, 154 << 1, 248);
-    Map_Place6(0, 128 << 6, 0);
-    Map_Place6(16, 192 << 8, 20);
-    Map_Do6(158);
-    Map_Place7(0x0200c77a, 78, 13);
+    Map_unk2_4(16, 0);
+    Map_unk4_2(50);
+    Map_unk3_4(16, 1);
+    Map_unk4_3(16, 0xcccc, 0x6666);
+    Map_unk5_3(16, 176, 248);
+    Map_unk5_3(16, 154 << 1, 248);
+    Map_unk6_3(0, 128 << 6, 0);
+    Map_unk6_3(16, 192 << 8, 20);
+    Map_unk6_2(158);
+    Map_unk7_3(0x0200c77a, 78, 13);
     Map_Run(16, 2);
-    Map_Do4(20);
-    Map_Place4(16, 192 << 9, 192 << 8);
-    rec = Record1(Map_Run79, 16);
+    Map_unk4_2(20);
+    Map_unk4_3(16, 192 << 9, 192 << 8);
+    rec = Record1(Map_unk79_4, 16);
     rec[90] &= 0xfe;
-    Map_Place5(16, 154 << 1, 136 << 1);
-    Map_Do4(1);
-    rec = Record1(Map_Run79, 16);
+    Map_unk5_3(16, 154 << 1, 136 << 1);
+    Map_unk4_2(1);
+    rec = Record1(Map_unk79_4, 16);
     {
         /*
          * A result temporary, not the compound or-assign the matching
@@ -807,9 +806,9 @@ void Scene_RunSecondEnsembleBeat(void)
 
         rec[90] = merged;
     }
-    Map_Place3(16, 0, 50);
-    Map_Place8(17, 152 << 17, 216 << 16);
-    Map_Place5(17, 152 << 1, 248);
+    Map_unk3_3(16, 0, 50);
+    Map_unk8_3(17, 152 << 17, 216 << 16);
+    Map_unk5_3(17, 152 << 1, 248);
     Map_Place(9, 17, 0);
     Map_Place(10, 17, 0);
     Map_Place(11, 17, 0);
@@ -819,25 +818,25 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_Place(15, 17, 0);
     Map_Place(16, 17, 0);
     Map_Place(0, 17, 0);
-    Map_Do4(10);
-    Map_Run4(9, 2);
-    Map_Run4(10, 2);
-    Map_Run4(11, 2);
-    Map_Run4(12, 2);
-    Map_Run4(13, 2);
-    Map_Run4(14, 2);
-    Map_Run4(15, 2);
+    Map_unk4_2(10);
+    Map_unk4_4(9, 2);
+    Map_unk4_4(10, 2);
+    Map_unk4_4(11, 2);
+    Map_unk4_4(12, 2);
+    Map_unk4_4(13, 2);
+    Map_unk4_4(14, 2);
+    Map_unk4_4(15, 2);
     Map_Run(16, 2);
-    Map_Place2(17, 0x103, 60);
-    Map_Place8(18, 152 << 17, 216 << 16);
-    Map_Place9(18, 152 << 1, 248);
-    Map_Place9(17, 140 << 1, 132 << 1);
-    Map_Do7(18);
-    Map_Place6(18, 160 << 7, 0);
-    Map_Do7(17);
-    Map_Do6(159);
-    Map_Place7(0x0200c790, 78, 13);
-    Map_Place3(18, 0, 20);
+    Map_unk2_3(17, 0x103, 60);
+    Map_unk8_3(18, 152 << 17, 216 << 16);
+    Map_unk9_3(18, 152 << 1, 248);
+    Map_unk9_3(17, 140 << 1, 132 << 1);
+    Map_unk7_2(18);
+    Map_unk6_3(18, 160 << 7, 0);
+    Map_unk7_2(17);
+    Map_unk6_2(159);
+    Map_unk7_3(0x0200c790, 78, 13);
+    Map_unk3_3(18, 0, 20);
     Map_Place(9, 17, 0);
     Map_Place(10, 17, 0);
     Map_Place(11, 17, 0);
@@ -847,132 +846,132 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_Place(15, 17, 0);
     Map_Place(16, 17, 0);
     Map_Place(0, 17, 0);
-    Map_Do4(10);
+    Map_unk4_2(10);
     Map_Run(17, 2);
-    Map_Do4(20);
-    Map_Run5(18, 4);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Run5(17, 3);
-    Map_Do4(20);
+    Map_unk4_2(20);
+    Map_unk5_4(18, 4);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk5_4(17, 3);
+    Map_unk4_2(20);
     Map_Run(18, 1);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Place6(17, 208 << 8, 20);
-    Map_Place3(17, 0, 20);
-    Map_Place2(18, 0x102, 60);
-    Map_Place3(18, 0, 20);
-    Map_Run5(17, 3);
-    Map_Do4(20);
-    Map_Place3(17, 0, 20);
-    Map_Run5(18, 3);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Run5(17, 3);
-    Map_Do4(20);
-    Map_Run5(18, 4);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk6_3(17, 208 << 8, 20);
+    Map_unk3_3(17, 0, 20);
+    Map_unk2_3(18, 0x102, 60);
+    Map_unk3_3(18, 0, 20);
+    Map_unk5_4(17, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(17, 0, 20);
+    Map_unk5_4(18, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk5_4(17, 3);
+    Map_unk4_2(20);
+    Map_unk5_4(18, 4);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
     Map_Run(17, 2);
-    Map_Do4(20);
-    Map_Place6(17, 0, 20);
-    Map_Place3(17, 0, 20);
-    Map_Place6(16, 128 << 8, 20);
-    Map_Run5(16, 3);
-    Map_Do4(20);
-    Map_Run5(17, 3);
-    Map_Do4(20);
-    Map_Place3(17, 0, 20);
-    Map_Run5(16, 3);
-    Map_Do4(20);
-    Map_Place3(16, 0, 20);
-    Map_Place6(17, 128 << 8, 20);
-    Map_Place3(17, 0, 20);
-    Map_Run5(9, 3);
-    Map_Do4(20);
-    Map_Place3(9, 0, 20);
-    Map_Place6(17, 208 << 8, 20);
+    Map_unk4_2(20);
+    Map_unk6_3(17, 0, 20);
+    Map_unk3_3(17, 0, 20);
+    Map_unk6_3(16, 128 << 8, 20);
+    Map_unk5_4(16, 3);
+    Map_unk4_2(20);
+    Map_unk5_4(17, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(17, 0, 20);
+    Map_unk5_4(16, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(16, 0, 20);
+    Map_unk6_3(17, 128 << 8, 20);
+    Map_unk3_3(17, 0, 20);
+    Map_unk5_4(9, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(9, 0, 20);
+    Map_unk6_3(17, 208 << 8, 20);
     Map_Run(17, 1);
-    Map_Do4(20);
-    Map_Place3(17, 0, 20);
-    Map_Place2(18, 0x102, 60);
-    Map_Place3(18, 0, 20);
-    Map_Place2(17, 0x101, 60);
-    Map_Place3(17, 0, 20);
-    Map_Run5(18, 3);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Place2(17, 0x100, 60);
-    Map_Place3(17, 0, 20);
-    Map_Run5(18, 4);
-    Map_Do4(20);
-    Map_Place2(17, 0x103, 60);
-    Map_Place3(17, 0, 20);
-    Map_Place2(18, 0x100, 60);
-    Map_Place3(18, 0, 20);
-    Map_Run5(17, 4);
-    Map_Do4(20);
-    Map_Place3(17, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(17, 0, 20);
+    Map_unk2_3(18, 0x102, 60);
+    Map_unk3_3(18, 0, 20);
+    Map_unk2_3(17, 0x101, 60);
+    Map_unk3_3(17, 0, 20);
+    Map_unk5_4(18, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk2_3(17, 0x100, 60);
+    Map_unk3_3(17, 0, 20);
+    Map_unk5_4(18, 4);
+    Map_unk4_2(20);
+    Map_unk2_3(17, 0x103, 60);
+    Map_unk3_3(17, 0, 20);
+    Map_unk2_3(18, 0x100, 60);
+    Map_unk3_3(18, 0, 20);
+    Map_unk5_4(17, 4);
+    Map_unk4_2(20);
+    Map_unk3_3(17, 0, 20);
     Map_Run(18, 2);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
     Map_Run(17, 2);
-    Map_Do4(10);
-    Map_Place5(17, 128 << 1, 140 << 1);
-    Map_Place6(17, 128 << 7, 20);
-    Map_Place8(17, 0, 0);
-    Map_Do8(17);
-    Map_Do4(30);
+    Map_unk4_2(10);
+    Map_unk5_3(17, 128 << 1, 140 << 1);
+    Map_unk6_3(17, 128 << 7, 20);
+    Map_unk8_3(17, 0, 0);
+    Map_unk8_2(17);
+    Map_unk4_2(30);
     Map_Run(9, 2);
-    Map_Do4(20);
-    Map_Place3(9, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(9, 0, 20);
     Map_Run(15, 2);
-    Map_Do4(20);
-    Map_Place3(15, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(15, 0, 20);
     Map_Place(16, 18, 0);
-    Map_Do4(20);
+    Map_unk4_2(20);
     Map_Run(16, 2);
-    Map_Do4(20);
-    Map_Place3(16, 0, 20);
+    Map_unk4_2(20);
+    Map_unk3_3(16, 0, 20);
     Map_Place(18, 16, 0);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Run5(18, 4);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Run5(18, 3);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Place4(18, 0xcccc, 0x6666);
-    Map_Place5(18, 128 << 1, 248);
-    Map_Place6(18, 192 << 8, 20);
-    Map_Run4(18, 1);
-    Map_Place2(18, 0x100, 60);
-    Map_Place5(18, 240, 184);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk5_4(18, 4);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk5_4(18, 3);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk4_3(18, 0xcccc, 0x6666);
+    Map_unk5_3(18, 128 << 1, 248);
+    Map_unk6_3(18, 192 << 8, 20);
+    Map_unk4_4(18, 1);
+    Map_unk2_3(18, 0x100, 60);
+    Map_unk5_3(18, 240, 184);
     Map_Run(18, 2);
-    Map_Do4(20);
-    Map_Place8(19, 232 << 16, 168 << 16);
-    Map_Place8(20, 232 << 16, 168 << 16);
-    rec = Record1(Map_Run79, 19);
+    Map_unk4_2(20);
+    Map_unk8_3(19, 232 << 16, 168 << 16);
+    Map_unk8_3(20, 232 << 16, 168 << 16);
+    rec = Record1(Map_unk79_4, 19);
     *(s32 *)(rec + 12) = 0xc0000;
-    rec = Record1(Map_Run79, 19);
+    rec = Record1(Map_unk79_4, 19);
     *(s32 *)(rec + 60) = -0x80000000;
-    rec = Record1(Map_Run79, 19);
+    rec = Record1(Map_unk79_4, 19);
     *(s32 *)(rec + 24) = 0xcccc;
-    rec = Record1(Map_Run79, 19);
+    rec = Record1(Map_unk79_4, 19);
     {
         u8 *target = *(u8 **)(rec + 80);
         s32 shown = 0x8000;
 
         *(u16 *)(target + 30) = shown;
     }
-    Map_Do6(124);
-    Map_Place3(18, 0, 20);
-    Map_Place6(0, 192 << 8, 20);
-    Map_Place5(16, 128 << 1, 240);
-    Map_Place6(16, 176 << 8, 20);
+    Map_unk6_2(124);
+    Map_unk3_3(18, 0, 20);
+    Map_unk6_3(0, 192 << 8, 20);
+    Map_unk5_3(16, 128 << 1, 240);
+    Map_unk6_3(16, 176 << 8, 20);
     Map_Run(16, 1);
-    Map_Place3(16, 0, 20);
+    Map_unk3_3(16, 0, 20);
     Map_Place(9, 0, 0);
     Map_Place(10, 0, 0);
     Map_Place(11, 0, 0);
@@ -982,53 +981,53 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_Place(15, 0, 0);
     Map_Place(16, 0, 0);
     Map_Run(18, 2);
-    Map_Do4(20);
-    Map_Place6(18, 160 << 7, 20);
-    Map_Place5(18, 248, 208);
-    Map_Place6(18, 160 << 7, 20);
-    Map_Run6(18, 0);
-    if (Map_Run7(0, 0) == 0) {
-        Map_Run8(16, 1);
-        Map_Do4(20);
+    Map_unk4_2(20);
+    Map_unk6_3(18, 160 << 7, 20);
+    Map_unk5_3(18, 248, 208);
+    Map_unk6_3(18, 160 << 7, 20);
+    Map_unk6_4(18, 0);
+    if (Map_unk7_4(0, 0) == 0) {
+        Map_unk8_4(16, 1);
+        Map_unk4_2(20);
         id = 16;
         goto joinBeat;
     }
 
     /* Skipped once: bump the workspace skip counter and offer the beat again. */
     Scene_BumpStep(1);
-    Map_Do4(20);
-    Map_Place2(18, 0x105, 60);
-    Map_Place6(18, 128 << 7, 20);
+    Map_unk4_2(20);
+    Map_unk2_3(18, 0x105, 60);
+    Map_unk6_3(18, 128 << 7, 20);
     Map_Run(16, 2);
-    Map_Do4(20);
-    Map_Run6(16, 0);
-    if (Map_Run7(0, 0) != 0) {
+    Map_unk4_2(20);
+    Map_unk6_4(16, 0);
+    if (Map_unk7_4(0, 0) != 0) {
         goto skipTwice;
     }
-    Map_Run5(16, 3);
-    Map_Do4(20);
-    Map_Place6(18, 176 << 8, 20);
+    Map_unk5_4(16, 3);
+    Map_unk4_2(20);
+    Map_unk6_3(18, 176 << 8, 20);
     id = 18;
 
 joinBeat:
-    Map_Place3(id, 0, 20);
-    Map_Do3(0x898);
+    Map_unk3_3(id, 0, 20);
+    Map_unk3_2(0x898);
     goto finish;
 
 skipTwice:
     Scene_BumpStep(1);
-    Map_Do4(20);
-    Map_Run5(18, 4);
-    Map_Do4(20);
-    Map_Place3(18, 0, 20);
-    Map_Do3(0x899);
+    Map_unk4_2(20);
+    Map_unk5_4(18, 4);
+    Map_unk4_2(20);
+    Map_unk3_3(18, 0, 20);
+    Map_unk3_2(0x899);
 
 finish:
-    Map_Place6(10, 128 << 8, 0);
-    Map_Place6(11, 128 << 8, 20);
-    Map_Run9(10, 5);
-    Map_Run9(11, 5);
-    Map_Run36(12, 0x0200c638);
+    Map_unk6_3(10, 128 << 8, 0);
+    Map_unk6_3(11, 128 << 8, 20);
+    Map_unk9_4(10, 5);
+    Map_unk9_4(11, 5);
+    Map_unk36_4(12, 0x0200c638);
 }
 
 void Scene_RunSkippableStoryBeat(void)
@@ -1037,20 +1036,20 @@ void Scene_RunSkippableStoryBeat(void)
 
     u8 *workspace;
 
-    Map_Run80();
-    Map_Do21(0x186e);
+    Map_unk80_4();
+    Map_unk21_2(0x186e);
     Map_Apply14(18, 0);
 
     if (Map_Apply15(0, 0) == 0) {
-        Map_Run81(20);
-        Map_Place26(18, 0, 20);
-        Map_Run82(0x898);
-        Map_Run83();
+        Map_unk81_4(20);
+        Map_unk26_3(18, 0, 20);
+        Map_unk82_3(0x898);
+        Map_unk83_3();
     } else {
         workspace = gWork;
         *(u16 *)(workspace + 472) += 1;
-        Map_Place27(18, 0, 20);
-        Map_Run84();
+        Map_unk27_3(18, 0, 20);
+        Map_unk84_3();
     }
 }
 
@@ -1269,27 +1268,27 @@ void Scene_ShowDialogue1A58(void)
 {
     extern u8 *gWork;
 
-    Map_Run85();
-    Map_Do22(0x1a58);
+    Map_unk85_3();
+    Map_unk22_2(0x1a58);
     Map_Apply16(11, 0);
-    Map_Run86();
+    Map_unk86_3();
 }
 
 void StartSchoolDoorEvent(void)
 {
-    Map_Run87();
-    if (Map_Check22(2202) == 0 && Map_Check23(2197) == 0) {
-        Map_Run88(6317, 1);
-        Map_Run89();
+    Map_unk87_3();
+    if (Map_unk22(2202) == 0 && Map_unk23(2197) == 0) {
+        Map_unk88_3(6317, 1);
+        Map_unk89_3();
     } else {
-        Map_Run90(158);
-        Map_Run91(0x0200c77a, 78, 13);
+        Map_unk90_3(158);
+        Map_unk91_3(0x0200c77a, 78, 13);
         SetScale(0, 0x8000, 0x4000);
         SetPosition(0, 306, 248);
-        Map_Run92(0, 304, 216);
-        Map_Run93(20);
-        Map_Run94(4);
-        Map_Run95();
+        Map_unk92_3(0, 304, 216);
+        Map_unk93_3(20);
+        Map_unk94_3(4);
+        Map_unk95_3();
     }
 }
 
@@ -1300,30 +1299,30 @@ void Scene_DispatchByRange(void)
     u8 *record;
     u32 biased;
 
-    record = Map_Run21(0);
+    record = Map_unk21_4(0);
     biased = *(u16 *)(record + 6);
-    Map_Run96();
+    Map_unk96_3();
 
     biased = biased + 0xffff5fff;
     if (biased <= 0x3ffe) {
-        Map_Run97(13);
+        Map_unk97_3(13);
     } else {
-        Map_Run98(0x1a1c);
-        Map_Run99(13, 0);
+        Map_unk98_3(0x1a1c);
+        Map_unk99_3(13, 0);
     }
 
-    Map_Run100();
+    Map_unk100_3();
 }
 
 void Scene_ShowDialogue17DF(void)
 {
     extern u8 *gWork;
 
-    Map_Run101();
+    Map_unk101_3();
     Map_Apply17(8, 2);
-    Map_Do23(0x17df);
+    Map_unk23_2(0x17df);
     Map_Apply18(8, 0);
-    Map_Run102();
+    Map_unk102_3();
 }
 
 s32 Scene_SelectData(void)
@@ -1348,19 +1347,19 @@ void Scene_SpawnRandomizedParticle(void)
     s32 draw;
     s32 offset;
 
-    record = Map_Run22(0);
+    record = Map_unk22_4(0);
 
     params.field1 = 7;
-    draw = (u32)(Map_Check24() * 7) >> 16;
+    draw = (u32)(Map_unk24() * 7) >> 16;
     if ((draw & 7) == 0)
         params.field1 = 5;
 
     params.field2 = 0xb333;
     params.field3 = 0xcccc;
 
-    offset = ((u32)(Map_Check25() * 8) >> 16) * 13107;
+    offset = ((u32)(Map_unk25() * 8) >> 16) * 13107;
 
-    Map_SetRect5(*(s32 *)(record + 8) + ((8 - (gIw & 15)) << 16),
+    Map_unk5_5(*(s32 *)(record + 8) + ((8 - (gIw & 15)) << 16),
                   *(s32 *)(record + 12) + (192 << 13),
                   *(s32 *)(record + 16),
                   0,
@@ -1403,14 +1402,14 @@ void Scene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
     u32 i;
     s32 record;
 
-    Map_Run103();
-    Map_Place10(0, 0x28000, 0x14000);
-    Map_Place11(0, a0, a1);
-    Map_Run104(0, 4, 0);
-    Map_Run105(0, 7);
-    Map_Run106(0);
-    Map_Run107(0, 6);
-    Map_Run108();
+    Map_unk103_3();
+    Map_unk10_3(0, 0x28000, 0x14000);
+    Map_unk11_3(0, a0, a1);
+    Map_unk104_3(0, 4, 0);
+    Map_unk105_3(0, 7);
+    Map_unk106_3(0);
+    Map_unk107_3(0, 6);
+    Map_unk108_3();
 }
 
 void Scene_RunScene39eSequenceA(void)
@@ -1421,31 +1420,31 @@ void Scene_RunScene39eSequenceA(void)
     s32 record;
     s32 base5_200a5b9;
 
-    Map_Run109();
-    base5_200a5b9 = (s32)Map_Run110;
-    Map_Run10(base5_200a5b9, 0xc80);
-    Map_Place12(0, 0x3333, 0x1999);
+    Map_unk109_3();
+    base5_200a5b9 = (s32)Map_unk110_3;
+    Map_unk10_4(base5_200a5b9, 0xc80);
+    Map_unk12_3(0, 0x3333, 0x1999);
     *(s32 *)((*(u8 *volatile *)gWork + 0x1c8)) = 60;
-    Map_Run111();
-    Map_Run112(154);
-    Map_Run113(0, 2);
-    Map_Place13(0, 0, -6);
-    Map_Run114(0);
-    Map_Run115(0, 15);
-    record = Map_Check26(0);
-    Map_Run116(record, 0);
-    Map_Run117(base5_200a5b9);
-    Map_Run118();
-    Map_Run119(3);
-    Map_Run120();
+    Map_unk111_3();
+    Map_unk112_3(154);
+    Map_unk113_3(0, 2);
+    Map_unk13_3(0, 0, -6);
+    Map_unk114_3(0);
+    Map_unk115_3(0, 15);
+    record = Map_unk26(0);
+    Map_unk116_3(record, 0);
+    Map_unk117_3(base5_200a5b9);
+    Map_unk118_3();
+    Map_unk119_3(3);
+    Map_unk120_3();
 }
 
 void Scene_PlaySound123AndEnable(void)
 {
     extern u8 *gWork;
 
-    Map_Do24(123);
-    Map_Do25(1);
+    Map_unk24_2(123);
+    Map_unk25_2(1);
 }
 
 void Scene_RunScene39e(void)
@@ -1455,17 +1454,17 @@ void Scene_RunScene39e(void)
     u32 i;
     s32 record;
 
-    Map_Run121();
-    Map_Run122(188);
-    Map_Place14(0x200c764, 77, 8);
-    *(u8 *)(Map_Check27(0) + 85) = 0;
-    Map_Place15(0, 0xcccc, 0x6666);
+    Map_unk121_3();
+    Map_unk122_3(188);
+    Map_unk14_3(0x200c764, 77, 8);
+    *(u8 *)(Map_unk27(0) + 85) = 0;
+    Map_unk15_3(0, 0xcccc, 0x6666);
     *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    Map_Run123(0, 2);
-    Map_Place16(0, 0, -16);
-    Map_Run124(16);
-    Map_Run125(2);
-    Map_Run126();
+    Map_unk123_3(0, 2);
+    Map_unk16_3(0, 0, -16);
+    Map_unk124_3(16);
+    Map_unk125_3(2);
+    Map_unk126_3();
 }
 
 void Scene_RunScene39e(void)
@@ -1475,98 +1474,98 @@ void Scene_RunScene39e(void)
     u32 i;
     s32 record;
 
-    Map_Run127();
-    Map_Place17(0, 0x8000, 0x4000);
-    Map_Place18(0, 168, 0x1f8);
+    Map_unk127_3();
+    Map_unk17_3(0, 0x8000, 0x4000);
+    Map_unk18_3(0, 168, 0x1f8);
     *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    Map_Run128();
-    Map_Run129();
-    Map_Run130(0);
-    Map_Run131(20);
-    Map_Run132(8, 2);
-    Map_Run11(8, 0x102);
-    Map_Run133(60);
-    *(u8 *)(Map_Check28(8) + 91) = 0;
-    Map_Run134(152);
-    record = Map_Check29(8);
+    Map_unk128_3();
+    Map_unk129_3();
+    Map_unk130_3(0);
+    Map_unk131_3(20);
+    Map_unk132_3(8, 2);
+    Map_unk11_4(8, 0x102);
+    Map_unk133_3(60);
+    *(u8 *)(Map_unk28(8) + 91) = 0;
+    Map_unk134_3(152);
+    record = Map_unk29(8);
     *(volatile s32 *)(record + 40) = 0x80000;
-    Map_Run135(8, 1);
-    Map_Do9(0x17be);
-    Map_Run136(8, 0, 20);
-    Map_Run137(8, 0, 20);
-    Map_Run138(0, 3);
-    Map_Run139(20);
-    Map_Run140(8, 3);
-    Map_Run141(20);
-    Map_Run142(8, 0, 20);
-    Map_Place19(0, 0x101, 60);
-    Map_Check4(8, 0);
-    if (Map_Check5(0, 0) == 0) {
-        Map_Run143(10);
-        Map_Run144(8, 3);
-        Map_Run145(20);
-        Map_Run146(8, 0, 20);
+    Map_unk135_3(8, 1);
+    Map_unk9_2(0x17be);
+    Map_unk136_3(8, 0, 20);
+    Map_unk137_3(8, 0, 20);
+    Map_unk138_3(0, 3);
+    Map_unk139_3(20);
+    Map_unk140_3(8, 3);
+    Map_unk141_3(20);
+    Map_unk142_3(8, 0, 20);
+    Map_unk19_3(0, 0x101, 60);
+    Map_unk4(8, 0);
+    if (Map_unk5(0, 0) == 0) {
+        Map_unk143_3(10);
+        Map_unk144_3(8, 3);
+        Map_unk145_3(20);
+        Map_unk146_3(8, 0, 20);
         bump_step(2);
     } else {
-        Map_Run147(10);
-        Map_Run148(8, 2);
-        Map_Run149(20);
+        Map_unk147_3(10);
+        Map_unk148_3(8, 2);
+        Map_unk149_3(20);
         bump_step(1);
-        Map_Run150(8, 0, 20);
-        Map_Run151(8, 3);
-        Map_Run152(20);
-        Map_Run153(8, 0, 20);
+        Map_unk150_3(8, 0, 20);
+        Map_unk151_3(8, 3);
+        Map_unk152_3(20);
+        Map_unk153_3(8, 0, 20);
     }
-    Map_Run154(8, 0, 20);
-    Map_Run155(8, 2);
-    Map_Run156(20);
-    Map_Run157(8, 0, 20);
-    Map_Place20(0, 0x101, 60);
-    Map_Check6(8, 0);
-    if (Map_Check7(0, 0) == 1) {
-        Map_Run158(10);
-        Map_Place21(8, 0x102, 60);
-        Map_Do10(0x17c8);
-        Map_Run159(8, 0);
+    Map_unk154_3(8, 0, 20);
+    Map_unk155_3(8, 2);
+    Map_unk156_3(20);
+    Map_unk157_3(8, 0, 20);
+    Map_unk20_3(0, 0x101, 60);
+    Map_unk6(8, 0);
+    if (Map_unk7(0, 0) == 1) {
+        Map_unk158_3(10);
+        Map_unk21_3(8, 0x102, 60);
+        Map_unk10_2(0x17c8);
+        Map_unk159_3(8, 0);
         L_0200299c:;
-        if (Map_Check8(0, 0) == 1) {
-            Map_Run160(10);
-            Map_Place22(8, 0x102, 60);
-            Map_Run161((s32)gVal);
-            Map_Run162(8, 0);
+        if (Map_unk8(0, 0) == 1) {
+            Map_unk160_3(10);
+            Map_unk22_3(8, 0x102, 60);
+            Map_unk161_3((s32)gVal);
+            Map_unk162_3(8, 0);
             goto L_0200299c;
         }
     }
-    Map_Do11(0x17c9);
-    Map_Run163(10);
-    Map_Run164(8, 3);
-    Map_Run165(20);
-    Map_Check9(8, 0);
-    if (Map_Check10(0, 0) == 0) {
-        Map_Run166(10);
-        Map_Run167(0, 3);
-        Map_Run168(20);
-        Map_Run169(8, 0, 20);
+    Map_unk11_2(0x17c9);
+    Map_unk163_3(10);
+    Map_unk164_3(8, 3);
+    Map_unk165_3(20);
+    Map_unk9(8, 0);
+    if (Map_unk10(0, 0) == 0) {
+        Map_unk166_3(10);
+        Map_unk167_3(0, 3);
+        Map_unk168_3(20);
+        Map_unk169_3(8, 0, 20);
         bump_step(1);
     } else {
-        Map_Run170(10);
-        Map_Run171(8, 2);
+        Map_unk170_3(10);
+        Map_unk171_3(8, 2);
         bump_step(1);
-        Map_Run172(8, 0, 20);
+        Map_unk172_3(8, 0, 20);
     }
-    Map_Run173(8, 3);
-    Map_Run174(20);
-    Map_Run175(8, 0, 20);
-    Map_Run176(8, 2);
-    Map_Run177(20);
-    Map_Run178(8, 0, 20);
-    Map_Run179(0, 3);
-    Map_Run180(20);
-    Map_Run181(8, 3);
-    Map_Run182(20);
-    Map_Run183(8, 5);
-    Map_Do12(0x893);
-    Map_Run184();
+    Map_unk173_3(8, 3);
+    Map_unk174_3(20);
+    Map_unk175_3(8, 0, 20);
+    Map_unk176_3(8, 2);
+    Map_unk177_3(20);
+    Map_unk178_3(8, 0, 20);
+    Map_unk179_3(0, 3);
+    Map_unk180_3(20);
+    Map_unk181_3(8, 3);
+    Map_unk182_3(20);
+    Map_unk183_3(8, 5);
+    Map_unk12_2(0x893);
+    Map_unk184_3();
 }
 
 /* Long scripted sequence: sets up and steps a series of actors (indices 0-3,
@@ -1985,7 +1984,7 @@ void Scene_RunRoofEnsembleSequence(void)
     Battle_RunThenWaitIfModeZero_71(1, 0, 20);
     Motion_SetVarCb_19(8, 2);
     BattleFx_SpawnLinked_50(8, 0x102, 60);
-    Map_Place23(10, 0xd000, 0);
+    Map_unk23_3(10, 0xd000, 0);
     Motion_ArmCb_68(8, 0xd000, 20);
     Battle_RunThenWaitIfModeZero_72(8, 0, 20);
     Motion_SetVarCb_20(0, 2);
@@ -2014,9 +2013,9 @@ void Scene_RunRoofEnsembleSequence(void)
         record[90] = (u8)(value | 1);
     }
     Battle_WaitMode0_86(20);
-    Map_Run185();
+    Map_unk185_3();
     Battle_WaitMode0_87(60);
-    Map_Run186(2, 144);
+    Map_unk186_3(2, 144);
     Motion_CallWaitAnim_32(8, 3);
     Battle_WaitMode0_88(20);
     Battle_RunThenWaitIfModeZero_74(8, 0, 20);
@@ -2133,14 +2132,14 @@ void Scene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
 
     u8 *globalCtx;
 
-    Map_Run187(160 << 1);
-    Map_Run188(141, 1);
+    Map_unk187_3(160 << 1);
+    Map_unk188_3(141, 1);
     globalCtx = *(u8 **)0x03001f30;
-    Map_Run189(arg0, arg1);
+    Map_unk189_3(arg0, arg1);
     globalCtx[0x23] = 0;
-    Map_Run190();
-    Map_Run191(1);
-    Map_Run192(1);
+    Map_unk190_3();
+    Map_unk191_3(1);
+    Map_unk192_3(1);
 }
 
 void Scene_FinishSequence(void)
@@ -2148,8 +2147,8 @@ void Scene_FinishSequence(void)
     extern u8 *gWork;
 
     Map_Apply24(0, 1);
-    Map_Do26(2);
-    Map_Run193();
+    Map_unk26_2(2);
+    Map_unk193_3();
 }
 
 void Scene_SpawnEightShots(void)
@@ -2160,22 +2159,22 @@ void Scene_SpawnEightShots(void)
     u8 *record;
     u32 i;
 
-    record = Map_Run23(8);
+    record = Map_unk23_4(8);
     descriptor.field0 = 1;
     descriptor.field24 = 0x0119;
     descriptor.field28 = 0x0200d1d8;
     descriptor.field16 = 224 << 10;
     descriptor.field20 = 192 << 9;
     for (i = 0; i <= 7; i++) {
-        Map_Do27(10);
+        Map_unk27_2(10);
         if (i & 1) {
-            Map_Do28(0x82);
+            Map_unk28_2(0x82);
         }
-        Map_SetRect6(*(s32 *)(record + 8), *(s32 *)(record + 12),
+        Map_unk6_5(*(s32 *)(record + 8), *(s32 *)(record + 12),
                       *(s32 *)(record + 16) + 0xffe80000, 0,
                       0x9999, 0, 0x00360001, (u8 *)&descriptor);
     }
-    Map_Do29(60);
+    Map_unk29_2(60);
 }
 
 void Scene_SelectActorModeFromInputBit(s32 arg0)
@@ -2200,42 +2199,42 @@ void Scene_RunParticleRain(void)
     s32 y;
     s32 scale;
 
-    Map_Do30(0x83);
-    *(u32 *)(Map_Run24(8) + 108) = 0x0200c1c5;
-    Map_Do31(40);
+    Map_unk30_2(0x83);
+    *(u32 *)(Map_unk24_4(8) + 108) = 0x0200c1c5;
+    Map_unk31_2(40);
     Map_Apply27(128 << 9, 0);
-    Map_Run194(0x205c54, 1);
-    Map_Do32(60);
-    Map_Do33(40);
-    Map_Do34(0x83);
-    *(u32 *)(Map_Run25(2) + 108) = 0x0200c1c5;
-    Map_Do35(120);
-    record = Map_Run26(8);
+    Map_unk194_3(0x205c54, 1);
+    Map_unk32_2(60);
+    Map_unk33_2(40);
+    Map_unk34_2(0x83);
+    *(u32 *)(Map_unk25_4(2) + 108) = 0x0200c1c5;
+    Map_unk35_2(120);
+    record = Map_unk26_4(8);
     descriptor.field0 = 1;
     descriptor.field4 = 2;
     descriptor.field24 = 0x011d;
     for (i = 0; i <= 63; i++) {
         if ((i & 3) == 0) {
-            Map_Do36(246);
+            Map_unk36_2(246);
         }
         x = *(s32 *)(record + 8)
-            + ((((u32)(Map_Check30() * 3) << 4) >> 16) << 16)
+            + ((((u32)(Map_unk30() * 3) << 4) >> 16) << 16)
             + 0xfff40000;
         y = *(s32 *)(record + 12)
-            + ((((u32)Map_Check31() << 5) >> 16) << 16)
+            + ((((u32)Map_unk31() << 5) >> 16) << 16)
             + 0xfff00000;
-        scale = (((u32)((u32)Map_Check32() << 2) >> 16) << 15) + (128 << 8);
-        Map_SetRect7(x, y, *(s32 *)(record + 16), 0,
+        scale = (((u32)((u32)Map_unk32() << 2) >> 16) << 15) + (128 << 8);
+        Map_unk7_5(x, y, *(s32 *)(record + 16), 0,
                       scale, 0, 152 << 13, (u8 *)&descriptor);
-        Map_Do37(2);
+        Map_unk37_2(2);
     }
-    Map_Do38(220);
-    Map_Do39(30);
+    Map_unk38_2(220);
+    Map_unk39_2(30);
     Map_Apply28(128 << 9, 1);
-    Map_Do40(60);
-    Map_Do41(40);
-    *(u32 *)(Map_Run27(8) + 108) = 0;
-    *(u32 *)(Map_Run28(2) + 108) = 0;
+    Map_unk40_2(60);
+    Map_unk41_2(40);
+    *(u32 *)(Map_unk27_4(8) + 108) = 0;
+    *(u32 *)(Map_unk28_4(2) + 108) = 0;
     Map_Apply29(8, 0);
     Map_Apply30(2, 0);
 }

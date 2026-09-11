@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/multi_encounter/run_scene_configure_three_actors.h"
 
 extern u8 gWork[];
 
@@ -18,7 +17,7 @@ void Scene_ConfigureThreeActors(void)
     record = Scene_GetRecord_1(0);
     Actor_Run(record, 0);
     Object_NotifyLastActiveOfEvent_1(0x200d160);
-    Actor_Run2(1);
+    Actor_unk2_4(1);
     Motion_SetHPosTerrain_1(20, 0xc40000, 0x1f60000);
     record = Scene_GetRecord_2(20);
     {
@@ -51,12 +50,12 @@ void Scene_ConfigureThreeActors(void)
     Motion_Launch_1(22, 4, 10);
     Motion_Launch_2(22, 6, 20);
     SceneWork_SetStepValue_1(0x1ee5);
-    Actor_Run3(22);
+    Actor_unk3_4(22);
     Motion_CallWaitAnim_1(20, 3);
     Motion_SetSpeed_2(21, 0x30000, 0x18000);
     Motion_SetPosReset_1(21, 180, 0x222);
     Motion_ArmCb_1(21, 0xb000, 40);
     Motion_SetVarCbObj_1(21, 1);
-    Actor_Run4(21);
-    Actor_Run5(15);
+    Actor_unk4_4(21);
+    Actor_unk5_4(15);
 }

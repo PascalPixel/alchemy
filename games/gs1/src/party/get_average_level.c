@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/party/get_average_level.h"
 #include "owner_state.h"
 #include "party_state.h"
 

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/adjust_byte205_by_direction.h"
 
 extern u8 gCell[];
 

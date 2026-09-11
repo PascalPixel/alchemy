@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/field/extended_presentation/extended_presentation.h"
 #include "find_clear_actor_position.h"
 #include "find_clear_actor_position_body.inc"
 #include "staged_actor_movement.h"
@@ -42,7 +41,7 @@ typedef struct {
 extern s32 ActorSearchStep[];
 extern s32 gOv[];
 
-Ent *Field_Run2(Desc *, Ent *);
+Ent *Field_unk2_4(Desc *, Ent *);
 
 s32 Actor_ResetMotionIfBlockedAhead(Ent *a)
 {
@@ -57,7 +56,7 @@ s32 Actor_ResetMotionIfBlockedAhead(Ent *a)
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Field_Run2(&d, a);
+    r = Field_unk2_4(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
@@ -90,14 +89,14 @@ done:
 }
 
 /* overlays/scene/field/extended_presentation/actor_position.c */
-u8 *Field_Run3(s32);
+u8 *Field_unk3_4(s32);
 
 void Actor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
 {
     s32 k1 = 0x1f80000;
     s32 k2 = 0x180000;
     s32 k3 = 0x900000;
-    u8 *obj = Field_Run3(a);
+    u8 *obj = Field_unk3_4(a);
     s32 buf[3];
     s32 *bp = buf;
 
@@ -128,7 +127,7 @@ void Effect_SetupBlendByFlag201(void)
         *(s32 *)(tmp + 0x1c8) = 24;
     }
     Field_Do(1);
-    Field_Do2(0x4d);
+    Field_unk2_2(0x4d);
     state = base[4];
     {
         u16 *slot = (u16 *)(state + 0x52a);
@@ -146,7 +145,7 @@ void Effect_SetupBlendByFlag201(void)
             s32 c = 0x3f;
             *slot = c;
         }
-        Field_Run4();
+        Field_unk4_4();
         return;
     } else {
         {
@@ -177,7 +176,7 @@ extern u16 *gOv2;
 extern s8 gOv3;
 extern u8 gOv4;
 
-u8 *Field_Run5(s32);
+u8 *Field_unk5_4(s32);
 
 /* Contiguous unnamed state-owner run for resource_3bd. */
 
@@ -186,7 +185,7 @@ void Actor_PlaceFiveActorsInRow(u8 *p)
     s32 i = 0;
 
     do {
-        Field_Place2(i + 11, 0x180000, p);
+        Field_unk2_3(i + 11, 0x180000, p);
         p -= 13107;
         i++;
     } while (i <= 4);
@@ -228,7 +227,7 @@ void Effect_UpdateStateMachine(void)
                 p[0] = k;
                 p[4] = z;
             }
-            o = Field_Run5(v + 11);
+            o = Field_unk5_4(v + 11);
             *(s32 *)(o + 0x6c) = (s32)&gOv4;
         }
     } else if (state == 0x63) {
@@ -237,7 +236,7 @@ void Effect_UpdateStateMachine(void)
     if (flag != 0) {
         u16 *q2;
         gOv2[3] += gOv2[4];
-        Field_Do3(gOv2[3]);
+        Field_unk3_2(gOv2[3]);
         q2 = gOv2;
         {
             s32 t2 = q2[5] + q2[4];
@@ -245,7 +244,7 @@ void Effect_UpdateStateMachine(void)
             if ((u16)t2 > 0x3000) {
                 s32 z2 = 0;
                 q2[5] = z2;
-                Field_Do4(0x87);
+                Field_unk4_2(0x87);
             }
         }
     }
@@ -272,7 +271,7 @@ void OvObj_UpdateThreeStateMotion(void *obj)
         position[2] = z;
         FIELD(obj, s32, 4) = x;
         position[0] = x;
-        Field_Place3(0x780000, Field_Check2(), position);
+        Field_unk3_3(0x780000, Field_unk2(), position);
         FIELD(obj, s32, 0xC) = position[0];
         FIELD(obj, s32, 0x10) = position[2];
         FIELD(obj, s32, 0x24) = 0x50000;
@@ -280,22 +279,22 @@ void OvObj_UpdateThreeStateMotion(void *obj)
         FIELD(obj, u8, 0x42) = state;
         (*p)++;
         if ((*(s32 *)0x03001800 & 3) == 0)
-            Field_Do5(0x86);
+            Field_unk5_2(0x86);
     } else if (state == 1) {
-        if (Field_Check3(obj) == 0) {
+        if (Field_unk3(obj) == 0) {
             s32 value = *p;
             value--;
             *p = value;
         }
     } else if (state == 2) {
-        if (Field_Check4(obj) == 0)
-            Field_Do6(obj);
+        if (Field_unk4(obj) == 0)
+            Field_unk6_2(obj);
     }
 }
 
 /* overlays/scene/field/extended_presentation/move_and_redraw.c */
 
-void Field_Run6(StagedActorMovementRequest request)
+void Field_unk6_4(StagedActorMovementRequest request)
 {
 }
 
@@ -366,7 +365,7 @@ s32 SceneData_SelectTableBySceneId(void)
 #define RECORD_COORD_X_OFFSET 10
 #define RECORD_COORD_Y_OFFSET 18
 
-u8 *Field_Run7();
+u8 *Field_unk7_4();
 
 u8 *Scene_GetRecord_1();
 
@@ -672,24 +671,24 @@ void Scene_RunBranchingCutsceneSequence(void)
 
 void Scene_RunFlagGatedActorEightDialogue(void)
 {
-    if (Field_Check5(0x960) == 0)
+    if (Field_unk5(0x960) == 0)
         return;
-    if (Field_Check6(0x962) != 0)
+    if (Field_unk6(0x962) != 0)
         return;
 
-    Field_Do7(0x961);
-    Field_Run8();
-    Field_Do8(0x217d);
+    Field_unk7_2(0x961);
+    Field_unk8_4();
+    Field_unk8_2(0x217d);
     Field_Apply3(8, 0);
-    Field_Do9(10);
+    Field_unk9_2(10);
     Field_Apply4(0, 2);
-    Field_Do10(30);
-    Field_Place4(0, 8, 0);
-    Field_Do11(30);
+    Field_unk10_2(30);
+    Field_unk4_3(0, 8, 0);
+    Field_unk11_2(30);
     Field_Apply5(8, 0);
     Field_Apply6(0, 3);
-    Field_Do12(20);
-    Field_Run9();
+    Field_unk12_2(20);
+    Field_unk9_4();
 }
 
 /* overlays/scene/field/extended_presentation/scene_setup.c */
@@ -703,69 +702,69 @@ extern u8 Value_0000217f;
 
 void Scene_RunIndexedStep0(void)
 {
-    Field_Do13(0);
+    Field_unk13_2(0);
 }
 
 void Scene_RunIndexedStep1(void)
 {
-    Field_Do14(1);
+    Field_unk14_2(1);
 }
 
 void Scene_RunIndexedStep2(void)
 {
-    Field_Do15(2);
+    Field_unk15_2(2);
 }
 
 void Scene_RunIndexedStep3(void)
 {
-    Field_Do16(3);
+    Field_unk16_2(3);
 }
 
 void Scene_RunIndexedStep4(void)
 {
-    Field_Do17(4);
+    Field_unk17_2(4);
 }
 
 void Scene_RunIndexedStep5(void)
 {
-    Field_Do18(5);
+    Field_unk18_2(5);
 }
 
 void Scene_RunTwoCallSequence(void)
 {
-    Field_Run10();
-    Field_Run11();
+    Field_unk10_4();
+    Field_unk11_4();
 }
 
 void Scene_RunGuardedSixWordStep(void)
 {
     S6 s;
 
-    Field_Run12();
-    if (Field_Check7(&s) != 0) {
-        Field_Do19(s);
+    Field_unk12_4();
+    if (Field_unk7(&s) != 0) {
+        Field_unk19_2(s);
     }
-    Field_Run13();
+    Field_unk13_4();
 }
 
 void Scene_RunTwoArmSequenceWithValue217f(void)
 {
     s32 val;
 
-    Field_Run14();
+    Field_unk14_4();
     val = (s32)&Value_0000217f;
-    Field_Do20(val);
+    Field_unk20_2(val);
     Field_Apply7(8, 0);
     if (Field_Apply8(0, 0) == 0) {
-        Field_Do21(20);
-        Field_Do22(val + 1);
+        Field_unk21_2(20);
+        Field_unk22_2(val + 1);
         Field_Apply9(8, 0);
     } else {
-        Field_Do23(20);
-        Field_Do24(val + 2);
+        Field_unk23_2(20);
+        Field_unk24_2(val + 2);
         Field_Apply10(8, 0);
     }
-    Field_Run15();
+    Field_unk15_4();
 }
 
 /* overlays/scene/field/extended_presentation/scene_state_interaction.c */
@@ -777,8 +776,8 @@ void State_RunFlag200SetupAndPlaceActors16To20(void)
     u8 *work = *(u8 **)0x03001f30;
     s16 *tbl;
 
-    if (Field_Check8(0x200) != 0) {
-        Field_Run16();
+    if (Field_unk8(0x200) != 0) {
+        Field_unk16_4();
         work[0x34] = 1;
     }
     tbl = &RuntimeSelectorTable;
@@ -805,16 +804,16 @@ typedef struct {
     s32 z;
 } Vec;
 
-Ent *Field_Run17(s32);
+Ent *Field_unk17_4(s32);
 
-u8 *Field_Run18(s32);
+u8 *Field_unk18_4(s32);
 
 /* Contiguous unnamed state-owner run for resource_3bd. */
 
 void State_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)0x03001f30;
-    Ent *p = Field_Run17(11);
+    Ent *p = Field_unk17_4(11);
     Vec v;
 
     v.x = p->unk8;
@@ -829,7 +828,7 @@ void State_MarkObjectWhenActorElevenAhead(void)
 void Scene_RunActorElevenCellSetup(void)
 {
     u8 *obj = *(u8 **)0x03001f30;
-    u8 *p = Field_Run18(11);
+    u8 *p = Field_unk18_4(11);
     s32 t;
 
     obj += 0x35;
@@ -844,7 +843,7 @@ void Scene_RunActorElevenCellSetup(void)
             p[0x55] = c;
             p[0x23] = t;
         }
-        Field_Do25(0x211);
+        Field_unk25_2(0x211);
     }
 }
 
@@ -939,6 +938,6 @@ void State_SetByte1004AndRunWhenIdle(s32 val)
     state = *(u8 **)0x03001ebc;
     *d = val;
     if (*(s16 *)(state + 0xcb8) == 0) {
-        Field_Run19();
+        Field_unk19_4();
     }
 }

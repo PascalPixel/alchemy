@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/resource_transfer/load_selected.h"
 #include "resource.h"
 
 struct SelectionNode_0801c188 {

@@ -20,8 +20,6 @@ struct EffectPosition {
     s32 y;
 };
 
-s32 Func_080e2974(struct EffectStep *step, s32 animation);
-
 #define EFFECT_STEP_OFFSET(field) \
     ((u32)&(((struct EffectStep *)0)->field))
 

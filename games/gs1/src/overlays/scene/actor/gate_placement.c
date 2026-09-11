@@ -5,7 +5,6 @@
 
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/gate_placement.h"
 
 #include "resource_388.h"
 #include "resource_388_runtime.h"

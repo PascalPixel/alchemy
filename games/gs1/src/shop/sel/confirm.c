@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/shop/sel/confirm.h"
 #include "shop.h"
 
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -21,7 +20,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct ShopRuntime *shop;
     struct ShopCursorAnchor *cursor_anchor;
 
-    Sys_Run2();
+    Sys_unk2_4();
     shop = SHOP_RUNTIME;
     shop->party_action = list_window;
 
@@ -56,7 +55,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     Shop_DrawMoney();
 
     for (;;) {
-        party_action = Sys_Check2(party_action);
+        party_action = Sys_unk2(party_action);
         shop->party_action = party_action;
         if (party_action == -1)
             break;
@@ -67,10 +66,10 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
             base = 0;
             Sys_Do(message);
-            if (Sys_Check3() == 0) {
+            if (Sys_unk3() == 0) {
                 Sys_Do(message + 1);
             } else {
-                Sys_Run3();
+                Sys_unk3_4();
             }
         }
         shop->party_action = 0;
@@ -81,6 +80,6 @@ s32 Shop_ConfirmAct(s32 unit_id)
     Sys_Do(0xd23);
     UiWindow_Close(shop->money_window, 2);
     UiWindow_Close(list_window, 2);
-    Sys_Run4();
+    Sys_unk4();
     return 0;
 }

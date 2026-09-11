@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/script/talk_flag_step.h"
 
 extern u8 gOv[];
 
@@ -21,10 +20,10 @@ void Scene_RunTalk(void)
         p6[9] &= 15;
         rec[85] = record;
         rec[92] = 1;
-        rec7 = Script_Check2(17, 0x608);
+        rec7 = Script_unk2(17, 0x608);
         Script_Run(230);
         Script_Place(p6[28], 128, (rec7 + 0x400));
-        Script_Run2(17);
+        Script_unk2_4(17);
         *(volatile s32 *)gOv = (s32)rec;
     }
 }

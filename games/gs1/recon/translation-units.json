@@ -110774,9 +110774,9 @@
       "overlay": null
     },
     {
-      "id": "ui-render_output_acquire_free",
+      "id": "ui-render-output_acquire_free",
       "game": "gs1",
-      "source": "games/gs1/src/ui/render_output_acquire_free.c",
+      "source": "games/gs1/src/ui/render/output_acquire_free.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112537,9 +112537,9 @@
       "overlay": null
     },
     {
-      "id": "graphics-palette-palette_decrement_selected_counter",
+      "id": "graphics-palette-decrement_selected_counter",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/palette/palette_decrement_selected_counter.c",
+      "source": "games/gs1/src/graphics/palette/decrement_selected_counter.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],

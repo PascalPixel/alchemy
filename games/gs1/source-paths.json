@@ -15591,6 +15591,9 @@
       "name": "FieldScene_RunScene3b9_020006bc",
       "source": "overlays/scene/status_dispatch_message_scene/run_scene_06bc.c"
     },
+    "resource_3b9:02000710": {
+      "name": "FieldScene_RunBranchingActorPresentation"
+    },
     "resource_3b9:02000dcc": {
       "name": "FieldScene_RunLargeActorPresentationSetup"
     },
@@ -18037,6 +18040,13 @@
     "resource_3b8:02000674": {
       "name": "FieldScene_RunScene3b8SequenceB",
       "source": "overlays/scene/choice_dialogue_cutscene_scene/scene_effect_sequence_mid.c"
+    },
+    "resource_3b8:020017e8": {
+      "name": "FieldScene_RunBranchingActorSequence",
+      "source": "overlays/scene/choice_dialogue_cutscene_scene/branching_actor_sequence.c"
+    },
+    "resource_3b8:020040b4": {
+      "name": "FieldScene_RunScene3b8SequenceC"
     },
     "resource_3b8:02000af8": {
       "name": "FieldScene_RunScene3b8SequenceA",

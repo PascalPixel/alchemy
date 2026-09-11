@@ -88033,11 +88033,11 @@
       ]
     },
     {
-      "id": "flatten-resource_377-overlays-scene-dialogue-facing_target",
+      "id": "overlays-scene-dialogue-facing_target",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
-      "source": "games/gs1/src/overlays/scene/dialogue/facing_target/facing_target.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/facing_target.c",
       "absolute_symbols": {
         "Func_02002e80": {
           "address": "0x02009824",
@@ -88849,11 +88849,11 @@
       ]
     },
     {
-      "id": "flatten-resource_378-overlays-scene-actor-facing_gated",
+      "id": "overlays-scene-actor-facing_gated",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
-      "source": "games/gs1/src/overlays/scene/actor/facing_gated/facing_gated.c",
+      "source": "games/gs1/src/overlays/scene/actor/facing_gated.c",
       "absolute_symbols": {
         "Func_0200657c": {
           "address": "0x0200b2a8",
@@ -92217,11 +92217,11 @@
       ]
     },
     {
-      "id": "flatten-resource_37a-map-locations-sol_shinden-inner_sanctum_scene",
+      "id": "map-locations-sol_shinden-inner_sanctum_scene",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
-      "source": "games/gs1/src/map/locations/sol_shinden/inner_sanctum_scene/inner_sanctum_scene.c",
+      "source": "games/gs1/src/map/locations/sol_shinden/inner_sanctum_scene.c",
       "absolute_symbols": {
         "Func_02000d2a": {
           "address": "0x02008108",
@@ -94327,11 +94327,11 @@
       ]
     },
     {
-      "id": "flatten-resource_382-overlays-scene-dialogue-actor_presentation",
+      "id": "overlays-scene-dialogue-actor_presentation",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
-      "source": "games/gs1/src/overlays/scene/dialogue/actor_presentation/actor_presentation.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/actor_presentation.c",
       "absolute_symbols": {
         "Func_02001094": {
           "address": "0x0200890c",
@@ -96021,11 +96021,11 @@
       ]
     },
     {
-      "id": "flatten-resource_38f-overlays-scene-field-extended_sequence",
+      "id": "overlays-scene-field-extended_sequence",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
-      "source": "games/gs1/src/overlays/scene/field/extended_sequence/extended_sequence.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_sequence.c",
       "absolute_symbols": {
         "Func_0200029e": {
           "address": "0x020080a0",
@@ -96753,11 +96753,11 @@
       ]
     },
     {
-      "id": "flatten-resource_392-overlays-scene-actor-staged_particle",
+      "id": "overlays-scene-actor-staged_particle",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
-      "source": "games/gs1/src/overlays/scene/actor/staged_particle/staged_particle.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_particle.c",
       "absolute_symbols": {
         "Func_02001590": {
           "address": "0x02008e3c",
@@ -97088,11 +97088,11 @@
       ]
     },
     {
-      "id": "flatten-resource_393-overlays-scene-actor-staged_palette",
+      "id": "overlays-scene-actor-staged_palette",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
-      "source": "games/gs1/src/overlays/scene/actor/staged_palette/staged_palette.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_palette.c",
       "absolute_symbols": {
         "Func_0200157c": {
           "address": "0x02008eac",
@@ -97234,11 +97234,11 @@
       ]
     },
     {
-      "id": "flatten-resource_39d-map-locations-heidia-village_story-village_story_scene",
+      "id": "map-locations-heidia-village_story-village_story_scene",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39d",
-      "source": "games/gs1/src/map/locations/heidia/village_story/village_story_scene/village_story_scene.c",
+      "source": "games/gs1/src/map/locations/heidia/village_story/village_story_scene.c",
       "absolute_symbols": {
         "Func_02001196": {
           "address": "0x02008890",
@@ -98583,11 +98583,11 @@
       ]
     },
     {
-      "id": "flatten-resource_3a4-overlays-scene-story-set_piece",
+      "id": "overlays-scene-story-set_piece",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
-      "source": "games/gs1/src/overlays/scene/story/set_piece/set_piece.c",
+      "source": "games/gs1/src/overlays/scene/story/set_piece.c",
       "absolute_symbols": {
         "Func_0200693c": {
           "address": "0x0200bc18",
@@ -101321,11 +101321,11 @@
       ]
     },
     {
-      "id": "flatten-resource_3a6-overlays-scene-actor-staged_pair_region",
+      "id": "overlays-scene-actor-staged_pair_region",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
-      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region/staged_pair_region.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair_region.c",
       "absolute_symbols": {
         "Func_0200293e": {
           "address": "0x02009c2c",
@@ -102164,11 +102164,11 @@
       ]
     },
     {
-      "id": "flatten-resource_3a8-overlays-scene-actor-staged_group",
+      "id": "overlays-scene-actor-staged_group",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
-      "source": "games/gs1/src/overlays/scene/actor/staged_group/staged_group.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_group.c",
       "absolute_symbols": {
         "Func_02003fee": {
           "address": "0x0200bbf4",
@@ -105482,11 +105482,11 @@
       ]
     },
     {
-      "id": "flatten-resource_3ae-overlays-scene-dialogue-flagged_message",
+      "id": "overlays-scene-dialogue-flagged_message",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
-      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message/flagged_message.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/flagged_message.c",
       "absolute_symbols": {
         "Func_0200208c": {
           "address": "0x02009510",
@@ -107362,11 +107362,11 @@
       ]
     },
     {
-      "id": "flatten-resource_3b5-overlays-scene-actor-proximity",
+      "id": "overlays-scene-actor-proximity",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
-      "source": "games/gs1/src/overlays/scene/actor/proximity/proximity.c",
+      "source": "games/gs1/src/overlays/scene/actor/proximity.c",
       "absolute_symbols": {
         "Func_02000040": {
           "address": "0x02008040",
@@ -107665,11 +107665,11 @@
       ]
     },
     {
-      "id": "flatten-resource_3bd-overlays-scene-field-extended_presentation",
+      "id": "overlays-scene-field-extended_presentation",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
-      "source": "games/gs1/src/overlays/scene/field/extended_presentation/extended_presentation.c",
+      "source": "games/gs1/src/overlays/scene/field/extended_presentation.c",
       "absolute_symbols": {
         "Func_02000342": {
           "address": "0x0200806c",
@@ -110142,9 +110142,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-two_mode_b-fx_run_two_mode_b_mode0",
+      "id": "battle-effects-fx_run_two_mode_b_mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/two_mode_b/fx_run_two_mode_b_mode0.c",
+      "source": "games/gs1/src/battle/effects/fx_run_two_mode_b_mode0.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -110214,9 +110214,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-series_a-fx_run_series_a_mode0",
+      "id": "battle-effects-fx_run_series_a_mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/series_a/fx_run_series_a_mode0.c",
+      "source": "games/gs1/src/battle/effects/fx_run_series_a_mode0.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -110260,9 +110260,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-series_b-fx_run_series_b_mode0",
+      "id": "battle-effects-fx_run_series_b_mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/series_b/fx_run_series_b_mode0.c",
+      "source": "games/gs1/src/battle/effects/fx_run_series_b_mode0.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -110357,9 +110357,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-dual_table-fx_run_dual_table_mode0",
+      "id": "battle-effects-fx_run_dual_table_mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/dual_table/fx_run_dual_table_mode0.c",
+      "source": "games/gs1/src/battle/effects/fx_run_dual_table_mode0.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -110553,9 +110553,9 @@
       "overlay": null
     },
     {
-      "id": "psynergy_menu-psynergy_menu_classify_selected_psynergy",
+      "id": "menu-psynergy_menu-psynergy_menu_classify_selected_psynergy",
       "game": "gs1",
-      "source": "games/gs1/src/psynergy_menu/psynergy_menu_classify_selected_psynergy.c",
+      "source": "games/gs1/src/menu/psynergy_menu/psynergy_menu_classify_selected_psynergy.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111347,9 +111347,9 @@
       "overlay": "resource_3be"
     },
     {
-      "id": "item_menu-item_menu_use",
+      "id": "menu-item_menu-item_menu_use",
       "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_use.c",
+      "source": "games/gs1/src/menu/item_menu/item_menu_use.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111368,9 +111368,9 @@
       "overlay": null
     },
     {
-      "id": "item_menu-item_menu_try_break",
+      "id": "menu-item_menu-item_menu_try_break",
       "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_try_break.c",
+      "source": "games/gs1/src/menu/item_menu/item_menu_try_break.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111389,9 +111389,9 @@
       "overlay": null
     },
     {
-      "id": "item_menu-item_menu_draw_stat",
+      "id": "menu-item_menu-item_menu_draw_stat",
       "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_draw_stat.c",
+      "source": "games/gs1/src/menu/item_menu/item_menu_draw_stat.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111440,9 +111440,9 @@
       "overlay": null
     },
     {
-      "id": "item_menu-item_menu_page_result",
+      "id": "menu-item_menu-item_menu_page_result",
       "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_page_result.c",
+      "source": "games/gs1/src/menu/item_menu/item_menu_page_result.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111991,9 +111991,9 @@
       "overlay": null
     },
     {
-      "id": "audio-misc-music_track_read_command_byte",
+      "id": "audio-music_track_read_command_byte",
       "game": "gs1",
-      "source": "games/gs1/src/audio/misc/music_track_read_command_byte.c",
+      "source": "games/gs1/src/audio/music_track_read_command_byte.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112656,9 +112656,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run-run_event_action",
+      "id": "battle-effects-run_event_action",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run/run_event_action.c",
+      "source": "games/gs1/src/battle/effects/run_event_action.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112677,9 +112677,9 @@
       "overlay": null
     },
     {
-      "id": "character_menu-build_availability",
+      "id": "menu-character_menu-build_availability",
       "game": "gs1",
-      "source": "games/gs1/src/character_menu/build_availability.c",
+      "source": "games/gs1/src/menu/character_menu/build_availability.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112808,9 +112808,9 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-actor-four_encounter-four_encounter",
+      "id": "overlays-scene-actor-four_encounter",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/four_encounter/four_encounter.c",
+      "source": "games/gs1/src/overlays/scene/actor/four_encounter.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_020007d6": {
@@ -113780,9 +113780,9 @@
       "overlay": "resource_396"
     },
     {
-      "id": "overlays-scene-actor-selected_presentation-selected_presentation",
+      "id": "overlays-scene-actor-selected_presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/selected_presentation/selected_presentation.c",
+      "source": "games/gs1/src/overlays/scene/actor/selected_presentation.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_020009c2": {
@@ -114365,9 +114365,9 @@
       "overlay": "resource_3c0"
     },
     {
-      "id": "overlays-scene-dialogue-choice-choice",
+      "id": "overlays-scene-dialogue-choice",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/dialogue/choice/choice.c",
+      "source": "games/gs1/src/overlays/scene/dialogue/choice.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02005c88": {
@@ -117295,9 +117295,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-palette_ramp-fx_run_palette_ramp_mode0",
+      "id": "battle-effects-fx_run_palette_ramp_mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/palette_ramp/fx_run_palette_ramp_mode0.c",
+      "source": "games/gs1/src/battle/effects/fx_run_palette_ramp_mode0.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -117351,9 +117351,9 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-actor-push_puzzle-push_puzzle",
+      "id": "overlays-scene-actor-push_puzzle",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/push_puzzle/push_puzzle.c",
+      "source": "games/gs1/src/overlays/scene/actor/push_puzzle.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001d5c": {
@@ -118958,9 +118958,9 @@
       "overlay": null
     },
     {
-      "id": "ui-ability_menu-build_available_list",
+      "id": "menu-ability_menu-build_available_list",
       "game": "gs1",
-      "source": "games/gs1/src/ui/ability_menu/build_available_list.c",
+      "source": "games/gs1/src/menu/ability_menu/build_available_list.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -119010,9 +119010,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-misc-wait_then_set_field18",
+      "id": "battle-effects-wait_then_set_field18",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/misc/wait_then_set_field18.c",
+      "source": "games/gs1/src/battle/effects/wait_then_set_field18.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -119072,9 +119072,9 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-story-progress_actor-progress_actor",
+      "id": "overlays-scene-story-progress_actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/progress_actor/progress_actor.c",
+      "source": "games/gs1/src/overlays/scene/story/progress_actor.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001a9e": {
@@ -120267,9 +120267,9 @@
       "overlay": "resource_375"
     },
     {
-      "id": "overlays-scene-actor-multi_encounter-multi_encounter",
+      "id": "overlays-scene-actor-multi_encounter",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/multi_encounter/multi_encounter.c",
+      "source": "games/gs1/src/overlays/scene/actor/multi_encounter.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02004792": {
@@ -122255,9 +122255,9 @@
       "overlay": "resource_3af"
     },
     {
-      "id": "overlays-scene-story-actor_sequence-actor_sequence",
+      "id": "overlays-scene-story-actor_sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/actor_sequence/actor_sequence.c",
+      "source": "games/gs1/src/overlays/scene/story/actor_sequence.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001e6e": {
@@ -123968,9 +123968,9 @@
       "overlay": "resource_3ab"
     },
     {
-      "id": "overlays-scene-story-flag_branched-flag_branched",
+      "id": "overlays-scene-story-flag_branched",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/flag_branched/flag_branched.c",
+      "source": "games/gs1/src/overlays/scene/story/flag_branched.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_0200081c": {
@@ -125090,9 +125090,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-random_particle-play_cue_and_start_emitter_on_target",
+      "id": "battle-effects-play_cue_and_start_emitter_on_target",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/random_particle/play_cue_and_start_emitter_on_target.c",
+      "source": "games/gs1/src/battle/effects/play_cue_and_start_emitter_on_target.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -125211,9 +125211,9 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-story-branching_formation-branching_formation",
+      "id": "overlays-scene-story-branching_formation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/branching_formation/branching_formation.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_formation.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02000176": {
@@ -125948,9 +125948,9 @@
       "overlay": "resource_391"
     },
     {
-      "id": "map-locations-heidia-village-village_scene-village_scene",
+      "id": "map-locations-heidia-village-village_scene",
       "game": "gs1",
-      "source": "games/gs1/src/map/locations/heidia/village/village_scene/village_scene.c",
+      "source": "games/gs1/src/map/locations/heidia/village/village_scene.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02000342": {
@@ -129544,9 +129544,9 @@
       "overlay": null
     },
     {
-      "id": "menu-misc-run_workspace_selection_loop",
+      "id": "menu-run_workspace_selection_loop",
       "game": "gs1",
-      "source": "games/gs1/src/menu/misc/run_workspace_selection_loop.c",
+      "source": "games/gs1/src/menu/run_workspace_selection_loop.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -130635,9 +130635,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-misc-schedule_ratio_transition",
+      "id": "battle-effects-schedule_ratio_transition",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/misc/schedule_ratio_transition.c",
+      "source": "games/gs1/src/battle/effects/schedule_ratio_transition.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -130681,9 +130681,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-set-fx_set_block30_values_max_zero",
+      "id": "battle-effects-fx_set_block30_values_max_zero",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/set/fx_set_block30_values_max_zero.c",
+      "source": "games/gs1/src/battle/effects/fx_set_block30_values_max_zero.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -131168,9 +131168,9 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-actor-staged_pair-staged_pair",
+      "id": "overlays-scene-actor-staged_pair",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/staged_pair/staged_pair.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_pair.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02002314": {
@@ -137256,9 +137256,9 @@
       "overlay": "resource_373"
     },
     {
-      "id": "overlays-scene-actor-staged_placement-staged_placement",
+      "id": "overlays-scene-actor-staged_placement",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/staged_placement/staged_placement.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_placement.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001f8a": {
@@ -138015,9 +138015,9 @@
       "overlay": "resource_389"
     },
     {
-      "id": "overlays-scene-actor-staged_effect-staged_effect",
+      "id": "overlays-scene-actor-staged_effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/staged_effect/staged_effect.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_effect.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_0200317c": {
@@ -138827,9 +138827,9 @@
       "overlay": "resource_39b"
     },
     {
-      "id": "map-locations-heidia-prologue-prologue_route_scene-prologue_route_scene",
+      "id": "map-locations-heidia-prologue-prologue_route_scene",
       "game": "gs1",
-      "source": "games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue_route_scene.c",
+      "source": "games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02000342": {
@@ -140996,9 +140996,9 @@
       "overlay": "resource_3b2"
     },
     {
-      "id": "overlays-scene-actor-staged_nav-staged_nav",
+      "id": "overlays-scene-actor-staged_nav",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/staged_nav/staged_nav.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_nav.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_020029e6": {
@@ -141984,9 +141984,9 @@
       "overlay": "resource_3b3"
     },
     {
-      "id": "overlays-scene-actor-map_init-map_init",
+      "id": "overlays-scene-actor-map_init",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/map_init/map_init.c",
+      "source": "games/gs1/src/overlays/scene/actor/map_init.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001aba": {
@@ -143940,9 +143940,9 @@
       "overlay": "resource_3b7"
     },
     {
-      "id": "overlays-scene-story-scenario_dispatch-scenario_dispatch",
+      "id": "overlays-scene-story-scenario_dispatch",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/scenario_dispatch/scenario_dispatch.c",
+      "source": "games/gs1/src/overlays/scene/story/scenario_dispatch.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001fe8": {
@@ -144481,9 +144481,9 @@
       "overlay": "resource_37f"
     },
     {
-      "id": "overlays-scene-story-selector_effect-selector_effect",
+      "id": "overlays-scene-story-selector_effect",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/selector_effect/selector_effect.c",
+      "source": "games/gs1/src/overlays/scene/story/selector_effect.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_020069fa": {
@@ -146884,9 +146884,9 @@
       "overlay": "resource_3a7"
     },
     {
-      "id": "overlays-scene-state-task-task",
+      "id": "overlays-scene-state-task",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state/task/task.c",
+      "source": "games/gs1/src/overlays/scene/state/task.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_020041ca": {
@@ -150462,9 +150462,9 @@
       "overlay": "resource_3bc"
     },
     {
-      "id": "overlays-scene-actor-transition-transition",
+      "id": "overlays-scene-actor-transition",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/transition/transition.c",
+      "source": "games/gs1/src/overlays/scene/actor/transition.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_020006fc": {
@@ -152711,9 +152711,9 @@
       "overlay": "resource_39a"
     },
     {
-      "id": "overlays-scene-actor-waypoint-waypoint",
+      "id": "overlays-scene-actor-waypoint",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/waypoint/waypoint.c",
+      "source": "games/gs1/src/overlays/scene/actor/waypoint.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02001d82": {
@@ -154638,9 +154638,9 @@
       "overlay": "resource_39f"
     },
     {
-      "id": "overlays-scene-actor-staged_step-staged_step",
+      "id": "overlays-scene-actor-staged_step",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/actor/staged_step/staged_step.c",
+      "source": "games/gs1/src/overlays/scene/actor/staged_step.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02002f42": {
@@ -156659,9 +156659,9 @@
       "overlay": "resource_3b4"
     },
     {
-      "id": "overlays-scene-story-branching_event-branching_event",
+      "id": "overlays-scene-story-branching_event",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/story/branching_event/branching_event.c",
+      "source": "games/gs1/src/overlays/scene/story/branching_event.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Func_02004da4": {
@@ -160572,9 +160572,9 @@
       "overlay": null
     },
     {
-      "id": "psynergy_menu-psynergy_menu_reserved_no_op",
+      "id": "menu-psynergy_menu-psynergy_menu_reserved_no_op",
       "game": "gs1",
-      "source": "games/gs1/src/psynergy_menu/psynergy_menu_reserved_no_op.c",
+      "source": "games/gs1/src/menu/psynergy_menu/psynergy_menu_reserved_no_op.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -160613,9 +160613,9 @@
       "overlay": null
     },
     {
-      "id": "item_menu-item_menu_hide_all_icons",
+      "id": "menu-item_menu-item_menu_hide_all_icons",
       "game": "gs1",
-      "source": "games/gs1/src/item_menu/item_menu_hide_all_icons.c",
+      "source": "games/gs1/src/menu/item_menu/item_menu_hide_all_icons.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -160714,9 +160714,9 @@
       "overlay": null
     },
     {
-      "id": "character_menu-build_availability",
+      "id": "menu-character_menu-build_availability",
       "game": "gs1",
-      "source": "games/gs1/src/character_menu/build_availability.c",
+      "source": "games/gs1/src/menu/character_menu/build_availability.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -160984,9 +160984,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-particle_field-fx_run_particle_field_variant0",
+      "id": "battle-effects-fx_run_particle_field_variant0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/particle_field/fx_run_particle_field_variant0.c",
+      "source": "games/gs1/src/battle/effects/fx_run_particle_field_variant0.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -161025,9 +161025,9 @@
       "overlay": null
     },
     {
-      "id": "effects-run_animation_mode_6_or_7_or",
+      "id": "effect_runtime-run_animation_mode_6_or_7_or",
       "game": "gs1",
-      "source": "games/gs1/src/effects/run_animation_mode_6_or_7_or.c",
+      "source": "games/gs1/src/effect_runtime/run_animation_mode_6_or_7_or.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -161127,9 +161127,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-misc-wait_then_set_field18",
+      "id": "battle-effects-wait_then_set_field18",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/misc/wait_then_set_field18.c",
+      "source": "games/gs1/src/battle/effects/wait_then_set_field18.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],

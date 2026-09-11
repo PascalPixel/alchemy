@@ -370,8 +370,8 @@ extern u8 gOv21[];
 void *Field_unk_02004e4e(s32, s32, s32, s32);
 
 void *Field_unk_02004e8e(s32, s32, s32, s32);
-struct Effect *Field_unk_02004fe6();
-struct Effect *Field_unk_02004f44();
+struct Effect *Effect_GetParty();
+struct Effect *Effect_SpawnAt();
 
 typedef s32(*IwramSqrt020002f0)(s32);
 u8 *Field_unk_020072a2();
@@ -382,11 +382,11 @@ struct StagedActor *FindActorAtPosition(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindActorAtForwardPosition(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindActorAbovePosition(s32 *arg0, struct StagedActor *arg1);
 
-struct EffectObject *Field_unk_0200560a(s32);
+struct EffectObject *EffectObject_Get(s32);
 
-struct SceneObject *Field_unk_020059c2(void);
+struct SceneObject *SceneObject_Get(void);
 
-struct EffectObject *Field_unk_02005a56(s32, s32, s32, s32);
+struct EffectObject *EffectObject_Create(s32, s32, s32, s32);
 
 u8 *Scene_GetRecord_1();
 
@@ -420,7 +420,7 @@ Struct_1a9c *Field_unk_02006974(s32);
 
 Struct_22a4b *Field_unk_0200715e(s32);
 
-struct SceneObject *Field_unk_02005b84(s32);
+struct SceneObject *SceneObject_GetById(s32);
 
 Struct_1644 *Field_TestFlag200();
 Struct_1644 *Field_TestFlag200();
@@ -519,14 +519,14 @@ void Effect_SpawnConfigured(s32 x, s32 y,
     s32 dur;
     s32 delta0;
     s32 acc;
-    party = Field_unk_02004fe6(0);
+    party = Effect_GetParty(0);
 
     /* 128 << 13.  With this bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Field_unk_02004f44(options->kind, x, y, z);
+        effect = Effect_SpawnAt(options->kind, x, y, z);
     } else {
-        effect = Field_unk_02004f44(222, x, y, z);
+        effect = Effect_SpawnAt(222, x, y, z);
     }
     if (effect == 0) return;
 
@@ -885,7 +885,7 @@ void Effect_RunObjectZeroColorSequence(void)
     u8 *state;
 
     state = *(u8 **)0x03001ebc;
-    obj = Field_unk_0200560a(0);
+    obj = EffectObject_Get(0);
     Field_unk_020055f8();
     Field_unk_02005766(228);
     obj->callback = 0x020086a1;
@@ -1139,7 +1139,7 @@ void Effect_SpawnNineRadialEffects(void)
     s32 x;
     s32 z;
 
-    object = Field_unk_020059c2();
+    object = SceneObject_Get();
     params.unk00 = 1;
     params.mode = 7;
     params.callback = 0x0200896d;
@@ -1194,7 +1194,7 @@ struct EffectObject *Effect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
 
     sx = x << 16;
     sz = z << 16;
-    obj = Field_unk_02005a56(284, sx, 0, sz);
+    obj = EffectObject_Create(284, sx, 0, sz);
     if (obj == 0) {
         return 0;
     }
@@ -1220,7 +1220,7 @@ s32 Actor_TryMoveActorZeroTwoTilesAhead(void)
     u8 old;
     s32 m;
 
-    obj = Field_unk_02005b84(0);
+    obj = SceneObject_GetById(0);
     state = &obj->state;
     old = *state;
     vec.x = (obj->x & 0xfff00000) + 0x80000;
@@ -1343,7 +1343,7 @@ void Scene_RunActorEightTenStepLoop(void)
 
     Field_unk_02005dd2();
     Field_unk_02005e5a(8, 3);
-    Field_unk_02005e90(0x266d);
+    Field_TestFlag266d(0x266d);
     n = 10;
     w = 8;
     Field_unk_02005eae(8, 0, 20);
@@ -1368,7 +1368,7 @@ void Scene_RunActorEightTenStepLoop(void)
 void Dialogue_RunActorElevenDialogue(void)
 {
     Field_unk_02005e54();
-    Field_unk_02005f0a(0x2670);
+    Field_TestFlag2670(0x2670);
     Field_unk_02005f24(11, 0, 20);
     Field_unk_02005eec(11, 2);
     Field_unk_02005f2c(11, 0);
@@ -1605,7 +1605,7 @@ void Scene_RunFlag986ActorOneScene(void)
             Field_unk_020063ea_a(20);
             Field_unk_02006472(1, 4);
             Field_unk_020063f8(20);
-            Field_unk_020064b6(0x2691);
+            Field_TestFlag2691(0x2691);
             Field_unk_020064d0(1, 0, 20);
             Field_unk_020064e2(1, 0, 10);
             Field_unk_020064fe(1, h, 60);

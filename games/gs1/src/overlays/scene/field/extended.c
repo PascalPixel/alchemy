@@ -243,7 +243,7 @@ void Dialogue_RunFlagGatedMessageStep(void)
 {
     Field_unk_02002a54();
     if (Field_TestFlag87a(0x87a) != 0) {
-        Field_unk_02002b2c(0x1be8);
+        Field_TestFlag1be8(0x1be8);
         Field_unk_02002b3c(15, 0);
         if (Field_unk_02002a94(0, 0) == 1) {
             Field_unk_02002b58(15, 0);
@@ -253,7 +253,7 @@ void Dialogue_RunFlagGatedMessageStep(void)
             Field_unk_02002b96(15, 0);
         }
     } else if (Field_unk_02002a74(0x815) != 0) {
-        Field_unk_02002b6e(0x1191);
+        Field_TestFlag1191(0x1191);
         Field_unk_02002b96(11, 0);
     } else {
         Field_TestFlagea8(0xea8);
@@ -268,7 +268,7 @@ void Scene_RunActorTwentySixEffectPresentation(void)
     Field_unk_02002b6c(26, 1);
     Field_unk_02002b9e(26, 0, 20);
     Field_unk_02002ba8(26, 21, 40);
-    Field_unk_02002bce(0x11c7);
+    Field_TestFlag11c7(0x11c7);
     Field_unk_0200273a(26, 20);
     Field_unk_02002c26(0x19999, 0x3333);
     Field_SetMode(0x1510000, -1, 0x1100000, 1);
@@ -348,9 +348,9 @@ void Dialogue_RunActorElevenFlaggedDialogue(void)
 
     Field_unk_02002cd4();
     if (Field_TestFlag302(0x302) != 0) {
-        Field_unk_02002dac(0x1be4);
+        Field_TestFlag1be4(0x1be4);
     } else {
-        Field_unk_02002db4(0x1be3);
+        Field_TestFlag1be3(0x1be3);
         Field_TestFlag302(0x302);
     }
     Field_unk_02002dd2(11, 0);
@@ -370,7 +370,7 @@ void Scene_RunActorTwentyOneSetup(void)
     p->f06 = 0xb000;
     Field_unk_02002d44(20);
     Field_unk_02002dec_a(21, 2);
-    Field_unk_02002e22(0x1c94);
+    Field_TestFlag1c94(0x1c94);
     Field_unk_02002e44(21, 0, 40);
     Field_unk_02002e16(21, 0, 20);
     Field_unk_02002e0e(21, 2);

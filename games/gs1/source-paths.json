@@ -15577,7 +15577,8 @@
       "source": "overlays/scene/status_dispatch_message_scene/scene_primary_script.c"
     },
     "resource_3b9:02001298": {
-      "name": "FieldScene_BuildActorPresentationGroup"
+      "name": "FieldScene_BuildActorPresentationGroup",
+      "source": "overlays/scene/status_dispatch_message_scene/actor_presentation_group.c"
     },
     "resource_3ad:020004a8": {
       "name": "FieldScene_RunMultiActorPresentation",

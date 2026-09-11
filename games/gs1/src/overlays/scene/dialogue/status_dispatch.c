@@ -848,7 +848,7 @@ void Func_020057e8();
 
 /* Shared scene work record, reached through the pointer at 0x03001ebc. The
  * three field offsets are the ones the adopted sibling
- * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c
+ * games/gs1/src/overlays/scene/script/run_scene_3b9_conditional_scene_setup.c
  * already spells. */
 
 /* Overlay call bindings.

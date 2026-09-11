@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunExtendedPresentationSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunExtendedPresentationSequence:
  * 188 calls, six conditional event advances, and terminal runtime state. */
 
-#define FieldScene_RunExtendedPresentationSequence Func_02000430
+#define Scene_RunExtendedPresentationSequence Func_02000430
 
 extern u8 Data_03001e70[];
 extern u8 Value_00000000;

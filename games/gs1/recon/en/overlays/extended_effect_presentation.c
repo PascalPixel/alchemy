@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunExtendedEffectPresentation Func_02001410
+#define Scene_RunExtendedEffectPresentation Func_02001410
 
 extern u8 SceneMessage_ActorOneChoiceBase;
 
@@ -120,7 +120,7 @@ static __inline__ u8 * Pointer4(u8 * (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunExtendedEffectPresentation(void)
+void Scene_RunExtendedEffectPresentation(void)
 {
     u8 *work;
     u8 *effect;

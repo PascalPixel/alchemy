@@ -23,7 +23,7 @@ extern void Func_020061bc(s32);
 extern u8 Data_0200d160[];
 extern s32 *Data_03001ebc;
 
-void FieldScene_RunActorTwentyDialogueSequence(void)
+void Scene_RunActorTwentyDialogueSequence(void)
 {
     Func_02005ffc();
     Func_02006012((s32)Data_0200d160);

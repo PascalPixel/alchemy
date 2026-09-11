@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_RunPuffArc Func_080d9fc8
+#define BattleFx_RunPuffArc Func_080d9fc8
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
@@ -85,7 +85,7 @@ typedef struct Efx {
  * Aggregate names remain provisional; byte offsets into the kind-39 work
  * block are retained where no evidence-backed structure exists yet.
  */
-void BattleEffect_RunPuffArc(Efx *efx)
+void BattleFx_RunPuffArc(Efx *efx)
 {
     u32 *cache;
     u32 *entry;

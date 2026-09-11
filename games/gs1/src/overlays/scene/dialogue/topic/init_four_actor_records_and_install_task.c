@@ -27,7 +27,7 @@ void Func_02000e5c();           /* the installed per-frame task */
  * is 0x0001 rather than a multiple of 0x4000 -- the byte is certain, its
  * meaning is not.
  */
-void SceneState_InitFourActorRecordsAndInstallTask(void)
+void State_InitFourActorRecordsAndInstallTask(void)
 {
     u8 *work = Data_0200a070;
     s32 i = 0;

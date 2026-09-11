@@ -28,23 +28,23 @@ void Func_02006c72();
  * overlay veneer and the main-image veneer island, keeping the site's own
  * calling form. Names without a repository binding are provisional.
  */
-#define BattleRuntime_Reset_1() Value0(Func_02006a84)
-#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02006b94, a0, a1)
-#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02006bae, a0, a1, a2, a3)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02006ad8, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Value3(Func_02006b1c, a0, a1, a2)
+#define Battle_Reset_1() Value0(Func_02006a84)
+#define Motion_SetSpeedLim_1(a0, a1) Call2(Func_02006b94, a0, a1)
+#define Motion_CamBounds_1(a0, a1, a2, a3) Call4(Func_02006bae, a0, a1, a2, a3)
+#define Motion_SetSpeed_1(a0, a1, a2) Call3(Func_02006ad8, a0, a1, a2)
+#define Motion_SetPosReset_1(a0, a1, a2) Value3(Func_02006b1c, a0, a1, a2)
 #define Audio_PlayCue_1(a0) Value1(Func_02006c6a, a0)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02006b0e, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02006b18, a0, a1, a2)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_02006b0e, a0, a1, a2)
+#define Motion_SetSpeed_3(a0, a1, a2) Call3(Func_02006b18, a0, a1, a2)
 #define Object_SetModeById_1(a0, a1) Call2(Func_02006b70, a0, a1)
-#define ObjectMotion_ResetAndSetPosition_1(a0, a1, a2) Call3(Func_02006b4c, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPosition_2(a0, a1, a2) Value3(Func_02006b58, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_1(a0) Value1(Func_02006b06, a0)
-#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02006c0a, a0, a1, a2)
-#define ObjectMotion_SetVariantCallback_1(a0, a1) Value2(Func_02006bba, a0, a1)
-#define ObjectMotion_CommitCurrentPositionAndActivate_1(a0) Value1(Func_02006b98, a0)
+#define Motion_ResetAndSetPosition_1(a0, a1, a2) Call3(Func_02006b4c, a0, a1, a2)
+#define Motion_ResetAndSetPosition_2(a0, a1, a2) Value3(Func_02006b58, a0, a1, a2)
+#define Battle_WaitMode0_1(a0) Value1(Func_02006b06, a0)
+#define BattleFx_SpawnLinked_1(a0, a1, a2) Call3(Func_02006c0a, a0, a1, a2)
+#define Motion_SetVarCb_1(a0, a1) Value2(Func_02006bba, a0, a1)
+#define Motion_CommitPos_1(a0) Value1(Func_02006b98, a0)
 #define SharedWorkData_SetFirstAndSecondFields_1(a0, a1) Call2(Func_02006c72, a0, a1)
-#define BattleEffect_ComputeWeightedResultAndDispatch_1(a0, a1) Call2(Func_02006c6a_a, a0, a1)
+#define BattleFx_ComputeWeightedResultAndDispatch_1(a0, a1) Call2(Func_02006c6a_a, a0, a1)
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 
@@ -98,28 +98,28 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* Runs a fixed chain of 19 calls with literal arguments, sets byte 0x22B of
  * the shared work buffer to 3, then issues two more calls. */
-void FieldScene_RunLateAuxiliarySequence(void)
+void Scene_RunLateAuxiliarySequence(void)
 {
-    BattleRuntime_Reset_1();
-    ObjectMotion_SetSpeedLimitAndAcceleration_1(39321, 4915);
-    ObjectMotion_PlaceWithinCameraBounds_1(21495808, -1, 5701632, 1);
-    ObjectMotion_SetSpeedParameters_1(0, 39321, 19660);
-    ObjectMotion_SetPositionAndReset_1(0, 328, 116);
+    Battle_Reset_1();
+    Motion_SetSpeedLim_1(39321, 4915);
+    Motion_CamBounds_1(21495808, -1, 5701632, 1);
+    Motion_SetSpeed_1(0, 39321, 19660);
+    Motion_SetPosReset_1(0, 328, 116);
     Audio_PlayCue_1(148);
     Value2(Func_020069d4, 33599213, 3200); /* main:080000d0 */
     Call3(Func_02006a9c, 65536, 65536, 65536); /* main:080091f0 */
-    ObjectMotion_SetSpeedParameters_2(8, 6553, 3276);
-    ObjectMotion_SetSpeedParameters_3(9, 6553, 3276);
+    Motion_SetSpeed_2(8, 6553, 3276);
+    Motion_SetSpeed_3(9, 6553, 3276);
     Object_SetModeById_1(8, 2);
-    ObjectMotion_ResetAndSetPosition_1(8, 328, 104);
-    ObjectMotion_ResetAndSetPosition_2(9, 328, 108);
-    BattleRuntime_WaitIfModeZero_1(60);
-    BattleEffect_SpawnLinkedResourceObject_1(0, 256, 0);
-    ObjectMotion_SetVariantCallback_1(0, 2);
-    ObjectMotion_CommitCurrentPositionAndActivate_1(8);
+    Motion_ResetAndSetPosition_1(8, 328, 104);
+    Motion_ResetAndSetPosition_2(9, 328, 108);
+    Battle_WaitMode0_1(60);
+    BattleFx_SpawnLinked_1(0, 256, 0);
+    Motion_SetVarCb_1(0, 2);
+    Motion_CommitPos_1(8);
     do {
         WORK_BYTE_22B = 3;
     } while (0);
     SharedWorkData_SetFirstAndSecondFields_1((s32)&Value_00000056, 99);
-    BattleEffect_ComputeWeightedResultAndDispatch_1(53, 3);
+    BattleFx_ComputeWeightedResultAndDispatch_1(53, 3);
 }

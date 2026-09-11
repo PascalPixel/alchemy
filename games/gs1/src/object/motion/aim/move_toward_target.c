@@ -22,7 +22,7 @@ s32 Object_SetMode(s32, s32);
  * argument -- that local is the callee load. The parameter is then reused
  * to hold the halfword at +0x64.
  */
-s32 ObjectMotion_MoveTowardTarget(s32 arg0)
+s32 Motion_MoveTowardTarget(s32 arg0)
 {
     s32 squareRoot = 0x030001d8;
     s32 object;

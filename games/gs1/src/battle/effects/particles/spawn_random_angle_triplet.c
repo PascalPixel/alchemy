@@ -8,11 +8,11 @@ u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 s32 Object_SetCallback(void *, s32);
-void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
 
-void BattleEffect_SpawnRandomAngleTriplet(void *object)
+void BattleFx_SpawnRandomAngleTriplet(void *object)
 {
     s32 i;
     void *p;
@@ -35,7 +35,7 @@ void BattleEffect_SpawnRandomAngleTriplet(void *object)
             FIELD_AT_OFFSET(p, s8 *, 0x55) = 2;
             FIELD_AT_OFFSET(p, s32 *, 0x28) = 0x10000;
             FIELD_AT_OFFSET(p, s32 *, 0x30) = (s32)(Rand() + 0x13333);
-            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 p, 0x200000, Rand());
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
             phase2 = 6;

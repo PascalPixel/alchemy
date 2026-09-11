@@ -44,7 +44,7 @@ extern void Func_08009098(struct BattleActionObject *, void *);
 extern void Func_0809ade8(s32);
 extern u8 Data_02000240;
 
-s32 BattleEffect_RunDescriptorAction(s32 id)
+s32 BattleFx_RunDescriptorAction(s32 id)
 {
     struct ActionDescriptor_0808d5dc *action =
         (struct ActionDescriptor_0808d5dc *)Func_0808d394(id);

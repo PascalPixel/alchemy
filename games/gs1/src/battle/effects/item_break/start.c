@@ -4,17 +4,17 @@
 #include "sound_ids.h"
 
 extern void *Object_Spawn(s32, s32, s32, s32);
-extern void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+extern void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
 extern void Object_SetCallback(void *, void *);
-extern void BattleEffect_UpdateItemBreakFragment(void *);
+extern void BattleFx_UpdateItemBreakFragment(void *);
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 extern void Audio_PlayCue(s32);
 
-void *BattleEffect_StartItemBreak(void *source)
+void *BattleFx_StartItemBreak(void *source)
 {
     s32 angle;
     s32 fragment_height;
@@ -34,13 +34,13 @@ void *BattleEffect_StartItemBreak(void *source)
         return 0;
     *(s32 *)((s8 *)parent + 0x1c) = 0x4000;
     *(s32 *)((s8 *)parent + 0x18) = 0x4000;
-    *(s32 *)((s8 *)parent + 0x6c) = (s32)BattleEffect_UpdateItemBreakFragment;
+    *(s32 *)((s8 *)parent + 0x6c) = (s32)BattleFx_UpdateItemBreakFragment;
     *(s32 *)((s8 *)parent + 0x30) = 0x20000;
     *(s32 *)((s8 *)parent + 0x34) = 0x20000;
     zero = 0;
     *(s8 *)((s8 *)parent + 0x55) = zero;
     Object_SetMode(parent, 3);
-    ObjectMotion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
+    Motion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
 
     fragment_count = 7;
     do {
@@ -58,7 +58,7 @@ void *BattleEffect_StartItemBreak(void *source)
             *(s32 *)((s8 *)child + 0x28) = vel - Rand();
             fragment_height = Rand() * 0x18 + 0x80000;
             rotation_jitter = Rand();
-            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 child, fragment_height,
                           ((rotation_jitter - Rand()) >> 3) +
                           *(u16 *)((s8 *)source + 6));

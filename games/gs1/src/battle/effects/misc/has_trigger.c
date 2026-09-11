@@ -2,7 +2,7 @@
 
 s32 Func_0808e14c(u16);
 
-u32 BattleEffect_HasTrigger(u16 effectId)
+u32 BattleFx_HasTrigger(u16 effectId)
 {
     s32 result;
 

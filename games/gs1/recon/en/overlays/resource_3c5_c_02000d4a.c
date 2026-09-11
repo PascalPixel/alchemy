@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunSupplementalSequenceOne Func_02000d4a
+#define Scene_RunSupplementalSequenceOne Func_02000d4a
 
 /* Audited retained supplemental scene body.
  * The complete production span preserves 49 calls, 1 loop(s), and 20 explicit memory operation(s).

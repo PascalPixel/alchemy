@@ -9,40 +9,40 @@
 #define Object_SetModeById_3(args...) Func_02003dda(args)
 #define Object_SetModeById_4(args...) Func_02003e0a(args)
 #define AUX_COUNTDOWN (*(volatile s32 *)Data_0200c41c)
-#define FieldScene_RunOpeningAuxiliarySequence Func_0200004c
+#define Scene_RunOpeningAuxiliarySequence Func_0200004c
 #define FieldScene_RunScene3ba_02000270 Func_02000270
 #define FieldScene_RunScene3ba_02000974 Func_02000974
-#define FieldScene_RunCommandSequence Func_02000db8
+#define Scene_RunCommandSequence Func_02000db8
 #define FieldScene_RunScene3ba_020015e0 Func_020015e0
-#define FieldScene_RunNearestActor165Scene Func_02001a28
-#define SceneState_ResetCounterAndStartTask Func_02000134
-#define SceneState_SetMode66AndPassOpeningSequence Func_02000158
-#define SceneState_ApplyRectAndSend303 Func_02000248
-#define SceneState_ApplyValue768 Func_02000830
-#define SceneState_SetStateHalfword386To99WhenMatched Func_020019e0
-#define SceneState_SendIdBySceneId Func_02001e20
-#define SceneState_InitHalfwordC6a6Once Func_02002bcc
-#define SceneState_StoreParamsAndInitTable Func_02002d28
-#define SceneState_InitTableWordsAndLoad3200 Func_02002d8c
-#define SceneState_ReleaseTableAndResetC6a6 Func_02002de8
-#define SceneState_WaitUntilWord1000IsNine Func_02002fa0
-#define SceneState_SetStateHalfword220 Func_020038a0
-#define SceneState_WaitUntilWordC41cIs22 Func_02000178
-#define SceneDialogue_RunFlagGatedPromptInteraction Func_02001d64
-#define SceneState_SetHalfword1000To9 Func_02002f94
-#define SceneState_ApplyRectsForActorsNineAndTen Func_020001a8
-#define FieldScene_RunTwoCallSequence Func_02000238
-#define FieldScene_RunBranchedStep Func_02000954
+#define Scene_RunNearestActor165Scene Func_02001a28
+#define State_ResetCounterAndStartTask Func_02000134
+#define State_SetMode66AndPassOpeningSequence Func_02000158
+#define State_ApplyRectAndSend303 Func_02000248
+#define State_ApplyValue768 Func_02000830
+#define State_SetStateHalfword386To99WhenMatched Func_020019e0
+#define State_SendIdBySceneId Func_02001e20
+#define State_InitHalfwordC6a6Once Func_02002bcc
+#define State_StoreParamsAndInitTable Func_02002d28
+#define State_InitTableWordsAndLoad3200 Func_02002d8c
+#define State_ReleaseTableAndResetC6a6 Func_02002de8
+#define State_WaitUntilWord1000IsNine Func_02002fa0
+#define State_SetStateHalfword220 Func_020038a0
+#define State_WaitUntilWordC41cIs22 Func_02000178
+#define Dialogue_RunFlagGatedPromptInteraction Func_02001d64
+#define State_SetHalfword1000To9 Func_02002f94
+#define State_ApplyRectsForActorsNineAndTen Func_020001a8
+#define Scene_RunTwoCallSequence Func_02000238
+#define Scene_RunBranchedStep Func_02000954
 #define SceneData_GetTablec420 Func_0200096c
-#define FieldScene_BuildSceneDescriptorAndInstallTask Func_02003764
-#define SceneState_InitControlWhenFlag109Clear Func_0200384c
+#define Scene_BuildSceneDescriptorAndInstallTask Func_02003764
+#define State_InitControlWhenFlag109Clear Func_0200384c
 #define StagedActor_PlacePairAtOffsetAndRun Func_0200033c
-#define SceneActor_ShiftActorSeventeenByLeaderRow Func_0200042c
-#define SceneActor_ShiftActorEighteenByInputAndLeaderColumn Func_02000490
-#define SceneActor_MarkObjectAtTiles94To95 Func_02000a10
-#define SceneActor_PlaceSlots1To3FromWork Func_02001898
-#define SceneActor_PlaceLinkedActorAbove Func_02003058
-#define FieldScene_RunSceneFourCoordinator Func_020016ec
+#define Actor_ShiftActorSeventeenByLeaderRow Func_0200042c
+#define Actor_ShiftActorEighteenByInputAndLeaderColumn Func_02000490
+#define Actor_MarkObjectAtTiles94To95 Func_02000a10
+#define Actor_PlaceSlots1To3FromWork Func_02001898
+#define Actor_PlaceLinkedActorAbove Func_02003058
+#define Scene_RunSceneFourCoordinator Func_020016ec
 #define SceneTransition_Phase Data_02000240[225]
 #define GetPartyInteractionRecord Func_0200593a
 #define FinishPartyInteractionRecordRead Func_0200592e
@@ -60,22 +60,22 @@
 #define RunLargePartyInteraction Func_02005a4a_a
 #define FinishPartyCountInteraction Func_020059b6
 #define RunPartyCountInteraction Func_02001c7c
-#define SceneActor_ApplyValueAndMatchingSlots Func_020020e8
-#define OverlayObject_ResetMotionFields Func_02002bac
-#define OverlayObject_PlaceWithScale14000 Func_02002e50
-#define SceneActor_StartMode5MoveToTile Func_02002e10
+#define Actor_ApplyValueAndMatchingSlots Func_020020e8
+#define OvObj_ResetMotionFields Func_02002bac
+#define OvObj_PlaceWithScale14000 Func_02002e50
+#define Actor_StartMode5MoveToTile Func_02002e10
 #define HexDigits Data_0200bfd0
 #define Text_WriteU32AsHex Func_02002f64
-#define SceneEffect_SpawnKind285AtRandomChance Func_02002fc4
-#define SceneActor_FindSlotAtTilePosition Func_020038b0
+#define Effect_SpawnKind285AtRandomChance Func_02002fc4
+#define Actor_FindSlotAtTilePosition Func_020038b0
 #define StagedActor_PushActorAhead Func_020038f8
-#define SceneActor_FindOccupantAheadOfSubject Func_02003a60
-#define FieldScene_RunSixSteps380To3A8 Func_02001d20
-#define FieldScene_RunMiddleSequence Func_02001e7c
-#define FieldScene_RunTwoArmSequence Func_02002738
-#define FieldScene_RunLateSequence Func_02002844
+#define Actor_FindOccupantAheadOfSubject Func_02003a60
+#define Scene_RunSixSteps380To3A8 Func_02001d20
+#define Scene_RunMiddleSequence Func_02001e7c
+#define Scene_RunTwoArmSequence Func_02002738
+#define Scene_RunLateSequence Func_02002844
 #define Resource3ba_NoOpCallback Func_02002f90
-#define FieldScene_RunFlag211ApproachScene Func_020030ac
+#define Scene_RunFlag211ApproachScene Func_020030ac
 
 typedef struct Sub {
     u8 pad00[0x28];
@@ -808,7 +808,7 @@ s32 *Func_02007398();
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -1229,7 +1229,7 @@ u8 *SceneData_GetTablec1f4(void)
 
 /* Runs one branch of a scripted auxiliary sequence selected by the current
  * countdown value, then advances (or, from 0, restarts) the countdown. */
-void FieldScene_RunOpeningAuxiliarySequence(void)
+void Scene_RunOpeningAuxiliarySequence(void)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
@@ -1264,7 +1264,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     AUX_COUNTDOWN = AUX_COUNTDOWN - 1;
 }
 
-void SceneState_ResetCounterAndStartTask(void)
+void State_ResetCounterAndStartTask(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -1278,7 +1278,7 @@ void SceneState_ResetCounterAndStartTask(void)
     task();
 }
 
-void SceneState_SetMode66AndPassOpeningSequence(void)
+void State_SetMode66AndPassOpeningSequence(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -1291,7 +1291,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     Func_02003c78(0x0200804D, 0xC80);
 }
 
-void SceneState_WaitUntilWordC41cIs22(void)
+void State_WaitUntilWordC41cIs22(void)
 {
     extern s16 Data_02000240[];
     extern u16 Data_02001000;
@@ -1312,7 +1312,7 @@ void SceneState_WaitUntilWordC41cIs22(void)
     }
 }
 
-void SceneState_ApplyRectsForActorsNineAndTen(void)
+void State_ApplyRectsForActorsNineAndTen(void)
 {
     extern Ctl Data_02001000;
 
@@ -1351,7 +1351,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
     }
 }
 
-void FieldScene_RunTwoCallSequence(void)
+void Scene_RunTwoCallSequence(void)
 {
     extern Ctl Data_02001000;
 
@@ -1359,7 +1359,7 @@ void FieldScene_RunTwoCallSequence(void)
     Func_020003e8();
 }
 
-void SceneState_ApplyRectAndSend303(void)
+void State_ApplyRectAndSend303(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -1450,7 +1450,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
     Func_020040b8();
 }
 
-void SceneActor_ShiftActorSeventeenByLeaderRow(void)
+void Actor_ShiftActorSeventeenByLeaderRow(void)
 {
     extern s32 Data_02000240[];
 
@@ -1471,7 +1471,7 @@ void SceneActor_ShiftActorSeventeenByLeaderRow(void)
     Func_02004078(64, 24, 3, 1, 64, v);
 }
 
-void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
+void Actor_ShiftActorEighteenByInputAndLeaderColumn(void)
 {
     extern s32 Data_02000240[];
 
@@ -1515,7 +1515,7 @@ void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
     Func_02004124_a(63, 25, 1, 3, a, 9);
 }
 
-void SceneState_ApplyValue768(void)
+void State_ApplyValue768(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -1524,7 +1524,7 @@ void SceneState_ApplyValue768(void)
     Func_02004498(768);
 }
 
-void FieldScene_RunBranchedStep(void)
+void Scene_RunBranchedStep(void)
 {
     extern Ctl Data_02001000;
 
@@ -1573,7 +1573,7 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
     Func_020046ae();
 }
 
-void SceneActor_MarkObjectAtTiles94To95(void)
+void Actor_MarkObjectAtTiles94To95(void)
 {
     extern s32 Data_02000240[];
 
@@ -1591,7 +1591,7 @@ void SceneActor_MarkObjectAtTiles94To95(void)
     }
 }
 
-void FieldScene_RunCommandSequence(s32 a0)
+void Scene_RunCommandSequence(s32 a0)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
@@ -1840,7 +1840,7 @@ void Func_020016ec(s32 scene)
     Func_0200552a();
 }
 
-void SceneActor_PlaceSlots1To3FromWork(void)
+void Actor_PlaceSlots1To3FromWork(void)
 {
     extern s32 Data_02000240[];
 
@@ -1876,7 +1876,7 @@ void SceneActor_PlaceSlots1To3FromWork(void)
     }
 }
 
-void SceneState_SetStateHalfword386To99WhenMatched(void)
+void State_SetStateHalfword386To99WhenMatched(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -1896,7 +1896,7 @@ void SceneState_SetStateHalfword386To99WhenMatched(void)
     }
 }
 
-void FieldScene_RunNearestActor165Scene(void)
+void Scene_RunNearestActor165Scene(void)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
@@ -1995,7 +1995,7 @@ void RunPartyCountInteraction(s32 actorId)
     FinishPartyCountInteraction();
 }
 
-void FieldScene_RunSixSteps380To3A8(void)
+void Scene_RunSixSteps380To3A8(void)
 {
     Func_0200599a(896, 0);
     Func_020059a4(904, 0);
@@ -2005,7 +2005,7 @@ void FieldScene_RunSixSteps380To3A8(void)
     Func_020059cc_a(936, 0);
 }
 
-s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
+s32 Dialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
 {
     extern s16 Data_02000240[];
     extern u16 Data_02001000;
@@ -2046,7 +2046,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
     return Func_02005aaa(0, 0);
 }
 
-void SceneState_SendIdBySceneId(s32 a, s32 b)
+void State_SendIdBySceneId(s32 a, s32 b)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2070,7 +2070,7 @@ void SceneState_SendIdBySceneId(s32 a, s32 b)
     Func_02005b9a(a, 0);
 }
 
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
+void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
     extern u8 Data_02000240[];
 
@@ -2178,7 +2178,7 @@ L_main:
     Func_02005d2c((obj << 4) + 888, sy);
 }
 
-void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
+void Actor_ApplyValueAndMatchingSlots(s32 a, s32 b)
 {
     Rec *t = Func_02005d34(a);
     s32 i;
@@ -2223,7 +2223,7 @@ void SceneData_SelectBlockAndResetCounters(s32 a, s32 b)
     Data_0200c770 = 0;
 }
 
-void FieldScene_RunTwoArmSequence(s32 a)
+void Scene_RunTwoArmSequence(s32 a)
 {
     extern u16 Data_0200c57e[];
 
@@ -2272,7 +2272,7 @@ void FieldScene_RunTwoArmSequence(s32 a)
     }
 }
 
-void FieldScene_RunLateSequence(s32 a0)
+void Scene_RunLateSequence(s32 a0)
 {
     extern u8 Data_02000240[];
     extern u8 Data_02000240_t[][2];
@@ -2317,7 +2317,7 @@ void FieldScene_RunLateSequence(s32 a0)
     Func_020066b6();
 }
 
-void OverlayObject_ResetMotionFields(void)
+void OvObj_ResetMotionFields(void)
 {
     Obj_02002bac *o = Func_02006868();
 
@@ -2328,7 +2328,7 @@ void OverlayObject_ResetMotionFields(void)
     o->f40 = 0x80000000;
 }
 
-void SceneState_InitHalfwordC6a6Once(void)
+void State_InitHalfwordC6a6Once(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2339,7 +2339,7 @@ void SceneState_InitHalfwordC6a6Once(void)
     }
 }
 
-void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c)
+void State_StoreParamsAndInitTable(s32 a, s32 b, s32 c)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2358,7 +2358,7 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c)
     }
 }
 
-void SceneState_InitTableWordsAndLoad3200(s32 a, s32 b, s32 c)
+void State_InitTableWordsAndLoad3200(s32 a, s32 b, s32 c)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2377,7 +2377,7 @@ void SceneState_InitTableWordsAndLoad3200(s32 a, s32 b, s32 c)
     }
 }
 
-void SceneState_ReleaseTableAndResetC6a6(void)
+void State_ReleaseTableAndResetC6a6(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2388,7 +2388,7 @@ void SceneState_ReleaseTableAndResetC6a6(void)
     Data_0200c6a6 = -1;
 }
 
-void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
+void Actor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 {
     Obj_02002e10 *o = Func_02006be0(a);
 
@@ -2405,7 +2405,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
     }
 }
 
-void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
+void OvObj_PlaceWithScale14000(s32 a, s32 b, s32 c)
 {
     Obj_02002e50 *o = Func_02006c20(a);
 
@@ -2442,7 +2442,7 @@ void Resource3ba_NoOpCallback(void)
 {
 }
 
-void SceneState_SetHalfword1000To9(void)
+void State_SetHalfword1000To9(void)
 {
     extern s16 Data_02000240[];
     extern u16 Data_02001000;
@@ -2454,7 +2454,7 @@ void SceneState_SetHalfword1000To9(void)
     *p = v;
 }
 
-void SceneState_WaitUntilWord1000IsNine(void)
+void State_WaitUntilWord1000IsNine(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2467,7 +2467,7 @@ void SceneState_WaitUntilWord1000IsNine(void)
     }
 }
 
-void SceneEffect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
+void Effect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
 {
     s32 t[3];
     u32 n;
@@ -2504,7 +2504,7 @@ void SceneEffect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
     }
 }
 
-s32 SceneActor_PlaceLinkedActorAbove(Obj_02003058 *a)
+s32 Actor_PlaceLinkedActorAbove(Obj_02003058 *a)
 {
     extern s32 Data_02000240[];
 
@@ -2518,7 +2518,7 @@ s32 SceneActor_PlaceLinkedActorAbove(Obj_02003058 *a)
     return 0;
 }
 
-s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
+s32 Scene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 {
     extern u8 Data_02000240[];
 
@@ -2587,7 +2587,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
  * for the fields written here, and the actor records are touched at +8 and
  * +16 only on the flag-clear path.
  */
-void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
+void Scene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
 {
     extern Ctl Data_02001000;
@@ -2632,7 +2632,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     Func_02007374(handle);
 }
 
-void SceneState_InitControlWhenFlag109Clear(void)
+void State_InitControlWhenFlag109Clear(void)
 {
     extern Ctl Data_02001000;
 
@@ -2654,7 +2654,7 @@ void SceneState_InitControlWhenFlag109Clear(void)
     }
 }
 
-void SceneState_SetStateHalfword220(s32 a)
+void State_SetStateHalfword220(s32 a)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
@@ -2665,7 +2665,7 @@ void SceneState_SetStateHalfword220(s32 a)
     *(s16 *)(p + 220) = a;
 }
 
-s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0)
+s32 *Actor_FindSlotAtTilePosition(s32 *arg0)
 {
     extern u8 *Data_03001ebc;
 
@@ -2794,7 +2794,7 @@ void StagedActor_PushActorAhead(void)
  * whole units and re-centres them by half a unit, carrying y unrounded. Only
  * the record fields at +6, +8, +12 and +16 are asserted.
  */
-s32 *SceneActor_FindOccupantAheadOfSubject(void)
+s32 *Actor_FindOccupantAheadOfSubject(void)
 {
     extern s16 Data_02000240[];
 

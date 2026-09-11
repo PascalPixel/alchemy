@@ -21,7 +21,7 @@
  * Call bindings used here, from the owner's own resolved call sites:
  *   Func_080041d8 Scheduler_AddOrUpdateCallback   Func_08004278 Scheduler_RemoveCallback
  *   Func_08004458 random_16                       Func_08002dd8 Runtime_ReleaseHeapBlock
- *   Func_080dbb24 BattleEffect_SpawnObjects       Func_080d6750 BattleEffect_SelectLivingTargets
+ *   Func_080dbb24 BattleFx_SpawnObjects       Func_080d6750 BattleFx_SelectLivingTargets
  *   Func_080e0524 load_and_decompress             Func_080e3980 apply_alternate_step_and_y_offset
  *   Func_080d6888 update_members                  Func_080e155c Camera_ApplyShake
  *   Func_080cd52c ObjectGroup_TickMemberTimers

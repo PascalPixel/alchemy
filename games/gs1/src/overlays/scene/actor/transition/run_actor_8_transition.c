@@ -7,7 +7,7 @@ extern void Func_020030b2(s32);
 extern void Func_02002ff0(s32);
 extern void Func_02002370(void);
 
-void FieldScene_RunActor8Transition313(void)
+void Scene_RunActor8Transition313(void)
 {
     Func_02003182(0xF1);
     Func_02000efe(8, 0, -112);

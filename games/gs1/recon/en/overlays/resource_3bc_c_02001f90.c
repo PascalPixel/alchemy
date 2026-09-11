@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunTimedArrivalSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunTimedArrivalSequence:
  * state-routed scene setup, bounded event polling, and all 30 calls. */
 
-#define FieldScene_RunTimedArrivalSequence Func_02001f90
+#define Scene_RunTimedArrivalSequence Func_02001f90
 
 void Func_02002156();
 void Func_020021b6();

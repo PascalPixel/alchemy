@@ -7,7 +7,7 @@ struct ObjectMotionAngleState {
     u16 target_angle;
 };
 
-s32 ObjectMotion_StepAngle(struct ObjectMotionAngleState *object)
+s32 Motion_StepAngle(struct ObjectMotionAngleState *object)
 {
     s32 delta = 0;
 

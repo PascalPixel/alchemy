@@ -53,6 +53,6 @@ enum BattleEventOpcode {
 
 u32 Func_080bbabc(u32 opcode, u32 operand);
 
-#define BattleEvent_Push Func_080bbabc
+#define BattleEv_Push Func_080bbabc
 
 #endif

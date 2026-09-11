@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunMiddleSequence Func_020019a2
+#define Scene_RunMiddleSequence Func_020019a2
 
 /* Audited retained field-scene body at 0x020019a2.
  * This reconstruction preserves 109 decoded calls, 0 loop(s), and 4 explicit memory operation(s)

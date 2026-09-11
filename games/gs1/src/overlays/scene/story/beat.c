@@ -56,14 +56,14 @@
 #define SceneData_GetMessageTable Func_0200003c
 #define SceneData_SelectActorTableByStep10 Func_02000044
 #define SceneData_SelectSceneScriptByStep10 Func_0200006c
-#define FieldScene_RunActors8To10OpeningSequence Func_02000094
-#define FieldScene_RunActor9Intro Func_02000110
-#define FieldScene_RunActor10Intro Func_02000140
-#define FieldScene_RunActor8Beat Func_02000170
-#define FieldScene_RunActor9Beat Func_02000190
-#define FieldScene_RunActor10Beat Func_020001b0
-#define FieldScene_RunClosingBeat Func_020001d0
-#define FieldScene_InitSceneStateByStep Func_020001e4
+#define Scene_RunActors8To10OpeningSequence Func_02000094
+#define Scene_RunActor9Intro Func_02000110
+#define Scene_RunActor10Intro Func_02000140
+#define Scene_RunActor8Beat Func_02000170
+#define Scene_RunActor9Beat Func_02000190
+#define Scene_RunActor10Beat Func_020001b0
+#define Scene_RunClosingBeat Func_020001d0
+#define Scene_InitSceneStateByStep Func_020001e4
 
 #include "resource_384.h"
 
@@ -171,7 +171,7 @@ u8 *SceneData_SelectSceneScriptByStep10(void)
     return DefaultSceneScript;
 }
 
-void FieldScene_RunActors8To10OpeningSequence(void)
+void Scene_RunActors8To10OpeningSequence(void)
 {
     void Func_020003ba(s32, s32);
 
@@ -201,7 +201,7 @@ void FieldScene_RunActors8To10OpeningSequence(void)
     EndSceneSequence();
 }
 
-void FieldScene_RunActor9Intro(void)
+void Scene_RunActor9Intro(void)
 {
     s32 Func_020003b4(s32, s32);
 
@@ -213,7 +213,7 @@ void FieldScene_RunActor9Intro(void)
     EndActor9Intro();
 }
 
-void FieldScene_RunActor10Intro(void)
+void Scene_RunActor10Intro(void)
 {
     void Func_020003b4_a(void);
     void Func_020003ba_a(s32);
@@ -226,7 +226,7 @@ void FieldScene_RunActor10Intro(void)
     EndActor10Intro();
 }
 
-void FieldScene_RunActor8Beat(void)
+void Scene_RunActor8Beat(void)
 {
     BeginActor8Beat();
     PlayActor8BeatCue(RESOURCE384_CUE_ACTOR_8_BEAT);
@@ -234,7 +234,7 @@ void FieldScene_RunActor8Beat(void)
     EndActor8Beat();
 }
 
-void FieldScene_RunActor9Beat(void)
+void Scene_RunActor9Beat(void)
 {
     BeginActor9Beat();
     PlayActor9BeatCue(RESOURCE384_CUE_ACTOR_9_BEAT);
@@ -242,7 +242,7 @@ void FieldScene_RunActor9Beat(void)
     EndActor9Beat();
 }
 
-void FieldScene_RunActor10Beat(void)
+void Scene_RunActor10Beat(void)
 {
     BeginActor10Beat();
     PlayActor10BeatCue(RESOURCE384_CUE_ACTOR_10_BEAT);
@@ -250,13 +250,13 @@ void FieldScene_RunActor10Beat(void)
     EndActor10Beat();
 }
 
-void FieldScene_RunClosingBeat(void)
+void Scene_RunClosingBeat(void)
 {
     WaitForClosingBeat(123);
     FinishClosingBeat(1);
 }
 
-s32 FieldScene_InitSceneStateByStep(void)
+s32 Scene_InitSceneStateByStep(void)
 {
     s16 mode;
 

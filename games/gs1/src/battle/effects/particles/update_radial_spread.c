@@ -23,7 +23,7 @@ void RotateVectorByMagnitude(s32, s32, void *);
 void NormalizeVector(void *);
 void Audio_PlayCue(s32);
 
-void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect)
+void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 {
     struct Output_08096048 position;
     struct PositionSource_08096048 *source;

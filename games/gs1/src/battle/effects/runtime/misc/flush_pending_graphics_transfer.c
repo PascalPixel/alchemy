@@ -19,7 +19,7 @@ void Func_080054e4(const void *source, void *destination, s32 size);
 void Func_08005490(const void *source, s32 mode, void *destination, s32 size);
 
 /* Flush the battle compositor's pending display transfer. */
-void BattleEffect_FlushPendingGraphicsTransfer(void)
+void BattleFx_FlushPendingGraphicsTransfer(void)
 {
     void **heap_cache;
     u8 *work;

@@ -4,24 +4,24 @@
 #define CreateOverlayObject Func_020006de
 #define SetOverlayObjectMode Func_02000710
 #define SetOverlayObjectSlot Func_02000770
-#define OverlayObject_SetEntryField Func_02000030
-#define OverlayObject_SpawnWithMode14 Func_02000048
-#define OverlayObject_CreateConfigured Func_020000a0
-#define OverlayObject_IntegrateVelocities Func_02000104
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
+#define OvObj_SetEntryField Func_02000030
+#define OvObj_SpawnWithMode14 Func_02000048
+#define OvObj_CreateConfigured Func_020000a0
+#define OvObj_IntegrateVelocities Func_02000104
+#define Effect_SpawnConfiguredEffect Func_0200013c
 #define SceneData_GetTable8778 Func_02000314
 #define SceneData_ReturnZero Func_0200031c
 #define SceneData_GetTable8868 Func_02000320
 #define SceneData_SelectTable89c8Or8890 Func_02000328
-#define SceneDialogue_RunActor14FlaggedDialogue Func_0200035c
-#define SceneDialogue_RunActor15FlaggedDialogue Func_020003bc
-#define SceneDialogue_RunActor16FlaggedDialogue Func_0200041c
-#define SceneDialogue_RunActor17FlaggedDialogue Func_02000484
-#define SceneDialogue_RunActor10Dialogue Func_020004e4
-#define SceneDialogue_RunActor12Dialogue Func_02000504
-#define SceneDialogue_RunActor9MotionDialogue Func_02000524
+#define Dialogue_RunActor14FlaggedDialogue Func_0200035c
+#define Dialogue_RunActor15FlaggedDialogue Func_020003bc
+#define Dialogue_RunActor16FlaggedDialogue Func_0200041c
+#define Dialogue_RunActor17FlaggedDialogue Func_02000484
+#define Dialogue_RunActor10Dialogue Func_020004e4
+#define Dialogue_RunActor12Dialogue Func_02000504
+#define Dialogue_RunActor9MotionDialogue Func_02000524
 #define SceneData_SelectTable8d4cOr8a28 Func_02000570
-#define SceneState_SetRuntimeWord448To521 Func_02000598
+#define State_SetRuntimeWord448To521 Func_02000598
 
 typedef struct {
     u8 pad[9];
@@ -170,14 +170,14 @@ void Func_02000c76(s32, s32);
  * as the exact resource_380/resource_39c/resource_3c9 owners, with this
  * overlay's own import veneers and descriptor table.
  */
-void OverlayObject_SetEntryField(void *arg0, s32 arg1)
+void OvObj_SetEntryField(void *arg0, s32 arg1)
 {
     Object_02000030 *obj = *(Object_02000030 **)((u8 *)arg0 + 0x50);
 
     obj->field = arg1;
 }
 
-void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     void *Func_02000686(s32, s32, s32, s32);
 
@@ -202,7 +202,7 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return NULL;
 }
 
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *ret = CreateOverlayObject(arg3, arg0, arg1, arg2);
 
@@ -226,7 +226,7 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return NULL;
 }
 
-void OverlayObject_IntegrateVelocities(void *arg0)
+void OvObj_IntegrateVelocities(void *arg0)
 {
     union Slot *s = (union Slot *)arg0;
     union Slot *obj;
@@ -240,7 +240,7 @@ void OverlayObject_IntegrateVelocities(void *arg0)
     obj[7].h[1] += s[25].h[0];
 }
 
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
+void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                    u32 flags, const struct Options *opt)
 {
     u32 off;
@@ -374,7 +374,7 @@ s32 SceneData_SelectTable89c8Or8890(void)
     return (s32)Data_02008890;
 }
 
-void SceneDialogue_RunActor14FlaggedDialogue(void)
+void Dialogue_RunActor14FlaggedDialogue(void)
 {
     u16 *state = Func_020009d6(0);
     u32 value = state[3];
@@ -393,7 +393,7 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
     Func_02000a04();
 }
 
-void SceneDialogue_RunActor15FlaggedDialogue(void)
+void Dialogue_RunActor15FlaggedDialogue(void)
 {
     u16 *state = Func_02000a36(0);
     u32 value = state[3];
@@ -412,7 +412,7 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
     Func_02000a64();
 }
 
-void SceneDialogue_RunActor16FlaggedDialogue(void)
+void Dialogue_RunActor16FlaggedDialogue(void)
 {
     void Func_02000af0();
     void Func_02000af0_a(s32);
@@ -433,7 +433,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
     Func_02000acc();
 }
 
-void SceneDialogue_RunActor17FlaggedDialogue(void)
+void Dialogue_RunActor17FlaggedDialogue(void)
 {
     s32 Func_02000af0_b(s32);
 
@@ -454,7 +454,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
     Func_02000b2e();
 }
 
-void SceneDialogue_RunActor10Dialogue(void)
+void Dialogue_RunActor10Dialogue(void)
 {
     s32 Func_02000ba2(s32, s32);
 
@@ -464,7 +464,7 @@ void SceneDialogue_RunActor10Dialogue(void)
     Func_02000b5e();
 }
 
-void SceneDialogue_RunActor12Dialogue(void)
+void Dialogue_RunActor12Dialogue(void)
 {
     void Func_02000ba2_a(s32);
     s32 Func_02000bc2(s32, s32);
@@ -475,7 +475,7 @@ void SceneDialogue_RunActor12Dialogue(void)
     Func_02000b7e();
 }
 
-void SceneDialogue_RunActor9MotionDialogue(void)
+void Dialogue_RunActor9MotionDialogue(void)
 {
     void Func_02000bc2_a(s32);
 
@@ -498,7 +498,7 @@ s32 SceneData_SelectTable8d4cOr8a28(void)
     return (s32)Data_02008a28;
 }
 
-s32 SceneState_SetRuntimeWord448To521(void)
+s32 State_SetRuntimeWord448To521(void)
 {
     void Func_02000686_a(s32, s32, s32, s32);
 

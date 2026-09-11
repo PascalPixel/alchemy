@@ -8,7 +8,7 @@ extern u8 Data_080cc961;
 extern u8 Data_080cd261;
 extern u8 Data_080cd4b5;
 
-void BattleEffect_ScheduleCallbacksAndReleaseBlocks(void)
+void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 {
     ScheduleCallback((void (*)(void))&Data_080cc961);
     ScheduleCallback((void (*)(void))&Data_080cd261);

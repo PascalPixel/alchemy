@@ -2,23 +2,23 @@
 
 #define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
-#define SceneEffect_SpawnPrimary Func_02000048
-#define SceneEffect_SpawnSecondary Func_020000a0
-#define SceneEffect_SpawnConfigured Func_0200013c
-#define SceneEffect_RequestFixedEffect Func_02000314
-#define SceneEffect_AdvanceRotatingSprite Func_02000358
-#define SceneEffect_SpawnPeriodicEffect Func_02000370
-#define SceneEffect_CalculatePositionDistance Func_020003cc
-#define SceneEffect_GetPrimaryData Func_0200059c
-#define SceneEffect_GetInitialValue Func_020005a4
-#define SceneEffect_GetSecondaryData Func_020005a8
-#define SceneEffect_PrepareState Func_020005b0
-#define SceneEffect_ShowActorSetupMessage Func_020005d4
-#define SceneEffect_ActivateNearbyActor Func_0200094c
-#define SceneEffect_RunActorSceneMessage Func_02000cec
-#define SceneEffect_DispatchStep Func_02000e4c
-#define SceneEffect_GetTertiaryData Func_02001140
-#define FieldScene_RunPrimarySequence Func_020005f4
+#define Effect_SpawnPrimary Func_02000048
+#define Effect_SpawnSecondary Func_020000a0
+#define Effect_SpawnConfigured Func_0200013c
+#define Effect_RequestFixedEffect Func_02000314
+#define Effect_AdvanceRotatingSprite Func_02000358
+#define Effect_SpawnPeriodicEffect Func_02000370
+#define Effect_CalculatePositionDistance Func_020003cc
+#define Effect_GetPrimaryData Func_0200059c
+#define Effect_GetInitialValue Func_020005a4
+#define Effect_GetSecondaryData Func_020005a8
+#define Effect_PrepareState Func_020005b0
+#define Effect_ShowActorSetupMessage Func_020005d4
+#define Effect_ActivateNearbyActor Func_0200094c
+#define Effect_RunActorSceneMessage Func_02000cec
+#define Effect_DispatchStep Func_02000e4c
+#define Effect_GetTertiaryData Func_02001140
+#define Scene_RunPrimarySequence Func_020005f4
 #define FieldScene_RunScene3a0_02000968 Func_02000968
 #define FieldScene_RunScene3a0_02000de8 Func_02000de8
 #define FieldScene_RunScene3a0_02001060 Func_02001060
@@ -397,7 +397,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
     work->record->mode = mode;
 }
 
-void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
+void *Effect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 {
     extern u8 *Data_03001ebc;
 
@@ -422,7 +422,7 @@ void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
     return NULL;
 }
 
-void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
+void *Effect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
 {
     extern u8 *Data_03001ebc;
 
@@ -448,7 +448,7 @@ void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
     return NULL;
 }
 
-void SceneEffect_SpawnConfigured(s32 x, s32 y,
+void Effect_SpawnConfigured(s32 x, s32 y,
                    s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
                    const struct Options *options)
 {
@@ -571,7 +571,7 @@ void SceneEffect_SpawnConfigured(s32 x, s32 y,
  * Func_020017be spells the overlay's own relocated call word rather than a
  * runtime address.
  */
-void SceneEffect_RequestFixedEffect(void)
+void Effect_RequestFixedEffect(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -579,7 +579,7 @@ void SceneEffect_RequestFixedEffect(void)
 }
 
 /* Complete entity-19 sprite-counter adjustment. */
-void SceneEffect_AdvanceRotatingSprite(void)
+void Effect_AdvanceRotatingSprite(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -588,7 +588,7 @@ void SceneEffect_AdvanceRotatingSprite(void)
     *(u16 *)(sprite + 30) += 0x1400;
 }
 
-void SceneEffect_SpawnPeriodicEffect(void)
+void Effect_SpawnPeriodicEffect(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -612,7 +612,7 @@ void SceneEffect_SpawnPeriodicEffect(void)
     }
 }
 
-s32 SceneEffect_CalculatePositionDistance(
+s32 Effect_CalculatePositionDistance(
     s32 *first_position,
     s32 *second_position)
 {
@@ -628,28 +628,28 @@ s32 SceneEffect_CalculatePositionDistance(
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-u8 *SceneEffect_GetPrimaryData(void)
+u8 *Effect_GetPrimaryData(void)
 {
     extern u8 *Data_03001ebc;
 
     return (u8 *)0x020097e8;
 }
 
-s32 SceneEffect_GetInitialValue(void)
+s32 Effect_GetInitialValue(void)
 {
     extern u8 *Data_03001ebc;
 
     return 0;
 }
 
-u8 *SceneEffect_GetSecondaryData(void)
+u8 *Effect_GetSecondaryData(void)
 {
     extern u8 *Data_03001ebc;
 
     return (u8 *)0x020098d8;
 }
 
-s32 SceneEffect_PrepareState(void)
+s32 Effect_PrepareState(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -658,7 +658,7 @@ s32 SceneEffect_PrepareState(void)
     return (s32)Data_02009900;
 }
 
-void SceneEffect_ShowActorSetupMessage(void)
+void Effect_ShowActorSetupMessage(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -668,7 +668,7 @@ void SceneEffect_ShowActorSetupMessage(void)
     Func_020019b2();
 }
 
-void FieldScene_RunPrimarySequence(void)
+void Scene_RunPrimarySequence(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -822,7 +822,7 @@ void FieldScene_RunPrimarySequence(void)
     L_02000916:;
 }
 
-void SceneEffect_ActivateNearbyActor(void)
+void Effect_ActivateNearbyActor(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -859,7 +859,7 @@ void FieldScene_RunScene3a0_02000968(void)
  * passed as an argument, not an address.  The first and last calls are the
  * scene bracket and must stay in that order.
  */
-void SceneEffect_RunActorSceneMessage(void)
+void Effect_RunActorSceneMessage(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -896,7 +896,7 @@ void FieldScene_RunScene3a0_02000de8(s32 a0)
  * the two shared arguments and jump into the middle of case 6 to share its
  * final call; the goto and the two locals are what reproduce that.
  */
-void SceneEffect_DispatchStep(void)
+void Effect_DispatchStep(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -987,7 +987,7 @@ void FieldScene_RunScene3a0_02001060(void)
     Call0(Func_020024f2_a);
 }
 
-u8 *SceneEffect_GetTertiaryData(void)
+u8 *Effect_GetTertiaryData(void)
 {
     extern u8 *Data_03001ebc;
 

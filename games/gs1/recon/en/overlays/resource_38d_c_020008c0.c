@@ -417,7 +417,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void FieldScene_RunLongBranchingChoreography(void)
+void Scene_RunLongBranchingChoreography(void)
 {
     s32 record;
     u8 *work;

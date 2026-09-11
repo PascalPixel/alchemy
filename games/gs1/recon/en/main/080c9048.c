@@ -4,9 +4,9 @@ void Func_080030f8(s32 frames);
 
 extern u16 Data_02002090[];
 
-#define BattlePresentation_ConfigureEffectDisplay Func_080c9048
+#define BattlePres_ConfigureEffectDisplay Func_080c9048
 
-void BattlePresentation_ConfigureEffectDisplay(void)
+void BattlePres_ConfigureEffectDisplay(void)
 {
     s32 saved_interrupt_master;
     s32 index;

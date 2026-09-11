@@ -2,7 +2,7 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_PrepareObject      Func_02000048
+#define OvObj_PrepareObject      Func_02000048
 #define AcquireOverlayObject      Func_02000736
 #define RunOverlayObjectCommand0  Func_0200076c
 #define RunOverlayObjectCommand1  Func_02000784
@@ -122,12 +122,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void SceneEffect_SetRecordMode(struct EffectWork *work, s32 mode)
+void Effect_SetRecordMode(struct EffectWork *work, s32 mode)
 {
     work->record->mode = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+void *OvObj_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
 {
     void *obj;
     void *rec;
@@ -148,7 +148,7 @@ void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
     return NULL;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *obj = CreateOverlayObject(arg3, arg0, arg1, arg2);
 
@@ -172,7 +172,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
-#define SceneEffect_UpdateMotion Func_02000104
+#define Effect_UpdateMotion Func_02000104
 
 /* The object is accessed through word fields and a linked record. Keep the
  * shared storage view so the record load follows the position stores. */
@@ -193,7 +193,7 @@ union MotionWork {
     u8 bytes[102];
 };
 
-void SceneEffect_UpdateMotion(union MotionWork *work)
+void Effect_UpdateMotion(union MotionWork *work)
 {
     u16 *record;
 
@@ -206,7 +206,7 @@ void SceneEffect_UpdateMotion(union MotionWork *work)
     record[15] += work->fields.angle_step;
 }
 
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
+void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct ConfiguredEffectOptions *options)
 {
 #include "configured_effect_spawn_body.inc"
@@ -246,7 +246,7 @@ s32 SceneData_GetTable8948OrTable8978(void)
     return (s32)Data_02008948;
 }
 
-void FieldScene_RunActor8AtCell24Sequence(void)
+void Scene_RunActor8AtCell24Sequence(void)
 {
     s32 *record;
     u8 *target;
@@ -279,7 +279,7 @@ s32 SceneData_GetTable8990OrTable89f0(void)
     return (s32)Data_02008990;
 }
 
-s32 FieldScene_PlaceActor8OnEntry(void)
+s32 Scene_PlaceActor8OnEntry(void)
 {
     extern u8 Data_02000240[];
 
@@ -311,14 +311,14 @@ s32 FieldScene_PlaceActor8OnEntry(void)
     return 0;
 }
 
-void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
+void Effect_RotateRecord(EffectWork_020004c4 *work)
 {
     EffectRecord_020004c4 *record = work->record;
 
     record->angle -= 0x800;
 }
 
-void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height)
+void Actor_WaitObjectBelowHeight(u8 *object, s32 height)
 {
     s32 frames = 60;
 
@@ -358,7 +358,7 @@ union SceneActor *Func_02000c2c(s32);
 void Func_02000bce(s32);
 s32 Func_02000bf0(s32);
 s32 Func_02000c8c(s32);
-void SceneActor_SetSpeed();
+void Actor_SetSpeed();
 void Func_02000c9c();
 void Func_02000cba(s32);
 void Func_02000a5a(union SceneActor *, s32);
@@ -375,10 +375,10 @@ void Func_02000dd2(s32);
 void Func_02000dca(s32, s32);
 void Func_02000d86(void);
 
-#define SceneEffect_RunActorBurst Func_020004f4
+#define Effect_RunActorBurst Func_020004f4
 
 /* Mixed object and option views preserve the reference's alias ordering. */
-void SceneEffect_RunActorBurst(s32 no)
+void Effect_RunActorBurst(s32 no)
 {
     union SceneActor *work;
     u32 cnt;
@@ -397,7 +397,7 @@ void SceneEffect_RunActorBurst(s32 no)
         work->fields.field_38 = 0x80000000;
     }
     work->fields.callback = 0x020084c5;
-    Call3(SceneActor_SetSpeed, no, 0x30000, 0x18000);
+    Call3(Actor_SetSpeed, no, 0x30000, 0x18000);
     Call3(Func_02000c9c, no, 376, 288);
     work->fields.velocity_y = 0xcccc;
     work->fields.mode = 3;

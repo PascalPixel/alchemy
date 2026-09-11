@@ -5,7 +5,7 @@ extern void Func_02002efe(s32);
 extern void Func_02002f04(s32);
 extern void Func_02002f0a(s32);
 
-void FieldScene_RunSteps30FTo312(void)
+void Scene_RunSteps30FTo312(void)
 {
     Func_02002ef6(0x30F);
     Func_02002efe(0x310);

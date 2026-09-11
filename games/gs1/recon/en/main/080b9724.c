@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_AppendLinkedActions Func_080b9724
+#define BattlePres_AppendLinkedActions Func_080b9724
 
 struct BattleLinkedAction {
     s16 unit_id;
@@ -19,7 +19,7 @@ struct BattleLinkedActionState {
     u8 unknown_0c[28];
 };
 
-s32 BattlePresentation_AppendLinkedActions(
+s32 BattlePres_AppendLinkedActions(
     struct BattleLinkedAction *actions, s32 count)
 {
     u8 *battle = *(u8 **)0x03001e74;

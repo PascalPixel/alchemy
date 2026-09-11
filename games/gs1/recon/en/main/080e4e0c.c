@@ -142,7 +142,7 @@ void Func_08009088(void *unit, s32 mode);
 s32 Func_080b5070(s32 id);
 void **Func_080b5098(s32 id);
 void Func_080d4604(void *object, s32 mode);
-/* BattleEffect_RenderMode5 */
+/* BattleFx_RenderMode5 */
 void Func_080d52a4(void *object);
 void Func_080dea70(void *object, s32 mode);
 /* load_and_decompress */

@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunComplexActorSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunComplexActorSequence:
  * 111 calls, actor and motion state, event flags, and workspace resets. */
 
-#define FieldScene_RunComplexActorSequence Func_02000578
+#define Scene_RunComplexActorSequence Func_02000578
 
 void Func_02001e8c();
 void Func_02001ea8();

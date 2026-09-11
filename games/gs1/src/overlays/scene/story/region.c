@@ -12,29 +12,29 @@
 #define DefaultOverlayData Data_020089bc
 #define RunSceneCommand Func_02000e04
 #define FinishSceneSetup Func_02000e64
-#define SceneState_ApplyArgMode0AndReturnZero Func_02000030
+#define State_ApplyArgMode0AndReturnZero Func_02000030
 #define SceneData_SelectByRuntimeSelector Func_02000040
 #define SceneData_GetTable8bcc Func_02000098
 #define SceneData_SelectSecondaryDataByRuntimeSelector Func_020000a0
 #define SceneData_SelectDataByRuntimeSelector Func_020000f4
-#define SceneState_ConfigureRegion1_0_21x14 Func_02000148
-#define SceneState_ConfigureRegion0_0_21x14 Func_02000168
-#define SceneState_ApplyTwoRects Func_02000188
-#define FieldScene_RunTwoLayoutSteps Func_020001bc
-#define FieldScene_RunActor9Flag882Scene Func_020001f0
-#define FieldScene_RunScene398SequenceA Func_02000214
-#define FieldScene_RunActorFifteenScene Func_02000280
-#define FieldScene_RunActorSixteenScene Func_020002ac
-#define FieldScene_RunActor17Steps28AndD2 Func_020002d8
-#define FieldScene_RunScene398SequenceB Func_02000304
-#define ActorPresentation_SetSceneCell31AndFlag305 Func_02000424
-#define SceneState_SetGlobalByte17 Func_0200044c
-#define SceneState_ClearRuntimeByte17 Func_0200045c
-#define FieldScene_DispatchByScenarioId Func_0200046c
+#define State_ConfigureRegion1_0_21x14 Func_02000148
+#define State_ConfigureRegion0_0_21x14 Func_02000168
+#define State_ApplyTwoRects Func_02000188
+#define Scene_RunTwoLayoutSteps Func_020001bc
+#define Scene_RunActor9Flag882Scene Func_020001f0
+#define Scene_RunScene398SequenceA Func_02000214
+#define Scene_RunActorFifteenScene Func_02000280
+#define Scene_RunActorSixteenScene Func_020002ac
+#define Scene_RunActor17Steps28AndD2 Func_020002d8
+#define Scene_RunScene398SequenceB Func_02000304
+#define ActorDraw_SetSceneCell31AndFlag305 Func_02000424
+#define State_SetGlobalByte17 Func_0200044c
+#define State_ClearRuntimeByte17 Func_0200045c
+#define Scene_DispatchByScenarioId Func_0200046c
 #define RunGuardedSceneSetup Func_020004b4
-#define SceneState_SetRuntimeWord448To516 Func_020004e8
-#define FieldScene_RunScene398SequenceC Func_02000538
-#define SceneActor_FindSlotAtTile Func_020007c4
+#define State_SetRuntimeWord448To516 Func_020004e8
+#define Scene_RunScene398SequenceC Func_02000538
+#define Actor_FindSlotAtTile Func_020007c4
 #define StagedActor_PushActorAhead Func_020007f8
 #define Resource398_ImportBankNoOp Func_02000904
 
@@ -305,7 +305,7 @@ extern u8 Data_02008c2c[];
 
 extern u8 Data_02008ea8[];
 
-s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
+s32 State_ApplyArgMode0AndReturnZero(s32 no)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -401,7 +401,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
     return (s32)Data_02008e9c;
 }
 
-void SceneState_ConfigureRegion1_0_21x14(void)
+void State_ConfigureRegion1_0_21x14(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -414,7 +414,7 @@ void SceneState_ConfigureRegion1_0_21x14(void)
     Func_02000a8e(1, 0, 1, 1, w, h);
 }
 
-void SceneState_ConfigureRegion0_0_21x14(void)
+void State_ConfigureRegion0_0_21x14(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -427,7 +427,7 @@ void SceneState_ConfigureRegion0_0_21x14(void)
     Func_02000aae(0, 0, 1, 1, w, h);
 }
 
-void SceneState_ApplyTwoRects(void)
+void State_ApplyTwoRects(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -448,7 +448,7 @@ void SceneState_ApplyTwoRects(void)
     }
 }
 
-void FieldScene_RunTwoLayoutSteps(void)
+void Scene_RunTwoLayoutSteps(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -469,7 +469,7 @@ void FieldScene_RunTwoLayoutSteps(void)
     }
 }
 
-void FieldScene_RunActor9Flag882Scene(void)
+void Scene_RunActor9Flag882Scene(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -482,7 +482,7 @@ void FieldScene_RunActor9Flag882Scene(void)
     Func_02000b78();
 }
 
-void FieldScene_RunScene398SequenceA(void)
+void Scene_RunScene398SequenceA(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -506,7 +506,7 @@ void FieldScene_RunScene398SequenceA(void)
     Func_02000be4();
 }
 
-void FieldScene_RunActorFifteenScene(void)
+void Scene_RunActorFifteenScene(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -523,7 +523,7 @@ void FieldScene_RunActorFifteenScene(void)
     Func_02000c14();
 }
 
-void FieldScene_RunActorSixteenScene(void)
+void Scene_RunActorSixteenScene(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -541,7 +541,7 @@ void FieldScene_RunActorSixteenScene(void)
     Func_02000c40_a();
 }
 
-void FieldScene_RunActor17Steps28AndD2(void)
+void Scene_RunActor17Steps28AndD2(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -558,7 +558,7 @@ void FieldScene_RunActor17Steps28AndD2(void)
     Func_02000c6c_a();
 }
 
-void FieldScene_RunScene398SequenceB(void)
+void Scene_RunScene398SequenceB(void)
 {
     extern u8 Data_03001ebc[];
     void Func_02000c7c();
@@ -623,7 +623,7 @@ void FieldScene_RunScene398SequenceB(void)
     L_02000414:;
 }
 
-void ActorPresentation_SetSceneCell31AndFlag305(void)
+void ActorDraw_SetSceneCell31AndFlag305(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -637,7 +637,7 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
     Func_02000d90(0x305);
 }
 
-void SceneState_SetGlobalByte17(void)
+void State_SetGlobalByte17(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -647,7 +647,7 @@ void SceneState_SetGlobalByte17(void)
     FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 1;
 }
 
-void SceneState_ClearRuntimeByte17(void)
+void State_ClearRuntimeByte17(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -664,7 +664,7 @@ void SceneState_ClearRuntimeByte17(void)
  * the three compared constants are spelled as addresses of Value_ symbols,
  * which is what puts them in the literal pool.
  */
-s32 FieldScene_DispatchByScenarioId(void)
+s32 Scene_DispatchByScenarioId(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -701,7 +701,7 @@ void RunGuardedSceneSetup(void)
     }
 }
 
-void SceneState_SetRuntimeWord448To516(void)
+void State_SetRuntimeWord448To516(void)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
@@ -722,7 +722,7 @@ void SceneState_SetRuntimeWord448To516(void)
     }
 }
 
-void FieldScene_RunScene398SequenceC(void)
+void Scene_RunScene398SequenceC(void)
 {
     extern u8 Data_03001ebc[];
     void Func_0200101a();
@@ -820,7 +820,7 @@ void FieldScene_RunScene398SequenceC(void)
     }
 }
 
-s32 *SceneActor_FindSlotAtTile(s32 x, s32 z)
+s32 *Actor_FindSlotAtTile(s32 x, s32 z)
 {
     extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);

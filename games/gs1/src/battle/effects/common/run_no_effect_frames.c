@@ -2,7 +2,7 @@
 
 void Func_080dbb98(void);
 
-void BattleEffect_RunNoEffectFrames(s32 frame_count)
+void BattleFx_RunNoEffectFrames(s32 frame_count)
 {
     s32 frame;
 

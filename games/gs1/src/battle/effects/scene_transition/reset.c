@@ -22,9 +22,9 @@ typedef struct {
 void WaitFrames(s32 frames);
 void ScheduleCallback(void (*callback)(void));
 void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
-void BattleEffect_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
-void BattleEffect_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
-void BattleEffect_StartBufferInterpolation(s32 battle_value);
+void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
+void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
+void BattleFx_StartBufferInterpolation(s32 battle_value);
 s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
 void Func_08098294(s32 battle_value);
 void Func_080982dc(void);
@@ -52,11 +52,11 @@ void ResetSceneTransitionEffect(void)
         state->transition_timer = zero;
         Func_08098294(0);
 
-        BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-        BattleEffect_StartBufferInterpolation(1);
-        BattleEffect_ApplyColorToSourceBuffer(0, 0);
-        BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-        BattleEffect_StartBufferInterpolation(30);
+        BattleFx_ApplyColorToTargetBuffer(0x10000, 1);
+        BattleFx_StartBufferInterpolation(1);
+        BattleFx_ApplyColorToSourceBuffer(0, 0);
+        BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
+        BattleFx_StartBufferInterpolation(30);
         WaitFrames(1);
 
         resource = Func_0808e4b4(0x40000005, 8, &size);

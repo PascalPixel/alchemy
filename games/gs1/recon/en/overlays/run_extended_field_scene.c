@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunExtendedActorSequence Func_020017c8
+#define Scene_RunExtendedActorSequence Func_020017c8
 
 /* Site-resolved aliases use this overlay's runtime veneers and local helpers.
  * The scene moves the actor groups before restoring the shared scene work. */
@@ -339,7 +339,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void FieldScene_RunExtendedActorSequence(void)
+void Scene_RunExtendedActorSequence(void)
 {
     u8 *record;
     u8 *work;

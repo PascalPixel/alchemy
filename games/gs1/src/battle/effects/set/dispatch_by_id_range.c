@@ -6,7 +6,7 @@ void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void *Func_080e3aa0(s32 *);
 void *Func_080e40a4(s32 *);
 void *Func_080e47b8(s32 *);
-void BattleEffect_DispatchByIdRange(s32 *arg0)
+void BattleFx_DispatchByIdRange(s32 *arg0)
 {
   s32 no;
   s32 tmp;

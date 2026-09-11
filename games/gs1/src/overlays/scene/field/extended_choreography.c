@@ -541,7 +541,7 @@ void Scene_RunScene3b1(void)
     Field_unk_02006cc0();
     if (Field_Check(0x921) != 0) {
         Field_unk_02006c30(0x1dd4);
-        Field_unk_02006c48(10, 0);
+        Field_TestFlag924(10, 0);
     } else {
         if (Field_TestFlag922(0x922) != 0) {
             Field_unk_02006c4a(0x1d91);
@@ -873,7 +873,7 @@ void Scene_RunScene3b1SequenceB(void)
             Field_unk_02007226(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         ((void (*)())Field_unk_02007254)(rec7);
-        Field_unk_02007266(rec7, 0, 0);
+        Field_TestFlag936(rec7, 0, 0);
     } else {
         Field_unk_020072ce(0x1e84);
         ((void (*)())Field_unk_020072f0)(9, 0, 60);
@@ -1229,7 +1229,7 @@ void Dialogue_RunActor25FlaggedLine(void)
     Field_unk_02007a24();
     if (Field_unk_02007a02(0x933)) Field_unk_02007b14(0x1ed1);
     else Field_unk_02007b1c(0x1ed2);
-    Field_unk_02007b34(25, 0); Field_unk_02007a50();
+    Field_unk_02007b34(25, 0); Field_TestFlag935();
 }
 
 /* Second-phase story selector at 0x02001594, 84 bytes; eight calls. */
@@ -1306,7 +1306,7 @@ void Dialogue_ShowLine1EDEOr1EDF(void)
 {
     Field_unk_02007c94();
     if (Field_TestFlag933(0x933)) Field_unk_02007d84(0x1ede);
-    else Field_unk_02007d8c_a(0x1edf);
+    else Field_TestFlag8a0(0x1edf);
     Field_unk_02007da4(25, 0); Field_unk_02007cc0();
 }
 
@@ -1491,7 +1491,7 @@ void Scene_RunThreeActorPresentation(void)
         Field_unk_02006484(request_b);
         Field_unk_020064a6(14, 0xb000);
         Field_unk_02006498(request_b);
-        Field_unk_020064b4_a(12, 0xd000);
+        GetAscendingMotionStep(12, 0xd000);
         Field_unk_02008228(12, 0x100, 30);
         Field_unk_020081c0(12, 1);
         Field_unk_020064ba(request_a);
@@ -1573,7 +1573,7 @@ void Scene_RunThreeActorPresentation(void)
         Field_unk_02006720(12);
         Field_unk_020083b6(12, 0x19999, 0xcccc);
         Field_unk_020083c6_a(12, action);
-        Field_unk_0200838c(40);
+        Field_TestFlag922(40);
         Field_unk_020084a8(0, 0x4000, 0);
         Field_unk_020083e6(12);
         Field_TestFlag922(0x922);
@@ -1788,7 +1788,7 @@ void Scene_RunExtendedActorChoreography(void)
     Field_unk_02006ebe(12, 0);
     Field_unk_02008bc6(8, 1);
     Field_unk_02006eb8_a(8);
-    Field_unk_02008c26(11, 0, 0);
+    Field_TestFlag921(11, 0, 0);
     Field_unk_02008c48(12, 0x105, 0);
     Field_unk_02008c52(9, 0x105, 60);
     Field_unk_02008c6a(0x13333, 0x2666);
@@ -1855,7 +1855,7 @@ void Scene_RunBranchingActorPresentation(void)
         Field_unk_02008e1a(9, 2);
         Field_unk_0200710c_b(0x9009);
         Field_unk_02008e94(8, 0x108, 40);
-        Field_unk_0200711e_a(request_a);
+        Field_TestFlag939(request_a);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 2;
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 2;
@@ -1880,7 +1880,7 @@ void Scene_RunBranchingActorPresentation(void)
     Field_unk_02008ef6(13, 3);
     Field_unk_02008e5c(20);
     Field_unk_02008f24(12, 1);
-    Field_unk_02007232_a(12, 0x3000);
+    Field_TestFlag300(12, 0x3000);
     Field_unk_02008f7c(0x100c, 0, 20);
     Field_unk_02008f96(11, 0xb000, 20);
     Field_unk_02008fba(11, 0x101, 40);
@@ -2806,7 +2806,7 @@ void Scene_RunSceneStep(s32 step, u32 arg, u32 opt)
         if (arg != 0) {
             Field_unk_0200b200(13, 0xb000, 0);
         }
-        Field_unk_0200e5d0_b(14, 0xd000, 0);
+        Value(14, 0xd000, 0);
         Field_unk_0200b218(15, 0xb000, 0);
         Field_unk_0200b224(16, 0xd000, 0);
         Field_unk_020094de(17, 0xb000);
@@ -3264,7 +3264,7 @@ void Scene_RunExtendedFormationPresentation(void)
     Field_unk_0200bd76(80);
     Field_unk_0200bf1c(181);
     Field_unk_0200bd54(0x20000, 0x20000, 0x10000);
-    Field_unk_0200bd92(10);
+    Field_TestFlag11a(10);
     Field_unk_0200bd64(-1, -1, 0xe666);
     Field_unk_0200bf42(63);
     Field_TestFlag11a(0x11a);

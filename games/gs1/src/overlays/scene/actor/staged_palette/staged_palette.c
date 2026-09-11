@@ -2,7 +2,6 @@
 #include "run_staged_actor_movement_and_redraw_body.inc"
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_palette/staged_palette.h"
 #include "staged_actor.h"
 #include "staged_actor_probe_state.h"
 #include "staged_actor_effect.h"
@@ -59,12 +58,12 @@ struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActo
 
 struct StagedActor *FindStagedActorAtProbe(struct StagedActorProbePoint *, struct StagedActor *);
 
-void Actor_Run2(void); void Actor_Run3(void);
+void Actor_unk2_4(void); void Actor_unk3_4(void);
 
-void Actor_Run4(s32, s32); void Actor_Run5(s32, s32, s32);
-void Actor_Run6(s32); u8 *Actor_Run7();
+void Actor_unk4_4(s32, s32); void Actor_unk5_4(s32, s32, s32);
+void Actor_unk6_4(s32); u8 *Actor_unk7_4();
 
-void Actor_Run8(s32); void Actor_Run9(u8 *, s32);
+void Actor_unk8_4(s32); void Actor_unk9_4(u8 *, s32);
 
 struct StagedActorEffect *GetStagedActorEffect(s32 actor_index);
 
@@ -80,7 +79,7 @@ struct SceneBeatSubject *GetScenePresentationSubject();
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Actor_Run10(s32, s32); u8 *Actor_Run11(s32);
+    void Actor_unk10_4(s32, s32); u8 *Actor_unk11_4(s32);
 
     Actor_SetRect(left, top, width, height, tile, palette);
 }
@@ -88,7 +87,7 @@ static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
 static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Actor_Run10();
+    void Actor_unk10_4();
 
     DrawSceneBeatRectangle(left, top, width, height, tile, palette);
 }
@@ -408,30 +407,30 @@ u8 *MapStagedScene_SelectTertiaryData(void) { return (u8 *)0x02009038; }
 
 void Scene_RunActorTenPlacementScene(void)
 {
-    void Actor_Run10(s32, s32); u8 *Actor_Run11(s32);
+    void Actor_unk10_4(s32, s32); u8 *Actor_unk11_4(s32);
 
     struct PlacementResult result;
-    Actor_Run12();
+    Actor_unk12_4();
     if (Actor_Check(&result)) {
-        Actor_Do2(result);
+        Actor_unk2_2(result);
         if (result.second == 10 && (result.third >> 20) == 12) {
             u8 *actor;
             s32 zero;
-            Actor_Run4(10, 3);
-            Actor_Run5(10, -18, 6);
-            Actor_Run6(30);
-            Actor_Do3(240);
-            Actor_Run10(10, 8);
-            Actor_Run11(10)[35] = 2;
+            Actor_unk4_4(10, 3);
+            Actor_unk5_4(10, -18, 6);
+            Actor_unk6_4(30);
+            Actor_unk3_2(240);
+            Actor_unk10_4(10, 8);
+            Actor_unk11_4(10)[35] = 2;
             zero = 0;
             DrawPlacement(32, 20, 2, 4, 11, 16);
-            Actor_SetRect2(2, 12, 16, 1, 4, zero);
-            Actor_Run8(0x201);
-            actor = Actor_Run7(10);
-            Actor_Run9(actor, 0);
+            Actor_unk2_5(2, 12, 16, 1, 4, zero);
+            Actor_unk8_4(0x201);
+            actor = Actor_unk7_4(10);
+            Actor_unk9_4(actor, 0);
         }
     }
-    Actor_Run13();
+    Actor_unk13_4();
 }
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
@@ -523,17 +522,17 @@ s32 State_SetRuntimeWord448To516(void)
 
 void Effect_AdjustPaletteColors(s32 a)
 {
-    s32 Actor_Run14(s32, s32);
+    s32 Actor_unk14_4(s32, s32);
 
     u32 x;
 
-    Actor_Run15();
+    Actor_unk15_4();
     x = 0;
     do {
         u32 idx = x >> 16;
         if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
             u16 *pal = (u16 *)(0x5000000 + idx * 2);
-            *pal = Actor_Run14(*pal, a);
+            *pal = Actor_unk14_4(*pal, a);
         }
         {
             u32 nx = x + 0x10000;
@@ -543,8 +542,8 @@ void Effect_AdjustPaletteColors(s32 a)
             }
         }
     } while (1);
-    Actor_Run16();
-    Actor_Run17();
+    Actor_unk16_4();
+    Actor_unk17_4();
     Actor_Apply(0x10000, 0);
 }
 
@@ -562,12 +561,12 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Actor_Check2(
+    red = (s16)(red + Actor_unk2(
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - Actor_Check3(green, adj));
-    blue = (s16)(blue - Actor_Check4(blue, adj));
+    green = (s16)(green - Actor_unk3(green, adj));
+    blue = (s16)(blue - Actor_unk4(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

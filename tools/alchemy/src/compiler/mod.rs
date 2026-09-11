@@ -11,6 +11,7 @@ pub(crate) mod plan;
 pub(crate) mod routing;
 mod routing_data;
 pub(crate) mod sha256;
+pub(crate) mod source_bindings;
 pub(crate) mod source_inputs;
 pub(crate) mod source_paths;
 pub(crate) mod symbols;

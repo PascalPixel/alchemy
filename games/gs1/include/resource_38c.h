@@ -7,9 +7,5 @@
 #define RESOURCE38C_TERTIARY_TABLE_ADDRESS   0x020088f0
 
 /* Behavior names for the address-stable leaf symbols. */
-#define Resource38c_GetPrimaryTable    Func_02000030
-#define Resource38c_NullCallback       Func_02000038
-#define Resource38c_GetSecondaryTable  Func_0200003c
-#define Resource38c_GetTertiaryTable   Func_0200011c
 
 #endif

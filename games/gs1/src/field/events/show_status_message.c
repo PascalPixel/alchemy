@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/field/events/show_status_message.h"
 
 extern s32 gCell[];
 extern char Value_00000923;

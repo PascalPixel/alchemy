@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/locations/heidia/village/village.h"
 #include "object_runtime.h"
 
 /* map/locations/heidia/village/actor_pair_sequence.c */
@@ -13,32 +12,32 @@ void Scene_RunScene3bf(void)
     s32 record;
     s32 base5_240d;
 
-    Map_Run2();
-    Map_Run3(0, 0, 0);
-    Map_Run4(0, 1);
-    Map_Run5(0, 1);
-    Map_Run6(113);
+    Map_unk2_4();
+    Map_unk3_4(0, 0, 0);
+    Map_unk4_4(0, 1);
+    Map_unk5_4(0, 1);
+    Map_unk6_4(113);
     Map_Place(21, 0x100, 0);
-    Map_Place2(13, 0x100, 60);
-    Map_Run7(21, 0, 0);
-    Map_Run8(13, 0, 0);
+    Map_unk2_3(13, 0x100, 60);
+    Map_unk7_4(21, 0, 0);
+    Map_unk8_4(13, 0, 0);
     base5_240d = (s32)gVal;
-    Map_Run9(base5_240d);
-    Map_Run10(13, 0);
-    Map_Place3(0, 0x102, 30);
-    Map_Run11((base5_240d + 1));
-    Map_Run12(13, 0);
-    Map_Run13();
-    Map_Run14(60);
-    Map_Run15(60);
-    Map_Run16();
+    Map_unk9_4(base5_240d);
+    Map_unk10_4(13, 0);
+    Map_unk3_3(0, 0x102, 30);
+    Map_unk11_4((base5_240d + 1));
+    Map_unk12_4(13, 0);
+    Map_unk13_4();
+    Map_unk14_4(60);
+    Map_unk15_4(60);
+    Map_unk16_4();
     Map_Do(0x225);
 }
 
 /* map/locations/heidia/village/actor_scenes.c */
 /* External Func aliases name loader-relocated call words, not runtime addresses. */
 
-u8 *Map_Run17(s32);
+u8 *Map_unk17_4(s32);
 
 extern u8 gWork[];
 
@@ -56,21 +55,21 @@ extern u8 gCam[];
 extern u32 gIw;
 extern s16 gCell[];
 extern u8 Value_00002092;
-struct ObjectRuntime *Map_Run18();
-struct ObjectRuntime *Map_Run19();
+struct ObjectRuntime *Map_unk18_4();
+struct ObjectRuntime *Map_unk19_4();
 
-struct ObjectRuntime *Map_Run20();
+struct ObjectRuntime *Map_unk20_4();
 
-struct ObjectRuntime *Map_Run21();
+struct ObjectRuntime *Map_unk21_4();
 
 void ConfigureSceneActor12(void)
 {
     s32 actor_slot = 15;
     u8 *actor;
 
-    Map_SetRect6(15, 20, 1, 1, actor_slot, 22);
-    Map_SetRect7(17, 23, 1, 3, actor_slot, 23);
-    actor = Map_Run17(12);
+    Map_unk6_5(15, 20, 1, 1, actor_slot, 22);
+    Map_unk7_5(17, 23, 1, 3, actor_slot, 23);
+    actor = Map_unk17_4(12);
     if (actor != 0) {
         Map_Apply(actor, 0);
         actor[0x55] = 0;
@@ -80,18 +79,18 @@ void ConfigureSceneActor12(void)
 
 void RunSceneObjectSetup(void)
 {
-    Map_Run22();
+    Map_unk22_4();
 }
 
 void Scene_StartActorTwelveTransition(void)
 {
-    Map_Place4(12, 0x10000, 0x8000);
-    Map_Place5(12, 248, 0x178);
-    Map_Run23(12);
-    Map_Run24(215);
-    Map_Run25(60);
-    Map_Run26();
-    Map_Do2(0x943);
+    Map_unk4_3(12, 0x10000, 0x8000);
+    Map_unk5_3(12, 248, 0x178);
+    Map_unk23_4(12);
+    Map_unk24_4(215);
+    Map_unk25_4(60);
+    Map_unk26_4();
+    Map_unk2_2(0x943);
 }
 
 void Scene_UpdateActorTwelveTransition(void)
@@ -101,17 +100,17 @@ void Scene_UpdateActorTwelveTransition(void)
 
     record = Map_Check(12);
     if ((*(volatile s32 *)(record + 16) >> 20) > 22) {
-        Map_Place6(0x40000, 0x40000, 0x10000);
-        Map_Place7(-1, -1, 0xe666);
-        Map_Run27(144);
+        Map_unk6_3(0x40000, 0x40000, 0x10000);
+        Map_unk7_3(-1, -1, 0xe666);
+        Map_unk27_4(144);
         Map_SetRect(15, 20, 1, 1, 15, 22);
-        Map_SetRect2(17, 23, 1, 3, 15, 23);
-        rec7 = Map_Check2(12);
+        Map_unk2_5(17, 23, 1, 3, 15, 23);
+        rec7 = Map_unk2(12);
         if ((s32)rec7 != 0) {
-            Map_Do12((s32)rec7, 0);
+            Map_unk12_2((s32)rec7, 0);
             rec7[35] = 2;
         }
-        Map_Do3(0x943);
+        Map_unk3_2(0x943);
     }
 }
 
@@ -120,9 +119,9 @@ void PlaceSceneObjectPairFromTableA(s32 table_index)
     s32 position_x = gOv[table_index * 2];
     s32 position_z = gOv[table_index * 2 + 1];
 
-    Map_SetRect8(0, 0x4d, 1, 3, position_x, position_z);
-    Map_SetRect9(1, 0x4d, 1, 1, position_x + 1, position_z);
-    Map_SetRect10(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
+    Map_unk8_5(0, 0x4d, 1, 3, position_x, position_z);
+    Map_unk9_5(1, 0x4d, 1, 1, position_x + 1, position_z);
+    Map_unk10_5(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
 }
 
 void Scene_UpdateObjectPairA(void)
@@ -134,19 +133,19 @@ void Scene_UpdateObjectPairA(void)
 
     p5 = *(volatile s32 *)gWork;
     v6 = 1;
-    if (Map_Do13(234) != -v6) {
+    if (Map_unk13_2(234) != -v6) {
         raw = *(s16 *)(((s32)p5 + 0x16c));
         d = raw - 40;
-        if (Map_Check3(0x941) != 0) {
+        if (Map_unk3(0x941) != 0) {
             if (d == 4) {
                 goto done;
             }
         }
-        Map_Run28(d);
-        Map_Run29(157);
-        Map_Place8(0x30000, 0x30000, 0x10000);
-        Map_Place9(-v6, -v6, 0xe666);
-        Map_Run30(raw + 0x328);
+        Map_unk28_4(d);
+        Map_unk29_4(157);
+        Map_unk8_3(0x30000, 0x30000, 0x10000);
+        Map_unk9_3(-v6, -v6, 0xe666);
+        Map_unk30_4(raw + 0x328);
     }
 done:;
 }
@@ -157,13 +156,13 @@ void Scene_UpdateObjectPairB(void)
     s16 field;
 
     p5 = *(volatile s32 *)gWork;
-    if (Map_Check23(234) != -1) {
+    if (Map_unk23(234) != -1) {
         field = *(s16 *)((s32)p5 + 0x16c);
-        Map_Run31(field - 40);
-        Map_Run32(157);
-        Map_Place10(0x30000, 0x30000, 0x10000);
-        Map_Place11(-1, -1, 0xe666);
-        Map_Run33(field + 0x32d);
+        Map_unk31_4(field - 40);
+        Map_unk32_4(157);
+        Map_unk10_3(0x30000, 0x30000, 0x10000);
+        Map_unk11_3(-1, -1, 0xe666);
+        Map_unk33_4(field + 0x32d);
     }
 }
 
@@ -172,9 +171,9 @@ void PlaceSceneObjectPairFromTableB(s32 table_index)
     s32 position_x = gOv2[table_index * 2];
     s32 position_z = gOv2[table_index * 2 + 1];
 
-    Map_SetRect11(0x37, 0x79, 1, 3, position_x, position_z);
-    Map_SetRect12(0x38, 0x79, 1, 1, position_x + 1, position_z);
-    Map_SetRect13(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Map_unk11_5(0x37, 0x79, 1, 3, position_x, position_z);
+    Map_unk12_5(0x38, 0x79, 1, 1, position_x + 1, position_z);
+    Map_unk13_5(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 void Scene_UpdateTableBObjectPair(void)
@@ -183,13 +182,13 @@ void Scene_UpdateTableBObjectPair(void)
     s16 field;
 
     work = *(volatile s32 *)gWork;
-    if (Map_Check24(234) != -1) {
+    if (Map_unk24(234) != -1) {
         field = *(s16 *)((s32)work + 0x16c);
-        Map_Run34(field - 40);
-        Map_Run35(157);
-        Map_Place12(0x30000, 0x30000, 0x10000);
-        Map_Place13(-1, -1, 0xe666);
-        Map_Run36(field + 0x330);
+        Map_unk34_4(field - 40);
+        Map_unk35_4(157);
+        Map_unk12_3(0x30000, 0x30000, 0x10000);
+        Map_unk13_3(-1, -1, 0xe666);
+        Map_unk36_4(field + 0x330);
     }
 }
 
@@ -198,9 +197,9 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
     s32 position_x = gOv3[table_index * 2];
     s32 position_z = gOv3[table_index * 2 + 1];
 
-    Map_SetRect14(1, 0x50, 1, 3, position_x, position_z);
-    Map_SetRect15(2, 0x50, 1, 1, position_x + 1, position_z);
-    Map_SetRect16(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Map_unk14_5(1, 0x50, 1, 3, position_x, position_z);
+    Map_unk15_5(2, 0x50, 1, 1, position_x + 1, position_z);
+    Map_unk16_5(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 void Scene_UpdateObjectPairC(void)
@@ -209,13 +208,13 @@ void Scene_UpdateObjectPairC(void)
     s16 field;
 
     p5 = *(volatile s32 *)gWork;
-    if (Map_Check25(234) != -1) {
+    if (Map_unk25(234) != -1) {
         field = *(s16 *)((s32)p5 + 0x16c);
-        Map_Run37(field - 40);
-        Map_Run38(157);
-        Map_Place14(0x30000, 0x30000, 0x10000);
-        Map_Place15(-1, -1, 0xe666);
-        Map_Run39(field + 0x332);
+        Map_unk37_4(field - 40);
+        Map_unk38_4(157);
+        Map_unk14_3(0x30000, 0x30000, 0x10000);
+        Map_unk15_3(-1, -1, 0xe666);
+        Map_unk39_4(field + 0x332);
     }
 }
 
@@ -226,8 +225,8 @@ static __inline__ void SetSceneValue(s16 *field, s32 value)
 
 void Scene_UpdateActorPairInteraction(void)
 {
-    struct ObjectRuntime *actor = Map_Run18(9);
-    struct ObjectRuntime *other = Map_Run19(10);
+    struct ObjectRuntime *actor = Map_unk18_4(9);
+    struct ObjectRuntime *other = Map_unk19_4(10);
     s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
     s16 *scene = *(s16 **)(gCam + 0x4c);
 
@@ -238,37 +237,37 @@ void Scene_UpdateActorPairInteraction(void)
         work[6] = -1;
         work[7] = -1;
     }
-    if (Map_Check26(0x106) || scene[191] != 0 || scene[192] != 0) {
+    if (Map_unk26(0x106) || scene[191] != 0 || scene[192] != 0) {
         actor->movement_state = 1;
         other->movement_state = 1;
-    } else if (!Map_Check4(0x214)) {
+    } else if (!Map_unk4(0x214)) {
         actor->movement_state = 0;
         other->movement_state = 0;
-        if (!Map_Check4(0x214) && actor->movement_state == 0) {
-            work[8] = Map_Check27(Map_Apply2(8912896.0, Map_Do14(actor->x)));
+        if (!Map_unk4(0x214) && actor->movement_state == 0) {
+            work[8] = Map_unk27(Map_Apply2(8912896.0, Map_unk14_2(actor->x)));
         }
-        if (!Map_Check28()) {
+        if (!Map_unk28()) {
             if (gCell[294] != 0) {
-                if (Map_Check29(9) && gCell[294] != 0) {
+                if (Map_unk29(9) && gCell[294] != 0) {
                     SetSceneValue(&scene[191], (s32)&Value_00002092);
                     return;
                 }
-                if (Map_Check29(10) && gCell[294] != 0) {
+                if (Map_unk29(10) && gCell[294] != 0) {
                     SetSceneValue(&scene[191], (s32)&Value_00002092);
                     return;
                 }
             }
             if (gCell[294] == 0) {
-                if (Map_Check30(9)) {
-                    Map_Run40(0x215);
-                    Map_Run40(0x214);
+                if (Map_unk30(9)) {
+                    Map_unk40_4(0x215);
+                    Map_unk40_4(0x214);
                 }
-                if (Map_Check30(10)) {
-                    Map_Run40(0x215);
-                    Map_Run40(0x214);
+                if (Map_unk30(10)) {
+                    Map_unk40_4(0x215);
+                    Map_unk40_4(0x214);
                 }
             }
-            if (Map_Check4(0x214)) {
+            if (Map_unk4(0x214)) {
                 SetSceneValue(&scene[193], 91);
             }
         }
@@ -277,11 +276,11 @@ void Scene_UpdateActorPairInteraction(void)
 
 void Scene_UpdateActorSeventeenInteraction(void)
 {
-    struct ObjectRuntime *actor = Map_Run20(17);
+    struct ObjectRuntime *actor = Map_unk20_4(17);
     s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
     s16 *scene = *(s16 **)(gCam + 0x4c);
 
-    Map_Run41(actor);
+    Map_unk41_4(actor);
     if (gIw & 1) {
         work[6] = 1;
         work[7] = 1;
@@ -289,27 +288,27 @@ void Scene_UpdateActorSeventeenInteraction(void)
         work[6] = -1;
         work[7] = -1;
     }
-    if (Map_Check31(0x106) || scene[191] != 0 || scene[192] != 0) {
+    if (Map_unk31(0x106) || scene[191] != 0 || scene[192] != 0) {
         actor->movement_state = 1;
-    } else if (!Map_Check5(0x214)) {
+    } else if (!Map_unk5(0x214)) {
         actor->movement_state = 0;
-        if (!Map_Check5(0x214) && actor->movement_state == 0) {
+        if (!Map_unk5(0x214) && actor->movement_state == 0) {
             work[8] = 0x3400000 - actor->x;
             work[9] = 0x2400000 - actor->z;
         }
-        if (!Map_Check32()) {
-            Map_Check33(17);
-            if (Map_Check34(17) && gCell[294] != 0) {
+        if (!Map_unk32()) {
+            Map_unk33(17);
+            if (Map_unk34(17) && gCell[294] != 0) {
                 SetSceneValue(&scene[191], (s32)&Value_00002092);
                 return;
             }
             if (gCell[294] == 0) {
-                if (Map_Check35(17)) {
-                    Map_Run42(0x215);
-                    Map_Run42(0x214);
+                if (Map_unk35(17)) {
+                    Map_unk42_4(0x215);
+                    Map_unk42_4(0x214);
                 }
             }
-            if (Map_Check5(0x214)) {
+            if (Map_unk5(0x214)) {
                 SetSceneValue(&scene[193], 92);
             }
         }
@@ -318,7 +317,7 @@ void Scene_UpdateActorSeventeenInteraction(void)
 
 void Scene_UpdateActorEighteenInteraction(void)
 {
-    struct ObjectRuntime *actor = Map_Run21(18);
+    struct ObjectRuntime *actor = Map_unk21_4(18);
     s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
     s16 *scene = *(s16 **)(gCam + 0x4c);
 
@@ -329,26 +328,26 @@ void Scene_UpdateActorEighteenInteraction(void)
         work[6] = -1;
         work[7] = -1;
     }
-    if (Map_Check36(0x106) || scene[191] != 0 || scene[192] != 0) {
+    if (Map_unk36(0x106) || scene[191] != 0 || scene[192] != 0) {
         actor->movement_state = 1;
-    } else if (!Map_Check6(0x214)) {
+    } else if (!Map_unk6(0x214)) {
         actor->movement_state = 0;
-        if (!Map_Check6(0x214) && actor->movement_state == 0) {
+        if (!Map_unk6(0x214) && actor->movement_state == 0) {
             work[8] = 0x2f00000 - actor->x;
             work[9] = 0x1f00000 - actor->z;
         }
-        if (!Map_Check37()) {
-            if (Map_Check38(18) && gCell[294] != 0) {
+        if (!Map_unk37()) {
+            if (Map_unk38(18) && gCell[294] != 0) {
                 SetSceneValue(&scene[191], (s32)&Value_00002092);
                 return;
             }
             if (gCell[294] == 0) {
-                if (Map_Check39(18)) {
-                    Map_Run43(0x215);
-                    Map_Run43(0x214);
+                if (Map_unk39(18)) {
+                    Map_unk43_4(0x215);
+                    Map_unk43_4(0x214);
                 }
             }
-            if (Map_Check6(0x214)) {
+            if (Map_unk6(0x214)) {
                 SetSceneValue(&scene[193], 93);
             }
         }
@@ -359,42 +358,42 @@ void Scene_SelectActorTwentyOneMessage(void)
 {
     switch (gOv4) {
     case 0:
-        Map_Run44(0x2414);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x2414);
+        Map_unk45_4(21, 0);
         break;
     case 1:
-        Map_Run44(0x2415);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x2415);
+        Map_unk45_4(21, 0);
         break;
     case 2:
-        Map_Run44(0x2416);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x2416);
+        Map_unk45_4(21, 0);
         break;
     case 3:
-        Map_Run44(0x2417);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x2417);
+        Map_unk45_4(21, 0);
         break;
     case 4:
-        Map_Run44(0x2418);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x2418);
+        Map_unk45_4(21, 0);
         break;
     case 6:
-        Map_Run44(0x241a);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x241a);
+        Map_unk45_4(21, 0);
         break;
     case 7:
-        Map_Run44(0x241b);
-        Map_Run45(21, 0);
+        Map_unk44_4(0x241b);
+        Map_unk45_4(21, 0);
         break;
     case 5:
-        Map_Place16(21, 0xd000, 0);
-        Map_Run46(50);
-        Map_Place17(21, 0xb000, 0);
-        Map_Run47(50);
-        Map_Place18(21, 0x5000, 0);
-        Map_Run48(50);
-        Map_Run49(0x2419);
-        Map_Run50(21, 0);
+        Map_unk16_3(21, 0xd000, 0);
+        Map_unk46_4(50);
+        Map_unk17_3(21, 0xb000, 0);
+        Map_unk47_4(50);
+        Map_unk18_3(21, 0x5000, 0);
+        Map_unk48_4(50);
+        Map_unk49_4(0x2419);
+        Map_unk50_4(21, 0);
         break;
     }
 }
@@ -403,44 +402,44 @@ void Scene_RunActorTwentyOneSequence(void)
 {
     s32 base5_2411;
 
-    Map_Place19(21, 0x101, 30);
-    Map_Place20(21, 0xd000, 0);
-    Map_Run51(50);
-    Map_Place21(21, 0xb000, 0);
-    Map_Run52(50);
-    Map_Place22(21, 0x5000, 0);
-    Map_Run53(50);
+    Map_unk19_3(21, 0x101, 30);
+    Map_unk20_3(21, 0xd000, 0);
+    Map_unk51_4(50);
+    Map_unk21_3(21, 0xb000, 0);
+    Map_unk52_4(50);
+    Map_unk22_3(21, 0x5000, 0);
+    Map_unk53_4(50);
     base5_2411 = (s32)gVal2;
-    Map_Run54(base5_2411);
-    Map_Run55(21, 0);
-    Map_Run56(21, 4);
-    Map_Run57(60);
-    Map_Place23(21, 0xb000, 0);
-    Map_Run58(40);
-    Map_Run59((base5_2411 + 1));
-    Map_Run60(21, 0);
+    Map_unk54_4(base5_2411);
+    Map_unk55_4(21, 0);
+    Map_unk56_4(21, 4);
+    Map_unk57_4(60);
+    Map_unk23_3(21, 0xb000, 0);
+    Map_unk58_4(40);
+    Map_unk59_4((base5_2411 + 1));
+    Map_unk60_4(21, 0);
 }
 
 /* map/locations/heidia/village/actor_setup.c */
 extern u8 gWork[];
 
-struct ObjectRuntime *Map_Run61();
-struct ObjectRuntime *Map_Run62();
+struct ObjectRuntime *Map_unk61_4();
+struct ObjectRuntime *Map_unk62_4();
 struct ObjectRuntime *Village_GetActor();
-struct ObjectRuntime *Map_Run63();
+struct ObjectRuntime *Map_unk63_4();
 
-struct ObjectRuntime *Map_Run64();
-struct ObjectRuntime *Map_Run65();
+struct ObjectRuntime *Map_unk64_4();
+struct ObjectRuntime *Map_unk65_4();
 
 void Village_FinishActorRestore();
 
 extern s16 gCell[];
 extern u8 gOv5[], gOv6[], gOv7[];
 
-struct ObjectRuntime *Map_Run66();
+struct ObjectRuntime *Map_unk66_4();
 
-struct ObjectRuntime *Map_Run67();
-struct ObjectRuntime *Map_Run68();
+struct ObjectRuntime *Map_unk67_4();
+struct ObjectRuntime *Map_unk68_4();
 
 extern u8 gOv8[], gOv9[], gOv10[];
 extern u8 gOv11[], gOv12[], gOv13[];
@@ -449,7 +448,7 @@ extern u8 gOv11[], gOv12[], gOv13[];
 
 void Scene_InstallSceneTasks(void)
 {
-    Map_Run69();
+    Map_unk69_4();
     switch (gCell[225]) {
     case 2:
     case 3:
@@ -458,77 +457,77 @@ void Scene_InstallSceneTasks(void)
     case 6:
     case 7:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Check7((s32)gOv8, 3200);
-        Map_Check8((s32)gOv9, 3200);
-        Map_Check9((s32)gOv10, 3200);
-        Map_Run70(0xe00);
+        Map_unk7((s32)gOv8, 3200);
+        Map_unk8((s32)gOv9, 3200);
+        Map_unk9((s32)gOv10, 3200);
+        Map_unk70_4(0xe00);
         break;
     case 12:
     case 19:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x209;
-        Map_Run70(0xc00);
+        Map_unk70_4(0xc00);
         break;
     case 16:
     case 17:
     case 18:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Check10((s32)gOv11, 3200);
-        Map_Check11((s32)gOv12, 3200);
-        Map_Run71(1);
-        Map_Run72();
-        Map_Run73(1);
-        Map_SetRect3(101, 9, 10, 8, 110, 9);
-        Map_Run70(0xe00);
+        Map_unk10((s32)gOv11, 3200);
+        Map_unk11((s32)gOv12, 3200);
+        Map_unk71_4(1);
+        Map_unk72_4();
+        Map_unk73_4(1);
+        Map_unk3_5(101, 9, 10, 8, 110, 9);
+        Map_unk70_4(0xe00);
         break;
     case 13:
     case 14:
     case 15:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Check12((s32)gOv13, 3200);
+        Map_unk12((s32)gOv13, 3200);
         break;
     default:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Run74(0xe00);
+        Map_unk74_4(0xe00);
         break;
     }
-    Map_Run75(18, 1);
-    Map_Run76(17, 1);
-    Map_Run77(21, 1);
-    Map_Run78(12, 1);
-    Map_Run79(13, 1);
-    Map_Run80(1);
+    Map_unk75_4(18, 1);
+    Map_unk76_4(17, 1);
+    Map_unk77_4(21, 1);
+    Map_unk78_4(12, 1);
+    Map_unk79_4(13, 1);
+    Map_unk80_4(1);
 }
 
 void Scene_SetupActorsForScene(void)
 {
     struct ObjectRuntime *actor;
 
-    Map_Run81();
-    Map_Run82(9, 1);
-    Map_Run83(10, 1);
-    Map_Run84(17, 1);
-    if (Map_Check40(0x94c)) {
-        Map_Run85(15, 0, 0);
+    Map_unk81_4();
+    Map_unk82_3(9, 1);
+    Map_unk83_3(10, 1);
+    Map_unk84_3(17, 1);
+    if (Map_unk40(0x94c)) {
+        Map_unk85_3(15, 0, 0);
     }
-    if (Map_Check41(0x949)) {
-        Map_Run86(11, 0, 0);
+    if (Map_unk41(0x949)) {
+        Map_unk86_3(11, 0, 0);
     }
-    if (Map_Check42(0x94b)) {
-        Map_Run87(16, 0, 0);
+    if (Map_unk42(0x94b)) {
+        Map_unk87_3(16, 0, 0);
     }
-    if (Map_Check43(0xf2e)) {
-        Map_Run88(8, 0, 0);
+    if (Map_unk43(0xf2e)) {
+        Map_unk88_3(8, 0, 0);
     }
     switch (gCell[225]) {
     case 1:
     case 2:
     case 3:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Run89(0xe00);
-        Map_Run90(gOv5, 3200);
-        Map_Run91(1);
-        Map_Run92();
-        Map_Run93(1);
+        Map_unk89_3(0xe00);
+        Map_unk90_3(gOv5, 3200);
+        Map_unk91_3(1);
+        Map_unk92_3();
+        Map_unk93_3(1);
         break;
     case 10:
     case 13:
@@ -536,45 +535,45 @@ void Scene_SetupActorsForScene(void)
     case 23:
     case 24:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x209;
-        Map_Run94(0xc00);
-        Map_Run95(Map_Run66(24), 0);
-        if (Map_Check44(0x314)) {
-            Map_Place24(25, 0x3680000, 0x780000);
+        Map_unk94_3(0xc00);
+        Map_unk95_3(Map_unk66_4(24), 0);
+        if (Map_unk44(0x314)) {
+            Map_unk24_3(25, 0x3680000, 0x780000);
         }
         break;
     case 21:
     case 22:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Run96(0xe00);
-        Map_Run90(gOv6, 3200);
-        Map_Run91(1);
-        Map_Run92();
-        Map_Run93(1);
+        Map_unk96_3(0xe00);
+        Map_unk90_3(gOv6, 3200);
+        Map_unk91_3(1);
+        Map_unk92_3();
+        Map_unk93_3(1);
         break;
     case 11:
     case 12:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        if (Map_Check45(0x94a)) {
-            Map_Run97();
+        if (Map_unk45(0x94a)) {
+            Map_unk97_3();
         }
         break;
     case 31:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Run98();
+        Map_unk98_3();
         break;
     case 14:
     case 15:
     case 16:
-        Map_Run99(gOv7, 3200);
+        Map_unk99_3(gOv7, 3200);
         break;
     default:
         *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-        Map_Run100(0xe00);
+        Map_unk100_3(0xe00);
         break;
     }
-    actor = Map_Run67(8);
-    Map_Run101(Map_Run68(8), 0);
-    Map_Run102(8, 1);
+    actor = Map_unk67_4(8);
+    Map_unk101_3(Map_unk68_4(8), 0);
+    Map_unk102_3(8, 1);
     *(s32 *)&actor->unknown_18[0] = 0xc000;
     *(s32 *)&actor->unknown_18[4] = 0xc000;
 }
@@ -584,36 +583,36 @@ void Scene_RestoreActorsFromFlags(void)
     struct ObjectRuntime *actor;
 
     *(s32 *)(*(u8 **)gWork + 0x1c0) = 0x200;
-    Map_Run103();
-    if (Map_Check46(0x943)) {
-        Map_Run104();
+    Map_unk103_3();
+    if (Map_unk46(0x943)) {
+        Map_unk104_3();
     }
-    Map_Do4(0x217);
-    Map_Do5(0x218);
-    if (Map_Check47(0x944)) {
-        Map_Run105(8, 0, 0);
-        Map_Do6(0x217);
+    Map_unk4_2(0x217);
+    Map_unk5_2(0x218);
+    if (Map_unk47(0x944)) {
+        Map_unk105_3(8, 0, 0);
+        Map_unk6_2(0x217);
     }
-    if (Map_Check48(0x945)) {
-        Map_Run106(9, 0, 0);
-        Map_Run107();
+    if (Map_unk48(0x945)) {
+        Map_unk106_3(9, 0, 0);
+        Map_unk107_3();
     }
-    if (Map_Check49(0x946)) {
-        Map_Run108(10, 0, 0);
-        Map_Do7(0x218);
+    if (Map_unk49(0x946)) {
+        Map_unk108_3(10, 0, 0);
+        Map_unk7_2(0x218);
     }
-    if (Map_Check50(0x947)) {
-        Map_Run109();
+    if (Map_unk50(0x947)) {
+        Map_unk109_3();
     }
-    if (Map_Check51(0x948)) {
-        Map_Run110();
+    if (Map_unk51(0x948)) {
+        Map_unk110_3();
     }
-    Map_Run111();
-    actor = Map_Run61(8);
+    Map_unk111_3();
+    actor = Map_unk61_4(8);
     if (actor != 0) {
         actor->unknown_23 = 2;
     }
-    actor = Map_Run62(9);
+    actor = Map_unk62_4(9);
     if (actor != 0) {
         actor->unknown_23 = 2;
     }
@@ -621,53 +620,53 @@ void Scene_RestoreActorsFromFlags(void)
     if (actor != 0) {
         actor->unknown_23 = 2;
     }
-    actor = Map_Run63(11);
+    actor = Map_unk63_4(11);
     if (actor != 0) {
-        Map_Run112(actor, 0);
+        Map_unk112_3(actor, 0);
     }
     actor->unknown_23 = 2;
-    actor = Map_Run64(12);
+    actor = Map_unk64_4(12);
     if (actor != 0) {
         actor->unknown_56[3] |= 0x10;
     }
-    Map_Run113(Map_Run65(11), 0);
-    Map_Run114();
+    Map_unk113_3(Map_unk65_4(11), 0);
+    Map_unk114_3();
     Village_FinishActorRestore(0xe00);
 }
 
 void Scene_ActivateThreeActorGroup(void)
 {
-    if (Map_Check52(0x35a)) {
-        Map_Do15(0);
+    if (Map_unk52(0x35a)) {
+        Map_unk15_2(0);
     }
-    if (Map_Check53(0x35b)) {
-        Map_Do16(1);
+    if (Map_unk53(0x35b)) {
+        Map_unk16_2(1);
     }
-    if (Map_Check54(0x35c)) {
-        Map_Do17(2);
+    if (Map_unk54(0x35c)) {
+        Map_unk17_2(2);
     }
 }
 
 void Scene_ActivateTwoActorGroup(void)
 {
-    if (Map_Check55(0x358)) {
-        Map_Do13(0);
+    if (Map_unk55(0x358)) {
+        Map_unk13_2(0);
     }
-    if (Map_Check56(0x359)) {
-        Map_Do18(1);
+    if (Map_unk56(0x359)) {
+        Map_unk18_2(1);
     }
 }
 
 void Scene_ActivateAlternateActorGroup(void)
 {
-    if (Map_Check57(0x355)) {
-        Map_Do12(0);
+    if (Map_unk57(0x355)) {
+        Map_unk12_2(0);
     }
-    if (Map_Check58(0x356)) {
-        Map_Do19(1);
+    if (Map_unk58(0x356)) {
+        Map_unk19_2(1);
     }
-    if (Map_Check59(0x357)) {
-        Map_Do20(2);
+    if (Map_unk59(0x357)) {
+        Map_unk20_2(2);
     }
 }
 
@@ -682,18 +681,18 @@ void Scene_RunScene3bf2(s32 a0)
     s32 base6_2424;
 
     base6_2424 = (s32)gVal3;
-    Map_Run115(base6_2424);
-    Map_Run116(a0, 0);
-    Map_Run117(120);
-    Map_Place25(a0, 0x101, 60);
-    Map_Run118((base6_2424 + 1));
-    Map_Run119(a0, 0);
-    Map_Run120(a0, 1);
-    Map_Run121((base6_2424 + 2));
-    Map_Run122(a0, 0);
-    Map_Run123(a0, 4);
-    Map_Run124((base6_2424 + 3));
-    Map_Run125(a0, 0);
+    Map_unk115_3(base6_2424);
+    Map_unk116_3(a0, 0);
+    Map_unk117_3(120);
+    Map_unk25_3(a0, 0x101, 60);
+    Map_unk118_3((base6_2424 + 1));
+    Map_unk119_3(a0, 0);
+    Map_unk120_3(a0, 1);
+    Map_unk121_3((base6_2424 + 2));
+    Map_unk122_3(a0, 0);
+    Map_unk123_3(a0, 4);
+    Map_unk124_3((base6_2424 + 3));
+    Map_unk125_3(a0, 0);
 }
 
 /* map/locations/heidia/village/conditional_scene.c */
@@ -708,59 +707,59 @@ void Scene_RunScene3bf3(void)
     s32 base5_244f;
     s32 base5_2455;
 
-    Map_Run126();
-    if (Map_Check13(0x941) != 0) {
-        Map_Do8(0x2566);
-        Map_Run127(18, 0);
-        Map_Run128();
+    Map_unk126_3();
+    if (Map_unk13(0x941) != 0) {
+        Map_unk8_2(0x2566);
+        Map_unk127_3(18, 0);
+        Map_unk128_3();
     } else {
-        if (Map_Check14(0x313) != 0) {
-            Map_Do9(0x2457);
-            Map_Check15(25, 0);
-            Map_Run129();
+        if (Map_unk14(0x313) != 0) {
+            Map_unk9_2(0x2457);
+            Map_unk15(25, 0);
+            Map_unk129_3();
         } else {
-            Map_Place26(25, 0x102, 30);
-            Map_Run130(25, 0, 0);
+            Map_unk26_3(25, 0x102, 30);
+            Map_unk130_3(25, 0, 0);
             base5_244f = (s32)gVal4;
-            Map_Run131(base5_244f);
-            Map_Run132(25, 0);
-            Map_Run133(25, 24, 0);
-            Map_Run134(24, 1);
-            Map_Run135();
-            Map_Run136(60);
-            Map_Run137(0, 1);
-            Map_Run55(20);
-            Map_Place27(25, 0x105, 60);
-            Map_Run138((base5_244f + 1));
-            Map_Run139(25, 0);
-            Map_Place28(25, 0x107, 60);
-            Map_Run140((base5_244f + 2));
-            Map_Run141(25, 0);
-            Map_Run142(70);
-            Map_Place29(25, 0x100, 60);
-            Map_Run143(25, 0, 0);
-            Map_Run144((base5_244f + 3));
-            Map_Check16(25, 0);
-            if (Map_Check17(0, 0) == 0) {
-                Map_Run145((base5_244f + 4));
-                Map_Run146(25, 0);
+            Map_unk131_3(base5_244f);
+            Map_unk132_3(25, 0);
+            Map_unk133_3(25, 24, 0);
+            Map_unk134_3(24, 1);
+            Map_unk135_3();
+            Map_unk136_3(60);
+            Map_unk137_3(0, 1);
+            Map_unk55_4(20);
+            Map_unk27_3(25, 0x105, 60);
+            Map_unk138_3((base5_244f + 1));
+            Map_unk139_3(25, 0);
+            Map_unk28_3(25, 0x107, 60);
+            Map_unk140_3((base5_244f + 2));
+            Map_unk141_3(25, 0);
+            Map_unk142_3(70);
+            Map_unk29_3(25, 0x100, 60);
+            Map_unk143_3(25, 0, 0);
+            Map_unk144_3((base5_244f + 3));
+            Map_unk16(25, 0);
+            if (Map_unk17(0, 0) == 0) {
+                Map_unk145_3((base5_244f + 4));
+                Map_unk146_3(25, 0);
             } else {
-                Map_Run147((base5_244f + 5));
-                Map_Run148(25, 0);
+                Map_unk147_3((base5_244f + 5));
+                Map_unk148_3(25, 0);
             }
-            Map_Run149(60);
-            Map_Place30(25, 0x105, 60);
+            Map_unk149_3(60);
+            Map_unk30_3(25, 0x105, 60);
             base5_2455 = (s32)gVal5;
-            Map_Run150(base5_2455);
-            Map_Check18(25, 0);
-            Map_Run151(25, 1);
-            Map_Run152((base5_2455 + 1));
-            Map_Check19(25, 0);
-            Map_Run153(25, 3);
-            Map_Run154((base5_2455 + 2));
+            Map_unk150_3(base5_2455);
+            Map_unk18(25, 0);
+            Map_unk151_3(25, 1);
+            Map_unk152_3((base5_2455 + 1));
+            Map_unk19(25, 0);
+            Map_unk153_3(25, 3);
+            Map_unk154_3((base5_2455 + 2));
             Map_Run(25, 0);
-            Map_Do10(0x313);
-            Map_Run155();
+            Map_unk10_2(0x313);
+            Map_unk155_3();
         }
     }
 }
@@ -802,11 +801,11 @@ void Scene_RunMainScriptSequence(void)
 
     GameFlag_Set_1(0x301);
     GameFlag_Set_2(0x941);
-    Map_SetRect4(16, 75, 7, 4, 26, 55);
-    Map_Run156(4);
+    Map_unk4_5(16, 75, 7, 4, 26, 55);
+    Map_unk156_3(4);
     Battle_Reset_1();
     record = Scene_GetRecord_1(12);
-    Map_Run157(record, 1);
+    Map_unk157_3(record, 1);
     Motion_SetHPosTerrain_1(0, 0x1c80000, 0xb80000);
     Motion_ArmCb_1(0, 0x4000, 0);
     Motion_SetHPosTerrain_2(1, 0x1b80000, 0xc00000);
@@ -1448,36 +1447,36 @@ void Scene_RunMainScriptSequence(void)
     Battle_WaitMode0_100(20);
     Audio_PlayCue_6(17);
     SCENE_PHASE = 0x203;
-    Map_Run158();
+    Map_unk158_3();
     Battle_WaitMode0_101(1);
     Battle_WaitMode0_102(210);
-    Map_Run159(4);
+    Map_unk159_3(4);
     Battle_SchedShoulder_1();
 }
 
 /* map/locations/heidia/village/party_animation.c */
 extern u8 gWork[];
 
-void Map_Run160(); void Map_Run161();
+void Map_unk160_3(); void Map_unk161_3();
 
 void Scene_RunScene3bf4(void)
 {
     u32 i;
     s32 record;
 
-    Map_Place31(2, 0x10000, 0x8000);
-    Map_Place32(2, 0x1f8, 216);
-    Map_Place33(3, 0x10000, 0x8000);
-    Map_Place34(3, 0x1b8, 232);
-    Map_Place35(1, 0x10000, 0x8000);
-    Map_Place36(1, 0x1e0, 224);
-    Map_Run162(1);
-    Map_Place37(1, 0xc000, 0);
-    Map_Run163(2);
-    Map_Place38(2, 0xc000, 0);
-    Map_Run164(3);
-    Map_Place39(3, 0xc000, 0);
-    Map_Place40(0, 0xc000, 0);
+    Map_unk31_3(2, 0x10000, 0x8000);
+    Map_unk32_3(2, 0x1f8, 216);
+    Map_unk33_3(3, 0x10000, 0x8000);
+    Map_unk34_3(3, 0x1b8, 232);
+    Map_unk35_3(1, 0x10000, 0x8000);
+    Map_unk36_3(1, 0x1e0, 224);
+    Map_unk162_3(1);
+    Map_unk37_3(1, 0xc000, 0);
+    Map_unk163_3(2);
+    Map_unk38_3(2, 0xc000, 0);
+    Map_unk164_3(3);
+    Map_unk39_3(3, 0xc000, 0);
+    Map_unk40_3(0, 0xc000, 0);
 }
 
 /* map/locations/heidia/village/scene_party_placement.c */
@@ -1488,32 +1487,32 @@ void Scene_RunScene3bf5(void)
     u32 i;
     s32 record;
 
-    record = Map_Check20(0);
+    record = Map_unk20(0);
     if (record != 0) {
-        Map_Run165(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Map_unk165_3(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    record = Map_Check21(0);
+    record = Map_unk21(0);
     if (record != 0) {
-        Map_Run166(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Map_unk166_3(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    record = Map_Check22(0);
+    record = Map_unk22(0);
     if (record != 0) {
-        Map_Run167(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Map_unk167_3(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    Map_Run168(0, 0, 0);
-    Map_Place41(2, 0xb333, 0x5999);
-    Map_Place42(2, 0x1c8, 192);
-    Map_Place43(3, 0xb333, 0x5999);
-    Map_Place44(3, 0x1b8, 184);
-    Map_Place45(1, 0xb333, 0x5999);
-    Map_Place46(1, 0x1c0, 240);
-    Map_Run169(2);
-    Map_Run170(2, 12, 0);
-    Map_Run171(1);
-    Map_Run172(3);
-    Map_Run173(1, 12, 0);
-    Map_Run174(3, 12, 0);
-    Map_Run175(15);
+    Map_unk168_3(0, 0, 0);
+    Map_unk41_3(2, 0xb333, 0x5999);
+    Map_unk42_3(2, 0x1c8, 192);
+    Map_unk43_3(3, 0xb333, 0x5999);
+    Map_unk44_3(3, 0x1b8, 184);
+    Map_unk45_3(1, 0xb333, 0x5999);
+    Map_unk46_3(1, 0x1c0, 240);
+    Map_unk169_3(2);
+    Map_unk170_3(2, 12, 0);
+    Map_unk171_3(1);
+    Map_unk172_3(3);
+    Map_unk173_3(1, 12, 0);
+    Map_unk174_3(3, 12, 0);
+    Map_unk175_3(15);
 }
 
 /* map/locations/heidia/village/scene_sequence.c */
@@ -1600,20 +1599,20 @@ void Scene_RunScene3bf6(void)
     u32 i;
     s32 record;
 
-    Map_Place47(0x40000, 0x40000, 0x10000);
-    Map_Run176(141);
-    Map_Run177(80);
-    Map_Do11(0x120);
-    Map_Run178(5);
-    Map_Run179(145);
-    Map_SetRect5(16, 75, 7, 4, 26, 55);
-    Map_Place48(-1, -1, 0xe666);
-    Map_Place49(0, 0x100, 0);
-    Map_Place50(1, 0x100, 0);
-    Map_Place51(2, 0x100, 0);
-    Map_Place52(3, 0x100, 0);
-    Map_Place53(12, 0x100, 0);
-    Map_Run180(60);
+    Map_unk47_3(0x40000, 0x40000, 0x10000);
+    Map_unk176_3(141);
+    Map_unk177_3(80);
+    Map_unk11_2(0x120);
+    Map_unk178_3(5);
+    Map_unk179_3(145);
+    Map_unk5_5(16, 75, 7, 4, 26, 55);
+    Map_unk48_3(-1, -1, 0xe666);
+    Map_unk49_3(0, 0x100, 0);
+    Map_unk50_3(1, 0x100, 0);
+    Map_unk51_3(2, 0x100, 0);
+    Map_unk52_3(3, 0x100, 0);
+    Map_unk53_3(12, 0x100, 0);
+    Map_unk180_3(60);
 }
 
 /* map/locations/heidia/village/supplemental_scene.c */

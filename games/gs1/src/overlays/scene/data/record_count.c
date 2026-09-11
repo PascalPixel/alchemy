@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/data/record_count.h"
 
 extern u8 gWork[];
 extern u8 gOv;
@@ -13,9 +12,9 @@ extern u8 gOv5;
 
 u8 *SceneData_Run(s32);
 
-u8 *SceneData_Run2();
+u8 *SceneData_unk2_4();
 
-u8 *SceneData_Run3(s32 id);
+u8 *SceneData_unk3_4(s32 id);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -147,16 +146,16 @@ void Scene_RunActor13Mode102Step(void)
 
 void Scene_RunActor13Mode105Step(void)
 {
-    void SceneData_Run4(s32, s32);
+    void SceneData_unk4_4(s32, s32);
 
-    SceneData_Place2(0xD, 0x105, 0);
-    SceneData_Do2(0x23CD);
-    SceneData_Run4(0xD, 0);
+    SceneData_unk2_3(0xD, 0x105, 0);
+    SceneData_unk2_2(0x23CD);
+    SceneData_unk4_4(0xD, 0);
 }
 
 void *SceneData_GetTable8a58(void)
 {
-    void SceneData_Run4(s32, s32);
+    void SceneData_unk4_4(s32, s32);
 
     return &gOv;
 }
@@ -166,7 +165,7 @@ void State_AddToRecordCount(s32 arg0, s32 arg1)
     u8 *entry = SceneData_Run(arg0);
 
     SceneData_Apply2(arg0, entry[15] + arg1);
-    SceneData_Do3(arg0);
+    SceneData_unk3_2(arg0);
 }
 
 void Scene_AddToListedRecordCounts(s32 arg)
@@ -188,7 +187,7 @@ void Scene_AddToListedRecordCounts(s32 arg)
 
 void Scene_RunCountAdjustPanel(void)
 {
-    void SceneData_Run5();
+    void SceneData_unk5_4();
 
     u8 *record;
     volatile s32 *work;
@@ -198,55 +197,55 @@ void Scene_RunCountAdjustPanel(void)
     s32 msg;
 
     work = (volatile s32 *)gCell;
-    record = SceneData_Run2(work[125]);
-    win = SceneData_Check2(0, 0, 30, 9, 2);
+    record = SceneData_unk2_4(work[125]);
+    win = SceneData_unk2(0, 0, 30, 9, 2);
 
     msg = ((s32)&Value_00000c20);
-    SceneData_Run6(msg, win, 0, 0);
-    SceneData_Run5(msg + 1, win, 0, 16);
+    SceneData_unk6_3(msg, win, 0, 0);
+    SceneData_unk5_4(msg + 1, win, 0, 16);
     msg += 2;
     flag = 1;
-    SceneData_Run7(msg, win, 0, 32);
+    SceneData_unk7_3(msg, win, 0, 32);
 
 loop:
     {
         if (flag != 0) {
-            SceneData_Run8(win);
-            SceneData_Run9(record, win, 0, 48);
-            SceneData_Run10(gOv2, win, 48, 48);
+            SceneData_unk8_3(win);
+            SceneData_unk9_3(record, win, 0, 48);
+            SceneData_unk10_3(gOv2, win, 48, 48);
             flag = 0;
-            SceneData_Run11(record[15], 0, win, 72, 48);
+            SceneData_unk11_3(record[15], 0, win, 72, 48);
         }
 
         key = (volatile u32 *)0x03001c94;
 
         if ((*key & 8) != 0 || (*key & 4) != 0) {
-            SceneData_Run12(5);
-            SceneData_Run13(93);
+            SceneData_unk12_3(5);
+            SceneData_unk13_3(93);
             flag = 1;
         }
 
         if ((*key & 1) != 0) {
-            SceneData_Run14(1);
-            SceneData_Run15(91);
+            SceneData_unk14_3(1);
+            SceneData_unk15_3(91);
             flag = 1;
         }
 
         if ((*key & 2) != 0) {
-            SceneData_Run16(113);
-            SceneData_Run17(win);
-            SceneData_Run18(1);
-            SceneData_Run19(win, 1);
+            SceneData_unk16_3(113);
+            SceneData_unk17_3(win);
+            SceneData_unk18_3(1);
+            SceneData_unk19_3(win, 1);
 
             /* The refresh order 0, 1, 3, 2 is deliberate; do not sort it. */
-            SceneData_Run20(0);
-            SceneData_Run21(1);
-            SceneData_Run22(3);
-            SceneData_Run23(2);
+            SceneData_unk20_3(0);
+            SceneData_unk21_3(1);
+            SceneData_unk22_3(3);
+            SceneData_unk23_3(2);
             return;
         }
 
-        SceneData_Run24(1);
+        SceneData_unk24_3(1);
         goto loop;
     }
 }
@@ -255,7 +254,7 @@ void State_SetWorkWords1c0And1c8(void)
 {
     *(s32 *)((*(u8 **)gWork) + 0x1c0) = 0x201;
     *(s32 *)((*(u8 **)gWork) + 0x1c8) = 24;
-    SceneData_Run25();
+    SceneData_unk25_3();
 }
 
 /*
@@ -270,9 +269,9 @@ s32 Scene_RunEntrySetup(void)
 {
     *(s32 *)((*(u8 **)gWork) + 448) = 516;
     *(s32 *)((*(u8 **)gWork) + 456) = 24;
-    *(s32 *)(SceneData_Run26(11) + 28) = 0x19999;
-    *(s32 *)(SceneData_Run3(11) + 24) = 0x19999;
-    SceneData_Run27(13, 5);
+    *(s32 *)(SceneData_unk26_2(11) + 28) = 0x19999;
+    *(s32 *)(SceneData_unk3_4(11) + 24) = 0x19999;
+    SceneData_unk27_2(13, 5);
     SceneData_Apply4(14, 2);
     return 0;
 }
@@ -301,10 +300,10 @@ void State_SetRecordFlag53(void)
 
 int State_GetFarResult100c(void)
 {
-    return SceneData_Run28();
+    return SceneData_unk28_2();
 }
 
 int State_GetFarResult1020(void)
 {
-    return SceneData_Run29();
+    return SceneData_unk29_2();
 }

@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ability/load_glyph.h"
-
 
 void *Ability_GetData(s32);
 

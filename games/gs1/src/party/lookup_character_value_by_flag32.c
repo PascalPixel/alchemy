@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/lookup_character_value_by_flag32.h"
 
 extern s16 gRom[];
 extern s16 gRom2[];

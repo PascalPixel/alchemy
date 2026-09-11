@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/battle/effects/random_particle/play_cue_and_start_emitter_on_target.h"
 #include "effect_runtime.h"
 
 s32 WaitFrames(s32);

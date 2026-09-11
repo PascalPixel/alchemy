@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/raise_linked_scene_effect.h"
 
 typedef struct Obj {
     s32 f00;

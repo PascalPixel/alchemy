@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/waypoint/reset_motion_if_blocked_ahead.h"
 
 typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
 typedef struct { u8 filler0[0x28]; s16 *unk28; } Sub;

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/ability_menu/build_available_list.h"
 
 s32 Ability_GetMaximum(s32, s32);
 

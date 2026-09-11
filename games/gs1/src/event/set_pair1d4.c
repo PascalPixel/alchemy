@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/event/set_pair1d4.h"
 
 struct State_08091fa8 {
     u8 filler0[0x170];

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/motion_event.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -117,15 +116,15 @@ extern const unsigned char gOv[];
 extern const unsigned char gOv2[];
 extern const unsigned char gOv3[];
 extern const u8 gOv4[];
-extern void Actor_Run5(s32 dialogue);                 /* Actor_Run6 */
-extern struct Actor *Actor_Run7(s32 actor);  /* Scene_GetRecord */
-extern void Actor_Run8(s32 actor);                    /* ActorDraw_RunActorModeOneThenZero */
-extern struct Actor *Actor_Run9(s32 actor);  /* Scene_GetRecord */
+extern void Actor_unk5_4(s32 dialogue);                 /* Actor_unk6_4 */
+extern struct Actor *Actor_unk7_4(s32 actor);  /* Scene_GetRecord */
+extern void Actor_unk8_4(s32 actor);                    /* ActorDraw_RunActorModeOneThenZero */
+extern struct Actor *Actor_unk9_4(s32 actor);  /* Scene_GetRecord */
 extern const u8 gOv5[];
-extern void Actor_Run10(s32 dialogue);                 /* Actor_Run6 */
-extern struct Actor2 *Actor_Run11(s32 actor);  /* Scene_GetRecord */
-extern void Actor_Run12(s32 actor);                    /* ActorDraw_RunActorModeOneThenZero */
-extern struct Actor2 *Actor_Run13(s32 actor);  /* Scene_GetRecord */
+extern void Actor_unk10_4(s32 dialogue);                 /* Actor_unk6_4 */
+extern struct Actor2 *Actor_unk11_4(s32 actor);  /* Scene_GetRecord */
+extern void Actor_unk12_4(s32 actor);                    /* ActorDraw_RunActorModeOneThenZero */
+extern struct Actor2 *Actor_unk13_4(s32 actor);  /* Scene_GetRecord */
 extern u8 gVal[];
 extern u8 gVal2[];
 extern const u8 gOv6[];
@@ -135,11 +134,11 @@ extern s16 State_Table[];
 
 void *AcquireOverlayObject(s32, s32, s32, s32);
 
-struct SceneActor *Actor_Run14(s32);
+struct SceneActor *Actor_unk14_4(s32);
 
-struct SceneActor *Actor_Run15(s32);
+struct SceneActor *Actor_unk15_4(s32);
 
-struct SceneActor *Actor_Run16(s32);
+struct SceneActor *Actor_unk16_4(s32);
 
 typedef s32(*IwramIntegerSquareRoot)(s32);
 
@@ -147,19 +146,19 @@ u8 *Scene_GetPartnerActor();
 
 u8 *Scene_GetPlayerActor();
 
-u8 *Actor_Run17(int);
+u8 *Actor_unk17_4(int);
 
-struct SceneActor *Actor_Run18(s32);
+struct SceneActor *Actor_unk18_4(s32);
 
-struct SceneActor *Actor_Run19(s32);
+struct SceneActor *Actor_unk19_4(s32);
 
-struct SceneActor *Actor_Run20(s32);
+struct SceneActor *Actor_unk20_4(s32);
 
-struct SceneActor *Actor_Run21(s32);
+struct SceneActor *Actor_unk21_4(s32);
 
-struct Actor3 *Actor_Run22(s32 actor);
+struct Actor3 *Actor_unk22_4(s32 actor);
 
-u8 *Actor_Run23();
+u8 *Actor_unk23_4();
 
 s32 SceneFlag_Check(s32 flag);
 void SceneFlag_Set(s32 flag);
@@ -205,7 +204,7 @@ void Actor_Place(s32 actor, s32 x, s32 z);
 
 /*
  * Both calls are named at their decoded bl sites, 0x02001f0e and 0x02001f18:
- * the semantic targets are the main-image pair Actor_Run24/Actor_Run25,
+ * the semantic targets are the main-image pair Actor_unk24_4/Actor_unk25_4,
  * but a direct bl cannot encode that displacement, and only the RAM-resident
  * sites reproduce the reference bytes.  The reference also materializes both
  * stacked constants before either store, which named locals preserve.
@@ -253,7 +252,7 @@ static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
 {
     extern u8 *gWork;
 
-    Actor_Place10(actor, horizontal, vertical);
+    Actor_unk10_3(actor, horizontal, vertical);
 }
 
 /*
@@ -434,22 +433,22 @@ void ActorDraw_RunActorModeOneThenZero(s32 actor)
 {
     extern struct SceneWork *gWork;
 
-    Actor_Run26();
+    Actor_unk26_4();
     Actor_Apply5(actor, 1);
     Actor_Apply6(actor, 0);
-    Actor_Run27();
+    Actor_unk27_4();
 }
 
 void Dialogue_RunActor8FlagScene(void)
 {
     extern struct SceneWork2 *gWork;
 
-    Actor_Run28();
-    Actor_Place11(8, 0, 2);
-    Actor_Do7(0x305);
-    Actor_Do8(0x1cab);
+    Actor_unk28_4();
+    Actor_unk11_3(8, 0, 2);
+    Actor_unk7_2(0x305);
+    Actor_unk8_2(0x1cab);
     Actor_Apply7(8, 0);
-    Actor_Run29();
+    Actor_unk29_4();
 }
 
 void Dialogue_RunActor11Line(void)
@@ -466,9 +465,9 @@ void Dialogue_RunActor11Line(void)
  * 0x020009d6, not the guessed 0x020004b4.
  */
 
-    Actor_Do9(0x1cae);
-    Actor_Place12(11, 0, 2);
-    Actor_Do10(11);
+    Actor_unk9_2(0x1cae);
+    Actor_unk12_3(11, 0, 2);
+    Actor_unk10_2(11);
 }
 
 void Dialogue_RunActor12TwoFlagScene(void)
@@ -485,13 +484,13 @@ void Dialogue_RunActor12TwoFlagScene(void)
  * sub4 and sub5 -- not the same symbol twice.
  */
 
-    Actor_Run30();
-    Actor_Place13(12, 0, 2);
-    Actor_Do11(0x306);
-    Actor_Do12(0x868);
-    Actor_Do13(0x1caf);
+    Actor_unk30_4();
+    Actor_unk13_3(12, 0, 2);
+    Actor_unk11_2(0x306);
+    Actor_unk12_2(0x868);
+    Actor_unk13_2(0x1caf);
     Actor_Apply8(12, 0);
-    Actor_Run31();
+    Actor_unk31_4();
 }
 
 void Dialogue_ShowLine1CB0ForActor13(void)
@@ -506,41 +505,41 @@ void Dialogue_ShowLine1CB0ForActor13(void)
  * time of writing): `bl sub6`, `bl sub7`, `bl sub8`.
  */
 
-    Actor_Do14(0x1cb0);
-    Actor_Place14(13, 0, 2);
-    Actor_Do15(13);
+    Actor_unk14_2(0x1cb0);
+    Actor_unk14_3(13, 0, 2);
+    Actor_unk15_2(13);
 }
 
 void Dialogue_RunActorFourteenFlagDialogue(void)
 {
     extern u8 gWork[];
 
-    struct SceneActor *actor = Actor_Run14(14);
+    struct SceneActor *actor = Actor_unk14_4(14);
     s16 facing = (s16)actor->facing;
     s32 text;
 
     actor->state_flags |= 2;
-    Actor_Run32();
+    Actor_unk32_4();
     text = (s32)&SceneMessage_ActorFourteenBase;
-    Actor_Do16(text);
+    Actor_unk16_2(text);
     Actor_Apply9(14, 0);
-    Actor_Place15(14, 0, 2);
-    if (Scene_QueryFlag(Actor_Check6, 0x300) == 0) {
-        Scene_Call3(Actor_Place16, 14, 256, 60);
-        Actor_Place17(14, 0, 10);
-        Actor_Place18(14, 0, 10);
-        Scene_SetFlag(Actor_Do17, 0x300);
+    Actor_unk15_3(14, 0, 2);
+    if (Scene_QueryFlag(Actor_unk6, 0x300) == 0) {
+        Scene_Call3(Actor_unk16_3, 14, 256, 60);
+        Actor_unk17_3(14, 0, 10);
+        Actor_unk18_3(14, 0, 10);
+        Scene_SetFlag(Actor_unk17_2, 0x300);
     }
-    Actor_Do18(text + 2);
-    Actor_Place19(14, 0, 10);
+    Actor_unk18_2(text + 2);
+    Actor_unk19_3(14, 0, 10);
     actor->facing = facing;
-    Actor_Do19(1);
-    Actor_Run33();
+    Actor_unk19_2(1);
+    Actor_unk33_4();
     {
         s32 shown = 1;
         actor->state_flags = shown;
     }
-    Actor_Do20(0x307);
+    Actor_unk20_2(0x307);
 }
 
 void Dialogue_RunActorFifteenFacingPreservedDialogue(void)
@@ -550,17 +549,17 @@ void Dialogue_RunActorFifteenFacingPreservedDialogue(void)
     struct Actor3 *actor;
     s16 facing0;
 
-    actor = Actor_Run22(15);
+    actor = Actor_unk22_4(15);
     facing0 = (s16)actor->facing;
     actor->state_flags |= 2;
-    Actor_Run34();
-    Actor_Do21(0x1cb4);
+    Actor_unk34_4();
+    Actor_unk21_2(0x1cb4);
     Actor_Apply10(15, 0);
-    Actor_Place20(15, 0, 2);
-    Actor_Place21(15, 0, 10);
+    Actor_unk20_3(15, 0, 2);
+    Actor_unk21_3(15, 0, 10);
     actor->facing = (u16)facing0;
-    Actor_Do22(1);
-    Actor_Run35();
+    Actor_unk22_2(1);
+    Actor_unk35_4();
     actor->state_flags = 0;
 }
 
@@ -568,65 +567,65 @@ void Dialogue_RunActor16CountedDialogue(void)
 {
     extern struct SceneWork2 *gWork;
 
-    Actor_Run36();
-    Actor_Do23(0x1cb5);
-    Actor_Place22(16, 0, 2);
+    Actor_unk36_4();
+    Actor_unk23_2(0x1cb5);
+    Actor_unk22_3(16, 0, 2);
     Actor_Apply11(16, 0);
     if (Actor_Apply12(0, 0) != 0) {
         gWork->branch_counter += 1;
     }
     Actor_Apply13(16, 0);
-    Actor_Do24(0x308);
-    Actor_Run37();
+    Actor_unk24_2(0x308);
+    Actor_unk37_4();
 }
 
 void Dialogue_RunActorEightTimedDialogue(void)
 {
     extern struct SceneWork2 *gWork;
 
-    Actor_Run38();
+    Actor_unk38_4();
     Actor_Apply14(8, 1);
-    Actor_Do25(20);
-    Actor_Place23(8, 0, 20);
-    Actor_Do26(0x305);
-    Actor_Do27(0x1cab);
-    Actor_Place24(8, 0, 20);
-    Actor_Run39();
+    Actor_unk25_2(20);
+    Actor_unk23_3(8, 0, 20);
+    Actor_unk26_2(0x305);
+    Actor_unk27_2(0x1cab);
+    Actor_unk24_3(8, 0, 20);
+    Actor_unk39_4();
 }
 
 void Dialogue_RunActor11AcceptanceDialogue(void)
 {
     extern struct SceneWork2 *gWork;
 
-    Actor_Run10(0x1cbd);
-    Actor_Run11(11)->accepted = 1;
-    Actor_Run12(11);
-    Actor_Run13(11)->accepted = 0;
+    Actor_unk10_4(0x1cbd);
+    Actor_unk11_4(11)->accepted = 1;
+    Actor_unk12_4(11);
+    Actor_unk13_4(11)->accepted = 0;
 }
 
 void Dialogue_RunActor12TimedTwoFlagScene(void)
 {
     extern struct SceneWork2 *gWork;
 
-    Actor_Run40();
+    Actor_unk40_4();
     Actor_Apply15(12, 1);
-    Actor_Do28(20);
-    Actor_Place25(12, 0, 20);
-    Actor_Do29(0x306);
-    Actor_Do30(0x868);
-    Actor_Do31(0x1caf);
-    Actor_Place26(12, 0, 20);
-    Actor_Run41();
+    Actor_unk28_2(20);
+    Actor_unk25_3(12, 0, 20);
+    Actor_unk29_2(0x306);
+    Actor_unk30_2(0x868);
+    Actor_unk31_2(0x1caf);
+    Actor_unk26_3(12, 0, 20);
+    Actor_unk41_4();
 }
 
 void ActorDraw_RunActor13AcceptanceDialogue(void)
 {
     extern struct SceneWork *gWork;
 
-    Actor_Run5(0x1cbf);
-    Actor_Run7(13)->accepted = 1;
-    Actor_Run8(13);
-    Actor_Run9(13)->accepted = 0;
+    Actor_unk5_4(0x1cbf);
+    Actor_unk7_4(13)->accepted = 1;
+    Actor_unk8_4(13);
+    Actor_unk9_4(13)->accepted = 0;
 }
 
 void Scene_RunSupplementalSequenceOne(void)
@@ -637,22 +636,22 @@ void Scene_RunSupplementalSequenceOne(void)
     u8 *record;
 
     {
-        u16 *flags = (u16 *)(Actor_Check7(14) + 100);
+        u16 *flags = (u16 *)(Actor_unk7(14) + 100);
         u16 bits = (u16)(s32)gVal;
 
         *flags |= bits;
     }
-    Actor_Run42();
+    Actor_unk42_4();
     if (Actor_Check(0x307) != 0) {
-        Actor_Run43((s32)gVal2);
-        Actor_Run44(14);
+        Actor_unk43_4((s32)gVal2);
+        Actor_unk44_4(14);
     } else {
-        Actor_Run45();
+        Actor_unk45_4();
         Actor_Do(0x307);
     }
-    Actor_Run46();
+    Actor_unk46_4();
     {
-        u8 *record = Actor_Run23(14);
+        u8 *record = Actor_unk23_4(14);
         s32 shown = 1;
 
         *(volatile u16 *)((s32)record + 100) = shown;
@@ -664,16 +663,16 @@ void Dialogue_RunActorFifteenDialogue(void)
     extern u8 gWork[];
 
     {
-        struct SceneActor *actor = Actor_Run15(15);
+        struct SceneActor *actor = Actor_unk15_4(15);
         actor->state_flags |= 2;
     }
-    Actor_Run47();
-    Actor_Do32(0x1cc1);
-    Actor_Do33(15);
-    Actor_Run48();
+    Actor_unk47_4();
+    Actor_unk32_2(0x1cc1);
+    Actor_unk33_2(15);
+    Actor_unk48_4();
     {
         s32 clear = 0;
-        struct SceneActor *actor = Actor_Run16(15);
+        struct SceneActor *actor = Actor_unk16_4(15);
         actor->state_flags = clear;
     }
 }
@@ -687,42 +686,42 @@ void Scene_RunScene385SequenceA(void)
     s32 record;
     s32 v5;
 
-    rec7 = Actor_Check2(0x308);
+    rec7 = Actor_unk2(0x308);
     if (rec7 == 0) {
-        Actor_Run49();
-        *(u8 *)(Actor_Check8(16) + 91) = 1;
-        Actor_Run50(16, 1);
+        Actor_unk49_4();
+        *(u8 *)(Actor_unk8(16) + 91) = 1;
+        Actor_unk50_4(16, 1);
         Actor_Run(16, 1);
-        Actor_Run51(20);
-        Actor_Do2(0x1cb5);
-        Actor_Place2(16, 0, 2);
-        Actor_Check3(16, 0);
-        if (Actor_Check4(0, 0) != 0) {
+        Actor_unk51_4(20);
+        Actor_unk2_2(0x1cb5);
+        Actor_unk2_3(16, 0, 2);
+        Actor_unk3(16, 0);
+        if (Actor_unk4(0, 0) != 0) {
             bump_step(1);
         }
-        Actor_Run52(16, 0);
-        *(u8 *)(Actor_Check9(16) + 91) = rec7;
-        Actor_Run53(16, 2);
-        Actor_Run2();
-        Actor_Do3(0x308);
+        Actor_unk52_4(16, 0);
+        *(u8 *)(Actor_unk9(16) + 91) = rec7;
+        Actor_unk53_4(16, 2);
+        Actor_unk2_4();
+        Actor_unk3_2(0x308);
     } else {
-        Actor_Do4(0x1cc2);
-        *(u8 *)(Actor_Check10(16) + 91) = 1;
-        Actor_Run54(16);
+        Actor_unk4_2(0x1cc2);
+        *(u8 *)(Actor_unk10(16) + 91) = 1;
+        Actor_unk54_4(16);
         v5 = 0;
-        *(u8 *)(Actor_Check11(16) + 91) = v5;
+        *(u8 *)(Actor_unk11(16) + 91) = v5;
     }
 }
 
-void Actor_Run55(int actor, int x, int z, int field40)
+void Actor_unk55_4(int actor, int x, int z, int field40)
 {
     extern u8 *gWork;
 
-    u8 *record = Actor_Run17(actor); int frames;
-    Actor_Place27(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
+    u8 *record = Actor_unk17_4(actor); int frames;
+    Actor_unk27_3(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
     *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Actor_Apply16(record, 0);
-    Actor_Place28(actor, x, z); Actor_Place29(actor, x << 16, z << 16);
-    for (frames = 60; frames != 0; --frames) { Actor_Do34(1); if (*(s16 *)(record + 42) == 0) break; }
+    Actor_unk28_3(actor, x, z); Actor_unk29_3(actor, x << 16, z << 16);
+    for (frames = 60; frames != 0; --frames) { Actor_unk34_2(1); if (*(s16 *)(record + 42) == 0) break; }
     Actor_Apply17(record, 1); *(s32 *)(record + 72) = 0x10000;
 }
 
@@ -733,22 +732,22 @@ void Scene_RunScene385(void)
     u32 i;
     s32 record;
 
-    Actor_Run56();
-    Actor_Run57(100);
-    Actor_Run58(40);
-    if (Actor_Check5(0x867) == 0) {
-        Actor_Run3(21, 0x102);
-        Actor_Run59(21, 4, 0);
-        Actor_Run60(12);
-        Actor_Run61(21, 4, 0);
-        Actor_Run62(20);
-        Actor_Run4(21, 0x188, 104, 0x70000);
-        Actor_Run63(20);
-        Actor_Place3(21, 0x198, 104);
-        Actor_Place4(21, 0x198, 120);
-        Actor_Do5(0x867);
+    Actor_unk56_4();
+    Actor_unk57_4(100);
+    Actor_unk58_4(40);
+    if (Actor_unk5(0x867) == 0) {
+        Actor_unk3_4(21, 0x102);
+        Actor_unk59_4(21, 4, 0);
+        Actor_unk60_4(12);
+        Actor_unk61_4(21, 4, 0);
+        Actor_unk62_4(20);
+        Actor_unk4_4(21, 0x188, 104, 0x70000);
+        Actor_unk63_4(20);
+        Actor_unk3_3(21, 0x198, 104);
+        Actor_unk4_3(21, 0x198, 120);
+        Actor_unk5_2(0x867);
     }
-    Actor_Run64();
+    Actor_unk64_4();
 }
 
 void PlaceActorAndSetSceneDelay(s32 x, s32 y, s32 delay)
@@ -758,44 +757,44 @@ void PlaceActorAndSetSceneDelay(s32 x, s32 y, s32 delay)
     s32 zero = 0;
 
     SetScale(zero, 0x8000, 0x4000);
-    Actor_Place30(zero, x, y);
+    Actor_unk30_3(zero, x, y);
     *(s32 *)(gWork + 456) = 16;
-    Actor_Do35(delay);
+    Actor_unk35_2(delay);
 }
 
 void Scene_SetupDescriptor9740(void)
 {
-    Actor_Do36(158);
-    Actor_Place31(gOv6, 56, 19);
-    Actor_Place32(408, 320, 5);
+    Actor_unk36_2(158);
+    Actor_unk31_3(gOv6, 56, 19);
+    Actor_unk32_3(408, 320, 5);
 }
 
 void ActorDraw_SetupActorEighteenAt312_304(void)
 {
     extern struct SceneWork *gWork;
 
-    Actor_Do37(158);
-    Actor_Place33(gOv5, 50, 18);
-    Actor_Place34(312, 304, 6);
+    Actor_unk37_2(158);
+    Actor_unk33_3(gOv5, 50, 18);
+    Actor_unk34_3(312, 304, 6);
 }
 
 void Scene_SetupWithDescriptor976C(void)
 {
-    Actor_Do38(158);
-    Actor_Place35(gOv7, 44, 17);
-    Actor_Place36(216, 288, 7);
+    Actor_unk38_2(158);
+    Actor_unk35_3(gOv7, 44, 17);
+    Actor_unk36_3(216, 288, 7);
 }
 
 void ActorDraw_SetupActorZeroForSceneEight(void)
 {
     extern struct SceneWork *gWork;
 
-    struct SceneActor2 *actor = Actor_Run18(0);
+    struct SceneActor2 *actor = Actor_unk18_4(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
-    Actor_Do39(158);
-    Actor_Place37((const void *)0x02009782, 54, 13);
+    Actor_unk39_2(158);
+    Actor_unk37_3((const void *)0x02009782, 54, 13);
     {
         s32 cell = 23;
         s32 row = 12;
@@ -806,96 +805,96 @@ void ActorDraw_SetupActorZeroForSceneEight(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Actor_Place38(376, 224, 8);
+    Actor_unk38_3(376, 224, 8);
 }
 
 void ActorDraw_SetupActorZeroForSceneNine(void)
 {
     extern struct SceneWork *gWork;
 
-    struct SceneActor2 *actor = Actor_Run19(0);
+    struct SceneActor2 *actor = Actor_unk19_4(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
-    Actor_Do40(158);
-    Actor_Place39((const void *)0x02009798, 49, 10);
+    Actor_unk40_2(158);
+    Actor_unk39_3((const void *)0x02009798, 49, 10);
     {
         s32 cell = 18;
         s32 row = 10;
 
-        Actor_SetRect2(33, 20, 1, 3, cell, row);
+        Actor_unk2_5(33, 20, 1, 3, cell, row);
     }
     actor->state_23 &= ~1;
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Actor_Place40(296, 176, 9);
+    Actor_unk40_3(296, 176, 9);
 }
 
 void Scene_SetupWithDescriptor97AE(void)
 {
-    Actor_Do41(158);
-    Actor_Place41(gOv8, 38, 6);
-    Actor_Place42(120, 144, 10);
+    Actor_unk41_2(158);
+    Actor_unk41_3(gOv8, 38, 6);
+    Actor_unk42_3(120, 144, 10);
 }
 
 void ActorDraw_SetupActorSceneCells(void)
 {
     extern struct SceneWork *gWork;
 
-    struct SceneActor3 *actor = Actor_Run21(0);
+    struct SceneActor3 *actor = Actor_unk21_4(0);
     struct Presentation *record = actor->presentation;
     u8 flags;
 
-    Actor_Do42(188);
-    Actor_SetRect3(42, 33, 34, 16, 2, 2);
-    Actor_SetRect4(42, 35, 36, 16, 2, 2);
-    Actor_Do43(4);
-    Actor_SetRect5(40, 33, 34, 16, 2, 2);
-    Actor_SetRect6(40, 35, 36, 16, 2, 2);
-    Actor_Do44(4);
+    Actor_unk42_2(188);
+    Actor_unk3_5(42, 33, 34, 16, 2, 2);
+    Actor_unk4_5(42, 35, 36, 16, 2, 2);
+    Actor_unk43_2(4);
+    Actor_unk5_5(40, 33, 34, 16, 2, 2);
+    Actor_unk6_5(40, 35, 36, 16, 2, 2);
+    Actor_unk44_2(4);
     {
         s32 mode = 3;
         s32 value = 16;
-        Actor_SetRect7(33, 21, 2, 2, mode, value);
+        Actor_unk7_5(33, 21, 2, 2, mode, value);
     }
     actor->state_23 &= ~1;
     flags = record->flags;
     flags |= 12;
     record->flags = flags;
-    Actor_Place43(64, 272, 11);
+    Actor_unk43_3(64, 272, 11);
 }
 
 void ActorDraw_SetupActorZeroForSceneTwelve(void)
 {
     extern struct SceneWork *gWork;
 
-    struct SceneActor3 *actor = Actor_Run20(0);
+    struct SceneActor3 *actor = Actor_unk20_4(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
-    Actor_Do45(158);
-    Actor_Place44((const void *)0x020097c4, 35, 9);
+    Actor_unk45_2(158);
+    Actor_unk44_3((const void *)0x020097c4, 35, 9);
     {
         s32 cell = 4;
         s32 row = 10;
 
-        Actor_SetRect8(33, 20, 1, 3, cell, row);
+        Actor_unk8_5(33, 20, 1, 3, cell, row);
     }
     actor->state_23 &= ~1;
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Actor_Place45(72, 160, 12);
+    Actor_unk45_3(72, 160, 12);
 }
 
 void State_SetFlag200AndConfigureRegion55_26(void)
 {
-    Actor_Do46(0x200);
+    Actor_unk46_2(0x200);
     {
         s32 a = 23;
         s32 b = 26;
-        Actor_SetRect9(55, 26, 4, 2, a, b);
+        Actor_unk9_5(55, 26, 4, 2, a, b);
     }
 }
 
@@ -903,11 +902,11 @@ void ActorDraw_SetFlag200AndSceneCell23(void)
 {
     extern struct SceneWork *gWork;
 
-    Actor_Do47(0x200);
+    Actor_unk47_2(0x200);
     {
         s32 first_value = 23;
         s32 second_value = 26;
-        Actor_SetRect10(23, 23, 4, 2, first_value, second_value);
+        Actor_unk10_5(23, 23, 4, 2, first_value, second_value);
     }
 }
 
@@ -915,7 +914,7 @@ void Scene_SetActor21Values0And4(void)
 {
     extern u8 gWork[];
 
-    Actor_Place46(21, 0, 4);
+    Actor_unk46_3(21, 0, 4);
 }
 
 void Scene_RunScene385(void)
@@ -925,25 +924,25 @@ void Scene_RunScene385(void)
     u32 i;
     s32 record;
 
-    Actor_Run65(231);
-    Actor_Run66();
-    Actor_Run67(10);
-    Actor_Run68(18, 2);
-    Actor_Place5(18, 0xcccc, 0x6666);
-    Actor_Place6(18, 216, 0x198);
-    Actor_Run69(10);
-    Actor_Place7(18, 0x4000, 20);
-    Actor_Run70(18, 6, 0);
-    Actor_Run71(30);
-    Actor_Run72(18, 6, 0);
-    Actor_Run73(30);
-    Actor_Run74(18, 6, 0);
-    Actor_Run75(30);
-    Actor_Place8(18, 216, 0x188);
-    Actor_Run76(10);
-    Actor_Place9(18, 0x4000, 20);
-    Actor_Do6(0x858);
-    Actor_Run77();
+    Actor_unk65_4(231);
+    Actor_unk66_4();
+    Actor_unk67_4(10);
+    Actor_unk68_4(18, 2);
+    Actor_unk5_3(18, 0xcccc, 0x6666);
+    Actor_unk6_3(18, 216, 0x198);
+    Actor_unk69_4(10);
+    Actor_unk7_3(18, 0x4000, 20);
+    Actor_unk70_4(18, 6, 0);
+    Actor_unk71_4(30);
+    Actor_unk72_4(18, 6, 0);
+    Actor_unk73_4(30);
+    Actor_unk74_4(18, 6, 0);
+    Actor_unk75_4(30);
+    Actor_unk8_3(18, 216, 0x188);
+    Actor_unk76_4(10);
+    Actor_unk9_3(18, 0x4000, 20);
+    Actor_unk6_2(0x858);
+    Actor_unk77_4();
 }
 
 void ActorDraw_SetPairedSceneCells(void)
@@ -953,8 +952,8 @@ void ActorDraw_SetPairedSceneCells(void)
     s32 v1 = 13;
     s32 v2 = 25;
 
-    Actor_SetRect11(41, 43, 1, 1, v1, v2);
-    Actor_SetRect12(40, 42, 12, 22, 3, 3);
+    Actor_unk11_5(41, 43, 1, 1, v1, v2);
+    Actor_unk12_5(40, 42, 12, 22, 3, 3);
 }
 
 void ActorDraw_SetAlternatePairedSceneCells(void)
@@ -964,35 +963,35 @@ void ActorDraw_SetAlternatePairedSceneCells(void)
     s32 v1 = 13;
     s32 v2 = 25;
 
-    Actor_SetRect13(37, 43, 1, 1, v1, v2);
-    Actor_SetRect14(36, 42, 12, 22, 3, 3);
+    Actor_unk13_5(37, 43, 1, 1, v1, v2);
+    Actor_unk14_5(36, 42, 12, 22, 3, 3);
 }
 
 void Scene_RunActorEighteenDialogue(void)
 {
     extern struct SceneWork *gWork;
 
-    Actor_Run78();
-    Actor_Do48(0x1342);
+    Actor_unk78_4();
+    Actor_unk48_2(0x1342);
     Actor_Apply18(18, 0);
-    Actor_Place47(18, 0, 0);
-    Actor_Do49(2);
+    Actor_unk47_3(18, 0, 0);
+    Actor_unk49_2(2);
     Actor_Apply19(18, 0);
     Actor_Apply20(18, 1);
 
-    if (Actor_Check12(231) != -1 && Actor_Check13(0x858) == 0) {
+    if (Actor_unk12(231) != -1 && Actor_unk13(0x858) == 0) {
         gWork->actor18_marker = 1;
     }
 
-    Actor_Run79();
+    Actor_unk79_4();
 }
 
 void State_SetFlag947AndValue29dc(void)
 {
-    Actor_Run80();
+    Actor_unk80_4();
     Actor_Apply21(0x947, 1);
     Actor_Apply22(0x29dc, 1);
-    Actor_Run81();
+    Actor_unk81_4();
 }
 
 const u8 *SceneData_GetTable97dc(void)

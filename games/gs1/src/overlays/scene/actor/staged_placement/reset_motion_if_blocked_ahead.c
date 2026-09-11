@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_placement/reset_motion_if_blocked_ahead.h"
 #include "staged_actor_probe_state.h"
 
 extern s32 StagedActorDirectionSteps[];

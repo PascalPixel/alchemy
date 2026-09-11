@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/window/apply_rect_at_object_origin.h"
 
 void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 height, s32 palette)
 {

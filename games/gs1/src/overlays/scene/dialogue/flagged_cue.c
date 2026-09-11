@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/flagged_cue.h"
 
 #define SCENE_STEP (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
@@ -30,16 +29,16 @@ u8 *Talk_Run(s32);
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-    void Talk_Run2(s32, s32, s32);
+    void Talk_unk2_4(s32, s32, s32);
 
-    Talk_Run2(actor, x, y);
+    Talk_unk2_4(actor, x, y);
 }
 
 static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
 {
-    void Talk_Run3(s32, s32, s32);
+    void Talk_unk3_4(s32, s32, s32);
 
-    Talk_Place4(actor, offset, zero);
+    Talk_unk4_3(actor, offset, zero);
 }
 
 static __inline__ s32 Scene_Value3(s32 (*fn)(), s32 a, s32 b, s32 c)
@@ -54,7 +53,7 @@ static __inline__ void Scene_Call3(void (*fn)(), s32 a, s32 b, s32 c)
 
 void Actor_SetActor23Params2And6(void)
 {
-    Talk_Place5(0x17, 2, 6);
+    Talk_unk5_3(0x17, 2, 6);
 }
 
 /*
@@ -84,7 +83,7 @@ u8 *SceneData_GetTable98c4(void)
 
 s32 SceneData_SelectTableByFlag9a7(void)
 {
-    if (Talk_Check2(0x9A7) != 0) {
+    if (Talk_unk2(0x9A7) != 0) {
         return 0x02009A98;
     }
     return 0x02009900;
@@ -93,47 +92,47 @@ s32 SceneData_SelectTableByFlag9a7(void)
 void Actor_SetupActorForTable9638(s32 a0)
 {
     extern u8 gWork[];
-    void Talk_Run3();
+    void Talk_unk3_4();
 
     u32 i;
     s32 record;
 
-    record = Talk_Check3();
+    record = Talk_unk3();
     *(volatile s32 *)(record + 24) = 0x10000;
     record = Talk_Check(a0);
     *(volatile s32 *)(record + 28) = 0x10000;
     Talk_Do(0x26af);
-    Talk_Run4(a0, 0);
+    Talk_unk4_4(a0, 0);
     Talk_Place(a0, 0xc000, 0);
-    Talk_Run5(20);
-    Talk_Run6(a0, 0x2009638);
+    Talk_unk5_4(20);
+    Talk_unk6_4(a0, 0x2009638);
 }
 
 void Actor_UpdateObjectWithCue28be(s32 obj)
 {
     s32 cue = (s32)&Value_000028be;
-    Talk_Do4(cue);
+    Talk_unk4_2(cue);
     Talk_Apply(obj, 0);
     if (Talk_Apply2(0, 0) == 0) {
-        Talk_Do5(10);
-        Talk_Do6(cue + 1);
+        Talk_unk5_2(10);
+        Talk_unk6_2(cue + 1);
     } else {
-        Talk_Do7(cue + 2);
+        Talk_unk7_2(cue + 2);
     }
     Talk_Apply3(obj, 0);
 }
 
 void Actor_SetupActor18Event(void)
 {
-    void Talk_Run3(s32, s32, s32);
+    void Talk_unk3_4(s32, s32, s32);
 
-    Talk_Run7(2491);
-    Talk_Run8(0x28b8);
-    Talk_Run9(18, 0);
+    Talk_unk7_4(2491);
+    Talk_unk8_4(0x28b8);
+    Talk_unk9_4(18, 0);
     PlaceActor(18, 65536, 32768);
     SetOffset(18, -16, 0);
-    Talk_Run10(18, 0, 0);
-    Talk_Do8(10);
+    Talk_unk10_4(18, 0, 0);
+    Talk_unk8_2(10);
 }
 
 void Scene_RunTableTransition(void)
@@ -145,17 +144,17 @@ void Scene_RunTableTransition(void)
     s32 y = gOv[no][1];
 
     Talk_Run(0)[85] = 2;
-    Talk_Do9(158);
+    Talk_unk9_2(158);
     if (no == 6) {
-        Scene_Value3(Talk_Check4, (s32)gOv2, (u16)x, (u16)y);
-        Scene_Call3(Talk_Run11, 0, 0, -16);
+        Scene_Value3(Talk_unk4, (s32)gOv2, (u16)x, (u16)y);
+        Scene_Call3(Talk_unk11_4, 0, 0, -16);
     } else {
-        Scene_Value3(Talk_Check5, (s32)gOv3, (u16)x, (u16)y);
-        Scene_Call3(Talk_Run12, 0, 2, -16);
+        Scene_Value3(Talk_unk5, (s32)gOv3, (u16)x, (u16)y);
+        Scene_Call3(Talk_unk12_4, 0, 2, -16);
     }
-    Talk_Do10(10);
+    Talk_unk10_2(10);
     *(s32 *)(gWork + 0x1c8) = 16;
-    Talk_Do11(no);
+    Talk_unk11_2(no);
 }
 
 void State_SetWord1c8To16AndForward16c(void)
@@ -167,7 +166,7 @@ void State_SetWord1c8To16AndForward16c(void)
     s32 n = *p;
 
     *(s32 *)(work + 0x1C8) = 16;
-    Talk_Do12(n);
+    Talk_unk12_2(n);
 }
 
 /*
@@ -438,7 +437,7 @@ void Scene_RunSecondarySequence(void)
     ObjectMotion_SetHorizontalPositionWithTerrain_1(22, 0x480000, 0x1380000);
     BattleRuntime_WaitIfModeZero_14(20);
     Motion_CommitPositionAndActivate_3(22, 0, 16);
-    Talk_SetRect2(32, 0, 1, 2, 4, 18);
+    Talk_unk2_5(32, 0, 1, 2, 4, 18);
     Audio_PlayCue_2(159);
     BattleRuntime_WaitIfModeZero_15(20);
     BattleEvent_RunActionAndWait_4(22, 0);
@@ -536,7 +535,7 @@ void Scene_RunSecondarySequence(void)
     BattleEvent_RunActionAndWait_21(22, 0);
     /* One extra call, run only when GameFlag_IsSet_1(0x9bf) is non-zero. */
     if (GameFlag_IsSet_2(0x9bf) != 0) {
-        Talk_Run13();
+        Talk_unk13_4();
     }
     SceneWork_SetStepValue_2(0x28a5);
     BattleRuntime_WaitIfModeZero_51(10);
@@ -565,9 +564,9 @@ void Scene_RunSecondarySequence(void)
     Motion_OffsetPositionAndResetMotion_1(25, 0, 16);
     Motion_CommitPositionAndActivate_5(22, 0, 16);
     BattleRuntime_WaitIfModeZero_62(30);
-    Talk_Place2(25, 0, 0);
+    Talk_unk2_3(25, 0, 0);
     SCENE_STEP += 1;
-    Talk_Run14(242, 0);
+    Talk_unk14_4(242, 0);
     BattleRuntime_WaitIfModeZero_63(10);
     /* Clear bit 0 of the flag byte at offset 90 of the record, then set it
      * back through a second record accessor. */
@@ -600,13 +599,13 @@ void Scene_RunSecondarySequence(void)
     Motion_CommitPositionAndActivate_7(22, -16, 0);
     Motion_ArmCb_16(22, 0xc000, 0);
     Battle_WaitMode0_72(20);
-    Talk_SetRect3(34, 0, 1, 2, 4, 18);
+    Talk_unk3_5(34, 0, 1, 2, 4, 18);
     Audio_PlayCue_3(158);
     Battle_WaitMode0_73(10);
     Motion_CommitPositionAndActivate_8(22, 0, -16);
     Motion_SetHPosTerrain_3(22, 0, 0);
     Battle_WaitMode0_74(10);
-    Talk_SetRect4(32, 0, 1, 2, 4, 18);
+    Talk_unk4_5(32, 0, 1, 2, 4, 18);
     Audio_PlayCue_4(159);
     Battle_WaitMode0_75(50);
     Motion_ArmCb_17(0, 0x4000, 0);
@@ -653,7 +652,7 @@ void Scene_RunSecondarySequence(void)
     }
     Motion_CommitPos_4(2);
     Motion_SetHPosTerrain_6(2, 0, 0);
-    Talk_Do2(10);
+    Talk_unk2_2(10);
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }
 
@@ -710,16 +709,16 @@ void Scene_RunSequenceB(void)
     u32 i;
     s32 record;
 
-    Talk_Run15();
-    Talk_Do3(0x28b7);
-    Talk_Run16(1, 0);
-    Talk_Place3(0, 0, -16);
-    Talk_Run17();
+    Talk_unk15_4();
+    Talk_unk3_2(0x28b7);
+    Talk_unk16_4(1, 0);
+    Talk_unk3_3(0, 0, -16);
+    Talk_unk17_4();
 }
 
 s32 SceneData_SelectSecondaryTableByFlag9a7(void)
 {
-    if (Talk_Check6(0x9A7) != 0) {
+    if (Talk_unk6(0x9A7) != 0) {
         return 0x02009EE4;
     }
     return 0x02009D04;

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/task.h"
 
 /* overlays/scene/state/task/actor_motion.c */
 typedef struct Obj {
@@ -16,8 +15,8 @@ typedef struct Obj {
 
 extern s32 gCell[];
 
-Obj *State_Run15(s32);
-Obj *State_Run16(s32);
+Obj *State_unk15_4(s32);
+Obj *State_unk16_4(s32);
 
 void Actor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 {
@@ -26,9 +25,9 @@ void Actor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = State_Run15(gCell[125]);
-    q = State_Run16(a0);
-    State_Run17();
+    p = State_unk15_4(gCell[125]);
+    q = State_unk16_4(a0);
+    State_unk17_4();
     {
         x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
         y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
@@ -51,17 +50,17 @@ void Actor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
     } else {
         State_Apply3(q, 3);
     }
-    State_Do6(226);
-    State_Do7(p);
-    State_Do8(288);
+    State_unk6_2(226);
+    State_unk7_2(p);
+    State_unk8_2(288);
     State_Apply4(q, 2);
-    State_Run18();
+    State_unk18_4();
 }
 
 /* overlays/scene/state/task/actor_position.c */
-s32 *State_Run19(s32 selector);
+s32 *State_unk19_4(s32 selector);
 
-u8 *State_Run20(s32 no);
+u8 *State_unk20_4(s32 no);
 
 /* STILL-OPEN: adopt --where differing_bytes=11/64. alchemist.ts refused
  * (tiers: class, priority) -- matches the documented DEAD-END FINGERPRINT
@@ -76,7 +75,7 @@ u8 *State_Run20(s32 no);
 
 void Actor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
 {
-    s32 *actor = State_Run19(selector);
+    s32 *actor = State_unk19_4(selector);
 
     if (actor != 0) {
         s32 scale = 0x20000;
@@ -87,7 +86,7 @@ void Actor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
         p += 91;
         *p = zero;
 
-        State_Do9(actor);
+        State_unk9_2(actor);
         State_Apply5(actor, 5);
         State_SetMode3(actor, x << 16, actor[3], z << 16);
     }
@@ -103,7 +102,7 @@ void Actor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
  */
 void Actor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 {
-    u8 *obj = State_Run20(no);
+    u8 *obj = State_unk20_4(no);
 
     if (obj == 0) {
         return;
@@ -119,10 +118,10 @@ void Actor_PlaceWithScale14000(s32 no, s32 x, s32 z)
         *p = zero;
     }
 
-    State_Run21();
+    State_unk21_4();
     State_Apply6(obj, 5);
     State_SetMode4(obj, x << 16, *(s32 *)(obj + 12), z << 16);
-    State_Do10(obj);
+    State_unk10_2(obj);
     State_Apply7(obj, 1);
 }
 
@@ -136,11 +135,11 @@ typedef struct ActiveSubjectSlot {
 extern u8 *gWork;
 extern s16 gCell[];
 
-u8 *State_Run22();
+u8 *State_unk22_4();
 
-s32 *State_Run23();
+s32 *State_unk23_4();
 
-s32 *State_Run24();
+s32 *State_unk24_4();
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay.
@@ -179,7 +178,7 @@ s32 *Actor_FindOccupantAheadOfSubject(void)
     s32 position[3];
     s32 *occupant;
 
-    record = State_Run22(((ActiveSubjectSlot *)gCell)->handle);
+    record = State_unk22_4(((ActiveSubjectSlot *)gCell)->handle);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;
@@ -187,16 +186,16 @@ s32 *Actor_FindOccupantAheadOfSubject(void)
     position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
     position[1] = *(s32 *)(record + 12);
     position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
-    State_Run25(0x100000, facing, position);          /* 128 << 13 */
+    State_unk25_4(0x100000, facing, position);          /* 128 << 13 */
 
-    occupant = State_Run23(position, record);
+    occupant = State_unk23_4(position, record);
     if (occupant == 0) {
         position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
         position[1] = *(s32 *)(record + 12);
         position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
-        State_Run26(0x200000, facing, position);      /* 128 << 14 */
+        State_unk26_4(0x200000, facing, position);      /* 128 << 14 */
 
-        occupant = State_Run24(position, record);
+        occupant = State_unk24_4(position, record);
     }
 
     return occupant;
@@ -210,13 +209,13 @@ extern s16 gOv;
 
 void Effect_RemoveMarkerTask(void)
 {
-    State_Do11((void *)0x0200ae85);
-    State_Do12(gOv);
+    State_unk11_2((void *)0x0200ae85);
+    State_unk12_2(gOv);
     gOv = -1;
 }
 
 /* overlays/scene/state/task/overlay_object.c */
-u16 *State_Run27(s32 no);
+u16 *State_unk27_4(s32 no);
 
 /*
  * resource_3bb: look up an object by arg0, then scan the first 15 halfword
@@ -228,10 +227,10 @@ u16 *State_Run27(s32 no);
 
 void OvObj_NotifyMatchingEntries(s32 no, s32 val)
 {
-    u16 *tbl = State_Run27(no);
+    u16 *tbl = State_unk27_4(no);
     s32 i;
 
-    State_Run28(no, val);
+    State_unk28_4(no, val);
 
     tbl = (u16 *)((char *)tbl + 0xd8);
     for (i = 0; i <= 14; i++) {
@@ -254,12 +253,12 @@ PartyInteractionRecord *GetPartyInteractionRecord(void);
 
 static inline void InitializeActorZero(void)
 {
-    State_Place19(0, 0x10000, 0x8000);
+    State_unk19_3(0, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    State_Place20(actorId, 0x10000, 0x8000);
+    State_unk20_3(actorId, 0x10000, 0x8000);
 }
 
 void RunPartyCountInteractionCopyA(s32 actorId)
@@ -323,84 +322,84 @@ void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = gCell[504 + i];
         }
         if (count <= 1) {
-            State_Run29(0x2083);
-            State_Run30(owner, 0);
+            State_unk29_4(0x2083);
+            State_unk30_4(owner, 0);
             return;
         }
-        if (State_Check2(base + 512) != 0) {
-            State_Run29(0x2084);
-            State_Run30(owner, 0);
+        if (State_unk2(base + 512) != 0) {
+            State_unk29_4(0x2084);
+            State_unk30_4(owner, 0);
             return;
         }
         if (mode == 2) {
             state = 0;
-            State_Check12(6);
+            State_unk12(6);
         } else {
             State_Do(0x207d);
-            State_Check3(owner, 0);
-            state = State_Check4(0, 0);
+            State_unk3(owner, 0);
+            state = State_unk4(0, 0);
         }
         if (state == 0) {
             if (state < count) {
                 for (i = 0; i < count; i++) {
-                    State_Run31((s32)(s8)buf[i]);
+                    State_unk31_4((s32)(s8)buf[i]);
                 }
             }
             for (i = 0; i < count; i++) {
                 if ((s32)(s8)buf[i] != 0) {
-                    State_Run32((s32)(s8)buf[i]);
+                    State_unk32_4((s32)(s8)buf[i]);
                 }
             }
-            obj = State_Run2();
+            obj = State_unk2_4();
             for (i = 0; i < count; i++) {
-                State_Run33((s32)(s8)buf[i]);
+                State_unk33_4((s32)(s8)buf[i]);
             }
             for (i = 0; i < count; i++) {
-                State_Run34((s32)(s8)buf[i]);
+                State_unk34_4((s32)(s8)buf[i]);
             }
             if (obj != -1) {
                 goto L_main;
             }
         }
     }
-    State_Run29(0x207e);
-    State_Run30(owner, 0);
+    State_unk29_4(0x207e);
+    State_unk30_4(owner, 0);
     return;
 L_main:
-    ((void (*)())State_Check13)(obj, 1);
-    State_Do2(0x207f);
-    State_Run35(owner, 0);
+    ((void (*)())State_unk13)(obj, 1);
+    State_unk2_2(0x207f);
+    State_unk35_4(owner, 0);
     State_Place(0, 0x10000, 0x8000);
-    State_Place2(obj, 0x10000, 0x8000);
-    State_Place3(owner, 0x10000, 0x8000);
-    record = State_Check5(0);
+    State_unk2_3(obj, 0x10000, 0x8000);
+    State_unk3_3(owner, 0x10000, 0x8000);
+    record = State_unk5(0);
     if (record != 0) {
-        State_Run36(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        State_unk36_4(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
     hi = p11 + 16;
-    State_Run37(obj, p9, hi);
+    State_unk37_4(obj, p9, hi);
     lo = p9 + 16;
-    State_Place4(0, lo, hi);
-    State_Run28(obj, 0, 30);
-    State_Run38(obj, 3);
+    State_unk4_3(0, lo, hi);
+    State_unk28_4(obj, 0, 30);
+    State_unk38_4(obj, 3);
     tail = hi - 32;
-    State_Run39(0, 3);
-    State_Run40(owner, p9, tail);
-    State_Place5(owner, lo, tail);
-    State_Run41(0, obj);
-    State_Run42(obj, p9, tail);
-    State_Run43(owner, 1);
-    State_Place6(owner, 0x8000, 0);
-    State_Run44(obj, p9, p11 - 48);
-    State_Run45(owner, p9, tail);
-    State_Run46(owner, p9, p11);
-    State_Run47(obj);
-    State_Run48(base + 512);
-    rec = State_Check6(obj);
+    State_unk39_4(0, 3);
+    State_unk40_4(owner, p9, tail);
+    State_unk5_3(owner, lo, tail);
+    State_unk41_3(0, obj);
+    State_unk42_3(obj, p9, tail);
+    State_unk43_3(owner, 1);
+    State_unk6_3(owner, 0x8000, 0);
+    State_unk44_3(obj, p9, p11 - 48);
+    State_unk45_3(owner, p9, tail);
+    State_unk46_3(owner, p9, p11);
+    State_unk47_3(obj);
+    State_unk48_3(base + 512);
+    rec = State_unk6(obj);
     sx = *(volatile s32 *)(rec + 8) >> 20;
-    State_Run49((obj << 4) + 880, sx);
+    State_unk49_3((obj << 4) + 880, sx);
     sy = *(volatile s32 *)(rec + 16) >> 20;
-    State_Run27((obj << 4) + 888, sy);
+    State_unk27_4((obj << 4) + 888, sy);
 }
 
 /* overlays/scene/state/task/scene_data.c */
@@ -501,9 +500,9 @@ void Scene_RunSupplementalSequenceOne(void)
     s32 record;
     s32 base5;
 
-    rec8 = State_Check14(gCell2[125][0]);
+    rec8 = State_unk14(gCell2[125][0]);
     for (i = 22; i <= 25; i++) {
-        rec7 = State_Check7(i);
+        rec7 = State_unk7(i);
         *(u8 *)(rec7 + 91) = 0;
         xa = *(s32 *)(rec7 + 8);
         xb = *(s32 *)(rec8 + 8);
@@ -531,7 +530,7 @@ void Scene_RunSupplementalSequenceOne(void)
                 continue;
             }
         }
-        if (State_Check8(0x104) != 0) {
+        if (State_unk8(0x104) != 0) {
             yb = *(s32 *)(rec7 + 16);
         } else {
             yb = *(s32 *)(rec8 + 16);
@@ -548,39 +547,39 @@ void Scene_RunSupplementalSequenceOne(void)
             State_SetRect(58, 10, 1, 1, 58, 11);
         }
     } else {
-        State_SetRect2(57, 11, 1, 1, 58, 11);
-        State_SetRect3(58, 14, 7, 1, 58, 13);
+        State_unk2_5(57, 11, 1, 1, 58, 11);
+        State_unk3_5(58, 14, 7, 1, 58, 13);
     }
     base5 = (s32)gOv11;
     if (*(volatile s32 *)base5 == 0) {
         flag = *(volatile s32 *)gOv10 ^ 1;
         *(volatile s32 *)gOv10 = flag;
         if (flag != 0) {
-            record = State_Check15(22);
-            State_Run3(record, 0x3a80000, 0, 0xb80000);
-            record = State_Check16(23);
-            State_Run4(record, 0x3c80000, 0, 0xf80000);
-            record = State_Check17(24);
-            State_Run5(record, 0x3e80000, 0, 0xb80000);
-            record = State_Check18(25);
-            State_Run6(record, 0x4080000, 0, 0xf80000);
-            State_Run50(31, 11);
+            record = State_unk15(22);
+            State_unk3_4(record, 0x3a80000, 0, 0xb80000);
+            record = State_unk16(23);
+            State_unk4_4(record, 0x3c80000, 0, 0xf80000);
+            record = State_unk17(24);
+            State_unk5_4(record, 0x3e80000, 0, 0xb80000);
+            record = State_unk18(25);
+            State_unk6_4(record, 0x4080000, 0, 0xf80000);
+            State_unk50_3(31, 11);
         } else {
-            record = State_Check19(22);
-            State_Run7(record, 0x3a80000, 0, 0xd80000);
-            record = State_Check20(23);
-            State_Run8(record, 0x3c80000, 0, 0xd80000);
-            record = State_Check21(24);
-            State_Run9(record, 0x3e80000, 0, 0xd80000);
-            record = State_Check22(25);
-            State_Run10(record, 0x4080000, 0, 0xd80000);
-            State_Run51(31, 10);
+            record = State_unk19(22);
+            State_unk7_4(record, 0x3a80000, 0, 0xd80000);
+            record = State_unk20(23);
+            State_unk8_4(record, 0x3c80000, 0, 0xd80000);
+            record = State_unk21(24);
+            State_unk9_4(record, 0x3e80000, 0, 0xd80000);
+            record = State_unk22(25);
+            State_unk10_4(record, 0x4080000, 0, 0xd80000);
+            State_unk51_3(31, 10);
         }
     }
     count = *(volatile s32 *)base5 + 1;
     *(volatile s32 *)base5 = count;
     if ((u32)count > 119) {
-        record = State_Check9(0x104);
+        record = State_unk9(0x104);
         if (record == 0) {
             *(volatile s32 *)base5 = record;
         }
@@ -594,12 +593,12 @@ void Scene_RunScene3bbSequenceA(void)
 
     *(volatile s32 *)gOv11 = 0;
     *(volatile s32 *)gOv10 = 0;
-    State_Do3(0x2008715);
-    State_Place7(22, 0x3a80000, 0xd80000);
-    State_Place8(23, 0x3c80000, 0xd80000);
-    State_Place9(24, 0x3e80000, 0xd80000);
-    State_Place10(25, 0x4080000, 0xd80000);
-    State_Run52(31, 10);
+    State_unk3_2(0x2008715);
+    State_unk7_3(22, 0x3a80000, 0xd80000);
+    State_unk8_3(23, 0x3c80000, 0xd80000);
+    State_unk9_3(24, 0x3e80000, 0xd80000);
+    State_unk10_3(25, 0x4080000, 0xd80000);
+    State_unk52_3(31, 10);
 }
 
 void Scene_RunScene3bb(s32 a0)
@@ -607,25 +606,25 @@ void Scene_RunScene3bb(s32 a0)
     u32 i;
     s32 record;
 
-    State_Run53(40);
-    State_Run54(41);
-    State_Run55(1);
-    State_Run56();
-    State_Place11(8, 0x580000, 0x1000000);
-    State_Place12(0, 0x780000, 0x1000000);
-    State_Place13(8, 0x4000, 0);
-    State_Place14(0, 0x4000, 0);
+    State_unk53_3(40);
+    State_unk54_3(41);
+    State_unk55_3(1);
+    State_unk56_2();
+    State_unk11_3(8, 0x580000, 0x1000000);
+    State_unk12_3(0, 0x780000, 0x1000000);
+    State_unk13_3(8, 0x4000, 0);
+    State_unk14_3(0, 0x4000, 0);
     if (a0 < 0) {
-        State_Run57(8, 10);
-        State_Run58(0, 35);
+        State_unk57_2(8, 10);
+        State_unk58_2(0, 35);
     } else {
-        State_Run59(8, 8);
-        State_Run60(0, 28);
+        State_unk59(8, 8);
+        State_unk60(0, 28);
     }
-    State_Run61(1);
-    State_Run11(0x680000, 0, 0xc00000, 0);
-    State_Run62(a0);
-    State_Run63();
+    State_unk61(1);
+    State_unk11_4(0x680000, 0, 0xc00000, 0);
+    State_unk62(a0);
+    State_unk63();
 }
 
 void Scene_RunSecondActorInteraction(s32 a0)
@@ -637,39 +636,39 @@ void Scene_RunSecondActorInteraction(s32 a0)
     s32 record;
 
     if (gCell2[225][0] == 2) {
-        State_Run64();
+        State_unk64();
     } else {
-        State_Run65();
-        rec = State_Check10(a0, 2);
+        State_unk65();
+        rec = State_unk10(a0, 2);
         if (rec == 0) {
-            State_Do4(0x20a2);
-            State_Run66();
-            State_Run12(0x30000, 0x6000);
-            State_Run13(0x3d80000, -1, 0xe80000, 1);
-            State_Run67();
-            State_Check11(a0, 0);
-            State_Run68();
-            State_Run69(a0, 0);
-            State_Run70(0, 0x438, 0x108);
-            State_Run71(15);
-            State_Place15(0, 0x18000, 0xc000);
-            State_Place16(0, 0x438, 216);
-            State_Place17(0, 0x428, 216);
-            State_Run72();
-            State_Run73();
-            State_Run14(-1, -1, -1, 0);
-            State_Run74(a0, 0);
-            State_Run75(0);
-            State_Run76(0, 0);
-            State_Run77(a0, 2);
+            State_unk4_2(0x20a2);
+            State_unk66();
+            State_unk12_4(0x30000, 0x6000);
+            State_unk13_4(0x3d80000, -1, 0xe80000, 1);
+            State_unk67();
+            State_unk11(a0, 0);
+            State_unk68();
+            State_unk69(a0, 0);
+            State_unk70(0, 0x438, 0x108);
+            State_unk71(15);
+            State_unk15_3(0, 0x18000, 0xc000);
+            State_unk16_3(0, 0x438, 216);
+            State_unk17_3(0, 0x428, 216);
+            State_unk72();
+            State_unk73();
+            State_unk14_4(-1, -1, -1, 0);
+            State_unk74(a0, 0);
+            State_unk75(0);
+            State_unk76(0, 0);
+            State_unk77(a0, 2);
         } else {
             if (rec == 1) {
-                State_Do5(0x20a1);
-                State_Run78(a0, 0);
+                State_unk5_2(0x20a1);
+                State_unk78(a0, 0);
             }
         }
-        State_Place18(rec, a0, 2);
-        ((void (*)())State_Check23)();
+        State_unk18_3(rec, a0, 2);
+        ((void (*)())State_unk23)();
     }
 }
 
@@ -687,18 +686,18 @@ extern Ctl gOv13;
 extern u8 *gIw;
 extern u8 gOv14[];
 
-void *State_Run79(s32);
+void *State_unk79(s32);
 
-s32 *State_Run80();
+s32 *State_unk80();
 
-s32 *State_Run81();
+s32 *State_unk81();
 
-s32 *State_Run82();
+s32 *State_unk82();
 
-u8 *State_Run83();
+u8 *State_unk83();
 
-u8 *State_Run84();
-u8 *State_Run85();
+u8 *State_unk84();
+u8 *State_unk85();
 
 /* Rect setup for resource_3bb.  Each call site is spelled with its own import
  * name even though several of them reach the same import. */
@@ -724,24 +723,24 @@ void State_ConfigureRegionByActorElevenColumn(void)
     s32 v0;
     s32 v1;
 
-    work = State_Run79(11);
+    work = State_unk79(11);
     if ((*(s32 *)(work + 8) >> 20) == 36) {
-        State_Do13(0x335);
+        State_unk13_2(0x335);
         v0 = 0x23;
         v1 = 0x4D;
-        State_SetRect4(0x23, 0x4E, 1, 1, v0, v1);
+        State_unk4_5(0x23, 0x4E, 1, 1, v0, v1);
     } else {
-        State_Do14(0x335);
+        State_unk14_2(0x335);
         v0 = 0x23;
         v1 = 0x4D;
-        State_SetRect5(0x22, 0x4D, 1, 1, v0, v1);
+        State_unk5_5(0x22, 0x4D, 1, 1, v0, v1);
     }
 }
 
 void Scene_RunTwoStepSequence(void)
 {
-    State_Run86();
-    State_Run87();
+    State_unk86();
+    State_unk87();
 }
 
 /*
@@ -756,52 +755,52 @@ void State_ApplyRectsForActors15To17(void)
 {
     s32 field;
 
-    State_Run88(100, 11, 12, 4, 14, 11);
+    State_unk88(100, 11, 12, 4, 14, 11);
 
-    field = State_Run80(15)[2] >> 20;
-    State_Run89(13, 28, 1, 4, field, 11);
+    field = State_unk80(15)[2] >> 20;
+    State_unk89(13, 28, 1, 4, field, 11);
 
-    field = State_Run81(16)[2] >> 20;
-    State_Run90(13, 28, 1, 4, field, 11);
+    field = State_unk81(16)[2] >> 20;
+    State_unk90(13, 28, 1, 4, field, 11);
 
-    field = State_Run82(17)[4] >> 20;
-    State_Run91(13, 28, 4, 1, 18, field);
+    field = State_unk82(17)[4] >> 20;
+    State_unk91(13, 28, 4, 1, 18, field);
 }
 
 void Scene_RunStep15At29By26(void)
 {
-    State_Place21(15, 29, 26);
-    State_Run92();
+    State_unk21_3(15, 29, 26);
+    State_unk92();
 }
 
 void Scene_RunStep15At33By26(void)
 {
-    State_Place22(15, 33, 26);
-    State_Run93();
+    State_unk22_3(15, 33, 26);
+    State_unk93();
 }
 
 void Scene_RunStep16At45By26(void)
 {
-    State_Place23(16, 45, 26);
-    State_Run94();
+    State_unk23_3(16, 45, 26);
+    State_unk94();
 }
 
 void Scene_RunStep16At49By26(void)
 {
-    State_Place24(16, 49, 26);
-    State_Run95();
+    State_unk24_3(16, 49, 26);
+    State_unk95();
 }
 
 void Scene_RunStep17At40By23(void)
 {
-    State_Place25(17, 40, 23);
-    State_Run96();
+    State_unk25_3(17, 40, 23);
+    State_unk96();
 }
 
 void Scene_RunStep17At40By25(void)
 {
-    State_Place26(17, 40, 25);
-    State_Run97();
+    State_unk26_3(17, 40, 25);
+    State_unk97();
 }
 
 /*
@@ -838,8 +837,8 @@ void Scene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 ce
     s32 handle;
     s32 extent;
 
-    descriptor = State_Run83(59, 0x7170);
-    handle = State_Check24(512);                /* 128 << 2 */
+    descriptor = State_unk83(59, 0x7170);
+    handle = State_unk24(512);                /* 128 << 2 */
 
     *(u16 *)(descriptor + 222) = (u16)first;
     *(u16 *)(descriptor + 224) = (u16)second;
@@ -849,10 +848,10 @@ void Scene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 ce
     *(s32 *)(descriptor + 232) = centre;
     *(s32 *)(descriptor + 236) = extra;
 
-    first_record = State_Run84(first);
-    second_record = State_Run85(second);
+    first_record = State_unk84(first);
+    second_record = State_unk85(second);
 
-    if (State_Check25(0x109) == 0) {
+    if (State_unk25(0x109) == 0) {
         *(s32 *)(second_record + 8) =
             (centre << 1) - *(s32 *)(first_record + 8);
         *(s32 *)(second_record + 16) = *(s32 *)(first_record + 16);
@@ -861,16 +860,16 @@ void Scene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 ce
     *(u16 *)(descriptor + 218) = 0;
     *(u16 *)(descriptor + 220) = 0;
 
-    State_Run98(gOv12, handle);
+    State_unk98(gOv12, handle);
 
-    extent = State_Check26();
+    extent = State_unk26();
     *(u16 *)(descriptor + 216) = (u16)extent;
-    State_Check27((s16)extent, 512, handle);
+    State_unk27((s16)extent, 512, handle);
 
     /* The task is published as its entry address plus the Thumb bit. */
-    State_Run99((s32)State_Run100 + 1, 0xc76);
+    State_unk99((s32)State_unk100 + 1, 0xc76);
 
-    State_Run101(handle);
+    State_unk101(handle);
 }
 
 void State_InitControlRecordAndStartTask(void)
@@ -878,8 +877,8 @@ void State_InitControlRecordAndStartTask(void)
     u8 *state = gIw;
     Ctl *m = &gOv13;
 
-    State_Apply16(State_Check28(), (s32)(state + 240));
-    if (State_Check29(0x109) == 0) {
+    State_Apply16(State_unk28(), (s32)(state + 240));
+    if (State_unk29(0x109) == 0) {
         m->f0 = 1;
         m->f2 = 1;
         m->f4 = *(u16 *)(state + 224);
@@ -918,26 +917,26 @@ extern u8 Value_00002078;
 extern u8 Value_0000207a;
 extern u8 Value_0000207c;
 
-u8 *State_Run102(s32);
+u8 *State_unk102(s32);
 
-u8 *State_Run103(s32);
+u8 *State_unk103(s32);
 
-Obj *State_Run104(s32);
+Obj *State_unk104(s32);
 
-Obj *State_Run105(s32);
+Obj *State_unk105(s32);
 
 void State_SetFlag331AndConfigureRegion46_17(void)
 {
     u8 *p;
 
-    State_Do15(0x331);
-    p = State_Run102(20) + 85;
+    State_unk15_2(0x331);
+    p = State_unk102(20) + 85;
     *p = 0;
     {
         s32 p5 = 44;
         s32 p6 = 17;
 
-        State_SetRect6(46, 17, 1, 1, p5, p6);
+        State_unk6_5(46, 17, 1, 1, p5, p6);
     }
 }
 
@@ -945,59 +944,59 @@ void Scene_SetFlag332AndDrawTiles(void)
 {
     u8 *slot;
 
-    State_Do16(0x332);
-    slot = State_Run103(21) + 85;
+    State_unk16_2(0x332);
+    slot = State_unk103(21) + 85;
     *slot = 0;
     {
         s32 v5 = 50;
         s32 v6 = 17;
 
-        State_SetRect7(46, 17, 1, 1, v5, v6);
+        State_unk7_5(46, 17, 1, 1, v5, v6);
     }
 }
 
 void Scene_SetFlag333AndDrawTiles(void)
 {
-    State_Do17(0x333);
+    State_unk17_2(0x333);
     {
         s32 width = 32;
         s32 height = 77;
 
-        State_SetRect8(32, 37, 1, 4, width, height);
+        State_unk8_5(32, 37, 1, 4, width, height);
     }
 }
 
-        s32 y = State_Check30(904);
+        s32 y = State_unk30(904);
 
         x <<= 20;
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        State_Place27(1, x, y);
+        State_unk27_3(1, x, y);
     }
     {
-        s32 x = State_Check31(912);
-        s32 y = State_Check32(920);
+        s32 x = State_unk31(912);
+        s32 y = State_unk32(920);
 
         x <<= 20;
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        State_Place28(2, x, y);
+        State_unk28_3(2, x, y);
     }
     {
-        s32 x = State_Check33(928);
-        s32 y = State_Check34(936);
+        s32 x = State_unk33(928);
+        s32 y = State_unk34(936);
 
         x <<= 20;
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        State_Place29(3, x, y);
+        State_unk29_3(3, x, y);
     }
 }
 
-void State_Run106(void)
+void State_unk106(void)
 {
     extern s32 gCell[];
 
@@ -1005,7 +1004,7 @@ void State_Run106(void)
     s32 v = gCell[125];
 
     if (v != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == v
-        && State_Check35(321) != 0) {
+        && State_unk35(321) != 0) {
         u16 *p = (u16 *)(state + 386);
         s32 t = 99;
 
@@ -1013,7 +1012,7 @@ void State_Run106(void)
     }
 }
 
-void State_Run107(void)
+void State_unk107(void)
 {
     extern s32 gCell[];
 
@@ -1021,14 +1020,14 @@ void State_Run107(void)
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gCell[125];
-    Obj *p = State_Run104(n);
+    Obj *p = State_unk104(n);
     s32 i;
     s32 *q;
     s32 base;
 
-    State_Run108();
+    State_unk108();
     for (i = 8; i <= 66; i++) {
-        Obj *o = State_Run105(i);
+        Obj *o = State_unk105(i);
 
         if (o != 0 && o->f54 == 1 && *o->f50->f28 == 165) {
             s32 dx = (p->f08 - o->f08) / 65536;
@@ -1048,35 +1047,35 @@ void State_Run107(void)
             }
         }
     }
-    State_Do18(0x2085);
+    State_unk18_2(0x2085);
     State_Apply18(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
     *(s32 *)(state + 456) = 15;
-    State_Run109(20);
-    State_Run110();
-    State_Run111();
+    State_unk109(20);
+    State_unk110();
+    State_unk111();
     base = n << 4;
     State_Apply19(base + 880, p->f08 >> 20);
     {
         s32 v = p->f10 >> 20;
 
-        State_Run112(base + 888, v);
+        State_unk112(base + 888, v);
     }
     n++;
     if (n > 3) {
-        State_Do19(10);
-        State_Do20(282);
+        State_unk19_2(10);
+        State_unk20_2(282);
     } else {
-        State_Do21(n);
-        State_Run113();
-        State_Run114();
+        State_unk21_2(n);
+        State_unk113();
+        State_unk114();
         *q = 0;
     }
-    State_Run115();
+    State_unk115();
 }
 
-s32 State_Run116(s32 a, s32 b)
+s32 State_unk116(s32 a, s32 b)
 {
     extern s16 gCell[];
 
@@ -1084,7 +1083,7 @@ s32 State_Run116(s32 a, s32 b)
     s32 id;
     s32 r;
 
-    State_Run117();
+    State_unk117();
     State_Apply20(b, 5);
     v = gCell[224];
     if (v == (s32)&Value_0000008f) {
@@ -1094,13 +1093,13 @@ s32 State_Run116(s32 a, s32 b)
     } else {
         id = (s32)&Value_0000207a;
     }
-    State_Do22(id);
+    State_unk22_2(id);
     State_Apply21(a, 0);
-    if (State_Check12(b + 512) != 0) {
+    if (State_unk12(b + 512) != 0) {
         return 2;
     }
-    if (State_Check36(b + 520) != 0) {
-        r = State_Check37(0);
+    if (State_unk36(b + 520) != 0) {
+        r = State_unk37(0);
         if (r == 1) {
             return 2;
         }
@@ -1109,8 +1108,8 @@ s32 State_Run116(s32 a, s32 b)
         }
         return r;
     }
-    State_Do23(b + 520);
-    State_Do24((s32)&Value_0000207c);
+    State_unk23_2(b + 520);
+    State_unk24_2((s32)&Value_0000207c);
     State_Apply22(a, 0);
     return State_Apply23(0, 0);
 }
@@ -1121,12 +1120,12 @@ extern u8 HexDigits[];
 
 void Scene_RunSingleStep(void)
 {
-    State_Run118();
+    State_unk118();
 }
 
 void Scene_Forward(void)
 {
-    State_Run119();
+    State_unk119();
 }
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
@@ -1144,14 +1143,14 @@ void Text_WriteU32AsHex(u8 *buf, u32 value)
 }
 
 /* overlays/scene/state/task/staged_actor.c */
-u8 *State_Run120();
+u8 *State_unk120();
 
 /* Reset the selected actor's motion fields after refreshing it. */
 
 void StagedActor_ResetMotionAfterRefresh(s32 slot)
 {
-    u8 *actor = State_Run120(slot);
-    State_Run121(actor);
+    u8 *actor = State_unk120(slot);
+    State_unk121(actor);
     *(s32 *)(actor + 36) = 0;
     *(s32 *)(actor + 44) = 0;
     *(s32 *)(actor + 56) = (s32)0x80000000;
@@ -1186,9 +1185,9 @@ typedef struct Position3 {
 extern u32 gOv15[];
 extern s16 gCell[];
 
-SceneRecord *State_Run122(Position3 *, SceneRecord *);
-SceneRecord *State_Run123(Position3 *, SceneRecord *);
-SceneRecord *State_Run124(Position3 *, SceneRecord *);
+SceneRecord *State_unk122(Position3 *, SceneRecord *);
+SceneRecord *State_unk123(Position3 *, SceneRecord *);
+SceneRecord *State_unk124(Position3 *, SceneRecord *);
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
@@ -1199,25 +1198,25 @@ SceneRecord *State_Run124(Position3 *, SceneRecord *);
 
 /* In-image direction table: sixteen packed steps, high half x, low half z. */
 
-SceneRecord *State_Run125();   /* scene record for a subject handle */
+SceneRecord *State_unk125();   /* scene record for a subject handle */
 
-s32 State_Run126(SceneRecord *, Position3 *);  /* terrain probe */
+s32 State_unk126(SceneRecord *, Position3 *);  /* terrain probe */
 
-void State_Run127(SceneRecord *, s32);         /* select presentation mode */
+void State_unk127(SceneRecord *, s32);         /* select presentation mode */
 
-void State_Run128(s32);                        /* wait n frames */
+void State_unk128(s32);                        /* wait n frames */
 
-void State_Run129(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
+void State_unk129(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
 
-void State_Run130(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
+void State_unk130(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
 
-void State_Run131(s32);                        /* play a cue */
+void State_unk131(s32);                        /* play a cue */
 
-void State_Run132(SceneRecord *);              /* re-attach the camera */
+void State_unk132(SceneRecord *);              /* re-attach the camera */
 
-void State_Run133(s32);                        /* play a cue */
+void State_unk133(s32);                        /* play a cue */
 
-void State_Run134(SceneRecord *, s32);         /* select presentation mode */
+void State_unk134(SceneRecord *, s32);         /* select presentation mode */
 
 /*
  * The push interaction: probe the tile one step ahead of the subject and, if
@@ -1240,7 +1239,7 @@ void StagedActor_PushActorAhead(void)
     s32 handle;
 
     handle = *(s32 *)((u8 *)gCell + (idx << 1));
-    subject = State_Run125(handle);
+    subject = State_unk125(handle);
 
     dir = subject->facing >> 12;
 
@@ -1250,7 +1249,7 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = subject->z + (s32)step;
 
-    target = State_Run122(&pos, subject);
+    target = State_unk122(&pos, subject);
     if (target == 0) {
         return;
     }
@@ -1261,7 +1260,7 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = target->z + (s32)step;
 
-    blocker = State_Run123(&pos, target);
+    blocker = State_unk123(&pos, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
         return;
     }
@@ -1270,7 +1269,7 @@ void StagedActor_PushActorAhead(void)
     pos.y = target->y + 0x100000;
     pos.z = target->z;
 
-    blocker = State_Run124(&pos, target);
+    blocker = State_unk124(&pos, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
         return;
     }
@@ -1285,32 +1284,32 @@ void StagedActor_PushActorAhead(void)
     pos.z = target->z + (s32)step;
 
     /* Terrain probe: signed, so only a positive code refuses the move. */
-    if (State_Run126(target, &pos) > 0) {
+    if (State_unk126(target, &pos) > 0) {
         return;
     }
 
-    State_Run127(subject, 8);
-    State_Run128(15);
+    State_unk127(subject, 8);
+    State_unk128(15);
 
     target->rate_x = 0x3333;
     target->rate_z = 0x3333;
-    State_Run129(target, pos.x, pos.y, pos.z);
+    State_unk129(target, pos.x, pos.y, pos.z);
 
     /* The same destination block, moved onto the subject this time. */
     subject->rate_x = 0x3333;
     subject->rate_z = 0x3333;
-    State_Run130(subject, pos.x, pos.y, pos.z);
+    State_unk130(subject, pos.x, pos.y, pos.z);
 
-    State_Run131(0xee);
-    State_Run132(target);
-    State_Run133(0x120);
+    State_unk131(0xee);
+    State_unk132(target);
+    State_unk133(0x120);
 
     target->x = pos.x;
     target->z = pos.z;
     target->motion_24 = zero;
     target->motion_2c = zero;
 
-    State_Run134(subject, 1);
+    State_unk134(subject, 1);
 }
 
 /* overlays/scene/state/task/state_update.c */
@@ -1321,11 +1320,11 @@ extern volatile s32 gOv10;
 extern volatile s32 gOv11;
 extern s16 gOv;
 
-s32 *State_Run135(s32);
+s32 *State_unk135(s32);
 
-s32 *State_Run136(s32);
+s32 *State_unk136(s32);
 
-s32 *State_Run137(s32);
+s32 *State_unk137(s32);
 
 /* Per-site veneers: both reach the same main-image import, but each names its
  * own loader-relocated call word rather than a runtime address. */
@@ -1349,22 +1348,22 @@ void State_StoreSlotTileXToWork832To848(void)
     s32 *record;
     s32 value;
 
-    State_SetRect9(100, 11, 12, 4, fifth, sixth);
+    State_unk9_5(100, 11, 12, 4, fifth, sixth);
 
-    record = State_Run135(12);
+    record = State_unk135(12);
     value = record[2] >> 20;
     State_Apply24(832, value);
-    State_SetRect10(71, 16, 1, 1, value, 16);
+    State_unk10_5(71, 16, 1, 1, value, 16);
 
-    record = State_Run136(13);
+    record = State_unk136(13);
     value = record[2] >> 20;
     State_Apply25(840, value);
-    State_SetRect11(71, 16, 1, 1, value, 16);
+    State_unk11_5(71, 16, 1, 1, value, 16);
 
-    record = State_Run137(14);
+    record = State_unk137(14);
     value = record[2] >> 20;
     State_Apply26(848, value);
-    State_SetRect12(71, 16, 1, 1, value, 16);
+    State_unk12_5(71, 16, 1, 1, value, 16);
 }
 
 void State_SetWorkByte35(void)
@@ -1376,13 +1375,13 @@ void State_SendWord250With6(void)
 {
     s16 *tbl = gCell;
 
-    State_Place30(*(s32 *)(tbl + 250), 6, 0);
+    State_unk30_3(*(s32 *)(tbl + 250), 6, 0);
 }
 
 void State_ApplyTable8715AndValue104(void)
 {
     State_Apply27(0x2008715, 0xC85);
-    State_Do25(0x104);
+    State_unk25_2(0x104);
 }
 
 /*
@@ -1398,11 +1397,11 @@ void State_WaitForStatusWords(void)
     s32 cnt;
 
     /* The frame count is a literal ten. */
-    State_Run138(10);
+    State_unk138(10);
 
     cnt = 0;
     while (gOv10 != 0 || gOv11 != 75) {
-        State_Run139(1);
+        State_unk139(1);
         cnt++;
         if (cnt >= 600) {
             return;
@@ -1412,23 +1411,23 @@ void State_WaitForStatusWords(void)
 
 void State_InstallTask8714AndApplyTwoRects(void)
 {
-    State_Do26(31);
-    State_Do27(820);                 /* 205 << 2 */
+    State_unk26_2(31);
+    State_unk27_2(820);                 /* 205 << 2 */
 
     if (gOv10 != 0) {
         gOv11 = 0;
     }
 
-    State_Do28(30);
-    State_Do29(1);
+    State_unk28_2(30);
+    State_unk29_2(1);
 
     /* The task is published as its entry address with the Thumb bit set. The
      * `.thumb_set` alias the exact reconstruction emits for a Thumb symbol already carries
      * bit 0, so adding it again here overshoots by one. */
-    State_Do30((s32)State_Run140);
+    State_unk30_2((s32)State_unk140);
 
-    State_SetRect13(58, 28, 7, 1, 58, 13);
-    State_SetRect14(57, 11, 1, 1, 58, 11);
+    State_unk13_5(58, 28, 7, 1, 58, 13);
+    State_unk14_5(57, 11, 1, 1, 58, 11);
 }
 
 void State_InitCursorWhenUnset(void)
@@ -1436,7 +1435,7 @@ void State_InitCursorWhenUnset(void)
     s16 *cursor = &gOv;
 
     if (*cursor == -1) {
-        *cursor = State_Check38();
+        *cursor = State_unk38();
     }
 }
 
@@ -1457,6 +1456,6 @@ void State_WaitUntilStatusNine(void)
     s16 *status = &gOv13;
 
     while (*status != 9) {
-        State_Do31(1);
+        State_unk31_2(1);
     }
 }

@@ -1,0 +1,114 @@
+#include "types.h"
+#include "scene.h"
+#include "gs1_edition.h"
+
+/* battle/presentation/trans/timer.c */
+#if defined(GS1_EDITION_DE)
+#define TIMER_CELL_ADDR 0x03001F08
+#define POSITION_ADDR   0x03001AE0
+#else
+#define TIMER_CELL_ADDR 0x03001EF8
+#define POSITION_ADDR   0x03001AD0
+#endif
+
+struct Display080c01bc {
+  u8 padding_00[0x36];
+  s16 field_36;
+};
+
+struct Position080c01bc {
+  s16 field_00;
+  s16 field_02;
+};
+
+void BattlePres_AdvanceTransitionTimer(void)
+{
+  s32 v;
+  struct Display080c01bc *disp;
+  u32 *timer;
+  struct Position080c01bc *pos;
+  u32 t;
+  u32 next;
+  timer = *((u32 **)TIMER_CELL_ADDR);
+  t = *timer;
+  disp = *((struct Display080c01bc **)(TIMER_CELL_ADDR - 0x78));
+  v = 0x34 - t;
+  if (v > 0x20)
+  {
+    if (1)
+    {
+      v = 0x20;
+    }
+  }
+  pos = (struct Position080c01bc *)POSITION_ADDR;
+  if (v < 0)
+  {
+    if (v || t)
+    {
+      v = 0;
+    } else
+    {
+      v = 0;
+    }
+  }
+  pos->field_02 = (s16)v;
+  if (t <= 0x50U)
+  {
+    disp->field_36 = (s16)(((45 * t) * 8) + 0xAF80);
+  }
+  next = (*timer = (*timer) + 1);
+  if (next <= 0x50U)
+  {
+    Battle_SetMode(0, 0, 0, 0xB4 - next);
+    return;
+  }
+  Battle_SetMode(0, 0, 0, 0x64);
+}
+
+/* battle/presentation/trans/draw_rows.c */
+/* Main-image symbols: every pool word inside the ROM or the work RAM. */
+extern u8 gDisp[];
+
+void BattlePres_DrawTransitionRows(void)
+{
+    u32 i;
+    s32 rec;
+    s32 q;
+    s32 tile;
+    u32 row;
+    u16 *p;
+
+    rec = *(s32 *)(*(s32 *)gDisp);
+    if ((u32)rec <= 79) {
+        tile = (7 & rec) + 0xf081;
+        if (rec >= 0) {
+            q = rec;
+        } else {
+            q = rec + 7;
+        }
+        row = 13 - (q >> 3);
+        i = 0;
+        p = (u16 *)((row << 6) + 0x06006000);
+        do {
+            i++;
+            *p = tile;
+            p++;
+        } while (i != 32);
+
+        tile = tile | 0x800;
+        q = rec;
+        if (rec < 0) {
+            q = q + 7;
+        }
+        row = (q >> 3) + 13;
+        if (row <= 20) {
+            i = 0;
+            p = (u16 *)((row << 6) + 0x06006000);
+            do {
+                i++;
+                *p = tile;
+                p++;
+            } while (i != 32);
+        }
+    }
+}

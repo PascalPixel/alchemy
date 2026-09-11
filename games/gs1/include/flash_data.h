@@ -3,6 +3,4 @@
 
 #include "types.h"
 
-extern u8 Data_08007c10[];
-
 #endif

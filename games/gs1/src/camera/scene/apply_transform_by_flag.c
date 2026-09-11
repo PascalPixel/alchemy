@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/camera/scene/apply_transform_by_flag.h"
 #include "global_cells.h"
 
 s32 GameFlag_IsSet(s32);

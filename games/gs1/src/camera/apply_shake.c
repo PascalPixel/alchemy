@@ -3,7 +3,6 @@
 #include "fixed_math.h"
 #include "global_cells.h"
 
-
 u32 Random16(void);
 
 void Camera_ApplyShake(s32 random_mask, u32 shake_range)

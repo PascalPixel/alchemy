@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/position_active_actor.h"
 
 #if defined(GS1_EDITION_JA)
 #define SCENE_TEXT_VALUE 0x98f
@@ -23,20 +22,20 @@
 extern u8 gCell[];
 
 s32 State_Run();           /* veneer to GameFlag_IsSet */
-u8 *State_Run2();           /* veneer to Scene_GetRecord */
+u8 *State_unk2_4();           /* veneer to Scene_GetRecord */
 
-void State_Run3();          /* veneer to Object_SetPosition */
-void State_Run4();          /* veneer to Object_SetCallback */
-void State_Run5();          /* veneer to State_Run6 */
-s32 State_Run7();           /* local thunk to State_Run8, site A */
-s32 State_Run9();           /* local thunk to State_Run8, site B */
-void State_Run10();          /* veneer to UiText_DrawQuantity, site A */
-void State_Run11();          /* veneer to UiText_DrawQuantity, site B */
-void State_Run12();          /* shared veneer, selector refresh + 0x96a */
+void State_unk3_4();          /* veneer to Object_SetPosition */
+void State_unk4_4();          /* veneer to Object_SetCallback */
+void State_unk5_4();          /* veneer to State_unk6_4 */
+s32 State_unk7_4();           /* local thunk to State_unk8_4, site A */
+s32 State_unk9_4();           /* local thunk to State_unk8_4, site B */
+void State_unk10_4();          /* veneer to UiText_DrawQuantity, site A */
+void State_unk11_4();          /* veneer to UiText_DrawQuantity, site B */
+void State_unk12_4();          /* shared veneer, selector refresh + 0x96a */
 
-void State_Run13();          /* veneer to State_Run14 */
+void State_unk13_4();          /* veneer to State_unk14_4 */
 
-s32 State_Run15(s32 handleA, s32 handleB)
+s32 State_unk15_4(s32 handleA, s32 handleB)
 {
     u8 *workspace = *(u8 **)SCENE_WORK_PTR;
     u8 *shared;
@@ -50,7 +49,7 @@ s32 State_Run15(s32 handleA, s32 handleB)
     flag = State_Run(0x211);
 
     shared = gCell;
-    record = State_Run2(*(s32 *)(shared + 500));
+    record = State_unk2_4(*(s32 *)(shared + 500));
 
     if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
         x = *(s32 *)(workspace + 232) + 0xc0000;
@@ -71,26 +70,26 @@ s32 State_Run15(s32 handleA, s32 handleB)
     *(s32 *)(record + 52) = 0x4000;
     *(s32 *)(record + 48) = 0x10000;
 
-    State_Run3(record, x, 0, z);
-    State_Run16(0x211);
-    State_Run4(record, (void *)SCENE_CALLBACK);
+    State_unk3_4(record, x, 0, z);
+    State_unk16_4(0x211);
+    State_unk4_4(record, (void *)SCENE_CALLBACK);
 
     while (*waitp != 0) {
-        State_Run5(1);
+        State_unk5_4(1);
     }
 
     if (flag == 0) {
-        State_Run7(0, handleA);
-        State_Run10(handleA, 2);
+        State_unk7_4(0, handleA);
+        State_unk10_4(handleA, 2);
     } else {
-        State_Run9(0, handleB);
-        State_Run11(handleB, 2);
+        State_unk9_4(0, handleB);
+        State_unk11_4(handleB, 2);
     }
 
     shared = gCell;
-    State_Run12(*(s32 *)(shared + 500), 1);
-    State_Run17(SCENE_TEXT_VALUE, 3);
-    State_Run13(record);
+    State_unk12_4(*(s32 *)(shared + 500), 1);
+    State_unk17_4(SCENE_TEXT_VALUE, 3);
+    State_unk13_4(record);
 
     return flag;
 }

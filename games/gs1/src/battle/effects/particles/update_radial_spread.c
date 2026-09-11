@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/battle/effects/particles/update_radial_spread.h"
 #include "fixed_math.h"
 #include "effect_0809b11c.h"
 

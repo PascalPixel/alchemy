@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/character_menu/draw_selection_cursor.h"
 
 struct State_080a847c {
     u8 padding[36];

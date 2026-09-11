@@ -1,7 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/presentation/act/mosaic_fade.h"
 
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */

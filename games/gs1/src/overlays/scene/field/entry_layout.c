@@ -5,7 +5,6 @@
 
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/field/entry_layout.h"
 
 /* The workspace pointer is a cell holding the scene work: one dereference. */
 #define MAP390_WORKSPACE (*(u8 **)0x03001ebc)
@@ -23,13 +22,13 @@ extern u8 gCell[];
 
 struct Approach390Subject *Field_Run(s32);
 
-struct Approach390Subject *Field_Run2(s32);
+struct Approach390Subject *Field_unk2_4(s32);
 
-struct Approach390Subject *Field_Run3(s32);
+struct Approach390Subject *Field_unk3_4(s32);
 
-struct Approach390Subject *Field_Run4(s32);
+struct Approach390Subject *Field_unk4_4(s32);
 
-void *Field_Run5();
+void *Field_unk5_4();
 
 /* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
@@ -86,7 +85,7 @@ u8 *SceneData_PrepareTable84d8(void)
         Field_Do((u8 *)0x020084D8);
     }
     buf = (u8 *)0x020084D8;
-    Field_Do2(buf);
+    Field_unk2_2(buf);
     return buf;
 }
 
@@ -98,16 +97,16 @@ void Scene_RunActor16MessageBranch(void)
      */
     u32 dir = Field_Run(0)->dir;
 
-    Field_Run6();
+    Field_unk6_4();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Field_Apply(13, 16);
     } else {
-        Field_Do3(0x16AD);
+        Field_unk3_2(0x16AD);
         Field_Apply2(16, 0);
     }
 
-    Field_Run7();
+    Field_unk7_4();
 }
 
 void Scene_RunActor17MessageBranch(void)
@@ -116,18 +115,18 @@ void Scene_RunActor17MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_Run2(0)->dir;
+    u32 dir = Field_unk2_4(0)->dir;
 
-    Field_Run8();
+    Field_unk8_4();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Field_Apply3(14, 17);
     } else {
-        Field_Do4(0x16AF);
+        Field_unk4_2(0x16AF);
         Field_Apply4(17, 0);
     }
 
-    Field_Run9();
+    Field_unk9_4();
 }
 
 void Scene_RunActor18MessageBranch(void)
@@ -136,41 +135,41 @@ void Scene_RunActor18MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_Run3(0)->dir;
+    u32 dir = Field_unk3_4(0)->dir;
 
-    Field_Run10();
+    Field_unk10_4();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Field_Apply5(15, 18);
     } else {
-        Field_Do5(0x16B1);
+        Field_unk5_2(0x16B1);
         Field_Apply6(18, 0);
     }
 
-    Field_Run11();
+    Field_unk11_4();
 }
 
 void Scene_RunActor19MessageBranch(void)
 {
-    void Field_Run12(s32, s32);
-    void Field_Run13(s32, s32);
+    void Field_unk12_4(s32, s32);
+    void Field_unk13_4(s32, s32);
 
     /*
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_Run4(0)->dir;
+    u32 dir = Field_unk4_4(0)->dir;
 
-    Field_Run14();
+    Field_unk14_4();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Field_Run12(3, 19);
+        Field_unk12_4(3, 19);
     } else {
-        Field_Do6(0x16B7);
-        Field_Run13(19, 0);
+        Field_unk6_2(0x16B7);
+        Field_unk13_4(19, 0);
     }
 
-    Field_Run15();
+    Field_unk15_4();
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
@@ -194,7 +193,7 @@ u8 *SceneData_GetTable8658(void)
  */
 s32 Scene_SetupEntryLayoutsBySelector(void)
 {
-    s32 Field_Run16();
+    s32 Field_unk16_4();
 
     u8 *work = MAP390_WORKSPACE;
     s32 id;
@@ -203,13 +202,13 @@ s32 Scene_SetupEntryLayoutsBySelector(void)
 
     *(s32 *)(work + 448) = 0x209;
 
-    if (Field_Run16(0x845) == 0) {
+    if (Field_unk16_4(0x845) == 0) {
         id = 8;
         do {
-            void *record = Field_Run5(id);
+            void *record = Field_unk5_4(id);
 
             id++;
-            Field_Run17(record, 0);
+            Field_unk17_4(record, 0);
         } while ((u32)id <= 22);
     }
 
@@ -224,21 +223,21 @@ s32 Scene_SetupEntryLayoutsBySelector(void)
         s32 arg4;
         arg4 = 13;
         arg5 = 8;
-        Field_Run18(34, 34, 18, 16, arg4, arg5);
-        Field_Run19(34, 94, 18, 76, arg4, arg5);
-        Field_Run20(94, 34, 78, 16, arg4, arg5);
+        Field_unk18_4(34, 34, 18, 16, arg4, arg5);
+        Field_unk19_4(34, 94, 18, 76, arg4, arg5);
+        Field_unk20_4(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
         /* Shifted window test: the selector set is {8, 9}. */
         s32 arg5;
         s32 arg4;
         arg4 = 11;
         arg5 = 8;
-        Field_Run21(34, 43, 19, 23, arg4, arg5);
-        Field_Run22(34, 94, 19, 83, arg4, arg5);
-        Field_Run23(94, 34, 79, 23, arg4, arg5);
-        Field_Run24(10, 0, 0);
-        Field_Run25(11, 0, 0);
-        Field_Run26(12, 0, 0);
+        Field_unk21_4(34, 43, 19, 23, arg4, arg5);
+        Field_unk22_4(34, 94, 19, 83, arg4, arg5);
+        Field_unk23_4(94, 34, 79, 23, arg4, arg5);
+        Field_unk24_4(10, 0, 0);
+        Field_unk25_4(11, 0, 0);
+        Field_unk26_4(12, 0, 0);
     }
     return 0;
 }

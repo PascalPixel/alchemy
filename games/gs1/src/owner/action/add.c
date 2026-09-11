@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/action/add.h"
 
 struct Slot08078e28 {
     u16 value;

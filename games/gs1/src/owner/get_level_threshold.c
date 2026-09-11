@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/get_level_threshold.h"
 
 struct State_08079008 {
     u8 padding[0x128];

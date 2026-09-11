@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/core/enable_all_item_objects.h"
 
 /*
  * This owner's view of gIw. 62 owners reach that global and declare

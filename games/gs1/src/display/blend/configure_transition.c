@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/display/blend/configure_transition.h"
 
 extern u8 gIw;
 extern u16 gIw2;

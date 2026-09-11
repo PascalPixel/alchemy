@@ -1,8 +1,6 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/finalize_work_and_release_heap13.h"
 #include "global_cells.h"
-
 
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(void *arg0);

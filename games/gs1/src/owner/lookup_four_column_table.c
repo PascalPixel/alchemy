@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/lookup_four_column_table.h"
 
 extern s32 gRom[];
 

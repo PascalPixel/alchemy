@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/shared/fill_scene_grid_attribute_rectangle.h"
 
 extern u8 *gCam;
 extern u8 gUnk[];

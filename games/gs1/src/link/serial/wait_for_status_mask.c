@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/link/serial/wait_for_status_mask.h"
 
 extern volatile u16 gIw;
 extern volatile u32 gUnk;

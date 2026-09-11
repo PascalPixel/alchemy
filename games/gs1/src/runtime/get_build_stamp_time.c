@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/get_build_stamp_time.h"
 #include "resource.h"
 
 extern volatile u8 gIw;

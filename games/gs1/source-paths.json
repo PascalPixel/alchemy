@@ -228,8 +228,7 @@
       "name": "Menu_SelectQuantity"
     },
     "main:080a5b94": {
-      "name": "Menu_OpenConfirmPrompt",
-      "source": "menu/selection/open_confirm_prompt.c"
+      "name": "Menu_OpenConfirmPrompt"
     },
     "main:080a5cc0": {
       "name": "Menu_ResolveSelectedAction"
@@ -264,8 +263,7 @@
     },
     "main:0800c0c4": "resource/table/reserved_no_op.c",
     "main:0801a90c": {
-      "name": "UiWork_ReservedNoOp",
-      "source": "ui/render/reserved_work_no_op.c"
+      "name": "UiWork_ReservedNoOp"
     },
     "main:0801c9bc": {
       "name": "reserved_no_op_a",
@@ -1257,8 +1255,7 @@
       "name": "UiIcon_PrepareObject"
     },
     "main:080a1814": {
-      "name": "UiMenu_CreateCursor",
-      "source": "ui/menu/create_cursor.c"
+      "name": "UiMenu_CreateCursor"
     },
     "main:080a9cbc": {
       "name": "ItemMenu_PosCategory"
@@ -1347,8 +1344,7 @@
       "name": "UiIcon_LoadResourceIntoSlot"
     },
     "main:0801fda8": {
-      "name": "UiWindow_FillTilemapRect",
-      "source": "ui/window/fill_tilemap_rect.c"
+      "name": "UiWindow_FillTilemapRect"
     },
     "main:08020a60": {
       "name": "UiWindow_SetTileAttributeRect"
@@ -1658,8 +1654,7 @@
       "name": "BattleFx_RunPhasedRadialParticleSequence"
     },
     "main:080e0c84": {
-      "name": "BattleFx_RunParticleReveal",
-      "source": "battle/effects/particle_reveal.c"
+      "name": "BattleFx_RunParticleReveal"
     },
     "main:080cfef4": {
       "name": "BattleFx_RunCounterReveal"
@@ -1719,8 +1714,7 @@
       "name": "AnimationObjects_SelectAnimation"
     },
     "main:080a1870": {
-      "name": "PsynergyMenu_InitializeEntryObjects",
-      "source": "menu/psynergy_menu/initialize_entry_objects.c"
+      "name": "PsynergyMenu_InitializeEntryObjects"
     },
     "main:0801ec6c": "object/side/create.c",
     "main:0801fe2c": "object/placement/create_group.c",
@@ -1808,7 +1802,9 @@
     "main:0808ba1c": {
       "name": "get"
     },
-    "main:0808b64c": "object/table/destroy_at_index.c",
+    "main:0808b64c": {
+      "name": "destroy_at_index"
+    },
     "main:0808b824": {
       "name": "find_last_active_id",
       "source": "object/table/find_last_active_id.c"
@@ -2017,8 +2013,7 @@
       "name": "get_default_element"
     },
     "main:080a195c": {
-      "name": "Menu_ReleaseEntryObjects",
-      "source": "menu/entry/release_entry_objects.c"
+      "name": "Menu_ReleaseEntryObjects"
     },
     "main:080197c4": {
       "name": "UiWork_DrainPending",
@@ -2340,8 +2335,7 @@
     },
     "main:080aac84": "graphics/palette/adjust_bank.c",
     "main:080a7380": {
-      "name": "Menu_OpenCharacterSelector",
-      "source": "menu/selection/open_character_selector.c"
+      "name": "Menu_OpenCharacterSelector"
     },
     "main:080a7f44": {
       "name": "CharacterSelector_MoveEntry"
@@ -2818,8 +2812,7 @@
       "name": "PsynergyMenu_DrawPreparedPsynergyIcons"
     },
     "main:080a9a5c": {
-      "name": "ItemMenu_DrawCategory",
-      "source": "menu/item_menu/draw/category.c"
+      "name": "ItemMenu_DrawCategory"
     },
     "main:080b08b8": {
       "name": "ShopCursor_Advance"
@@ -6162,7 +6155,7 @@
     },
     "main:080a1804": {
       "name": "PsynergyMenu_CallIconRoutineWithValue",
-      "source": "menu/psynergy_menu/call_icon_routine_with_value.c"
+      "source": "menu/psynergy_menu/initialize_entry_objects.c"
     },
     "main:080a19a0": {
       "name": "Menu_UpdateEntryObjectTransforms"
@@ -6215,8 +6208,7 @@
       "name": "Menu_ReservedStatusOne"
     },
     "main:080a9b94": {
-      "name": "Menu_PlaceEntryObjectsInGrid",
-      "source": "menu/entry/place_entry_objects_in_grid.c"
+      "name": "Menu_PlaceEntryObjectsInGrid"
     },
     "main:080a9bd8": {
       "name": "Menu_PlaceEntryObjectInGrid"
@@ -17464,8 +17456,7 @@
       "source": "overlays/scene/actor/motion_particle.c"
     },
     "main:080a9598": {
-      "name": "Shop_DrawItemPage",
-      "source": "shop/draw/item_page.c"
+      "name": "Shop_DrawItemPage"
     },
     "resource_3a2:020001ec": {
       "name": "Scene_RunScene3a2SequenceA",

@@ -41,7 +41,7 @@ typedef struct {
 extern s32 ActorSearchStep[];
 extern s32 gOv[];
 
-Ent *Field_unk2_4(Desc *, Ent *);
+Ent *Field_unk_02000342(Desc *, Ent *);
 
 s32 Actor_ResetMotionIfBlockedAhead(Ent *a)
 {
@@ -56,7 +56,7 @@ s32 Actor_ResetMotionIfBlockedAhead(Ent *a)
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Field_unk2_4(&d, a);
+    r = Field_unk_02000342(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
@@ -89,20 +89,20 @@ done:
 }
 
 /* overlays/scene/field/extended_presentation/actor_position.c */
-u8 *Field_unk3_4(s32);
+u8 *Field_unk_02004bfa(s32);
 
 void Actor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
 {
     s32 k1 = 0x1f80000;
     s32 k2 = 0x180000;
     s32 k3 = 0x900000;
-    u8 *obj = Field_unk3_4(a);
+    u8 *obj = Field_unk_02004bfa(a);
     s32 buf[3];
     s32 *bp = buf;
 
     bp[0] = k1;
     bp[2] = k2;
-    Field_Place(b, c, bp);
+    Field_unk_02004b68(b, c, bp);
     *(s32 *)(obj + 8) = bp[0];
     *(s32 *)(obj + 12) = bp[2];
     *(s32 *)(obj + 16) = k3;
@@ -126,8 +126,8 @@ void Effect_SetupBlendByFlag201(void)
         *(s32 *)(tmp + 0x1c0) = 0x100;
         *(s32 *)(tmp + 0x1c8) = 24;
     }
-    Field_Do(1);
-    Field_unk2_2(0x4d);
+    Field_unk_0200474c(1);
+    Field_unk_0200490a(0x4d);
     state = base[4];
     {
         u16 *slot = (u16 *)(state + 0x52a);
@@ -145,7 +145,7 @@ void Effect_SetupBlendByFlag201(void)
             s32 c = 0x3f;
             *slot = c;
         }
-        Field_unk4_4();
+        Field_unk_020015ce();
         return;
     } else {
         {
@@ -176,7 +176,7 @@ extern u16 *gOv2;
 extern s8 gOv3;
 extern u8 gOv4;
 
-u8 *Field_unk5_4(s32);
+u8 *Field_unk_02004cea(s32);
 
 /* Contiguous unnamed state-owner run for resource_3bd. */
 
@@ -185,7 +185,7 @@ void Actor_PlaceFiveActorsInRow(u8 *p)
     s32 i = 0;
 
     do {
-        Field_unk2_3(i + 11, 0x180000, p);
+        Field_unk_02001e8e(i + 11, 0x180000, p);
         p -= 13107;
         i++;
     } while (i <= 4);
@@ -216,7 +216,7 @@ void Effect_UpdateStateMachine(void)
         }
     } else if (state == 3) {
         s32 v = gOv3;
-        s32 r = Field_Apply(v << 16, 5);
+        s32 r = Field_unk_02004be0(v << 16, 5);
         if ((unsigned int)(((p[3] - r) << 16) + 0xc2ff0000) <= 0x5fe0000) {
             u8 *o;
             s32 nv = r + 0x4000;
@@ -227,7 +227,7 @@ void Effect_UpdateStateMachine(void)
                 p[0] = k;
                 p[4] = z;
             }
-            o = Field_unk5_4(v + 11);
+            o = Field_unk_02004cea(v + 11);
             *(s32 *)(o + 0x6c) = (s32)&gOv4;
         }
     } else if (state == 0x63) {
@@ -236,7 +236,7 @@ void Effect_UpdateStateMachine(void)
     if (flag != 0) {
         u16 *q2;
         gOv2[3] += gOv2[4];
-        Field_unk3_2(gOv2[3]);
+        Field_unk_02001fb2(gOv2[3]);
         q2 = gOv2;
         {
             s32 t2 = q2[5] + q2[4];
@@ -244,7 +244,7 @@ void Effect_UpdateStateMachine(void)
             if ((u16)t2 > 0x3000) {
                 s32 z2 = 0;
                 q2[5] = z2;
-                Field_unk4_2(0x87);
+                Field_unk_02004ed6(0x87);
             }
         }
     }
@@ -271,7 +271,7 @@ void OvObj_UpdateThreeStateMotion(void *obj)
         position[2] = z;
         FIELD(obj, s32, 4) = x;
         position[0] = x;
-        Field_unk3_3(0x780000, Field_unk2(), position);
+        Field_unk_02007684(0x780000, Field_unk_02007670(), position);
         FIELD(obj, s32, 0xC) = position[0];
         FIELD(obj, s32, 0x10) = position[2];
         FIELD(obj, s32, 0x24) = 0x50000;
@@ -279,16 +279,16 @@ void OvObj_UpdateThreeStateMotion(void *obj)
         FIELD(obj, u8, 0x42) = state;
         (*p)++;
         if ((*(s32 *)0x03001800 & 3) == 0)
-            Field_unk5_2(0x86);
+            Field_unk_02007904(0x86);
     } else if (state == 1) {
-        if (Field_unk3(obj) == 0) {
+        if (Field_unk_02007898(obj) == 0) {
             s32 value = *p;
             value--;
             *p = value;
         }
     } else if (state == 2) {
-        if (Field_unk4(obj) == 0)
-            Field_unk6_2(obj);
+        if (Field_unk_020078b0(obj) == 0)
+            Field_unk_020078da(obj);
     }
 }
 
@@ -365,7 +365,7 @@ s32 SceneData_SelectTableBySceneId(void)
 #define RECORD_COORD_X_OFFSET 10
 #define RECORD_COORD_Y_OFFSET 18
 
-u8 *Field_unk7_4();
+u8 *Scene_GetRecord();
 
 u8 *Scene_GetRecord_1();
 
@@ -389,7 +389,7 @@ u8 *Scene_GetRecord_3();
 
 void Scene_SetActor13Value41(void)
 {
-    Field_Apply2(13, 0x41);
+    Field_unk_02004794(13, 0x41);
 }
 
 /*
@@ -405,7 +405,7 @@ void Scene_RunBranchingCutsceneSequence(void)
     GameFlag_Set_1(0x960);
     Audio_PlayCue_1(24);
     Battle_Reset_1();
-    Field_Run(); /* main:0808a460 */
+    Field_unk_02006a42(); /* main:0808a460 */
     SceneWork_SetStepValue_1(0x214f);
     Motion_SetVarCbObj_1(8, 2);
     Battle_WaitMode0_1(20);
@@ -671,24 +671,24 @@ void Scene_RunBranchingCutsceneSequence(void)
 
 void Scene_RunFlagGatedActorEightDialogue(void)
 {
-    if (Field_unk5(0x960) == 0)
+    if (Field_TestFlag960(0x960) == 0)
         return;
-    if (Field_unk6(0x962) != 0)
+    if (Field_TestFlag962(0x962) != 0)
         return;
 
-    Field_unk7_2(0x961);
-    Field_unk8_4();
-    Field_unk8_2(0x217d);
-    Field_Apply3(8, 0);
-    Field_unk9_2(10);
-    Field_Apply4(0, 2);
-    Field_unk10_2(30);
-    Field_unk4_3(0, 8, 0);
-    Field_unk11_2(30);
-    Field_Apply5(8, 0);
-    Field_Apply6(0, 3);
-    Field_unk12_2(20);
-    Field_unk9_4();
+    Field_TestFlag961(0x961);
+    Field_unk_020071e8();
+    Field_unk_0200729e(0x217d);
+    Field_unk_020072b6(8, 0);
+    Field_unk_020071f4(10);
+    Field_unk_02007294(0, 2);
+    Field_unk_02007202(30);
+    Field_unk_020072ac(0, 8, 0);
+    Field_unk_02007212(30);
+    Field_unk_020072e2(8, 0);
+    Field_unk_020072a2(0, 3);
+    Field_unk_02007228(20);
+    Field_unk_0200723c();
 }
 
 /* overlays/scene/field/extended_presentation/scene_setup.c */
@@ -702,69 +702,69 @@ extern u8 Value_0000217f;
 
 void Scene_RunIndexedStep0(void)
 {
-    Field_unk13_2(0);
+    Field_unk_020015aa(0);
 }
 
 void Scene_RunIndexedStep1(void)
 {
-    Field_unk14_2(1);
+    Field_unk_020015b6(1);
 }
 
 void Scene_RunIndexedStep2(void)
 {
-    Field_unk15_2(2);
+    Field_unk_020015c2(2);
 }
 
 void Scene_RunIndexedStep3(void)
 {
-    Field_unk16_2(3);
+    Field_unk_020015ce_a(3);
 }
 
 void Scene_RunIndexedStep4(void)
 {
-    Field_unk17_2(4);
+    Field_unk_020015da(4);
 }
 
 void Scene_RunIndexedStep5(void)
 {
-    Field_unk18_2(5);
+    Field_unk_020015e6(5);
 }
 
 void Scene_RunTwoCallSequence(void)
 {
-    Field_unk10_4();
-    Field_unk11_4();
+    Field_unk_02000e10();
+    Field_unk_02001a48();
 }
 
 void Scene_RunGuardedSixWordStep(void)
 {
     S6 s;
 
-    Field_unk12_4();
-    if (Field_unk7(&s) != 0) {
-        Field_unk19_2(s);
+    Field_unk_02004b62();
+    if (Field_unk_0200132e(&s) != 0) {
+        Field_unk_020014da(s);
     }
-    Field_unk13_4();
+    Field_unk_02004b8e();
 }
 
 void Scene_RunTwoArmSequenceWithValue217f(void)
 {
     s32 val;
 
-    Field_unk14_4();
+    Field_unk_02007170();
     val = (s32)&Value_0000217f;
-    Field_unk20_2(val);
-    Field_Apply7(8, 0);
-    if (Field_Apply8(0, 0) == 0) {
-        Field_unk21_2(20);
-        Field_unk22_2(val + 1);
-        Field_Apply9(8, 0);
+    Field_unk_02007228_a(val);
+    Field_unk_02007238(8, 0);
+    if (Field_unk_02007198(0, 0) == 0) {
+        Field_unk_0200718a(20);
+        Field_unk_02007248(val + 1);
+        Field_unk_02007260(8, 0);
     } else {
-        Field_unk23_2(20);
-        Field_unk24_2(val + 2);
-        Field_Apply10(8, 0);
+        Field_unk_020071a0(20);
+        Field_unk_0200725e(val + 2);
+        Field_unk_02007276(8, 0);
     }
-    Field_unk15_4();
+    Field_unk_020071c2();
 }
 
 /* overlays/scene/field/extended_presentation/scene_state_interaction.c */
@@ -776,17 +776,17 @@ void State_RunFlag200SetupAndPlaceActors16To20(void)
     u8 *work = *(u8 **)0x03001f30;
     s16 *tbl;
 
-    if (Field_unk8(0x200) != 0) {
-        Field_unk16_4();
+    if (Field_TestFlag200(0x200) != 0) {
+        Field_unk_02001770();
         work[0x34] = 1;
     }
     tbl = &RuntimeSelectorTable;
     if (tbl[0xe0] == (s32)&Value_00000097) {
-        Field_Apply11(16, 6);
-        Field_Apply12(17, 6);
-        Field_Apply13(18, 6);
-        Field_Apply14(19, 6);
-        Field_Apply15(20, 6);
+        Field_unk_020049ba(16, 6);
+        Field_unk_020049c2(17, 6);
+        Field_unk_020049ca(18, 6);
+        Field_unk_020049d2(19, 6);
+        Field_unk_020049da(20, 6);
     }
 }
 
@@ -804,16 +804,16 @@ typedef struct {
     s32 z;
 } Vec;
 
-Ent *Field_unk17_4(s32);
+Ent *Field_unk_02004a2c(s32);
 
-u8 *Field_unk18_4(s32);
+u8 *Field_unk_02004a64(s32);
 
 /* Contiguous unnamed state-owner run for resource_3bd. */
 
 void State_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)0x03001f30;
-    Ent *p = Field_unk17_4(11);
+    Ent *p = Field_unk_02004a2c(11);
     Vec v;
 
     v.x = p->unk8;
@@ -828,7 +828,7 @@ void State_MarkObjectWhenActorElevenAhead(void)
 void Scene_RunActorElevenCellSetup(void)
 {
     u8 *obj = *(u8 **)0x03001f30;
-    u8 *p = Field_unk18_4(11);
+    u8 *p = Field_unk_02004a64(11);
     s32 t;
 
     obj += 0x35;
@@ -843,7 +843,7 @@ void Scene_RunActorElevenCellSetup(void)
             p[0x55] = c;
             p[0x23] = t;
         }
-        Field_unk25_2(0x211);
+        Field_TestFlag211(0x211);
     }
 }
 
@@ -938,6 +938,6 @@ void State_SetByte1004AndRunWhenIdle(s32 val)
     state = *(u8 **)0x03001ebc;
     *d = val;
     if (*(s16 *)(state + 0xcb8) == 0) {
-        Field_unk19_4();
+        Field_unk_02001528();
     }
 }

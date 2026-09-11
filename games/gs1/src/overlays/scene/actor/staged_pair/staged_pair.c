@@ -3,6 +3,7 @@
 #include "staged_actor_pair_scene.h"
 #include "staged_actor.h"
 
+/* overlays/scene/actor/staged_pair/staged_pair.c */
 /* overlays/scene/actor/staged_pair/actor_presentation.c */
 
 void *Actor_Run();
@@ -108,7 +109,7 @@ extern u8 gWork[];
 extern s16 gCell2[][1];
 extern u8 gVal5[];
 
-s32 Actor_unk36_4(void)
+s32 Scene_RunOpeningAuxiliarySequence(void)
 {
     if (gCell2[224][0] == (s32)gVal2) {
         if (Actor_Check(0x96f) != 0) {
@@ -828,3 +829,25 @@ void StagedActorPairScene_RunActorTwelveCommand(void)
 {
     Actor_unk8_3(12, 0, 0);
 }
+
+/* overlays/scene/actor/staged_pair/move_and_redraw.c */
+#define Value Value2
+
+#include "staged_actor_movement.h"
+
+void Actor_RunMoveAndRedraw(StagedActorMovementRequest request)
+{
+#include "run_staged_actor_movement_and_redraw_body.inc"
+}
+
+/* overlays/scene/actor/staged_pair/get_message_data.c */
+u8 *StagedActorPairScene_GetMessageData(void)
+{
+    return (u8 *)0x0200991c;
+}
+
+/* overlays/scene/actor/staged_pair/noop_actor_callback.c */
+void StagedActorPairScene_NoopActorCallback(void){}
+
+/* overlays/scene/actor/staged_pair/noop_scene_callback.c */
+void StagedActorPairScene_NoopSceneCallback(void){}

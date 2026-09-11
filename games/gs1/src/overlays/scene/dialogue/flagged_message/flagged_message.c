@@ -846,7 +846,7 @@ void Scene_RunActorThirteenFlagDialogue(void)
 }
 
 /* overlays/scene/dialogue/flagged_message/shared.c */
-s32 Talk_unk214_2(void)
+s32 get_followup_default_result(void)
 {
     return 0;
 }

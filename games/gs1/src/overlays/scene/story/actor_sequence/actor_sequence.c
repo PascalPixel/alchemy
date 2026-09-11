@@ -5,6 +5,7 @@
 #include "create_configured_overlay_object.h"
 #include "create_configured_overlay_object_body.inc"
 
+/* overlays/scene/story/actor_sequence/actor_sequence.c */
 /* overlays/scene/story/actor_sequence/actor_position.c */
 u8 *Story_unk5_4(s32);
 u8 *Story_unk6_4(s32);
@@ -148,7 +149,7 @@ void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 {
 }
 
-s32 Story_unk12_4(s32 *p)
+s32 update_orbiting_effect(s32 *p)
 {
     s16 *q = (s16 *)p[20];
     s32 a, b;
@@ -406,7 +407,7 @@ void Scene_RunScriptedSteps947And29E1(void)
     Story_unk33_4();
 }
 
-s32 Story_unk34_4(void)
+s32 Scene_RunScene3abSequenceF(void)
 {
     extern s16 gCell2[][1];
     extern u8 gWork[];
@@ -939,3 +940,31 @@ s32 Scene_InitializeStoryActors(void)
 /* overlays/scene/story/actor_sequence/scene_wrapper.c */
 
 void Scene_CallHelper(void) { Story_unk115_3(); }
+
+/* overlays/scene/story/actor_sequence/run_83_when_flag_clear.c */
+void State_Run83WhenFlag201Clear(void) { if (Story_Run(0x201) == 0) Story_unk2_4(83); }
+
+/* overlays/scene/story/actor_sequence/scene_no_op.c */
+/* overlays/scene/story/actor_sequence/no_op.c */
+void Scene_NoOp(void) { }
+
+/* overlays/scene/story/actor_sequence/set_three_cells_6_11_flag_241.c */
+typedef signed int s32;
+
+void State_SetThreeCellsAt6x11AndFlag241(void)
+{
+    Story_SetRectNoOp(6, 11, 1, 1, 7, 11);
+    Story_unk2_5NoOp(6, 11, 1, 1, 8, 11);
+    Story_unk3_5NoOp(6, 11, 1, 1, 9, 11);
+    Story_Do(0x241);
+}
+
+/* overlays/scene/story/actor_sequence/state_set_three_cells_at7x12.c */
+/* Three adjacent collision cells used by the scene's lower doorway. */
+
+void State_SetThreeCellsAt7x12(void)
+{
+    Story_SetRectThreeCellsAt7x12(7, 12, 1, 1, 7, 11);
+    Story_unk2_5ThreeCellsAt7x12(7, 12, 1, 1, 8, 11);
+    Story_unk3_5ThreeCellsAt7x12(7, 12, 1, 1, 9, 11);
+}

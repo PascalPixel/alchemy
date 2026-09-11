@@ -256,7 +256,7 @@ s32 SceneData_SelectTableBySceneId(void)
     return (s32)gOv3;
 }
 
-s32 Talk_unk16_4(void)
+s32 get_secondary_default_result(void)
 {
     return 0;
 }

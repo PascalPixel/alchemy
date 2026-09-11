@@ -276,7 +276,7 @@ void Scene_RunIndexedStep8(void)
     Actor_unk25_2(8);
 }
 
-s32 Actor_unk45_4(void)
+s32 Scene_RunSupplementalSequenceOne(void)
 {
     extern u8 gWork[];
     void Actor_unk46_4();

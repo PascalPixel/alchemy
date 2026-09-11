@@ -167,7 +167,7 @@ s32 SceneData_SelectTableByWord224(void)
     return (s32)gOv3;
 }
 
-s32 Actor_unk43_4(void)
+s32 get_secondary_default_result(void)
 {
     return 0;
 }

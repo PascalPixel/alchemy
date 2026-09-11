@@ -19,25 +19,25 @@ u8 *State_Run(void)
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
-s32 State_unk2_4(void)
+s32 state_update_0432(void)
 {
     return 0;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *State_unk3_4(void)
+u8 *SceneData_GetPrimaryTable37c(void)
 {
     return RESOURCE37C_SECONDARY_TABLE;   /* image offset 0x110 */
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *State_unk4_4(void)
+u8 *SceneData_GetSecondaryTable37c(void)
 {
     return RESOURCE37C_TERTIARY_TABLE;   /* image offset 0x11c */
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *State_unk5_4(void)
+u8 *SceneData_GetTertiaryTable37c(void)
 {
     return RESOURCE37C_QUATERNARY_TABLE;   /* image offset 0x134 */
 }

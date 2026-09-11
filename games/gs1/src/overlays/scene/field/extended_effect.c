@@ -136,7 +136,7 @@ u8 *SceneData_GetTableB6D4(void)
     return (u8 *)0x0200b6d4;
 }
 
-s32 Field_unk31_4(void)
+s32 get_default_result(void)
 {
     return 0;
 }

@@ -8,6 +8,7 @@
 #include "find_clear_actor_position_body.inc"
 #include "staged_actor.h"
 
+/* overlays/scene/actor/staged_step/staged_step.c */
 /* overlays/scene/actor/staged_step/actor_facing.c */
 u8 *Actor_unk11_4();
 
@@ -52,7 +53,7 @@ struct Actor *Actor_unk14_4(s32);
 struct Actor *Actor_unk15_4(s32);
 struct Frame *Actor_unk16_4(s32);
 
-void Actor_unk17_4(void)
+void Scene_CopyActorPosition(void)
 {
     extern u8 RuntimeSelectorTable[];
 
@@ -357,7 +358,7 @@ void Scene_DispatchByActorZeroFacing(void)
 
 #define STAGED_ACTOR_MOVEMENT_UNTYPED_LOCATION_CALL
 
-void Actor_unk48_4(StagedActorMovementRequest request)
+void Actor_MoveAndRedraw(StagedActorMovementRequest request)
 {
 }
 
@@ -1319,3 +1320,42 @@ void State_ApplyRectAndClearActor10Byte85(void)
     p = Actor_unk188_2(10) + 85;
     *p = 0;
 }
+
+/* overlays/scene/actor/staged_step/empty_hook_b.c */
+/* Complete four-byte no-op leaf plus its alignment halfword. */
+void Resource3b4_EmptyHookA(void)
+{
+}
+
+/* overlays/scene/actor/staged_step/scene_data_select_data_by_runtime_selector.c */
+/* overlays/scene/actor/staged_step/select_data_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_00000075
+#define SecondaryRuntimeSelector Value_00000076
+#define TertiaryRuntimeSelector Value_00000078
+
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+}
+
+/* overlays/scene/actor/staged_step/empty_hook_c.c */
+/* Complete two-byte empty hook plus its alignment halfword. */
+void Resource3b4_EmptyHookB(void)
+{
+}
+
+/* overlays/scene/actor/staged_step/select_secondary_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_00000075
+#define SecondaryRuntimeSelector Value_00000076
+#define TertiaryRuntimeSelector Value_00000078
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectSecondaryByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
+}
+
+/* overlays/scene/actor/staged_step/no_op_callback.c */
+/* Deliberate no-op callback. */
+void Scene_NoOpCallback(void) {}

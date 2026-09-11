@@ -7,6 +7,7 @@
 #include "configured_effect_spawn.h"
 #include "configured_effect_spawn_body.inc"
 
+/* overlays/scene/actor/selected_presentation/selected_presentation.c */
 /* overlays/scene/actor/selected_presentation/actor_presentation.c */
 
 /* Actor-step entry points for the two scene phases. */
@@ -261,7 +262,7 @@ void Scene_RunActorThirteenRestoration(void)
     }
 }
 
-s32 Actor_unk14_4(s32 a0)
+s32 Scene_RunOpeningAuxiliarySequence(s32 a0)
 {
     u32 i;
     s32 record;
@@ -285,7 +286,7 @@ s32 Actor_unk14_4(s32 a0)
     return a0;
 }
 
-s32 Actor_unk17_4(s32 a0)
+s32 Scene_RunScene3c0SequenceA(s32 a0)
 {
     u32 i;
     s32 record;
@@ -339,7 +340,7 @@ void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 {
 }
 
-void Actor_unk20_4(void)
+void sync_selected_actor_progress(void)
 {
     struct Actor *actor;
     struct SceneWork *scene;
@@ -378,4 +379,22 @@ void State_SetStateByte52(void)
 {
     u8 *state = *(u8 *volatile *)0x03001f30;
     state[52] = 1;
+}
+
+/* overlays/scene/actor/selected_presentation/ov_obj_apply_zero_and_clear_byte89.c */
+/* overlays/scene/actor/selected_presentation/apply_zero_and_clear_byte_89.c */
+/* Complete 24-byte entity reset owner. */
+s32 OvObj_ApplyZeroAndClearByte89(u8 *obj)
+{
+    Actor_Run(obj, 0);
+    obj[89] = 0;
+    return 0;
+}
+
+/* overlays/scene/actor/selected_presentation/toggle_field_84_bit_0.c */
+/* Complete 16-byte flag-toggle leaf, including its alignment halfword. */
+s32 OvObj_ToggleField84Bit0(u8 *obj)
+{
+    obj[84] ^= 1;
+    return 1;
 }

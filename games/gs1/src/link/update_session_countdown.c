@@ -91,7 +91,7 @@ void UpdateLinkSessionCountdown(void)
             i--;
             entry++;
         } while (i >= 0);
-        Sys_unk2_2(0x06006680);
+        Link_DrawShiftedTilePair(0x06006680);
 
         if (state->enabled == 0)
             goto done;

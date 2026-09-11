@@ -2,6 +2,7 @@
 #include "scene.h"
 #include "resource_3af_motion.h"
 
+/* overlays/scene/actor/multi_encounter/multi_encounter.c */
 /* overlays/scene/actor/multi_encounter/actor_facing.c */
 
 s32 Actor_SetFacingFromSample(u8 *a)
@@ -280,7 +281,7 @@ void Scene_RunOpeningAuxiliarySequence(void)
     Actor_unk45_4();
 }
 
-void Actor_unk46_4(void)
+void Scene_RunScriptSequenceA(void)
 {
     s32 rec7;
     s32 record;
@@ -1477,4 +1478,226 @@ void State_ApplyFiveRectsAtColumn78(void)
 
         Actor_unk10_5(17, 38, 5, 2, x, y);
     }
+}
+
+/* overlays/scene/script/fx_entry_step.c */
+extern u8 gWork[];
+
+void Scene_RunScriptFxEntryStep(void)
+{
+    u32 i;
+    s32 record;
+
+    Script_unk3_4FxEntryStep();
+    Script_Run(-1, -1, -1, 0);
+    Script_unk4_4FxEntryStep(1);
+    Script_unk5_3FxEntryStep(20, 0, 0);
+    Script_unk6_3FxEntryStep(22, 0, 0);
+    Script_unk7_3FxEntryStep(24, 0, 0);
+    Script_unk8_2FxEntryStep(25, 0, 0);
+    Script_unk9_2FxEntryStep(26, 0, 0);
+    Script_unk10_2FxEntryStep(27, 0, 0);
+    Script_unk11_2FxEntryStep(0, 0, 0);
+    Script_unk12_2FxEntryStep(23, 0, 0);
+    record = Script_CheckFxEntryStep(23);
+    {
+        s32 shown = 0x3000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Script_Place(21, 0xe80000, 0x28a0000);
+    record = Script_unk2FxEntryStep(21);
+    {
+        s32 shown = 0xb000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Script_unk2_4(0xe80000, -1, 0x27c0000, 0);
+    Script_unk13_2FxEntryStep();
+    Script_unk14_2FxEntryStep(1);
+    Script_unk15FxEntryStep(23, 21);
+}
+
+/* overlays/scene/script/fx_mid_step.c */
+extern u8 gWork[];
+
+void Scene_RunScriptFxMidStep(void)
+{
+    u32 i;
+    s32 record;
+
+    Script_Run();
+    Script_Do(0x200d160);
+    Script_unk2_4FxMidStep(1);
+    Script_Place(0, 0xe80000, 0x27c0000);
+    Script_unk3_4FxMidStep(0, 15);
+    record = Script_CheckFxMidStep(0);
+    Script_unk4_4FxMidStep(record, 0);
+    Script_unk5_3FxMidStep(1);
+    Script_unk6_3FxMidStep(0, 0);
+    Script_unk7_3FxMidStep();
+    Script_unk8_2FxMidStep(1);
+    Script_unk9_2FxMidStep(22);
+    Script_unk10_2FxMidStep(21);
+    Script_unk11_2FxMidStep(1);
+    Script_unk12_2FxMidStep(22, 0, 0);
+    Script_unk13_2FxMidStep(21, 0, 0);
+    Script_unk14_2FxMidStep(20, 0, 0);
+    record = Script_unk2FxMidStep(20);
+    {
+        s32 shown = 0x3000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Script_unk2_3(23, 0xe80000, 0x28a0000);
+    record = Script_unk3(23);
+    {
+        s32 shown = 0xb000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Script_unk15FxMidStep(1);
+    Script_unk16(20, 23);
+}
+
+/* overlays/scene/script/fx_pair_step.c */
+extern u8 gWork[];
+
+void Scene_RunScriptFxPairStep(s32 a0, s32 a1)
+{
+    u32 i;
+    s32 p10;
+    s32 record;
+
+    *(s32 *)(*(u8 *volatile *)gWork + 0x1c0) = 0x100;
+    Script_unk2_4FxPairStep();
+    Script_unk3_4FxPairStep();
+    Script_unk4_4FxPairStep(20);
+    Script_unk5_3FxPairStep();
+    Script_Place(a0, 0xd80000, 0x24c0000);
+    Script_unk2_3(a0, 0xcccc, 0x6666);
+    Script_unk3_3(a0, 216, 0x258);
+    Script_unk4_3(a0, 218, 0x25c);
+    Script_unk5_2(a0, 234, 0x25c);
+    Script_unk6_2(a0, 236, 0x26a);
+    Script_unk7_2(a0, 0x5000, 20);
+    Script_unk6_3FxPairStep(a0, 3);
+    Script_unk7_3FxPairStep(20);
+    Script_Run(a1, 0x5000);
+    Script_unk8_2FxPairStep(a1, 4, 40);
+    Script_unk9_2FxPairStep(a1, 2);
+    Script_Do(0x1e39);
+    Script_unk10_2FxPairStep(a1, 0, 20);
+    *(s32 *)(*(u8 *volatile *)gWork + 0x1c0) = 0x202;
+    Script_unk11_2FxPairStep();
+    Script_unk12_2FxPairStep();
+    Script_unk13_2FxPairStep(10);
+    p10 = a0;
+}
+
+/* overlays/scene/actor/multi_encounter/run_scene_actor_twenty_dialogue.c */
+extern u8 gOvActorTwentyDialogue[];
+extern s32 *gWork;
+
+void Scene_RunActorTwentyDialogueSequence(void)
+{
+    Actor_RunActorTwentyDialogue();
+    Actor_Do((s32)gOvActorTwentyDialogue);
+    Actor_unk2_2(1);
+    Actor_ApplyActorTwentyDialogue(0, 15);
+    Actor_Apply2ActorTwentyDialogue(Actor_Check(0), 0);
+    gWork[0x70] = 0x202;
+    Actor_unk2_4ActorTwentyDialogue();
+    Actor_unk3_4ActorTwentyDialogue();
+    Actor_unk3_2(20);
+    Actor_Apply3ActorTwentyDialogue(20, 1);
+    Actor_unk4_2(0x1e41);
+    Actor_Place(20, 0, 10);
+    Actor_Apply4ActorTwentyDialogue(22, 0x5000);
+    Actor_unk2_3(22, 4, 20);
+    Actor_Apply5ActorTwentyDialogue(22, 2);
+    Actor_unk3_3(0x6016, 0, 20);
+    Actor_unk4_4ActorTwentyDialogue();
+    Actor_unk5_4ActorTwentyDialogue();
+    Actor_unk5_2(11);
+}
+
+/* overlays/scene/actor/multi_encounter/run_scene_configure_three_actors.c */
+extern u8 gWork[];
+
+/* Phase/status word at 0x1c0 of the shared scene work record. */
+
+/* Configures actors 20, 21 and 22 (position and movement/sprite flags) and
+ * advances the shared scene phase before the scene runs. */
+void Scene_ConfigureThreeActors(void)
+{
+    u32 i;
+    s32 record;
+
+    Battle_Reset_1();
+    ObjectGroup_ConfigureChildValue_1(0, 15);
+    record = Scene_GetRecord_1(0);
+    Actor_RunConfigureThreeActors(record, 0);
+    Object_NotifyLastActiveOfEvent_1(0x200d160);
+    Actor_unk2_4ConfigureThreeActors(1);
+    Motion_SetHPosTerrain_1(20, 0xc40000, 0x1f60000);
+    record = Scene_GetRecord_2(20);
+    {
+        /* Set the visibility/active flag at +6. */
+        s32 shown = 0xa000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Motion_SetHPosTerrain_2(22, 0xb80000, 0x20c0000);
+    record = Scene_GetRecord_3(22);
+    {
+        /* Set the visibility/active flag at +6. */
+        s32 shown = 0xb000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Motion_SetActionVariant_1(21, 1);
+    Motion_SetHPosTerrain_3(21, 0xb80000, 0x2780000);
+    record = Scene_GetRecord_4(21);
+    {
+        /* Set the visibility/active flag at +6. */
+        s32 shown = 0xb000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    SCENE_PHASE = 0x202;
+    Battle_WaitMode0_1();
+    Motion_SetSpeed_1();
+    Battle_WaitMode0_2(20);
+    Motion_Launch_1(22, 4, 10);
+    Motion_Launch_2(22, 6, 20);
+    SceneWork_SetStepValue_1(0x1ee5);
+    Actor_unk3_4ConfigureThreeActors(22);
+    Motion_CallWaitAnim_1(20, 3);
+    Motion_SetSpeed_2(21, 0x30000, 0x18000);
+    Motion_SetPosReset_1(21, 180, 0x222);
+    Motion_ArmCb_1(21, 0xb000, 40);
+    Motion_SetVarCbObj_1(21, 1);
+    Actor_unk4_4ConfigureThreeActors(21);
+    Actor_unk5_4ConfigureThreeActors(15);
+}
+
+/* overlays/scene/script/fx_tail_step.c */
+extern u8 gWork[];
+
+void Scene_RunScriptFxTailStep(void)
+{
+    u32 i;
+    s32 record;
+
+    Script_Run(0xe80000, -1, 0x2a40000, 0);
+    Script_unk2_4FxTailStep();
+    Script_Place(0, 0xe80000, 0x2a40000);
+    record = Script_CheckFxTailStep(0);
+    {
+        s32 shown = 0x4000;
+
+        *(volatile u16 *)(record + 6) = shown;
+    }
+    Script_unk3_4FxTailStep(1);
 }

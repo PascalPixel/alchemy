@@ -10,6 +10,7 @@
 #include "find_clear_actor_position_body.inc"
 #include "staged_actor.h"
 
+/* overlays/scene/actor/waypoint/waypoint.c */
 /* overlays/scene/actor/waypoint/actor_motion.c */
 s32 *Actor_unk7_4(s32 a);
 
@@ -305,7 +306,7 @@ void Effect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
 #define STAGED_ACTOR_MOVEMENT_UNTYPED_LOCATION_CALL
 
-void Actor_unk31_4(
+void Actor_MoveAndRedraw(
     StagedActorMovementRequest request)
 {
 }
@@ -358,7 +359,7 @@ OrbitingSceneObject *GetOrbitingSceneObject(void);
 
 u8 *AllocateEffectTransfer(s32, s32);
 
-s32 Actor_unk32_4(s32 *p)
+s32 update_orbiting_effect(s32 *p)
 {
     s16 *q = (s16 *)p[20];
     s32 a, b;
@@ -1255,4 +1256,87 @@ void State_ApplyCrossRectsAroundActor11(void)
 
     /* Common exit; no argument registers are set. */
     Actor_unk138_3();
+}
+
+/* overlays/scene/actor/waypoint/reset_motion_if_blocked_ahead.c */
+typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
+typedef struct { u8 filler0[0x28]; s16 *unk28; } Sub;
+typedef struct {
+    u8 filler0[6]; u16 unk6; s32 unk8; s32 unkC; s32 unk10;
+    u8 filler14[0x10]; s32 unk24; u8 filler28[4]; s32 unk2C;
+    u8 filler30[8]; s32 unk38; u8 filler3C[4]; s32 unk40;
+    u8 filler44[0xC]; Sub *unk50;
+} Ent;
+
+extern s32 gOv[];
+extern s32 gOv2[];
+extern Ent *Actor_Run(Desc *, Ent *);
+
+s32 StagedActor_ResetMotionIfBlockedAhead(Ent *actor)
+{
+    Desc probe;
+    u32 dir;
+    s32 step;
+    Ent *target;
+
+    dir = actor->unk6 >> 12;
+    step = gOv[dir];
+    probe.unk0 = actor->unk8 + (step & 0xffff0000);
+    probe.unk4 = actor->unkC;
+    step = step << 16;
+    probe.unk8 = actor->unk10 + step;
+    target = Actor_Run(&probe, actor);
+    if (target != 0) {
+        u32 i = 0;
+        s32 v = *target->unk50->unk28;
+        s32 *p = gOv2;
+
+        do {
+            if (v == *p++) {
+                goto done;
+            }
+            i++;
+        } while (i <= 5);
+        actor->unk24 = 0;
+        actor->unk2C = 0;
+        actor->unk38 = 0x80000000;
+        actor->unk40 = 0x80000000;
+    }
+    step = gOv[dir];
+    probe.unk0 = actor->unk8 + (step & 0xffff0000);
+    probe.unk4 = actor->unkC;
+    step = step << 16;
+    probe.unk8 = actor->unk10 + step;
+    if (Actor_EntOp(actor, &probe) > 0) {
+        actor->unk24 = 0;
+        actor->unk2C = 0;
+        actor->unk38 = 0x80000000;
+        actor->unk40 = 0x80000000;
+    }
+done:
+    return 0;
+}
+
+/* overlays/scene/actor/waypoint/select_data_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_00000044
+#define SecondaryRuntimeSelector Value_00000045
+#define TertiaryRuntimeSelector Value_00000046
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
+}
+
+/* overlays/scene/actor/waypoint/select_table_ba48_by_runtime_selector.c */
+#define PrimaryRuntimeSelector Value_00000044
+#define SecondaryRuntimeSelector Value_00000045
+#define TertiaryRuntimeSelector Value_00000046
+
+#include "select_overlay_data_by_runtime_selector.h"
+
+s32 SceneData_SelectTableBa48ByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
 }

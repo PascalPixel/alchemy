@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene.h"
 
+/* item/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Item_GetData();
@@ -8,4 +9,72 @@ void *Item_GetData();
 void Item_PlayUseAnimation(void)
 {
     Ability_PlayUseAnimation(0x3fff & FIELD(Item_GetData(), u16 *, 0x28));
+}
+
+/* ability/play_use_animation.c */
+#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
+void *Ability_GetData();
+
+void Ability_PlayUseAnimation(void)
+{
+    s32 animation_type;
+    u32 target_type;
+    void *ability;
+
+    ability = Ability_GetData();
+    animation_type = 0xf & FIELD(ability, u8 *, 1);
+    switch (animation_type) {
+    case 1:
+        Sys_Do(0x7e);
+
+    case 11:
+        Sys_Do(0x7e);
+        return;
+    default:
+        target_type = FIELD(ability, u8 *, 3) - 1;
+        switch (target_type) {
+        case 4:
+            Sys_Do(0x52);
+            return;
+        case 2:
+            Sys_Do(0x54);
+            return;
+        default:
+        case 3:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 25:
+        case 26:
+        case 27:
+        case 28:
+        case 29:
+            Sys_Do(0x5b);
+
+        case 0:
+        case 1:
+        case 30:
+        case 31:
+            return;
+        }
+        break;
+    }
 }

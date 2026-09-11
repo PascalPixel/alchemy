@@ -9,7 +9,7 @@ void Field_DispatchTypeHandler(s32 kind)
     if (kind == 0) {
         Field_Check();
     } else if (kind == 1) {
-        Field_unk2();
+        BattleFx_DispatchRequestKind();
     } else if (kind == 2) {
         Field_Run();
     } else if (kind == 3) {

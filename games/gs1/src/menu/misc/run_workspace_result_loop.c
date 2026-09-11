@@ -20,7 +20,7 @@ retry:
         return -1;
     }
     if (result == 0) {
-        if (Menu_unk2() == -1) {
+        if (Save_WriteSelectedSlot() == -1) {
             goto retry;
         }
     } else if (result == 1) {

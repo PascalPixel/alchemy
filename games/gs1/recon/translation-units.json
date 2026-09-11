@@ -118544,42 +118544,6 @@
       "overlay": null
     },
     {
-      "id": "menu-selection-setup_entry",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/selection/setup_entry.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801c0c4",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c0c8",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c0dc",
-          "extent": 120,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c154",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c17c",
-          "extent": 12,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "graphics-tile-merge_shifted_tile_rows",
       "game": "gs1",
       "source": "games/gs1/src/graphics/tile/merge_shifted_tile_rows.c",
@@ -159659,62 +159623,6 @@
       "overlay": null
     },
     {
-      "id": "menu-selection-loop",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/selection/loop.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801b398",
-          "extent": 140,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b424",
-          "extent": 200,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b4ec",
-          "extent": 212,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b5c0",
-          "extent": 1000,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b9a8",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801b9ec",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801ba34",
-          "extent": 512,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801bc34",
-          "extent": 160,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801bcd4",
-          "extent": 196,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "menu-selection-run_top_selection",
       "game": "gs1",
       "source": "games/gs1/src/menu/selection/run_top_selection.c",
@@ -161215,6 +161123,92 @@
         {
           "address": "0x0808b64c",
           "extent": 40,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "menu-selection-loop",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/selection/loop.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801b398",
+          "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b424",
+          "extent": 200,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b4ec",
+          "extent": 212,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b5c0",
+          "extent": 1000,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b9a8",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b9ec",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801ba34",
+          "extent": 512,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801bc34",
+          "extent": 160,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801bcd4",
+          "extent": 196,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801bd98",
+          "extent": 812,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c0c4",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c0c8",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c0dc",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c154",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c17c",
+          "extent": 12,
           "state": "exact-c"
         }
       ],

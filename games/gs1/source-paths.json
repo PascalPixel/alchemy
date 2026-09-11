@@ -15984,8 +15984,7 @@
       "source": "battle/presentation/prepare_scene.c"
     },
     "main:0801bd98": {
-      "name": "MenuSelection_SetupEntry",
-      "source": "menu/selection/setup_entry.c"
+      "name": "MenuSelection_SetupEntry"
     },
     "main:0808a5f8": {
       "name": "MapGroupTable_SelectEntry",

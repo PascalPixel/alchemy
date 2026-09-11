@@ -437,7 +437,7 @@
       "song_id": 114,
       "symbol": "sound_menu_error",
       "name": "menu error",
-      "evidence": "InventoryMenu_UseSelectedItem plays id=114 only when applying the selected item returns -1, immediately before displaying the failure message; 22 menu call sites support the shared error role."
+      "evidence": "ItemMenu_Use plays id=114 only when applying the selected item returns -1, immediately before displaying the failure message; 22 menu call sites support the shared error role."
     },
     {
       "song_id": 115,
@@ -581,7 +581,7 @@
       "song_id": 138,
       "symbol": "sound_item_break",
       "name": "item break",
-      "evidence": "InventoryMenu_MaybeBreakSelectedItem plays id=138 immediately after marking a breakable item as broken; five related effect callers corroborate the break effect."
+      "evidence": "ItemMenu_TryBreak plays id=138 immediately after marking a breakable item as broken; five related effect callers corroborate the break effect."
     },
     {
       "song_id": 139,

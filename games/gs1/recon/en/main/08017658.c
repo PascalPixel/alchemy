@@ -20,11 +20,11 @@
  * declaration/statement order) were tried; all reproduce the same register
  * count gap. Func_08018038 mirrors UiText_BuildRenderEntries's exact
  * "build render entries, then check RENDER_ENTRY_TBL_OFS[index] != 0" idiom
- * (ui/text/prepare_message_work.c); Func_08016418 IS UiWork_Finalize
+ * (ui/text/work/prepare_message_work.c); Func_08016418 IS UiWork_Finalize
  * (ui/render/finalize.c, called the same way: Finalize(work, 1) on failure);
  * Func_080162d4/Func_080165d8 are argument-shape-compatible with
  * UiWindow_Create/UiWork_ActivateChannel but not confirmed identical. The
- * family-matcher's best guess, ui/text/prepare_message_work.c (7382/10000,
+ * family-matcher's best guess, ui/text/work/prepare_message_work.c (7382/10000,
  * below threshold), is a genuine sibling by shared idiom and shared
  * UiWork_Finalize callee, not a shape-only false positive, but its own body
  * differs (different call targets/argument counts) so it was not transplanted.

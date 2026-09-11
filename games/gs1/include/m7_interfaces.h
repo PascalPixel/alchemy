@@ -19,7 +19,7 @@ struct Object080a1c {
 
 void PsynergyMenu_PositionOwnerEntry(
     struct Object080a1c **, s32, s32, s32, s32);
-void InventoryMenu_PositionOwnerEntry(
+void ItemMenu_PosOwner(
     struct Object080a1c **, s32, s32, s32, s32);
 void WindowBounds_Set(
     struct WindowBounds *, s32, s32, s32, s32);

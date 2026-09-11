@@ -2,7 +2,7 @@
 #include "object_efx.h"
 
 s32 Object_SetCallback(void *, s32);
-void BattleEffect_UpdateOrbitingParticleFade(void *object)
+void BattleFx_UpdateOrbitingParticleFade(void *object)
 {
   s32 primary_fade;
   u8 *object_bytes;

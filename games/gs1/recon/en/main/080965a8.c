@@ -106,7 +106,7 @@ void Func_080965a8(s32 arg)
         Func_08003f3c(last);
     }
     WaitFrames(10);
-    ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
+    Motion_ArmCb(Data_02000240[125], 0x4000, 0);
     WaitFrames(20);
     Object_SetMode(Object_GetById(Data_02000240[125]), 28);
     WaitFrames(20);
@@ -142,5 +142,5 @@ void Func_080965a8(s32 arg)
     while (count >= 0);
     WaitFrames(50);
     Func_080b0050();
-    BattleEffect_ClearActiveSlotsAndScheduleUpdates();
+    BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

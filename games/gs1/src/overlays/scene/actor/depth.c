@@ -3,7 +3,7 @@
 #define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_PrepareObject      Func_02000048
+#define OvObj_PrepareObject      Func_02000048
 #define AcquireOverlayObject      Func_0200110e
 #define RunOverlayObjectCommand0  Func_02001144
 #define RunOverlayObjectCommand1  Func_0200115c
@@ -11,9 +11,9 @@
 #define CreateOverlayObject Func_02001166
 #define SetOverlayObjectMode Func_020011a0
 #define SetOverlayObjectSlot Func_020012a0
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define OverlayObject_TurnStateByEighth Func_02000da8
-#define OverlayObject_WaitForHeight Func_02000db8
+#define OvObj_CreateConfiguredObject Func_020000a0
+#define OvObj_TurnStateByEighth Func_02000da8
+#define OvObj_WaitForHeight Func_02000db8
 #define EffectDescriptorTable Data_020092dc
 #define GetPartyEffect Func_020012a2
 #define SpawnEffect Func_02001238
@@ -27,20 +27,20 @@
 #define SetEffectCallbackArgument Func_0200136c
 #define SpawnConfiguredEffect Func_0200013c
 #define Overlay387_ConfigureActorEightAtDepth Func_02000d04
-#define FieldScene_RequestAndWaitFrames Func_02000314
+#define Scene_RequestAndWaitFrames Func_02000314
 #define SceneData_GetTable92f8 Func_0200032c
 #define SceneData_ReturnZero Func_02000334
 #define SceneData_GetTable9358 Func_02000338
 #define SceneData_GetTable9368 Func_02000340
-#define FieldScene_RunOpeningAuxiliarySequence Func_02000348
-#define FieldScene_RunScene387SequenceC Func_020003d0
-#define FieldScene_RunScene387SequenceD Func_0200043c
-#define FieldScene_RunScene387SequenceA Func_0200067c
+#define Scene_RunOpeningAuxiliarySequence Func_02000348
+#define Scene_RunScene387SequenceC Func_020003d0
+#define Scene_RunScene387SequenceD Func_0200043c
+#define Scene_RunScene387SequenceA Func_0200067c
 #define Resource387_NoOpCallbackA Func_020004cc
 #define Resource387_NoOpCallbackB Func_020004d0
-#define FieldScene_RunStepWithValue866 Func_020004d4
+#define Scene_RunStepWithValue866 Func_020004d4
 #define SceneData_GetTable9488 Func_020004ec
-#define SceneActor_ApplyValueAndMatchingSlots Func_02000f8c
+#define Actor_ApplyValueAndMatchingSlots Func_02000f8c
 
 #include "create_configured_overlay_object.h"
 #include "configured_effect_spawn.h"
@@ -365,7 +365,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
     work->record->mode = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+void *OvObj_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
 {
     void *obj;
     void *rec;
@@ -386,7 +386,7 @@ void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
     return NULL;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "create_configured_overlay_object_body.inc"
 }
@@ -402,7 +402,7 @@ void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
  * the first call clobbers its register, so it survives to reach the second.
  * The twenty-two byte owner loads no literal and has no pool.
  */
-void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
+void Scene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
     Func_020014e8(selector, 0);
     Func_02001446(frames);
@@ -434,7 +434,7 @@ void *SceneData_GetTable9368(void)
     return (void *)0x02009368;
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+void Scene_RunOpeningAuxiliarySequence(void)
 {
     s32 record;
     s32 v3;
@@ -454,7 +454,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     }
 }
 
-void FieldScene_RunScene387SequenceC(void)
+void Scene_RunScene387SequenceC(void)
 {
     s32 record;
     s32 v3;
@@ -473,7 +473,7 @@ void FieldScene_RunScene387SequenceC(void)
     }
 }
 
-void FieldScene_RunScene387SequenceD(void)
+void Scene_RunScene387SequenceD(void)
 {
     u8 *p5;
     s32 v5;
@@ -507,7 +507,7 @@ void Resource387_NoOpCallbackB(void)
 {
 }
 
-void FieldScene_RunStepWithValue866(void)
+void Scene_RunStepWithValue866(void)
 {
     Func_02001604();
     Func_020015ea(0x866);
@@ -520,7 +520,7 @@ void *SceneData_GetTable9488(void)
     return (void *)0x02009488;
 }
 
-void FieldScene_RunScene387SequenceA(void)
+void Scene_RunScene387SequenceA(void)
 {
     u32 i;
     s32 record;
@@ -740,7 +740,7 @@ void Overlay387_ConfigureActorEightAtDepth(void)
 }
 
 /* Turn the object's attached presentation state by one eighth-turn. */
-void OverlayObject_TurnStateByEighth(u8 *obj)
+void OvObj_TurnStateByEighth(u8 *obj)
 {
     u8 *state = *(u8 **)(obj + 80);
     s32 v = *(u16 *)(state + 30) - 0x800;
@@ -748,7 +748,7 @@ void OverlayObject_TurnStateByEighth(u8 *obj)
     *(u16 *)(state + 30) = v;
 }
 
-void OverlayObject_WaitForHeight(u8 *obj, s32 height)
+void OvObj_WaitForHeight(u8 *obj, s32 height)
 {
     s32 cnt = 60;
     while (cnt != 0) {
@@ -760,7 +760,7 @@ void OverlayObject_WaitForHeight(u8 *obj, s32 height)
 }
 
 /* Apply a value to every matching member of a fifteen-slot group. */
-void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
+void Actor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
     u8 *work = Func_0200207c(group);
     s32 i;

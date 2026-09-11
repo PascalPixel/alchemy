@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunPrimarySequence Func_02000f5c
+#define Scene_RunPrimarySequence Func_02000f5c
 
 /* Audited retained field-scene body at 0x02000f5c.
  * The complete production body preserves 60 decoded calls, 2 loop(s), and 23 explicit memory operation(s).

@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunFirstActorInteraction:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunFirstActorInteraction:
  * 29 calls, a progress gate, result-dependent presentation, and common
  * actor cleanup across the complete callable owner. */
 
-#define FieldScene_RunFirstActorInteraction Func_020012f0
+#define Scene_RunFirstActorInteraction Func_020012f0
 
 void *Func_020030fa();
 s32 Func_02003310();

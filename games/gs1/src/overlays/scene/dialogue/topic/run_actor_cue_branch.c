@@ -9,7 +9,7 @@ extern void Func_02001a02(s32);
 extern void Func_02001a0a(s32);
 extern void Func_02001a22(s32, s32);
 
-void FieldScene_RunActorCueBranch(s32 object)
+void Scene_RunActorCueBranch(s32 object)
 {
     s32 cue = (s32)&Value_00000e39;
     Func_020019e2(cue);

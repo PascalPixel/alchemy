@@ -9,7 +9,7 @@ extern void Func_02001a4a(s32);
 extern void Func_02001a52(s32);
 extern void Func_02001a6a(s32, s32);
 
-void FieldScene_RunPromptDialogueE19(s32 object)
+void Scene_RunPromptDialogueE19(s32 object)
 {
     s32 cue = (s32)&Value_00000e19;
     Func_02001a2a(cue);

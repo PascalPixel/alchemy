@@ -37,28 +37,28 @@ void Func_02007090();
  * overlay veneer and the main-image veneer island, keeping the site's own
  * calling form. Names without a repository binding are provisional.
  */
-#define BattleRuntime_Reset_1(args...) Func_02006e6c(args)
+#define Battle_Reset_1(args...) Func_02006e6c(args)
 #define ObjectGroup_ConfigureChildValue_1(args...) Func_02006f2c(args)
 #define Scene_GetRecord_1(args...) Func_02006e9a(args)
 #define Object_NotifyLastActiveOfEvent_1(a0) Call1(Func_02006e96, a0)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_02006f1a, a0, a1, a2)
+#define Motion_SetHPosTerrain_1(a0, a1, a2) Call3(Func_02006f1a, a0, a1, a2)
 #define Scene_GetRecord_2(args...) Func_02006ec0(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_02006f34, a0, a1, a2)
+#define Motion_SetHPosTerrain_2(a0, a1, a2) Call3(Func_02006f34, a0, a1, a2)
 #define Scene_GetRecord_3(args...) Func_02006eda(args)
-#define ObjectMotion_SetActionVariant_1(a0, a1) Value2(Func_02006fc0, a0, a1)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_02006f56, a0, a1, a2)
+#define Motion_SetActionVariant_1(a0, a1) Value2(Func_02006fc0, a0, a1)
+#define Motion_SetHPosTerrain_3(a0, a1, a2) Call3(Func_02006f56, a0, a1, a2)
 #define Scene_GetRecord_4(args...) Func_02006efc(args)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_02007040(args)
-#define ObjectMotion_SetSpeedParameters_1(args...) Func_02007054(args)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_02006ef2(args)
-#define ObjectMotion_Launch_1(args...) Func_02006f9c(args)
-#define ObjectMotion_Launch_2(args...) Func_02006fa6(args)
+#define Battle_WaitMode0_1(args...) Func_02007040(args)
+#define Motion_SetSpeed_1(args...) Func_02007054(args)
+#define Battle_WaitMode0_2(args...) Func_02006ef2(args)
+#define Motion_Launch_1(args...) Func_02006f9c(args)
+#define Motion_Launch_2(args...) Func_02006fa6(args)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_02006fd4, a0)
-#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02006fb2(args)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02006f60, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_02006faa, a0, a1, a2)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Value3(Func_0200702c, a0, a1, a2)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02006ff4(args)
+#define Motion_CallWaitAnim_1(args...) Func_02006fb2(args)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_02006f60, a0, a1, a2)
+#define Motion_SetPosReset_1(a0, a1, a2) Call3(Func_02006faa, a0, a1, a2)
+#define Motion_ArmCb_1(a0, a1, a2) Value3(Func_0200702c, a0, a1, a2)
+#define Motion_SetVarCbObj_1(args...) Func_02006ff4(args)
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -98,18 +98,18 @@ static __inline__ void bump_step(s32 amount)
 
 /* Configures actors 20, 21 and 22 (position and movement/sprite flags) and
  * advances the shared scene phase before the scene runs. */
-void FieldScene_ConfigureThreeActors(void)
+void Scene_ConfigureThreeActors(void)
 {
     u32 i;
     s32 record;
 
-    BattleRuntime_Reset_1();
+    Battle_Reset_1();
     ObjectGroup_ConfigureChildValue_1(0, 15);
     record = Scene_GetRecord_1(0);
     Func_02006e38(record, 0);
     Object_NotifyLastActiveOfEvent_1(0x200d160);
     Func_02006dfc(1);
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(20, 0xc40000, 0x1f60000);
+    Motion_SetHPosTerrain_1(20, 0xc40000, 0x1f60000);
     record = Scene_GetRecord_2(20);
     {
         /* Set the visibility/active flag at +6. */
@@ -117,7 +117,7 @@ void FieldScene_ConfigureThreeActors(void)
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    ObjectMotion_SetHorizontalPositionWithTerrain_2(22, 0xb80000, 0x20c0000);
+    Motion_SetHPosTerrain_2(22, 0xb80000, 0x20c0000);
     record = Scene_GetRecord_3(22);
     {
         /* Set the visibility/active flag at +6. */
@@ -125,8 +125,8 @@ void FieldScene_ConfigureThreeActors(void)
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    ObjectMotion_SetActionVariant_1(21, 1);
-    ObjectMotion_SetHorizontalPositionWithTerrain_3(21, 0xb80000, 0x2780000);
+    Motion_SetActionVariant_1(21, 1);
+    Motion_SetHPosTerrain_3(21, 0xb80000, 0x2780000);
     record = Scene_GetRecord_4(21);
     {
         /* Set the visibility/active flag at +6. */
@@ -135,18 +135,18 @@ void FieldScene_ConfigureThreeActors(void)
         *(volatile u16 *)(record + 6) = shown;
     }
     SCENE_PHASE = 0x202;
-    BattleRuntime_WaitIfModeZero_1();
-    ObjectMotion_SetSpeedParameters_1();
-    BattleRuntime_WaitIfModeZero_2(20);
-    ObjectMotion_Launch_1(22, 4, 10);
-    ObjectMotion_Launch_2(22, 6, 20);
+    Battle_WaitMode0_1();
+    Motion_SetSpeed_1();
+    Battle_WaitMode0_2(20);
+    Motion_Launch_1(22, 4, 10);
+    Motion_Launch_2(22, 6, 20);
     SceneWork_SetStepValue_1(0x1ee5);
     Func_0200661a(22);
-    ObjectMotion_CallThenWaitForAnimationChange_1(20, 3);
-    ObjectMotion_SetSpeedParameters_2(21, 0x30000, 0x18000);
-    ObjectMotion_SetPositionAndReset_1(21, 180, 0x222);
-    ObjectMotion_ArmCallback_1(21, 0xb000, 40);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_1(21, 1);
+    Motion_CallWaitAnim_1(20, 3);
+    Motion_SetSpeed_2(21, 0x30000, 0x18000);
+    Motion_SetPosReset_1(21, 180, 0x222);
+    Motion_ArmCb_1(21, 0xb000, 40);
+    Motion_SetVarCbObj_1(21, 1);
     Func_02006652(21);
     Func_02007090(15);
 }

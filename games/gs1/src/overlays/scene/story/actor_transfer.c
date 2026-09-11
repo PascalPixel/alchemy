@@ -19,14 +19,14 @@
 #define StoryScene_ShowRewardDialogue Func_020028a8
 #define StoryScene_StartTransition Func_02003130
 #define StoryScene_ComputeOpposingSlotDelta Func_0200341c
-#define SceneState_SetValues130_6_47 Func_02000540
-#define SceneState_ApplyValues150And46And11 Func_02000550
-#define SceneState_ApplyValues116And56And21 Func_02000560
-#define SceneState_ApplyValues151And25And54 Func_02000570
-#define SceneState_ApplyFlag85aBranch Func_020006b4
-#define SceneState_RunSlotStepOnOddFrames Func_02003f88
-#define FieldScene_RunStep7D3B1E Func_02000580
-#define FieldScene_RunStep74 Func_020006dc
+#define State_SetValues130_6_47 Func_02000540
+#define State_ApplyValues150And46And11 Func_02000550
+#define State_ApplyValues116And56And21 Func_02000560
+#define State_ApplyValues151And25And54 Func_02000570
+#define State_ApplyFlag85aBranch Func_020006b4
+#define State_RunSlotStepOnOddFrames Func_02003f88
+#define Scene_RunStep7D3B1E Func_02000580
+#define Scene_RunStep74 Func_020006dc
 #define FieldScene_RunScene371_0200155c Func_0200155c
 #define FieldScene_RunScene371_02001680 Func_02001680
 #define FieldScene_RunScene371_020017a4 Func_020017a4
@@ -35,27 +35,27 @@
 #define FieldScene_RunScene371_02001938 Func_02001938
 #define FieldScene_RunScene371_020019e8 Func_020019e8
 #define FieldScene_RunScene371_02001a98 Func_02001a98
-#define BattleRuntime_Reset_1(args...) Func_020075d0_b(args)
-#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020076fa, a0, a1, a2, a3)
+#define Battle_Reset_1(args...) Func_020075d0_b(args)
+#define Motion_CamBounds_1(a0, a1, a2, a3) Call4(Func_020076fa, a0, a1, a2, a3)
 #define Object_SetModeById_1(args...) Func_02007678(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_0200767c, a0, a1, a2)
+#define Motion_SetHPosTerrain_1(a0, a1, a2) Call3(Func_0200767c, a0, a1, a2)
 #define Scene_GetRecord_1(args...) Func_02007622(args)
 #define RatioHistory_RecordAndScheduleCallback_1(a0, a1) Call2(Func_020077c6, a0, a1)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_020076a0(args)
-#define ObjectMotion_SetPositionAndReset_1(args...) Func_02007730(args)
-#define BattleRuntime_WaitIfModeZero_1(args...) Func_020077a0(args)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_0200767a, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_1(a0, a1, a2) Call3(Func_020076ae, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_2(a0, a1, a2) Call3(Func_020076ba, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_0200769c, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_3(a0, a1, a2) Call3(Func_020076d0, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_020076b2, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_4(a0, a1, a2) Call3(Func_020076e6, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_020076c8, a0, a1, a2)
-#define ObjectMotion_SetPositionAndCommit_5(a0, a1, a2) Call3(Func_020076fc, a0, a1, a2)
+#define Motion_SetHPosTerrain_2(args...) Func_020076a0(args)
+#define Motion_SetPosReset_1(args...) Func_02007730(args)
+#define Battle_WaitMode0_1(args...) Func_020077a0(args)
+#define Motion_SetSpeed_1(a0, a1, a2) Call3(Func_0200767a, a0, a1, a2)
+#define Motion_SetPositionAndCommit_1(a0, a1, a2) Call3(Func_020076ae, a0, a1, a2)
+#define Motion_SetPositionAndCommit_2(a0, a1, a2) Call3(Func_020076ba, a0, a1, a2)
+#define Motion_SetSpeed_2(a0, a1, a2) Call3(Func_0200769c, a0, a1, a2)
+#define Motion_SetPositionAndCommit_3(a0, a1, a2) Call3(Func_020076d0, a0, a1, a2)
+#define Motion_SetSpeed_3(a0, a1, a2) Call3(Func_020076b2, a0, a1, a2)
+#define Motion_SetPositionAndCommit_4(a0, a1, a2) Call3(Func_020076e6, a0, a1, a2)
+#define Motion_SetSpeed_4(a0, a1, a2) Call3(Func_020076c8, a0, a1, a2)
+#define Motion_SetPositionAndCommit_5(a0, a1, a2) Call3(Func_020076fc, a0, a1, a2)
 #define Object_SetModeById_2(args...) Func_02007734(args)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_020076aa(args)
-#define ObjectMotion_SetSpeedParameters_5(args...) Func_0200782a(args)
+#define Battle_WaitMode0_2(args...) Func_020076aa(args)
+#define Motion_SetSpeed_5(args...) Func_0200782a(args)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define ACTOR 8
 #define FieldScene_RunScene371_02001b5c Func_02001b5c
@@ -63,21 +63,21 @@
 #define FieldScene_RunScene371_02002274 Func_02002274
 #define FieldScene_RunScene371_0200281c Func_0200281c
 #define FieldScene_RunScene371_02002858 Func_02002858
-#define FieldScene_RunActorPresentationSequence Func_02002cb4
-#define FieldScene_RunActorEightApproach Func_020032f0
+#define Scene_RunActorPresentationSequence Func_02002cb4
+#define Scene_RunActorEightApproach Func_020032f0
 #define FieldScene_RunScene371_0200357c Func_0200357c
-#define FieldScene_RunOpeningAuxiliarySequence Func_020036dc
-#define FieldScene_RunLateSequence Func_0200395c
+#define Scene_RunOpeningAuxiliarySequence Func_020036dc
+#define Scene_RunLateSequence Func_0200395c
 #define RunEventScript01 Func_02000a8c
-#define FieldScene_RunActorTransferSequence Func_02000c28
+#define Scene_RunActorTransferSequence Func_02000c28
 #define StoryReward_LookupBySelection Func_02003448
 #define StoryScene_UpdateSelectedActorProgress Func_02003678
 #define StoryScene_SetReferenceActor Func_020037bc
 #define StoryScene_ActivateSharedState Func_020037c8
 #define StoryScene_CompleteActor98 Func_020037d8
-#define SceneEffect_RestoreBlendRegisters Func_020038fc
-#define SceneActor_UpdateObjectByCounterBits Func_02003f10
-#define OverlayObject_UpdateOnFrameParity Func_02003f4c
+#define Effect_RestoreBlendRegisters Func_020038fc
+#define Actor_UpdateObjectByCounterBits Func_02003f10
+#define OvObj_UpdateOnFrameParity Func_02003f4c
 #define StoryEffect_AnimateVerticalPositive Func_02003fb4
 #define StoryEffect_AnimateVerticalNegative Func_02004004
 
@@ -1630,35 +1630,35 @@ void StoryScene_SetBranchValueFromZ(
     Func_020049d2(0x7B);
 }
 
-void SceneState_SetValues130_6_47(void)
+void State_SetValues130_6_47(void)
 {
     extern volatile s32 Data_03001e40;
 
     Func_020009ea(0x82, 6, 0x2F);
 }
 
-void SceneState_ApplyValues150And46And11(void)
+void State_ApplyValues150And46And11(void)
 {
     extern volatile s32 Data_03001e40;
 
     Func_02000a4a(0x96, 0x2E, 0x0B);
 }
 
-void SceneState_ApplyValues116And56And21(void)
+void State_ApplyValues116And56And21(void)
 {
     extern volatile s32 Data_03001e40;
 
     Func_02000a5a(0x74, 0x38, 0x15);
 }
 
-void SceneState_ApplyValues151And25And54(void)
+void State_ApplyValues151And25And54(void)
 {
     extern volatile s32 Data_03001e40;
 
     Func_02000a6a(0x97, 0x19, 0x36);
 }
 
-void FieldScene_RunStep7D3B1E(void)
+void Scene_RunStep7D3B1E(void)
 {
     extern u8 Data_02000240[];
     extern u8 Data_0200e7a0[];
@@ -1673,7 +1673,7 @@ u8 *SceneData_GetTableE3F4(void)
     return Data_0200e3f4;
 }
 
-void SceneState_ApplyFlag85aBranch(void)
+void State_ApplyFlag85aBranch(void)
 {
     extern volatile s32 Data_03001e40;
 
@@ -1685,7 +1685,7 @@ void SceneState_ApplyFlag85aBranch(void)
     }
 }
 
-void FieldScene_RunStep74(void)
+void Scene_RunStep74(void)
 {
     extern u8 Data_02000240[];
     extern u8 Data_0200e7a0[];
@@ -1759,7 +1759,7 @@ void RunEventScript01(void)
     Func_02004ef8_a();
 }
 
-void FieldScene_RunActorTransferSequence(void)
+void Scene_RunActorTransferSequence(void)
 {
     u8 *actor;
     u8 *record;
@@ -2514,7 +2514,7 @@ void StoryScene_ShowRewardDialogue(void)
     Func_02006bbe();
 }
 
-void FieldScene_RunActorPresentationSequence(void)
+void Scene_RunActorPresentationSequence(void)
 {
     extern u8 Data_02000240[];
     extern u8 Data_0200e7a0[];
@@ -2678,7 +2678,7 @@ void StoryScene_StartTransition(void)
 
 /* Drives actor 8 through a series of position/threshold setup calls and
  * advances the shared scene phase before the scene runs. */
-void FieldScene_RunActorEightApproach(void)
+void Scene_RunActorEightApproach(void)
 {
     extern u8 Data_02000240[];
     extern u8 Data_0200e7a0[];
@@ -2688,11 +2688,11 @@ void FieldScene_RunActorEightApproach(void)
     u32 i;
     s32 actor;
 
-    BattleRuntime_Reset_1();
-    ObjectMotion_PlaceWithinCameraBounds_1(-1, -1, -1, 0);
+    Battle_Reset_1();
+    Motion_CamBounds_1(-1, -1, -1, 0);
     Func_02007490(1);
     Object_SetModeById_1(ACTOR, 2);
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(ACTOR, 0x13080000, 0x3280000);
+    Motion_SetHPosTerrain_1(ACTOR, 0x13080000, 0x3280000);
     actor = Scene_GetRecord_1(ACTOR);
     {
         /* Write 0xa000 to the halfword at +6 of the actor record. */
@@ -2702,24 +2702,24 @@ void FieldScene_RunActorEightApproach(void)
     }
     Func_020074b6(1);
     RatioHistory_RecordAndScheduleCallback_1(0x13333, 1);
-    ObjectMotion_SetHorizontalPositionWithTerrain_2(0, 0, 0);
-    ObjectMotion_SetPositionAndReset_1(ACTOR, 1);
+    Motion_SetHPosTerrain_2(0, 0, 0);
+    Motion_SetPosReset_1(ACTOR, 1);
     Func_020074d6(1);
     SCENE_PHASE = 0x100;
-    BattleRuntime_WaitIfModeZero_1();
-    ObjectMotion_SetSpeedParameters_1(ACTOR, 0x6666, 0x3333);
-    ObjectMotion_SetPositionAndCommit_1(ACTOR, 0x12d8, 0x2c8);
-    ObjectMotion_SetPositionAndCommit_2(ACTOR, 0x12a8, 0x268);
-    ObjectMotion_SetSpeedParameters_2(ACTOR, 0x4ccc, 0x2666);
-    ObjectMotion_SetPositionAndCommit_3(ACTOR, 0x12a8, 0x1d8);
-    ObjectMotion_SetSpeedParameters_3(ACTOR, 0x3333, 0x1999);
-    ObjectMotion_SetPositionAndCommit_4(ACTOR, 0x1298, 0x1c8);
-    ObjectMotion_SetSpeedParameters_4(ACTOR, 0x1999, 0xccc);
-    ObjectMotion_SetPositionAndCommit_5(ACTOR, 0x1298, 0x1b8);
+    Battle_WaitMode0_1();
+    Motion_SetSpeed_1(ACTOR, 0x6666, 0x3333);
+    Motion_SetPositionAndCommit_1(ACTOR, 0x12d8, 0x2c8);
+    Motion_SetPositionAndCommit_2(ACTOR, 0x12a8, 0x268);
+    Motion_SetSpeed_2(ACTOR, 0x4ccc, 0x2666);
+    Motion_SetPositionAndCommit_3(ACTOR, 0x12a8, 0x1d8);
+    Motion_SetSpeed_3(ACTOR, 0x3333, 0x1999);
+    Motion_SetPositionAndCommit_4(ACTOR, 0x1298, 0x1c8);
+    Motion_SetSpeed_4(ACTOR, 0x1999, 0xccc);
+    Motion_SetPositionAndCommit_5(ACTOR, 0x1298, 0x1b8);
     Object_SetModeById_2(ACTOR, 1);
-    BattleRuntime_WaitIfModeZero_2(40);
+    Battle_WaitMode0_2(40);
     Func_0200781e();
-    ObjectMotion_SetSpeedParameters_5();
+    Motion_SetSpeed_5();
     Func_020077f0(110);
 }
 
@@ -2838,7 +2838,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
     Func_02007974(0x2f8, progress);
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
+void Scene_RunOpeningAuxiliarySequence(s32 a0)
 {
     extern u8 Data_02000240[];
     extern u8 Data_0200e7a0[];
@@ -2921,7 +2921,7 @@ void StoryScene_CompleteActor98(void)
 }
 
 /* Restore the blend registers using the active display bank's mask. */
-void SceneEffect_RestoreBlendRegisters(void)
+void Effect_RestoreBlendRegisters(void)
 {
     extern u16 Data_0200e7a0;
     extern u32 Data_03001e40;
@@ -2934,7 +2934,7 @@ void SceneEffect_RestoreBlendRegisters(void)
     }
 }
 
-void FieldScene_RunLateSequence(void)
+void Scene_RunLateSequence(void)
 {
     extern u8 Data_02000240[];
     extern u8 Data_0200e7a0[];
@@ -2968,7 +2968,7 @@ void FieldScene_RunLateSequence(void)
     }
 }
 
-void SceneActor_UpdateObjectByCounterBits(u8 *obj)
+void Actor_UpdateObjectByCounterBits(u8 *obj)
 {
     extern s32 Data_03001e40;
     void Func_02008180(u8 *, s32);
@@ -2983,7 +2983,7 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
     }
 }
 
-void OverlayObject_UpdateOnFrameParity(u8 *obj)
+void OvObj_UpdateOnFrameParity(u8 *obj)
 {
     extern volatile u32 Data_03001e40;
 
@@ -2995,7 +2995,7 @@ void OverlayObject_UpdateOnFrameParity(u8 *obj)
     }
 }
 
-void SceneState_RunSlotStepOnOddFrames(s32 arg0)
+void State_RunSlotStepOnOddFrames(s32 arg0)
 {
     extern volatile s32 Data_03001e40;
 

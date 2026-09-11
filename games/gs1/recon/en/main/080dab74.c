@@ -119,7 +119,7 @@ extern char Value_000000ba;
 
 void Func_080cd594(s32 mode);
 void Func_080e0524(void *resource_id, void *destination, s32 upper, s32 palette);
-void BattleEffect_FetchRectangleBlitters(s32 alternate, u32 *output);
+void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 s32 Func_08004458(void);
 void Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -169,7 +169,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
     Func_080e0524(&Value_000000b8, work, 1, 1);
     Func_080e0524(&Value_000000ba, graphics, 0, 0);
     rectangle_slot = rectangle;
-    BattleEffect_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
+    BattleFx_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
 
     mote = work->motes;
     for (i = 0; i != 64; i++) {

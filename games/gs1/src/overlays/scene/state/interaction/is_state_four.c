@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 SceneState_IsStateFour(s32 *state)
+s32 State_IsStateFour(s32 *state)
 {
     s32 ret = 0;
 

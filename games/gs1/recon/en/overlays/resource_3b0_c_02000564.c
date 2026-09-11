@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunFourActorStagingSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunFourActorStagingSequence:
  * 52 ordered calls, actor 9/10/11/12 staging, placement publication,
  * workspace transitions, camera motion, and the terminal scene close. */
 
-#define FieldScene_RunFourActorStagingSequence Func_02000564
+#define Scene_RunFourActorStagingSequence Func_02000564
 
 void *Func_02001736();
 void *Func_0200178a();

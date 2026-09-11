@@ -15,22 +15,22 @@
 #define ScaleEffectVerticalDelta Func_02001f26
 #define SetEffectCallbackMode Func_02001fa4
 #define SetEffectCallbackArgument Func_02001fb4
-#define OverlayObject_PrepareObject Func_02000048
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
-#define FieldScene_ApplyActor13Values3And3 Func_02000314
-#define OverlayObject_WaitUntilField12BelowLimit Func_02000324
+#define OvObj_PrepareObject Func_02000048
+#define OvObj_CreateConfiguredObject Func_020000a0
+#define Effect_SpawnConfiguredEffect Func_0200013c
+#define Scene_ApplyActor13Values3And3 Func_02000314
+#define OvObj_WaitUntilField12BelowLimit Func_02000324
 #define SceneData_SelectTableByScene59To5c Func_020003ac
 #define SceneData_ReturnZero Func_02000410
 #define SceneData_GetTablea36c Func_02000414
-#define FieldScene_RunFlags8B2And8B3Steps Func_02000498
+#define Scene_RunFlags8B2And8B3Steps Func_02000498
 #define SceneData_GetTableA500 Func_020004dc
 #define FieldScene_RunScene3a5_02000c38 Func_02000c38
 #define FieldScene_RunScene3a5_02000c6c Func_02000c6c
 #define CalculatePlanarDistance Func_02000e00
 #define FieldScene_RunScene3a5_020014b0 Func_020014b0
 #define FieldScene_RunScene3a5_02001874 Func_02001874
-#define SceneState_SetHalfwordB030 Func_02001c78
+#define State_SetHalfwordB030 Func_02001c78
 
 #include "create_configured_overlay_object.h"
 #include "configured_effect_spawn.h"
@@ -167,7 +167,7 @@ static __inline__ void Call3_02001874(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *obj = Func_02001d56(arg3, arg0, arg1, arg2);
 
@@ -190,25 +190,25 @@ void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return NULL;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OvObj_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "create_configured_overlay_object_body.inc"
 }
 
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
+void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct ConfiguredEffectOptions *options)
 {
 #include "configured_effect_spawn_body.inc"
 }
 
-void FieldScene_ApplyActor13Values3And3(void) { Func_02002152(13, 3, 3); }
+void Scene_ApplyActor13Values3And3(void) { Func_02002152(13, 3, 3); }
 
 /*
  * The countdown is tested at the top of the loop and decremented inside the
  * body, after the call.  A post-decrement test would move the subtract ahead
  * of the call.
  */
-void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
+void OvObj_WaitUntilField12BelowLimit(u8 *o, s32 limit)
 {
     s32 frames = 60;
 
@@ -250,7 +250,7 @@ void *SceneData_GetTablea36c(void)
     return (void *)0x0200a36c;
 }
 
-void FieldScene_RunFlags8B2And8B3Steps(void)
+void Scene_RunFlags8B2And8B3Steps(void)
 {
     u32 i;
     s32 record;
@@ -393,7 +393,7 @@ void FieldScene_RunScene3a5_02001874(void)
     Func_02003648(8, 2);
 }
 
-void SceneState_SetHalfwordB030(u16 value)
+void State_SetHalfwordB030(u16 value)
 {
     *(u16 *)0x0200b030 = value;
 }

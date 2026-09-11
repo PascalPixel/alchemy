@@ -16,11 +16,11 @@
  */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_ConfigureProgressDependentActors:
+/* AUDITED GENERATED CALL SCRIPT for Scene_ConfigureProgressDependentActors:
  * 46 calls, progress-gated actor setup, and three actor-state writes across
  * the complete callable owner. */
 
-#define FieldScene_ConfigureProgressDependentActors Func_0200150c
+#define Scene_ConfigureProgressDependentActors Func_0200150c
 
 void Func_02001ffa();
 s32 Func_02002f98();

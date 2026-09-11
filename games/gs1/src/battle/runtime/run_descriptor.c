@@ -11,7 +11,7 @@ typedef struct {
 } Obj;
 
 struct EffectDescriptor *Func_0808d48c(s32, s32);
-void BattleRuntime_Reset(void);
+void Battle_Reset(void);
 void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 void Func_08091750(void);
@@ -35,7 +35,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             work->h19c = 0;
         }
         if (desc->val8 < 0x10000) {
-            BattleRuntime_Reset();
+            Battle_Reset();
             Func_08092b94(desc->val8);
             Func_08092f84(-1, 0);
             ret = 0;

@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunLiftedActorCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunLiftedActorCoordinator:
  * A phase-two fast path, full and revisit branches, the lifted actor-state
  * transfer, and all 40 calls across the complete scene coordinator. */
 
-#define FieldScene_RunLiftedActorCoordinator Func_020016d4
+#define Scene_RunLiftedActorCoordinator Func_020016d4
 
 void Func_020034de();
 s32 Func_020036f4();

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_RunUnitAction Func_080b8c1c
+#define BattlePres_RunUnitAction Func_080b8c1c
 #define BattleObject_IsValidId Func_080b8808
 #define BattleParty_ListLivingUnits Func_080b6b40
 #define GetBattleObjectSlot Func_080b7dd0
@@ -58,7 +58,7 @@ void Func_080c9020(struct BattlePresentationWork *work);
 void Func_080c9018(struct BattlePresentationWork *work);
 void Func_080b8000(s32 unit_id);
 
-s32 BattlePresentation_RunUnitAction(s16 *action)
+s32 BattlePres_RunUnitAction(s16 *action)
 {
     s16 *saved_action = action;
     struct BattlePresentationTransition *transition;

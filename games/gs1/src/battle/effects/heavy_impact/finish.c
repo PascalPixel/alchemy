@@ -3,7 +3,7 @@
 
 extern s32 Data_02000240[];
 
-void BattleEffect_FinishHeavyImpact(s32 arg)
+void BattleFx_FinishHeavyImpact(s32 arg)
 {
     s8 *head;
     struct {
@@ -47,7 +47,7 @@ void BattleEffect_FinishHeavyImpact(s32 arg)
         (*((s32 *)(((s8 *)ctx) + 0x6C))) = 0x0809592D;
         WaitFrames(0x28);
         Audio_PlayCue(0x99);
-        ObjectMotion_Launch(id, 0xC, 0x16);
+        Motion_Launch(id, 0xC, 0x16);
         pos.x = ((s32)(*((s32 *)(((s8 *)ctx) + 8))));
         pos.y = ((s32)(*((s32 *)(((s8 *)ctx) + 0xC))));
         pos.z = ((s32)(*((s32 *)(zptr = (((s8 *)ctx) + 0x10)))));
@@ -78,12 +78,12 @@ void BattleEffect_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
+    Motion_ArmCb(Data_02000240[125], 0x4000, 0);
     WaitFrames(0x14);
     Object_SetMode(Object_GetById(Data_02000240[125]), 0x1C);
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);
     Func_080b0050();
-    BattleEffect_ClearActiveSlotsAndScheduleUpdates();
+    BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

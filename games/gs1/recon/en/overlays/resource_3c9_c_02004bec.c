@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunExtendedActorTransition Func_02004bec
+#define Scene_RunExtendedActorTransition Func_02004bec
 
 struct SceneWork {
     u8 unknown_000[0x1c0];
@@ -295,7 +295,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) { f(a0, a1, a2
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) { f(a0, a1, a2, a3); }
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) { f(a0, a1, a2, a3, a4, a5); }
 
-void FieldScene_RunExtendedActorTransition(void)
+void Scene_RunExtendedActorTransition(void)
 {
     u8 *rec;
     u8 *record;

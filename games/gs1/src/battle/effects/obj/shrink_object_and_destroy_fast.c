@@ -4,7 +4,7 @@
 
 void Object_Destroy();
 
-void BattleEffect_ShrinkObjectAndDestroyFast(void *obj)
+void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 {
     s32 scale;
 

@@ -8,9 +8,9 @@ void Object_SetMode(s32, s32);
 void Func_080091e0(void *, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
-void BattleEffect_PrepareBufferInterpolation(void);
+void BattleFx_PrepareBufferInterpolation(void);
 
-void BattleEffect_RunBurstParticleMainObject(void)
+void BattleFx_RunBurstParticleMainObject(void)
 {
     u8 *object;
     u8 *flags;
@@ -29,6 +29,6 @@ void BattleEffect_RunBurstParticleMainObject(void)
         WaitFrames(0xAU);
         Audio_PlayCue(0x7E);
         WaitFrames(0x28U);
-        BattleEffect_PrepareBufferInterpolation();
+        BattleFx_PrepareBufferInterpolation();
     }
 }

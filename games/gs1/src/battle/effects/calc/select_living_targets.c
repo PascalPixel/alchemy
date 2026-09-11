@@ -8,7 +8,7 @@ struct BattleEffectTargetArgument {
     s16 unit_id;
 };
 
-void BattleEffect_SelectLivingTargets(struct BattleEffectTargetArgument *argument)
+void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument)
 {
     s16 targets[14];
     s32 count;

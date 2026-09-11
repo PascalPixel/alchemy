@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunDualArrivalSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunDualArrivalSequence:
  * state-routed scene setup, four actor field groups, and all 44 calls. */
 
-#define FieldScene_RunDualArrivalSequence Func_02001c20
+#define Scene_RunDualArrivalSequence Func_02001c20
 
 void *Func_020044c8();
 s32 Func_020046de();

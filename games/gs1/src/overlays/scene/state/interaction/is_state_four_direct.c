@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 SceneState_IsStateFourDirect(s32 *state)
+s32 State_IsStateFourDirect(s32 *state)
 {
     return *state == 4;
 }

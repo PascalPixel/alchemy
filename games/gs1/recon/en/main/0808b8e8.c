@@ -11,9 +11,9 @@
  */
 void Func_080090d0(void *object);
 
-#define BattleEffect_ClearOutOfBoundsObjects Func_0808b8e8
+#define BattleFx_ClearOutOfBoundsObjects Func_0808b8e8
 
-void BattleEffect_ClearOutOfBoundsObjects(void)
+void BattleFx_ClearOutOfBoundsObjects(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
     u8 *anchor;

@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunLargeActorPresentationSetup:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunLargeActorPresentationSetup:
  * 101 calls, no loops, two actor-flag updates, and a complete nine-field
  * presentation-record reset across the full callable owner. */
 
-#define FieldScene_RunLargeActorPresentationSetup Func_02000dcc
+#define Scene_RunLargeActorPresentationSetup Func_02000dcc
 
 void Func_02002a6e();
 void Func_02002ad2();

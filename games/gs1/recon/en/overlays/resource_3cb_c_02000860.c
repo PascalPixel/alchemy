@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene3cbSequenceB Func_02000860
+#define Scene_RunScene3cbSequenceB Func_02000860
 
 extern u8 Data_00000043[];
 extern u8 Data_00000045[];

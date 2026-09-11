@@ -86,7 +86,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void FieldScene_RunSceneThreeCoordinator(s32 a0)
+void Scene_RunSceneThreeCoordinator(s32 a0)
 {
     u32 i;
     s32 rec2;

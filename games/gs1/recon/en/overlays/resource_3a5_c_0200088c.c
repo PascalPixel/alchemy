@@ -12,10 +12,10 @@
  */
 #include "types.h"
 
-/* AUDITED ACTOR-LAYOUT SCRIPT for FieldScene_ConfigureAlternateActorLayout:
+/* AUDITED ACTOR-LAYOUT SCRIPT for Scene_ConfigureAlternateActorLayout:
  * scene-state dispatch, shared actor initialization, and terminal transition. */
 
-#define FieldScene_ConfigureAlternateActorLayout Func_0200088c
+#define Scene_ConfigureAlternateActorLayout Func_0200088c
 
 void Func_020025dc();
 void Func_020025ee();void Func_020025f0_a(); void Func_020025f0_b();

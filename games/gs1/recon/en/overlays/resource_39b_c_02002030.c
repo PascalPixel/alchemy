@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene39bSequenceA Func_02002030
+#define Scene_RunScene39bSequenceA Func_02002030
 
 extern u8 Data_00000000[];
 void Func_02003ec6();
@@ -65,7 +65,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunScene39bSequenceA(void)
+void Scene_RunScene39bSequenceA(void)
 {
     u32 i;
     s32 p10;

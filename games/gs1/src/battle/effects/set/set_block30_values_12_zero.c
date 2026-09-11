@@ -8,7 +8,7 @@ struct Fields_08095240 {
     u16 field_1f82;
 };
 
-void BattleEffect_SetBlock30Values12Zero(void)
+void BattleFx_SetBlock30Values12Zero(void)
 {
     struct Fields_08095240 *state = (struct Fields_08095240 *)Runtime_AllocateBlock(30, 0x1F88);
     state->field_1f80 = 12;

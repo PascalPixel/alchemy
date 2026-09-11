@@ -10,7 +10,7 @@ extern struct BattleEffect16GlobalState Data_02000240;
 extern u32 Data_03001e40;
 s32 UnsignedModulo(u32, s32);
 
-void BattleEffect_UpdateEffect16State(void)
+void BattleFx_UpdateEffect16State(void)
 {
     s32 phase;
     u8 *effect_state;

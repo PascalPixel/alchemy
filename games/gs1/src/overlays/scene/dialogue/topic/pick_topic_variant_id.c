@@ -7,7 +7,7 @@ extern s32 Func_020025f8(void);
 extern s32 Func_02002610(void);
 extern s32 Func_02002608(s32, s32);
 
-s32 SceneDialogue_PickTopicVariantId(s32 topic)
+s32 Dialogue_PickTopicVariantId(s32 topic)
 {
     s32 cursor;
     s32 variant;

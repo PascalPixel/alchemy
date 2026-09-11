@@ -23,7 +23,7 @@ extern struct State_08096ab0 *Data_03001f30;
 extern struct Global_08096ab0 Data_02000240;
 void Func_08097608(void);
 
-void BattleEffect_ClearChildValueOnMismatch(void)
+void BattleFx_ClearChildValueOnMismatch(void)
 {
     struct State_08096ab0 *state = Data_03001f30;
 

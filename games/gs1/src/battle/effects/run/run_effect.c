@@ -29,27 +29,27 @@ void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect03(void);
 void RunBattleEffect04(void);
 void RunBattleEffect05(void);
-void BattleEffect_RunOrbitingParticles(void);
+void BattleFx_RunOrbitingParticles(void);
 void RunBattleEffect07(void);
 void RunBattleEffect08(void);
 void RunBattleEffect10(void);
 void RunBattleEffect11(void);
-void BattleEffect_RunBurstParticles(void);
+void BattleFx_RunBurstParticles(void);
 void RunBattleEffect13(void);
 void RunBattleEffect14(void);
-void BattleEffect_RunEffect15(void);
+void BattleFx_RunEffect15(void);
 void RunBattleEffect16(void);
-void BattleEffect_ResumeObject(s32 obj_id);
+void BattleFx_ResumeObject(s32 obj_id);
 s32 Func_0808df1c(s32 obj_id, s32 battle_mode);
-s32 BattleEffect_FilterObjectIdByFlags(s32 obj_id);
+s32 BattleFx_FilterObjectIdByFlags(s32 obj_id);
 s32 Func_0808d5a4(s32 obj_id);
-void BattleEffect_SetupObjectPair(s32 selected_object, s32 obj_id);
+void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
 void Func_0809ab98(s32 obj_id);
-void BattleEffect_PauseObject(s32 obj_id);
+void BattleFx_PauseObject(s32 obj_id);
 void Func_0809abb4(void);
 void ResetSceneTransitionEffect(void);
 
-void BattleEffect_Run(void)
+void BattleFx_Run(void)
 {
     struct BattleEffectRequest *request;
     struct BattleEffectState *battle;
@@ -82,29 +82,29 @@ void BattleEffect_Run(void)
         RunBattleEffect14();
         return;
     case 6:
-        BattleEffect_RunOrbitingParticles();
+        BattleFx_RunOrbitingParticles();
         return;
     case 3:
         RunBattleEffect03();
         return;
     case 12:
-        BattleEffect_RunBurstParticles();
+        BattleFx_RunBurstParticles();
         return;
     case 13:
         RunBattleEffect13();
         return;
     case 9:
         if (Data_02000240.selected_id != -1) {
-            BattleEffect_ResumeObject(Data_02000240.selected_id);
+            BattleFx_ResumeObject(Data_02000240.selected_id);
             Data_02000240.selected_id = -1;
         }
 
         obj_id = Func_0808df1c(Data_02000240.selected_object, battle_mode);
-        obj_id = BattleEffect_FilterObjectIdByFlags(obj_id);
+        obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
         if (Func_0808d5a4(obj_id)!= 0) {
-            BattleEffect_SetupObjectPair(Data_02000240.selected_object, obj_id);
+            BattleFx_SetupObjectPair(Data_02000240.selected_object, obj_id);
             Func_0809ab98(obj_id);
-            BattleEffect_PauseObject(obj_id);
+            BattleFx_PauseObject(obj_id);
             Data_02000240.selected_id = obj_id;
         } else {
             Func_0809abb4();
@@ -122,7 +122,7 @@ void BattleEffect_Run(void)
         RunBattleEffect10();
         return;
     case 15:
-        BattleEffect_RunEffect15();
+        BattleFx_RunEffect15();
         return;
     case 16:
         RunBattleEffect16();

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_RunUnitTransition Func_080b9ec0
+#define BattlePres_RunUnitTransition Func_080b9ec0
 
 struct BattlePresentationSelection {
     u8 primary_unit;
@@ -22,7 +22,7 @@ struct BattlePresentationUnitInfo {
 #define FIELD16(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define FIELD32(base, offset) (*(u32 *)((u8 *)(base) + (offset)))
 
-void BattlePresentation_RunUnitTransition(
+void BattlePres_RunUnitTransition(
     struct BattlePresentationSelection *selection,
     s32 mode)
 {

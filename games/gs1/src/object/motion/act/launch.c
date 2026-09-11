@@ -1,9 +1,9 @@
 #include "object_runtime.h"
 
-void BattleRuntime_WaitIfModeZero(s32 arg0);
+void Battle_WaitMode0(s32 arg0);
 void Audio_PlayCue(s32 arg0);
 
-void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
+void Motion_Launch(u32 object_id, s32 speed, s32 event_id)
 {
     struct ObjectRuntime *object;
     u8 *object_flags;
@@ -22,6 +22,6 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         } else {
             Audio_PlayCue(0x98);
         }
-        BattleRuntime_WaitIfModeZero(event_id);
+        Battle_WaitMode0(event_id);
     }
 }

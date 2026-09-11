@@ -4,31 +4,31 @@
 #define SceneData_GetTableB704 Func_0200003c
 #define SceneData_GetTableB710 Func_02000044
 #define SceneData_GetTableB998 Func_0200004c
-#define FieldScene_RunTwoPhaseActorSequence Func_02000054
+#define Scene_RunTwoPhaseActorSequence Func_02000054
 #define FieldScene_RunScene381_02000e30 Func_02000e30
 #define Resource381_NoOpCallbackA Func_02000f28
 #define Resource381_NoOpCallbackB Func_02000f2c
-#define FieldScene_RunWhenWord225Is10 Func_02000f30
-#define SceneState_ConfigureEightCornerRegions Func_02002c9c
-#define FieldScene_RunActor15TwoStep Func_0200300c
-#define OverlayObject_SetRecordAngleFromHeading Func_02000f54
-#define SceneState_InitStateWordsAndSlots Func_02001084
-#define SceneState_UpdateRandomTimerLevel Func_0200135c
-#define SceneState_ApplyRectsByCondition Func_0200284c
-#define SceneState_ApplyRectPairByFlag Func_020028dc
-#define FieldScene_RunRandomHalfBranch Func_0200293c
-#define FieldScene_RunLateRandomHalfBranch Func_02002970
-#define FieldScene_RunVariantStep Func_02002d48
-#define FieldScene_RunStepByRuntimeBits Func_02002d94
-#define SceneState_ForwardByRuntimeWordBits Func_02002dd0
-#define SceneState_SetValue140Mode0 Func_02002ff0
-#define SceneActor_MoveTo232_125AndFace4000 Func_02002820
-#define FieldScene_RunFourWayEffectSequence Func_020029a4
-#define SceneEffect_AdvanceTenEntryTimers Func_02002ba0
-#define SceneActor_PlaceAtTileAndRunSteps Func_02002c1c
-#define SceneEffect_UpdateArcOverAnchor Func_02002e0c
-#define SceneEffect_UpdateAnchoredRiseArc Func_02002e5c
-#define FieldScene_CallHelper6620 Func_02003000
+#define Scene_RunWhenWord225Is10 Func_02000f30
+#define State_ConfigureEightCornerRegions Func_02002c9c
+#define Scene_RunActor15TwoStep Func_0200300c
+#define OvObj_SetRecordAngleFromHeading Func_02000f54
+#define State_InitStateWordsAndSlots Func_02001084
+#define State_UpdateRandomTimerLevel Func_0200135c
+#define State_ApplyRectsByCondition Func_0200284c
+#define State_ApplyRectPairByFlag Func_020028dc
+#define Scene_RunRandomHalfBranch Func_0200293c
+#define Scene_RunLateRandomHalfBranch Func_02002970
+#define Scene_RunVariantStep Func_02002d48
+#define Scene_RunStepByRuntimeBits Func_02002d94
+#define State_ForwardByRuntimeWordBits Func_02002dd0
+#define State_SetValue140Mode0 Func_02002ff0
+#define Actor_MoveTo232_125AndFace4000 Func_02002820
+#define Scene_RunFourWayEffectSequence Func_020029a4
+#define Effect_AdvanceTenEntryTimers Func_02002ba0
+#define Actor_PlaceAtTileAndRunSteps Func_02002c1c
+#define Effect_UpdateArcOverAnchor Func_02002e0c
+#define Effect_UpdateAnchoredRiseArc Func_02002e5c
+#define Scene_CallHelper6620 Func_02003000
 
 #include "facing_object.h"
 
@@ -658,7 +658,7 @@ u8 *SceneData_GetTableB998(void)
     return (u8 *)0x0200b998;
 }
 
-void FieldScene_RunTwoPhaseActorSequence(void)
+void Scene_RunTwoPhaseActorSequence(void)
 {
     void Func_0200b5ac();
     void Func_0200b5ec();
@@ -1074,7 +1074,7 @@ void Resource381_NoOpCallbackB(void)
 {
 }
 
-s32 FieldScene_RunWhenWord225Is10(void)
+s32 Scene_RunWhenWord225Is10(void)
 {
     if (Data_02000240[225] == 10) {
         Func_02004528();
@@ -1083,13 +1083,13 @@ s32 FieldScene_RunWhenWord225Is10(void)
     return 0;
 }
 
-s32 OverlayObject_SetRecordAngleFromHeading(Ent *p)
+s32 OvObj_SetRecordAngleFromHeading(Ent *p)
 {
     *(u16 *)(p->unk50 + 30) = p->unk6 + 0x4000;
     return 1;
 }
 
-void SceneState_InitStateWordsAndSlots(void)
+void State_InitStateWordsAndSlots(void)
 {
     s32 *p;
     u32 i;
@@ -1104,7 +1104,7 @@ void SceneState_InitStateWordsAndSlots(void)
     }
 }
 
-void SceneState_UpdateRandomTimerLevel(void)
+void State_UpdateRandomTimerLevel(void)
 {
     u32 v;
 
@@ -1138,7 +1138,7 @@ void SceneState_UpdateRandomTimerLevel(void)
     }
 }
 
-void SceneActor_MoveTo232_125AndFace4000(s32 no)
+void Actor_MoveTo232_125AndFace4000(s32 no)
 {
     Ent_02002820 *rec;
 
@@ -1148,7 +1148,7 @@ void SceneActor_MoveTo232_125AndFace4000(s32 no)
     Func_02005de8(no, 3);
 }
 
-void SceneState_ApplyRectsByCondition(s32 a)
+void State_ApplyRectsByCondition(s32 a)
 {
     if (a != 0) {
         s32 x;
@@ -1169,7 +1169,7 @@ void SceneState_ApplyRectsByCondition(s32 a)
     Func_02005d34();
 }
 
-void SceneState_ApplyRectPairByFlag(s32 a)
+void State_ApplyRectPairByFlag(s32 a)
 {
     if (a != 0) {
         s32 n;
@@ -1185,7 +1185,7 @@ void SceneState_ApplyRectPairByFlag(s32 a)
     Func_02005d94();
 }
 
-void FieldScene_RunRandomHalfBranch(void)
+void Scene_RunRandomHalfBranch(void)
 {
     if ((Data_03001e40 & 1) == 0) {
         if (Func_02005d2e(Func_02005d48(), 100) > 50) {
@@ -1196,7 +1196,7 @@ void FieldScene_RunRandomHalfBranch(void)
     }
 }
 
-void FieldScene_RunLateRandomHalfBranch(void)
+void Scene_RunLateRandomHalfBranch(void)
 {
     if ((Data_03001e40 & 1) == 0) {
         if (Func_02005d62(Func_02005d7c(), 100) > 50) {
@@ -1207,7 +1207,7 @@ void FieldScene_RunLateRandomHalfBranch(void)
     }
 }
 
-void FieldScene_RunFourWayEffectSequence(u32 mode)
+void Scene_RunFourWayEffectSequence(u32 mode)
 {
     extern u8 *Data_0200bb10[];
     void Func_0200b5ac(s32, s32, s32);
@@ -1286,7 +1286,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
     Func_0200b5f4(40);
 }
 
-void SceneEffect_AdvanceTenEntryTimers(void)
+void Effect_AdvanceTenEntryTimers(void)
 {
     extern Ent *Data_0200bb10[];
 
@@ -1316,7 +1316,7 @@ void SceneEffect_AdvanceTenEntryTimers(void)
     }
 }
 
-void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
+void Actor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
     Ent_02002c1c *p;
 
@@ -1341,7 +1341,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
     Func_02006072(30);
 }
 
-void SceneState_ConfigureEightCornerRegions(void)
+void State_ConfigureEightCornerRegions(void)
 {
     s32 x;
     s32 y;
@@ -1364,7 +1364,7 @@ void SceneState_ConfigureEightCornerRegions(void)
     Func_020061b4(43, 28, 1, 1, v, w);
 }
 
-void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
+void Scene_RunVariantStep(s32 a, s32 b, s32 c)
 {
     if (a == 1) {
         Func_0200637c(0x134);
@@ -1379,7 +1379,7 @@ void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
     }
 }
 
-void FieldScene_RunStepByRuntimeBits(s32 a)
+void Scene_RunStepByRuntimeBits(s32 a)
 {
     if ((Data_03001e40 & 2) != 0) {
         Func_0200624c(a, 7);
@@ -1391,7 +1391,7 @@ void FieldScene_RunStepByRuntimeBits(s32 a)
     }
 }
 
-void SceneState_ForwardByRuntimeWordBits(s32 a)
+void State_ForwardByRuntimeWordBits(s32 a)
 {
     volatile u32 *p = (u32 *)0x03001e40;
 
@@ -1403,7 +1403,7 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
     }
 }
 
-void SceneEffect_UpdateArcOverAnchor(struct Actor_02002e0c *self)
+void Effect_UpdateArcOverAnchor(struct Actor_02002e0c *self)
 {
     struct Actor_02002e0c *anchor;
     s32 frame;
@@ -1426,7 +1426,7 @@ void SceneEffect_UpdateArcOverAnchor(struct Actor_02002e0c *self)
     self->z = anchor->z + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
+void Effect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
 {
     struct Actor_02002e5c *anchor;
     s32 frame;
@@ -1449,17 +1449,17 @@ void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
     obj->z = anchor->z - (0x10000 - amp) * 5 + 0x100000;
 }
 
-void SceneState_SetValue140Mode0(void)
+void State_SetValue140Mode0(void)
 {
     Func_0200660c(140, 0);
 }
 
-void FieldScene_CallHelper6620(void)
+void Scene_CallHelper6620(void)
 {
     Func_02006620();
 }
 
-void FieldScene_RunActor15TwoStep(void)
+void Scene_RunActor15TwoStep(void)
 {
     Func_020064fe(15);
     Func_02005de6();

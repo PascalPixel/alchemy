@@ -2,7 +2,7 @@
 
 s32 BattleEffectI(s32, s32);
 
-void BattleEffect_RunSeriesIMode3(s32 effect)
+void BattleFx_RunSeriesIMode3(s32 effect)
 {
     BattleEffectI(effect, 3);
 }

@@ -1,6 +1,6 @@
 #include "shared-aggregates.h"
 
-#define BattleEffect_RunTileAndPaletteAnimation Func_080cbc0c
+#define BattleFx_RunTileAndPaletteAnimation Func_080cbc0c
 
 /*
  * Blocking battle effect scene at 0x080cbc0c.
@@ -66,7 +66,7 @@ void Func_080f9010(s32 id);
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
+void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     struct M2cAggregate_absolute_02010000 *work;
     struct M2cAggregate_absolute_02010000 *canvas;
     struct M2cAggregate_absolute_02010000 *ent;

@@ -1,7 +1,7 @@
 #include "effect_0809b11c.h"
 #include "global_cells.h"
 
-void BattleEffect_UpdateAllEffectSlots(void)
+void BattleFx_UpdateAllEffectSlots(void)
 {
     s32 p;
     s32 cnt;

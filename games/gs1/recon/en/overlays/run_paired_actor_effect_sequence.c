@@ -1,6 +1,6 @@
 #include "configured_effect_spawn.h"
 
-#define FieldScene_RunPairedActorEffectSequence Func_02002360
+#define Scene_RunPairedActorEffectSequence Func_02002360
 
 extern u8 Data_02000240[];
 extern const s32 Data_0200e074[];
@@ -115,7 +115,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void FieldScene_RunPairedActorEffectSequence(void)
+void Scene_RunPairedActorEffectSequence(void)
 {
     u32 i;
     u8 *rec;

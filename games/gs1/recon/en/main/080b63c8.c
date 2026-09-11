@@ -66,7 +66,7 @@
  * generic names, not unique external symbols.  Work-block fields keep
  * offset-based names except where a neighbouring recovered owner already fixes
  * the meaning: +0x2ec is the action slot array that
- * BattlePresentation_RunAction consumes as `s16 *`, and halfword 0 of a slot
+ * BattlePres_RunAction consumes as `s16 *`, and halfword 0 of a slot
  * is the acting unit id.  `actions[36]` spans +0x2ec to the next evidenced
  * field; only the first twenty slots are ever cleared or replayed here.
  */
@@ -174,24 +174,24 @@ void BattleActor_CommitPlacement(void);
 void Func_080c08a8(void);
 void Func_080c08ec(s32 a, s32 b, s32 c);
 void Func_080c0a24(s32 a, s32 b, s32 c, s32 d, s32 e);
-void BattlePresentation_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
+void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Func_080b5b14(s32 value);
 void Summon_ClearWorkFields(void);
 s32 Resource_LoadIntoFreeSlot(s32 size);
 s32 Func_080771a0(void);
 void Func_080c02a4(s32 object, s32 arg);
-void BattleRuntime_ReservedNoOp9B2C(void);
+void Battle_ReservedNoOp9B2C(void);
 void Func_08015130(s32 mode);
 void Func_08003f3c(s32 entry);
 void Runtime_GetRemainingIwram(void);
 void Runtime_GetRemainingEwram(void);
-s32 BattlePresentation_BuildActions(struct BattleActionSlot *slots);
-s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionSlot *slots);
-s32 BattlePresentation_DispatchAction(struct BattleActionSlot *slot, s32 delay);
-s32 BattlePresentation_RunAction(struct BattleActionSlot *slot);
+s32 BattlePres_BuildActions(struct BattleActionSlot *slots);
+s32 BattlePres_BuildSortedUnitEntries(struct BattleActionSlot *slots);
+s32 BattlePres_DispatchAction(struct BattleActionSlot *slot, s32 delay);
+s32 BattlePres_RunAction(struct BattleActionSlot *slot);
 s32 BattleParty_ListLivingUnits(s32 side, s32 mode);
 s32 Func_080b6148(void);
-void BattleRuntime_ReservedNoOpF674(void);
+void Battle_ReservedNoOpF674(void);
 void Func_080bf678(void);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 Func_08015038(s32 id, s32 a, s32 b, s32 c);
@@ -203,7 +203,7 @@ void Func_08077140(s32 a, s32 b, s32 c);
 void Func_08015118(void);
 void Func_08015120(s32 a, s32 b);
 void Func_080151c8(s32 id);
-void BattlePresentation_WaitForAdvance(void);
+void BattlePres_WaitForAdvance(void);
 void Func_080c2724(void);
 void Blend_SetDarkenTarget16(s32 value);
 void Blend_WaitForTransition(void);
@@ -345,7 +345,7 @@ s32 Battle_RunEncounter(s32 arg)
     Func_080c08a8();
     Func_080c08ec(1, work->field_648, 0);
     Func_080c0a24(0xa00000, 0x500000, 0, 0, 0x20000);
-    BattlePresentation_SetupTransitionScene(0, 0, 0, 190);
+    BattlePres_SetupTransitionScene(0, 0, 0, 190);
     Func_080b5b14(1);
     *(u16 *)0x04000050 = 0;
     Summon_ClearWorkFields();
@@ -365,7 +365,7 @@ s32 Battle_RunEncounter(s32 arg)
     Scheduler_AddOrUpdateCallback(0x080b7739, 0xc80);
 
     for (;;) {
-        BattleRuntime_ReservedNoOp9B2C();
+        Battle_ReservedNoOp9B2C();
         BattleSummon_UpdateAvailability();
         if (*Func_08077000(0) != 0)
             work->field_41 = 3;
@@ -380,11 +380,11 @@ s32 Battle_RunEncounter(s32 arg)
         if (Func_080770c0(0x16a) == 0) {
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
-            cnt = BattlePresentation_BuildActions(work->actions);
+            cnt = BattlePres_BuildActions(work->actions);
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
         } else {
-            cnt = BattlePresentation_BuildSortedUnitEntries(work->actions);
+            cnt = BattlePres_BuildSortedUnitEntries(work->actions);
         }
         work->field_54 = Resource_LoadIntoFreeSlot(128);
         Func_08015130(work->field_41);
@@ -399,10 +399,10 @@ s32 Battle_RunEncounter(s32 arg)
                 delay = 10;
                 if (i != 0)
                     delay = 0;
-                if (BattlePresentation_DispatchAction(&work->actions[i], delay) == 1)
+                if (BattlePres_DispatchAction(&work->actions[i], delay) == 1)
                     goto interrupted;
             } else {
-                if (BattlePresentation_RunAction(&work->actions[i]) == 1)
+                if (BattlePres_RunAction(&work->actions[i]) == 1)
                     goto interrupted;
             }
             Runtime_GetRemainingIwram();
@@ -419,7 +419,7 @@ s32 Battle_RunEncounter(s32 arg)
         }
 
         work->field_45 = 0;
-        BattleRuntime_ReservedNoOpF674();
+        Battle_ReservedNoOpF674();
         Func_080bf678();
         BattleMotion_DestroyAllSlotObjects();
         if (work->field_44 != 0) {
@@ -454,7 +454,7 @@ resolved:
                 Func_08015118();
                 Func_08015120(128, 1);
                 Func_080151c8(work->field_3e + 0x838);
-                BattlePresentation_WaitForAdvance();
+                BattlePres_WaitForAdvance();
             }
         }
         Func_080c2724();
@@ -484,7 +484,7 @@ party_lost:
         Func_080151c8(0x83d);
     else
         Func_080151c8(0x837);
-    BattlePresentation_WaitForAdvance();
+    BattlePres_WaitForAdvance();
     Func_080f9010(17);
     Blend_SetDarkenTarget16(30);
     ret = -1;
@@ -499,7 +499,7 @@ interrupted:
 
 finished:
     Func_080b5b18();
-    BattleRuntime_ReservedNoOpF674();
+    Battle_ReservedNoOpF674();
     BattlePlacement_UpdateTimedEntries();
     Data_02000240[0x22b] = 0;
     Scheduler_RemoveCallback(0x080b7739);

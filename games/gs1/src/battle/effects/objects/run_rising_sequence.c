@@ -13,12 +13,12 @@ void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(u32);
 void Object_SetPosition(void *, s32, s32, s32);
-void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
-void BattleEffect_SpawnBurstParticle(void *, s32);
+void Motion_ArmCb(s32 arg0, s32 arg1, s32 arg2);
+void BattleFx_SpawnBurstParticle(void *, s32);
 void Object_CommitPosition(void *);
-void BattleEffect_PlayQueuedSound(void);
+void BattleFx_PlayQueuedSound(void);
 
-void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action)
+void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action)
 {
     s32 next_y;
     s32 base_z;
@@ -44,7 +44,7 @@ void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s
         WaitFrames(6);
         Audio_PlayCue(0xD9);
         mode_or_frame = 0;
-        ObjectMotion_ArmCallback(sequence_arg, 0x5000, 0);
+        Motion_ArmCb(sequence_arg, 0x5000, 0);
         *object_flags = 0;
         do {
             next_y = OBJECT_Y(object) + 0xFFFE0000;
@@ -52,7 +52,7 @@ void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s
             OBJECT_MIRRORED_Y(object) = next_y;
             WaitFrames(1);
             if ((optional_action != -1) && (mode_or_frame & 1)) {
-                BattleEffect_SpawnBurstParticle(object, optional_action);
+                BattleFx_SpawnBurstParticle(object, optional_action);
             }
             mode_or_frame++;
         } while ((u32)mode_or_frame <= 0xD);
@@ -73,6 +73,6 @@ wait_for_target_y:
             }
         }
         WaitFrames(2);
-        BattleEffect_PlayQueuedSound();
+        BattleFx_PlayQueuedSound();
     }
 }

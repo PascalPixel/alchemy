@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_SelectAndConfigureActorPair:
+/* AUDITED GENERATED CALL SCRIPT for Scene_SelectAndConfigureActorPair:
  * 61 calls, a signed scene-selector branch, shared-object state, and both
  * workspace transitions across the complete decoded owner. */
 
-#define FieldScene_SelectAndConfigureActorPair Func_02001f50
+#define Scene_SelectAndConfigureActorPair Func_02001f50
 
 void Func_0200202a();
 void Func_02004318();

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_RunRingAndSparkScene Func_080e40a4
+#define BattlePres_RunRingAndSparkScene Func_080e40a4
 
 /*
  * Battle-presentation ring-and-spark scene at 0x080e40a4.
@@ -187,9 +187,9 @@ void Func_080051d8(void *a, void *b);                              /* Graphics_P
 void Func_080e38b8(void *particle, s32 a, s32 b);                  /* advance_with_gravity_3d */
 void Func_08002dd8(s32 id);                                        /* Runtime_ReleaseHeapBlock */
 void Func_080b5048(s32 cue, s32 level);
-void Func_080cdd14(void);                                          /* BattleEffect_SetTransitionFlagAndDisplay */
+void Func_080cdd14(void);                                          /* BattleFx_SetTransitionFlagAndDisplay */
 
-void BattlePresentation_RunRingAndSparkScene(void *object)
+void BattlePres_RunRingAndSparkScene(void *object)
 {
     void **heap;
     void **cursor;

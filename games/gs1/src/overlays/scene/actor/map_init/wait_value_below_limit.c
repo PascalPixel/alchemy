@@ -13,7 +13,7 @@ struct Track02001038 {
 
 extern void Func_0200406a(s32);
 
-void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
+void Actor_WaitValueBelowLimit(struct Track02001038 *track)
 {
     s32 cnt = 60;
     s32 limit;

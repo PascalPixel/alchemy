@@ -4,9 +4,9 @@ extern s16 Data_02000240[];
 extern u8 Value_00000001;
 
 s32 Modulo(s32, s32);
-void BattleEffect_SpawnPairedArcObjects(void *);
+void BattleFx_SpawnPairedArcObjects(void *);
 
-void BattleEffect_UpdatePairedArcSpawner(void *arg0)
+void BattleFx_UpdatePairedArcSpawner(void *arg0)
 {
     s16 field64;
     s16 counter;
@@ -16,9 +16,9 @@ void BattleEffect_UpdatePairedArcSpawner(void *arg0)
 
     if (Data_02000240[237] == (s32)&Value_00000001) {
         if (Modulo(counter, 7) == 0)
-            BattleEffect_SpawnPairedArcObjects(arg0);
+            BattleFx_SpawnPairedArcObjects(arg0);
     } else if (Modulo(counter, 5) == 0) {
-        BattleEffect_SpawnPairedArcObjects(arg0);
+        BattleFx_SpawnPairedArcObjects(arg0);
     }
 
     if (field64 == 1)

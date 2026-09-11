@@ -17,11 +17,11 @@
  */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunProgressDependentActorSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunProgressDependentActorSequence:
  * 60 calls, nested resource predicates, and terminal actor-coordinate
  * forwarding across the complete callable owner. */
 
-#define FieldScene_RunProgressDependentActorSequence Func_02001760
+#define Scene_RunProgressDependentActorSequence Func_02001760
 
 s32 Func_020031ca();
 s32 Func_020031d6();

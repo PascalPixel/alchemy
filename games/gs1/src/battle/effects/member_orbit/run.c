@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_RunMemberOrbit Func_080ce85c
+#define BattleFx_RunMemberOrbit Func_080ce85c
 
 /*
  * Battle-presentation sub-effect: entry 34 of the effect callback table at
@@ -43,7 +43,7 @@ s32 Func_080cdbc0(void);
  * result to `status` is load-bearing: it makes the call a set of r0 and so
  * fixes the order of the following argument setup.
  */
-void BattleEffect_RunMemberOrbit(void *object)
+void BattleFx_RunMemberOrbit(void *object)
 {
     void **heap_cache;
     void **cursor;

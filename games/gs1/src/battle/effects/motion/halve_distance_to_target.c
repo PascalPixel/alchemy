@@ -9,7 +9,7 @@ struct Object_08096574 {
     struct Object_08096574 *target;
 };
 
-void BattleEffect_HalveDistanceToTarget(struct Object_08096574 *object)
+void BattleFx_HalveDistanceToTarget(struct Object_08096574 *object)
 {
     struct Object_08096574 *target = object->target;
 

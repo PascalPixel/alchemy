@@ -10,7 +10,7 @@
 s32 WaitFrames(s32);
 void Func_0800387c(u32 first, u32 second);
 void Func_080b5038(s32, u16, s32);
-void BattleEffect_SetTransitionFlagAndDisplay(void)
+void BattleFx_SetTransitionFlagAndDisplay(void)
 {
   u8 *state;
   s32 one;

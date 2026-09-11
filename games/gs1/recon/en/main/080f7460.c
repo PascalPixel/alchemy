@@ -13,7 +13,7 @@
  * everything it took.
  *
  * The owner is a confirmed member of the same "work block" family as
- * games/gs1/recon/en/main/080e0c84.c (BattleEffect_RunParticleReveal)
+ * games/gs1/recon/en/main/080e0c84.c (BattleFx_RunParticleReveal)
  * and games/gs1/src/battle/effects/member_orbit/run.c: same
  * Data_03001e50 heap-cache indexed by allocation id, same 0x782c work
  * block with the per-frame `work[0x7824] = 1` republish, the same

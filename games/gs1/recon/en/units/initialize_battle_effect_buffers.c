@@ -10,9 +10,9 @@ void *Func_080048f4(s32, s32);
 void Func_08090a5c(s32, s32, s32, s32);
 void Func_080041d8(void (*)(void), s32);
 
-#define BattleEffect_InitializeBuffers Func_08091174
+#define BattleFx_InitializeBuffers Func_08091174
 
-void BattleEffect_InitializeBuffers(void)
+void BattleFx_InitializeBuffers(void)
 {
     s32 operation;
     s32 zero;

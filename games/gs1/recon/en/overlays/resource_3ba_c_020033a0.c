@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunScene3baSequenceA Func_020033a0
+#define Scene_RunScene3baSequenceA Func_020033a0
 
 s32 Func_02006f8c();
 void Func_02006fa6();
@@ -53,7 +53,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunScene3baSequenceA(s32 a0)
+void Scene_RunScene3baSequenceA(s32 a0)
 {
     u32 i;
     s32 p10;

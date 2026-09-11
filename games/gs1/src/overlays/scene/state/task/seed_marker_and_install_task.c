@@ -11,7 +11,7 @@ extern u16 Data_0200cc2c;
 extern void Func_02005e32(u32 x, u32 y, u32 style);
 extern void Func_02006d9c(s32 task_address, s32 budget);
 
-void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
+void Effect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 {
     Func_02005e32(x, y, style);
 

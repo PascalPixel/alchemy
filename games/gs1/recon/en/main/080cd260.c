@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattlePresentation_ProcessPendingGraphicsTransfer Func_080cd260
+#define BattlePres_ProcessPendingGraphicsTransfer Func_080cd260
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -22,7 +22,7 @@ void Func_080054e4(void *source, void *destination, s32 size);
 void Func_08005490(void *source, s32 amount, void *destination, s32 size);
 void Func_0800543c(void *source, s32 amount, void *destination, s32 size);
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void)
+void BattlePres_ProcessPendingGraphicsTransfer(void)
 {
     void **heap_cache = (void **)0x03001eec;
     void *work = heap_cache[0];

@@ -3,7 +3,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void BattleEffect_UpdateScaledArcObjectA(void *obj)
+void BattleFx_UpdateScaledArcObjectA(void *obj)
 {
     s32 v;
     s32 step;

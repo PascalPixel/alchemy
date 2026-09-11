@@ -8,7 +8,7 @@ struct State_0808d5a4 {
 extern u8 Data_02000240;
 struct EffectDescriptor *Func_0808d48c(s32, s32);
 
-s32 BattleEffect_FindDescriptorWithOverride(s32 arg0)
+s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
 {
     s32 result = Func_0808d48c(0, arg0);
     s32 value = ((struct State_0808d5a4 *)&Data_02000240)->value;

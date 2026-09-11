@@ -1,3 +1,3 @@
-void BattleEffect_RunNoEffect(void)
+void BattleFx_RunNoEffect(void)
 {
 }

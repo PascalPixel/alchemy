@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_RunTargetedItemBreak Func_08098848
+#define BattleFx_RunTargetedItemBreak Func_08098848
 
 /*
  * Companion to RunBattleEffect07 (0x08098954) and Func_08099da4 (the
@@ -40,15 +40,15 @@ void Func_08097384(void);
 void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle);
 void Object_SetCallback(void *object, const void *callback);
 void WaitFrames(s32 frames);
-void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
-void BattleEffect_PrepareBufferInterpolation(void);
+void BattleFx_PrepareBufferInterpolation(void);
 
-void BattleEffect_RunTargetedItemBreak(void)
+void BattleFx_RunTargetedItemBreak(void)
 {
     struct BattleEffectScene *scene;
     void *main_object;
@@ -83,7 +83,7 @@ void BattleEffect_RunTargetedItemBreak(void)
     for (index = 0; index < 2; index++) {
         void *anchor = anchors[index];
         if (anchor != 0)
-            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 anchor, 0xe0000, *(u16 *)((u8 *)anchor + 6));
     }
 
@@ -110,5 +110,5 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     UpdateRisingParticleBurst(anchors[0]);
     UpdateRisingParticleBurst(anchors[1]);
-    BattleEffect_PrepareBufferInterpolation();
+    BattleFx_PrepareBufferInterpolation();
 }

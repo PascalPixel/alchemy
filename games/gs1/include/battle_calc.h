@@ -48,6 +48,6 @@ s32 Func_080bbae8(s32 effect); /* 倒れていても効く効果か */
 #define Battle_CalcRestore Func_08077190
 #define BattleUnit_Drain Func_08077120
 #define BattleUnit_Assign Func_08077140
-#define BattleEffect_OnDead Func_080bbae8
+#define BattleFx_OnDead Func_080bbae8
 
 #endif

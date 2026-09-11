@@ -7,7 +7,7 @@ struct ActorVisualFlags {
     u8 unknown_09_high : 4;
 };
 
-#define FieldScene_RunActorGroupDepartureSequence Func_020031ac
+#define Scene_RunActorGroupDepartureSequence Func_020031ac
 
 struct ObjectRuntime *Func_0200472c();
 void Func_0200481c();
@@ -102,7 +102,7 @@ static __inline__ struct ObjectRuntime *Pointer1(struct ObjectRuntime *(*f)(), s
     return f(id);
 }
 
-void FieldScene_RunActorGroupDepartureSequence(void)
+void Scene_RunActorGroupDepartureSequence(void)
 {
     u8 *actorVisual;
     u8 *groupVisual;

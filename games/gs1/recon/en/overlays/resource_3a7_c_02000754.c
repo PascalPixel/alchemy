@@ -67,7 +67,7 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+void Scene_RunSupplementalSequenceOne(void)
 {
     s32 p10;
     s32 count;

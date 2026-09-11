@@ -4,7 +4,7 @@ void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
-void ObjectMotion_ResetAndSetPositionInMode2(u32 object_id, s32 x, s32 z)
+void Motion_ResetPosMode2(u32 object_id, s32 x, s32 z)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 

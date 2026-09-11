@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_CreateRadialParticle Func_0809a484
+#define BattleFx_CreateRadialParticle Func_0809a484
 
 struct ParticleVisual {
     u8 reserved_00[9];
@@ -59,7 +59,7 @@ void Func_08009098(struct ParticleObject *, void *);
 void Func_080929d8(struct ParticleObject *, struct ParticleObject *);
 s32 Func_080022ec(s32, s32);
 
-void BattleEffect_CreateRadialParticle(
+void BattleFx_CreateRadialParticle(
     s32 x,
     s32 y,
     s32 z,

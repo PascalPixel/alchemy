@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED ACTOR-LAYOUT SCRIPT for FieldScene_ConfigureActorLayout:
+/* AUDITED ACTOR-LAYOUT SCRIPT for Scene_ConfigureActorLayout:
  * scene-state dispatch, shared actor initialization, and terminal transition. */
 
-#define FieldScene_ConfigureActorLayout Func_020004e4
+#define Scene_ConfigureActorLayout Func_020004e4
 
 void Func_0200222c();
 void Func_02002240();

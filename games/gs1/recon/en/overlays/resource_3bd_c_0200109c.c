@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunStatefulSequence Func_0200109c
+#define Scene_RunStatefulSequence Func_0200109c
 
 /* Audited retained field-scene body at 0x0200109c.
  * The complete owner preserves 46 decoded calls, 8 loop(s), and 36 explicit memory operation(s)

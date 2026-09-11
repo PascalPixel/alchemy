@@ -422,7 +422,7 @@ Struct_22a4b *Field_unk_0200715e(s32);
 
 struct SceneObject *Field_unk_02005b84(s32);
 
-Struct_1644 *Field_unk_020064f8();
+Struct_1644 *Field_TestFlag200();
 Struct_1644 *Field_TestFlag200();
 
 Struct_18f8 *Field_unk_020067e2(s32);
@@ -1531,7 +1531,7 @@ void Scene_RunScene3c8SequenceD(void)
         Field_unk_02006116(41, 90, 29, 93, 3, 2);
         Field_unk_02006126_a(41, 90, 27, 94, 3, 2);
         Field_unk_02006136_a(41, 90, 27, 96, 3, 2);
-        Field_unk_02006146_a(41, 90, 29, 97, 3, 2);
+        Field_TestFlag983(41, 90, 29, 97, 3, 2);
         Field_unk_02006156(41, 96, 25, 91, 3, 2);
         Field_unk_02006166(41, 92, 25, 93, 3, 2);
         Field_unk_02006176(41, 96, 25, 95, 3, 2);
@@ -1546,7 +1546,7 @@ void Scene_RunScene3c8SequenceD(void)
         Field_unk_020061ec(41, 90, 25, 93, 3, 2);
         Field_unk_020061fc(41, 90, 25, 95, 3, 2);
         Field_unk_0200620c(41, 90, 25, 97, 3, 2);
-        Field_unk_0200621c_a(41, 90, 27, 96, 3, 2);
+        Field_TestFlag982(41, 90, 27, 96, 3, 2);
         Field_unk_0200622c(41, 90, 29, 97, 3, 2);
         Field_unk_0200623c(41, 94, 27, 92, 3, 2);
         Field_unk_0200624c(41, 96, 29, 93, 3, 2);
@@ -1648,7 +1648,7 @@ void State_RunActor13AtColumn42Setup(void)
     s32 a;
     s32 b;
 
-    obj = Field_unk_020064f8(13);
+    obj = Field_TestFlag200(13);
     Field_unk_020064e6();
     if (obj->unk8 >> 20 == 42) {
         Field_unk_020064ec(30);

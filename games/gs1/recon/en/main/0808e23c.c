@@ -42,7 +42,7 @@ extern struct BattleRuntime *Data_03001ebc;
 struct BattleUnitObject {
     u8 unknown_000[0xd8];
     u16 abilities[15]; /* 0xd8: object+216, masked 0x1ff, matches
-                           shop/select_use_item.c's Ability_GetAvailability scan. */
+                           shop/sel/use.c's Ability_GetAvailability scan. */
 };
 
 struct BattleItemEventRecord {
@@ -77,7 +77,7 @@ void Func_08092b94(s32 effect_id);
 void Func_08092f84(s32 value, s32 flag);
 void Func_08091750(void);
 void Func_08096fb0(s32 action_id, s32 mode);
-void Func_08096810(void); /* RunBattleEffect (battle/effects/run_effect.c) */
+void Func_08096810(void); /* RunBattleEffect (battle/effects/run/run_effect.c) */
 void Func_08097194(void); /* named BattleEffect_CleanupSceneObjects in source-paths.json */
 #define BattleEffect_CleanupSceneObjects Func_08097194
 u8 Func_08077058(s32 actor, s32 slot);

@@ -16,8 +16,8 @@
  *
  * Once armed, an inner loop reads ADDR_03001B04 (newly-pressed trigger
  * bits) every pass, exactly mirroring the repeated-volatile-read idiom
- * already adopted in games/gs1/src/shop/select_repair_item.c and
- * games/gs1/src/shop/select_use_item.c (a fresh dereference per `if`,
+ * already adopted in games/gs1/src/shop/sel/repair.c and
+ * games/gs1/src/shop/sel/use.c (a fresh dereference per `if`,
  * not a cached local): Right/Left adjust val1 by +-1, Up/Down adjust it
  * by +-10, R/L adjust val2 by +-1, and A breaks out. While waiting for
  * A, Start calls Func_080b5534 and Select calls the already-adopted

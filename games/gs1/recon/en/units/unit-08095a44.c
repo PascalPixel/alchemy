@@ -5,10 +5,10 @@
 
 #include "../../../src/battle/effects/heavy_impact/finish.c"
 #include "../../../src/battle/effects/objects/set_alternating_words.c"
-#include "../../../src/battle/effects/advance_object_field6_with_ramp.c"
-#include "../../../src/battle/effects/shrink_object_and_destroy_slow.c"
+#include "../../../src/battle/effects/obj/advance_object_field6_with_ramp.c"
+#include "../../../src/battle/effects/obj/shrink_object_and_destroy_slow.c"
 #include "../main/08095c08.c"
 #include "../main/08095dd0.c"
-#include "../../../src/battle/effects/shrink_object_and_destroy_fast.c"
+#include "../../../src/battle/effects/obj/shrink_object_and_destroy_fast.c"
 #include "../../../src/battle/effects/objects/update_descending_orbit.c"
 #include "../../../src/battle/effects/particles/update_radial_spread.c"

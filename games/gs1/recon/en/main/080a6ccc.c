@@ -18,7 +18,7 @@
  *   Select     hold to show the shortcut prompt; Select + L / R assigns the
  *              highlighted action to shortcut slot 0 / 1
  *
- * Data_03001f2c is the polymorphic menu-runtime cell (compare inventory_menu.h
+ * Data_03001f2c is the polymorphic menu-runtime cell (compare item_menu.h
  * and psynergy_menu.h).  Field names shared with PsynergyMenuState keep that
  * header's spellings (entry_grid_cursor 0x044, entry_icons 0x048, psynergies
  * 0x1c8, psynergy_count 0x218, owner_ids 0x21a, selected_index_by_owner

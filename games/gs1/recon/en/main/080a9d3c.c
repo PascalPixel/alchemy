@@ -1,10 +1,10 @@
 #include "types.h"
 #include "global_cells.h"
 
-void InventoryMenu_ResetCategoryItemPositions(void);
+void ItemMenu_ResetCategory(void);
 void Func_080a17c4(void *);
 
-void InventoryMenu_ApplyCategoryItemFlags(const u8 *flags)
+void ItemMenu_ApplyFlags(const u8 *flags)
 {
     u8 *base;
     void **slot;
@@ -14,7 +14,7 @@ void InventoryMenu_ApplyCategoryItemFlags(const u8 *flags)
     u16 kind;
 
     base = *(u8 **)ADDR_03001F2C;
-    InventoryMenu_ResetCategoryItemPositions();
+    ItemMenu_ResetCategory();
     index = 0;
     slot = (void **)(base + 200);
     value = 88;

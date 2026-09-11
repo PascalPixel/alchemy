@@ -6,7 +6,7 @@
  * Battle-presentation effect sequence at 0x080dbc30 (1468 bytes), in the
  * same kind-39 "battle work block" family as the exact
  * games/gs1/src/battle/effects/puff_arc/run.c (owner 080d9fc8) and
- * games/gs1/src/battle/effects/fetch_rectangle_blitters.c (owner 080cef64).
+ * games/gs1/src/battle/effects/work/fetch_rectangle_blitters.c (owner 080cef64).
  * The heap-allocation cache Data_03001e50[kind], the republished effect
  * argument at work + 0x7828, the sixty-four twenty-eight byte particle
  * records at work + 0x7080, the display pair at 0x7780/0x7784 and the

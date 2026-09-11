@@ -20,15 +20,15 @@ struct Approach390Subject {
 /* The cross-overlay map selector block, in RAM rather than in the image. */
 extern u8 gCell[];
 
-struct Approach390Subject *Field_Run(s32);
+struct Approach390Subject *Field_unk_0200038a(s32);
 
-struct Approach390Subject *Field_unk2_4(s32);
+struct Approach390Subject *Field_unk_020003d2(s32);
 
-struct Approach390Subject *Field_unk3_4(s32);
+struct Approach390Subject *Field_unk_0200041a(s32);
 
-struct Approach390Subject *Field_unk4_4(s32);
+struct Approach390Subject *Field_unk_02000462(s32);
 
-void *Field_unk5_4();
+void *Field_unk_020004ce();
 
 /* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
@@ -82,10 +82,10 @@ u8 *SceneData_PrepareTable84d8(void)
     u8 *buf;
 
     if (Field_Check(0x845) == 0) {
-        Field_Do((u8 *)0x020084D8);
+        Field_unk_020000b0((u8 *)0x020084D8);
     }
     buf = (u8 *)0x020084D8;
-    Field_unk2_2(buf);
+    Field_unk_02000368(buf);
     return buf;
 }
 
@@ -95,18 +95,18 @@ void Scene_RunActor16MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_Run(0)->dir;
+    u32 dir = Field_unk_0200038a(0)->dir;
 
-    Field_unk6_4();
+    Field_unk_02000378();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Field_Apply(13, 16);
+        Field_unk_020003c2(13, 16);
     } else {
-        Field_unk3_2(0x16AD);
-        Field_Apply2(16, 0);
+        Field_unk_020003ba(0x16AD);
+        Field_unk_020003ca(16, 0);
     }
 
-    Field_unk7_4();
+    Field_unk_020003a6();
 }
 
 void Scene_RunActor17MessageBranch(void)
@@ -115,18 +115,18 @@ void Scene_RunActor17MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_unk2_4(0)->dir;
+    u32 dir = Field_unk_020003d2(0)->dir;
 
-    Field_unk8_4();
+    Field_unk_020003c0();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Field_Apply3(14, 17);
+        Field_unk_0200040a(14, 17);
     } else {
-        Field_unk4_2(0x16AF);
-        Field_Apply4(17, 0);
+        Field_unk_02000402(0x16AF);
+        Field_unk_02000412(17, 0);
     }
 
-    Field_unk9_4();
+    Field_unk_020003ee();
 }
 
 void Scene_RunActor18MessageBranch(void)
@@ -135,41 +135,41 @@ void Scene_RunActor18MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_unk3_4(0)->dir;
+    u32 dir = Field_unk_0200041a(0)->dir;
 
-    Field_unk10_4();
+    Field_unk_02000408();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Field_Apply5(15, 18);
+        Field_unk_02000452(15, 18);
     } else {
-        Field_unk5_2(0x16B1);
-        Field_Apply6(18, 0);
+        Field_unk_0200044a(0x16B1);
+        Field_unk_0200045a(18, 0);
     }
 
-    Field_unk11_4();
+    Field_unk_02000436();
 }
 
 void Scene_RunActor19MessageBranch(void)
 {
-    void Field_unk12_4(s32, s32);
-    void Field_unk13_4(s32, s32);
+    void Field_unk_020004a2(s32, s32);
+    void Field_unk_020004a2_a(s32, s32);
 
     /*
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Field_unk4_4(0)->dir;
+    u32 dir = Field_unk_02000462(0)->dir;
 
-    Field_unk14_4();
+    Field_unk_02000450();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Field_unk12_4(3, 19);
+        Field_unk_020004a2(3, 19);
     } else {
-        Field_unk6_2(0x16B7);
-        Field_unk13_4(19, 0);
+        Field_unk_02000492(0x16B7);
+        Field_unk_020004a2_a(19, 0);
     }
 
-    Field_unk15_4();
+    Field_unk_0200047e();
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
@@ -193,7 +193,7 @@ u8 *SceneData_GetTable8658(void)
  */
 s32 Scene_SetupEntryLayoutsBySelector(void)
 {
-    s32 Field_unk16_4();
+    s32 Field_TestFlag845();
 
     u8 *work = MAP390_WORKSPACE;
     s32 id;
@@ -202,13 +202,13 @@ s32 Scene_SetupEntryLayoutsBySelector(void)
 
     *(s32 *)(work + 448) = 0x209;
 
-    if (Field_unk16_4(0x845) == 0) {
+    if (Field_TestFlag845(0x845) == 0) {
         id = 8;
         do {
-            void *record = Field_unk5_4(id);
+            void *record = Field_unk_020004ce(id);
 
             id++;
-            Field_unk17_4(record, 0);
+            Field_unk_020004ae(record, 0);
         } while ((u32)id <= 22);
     }
 
@@ -223,21 +223,21 @@ s32 Scene_SetupEntryLayoutsBySelector(void)
         s32 arg4;
         arg4 = 13;
         arg5 = 8;
-        Field_unk18_4(34, 34, 18, 16, arg4, arg5);
-        Field_unk19_4(34, 94, 18, 76, arg4, arg5);
-        Field_unk20_4(94, 34, 78, 16, arg4, arg5);
+        Field_unk_020004d0(34, 34, 18, 16, arg4, arg5);
+        Field_unk_020004e0(34, 94, 18, 76, arg4, arg5);
+        Field_unk_020004f0(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
         /* Shifted window test: the selector set is {8, 9}. */
         s32 arg5;
         s32 arg4;
         arg4 = 11;
         arg5 = 8;
-        Field_unk21_4(34, 43, 19, 23, arg4, arg5);
-        Field_unk22_4(34, 94, 19, 83, arg4, arg5);
-        Field_unk23_4(94, 34, 79, 23, arg4, arg5);
-        Field_unk24_4(10, 0, 0);
-        Field_unk25_4(11, 0, 0);
-        Field_unk26_4(12, 0, 0);
+        Field_unk_02000514(34, 43, 19, 23, arg4, arg5);
+        Field_unk_02000524(34, 94, 19, 83, arg4, arg5);
+        Field_unk_02000534(94, 34, 79, 23, arg4, arg5);
+        Field_unk_02000576(10, 0, 0);
+        Field_unk_02000580(11, 0, 0);
+        Field_unk_0200058a(12, 0, 0);
     }
     return 0;
 }

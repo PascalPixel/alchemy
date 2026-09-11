@@ -404,7 +404,7 @@ Struct_A *Field_unk_020063ca(s32);
 
 Struct_B *Field_unk_02006496(s32);
 
-struct Actor *Field_unk_0200577c();
+struct Actor *Actor_Get();
 struct Position *Field_unk_020057c2(s32);
 struct Position *Field_unk_020057ca(s32);
 
@@ -968,7 +968,7 @@ s32 Actor_SetFlagBitByRelativeDepth(struct Actor *actor)
     struct Actor *ref;
     u8 *fp;
     u8 flags;
-    ref = Field_unk_0200577c(0);
+    ref = Actor_Get(0);
     fp = &actor->flags23;
     flags = *fp | 2;
     *fp = flags;

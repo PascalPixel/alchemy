@@ -91,9 +91,17 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* The work-record cells are written as a union, not as bare halfwords: the
+ * halfword store and the scene-pointer read that follows are only ordered
+ * against each other when they can alias. */
+union WorkCell {
+    s32 w;
+    u16 h;
+};
+
 static __inline__ void SetHalf(u16 *at, s32 value)
 {
-    *at = value;
+    ((union WorkCell *)at)->h = value;
 }
 
 extern u8 *Data_03001ebc[];

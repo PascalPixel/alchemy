@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/link/create_countdown_label_window.h"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);

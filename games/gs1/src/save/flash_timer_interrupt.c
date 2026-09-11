@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/save/flash_timer_interrupt.h"
 #include "flash.h"
 
 /* The flash driver's timer tick handler and the installer that arms it. */

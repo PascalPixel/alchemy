@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/summon/get_definition.h"
 #include "battle_summon.h"
 
 extern const u8 gRom[];

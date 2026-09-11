@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/command_list/command_list_scene.h"
 
 extern s16 gCell[];
 extern volatile s32 gIw;
@@ -69,12 +68,12 @@ u8 *SceneData_GetTable93fc(void)
 
 void Dialogue_ShowMessageAndWait(s32 arg0)
 {
-    Story_Run4();
+    Story_unk4_4();
     Story_SetMode(arg0, 5, 0, 0x22);
-    while (Story_Check10() == 0) {
+    while (Story_unk10() == 0) {
         Story_Do(1);
     }
-    Story_Do2(1);
+    Story_unk2_2(1);
 }
 
 void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
@@ -91,13 +90,13 @@ void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
         Story_Apply(1, 1);
         Story_Apply2(141, 2);
         Story_Apply3(0x1e240, 5);
-        Story_Do3(x);
+        Story_unk3_2(x);
         goto test;
 retry:
         if (*key != 0) {
             goto next;
         }
-        Story_Do4(1);
+        Story_unk4_2(1);
 test:
         if ((*key & 2) != 0) {
             goto end;
@@ -120,48 +119,48 @@ other:
 next:;
     }
 end:
-    Story_Run5();
+    Story_unk5_4();
     Story_Apply4(token, 2);
 }
 
 void State_ApplyBlockC9b(void)
 {
-    Story_Check11((s32)&Value_00000c9b, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    Story_unk11((s32)&Value_00000c9b, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
 void State_ApplyBlockCc6(void)
 {
-    Story_Check12((s32)&Value_00000cc6, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    Story_unk12((s32)&Value_00000cc6, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
 void State_ApplyBlockCf1(void)
 {
-    Story_Check13((s32)&Value_00000cf1, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    Story_unk13((s32)&Value_00000cf1, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
 void State_ApplyBlockD21(void)
 {
-    Story_Check14((s32)&Value_00000d21, (s32)&Value_00000d4c - (s32)&Value_00000d21);
+    Story_unk14((s32)&Value_00000d21, (s32)&Value_00000d4c - (s32)&Value_00000d21);
 }
 
 void State_ApplyBlockD4c(void)
 {
-    Story_Check15((s32)&Value_00000d4c, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    Story_unk15((s32)&Value_00000d4c, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
 void State_ApplyBlockD77(void)
 {
-    Story_Check16((s32)&Value_00000d77, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    Story_unk16((s32)&Value_00000d77, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
 void State_ApplyBlockDa2(void)
 {
-    Story_Check17((s32)&Value_00000da2, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    Story_unk17((s32)&Value_00000da2, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
 }
 
 void State_ApplyOne(void)
 {
-    Story_Check18(1);
+    Story_unk18(1);
 }
 
 void State_NoOp(void)
@@ -172,12 +171,12 @@ void State_QueryTwoValues(void)
 {
     s32 a;
     s32 b;
-    Story_Check19(&a, &b);
+    Story_unk19(&a, &b);
 }
 
 void State_ApplyZero(void)
 {
-    Story_Check20(0);
+    Story_unk20(0);
 }
 
 void CommandTable_NoOpCallback(void)
@@ -202,15 +201,15 @@ void Scene_ApplyTable9684ValueToFourSlots(void)
 
     Story_Run(0xc1a, 1);
     p = (s32)gOv2;
-    Story_Run6(0, *(volatile s32 *)p);
+    Story_unk6_4(0, *(volatile s32 *)p);
     Story_Check(1, *(volatile s32 *)p);
-    Story_Check2(3, *(volatile s32 *)p);
-    Story_Run7(2, *(volatile s32 *)p);
+    Story_unk2(3, *(volatile s32 *)p);
+    Story_unk7_4(2, *(volatile s32 *)p);
     *(volatile s32 *)p += 10;
-    Story_Run8(0);
-    Story_Run9(1);
-    Story_Run10(3);
-    Story_Run11(2);
+    Story_unk8_4(0);
+    Story_unk9_4(1);
+    Story_unk10_4(3);
+    Story_unk11_4(2);
 }
 
 void Scene_GrantItemListToSlots(void)
@@ -419,65 +418,65 @@ void Scene_GrantItemListToSlots(void)
 void CommandTable_ConfigureCommandGroups(void)
 {
     u8 buf[256];
-    Story_Run12(0xc1d, 1);
-    Story_Check21(0, 0, 0);
-    Story_Check22(0, 0, 1);
-    Story_Check23(0, 0, 2);
-    Story_Check24(0, 0, 3);
-    Story_Check25(0, 0, 4);
-    Story_Check26(0, 0, 5);
-    Story_Check27(0, 0, 6);
-    Story_Check28(0, 0, 0);
-    Story_Check29(0, 0, 1);
-    Story_Check30(0, 0, 2);
-    Story_Check31(0, 0, 3);
-    Story_Check32(0, 0, 4);
-    Story_Check33(0, 0, 5);
-    Story_Check34(0, 0, 6);
-    Story_Check35(1, 2, 0);
-    Story_Check36(1, 2, 1);
-    Story_Check37(1, 2, 2);
-    Story_Check38(1, 2, 3);
-    Story_Check39(1, 2, 4);
-    Story_Check40(1, 2, 5);
-    Story_Run13(1, 2, 6);
-    Story_Check41(1, 2, 0);
-    Story_Check42(1, 2, 1);
-    Story_Check43(1, 2, 2);
-    Story_Check44(1, 2, 3);
-    Story_Check45(1, 2, 4);
-    Story_Check46(1, 2, 5);
-    Story_Check47(1, 2, 6);
-    Story_Check48(3, 1, 0);
-    Story_Check49(3, 1, 1);
-    Story_Check50(3, 1, 2);
-    Story_Check51(3, 1, 3);
-    Story_Check52(3, 1, 4);
-    Story_Check53(3, 1, 5);
-    Story_Check54(3, 1, 6);
-    Story_Check55(3, 1, 0);
-    Story_Check56(3, 1, 1);
-    Story_Check57(3, 1, 2);
-    Story_Check58(3, 1, 3);
-    Story_Check59(3, 1, 4);
-    Story_Check60(3, 1, 5);
-    Story_Check61(3, 1, 6);
-    Story_Check62(2, 3, 0);
-    Story_Check63(2, 3, 1);
-    Story_Check64(2, 3, 2);
-    Story_Check65(2, 3, 3);
-    Story_Check66(2, 3, 4);
-    Story_Check67(2, 3, 5);
-    Story_Check68(2, 3, 0);
-    Story_Check69(2, 3, 1);
-    Story_Check70(2, 3, 2);
-    Story_Check71(2, 3, 3);
-    Story_Check72(2, 3, 4);
-    Story_Check73(2, 3, 5);
-    Story_Check74(0);
-    Story_Check75(1);
-    Story_Check76(3);
-    Story_Check77(2);
+    Story_unk12_4(0xc1d, 1);
+    Story_unk21(0, 0, 0);
+    Story_unk22(0, 0, 1);
+    Story_unk23(0, 0, 2);
+    Story_unk24(0, 0, 3);
+    Story_unk25(0, 0, 4);
+    Story_unk26(0, 0, 5);
+    Story_unk27(0, 0, 6);
+    Story_unk28(0, 0, 0);
+    Story_unk29(0, 0, 1);
+    Story_unk30(0, 0, 2);
+    Story_unk31(0, 0, 3);
+    Story_unk32(0, 0, 4);
+    Story_unk33(0, 0, 5);
+    Story_unk34(0, 0, 6);
+    Story_unk35(1, 2, 0);
+    Story_unk36(1, 2, 1);
+    Story_unk37(1, 2, 2);
+    Story_unk38(1, 2, 3);
+    Story_unk39(1, 2, 4);
+    Story_unk40(1, 2, 5);
+    Story_unk13_4(1, 2, 6);
+    Story_unk41(1, 2, 0);
+    Story_unk42(1, 2, 1);
+    Story_unk43(1, 2, 2);
+    Story_unk44(1, 2, 3);
+    Story_unk45(1, 2, 4);
+    Story_unk46(1, 2, 5);
+    Story_unk47(1, 2, 6);
+    Story_unk48(3, 1, 0);
+    Story_unk49(3, 1, 1);
+    Story_unk50(3, 1, 2);
+    Story_unk51(3, 1, 3);
+    Story_unk52(3, 1, 4);
+    Story_unk53(3, 1, 5);
+    Story_unk54(3, 1, 6);
+    Story_unk55(3, 1, 0);
+    Story_unk56(3, 1, 1);
+    Story_unk57(3, 1, 2);
+    Story_unk58(3, 1, 3);
+    Story_unk59(3, 1, 4);
+    Story_unk60(3, 1, 5);
+    Story_unk61(3, 1, 6);
+    Story_unk62(2, 3, 0);
+    Story_unk63(2, 3, 1);
+    Story_unk64(2, 3, 2);
+    Story_unk65(2, 3, 3);
+    Story_unk66(2, 3, 4);
+    Story_unk67(2, 3, 5);
+    Story_unk68(2, 3, 0);
+    Story_unk69(2, 3, 1);
+    Story_unk70(2, 3, 2);
+    Story_unk71(2, 3, 3);
+    Story_unk72(2, 3, 4);
+    Story_unk73(2, 3, 5);
+    Story_unk74(0);
+    Story_unk75(1);
+    Story_unk76(3);
+    Story_unk77(2);
 }
 
 void Scene_ApplySlotOffsetsAndFlags(void)
@@ -485,168 +484,168 @@ void Scene_ApplySlotOffsetsAndFlags(void)
     u32 i;
     s32 record;
 
-    Story_Run2(0xc1b, 1);
-    Story_Check3(0, -100);
-    Story_Check4(1, -100);
-    Story_Check5(2, -33);
-    Story_Check6(3, -100);
-    Story_Check7(0, -50);
-    Story_Check8(1, -40);
-    Story_Check9(2, -35);
-    Story_Run3(3, -20);
-    record = Story_Check78(0);
+    Story_unk2_4(0xc1b, 1);
+    Story_unk3(0, -100);
+    Story_unk4(1, -100);
+    Story_unk5(2, -33);
+    Story_unk6(3, -100);
+    Story_unk7(0, -50);
+    Story_unk8(1, -40);
+    Story_unk9(2, -35);
+    Story_unk3_4(3, -20);
+    record = Story_unk78(0);
     *(u8 *)(record + 0x131) = 1;
     record = record + 0x140;
     *(u8 *)record = 1;
-    record = Story_Check79(1);
+    record = Story_unk79(1);
     *(u8 *)((record + 0x130)) = 1;
     *(u8 *)(record + 0x131) = 2;
-    Story_Run14(0);
-    Story_Run15(1);
-    Story_Run16(3);
-    Story_Run17(2);
+    Story_unk14_4(0);
+    Story_unk15_4(1);
+    Story_unk16_4(3);
+    Story_unk17_4(2);
 }
 
 void Scene_AssignCodeSetAToSlots(void)
 {
-    Story_Run18(0xc1f, 1);
-    Story_Check80(0, 85);
-    Story_Check81(0, 84);
-    Story_Check82(0, 124);
-    Story_Check83(0, 123);
-    Story_Check84(0, 9);
-    Story_Check85(0, 11);
-    Story_Check86(0, 27);
-    Story_Check87(0, 26);
-    Story_Check88(1, 38);
-    Story_Check89(1, 37);
-    Story_Check90(1, 50);
-    Story_Check91(1, 49);
-    Story_Check92(1, 83);
-    Story_Check93(1, 82);
-    Story_Check94(1, 134);
-    Story_Check95(1, 133);
-    Story_Check96(1, 152);
-    Story_Check97(2, 64);
-    Story_Check98(2, 65);
-    Story_Check99(2, 98);
-    Story_Check100(2, 97);
-    Story_Check101(2, 124);
-    Story_Check102(2, 131);
-    Story_Check103(2, 141);
-    Story_Check104(2, 163);
-    Story_Check105(3, 61);
-    Story_Check106(3, 63);
-    Story_Check107(3, 96);
-    Story_Check108(3, 95);
-    Story_Check109(3, 113);
-    Story_Check110(3, 112);
-    Story_Check111(3, 130);
-    Story_Check112(3, 142);
-    Story_Check113(3, 171);
-    Story_Check114(0);
-    Story_Check115(1);
-    Story_Check116(3);
-    Story_Check117(2);
+    Story_unk18_4(0xc1f, 1);
+    Story_unk80(0, 85);
+    Story_unk81(0, 84);
+    Story_unk82(0, 124);
+    Story_unk83(0, 123);
+    Story_unk84(0, 9);
+    Story_unk85(0, 11);
+    Story_unk86(0, 27);
+    Story_unk87(0, 26);
+    Story_unk88(1, 38);
+    Story_unk89(1, 37);
+    Story_unk90(1, 50);
+    Story_unk91(1, 49);
+    Story_unk92(1, 83);
+    Story_unk93(1, 82);
+    Story_unk94(1, 134);
+    Story_unk95(1, 133);
+    Story_unk96(1, 152);
+    Story_unk97(2, 64);
+    Story_unk98(2, 65);
+    Story_unk99(2, 98);
+    Story_unk100(2, 97);
+    Story_unk101(2, 124);
+    Story_unk102(2, 131);
+    Story_unk103(2, 141);
+    Story_unk104(2, 163);
+    Story_unk105(3, 61);
+    Story_unk106(3, 63);
+    Story_unk107(3, 96);
+    Story_unk108(3, 95);
+    Story_unk109(3, 113);
+    Story_unk110(3, 112);
+    Story_unk111(3, 130);
+    Story_unk112(3, 142);
+    Story_unk113(3, 171);
+    Story_unk114(0);
+    Story_unk115(1);
+    Story_unk116(3);
+    Story_unk117(2);
 }
 
 void State_RunCall1c00(void)
 {
-    void Story_Run19(void);
+    void Story_unk19_4(void);
 
-    Story_Run19();
+    Story_unk19_4();
 }
 
 void Scene_AssignCodeSetBToSlots(void)
 {
-    Story_Run20(0xc1c, 1);
-    Story_Check118(0, 0xb8);
-    Story_Check119(0, 0xcc);
-    Story_Check120(0, 0xdc);
-    Story_Check121(0, 0xdd);
-    Story_Check122(0, 0xde);
-    Story_Check123(0, 0xdf);
-    Story_Check124(0, 0xe0);
-    Story_Check125(1, 0xe2);
-    Story_Check126(1, 0xe3);
-    Story_Check127(1, 0xe6);
-    Story_Check128(1, 0xe4);
-    Story_Check129(1, 0xe4);
-    Story_Check130(1, 0xe4);
-    Story_Check131(1, 0xe4);
-    Story_Check132(1, 0xe4);
-    Story_Check133(1, 0xe4);
-    Story_Check134(1, 0xe4);
-    Story_Check135(1, 0xe4);
-    Story_Check136(1, 0xe4);
-    Story_Check137(1, 0xe4);
-    Story_Check138(1, 0xe4);
-    Story_Check139(1, 0xe5);
-    Story_Check140(1, 0xe5);
-    Story_Check141(1, 0xe5);
-    Story_Check142(1, 0xe5);
-    Story_Check143(1, 0xe5);
-    Story_Check144(1, 0xe5);
-    Story_Check145(1, 0xe5);
-    Story_Check146(1, 0xe5);
-    Story_Check147(1, 0xe8);
-    Story_Check148(1, 0xe7);
-    Story_Check149(1, 0xed);
-    Story_Check150(2, 0xf2);
-    Story_Check151(2, 0x102);
-    Story_Check152(2, 0x10b);
-    Story_Check153(2, 0x109);
-    Story_Check154(2, 0xfc);
-    Story_Check155(3, 0xbd);
-    Story_Check156(3, 0xc8);
-    Story_Check157(3, 0xc9);
-    Story_Check158(3, 0xca);
-    Story_Check159(3, 0xcb);
-    Story_Check160(3, 0xcc);
-    Story_Check161(3, 0xcf);
-    Story_Check162(0);
-    Story_Check163(1);
-    Story_Check164(3);
-    Story_Check165(2);
+    Story_unk20_4(0xc1c, 1);
+    Story_unk118(0, 0xb8);
+    Story_unk119(0, 0xcc);
+    Story_unk120(0, 0xdc);
+    Story_unk121(0, 0xdd);
+    Story_unk122(0, 0xde);
+    Story_unk123(0, 0xdf);
+    Story_unk124(0, 0xe0);
+    Story_unk125(1, 0xe2);
+    Story_unk126(1, 0xe3);
+    Story_unk127(1, 0xe6);
+    Story_unk128(1, 0xe4);
+    Story_unk129(1, 0xe4);
+    Story_unk130(1, 0xe4);
+    Story_unk131(1, 0xe4);
+    Story_unk132(1, 0xe4);
+    Story_unk133(1, 0xe4);
+    Story_unk134(1, 0xe4);
+    Story_unk135(1, 0xe4);
+    Story_unk136(1, 0xe4);
+    Story_unk137(1, 0xe4);
+    Story_unk138(1, 0xe4);
+    Story_unk139(1, 0xe5);
+    Story_unk140(1, 0xe5);
+    Story_unk141(1, 0xe5);
+    Story_unk142(1, 0xe5);
+    Story_unk143(1, 0xe5);
+    Story_unk144(1, 0xe5);
+    Story_unk145(1, 0xe5);
+    Story_unk146(1, 0xe5);
+    Story_unk147(1, 0xe8);
+    Story_unk148(1, 0xe7);
+    Story_unk149(1, 0xed);
+    Story_unk150(2, 0xf2);
+    Story_unk151(2, 0x102);
+    Story_unk152(2, 0x10b);
+    Story_unk153(2, 0x109);
+    Story_unk154(2, 0xfc);
+    Story_unk155(3, 0xbd);
+    Story_unk156(3, 0xc8);
+    Story_unk157(3, 0xc9);
+    Story_unk158(3, 0xca);
+    Story_unk159(3, 0xcb);
+    Story_unk160(3, 0xcc);
+    Story_unk161(3, 0xcf);
+    Story_unk162(0);
+    Story_unk163(1);
+    Story_unk164(3);
+    Story_unk165(2);
 }
 
 s32 CommandTable_ConfigureCommandList(void)
 {
-    Story_Check166(5);
-    Story_Check167(1);
-    Story_Check168(3);
-    Story_Check169(2);
-    Story_Check170(5, 1);
-    Story_Check171(5, 1);
-    Story_Check172(5, 1);
-    Story_Check173(6, 1);
-    Story_Check174(6, 1);
-    Story_Check175(7, 1);
-    Story_Check176(106, 1);
-    Story_Check177(108, 1);
-    Story_Check178(109, 1);
-    Story_Check179(113, 1);
-    Story_Check180(123, 1);
-    Story_Check181(130, 1);
-    Story_Check182(140, 1);
-    Story_Check183(151, 1);
+    Story_unk166(5);
+    Story_unk167(1);
+    Story_unk168(3);
+    Story_unk169(2);
+    Story_unk170(5, 1);
+    Story_unk171(5, 1);
+    Story_unk172(5, 1);
+    Story_unk173(6, 1);
+    Story_unk174(6, 1);
+    Story_unk175(7, 1);
+    Story_unk176(106, 1);
+    Story_unk177(108, 1);
+    Story_unk178(109, 1);
+    Story_unk179(113, 1);
+    Story_unk180(123, 1);
+    Story_unk181(130, 1);
+    Story_unk182(140, 1);
+    Story_unk183(151, 1);
     Story_Apply5(0, 50);
     Story_Apply6(1, 30);
     Story_Apply7(3, 30);
-    Story_Check184(2, 30);
-    Story_Check185(0);
-    Story_Check186(1);
-    Story_Check187(3);
-    Story_Check188(2);
+    Story_unk184(2, 30);
+    Story_unk185(0);
+    Story_unk186(1);
+    Story_unk187(3);
+    Story_unk188(2);
     return 0;
 }
 
 s32 State_GetFarResult2384(void)
 {
-    return Story_Check189();
+    return Story_unk189();
 }
 
 s32 State_GetFarResult2418(void)
 {
-    return Story_Check190();
+    return Story_unk190();
 }

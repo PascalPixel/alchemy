@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/initialize_state_interaction.h"
 
 extern s16 gCell[];
 extern u8 Value_0000008f;

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/misc/map_key_through_table.h"
 
 extern s16 gRom[];
 

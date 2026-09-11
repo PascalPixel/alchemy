@@ -697,15 +697,18 @@ fn source_input_signature(
     routing_source: &str,
     compiler: CompilerTarget,
 ) -> Result<Vec<u8>, String> {
-    let source = root.join(source);
+    let path = root.join(source);
     let include_dirs = routing_source
         .strip_prefix("games/")
         .and_then(|path| path.split('/').next())
         .map(|game| root.join("games").join(game).join("include"))
         .into_iter()
         .collect::<Vec<_>>();
-    let mut signature = source_tree_signature(&source, &include_dirs)?;
-    signature.extend(source_symbol_bindings(root, routing_source, compiler)?.as_bytes());
+    let mut signature = source_tree_signature(&path, &include_dirs)?;
+    signature.extend(
+        crate::candidate::production_symbol_bindings(root, routing_source, source, compiler)?
+            .as_bytes(),
+    );
     Ok(signature)
 }
 #[cfg(test)]

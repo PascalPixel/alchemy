@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/shared/set_work_four_values.h"
 
 struct State_080935b0 {
     u8 filler0[0xEC];

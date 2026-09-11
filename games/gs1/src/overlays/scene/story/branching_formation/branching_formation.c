@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/branching_formation/branching_formation.h"
 #include "staged_actor.h"
 #include "staged_actor_probe.h"
 #include "staged_actor_effect.h"
@@ -84,22 +83,22 @@ struct StagedActor *FindNextStagedActor(s32 *position, struct StagedActor *actor
 struct StagedActor *FindBlockingStagedActor(s32 *position, struct StagedActor *actor);
 struct StagedActor *FindElevatedBlockingStagedActor(s32 *position, struct StagedActor *actor);
 
-Ent *Story_Run7(Desc *, Ent *);
+Ent *Story_unk7_4(Desc *, Ent *);
 
-u8 *Story_Run8(s32);
+u8 *Story_unk8_4(s32);
 
-u8 *Story_Run9(s32);
+u8 *Story_unk9_4(s32);
 
 struct StagedActorEffect *GetStagedActorEffect(s32 actor_index);
 
-struct Struct3848 *Story_Run10(s32 arg0);
+struct Struct3848 *Story_unk10_4(s32 arg0);
 
-struct Obj *Story_Run11(s32, s32, s32, s32);
+struct Obj *Story_unk11_4(s32, s32, s32, s32);
 
-struct Struct5702 *Story_Run12(s32 arg0);
-struct Struct5702 *Story_Run13(s32 arg0);
-struct Struct5702 *Story_Run14(s32 arg0);
-struct Struct5702 *Story_Run15(s32 arg0);
+struct Struct5702 *Story_unk12_4(s32 arg0);
+struct Struct5702 *Story_unk13_4(s32 arg0);
+struct Struct5702 *Story_unk14_4(s32 arg0);
+struct Struct5702 *Story_unk15_4(s32 arg0);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.  Each
@@ -138,10 +137,10 @@ struct Struct5702 *Story_Run15(s32 arg0);
 static __inline__ void DrawPlacement(
     s32 left, s32 top, s32 width, s32 height, s32 tile, s32 palette)
 {
-    Story_SetRect2(left, top, width, height, tile, palette);
+    Story_unk2_5(left, top, width, height, tile, palette);
 }
 
-s32 Story_Run16(s32 *first_position, s32 *second_position)
+s32 Story_unk16_4(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -153,7 +152,7 @@ s32 Story_Run16(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Story_Run17(s32 *arg0)
+s32 *Story_unk17_4(s32 *arg0)
 {
     s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
@@ -243,7 +242,7 @@ void StagedActor_PushActorAhead(void)
     SetStagedActorTransition(lead, 1);
 }
 
-s32 Story_Run18(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 Story_unk18_4(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = gCam;
     u8 *base;
@@ -284,7 +283,7 @@ s32 Actor_ResetMotionWhenAheadBlocked(Ent *a)
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Story_Run7(&d, a);
+    r = Story_unk7_4(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
@@ -400,7 +399,7 @@ s32 OvObj_ClearPendingAndRestoreMode(u8 *object)
 s32 Actor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
-    *counter = (u16)(*counter + ((Story_Run19() * 100) >> 16));
+    *counter = (u16)(*counter + ((Story_unk19_4() * 100) >> 16));
     if ((s16)*counter > 1000) Story_Apply2(object, 7);
     else Story_Apply3(object, 10);
     if (*(s16 *)counter > 1200) { u16 z = 0; *counter = z; }
@@ -418,30 +417,30 @@ u8 *SceneData_GetTableb0e4(void) { return (u8 *)0x0200b0e4; }
 void Scene_RunTile10x20Transition(void)
 {
     struct PlacementResult res;
-    Story_Run20();
+    Story_unk20_4();
 
-    if (Story_Check10(&res)) {
-        Story_Do4(res);
+    if (Story_unk10(&res)) {
+        Story_unk4_2(res);
         if (res.words[1] == 10 && (res.words[2] >> 20) == 20) {
             u8 *actor;
             s32 zero;
 
             Story_Apply4(10, 3);
-            Story_Place8(10, -18, 6);
-            Story_Do5(30);
-            Story_Do6(240);
+            Story_unk8_3(10, -18, 6);
+            Story_unk5_2(30);
+            Story_unk6_2(240);
             Story_Apply5(10, 8);
-            Story_Run8(10)[35] = 2;
+            Story_unk8_4(10)[35] = 2;
             zero = 0;
             DrawPlacement(0, 17, 2, 4, 19, 17);
             Scene_RunBranchingFormationPresentation(2, 20, 17, 1, 4, zero);
-            Story_Do7(0x200);
-            actor = Story_Run9(10);
+            Story_unk7_2(0x200);
+            actor = Story_unk9_4(10);
             Story_Apply6(actor, 0);
         }
     }
 
-    Story_Run21();
+    Story_unk21_4();
 }
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
@@ -491,14 +490,14 @@ void Actor_PassSubjectOffsetPosition(void)
 
     u32 buf[3];
     s32 off = 500;
-    struct Struct3848 *p = Story_Run10(*(s32 *)(gCell + off));
+    struct Struct3848 *p = Story_unk10_4(*(s32 *)(gCell + off));
     u32 base = p->field08 & 0xfff00000;
 
     buf[0] = base + 0x80000;
     buf[1] = p->field0c;
     buf[2] = (p->field10 & 0xfff00000) + 0x80000;
     buf[0] = base + 0x280000;
-    Story_Do8(buf);
+    Story_unk8_2(buf);
 }
 
 u8 *SceneData_GetTableB294(void) { return (u8 *)0x0200b294; }
@@ -510,28 +509,28 @@ s32 Scene_RunScene391(void)
     s32 record;
     s32 zero;
 
-    Story_Run22(10);
+    Story_unk22_4(10);
     if (Story_Check(0x200) != 0) {
         zero = 0;
-        *(u8 *)(Story_Check11(10) + 35) = 2;
+        *(u8 *)(Story_unk11(10) + 35) = 2;
         Story_SetRect(0, 17, 2, 4, 19, 17);
-        record = Story_Check12(2, 20, 17, 1, 4, zero);
-        record = Story_Check13(10);
-        Story_Run23(record, 0);
+        record = Story_unk12(2, 20, 17, 1, 4, zero);
+        record = Story_unk13(10);
+        Story_unk23_4(record, 0);
     }
-    Story_Run24(8);
-    Story_Run25(9);
+    Story_unk24_4(8);
+    Story_unk25_4(9);
     if (SceneTransition_Phase == 4) {
-        if (Story_Check2(0x843) == 0) {
-            Story_Run26();
+        if (Story_unk2(0x843) == 0) {
+            Story_unk26_4();
         }
     }
-    if (Story_Check3(0x845) != 0) {
-        Story_Run27(17, 0, 0);
-        Story_Run28(18, 0, 0);
-        Story_Run29(19, 0, 0);
-        Story_Run30(20, 0, 0);
-        Story_Run31(21, 0, 0);
+    if (Story_unk3(0x845) != 0) {
+        Story_unk27_4(17, 0, 0);
+        Story_unk28_4(18, 0, 0);
+        Story_unk29_4(19, 0, 0);
+        Story_unk30_4(20, 0, 0);
+        Story_unk31_4(21, 0, 0);
     }
     return 0;
 }
@@ -539,13 +538,13 @@ s32 Scene_RunScene391(void)
 void Scene_RunSplitPairSteps(s32 a, s32 b)
 {
     Story_Apply7(a, 0);
-    Story_Check14(b);
+    Story_unk14(b);
 }
 
 void Actor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
-    Story_Place9(a, b, 0);
-    Story_Check15(c);
+    Story_unk9_3(a, b, 0);
+    Story_unk15(c);
 }
 
 s32 Effect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
@@ -554,7 +553,7 @@ s32 Effect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
     if (p->field38 == (s32)0x80000000
         && p->field3c == (s32)0x80000000
         && p->field40 == (s32)0x80000000) {
-        Story_Do9(p);
+        Story_unk9_2(p);
     }
     return 1;
 }
@@ -575,8 +574,8 @@ void Effect_SpawnObject26EveryEightFrames(void)
 
     phase = gIw & 7;
     if (phase != 0) return;
-    if (gOv2 != 0) Story_Do10(200);
-    obj = Story_Run11(26, c1, 0, c2);
+    if (gOv2 != 0) Story_unk10_2(200);
+    obj = Story_unk11_4(26, c1, 0, c2);
     if (obj == 0) return;
     sprite = obj->f50;
     sprite->f26 = phase;
@@ -639,7 +638,7 @@ s32 Actor_CheckRegionTrigger(struct Struct288c *arg0)
     }
     return 0;
 hit:
-    Story_Do11(106);
+    Story_unk11_2(106);
     Story_Apply12(arg0, gOv6);
     gOv5 = 1;
     return 0;
@@ -651,7 +650,7 @@ void Actor_AlternateSlots13To16Field0c(void)
 
     struct Struct5702 *p;
 
-    p = Story_Run12(13);
+    p = Story_unk12_4(13);
     if (p != 0) {
         p->field55 = 0;
         if ((gIw & 1) == 0) {
@@ -660,7 +659,7 @@ void Actor_AlternateSlots13To16Field0c(void)
             p->field0c = 0x1f40000;
         }
     }
-    p = Story_Run13(14);
+    p = Story_unk13_4(14);
     if (p != 0) {
         p->field55 = 0;
         if ((gIw & 1) != 0) {
@@ -669,7 +668,7 @@ void Actor_AlternateSlots13To16Field0c(void)
             p->field0c = 0x1f40000;
         }
     }
-    p = Story_Run14(15);
+    p = Story_unk14_4(15);
     if (p != 0) {
         p->field55 = 0;
         if ((gIw & 1) == 0) {
@@ -678,7 +677,7 @@ void Actor_AlternateSlots13To16Field0c(void)
             p->field0c = 0x1f40000;
         }
     }
-    p = Story_Run15(16);
+    p = Story_unk15_4(16);
     if (p != 0) {
         p->field55 = 0;
         if ((gIw & 1) != 0) {
@@ -733,97 +732,97 @@ void Scene_RunBranchingFormationPresentation(void)
     s32 finish_action;
     s32 *sequence_phase;
 
-    Story_Run32();
+    Story_unk32_4();
     Story_Run(-1, -1, -1, 0);
-    Story_Run33(1);
+    Story_unk33_4(1);
     Story_Run(0xf60000, -1, 0x25c0000, 0);
     flag_work = &gOv4;
-    flag = Story_Check4(3);
+    flag = Story_unk4(3);
     *flag_work = flag;
     record = Story_BytePtr(13);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(14);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(15);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(16);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(17);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(18);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(19);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(20);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     record = Story_BytePtr(21);
-    Story_Run34((s32)record, 0);
+    Story_unk34_4((s32)record, 0);
     entry_action = (s32)gOv20;
-    Story_Run35(17, entry_action);
-    Story_Run35(18, entry_action);
-    Story_Run35(19, entry_action);
-    Story_Run35(20, entry_action);
-    Story_Run35(21, entry_action);
+    Story_unk35_4(17, entry_action);
+    Story_unk35_4(18, entry_action);
+    Story_unk35_4(19, entry_action);
+    Story_unk35_4(20, entry_action);
+    Story_unk35_4(21, entry_action);
     Story_Place(0, 0x740000, 0x25a0000);
-    Story_Run33(1);
-    Story_Run36();
+    Story_unk33_4(1);
+    Story_unk36_4();
     Story_Do(1);
-    Story_Run37();
-    Story_Run38();
-    Story_Place2(0, 0xcccc, 0x6666);
-    Story_Place3(0, 254, 0x251);
-    Story_Place2(1, 0x9999, 0x4ccc);
-    Story_Place2(2, 0x9999, 0x4ccc);
+    Story_unk37_4();
+    Story_unk38_4();
+    Story_unk2_3(0, 0xcccc, 0x6666);
+    Story_unk3_3(0, 254, 0x251);
+    Story_unk2_3(1, 0x9999, 0x4ccc);
+    Story_unk2_3(2, 0x9999, 0x4ccc);
     {
         u8 *record = Record1(Story_BytePtr, 0);
 
         if (record != 0) {
-            Story_Run39(1, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            Story_unk39_4(1, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
     {
         u8 *record = Record1(Story_BytePtr, 0);
 
         if (record != 0) {
-            Story_Run39(2, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            Story_unk39_4(2, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
-    Story_Run2(1, (s32)gOv13);
-    Story_Run35(2, (s32)gOv14);
+    Story_unk2_4(1, (s32)gOv13);
+    Story_unk35_4(2, (s32)gOv14);
     if (*flag_work != 0) {
-        Story_Place2(3, 0x9999, 0x4ccc);
+        Story_unk2_3(3, 0x9999, 0x4ccc);
         {
             u8 *record = Record1(Story_BytePtr, 0);
 
             if (record != 0) {
-                Story_Run39(3, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+                Story_unk39_4(3, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
             }
         }
-        Story_Run35(3, (s32)gOv15);
+        Story_unk35_4(3, (s32)gOv15);
     }
-    Story_Run40(2);
+    Story_unk40_4(2);
     Actor_SetPairZeroAndValue(2, 0x2000, 40);
     Actor_SetPairZeroAndValue(2, 0x8000, 20);
     Actor_SetPairZeroAndValue(2, 0x4000, 40);
-    Story_Place4(2, 0x101, 0);
-    Story_Run41(60);
-    Story_Run42(1, 0x4000, 0);
+    Story_unk4_3(2, 0x101, 0);
+    Story_unk41_4(60);
+    Story_unk42_4(1, 0x4000, 0);
     Actor_SetPairZeroAndValue(0, 0x6000, 60);
     value = 160;
     Actor_SetPairZeroAndValue(3, 0x2000, 10);
-    Story_Run42(1, 0x2000, 0);
+    Story_unk42_4(1, 0x2000, 0);
     Actor_SetPairZeroAndValue(0, (value << 8), 10);
-    Story_Place4(1, 0x101, 0);
-    Story_Place4(0, 0x101, 0);
-    Story_Run41(40);
-    Story_Run42(1, 0x4000, 0);
+    Story_unk4_3(1, 0x101, 0);
+    Story_unk4_3(0, 0x101, 0);
+    Story_unk41_4(40);
+    Story_unk42_4(1, 0x4000, 0);
     Actor_SetPairZeroAndValue(0, 0x6000, 10);
-    Story_Run43(1, 2);
-    Story_Do2(0x1474);
+    Story_unk43_4(1, 2);
+    Story_unk2_2(0x1474);
     Scene_RunSplitPairSteps(1, 10);
-    Story_Do2(0x147c);
+    Story_unk2_2(0x147c);
     Actor_SetPairZeroAndValue(2, 0xc000, 20);
-    Story_Run44(2, 3);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(2, 20);
     Actor_SetPairZeroAndValue(1, 0, 20);
     Actor_SetPairZeroAndValue(0, (value << 8), 40);
@@ -831,123 +830,123 @@ void Scene_RunBranchingFormationPresentation(void)
     Actor_SetPairZeroAndValue(0, 0x6000, 30);
     Actor_SetPairZeroAndValue(1, 0x6000, 20);
     Actor_SetPairZeroAndValue(0, 0xe000, 30);
-    Story_Run43(2, 2);
-    Story_Place4(2, 0x100, 0);
-    Story_Run41(40);
-    Story_Run42(1, 0x4000, 0);
+    Story_unk43_4(2, 2);
+    Story_unk4_3(2, 0x100, 0);
+    Story_unk41_4(40);
+    Story_unk42_4(1, 0x4000, 0);
     Actor_SetPairZeroAndValue(0, 0x6000, 20);
     Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_Run45(17);
-    Story_Run45(206);
-    Story_Run3(0x7fff, 0);
-    Story_Run46(1);
-    Story_Run33(1);
+    Story_unk45_4(17);
+    Story_unk45_4(206);
+    Story_unk3_4(0x7fff, 0);
+    Story_unk46_4(1);
+    Story_unk33_4(1);
     gOv2 = 1;
-    Story_Check5((s32)gOv10, 0xc80);
-    Story_Run33(20);
-    Story_Run3(0x405210, 1);
-    Story_Run3(0x10000, 2);
-    Story_Run46(120);
-    Story_Run33(60);
+    Story_unk5((s32)gOv10, 0xc80);
+    Story_unk33_4(20);
+    Story_unk3_4(0x405210, 1);
+    Story_unk3_4(0x10000, 2);
+    Story_unk46_4(120);
+    Story_unk33_4(60);
     motion_action = (s32)gOv16;
-    Story_Run35(0, motion_action);
-    Story_Run35(1, motion_action);
-    Story_Run35(2, motion_action);
-    Story_Run35(3, motion_action);
-    Story_Run41(100);
+    Story_unk35_4(0, motion_action);
+    Story_unk35_4(1, motion_action);
+    Story_unk35_4(2, motion_action);
+    Story_unk35_4(3, motion_action);
+    Story_unk41_4(100);
     Scene_RunSplitPairSteps(1, 20);
     Scene_RunSplitPairSteps(2, 40);
     if (gOv4 != 0) {
-        Story_Run41(40);
-        Story_Place4(3, 0x102, 0);
-        Story_Run41(40);
+        Story_unk41_4(40);
+        Story_unk4_3(3, 0x102, 0);
+        Story_unk41_4(40);
         Scene_RunSplitPairSteps(3, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Run41(20);
+    Story_unk41_4(20);
     party_flag = &gOv4;
     if (*party_flag != 0) {
         value = 128;
         record = Story_BytePtr(3);
         *(s32 *)((s32)record + 40) = (value << 10);
-        Story_Run41(10);
-        Story_Run47(3, (value << 10), (value << 10));
-        Story_Place5(3, -2, 0);
-        Story_Run2(3, (s32)gOv17);
+        Story_unk41_4(10);
+        Story_unk47_4(3, (value << 10), (value << 10));
+        Story_unk5_3(3, -2, 0);
+        Story_unk2_4(3, (s32)gOv17);
         record = Story_BytePtr(3);
-        Story_Run34((s32)record, 0);
-        Story_Run48(3, 19);
-        Story_Run41(10);
+        Story_unk34_4((s32)record, 0);
+        Story_unk48_4(3, 19);
+        Story_unk41_4(10);
     }
     value = 128;
     record = Story_BytePtr(0);
     *(s32 *)((s32)record + 40) = (value << 10);
-    Story_Run41(10);
-    Story_Place2(0, (value << 10), (value << 10));
+    Story_unk41_4(10);
+    Story_unk2_3(0, (value << 10), (value << 10));
     reset_action = (s32)gOv17;
-    Story_Run35(0, reset_action);
+    Story_unk35_4(0, reset_action);
     record = Story_BytePtr(0);
-    Story_Run34((s32)record, 0);
-    Story_Run48(0, 19);
-    Story_Run41(20);
+    Story_unk34_4((s32)record, 0);
+    Story_unk48_4(0, 19);
+    Story_unk41_4(20);
     record = Record1(Story_BytePtr, 1);
     *(s32 *)((s32)record + 40) = (value << 10);
-    Story_Run41(10);
-    Story_Place2(1, (value << 10), (value << 10));
-    Story_Run35(1, reset_action);
+    Story_unk41_4(10);
+    Story_unk2_3(1, (value << 10), (value << 10));
+    Story_unk35_4(1, reset_action);
     record = Story_BytePtr(1);
-    Story_Run34((s32)record, 0);
-    Story_Run48(1, 19);
-    Story_Run41(40);
+    Story_unk34_4((s32)record, 0);
+    Story_unk48_4(1, 19);
+    Story_unk41_4(40);
     record = Record1(Story_BytePtr, 2);
     *(s32 *)((s32)record + 40) = (value << 10);
-    Story_Run41(10);
-    Story_Run35(2, reset_action);
+    Story_unk41_4(10);
+    Story_unk35_4(2, reset_action);
     record = Story_BytePtr(2);
-    Story_Run34((s32)record, 0);
-    Story_Run48(2, 19);
+    Story_unk34_4((s32)record, 0);
+    Story_unk48_4(2, 19);
     gOv2 = 0;
-    Story_Run41(160);
-    Story_Check6((s32)gOv10);
-    Story_Run41(120);
-    Story_Run3(0x406218, 1);
-    Story_Run46(60);
-    Story_Run33(60);
+    Story_unk41_4(160);
+    Story_unk6((s32)gOv10);
+    Story_unk41_4(120);
+    Story_unk3_4(0x406218, 1);
+    Story_unk46_4(60);
+    Story_unk33_4(60);
     gOv8 = 0;
     effect_phase = &gOv9;
     gOv7 = 0x800000;
     *effect_phase = 1;
-    Story_Check5((s32)gOv11, 0xc80);
-    Story_Run41(180);
-    Story_Run45(21);
+    Story_unk5((s32)gOv11, 0xc80);
+    Story_unk41_4(180);
+    Story_unk45_4(21);
     Scene_RunSplitPairSteps(1, 80);
     Scene_RunSplitPairSteps(2, 40);
-    Story_Place4(0, 0x102, 0);
-    Story_Place4(1, 0x102, 0);
-    Story_Place4(2, 0x102, 0);
-    Story_Place4(3, 0x102, 0);
-    Story_Run41(60);
+    Story_unk4_3(0, 0x102, 0);
+    Story_unk4_3(1, 0x102, 0);
+    Story_unk4_3(2, 0x102, 0);
+    Story_unk4_3(3, 0x102, 0);
+    Story_unk41_4(60);
     Scene_RunSplitPairSteps(2, 20);
     *effect_phase = 2;
-    Story_Run49(2, 2);
-    Story_Run41(20);
-    Story_Run49(1, 1);
-    Story_Run41(40);
-    Story_Run49(0, 2);
-    Story_Run49(3, 1);
-    Story_Run41(20);
-    Story_Run49(2, 3);
-    Story_Run41(40);
-    Story_Run49(0, 1);
-    Story_Run41(20);
-    Story_Run49(1, 2);
-    Story_Run41(20);
-    Story_Run49(3, 2);
-    Story_Place4(1, 0x102, 0);
+    Story_unk49_4(2, 2);
+    Story_unk41_4(20);
+    Story_unk49_4(1, 1);
+    Story_unk41_4(40);
+    Story_unk49_4(0, 2);
+    Story_unk49_4(3, 1);
+    Story_unk41_4(20);
+    Story_unk49_4(2, 3);
+    Story_unk41_4(40);
+    Story_unk49_4(0, 1);
+    Story_unk41_4(20);
+    Story_unk49_4(1, 2);
+    Story_unk41_4(20);
+    Story_unk49_4(3, 2);
+    Story_unk4_3(1, 0x102, 0);
     Scene_RunSplitPairSteps(1, 20);
     if (*party_flag != 0) {
-        Story_Place4(3, 0x102, 0);
+        Story_unk4_3(3, 0x102, 0);
         Scene_RunSplitPairSteps(3, 10);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
@@ -958,155 +957,155 @@ void Scene_RunBranchingFormationPresentation(void)
     *(u8 *)(Story_BytePtr(1) + 35) &= 254;
     *(u8 *)(Story_BytePtr(2) + 35) &= 254;
     *(u8 *)(Story_BytePtr(3) + 35) &= 254;
-    Story_Run50(0, 3);
-    Story_Run50(1, 3);
-    Story_Run50(2, 3);
+    Story_unk50_4(0, 3);
+    Story_unk50_4(1, 3);
+    Story_unk50_4(2, 3);
     value = 0;
-    Story_Run50(3, 3);
+    Story_unk50_4(3, 3);
     gOv5 = value;
-    Story_Check5((s32)gOv12, 0xc80);
-    Story_Run45(220);
+    Story_unk5((s32)gOv12, 0xc80);
+    Story_unk45_4(220);
     *(u8 *)(Story_BytePtr(13) + 35) &= 254;
-    Story_Run50(13, 2);
+    Story_unk50_4(13, 2);
     Story_Place(13, 0xfd0000, 0x25b0000);
     formation_action = (s32)gOv18;
-    Story_Run35(13, formation_action);
+    Story_unk35_4(13, formation_action);
     *(u8 *)(Story_BytePtr(14) + 35) &= 254;
-    Story_Run50(14, 2);
+    Story_unk50_4(14, 2);
     Story_Place(14, 0xe90000, 0x2750000);
-    Story_Run35(14, formation_action);
+    Story_unk35_4(14, formation_action);
     if (gOv4 != 0) {
         *(u8 *)(Story_BytePtr(15) + 35) &= 254;
-        Story_Run50(15, 2);
+        Story_unk50_4(15, 2);
         Story_Place(15, 0xcf0000, 0x2610000);
-        Story_Run35(15, formation_action);
+        Story_unk35_4(15, formation_action);
     }
     *(u8 *)(Story_BytePtr(16) + 35) &= 254;
-    Story_Run50(16, 2);
+    Story_unk50_4(16, 2);
     Story_Place(16, 0xe30000, 0x2440000);
-    Story_Run35(16, formation_action);
+    Story_unk35_4(16, formation_action);
     if (*formation_phase != 0) {
         do {
-            Story_Run33(1);
+            Story_unk33_4(1);
         } while (gOv9 != 0);
     }
-    Story_Do3(0x12c);
-    Story_Check6((s32)gOv11);
-    Story_Run41(120);
-    Story_Run45(17);
-    Story_Run3(0x10000, 1);
-    Story_Run46(60);
-    Story_Run33(60);
-    Story_Run51(13);
-    Story_Run51(14);
+    Story_unk3_2(0x12c);
+    Story_unk6((s32)gOv11);
+    Story_unk41_4(120);
+    Story_unk45_4(17);
+    Story_unk3_4(0x10000, 1);
+    Story_unk46_4(60);
+    Story_unk33_4(60);
+    Story_unk51_4(13);
+    Story_unk51_4(14);
     formation_flag = &gOv4;
     if (*formation_flag != 0) {
-        Story_Run51(15);
+        Story_unk51_4(15);
     }
-    Story_Run51(16);
-    Story_Run33(1);
+    Story_unk51_4(16);
+    Story_unk33_4(1);
     finish_action = (s32)gOv19;
-    Story_Run35(13, finish_action);
-    Story_Run35(14, finish_action);
+    Story_unk35_4(13, finish_action);
+    Story_unk35_4(14, finish_action);
     if (*formation_flag != 0) {
-        Story_Run35(15, finish_action);
+        Story_unk35_4(15, finish_action);
     }
-    Story_Run52(16, finish_action);
-    Story_Run41(80);
-    Story_Run43(1, 2);
-    Story_Run41(40);
-    Story_Check7(1, 0);
+    Story_unk52_3(16, finish_action);
+    Story_unk41_4(80);
+    Story_unk43_4(1, 2);
+    Story_unk41_4(40);
+    Story_unk7(1, 0);
     Story_Place(11, 0xdc0000, 0x1ee0000);
     Story_Place(12, 0xdc0000, 0x1ee0000);
-    Story_Run33(1);
-    if (Story_Check8(11, 0) == 1) {
+    Story_unk33_4(1);
+    if (Story_unk8(11, 0) == 1) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Run43(0, 1);
-    Story_Run41(20);
-    Story_Run43(2, 2);
+    Story_unk43_4(0, 1);
+    Story_unk41_4(20);
+    Story_unk43_4(2, 2);
     Scene_RunSplitPairSteps(2, 20);
     if (*formation_flag != 0) {
-        Story_Run43(3, 2);
-        Story_Run41(10);
-        Story_Do2(0x1488);
+        Story_unk43_4(3, 2);
+        Story_unk41_4(10);
+        Story_unk2_2(0x1488);
         Scene_RunSplitPairSteps(3, 40);
     }
-    Story_Run49(1, 1);
-    Story_Place4(1, 0x101, 0);
-    Story_Run41(80);
-    Story_Run43(2, 2);
-    Story_Do2(0x1489);
+    Story_unk49_4(1, 1);
+    Story_unk4_3(1, 0x101, 0);
+    Story_unk41_4(80);
+    Story_unk43_4(2, 2);
+    Story_unk2_2(0x1489);
     Scene_RunSplitPairSteps(2, 40);
-    Story_Run43(1, 3);
-    Story_Run41(40);
-    Story_Run50(1, 2);
+    Story_unk43_4(1, 3);
+    Story_unk41_4(40);
+    Story_unk50_4(1, 2);
     *(u8 *)(Story_BytePtr(1) + 35) |= 1;
     record = Story_BytePtr(1);
-    Story_Run34((s32)record, 1);
-    Story_Run53(1, 6, 0);
-    Story_Place5(1, -3, 0);
-    Story_Run48(1, 1);
+    Story_unk34_4((s32)record, 1);
+    Story_unk53_3(1, 6, 0);
+    Story_unk5_3(1, -3, 0);
+    Story_unk48_4(1, 1);
     Actor_SetPairZeroAndValue(1, 0x4000, 60);
     Scene_RunSplitPairSteps(1, 20);
-    Story_Run49(1, 2);
+    Story_unk49_4(1, 2);
     Scene_RunSplitPairSteps(1, 10);
-    Story_Run43(0, 3);
+    Story_unk43_4(0, 3);
     Actor_SetPairZeroAndValue(1, 0x2000, 20);
-    Story_Place4(1, 0x101, 0);
-    Story_Run41(40);
+    Story_unk4_3(1, 0x101, 0);
+    Story_unk41_4(40);
     Actor_SetPairZeroAndValue(1, 0x6000, 40);
     Actor_SetPairZeroAndValue(1, 0x2000, 20);
     Actor_SetPairZeroAndValue(1, 0x6000, 20);
     Actor_SetPairZeroAndValue(1, 0x2000, 10);
-    Story_Run53(1, 2, 0);
-    Story_Run41(40);
-    Story_Run53(1, 2, 0);
-    Story_Run41(10);
-    Story_Run53(1, 4, 0);
-    Story_Run41(20);
+    Story_unk53_3(1, 2, 0);
+    Story_unk41_4(40);
+    Story_unk53_3(1, 2, 0);
+    Story_unk41_4(10);
+    Story_unk53_3(1, 4, 0);
+    Story_unk41_4(20);
     Scene_RunSplitPairSteps(1, 20);
     if (*formation_flag != 0) {
-        Story_Place4(3, 0x100, 0);
-        Story_Run41(60);
-        Story_Run43(3, 2);
-        Story_Run41(80);
-        Story_Run50(3, 2);
+        Story_unk4_3(3, 0x100, 0);
+        Story_unk41_4(60);
+        Story_unk43_4(3, 2);
+        Story_unk41_4(80);
+        Story_unk50_4(3, 2);
         *(u8 *)(Story_BytePtr(3) + 35) |= 1;
         record = Story_BytePtr(3);
-        Story_Run34((s32)record, 1);
-        Story_Run53(3, 4, 0);
-        Story_Place5(3, -2, 0);
-        Story_Run48(3, 1);
+        Story_unk34_4((s32)record, 1);
+        Story_unk53_3(3, 4, 0);
+        Story_unk5_3(3, -2, 0);
+        Story_unk48_4(3, 1);
         Actor_SetPairZeroAndValue(3, 0xe000, 60);
-        Story_Run43(3, 2);
-        Story_Run41(20);
+        Story_unk43_4(3, 2);
+        Story_unk41_4(20);
         Scene_RunSplitPairSteps(3, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Place6(1, 2, 0);
+    Story_unk6_3(1, 2, 0);
     Actor_SetPairZeroAndValue(1, 0x4000, 20);
-    Story_Run44(1, 3);
+    Story_unk44_4(1, 3);
     Actor_SetPairZeroAndValue(1, 0x2000, 10);
     Scene_RunSplitPairSteps(1, 20);
-    Story_Run44(1, 3);
-    Story_Run41(10);
-    Story_Run4(2, 1);
-    Story_Run41(40);
-    Story_Run43(2, 2);
-    Story_Run41(20);
+    Story_unk44_4(1, 3);
+    Story_unk41_4(10);
+    Story_unk4_4(2, 1);
+    Story_unk41_4(40);
+    Story_unk43_4(2, 2);
+    Story_unk41_4(20);
     value = 1;
-    Story_Run50(2, 2);
+    Story_unk50_4(2, 2);
     *(u8 *)(Story_BytePtr(2) + 35) |= value;
     record = Story_BytePtr(2);
-    Story_Run34((s32)record, 1);
-    Story_Run53(2, 4, 0);
-    Story_Run48(2, 1);
-    Story_Place7(2, 0xc000, 0);
-    Story_Run43(0, 2);
-    Story_Run41(10);
-    Story_Run50(0, 2);
+    Story_unk34_4((s32)record, 1);
+    Story_unk53_3(2, 4, 0);
+    Story_unk48_4(2, 1);
+    Story_unk7_3(2, 0xc000, 0);
+    Story_unk43_4(0, 2);
+    Story_unk41_4(10);
+    Story_unk50_4(0, 2);
     {
         u8 *record = Story_BytePtr(0);
         u8 flags = (u8)(value | record[35]);
@@ -1114,119 +1113,119 @@ void Scene_RunBranchingFormationPresentation(void)
         record[35] = flags;
     }
     record = Story_BytePtr(0);
-    Story_Run34((s32)record, 1);
-    Story_Run53(0, 4, 0);
-    Story_Run48(0, 1);
+    Story_unk34_4((s32)record, 1);
+    Story_unk53_3(0, 4, 0);
+    Story_unk48_4(0, 1);
     Actor_SetPairZeroAndValue(0, 0x6000, 60);
-    Story_Place4(0, 0x105, 0);
-    Story_Place4(2, 0x105, 0);
-    Story_Run41(60);
+    Story_unk4_3(0, 0x105, 0);
+    Story_unk4_3(2, 0x105, 0);
+    Story_unk41_4(60);
     Actor_SetPairZeroAndValue(0, 0xa000, 20);
-    Story_Run44(1, 3);
-    Story_Run44(0, 3);
+    Story_unk44_4(1, 3);
+    Story_unk44_4(0, 3);
     Actor_SetPairZeroAndValue(0, 0x6000, 10);
     Actor_SetPairZeroAndValue(1, 0x4000, 10);
-    Story_Place7(2, 0xc000, 0);
-    Story_Run44(2, 3);
+    Story_unk7_3(2, 0xc000, 0);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(2, 20);
-    Story_Run48(0, 3);
-    Story_Run48(3, 3);
-    Story_Run44(1, 3);
-    Story_Run41(20);
-    Story_Run43(2, 1);
-    Story_Run41(20);
-    Story_Check7(2, 0);
-    Story_Run48(2, 3);
-    Story_Place7(2, 0xe000, 0);
-    Story_Run42(1, 0x2000, 0);
-    if (Story_Check8(0, 0) == 0) {
-        Story_Run48(2, 3);
-        Story_Run44(1, 3);
+    Story_unk48_4(0, 3);
+    Story_unk48_4(3, 3);
+    Story_unk44_4(1, 3);
+    Story_unk41_4(20);
+    Story_unk43_4(2, 1);
+    Story_unk41_4(20);
+    Story_unk7(2, 0);
+    Story_unk48_4(2, 3);
+    Story_unk7_3(2, 0xe000, 0);
+    Story_unk42_4(1, 0x2000, 0);
+    if (Story_unk8(0, 0) == 0) {
+        Story_unk48_4(2, 3);
+        Story_unk44_4(1, 3);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     } else {
-        Story_Run43(1, 2);
+        Story_unk43_4(1, 2);
         Actor_SetPairZeroAndValue(1, 0x2000, 10);
-        Story_Run49(1, 2);
-        Story_Run54(1, 0);
+        Story_unk49_4(1, 2);
+        Story_unk54_3(1, 0);
     }
     Actor_SetPairZeroAndValue(1, 0x4000, 10);
-    Story_Run44(1, 4);
+    Story_unk44_4(1, 4);
     Scene_RunSplitPairSteps(1, 20);
     Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_Run44(2, 3);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(2, 10);
     if (gOv4 != 0) {
-        Story_Run43(3, 2);
+        Story_unk43_4(3, 2);
         Actor_SetPairZeroAndValue(3, 0, 20);
         Actor_SetPairZeroAndValue(3, 0x2000, 10);
-        Story_Run48(3, 4);
+        Story_unk48_4(3, 4);
         Scene_RunSplitPairSteps(3, 10);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Place7(1, 0x2000, 0);
+    Story_unk7_3(1, 0x2000, 0);
     Actor_SetPairZeroAndValue(0, 0xa000, 10);
-    Story_Run48(0, 3);
-    Story_Run44(1, 3);
+    Story_unk48_4(0, 3);
+    Story_unk44_4(1, 3);
     value = 128;
-    Story_Run41(20);
-    Story_Place7(0, 0x6000, 0);
+    Story_unk41_4(20);
+    Story_unk7_3(0, 0x6000, 0);
     Actor_SetPairZeroAndValue(1, (value << 7), 10);
-    Story_Run44(2, 4);
-    Story_Run41(20);
-    Story_Place4(0, 0x102, 0);
-    Story_Place4(1, 0x102, 0);
-    Story_Run41(80);
+    Story_unk44_4(2, 4);
+    Story_unk41_4(20);
+    Story_unk4_3(0, 0x102, 0);
+    Story_unk4_3(1, 0x102, 0);
+    Story_unk41_4(80);
     Actor_SetPairZeroAndValue(2, 0xe000, 10);
-    Story_Run49(2, 2);
+    Story_unk49_4(2, 2);
     Scene_RunSplitPairSteps(2, 20);
-    Story_Place7(1, 0x2000, 0);
+    Story_unk7_3(1, 0x2000, 0);
     Actor_SetPairZeroAndValue(0, 0xa000, 40);
-    Story_Run42(1, (value << 7), 0);
+    Story_unk42_4(1, (value << 7), 0);
     Actor_SetPairZeroAndValue(0, 0x6000, 10);
     Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_Run44(2, 3);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(2, 10);
-    Story_Run5(1, 0x102);
-    Story_Run41(40);
+    Story_unk5_4(1, 0x102);
+    Story_unk41_4(40);
     Scene_RunSplitPairSteps(1, 20);
-    Story_Run44(2, 3);
-    Story_Run41(20);
-    Story_Place4(1, 0x102, 0);
-    Story_Run41(40);
+    Story_unk44_4(2, 3);
+    Story_unk41_4(20);
+    Story_unk4_3(1, 0x102, 0);
+    Story_unk41_4(40);
     Scene_RunSplitPairSteps(1, 20);
-    Story_Run48(2, 3);
+    Story_unk48_4(2, 3);
     Scene_RunSplitPairSteps(2, 10);
-    Story_Run43(1, 2);
+    Story_unk43_4(1, 2);
     Actor_SetPairZeroAndValue(1, 0x2000, 10);
-    Story_Check7(1, 0);
-    Story_Run42(0, 0xa000, 0);
-    if (Story_Check8(0, 0) == 0) {
-        Story_Run44(1, 3);
+    Story_unk7(1, 0);
+    Story_unk42_4(0, 0xa000, 0);
+    if (Story_unk8(0, 0) == 0) {
+        Story_unk44_4(1, 3);
     } else {
-        Story_Run41(20);
-        Story_Run43(1, 2);
-        Story_Run41(40);
+        Story_unk41_4(20);
+        Story_unk43_4(1, 2);
+        Story_unk41_4(40);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Run54(1, 0);
-    Story_Run45(21);
-    Story_Run3(0x406218, 1);
-    Story_Run46(60);
-    Story_Run33(60);
+    Story_unk54_3(1, 0);
+    Story_unk45_4(21);
+    Story_unk3_4(0x406218, 1);
+    Story_unk46_4(60);
+    Story_unk33_4(60);
     gOv8 = 0;
     gOv7 = 0x800000;
     sequence_phase = &gOv9;
     *sequence_phase = 1;
-    Story_Check5((s32)gOv11, 0xc80);
-    Story_Run41(80);
-    Story_Run6(0, 2);
-    Story_Run49(1, 2);
-    Story_Run6(3, 2);
-    Story_Run43(2, 2);
-    Story_Run41(60);
+    Story_unk5((s32)gOv11, 0xc80);
+    Story_unk41_4(80);
+    Story_unk6_4(0, 2);
+    Story_unk49_4(1, 2);
+    Story_unk6_4(3, 2);
+    Story_unk43_4(2, 2);
+    Story_unk41_4(60);
     Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_Do2(0x149d);
+    Story_unk2_2(0x149d);
     Scene_RunSplitPairSteps(2, 10);
     Actor_SetPairZeroAndValue(1, 0xc000, 10);
     Actor_SetPairZeroAndValue(0, 0xc000, 10);
@@ -1238,147 +1237,147 @@ void Scene_RunBranchingFormationPresentation(void)
     *(u8 *)(Story_BytePtr(1) + 35) &= 254;
     *(u8 *)(Story_BytePtr(2) + 35) &= 254;
     *(u8 *)(Story_BytePtr(3) + 35) &= 254;
-    Story_Run50(0, 3);
-    Story_Run50(1, 3);
-    Story_Run50(2, 3);
-    Story_Run50(3, 3);
+    Story_unk50_4(0, 3);
+    Story_unk50_4(1, 3);
+    Story_unk50_4(2, 3);
+    Story_unk50_4(3, 3);
     *sequence_phase = 2;
-    Story_Run45(220);
+    Story_unk45_4(220);
     Story_Place(13, 0xfd0000, 0x25b0000);
     formation_action = (s32)gOv18;
-    Story_Run35(13, formation_action);
+    Story_unk35_4(13, formation_action);
     Story_Place(14, 0xe90000, 0x2750000);
-    Story_Run35(14, formation_action);
+    Story_unk35_4(14, formation_action);
     if (*sequence_flag != 0) {
         Story_Place(15, 0xcf0000, 0x2610000);
-        Story_Run35(15, formation_action);
+        Story_unk35_4(15, formation_action);
     }
     Story_Place(16, 0xe30000, 0x2440000);
-    Story_Run2(16, formation_action);
-    Story_Run41(120);
+    Story_unk2_4(16, formation_action);
+    Story_unk41_4(120);
     *sequence_phase = 3;
     do {
-        Story_Run33(1);
+        Story_unk33_4(1);
     } while (gOv9 != 0);
     Scene_RunSplitPairSteps(11, 80);
     Scene_RunSplitPairSteps(12, 20);
-    Story_Place4(0, 0x101, 0);
-    Story_Place4(1, 0x101, 0);
-    Story_Place4(2, 0x101, 0);
-    Story_Place4(3, 0x101, 0);
-    Story_Run41(60);
+    Story_unk4_3(0, 0x101, 0);
+    Story_unk4_3(1, 0x101, 0);
+    Story_unk4_3(2, 0x101, 0);
+    Story_unk4_3(3, 0x101, 0);
+    Story_unk41_4(60);
     Scene_RunSplitPairSteps(12, 20);
-    Story_Run48(0, 3);
-    Story_Run48(1, 3);
-    Story_Run48(3, 3);
-    Story_Run44(2, 3);
+    Story_unk48_4(0, 3);
+    Story_unk48_4(1, 3);
+    Story_unk48_4(3, 3);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Run48(0, 3);
-    Story_Run48(1, 3);
-    Story_Run48(3, 3);
-    Story_Run44(2, 3);
+    Story_unk48_4(0, 3);
+    Story_unk48_4(1, 3);
+    Story_unk48_4(3, 3);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Place4(0, 0x100, 0);
-    Story_Place4(1, 0x100, 0);
-    Story_Place4(2, 0x100, 0);
-    Story_Place4(3, 0x100, 0);
-    Story_Run41(40);
+    Story_unk4_3(0, 0x100, 0);
+    Story_unk4_3(1, 0x100, 0);
+    Story_unk4_3(2, 0x100, 0);
+    Story_unk4_3(3, 0x100, 0);
+    Story_unk41_4(40);
     Scene_RunSplitPairSteps(11, 10);
-    Story_Place7(0, 0x8000, 0);
-    Story_Place7(1, 0x4000, 0);
-    Story_Run42(3, 0, 0);
+    Story_unk7_3(0, 0x8000, 0);
+    Story_unk7_3(1, 0x4000, 0);
+    Story_unk42_4(3, 0, 0);
     Actor_SetPairZeroAndValue(2, 0xc000, 40);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Place4(0, 0x102, 0);
-    Story_Place4(1, 0x102, 0);
-    Story_Place4(2, 0x102, 0);
-    Story_Place4(3, 0x102, 0);
-    Story_Run42(0, 0xc000, 0);
-    Story_Run42(1, 0xc000, 0);
-    Story_Run42(2, 0xc000, 0);
+    Story_unk4_3(0, 0x102, 0);
+    Story_unk4_3(1, 0x102, 0);
+    Story_unk4_3(2, 0x102, 0);
+    Story_unk4_3(3, 0x102, 0);
+    Story_unk42_4(0, 0xc000, 0);
+    Story_unk42_4(1, 0xc000, 0);
+    Story_unk42_4(2, 0xc000, 0);
     Actor_SetPairZeroAndValue(3, 0xc000, 80);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Place7(0, 0x8000, 0);
-    Story_Place7(1, 0x4000, 0);
-    Story_Run42(2, 0xc000, 0);
+    Story_unk7_3(0, 0x8000, 0);
+    Story_unk7_3(1, 0x4000, 0);
+    Story_unk42_4(2, 0xc000, 0);
     Actor_SetPairZeroAndValue(3, 0, 40);
     Scene_RunSplitPairSteps(11, 10);
-    Story_Run42(0, 0xc000, 0);
-    Story_Run42(1, 0xc000, 0);
-    Story_Run42(2, 0xc000, 0);
+    Story_unk42_4(0, 0xc000, 0);
+    Story_unk42_4(1, 0xc000, 0);
+    Story_unk42_4(2, 0xc000, 0);
     Actor_SetPairZeroAndValue(3, 0xc000, 10);
-    Story_Run48(0, 4);
-    Story_Run48(1, 4);
-    Story_Run48(3, 4);
-    Story_Run44(2, 4);
-    Story_Run41(60);
+    Story_unk48_4(0, 4);
+    Story_unk48_4(1, 4);
+    Story_unk48_4(3, 4);
+    Story_unk44_4(2, 4);
+    Story_unk41_4(60);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Run48(0, 3);
-    Story_Run48(1, 3);
-    Story_Run48(3, 3);
-    Story_Run44(2, 3);
+    Story_unk48_4(0, 3);
+    Story_unk48_4(1, 3);
+    Story_unk48_4(3, 3);
+    Story_unk44_4(2, 3);
     Scene_RunSplitPairSteps(12, 20);
-    Story_Place7(0, 0x8000, 0);
-    Story_Place7(1, 0x4000, 0);
-    Story_Run42(2, 0xc000, 0);
+    Story_unk7_3(0, 0x8000, 0);
+    Story_unk7_3(1, 0x4000, 0);
+    Story_unk42_4(2, 0xc000, 0);
     Actor_SetPairZeroAndValue(3, 0, 20);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Run49(0, 2);
-    Story_Run49(1, 2);
-    Story_Run49(3, 2);
-    Story_Run43(2, 2);
-    Story_Run42(0, 0xc000, 0);
-    Story_Run42(1, 0xc000, 0);
-    Story_Run42(2, 0xc000, 0);
-    Story_Run42(3, 0xc000, 0);
+    Story_unk49_4(0, 2);
+    Story_unk49_4(1, 2);
+    Story_unk49_4(3, 2);
+    Story_unk43_4(2, 2);
+    Story_unk42_4(0, 0xc000, 0);
+    Story_unk42_4(1, 0xc000, 0);
+    Story_unk42_4(2, 0xc000, 0);
+    Story_unk42_4(3, 0xc000, 0);
     Scene_RunSplitPairSteps(12, 20);
-    Story_Place7(0, 0x8000, 0);
-    Story_Place7(1, 0x4000, 0);
-    Story_Run42(2, 0xc000, 0);
+    Story_unk7_3(0, 0x8000, 0);
+    Story_unk7_3(1, 0x4000, 0);
+    Story_unk42_4(2, 0xc000, 0);
     Actor_SetPairZeroAndValue(3, 0, 20);
     Scene_RunSplitPairSteps(11, 20);
-    Story_Place4(0, 0x102, 0);
-    Story_Place4(1, 0x102, 0);
-    Story_Place4(3, 0x102, 0);
-    Story_Place4(2, 0x102, 0);
-    Story_Run41(40);
+    Story_unk4_3(0, 0x102, 0);
+    Story_unk4_3(1, 0x102, 0);
+    Story_unk4_3(3, 0x102, 0);
+    Story_unk4_3(2, 0x102, 0);
+    Story_unk41_4(40);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Run42(0, 0xc000, 0);
-    Story_Run42(1, 0xc000, 0);
-    Story_Run42(2, 0xc000, 0);
+    Story_unk42_4(0, 0xc000, 0);
+    Story_unk42_4(1, 0xc000, 0);
+    Story_unk42_4(2, 0xc000, 0);
     Actor_SetPairZeroAndValue(3, 0xc000, 10);
     Scene_RunSplitPairSteps(12, 10);
-    Story_Run48(0, 3);
-    Story_Run48(1, 3);
-    Story_Run48(3, 3);
-    Story_Run44(2, 3);
-    Story_Run41(60);
-    Story_Run54(12, 0);
-    Story_Run54(11, 0);
-    Story_Check6((s32)gOv11);
-    Story_Run41(80);
-    Story_Run3(0x10000, 1);
-    Story_Run46(60);
-    Story_Run33(80);
-    Story_Run51(13);
-    Story_Run51(14);
+    Story_unk48_4(0, 3);
+    Story_unk48_4(1, 3);
+    Story_unk48_4(3, 3);
+    Story_unk44_4(2, 3);
+    Story_unk41_4(60);
+    Story_unk54_3(12, 0);
+    Story_unk54_3(11, 0);
+    Story_unk6((s32)gOv11);
+    Story_unk41_4(80);
+    Story_unk3_4(0x10000, 1);
+    Story_unk46_4(60);
+    Story_unk33_4(80);
+    Story_unk51_4(13);
+    Story_unk51_4(14);
     finish_flag = &gOv4;
-    Story_Run51(15);
-    Story_Run51(16);
-    Story_Run33(1);
+    Story_unk51_4(15);
+    Story_unk51_4(16);
+    Story_unk33_4(1);
     finish_action = (s32)gOv19;
-    Story_Run35(13, finish_action);
-    Story_Run35(14, finish_action);
+    Story_unk35_4(13, finish_action);
+    Story_unk35_4(14, finish_action);
     if (*finish_flag != 0) {
-        Story_Run35(15, finish_action);
+        Story_unk35_4(15, finish_action);
     }
-    Story_Run52(16, finish_action);
-    Story_Run41(20);
-    Story_Run50(0, 2);
-    Story_Run50(1, 2);
-    Story_Run50(2, 2);
+    Story_unk52_3(16, finish_action);
+    Story_unk41_4(20);
+    Story_unk50_4(0, 2);
+    Story_unk50_4(1, 2);
+    Story_unk50_4(2, 2);
     value = 1;
-    Story_Run50(3, 2);
+    Story_unk50_4(3, 2);
     *(u8 *)(Story_BytePtr(0) + 35) |= value;
     *(u8 *)(Story_BytePtr(1) + 35) |= value;
     *(u8 *)(Story_BytePtr(2) + 35) |= value;
@@ -1388,179 +1387,179 @@ void Scene_RunBranchingFormationPresentation(void)
 
         record[35] = flags;
     }
-    Story_Run43(2, 2);
+    Story_unk43_4(2, 2);
     Actor_SetPairZeroAndValue(2, 0xe000, 10);
-    Story_Check7(2, 0);
-    Story_Place7(1, 0x2000, 0);
-    Story_Run42(3, 0, 0);
-    if (Story_Check8(0, 0) != 0) {
+    Story_unk7(2, 0);
+    Story_unk7_3(1, 0x2000, 0);
+    Story_unk42_4(3, 0, 0);
+    if (Story_unk8(0, 0) != 0) {
     } else {
-        Story_Run43(1, 2);
-        Story_Run41(10);
-        Story_Check7(1, 0);
-        if (Story_Check8(0, 0) == 0) {
+        Story_unk43_4(1, 2);
+        Story_unk41_4(10);
+        Story_unk7(1, 0);
+        if (Story_unk8(0, 0) == 0) {
             Actor_SetPairZeroAndValue(3, 0, 20);
-            Story_Place4(1, 0x101, 0);
-            Story_Place4(2, 0x101, 0);
-            Story_Place4(3, 0x101, 0);
-            Story_Run41(40);
+            Story_unk4_3(1, 0x101, 0);
+            Story_unk4_3(2, 0x101, 0);
+            Story_unk4_3(3, 0x101, 0);
+            Story_unk41_4(40);
             Actor_SetPairZeroAndValue(1, 0x4000, 20);
             Scene_RunSplitPairSteps(1, 10);
             Actor_SetPairZeroAndValue(2, 0xc000, 20);
             Actor_SetPairZeroAndValue(2, 0xe000, 20);
-            Story_Run44(2, 3);
+            Story_unk44_4(2, 3);
             Scene_RunSplitPairSteps(2, 20);
             Actor_SetPairZeroAndValue(1, 0x2000, 20);
         } else {
             Actor_SetPairZeroAndValue(3, 0, 20);
-            Story_Place4(1, 0x102, 0);
-            Story_Place4(2, 0x102, 0);
-            Story_Place4(3, 0x102, 0);
-            Story_Run41(40);
+            Story_unk4_3(1, 0x102, 0);
+            Story_unk4_3(2, 0x102, 0);
+            Story_unk4_3(3, 0x102, 0);
+            Story_unk41_4(40);
             Actor_SetPairZeroAndValue(1, 0x4000, 20);
-            Story_Do2(0x14b4);
+            Story_unk2_2(0x14b4);
             Scene_RunSplitPairSteps(1, 20);
-            Story_Run44(2, 3);
+            Story_unk44_4(2, 3);
             Scene_RunSplitPairSteps(2, 20);
         }
-        Story_Run48(3, 3);
-        Story_Run44(1, 3);
+        Story_unk48_4(3, 3);
+        Story_unk44_4(1, 3);
         goto L_02002528;
     }
-    Story_Run41(20);
-    Story_Run44(1, 3);
-    Story_Run41(10);
-    Story_Do2(0x14b6);
+    Story_unk41_4(20);
+    Story_unk44_4(1, 3);
+    Story_unk41_4(10);
+    Story_unk2_2(0x14b6);
     Scene_RunSplitPairSteps(1, 10);
-    Story_Place7(1, 0x4000, 0);
+    Story_unk7_3(1, 0x4000, 0);
     Actor_SetPairZeroAndValue(0, 0x6000, 20);
-    Story_Run48(1, 3);
-    Story_Run44(0, 3);
-    Story_Run41(10);
-    Story_Run44(2, 4);
-    Story_Check7(2, 0);
-    if (Story_Check8(0, 0) != 0) {
+    Story_unk48_4(1, 3);
+    Story_unk44_4(0, 3);
+    Story_unk41_4(10);
+    Story_unk44_4(2, 4);
+    Story_unk7(2, 0);
+    if (Story_unk8(0, 0) != 0) {
     } else {
-        Story_Run41(20);
-        Story_Place4(2, 0x103, 0);
-        Story_Run41(40);
+        Story_unk41_4(20);
+        Story_unk4_3(2, 0x103, 0);
+        Story_unk41_4(40);
         Actor_SetPairZeroAndValue(2, 0xe000, 10);
         Scene_RunSplitPairSteps(2, 10);
         if (*finish_flag != 0) {
             Actor_SetPairZeroAndValue(3, 0, 10);
-            Story_Run49(3, 3);
+            Story_unk49_4(3, 3);
             Scene_RunSplitPairSteps(3, 20);
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
-        Story_Place4(0, 0x102, 0);
-        Story_Place4(1, 0x102, 0);
-        Story_Run41(40);
-        Story_Run43(1, 2);
+        Story_unk4_3(0, 0x102, 0);
+        Story_unk4_3(1, 0x102, 0);
+        Story_unk41_4(40);
+        Story_unk43_4(1, 2);
         Scene_RunSplitPairSteps(1, 20);
-        Story_Place4(1, 0x105, 0);
-        Story_Run41(120);
+        Story_unk4_3(1, 0x105, 0);
+        Story_unk41_4(120);
         Scene_RunSplitPairSteps(2, 40);
         if (gOv4 != 0) {
             Actor_SetPairZeroAndValue(3, 0x2000, 10);
-            Story_Run44(3, 4);
+            Story_unk44_4(3, 4);
             Scene_RunSplitPairSteps(3, 10);
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
-        Story_Run41(60);
-        Story_Run43(2, 2);
+        Story_unk41_4(60);
+        Story_unk43_4(2, 2);
         if (gOv4 != 0) {
             Actor_SetPairZeroAndValue(2, 0xa000, 40);
             Actor_SetPairZeroAndValue(2, 0xe000, 20);
         }
         Scene_RunSplitPairSteps(2, 10);
-        Story_Run49(0, 2);
-        Story_Run43(1, 2);
-        Story_Run41(40);
+        Story_unk49_4(0, 2);
+        Story_unk43_4(1, 2);
+        Story_unk41_4(40);
         Scene_RunSplitPairSteps(2, 20);
-        Story_Run44(0, 3);
-        Story_Run44(1, 3);
-        Story_Run41(20);
-        Story_Run48(3, 3);
+        Story_unk44_4(0, 3);
+        Story_unk44_4(1, 3);
+        Story_unk41_4(20);
+        Story_unk48_4(3, 3);
         L_02002528:;
-        Story_Run44(2, 3);
+        Story_unk44_4(2, 3);
         goto L_02002660;
     }
-    Story_Place4(2, 0x105, 0);
-    Story_Run41(40);
-    Story_Run44(2, 3);
-    Story_Do2(0x14bf);
+    Story_unk4_3(2, 0x105, 0);
+    Story_unk41_4(40);
+    Story_unk44_4(2, 3);
+    Story_unk2_2(0x14bf);
     Scene_RunSplitPairSteps(2, 20);
     if (*finish_flag != 0) {
         Actor_SetPairZeroAndValue(3, 0, 10);
-        Story_Run49(3, 1);
+        Story_unk49_4(3, 1);
         Scene_RunSplitPairSteps(3, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Place4(1, 0x102, 0);
-    Story_Place4(0, 0x102, 0);
-    Story_Run41(40);
-    Story_Run43(1, 2);
+    Story_unk4_3(1, 0x102, 0);
+    Story_unk4_3(0, 0x102, 0);
+    Story_unk41_4(40);
+    Story_unk43_4(1, 2);
     Scene_RunSplitPairSteps(1, 20);
-    Story_Place4(2, 0x105, 0);
-    Story_Run41(80);
+    Story_unk4_3(2, 0x105, 0);
+    Story_unk41_4(80);
     Scene_RunSplitPairSteps(2, 40);
     if (gOv4 != 0) {
         Actor_SetPairZeroAndValue(3, 0x2000, 20);
-        Story_Run48(3, 4);
+        Story_unk48_4(3, 4);
         Scene_RunSplitPairSteps(3, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Story_Run43(2, 2);
-    Story_Run41(20);
+    Story_unk43_4(2, 2);
+    Story_unk41_4(20);
     Scene_RunSplitPairSteps(2, 20);
-    Story_Run49(1, 2);
-    Story_Run43(0, 2);
-    Story_Run41(40);
+    Story_unk49_4(1, 2);
+    Story_unk43_4(0, 2);
+    Story_unk41_4(40);
     Scene_RunSplitPairSteps(2, 20);
     L_02002660:;
-    Story_Run45(17);
-    Story_Place2(1, 0x13333, 0x9999);
-    Story_Place2(2, 0x13333, 0x9999);
-    Story_Place2(3, 0x13333, 0x9999);
-    Story_Run48(1, 2);
+    Story_unk45_4(17);
+    Story_unk2_3(1, 0x13333, 0x9999);
+    Story_unk2_3(2, 0x13333, 0x9999);
+    Story_unk2_3(3, 0x13333, 0x9999);
+    Story_unk48_4(1, 2);
     {
         u8 *record = Record1(Story_BytePtr, 0);
 
         if (record != 0) {
-            Story_Run55(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+            Story_unk55_3(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
     }
-    Story_Run56(1);
-    Story_Run39(1, 0, 0);
-    Story_Run48(2, 2);
+    Story_unk56_3(1);
+    Story_unk39_4(1, 0, 0);
+    Story_unk48_4(2, 2);
     {
         u8 *record = Record1(Story_BytePtr, 0);
 
         if (record != 0) {
-            Story_Run55(2, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+            Story_unk55_3(2, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
     }
-    Story_Run56(2);
-    Story_Run39(2, 0, 0);
+    Story_unk56_3(2);
+    Story_unk39_4(2, 0, 0);
     if (gOv4 != 0) {
-        Story_Run48(3, 2);
+        Story_unk48_4(3, 2);
         {
             u8 *record = Record1(Story_BytePtr, 0);
 
             if (record != 0) {
-                Story_Run55(3, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+                Story_unk55_3(3, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
             }
         }
-        Story_Run56(3);
-        Story_Run39(3, 0, 0);
+        Story_unk56_3(3);
+        Story_unk39_4(3, 0, 0);
     }
-    Story_Check9(0x843);
-    Story_Run39(11, 0, 0);
-    Story_Run39(12, 0, 0);
-    Story_Run57();
-    Story_Run58();
+    Story_unk9(0x843);
+    Story_unk39_4(11, 0, 0);
+    Story_unk39_4(12, 0, 0);
+    Story_unk57_3();
+    Story_unk58_3();
 }

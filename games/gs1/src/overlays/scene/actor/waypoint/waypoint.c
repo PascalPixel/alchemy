@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/waypoint/waypoint.h"
 #include "spawn_configured_effect.h"
 #include "spawn_configured_effect_body.inc"
 #include "staged_actor_movement.h"
@@ -12,18 +11,18 @@
 #include "staged_actor.h"
 
 /* overlays/scene/actor/waypoint/actor_motion.c */
-s32 *Actor_Run7(s32 a);
+s32 *Actor_unk7_4(s32 a);
 
-s32 *Actor_Run8(s32 a);
+s32 *Actor_unk8_4(s32 a);
 
-u8 *Actor_Run9(s32);
+u8 *Actor_unk9_4(s32);
 
-u8 *Actor_Run10(s32);
+u8 *Actor_unk10_4(s32);
 
-u8 *Actor_Run11(s32);
-u8 *Actor_Run12(s32);
-u8 *Actor_Run13(s32);
-u8 *Actor_Run14(s32);
+u8 *Actor_unk11_4(s32);
+u8 *Actor_unk12_4(s32);
+u8 *Actor_unk13_4(s32);
+u8 *Actor_unk14_4(s32);
 
 /* Two veneers each serve two imports: 0x020046fa is the three-argument setter
  * at site 8 and the one-argument wait at site 21, and 0x02004730 is the
@@ -36,7 +35,7 @@ u8 *Actor_Run14(s32);
 
 s32 Actor_TryRunSlotZeroMoveStep(s16 *arg)
 {
-    s32 *p = Actor_Run7(0);
+    s32 *p = Actor_unk7_4(0);
     u8 *f = (u8 *)p + 0x55;
     s32 saved = *f;
 
@@ -45,10 +44,10 @@ s32 Actor_TryRunSlotZeroMoveStep(s16 *arg)
     if (r == 0) {
         s32 m;
 
-        Actor_Run15();
+        Actor_unk15_4();
         Actor_Apply2(p, 6);
-        Actor_Do6(6);
-        Actor_Do7(152);
+        Actor_unk6_2(6);
+        Actor_unk7_2(152);
         Actor_Apply3(p, 7);
         p[12] = 0x30000;
         p[13] = 0x20000;
@@ -57,11 +56,11 @@ s32 Actor_TryRunSlotZeroMoveStep(s16 *arg)
         m &= *f;
         *f = m;
         Actor_Apply4(p, 0);
-        Actor_Place7(0, arg[1], arg[5]);
+        Actor_unk7_3(0, arg[1], arg[5]);
         Actor_Apply5(p, 6);
         Actor_Apply6(p, 1);
         *f = saved;
-        Actor_Run16();
+        Actor_unk16_4();
         return 1;
     }
     return 0;
@@ -70,30 +69,30 @@ s32 Actor_TryRunSlotZeroMoveStep(s16 *arg)
 void Actor_BobActorZeroWhenAheadClear(void)
 {
     s32 pos[3];
-    s32 *actor = Actor_Run8(0);
+    s32 *actor = Actor_unk8_4(0);
     u8 *fp = (u8 *)actor + 0x55;
     s32 saved = *fp;
 
     pos[0] = (actor[2] & 0xfff00000) + 0x80000;
     pos[1] = actor[3];
     pos[2] = (actor[4] & 0xfff00000) + 0x280000;
-    if (Actor_Check6(pos)!= 0) {
-        Actor_Run17();
+    if (Actor_unk6(pos)!= 0) {
+        Actor_unk17_4();
         *fp = 0;
         Actor_Apply7(9, 7);
         actor[3] += -0x10000;
         actor[5] += -0x10000;
-        Actor_Do8(2);
+        Actor_unk8_2(2);
         actor[3] += -0x10000;
         actor[5] += -0x10000;
-        Actor_Do9(10);
+        Actor_unk9_2(10);
         actor[3] += 0x10000;
         actor[5] += 0x10000;
-        Actor_Do10(4);
+        Actor_unk10_2(4);
         actor[3] += 0x10000;
         actor[5] += 0x10000;
         *fp = saved;
-        Actor_Run18();
+        Actor_unk18_4();
     }
 }
 
@@ -101,95 +100,95 @@ void Actor_RunActorTwelveThreeWaypointMotion(void)
 {
     u8 *slot;
 
-    slot = Actor_Run9(12);
+    slot = Actor_unk9_4(12);
 
     /* r0 still holds the record returned above. */
-    Actor_Run19();
+    Actor_unk19_4();
 
     Actor_Apply8(12, 1);
     Actor_SetMode(12, 536, 344, 0x70000);       /* 134 << 2, 172 << 1, 224 << 11 */
 
-    Actor_SetRect4(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk4_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x100000,   /* 128 << 13 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply9(12, 1);
-    Actor_Place8(12, 0, 0);
-    Actor_Do11(20);
+    Actor_unk8_3(12, 0, 0);
+    Actor_unk11_2(20);
     Actor_Apply10(12, 2);
     Actor_Apply11(12, 258);                     /* 129 << 1 */
-    Actor_Do12(60);
+    Actor_unk12_2(60);
 
     /* Three waypoints, each at height 0x30000 (192 << 10); the X literals are
      * 146 << 2, 158 << 2 and 170 << 2 and the Z is the same 172 << 1. */
     Actor_SetMode2(12, 584, 344, 0x30000);
-    Actor_Place9(0, 12, 0);
-    Actor_Do13(6);
+    Actor_unk9_3(0, 12, 0);
+    Actor_unk13_2(6);
 
     Actor_SetMode3(12, 632, 344, 0x30000);
-    Actor_Place10(0, 12, 0);
-    Actor_Do14(6);
+    Actor_unk10_3(0, 12, 0);
+    Actor_unk14_2(6);
 
     Actor_SetMode4(12, 680, 344, 0x30000);
-    Actor_Place11(0, 12, 0);
-    Actor_Do15(6);
+    Actor_unk11_3(0, 12, 0);
+    Actor_unk15_2(6);
 
-    Actor_Do16(0x302);
-    Actor_Place12(15, 0, 0);
+    Actor_unk16_2(0x302);
+    Actor_unk12_3(15, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run20();
+    Actor_unk20_4();
 }
 
 void Actor_RunActorFourteenFourWaypointMotion(void)
 {
     u8 *slot;
 
-    slot = Actor_Run10(14);
+    slot = Actor_unk10_4(14);
 
     /* r0 still holds the record returned above. */
-    Actor_Run21();
+    Actor_unk21_4();
 
     Actor_Apply12(14, 1);
     Actor_SetMode5(14, 392, 504, 0x60000);       /* 196 << 1, 252 << 1, 192 << 11 */
-    Actor_Do17(10);
+    Actor_unk17_2(10);
 
-    Actor_SetRect5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk5_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply13(14, 1);
-    Actor_Place13(14, 0, 0);
-    Actor_Do18(20);
+    Actor_unk13_3(14, 0, 0);
+    Actor_unk18_2(20);
     Actor_Apply14(14, 2);
     Actor_Apply15(14, 258);                     /* 129 << 1 */
-    Actor_Do19(60);
+    Actor_unk19_2(60);
 
     /* Four waypoints; Z is 132 << 2 and the height 192 << 10 throughout. */
     Actor_SetMode6(14, 360, 528, 0x30000);
-    Actor_Place14(0, 14, 0);
-    Actor_Do20(6);
+    Actor_unk14_3(0, 14, 0);
+    Actor_unk20_2(6);
 
     Actor_SetMode7(14, 328, 528, 0x30000);
-    Actor_Place15(0, 14, 0);
-    Actor_Do21(6);
+    Actor_unk15_3(0, 14, 0);
+    Actor_unk21_2(6);
 
     Actor_SetMode8(14, 288, 528, 0x30000);
-    Actor_Place16(0, 14, 0);
-    Actor_Do22(6);
+    Actor_unk16_3(0, 14, 0);
+    Actor_unk22_2(6);
 
     Actor_SetMode9(14, 256, 528, 0x30000);
-    Actor_Place17(0, 14, 0);
-    Actor_Do23(6);
+    Actor_unk17_3(0, 14, 0);
+    Actor_unk23_2(6);
 
     Actor_Apply16(0, 1);
-    Actor_Place18(14, 0, 0);
-    Actor_Do24(30);
-    Actor_Do25(0x306);
-    Actor_Place19(17, 0, 0);
+    Actor_unk18_3(14, 0, 0);
+    Actor_unk24_2(30);
+    Actor_unk25_2(0x306);
+    Actor_unk19_3(17, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run22();
+    Actor_unk22_4();
 }
 
 void Actor_BobActorZeroWhenTargetClear(void)
@@ -199,48 +198,48 @@ void Actor_BobActorZeroWhenTargetClear(void)
     u8 saved;
     s32 target[3];
 
-    record = Actor_Run11(0);
+    record = Actor_unk11_4(0);
     mode = record + 85;
     saved = *mode;
 
-    target[0] = *(s32 *)(Actor_Run12(0) + 8) + (s32)0xffe00000;
-    target[1] = *(s32 *)(Actor_Run13(0) + 12);
-    target[2] = *(s32 *)(Actor_Run14(0) + 16);
+    target[0] = *(s32 *)(Actor_unk12_4(0) + 8) + (s32)0xffe00000;
+    target[1] = *(s32 *)(Actor_unk13_4(0) + 12);
+    target[2] = *(s32 *)(Actor_unk14_4(0) + 16);
 
-    if (Actor_Check7(target)!= 0) {
+    if (Actor_unk7(target)!= 0) {
         /* r0 still holds the nonzero result of the test above. */
-        Actor_Run23();
+        Actor_unk23_4();
 
         *mode = 0;
         Actor_Apply17(11, 7);
 
         *(s32 *)(record + 12) += (s32)0xffff0000;
         *(s32 *)(record + 20) += (s32)0xffff0000;
-        Actor_Do26(2);
+        Actor_unk26_2(2);
 
         *(s32 *)(record + 12) += (s32)0xffff0000;
         *(s32 *)(record + 20) += (s32)0xffff0000;
-        Actor_Do27(10);
+        Actor_unk27_2(10);
 
         *(s32 *)(record + 12) += 0x10000;
         *(s32 *)(record + 20) += 0x10000;
-        Actor_Do28(4);
+        Actor_unk28_2(4);
 
         *(s32 *)(record + 12) += 0x10000;
         *(s32 *)(record + 20) += 0x10000;
 
         *mode = saved;
-        Actor_Run24();
+        Actor_unk24_4();
     }
 }
 
 /* overlays/scene/actor/waypoint/actor_position.c */
-s32 *Actor_Run25(s32 a);
+s32 *Actor_unk25_4(s32 a);
 
-s32 *Actor_Run26();
-s32 *Actor_Run27();
+s32 *Actor_unk26_4();
+s32 *Actor_unk27_4();
 
-s32 *Actor_Run28();
+s32 *Actor_unk28_4();
 
 /* The five tile-painting calls take (layer, x, z, width, height, value) and
  * all reach the same routine, but each keeps its own call word: the encoding
@@ -249,12 +248,12 @@ s32 *Actor_Run28();
 void Actor_PassOffsetPointOfActorZero(void)
 {
     s32 v[3];
-    s32 *p = Actor_Run25(0);
+    s32 *p = Actor_unk25_4(0);
 
     v[0] = (p[2] & 0xfff00000) + 0x80000;
     v[1] = p[3];
     v[2] = (p[4] & 0xfff00000) + 0xffe80000;
-    Actor_Do29(v);
+    Actor_unk29_2(v);
 }
 
 /*
@@ -272,19 +271,19 @@ void Actor_MarkActorThirteenTileAndPark(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Actor_Run29();
+    Actor_unk29_4();
 
-    x = Actor_Run26(13)[2] >> 20;
-    z = Actor_Run27(13)[4] >> 20;
+    x = Actor_unk26_4(13)[2] >> 20;
+    z = Actor_unk27_4(13)[4] >> 20;
 
-    Actor_Check8(2, x, z, 1, 1, 0xff);
-    Actor_Check9(2, x + 1, z, 1, 1, 0);
-    Actor_Check10(2, x - 1, z, 1, 1, 0);
-    Actor_Check11(2, x, z + 1, 1, 1, 0);
-    Actor_Check12(2, x, z - 1, 1, 1, 0);
+    Actor_unk8(2, x, z, 1, 1, 0xff);
+    Actor_unk9(2, x + 1, z, 1, 1, 0);
+    Actor_unk10(2, x - 1, z, 1, 1, 0);
+    Actor_unk11(2, x, z + 1, 1, 1, 0);
+    Actor_unk12(2, x, z - 1, 1, 1, 0);
 
     if (x == 45 && z == 6) {
-        u8 *record = (u8 *)Actor_Run28(13);
+        u8 *record = (u8 *)Actor_unk28_4(13);
 
         record[85] = 0;
         *(s32 *)(record + 20) = (s32)0xfffe0000;
@@ -292,7 +291,7 @@ void Actor_MarkActorThirteenTileAndPark(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Actor_Run30();
+    Actor_unk30_4();
 }
 
 /* overlays/scene/actor/waypoint/configurable_effect_spawn.c */
@@ -306,7 +305,7 @@ void Effect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
 #define STAGED_ACTOR_MOVEMENT_UNTYPED_LOCATION_CALL
 
-void Actor_Run31(
+void Actor_unk31_4(
     StagedActorMovementRequest request)
 {
 }
@@ -359,18 +358,18 @@ OrbitingSceneObject *GetOrbitingSceneObject(void);
 
 u8 *AllocateEffectTransfer(s32, s32);
 
-s32 Actor_Run32(s32 *p)
+s32 Actor_unk32_4(s32 *p)
 {
     s16 *q = (s16 *)p[20];
     s32 a, b;
-    s32 d = Actor_Check13(p[12]) * 2;
+    s32 d = Actor_unk13(p[12]) * 2;
     if (d > 0)
         d = -d;
-    p[2] = p[14] + Actor_Check14(p[12]) * 2;
+    p[2] = p[14] + Actor_unk14(p[12]) * 2;
     p[3] = p[15] + d;
-    q[15] = Actor_Check15(p[12] + 0x8000) / 8;
-    a = Actor_Check16();
-    b = Actor_Check17();
+    q[15] = Actor_unk15(p[12] + 0x8000) / 8;
+    a = Actor_unk16();
+    b = Actor_unk17();
     p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
     return 0;
 }
@@ -415,9 +414,9 @@ void InitializeOrbitingEffect(void)
 }
 
 /* overlays/scene/actor/waypoint/overlay_object.c */
-u8 *Actor_Run33(s32 kind, s32 x, s32 y, s32 z);
+u8 *Actor_unk33_4(s32 kind, s32 x, s32 y, s32 z);
 
-u8 *Actor_Run34(s32 kind, s32 x, s32 y, s32 z);
+u8 *Actor_unk34_4(s32 kind, s32 x, s32 y, s32 z);
 
 /*
  * Spawns an overlay object and puts it into its configured state --
@@ -441,7 +440,7 @@ u8 *Actor_Run34(s32 kind, s32 x, s32 y, s32 z);
 u8 *OvObj_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret;
-    u8 *obj = Actor_Run33(kind, x, y, z);
+    u8 *obj = Actor_unk33_4(kind, x, y, z);
 
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);
@@ -468,7 +467,7 @@ u8 *OvObj_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 u8 *OvObj_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret;
-    u8 *obj = Actor_Run34(kind, x, y, z);
+    u8 *obj = Actor_unk34_4(kind, x, y, z);
 
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);
@@ -544,24 +543,24 @@ struct Resource39fProbe {
 
 extern u8 gWork[];
 
-u8 *Actor_Run35(s32);
+u8 *Actor_unk35_4(s32);
 
-u8 *Actor_Run36();
+u8 *Actor_unk36_4();
 
-u8 *Actor_Run37();
-u8 *Actor_Run38();
+u8 *Actor_unk37_4();
+u8 *Actor_unk38_4();
 
-u8 *Actor_Run39(s32);
+u8 *Actor_unk39_4(s32);
 
-u8 *Actor_Run40(s32);
+u8 *Actor_unk40_4(s32);
 
-u8 *Actor_Run41();
+u8 *Actor_unk41_4();
 
-u8 *Actor_Run42(s32);
+u8 *Actor_unk42_4(s32);
 
-u8 *Actor_Run43(s32);
+u8 *Actor_unk43_4(s32);
 
-u8 *Actor_Run44(s32);
+u8 *Actor_unk44_4(s32);
 
 /* 0x02003fb6 serves the two-argument presentation select and, twice later,
  * one-argument imports; the `_b` alias carries the two-argument one. */
@@ -598,73 +597,73 @@ void Scene_RunScene39f(s32 a0, s32 a1, s32 a2, s32 a3)
     p10 = a2;
     p9 = a3;
     p8 = a1;
-    rec7 = Actor_Check18();
-    Actor_Run45(a0, 1);
+    rec7 = Actor_unk18();
+    Actor_unk45_4(a0, 1);
     Actor_Place(a0, 0x30000, 0x18000);
-    Actor_Run46(152);
+    Actor_unk46_4(152);
     *(volatile s32 *)(rec7 + 40) = p9;
     *(volatile s32 *)(rec7 + 72) = 0x8000;
     *(volatile s32 *)(rec7 + 68) = 0;
-    Actor_Run47(rec7, 0);
-    Actor_Run48(a0, p8, p10);
+    Actor_unk47_4(rec7, 0);
+    Actor_unk48_4(a0, p8, p10);
     p8b = ((s32)p8 << 16);
     p10b = ((s32)p10 << 16);
-    Actor_Run49(a0, p8b, p10b);
-    Actor_Run50(rec7, 1);
+    Actor_unk49_4(a0, p8b, p10b);
+    Actor_unk50_4(rec7, 1);
     *(volatile s32 *)(rec7 + 72) = 0x10000;
     p10c = a0;
 }
 
 void Scene_RunScriptedSteps0And17E6(void)
 {
-    Actor_Run51();
+    Actor_unk51_4();
     Actor_Apply25(0, 1);
     Actor_Apply26(6118, 1);
-    Actor_Run52();
+    Actor_unk52_4();
 }
 
 void Scene_RunActor10WaypointSequence(void)
 {
     u8 *slot;
 
-    slot = Actor_Run35(10);
+    slot = Actor_unk35_4(10);
 
     /* r0 still holds the record returned above. */
-    Actor_Run53();
+    Actor_unk53_4();
 
     Actor_Apply27(10, 1);
     Actor_SetMode10(10, 88, 120, 0x60000);        /* 192 << 11 */
 
-    Actor_SetRect6(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk6_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply28(10, 1);
-    Actor_Place20(10, 0, 0);
-    Actor_Do30(20);
+    Actor_unk20_3(10, 0, 0);
+    Actor_unk30_2(20);
     Actor_Apply29(10, 2);
     Actor_Apply30(10, 258);                     /* 129 << 1 */
-    Actor_Do31(60);
+    Actor_unk31_2(60);
 
     /* Three waypoints, each at height 0x30000 (192 << 10). */
     Actor_SetMode11(10, 88, 152, 0x30000);
-    Actor_Place21(0, 10, 0);
-    Actor_Do32(10);
+    Actor_unk21_3(0, 10, 0);
+    Actor_unk32_2(10);
 
     Actor_SetMode12(10, 120, 192, 0x30000);
-    Actor_Place22(0, 10, 0);
-    Actor_Do33(10);
+    Actor_unk22_3(0, 10, 0);
+    Actor_unk33_2(10);
 
     Actor_SetMode13(10, 120, 240, 0x30000);
-    Actor_Place23(0, 10, 0);
-    Actor_Do34(10);
+    Actor_unk23_3(0, 10, 0);
+    Actor_unk34_2(10);
 
-    Actor_Do35(768);                       /* 192 << 2 */
-    Actor_Place24(13, 0, 0);
-    Actor_Place25(10, 0, 0);
+    Actor_unk35_2(768);                       /* 192 << 2 */
+    Actor_unk24_3(13, 0, 0);
+    Actor_unk25_3(10, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run54();
+    Actor_unk54_4();
 }
 
 /*
@@ -681,55 +680,55 @@ void Scene_RunActorElevenPresentationBeat(void)
     u8 *slot;
     s32 offset;
 
-    slot = Actor_Run36(11);
+    slot = Actor_unk36_4(11);
 
     /* Reads the record left in r0 by the call above; it must not be respelled
      * as a fresh fetch. */
-    Actor_Run55();
+    Actor_unk55_4();
 
-    Actor_Run56(11, 0);
-    Actor_Run57(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
+    Actor_unk56_4(11, 0);
+    Actor_unk57_4(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
 
-    Actor_Run58(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk58_4(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
-    Actor_Run59(11, 1);
-    Actor_Run60(11, 0, 0);
-    Actor_Run61(30);
-    Actor_Run62(11, 2);
-    Actor_Run63(11, 0x103, 0);
-    Actor_Run64(147);
-    Actor_Run65(60);
+    Actor_unk59_4(11, 1);
+    Actor_unk60_4(11, 0, 0);
+    Actor_unk61_4(30);
+    Actor_unk62_4(11, 2);
+    Actor_unk63_4(11, 0x103, 0);
+    Actor_unk64_4(147);
+    Actor_unk65_4(60);
 
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
-    Actor_Run66(11,
-                  *(s16 *)(Actor_Run37(0) + 10),
-                  *(s16 *)(Actor_Run38(0) + 18),
+    Actor_unk66_4(11,
+                  *(s16 *)(Actor_unk37_4(0) + 10),
+                  *(s16 *)(Actor_unk38_4(0) + 18),
                   0x40000);                          /* 128 << 11 */
 
-    Actor_Run67(10);
-    Actor_Run68(0x301);
-    Actor_Run69(14, 0, 0);
+    Actor_unk67_4(10);
+    Actor_unk68_4(0x301);
+    Actor_unk69_4(14, 0, 0);
 
     offset = 0x22b;
     ((u8 *)RuntimeSelectorTable)[offset] = 3;
 
-    Actor_Run70(53, 0);
+    Actor_unk70_4(53, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run71();
+    Actor_unk71_4();
 }
 
 void Scene_RunStepFD4WithActor181(s32 a)
 {
-    Actor_Do36(a);
-    Actor_Place26(16, 0, 0);
-    Actor_Do37(4052);
+    Actor_unk36_2(a);
+    Actor_unk26_3(16, 0, 0);
+    Actor_unk37_2(4052);
     Actor_Apply31(181, 3);
     Actor_Apply32(181, 0);
-    Actor_Run72();
+    Actor_unk72_4();
 }
 
 void Scene_RunProbedActorEightOrTenScene(void)
@@ -741,86 +740,86 @@ void Scene_RunProbedActorEightOrTenScene(void)
     s32 value;
 
     /* No argument register is written before this branch. */
-    Actor_Run73();
+    Actor_unk73_4();
 
-    if (Actor_Check19(&probe) != 0) {
-        Actor_Do38(probe);
+    if (Actor_unk19(&probe) != 0) {
+        Actor_unk38_2(probe);
 
         if (probe.word[1] == 8 && (probe.word[4] >> 20) == 23) {
             fifth = 35;
             sixth = 68;
-            Actor_SetRect7(35, 67, 4, 1, fifth, sixth);
+            Actor_unk7_5(35, 67, 4, 1, fifth, sixth);
         } else if (probe.word[1] == 10 && (probe.word[2] >> 20) == 35) {
             /* Written here, not at the call: the reference keeps it in a
              * callee-saved register across the whole sequence. */
             value = 0;
-            Actor_Do39(0x311);
+            Actor_unk39_2(0x311);
             Actor_Apply33(10, 3);
-            Actor_Place27(10, -16, 6);
-            Actor_Do40(30);
+            Actor_unk27_3(10, -16, 6);
+            Actor_unk40_2(30);
             Actor_Apply34(10, 8);
-            Actor_Do41(240);
+            Actor_unk41_2(240);
 
-            Actor_Run39(10)[35] = 2;
+            Actor_unk39_4(10)[35] = 2;
 
             fifth = 34;
             sixth = 30;
-            Actor_SetRect8(44, 30, 2, 4, fifth, sixth);
+            Actor_unk8_5(44, 30, 2, 4, fifth, sixth);
             height = 4;
-            Actor_SetRect9(2, 35, 30, 1, height, value);
+            Actor_unk9_5(2, 35, 30, 1, height, value);
         }
     }
 
     /* Common exit; no argument registers are set. */
-    Actor_Run74();
+    Actor_unk74_4();
 }
 
 void Scene_RunActorThirteenPresentationBeat(void)
 {
     u8 *slot;
 
-    slot = Actor_Run40(13);
+    slot = Actor_unk40_4(13);
 
     /* r0 still holds the record returned above. */
-    Actor_Run75();
+    Actor_unk75_4();
 
     Actor_Apply35(13, 1);
     Actor_SetMode14(13, 456, 104, 0x70000);       /* 228 << 1, 224 << 11 */
-    Actor_Do42(10);
+    Actor_unk42_2(10);
 
-    Actor_SetRect10(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk10_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply36(13, 1);
-    Actor_Place28(13, 0, 0);
-    Actor_Do43(20);
+    Actor_unk28_3(13, 0, 0);
+    Actor_unk43_2(20);
     Actor_Apply37(13, 2);
     Actor_Apply38(13, 258);                     /* 129 << 1 */
-    Actor_Do44(60);
+    Actor_unk44_2(60);
 
     Actor_SetMode15(13, 472, 136, 0x30000);       /* 236 << 1, 192 << 10 */
-    Actor_Place29(0, 13, 0);
-    Actor_Do45(6);
+    Actor_unk29_3(0, 13, 0);
+    Actor_unk45_2(6);
 
     Actor_SetMode16(13, 504, 136, 0x33333);       /* 252 << 1, pooled height */
-    Actor_Place30(0, 13, 0);
-    Actor_Do46(6);
+    Actor_unk30_3(0, 13, 0);
+    Actor_unk46_2(6);
 
     Actor_SetMode17(13, 552, 136, 0x38000);       /* 138 << 2, 224 << 10 */
-    Actor_Place31(0, 13, 0);
-    Actor_Do47(6);
+    Actor_unk31_3(0, 13, 0);
+    Actor_unk47_2(6);
 
     Actor_SetMode18(13, 584, 136, 0x38000);       /* 146 << 2 */
-    Actor_Place32(0, 13, 0);
-    Actor_Do48(6);
+    Actor_unk32_3(0, 13, 0);
+    Actor_unk48_2(6);
 
-    Actor_Place33(13, 0, 0);
-    Actor_Do49(772);                         /* 193 << 2 */
-    Actor_Place34(16, 0, 0);
+    Actor_unk33_3(13, 0, 0);
+    Actor_unk49_2(772);                         /* 193 << 2 */
+    Actor_unk34_3(16, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run76();
+    Actor_unk76_4();
 }
 
 void Scene_RunScene39f(void)
@@ -828,53 +827,53 @@ void Scene_RunScene39f(void)
     u32 i;
     s32 record;
 
-    Actor_Run77();
-    Actor_Run78(14, 1);
+    Actor_unk77_4();
+    Actor_unk78_4(14, 1);
     Actor_Run(14, 0x1a8, 0x1e0, 0x79999);
-    Actor_Run79(2);
-    Actor_Run80(14);
-    Actor_Run81(14, 15);
-    record = Actor_Check20(14);
-    Actor_Run82(record, 0);
-    Actor_Run83(30);
+    Actor_unk79_4(2);
+    Actor_unk80_4(14);
+    Actor_unk81_4(14, 15);
+    record = Actor_unk20(14);
+    Actor_unk82_4(record, 0);
+    Actor_unk83_4(30);
     Actor_Do(0x305);
-    Actor_Place2(17, 0x1a80000, 0x1e00000);
-    Actor_Run84();
+    Actor_unk2_3(17, 0x1a80000, 0x1e00000);
+    Actor_unk84_4();
 }
 
 void Scene_RunSupplementalSequenceOne(void)
 {
     extern u8 RuntimeSelectorTable[];
-    u8 *Actor_Run85();
+    u8 *Actor_unk85_4();
 
     s32 one;
     s32 x;
     s32 y;
     u8 *record;
 
-    Actor_Run86();
+    Actor_unk86_4();
     record = Actor_Check(14);
     x = *(volatile s32 *)((s32)record + 8);
-    record = Actor_Check2(14);
+    record = Actor_unk2(14);
     y = *(volatile s32 *)((s32)record + 16);
     x >>= 20;
     y >>= 20;
     one = 1;
-    Actor_Check21(2, x, y, 1, one, 255);
+    Actor_unk21(2, x, y, 1, one, 255);
     Actor_SetRect(2, x + 1, y, 1, one, 0);
-    Actor_SetRect2(2, x - 1, y, 1, one, 0);
-    Actor_Check22(2, x, y + 1, 1, one, 0);
-    Actor_Check23(2, x, y - 1, 1, one, 0);
-    record = Actor_Check3(14);
+    Actor_unk2_5(2, x - 1, y, 1, one, 0);
+    Actor_unk22(2, x, y + 1, 1, one, 0);
+    Actor_unk23(2, x, y - 1, 1, one, 0);
+    record = Actor_unk3(14);
     if ((*(volatile s32 *)((s32)record + 16) >> 20) == 27) {
-        record = Actor_Check4(14);
+        record = Actor_unk4(14);
         record[85] = 0;
         *(volatile s32 *)((s32)record + 20) = -0x20000;
         *(volatile s32 *)((s32)record + 12) = -0x20000;
-        Actor_Do2(0x214);
-        Actor_SetRect3(2, 43, 23, 1, one, 255);
+        Actor_unk2_2(0x214);
+        Actor_unk3_5(2, 43, 23, 1, one, 255);
     }
-    Actor_Run87();
+    Actor_unk87_4();
 }
 
 /*
@@ -884,7 +883,7 @@ void Scene_RunSupplementalSequenceOne(void)
 void Scene_RunScene39fSequenceA(void)
 {
     extern u8 RuntimeSelectorTable[];
-    s32 Actor_Run85();
+    s32 Actor_unk85_4();
 
     s32 rec7;
     s32 big;
@@ -893,123 +892,123 @@ void Scene_RunScene39fSequenceA(void)
     s32 second;
     s32 base3_2000240;
 
-    rec7 = Actor_Check24(15);
+    rec7 = Actor_unk24(15);
     big = 0x80000;
-    Actor_Run88();
-    Actor_Run89(15, 0);
-    Actor_Run2(15, 0x1d8, 104, big);
-    Actor_Run90(10);
-    Actor_Run91(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
-    Actor_Run92(15, 1);
-    Actor_Run93(15, 0, 0);
-    Actor_Run94(30);
-    Actor_Run95(15, 2);
-    Actor_Place3(15, 0x103, 0);
-    Actor_Run96(147);
-    Actor_Run97(60);
-    first = Actor_Check25(0);
+    Actor_unk88_4();
+    Actor_unk89_4(15, 0);
+    Actor_unk2_4(15, 0x1d8, 104, big);
+    Actor_unk90_4(10);
+    Actor_unk91_4(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
+    Actor_unk92_4(15, 1);
+    Actor_unk93_4(15, 0, 0);
+    Actor_unk94_4(30);
+    Actor_unk95_4(15, 2);
+    Actor_unk3_3(15, 0x103, 0);
+    Actor_unk96_4(147);
+    Actor_unk97_4(60);
+    first = Actor_unk25(0);
     shown = *(s16 *)(first + 10);
-    second = Actor_Run85(0);
-    Actor_Run3(15, shown, *(s16 *)(second + 18), 0x60000);
-    ((s64 (*)())Actor_Check26)(10);
-    Actor_Do3(0x307);
+    second = Actor_unk85_4(0);
+    Actor_unk3_4(15, shown, *(s16 *)(second + 18), 0x60000);
+    ((s64 (*)())Actor_unk26)(10);
+    Actor_unk3_2(0x307);
     base3_2000240 = (s32)RuntimeSelectorTable;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
-    Actor_Run98(53, 0);
-    Actor_Run99();
+    Actor_unk98_4(53, 0);
+    Actor_unk99_4();
 }
 
 void Scene_RunSlot16WaypointSequence(void)
 {
     u8 *slot;
 
-    slot = Actor_Run42(16);
+    slot = Actor_unk42_4(16);
 
     /* r0 still holds the record returned above. */
-    Actor_Run100();
+    Actor_unk100_4();
 
     Actor_Apply39(16, 1);
     Actor_SetMode19(16, 456, 152, 0x60000);       /* 228 << 1, 192 << 11 */
-    Actor_Do50(10);
+    Actor_unk50_2(10);
 
-    Actor_SetRect11(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk11_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply40(16, 1);
-    Actor_Place35(16, 0, 0);
-    Actor_Do51(20);
+    Actor_unk35_3(16, 0, 0);
+    Actor_unk51_2(20);
     Actor_Apply41(16, 2);
     Actor_Apply42(16, 258);                     /* 129 << 1 */
-    Actor_Do52(60);
+    Actor_unk52_2(60);
 
     /* Three waypoints at height 0x30000 (192 << 10). */
     Actor_SetMode20(16, 448, 192, 0x30000);       /* 224 << 1 */
-    Actor_Place36(0, 16, 0);
-    Actor_Do53(6);
+    Actor_unk36_3(0, 16, 0);
+    Actor_unk53_2(6);
 
     Actor_SetMode21(16, 424, 208, 0x30000);       /* 212 << 1 */
-    Actor_Place37(0, 16, 0);
-    Actor_Do54(6);
+    Actor_unk37_3(0, 16, 0);
+    Actor_unk54_2(6);
 
     Actor_SetMode22(16, 424, 224, 0x30000);
-    Actor_Place38(0, 16, 0);
-    Actor_Do55(6);
+    Actor_unk38_3(0, 16, 0);
+    Actor_unk55_2(6);
 
     Actor_Apply43(0, 1);
-    Actor_Place39(16, 0, 0);
-    Actor_Do56(30);
-    Actor_Do57(776);                         /* 194 << 2 */
-    Actor_Place40(20, 0, 0);
+    Actor_unk39_3(16, 0, 0);
+    Actor_unk56_2(30);
+    Actor_unk57_2(776);                         /* 194 << 2 */
+    Actor_unk40_3(20, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run101();
+    Actor_unk101_4();
 }
 
 void Scene_RunActor17CameraSequence(void)
 {
     u8 *slot;
 
-    slot = Actor_Run43(17);
+    slot = Actor_unk43_4(17);
 
     /* r0 still holds the record returned above. */
-    Actor_Run102();
+    Actor_unk102_4();
 
     Actor_Apply44(17, 1);
     Actor_SetMode23(17, 392, 104, 0x60000);       /* 196 << 1, 192 << 11 */
-    Actor_Do58(10);
+    Actor_unk58_2(10);
 
-    Actor_SetRect12(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk12_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply45(17, 1);
-    Actor_Place41(17, 0, 0);
-    Actor_Do59(20);
+    Actor_unk41_3(17, 0, 0);
+    Actor_unk59_2(20);
     Actor_Apply46(17, 2);
     Actor_Apply47(17, 258);                     /* 129 << 1 */
-    Actor_Do60(60);
+    Actor_unk60_2(60);
 
     Actor_SetMode24(17, 376, 152, 0x60000);       /* 188 << 1 */
-    Actor_Place42(0, 17, 0);
-    Actor_Do61(10);
+    Actor_unk42_3(0, 17, 0);
+    Actor_unk61_2(10);
 
     Actor_SetMode25(17, 328, 160, 0x30000);       /* 164 << 1, 192 << 10 */
-    Actor_Place43(0, 17, 0);
-    Actor_Do62(6);
+    Actor_unk43_3(0, 17, 0);
+    Actor_unk62_2(6);
 
     Actor_SetMode26(17, 296, 160, 0x30000);       /* 148 << 1 */
-    Actor_Place44(0, 17, 0);
-    Actor_Do63(6);
+    Actor_unk44_3(0, 17, 0);
+    Actor_unk63_2(6);
 
     Actor_Apply48(0, 1);
-    Actor_Place45(17, 0, 0);
-    Actor_Do64(30);
-    Actor_Do65(0x309);
-    Actor_Place46(21, 0, 0);
+    Actor_unk45_3(17, 0, 0);
+    Actor_unk64_2(30);
+    Actor_unk65_2(0x309);
+    Actor_unk46_3(21, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run103();
+    Actor_unk103_4();
 }
 
 void Scene_RunScene39f(void)
@@ -1017,98 +1016,98 @@ void Scene_RunScene39f(void)
     u32 i;
     s32 record;
 
-    Actor_Run104();
-    Actor_Run105(18, 1);
-    Actor_Run4(0x2e80000, -1, 0x1f80000, 1);
-    Actor_Run5(18, 0x2e8, 0x1f8, 0x90000);
-    Actor_Run106(18);
-    Actor_Run107(18, 15);
-    record = Actor_Check27(18);
-    Actor_Run108(record, 0);
-    Actor_Run109(30);
-    Actor_Do4(0x30a);
-    Actor_Place4(22, 0x2e80000, 0x1f80000);
-    Actor_Run110();
+    Actor_unk104_4();
+    Actor_unk105_4(18, 1);
+    Actor_unk4_4(0x2e80000, -1, 0x1f80000, 1);
+    Actor_unk5_4(18, 0x2e8, 0x1f8, 0x90000);
+    Actor_unk106_4(18);
+    Actor_unk107_4(18, 15);
+    record = Actor_unk27(18);
+    Actor_unk108_4(record, 0);
+    Actor_unk109_4(30);
+    Actor_unk4_2(0x30a);
+    Actor_unk4_3(22, 0x2e80000, 0x1f80000);
+    Actor_unk110_4();
 }
 
 void Scene_RunActorEighteenEffectSequence(void)
 {
     u8 *slot;
 
-    slot = Actor_Run44(18);
+    slot = Actor_unk44_4(18);
 
     /* r0 still holds the record returned above. */
-    Actor_Run111();
+    Actor_unk111_4();
 
     Actor_Apply49(18, 1);
     Actor_SetMode27(18, 712, 536, 0x60000);       /* 178 << 2, 134 << 2, 192 << 11 */
-    Actor_Do66(10);
+    Actor_unk66_2(10);
 
-    Actor_SetRect13(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Actor_unk13_5(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Actor_Apply50(18, 1);
-    Actor_Place47(18, 0, 0);
-    Actor_Do67(20);
+    Actor_unk47_3(18, 0, 0);
+    Actor_unk67_2(20);
     Actor_Apply51(18, 2);
     Actor_Apply52(18, 258);                     /* 129 << 1 */
-    Actor_Do68(60);
+    Actor_unk68_2(60);
 
     Actor_SetMode28(18, 712, 568, 0x60000);       /* 142 << 2 */
-    Actor_Place48(0, 18, 0);
-    Actor_Do69(10);
+    Actor_unk48_3(0, 18, 0);
+    Actor_unk69_2(10);
 
     Actor_SetMode29(18, 712, 600, 0x30000);       /* 150 << 2, 192 << 10 */
-    Actor_Place49(0, 18, 0);
-    Actor_Do70(6);
+    Actor_unk49_3(0, 18, 0);
+    Actor_unk70_2(6);
 
     Actor_SetMode30(18, 736, 640, 0x30000);       /* X += 24, 160 << 2 */
-    Actor_Place50(0, 18, 0);
-    Actor_Do71(6);
+    Actor_unk50_3(0, 18, 0);
+    Actor_unk71_2(6);
 
     Actor_SetMode31(18, 736, 704, 0x30000);       /* 176 << 2 */
-    Actor_Place51(0, 18, 0);
-    Actor_Do72(6);
+    Actor_unk51_3(0, 18, 0);
+    Actor_unk72_2(6);
 
     Actor_Apply53(0, 1);
-    Actor_Place52(18, 0, 0);
-    Actor_Do73(30);
-    Actor_Do74(0x30b);
+    Actor_unk52_3(18, 0, 0);
+    Actor_unk73_2(30);
+    Actor_unk74_2(0x30b);
 
     /* Common exit; no argument registers are set. */
-    Actor_Run112();
+    Actor_unk112_4();
 }
 
 void Scene_RunScene39f(void)
 {
     s32 rec7;
 
-    rec7 = Actor_Check5(18);
-    Actor_Run113();
-    Actor_Place5(18, 0x880000, 0x1680000);
-    Actor_Run114(18, 1);
-    Actor_Run115(18, 136, 0x198, 0x80000);
-    Actor_Run116(10);
-    Actor_Run117(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
-    Actor_Place6(18, 0xc000, 40);
-    Actor_Run6(18, 0x102);
-    Actor_Run118(18, 2);
-    Actor_Run119(18, 1);
-    Actor_Run120(18, 136, 0x1b8, 0x60000);
-    Actor_Run121(0, 18, 0);
-    Actor_Run122(10);
-    Actor_Run123(18, 136, 0x1d8, 0x30000);
-    Actor_Run124(0, 18, 0);
-    Actor_Run125(6);
-    Actor_Run126(18, 136, 0x1f8, 0x30000);
-    Actor_Run127(0, 18, 0);
-    Actor_Run128(6);
-    Actor_Run129(0, 1);
-    Actor_Run130(18, 0, 0);
-    Actor_Run131(60);
-    Actor_Do5(0x89d);
-    Actor_Run132();
+    rec7 = Actor_unk5(18);
+    Actor_unk113_4();
+    Actor_unk5_3(18, 0x880000, 0x1680000);
+    Actor_unk114_4(18, 1);
+    Actor_unk115_4(18, 136, 0x198, 0x80000);
+    Actor_unk116_4(10);
+    Actor_unk117_4(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
+    Actor_unk6_3(18, 0xc000, 40);
+    Actor_unk6_4(18, 0x102);
+    Actor_unk118_4(18, 2);
+    Actor_unk119_4(18, 1);
+    Actor_unk120_4(18, 136, 0x1b8, 0x60000);
+    Actor_unk121_4(0, 18, 0);
+    Actor_unk122_4(10);
+    Actor_unk123_4(18, 136, 0x1d8, 0x30000);
+    Actor_unk124_4(0, 18, 0);
+    Actor_unk125_4(6);
+    Actor_unk126_4(18, 136, 0x1f8, 0x30000);
+    Actor_unk127_4(0, 18, 0);
+    Actor_unk128_4(6);
+    Actor_unk129_4(0, 1);
+    Actor_unk130_4(18, 0, 0);
+    Actor_unk131_3(60);
+    Actor_unk5_2(0x89d);
+    Actor_unk132_3();
 }
 
 /* overlays/scene/actor/waypoint/scene_setup.c */
@@ -1120,9 +1119,9 @@ void Scene_RunSixCallSetupSequence(s32 no, s32 val)
 
     Actor_Apply54(v0, v1);
     Actor_Apply55(no, 1);
-    Actor_Run133();
-    Actor_Do75(30);
-    Actor_Do76(no);
+    Actor_unk133_3();
+    Actor_unk75_2(30);
+    Actor_unk76_2(no);
     Actor_Apply56(no, val);
 }
 
@@ -1214,9 +1213,9 @@ void StagedActor_AdvanceActorPair(void)
 
 /* overlays/scene/actor/waypoint/state_update.c */
 
-s32 *Actor_Run134(s32);
-s32 *Actor_Run135(s32);
-s32 *Actor_Run136(s32);
+s32 *Actor_unk134_3(s32);
+s32 *Actor_unk135_3(s32);
+s32 *Actor_unk136_3(s32);
 
 /* Three sites of the record accessor, so three names. */
 
@@ -1233,21 +1232,21 @@ void State_ApplyCrossRectsAroundActor11(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Actor_Run137();
+    Actor_unk137_3();
 
     /* Both coordinates are 16.16 fixed point reduced to whole tiles with
      * `asrs #20`, i.e. 16 fractional bits plus a 16-unit tile pitch. */
-    x = Actor_Run135(11)[2] >> 20;
-    z = Actor_Run134(11)[4] >> 20;
+    x = Actor_unk135_3(11)[2] >> 20;
+    z = Actor_unk134_3(11)[4] >> 20;
 
-    Actor_SetRect14(2, x, z, 1, 1, 0xff);
-    Actor_SetRect15(2, x + 1, z, 1, 1, 0);
-    Actor_SetRect16(2, x - 1, z, 1, 1, 0);
-    Actor_SetRect17(2, x, z + 1, 1, 1, 0);
-    Actor_SetRect18(2, x, z - 1, 1, 1, 0);
+    Actor_unk14_5(2, x, z, 1, 1, 0xff);
+    Actor_unk15_5(2, x + 1, z, 1, 1, 0);
+    Actor_unk16_5(2, x - 1, z, 1, 1, 0);
+    Actor_unk17_5(2, x, z + 1, 1, 1, 0);
+    Actor_unk18_5(2, x, z - 1, 1, 1, 0);
 
     if (x == 36 && z == 24) {
-        u8 *p = (u8 *)Actor_Run136(11);
+        u8 *p = (u8 *)Actor_unk136_3(11);
 
         p[85] = 0;
         *(s32 *)(p + 20) = (s32)0xfffe0000;
@@ -1255,5 +1254,5 @@ void State_ApplyCrossRectsAroundActor11(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Actor_Run138();
+    Actor_unk138_3();
 }

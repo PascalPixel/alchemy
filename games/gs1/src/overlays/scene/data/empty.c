@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/data/empty.h"
-
 
 #include "resource_3cc.h"
 
@@ -45,20 +43,20 @@ void State_ApplyValues8And0And0Then30(void)
 
 void State_ApplyValues9And1And0Then44(void)
 {
-    SceneData_Place2(9, 1, 0);
-    SceneData_Do2(0x44);
+    SceneData_unk2_3(9, 1, 0);
+    SceneData_unk2_2(0x44);
 }
 
 void State_ApplyValues10And2And0Then58(void)
 {
-    SceneData_Place3(0xA, 2, 0);
-    SceneData_Do3(0x58);
+    SceneData_unk3_3(0xA, 2, 0);
+    SceneData_unk3_2(0x58);
 }
 
 void State_ApplyValues11And3And0Then6c(void)
 {
-    SceneData_Place4(0xB, 3, 0);
-    SceneData_Do4(0x6C);
+    SceneData_unk4_3(0xB, 3, 0);
+    SceneData_unk4_2(0x6C);
 }
 
 /* The eight-byte owner includes the pool word holding this address. */

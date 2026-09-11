@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/effect_runtime/stop_current_object.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

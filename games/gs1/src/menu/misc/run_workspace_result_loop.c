@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/misc/run_workspace_result_loop.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE)
@@ -21,14 +20,14 @@ retry:
         return -1;
     }
     if (result == 0) {
-        if (Menu_Check2() == -1) {
+        if (Menu_unk2() == -1) {
             goto retry;
         }
     } else if (result == 1) {
         Menu_Apply((s32)&Value_00000c2a, 1);
         *(u8 *)RESULT_CELL_ADDR = result;
     } else if (result == 2) {
-        if (Menu_Check3() == -1) {
+        if (Menu_unk3() == -1) {
             goto retry;
         }
     }

@@ -4,7 +4,6 @@
  */
 #include "types.h"
 #include "scene.h"
-#include "abi/object/motion/aim/approach_linked_object.h"
 
 s32 FixedPoint_Ratio(s32, s32);
 

@@ -3,11 +3,6 @@
 
 #include "types.h"
 
-#define BattleFx_GetBaseSuccessRate Func_08079d7c
-#define BattleTarget_IsWeakToEffect      Func_08079e9c
-#define BattleFx_IsRevive            Func_08079ef8
-#define BattleFx_RollSuccess         Func_08079f10
-
 s32 BattleFx_GetBaseSuccessRate(s32 effect_id);
 s32 BattleTarget_IsWeakToEffect(const u8 *target_state, s32 effect_id);
 s32 BattleFx_IsRevive(s32 effect_id);

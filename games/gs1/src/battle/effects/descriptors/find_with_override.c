@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/descriptors/find_with_override.h"
 
 struct State_0808d5a4 {
     u8 padding[0x24a];

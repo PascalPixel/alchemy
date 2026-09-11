@@ -1,7 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/presentation/act/run_entries.h"
-
 
 s32 WaitFrames(s32);
 

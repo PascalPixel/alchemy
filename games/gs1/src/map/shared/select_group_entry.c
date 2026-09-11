@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/shared/select_group_entry.h"
 
 /*
  * Walks the word table returned by the 0x02008000 service at +0x14 and

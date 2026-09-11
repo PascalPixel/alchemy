@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/effect/table_audio.h"
 
 #define PALETTE ((volatile u16 *)0x05000000)
 
@@ -20,9 +19,9 @@ extern u16 gOv7[];
 extern u16 gOv8[];
 
 T *Effect_Run(s32);
-T *Effect_Run2(s32);
-T *Effect_Run3(s32);
-T *Effect_Run4(s32);
+T *Effect_unk2_4(s32);
+T *Effect_unk3_4(s32);
+T *Effect_unk4_4(s32);
 
 /* Return this overlay's state block. */
 
@@ -81,7 +80,7 @@ void PlayWorkspaceCueAndClearPaletteZero(void)
 
 void Scene_Forward(void)
 {
-    Effect_Run5();
+    Effect_unk5_4();
 }
 
 void Scene_ConfigureFixedPointValues(void)
@@ -121,7 +120,7 @@ s32 SceneData_StoreRecord1Field12(void)
     T *rec;
 
     p = &gOv4;
-    rec = Effect_Run2(1);
+    rec = Effect_unk2_4(1);
     *p = rec->unk12;
     return 0;
 }
@@ -132,7 +131,7 @@ s32 State_StoreSlotThreeField12(void)
     T *p;
 
     d = &gOv5;
-    p = Effect_Run3(3);
+    p = Effect_unk3_4(3);
     *d = p->unk12;
     return 0;
 }
@@ -143,7 +142,7 @@ s32 SceneData_StoreRecord2Field12(void)
     T *p;
 
     d = &gOv6;
-    p = Effect_Run4(2);
+    p = Effect_unk4_4(2);
     *d = p->unk12;
     return 0;
 }
@@ -153,7 +152,7 @@ void Effect_LoadTablesAndStopDma0(void)
     volatile u16 *reg;
 
     Effect_Do(gOv7);
-    Effect_Do2(gOv8);
+    Effect_unk2_2(gOv8);
     reg = (volatile u16 *)0x040000B0;
     reg[5] = 0xC5FF & reg[5];
     reg[5] = 0x7FFF & reg[5];

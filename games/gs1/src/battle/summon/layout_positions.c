@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/summon/layout_positions.h"
 
 struct BattleActorDefinition {
     u8 reserved_000[296];

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/misc/wait_then_set_field18.h"
 
 s32 WaitFrames(s32);
 

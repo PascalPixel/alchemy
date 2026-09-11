@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/get_trigger_tile_ahead_of_current.h"
 
 struct Vec {
     s32 x;
@@ -20,7 +19,7 @@ extern s32 gCell[];
 
 struct Object *Obj_Run(s32);
 
-s32 Obj_Run2(void)
+s32 Obj_unk2_2(void)
 {
     u8 *state;
     u8 *map;
@@ -49,7 +48,7 @@ s32 Obj_Run2(void)
         }
         kind = cell[2];
         if ((u32)(kind - 242) <= 5) {
-            height = Obj_Place2(obj->kind, pos.x, pos.z);
+            height = Obj_unk2(obj->kind, pos.x, pos.z);
             if (height >= obj->pos.y && height <= obj->pos.y + 0x400000) {
                 result = kind;
             }

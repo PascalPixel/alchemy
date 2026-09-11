@@ -5,7 +5,6 @@
 
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/topic/init_four_actor_records_and_install_task.h"
 
 extern u8 gOv[];      /* in-image 0x205a: four X tile coordinates */
 extern u8 gOv2[];      /* in-image 0x205e: four Z tile coordinates */
@@ -15,9 +14,9 @@ extern u8 gOv5[];      /* scratch EWRAM above the image: 4 x 24 bytes */
 
 u8 *Talk_Run();
 
-u8 *Talk_Run2();
+u8 *Talk_unk2_4();
 
-void Talk_Run3();           /* the installed per-frame task */
+void Talk_unk3_4();           /* the installed per-frame task */
 
 /*
  * The 148-byte owner includes its eight-word literal pool: those words lie
@@ -67,8 +66,8 @@ void State_InitFourActorRecordsAndInstallTask(void)
     *(s32 *)(work + 76) = 0;
 
     /* r0 carries each lookup's result straight into the retag call. */
-    Talk_Run4(Talk_Run(20), 2);
-    Talk_Run5(Talk_Run2(21), 2);
+    Talk_unk4_4(Talk_Run(20), 2);
+    Talk_unk5_4(Talk_unk2_4(21), 2);
 
     /* The task word names in-image code with the Thumb bit set, not a runtime
      * address; the locals keep it and its rate built rather than folded. */
@@ -76,6 +75,6 @@ void State_InitFourActorRecordsAndInstallTask(void)
         s32 budget = 0xc83;
         void (*task)(void) = (void (*)(void))0x02008e5d;
 
-        Talk_Run6(task, budget);
+        Talk_unk6_4(task, budget);
     }
 }

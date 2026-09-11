@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/dialogue/flagged_object.h"
 
 typedef struct {
     u8 pad[9];
@@ -81,15 +80,15 @@ extern u8 *gWork;
 void *CreateOverlayObject(s32, s32, s32, s32);
 
 struct Effect *Talk_Run(s32 slot);
-struct Effect *Talk_Run2(s32 kind, s32 x, s32 y, s32 z);
+struct Effect *Talk_unk2_4(s32 kind, s32 x, s32 y, s32 z);
 
-u16 *Talk_Run3(s32);
+u16 *Talk_unk3_4(s32);
 
-u16 *Talk_Run4(s32);
+u16 *Talk_unk4_4(s32);
 
-u16 *Talk_Run5(s32);
+u16 *Talk_unk5_4(s32);
 
-u16 *Talk_Run6(s32);
+u16 *Talk_unk6_4(s32);
 
 /*
  * resource_3a1 configurable spawn/copy owner at 0x0200013c. The code ends
@@ -107,9 +106,9 @@ void OvObj_SetEntryField(void *arg0, s32 arg1)
 
 void *OvObj_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    void *Talk_Run7(s32, s32, s32, s32);
+    void *Talk_unk7_4(s32, s32, s32, s32);
 
-    u8 *ret = Talk_Run7(arg3, arg0, arg1, arg2);
+    u8 *ret = Talk_unk7_4(arg3, arg0, arg1, arg2);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -187,9 +186,9 @@ void Effect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
     party = Talk_Run(0);
     if ((flags & 0x100000) != 0 && opt != 0) {
-        effect = Talk_Run2(opt->kind, x, y, z);
+        effect = Talk_unk2_4(opt->kind, x, y, z);
     } else {
-        effect = Talk_Run2(222, x, y, z);
+        effect = Talk_unk2_4(222, x, y, z);
     }
     if (effect == 0)
         return;
@@ -304,118 +303,118 @@ s32 SceneData_SelectTable89c8Or8890(void)
 
 void Dialogue_RunActor14FlaggedDialogue(void)
 {
-    u16 *state = Talk_Run3(0);
+    u16 *state = Talk_unk3_4(0);
     u32 value = state[3];
 
-    Talk_Run8();
+    Talk_unk8_4();
     if (value >= 0xa001 && value <= 0xdfff) {
         Talk_Apply12(16, 14);
     } else {
         if (Talk_Check(0x895) == 0) {
-            Talk_Do2(0x1817);
+            Talk_unk2_2(0x1817);
         } else {
-            Talk_Do3(0x1a46);
+            Talk_unk3_2(0x1a46);
         }
         Talk_Apply13(14, 0);
     }
-    Talk_Run9();
+    Talk_unk9_4();
 }
 
 void Dialogue_RunActor15FlaggedDialogue(void)
 {
-    u16 *state = Talk_Run4(0);
+    u16 *state = Talk_unk4_4(0);
     u32 value = state[3];
 
-    Talk_Run10();
+    Talk_unk10_4();
     if (value >= 0xa001 && value <= 0xdfff) {
         Talk_Apply14(17, 15);
     } else {
-        if (Talk_Check2(0x895) == 0) {
-            Talk_Do4(0x1819);
+        if (Talk_unk2(0x895) == 0) {
+            Talk_unk4_2(0x1819);
         } else {
-            Talk_Do5(0x1a48);
+            Talk_unk5_2(0x1a48);
         }
         Talk_Apply15(15, 0);
     }
-    Talk_Run11();
+    Talk_unk11_4();
 }
 
 void Dialogue_RunActor16FlaggedDialogue(void)
 {
-    void Talk_Run12();
-    void Talk_Run13(s32);
+    void Talk_unk12_4();
+    void Talk_unk13_4(s32);
 
-    u16 *state = Talk_Run5(0);
+    u16 *state = Talk_unk5_4(0);
     u32 value = state[3];
 
-    Talk_Run14();
+    Talk_unk14_4();
     if (value >= 0xa001 && value <= 0xdfff) {
         Talk_Apply16(18, 16);
-    } else if (Talk_Check3(0x895) == 0) {
-        Talk_Do6(0x181b);
-        Talk_Run12(16, 0);
+    } else if (Talk_unk3(0x895) == 0) {
+        Talk_unk6_2(0x181b);
+        Talk_unk12_4(16, 0);
     } else {
-        Talk_Run13(0x1a4a);
+        Talk_unk13_4(0x1a4a);
         Talk_Apply17(16, 0);
     }
-    Talk_Run15();
+    Talk_unk15_4();
 }
 
 void Dialogue_RunActor17FlaggedDialogue(void)
 {
-    s32 Talk_Run16(s32);
+    s32 Talk_unk16_4(s32);
 
-    u16 *state = Talk_Run6(0);
+    u16 *state = Talk_unk6_4(0);
     u32 value = state[3];
 
-    Talk_Run17();
+    Talk_unk17_4();
     if (value < 0x2000 || value > 0xe000) {
         Talk_Apply18(5, 17);
     } else {
-        if (Talk_Run16(0x895) == 0) {
-            Talk_Do7(0x181d);
+        if (Talk_unk16_4(0x895) == 0) {
+            Talk_unk7_2(0x181d);
         } else {
-            Talk_Do8(0x1a4e);
+            Talk_unk8_2(0x1a4e);
         }
         Talk_Apply19(17, 0);
     }
-    Talk_Run18();
+    Talk_unk18_4();
 }
 
 void Dialogue_RunActor10Dialogue(void)
 {
-    s32 Talk_Run19(s32, s32);
+    s32 Talk_unk19_4(s32, s32);
 
-    Talk_Run20();
-    Talk_Do9(0x1a3a);
-    Talk_Run19(10, 0);
-    Talk_Run21();
+    Talk_unk20_4();
+    Talk_unk9_2(0x1a3a);
+    Talk_unk19_4(10, 0);
+    Talk_unk21_4();
 }
 
 void Dialogue_RunActor12Dialogue(void)
 {
-    void Talk_Run22(s32);
-    s32 Talk_Run23(s32, s32);
+    void Talk_unk22_4(s32);
+    s32 Talk_unk23_4(s32, s32);
 
-    Talk_Run24();
-    Talk_Run22((s32)&Value_00001a40);
-    Talk_Run23(12, 0);
-    Talk_Run25();
+    Talk_unk24_4();
+    Talk_unk22_4((s32)&Value_00001a40);
+    Talk_unk23_4(12, 0);
+    Talk_unk25_4();
 }
 
 void Dialogue_RunActor9MotionDialogue(void)
 {
-    void Talk_Run26(s32);
+    void Talk_unk26_4(s32);
 
-    Talk_Run27();
-    Talk_Run26(0x1a64);
+    Talk_unk27_4();
+    Talk_unk26_4(0x1a64);
     Talk_Place(9, 0, 20);
-    Talk_Place2(9, 10, 0);
-    Talk_Do10(60);
-    Talk_Place3(9, 0, 0);
-    Talk_Do11(20);
+    Talk_unk2_3(9, 10, 0);
+    Talk_unk10_2(60);
+    Talk_unk3_3(9, 0, 0);
+    Talk_unk11_2(20);
     Talk_Apply20(9, 0);
-    Talk_Run28();
+    Talk_unk28_4();
 }
 
 s32 SceneData_SelectTable8d4cOr8a28(void)
@@ -428,19 +427,19 @@ s32 SceneData_SelectTable8d4cOr8a28(void)
 
 s32 State_SetRuntimeWord448To521(void)
 {
-    void Talk_Run29(s32, s32, s32, s32);
+    void Talk_unk29_4(s32, s32, s32, s32);
 
     s16 scene;
 
     *(s32 *)(gWork + 448) = 521;
     scene = gCell[225];
     if (scene == 4 || scene == 7) {
-        Talk_Run29(0x00f80000, 0, 0x01a10000, 20);
+        Talk_unk29_4(0x00f80000, 0, 0x01a10000, 20);
     } else if (scene == 6) {
         Talk_SetMode(0x01cc0000, 0, 0x02380000, 20);
-        Talk_Run29(0x01e40000, 0, 0x02380000, 20);
+        Talk_unk29_4(0x01e40000, 0, 0x02380000, 20);
     } else if (scene == 8) {
-        Talk_Do12(0x12f);
+        Talk_unk12_2(0x12f);
         Talk_Apply21(10, 6);
     }
     return 0;

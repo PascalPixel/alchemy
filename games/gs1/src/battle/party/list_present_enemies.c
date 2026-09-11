@@ -2,7 +2,6 @@
 #include "battle_party.h"
 #include "battle_runtime.h"
 
-
 s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
 {
     s16 *output;

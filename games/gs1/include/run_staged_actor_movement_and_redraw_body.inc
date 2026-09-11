@@ -7,10 +7,10 @@
     s32 horizontal_extent;
     s32 vertical_extent;
 
-    workspace = (u8 *)Data_03001e70;
-    direction = Func_02006610(0)->orientation >> 12;
-    actor = Func_0200661c(request.actor_id);
-    footprint_table = (u8 *)Data_0200e1e8;
+    workspace = (u8 *)gCam;
+    direction = StagedActor_GetActive(0)->orientation >> 12;
+    actor = StagedActor_Get(request.actor_id);
+    footprint_table = (u8 *)gStagedFootprint;
     {
         s32 footprint_offset = request.movement_index << 4;
         s32 table_offset = footprint_offset + 4;
@@ -52,11 +52,11 @@
         tile_position.y >>= 20;
     }
 
-    Func_02000902(0, tile_position.x, tile_position.y, horizontal_extent,
+    StagedActor_FillTileRect(0, tile_position.x, tile_position.y, horizontal_extent,
                   vertical_extent, 0);
-    Func_020066b4(0, 0x8000, 0x1999);
-    Func_02006714(0, 8);
-    Func_0200668a(15);
+    StagedActor_SetSpeed(0, 0x8000, 0x1999);
+    StagedActor_SetStep(0, 8);
+    StagedActor_SetFacing(15);
 
     {
         s32 horizontal_delta = request.target_x - original_position.x;
@@ -69,47 +69,47 @@
             if (vertical_delta < 0)
                 vertical_delta += 0x1ffff;
             vertical_delta >>= 17;
-            Func_0200672c(0, horizontal_delta, vertical_delta);
+            StagedActor_AddDelta(0, horizontal_delta, vertical_delta);
         }
     }
 
-    Func_020066ea(0)->callback = (u32)&Value_020082a9;
-    Func_020066c4(4);
+    StagedActor_Motion(0)->callback = (u32)&Value_020082a9;
+    StagedActor_SetMode(4);
     if ((u32)(direction - 6) <= 7)
-        Func_02006614(actor, 3);
+        StagedActor_SetFlagA(actor, 3);
     else
-        Func_0200661e(actor, 2);
+        StagedActor_SetFlagB(actor, 2);
 
-    Func_0200687c(239);
-    Func_02006658(actor, request.target_x, request.target_depth,
+    StagedActor_PlayCue(239);
+    StagedActor_SetTarget(actor, request.target_x, request.target_depth,
                   request.tail.target_y);
-    Func_02006776(0);
-    Func_0200678e(0, 2);
+    StagedActor_Commit(0);
+    StagedActor_SetState(0, 2);
     ConfigureStagedActorMotion(0, 0x4ccc, 0x1999);
 
     {
-        s32 packed_orientation = Data_0200e190[direction];
-        Func_020067a4(0, ((s16)(packed_orientation >> 16)) / 2,
+        s32 packed_orientation = gStagedHeading[direction];
+        StagedActor_SetHeading(0, ((s16)(packed_orientation >> 16)) / 2,
                       ((s16)packed_orientation) / 2);
     }
     if (request.tail.callback != 0)
         request.tail.callback();
 
-    Func_020067bc(0);
-    Func_020067d4(0, 1);
-    Func_0200677a(0)->callback = 0;
+    StagedActor_ClearHeading(0);
+    StagedActor_SetLock(0, 1);
+    StagedActor_Motion2(0)->callback = 0;
     RefreshStagedActor(actor);
-    Func_020068f4(288);
-    Func_020068fa(213);
+    StagedActor_PlayCue2(288);
+    StagedActor_PlayCue3(213);
 
     actor->x = request.target_x;
     actor->y = request.tail.target_y;
     actor->horizontal_velocity = 0;
     actor->vertical_velocity = 0;
-    Func_020066b8(actor, 1);
+    StagedActor_SetFlagC(actor, 1);
 
     {
-        u8 *table = (u8 *)Data_0200e1e8;
+        u8 *table = (u8 *)gStagedFootprint;
         s32 horizontal_origin;
         s32 vertical_origin;
 
@@ -132,9 +132,9 @@
                                 horizontal_extent, vertical_extent,
                                 horizontal_origin + request.target_x,
                                 vertical_origin + request.tail.target_y);
-        Func_02000a6e(0, request.target_x, request.tail.target_y,
+        StagedActor_FillDestRect(0, request.target_x, request.tail.target_y,
                       horizontal_extent, vertical_extent, 255);
-        Func_02000a80(2, request.target_x, request.tail.target_y,
+        StagedActor_FillDestRect2(2, request.target_x, request.tail.target_y,
                       horizontal_extent, vertical_extent, 255);
 
         {
@@ -152,10 +152,10 @@
         horizontal_origin += original_position.x;
         vertical_origin += original_position.y;
 
-        Func_020067ae(horizontal_origin, vertical_origin, horizontal_extent,
+        StagedActor_RedrawAt(horizontal_origin, vertical_origin, horizontal_extent,
                       vertical_extent, original_position.x,
                       original_position.y);
-        Func_02000acc(2, original_position.x, original_position.y,
+        StagedActor_RestoreRect(2, original_position.x, original_position.y,
                       horizontal_extent, vertical_extent, 0);
     }
-    Func_020069d0();
+    StagedActor_Finish();

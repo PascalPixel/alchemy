@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/reset_owner_entries.h"
 
 struct Node_0801b148 {
     u32 value0;

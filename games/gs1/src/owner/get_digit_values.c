@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/get_digit_values.h"
 #include "runtime_interfaces.h"
 
 struct Record_080797fc {

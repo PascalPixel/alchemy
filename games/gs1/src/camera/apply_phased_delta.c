@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/camera/apply_phased_delta.h"
 
 struct Actor {
     u8 unknown[54];

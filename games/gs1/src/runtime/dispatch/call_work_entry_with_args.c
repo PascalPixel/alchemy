@@ -3,7 +3,6 @@
  */
 #include "types.h"
 #include "scene.h"
-#include "abi/runtime/dispatch/call_work_entry_with_args.h"
 
 /*
  * Sys_Place names a `bx rN` slot: the call is an indirect call through

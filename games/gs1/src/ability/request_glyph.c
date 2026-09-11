@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ability/request_glyph.h"
 
 u8 *Ability_GetData(s32);
 

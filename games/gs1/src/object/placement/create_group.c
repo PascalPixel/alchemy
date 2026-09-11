@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/placement/create_group.h"
 
 struct PlacementOrigin {
     u8 pad_00[0x0c];
@@ -65,5 +64,5 @@ void ObjectPlacement_CreateGroup(struct PlacementOrigin *origin, s32 x, s32 y,
 
     duration = 200;
     duration <<= 4;
-    ScheduleCallbackAfterFrames((s32)Obj_Run2, duration);
+    ScheduleCallbackAfterFrames((s32)Obj_unk2_2, duration);
 }

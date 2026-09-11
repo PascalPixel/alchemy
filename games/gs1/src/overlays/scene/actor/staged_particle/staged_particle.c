@@ -2,7 +2,6 @@
 #include "run_staged_actor_movement_and_redraw_body.inc"
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_particle/staged_particle.h"
 #include "staged_actor.h"
 #include "staged_actor_probe_state.h"
 
@@ -101,11 +100,11 @@ u8 *AllocateEffectTransfer(s32, s32);
  * address. All three reach the same ARM-mode IWRAM helper that scales one
  * channel by the adjustment, and each still needs its own name.
  */
-s32 Actor_Run2();   /* 0x02000b44 */
+s32 Actor_unk2_4();   /* 0x02000b44 */
 
-s32 Actor_Run3();   /* 0x02000b52 */
+s32 Actor_unk3_4();   /* 0x02000b52 */
 
-s32 Actor_Run4();   /* 0x02000b60 */
+s32 Actor_unk4_4();   /* 0x02000b60 */
 
 /*
  * Distance between two three-component 16.16 fixed-point positions. Each
@@ -412,21 +411,21 @@ u8 *SceneData_GetTable8ff0(void) { return (u8 *)0x02008ff0; }
 void Actor_RunPlacementQuery(void)
 {
     Query result;
-    Actor_Run5();
+    Actor_unk5_4();
     if (Actor_Check(&result))
         Actor_Do(result);
-    Actor_Run6();
+    Actor_unk6_4();
 }
 
 /* Scene setup for slot 11 and effect 181. */
 void Scene_SetupActor11Effect181(void)
 {
-    Actor_Run7();
+    Actor_unk7_4();
     Actor_Place(11, 0, 0);
-    Actor_Run8(0xfd3);
+    Actor_unk8_4(0xfd3);
     Actor_Apply(181, 3);
     Actor_Apply2(181, 0);
-    Actor_Run9();
+    Actor_unk9_4();
 }
 
 /* Constant getter; the owner includes its own pool word. */
@@ -445,14 +444,14 @@ s32 Scene_SetupEntryActors8To11(void)
     void Effect_InitOrbitingParticle(s32 id);
 
     *(s32 *)(gWork + 448) = 516;
-    if (Actor_Run10(0xfd3) == 0) {
-        Actor_Run11(11);
+    if (Actor_unk10_4(0xfd3) == 0) {
+        Actor_unk11_4(11);
     }
-    Actor_Run12(8);
-    Actor_Run13(9);
-    Actor_Run14(10);
-    if (Actor_Check2(0x845) == 0) {
-        Actor_Run15(11);
+    Actor_unk12_4(8);
+    Actor_unk13_4(9);
+    Actor_unk14_4(10);
+    if (Actor_unk2(0x845) == 0) {
+        Actor_unk15_4(11);
     }
     return 0;
 }
@@ -463,7 +462,7 @@ void Effect_AdjustPaletteWindow(s32 adj)
     volatile u16 *pal = (volatile u16 *)0x05000000;
     u32 phase;
     u32 next;
-    Actor_Run16();
+    Actor_unk16_4();
     phase = 0;
     do {
         u32 idx = phase >> 16;
@@ -477,7 +476,7 @@ void Effect_AdjustPaletteWindow(s32 adj)
         next = phase + 0x10000;
         phase = next;
     } while (next <= 0x00df0000);
-    Actor_Run17(); Actor_Run18(); Actor_Run19(0x10000, 0);
+    Actor_unk17_4(); Actor_unk18_4(); Actor_unk19_4(0x10000, 0);
 }
 
 /*
@@ -492,12 +491,12 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Actor_Run2(
+    red = (s16)(red + Actor_unk2_4(
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - Actor_Run3(green, adj));
-    blue = (s16)(blue - Actor_Run4(blue, adj));
+    green = (s16)(green - Actor_unk3_4(green, adj));
+    blue = (s16)(blue - Actor_unk4_4(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)
@@ -515,21 +514,21 @@ s32 Effect_UpdateOrbitingParticle(struct Particle *record)
     s32 tilt;
     s32 jitter;
 
-    lift = Actor_Check3(record->angle) * 2;
+    lift = Actor_unk3(record->angle) * 2;
     if (lift > 0)
         lift = -lift;
 
-    record->x = record->base_x + Actor_Check4(record->angle) * 2;
+    record->x = record->base_x + Actor_unk4(record->angle) * 2;
     record->y = record->base_y + lift;
 
     /* Signed divide by 8, spelled `if (v < 0) v += 7; v >>= 3`. */
-    tilt = Actor_Check5(record->angle + 0x8000);
+    tilt = Actor_unk5(record->angle + 0x8000);
     if (tilt < 0)
         tilt += 7;
     sprite[15] = (u16)(tilt >> 3);          /* +0x1e */
 
-    jitter = (s32)(((u32)Actor_Check6() << 9) >> 16);
-    jitter += (s32)(((u32)Actor_Check7() << 9) >> 16);
+    jitter = (s32)(((u32)Actor_unk6() << 9) >> 16);
+    jitter += (s32)(((u32)Actor_unk7() << 9) >> 16);
     record->angle += jitter + 1024;
 
     return 0;

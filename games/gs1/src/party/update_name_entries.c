@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/update_name_entries.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || \
@@ -38,7 +37,7 @@ s32 UpdateNameEntries(void)
         if (Party_Check() == -1) {
             break;
         }
-        Party_Run2();
+        Party_unk2();
         if (name_entry[298] != 0) {
             named_count += 1;
         }
@@ -71,7 +70,7 @@ s32 UpdateNameEntries(void)
     buffer = Runtime_BumpAllocateAlternatePool(320);
     Party_Run(1);
     if (Party_Check() != -1) {
-        Party_Run2();
+        Party_unk2();
         WaitFrames(2);
     }
     Party_Do(buffer);

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/selected_presentation/selected_presentation.h"
 #include "create_configured_overlay_object.h"
 #include "create_configured_overlay_object_body.inc"
 #include "select_overlay_data_by_runtime_selector.h"
@@ -14,33 +13,33 @@
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-    Actor_Place3(actor, x, y);
+    Actor_unk3_3(actor, x, y);
 }
 
-void Scene_RunActor8Step(void) { Actor_Do2(8); }
+void Scene_RunActor8Step(void) { Actor_unk2_2(8); }
 
-void Scene_RunActor9Step(void) { Actor_Do3(9); }
+void Scene_RunActor9Step(void) { Actor_unk3_2(9); }
 
-void Scene_RunActor10Step(void) { Actor_Do4(10); }
+void Scene_RunActor10Step(void) { Actor_unk4_2(10); }
 
-void Scene_RunActor11Step(void) { Actor_Do5(11); }
+void Scene_RunActor11Step(void) { Actor_unk5_2(11); }
 
-void Scene_RunActor12Step(void) { Actor_Do6(12); }
+void Scene_RunActor12Step(void) { Actor_unk6_2(12); }
 
-void Scene_RunLateActor8Step(void) { Actor_Do7(8); }
+void Scene_RunLateActor8Step(void) { Actor_unk7_2(8); }
 
-void Scene_RunLateActor9Step(void) { Actor_Do8(9); }
+void Scene_RunLateActor9Step(void) { Actor_unk8_2(9); }
 
-void Scene_RunLateActor10Step(void) { Actor_Do9(10); }
+void Scene_RunLateActor10Step(void) { Actor_unk9_2(10); }
 
-void Scene_RunLateActor11Step(void) { Actor_Do10(11); }
+void Scene_RunLateActor11Step(void) { Actor_unk10_2(11); }
 
-void Scene_RunLateActor12Step(void) { Actor_Do11(12); }
+void Scene_RunLateActor12Step(void) { Actor_unk11_2(12); }
 
 void PlaceActorTwelveWhenFlagClear(void)
 {
-    if (Actor_Check7(2487) == 0) {
-        Actor_Do12(526);
+    if (Actor_unk7(2487) == 0) {
+        Actor_unk12_2(526);
         PlaceActor(12, 240 << 15, 206 << 18);
         Actor_Apply(12, (const void *)0x020097a8);
     }
@@ -64,11 +63,11 @@ void EncounterPalette_Pulse(void)
 
 /* overlays/scene/actor/selected_presentation/overlay_object_head.c */
 
-void *Actor_Run4(s32, s32, s32, s32);
+void *Actor_unk4_4(s32, s32, s32, s32);
 
 void *OvObj_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *obj = Actor_Run4(arg3, arg0, arg1, arg2);
+    u8 *obj = Actor_unk4_4(arg3, arg0, arg1, arg2);
 
     if (obj != NULL) {
         u8 *sprite = *(u8 **)(obj + 0x50);
@@ -170,32 +169,32 @@ void Scene_RunMiddleAuxiliarySequence(s32 a0)
     p6 = *(volatile s32 *)(base + 500);
     p10 = a0;
     rec7 = Actor_Check((s32)p6);
-    Actor_Run5(p10);
-    rec2 = Actor_Check2(0x20f);
+    Actor_unk5_4(p10);
+    rec2 = Actor_unk2(0x20f);
     if (rec2 == 0) {
-        Actor_Run6();
+        Actor_unk6_4();
         Actor_Run((s32)p6, 0x101);
-        Actor_Run7((s32)p6, 9);
-        record = Actor_Check3(p10);
+        Actor_unk7_4((s32)p6, 9);
+        record = Actor_unk3(p10);
         if (record != 0) {
-            Actor_Run8((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_unk8_4((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Actor_Run9((s32)p6);
-        Actor_Run10(244);
-        Actor_Check4(0x2008401, 0xc80);
+        Actor_unk9_4((s32)p6);
+        Actor_unk10_4(244);
+        Actor_unk4(0x2008401, 0xc80);
         rec7[85] = rec2;
         {
             s32 v12 = *(volatile s32 *)((s32)rec7 + 12) + 0x200000;
-            Actor_Run11((s32)rec7, *(volatile s32 *)((s32)rec7 + 8), v12, *(volatile s32 *)((s32)rec7 + 16));
+            Actor_unk11_4((s32)rec7, *(volatile s32 *)((s32)rec7 + 8), v12, *(volatile s32 *)((s32)rec7 + 16));
         }
-        Actor_Run12((s32)p6);
+        Actor_unk12_4((s32)p6);
         *(volatile s32 *)((s32)rec7 + 40) = rec2;
         rec7[85] = 4;
         *(u8 *)(base + 498) = 2;
         Actor_Do(0x20f);
-        Actor_Run2(0x218, p10);
-        Actor_Run3(0x210, 180);
-        Actor_Run13();
+        Actor_unk2_4(0x218, p10);
+        Actor_unk3_4(0x210, 180);
+        Actor_unk13_4();
         *(u16 *)((*(u8 *volatile *)gWork + 0x17c)) = rec2;
     }
 }
@@ -262,20 +261,20 @@ void Scene_RunActorThirteenRestoration(void)
     }
 }
 
-s32 Actor_Run14(s32 a0)
+s32 Actor_unk14_4(s32 a0)
 {
     u32 i;
     s32 record;
 
     if (gCell[224][0] == (s32)gVal) {
-        *(u8 *)(Actor_Check8(14) + 35) = 2;
-        *(u8 *)(Actor_Check9(14) + 85) = 3;
-        Actor_Run15(14, 0, 0);
+        *(u8 *)(Actor_unk8(14) + 35) = 2;
+        *(u8 *)(Actor_unk9(14) + 85) = 3;
+        Actor_unk15_4(14, 0, 0);
         Actor_SetRect(16, 44, 1, 1, 15, 44);
-        Actor_Run16(100, 0, 0);
-        Actor_SetRect2(12, 71, 1, 1, 127, 127);
-        Actor_SetRect3(11, 71, 1, 1, 12, 71);
-        record = Actor_Check5(0x2008ce5);
+        Actor_unk16_4(100, 0, 0);
+        Actor_unk2_5(12, 71, 1, 1, 127, 127);
+        Actor_unk3_5(11, 71, 1, 1, 12, 71);
+        record = Actor_unk5(0x2008ce5);
         do {
             s32 shown = *(u16 *)gOv3;
 
@@ -286,22 +285,22 @@ s32 Actor_Run14(s32 a0)
     return a0;
 }
 
-s32 Actor_Run17(s32 a0)
+s32 Actor_unk17_4(s32 a0)
 {
     u32 i;
     s32 record;
     s32 v5;
 
     if (gCell[224][0] == (s32)gVal) {
-        *(u8 *)(Actor_Check10(14) + 35) = 2;
+        *(u8 *)(Actor_unk10(14) + 35) = 2;
         v5 = 0;
-        *(u8 *)(Actor_Check11(14) + 85) = v5;
+        *(u8 *)(Actor_unk11(14) + 85) = v5;
         Actor_Place(14, 0xf80000, 0x2c80000);
-        Actor_SetRect4(31, 95, 1, 1, 15, 44);
-        Actor_Place2(100, -1, -1);
-        Actor_Run18();
-        Actor_SetRect5(127, 127, 1, 1, 12, 71);
-        record = Actor_Check6(0x2008ce5, 0xc80);
+        Actor_unk4_5(31, 95, 1, 1, 15, 44);
+        Actor_unk2_3(100, -1, -1);
+        Actor_unk18_4();
+        Actor_unk5_5(127, 127, 1, 1, 12, 71);
+        record = Actor_unk6(0x2008ce5, 0xc80);
         return record;
     }
     return a0;
@@ -333,28 +332,28 @@ extern struct Selection RuntimeSelectorTable;
 extern struct SceneWork *gWork;
 extern volatile s32 gIw;
 
-struct Actor *Actor_Run19(s32 actor);
+struct Actor *Actor_unk19_4(s32 actor);
 
 void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct ConfiguredEffectOptions *options)
 {
 }
 
-void Actor_Run20(void)
+void Actor_unk20_4(void)
 {
     struct Actor *actor;
     struct SceneWork *scene;
     s32 progress;
 
-    actor = Actor_Run19(RuntimeSelectorTable.actor_id);
+    actor = Actor_unk19_4(RuntimeSelectorTable.actor_id);
     scene = gWork;
     actor->presentation = (u16)(gIw << 12);
 
-    progress = Actor_Check12(0x210);
+    progress = Actor_unk12(0x210);
     if (progress != 0) {
         if (progress == 1) {
             scene->state_one_marker = 99;
-        } else if (Actor_Check13(0x106) == 0) {
+        } else if (Actor_unk13(0x106) == 0) {
             progress -= 1;
         }
     }
@@ -367,12 +366,12 @@ void Actor_Run20(void)
 
 /*
  * The 14-byte owner at 0x02000314 loads no literal and has no pool word.
- * Both arguments are immediates, and Actor_Run21 spells the overlay's own
+ * Both arguments are immediates, and Actor_unk21_4 spells the overlay's own
  * relocated call word rather than a runtime address.
  */
 void State_SendRequest15With45(void)
 {
-    Actor_Run21(15, 45);
+    Actor_unk21_4(15, 45);
 }
 
 void State_SetStateByte52(void)

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/character_menu/draw_selection_labels.h"
 
 void UiText_DrawMessageAt(s32, s32, s32, s32);
 extern u8 gVal[][2];

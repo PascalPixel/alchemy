@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/link/update_session_countdown.h"
 #include "sound_ids.h"
 
 #define COUNTDOWN_START_FRAMES 900
@@ -92,7 +91,7 @@ void UpdateLinkSessionCountdown(void)
             i--;
             entry++;
         } while (i >= 0);
-        Sys_Do2(0x06006680);
+        Sys_unk2_2(0x06006680);
 
         if (state->enabled == 0)
             goto done;

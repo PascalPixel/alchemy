@@ -41,22 +41,5 @@ typedef char Resource388SlotView_unknown_59_offset[
 #define RESOURCE388_RUNTIME ((struct Resource388Runtime *)EFFECT_RUNTIME)
 
 /* Address-stable overlay ABI declarations. */
-s32 Func_0200015c(s32);
-u8 Func_0200017a(s32, s32);
-void Func_0200017e(s32, s32, s32);
-s32 Func_02000184(s32);
-u8 Func_0200018e(s32, s32);
-struct Resource388SlotView *Func_02000190(s32);
-struct Resource388SlotView *Func_0200019c(s32);
-u8 Func_0200019e(s32, s32, s32, s32, s32, s32);
-
-#define Resource388_TestSetupGate    Func_0200015c
-#define Resource388_SetSlotPosition  Func_0200017e
-#define Resource388_SetSlotOption    Func_0200017a
-#define Resource388_LookupSlotHandle Func_02000184
-#define Resource388_SetSlotMode      Func_0200018e
-#define Resource388_GetSlotRecord    Func_02000190
-#define Resource388_GetSlotState     Func_0200019c
-#define Resource388_QueueSlotCommand Func_0200019e
 
 #endif

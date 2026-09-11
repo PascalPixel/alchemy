@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/story/scenario_dispatch/scenario_dispatch.h"
 
 /* overlays/scene/story/scenario_dispatch/run_scene_early_sequence.c */
 /* Runs a linear setup sequence once two prior gate checks both pass;
@@ -26,20 +25,20 @@ void Scene_RunSupplementalSequenceTwo(void)
             Story_Run();
             Audio_PlayCue_1(182);
             Story_SetRect(0, 71, 100, 71, 1, 1);
-            Story_Run2();
+            Story_unk2_4();
             Battle_WaitMode0_1(40);
             /* Address of the byte pair starting at Value_00001032. */
             byte_pair_addr = (s32)&Value_00001032;
             UiText_DrawMessage_1(byte_pair_addr, 1);
             Battle_WaitMode0_2(20);
             Audio_PlayCue_2(183);
-            Story_Run6(122, 20, 120, 30, 1, 2);
-            Story_SetRect2(122, 20, 1, 2, 120, 30);
-            Story_Run3();
+            Story_unk6_4(122, 20, 120, 30, 1, 2);
+            Story_unk2_5(122, 20, 1, 2, 120, 30);
+            Story_unk3_4();
             Story_Place(65536, 65536, 65536);
             Battle_WaitMode0_3(20);
             BattleFx_SpawnLinked_1(0, 256, 0);
-            Story_Place2(131072, 131072, 65536);
+            Story_unk2_3(131072, 131072, 65536);
             Battle_WaitMode0_4(20);
             Motion_ArmCb_1(0, 16384, 40);
             Motion_ArmCb_2(0, 32768, 20);
@@ -47,7 +46,7 @@ void Scene_RunSupplementalSequenceTwo(void)
             Motion_ArmCb_4(0, 16384, 10);
             Motion_Launch_1(0, 4, 20);
             Motion_Launch_2(0, 6, 40);
-            Story_Place3(-1, -1, 58982);
+            Story_unk3_3(-1, -1, 58982);
             Battle_WaitMode0_5(40);
             UiText_DrawMessage_2(byte_pair_addr + 1, 1);
             GameFlag_Set_1(0x143);
@@ -60,7 +59,7 @@ void Scene_RunSupplementalSequenceTwo(void)
 /* overlays/scene/story/scenario_dispatch/run_scene_late_sequence.c */
 extern u8 Value_00000fe0;
 
-u8 *Story_Run7();
+u8 *Story_unk7_4();
 
 /*
  * resource_37f owner at 0x02000f8c, 1,680 bytes: full scene sequence
@@ -302,12 +301,12 @@ extern u8 gOv6[];
 extern u8 gOv7[];
 extern u8 gOv8[];
 extern s16 gCell[][1];
-extern void Story_Run8(void);  /* Story_Run9 veneer. */
-extern s32 Story_Run10();       /* GameFlag_IsSet veneer, first site. */
-extern void Story_Run11();      /* UiText_DrawMessage veneer, first site. */
-extern void Story_Run12();      /* UiText_DrawMessage veneer, second site. */
-extern s32 Story_Run13();       /* GameFlag_IsSet veneer, second site. */
-extern void Story_Run14(void);  /* Story_Run15 veneer. */
+extern void Story_unk8_4(void);  /* Story_unk9_4 veneer. */
+extern s32 Story_unk10_4();       /* GameFlag_IsSet veneer, first site. */
+extern void Story_unk11_4();      /* UiText_DrawMessage veneer, first site. */
+extern void Story_unk12_4();      /* UiText_DrawMessage veneer, second site. */
+extern s32 Story_unk13_4();       /* GameFlag_IsSet veneer, second site. */
+extern void Story_unk14_4(void);  /* Story_unk15_4 veneer. */
 
 /*
  * Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -361,7 +360,7 @@ u8 *SceneData_GetTable9F14(void)
     return (u8 *)0x02009f14;
 }
 
-s32 Story_Run16(void)
+s32 Story_unk16_4(void)
 {
     extern u8 gCell2[];
     extern u8 gWork[];
@@ -381,7 +380,7 @@ s32 Story_Run16(void)
         }
         L_020000ae:;
         base5_2009fd8 = (s32)gOv5;
-        Story_Run17(base5_2009fd8);
+        Story_unk17_4(base5_2009fd8);
         return base5_2009fd8;
     } else {
         if (gCell[224][0] == (s32)gVal2) {
@@ -400,46 +399,46 @@ void Scene_RunGateSequenceA(void)
     s32 v5;
     s32 v6;
 
-    Story_Run18();
+    Story_unk18_4();
     v5 = 3;
     v6 = 2;
-    Story_Run19(181);
-    Story_SetRect3(16, 28, 21, 3, v5, v6);
-    Story_Run20(10);
-    Story_SetRect4(16, 30, 21, 3, v5, v6);
-    Story_Run21(10);
-    Story_SetRect5(16, 32, 21, 3, v5, v6);
-    Story_Run22(10);
-    Story_Run23(0, 2);
-    Story_Place4(0, 0x9999, 0x4ccc);
-    Story_Run24(0, 120, 98);
-    Story_Run25(0, 2);
-    Story_Place5(0, 0, -8);
-    Story_Run26(10);
-    Story_Run27();
-    Story_Run28();
-    Story_Run29(2);
-    Story_Run30();
+    Story_unk19_4(181);
+    Story_unk3_5(16, 28, 21, 3, v5, v6);
+    Story_unk20_4(10);
+    Story_unk4_5(16, 30, 21, 3, v5, v6);
+    Story_unk21_4(10);
+    Story_unk5_5(16, 32, 21, 3, v5, v6);
+    Story_unk22_4(10);
+    Story_unk23_4(0, 2);
+    Story_unk4_3(0, 0x9999, 0x4ccc);
+    Story_unk24_4(0, 120, 98);
+    Story_unk25_4(0, 2);
+    Story_unk5_3(0, 0, -8);
+    Story_unk26_4(10);
+    Story_unk27_4();
+    Story_unk28_4();
+    Story_unk29_4(2);
+    Story_unk30_4();
 }
 
 void Dialogue_RunFlag81aMessageBranch(void)
 {
     extern u8 *gWork;
 
-    Story_Run8();
+    Story_unk8_4();
 
-    if (Story_Run10(0x81a) != 0) {
-        Story_Run11(0x1034, 1);
+    if (Story_unk10_4(0x81a) != 0) {
+        Story_unk11_4(0x1034, 1);
     } else {
-        Story_Run12(0x1031, 1);
-        if (Story_Run13(0xf01) != 0) {
+        Story_unk12_4(0x1031, 1);
+        if (Story_unk13_4(0xf01) != 0) {
             u16 *p = (u16 *)(gWork + 370);
             u16 val = 1;
             *p = val;
         }
     }
 
-    Story_Run14();
+    Story_unk14_4();
 }
 
 void Scene_RunOpeningAuxiliarySequence(void)
@@ -452,41 +451,41 @@ void Scene_RunOpeningAuxiliarySequence(void)
 
     if (Story_Check(0xf01) == 0) {
     } else {
-        if (Story_Check2(0x81a) != 0) {
+        if (Story_unk2(0x81a) != 0) {
         } else {
-            Story_Run31();
-            Story_Run32();
+            Story_unk31_4();
+            Story_unk32_4();
             v5 = 1;
-            Story_Run33(182);
-            Story_SetRect6(0, 70, 30, 42, v5, v5);
-            Story_Run34();
-            Story_Run35(40);
+            Story_unk33_4(182);
+            Story_unk6_5(0, 70, 30, 42, v5, v5);
+            Story_unk34_4();
+            Story_unk35_4(40);
             id = 0x1032;
-            Story_Run4(id, 1);
-            Story_Run36(20);
+            Story_unk4_4(id, 1);
+            Story_unk36_4(20);
             v6 = 3;
-            Story_Run37(183);
-            Story_SetRect7(0, 29, 3, 1, v6, 2);
-            Story_SetRect8(0, 29, 3, 2, v6, v5);
-            Story_SetRect9(1, 109, 4, 81, v5, v5);
-            Story_Run38();
-            Story_Place6(0x10000, 0x10000, 0x10000);
-            Story_Run39(20);
-            Story_Place7(0, 0x100, 0);
-            Story_Place8(0x20000, 0x20000, 0x10000);
-            Story_Run40(20);
-            Story_Place9(0, 0x4000, 40);
-            Story_Place10(0, 0x8000, 20);
-            Story_Run41(0, 0, 20);
-            Story_Place11(0, 0x4000, 10);
-            Story_Run42(0, 4, 20);
-            Story_Run43(0, 6, 40);
-            Story_Place12(-1, -1, 0xe666);
-            Story_Run44(40);
-            Story_Run5(id + 1, 1);
+            Story_unk37_4(183);
+            Story_unk7_5(0, 29, 3, 1, v6, 2);
+            Story_unk8_5(0, 29, 3, 2, v6, v5);
+            Story_unk9_5(1, 109, 4, 81, v5, v5);
+            Story_unk38_4();
+            Story_unk6_3(0x10000, 0x10000, 0x10000);
+            Story_unk39_4(20);
+            Story_unk7_3(0, 0x100, 0);
+            Story_unk8_3(0x20000, 0x20000, 0x10000);
+            Story_unk40_4(20);
+            Story_unk9_3(0, 0x4000, 40);
+            Story_unk10_3(0, 0x8000, 20);
+            Story_unk41_4(0, 0, 20);
+            Story_unk11_3(0, 0x4000, 10);
+            Story_unk42_4(0, 4, 20);
+            Story_unk43_4(0, 6, 40);
+            Story_unk12_3(-1, -1, 0xe666);
+            Story_unk44_4(40);
+            Story_unk5_4(id + 1, 1);
             Story_Do(0x143);
-            Story_Do2(0x81a);
-            Story_Run45();
+            Story_unk2_2(0x81a);
+            Story_unk45_4();
         }
     }
 }
@@ -497,13 +496,13 @@ void Scene_RunFlag821Dialogue(void)
 
     u8 *work;
 
-    Story_Run46();
+    Story_unk46_4();
 
-    if (Story_Check3(0x821) != 0) {
-        Story_Run47(0x1034, 1);
-    } else if (Story_Check4(0xf02) != 0) {
+    if (Story_unk3(0x821) != 0) {
+        Story_unk47_4(0x1034, 1);
+    } else if (Story_unk4(0xf02) != 0) {
         work = gWork;
-        Story_Run48(0x1031, 1);
+        Story_unk48_4(0x1031, 1);
         {
             /*
              * The halfword store goes through a pointer local and then an
@@ -517,8 +516,8 @@ void Scene_RunFlag821Dialogue(void)
             *frame = (u16)one;
         }
     } else {
-        Story_Run49(0x1031, 1);
+        Story_unk49_4(0x1031, 1);
     }
 
-    Story_Run50();
+    Story_unk50_4();
 }

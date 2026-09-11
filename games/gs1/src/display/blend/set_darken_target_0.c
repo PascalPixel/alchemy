@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/display/blend/set_darken_target_0.h"
 
 extern u8 gIw;
 extern u16 gIw2;

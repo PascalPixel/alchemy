@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/spawn_random_scene_effect.h"
 
 typedef struct Obj {
     s32 f00;
@@ -18,7 +17,7 @@ extern u8 gOv[];
 
 extern Obj *State_Run(s32, s32, s32, s32);
 
-void State_Run2(Obj *a)
+void State_unk2_4(Obj *a)
 {
     s32 t[3];
     u32 n;
@@ -26,7 +25,7 @@ void State_Run2(Obj *a)
     if (a->f28 >= -255 && a->f28 <= 255) {
         a->f55 = 0;
     }
-    n = State_Run3();
+    n = State_unk3_4();
     if (n * 100 >> 16 <= 9) {
         Obj *o;
         s32 u;
@@ -36,7 +35,7 @@ void State_Run2(Obj *a)
         t[1] = a->f0c;
         t[2] = a->f10;
         u = State_Check();
-        w = State_Check2();
+        w = State_unk2();
         State_Place(u << 4, w, t);
         {
             s32 x = t[0];

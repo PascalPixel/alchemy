@@ -1,8 +1,0 @@
-#ifndef ALCHEMY_ABI_OVERLAYS_SCENE_ACTOR_STAGED_MOTION_SELECT_PRIMARY_SCENE_DATA
-#define ALCHEMY_ABI_OVERLAYS_SCENE_ACTOR_STAGED_MOTION_SELECT_PRIMARY_SCENE_DATA
-
-/* Binding layer — not production source. Address / far-call ABI only. */
-
-#define gOv Data_0200e708
-
-#endif

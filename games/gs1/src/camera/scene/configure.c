@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/camera/scene/configure.h"
 
 /* Alternate scene-camera setup used by the later field presentation. */
 struct SceneCameraState {
@@ -66,8 +65,8 @@ void Camera_ConfigureScene(s32 pos)
 
     Sys_Run();
     Sys_Do(&state->field0c);
-    Sys_Do2(state->field36);
-    Sys_Do3(state->field34);
+    Sys_unk2_2(state->field36);
+    Sys_unk3_2(state->field34);
 
     local.first = 0;
     local.second = 0;

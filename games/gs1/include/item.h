@@ -100,28 +100,6 @@ LAYOUT_OFFSET_GUARD(
     action_id,
     0x28);
 
-struct ItemDefinition *Func_08078414(s32 item);
-struct ItemDefinition *Func_08077018(s32 item);
-s32 Func_08077218(s32 owner, s32 item);
-s32 Func_0807842c(s32 owner, s32 item);
-s32 Func_0807845c(s32 owner, s32 item);
-s32 Func_08078480(s32 item);
-u8 Func_08078a8c(s32 item);
-s32 Func_08078aa0(s32 counter, s32 delta);
-s32 Func_08078ad0(s32 item, s32 delta);
-
-#define Item_Get                   Func_08077018
-#define Item_GetDirect             Func_08078414
-#define Item_CanOwnerEquip         Func_08077218
-#define Item_CanOwnerEquipDirect   Func_0807842c
-#define Item_IsCompatibleWithOwner Func_0807845c
-#define Item_GetEquipmentGroup     Func_08078480
-#define Item_GetTargetMode         Func_08078a8c
-#define ItemCounter_Adjust         Func_08078aa0
-#define Item_AdjustCounter         Func_08078ad0
-#define Equipment_GetUnleashRateBonus Func_08079cbc
-#define RollWeaponUnleash             Func_08079d1c
-
 s32 Equipment_GetUnleashRateBonus(s32 owner);
 u16 RollWeaponUnleash(void *owner);
 

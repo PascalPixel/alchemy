@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/owner/get_default_element.h"
 #include "runtime_interfaces.h"
 
 struct OwnerElementState {

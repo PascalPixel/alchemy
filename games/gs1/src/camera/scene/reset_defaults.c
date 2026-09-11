@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/camera/scene/reset_defaults.h"
 
 struct SceneCameraState {
     u8 filler0[12];
@@ -58,8 +57,8 @@ void Camera_ResetSceneDefaults(void)
 
     Sys_Run();
     Sys_Do(&state->field0c);
-    Sys_Do2(state->field36);
-    Sys_Do3(state->field34);
+    Sys_unk2_2(state->field36);
+    Sys_unk3_2(state->field34);
 
     local.first = 0;
     local.second = 0;

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/resolve_table_pair.h"
 
 extern s16 gCell[];
 extern const s16 gRom[];

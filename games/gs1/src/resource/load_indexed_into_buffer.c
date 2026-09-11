@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/resource/load_indexed_into_buffer.h"
 #include "resource.h"
 
 extern u8 gVal[];

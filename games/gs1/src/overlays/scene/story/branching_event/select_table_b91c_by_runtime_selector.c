@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/overlays/scene/story/branching_event/select_table_b91c_by_runtime_selector.h"
 #define PrimaryRuntimeSelector Value_000000b0
 #define SecondaryRuntimeSelector Value_000000af
 #define TertiaryRuntimeSelector Value_000000ae

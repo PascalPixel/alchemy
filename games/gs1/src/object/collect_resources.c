@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/object/collect_resources.h"
 
 #define RESOURCE_ID_MASK_0801C7FC 0x3FFF
 

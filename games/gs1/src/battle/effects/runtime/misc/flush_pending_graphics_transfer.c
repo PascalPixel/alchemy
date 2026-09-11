@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/runtime/misc/flush_pending_graphics_transfer.h"
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
@@ -43,7 +42,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
         if (*(s32 *)(work + 0x7784) == 50) {
             Battle_Place(source, (void *)0x06008000, 0x7800);
         } else {
-            Battle_Place2(source, (void *)0x06008000, 0x7800);
+            Battle_unk2_3(source, (void *)0x06008000, 0x7800);
         }
         break;
     case 3:

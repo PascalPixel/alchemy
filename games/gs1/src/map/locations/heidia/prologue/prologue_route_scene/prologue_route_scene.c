@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/map/locations/heidia/prologue/prologue_route_scene/prologue_route_scene.h"
 #include "staged_actor.h"
 
 /* map/locations/heidia/prologue/prologue_route_scene/actor_activation.c */
@@ -30,10 +29,10 @@ extern s32 StagedActorStepTable[];
 extern s32 gOv[];
 extern s32 gCell[];
 
-Ent *Map_Run6(Desc *, Ent *);
+Ent *Map_unk6_4(Desc *, Ent *);
 
-Obj *Map_Run7(s32);
-Obj *Map_Run8(s32);
+Obj *Map_unk7_4(s32);
+Obj *Map_unk8_4(s32);
 
 s32 StopBlockedActorMotion(Ent *actor)
 {
@@ -48,7 +47,7 @@ s32 StopBlockedActorMotion(Ent *actor)
     destination.unk4 = actor->unkC;
     step = step << 16;
     destination.unk8 = actor->unk10 + step;
-    blocking_actor = Map_Run6(&destination, actor);
+    blocking_actor = Map_unk6_4(&destination, actor);
     if (blocking_actor != 0) {
         u32 kind_index = 0;
         s32 blocking_kind = *blocking_actor->unk50->unk28;
@@ -87,9 +86,9 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
     s32 x;
     s32 y;
 
-    p = Map_Run7(gCell[125]);
-    q = Map_Run8(actor_id);
-    Map_Run9();
+    p = Map_unk7_4(gCell[125]);
+    q = Map_unk8_4(actor_id);
+    Map_unk9_4();
     {
         x = ((p->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
         y = ((p->f10 + (z_offset << 16)) & 0xFFF00000) + 0x80000;
@@ -112,70 +111,70 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
     } else {
         Map_Apply3(q, 3);
     }
-    Map_Do2(226);
-    Map_Do3(p);
-    Map_Do4(288);
-    Map_Run10();
+    Map_unk2_2(226);
+    Map_unk3_2(p);
+    Map_unk4_2(288);
+    Map_unk10_4();
 }
 
 void ActivateSceneActor8(void)
 {
-    Map_Do5(8);
+    Map_unk5_2(8);
 }
 
 void ActivateSceneActor10(void)
 {
-    Map_Do6(10);
+    Map_unk6_2(10);
 }
 
 void ActivateSceneActor11(void)
 {
-    Map_Do7(11);
+    Map_unk7_2(11);
 }
 
 void ActivateSceneActor12(void)
 {
-    Map_Do8(12);
+    Map_unk8_2(12);
 }
 
 void ActivateSceneActor13(void)
 {
-    Map_Do9(13);
+    Map_unk9_2(13);
 }
 
 void ActivateSceneActor15(void)
 {
-    Map_Do10(15);
+    Map_unk10_2(15);
 }
 
 void ActivateSceneActor17(void)
 {
-    Map_Do11(17);
+    Map_unk11_2(17);
 }
 
 void ActivateSceneActor18(void)
 {
-    Map_Do12(18);
+    Map_unk12_2(18);
 }
 
 void ActivateSceneActor9(void)
 {
-    Map_Do13(9);
+    Map_unk13_2(9);
 }
 
 void ActivateSceneActor19(void)
 {
-    Map_Do14(19);
+    Map_unk14_2(19);
 }
 
 void ActivateSceneActor14(void)
 {
-    Map_Do15(14);
+    Map_unk15_2(14);
 }
 
 void ActivateSceneActor16(void)
 {
-    Map_Do16(16);
+    Map_unk16_2(16);
 }
 
 /* map/locations/heidia/prologue/prologue_route_scene/actor_motion.c */
@@ -327,7 +326,7 @@ void AdvanceEffectMotion(struct Effect *effect)
     velocity_z = effect->velocity[2];
     effect->position[2] += velocity_z;
 
-    effect->velocity[0] = velocity_x - Map_Check18(velocity_x, 18);
+    effect->velocity[0] = velocity_x - Map_unk18(velocity_x, 18);
     effect->velocity[2] = velocity_z - velocity_z / 16;
 
     effect->accum18 += effect->rate30;
@@ -340,18 +339,18 @@ void AdvanceEffectMotion(struct Effect *effect)
 s32 UpdateSwayingSceneObject(struct S *object)
 {
     struct T *sprite = object->f50;
-    s32 vertical_offset = Map_Check19(object->f30) * 2;
+    s32 vertical_offset = Map_unk19(object->f30) * 2;
     s32 random_b;
     s32 random_a;
 
     if (vertical_offset > 0) {
         vertical_offset = -vertical_offset;
     }
-    object->f08 = object->f38 + Map_Check20(object->f30) * 2;
+    object->f08 = object->f38 + Map_unk20(object->f30) * 2;
     object->f0c = object->f3c + vertical_offset;
-    sprite->f1e = (u16)(Map_Check21(object->f30 + 0x8000) / 8);
-    random_a = Map_Check22();
-    random_b = Map_Check23();
+    sprite->f1e = (u16)(Map_unk21(object->f30 + 0x8000) / 8);
+    random_a = Map_unk22();
+    random_b = Map_unk23();
     object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;
     return 0;
 }
@@ -473,115 +472,115 @@ struct S14 {
     s32 f10;
 };
 
-struct S *Map_Run11(s32 arg0);
+struct S *Map_unk11_4(s32 arg0);
 
-struct S *Map_Run12(s32 arg0);
+struct S *Map_unk12_4(s32 arg0);
 
-struct S *Map_Run13(s32 arg0);
+struct S *Map_unk13_4(s32 arg0);
 
-struct S *Map_Run14(s32 arg0);
+struct S *Map_unk14_4(s32 arg0);
 
-struct S *Map_Run15(s32 arg0);
-struct S *Map_Run16(s32 arg0);
-struct S *Map_Run17(s32 arg0);
-struct S *Map_Run18(s32 arg0);
-struct S *Map_Run19(s32 arg0);
+struct S *Map_unk15_4(s32 arg0);
+struct S *Map_unk16_4(s32 arg0);
+struct S *Map_unk17_4(s32 arg0);
+struct S *Map_unk18_4(s32 arg0);
+struct S *Map_unk19_4(s32 arg0);
 
-struct S *Map_Run20(s32 arg0);
-struct S *Map_Run21(s32 arg0);
-struct S *Map_Run22(s32 arg0);
-struct S *Map_Run23(s32 arg0);
+struct S *Map_unk20_4(s32 arg0);
+struct S *Map_unk21_4(s32 arg0);
+struct S *Map_unk22_4(s32 arg0);
+struct S *Map_unk23_4(s32 arg0);
 
-struct S *Map_Run24(s32 arg0);
-struct S *Map_Run25(s32 arg0);
-struct S *Map_Run26(s32 arg0);
-struct S *Map_Run27(s32 arg0);
-struct S *Map_Run28(s32 arg0);
+struct S *Map_unk24_4(s32 arg0);
+struct S *Map_unk25_4(s32 arg0);
+struct S *Map_unk26_4(s32 arg0);
+struct S *Map_unk27_4(s32 arg0);
+struct S *Map_unk28_4(s32 arg0);
 
-struct S *Map_Run29(s32 arg0);
-struct S *Map_Run30(s32 arg0);
-struct S *Map_Run31(s32 arg0);
+struct S *Map_unk29_4(s32 arg0);
+struct S *Map_unk30_4(s32 arg0);
+struct S *Map_unk31_4(s32 arg0);
 
-struct S *Map_Run32(s32 arg0);
-struct S *Map_Run33(s32 arg0);
-struct S *Map_Run34(s32 arg0);
-struct S *Map_Run35(s32 arg0);
-struct S *Map_Run36(s32 arg0);
+struct S *Map_unk32_4(s32 arg0);
+struct S *Map_unk33_4(s32 arg0);
+struct S *Map_unk34_4(s32 arg0);
+struct S *Map_unk35_4(s32 arg0);
+struct S *Map_unk36_4(s32 arg0);
 
-struct S *Map_Run37(s32 arg0);
-struct S *Map_Run38(s32 arg0);
-struct S *Map_Run39(s32 arg0);
-struct S *Map_Run40(s32 arg0);
+struct S *Map_unk37_4(s32 arg0);
+struct S *Map_unk38_4(s32 arg0);
+struct S *Map_unk39_4(s32 arg0);
+struct S *Map_unk40_4(s32 arg0);
 
-struct S *Map_Run41(s32 arg0);
-struct S *Map_Run42(s32 arg0);
-struct S *Map_Run43(s32 arg0);
+struct S *Map_unk41_4(s32 arg0);
+struct S *Map_unk42_4(s32 arg0);
+struct S *Map_unk43_4(s32 arg0);
 
-struct S *Map_Run44(s32 arg0);
-struct S *Map_Run45(s32 arg0);
-struct S *Map_Run46(s32 arg0);
+struct S *Map_unk44_4(s32 arg0);
+struct S *Map_unk45_4(s32 arg0);
+struct S *Map_unk46_4(s32 arg0);
 
-struct S *Map_Run47(s32 arg0);
-struct S *Map_Run48(s32 arg0);
-struct S *Map_Run49(s32 arg0);
-struct S *Map_Run50(s32 arg0);
-struct S *Map_Run51(s32 arg0);
+struct S *Map_unk47_4(s32 arg0);
+struct S *Map_unk48_4(s32 arg0);
+struct S *Map_unk49_4(s32 arg0);
+struct S *Map_unk50_4(s32 arg0);
+struct S *Map_unk51_4(s32 arg0);
 
-struct S *Map_Run52(s32 arg0);
-struct S *Map_Run53(s32 arg0);
+struct S *Map_unk52_4(s32 arg0);
+struct S *Map_unk53_4(s32 arg0);
 
-struct S *Map_Run54(s32 arg0);
+struct S *Map_unk54_4(s32 arg0);
 
-struct S *Map_Run55(s32 arg0);
-struct S *Map_Run56(s32 arg0);
-struct S *Map_Run57(s32 arg0);
-struct S *Map_Run58(s32 arg0);
-struct S *Map_Run59(s32 arg0);
+struct S *Map_unk55_4(s32 arg0);
+struct S *Map_unk56_4(s32 arg0);
+struct S *Map_unk57_4(s32 arg0);
+struct S *Map_unk58_4(s32 arg0);
+struct S *Map_unk59_4(s32 arg0);
 
-struct S *Map_Run60(s32 arg0);
-struct S *Map_Run61(s32 arg0);
-struct S *Map_Run62(s32 arg0);
-struct S *Map_Run63(s32 arg0);
-struct S *Map_Run64(s32 arg0);
+struct S *Map_unk60_4(s32 arg0);
+struct S *Map_unk61_4(s32 arg0);
+struct S *Map_unk62_4(s32 arg0);
+struct S *Map_unk63_4(s32 arg0);
+struct S *Map_unk64_4(s32 arg0);
 
-struct S *Map_Run65(s32 arg0);
-struct S *Map_Run66(s32 arg0);
-struct S *Map_Run67(s32 arg0);
-struct S *Map_Run68(s32 arg0);
+struct S *Map_unk65_4(s32 arg0);
+struct S *Map_unk66_4(s32 arg0);
+struct S *Map_unk67_4(s32 arg0);
+struct S *Map_unk68_4(s32 arg0);
 
-struct S *Map_Run69(s32 arg0);
-struct S *Map_Run70(s32 arg0);
-struct S *Map_Run71(s32 arg0);
+struct S *Map_unk69_4(s32 arg0);
+struct S *Map_unk70_4(s32 arg0);
+struct S *Map_unk71_4(s32 arg0);
 
-u8 *Map_Run72();
-u8 *Map_Run73();
-u8 *Map_Run74();
-u8 *Map_Run75();
+u8 *Map_unk72_4();
+u8 *Map_unk73_4();
+u8 *Map_unk74_4();
+u8 *Map_unk75_4();
 
-u8 *Map_Run76();
-u8 *Map_Run77();
-u8 *Map_Run78();
-u8 *Map_Run79();
-u8 *Map_Run80();
+u8 *Map_unk76_4();
+u8 *Map_unk77_4();
+u8 *Map_unk78_4();
+u8 *Map_unk79_4();
+u8 *Map_unk80_4();
 
-u8 *Map_Run81();
-u8 *Map_Run82();
-u8 *Map_Run83();
-u8 *Map_Run84();
+u8 *Map_unk81_4();
+u8 *Map_unk82_3();
+u8 *Map_unk83_3();
+u8 *Map_unk84_3();
 
-u8 *Map_Run85();
-u8 *Map_Run86();
-u8 *Map_Run87();
-u8 *Map_Run88();
+u8 *Map_unk85_3();
+u8 *Map_unk86_3();
+u8 *Map_unk87_3();
+u8 *Map_unk88_3();
 
-u8 *Map_Run89();
-u8 *Map_Run90();
-u8 *Map_Run91();
-u8 *Map_Run92();
+u8 *Map_unk89_3();
+u8 *Map_unk90_3();
+u8 *Map_unk91_3();
+u8 *Map_unk92_3();
 
-u8 *Map_Run93();
-u8 *Map_Run94();
-u8 *Map_Run95();
+u8 *Map_unk93_3();
+u8 *Map_unk94_3();
+u8 *Map_unk95_3();
 
 /* Advance actor 18 and its companions along the Z-axis escape route.
    Shared branches preserve the transition call sites used by multiple rows. */
@@ -604,45 +603,45 @@ u8 *Map_Run95();
 
 /* Outbound leg of the slot-16 transition beat. */
 
-u8 *Map_Run96();                    /* scene entity by selector */
+u8 *Map_unk96_3();                    /* scene entity by selector */
 
-void Map_Run97();                   /* wait N frames */
+void Map_unk97_3();                   /* wait N frames */
 
-void Map_Run98();                   /* collision repaint, six arguments */
+void Map_unk98_3();                   /* collision repaint, six arguments */
 
-u8 *Map_Run99();                    /* scene entity by selector */
+u8 *Map_unk99_3();                    /* scene entity by selector */
 
-void Map_Run100();                   /* wait N frames */
+void Map_unk100_3();                   /* wait N frames */
 
-void Map_Run101();                   /* collision repaint, six arguments */
+void Map_unk101_3();                   /* collision repaint, six arguments */
 
-u8 *Map_Run102();                    /* scene entity by selector */
+u8 *Map_unk102_3();                    /* scene entity by selector */
 
-void Map_Run103();                   /* wait N frames */
+void Map_unk103_3();                   /* wait N frames */
 
-void Map_Run104();                   /* collision repaint, six arguments */
+void Map_unk104_3();                   /* collision repaint, six arguments */
 
-u8 *Map_Run105();                    /* scene entity by selector */
+u8 *Map_unk105_3();                    /* scene entity by selector */
 
-void Map_Run106();                   /* wait N frames */
+void Map_unk106_3();                   /* wait N frames */
 
-void Map_Run107();                   /* collision repaint, six arguments */
+void Map_unk107_3();                   /* collision repaint, six arguments */
 
-u8 *Map_Run108();                    /* scene entity by selector */
+u8 *Map_unk108_3();                    /* scene entity by selector */
 
-void Map_Run109();                   /* wait N frames */
+void Map_unk109_3();                   /* wait N frames */
 
-void Map_Run110();                   /* collision repaint, six arguments */
+void Map_unk110_3();                   /* collision repaint, six arguments */
 
-u8 *Map_Run111();                    /* scene entity by selector */
+u8 *Map_unk111_3();                    /* scene entity by selector */
 
-void Map_Run112();                   /* wait N frames */
+void Map_unk112_3();                   /* wait N frames */
 
-void Map_Run113();                   /* collision repaint, six arguments */
+void Map_unk113_3();                   /* collision repaint, six arguments */
 
 s32 CheckActorPathSouth(void)
 {
-    struct S *actor = Map_Run11(0);
+    struct S *actor = Map_unk11_4(0);
     struct V destination;
 
     destination.a = actor->f08;
@@ -653,7 +652,7 @@ s32 CheckActorPathSouth(void)
 
 s32 CheckActorPathNorth(void)
 {
-    struct S *actor = Map_Run12(0);
+    struct S *actor = Map_unk12_4(0);
     struct V destination;
 
     destination.a = actor->f08;
@@ -664,7 +663,7 @@ s32 CheckActorPathNorth(void)
 
 s32 CheckActorPathWest(void)
 {
-    struct S *actor = Map_Run13(0);
+    struct S *actor = Map_unk13_4(0);
     struct V destination;
 
     destination.a = actor->f08 + -0x200000;
@@ -675,7 +674,7 @@ s32 CheckActorPathWest(void)
 
 s32 CheckActorPathEast(void)
 {
-    struct S *actor = Map_Run14(0);
+    struct S *actor = Map_unk14_4(0);
     struct V destination;
 
     destination.a = actor->f08 + 0x200000;
@@ -686,97 +685,97 @@ s32 CheckActorPathEast(void)
 
 void UpdateEscapeRouteForActorPositions(void)
 {
-    s32 actor_x = Map_Run15(8)->f08 >> 20;
-    s32 actor_z = Map_Run16(8)->f10 >> 20;
-    s32 actor_12_x = Map_Run17(12)->f08 >> 20;
-    s32 actor_15_x = Map_Run18(15)->f08 >> 20;
+    s32 actor_x = Map_unk15_4(8)->f08 >> 20;
+    s32 actor_z = Map_unk16_4(8)->f10 >> 20;
+    s32 actor_12_x = Map_unk17_4(12)->f08 >> 20;
+    s32 actor_15_x = Map_unk18_4(15)->f08 >> 20;
 
     if (actor_z == 19) {
         if (actor_12_x == 24) {
-            Map_Place12(8, 0, -80);
+            Map_unk12_3(8, 0, -80);
         } else if (actor_15_x == 24) {
-            Map_Place13(8, 0, -112);
-            Map_Place12(8, 0, -32);
+            Map_unk13_3(8, 0, -112);
+            Map_unk12_3(8, 0, -32);
         } else {
-            Map_Place14(8, 0, -80);
-            Map_Place12(8, 0, -112);
+            Map_unk14_3(8, 0, -80);
+            Map_unk12_3(8, 0, -112);
         }
     } else if (actor_z == 14) {
         if (actor_12_x == 24) {
             return;
         }
         if (actor_15_x == 24) {
-            Map_Place12(8, 0, -64);
+            Map_unk12_3(8, 0, -64);
         } else {
-            Map_Place12(8, 0, -112);
+            Map_unk12_3(8, 0, -112);
         }
     } else if (actor_z == 10) {
         if (actor_15_x == 24) {
             return;
         }
-        Map_Place12(8, 0, -48);
+        Map_unk12_3(8, 0, -48);
     } else {
-        Map_Run114();
+        Map_unk114_3();
         return;
     }
-    Map_Do17(2);
+    Map_unk17_2(2);
     {
-        s32 route_end_z = Map_Run19(8)->f10 >> 20;
+        s32 route_end_z = Map_unk19_4(8)->f10 >> 20;
         s32 route_x = actor_x - 1;
 
-        Map_SetRect7(route_x, actor_z, 3, 1, route_x, route_end_z);
+        Map_unk7_5(route_x, actor_z, 3, 1, route_x, route_end_z);
     }
-    Map_SetRect8(0, 0, 3, 1, actor_x - 1, actor_z);
+    Map_unk8_5(0, 0, 3, 1, actor_x - 1, actor_z);
 }
 
 void UpdateActor8ReturnRoute(void)
 {
-    s32 x = Map_Run20(8)->f08 >> 20;
-    s32 y = Map_Run21(8)->f10 >> 20;
-    s32 z = Map_Run22(12)->f08 >> 20;
+    s32 x = Map_unk20_4(8)->f08 >> 20;
+    s32 y = Map_unk21_4(8)->f10 >> 20;
+    s32 z = Map_unk22_4(12)->f08 >> 20;
 
     if (y == 7) {
         if (z == 24) {
-            Map_Place15(8, 0, 48);
+            Map_unk15_3(8, 0, 48);
         } else {
-            Map_Place16(8, 0, 80);
-            Map_Place17(8, 0, 112);
+            Map_unk16_3(8, 0, 80);
+            Map_unk17_3(8, 0, 112);
         }
     } else if (y == 10) {
         if (z == 24) {
             return;
         }
-        Map_Place18(8, 0, 144);
+        Map_unk18_3(8, 0, 144);
     } else if (y == 14) {
-        Map_Place19(8, 0, 80);
+        Map_unk19_3(8, 0, 80);
     } else {
         return;
     }
-    Map_Do18(2);
+    Map_unk18_2(2);
     {
-        s32 k = Map_Run23(8)->f10 >> 20;
+        s32 k = Map_unk23_4(8)->f10 >> 20;
         s32 m = x - 1;
 
-        Map_SetRect9(m, y, 3, 1, m, k);
+        Map_unk9_5(m, y, 3, 1, m, k);
     }
-    Map_SetRect10(0, 0, 3, 1, x - 1, y);
+    Map_unk10_5(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor10RetreatRoute(void)
 {
-    s32 x = Map_Run24(10)->f08 >> 20;
-    s32 y = Map_Run25(10)->f10 >> 20;
-    s32 z = Map_Run26(13)->f08 >> 20;
-    s32 w = Map_Run27(15)->f08 >> 20;
+    s32 x = Map_unk24_4(10)->f08 >> 20;
+    s32 y = Map_unk25_4(10)->f10 >> 20;
+    s32 z = Map_unk26_4(13)->f08 >> 20;
+    s32 w = Map_unk27_4(15)->f08 >> 20;
 
     if (y == 18) {
         if (w >= 31 && w <= 33) {
-            Map_Place20(10, 0, -128);
+            Map_unk20_3(10, 0, -128);
         } else if (z >= 31 && z <= 33) {
-            Map_Place20(10, 0, -128);
+            Map_unk20_3(10, 0, -128);
         } else {
-            Map_Place21(10, 0, -112);
-            Map_Place20(10, 0, -64);
+            Map_unk21_3(10, 0, -112);
+            Map_unk20_3(10, 0, -64);
         }
     } else if (y == 10) {
         if (w >= 31 && w <= 33) {
@@ -785,375 +784,375 @@ void UpdateActor10RetreatRoute(void)
         if (z >= 31 && z <= 33) {
             return;
         }
-        Map_Place20(10, 0, -48);
+        Map_unk20_3(10, 0, -48);
     } else if (y == 7) {
         return;
     }
-    Map_Do19(2);
+    Map_unk19_2(2);
     {
-        s32 k = Map_Run28(10)->f10 >> 20;
+        s32 k = Map_unk28_4(10)->f10 >> 20;
         s32 m = x - 1;
 
-        Map_SetRect11(m, y, 3, 1, m, k);
+        Map_unk11_5(m, y, 3, 1, m, k);
     }
-    Map_SetRect12(0, 0, 3, 1, x - 1, y);
+    Map_unk12_5(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor10AdvanceRoute(void)
 {
-    s32 x = Map_Run29(10)->f08 >> 20;
-    s32 y = Map_Run30(10)->f10 >> 20;
+    s32 x = Map_unk29_4(10)->f08 >> 20;
+    s32 y = Map_unk30_4(10)->f10 >> 20;
 
     if (y != 18) {
         if (y == 10) {
-            Map_Place22(10, 0, 128);
+            Map_unk22_3(10, 0, 128);
         } else {
-            Map_Place23(10, 0, 112);
-            Map_Place24(10, 0, 64);
+            Map_unk23_3(10, 0, 112);
+            Map_unk24_3(10, 0, 64);
         }
-        Map_Do20(2);
+        Map_unk20_2(2);
         {
-            s32 k = Map_Run31(10)->f10 >> 20;
+            s32 k = Map_unk31_4(10)->f10 >> 20;
             s32 m = x - 1;
 
-            Map_SetRect13(m, y, 3, 1, m, k);
+            Map_unk13_5(m, y, 3, 1, m, k);
         }
-        Map_SetRect14(0, 0, 3, 1, x - 1, y);
+        Map_unk14_5(0, 0, 3, 1, x - 1, y);
     }
 }
 
 void UpdateActor11WestRoute(void)
 {
-    s32 x = Map_Run32(11)->f08 >> 20;
-    s32 y = Map_Run33(11)->f10 >> 20;
+    s32 x = Map_unk32_4(11)->f08 >> 20;
+    s32 y = Map_unk33_4(11)->f10 >> 20;
 
     if (x != 30) {
         if (x == 34) {
-            if ((Map_Run34(10)->f10 >> 20) == 18) {
+            if ((Map_unk34_4(10)->f10 >> 20) == 18) {
                 return;
             }
-            Map_Place25(11, -64, 0);
+            Map_unk25_3(11, -64, 0);
         } else if (x == 36) {
-            if ((Map_Run35(10)->f10 >> 20) == 18) {
-                Map_Place25(11, -32, 0);
+            if ((Map_unk35_4(10)->f10 >> 20) == 18) {
+                Map_unk25_3(11, -32, 0);
             } else {
-                Map_Place26(11, -96, 0);
+                Map_unk26_3(11, -96, 0);
             }
         }
-        Map_Do21(2);
+        Map_unk21_2(2);
         {
-            s32 k = Map_Run36(11)->f08 >> 20;
+            s32 k = Map_unk36_4(11)->f08 >> 20;
             s32 m = y - 1;
 
-            Map_SetRect15(x, m, 1, 3, k, m);
+            Map_unk15_5(x, m, 1, 3, k, m);
         }
-        Map_SetRect16(0, 0, 1, 3, x, y - 1);
+        Map_unk16_5(0, 0, 1, 3, x, y - 1);
     }
 }
 
 void UpdateActor11EastRoute(void)
 {
-    s32 x = Map_Run37(11)->f08 >> 20;
-    s32 y = Map_Run38(11)->f10 >> 20;
+    s32 x = Map_unk37_4(11)->f08 >> 20;
+    s32 y = Map_unk38_4(11)->f10 >> 20;
 
     if (x != 36) {
         if (x == 30) {
-            if ((Map_Run39(10)->f10 >> 20) == 18) {
+            if ((Map_unk39_4(10)->f10 >> 20) == 18) {
                 return;
             }
-            Map_Place27(11, 96, 0);
+            Map_unk27_3(11, 96, 0);
         } else if (x == 34) {
-            Map_Place28(11, 32, 0);
+            Map_unk28_3(11, 32, 0);
         }
-        Map_Do22(2);
+        Map_unk22_2(2);
         {
-            s32 k = Map_Run40(11)->f08 >> 20;
+            s32 k = Map_unk40_4(11)->f08 >> 20;
             s32 m = y - 1;
 
-            Map_SetRect17(x, m, 1, 3, k, m);
+            Map_unk17_5(x, m, 1, 3, k, m);
         }
-        Map_SetRect18(0, 0, 1, 3, x, y - 1);
+        Map_unk18_5(0, 0, 1, 3, x, y - 1);
     }
 }
 
 void UpdateActor12WestRoute(void)
 {
-    s32 x = Map_Run41(12)->f08 >> 20;
-    s32 y = Map_Run42(12)->f10 >> 20;
+    s32 x = Map_unk41_4(12)->f08 >> 20;
+    s32 y = Map_unk42_4(12)->f10 >> 20;
 
     if (x == 36) {
-        Map_Place29(12, -96, 0);
-        Map_Place30(12, -96, 0);
+        Map_unk29_3(12, -96, 0);
+        Map_unk30_3(12, -96, 0);
     } else if (x == 34) {
-        Map_Place31(12, -96, 0);
-        Map_Place30(12, -64, 0);
+        Map_unk31_3(12, -96, 0);
+        Map_unk30_3(12, -64, 0);
     } else if (x == 24) {
         return;
     }
-    Map_Do23(2);
+    Map_unk23_2(2);
     {
-        s32 k = Map_Run43(12)->f08 >> 20;
+        s32 k = Map_unk43_4(12)->f08 >> 20;
         s32 m = y - 1;
 
-        Map_SetRect19(x, m, 1, 3, k, m);
+        Map_unk19_5(x, m, 1, 3, k, m);
     }
-    Map_SetRect20(0, 0, 1, 3, x, y - 1);
+    Map_unk20_5(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor12EastRoute(void)
 {
-    s32 x = Map_Run44(12)->f08 >> 20;
-    s32 y = Map_Run45(12)->f10 >> 20;
+    s32 x = Map_unk44_4(12)->f08 >> 20;
+    s32 y = Map_unk45_4(12)->f10 >> 20;
 
     if (x == 24) {
-        Map_Place32(12, 96, 0);
-        Map_Place33(12, 96, 0);
+        Map_unk32_3(12, 96, 0);
+        Map_unk33_3(12, 96, 0);
     } else if (x == 34) {
-        Map_Place33(12, 32, 0);
+        Map_unk33_3(12, 32, 0);
     } else if (x == 36) {
         return;
     }
-    Map_Do24(2);
+    Map_unk24_2(2);
     {
-        s32 k = Map_Run46(12)->f08 >> 20;
+        s32 k = Map_unk46_4(12)->f08 >> 20;
         s32 m = y - 1;
 
-        Map_SetRect21(x, m, 1, 3, k, m);
+        Map_unk21_5(x, m, 1, 3, k, m);
     }
-    Map_SetRect22(0, 0, 1, 3, x, y - 1);
+    Map_unk22_5(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor13WestRoute(void)
 {
-    s32 x = Map_Run47(13)->f08 >> 20;
-    s32 y = Map_Run48(13)->f10 >> 20;
-    s32 z = Map_Run49(10)->f10 >> 20;
-    s32 w = Map_Run50(15)->f08 >> 20;
+    s32 x = Map_unk47_4(13)->f08 >> 20;
+    s32 y = Map_unk48_4(13)->f10 >> 20;
+    s32 z = Map_unk49_4(10)->f10 >> 20;
+    s32 w = Map_unk50_4(15)->f08 >> 20;
 
     if (x == 36) {
         if (w == 34) {
-            Map_Place34(13, -16, 0);
+            Map_unk34_3(13, -16, 0);
         } else if (z == 7) {
-            Map_Place34(13, -32, 0);
+            Map_unk34_3(13, -32, 0);
         } else if (w == 30) {
-            Map_Place34(13, -80, 0);
+            Map_unk34_3(13, -80, 0);
         } else {
-            Map_Place35(13, -96, 0);
-            Map_Place34(13, -80, 0);
+            Map_unk35_3(13, -96, 0);
+            Map_unk34_3(13, -80, 0);
         }
     } else if (x == 35) {
         if (w == 34) {
             return;
         } else if (z == 7) {
-            Map_Place34(13, -16, 0);
+            Map_unk34_3(13, -16, 0);
         } else if (w == 30) {
-            Map_Place34(13, -64, 0);
+            Map_unk34_3(13, -64, 0);
         } else {
-            Map_Place36(13, -80, 0);
-            Map_Place34(13, -80, 0);
+            Map_unk36_3(13, -80, 0);
+            Map_unk34_3(13, -80, 0);
         }
     } else if (x == 34) {
         if (z == 7) {
             return;
         }
         if (w == 30) {
-            Map_Place34(13, -48, 0);
+            Map_unk34_3(13, -48, 0);
         } else {
-            Map_Place34(13, -144, 0);
+            Map_unk34_3(13, -144, 0);
         }
     } else if (x == 31) {
         if (w == 30) {
             return;
         }
-        Map_Place34(13, -96, 0);
+        Map_unk34_3(13, -96, 0);
     } else if (x == 25) {
         return;
     }
-    Map_Do25(2);
+    Map_unk25_2(2);
     {
-        s32 k = Map_Run51(13)->f08 >> 20;
+        s32 k = Map_unk51_4(13)->f08 >> 20;
         s32 m = y - 1;
 
-        Map_SetRect23(x, m, 1, 3, k, m);
+        Map_unk23_5(x, m, 1, 3, k, m);
     }
-    Map_SetRect24(0, 0, 1, 3, x, y - 1);
+    Map_unk24_5(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor13EastRoute(void)
 {
-    s32 x = Map_Run52(13)->f08 >> 20;
-    s32 y = Map_Run53(13)->f10 >> 20;
+    s32 x = Map_unk52_4(13)->f08 >> 20;
+    s32 y = Map_unk53_4(13)->f10 >> 20;
 
-    Map_Do26(15);
+    Map_unk26_2(15);
     if (x == 25) {
-        Map_Place37(13, 96, 0);
-        Map_Place38(13, 80, 0);
+        Map_unk37_3(13, 96, 0);
+        Map_unk38_3(13, 80, 0);
     } else if (x == 31) {
-        Map_Place38(13, 80, 0);
+        Map_unk38_3(13, 80, 0);
     } else if (x == 34) {
-        Map_Place38(13, 32, 0);
+        Map_unk38_3(13, 32, 0);
     } else if (x == 35) {
-        Map_Place38(13, 16, 0);
+        Map_unk38_3(13, 16, 0);
     } else if (x == 36) {
         return;
     }
-    Map_Do27(2);
+    Map_unk27_2(2);
     {
-        s32 k = Map_Run54(13)->f08 >> 20;
+        s32 k = Map_unk54_4(13)->f08 >> 20;
         s32 m = y - 1;
 
-        Map_SetRect25(x, m, 1, 3, k, m);
+        Map_unk25_5(x, m, 1, 3, k, m);
     }
-    Map_SetRect26(0, 0, 1, 3, x, y - 1);
+    Map_unk26_5(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor15WestRoute(void)
 {
-    s32 x = Map_Run55(15)->f08 >> 20;
-    s32 y = Map_Run56(15)->f10 >> 20;
-    s32 z = Map_Run57(8)->f10 >> 20;
-    s32 w = Map_Run58(10)->f10 >> 20;
+    s32 x = Map_unk55_4(15)->f08 >> 20;
+    s32 y = Map_unk56_4(15)->f10 >> 20;
+    s32 z = Map_unk57_4(8)->f10 >> 20;
+    s32 w = Map_unk58_4(10)->f10 >> 20;
 
     if (x == 35) {
         if (w == 7) {
-            Map_Place39(15, -16, 0);
+            Map_unk39_3(15, -16, 0);
         } else if (z == 7) {
-            Map_Place39(15, -112, 0);
+            Map_unk39_3(15, -112, 0);
         } else {
-            Map_Place40(15, -96, 0);
-            Map_Place39(15, -80, 0);
+            Map_unk40_3(15, -96, 0);
+            Map_unk39_3(15, -80, 0);
         }
     } else if (x == 34) {
         if (w == 7) {
             return;
         }
-        Map_Place41(15, -96, 0);
-        Map_Place39(15, -64, 0);
+        Map_unk41_3(15, -96, 0);
+        Map_unk39_3(15, -64, 0);
     } else if (x == 33) {
-        Map_Place39(15, -144, 0);
+        Map_unk39_3(15, -144, 0);
     } else if (x == 31) {
-        Map_Place39(15, -80, 0);
+        Map_unk39_3(15, -80, 0);
     } else if (x == 30) {
-        Map_Place39(15, -96, 0);
+        Map_unk39_3(15, -96, 0);
     } else if (x == 24) {
         return;
     }
-    Map_Do28(2);
+    Map_unk28_2(2);
     {
-        s32 k = Map_Run59(15)->f08 >> 20;
+        s32 k = Map_unk59_4(15)->f08 >> 20;
         s32 m = y - 1;
 
-        Map_SetRect27(x, m, 1, 3, k, m);
+        Map_unk27_5(x, m, 1, 3, k, m);
     }
-    Map_SetRect28(0, 0, 1, 3, x, y - 1);
+    Map_unk28_5(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor15EastRoute(void)
 {
-    s32 x = Map_Run60(15)->f08 >> 20;
-    s32 y = Map_Run61(15)->f10 >> 20;
-    s32 z = Map_Run62(10)->f10 >> 20;
-    s32 w = Map_Run63(13)->f08 >> 20;
+    s32 x = Map_unk60_4(15)->f08 >> 20;
+    s32 y = Map_unk61_4(15)->f10 >> 20;
+    s32 z = Map_unk62_4(10)->f10 >> 20;
+    s32 w = Map_unk63_4(13)->f08 >> 20;
 
     if (x == 24) {
         if (z == 7 || w == 31) {
-            Map_Place42(15, 96, 0);
+            Map_unk42_3(15, 96, 0);
         } else if (w == 34) {
-            Map_Place43(15, 64, 0);
-            Map_Place42(15, 80, 0);
+            Map_unk43_3(15, 64, 0);
+            Map_unk42_3(15, 80, 0);
         } else if (w == 35) {
-            Map_Place44(15, 80, 0);
-            Map_Place42(15, 80, 0);
+            Map_unk44_3(15, 80, 0);
+            Map_unk42_3(15, 80, 0);
         } else {
-            Map_Place45(15, 80, 0);
-            Map_Place42(15, 96, 0);
+            Map_unk45_3(15, 80, 0);
+            Map_unk42_3(15, 96, 0);
         }
     } else if (x == 30 || w == 31) {
         if (z == 7) {
             return;
         }
         if (w == 34) {
-            Map_Place42(15, 48, 0);
+            Map_unk42_3(15, 48, 0);
         } else if (w == 35) {
-            Map_Place42(15, 64, 0);
+            Map_unk42_3(15, 64, 0);
         } else {
-            Map_Place42(15, 80, 0);
+            Map_unk42_3(15, 80, 0);
         }
     } else if (x == 33) {
         if (w == 34) {
             return;
         }
         if (w == 35) {
-            Map_Place42(15, 16, 0);
+            Map_unk42_3(15, 16, 0);
         } else {
-            Map_Place42(15, 32, 0);
+            Map_unk42_3(15, 32, 0);
         }
     } else if (x == 34) {
-        Map_Place42(15, 16, 0);
+        Map_unk42_3(15, 16, 0);
     } else if (x == 35) {
         return;
     }
-    Map_Do29(2);
+    Map_unk29_2(2);
     {
-        s32 k = Map_Run64(15)->f08 >> 20;
+        s32 k = Map_unk64_4(15)->f08 >> 20;
         s32 m = y - 1;
 
-        Map_SetRect29(x, m, 1, 3, k, m);
+        Map_unk29_5(x, m, 1, 3, k, m);
     }
-    Map_SetRect30(0, 0, 1, 3, x, y - 1);
+    Map_unk30_5(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor17SouthRoute(void)
 {
-    s32 x = Map_Run65(17)->f08 >> 20;
-    s32 y = Map_Run66(17)->f10 >> 20;
-    s32 z = Map_Run67(19)->f08 >> 20;
+    s32 x = Map_unk65_4(17)->f08 >> 20;
+    s32 y = Map_unk66_4(17)->f10 >> 20;
+    s32 z = Map_unk67_4(19)->f08 >> 20;
 
     if (y == 19) {
         if (z >= 3 && z <= 5) {
-            Map_Place46(17, 0, -16);
+            Map_unk46_3(17, 0, -16);
         } else {
-            Map_Place46(17, 0, -64);
+            Map_unk46_3(17, 0, -64);
         }
     } else if (y == 18) {
         if (z >= 3 && z <= 5) {
             return;
         }
-        Map_Place46(17, 0, -48);
+        Map_unk46_3(17, 0, -48);
     } else if (y == 15) {
         return;
     }
-    Map_Do30(2);
+    Map_unk30_2(2);
     {
-        s32 k = Map_Run68(17)->f10 >> 20;
+        s32 k = Map_unk68_4(17)->f10 >> 20;
         s32 m = x - 1;
 
-        Map_SetRect31(m, y, 3, 1, m, k);
+        Map_unk31_5(m, y, 3, 1, m, k);
     }
-    Map_SetRect32(0, 0, 3, 1, x - 1, y);
+    Map_unk32_5(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor17NorthRoute(void)
 {
-    s32 x = Map_Run69(17)->f08 >> 20;
-    s32 y = Map_Run70(17)->f10 >> 20;
+    s32 x = Map_unk69_4(17)->f08 >> 20;
+    s32 y = Map_unk70_4(17)->f10 >> 20;
 
     if (y == 15) {
-        Map_Place47(17, 0, 64);
+        Map_unk47_3(17, 0, 64);
     } else if (y == 18) {
-        Map_Place48(17, 0, 16);
+        Map_unk48_3(17, 0, 16);
     } else if (y == 19) {
         return;
     }
-    Map_Do31(2);
+    Map_unk31_2(2);
     {
-        s32 k = Map_Run71(17)->f10 >> 20;
+        s32 k = Map_unk71_4(17)->f10 >> 20;
 
         s32 m = x - 1;
 
-        Map_SetRect33(m, y, 3, 1, m, k);
+        Map_unk33_5(m, y, 3, 1, m, k);
     }
-    Map_SetRect34(0, 0, 3, 1, x - 1, y);
+    Map_unk34_5(0, 0, 3, 1, x - 1, y);
 }
 
 void AdvanceActor18AlongEscapeRoute(void)
@@ -1164,11 +1163,11 @@ void AdvanceActor18AlongEscapeRoute(void)
     s32 companion14Column;
 
     s32 permuted_5;
-    permuted_5 = *(s32 *)(Map_Run96(18) + 8) >> 20;
-    row = *(s32 *)(Map_Run72(18) + 16) >> 20;
+    permuted_5 = *(s32 *)(Map_unk96_3(18) + 8) >> 20;
+    row = *(s32 *)(Map_unk72_4(18) + 16) >> 20;
     column  = permuted_5;
-    companion19Column = *(s32 *)(Map_Run73(19) + 8) >> 20;
-    companion14Column = *(s32 *)(Map_Run74(14) + 8) >> 20;
+    companion19Column = *(s32 *)(Map_unk73_4(19) + 8) >> 20;
+    companion14Column = *(s32 *)(Map_unk74_4(14) + 8) >> 20;
 
     if (row == 9) {
         if ((u32)(companion14Column - 6) <= 2) {
@@ -1178,44 +1177,44 @@ void AdvanceActor18AlongEscapeRoute(void)
             goto transition80;
         }
         /* This arm runs two transitions back to back. */
-        Map_Run115(18, 0, 64);
-        Map_Run116(18, 0, 96);
+        Map_unk115_3(18, 0, 64);
+        Map_unk116_3(18, 0, 96);
     } else if (row == 11) {
         if ((u32)(companion14Column - 6) <= 2) {
             return;
         }
         if ((u32)(companion19Column - 6) <= 2) {
-            Map_Run117(18, 0, 48);
+            Map_unk117_3(18, 0, 48);
         } else {
-            Map_Run118(18, 0, 128);
+            Map_unk118_3(18, 0, 128);
         }
     } else if (row == 12) {
         if ((u32)(companion19Column - 6) <= 2) {
 transition32:
-            Map_Run119(18, 0, 32);
+            Map_unk119_3(18, 0, 32);
         } else {
-            Map_Run120(18, 0, 112);
+            Map_unk120_3(18, 0, 112);
         }
     } else if (row == 14) {
         if ((u32)(companion19Column - 6) <= 2) {
             return;
         }
 transition80:
-        Map_Run121(18, 0, 80);
+        Map_unk121_3(18, 0, 80);
     } else if (row == 15) {
-        Map_Run122(18, 0, 64);
+        Map_unk122_3(18, 0, 64);
     } else if (row == 18) {
-        Map_Run123(18, 0, 16);
+        Map_unk123_3(18, 0, 16);
     } else if (row == 19) {
         return;
     }
 
-    Map_Run97(2);
+    Map_unk97_3(2);
 
     column -= 1;
-    Map_Run98(column, row, 3, 1,
-                  column, *(s32 *)(Map_Run75(18) + 16) >> 20);
-    Map_Run124(0, 0, 3, 1, column, row);
+    Map_unk98_3(column, row, 3, 1,
+                  column, *(s32 *)(Map_unk75_4(18) + 16) >> 20);
+    Map_unk124_3(0, 0, 3, 1, column, row);
 }
 
 void AdvanceActor9AlongEscapeRoute(void)
@@ -1227,12 +1226,12 @@ void AdvanceActor9AlongEscapeRoute(void)
     s32 companion16Column;
 
     s32 permuted_6;
-    permuted_6 = *(s32 *)(Map_Run99(9) + 8) >> 20;
-    row = *(s32 *)(Map_Run76(9) + 16) >> 20;
+    permuted_6 = *(s32 *)(Map_unk99_3(9) + 8) >> 20;
+    row = *(s32 *)(Map_unk76_4(9) + 16) >> 20;
     column  = permuted_6;
-    companion19Column = *(s32 *)(Map_Run77(19) + 8) >> 20;
-    companion14Column = *(s32 *)(Map_Run78(14) + 8) >> 20;
-    companion16Column = *(s32 *)(Map_Run79(16) + 8) >> 20;
+    companion19Column = *(s32 *)(Map_unk77_4(19) + 8) >> 20;
+    companion14Column = *(s32 *)(Map_unk78_4(14) + 8) >> 20;
+    companion16Column = *(s32 *)(Map_unk79_4(16) + 8) >> 20;
 
     if (row == 8) {
         if ((u32)(companion16Column - 9) <= 2) {
@@ -1242,46 +1241,46 @@ void AdvanceActor9AlongEscapeRoute(void)
             goto transition48;
         }
         if ((u32)(companion19Column - 9) > 2) {
-            Map_Run125(9, 0, 80);
+            Map_unk125_3(9, 0, 80);
         }
         /* Falls through into the id-96 site from both paths. */
-        Map_Run126(9, 0, 96);
+        Map_unk126_3(9, 0, 96);
     } else if (row == 11) {
         if ((u32)(companion14Column - 9) <= 2) {
             return;
         }
         if ((u32)(companion19Column - 9) <= 2) {
 transition48:
-            Map_Run127(9, 0, 48);
+            Map_unk127_3(9, 0, 48);
         } else {
-            Map_Run128(9, 0, 128);
+            Map_unk128_3(9, 0, 128);
         }
     } else if (row == 12) {
         if ((u32)(companion14Column - 9) <= 2) {
             return;
         }
         if ((u32)(companion19Column - 9) <= 2) {
-            Map_Run129(9, 0, 32);
+            Map_unk129_3(9, 0, 32);
         } else {
-            Map_Run130(9, 0, 112);
+            Map_unk130_3(9, 0, 112);
         }
     } else if (row == 14) {
         if ((u32)(companion19Column - 9) <= 2) {
             return;
         }
-        Map_Run131(9, 0, 80);
+        Map_unk131_3(9, 0, 80);
     } else if (row == 15) {
-        Map_Run132(9, 0, 64);
+        Map_unk132_3(9, 0, 64);
     } else if (row == 18) {
-        Map_Run133(9, 0, 16);
+        Map_unk133_3(9, 0, 16);
     }
 
-    Map_Run100(2);
+    Map_unk100_3(2);
 
     column -= 1;
-    Map_Run101(column, row, 3, 1,
-                  column, *(s32 *)(Map_Run80(9) + 16) >> 20);
-    Map_Run134(0, 0, 3, 1, column, row);
+    Map_unk101_3(column, row, 3, 1,
+                  column, *(s32 *)(Map_unk80_4(9) + 16) >> 20);
+    Map_unk134_3(0, 0, 3, 1, column, row);
 }
 
 void RetreatActor14AlongEscapeRoute(void)
@@ -1293,49 +1292,49 @@ void RetreatActor14AlongEscapeRoute(void)
     s32 rowM1;
 
     s32 permuted_7;
-    column = *(s32 *)(Map_Run102(14) + 8) >> 20;
-    permuted_7 = *(s32 *)(Map_Run81(14) + 16) >> 20;
-    companion18Row = *(s32 *)(Map_Run82(18) + 16) >> 20;
+    column = *(s32 *)(Map_unk102_3(14) + 8) >> 20;
+    permuted_7 = *(s32 *)(Map_unk81_4(14) + 16) >> 20;
+    companion18Row = *(s32 *)(Map_unk82_3(18) + 16) >> 20;
     row  = permuted_7;
-    companion9Row = *(s32 *)(Map_Run83(9) + 16) >> 20;
+    companion9Row = *(s32 *)(Map_unk83_3(9) + 16) >> 20;
 
     if (column == 13) {
         if ((u32)(companion9Row - 12) <= 2) {
-            Map_Run135(14, -16, 0);
+            Map_unk135_3(14, -16, 0);
         } else if ((u32)(companion18Row - 12) <= 2) {
-            Map_Run135(14, -64, 0);
+            Map_unk135_3(14, -64, 0);
         } else {
-            Map_Run135(14, -112, 0);
+            Map_unk135_3(14, -112, 0);
         }
     } else if (column == 12) {
         if ((u32)(companion9Row - 12) <= 2) {
             return;
         }
         if ((u32)(companion18Row - 12) <= 2) {
-            Map_Run135(14, -48, 0);
+            Map_unk135_3(14, -48, 0);
         } else {
-            Map_Run135(14, -96, 0);
+            Map_unk135_3(14, -96, 0);
         }
     } else if (column == 9) {
         if ((u32)(companion18Row - 12) <= 2) {
             return;
         }
-        Map_Run135(14, -48, 0);
+        Map_unk135_3(14, -48, 0);
     } else if (column == 8) {
         if ((u32)(companion18Row - 12) <= 2) {
             return;
         }
-        Map_Run135(14, -32, 0);
+        Map_unk135_3(14, -32, 0);
     } else if (column == 6) {
         return;
     }
 
-    Map_Run103(2);
+    Map_unk103_3(2);
 
     rowM1 = row - 1;
-    Map_Run104(column, rowM1, 1, 3,
-                  *(s32 *)(Map_Run84(14) + 8) >> 20, rowM1);
-    Map_Run136(0, 0, 1, 3, column, rowM1);
+    Map_unk104_3(column, rowM1, 1, 3,
+                  *(s32 *)(Map_unk84_3(14) + 8) >> 20, rowM1);
+    Map_unk136_3(0, 0, 1, 3, column, rowM1);
 }
 
 void AdvanceActor14AlongEscapeRoute(void)
@@ -1347,42 +1346,42 @@ void AdvanceActor14AlongEscapeRoute(void)
     s32 rowM1;
 
     s32 permuted_7;
-    column = *(s32 *)(Map_Run105(14) + 8) >> 20;
-    permuted_7 = *(s32 *)(Map_Run85(14) + 16) >> 20;
-    companion18Row = *(s32 *)(Map_Run86(18) + 16) >> 20;
+    column = *(s32 *)(Map_unk105_3(14) + 8) >> 20;
+    permuted_7 = *(s32 *)(Map_unk85_3(14) + 16) >> 20;
+    companion18Row = *(s32 *)(Map_unk86_3(18) + 16) >> 20;
     row  = permuted_7;
-    companion9Row = *(s32 *)(Map_Run87(9) + 16) >> 20;
+    companion9Row = *(s32 *)(Map_unk87_3(9) + 16) >> 20;
 
     if (column == 6) {
         if ((u32)(companion9Row - 12) <= 2) {
-            Map_Run137(14, 32, 0);
+            Map_unk137_3(14, 32, 0);
         } else if ((u32)(companion18Row - 12) <= 2) {
-            Map_Run137(14, 64, 0);
+            Map_unk137_3(14, 64, 0);
         } else {
-            Map_Run137(14, 112, 0);
+            Map_unk137_3(14, 112, 0);
         }
     } else if (column == 8) {
         if ((u32)(companion9Row - 12) <= 2) {
             return;
         }
-        Map_Run137(14, 80, 0);
+        Map_unk137_3(14, 80, 0);
     } else if (column == 9) {
         if ((u32)(companion9Row - 12) <= 2) {
             return;
         }
-        Map_Run137(14, 64, 0);
+        Map_unk137_3(14, 64, 0);
     } else if (column == 12) {
-        Map_Run137(14, 16, 0);
+        Map_unk137_3(14, 16, 0);
     } else if (column == 13) {
         return;
     }
 
-    Map_Run106(2);
+    Map_unk106_3(2);
 
     rowM1 = row - 1;
-    Map_Run107(column, rowM1, 1, 3,
-                  *(s32 *)(Map_Run88(14) + 8) >> 20, rowM1);
-    Map_Run138(0, 0, 1, 3, column, rowM1);
+    Map_unk107_3(column, rowM1, 1, 3,
+                  *(s32 *)(Map_unk88_3(14) + 8) >> 20, rowM1);
+    Map_unk138_3(0, 0, 1, 3, column, rowM1);
 }
 
 void RetreatActor16AlongEscapeRoute(void)
@@ -1394,46 +1393,46 @@ void RetreatActor16AlongEscapeRoute(void)
     s32 rowM1;
 
     s32 permuted_7;
-    column = *(s32 *)(Map_Run108(16) + 8) >> 20;
-    permuted_7 = *(s32 *)(Map_Run89(16) + 16) >> 20;
-    companion18Row = *(s32 *)(Map_Run90(18) + 16) >> 20;
+    column = *(s32 *)(Map_unk108_3(16) + 8) >> 20;
+    permuted_7 = *(s32 *)(Map_unk89_3(16) + 16) >> 20;
+    companion18Row = *(s32 *)(Map_unk90_3(18) + 16) >> 20;
     row  = permuted_7;
-    companion9Row = *(s32 *)(Map_Run91(9) + 16) >> 20;
+    companion9Row = *(s32 *)(Map_unk91_3(9) + 16) >> 20;
 
     if (column == 13) {
         if ((u32)(companion9Row - 9) <= 2) {
-            Map_Run139(16, -16, 0);
+            Map_unk139_3(16, -16, 0);
         } else if ((u32)(companion18Row - 9) <= 2) {
-            Map_Run139(16, -64, 0);
+            Map_unk139_3(16, -64, 0);
         } else {
-            Map_Run139(16, -112, 0);
+            Map_unk139_3(16, -112, 0);
         }
     } else if (column == 12) {
         if ((u32)(companion9Row - 9) <= 2) {
             return;
         }
         if ((u32)(companion18Row - 9) <= 2) {
-            Map_Run139(16, -48, 0);
+            Map_unk139_3(16, -48, 0);
         } else {
-            Map_Run139(16, -96, 0);
+            Map_unk139_3(16, -96, 0);
         }
     } else if (column == 9) {
         if ((u32)(companion18Row - 9) <= 2) {
             return;
         }
-        Map_Run139(16, -48, 0);
+        Map_unk139_3(16, -48, 0);
     } else if (column == 8) {
-        Map_Run139(16, -32, 0);
+        Map_unk139_3(16, -32, 0);
     } else if (column == 6) {
         return;
     }
 
-    Map_Run109(2);
+    Map_unk109_3(2);
 
     rowM1 = row - 1;
-    Map_Run110(column, rowM1, 1, 3,
-                  *(s32 *)(Map_Run92(16) + 8) >> 20, rowM1);
-    Map_Run140(0, 0, 1, 3, column, rowM1);
+    Map_unk110_3(column, rowM1, 1, 3,
+                  *(s32 *)(Map_unk92_3(16) + 8) >> 20, rowM1);
+    Map_unk140_3(0, 0, 1, 3, column, rowM1);
 }
 
 void AdvanceActor16AlongEscapeRoute(void)
@@ -1443,87 +1442,87 @@ void AdvanceActor16AlongEscapeRoute(void)
     s32 companionRow;
 
     s32 permuted_6;
-    column = *(s32 *)(Map_Run111(16) + 8) >> 20;
-    permuted_6 = *(s32 *)(Map_Run93(16) + 16) >> 20;
-    companionRow = *(s32 *)(Map_Run94(9) + 16) >> 20;
+    column = *(s32 *)(Map_unk111_3(16) + 8) >> 20;
+    permuted_6 = *(s32 *)(Map_unk93_3(16) + 16) >> 20;
+    companionRow = *(s32 *)(Map_unk94_3(9) + 16) >> 20;
     row  = permuted_6;
 
     if (column == 6) {
         if ((u32)(companionRow - 9) <= 2) {
-            Map_Run141(16, 32, 0);
+            Map_unk141_3(16, 32, 0);
         } else {
-            Map_Run141(16, 112, 0);
+            Map_unk141_3(16, 112, 0);
         }
     } else if (column == 8) {
         if ((u32)(companionRow - 9) <= 2) {
             return;
         }
-        Map_Run141(16, 80, 0);
+        Map_unk141_3(16, 80, 0);
     } else if (column == 9) {
-        Map_Run141(16, 64, 0);
+        Map_unk141_3(16, 64, 0);
     } else if (column == 12) {
-        Map_Run141(16, 16, 0);
+        Map_unk141_3(16, 16, 0);
     } else if (column == 13) {
         return;
     }
 
-    Map_Run112(2);
+    Map_unk112_3(2);
 
     row -= 1;
-    Map_Run113(column, row, 1, 3,
-                  *(s32 *)(Map_Run95(16) + 8) >> 20, row);
-    Map_Run142(0, 0, 1, 3, column, row);
+    Map_unk113_3(column, row, 1, 3,
+                  *(s32 *)(Map_unk95_3(16) + 8) >> 20, row);
+    Map_unk142_3(0, 0, 1, 3, column, row);
 }
 
 /* map/locations/heidia/prologue/prologue_route_scene/actor_setup.c */
-u8 *Map_Run143(s32 arg0);
+u8 *Map_unk143_3(s32 arg0);
 
-u8 *Map_Run144(s32 arg0);
+u8 *Map_unk144_3(s32 arg0);
 
-u8 *Map_Run145(s32 arg0);
+u8 *Map_unk145_3(s32 arg0);
 
-u8 *Map_Run146(s32 arg0);
+u8 *Map_unk146_3(s32 arg0);
 
 void ConfigureSceneActor11(s32 actor_id)
 {
     s32 a = 0x1300000;
     s32 b = 0x1700000;
-    u8 *p = Map_Run143(11);
+    u8 *p = Map_unk143_3(11);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Map_Apply8(Map_Check24(actor_id), 0);
+    Map_Apply8(Map_unk24(actor_id), 0);
     Map_SetMode3(0, a, b, 253);
-    Map_Do32(576);
+    Map_unk32_2(576);
 }
 
 void ConfigureSceneActor12(s32 actor_id)
 {
     s32 a = 0x500000;
     s32 b = 0x1700000;
-    u8 *p = Map_Run144(12);
+    u8 *p = Map_unk144_3(12);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Map_Apply9(Map_Check25(actor_id), 0);
+    Map_Apply9(Map_unk25(actor_id), 0);
     Map_SetMode4(0, a, b, 253);
-    Map_Do33(577);
+    Map_unk33_2(577);
 }
 
 void ConfigureSceneActor13(s32 actor_id)
 {
     s32 a = 0x600000;
     s32 b = 0x1500000;
-    u8 *p = Map_Run145(13);
+    u8 *p = Map_unk145_3(13);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Map_Apply10(Map_Check26(actor_id), 0);
+    Map_Apply10(Map_unk26(actor_id), 0);
     Map_SetMode5(0, a, b, 253);
-    Map_Do34(578);
+    Map_unk34_2(578);
 }
 
 void ConfigureSceneActor14(s32 actor_id)
@@ -1532,15 +1531,15 @@ void ConfigureSceneActor14(s32 actor_id)
     s32 b = 0x1400000;
     s32 c = 0x2f00000;
     s32 d = 0x1400000;
-    u8 *p = Map_Run146(14);
+    u8 *p = Map_unk146_3(14);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Map_Apply11(Map_Check27(actor_id), 0);
+    Map_Apply11(Map_unk27(actor_id), 0);
     Map_SetMode6(0, a, b, 253);
     Map_SetMode7(0, c, d, 253);
-    Map_Do35(579);
+    Map_unk35_2(579);
 }
 
 /* map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c */
@@ -1616,14 +1615,14 @@ struct EffectParams {
 
 extern struct Descriptor *gOv2[];
 
-u8 *Map_Run147(s32 kind, s32 x, s32 y, s32 z);
+u8 *Map_unk147_3(s32 kind, s32 x, s32 y, s32 z);
 
-u8 *Map_Run148(s32 kind, s32 x, s32 y, s32 z);
+u8 *Map_unk148_3(s32 kind, s32 x, s32 y, s32 z);
 
-struct Effect *Map_Run149();
-struct Effect *Map_Run150();
+struct Effect *Map_unk149_3();
+struct Effect *Map_unk150_3();
 
-struct SceneObject *Map_Run151(void);
+struct SceneObject *Map_unk151_3(void);
 
 /* Spawn and configure the mode-14 object variant. */
 
@@ -1633,7 +1632,7 @@ struct SceneObject *Map_Run151(void);
 
 u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *object = Map_Run147(kind, x, y, z);
+    u8 *object = Map_unk147_3(kind, x, y, z);
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);
@@ -1652,7 +1651,7 @@ u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 
 u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *object = Map_Run148(kind, x, y, z);
+    u8 *object = Map_unk148_3(kind, x, y, z);
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);
@@ -1696,23 +1695,23 @@ void SpawnConfiguredSceneEffect(s32 x, s32 y,
     s32 duration;
     s32 first_delta;
     s32 accumulated;
-    party = Map_Run149(0);
+    party = Map_unk149_3(0);
 
     /* 128 << 13.  With that bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Map_Run150(options->kind, x, y, z);
+        effect = Map_unk150_3(options->kind, x, y, z);
     } else {
-        effect = Map_Run150(222, x, y, z);
+        effect = Map_unk150_3(222, x, y, z);
     }
     if (effect == 0) return;
 
     block = effect->sprite;
     mode_block = block;
 
-    Map_Run152(effect, (flags + 1) & 15);
+    Map_unk152_3(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
-    Map_Run153(effect, gOv2[table_offset >> 2]);
+    Map_unk153_3(effect, gOv2[table_offset >> 2]);
 
     effect->mode55 = 0;
     block->state26 = 0;
@@ -1742,7 +1741,7 @@ void SpawnConfiguredSceneEffect(s32 x, s32 y,
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
-        Map_Run154(effect, options->mode);
+        Map_unk154_3(effect, options->mode);
     }
 
     if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
@@ -1769,7 +1768,7 @@ void SpawnConfiguredSceneEffect(s32 x, s32 y,
             first_delta = *(volatile const s32 *)&options->target30;
             accumulated = *(volatile const s32 *)&effect->accum18;
             first_delta -= accumulated;
-            effect->rate30 = Map_Check28(first_delta,
+            effect->rate30 = Map_unk28(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
@@ -1777,7 +1776,7 @@ void SpawnConfiguredSceneEffect(s32 x, s32 y,
         } else {
             first_delta = options->target30;
             first_delta += (s32)0xffff0000;
-            effect->rate30 = Map_Check29(first_delta,
+            effect->rate30 = Map_unk29(first_delta,
                                            descriptor->duration);
             delta = options->target34;
             duration = descriptor->duration;
@@ -1788,12 +1787,12 @@ void SpawnConfiguredSceneEffect(s32 x, s32 y,
          * the first arm joins both arms onto the single second call site, so
          * the second delta is computed in each arm and the call is spelled
          * once. */
-        effect->rate34 = Map_Check30(delta, duration);
+        effect->rate34 = Map_unk30(delta, duration);
     }
 
     if ((flags & 0x200000) != 0) {                  /* 128 << 14 */
-        Map_Run155(effect, 1);
-        Map_Run156(effect, options->callback_arg);
+        Map_unk155_3(effect, 1);
+        Map_unk156_3(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {                  /* 128 << 15 */
@@ -1819,18 +1818,18 @@ void SpawnRadialEffectBurst(void)
     s32 x;
     s32 z;
 
-    object = Map_Run151();
+    object = Map_unk151_3();
     params.callback = 0x02008da5;
     for (angle_step = 0; angle_step <= 16; angle_step += 2) {
         angle = angle_step << 12;
-        vec.x = Map_Check31(angle);
+        vec.x = Map_unk31(angle);
         vec.y = 0;
-        z = Map_Check32(angle);
+        z = Map_unk32(angle);
         x = vec.x;
         vec.z = z;
         x = x + Map_Apply17(x, 3);
         vec.x = x;
-        Map_SetRect35(object->x, object->y, object->z, x, vec.y, z, 0x01000001, &params);
+        Map_unk35_5(object->x, object->y, object->z, x, vec.y, z, 0x01000001, &params);
     }
 }
 
@@ -1838,37 +1837,37 @@ void SpawnRadialEffectBurst(void)
 
 void StartScriptedSceneMessage(s32 message_id)
 {
-    Map_Do36(message_id);
-    Map_Place49(8, 0, 0);
-    Map_Do37(4055);
+    Map_unk36_2(message_id);
+    Map_unk49_3(8, 0, 0);
+    Map_unk37_2(4055);
     Map_Apply18(181, 3);
     Map_Apply19(181, 0);
-    Map_Run157();
+    Map_unk157_3();
 }
 
 void ShowForgetEverythingMessage(void)
 {
-    Map_Do38(2244);
+    Map_unk38_2(2244);
     {
         s32 k4 = 8, k5 = 21;
 
-        Map_SetRect36(0, 0, 1, 1, k4, k5);
+        Map_unk36_5(0, 0, 1, 1, k4, k5);
     }
 }
 
 void ShowHelpYouForgetMessage(void)
 {
-    Map_Do39(2245);
+    Map_unk39_2(2245);
 }
 
 void ShowDamagedDoorMessage(void)
 {
-    Map_Do40(2246);
+    Map_unk40_2(2246);
 }
 
 void ShowSaveMyLifeMessage(void)
 {
-    Map_Do41(2247);
+    Map_unk41_2(2247);
 }
 
 /* map/locations/heidia/prologue/prologue_route_scene/orbiting_effect.c */
@@ -2021,7 +2020,7 @@ s32 FindClearActorPosition(s32 *a)
     s32 *b;
     s32 ret;
     a[5] = 0;
-    obj = (u8 *)Map_Place50(&sel, a + 1, a);
+    obj = (u8 *)Map_unk50_3(&sel, a + 1, a);
     if (obj == 0)
         return 0;
     p = obj + 0x22;
@@ -2114,28 +2113,28 @@ void NoOpEffectCallback(void) {}
 
 void RunPrologueSceneSetup(void)
 {
-    Map_Run158();
-    Map_Run159();
-    Map_Run160();
-    Map_Run161();
+    Map_unk158_3();
+    Map_unk159_3();
+    Map_unk160_3();
+    Map_unk161_3();
 }
 
 void StartSceneScript37(void)
 {
-    Map_Place51(gOv4, 37, 7);
-    Map_Do42(183);
-    Map_Do43(4);
+    Map_unk51_3(gOv4, 37, 7);
+    Map_unk42_2(183);
+    Map_unk43_2(4);
 }
 
 void RunSceneVectorTransition(void)
 {
     struct V6 transition;
 
-    Map_Run162();
-    if (Map_Check33(&transition) != 0) {
-        Map_Do44(transition);
+    Map_unk162_3();
+    if (Map_unk33(&transition) != 0) {
+        Map_unk44_2(transition);
     }
-    Map_Run163();
+    Map_unk163_3();
 }
 
 s32 TryPushBlockingSceneActor(struct S *actor)
@@ -2150,15 +2149,15 @@ s32 TryPushBlockingSceneActor(struct S *actor)
     {
         s32 direction = (actor->f06 + 0x2000) & 0xc000;
 
-        Map_Place52(0x200000, direction, &destination);
+        Map_unk52_3(0x200000, direction, &destination);
     }
     if (Map_Apply21(actor, &destination) == 0) {
         s32 t;
 
-        Map_Run164();
+        Map_unk164_3();
         Map_Apply22(actor, 6);
-        Map_Do45(6);
-        Map_Do46(152);
+        Map_unk45_2(6);
+        Map_unk46_2(152);
         Map_Apply23(actor, 7);
         actor->f30 = 0x30000;
         actor->f34 = 0x20000;
@@ -2170,12 +2169,12 @@ s32 TryPushBlockingSceneActor(struct S *actor)
         {
             s16 *coordinates = (s16 *)&destination;
 
-            Map_Place53(0, coordinates[1], coordinates[5]);
+            Map_unk53_3(0, coordinates[1], coordinates[5]);
         }
         Map_Apply25(actor, 6);
         Map_Apply26(actor, 1);
         *state = (u8)saved_state;
-        Map_Run165();
+        Map_unk165_3();
         return 1;
     }
     return 0;
@@ -2294,9 +2293,9 @@ extern u8 gCell[];
 extern u8 gWork[];
 extern s16 gCell2[][1];
 
-u8 *Map_Run166();
+u8 *Map_unk166_3();
 
-s32 Map_Run167(void)
+s32 Map_unk167_3(void)
 {
     u8 *rec7;
     s32 scene;
@@ -2306,24 +2305,24 @@ s32 Map_Run167(void)
     ((RecWord *)(*(u8 *volatile *)gWork + 0x1c0))->w = 0x204;
     scene = gCell2[224][0];
     if (scene == (s32)gVal2) {
-        Map_Run168();
+        Map_unk168_3();
         return 0;
     }
     if (scene == (s32)gVal3) {
         if (Map_Check(0xef7) == 0) {
             Map_SetRect(0, 3, 1, 1, 13, 40);
-            Map_SetRect2(0, 2, 1, 1, 15, 40);
+            Map_unk2_5(0, 2, 1, 1, 15, 40);
             Map_Place(101, 0xd80000, 0x2880000);
         }
         if (gCell2[224][0] == scene) {
             if (gCell2[225][0] != 5) {
-                if (Map_Check2(0x8d1) == 0) {
+                if (Map_unk2(0x8d1) == 0) {
                     return 0;
                 }
             }
             Map_Do(0x8d1);
-            Map_SetRect3(0, 1, 1, 1, 13, 30);
-            Map_Place2(100, 0xd80000, 0x1e80000);
+            Map_unk3_5(0, 1, 1, 1, 13, 30);
+            Map_unk2_3(100, 0xd80000, 0x1e80000);
             return 0;
         }
     }
@@ -2331,67 +2330,67 @@ s32 Map_Run167(void)
     if (cur == (s32)gVal) {
         s32 rec;
 
-        Map_Run169();
-        rec = Map_Check34(8);
+        Map_unk169_3();
+        rec = Map_unk34(8);
         *(volatile s32 *)(rec + 56) = 0x810000;
-        Map_Run170(9);
-        Map_Run171(10);
-        if (Map_Check3(0x240) != 0) {
-            rec7 = Map_Check4(11);
+        Map_unk170_3(9);
+        Map_unk171_3(10);
+        if (Map_unk3(0x240) != 0) {
+            rec7 = Map_unk4(11);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
-                Map_Run172((s32)rec7, 4);
-                Map_Run173((s32)rec7, 0);
+                Map_unk172_3((s32)rec7, 4);
+                Map_unk173_3((s32)rec7, 0);
             }
             Map_Run(0, 0x1300000, 0x1700000, 253);
         }
-        if (Map_Check5(0x241) != 0) {
-            rec7 = Map_Check6(12);
+        if (Map_unk5(0x241) != 0) {
+            rec7 = Map_unk6(12);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
-                Map_Run174((s32)rec7, 4);
-                Map_Run175((s32)rec7, 0);
+                Map_unk174_3((s32)rec7, 4);
+                Map_unk175_3((s32)rec7, 0);
             }
-            Map_Run2(0, 0x500000, 0x1700000, 253);
+            Map_unk2_4(0, 0x500000, 0x1700000, 253);
         }
-        if (Map_Check7(0x242) != 0) {
-            rec7 = Map_Check8(13);
+        if (Map_unk7(0x242) != 0) {
+            rec7 = Map_unk8(13);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
-                Map_Run176((s32)rec7, 4);
-                Map_Run177((s32)rec7, 0);
+                Map_unk176_3((s32)rec7, 4);
+                Map_unk177_3((s32)rec7, 0);
             }
-            Map_Run3(0, 0x600000, 0x1500000, 253);
+            Map_unk3_4(0, 0x600000, 0x1500000, 253);
         }
-        if (Map_Check9(0x243) != 0) {
-            rec7 = Map_Check10(14);
+        if (Map_unk9(0x243) != 0) {
+            rec7 = Map_unk10(14);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
-                Map_Run178((s32)rec7, 4);
-                Map_Run179((s32)rec7, 0);
+                Map_unk178_3((s32)rec7, 4);
+                Map_unk179_3((s32)rec7, 0);
             }
-            Map_Run4(0, 0x900000, 0x1400000, 253);
-            Map_Run5(0, 0x2f00000, 0x1400000, 253);
+            Map_unk4_4(0, 0x900000, 0x1400000, 253);
+            Map_unk5_4(0, 0x2f00000, 0x1400000, 253);
         }
-        if (Map_Check11(0xfd7) != 0) {
+        if (Map_unk11(0xfd7) != 0) {
             return 0;
         }
-        Map_Run180(8);
+        Map_unk180_3(8);
         return 0;
     }
     lo = (s32)gVal4;
     if (cur == lo) {
-        if (Map_Check12(0xef4) == 0) {
-            Map_SetRect4(0, 0, 1, 1, 37, 10);
-            Map_Place3(100, 0x2580000, 0xa80000);
+        if (Map_unk12(0xef4) == 0) {
+            Map_unk4_5(0, 0, 1, 1, 37, 10);
+            Map_unk3_3(100, 0x2580000, 0xa80000);
         }
     }
     cur = gCell2[224][0];
     if (cur >= lo) {
         if (cur <= (s32)gVal5) {
-            Map_Run181();
+            Map_unk181_3();
             if (gCell2[225][0] == 5) {
-                Map_Run182();
+                Map_unk182_3();
             }
         }
     }
@@ -2405,23 +2404,23 @@ void Scene_RunScene3b2SequenceA(void)
     u8 *rec8;
     s32 record;
 
-    rec8 = Map_Run166(8);
-    rec7 = Map_Check13((gCell2[224][0] + (0x8d2 - (s32)gVal4)));
+    rec8 = Map_unk166_3(8);
+    rec7 = Map_unk13((gCell2[224][0] + (0x8d2 - (s32)gVal4)));
     if (rec7 != 0) {
-        Map_Place4(8, 0x28a0000, 0xa80000);
+        Map_unk4_3(8, 0x28a0000, 0xa80000);
         *(volatile s32 *)((s32)rec8 + 12) = -0x200000;
-        record = Map_Check35(8);
-        Map_Run183(record, 0);
-        Map_Run184(8, 3);
+        record = Map_unk35(8);
+        Map_unk183_3(record, 0);
+        Map_unk184_3(8, 3);
         rec8[85] = 0;
         {
             u8 value = *(volatile u8 *)&rec8[35];
 
             rec8[35] = (u8)(value | 2);
         }
-        Map_SetRect5(42, 10, 1, 1, 40, 10);
+        Map_unk5_5(42, 10, 1, 1, 40, 10);
     } else {
-        *(u8 *)(Map_Check36(8) + 85) = rec7;
+        *(u8 *)(Map_unk36(8) + 85) = rec7;
     }
 }
 
@@ -2430,16 +2429,16 @@ void Scene_RunScene3b2(void)
     u32 i;
     s32 record;
 
-    Map_Run185();
-    Map_Place5(0, 0x6666, 0x3333);
-    Map_Run186();
-    Map_Run187();
-    Map_Run188((gCell2[224][0] + (0x8c8 - (s32)gVal4)));
-    Map_Run189(30);
-    Map_Place6(0x200b2bc, 44, 7);
-    Map_Place7(0, 3, -16);
-    Map_Run190(3);
-    Map_Run191();
+    Map_unk185_3();
+    Map_unk5_3(0, 0x6666, 0x3333);
+    Map_unk186_3();
+    Map_unk187_3();
+    Map_unk188_3((gCell2[224][0] + (0x8c8 - (s32)gVal4)));
+    Map_unk189_3(30);
+    Map_unk6_3(0x200b2bc, 44, 7);
+    Map_unk7_3(0, 3, -16);
+    Map_unk190_3(3);
+    Map_unk191_3();
 }
 
 void Scene_RunScene3b2(void)
@@ -2447,29 +2446,29 @@ void Scene_RunScene3b2(void)
     u32 i;
     s32 record;
 
-    if (Map_Check14(0x8c4) != 0) {
-        Map_SetRect6(0, 0, 1, 1, 8, 21);
-        Map_Place8(15, 0x3c80000, 0x3c80000);
+    if (Map_unk14(0x8c4) != 0) {
+        Map_unk6_5(0, 0, 1, 1, 8, 21);
+        Map_unk8_3(15, 0x3c80000, 0x3c80000);
     } else {
-        record = Map_Check37(15);
+        record = Map_unk37(15);
         *(volatile s32 *)(record + 28) = 0x19999;
     }
-    if (Map_Check15(0x8c5) != 0) {
-        Map_Place9(16, 0x3c80000, 0x3c80000);
+    if (Map_unk15(0x8c5) != 0) {
+        Map_unk9_3(16, 0x3c80000, 0x3c80000);
     } else {
-        record = Map_Check38(16);
+        record = Map_unk38(16);
         *(volatile s32 *)(record + 28) = 0x19999;
     }
-    if (Map_Check16(0x8c6) != 0) {
-        Map_Place10(17, 0x3c80000, 0x3c80000);
+    if (Map_unk16(0x8c6) != 0) {
+        Map_unk10_3(17, 0x3c80000, 0x3c80000);
     } else {
-        record = Map_Check39(17);
+        record = Map_unk39(17);
         *(volatile s32 *)(record + 28) = 0x19999;
     }
-    if (Map_Check17(0x8c7) != 0) {
-        Map_Place11(18, 0x3c80000, 0x3c80000);
+    if (Map_unk17(0x8c7) != 0) {
+        Map_unk11_3(18, 0x3c80000, 0x3c80000);
     } else {
-        record = Map_Check40(18);
+        record = Map_unk40(18);
         *(volatile s32 *)(record + 28) = 0x19999;
     }
 }
@@ -2494,9 +2493,9 @@ struct S {
 
 extern u8 gCell[];
 
-struct S *Map_Run192(void);
+struct S *Map_unk192_3(void);
 
-struct S *Map_Run193(void);
+struct S *Map_unk193_3(void);
 
 /* Copy the low two mode bits into the object's owner record. */
 
@@ -2510,17 +2509,17 @@ void InitializePrologueSceneState(void)
 {
     u8 *base;
 
-    Map_Run194();
+    Map_unk194_3();
     base = gCell;
     Map_Apply27(*(s16 *)(base + 448), 5);
     base[555] = 3;
     Map_Apply28(84, 5);
-    Map_Run195();
+    Map_unk195_3();
 }
 
 void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute)
 {
-    struct S *p = Map_Run192();
+    struct S *p = Map_unk192_3();
 
     if (p != 0) {
         s32 v;
@@ -2533,14 +2532,14 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
             s32 k5 = p->f10 >> 20;
             s32 k4 = (p->f08 >> 20) - 1;
 
-            Map_SetRect37(grid_value, grid_attribute, 3, 1, k4, k5);
+            Map_unk37_5(grid_value, grid_attribute, 3, 1, k4, k5);
         }
     }
 }
 
 void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute)
 {
-    struct S *p = Map_Run193();
+    struct S *p = Map_unk193_3();
 
     if (p != 0) {
         s32 v;
@@ -2553,7 +2552,7 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute)
             s32 k4 = p->f08 >> 20;
             s32 k5 = (p->f10 >> 20) - 1;
 
-            Map_SetRect38(grid_value, grid_attribute, 1, 3, k4, k5);
+            Map_unk38_5(grid_value, grid_attribute, 1, 3, k4, k5);
         }
     }
 }

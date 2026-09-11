@@ -42,8 +42,5 @@ void EffectSlot_SetPosition(struct EffectSlot *, s32, s32);
 void EffectSlot_SetObjectMode(struct EffectSlot *, s32);
 void EffectSlot_SetCallback(struct EffectSlot *, EffectCallback);
 void EffectSlot_Update(struct EffectSlot *);
-void Func_0809b86c(struct EffectSlot *);
-void Func_0809b8f4(struct EffectSlot *);
-void Func_0809bb34(struct EffectSlot *);
 
 #endif

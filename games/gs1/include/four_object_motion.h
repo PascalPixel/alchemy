@@ -4,8 +4,8 @@
 #include "types.h"
 
 /*
- * Shared four-slot projection state used by the Func_080ad274 and
- * Func_080ad508 setup/teardown paths and their frame callbacks.
+ * Shared four-slot projection state used by the four-object motion
+ * setup/teardown paths and their frame callbacks.
  */
 struct FourObjectMotionState {
     u8 unknown_000[0x144];
@@ -16,8 +16,6 @@ struct FourObjectMotionState {
     s16 positions_y[4];
     s32 phases[4];
 };
-
-extern struct FourObjectMotionState *Data_03001f2c;
 
 #define FOUR_OBJECT_MOTION_OFFSET(field) \
     ((u32)&(((struct FourObjectMotionState *)0)->field))

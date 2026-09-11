@@ -4,7 +4,5 @@
 #include "types.h"
 
 const u8 *Owner_GetRecord(s32 selector);
-u32 Func_08005cf8(void);
-s32 Func_08018850(s32 start, s32 *width, s32 *count, s32 mode);
 
 #endif

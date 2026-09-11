@@ -3,8 +3,4 @@
 
 #include "types.h"
 
-s32 Func_080b874c(s16 *action);
-
-#define BattlePres_RunAction Func_080b874c
-
 #endif

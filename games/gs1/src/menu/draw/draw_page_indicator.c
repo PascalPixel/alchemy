@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/menu/draw/draw_page_indicator.h"
 
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128

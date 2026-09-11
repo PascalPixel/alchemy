@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/show_paired_unit_work_and_wait.h"
 
 struct Runtime_080931ec {
     u8 unknown_000[0x1d8];
@@ -53,9 +52,9 @@ void Battle_ShowPairedUnitWorkAndWait(
     UiWork_FinalizePending();
     WaitFrames(1);
 
-    while (Battle_Check2(h0) == 0)
+    while (Battle_unk2(h0) == 0)
         WaitFrames(1);
-    while (Battle_Check2(h1) == 0)
+    while (Battle_unk2(h1) == 0)
         WaitFrames(1);
 
     WaitFrames(1);

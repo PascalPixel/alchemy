@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/ui/icon/prepare_transfer_for_item.h"
 
 struct State_0801a4c0 {
     u8 filler0[0x600];

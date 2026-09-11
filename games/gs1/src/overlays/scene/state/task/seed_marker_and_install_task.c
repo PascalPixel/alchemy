@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/state/task/seed_marker_and_install_task.h"
 
 /* Seed the marker cycle directly from caller coordinates and install it. */
 extern u16 gOv;

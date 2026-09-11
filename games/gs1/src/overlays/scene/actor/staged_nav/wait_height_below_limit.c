@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_nav/wait_height_below_limit.h"
 
 /*
  * Staged actor height wait for overlay resource_3b3. The callee name refers

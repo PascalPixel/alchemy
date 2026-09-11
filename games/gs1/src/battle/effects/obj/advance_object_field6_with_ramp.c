@@ -1,7 +1,6 @@
 #include "types.h"
 #include "scene.h"
 
-
 void BattleFx_AdvanceObjectField6WithRamp(void *obj)
 {
     u32 step;

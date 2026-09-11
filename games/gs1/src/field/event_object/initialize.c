@@ -2,7 +2,6 @@
 #include "scene.h"
 #include "gs1_edition.h"
 
-
 void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 
 #if defined(GS1_EDITION_JA)

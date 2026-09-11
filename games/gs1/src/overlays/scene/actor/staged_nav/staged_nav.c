@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/overlays/scene/actor/staged_nav/staged_nav.h"
 #include "staged_actor_movement.h"
 #include "run_staged_actor_movement_and_redraw_body.inc"
 #include "create_configured_overlay_object.h"
@@ -10,8 +9,8 @@
 #include "configured_effect_spawn_body.inc"
 
 /* overlays/scene/actor/staged_nav/actor_position.c */
-u8 *Actor_Run3(s32 slot);
-u8 *Actor_Run4();
+u8 *Actor_unk3_4(s32 slot);
+u8 *Actor_unk4_4();
 
 /*
  * Place a staged actor at object ten's grid cell -- resource_3b3.
@@ -31,7 +30,7 @@ u8 *Actor_Run4();
  */
 s32 Actor_UpdateBit1ByPositionToSlotZero(u8 *actor)
 {
-    u8 *ref = Actor_Run3(0);
+    u8 *ref = Actor_unk3_4(0);
 
     if (*(s32 *)(actor + 16) > *(s32 *)(ref + 16)) {
         actor[35] = (u8)(actor[35] & 0xfd);
@@ -49,17 +48,17 @@ s32 Actor_UpdateBit1ByPositionToSlotZero(u8 *actor)
  */
 void StagedActor_PlaceAtObjectTenCell(void)
 {
-    u8 *obj = Actor_Run4(10);
+    u8 *obj = Actor_unk4_4(10);
     s32 x;
     s32 z;
 
-    Actor_Run5();
+    Actor_unk5_4();
 
     x = *(s32 *)(obj + 8) >> 20;
     z = *(s32 *)(obj + 16) >> 20;
 
-    Actor_Check11(2, x, z, 1, 1, 0);
-    Actor_Run6();
+    Actor_unk11(2, x, z, 1, 1, 0);
+    Actor_unk6_4();
 }
 
 /* overlays/scene/actor/staged_nav/actor_presentation.c */
@@ -69,13 +68,13 @@ void StagedActor_PlaceAtObjectTenCell(void)
 /* Complete 12-byte actor-11 wrapper before 0x02002150. */
 void Scene_RunActor11Step(void)
 {
-    Actor_Do5(11);
+    Actor_unk5_2(11);
 }
 
 /* Complete 12-byte actor-12 wrapper before 0x0200215c. */
 void Scene_RunActor12Step(void)
 {
-    Actor_Do6(12);
+    Actor_unk6_2(12);
 }
 
 /* overlays/scene/actor/staged_nav/actor_search.c */
@@ -86,18 +85,18 @@ typedef struct {
     u8 rest : 4;
 } Handle;
 
-u8 *Actor_Run7();
-u8 *Actor_Run8();
-u8 *Actor_Run9();
+u8 *Actor_unk7_4();
+u8 *Actor_unk8_4();
+u8 *Actor_unk9_4();
 
 void Actor_CheckActors8To11NearSlotZero(void)
 {
-    u8 *hero = Actor_Run7(0);
+    u8 *hero = Actor_unk7_4(0);
     u32 selector = 8;
     u8 *actor;
 
 loop:
-    actor = Actor_Run8(selector);
+    actor = Actor_unk8_4(selector);
 
     if (*(s32 *)(hero + 12) / 0x10000 != *(s32 *)(actor + 12) / 0x10000)
         goto mark_and_continue;
@@ -112,13 +111,13 @@ loop:
 
     {
         Handle *handle = *(Handle **)(actor + 80);
-        Actor_Run10(0, handle->mode);
+        Actor_unk10_4(0, handle->mode);
     }
     goto done;
 
 mark_and_continue:
     {
-        u8 *mark = Actor_Run9(0) + 35;
+        u8 *mark = Actor_unk9_4(0) + 35;
         u8 bit = 1;
         bit |= *mark;
         *mark = bit;
@@ -148,7 +147,7 @@ void Effect_SpawnRandomizedParticle(void)
     if ((gIw & 2) != 0)
         return;
     if ((gIw & 7) == 0)
-        Actor_Do7(136);
+        Actor_unk7_2(136);
 
     d = descriptor;
     *(s32 *)(d + 4) = 10;
@@ -156,19 +155,19 @@ void Effect_SpawnRandomizedParticle(void)
     *(s32 *)(d + 12) = 0x8000;
     *(s32 *)(d + 16) = 0x19999;
     *(s32 *)(d + 20) = 0x19999;
-    draw = (u32)Actor_Check12();
+    draw = (u32)Actor_unk12();
     mask = 0x0ffff000;
     mask &= draw;
     *(u16 *)(d + 32) = (u16)mask;
     *(s32 *)(d + 36) = 0x020093b1;
 
-    draw = (u32)Actor_Check13();
+    draw = (u32)Actor_unk13();
     spread = -((s32)((draw * 5) >> 16) * 0x10000 + 0x60000);
     spread /= 2;
-    draw = (u32)Actor_Check14();
+    draw = (u32)Actor_unk14();
     secondary = -((s32)((draw * 5) >> 16) * 0x10000 + 0x50000);
 
-    Actor_SetRect12(0x01440000, 0x00300000, 0x00e40000, spread,
+    Actor_unk12_5(0x01440000, 0x00300000, 0x00e40000, spread,
                   secondary, 0, 0x014d0000, d);
 }
 
@@ -211,19 +210,19 @@ s32 Effect_SpawnRandomEffectEveryEightFrames(u8 *actor)
     *(s32 *)(p + 8) = 0xb333;
     *(s32 *)(p + 12) = 0xb333;
 
-    x = *(s32 *)(actor + 8) + (((s32)(((u32)Actor_Check15() * 17) >> 16) - 8) << 16);
-    y = *(s32 *)(actor + 12) + ((s32)(((u32)Actor_Check16() * 17) >> 16) << 16);
-    z = *(s32 *)(actor + 16) + (((s32)(((u32)Actor_Check17() * 17) >> 16) - 8) << 16);
-    scale = Actor_Apply((s32)(((u32)Actor_Check18() * 5) >> 16) * 0x10000 + 0x30000, 10);
+    x = *(s32 *)(actor + 8) + (((s32)(((u32)Actor_unk15() * 17) >> 16) - 8) << 16);
+    y = *(s32 *)(actor + 12) + ((s32)(((u32)Actor_unk16() * 17) >> 16) << 16);
+    z = *(s32 *)(actor + 16) + (((s32)(((u32)Actor_unk17() * 17) >> 16) - 8) << 16);
+    scale = Actor_Apply((s32)(((u32)Actor_unk18() * 5) >> 16) * 0x10000 + 0x30000, 10);
 
-    Actor_SetRect13(x, y, z, 0, scale, (s32)phase, 0x00090001, p);
+    Actor_unk13_5(x, y, z, 0, scale, (s32)phase, 0x00090001, p);
     return 0;
 }
 
 /* overlays/scene/actor/staged_nav/move_and_redraw.c */
 #define Value Value3
 
-u8 *Actor_Run11(void);
+u8 *Actor_unk11_4(void);
 
 /*
  * Poll an overlay object until it settles, then reset it -- resource_3b3.
@@ -233,7 +232,7 @@ u8 *Actor_Run11(void);
 
 void *OvObj_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *obj = Actor_Run12(arg3, arg0, arg1, arg2);
+    u8 *obj = Actor_unk12_4(arg3, arg0, arg1, arg2);
 
     if (obj != NULL) {
         u8 *rec = *(u8 **)(obj + 0x50);
@@ -260,7 +259,7 @@ void *OvObj_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
 /*
  * Wait at most sixty polls for the object's +12 to reach its +20, then clear
- * +0x28, set +0x3c, and mirror +20 back into +12. Actor_Run13(1) is taken
+ * +0x28, set +0x3c, and mirror +20 back into +12. Actor_unk13_4(1) is taken
  * to be a one-frame wait, and the field offsets are named by position and
  * not verified.
  */
@@ -272,7 +271,7 @@ void OvObj_WaitUntilSettledAndReset(u8 *obj)
         if (cnt == 0) {
             break;
         }
-        Actor_Run13(1);
+        Actor_unk13_4(1);
         if (*(u32 *)(obj + 12) == *(u32 *)(obj + 20)) {
             break;
         }
@@ -286,7 +285,7 @@ void OvObj_WaitUntilSettledAndReset(u8 *obj)
 
 void OvObj_SetCallbackAndMode2(void)
 {
-    u8 *obj = Actor_Run11();
+    u8 *obj = Actor_unk11_4();
     u8 *base = obj;
     u8 zero = 0;
 
@@ -407,13 +406,13 @@ extern u8 gWork[];
 extern u8 gCell2[][2];
 extern u8 gOv18[];
 
-u8 *Actor_Run14();
+u8 *Actor_unk14_4();
 
 u8 *Scene_GetRecord_2();
 
 u8 *Scene_GetRecord_4();
 
-u8 *Actor_Run15();
+u8 *Actor_unk15_4();
 
 /* Record id used for the single record configured below in either branch. */
 
@@ -422,7 +421,7 @@ u8 *Actor_Run15();
 
 void Scene_RunPrimarySequence(void)
 {
-    s32 Actor_Check19();
+    s32 Actor_unk19();
 
     s32 rec;
     s32 flag;
@@ -435,19 +434,19 @@ void Scene_RunPrimarySequence(void)
     u8 *base;
     u8 slot16[40];
 
-    rec = Actor_Check20(0);
+    rec = Actor_unk20(0);
     flag = *(volatile s32 *)0x03001e40 & 3;
     if (flag == 0) {
         base = slot16;
         *(s32 *)(base + 4) = 10;
         *(s32 *)(base + 8) = 0xb333;
         *(s32 *)(base + 12) = 0xb333;
-        v1 = Actor_Check21();
+        v1 = Actor_unk21();
         p6 = *(volatile s32 *)(rec + 8) + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
-        v2 = Actor_Check22();
+        v2 = Actor_unk22();
         p5 = *(volatile s32 *)(rec + 16) + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
-        v3 = Actor_Check23();
-        record = Actor_Check24((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
+        v3 = Actor_unk23();
+        record = Actor_unk24((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
         Actor_SetRect(p6, *(volatile s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
     }
 }
@@ -459,7 +458,7 @@ void Scene_RunPrimarySequence(void)
     s32 *p;
     s32 buf[3];
 
-    rec = Actor_Run14(0);
+    rec = Actor_unk14_4(0);
     pflag = rec + 85;
     saved = *pflag;
     mode = (*(volatile u16 *)(rec + 6) + 0x2000) & 0xc000;
@@ -474,34 +473,34 @@ void Scene_RunPrimarySequence(void)
     if (Actor_Check((s32)rec, (s32)p) == 1) {
         goto reject;
     }
-    if (Actor_Check2((s32)p, (s32)rec) != 0) {
+    if (Actor_unk2((s32)p, (s32)rec) != 0) {
         goto reject;
     }
     p[0] = (*(volatile s32 *)(rec + 8) & -0x100000) + 0x80000;
     p[1] = *(volatile s32 *)(rec + 12);
     p[2] = (*(volatile s32 *)(rec + 16) & -0x100000) + 0x80000;
-    Actor_Place2(0x200000, mode, (s32)p);
-    if (Actor_Check3((s32)p, (s32)rec) != 0) {
+    Actor_unk2_3(0x200000, mode, (s32)p);
+    if (Actor_unk3((s32)p, (s32)rec) != 0) {
         goto reject;
     }
-    if (Actor_Check4((s32)rec, (s32)p) != 0) {
+    if (Actor_unk4((s32)rec, (s32)p) != 0) {
         goto reject;
     }
-    Actor_Run16();
-    Actor_Run17((s32)rec, 6);
-    Actor_Run18(6);
-    Actor_Run19(152);
-    Actor_Run20((s32)rec, 7);
+    Actor_unk16_4();
+    Actor_unk17_4((s32)rec, 6);
+    Actor_unk18_4(6);
+    Actor_unk19_4(152);
+    Actor_unk20_4((s32)rec, 7);
     *(volatile s32 *)(rec + 48) = 0x30000;
     *(volatile s32 *)(rec + 52) = 0x20000;
     *(volatile s32 *)(rec + 40) = 0x40000;
     *pflag &= 126;
-    Actor_Run21((s32)rec, 0);
-    Actor_Run22(0, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
-    Actor_Run23((s32)rec, 6);
-    Actor_Run24((s32)rec, 1);
+    Actor_unk21_4((s32)rec, 0);
+    Actor_unk22_4(0, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
+    Actor_unk23_4((s32)rec, 6);
+    Actor_unk24_4((s32)rec, 1);
     *pflag = saved;
-    Actor_Run25();
+    Actor_unk25_4();
     return 1;
 reject:
     return 0;
@@ -521,11 +520,11 @@ reject:
     v76 = *(s32 *)(a0 + 76);
     *(s32 *)(a0 + 12) = t + v72;
     *(s32 *)(a0 + 16) += v76;
-    step = Actor_Check5(v68, 10);
+    step = Actor_unk5(v68, 10);
     *(s32 *)(a0 + 68) = v68 - step;
-    step = Actor_Check25(v72, 3);
+    step = Actor_unk25(v72, 3);
     *(s32 *)(a0 + 72) = v72 - step;
-    step = Actor_Check26(v76, 10);
+    step = Actor_unk26(v76, 10);
     *(volatile s32 *)(a0 + 76) = v76 - step;
     *(volatile s32 *)(a0 + 24) += *(volatile s32 *)(a0 + 48);
     *(volatile s32 *)(a0 + 28) += *(s32 *)(a0 + 52);
@@ -537,42 +536,42 @@ void Scene_RunScene3b3SequenceA(void)
     s32 record;
     s32 count;
 
-    record = Actor_Check6(0x200);
+    record = Actor_unk6(0x200);
     if (record == 0) {
-        Actor_Run26(10, 19, 16, 5, record, 10, 31);
-        Actor_Run27(10, 51, 16, 5, 1, 10, 31);
-        Actor_Run28(42, 51, 16, 5, 2, 10, 31);
+        Actor_unk26_4(10, 19, 16, 5, record, 10, 31);
+        Actor_unk27_4(10, 51, 16, 5, 1, 10, 31);
+        Actor_unk28_4(42, 51, 16, 5, 2, 10, 31);
     } else {
-        Actor_Run29(10, 19, 16, 5, 0, 10, 31);
-        Actor_Run30(10, 83, 16, 5, 1, 10, 31);
-        Actor_Run31(42, 83, 16, 5, 2, 10, 31);
+        Actor_unk29_4(10, 19, 16, 5, 0, 10, 31);
+        Actor_unk30_4(10, 83, 16, 5, 1, 10, 31);
+        Actor_unk31_4(42, 83, 16, 5, 2, 10, 31);
     }
     *(volatile s32 *)gOv18 = 0;
-    Actor_Check27(0x20095cd, 0xc80);
-    Actor_Run32(1);
-    Actor_Run33(1, 0, 0x2009579);
-    Actor_Run34(231);
+    Actor_unk27(0x20095cd, 0xc80);
+    Actor_unk32_4(1);
+    Actor_unk33_4(1, 0, 0x2009579);
+    Actor_unk34_4(231);
     *(volatile s32 *)gOv18 = 0;
     do {
-        Actor_Run35(1);
+        Actor_unk35_4(1);
         count = *(volatile s32 *)gOv18;
         count = count + 1;
         *(volatile s32 *)gOv18 = count;
     } while (count <= 100);
     Actor_Do(0x121);
-    if (Actor_Check7(0x200) == 0) {
-        Actor_SetRect2(0, 32, 32, 0, 32, 32);
-        Actor_SetRect3(32, 32, 64, 0, 32, 32);
+    if (Actor_unk7(0x200) == 0) {
+        Actor_unk2_5(0, 32, 32, 0, 32, 32);
+        Actor_unk3_5(32, 32, 64, 0, 32, 32);
     } else {
-        Actor_SetRect4(0, 64, 32, 0, 32, 32);
-        Actor_SetRect5(32, 64, 64, 0, 32, 32);
+        Actor_unk4_5(0, 64, 32, 0, 32, 32);
+        Actor_unk5_5(32, 64, 64, 0, 32, 32);
     }
-    Actor_Run36(1);
-    Actor_Run37(1, 0, 0);
-    Actor_Run38(1);
-    Actor_Do2(0x20095cd);
-    Actor_Run39();
-    Actor_Run40(30);
+    Actor_unk36_4(1);
+    Actor_unk37_4(1, 0, 0);
+    Actor_unk38_4(1);
+    Actor_unk2_2(0x20095cd);
+    Actor_unk39_4();
+    Actor_unk40_4(30);
 }
 
 /* Runs one of two near-identical setup sequences for record REC_ID and
@@ -592,7 +591,7 @@ void Scene_RunFlaggedDisplayScene(void)
     queried = GameFlag_IsSet_1(QUERY_FLAG);
     if (queried == 0) {
         Audio_PlayCue_1(232);
-        Actor_Place3(0x200ada8, 84, 24);
+        Actor_unk3_3(0x200ada8, 84, 24);
         Battle_WaitMode0_1(30);
         Audio_PlayCue_2(240);
         Motion_SetActionVariant_1(REC_ID, 1);
@@ -602,22 +601,22 @@ void Scene_RunFlaggedDisplayScene(void)
         *(s32 *)(record + 12) = -0x200000;
         Motion_SetHPosTerrain_1(REC_ID, 0x1100000, 0x1a00000);
         Object_SetModeById_1(REC_ID, 1);
-        Actor_Place4(0x200adfc, 80, 24);
-        Actor_Place5(0x200ae50, 80, 28);
-        Actor_SetRect6(65, 40, 16, 27, 2, 4);
-        Actor_Run41();
-        Actor_Run42(9);
-        Actor_Run43(10);
-        Actor_Run44(11);
-        Actor_Run45(12);
-        Actor_Run46(13);
-        Actor_Run47(14);
-        Actor_Run48(15);
-        Actor_SetRect7(24, 3, 1, 1, 24, 8);
+        Actor_unk4_3(0x200adfc, 80, 24);
+        Actor_unk5_3(0x200ae50, 80, 28);
+        Actor_unk6_5(65, 40, 16, 27, 2, 4);
+        Actor_unk41_4();
+        Actor_unk42_4(9);
+        Actor_unk43_4(10);
+        Actor_unk44_4(11);
+        Actor_unk45_4(12);
+        Actor_unk46_4(13);
+        Actor_unk47_4(14);
+        Actor_unk48_4(15);
+        Actor_unk7_5(24, 3, 1, 1, 24, 8);
         GameFlag_Set_1(QUERY_FLAG);
     } else {
         Audio_PlayCue_3(232);
-        Actor_Place6(0x200add2, 84, 24);
+        Actor_unk6_3(0x200add2, 84, 24);
         Battle_WaitMode0_2(30);
         Audio_PlayCue_4(230);
         /* Flag byte at +85: cleared unconditionally in this branch. */
@@ -626,17 +625,17 @@ void Scene_RunFlaggedDisplayScene(void)
         *(s32 *)(record + 12) = -0x200000;
         Motion_SetHPosTerrain_2(REC_ID, 0x1100000, 0x1b40000);
         Object_SetModeById_2(REC_ID, 2);
-        Actor_SetRect8(65, 45, 16, 27, 2, 4);
-        Actor_Place7(0x200ae26, 80, 24);
-        Actor_Run49();
-        Actor_Run50(9);
-        Actor_Run51(10);
-        Actor_Run52(11);
-        Actor_Run53(12);
-        Actor_Run54(13);
-        Actor_Run55(14);
-        Actor_Run56(15);
-        Actor_SetRect9(24, 4, 1, 1, 24, 8);
+        Actor_unk8_5(65, 45, 16, 27, 2, 4);
+        Actor_unk7_3(0x200ae26, 80, 24);
+        Actor_unk49_4();
+        Actor_unk50_4(9);
+        Actor_unk51_4(10);
+        Actor_unk52_4(11);
+        Actor_unk53_4(12);
+        Actor_unk54_4(13);
+        Actor_unk55_4(14);
+        Actor_unk56_4(15);
+        Actor_unk9_5(24, 4, 1, 1, 24, 8);
         GameFlag_Clear_1(QUERY_FLAG);
     }
     Battle_SchedShoulder_1();
@@ -647,21 +646,21 @@ void Scene_RunScene3b3(void)
     u32 i;
     u8 *record;
 
-    Actor_Run57();
+    Actor_unk57_4();
     if (Actor_Run() == 0) {
-        *(u8 *)(Actor_Check28(0) + 85) &= 254;
-        *(u8 *)(Actor_Check29(0) + 35) &= 254;
-        Actor_Run58();
-        Actor_Run59();
-        *(u8 *)(Actor_Check30(0) + 85) |= 1;
+        *(u8 *)(Actor_unk28(0) + 85) &= 254;
+        *(u8 *)(Actor_unk29(0) + 35) &= 254;
+        Actor_unk58_4();
+        Actor_unk59_4();
+        *(u8 *)(Actor_unk30(0) + 85) |= 1;
         {
-            u8 *record = Actor_Run15(0);
+            u8 *record = Actor_unk15_4(0);
             u8 value = *(volatile u8 *)&record[35];
 
             record[35] = (u8)(value | 1);
         }
     }
-    Actor_Run60();
+    Actor_unk60_4();
 }
 
 void Scene_RunScene3b3(s32 a0)
@@ -670,13 +669,13 @@ void Scene_RunScene3b3(s32 a0)
     s32 rec7;
     s32 record;
 
-    rec7 = Actor_Run2();
-    Actor_Run61();
+    rec7 = Actor_unk2_4();
+    Actor_unk61_4();
     *(s32 *)(rec7 + 108) = 0x200a0b9;
-    Actor_SetRect10(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
-    Actor_Run62((a0 + 0x1f5));
-    Actor_Check8(a0, 0x200ad64);
-    Actor_Run63();
+    Actor_unk10_5(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+    Actor_unk62_4((a0 + 0x1f5));
+    Actor_unk8(a0, 0x200ad64);
+    Actor_unk63_4();
 }
 
 void Scene_RunScene3b3(void)
@@ -686,18 +685,18 @@ void Scene_RunScene3b3(void)
     s32 record;
     u8 *p6;
 
-    rec7 = Actor_Check9(0);
-    record = Actor_Check31(13);
+    rec7 = Actor_unk9(0);
+    record = Actor_unk31(13);
     p6 = *(s32 *)0x03001f30;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
         if ((*(s32 *)(record + 16) >> 20) != (*(s32 *)(rec7 + 16) >> 20)) {
             goto L_02002198;
         }
-        Actor_Do3(0x203);
+        Actor_unk3_2(0x203);
         p6[53] = 1;
     } else {
         L_02002198:;
-        Actor_Do4(0x203);
+        Actor_unk4_2(0x203);
     }
 }
 
@@ -707,24 +706,24 @@ void Scene_RunScene3b3(s32 a0)
     s32 rec7;
     s32 record;
 
-    rec7 = Actor_Check32();
-    if (Actor_Check10((a0 + 0x1f5)) != 0) {
-        Actor_Run64(rec7, 5);
+    rec7 = Actor_unk32();
+    if (Actor_unk10((a0 + 0x1f5)) != 0) {
+        Actor_unk64_4(rec7, 5);
         *(s32 *)(rec7 + 108) = 0x200a0b9;
-        Actor_SetRect11(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
-        Actor_Run65(a0, 0x200ad64);
+        Actor_unk11_5(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+        Actor_unk65_4(a0, 0x200ad64);
     }
 }
 
 /* overlays/scene/actor/staged_nav/scene_state_interaction.c */
 extern u8 *gIw2;
 
-u8 *Actor_Run66();
+u8 *Actor_unk66_4();
 
 /* Complete scene/entity linker through return and its sole pool word. */
 void State_LinkActorZeroToWork24(void)
 {
-    u8 *obj = Actor_Run66(0);
+    u8 *obj = Actor_unk66_4(0);
     *(u8 **)(gIw2 + 24) = obj;
     obj[98] = 1;
 }
@@ -761,11 +760,11 @@ struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
 struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
 
-Ent *Actor_Run67(Desc *, Ent *);
+Ent *Actor_unk67_4(Desc *, Ent *);
 
-u8 *Actor_Run68();
+u8 *Actor_unk68_4();
 
-u8 *Actor_Run69();
+u8 *Actor_unk69_4();
 
 /* The size test is unsigned, so out20 and out16 are u32. The two rec words
  * that travel on the stack are read into their own locals, which puts both
@@ -773,7 +772,7 @@ u8 *Actor_Run69();
  * assigned first, which fixes the register the mask lands in. */
 
 /*
- * Apply a placement query and tag the object. Actor_Check33 fills out20 and
+ * Apply a placement query and tag the object. Actor_unk33 fills out20 and
  * out16, a 24-byte record of which only rec[2] and rec[4] are read back, and
  * two further out-params whose written values are never read -- only the
  * pointers matter. On success the object is tagged at +0x23 and one of two
@@ -785,7 +784,7 @@ u8 *Actor_Run69();
  * veneer. */
 
 /*
- * Apply a placement query to an actor. Actor_Check34 is an out-param helper:
+ * Apply a placement query to an actor. Actor_unk34 is an out-param helper:
  * it fills out20 and out16, a 24-byte record of which only rec[2] and rec[4]
  * are read back, and out12 and out8 passed on the stack. Its field semantics
  * are not established. On success the values thread unchanged into the two
@@ -870,7 +869,7 @@ void AdvanceStagedActorPair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Actor_Run70(Ent *a)
+s32 Actor_unk70_4(Ent *a)
 {
     extern s32 Actor_Far2[];
 
@@ -885,7 +884,7 @@ s32 Actor_Run70(Ent *a)
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Actor_Run67(&d, a);
+    r = Actor_unk67_4(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
@@ -915,7 +914,7 @@ done:
     return 0;
 }
 
-s32 Actor_Run71(s32 *a)
+s32 Actor_unk71_4(s32 *a)
 {
     extern s32 Actor_Far2[];
 
@@ -931,7 +930,7 @@ s32 Actor_Run71(s32 *a)
     s32 *b;
     s32 ret;
     a[5] = 0;
-    obj = (u8 *)Actor_Place8(&sel, a + 1, a);
+    obj = (u8 *)Actor_unk8_3(&sel, a + 1, a);
     if (obj == 0)
         return 0;
     p = obj + 0x22;
@@ -1021,29 +1020,29 @@ found:
 
 s32 Actor_ApplyPlacementQueryAndTag(u8 *no)
 {
-    u8 *obj = Actor_Run68(no);
+    u8 *obj = Actor_unk68_4(no);
     u32 out20, out16;
     s32 out12, out8;
     s32 rec[6];
     s32 r2, r4;
     u8 mask;
 
-    if (Actor_Check33(no, &out20, &out16, rec, &out12, &out8) == 0) {
+    if (Actor_unk33(no, &out20, &out16, rec, &out12, &out8) == 0) {
         return 0;
     }
 
     r2 = rec[2];
     r4 = rec[4];
-    Actor_Run72(2, 2, out20, out16, r2, r4);
+    Actor_unk72_4(2, 2, out20, out16, r2, r4);
 
-    Actor_Run73(obj, 4);
+    Actor_unk73_4(obj, 4);
     mask = 2;
     obj[0x23] = obj[0x23] | mask;
 
     if (out20 > out16) {
-        Actor_Run74(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+        Actor_unk74_4(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
     } else {
-        Actor_Run75(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+        Actor_unk75_4(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
     }
 
     return 1;
@@ -1051,11 +1050,11 @@ s32 Actor_ApplyPlacementQueryAndTag(u8 *no)
 
 s32 Actor_ApplyPlacementQuery(u8 *no)
 {
-    u8 *obj = Actor_Run69(no);
+    u8 *obj = Actor_unk69_4(no);
     s32 out20, out16, out12, out8;
     s32 rec[6];
 
-    if (Actor_Check34(no, &out20, &out16, rec, &out12, &out8) == 0) {
+    if (Actor_unk34(no, &out20, &out16, rec, &out12, &out8) == 0) {
         return 0;
     }
 
@@ -1063,11 +1062,11 @@ s32 Actor_ApplyPlacementQuery(u8 *no)
         s32 x = out12 + rec[2];
         s32 z = out8 + rec[4];
 
-        Actor_Run76(x, z, out20, out16, rec[2], rec[4]);
-        Actor_Run77(0, rec[2], rec[4], out20, out16, 255);
+        Actor_unk76_4(x, z, out20, out16, rec[2], rec[4]);
+        Actor_unk77_4(0, rec[2], rec[4], out20, out16, 255);
     }
 
-    Actor_Run78(obj, 1);
+    Actor_unk78_4(obj, 1);
     obj[0x23] &= 0xfd;
 
     return 1;
@@ -1080,7 +1079,7 @@ typedef struct {
 
 extern u8 *gIw2;
 
-u8 *Actor_Run79();
+u8 *Actor_unk79_4();
 
 /*
  * Scene state reset for overlay resource_3b3. The callee name refers to its
@@ -1091,20 +1090,20 @@ void State_ApplyPlacementResult(void)
 {
     PlacementResult out;
 
-    Actor_Run80();
-    if (Actor_Check35(&out) != 0)
-        Actor_Do8(out);
-    Actor_Run81();
+    Actor_unk80_4();
+    if (Actor_unk35(&out) != 0)
+        Actor_unk8_2(out);
+    Actor_unk81_4();
 }
 
 /*
  * Clears gIw2[+24] and one flag byte on the object returned by
- * Actor_Run79. The 28-byte owner at 0x0200209c includes its one pool
+ * Actor_unk79_4. The 28-byte owner at 0x0200209c includes its one pool
  * word, the gIw2 pointer.
  */
 void State_ClearWord24AndObjectByte62(void)
 {
-    u8 *obj = Actor_Run79(0);
+    u8 *obj = Actor_unk79_4(0);
 
     *(s32 *)(gIw2 + 24) = 0;
     obj[0x62] = 0;

@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "abi/party/list_active_owners.h"
 #include "party_state.h"
 
 s32 Party_ListActiveOwners(s16 *owners)

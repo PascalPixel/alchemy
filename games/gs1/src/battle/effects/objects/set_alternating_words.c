@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/battle/effects/objects/set_alternating_words.h"
 
 extern u32 gIw;
 extern u32 gRom[];

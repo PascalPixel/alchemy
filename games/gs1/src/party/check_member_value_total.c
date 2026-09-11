@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene.h"
-#include "abi/party/check_member_value_total.h"
 
 extern u8 gCell[];
 extern u8 Value_0000097d;

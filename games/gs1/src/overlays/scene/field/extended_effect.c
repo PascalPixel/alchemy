@@ -235,7 +235,7 @@ void Scene_RunTwoPhaseActorSequence(void)
     Field_unk_02003718(1, 6, 20);
     Field_unk_02002f1e(1, 20, 20);
     Field_unk_02002f28(0, 20, 40);
-    Field_unk_02003762(0x10cd);
+    Field_TestFlag10cd(0x10cd);
     Field_unk_0200b594(11, 0, 20);
     Field_unk_0200b58c(10, 0);
     Field_unk_02002f4a(1, 20, 0);
@@ -289,12 +289,12 @@ void Scene_RunTwoPhaseActorSequence(void)
     Field_unk_0200b4cc(200);
     Field_unk_02003938(0x1001, 0);
     if (Field_Check(0, 0) == 0) {
-        Field_unk_02003942(0x10d6);
+        Field_TestFlag10d6(0x10d6);
     } else {
-        Field_unk_02003998(0x10d7);
+        Field_TestFlag10d7(0x10d7);
     }
     Field_unk_020039ba(0x1001, 0, 80);
-    Field_unk_020039a8(0x10d8);
+    Field_TestFlag10d8(0x10d8);
     Field_unk_020039ca(9, 0, 20);
     Field_unk_02003188(1, 20, 0);
     *(s32 *)(((s32)p7 + 0x40c)) = 0;

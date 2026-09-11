@@ -272,7 +272,7 @@ u8 *Field_unk_0200b52c();
  */
 static __inline__ void SetDirection(s32 actor, s32 direction, s32 duration)
 {
-    Field_unk_0200c2b8(actor, direction, duration);
+    Field_SetDirection(actor, direction, duration);
 }
 
 static __inline__ u8 *Pointer1(u8 *(*f)(), s32 id)

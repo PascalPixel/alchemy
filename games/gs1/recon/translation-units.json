@@ -109536,9 +109536,9 @@
       "overlay": null
     },
     {
-      "id": "battle-placement_update_entries",
+      "id": "battle-placement-update_entries",
       "game": "gs1",
-      "source": "games/gs1/src/battle/placement_update_entries.c",
+      "source": "games/gs1/src/battle/placement/update_entries.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -109557,9 +109557,9 @@
       "overlay": null
     },
     {
-      "id": "battle-motion-actor_reset_motion_at_anchor",
+      "id": "battle-motion-reset_actor_at_anchor",
       "game": "gs1",
-      "source": "games/gs1/src/battle/motion/actor_reset_motion_at_anchor.c",
+      "source": "games/gs1/src/battle/motion/reset_actor_at_anchor.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -109593,9 +109593,9 @@
       "overlay": null
     },
     {
-      "id": "battle-motion-motion_apply_variant_motion",
+      "id": "battle-motion-apply_variant_motion",
       "game": "gs1",
-      "source": "games/gs1/src/battle/motion/motion_apply_variant_motion.c",
+      "source": "games/gs1/src/battle/motion/apply_variant_motion.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -109670,9 +109670,9 @@
       "overlay": null
     },
     {
-      "id": "battle-motion_set_mode5_and_activate_slot",
+      "id": "battle-motion-set_mode5_and_activate_slot",
       "game": "gs1",
-      "source": "games/gs1/src/battle/motion_set_mode5_and_activate_slot.c",
+      "source": "games/gs1/src/battle/motion/set_mode5_and_activate_slot.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -109691,9 +109691,9 @@
       "overlay": null
     },
     {
-      "id": "battle-unit_clear_field12b_for_group",
+      "id": "battle-actor-clear_field_12b_for_group",
       "game": "gs1",
-      "source": "games/gs1/src/battle/unit_clear_field12b_for_group.c",
+      "source": "games/gs1/src/battle/actor/clear_field_12b_for_group.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -109877,9 +109877,9 @@
       "overlay": null
     },
     {
-      "id": "battle-formation_select_level_matched_candidate",
+      "id": "battle-formation-select_level_matched_candidate",
       "game": "gs1",
-      "source": "games/gs1/src/battle/formation_select_level_matched_candidate.c",
+      "source": "games/gs1/src/battle/formation/select_level_matched_candidate.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -109953,9 +109953,9 @@
       "overlay": null
     },
     {
-      "id": "battle-summon_clear_work_fields",
+      "id": "battle-summon-clear_work_fields",
       "game": "gs1",
-      "source": "games/gs1/src/battle/summon_clear_work_fields.c",
+      "source": "games/gs1/src/battle/summon/clear_work_fields.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -110650,9 +110650,9 @@
       "overlay": null
     },
     {
-      "id": "shop-hilite_unit",
+      "id": "shop-unit-hilite",
       "game": "gs1",
-      "source": "games/gs1/src/shop/hilite_unit.c",
+      "source": "games/gs1/src/shop/unit/hilite.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111146,9 +111146,9 @@
       "overlay": null
     },
     {
-      "id": "graphics-upload_block",
+      "id": "graphics-vram-upload_block",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/upload_block.c",
+      "source": "games/gs1/src/graphics/vram/upload_block.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111172,9 +111172,9 @@
       "overlay": null
     },
     {
-      "id": "object-dispatch-dispatch_find_free_object",
+      "id": "object-dispatch-find_free_object",
       "game": "gs1",
-      "source": "games/gs1/src/object/dispatch/dispatch_find_free_object.c",
+      "source": "games/gs1/src/object/dispatch/find_free_object.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -118984,9 +118984,9 @@
       "overlay": null
     },
     {
-      "id": "graphics-apply_window_blend",
+      "id": "graphics-registers-apply_window_blend",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/apply_window_blend.c",
+      "source": "games/gs1/src/graphics/registers/apply_window_blend.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -130049,9 +130049,9 @@
       "overlay": null
     },
     {
-      "id": "battle-party_apply_drain",
+      "id": "battle-party-apply_drain",
       "game": "gs1",
-      "source": "games/gs1/src/battle/party_apply_drain.c",
+      "source": "games/gs1/src/battle/party/apply_drain.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -130292,9 +130292,9 @@
       "overlay": null
     },
     {
-      "id": "event-event_set_status1c6",
+      "id": "event-set_status_1c6",
       "game": "gs1",
-      "source": "games/gs1/src/event/event_set_status1c6.c",
+      "source": "games/gs1/src/event/set_status_1c6.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -130925,9 +130925,9 @@
       "overlay": null
     },
     {
-      "id": "battle-unit_roll_counter_early_end",
+      "id": "battle-unit-roll_counter_early_end",
       "game": "gs1",
-      "source": "games/gs1/src/battle/unit_roll_counter_early_end.c",
+      "source": "games/gs1/src/battle/unit/roll_counter_early_end.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -146046,9 +146046,9 @@
       "overlay": null
     },
     {
-      "id": "battle-unit_lookup_weapon_value_by_class",
+      "id": "battle-unit-lookup_weapon_value_by_class",
       "game": "gs1",
-      "source": "games/gs1/src/battle/unit_lookup_weapon_value_by_class.c",
+      "source": "games/gs1/src/battle/unit/lookup_weapon_value_by_class.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -159667,9 +159667,9 @@
       "overlay": null
     },
     {
-      "id": "object-dispatch-dispatch_register_child_metadata",
+      "id": "object-dispatch-register_child_metadata",
       "game": "gs1",
-      "source": "games/gs1/src/object/dispatch/dispatch_register_child_metadata.c",
+      "source": "games/gs1/src/object/dispatch/register_child_metadata.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -160006,9 +160006,9 @@
       "overlay": null
     },
     {
-      "id": "menu-selection-selection_loop",
+      "id": "menu-selection-loop",
       "game": "gs1",
-      "source": "games/gs1/src/menu/selection/selection_loop.c",
+      "source": "games/gs1/src/menu/selection/loop.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -160083,9 +160083,9 @@
       "overlay": null
     },
     {
-      "id": "save-state-state_confirm_and_process_selected_slot",
+      "id": "save-state-confirm_and_process_selected_slot",
       "game": "gs1",
-      "source": "games/gs1/src/save/state/state_confirm_and_process_selected_slot.c",
+      "source": "games/gs1/src/save/state/confirm_and_process_selected_slot.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -160776,9 +160776,9 @@
       "overlay": null
     },
     {
-      "id": "shop-place_cursor",
+      "id": "shop-cursor-place",
       "game": "gs1",
-      "source": "games/gs1/src/shop/place_cursor.c",
+      "source": "games/gs1/src/shop/cursor/place.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],

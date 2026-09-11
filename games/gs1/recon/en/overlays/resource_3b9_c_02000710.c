@@ -45,7 +45,7 @@ extern u8 Data_0200ade4[];
 
 /* Shared scene work record, reached through the pointer at 0x03001ebc. The two
  * field offsets are the ones the adopted sibling
- * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c
+ * games/gs1/src/overlays/scene/script/run_scene_3b9_conditional_scene_setup.c
  * already spells. */
 
 extern u8 Data_03001ebc[];
@@ -81,7 +81,7 @@ static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
  *
  * Readable names are reading aids, not recovered spellings. Ten come from the
  * adopted source
- * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c,
+ * games/gs1/src/overlays/scene/script/run_scene_3b9_conditional_scene_setup.c,
  * which reaches the same veneer table; twelve more come from the sibling draft
  * games/gs1/recon/en/overlays/resource_3b9_c_02001cd4.c, which documents the
  * same veneer-to-main pairs but is itself unadopted; and the two overlay-local

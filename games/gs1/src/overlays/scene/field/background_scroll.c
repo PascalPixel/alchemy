@@ -38,7 +38,7 @@ extern u16 gOv2;
 extern u16 gOv3;
 extern u16 gUnk2;
 
-u8 *Field_unk_020003ac();
+u8 *SceneObject_Get();
 
 void State_SetActorEightValue3d(void)
 {
@@ -81,7 +81,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 h;
 
     /* Block coordinates become 16.16 fixed-point shifts of sixteen tiles. */
-    obj = (struct SceneObject *)Field_unk_020003ac(gCell[125]);
+    obj = (struct SceneObject *)SceneObject_Get(gCell[125]);
     dx <<= 20;
     dz <<= 20;
 
@@ -98,7 +98,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Field_unk_020003da((s32)obj->layer, obj->x, obj->z);
+        h = Field_Check2((s32)obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }

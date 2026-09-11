@@ -194,7 +194,7 @@ void Scene_RunOpeningAuxiliarySequence(void)
             bump_step(1);
         }
         Field_unk_02002a06(17, 0);
-        if (Field_unk_0200295e(0, 0) == 0) {
+        if (Field_TestFlagf3f(0, 0) == 0) {
             Field_unk_02002a10((base5_1197 + 3));
         } else {
             Field_unk_02002a18((base5_1197 + 4));
@@ -291,7 +291,7 @@ void Scene_RunMiddleAuxiliarySequence(void)
 
     Field_unk_02002b78();
     Field_unk_02002bec_b(0, 82, 0x2f8);
-    Field_unk_02002c3e_a(15, 0, 30);
+    Field_SetMode(15, 0, 30);
     Field_TestFlageae(0xeae);
     Field_unk_020027c8(15, 20);
     Field_unk_020027ec(15, 0xa000, 20);
@@ -460,7 +460,7 @@ void Scene_RunSupplementalSequenceFive(void)
 void Scene_RunSupplementalSequenceSix(void)
 {
     Audio_PlayCue_1(158);
-    Field_unk_02002ec8_a((s32)&Value, 35, 36); /* main:08009178 */
+    Motion_SetPosReset_1((s32)&Value, 35, 36); /* main:08009178 */
     ObjectMotion_ResetAndSetPositionInMode2_1(0, 102, 0x263); /* object_id 0, x 102, z 611 */
     Field_unk_02000fb0(6);
 }

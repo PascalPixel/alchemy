@@ -2,6 +2,7 @@
 #include "scene.h"
 #include "global_cells.h"
 
+/* ui/icon/build_ability_icon_tiles.c */
 /* ui/icon/icon_build_ability_icon_tiles.c */
 /* ui/icon/build_ability_icon_tiles.c */
 typedef struct {
@@ -111,4 +112,9 @@ void Resource_PushPendingPair(u32 first, u32 second)
         state->second[cnt] = second;
         state->cnt++;
     }
+}
+
+/* ui/render/reserved_work_no_op.c */
+void UiWork_ReservedNoOpA90C(void)
+{
 }

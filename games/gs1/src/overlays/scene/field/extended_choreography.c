@@ -135,7 +135,7 @@ extern const s32 gOv23[];
 extern const s32 gOv24[];
 extern const s32 gOv25[];
 
-struct SceneActor *Field_unk_02006778(s32 actor_id);
+struct SceneActor *SceneActor_Get(s32 actor_id);
 
 u8 *Field_unk_02001da0(void);
 
@@ -426,7 +426,7 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
 {
     struct SceneActor *actor;
 
-    actor = Field_unk_02006778(9);
+    actor = SceneActor_Get(9);
     if (record->state != 0)
         return;
     if (actor->mode == 1) {
@@ -1543,7 +1543,7 @@ void Scene_RunThreeActorPresentation(void)
         Field_unk_02008358(12, 2);
         Field_unk_0200664a(request_a);
         Field_unk_02008346(13, 3);
-        Field_unk_02006658(13);
+        StagedActor_SetTarget(13);
         Field_unk_020083c6(14, 0xb000, 40);
         Field_unk_0200834e(14, 3);
         Field_unk_02008366(13, 3);
@@ -1618,7 +1618,7 @@ void Scene_RunExtendedActorChoreography(void)
     Field_unk_020068c4(8);
     Field_unk_020068e0(12, 0x3000);
     Field_unk_020068d2(0x900c);
-    Field_unk_020068f4(11, 0xb000);
+    StagedActor_PlayCue2(11, 0xb000);
     Field_unk_020085dc(11, 3);
     Field_unk_02008542(10);
     Field_unk_0200860a(13, 1);

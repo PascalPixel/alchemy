@@ -185,7 +185,7 @@ void Actor_PlaceFiveActorsInRow(u8 *p)
     s32 i = 0;
 
     do {
-        Field_unk_02001e8e(i + 11, 0x180000, p);
+        Field_SetActorPosition(i + 11, 0x180000, p);
         p -= 13107;
         i++;
     } while (i <= 4);

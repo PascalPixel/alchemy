@@ -51,7 +51,7 @@ extern u8 Value;
 extern u8 Value_00000eb0;
 extern u8 gOv12[];
 
-struct Obj *Field_unk_02002d3e(s32);
+struct Obj *Field_GetObj(s32);
 
 s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
 {
@@ -359,7 +359,7 @@ void Dialogue_RunActorElevenFlaggedDialogue(void)
 
 void Scene_RunActorTwentyOneSetup(void)
 {
-    struct Obj *p = Field_unk_02002d3e(21);
+    struct Obj *p = Field_GetObj(21);
     Field_unk_02002d1c();
     p->f38 = 0x80000000;
     p->f3c = 0x80000000;
@@ -413,7 +413,7 @@ void Scene_RunSupplementalSequenceTwo(void)
     Audio_PlayCue_1(188);
     Field_SetRect(0, 63, 51, 8, 2, 2);
     Field_unk_02002d8c(10);
-    Field_unk_02002df4(2, 63, 51, 8, 2, 2);
+    Field_SetRect2(2, 63, 51, 8, 2, 2);
     Field_unk_02002da2(10);
     Motion_SetPosReset_1(0, 352, 306);
     Motion_SetActionVariant_1(0, 3);

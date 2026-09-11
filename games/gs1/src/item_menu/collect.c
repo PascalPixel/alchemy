@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item_menu/collect.h"
 #include "owner_state.h"
-
-#define ItemMenu_Collect Func_080a3ddc
 
 s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items)
 {

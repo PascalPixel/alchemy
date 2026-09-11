@@ -1,5 +1,7 @@
 #include "owner_state.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/refresh_derived_data.h"
 
 struct OwnerDerivedState {
     u8 unknown_000[0x24];
@@ -9,16 +11,14 @@ struct OwnerDerivedState {
     s8 value_129;
 };
 
-s32 Func_08078bf0(s32);
 u32 Owner_BuildDigitTiles(s32, void *);
-s8 Func_080799b0(u8, const u8 *);
 
 void Owner_RefreshDerivedData(s32 owner_no)
 {
     struct OwnerDerivedState *owner;
 
     owner = Owner_GetState(owner_no);
-    owner->value_129 = Func_080799b0(owner->value_128, owner->values_f8);
-    Func_08078bf0(owner_no);
+    owner->value_129 = Sys_Apply(owner->value_128, owner->values_f8);
+    Sys_Check(owner_no);
     Owner_BuildDigitTiles(owner_no, owner->data_024);
 }

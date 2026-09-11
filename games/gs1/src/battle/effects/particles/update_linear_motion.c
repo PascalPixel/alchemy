@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 FixedPoint_Ratio(s32, s32);
 void ParticleEffect_UpdateLinearMotion(void *particle)

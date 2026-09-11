@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 u8 *Runtime_GetObject(void);
 

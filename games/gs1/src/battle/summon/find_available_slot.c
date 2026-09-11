@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct BattleActorDefinition;
 struct BattleActorDefinition *Runtime_GetObject(s32);

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void Battle_WaitMode0(s32 arg0);

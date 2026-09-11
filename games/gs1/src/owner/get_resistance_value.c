@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct State_0807987c {
     u8 padding[0xf8];

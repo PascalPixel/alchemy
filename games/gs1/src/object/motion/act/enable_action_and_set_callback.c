@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void Motion_SetActionCallback(struct ObjectRuntime *object, s32 kind);

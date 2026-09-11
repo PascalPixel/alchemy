@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_operands.h"
 
 void Script_SetOrCompareWord28(struct ScriptOperands *state, s32 operation, s32 value)

@@ -1,7 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_number_right_aligned_far.h"
 
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
-void Func_080150a8(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)
 {
@@ -18,5 +19,5 @@ void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)
 
     digits++;
     x -= digits << 3;
-    Func_080150a8(number, digits, layer, x, y);
+    Ui_SetRange(number, digits, layer, x, y);
 }

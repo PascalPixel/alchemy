@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
 {

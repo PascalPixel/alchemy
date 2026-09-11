@@ -1,5 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
 
 void ObjectLink_RotatePairToward(void *, void *);
 void Battle_WaitMode0(s32 arg0);

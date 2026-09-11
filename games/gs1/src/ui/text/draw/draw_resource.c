@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_resource.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
 
 void UiText_BuildRenderEntries(s32, s32);
-void Func_08017aa4(u8 *, s32, s32, s32);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -18,5 +19,5 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     /* 0xeb0から始まる列を次の処理へ渡す。 */
-    Func_08017aa4(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    Ui_SetMode(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
 }

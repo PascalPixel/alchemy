@@ -1,11 +1,13 @@
+#include "scene.h"
+#include "abi/item/adjust_counter_slot.h"
 #include "item.h"
 
-extern u8 Data_02000380[128];
+extern u8 gOv[128];
 
 s32 ItemCounter_Adjust(s32 index, s32 delta)
 {
     s32 counter_slot = index;
-    u8 *data = Data_02000380;
+    u8 *data = gOv;
 
     index = 0;
     if (counter_slot <= 127) {

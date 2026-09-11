@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/data/select_result_pointer.h"
 
-extern u16 Data_02000240[];
+extern u16 gCell[];
 extern u8 Value_00000038;
 extern u8 Value_0000003a;
 extern u8 Value_0000003c;
@@ -34,5 +36,5 @@ void BattleFx_SelectResultPointer(s32 arg0)
         value = (u16)(u32)&Value_00000039;
         break;
     }
-    Data_02000240[235] = value;
+    gCell[235] = value;
 }

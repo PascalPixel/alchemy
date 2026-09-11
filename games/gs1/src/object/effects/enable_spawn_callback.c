@@ -1,9 +1,8 @@
 #include "types.h"
-
-s32 Func_080042c8(u32 callback);
-void Func_080912b8(void);
+#include "scene.h"
+#include "abi/object/effects/enable_spawn_callback.h"
 
 void Object_EnableEffectSpawnCallback(void)
 {
-    Func_080042c8((u32)Func_080912b8);
+    Obj_Check((u32)Obj_Run);
 }

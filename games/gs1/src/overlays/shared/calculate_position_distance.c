@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/shared/calculate_position_distance.h"
 
 typedef s32 (*IwramSqrt02000314)(s32);
 
-s32 Func_02000314(s32 *a, s32 *b)
+s32 Sys_Run(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;

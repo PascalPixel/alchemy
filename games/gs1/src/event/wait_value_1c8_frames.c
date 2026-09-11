@@ -1,8 +1,10 @@
+#include "scene.h"
+#include "abi/event/wait_value_1c8_frames.h"
 #include "event_runtime.h"
 
 s32 WaitFrames(s32);
 
 void Event_WaitValue1c8Frames(void)
 {
-    WaitFrames(Data_03001ebc->value_1c8);
+    WaitFrames(gWork->value_1c8);
 }

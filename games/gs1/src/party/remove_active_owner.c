@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/party/remove_active_owner.h"
 #include "game_flags.h"
 #include "party_state.h"
 
@@ -12,7 +14,7 @@ s32 Party_RemoveActiveOwner(s32 owner_id)
 
     owner_index = 0;
     while (owner_index < active_count
-        && Data_02000240.active_owners[owner_index] != owner_id) {
+        && gCell.active_owners[owner_index] != owner_id) {
         owner_index++;
     }
 
@@ -22,7 +24,7 @@ s32 Party_RemoveActiveOwner(s32 owner_id)
         u8 *owner_base;
         u8 *owner_cursor;
 
-        owner_base = (u8 *)&Data_02000240;
+        owner_base = (u8 *)&gCell;
         owner_base += owner_index;
         owner_cursor = owner_base + 0x1f8;
         remaining_count = last_index - owner_index;

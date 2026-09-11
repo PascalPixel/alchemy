@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/script/interpreter/jump/if_true.h"
 #include "script_interpreter.h"
 
 u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
@@ -7,7 +9,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
     u32 value = table[index + 1];
 
     if (interpreter->condition_result != 0) {
-        interpreter->cursor = Func_0800d6d8(interpreter, value);
+        interpreter->cursor = Script_Run(interpreter, value);
     } else {
         interpreter->cursor = (u16)interpreter->cursor + 2;
     }

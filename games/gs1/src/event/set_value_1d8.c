@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/event/set_value_1d8.h"
 #include "event_runtime.h"
 
 struct EventRuntime1d8 {
@@ -7,5 +9,5 @@ struct EventRuntime1d8 {
 
 void Event_SetValue1d8(s16 value)
 {
-    ((struct EventRuntime1d8 *)Data_03001ebc)->value = value;
+    ((struct EventRuntime1d8 *)gWork)->value = value;
 }

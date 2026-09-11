@@ -1,15 +1,17 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/play/play_cue_from_event_work.h"
 
 struct Party {
     u8 unk00[0x1f0];
     s16 cue;
 };
 
-extern struct Party Data_02000240;
+extern struct Party gCell;
 
 extern void Audio_PlayCue(s16 arg0);
 
 void Audio_PlayCueFromEventWork(void)
 {
-    Audio_PlayCue(Data_02000240.cue);
+    Audio_PlayCue(gCell.cue);
 }

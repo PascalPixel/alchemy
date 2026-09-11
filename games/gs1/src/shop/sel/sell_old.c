@@ -1,7 +1,7 @@
+#include "scene.h"
+#include "abi/shop/sel/sell_old.h"
 #include "battle_runtime.h"
 #include "shop.h"
-
-void Func_080b1f4c(s32, s32, s32);
 
 s32 Shop_SellOld(s32 unit_id, s32 slot)
 {
@@ -24,6 +24,6 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
     {
         return 0;
     }
-    Func_080b1f4c(unit_id, slot, -1);
+    Sys_Place(unit_id, slot, -1);
     return 1;
 }

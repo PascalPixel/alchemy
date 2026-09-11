@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/selection/set_node_coordinates.h"
 
 struct Node_0801b1ec {
     u8 filler0[4];
@@ -19,11 +21,11 @@ struct State_0801b1ec {
     u16 second;
 };
 
-extern struct State_0801b1ec *Data_03001e98;
+extern struct State_0801b1ec *gIw;
 
 void Menu_SetNodeCoordinates(u32 first, u32 second)
 {
-    struct State_0801b1ec *state = Data_03001e98;
+    struct State_0801b1ec *state = gIw;
     struct Node_0801b1ec *node;
 
     state->first = first;

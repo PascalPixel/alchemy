@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/orbiting_particles/run.h"
 
 struct OrbitingParticleVector {
     s32 x;
@@ -39,8 +41,8 @@ struct OrbitingParticleGlobals {
     s32 resource_mode;
 };
 
-extern struct OrbitingParticleScene *Data_03001f30;
-extern struct OrbitingParticleGlobals Data_02000240;
+extern struct OrbitingParticleScene *gIw;
+extern struct OrbitingParticleGlobals gCell;
 
 void WaitFrames(s32 frames);
 u32 Random16(void);
@@ -51,14 +53,11 @@ void RotateVectorByMagnitude(
     s32 angle,
     struct OrbitingParticleVector *vector);
 void Object_SetMode(struct OrbitingParticle *particle, s32 battle_mode);
-void Func_08009240(struct OrbitingParticle *particle, s32 battle_mode);
-void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
+
+void *Battle_Run(u32 kind, u32 entry_index, s32 *size);
 struct OrbitingParticle *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
-void Func_08097384(void);
+
 void BattleFx_PrepareBufferInterpolation(void);
-#define UpdateOrbitingParticleLeft Func_08099070
-#define UpdateOrbitingParticleRight Func_080990cc
 void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle);
 void UpdateOrbitingParticleLeft(struct OrbitingParticle *particle);
 void UpdateOrbitingParticleRight(struct OrbitingParticle *particle);
@@ -75,9 +74,9 @@ void BattleFx_RunOrbitingParticles(void)
     void *resource;
     s32 entry_count;
 
-    scene = Data_03001f30;
+    scene = gIw;
     main_particle = scene->main_particle;
-    Func_08097384();
+    Battle_Run2();
     Audio_PlayCue(0x73);
 
     p = &position;
@@ -99,7 +98,7 @@ void BattleFx_RunOrbitingParticles(void)
             particle->rotation = Rand();
             particle->lifetime = 60;
             particle->orbit_angle = Rand();
-            Func_08009240(particle, 9);
+            Battle_Apply(particle, 9);
 
             p->x = scene->origin.x;
             p->y = scene->origin.y;
@@ -124,9 +123,9 @@ void BattleFx_RunOrbitingParticles(void)
 
         entry_count = 15;
         do {
-            Func_08009240(main_particle, 7);
+            Battle_Apply(main_particle, 7);
             WaitFrames(1);
-            Func_08009240(main_particle, 0);
+            Battle_Apply(main_particle, 0);
             WaitFrames(4);
             entry_count--;
         } while (entry_count >= 0);
@@ -137,11 +136,11 @@ void BattleFx_RunOrbitingParticles(void)
         }
 
         main_particle->update = BattleFx_UpdateOrbitingParticleMain;
-        resource = Func_0808e4b4(0x50000005, 6, &resource_size);
+        resource = Battle_Run(0x50000005, 6, &resource_size);
         if (resource != NULL) {
-            Func_08096b28(
+            Battle_Place(
                 resource,
-                Data_02000240.resource_mode,
+                gCell.resource_mode,
                 resource_size);
         }
         WaitFrames(20);

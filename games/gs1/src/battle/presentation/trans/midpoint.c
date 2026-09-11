@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/trans/midpoint.h"
 
 struct Point {
     u8 unknown0[8];
@@ -8,7 +10,6 @@ struct Point {
 };
 
 struct Point **GetBattleObjectSlot(s32);
-void Func_080c0cec(s32, s32, s32, s32);
 
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
 {
@@ -21,5 +22,5 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
     s32 x = (right_x + left_x) / 2;
     s32 y = (right_y + left_y) / 2;
 
-    Func_080c0cec(x, 0, y, mode);
+    Battle_SetMode(x, 0, y, mode);
 }

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/status_icon/cycle.h"
 #include "battle_status_icon.h"
 
 struct BattleStatusIconOwner {
@@ -32,9 +34,7 @@ struct BattleStatusIconRecord {
 };
 
 void *GetMotionRecord(struct BattleStatusIconOwner *owner, s32 entry_index);
-struct StatusIconEffect *Func_08009048(struct EffectContext *context, s32 effect_id);
-void Func_08009050(struct EffectContext *context, struct StatusIconEffect *effect);
-void Func_08009070(struct StatusIconEffect *effect, s32 entry_index);
+struct StatusIconEffect *Battle_Run(struct EffectContext *context, s32 effect_id);
 
 /*
  * The reference preserves r0 in its epilogue (pop {r1}; bx r1), matching GCC's
@@ -101,19 +101,19 @@ update:
     }
 
     if (record->icon_effect != 0 && changed != 0) {
-        Func_08009050(context, record->icon_effect);
+        Battle_Apply(context, record->icon_effect);
         record->icon_effect = 0;
     }
 
     if (effect_id >= 0 && changed != 0) {
-        effect = Func_08009048(context, effect_id);
+        effect = Battle_Run(context, effect_id);
         record->icon_effect = effect;
         if (effect == (struct StatusIconEffect *)-1)
             record->icon_effect = 0;
         effect = record->icon_effect;
         if (effect != 0) {
             effect->state = 3;
-            Func_08009070(effect, 0);
+            Battle_Apply2(effect, 0);
         }
     }
 

@@ -1,28 +1,25 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/act/run_entries.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 WaitFrames(s32);
-void Func_080bb65c(void);
-s32 Func_080bb938();
-s32 Func_080bbb0c(void *, s32);
-void Func_080c10e8(u16 *, s32);
 
 s32 BattlePres_RunActorEntries(void *tbl)
 {
     s32 i;
     s8 n;
 
-    Func_080c10e8(0, 0);
+    Battle_Apply(0, 0);
     n = FIELD_AT_OFFSET(tbl, s8 *, 1);
     if (n == 0) {
-        Func_080bb65c();
+        Battle_Run();
     } else {
         i = 0;
         if (i < (s32)n) {
             do {
-                Func_080bbb0c(tbl, i);
-                Func_080bb938();
+                Battle_Apply2(tbl, i);
+                Battle_Check();
                 i += 1;
             } while (i < (s32)FIELD_AT_OFFSET(tbl, s8 *, 1));
         }

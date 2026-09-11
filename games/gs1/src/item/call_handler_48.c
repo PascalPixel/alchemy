@@ -1,11 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item/call_handler_48.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_08077048(s32);
 
 s32 Item_CallHandler48(s32 arg0, s32 arg1)
 {
-    Func_08077048(arg1);
+    Item_Check(arg1);
     return 0;
 }

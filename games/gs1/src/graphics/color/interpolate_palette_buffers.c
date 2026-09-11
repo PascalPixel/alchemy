@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
 {

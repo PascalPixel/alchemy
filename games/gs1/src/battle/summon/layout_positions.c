@@ -1,12 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/summon/layout_positions.h"
 
 struct BattleActorDefinition {
     u8 reserved_000[296];
     u8 class_id;
 };
 
-struct BattleActorDefinition *Func_08077008(s32 actor_id);
-s32 Func_080c23c0(u8 class_id);
+struct BattleActorDefinition *Battle_Run(s32 actor_id);
 
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
 {
@@ -23,8 +24,8 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 
             spacing = 25;
             if ((u16)(actor_ids[index] - 254) > 1) {
-                actor = Func_08077008(actor_ids[index]);
-                spacing = Func_080c23c0(actor->class_id) ? 27 : 38;
+                actor = Battle_Run(actor_ids[index]);
+                spacing = Battle_Check(actor->class_id) ? 27 : 38;
                 if (actor->class_id == 148 || actor->class_id == 121) {
                     x_positions[index] = -50;
                 }
@@ -34,9 +35,9 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
         z_positions[index] = z;
         spacing = 25;
         if ((u16)(actor_ids[index] - 254) > 1) {
-            struct BattleActorDefinition *actor = Func_08077008(actor_ids[index]);
+            struct BattleActorDefinition *actor = Battle_Run(actor_ids[index]);
 
-            spacing = Func_080c23c0(actor->class_id) ? 27 : 38;
+            spacing = Battle_Check(actor->class_id) ? 27 : 38;
         }
         z -= spacing / 2;
     }

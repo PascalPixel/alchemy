@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *arg0)
 {

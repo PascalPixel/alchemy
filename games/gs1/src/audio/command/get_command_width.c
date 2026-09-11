@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define AudioCommand_GetWidth Func_080f95c8
+#include "scene.h"
+#include "abi/audio/command/get_command_width.h"
 
 s32 AudioCommand_GetWidth(s32 command)
 {

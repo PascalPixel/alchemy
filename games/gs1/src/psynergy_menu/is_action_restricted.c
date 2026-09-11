@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "psynergy_menu.h"
 
 u8 *Ability_GetData(u32 action);

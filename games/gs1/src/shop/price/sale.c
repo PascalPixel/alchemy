@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "shop.h"
 
 s32 Shop_SalePrice(s32 item_id)

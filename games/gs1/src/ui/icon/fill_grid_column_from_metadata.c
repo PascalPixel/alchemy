@@ -1,5 +1,7 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/icon/fill_grid_column_from_metadata.h"
 #include "global_cells.h"
 
 struct Entry_08012d70 {
@@ -31,7 +33,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     do {
         entry = *(struct Entry_08012d70 **)(work + offset);
         if (entry->table_0c != 0) {
-            metadata = Func_08185000(entry->no);
+            metadata = Ui_Run(entry->no);
             if (value < metadata[5]) {
                 entry->value_04 = metadata[4];
                 entry->value_10 = entry->table_0c[value];

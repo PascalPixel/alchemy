@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Menu_AllocateSelectionWorkspace(void)

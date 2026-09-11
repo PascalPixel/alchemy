@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "game_flags.h"
 
 u32 GameFlag_Toggle(s32 flag)

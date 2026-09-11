@@ -1,18 +1,13 @@
 #include "types.h"
-
-extern void Func_020031ba(s32);
-extern s32 Func_02000f36(s32, s32, s32);
-extern void Func_020031cc(s32);
-extern void Func_020030e4(s32);
-extern void Func_0200302a(s32);
-extern void Func_020023aa(void);
+#include "scene.h"
+#include "abi/overlays/scene/actor/transition/run_actor_9_flag_sequence.h"
 
 void Scene_RunActor9Flag314Sequence(void)
 {
-    Func_020031ba(0xF1);
-    Func_02000f36(9, -128, 0);
-    Func_020031cc(0x121);
-    Func_020030e4(0x314);
-    Func_0200302a(2);
-    Func_020023aa();
+    Actor_Do(0xF1);
+    Actor_Place(9, -128, 0);
+    Actor_Do2(0x121);
+    Actor_Do3(0x314);
+    Actor_Do4(2);
+    Actor_Run();
 }

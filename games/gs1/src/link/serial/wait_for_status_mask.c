@@ -1,15 +1,17 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/link/serial/wait_for_status_mask.h"
 
-extern volatile u16 Data_03001f64;
-extern volatile u32 Data_04000128;
+extern volatile u16 gIw;
+extern volatile u32 gUnk;
 s32 WaitFrames(s32);
 
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
 {
-    if ((mask & Data_03001f64) != mask) {
+    if ((mask & gIw) != mask) {
         do {
             WaitFrames(1);
-        } while ((mask & Data_03001f64) != mask);
+        } while ((mask & gIw) != mask);
     }
-    return (Data_04000128 << 0x1A) >> 0x1E;
+    return (gUnk << 0x1A) >> 0x1E;
 }

@@ -1,12 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/proc/process_all.h"
 
 void UiWork_ProcessRenderChannels(void);
-s32 Func_08016f2c(void);
-s32 Func_080191cc(void);
 
 void UiWork_ProcessAll(void)
 {
-    Func_08016f2c();
+    Ui_Check();
     UiWork_ProcessRenderChannels();
-    Func_080191cc();
+    Ui_Check2();
 }

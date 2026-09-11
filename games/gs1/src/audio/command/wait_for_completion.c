@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define AudioCommand_WaitForCompletion Func_080f95a0
+#include "scene.h"
+#include "abi/audio/command/wait_for_completion.h"
 
 s32 WaitFrames(s32);
 

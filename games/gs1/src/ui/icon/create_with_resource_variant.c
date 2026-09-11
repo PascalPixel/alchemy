@@ -1,9 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/icon/create_with_resource_variant.h"
 
 s32 Resource_CopyData(s32 entry_no, s32 mode, s32 data);
 s32 Resource_FindFreeSlot(void);
 s32 UiIcon_DrawWithFlags(s32 entry_no, s32 flags, s32 first, s32 second, s32 third);
-extern u8 Data_080aea4c[];
+extern u8 gRom[];
 s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
 {
   s32 slot;
@@ -16,7 +18,7 @@ s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
   resource_mode = 0x80;
   if (slot != 0)
   {
-    Resource_CopyData(slot, copy_mode = resource_mode, Data_080aea4c);
+    Resource_CopyData(slot, copy_mode = resource_mode, gRom);
     icon = UiIcon_DrawWithFlags(slot, 0x40000000, first, second, third);
   }
   return icon;

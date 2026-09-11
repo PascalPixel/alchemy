@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_dispatch.h"
 
 void ObjectDispatch_SetChildField1e(struct DispatchObject *object, u32 value)

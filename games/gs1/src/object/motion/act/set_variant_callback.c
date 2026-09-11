@@ -1,7 +1,9 @@
+#include "scene.h"
+#include "abi/object/motion/act/set_variant_callback.h"
 #include "object_runtime.h"
 
 void Object_SetCallback(struct ObjectRuntime *, const void *);
-extern const u8 Data_0809ebfc[];
+extern const u8 gRom[];
 
 void Motion_SetVarCb(u32 object_id, s32 variant)
 {
@@ -13,6 +15,6 @@ void Motion_SetVarCb(u32 object_id, s32 variant)
             variant = 3;
         }
         Object_SetCallback(object,
-            Data_0809ebfc + ((3 - variant) << 7));
+            gRom + ((3 - variant) << 7));
     }
 }

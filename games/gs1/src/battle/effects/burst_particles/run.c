@@ -1,13 +1,15 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/burst_particles/run.h"
 #include "sound_ids.h"
 
 struct BurstParticleVector {
     s32 values[3];
 };
 
-extern u8 *Data_03001f30;
-void Func_08098698(void);
+extern u8 *gIw;
+
 void Audio_PlayCue(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -17,16 +19,16 @@ void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetCallback(void *, const void *);
 void WaitFrames(u32);
 void BattleFx_PrepareBufferInterpolation(void);
-extern const u8 Data_0809f11c[];
+extern const u8 gRom[];
 
 void BattleFx_RunBurstParticles(void)
 {
-    u8 *state = Data_03001f30;
+    u8 *state = gIw;
     struct BurstParticleVector position;
     struct BurstParticleVector *p;
     s32 entry_count;
 
-    Func_08098698();
+    Battle_Run();
     Audio_PlayCue(SOUND_HEAVY_IMPACT);
     p = &position;
     entry_count = 4;
@@ -46,7 +48,7 @@ void BattleFx_RunBurstParticles(void)
             p->values[2]
         );
         if (object != 0) {
-            Object_SetCallback(object, Data_0809f11c);
+            Object_SetCallback(object, gRom);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Rand() * 2) >> 16) + 2);

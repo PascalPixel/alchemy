@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Target_080b8144 {
     u8 filler0[0x30];

@@ -1,7 +1,7 @@
+#include "scene.h"
+#include "abi/object/dispatch/apply_argument_to_children.h"
 #include "object_commands.h"
 #include "object_dispatch.h"
-
-void Func_0800ba30(void *, s32);
 
 void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
 {
@@ -14,7 +14,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            Func_0800ba30(object->target.child, argument);
+            Obj_Apply(object->target.child, argument);
             break;
         case 2:
             items = object->target.children;
@@ -22,7 +22,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
             do {
                 item = *items++;
                 if (item != 0) {
-                    Func_0800ba30(item, argument);
+                    Obj_Apply(item, argument);
                 }
                 count--;
             } while (count >= 0);

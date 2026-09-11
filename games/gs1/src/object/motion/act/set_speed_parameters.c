@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void Motion_SetSpeed(u32 object_id, s32 speed_limit, s32 acceleration)

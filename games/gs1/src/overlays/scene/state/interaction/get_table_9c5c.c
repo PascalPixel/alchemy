@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 u8 *SceneData_GetTable9C5C(void)
 {

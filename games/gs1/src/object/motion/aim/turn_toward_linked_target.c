@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "fixed_math.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

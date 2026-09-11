@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/fx/spawn_particle.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct SceneParticle {
@@ -17,14 +19,10 @@ typedef struct SceneParticle {
     s16 velocity_y;
 } SceneParticle;
 
-extern SceneParticle *Func_02005de2(s32);
-extern s32 Func_02005c1a(s32, s32);
-extern SceneParticle *Func_02005e1a(s32);
-extern SceneParticle *Func_02005e26(s32);
-extern void Func_02005e84(s32, s32, s32);
-extern s32 Func_02005e3a(s32);
-extern void Func_02005d80(s32, s32);
-extern void Func_02005e8a(s32, s32);
+extern SceneParticle *Map_Run(s32);
+
+extern SceneParticle *Map_Run2(s32);
+extern SceneParticle *Map_Run3(s32);
 
 void Colosso_SpawnPeriodicParticle(void)
 {
@@ -35,13 +33,13 @@ void Colosso_SpawnPeriodicParticle(void)
     s32 kind;
     s32 count;
 
-    particle = Func_02005de2(0);
+    particle = Map_Run(0);
     count = *(s32 *)0x0200DB80 + 1;
     kind = 41;
     x = particle->x;
     y = particle->y;
     *(s32 *)0x0200DB80 = count;
-    switch (Func_02005c1a(count, 180)) {
+    switch (Map_Apply(count, 180)) {
     case 10:
         break;
     case 20:
@@ -53,15 +51,15 @@ void Colosso_SpawnPeriodicParticle(void)
     default:
         return;
     }
-    particle = Func_02005e1a(kind);
+    particle = Map_Run2(kind);
     if (particle == 0) {
         return;
     }
-    source = Func_02005e26(0);
+    source = Map_Run3(0);
     if (source != 0) {
-        Func_02005e84(kind, source->x, source->z);
+        Map_Place(kind, source->x, source->z);
     }
-    Func_02005d80(Func_02005e3a(kind), 0);
+    Map_Apply2(Map_Check(kind), 0);
     particle->state = 0;
     particle->scale_x = 0x6666;
     particle->scale_y = 0x6666;
@@ -74,5 +72,5 @@ void Colosso_SpawnPeriodicParticle(void)
     }
     particle->velocity_x = 25;
     particle->velocity_y = 128;
-    Func_02005e8a(kind, 0x0200D96C);
+    Map_Apply3(kind, 0x0200D96C);
 }

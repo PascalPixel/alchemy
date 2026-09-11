@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 

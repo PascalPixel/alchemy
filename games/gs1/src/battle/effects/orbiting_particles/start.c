@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/orbiting_particles/start.h"
 
 struct OrbitingParticleChild {
     u8 reserved_00[35];
@@ -14,12 +16,12 @@ struct OrbitingParticleState {
     s8 battle_mode;
 };
 
-extern struct OrbitingParticleState *Data_03001f30;
+extern struct OrbitingParticleState *gIw;
 void BattleFx_RunOrbitingParticles(void);
 
 void BattleFx_StartOrbitingParticles(void)
 {
-    struct OrbitingParticleState *state = Data_03001f30;
+    struct OrbitingParticleState *state = gIw;
     struct OrbitingParticleChild *child = state->child;
 
     if (child != 0) {

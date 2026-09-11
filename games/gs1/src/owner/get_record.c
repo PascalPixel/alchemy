@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/get_record.h"
 #include "runtime_interfaces.h"
 
-extern const u8 Data_08080ec8[];
+extern const u8 gRom[];
 
 const u8 *Owner_GetRecord(s32 selector)
 {
@@ -11,5 +13,5 @@ const u8 *Owner_GetRecord(s32 selector)
     if (record_index > 0xF9U) {
         record_index = 0;
     }
-    return Data_08080ec8 + record_index * 0x54;
+    return gRom + record_index * 0x54;
 }

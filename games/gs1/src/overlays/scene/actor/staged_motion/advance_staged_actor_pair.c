@@ -1,36 +1,15 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_motion/advance_staged_actor_pair.h"
 #include "staged_actor.h"
 
-extern u32 Data_0200e190[];
+extern u32 StagedActorStepTable[];
 
-extern struct StagedActor *Func_020060b8(s32 arg0);
-extern struct StagedActor *Func_02000176(s32 *arg0, struct StagedActor *arg1);
-extern struct StagedActor *Func_020001a2(s32 *arg0, struct StagedActor *arg1);
-extern struct StagedActor *Func_020001ce(s32 *arg0, struct StagedActor *arg1);
-extern s32 Func_020060e4(struct StagedActor *arg0, s32 *arg1);
-extern void Func_020060ac(struct StagedActor *arg0, s32 arg1);
-extern void Func_0200604c(s32 arg0);
-extern void Func_02006312(s32 arg0);
-extern void Func_020060f2(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02006102(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02006110(struct StagedActor *arg0);
-extern void Func_02006334(void);
-extern void Func_02006118(struct StagedActor *arg0, s32 arg1);
+extern struct StagedActor *GetStagedActor(s32 arg0);
+extern struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);
+extern struct StagedActor *FindBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
+extern struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
 
-#define StagedActorStepTable Data_0200e190
-#define GetStagedActor Func_020060b8
-#define FindNextStagedActor Func_02000176
-#define FindBlockingStagedActor Func_020001a2
-#define FindElevatedBlockingStagedActor Func_020001ce
-#define CanStartStagedActorMove Func_020060e4
-#define SetStagedActorMode Func_020060ac
-#define SelectStagedActorSlot Func_0200604c
-#define StartStagedActorEffect Func_02006312
-#define StartNextStagedActorMove Func_020060f2
-#define StartLeadStagedActorMove Func_02006102
-#define FinishStagedActorMove Func_02006110
-#define FinishStagedActorEffect Func_02006334
-#define SetStagedActorTransition Func_02006118
 void MapStagedActor_AdvancePair(void)
 {
     s32 destination[3];

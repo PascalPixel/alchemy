@@ -1,16 +1,16 @@
+#include "scene.h"
+#include "abi/event/run_object_hook_and_wait.h"
 #include "event_runtime.h"
 #include "object_lookup.h"
 
-extern struct EventValueWork Data_02000240;
+extern struct EventValueWork gCell;
 
 void WaitFrames(s32);
-void Func_0808b674(s32);
-void Func_0809177c(void);
 
 void Event_RunObjectHookAndWait(s32 object_id)
 {
-    Func_0809177c();
-    Func_0808b674(object_id);
+    Sys_Run();
+    Sys_Do(object_id);
     WaitFrames(1);
-    ObjectTable_Get(Data_02000240.value);
+    ObjectTable_Get(gCell.value);
 }

@@ -1,8 +1,9 @@
+#include "scene.h"
+#include "abi/psynergy_menu/classify_selected_psynergy.h"
 #include "psynergy_menu.h"
 #include "global_cells.h"
 
 u8 *Ability_GetData(s32 action);
-s32 Func_0808a488(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
@@ -14,7 +15,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
         (s32)(0x3fff &
               (*(struct PsynergyMenuState **)ADDR_03001F2C)
                   ->selected_psynergy));
-    if (Func_0808a488(psynergy[0x0c]) != 0) {
+    if (Sys_Check(psynergy[0x0c]) != 0) {
         return 0;
     }
     ret = 2;

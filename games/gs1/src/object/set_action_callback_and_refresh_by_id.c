@@ -1,7 +1,8 @@
+#include "scene.h"
+#include "abi/object/set_action_callback_and_refresh_by_id.h"
 #include "object_runtime.h"
 
 void Motion_SetActionCallback(struct ObjectRuntime *, s32);
-void Func_08009148(struct ObjectRuntime *);
 
 void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
 {
@@ -12,6 +13,6 @@ void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
         value |= object->action_flags;
         object->action_flags = value;
         Motion_SetActionCallback(object, action);
-        Func_08009148(object);
+        Obj_Do(object);
     }
 }

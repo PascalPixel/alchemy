@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/summon/class_is_valid.h"
 #include "global_cells.h"
-
-extern s32 Func_080c23c0(s32 index);
 
 struct Layout {
     u8 pad[4];
@@ -14,7 +14,7 @@ s32 Summon_ClassValid(s32 arg0)
     s32 retval;
     s32 i;
 
-    retval = Func_080c23c0(arg0);
+    retval = Battle_Check(arg0);
     ptr = *(struct Layout **)ADDR_03001E74;
     for (i = 0; i <= 5; i++) {
         if (ptr->field[i] != 0)

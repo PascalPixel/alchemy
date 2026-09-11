@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item_menu.h"
 #include "global_cells.h"
 

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/objects/update_shrinking_orbit.h"
 #include "object_efx.h"
 
 struct Triple08099340 {
@@ -7,13 +9,13 @@ struct Triple08099340 {
     s32 z;
 };
 
-extern s32 *Data_03001f30;
+extern s32 *gIw;
 void RotateVectorByMagnitude(s32, s32, struct Triple08099340 *);
 void Object_SetCallback(void *, void *);
 
 void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
 {
-    s32 *global = Data_03001f30;
+    s32 *global = gIw;
     struct Triple08099340 local;
     s16 value;
     s32 raw;
@@ -33,7 +35,7 @@ void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            Object_SetCallback(arg, Data_0809f0b0);
+            Object_SetCallback(arg, gRom);
         }
     }
 }

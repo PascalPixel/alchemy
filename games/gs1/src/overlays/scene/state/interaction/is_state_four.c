@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 State_IsStateFour(s32 *state)
 {

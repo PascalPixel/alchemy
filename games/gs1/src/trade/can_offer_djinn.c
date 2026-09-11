@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct OwnerTradeState {
     u8 unknown_000[0xf8];

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 ScheduleCallbackAfterFrames(s32, s32);
 s32 GameFlag_Clear(s32);

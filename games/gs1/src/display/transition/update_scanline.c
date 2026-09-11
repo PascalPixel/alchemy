@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))

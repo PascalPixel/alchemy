@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/find_tagged_slot_by_value.h"
 
-extern void *Data_03001e74;
+extern void *gBattleWork;
 
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
@@ -10,7 +12,7 @@ s32 Battle_FindTaggedSlotByValue(u32 value)
     char *base;
     s16 item;
 
-    base = Data_03001e74;
+    base = gBattleWork;
     if (value <= 7) {
         tag = 0x80;
         index = 0;

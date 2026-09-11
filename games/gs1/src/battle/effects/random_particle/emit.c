@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/random_particle/emit.h"
 #include "fixed_math.h"
 #include "object_effect.h"
 
@@ -41,13 +43,12 @@ typedef char ParticleEmitter_active_offset[
 typedef char ParticleEffectObject_child_offset[
     OBJECT_0808EEE4_OFFSET(struct ParticleEffectObject, child) == 0x50 ? 1 : -1
 ];
-#undef OBJECT_0808EEE4_OFFSET
 
 extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
 extern void Object_SetCallback(struct ParticleEffectObject *, void *);
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
-extern const u8 Data_0809e87c[];
+extern const u8 gRom[];
 
 void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
 {
@@ -72,7 +73,7 @@ void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
         s32 mask;
         u8 flags;
 
-        Object_SetCallback(object, (void *)Data_0809e87c);
+        Object_SetCallback(object, (void *)gRom);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

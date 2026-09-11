@@ -1,230 +1,170 @@
 /* Contiguous unnamed state-owner run for resource_37f. */
 
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/story/scenario_dispatch/find_slot_by_tile_position.h"
 
-extern s32 *Func_0200213e(s32);
-extern void Func_0200211c(s32);
-extern void Func_02002122(s32);
-extern void Func_02002124(s32);
-extern void Func_02002130(s32);
+extern s32 *Story_Run(s32);
 
-void Func_0200056c(void)
-{
-    s32 *rec = Func_0200213e(9);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_0200211c(0x302);
-    Func_02002122(0x303);
+    Story_Do(0x302);
+    Story_Do2(0x303);
     if (dir == 93) {
-        Func_02002124(0x303);
+        Story_Do3(0x303);
     } else if (dir == 95) {
-        Func_02002130(0x302);
+        Story_Do4(0x302);
     }
 }
 
 #include "types.h"
 
-extern s32 *Func_0200217e(s32);
-extern void Func_0200215e(s32);
-extern void Func_02002164(s32);
-extern void Func_02002168(s32);
-extern void Func_02002174(s32);
+extern s32 *Story_Run2(s32);
 
-void Func_020005ac(void)
-{
-    s32 *rec = Func_0200217e(10);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_0200215e(0x300);
-    Func_02002164(0x301);
+    Story_Do5(0x300);
+    Story_Do6(0x301);
     if (dir == 115) {
-        Func_02002168(0x300);
+        Story_Do7(0x300);
     } else if (dir == 113) {
-        Func_02002174(0x301);
+        Story_Do8(0x301);
     }
 }
 
 #include "types.h"
 
-extern s32 *Func_020021be(s32);
-extern void Func_0200219e(s32);
-extern void Func_020021a4(s32);
-extern void Func_020021a6(s32);
-extern void Func_020021b4(s32);
-extern void Func_02001de6(s32);
+extern s32 *Story_Run3(s32);
 
-void Func_020005ec(void)
-{
-    s32 *rec = Func_020021be(9);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_0200219e(0x310);
-    Func_020021a4(0x311);
+    Story_Do9(0x310);
+    Story_Do10(0x311);
     if (dir == 99) {
-        Func_020021a6(0x311);
+        Story_Do11(0x311);
     } else if (dir == 101) {
-        Func_020021b4(0x310);
+        Story_Do12(0x310);
     }
-    Func_02001de6(0);
+    Story_Do13(0);
 }
 
 #include "types.h"
 
-extern s32 *Func_02002206(s32);
-extern void Func_020021e4(s32);
-extern void Func_020021ea(s32);
-extern void Func_020021ec(s32);
-extern void Func_020021f8(s32);
-extern void Func_02001e2a(s32);
+extern s32 *Story_Run4(s32);
 
-void Func_02000634(void)
-{
-    s32 *rec = Func_02002206(10);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_020021e4(0x312);
-    Func_020021ea(0x313);
+    Story_Do14(0x312);
+    Story_Do15(0x313);
     if (dir == 103) {
-        Func_020021ec(0x313);
+        Story_Do16(0x313);
     } else if (dir == 105) {
-        Func_020021f8(0x312);
+        Story_Do17(0x312);
     }
-    Func_02001e2a(0);
+    Story_Do18(0);
 }
 
 #include "types.h"
 
-extern s32 *Func_0200224e(s32);
-extern void Func_0200222e(s32);
-extern void Func_02002234(s32);
-extern void Func_02002236(s32);
-extern void Func_02002244(s32);
-extern void Func_02001e76(s32);
+extern s32 *Story_Run5(s32);
 
-void Func_0200067c(void)
-{
-    s32 *rec = Func_0200224e(11);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_0200222e(0x314);
-    Func_02002234(0x315);
+    Story_Do19(0x314);
+    Story_Do20(0x315);
     if (dir == 107) {
-        Func_02002236(0x315);
+        Story_Do21(0x315);
     } else if (dir == 109) {
-        Func_02002244(0x314);
+        Story_Do22(0x314);
     }
-    Func_02001e76(0);
+    Story_Do23(0);
 }
 
 #include "types.h"
 
-extern s32 *Func_02002296(s32);
-extern void Func_02002274(s32);
-extern void Func_0200227a(s32);
-extern void Func_0200227c(s32);
-extern void Func_02002288(s32);
-extern void Func_02001eba(s32);
+extern s32 *Story_Run6(s32);
 
-void Func_020006c4(void)
-{
-    s32 *rec = Func_02002296(12);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_02002274(0x316);
-    Func_0200227a(0x317);
+    Story_Do24(0x316);
+    Story_Do25(0x317);
     if (dir == 111) {
-        Func_0200227c(0x317);
+        Story_Do26(0x317);
     } else if (dir == 113) {
-        Func_02002288(0x316);
+        Story_Do27(0x316);
     }
-    Func_02001eba(0);
+    Story_Do28(0);
 }
 
 #include "types.h"
 
-extern s32 *Func_020022de(s32);
-extern void Func_020022be(s32);
-extern void Func_020022c4(s32);
-extern void Func_020022c6(s32);
-extern void Func_020022d4(s32);
-extern void Func_02001f06(s32);
+extern s32 *Story_Run7(s32);
 
-void Func_0200070c(void)
-{
-    s32 *rec = Func_020022de(13);
     s32 dir;
 
     if (rec == 0) {
         return;
     }
     dir = rec[2] >> 20;
-    Func_020022be(0x318);
-    Func_020022c4(0x319);
+    Story_Do29(0x318);
+    Story_Do30(0x319);
     if (dir == 115) {
-        Func_020022c6(0x319);
+        Story_Do31(0x319);
     } else if (dir == 117) {
-        Func_020022d4(0x318);
+        Story_Do32(0x318);
     }
-    Func_02001f06(0);
+    Story_Do33(0);
 }
 
 #include "types.h"
 
-extern s32 *Func_02002326(s32);
-extern void Func_02002304(s32);
-extern void Func_0200230a(s32);
-extern void Func_0200230c(s32);
-extern void Func_02002318(s32);
-extern void Func_02001f4a(s32);
+extern s32 *Story_Run8(s32);
 
-void Func_02000754(void)
-{
-    s32 *rec = Func_02002326(14);
     s32 dir;
 
     if (rec == 0) return;
     dir = rec[2] >> 20;
-    Func_02002304(0x31a);
-    Func_0200230a(0x31b);
+    Story_Do34(0x31a);
+    Story_Do35(0x31b);
     if (dir == 119) {
-        Func_0200230c(0x31b);
+        Story_Do36(0x31b);
     } else if (dir == 121) {
-        Func_02002318(0x31a);
+        Story_Do37(0x31a);
     }
-    Func_02001f4a(0);
+    Story_Do38(0);
 }
 
 #include "types.h"
 
-extern u8 *Data_03001ebc;
+extern u8 *gWork;
 
 s32 *Actor_FindSlotByTilePosition(s32 x, s32 z)
 {
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {

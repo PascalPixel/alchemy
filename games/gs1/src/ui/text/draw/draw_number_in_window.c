@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 u8 *Text_FormatNumber(u8 *, s32, s32);
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);

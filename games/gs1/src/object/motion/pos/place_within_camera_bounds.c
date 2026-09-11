@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/motion/pos/place_within_camera_bounds.h"
 #include "global_cells.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -6,7 +8,7 @@
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Object_ResetMotion(void *);
 void WaitFrames(u32);
-void Func_08009128(void);
+
 void Object_SetPosition(void *, s32, s32, s32);
 
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
@@ -65,7 +67,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
         FIELD_AT_OFFSET(object, s32, 0x10) = position_z;
         WaitFrames(1U);
         if (FIELD_AT_OFFSET(runtime_block, s16, 0x19E) != 3) {
-            Func_08009128();
+            Obj_Run();
         }
     } else {
         Object_SetPosition(object, position_x, position_y, position_z);

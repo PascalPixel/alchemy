@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/actor/pos_msg.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct StageActor {
@@ -8,10 +10,9 @@ typedef struct StageActor {
     s32 z;
 } StageActor;
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 
-extern StageActor *Func_0200507e(s32);
-extern void Func_02004ffe(s32, s32, s32, s32);
+extern StageActor *Actor_Run(s32);
 
 void Colosso_ShowActorPositionMessage(void)
 {
@@ -21,8 +22,8 @@ void Colosso_ShowActorPositionMessage(void)
     s32 z;
     s32 message_id;
 
-    table = Data_02000240;
-    actor = Func_0200507e(*(s32 *)&table[250]);
+    table = gCell;
+    actor = Actor_Run(*(s32 *)&table[250]);
     x = actor->x >> 20;
     message_id = 23;
     z = actor->z >> 20;
@@ -30,6 +31,6 @@ void Colosso_ShowActorPositionMessage(void)
         if ((actor->attributes & 0xE000) == 0x4000) {
             message_id = 253;
         }
-        Func_02004ffe(0, x << 20, z << 20, message_id);
+        Actor_SetMode(0, x << 20, z << 20, message_id);
     }
 }

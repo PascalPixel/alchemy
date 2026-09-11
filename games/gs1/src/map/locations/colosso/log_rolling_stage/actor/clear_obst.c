@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/actor/clear_obst.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct StageActor {
@@ -11,11 +13,7 @@ typedef struct StageActor {
     u8 state;
 } StageActor;
 
-extern StageActor *Func_02005002(s32);
-extern s32 Func_02004f26(s32, s32, s32);
-extern void Func_02004f60(s32, s32, s32, s32, s32, s32);
-extern void Func_02004f7a(s32, s32, s32, s32, s32, s32);
-extern void Func_02004ffa(s32);
+extern StageActor *Actor_Run(s32);
 
 void Colosso_ActivateClearObstacleActors(void)
 {
@@ -27,17 +25,17 @@ void Colosso_ActivateClearObstacleActors(void)
     s32 z2;
 
     for (slot = 15; slot <= 17; slot++) {
-        actor = Func_02005002(slot);
-        if (Func_02004f26(0, actor->x, actor->z) == 0) {
+        actor = Actor_Run(slot);
+        if (Actor_Place(0, actor->x, actor->z) == 0) {
             actor->direction_and_kind = 2;
             actor->state = 0;
             x = actor->x >> 20;
             z = actor->z >> 20;
-            Func_02004f60(83, 13, 1, 1, x, z);
+            Actor_SetRect(83, 13, 1, 1, x, z);
             x2 = actor->x >> 20;
             z2 = actor->z >> 20;
-            Func_02004f7a(83, 13, 1, 1, x2, z2 + 52);
-            Func_02004ffa(slot + 517);
+            Actor_SetRect2(83, 13, 1, 1, x2, z2 + 52);
+            Actor_Do(slot + 517);
         }
     }
 }

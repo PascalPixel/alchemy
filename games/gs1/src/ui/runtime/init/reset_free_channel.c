@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/init/reset_free_channel.h"
 #include "gs1_edition.h"
 
 struct EntryState {
@@ -18,14 +20,12 @@ struct EntrySlot {
     u8 padding1c[0x0C];
 };
 
-extern u8 *Data_03001e8c;
-
-char Func_0801671c(void);
+extern u8 *gIw;
 
 void UiWork_ResetFreeChannel(void)
 {
     struct EntrySlot *slot =
-        (struct EntrySlot *)(Data_03001e8c + RENDER_CHANNEL_OFS);
+        (struct EntrySlot *)(gIw + RENDER_CHANNEL_OFS);
     struct EntrySlot *sel = 0;
     s32 i;
 
@@ -37,7 +37,7 @@ void UiWork_ResetFreeChannel(void)
     }
     if (sel != 0) {
         if (sel->entry != 0) {
-            Func_0801671c();
+            Ui_Run();
             sel->field06 = 0;
         }
         sel->field04 = 0;

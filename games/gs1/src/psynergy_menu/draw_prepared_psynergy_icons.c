@@ -1,14 +1,14 @@
+#include "scene.h"
+#include "abi/psynergy_menu/draw_prepared_psynergy_icons.h"
 #include "owner_state.h"
 #include "psynergy_menu.h"
 
-void Func_080a345c(void);
-
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id)
 {
-    struct PsynergyMenuState *menu = Data_03001f2c;
+    struct PsynergyMenuState *menu = gIw;
 
     OwnerState_GetFar(owner_id);
-    Func_080a345c();
+    Sys_Run();
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }
 

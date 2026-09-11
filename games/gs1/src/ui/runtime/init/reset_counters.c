@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/init/reset_counters.h"
 
 struct State_080173ac {
     u8 filler0[0xea8];
@@ -10,11 +12,11 @@ struct State_080173ac {
     u16 nine;
 };
 
-extern struct State_080173ac *Data_03001e8c;
+extern struct State_080173ac *gIw;
 
 void UiWork_ResetCounters(void)
 {
-    struct State_080173ac *state = Data_03001e8c;
+    struct State_080173ac *state = gIw;
 
     state->fifteen = 15;
     state->ten = 10;

@@ -1,38 +1,24 @@
 /* Contiguous unnamed leaf-owner run for resource_38d. */
 
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/story/flag_branched/run_actor_16_message.h"
 
-extern void Func_02002628(void);
-extern void Func_020026f6(s32);
-extern s32 Func_02002614(s32);
-extern void Func_02002706(s32);
-extern void Func_0200271e(s32, s32);
-extern void Func_02002634(s32);
-extern void Func_02002658(void);
-
-void Func_020001b4(void)
-{
-    Func_02002628();
-    Func_020026f6(0x1750);
-    if (Func_02002614(0x302) != 0) {
-        Func_02002706(0x1768);
+    Story_Do(0x1750);
+    if (Story_Check(0x302) != 0) {
+        Story_Do2(0x1768);
     }
-    Func_0200271e(15, 0);
-    Func_02002634(0x302);
-    Func_02002658();
+    Story_Apply(15, 0);
+    Story_Do3(0x302);
+    Story_Run();
 }
 
 #include "types.h"
 
-extern void Func_02002668(void);
-extern void Func_02002736(s32);
-extern s32 Func_0200275e(s32, s32);
-extern void Func_02002682(void);
-
 void Dialogue_RunActor16Message1769(void)
 {
-    Func_02002668();
-    Func_02002736(0x1769);
-    Func_0200275e(16, 0);
-    Func_02002682();
+    Story_Run2();
+    Story_Do4(0x1769);
+    Story_Apply2(16, 0);
+    Story_Run3();
 }

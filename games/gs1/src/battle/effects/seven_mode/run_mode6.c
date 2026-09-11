@@ -1,8 +1,8 @@
 #include "types.h"
-
-s32 Func_080cf8e0(s32, s32);
+#include "scene.h"
+#include "abi/battle/effects/seven_mode/run_mode6.h"
 
 void BattleFx_RunSevenModeMode6(s32 arg0)
 {
-    Func_080cf8e0(arg0, 6);
+    Battle_Apply(arg0, 6);
 }

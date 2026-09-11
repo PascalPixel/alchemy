@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void MusicPlayer_SetVolume(struct Work *work, u32 mask, u32 value);
 void MusicCommand_SetVolume(s16 volume)

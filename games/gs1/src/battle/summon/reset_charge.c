@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/summon/reset_charge.h"
 #include "gs1_edition.h"
-
-#define Summon_ResetCharge Func_080c1f50
 
 u8 *Runtime_GetObject(s32);
 

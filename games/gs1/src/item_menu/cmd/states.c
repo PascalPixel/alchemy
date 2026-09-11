@@ -1,19 +1,18 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item_menu/cmd/states.h"
 #include "item_menu.h"
 #include "item.h"
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
 
-s32 Func_080a46b4(s32 owner, s32 item);
-s32 Func_0808a490(s32 item);
-
 void ItemMenu_BuildCmd(s8 *command_states)
 {
     struct ItemMenuState *menu;
     struct ItemDefinition *item;
 
-    menu = Data_03001f2c;
+    menu = gIw;
     item = Item_Get(0x1ff & menu->selected_item);
 
     if (item->type == 0) {
@@ -24,7 +23,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
         command_states[1] = COMMAND_AVAILABLE;
     }
 
-    if (Func_080a46b4(menu->item_owner, menu->selected_item) != -1)
+    if (Sys_Apply(menu->item_owner, menu->selected_item) != -1)
         command_states[0] = COMMAND_AVAILABLE;
     else
         command_states[0] = COMMAND_DISABLED;
@@ -57,7 +56,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
         }
     }
 
-    if (Func_0808a490(menu->selected_item & 0x1ff) != 0)
+    if (Sys_Check(menu->selected_item & 0x1ff) != 0)
         command_states[0] = COMMAND_AVAILABLE;
 
     if (menu->party_count <= 1)

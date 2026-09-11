@@ -1,10 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/runtime/misc/dispatch_mode.h"
 #include "global_cells.h"
 
 typedef void (*Callback)(s32 *);
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
-void Func_08002dd8(s32);
+
 extern Callback BattleFx_CallbackTable[];
 
 void BattleFx_DispatchMode(s32 *state)
@@ -24,7 +26,7 @@ void BattleFx_DispatchMode(s32 *state)
     else
         BattleFx_CallbackTable[index - 1](state);
 
-    Func_08002dd8(40);
-    Func_08002dd8(39);
-    Func_08002dd8(41);
+    Battle_Do(40);
+    Battle_Do(39);
+    Battle_Do(41);
 }

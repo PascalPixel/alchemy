@@ -1,6 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/event/validate_packed_id.h"
 
-s32 Func_08077090(s32 group, s32 entry);
 s32 GameFlag_IsSet(s32 group);
 
 s32 Event_ValidatePackedId(u32 packed_id)
@@ -12,7 +13,7 @@ s32 Event_ValidatePackedId(u32 packed_id)
         return -1;
     if (GameFlag_IsSet(group) == 0)
         return -2;
-    if (Func_08077090(group, entry) == 0)
+    if (Sys_Apply(group, entry) == 0)
         return -3;
     return 0;
 }

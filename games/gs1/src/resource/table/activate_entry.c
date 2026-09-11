@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 extern u8 ResourceTableEntries[];
 s32 Resource_ClearSlotReferences(s32 resource_id);

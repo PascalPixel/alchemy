@@ -1,17 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_placement/reset_motion_if_blocked_ahead.h"
 #include "staged_actor_probe_state.h"
 
-extern s32 Data_02009554[];
-extern s32 Data_02009594[];
-extern struct StagedActor *Func_02000342(
+extern s32 StagedActorDirectionSteps[];
+extern s32 StagedActorProbeValues[];
+extern struct StagedActor *FindStagedActorAtProbe(
     struct StagedActorProbePoint *, struct StagedActor *);
-extern s32 Func_0200171a(
-    struct StagedActor *, struct StagedActorProbePoint *);
-
-#define StagedActorDirectionSteps Data_02009554
-#define StagedActorProbeValues Data_02009594
-#define FindStagedActorAtProbe Func_02000342
-#define CheckStagedActorProbePosition Func_0200171a
 
 s32 StagedActor_ResetMotionIfBlockedAhead(struct StagedActor *actor)
 {

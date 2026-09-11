@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/command/execute_selected_action.h"
 #include "battle_effect_runtime.h"
 
 struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
@@ -14,43 +16,42 @@ struct BattleCommandRuntime {
  * battle_effect_runtime.h; the local view of the same storage is obtained by
  * a cast below.
  */
-extern struct BattleRuntime *Data_03001ebc;
+extern struct BattleRuntime *gWork;
 extern u8 Value_00000920;
 /*
  * Returns u8 * to match the prototype shared with the other callers; the raw
  * pointer is cast to the local action-definition view below.
  */
-u8 *Func_08077080(s32);
+u8 *Battle_Run(s32);
 /*
  * Returns void * because callers view the same record through different
  * structs; each casts the shared pointer to its own view locally.
  */
-void *Func_08077008(s32);
-void *Func_0808ba1c(s32);
-void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
-void Func_08015120(s32, s32); void Func_08015040(s32, s32);
-s32 Func_08091d84(s32); void Func_08015140(void);
+void *Battle_Run2(s32);
+void *Battle_Run3(s32);
+void Battle_Run4(void); void Battle_Run5(s32); s32 Battle_Run6(s32);
+void Battle_Run7(s32, s32); void Battle_Run8(s32, s32);
+s32 Battle_Run9(s32); void Battle_Run10(void);
 /* Takes an s32 to match the definition of the packed effect argument. */
-s32 Func_0808e5d8(s32);
-void Func_08077120(s32, s32);
+
 /*
  * Matches the shared prototype: s32-returning, with a void * out parameter.
  * Results are cast back to struct BattleTargetCandidate * here.
  */
-s32 Func_0808e4b4(s32, s32, void *);
-void Func_080770c8(s32); s32 Func_0808df1c(s32, s32); void Func_0808b8e8(void);
-void Func_08096fb0(s32, s32); void Func_080970f8(s32, s32); void Func_0809728c(void);
+
+void Battle_Run11(s32); s32 Battle_Run12(s32, s32); void Battle_Run13(void);
+void Battle_Run14(s32, s32); void Battle_Run15(s32, s32); void Battle_Run16(void);
 /*
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
  */
-s32 Func_08096b28(void *, s32, s32); void Func_08096960(void); void Func_08096810(void);
-void Func_08097174(void); void Func_08096ab0(void); void Func_08097194(void); void Func_0808b98c(void);
+s32 Battle_Run17(void *, s32, s32); void Battle_Run18(void); void Battle_Run19(void);
+void Battle_Run20(void); void Battle_Run21(void); void Battle_Run22(void); void Battle_Run23(void);
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
     s32 actionId = encodedAction & 0x3ff;
-    struct BattleCommandRuntime *runtime = (struct BattleCommandRuntime *)Data_03001ebc;
+    struct BattleCommandRuntime *runtime = (struct BattleCommandRuntime *)gWork;
     struct BattleTargetCandidate *primary;
     struct BattleTargetCandidate *secondary;
     struct BattleTargetCandidate *tertiary;
@@ -61,32 +62,32 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     s32 cost;
     s32 status;
 
-    targetMode = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->target_mode;
+    targetMode = ((struct BattleActionDefinition *)(void *)Battle_Run(actionId))->target_mode;
     actor = (encodedAction >> 10) & 15;
-    Func_0808ba1c(Data_02000240.object_id);
+    Battle_Run3(gCell.object_id);
     specialResult = 0;
-    Func_08091660();
-    Func_080770d0(0x145);
+    Battle_Run4();
+    Battle_Run5(0x145);
     if (actor == 15) actor = 0;
 
-    if (Func_080770c0(0x17e)) {
-        Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91f, 1);
+    if (Battle_Run6(0x17e)) {
+        Battle_Run7(actor, 1); Battle_Run7(actionId, 4); Battle_Run8(0x91f, 1);
         return 0;
     }
     if (runtime->battle_mode == 3 && actionId == 0x90) {
-        Func_08015120(actor, 1); Func_08015120(0x90, 4); Func_08015040(0x91f, 1);
+        Battle_Run7(actor, 1); Battle_Run7(0x90, 4); Battle_Run8(0x91f, 1);
         return 0;
     }
     if (actionId == 0x95) {
-        if (Func_080770c0(0x144)) {
-            Func_08015120(actor, 1); Func_08015120(0x95, 4); Func_08015040(0x921, 1);
+        if (Battle_Run6(0x144)) {
+            Battle_Run7(actor, 1); Battle_Run7(0x95, 4); Battle_Run8(0x921, 1);
             return 0;
         }
-        Func_08015120(0x95, 4); Func_08015040((s32)&Value_00000920, 13);
-        status = Func_08091d84(1); Func_08015140();
+        Battle_Run7(0x95, 4); Battle_Run8((s32)&Value_00000920, 13);
+        status = Battle_Run9(1); Battle_Run10();
         if (status != 0) return 0;
         {
-            u16 *work = (u16 *)&Data_02000240;
+            u16 *work = (u16 *)&gCell;
             s32 a, b;
             a = work[288];
             work[224] = a;
@@ -96,41 +97,41 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         runtime->result_code = 999;
         specialResult = 1;
     }
-    if (encodedAction & 0x2000) return Func_0808e5d8(encodedAction);
+    if (encodedAction & 0x2000) return Battle_Check(encodedAction);
 
     if (actor <= 7) {
-        cost = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->pp_cost;
-        if (((struct BattleUnitRecord *)Func_08077008(actor))->pp < cost) {
-            Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91e, 1);
+        cost = ((struct BattleActionDefinition *)(void *)Battle_Run(actionId))->pp_cost;
+        if (((struct BattleUnitRecord *)Battle_Run2(actor))->pp < cost) {
+            Battle_Run7(actor, 1); Battle_Run7(actionId, 4); Battle_Run8(0x91e, 1);
             if (specialResult)runtime->result_code = 0;
             return 0;
         }
-        Func_08077120(actor, -cost);
+        Battle_Apply(actor, -cost);
     }
 
-    primary = (struct BattleTargetCandidate *)Func_0808e4b4(0x10000005, targetMode, &targetId);
-    secondary = (struct BattleTargetCandidate *)Func_0808e4b4(5, targetMode, &targetId);
-    tertiary = (struct BattleTargetCandidate *)Func_0808e4b4(0x50000005, targetMode, &targetId);
+    primary = (struct BattleTargetCandidate *)Battle_Place(0x10000005, targetMode, &targetId);
+    secondary = (struct BattleTargetCandidate *)Battle_Place(5, targetMode, &targetId);
+    tertiary = (struct BattleTargetCandidate *)Battle_Place(0x50000005, targetMode, &targetId);
     targetId = -1;
-    Func_080770c8(0x140); Func_080770c8(0x141);
+    Battle_Run11(0x140); Battle_Run11(0x141);
     if (primary || secondary || tertiary) {
-        targetId = Func_0808df1c(Data_02000240.object_id, targetMode);
+        targetId = Battle_Run12(gCell.object_id, targetMode);
         if (secondary && (secondary->flags & 0x400)) {
-            Func_080770d0(0x140); Func_080770d0(0x141);
+            Battle_Run5(0x140); Battle_Run5(0x141);
         }
-    } else Func_080770d0(0x141);
+    } else Battle_Run5(0x141);
 
-    if (runtime->battle_mode == 3) Func_0808b8e8();
-    Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
-    Func_080970f8(Data_02000240.object_id, targetId); Func_0809728c();
-    Func_08096b28(primary, actor, targetId);
-    if (Func_080770c0(0x140)) {
-        if (Func_080770c0(0x141)) Func_08096960(); else Func_08096810();
+    if (runtime->battle_mode == 3) Battle_Run13();
+    Battle_Run14(actionId, 0); runtime->resolving_action = 1;
+    Battle_Run15(gCell.object_id, targetId); Battle_Run16();
+    Battle_Run17(primary, actor, targetId);
+    if (Battle_Run6(0x140)) {
+        if (Battle_Run6(0x141)) Battle_Run18(); else Battle_Run19();
     }
-    Func_08097174(); Func_08096b28(secondary, actor, targetId);
-    if (Func_080770c0(0x140)) Func_08096ab0();
-    Func_080770d0(0x140); Func_080770d0(0x141); runtime->resolving_action = 0;
-    Func_08097194();
-    if (runtime->battle_mode == 3) Func_0808b98c();
+    Battle_Run20(); Battle_Run17(secondary, actor, targetId);
+    if (Battle_Run6(0x140)) Battle_Run21();
+    Battle_Run5(0x140); Battle_Run5(0x141); runtime->resolving_action = 0;
+    Battle_Run22();
+    if (runtime->battle_mode == 3) Battle_Run23();
     return 0;
 }

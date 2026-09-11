@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/command/update_toggle_mask.h"
 
-extern u8 Data_02003040[];
+extern u8 gOv[];
 
 void AudioCommand_UpdateToggleMask(u32 command)
 {
@@ -8,7 +10,7 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
     command &= 0x7f;
     if (toggle != 0)
-        Data_02003040[0] ^= command;
+        gOv[0] ^= command;
     else
-        Data_02003040[0] = command;
+        gOv[0] = command;
 }

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "../../../include/types.h"
 #include "../../../include/battle_actor.h"
 #include "../../../include/battle_calc.h"
@@ -555,7 +556,6 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
         if (i == 4)
             affinity = 1;
 #ifdef BATTLE_AFFINITY_CARRIER
-#undef i
 #endif
     }
 
@@ -1321,7 +1321,6 @@ dealt = target->hp - cur;
         BattleEv_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
         target->defense_modifier_turns = 7;
         break;
-
 
     case EFX_REVIVE_FULL:
         if (target->hp != 0)

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);

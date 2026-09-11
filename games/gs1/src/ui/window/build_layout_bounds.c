@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/window/build_layout_bounds.h"
 #include "global_cells.h"
 #include "gs1_edition.h"
 
@@ -11,9 +13,6 @@ struct State_0801eea0 {
     u16 flags;
 };
 
-extern s32 Func_080b50c8(s32);
-extern s32 Func_08077148(void);
-
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
     void **slot = (void **)ADDR_03001E90;
@@ -25,10 +24,10 @@ void UiWindow_BuildLayoutBounds(s32 flags)
     s32 left;
 
     if (base[RENDER_MENU_STATE_OFS] != 0) {
-        n = Func_080b50c8(0);
+        n = Ui_Check(0);
         height = 3;
     } else {
-        n = Func_08077148();
+        n = Ui_Check2();
     }
     if (flags & 1)
         height++;

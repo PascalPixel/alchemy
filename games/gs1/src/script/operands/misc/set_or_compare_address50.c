@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_operands.h"
 
 void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s32 value)

@@ -1,6 +1,6 @@
 #include "types.h"
+#include "scene.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Object_Destroy(s32);
 void *GetBattleObjectSlot(s32 arg0);

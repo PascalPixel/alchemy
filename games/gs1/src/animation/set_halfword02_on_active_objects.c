@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 AnimationObjects_SetHalfword02OnActive(u8 *grp, s32 val)
 {

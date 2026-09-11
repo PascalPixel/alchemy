@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/orbiting_particles/update_return.h"
 #include "fixed_math.h"
 #include "effect_0809b11c.h"
 
@@ -57,5 +59,5 @@ next_state:
     }
 
     if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
-        Func_0809bb34(effect);
+        Battle_Run(effect);
 }

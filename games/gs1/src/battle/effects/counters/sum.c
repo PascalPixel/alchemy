@@ -1,8 +1,10 @@
+#include "scene.h"
+#include "abi/battle/effects/counters/sum.h"
 #include "battle_effect_counters.h"
 
 s32 BattleFx_SumCounters(void)
 {
-    struct BattleEffectCounterState *state = Data_03001ebc;
+    struct BattleEffectCounterState *state = gWork;
 
     return state->counters[0] + state->counters[1] + state->counters[2]
          + state->counters[3] + state->counters[4] + state->counters[5]

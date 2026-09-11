@@ -1,28 +1,24 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/actor/set_modes.h"
 
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 void WaitFrames(s32);
-void Func_0800387c(u32, u32);
-s32 Func_080041d8(u32, s32);
-void Func_08004278(u32);
-u32 Func_080b6c08(s32, s16 *);
-void Func_080c0f98(s32, s32);
-void Func_080c1054(void);
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
     s16 active_actors[14];
-    u8 *battle = Data_03001e74;
+    u8 *battle = gBattleWork;
     u32 count;
     u32 i;
     volatile u16 *blend_y;
 
     if (mode == 0) {
-        Func_08004278(0x080c1085);
+        Actor_Do(0x080c1085);
         *(volatile u16 *)0x04000054 = mode;
-        Func_080c1054();
+        Actor_Run();
         WaitFrames(1);
-        Func_0800387c(0x04000050, 0);
+        Actor_Apply(0x04000050, 0);
     }
     if (battle != 0 && mode != 0) {
         u32 zero = 0;
@@ -38,9 +34,9 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             blend_y[-1] = sixteen;
         } while (0);
 
-        count = Func_080b6c08(3, active_actors);
+        count = Actor_Apply2(3, active_actors);
         for (i = 0; i < count; i++)
-            Func_080c0f98(active_actors[i], mode & 1);
+            Actor_Apply3(active_actors[i], mode & 1);
 
         if (actors != 0) {
             u32 actor = *actors;
@@ -48,7 +44,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             actors++;
             if (actor != 0xff) {
                 do {
-                    Func_080c0f98(actor, (mode & 1) ^ 1);
+                    Actor_Apply3(actor, (mode & 1) ^ 1);
                     i++;
                     if (i > 13)
                         break;
@@ -57,7 +53,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             }
         }
         WaitFrames(1);
-        Func_0800387c(0x04000050, 0);
-        Func_080041d8(0x080c1085, 0x480);
+        Actor_Apply(0x04000050, 0);
+        Actor_Apply4(0x080c1085, 0x480);
     }
 }

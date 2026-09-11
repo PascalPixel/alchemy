@@ -1,5 +1,7 @@
 /* Signed division runs from IWRAM through the register-call veneer. */
 #include "types.h"
+#include "scene.h"
+#include "abi/display/transition/update.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE)
@@ -27,7 +29,7 @@ struct DisplayTransitionRegisters {
 };
 
 extern s32 ScheduleCallback(void (*)(void));
-extern void Func_0800307c(s32, s32, s32);
+
 typedef s32 (*SignedDivide)(s32, s32);
 
 void DisplayTransition_Update(void)
@@ -45,7 +47,7 @@ void DisplayTransition_Update(void)
         if (*step >= *duration) {
             *duration = 0;
             ScheduleCallback(DisplayTransition_Update);
-            Func_0800307c(1, 0, 0);
+            Sys_Place(1, 0, 0);
             return;
         } else {
             s32 delta = state->transition_end - state->transition_start;

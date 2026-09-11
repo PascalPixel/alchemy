@@ -1,5 +1,7 @@
 #include "b5_context.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/motion/set_approach_motion.h"
 #include "motion_object.h"
 
 s32 FixedPoint_Ratio(s32, s32);
@@ -9,8 +11,8 @@ void Object_SetMode(struct MotionObject *, s32);
 
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor)
 {
-    struct B5Context *first_context = Func_080b5098(first);
-    struct B5Context *second_context = Func_080b5098(second);
+    struct B5Context *first_context = Battle_Run(first);
+    struct B5Context *second_context = Battle_Run(second);
     struct MotionObject *object = first_context->object;
     struct MotionObject *target = second_context->object;
     s32 scale = 80;

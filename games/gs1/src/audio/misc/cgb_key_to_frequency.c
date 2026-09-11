@@ -1,9 +1,11 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/misc/cgb_key_to_frequency.h"
 
-extern u8 Data_080fb92c[];
-extern s16 Data_080fb9b0[];
-extern u8 Data_080fb9c8[];
+extern u8 gRom[];
+extern s16 gRom2[];
+extern u8 gRom3[];
 
 s32 Cgb_KeyToFrequency(
     s32 channel_type_arg,
@@ -22,7 +24,7 @@ s32 Cgb_KeyToFrequency(
             if (key > 59)
                 key = 59;
         }
-        return Data_080fb9c8[key];
+        return gRom3[key];
     }
 
     if (key <= 35) {
@@ -37,11 +39,11 @@ s32 Cgb_KeyToFrequency(
     }
 
     {
-        s32 lower = Data_080fb92c[key];
+        s32 lower = gRom[key];
         s32 upper;
-        lower = Data_080fb9b0[lower & 15] >> (lower >> 4);
-        upper = Data_080fb92c[key + 1];
-        upper = Data_080fb9b0[upper & 15] >> (upper >> 4);
+        lower = gRom2[lower & 15] >> (lower >> 4);
+        upper = gRom[key + 1];
+        upper = gRom2[upper & 15] >> (upper >> 4);
         return lower + ((pitch *(upper - lower)) >> 8) + 0x800;
     }
 }

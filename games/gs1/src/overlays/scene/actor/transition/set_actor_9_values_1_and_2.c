@@ -1,10 +1,9 @@
 #include "types.h"
-
-extern void Func_02003210(s32, s32);
-extern void Func_02003218(s32, s32);
+#include "scene.h"
+#include "abi/overlays/scene/actor/transition/set_actor_9_values_1_and_2.h"
 
 void Scene_SetActor9Values1And2(void)
 {
-    Func_02003210(9, 1);
-    Func_02003218(9, 2);
+    Actor_Apply(9, 1);
+    Actor_Apply2(9, 2);
 }

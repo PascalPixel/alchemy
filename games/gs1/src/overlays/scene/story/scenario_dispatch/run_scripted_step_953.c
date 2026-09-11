@@ -1,12 +1,10 @@
 #include "types.h"
-
-extern void Func_0200365c(void);
-extern void Func_0200363c(s32, s32);
-extern void Func_02003670(void);
+#include "scene.h"
+#include "abi/overlays/scene/story/scenario_dispatch/run_scripted_step_953.h"
 
 void Scene_RunScriptedStep953(void)
 {
-    Func_0200365c();
-    Func_0200363c(0x953, 1);
-    Func_02003670();
+    Story_Run();
+    Story_Apply(0x953, 1);
+    Story_Run2();
 }

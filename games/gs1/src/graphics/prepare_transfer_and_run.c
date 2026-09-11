@@ -1,13 +1,13 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/graphics/prepare_transfer_and_run.h"
 
 typedef void (*WorkFunc)(void *);
-
-void Func_08004fe4(void *, void *, void *);
 
 void Graphics_PrepareTransferAndRun(void *src, void *dst)
 {
     u8 work[48];
 
-    Func_08004fe4(src, dst, work);
+    Sys_Place(src, dst, work);
     ((WorkFunc)0x030002c0)(work);
 }

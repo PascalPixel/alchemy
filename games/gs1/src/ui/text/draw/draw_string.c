@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/draw/draw_string.h"
 
-s32 Func_08002df0(s16 *);
 s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
-s32 Func_08017aa4(s16 *, s32, s32, s32);
 
 void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -21,6 +21,6 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
         } while (*input != 0);
     }
     *output = 0;
-    Func_08017aa4(buffer, arg1, arg2, arg3);
-    Func_08002df0(buffer);
+    Ui_SetMode(buffer, arg1, arg2, arg3);
+    Ui_Check(buffer);
 }

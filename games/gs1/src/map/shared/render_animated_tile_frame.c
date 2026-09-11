@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/render_animated_tile_frame.h"
 #include "global_cells.h"
 
 struct MapBase {
@@ -6,7 +8,7 @@ struct MapBase {
     u16 offset;
 };
 
-extern u8 Data_0801314c[];
+extern u8 gRom[];
 
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 {
@@ -24,7 +26,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     row = 0;
 
     if (row < (u32)count) {
-        table = Data_0801314c;
+        table = gRom;
         high_mask = 0xFF00;
         index_mask = 0x3F;
         offset_mask = 0x3E;

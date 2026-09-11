@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/act/run_approach.h"
 #include "battle_msg.h"
 #include "battle_motion.h"
 
@@ -26,10 +28,10 @@ struct ObjectSlot_080b8b48 {
     void *object;
 };
 
-extern s32 *Data_03001f00;
+extern s32 *gIw;
 
 void WaitFrames(u32);
-s32 Func_080b8808(u32);
+
 void Runtime_GetObject(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -38,27 +40,27 @@ void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWait(s32);
 struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
 void Object_SetAction(void *, s32);
-void Func_080c9008(struct Work_080b8b48 *);
+
 void Actor_ResetMotionAtAnchor(s32);
 
 s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
 {
     struct Work_080b8b48 work;
 
-    if (*Data_03001f00 == 0x2000) {
-        *Data_03001f00 = 0x2000;
+    if (*gIw == 0x2000) {
+        *gIw = 0x2000;
         WaitFrames(10);
     } else {
-        *Data_03001f00 = 0x2000;
+        *gIw = 0x2000;
         WaitFrames(30);
     }
 
     work.primary_id = input->primary_id;
-    if (Func_080b8808(work.primary_id) < 0)
+    if (Battle_Check(work.primary_id) < 0)
         return -1;
 
     work.secondary_id = input->secondary_id;
-    if (Func_080b8808(work.secondary_id) < 0)
+    if (Battle_Check(work.secondary_id) < 0)
         return -1;
 
     Runtime_GetObject(work.primary_id);
@@ -78,7 +80,7 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
     work.unknown1c = 0;
 
     WaitFrames(4);
-    Func_080c9008(&work);
+    Battle_Do(&work);
     Actor_ResetMotionAtAnchor(work.secondary_id);
     Actor_ResetMotionAtAnchor(work.primary_id);
     return 0;

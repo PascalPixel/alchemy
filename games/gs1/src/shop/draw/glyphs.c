@@ -1,14 +1,16 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/shop/draw/glyphs.h"
 
-extern u16 Data_080b413c[];
-extern u8 Data_080b3d40[];
+extern u16 gRom[];
+extern u8 gRom2[];
 
 /* 4行分の非0バイトを指定配置へ順にコピーする。 */
 void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
 {
-    u8 *src = Data_080b3d40 + ((u32)arg0 << 5);
+    u8 *src = gRom2 + ((u32)arg0 << 5);
     u8 *dst =
-        (u8 *)((u32)arg1 + Data_080b413c[arg2] + 2);
+        (u8 *)((u32)arg1 + gRom[arg2] + 2);
     s32 count = 3;
 
     do {

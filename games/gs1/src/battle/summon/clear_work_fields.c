@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/summon/clear_work_fields.h"
 #include "global_cells.h"
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 
 union Word {
     s32 value;
@@ -16,7 +18,7 @@ void Summon_ClearWorkFields(void)
 
     base = *(u8 **)ADDR_03001E74;
     words = (union Word *)(base + 0x530);
-    Data_02000240[286] = 0;
+    gCell[286] = 0;
     words[0].value = 0;
     words[1].value = 0;
     words[2].value = 0;

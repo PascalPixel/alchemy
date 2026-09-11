@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void BattleFx_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
 void BattleFx_StartBufferInterpolation(s32 value);

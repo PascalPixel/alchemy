@@ -1,12 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/runtime/misc/clear_work_state_and_wait_frame.h"
 
 s32 WaitFrames(s32);
-s32 Func_0801a66c();
-void Func_0801a778(void);
 
 void Ui_ClearWorkStateAndWaitFrame(void)
 {
-    Func_0801a66c();
-    Func_0801a778();
+    Ui_Check();
+    Ui_Run();
     WaitFrames(1);
 }

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_interpreter.h"
 
 s32 GameFlag_IsSet(s32 arg0);

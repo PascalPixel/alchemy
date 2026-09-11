@@ -1,6 +1,6 @@
+#include "scene.h"
+#include "abi/script/interpreter/pos/set_reset.h"
 #include "script_interpreter.h"
-
-void Func_0800d130(struct ScriptInterpreter *, s32, s32, s32);
 
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
 {
@@ -16,7 +16,7 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Func_0800d130(interpreter, first, second, third);
+    Script_SetMode(interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }

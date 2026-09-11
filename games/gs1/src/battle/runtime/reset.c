@@ -1,20 +1,21 @@
+#include "scene.h"
+#include "abi/battle/runtime/reset.h"
 #include "battle_effect_runtime.h"
 
-void Func_08015208(void);
 void Battle_InitializeRenderObject(void);
-void Func_0808e118(void);
+
 void ScheduleCallbackAfterFrames(const void *, s32);
 void Battle_UpdateModeFromShoulderButtons(void);
 u32 GameFlag_Clear(s32);
 
 void Battle_Reset(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = gWork;
 
-    Func_08015208();
+    Battle_Run();
     Battle_InitializeRenderObject();
     if (runtime->unknown_cb6 != 0) {
-        Func_0808e118();
+        Battle_Run2();
     }
     {
         s32 zero = 0;
@@ -27,7 +28,7 @@ void Battle_Reset(void)
         runtime->unknown_1de = -1;
         ScheduleCallbackAfterFrames((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
         GameFlag_Clear(0x132);
-        runtime->object_id = Data_02000240.object_id;
+        runtime->object_id = gCell.object_id;
         runtime->unknown_1f8 = zero;
     }
 }

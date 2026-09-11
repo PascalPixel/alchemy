@@ -1,10 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/owner/action/check_level_threshold.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_080792c4();
 
 s32 OwnerAction_CheckLevelThreshold(void)
 {
-    return Func_080792c4();
+    return Sys_Check();
 }

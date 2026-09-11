@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/obj/cfg_secondary.h"
 #include "colosso_log_rolling_stage.h"
 
 typedef struct SecondaryStageObject {
@@ -12,45 +14,39 @@ typedef struct SecondaryStageObject {
     u8 state;
 } SecondaryStageObject;
 
-extern s16 Data_02000240[];
+extern s16 gCell[];
 
-void Func_02004e8a();
-SecondaryStageObject *Func_02004e38();
-void Func_02004d50();
-SecondaryStageObject *Func_02004e5e();
-void Func_02004d6e();
-void Func_02004ec4();
-void Func_02004db8();
-void Func_02004cbe();
-void Func_02004e44();
+SecondaryStageObject *Map_Run();
+
+SecondaryStageObject *Map_Run2();
 
 void Colosso_ConfigureSecondaryObjects(void)
 {
     s16 *table;
     SecondaryStageObject *object;
 
-    table = Data_02000240;
+    table = gCell;
 
-    Func_02004e8a(*(s32 *)&table[250], 1);
+    Map_Run3(*(s32 *)&table[250], 1);
 
-    object = Func_02004e38(11);
+    object = Map_Run(11);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
-    Func_02004d50(object, object->x, 0x40000, object->z);
+    Map_Run4(object, object->x, 0x40000, object->z);
 
-    object = Func_02004e5e(10);
+    object = Map_Run2(10);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
-    Func_02004d6e(object, object->x, 0x200000, object->z);
+    Map_Run5(object, object->x, 0x200000, object->z);
 
-    Func_02004ec4(10);
+    Map_Run6(10);
     {
         s32 stack_first = 9;
         s32 stack_second = 12;
-        Func_02004db8(0, 25, 1, 1, stack_first, stack_second);
+        Map_Run7(0, 25, 1, 1, stack_first, stack_second);
     }
-    Func_02004cbe(2);
-    Func_02004e44(0x367);
+    Map_Run8(2);
+    Map_Run9(0x367);
 }

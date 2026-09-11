@@ -1,10 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/map/shared/apply_work_origin_and_span.h"
 #include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_08010000();
-s32 Func_08010230(s32, s32);
 
 void Map_ApplyWorkOriginAndSpan(void)
 {
@@ -22,6 +20,6 @@ void Map_ApplyWorkOriginAndSpan(void)
         second = *p++;
         third = *p;
     }
-    Func_08010230(first, (s32)((u32)third - (u32)second));
-    Func_08010000();
+    Map_Apply(first, (s32)((u32)third - (u32)second));
+    Map_Check();
 }

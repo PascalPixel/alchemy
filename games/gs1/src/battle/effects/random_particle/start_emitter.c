@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/random_particle/start_emitter.h"
 
 struct EfxSrc {
     u8 pad0[6];
@@ -42,9 +44,9 @@ struct EfxObj {
     void (*proc)(void);
 };
 
-extern u8 *Data_03001ebc;
-extern const u8 Data_0809e6c0[];
-extern const u8 Data_0809e87c[];
+extern u8 *EfxWork;
+extern const u8 EmitterData[];
+extern const u8 ParticleData[];
 
 void RotateVectorByMagnitude(s32 mag, s32 ang, struct EfxPos *pos);
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -58,10 +60,6 @@ void Runtime_ReleaseHeapBlock(s32 kind);
 void EmitRandomParticleEffect(void);
 void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
-#define EfxWork Data_03001ebc
-#define EmitterData Data_0809e6c0
-#define ParticleData Data_0809e87c
-#define EfxPool (*(struct EfxObj **)((u8 *)&Data_03001ebc - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 
 struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)

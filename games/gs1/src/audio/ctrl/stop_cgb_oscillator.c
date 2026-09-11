@@ -3,6 +3,7 @@
 // Register addresses and control flow were checked against this ROM region.
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
 
 void Cgb_StopOscillator(u8 channel_id)
 {

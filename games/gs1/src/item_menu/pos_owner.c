@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/item_menu/pos_owner.h"
 #include "m7_interfaces.h"
 
 s32 FixedPoint_Ratio(s32, s32);
@@ -21,5 +23,5 @@ void ItemMenu_PosOwner(struct Object080a1c **slot, s32 index,
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =
         (s16)((Modulo(wrapped_index, phase) * 0x18) + origin_x);
-    Func_080a17c4(object);
+    Sys_Run(object);
 }

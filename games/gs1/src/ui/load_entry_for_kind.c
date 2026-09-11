@@ -1,6 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/load_entry_for_kind.h"
 
-s32 Func_0801a4fc(u32, s32, s32 *, s32 *, s32, s32);
 s32 GameFlag_IsSet(s32);
 
 s32 Ui_LoadEntryForKind(u32 kind, s32 value)
@@ -24,6 +25,6 @@ s32 Ui_LoadEntryForKind(u32 kind, s32 value)
             break;
         }
     }
-    Func_0801a4fc(no, 0, &cur, &out, 0xE, 1);
+    Ui_SetRect(no, 0, &cur, &out, 0xE, 1);
     return out;
 }

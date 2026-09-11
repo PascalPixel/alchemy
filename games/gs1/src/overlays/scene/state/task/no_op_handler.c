@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /*
  * resource_3bb owner at 0x0200004c: two bytes, `bx lr', with no prologue and

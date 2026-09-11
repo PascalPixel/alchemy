@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/party/list_active_owners.h"
 #include "party_state.h"
 
 s32 Party_ListActiveOwners(s16 *owners)
@@ -11,7 +13,7 @@ s32 Party_ListActiveOwners(s16 *owners)
         index = 0;
         if (count != 0) {
             do {
-                *owners++ = Data_02000240.active_owners[index];
+                *owners++ = gCell.active_owners[index];
                 index++;
             } while (index != count);
         }

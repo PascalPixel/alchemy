@@ -1,20 +1,21 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/release_entry_objects.h"
 
-extern u8 *Data_03001f2c;
-s32 Func_08077158(void *);
-void Func_08009038(void *);
+extern u8 *gIw;
+
 void ScheduleCallback(void (*callback)(void));
-extern u8 Data_080a19a1;
+extern u8 gRom;
 
 void Menu_ReleaseEntryObjects(void)
 {
     u32 buf[7];
-    u8 *base = Data_03001f2c;
+    u8 *base = gIw;
     s32 count;
     void **p;
     s32 i;
 
-    count = (u16)Func_08077158(buf);
+    count = (u16)Menu_Check(buf);
     if (count != 0) {
         p = (void **)(base + 276);
         i = count;
@@ -22,9 +23,9 @@ void Menu_ReleaseEntryObjects(void)
             void *entry = *p++;
 
             if (entry != 0) {
-                Func_08009038(entry);
+                Menu_Do(entry);
             }
         } while (--i != 0);
     }
-    ScheduleCallback((void (*)(void))&Data_080a19a1);
+    ScheduleCallback((void (*)(void))&gRom);
 }

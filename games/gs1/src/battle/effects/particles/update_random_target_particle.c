@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/effects/particles/update_random_target_particle.h"
 #include "effect_0809b11c.h"
 #include "fixed_math.h"
 
@@ -12,7 +14,7 @@ struct EffectPositionSource {
     struct EffectVector position;
 };
 
-extern s32 Data_02000240[];
+extern s32 gCell[];
 
 struct EffectPositionSource *Object_GetById(s32 id);
 u32 Random16(void);
@@ -30,7 +32,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     s8 *state_pointer;
     s32 state;
 
-    source = Object_GetById(Data_02000240[125]);
+    source = Object_GetById(gCell[125]);
     state_pointer = &effect->state;
     state = *state_pointer;
 
@@ -77,6 +79,6 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
             effect->callback_delay = 6;
         }
     } else if (state == 3) {
-        Func_0809bb34(effect);
+        Battle_Run(effect);
     }
 }

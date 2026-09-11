@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "game_flags.h"
 
 void GameFlag_ClearBit(s32 flag)

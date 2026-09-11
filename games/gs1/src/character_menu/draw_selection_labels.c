@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/character_menu/draw_selection_labels.h"
 
 void UiText_DrawMessageAt(s32, s32, s32, s32);
-extern u8 Data_00000bdc[][2];
-extern u8 Data_00000bda[];
+extern u8 gVal[][2];
+extern u8 gVal2[];
 
 void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     const u8 *entries)
@@ -13,7 +15,7 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     do {
         if (entries[index] != 0) {
             if (selected == count) {
-                s32 message = (s32)Data_00000bdc[index];
+                s32 message = (s32)gVal[index];
                 UiText_DrawMessageAt(message, target, 0, -1);
                 UiText_DrawMessageAt(message + 1, target, 0, 15);
             }
@@ -23,5 +25,5 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     } while (index <= 4);
 
     if (count == 0)
-        UiText_DrawMessageAt((s32)Data_00000bda, target, 0, 0);
+        UiText_DrawMessageAt((s32)gVal2, target, 0, 0);
 }

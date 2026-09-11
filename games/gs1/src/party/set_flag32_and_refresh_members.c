@@ -1,6 +1,7 @@
+#include "scene.h"
+#include "abi/party/set_flag32_and_refresh_members.h"
 #include "game_flags.h"
 
-s32 Func_08077428(s32);
 void Owner_RefreshDerivedData(s32 arg0);
 
 void Party_SetFlag32AndRefreshMembers(void)
@@ -9,7 +10,7 @@ void Party_SetFlag32AndRefreshMembers(void)
     Owner_RefreshDerivedData(0);
     Owner_RefreshDerivedData(1);
     Owner_RefreshDerivedData(5);
-    Func_08077428(0);
-    Func_08077428(1);
-    Func_08077428(5);
+    Party_Check(0);
+    Party_Check(1);
+    Party_Check(5);
 }

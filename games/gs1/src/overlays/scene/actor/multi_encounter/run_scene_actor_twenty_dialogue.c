@@ -1,47 +1,29 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/multi_encounter/run_scene_actor_twenty_dialogue.h"
 
-extern void Func_02005ffc(void);
-extern void Func_02006012(s32);
-extern void Func_02005f78(s32);
-extern void Func_020060c8(s32, s32);
-extern s32 Func_02006036(s32);
-extern void Func_02005fd4(s32, s32);
-extern void Func_0200617e(void);
-extern void Func_02006192(void);
-extern void Func_02006030(s32);
-extern void Func_020060e8(s32, s32);
-extern void Func_02006106(s32);
-extern void Func_02006128(s32, s32, s32);
-extern void Func_0200576e(s32, s32);
-extern void Func_020060fc(s32, s32, s32);
-extern void Func_0200610c(s32, s32);
-extern void Func_0200614e(s32, s32, s32);
-extern void Func_020061d2(void);
-extern void Func_020061de(void);
-extern void Func_020061bc(s32);
-
-extern u8 Data_0200d160[];
-extern s32 *Data_03001ebc;
+extern u8 gOv[];
+extern s32 *gWork;
 
 void Scene_RunActorTwentyDialogueSequence(void)
 {
-    Func_02005ffc();
-    Func_02006012((s32)Data_0200d160);
-    Func_02005f78(1);
-    Func_020060c8(0, 15);
-    Func_02005fd4(Func_02006036(0), 0);
-    Data_03001ebc[0x70] = 0x202;
-    Func_0200617e();
-    Func_02006192();
-    Func_02006030(20);
-    Func_020060e8(20, 1);
-    Func_02006106(0x1e41);
-    Func_02006128(20, 0, 10);
-    Func_0200576e(22, 0x5000);
-    Func_020060fc(22, 4, 20);
-    Func_0200610c(22, 2);
-    Func_0200614e(0x6016, 0, 20);
-    Func_020061d2();
-    Func_020061de();
-    Func_020061bc(11);
+    Actor_Run();
+    Actor_Do((s32)gOv);
+    Actor_Do2(1);
+    Actor_Apply(0, 15);
+    Actor_Apply2(Actor_Check(0), 0);
+    gWork[0x70] = 0x202;
+    Actor_Run2();
+    Actor_Run3();
+    Actor_Do3(20);
+    Actor_Apply3(20, 1);
+    Actor_Do4(0x1e41);
+    Actor_Place(20, 0, 10);
+    Actor_Apply4(22, 0x5000);
+    Actor_Place2(22, 4, 20);
+    Actor_Apply5(22, 2);
+    Actor_Place3(0x6016, 0, 20);
+    Actor_Run4();
+    Actor_Run5();
+    Actor_Do5(11);
 }

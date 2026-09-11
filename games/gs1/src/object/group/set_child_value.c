@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_dispatch.h"
 
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)

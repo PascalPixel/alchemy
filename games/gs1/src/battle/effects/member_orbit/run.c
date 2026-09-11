@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define BattleFx_RunMemberOrbit Func_080ce85c
+#include "scene.h"
+#include "abi/battle/effects/member_orbit/run.h"
 
 /*
  * Battle-presentation sub-effect: entry 34 of the effect callback table at
@@ -18,22 +18,9 @@ typedef void (*DrawRectangleFn)(
  * literal pool word, which an ordinary integer literal cannot produce. */
 extern u8 Value_000000af;
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
-u32 Func_08005340(const void *source, void *destination);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
-void **Func_080b5098(s32 member_id);
-void Func_080e3944(void *source, void *screen);
-s32 Func_08002322(s32 angle);
-s32 Func_0800231c(s32 angle);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080030f8(s32 frames);
-void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+void *Battle_Run(s32 id);
+
+void **Battle_Run2(s32 member_id);
 
 /*
  * Sets the BG2 affine scale, loads the palette and the 32x32 sprite frames
@@ -66,21 +53,21 @@ void BattleFx_RunMemberOrbit(void *object)
     work = *cursor++;
     canvas = *cursor;
     FIELD_AT_OFFSET(work, void **, 0x7828) = object;
-    Func_080cd594(0);
+    Battle_Do(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
-    palette = Func_08002f40((s32)&Value_000000af);
+    palette = Battle_Run((s32)&Value_000000af);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, work);
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = Battle_Apply((u8 *)palette + 128, work);
+    status = Battle_SetRange(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
-    status = Func_080ed408(47, 7, 7, 15, 2);
+    status = Battle_SetRange(47, 7, 7, 15, 2);
     rect2 = heap_cache[8];
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
-    Func_080041d8((void *)0x080DBB9D, 0x480);
+    Battle_Apply2((void *)0x080DBB9D, 0x480);
     FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
     FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Battle_Apply2((void *)0x080CD261, 0x480);
     if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 1) {
         FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
@@ -104,19 +91,19 @@ void BattleFx_RunMemberOrbit(void *object)
 
             for (i = 0, ceiling = 0x80000, angle = frame << 10;
                     i != 160; i++) {
-                *scanline++ = (ceiling - (Func_08002322(angle) << 3)) >> 10;
+                *scanline++ = (ceiling - (Battle_Check(angle) << 3)) >> 10;
                 angle += 1024;
             }
         } else {
             s32 angle;
 
             for (i = 0, angle = frame << 10; i != 160; i++) {
-                *scanline++ = ((Func_08002322(angle) << 3) >> 10) - 0x7000;
+                *scanline++ = ((Battle_Check(angle) << 3) >> 10) - 0x7000;
                 angle += 1024;
             }
         }
-        Func_080049ac();
-        Func_080051d8(facing, facing + 12);
+        Battle_Run3();
+        Battle_Apply3(facing, facing + 12);
         member = 0;
         if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {
             record_slot = record;
@@ -125,14 +112,14 @@ void BattleFx_RunMemberOrbit(void *object)
                 != FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)) {
                 void *member_object;
 
-                member_object = *Func_080b5098(
+                member_object = *Battle_Run2(
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s16 *,
                         id_ofs));
                 if (frame > member * 16 && frame < (member * 16) + 60) {
                     s32 spin;
 
                     if (frame == (member * 16) + 32) {
-                        Func_080d6888(
+                        Battle_SetRange2(
                             FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
                                 s16 *, id_ofs),
                             0, 5, -1, 0);
@@ -140,16 +127,16 @@ void BattleFx_RunMemberOrbit(void *object)
                     record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
                     record_slot[1] = 0x280000;
                     record_slot[2] = FIELD_AT_OFFSET(member_object, s32 *, 16);
-                    Func_080e3944(record_slot, screen);
+                    Battle_Apply4(record_slot, screen);
                     for (i = 0; i != 4; i++) {
                         s32 x;
                         s32 y;
                         s32 slot;
 
                         spin = (frame << 9) + (i << 14);
-                        x = (screen[0] + ((Func_08002322(spin) << 4) >> 16))
+                        x = (screen[0] + ((Battle_Check(spin) << 4) >> 16))
                             + y_offset;
-                        y = screen[1] + ((Func_0800231c(spin) << 4) >> 16);
+                        y = screen[1] + ((Battle_Check2(spin) << 4) >> 16);
                         slot = frame / 16;
                         ((DrawRectangleFn)rectangle_slot[slot & 1])(
                             canvas,
@@ -162,11 +149,11 @@ void BattleFx_RunMemberOrbit(void *object)
             }
         }
         FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        Battle_Do2(1);
     }
-    Func_08004278((void *)0x080CD261);
-    Func_08004278((void *)0x080DBB9D);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080cdbc0();
+    Battle_Do3((void *)0x080CD261);
+    Battle_Do3((void *)0x080DBB9D);
+    Battle_Do4(47);
+    Battle_Do4(46);
+    Battle_Check3();
 }

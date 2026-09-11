@@ -1,36 +1,16 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/story/branching_event/push_actor_ahead.h"
 #include "staged_actor.h"
 
-extern u32 Data_0200afd4[];
+extern u32 StagedActorStepTable[];
 
-extern struct StagedActor *Func_02002f24(s32 arg0);
+extern struct StagedActor *GetStagedActor(s32 arg0);
 extern struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);
 extern struct StagedActor *FindBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
 extern struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActor *arg1);
-extern s32 Func_02002f88(struct StagedActor *arg0, s32 *arg1);
-extern void Func_02002f50(struct StagedActor *arg0, s32 arg1);
-extern void Func_02002f40(s32 arg0);
-extern void Func_02003156(s32 arg0);
-extern void Func_02002f8e(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02002f9e(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02002fac(struct StagedActor *arg0);
-extern void SelectStagedActorSlot(void);
-extern void Func_02002fbc(struct StagedActor *arg0, s32 arg1);
 
-#define StagedActorStepTable Data_0200afd4
-#define GetStagedActor Func_02002f24
-#define FindNextStagedActor Func_02000176
-#define FindBlockingStagedActor Func_020001a2
-#define FindElevatedBlockingStagedActor Func_020001ce
-#define CanStartStagedActorMove Func_02002f88
-#define SetStagedActorMode Func_02002f50
-#define SelectStagedActorSlot Func_02002f40
-#define StartStagedActorEffect Func_02003156
-#define StartNextStagedActorMove Func_02002f8e
-#define StartLeadStagedActorMove Func_02002f9e
-#define FinishStagedActorMove Func_02002fac
-#define FinishStagedActorEffect Func_02003178
-#define SetStagedActorTransition Func_02002fbc
+extern void SelectStagedActorSlot(void);
 
 void StagedActor_PushActorAhead(void)
 {

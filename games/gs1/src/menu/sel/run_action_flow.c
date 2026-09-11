@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/sel/run_action_flow.h"
 
 struct MenuActionObject {
     u8 padding0[5];
@@ -12,17 +14,13 @@ struct MenuActionState {
     u16 selection;
 };
 
-extern struct MenuState_080a76d0 *Data_03001f2c;
+extern struct MenuState_080a76d0 *gIw;
 
 s32 GameFlag_IsSet(s32 flag);
-s32 Func_080a77a4(s32 index);
-s32 Func_080a8114(void);
-s32 Func_080a90bc(void);
-s32 Func_080a96d8(void);
 
 s32 Menu_RunActionFlow(void)
 {
-    struct MenuActionState *state = Data_03001f2c;
+    struct MenuActionState *state = gIw;
     s32 step = 0;
     s32 finished = step;
     s32 result = 0;
@@ -32,7 +30,7 @@ s32 Menu_RunActionFlow(void)
         switch (step) {
         case 0:
             state->selection = finished;
-            if (Func_080a77a4(0) == -1) {
+            if (Menu_Check(0) == -1) {
                 result = -1;
                 finished = 1;
             }
@@ -40,19 +38,19 @@ s32 Menu_RunActionFlow(void)
             break;
         case 1:
             state->object->mode = 13;
-            result = Func_080a8114();
+            result = Menu_Check2();
             step = result == -1 ? 0 : 2;
             break;
         case 2:
             state->object->mode = 13;
-            result = Func_080a90bc();
+            result = Menu_Check3();
             step = 0;
             if (result != -1)
                 step = 3;
             break;
         case 3:
             state->object->mode = 13;
-            result = Func_080a96d8();
+            result = Menu_Check4();
             /* Collapse every non-cancellation result to one. */
             changed = (u32)~result;
             step = (-changed | changed) >> 31;

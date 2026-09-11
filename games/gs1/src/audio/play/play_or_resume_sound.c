@@ -1,21 +1,23 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/play/play_or_resume_sound.h"
 
 typedef struct {
     s32 header;
     u16 player;
 } SoundTableEntry;
 
-extern s32 *Data_080fc624[];
-extern SoundTableEntry Data_080fc684[];
+extern s32 *gRom[];
+extern SoundTableEntry gRom2[];
 
 void MusicPlayer_StartSong(void *, s32);
 void Audio_ResumePlayer(void *);
 
 void Audio_PlayOrResumeSound(u16 audio_cue_id)
 {
-    s32 **players = Data_080fc624;
-    SoundTableEntry *audio_cue_table = Data_080fc684;
+    s32 **players = gRom;
+    SoundTableEntry *audio_cue_table = gRom2;
     SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     s32 *player = players[audio_cue->player * 3];
     s32 current_header = player[0];

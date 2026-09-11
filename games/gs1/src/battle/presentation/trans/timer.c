@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/presentation/trans/timer.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE)
@@ -8,8 +10,6 @@
 #define TIMER_CELL_ADDR 0x03001EF8
 #define POSITION_ADDR   0x03001AD0
 #endif
-
-s32 Func_080c0cec(s32, s32, s32, s32);
 
 struct Display080c01bc {
   u8 padding_00[0x36];
@@ -59,8 +59,8 @@ void BattlePres_AdvanceTransitionTimer(void)
   next = (*timer = (*timer) + 1);
   if (next <= 0x50U)
   {
-    Func_080c0cec(0, 0, 0, 0xB4 - next);
+    Battle_SetMode(0, 0, 0, 0xB4 - next);
     return;
   }
-  Func_080c0cec(0, 0, 0, 0x64);
+  Battle_SetMode(0, 0, 0, 0x64);
 }

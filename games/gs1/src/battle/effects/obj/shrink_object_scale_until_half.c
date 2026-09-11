@@ -1,8 +1,7 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/obj/shrink_object_scale_until_half.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_080090f0(void *, s32, s32, s32);
 
 void BattleFx_ShrinkObjectScaleUntilHalf(void *obj)
 {
@@ -12,7 +11,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(void *obj)
     FIELD_AT_OFFSET(obj, s32 *, 0x1C) = scale;
     FIELD_AT_OFFSET(obj, s32 *, 0x18) = scale;
     if (scale < 0x8000) {
-        Func_080090f0(obj, 0, 0, 0);
+        Battle_SetMode(obj, 0, 0, 0);
         FIELD_AT_OFFSET(obj, s32 *, 0x6C) = 0;
     }
 }

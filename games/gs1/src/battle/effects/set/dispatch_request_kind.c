@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define BattleFx_DispatchRequestKind Func_08096960
+#include "scene.h"
+#include "abi/battle/effects/set/dispatch_request_kind.h"
 
 struct BattleEffectRequest {
     u8 reserved_000[0x14];
@@ -22,33 +22,13 @@ struct BattleEffectGlobals {
     s16 selected_id;
 };
 
-extern struct BattleEffectRequest *Data_03001f30;
-extern struct BattleEffectGlobals Data_02000240;
-
-void Func_08097c3c(s32);
-void Func_08097540(s32, s32);
-void Func_080994c0(s32);
-void Func_08098ccc(s32);
-void Func_080999e4(s32);
-void Func_08099128(s32);
-void Func_08098848(s32);
-void Func_080983a0(void);
-void Func_08099838(void);
-void Func_08099da4(s32);
-void Func_080985a8(s32);
-void Func_0809ae58(s32);
-void Func_0809a8b8(s32);
-void Func_0809b208(void);
-void Func_0809b698(void);
-void Func_080984c0(void);
-void Func_0809ade8(s32);
-void Func_0809ad90(s32);
-void Func_0809ab98(s32);
+extern struct BattleEffectRequest *gIw;
+extern struct BattleEffectGlobals gCell;
 
 void BattleFx_DispatchRequestKind(void)
 {
-    struct BattleEffectRequest *request = Data_03001f30;
-    struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&Data_03001f30 - 0x74);
+    struct BattleEffectRequest *request = gIw;
+    struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&gIw - 0x74);
     s32 battle_mode = request->battle_mode;
     s32 target_id = request->target_id;
 
@@ -56,61 +36,61 @@ void BattleFx_DispatchRequestKind(void)
     switch (battle_mode) {
     case 2:
         if (battle->active != 0)
-            Func_080984c0();
-        if (Data_02000240.selected_id != request->target_id)
+            Battle_Run();
+        if (gCell.selected_id != request->target_id)
             *(u8 *)((u8 *)request->object + 91) = 1;
-        Func_08097540(request->source_id, target_id);
+        Battle_Apply(request->source_id, target_id);
         break;
     case 1:
-        Func_08097c3c(target_id);
+        Battle_Do(target_id);
         break;
     case 7:
-        Func_08098848(target_id);
+        Battle_Do2(target_id);
         break;
     case 11:
-        Func_08099da4(target_id);
+        Battle_Do3(target_id);
         break;
     case 4:
-        Func_08098ccc(target_id);
+        Battle_Do4(target_id);
         break;
     case 5:
-        Func_080999e4(target_id);
+        Battle_Do5(target_id);
         break;
     case 6:
-        Func_08099128(target_id);
+        Battle_Do6(target_id);
         break;
     case 12:
-        Func_080985a8(target_id);
+        Battle_Do7(target_id);
         break;
     case 9:
-        if (Data_02000240.selected_id != -1) {
-            Func_0809ade8(Data_02000240.selected_id);
-            Data_02000240.selected_id = -1;
+        if (gCell.selected_id != -1) {
+            Battle_Do8(gCell.selected_id);
+            gCell.selected_id = -1;
         }
-        Func_0809ad90(target_id);
-        Data_02000240.selected_id = target_id;
-        Func_0809ab98(target_id);
+        Battle_Do9(target_id);
+        gCell.selected_id = target_id;
+        Battle_Do10(target_id);
         break;
     case 3:
-        Func_080994c0(target_id);
+        Battle_Do11(target_id);
         break;
     case 14:
-        Func_0809a8b8(target_id);
+        Battle_Do12(target_id);
         break;
     case 13:
-        Func_0809ae58(target_id);
+        Battle_Do13(target_id);
         break;
     case 8:
-        Func_080983a0();
+        Battle_Run2();
         break;
     case 10:
-        Func_08099838();
+        Battle_Run3();
         break;
     case 15:
-        Func_0809b208();
+        Battle_Run4();
         break;
     case 16:
-        Func_0809b698();
+        Battle_Run5();
         break;
     }
 }

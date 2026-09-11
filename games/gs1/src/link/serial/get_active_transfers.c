@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 SerialRuntime_GetActiveTransfers(void)
 {

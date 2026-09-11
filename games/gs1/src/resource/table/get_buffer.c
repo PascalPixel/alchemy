@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 extern u16 ResourceTableEntries[];
 s32 Resource_CopyData(s32, u16, s32);

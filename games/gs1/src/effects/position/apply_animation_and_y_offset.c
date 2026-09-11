@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_step.h"
 
 void EffectPosition_ApplyAnimation(s32, struct EffectPosition *);

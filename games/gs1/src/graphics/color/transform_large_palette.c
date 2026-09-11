@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 s32 Graphics_TransformPaletteBuffer(s32, void *, void *, s32);

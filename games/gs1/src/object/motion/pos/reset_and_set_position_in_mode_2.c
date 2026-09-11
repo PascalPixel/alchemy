@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 void Object_ResetMotion(struct ObjectRuntime *);

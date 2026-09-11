@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/menu/entry/spawn_four_objects_at_origin.h"
 
 struct PlacementOrigin {
     u8 pad_00[0x0c];
@@ -20,22 +22,21 @@ struct RuntimeObject {
     s8 field_26;
 };
 
-extern struct PlacementState *Data_03001f2c;
-extern const s32 Data_08073854[4];
+extern struct PlacementState *gIw;
+extern const s32 gRom[4];
 
-struct RuntimeObject *Func_08009030(s32);
+struct RuntimeObject *Menu_Run(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
-void Func_080200cc(void);
 
 void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 {
-    struct PlacementState *state = Data_03001f2c;
+    struct PlacementState *state = gIw;
     s32 i;
 
     if (origin != 0) {
         for (i = 0; i < 4; i++) {
-            struct RuntimeObject *object = Func_08009030(Data_08073854[i]);
+            struct RuntimeObject *object = Menu_Run(gRom[i]);
 
             if (object != 0) {
                 Object_InitializeMode(object, 2);
@@ -48,6 +49,6 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
             state->y[i] = (origin->y + y) * 8 + 0x10;
         }
 
-        ScheduleCallbackAfterFrames((s32)Func_080200cc, 200 << 4);
+        ScheduleCallbackAfterFrames((s32)Menu_Run2, 200 << 4);
     }
 }

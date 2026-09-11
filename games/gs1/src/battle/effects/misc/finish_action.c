@@ -1,15 +1,16 @@
+#include "scene.h"
+#include "abi/battle/effects/misc/finish_action.h"
 #include "event_runtime.h"
 
-extern struct EventValueWork Data_02000240;
+extern struct EventValueWork gCell;
 
 void ScheduleCallback(u32);
-void Func_080772f0(void);
+
 void Battle_UpdateModeFromShoulderButtons(void);
-void Func_0809335c(s32 value, s32 enabled);
 
 void BattleFx_FinishAction(void)
 {
     ScheduleCallback((u32)Battle_UpdateModeFromShoulderButtons);
-    Func_0809335c(Data_02000240.value, 1);
-    Func_080772f0();
+    Battle_Apply(gCell.value, 1);
+    Battle_Run();
 }

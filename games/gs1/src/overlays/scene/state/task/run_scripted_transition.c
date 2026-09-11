@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/state/task/run_scripted_transition.h"
 
 /*
  * resource_3bb scripted transition owner at 0x020029d0, 268 bytes including
@@ -7,106 +9,102 @@
  * 0x123 when it closes.
  *
  * Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
- * target at every occurrence, including every repeated Func_0808a010,
- * Audio_PlayCue, Func_02002e54, Func_020033d8, Func_0808a018/360/370/020
+ * target at every occurrence, including every repeated State_Run,
+ * Audio_PlayCue, State_Run2, State_Run3, State_Run4/360/370/020
  * call) -- declared/named as the literal per-site targets, not the shared
  * ultimate-destination symbol.
  */
 
-extern void Func_02006912(void);              /* Func_0808a018 veneer #1 (mode==0 arm) */
-extern void Func_02006a3e(void);              /* Func_0808a360 veneer #1 */
-extern void Func_02006a52(void);              /* Func_0808a370 veneer #1 */
-extern void Func_02006918(s32 frames);        /* Func_0808a010 veneer #1 */
-extern void Func_02006a9e(s32 cue);           /* Audio_PlayCue veneer #1 */
-extern void Func_02004db0(s32 mode);          /* Func_02002e54 veneer #1 */
-extern void Func_0200533c(s32 style, s32 variant); /* Func_020033d8 veneer #1 */
-extern void Func_02006932(s32 frames);        /* Func_0808a010 veneer #2 */
-extern void Func_02006946(void);              /* Func_0808a020 veneer #1 */
+extern void State_Run5(void);              /* State_Run4 veneer #1 (mode==0 arm) */
+extern void State_Run6(void);              /* State_Run7 veneer #1 */
+extern void State_Run8(void);              /* State_Run9 veneer #1 */
+extern void State_Run10(s32 frames);        /* State_Run veneer #1 */
+extern void State_Run11(s32 cue);           /* Audio_PlayCue veneer #1 */
+extern void State_Run12(s32 mode);          /* State_Run2 veneer #1 */
+extern void State_Run13(s32 style, s32 variant); /* State_Run3 veneer #1 */
+extern void State_Run14(s32 frames);        /* State_Run veneer #2 */
+extern void State_Run15(void);              /* State_Run16 veneer #1 */
 
-extern void Func_02006abe(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
-extern void Func_0200694a(void);              /* Func_0808a018 veneer #2 */
-extern void Func_02006a76(void);              /* Func_0808a360 veneer #2 */
-extern void Func_02006a8a(void);              /* Func_0808a370 veneer #2 */
-extern void Func_0200695a(s32 frames);        /* Func_0808a010 veneer #3 */
-extern void Func_02006ae2(s32 cue);           /* Audio_PlayCue veneer #3 */
-extern void Func_02004df4(s32 mode);          /* Func_02002e54 veneer #2 */
-extern void Func_02005380(s32 style, s32 variant); /* Func_020033d8 veneer #2 */
-extern void Func_02006976(s32 frames);        /* Func_0808a010 veneer #4 */
+extern void State_Run17(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
+extern void State_Run18(void);              /* State_Run4 veneer #2 */
+extern void State_Run19(void);              /* State_Run7 veneer #2 */
+extern void State_Run20(void);              /* State_Run9 veneer #2 */
+extern void State_Run21(s32 frames);        /* State_Run veneer #3 */
+extern void State_Run22(s32 cue);           /* Audio_PlayCue veneer #3 */
+extern void State_Run23(s32 mode);          /* State_Run2 veneer #2 */
+extern void State_Run24(s32 style, s32 variant); /* State_Run3 veneer #2 */
+extern void State_Run25(s32 frames);        /* State_Run veneer #4 */
 
-extern void Func_020067ee(s32 frames);        /* Func_080000c0 veneer (loop body) */
-extern s32 Func_02006b0a(void);               /* Func_080f9048 veneer (loop check) */
+extern void State_Run26(s32 frames);        /* State_Run27 veneer (loop body) */
+extern s32 State_Run28(void);               /* State_Run29 veneer (loop check) */
 
-extern void Func_02006b0c(s32 cue);           /* Audio_PlayCue veneer #4 */
-extern void Func_02004e1e(s32 mode);          /* Func_02002e54 veneer #3 */
-extern void Func_020053aa(s32 style, s32 variant); /* Func_020033d8 veneer #3 */
-extern void Func_02006b20(s32 cue);           /* Audio_PlayCue veneer #5 */
-extern void Func_020069a6(s32 frames);        /* Func_0808a010 veneer #5 */
-extern void Func_020053be(s32 style, s32 variant); /* Func_020033d8 veneer #4 */
-extern void Func_02006b34(s32 cue);           /* Audio_PlayCue veneer #6 */
-extern void Func_020069ba(s32 frames);        /* Func_0808a010 veneer #6 */
-extern void Func_02004e4c(s32 mode);          /* Func_02002e54 veneer #4 */
-extern void Func_020053d8(s32 style, s32 variant); /* Func_020033d8 veneer #5 */
-extern void Func_02006b4e(s32 cue);           /* Audio_PlayCue veneer #7 */
-extern void Func_020069d4(s32 frames);        /* Func_0808a010 veneer #7 */
-extern void Func_02004e66(s32 mode);          /* Func_02002e54 veneer #5 */
-extern void Func_020053f2(s32 style, s32 variant); /* Func_020033d8 veneer #6 */
-extern void Func_02006b68(s32 cue);           /* Audio_PlayCue veneer #8 */
-extern void Func_02006b44(void);              /* Func_0808a4f0 veneer */
-extern void Func_02006a00(void);              /* Func_0808a020 veneer #2 */
-extern void Func_020069b6(s32 flag);          /* GameFlag_Set veneer */
+extern void State_Run30(s32 cue);           /* Audio_PlayCue veneer #4 */
+extern void State_Run31(s32 mode);          /* State_Run2 veneer #3 */
+extern void State_Run32(s32 style, s32 variant); /* State_Run3 veneer #3 */
+extern void State_Run33(s32 cue);           /* Audio_PlayCue veneer #5 */
+extern void State_Run34(s32 frames);        /* State_Run veneer #5 */
+extern void State_Run35(s32 style, s32 variant); /* State_Run3 veneer #4 */
+extern void State_Run36(s32 cue);           /* Audio_PlayCue veneer #6 */
+extern void State_Run37(s32 frames);        /* State_Run veneer #6 */
+extern void State_Run38(s32 mode);          /* State_Run2 veneer #4 */
+extern void State_Run39(s32 style, s32 variant); /* State_Run3 veneer #5 */
+extern void State_Run40(s32 cue);           /* Audio_PlayCue veneer #7 */
+extern void State_Run41(s32 frames);        /* State_Run veneer #7 */
+extern void State_Run42(s32 mode);          /* State_Run2 veneer #5 */
+extern void State_Run43(s32 style, s32 variant); /* State_Run3 veneer #6 */
+extern void State_Run44(s32 cue);           /* Audio_PlayCue veneer #8 */
+extern void State_Run45(void);              /* State_Run46 veneer */
+extern void State_Run47(void);              /* State_Run16 veneer #2 */
+extern void State_Run48(s32 flag);          /* GameFlag_Set veneer */
 
-void Func_020029d0(s32 mode)
-{
-    if (mode == 0) {
-        Func_02006912();
-        Func_02006a3e();
-        Func_02006a52();
-        Func_02006918(30);
-        Func_02006a9e(0x59);
-        Func_02004db0(0);
-        Func_0200533c(1, 0);
-        Func_02006932(120);
-        Func_02006946();
+        State_Run6();
+        State_Run8();
+        State_Run10(30);
+        State_Run11(0x59);
+        State_Run12(0);
+        State_Run13(1, 0);
+        State_Run14(120);
+        State_Run15();
         return;
     }
 
-    Func_02006abe(0xf7);
-    Func_0200694a();
-    Func_02006a76();
-    Func_02006a8a();
+    State_Run17(0xf7);
+    State_Run18();
+    State_Run19();
+    State_Run20();
     {
         s16 *base = (s16 *)0x0200ca1e;
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
-    Func_0200695a(30);
-    Func_02006ae2(mode + 0x5a);
-    Func_02004df4(mode);
-    Func_02005380(1, 0);
-    Func_02006976(120);
+    State_Run21(30);
+    State_Run22(mode + 0x5a);
+    State_Run23(mode);
+    State_Run24(1, 0);
+    State_Run25(120);
 
     goto check_transition;
 wait_transition:
-    Func_020067ee(1);
+    State_Run26(1);
 check_transition:
-    if (Func_02006b0a() != 0)
+    if (State_Run28() != 0)
         goto wait_transition;
 
-    Func_02006b0c(0x121);
-    Func_02004e1e(5);
-    Func_020053aa(2, 0);
-    Func_02006b20(0xec);
-    Func_020069a6(60);
-    Func_020053be(2, 1);
-    Func_02006b34(0xec);
-    Func_020069ba(60);
-    Func_02004e4c(6);
-    Func_020053d8(2, 0);
-    Func_02006b4e(0xec);
-    Func_020069d4(60);
-    Func_02004e66(7);
-    Func_020053f2(4, 0);
-    Func_02006b68(0xed);
-    Func_02006b44();
-    Func_02006a00();
-    Func_020069b6(0x123);
+    State_Run30(0x121);
+    State_Run31(5);
+    State_Run32(2, 0);
+    State_Run33(0xec);
+    State_Run34(60);
+    State_Run35(2, 1);
+    State_Run36(0xec);
+    State_Run37(60);
+    State_Run38(6);
+    State_Run39(2, 0);
+    State_Run40(0xec);
+    State_Run41(60);
+    State_Run42(7);
+    State_Run43(4, 0);
+    State_Run44(0xed);
+    State_Run45();
+    State_Run47();
+    State_Run48(0x123);
 }

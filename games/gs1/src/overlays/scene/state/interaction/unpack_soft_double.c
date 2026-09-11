@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /*
  * Soft-float double unpack -- resource_3a7.  Splits a packed pair into the

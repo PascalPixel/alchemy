@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/render/finalize.h"
 
 struct Work {
     s32 unknown00;
@@ -20,7 +22,6 @@ struct Work {
 };
 
 void RenderOutput_PrepareForRedraw(void *work);
-void Func_08016178(u16 x, u16 y, u16 width, u16 height);
 
 void UiWork_Finalize(struct Work *work, s32 release)
 {
@@ -38,7 +39,7 @@ void UiWork_Finalize(struct Work *work, s32 release)
     work->previous_height = work->height;
 
     if (release != 0) {
-        Func_08016178(work->x, work->y, work->width, work->height);
+        Ui_SetMode(work->x, work->y, work->width, work->height);
         work->unknown00 = zero;
         work->unknown04 = zero;
         work->width = zero;

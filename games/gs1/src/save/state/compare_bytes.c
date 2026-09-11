@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 {

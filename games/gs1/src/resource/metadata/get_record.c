@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/resource/metadata/get_record.h"
 
-extern u8 Data_08185024[];
+extern u8 gUnk[];
 
 u8 *Resource_GetMetadataRecord(u32 arg0)
 {
-    return &Data_08185024[(arg0 & 0xfff) * 20];
+    return &gUnk[(arg0 & 0xfff) * 20];
 }

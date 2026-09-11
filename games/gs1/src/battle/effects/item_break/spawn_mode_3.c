@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "sound_ids.h"
 
 void Audio_PlayCue(s32);

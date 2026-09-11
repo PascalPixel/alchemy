@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/link/draw_shifted_tile_pair.h"
 #include "global_cells.h"
 
-extern u8 Data_08037280[];
-
-void Func_08021950(void *, u8 *, s32, s32);
+extern u8 gRom[];
 
 void Link_DrawShiftedTilePair(s32 offset)
 {
@@ -16,6 +16,6 @@ void Link_DrawShiftedTilePair(s32 offset)
         phase = 1;
     }
     phase = phase + 1;
-    Func_08021950((void *)0x06000220, Data_08037280, offset, -phase);
-    Func_08021950((void *)0x06000240, Data_08037280 + 32, offset + 32, phase);
+    Sys_SetMode((void *)0x06000220, gRom, offset, -phase);
+    Sys_SetMode((void *)0x06000240, gRom + 32, offset + 32, phase);
 }

@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_interpreter.h"
 
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)

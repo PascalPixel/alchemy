@@ -1,9 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/render/drain_pending.h"
 
 void UiWork_Finalize(void *work, s32 release);
 void WaitFrames(u32);
 
-extern u8 *Data_03001e8c;
+extern u8 *gIw;
 
 struct PendingWork {
     u8 padding00[0x16];
@@ -34,7 +36,7 @@ void UiWork_DrainPending(void)
     s32 index;
     u16 flag;
 
-    state = Data_03001e8c;
+    state = gIw;
     slot = (struct WorkSlot *)(state + 0x620);
     direct = (struct DirectWork *)(state + 0x500);
     index = 0;

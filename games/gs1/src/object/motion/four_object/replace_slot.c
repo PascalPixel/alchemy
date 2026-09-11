@@ -1,22 +1,23 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/motion/four_object/replace_slot.h"
 #include "four_object_motion.h"
 
-extern s32 Data_080af304[];
+extern s32 gRom[];
 
-void Func_08009038(void *);
-void *Func_08009030(s32);
+void *Obj_Run(s32);
 void Object_InitializeMode(void *, s32);
 
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gIw;
 
     if (state->objects[index] != 0) {
-        Func_08009038(state->objects[index]);
+        Obj_Do(state->objects[index]);
         state->objects[index] = 0;
     }
     {
-        void *object = Func_08009030(Data_080af304[kind]);
+        void *object = Obj_Run(gRom[kind]);
 
         if (object != 0) {
             Object_InitializeMode(object, value);

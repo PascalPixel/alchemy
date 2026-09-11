@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "object_runtime.h"
 
 s32 Object_IsTargetUnset(struct ObjectRuntime *object)

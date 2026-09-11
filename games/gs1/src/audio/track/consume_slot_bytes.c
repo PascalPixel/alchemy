@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/track/consume_slot_bytes.h"
 
 struct State_080f7e60 {
     u8 padding0000[0x3404];
@@ -9,7 +11,7 @@ struct State_080f7e60 {
     u32 input_limit;
 };
 
-extern struct State_080f7e60 *Data_02004c00;
+extern struct State_080f7e60 *gOv;
 
 void AudioTrack_InsertSlotNode(s32 index);
 void AudioTrack_RemoveSlotNode(s32 index);
@@ -32,7 +34,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             u8 value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
-            state = Data_02004c00;
+            state = gOv;
             read_offset = state->input_cursor;
             value = input[read_offset];
             next_offset = read_offset + 1;
@@ -52,7 +54,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     current++;
     if (current < limit) {
         u32 mask = 0x3ff;
-        struct State_080f7e60 **root = &Data_02004c00;
+        struct State_080f7e60 **root = &gOv;
         s32 empty = -1;
 
         do {

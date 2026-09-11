@@ -1,11 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/runtime/misc/clear_active_slots_and_schedule_updates.h"
 #include "global_cells.h"
 
 void ScheduleCallback(void *);
-void Func_0809bb34(void *);
-void Func_08002dd8(s32);
+
 void WaitFrames(s32);
-extern u8 Data_08095885;
+extern u8 gRom;
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
@@ -13,18 +14,18 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
     u8 *active_flag;
     s32 slot_index;
 
-    ScheduleCallback(&Data_08095885);
+    ScheduleCallback(&gRom);
     active_flag = slot + 157;
     slot += 88;
     for (slot_index = 23; slot_index >= 0; slot_index--) {
         u32 is_active = *(volatile u8 *)active_flag;
         active_flag += 72;
         if ((is_active << 24) != 0) {
-            Func_0809bb34(slot);
+            Battle_Do(slot);
         }
         slot += 72;
     }
-    Func_08002dd8(56);
+    Battle_Do2(56);
     WaitFrames(1);
 }
 

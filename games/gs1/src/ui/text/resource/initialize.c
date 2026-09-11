@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/resource/initialize.h"
 
 struct Object_0801c0dc {
     u8 filler0[5];
@@ -18,11 +20,11 @@ struct Object_0801c0dc {
 
 s32 Resource_FindFreeSlot(void);
 s32 Resource_CopyData(s32, s32, const void *);
-extern const u8 Data_080342f8[];
+extern const u8 gRom[];
 
 void TextResource_Initialize(struct Object_0801c0dc *object, s32 *slot)
 {
-    const void *data = Data_080342f8;
+    const void *data = gRom;
     s32 value = Resource_FindFreeSlot();
 
     /* ビットフィールドは生成時の設定順を保持する。 */

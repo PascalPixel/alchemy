@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void ObjectDispatch_SetField6c(void *arg0, s32 arg1)
 {

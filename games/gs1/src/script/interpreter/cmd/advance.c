@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "script_interpreter.h"
 
 s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter)

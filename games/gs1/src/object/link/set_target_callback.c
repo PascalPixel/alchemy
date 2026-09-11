@@ -1,5 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
 
 struct Object_08092a1c {
     u8 padding_00[0x30];

@@ -1,6 +1,6 @@
 #include "types.h"
-
-#define AudioCommand_GetSecondaryStateByte Func_080f9594
+#include "scene.h"
+#include "abi/audio/command/get_secondary_state_byte.h"
 
 u8 AudioCommand_GetSecondaryStateByte(void)
 {

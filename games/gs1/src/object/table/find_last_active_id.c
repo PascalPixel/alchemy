@@ -1,15 +1,17 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/object/table/find_last_active_id.h"
 
 struct State_0808b824 {
     u8 padding[0x34];
     s32 values[58];
 };
 
-extern struct State_0808b824 *Data_03001ebc;
+extern struct State_0808b824 *gWork;
 
 s32 ObjectTable_FindLastActiveId(void)
 {
-    struct State_0808b824 *state = Data_03001ebc;
+    struct State_0808b824 *state = gWork;
     s32 result = 7;
     s32 index = 8;
     s32 *value = state->values;

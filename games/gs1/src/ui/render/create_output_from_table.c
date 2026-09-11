@@ -1,5 +1,6 @@
 #include "render_input.h"
 #include "types.h"
+#include "scene.h"
 
 s32 Resource_FindFreeSlot();
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);

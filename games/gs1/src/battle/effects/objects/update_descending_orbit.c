@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/objects/update_descending_orbit.h"
 
 struct Triple08095fcc {
     s32 x;
@@ -16,7 +18,7 @@ struct Object08095fcc {
     s16 angle;
 };
 
-extern s32 Data_02000240[];
+extern s32 gCell[];
 
 s32 Object_GetById(u32);
 void RotateVectorByMagnitude(s32, s32, void *);
@@ -30,7 +32,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
     s16 value;
     s32 y;
 
-    other = (struct Object08095fcc *)Object_GetById(Data_02000240[125]);
+    other = (struct Object08095fcc *)Object_GetById(gCell[125]);
     raw = arg->timer - 1;
     arg->timer = raw;
     value = arg->timer;

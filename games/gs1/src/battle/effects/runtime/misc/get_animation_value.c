@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "battle_effect_runtime.h"
 
 s32 BattleFx_GetAnimationValue(void)

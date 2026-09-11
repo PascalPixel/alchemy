@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "item.h"
 
 s32 Item_IsCompatibleWithOwner(s32 owner_id, s32 item_id)

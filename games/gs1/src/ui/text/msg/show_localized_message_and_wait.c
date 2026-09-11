@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/ui/text/msg/show_localized_message_and_wait.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_JA)
@@ -10,18 +12,17 @@
 void WaitFrames(s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
-volatile unsigned char Func_08016738(void);
-void Func_08017aa4(s16 *, s32, s32, s32);
+
 #if defined(GS1_EDITION_JA)
-void Func_0801965c(s32, s16 *, s32);
+
 #else
-s32 Func_0801965c(s32, s16 *, s32);
+
 #endif
 
-extern u8 Data_02000240[];
-extern void *volatile Data_03001e74;
-extern volatile s32 Data_03001c94;
-extern void *Data_03001f34;
+extern u8 gCell[];
+extern void *volatile gBattleWork;
+extern volatile s32 gIw;
+extern void *gIw2;
 extern char Value_00000845;
 
 s32 UiText_ShowLocalizedMessageAndWait(void)
@@ -32,9 +33,9 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     void *state;
     s32 mode;
 
-    state = Data_03001e74;
-    mode = Data_02000240[0x22B];
-    if (Data_02000240[0x22B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
+    state = gBattleWork;
+    mode = gCell[0x22B];
+    if (gCell[0x22B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
         result = 0;
     }
     if (result == 0) {
@@ -47,13 +48,13 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     } else {
 active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
-        Func_08016738();
-        Func_0801965c((s32)&Value_00000845, buffer, TEXT_COUNT);
-        Func_08017aa4(buffer, work, 0, 4);
+        Ui_Run();
+        Ui_Place((s32)&Value_00000845, buffer, TEXT_COUNT);
+        Ui_SetMode(buffer, work, 0, 4);
         do {
             WaitFrames(1);
-        } while ((Data_03001c94 & 3) == 0 &&
-                 *(s32 *)((u8 *)Data_03001f34 + 0x4C) != 0);
+        } while ((gIw & 3) == 0 &&
+                 *(s32 *)((u8 *)gIw2 + 0x4C) != 0);
         UiWork_Finalize(work, 1);
     }
     return result;

@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/placement/update_timed_entries.h"
 
 struct PlacementEntry {
     u8 x;
@@ -22,11 +24,9 @@ struct BattleObject {
     s16 active;
 };
 
-struct PlacementTable *Func_08077000(s32 owner);
+struct PlacementTable *Battle_Run(s32 owner);
 struct BattleObject *Runtime_GetObject(u8 id);
 void BattleUnit_Recalculate(u8 id);
-void Func_080771b0(u8 id, u8 x, u8 y);
-void Func_080771c0(u8 id, u8 x, u8 y);
 
 s32 BattlePlacement_UpdateTimedEntries(void)
 {
@@ -37,7 +37,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
     s32 removed;
     s32 initial_count;
 
-    list = &Func_08077000(0)->list;
+    list = &Battle_Run(0)->list;
     initial_count = list->count;
     index = 0;
     removed = 0;
@@ -59,8 +59,8 @@ s32 BattlePlacement_UpdateTimedEntries(void)
             if (expired_entry->timer == 0) {
                 u8 id = expired_entry->id;
 
-                Func_080771b0(id, expired_entry->x, expired_entry->y);
-                Func_080771c0(id, expired_entry->x, expired_entry->y);
+                Battle_Place(id, expired_entry->x, expired_entry->y);
+                Battle_Place2(id, expired_entry->x, expired_entry->y);
                 BattleUnit_Recalculate(id);
                 removed = 1;
             } else {

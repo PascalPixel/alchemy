@@ -1,58 +1,55 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/audio/music/player/step_volume_and_pitch_toward_targets.h"
 
-extern u8 Data_02003000;
-extern u16 Data_02003008;
-extern u16 Data_0200300c;
-extern u16 Data_02003010;
-extern u16 Data_02003030;
-extern u16 Data_02003034;
-extern u16 Data_02003038;
-extern u8 Data_02004210[];
-extern u8 Data_02004290[];
+extern u8 gOv;
+extern u16 gOv2;
+extern u16 gOv3;
+extern u16 gOv4;
+extern u16 gOv5;
+extern u16 gOv6;
+extern u16 gOv7;
+extern u8 gOv8[];
+extern u8 gOv9[];
 
-void Func_080f9c44(void);
-void Func_080fb2a4(u8 *, s32);
-void Func_080fb2cc(u8 *, s32, s32);
-void Func_080fb334(u8 *, s32, s32);
-
-void Func_080f91e8(void)
+void Audio_Run(void)
 {
     s32 delta;
 
-    if (Data_02003000 != 0) {
-        if (Data_02003000 == 1) {
-            if (Data_02004210[4] == 0) {
-                Data_02003000 = 0;
-                Data_02003034 = 0x100;
+    if (gOv != 0) {
+        if (gOv == 1) {
+            if (gOv8[4] == 0) {
+                gOv = 0;
+                gOv6 = 0x100;
             }
         } else {
-            Data_02003000 -= 1;
+            gOv -= 1;
         }
     }
-    if ((s16)Data_02003034 != (s16)Data_02003008) {
-        delta = (s16)Data_02003034 - (s16)Data_02003008;
+    if ((s16)gOv6 != (s16)gOv2) {
+        delta = (s16)gOv6 - (s16)gOv2;
         if (delta > 0) {
-            Data_02003008 = Data_02003008 + Data_02003010;
+            gOv2 = gOv2 + gOv4;
         } else {
-            Data_02003008 = Data_02003008 - Data_02003010;
+            gOv2 = gOv2 - gOv4;
         }
-        if ((((s16)Data_02003034 - (s16)Data_02003008) ^ delta) < 0) {
-            Data_02003008 = Data_02003034;
+        if ((((s16)gOv6 - (s16)gOv2) ^ delta) < 0) {
+            gOv2 = gOv6;
         }
-        Func_080fb2cc(Data_02004290, 255, Data_02003008);
+        Audio_Place(gOv9, 255, gOv2);
     }
-    if ((s16)Data_02003030 != (s16)Data_02003038) {
-        delta = (s16)Data_02003030 - (s16)Data_02003038;
+    if ((s16)gOv5 != (s16)gOv7) {
+        delta = (s16)gOv5 - (s16)gOv7;
         if (delta > 0) {
-            Data_02003038 = Data_02003038 + Data_0200300c;
+            gOv7 = gOv7 + gOv3;
         } else {
-            Data_02003038 = Data_02003038 - Data_0200300c;
+            gOv7 = gOv7 - gOv3;
         }
-        if ((((s16)Data_02003030 - (s16)Data_02003038) ^ delta) < 0) {
-            Data_02003038 = Data_02003030;
+        if ((((s16)gOv5 - (s16)gOv7) ^ delta) < 0) {
+            gOv7 = gOv5;
         }
-        Func_080fb2a4(Data_02004290, Data_02003038);
-        Func_080fb334(Data_02004290, 255, (s16)((s16)Data_02003038 * 12 - 3072));
+        Audio_Apply(gOv9, gOv7);
+        Audio_Place2(gOv9, 255, (s16)((s16)gOv7 * 12 - 3072));
     }
-    Func_080f9c44();
+    Audio_Run2();
 }

@@ -1,7 +1,7 @@
+#include "scene.h"
+#include "abi/battle/event/push.h"
 #include "battle_event.h"
 #include "global_cells.h"
-
-#define BattleEv_Push Func_080bbabc
 
 u32 BattleEv_Push(u32 opcode, u32 operand)
 {

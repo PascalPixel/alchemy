@@ -1,5 +1,6 @@
 #include "global_progress.h"
 #include "types.h"
+#include "scene.h"
 
 s32 Party_AdjustSixDigitCounterB(s32 amount)
 {

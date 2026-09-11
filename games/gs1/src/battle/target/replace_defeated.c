@@ -1,5 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
 #include "battle_party.h"
 #include "battle_runtime.h"
 #include "battle_target.h"

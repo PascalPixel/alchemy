@@ -1,5 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
+#include "scene.h"
+#include "abi/battle/effects/radial_burst/update.h"
 
 struct EffectPosition {
     s32 x;
@@ -37,7 +39,7 @@ struct RadialBurstEffect {
     u8 enabled;
 };
 
-extern struct EffectRuntime *Data_03001f30;
+extern struct EffectRuntime *gIw;
 
 s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -45,11 +47,10 @@ s32 Random16(void);
 void RotateVectorByMagnitude(s32 magnitude, s32 angle, struct EffectPosition *output);
 void NormalizeVector(struct EffectPosition *value);
 s32 EffectSlot_HasReachedTarget(struct RadialBurstEffect *effect);
-void Func_0809bb34(struct RadialBurstEffect *effect);
 
 void UpdateRadialBurstEffect(struct RadialBurstEffect *effect)
 {
-    struct EffectRuntime *runtime = Data_03001f30;
+    struct EffectRuntime *runtime = gIw;
     struct EffectPosition value;
     s32 state;
 
@@ -94,5 +95,5 @@ again:
     }
 
     if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
-        Func_0809bb34(effect);
+        Battle_Do(effect);
 }

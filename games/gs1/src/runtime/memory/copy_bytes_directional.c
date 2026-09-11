@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 direction)
 {

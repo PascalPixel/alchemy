@@ -1,15 +1,14 @@
+#include "scene.h"
+#include "abi/map/locations/colosso/log_rolling_stage/obj/cfg_grid.h"
 #include "colosso_log_rolling_stage.h"
-
-extern void Func_02004c0e(s32);
-extern void Func_02004baa(s32, s32, s32, s32, s32, s32);
 
 void Colosso_ConfigureGridRegion(void)
 {
-    Func_02004c0e(0x360);
+    Map_Do(0x360);
     {
         s32 width = 49;
         s32 height = 61;
 
-        Func_02004baa(47, 61, 1, 4, width, height);
+        Map_SetRect(47, 61, 1, 4, width, height);
     }
 }

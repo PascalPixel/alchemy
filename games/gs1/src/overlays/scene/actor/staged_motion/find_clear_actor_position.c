@@ -1,9 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/overlays/scene/actor/staged_motion/find_clear_actor_position.h"
 
-extern s32 Func_020007de(s32 *, s32 *, s32 *);
-extern s32 Func_020064a0(u8 *, s32 *);
-extern s32 Data_0200e1e8[];
-extern s32 Data_0200e190[];
+extern s32 gOv[];
+extern s32 gOv2[];
 
 s32 MapStagedActor_FindClearPosition(s32 *request)
 {
@@ -19,13 +19,13 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
     s32 *candidate;
     s32 found;
     request[5] = 0;
-    actor = (u8 *)Func_020007de(&direction_index, request + 1, request);
+    actor = (u8 *)Actor_Place(&direction_index, request + 1, request);
     if (actor == 0)
         return 0;
     active_flag = actor + 0x22;
     *active_flag = 2;
     step_count = 0;
-    footprint_table = (u8 *)Data_0200e1e8;
+    footprint_table = (u8 *)gOv;
     footprint_offset = request[0] << 4;
     {
         s32 table_offset = footprint_offset + 4;
@@ -53,18 +53,18 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
         s32 actor_y;
         s32 direction_x;
         candidate = origin;
-        direction_x = Data_0200e190[direction_index] & 0xffff0000;
+        direction_x = gOv2[direction_index] & 0xffff0000;
         actor_bytes = actor;
         candidate[0] = *(s32 *)(actor_bytes + 8) + direction_x;
         actor_y = *(s32 *)(actor_bytes + 12);
         candidate[1] = actor_y;
-        candidate[2] = *(s32 *)(actor_bytes + 16) + (Data_0200e190[direction_index] << 16);
+        candidate[2] = *(s32 *)(actor_bytes + 16) + (gOv2[direction_index] << 16);
         request[3] = actor_y;
     }
     for (;;) {
         s32 row, column;
         {
-            u8 *table = (u8 *)Data_0200e1e8;
+            u8 *table = (u8 *)gOv;
             s32 table_offset = request[0] << 4;
             table_offset += 4;
             request[4] = origin[2] + (*(s32 *)(table + table_offset) << 16);
@@ -72,13 +72,13 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
         row = 0;
         while (row < tiles_y) {
             {
-                u8 *table = (u8 *)Data_0200e1e8;
+                u8 *table = (u8 *)gOv;
                 request[2] = origin[0] + (*(s32 *)(table + (request[0] << 4)) << 16);
             }
             column = 0;
             while (column < tiles_x) {
                 s32 *probe = request + 2;
-                if (Func_020064a0(actor, probe) == 2)
+                if (Actor_Apply(actor, probe) == 2)
                     goto found;
                 probe[0] = probe[0] + 0x100000;
                 column++;
@@ -87,14 +87,14 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
             row++;
         }
         step_count++;
-        origin[0] = origin[0] + (Data_0200e190[direction_index] & 0xffff0000);
-        origin[2] = origin[2] + (Data_0200e190[direction_index] << 16);
+        origin[0] = origin[0] + (gOv2[direction_index] & 0xffff0000);
+        origin[2] = origin[2] + (gOv2[direction_index] << 16);
     }
 found:
     *active_flag = 0;
     found = 0;
     if (step_count != 0) {
-        s32 direction = Data_0200e190[direction_index];
+        s32 direction = gOv2[direction_index];
         s32 direction_x = direction & 0xffff0000;
         s32 offset_x = direction_x *step_count;
         s32 offset_z = (direction << 16) * step_count;

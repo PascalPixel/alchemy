@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/battle/unit/tick_counter_132.h"
 #include "counter_runtime.h"
 
 s32 BattleUnit_TickCounter132(s32 value)
@@ -13,7 +15,7 @@ s32 BattleUnit_TickCounter132(s32 value)
             return 1;
         }
         if (state->state_133 < 0) {
-            if (Func_080bf208(value, state->counter_132, 30) != 0) {
+            if (Battle_Run(value, state->counter_132, 30) != 0) {
                 state->state_133 = zero;
                 state->counter_132 = zero;
                 return 1;

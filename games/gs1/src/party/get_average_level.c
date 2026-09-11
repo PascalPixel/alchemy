@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "abi/party/get_average_level.h"
 #include "owner_state.h"
 #include "party_state.h"
 
@@ -15,7 +17,7 @@ u32 Party_GetAverageLevel(void)
     }
     for (i = 0; i < count; i++) {
         total += ((u8 *)OwnerState_Get(
-            Data_02000240.active_owners[i]))[15];
+            gCell.active_owners[i]))[15];
     }
     total = FixedPoint_Ratio(total, count);
     return total;

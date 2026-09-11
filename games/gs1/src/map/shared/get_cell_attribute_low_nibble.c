@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)

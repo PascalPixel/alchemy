@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/resource/decompress_lz.h"
 
-u8 *Func_0800a97c(const u8 *source, u8 *destination)
+u8 *Sys_Run(const u8 *source, u8 *destination)
 {
     s32 token;
     u32 length;

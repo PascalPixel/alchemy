@@ -1,9 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/item/play_use_animation.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void *Item_GetData();
-s32 Func_080aa460(s32);
 
 void Item_PlayUseAnimation(void)
 {

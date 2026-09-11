@@ -1,4 +1,6 @@
 #include "types.h"
+#include "scene.h"
+#include "abi/display/blend/run_script.h"
 
 struct BlendScriptState {
     u16 *script;
@@ -7,11 +9,11 @@ struct BlendScriptState {
     u16 paused;
 };
 
-extern u8 *Data_03001e70;
+extern u8 *gCam;
 
 void DisplayBlend_RunScript(void)
 {
-    u8 *base = Data_03001e70;
+    u8 *base = gCam;
     struct BlendScriptState *state;
     u16 *cursor;
     u32 command;

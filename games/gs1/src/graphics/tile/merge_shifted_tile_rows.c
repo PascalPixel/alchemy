@@ -1,7 +1,9 @@
 #include "types.h"
 #include "scene.h"
 #include "global_cells.h"
+#include "resource.h"
 
+/* graphics/tile/merge_shifted_tile_rows.c */
 /* graphics/tile/merge_shifted_tile_rows.c */
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)
 {
@@ -160,5 +162,79 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
     Sys_SetRange(resource, 0, &cur, &out, 1);
     ret = Resource_GetBuffer(index, (s32)(work + 0x400));
     Sys_Check(0x11);
+    return ret;
+}
+
+/* ui/load_entry_for_kind.c */
+/* ui/load_entry_for_kind.c */
+s32 GameFlag_IsSet(s32);
+
+s32 Ui_LoadEntryForKind(u32 kind, s32 value)
+{
+    s32 out;
+    s32 cur;
+    u32 no;
+
+    no = kind;
+    cur = value;
+    if (no > 7U) {
+        no = 0;
+    }
+    if (GameFlag_IsSet(0x20) != 0) {
+        switch (no) {
+        case 0:
+            no = 0x38;
+            break;
+        case 1:
+            no = 0x39;
+            break;
+        }
+    }
+    Ui_SetRect(no, 0, &cur, &out, 0xE, 1);
+    return out;
+}
+
+/* ui/get_table_word_zero.c */
+extern s32 gRomLoadEntryForKind[];
+
+s32 Ui_GetTableWordZero(s32 index)
+{
+    if (index != 0)
+        index = 0;
+    return gRomLoadEntryForKind[index];
+}
+
+/* link/create_countdown_label_window.c */
+/* link/create_countdown_label_window.c */
+s32 UiWindow_Create(s32, s32, s32, s32, s32);
+void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
+extern u8 gRomCreateCountdownLabelWindow[];
+s32 Link_CreateCountdownLabelWindow(void)
+{
+    s32 handle = UiWindow_Create(0, 0, 6, 4, 6);
+
+    UiText_DrawStringInWindow(gRomCreateCountdownLabelWindow, handle, 0, 0);
+    return handle;
+}
+
+/* resource/load_indexed_into_buffer.c */
+extern u8 gVal[];
+
+s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+
+s32 Resource_GetBuffer(s32 index, s32 value);
+
+s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
+{
+    void *buffer = Runtime_AllocateHeapBlock(0x11, 0x608);
+    u16 *base = GetResource((s32)gVal);
+    void **slot = (void **)((u32)buffer + 0x604);
+    void *target = (void *)((u32)base + base[arg1]);
+    s32 ret;
+
+    *slot = target;
+    Sys_ApplyCreateCountdownLabelWindow(target, buffer);
+    ret = Resource_GetBuffer(arg0, (s32)buffer);
+    Sys_DoCreateCountdownLabelWindow(0x11);
     return ret;
 }

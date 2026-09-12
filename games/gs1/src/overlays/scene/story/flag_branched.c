@@ -692,9 +692,9 @@ void Scene_RunCueSequenceA(void)
     if (Story_unk33(0x302) != 0) {
         Story_unk12_2(0x1768);
     }
-    Story_unk199_2(15, 0);
+    Story_ApplyActor16Message(15, 0);
     Story_unk13_2(0x302);
-    Story_unk200_2();
+    Story_RunActor16Message();
 }
 
 void Scene_RunActorSeventeenFlaggedDialogue(void)

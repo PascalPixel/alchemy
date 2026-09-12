@@ -5073,8 +5073,7 @@
       "name": "Graphics_EnableObjLayerAndCallbacks"
     },
     "main:0800c5fc": {
-      "name": "ObjectDispatch_StopCallbacksAndHideLayers",
-      "source": "object/dispatch/stop_callbacks_and_hide_layers.c"
+      "name": "ObjectDispatch_StopCallbacksAndHideLayers"
     },
     "main:0800ca2c": {
       "name": "Script_AdvancePastCursor",

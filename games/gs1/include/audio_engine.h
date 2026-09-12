@@ -206,8 +206,12 @@ void CgbAudio_Initialize(struct CgbChannel *channels);
 void MusicPlayer_ExecuteMemoryAccessCommand(
     struct MusicPlayerState *player,
     struct MusicTrackState *track);
+void AudioEngine_Initialize(struct AudioEngineState *audio_state);
+void AudioEngine_SetMode(u32 value);
+void MusicPlayer_Initialize(
     struct MusicPlayerState *player,
     struct MusicTrackState *tracks,
     u32 count);
+void CgbChannel_UpdatePanEnvelope(struct CgbChannel *channel);
 
 #endif

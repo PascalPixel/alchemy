@@ -9,6 +9,7 @@ struct Object080a9bd8 {
     s16 y;
 };
 
+void Menu_PlaceEntryObjectInGrid(
     struct Object080a9bd8 *, s32, s32, s32, s32);
 
 #endif

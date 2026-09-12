@@ -3,4 +3,6 @@
 
 #include "types.h"
 
+s32 BattleTarget_ReplaceDefeated(const u8 *action);
+
 #endif

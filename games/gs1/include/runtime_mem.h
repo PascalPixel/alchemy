@@ -8,4 +8,7 @@ u32 Runtime_BumpAllocate(s32 size);
 
 #define Sys_Alloc Runtime_BumpAllocate
 
+void Sys_Free(void *buffer);
+void Mem_Copy(void *dst, void *src, s32 size, void *desc);
+
 #endif

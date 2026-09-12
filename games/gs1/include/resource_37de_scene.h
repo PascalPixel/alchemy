@@ -23,4 +23,9 @@ typedef char Resource37deSceneRuntime_scene_setup_word_offset[
 #define RESOURCE37DE_SCENE_RUNTIME \
     ((struct Resource37deSceneRuntime *)EFFECT_RUNTIME)
 
+s32 TestSceneFlag(s32);
+void SetCameraZoom(s32, s32, s32);
+void QueueSceneSound(s32);
+void InitializeSceneRecordBuffer(void);
+
 #endif

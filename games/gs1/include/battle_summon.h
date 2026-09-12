@@ -20,4 +20,11 @@ s32 Summon_ClassValid(s32 class_id); /* クラスが有効か */
 
 #define Summon_ClassId BattleFormation_SelectRandomAvailableMember
 
+s32 SummonDefinition_GetNear(u32 summon_id);
+s32 BattleFormation_SelectRandomAvailableMember(s32 record_id);
+s32 Summon_TakeCharge(s32 class_id, s32 n);
+s32 Summon_ReleaseCharge(s32 actor_id);
+s32 Summon_ResetCharge(s32 class_id);
+void Summon_Refresh(void);
+
 #endif

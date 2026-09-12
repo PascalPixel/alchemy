@@ -23,4 +23,10 @@ LAYOUT_OFFSET_GUARD(
 
 /* Observed setup operations; their wider interfaces remain local and opaque. */
 
+s32 Resource37c_TestSetupGate(s32);
+void Resource37c_SetSetupFlag(s32);
+void Resource37c_SetViewScale(s32, s32, s32);
+void Resource37c_QueueSoundCue(s32);
+void Resource37c_FinalizeSetup(void);
+
 #endif

@@ -17,4 +17,6 @@
  * declaration above, while callers describe the bounded table access.
  */
 
+void *ObjectTable_Get();
+
 #endif

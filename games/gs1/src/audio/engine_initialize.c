@@ -2,6 +2,9 @@
 #include "types.h"
 #include "scene.h"
 
+extern u8 RomBytes_080f9c91[];
+extern u8 RomBytes_080fb92c[];
+
 /* audio/init/initialize_engine.c */
 struct CgbChannel;
 struct MusicPlayerState;

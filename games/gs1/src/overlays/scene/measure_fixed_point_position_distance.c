@@ -4,6 +4,10 @@
 #include "staged_actor_movement.h"
 #include "run_staged_actor_movement_and_redraw_body.inc"
 
+extern u8 RomBytes_0200e1e8[];
+extern u8 RomBytes_0200e870[];
+extern u8 RomBytes_0200ee48[];
+
 /* overlays/measure_fixed_point_position_distance.c */
 /* overlays/shared/measure_fixed_point_position_distance.c */
 /*

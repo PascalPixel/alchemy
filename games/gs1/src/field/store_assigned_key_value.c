@@ -44,7 +44,6 @@ u32 Field_StoreAssignedKeyValue(u32 value)
    該当が無ければ表の値を Field_StoreAssignedKeyValue へ渡す。
    キー状態は割り込みで更新されるため、判定ごとに読み直す。 */
 
-extern u8 *gWork;
 extern u16 gCell[];
 extern volatile u32 gIw;
 

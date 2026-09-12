@@ -11,7 +11,7 @@ struct ActorState_080b90ac {
     u8 field_12b;
 };
 
-struct ActorState_080b90ac *Runtime_GetObject(u16 id);
+struct BattleUnitLevel *Runtime_GetObject(s32);
 void BattleUnit_Recalculate(u16 id);
 
 void BattleUnit_ClearField12bForGroup(void)
@@ -42,7 +42,6 @@ struct BattleUnitLevel {
     u8 level;
 };
 
-struct BattleUnitLevel *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -98,7 +97,7 @@ s32 BattleEscape_CheckSuccess(void)
 }
 
 /* battle/presentation/list/units.c */
-u16 *Battle_Run(s32 size);
+u8 *Battle_Run(s32 unit_id);
 
 u8 *random_16(s32 unit_id);
 
@@ -159,7 +158,6 @@ s32 BattlePres_BuildUnitEntries(
 }
 
 /* battle/presentation/list/opponent.c */
-u8 *Battle_Run(s32 unit_id);
 
 struct BattlePresentationOpponentEntry {
     u16 unit_id;

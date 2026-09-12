@@ -676,7 +676,7 @@ extern s32 *Story_unk8_4ByTilePosition(s32);
 }
 
 
-extern u8 *gWork;
+extern u8 gWork[];
 
 s32 *Actor_FindSlotByTilePosition(s32 x, s32 z)
 {
@@ -695,8 +695,6 @@ s32 *Actor_FindSlotByTilePosition(s32 x, s32 z)
 
 /* overlays/scene/story/scenario_dispatch/dispatch_by_scenario_id.c */
 extern s16 gCellByTilePosition[];
-extern u8 Value_00000013;
-extern u8 Value_00000010;
 
 s32 Scene_DispatchByScenarioId(void)
 {
@@ -712,7 +710,6 @@ s32 Scene_DispatchByScenarioId(void)
 
 /* overlays/scene/script/gate_open_step.c */
 extern u8 gOvGateOpenStep[];
-extern u8 gWork[];
 
 void Scene_RunGateGateOpenStep(void)
 {
@@ -738,7 +735,6 @@ void Scene_RunGateGateOpenStep(void)
 }
 
 /* overlays/scene/script/gate_close_step.c */
-extern u8 gWork[];
 
 void Scene_RunGateGateCloseStep(void)
 {

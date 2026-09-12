@@ -29,7 +29,7 @@ struct Work_080936a0 {
     u16 flags;
 };
 
-s32 Runtime_AllocateBlock(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void ScheduleCallbackAfterFrames(const void *arg0, s32 arg1);
 extern u8 gRom;
 
@@ -54,8 +54,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 }
 
 /* event/wait_for_display_field358_clear.c */
-s32 WaitFrames(s32);
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
+void WaitFrames(s32);
 void Event_WaitForDisplayField358Clear(void)
 {
   s32 cnt;
@@ -348,7 +347,6 @@ struct FacingEntry {
     u8 unknown_55[0x1b];
 };
 
-s32 ArcTan2(s32, s32);
 
 struct FacingEntry *Obj_Run(struct FacingEntry *self, s32 id)
 {

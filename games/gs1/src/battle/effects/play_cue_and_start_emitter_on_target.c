@@ -9,7 +9,7 @@
 
 /* battle/effects/random_particle/play_cue_and_start_emitter_on_target.c */
 void WaitFrames(s32);
-void Object_SetMode(s32, s32);
+extern void Object_SetMode(struct ParticleEffectObject *, s32);
 
 s32 Object_GetById(u32);
 s32 Audio_PlayCue(s32);
@@ -123,7 +123,6 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
  * object_id field sits at the same 0x1f4 offset this owner reads as
  * selected_object, matching main:0808e23c's use of the same shared symbol. */
 
-u8 *Ability_GetData(s32);
 
 void BattleFx_SetupObjectPair(s32, s32);
 
@@ -175,7 +174,6 @@ extern u8 Value_00000920;
  * Returns u8 * to match the prototype shared with the other callers; the raw
  * pointer is cast to the local action-definition view below.
  */
-u8 *Ability_GetData(s32);
 /*
  * Returns void * because callers view the same record through different
  * structs; each casts the shared pointer to its own view locally.
@@ -351,10 +349,7 @@ loop_2:
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-void WaitFrames(s32);
-void Object_SetMode(s32, s32);
 s32 EffectRuntime_FindSlotByObject();
-s32 Audio_PlayCue(s32);
 
 void EffectRuntime_SetMode5AndPlayCue(void)
 {
@@ -376,11 +371,7 @@ void EffectRuntime_SetMode5AndPlayCue(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-void WaitFrames(s32);
-void Object_SetMode(void *, s32);
 
-s32 EffectRuntime_FindSlotByObject();
-s32 Audio_PlayCue(s32);
 
 void EffectRuntime_SetMode7AndLaunch(void)
 {
@@ -406,10 +397,6 @@ void EffectRuntime_SetMode7AndLaunch(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-void WaitFrames(s32);
-void Object_SetMode(s32, s32);
-s32 EffectRuntime_FindSlotByObject();
-s32 Audio_PlayCue(s32);
 
 void EffectRuntime_SetMode4AndPlayCue(void)
 {
@@ -431,8 +418,6 @@ void EffectRuntime_SetMode4AndPlayCue(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-void Object_SetMode(s32, s32);
-s32 EffectRuntime_FindSlotByObject();
 
 void EffectRuntime_SetMode2(void)
 {
@@ -452,7 +437,6 @@ void EffectRuntime_SetMode2(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 EffectRuntime_FindSlotByObject();
 
 s32 EffectRuntime_GetCurrentObject(void)
 {
@@ -469,7 +453,6 @@ s32 EffectRuntime_GetCurrentObject(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 EffectRuntime_FindSlotByObject();
 
 void EffectRuntime_ClearCurrentFlags(void)
 {
@@ -486,7 +469,6 @@ void EffectRuntime_ClearCurrentFlags(void)
 }
 
 /* effect_runtime/set_current_position.c */
-s32 EffectRuntime_FindSlotByObject();
 
 void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y)
 {
@@ -526,7 +508,7 @@ void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 s32 ArcTan2(s32, s32);
-void RotateVectorByMagnitude(s32, u16, void *);
+extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
 
 struct GlobalData {
     u8 filler[0x1F4];
@@ -632,9 +614,7 @@ typedef char ParticleEffectObject_child_offset[
 ];
 
 extern u32 Random16(void);
-extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
 extern void Object_SetCallback(struct ParticleEffectObject *, void *);
-extern void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 gRom[];
 
 void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
@@ -718,12 +698,10 @@ extern u8 *EfxWork;
 extern const u8 EmitterData[];
 extern const u8 ParticleData[];
 
-void RotateVectorByMagnitude(s32 mag, s32 ang, struct EfxPos *pos);
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(struct EfxObj *obj, s32 data);
 void Object_Destroy(struct EfxObj *obj);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void WaitFrames(s32 frames);
 void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 void Runtime_ReleaseHeapBlock(s32 kind);
@@ -818,7 +796,6 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 }
 
 /* object/destroy_if_present.c */
-void Object_Destroy();
 
 void Object_DestroyIfPresent(s32 arg0)
 {

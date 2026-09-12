@@ -111,7 +111,6 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
 
 /* menu/entry/release_entry_objects.c */
 /* menu/entry/release_entry_objects.c */
-extern u8 *gIw;
 
 void ScheduleCallback(void (*callback)(void));
 extern u8 gRom;
@@ -140,7 +139,6 @@ void Menu_ReleaseEntryObjects(void)
 }
 
 /* menu/entry/update_entry_object_transforms.c */
-extern u8 *gIw;
 
 void Menu_UpdateEntryObjectTransforms(void)
 {

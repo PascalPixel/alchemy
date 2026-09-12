@@ -2,7 +2,7 @@
 #include "scene.h"
 
 /* battle/effects/series_a/mode_0.c */
-s32 BattleEffectA(s32, s32);
+s32 BattleEffectA(void *, s32);
 
 void BattleFx_RunSeriesAMode0(s32 effect)
 {
@@ -10,7 +10,6 @@ void BattleFx_RunSeriesAMode0(s32 effect)
 }
 
 /* battle/effects/series_a/mode_1.c */
-s32 BattleEffectA(s32, s32);
 
 void BattleFx_RunSeriesAMode1(s32 effect)
 {
@@ -18,7 +17,6 @@ void BattleFx_RunSeriesAMode1(s32 effect)
 }
 
 /* battle/effects/series_a/mode_2.c */
-s32 BattleEffectA(s32, s32);
 
 void BattleFx_RunSeriesAMode2(s32 effect)
 {
@@ -28,7 +26,6 @@ void BattleFx_RunSeriesAMode2(s32 effect)
 /* battle/effects/series_a/mode_3_or_4.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 BattleEffectA(void *, s32);
 
 void BattleFx_RunSeriesAMode3Or4(void *effect)
 {
@@ -40,7 +37,6 @@ void BattleFx_RunSeriesAMode3Or4(void *effect)
 }
 
 /* battle/effects/series_a/mode_4.c */
-s32 BattleEffectA(s32, s32);
 
 void BattleFx_RunSeriesAMode4(s32 effect)
 {
@@ -48,7 +44,6 @@ void BattleFx_RunSeriesAMode4(s32 effect)
 }
 
 /* battle/effects/series_a/mode_5.c */
-s32 BattleEffectA(s32, s32);
 
 void BattleFx_RunSeriesAMode5(s32 effect)
 {
@@ -56,7 +51,6 @@ void BattleFx_RunSeriesAMode5(s32 effect)
 }
 
 /* battle/effects/series_a/mode_6.c */
-s32 BattleEffectA(s32, s32);
 
 void BattleFx_RunSeriesAMode6(s32 effect)
 {

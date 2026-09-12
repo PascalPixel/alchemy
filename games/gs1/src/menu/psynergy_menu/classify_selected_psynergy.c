@@ -12,7 +12,7 @@
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
 /* psynergy_menu/classify_selected_psynergy.c */
-u8 *Ability_GetData(s32 action);
+struct BattleAction *Ability_GetData(s32 action);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
@@ -44,7 +44,7 @@ struct Cur { unsigned short mark : 8; };
 
 extern void *gIw;
 
-void *Sys_Run(s32);
+struct PsynergyMenuIcon *Sys_Run(s32, s32, s32);
 
 void WaitFrames(s32);
 
@@ -149,7 +149,6 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
 /* psynergy_menu/create_entry_grid.c */
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *Sys_Run(s32, s32, s32);
 void *PsynergyMenu_IsActionRestricted(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *RenderOutput_CreateFromResource(s32, s32, s32, s32, s32);
 
@@ -240,7 +239,6 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
 }
 
 /* psynergy_menu/collect_actions.c */
-u8 *Ability_GetData(s32 action);
 
 #define ACTION_ID_MASK 0x3FFF
 
@@ -343,12 +341,9 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 /* psynergy_menu/draw_action_page.c */
 void UiWindow_Commit(s32 window);
 
-void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 
 s32 UiPalette_SetColor(s32 color);
 
-struct BattleUnit *Sys_Run(s32 owner);
-struct BattleAction *Ability_GetData(s32 action);
 extern u8 Value_00000333;
 
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
@@ -412,7 +407,6 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 }
 
 /* psynergy_menu/is_action_restricted.c */
-u8 *Ability_GetData(u32 action);
 
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
@@ -488,9 +482,7 @@ extern struct MenuObjectControl *gIwOpenCharacterSelector;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 
-void WaitFrames(s32);
 
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 
 /*
  * Open the compact character selector, run its blocking interaction body,

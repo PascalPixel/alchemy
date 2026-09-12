@@ -93,7 +93,7 @@ void AudioTrack_ResetSlotBuckets(void)
 /* audio/track/insert_slot_node.c */
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-extern void *gOv;
+extern struct State_080f7e60 *gOv;
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
@@ -154,7 +154,6 @@ struct State_080f7e60 {
     u32 input_limit;
 };
 
-extern struct State_080f7e60 *gOv;
 
 void AudioTrack_InsertSlotNode(s32 index);
 void AudioTrack_RemoveSlotNode(s32 index);
@@ -244,7 +243,6 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
 }
 
 /* audio/music/player/step_volume_and_pitch_toward_targets.c */
-extern u8 gOv;
 extern u16 gOv2;
 extern u16 gOv3;
 extern u16 gOv4;

@@ -11,7 +11,7 @@
 /* battle/effects/scene_transition/finish_and_release_heap_block.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void ScheduleCallback(s32);
+extern void ScheduleCallback(s32);
 
 struct Outer0808e0b0 *Object_GetById(u32);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -78,7 +78,7 @@ void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *mini
 /* battle/effects/object_control/set_callback_when_target_unset.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Object_SetCallback(void *, s32);
+extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
 extern const u8 gRom[];
 
 struct Target_08097a54 {
@@ -142,7 +142,6 @@ void Ui_FillBank15PaletteGrey(void)
 }
 
 /* ui/set_bank15_palette_and_clear_render_mode.c */
-extern void ScheduleCallback(s32);
 
 extern u8 gCell[];
 
@@ -163,7 +162,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
 /* battle/effects/fx_get_cycled_table_word.c */
 /* battle/effects/fx_get_cycled_table_word.c */
 /* battle/effects/misc/get_cycled_table_word.c */
-extern u32 gIwFxGetCycledTableWord;
+extern struct BattleEffectScene *gIwFxGetCycledTableWord;
 extern u16 gRomFxGetCycledTableWord[];
 
 u16 BattleFx_GetCycledTableWord(void)
@@ -206,7 +205,6 @@ extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
-extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
 
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {
@@ -256,10 +254,8 @@ struct Output_08097f80 {
     s32 z;
 };
 
-u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, struct Output_08097f80 *);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
 {
     struct Output_08097f80 position;
@@ -315,12 +311,10 @@ struct BattleEffectScene {
     void *volatile main_object;
 };
 
-extern struct BattleEffectScene *gIwFxGetCycledTableWord;
 
 void *BattleFx_StartItemBreak(void *object);
 
-void WaitFrames(s32 frames);
-void BattleFx_PrepareBufferInterpolation(void);
+void WaitFrames(s32);
 void UpdateRisingParticleBurst(void *object);
 
 void BattleFx_RunItemBreakSequence(void)
@@ -346,13 +340,9 @@ void BattleFx_RunItemBreakSequence(void)
 }
 
 /* battle/effects/item_break/start.c */
-extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
-extern void Object_SetMode(void *, s32);
-extern void Object_SetCallback(void *, void *);
 extern void BattleFx_UpdateItemBreakFragment(void *);
-extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 extern void Audio_PlayCue(s32);

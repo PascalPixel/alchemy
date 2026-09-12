@@ -152,8 +152,6 @@ struct BattleEffectGlobals {
     s16 selected_id;
 };
 
-extern struct BattleEffectRequest *gIw;
-extern struct BattleEffectGlobals gCell;
 
 void BattleFx_DispatchRequestKind(void)
 {
@@ -245,8 +243,6 @@ struct Global_08096ab0 {
     s16 value;
 };
 
-extern struct State_08096ab0 *gIw;
-extern struct Global_08096ab0 gCell;
 
 void BattleFx_ClearChildValueOnMismatch(void)
 {

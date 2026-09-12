@@ -88,7 +88,6 @@ struct Rec_383 *Talk_unk30_4();
 struct Rec_383 *Talk_unk31_4();
 struct Rec_383 *Talk_unk32_4();
 
-u8 *Scene_GetRecord_1();
 
 u8 *Talk_unk33_4();
 

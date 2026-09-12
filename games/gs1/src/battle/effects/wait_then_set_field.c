@@ -3,7 +3,7 @@
 
 /* battle/effects/misc/wait_then_set_field18.c */
 /* battle/effects/misc/wait_then_set_field18.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void BattleFx_WaitThenSetField18To4(void *arg0)
 {
@@ -16,7 +16,6 @@ void BattleFx_WaitThenSetField18To4(void *arg0)
 }
 
 /* object/wait_twelve_frames_then_set_field18.c */
-s32 WaitFrames(s32);
 
 struct Object080eceac {
   u8 padding_00[8];

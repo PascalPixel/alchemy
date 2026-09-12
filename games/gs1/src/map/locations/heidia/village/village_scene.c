@@ -31,7 +31,7 @@ typedef struct BlockingActor {
 
 extern s32 StagedActorStepTable[];
 extern s32 gOv[];
-extern u8 *gWork;
+extern u8 gWork[];
 
 BlockingActor *Map_unk4_4(s32 *position, MovingActor *actor);
 
@@ -313,7 +313,7 @@ void NoOpActorCallback(void)
 }
 
 /* map/locations/heidia/village/village_scene/object_inspection.c */
-extern u8 gCell[];
+extern s16 gCell[];
 
 void InspectOrdinaryObject(void)
 {
@@ -411,7 +411,6 @@ void InspectBooks(void)
 }
 
 /* map/locations/heidia/village/village_scene/scene_data.c */
-extern s16 gCell[];
 extern u8 Value_000000a0;
 extern u8 Value_000000a1;
 extern u8 Value_000000a2;
@@ -537,7 +536,6 @@ extern u8 Value_00002428;
 extern u8 Value_0000247d;
 extern u8 Value_00002464;
 extern u8 Value_0000247e;
-extern u8 Value_000000a3;
 extern u8 gVal[];
 extern u8 gVal2[];
 
@@ -1169,7 +1167,6 @@ typedef struct SceneActor {
     s32 z;          /* 0x10 */
 } SceneActor;
 
-extern u8 *gWork;
 
 SceneActor *Map_unk90_3(s32);
 SceneActor *Map_unk91_3(s32);
@@ -1661,7 +1658,6 @@ void Map_RunMoveRedraw(
 /* map/locations/heidia/village/village.c */
 /* map/locations/heidia/village/actor_pair_sequence.c */
 extern u8 gValVillage[];
-extern u8 gWork[];
 
 void Scene_RunScene3bfVillage(void)
 {
@@ -1696,7 +1692,6 @@ void Scene_RunScene3bfVillage(void)
 
 u8 *Map_unk17_4Village(s32);
 
-extern u8 gWork[];
 
 extern s32 gOvVillage[];
 
@@ -1710,7 +1705,6 @@ extern u8 gVal2Village[];
 
 extern u8 gCam[];
 extern u32 gIw;
-extern s16 gCell[];
 extern u8 Value_00002092;
 struct ObjectRuntime *Map_unk18_4Village();
 struct ObjectRuntime *Map_unk19_4Village();
@@ -2078,7 +2072,6 @@ void Scene_RunActorTwentyOneSequence(void)
 }
 
 /* map/locations/heidia/village/actor_setup.c */
-extern u8 gWork[];
 
 struct ObjectRuntime *Map_unk61_4Village();
 struct ObjectRuntime *Map_unk62_4Village();
@@ -2090,7 +2083,6 @@ struct ObjectRuntime *Map_unk65_4Village();
 
 void Village_FinishActorRestore();
 
-extern s16 gCell[];
 extern u8 gOv5Village[], gOv6Village[], gOv7Village[];
 
 struct ObjectRuntime *Map_unk66_4Village();
@@ -2329,7 +2321,6 @@ void Scene_ActivateAlternateActorGroup(void)
 
 /* map/locations/heidia/village/actor_steps.c */
 extern u8 gVal3[];
-extern u8 gWork[];
 
 void Scene_RunScene3bf2(s32 a0)
 {
@@ -2355,7 +2346,6 @@ void Scene_RunScene3bf2(s32 a0)
 /* map/locations/heidia/village/conditional_scene.c */
 extern u8 gVal4[];
 extern u8 gVal5[];
-extern u8 gWork[];
 
 void Scene_RunScene3bf3(void)
 {
@@ -2434,10 +2424,6 @@ u8 *Scene_GetRecord_3();
 
 u8 *Motion_CommitPos_22();
 
-u8 *Scene_GetRecord_1();
-u8 *Scene_GetRecord_2();
-u8 *Motion_CommitPos_22();
-u8 *Scene_GetRecord_3();
 u8 *Scene_GetRecord_4();
 u8 *Battle_WaitMode0_92();
 
@@ -3112,7 +3098,6 @@ void Scene_RunMainScriptSequence(void)
 }
 
 /* map/locations/heidia/village/party_animation.c */
-extern u8 gWork[];
 
 void Map_unk160_3(); void Map_unk161_3();
 
@@ -3137,7 +3122,6 @@ void Scene_RunScene3bf4(void)
 }
 
 /* map/locations/heidia/village/scene_party_placement.c */
-extern u8 gWork[];
 
 void Scene_RunScene3bf5(void)
 {
@@ -3249,7 +3233,6 @@ void Scene_RunSupplementalSequenceTwo(void)
 }
 
 /* map/locations/heidia/village/scene_transition.c */
-extern u8 gWork[];
 
 void Scene_RunScene3bf6(void)
 {
@@ -3273,10 +3256,8 @@ void Scene_RunScene3bf6(void)
 }
 
 /* map/locations/heidia/village/supplemental_scene.c */
-extern u8 gWork[];
 extern u8 gVal9[];
 extern u8 gVal10[];
-extern u8 gCell[];
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
@@ -3364,7 +3345,6 @@ void Scene_RunSequenceTail(void)
 }
 
 /* map/locations/heidia/village/scene/actor_pair.c */
-extern u8 gWork[];
 
 void Scene_RunScene3bfActorPair(void)
 {

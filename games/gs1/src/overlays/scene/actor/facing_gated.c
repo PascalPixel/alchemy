@@ -295,7 +295,6 @@ u8 *Actor_unk14_4();
 
 u8 *Scene_GetRecord_1();
 
-u8 *Scene_GetRecord_1();
 u8 *Scene_GetRecord_2();
 
 u8 *Scene_GetRecord_6();

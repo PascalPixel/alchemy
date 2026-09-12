@@ -25,7 +25,7 @@ void *RenderOutput_AcquireFree(void)
 }
 
 /* ui/render/output_list/release_free.c */
-extern u8 *gIw;
+extern struct State_080173ac *gIw;
 
 void RenderOutput_ReleaseFree(u32 arg0)
 {
@@ -40,7 +40,6 @@ void RenderOutput_ReleaseFree(u32 arg0)
 }
 
 /* ui/runtime/init/init_free_list.c */
-extern u8 *gIw;
 
 void UiWork_InitFreeList(void)
 {
@@ -65,7 +64,6 @@ void UiWork_InitFreeList(void)
 }
 
 /* ui/window/erase_border_rect.c */
-extern u8 *gIw;
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
@@ -364,7 +362,6 @@ struct Slot {
     u16 field26;
 };
 
-extern u8 *gIw;
 void UiWork_ResetChannelTransition(void *);
 
 struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
@@ -463,7 +460,6 @@ struct EntrySlot {
     u8 padding1c[0x0C];
 };
 
-extern u8 *gIw;
 
 void UiWork_ResetFreeChannel(void)
 {
@@ -522,7 +518,7 @@ void UiWork_ResetChannelTransition(void *work)
 /* ui/runtime/proc/process_render_channels.c */
 struct Work;
 
-void UiWork_Finalize(struct Work *, s32);
+void UiWork_Finalize(struct Work *work, s32 release);
 
 void UiWork_ProcessRenderChannels(void)
 {
@@ -597,7 +593,6 @@ struct Work {
     s16 previous_height;
 };
 
-extern u8 *gIw;
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
@@ -785,7 +780,6 @@ struct State_080173ac {
     u16 nine;
 };
 
-extern struct State_080173ac *gIw;
 
 void UiWork_ResetCounters(void)
 {
@@ -812,7 +806,6 @@ struct State_080173f4 {
     u16 result;
 };
 
-extern struct State_080173f4 *gIw;
 
 s32 Resource_CopyData(s32, s32, s32);
 void ScheduleCallbackAfterFrames(void *, s32);
@@ -855,11 +848,8 @@ struct State_08017464 {
     u16 result;
 };
 
-extern struct State_08017464 *gIw;
 extern u8 gRom;
 
-s32 Resource_CopyData(s32, s32, s32);
-void ScheduleCallbackAfterFrames(void *, s32);
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 {
@@ -880,7 +870,6 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 }
 
 /* ui/runtime/misc/finalize_shared_slot.c */
-void UiWork_Finalize(struct Work *work, s32 release);
 
 void UiWork_FinalizeSharedSlot(void)
 {
@@ -898,7 +887,6 @@ void UiWork_FinalizeSharedSlot(void)
 /* ui/text/misc/prepare_message_work.c */
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-struct Work;
 struct Slot;
 
 struct UiTextMessageWorkGlobals {
@@ -909,11 +897,10 @@ struct UiTextMessageWorkGlobals {
 
 extern volatile struct UiTextMessageWorkGlobals gIw;
 
-s32 UiText_BuildRenderEntries(s32, s32);
+extern s32 UiText_BuildRenderEntries(s32, s32);
 struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
 
 struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
-void UiWork_Finalize(struct Work *, s32);
 
 void UiText_PrepareMessageWork(s32 argument)
 {
@@ -963,7 +950,6 @@ have_work:
 }
 
 /* ui/text/msg/show_message_and_wait.c */
-void WaitFrames(s32);
 s32 UiWork_IsComplete(void);
 void UiText_ShowMessageAndWaitCore(s32 argument)
 {
@@ -1043,7 +1029,6 @@ struct Work_08017c1c {
     u16 y;
 };
 
-extern u8 *gIw;
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
@@ -1146,7 +1131,6 @@ u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 }
 
 /* ui/window/fit_on_screen.c */
-extern u8 *gIw;
 
 void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
@@ -1214,7 +1198,6 @@ void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 }
 
 /* ui/text/size/measure_resource_entries.c */
-s32 UiText_BuildRenderEntries(s32, s32);
 
 void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 {
@@ -1222,7 +1205,6 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 }
 
 /* ui/text/size/get_resource_dimensions.c */
-extern s32 UiText_BuildRenderEntries(s32, s32);
 
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
@@ -1242,7 +1224,6 @@ s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 }
 
 /* ui/text/size/get_resource_dimensions_alt.c */
-extern s32 UiText_BuildRenderEntries(s32, s32);
 
 s32 UiText_GetResourceDimensionsAlt(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {

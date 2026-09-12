@@ -86,8 +86,6 @@ void ObjectEffect_BeginContextEffect26(void)
 }
 
 /* object/effects/begin_context_effect_25.c */
-s32 GameFlag_Set(s32);
-void ObjectEffect_PrepareContextEffect(s32);
 
 void ObjectEffect_BeginContextEffect25(void)
 {
@@ -122,13 +120,10 @@ typedef struct {
 } Object08094380;
 
 Effect08094380 *Obj_Run(Context08094380 *, s32);
-void Object_SetMode(Object08094380 *, s32);
-void WaitFrames(s32);
 
 void Object_SetPosition(Object08094380 *, s32, s32, s32);
 void Object_CommitPosition(Object08094380 *);
 
-extern s32 gCell[];
 
 void ObjectEffect_EndContextEffect(s32 arg0)
 {
@@ -162,12 +157,9 @@ s32 GameFlag_IsSet(s32);
 void GameFlag_Clear(s32);
 
 void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void WaitFrames(s32);
 void Audio_PlayCue(s32);
-void Object_SetMode(void *, s32);
 void Battle_WaitMode0(s32 arg0);
 
-extern s32 gCell[];
 
 s32 ObjectEffect_RunPendingFlagEvent(void)
 {

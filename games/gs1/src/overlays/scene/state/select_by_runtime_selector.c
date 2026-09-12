@@ -110,7 +110,7 @@ void Actor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
 }
 
 /* overlays/scene/state/interaction/actor_search.c */
-extern u8 *gWork;
+extern u8 gWork[];
 
 s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
 {
@@ -133,7 +133,6 @@ void Resource3a7_NoOpCallback(void)
 }
 
 /* overlays/scene/state/interaction/conditional_scene_setup.c */
-extern u8 gWork[];
 
 void Scene_RunFlag9a9GuardedScene(void)
 {
@@ -151,7 +150,6 @@ void Scene_RunFlag9a9GuardedScene(void)
 }
 
 /* overlays/scene/state/interaction/scene_primary_script.c */
-extern u8 gWork[];
 extern u8 gOvInteraction[];
 extern u8 gOv2[];
 extern u8 gOv3[];
@@ -706,7 +704,6 @@ void State_DispatchByActorZeroDepth(void)
 }
 
 /* overlays/scene/state/interaction/set_entries_16_21_byte_35.c */
-extern u8 *State_RunActorZeroDepth(s32);
 
 void State_SetEntries16To21Byte35(void)
 {

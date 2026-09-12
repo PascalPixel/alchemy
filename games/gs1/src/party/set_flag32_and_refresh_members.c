@@ -36,9 +36,8 @@ struct OwnerWork {
     u16 inventory[15];
 };
 
-void Owner_RefreshDerivedData(s32 id);
 void Owner_RecalculateStats(s32 id);
-s32 FixedPoint_Ratio(s32, s32);
+extern s32 FixedPoint_Ratio(s32, s32);
 s32 OwnerAction_Add(s32 id, s32 value);
 
 void Party_ApplyStatePreset(void)
@@ -116,7 +115,6 @@ void Party_ApplyStatePreset(void)
 
 /* owner/refresh_active_ratios.c */
 /* owner/refresh_active_ratios.c */
-extern s32 FixedPoint_Ratio(s32, s32);
 
 void Owner_RefreshActiveRatios(s32 arg0)
 {
@@ -175,7 +173,6 @@ void Owner_RefreshActiveRatios(s32 arg0)
 }
 
 /* owner/refresh_ratios_on_flag.c */
-extern s32 FixedPoint_Ratio(s32, s32);
 extern const u8 gRomRefreshActiveRatios[];
 
 void Owner_RefreshRatiosOnFlag(void)
@@ -259,7 +256,6 @@ void Owner_ReservedNoOp78228(void)
 }
 
 /* owner/recalculate_ratios.c */
-s32 FixedPoint_Ratio(s32, s32);
 
 struct OwnerRatioState {
     u8 unknown_00[0x14];
@@ -323,7 +319,6 @@ struct OwnerRatioPairState {
     s16 inputY;
 };
 
-s32 FixedPoint_Ratio(s32, s32);
 
 void Owner_UpdateRatioPair(struct OwnerRatioPairState *state, s32 input)
 {
@@ -374,7 +369,7 @@ void Owner_UpdateRatioPair(struct OwnerRatioPairState *state, s32 input)
 
 /* owner/adjust_first_value.c */
 struct OwnerFirstValueState { u8 padding[0x34]; s16 max; s16 unk; s16 pos; };
-struct OwnerFirstValueState *Owner_GetState(s32);
+struct OwnerSecondValueState *Owner_GetState(s32);
 void Owner_RecalculateRatios(s32 arg0);
 s16 Owner_AdjustFirstValue(s32 o, s32 d)
 {
@@ -392,8 +387,6 @@ s16 Owner_AdjustFirstValue(s32 o, s32 d)
 
 /* owner/adjust_second_value.c */
 struct OwnerSecondValueState { u8 padding[0x36]; s16 max; s16 pad2; s16 pos; };
-struct OwnerSecondValueState *Owner_GetState(s32);
-void Owner_RecalculateRatios(s32 arg0);
 s16 Owner_AdjustSecondValue(s32 o, s32 d){ struct OwnerSecondValueState *s=Owner_GetState(o);
  s32 cur=s->pos; s32 mx=s->max; s32 p=cur+d;
  s32 r; if (p>mx) r=mx; else { r=0; if (p>=0) r=p; }

@@ -47,7 +47,6 @@ void Ui_SetGridColumnByte5(s32 slot, s32 value)
 }
 
 /* ui/icon/set_grid_column_byte6.c */
-extern u8 *gIw;
 
 void Ui_SetGridColumnByte6(s32 slot, s32 value)
 {
@@ -113,7 +112,6 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 }
 
 /* ui/icon/set_grid_column_number.c */
-extern u8 *gIw;
 
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {

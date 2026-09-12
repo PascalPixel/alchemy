@@ -11,7 +11,7 @@ typedef struct Entry {
 
 extern Entry gRom[];
 
-s32 GameFlag_IsSet(s32);
+s32 GameFlag_IsSet(s32 flag);
 void BattleFx_SelectResultPointer(s32 arg0);
 
 s32 BattleFx_LookupResult(void *arg0)
@@ -92,7 +92,6 @@ struct SceneInteractionEntry {
 
 extern const struct SceneInteractionEntry gRom3[];
 
-s32 GameFlag_IsSet(s32 flag);
 
 void Scene_ResolveInteractionResult(void)
 {

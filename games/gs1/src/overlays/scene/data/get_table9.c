@@ -76,8 +76,6 @@ u8 *SceneData_GetTable9ac8(void)
     return (u8 *)0x02009ac8;
 }
 
-extern s16 gCell[];
-extern u8 Value_000000bd;
 extern u8 gOv3[];
 extern u8 gOv4[];
 

@@ -233,7 +233,6 @@ struct S {
     struct T *f50;
 };
 
-extern u32 StagedActorStepTable[];
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);
@@ -2005,7 +2004,6 @@ struct V {
 };
 
 extern s32 gOv3[];
-extern s32 StagedActorStepTable[];
 extern u8 gOv4[];
 
 s32 FindClearActorPosition(s32 *a)
@@ -2183,7 +2181,6 @@ s32 TryPushBlockingSceneActor(struct S *actor)
 }
 
 /* map/locations/heidia/prologue/prologue_route_scene/scene_data.c */
-extern s16 gCell[];
 extern u8 Value_00000071;
 extern u8 Value_00000072;
 extern u8 Value_0000007b;
@@ -2291,7 +2288,6 @@ extern u8 gVal2[];
 extern u8 gVal3[];
 extern u8 gVal4[];
 extern u8 gVal5[];
-extern u8 gCell[];
 extern u8 gWork[];
 extern s16 gCell2[][1];
 
@@ -2493,7 +2489,6 @@ struct S {
     u8 f23;
 };
 
-extern u8 gCell[];
 
 struct S *Map_unk192_3(void);
 

@@ -23,7 +23,7 @@ typedef struct {
     u8 transition_phase;
 } SceneTransitionScene;
 
-void WaitFrames(s32 frames);
+void WaitFrames(s32);
 void ScheduleCallback(void (*callback)(void));
 void *Battle_Run(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
@@ -77,8 +77,6 @@ void ResetSceneTransitionEffect(void)
 /* battle/effects/burst_particles/run_main_object.c */
 void Object_SetMode(s32, s32);
 
-void WaitFrames(s32);
-void Audio_PlayCue(s32);
 void BattleFx_PrepareBufferInterpolation(void);
 
 void BattleFx_RunBurstParticleMainObject(void)
@@ -111,15 +109,12 @@ struct BurstParticleVector {
 
 extern u8 *gIw;
 
-void Audio_PlayCue(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void RotateVectorByMagnitude(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetCallback(void *, const void *);
-void WaitFrames(u32);
-void BattleFx_PrepareBufferInterpolation(void);
 extern const u8 gRom[];
 
 void BattleFx_RunBurstParticles(void)

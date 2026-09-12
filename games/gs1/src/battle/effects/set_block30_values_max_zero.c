@@ -22,7 +22,6 @@ void BattleFx_SetBlock30ValuesMaxZero(void)
 }
 
 /* battle/effects/set/set_block30_values_12_zero.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 struct Fields_08095240 {
     u8 filler[0x1F80];
@@ -38,7 +37,6 @@ void BattleFx_SetBlock30Values12Zero(void)
 }
 
 /* battle/effects/set/set_block30_values_128_one.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 struct Fields_08095268 {
     u8 filler[0x1F80];
@@ -255,7 +253,6 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
 }
 
 /* battle/effects/heavy_impact/finish.c */
-extern s32 gCell[];
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
@@ -385,7 +382,6 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
 
 /* battle/effects/obj/shrink_object_and_destroy_fast.c */
 /* battle/effects/obj/shrink_object_and_destroy_fast.c */
-void Object_Destroy();
 
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 {
@@ -417,11 +413,9 @@ struct Object08095fcc {
     s16 angle;
 };
 
-extern s32 gCell[];
 
-s32 Object_GetById(u32);
+struct EffectPositionSource *Object_GetById(s32 id);
 void RotateVectorByMagnitude(s32, s32, void *);
-void Object_Destroy();
 
 void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
 {
@@ -460,16 +454,12 @@ struct PositionSource_08096048 {
     struct Output_08096048 position;
 };
 
-extern s32 gCell[];
-extern u32 gIw;
 
-s32 Object_GetById(u32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, void *);
-void NormalizeVector(void *);
-void Audio_PlayCue(s32);
+void NormalizeVector(struct EffectVector *position);
+void Audio_PlayCue(s32 cue);
 
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 {
@@ -533,16 +523,11 @@ struct EffectPositionSource {
     struct EffectVector position;
 };
 
-extern s32 gCell[];
 
-struct EffectPositionSource *Object_GetById(s32 id);
-u32 Random16(void);
 void RotateVectorByMagnitude(
     s32 magnitude,
     s32 angle,
     struct EffectVector *position);
-void NormalizeVector(struct EffectVector *position);
-void Audio_PlayCue(s32 cue);
 
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 {

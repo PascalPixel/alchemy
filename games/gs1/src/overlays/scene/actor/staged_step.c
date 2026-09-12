@@ -386,7 +386,6 @@ u8 *SceneData_GetTablea970(void)
 }
 
 /* overlays/scene/actor/staged_step/scene_primary_script.c */
-extern u8 gWork[];
 extern u8 RuntimeSelectorTable[];
 
 void Scene_RunScene3b4(void)
@@ -966,7 +965,6 @@ void Scene_RunSingleStep(void)
 
 /* overlays/scene/actor/staged_step/staged_actor.c */
 
-extern u8 *gWork;
 
 u8 *Actor_unk179_2(s32);
 
@@ -1164,7 +1162,6 @@ done:
 
 /* overlays/scene/actor/staged_step/staged_actor_pair.c */
 
-extern u32 Actor_Far2[];
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);

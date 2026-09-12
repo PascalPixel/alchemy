@@ -293,9 +293,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 }
 
 /* ui/text/draw/draw_string_at_offset.c */
-extern u8 *gIwSetParamNibble;
 
-s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
 
 void UiText_DrawStringAtOffset(
     u8 *text,
@@ -343,7 +341,6 @@ void UiText_DrawStringAtOffset(
 }
 
 /* ui/text/draw/draw_string_in_window.c */
-s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
 
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {
@@ -363,7 +360,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 }
 
 /* ui/text/draw/draw_number.c */
-u8 *Text_FormatNumber(u8 *, s32, s32);
+u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
 void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
@@ -375,7 +372,6 @@ void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 }
 
 /* ui/text/draw/draw_number_at_offset.c */
-u8 *Text_FormatNumber(u8 *, s32, s32);
 
 void UiText_DrawNumberAtOffset(
     s32 arg0,
@@ -391,7 +387,6 @@ void UiText_DrawNumberAtOffset(
 }
 
 /* ui/text/draw/draw_number_in_window.c */
-u8 *Text_FormatNumber(u8 *, s32, s32);
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 
 void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
@@ -403,9 +398,7 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 }
 
 /* ui/text/draw/draw_prefixed_number_at_offset.c */
-extern u8 *gIwSetParamNibble;
 
-u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
 
 void UiText_DrawPrefixedNumberAtOffset(
     s32 value,
@@ -523,7 +516,7 @@ void *RenderOutput_CreateFromResource(
 }
 
 /* ui/render/create_output_loaded.c */
-s32 Resource_FindFreeSlot();
+s32 Resource_FindFreeSlot(void);
 
 void *RenderOutput_CreateLoaded(
     s32 arg0,
@@ -545,7 +538,6 @@ void *RenderOutput_CreateLoaded(
 }
 
 /* ui/render/create_output_with_transform.c */
-s32 Resource_FindFreeSlot(void);
 
 void *RenderOutput_CreateWithTransform(
     s32 arg0,
@@ -568,7 +560,6 @@ void *RenderOutput_CreateWithTransform(
 }
 
 /* ui/render/create_output_from_table.c */
-s32 Resource_FindFreeSlot();
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
 void *RenderOutput_CreateFromTable(
     s32 table_entry,

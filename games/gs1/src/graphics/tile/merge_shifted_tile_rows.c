@@ -131,8 +131,6 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
 }
 
 /* resource/load_kind26_entry_to_buffer.c */
-s32 Resource_GetBuffer(s32 index, s32 value);
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
 {
@@ -147,8 +145,6 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
 }
 
 /* resource/load_indexed_entry_to_buffer.c */
-s32 Resource_GetBuffer(s32 index, s32 value);
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
 {
@@ -222,7 +218,6 @@ extern u8 gVal[];
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 
-s32 Resource_GetBuffer(s32 index, s32 value);
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {

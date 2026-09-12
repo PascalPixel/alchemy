@@ -1467,7 +1467,6 @@ s32 SceneData_SelectDataBySelectorAndFlags(void)
 }
 
 /* overlays/scene/dialogue/choice/scene_dialogue.c */
-extern u8 gWork[];
 
 void Dialogue_ShowLine2239Or223A(void)
 {
@@ -1839,7 +1838,6 @@ void RunMiddleAuxiliarySequence(s32 a)
 /* overlays/scene/dialogue/choice/scene_effect_sequence_mid.c */
 
 extern u8 Value_00002280[];
-extern u8 gWork[];
 
 extern u8 Value_00001ffb[];
 
@@ -2167,7 +2165,6 @@ void Scene_RunScene3b8SequenceA(void)
 
 /* overlays/scene/dialogue/choice/scene_primary_script.c */
 extern u8 gVal[];
-extern u8 gWork[];
 extern u8 Value_000022ab;
 extern u8 Value_00002352;
 extern u8 Value_00000f31;
@@ -2317,7 +2314,6 @@ extern u8 Value_00001ff1;
 extern u8 Value_00002006;
 extern u8 Value_00000105;
 extern s16 gCell[];
-extern u8 Value_0000008b;
 extern u8 gOv10[];
 extern u8 gOv11[];
 extern u8 gOv12[];

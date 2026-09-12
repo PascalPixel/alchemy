@@ -197,7 +197,7 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 f
 }
 
 /* ui/window/close_if_open.c */
-s32 UiWindow_Close(void *handle);
+void UiWindow_Close(void *handle);
 
 void UiWindow_CloseIfOpen(void **handle)
 {

@@ -574,8 +574,8 @@ extern u8 Value_000000f1;
 struct SelectionNode_0801c188 *Menu_RunLoadSelected(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 
-u16 Resource_FindFreeSlot(void);
-u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
+s32 Resource_FindFreeSlot(void);
+s32 Resource_CopyData(s32 handle, s32 size, void *buffer);
 
 void Menu_LoadSelectedResource(void)
 {

@@ -204,7 +204,7 @@ extern s32 gCell[];
 
 struct Target *FunctionHead_08092054(s32);
 
-void FunctionHead_08095938(struct Actor *actor)
+void BattleFx_RunAngledApproachPhases(struct Actor *actor)
 {
     struct Target *target;
     struct Vec pos;

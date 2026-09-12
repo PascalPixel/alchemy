@@ -712,7 +712,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     return result;
 }
 
-s32 FunctionHead_080a9f0c(void)
+s32 Item_Run(void)
 {
     return 1;
 }

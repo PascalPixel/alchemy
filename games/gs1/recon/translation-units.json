@@ -109430,16 +109430,6 @@
           "address": "0x0809ad90",
           "extent": 88,
           "state": "exact-c"
-        },
-        {
-          "address": "0x0809ade8",
-          "extent": 84,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809ae3c",
-          "extent": 26,
-          "state": "exact-c"
         }
       ],
       "overlay": null

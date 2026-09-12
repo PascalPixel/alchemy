@@ -128686,36 +128686,6 @@
           "address": "0x08091dc8",
           "extent": 44,
           "state": "exact-c"
-        },
-        {
-          "address": "0x08091df4",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08091e20",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08091e3c",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08091e6c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08091eb0",
-          "extent": 100,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08091f14",
-          "extent": 124,
-          "state": "exact-c"
         }
       ],
       "overlay": null

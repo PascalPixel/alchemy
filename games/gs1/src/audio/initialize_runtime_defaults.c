@@ -5,8 +5,8 @@
 
 /* audio/init/initialize_runtime_defaults.c */
 void Audio_Initialize(void);
-extern u8 gOv[];
-extern u16 gOv2;
+extern u8 RomBytes_02003000[];
+extern u16 RomBytes_02003004;
 extern u16 gOv3;
 extern u16 gOv4;
 extern u16 gOv5;
@@ -25,7 +25,7 @@ void Audio_InitializeRuntimeDefaults(void)
 
     Audio_Initialize();
     gOv11 = 0xff;
-    gOv = 0;
+    RomBytes_02003000 = 0;
     gOv9 = 0x100;
     gOv3 = 0x100;
     gOv5 = 4;
@@ -35,7 +35,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gOv6 = 0;
     gOv12 = 0;
     player_volume = &gOv7;
-    gOv2 = 0;
+    RomBytes_02003004 = 0;
     remaining = 7;
     do {
         remaining--;
@@ -73,8 +73,8 @@ void MusicCommand_SetPitch(s16 pitch)
 
 void Audio_SetWorkPairB(u16 primary, u16 secondary)
 {
-    gOv = primary;
-    gOv2 = secondary;
+    RomBytes_02003030 = primary;
+    RomBytes_0200300c = secondary;
 }
 
 /* audio/command/set_volume.c */
@@ -101,8 +101,8 @@ void MusicCommand_SetVolume(s16 volume)
 
 void Audio_SetWorkPairA(u16 primary, u16 secondary)
 {
-    gOv = primary;
-    gOv2 = secondary;
+    RomBytes_02003034 = primary;
+    RomBytes_02003010 = secondary;
 }
 
 /* audio/command/get_state_byte.c */
@@ -115,13 +115,13 @@ u8 AudioCommand_GetStateByte(void)
 /* audio/command/stop_all_players.c */
 void AudioCommand_StopAllPlayers(void)
 {
-    Audio_Run();
+    FunctionHead_080fa458();
 }
 
 /* audio/command/resume_all_players.c */
 void AudioCommand_ResumeAllPlayers(void)
 {
-    Audio_Run();
+    FunctionHead_080fa490();
 }
 
 /* audio/command/update_toggle_mask.c */
@@ -132,9 +132,9 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
     command &= 0x7f;
     if (toggle != 0)
-        gOv[0] ^= command;
+        RomBytes_02003040[0] ^= command;
     else
-        gOv[0] = command;
+        RomBytes_02003040[0] = command;
 }
 
 /* audio/command/get_secondary_state_byte.c */

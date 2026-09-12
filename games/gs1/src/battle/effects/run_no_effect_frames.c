@@ -32,7 +32,7 @@ void BattleFx_InitializeMode(s32 *arg0)
     Runtime_AllocateHeapBlock(40, 0x4000);
 
     if (*arg0 == 0) {
-        Battle_Do(arg0);
+        FunctionHead_080e7320(arg0);
     } else {
         switch (*arg0) {
         case 1:
@@ -66,7 +66,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             FunctionHead_080d765c(arg0);
             break;
         case 11:
-            Battle_Do(arg0);
+            FunctionHead_080e7320(arg0);
             break;
         case 12:
             FunctionHead_080e15e8(arg0);
@@ -102,9 +102,9 @@ void BattleFx_DispatchMode(s32 *state)
     else
         BattleFx_CallbackTable[index - 1](state);
 
-    Battle_Do(40);
-    Battle_Do(39);
-    Battle_Do(41);
+    FunctionHead_08002dd8(40);
+    FunctionHead_08002dd8(39);
+    FunctionHead_08002dd8(41);
 }
 
 /* battle/effects/calc/select_living_targets.c */

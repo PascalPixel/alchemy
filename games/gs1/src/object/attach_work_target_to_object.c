@@ -23,7 +23,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
     p = *(s32 **)ADDR_03001E70;
     if (obj != 0) {
         *p = (s32)((u8 *)target + 8);
-        Obj_Run(target, (void *)obj);
+        FunctionHead_080090e0(target, (void *)obj);
         if (flag == 0) {
             FIELD_AT_OFFSET(target, s32 *, 8) = (s32)FIELD_AT_OFFSET(obj, s32 *, 8);
             FIELD_AT_OFFSET(target, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0xC);
@@ -113,7 +113,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
         FIELD_AT_OFFSET(object, s32, 0x10) = position_z;
         WaitFrames(1U);
         if (FIELD_AT_OFFSET(runtime_block, s16, 0x19E) != 3) {
-            Obj_Run();
+            FunctionHead_08009128();
         }
     } else {
         Object_SetPosition(object, position_x, position_y, position_z);

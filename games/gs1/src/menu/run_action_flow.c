@@ -152,7 +152,7 @@ void Menu_InitSelectorCursorAndEntries(void)
     struct State080a8034 *state;
 
     state = *(struct State080a8034 **)ADDR_03001F2C;
-    InitializeEntryObjects(Menu_Check(state), 2, 2, 8, 0);
+    InitializeEntryObjects(FunctionHead_080a1814(state), 2, 2, 8, 0);
     state->field_28 = 0;
     state->field_24 = 0;
     state->field_2c = 0;
@@ -191,7 +191,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
         if ((((Object0f *)object)->field_0f = 0xF0, state->mode) == 3) {
             Menu_SpawnIconEntries(state, handle);
         }
-        Menu_Check(handle);
+        FunctionHead_080a9cf8(handle);
         Menu_Place(handle, resource, 0x100);
         return;
     }

@@ -20,13 +20,13 @@ struct MapInitWork {
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
     struct MapInitWork *work = *(struct MapInitWork **)ADDR_03001E70;
-    *(s32 *)ADDR_03001CFC = (s32)Map_Run;
+    *(s32 *)ADDR_03001CFC = (s32)FunctionHead_0801161c;
     work->first = 0;
     work->second = 0x9f;
     WaitFrames(1U);
     Map_Apply((s32)GetResource((s32)gVal), 0x02010000);
     Map_UpdateCurrentTileBlock();
-    Map_Check((u32)Map_unk3_4);
+    FunctionHead_0800439c((u32)Map_unk3_4);
     WaitFrames(1U);
 }
 
@@ -41,7 +41,7 @@ void Map_ClearLayerEntryFlag(u32 no)
     *(u16 *)(entry + 0x22) = value;
 }
 
-void Map_Run(u32 no)
+void FunctionHead_080118c0(u32 no)
 {
     u8 *base = gCam;
     u8 *entry = base + no * 12;
@@ -53,14 +53,14 @@ void Map_Run(u32 no)
 void Map_EnableUpdateCallback(void)
 {
     if (gCam->active == 0)
-        Map_Check((u32)Map_Run);
+        FunctionHead_080042c8((u32)FunctionHead_0801179c);
 }
 
 /* map/shared/disable_update_callback.c */
 void Map_DisableUpdateCallback(void)
 {
     if (gCam->active == 0)
-        Map_Check((u32)Map_Run);
+        FunctionHead_080042c8((u32)FunctionHead_0801179c);
 }
 
 /* display/blend/blend_run_script.c */
@@ -136,14 +136,14 @@ void DisplayBlend_RunScript(void);
 
 void DisplayBlend_EnableRunScript(void)
 {
-    Sys_Check((u32)DisplayBlend_RunScript);
+    FunctionHead_080042c8((u32)DisplayBlend_RunScript);
 }
 
 /* display/blend/disable_run_script.c */
 
 void DisplayBlend_DisableRunScript(void)
 {
-    Sys_Check((u32)DisplayBlend_RunScript);
+    FunctionHead_0800439c((u32)DisplayBlend_RunScript);
 }
 
 /* runtime/allocate_and_clear_queue.c */
@@ -363,7 +363,7 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
     start = samples[0] << CURVE_VALUE_SHIFT;
     return start
         + (((samples[1] << CURVE_VALUE_SHIFT) - start)
-           * gRomGetFirstSample[position + (row *CURVE_FULL_STEPS)]);
+           * RomBytes_080132fc[position + (row *CURVE_FULL_STEPS)]);
 }
 
 /* math/curve/step_at_half.c */
@@ -453,7 +453,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position)
 /* math/curve/lookup_sample_by_table.c */
 s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 {
-    return samples[gRomGetFirstSample[position + (row << 4)]]
+    return samples[RomBytes_080133fc[position + (row << 4)]]
         << CURVE_VALUE_SHIFT;
 }
 
@@ -461,7 +461,7 @@ s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row)
 {
     return samples[
-        gRomGetFirstSample[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
+        RomBytes_080133fc[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
         << CURVE_VALUE_SHIFT;
 }
 

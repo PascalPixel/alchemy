@@ -39,9 +39,9 @@ void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
 
 void WaitFrames(s32);
-extern u8 gRom[];
+extern u8 RomBytes_08028195[];
 
-void Menu_EndResourceSelection(void)
+void FunctionHead_0802851c(void)
 {
     struct Work *child;
     s32 i;
@@ -49,7 +49,7 @@ void Menu_EndResourceSelection(void)
     void *work;
 
     work = *(void **)ADDR_03001F38;
-    ScheduleCallback(&gRom);
+    ScheduleCallback(&RomBytes_08028195);
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
     if (child != 0) {
         UiWork_Finalize(child, 2);
@@ -60,7 +60,7 @@ void Menu_EndResourceSelection(void)
         Resource_ResetEntry(*entry);
         i += 1;
     }
-    Menu_Do(0x3A);
+    FunctionHead_08002dd8(0x3A);
     WaitFrames(1U);
 }
 
@@ -122,7 +122,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         UiText_DrawCharacter(resource_id, state->work, 0, 0);
 
         cur = state->selection;
-        tbl = gRom;
+        tbl = RomBytes_080373ef;
         diff = cur - goal;
         dist = AbsoluteDifference(diff, cur, goal);
         WaitFrames(tbl[dist] + delay);
@@ -156,7 +156,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     /* 表内の相対位置から転送元を求める。 */
     Menu_Apply((void *)((u32)base + base[index]), buffer);
     Resource_CopyData(slot, size, buffer);
-    Menu_Do(buffer);
+    FunctionHead_08002df0(buffer);
 }
 
 /* menu/res/append_resource_entry.c */
@@ -232,12 +232,12 @@ s32 Menu_SelectTopEntry(s32 sel)
     s32 ret;
     s8 *tbl;
 
-    if (Menu_Check(-1) == 0) {
+    if (FunctionHead_08077290(-1) == 0) {
         group = 1;
     }
 
     triple = group * 3;
-    tbl = gRom;
+    tbl = RomBytes_08037403;
     ofs = triple << 1;
     sel = TblGet(tbl, sel + ofs) - 1;
     if (sel < 0) {
@@ -253,7 +253,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     Menu_AppendResourceEntry(7);
     Menu_Place(17, SELECT_MENU_WIDTH, 0);
     ret = Menu_SelectListedEntry(sel);
-    Menu_EndResourceSelection();
+    FunctionHead_0801c2d0();
 
     if (ret >= 0) {
         ret = gRom2[ret + ofs + 1];
@@ -268,7 +268,7 @@ s32 Menu_SelectResource(s32, s32);
 
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
 {
-    Menu_EndResourceSelection();
+    FunctionHead_0801c2d0();
     Menu_Run();
     Menu_AppendResourceEntry(1);
     Menu_AppendResourceEntry(0xF);
@@ -276,7 +276,7 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     Menu_AppendResourceEntry(7);
     Menu_Place(0x11, 7, 0);
     arg1 = Menu_SelectResource(arg0, arg1 - 1);
-    Menu_EndResourceSelection();
+    FunctionHead_0801c2d0();
     UiWork_CloseAndRelease();
     return arg1;
 }
@@ -293,7 +293,7 @@ s32 Menu_SelectSaveSlotAction(void)
 
     group = 0;
     initial = 0;
-    type = Menu_Check();
+    type = FunctionHead_0801f77c();
     if (type < 0) {
         return -1;
     }
@@ -328,9 +328,9 @@ s32 Menu_SelectSaveSlotAction(void)
     }
     Menu_Place(0x11, TYPE_MENU_WIDTH, 0);
     ret = Menu_SelectListedEntry(initial);
-    Menu_EndResourceSelection();
+    FunctionHead_0801c2d0();
     if (ret >= 0) {
-        ret = gRom[ret + (group * 6)];
+        ret = RomBytes_0803740f[ret + (group * 6)];
     }
     return ret;
 }
@@ -440,8 +440,8 @@ s32 Menu_SelectEntry11To14(s32 arg0)
     Menu_AppendResourceEntry(0x13);
     Menu_AppendResourceEntry(0x14);
     Menu_Place(0x11, 7, 0);
-    ret = Menu_Check(arg0);
-    Menu_EndResourceSelection();
+    ret = FunctionHead_08028574(arg0);
+    FunctionHead_0801c2d0();
     return ret;
 }
 
@@ -458,8 +458,8 @@ s32 Menu_SelectEntry19To1c(s32 arg0)
     Menu_AppendResourceEntry(0x1B);
     Menu_AppendResourceEntry(0x1C);
     Menu_Place(0x11, 0xA, 0);
-    ret = Menu_Check(arg0);
-    Menu_EndResourceSelection();
+    ret = FunctionHead_08028574(arg0);
+    FunctionHead_0801c2d0();
     return ret;
 }
 
@@ -484,8 +484,8 @@ s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     Menu_AppendResourceEntry(6);
     Menu_Place(flag, arg2, arg1);
 
-    arg3 = Menu_Check(arg3);
-    Menu_EndResourceSelection();
+    arg3 = FunctionHead_08028574(arg3);
+    FunctionHead_0801c2d0();
     if (arg3 == -1) {
         arg3 = 1;
     }
@@ -506,8 +506,8 @@ s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
     Menu_AppendResourceEntry(5);
     Menu_AppendResourceEntry(6);
     Menu_LayoutResourceEntries(arg0, arg1, 3, p);
-    ret = Menu_Check(ret);
-    Menu_EndResourceSelection();
+    ret = FunctionHead_08028574(ret);
+    FunctionHead_0801c2d0();
     if (ret == -1) {
         ret = 1;
     }
@@ -525,7 +525,7 @@ s32 Menu_SelectEntry20To21(s32 arg0)
     Menu_AppendResourceEntry(0x20);
     Menu_AppendResourceEntry(0x21);
     Menu_Place(0x11, 9, 0);
-    ret = Menu_Check(arg0);
-    Menu_EndResourceSelection();
+    ret = FunctionHead_08028574(arg0);
+    FunctionHead_0801c2d0();
     return ret;
 }

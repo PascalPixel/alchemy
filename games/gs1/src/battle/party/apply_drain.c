@@ -12,7 +12,7 @@ extern s32 gCell[];
 
 void BattleParty_ApplyDrain(s32 amount)
 {
-    s32 target_count = Battle_Check(amount);
+    s32 target_count = FunctionHead_08077148(amount);
 
     if (target_count > 0) {
         u8 *base = (u8 *)&gCell;
@@ -21,7 +21,7 @@ void BattleParty_ApplyDrain(s32 amount)
         s32 remaining = target_count;
 
         do {
-            Battle_Apply(*target_id++, amount);
+            FunctionHead_08077120(*target_id++, amount);
             remaining--;
         } while (remaining != 0);
     }
@@ -39,7 +39,7 @@ void Audio_PlayCue(s32);
 s32 BattleParty_ApplyStatusDamage(void)
 {
     s32 result = 0;
-    s32 count = Battle_Check();
+    s32 count = FunctionHead_08009230();
 
     if (result < count) {
         s32 offset = 252;
@@ -75,7 +75,7 @@ s32 BattleParty_ApplyStatusDamage(void)
             }
 
             remaining--;
-            Battle_Apply(*entry, amount);
+            FunctionHead_08077118(*entry, amount);
             entry++;
         } while (remaining != 0);
     }
@@ -107,7 +107,7 @@ void Battle_SetObjectFlag5bWhenMode3(void)
             FIELD_AT_OFFSET(blk, s8 *, 0x53D) = 0;
         }
         FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x1E0), s8 *, 0x5B) = 1;
-        Battle_Check();
+        FunctionHead_08009238();
     }
 }
 
@@ -119,7 +119,7 @@ void Battle_ClearObjectFlag5bWhenMode3(void)
 
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
     if (FIELD_AT_OFFSET(work, s16 *, 0x19E) == 3) {
-        Battle_Check();
+        FunctionHead_08009238();
         FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x1E0), s8 *, 0x5B) = 0;
     }
 }

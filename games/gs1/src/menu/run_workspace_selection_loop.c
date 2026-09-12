@@ -218,7 +218,7 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     /* 0xeb0から始まる列を次の処理へ渡す。 */
-    Ui_SetMode(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    FunctionHead_08017aa4(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
 }
 
 /* ui/text/draw/draw_character.c */
@@ -260,7 +260,7 @@ void UiText_DrawCharacter(
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
         text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
-        Ui_SetMode(
+        FunctionHead_0801de5c(
             text,
             (s32)(base + byte_offset),
             vram_address,
@@ -288,7 +288,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
         } while (*input != 0);
     }
     *output = 0;
-    Ui_SetMode(buffer, arg1, arg2, arg3);
+    FunctionHead_08017c8c(buffer, arg1, arg2, arg3);
     Ui_Check(buffer);
 }
 
@@ -331,7 +331,7 @@ void UiText_DrawStringAtOffset(
         dst = vram + cell;
         src = (s32)base + cell;
         phase = offset_x & 7;
-        Ui_SetMode(
+        FunctionHead_08017c8c(
             buffer,
             src,
             dst,
@@ -355,7 +355,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     x >>= 3;
     y >>= 3;
-    Ui_SetMode(buffer, arg1, x, y);
+    FunctionHead_08017c8c(buffer, arg1, x, y);
     Ui_Do(buffer);
 }
 
@@ -439,7 +439,7 @@ void UiText_DrawPrefixedNumberAtOffset(
         dst = vram + cell;
         src = (s32)base + cell;
         phase = offset_x & 7;
-        Ui_SetMode(
+        FunctionHead_08017c8c(
             output,
             src,
             dst,

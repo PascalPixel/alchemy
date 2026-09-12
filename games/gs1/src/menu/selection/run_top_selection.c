@@ -83,14 +83,14 @@ void UiWindow_OpenMode1AndWaitFrame(void)
 /* ui/runtime/misc/close_and_release.c */
 void UiWork_CloseAndRelease(void)
 {
-    Ui_Run();
+    FunctionHead_0801f5d4();
 }
 
 /* ui/runtime/misc/clear_work_state_and_wait_frame.c */
 void Ui_ClearWorkStateAndWaitFrame(void)
 {
     Ui_Check();
-    Ui_Run();
+    FunctionHead_0801a778();
     WaitFrames(1);
 }
 

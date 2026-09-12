@@ -47,10 +47,10 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
   state = *((u8 **)(TRANSITION_CELL_ADDR - 0x8C));
   *flag = 1;
   transfer = 0x1541;
-  Battle_Apply(0x04000000, transfer);
+  FunctionHead_0800387c(0x04000000, transfer);
   one = 1;
   WaitFrames(one);
-  Battle_Place(2, *((u16 *)(state + 0x648)), 0);
+  FunctionHead_080b5038(2, *((u16 *)(state + 0x648)), 0);
   transfer = one;
   do
   {
@@ -76,9 +76,9 @@ typedef void (*DrawRectangleFn)(
  * literal pool word, which an ordinary integer literal cannot produce. */
 extern u8 Value_000000af;
 
-void *Battle_Run(s32 id);
+void *FunctionHead_08002f40(s32 id);
 
-void **Battle_unk2_4(s32 member_id);
+void **FunctionHead_080b5098(s32 member_id);
 
 /*
  * Sets the BG2 affine scale, loads the palette and the 32x32 sprite frames
@@ -111,11 +111,11 @@ void BattleFx_RunMemberOrbit(void *object)
     work = *cursor++;
     canvas = *cursor;
     FIELD_AT_OFFSET(work, void **, 0x7828) = object;
-    Battle_Do(0);
+    FunctionHead_080cd594(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
-    palette = Battle_Run((s32)&Value_000000af);
+    palette = FunctionHead_08002f40((s32)&Value_000000af);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Battle_Apply((u8 *)palette + 128, work);
+    status = FunctionHead_08005340((u8 *)palette + 128, work);
     status = Battle_SetRange(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
     status = Battle_SetRange(47, 7, 7, 15, 2);
@@ -149,19 +149,19 @@ void BattleFx_RunMemberOrbit(void *object)
 
             for (i = 0, ceiling = 0x80000, angle = frame << 10;
                     i != 160; i++) {
-                *scanline++ = (ceiling - (Battle_Check(angle) << 3)) >> 10;
+                *scanline++ = (ceiling - (FunctionHead_08002322(angle) << 3)) >> 10;
                 angle += 1024;
             }
         } else {
             s32 angle;
 
             for (i = 0, angle = frame << 10; i != 160; i++) {
-                *scanline++ = ((Battle_Check(angle) << 3) >> 10) - 0x7000;
+                *scanline++ = ((FunctionHead_08002322(angle) << 3) >> 10) - 0x7000;
                 angle += 1024;
             }
         }
-        get();
-        Battle_Apply3(facing, facing + 12);
+        FunctionHead_080049ac();
+        FunctionHead_080051d8(facing, facing + 12);
         member = 0;
         if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {
             record_slot = record;
@@ -170,7 +170,7 @@ void BattleFx_RunMemberOrbit(void *object)
                 != FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)) {
                 void *member_object;
 
-                member_object = *Battle_unk2_4(
+                member_object = *FunctionHead_080b5098(
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s16 *,
                         id_ofs));
                 if (frame > member * 16 && frame < (member * 16) + 60) {
@@ -192,9 +192,9 @@ void BattleFx_RunMemberOrbit(void *object)
                         s32 slot;
 
                         spin = (frame << 9) + (i << 14);
-                        x = (screen[0] + ((Battle_Check(spin) << 4) >> 16))
+                        x = (screen[0] + ((FunctionHead_08002322(spin) << 4) >> 16))
                             + y_offset;
-                        y = screen[1] + ((Battle_unk2(spin) << 4) >> 16);
+                        y = screen[1] + ((FunctionHead_0800231c(spin) << 4) >> 16);
                         slot = frame / 16;
                         ((DrawRectangleFn)rectangle_slot[slot & 1])(
                             canvas,
@@ -213,25 +213,25 @@ void BattleFx_RunMemberOrbit(void *object)
     Scheduler_RemoveCallback((void *)0x080DBB9D);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Battle_unk3();
+    FunctionHead_080cdbc0();
 }
 
 /* battle/effects/member_burst/run_mode0.c */
 void BattleFx_RunMemberBurstMode0(s32 arg0)
 {
-    Battle_Apply(arg0, 0);
+    FunctionHead_080ceb54(arg0, 0);
 }
 
 /* battle/effects/member_burst/run_mode1.c */
 void BattleFx_RunMemberBurstMode1(s32 arg0)
 {
-    Battle_Apply(arg0, 1);
+    FunctionHead_080ceff8(arg0, 1);
 }
 
 /* battle/effects/member_burst/run_mode2.c */
 void BattleFx_RunMemberBurstMode2(s32 arg0)
 {
-    Battle_Apply(arg0, 2);
+    FunctionHead_080cf2b8(arg0, 2);
 }
 
 /* battle/effects/misc/fetch_rectangle_blitters.c */
@@ -267,73 +267,73 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output)
 /* battle/effects/forty_eight_frame/run_mode1.c */
 void BattleFx_RunFortyEightFrameMode1(s32 arg0)
 {
-    Battle_Apply(arg0, 1);
+    FunctionHead_080cf8e0(arg0, 1);
 }
 
 /* battle/effects/forty_eight_frame/run_mode0.c */
 void BattleFx_RunFortyEightFrameMode0(s32 arg0)
 {
-    Battle_Apply(arg0, 0);
+    FunctionHead_080cf8e0(arg0, 0);
 }
 
 /* battle/effects/forty_eight_frame/run_mode2.c */
 void BattleFx_RunFortyEightFrameMode2(s32 arg0)
 {
-    Battle_Apply(arg0, 2);
+    FunctionHead_080cf8e0(arg0, 2);
 }
 
 /* battle/effects/two_mode_a/run_mode0.c */
 void BattleFx_RunTwoModeAMode0(s32 arg0)
 {
-    Battle_Apply(arg0, 0);
+    FunctionHead_080cf8e0(arg0, 0);
 }
 
 /* battle/effects/two_mode_a/run_mode1.c */
 void BattleFx_RunTwoModeAMode1(s32 arg0)
 {
-    Battle_Apply(arg0, 1);
+    FunctionHead_080cf8e0(arg0, 1);
 }
 
 /* battle/effects/seven_mode/run_mode4.c */
 void BattleFx_RunSevenModeMode4(s32 arg0)
 {
-    Battle_Apply(arg0, 4);
+    FunctionHead_080cf8e0(arg0, 4);
 }
 
 /* battle/effects/seven_mode/run_mode5.c */
 void BattleFx_RunSevenModeMode5(s32 arg0)
 {
-    Battle_Apply(arg0, 5);
+    FunctionHead_080cf8e0(arg0, 5);
 }
 
 /* battle/effects/seven_mode/run_mode0.c */
 void BattleFx_RunSevenModeMode0(s32 arg0)
 {
-    Battle_Apply(arg0, 0);
+    FunctionHead_080cf8e0(arg0, 0);
 }
 
 /* battle/effects/seven_mode/run_mode1.c */
 void BattleFx_RunSevenModeMode1(s32 arg0)
 {
-    Battle_Apply(arg0, 1);
+    FunctionHead_080cf8e0(arg0, 1);
 }
 
 /* battle/effects/seven_mode/run_mode6.c */
 void BattleFx_RunSevenModeMode6(s32 arg0)
 {
-    Battle_Apply(arg0, 6);
+    FunctionHead_080cf8e0(arg0, 6);
 }
 
 /* battle/effects/seven_mode/run_mode2.c */
 void BattleFx_RunSevenModeMode2(s32 arg0)
 {
-    Battle_Apply(arg0, 2);
+    FunctionHead_080cf8e0(arg0, 2);
 }
 
 /* battle/effects/seven_mode/run_mode3.c */
 void BattleFx_RunSevenModeMode3(s32 arg0)
 {
-    Battle_Apply(arg0, 3);
+    FunctionHead_080cf8e0(arg0, 3);
 }
 
 /* battle/effects/counter_reveal/run.c */
@@ -376,7 +376,7 @@ extern u8 *gBattleWork;
 extern u8 gRom[];
 extern u8 gRom2[];
 
-void *get(s32 id);
+void *FunctionHead_08002f40(s32 id);
 
 void **Battle_unk4_4(s32 member_id);
 
@@ -406,17 +406,17 @@ void BattleFx_RunCounterReveal(void *object)
     canvas = *cursor;
     zero_val = 0;
     (*(void **)((u8 *)(work) + (0x7828))) = object;
-    Battle_Check(0);
+    FunctionHead_080cdb24(0);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
-    palette = get((s32)&Value_000000ab);
+    palette = FunctionHead_08002f40((s32)&Value_000000ab);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
-    status = Battle_Apply(palette, work);
+    status = FunctionHead_080cf8e0(palette, work);
     sprite_vram = (void *)0x02010000;
-    palette = get((s32)&Value_000000ac);
+    palette = FunctionHead_08002f40((s32)&Value_000000ac);
     palette = (u8 *)palette + 128;
-    status = Battle_Apply(palette, sprite_vram);
+    status = FunctionHead_080cf8e0(palette, sprite_vram);
     status = Battle_SetRange(46, 7, 7, 3, 1);
     rectangle[0] = heap_cache[7];
     status = Battle_SetRange(47, 7, 7, 7, 1);
@@ -444,10 +444,10 @@ void BattleFx_RunCounterReveal(void *object)
         s32 *scanline;
 
         spin = frame << 9;
-        screen_x = (curve[0] >> 16) + ((Battle_unk2(spin) << 4) >> 16) + 48;
-        screen_y = (curve[1] >> 16) + ((Battle_unk3(spin) << 2) >> 16) + 16;
+        screen_x = (curve[0] >> 16) + ((FunctionHead_08002322(spin) << 4) >> 16) + 48;
+        screen_y = (curve[1] >> 16) + ((FunctionHead_0800231c(spin) << 2) >> 16) + 16;
         if (frame == 88) {
-            Battle_Do(134);
+            FunctionHead_080f9010(134);
         }
         if (frame == 32) {
             if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
@@ -463,7 +463,7 @@ void BattleFx_RunCounterReveal(void *object)
             draw_enabled = 1;
         }
         if (frame == 64) {
-            Battle_Apply3(
+            FunctionHead_080e396c(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 pos);
             if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
@@ -503,7 +503,7 @@ void BattleFx_RunCounterReveal(void *object)
         angle = frame << 11;
         for (; i != 160; i++) {
             *scanline++ =
-                row_base - ((Battle_unk2(angle) * amp) >> 10);
+                row_base - ((FunctionHead_08002322(angle) * amp) >> 10);
             angle += 0x800;
         }
         if (draw_enabled != 0) {
@@ -586,7 +586,7 @@ void BattleFx_RunCounterReveal(void *object)
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
     Scheduler_RemoveCallback((void *)0x080DBB9D);
-    Battle_Place(1, (*(u16 *)((u8 *)(gBattleWork) + (0x648))), 24);
+    FunctionHead_080b5040(1, (*(u16 *)((u8 *)(gBattleWork) + (0x648))), 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Battle_unk4();

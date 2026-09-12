@@ -40,23 +40,23 @@ void MusicPlayer_Initialize(
     struct MusicPlayerState *,
     struct MusicTrackState *,
     u32);
-extern struct MusicPlayerView *gRom[];
+extern struct MusicPlayerView *RomBytes_080f9675[];
 extern u32 Value_00000008;
 extern u8 gOv;
-extern struct PlayerBootstrapRecord gRom2[];
+extern struct PlayerBootstrapRecord RomBytes_080fc624[];
 
 void Audio_Initialize(void)
 {
     u16 count;
 
-    Audio_Place((s32)&gRom & ~1, 0x03007000, 0x04000100);
+    Audio_Place((s32)&RomBytes_080f9675 & ~1, 0x03007000, 0x04000100);
     AudioEngine_Initialize((struct AudioEngineState *)0x02003050);
     CgbAudio_Initialize((struct CgbChannel *)0x02004090);
     AudioEngine_SetMode(0x0097F800);
 
     count = (u32)&Value_00000008;
     if (count != 0) {
-        struct PlayerBootstrapRecord *record = gRom2;
+        struct PlayerBootstrapRecord *record = RomBytes_080fc624;
         u32 remaining = count;
         do {
             struct MusicPlayerState *player = record->player;
@@ -86,14 +86,14 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-extern SoundTableEntry gRom2[];
+extern SoundTableEntry RomBytes_080fc684[];
 
 void MusicPlayer_StartSong(void *, s32);
 
 void Audio_PlaySound(u16 audio_cue_id)
 {
-    s32 *player_records = gRom;
-    SoundTableEntry *audio_cue_table = gRom2;
+    s32 *player_records = RomBytes_080fc624;
+    SoundTableEntry *audio_cue_table = RomBytes_080fc684;
     SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     s32 *player_record = &player_records[audio_cue->player * 3];
 
@@ -116,8 +116,8 @@ struct MusicPlayerView {
 
 void Audio_PlaySoundIfInactive(u16 audio_cue_id)
 {
-    struct MusicPlayerView **players = gRom;
-    struct SoundTableEntry *audio_cue_table = gRom2;
+    struct MusicPlayerView **players = RomBytes_080fc624;
+    struct SoundTableEntry *audio_cue_table = RomBytes_080fc684;
     struct SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     struct MusicPlayerView *player = players[audio_cue->player * 3];
 
@@ -138,14 +138,14 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-extern SoundTableEntry gRom2[];
+extern SoundTableEntry RomBytes_080fc684[];
 
 void Audio_ResumePlayer(void *player);
 
 void Audio_PlayOrResumeSound(u16 audio_cue_id)
 {
-    s32 **players = gRom;
-    SoundTableEntry *audio_cue_table = gRom2;
+    s32 **players = RomBytes_080fc624;
+    SoundTableEntry *audio_cue_table = RomBytes_080fc684;
     SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     s32 *player = players[audio_cue->player * 3];
     s32 current_header = player[0];
@@ -170,12 +170,12 @@ typedef struct {
 } SoundTableEntry;
 
 void MusicPlayer_Stop(void *player);
-extern SoundTableEntry gRom2[];
+extern SoundTableEntry RomBytes_080fc684[];
 
 void Audio_StopSound(u16 audio_cue_id)
 {
-    void **players = gRom;
-    SoundTableEntry *audio_cue_table = gRom2;
+    void **players = RomBytes_080fc624;
+    SoundTableEntry *audio_cue_table = RomBytes_080fc684;
     SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     void *player = players[audio_cue->player * 3];
 
@@ -189,7 +189,7 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-extern SoundTableEntry gRom2[];
+extern SoundTableEntry RomBytes_080fc684[];
 
 void Audio_ResumeSound(u16 audio_cue_id)
 {
@@ -204,8 +204,8 @@ void Audio_ResumeSound(u16 audio_cue_id)
     u32 player_slot;
 
     table_offset <<= 16;
-    players = gRom;
-    audio_cue_table = gRom2;
+    players = RomBytes_080fc624;
+    audio_cue_table = RomBytes_080fc684;
     table_offset >>= 13;
     audio_cue = (SoundTableEntry *)((unsigned char *)audio_cue_table + table_offset);
     player_id = audio_cue->player;
@@ -227,7 +227,7 @@ void Audio_StopAllPlayers(void)
     u32 player_count = (u16)(u32)gVal;
 
     if (player_count != 0) {
-        u8 *record = gRom;
+        u8 *record = RomBytes_080fc624;
         u32 remaining = player_count;
 
         do {
@@ -253,7 +253,7 @@ void Audio_ResumeAllPlayers(void)
     u16 player_count = (u32)gVal;
 
     if (player_count != 0) {
-        s32 *record = gRom;
+        s32 *record = RomBytes_080fc624;
         u32 remaining = player_count;
 
         do {

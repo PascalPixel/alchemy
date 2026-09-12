@@ -93,7 +93,7 @@ void AudioTrack_ResetSlotBuckets(void)
 /* audio/track/insert_slot_node.c */
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-extern struct State_080f7e60 *gOv;
+extern struct State_080f7e60 *RomBytes_02004c00;
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
@@ -106,7 +106,7 @@ void AudioTrack_InsertSlotNode(s32 index)
     void **node;
     void *next;
 
-    base = (s32)gOv;
+    base = (s32)RomBytes_02004c00;
     node_off = index * 12;
     tbl_off = index * 4 + 0x3404;
     bucket = *(s32 *)(base + tbl_off) * 4;
@@ -176,7 +176,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             u8 value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
-            state = gOv;
+            state = RomBytes_02003000;
             read_offset = state->input_cursor;
             value = input[read_offset];
             next_offset = read_offset + 1;
@@ -196,7 +196,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     current++;
     if (current < limit) {
         u32 mask = 0x3ff;
-        struct State_080f7e60 **root = &gOv;
+        struct State_080f7e60 **root = &RomBytes_02003000;
         s32 empty = -1;
 
         do {
@@ -256,14 +256,14 @@ void Audio_Run(void)
 {
     s32 delta;
 
-    if (gOv != 0) {
-        if (gOv == 1) {
+    if (RomBytes_02003000 != 0) {
+        if (RomBytes_02003000 == 1) {
             if (gOv8[4] == 0) {
-                gOv = 0;
+                RomBytes_02003000 = 0;
                 gOv6 = 0x100;
             }
         } else {
-            gOv -= 1;
+            RomBytes_02003000 -= 1;
         }
     }
     if ((s16)gOv6 != (s16)gOv2) {

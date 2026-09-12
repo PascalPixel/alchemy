@@ -122,7 +122,7 @@ void UiWindow_BuildLayoutBounds(s32 flags)
     s32 left;
 
     if (base[RENDER_MENU_STATE_OFS] != 0) {
-        n = Ui_Check(0);
+        n = FunctionHead_080b50c8(0);
         height = 3;
     } else {
         n = Party_CountActiveOwners();
@@ -181,7 +181,7 @@ void UiWork_Finalize(struct Work *work, s32 release);
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
     UiWork_Finalize(**(s32 **)ADDR_03001E90, 1);
-    Ui_Check(0x10);
+    FunctionHead_08002dd8(0x10);
 }
 
 /* ui/window/set_tile_attribute_bit_rect.c */
@@ -311,12 +311,12 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
             } while (i >= 0);
         }
     }
-    State_Run();
+    FunctionHead_08005cf8();
     return cnt;
 }
 
 /* save/state/scan_record_flags.c */
-extern volatile s16 gOv;
+extern volatile s16 RomBytes_0200200c;
 
 s32 SaveState_ScanRecordFlags(void)
 {
@@ -336,7 +336,7 @@ s32 SaveState_ScanRecordFlags(void)
 
         i = SaveState_LoadSummaryRecords();
         p = (void *)*(volatile s32 *)ADDR_03001F1C;
-        q = (s16 *)&gOv;
+        q = (s16 *)&RomBytes_0200200c;
         t = 0x02002010;
         *(volatile s16 *)t = 0;
         addr = t;
@@ -350,7 +350,7 @@ s32 SaveState_ScanRecordFlags(void)
                 cnt++;
             }
             if (*(s8 *)((s8 *)p + 2) != 0) {
-                gOv = 1;
+                RomBytes_0200200c = 1;
             }
         }
 
@@ -358,7 +358,7 @@ s32 SaveState_ScanRecordFlags(void)
             *(volatile s16 *)0x02002010 = 0;
         }
     }
-    State_Run();
+    FunctionHead_0801f818();
     if (ret != 0 && cnt == ret) {
         return ret + 100;
     }
@@ -366,7 +366,7 @@ s32 SaveState_ScanRecordFlags(void)
 }
 
 /* save/state/write_current_slot_pair.c */
-extern char gOv;
+extern char RomBytes_02000000;
 extern char Value_0000000a;
 extern char Value_0000000b;
 
@@ -386,9 +386,9 @@ s16 SaveState_WriteCurrentSlotPair(void)
             error = 9;
             goto set_error;
         }
-        State_Run();
+        FunctionHead_0801f818();
         {
-            void *base = &gOv;
+            void *base = &RomBytes_02000000;
             s32 next;
 
             found = State_Apply2(*(s16 *)0x02002004, base);
@@ -409,7 +409,7 @@ set_error:
 }
 
 /* save/state/write_slot_pair.c */
-extern char gOv;
+extern char RomBytes_02000000;
 extern char Value_0000000a;
 extern char Value_0000000b;
 
@@ -423,7 +423,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
         State_Apply((s32)&Value_0000000a, 1);
         result = -9;
     } else {
-        void *base = &gOv;
+        void *base = &RomBytes_02000000;
 
         found = State_Apply2(arg0, base);
         base = (char *)base + 0x1000;
@@ -433,6 +433,6 @@ s32 SaveState_WriteSlotPair(s32 arg0)
             result = -3;
         }
     }
-    State_Run();
+    FunctionHead_0801f818();
     return result;
 }

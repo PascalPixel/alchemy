@@ -64,11 +64,11 @@ void Colosso_WaitForSceneTask(void)
      * read of gOv into the test block, where the reference loads it
      * before the loop. And the frame count is a literal ten: the reference
      * emits `movs r0, #10`, which a Value_ symbol cannot produce. */
-    Map_Run(10);
+    FunctionHead_02004a0e(10);
 
     polls = 0;
     while (gOv != 3 || gOv2 != 1) {
-        Map_unk2_4(1);
+        FunctionHead_02004a1e(1);
         polls++;
         if (polls > 119) {
             return;
@@ -108,12 +108,12 @@ void Colosso_NudgeActorsLeft(void)
 /* map/locations/colosso/log_rolling_stage/obj/cfg_grid.c */
 void Colosso_ConfigureGridRegion(void)
 {
-    Map_Do(0x360);
+    FunctionHead_02004c0e(0x360);
     {
         s32 width = 49;
         s32 height = 61;
 
-        Map_SetRect(47, 61, 1, 4, width, height);
+        FunctionHead_02004baa(47, 61, 1, 4, width, height);
     }
 }
 
@@ -131,19 +131,19 @@ typedef struct PrimaryStageObject {
     s32 move_rate_z;
 } PrimaryStageObject;
 
-PrimaryStageObject *Map_Run(s32);
-PrimaryStageObject *Map_unk2_4(s32);
+PrimaryStageObject *FunctionHead_02004c94(s32);
+PrimaryStageObject *FunctionHead_02004ca2(s32);
 PrimaryStageObject *Map_unk3_4(s32);
 
 void Colosso_ConfigurePrimaryObjects(void)
 {
     PrimaryStageObject *object;
 
-    object = Map_Run(9);
+    object = FunctionHead_02004c94(9);
     object->scale_x = 0x10000;
     object->scale_z = 0x10000;
 
-    object = Map_unk2_4(11);
+    object = FunctionHead_02004ca2(11);
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xCCCC;
     Map_SetMode(object, object->x, 0x200000, object->y);
@@ -153,8 +153,8 @@ void Colosso_ConfigurePrimaryObjects(void)
     object->move_rate_x = 0xCCCC;
     Map_SetMode2(object, object->x, 0x40000, object->y);
 
-    Map_Do(0x362);
-    Map_SetRect(15, 12, 1, 1, 13, 12);
+    FunctionHead_02004c72(0x362);
+    FunctionHead_02004c0e(15, 12, 1, 1, 13, 12);
     Map_unk2_5(14, 12, 1, 1, 9, 12);
 }
 
@@ -1387,13 +1387,13 @@ void Scene_RunFourStepActorMotion(s32 a0)
         v6 = r10;
     } else {
         Map_unk182_3();
-        rec5 = Map_Check(a0, 4);
+        rec5 = FunctionHead_02005504(a0, 4);
         if (rec5 != 0) {
             v6 = r10;
         } else {
-            Map_Do(0x20bf);
-            Map_Run(0x30000, 0x6000);
-            Map_unk2_4(0x3580000, -1, 0xa80000, 1);
+            FunctionHead_02004c72(0x20bf);
+            FunctionHead_02004c94(0x30000, 0x6000);
+            FunctionHead_02004ca2(0x3580000, -1, 0xa80000, 1);
             Map_unk183_3();
             Map_unk184_3(30);
             Map_unk185_3(a0, 0);
@@ -1433,7 +1433,7 @@ void Scene_RunFourStepActorMotion(s32 a0)
             goto L_02002298;
         }
         if (rec5 == 1) {
-            Map_unk2_2(0x20be);
+            FunctionHead_0200534c(0x20be);
             Map_unk205_3(a0, 0);
         }
         L_02002298:;
@@ -1486,7 +1486,7 @@ void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             state = 0;
             Map_unk209_2(6);
         } else {
-            Map_unk3_2(0x207d);
+            FunctionHead_020055d4(0x207d);
             Map_unk5(owner, 0);
             state = Map_unk6(0, 0);
         }
@@ -1518,7 +1518,7 @@ void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     return;
 L_main:
     ((void (*)())Map_unk36)(obj, 1);
-    Map_unk4_2(0x207f);
+    FunctionHead_020055da(0x207f);
     Map_unk214_2(owner, 0);
     Map_unk8_3(0, 0x10000, 0x8000);
     Map_unk9_3(obj, 0x10000, 0x8000);
@@ -1665,7 +1665,7 @@ void Scene_RunClosingAuxiliarySequence(void)
         Map_unk13_4(rec7, *(s32 *)(rec7 + 8), 0x40000, *(s32 *)(rec7 + 16));
         Map_unk256_2(rec7, 1);
         Map_unk257_2((s32)p6);
-        Map_SetRect(0, 24, 1, 1, 9, 12);
+        FunctionHead_02004c0e(0, 24, 1, 1, 9, 12);
         Map_unk258_2(2);
         Map_unk259_2(rec7, 1);
         *p9 = 3;
@@ -1850,7 +1850,7 @@ void Scene_RunEarlySequence(void)
         } else {
             Map_unk279_2(rec2, 1);
             Map_unk11_2(0x120);
-            Actor_RunSetValues(213);
+            FunctionHead_020054fa(213);
             v5 = (v7 >> 20);
             Map_unk8_5(85, 9, 1, 4, v5, 9);
             Map_unk9_5(85, 9, 1, 4, v5, 61);
@@ -2198,7 +2198,7 @@ void Colosso_ConfigureSecondaryObjects(void)
 /* map/locations/colosso/log_rolling_stage/event/setup_done.c */
 void Colosso_RunSetupCompletionHooks(void)
 {
-    Map_RunSetupDone();
+    FunctionHead_02004ba8();
     Map_unk2_4SetupDone();
 }
 
@@ -2208,18 +2208,18 @@ typedef struct StageActor {
     s32 x;
 } StageActor;
 
-extern StageActor *Actor_RunSetupDone(s32);
+extern StageActor *FunctionHead_02004fac(s32);
 
 void Colosso_ConfigureActorThirteen(void)
 {
     StageActor *actor;
     s32 x;
 
-    actor = Actor_RunSetupDone(13);
+    actor = FunctionHead_02004fac(13);
     x = actor->x >> 20;
-    Actor_ApplySetupDone(880, x);
-    Actor_SetRect(18, 10, 3, 1, 18, 11);
-    Actor_unk2_5(17, 11, 1, 1, x, 11);
+    FunctionHead_02004f72(880, x);
+    FunctionHead_02004ef6(18, 10, 3, 1, 18, 11);
+    FunctionHead_02004f06(17, 11, 1, 1, x, 11);
 }
 
 /* map/locations/colosso/log_rolling_stage/event/noop_setup.c */
@@ -2230,7 +2230,7 @@ void Colosso_NoopSetupHook(void)
 /* map/locations/colosso/log_rolling_stage/event/setup_hook.c */
 void Colosso_RunSetupHook(void)
 {
-    Map_RunSetupDone();
+    FunctionHead_02004c00();
 }
 
 /* map/locations/colosso/log_rolling_stage/actor/clear_obst.c */
@@ -2245,7 +2245,7 @@ typedef struct StageActor {
     u8 state;
 } StageActor;
 
-extern StageActor *Actor_RunSetupDone(s32);
+extern StageActor *FunctionHead_02005002(s32);
 
 void Colosso_ActivateClearObstacleActors(void)
 {
@@ -2257,16 +2257,16 @@ void Colosso_ActivateClearObstacleActors(void)
     s32 z2;
 
     for (slot = 15; slot <= 17; slot++) {
-        actor = Actor_RunSetupDone(slot);
-        if (Actor_PlaceSetupDone(0, actor->x, actor->z) == 0) {
+        actor = FunctionHead_02005002(slot);
+        if (FunctionHead_02004f26(0, actor->x, actor->z) == 0) {
             actor->direction_and_kind = 2;
             actor->state = 0;
             x = actor->x >> 20;
             z = actor->z >> 20;
-            Actor_SetRect(83, 13, 1, 1, x, z);
+            FunctionHead_02004f60(83, 13, 1, 1, x, z);
             x2 = actor->x >> 20;
             z2 = actor->z >> 20;
-            Actor_unk2_5(83, 13, 1, 1, x2, z2 + 52);
+            FunctionHead_02004f7a(83, 13, 1, 1, x2, z2 + 52);
             Actor_DoSetupDone(slot + 517);
         }
     }
@@ -2282,7 +2282,7 @@ typedef struct StageActor {
 } StageActor;
 
 
-extern StageActor *Actor_RunSetupDone(s32);
+extern StageActor *FunctionHead_0200507e(s32);
 
 void Colosso_ShowActorPositionMessage(void)
 {
@@ -2293,7 +2293,7 @@ void Colosso_ShowActorPositionMessage(void)
     s32 message_id;
 
     table = gCell;
-    actor = Actor_RunSetupDone(*(s32 *)&table[250]);
+    actor = FunctionHead_0200507e(*(s32 *)&table[250]);
     x = actor->x >> 20;
     message_id = 23;
     z = actor->z >> 20;
@@ -2313,7 +2313,7 @@ typedef struct StageActor {
     s32 z;
 } StageActor;
 
-extern StageActor *Actor_RunSetupDone(s32);
+extern StageActor *FunctionHead_020050da(s32);
 extern StageActor *Actor_unk2_4SetupDone(s32);
 extern StageActor *Actor_unk3_4SetupDone(s32);
 
@@ -2321,10 +2321,10 @@ s32 Colosso_CheckObstacleDestination(s32 x, s32 z)
 {
     StageActor *actor;
 
-    if (Actor_PlaceSetupDone(0, x, z) == 255) {
+    if (FunctionHead_02004fea(0, x, z) == 255) {
         return -2;
     }
-    actor = Actor_RunSetupDone(15);
+    actor = FunctionHead_020050da(15);
     x = x >> 20;
     z = z >> 20;
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
@@ -2344,7 +2344,7 @@ s32 Colosso_CheckObstacleDestination(s32 x, s32 z)
 /* map/locations/colosso/log_rolling_stage/actor/path_clear.c */
 s32 Colosso_CheckPathClearance(s32 x, s32 y)
 {
-    if (Actor_ApplySetupDone(x, y - 0x180000) != 0
+    if (FunctionHead_02000dc4(x, y - 0x180000) != 0
      || Actor_Apply2SetupDone(x, y - 0x80000) != 0
      || Actor_Apply3(x, y + 0x80000) != 0
      || Actor_Apply4(x, y + 0x180000) != 0) {
@@ -2357,10 +2357,10 @@ s32 Colosso_CheckPathClearance(s32 x, s32 y)
 /* map/locations/colosso/log_rolling_stage/event/set_values.c */
 s32 Colosso_SetSceneEventValues(void)
 {
-    Map_DoSetValues(1);
-    Map_unk2_2(2);
-    Map_unk3_2(288);
-    Map_unk4_2(217);
+    FunctionHead_0200534e(1);
+    FunctionHead_02005448(2);
+    FunctionHead_020052d6(288);
+    FunctionHead_020052ea(217);
     return 0;
 }
 
@@ -2387,7 +2387,7 @@ void Colosso_ConfigureSceneEventEffect(void)
     effect->move_rate_x = move_rate;
     Map_ApplySetValues(effect, 2);
     Map_Apply2SetValues(effect, 0x0200CC48);
-    Map_DoSetValues(0x363);
+    FunctionHead_02005426(0x363);
 }
 
 /* map/locations/colosso/log_rolling_stage/event/wait_task.c */
@@ -2396,14 +2396,14 @@ void Colosso_WaitForSceneEventTask(void)
     s32 *status;
     s32 value;
 
-    Map_DoSetValues(28);
-    Map_unk2_2(0x361);
-    Map_unk3_2(10);
+    FunctionHead_0200561a(28);
+    FunctionHead_02005448(0x361);
+    FunctionHead_020052d6(10);
     value = *(s32 *)0x0200D480;
     if (value != 1 && value != 3) {
         status = (s32 *)0x0200D480;
         do {
-            Map_unk4_2(1);
+            FunctionHead_020052ea(1);
             value = *status;
         } while (value != 1 && value != 3);
     }
@@ -2423,7 +2423,7 @@ typedef struct StageActor {
 } StageActor;
 
 
-extern StageActor *Actor_RunSetValues(s32);
+extern StageActor *FunctionHead_02005556(s32);
 
 void Colosso_OffsetActiveActor(void)
 {
@@ -2434,14 +2434,14 @@ void Colosso_OffsetActiveActor(void)
 
     table = gCell;
     slot = (s32 *)&table[250];
-    actor = Actor_RunSetValues(*slot);
+    actor = FunctionHead_02005556(*slot);
     actor->move_rate_z = 0x10000;
     actor->move_rate_x = 0x20000;
-    Actor_ApplySetValues(*slot, 258);
-    Actor_Apply2SetValues(actor, 5);
+    FunctionHead_020055e2(*slot, 258);
+    FunctionHead_020053e2(actor, 5);
     z = actor->z & 0xFFF00000;
-    Actor_SetModeSetValues(actor, actor->x, actor->y, z + 0x180000);
-    Actor_DoSetValues(actor);
+    FunctionHead_02005428(actor, actor->x, actor->y, z + 0x180000);
+    FunctionHead_02005436(actor);
 }
 
 /* map/locations/colosso/log_rolling_stage/actor/clamp_off.c */
@@ -2456,7 +2456,7 @@ typedef struct StageActor {
 } StageActor;
 
 
-extern StageActor *Actor_RunSetValues(s32);
+extern StageActor *FunctionHead_02005556(s32);
 
 void Colosso_ClampAndOffsetActiveActor(void)
 {
@@ -2467,17 +2467,17 @@ void Colosso_ClampAndOffsetActiveActor(void)
 
     table = gCell;
     slot = (s32 *)&table[250];
-    actor = Actor_RunSetValues(*slot);
+    actor = FunctionHead_02005556(*slot);
     if (actor->x > 0x2980000) {
         actor->x = 0x2980000;
     }
     actor->move_rate_z = 0x10000;
     actor->move_rate_x = 0x20000;
-    Actor_ApplySetValues(actor, 5);
+    FunctionHead_02005440(actor, 5);
     z = actor->z & 0xFFF00000;
-    Actor_SetModeSetValues(actor, actor->x, actor->y, z + 0xC0000);
-    Actor_DoSetValues(actor);
-    Actor_Apply2SetValues(*slot, 258);
+    FunctionHead_02005486(actor, actor->x, actor->y, z + 0xC0000);
+    FunctionHead_02005494(actor);
+    FunctionHead_0200566e(*slot, 258);
     Actor_PlaceSetValues(*slot, 6, 0);
 }
 
@@ -2490,18 +2490,18 @@ void Colosso_NoopSceneEventHook(void)
 /* map/locations/colosso/log_rolling_stage/event/run_if_ready.c */
 void Colosso_RunSceneEventIfReady(void)
 {
-    if (Map_Check() == 0) {
-        Map_RunIfReady();
+    if (FunctionHead_02005518() == 0) {
+        FunctionHead_020058ac();
     }
 }
 
 /* map/locations/colosso/log_rolling_stage/event/finish_or_cont.c */
 void Colosso_FinishOrContinueSceneEvent(void)
 {
-    if (Map_Check() == 0) {
-        Map_RunIfReady();
+    if (FunctionHead_02005504() == 0) {
+        FunctionHead_020058c0();
     } else {
-        Map_unk2_4IfReady();
+        FunctionHead_02001312();
     }
 }
 
@@ -2553,9 +2553,9 @@ typedef struct SceneParticle {
     s16 velocity_y;
 } SceneParticle;
 
-extern SceneParticle *Map_RunIfReady(s32);
+extern SceneParticle *FunctionHead_02005de2(s32);
 
-extern SceneParticle *Map_unk2_4IfReady(s32);
+extern SceneParticle *FunctionHead_02005e1a(s32);
 extern SceneParticle *Map_unk3_4IfReady(s32);
 
 void Colosso_SpawnPeriodicParticle(void)
@@ -2567,7 +2567,7 @@ void Colosso_SpawnPeriodicParticle(void)
     s32 kind;
     s32 count;
 
-    particle = Map_RunIfReady(0);
+    particle = FunctionHead_02005de2(0);
     count = *(s32 *)0x0200DB80 + 1;
     kind = 41;
     x = particle->x;
@@ -2585,7 +2585,7 @@ void Colosso_SpawnPeriodicParticle(void)
     default:
         return;
     }
-    particle = Map_unk2_4IfReady(kind);
+    particle = FunctionHead_02005e1a(kind);
     if (particle == 0) {
         return;
     }
@@ -2593,7 +2593,7 @@ void Colosso_SpawnPeriodicParticle(void)
     if (source != 0) {
         Map_Place(kind, source->x, source->z);
     }
-    Map_Apply2IfReady(Map_Check(kind), 0);
+    Map_Apply2IfReady(FunctionHead_02005e3a(kind), 0);
     particle->state = 0;
     particle->scale_x = 0x6666;
     particle->scale_y = 0x6666;
@@ -2642,12 +2642,12 @@ void Scene_RunOpeningAuxiliarySequence(s32 a0)
         Map_unk5_4OpenAux();
     } else {
         Map_unk6_4OpenAux();
-        rec2 = Map_Check(a0, 5);
+        rec2 = FunctionHead_02005e3a(a0, 5);
         if (rec2 != 0) {
         } else {
-            Map_Do(0x20c3);
-            Map_Run(0x30000, 0x6000);
-            Map_unk2_4(0x4380000, -1, 0xa80000, 1);
+            FunctionHead_02004c72(0x20c3);
+            FunctionHead_02004c94(0x30000, 0x6000);
+            FunctionHead_02004ca2(0x4380000, -1, 0xa80000, 1);
             Map_unk7_4OpenAux();
             Map_unk8_4OpenAux(30);
             Map_unk9_4OpenAux(a0, 0);
@@ -2686,7 +2686,7 @@ void Scene_RunOpeningAuxiliarySequence(s32 a0)
             goto L_02002494;
         }
         if (rec2 == 1) {
-            Map_unk2_2(0x20c2);
+            FunctionHead_02005448(0x20c2);
             Map_unk22_4(a0, 0);
         }
         L_02002494:;
@@ -2730,7 +2730,7 @@ void Scene_RunScene3bcSequenceA(s32 a0)
         Map_unk7_4(30);
         Map_unk8_4(86);
         Map_unk9_4(8);
-        Map_Check(3, 1);
+        FunctionHead_02005e3a(3, 1);
         Map_unk10_4Seq(-a0 * 60 + 60);
         kind = 0;
     } else {
@@ -2742,12 +2742,12 @@ void Scene_RunScene3bcSequenceA(s32 a0)
         kind = 8;
     }
     Map_Place(kind, 0x105, 0);
-    while (Map_Run()!= 0) {
+    while (FunctionHead_02004a0e()!= 0) {
         Map_unk15_4Seq(1);
     }
     Map_unk16_4Seq(19);
     Map_unk17_4Seq(30);
-    Map_Do(0x121);
+    FunctionHead_02004c72(0x121);
     Map_unk18_4Seq();
     Map_unk19_4Seq();
 }

@@ -97,9 +97,9 @@ s32 BattleEscape_CheckSuccess(void)
 }
 
 /* battle/presentation/list/units.c */
-u8 *Battle_Run(s32 unit_id);
+u8 *FunctionHead_08004970(s32 unit_id);
 
-u8 *random_16(s32 unit_id);
+u8 *FunctionHead_08077008(s32 unit_id);
 
 struct BattlePresentationUnitEntry {
     u16 unit_id;
@@ -114,15 +114,15 @@ struct BattlePresentationUnitEntry {
 s32 BattlePres_BuildUnitEntries(
     struct BattlePresentationUnitEntry *entries)
 {
-    u16 *excluded_units = Battle_Run(17);
-    u16 *unit_ids = Battle_Run(9);
+    u16 *excluded_units = FunctionHead_08004970(17);
+    u16 *unit_ids = FunctionHead_08004970(9);
     s32 unit_count = Battle_Apply(1, unit_ids);
     s32 excluded_count = 0;
     s32 entry_count = 0;
     s32 unit_index;
 
     for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        u8 *unit = random_16(unit_ids[unit_index]);
+        u8 *unit = FunctionHead_08077008(unit_ids[unit_index]);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
@@ -188,15 +188,15 @@ s32 BattlePres_BuildOpponentEntries(
     }
 
     for (i = 31; i >= 0; i--) {
-        u32 first = (u32)(unit_count *random_16()) >> 16;
-        u32 second = (u32)(unit_count *random_16()) >> 16;
+        u32 first = (u32)(unit_count *FunctionHead_08004458()) >> 16;
+        u32 second = (u32)(unit_count *FunctionHead_08004458()) >> 16;
         s32 swap = unit_ids[first];
         unit_ids[first] = unit_ids[second];
         unit_ids[second] = swap;
     }
 
     if (battle[0x45] == 2) {
-        s32 limit = ((u32)(random_16() * 5) >> 16) + 1;
+        s32 limit = ((u32)(FunctionHead_08004458() * 5) >> 16) + 1;
 
         if (limit <= 1) {
             limit = 2;
@@ -208,7 +208,7 @@ s32 BattlePres_BuildOpponentEntries(
 
     for (i = 0; i < unit_count; i++) {
         s32 unit_id = unit_ids[i];
-        u8 *unit = Battle_Run(unit_id);
+        u8 *unit = FunctionHead_08077008(unit_id);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {

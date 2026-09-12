@@ -8,7 +8,7 @@ struct Record_080b06c0 {
     u8 values[21];
 };
 
-extern u16 gRom[];
+extern u16 RomBytes_080b4100[];
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
@@ -18,7 +18,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     selector = shifted + 1;
 
     if (count > 0) {
-        offset = gRom;
+        offset = RomBytes_080b4100;
         do {
             struct Record_080b06c0 *record = (struct Record_080b06c0 *)(base + *offset++);
             record->values[0] = selector;
@@ -40,7 +40,7 @@ void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
 {
     u8 *src = gRom2 + ((u32)arg0 << 5);
     u8 *dst =
-        (u8 *)((u32)arg1 + gRom[arg2] + 2);
+        (u8 *)((u32)arg1 + RomBytes_080b413c[arg2] + 2);
     s32 count = 3;
 
     do {

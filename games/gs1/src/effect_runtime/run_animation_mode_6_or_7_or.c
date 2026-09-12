@@ -104,14 +104,14 @@ void EffectPosition_ApplyAnimationAndYOffset(s32 arg0, struct EffectPosition *po
 /* effects/position/apply_step_and_y_offset.c */
 void EffectPosition_ApplyStepAndYOffset(s32 arg0, struct EffectPosition *position)
 {
-    Sys_Apply(arg0, position);
+    FunctionHead_080b50b0(arg0, position);
     position->y = (s32)((u32)position->y - 0x10);
 }
 
 /* effects/position/apply_alternate_step_and_y_offset.c */
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 arg0, struct EffectPosition *position)
 {
-    Sys_Apply(arg0, position);
+    FunctionHead_080b50a8(arg0, position);
     position->y = (s32)((u32)position->y - 0x10);
 }
 

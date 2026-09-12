@@ -5,12 +5,12 @@
 
 /* ui/text/fmt/text_format_hex_to_work.c */
 /* ui/text/fmt/format_hex_to_work.c */
-extern const u8 gRom[];
+extern const u8 RomBytes_0800795c[];
 
 void Text_FormatHexToWork(u32 value)
 {
     u8 *buffer = (u8 *)ADDR_03001F70;
-    const u8 *digits = gRom;
+    const u8 *digits = RomBytes_0800795c;
     s32 index = 7;
 
     do {
@@ -26,7 +26,7 @@ void Text_FormatHexToWork(u32 value)
 }
 
 /* ui/text/fmt/format_signed_decimal_to_work.c */
-extern u8 gRom[];
+extern u8 RomBytes_08007970[];
 extern u8 gIw[];
 
 void Text_FormatSignedDecimalToWork(s32 arg0)
@@ -41,7 +41,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
 
     result = arg0;
     val = result;
-    tbl = (u32 *)gRom;
+    tbl = (u32 *)RomBytes_08007970;
     sign = 0x20;
     out = (s8 *)gIw;
     if (val < 0) {
@@ -125,7 +125,7 @@ void Text_DrawHexRightAligned(u32 value, s32 width)
     if ((u32)(count - 1) > 7U) {
         count = 8;
     }
-    Ui_Do(value);
+    FunctionHead_080045f0(value);
     Ui_Run((const u8 *)(ADDR_03001F78 - count));
 }
 
@@ -138,6 +138,6 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
     if ((u32)(count - 1) > 9U) {
         count = 0xA;
     }
-    Ui_Do(value);
+    FunctionHead_08004620(value);
     Ui_Run((const u8 *)(ADDR_03001F7A - count));
 }

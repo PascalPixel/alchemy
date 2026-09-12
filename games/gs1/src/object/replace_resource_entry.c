@@ -140,9 +140,9 @@ extern s32 gIw;
 void BattleFx_FlickerObjectAndTick(s32 arg0)
 {
     if ((gIw & 2) != 0) {
-        Battle_Apply(arg0, 7);
+        FunctionHead_08009240(arg0, 7);
     } else {
-        Battle_Apply(arg0, 0);
+        FunctionHead_08009240(arg0, 0);
     }
     if ((gIw & 15) == 0) {
         Battle_Do(arg0);
@@ -155,7 +155,7 @@ extern volatile s32 gIw;
 void BattleFx_CycleObjectValueByCounter(s32 arg0)
 {
     if ((gIw & 1) != 0) {
-        s32 value = Battle_Apply((s32)((unsigned int)gIw >> 1), 6);
+        s32 value = FunctionHead_08002304((s32)((unsigned int)gIw >> 1), 6);
 
         Battle_Apply2(arg0, value);
     }

@@ -55,23 +55,3 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
     *dst = Resource_CopyData(*src, 0x80, &work->f400);
     Ui_Do(0x11);
 }
-
-/* ui/icon/prepare_transfer_from_table_entry.c */
-struct State_0801a4c0 {
-    u8 filler0[0x600];
-    u16 first;
-    u16 second;
-    u32 value;
-};
-
-extern struct State_0801a4c0 *gIw;
-
-void Ui_PrepareTransferFromTableEntry(u32 index)
-{
-    struct State_0801a4c0 *state = gIw;
-
-    state->value = RomBytes_080308a0[index];
-    state->first = 2;
-    state->second = 2;
-    Ui_Apply(state, 0);
-}

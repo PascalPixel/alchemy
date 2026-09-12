@@ -27,3 +27,91 @@ void MusicTrack_ReadWavePointer(
     track->wave_pointer = value.word;
     track->command = source + 4;
 }
+
+/* audio/music/track/set_tone_decay.c */
+/* 戻り値は未使用だが、更新後位置を返す形でレジスタ順が一致する。 */
+u8 *MusicTrack_SetToneDecay(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
+{
+    u32 cursor;
+
+    cursor = (u32)track->command;
+    cursor = *(u8 *)cursor;
+    track->tone_decay = cursor;
+    cursor = (u32)track->command;
+    cursor++;
+    track->command = (u8 *)cursor;
+    return (u8 *)cursor;
+}
+
+/* audio/music/track/set_tone_sustain.c */
+/* 戻り値は未使用だが、更新後位置を返す形でレジスタ順が一致する。 */
+u8 *MusicTrack_SetToneSustain(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
+{
+    u32 cursor;
+
+    cursor = (u32)track->command;
+    cursor = *(u8 *)cursor;
+    track->tone_sustain = cursor;
+    cursor = (u32)track->command;
+    cursor++;
+    track->command = (u8 *)cursor;
+    return (u8 *)cursor;
+}
+
+/* audio/music/track/set_tone_release.c */
+/* 戻り値は未使用だが、更新後位置を返す形でレジスタ順が一致する。 */
+u8 *MusicTrack_SetToneRelease(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
+{
+    u32 cursor;
+
+    cursor = (u32)track->command;
+    cursor = *(u8 *)cursor;
+    track->tone_release = cursor;
+    cursor = (u32)track->command;
+    cursor++;
+    track->command = (u8 *)cursor;
+    return (u8 *)cursor;
+}
+
+/* audio/music/track/set_pseudo_echo_volume.c */
+/* 戻り値は未使用だが、更新後位置を返す形でレジスタ順が一致する。 */
+u8 *MusicTrack_SetPseudoEchoVolume(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
+{
+    u8 *cursor;
+    u8 value;
+
+    cursor = (u8 *)track->command;
+    value = *cursor;
+    track->pseudo_echo_volume = value;
+    cursor++;
+    track->command = cursor;
+    return cursor;
+}
+
+/* audio/music/track/set_pseudo_echo_length.c */
+const u8 *MusicTrack_SetPseudoEchoLength(
+    struct MusicPlayerState *player, struct MusicTrackState *track)
+{
+    const u8 *cursor;
+    u8 value;
+
+    cursor = track->command;
+    value = *cursor;
+    track->pseudo_echo_length = value;
+    cursor++;
+    track->command = cursor;
+    return cursor;
+}
+
+/* audio/misc/dummy_callback.c */
+void Audio_DummyCallback(void)
+{
+}

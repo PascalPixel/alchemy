@@ -10,3 +10,20 @@ s8 BattleFx_GetResourceGroup(s32 effect_index)
   entry = (u8 *)((effect_index * 8) + (s32)gRom);
   return (s8)(*((u8 *)(2 + entry)));
 }
+
+/* battle/effects/data/load_resource_group.c */
+struct Work {
+    u8 unknown_000[448];
+    s16 index;
+};
+
+extern struct Work gCell;
+extern u8 gOv[];
+
+void BattleFx_LoadResourceGroup(void)
+{
+    const u8 *table = gRom;
+    s16 index = gCell.index;
+    s16 value = *(s16 *)(table + index * 8);
+    SceneData_Apply(value, gOv);
+}

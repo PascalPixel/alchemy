@@ -110239,11 +110239,6 @@
           "address": "0x080a23f4",
           "extent": 20,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080a2408",
-          "extent": 48,
-          "state": "exact-c"
         }
       ],
       "overlay": null

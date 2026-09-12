@@ -111229,9 +111229,40 @@
           "address": "0x02000350",
           "extent": 88,
           "state": "exact-c"
+        },
+        {
+          "address": "0x02000528",
+          "extent": 64,
+          "state": "exact-c"
         }
       ],
       "overlay": "resource_3be"
+    },
+    {
+      "id": "overlays-shared-field-probe-scene",
+      "game": "gs1",
+      "source": "games/gs1/src/overlays/shared/field_probe_scene.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000314",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000350",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000528",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": "resource_39c"
     },
     {
       "id": "djinn-mark-balanced-entries",

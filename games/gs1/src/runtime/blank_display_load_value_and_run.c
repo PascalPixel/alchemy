@@ -2,6 +2,8 @@
 #include "scene.h"
 #include "global_cells.h"
 
+extern u8 RomBytes_02003000[];
+
 /* runtime/blank_display_load_value_and_run.c */
 /* runtime/blank_display_load_value_and_run.c */
 s32 Audio_PlayCue(s32);

@@ -3,6 +3,11 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
+extern u8 RomBytes_08029a10[];
+extern u8 RomBytes_08029e00[];
+extern u8 RomBytes_0802de88[];
+extern u8 RomBytes_0802e108[];
+
 /* ui/render/drain_pending.c */
 extern void UiWork_Finalize(struct Work *work, s32 release);
 void WaitFrames(s32);

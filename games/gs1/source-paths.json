@@ -12886,134 +12886,134 @@
       "name": "FieldScene_RunScene3a4SequenceH",
       "source": "overlays/scene/story/set_piece.c"
     },
-    "resource_3a6:02000030": "overlays/scene/actor/staged_pair_region/set_effect_record_mode.c",
+    "resource_3a6:02000030": "overlays/scene/actor/staged_pair_region.c",
     "resource_3a6:0200013c": {
       "name": "SpawnConfiguredEffect",
-      "source": "overlays/scene/actor/staged_pair_region/staged_actor_pair.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
-    "resource_3a6:02000314": "overlays/scene/actor/staged_pair_region/calculate_position_distance.c",
-    "resource_3a6:02000350": "overlays/scene/actor/staged_pair_region/find_scene_actor_at_fixed_point_position.c",
+    "resource_3a6:02000314": "overlays/scene/actor/staged_pair_region.c",
+    "resource_3a6:02000350": "overlays/scene/actor/staged_pair_region.c",
     "resource_3a6:020003a8": {
       "name": "AdvanceStagedActorPair",
-      "source": "overlays/scene/actor/staged_pair_region/staged_actor_pair.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
-    "resource_3a6:02000528": "overlays/scene/actor/staged_pair_region/fill_scene_grid_attribute_rectangle.c",
+    "resource_3a6:02000528": "overlays/scene/actor/staged_pair_region.c",
     "resource_3a6:0200058c": {
       "name": "stop_blocked_actor_motion",
-      "source": "overlays/scene/actor/staged_pair_region/staged_actor_pair.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000758": {
       "name": "find_clear_actor_position",
-      "source": "overlays/scene/actor/staged_pair_region/staged_actor_pair.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000d80": {
       "name": "SelectSceneDataByState",
-      "source": "overlays/scene/actor/staged_pair_region/scene_data_tail.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020017d8": {
       "name": "position_actor_pair",
-      "source": "overlays/scene/actor/staged_pair_region/staged_actor_pair.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000d74": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/actor/staged_pair_region/scene_data_head.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001770": {
       "name": "DialogueLayout_ConfigureRowsByFlag301",
-      "source": "overlays/scene/actor/staged_pair_region/dialogue_layout.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020018f4": {
       "name": "FieldScene_RunActor11Transition301",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000cd0": {
       "name": "SceneActor_WaitActorDescent",
-      "source": "overlays/scene/actor/staged_pair_region/actor_motion.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020018b4": {
       "name": "FieldScene_RunShiftAndSetFlag301",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000d20": {
       "name": "SceneData_SelectByRuntimeSelector",
-      "source": "overlays/scene/actor/staged_pair_region/scene_data_head.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020000a0": {
       "name": "OverlayObject_CreateConfiguredB",
-      "source": "overlays/scene/actor/staged_pair_region/overlay_object.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:0200169c": {
       "name": "SceneData_SelectSecondaryByRuntimeSelector",
-      "source": "overlays/scene/actor/staged_pair_region/scene_data_tail.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020010c8": {
       "name": "FieldScene_RunInitBracketThenSequence",
-      "source": "overlays/scene/actor/staged_pair_region/scene_setup.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001938": {
       "name": "SceneActor_PlaceAtTile",
-      "source": "overlays/scene/actor/staged_pair_region/actor_position.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000048": {
       "name": "OverlayObject_CreateConfigured",
-      "source": "overlays/scene/actor/staged_pair_region/overlay_object.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000cf8": {
       "name": "SceneActor_FaceActorZero",
-      "source": "overlays/scene/actor/staged_pair_region/actor_facing.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001748": {
       "name": "SceneAudio_PlayCue123AndDispatchWork364",
-      "source": "overlays/scene/actor/staged_pair_region/scene_audio.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000dcc": {
       "name": "FieldScene_ConfigureRegionAtRow15",
-      "source": "overlays/scene/actor/staged_pair_region/scene_setup.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000d78": {
       "name": "SceneData_GetTablea1dc",
-      "source": "overlays/scene/actor/staged_pair_region/scene_data_head.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001378": {
       "name": "FieldScene_RunActor8ZeroStep",
-      "source": "overlays/scene/actor/staged_pair_region/scene_setup.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000de8": {
       "name": "FieldScene_ConfigureRegionAtRow17",
-      "source": "overlays/scene/actor/staged_pair_region/scene_setup.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001bfc": {
       "name": "ActorPresentation_AdvanceActorElevenStates",
-      "source": "overlays/scene/actor/staged_pair_region/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000cc0": {
       "name": "SceneState_SetValues8_3_4",
-      "source": "overlays/scene/actor/staged_pair_region/state_update.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020014ac": {
       "name": "FieldScene_RunScene3a6_020014ac",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001258": {
       "name": "FieldScene_RunScene3a6SequenceB",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020011a0": {
       "name": "FieldScene_RunScene3a6SequenceA",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020010e0": {
       "name": "FieldScene_RunPrimarySequence",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02001300": {
       "name": "FieldScene_RunScene3a6SequenceC",
-      "source": "overlays/scene/actor/staged_pair_region/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020027ca",
-      "source": "overlays/scene/actor/staged_pair_region/move_and_redraw.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a8:02000590": {
       "name": "FieldScene_RunStagedGroupSequence",

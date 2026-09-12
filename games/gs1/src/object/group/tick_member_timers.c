@@ -34,7 +34,7 @@ void ObjectGroup_TickMemberTimers(void)
 #define TRANSITION_CELL_ADDR 0x03001F00
 #endif
 
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void BattleFx_SetTransitionFlagAndDisplay(void)
 {

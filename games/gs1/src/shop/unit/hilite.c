@@ -42,7 +42,6 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
 }
 
 /* shop/draw/sel_msg.c */
-extern u8 *gIw;
 extern u8 Value_00000d2c;
 extern u8 Value_00000d2d;
 

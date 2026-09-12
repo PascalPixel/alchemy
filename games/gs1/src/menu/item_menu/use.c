@@ -21,7 +21,7 @@
 extern char Value_00000bef;
 extern s32 Audio_PlayCue(s32);
 
-extern void UiWindow_Commit(s32);
+void UiWindow_Commit(s32 window);
 
 s32 ItemMenu_Use(void)
 {
@@ -185,9 +185,8 @@ void ItemMenu_Close(void)
 }
 
 /* item_menu/prep_owner.c */
-s32 Runtime_GetObject(s32);
+extern s32 Runtime_GetObject(s32);
 
-void WaitFrames(s32);
 
 s32 ItemMenu_PrepOwner(s32 party_slot)
 {
@@ -238,7 +237,7 @@ void ItemMenu_OpenCategory(s32 owner_id)
 
 /* equipment_menu/equipment_menu_update_compatibility_indicators.c */
 /* equipment_menu/update_compatibility_indicators.c */
-extern u8 *gIw;
+extern struct ItemMenuState *gIw;
 extern s32 gIw2;
 void Object_InitializeMode(void *, s32);
 
@@ -269,8 +268,6 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void)
 }
 
 /* equipment_menu/start_compatibility_indicators.c */
-extern u8 *gIw;
-void Object_InitializeMode(void *, s32);
 s32 ScheduleCallback(s32);
 
 void EquipmentMenu_StartCompatibilityIndicators(void)
@@ -313,7 +310,7 @@ L0:
 }
 
 /* item_menu/draw/msg.c */
-void UiText_DrawAt(s32, s32, s32, s32);
+extern void UiText_DrawAt(s32, void *, s32, s32);
 
 void ItemMenu_DrawMsg(s32 unused, s32 message)
 {
@@ -409,9 +406,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 }
 
 /* item_menu/refresh_owner.c */
-void UiWindow_Commit(s32 window);
 
-void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
 {
@@ -530,7 +525,6 @@ void ItemMenu_BuildCmd(s8 *command_states)
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void UiText_DrawAt(s32, s32, s32, s32);
 extern char Value_00000b33;
 #define ItemMenu_CommandUseMessage Value_00000b33
 
@@ -636,7 +630,6 @@ u32 Random16();
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 
-s32 Audio_PlayCue(s32);
 
 void ItemMenu_TryBreak(void)
 {
@@ -679,7 +672,6 @@ s32 ItemMenu_OpenDetail(s32 item_index)
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
 struct ItemMenuState;
-extern struct ItemMenuState *gIw;
 extern volatile s32 gIw2TryBreak;
 extern volatile u32 gIw3;
 
@@ -860,9 +852,7 @@ void ItemMenu_SetMsgWin3(void)
 extern u8 Value_00000182;
 #define ItemMenu_ItemNameMessages Value_00000182
 
-extern s32 Runtime_GetObject(s32);
 
-extern void UiText_DrawAt(s32, void *, s32, s32);
 
 void ItemMenu_DrawItemHead(void)
 {

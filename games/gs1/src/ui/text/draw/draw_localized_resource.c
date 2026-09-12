@@ -38,8 +38,8 @@ void ScheduleCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
 
-void WaitFrames(u32);
-extern u8 gRom;
+void WaitFrames(s32);
+extern u8 gRom[];
 
 void Menu_EndResourceSelection(void)
 {
@@ -77,12 +77,10 @@ struct MenuSelectionState {
 };
 
 extern struct MenuSelectionState *gIw;
-extern u8 gRom[];
-extern u8 gVal;
+extern u8 gVal[];
 
 void RenderOutput_PrepareForRedraw(void *work);
-void UiText_DrawCharacter(s32 resource_id, void *work, s32 x, s32 y);
-void WaitFrames(s32 frames);
+extern void UiText_DrawCharacter(const u8 *, void *, s32, s32);
 void Audio_PlayCue(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
@@ -144,7 +142,6 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 }
 
 /* menu/res/load_resource_slot.c */
-extern u8 gVal[];
 
 u32 Runtime_BumpAllocate(s32 size);
 
@@ -194,7 +191,6 @@ void Menu_AppendResourceEntry(s32 no)
 
 /* menu/res/layout_resource_entries.c */
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
-extern u8 gIw;
 
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
@@ -218,11 +214,10 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 }
 
 /* menu/sel/select_top_entry.c */
-extern s8 gRom[];
 extern s8 gRom2[];
 
-void *Menu_Run(void);
-void Menu_AppendResourceEntry(s32 arg0);
+extern void *Menu_Run(void);
+extern void Menu_AppendResourceEntry(s32 arg0);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {
@@ -268,8 +263,6 @@ s32 Menu_SelectTopEntry(s32 sel)
 }
 
 /* menu/sel/animate_selection_to_entry.c */
-void *Menu_Run(void);
-void Menu_AppendResourceEntry(s32 arg0);
 
 s32 Menu_SelectResource(s32, s32);
 
@@ -289,10 +282,7 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
 }
 
 /* menu/sel/select_save_slot_action.c */
-extern void *Menu_Run(void);
-extern void Menu_AppendResourceEntry(s32 arg0);
 
-extern s8 gRom[];
 
 s32 Menu_SelectSaveSlotAction(void)
 {
@@ -355,9 +345,7 @@ struct MenuModeLabelState {
     s16 previous_mode;
 };
 
-extern struct State_08028aa8 *gIw;
 
-extern void UiText_DrawCharacter(const u8 *, void *, s32, s32);
 
 void Menu_DrawModeLabel(void)
 {
@@ -409,9 +397,7 @@ done:
 }
 
 /* menu/draw/draw_mode_indicator.c */
-void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
-extern u8 gIw;
 extern u8 Value_00000c71;
 extern u8 Value_00000c73;
 
@@ -442,9 +428,7 @@ void Menu_DrawModeIndicator(void)
 }
 
 /* menu/sel/select_entry_11_to_14.c */
-void *Menu_Run(void);
 
-void Menu_AppendResourceEntry(s32 arg0);
 
 s32 Menu_SelectEntry11To14(s32 arg0)
 {
@@ -462,9 +446,7 @@ s32 Menu_SelectEntry11To14(s32 arg0)
 }
 
 /* menu/sel/select_entry_19_to_1c.c */
-void *Menu_Run(void);
 
-void Menu_AppendResourceEntry(s32 arg0);
 
 s32 Menu_SelectEntry19To1c(s32 arg0)
 {
@@ -482,8 +464,6 @@ s32 Menu_SelectEntry19To1c(s32 arg0)
 }
 
 /* menu/sel/run_confirm_selection.c */
-void *Menu_Run(void);
-void Menu_AppendResourceEntry(s32 arg0);
 
 s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -513,10 +493,7 @@ s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 }
 
 /* menu/sel/run_confirm_selection_at.c */
-extern u8 gVal[];
 
-void *Menu_Run(void);
-void Menu_AppendResourceEntry(s32 arg0);
 
 s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -538,9 +515,7 @@ s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
 }
 
 /* menu/sel/select_entry_20_to_21.c */
-void *Menu_Run(void);
 
-void Menu_AppendResourceEntry(s32 arg0);
 
 s32 Menu_SelectEntry20To21(s32 arg0)
 {

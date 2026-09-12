@@ -169,8 +169,8 @@ void OvObj_ApplyVelocity(union Slot *object)
 #if defined(GS1_EDITION_DE)
 #endif
 
-extern u8 *gWork;
-extern u8 gCell[];
+extern u8 gWork[];
+extern s16 gCell[];
 extern u8 Value_0000003a;
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -663,7 +663,6 @@ void RunScene58Sequence(void)
 
 /* map/locations/heidia/village_story/village_story_scene/run_scene_59_sequence.c */
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
-extern u8 *gWork;
 extern u8 *gCam;
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -1270,7 +1269,6 @@ void *SceneData_GetTableB938(void)
 #define ACTOR_FIELD_0X12(record) (*(s16 *)((record) + 18))
 
 extern u8 gOv2[];
-extern u8 gWork[];
 
 u8 *Scene_GetRecord_1();
 u8 *Scene_GetRecord_2();
@@ -1529,7 +1527,6 @@ struct Record {
 };
 
 extern u8 gOv3[];
-extern s16 gCell[];
 extern u8 gOv4[];
 extern u8 gOv5[];
 

@@ -39,7 +39,6 @@ void FourObjectMotion_InitializeTopRow(void)
 
 /* object/motion/four_object/clear_slots_and_schedule.c */
 void ScheduleCallback(s32);
-extern u8 gRom;
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
 {
@@ -94,10 +93,7 @@ void FourObjectMotion_UpdateAllPositions(void)
 }
 
 /* object/motion/four_object/initialize_bottom_row.c */
-extern s32 gRom[];
 
-void *Obj_Run(s32);
-void Object_InitializeMode(void *, s32);
 
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
 
@@ -153,10 +149,7 @@ void FourObjectMotion_SetSlotPhase(s32 arg0, s32 arg1)
 }
 
 /* object/motion/four_object/replace_slot.c */
-extern s32 gRom[];
 
-void *Obj_Run(s32);
-void Object_InitializeMode(void *, s32);
 
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 {
@@ -178,8 +171,6 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 }
 
 /* object/motion/four_object/clear_slots_and_schedule_alt.c */
-void ScheduleCallback(s32);
-extern u8 gRom;
 
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
 {

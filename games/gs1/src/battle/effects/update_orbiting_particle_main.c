@@ -18,7 +18,7 @@ void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 }
 
 /* battle/effects/orbiting_particles/update_fade.c */
-void Object_SetCallback(void *, s32);
+void Object_SetCallback(void *, void *);
 void BattleFx_UpdateOrbitingParticleFade(void *object)
 {
   s32 primary_fade;
@@ -43,7 +43,6 @@ struct OrbitingParticleVector {
     s32 z;
 };
 
-struct OrbitingParticle;
 
 void RotateVectorByMagnitude(s32, s32, struct OrbitingParticleVector *);
 void BattleFx_UpdateOrbitingParticleFade(void *object);
@@ -82,10 +81,7 @@ struct OrbitingParticleVector {
     s32 z;
 };
 
-struct OrbitingParticle;
 
-void RotateVectorByMagnitude(s32, s32, struct OrbitingParticleVector *);
-void BattleFx_UpdateOrbitingParticleFade(void *object);
 
 void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
 {
@@ -185,10 +181,9 @@ struct OrbitingParticleGlobals {
     s32 resource_mode;
 };
 
-extern struct OrbitingParticleScene *gIw;
 extern struct OrbitingParticleGlobals gCell;
 
-void WaitFrames(s32 frames);
+void WaitFrames(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -300,9 +295,6 @@ struct Triple08099340 {
     s32 z;
 };
 
-extern s32 *gIw;
-void RotateVectorByMagnitude(s32, s32, struct Triple08099340 *);
-void Object_SetCallback(void *, void *);
 
 void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
 {

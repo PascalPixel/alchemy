@@ -52,8 +52,6 @@ void Colosso_StartSceneTask(void)
 }
 
 /* map/locations/colosso/log_rolling_stage/event/wait.c */
-extern s32 gOv;
-extern s32 gOv2;
 
 extern u8 Value_0000000a;
 
@@ -87,7 +85,7 @@ typedef struct StageActor {
 } StageActor;
 
 extern s16 gCell[];
-extern u8 *gWork;
+extern u8 gWork[];
 
 StageActor *Actor_Run();
 
@@ -1367,8 +1365,6 @@ void RunPartyCountInteractionCopyB(s32 actorId)
 }
 
 /* map/locations/colosso/log_rolling_stage/run_scene_four_step_actor_motion.c */
-extern u8 gCell[];
-extern u8 gWork[];
 extern s16 gCell2[][1];
 
 void Scene_RunFourStepActorMotion(s32 a0)
@@ -1450,7 +1446,6 @@ void Scene_RunFourStepActorMotion(s32 a0)
 
 /* map/locations/colosso/log_rolling_stage/run_scene_late_sequence.c */
 
-extern u8 gCell[];
 
 void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
@@ -1562,7 +1557,6 @@ L_main:
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunSecondArrivalSequence:
  * state-routed scene setup and all 40 calls with their scene arguments. */
 
-extern s16 gCell[];
 
 void Scene_RunSecondArrivalSequence(s32 scene)
 {
@@ -1620,8 +1614,6 @@ void Scene_RunSecondArrivalSequence(s32 scene)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define PENDING_CALLBACK_FLAG (*(s32 *)0x0200db80)
 
-extern u8 gCell[];
-extern u8 gWork[];
 extern u8 gVal[];
 extern u8 gVal2[];
 extern u8 gVal3[];
@@ -2121,7 +2113,6 @@ void Scene_RunMultiPhaseActorSequence(s32 a0)
 /* map/locations/colosso/log_rolling_stage/shared.c */
 
 extern u8 HexDigitCharacters[];
-extern u8 *gWork;
 
 void WriteU32AsHex(u8 *hex_text, u32 value)
 {
@@ -2167,7 +2158,6 @@ typedef struct SecondaryStageObject {
     u8 state;
 } SecondaryStageObject;
 
-extern s16 gCell[];
 
 SecondaryStageObject *Map_RunCfgSecondary();
 
@@ -2291,7 +2281,6 @@ typedef struct StageActor {
     s32 z;
 } StageActor;
 
-extern s16 gCell[];
 
 extern StageActor *Actor_RunSetupDone(s32);
 
@@ -2433,7 +2422,6 @@ typedef struct StageActor {
     s32 move_rate_z;
 } StageActor;
 
-extern s16 gCell[];
 
 extern StageActor *Actor_RunSetValues(s32);
 
@@ -2467,7 +2455,6 @@ typedef struct StageActor {
     s32 move_rate_z;
 } StageActor;
 
-extern s16 gCell[];
 
 extern StageActor *Actor_RunSetValues(s32);
 
@@ -2641,9 +2628,7 @@ void Colosso_PositionActor(s32 selector, s32 x, s32 z)
 }
 
 /* map/locations/colosso/log_rolling_stage/event/open_aux.c */
-extern u8 gCell[];
 extern u8 gOvOpenAux[];
-extern u8 gWork[];
 extern s16 gCell2[][1];
 
 void Scene_RunOpeningAuxiliarySequence(s32 a0)
@@ -2722,12 +2707,10 @@ struct ModeRecord {
 };
 extern struct ModeRecord gOvSeq;
 extern struct ModeRecord gOv2Seq;
-extern u8 gCell[];
 extern u8 gOv3Seq[];
 extern u8 gOv4Seq[];
 extern u8 gOv5Seq[];
 extern u8 gOv6Seq[];
-extern u8 gWork[];
 extern u8 gCell2[][2];
 
 u8 *Map_unk2_4Seq();

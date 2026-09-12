@@ -5,7 +5,6 @@
 /* audio/init/initialize_engine.c */
 struct CgbChannel;
 struct MusicPlayerState;
-struct MusicTrackState;
 union AudioCommandSlot;
 
 typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
@@ -160,7 +159,6 @@ void AudioEngine_SetPcmRate(u32 mode_bits)
 }
 
 /* audio/mix/set_mode.c */
-void AudioEngine_SetPcmRate(u32);
 void AudioEngine_DisablePcmDma(void);
 
 void AudioEngine_SetMode(u32 mode)
@@ -306,7 +304,6 @@ void AudioEngine_EnablePcmDma(void)
 }
 
 /* audio/init/initialize_music_player.c */
-struct MusicPlayerState;
 
 typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
 
@@ -339,7 +336,6 @@ struct AudioEngineState {
     struct MusicPlayerState *music_player_head;
 };
 
-extern u8 gRom;
 
 void MusicPlayer_Initialize(
     struct MusicPlayerState *player,
@@ -621,7 +617,6 @@ void MusicPlayer_UpdateFade(struct FadePlayerState *player)
 // src/m4a.c:TrkVolPitSet at commit 83df84e40623b79281f2397faa611cbf044170bd.
 // Names and layout were checked against this ROM region and exact compiler output.
 
-struct MusicPlayerState;
 
 struct VolumePitchTrackState {
     u8 flags;
@@ -698,7 +693,6 @@ void MusicTrack_UpdateVolumePitch(
 }
 
 /* audio/misc/cgb_key_to_frequency.c */
-extern u8 gRom[];
 extern s16 gRom2[];
 extern u8 gRom3[];
 

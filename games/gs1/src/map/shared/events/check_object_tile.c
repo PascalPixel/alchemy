@@ -25,7 +25,7 @@ struct ObjectGlobals {
     u32 active_object_id;
 };
 
-extern struct ObjectGlobals gCell;
+extern struct Global_08099738 gCell;
 extern struct MapEventRuntime *gWork;
 
 void CheckObjectMapTile(void)
@@ -113,7 +113,6 @@ struct Global_08099738 {
     u16 field_24c;
 };
 
-extern struct Global_08099738 gCell;
 
 void Audio_PlayCue(s32);
 s32 ScheduleCallback(void (*callback)(void));

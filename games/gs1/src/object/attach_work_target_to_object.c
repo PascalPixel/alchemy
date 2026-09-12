@@ -7,7 +7,7 @@
 
 /* object/attach_work_target_to_object.c */
 /* object/attach_work_target_to_object.c */
-void *Runtime_AllocateBlock(s32 id, s32 flag);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void WaitFrames(s32);
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
@@ -37,7 +37,6 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 }
 
 /* object/table/allocate_and_set_object_speed.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 struct ObjectOwner_080933d4 {
     u8 unknown_000[0x1e0];
@@ -54,9 +53,7 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 /* object/motion/pos/place_within_camera_bounds.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Object_ResetMotion(void *);
-void WaitFrames(u32);
 
 void Object_SetPosition(void *, s32, s32, s32);
 
@@ -126,7 +123,6 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
 /* object/motion/pos/place_current_within_camera_bounds.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Runtime_AllocateBlock(s32, s32);
 void Motion_CamBounds(s32, s32, s32, s32);
 
 void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
@@ -144,7 +140,6 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 /* battle/effects/object_control/commit_position_and_wait.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 s32 Object_CommitPosition(s32);
 void Battle_WaitMode0(s32 arg0);
 
@@ -157,7 +152,6 @@ void BattleFx_CommitObjectPositionAndWait(void)
 /* battle/get_work_object_1e0.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 s32 Battle_GetWorkObject1e0(void)
 {
@@ -167,7 +161,6 @@ s32 Battle_GetWorkObject1e0(void)
 /* battle/effects/object_control/link_object_to_target.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void BattleFx_LinkObjectToTarget(void *target, s32 keep_current_position)
 {
     void *object;

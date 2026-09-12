@@ -159,7 +159,7 @@ void SerialRuntime_RemoveIrqHandlers(void)
 /* link/serial/wait_for_status_mask.c */
 extern volatile u16 gIw;
 extern volatile u32 gUnk;
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
 {
@@ -173,7 +173,6 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
 
 /* link/serial/wait_for_transfer_a.c */
 /* link/serial/wait_for_transfer_a.c */
-s32 WaitFrames(s32);
 
 void SerialRuntime_WaitForTransferA(void)
 {
@@ -195,7 +194,6 @@ loop:
 }
 
 /* link/serial/wait_for_transfer_b.c */
-s32 WaitFrames(s32);
 
 void SerialRuntime_WaitForTransferB(void)
 {
@@ -219,7 +217,6 @@ loop:
 }
 
 /* link/serial/wait_for_transfers.c */
-s32 WaitFrames(s32);
 
 void SerialRuntime_WaitForTransfers(void)
 {

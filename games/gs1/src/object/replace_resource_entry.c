@@ -215,7 +215,7 @@ void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 /* effect_runtime/stop_current_object.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 struct State_08097174 {
     u8 unknown_00[0x10];

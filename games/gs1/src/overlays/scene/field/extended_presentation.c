@@ -768,8 +768,6 @@ void Scene_RunTwoArmSequenceWithValue217f(void)
 }
 
 /* overlays/scene/field/extended_presentation/scene_state_interaction.c */
-extern s16 RuntimeSelectorTable;
-extern u8 Value_00000097;
 
 void State_RunFlag200SetupAndPlaceActors16To20(void)
 {
@@ -849,7 +847,6 @@ void Scene_RunActorElevenCellSetup(void)
 
 /* overlays/scene/field/extended_presentation/staged_actor_pair.c */
 
-extern u32 ActorSearchStep[];
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);

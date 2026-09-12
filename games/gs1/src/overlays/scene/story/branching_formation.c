@@ -700,9 +700,6 @@ static __inline__ u8 * Record1(u8 * (*f)(), s32 a0)
 extern s32 gOv7;
 extern s32 gOv8;
 extern s32 gOv9;
-extern s32 gOv5;
-extern s32 gOv4;
-extern s32 gOv2;
 extern u8 gOv10[];
 extern u8 gOv11[];
 extern u8 gOv12[];

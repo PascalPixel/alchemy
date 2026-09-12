@@ -39,7 +39,7 @@ struct BattlePresentationTransition {
 
 extern struct BattlePresentationTransition *gIw;
 
-u8 *Runtime_GetObject(s32);
+void *Runtime_GetObject(s32);
 
 void UiText_ShowMessageAndWait(s32);
 void WaitFrames(s32);
@@ -113,9 +113,7 @@ s32 BattleObject_IsValidId(u32 object_id)
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void WaitFrames(u32);
 
-void UiText_ShowMessageAndWait(s32);
 
 s32 BattleEscape_PlayRun(s16 *action)
 {
@@ -149,10 +147,8 @@ s32 BattleEscape_PlayRun(s16 *action)
 /* battle/presentation/misc/msg_field38.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Runtime_GetObject(s32);
 
 void UiText_DrawQuantity(s32, s32);
-void UiText_ShowMessageAndWait(s32);
 
 s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 {

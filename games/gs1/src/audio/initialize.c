@@ -5,8 +5,6 @@
 /* audio/init/initialize.c */
 struct CgbChannel;
 struct MusicPlayerState;
-struct MusicTrackState;
-struct AudioEngineState;
 
 typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
 
@@ -42,7 +40,7 @@ void MusicPlayer_Initialize(
     struct MusicPlayerState *,
     struct MusicTrackState *,
     u32);
-extern u8 gRom;
+extern struct MusicPlayerView *gRom[];
 extern u32 Value_00000008;
 extern u8 gOv;
 extern struct PlayerBootstrapRecord gRom2[];
@@ -88,10 +86,9 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-extern s32 gRom[];
 extern SoundTableEntry gRom2[];
 
-void MusicPlayer_StartSong(s32, s32);
+void MusicPlayer_StartSong(void *, s32);
 
 void Audio_PlaySound(u16 audio_cue_id)
 {
@@ -116,9 +113,6 @@ struct MusicPlayerView {
     u32 unknown08;
 };
 
-void MusicPlayer_StartSong(struct MusicPlayerView *, u32);
-extern struct MusicPlayerView *gRom[];
-extern struct SoundTableEntry gRom2[];
 
 void Audio_PlaySoundIfInactive(u16 audio_cue_id)
 {
@@ -144,11 +138,9 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-extern s32 *gRom[];
 extern SoundTableEntry gRom2[];
 
-void MusicPlayer_StartSong(void *, s32);
-void Audio_ResumePlayer(void *);
+void Audio_ResumePlayer(void *player);
 
 void Audio_PlayOrResumeSound(u16 audio_cue_id)
 {
@@ -178,7 +170,6 @@ typedef struct {
 } SoundTableEntry;
 
 void MusicPlayer_Stop(void *player);
-extern void *gRom[];
 extern SoundTableEntry gRom2[];
 
 void Audio_StopSound(u16 audio_cue_id)
@@ -198,8 +189,6 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-void Audio_ResumePlayer(void *player);
-extern void *gRom[];
 extern SoundTableEntry gRom2[];
 
 void Audio_ResumeSound(u16 audio_cue_id)
@@ -232,8 +221,6 @@ void Audio_ResumeSound(u16 audio_cue_id)
 
 /* audio/ctrl/stop_all_players.c */
 extern u8 gVal[];
-extern u8 gRom[];
-void MusicPlayer_Stop(u8 *player);
 
 void Audio_StopAllPlayers(void)
 {
@@ -252,7 +239,6 @@ void Audio_StopAllPlayers(void)
 }
 
 /* audio/ctrl/resume_music_player.c */
-void Audio_ResumePlayer(void);
 
 void MusicPlayer_Resume(void)
 {
@@ -260,10 +246,7 @@ void MusicPlayer_Resume(void)
 }
 
 /* audio/ctrl/resume_all_players.c */
-extern u8 gVal[];
-extern s32 gRom[];
 
-void Audio_ResumePlayer(s32);
 
 void Audio_ResumeAllPlayers(void)
 {
@@ -290,8 +273,6 @@ void MusicPlayer_FadeOut(s32 player, u16 interval)
 }
 
 /* audio/init/initialize_cgb.c */
-struct MusicPlayerState;
-struct MusicTrackState;
 
 typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
 typedef void (*CgbUpdateCallback)(void);

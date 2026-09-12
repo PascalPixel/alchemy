@@ -671,10 +671,9 @@ void OvObj_ActivateSlotWithMode3(s32 a)
 #endif
 
 extern u8 gVal2[];
-extern u8 gOv4[];
+extern u32 gOv4[];
 extern u8 gOv5[];
 extern u8 gOv6[];
-extern u8 gWork[];
 
 void ObjectGroup_ConfigureChildValue_1(); void Battle_WaitMode0_4();
 
@@ -768,13 +767,8 @@ void Scene_ConfigureFourActorPresentation(void)
 }
 
 /* overlays/scene/actor/multi_encounter/run_scene_configure_lead_actors.c */
-extern u8 gWork[];
 
-u8 *Scene_GetRecord_1();
-u8 *Scene_GetRecord_2();
 
-u8 *Scene_GetRecord_1();
-u8 *Scene_GetRecord_2();
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
@@ -946,8 +940,6 @@ u8 *Scene_GetRecord_5();
 
 u8 *Scene_GetRecord_7();
 
-u8 *Scene_GetRecord_5();
-u8 *Scene_GetRecord_7();
 
 /* Offset of a flag byte on an actor record, cleared and set below. */
 #define ACTOR_FLAGS_OFFSET 90
@@ -1242,12 +1234,6 @@ s32 Effect_UpdateCountdownMotion(struct Resource3afMotion *motion)
 extern u8 *gCam;
 extern u32 gOv21;
 extern u32 gOv22;
-extern u32 gOv4[];
-extern u32 gOv5;
-extern u16 gOv2[];
-extern u16 gOv[];
-extern s32 gOv3[];
-extern s32 Actor_Far[];
 
 s32 *Actor_unk157_2();
 s32 *Actor_unk158_2();
@@ -1412,7 +1398,6 @@ void State_InitActorSlots8To19(void)
 }
 
 /* overlays/scene/actor/multi_encounter/scene_state_interaction.c */
-extern s32 gOv3[];
 
 void State_FillTableDb70ByChecks(void)
 {
@@ -1481,7 +1466,6 @@ void State_ApplyFiveRectsAtColumn78(void)
 }
 
 /* overlays/scene/script/fx_entry_step.c */
-extern u8 gWork[];
 
 void Scene_RunScriptFxEntryStep(void)
 {
@@ -1519,7 +1503,6 @@ void Scene_RunScriptFxEntryStep(void)
 }
 
 /* overlays/scene/script/fx_mid_step.c */
-extern u8 gWork[];
 
 void Scene_RunScriptFxMidStep(void)
 {
@@ -1561,7 +1544,6 @@ void Scene_RunScriptFxMidStep(void)
 }
 
 /* overlays/scene/script/fx_pair_step.c */
-extern u8 gWork[];
 
 void Scene_RunScriptFxPairStep(s32 a0, s32 a1)
 {
@@ -1597,7 +1579,6 @@ void Scene_RunScriptFxPairStep(s32 a0, s32 a1)
 
 /* overlays/scene/actor/multi_encounter/run_scene_actor_twenty_dialogue.c */
 extern u8 gOvActorTwentyDialogue[];
-extern s32 *gWork;
 
 void Scene_RunActorTwentyDialogueSequence(void)
 {
@@ -1623,7 +1604,6 @@ void Scene_RunActorTwentyDialogueSequence(void)
 }
 
 /* overlays/scene/actor/multi_encounter/run_scene_configure_three_actors.c */
-extern u8 gWork[];
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
@@ -1683,7 +1663,6 @@ void Scene_ConfigureThreeActors(void)
 }
 
 /* overlays/scene/script/fx_tail_step.c */
-extern u8 gWork[];
 
 void Scene_RunScriptFxTailStep(void)
 {

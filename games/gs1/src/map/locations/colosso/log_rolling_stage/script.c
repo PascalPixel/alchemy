@@ -734,7 +734,7 @@ s32 Colosso_RunStateInteraction(s32 actor_handle, s32 interaction_base)
     if (Map_unk25(interaction_base + 512) != 0) {
         return 2;
     }
-    if (Map_unk26(interaction_base + 520) != 0) {
+    if (CheckActorInteraction(interaction_base + 520) != 0) {
         result = Map_unk27(0);
         if (result == 1) {
             return 2;
@@ -1858,7 +1858,7 @@ void Scene_RunEarlySequence(void)
         } else {
             Map_unk279_2(rec2, 1);
             Map_unk11_2(0x120);
-            Map_unk280_2(213);
+            Actor_RunSetValues(213);
             v5 = (v7 >> 20);
             Map_unk8_5(85, 9, 1, 4, v5, 9);
             Map_unk9_5(85, 9, 1, 4, v5, 61);

@@ -1,5 +1,36 @@
 #include "types.h"
 
+#define NULL ((void *)0)
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define SceneState_SetValue14Mode23 Func_02000030
+#define SceneState_SetWorkByte22bTo3 Func_02000388
+#define SceneState_SetByte22bTo3 Func_020003b4
+#define SceneState_ApplyRectAndSetActor9Byte55 Func_020004cc
+#define SceneState_ApplyRectAndLowerActor9 Func_020005ac
+#define SceneActor_AdjustSlot12AndSetFlag204 Func_02000650
+#define SceneState_ForwardByRuntimeSelector Func_02002ce0
+#define SceneState_SetWorkspaceHalfword382To1018 Func_02003410
+#define CalculateFacingAngle Func_02003afa
+#define OverlayObject_UpdateFacingTowardTarget Func_02000040
+#define SceneActor_CopyActor8PositionWithFixedY Func_02000098
+#define SceneActor_UpdateSlot10ByTileX Func_0200040c
+#define SceneActor_RaiseSlot9StepA Func_0200050c
+#define SceneActor_RaiseSlot9StepB Func_0200055c
+#define SceneActor_RaiseSlot11AndSetFlag201 Func_020005fc
+#define SceneActor_ClearCollisionFlagAndPlaceMarker Func_02003460
+#define OverlayObject_IntegrateAndDamp Func_020000bc
+#define SceneData_SelectTableByWord224 Func_020000e4
+#define SceneData_SelectTableC80cOrC83c Func_020001c8
+#define SceneData_GetTableC85c Func_02000204
+#define SceneData_SelectDataByRuntimeSelector Func_0200020c
+#define SceneState_SetByte22bTo3AndSend51 Func_020003e0
+#define ActorPresentation_SetCellAndLowerActorEight Func_0200047c
+#define SceneActor_SetActor10Byte23To3 Func_02000c74
+#define SceneActor_SetActor10Byte23To1 Func_02000c88
+#define SceneActor_SetMode3AndRate4ccc Func_02002a10
+#define SceneActor_SetActor8ModeByCounterBit Func_02002ffc
+#define SceneActor_SetActor12ModeByActorZeroHeight Func_02003428
+#define SceneState_SetDispcntBit9ByThreshold Func_020006a0
 #define BattleRuntime_Reset_1() Value0(Func_02006a84)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02006b94, a0, a1)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02006bae, a0, a1, a2, a3)
@@ -39,14 +70,228 @@
 #define FieldScene_RunScene3a4SequenceF Func_02002e1c
 #define FieldScene_RunScene3a4SequenceE Func_02002e84
 #define FieldScene_RunLateAuxiliarySequence Func_02002f10
+#define FieldScene_RunValue1528Scene Func_02000a64
+#define SceneState_StoreParamsAndInstallTask Func_02002bb0
+#define SceneEffect_SpawnObject222 Func_02002b58
+#define FieldScene_RunActorTenFourStepSequence Func_02002d08
+#define SceneAudio_PlayCue183EverySixtyTicks Func_02002eec
+#define SceneState_SetRecordWord102AndPlayCue288 Func_02003724
+#define BattleRuntime_Reset_1_02003028(args...) Func_02006b9c(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_02006c22, a0, a1, a2)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_02006c30, a0, a1, a2)
+#define Object_SetModeById_1_02003028(args...) Func_02006c40(args)
+#define BattleRuntime_WaitIfModeZero_1_02003028(args...) Func_02006d1a(args)
+#define ObjectMotion_SetSpeedParameters_1_02003028(args...) Func_02006d26(args)
+#define BattleRuntime_WaitIfModeZero_2(args...) Func_02006bdc(args)
+#define Scene_GetRecord_1(a0) Value1(Func_02006c12, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_02006c70(args)
+#define Scene_GetRecord_2(a0) Value1(Func_02006c26, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_02006c84(args)
+#define Scene_GetRecord_3(a0) Value1(Func_02006c3a, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_5(args...) Func_02006c98(args)
+#define ObjectMotion_SetSpeedParameters_2_02003028(a0, a1, a2) Call3(Func_02006c5a, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_3_02003028(a0, a1, a2) Call3(Func_02006c64, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_02006c6e, a0, a1, a2)
+#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Func_02006c7e, a0, a1)
+#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Func_02006c86, a0, a1)
+#define ObjectMotion_MarkActiveAndSetActionCallback_1(a0, a1) Value2(Func_02006c9e, a0, a1)
+#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02006d42, a0, a1, a2)
+#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02006d4e, a0, a1, a2)
+#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02006d5a, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02006d22(args)
+#define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02006d6e, a0, a1, a2)
+#define SceneWork_SetStepValue_1(a0) Call1(Func_02006d54, a0)
+#define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_02006d76(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_02006d46(args)
+#define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3(Func_02006d92, a0, a1, a2)
+#define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3(Func_02006d9e, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_5(a0, a1) Value2(Func_02006d8e, a0, a1)
+#define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_02006cee, a0, a1)
+#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02006d62(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02006d6c(args)
+#define BattleRuntime_RunThenWaitIfModeZero_2(args...) Func_02006dd4(args)
+#define Object_SetModeById_2(args...) Func_02006d84(args)
+#define Object_SetModeById_3(args...) Func_02006d8c(args)
+#define Object_SetModeById_4(args...) Func_02006d94(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02006da4(args)
+#define BattleRuntime_WaitIfModeZero_3(args...) Func_02006d1a_a(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_02006dca(args)
+#define SceneWork_SetStepValue_2(a0) Call1(Func_02006df0, a0)
+#define BattleEvent_RunActionAndWait_1(args...) Func_02006e08(args)
+#define ObjectMotion_ArmCallback_7(a0, a1, a2) Call3(Func_02006e24, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_1_02003028(a0, a1, a2) Call3(Func_02006e40, a0, a1, a2)
+#define ObjectMotion_ArmCallback_8(a0, a1, a2) Call3(Func_02006e3c, a0, a1, a2)
+#define BattleEvent_RunActionAndWait_2(args...) Func_02006e34(args)
+#define ObjectMotion_ArmCallback_9(a0, a1, a2) Call3(Func_02006e50, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_02006e6a, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_02006e74, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3(Func_02006e7e, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3(Func_02006e88, a0, a1, a2)
+#define Audio_PlayCue_1_02003028(args...) Func_02006f4e(args)
+#define ObjectGroup_ConfigureChildValue_1(args...) Func_02006e4e(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_02006da4_a(args)
+#define Audio_PlayCue_2(a0) Call1(Func_02006f62, a0)
+#define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_02006e9e, a0, a1, a2)
+#define ObjectMotion_ArmCallback_11(a0, a1, a2) Call3(Func_02006eaa, a0, a1, a2)
+#define ObjectMotion_ArmCallback_12(a0, a1, a2) Call3(Func_02006eb6, a0, a1, a2)
+#define ObjectMotion_ArmCallback_13(a0, a1, a2) Call3(Func_02006ec2, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_6(a0, a1, a2) Call3(Func_02006ede, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_7(a0, a1, a2) Call3(Func_02006eea, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_8(a0, a1, a2) Call3(Func_02006ef6, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_9(a0, a1, a2) Call3(Func_02006f02, a0, a1, a2)
+#define Audio_PlayCue_3(args...) Func_02006fc8(args)
+#define ObjectMotion_EnableActionAndSetCallback_3(args...) Func_02006e66(args)
+#define ObjectMotion_MarkActiveAndSetActionCallback_2(args...) Func_02006e7e_a(args)
+#define BattleRuntime_WaitIfModeZero_5(args...) Func_02006e3a(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_4(args...) Func_02006eea_a(args)
+#define BattleRuntime_WaitIfModeZero_6(args...) Func_02006e48(args)
+#define BattleEvent_RunActionAndWait_3(args...) Func_02006f28(args)
+#define ObjectMotion_ArmCallback_14(a0, a1, a2) Call3(Func_02006f44, a0, a1, a2)
+#define ObjectMotion_ArmCallback_15(a0, a1, a2) Call3(Func_02006f50, a0, a1, a2)
+#define Object_SetModeById_5(args...) Func_02006ef8(args)
+#define Object_SetModeById_6(args...) Func_02006f00(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_4(args...) Func_02006f10(args)
+#define BattleRuntime_WaitIfModeZero_7(args...) Func_02006e86(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_5(args...) Func_02006f36(args)
+#define BattleRuntime_RunThenWaitIfModeZero_3(args...) Func_02006f78(args)
+#define ObjectMotion_ArmCallback_16(a0, a1, a2) Call3(Func_02006f8c, a0, a1, a2)
+#define ObjectMotion_ArmCallback_17(a0, a1, a2) Call3(Func_02006f98, a0, a1, a2)
+#define ObjectMotion_CallThenWaitForAnimationChange_5(args...) Func_02006f48(args)
+#define BattleRuntime_RunThenWaitIfModeZero_4(args...) Func_02006fa2(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_6(args...) Func_02006f5a(args)
+#define Object_SetModeById_7(args...) Func_02006f5a_a(args)
+#define Object_SetModeById_8(args...) Func_02006f62_a(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_7(args...) Func_02006f72(args)
+#define BattleRuntime_WaitIfModeZero_8(args...) Func_02006ee8(args)
+#define ObjectMotion_EnableActionAndSetCallback_4(args...) Func_02006f32(args)
+#define ObjectMotion_EnableActionAndSetCallback_5(a0, a1) Value2(Func_02006f3a, a0, a1)
+#define ObjectMotion_MarkActiveAndSetActionCallback_3(args...) Func_02006f52(args)
+#define BattleRuntime_WaitIfModeZero_9(args...) Func_02006f08(args)
+#define GameFlag_Clear_1(a0) Call1(Func_02006f14, a0)
+#define GameFlag_Set_1(a0) Call1(Func_02006f1e, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006f42(args)
+#define SCENE_PHASE (*(volatile s32 *)(work + 0x1c0))
+#define SCENE_FIELD_1C8 (*(volatile s32 *)(work + 0x1c8))
+#define RunEventScript01 Func_02003028
 
+#include "facing_object.h"
+
+struct Frame {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+};
+
+extern u8 Value_0000004d;
+extern u8 Value_0000004f;
+extern u8 Value_00001018;   /* The pooled constant 0x1018. */
+extern u8 Value_0000004e;
+extern u8 Value_00000050;
+extern u8 Value_00000051;
+extern u8 Value_00000052;
+extern u8 Value_00000053;
+extern u8 Value_00000054;
+extern u8 Value_00000055;
+extern u8 Value_00000056;
+extern u8 Value_00000057;
+extern u8 Data_0200c194[];
+extern u8 Data_0200c20c[];
+extern u8 Data_0200c26c[];
+extern u8 Data_0200c314[];
+extern u8 Data_0200c3ec[];
+extern u8 Data_0200c464[];
+extern u8 Data_0200c524[];
+extern u8 Data_0200c59c[];
+extern u8 Data_0200c644[];
+extern u8 Data_0200c704[];
+extern u8 Data_0200c77c[];
+extern u8 Data_0200c164[];
+extern u8 Data_0200c80c[];
+extern u8 Data_0200c83c[];
+extern u8 Data_0200c85c[];   /* Image offset 0x485c. */
+extern u8 Data_0200c940[];
+extern u8 Data_0200c9a0[];
+extern u8 Data_0200ca00[];
+extern u8 Data_0200ca60[];
+extern u8 Data_0200caa8[];
+extern u8 Data_0200cb68[];
+extern u8 Data_0200cb98[];
+extern u8 Data_0200cc40[];
+extern u8 Data_0200ccd0[];
+extern u8 Data_0200c928[];
+extern unsigned char Value_00004ccc;
 extern u8 Data_00000000[];
-extern u8 Data_0200d238[];
 extern u8 Data_03001ebc[];
 extern u8 Data_00001953[];
 extern s16 Data_02000240_t[][1];
-extern u8 Value_00000056;
+extern s32 Data_0200d240[3];
+extern s32 Data_0200d23c;
+extern s32 Data_0200d240[3];   /* image offset 0x5240 */
+extern u8 *Func_02006652(s32 arg0, s32 arg1, s32 arg2, s32 arg3);  /* site veneer -> Func_080090c8 */
+extern void Func_0200559e(u8 *obj);                             /* site veneer -> Func_02002a10 */
+extern void Func_0200666a(u8 *obj, s32 arg1);                   /* site veneer -> Object_SetMode */
+extern s32 Data_0200d1b0;   /* In-image writable data at image offset 0x51b0. */
+extern u8 Data_0200c0e4[];
+extern u8 Data_0200c12c[];
 
+void Func_02003cd8(s32, s32);
+void Func_02004042(s32, s32);
+void Func_0200403a(s32, s32);
+void Func_0200406e(s32, s32);
+void Func_02004066(s32, s32);
+s32 *Func_0200406c(s32);
+void Func_02004012(s32, s32, s32, s32, s32, s32);
+void Func_02004054(s32);
+s32 *Func_0200414c(s32);
+void Func_020040f2(s32, s32, s32, s32, s32, s32);
+void Func_02004106(s32 *, s32);
+void Func_02004146(s32);
+s32 *Func_020041f0(s32);
+void Func_02004196(s32, s32, s32, s32, s32, s32);
+void Func_020041aa(s32 *, s32);
+void Func_020041ea(s32);
+void Func_02006912();
+void Func_0200691e();
+s32 Func_02003afa(s32, s32);
+struct Frame *Func_02003c38(s32);
+s32 *Func_02003fac(s32);
+void Func_02003f56(s32, s32, s32, s32, s32, s32);
+void Func_02003f6e(s32, s32, s32, s32, s32, s32);
+void Func_02003f80(s32, s32, s32, s32, s32, s32);
+void Func_02003f90(s32 *, s32);
+void Func_02003f5c(void);
+void Func_02003eea(s32);
+s32 *Func_020040ac(s32);
+void Func_02004050(s32, s32, s32, s32, s32, s32);
+void Func_02004064(s32 *, s32);
+void Func_020040a4(s32);
+s32 *Func_020040fc(s32);
+void Func_020040a2(s32, s32, s32, s32, s32, s32);
+void Func_020040b6(s32 *, s32);
+void Func_020040f6(s32);
+s32 *Func_0200419c(s32);
+void Func_02004142(s32, s32, s32, s32, s32, s32);
+void Func_02004156(s32 *, s32);
+void Func_02004194(s32);
+void Func_0200409a(s32, s32);
+void Func_02004092(s32, s32);
+s32 *Func_0200401c(s32);
+void Func_02003fc2(s32, s32, s32, s32, s32, s32);
+void Func_02003fd6(s32 *, s32);
+void Func_02004016(s32);
+u8 *Func_02004812(s32);
+u8 *Func_02004826(s32);
+void Func_0200664e();
+void Func_02006566();
+void Func_02006c2a();
+void Func_02006c34();
+u8 *Func_02006fc6(s32 id);
+u8 *Func_02006fd6(s32 id);
+void Func_020070a8(s32 id, s32 arg1);
+void Func_020070b2(s32 id, s32 arg1);
+s32 Func_02004142_a(void);
 void Func_0200418e();
 void Func_020041d6();
 void Func_020041ec();
@@ -143,7 +388,7 @@ void Func_0200490c();
 void Func_02004976();
 void Func_02001122();
 void Func_020047de();
-void Func_02004812();
+void Func_02004812_a();
 void Func_02004866();
 s32 Func_0200486e();
 void Func_02004870_a();
@@ -480,6 +725,118 @@ void Func_02006c0a();
 void Func_02006c6a();
 void Func_02006c6a_a();
 void Func_02006c72();
+void Func_020045d8(void);
+void Func_020045b8(s32, s32);
+void Func_02004796(s32);
+void Func_02001466(void);
+void Func_020044f8(s32);
+void Func_0200479c(void);
+void Func_02004600_a(void);
+void Func_02006c1e();
+void Func_02007452();
+void Func_02006b9c();
+void Func_02006bdc();
+s32 Func_02006c12();
+void Func_02006c22();
+s32 Func_02006c26();
+void Func_02006c30();
+s32 Func_02006c3a();
+void Func_02006c40();
+void Func_02006c5a();
+void Func_02006c64();
+void Func_02006c6e();
+void Func_02006c70();
+s32 Func_02006c7e();
+void Func_02006c84();
+s32 Func_02006c86();
+void Func_02006c98();
+s32 Func_02006c9e();
+s32 Func_02006cee();
+void Func_02006d1a();
+void Func_02006d1a_a();
+void Func_02006d22();
+void Func_02006d26();
+void Func_02006d34();
+void Func_02006d42();
+void Func_02006d46();
+void Func_02006d4e();
+void Func_02006d54();
+void Func_02006d54_a();
+void Func_02006d5a();
+void Func_02006d62();
+void Func_02006d6c();
+void Func_02006d6e();
+void Func_02006d76();
+void Func_02006d84();
+void Func_02006d8c();
+s32 Func_02006d8e();
+void Func_02006d92();
+void Func_02006d94();
+void Func_02006d9e();
+void Func_02006da4();
+void Func_02006da4_a();
+void Func_02006dca();
+void Func_02006dd4();
+void Func_02006df0();
+void Func_02006e08();
+void Func_02006e24();
+void Func_02006e34();
+void Func_02006e3a();
+void Func_02006e3c();
+void Func_02006e40();
+void Func_02006e48();
+void Func_02006e4e();
+void Func_02006e50();
+void Func_02006e66();
+void Func_02006e6a();
+void Func_02006e74();
+void Func_02006e7e();
+void Func_02006e7e_a();
+void Func_02006e86();
+void Func_02006e88();
+void Func_02006e9e();
+void Func_02006eaa();
+void Func_02006eb6();
+void Func_02006ec2();
+void Func_02006ede();
+void Func_02006ee8();
+void Func_02006eea();
+void Func_02006eea_a();
+void Func_02006ef6();
+void Func_02006ef8();
+void Func_02006f00();
+void Func_02006f02();
+void Func_02006f08();
+void Func_02006f10();
+void Func_02006f14();
+void Func_02006f1e();
+void Func_02006f28();
+void Func_02006f32();
+void Func_02006f36();
+s32 Func_02006f3a();
+void Func_02006f42();
+void Func_02006f44();
+void Func_02006f48();
+void Func_02006f4e();
+void Func_02006f50();
+void Func_02006f52();
+void Func_02006f5a();
+void Func_02006f5a_a();
+void Func_02006f62();
+void Func_02006f62_a();
+void Func_02006f72();
+void Func_02006f78();
+void Func_02006f8c();
+void Func_02006f98();
+void Func_02006fa2();
+void Func_02006fc8();
+void Func_0200affd();
+
+/*
+ * resource_3a4 owner at 0x02003460, 34 bytes with no literal pool: clear
+ * bit 0 of the scene record's flags byte at +89, then place a marker at the
+ * record's x and z at level 255. Both callees are reached through veneers.
+ */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -499,32 +856,44 @@ void Func_02006c72();
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
+    extern u8 Data_0200d238[];
+
     f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_0200d238[];
+
     f(a0, a1, a2);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
+    extern u8 Data_0200d238[];
+
     f(a0, a1, a2, a3, a4, a5);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
+    extern u8 Data_0200d238[];
+
     u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
@@ -536,16 +905,22 @@ static __inline__ void bump_step(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02000c9c(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_0200d238[];
+
     f(a0, a1, a2);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
+    extern u8 Data_0200d238[];
+
     f(a0, a1, a2, a3);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
+    extern u8 Data_0200d238[];
+
     return f(a0, a1);
 }
 
@@ -555,6 +930,8 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02002310(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     return f(a0);
@@ -566,6 +943,8 @@ static __inline__ s32 Value1_02002310(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02002490(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     return f(a0);
@@ -577,6 +956,8 @@ static __inline__ s32 Value1_02002490(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_020025c0(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     return f(a0);
@@ -588,6 +969,8 @@ static __inline__ s32 Value1_020025c0(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_020026c0(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     return f(a0);
 }
 
@@ -597,6 +980,8 @@ static __inline__ s32 Value1_020026c0(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02002934(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     extern s16 Data_02000240[];
 
     return f(a0);
@@ -608,6 +993,8 @@ static __inline__ s32 Value1_02002934(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_020029dc(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_0200d238[];
+
     extern s16 Data_02000240[];
 
     f(a0, a1, a2);
@@ -619,17 +1006,23 @@ static __inline__ void Call3_020029dc(void (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
+    extern u8 Data_0200d238[];
+
     return f();
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
+    extern u8 Data_0200d238[];
+
     return f(a0, a1, a2, a3);
 }
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 static __inline__ void Call0(void (*f)())
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     f();
@@ -637,6 +1030,8 @@ static __inline__ void Call0(void (*f)())
 
 static __inline__ s32 Value0_02002f10(s32 (*f)())
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     return f();
@@ -644,13 +1039,490 @@ static __inline__ s32 Value0_02002f10(s32 (*f)())
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     return f(a0, a1, a2);
 }
 
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+
+/* Phase/status word at 0x1c0, and a companion word at 0x1c8, of the shared
+ * scene work record. */
+
+/* Remaining raw call sites, named from the engine function's own source. */
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_02003028(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+u8 *Func_02006ffc();           /* Scene record accessor. */
+
+void Func_02006fbc();          /* Place a marker: kind, x, z, level. */
+
+s32 Func_020068d2();           /* per-site veneer -> Func_0808a5e0 */
+
+s32 Func_0200664c();           /* per-site veneer -> Func_080000d0 */
+
+void Func_020069e8_a();          /* site veneer -> Func_0808a428 */
+
+void Func_020069f8_a();          /* site veneer -> Func_0808a430 */
+
+void Func_02006a14();          /* site veneer -> Func_0808a448 */
+
+void Func_0200693c_a();          /* site veneer -> Func_0808a158 (1st) */
+
+void Func_020069fa();          /* site veneer -> Func_0808a420 */
+
+void Func_0200694a();          /* site veneer -> Func_0808a158 (2nd) */
+
+void Func_02006a1e();          /* site veneer -> Func_0808a438 */
+
+void Func_02006956();          /* site veneer -> Func_0808a158 (3rd) */
+
+void Func_02006a32_a();          /* site veneer -> Func_0808a440 */
+
+void Func_02006a6a();          /* site veneer -> Audio_PlayCue */
+
+void Func_0200696a();          /* site veneer -> Func_0808a158 (4th) */
+
+/*
+ * Read the low three bits of the runtime word at 0x03001e40 and, on two of the
+ * eight values, forward the incoming argument. The 40-byte owner includes its
+ * alignment halfword and one pool word. The argument is never materialised in
+ * the body, yet it is live at both call sites, so the parameter must stay. The
+ * meaning of the selector is not established; the other values fall through
+ * deliberately.
+ */
+
+/* Two call words that reach the same target. */
+
+/*
+ * Write 0x1018 into the halfword at scene workspace + 382. The 24-byte owner
+ * includes its two-word literal pool holding 0x03001ebc and 0x00001018, both
+ * read by pc-relative loads in the row. The displacement is built as 191 << 1
+ * and is a plain displacement, never used as a value. 0x1018 is loaded from
+ * the pool rather than built. No arguments and no return value.
+ */
+void SceneState_SetValue14Mode23(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    Func_02003cd8(0xE, 0x17);
+}
+
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
+{
+    s32 delta;
+    u16 old;
+    s32 angle;
+    struct FacingObject *target;
+
+    target = object->facing_target;
+    if (target != NULL) {
+        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        angle = (u16)CalculateFacingAngle(target->position_z - object->position_z, target->position_x - object->position_x);
+        old = object->facing;
+        delta = (s16)(angle - old);
+        if (delta != 0) {
+            if (delta > 0x1000) {
+                delta = 0x1000;
+            }
+            /* The loader relocates the stored pool word to -0x1000. */
+            if (delta < -0x1000) {
+                delta = -0x1000;
+            }
+            object->facing = (u16)(old + delta);
+        }
+    }
+    return 1;
+}
+
+s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst)
+{
+    struct Frame *src = Func_02003c38(8);
+
+    dst->f08 = src->f08;
+    dst->f0c = 0xFFF40000;
+    dst->f10 = src->f10;
+    return 0;
+}
+
+/*
+ * Per-frame integrator for one actor record in resource_3a4. Advances the
+ * position pair at +8 and +12, advances +24 and +28 by one shared velocity,
+ * damps that velocity, and returns 0.
+ *
+ * The damping subtracts +72 from the value of +40 already held in a register,
+ * not from a fresh load; v28 and v2c carry those earlier reads and must stay
+ * locals rather than become repeated loads.
+ */
+s32 OverlayObject_IntegrateAndDamp(u8 *p)
+{
+    s32 v28;
+    s32 v2c;
+
+    *(s32 *)(p + 8) = *(s32 *)(p + 8) + *(s32 *)(p + 36);
+
+    v28 = *(s32 *)(p + 40);
+    *(s32 *)(p + 12) = *(s32 *)(p + 12) + v28;
+
+    v2c = *(s32 *)(p + 44);
+    *(s32 *)(p + 24) = *(s32 *)(p + 24) + v2c;
+    *(s32 *)(p + 28) = *(s32 *)(p + 28) + v2c;
+
+    *(s32 *)(p + 40) = v28 - *(s32 *)(p + 72);
+
+    return 0;
+}
+
+/*
+ * Table getter for resource_3a4, published from the overlay's header as an
+ * entry point.
+ *
+ * The eight-byte owner at 0x02000204 includes its one pool word at
+ * 0x02000208; the load reads that word and returns it as an address,
+ * without dereferencing it.
+ */
+s32 SceneData_SelectTableByWord224(void)
+{
+    extern s16 Data_02000240[];
+
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_0000004d) {
+        return (s32)Data_0200c194;
+    }
+    if (v == (s32)&Value_0000004e) {
+        return (s32)Data_0200c20c;
+    }
+    if (v == (s32)&Value_0000004f) {
+        return (s32)Data_0200c26c;
+    }
+    if (v == (s32)&Value_00000050) {
+        return (s32)Data_0200c314;
+    }
+    if (v == (s32)&Value_00000051) {
+        return (s32)Data_0200c3ec;
+    }
+    if (v == (s32)&Value_00000052) {
+        return (s32)Data_0200c464;
+    }
+    if (v == (s32)&Value_00000053) {
+        return (s32)Data_0200c524;
+    }
+    if (v == (s32)&Value_00000054) {
+        return (s32)Data_0200c59c;
+    }
+    if (v == (s32)&Value_00000055) {
+        return (s32)Data_0200c644;
+    }
+    if (v == (s32)&Value_00000056) {
+        return (s32)Data_0200c704;
+    }
+    if (v == (s32)&Value_00000057) {
+        return (s32)Data_0200c77c;
+    }
+    return (s32)Data_0200c164;
+}
+
+s32 SceneData_SelectTableC80cOrC83c(void)
+{
+    extern s16 Data_02000240[];
+
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_00000055) {
+        return (s32)Data_0200c80c;
+    }
+    if (v == (s32)&Value_00000056) {
+        return (s32)Data_0200c83c;
+    }
+    return 0;
+}
+
+u8 *SceneData_GetTableC85c(void)
+{
+    extern s16 Data_02000240[];
+
+    return Data_0200c85c;
+}
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+    extern s16 Data_02000240[];
+
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_0000004d) {
+        return (s32)Data_0200c940;
+    }
+    if (v == (s32)&Value_0000004f) {
+        return (s32)Data_0200c9a0;
+    }
+    if (v == (s32)&Value_00000051) {
+        return (s32)Data_0200ca00;
+    }
+    if (v == (s32)&Value_00000052) {
+        return (s32)Data_0200ca60;
+    }
+    if (v == (s32)&Value_00000053) {
+        return (s32)Data_0200caa8;
+    }
+    if (v == (s32)&Value_00000054) {
+        return (s32)Data_0200cb68;
+    }
+    if (v == (s32)&Value_00000055) {
+        return (s32)Data_0200cb98;
+    }
+    if (v == (s32)&Value_00000056) {
+        return (s32)Data_0200cc40;
+    }
+    if (v == (s32)&Value_00000057) {
+        return (s32)Data_0200ccd0;
+    }
+    return (s32)Data_0200c928;
+}
+
+void SceneState_SetWorkByte22bTo3(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    Data_02000240[0x22b] = 3;
+    Func_02004042((s32)&Value_0000004d, 99);
+    Func_0200403a(53, 2);
+}
+
+void SceneState_SetByte22bTo3(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    Data_02000240[0x22b] = 3;
+    Func_0200406e((s32)&Value_0000004f, 99);
+    Func_02004066(53, 2);
+}
+
+void SceneState_SetByte22bTo3AndSend51(void)
+{
+    extern u8 Data_02000240[];
+
+    Data_02000240[0x22b] = 3;
+    Func_0200409a((s32)&Value_00000051, 99);
+    Func_02004092(53, 2);
+}
+
+void SceneActor_UpdateSlot10ByTileX(void)
+{
+    s32 *a = Func_02003fac(10);
+
+    if (a != 0) {
+        s32 x = 24;
+        s32 y = 26;
+        s32 t;
+
+        Func_02003f56(x, 27, 2, 1, x, y);
+        t = a[2] >> 20;
+        if (t == 25) {
+            Func_02003f6e(0, 0, 1, 1, t, y);
+        } else {
+            Func_02003f80(0, 0, 1, 1, x, y);
+        }
+        Func_02003f90(a, 0);
+        ((u8 *)a)[0x55] = 0;
+        Func_02003f5c();
+        Func_02003eea(1);
+    }
+}
+
+/*
+ * Presentation setup in resource_3a4: clear a record byte, adjust two
+ * handle flag bits, run two presentation primitives, then stamp a fixed
+ * rate into the record.
+ */
+
+/* Declared without prototypes -- call sites vary in argument shape. */
+
+/*
+ * resource_3a4: a published callback that sets the mode of actor record 8.
+ */
+
+/*
+ * Presentation callback for resource_3a4, published rather than called
+ * directly from this overlay.
+ */
+void ActorPresentation_SetCellAndLowerActorEight(void)
+{
+    extern u32 Data_03001e40;
+
+    s32 *p;
+    s32 s0;
+    s32 s1;
+
+    p = Func_0200401c(8);
+    s0 = 9;
+    s1 = 13;
+    Func_02003fc2(7, 13, 1, 1, s0, s1);
+    if (p != 0) {
+        Func_02003fd6(p, 0);
+        p[3] += 0xffe00000;
+        ((u8 *)p)[0x23] = 2;
+    }
+    Func_02004016(0x200);
+}
+
+void SceneState_ApplyRectAndSetActor9Byte55(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    s32 *p;
+    s32 s0;
+    s32 s1;
+
+    p = Func_0200406c(9);
+    s0 = 17;
+    s1 = 13;
+    Func_02004012(29, 1, 3, 1, s0, s1);
+    if (p != 0) {
+        ((u8 *)p)[0x55] = 2;
+    }
+    Func_02004054(0x201);
+}
+
+void SceneActor_RaiseSlot9StepA(void)
+{
+    s32 *p;
+    s32 s0;
+
+    p = Func_020040ac(9);
+    s0 = 26;
+    Func_02004050(0, 0, 1, 1, s0, s0);
+    if (p != 0) {
+        Func_02004064(p, 0);
+        p[3] += 0xffe00000;
+        ((u8 *)p)[0x23] = 2;
+    }
+    Func_020040a4(0x200);
+}
+
+void SceneActor_RaiseSlot9StepB(void)
+{
+    s32 *p;
+    s32 s0;
+    s32 s1;
+
+    p = Func_020040fc(9);
+    s0 = 25;
+    s1 = 13;
+    Func_020040a2(23, 13, 1, 1, s0, s1);
+    if (p != 0) {
+        Func_020040b6(p, 0);
+        p[3] += 0xffe00000;
+        ((u8 *)p)[0x23] = 2;
+    }
+    Func_020040f6(0x200);
+}
+
+void SceneState_ApplyRectAndLowerActor9(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    s32 *rec;
+    s32 s0;
+    s32 s1;
+
+    rec = Func_0200414c(9);
+    s0 = 43;
+    s1 = 41;
+    Func_020040f2(45, 41, 1, 1, s0, s1);
+    if (rec != 0) {
+        Func_02004106(rec, 0);
+        rec[3] += 0xffe00000;
+        ((u8 *)rec)[0x23] = 2;
+    }
+    Func_02004146(0x200);
+}
+
+void SceneActor_RaiseSlot11AndSetFlag201(void)
+{
+    s32 *p;
+    s32 s0;
+    s32 s1;
+
+    p = Func_0200419c(11);
+    s0 = 17;
+    s1 = 10;
+    Func_02004142(1, 0, 1, 1, s0, s1);
+    if (p != 0) {
+        Func_02004156(p, 0);
+        p[3] += 0xffe00000;
+        ((u8 *)p)[0x23] = 2;
+    }
+    Func_02004194(0x201);
+}
+
+void SceneActor_AdjustSlot12AndSetFlag204(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    s32 *p;
+    s32 s0;
+    s32 s1;
+
+    p = Func_020041f0(12);
+    s0 = 26;
+    s1 = 15;
+    Func_02004196(1, 0, 1, 1, s0, s1);
+    if (p != 0) {
+        Func_020041aa(p, 0);
+        p[3] += 0xffe00000;
+        ((u8 *)p)[0x23] = 2;
+    }
+    Func_020041ea(0x204);
+}
+
+void SceneState_SetDispcntBit9ByThreshold(void)
+{
+    extern u16 Data_0200d238;
+
+    volatile u16 *reg = (volatile u16 *)0x04000000;
+    s16 v = *reg & 0xfdff;
+
+    if ((u32)(Func_02004142_a() * 100) >> 16 >= Data_0200d238) {
+        s32 k = 0x200;
+
+        v |= k;
+    }
+    {
+        u32 t = (u16)v;
+
+        *reg = t;
+    }
+}
+
 void FieldScene_RunEarlySequence(void)
 {
+    extern u8 Data_0200d238[];
+
     s32 i;
     s32 record;
     u8 *p5;
@@ -692,6 +1564,8 @@ void FieldScene_RunEarlySequence(void)
 
 void Func_020007e8(void)
 {
+    extern u8 Data_0200d238[];
+
     s32 i;
     u8 *p5;
     u8 *rec;
@@ -725,6 +1599,8 @@ void Func_020007e8(void)
 
 void Func_020008d4(void)
 {
+    extern u8 Data_0200d238[];
+
     s32 i;
     u8 *p8;
     u8 *rec;
@@ -760,6 +1636,8 @@ void Func_020008d4(void)
 
 void FieldScene_RunScene3a4SequenceB(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
 
@@ -774,8 +1652,21 @@ void FieldScene_RunScene3a4SequenceB(void)
     }
 }
 
+void FieldScene_RunValue1528Scene(void)
+{
+    Func_020045d8();
+    Func_020045b8(0x1528, 1);
+    Func_02004796(125);
+    Func_02001466();
+    Func_020044f8(20);
+    Func_0200479c();
+    Func_02004600_a();
+}
+
 void FieldScene_RunScene3a4SequenceA(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
 
@@ -792,6 +1683,8 @@ void FieldScene_RunScene3a4SequenceA(void)
 
 void FieldScene_RunLine1528Sequence(void)
 {
+    extern u8 Data_0200d238[];
+
     Func_02004680();
     Func_02004660(0x1528, 1);
     Func_0200483e(125);
@@ -803,6 +1696,8 @@ void FieldScene_RunLine1528Sequence(void)
 
 void FieldScene_RunScene3a4SequenceC(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
 
@@ -825,6 +1720,8 @@ void FieldScene_RunScene3a4SequenceC(void)
 
 void FieldScene_RunScene3a4SequenceD(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
 
@@ -845,12 +1742,28 @@ void FieldScene_RunScene3a4SequenceD(void)
     Func_020047da();
 }
 
+void SceneActor_SetActor10Byte23To3(void)
+{
+    extern u32 Data_03001e40;
+
+    Func_02004812(10)[0x23] = 3;
+}
+
+void SceneActor_SetActor10Byte23To1(void)
+{
+    extern u32 Data_03001e40;
+
+    Func_02004826(10)[0x23] = 1;
+}
+
 void FieldScene_RunScene3a4_02000c9c(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
 
-    Func_02004812();
+    Func_02004812_a();
     Call6(Func_020047de, 24, 27, 2, 1, 24, 26);
     Func_020049dc(185);
     Call3_02000c9c(Func_02004866, 10, 0x3333, 0x1999);
@@ -867,6 +1780,8 @@ void FieldScene_RunScene3a4_02000c9c(void)
 
 void FieldScene_RunSharedSetPiece(s32 a0)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 rec;
     s32 rec2;
@@ -1034,6 +1949,8 @@ void FieldScene_RunSharedSetPiece(s32 a0)
 
 void FieldScene_RunScene3a4_02001398(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     u8 *record;
     s32 base5_1953;
@@ -1120,6 +2037,8 @@ void FieldScene_RunScene3a4_02001398(void)
 
 void FieldScene_RunScene3a4_02002310(void)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     u32 i;
@@ -1157,6 +2076,8 @@ void FieldScene_RunScene3a4_02002310(void)
 
 void FieldScene_RunScene3a4_02002428(void)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     if (Value1(Func_02005f80, 0x8fe) != 0) {
@@ -1174,6 +2095,8 @@ void FieldScene_RunScene3a4_02002428(void)
 
 void FieldScene_RunScene3a4_02002490(void)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     u32 i;
@@ -1217,6 +2140,8 @@ void FieldScene_RunScene3a4_02002490(void)
 
 void FieldScene_RunScene3a4_020025c0(void)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     u32 i;
@@ -1253,6 +2178,8 @@ void FieldScene_RunScene3a4_020025c0(void)
 
 void FieldScene_RunScene3a4_020026c0(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     u8 *record;
 
@@ -1304,6 +2231,8 @@ void FieldScene_RunScene3a4_020026c0(void)
 
 void FieldScene_RunScene3a4_02002934(void)
 {
+    extern u8 Data_0200d238[];
+
     extern s16 Data_02000240[];
 
     s32 rec7;
@@ -1340,6 +2269,8 @@ void FieldScene_RunScene3a4_02002934(void)
 
 void FieldScene_RunScene3a4_020029dc(void)
 {
+    extern u8 Data_0200d238[];
+
     extern s16 Data_02000240[];
 
     s32 record;
@@ -1351,8 +2282,81 @@ void FieldScene_RunScene3a4_020029dc(void)
     }
 }
 
+/*
+ * Clear the record byte at +0x55, then rewrite the handle flags at +9 as
+ * (flags & ~0x0c) | 0x04 -- the mask is built from the zero already in v,
+ * not spelled as a constant. The rate address is held in a local and
+ * stored to both +24 and +28. The 50-byte owner includes its one pool
+ * word.
+ */
+void SceneActor_SetMode3AndRate4ccc(u8 *rec)
+{
+    extern u32 Data_03001e40;
+
+    u8 *p = rec + 0x55;
+    s32 v = 0;
+    u8 *h;
+
+    *p = v;
+    h = *(u8 **)(rec + 80);
+    v -= 13;
+    v &= h[9];
+    v |= 4;
+    h[9] = (u8)v;
+    Func_0200664e(rec, 3);
+    Func_02006566(rec, 0);
+    {
+        s32 rate = (s32)&Value_00004ccc;
+
+        *(s32 *)(rec + 24) = rate;
+        *(s32 *)(rec + 28) = rate;
+    }
+}
+
+void SceneEffect_SpawnObject222(void)
+{
+    extern s32 Data_03001e40;
+
+    u8 *obj;
+
+    if ((Data_03001e40 & 3) != 0) {
+        return;
+    }
+    obj = Func_02006652(222, Data_0200d240[0], Data_0200d240[1], Data_0200d240[2]);
+    if (obj == 0) {
+        return;
+    }
+    {
+        u16 *p = (u16 *)(obj + 100);
+        u16 v = 30;
+        *p = v;
+    }
+    {
+        u16 *q = (u16 *)(obj + 102);
+        u16 w = 1;
+        *q = w;
+    }
+    *(s32 *)(obj + 104) = 20;
+    Func_0200559e(obj);
+    *(s32 *)(obj + 108) = 0x0200aa49;
+    Func_0200666a(obj, 1);
+}
+
+void SceneState_StoreParamsAndInstallTask(s32 v0, s32 v1, s32 v2, s32 v3)
+{
+    Data_0200d240[0] = v0;
+    Data_0200d240[1] = v1;
+    Data_0200d240[2] = v2;
+    Data_0200d23c = v3;
+
+    Func_020068d2(170);
+    Func_0200664c(0x0200ab59, 0xc80);
+}
+
 void FieldScene_RunScene3a4SequenceG(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     u8 *rec7;
     s32 record;
@@ -1401,8 +2405,39 @@ void FieldScene_RunScene3a4SequenceG(void)
     }
 }
 
+void SceneState_ForwardByRuntimeSelector(s32 arg)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    s32 sel = Data_03001e40 & 7;
+
+    if (sel == 0) {
+        Func_02006912(arg, 2);
+    } else if (sel == 2) {
+        Func_0200691e(arg, 0);
+    }
+}
+
+void FieldScene_RunActorTenFourStepSequence(void)
+{
+    Func_020069e8_a(24, 1);
+    Func_020069f8_a(10, 9);
+    Func_02006a14();
+    Func_0200693c_a(10, 2);
+    Func_020069fa(1);
+    Func_0200694a(10, 2);
+    Func_02006a1e();
+    Func_02006956(10, 2);
+    Func_02006a32_a();
+    Func_02006a6a(288);
+    Func_0200696a(10, 2);
+}
+
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 rec7;
     s32 record;
@@ -1432,6 +2467,8 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void FieldScene_RunScene3a4SequenceF(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
     s32 v6;
@@ -1454,6 +2491,8 @@ void FieldScene_RunScene3a4SequenceF(void)
 
 void FieldScene_RunScene3a4SequenceE(void)
 {
+    extern u8 Data_0200d238[];
+
     u32 i;
     s32 record;
     s32 v6;
@@ -1474,10 +2513,36 @@ void FieldScene_RunScene3a4SequenceE(void)
     Func_02006a50();
 }
 
+/*
+ * Overlay resource_3a4. Per-frame tick that counts to sixty, fires one
+ * audio cue and rewinds itself. The address of this routine is stored in
+ * a record as a plain word, so it runs as a published callback.
+ */
+
+/* Plays a sound cue; the name is this site's own call word, not a runtime
+ * address. */
+
+/*
+ * The owner spans the code, one alignment halfword and its one pool word,
+ * thirty-six bytes in all. Func_02006c1e names the loader-relocated call
+ * word for the cue call, not a runtime address. The limit of sixty reads
+ * as one second of frames, but nothing here fixes a frame rate.
+ */
+void SceneAudio_PlayCue183EverySixtyTicks(void)
+{
+    Data_0200d1b0 = Data_0200d1b0 + 1;
+    if (Data_0200d1b0 == 60) {
+        Func_02006c1e(183);
+        Data_0200d1b0 = 0;
+    }
+}
+
 /* Runs a fixed chain of 19 calls with literal arguments, sets byte 0x22B of
  * the shared work buffer to 3, then issues two more calls. */
 void FieldScene_RunLateAuxiliarySequence(void)
 {
+    extern u8 Data_0200d238[];
+
     extern u8 Data_02000240[];
 
     BattleRuntime_Reset_1();
@@ -1502,4 +2567,209 @@ void FieldScene_RunLateAuxiliarySequence(void)
     } while (0);
     SharedWorkData_SetFirstAndSecondFields_1((s32)&Value_00000056, 99);
     BattleEffect_ComputeWeightedResultAndDispatch_1(53, 3);
+}
+
+/*
+ * Bit 1 of the runtime status word at 0x03001e40 selects mode 7 or mode 6
+ * for record 8. That bit's meaning is unverified: other callbacks here mask
+ * different bits of the same word. Both branches reach the same veneer, and
+ * the declarations carry no parameter list because the arguments are set up
+ * in registers at the call site. The owner spans 44 bytes -- the body, one
+ * alignment halfword and one literal pool word.
+ */
+void SceneActor_SetActor8ModeByCounterBit(void)
+{
+    extern u32 Data_03001e40;
+
+    if (((Data_03001e40 >> 1) & 1) != 0) {
+        Func_02006c2a(8, 7);
+    } else {
+        Func_02006c34(8, 6);
+    }
+}
+
+/* Record returned by Func_02006c12/26/3a: a pair of s32 fields at +8 and
+ * +16 that get forwarded straight into the matching setup call. */
+void RunEventScript01(void)
+{
+    u32 i;
+    s32 record;
+    u8 *work;
+    s32 addr_0200affd;
+    s32 addr_0200c0e4;
+    s32 addr_0200c12c;
+
+    BattleRuntime_Reset_1_02003028();
+    ObjectMotion_SetHorizontalPositionWithTerrain_1(8, 0x1480000, 0x580000);
+    ObjectMotion_SetHorizontalPositionWithTerrain_2(9, 0x1480000, 0x580000);
+    Object_SetModeById_1_02003028(8, 0);
+    work = *(u8 *volatile *)Data_03001ebc;
+    SCENE_PHASE = 0x100;
+    SCENE_FIELD_1C8 = 40;
+    BattleRuntime_WaitIfModeZero_1_02003028();
+    ObjectMotion_SetSpeedParameters_1_02003028(); /* main:0808a370 */
+    BattleRuntime_WaitIfModeZero_2(20);
+    record = Scene_GetRecord_1(0);
+    if (record != 0) {
+        ObjectMotion_SetHorizontalPositionWithTerrain_3(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    }
+    record = Scene_GetRecord_2(0);
+    if (record != 0) {
+        ObjectMotion_SetHorizontalPositionWithTerrain_4(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    }
+    record = Scene_GetRecord_3(0);
+    if (record != 0) {
+        ObjectMotion_SetHorizontalPositionWithTerrain_5(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    }
+    ObjectMotion_SetSpeedParameters_2_02003028(1, 0x9999, 0x4ccc);
+    ObjectMotion_SetSpeedParameters_3_02003028(2, 0x9999, 0x4ccc);
+    ObjectMotion_SetSpeedParameters_4(3, 0x9999, 0x4ccc);
+    ObjectMotion_EnableActionAndSetCallback_1(1, 0x200c054);
+    ObjectMotion_EnableActionAndSetCallback_2(2, 0x200c084);
+    ObjectMotion_MarkActiveAndSetActionCallback_1(3, 0x200c0b4);
+    ObjectMotion_ArmCallback_1(1, 0xc000, 0);
+    ObjectMotion_ArmCallback_2(2, 0xc000, 0);
+    ObjectMotion_ArmCallback_3(3, 0xc000, 40);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_1(1, 1);
+    ObjectMotion_ArmCallback_4(1, 0xe000, 10);
+    SceneWork_SetStepValue_1(0x190c);
+    BattleRuntime_RunThenWaitIfModeZero_1(1, 0, 10);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_2(2, 1);
+    ObjectMotion_ArmCallback_5(2, 0xa000, 10);
+    ObjectMotion_ArmCallback_6(0, 0x2000, 0);
+    ObjectMotion_SetSpeedParameters_5(2, 0); /* main:0808a178 */
+    if (UiWork_WaitThenFinalizeCapacity_1(0, 0) == 0) {
+        ObjectMotion_CallThenWaitForAnimationChange_1(2, 3);
+    } else {
+        ObjectMotion_CallThenWaitForAnimationChange_2(2, 4);
+        bump_step(1);
+    }
+    BattleRuntime_RunThenWaitIfModeZero_2(2, 0, 20);
+    Object_SetModeById_2(0, 3);
+    Object_SetModeById_3(1, 3);
+    Object_SetModeById_4(0, 3);
+    ObjectMotion_CallThenWaitForAnimationChange_3(0, 3);
+    BattleRuntime_WaitIfModeZero_3(20);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_3(3, 2);
+    SceneWork_SetStepValue_2(0x1910);
+    BattleEvent_RunActionAndWait_1(3, 0);
+    ObjectMotion_ArmCallback_7(0, 0x4000, 10);
+    BattleEffect_SpawnLinkedResourceObject_1_02003028(1, 0x102, 60);
+    ObjectMotion_ArmCallback_8(1, 0x2000, 40);
+    BattleEvent_RunActionAndWait_2(1, 0);
+    ObjectMotion_ArmCallback_9(0, 0x6000, 10);
+    BattleEffect_SpawnLinkedResourceObject_2(0, 0x101, 0);
+    BattleEffect_SpawnLinkedResourceObject_3(1, 0x101, 0);
+    BattleEffect_SpawnLinkedResourceObject_4(2, 0x101, 0);
+    BattleEffect_SpawnLinkedResourceObject_5(3, 0x101, 40);
+    Audio_PlayCue_1_02003028(190);
+    ObjectGroup_ConfigureChildValue_1(8, 7);
+    BattleRuntime_WaitIfModeZero_4(10);
+    Audio_PlayCue_2(0x121);
+    ObjectMotion_ArmCallback_10(0, 0xc000, 0);
+    ObjectMotion_ArmCallback_11(1, 0xc000, 0);
+    ObjectMotion_ArmCallback_12(2, 0xc000, 0);
+    ObjectMotion_ArmCallback_13(3, 0xc000, 0);
+    BattleEffect_SpawnLinkedResourceObject_6(0, 0x100, 0);
+    BattleEffect_SpawnLinkedResourceObject_7(1, 0x100, 0);
+    BattleEffect_SpawnLinkedResourceObject_8(2, 0x100, 0);
+    BattleEffect_SpawnLinkedResourceObject_9(3, 0x100, 40);
+    Audio_PlayCue_3(103);
+    addr_0200affd = (s32)Func_0200affd;
+    Call2(Func_02006d34, addr_0200affd, 0xc80); /* main:080000d0 */
+    addr_0200c0e4 = (s32)Data_0200c0e4;
+    ObjectMotion_EnableActionAndSetCallback_3(9, addr_0200c0e4);
+    ObjectMotion_MarkActiveAndSetActionCallback_2(8, addr_0200c0e4);
+    Func_02006d54_a(addr_0200affd); /* main:080000d8 */
+    BattleRuntime_WaitIfModeZero_5(60);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_4(2, 2);
+    BattleRuntime_WaitIfModeZero_6(20);
+    BattleEvent_RunActionAndWait_3(2, 0);
+    ObjectMotion_ArmCallback_14(1, 0xe000, 0);
+    ObjectMotion_ArmCallback_15(2, 0xa000, 20);
+    Object_SetModeById_5(1, 3);
+    Object_SetModeById_6(2, 3);
+    ObjectMotion_CallThenWaitForAnimationChange_4(3, 3);
+    BattleRuntime_WaitIfModeZero_7(20);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_5(3, 1);
+    BattleRuntime_RunThenWaitIfModeZero_3(3, 0, 20);
+    ObjectMotion_ArmCallback_16(1, 0xe000, 0);
+    ObjectMotion_ArmCallback_17(0, 0x6000, 40);
+    ObjectMotion_CallThenWaitForAnimationChange_5(1, 3);
+    BattleRuntime_RunThenWaitIfModeZero_4(1, 0, 10);
+    ObjectMotion_CallThenWaitForAnimationChange_6(0, 3);
+    Object_SetModeById_7(1, 3);
+    Object_SetModeById_8(2, 3);
+    ObjectMotion_CallThenWaitForAnimationChange_7(3, 3);
+    BattleRuntime_WaitIfModeZero_8(20);
+    addr_0200c12c = (s32)Data_0200c12c;
+    ObjectMotion_EnableActionAndSetCallback_4(1, addr_0200c12c);
+    ObjectMotion_EnableActionAndSetCallback_5(2, addr_0200c12c);
+    ObjectMotion_MarkActiveAndSetActionCallback_3(3, addr_0200c12c);
+    BattleRuntime_WaitIfModeZero_9(20);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
+    GameFlag_Clear_1(0x12f);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 16;
+    GameFlag_Set_1(0x909);
+    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+}
+
+void SceneState_SetWorkspaceHalfword382To1018(void)
+{
+    extern u8 Data_02000240[];
+    extern s32 Data_03001e40;
+
+    *(u16 *)(*(u8 **)Data_03001ebc + (191 << 1)) = (int)&Value_00001018;
+}
+
+/*
+ * Compare record 0's field at +12 against a signed threshold and set record
+ * 12's mode accordingly; the taller branch also sets bit 1 of record 11's
+ * byte at +35.  Both offsets are named by position only and their roles are
+ * unverified; +35 is read-modify-written as a flags byte.  The threshold is
+ * kept as the value 0x00300000 the code builds, in no assumed fixed-point
+ * unit.
+ */
+void SceneActor_SetActor12ModeByActorZeroHeight(void)
+{
+    extern u32 Data_03001e40;
+
+    if (*(s32 *)(Func_02006fc6(0) + 12) > 0x00300000) {
+        {
+            u8 *flag = Func_02006fd6(11) + 35;
+            s32 bit = 2;
+
+            bit |= *flag;
+            *flag = bit;
+        }
+        Func_020070a8(12, 3);
+    } else {
+        Func_020070b2(12, 2);
+    }
+}
+
+void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
+{
+    u8 *record;
+
+    record = Func_02006ffc(no);
+    record[89] &= 0xfe;
+
+    Func_02006fbc(0, *(s32 *)(record + 8), *(s32 *)(record + 16), 255);
+}
+
+/*
+ * Stamp a fixed value into the caller's record at +102, then play sound cue
+ * 288. The owner at 0x02003724 in resource_3a4 is 20 bytes with no literal
+ * pool.
+ */
+void SceneState_SetRecordWord102AndPlayCue288(u16 *record)
+{
+    record = (u16 *)((char *)record + 102);
+    {
+        s32 value = 0x21;
+
+        *record = value;
+    }
+    Func_02007452(288);
 }

@@ -12650,147 +12650,147 @@
     },
     "resource_3a4:02000040": {
       "name": "OverlayObject_UpdateFacingTowardTarget",
-      "source": "overlays/scene/story/set_piece/actor_facing.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02003724": {
       "name": "SceneState_SetRecordWord102AndPlayCue288",
-      "source": "overlays/scene/story/set_piece/scene_audio.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000650": {
       "name": "SceneActor_AdjustSlot12AndSetFlag204",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000204": {
       "name": "SceneData_GetTableC85c",
-      "source": "overlays/scene/story/set_piece/scene_data.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02003460": {
       "name": "SceneActor_ClearCollisionFlagAndPlaceMarker",
-      "source": "overlays/scene/story/set_piece/actor_position.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000388": {
       "name": "SceneState_SetWorkByte22bTo3",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020003b4": {
       "name": "SceneState_SetByte22bTo3",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002ce0": {
       "name": "SceneState_ForwardByRuntimeSelector",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000098": {
       "name": "SceneActor_CopyActor8PositionWithFixedY",
-      "source": "overlays/scene/story/set_piece/actor_position.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000c88": {
       "name": "SceneActor_SetActor10Byte23To1",
-      "source": "overlays/scene/story/set_piece/actor_presentation.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020004cc": {
       "name": "SceneState_ApplyRectAndSetActor9Byte55",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020000bc": {
       "name": "OverlayObject_IntegrateAndDamp",
-      "source": "overlays/scene/story/set_piece/overlay_object.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002b58": {
       "name": "SceneEffect_SpawnObject222",
-      "source": "overlays/scene/story/set_piece/effect.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002d08": {
       "name": "FieldScene_RunActorTenFourStepSequence",
-      "source": "overlays/scene/story/set_piece/actor_motion.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:0200050c": {
       "name": "SceneActor_RaiseSlot9StepA",
-      "source": "overlays/scene/story/set_piece/actor_position.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:0200040c": {
       "name": "SceneActor_UpdateSlot10ByTileX",
-      "source": "overlays/scene/story/set_piece/actor_position.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000b0c": {
       "name": "FieldScene_RunLine1528Sequence",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002eec": {
       "name": "SceneAudio_PlayCue183EverySixtyTicks",
-      "source": "overlays/scene/story/set_piece/scene_audio.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020005fc": {
       "name": "SceneActor_RaiseSlot11AndSetFlag201",
-      "source": "overlays/scene/story/set_piece/actor_position.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:0200055c": {
       "name": "SceneActor_RaiseSlot9StepB",
-      "source": "overlays/scene/story/set_piece/actor_position.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:0200020c": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/story/set_piece/scene_data.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02003428": {
       "name": "SceneActor_SetActor12ModeByActorZeroHeight",
-      "source": "overlays/scene/story/set_piece/actor_presentation.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020001c8": {
       "name": "SceneData_SelectTableC80cOrC83c",
-      "source": "overlays/scene/story/set_piece/scene_data.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002ffc": {
       "name": "SceneActor_SetActor8ModeByCounterBit",
-      "source": "overlays/scene/story/set_piece/actor_presentation.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020005ac": {
       "name": "SceneState_ApplyRectAndLowerActor9",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:0200047c": {
       "name": "ActorPresentation_SetCellAndLowerActorEight",
-      "source": "overlays/scene/story/set_piece/actor_presentation.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002a10": {
       "name": "SceneActor_SetMode3AndRate4ccc",
-      "source": "overlays/scene/story/set_piece/actor_presentation.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002bb0": {
       "name": "SceneState_StoreParamsAndInstallTask",
-      "source": "overlays/scene/story/set_piece/scene_setup.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000c74": {
       "name": "SceneActor_SetActor10Byte23To3",
-      "source": "overlays/scene/story/set_piece/actor_presentation.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020000e4": {
       "name": "SceneData_SelectTableByWord224",
-      "source": "overlays/scene/story/set_piece/scene_data.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020003e0": {
       "name": "SceneState_SetByte22bTo3AndSend51",
-      "source": "overlays/scene/story/set_piece/scene_state_interaction.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000a64": {
       "name": "FieldScene_RunValue1528Scene",
-      "source": "overlays/scene/story/set_piece/scene_setup.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02003410": {
       "name": "SceneState_SetWorkspaceHalfword382To1018",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000030": {
       "name": "SceneState_SetValue14Mode23",
-      "source": "overlays/scene/story/set_piece/state_update.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020006a0": {
       "name": "SceneState_SetDispcntBit9ByThreshold",
-      "source": "overlays/scene/story/set_piece/display.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02003028": {
       "name": "RunEventScript01",
-      "source": "overlays/scene/story/set_piece/scene_primary_script.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02001838": {
       "name": "FieldScene_BuildMultiPhasePresentation"
@@ -12800,91 +12800,91 @@
     },
     "resource_3a4:02000ec0": {
       "name": "FieldScene_RunSharedSetPiece",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020006dc": {
       "name": "FieldScene_RunEarlySequence",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002d58": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002f10": {
       "name": "FieldScene_RunLateAuxiliarySequence",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02001398": {
       "name": "FieldScene_RunScene3a4_02001398",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000c9c": {
       "name": "FieldScene_RunScene3a4_02000c9c",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020026c0": {
       "name": "FieldScene_RunScene3a4_020026c0",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002934": {
       "name": "FieldScene_RunScene3a4_02002934",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002428": {
       "name": "FieldScene_RunScene3a4_02002428",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020029dc": {
       "name": "FieldScene_RunScene3a4_020029dc",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002310": {
       "name": "FieldScene_RunScene3a4_02002310",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002490": {
       "name": "FieldScene_RunScene3a4_02002490",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020025c0": {
       "name": "FieldScene_RunScene3a4_020025c0",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000a94": {
       "name": "FieldScene_RunScene3a4SequenceA",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000b3c": {
       "name": "FieldScene_RunScene3a4SequenceC",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002e84": {
       "name": "FieldScene_RunScene3a4SequenceE",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020009ec": {
       "name": "FieldScene_RunScene3a4SequenceB",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002be0": {
       "name": "FieldScene_RunScene3a4SequenceG",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02000bd8": {
       "name": "FieldScene_RunScene3a4SequenceD",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:02002e1c": {
       "name": "FieldScene_RunScene3a4SequenceF",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020008d4": {
       "name": "FieldScene_RunScene3a4SequenceI",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a4:020007e8": {
       "name": "FieldScene_RunScene3a4SequenceH",
-      "source": "overlays/scene/story/set_piece/field_scene.c"
+      "source": "overlays/scene/story/set_piece.c"
     },
     "resource_3a6:02000030": "overlays/scene/actor/staged_pair_region/set_effect_record_mode.c",
     "resource_3a6:0200013c": {

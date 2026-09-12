@@ -128590,26 +128590,6 @@
           "address": "0x0801ff14",
           "extent": 68,
           "state": "exact-c"
-        },
-        {
-          "address": "0x0801ff58",
-          "extent": 128,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801ffd8",
-          "extent": 176,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08020088",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080200cc",
-          "extent": 132,
-          "state": "exact-c"
         }
       ],
       "overlay": null

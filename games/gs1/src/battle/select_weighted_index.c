@@ -69,7 +69,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 parameter)
     runtime->value_808 = parameter;
     runtime->phase = 2;
     runtime->flag_655 = 0;
-    return ScheduleCallbackAfterFrames((s32)Battle_Run, 0xC80);
+    return ScheduleCallbackAfterFrames((s32)FunctionHead_080bd898, 0xC80);
 }
 
 /* battle/event_runtime/reset.c */
@@ -108,7 +108,7 @@ s32 BattleEventRuntime_WaitForReady(void)
             WaitFrames(1U);
         } while (FIELD_AT_OFFSET(runtime, s32 *, 0x800) != 4);
     }
-    ScheduleCallback((void *)Battle_Run);
+    ScheduleCallback((void *)FunctionHead_08077000);
     return BattleEventRuntime_Reset();
 }
 
@@ -140,7 +140,7 @@ struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[64]; s32 count; };
 struct PlacementTable { u8 padding[8]; struct PlacementList list; };
 
-struct PlacementTable *Battle_Run(s32 owner);
+struct PlacementTable *FunctionHead_08077000(s32 owner);
 
 s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
 {
@@ -161,7 +161,7 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
     owner = 0;
     if (arg0 > 7)
         owner = 1;
-    list = &Battle_Run(owner)->list;
+    list = &FunctionHead_08077000(owner)->list;
     if (counts != 0)
         for (j = 3; j >= 0; j--)
             counts[j] = 0;

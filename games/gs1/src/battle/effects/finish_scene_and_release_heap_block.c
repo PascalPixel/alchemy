@@ -16,7 +16,7 @@ extern void ScheduleCallback(s32);
 struct Outer0808e0b0 *Object_GetById(u32);
 void BattleFx_PrepareBufferInterpolation(void);
 
-extern u8 gRom;
+extern u8 RomBytes_08097645;
 
 void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 {
@@ -24,7 +24,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 
     work = *(void **)ADDR_03001EA8;
     Battle_Run();
-    ScheduleCallback((s32)&gRom);
+    ScheduleCallback((s32)&RomBytes_08097645);
     Battle_Apply(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1);
     BattleFx_PrepareBufferInterpolation();
     Battle_Check(0x16);
@@ -79,7 +79,7 @@ void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *mini
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
-extern const u8 gRom[];
+extern const u8 RomBytes_080a0128[];
 
 struct Target_08097a54 {
     u8 unknown_00[0x38];
@@ -97,7 +97,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct Target_08097a54 *target)
     if (tx == 0x80000000) {
         ty = target->y;
         if ((ty == tx) && (target->z == ty)) {
-            Object_SetCallback(target, (s32)gRom);
+            Object_SetCallback(target, (s32)RomBytes_080a0128);
         }
     }
 }
@@ -162,12 +162,12 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
 /* battle/effects/fx_get_cycled_table_word.c */
 /* battle/effects/fx_get_cycled_table_word.c */
 /* battle/effects/misc/get_cycled_table_word.c */
-extern struct BattleEffectScene *gIwFxGetCycledTableWord;
-extern u16 gRomFxGetCycledTableWord[];
+extern struct BattleEffectScene *RomBytes_03001ae8;
+extern u16 RomBytes_0809f0f8[];
 
 u16 BattleFx_GetCycledTableWord(void)
 {
-    return gRomFxGetCycledTableWord[(gIwFxGetCycledTableWord >> 4) & 15];
+    return RomBytes_0809f0f8[(RomBytes_03001ae8 >> 4) & 15];
 }
 
 /* battle/effects/item_break/update_fragment.c */
@@ -243,7 +243,7 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-        Object_SetCallback(object, gRomFxGetCycledTableWord);
+        Object_SetCallback(object, RomBytes_0809f0b0);
     }
 }
 
@@ -302,7 +302,7 @@ next_state:
     }
 
     if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
-        Battle_RunFxGetCycledTableWord(effect);
+        FunctionHead_0809bb34(effect);
 }
 
 /* battle/effects/item_break/run_item_break_sequence.c */
@@ -323,11 +323,11 @@ void BattleFx_RunItemBreakSequence(void)
     struct BattleEffectScene *scene;
     void *object;
 
-    scene = gIwFxGetCycledTableWord;
+    scene = RomBytes_03001f30;
     object = scene->main_object;
 
     do {
-        Battle_RunFxGetCycledTableWord();
+        FunctionHead_08097384();
     } while (0);
     object = BattleFx_StartItemBreak(object);
     Battle_Do(object);
@@ -381,7 +381,7 @@ void *BattleFx_StartItemBreak(void *source)
                               *(s32 *)((s8 *)source + 12) + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            Object_SetCallback(child, &gRomFxGetCycledTableWord);
+            Object_SetCallback(child, &RomBytes_0809f0d4);
             fragment_scale = Rand() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
             *(s32 *)((s8 *)child + 0x30) = fragment_scale;

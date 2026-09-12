@@ -123,7 +123,7 @@ void Menu_ReleaseEntryObjects(void)
     void **p;
     s32 i;
 
-    count = (u16)Menu_Check(buf);
+    count = (u16)FunctionHead_08077158(buf);
     if (count != 0) {
         p = (void **)(base + 276);
         i = count;
@@ -152,7 +152,7 @@ void Menu_UpdateEntryObjectTransforms(void)
     s32 cnt;
 
     p = gIw;
-    cnt = (u16)Menu_Check();
+    cnt = (u16)FunctionHead_08077148();
     i = 0;
     if (i < cnt) {
         pp = pos;

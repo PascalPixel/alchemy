@@ -31,7 +31,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
                     Object_InitializeMode((void *)*item, 1);
                 item[16] = 0x10000;
                 id = *(s16 *)(half_base + offset);
-                if (Sys_Apply(id, variant) == 0)
+                if (FunctionHead_080b27b0(id, variant) == 0)
                     item[16] = 0xb333;
                 index++;
                 offset += 2;
@@ -55,7 +55,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     s32 message;
 
     variant = (s8)gIw[0x3AA];
-    message = Sys_Apply(selection, variant);
+    message = FunctionHead_080b2778(selection, variant);
     if (target != 0) {
         UiWindow_Clear(target);
         if (Sys_Apply2(selection, variant) != 0) {

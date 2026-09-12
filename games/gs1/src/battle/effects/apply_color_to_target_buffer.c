@@ -76,13 +76,13 @@ s32 BattleFx_ClampRgb555Component(s32 value)
 /* object/effects/enable_spawn_callback.c */
 void Object_EnableEffectSpawnCallback(void)
 {
-    Obj_Check((u32)Obj_Run);
+    FunctionHead_080042c8((u32)Obj_Run);
 }
 
 /* object/effects/disable_spawn_callback.c */
 void Object_DisableEffectSpawnCallback(void)
 {
-    Obj_Check((u32)Obj_Run);
+    FunctionHead_0800439c((u32)Obj_Run);
 }
 
 /* battle/fx_find_definition.c */
@@ -205,7 +205,7 @@ void Battle_Reset(void)
 {
     struct BattleRuntime *runtime = gWork;
 
-    Battle_Run();
+    FunctionHead_08015208();
     Battle_InitializeRenderObject();
     if (runtime->unknown_cb6 != 0) {
         Battle_ResetEffectCounter();
@@ -236,7 +236,7 @@ void BattleFx_FinishAction(void)
 {
     ScheduleCallback((u32)Battle_UpdateModeFromShoulderButtons);
     Battle_Apply(gCell.value, 1);
-    Battle_Run();
+    FunctionHead_080772f0();
 }
 
 /* event/event_no_op_hook.c */
@@ -262,7 +262,7 @@ s32 ObjectTable_FindLastActiveId(void);
 
 void Event_CallWithLastActiveObjectId(s32 event_id)
 {
-    Sys_Apply(event_id, ObjectTable_FindLastActiveId());
+    FunctionHead_0808b3ec(event_id, ObjectTable_FindLastActiveId());
 }
 
 /* event/prepare_object_and_apply_value.c */
@@ -273,7 +273,7 @@ void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
     Runtime_GetObject();
     Sys_Check(event_id);
     if (value != 0) {
-        Sys_Apply(event_id, value);
+        FunctionHead_08015420(event_id, value);
     }
 }
 
@@ -282,7 +282,7 @@ void Event_PrepareTwoObjectsAndApply(void *first, void *second)
 {
     Sys_Check(first);
     Sys_Check(second);
-    Sys_Apply(first, second);
+    FunctionHead_08015428(first, second);
 }
 
 /* event/validate_packed_id.c */
@@ -297,7 +297,7 @@ s32 Event_ValidatePackedId(u32 packed_id)
         return -1;
     if (GameFlag_IsSet(group) == 0)
         return -2;
-    if (Sys_Apply(group, entry) == 0)
+    if (FunctionHead_08077090(group, entry) == 0)
         return -3;
     return 0;
 }

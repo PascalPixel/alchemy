@@ -17863,333 +17863,337 @@
     },
     "resource_3bf:02001528": {
       "name": "FieldScene_UpdateActorEighteenInteraction",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200138c": {
       "name": "FieldScene_UpdateActorSeventeenInteraction",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001150": {
       "name": "FieldScene_UpdateActorPairInteraction",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004f60": {
       "name": "FieldScene_InstallSceneTasks",
-      "source": "map/locations/heidia/village/village_scene/actor_setup.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020050e4": {
       "name": "FieldScene_SetupActorsForScene",
-      "source": "map/locations/heidia/village/village_scene/actor_setup.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02005324": {
       "name": "FieldScene_RestoreActorsFromFlags",
-      "source": "map/locations/heidia/village/village_scene/actor_setup.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000030": {
       "name": "CalculateFixedPointPositionDistance",
-      "source": "map/locations/heidia/village/village_scene/shared/measure_fixed_point_position_distance.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
-    "resource_3bf:0200006c": "map/locations/heidia/village/village_scene/shared/find_actor_at_fixed_point_position.c",
+    "resource_3bf:0200006c": {
+      "source": "map/locations/heidia/village/village_scene.c"
+    },
     "resource_3bf:020000c4": {
       "name": "AdvanceStagedActorPair",
-      "source": "map/locations/heidia/village/village_scene/village_scene/village.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
-    "resource_3bf:02000244": "map/locations/heidia/village/village_scene/shared/fill_grid_attribute_rectangle.c",
+    "resource_3bf:02000244": {
+      "source": "map/locations/heidia/village/village_scene.c"
+    },
     "resource_3bf:020002a8": {
       "name": "StopBlockedActorMotion",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000474": {
       "name": "FindClearActorPosition",
-      "source": "map/locations/heidia/village/village_scene/village_scene/village.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020009dc": {
       "name": "SelectPrimarySceneData",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000a30": {
       "name": "GetEmptySceneData",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000a34": {
       "name": "SelectSecondarySceneData",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000a80": {
       "name": "SelectTertiarySceneData",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000af8": {
       "name": "SelectQuaternarySceneData",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000b4c": {
       "name": "ConfigureSceneActor12",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000ba0": {
       "name": "RunSceneObjectSetup",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000c90": {
       "name": "PlaceSceneObjectPairFromTableA",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000e30": {
       "name": "PlaceSceneObjectPairFromTableB",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000ee0": {
       "name": "PlaceSceneObjectPairFromTableC",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000f94": {
       "name": "ShowLockedDoorMessageOnce",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000fb4": {
       "name": "ShowLockedDoorMessage",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000fc8": {
       "name": "ShowGeraldDontMessage",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000fe4": {
       "name": "ShowThatWasExcitingMessage",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001000": {
       "name": "ShowSorryIScaredYouMessage",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200101c": {
       "name": "ShowWellMessage",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001038": {
       "name": "TryStartActorInteraction",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001098": {
       "name": "NoOpSceneCallbackA",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200109c": {
       "name": "NoOpSceneCallbackB",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020010a0": {
       "name": "NoOpSceneCallbackC",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020010a4": {
       "name": "NoOpSceneCallbackD",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020010a8": {
       "name": "StartDoraHouseAccidentScene",
-      "source": "map/locations/heidia/village/village_scene/village_scene/village.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001108": {
       "name": "IsPlayerInAccidentTriggerArea",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020012e0": {
       "name": "ConfigureSceneActor9",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001324": {
       "name": "AreSceneActorsInPassingLane",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020014bc": {
       "name": "ActivateSceneActor17",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020014cc": {
       "name": "IsPlayerInSecondaryTriggerArea",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001650": {
       "name": "ActivateSceneActor18",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001660": {
       "name": "IsPlayerOutsideSceneRectangle",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001708": {
       "name": "RunActor17SceneStep",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001718": {
       "name": "TriggerSceneStage95FromActor12",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200181c": {
       "name": "IsSceneActorVerticallyNearPlayer",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001880": {
       "name": "IsSceneActorHorizontallyNearPlayer",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020018e4": {
       "name": "IsActorInteractionAvailable",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001918": {
       "name": "IsSceneActorWithinFourSteps",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001980": {
       "name": "IsSceneActorWithinTriggerBox",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020019e8": {
       "name": "TriggerScene41AtVillagePath",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001a44": {
       "name": "TriggerScene40AtVillagePath",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001ab0": {
       "name": "RunActor9ScriptedSequence",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001b24": {
       "name": "RunActorScriptedSequenceA",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001be4": {
       "name": "TurnActorToSceneDirection",
-      "source": "map/locations/heidia/village/village_scene/village_scene/village.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001c4c": {
       "name": "RunActorScriptedSequenceB",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001ca4": {
       "name": "RunActorScriptedSequenceC",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001d60": {
       "name": "RunActorScriptedSequenceD",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001dc4": {
       "name": "InspectOrdinaryObject",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001e2c": {
       "name": "InspectEmptyChest",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020020cc": {
       "name": "InspectEmptySceneObject",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002134": {
       "name": "RunActor12InteractionSequence",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200226c": {
       "name": "ConfigureInteractionRegionA",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020022a0": {
       "name": "ConfigureInteractionRegionB",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020022d4": {
       "name": "ConfigureInteractionRegionC",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002410": {
       "name": "ConfigurePrimaryInteractionRegions",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002468": {
       "name": "ConfigureSecondaryInteractionRegions",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020024c0": {
       "name": "InspectWardrobe",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020024e4": {
       "name": "InspectFirewood",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002504": {
       "name": "InspectBooks",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002528": {
       "name": "NoOpInteractionCallback",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004928": {
       "name": "SelectActor25SceneVariant",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004964": {
       "name": "SelectActor24SceneVariant",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004b68": {
       "name": "ConfigureSceneActor26",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004b84": {
       "name": "ConfigureSceneActor14",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004ba4": {
       "name": "ConfigureSceneActor13",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004bc4": {
       "name": "ConfigureSceneActor12Variant",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004be4": {
       "name": "ConfigureSceneActor18",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004d0c": {
       "name": "FinishActor20SceneSequence",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004d4c": {
       "name": "NoOpActorCallback",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004d50": {
       "name": "ConfigureActor13Interaction",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004d88": {
       "name": "ConfigureActor13SceneResource",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02005470": {
       "name": "FieldScene_ActivateThreeActorGroup",
-      "source": "map/locations/heidia/village/village_scene/actor_setup.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020054b0": {
       "name": "FieldScene_ActivateTwoActorGroup",
-      "source": "map/locations/heidia/village/village_scene/actor_setup.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020054dc": {
       "name": "FieldScene_ActivateAlternateActorGroup",
-      "source": "map/locations/heidia/village/village_scene/actor_setup.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02005520": {
       "name": "ActivateFiveActorGroupFromFlags",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02005a40": {
       "name": "AddSoftDouble",
@@ -18265,103 +18269,103 @@
     },
     "resource_3bf:02000c78": {
       "name": "PlaceActorTwelveAndFinishScene",
-      "source": "map/locations/heidia/village/scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02003054": {
       "name": "FieldScene_RunMainScriptSequence",
-      "source": "map/locations/heidia/village/village_scene/main_scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001e94": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "map/locations/heidia/village/village_scene/supplemental_scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020049a0": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
-      "source": "map/locations/heidia/village/village_scene/scene_sequence.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000ce0": {
       "name": "FieldScene_UpdateObjectPairA",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200206c": {
       "name": "FieldScene_RunSequenceTail",
-      "source": "map/locations/heidia/village/village_scene/sequence_tail.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020027b0": {
       "name": "PlayStoryScene",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000bec": {
       "name": "FieldScene_UpdateActorTwelveTransition",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02001cf0": {
       "name": "FieldScene_RunScene3bf_02001cf0",
-      "source": "map/locations/heidia/village/village_scene/actor_steps.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020021c4": {
       "name": "FieldScene_RunScene3bf_020021c4",
-      "source": "map/locations/heidia/village/village_scene/actor_pair_sequence.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020025f8": {
       "name": "FieldScene_RunScene3bf_020025f8",
-      "source": "map/locations/heidia/village/village_scene/scene_transition.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200269c": {
       "name": "FieldScene_RunScene3bf_0200269c",
-      "source": "map/locations/heidia/village/village_scene/actor_pair_placement.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004704": {
       "name": "FieldScene_RunActorTwentyOneSequence",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004794": {
       "name": "FieldScene_RunScene3bf_02004794",
-      "source": "map/locations/heidia/village/village_scene/conditional_scene.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002718": {
       "name": "FieldScene_RunScene3bf_02002718",
-      "source": "map/locations/heidia/village/village_scene/party_animation.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000bac": {
       "name": "FieldScene_StartActorTwelveTransition",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200252c": {
       "name": "FieldScene_RunScene3bf_0200252c",
-      "source": "map/locations/heidia/village/village_scene/scene_party_placement.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000f30": {
       "name": "FieldScene_UpdateObjectPairC",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004bfc": {
       "name": "RunActor20SceneSequence",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02002308": {
       "name": "InspectVillageWell",
-      "source": "map/locations/heidia/village/village_scene/village_scene/object_inspection.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200238c": {
       "name": "RunSecondaryMapInteraction",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:020017bc": {
       "name": "FieldScene_RunScene3bfSequenceC",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200169c": {
       "name": "FieldScene_RunScene3bfSequenceA",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:0200175c": {
       "name": "FieldScene_RunScene3bfSequenceB",
-      "source": "map/locations/heidia/village/village_scene/village_scene/scene_scripts.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000dcc": {
       "name": "FieldScene_UpdateObjectPairB",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02000608": {
       "name": "SceneActor_MoveAndRedraw",
@@ -18370,11 +18374,11 @@
     },
     "resource_3bf:02000e80": {
       "name": "FieldScene_UpdateTableBObjectPair",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02004638": {
       "name": "FieldScene_SelectActorTwentyOneMessage",
-      "source": "map/locations/heidia/village/village_scene/actor_scenes.c"
+      "source": "map/locations/heidia/village/village_scene.c"
     },
     "main:080049a8": {
       "name": "RuntimeMemory_ReservedNoOp"

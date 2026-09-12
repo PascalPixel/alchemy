@@ -6,12 +6,7 @@
 #include "battle_escape.h"
 
 /* battle/actor/clear_field_12b_for_group.c */
-struct ActorState_080b90ac {
-    u8 padding_000[0x12b];
-    u8 field_12b;
-};
-
-struct BattleUnitLevel *Runtime_GetObject(s32);
+u8 *FunctionHead_08077008(s32);
 void BattleUnit_Recalculate(u16 id);
 
 void BattleUnit_ClearField12bForGroup(void)
@@ -22,10 +17,7 @@ void BattleUnit_ClearField12bForGroup(void)
 
     count = Actor_Apply(3, ids);
     for (index = 0; index < count; index++) {
-        struct ActorState_080b90ac *actor;
-
-        actor = Runtime_GetObject(ids[index]);
-        actor->field_12b = 0;
+        FunctionHead_08077008(ids[index])[0x12b] = 0;
         BattleUnit_Recalculate(ids[index]);
     }
 }
@@ -35,11 +27,6 @@ struct BattleEscapeState {
     u8 reserved_00[0x45];
     u8 guaranteed;
     u8 failed_attempts;
-};
-
-struct BattleUnitLevel {
-    u8 reserved_00[0x0f];
-    u8 level;
 };
 
 s32 FixedPoint_Ratio(s32, s32);
@@ -71,8 +58,8 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += Runtime_GetObject(
-                (s32)living_units[unit_index])->level;
+            level_total += FunctionHead_08077008(
+                (s32)living_units[unit_index])[0x0f];
         }
         chance += FixedPoint_Ratio(level_total * 0x1F4, living_count);
         living_count = BattleParty_ListLivingUnits(
@@ -80,8 +67,8 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += Runtime_GetObject(
-                (s32)living_units[unit_index])->level;
+            level_total += FunctionHead_08077008(
+                (s32)living_units[unit_index])[0x0f];
         }
         chance -= FixedPoint_Ratio(level_total * 0x1F4, living_count);
         if ((chance > 0) &&
@@ -98,8 +85,6 @@ s32 BattleEscape_CheckSuccess(void)
 
 /* battle/presentation/list/units.c */
 u8 *FunctionHead_08004970(s32 unit_id);
-
-u8 *FunctionHead_08077008(s32 unit_id);
 
 struct BattlePresentationUnitEntry {
     u16 unit_id;

@@ -156061,6 +156061,11 @@
           "address": "0x0801a404",
           "extent": 188,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0801a4c0",
+          "extent": 60,
+          "state": "exact-c"
         }
       ],
       "overlay": null

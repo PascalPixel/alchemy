@@ -111234,6 +111234,11 @@
           "address": "0x080f40b4",
           "extent": 28,
           "state": "exact-c"
+        },
+        {
+          "address": "0x080f40d0",
+          "extent": 22,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -116942,6 +116947,11 @@
         {
           "address": "0x080cd418",
           "extent": 112,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080cd488",
+          "extent": 44,
           "state": "exact-c"
         }
       ],
@@ -127159,6 +127169,11 @@
         {
           "address": "0x08091220",
           "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091240",
+          "extent": 20,
           "state": "exact-c"
         }
       ],
@@ -156283,6 +156298,11 @@
         },
         {
           "address": "0x08079358",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079374",
           "extent": 28,
           "state": "exact-c"
         }

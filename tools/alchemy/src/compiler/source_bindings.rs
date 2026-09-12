@@ -4,7 +4,7 @@
 //! into a generated header under `out/`.
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashSet};
-use std::path::Path;
+use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
 pub const SOURCE_BINDINGS_MANIFEST: &str = "games/gs1/recon/source-bindings.json";
@@ -92,6 +92,73 @@ fn source_key(root: &Path, source: &Path) -> Option<String> {
     Some(relative.to_string_lossy().replace('\\', "/"))
 }
 
+fn quoted_c_includes(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for raw in text.lines() {
+        let line = raw.trim_start();
+        let Some(rest) = line.strip_prefix("#include") else {
+            continue;
+        };
+        let rest = rest.trim_start();
+        let Some(inner) = rest.strip_prefix('"') else {
+            continue;
+        };
+        let Some(end) = inner.find('"') else {
+            continue;
+        };
+        out.push(inner[..end].to_string());
+    }
+    out
+}
+
+fn lexical_join(base: &Path, rel: &str) -> PathBuf {
+    let mut out = base.to_path_buf();
+    for component in Path::new(rel).components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                out.pop();
+            }
+            Component::Normal(name) => out.push(name),
+            Component::RootDir | Component::Prefix(_) => {
+                out = PathBuf::from(rel);
+                break;
+            }
+        }
+    }
+    out
+}
+
+/// Production src keys for this TU: the file itself, plus `#include`d `.c`
+/// files under `games/gs1/src`. Mixed leftover wrappers compile those src
+/// files through a recon unit path that has no bindings key of its own.
+fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
+    let mut keys = Vec::new();
+    let mut seen = HashSet::new();
+    if let Some(key) = source_key(root, source) {
+        seen.insert(key.clone());
+        keys.push(key);
+    }
+    let Ok(text) = std::fs::read_to_string(source) else {
+        return keys;
+    };
+    let Some(parent) = source.parent() else {
+        return keys;
+    };
+    for include in quoted_c_includes(&text) {
+        if !include.ends_with(".c") {
+            continue;
+        }
+        let resolved = lexical_join(parent, &include);
+        if let Some(key) = source_key(root, &resolved) {
+            if seen.insert(key.clone()) {
+                keys.push(key);
+            }
+        }
+    }
+    keys
+}
+
 /// Register names plus the per-source / common address map for one compile.
 pub fn production_bindings(
     root: &Path,
@@ -116,7 +183,11 @@ pub fn production_bindings(
         }
     }
     if let Some(source) = source {
-        if let Some(key) = source_key(root, source) {
+        for key in included_source_keys(root, source) {
+            let src_path = root.join("games/gs1/src").join(&key);
+            if let Ok(src_text) = std::fs::read_to_string(&src_path) {
+                reserved.extend(type_tags(&src_text));
+            }
             if let Some(file) = manifest.files.get(&key) {
                 text.push_str(&filter_reserved_defines(
                     &expand_binding_text(file),
@@ -257,8 +328,10 @@ fn rewrite_extern_data_types(line: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        define_only_bindings, expand_binding_text, filter_reserved_defines, type_tags,
+        define_only_bindings, expand_binding_text, filter_reserved_defines,
+        lexical_join, quoted_c_includes, source_key, type_tags,
     };
+    use std::path::Path;
     use std::collections::HashSet;
 
     #[test]
@@ -302,5 +375,26 @@ mod tests {
         let tags = type_tags("struct gRom {\n    u8 x;\n};\ntypedef struct { u8 bytes[4]; } gVal;\n");
         assert!(tags.contains("gRom"));
         assert!(tags.contains("gVal"));
+    }
+
+    #[test]
+    fn mixed_unit_includes_resolve_to_src_keys() {
+        let includes = quoted_c_includes(
+            "#include \"../main/0808fe38.c\"\n#include \"../../../src/battle/effects/runtime/enable_two_callbacks.c\"\n",
+        );
+        assert_eq!(
+            includes,
+            [
+                "../main/0808fe38.c",
+                "../../../src/battle/effects/runtime/enable_two_callbacks.c"
+            ]
+        );
+        let unit = Path::new("/workspace/games/gs1/recon/en/units/unit-0808fe38.c");
+        let resolved = lexical_join(unit.parent().unwrap(), &includes[1]);
+        assert_eq!(
+            source_key(Path::new("/workspace"), &resolved).as_deref(),
+            Some("battle/effects/runtime/enable_two_callbacks.c")
+        );
+        assert_eq!(source_key(Path::new("/workspace"), unit), None);
     }
 }

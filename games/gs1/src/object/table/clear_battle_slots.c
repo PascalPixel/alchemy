@@ -18,3 +18,14 @@ void ObjectTable_ClearBattleSlots(void)
         current--;
     } while (count >= 0);
 }
+
+/* object/table/get.c */
+void *get(u32 arg0)
+{
+    u8 *base = (u8 *)gWork;
+    u32 offset;
+    if (arg0 > 0xbf)
+        return 0;
+    offset = (arg0 * 4) + 0x14;
+    return *(void **)(base + offset);
+}

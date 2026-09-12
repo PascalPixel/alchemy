@@ -11,10 +11,3 @@ void BattleFx_RunParticleFieldVariant0(s32 effect)
 {
     BattleFx_RunParticleFieldVariant(effect, 0);
 }
-
-/* battle/effects/particle_field/variant_1.c */
-
-void BattleFx_RunParticleFieldVariant1(s32 effect)
-{
-    BattleFx_RunParticleFieldVariant(effect, 1);
-}

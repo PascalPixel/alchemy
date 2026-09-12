@@ -3,11 +3,13 @@
 
 /* battle/effects/run/run_effect.c */
 struct BattleEffectRequest {
-    u8 reserved_000[0x18];
+    u8 reserved_000[0x14];
+    void *object;
     s16 source_id;
     s16 target_id;
     u8 reserved_01c[2];
     s16 battle_mode;
+    u8 running;
 };
 
 struct BattleEffectState {
@@ -132,27 +134,6 @@ void BattleFx_Run(void)
 }
 
 /* battle/effects/set/dispatch_request_kind.c */
-struct BattleEffectRequest {
-    u8 reserved_000[0x14];
-    void *object;
-    s16 source_id;
-    s16 target_id;
-    u8 reserved_01c[2];
-    s16 battle_mode;
-    u8 running;
-};
-
-struct BattleEffectState {
-    u8 reserved_000[0xcb8];
-    s16 active;
-};
-
-struct BattleEffectGlobals {
-    u8 reserved_000[0x24a];
-    s16 selected_id;
-};
-
-
 void BattleFx_DispatchRequestKind(void)
 {
     struct BattleEffectRequest *request = gIw;
@@ -224,34 +205,14 @@ void BattleFx_DispatchRequestKind(void)
 }
 
 /* battle/effects/misc/clear_child_value_on_mismatch.c */
-struct Child_08096ab0 {
-    u8 padding[91];
-    u8 value;
-};
-
-struct State_08096ab0 {
-    u8 padding_00[20];
-    struct Child_08096ab0 *child;
-    u8 padding_18[2];
-    s16 value;
-    u8 padding_1c[2];
-    s16 mode;
-};
-
-struct Global_08096ab0 {
-    u8 padding[0x24a];
-    s16 value;
-};
-
-
 void BattleFx_ClearChildValueOnMismatch(void)
 {
-    struct State_08096ab0 *state = gIw;
+    struct BattleEffectRequest *request = gIw;
 
-    if (state->mode == 2) {
+    if (request->battle_mode == 2) {
         FunctionHead_08097608();
-        if (gCell.value != state->value) {
-            state->child->value = 0;
+        if (gCell.selected_id != request->target_id) {
+            *(u8 *)((u8 *)request->object + 91) = 0;
         }
     }
 }

@@ -1071,7 +1071,7 @@ void select_nearest_scene_actor(void)
     } else {
         State_unk21_2(n);
         State_unk113();
-        State_unk114();
+        GetPartyMemberCount();
         *q = 0;
     }
     State_unk115();
@@ -2117,7 +2117,7 @@ s32 position_active_actor(s32 handleA, s32 handleB)
     *(s32 *)(record + 48) = 0x10000;
 
     State_unk3_4(record, x, 0, z);
-    State_unk16_4RaiseLinkedEffect(0x211);
+    Scene_GetRecord(0x211);
     Object_SetCallback(record, (void *)SCENE_CALLBACK);
 
     while (*waitp != 0) {

@@ -94,7 +94,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         WaitFrames(20);
     }
 
-    Battle_Apply(0, 0);
+    FunctionHead_080c10e8(0, 0);
     Battle_Apply2(saved_input, &work);
     Runtime_GetObject(work.primary_id);
     Runtime_GetObject(saved_input->secondary_id);
@@ -117,7 +117,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         work.secondary_is_low_id = 0;
     if (scripted != 0) {
         WaitFrames(10);
-        Battle_Do(saved_input->secondary_id);
+        FunctionHead_080b8178(saved_input->secondary_id);
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
@@ -163,12 +163,12 @@ void BattleMotion_RunValueSequence(s32 id)
         target = 0xff;
         sel[1] = target;
         sel[0] = id;
-        Battle_Do(sel);
+        FunctionHead_080b8178(sel);
         BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, 7);
         WaitFrames(2);
 
         sel[0] = id;
-        Battle_Do(sel);
+        FunctionHead_080b8178(sel);
         BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, Battle_Check(id));
         WaitFrames(2);
         remaining--;
@@ -211,8 +211,8 @@ void BattleMotion_InitializeActorRecords(s32 id)
             index++;
         }
         WaitFrames(4);
-        Battle_Do(id);
-        Battle_Apply(items, index);
+        FunctionHead_080bac6c(id);
+        FunctionHead_08009108(items, index);
         ActivateBattleObjectSlot(id);
     }
 }

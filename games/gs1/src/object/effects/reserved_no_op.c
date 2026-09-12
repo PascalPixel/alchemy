@@ -142,7 +142,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     Object_SetMode(obj, arg0);
     WaitFrames(30);
     ctx->second_flag = 1;
-    Obj_Do(ctx->eff);
+    FunctionHead_08009060(ctx->eff);
     ctx->eff = (void *)zero;
     *(u8 *)((u8 *)ctx + 38) = 1;
     obj->speed34 = 0x10000;
@@ -167,13 +167,13 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
     s32 flag = 0x120;
 
     if (GameFlag_IsSet(flag)!= 0) {
-        Obj_Do(24);
+        FunctionHead_08094380(24);
         GameFlag_Clear(flag);
         result = 1;
     } else {
         flag = 0x121;
         if (GameFlag_IsSet(flag)!= 0) {
-            Obj_Do(23);
+            FunctionHead_08094380(23);
             GameFlag_Clear(flag);
             result = 2;
         } else {

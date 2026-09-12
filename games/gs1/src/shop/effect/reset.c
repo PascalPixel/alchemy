@@ -121,7 +121,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     s32 amount;
     s32 message_base;
 
-    Sys_RunRoomPrice();
+    FunctionHead_080b010c();
     state = gIw;
     state->active = 1;
     if (mode == 5)
@@ -134,21 +134,21 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     amount = Inn_RoomPrice(mode);
     UiText_DrawQuantity(amount, 5);
     message_base = (s32)&Value_00000d1c;
-    Sys_Do(message_base);
+    FunctionHead_080b04dc(message_base);
     state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
     Shop_DrawMoney();
 
-    if (Sys_CheckRoomPrice(0) != 0) {
-        Sys_Do(message_base
+    if (FunctionHead_080b0634(0) != 0) {
+        FunctionHead_080b04dc(message_base
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
         UiWindow_Close(state->window, 2);
     } else if ((u32)amount > gCell.limit) {
-        Sys_Do(message_base
+        FunctionHead_080b04dc(message_base
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
         UiWindow_Close(state->window, 2);
     } else {
         UiWindow_Close(state->window, 2);
-        Sys_Do(message_base
+        FunctionHead_080b04dc(message_base
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
         UiWindow_Close(win, 2);
         Inn_PlaySleep(amount);
@@ -156,7 +156,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         object = Scene_GetRecord(object_id);
         state->resource_id = *object->component->resource_id;
         win = Sys_SetMode(state->resource_id, 0, 0, 0);
-        Sys_Do(message_base
+        FunctionHead_080b04dc(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
 
@@ -197,8 +197,8 @@ void Inn_PlaySleep(s32 room_price)
     struct FieldObject *object;
     struct FieldEffectState *state;
 
-    count = Sys_CheckRoomPrice(objects);
-    Sys_Do(-room_price);
+    count = FunctionHead_08077158(objects);
+    FunctionHead_08077230(-room_price);
 
     for (index = 0; index < count; index++) {
         object = Runtime_GetObject(objects[index]);
@@ -213,7 +213,7 @@ void Inn_PlaySleep(s32 room_price)
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
-    Sys_RunRoomPrice();
+    FunctionHead_0808a368();
     Event_WaitValue1c8Frames();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
@@ -230,7 +230,7 @@ void Inn_PlaySleep(s32 room_price)
 #define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
 
 s32 Modulo(s32 value, s32 divisor);
-struct ShopCursorAnchor *Sys_RunPickUnitItem(
+struct ShopCursorAnchor *FunctionHead_080150c8(
     u32 resource,
     u32 flags,
     s32 window,
@@ -250,11 +250,11 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     s32 item_slot;
     s32 result = 0;
 
-    Sys_RunRoomPrice();
+    FunctionHead_0808a368();
     shop = SHOP_RUNTIME;
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
-    cursor_anchor = Sys_RunPickUnitItem(
+    cursor_anchor = FunctionHead_080150c8(
         *(u16 *)((u8 *)shop + 0x390),
         0x40000000,
         list_window,
@@ -477,11 +477,11 @@ extern u8 Value_00000c94;
 extern u8 Value_00000c95;
 extern u8 Value_00000c8d;
 
-void *Sys_RunPickUnitItem(s32);
+void *FunctionHead_08077008(s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit = Sys_RunPickUnitItem(unit_id);
+    u8 *unit = FunctionHead_08077008(unit_id);
     s32 slot_offset = item_id * 2 + 216;
     s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
     s32 mult = (*(volatile u16 *)(unit + slot_offset) >> 11) + 1;
@@ -551,7 +551,7 @@ struct LinkWork {
 #define LINK_STAT (*(u16 *)0x03001f64)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
-void Battle_Run(void)
+void FunctionHead_080b5864(void)
 {
     void **slot = (void **)ADDR_03001E80;
     struct SceneCameraState *state = slot[0];
@@ -589,7 +589,7 @@ void Battle_Run(void)
         pos = state->field1c;
     }
 
-    BattlePres_WaitForAdvance();
+    FunctionHead_080049ac();
     Battle_Do(pos);
     SceneTransform_ApplyYaw((s16)state->field36);
     SceneTransform_ApplyPitch((s16)state->field34);
@@ -617,7 +617,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     s32 announced;
 
     battle_state = gBattleWork;
-    Battle_Run();
+    FunctionHead_08015118();
     BattleParty_ListPresentEnemies(enemies);
 
     announced = 0;
@@ -630,21 +630,21 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
             else
                 UiText_ShowMessageAndWait((s32)&Value_00000810);
             announced++;
-            BattlePres_WaitForAdvance();
+            FunctionHead_080bb65c();
         } while (announced != enemy_count);
     }
 
     UiWork_FinalizeSharedSlot();
     if (battle_state[69] == BATTLE_ENCOUNTER_PARTY_FIRST) {
-        Battle_Run();
+        FunctionHead_08015118();
         UiText_DrawQuantity(0, 1);
         UiText_ShowMessageAndWait((s32)&Value_00000812);
-        BattlePres_WaitForAdvance();
+        FunctionHead_080bb65c();
     } else if (battle_state[69] == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
-        Battle_Run();
+        FunctionHead_08015118();
         UiText_DrawQuantity(0, 1);
         UiText_ShowMessageAndWait((s32)&Value_00000813);
-        BattlePres_WaitForAdvance();
+        FunctionHead_080bb65c();
     }
 }
 

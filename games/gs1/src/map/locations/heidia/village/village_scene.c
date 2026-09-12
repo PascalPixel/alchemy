@@ -384,7 +384,7 @@ void InspectVillageWell(void)
             Map_unk2_5(7, 77, 1, 2, v5, v6);
             Map_unk18_4(1);
             Map_unk19_4();
-            Map_Do(0x947);
+            FunctionHead_0200b6a8(0x947);
         }
     }
 }
@@ -1684,7 +1684,7 @@ void Scene_RunScene3bfVillage(void)
     Map_unk14_4Village(60);
     Map_unk15_4Village(60);
     Map_unk16_4Village();
-    Map_Do(0x225);
+    FunctionHead_0200b6e8(0x225);
 }
 
 /* map/locations/heidia/village/actor_scenes.c */
@@ -3354,7 +3354,7 @@ void Scene_RunScene3bfActorPair(void)
     Map_RunActorPair(11, 1);
     Map_unk2_4ActorPair();
     Map_unk3_4ActorPair(60);
-    Map_Do(0x247c);
+    FunctionHead_0200b792(0x247c);
     Map_unk4_4ActorPair(13, 0);
     Map_Place(11, 0x10000, 0x8000);
     Map_unk2_3(15, 0x10000, 0x8000);
@@ -3391,7 +3391,7 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-SoftFloatRecord *Map_RunSoftFloatParts(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
+SoftFloatRecord *FunctionHead_0200b258(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
 
 /*
  * Unpacks both operands into 20-byte records, runs the arithmetic core, and
@@ -3416,10 +3416,10 @@ SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     packedBWords[0] = b0;
     packedBWords[1] = b1;
 
-    Map_ApplySoftFloatParts(&frame.packedA, &frame.recordA);
-    Map_Apply2SoftFloatParts(&frame.packedB, &frame.recordB);
+    FunctionHead_0200b85c(&frame.packedA, &frame.recordA);
+    FunctionHead_0200b866(&frame.packedB, &frame.recordB);
 
-    return Map_Do(Map_RunSoftFloatParts(&frame.recordA, &frame.recordB, &frame.result));
+    return FunctionHead_0200b77c(FunctionHead_0200b258(&frame.recordA, &frame.recordB, &frame.result));
 }
 
 /* map/locations/heidia/village/soft/sub.c */
@@ -3435,7 +3435,7 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-SoftFloatRecord *Map_RunSoftFloatParts(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
+SoftFloatRecord *FunctionHead_0200b298(SoftFloatRecord *left, SoftFloatRecord *right, SoftFloatRecord *result);
 
 /*
  * Unpacks both operands into 20-byte records, runs the shared addition core,
@@ -3460,17 +3460,17 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     packedBWords[0] = b0;
     packedBWords[1] = b1;
 
-    Map_ApplySoftFloatParts(&frame.packedA, &frame.recordA);
+    FunctionHead_0200b894(&frame.packedA, &frame.recordA);
     {
         SoftFloatRecord *recordB = &frame.recordB;
 
-        Map_Apply2SoftFloatParts(&frame.packedB, recordB);
+        FunctionHead_0200b89e(&frame.packedB, recordB);
 
         /* Toggling the sign word of the unpacked second operand turns the
          * shared addition core into a subtraction. */
         recordB->word[1] ^= 1u;
 
-        return Map_Do(Map_RunSoftFloatParts(&frame.recordA, recordB, &frame.result));
+        return FunctionHead_0200b77c(FunctionHead_0200b298(&frame.recordA, recordB, &frame.result));
     }
 }
 
@@ -3572,7 +3572,7 @@ SoftDouble SignedIntToSoftDouble(s32 value)
     }
 
 pack:
-    return Map_Do(&record);
+    return FunctionHead_0200b77c(&record);
 }
 
 /* map/locations/heidia/village/soft/to_int.c */
@@ -3604,9 +3604,9 @@ s32 SoftDoubleToSignedInt(u32 high, u32 low)
     slot = &au;
     slot->words.lo = high;
     slot->words.hi = low;
-    Map_ApplySoftFloatParts((FloUnion *)slot, &record);
+    FunctionHead_0200b982((FloUnion *)slot, &record);
 
-    if (Map_Do(&record) != 0u) {
+    if (FunctionHead_0200b77c(&record) != 0u) {
         return 0;
     }
     if (Map_unk2_2(&record) != 0u) {
@@ -3624,7 +3624,7 @@ s32 SoftDoubleToSignedInt(u32 high, u32 low)
     return 0x7fffffff + (s32)(record.sign != 0u);
 
 convert:
-    shifted = Map_Apply2SoftFloatParts(record.fraction, (u32)(60 - exponent));
+    shifted = FunctionHead_0200b7ce(record.fraction, (u32)(60 - exponent));
     if (record.sign != 0u) {
         return -(s32)shifted;
     }
@@ -3762,7 +3762,7 @@ SoftDouble PackSoftDouble(SoftFloatRecord *src)
                 fraction = 0;
             } else {
                 s32 lowbit = (fraction & ((1 << shift) - 1)) ? 1 : 0;
-                fraction = Map_ApplySoftFloatParts(fraction, (u32)shift) | (u32)lowbit;
+                fraction = FunctionHead_0200b8c2(fraction, (u32)shift) | (u32)lowbit;
             }
             if ((fraction & 0xff) == 0x80) {
                 if (fraction & (1 << 8)) {

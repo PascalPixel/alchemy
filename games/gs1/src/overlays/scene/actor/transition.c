@@ -1483,10 +1483,10 @@ void State_SetWorkspace370ByFlag820(void)
 /* overlays/scene/actor/transition/run_steps_to.c */
 void Scene_RunSteps30FTo312(void)
 {
-    Actor_DoSteps30FTo312(0x30F);
-    Actor_unk2_2Steps30FTo312(0x310);
-    Actor_unk3_2Steps30FTo312(0x311);
-    Actor_unk4_2Steps30FTo312(0x312);
+    FunctionHead_02002ef6(0x30F);
+    FunctionHead_02002efe(0x310);
+    FunctionHead_02002f04(0x311);
+    FunctionHead_02002f0a(0x312);
 }
 
 /* overlays/scene/actor/transition/run_actor_11_offset_sequence.c */
@@ -1497,26 +1497,26 @@ void Scene_RunSteps30FTo312(void)
 
 void Scene_RunActor11Offset128Sequence(void)
 {
-    Actor_DoSteps30FTo312(241);
-    Actor_PlaceSteps30FTo312(11, 0, 128);
+    FunctionHead_0200300a(241);
+    FunctionHead_02000d84(11, 0, 128);
     Actor_unk2_4Steps30FTo312();
-    Actor_RunSteps30FTo312(0x121);
-    Actor_unk2_2Steps30FTo312(2);
+    FunctionHead_0200301e(0x121);
+    FunctionHead_02002e74(2);
     Actor_unk3_4Steps30FTo312();
 }
 
 /* overlays/scene/actor/transition/run_actor_11_flags_312_sequence.c */
 void Scene_RunActor11Flags30fTo312Sequence(void)
 {
-    Actor_DoSteps30FTo312(0xF1);
-    Actor_PlaceSteps30FTo312(0xB, 0, -16);
-    Actor_unk2_2Steps30FTo312(0x121);
-    Actor_unk3_2Steps30FTo312(0x30F);
-    Actor_unk4_2Steps30FTo312(0x310);
+    FunctionHead_0200303a(0xF1);
+    FunctionHead_02000db6(0xB, 0, -16);
+    FunctionHead_0200304c(0x121);
+    FunctionHead_02002f62(0x30F);
+    FunctionHead_02002f72(0x310);
     Actor_unk5_2Steps30FTo312(0x311);
     Actor_unk6_2Steps30FTo312(0x312);
     Actor_unk7_2Steps30FTo312(2);
-    Actor_RunSteps30FTo312();
+    FunctionHead_02001f2c();
 }
 
 /* overlays/scene/actor/transition/run_actor_11_transition.c */
@@ -1534,23 +1534,23 @@ void Scene_RunActor11Transition(void)
 /* overlays/scene/actor/transition/run_actor_8_transition.c */
 void Scene_RunActor8Transition313(void)
 {
-    Actor_DoActor8Transition313(0xF1);
-    Actor_PlaceActor8Transition313(8, 0, -112);
-    Actor_unk2_2Actor8Transition313(0x121);
-    Actor_unk3_2Actor8Transition313(0x313);
-    Actor_unk4_2Actor8Transition313(2);
-    Actor_RunActor8Transition313();
+    FunctionHead_02003182(0xF1);
+    FunctionHead_02000efe(8, 0, -112);
+    FunctionHead_02003194(0x121);
+    FunctionHead_020030b2(0x313);
+    FunctionHead_02002ff0(2);
+    FunctionHead_02002370();
 }
 
 /* overlays/scene/actor/transition/run_actor_9_flag_sequence.c */
 void Scene_RunActor9Flag314Sequence(void)
 {
-    Actor_DoActor8Transition313(0xF1);
-    Actor_PlaceActor8Transition313(9, -128, 0);
-    Actor_unk2_2Actor8Transition313(0x121);
-    Actor_unk3_2Actor8Transition313(0x314);
-    Actor_unk4_2Actor8Transition313(2);
-    Actor_RunActor8Transition313();
+    FunctionHead_020031ba(0xF1);
+    FunctionHead_02000f36(9, -128, 0);
+    FunctionHead_020031cc(0x121);
+    FunctionHead_020030e4(0x314);
+    FunctionHead_0200302a(2);
+    FunctionHead_020023aa();
 }
 
 /* overlays/scene/actor/transition/run_actor_10_flag_sequence.c */

@@ -47,7 +47,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            Obj_Apply(object->target.child, argument);
+            FunctionHead_0800ba30(object->target.child, argument);
             break;
         case 2:
             items = object->target.children;
@@ -55,7 +55,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
             do {
                 item = *items++;
                 if (item != 0) {
-                    Obj_Apply(item, argument);
+                    FunctionHead_0800ba30(item, argument);
                 }
                 count--;
             } while (count >= 0);
@@ -74,7 +74,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            Obj_Apply(object->target.child, value);
+            FunctionHead_0800baf8(object->target.child, value);
             return;
         case 2:
             children = object->target.children;
@@ -82,7 +82,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
             do {
                 child = *children++;
                 if (child != 0)
-                    Obj_Apply(child, value);
+                    FunctionHead_0800baf8(child, value);
                 count--;
             } while (count >= 0);
             break;

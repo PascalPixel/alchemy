@@ -19,7 +19,7 @@ extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 extern s32 Resource_FindFreeSlot(void);
 extern s32 Resource_CopyData(s32 index, s32 size, u8 *destination);
 
-extern s32 gRom[];
+extern s32 RomBytes_08029a10[];
 extern s32 gRom2[];
 
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
@@ -35,7 +35,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
         glyph = 0;
 
     if (with_base != 0) {
-        work->f604 = gRom[2];
+        work->f604 = RomBytes_08029a10[2];
         work->f600 = 2;
         work->f602 = 2;
         Ui_Apply(work, 0);
@@ -68,7 +68,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index)
 {
     struct State_0801a4c0 *state = gIw;
 
-    state->value = gRom[index];
+    state->value = RomBytes_080308a0[index];
     state->first = 2;
     state->second = 2;
     Ui_Apply(state, 0);

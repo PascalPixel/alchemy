@@ -38,7 +38,7 @@ void BattlePresentation_PrepareScene(s32 kind)
 
     work = (u8 *)Runtime_AllocateHeapBlock(39, 0x782c);
     Runtime_AllocateHeapBlock(40, 0x4000);
-    Battle_Do(0);
+    FunctionHead_080cd594(0);
     *(s32 *)(work + 0x77b4) = 24;
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000052 = 0x1010;
@@ -65,8 +65,8 @@ void BattlePresentation_PrepareScene(s32 kind)
     *(s32 *)(work + 0x778c) = 0;
     *(s32 *)(work + 0x7780) = 3;
     *(s32 *)(work + 0x7784) = 0x06060606;
-    Battle_Apply((s32)Battle_unk3_4, 0xC80);
-    Battle_Apply((s32)BattlePres_ProcessPendingGraphicsTransfer, 0x480);
+    FunctionHead_080041d8((s32)Battle_unk3_4, 0xC80);
+    FunctionHead_080041d8((s32)BattlePres_ProcessPendingGraphicsTransfer, 0x480);
 }
 
 /* battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c */
@@ -87,18 +87,18 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
         transfer((void *)0x06004000, 0x4000);
     }
     ScheduleCallback((void (*)(void))&gRom3);
-    Battle_Do(40);
-    Battle_Do(39);
+    FunctionHead_08002dd8(40);
+    FunctionHead_08002dd8(39);
 }
 
 /* battle/effects/two_resource/run_mode0.c */
 void BattleFx_RunTwoResourceMode0(s32 arg0)
 {
-    Battle_Apply(arg0, 0);
+    FunctionHead_080ccc38(arg0, 0);
 }
 
 /* battle/effects/two_resource/run_mode1.c */
 void BattleFx_RunTwoResourceMode1(s32 arg0)
 {
-    Battle_Apply(arg0, 1);
+    FunctionHead_080ccc38(arg0, 1);
 }

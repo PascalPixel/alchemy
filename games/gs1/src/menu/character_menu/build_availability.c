@@ -647,7 +647,7 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
 /* item/prepare_use_palette.c */
 void Item_PrepareUsePalette(void)
 {
-    Item_Run();
+    FunctionHead_080a22f4();
     Item_Do(13);
 }
 
@@ -712,7 +712,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     return result;
 }
 
-s32 Item_Run(void)
+s32 FunctionHead_080a9f0c(void)
 {
     return 1;
 }

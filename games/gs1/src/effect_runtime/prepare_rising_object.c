@@ -32,7 +32,7 @@ void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
 void WaitFrames(s32);
 extern void Object_SetMode(struct Object_0808f28c *, s32);
 extern void Object_SetCallback(struct Object_0808f28c *, void *);
-extern const u8 gRom[];
+extern const u8 RomBytes_0809e75c[];
 
 void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
 {
@@ -48,7 +48,7 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
     Object_SetPosition(object, entity->x, entity->y + 0x240000, entity->z);
     WaitFrames(3);
     Object_SetMode(entity, 28);
-    Object_SetCallback(object, gRom);
+    Object_SetCallback(object, RomBytes_0809e75c);
     entity->angle = 0x4000;
 }
 
@@ -62,7 +62,7 @@ struct GlobalState {
     u32 selected_object;
 };
 
-extern const u8 gRom[];
+extern const u8 RomBytes_0809e6c0[];
 extern u8 gRom2;
 
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
@@ -73,7 +73,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
         other = ObjectTable_Get(gCell.selected_object);
         if (flags & 1) {
             Sys_Apply(object, 0);
-            Object_SetCallback(object, (s32)gRom);
+            Object_SetCallback(object, (s32)RomBytes_0809e6c0);
             FIELD(object, u32, 0x28) = 0x20000;
             FIELD(object, u32, 0x48) = 0x4000;
             FIELD(object, s32, 0x6C) = (s32)&gRom2;

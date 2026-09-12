@@ -29,7 +29,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
     } else {
         UiWork_FinalizePendingCore();
         Audio_PlayCue(85);
-        result = State_Check();
+        result = FunctionHead_0801faa8();
         if (result >= 0) {
             State_Apply((s32)&Value_00000017, 1);
         }
@@ -51,7 +51,7 @@ s32 SaveState_CopySlotPair(void)
     s32 result;
 
     result = 0;
-    found = State_Check();
+    found = FunctionHead_080056cc();
     if (found != 0) {
         State_Apply((s32)&Value_0000000a, 1);
         result = -9;
@@ -71,7 +71,7 @@ s32 SaveState_CopySlotPair(void)
                 State_Apply((s32)&Value_0000000c, 1);
                 result = -2;
             } else {
-                value = SaveState_ReleaseWorkspace();
+                value = FunctionHead_0801f704();
                 if (value == 999) {
                     State_Apply((s32)&Value_0000000d, 1);
                     result = -5;
@@ -89,7 +89,7 @@ s32 SaveState_CopySlotPair(void)
         }
     }
 
-    SaveState_ReleaseWorkspace();
+    FunctionHead_0801f704();
     return result;
 }
 
@@ -105,7 +105,7 @@ s32 SaveState_DeleteSelectedSlot(void)
     s32 value;
     s32 result = 0;
 
-    found = State_Check();
+    found = FunctionHead_080056cc();
     if (found != 0) {
         State_Apply((s32)&Value_0000000a, 1);
         result = -9;
@@ -134,7 +134,7 @@ s32 SaveState_DeleteSelectedSlot(void)
             }
         }
     }
-    SaveState_ReleaseWorkspace();
+    FunctionHead_08005cf8();
     return result;
 }
 

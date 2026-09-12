@@ -9,7 +9,7 @@ void Event_SetStatus1c6(void)
 {
     struct EventRuntime *runtime = gWork;
 
-    Sys_Apply(runtime->value_1c0, runtime->value_1c8);
+    FunctionHead_0808fefc(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 1;
 }
 
@@ -18,7 +18,7 @@ void Event_ClearStatus1c6(void)
 {
     struct EventRuntime *runtime = gWork;
 
-    Sys_Apply(runtime->value_1c0, runtime->value_1c8);
+    FunctionHead_080901c0(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 0;
 }
 

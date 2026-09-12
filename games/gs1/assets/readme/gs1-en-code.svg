@@ -16534,582 +16534,540 @@
 <path class="bevel-dark" d="M310.6832676223004 238.62277408323013 H333.5568591265166 V204.45441987319504" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="float_status.c: 144 bytes · 9 items" data-node="container" data-kind="file" data-bytes="144" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>float_status.c: 144 bytes · 9 items</title>
-<rect class="container-frame" x="312.6832676223004" y="206.45441987319504" width="0.9358805704570031" height="3.9030963479435945" fill="#1f7f93"/>
-<path class="bevel-light" d="M312.6832676223004 210.35751622113864 V206.45441987319504 H313.6191481927574" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M312.6832676223004 210.35751622113864 H313.6191481927574 V206.45441987319504" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect class="container-frame" x="312.6832676223004" y="206.45441987319504" width="18.87359150421623" height="0.19354196766662451" fill="#1f7f93"/>
+<path class="bevel-light" d="M312.6832676223004 206.64796184086165 V206.45441987319504 H331.5568591265166" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M312.6832676223004 206.64796184086165 H331.5568591265166 V206.45441987319504" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3bf · SoftFloatRecordAIsNaN · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005ac0" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordAIsNaN · C: 16 bytes</title>
-<rect x="313.01265876665667" y="206.7838110175514" width="0.2770982817443297" height="0.19084200348417182" style="fill:#326b7d"/>
+<rect x="312.7558458601753" y="206.52699811107001" width="2.037927899237001" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordAIsInfinity · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005ad0" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordAIsInfinity · C: 16 bytes</title>
-<rect x="313.01265876665667" y="207.16549502451974" width="0.2770982817443297" height="0.19084200348417182" style="fill:#326b7d"/>
+<rect x="314.842159251329" y="206.52699811107001" width="2.037927899237001" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordAIsZero · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005ae0" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordAIsZero · C: 16 bytes</title>
-<rect x="313.01265876665667" y="207.54717903148807" width="0.2770982817443297" height="0.19084200348417182" style="fill:#326b7d"/>
+<rect x="316.92847264248263" y="206.52699811107001" width="2.037927899237001" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordBIsNaN · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005bd8" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordBIsNaN · C: 16 bytes</title>
-<rect x="313.01265876665667" y="207.92886303845643" width="0.2770982817443297" height="0.19084200348417182" style="fill:#326b7d"/>
+<rect x="319.0147860336363" y="206.52699811107001" width="2.037927899237001" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordBIsInfinity · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005be8" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordBIsInfinity · C: 16 bytes</title>
-<rect x="313.01265876665667" y="208.31054704542476" width="0.2770982817443297" height="0.19084200348417182" style="fill:#326b7d"/>
+<rect x="321.10109942478994" y="206.52699811107001" width="2.0379278992370016" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordBIsZero · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005bf8" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordBIsZero · C: 16 bytes</title>
-<rect x="313.01265876665667" y="208.6922310523931" width="0.2770982817443297" height="0.19084200348417182" style="fill:#326b7d"/>
+<rect x="323.1874128159436" y="206.52699811107001" width="2.0379278992370016" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordCIsNaN · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005dd4" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordCIsNaN · C: 16 bytes</title>
-<rect x="313.01265876665667" y="209.07391505936144" width="0.27709828174432977" height="0.1908420034841718" style="fill:#326b7d"/>
+<rect x="325.27372620709724" y="206.52699811107001" width="2.0379278992370016" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordCIsInfinity · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005de4" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordCIsInfinity · C: 16 bytes</title>
-<rect x="313.01265876665667" y="209.4555990663298" width="0.27709828174432977" height="0.1908420034841718" style="fill:#326b7d"/>
+<rect x="327.3600395982509" y="206.52699811107001" width="2.0379278992370016" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftFloatRecordCIsZero · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02005df4" data-source="games/gs1/src/map/locations/heidia/village/float_status.c">
 <title>3bf · SoftFloatRecordCIsZero · C: 16 bytes</title>
-<rect x="313.01265876665667" y="209.83728307329815" width="0.27709828174432977" height="0.1908420034841718" style="fill:#326b7d"/>
+<rect x="329.4463529894046" y="206.52699811107001" width="2.0379278992370016" height="0.04838549191665613" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="scene.c: 2,760 bytes · 50 items" data-node="container" data-kind="file" data-bytes="2760" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>scene.c: 2,760 bytes · 50 items</title>
-<rect class="container-frame" x="313.6191481927574" y="206.45441987319504" width="17.937710933759227" height="3.9030963479435945" fill="#1f7f93"/>
-<path class="bevel-light" d="M313.6191481927574 210.35751622113864 V206.45441987319504 H331.5568591265166" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M313.6191481927574 210.35751622113864 H331.5568591265166 V206.45441987319504" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · StopBlockedActorMotion · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020002a8" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
+<g aria-label="village_scene.c: 19,982 bytes · 111 items" data-node="container" data-kind="file" data-bytes="19982" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>village_scene.c: 19,982 bytes · 111 items</title>
+<rect class="container-frame" x="312.6832676223004" y="206.64796184086165" width="18.87359150421623" height="26.85663609662841" fill="#1f7f93"/>
+<path class="bevel-light" d="M312.6832676223004 233.50459793749008 V206.64796184086165 H331.5568591265166" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M312.6832676223004 233.50459793749008 H331.5568591265166 V206.64796184086165" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="3bf · CalculateFixedPointPositionDistance · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000030" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · CalculateFixedPointPositionDistance · C: 60 bytes</title>
+<rect x="314.9054911245259" y="208.87018534308717" width="0.7039458463666808" height="0.44444700445101887" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · village_scene · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x0200006c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · village_scene · C: 88 bytes</title>
+<rect x="316.0538839753436" y="208.87018534308717" width="1.2398625100816072" height="0.44444700445101887" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · AdvanceStagedActorPair · C: 384 bytes" data-node="leaf" data-kind="file" data-bytes="384" data-address="0x020000c4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · AdvanceStagedActorPair · C: 384 bytes</title>
+<rect x="315.1832676223004" y="210.0368558497637" width="1.8327023653503258" height="1.3063195906647467" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · village_scene · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000244" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · village_scene · C: 100 bytes</title>
+<rect x="314.9515159523525" y="212.11142377048054" width="0.5364966601042284" height="1.0490980584777856" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · StopBlockedActorMotion · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020002a8" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · StopBlockedActorMotion · C: 164 bytes</title>
-<rect x="314.83886580148976" y="207.6741374819274" width="1.4119178062209188" height="0.48788704349294926" style="fill:#326b7d"/>
+<rect x="316.1526596221544" y="212.23957412007394" width="0.9669116858508622" height="0.7927973592910069" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · SelectPrimarySceneData · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020009dc" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
+<g aria-label="3bf · FindClearActorPosition · C: 404 bytes" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x02000474" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FindClearActorPosition · C: 404 bytes</title>
+<rect x="318.0159699876507" y="209.14796184086165" width="2.260143899990208" height="1.1083067738420165" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · SelectPrimarySceneData · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020009dc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · SelectPrimarySceneData · C: 84 bytes</title>
-<rect x="314.838189973914" y="208.6492357413375" width="0.4865353883413565" height="0.4892386986445421" style="fill:#326b7d"/>
+<rect x="321.04607999892556" y="208.9179279521463" width="0.7834925289118765" height="0.539932222569297" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · GetEmptySceneData · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000a30" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
+<g aria-label="3bf · GetEmptySceneData · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000a30" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · GetEmptySceneData · C: 4 bytes</title>
-<rect x="315.58019023251336" y="208.41816522325414" width="0.9023397208565077" height="0.024394352174647468" style="fill:#326b7d"/>
+<rect x="320.79265669703443" y="209.74436909539375" width="0.033085618787029335" height="0.9953567099163932" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · SelectSecondarySceneData · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x02000a34" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
+<g aria-label="3bf · SelectSecondarySceneData · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x02000a34" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · SelectSecondarySceneData · C: 76 bytes</title>
-<rect x="315.7996765746838" y="208.68644026977393" width="0.4633670365155776" height="0.46361834612102615" style="fill:#326b7d"/>
+<rect x="321.09939570739084" y="209.9849368681761" width="0.7430323495554035" height="0.5142211643517113" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · SelectTertiarySceneData · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02000a80" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
+<g aria-label="3bf · SelectTertiarySceneData · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02000a80" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · SelectTertiarySceneData · C: 120 bytes</title>
-<rect x="316.6689725021332" y="207.60443933285697" width="1.5976508080133196" height="0.3484907453521066" style="fill:#326b7d"/>
+<rect x="317.73867844967623" y="210.97897707672922" width="1.8463674016845604" height="0.4454169240511303" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · SelectQuaternarySceneData · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x02000af8" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
+<g aria-label="3bf · SelectQuaternarySceneData · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x02000af8" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · SelectQuaternarySceneData · C: 84 bytes</title>
-<rect x="316.73799482362784" y="208.37044314505582" width="0.48653538834135657" height="0.48923869864454206" style="fill:#326b7d"/>
+<rect x="317.7165011161526" y="211.84763359130778" width="0.40106225700374587" height="1.3806054392007754" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · PlaceActorTwelveAndFinishScene · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02000c78" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · PlaceActorTwelveAndFinishScene · C: 24 bytes</title>
-<rect x="316.56442527852755" y="209.17264768694147" width="0.8336744785418705" height="0.13939629814084264" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ShowLockedDoorMessageOnce · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000f94" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ShowLockedDoorMessageOnce · C: 32 bytes</title>
-<rect x="317.6175011025526" y="208.27687864729788" width="0.29940639282545023" height="0.3046442324515346" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ShowLockedDoorMessage · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x02000fb4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ShowLockedDoorMessage · C: 20 bytes</title>
-<rect x="318.16017518954874" y="208.22073994864311" width="0.18712899551590634" height="0.41692162976107844" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ShowGeraldDontMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02000fc8" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ShowGeraldDontMessage · C: 28 bytes</title>
-<rect x="317.5894317532252" y="208.85285992324748" width="0.24326769417067828" height="0.4072483638199208" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ShowThatWasExcitingMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02000fe4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ShowThatWasExcitingMessage · C: 28 bytes</title>
-<rect x="318.07596714156654" y="208.85285992324748" width="0.24326769417067828" height="0.4072483638199208" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ShowSorryIScaredYouMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02001000" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ShowSorryIScaredYouMessage · C: 28 bytes</title>
-<rect x="318.5628404436958" y="207.55216572105417" width="0.40477032937533414" height="0.24394352174647466" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ShowWellMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x0200101c" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ShowWellMessage · C: 28 bytes</title>
-<rect x="318.5628404436958" y="208.0400527645471" width="0.40477032937533414" height="0.24394352174647466" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · TryStartActorInteraction · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x02001038" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · TryStartActorInteraction · C: 96 bytes</title>
-<rect x="319.3335260556908" y="207.6741374819274" width="0.6241938441444371" height="0.48788704349294926" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · NoOpSceneCallbackA · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02001098" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · NoOpSceneCallbackA · C: 4 bytes</title>
-<rect x="318.4814132985177" y="208.44651266286195" width="0.0810892313902261" height="0.19770336489145918" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · NoOpSceneCallbackB · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0200109c" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · NoOpSceneCallbackB · C: 4 bytes</title>
-<rect x="318.4814132985177" y="208.72530525914362" width="0.0810892313902261" height="0.19770336489145923" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · NoOpSceneCallbackC · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x020010a0" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · NoOpSceneCallbackC · C: 4 bytes</title>
-<rect x="318.4814132985177" y="209.0040978554253" width="0.0810892313902261" height="0.19770336489145918" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · NoOpSceneCallbackD · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x020010a4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · NoOpSceneCallbackD · C: 2 bytes</title>
-<rect x="318.47571775735776" y="209.27719491054705" width="0.09248031371003085" height="0.06969814907042135" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsPlayerInAccidentTriggerArea · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02001108" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsPlayerInAccidentTriggerArea · C: 72 bytes</title>
-<rect x="318.811562312035" y="208.61448321359885" width="0.41703033286401997" height="0.5587437541218787" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSceneActor9 · C: 66 bytes" data-node="leaf" data-kind="file" data-bytes="66" data-address="0x020012e0" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSceneActor9 · C: 66 bytes</title>
-<rect x="319.6282467138937" y="208.5971069497295" width="0.38227780512535164" height="0.5934962818605469" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · AreSceneActorsInPassingLane · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001324" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · AreSceneActorsInPassingLane · C: 104 bytes</title>
-<rect x="320.3754260602751" y="207.60395659887428" width="0.34752527738668326" height="1.3438164733888744" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ActivateSceneActor17 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x020014bc" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ActivateSceneActor17 · C: 16 bytes</title>
-<rect x="320.2667150273808" y="209.18658731675555" width="0.5649473431752468" height="0.13010321159811977" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsPlayerInSecondaryTriggerArea · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x020014cc" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsPlayerInSecondaryTriggerArea · C: 92 bytes</title>
-<rect x="321.0933251729866" y="207.62680515681242" width="0.929089835015739" height="0.3932223932629741" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ActivateSceneActor18 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001650" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ActivateSceneActor18 · C: 16 bytes</title>
-<rect x="322.27651804064595" y="207.48768579619303" width="0.11498367202423598" height="0.6714611145017122" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsPlayerOutsideSceneRectangle · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02001660" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsPlayerOutsideSceneRectangle · C: 60 bytes</title>
-<rect x="321.0422401862608" y="208.36216495661256" width="0.2910524198113472" height="0.8740509676345017" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsSceneActorVerticallyNearPlayer · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x0200181c" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsSceneActorVerticallyNearPlayer · C: 100 bytes</title>
-<rect x="321.72136249915394" y="208.459182429883" width="0.48508736635224536" height="0.6800160210936036" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsSceneActorHorizontallyNearPlayer · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02001880" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsSceneActorHorizontallyNearPlayer · C: 100 bytes</title>
-<rect x="322.64107506186855" y="207.62227547336713" width="1.0870273145645584" height="0.3841630263724011" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsActorInteractionAvailable · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x020018e4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsActorInteractionAvailable · C: 50 bytes</title>
-<rect x="322.56840834908303" y="208.31793481332647" width="0.23882960080145443" height="0.9443925204255408" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsSceneActorWithinFourSteps · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001918" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsSceneActorWithinFourSteps · C: 104 bytes</title>
-<rect x="323.17503553511875" y="208.44690279775926" width="0.49676556966702523" height="0.68645655155997" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · IsSceneActorWithinTriggerBox · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001980" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · IsSceneActorWithinTriggerBox · C: 104 bytes</title>
-<rect x="324.1790627290237" y="207.68907279958535" width="0.6174915606543211" height="0.5177576788088442" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · TriggerScene41AtVillagePath · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x020019e8" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · TriggerScene41AtVillagePath · C: 92 bytes</title>
-<rect x="324.1491920937078" y="208.69471752188716" width="0.6772328312861108" height="0.45801640817705447" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · TriggerScene40AtVillagePath · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x02001a44" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · TriggerScene40AtVillagePath · C: 108 bytes</title>
-<rect x="325.30875909397304" y="207.6835199250715" width="0.6981023651593624" height="0.5066519297811397" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureInteractionRegionA · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x0200226c" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureInteractionRegionA · C: 50 bytes</title>
-<rect x="325.20602741595" y="208.5940921066108" width="0.30118857373512553" height="0.6370557406743923" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureInteractionRegionB · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x020022a0" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureInteractionRegionB · C: 50 bytes</title>
-<rect x="325.80840456342025" y="208.5940921066108" width="0.30118857373512553" height="0.6370557406743923" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureInteractionRegionC · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x020022d4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureInteractionRegionC · C: 50 bytes</title>
-<rect x="326.43695809195515" y="207.60696462811316" width="0.4457668021249156" height="0.35354133586445596" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigurePrimaryInteractionRegions · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x02002410" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigurePrimaryInteractionRegions · C: 88 bytes</title>
-<rect x="326.4600144585203" y="208.33710366640716" width="0.3996540689946858" height="0.8448114332481995" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSecondaryInteractionRegions · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x02002468" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSecondaryInteractionRegions · C: 88 bytes</title>
-<rect x="327.2685900092236" y="207.6392884073922" width="0.7711198326341214" height="0.4181888944225279" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · NoOpInteractionCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02002528" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · NoOpInteractionCallback · C: 2 bytes</title>
-<rect x="328.25556172501814" y="207.43695139613013" width="0.013514871898371084" height="0.8228629169466848" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · SelectActor25SceneVariant · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02004928" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · SelectActor25SceneVariant · C: 60 bytes</title>
-<rect x="327.211537870869" y="208.41861405788265" width="0.3040846177133479" height="0.8110857674133936" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · SelectActor24SceneVariant · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02004964" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · SelectActor24SceneVariant · C: 60 bytes</title>
-<rect x="327.8197071062957" y="208.41861405788265" width="0.3040846177133479" height="0.8110857674133936" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSceneActor26 · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02004b68" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSceneActor26 · C: 28 bytes</title>
-<rect x="328.37584408491364" y="207.53020401222886" width="0.20002010409589108" height="0.591148074541324" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSceneActor14 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02004b84" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSceneActor14 · C: 32 bytes</title>
-<rect x="328.790171443398" y="207.54449116252144" width="0.22859440468101835" height="0.5625737739561968" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSceneActor13 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02004ba4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSceneActor13 · C: 32 bytes</title>
-<rect x="328.3813231233507" y="208.3268512293031" width="0.6462508365838948" height="0.21097818096992402" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSceneActor12Variant · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02004bc4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSceneActor12Variant · C: 32 bytes</title>
-<rect x="328.3982953210877" y="208.76577978897996" width="0.24492257644394824" height="0.49350105695078583" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureSceneActor18 · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02004be4" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureSceneActor18 · C: 24 bytes</title>
-<rect x="328.8575251519201" y="208.73516446692446" width="0.1836919323329612" height="0.5547317010617728" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FinishActor20SceneSequence · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02004d0c" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · FinishActor20SceneSequence · C: 64 bytes</title>
-<rect x="329.32296757358165" y="207.62009848334304" width="0.3798090463242441" height="0.5725464625739929" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · NoOpActorCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02004d4c" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · NoOpActorCallback · C: 2 bytes</title>
-<rect x="329.9008911043517" y="207.43840392146453" width="0.6719839738954813" height="0.016419922567210983" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureActor13Interaction · C: 56 bytes" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x02004d50" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureActor13Interaction · C: 56 bytes</title>
-<rect x="330.0647821171837" y="207.635134779431" width="0.34420194823134614" height="0.575313715532469" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ConfigureActor13SceneResource · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02004d88" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ConfigureActor13SceneResource · C: 24 bytes</title>
-<rect x="329.2009390811591" y="208.45042549981878" width="0.13575206147917318" height="0.863440603594387" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · ActivateFiveActorGroupFromFlags · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02005520" data-source="games/gs1/src/map/locations/heidia/village/scene.c">
-<title>3bf · ActivateFiveActorGroupFromFlags · C: 104 bytes</title>
-<rect x="329.65436533964623" y="208.63234763534757" width="0.6769215336160541" height="0.4995963325367801" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="village_scene: 19,542 bytes · 25 items" data-node="container" data-kind="folder" data-bytes="19542" data-source="games/gs1/src/map/locations/heidia/village/village_scene/">
-<title>village_scene: 19,542 bytes · 25 items</title>
-<rect class="container-frame" x="312.6832676223004" y="210.35751622113864" width="18.87359150421623" height="26.265257862091502" fill="#1f7f93"/>
-<path class="bevel-light" d="M312.6832676223004 236.62277408323013 V210.35751622113864 H331.5568591265166" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M312.6832676223004 236.62277408323013 H331.5568591265166 V210.35751622113864" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · FieldScene_RunScene3bf_0200269c · C: 124 bytes" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x0200269c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_pair_placement.c">
-<title>3bf · FieldScene_RunScene3bf_0200269c · C: 124 bytes</title>
-<rect x="314.88882842877666" y="212.56307702761492" width="0.41112161295258787" height="2.1444964606974124" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bf_020021c4 · C: 168 bytes" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x020021c4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_pair_sequence.c">
-<title>3bf · FieldScene_RunScene3bf_020021c4 · C: 168 bytes</title>
-<rect x="314.88882842877666" y="215.11869510126493" width="0.41112161295258787" height="3.051328680379671" style="fill:#326b7d"/>
-</g>
-<g aria-label="actor_scenes.c: 2,296 bytes · 16 items" data-node="container" data-kind="file" data-bytes="2296" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
-<title>actor_scenes.c: 2,296 bytes · 16 items</title>
-<rect class="container-frame" x="315.5055108482056" y="212.35751622113864" width="6.465309748898232" height="6.018068366982259" fill="#1f7f93"/>
-<path class="bevel-light" d="M315.5055108482056 218.3755845881209 V212.35751622113864 H321.9708205971038" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M315.5055108482056 218.3755845881209 H321.9708205971038 V212.35751622113864" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · ConfigureSceneActor12 · C: 82 bytes" data-node="leaf" data-kind="file" data-bytes="82" data-address="0x02000b4c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · ConfigureSceneActor12 · C: 82 bytes" data-node="leaf" data-kind="file" data-bytes="82" data-address="0x02000b4c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · ConfigureSceneActor12 · C: 82 bytes</title>
-<rect x="317.15804834106996" y="214.01005371400296" width="0.296040802237544" height="0.3312889469334402" style="fill:#326b7d"/>
+<rect x="318.5522239104543" y="211.881231871602" width="1.021400994135985" height="0.46825881759221394" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · RunSceneObjectSetup · C: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x02000ba0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · RunSceneObjectSetup · C: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x02000ba0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · RunSceneObjectSetup · C: 10 bytes</title>
-<rect x="317.0300306968591" y="214.50936581896312" width="0.040005513815884325" height="0.526121332996955" style="fill:#326b7d"/>
+<rect x="318.36842084664903" y="212.63394644298117" width="0.10065268998163507" height="0.7444973710384584" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_StartActorTwelveTransition · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02000bac" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · FieldScene_StartActorTwelveTransition · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02000bac" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_StartActorTwelveTransition · C: 64 bytes</title>
-<rect x="317.21805661179377" y="214.61738070626603" width="0.2560352884216597" height="0.31009155839117963" style="fill:#326b7d"/>
+<rect x="318.73068739687653" y="212.79490761324539" width="0.8657794012548821" height="0.4225750305100467" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateActorTwelveTransition · C: 140 bytes" data-node="leaf" data-kind="file" data-bytes="140" data-address="0x02000bec" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · FieldScene_UpdateActorTwelveTransition · C: 140 bytes" data-node="leaf" data-kind="file" data-bytes="140" data-address="0x02000bec" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateActorTwelveTransition · C: 140 bytes</title>
-<rect x="317.79197763924185" y="214.0519014076998" width="0.45525068847467665" height="0.3797361896312166" style="fill:#326b7d"/>
+<rect x="320.1121225448213" y="211.0606368461386" width="1.347664790806931" height="0.608736462869878" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · PlaceSceneObjectPairFromTableA · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000c90" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · PlaceActorTwelveAndFinishScene · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02000c78" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · PlaceActorTwelveAndFinishScene · C: 24 bytes</title>
+<rect x="321.8480013350779" y="210.84011438271838" width="0.16769153602944076" height="1.0497813897103154" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · PlaceSceneObjectPairFromTableA · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000c90" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · PlaceSceneObjectPairFromTableA · C: 80 bytes</title>
-<rect x="317.7106055986066" y="214.73000174632696" width="0.6179947697451981" height="0.21699210836069516" style="fill:#326b7d"/>
+<rect x="320.0416098568288" y="212.20759708388584" width="0.46771108688483487" height="0.9873175316821909" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateObjectPairA · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02000ce0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · FieldScene_UpdateObjectPairA · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02000ce0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateObjectPairA · C: 116 bytes</title>
-<rect x="317.1814286212893" y="215.22689059020612" width="0.42358726685802606" height="0.34280136267620465" style="fill:#326b7d"/>
+<rect x="321.0822670251476" y="212.31283207843492" width="0.6781810759830105" height="0.7768475425840153" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateObjectPairB · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000dcc" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · FieldScene_UpdateObjectPairB · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000dcc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateObjectPairB · C: 100 bytes</title>
-<rect x="317.94158653274707" y="215.22065987212972" width="0.33033992652337524" height="0.355262798829034" style="fill:#326b7d"/>
+<rect x="314.89094230389134" y="213.6364448406014" width="0.4153493631819091" height="1.63272473107303" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · PlaceSceneObjectPairFromTableB · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000e30" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · PlaceSceneObjectPairFromTableB · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000e30" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · PlaceSceneObjectPairFromTableB · C: 80 bytes</title>
-<rect x="317.13843417428694" y="215.8694988685562" width="0.44870453395273785" height="0.25681246867156743" style="fill:#326b7d"/>
+<rect x="315.68010609393696" y="213.5949099042832" width="0.33227949054552725" height="1.7157946037094116" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateTableBObjectPair · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x02000e80" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · FieldScene_UpdateTableBObjectPair · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x02000e80" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateTableBObjectPair · C: 96 bytes</title>
-<rect x="317.1641154211541" y="216.4088050527665" width="0.3973420402184243" height="0.308174962405881" style="fill:#326b7d"/>
+<rect x="316.45780816079" y="213.70805299004522" width="0.9034640963307908" height="0.5585656620695288" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · PlaceSceneObjectPairFromTableC · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000ee0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · PlaceSceneObjectPairFromTableC · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000ee0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · PlaceSceneObjectPairFromTableC · C: 80 bytes</title>
-<rect x="317.84109770503716" y="215.8666453966821" width="0.4704459550333655" height="0.2511055249233104" style="fill:#326b7d"/>
+<rect x="316.41126102228424" y="214.77863717567845" width="0.996558373342379" height="0.4654713850579407" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateObjectPairC · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000f30" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · FieldScene_UpdateObjectPairC · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000f30" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateObjectPairC · C: 100 bytes</title>
-<rect x="317.8724858956526" y="216.4002446371441" width="0.4076695738025379" height="0.313881906154138" style="fill:#326b7d"/>
+<rect x="314.97091847823503" y="215.76449510920006" width="0.9033420210582314" height="0.575301711869365" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateActorPairInteraction · C: 400 bytes" data-node="leaf" data-kind="file" data-bytes="400" data-address="0x02001150" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · ShowLockedDoorMessageOnce · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000f94" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ShowLockedDoorMessageOnce · C: 32 bytes</title>
+<rect x="314.77531589619946" y="216.71949595090322" width="1.2945471851293995" height="0.18409654779819673" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ShowLockedDoorMessage · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x02000fb4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ShowLockedDoorMessage · C: 20 bytes</title>
+<rect x="316.2999837660766" y="215.61491666411402" width="0.3399567336892033" height="0.27614482169729515" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ShowGeraldDontMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02000fc8" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ShowGeraldDontMessage · C: 28 bytes</title>
+<rect x="316.9160853214631" y="215.61491666411402" width="0.5863973558438027" height="0.27614482169729515" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ShowThatWasExcitingMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02000fe4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ShowThatWasExcitingMessage · C: 28 bytes</title>
+<rect x="316.2851316663053" y="216.15235420773726" width="0.2464406221545994" height="0.7200662537859337" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ShowSorryIScaredYouMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02001000" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ShowSorryIScaredYouMessage · C: 28 bytes</title>
+<rect x="316.7780129106145" y="216.15235420773726" width="0.2464406221545994" height="0.7200662537859337" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ShowWellMessage · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x0200101c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ShowWellMessage · C: 28 bytes</title>
+<rect x="317.2708941549237" y="216.15235420773726" width="0.2464406221545994" height="0.7200662537859337" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · TryStartActorInteraction · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x02001038" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · TryStartActorInteraction · C: 96 bytes</title>
+<rect x="314.9758050514767" y="217.28817820177682" width="0.585074858352646" height="0.810711694953682" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · NoOpSceneCallbackA · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02001098" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · NoOpSceneCallbackA · C: 4 bytes</title>
+<rect x="314.734155673723" y="218.44231537732944" width="0.23255238764197322" height="0.10177610284525307" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · NoOpSceneCallbackB · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0200109c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · NoOpSceneCallbackB · C: 4 bytes</title>
+<rect x="315.06848416421025" y="218.44231537732944" width="0.23255238764197328" height="0.10177610284525307" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · NoOpSceneCallbackC · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x020010a0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · NoOpSceneCallbackC · C: 4 bytes</title>
+<rect x="315.40281265469747" y="218.44231537732944" width="0.23255238764197317" height="0.10177610284525307" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · NoOpSceneCallbackD · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x020010a4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · NoOpSceneCallbackD · C: 2 bytes</title>
+<rect x="315.72804415507295" y="218.43321838721772" width="0.08358212262180659" height="0.11997008306869955" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · StartDoraHouseAccidentScene · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x020010a8" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · StartDoraHouseAccidentScene · C: 96 bytes</title>
+<rect x="316.10872273174135" y="217.2509461653362" width="0.5106107854714002" height="1.088727973525434" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · IsPlayerInAccidentTriggerArea · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02001108" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsPlayerInAccidentTriggerArea · C: 72 bytes</title>
+<rect x="317.06611795450027" y="217.18711981715228" width="0.3829580891035501" height="1.216380669893284" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_UpdateActorPairInteraction · C: 400 bytes" data-node="leaf" data-kind="file" data-bytes="400" data-address="0x02001150" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateActorPairInteraction · C: 400 bytes</title>
-<rect x="318.66031854296915" y="214.0852554333212" width="1.5827628419520663" height="0.4464442408740548" style="fill:#326b7d"/>
+<rect x="318.14055508815557" y="213.92877015901044" width="2.1291112638361507" height="1.1748444182972904" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateActorSeventeenInteraction · C: 304 bytes" data-node="leaf" data-kind="file" data-bytes="304" data-address="0x0200138c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · ConfigureSceneActor9 · C: 66 bytes" data-node="leaf" data-kind="file" data-bytes="66" data-address="0x020012e0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSceneActor9 · C: 66 bytes</title>
+<rect x="320.9807541925911" y="213.6398579996099" width="0.9076966059314786" height="0.42217568119888577" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · AreSceneActorsInPassingLane · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001324" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · AreSceneActorsInPassingLane · C: 104 bytes</title>
+<rect x="321.1021344237743" y="214.60558959319079" width="0.6649361435651822" height="0.6655569123343368" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_UpdateActorSeventeenInteraction · C: 304 bytes" data-node="leaf" data-kind="file" data-bytes="304" data-address="0x0200138c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateActorSeventeenInteraction · C: 304 bytes</title>
-<rect x="318.60674523406425" y="214.92457060616445" width="1.6899094597618394" height="0.33929762306428174" style="fill:#326b7d"/>
+<rect x="318.09555340968274" y="216.05861289883492" width="0.9099966430543909" height="1.9318000635207353" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_UpdateActorEighteenInteraction · C: 296 bytes" data-node="leaf" data-kind="file" data-bytes="296" data-address="0x02001528" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
+<g aria-label="3bf · ActivateSceneActor17 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x020014bc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ActivateSceneActor17 · C: 16 bytes</title>
+<rect x="317.6779471500842" y="218.48280334581148" width="1.7452091622515415" height="0.0747841238572402" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · IsPlayerInSecondaryTriggerArea · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x020014cc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsPlayerInSecondaryTriggerArea · C: 92 bytes</title>
+<rect x="319.608827240533" y="215.7518934435764" width="2.3424325323204016" height="0.2965577325373317" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_UpdateActorEighteenInteraction · C: 296 bytes" data-node="leaf" data-kind="file" data-bytes="296" data-address="0x02001528" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_UpdateActorEighteenInteraction · C: 296 bytes</title>
-<rect x="318.67026618049664" y="215.66668679872538" width="0.4663395159289843" height="0.9712109396854725" style="fill:#326b7d"/>
+<rect x="319.96054837426436" y="216.6967300423824" width="1.0998417161233576" height="1.398249489214943" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_SelectActorTwentyOneMessage · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x02004638" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
-<title>3bf · FieldScene_SelectActorTwentyOneMessage · C: 204 bytes</title>
-<rect x="319.58045095219563" y="215.64419253856644" width="0.6751770553570187" height="0.4213509956111338" style="fill:#326b7d"/>
+<g aria-label="3bf · ActivateSceneActor18 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001650" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ActivateSceneActor18 · C: 16 bytes</title>
+<rect x="321.68661374771483" y="216.3229536997095" width="0.2867012340801712" height="0.2524473146542045" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_RunActorTwentyOneSequence · C: 144 bytes" data-node="leaf" data-kind="file" data-bytes="144" data-address="0x02004704" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_scenes.c">
-<title>3bf · FieldScene_RunActorTwentyOneSequence · C: 144 bytes</title>
-<rect x="319.51848757048816" y="216.42493114808119" width="0.799103818772058" height="0.29742423219609454" style="fill:#326b7d"/>
+<g aria-label="3bf · IsPlayerOutsideSceneRectangle · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02001660" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsPlayerOutsideSceneRectangle · C: 60 bytes</title>
+<rect x="321.6951772275713" y="216.8364118088744" width="0.26957427436718784" height="1.6237805855393461" style="fill:#326b7d"/>
 </g>
+<g aria-label="3bf · FieldScene_RunScene3bfSequenceA · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x0200169c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bfSequenceA · C: 108 bytes</title>
+<rect x="322.36835609361907" y="208.91677929535865" width="1.171181905340279" height="0.5376349089939908" style="fill:#326b7d"/>
 </g>
-<g aria-label="actor_setup.c: 1,472 bytes · 6 items" data-node="container" data-kind="file" data-bytes="1472" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>actor_setup.c: 1,472 bytes · 6 items</title>
-<rect class="container-frame" x="321.9708205971038" y="212.35751622113864" width="4.145006947028832" height="6.018068366982259" fill="#1f7f93"/>
-<path class="bevel-light" d="M321.9708205971038 218.3755845881209 V212.35751622113864 H326.1158275441326" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M321.9708205971038 218.3755845881209 H326.1158275441326 V212.35751622113864" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · FieldScene_InstallSceneTasks · C: 388 bytes" data-node="leaf" data-kind="file" data-bytes="388" data-address="0x02004f60" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>3bf · FieldScene_InstallSceneTasks · C: 388 bytes</title>
-<rect x="323.26707219436804" y="213.6537678184029" width="1.5525037525003116" height="0.5199997210141044" style="fill:#326b7d"/>
+<g aria-label="3bf · RunActor17SceneStep · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001708" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActor17SceneStep · C: 16 bytes</title>
+<rect x="322.1809108683761" y="209.80460388810366" width="0.16274445850802569" height="0.6735765110381823" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_SetupActorsForScene · C: 576 bytes" data-node="leaf" data-kind="file" data-bytes="576" data-address="0x020050e4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>3bf · FieldScene_SetupActorsForScene · C: 576 bytes</title>
-<rect x="323.393051508222" y="214.81974657428503" width="1.3005451247924467" height="0.7719583487219693" style="fill:#326b7d"/>
+<g aria-label="3bf · TriggerSceneStage95FromActor12 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02001718" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · TriggerSceneStage95FromActor12 · C: 68 bytes</title>
+<rect x="322.6341077985247" y="209.9323119012362" width="0.9651674125451144" height="0.41816048477310397" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_RestoreActorsFromFlags · C: 332 bytes" data-node="leaf" data-kind="file" data-bytes="332" data-address="0x02005324" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>3bf · FieldScene_RestoreActorsFromFlags · C: 332 bytes</title>
-<rect x="323.3456900273683" y="216.31630179087526" width="0.6772353870145532" height="0.6844133669811424" style="fill:#326b7d"/>
+<g aria-label="3bf · FieldScene_RunScene3bfSequenceB · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x0200175c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bfSequenceB · C: 96 bytes</title>
+<rect x="324.0473043018982" y="208.88691068930342" width="1.2309191174507224" height="0.4778976968835474" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_ActivateThreeActorGroup · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02005470" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>3bf · FieldScene_ActivateThreeActorGroup · C: 64 bytes</title>
-<rect x="324.48532935825335" y="216.10147034773124" width="0.47046019875881934" height="0.24757250072649012" style="fill:#326b7d"/>
+<g aria-label="3bf · FieldScene_RunScene3bfSequenceC · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x020017bc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bfSequenceC · C: 96 bytes</title>
+<rect x="324.0473043018982" y="209.8427060830705" width="1.2309191174507224" height="0.4778976968835474" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_ActivateTwoActorGroup · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x020054b0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>3bf · FieldScene_ActivateTwoActorGroup · C: 44 bytes</title>
-<rect x="324.44664615501483" y="216.5579321459457" width="0.5478266052358475" height="0.17020609424946195" style="fill:#326b7d"/>
+<g aria-label="3bf · IsSceneActorVerticallyNearPlayer · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x0200181c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsSceneActorVerticallyNearPlayer · C: 100 bytes</title>
+<rect x="322.3733341946283" y="210.83334818390205" width="1.0058787202005743" height="0.5475911110123981" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_ActivateAlternateActorGroup · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x020054dc" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_setup.c">
-<title>3bf · FieldScene_ActivateAlternateActorGroup · C: 68 bytes</title>
-<rect x="324.49306599890105" y="216.94476417833084" width="0.4549869174634137" height="0.26304578202189577" style="fill:#326b7d"/>
+<g aria-label="3bf · IsSceneActorHorizontallyNearPlayer · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02001880" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsSceneActorHorizontallyNearPlayer · C: 100 bytes</title>
+<rect x="322.3733341946283" y="211.92853040592684" width="1.0058787202005743" height="0.5475911110123981" style="fill:#326b7d"/>
 </g>
+<g aria-label="3bf · IsActorInteractionAvailable · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x020018e4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsActorInteractionAvailable · C: 50 bytes</title>
+<rect x="322.2364364168752" y="212.8868148501985" width="1.2796742757067734" height="0.27379555550619905" style="fill:#326b7d"/>
 </g>
-<g aria-label="3bf · FieldScene_RunScene3bf_02001cf0 · C: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x02001cf0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/actor_steps.c">
+<g aria-label="3bf · IsSceneActorWithinFourSteps · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001918" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsSceneActorWithinFourSteps · C: 104 bytes</title>
+<rect x="323.8902979517738" y="210.79684210983453" width="1.3895848345781552" height="0.4745789628774117" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · IsSceneActorWithinTriggerBox · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001980" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · IsSceneActorWithinTriggerBox · C: 104 bytes</title>
+<rect x="323.9002955046914" y="211.75599758850703" width="0.4945740687127015" height="1.2942235605944659" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · TriggerScene41AtVillagePath · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x020019e8" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · TriggerScene41AtVillagePath · C: 92 bytes</title>
+<rect x="324.860910522768" y="211.7274644691582" width="0.437507830015082" height="1.351289799292085" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · TriggerScene40AtVillagePath · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x02001a44" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · TriggerScene40AtVillagePath · C: 108 bytes</title>
+<rect x="325.781145929516" y="208.91193550258708" width="1.2122254772311143" height="0.5279473234508473" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunActor9ScriptedSequence · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02001ab0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActor9ScriptedSequence · C: 116 bytes</title>
+<rect x="325.80069953408827" y="209.98738375406103" width="1.1731182680866072" height="0.5670545325953545" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunActorScriptedSequenceA · C: 192 bytes" data-node="leaf" data-kind="file" data-bytes="192" data-address="0x02001b24" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActorScriptedSequenceA · C: 192 bytes</title>
+<rect x="327.63023924004733" y="209.02085601243635" width="0.7457883431494121" height="1.4442153689429915" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · TurnActorToSceneDirection · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001be4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · TurnActorToSceneDirection · C: 104 bytes</title>
+<rect x="328.9509060977077" y="208.84994618379795" width="0.40396868587259815" height="1.7860350262198055" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunActorScriptedSequenceB · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x02001c4c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActorScriptedSequenceB · C: 88 bytes</title>
+<rect x="325.71322276732354" y="211.03401605248695" width="1.5170660780033094" height="0.39210099906581936" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunActorScriptedSequenceC · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x02001ca4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActorScriptedSequenceC · C: 76 bytes</title>
+<rect x="325.7101200043029" y="211.815115287598" width="0.3858954730246111" height="1.2894451593475265" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_02001cf0 · C: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x02001cf0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
 <title>3bf · FieldScene_RunScene3bf_02001cf0 · C: 112 bytes</title>
-<rect x="326.25372109100294" y="212.49540976800893" width="3.165244488643395" height="0.2757870937405945" style="fill:#326b7d"/>
+<rect x="326.5733072465948" y="211.90651158384065" width="0.5686880655099533" height="1.1066525668621843" style="fill:#326b7d"/>
 </g>
+<g aria-label="3bf · RunActorScriptedSequenceD · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02001d60" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActorScriptedSequenceD · C: 100 bytes</title>
+<rect x="327.6259775453876" y="211.03760375348196" width="1.7312433806010457" height="0.3992764010558078" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectOrdinaryObject · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001dc4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectOrdinaryObject · C: 104 bytes</title>
+<rect x="327.69265431756685" y="211.90283332777278" width="0.5326299454142134" height="1.128359882977947" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectEmptyChest · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001e2c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectEmptyChest · C: 104 bytes</title>
+<rect x="328.7579142083953" y="211.90283332777278" width="0.5326299454142134" height="1.128359882977947" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunSupplementalSequenceOne · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x02001e94" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunSupplementalSequenceOne · C: 472 bytes</title>
+<rect x="322.5995386391221" y="213.79750818345784" width="2.6419472147740684" height="1.2049439826471349" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunSequenceTail · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x0200206c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunSequenceTail · C: 96 bytes</title>
+<rect x="322.37461018102346" y="215.77752370800633" width="0.5501430838027294" height="0.9342700516336132" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectEmptySceneObject · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x020020cc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectEmptySceneObject · C: 104 bytes</title>
+<rect x="322.37461018102346" y="217.2619368434427" width="0.5501430838027294" height="1.0579711462533083" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunActor12InteractionSequence · C: 144 bytes" data-node="leaf" data-kind="file" data-bytes="144" data-address="0x02002134" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActor12InteractionSequence · C: 144 bytes</title>
+<rect x="323.44080096507764" y="215.74342832445504" width="2.0597087304684987" height="0.4819523167001113" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_020021c4 · C: 168 bytes" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x020021c4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bf_020021c4 · C: 168 bytes</title>
+<rect x="323.5355158884291" y="216.80204788120673" width="0.671382163403029" height="1.457240568689129" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureInteractionRegionA · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x0200226c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureInteractionRegionA · C: 50 bytes</title>
+<rect x="324.71997436120796" y="216.64374202717954" width="0.8441262650138588" height="0.354770455348693" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureInteractionRegionB · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x020022a0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureInteractionRegionB · C: 50 bytes</title>
+<rect x="324.71997436120796" y="217.35328293787694" width="0.8441262650138588" height="0.354770455348693" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureInteractionRegionC · C: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x020022d4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureInteractionRegionC · C: 50 bytes</title>
+<rect x="324.71997436120796" y="218.06282384857434" width="0.8441262650138588" height="0.354770455348693" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectVillageWell · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x02002308" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectVillageWell · C: 132 bytes</title>
+<rect x="326.0458229073562" y="213.60184523691788" width="1.2361217611601485" height="0.6086741069200706" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunSecondaryMapInteraction · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x0200238c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunSecondaryMapInteraction · C: 132 bytes</title>
+<rect x="326.0458229073562" y="214.81919345075804" width="1.2361217611601485" height="0.6086741069200706" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigurePrimaryInteractionRegions · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x02002410" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigurePrimaryInteractionRegions · C: 88 bytes</title>
+<rect x="327.77622257803654" y="213.487449039518" width="1.5906956924199063" height="0.3798817121203278" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureSecondaryInteractionRegions · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x02002468" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSecondaryInteractionRegions · C: 88 bytes</title>
+<rect x="327.80974926269744" y="214.28073914841954" width="0.4469350814421149" height="1.2279979219975121" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectWardrobe · C: 36 bytes" data-node="leaf" data-kind="file" data-bytes="36" data-address="0x020024c0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectWardrobe · C: 36 bytes</title>
+<rect x="328.6223631776055" y="214.19948290044334" width="0.7922846561662562" height="0.28442258548974797" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectFirewood · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x020024e4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectFirewood · C: 32 bytes</title>
+<rect x="328.6065619228561" y="214.75252681667342" width="0.8238871656651171" height="0.25282007599088707" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · InspectBooks · C: 36 bytes" data-node="leaf" data-kind="file" data-bytes="36" data-address="0x02002504" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · InspectBooks · C: 36 bytes</title>
+<rect x="328.6302638049802" y="215.28186885077935" width="0.7198145992244044" height="0.3002238402391785" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · NoOpInteractionCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02002528" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · NoOpInteractionCallback · C: 2 bytes</title>
+<rect x="329.5143575248723" y="215.14592413120786" width="0.02833440109621066" height="0.5721132793821463" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_0200252c · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x0200252c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bf_0200252c · C: 204 bytes</title>
+<rect x="326.04457625405763" y="216.03529501129955" width="0.6061808003228757" height="2.256594120136357" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_020025f8 · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020025f8" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bf_020025f8 · C: 164 bytes</title>
+<rect x="327.22182410234745" y="216.00018125894366" width="2.0670583763636126" height="0.5359532956110892" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_0200269c · C: 124 bytes" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x0200269c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bf_0200269c · C: 124 bytes</title>
+<rect x="327.2483487750938" y="217.0986125229122" width="0.5890026411037647" height="1.2018656881332896" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_02002718 · C: 150 bytes" data-node="leaf" data-kind="file" data-bytes="150" data-address="0x02002718" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bf_02002718 · C: 150 bytes</title>
+<rect x="328.48810433419123" y="217.1603627998021" width="0.7125031948835862" height="1.0783651343534681" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · PlayStoryScene · C: 2,212 bytes" data-node="leaf" data-kind="file" data-bytes="2212" data-address="0x020027b0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · PlayStoryScene · C: 2,212 bytes</title>
+<rect x="315.1832676223004" y="219.09497953159735" width="1.9151501335571766" height="11.909618405892715" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunMainScriptSequence · C: 5,604 bytes" data-node="leaf" data-kind="file" data-bytes="5604" data-address="0x02003054" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunMainScriptSequence · C: 5,604 bytes</title>
+<rect x="318.09841775585755" y="219.09497953159735" width="10.958441370659052" height="6.972834642563673" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_SelectActorTwentyOneMessage · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x02004638" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_SelectActorTwentyOneMessage · C: 204 bytes</title>
+<rect x="317.8982403493006" y="226.86763676760404" width="0.5996451868860736" height="2.2943315019619854" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunActorTwentyOneSequence · C: 144 bytes" data-node="leaf" data-kind="file" data-bytes="144" data-address="0x02004704" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunActorTwentyOneSequence · C: 144 bytes</title>
+<rect x="317.8982403493006" y="229.7616134564521" width="0.5996451868860736" height="1.4431618875949095" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bf_02004794 · C: 404 bytes" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x02004794" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunScene3bf_02004794 · C: 404 bytes</title>
+<rect x="319.2977081296297" y="227.06781417416101" width="1.997121034112336" height="1.2933286276457605" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · SelectActor25SceneVariant · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02004928" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · SelectActor25SceneVariant · C: 60 bytes</title>
+<rect x="322.0173876563742" y="226.79037266679313" width="0.4451169852642085" height="0.7015473285586717" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · SelectActor24SceneVariant · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02004964" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · SelectActor24SceneVariant · C: 60 bytes</title>
+<rect x="322.0173876563742" y="227.937036980616" width="0.4451169852642085" height="0.7015473285586717" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RunSupplementalSequenceTwo · C: 456 bytes" data-node="leaf" data-kind="file" data-bytes="456" data-address="0x020049a0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RunSupplementalSequenceTwo · C: 456 bytes</title>
+<rect x="319.2977081296297" y="229.36114280180678" width="1.9348243081393761" height="1.6434551356832814" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureSceneActor26 · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x02004b68" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSceneActor26 · C: 28 bytes</title>
+<rect x="321.85756072121353" y="228.98617108525127" width="0.7024741296124178" height="0.25005656688895905" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureSceneActor14 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02004b84" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSceneActor14 · C: 32 bytes</title>
+<rect x="321.87542190456276" y="229.50414540237838" width="0.6667517629139951" height="0.2857789335873818" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureSceneActor13 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02004ba4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSceneActor13 · C: 32 bytes</title>
+<rect x="321.87542190456276" y="230.07570326955314" width="0.6667517629139952" height="0.28577893358738177" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureSceneActor12Variant · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02004bc4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSceneActor12Variant · C: 32 bytes</title>
+<rect x="321.87542190456276" y="230.6472611367279" width="0.6667517629139952" height="0.28577893358738177" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureSceneActor18 · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02004be4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureSceneActor18 · C: 24 bytes</title>
+<rect x="321.83969953786436" y="231.18309663720424" width="0.7381964963108405" height="0.2143342001905363" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · RunActor20SceneSequence · C: 272 bytes" data-node="leaf" data-kind="file" data-bytes="272" data-address="0x02004bfc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · RunActor20SceneSequence · C: 272 bytes</title>
+<rect x="323.16445740177227" y="227.0472084416628" width="0.9587885350035567" height="1.4544779696510868" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FinishActor20SceneSequence · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02004d0c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FinishActor20SceneSequence · C: 64 bytes</title>
+<rect x="324.8176626330835" y="226.78283660296697" width="0.4300448576118895" height="0.8359310136823498" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · NoOpActorCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02004d4c" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · NoOpActorCallback · C: 2 bytes</title>
+<rect x="324.61253064077204" y="227.84368048194975" width="0.8403088422348065" height="0.01978087298897249" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureActor13Interaction · C: 56 bytes" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x02004d50" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureActor13Interaction · C: 56 bytes</title>
+<rect x="324.8176626330835" y="228.08837422023916" width="0.4300448576118895" height="0.6776840297705699" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ConfigureActor13SceneResource · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02004d88" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ConfigureActor13SceneResource · C: 24 bytes</title>
+<rect x="322.72551459230783" y="229.021532136853" width="0.08090291607468618" height="2.442614342599712" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_InstallSceneTasks · C: 388 bytes" data-node="leaf" data-kind="file" data-bytes="388" data-address="0x02004f60" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_InstallSceneTasks · C: 388 bytes</title>
+<rect x="323.34686896641983" y="229.48108067881566" width="1.61586095308152" height="1.5235172586743984" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_SetupActorsForScene · C: 576 bytes" data-node="leaf" data-kind="file" data-bytes="576" data-address="0x020050e4" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_SetupActorsForScene · C: 576 bytes</title>
+<rect x="325.9627299195014" y="227.06781417416101" width="3.0941292070152606" height="1.3935921276746872" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_RestoreActorsFromFlags · C: 332 bytes" data-node="leaf" data-kind="file" data-bytes="332" data-address="0x02005324" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_RestoreActorsFromFlags · C: 332 bytes</title>
+<rect x="325.9627299195014" y="229.4614063018357" width="1.2209981972697164" height="1.5431916356543545" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_ActivateThreeActorGroup · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02005470" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_ActivateThreeActorGroup · C: 64 bytes</title>
+<rect x="327.9289644530663" y="229.20664263813094" width="0.6195308887402102" height="0.4904726725904827" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_ActivateTwoActorGroup · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x020054b0" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_ActivateTwoActorGroup · C: 44 bytes</title>
+<rect x="328.9845135402055" y="229.1521881639394" width="0.3815637242074257" height="0.5993816209735398" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · FieldScene_ActivateAlternateActorGroup · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x020054dc" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · FieldScene_ActivateAlternateActorGroup · C: 68 bytes</title>
+<rect x="327.86886315843196" y="230.12748668867755" width="0.3702700833217936" height="1.1919762071515958" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bf · ActivateFiveActorGroupFromFlags · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02005520" data-source="games/gs1/src/map/locations/heidia/village/village_scene.c">
+<title>3bf · ActivateFiveActorGroupFromFlags · C: 104 bytes</title>
+<rect x="328.70741599419017" y="230.22549935779216" width="0.5662954215509786" height="0.9959508689224108" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="village_scene: 2,320 bytes · 10 items" data-node="container" data-kind="folder" data-bytes="2320" data-source="games/gs1/src/map/locations/heidia/village/village_scene/">
+<title>village_scene: 2,320 bytes · 10 items</title>
+<rect class="container-frame" x="312.6832676223004" y="233.50459793749008" width="18.87359150421623" height="3.118176145740062" fill="#1f7f93"/>
+<path class="bevel-light" d="M312.6832676223004 236.62277408323013 V233.50459793749008 H331.5568591265166" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M312.6832676223004 236.62277408323013 H331.5568591265166 V233.50459793749008" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3bf · AddSoftFloatParts · C: 596 bytes" data-node="leaf" data-kind="file" data-bytes="596" data-address="0x020057ec" data-source="games/gs1/src/map/locations/heidia/village/village_scene/add_parts_copy.c">
 <title>3bf · AddSoftFloatParts · C: 596 bytes</title>
-<rect x="326.6158275441326" y="213.40909040861982" width="2.4410315823839897" height="1.9351626405248985" style="fill:#326b7d"/>
+<rect x="313.8525836769529" y="234.67391399214262" width="3.668492189893577" height="0.7795440364350155" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · AddSoftDouble · C: 54 bytes" data-node="leaf" data-kind="file" data-bytes="54" data-address="0x02005a40" data-source="games/gs1/src/map/locations/heidia/village/village_scene/add_soft_double.c">
 <title>3bf · AddSoftDouble · C: 54 bytes</title>
-<rect x="326.20620483277503" y="215.9346303377871" width="0.1807545772847621" height="2.3505769616914094" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bf_02004794 · C: 404 bytes" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x02004794" data-source="games/gs1/src/map/locations/heidia/village/village_scene/conditional_scene.c">
-<title>3bf · FieldScene_RunScene3bf_02004794 · C: 404 bytes</title>
-<rect x="326.9773366987022" y="216.34425304914473" width="1.7046240452979218" height="1.5313315389761715" style="fill:#326b7d"/>
+<rect x="318.102190512189" y="234.47548460105006" width="0.4382610291328772" height="0.3826852542499167" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · GetSoftFloatStatusStorage · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02005ab8" data-source="games/gs1/src/map/locations/heidia/village/village_scene/get_status_storage.c">
 <title>3bf · GetSoftFloatStatusStorage · C: 8 bytes</title>
-<rect x="329.2723654418207" y="215.9346577469653" width="0.19408898687538864" height="0.18080939564115509" style="fill:#326b7d"/>
+<rect x="317.9401673951848" y="235.07883199254576" width="0.05863902024162813" height="0.7350785441285694" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · LogicalShiftRight64 · C: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x02005c08" data-source="games/gs1/src/map/locations/heidia/village/village_scene/logical_shift_right_64.c">
 <title>3bf · LogicalShiftRight64 · C: 48 bytes</title>
-<rect x="329.2756853396292" y="216.29959643605616" width="0.18744919125827186" height="1.9822635564355895" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunMainScriptSequence · C: 5,604 bytes" data-node="leaf" data-kind="file" data-bytes="5604" data-address="0x02003054" data-source="games/gs1/src/map/locations/heidia/village/village_scene/main_scene.c">
-<title>3bf · FieldScene_RunMainScriptSequence · C: 5,604 bytes</title>
-<rect x="315.1832676223004" y="218.8755845881209" width="10.796151541130447" height="7.0506760850239765" style="fill:#326b7d"/>
+<rect x="318.20404298627216" y="235.22542954314983" width="0.3518341214497688" height="0.4418834429204288" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SceneActor_MoveAndRedraw · C: 696 bytes" data-node="leaf" data-kind="file" data-bytes="696" data-address="0x02000608" data-source="games/gs1/src/map/locations/heidia/village/village_scene/move_and_redraw.c">
 <title>3bf · SceneActor_MoveAndRedraw · C: 696 bytes</title>
-<rect x="326.9794191634308" y="218.8755845881209" width="2.077439963085782" height="2.8326063988896633" style="fill:#326b7d"/>
+<rect x="319.1215661866643" y="234.67391399214262" width="4.414806992968844" height="0.7795440364350155" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · PackSoftDouble · C: 412 bytes" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x02005c38" data-source="games/gs1/src/map/locations/heidia/village/village_scene/pack_soft_double.c">
 <title>3bf · PackSoftDouble · C: 412 bytes</title>
-<rect x="326.9794191634308" y="222.70819098701054" width="2.077439963085782" height="1.2687267763542263" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bf_02002718 · C: 150 bytes" data-node="leaf" data-kind="file" data-bytes="150" data-address="0x02002718" data-source="games/gs1/src/map/locations/heidia/village/village_scene/party_animation.c">
-<title>3bf · FieldScene_RunScene3bf_02002718 · C: 150 bytes</title>
-<rect x="326.8054191595204" y="224.80291775945435" width="0.651999992179191" height="1.2973429176008964" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bf_0200252c · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x0200252c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/scene_party_placement.c">
-<title>3bf · FieldScene_RunScene3bf_0200252c · C: 204 bytes</title>
-<rect x="328.226779142471" y="224.9202777580466" width="0.8867199893636999" height="1.0626229204163875" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunSupplementalSequenceTwo · C: 456 bytes" data-node="leaf" data-kind="file" data-bytes="456" data-address="0x020049a0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/scene_sequence.c">
-<title>3bf · FieldScene_RunSupplementalSequenceTwo · C: 456 bytes</title>
-<rect x="315.1660941860354" y="226.9090872368799" width="0.9656531274700972" height="3.0355284959906816" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bf_020025f8 · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020025f8" data-source="games/gs1/src/map/locations/heidia/village/village_scene/scene_transition.c">
-<title>3bf · FieldScene_RunScene3bf_020025f8 · C: 164 bytes</title>
-<rect x="316.9480056791956" y="226.75969247509994" width="1.4169141974727117" height="0.6668636039101298" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunSequenceTail · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x0200206c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/sequence_tail.c">
-<title>3bf · FieldScene_RunSequenceTail · C: 96 bytes</title>
-<rect x="316.8097534686289" y="227.95516747235345" width="1.69341861860618" height="0.3903591827766613" style="fill:#326b7d"/>
+<rect x="324.31591721606816" y="234.67391399214262" width="2.2952729522350848" height="0.7795440364350155" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SignedIntToSoftDouble · C: 124 bytes" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x02005af0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/signed_int_to_soft_double.c">
 <title>3bf · SignedIntToSoftDouble · C: 124 bytes</title>
-<rect x="316.89300970414945" y="228.81914207342737" width="0.5568716538178282" height="1.3298643962693686" style="fill:#326b7d"/>
+<rect x="327.2323197754741" y="234.51549956287843" width="0.4627151779066656" height="1.0963728949633653" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SoftDoubleToSignedInt · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x02005b6c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/soft_double_to_signed_int.c">
 <title>3bf · SoftDoubleToSignedInt · C: 108 bytes</title>
-<rect x="317.970825808313" y="228.78321486995526" width="0.4850172468735925" height="1.4017188032136043" style="fill:#326b7d"/>
+<rect x="328.12789753916434" y="234.48564697075543" width="0.4030099936606443" height="1.1560780792093865" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · SubtractSoftDouble · C: 62 bytes" data-node="leaf" data-kind="file" data-bytes="62" data-address="0x02005a78" data-source="games/gs1/src/map/locations/heidia/village/village_scene/subtract_soft_double.c">
 <title>3bf · SubtractSoftDouble · C: 62 bytes</title>
-<rect x="314.7486877859751" y="230.49286246028038" width="3.88424372897358" height="0.13084032734945586" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunSupplementalSequenceOne · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x02001e94" data-source="games/gs1/src/map/locations/heidia/village/village_scene/supplemental_scene.c">
-<title>3bf · FieldScene_RunSupplementalSequenceOne · C: 472 bytes</title>
-<rect x="315.1832676223004" y="231.18912295130457" width="1.0333902087816234" height="2.933651131925576" style="fill:#326b7d"/>
+<rect x="328.848091324132" y="234.39982076840178" width="0.23135758895333283" height="1.3277304839166981" style="fill:#326b7d"/>
 </g>
 <g aria-label="3bf · UnpackSoftDouble · C: 212 bytes" data-node="leaf" data-kind="file" data-bytes="212" data-address="0x02005e04" data-source="games/gs1/src/map/locations/heidia/village/village_scene/unpack_soft_double.c">
 <title>3bf · UnpackSoftDouble · C: 212 bytes</title>
-<rect x="317.1698828528038" y="231.14234797302643" width="1.0752438040976928" height="0.9064500434437197" style="fill:#326b7d"/>
-</g>
-<g aria-label="shared: 248 bytes · 3 items" data-node="container" data-kind="folder" data-bytes="248" data-source="games/gs1/src/map/locations/heidia/village/village_scene/shared/">
-<title>shared: 248 bytes · 3 items</title>
-<rect class="container-frame" x="316.716657831082" y="232.50202303819202" width="1.9816938475414125" height="2.1207510450381366" fill="#1f7f93"/>
-<path class="bevel-light" d="M316.716657831082 234.62277408323015 V232.50202303819202 H318.6983516786234" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M316.716657831082 234.62277408323015 H318.6983516786234 V232.50202303819202" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · fill_grid_attribute_rectangle · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000244" data-source="games/gs1/src/map/locations/heidia/village/village_scene/shared/fill_grid_attribute_rectangle.c">
-<title>3bf · fill_grid_attribute_rectangle · C: 100 bytes</title>
-<rect x="317.3259829180951" y="233.11134812520515" width="0.763043673515176" height="0.2278032502555303" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · find_actor_at_fixed_point_position · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x0200006c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/shared/find_actor_at_fixed_point_position.c">
-<title>3bf · find_actor_at_fixed_point_position · C: 88 bytes</title>
-<rect x="317.3593693492035" y="233.60034105682465" width="0.29457611247237214" height="0.37972150828399764" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · CalculateFixedPointPositionDistance · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000030" data-source="games/gs1/src/map/locations/heidia/village/village_scene/shared/measure_fixed_point_position_distance.c">
-<title>3bf · CalculateFixedPointPositionDistance · C: 60 bytes</title>
-<rect x="317.9016571926186" y="233.55347667529495" width="0.200847349412981" height="0.47345027134338885" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="village_scene: 5,252 bytes · 3 items" data-node="container" data-kind="folder" data-bytes="5252" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/">
-<title>village_scene: 5,252 bytes · 3 items</title>
-<rect class="container-frame" x="318.6983516786234" y="226.42626067314487" width="10.858507447893192" height="8.196513410085267" fill="#1f7f93"/>
-<path class="bevel-light" d="M318.6983516786234 234.62277408323013 V226.42626067314487 H329.5568591265166" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M318.6983516786234 234.62277408323013 H329.5568591265166 V226.42626067314487" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="object_inspection.c: 548 bytes · 7 items" data-node="container" data-kind="file" data-bytes="548" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>object_inspection.c: 548 bytes · 7 items</title>
-<rect class="container-frame" x="320.6983516786234" y="228.42626067314487" width="0.7156249203056873" height="4.196513410085267" fill="#1f7f93"/>
-<path class="bevel-light" d="M320.6983516786234 232.62277408323013 V228.42626067314487 H321.4139765989291" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M320.6983516786234 232.62277408323013 H321.4139765989291 V228.42626067314487" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · InspectOrdinaryObject · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001dc4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectOrdinaryObject · C: 104 bytes</title>
-<rect x="320.96671102373807" y="228.6946200182595" width="0.1789062300764218" height="0.5496063589618482" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · InspectEmptyChest · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001e2c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectEmptyChest · C: 104 bytes</title>
-<rect x="320.96671102373807" y="229.4231326072978" width="0.1789062300764218" height="0.5496063589618482" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · InspectEmptySceneObject · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x020020cc" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectEmptySceneObject · C: 104 bytes</title>
-<rect x="320.96671102373807" y="230.15164519633606" width="0.1789062300764218" height="0.5496063589618483" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · InspectVillageWell · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x02002308" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectVillageWell · C: 132 bytes</title>
-<rect x="320.96671102373807" y="230.88015778537434" width="0.1789062300764218" height="0.7457443637029209" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · InspectWardrobe · C: 36 bytes" data-node="leaf" data-kind="file" data-bytes="36" data-address="0x020024c0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectWardrobe · C: 36 bytes</title>
-<rect x="320.94030226736663" y="231.77839962278225" width="0.2317237428192969" height="0.12608871733354673" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · InspectFirewood · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x020024e4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectFirewood · C: 32 bytes</title>
-<rect x="320.9332973386259" y="232.02357212870857" width="0.24573360030080207" height="0.11207885985204155" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · InspectBooks · C: 36 bytes" data-node="leaf" data-kind="file" data-bytes="36" data-address="0x02002504" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/object_inspection.c">
-<title>3bf · InspectBooks · C: 36 bytes</title>
-<rect x="320.94030226736663" y="232.25473477715343" width="0.23172374281929686" height="0.12608871733354676" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="scene_scripts.c: 3,716 bytes · 14 items" data-node="container" data-kind="file" data-bytes="3716" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>scene_scripts.c: 3,716 bytes · 14 items</title>
-<rect class="container-frame" x="321.4139765989291" y="228.42626067314487" width="4.852668255211558" height="4.196513410085267" fill="#1f7f93"/>
-<path class="bevel-light" d="M321.4139765989291 232.62277408323013 V228.42626067314487 H326.2666448541406" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M321.4139765989291 232.62277408323013 H326.2666448541406 V228.42626067314487" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · FieldScene_RunScene3bfSequenceA · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x0200169c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · FieldScene_RunScene3bfSequenceA · C: 108 bytes</title>
-<rect x="322.550771733706" y="229.5630558079217" width="0.17533356451107596" height="0.30367187241525573" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActor17SceneStep · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001708" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActor17SceneStep · C: 16 bytes</title>
-<rect x="322.4808458935588" y="229.9721354047009" width="0.3151852448053866" height="0.035481884216765305" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · TriggerSceneStage95FromActor12 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02001718" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · TriggerSceneStage95FromActor12 · C: 68 bytes</title>
-<rect x="322.53850395541104" y="230.10075723498667" width="0.19986912110089933" height="0.15079800792125259" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bfSequenceB · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x0200175c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · FieldScene_RunScene3bfSequenceB · C: 96 bytes</title>
-<rect x="322.88012781199484" y="229.54174475718844" width="0.4298170564285105" height="0.1327114630445248" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FieldScene_RunScene3bfSequenceC · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x020017bc" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · FieldScene_RunScene3bfSequenceC · C: 96 bytes</title>
-<rect x="322.88012781199484" y="229.8071676832775" width="0.4298170564285105" height="0.1327114630445248" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActor9ScriptedSequence · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02001ab0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActor9ScriptedSequence · C: 116 bytes</title>
-<rect x="322.89395192272866" y="230.08641472010035" width="0.40216883496090117" height="0.16035968451213412" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActorScriptedSequenceA · C: 192 bytes" data-node="leaf" data-kind="file" data-bytes="192" data-address="0x02001b24" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActorScriptedSequenceA · C: 192 bytes</title>
-<rect x="322.5862324546183" y="230.45008175003645" width="0.24625500633578082" height="0.36005943116030475" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActorScriptedSequenceB · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x02001c4c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActorScriptedSequenceB · C: 88 bytes</title>
-<rect x="323.03694982768855" y="230.4082891104351" width="0.25801590869052937" height="0.16266972713309616" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActorScriptedSequenceC · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x02001ca4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActorScriptedSequenceC · C: 76 bytes</title>
-<rect x="323.0258587099295" y="230.7225374469422" width="0.28019814420867895" height="0.14048749161494664" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActorScriptedSequenceD · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02001d60" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActorScriptedSequenceD · C: 100 bytes</title>
-<rect x="322.523822747228" y="230.99398648014224" width="0.12143559155521107" height="0.5189414547889691" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActor12InteractionSequence · C: 144 bytes" data-node="leaf" data-kind="file" data-bytes="144" data-address="0x02002134" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActor12InteractionSequence · C: 144 bytes</title>
-<rect x="322.7934097604806" y="231.02070231028438" width="0.17486725183950394" height="0.46550979450467633" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunSecondaryMapInteraction · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x0200238c" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunSecondaryMapInteraction · C: 132 bytes</title>
-<rect x="323.1358581286663" y="231.01341617479108" width="0.1602949808528786" height="0.4800820654913016" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · PlayStoryScene · C: 2,212 bytes" data-node="leaf" data-kind="file" data-bytes="2212" data-address="0x020027b0" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · PlayStoryScene · C: 2,212 bytes</title>
-<rect x="323.836604575364" y="229.93569300108462" width="0.9206079508368687" height="0.9478879555859592" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · RunActor20SceneSequence · C: 272 bytes" data-node="leaf" data-kind="file" data-bytes="272" data-address="0x02004bfc" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/scene_scripts.c">
-<title>3bf · RunActor20SceneSequence · C: 272 bytes</title>
-<rect x="323.4337407996005" y="231.40132513174396" width="1.7263355023638347" height="0.11488039930990268" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="village.c: 988 bytes · 4 items" data-node="container" data-kind="file" data-bytes="988" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/village.c">
-<title>village.c: 988 bytes · 4 items</title>
-<rect class="container-frame" x="326.2666448541406" y="228.42626067314487" width="1.2902142723759464" height="4.196513410085267" fill="#1f7f93"/>
-<path class="bevel-light" d="M326.2666448541406 232.62277408323013 V228.42626067314487 H327.55685912651654" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M326.2666448541406 232.62277408323013 H327.55685912651654 V228.42626067314487" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf · AdvanceStagedActorPair · C: 384 bytes" data-node="leaf" data-kind="file" data-bytes="384" data-address="0x020000c4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/village.c">
-<title>3bf · AdvanceStagedActorPair · C: 384 bytes</title>
-<rect x="326.75047520628164" y="228.91009102528585" width="0.3225535680939866" height="1.0577500849187267" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · FindClearActorPosition · C: 404 bytes" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x02000474" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/village.c">
-<title>3bf · FindClearActorPosition · C: 404 bytes</title>
-<rect x="326.75047520628164" y="230.29039467829855" width="0.3225535680939866" height="1.1296409001798053" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · StartDoraHouseAccidentScene · C: 96 bytes" data-node="leaf" data-kind="file" data-bytes="96" data-address="0x020010a8" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/village.c">
-<title>3bf · StartDoraHouseAccidentScene · C: 96 bytes</title>
-<rect x="326.6754674005479" y="231.66758134083864" width="0.4725691795613841" height="0.17253795662658913" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bf · TurnActorToSceneDirection · C: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x02001be4" data-source="games/gs1/src/map/locations/heidia/village/village_scene/village_scene/village.c">
-<title>3bf · TurnActorToSceneDirection · C: 104 bytes</title>
-<rect x="326.68265648207404" y="232.01984633561793" width="0.45819101650916827" height="0.18691611967880492" style="fill:#326b7d"/>
-</g>
-</g>
+<rect x="329.5848997257795" y="234.67391399214262" width="0.802643346084551" height="0.7795440364350155" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

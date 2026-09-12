@@ -294,8 +294,6 @@ extern const u8 gRom5[];
 extern const u8 gRom6[];
 extern const u8 gRom7[];
 
-extern u8 gCellBytes[];
-
 void Motion_SetActionCallback(s8 *object, s32 kind)
 {
     s32 index;
@@ -317,7 +315,7 @@ void Motion_SetActionCallback(s8 *object, s32 kind)
         break;
     case 5:
         index = 250;
-        *(s32 *)(object + 0x68) = Object_GetById(*(u32 *)&((s16 *)gCellBytes)[index]);
+        *(s32 *)(object + 0x68) = Object_GetById(*(u32 *)&((s16 *)&gCell)[index]);
         kind = (s32)gRom6;
         break;
     case 6:

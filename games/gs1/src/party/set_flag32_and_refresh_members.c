@@ -33,7 +33,6 @@ struct OwnerWork {
     u16 inventory[15];
 };
 
-void Owner_RecalculateStats(s32 id);
 s32 FixedPoint_Ratio(s32, s32);
 s32 OwnerAction_Add(s32 id, s32 value);
 
@@ -45,7 +44,7 @@ void Party_ApplyStatePreset(void)
     GameFlag_Clear(33);
     GameFlag_Set(0x901);
     Owner_RefreshDerivedData(5);
-    Owner_RecalculateStats(5);
+    Party_Check(5);
     GameFlag_Clear(0x11b);
     GameFlag_Set(282);
 
@@ -99,7 +98,7 @@ void Party_ApplyStatePreset(void)
         }
 
         Owner_RefreshDerivedData(id);
-        Owner_RecalculateStats(id);
+        Party_Check(id);
     }
 
     OwnerAction_Add(0, 140);

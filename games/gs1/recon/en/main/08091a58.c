@@ -3,6 +3,7 @@
 #include "party_state.h"
 
 extern void *Data_03001ebc;
+extern struct PartyState Data_02000240;
 
 s32 Func_08077008(s32 owner);
 s32 Func_08077020(s32 owner, s32 slot);

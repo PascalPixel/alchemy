@@ -16331,204 +16331,210 @@
     },
     "resource_3bb:02001b30": {
       "name": "initialize_scene_actor_positions",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02001c78": {
       "name": "mark_scene_progress",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02001cc0": {
       "name": "select_nearest_scene_actor",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02001ffc": {
       "name": "run_state_interaction",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
-    "resource_3bb:020020b8": "overlays/scene/state/task/initialize_state_interaction.c",
-    "resource_3bb:02002940": "overlays/scene/state/task/initialize_mode_task.c",
-    "resource_3bb:020029d0": "overlays/scene/state/task/run_scripted_transition.c",
-    "resource_3bb:0200325c": "overlays/scene/state/task/spawn_random_scene_effect.c",
-    "resource_3bb:020032f0": "overlays/scene/state/task/raise_linked_scene_effect.c",
-    "resource_3bb:02003344": "overlays/scene/state/task/position_active_actor.c",
-    "resource_3bb:0200004c": "overlays/scene/state/task/no_op_handler.c",
-    "resource_3bb:02003228": "overlays/scene/state/task/empty_hook_d.c",
+    "resource_3bb:020020b8": "overlays/scene/state/task.c",
+    "resource_3bb:02002940": "overlays/scene/state/task.c",
+    "resource_3bb:020029d0": "overlays/scene/state/task.c",
+    "resource_3bb:0200325c": "overlays/scene/state/task.c",
+    "resource_3bb:020032f0": "overlays/scene/state/task.c",
+    "resource_3bb:02003344": "overlays/scene/state/task.c",
+    "resource_3bb:0200004c": {
+      "name": "Resource3bb_NoOpHandler",
+      "source": "overlays/scene/state/task.c"
+    },
+    "resource_3bb:02003228": {
+      "name": "Resource3bb_EmptyHook",
+      "source": "overlays/scene/state/task.c"
+    },
     "resource_3bb:02003cf8": {
       "name": "SceneActor_FindOccupantAheadOfSubject",
-      "source": "overlays/scene/state/task/actor_search.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020039fc": {
       "name": "FieldScene_BuildDescriptorAndInstallTask",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003080": {
       "name": "SceneEffect_RemoveMarkerTask",
-      "source": "overlays/scene/state/task/effect.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003b90": {
       "name": "StagedActor_PushActorAhead",
-      "source": "overlays/scene/state/task/staged_actor_movement.c"
+      "source": "overlays/scene/state/task.c"
     },
-    "resource_3bb:02000038": "overlays/scene/state/task/get_default_result.c",
+    "resource_3bb:02000038": "overlays/scene/state/task.c",
     "resource_3bb:0200005c": {
       "name": "SceneState_ConfigureRegionByActorElevenColumn",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003b48": {
       "name": "SceneData_FindSlotAtPosition",
-      "source": "overlays/scene/state/task/actor_search.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020006d8": {
       "name": "FieldScene_RunStep16At49By26",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02002380": {
       "name": "OverlayObject_NotifyMatchingEntries",
-      "source": "overlays/scene/state/task/overlay_object.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:0200322c": {
       "name": "SceneState_SetHalfword1000To9",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020002e8": {
       "name": "SceneState_SendWord250With6",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000970": {
       "name": "SceneState_WaitForStatusWords",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003024": {
       "name": "SceneState_StartMarkerMove",
-      "source": "overlays/scene/state/task/scene_motion.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000310": {
       "name": "SceneActor_MovePairByTileOffset",
-      "source": "overlays/scene/state/task/actor_motion.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000050": {
       "name": "FieldScene_RunSingleStep",
-      "source": "overlays/scene/state/task/shared.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020006c4": {
       "name": "FieldScene_RunStep16At45By26",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020000b0": {
       "name": "FieldScene_RunTwoStepSequence",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000150": {
       "name": "SceneState_SetWorkByte35",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000700": {
       "name": "FieldScene_RunStep17At40By25",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020000c0": {
       "name": "SceneState_StoreSlotTileXToWork832To848",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003ae4": {
       "name": "SceneState_InitControlRecordAndStartTask",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02002e64": {
       "name": "SceneState_InitCursorWhenUnset",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020002c0": {
       "name": "FieldScene_SetFlag333AndDrawTiles",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020006b0": {
       "name": "FieldScene_RunStep15At33By26",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000304": {
       "name": "FieldScene_Forward4358",
-      "source": "overlays/scene/state/task/shared.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000044": {
       "name": "SceneData_GetTableC48c",
-      "source": "overlays/scene/state/task/scene_data.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:0200069c": {
       "name": "FieldScene_RunStep15At29By26",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:0200028c": {
       "name": "FieldScene_SetFlag332AndDrawTiles",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000030": {
       "name": "SceneData_GetTableC414",
-      "source": "overlays/scene/state/task/scene_data.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000950": {
       "name": "SceneState_ApplyTable8715AndValue104",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020009b0": {
       "name": "SceneState_InstallTask8714AndApplyTwoRects",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02002e44": {
       "name": "StagedActor_ResetMotionAfterRefresh",
-      "source": "overlays/scene/state/task/staged_actor.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02002fc0": {
       "name": "SceneEffect_SeedMarkerAndInstallTask",
-      "source": "overlays/scene/state/task/seed_marker_and_install_task.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000b30": {
       "name": "SceneData_GetTableC83c",
-      "source": "overlays/scene/state/task/scene_data.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020030a8": {
       "name": "SceneActor_PlaceWithScale20000",
-      "source": "overlays/scene/state/task/actor_position.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020031fc": {
       "name": "Text_WriteU32AsHex",
-      "source": "overlays/scene/state/task/shared.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000258": {
       "name": "SceneState_SetFlag331AndConfigureRegion46_17",
-      "source": "overlays/scene/state/task/scene_state_interaction_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020030e8": {
       "name": "SceneActor_PlaceWithScale14000",
-      "source": "overlays/scene/state/task/actor_position.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003b38": {
       "name": "SceneState_SetWorkHalfwordDc",
-      "source": "overlays/scene/state/task/set_work_halfword_dc.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:0200003c": {
       "name": "SceneData_GetTableC474",
-      "source": "overlays/scene/state/task/scene_data.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02001fb8": {
       "name": "FieldScene_RunSixSteps896To936",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:0200062c": {
       "name": "SceneState_ApplyRectsForActors15To17",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003238": {
       "name": "SceneState_WaitUntilStatusNine",
-      "source": "overlays/scene/state/task/state_update.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020006ec": {
       "name": "FieldScene_RunStep17At40By23",
-      "source": "overlays/scene/state/task/scene_setup.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02001f14": {
       "name": "RunPartyCountInteractionCopyA",
-      "source": "overlays/scene/state/task/party.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020010dc": {
       "name": "FieldScene_ConfigureActorFormation"
@@ -16538,11 +16544,11 @@
     },
     "resource_3bb:02001424": {
       "name": "FieldScene_RunSecondActorInteraction",
-      "source": "overlays/scene/state/task/scene_primary_script_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02001538": {
       "name": "FieldScene_RunSceneThreeCoordinator",
-      "source": "overlays/scene/state/task/run_scene_scene_three_coordinator.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020016d4": {
       "name": "FieldScene_RunLiftedActorCoordinator"
@@ -16552,26 +16558,26 @@
     },
     "resource_3bb:02002adc": {
       "name": "FieldScene_RunLateSequence",
-      "source": "overlays/scene/state/task/run_scene_late_sequence.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02002114": {
       "name": "FieldScene_RunMiddleSequence",
-      "source": "overlays/scene/state/task/run_scene_middle_sequence.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000a1c": {
       "name": "FieldScene_RunOpeningAuxiliarySequence"
     },
     "resource_3bb:02000714": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/state/task/scene_primary_script_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02000b38": {
       "name": "FieldScene_RunScene3bb_02000b38",
-      "source": "overlays/scene/state/task/scene_primary_script_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:020008ec": {
       "name": "FieldScene_RunScene3bbSequenceA",
-      "source": "overlays/scene/state/task/scene_primary_script_head.c"
+      "source": "overlays/scene/state/task.c"
     },
     "resource_3bb:02003638": {
       "name": "FieldScene_RunScene3bbSequenceC"

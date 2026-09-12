@@ -1114,7 +1114,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
 /* shop/sel/confirm.c */
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
-struct ShopCursorAnchor *Sys_RunServicePrice(
+struct ShopCursorAnchor *UiIcon_DrawWithFlags(
     u32 resource,
     u32 flags,
     s32 window,
@@ -1137,7 +1137,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
     {
         s32 shown =
-            *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Sys_CheckServicePrice(unit_id) + 80) + 40));
+            *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Scene_GetRecord(unit_id) + 80) + 40));
         *(u16 *)((u8 *)shop + 0x3a4) = shown;
     }
 
@@ -1150,7 +1150,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
         Sys_SetRect(2, 0, 0, list_window, -4, -4);
     }
 
-    cursor_anchor = Sys_RunServicePrice(
+    cursor_anchor = UiIcon_DrawWithFlags(
         *(u16 *)((u8 *)shop + 0x390),
         0x40000000,
         list_window,

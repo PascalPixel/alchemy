@@ -84,9 +84,9 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     row = 0;
     do {
         if (row == *(s32 *)(state + 16)) {
-            Sys_SetRect(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 14);
+            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 14);
         } else {
-            Sys_SetRect(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 15);
+            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 15);
         }
         row++;
     } while (row <= 4);

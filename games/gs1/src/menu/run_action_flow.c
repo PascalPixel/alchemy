@@ -247,7 +247,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
 
     different = 1 ^ (u32)invert;
     last = 15 - (((0u - different) | different) >> 31);
-    Sys_SetRect(state->object, x, y, width, 1, last);
+    Render_SetTilemapFlagRect(state->object, x, y, width, 1, last);
 }
 
 /* character_menu/draw_selection_labels.c */

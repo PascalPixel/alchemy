@@ -338,7 +338,7 @@ void BattleFx_RunItemBreakSequence(void)
     object = BattleFx_StartItemBreak(object);
     Battle_Do(object);
     if (object != 0) {
-        Battle_ApplyFxGetCycledTableWord(object, 4);
+        Object_SetMode(object, 4);
         WaitFrames(30);
     }
     BattleFx_PrepareBufferInterpolation();

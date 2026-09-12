@@ -17,3 +17,11 @@ void Graphics_ApplyWindowBlendRegisters(void)
     *(u16 *)0x04000050 = *(u16 *)(src + 0x77ca); /* BLDCNT */
     *(u16 *)0x04000052 = *(u16 *)(src + 0x77cc); /* BLDALPHA */
 }
+
+/* graphics/registers/apply_bg2_reference.c */
+void apply_bg2_reference(void)
+{
+    u8 *base = *(u8 **)ADDR_03001EEC;
+    *(u32 *)0x04000028 = *(u32 *)(base + 0x77D0);
+    *(u32 *)0x0400002C = *(u32 *)(base + 0x77D4);
+}

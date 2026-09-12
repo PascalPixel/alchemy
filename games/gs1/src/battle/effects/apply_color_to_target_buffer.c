@@ -23,3 +23,14 @@ void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode)
         Battle_SetMode(value, (s32)buffers, (s32)buffers->buffer_380, mode);
     }
 }
+
+/* battle/effects/buffers/set_primary_value.c */
+void BattleFx_SetPrimaryBufferValue(unsigned int value)
+{
+  s16 *primary_buffer;
+  primary_buffer = *((s16 **)ADDR_03001ED0);
+  if (0 != primary_buffer)
+  {
+    *primary_buffer = value;
+  }
+}

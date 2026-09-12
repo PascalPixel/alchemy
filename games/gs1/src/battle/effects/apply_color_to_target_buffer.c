@@ -34,3 +34,20 @@ void BattleFx_SetPrimaryBufferValue(unsigned int value)
     *primary_buffer = value;
   }
 }
+
+/* battle/effects/interpolate/start_buffer.c */
+void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3);
+
+void BattleFx_StartBufferInterpolation(s32 mode)
+{
+    struct BattleEffectBuffers *buffers = gIw;
+
+    if (buffers != NULL) {
+        buffers->mode_2a01 = mode;
+        buffers->unknown_2a02 = 0;
+        BattleFx_InterpolateBuffers((s16 *)buffers->buffer_380,
+                                        (s16 *)buffers->buffer_e00,
+                                        (s16 *)buffers->buffer_1880,
+                                        mode);
+    }
+}

@@ -71,3 +71,16 @@ s32 find_free_slot(void)
   }
   return free_slot;
 }
+
+/* resource/load_into_free_slot.c */
+s32 Resource_CopyData(s32, s32, s32);
+s32 Resource_FindFreeSlot();
+
+s32 Resource_LoadIntoFreeSlot(s32 arg0)
+{
+    s32 slot;
+
+    slot = Resource_FindFreeSlot();
+    Resource_CopyData(slot, arg0, 0);
+    return slot;
+}

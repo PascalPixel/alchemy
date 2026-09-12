@@ -12,6 +12,8 @@ void *Obj_Run(s32);
 void Object_InitializeMode(void *, s32);
 
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
+void FunctionHead_080ad35c(void);
+void FunctionHead_080ad40c(void);
 
 void FourObjectMotion_InitializeTopRow(void)
 {

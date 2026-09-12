@@ -44,25 +44,3 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
         }
     }
 }
-
-/* battle/effects/obj/update_drifting_fall_object.c */
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
-
-void BattleFx_UpdateDriftingFallObject(void *obj)
-{
-    s32 r;
-
-    FIELD_AT_OFFSET(obj, s32 *, 0xC) = (s32)(FIELD_AT_OFFSET(obj, s32 *, 0xC) + 0xFFFFB334);
-    r = Rand();
-    FIELD_AT_OFFSET(obj, s32 *, 8) = (s32)(FIELD_AT_OFFSET(obj, s32 *, 8) + (r - Rand()));
-    if ((s32)FIELD_AT_OFFSET(obj, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(obj, s32 *, 0x14)) {
-        Object_SetCallback(obj, gRom);
-    }
-}
-
-/* battle/effects/call/call_effect_05.c */
-void BattleFx_CallEffect05(void)
-{
-    Battle_Check();
-}

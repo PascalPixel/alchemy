@@ -9,17 +9,3 @@ void BattleFx_RunPaletteRampMode0(s32 effect)
 {
     RunPaletteRampEffect(effect, 0);
 }
-
-/* battle/effects/palette_ramp/fx_run_palette_ramp_mode1.c */
-
-void BattleFx_RunPaletteRampMode1(s32 effect)
-{
-    RunPaletteRampEffect(effect, 1);
-}
-
-/* battle/effects/palette_ramp/fx_run_palette_ramp_mode2.c */
-
-void BattleFx_RunPaletteRampMode2(s32 effect)
-{
-    RunPaletteRampEffect(effect, 2);
-}

@@ -2670,8 +2670,7 @@
       "name": "GameFlag_DecrementByte"
     },
     "main:08079418": {
-      "name": "GameFlag_GetNibble",
-      "source": "game_flags/get_nibble.c"
+      "name": "GameFlag_GetNibble"
     },
     "main:08079434": {
       "name": "GameFlag_SetNibble"

@@ -3,7 +3,7 @@
 //! from `games/gs1/src` or `games/gs1/include`. The compile plan expands it
 //! into a generated header under `out/`.
 use serde::Deserialize;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::path::Path;
 use std::sync::OnceLock;
 
@@ -98,13 +98,14 @@ pub fn production_bindings(
     register_text: &str,
     source: Option<&Path>,
 ) -> Result<String, String> {
-    let mut text = register_text.to_owned();
-    if !text.is_empty() && !text.ends_with('\n') {
-        text.push('\n');
-    }
+    let reserved = define_names(register_text);
+    let mut text = String::new();
     let manifest = load_gs1()?;
     if !manifest.common.is_empty() {
-        text.push_str(&expand_binding_text(&manifest.common));
+        text.push_str(&filter_reserved_defines(
+            &expand_binding_text(&manifest.common),
+            &reserved,
+        ));
         if !text.ends_with('\n') {
             text.push('\n');
         }
@@ -112,7 +113,10 @@ pub fn production_bindings(
     if let Some(source) = source {
         if let Some(key) = source_key(root, source) {
             if let Some(file) = manifest.files.get(&key) {
-                text.push_str(&expand_binding_text(file));
+                text.push_str(&filter_reserved_defines(
+                    &expand_binding_text(file),
+                    &reserved,
+                ));
                 if !text.ends_with('\n') {
                     text.push('\n');
                 }
@@ -120,6 +124,51 @@ pub fn production_bindings(
         }
     }
     Ok(define_only_bindings(&text))
+}
+
+/// Overlay compile has one `-include` header: register names first, then
+/// recovered aliases that do not override them.
+pub fn with_register(register: &str, recovered: &str) -> String {
+    let mut out = register.to_owned();
+    if !out.is_empty() && !out.ends_with('\n') {
+        out.push('\n');
+    }
+    out.push_str(recovered);
+    out
+}
+
+fn define_names(text: &str) -> HashSet<String> {
+    let mut names = HashSet::new();
+    for line in text.lines() {
+        let trimmed = line.trim_start();
+        if let Some(rest) = trimmed.strip_prefix("#define ") {
+            if let Some(name) = rest.split_whitespace().next() {
+                names.insert(name.split('(').next().unwrap_or(name).to_string());
+            }
+        }
+    }
+    names
+}
+
+fn filter_reserved_defines(text: &str, reserved: &HashSet<String>) -> String {
+    if reserved.is_empty() {
+        return text.to_string();
+    }
+    let mut out = String::with_capacity(text.len());
+    for line in text.lines() {
+        let trimmed = line.trim_start();
+        if let Some(rest) = trimmed.strip_prefix("#define ") {
+            if let Some(name) = rest.split_whitespace().next() {
+                let name = name.split('(').next().unwrap_or(name);
+                if reserved.contains(name) {
+                    continue;
+                }
+            }
+        }
+        out.push_str(line);
+        out.push('\n');
+    }
+    out
 }
 
 /// Prototypes in the manifest mention `u8` / structs before `types.h` is

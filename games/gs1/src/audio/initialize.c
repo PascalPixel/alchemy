@@ -101,12 +101,6 @@ void Audio_PlaySound(u16 audio_cue_id)
 }
 
 /* audio/play/play_sound_if_inactive.c */
-struct SoundTableEntry {
-    u32 header;
-    u16 player;
-    u16 padding;
-};
-
 struct MusicPlayerView {
     u32 song_header;
     s32 status;
@@ -117,8 +111,8 @@ struct MusicPlayerView {
 void Audio_PlaySoundIfInactive(u16 audio_cue_id)
 {
     struct MusicPlayerView **players = RomBytes_080fc624;
-    struct SoundTableEntry *audio_cue_table = RomBytes_080fc684;
-    struct SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
+    SoundTableEntry *audio_cue_table = RomBytes_080fc684;
+    SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
     struct MusicPlayerView *player = players[audio_cue->player * 3];
 
     if (player->song_header != audio_cue->header) {
@@ -133,14 +127,7 @@ void Audio_PlaySoundIfInactive(u16 audio_cue_id)
 }
 
 /* audio/play/play_or_resume_sound.c */
-typedef struct {
-    s32 header;
-    u16 player;
-} SoundTableEntry;
-
-extern SoundTableEntry RomBytes_080fc684[];
-
-void Audio_ResumePlayer(void *player);
+void Audio_ResumePlayer();
 
 void Audio_PlayOrResumeSound(u16 audio_cue_id)
 {
@@ -164,13 +151,7 @@ void Audio_PlayOrResumeSound(u16 audio_cue_id)
 }
 
 /* audio/ctrl/stop_sound.c */
-typedef struct {
-    u32 header;
-    u16 player;
-} SoundTableEntry;
-
 void MusicPlayer_Stop(void *player);
-extern SoundTableEntry RomBytes_080fc684[];
 
 void Audio_StopSound(u16 audio_cue_id)
 {
@@ -184,13 +165,6 @@ void Audio_StopSound(u16 audio_cue_id)
 }
 
 /* audio/ctrl/resume_sound.c */
-typedef struct {
-    u32 header;
-    u16 player;
-} SoundTableEntry;
-
-extern SoundTableEntry RomBytes_080fc684[];
-
 void Audio_ResumeSound(u16 audio_cue_id)
 {
     u32 table_offset = audio_cue_id;
@@ -274,7 +248,6 @@ void MusicPlayer_FadeOut(s32 player, u16 interval)
 
 /* audio/init/initialize_cgb.c */
 
-typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
 typedef void (*CgbUpdateCallback)(void);
 typedef void (*CgbDisableCallback)(u8);
 typedef s32 (*KeyToFrequencyCallback)(s32, s32, s32);

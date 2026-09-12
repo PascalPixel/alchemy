@@ -956,7 +956,7 @@ void Scene_RunScene37a(void)
 }
 
 /* map/locations/sol_shinden/inner_sanctum_scene/scene_sequence_f.c */
-/* Message ids handed to the Map_unk226_2 service; see the header note. */
+/* Message ids handed to the Event_SetValue1d8 service; see the header note. */
 extern u8 gVal3[];
 extern u8 gVal4[];
 extern u8 gVal5[];
@@ -994,7 +994,7 @@ extern u8 gVal6[];
  * Those calls are semantically right; they emit the direct long call instead
  * of this overlay's veneer word, and nothing else about them differs.
  *
- * The four ids handed to the Map_unk226_2 message service are spelled as
+ * The four ids handed to the Event_SetValue1d8 message service are spelled as
  * `Data_00000<id>` externs, the convention the adopted overlay scene scripts
  * already use for this family (see
  * games/gs1/src/overlays/scene/script/run_scene_372_sequence_a.c,
@@ -1025,31 +1025,31 @@ extern u8 gVal6[];
 s32  Map_unk236_2();  /* GameFlag_IsSet */
 s32  Map_unk238_2();  /* Scene_GetRecord */
 s32  Map_unk239_2();  /* Map_unk240_2 */
-s32  Map_unk241_2();  /* Map_unk242_2 */
+s32  Map_unk241_2();  /* Battle_RunEvWait */
 void Map_unk243_2();  /* Scene_RunScene37aSequenceA (0x02000054) */
 void Map_unk244_2();  /* SetSolShindenActorStep (0x020025fc) */
 void Map_unk245_2();  /* Map_unk246_2 */
 void Map_unk247_2();  /* Map_unk248_2 */
-void Map_unk249_2();  /* Map_unk250_2 */
+void Map_unk249_2();  /* Motion_SetSpeed */
 void Map_unk251_2();  /* Map_unk252_2 */
-void Map_unk253_2();  /* Map_unk254_2 */
-void Map_unk255_2();  /* Map_unk226_2 */
-void Map_unk256_2();  /* Map_unk257_2 */
-void Map_unk258_2();  /* Map_unk259_2 */
-void Map_unk260_2();  /* Map_unk261_2 */
+void Map_unk253_2();  /* Object_SetModeById */
+void Map_unk255_2();  /* Event_SetValue1d8 */
+void Map_unk256_2();  /* Motion_SetHPosTerrain */
+void Map_unk258_2();  /* Motion_ArmCb */
+void Map_unk260_2();  /* Motion_Launch */
 void Map_unk262_2();  /* Map_unk263_2 */
-void Map_unk264_2();  /* Map_unk265_2 */
+void Map_unk264_2();  /* BattleFx_SpawnLinked */
 void Map_unk266_2();  /* Audio_PlayCue */
-void Map_unk268_2();  /* Map_unk269_2 */
-void Map_unk270_2();  /* Map_unk271_2 */
-void Map_unk272_2();  /* Map_unk273_2 */
-void Map_unk180_3();  /* Map_unk274_2 */
+void Map_unk268_2();  /* Motion_SetVarCbAndRefresh */
+void Map_unk270_2();  /* Motion_SetModeAndWaitAnimation */
+void Map_unk272_2();  /* ObjectTable_AllocateAndSetObjectSpeed */
+void Map_unk180_3();  /* Motion_CamBounds */
 void Map_unk275_2();  /* Map_unk276_2 */
-void Map_unk277_2();  /* Map_unk278_2 */
+void Map_unk277_2();  /* BattleEv_RunWait */
 void Map_unk231_2();  /* main-image name; collision fallback, see the RESIDUAL note */
-void Map_unk279_2();  /* Map_unk280_2 */
+void Map_unk279_2();  /* Motion_CommitPos */
 void Map_unk281_2();  /* GameFlag_Set */
-void Map_unk283_2();  /* Map_unk284_2 */
+void Map_unk283_2();  /* BattleFx_FinishAction */
 
 void Scene_RunScene37aSequenceF(void)
 {

@@ -246,7 +246,7 @@ void BattleFx_RunParticleReveal(void *object)
 
         if (frame == 8) {
             (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
-            Battle_unk4_2(0x86);
+            BattleEventRuntime_BeginPhase(0x86);
             ObjectGroup_UpdateMembers(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 7, 5, 0, 16);

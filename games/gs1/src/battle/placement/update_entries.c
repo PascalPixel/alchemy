@@ -154,7 +154,3 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
         return (struct BattleSummonState *)state;
     }
 }
-
-void BattleSummon_ReservedNoOp5E10(void)
-{
-}

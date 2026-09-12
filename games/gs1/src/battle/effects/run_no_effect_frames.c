@@ -36,19 +36,19 @@ void BattleFx_InitializeMode(s32 *arg0)
     } else {
         switch (*arg0) {
         case 1:
-            Battle_unk2_2(arg0);
+            BattleFx_RunFallingCircle(arg0);
             break;
         case 2:
             BattleFx_RunEmberShower(arg0);
             break;
         case 3:
-            Battle_unk4_2(arg0);
+            BattleFx_RunMemberSparkRise(arg0);
             break;
         case 4:
             BattleFx_RunStagedParticles(arg0);
             break;
         case 5:
-            Battle_unk6(arg0);
+            BattleFx_RunDitherScene(arg0);
             break;
         case 6:
             FunctionHead(arg0);
@@ -57,10 +57,10 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleFx_RenderAnimationMode0(arg0);
             break;
         case 8:
-            Battle_unk8(arg0);
+            BattleFx_RunRingBurstOrbit(arg0);
             break;
         case 9:
-            Battle_unk9(arg0);
+            BattleFx_RunConcentricRings(arg0);
             break;
         case 10:
             FunctionHead(arg0);

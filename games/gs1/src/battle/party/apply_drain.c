@@ -228,7 +228,7 @@ struct EffectObject {
     u16 reference;
 };
 
-extern struct EffectObject *Battle_RunCheckKind3Result(s32 object);
+extern struct EffectObject *ObjectTable_Get(s32 object);
 extern u8 gCell;
 extern void *gWork;
 
@@ -240,13 +240,13 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
     s32 state_index = 250;
     s32 flags;
     u32 reference =
-        Battle_RunCheckKind3Result(*(u32 *)((s16 *)&gCell + state_index))->reference;
+        ObjectTable_Get(*(u32 *)((s16 *)&gCell + state_index))->reference;
 
     flags = descriptor->flags;
     while (flags != -1) {
         if ((flags & 0xf) == kind && descriptor->value == value &&
             (Battle_ApplyCheckKind3Result(flags, descriptor->result) != 0 ||
-             (Battle_CheckCheckKind3Result(descriptor->condition) != 0 &&
+             (GameFlag_IsConditionActive(descriptor->condition) != 0 &&
               (flags = descriptor->flags, 1)))) {
             s32 accepted = 0;
             s32 threshold = 12;
@@ -371,7 +371,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                 return -1;
             }
             if (descriptor->result >= 0x10000) {
-                s32 index = Battle_CheckFindWithOverride(id);
+                s32 index = BattleFx_GetFlags(id);
                 u32 random = random_16();
                 s32 message =
                     0x0e0b + index * 2 + (random * 2 >> 16);

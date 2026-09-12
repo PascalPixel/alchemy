@@ -46,7 +46,3 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
                 upper_frequency - lower_frequency,
                 pitch_scale));
 }
-
-void Audio_NoopStub(void)
-{
-}

@@ -380,7 +380,7 @@ struct Record_080797fc {
     u8 values[148];
 };
 
-struct Record_080797fc *Sys_Run(s32);
+struct Record_080797fc *Owner_GetRecordStride180(s32);
 #include "preset_table.h"
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
@@ -410,7 +410,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
         if (record <= 7) {
             for (i = 0; i <= 3; i++) {
-                *output += Sys_Run(record)->values[144 + i];
+                *output += Owner_GetRecordStride180(record)->values[144 + i];
                 output++;
             }
         }
@@ -554,8 +554,6 @@ struct OwnerDerivedState {
     u8 value_128;
     s8 value_129;
 };
-
-u32 Owner_BuildDigitTiles(s32, void *);
 
 void Owner_RefreshDerivedData(s32 owner_no)
 {

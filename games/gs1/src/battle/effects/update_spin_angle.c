@@ -132,6 +132,7 @@ struct BattleEffect16GlobalState {
 };
 
 extern struct BattleEffect16GlobalState gCell;
+void apply_random_child_values(void);
 
 void BattleFx_RunEffect15(void)
 {

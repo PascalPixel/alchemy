@@ -444,7 +444,7 @@
       "source": "resource/decompress_lz.c"
     },
     "main:0800b8ac": {
-      "name": "register"
+      "name": "FunctionHead_0800b8ac"
     },
     "main:0800b93c": {
       "name": "unregister"

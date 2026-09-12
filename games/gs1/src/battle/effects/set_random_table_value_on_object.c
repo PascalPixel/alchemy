@@ -27,7 +27,8 @@ struct GlobalState {
     u32 saved_callback;
 };
 
-extern u8 gCell[];
+extern struct GlobalState gCell;
+void Battle_Run(void);
 
 void BattleFx_PauseObject(s32 arg0)
 {
@@ -58,10 +59,9 @@ void BattleFx_ResumeObject(void)
     u8 *object = ObjectTable_Get();
     if (object != 0) {
         if (*(void (**)(void))(object + 0x6C) == Battle_Run) {
-            u8 *state = gCell;
-            *(s32 *)(object + 0x6C) = *(s32 *)(state + 0x250);
-            *(s32 *)(state + 0x250) = 0;
-            Battle_Apply(object, *(s8 *)(state + 0x249));
+            *(s32 *)(object + 0x6C) = gCell.saved_callback;
+            gCell.saved_callback = 0;
+            Battle_Apply(object, gCell.saved_byte);
         }
         object[0x5B] = 0;
         Object_SetAction(object, 16);

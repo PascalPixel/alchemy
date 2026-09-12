@@ -7,8 +7,8 @@
 struct OwnerActionState;
 
 /*
- * Data_03001f2c is a polymorphic menu-runtime cell.  This view belongs to the
- * Psynergy menu; keep it separate from InventoryMenuState even where the two
+ * The menu-runtime cell is polymorphic.  This view belongs to the
+ * Psynergy menu; keep it separate from ItemMenuState even where the two
  * modes deliberately share field offsets.
  */
 struct PsynergyMenuIcon {
@@ -46,7 +46,7 @@ struct PsynergyMenuState {
     s8 selected_index_by_owner[8];  /* 0x260 */
 };
 
-/* Data_02000240 is likewise mode-owned while the Psynergy menu is active. */
+/* The shared cell is likewise mode-owned while the Psynergy menu is active. */
 struct PsynergyMenuGlobalState {
     u8 unknown_000[0x220];
     u16 psynergy_shortcuts[2];      /* 0x220 */
@@ -138,39 +138,24 @@ LAYOUT_OFFSET_GUARD(
     psynergy_shortcuts,
     0x220);
 
-extern struct PsynergyMenuState *Data_03001f2c;
-extern struct PsynergyMenuGlobalState Data_02000240;
 extern char Value_00000af2;
 
-s32 Func_080a5fe0(void);
-void Func_080a6384(s32 owner);
-s32 Func_080a63dc(void);
-s32 Func_080a65e4(s32 owner, s32 psynergy, s32 shortcut);
-void Func_080a6794(void);
-void Func_080a6874(void);
-void Func_080a68a8(u16 *psynergies);
-u8 Func_080a68ec(struct OwnerActionState *owner, u16 *actions, s32 mode);
-s32 Func_080a6a00(struct MenuResult *result, s32 owner_index);
-s32 Func_080a735c(s32 encoded_action);
-void Func_080a9374(s32 unused, s32 owner);
-void Func_080a939c(void);
-
 /* Shared icon-grid helper used by both inventory and Psynergy menu modes. */
-void Func_080a3d24(const u16 *entries);
-#define Menu_HideEmptyEntryIcons Func_080a3d24
 
-#define PsynergyMenu_ClassifySelectedPsynergy Func_080a5fe0
-#define PsynergyMenu_RefreshOwnerPsynergy      Func_080a6384
-#define PsynergyMenu_ReturnTrue                Func_080a63dc
-#define PsynergyMenu_SetShortcut               Func_080a65e4
-#define PsynergyMenu_CreateEntryGrid           Func_080a6794
-#define PsynergyMenu_CloseWindows              Func_080a6874
-#define PsynergyMenu_DrawPsynergyIcons         Func_080a68a8
-#define PsynergyMenu_CollectActions            Func_080a68ec
-#define PsynergyMenu_BuildPageResult           Func_080a6a00
-#define PsynergyMenu_IsActionRestricted        Func_080a735c
-#define PsynergyMenu_DrawPreparedPsynergyIcons Func_080a9374
-#define PsynergyMenu_PreparedIconsNoOp         Func_080a939c
 #define PsynergyMenu_EmptyMessage              Value_00000af2
+
+s32 PsynergyMenu_ClassifySelectedPsynergy(void);
+void PsynergyMenu_RefreshOwnerPsynergy(s32 owner);
+s32 PsynergyMenu_ReturnTrue(void);
+s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
+void PsynergyMenu_CreateEntryGrid(void);
+void PsynergyMenu_CloseWindows(void);
+void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
+u8 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s32 mode);
+s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 owner_index);
+s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
+void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner);
+void PsynergyMenu_PreparedIconsNoOp(void);
+void Menu_HideEmptyEntryIcons(const u16 *entries);
 
 #endif

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "gs1_edition.h"
 
 #if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || \
@@ -11,13 +12,11 @@
 #endif
 
 void *Runtime_BumpAllocateAlternatePool(s32);
-void Func_08002df0(void *);
-void Func_08006488(void);
-s32 Func_08006408(void);
+
 void WaitFrames(s32);
 u8 *Runtime_GetObject(s32);
-void *Func_08077000(s32);
-void Func_08015020(s32, u16 *);
+void *Party_Run(s32);
+
 extern char Value_0000080c;
 
 s32 UpdateNameEntries(void)
@@ -35,15 +34,15 @@ s32 UpdateNameEntries(void)
     index = 0;
     while (index <= 2) {
         name_entry = Runtime_GetObject(index + 128);
-        if (Func_08006408() == -1) {
+        if (Party_Check() == -1) {
             break;
         }
-        Func_08006488();
+        SerialRuntime_WaitForTransferB();
         if (name_entry[298] != 0) {
             named_count += 1;
         }
         WaitFrames(2);
-        Func_08015020((s32)&Value_0000080c, name_text);
+        Party_Apply((s32)&Value_0000080c, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {
@@ -67,13 +66,13 @@ s32 UpdateNameEntries(void)
         name_entry[14] = 0;
         index += 1;
     }
-    Func_08002df0(buffer);
+    Party_Do(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(320);
-    Func_08077000(1);
-    if (Func_08006408() != -1) {
-        Func_08006488();
+    Party_Run(1);
+    if (Party_Check() != -1) {
+        SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }
-    Func_08002df0(buffer);
+    Party_Do(buffer);
     return named_count;
 }

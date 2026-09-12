@@ -215,7 +215,15 @@ pub fn compile_overlay_c(
         assembly.clone(),
     );
     options.preprocessed_output = Some(at(&format!("{stem}.i")));
-    let binding_text = source_paths.symbol_bindings(Some(overlay));
+    let register = source_paths.symbol_bindings(Some(overlay));
+    let binding_text = crate::compiler::source_bindings::with_register(
+        &register,
+        &crate::compiler::source_bindings::production_bindings(
+            &root(),
+            &register,
+            Some(Path::new(&source_display)),
+        )?,
+    );
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
     options.support_flags = extra_flags.to_vec();
@@ -332,7 +340,15 @@ fn compile_overlay_unit(
             .preprocessor_flags
             .push(format!("-DGS1_EDITION_{}=1", edition.to_ascii_uppercase()));
     }
-    let binding_text = names.symbol_bindings(Some(overlay));
+    let register = names.symbol_bindings(Some(overlay));
+    let binding_text = crate::compiler::source_bindings::with_register(
+        &register,
+        &crate::compiler::source_bindings::production_bindings(
+            &root(),
+            &register,
+            Some(source.as_path()),
+        )?,
+    );
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options
         .preprocessor_flags

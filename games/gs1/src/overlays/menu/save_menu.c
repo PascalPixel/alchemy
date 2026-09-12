@@ -1,11 +1,6 @@
 #include "types.h"
+#include "scene.h"
 
-#define SceneData_GetScriptTable Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetMessageTable Func_0200003c
-#define SceneData_GetActorTable Func_02000044
-#define SceneData_GetEffectTable Func_0200004c
-#define SceneData_GetBufferCrc16 Func_020012c8
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
  * the returned table address 0x02009658.

@@ -13,6 +13,4 @@ struct PresetValues {
     s32 values[4];
 };
 
-extern const struct PresetValues Data_08088e38[44];
-
 #endif

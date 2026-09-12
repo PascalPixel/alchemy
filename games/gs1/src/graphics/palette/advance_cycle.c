@@ -1,7 +1,6 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct State080c1084 {
     u8 padding_000[0x64e];
@@ -9,7 +8,7 @@ struct State080c1084 {
     u16 field_650;
 };
 
-extern s8 Data_080c5c10[];
+extern s8 gRom[];
 
 void Graphics_AdvancePaletteCycle(void)
 {
@@ -23,7 +22,7 @@ void Graphics_AdvancePaletteCycle(void)
     if ((state != NULL) && (state->field_650 != 0)) {
         FIELD_AT_OFFSET((void *)0x04000050, s16 *, 0) = 0x3F90;
         FIELD_AT_OFFSET((void *)0x04000050, s16 *, 2) = 0x10;
-        table = Data_080c5c10;
+        table = gRom;
         *(s16 *)0x04000054 = table[state->index];
         index = state->index;
         next = (index + 1) & 0xF;

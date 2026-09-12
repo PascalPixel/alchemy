@@ -1,10 +1,14 @@
 #include "types.h"
+#include "scene.h"
+#include "object_dispatch.h"
+#include "object_commands.h"
 
-extern u8 *Data_03001e64;
+/* object/dispatch/find_free_object.c */
+extern u8 *gIw;
 
 void *ObjectDispatch_FindFreeObject(void)
 {
-    u8 *entry = Data_03001e64;
+    u8 *entry = gIw;
     void *ret = 0;
     s32 index = 0;
 

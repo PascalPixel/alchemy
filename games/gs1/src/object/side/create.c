@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "gs1_edition.h"
 
 struct SideObjectRegistry {
@@ -28,18 +29,18 @@ struct SideObject {
     u8 slot_19;
 };
 
-extern struct SideObjectRegistry *Data_03001e8c;
+extern struct SideObjectRegistry *gIw;
 
 extern s32 GameFlag_IsSet(s32);
 extern s32 Localization_LookupEntryId(s32);
-extern void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
-extern struct SideObject *Func_0801eadc(
+
+extern struct SideObject *RenderOutput_Create(
     s32, s32, s32, s32, s32);
 
 struct SideObject *CreateSideObject(
     s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
-    struct SideObjectRegistry *state = Data_03001e8c;
+    struct SideObjectRegistry *state = gIw;
     struct SideObject *object = 0;
     s32 first;
     s32 second;
@@ -67,8 +68,8 @@ struct SideObject *CreateSideObject(
     }
 
     slot = 14 + side;
-    Func_0801a4fc(id, position, &first, &second, slot, 0);
-    object = Func_0801eadc(first, 0x80000000, arg3, arg4, arg5);
+    Obj_SetRect(id, position, &first, &second, slot, 0);
+    object = RenderOutput_Create(first, 0x80000000, arg3, arg4, arg5);
     if (object != 0) {
         s32 slotBits = slot << 4;
 

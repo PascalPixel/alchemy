@@ -1,11 +1,25 @@
 #include "types.h"
+#include "scene.h"
+#include "global_cells.h"
 
+/* runtime/memory/schedule_callback_and_release_block_32_a.c */
 s32 ScheduleCallback(s32);
-s32 Func_08002dd8(s32);
-extern u8 Data_080f2f11;
+
+extern u8 gRom;
 
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
-    ScheduleCallback((s32)&Data_080f2f11);
-    Func_08002dd8(0x20);
+    ScheduleCallback((s32)&gRom);
+    Sys_Check(0x20);
+}
+
+/* graphics/color/transform_large_palette.c */
+s32 Graphics_TransformPaletteBuffer(s32, void *, void *, s32);
+
+void Graphics_TransformLargePalette(s32 arg0, s32 arg1)
+{
+    void *target = *(void **)ADDR_03001ED0;
+    if (target != NULL) {
+        Graphics_TransformPaletteBuffer(arg0, target, (u8 *)target + 0x1000, arg1);
+    }
 }

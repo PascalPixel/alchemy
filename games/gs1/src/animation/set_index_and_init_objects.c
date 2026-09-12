@@ -1,6 +1,5 @@
 #include "types.h"
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "scene.h"
 
 struct State_0800b7c0;
 

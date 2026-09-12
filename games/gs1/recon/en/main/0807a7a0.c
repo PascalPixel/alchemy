@@ -3,6 +3,7 @@
 #include "psynergy_menu.h"
 
 extern u16 Data_02001078[];
+extern struct PsynergyMenuGlobalState Data_02000240;
 
 #define InventorySnapshot_Restore Func_0807a7a0
 

@@ -1,6 +1,9 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
+#include "global_cells.h"
 
+/* ui/icon/find_next_number_with_metadata.c */
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
     s32 value = start;
@@ -19,7 +22,7 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
                 continue;
             }
         }
-        if (*(u8 *)Func_08185000(value)) {
+        if (*(u8 *)Ui_Run(value)) {
             return value;
         }
     }

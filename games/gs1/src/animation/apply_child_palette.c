@@ -1,3 +1,4 @@
+#include "scene.h"
 #include "effect_runtime.h"
 
 struct Item0808e0b0 {
@@ -21,8 +22,8 @@ struct Outer0808e0b0 {
     u8 mode;
 };
 
-extern u32 Data_03001e40;
-extern u8 Data_0809e6b8[];
+extern u32 gIw;
+extern u8 gRom[];
 
 void Animation_ApplyChildPalette(struct Outer0808e0b0 *obj, s32 palette)
 {
@@ -37,7 +38,7 @@ void Animation_ApplyChildPalette(struct Outer0808e0b0 *obj, s32 palette)
         state = obj->state;
         replacement = palette - 1;
         if (palette == 0)
-            replacement = Data_0809e6b8[(Data_03001e40 >> 1) & 7];
+            replacement = gRom[(gIw >> 1) & 7];
 
         n = state->cnt;
         if (n != 0) {

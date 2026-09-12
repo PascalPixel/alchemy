@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "sound_ids.h"
 
 #define COUNTDOWN_START_FRAMES 900
@@ -37,21 +38,20 @@ struct LinkRuntimeState {
     u8 paused;
 };
 
-extern struct LinkCountdownState *Data_03001f34;
-extern struct LinkRuntimeState *Data_03001e74;
-extern struct LinkSignature Data_02002024[];
+extern struct LinkCountdownState *gIw;
+extern struct LinkRuntimeState *gBattleWork;
+extern struct LinkSignature gOv[];
 
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
-void Func_080219c8(s32 destination);
-s32 Func_08021c34(void);
+
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
-void Func_080b50d0(s32 offset);
+
 void Audio_PlayCue(s32 soundId);
 
 void UpdateLinkSessionCountdown(void)
 {
-    struct LinkCountdownState *state = Data_03001f34;
+    struct LinkCountdownState *state = gIw;
     struct LinkRuntimeState *runtime;
     struct CountdownDisplayEntry *entry;
     u8 *active;
@@ -79,7 +79,7 @@ void UpdateLinkSessionCountdown(void)
             }
             newOffset = current + step;
             state->currentOffset = newOffset;
-            Func_080b50d0(newOffset);
+            Sys_Do(newOffset);
         }
 
         entry = state->entries;
@@ -91,12 +91,12 @@ void UpdateLinkSessionCountdown(void)
             i--;
             entry++;
         } while (i >= 0);
-        Func_080219c8(0x06006680);
+        Link_DrawShiftedTilePair(0x06006680);
 
         if (state->enabled == 0)
             goto done;
 
-        runtime = Data_03001e74;
+        runtime = gBattleWork;
         if (runtime->paused == 0)
             goto load_timer;
         state->timer = 0;
@@ -115,7 +115,7 @@ load_timer:
         timer = state->timer;
         if (timer >= 0)
             goto timer_ready;
-        signature = &Data_02002024[runtime->side ^ 1];
+        signature = &gOv[runtime->side ^ 1];
         if (signature->e != 'E')
             goto signature_done;
         if (signature->d == 'D')
@@ -127,7 +127,7 @@ signature_done:
 
 timer_ready:
         if (state->displayHandle == 0 && state->secondaryHandle == 0) {
-            state->displayHandle = Func_08021c34();
+            state->displayHandle = Sys_Check();
             timer = state->timer;
         }
 

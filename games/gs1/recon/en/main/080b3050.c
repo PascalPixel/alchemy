@@ -30,7 +30,7 @@ void Func_08004278(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
 void Func_080b0894(void);
 void Func_080b2ffc(void);
-void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect);
+void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 Data_080b4ab2[];
 
@@ -65,7 +65,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
     do {
         Func_0808a528(effect, 0x11c, position.x, position.z);
-        Func_0808a520(effect, BattleEffect_UpdateRadialMotion);
+        Func_0808a520(effect, BattleFx_UpdateRadialMotion);
         Func_0808a518(effect, 7);
         Func_08009248(
             *(s32 *)((u8 *)effect + 0),

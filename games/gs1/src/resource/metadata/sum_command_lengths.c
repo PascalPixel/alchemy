@@ -1,5 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "scene.h"
 
 struct EventInfo {
     u8 pad0[5];
@@ -16,7 +17,7 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
     u8 val;
     s32 sum = 0;
 
-    info = Func_08185000(id);
+    info = Sys_Run(id);
     if (no >= info->count) {
         return 0;
     }

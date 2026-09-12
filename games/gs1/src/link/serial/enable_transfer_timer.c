@@ -1,7 +1,8 @@
 #include "types.h"
+#include "scene.h"
+#include "global_cells.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
+/* link/serial/enable_transfer_timer.c */
 void SerialRuntime_EnableTransferTimer(void)
 {
     s32 state = 0x02002240;

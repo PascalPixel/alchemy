@@ -18,7 +18,7 @@
  *    games/gs1/include/four_object_motion.h; the fields this owner touches
  *    (0x134, 0x178, 0x184, 0x21a, 0x254..0x258) extend past that struct, so
  *    the file uses the FIELD_AT_OFFSET idiom of its exact sibling
- *    games/gs1/src/menu/run_paired_entry_action.c instead of inventing a type.
+ *    games/gs1/src/menu/sel/run_paired_entry_action.c instead of inventing a type.
  *  - the reference reaches the fixed IWRAM entry at 0x03000118 with the
  *    "mov ip, pc / bx rN" inline-call idiom, which the approved GCC 2.96 route
  *    has no way to emit. It is modelled here as an ordinary typed indirect
@@ -76,7 +76,7 @@ s32 UiWork_IsCompleteFar(void);
 
 void Runtime_SetMainState19(void);
 void Menu_RunPairedEntryAction(s32, s32);
-void BattleEffect_PositionSprite(s32, s32);
+void BattleFx_PositionSprite(s32, s32);
 s32 OwnerAction_DiffSlots(void *, void *, void *, s32 *, s32 *);
 void FourObjectMotion_SetSlotPhase(s32, s32);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
@@ -501,7 +501,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             dirty = 0;
             anim = Menu_GetModuloOfSum(anim, 2);
         }
-        BattleEffect_PositionSprite(anim * 56 + 80, 16);
+        BattleFx_PositionSprite(anim * 56 + 80, 16);
 
         if ((frame & 3) == 0) {
             if ((frame & 4) != 0) {

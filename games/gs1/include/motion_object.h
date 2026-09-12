@@ -4,7 +4,7 @@
 #include "types.h"
 
 /*
- * Shared 0x70-byte object used by the motion engine around Func_0800d14c.
+ * Shared 0x70-byte object used by the motion engine.
  * Only fields whose roles are established by multiple callers are named.
  */
 struct MotionObject {
@@ -47,16 +47,9 @@ struct BattleObjectSlot {
 };
 
 /* Raw linker spellings stay here; reconstructed APIs are used by C bodies. */
-struct BattleObjectSlot *Func_080b7dd0(s32 object_id);
 void ReleaseBattleObjectRecords(s32 object_id);
 void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
-s32 Func_080b7e60(s32 object_id);
-void *Func_080b7f70(struct MotionObject *object, s32 record_index);
-
-#define GetBattleObjectSlot Func_080b7dd0
-#define ActivateBattleObjectSlot Func_080b7e60
-#define GetMotionRecord Func_080b7f70
 
 #define MOTION_OBJECT_OFFSET(type, field) \
     ((u32)&(((type *)0)->field))
@@ -93,5 +86,8 @@ typedef char BattleObjectSlot_active_offset[
 ];
 
 #undef MOTION_OBJECT_OFFSET
+
+s32 ActivateBattleObjectSlot(s32 object_id);
+void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #endif

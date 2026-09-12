@@ -111,7 +111,7 @@ pub fn compile_source(
     let bindings = resolve_against_cwd(assembly, cwd).with_extension("bindings.h");
     write(
         &bindings.to_string_lossy(),
-        source_symbol_bindings(root(), routing_source, compiler)?.as_bytes(),
+        production_symbol_bindings(root(), routing_source, source, compiler)?.as_bytes(),
     )?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
     options.support_flags = extra_flags.to_vec();
@@ -136,6 +136,23 @@ pub fn source_symbol_bindings(
         .and_then(SourceOwner::overlay_id);
     Ok(SourcePaths::load_for_game(repository, compiler.as_str())?
         .symbol_bindings(overlay.as_deref()))
+}
+/// Register names plus the per-source address map for one production file.
+pub fn production_symbol_bindings(
+    repository: &Path,
+    routing_source: &str,
+    production_source: &str,
+    compiler: CompilerTarget,
+) -> Result<String, String> {
+    let register = source_symbol_bindings(repository, routing_source, compiler)?;
+    Ok(crate::compiler::source_bindings::with_register(
+        &register,
+        &crate::compiler::source_bindings::production_bindings(
+            repository,
+            &register,
+            Some(Path::new(production_source)),
+        )?,
+    ))
 }
 fn resolve_against_cwd(path: &str, cwd: &Path) -> PathBuf {
     let path = Path::new(path);

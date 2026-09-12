@@ -1,5 +1,11 @@
 #include "types.h"
+#include "scene.h"
+#include "battle_party.h"
+#include "battle_runtime.h"
+#include "global_cells.h"
 
+/* battle/pres_wait_sync.c */
+/* battle/presentation/misc/wait_sync.c */
 struct LinkWork {
     u8 pad0[0x44];
     u8 enabled;
@@ -14,7 +20,7 @@ struct LinkWork {
 #define LINK_LOCAL ((u16 *)0x02002224)
 #define LINK_STAT (*(u16 *)0x03001f64)
 
-s32 BattlePresentation_WaitSync(void)
+s32 BattlePres_WaitSync(void)
 {
     struct LinkWork *work = LINK_WORK;
     u16 *peer;

@@ -1,5 +1,6 @@
 #include "types.h"
 
+/* battle/effects/set/set_block30_values_max_zero.c */
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 struct Fields_08095214 {
@@ -8,9 +9,17 @@ struct Fields_08095214 {
     u16 field_1f82;
 };
 
-void BattleEffect_SetBlock30ValuesMaxZero(void)
+void BattleFx_SetBlock30ValuesMaxZero(void)
 {
     struct Fields_08095214 *state = (struct Fields_08095214 *)Runtime_AllocateBlock(30, 0x1F88);
     state->field_1f80 = 0x7FFF;
+    state->field_1f82 = 0;
+}
+
+/* battle/effects/set/set_block30_values_12_zero.c */
+void BattleFx_SetBlock30Values12Zero(void)
+{
+    struct Fields_08095214 *state = (struct Fields_08095214 *)Runtime_AllocateBlock(30, 0x1F88);
+    state->field_1f80 = 12;
     state->field_1f82 = 0;
 }

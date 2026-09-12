@@ -1,15 +1,18 @@
 #include "types.h"
+#include "scene.h"
+#include "global_cells.h"
 
+/* object/table/find_last_active_id.c */
 struct State_0808b824 {
     u8 padding[0x34];
     s32 values[58];
 };
 
-extern struct State_0808b824 *Data_03001ebc;
+extern struct State_0808b824 *gWork;
 
 s32 ObjectTable_FindLastActiveId(void)
 {
-    struct State_0808b824 *state = Data_03001ebc;
+    struct State_0808b824 *state = gWork;
     s32 result = 7;
     s32 index = 8;
     s32 *value = state->values;
@@ -27,4 +30,10 @@ s32 ObjectTable_FindLastActiveId(void)
         result = -1;
     }
     return result;
+}
+
+/* object/table/get_slot_address.c */
+void *ObjectTable_GetSlotAddress(u32 index)
+{
+    return *(u8 **)ADDR_03001EBC + index * 4 + 20;
 }

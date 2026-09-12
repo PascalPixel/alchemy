@@ -3,8 +3,6 @@
 
 #include "types.h"
 
-s32 Func_080b874c(s16 *action);
-
-#define BattlePresentation_RunAction Func_080b874c
+s32 BattlePresentation_RunAction(s16 *action);
 
 #endif

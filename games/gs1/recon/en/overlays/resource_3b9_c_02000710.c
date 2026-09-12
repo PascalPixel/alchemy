@@ -1,8 +1,8 @@
 #include "types.h"
 
-#define FieldScene_RunBranchingActorPresentation Func_02000710
+#define Scene_RunBranchingActorPresentation Func_02000710
 
-/* FieldScene_RunBranchingActorPresentation - resource_3b9:02000710, 1724 bytes.
+/* Scene_RunBranchingActorPresentation - resource_3b9:02000710, 1724 bytes.
  *
  * One field-scene presentation script guarded by a single flag query. When the
  * flag is clear the routine returns at once. Otherwise it resets the battle
@@ -45,7 +45,7 @@ extern u8 Data_0200ade4[];
 
 /* Shared scene work record, reached through the pointer at 0x03001ebc. The two
  * field offsets are the ones the adopted sibling
- * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c
+ * games/gs1/src/overlays/scene/script/run_scene_3b9_conditional_scene_setup.c
  * already spells. */
 
 extern u8 Data_03001ebc[];
@@ -81,13 +81,13 @@ static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
  *
  * Readable names are reading aids, not recovered spellings. Ten come from the
  * adopted source
- * games/gs1/src/overlays/scene_primary_script/run_scene_3b9_conditional_scene_setup.c,
+ * games/gs1/src/overlays/scene/script/run_scene_3b9_conditional_scene_setup.c,
  * which reaches the same veneer table; twelve more come from the sibling draft
  * games/gs1/recon/en/overlays/resource_3b9_c_02001cd4.c, which documents the
  * same veneer-to-main pairs but is itself unadopted; and the two overlay-local
  * targets carry the names alchemy inspect prints for them. The veneer at
  * 0x0200ac14 is left unnamed on purpose: that sibling draft calls it
- * ObjectMotion_SetSpeedParameters, which the adopted source already uses for a
+ * Motion_SetSpeed, which the adopted source already uses for a
  * different main entry (0x0808a370), so one of the two spellings is wrong and
  * this owner does not pick a side. Eight targets nobody has named keep their
  * alias.
@@ -95,10 +95,10 @@ static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
 
 /* overlay 0x02001c48, runtime 0x02009c48, 18 sites */
 void Func_02002410();
-#define FieldScene_CallPairWith10 Func_02002410
+#define Scene_CallPairWith10 Func_02002410
 /* overlay 0x02001c5c, runtime 0x02009c5c, 8 sites */
 void Func_0200244a();
-#define SceneState_ForwardMaskedHalfwordWith10 Func_0200244a
+#define State_ForwardMaskedHalfwordWith10 Func_0200244a
 /* veneer 0x0200abbc -> main 0x080770c0, 1 site */
 s32 Func_020032d2();
 #define GameFlag_IsSet Func_020032d2
@@ -106,13 +106,13 @@ s32 Func_020032d2();
 void Data_0200abc4();
 /* veneer 0x0200abec -> main 0x0808a010, 17 sites */
 void Func_020033a2();
-#define BattleRuntime_WaitIfModeZero Func_020033a2
+#define Battle_WaitMode0 Func_020033a2
 /* veneer 0x0200abf4 -> main 0x0808a018, 1 site */
 void Func_02003314();
-#define BattleRuntime_Reset Func_02003314
+#define Battle_Reset Func_02003314
 /* veneer 0x0200abfc -> main 0x0808a020, 1 site */
 void Func_020039a2();
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate Func_020039a2
+#define Battle_SchedShoulder Func_020039a2
 /* veneer 0x0200ac04 -> main 0x0808a070, 2 sites */
 s32 Func_02003634();
 #define UiWork_WaitThenFinalizeCapacity Func_02003634
@@ -122,31 +122,31 @@ s32 Func_02003548();
 void Func_0200351e();
 /* veneer 0x0200ac1c -> main 0x0808a098, 11 sites */
 void Func_02003668();
-#define ObjectMotion_EnableActionAndSetCallback Func_02003668
+#define Motion_EnableActCb Func_02003668
 /* veneer 0x0200ac2c -> main 0x0808a0b0, 4 sites */
 void Func_02003688();
-#define ObjectMotion_MarkActiveAndSetActionCallback Func_02003688
+#define Motion_MarkActiveAndSetActionCallback Func_02003688
 /* veneer 0x0200ac44 -> main 0x0808a0c8, 2 sites */
 void Func_020035ca();
-#define ObjectMotion_ResetAndSetPositionInMode2 Func_020035ca
+#define Motion_ResetPosMode2 Func_020035ca
 /* veneer 0x0200ac4c -> main 0x0808a0d0, 4 sites */
 void Func_0200354c();
-#define ObjectMotion_SetPositionAndReset Func_0200354c
+#define Motion_SetPosReset Func_0200354c
 /* veneer 0x0200ac54 -> main 0x0808a0f0, 3 sites */
 void Func_020035b2();
-#define ObjectMotion_SetHorizontalPositionWithTerrain Func_020035b2
+#define Motion_SetHPosTerrain Func_020035b2
 /* veneer 0x0200ac5c -> main 0x0808a100, 10 sites */
 void Func_02003510();
 #define Object_SetModeById Func_02003510
 /* veneer 0x0200ac6c -> main 0x0808a110, 11 sites */
 void Func_0200343c();
-#define ObjectMotion_CallThenWaitForAnimationChange Func_0200343c
+#define Motion_CallWaitAnim Func_0200343c
 /* veneer 0x0200ac74 -> main 0x0808a130, 6 sites */
 void Func_020033d8();
-#define ObjectMotion_SetVariantCallback Func_020033d8
+#define Motion_SetVarCb Func_020033d8
 /* veneer 0x0200ac7c -> main 0x0808a138, 8 sites */
 void Func_020033a4();
-#define ObjectMotion_SetVariantCallbackAndInvokeObject Func_020033a4
+#define Motion_SetVarCbObj Func_020033a4
 /* veneer 0x0200ac94 -> main 0x0808a170, 1 site */
 void Data_0200ac94();
 #define SceneWork_SetStepValue Data_0200ac94
@@ -156,18 +156,18 @@ void Func_020036ac();
 void Func_020034c4();
 /* veneer 0x0200acbc -> main 0x0808a1b8, 21 sites */
 void Func_020033fa();
-#define ObjectMotion_ArmCallback Func_020033fa
+#define Motion_ArmCb Func_020033fa
 /* veneer 0x0200acc4 -> main 0x0808a1e8, 10 sites */
 void Func_02003486();
-#define BattleEffect_SpawnLinkedResourceObject Func_02003486
+#define BattleFx_SpawnLinked Func_02003486
 /* veneer 0x0200accc -> main 0x0808a1f0, 1 site */
 void Func_020034ac();
 /* veneer 0x0200acdc -> main 0x0808a208, 4 sites */
 void Func_02003476();
-#define ObjectMotion_SetSpeedLimitAndAcceleration Func_02003476
+#define Motion_SetSpeedLim Func_02003476
 /* veneer 0x0200ace4 -> main 0x0808a210, 4 sites */
 void Func_0200375a();
-#define ObjectMotion_PlaceWithinCameraBounds Func_0200375a
+#define Motion_CamBounds Func_0200375a
 /* veneer 0x0200acec -> main 0x0808a218, 1 site */
 void Data_0200acec();
 #define Object_CommitPositionThenWaitIfModeZero Data_0200acec
@@ -180,7 +180,7 @@ void Func_02003a98();
 void Func_020039be();
 /* veneer 0x0200ad2c -> main 0x0808a370, 2 sites */
 void Func_020039ca();
-#define ObjectMotion_SetSpeedParameters Func_020039ca
+#define Motion_SetSpeed Func_020039ca
 
 /* A call site spelled through one of these wrappers passes its constants
  * straight into the argument registers; a direct call lets the compiler
@@ -224,7 +224,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void FieldScene_RunBranchingActorPresentation(void)
+void Scene_RunBranchingActorPresentation(void)
 {
     s32 record;
     s32 value;
@@ -234,202 +234,202 @@ void FieldScene_RunBranchingActorPresentation(void)
         return;
     }
 
-    BattleRuntime_Reset();
-    ObjectMotion_SetVariantCallbackAndInvokeObject(17, 1);
-    Call3(ObjectMotion_ArmCallback, 17, 0x3000, 20);
+    Battle_Reset();
+    Motion_SetVarCbObj(17, 1);
+    Call3(Motion_ArmCb, 17, 0x3000, 20);
     value = 192;
-    ObjectMotion_ArmCallback(17, 0, 60);
-    Call3(BattleEffect_SpawnLinkedResourceObject, 17, 0x100, 40);
-    SceneState_ForwardMaskedHalfwordWith10(17, (value << 6));
+    Motion_ArmCb(17, 0, 60);
+    Call3(BattleFx_SpawnLinked, 17, 0x100, 40);
+    State_ForwardMaskedHalfwordWith10(17, (value << 6));
     Call1(SceneWork_SetStepValue, 0x2267);
-    ObjectMotion_SetVariantCallback(17, 2);
-    FieldScene_CallPairWith10(17);
-    ObjectMotion_ArmCallback(18, (value << 6), 0);
-    ObjectMotion_ArmCallback(19, (value << 6), 0);
-    Value3(ObjectMotion_ArmCallback, 20, (value << 6), 0);
+    Motion_SetVarCb(17, 2);
+    Scene_CallPairWith10(17);
+    Motion_ArmCb(18, (value << 6), 0);
+    Motion_ArmCb(19, (value << 6), 0);
+    Value3(Motion_ArmCb, 20, (value << 6), 0);
     slot = RuntimeBlock_GetOffset1e0Pointer();
     *(u8 *)(slot + 85) = 0;
-    Call2(ObjectMotion_SetSpeedLimitAndAcceleration, 0x19999, 0x3333);
-    Call4(ObjectMotion_PlaceWithinCameraBounds, 0x1000000, -1, 0xac0000, 1);
+    Call2(Motion_SetSpeedLim, 0x19999, 0x3333);
+    Call4(Motion_CamBounds, 0x1000000, -1, 0xac0000, 1);
     Object_CommitPositionThenWaitIfModeZero();
-    BattleRuntime_WaitIfModeZero(20);
-    Call3(BattleEffect_SpawnLinkedResourceObject, 18, 0x102, 40);
-    FieldScene_CallPairWith10(18);
-    ObjectMotion_CallThenWaitForAnimationChange(17, 3);
-    FieldScene_CallPairWith10(17);
+    Battle_WaitMode0(20);
+    Call3(BattleFx_SpawnLinked, 18, 0x102, 40);
+    Scene_CallPairWith10(18);
+    Motion_CallWaitAnim(17, 3);
+    Scene_CallPairWith10(17);
     Call2(Func_020034ac, 19, 0x102);
-    BattleRuntime_WaitIfModeZero(40);
-    SceneState_ForwardMaskedHalfwordWith10(19, 0);
-    FieldScene_CallPairWith10(19);
-    Call3(BattleEffect_SpawnLinkedResourceObject, 20, 0x103, 40);
-    SceneState_ForwardMaskedHalfwordWith10(20, 0);
-    ObjectMotion_SetVariantCallback(20, 2);
+    Battle_WaitMode0(40);
+    State_ForwardMaskedHalfwordWith10(19, 0);
+    Scene_CallPairWith10(19);
+    Call3(BattleFx_SpawnLinked, 20, 0x103, 40);
+    State_ForwardMaskedHalfwordWith10(20, 0);
+    Motion_SetVarCb(20, 2);
     Func_020034c4(20, 0, 20);
-    ObjectMotion_SetVariantCallbackAndInvokeObject(17, 1);
-    BattleRuntime_WaitIfModeZero(10);
-    Call3(ObjectMotion_ArmCallback, 17, 0xb000, 20);
+    Motion_SetVarCbObj(17, 1);
+    Battle_WaitMode0(10);
+    Call3(Motion_ArmCb, 17, 0xb000, 20);
     Func_020034c4(17, 0, 20);
-    ObjectMotion_SetVariantCallbackAndInvokeObject(18, 1);
-    ObjectMotion_CallThenWaitForAnimationChange(18, 4);
-    BattleRuntime_WaitIfModeZero(20);
-    SceneState_ForwardMaskedHalfwordWith10(17, 0x8000);
+    Motion_SetVarCbObj(18, 1);
+    Motion_CallWaitAnim(18, 4);
+    Battle_WaitMode0(20);
+    State_ForwardMaskedHalfwordWith10(17, 0x8000);
     Func_020034c4(17, 0, 20);
-    ObjectMotion_SetVariantCallbackAndInvokeObject(19, 1);
-    BattleRuntime_WaitIfModeZero(40);
-    ObjectMotion_CallThenWaitForAnimationChange(19, 4);
+    Motion_SetVarCbObj(19, 1);
+    Battle_WaitMode0(40);
+    Motion_CallWaitAnim(19, 4);
     Func_020034c4(17, 0, 20);
-    ObjectMotion_SetVariantCallbackAndInvokeObject(20, 2);
-    BattleRuntime_WaitIfModeZero(40);
-    ObjectMotion_CallThenWaitForAnimationChange(20, 3);
-    BattleRuntime_WaitIfModeZero(20);
+    Motion_SetVarCbObj(20, 2);
+    Battle_WaitMode0(40);
+    Motion_CallWaitAnim(20, 3);
+    Battle_WaitMode0(20);
     Object_SetModeById(17, 3);
     Object_SetModeById(18, 3);
     Object_SetModeById(19, 3);
-    ObjectMotion_CallThenWaitForAnimationChange(20, 3);
-    ObjectMotion_ArmCallback(17, (value << 6), 0);
-    ObjectMotion_ArmCallback(18, (value << 6), 0);
-    ObjectMotion_ArmCallback(19, (value << 6), 0);
-    SceneState_ForwardMaskedHalfwordWith10(20, (value << 6));
+    Motion_CallWaitAnim(20, 3);
+    Motion_ArmCb(17, (value << 6), 0);
+    Motion_ArmCb(18, (value << 6), 0);
+    Motion_ArmCb(19, (value << 6), 0);
+    State_ForwardMaskedHalfwordWith10(20, (value << 6));
     Call3(Func_0200351e, 17, 0x9999, 0x4ccc);
-    Call3(ObjectMotion_SetPositionAndReset, 17, 0x102, 172);
+    Call3(Motion_SetPosReset, 17, 0x102, 172);
     Call3(Func_0200351e, 0, 0xcccc, 0x6666);
-    Call3(ObjectMotion_SetPositionAndReset, 0, 0x106, 188);
-    Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
+    Call3(Motion_SetPosReset, 0, 0x106, 188);
+    Call3(Motion_ArmCb, 0, 0xc000, 0);
     record = Value1(Func_02003548, 0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Motion_SetHPosTerrain(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Value1(Func_02003548, 0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Motion_SetHPosTerrain(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Value1(Func_02003548, 0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Motion_SetHPosTerrain(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Call3(Func_0200351e, 1, 0xcccc, 0x6666);
     Call3(Func_0200351e, 2, 0xcccc, 0x6666);
     Call3(Func_0200351e, 3, 0xcccc, 0x6666);
-    ObjectMotion_ResetAndSetPositionInMode2(1, 246, 200);
-    Call3(ObjectMotion_ResetAndSetPositionInMode2, 2, 0x106, 200);
-    Call3(ObjectMotion_SetPositionAndReset, 3, 0x116, 200);
+    Motion_ResetPosMode2(1, 246, 200);
+    Call3(Motion_ResetPosMode2, 2, 0x106, 200);
+    Call3(Motion_SetPosReset, 3, 0x116, 200);
     Object_SetModeById(2, 1);
     Object_SetModeById(1, 1);
-    Call3(ObjectMotion_ArmCallback, 1, 0xc000, 0);
-    Call3(ObjectMotion_ArmCallback, 2, 0xc000, 0);
-    Call3(ObjectMotion_ArmCallback, 3, 0xc000, 40);
-    ObjectMotion_SetVariantCallbackAndInvokeObject(17, 1);
-    FieldScene_CallPairWith10(17);
-    ObjectMotion_SetVariantCallback(0, 2);
-    ObjectMotion_SetVariantCallback(1, 2);
-    ObjectMotion_SetVariantCallback(2, 2);
-    ObjectMotion_SetVariantCallbackAndInvokeObject(3, 2);
-    ObjectMotion_CallThenWaitForAnimationChange(17, 3);
+    Call3(Motion_ArmCb, 1, 0xc000, 0);
+    Call3(Motion_ArmCb, 2, 0xc000, 0);
+    Call3(Motion_ArmCb, 3, 0xc000, 40);
+    Motion_SetVarCbObj(17, 1);
+    Scene_CallPairWith10(17);
+    Motion_SetVarCb(0, 2);
+    Motion_SetVarCb(1, 2);
+    Motion_SetVarCb(2, 2);
+    Motion_SetVarCbObj(3, 2);
+    Motion_CallWaitAnim(17, 3);
     Value2(Func_020036ac, 17, 0);
-    Call3(ObjectMotion_ArmCallback, 1, 0xe000, 0);
-    Call3(ObjectMotion_ArmCallback, 3, 0xa000, 0);
+    Call3(Motion_ArmCb, 1, 0xe000, 0);
+    Call3(Motion_ArmCb, 3, 0xa000, 0);
 
     if (Value2(UiWork_WaitThenFinalizeCapacity, 0, 0) == 0) {
-        ObjectMotion_CallThenWaitForAnimationChange(17, 3);
-        FieldScene_CallPairWith10(17);
-        ObjectMotion_EnableActionAndSetCallback(1, (s32)Data_0200ad3c);
-        Value2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)Data_0200ad3c);
-        Value2(ObjectMotion_MarkActiveAndSetActionCallback, 3, (s32)Data_0200ad3c);
-        Call2(ObjectMotion_SetSpeedLimitAndAcceleration, 0x6666, 0xccc);
-        Call4(ObjectMotion_PlaceWithinCameraBounds, 0x1000000, -1, 0x640000, 1);
+        Motion_CallWaitAnim(17, 3);
+        Scene_CallPairWith10(17);
+        Motion_EnableActCb(1, (s32)Data_0200ad3c);
+        Value2(Motion_EnableActCb, 2, (s32)Data_0200ad3c);
+        Value2(Motion_MarkActiveAndSetActionCallback, 3, (s32)Data_0200ad3c);
+        Call2(Motion_SetSpeedLim, 0x6666, 0xccc);
+        Call4(Motion_CamBounds, 0x1000000, -1, 0x640000, 1);
         Call3(Func_0200351e, 17, 0x10000, 0x8000);
-        ObjectMotion_EnableActionAndSetCallback(17, (s32)Data_0200ade4);
-        BattleRuntime_WaitIfModeZero(10);
+        Motion_EnableActCb(17, (s32)Data_0200ade4);
+        Battle_WaitMode0(10);
         Call3(Func_0200351e, 0, 0x10000, 0x8000);
-        Value2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_0200ade4);
-        BattleRuntime_WaitIfModeZero(80);
+        Value2(Motion_EnableActCb, 0, (s32)Data_0200ade4);
+        Battle_WaitMode0(80);
         SCENE_FIELD_1C8 = 40;
         Func_020039be();
-        ObjectMotion_SetSpeedParameters();
+        Motion_SetSpeed();
     } else {
         bump_step(1);
-        Call3(BattleEffect_SpawnLinkedResourceObject, 17, 0x102, 40);
-        FieldScene_CallPairWith10(17);
-        Call3(BattleEffect_SpawnLinkedResourceObject, 18, 0x102, 40);
-        FieldScene_CallPairWith10(18);
-        Call3(BattleEffect_SpawnLinkedResourceObject, 19, 0x102, 40);
-        FieldScene_CallPairWith10(19);
-        Call3(BattleEffect_SpawnLinkedResourceObject, 20, 0x102, 40);
-        FieldScene_CallPairWith10(19);
-        ObjectMotion_CallThenWaitForAnimationChange(17, 4);
-        FieldScene_CallPairWith10(17);
-        ObjectMotion_SetVariantCallbackAndInvokeObject(2, 1);
-        BattleRuntime_WaitIfModeZero(20);
-        FieldScene_CallPairWith10(2);
-        Call3(BattleEffect_SpawnLinkedResourceObject, 3, 0x102, 40);
-        FieldScene_CallPairWith10(3);
-        Call3(ObjectMotion_ArmCallback, 17, 0xb000, 0);
-        ObjectMotion_ArmCallback(19, 0x8000, 0);
-        ObjectMotion_ArmCallback(20, 0, 60);
-        ObjectMotion_ArmCallback(17, (value << 6), 0);
-        ObjectMotion_ArmCallback(19, (value << 6), 0);
-        ObjectMotion_ArmCallback(20, (value << 6), 20);
+        Call3(BattleFx_SpawnLinked, 17, 0x102, 40);
+        Scene_CallPairWith10(17);
+        Call3(BattleFx_SpawnLinked, 18, 0x102, 40);
+        Scene_CallPairWith10(18);
+        Call3(BattleFx_SpawnLinked, 19, 0x102, 40);
+        Scene_CallPairWith10(19);
+        Call3(BattleFx_SpawnLinked, 20, 0x102, 40);
+        Scene_CallPairWith10(19);
+        Motion_CallWaitAnim(17, 4);
+        Scene_CallPairWith10(17);
+        Motion_SetVarCbObj(2, 1);
+        Battle_WaitMode0(20);
+        Scene_CallPairWith10(2);
+        Call3(BattleFx_SpawnLinked, 3, 0x102, 40);
+        Scene_CallPairWith10(3);
+        Call3(Motion_ArmCb, 17, 0xb000, 0);
+        Motion_ArmCb(19, 0x8000, 0);
+        Motion_ArmCb(20, 0, 60);
+        Motion_ArmCb(17, (value << 6), 0);
+        Motion_ArmCb(19, (value << 6), 0);
+        Motion_ArmCb(20, (value << 6), 20);
         Object_SetModeById(17, 3);
         Object_SetModeById(18, 3);
         Object_SetModeById(19, 3);
-        ObjectMotion_CallThenWaitForAnimationChange(20, 3);
-        Call3(BattleEffect_SpawnLinkedResourceObject, 3, 0x100, 60);
-        Call2(SceneState_ForwardMaskedHalfwordWith10, 3, 0xa000);
-        FieldScene_CallPairWith10(3);
+        Motion_CallWaitAnim(20, 3);
+        Call3(BattleFx_SpawnLinked, 3, 0x100, 60);
+        Call2(State_ForwardMaskedHalfwordWith10, 3, 0xa000);
+        Scene_CallPairWith10(3);
         Object_SetModeById(1, 4);
-        BattleRuntime_WaitIfModeZero(20);
+        Battle_WaitMode0(20);
         Value2(Func_020036ac, 1, 0);
 
         if (Value2(UiWork_WaitThenFinalizeCapacity, 0, 0) == 0) {
-            ObjectMotion_CallThenWaitForAnimationChange(17, 3);
-            FieldScene_CallPairWith10(17);
-            ObjectMotion_EnableActionAndSetCallback(1, (s32)Data_0200ad3c);
-            Value2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)Data_0200ad3c);
-            Value2(ObjectMotion_MarkActiveAndSetActionCallback, 3, (s32)Data_0200ad3c);
-            Call2(ObjectMotion_SetSpeedLimitAndAcceleration, 0x6666, 0xccc);
-            Call4(ObjectMotion_PlaceWithinCameraBounds, 0x1000000, -1, 0x640000, 1);
+            Motion_CallWaitAnim(17, 3);
+            Scene_CallPairWith10(17);
+            Motion_EnableActCb(1, (s32)Data_0200ad3c);
+            Value2(Motion_EnableActCb, 2, (s32)Data_0200ad3c);
+            Value2(Motion_MarkActiveAndSetActionCallback, 3, (s32)Data_0200ad3c);
+            Call2(Motion_SetSpeedLim, 0x6666, 0xccc);
+            Call4(Motion_CamBounds, 0x1000000, -1, 0x640000, 1);
             Call3(Func_0200351e, 17, 0x10000, 0x8000);
-            ObjectMotion_EnableActionAndSetCallback(17, (s32)Data_0200ade4);
-            BattleRuntime_WaitIfModeZero(10);
+            Motion_EnableActCb(17, (s32)Data_0200ade4);
+            Battle_WaitMode0(10);
             Call3(Func_0200351e, 0, 0x10000, 0x8000);
-            Value2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_0200ade4);
-            BattleRuntime_WaitIfModeZero(80);
+            Value2(Motion_EnableActCb, 0, (s32)Data_0200ade4);
+            Battle_WaitMode0(80);
             SCENE_FIELD_1C8 = 40;
             Func_020039be();
-            ObjectMotion_SetSpeedParameters();
+            Motion_SetSpeed();
         } else {
             bump_step(1);
-            BattleRuntime_WaitIfModeZero(20);
-            ObjectMotion_SetVariantCallback(1, 2);
+            Battle_WaitMode0(20);
+            Motion_SetVarCb(1, 2);
             Func_020034c4(1, 0, 20);
-            Call3(BattleEffect_SpawnLinkedResourceObject, 2, 0x102, 60);
-            FieldScene_CallPairWith10(2);
-            SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
+            Call3(BattleFx_SpawnLinked, 2, 0x102, 60);
+            Scene_CallPairWith10(2);
+            State_ForwardMaskedHalfwordWith10(3, 0x8000);
             Object_SetModeById(3, 3);
-            FieldScene_CallPairWith10(3);
-            ObjectMotion_EnableActionAndSetCallback(2, (s32)Data_0200ad74);
-            Value2(ObjectMotion_MarkActiveAndSetActionCallback, 3, (s32)Data_0200ad74);
-            BattleRuntime_WaitIfModeZero(20);
-            Value2(ObjectMotion_MarkActiveAndSetActionCallback, 0, (s32)Data_0200ad74);
-            Call3(ObjectMotion_SetPositionAndReset, 1, 0x106, 188);
-            Value2(SceneState_ForwardMaskedHalfwordWith10, 1, 0xc000);
-            ObjectMotion_CallThenWaitForAnimationChange(1, 3);
-            FieldScene_CallPairWith10(1);
-            Call2(ObjectMotion_SetSpeedLimitAndAcceleration, 0x6666, 0xccc);
-            Call4(ObjectMotion_PlaceWithinCameraBounds, 0x1000000, -1, 0x640000, 1);
+            Scene_CallPairWith10(3);
+            Motion_EnableActCb(2, (s32)Data_0200ad74);
+            Value2(Motion_MarkActiveAndSetActionCallback, 3, (s32)Data_0200ad74);
+            Battle_WaitMode0(20);
+            Value2(Motion_MarkActiveAndSetActionCallback, 0, (s32)Data_0200ad74);
+            Call3(Motion_SetPosReset, 1, 0x106, 188);
+            Value2(State_ForwardMaskedHalfwordWith10, 1, 0xc000);
+            Motion_CallWaitAnim(1, 3);
+            Scene_CallPairWith10(1);
+            Call2(Motion_SetSpeedLim, 0x6666, 0xccc);
+            Call4(Motion_CamBounds, 0x1000000, -1, 0x640000, 1);
             Call3(Func_0200351e, 17, 0x10000, 0x8000);
-            ObjectMotion_EnableActionAndSetCallback(17, (s32)Data_0200ade4);
-            BattleRuntime_WaitIfModeZero(10);
+            Motion_EnableActCb(17, (s32)Data_0200ade4);
+            Battle_WaitMode0(10);
             Call3(Func_0200351e, 1, 0x10000, 0x8000);
-            Value2(ObjectMotion_EnableActionAndSetCallback, 1, (s32)Data_0200ade4);
-            BattleRuntime_WaitIfModeZero(80);
+            Value2(Motion_EnableActCb, 1, (s32)Data_0200ade4);
+            Battle_WaitMode0(80);
             SCENE_FIELD_1C8 = 40;
             Func_020039be();
-            ObjectMotion_SetSpeedParameters();
+            Motion_SetSpeed();
         }
     }
 
     Func_02003a98(2);
     Call1(Data_0200abc4, 0x93f);
-    BattleRuntime_ScheduleShoulderButtonModeUpdate();
+    Battle_SchedShoulder();
 }

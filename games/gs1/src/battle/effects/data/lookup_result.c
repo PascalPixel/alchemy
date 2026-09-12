@@ -1,5 +1,7 @@
 #include "types.h"
+#include "scene.h"
 
+/* battle/effects/data/lookup_result.c */
 typedef struct Entry {
     s16 first;
     s16 second;
@@ -7,17 +9,16 @@ typedef struct Entry {
     s16 result;
 } Entry;
 
-extern Entry Data_0809d7a8[];
+extern Entry gRom[];
 
-s32 Func_08009268(void *, s32 *);
-s32 GameFlag_IsSet(s32);
-void BattleEffect_SelectResultPointer(s32 arg0);
+s32 GameFlag_IsSet(s32 flag);
+void BattleFx_SelectResultPointer(s32 arg0);
 
-s32 BattleEffect_LookupResult(void *arg0)
+s32 BattleFx_LookupResult(void *arg0)
 {
     s32 value;
-    Entry *entry = Data_0809d7a8;
-    s32 key = Func_08009268(arg0, &value);
+    Entry *entry = gRom;
+    s32 key = SceneData_Apply(arg0, &value);
     s32 result = 0;
 
     while (entry->first != -1) {
@@ -29,6 +30,6 @@ s32 BattleEffect_LookupResult(void *arg0)
         }
         entry++;
     }
-    BattleEffect_SelectResultPointer(key);
+    BattleFx_SelectResultPointer(key);
     return result;
 }

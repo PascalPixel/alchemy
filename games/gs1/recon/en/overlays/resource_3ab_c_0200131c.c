@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorDialogueMovementSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunActorDialogueMovementSequence:
  * all 70 calls, two completion waits, and fifteen actor/effect memory
  * operations across the complete actor-0/8/9 presentation owner. */
 
-#define FieldScene_RunActorDialogueMovementSequence Func_0200131c
+#define Scene_RunActorDialogueMovementSequence Func_0200131c
 
 void Func_02002cfe();
 void Func_02002d00();

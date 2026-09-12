@@ -1,6 +1,5 @@
 #include "types.h"
-
-#define Camera_ResetSceneDefaults Func_080f4028
+#include "scene.h"
 
 struct SceneCameraState {
     u8 filler0[12];
@@ -35,18 +34,12 @@ struct SceneCameraObject {
     s32 anchor;
 };
 
-extern struct SceneCameraRuntime Data_03001e80;
-extern struct SceneCameraObject Data_03001ce0;
-
-void Func_080049ac(void);
-void Func_08004cb4(void *);
-void Func_08004c1c(s32);
-void Func_08004bd4(s32);
-void Func_08005258(u32, u32, u32);
+extern struct SceneCameraRuntime gIw;
+extern struct SceneCameraObject gIw2;
 
 void Camera_ResetSceneDefaults(void)
 {
-    struct SceneCameraState *state = Data_03001e80.state;
+    struct SceneCameraState *state = gIw.state;
     struct SceneCameraTransfer local;
     u32 result;
     u32 param1;
@@ -58,14 +51,14 @@ void Camera_ResetSceneDefaults(void)
     state->field14 = 0;
     state->field36 = 0;
     state->field1c = 0;
-    Data_03001ce0.field0c = 0;
-    Data_03001ce0.anchor = 0;
+    gIw2.field0c = 0;
+    gIw2.anchor = 0;
     state->field18 = 0;
 
-    Func_080049ac();
-    Func_08004cb4(&state->field0c);
-    Func_08004c1c(state->field36);
-    Func_08004bd4(state->field34);
+    Sys_Run();
+    Sys_Do(&state->field0c);
+    SceneTransform_ApplyYaw(state->field36);
+    SceneTransform_ApplyPitch(state->field34);
 
     local.first = 0;
     local.second = 0;
@@ -78,5 +71,5 @@ void Camera_ResetSceneDefaults(void)
 
     param1 = 250;
     param1 = param1 << 16;
-    Func_08005258(param1, result, 0x7fff0000);
+    Sys_Place(param1, result, 0x7fff0000);
 }

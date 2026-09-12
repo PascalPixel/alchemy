@@ -1,7 +1,9 @@
 #include "types.h"
+#include "scene.h"
+#include "runtime_1e74.h"
+#include "global_cells.h"
 
-s32 Func_080771a0(void);
-
+/* battle/select_weighted_index.c */
 /*
  * The r9 static-chain setup at the call sites and the callee's matching r9
  * save identify this as a GNU C nested function. The public alias gives the
@@ -19,7 +21,7 @@ static __inline__ s32 Scope_080bd3e4(void)
         s32 result;
         s32 index;
 
-        value = Func_080771a0() & 0xFF;
+        value = Battle_Check() & 0xFF;
         total = weights[0];
         result = 0;
         index = 0;

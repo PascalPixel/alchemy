@@ -28,20 +28,14 @@ LAYOUT_OFFSET_GUARD(
     0x1f8);
 LAYOUT_SIZE_GUARD(PartyState_Size, struct PartyState, 0x200);
 
-extern struct PartyState Data_02000240;
-
-#define PARTY_STATE Data_02000240
-
 /*
- * Most callers use the true no-argument interface. Func_08079664's reference
+ * Most callers use the true no-argument interface. Party_RemoveActiveOwner's reference
  * object keeps its owner value live by presenting it at both calls, even
  * though the callee ignores r0, so that translation unit intentionally uses
  * the old-style call form for byte-exact register allocation.
  */
-s32 Func_080795fc();
-s32 Func_080796c4(s16 *owners);
 
-#define Party_CountActiveOwners Func_080795fc
-#define Party_ListActiveOwners  Func_080796c4
+s32 Party_CountActiveOwners();
+s32 Party_ListActiveOwners(s16 *owners);
 
 #endif

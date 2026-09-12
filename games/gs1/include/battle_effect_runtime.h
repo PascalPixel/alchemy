@@ -29,9 +29,9 @@ struct BattleRuntime {
     s32 unknown_1c8;
     /*
      * Two-state, driven by the shoulder buttons off the 0x03001c94 latch:
-     * BattleRuntime_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
+     * Battle_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
      * and to -1 on R (0x100), and
-     * Func_080916b0 initialises it to 0. Func_0809163c calls Func_080030f8
+     * Battle_Reset initialises it to 0. Battle_WaitMode0 calls WaitFrames
      * only while it is 0. That is the whole of the evidence -- what the two
      * states mean is not established, so the name says mode and not more.
      */
@@ -76,12 +76,6 @@ struct BattleEffectEntry {
     u8 flags;
 };
 
-extern struct BattleRuntime *Data_03001ebc;
-extern struct BattleEffectBuffers *Data_03001ed0;
-extern struct BattleWork Data_02000240;
-
-void Func_080937b8(s32 resource_id, s32 flags, s32 state);
-
-#define BattleEffect_SpawnLinkedResourceObject Func_080937b8
+void BattleEffect_SpawnLinkedResourceObject(s32 resource_id, s32 flags, s32 state);
 
 #endif

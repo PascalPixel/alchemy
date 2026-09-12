@@ -1,8 +1,8 @@
 #include "types.h"
 
-#define FieldScene_RunClosingSequence Func_02001348
+#define Scene_RunClosingSequence Func_02001348
 
-/* AUDITED GENERATED SCENE SCRIPT for FieldScene_RunClosingSequence:
+/* AUDITED GENERATED SCENE SCRIPT for Scene_RunClosingSequence:
  * all 169 calls and arguments are represented in machine order. */
 
 void Func_020059cc();

@@ -20,17 +20,13 @@ LAYOUT_OFFSET_GUARD(
     ((struct Resource37cRuntime *)*(void **)0x03001EBC)
 
 /* Address-stable overlay ABI declarations. */
-s32 Func_02000118(s32);
-void Func_0200011a(s32);
-void Func_0200012a(s32, s32, s32);
-void Func_0200013a(s32);
-void Func_02000146(void);
 
 /* Observed setup operations; their wider interfaces remain local and opaque. */
-#define Resource37c_TestSetupGate   Func_02000118
-#define Resource37c_SetSetupFlag    Func_0200011a
-#define Resource37c_SetViewScale    Func_0200012a
-#define Resource37c_QueueSoundCue   Func_0200013a
-#define Resource37c_FinalizeSetup   Func_02000146
+
+s32 Resource37c_TestSetupGate(s32);
+void Resource37c_SetSetupFlag(s32);
+void Resource37c_SetViewScale(s32, s32, s32);
+void Resource37c_QueueSoundCue(s32);
+void Resource37c_FinalizeSetup(void);
 
 #endif

@@ -1,0 +1,31 @@
+#include "types.h"
+#include "scene.h"
+
+/* ui/text/draw/draw_localized_resource_80d.c */
+/*
+ * The r9 static chain and matching save identify this as a GNU C nested
+ * function. The two captured pointers preserve the evidenced outer-frame
+ * layout; the public alias gives the reconstructed entry its address name.
+ */
+s32 Ui_Place(s32, s16 *, s32);
+s32 Ui_SetMode(s16 *, s32, s32, s32);
+
+extern s32 UiText_DrawLocalizedResource80d(void)
+    __attribute__((alias("Nested_080270d8.0")));
+
+static __inline__ s32 Scope_080270d8(void)
+{
+    u8 *padding;
+    u8 *context;
+
+    s32 Nested_080270d8(void)
+    {
+        s16 data[64];
+
+        (void)&padding;
+        Ui_Place(0x80D, data, 0x34);
+        return Ui_SetMode(data, *(s32 *)(context + 0x44), 0, 4);
+    }
+
+    return 0;
+}

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 /*
  * Walks the word table returned by the 0x02008000 service at +0x14 and
@@ -25,12 +26,10 @@ struct Services_0808a5f8 {
     TableProvider_0808a5f8 table_provider;
 };
 
-extern struct Work_0808a5f8 Data_02000240;
-extern struct Services_0808a5f8 Data_02008000;
+extern struct Work_0808a5f8 gCell;
+extern struct Services_0808a5f8 gOv;
 
-s32 Func_080770c0(s32 flag_id);
-
-void Func_0808a5f8(s32 kind)
+void Map_Run(s32 kind)
 {
     s16 cur;
     u32 *p;
@@ -43,8 +42,8 @@ void Func_0808a5f8(s32 kind)
     s32 entry_kind;
     s32 flag;
 
-    cur = Data_02000240.current;
-    p = Data_02008000.table_provider();
+    cur = gCell.current;
+    p = gOv.table_provider();
     result = 999;
     sub = 0;
     if (kind == 999)
@@ -84,7 +83,7 @@ void Func_0808a5f8(s32 kind)
     }
 
     if (result != 999) {
-        Data_02000240.current = result;
-        Data_02000240.sub = sub;
+        gCell.current = result;
+        gCell.sub = sub;
     }
 }

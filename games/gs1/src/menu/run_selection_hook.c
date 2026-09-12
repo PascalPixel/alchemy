@@ -1,8 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "global_cells.h"
 
-s32 Func_0801c49c();
-
+/* menu/run_selection_hook.c */
+/* menu/sel/run_selection_hook.c */
 void Menu_RunSelectionHook(void)
 {
-    Func_0801c49c();
+    Menu_Check();
 }

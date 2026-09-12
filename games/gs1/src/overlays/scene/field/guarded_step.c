@@ -1,0 +1,819 @@
+#include "types.h"
+#include "scene.h"
+
+#define TARGET_ID 9
+#define GATE_CODE 2059
+
+extern u8 SceneEventRuntime_ScriptData[];
+extern u8 SceneEventRuntime_MessageData[];
+extern u8 SceneEventRuntime_ActorData[];
+extern u8 SceneEventRuntime_EffectData[];
+extern struct Cam *gCam;
+extern s32 gEntCnt;
+extern u8 gCell[];
+extern u8 gWork[];
+extern u16 gCell2[][1];
+extern s32 gEntTbl[];
+
+u16 *GameFlag_IsSet_1(s32);
+
+u16 *GameFlag_GetRecord2(s32);
+
+u8 *Field_unk_02003506();
+
+u8 *Field_GetRecord(s32 index);
+
+s32 *Field_unk_02003f68(s32);
+
+s32 *Field_unk_0200405c(s32);
+s32 *Field_unk_02003f20(s32);
+
+s32 *Field_unk_02003f90(s32);
+
+/* Scene-record accessor. */
+
+static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
+{
+    Field_SetMode(actor, x, y, mode);
+}
+
+static __inline__ void ConfigureScene2(s32 actor, s32 x, s32 y, s32 mode)
+{
+    Field_SetMode2(actor, x, y, mode);
+}
+
+u8 *SceneEventRuntime_GetScriptData(void)
+{
+    return SceneEventRuntime_ScriptData;
+}
+
+s32 SceneEventRuntime_ReturnZero(void)
+{
+    return 0;
+}
+
+u8 *SceneEventRuntime_GetMessageData(void)
+{
+    return SceneEventRuntime_MessageData;
+}
+
+u8 *SceneEventRuntime_GetActorData(void)
+{
+    return SceneEventRuntime_ActorData;
+}
+
+u8 *SceneEventRuntime_GetEffectData(void)
+{
+    return SceneEventRuntime_EffectData;
+}
+
+s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
+{
+    s32 no;
+
+    if (Field_unk_0200248e(0x818) != 0) {
+        if (Field_TestFlag813(0x813) == 0) {
+            no = 3;
+            goto apply;
+        }
+        goto fail;
+    }
+    if (Field_TestFlag812(0x812) == 0) {
+        no = 4;
+apply:
+        Field_unk_020025a8(no);
+        return 1;
+    }
+fail:
+    return -1;
+}
+
+void Scene_RunLoopedLayoutSequence(void)
+{
+    s32 i;
+
+    { s32 k5 = 2, k6 = 1; Field_unk_020024b2(0, 28, 17, 8, k5, k6); }
+    Field_unk_02002618(200);
+    for (i = 0; i != 22; i++) {
+        Field_unk_020024ce(10, 61, 17, 40, 2, 1);
+        Field_unk_0200251c(4);
+        Field_unk_020024e6(8, 61, 17, 40, 2, 1);
+        Field_unk_02002534(4);
+    }
+    { s32 k5 = 4, k6 = 3;
+      Field_unk_02002504(0, 59, 15, 38, k5, k6);
+      Field_unk_02002514(4, 59, 17, 38, k5, k6); }
+    Field_unk_02002526(8, 60, 17, 39, 2, 2);
+    { s32 k5 = 17, k6 = 8; Field_unk_02002542(0, 0, 2, 1, k5, k6); }
+    Field_TestFlag207(0x207);
+    Field_unk_0200181c();
+}
+
+void Effect_UpdateScrollingSpriteRows(void)
+{
+    extern struct Ent gFarStub[];
+
+    s32 *cp = &gCam->x;
+    struct Ent *e = gFarStub;
+    s32 sx = cp[0] / 65536;
+    s32 sy = 80 - cp[1] / 65536;
+    s32 v;
+    u32 i;
+
+    if ((u32)(sy + 16) <= 175) {
+        v = (gEntCnt >> 10) - sx;
+        v |= -32;
+        {
+            for (i = 0; i <= 8; i++) {
+                e->f06 = v;
+                e->f04 = sy;
+                Field_EntOp(e, 0);
+                v += 32;
+                e++;
+            }
+        }
+        v = (gEntCnt >> 9) - sx;
+        v |= -32;
+        {
+            for (i = 0; i <= 8; i++) {
+                e->f06 = v;
+                e->f04 = sy;
+                Field_EntOp2(e, 0);
+                v += 32;
+                e++;
+            }
+        }
+        v = (gEntCnt >> 8) - sx;
+        v |= -32;
+        {
+            for (i = 0; i <= 8; i++) {
+                e->f06 = v;
+                e->f04 = sy + 8;
+                Field_EntOp3(e, 0);
+                v += 32;
+                e++;
+            }
+        }
+    }
+    gEntCnt += 0x80;
+}
+
+void State_RunWhenSlotZeroFacingC000(void)
+{
+    u16 *p = GameFlag_IsSet_1(0);
+    if (p[3] == 0xc000) {
+        Field_unk_0200352c();
+    }
+}
+
+void State_RunWhenActorZeroFacing4000(void)
+{
+    u16 *p = GameFlag_GetRecord2(0);
+    if (p[3] == 0x4000) {
+        Field_unk_02003548();
+    }
+}
+
+/* If the code-2059 check passes, runs a short setup/configuration sequence
+ * for id 9: two no-argument calls bracket a select call and two calls each
+ * taking a pair of numeric arguments. */
+void Scene_RunPrimarySequenceHead(void)
+{
+    extern u8 gFarStub[];
+
+    if (GameFlag_IsSet_1(GATE_CODE) == 0) {
+        Battle_Reset_1();
+        Scene_GetRecord_1(TARGET_ID);
+        Motion_SetSpeed_1(TARGET_ID, 13107, 0x00001999); /* object_id, speed_limit, acceleration */
+        Motion_SetPosReset_1(TARGET_ID, 504, 152); /* object_id, x=504, z=152 */
+        Battle_SchedShoulder_1();
+    }
+}
+
+s32 Scene_RunGuardSequenceB(void)
+{
+    extern u8 gFarStub[];
+
+    u8 *record;
+
+    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x204;
+    Field_unk_0200252c();
+    Field_TestFlag144(0x144);
+    record = (u8 *)Field_Check(18);
+    record[89] = 0;
+    record += 35;
+    {
+        u8 value = *(volatile u8 *)record;
+
+        *record = (u8)(value | 2);
+    }
+    Field_unk_020034b4((s32)Field_unk_02003506(18), 0);
+    *(u8 *)(Field_unk_02003512(18) + 35) &= 254;
+    Field_unk_020035b4(18, 1);
+    if ((u32)((gCell2[225][0] - 3) << 16) > 0x10000) {
+        Field_unk_0200357c(5, 0, 0);
+        Field_unk_02003586(1, 0, 0);
+    }
+    if (Field_unk_0200351c(0x818) != 0) {
+        Field_unk_0200359e(18, 0x1200000, 0xb20000);
+        Field_unk_020035ac(17, 0x6480000, 0x6480000);
+        Field_unk_020035ba(10, 0xe80000, 0x780000);
+        Field_unk_020035c8(12, 0x1580000, 0x780000);
+        Field_unk_020035d6(10, 0xe80000, 0x780000);
+        Field_SetRect(0, 59, 15, 38, 4, 3);
+        Field_unk_020035f8(12, 0x1580000, 0x780000);
+        Field_unk_02003568(4, 59, 17, 38, 4, 3);
+        Field_unk_0200357a(8, 60, 17, 39, 2, 2);
+        Field_unk_0200363c(0, 1, 2, 1, 17, 7);
+    } else if (Field_unk_020035be(0x816) != 0
+                && Field_unk_020035c8_a(0x817) != 0) {
+        Field_unk_0200364a(10, 0xe80000, 0x780000);
+        Field_unk_02003658(12, 0x1580000, 0x780000);
+        Field_unk_020035cc(0, 28, 17, 8, 2, 1);
+        Field_unk_0200367a(10, 0xe80000, 0x780000);
+        Field_unk_020035f0(0, 59, 15, 38, 4, 3);
+        Field_unk_0200369e(12, 0x1580000, 0x780000);
+        Field_unk_02003610(4, 59, 17, 38, 4, 3);
+        Field_unk_02003620(8, 60, 17, 39, 2, 2);
+        Field_unk_0200363c(0, 0, 2, 1, 17, 8);
+    } else {
+        if (Field_unk_0200366c(0x816) != 0) {
+            Field_unk_020036ee(10, 0xe80000, 0x780000);
+            Field_unk_02003662(0, 59, 15, 38, 4, 3);
+        }
+        if (Field_unk_02003698(0x817) != 0) {
+            Field_unk_0200371a(12, 0x1580000, 0x780000);
+            Field_unk_0200368e(4, 59, 17, 38, 4, 3);
+        }
+    }
+    if (Field_TestFlag80b(0x80b) != 0) {
+        Field_unk_02003746(9, 0x1f80000, 0x980000);
+        Field_unk_020036ba(2, 28, 34, 10, 2, 1);
+        Field_unk_020036ca(2, 30, 16, 10, 2, 1);
+        Field_unk_020036de(0, 55, 32, 40, 4, 3);
+    }
+    if (Field_TestFlag80c(0x80c) != 0) {
+        Field_unk_02003796(11, 0x2880000, 0x980000);
+        Field_unk_0200370a(4, 28, 36, 10, 2, 1);
+        Field_unk_0200371a_a(4, 30, 18, 10, 2, 1);
+        Field_unk_0200372e(4, 55, 36, 40, 4, 3);
+    }
+    if (Field_TestFlag80d(0x80d) != 0) {
+        Field_unk_020037e6(13, 0x1f80000, 0xc80000);
+        Field_unk_0200375a(2, 29, 34, 11, 2, 1);
+        Field_unk_0200376a(2, 31, 16, 11, 2, 1);
+        Field_unk_0200377c(0, 58, 32, 43, 4, 1);
+    }
+    if (Field_TestFlag80e(0x80e) != 0) {
+        Field_unk_02003834(15, 0x2880000, 0xc80000);
+        Field_unk_020037a8(4, 29, 36, 11, 2, 1);
+        Field_unk_020037b8(4, 31, 18, 11, 2, 1);
+        Field_unk_020037ca(4, 58, 36, 43, 4, 1);
+    }
+    {
+    s16 *state = (s16 *)gCell2;
+
+    if (state[225] == 3) {
+        if (Field_TestFlag30a(0x30a) != 0) {
+            Field_unk_0200388e(1, 0, 0);
+            Field_unk_02003898(5, 0, 0);
+        } else if (Field_TestFlag109(0x109) == 0) {
+            Field_unk_0200157c();
+            Field_TestFlag30a(0x30a);
+        }
+    }
+    if (state[225] == 4) {
+        if (Field_TestFlag30b(0x30b) != 0) {
+            Field_unk_020038f8(1, 0, 0);
+            Field_unk_02003902(5, 0, 0);
+        } else if (Field_TestFlag109(0x109) == 0) {
+            Field_unk_02001a82();
+            Field_TestFlag30b(0x30b);
+        }
+    }
+    }
+    if (Field_TestFlag814(0x814) != 0) {
+        Field_unk_020039e0(141);
+        Field_TestFlag30b(0x10000, 0x10000, 0x10000);
+        Field_unk_020039d4();
+    }
+    return 0;
+}
+
+void Scene_RunGuardSequenceC(void)
+{
+    extern u8 gFarStub[];
+
+    u32 i;
+    s32 value;
+    volatile s32 *p;
+    s32 buf;
+
+    p = (volatile s32 *)gFarStub;
+    buf = Field_unk_02003890(14, 0x400);
+    Field_unk_020038aa(0x200a56c, buf);
+    value = Field_unk_020038be_a(Field_unk_020038be(), 128, buf);
+    for (i = 0; i < 9; i++) {
+        volatile s32 *q = p;
+
+        *q++ = 0;
+        *q++ = 0x40004000;
+        p += 3;
+        *q = value | 0xac00;
+    }
+    value = Field_unk_020038e8(Field_unk_020038e6(), 128, buf + 128);
+    for (i = 0; i < 9; i++) {
+        volatile s32 *q = p;
+
+        *q++ = 0;
+        *q++ = 0x40004000;
+        p += 3;
+        *q = value | 0xdc00;
+    }
+    value = Field_unk_02003914(Field_unk_02003910(), 128, buf + 0x100);
+    for (i = 0; i < 9; i++) {
+        volatile s32 *q = p;
+
+        *q++ = 0;
+        *q++ = 0x40004000;
+        p += 3;
+        *q = value | 0xc00;
+    }
+    Field_unk_02003926(14);
+    {
+        s32 size = 0xc80;
+
+        Field_unk_02003920(0x2008eb1, size);
+    }
+}
+
+void Scene_CallWhenCheck9_31_9(void)
+{
+    if (Field_unk_02003166(9, 31, 9) != 0) {
+        Field_unk_0200319a();
+    }
+}
+
+void Scene_RunGuardedStep11(void)
+{
+    if (Field_unk_0200317e(11, 40, 9) != 0) {
+        Field_unk_020032b2();
+    }
+}
+
+void Scene_RunGuardedStep13(void)
+{
+    if (Field_unk_02003196(13, 31, 12) != 0) {
+        Field_unk_020033c6();
+    }
+}
+
+void Scene_RunGuardedStep15(void)
+{
+    if (Field_unk_020031ae(15, 40, 12) != 0) {
+        Motion_SetPosReset_1();
+    }
+}
+
+void ConfigureSceneAndCheckActors(void)
+{
+    ConfigureScene(2, 0x00d00000, 0x00700000, 0);
+    if (Field_unk_020031d6(10, 14, 7) != 0) {
+        Field_unk_0200383a();
+    }
+}
+
+    if (Field_unk_020031fe(12, 21, 7) != 0) {
+        Field_unk_02003912();
+    }
+}
+
+void Scene_RunClosingSequence(void)
+{
+    extern u8 gFarStub[];
+
+    s32 first;
+    s32 kind;
+    s32 second;
+
+    first = Field_unk_02003a96(0);
+    kind = *(volatile s32 *)(first + 8) >> 20;
+    second = Field_unk_02003aa0(0);
+    if ((*(volatile s32 *)(second + 16) >> 20) == 8) {
+        if ((u32)(kind - 17) <= 1) {
+            Field_unk_02003a78(2, 0x1100000, 0x800000, 255);
+            Field_unk_02003a88(2, 0x1200000, 0x800000, 255);
+        }
+    }
+}
+
+void Scene_RunGuardSequenceA(void)
+{
+    extern u8 gFarStub[];
+
+    u32 i;
+    s32 record;
+
+    record = Field_unk_02003dce(17);
+    if (record != 0) {
+        if ((*(volatile s32 *)(record + 16) >> 20) == 8) {
+            Field_unk_02003dc6();
+            Field_unk_02003edc(185);
+            Field_unk_02003df6(17, 0x3333, 0x1999);
+            Field_unk_02003e00(0, 0x3333, 0x1999);
+            *(u8 *)(Field_unk_02003dfe(17) + 90) &= 254;
+            Field_unk_02003e50(0, 8);
+            record = Field_unk_02003e16(0);
+            Field_unk_02003e32(0, *(s16 *)(record + 10), 136);
+            Field_unk_02003e3e(17, 0x120, 120);
+            Field_unk_02003e64(17);
+            Field_unk_02003e7c(0, 1);
+            Field_unk_02003e30();
+        }
+    }
+}
+
+void Scene_RunFiveValueStep9(void)
+{
+    extern u8 gFarStub[];
+
+    Field_SetRange(9, 31, 9, 30, 9);
+    Field_unk_0200360e();
+}
+
+void Scene_RunFiveValueStep11(void)
+{
+    extern u8 gFarStub[];
+
+    Field_unk_0200355a(11, 40, 9, 41, 9);
+    Field_unk_0200372e_a();
+}
+
+void Scene_ApplyRect13_31_12_30_12(void)
+{
+    Field_unk_0200357a_a(13, 31, 12, 30, 12);
+    Field_unk_0200384a();
+}
+
+void Scene_RunFiveValueStep15(void)
+{
+    extern u8 gFarStub[];
+
+    Field_unk_0200359a(15, 40, 12, 41, 12);
+    Field_unk_02003966();
+}
+
+void Scene_ApplyRect10_14_7_13_7(void)
+{
+    Field_unk_020035ba_a(10, 14, 7, 13, 7);
+    Field_unk_02003cbe();
+}
+
+/*
+ * Fetches scene record 10 and, when it exists, hands a coarse coordinate
+ * derived from it to a five-argument routine, which receives both the
+ * coordinate and the coordinate plus one; the fifth argument travels on the
+ * stack. The `>> 20` reduction to a cell index is by analogy with the rest of
+ * the tree and is not verified, and the repeated 13 is as written.
+ */
+void Actor_UseActorTenCellAndNext(void)
+{
+    u8 *record = Field_GetRecord(10);
+    s32 cell;
+
+    if (record == 0) {
+        return;
+    }
+
+    cell = *(s32 *)(record + 16) >> 20;
+    Field_unk_020035e6(10, 13, cell + 1, 13, cell);
+}
+
+void Actor_MoveActor10ByRow(void)
+{
+    s32 *p = Field_unk_02003f20(10);
+    if (p != NULL) {
+        s32 v = p[4] >> 20;
+        Field_unk_0200360e_a(10, 13, v - 1, 13, v);
+    }
+}
+
+void Scene_ApplyRect12_21_7_22_7(void)
+{
+    Field_unk_0200362a(12, 21, 7, 22, 7);
+    Field_unk_02003dde();
+}
+
+void Actor_ApplyActorTwelveZCellPair(void)
+{
+    s32 *p = Field_unk_02003f68(12);
+    if (p != NULL) {
+        s32 v = p[4] >> 20;
+        Field_unk_02003656(12, 22, v + 1, 22, v);
+    }
+}
+
+void Actor_RunSlot12ColumnStep(void)
+{
+    s32 *p = Field_unk_02003f90(12);
+    if (p != NULL) {
+        s32 v = p[4] >> 20;
+        Field_unk_0200367e(12, 22, v - 1, 22, v);
+    }
+}
+
+s32 Actor_IsActorAtTile(s32 no, s32 x, s32 z)
+{
+    s32 *p = Field_unk_0200405c(no);
+    if (p == NULL || (p[2] >> 20) != x) {
+        return 0;
+    }
+    if ((p[4] >> 20) != z) {
+        return 0;
+    }
+    return 1;
+}
+
+void SceneData_InitEntTbl(void)
+{
+    s32 *p = gEntTbl;
+    p[0] = 0;
+    p[1] = 55;
+    p[2] = 32;
+    p[3] = 40;
+    p[4] = 4;
+    p[5] = 3;
+    p[6] = 2;
+    p[7] = 30;
+    p[8] = 34;
+    p[9] = 10;
+    p[10] = 2;
+    p[11] = 1;
+    p[12] = 2;
+    p[13] = 28;
+    p[14] = 34;
+    p[15] = 10;
+    p[16] = 2;
+    p[17] = 1;
+    p[18] = 2;
+    p[19] = 30;
+    p[20] = 16;
+    p[21] = 10;
+    p[22] = 2;
+    p[23] = 1;
+    p[24] = 0x80b;
+    p[25] = 0x4000;
+    p[26] = 500;
+    p[27] = 132;
+    p[28] = 8;
+    p[29] = 55;
+    p[30] = 32;
+    p[31] = 40;
+    p[32] = 4;
+    p[33] = 3;
+    p[34] = 2;
+    p[35] = 30;
+    p[36] = 34;
+    p[37] = 10;
+    p[38] = 2;
+    p[39] = 1;
+    p[40] = 2;
+    p[41] = 28;
+    p[42] = 16;
+    p[43] = 10;
+    p[44] = 2;
+    p[45] = 1;
+    p[46] = 9;
+    p[47] = 488;
+    p[48] = 152;
+    Field_unk_02003cec();
+}
+
+void SceneData_FillEntTbl(void)
+{
+    s32 *p = gEntTbl;
+    p[0] = 4;
+    p[1] = 55;
+    p[2] = 36;
+    p[3] = 40;
+    p[4] = 4;
+    p[5] = 3;
+    p[6] = 4;
+    p[7] = 30;
+    p[8] = 36;
+    p[9] = 10;
+    p[10] = 2;
+    p[11] = 1;
+    p[12] = 4;
+    p[13] = 28;
+    p[14] = 36;
+    p[15] = 10;
+    p[16] = 2;
+    p[17] = 1;
+    p[18] = 4;
+    p[19] = 30;
+    p[20] = 18;
+    p[21] = 10;
+    p[22] = 2;
+    p[23] = 1;
+    p[24] = 0x80c;
+    p[25] = 0x4000;
+    p[26] = 654;
+    p[27] = 132;
+    p[28] = 12;
+    p[29] = 55;
+    p[30] = 36;
+    p[31] = 40;
+    p[32] = 4;
+    p[33] = 3;
+    p[34] = 4;
+    p[35] = 30;
+    p[36] = 36;
+    p[37] = 10;
+    p[38] = 2;
+    p[39] = 1;
+    p[40] = 4;
+    p[41] = 28;
+    p[42] = 18;
+    p[43] = 10;
+    p[44] = 2;
+    p[45] = 1;
+    p[46] = 11;
+    p[47] = 664;
+    p[48] = 152;
+    Field_unk_02003de6();
+}
+
+void SceneData_InitEntTblAndRunB(void)
+{
+    s32 *p = gEntTbl;
+    p[0] = 0;
+    p[1] = 58;
+    p[2] = 32;
+    p[3] = 43;
+    p[4] = 4;
+    p[5] = 1;
+    p[6] = 2;
+    p[7] = 31;
+    p[8] = 34;
+    p[9] = 11;
+    p[10] = 2;
+    p[11] = 1;
+    p[12] = 2;
+    p[13] = 29;
+    p[14] = 34;
+    p[15] = 11;
+    p[16] = 2;
+    p[17] = 1;
+    p[18] = 2;
+    p[19] = 31;
+    p[20] = 16;
+    p[21] = 11;
+    p[22] = 2;
+    p[23] = 1;
+    p[24] = 0x80d;
+    p[25] = 0xc000;
+    p[26] = 500;
+    p[27] = 216;
+    p[28] = 8;
+    p[29] = 58;
+    p[30] = 32;
+    p[31] = 43;
+    p[32] = 4;
+    p[33] = 1;
+    p[34] = 2;
+    p[35] = 31;
+    p[36] = 34;
+    p[37] = 11;
+    p[38] = 2;
+    p[39] = 1;
+    p[40] = 2;
+    p[41] = 29;
+    p[42] = 16;
+    p[43] = 11;
+    p[44] = 2;
+    p[45] = 1;
+    p[46] = 13;
+    p[47] = 488;
+    p[48] = 200;
+    Field_unk_02003ee4();
+}
+
+void SceneData_BuildEntTbl(void)
+{
+    s32 *p = gEntTbl;
+    p[0] = 4;
+    p[1] = 58;
+    p[2] = 36;
+    p[3] = 43;
+    p[4] = 4;
+    p[5] = 1;
+    p[6] = 4;
+    p[7] = 31;
+    p[8] = 36;
+    p[9] = 11;
+    p[10] = 2;
+    p[11] = 1;
+    p[12] = 4;
+    p[13] = 29;
+    p[14] = 36;
+    p[15] = 11;
+    p[16] = 2;
+    p[17] = 1;
+    p[18] = 4;
+    p[19] = 31;
+    p[20] = 18;
+    p[21] = 11;
+    p[22] = 2;
+    p[23] = 1;
+    p[24] = 0x80e;
+    p[25] = 0xc000;
+    p[26] = 0x28e;
+    p[27] = 216;
+    p[28] = 12;
+    p[29] = 58;
+    p[30] = 36;
+    p[31] = 43;
+    p[32] = 4;
+    p[33] = 1;
+    p[34] = 4;
+    p[35] = 31;
+    p[36] = 36;
+    p[37] = 11;
+    p[38] = 2;
+    p[39] = 1;
+    p[40] = 4;
+    p[41] = 29;
+    p[42] = 18;
+    p[43] = 11;
+    p[44] = 2;
+    p[45] = 1;
+    p[46] = 15;
+    p[47] = 664;
+    p[48] = 200;
+    Field_unk_02003fcc();
+}
+
+void Scene_RunGuard(void)
+{
+    extern u8 gFarStub[];
+
+    u32 i;
+    s32 record;
+
+    Field_unk_0200469e();
+    if (Field_TestFlag818(0x818) == 0) {
+        if (Field_unk_0200468e(0x816) == 0) {
+            Field_unk_0200477e(0x20000, 0x4000);
+            Field_unk_02004798(0x11e0000, -1, 0x920000, 1);
+            Field_unk_020047a4();
+            Field_unk_020047ea(186);
+            Field_unk_0200469e_a(0, 59, 15, 38, 4, 3);
+            if (Field_unk_020046d4(0x817) != 0) {
+                Field_unk_020046ba(8, 60, 17, 39, 2, 2);
+            }
+            Field_unk_020047b4(0, 0, 0);
+            Field_unk_02004712(30);
+            Field_TestFlag816(0x816);
+            if (Field_TestFlag817(0x817) != 0) {
+                Field_unk_02002372();
+            }
+        }
+    }
+    Field_unk_0200473a();
+}
+
+void Scene_RunGuard(void)
+{
+    extern u8 gFarStub[];
+
+    u32 i;
+    s32 record;
+
+    Field_unk_0200474e();
+    if (Field_TestFlag818(0x818) == 0) {
+        if (Field_unk_0200473e(0x817) == 0) {
+            Field_unk_0200482e(0x20000, 0x4000);
+            Field_unk_02004848(0x11e0000, -1, 0x920000, 1);
+            Field_unk_02004854();
+            Field_unk_0200489a(186);
+            Field_unk_0200474e_a(4, 59, 17, 38, 4, 3);
+            if (Field_TestFlag816(0x816) != 0) {
+                Field_unk_0200476a(8, 60, 17, 39, 2, 2);
+            }
+            Field_unk_02004866(0, 0x8000, 0);
+            Field_unk_020047c4(30);
+            Field_TestFlag817(0x817);
+            if (Field_unk_020047b8(0x816) != 0) {
+                Field_unk_02002424();
+            }
+        }
+    }
+    Field_unk_020047ec();
+}
+
+void Scene_RunSplitPairSteps(s32 a, s32 b)
+{
+    Field_unk_02004898(a, 0);
+    Field_unk_020047fe(b);
+}

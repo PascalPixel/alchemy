@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Child_0800b684 {
     u8 filler0[5];

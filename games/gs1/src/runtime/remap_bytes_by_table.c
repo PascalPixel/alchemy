@@ -1,8 +1,7 @@
 #include "types.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-extern u8 Data_080097b8[];
+/* runtime/remap_bytes_by_table.c */
+extern u8 gRom[];
 
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {
@@ -11,7 +10,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
     u8 *tbl;
 
     p = buf;
-    tbl = Data_080097b8;
+    tbl = gRom;
     n = cnt - 1;
     if (n != -1) {
         do {

@@ -16,12 +16,12 @@
  *
  * Once armed, an inner loop reads ADDR_03001B04 (newly-pressed trigger
  * bits) every pass, exactly mirroring the repeated-volatile-read idiom
- * already adopted in games/gs1/src/shop/select_repair_item.c and
- * games/gs1/src/shop/select_use_item.c (a fresh dereference per `if`,
+ * already adopted in games/gs1/src/shop/sel/repair.c and
+ * games/gs1/src/shop/sel/use.c (a fresh dereference per `if`,
  * not a cached local): Right/Left adjust val1 by +-1, Up/Down adjust it
  * by +-10, R/L adjust val2 by +-1, and A breaks out. While waiting for
  * A, Start calls Func_080b5534 and Select calls the already-adopted
- * BattleRuntime_ReservedNoOp2A08 (games/gs1/src/battle/runtime/
+ * Battle_ReservedNoOp2A08 (games/gs1/src/battle/runtime/
  * reserved_no_op_a.c); B (or the sticky `held` flag it sets) writes 5 to
  * *(u8*)0x0200046b every pass once triggered once. When val2 changes,
  * Func_08077098 (a plain far-call veneer, see games/gs1/asm/
@@ -48,7 +48,7 @@ extern void Func_080b63c8(s32);
 void WaitFrames(s32);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
-void BattleRuntime_ReservedNoOp2A08(void);
+void Battle_ReservedNoOp2A08(void);
 void BattleUnit_Recalculate(s32);
 
 void Func_080b56e0(void)
@@ -106,7 +106,7 @@ void Func_080b56e0(void)
                 if ((*(volatile u32 *)ADDR_03001B04 & 8) != 0)
                     Func_080b5534();
                 if ((*(volatile u32 *)ADDR_03001B04 & 4) != 0)
-                    BattleRuntime_ReservedNoOp2A08();
+                    Battle_ReservedNoOp2A08();
                 if ((*(volatile u32 *)ADDR_03001B04 & 2) != 0 || held != 0) {
                     held = 1;
                     *bytePtr = 5;

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define FieldScene_RunLateSequence Func_02001fda
+#define Scene_RunLateSequence Func_02001fda
 
 /* Audited retained field-scene body at 0x02001fda.
  * The complete production body preserves 63 decoded calls, 0 loop(s), and 20 explicit memory operation(s).

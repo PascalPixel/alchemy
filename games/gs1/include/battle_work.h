@@ -3,12 +3,8 @@
 
 #include "types.h"
 
-extern void *Data_03001e74; /* 戦闘ワークへのポインタセル */
+extern void *gBattleWork;
 
-#define BattleWorkPtr Data_03001e74
-
-/* 戦闘ワーク+65 のモード適用。役割未確定。 */
-void Func_08015130(s32 mode);
-#define Sys_SetMode Func_08015130
+void Sys_SetMode(s32 mode);
 
 #endif

@@ -1,17 +1,16 @@
 #include "types.h"
+#include "scene.h"
 
-extern u8 *Data_03001ea0;
-void Func_080b0020(void *);
-void Func_080217a4(struct Object *object);
+extern u8 *gIw;
 
 void Menu_RunSelectedWorkspaceEntry(void)
 {
-    u8 *base = Data_03001ea0;
+    u8 *base = gIw;
     u32 index;
 
-    Func_080b0020(base + 0x5a4);
+    Menu_Do(base + 0x5a4);
     index = *(u16 *)(base + 0x574);
     index *= 4;
     index += 0x610;
-    Func_080217a4(*(void **)(base + index));
+    Ui_ApplyTableScaleToObject(*(void **)(base + index));
 }

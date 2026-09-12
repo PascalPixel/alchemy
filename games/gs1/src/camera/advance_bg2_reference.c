@@ -1,7 +1,6 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Camera_AdvanceBg2Reference(void)
 {

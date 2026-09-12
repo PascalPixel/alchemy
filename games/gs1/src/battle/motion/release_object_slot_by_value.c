@@ -1,7 +1,6 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
-
-extern s32 Func_08009270(s32, s32, s32, s32);
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
@@ -16,7 +15,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
         offset = index * 2 + 4;
         item = *(s16 *)(offset + (u32)base);
         if (item == value) {
-            Func_08009270(index, 0, 0, 0);
+            Battle_SetMode(index, 0, 0, 0);
             *(s16 *)(offset + (u32)base) = 0;
         }
         index++;

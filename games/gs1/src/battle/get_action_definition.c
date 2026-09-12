@@ -1,6 +1,7 @@
+#include "scene.h"
 #include "battle_runtime.h"
 
-extern const u8 Data_0807ee58[];
+extern const u8 gRom[];
 
 struct BattleAction *BattleAction_GetDirect(s32 action_id) {
     u32 entry_index;
@@ -9,5 +10,5 @@ struct BattleAction *BattleAction_GetDirect(s32 action_id) {
     if (entry_index >= 0x208U) {
         entry_index = 0;
     }
-    return (struct BattleAction *)(Data_0807ee58 + entry_index * 0x10);
+    return (struct BattleAction *)(gRom + entry_index * 0x10);
 }

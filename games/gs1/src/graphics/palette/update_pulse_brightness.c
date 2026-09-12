@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
 
-s32 Func_0800231c(s32);
 s32 FixedPoint_Ratio(s32, s32);
-extern s32 Data_03001e40;
+extern s32 gIw;
 
 void Palette_UpdatePulseBrightness(void)
 {
@@ -22,10 +22,10 @@ void Palette_UpdatePulseBrightness(void)
         s32 green;
         s32 blue;
 
-        tick = Data_03001e40;
+        tick = gIw;
         angle = (tick * 3) << 10;
         color = palette[16];
-        amount = FixedPoint_Ratio(0x10000 - Func_0800231c(angle), 0x2AAA);
+        amount = FixedPoint_Ratio(0x10000 - FixedCos(angle), 0x2AAA);
 
         red = (color >> 10) & mask;
         green = (color >> 5) & mask;

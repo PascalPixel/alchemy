@@ -1,8 +1,11 @@
 #include "types.h"
+#include "scene.h"
 #include "fixed_math.h"
+#include "gs1_edition.h"
+#include "battle_summon.h"
+#include "battle_formation.h"
 
-#define BattleFormation_SelectLevelMatchedCandidate Func_080c1afc
-
+/* battle/formation/select_level_matched_candidate.c */
 u32 Random16(void);
 
 struct BattleUnitLevel {
@@ -17,13 +20,11 @@ struct FormationCandidate {
 
 struct BattleUnitLevel *Runtime_GetObject(s32 unit_id);
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
-s32 Func_080b6a60(u16 *out_units);
+
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-void *Func_08077198(s32 id);
-s32 Func_080770d0(s32 id);
-s32 Func_080770e0(s32 id);
-void Func_08002df0(void *ptr);
-extern u16 Data_080c73f8[];
+struct BattleActorDefinition *FunctionHead_08077198(s32 actor_id);
+
+extern s16 RomBytes_080c73f8[];
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
@@ -32,7 +33,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         (struct FormationCandidate *)Runtime_BumpAllocateAlternatePool(128);
     u16 party[8];
     s32 level_total = 0;
-    s32 unit_count = Func_080b6a60(party);
+    s32 unit_count = Battle_Check(party);
     s32 i;
     s32 j;
     s32 chance;
@@ -52,7 +53,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
     }
 
     chance = FixedPoint_Ratio(level_total, unit_count);
-    chance += (s8)Func_080770e0(1016);
+    chance += (s8)GameFlag_GetByte(1016);
     if (chance <= 0)
         chance = 1;
     if (chance > 99)
@@ -62,8 +63,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         pool[i].score = -1;
 
     for (i = 0; (u32)i <= 19; i++) {
-        Func_08077198(Data_080c73f8[i]);
-        Func_080770d0(Data_080c73f8[i] + 1536);
+        FunctionHead_08077198(RomBytes_080c73f8[i]);
+        GameFlag_Clear(RomBytes_080c73f8[i] + 1536);
     }
 
     for (i = 0; (u32)i <= 379; i++) {
@@ -102,6 +103,6 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         result = 1;
     }
 
-    Func_08002df0(pool);
+    Battle_Do(pool);
     return result;
 }

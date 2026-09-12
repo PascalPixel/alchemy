@@ -1,8 +1,8 @@
 #include "types.h"
+#include "scene.h"
 
-void Func_080e7404(s32, s32);
-
-void BattleEffect_InitializeDefaultMode(s32 arg0)
+/* battle/effects/runtime/initialize_default_mode.c */
+void BattleFx_InitializeDefaultMode(s32 arg0)
 {
-    Func_080e7404(arg0, 0);
+    Battle_Apply(arg0, 0);
 }

@@ -1,6 +1,8 @@
 #include "types.h"
+#include "scene.h"
 #include "global_cells.h"
 
+/* runtime/memory/get_remaining_iwram.c */
 s32 Runtime_GetRemainingIwram(void)
 {
     s32 state = ADDR_03001E50;

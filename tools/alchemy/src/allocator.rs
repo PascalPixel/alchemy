@@ -81,11 +81,14 @@ fn run(args: &[String]) -> Result<(), String> {
     let bindings = work.join("bindings.h");
     // Bind through the parsed owner rather than the file name: a named overlay
     // source carries no resource stem to infer an overlay from.
-    fs::write(
-        &bindings,
-        SourcePaths::load_for_game(&repo, CompilerTarget::Gs1.as_str())?
-            .symbol_bindings(parsed.overlay_id().as_deref()),
-    )
+    fs::write(&bindings, {
+        let register = SourcePaths::load_for_game(&repo, CompilerTarget::Gs1.as_str())?
+            .symbol_bindings(parsed.overlay_id().as_deref());
+        crate::compiler::source_bindings::with_register(
+            &register,
+            &crate::compiler::source_bindings::production_bindings(&repo, &register, Some(&src))?,
+        )
+    })
     .map_err(|e| e.to_string())?;
     cpp.splice(
         1..1,

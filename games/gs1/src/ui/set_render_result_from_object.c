@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 #include "gs1_edition.h"
 
 struct State08093304 {
@@ -10,14 +11,14 @@ struct State08093304 {
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 s32 ObjectTable_ReadActiveValue(s32 key);
-s32 Func_080915ac(u32 id);
-extern u8 Data_02000240[];
-extern u8 Data_0809fc28[];
-extern struct State08093304 *Data_03001e8c;
+
+extern u8 gCell[];
+extern u8 gRom[];
+extern struct State08093304 *gIw;
 
 void Ui_SetRenderResultFromObject(s32 arg0)
 {
-    struct State08093304 *state = Data_03001e8c;
+    struct State08093304 *state = gIw;
     u8 value;
     s32 ret;
 
@@ -25,8 +26,8 @@ void Ui_SetRenderResultFromObject(s32 arg0)
         FIELD(state, s16, RENDER_RESULT_OFS) = (value = 0);
         FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     } else {
-        ret = Func_080915ac(ObjectTable_ReadActiveValue(arg0));
-        value = Data_0809fc28[Data_02000240[0x20C]];
+        ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
+        value = gRom[gCell[0x20C]];
         FIELD(state, s16, RENDER_RESULT_OFS) = ret;
         FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     }

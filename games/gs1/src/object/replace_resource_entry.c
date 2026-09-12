@@ -1,7 +1,7 @@
 #include "types.h"
+#include "scene.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
+/* object/replace_resource_entry.c */
 s32 Resource_ResetEntry(u32 index);
 
 void *Object_ReplaceResourceEntry(void *src, void *alt)

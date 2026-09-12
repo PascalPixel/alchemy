@@ -1,5 +1,10 @@
 #include "types.h"
+#include "scene.h"
+#include "battle_summon.h"
+#include "battle_party.h"
+#include "owner_state.h"
 
+/* battle/placement/update_entries.c */
 struct PlacementEntry {
     u8 x;
     u8 y;
@@ -13,22 +18,18 @@ struct PlacementList {
 };
 
 struct PlacementTable {
-    u8 padding[8];
+    u32 available_mask;
+    u8 padding[4];
     struct PlacementList list;
 };
 
 struct BattleObjectSlot;
 
-s32 Func_080b6a60(u16 *owners);
-s32 Func_08077210(s32 id, s32 x, s32 y);
-struct PlacementTable *Func_08077000(s32 owner);
-void Func_080771c8(s32 id, s32 x, s32 y);
-s32 Func_080770c0(s32 message);
-struct BattleObjectSlot *Func_080b7dd0(s32 object_id);
-s32 Func_080771b0(s32 id, s32 x, s32 y);
-s32 Func_080771c0(s32 id, s32 x, s32 y);
+struct PlacementTable *Battle_Run(s32 side);
 
-s32 Func_080b5c08(void)
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
+
+s32 BattlePlacement_UpdateEntries(void)
 {
     u16 owners[10];
     s32 count;
@@ -37,14 +38,14 @@ s32 Func_080b5c08(void)
     s32 x;
     s32 y;
 
-    count = Func_080b6a60(owners);
+    count = Battle_Check(owners);
 
     for (i = 0; i < count; i++) {
         owner = owners[i];
         for (x = 0; x <= 3; x++) {
             for (y = 0; y <= 19; y++) {
-                if (Func_08077210(owner, x, y) != 0) {
-                    struct PlacementList *list = &Func_08077000((u32)owner > 7 ? 1 : 0)->list;
+                if (Battle_Place(owner, x, y) != 0) {
+                    struct PlacementList *list = &Battle_Run((u32)owner > 7 ? 1 : 0)->list;
                     s32 j;
 
                     for (j = 0; j < list->count; j++) {
@@ -52,17 +53,17 @@ s32 Func_080b5c08(void)
                             break;
                     }
                     if (j == list->count)
-                        Func_080771c8(owner, x, y);
+                        Battle_unk2_3(owner, x, y);
                 }
             }
         }
     }
 
-    if (Func_080770c0(364) != 0)
+    if (GameFlag_IsSet(364) != 0)
         return;
 
     {
-        struct PlacementList *list = &Func_08077000(0)->list;
+        struct PlacementList *list = &Battle_Run(0)->list;
         struct PlacementEntry *entry;
 
         i = 0;
@@ -71,13 +72,13 @@ s32 Func_080b5c08(void)
 
             entry = list->entries;
             do {
-                if (entry->timer == permanent_timer && Func_080b7dd0(entry->id) == 0) {
+                if (entry->timer == permanent_timer && GetBattleObjectSlot(entry->id) == 0) {
                     u8 id = entry->id;
                     u8 ex = entry->x;
                     u8 ey = entry->y;
 
-                    Func_080771b0(id, ex, ey);
-                    Func_080771c0(id, ex, ey);
+                    Battle_unk3_3(id, ex, ey);
+                    Battle_unk4_3(id, ex, ey);
                 }
                 i++;
                 entry++;

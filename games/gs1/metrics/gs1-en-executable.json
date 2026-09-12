@@ -1814,7 +1814,7 @@
         "start": 134342592,
         "end": 134342742,
         "kind": "thumb",
-        "evidence": "games/gs1/src/ui/text/draw_character.c:byte-identical-claimed-C"
+        "evidence": "games/gs1/src/ui/text/draw/draw_character.c:byte-identical-claimed-C"
       },
       {
         "start": 134342742,

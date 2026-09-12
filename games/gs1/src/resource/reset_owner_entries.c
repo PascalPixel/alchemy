@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Node_0801b148 {
     u32 value0;
@@ -10,18 +11,17 @@ struct Node_0801b148 {
 
 struct Work;
 
-extern u8 *Data_03001e98;
+extern u8 *gIw;
 
 void Resource_ScheduleOwnerReset(void);
 void UiWork_Finalize(struct Work *work, s32 release);
-void WaitFrames(u32 value);
+void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
 void Resource_ResetPendingTransfer(void);
-void Func_08002dd8(u32 value);
 
 void Resource_ResetOwnerEntries(void)
 {
-    u8 *state = Data_03001e98;
+    u8 *state = gIw;
     struct Node_0801b148 *node;
 
     Resource_ScheduleOwnerReset();
@@ -51,5 +51,5 @@ void Resource_ResetOwnerEntries(void)
         }
     }
     Resource_ResetEntry(*(u16 *)(state + 0x2e4));
-    Func_08002dd8(18);
+    Sys_Do(18);
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 void Graphics_PackTileRows(u8 *source, u8 *destination, s32 stride)
 {

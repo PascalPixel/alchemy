@@ -1,8 +1,12 @@
 #include "types.h"
+#include "scene.h"
+#include "resource.h"
 
+/* graphics/palette/palette_decrement_selected_counter.c */
+/* graphics/palette/decrement_selected_counter.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 Data_02000240[];
+extern u8 gCell[];
 
 void GraphicsPalette_DecrementSelectedCounter(s32 work)
 {
@@ -14,15 +18,15 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
     switch (sel) {
     case 0:
         off = 0x20C;
-        p = &Data_02000240[off];
+        p = &gCell[off];
         break;
     case 1:
         off = 0x205;
-        p = &Data_02000240[off];
+        p = &gCell[off];
         break;
     case 2:
         off = 0x206;
-        p = &Data_02000240[off];
+        p = &gCell[off];
         break;
     default:
         return;

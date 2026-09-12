@@ -90,11 +90,7 @@ LAYOUT_OFFSET_GUARD(
  * spelling it as a C argument.  Keep the legacy declaration non-prototyped
  * so those compiler-shaped calls remain representable.
  */
-void *Func_08077394();
-struct OwnerInventoryState *Func_08077008(s32 owner);
 
-#define OwnerState_Get Func_08077394
-#define OwnerState_GetFar Func_08077008
-#define Owner_RecalculateStats Func_08077428
+void *OwnerState_Get();
 
 #endif

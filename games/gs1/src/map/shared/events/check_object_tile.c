@@ -1,7 +1,9 @@
 #include "object_lookup.h"
 #include "types.h"
+#include "scene.h"
 #include "map.h"
 
+/* map/shared/events/check_object_tile.c */
 struct MapObject {
     u8 padding00[8];
     s32 x;
@@ -18,13 +20,15 @@ struct MapEventRuntime {
     s16 mode;
 };
 
-struct ObjectGlobals {
-    u8 padding000[0x1f4];
-    u32 active_object_id;
+struct Global_08099738 {
+    u8 pad_000[0x1F4];
+    u32 object_id;
+    u8 pad_1f8[0x54];
+    u16 field_24c;
 };
 
-extern struct ObjectGlobals Data_02000240;
-extern struct MapEventRuntime *Data_03001ebc;
+extern struct Global_08099738 gCell;
+extern struct MapEventRuntime *gWork;
 
 void CheckObjectMapTile(void)
 {
@@ -35,9 +39,9 @@ void CheckObjectMapTile(void)
     s32 x;
     s32 y;
 
-    runtime_slot_address = (u32)&Data_03001ebc;
-    runtime = Data_03001ebc;
-    object = ObjectTable_Get(Data_02000240.active_object_id);
+    runtime_slot_address = (u32)&gWork;
+    runtime = gWork;
+    object = ObjectTable_Get(gCell.object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
@@ -81,4 +85,71 @@ void CheckObjectMapTile(void)
 
     if (tile[2] != 0xfb)
         runtime->event_code = 0x2092;
+}
+
+/* map/shared/events/run_tile_trigger_sequence.c */
+struct Controller_08099738 {
+    u8 pad_00[5];
+    u8 field_05;
+};
+
+struct State_08099738 {
+    u8 pad_00[0x25];
+    u8 field_25;
+    u8 field_26;
+    u8 pad_27;
+    struct Controller_08099738 *controller;
+};
+
+struct Object_08099738 {
+    u8 pad_00[0x50];
+    struct State_08099738 *state;
+    u8 pad_54[0x18];
+    u32 field_6c;
+};
+
+void Audio_PlayCue(s32);
+s32 ScheduleCallback(void (*callback)(void));
+void Object_SetMode(struct Object_08099738 *, s32);
+void WaitFrames(s32);
+void CheckObjectMapTile(void);
+
+void MapEvent_RunTileTriggerSequence(void)
+{
+    struct Object_08099738 *object;
+    struct State_08099738 *state;
+    struct Controller_08099738 *controller;
+    u32 i;
+
+    object = ObjectTable_Get(gCell.object_id);
+    state = object->state;
+    controller = state->controller;
+
+    Audio_PlayCue(154);
+    ScheduleCallback(CheckObjectMapTile);
+    Object_SetMode(object, 0);
+    object->field_6c = 0;
+
+    for (i = 0; i < 5; ++i) {
+        controller->field_05 = 7;
+        state->field_25 = 1;
+        state->field_26 = 2;
+        WaitFrames(2);
+        state->field_25 = 1;
+        state->field_26 = 0;
+        WaitFrames(2);
+    }
+
+    for (i = 0; i < 5; ++i) {
+        controller->field_05 = 7;
+        state->field_25 = 1;
+        state->field_26 = 0;
+        WaitFrames(2);
+        controller->field_05 = 0;
+        state->field_25 = 1;
+        WaitFrames(2);
+    }
+
+    state->field_26 = 1;
+    gCell.field_24c = 0;
 }

@@ -1,9 +1,7 @@
 #include "types.h"
+#include "scene.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 Func_080772b8(void *);
-
+/* battle/classify_entry_kind.c */
 s32 Battle_ClassifyEntryKind(const u8 *entry)
 {
     s32 b3;
@@ -31,7 +29,7 @@ s32 Battle_ClassifyEntryKind(const u8 *entry)
     if (k == 0x40) {
         ret = 6;
     }
-    if (Func_080772b8(entry[3]) != 0) {
+    if (Battle_Check(entry[3]) != 0) {
         ret = 5;
     }
     return ret;

@@ -1,8 +1,7 @@
 #include "types.h"
+#include "scene.h"
 #include "fixed_math.h"
 #include "global_cells.h"
-
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 u32 Random16(void);
 

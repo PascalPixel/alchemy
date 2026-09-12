@@ -1,9 +1,8 @@
 #include "types.h"
-
-s32 Func_0800c0f4();
+#include "scene.h"
 
 s32 ObjectDispatch_RunHookAndReturnZero(void)
 {
-    Func_0800c0f4();
+    Obj_Check();
     return 0;
 }

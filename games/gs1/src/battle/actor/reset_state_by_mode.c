@@ -1,7 +1,8 @@
 #include "types.h"
+#include "scene.h"
 
 u8 *Runtime_GetObject(s32);
-void Func_08077128(s32);
+
 u8 *Item_GetData(u16);
 void BattleUnit_Recalculate(s32);
 
@@ -12,7 +13,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
     state = Runtime_GetObject(id);
     if (mode == 0) {
         *(u16 *)(state + 56) = *(u16 *)(state + 52);
-        Func_08077128(id);
+        Actor_Do(id);
     } else if (mode == 1) {
         state[0x131] = 0;
     } else if (mode == 2) {

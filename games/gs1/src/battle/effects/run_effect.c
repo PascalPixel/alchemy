@@ -1,11 +1,15 @@
 #include "types.h"
+#include "scene.h"
 
+/* battle/effects/run/run_effect.c */
 struct BattleEffectRequest {
-    u8 reserved_000[0x18];
+    u8 reserved_000[0x14];
+    void *object;
     s16 source_id;
     s16 target_id;
     u8 reserved_01c[2];
     s16 battle_mode;
+    u8 running;
 };
 
 struct BattleEffectState {
@@ -20,36 +24,35 @@ struct BattleEffectGlobals {
     s16 selected_id;
 };
 
-extern struct BattleEffectRequest *Data_03001f30;
-extern struct BattleEffectGlobals Data_02000240;
-#define RunBattleEffect01 Func_0809802c
+extern struct BattleEffectRequest *gIw;
+extern struct BattleEffectGlobals gCell;
 
 void RunBattleEffect01(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect03(void);
 void RunBattleEffect04(void);
 void RunBattleEffect05(void);
-void BattleEffect_RunOrbitingParticles(void);
+void BattleFx_RunOrbitingParticles(void);
 void RunBattleEffect07(void);
 void RunBattleEffect08(void);
 void RunBattleEffect10(void);
 void RunBattleEffect11(void);
-void BattleEffect_RunBurstParticles(void);
+void BattleFx_RunBurstParticles(void);
 void RunBattleEffect13(void);
 void RunBattleEffect14(void);
-void BattleEffect_RunEffect15(void);
+void BattleFx_RunEffect15(void);
 void RunBattleEffect16(void);
-void BattleEffect_ResumeObject(s32 obj_id);
-s32 Func_0808df1c(s32 obj_id, s32 battle_mode);
-s32 BattleEffect_FilterObjectIdByFlags(s32 obj_id);
-s32 Func_0808d5a4(s32 obj_id);
-void BattleEffect_SetupObjectPair(s32 selected_object, s32 obj_id);
-void Func_0809ab98(s32 obj_id);
-void BattleEffect_PauseObject(s32 obj_id);
-void Func_0809abb4(void);
+void BattleFx_ResumeObject(s32 obj_id);
+
+s32 BattleFx_FilterObjectIdByFlags(s32 obj_id);
+
+void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
+
+void BattleFx_PauseObject(s32 obj_id);
+
 void ResetSceneTransitionEffect(void);
 
-void BattleEffect_Run(void)
+void BattleFx_Run(void)
 {
     struct BattleEffectRequest *request;
     struct BattleEffectState *battle;
@@ -57,8 +60,8 @@ void BattleEffect_Run(void)
     s32 target_id;
     s32 obj_id;
 
-    request = Data_03001f30;
-    battle = *(struct BattleEffectState **)((u8 *)&Data_03001f30 - 0x74);
+    request = gIw;
+    battle = *(struct BattleEffectState **)((u8 *)&gIw - 0x74);
     battle_mode = request->battle_mode;
     target_id = request->target_id;
 
@@ -82,32 +85,32 @@ void BattleEffect_Run(void)
         RunBattleEffect14();
         return;
     case 6:
-        BattleEffect_RunOrbitingParticles();
+        BattleFx_RunOrbitingParticles();
         return;
     case 3:
         RunBattleEffect03();
         return;
     case 12:
-        BattleEffect_RunBurstParticles();
+        BattleFx_RunBurstParticles();
         return;
     case 13:
         RunBattleEffect13();
         return;
     case 9:
-        if (Data_02000240.selected_id != -1) {
-            BattleEffect_ResumeObject(Data_02000240.selected_id);
-            Data_02000240.selected_id = -1;
+        if (gCell.selected_id != -1) {
+            BattleFx_ResumeObject(gCell.selected_id);
+            gCell.selected_id = -1;
         }
 
-        obj_id = Func_0808df1c(Data_02000240.selected_object, battle_mode);
-        obj_id = BattleEffect_FilterObjectIdByFlags(obj_id);
-        if (Func_0808d5a4(obj_id)!= 0) {
-            BattleEffect_SetupObjectPair(Data_02000240.selected_object, obj_id);
-            Func_0809ab98(obj_id);
-            BattleEffect_PauseObject(obj_id);
-            Data_02000240.selected_id = obj_id;
+        obj_id = FunctionHead_0808df1c(gCell.selected_object, battle_mode);
+        obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
+        if (Battle_Check(obj_id)!= 0) {
+            BattleFx_SetupObjectPair(gCell.selected_object, obj_id);
+            FunctionHead_0809ab98(obj_id);
+            BattleFx_PauseObject(obj_id);
+            gCell.selected_id = obj_id;
         } else {
-            Func_0809abb4();
+            FunctionHead_0809abb4();
         }
         return;
     case 2:
@@ -122,10 +125,94 @@ void BattleEffect_Run(void)
         RunBattleEffect10();
         return;
     case 15:
-        BattleEffect_RunEffect15();
+        BattleFx_RunEffect15();
         return;
     case 16:
         RunBattleEffect16();
         return;
+    }
+}
+
+/* battle/effects/set/dispatch_request_kind.c */
+void BattleFx_DispatchRequestKind(void)
+{
+    struct BattleEffectRequest *request = gIw;
+    struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&gIw - 0x74);
+    s32 battle_mode = request->battle_mode;
+    s32 target_id = request->target_id;
+
+    request->running = 0;
+    switch (battle_mode) {
+    case 2:
+        if (battle->active != 0)
+            FunctionHead_080984c0();
+        if (gCell.selected_id != request->target_id)
+            *(u8 *)((u8 *)request->object + 91) = 1;
+        FunctionHead_08097540(request->source_id, target_id);
+        break;
+    case 1:
+        FunctionHead_08097c3c(target_id);
+        break;
+    case 7:
+        BattleFx_RunTargetedItemBreak(target_id);
+        break;
+    case 11:
+        Battle_unk3_2(target_id);
+        break;
+    case 4:
+        BattleFx_CallEffect04(target_id);
+        break;
+    case 5:
+        BattleFx_CallEffect05(target_id);
+        break;
+    case 6:
+        BattleFx_StartOrbitingParticles(target_id);
+        break;
+    case 12:
+        BattleFx_RunBurstParticleMainObject(target_id);
+        break;
+    case 9:
+        if (gCell.selected_id != -1) {
+            BattleFx_ResumeObject(gCell.selected_id);
+            gCell.selected_id = -1;
+        }
+        BattleFx_PauseObject(target_id);
+        gCell.selected_id = target_id;
+        BattleFx_MarkChildAndRunFallbackTransition(target_id);
+        break;
+    case 3:
+        BattleFx_CallEffect03AndStop(target_id);
+        break;
+    case 14:
+        BattleFx_CallEffect14(target_id);
+        break;
+    case 13:
+        BattleFx_RunEffect13Hook(target_id);
+        break;
+    case 8:
+        RunBattleEffect08();
+        break;
+    case 10:
+        RunBattleEffect10();
+        break;
+    case 15:
+        BattleFx_RunEffect15();
+        break;
+    case 16:
+        RunBattleEffect16();
+        break;
+    }
+}
+
+/* battle/effects/misc/clear_child_value_on_mismatch.c */
+void BattleFx_ClearChildValueOnMismatch(void)
+{
+    struct BattleEffectRequest *request = gIw;
+
+    if (request->battle_mode == 2) {
+        FunctionHead_08097608();
+        if (gCell.selected_id != request->target_id) {
+            *(u8 *)((u8 *)request->object + 91) = 0;
+        }
     }
 }

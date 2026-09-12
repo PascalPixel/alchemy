@@ -16,11 +16,11 @@
  */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunConditionalActorSequence:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunConditionalActorSequence:
  * 91 calls, three nested conditionals, fallback routing, actor flags, and
  * workspace state across the complete decoded owner. */
 
-#define FieldScene_RunConditionalActorSequence Func_020021c8
+#define Scene_RunConditionalActorSequence Func_020021c8
 
 void Func_0200689a();
 void Func_02006900();

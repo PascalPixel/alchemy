@@ -1,5 +1,7 @@
 #include "psynergy_menu.h"
 
+extern struct PsynergyMenuGlobalState Data_02000240;
+
 extern void UiText_DrawAt(s32, s32, s32, s32);
 extern s32 Func_08015108(s32, s32, s32, s32, s32);
 extern void UiText_DrawQuantity(s32, s32);

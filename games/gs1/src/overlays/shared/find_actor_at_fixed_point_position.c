@@ -1,10 +1,11 @@
 #include "types.h"
+#include "scene.h"
 
-extern u8 *Data_03001ebc;
+extern u8 *gWork;
 
-s32 *Func_0200006c(s32 *arg0)
+s32 *Sys_Run(s32 *arg0)
 {
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {

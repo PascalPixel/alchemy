@@ -18,7 +18,7 @@
  *   Select     hold to show the shortcut prompt; Select + L / R assigns the
  *              highlighted action to shortcut slot 0 / 1
  *
- * Data_03001f2c is the polymorphic menu-runtime cell (compare inventory_menu.h
+ * Data_03001f2c is the polymorphic menu-runtime cell (compare item_menu.h
  * and psynergy_menu.h).  Field names shared with PsynergyMenuState keep that
  * header's spellings (entry_grid_cursor 0x044, entry_icons 0x048, psynergies
  * 0x1c8, psynergy_count 0x218, owner_ids 0x21a, selected_index_by_owner
@@ -117,7 +117,7 @@ void Func_080f9010(s32 cue);
 #define BattleUnit_Get Func_08077008
 #define UiWindow_UpdateOrCreate Func_080a10d0
 #define PsynergyMenu_CallIconRoutineWithValue Func_080a1804
-#define BattleEffect_PositionSprite Func_080a1a40
+#define BattleFx_PositionSprite Func_080a1a40
 #define PsynergyMenu_SetShortcut Func_080a65e4
 #define PsynergyMenu_DrawPsynergyIcons Func_080a68a8
 #define PsynergyMenu_CollectActions Func_080a68ec
@@ -186,7 +186,7 @@ s32 PsynergyMenu_SelectAction(s32 pane)
         menu->pane_icon[pane]->state = 1;
 
         while (GameFlag_IsSet(0x150) == 0) {
-            BattleEffect_PositionSprite(88, state.row * 16 + 36);
+            BattleFx_PositionSprite(88, state.row * 16 + 36);
 
             if (changed != 0) {
                 changed = 0;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene.h"
 
 struct Entry_08091c7c {
     u8 unknown_00[10];
@@ -17,28 +18,25 @@ struct Runtime_08091c7c {
     s16 value_cc4;
 };
 
-extern struct Runtime_08091c7c *Data_03001ebc;
-extern volatile s32 Data_03001c94;
+extern struct Runtime_08091c7c *gWork;
+extern volatile s32 gIw;
 
-s16 *Func_0808d394(s32);
+s16 *Sys_Run(s32);
 void WaitFrames(s32);
 s32 UiWork_IsCompleteFar(void);
-s32 Func_08015390(s32, s32, s32, s32);
-void Func_080924d4(s32, s32);
-void Func_08015100(s32);
+
 void UiWork_FinalizePending(void);
-void Func_08091c44(s32, s32);
 
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
 {
-    struct Runtime_08091c7c *rt = Data_03001ebc;
-    s32 v = *Func_0808d394(rt->first_1f4);
+    struct Runtime_08091c7c *rt = gWork;
+    s32 v = *Sys_Run(rt->first_1f4);
     struct Entry_08091c7c *ent0 = rt->second_1f8;
     struct Entry_08091c7c *ent1 = rt->third_1fc;
     s32 flag = 1;
     s32 ret;
 
-    while (Data_03001c94 != 0)
+    while (gIw != 0)
         WaitFrames(1);
 
     while (UiWork_IsCompleteFar() == 0)
@@ -59,17 +57,17 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
             flag = 0;
     }
 
-    ret = Func_08015390(flag, rt->value_cc2, rt->value_cc4, 0);
+    ret = Sys_SetMode(flag, rt->value_cc2, rt->value_cc4, 0);
     if (ret != 0) {
-        Func_080924d4(id, 4);
-        Func_08015100(v);
+        Object_SetModeById(id, 4);
+        Sys_Do(v);
         UiWork_FinalizePending();
-        Func_08091c44(id, 4);
+        Sys_Apply2(id, 4);
     } else {
-        Func_080924d4(id, 3);
-        Func_08015100(v);
+        Object_SetModeById(id, 3);
+        Sys_Do(v);
         UiWork_FinalizePending();
-        Func_08091c44(id, 3);
+        Sys_Apply2(id, 3);
     }
 
     return ret;

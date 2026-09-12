@@ -1,8 +1,7 @@
 #include "types.h"
-
-s32 Func_08002dd8(s32);
+#include "scene.h"
 
 void Runtime_ReleaseHeapBlock10(void)
 {
-    Func_08002dd8(0xA);
+    Sys_Check(0xA);
 }

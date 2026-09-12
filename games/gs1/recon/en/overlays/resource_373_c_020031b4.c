@@ -38,26 +38,26 @@ void Func_02009338();
  * overlay veneer and the main-image veneer island, keeping the site's own
  * calling form. Names without a repository binding are provisional.
  */
-#define BattleRuntime_Reset_1(args...) Func_02009174(args)
+#define Battle_Reset_1(args...) Func_02009174(args)
 #define Scene_GetRecord_1(args...) Func_020091a2(args)
 #define Scene_GetRecord_2(args...) Func_020091ae(args)
 #define Scene_GetRecord_3(args...) Func_020091ba(args)
 #define Object_SetModeById_1(args...) Func_02009228(args)
 #define Object_SetModeById_2(args...) Func_02009230(args)
 #define Object_SetModeById_3(args...) Func_02009238(args)
-#define ObjectMotion_EnableActionAndSetCallback_1(args...) Func_02009208(args)
-#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Func_02009216, a0, a1)
-#define ObjectMotion_MarkActiveAndSetActionCallback_1(a0, a1) Value2(Func_02009242, a0, a1)
-#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_0200930e, a0, a1, a2)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_020092b6(args)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_0200930a, a0, a1, a2)
+#define Motion_EnableActCb_1(args...) Func_02009208(args)
+#define Motion_EnableActCb_2(a0, a1) Value2(Func_02009216, a0, a1)
+#define Motion_MarkActiveAndSetActionCallback_1(a0, a1) Value2(Func_02009242, a0, a1)
+#define BattleFx_SpawnLinked_1(a0, a1, a2) Call3(Func_0200930e, a0, a1, a2)
+#define Motion_SetVarCbObj_1(args...) Func_020092b6(args)
+#define Motion_ArmCb_1(a0, a1, a2) Call3(Func_0200930a, a0, a1, a2)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_020092e8, a0)
-#define BattleRuntime_RunThenWaitIfModeZero_1(args...) Func_0200930a_a(args)
-#define ObjectMotion_SetAngleToward_1(args...) Func_020092e4(args)
-#define BattleEvent_RunActionAndWait_1(args...) Func_02009314(args)
-#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02009338, a0, a1, a2)
+#define Battle_RunThenWaitIfModeZero_1(args...) Func_0200930a_a(args)
+#define Motion_SetAngleToward_1(args...) Func_020092e4(args)
+#define BattleEv_RunWait_1(args...) Func_02009314(args)
+#define Motion_ArmCb_2(a0, a1, a2) Call3(Func_02009338, a0, a1, a2)
 #define GameFlag_Set_1(a0) Call1(Func_02009236, a0)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_0200925a(args)
+#define Battle_SchedShoulder_1(args...) Func_0200925a(args)
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -100,13 +100,13 @@ static __inline__ void bump_step(s32 amount)
 
 /* Sets up actors 12, 13, 14 and 20 with shared data and movement/speed
  * parameters, then drives actor 11 through a further sequence of moves. */
-void FieldScene_RunCompanionActorSequence(void)
+void Scene_RunCompanionActorSequence(void)
 {
     u32 i;
     s32 actor_data;
     s32 shared_data;
 
-    BattleRuntime_Reset_1();
+    Battle_Reset_1();
     actor_data = Scene_GetRecord_1(ACTOR_A);
     Func_02009110(actor_data, 0);
     actor_data = Scene_GetRecord_2(ACTOR_B);
@@ -119,20 +119,20 @@ void FieldScene_RunCompanionActorSequence(void)
     Func_02009086(20);
     Call3(Func_0200915e, 0x20000, 0x20000, 0x10000);
     shared_data = SHARED_DATA;
-    ObjectMotion_EnableActionAndSetCallback_1(ACTOR_A, shared_data);
+    Motion_EnableActCb_1(ACTOR_A, shared_data);
     Func_020090a6(10);
-    ObjectMotion_EnableActionAndSetCallback_2(ACTOR_B, shared_data);
+    Motion_EnableActCb_2(ACTOR_B, shared_data);
     Call3(Func_02009184, -1, -1, 0xe666);
     Func_020090c2(20);
-    ObjectMotion_MarkActiveAndSetActionCallback_1(ACTOR_C, shared_data);
-    BattleEffect_SpawnLinkedResourceObject_1(ACTOR_D, 0x100, 40);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_1(ACTOR_D, 2);
-    ObjectMotion_ArmCallback_1(ACTOR_D, 0xd000, 10);
+    Motion_MarkActiveAndSetActionCallback_1(ACTOR_C, shared_data);
+    BattleFx_SpawnLinked_1(ACTOR_D, 0x100, 40);
+    Motion_SetVarCbObj_1(ACTOR_D, 2);
+    Motion_ArmCb_1(ACTOR_D, 0xd000, 10);
     SceneWork_SetStepValue_1(0x1c90);
-    BattleRuntime_RunThenWaitIfModeZero_1(ACTOR_D, 0, 40);
-    ObjectMotion_SetAngleToward_1(ACTOR_D, 0, 20);
-    BattleEvent_RunActionAndWait_1(ACTOR_D, 0);
-    ObjectMotion_ArmCallback_2(ACTOR_D, 0x8000, 10);
+    Battle_RunThenWaitIfModeZero_1(ACTOR_D, 0, 40);
+    Motion_SetAngleToward_1(ACTOR_D, 0, 20);
+    BattleEv_RunWait_1(ACTOR_D, 0);
+    Motion_ArmCb_2(ACTOR_D, 0x8000, 10);
     GameFlag_Set_1(0x305);
-    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+    Battle_SchedShoulder_1();
 }

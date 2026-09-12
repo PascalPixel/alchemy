@@ -115,7 +115,7 @@ void Motion_EnableActCb(u32 object_id, s32 action)
 }
 
 /* object/motion/act/enable_action_and_reset_motion.c */
-s32 Object_ResetMotion();
+void Object_ResetMotion();
 void Motion_EnableReset(void)
 {
   void *object;
@@ -495,7 +495,7 @@ void Motion_WaitForAnimationChange(u32 object_id)
 }
 
 /* object/motion/act/set_mode_and_wait_animation.c */
-s32 Motion_WaitForAnimationChange(s32);
+void Motion_WaitForAnimationChange(s32);
 
 void Motion_SetModeAndWaitAnimation(s32 arg0)
 {
@@ -549,7 +549,7 @@ void Motion_SetVarCb(u32 object_id, s32 variant)
 }
 
 /* object/motion/act/set_variant_callback_and_refresh.c */
-s32 Motion_SetVarCb();
+void Motion_SetVarCb();
 
 void Motion_SetVarCbAndRefresh(s32 arg0)
 {
@@ -949,8 +949,8 @@ s32 Motion_StepAngle(struct ObjectMotionAngleState *object)
 /* object/reset_target_and_set_mode1.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(void *, s32);
-s32 Object_ResetMotion();
+void Object_SetMode(void *, s32);
+void Object_ResetMotion();
 
 void Object_ResetTargetAndSetMode1(void)
 {

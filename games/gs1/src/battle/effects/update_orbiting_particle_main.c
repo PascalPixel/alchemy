@@ -18,7 +18,7 @@ void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 }
 
 /* battle/effects/orbiting_particles/update_fade.c */
-s32 Object_SetCallback(void *, s32);
+void Object_SetCallback(void *, s32);
 void BattleFx_UpdateOrbitingParticleFade(void *object)
 {
   s32 primary_fade;

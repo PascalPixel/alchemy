@@ -114,7 +114,7 @@ void Shop_DrawMoney(void)
 }
 
 /* shop/draw/msg.c */
-s32 UiText_DrawAt(s32, s32, s32, s32);
+void UiText_DrawAt(s32, s32, s32, s32);
 
 void Shop_DrawMsg(s32 window, s32 message)
 {
@@ -300,7 +300,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 }
 
 /* shop/sel/buy_done.c */
-s32 Audio_PlayCue(s32);
+void Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
@@ -907,7 +907,7 @@ extern s16 gRom[][33];
 
 s32 GameFlag_IsSet(s32 flag_no);
 void GameFlag_Set(s32 flag_no);
-void Ability_GetMaximum(s32 value, s32 enabled);
+s32 Ability_GetMaximum(s32 value, s32 enabled);
 
 void EventTable_ApplyRowAbilities(s32 row_no)
 {

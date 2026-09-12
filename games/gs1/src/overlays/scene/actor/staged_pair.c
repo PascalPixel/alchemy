@@ -243,7 +243,7 @@ void Scene_RunScene3be(void)
     Actor_unk65_4();
 }
 
-s32 Scene_RunScene3be(void)
+void Scene_RunScene3be(void)
 {
     u32 i;
     s32 record;

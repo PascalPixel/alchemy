@@ -162,7 +162,7 @@ void UiWork_DrawByAttributes(void *arg0)
 }
 
 /* ui/runtime/misc/wait_until_field1a_clear.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void UiWork_WaitUntilField1aClear(void *work)
 {
@@ -237,7 +237,7 @@ void UiWork_Finalize(struct Work *work, s32 release)
 
 /* ui/render/output_list/prepare_for_redraw.c */
 void RenderOutput_RedrawSavedRect(void *);
-s32 RenderOutput_ClearList(void *);
+void RenderOutput_ClearList(void *);
 
 void RenderOutput_PrepareForRedraw(void *arg0)
 {

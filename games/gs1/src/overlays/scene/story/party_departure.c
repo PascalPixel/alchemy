@@ -818,7 +818,7 @@ s32 Dialogue_AskMessage254a(void)
     return Story_Apply11(0, 0) == 0;
 }
 
-s32 Scene_RunScene3ad(void)
+void Scene_RunScene3ad(void)
 {
     s32 record;
     s32 base5_255e;

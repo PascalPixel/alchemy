@@ -42,7 +42,7 @@ void BattleFx_RunMode4(s32 arg0)
 /* battle/effects/runtime/mode/run_mode_5_with_action.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(s32, s32);
+void Object_SetMode(s32, s32);
 s32 Object_SetAction(s32, s32);
 
 void BattleFx_RunMode5WithAction(void *effect)
@@ -60,7 +60,7 @@ void BattleFx_RunMode5WithAction(void *effect)
 /* battle/effects/runtime/mode/run_mode_6_with_action.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(s32, s32);
+void Object_SetMode(s32, s32);
 s32 Object_SetAction(s32, s32);
 
 void BattleFx_RunMode6WithAction(void *effect)
@@ -90,7 +90,7 @@ void BattleFx_RunMode10(s32 arg0)
 /* battle/effects/runtime/mode/run_mode_9_with_action.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(s32, s32);
+void Object_SetMode(s32, s32);
 s32 Object_SetAction(s32, s32);
 
 void BattleFx_RunMode9WithAction(void *effect)

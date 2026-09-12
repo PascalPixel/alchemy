@@ -97,8 +97,8 @@ void BattleMotion_ApproachTarget(
 }
 
 /* battle/motion/reset_slot_object_mode2.c */
-s32 Object_SetMode(s32, s32);
-s32 Object_ResetMotion(s32);
+void Object_SetMode(s32, s32);
+void Object_ResetMotion(s32);
 s32 *GetBattleObjectSlot();
 
 void BattleMotion_ResetSlotObjectMode2(void)

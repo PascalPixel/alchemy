@@ -74,3 +74,81 @@ void ResetSceneTransitionEffect(void)
         }
     }
 }
+
+/* battle/effects/burst_particles/run_main_object.c */
+void Object_SetMode(s32, s32);
+
+void BattleFx_PrepareBufferInterpolation(void);
+
+void BattleFx_RunBurstParticleMainObject(void)
+{
+    u8 *object;
+    u8 *flags;
+    u8 battle_value;
+
+    object = FIELD_AT_OFFSET(*(void **)ADDR_03001F30, u8 **, 0x14);
+    if (object != 0) {
+        FunctionHead_08098698();
+        Object_SetMode((s32)object, 2);
+        object[0x59] = 0;
+        Battle_Apply(object, 0);
+        flags = object + 0x23;
+        battle_value = 2;
+        battle_value |= *flags;
+        *flags = battle_value;
+        WaitFrames(0xAU);
+        Audio_PlayCue(0x7E);
+        WaitFrames(0x28U);
+        BattleFx_PrepareBufferInterpolation();
+    }
+}
+
+/* battle/effects/burst_particles/run.c */
+struct BurstParticleVector {
+    s32 values[3];
+};
+
+u32 Random16(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Random16
+void RotateVectorByMagnitude(s32, s32, struct BurstParticleVector *);
+void *Object_Spawn(s32, s32, s32, s32);
+void Object_SetCallback(void *, const void *);
+extern const u8 gRom[];
+
+void BattleFx_RunBurstParticles(void)
+{
+    u8 *state = (u8 *)gIw;
+    struct BurstParticleVector position;
+    struct BurstParticleVector *p;
+    s32 entry_count;
+
+    FunctionHead_08098698();
+    Audio_PlayCue(SOUND_HEAVY_IMPACT);
+    p = &position;
+    entry_count = 4;
+    do {
+        void *object;
+        s32 random_value;
+
+        p->values[0] = *(s32 *)(state + 4);
+        p->values[2] = *(s32 *)(state + 12);
+        random_value = (Rand() * 6) + 0x40000;
+        RotateVectorByMagnitude(random_value, Rand(), p);
+        p->values[1] = *(s32 *)(state + 8);
+        object = Object_Spawn(
+            0xD9,
+            p->values[0],
+            p->values[1],
+            p->values[2]
+        );
+        if (object != 0) {
+            Object_SetCallback(object, gRom);
+            *((u8 *)object + 0x55) = 2;
+        }
+        WaitFrames((((u32)Rand() * 2) >> 16) + 2);
+        entry_count--;
+    } while (entry_count >= 0);
+    WaitFrames(0x1E);
+    BattleFx_PrepareBufferInterpolation();
+}

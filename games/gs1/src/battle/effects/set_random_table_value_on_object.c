@@ -18,7 +18,7 @@ void BattleFx_SetRandomTableValueOnObject(s32 arg0)
 }
 
 /* battle/effects/object_control/pause_object.c */
-void Object_SetAction(u8 *, s32);
+void Object_SetAction(void *, s32);
 
 struct GlobalState {
     u8 unknown_000[0x249];
@@ -27,7 +27,7 @@ struct GlobalState {
     u32 saved_callback;
 };
 
-extern struct GlobalState gCell;
+extern u8 gCell[];
 
 void BattleFx_PauseObject(s32 arg0)
 {
@@ -51,9 +51,7 @@ void BattleFx_PauseObject(s32 arg0)
 }
 
 /* battle/effects/object_control/resume_object.c */
-void Object_SetAction(void *, s32);
 
-extern u8 gCell[];
 
 void BattleFx_ResumeObject(void)
 {

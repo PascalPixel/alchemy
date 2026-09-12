@@ -207,7 +207,6 @@ block_9:
 }
 
 /* battle/unit/tick_counter_13e.c */
-u8 *Runtime_GetObject(void);
 
 s32 BattleUnit_TickCounter13e(void)
 {
@@ -222,7 +221,6 @@ s32 BattleUnit_TickCounter13e(void)
 }
 
 /* battle/unit/tick_counter_13f.c */
-u8 *Runtime_GetObject(void);
 
 s32 BattleUnit_TickCounter13f(void)
 {
@@ -237,7 +235,6 @@ s32 BattleUnit_TickCounter13f(void)
 }
 
 /* battle/unit/tick_counter_146.c */
-u8 *Runtime_GetObject(void);
 
 s32 BattleUnit_TickCounter146(void)
 {
@@ -277,7 +274,6 @@ struct BattleObject {
 };
 
 struct PlacementTable *Battle_Run(s32 owner);
-struct BattleObject *Runtime_GetObject(u8 id);
 void BattleUnit_Recalculate(u8 id);
 
 s32 BattlePlacement_UpdateTimedEntries(void)

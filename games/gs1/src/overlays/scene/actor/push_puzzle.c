@@ -99,7 +99,7 @@ void ActorDraw_RepaintTenCellsAndActorEightCell(void)
 }
 
 /* overlays/scene/actor/push_puzzle/actor_search.c */
-extern u8 *gWork;
+extern u8 gWork[];
 
 s32 *Actor_FindAtTileXZ(s32 x, s32 z)
 {
@@ -186,7 +186,6 @@ u8 *SceneData_GetTable942c(void)
 }
 
 /* overlays/scene/actor/push_puzzle/scene_dialogue.c */
-extern u8 gWork[];
 
 void Scene_RunScriptedStep1472(void)
 {
@@ -263,7 +262,6 @@ void Dialogue_ShowLine16CC(void)
 
 /* overlays/scene/actor/push_puzzle/scene_primary_script.c */
 
-extern u8 gWork[];
 extern u8 gOv4[];
 
 u8 *Actor_unk20_4();
@@ -648,10 +646,7 @@ void Scene_RunScene38b(void)
 /* overlays/scene/actor/push_puzzle/scene_script.c */
 
 extern u8 Value_0000001e;
-extern u8 Value_00000020;
 extern u8 Value_00000023;
-extern u8 gWork[];
-extern s16 RuntimeSelectorTable[];
 
 s32 Scene_DispatchPuzzleEvent(void)
 {

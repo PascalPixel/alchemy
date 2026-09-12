@@ -483,7 +483,6 @@ void Scene_RunSingleStep(void)
 }
 
 /* overlays/scene/dialogue/facing_target/state_update.c */
-extern u8 *gWork;
 
 void State_SetWork448To521AndRun(s32 object)
 {

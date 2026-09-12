@@ -4,7 +4,7 @@
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
-extern u8 *gIw;
+extern struct PlacementState *gIw;
 void ScheduleCallback(s32);
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
@@ -31,7 +31,6 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 }
 
 /* menu/entry/update_first_object_row_positions.c */
-extern u8 *gIw;
 
 void Menu_UpdateFirstObjectRowPositions(void)
 {
@@ -82,7 +81,6 @@ struct RuntimeObject {
     s8 field_26;
 };
 
-extern struct PlacementState *gIw;
 extern const s32 gRom[4];
 
 struct RuntimeObject *Menu_Run(s32);
@@ -114,8 +112,6 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 }
 
 /* menu/entry/clear_second_object_row_and_schedule_update.c */
-extern u8 *gIw;
-void ScheduleCallback(s32);
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
 {
@@ -147,7 +143,6 @@ struct Root_080200cc {
     s16 coords[8];
 };
 
-extern struct Root_080200cc *gIw;
 
 void Menu_UpdateSecondObjectRowPositions(void)
 {

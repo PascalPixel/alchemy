@@ -26,7 +26,6 @@ void Graphics_TransformLargePalette(s32 arg0, s32 arg1)
 }
 
 /* graphics/color/transform_small_palette.c */
-s32 Graphics_TransformPaletteBuffer(s32, s32, s32, s32);
 
 void Graphics_TransformSmallPalette(s32 palette_index, s32 transform)
 {

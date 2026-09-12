@@ -24,7 +24,7 @@ struct gRom {
 };
 
 extern struct State_08091fa8 *volatile gWork;
-extern struct gRom gCell;
+extern s32 gCell[];
 
 void Event_SetPair1d4(u16 first, u16 second)
 {
@@ -48,7 +48,7 @@ struct BattleEventState {
 };
 
 extern struct BattleEventState *gWork;
-void Audio_PlayCue(s32);
+void Audio_PlayCue(s32 arg0);
 
 void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 {
@@ -66,8 +66,6 @@ struct BattleEventState {
     s16 queued_sound;
 };
 
-extern struct BattleEventState *gWork;
-void Audio_PlayCue(s32);
 
 void BattleFx_PlayQueuedSound(void)
 {
@@ -115,7 +113,7 @@ void Motion_EnableActCb(u32 object_id, s32 action)
 }
 
 /* object/motion/act/enable_action_and_reset_motion.c */
-void Object_ResetMotion();
+void Object_ResetMotion(struct ObjectRuntime *);
 void Motion_EnableReset(void)
 {
   void *object;
@@ -131,7 +129,6 @@ void Motion_EnableReset(void)
 
 /* object/link/link_object_and_set_callback.c */
 struct ObjectRuntime *Object_GetById(u32);
-void Motion_SetActionCallback(struct ObjectRuntime *, s32);
 extern const u8 gRomGetById[];
 
 void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
@@ -154,7 +151,6 @@ void Object_RefreshSelectorById(u32 object_id)
 }
 
 /* object/set_action_callback_and_refresh_by_id.c */
-void Motion_SetActionCallback(struct ObjectRuntime *, s32);
 
 void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
 {
@@ -170,7 +166,6 @@ void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
 }
 
 /* object/motion/pos/reset_and_set_position.c */
-void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void Motion_ResetAndSetPosition(u32 object_id, s32 x, s32 z)
@@ -185,8 +180,6 @@ void Motion_ResetAndSetPosition(u32 object_id, s32 x, s32 z)
 }
 
 /* object/motion/pos/set_position_and_commit.c */
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
 
 void Motion_SetPositionAndCommit(u32 object_id, s32 x, s32 z)
@@ -202,9 +195,7 @@ void Motion_SetPositionAndCommit(u32 object_id, s32 x, s32 z)
 }
 
 /* object/motion/pos/reset_and_set_position_in_mode_2.c */
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+extern void Object_SetMode(struct Object_08092624 *, s32);
 
 void Motion_ResetPosMode2(u32 object_id, s32 x, s32 z)
 {
@@ -219,10 +210,6 @@ void Motion_ResetPosMode2(u32 object_id, s32 x, s32 z)
 }
 
 /* object/motion/pos/set_position_and_reset.c */
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
 
 void Motion_SetPosReset(u32 object_id, s32 x, s32 z)
 {
@@ -239,10 +226,6 @@ void Motion_SetPosReset(u32 object_id, s32 x, s32 z)
 }
 
 /* object/motion/pos/snap_heading_and_offset.c */
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
 void Motion_SetActionVariant(u32 object_id, s32 action);
 
 void Motion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
@@ -276,8 +259,6 @@ void Motion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
 }
 
 /* object/motion/pos/offset_position_and_reset_motion.c */
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void Motion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 z_offset)
 {
@@ -292,9 +273,6 @@ void Motion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 z_offs
 }
 
 /* object/motion/pos/offset_position_and_reset.c */
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void Motion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offset)
 {
@@ -310,8 +288,6 @@ void Motion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offset)
 }
 
 /* object/motion/pos/commit_position_and_activate.c */
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
 void Motion_OffsetPositionAndReset(u32, s32, s32);
 
 void Motion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset)
@@ -327,13 +303,10 @@ void Motion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset)
 
 /* object/motion/act/launch_from_focused_object.c */
 void Motion_SetSpeed(s32, s32, s32);
-struct ObjectRuntime *Object_GetById(u32);
 void Motion_SetHPosTerrain(u32, s32, s32);
-void Object_SetMode(struct ObjectRuntime *, s32);
 void Motion_OffsetPositionAndResetMotion(s32, s32, s32);
-void Object_SetCallback(struct ObjectRuntime *, void *);
+extern void Object_SetCallback(struct Object_08092624 *, const void *);
 
-extern s32 gCell[];
 extern u8 gRomGetById;
 
 void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
@@ -356,8 +329,6 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
 }
 
 /* object/motion/pos/commit_current_position_and_activate.c */
-void Object_SetMode(struct ObjectRuntime *, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
 
 void Motion_CommitPos(u32 object_id)
 {
@@ -370,7 +341,6 @@ void Motion_CommitPos(u32 object_id)
 }
 
 /* object/motion/pos/set_horizontal_position_with_terrain.c */
-void Object_ResetMotion(struct ObjectRuntime *);
 
 void Motion_SetHPosTerrain(u32 object_id, s32 x, s32 z)
 {
@@ -410,7 +380,6 @@ void Motion_SetHPosTerrain(u32 object_id, s32 x, s32 z)
 }
 
 /* object/motion/pos/set_position_with_terrain.c */
-void Object_ResetMotion(struct ObjectRuntime *);
 
 void Motion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
 {
@@ -450,7 +419,6 @@ void Motion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
 }
 
 /* object/set_mode_by_id.c */
-void Object_SetMode(struct ObjectRuntime *, s32);
 
 void Object_SetModeById(u32 object_id, s32 action)
 {
@@ -505,7 +473,6 @@ void Motion_SetModeAndWaitAnimation(s32 arg0)
 
 /* object/motion/act/launch.c */
 void Battle_WaitMode0(s32 arg0);
-void Audio_PlayCue(s32 arg0);
 
 void Motion_Launch(u32 object_id, s32 speed, s32 event_id)
 {
@@ -531,7 +498,6 @@ void Motion_Launch(u32 object_id, s32 speed, s32 event_id)
 }
 
 /* object/motion/act/set_variant_callback.c */
-void Object_SetCallback(struct ObjectRuntime *, const void *);
 extern const u8 gRomGetById[];
 
 void Motion_SetVarCb(u32 object_id, s32 variant)
@@ -623,9 +589,7 @@ extern struct Object_08092624 *Battle_RunParticleLinearMotion(s32, s32, s32, s32
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void Object_SetMode(struct Object_08092624 *, s32);
-extern void Object_SetCallback(struct Object_08092624 *, const void *);
-extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
+void ObjectGroup_SetChildValue(void *, s32);
 
 extern const u8 gRomParticleLinearMotion[];
 extern const u8 gRom2[];
@@ -676,14 +640,8 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
 #define OBJECT_VERTICAL_STEP(object) FIELD_S32(object, 0x28)
 #define OBJECT_MIRRORED_Y(object) FIELD_S32(object, 0x3C)
 
-s32 Object_GetById(u32);
-void Audio_PlayCue(s32);
-void Object_SetMode(void *, s32);
-void WaitFrames(u32);
-void Object_SetPosition(void *, s32, s32, s32);
 void Motion_ArmCb(s32 arg0, s32 arg1, s32 arg2);
 void BattleFx_SpawnBurstParticle(void *, s32);
-void Object_CommitPosition(void *);
 void BattleFx_PlayQueuedSound(void);
 
 void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action)
@@ -756,7 +714,6 @@ struct Object_0809280c {
 };
 
 s32 ArcTan2(s32, s32);
-void Battle_WaitMode0(s32 arg0);
 
 void Motion_SetAngleToward(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -774,7 +731,6 @@ void Motion_SetAngleToward(s32 arg0, s32 arg1, s32 arg2)
 
 /* object/link/link_pair.c */
 void ObjectLink_RotatePairToward(void *, void *);
-void Battle_WaitMode0(s32 arg0);
 
 void Object_LinkPair(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -787,7 +743,6 @@ void Object_LinkPair(s32 arg0, s32 arg1, s32 arg2)
 }
 
 /* object/table/destroy_by_id.c */
-extern u8 *gWork;
 /* 生成順維持のため戻り値を整数で受け、直後にオブジェクト番地として扱う。 */
 s32 ObjectTable_Get(u32 object_id);
 /* Object table: 192 pointers at gWork + 0x14 (object/table/get.c). */
@@ -814,8 +769,7 @@ void ObjectTable_ReservedNoOp294C(void)
 /* object/group/configure_child_value.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 gRomSetAngleToward;
-void ObjectGroup_SetChildValue(void *, s32);
+extern u8 gRomSetAngleToward[];
 
 void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1)
 {
@@ -836,7 +790,6 @@ void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1)
 
 /* object/group/apply_indexed_child_value.c */
 extern u32 gIwSetAngleToward;
-extern u8 gRomSetAngleToward[];
 
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 {
@@ -898,7 +851,6 @@ struct Object_08092a1c {
     struct Object_08092a1c *field_68;
 };
 
-void Object_SetCallback(struct Object_08092a1c *, s32);
 
 void Object_SetTargetAndCallback(u32 arg0, s32 arg1, s32 arg2)
 {
@@ -949,8 +901,6 @@ s32 Motion_StepAngle(struct ObjectMotionAngleState *object)
 /* object/reset_target_and_set_mode1.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Object_SetMode(void *, s32);
-void Object_ResetMotion();
 
 void Object_ResetTargetAndSetMode1(void)
 {
@@ -967,9 +917,6 @@ void Object_ResetTargetAndSetMode1(void)
 }
 
 /* object/motion/act/arm_callback.c */
-void Object_SetCallback(u8 *, void *);
-void Battle_WaitMode0(s32 arg0);
-extern u8 gRomSetAngleToward[];
 
 void Motion_ArmCb(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -1003,7 +950,6 @@ void Motion_SetActionVariant(s32 arg0, s32 arg1)
 }
 
 /* object/visual/copy_attributes.c */
-extern s32 Object_GetById(u32);
 
 void ObjectVisual_CopyAttributes(u32 arg0, u32 arg1)
 {
@@ -1079,7 +1025,6 @@ typedef char ObjectTableState_objects_offset[
     OBJECT_08092BA8_OFFSET(struct ObjectTableState, objects) == 0x14 ? 1 : -1
 ];
 
-extern struct ObjectTableState *gWork;
 
 s32 ObjectTable_ReadActiveValue(s32 key)
 {
@@ -1116,7 +1061,6 @@ struct Work_08092be0 {
     struct Object_08092be0 *objects[4096];
 };
 
-extern struct Work_08092be0 *gWork;
 
 s32 ObjectTable_FindActiveByValue(s32 value)
 {
@@ -1180,7 +1124,6 @@ void BattleEv_RunWait(s32 action)
 }
 
 /* battle/presentation/act/run_wait_mode0.c */
-void Battle_WaitMode0(s32 arg0);
 /* 入力r0/r1をそのまま渡すため、引数型は意図的に省略する。 */
 
 void BattlePres_RunActionThenWaitIfModeZero(s32 first, s32 second, s32 value)
@@ -1190,7 +1133,6 @@ void BattlePres_RunActionThenWaitIfModeZero(s32 first, s32 second, s32 value)
 }
 
 /* battle/event_runtime/process_action.c */
-extern u8 gCell;
 
 s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 {
@@ -1230,10 +1172,8 @@ struct State_08093168 {
     s16 counter;
 };
 
-extern struct State_08093168 *gWork;
 extern s32 UiWork_Create(s32, s32, s32, s32);
 
-extern void WaitFrames(s32);
 
 void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
@@ -1266,7 +1206,7 @@ void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 }
 
 /* object/table/run_if_active.c */
-s32 ObjectTable_ReadActiveValue();
+s32 ObjectTable_ReadActiveValue(s32);
 
 void ObjectTable_RunIfActive(void)
 {
@@ -1281,17 +1221,13 @@ struct Runtime_080931ec {
     s16 effect_count;
 };
 
-extern struct Runtime_080931ec *gWork;
 extern volatile u32 gIw;
 
-s32 ObjectTable_ReadActiveValue(s32);
 
-s32 UiWork_Create(s32, s32, s32, s32);
 
 s32 UiWork_IsCompleteFar(void);
 
 void UiWork_FinalizePending(void);
-void WaitFrames(s32);
 
 void Battle_ShowPairedUnitWorkAndWait(
     s32 first, s32 first_x, s32 first_y, s32 first_arg,

@@ -230,7 +230,7 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 }
 
 /* script/interpreter/flag/test.c */
-s32 GameFlag_IsSet(s32);
+s32 GameFlag_IsSet(s32 arg0);
 
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
@@ -241,8 +241,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 }
 
 /* script/interpreter/flag/set_test.c */
-s32 GameFlag_IsSet(s32);
-void GameFlag_Set(s32);
+void GameFlag_Set(s32 arg0);
 
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
 {
@@ -256,8 +255,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
 }
 
 /* script/interpreter/flag/clear_test.c */
-s32 GameFlag_IsSet(s32);
-void GameFlag_Clear(s32);
+void GameFlag_Clear(s32 arg0);
 
 s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
 {
@@ -271,9 +269,6 @@ s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
 }
 
 /* script/interpreter/flag/toggle_test.c */
-s32 GameFlag_IsSet(s32 arg0);
-void GameFlag_Set(s32 arg0);
-void GameFlag_Clear(s32 arg0);
 
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
 {

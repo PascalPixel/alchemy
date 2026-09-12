@@ -9,7 +9,7 @@
 /* map/shared/load_default_cells_and_update_block.c */
 /* map/shared/load_default_cells_and_update_block.c */
 extern u8 gVal[];
-void WaitFrames(u32);
+void WaitFrames(s32);
 
 struct MapInitWork {
     u8 unknown_000[0x100];
@@ -73,7 +73,7 @@ struct BlendScriptState {
     u16 paused;
 };
 
-extern u8 *gCam;
+extern struct MapState *gCam;
 
 void DisplayBlend_RunScript(void)
 {
@@ -140,7 +140,6 @@ void DisplayBlend_EnableRunScript(void)
 }
 
 /* display/blend/disable_run_script.c */
-void DisplayBlend_RunScript(void);
 
 void DisplayBlend_DisableRunScript(void)
 {
@@ -201,7 +200,6 @@ void Runtime_ScheduleCallbackAndReleaseBlock28(void)
 
 /* runtime/scheduler/schedule_callback_b_after_frames.c */
 s32 ScheduleCallbackAfterFrames(s32, s32);
-extern u8 gRomAndClearQueue;
 
 void Scheduler_ScheduleCallbackBAfterFrames(void)
 {
@@ -524,7 +522,6 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 }
 
 /* map/shared/set_cell_collision.c */
-extern struct MapState *gCam;
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 {

@@ -32,7 +32,7 @@ struct Runtime_080b8ec4 {
   struct ObjectHolder_080b8ec4 *field_00;
 };
 
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 s32 Object_InitializeMode(void *, s32);
 
 struct Creature_080b8ec4 *Runtime_GetObject();

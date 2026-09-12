@@ -258,8 +258,6 @@ void Dialogue_RunActor10Message1f15(void)
 
 /* overlays/scene/dialogue/flagged_message/scene_primary_script.c */
 
-extern u8 gWork[];
-extern u8 RuntimeSelectorTable[];
 extern u8 gVal2[];
 extern u8 gVal3[];
 extern u8 gVal4[];
@@ -853,7 +851,6 @@ s32 get_followup_default_result(void)
 
 /* overlays/scene/dialogue/flagged_message/state_update.c */
 
-extern u8 *gWork;
 
 void State_ApplyValues14And0And5(void)
 {

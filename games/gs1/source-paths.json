@@ -16798,323 +16798,323 @@
     },
     "resource_39a:02000d08": {
       "name": "FieldScene_RunActor11Transition",
-      "source": "overlays/scene/actor/transition/run_actor_11_transition.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020015dc": {
       "name": "FieldScene_RunFlagBranchedLayoutSteps",
-      "source": "overlays/scene/actor/transition/dialogue_layout.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001f58": {
       "name": "SceneState_SetWorkspace370ByFlag820",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020005b8": {
       "name": "FieldScene_PlaceActorEightByFlags",
-      "source": "overlays/scene/actor/transition/conditional_scene_setup.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:0200042c": {
       "name": "FieldScene_RunActor8Transition305",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001bdc": {
       "name": "OverlayObject_AdvancePositionByDelta",
-      "source": "overlays/scene/actor/transition/actor_motion.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000180": {
       "name": "SceneActor_PlacePairAtOffset",
-      "source": "overlays/scene/actor/transition/actor_position.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000380": {
       "name": "FieldScene_RunActor10Transition303",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001c08": {
       "name": "OverlayObject_ApplyValue15",
-      "source": "overlays/scene/actor/transition/overlay_object.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:0200062c": {
       "name": "FieldScene_RunActor8Transition308And309",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000e90": {
       "name": "FieldScene_SetActor9Values1And2",
-      "source": "overlays/scene/actor/transition/set_actor_9_values_1_and_2.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020003b8": {
       "name": "FieldScene_RunActor8Transition304",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000ff8": {
       "name": "FieldScene_RunSingleStep",
-      "source": "overlays/scene/actor/transition/shared.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020000f8": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/actor/transition/scene_data.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020003ec": {
       "name": "FieldScene_RunActor8Transition304And305",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001e08": {
       "name": "FieldScene_RunFourPassCallbackSequence",
-      "source": "overlays/scene/actor/transition/run_scene_four_pass_callback_sequence.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020008cc": {
       "name": "FieldScene_RunActor10Transition30BTo30E",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001f3c": {
       "name": "FieldScene_RunScriptedStep17E3",
-      "source": "overlays/scene/actor/transition/run_scripted_step_17e3.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000bc8": {
       "name": "FieldScene_RunSteps30FTo312",
-      "source": "overlays/scene/actor/transition/run_steps_to.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000d6c": {
       "name": "FieldScene_RunActor8Transition313",
-      "source": "overlays/scene/actor/transition/run_actor_8_transition.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020000ec": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/actor/transition/scene_data.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001b9c": {
       "name": "SceneDialogue_ShowLineF13WithWorkA488",
-      "source": "overlays/scene/actor/transition/scene_dialogue.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000734": {
       "name": "FieldScene_RunActor9Transition30A",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020002e0": {
       "name": "FieldScene_RunActor9Transition302",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000da4": {
       "name": "FieldScene_RunActor9Flag314Sequence",
-      "source": "overlays/scene/actor/transition/run_actor_9_flag_sequence.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:0200029c": {
       "name": "SceneState_RunSlot8OffsetStep",
-      "source": "overlays/scene/actor/transition/actor_motion.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001730": {
       "name": "SceneState_ClearWorkWord24",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000c24": {
       "name": "FieldScene_RunActor11Flags30fTo312Sequence",
-      "source": "overlays/scene/actor/transition/run_actor_11_flags_312_sequence.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000030": {
       "name": "SceneState_ApplyValues8And2And1",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000f30": {
       "name": "SceneData_SelectDataByRuntimeSelectorB",
-      "source": "overlays/scene/actor/transition/scene_data.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000464": {
       "name": "FieldScene_RunActor8FlaggedSequence",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02002014": {
       "name": "SceneActor_TurnTowardTableAngle",
-      "source": "overlays/scene/actor/transition/actor_facing.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000a60": {
       "name": "FieldScene_RunActor10Flags30bTo30eSequenceB",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001f20": {
       "name": "SceneDialogue_RunLine17e2",
-      "source": "overlays/scene/actor/transition/scene_dialogue.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020007f0": {
       "name": "FieldScene_RunFlag308DialogueBranch",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000920": {
       "name": "FieldScene_RunFlag311DialogueBranch",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000040": {
       "name": "SceneState_ApplyValues11And62",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001050": {
       "name": "DialogueLayout_ConfigureGroupOne",
-      "source": "overlays/scene/actor/transition/dialogue_layout.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000a10": {
       "name": "FieldScene_RunActor10Flags30bTo30eSequenceA",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000ab4": {
       "name": "FieldScene_RunActor10Flags30bTo30eSequenceC",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000bf4": {
       "name": "FieldScene_RunActor11Offset128Sequence",
-      "source": "overlays/scene/actor/transition/run_actor_11_offset_sequence.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020004f0": {
       "name": "FieldScene_RunActor9Flag306Sequence",
-      "source": "overlays/scene/actor/transition/field_scene_head.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000e40": {
       "name": "FieldScene_RunActor10Flag315Sequence",
-      "source": "overlays/scene/actor/transition/run_actor_10_flag_sequence.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001154": {
       "name": "DialogueLayout_ConfigureGroupTwo",
-      "source": "overlays/scene/actor/transition/dialogue_layout.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000ec0": {
       "name": "SceneActor_SetActor11Values1And2",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001ac0": {
       "name": "SceneState_ApplyOffsetMinus32",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000314": {
       "name": "ActorPresentation_SetupActorNineForFlag302",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020000f0": {
       "name": "SceneData_GetTableA8f4",
-      "source": "overlays/scene/actor/transition/scene_data.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020006c0": {
       "name": "ActorPresentation_SetupActorEightForFlags308And309",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001ab0": {
       "name": "FieldScene_ApplyOffset0Neg32",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001f04": {
       "name": "SceneState_SetValue17e1",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000050": {
       "name": "SceneData_SelectTableBySceneId",
-      "source": "overlays/scene/actor/transition/scene_data.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000b04": {
       "name": "FieldScene_RunActorElevenFlaggedSteps",
-      "source": "overlays/scene/actor/transition/run_actor_eleven_flagged_steps.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001004": {
       "name": "SceneActor_PlaceAtTileAndMark",
-      "source": "overlays/scene/actor/transition/actor_position.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020009d0": {
       "name": "ActorPresentation_SetupActorTenForFlags30bAnd30d",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000ea8": {
       "name": "ActorPresentation_AdvanceActorTenStates",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000cd8": {
       "name": "ActorPresentation_SetupActorElevenAt0_80",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:0200025c": {
       "name": "ActorPresentation_SetupActorEightForFlag301",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000c78": {
       "name": "ActorPresentation_SetupActorElevenAt0_112",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020012cc": {
       "name": "DialogueLayout_ConfigureGroupThree",
-      "source": "overlays/scene/actor/transition/dialogue_layout.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000d38": {
       "name": "ActorPresentation_SetupActorEightForFlag313",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02002094": {
       "name": "SceneActor_StepSubjectAlongHeading",
-      "source": "overlays/scene/actor/transition/staged_actor_navigation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:0200034c": {
       "name": "ActorPresentation_SetupActorTenForFlag303",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000ca8": {
       "name": "ActorPresentation_SetupActorElevenAt0_64",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000ed8": {
       "name": "OverlayObject_CreateAndInitialize",
-      "source": "overlays/scene/actor/transition/overlay_object.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000dd8": {
       "name": "ActorPresentation_SetupActorNineForFlag314",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000568": {
       "name": "FieldScene_RunActorTenDepthSequence",
-      "source": "overlays/scene/actor/transition/actor_depth_effect.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020004bc": {
       "name": "ActorPresentation_SetupActorNineForFlag306",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000768": {
       "name": "FieldScene_PlaceActorTenByFlags",
-      "source": "overlays/scene/actor/transition/conditional_scene_setup.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000e0c": {
       "name": "ActorPresentation_SetupActorTenForFlag315",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:0200170c": {
       "name": "SceneState_StoreValueToWorkspaceWord24WhenFlagged",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000e78": {
       "name": "ActorPresentation_AdvanceActorEightStates",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000668": {
       "name": "ActorPresentation_SetupActorEightForFlags308And309Guarded",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000fcc": {
       "name": "SceneState_SetServiceZeroValue06",
-      "source": "overlays/scene/actor/transition/state_update.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020006fc": {
       "name": "ActorPresentation_SetupActorNineForFlag30a",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02000528": {
       "name": "ActorPresentation_SetupActorTenForFlag307",
-      "source": "overlays/scene/actor/transition/actor_presentation.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001750": {
       "name": "FieldScene_RunPrimarySequence",
-      "source": "overlays/scene/actor/transition/run_scene_primary_sequence.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001ad0": {
       "name": "FieldScene_RunScene39a_02001ad0",
-      "source": "overlays/scene/actor/transition/run_scene_39a_02001ad0.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:02001b1c": {
       "name": "FieldScene_RunScene39a_02001b1c",
-      "source": "overlays/scene/actor/transition/run_scene_39a_02001b1c.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39a:020017a8": {
       "name": "FieldScene_RunScene39aSequenceA",
-      "source": "overlays/scene/actor/transition/run_scene_sequence_a.c"
+      "source": "overlays/scene/actor/transition.c"
     },
     "resource_39f:02000030": "overlays/scene/actor/waypoint/measure_fixed_point_position_distance.c",
     "resource_39f:0200006c": "overlays/scene/actor/waypoint/find_actor_at_fixed_point_position.c",

@@ -6487,7 +6487,7 @@
     },
     "main:080c08e0": {
       "name": "Runtime_ReleaseHeapBlock10",
-      "source": "runtime/memory/release_heap_block10.c"
+      "source": "runtime/memory/release_heap_block_10.c"
     },
     "main:080c0df4": {
       "name": "BattlePres_SetupTransitionAtPairMidpoint"
@@ -14650,7 +14650,7 @@
       "name": "RelocatedQ16DotProduct"
     },
     "main:0800ebec": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_0800ebec"
     },
     "main:0800ee14": {
       "name": "Region"
@@ -14668,7 +14668,7 @@
       "name": "Region"
     },
     "main:0808b674": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_0808b674"
     },
     "main:0808b7b8": {
       "name": "Fragment"
@@ -14795,7 +14795,7 @@
       "name": "RunBattlePresentation"
     },
     "main:080be378": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080be378"
     },
     "main:080c00d8": {
       "name": "BattlePres_BuildTilemap"
@@ -14829,7 +14829,7 @@
       "name": "Fragment"
     },
     "main:080d765c": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080d765c"
     },
     "main:080d76f0": {
       "name": "Continuation"
@@ -14862,7 +14862,7 @@
       "name": "BattleEffectI"
     },
     "main:080dd9c0": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080dd9c0"
     },
     "main:080dda3c": {
       "name": "Continuation"
@@ -14877,7 +14877,7 @@
       "name": "Continuation"
     },
     "main:080e15e8": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080e15e8"
     },
     "main:080e1724": {
       "name": "Fragment"
@@ -14898,7 +14898,7 @@
       "name": "Region"
     },
     "main:080e47b8": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080e47b8"
     },
     "main:080e4ab8": {
       "name": "Fragment"
@@ -14928,7 +14928,7 @@
       "name": "Region"
     },
     "main:080ec100": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080ec100"
     },
     "main:080ec190": {
       "name": "Continuation"
@@ -14946,7 +14946,7 @@
       "name": "Region"
     },
     "main:080f4168": {
-      "name": "FunctionHead"
+      "name": "FunctionHead_080f4168"
     },
     "main:080f4318": {
       "name": "Region"

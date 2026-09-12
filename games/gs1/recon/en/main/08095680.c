@@ -18,6 +18,7 @@ extern struct ActionDescriptor *Func_0808d394(s32 id);
 extern s32 Func_080770c0(s32 flag_id);
 extern s32 Func_080090f0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 extern void Func_08009080(struct ObjectRuntime *object, s32 mode);
+extern struct BattleWork Data_02000240;
 
 void Func_08095680(void)
 {

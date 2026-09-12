@@ -3,4 +3,7 @@
 
 #include "types.h"
 
+s32 BattleEscape_CheckSuccess(void);
+s32 BattleEscape_PlayRun(s16 *action);
+
 #endif

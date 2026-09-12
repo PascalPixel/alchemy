@@ -27,6 +27,7 @@ struct StagedActorFootprint {
     s32 z1;
 };
 
+extern struct StagedActor *FindStagedActorProbeTarget(
     s32 *direction_out, s32 *actor_slot_out, struct StagedActorProbe *probe);
 
 #define STAGED_ACTOR_PROBE_OFFSET(field) \
@@ -45,5 +46,7 @@ typedef char StagedActorProbe_position_z_offset[
 typedef char StagedActorFootprint_size[
     sizeof(struct StagedActorFootprint) == 0x10 ? 1 : -1
 ];
+
+extern s32 ClassifyStagedActorProbePosition(struct StagedActor *actor, s32 *position);
 
 #endif

@@ -5,4 +5,6 @@
 
 extern void *gBattleWork;
 
+void Sys_SetMode(s32 mode);
+
 #endif

@@ -2,11 +2,6 @@
 #include "event_runtime.h"
 
 /* event/set_pair1d4.c */
-struct State_08091fa8 {
-    u8 filler0[0x170];
-    u16 value;
-};
-
 struct EventCellPairs {
     u8 filler0[0x1C0];
     u16 first_1c0;

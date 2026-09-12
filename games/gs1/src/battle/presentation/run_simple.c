@@ -130,3 +130,153 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
     Actor_ResetMotionAtAnchor(work.primary_id);
     return 0;
 }
+
+/* battle/motion/run_value_sequence.c */
+struct ObjectSlot_080babdc {
+    void *object;
+};
+
+struct Runtime_080babdc {
+    u8 padding_00[65];
+    u8 mode;
+};
+
+extern struct Runtime_080babdc *gBattleWork;
+
+void Object_SetMode(void *object, s32 mode);
+
+void BattleMotion_SetRecordChildValues(void *object, s32 value);
+
+void BattleMotion_RunValueSequence(s32 id)
+{
+    u16 selection[2];
+    u16 *sel;
+    s32 target;
+    s32 remaining;
+
+    Runtime_GetObject(id);
+    Object_SetMode(GetBattleObjectSlot(id)->object, 5);
+
+    sel = selection;
+    remaining = 1;
+    do {
+        target = 0xff;
+        sel[1] = target;
+        sel[0] = id;
+        FunctionHead_080b8178(sel);
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, 7);
+        WaitFrames(2);
+
+        sel[0] = id;
+        FunctionHead_080b8178(sel);
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, Battle_Check(id));
+        WaitFrames(2);
+        remaining--;
+    } while (remaining >= 0);
+
+    Battle_unk2_2(gBattleWork->mode);
+}
+
+/* battle/motion/initialize_actor_records.c */
+void Object_InitializeMode(void *, s32);
+
+void ActivateBattleObjectSlot(s32);
+
+void BattleMotion_InitializeActorRecords(s32 id)
+{
+    void *items[4];
+    u8 *state;
+    u8 *item;
+    u8 *child;
+    s32 index;
+
+    state = (u8 *)Runtime_GetObject(id);
+    index = 0;
+    while ((item = (u8 *)GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
+        if (state[0x12a] != 1)
+            Object_InitializeMode(item, 4);
+        else
+            Object_InitializeMode(item, 5);
+        index++;
+    }
+
+    if (state[0x12a] == 1) {
+        index = 0;
+        while ((item = (u8 *)GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
+            child = *(u8 **)(item + 40);
+            items[index] = item;
+            child[5] = 6;
+            child[22] = 0xff;
+            index++;
+        }
+        WaitFrames(4);
+        FunctionHead_080bac6c(id);
+        FunctionHead_08009108(items, index);
+        ActivateBattleObjectSlot(id);
+    }
+}
+
+/* battle/target/select_random_position.c */
+struct SlotArray { s16 items[64]; };
+
+s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
+{
+    u16 positions[6];
+    struct SlotArray *order;
+    s16 *entry;
+    u16 *cursor;
+    s32 value;
+    s32 count;
+    s32 index;
+    s32 slot;
+    s32 tail;
+    s32 offset;
+
+    count = 0;
+    order = (struct SlotArray *)BATTLE_TURN_ORDER;
+
+    if (require_living_unit != 0) {
+        for (;;) {
+            index = 0;
+            slot = 44;
+            if (order->items[slot] != 255) {
+                entry = order->items;
+                do {
+                    value = entry[slot];
+                    if (value != 254) {
+                        if (BattleUnit_Get(value)->hp != 0) {
+                            positions[count] = index | 0x100;
+                            count++;
+                        }
+                    }
+                    slot++;
+                    index++;
+                } while (entry[slot] != 255);
+            }
+            goto pick;
+        }
+    } else {
+        index = 0;
+        slot = 50;
+        tail = 50;
+        offset = tail * 2;
+        entry = (s16 *)(order->items + 1);
+        if (*(s16 *)((char *)entry + offset) != 255) {
+            cursor = (u16 *)entry;
+            do {
+                if ((s16)cursor[slot] != 254) {
+                    positions[count] = index | 0x180;
+                    count++;
+                }
+                slot++;
+                tail++;
+                index++;
+            } while (entry[tail] != 255);
+        }
+    }
+
+pick:
+    if (count == 0)
+        return 0;
+    return positions[(u32)(Random16() * count) >> 16];
+}

@@ -7,6 +7,10 @@
 #include "effect_0809b11c.h"
 #include "sound_ids.h"
 
+extern u8 RomBytes_03001f30[];
+extern u8 RomBytes_0809f0b0[];
+extern u8 RomBytes_0809f0d4[];
+
 /* battle/effects/fx_finish_scene_and_release_heap_block.c */
 /* battle/effects/scene_transition/finish_and_release_heap_block.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

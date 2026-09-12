@@ -6,11 +6,6 @@
 #include "battle_target.h"
 
 /* battle/motion/set_mode5_and_activate_slot.c */
-struct Creature_080b8ec4 {
-  u8 padding_00[0x38];
-  s16 field_38;
-};
-
 struct ActorData_080b8ec4 {
   u8 padding_00[5];
   s8 field_05;
@@ -35,14 +30,14 @@ struct Runtime_080b8ec4 {
 void WaitFrames(s32);
 s32 Object_InitializeMode(void *, s32);
 
-struct Creature_080b8ec4 *Runtime_GetObject();
+struct BattleUnit *Runtime_GetObject();
 struct Runtime_080b8ec4 *GetBattleObjectSlot(s32);
 s32 ActivateBattleObjectSlot(s32);
 void BattleMotion_SetMode5AndActivateSlot(s32 arg0)
 {
   struct ActorData_080b8ec4 *actor_data;
   struct Actor_080b8ec4 *object;
-  if (Runtime_GetObject()->field_38 <= 0)
+  if (Runtime_GetObject()->hp <= 0)
   {
     object = GetBattleObjectSlot(arg0)->field_00->field_50;
     Object_InitializeMode(object, 5);

@@ -25,3 +25,33 @@ void apply_bg2_reference(void)
     *(u32 *)0x04000028 = *(u32 *)(base + 0x77D0);
     *(u32 *)0x0400002C = *(u32 *)(base + 0x77D4);
 }
+
+/* graphics/palette/step_fade_transfer.c */
+struct FadeGlobals {
+    void *target;
+    u8 unknown[116];
+    u8 *base;
+};
+
+extern struct FadeGlobals gBattleWork;
+void Sys_SetMode(void *, void *, s32, s32);
+
+void Palette_StepFadeTransfer(void)
+{
+    u8 *base = gBattleWork.base;
+    s32 *remaining = (s32 *)(base + 0x77B4);
+    void *target = gBattleWork.target;
+
+    if (*remaining > 0) {
+        s32 *counter = (s32 *)(base + 0x77B8);
+        s32 value = ++*counter;
+
+        Sys_SetMode(
+            (u8 *)target + 0x544,
+            (void *)0x050000C0,
+            0x10000 - value * 1092,
+            128
+        );
+        (*remaining)--;
+    }
+}

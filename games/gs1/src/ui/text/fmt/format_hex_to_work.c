@@ -72,3 +72,16 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     out[0] = val + 0x30;
     out[1] = 0;
 }
+
+/* graphics/fill_word_stream_with_f000.c */
+extern u16 *gIw;
+
+void Graphics_FillWordStreamWithF000(u32 count)
+{
+    u16 *dst = gIw;
+    u32 index;
+
+    for (index = 0; index < count; index++)
+        *dst++ = 0xf000;
+    gIw = dst;
+}

@@ -112379,8 +112379,18 @@
       "local_symbols": [],
       "owners": [
         {
+          "address": "0x080217a4",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
           "address": "0x08021848",
           "extent": 148,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080218dc",
+          "extent": 116,
           "state": "exact-c"
         }
       ],

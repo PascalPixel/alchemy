@@ -583,7 +583,8 @@
       "name": "remove_active_owner"
     },
     "main:08079c8c": {
-      "name": "Item_GetEquippedElement"
+      "name": "Item_GetEquippedElement",
+      "source": "battle/random16.c"
     },
     "main:080921c4": {
       "name": "set_position_and_reset"
@@ -1368,7 +1369,8 @@
       "source": "menu/selection/loop.c"
     },
     "main:0801b424": {
-      "name": "Menu_WaitForSelectionInput"
+      "name": "Menu_WaitForSelectionInput",
+      "source": "menu/selection/loop.c"
     },
     "main:0801b4ec": {
       "name": "Menu_MoveSelectionForward"
@@ -2527,7 +2529,8 @@
       "name": "BattleRandomPercent"
     },
     "main:08079cbc": {
-      "name": "Equipment_GetUnleashRateBonus"
+      "name": "Equipment_GetUnleashRateBonus",
+      "source": "battle/random16.c"
     },
     "main:08079d1c": {
       "name": "Item_RollWeaponUnleash"
@@ -5659,7 +5662,8 @@
       "source": "menu/entry/clear_first_object_row_and_schedule_update.c"
     },
     "main:0801ff58": {
-      "name": "Menu_UpdateFirstObjectRowPositions"
+      "name": "Menu_UpdateFirstObjectRowPositions",
+      "source": "menu/entry/clear_first_object_row_and_schedule_update.c"
     },
     "main:0801ffd8": {
       "name": "Menu_SpawnFourObjectsAtOrigin"
@@ -5878,7 +5882,8 @@
       "source": "event/get_special_value.c"
     },
     "main:0808b25c": {
-      "name": "BattleFx_SetSpecialFromTable"
+      "name": "BattleFx_SetSpecialFromTable",
+      "source": "event/get_special_value.c"
     },
     "main:0808b398": {
       "name": "Party_RemapCharacterIdByFlags"
@@ -5994,10 +5999,12 @@
       "source": "event/set_status_1c6.c"
     },
     "main:08091df4": {
-      "name": "Event_ClearStatus1c6"
+      "name": "Event_ClearStatus1c6",
+      "source": "event/set_status_1c6.c"
     },
     "main:08091e20": {
-      "name": "Event_WaitValue1c8Frames"
+      "name": "Event_WaitValue1c8Frames",
+      "source": "event/set_status_1c6.c"
     },
     "main:08091e3c": {
       "name": "Event_SetPairWork1c0"
@@ -6533,28 +6540,36 @@
       "name": "BattleParty_IsUnitListed"
     },
     "main:080bf250": {
-      "name": "BattleUnit_TickCounter132"
+      "name": "BattleUnit_TickCounter132",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf2b4": {
-      "name": "BattleUnit_TickCounter134"
+      "name": "BattleUnit_TickCounter134",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf318": {
-      "name": "BattleUnit_TickCounter136"
+      "name": "BattleUnit_TickCounter136",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf37c": {
-      "name": "BattleUnit_TickCounter138"
+      "name": "BattleUnit_TickCounter138",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf3bc": {
-      "name": "BattleUnit_TickCounter139"
+      "name": "BattleUnit_TickCounter139",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf400": {
-      "name": "BattleUnit_TickCounter13a"
+      "name": "BattleUnit_TickCounter13a",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf440": {
-      "name": "BattleUnit_TickCounter13b"
+      "name": "BattleUnit_TickCounter13b",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf484": {
-      "name": "BattleUnit_TickCounter13c"
+      "name": "BattleUnit_TickCounter13c",
+      "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080bf524": {
       "name": "BattleUnit_TickCounter13e"

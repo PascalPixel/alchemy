@@ -467,7 +467,7 @@ void RunGuardedSceneSetup(void)
         s32 width = 8;
         s32 height = 13;
 
-        Story_unk17_5(31, 0, 1, 1, width, height);
+        RunSceneCommand(31, 0, 1, 1, width, height);
         FinishSceneSetup(8, 0);
     }
 }

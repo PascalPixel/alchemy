@@ -201,7 +201,7 @@ void Scene_RunGuardedStep9AA(void)
     if (State_unk5(0x9aa) == 0) {
         if (State_unk4_4()!= 0) {
             if (State_unk6(0x207) == 0) {
-                State_unk19_4(80);
+                State_SetRectAndMarkActor17(80);
                 State_unk20_4();
                 State_unk4_2(0x9aa);
             }
@@ -556,7 +556,7 @@ u8 *State_unk66(s32);
 
 void State_ApplyFlag300(void)
 {
-    State_unk10_2(0x300);
+    State_Apply2Interaction(0x300);
 }
 
 void State_SetFlag953(void)

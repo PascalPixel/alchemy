@@ -2068,10 +2068,10 @@ extern Obj *State_Run(s16);
 extern u8 gCell[];
 
 s32 State_RunPositionActiveActor();           /* veneer to GameFlag_IsSet */
-u8 *State_unk2_4RaiseLinkedEffect();           /* veneer to Scene_GetRecord */
+u8 *Scene_GetRecord();           /* veneer to Scene_GetRecord */
 
 void State_unk3_4();          /* veneer to Object_SetPosition */
-void State_unk4_4RaiseLinkedEffect();          /* veneer to Object_SetCallback */
+void Object_SetCallback();          /* veneer to Object_SetCallback */
 void State_unk5_4RaiseLinkedEffect();          /* veneer to State_unk6_4 */
 s32 State_unk7_4();           /* local thunk to State_unk8_4, site A */
 s32 State_unk9_4();           /* local thunk to State_unk8_4, site B */
@@ -2095,7 +2095,7 @@ s32 position_active_actor(s32 handleA, s32 handleB)
     flag = State_RunPositionActiveActor(0x211);
 
     shared = gCell;
-    record = State_unk2_4RaiseLinkedEffect(*(s32 *)(shared + 500));
+    record = Scene_GetRecord(*(s32 *)(shared + 500));
 
     if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
         x = *(s32 *)(workspace + 232) + 0xc0000;
@@ -2118,7 +2118,7 @@ s32 position_active_actor(s32 handleA, s32 handleB)
 
     State_unk3_4(record, x, 0, z);
     State_unk16_4RaiseLinkedEffect(0x211);
-    State_unk4_4RaiseLinkedEffect(record, (void *)SCENE_CALLBACK);
+    Object_SetCallback(record, (void *)SCENE_CALLBACK);
 
     while (*waitp != 0) {
         State_unk5_4RaiseLinkedEffect(1);

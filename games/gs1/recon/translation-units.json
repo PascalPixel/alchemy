@@ -112279,41 +112279,6 @@
           "address": "0x08002ee4",
           "extent": 20,
           "state": "exact-c"
-        },
-        {
-          "address": "0x08002ef8",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002efc",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002f00",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002f04",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002f08",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002f0c",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002f3c",
-          "extent": 4,
-          "state": "exact-c"
         }
       ],
       "overlay": null

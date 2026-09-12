@@ -158115,7 +158115,16 @@
       "game": "gs1",
       "source": "games/gs1/recon/en/units/runtime-reserved-no-op-f-retained.c",
       "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "TransferCommandExecutor_Size": {
+          "address": "0x00000068",
+          "kind": "data"
+        },
+        "LoadedRuntime_Size": {
+          "address": "0x000000e0",
+          "kind": "data"
+        }
+      },
       "local_symbols": [],
       "owners": [
         {

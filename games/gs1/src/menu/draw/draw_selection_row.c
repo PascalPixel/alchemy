@@ -15,7 +15,7 @@ extern u8 gRom[];
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)
 {
     s16 selected = first;
-    s32 label = Menu_Apply(selected, *second) + (s32)Value_0000099b;
+    s32 label = FunctionHead_0808a5d0(selected, *second) + (s32)Value_0000099b;
     RenderOutput_PrepareForRedraw(work);
     UiText_DrawNumber(selected, 3, (s32)work, 0, 14);
     UiText_DrawNumber(*second, 3, (s32)work, MENU_LABEL_X, 14);
@@ -64,17 +64,17 @@ s16 Menu_RunSelection(void)
     secondary = gCell.secondary;
     work = UiWindow_Create(0, 7, 30, 5, 2);
     Menu_DrawSelectionRow(work, primary, &secondary);
-    Menu_Apply(&object, &resource);
+    FunctionHead_0801c0dc(&object, &resource);
 
     while (gIw != 0)
         WaitFrames(1);
 
     for (;;) {
-        result = Menu_SetMode(work, primary, &secondary, &mode);
+        result = FunctionHead_08029094(work, primary, &secondary, &mode);
         if (result == -1) {
             TextResource_Release(resource);
             UiWork_Finalize(work, 2);
-            Menu_Apply2(primary, secondary);
+            FunctionHead_0808a238(primary, secondary);
             return result;
         }
         if (result == -2) {
@@ -83,7 +83,7 @@ s16 Menu_RunSelection(void)
             return result;
         }
 
-        Menu_Place(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
+        FunctionHead_0801c154(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
         primary = result;
         WaitFrames(1);
     }
@@ -107,13 +107,13 @@ s32 Menu_RunSelectionWithCursorObject(void)
     pos[0] = win;
     pos[1] = win;
     win = UiWindow_Create(1, 0, 28, 20, 2);
-    Menu_Apply(win, sel);
-    Menu_Apply2(obj, &res);
+    FunctionHead_080292c4(win, sel);
+    FunctionHead_0801c0dc(obj, &res);
     goto loop_test;
 loop_body:
     if (ev == 1)
-        Menu_Apply(win, *(volatile s32 *)&sel);
-    Menu_Place(obj,
+        FunctionHead_080292c4(win, *(volatile s32 *)&sel);
+    FunctionHead_08029274(obj,
                   pos[0] * 8 + 58,
                   pos[1] * 8 + 20);
 loop_test:
@@ -136,7 +136,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
     char bits[17];
 
     RenderOutput_PrepareForRedraw();
-    Menu_SetMode(0x0803742c, window, 48, 0);
+    FunctionHead_0801e940(0x0803742c, window, 48, 0);
 
     flag = start_flag << 8;
     for (row = 0; row != 16; row++) {
@@ -147,9 +147,9 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         for (i = 0; i != 5; i++) {
             label[i] = 0;
         }
-        Menu_Place(flag, 3, (s32)label);
-        Menu_SetMode((s32)label, window, 0, y);
-        Menu_SetMode(0x08037428, window, 32, y);
+        FunctionHead_08029274(flag, 3, (s32)label);
+        FunctionHead_0801e940((s32)label, window, 0, y);
+        FunctionHead_0801e940(0x08037428, window, 32, y);
 
         for (i = 0; i < 16; i++) {
             s32 val = GameFlag_IsSet(flag);
@@ -157,7 +157,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
             flag++;
         }
         bits[i] = 0;
-        Menu_SetMode((s32)bits, window, 48, y);
+        FunctionHead_0801e940((s32)bits, window, 48, y);
     }
 }
 

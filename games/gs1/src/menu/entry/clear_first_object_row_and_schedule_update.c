@@ -14,7 +14,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)Menu_Run);
+    ScheduleCallback((s32)FunctionHead_0801ff58);
     zero = 0;
     offset *= 2;
     count = 3;
@@ -83,7 +83,7 @@ struct RuntimeObject {
 
 extern const s32 gRom[4];
 
-struct RuntimeObject *Menu_Run(s32);
+struct RuntimeObject *FunctionHead_08009030(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
 
@@ -94,7 +94,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 
     if (origin != 0) {
         for (i = 0; i < 4; i++) {
-            struct RuntimeObject *object = Menu_Run(gRom[i]);
+            struct RuntimeObject *object = FunctionHead_08009030(gRom[i]);
 
             if (object != 0) {
                 Object_InitializeMode(object, 2);
@@ -120,7 +120,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)Menu_Run);
+    ScheduleCallback((s32)FunctionHead_080200cc);
     zero = 0;
     offset *= 4;
     count = 3;

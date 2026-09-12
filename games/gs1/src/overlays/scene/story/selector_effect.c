@@ -1527,25 +1527,25 @@ s32 Scene_RunScene39bSequenceC(s32 a0)
 /* overlays/scene/story/selector_effect/helper_b.c */
 void Scene_CallHelper(void)
 {
-    Story_RunCallHelperB();
+    FunctionHead_020067e8();
 }
 
 /* overlays/scene/story/selector_effect/forward.c */
 void Scene_Forward(void)
 {
-    Story_RunCallHelperB();
+    FunctionHead_0200646c();
 }
 
 /* overlays/scene/story/selector_effect/run_single_step.c */
 void Scene_RunSingleStep(void)
 {
-    Story_RunCallHelperB();
+    FunctionHead_020064c0();
 }
 
 /* overlays/scene/story/selector_effect/helper.c */
 void Scene_CallHelper(void)
 {
-    Story_RunCallHelperB();
+    FunctionHead_02006364();
 }
 
 /* overlays/scene/script/sel_open_step.c */

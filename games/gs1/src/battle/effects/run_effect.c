@@ -100,15 +100,15 @@ void BattleFx_Run(void)
             gCell.selected_id = -1;
         }
 
-        obj_id = Battle_Apply(gCell.selected_object, battle_mode);
+        obj_id = FunctionHead_0808df1c(gCell.selected_object, battle_mode);
         obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
         if (Battle_Check(obj_id)!= 0) {
             BattleFx_SetupObjectPair(gCell.selected_object, obj_id);
-            Battle_Do(obj_id);
+            FunctionHead_0809ab98(obj_id);
             BattleFx_PauseObject(obj_id);
             gCell.selected_id = obj_id;
         } else {
-            Battle_Run();
+            FunctionHead_0809abb4();
         }
         return;
     case 2:
@@ -164,13 +164,13 @@ void BattleFx_DispatchRequestKind(void)
     switch (battle_mode) {
     case 2:
         if (battle->active != 0)
-            Battle_Run();
+            FunctionHead_080984c0();
         if (gCell.selected_id != request->target_id)
             *(u8 *)((u8 *)request->object + 91) = 1;
-        Battle_Apply(request->source_id, target_id);
+        FunctionHead_08097540(request->source_id, target_id);
         break;
     case 1:
-        Battle_Do(target_id);
+        FunctionHead_08097c3c(target_id);
         break;
     case 7:
         BattleFx_RunTargetedItemBreak(target_id);
@@ -249,7 +249,7 @@ void BattleFx_ClearChildValueOnMismatch(void)
     struct State_08096ab0 *state = gIw;
 
     if (state->mode == 2) {
-        Battle_Run();
+        FunctionHead_08097608();
         if (gCell.value != state->value) {
             state->child->value = 0;
         }

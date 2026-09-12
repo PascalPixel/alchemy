@@ -34,7 +34,7 @@ s32 Modulo(s32 value, s32 divisor);
 void UiWindow_Clear(s32 window);
 u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
-struct BattleActorDefinition *Sys_Run(s32 actor_id);
+struct BattleActorDefinition *FunctionHead_08077008(s32 actor_id);
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
@@ -90,7 +90,7 @@ void Shop_DrawStock(s32 window, s32 selected)
                     *(u16 *)(icon + 12) = highlight;
                     icon[15] = 253;
                 }
-                icon = Sys_Run(definition->price, window, x, 0);
+                icon = FunctionHead_080b0744(definition->price, window, x, 0);
                 icon[15] = 251;
             }
         }
@@ -157,7 +157,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
                 icon_entry[16] = 0x10000;
                 unit_id = ((union ShopPartyMemberId *)(
                     party_member_base + offset))->half[0];
-                if (Sys_Apply(unit_id, requirement) == 0)
+                if (FunctionHead_08077220(unit_id, requirement) == 0)
                     icon_entry[16] = 0xcccc;
                 index++;
                 offset += 2;
@@ -262,7 +262,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {
-        Sys_Do((s32)&Value_00000ca0);
+        FunctionHead_080b04dc((s32)&Value_00000ca0);
         slot = Item_FindSlot(unit_id, item_id);
         if (slot != -1) {
             quantity = (unit->inventory[slot] >> 11) + 1;
@@ -272,7 +272,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         chance = 30;
         if (item->price != 0)
-            chance = Sys_Apply(SHOP_PARTY_STATE.money, item->price);
+            chance = FunctionHead_080022f4(SHOP_PARTY_STATE.money, item->price);
 
         if (shop->party_action == 2) {
             maximum = Ability_GetMaximum(item_id, 0);
@@ -289,7 +289,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         shop->mode = 12;
         Shop_PlaceCursor(0, ACTION_Y, 0x30);
-        result = Sys_Place(quantity, chance, item->price);
+        result = FunctionHead_080b1614(quantity, chance, item->price);
     }
     return result;
 }
@@ -308,18 +308,18 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
     remaining = quantity;
     item = Item_Get(item_id);
     added_slot = 0;
-    replaced_slot = Sys_Apply(unit_id, item->type);
+    replaced_slot = FunctionHead_08077228(unit_id, item->type);
     Audio_PlayCue(SOUND_SHOP_PURCHASE);
     if (added_slot < remaining) {
         do {
-            added_slot = Sys_Apply2(unit_id, item_id);
-            Sys_Check(0 - item->price);
+            added_slot = FunctionHead_08077028(unit_id, item_id);
+            FunctionHead_08077230(0 - item->price);
             remaining -= 1;
             Party_AdjustSixDigitCounterB(item->price);
             Shop_DrawMoney();
         } while (remaining != 0);
     }
-    Sys_Do((s32)&Value_00000ca1);
+    FunctionHead_080b0574((s32)&Value_00000ca1);
     if (Shop_ConfirmEquip(unit_id, added_slot) != 0) {
         Shop_SellOld(unit_id, replaced_slot);
     }
@@ -341,7 +341,7 @@ extern u8 Value_00000ad0[];
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopMenuState_080b1868 *menu = gIw;
-    u8 *unit = (u8 *)Sys_Run(unit_id);
+    u8 *unit = (u8 *)FunctionHead_08077008(unit_id);
     s32 slot_offset = slot * 2 + 216;
     s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
     struct ItemDefinition *info = Item_Get(masked);
@@ -351,10 +351,10 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     if (*(volatile u16 *)(unit + slot_offset) & 0x200)
         return 0;
 
-    if (Sys_Apply(unit_id, masked) == 0)
+    if (FunctionHead_08077218(unit_id, masked) == 0)
         return 0;
 
-    replaced = Sys_Apply2(unit_id, info->type);
+    replaced = FunctionHead_08077228(unit_id, info->type);
     if (replaced != -1) {
         s32 old_offset = replaced * 2 + 216;
         u16 old_raw = *(u16 *)(unit + old_offset);
@@ -365,8 +365,8 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     }
 
     UiText_DrawQuantity(unit_id, 1);
-    Sys_Do((s32)&Value_00000ca2);
-    if (Sys_Check(0) != 0)
+    FunctionHead_080b1bd0((s32)&Value_00000ca2);
+    if (FunctionHead_080b0634(0) != 0)
         return 0;
 
     Sys_Apply4(unit_id, slot);
@@ -375,7 +375,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
         Sys_Apply5(menu_value, unit_id);
 
     if (info->flags & 1) {
-        Shop_SelRepair(103);
+        FunctionHead_080f9010(103);
         UiWork_FinalizePending();
         UiWork_Create((s32)Value_00000ad0, 8, 4, 2);
         while (UiWork_IsCompleteFar() == 0) {
@@ -409,7 +409,7 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
     {
         return 0;
     }
-    Sys_Place(unit_id, slot, -1);
+    FunctionHead_080b1f4c(unit_id, slot, -1);
     return 1;
 }
 
@@ -485,9 +485,9 @@ s32 Shop_PickUnit(void)
             } else {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 if (shop->party_action == 1)
-                    Sys_Do(unit_id);
+                    FunctionHead_080b1bd0(unit_id);
                 else
-                    Shop_SelRepair(unit_id);
+                    FunctionHead_080b211c(unit_id);
                 shop->cursor.anchor->kind = 4;
                 shop->mode = 12;
                 redraw = 1;
@@ -497,7 +497,7 @@ s32 Shop_PickUnit(void)
 
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
-            Sys_Run();
+            FunctionHead_080a1030();
             UiWindow_Close(list_window, 2);
             UiWindow_Close(shop->item_window, 2);
             UiWindow_Close(shop->money_window, 2);
@@ -628,7 +628,7 @@ done:
 
         quantity = Shop_SelSellNum(unit_id, selection);
         if (quantity != -1)
-            Sys_Place(unit_id, selection, quantity);
+            FunctionHead_080b1f4c(unit_id, selection, quantity);
         UiMessage_ShowAndWait((s32)&Value_00000caa);
         if (Ability_GetAvailability(unit_id) == 0)
             break;
@@ -719,15 +719,15 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     state = Shop_GetSelectionState(unit_id, slot);
     selection = state;
     if ((item->flags & 0x10) && state > 1) {
-        Sys_Do((s32)&Value_00000cad);
+        FunctionHead_080b1bd0((s32)&Value_00000cad);
         saved_x = shop->cursor.target_x;
         saved_y = shop->cursor.target_y;
         shop->cursor.anchor->kind = 4;
         shop->mode = 0xc;
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
-        result = Sys_Place(0, selection, effect);
+        result = FunctionHead_080b1f4c(0, selection, effect);
         WaitFrames(1);
-        Shop_SelRepair(shop->cursor.anchor);
+        FunctionHead_080a1038(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);
     }
     return result;
@@ -761,7 +761,7 @@ extern u8 Value_00000cc2;
  * slot at a time, and hand a confirmed slot off to Sys_Apply before
  * showing the repair-result message.
  */
-s32 Shop_SelRepair(s32 unit_id)
+s32 FunctionHead_080a1038(s32 unit_id)
 {
     struct ShopRuntime *shop;
     s32 item_count;
@@ -855,7 +855,7 @@ done:
         if (result != 0)
             break;
 
-        Sys_Apply(unit_id, selection);
+        FunctionHead_080b2328(unit_id, selection);
         UiMessage_ShowAndWait((s32)&Value_00000cc2);
         if (Ability_GetAvailability(unit_id) == 0)
             break;

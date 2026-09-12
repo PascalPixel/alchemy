@@ -23,10 +23,10 @@ void Scene_RunSupplementalSequenceTwo(void)
         if (GameFlag_IsSet_2(GATE_ID)!= 0) {
         } else {
             Battle_Reset_1();
-            Story_Run();
+            FunctionHead_02001236();
             Audio_PlayCue_1(182);
             Story_SetRect(0, 71, 100, 71, 1, 1);
-            Story_unk2_4();
+            FunctionHead_0200133a();
             Battle_WaitMode0_1(40);
             /* Address of the byte pair starting at Value_00001032. */
             byte_pair_addr = (s32)&Value_00001032;
@@ -528,7 +528,7 @@ void Scene_RunFlag821Dialogue(void)
 /* Contiguous unnamed state-owner run for resource_37f. */
 
 
-extern s32 *Story_Run(s32);
+extern s32 *FunctionHead_02001236(s32);
 
     s32 dir;
 
@@ -546,7 +546,7 @@ extern s32 *Story_Run(s32);
 }
 
 
-extern s32 *Story_unk2_4(s32);
+extern s32 *FunctionHead_0200133a(s32);
 
     s32 dir;
 
@@ -701,9 +701,9 @@ s32 Scene_DispatchByScenarioId(void)
     s32 scenario = gCellByTilePosition[224];
 
     if (scenario == (s32)&Value_00000013) {
-        Story_Run();
+        FunctionHead_02001236();
     } else if (scenario == (s32)&Value_00000010) {
-        Story_unk2_4();
+        FunctionHead_0200133a();
     }
     return 0;
 }

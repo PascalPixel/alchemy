@@ -171,17 +171,17 @@ void ItemMenu_Close(void)
     WaitFrames(1);
     cursor = *(s8 **)(menu + 0x17C);
     cursor[5] = 0xD;
-    Sys_Apply(menu + 0x10, 1);
-    Sys_Apply(menu + 0x20, 1);
-    Sys_Apply(menu + 0x10C, 1);
-    Sys_Apply(menu + 0x24, 1);
-    Sys_Apply(menu + 0x28, 1);
-    Sys_Apply(menu + 0x2C, 1);
-    Sys_Apply(menu + 0x30, 1);
-    Sys_Apply(menu + 0x34, 1);
-    Sys_Apply(menu + 0x38, 1);
-    Sys_Apply(menu + 0x3C, 1);
-    Sys_Apply(menu + 0x40, 1);
+    FunctionHead_080a1114(menu + 0x10, 1);
+    FunctionHead_080a1114(menu + 0x20, 1);
+    FunctionHead_080a1114(menu + 0x10C, 1);
+    FunctionHead_080a1114(menu + 0x24, 1);
+    FunctionHead_080a1114(menu + 0x28, 1);
+    FunctionHead_080a1114(menu + 0x2C, 1);
+    FunctionHead_080a1114(menu + 0x30, 1);
+    FunctionHead_080a1114(menu + 0x34, 1);
+    FunctionHead_080a1114(menu + 0x38, 1);
+    FunctionHead_080a1114(menu + 0x3C, 1);
+    FunctionHead_080a1114(menu + 0x40, 1);
 }
 
 /* item_menu/prep_owner.c */
@@ -205,7 +205,7 @@ s32 ItemMenu_PrepOwner(s32 party_slot)
         offset = 0;
     } else {
         offset = owner_index * 2;
-        Sys_Apply(owner_index * 24 - 10, 16);
+        FunctionHead_080a1ac0(owner_index * 24 - 10, 16);
     }
 
     {
@@ -329,7 +329,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items)
 
     for (slot = 0; slot < 32; slot++) {
         if (items[slot] == 0) {
-            Sys_DoItemMenuIsSpecial(menu->entry_icons[slot]);
+            FunctionHead_080a17c4(menu->entry_icons[slot]);
             menu->entry_icons[slot]->state = 13;
         }
     }
@@ -419,7 +419,7 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     items = menu->items;
     menu->item_count = ItemMenu_Collect(owner, items, 0);
     UiWindow_Commit(menu->item_window);
-    Sys_DoItemMenuIsSpecial(mode);
+    FunctionHead_080a1cb0(mode);
     ItemMenu_DrawIcons(items, 0);
     if (ItemMenu_Count(owner_id) == 0)
         UiText_DrawAt(
@@ -784,10 +784,10 @@ void ItemMenu_DrawStat(
         digits = 3;
     }
     if (delta > 0) {
-        Sys_SetMode(
+        FunctionHead_08015098(
             &ItemMenu_IncreaseGlyph, window, x - digits * 8 + 16, y);
     } else {
-        Sys_SetMode(
+        FunctionHead_08015098(
             &ItemMenu_DecreaseGlyph, window, x - digits * 8 + 16, y);
     }
 }
@@ -864,7 +864,7 @@ void ItemMenu_DrawItemHead(void)
     menu->selected_item_icon->x = 112;
     menu->selected_item_icon->y = 8;
     UiIcon_PrepareObject(menu->selected_item_icon);
-    Sys_SetMode(
+    FunctionHead_08015090(
         Runtime_GetObject(menu->item_owner),
         (void *)menu->message_window,
         16,

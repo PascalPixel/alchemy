@@ -25,7 +25,7 @@ typedef struct {
 
 void WaitFrames(s32);
 void ScheduleCallback(void (*callback)(void));
-void *Battle_Run(u32 kind, u32 entry_index, s32 *size);
+void *FunctionHead_0808e4b4(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 void BattleFx_StartBufferInterpolation(s32 battle_value);
@@ -61,7 +61,7 @@ void ResetSceneTransitionEffect(void)
         BattleFx_StartBufferInterpolation(30);
         WaitFrames(1);
 
-        resource = Battle_Run(0x40000005, 8, &size);
+        resource = FunctionHead_0808e4b4(0x40000005, 8, &size);
         if (resource != NULL)
             Battle_Place(resource, gCell[125], size);
 
@@ -87,7 +87,7 @@ void BattleFx_RunBurstParticleMainObject(void)
 
     object = FIELD_AT_OFFSET(*(void **)ADDR_03001F30, u8 **, 0x14);
     if (object != 0) {
-        Battle_Run();
+        FunctionHead_08098698();
         Object_SetMode((s32)object, 2);
         object[0x59] = 0;
         Battle_Apply(object, 0);
@@ -124,7 +124,7 @@ void BattleFx_RunBurstParticles(void)
     struct BurstParticleVector *p;
     s32 entry_count;
 
-    Battle_Run();
+    FunctionHead_08098698();
     Audio_PlayCue(SOUND_HEAVY_IMPACT);
     p = &position;
     entry_count = 4;

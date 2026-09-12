@@ -101,15 +101,15 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 
     if (selection >= 0) {
         Battle_Reset();
-        Battle_RunEffectForSlot();
+        FunctionHead_0808c44c();
         if (slot != -1) {
             if (state->mode == 3)
-                BattleFx_RunAngledApproachPhases();
+                FunctionHead_0808b8e8();
 
             if (page == 0)
-                Battle_Do(slot);
+                FunctionHead_08096140(slot);
             else if (page == 1)
-                Runtime_ReleaseHeapBlock(slot);
+                FunctionHead_080965a8(slot);
             else if (page == 2)
                 BattleFx_RunPhasedRadialParticleSequence(slot);
             else if (page == 3)
@@ -120,7 +120,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
                 BattleFx_ClearAllObjects();
         }
 
-        Battle_Place(selection, page, entries);
+        FunctionHead_08015358(selection, page, entries);
         Battle_ClearObjectFlag5bWhenMode3();
         BattleFx_FinishAction();
     }
@@ -160,11 +160,11 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
         u32 is_active = *(volatile u8 *)active_flag;
         active_flag += 72;
         if ((is_active << 24) != 0) {
-            Battle_Do(slot);
+            FunctionHead_0809bb34(slot);
         }
         slot += 72;
     }
-    Runtime_ReleaseHeapBlock(56);
+    FunctionHead_08002dd8(56);
     WaitFrames(1);
 }
 
@@ -202,14 +202,14 @@ struct Target {
 
 extern s32 gCell[];
 
-struct Target *Battle_RunEffectForSlot(s32);
+struct Target *FunctionHead_08092054(s32);
 
-void BattleFx_RunAngledApproachPhases(struct Actor *actor)
+void FunctionHead_08095938(struct Actor *actor)
 {
     struct Target *target;
     struct Vec pos;
 
-    target = Battle_RunEffectForSlot(gCell[125]);
+    target = FunctionHead_08092054(gCell[125]);
     if (actor->phase == 0) {
         actor->yaw += 1;
         actor->pitch += 1;
@@ -228,7 +228,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
         pos.x = target->pos.x;
         pos.y = target->pos.y + 0x140000;
         pos.z = target->pos.z;
-        Battle_Do(&pos);
+        FunctionHead_080974d8(&pos);
         actor->x += (pos.x - actor->x) / 8;
         actor->z += (pos.z - actor->z) / 8;
         if (actor->timer == 40) {
@@ -243,11 +243,11 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
             actor->phase += 1;
         }
     } else if (actor->phase == 4) {
-        Runtime_ReleaseHeapBlock(actor);
+        FunctionHead_0809bb34(actor);
     }
     pos.x = actor->x;
     pos.z = actor->z;
-    Battle_Place(actor->yaw << 16, actor->pitch << 11, &pos);
+    FunctionHead_0800447c(actor->yaw << 16, actor->pitch << 11, &pos);
     actor->screenX = pos.x;
     actor->screenZ = pos.z;
 }

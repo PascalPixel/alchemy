@@ -122,7 +122,7 @@ struct PcmRateState {
     s32 half_period;
 };
 
-extern u16 gRom[];
+extern u16 RomBytes_080fb914[];
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 void AudioEngine_EnablePcmDma(void);
@@ -139,7 +139,7 @@ void AudioEngine_SetPcmRate(u32 mode_bits)
     mode_bits = (mode_bits & 0x000f0000) >> 16;
     zero = 0;
     audio->rate = mode_bits;
-    pcm_samples_per_vblank = gRom[mode_bits - 1];
+    pcm_samples_per_vblank = RomBytes_080fb914[mode_bits - 1];
     audio->pcm_samples_per_vblank = pcm_samples_per_vblank;
     audio->dma_period = FixedPoint_Ratio(0x630, pcm_samples_per_vblank);
     frequency = FixedPoint_Ratio(
@@ -378,7 +378,7 @@ void MusicPlayer_Initialize(
     }
 
     audio->music_player_head = player;
-    audio->mplay_main_head = (PlayerMainCallback)&gRom;
+    audio->mplay_main_head = (PlayerMainCallback)&RomBytes_080f9c91;
     audio->ident = 0x68736d53;
     player->ident = 0x68736d53;
 }
@@ -728,10 +728,10 @@ s32 Cgb_KeyToFrequency(
     }
 
     {
-        s32 lower = gRom[key];
+        s32 lower = RomBytes_080fb92c[key];
         s32 upper;
         lower = gRom2[lower & 15] >> (lower >> 4);
-        upper = gRom[key + 1];
+        upper = RomBytes_080fb92c[key + 1];
         upper = gRom2[upper & 15] >> (upper >> 4);
         return lower + ((pitch *(upper - lower)) >> 8) + 0x800;
     }

@@ -157745,27 +157745,7 @@
       "owners": [
         {
           "address": "0x080a1804",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1814",
-          "extent": 92,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a1870",
-          "extent": 236,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a195c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a19a0",
-          "extent": 160,
+          "extent": 14,
           "state": "exact-c"
         }
       ],

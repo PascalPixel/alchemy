@@ -121,7 +121,7 @@ void Effect_ConfigureIndexedEffect85fe(void)
 
 s32 SceneData_SelectTable8614ByFlag96f(void)
 {
-    if (Field_unk_020004a6(0x96F) != 0) {
+    if (Field_Check2(0x96F) != 0) {
         return 0x02008758;
     }
     return 0x02008614;

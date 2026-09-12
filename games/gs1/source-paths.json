@@ -14474,142 +14474,142 @@
     },
     "resource_3af:020029d4": {
       "name": "FieldScene_ConfigureLeadActors",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_configure_lead_actors.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02002b7c": {
       "name": "FieldScene_ConfigureThreeActors",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_configure_three_actors.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020009fc": {
       "name": "SceneData_SelectTableByThreeFlags",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020039ec": {
       "name": "FieldScene_RunStepThen10",
-      "source": "overlays/scene/actor/multi_encounter/shared.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020034bc": {
       "name": "SceneState_ConfigureEntries8Through19",
-      "source": "overlays/scene/actor/multi_encounter/scene_setup.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020039b8": {
       "name": "DialogueLayout_ConfigureTwoRegions",
-      "source": "overlays/scene/actor/multi_encounter/dialogue_layout.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000938": {
       "name": "SceneData_GetTablec994",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000570": {
       "name": "SceneActor_SetFacingFromSample",
-      "source": "overlays/scene/actor/multi_encounter/actor_facing.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003150": {
       "name": "SceneState_FindFirstSetFlagOfGroup",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003a00": {
       "name": "FieldScene_CallPairWith10",
-      "source": "overlays/scene/actor/multi_encounter/shared.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020013d4": {
       "name": "SceneState_ResetWorkValuesAndStart",
-      "source": "overlays/scene/actor/multi_encounter/scene_setup.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020017a0": {
       "name": "SceneActor_PlaceActors20To27",
-      "source": "overlays/scene/actor/multi_encounter/actor_position.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020008c0": {
       "name": "OverlayObject_DecayFields24And28",
-      "source": "overlays/scene/actor/multi_encounter/overlay_object.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000940": {
       "name": "SceneData_GetTablecb44",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003710": {
       "name": "SceneState_InitActorSlots8To19",
-      "source": "overlays/scene/actor/multi_encounter/scene_setup.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000030": {
       "name": "SceneEffect_UpdateCountdownMotion",
-      "source": "overlays/scene/actor/multi_encounter/scene_motion.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000950": {
       "name": "SceneData_SelectTableByFlags",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000514": {
       "name": "SceneActor_OscillateHeightBetweenLimits",
-      "source": "overlays/scene/actor/multi_encounter/actor_motion.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:0200089c": {
       "name": "SceneActor_SetWord28RandomlyOneIn40",
-      "source": "overlays/scene/actor/multi_encounter/actor_motion.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000b98": {
       "name": "SceneDialogue_RunActor21Line",
-      "source": "overlays/scene/actor/multi_encounter/scene_dialogue.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003464": {
       "name": "SceneData_SelectTableEntryByFlagGroup",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003950": {
       "name": "SceneState_ApplyFiveRectsAtColumn78",
-      "source": "overlays/scene/actor/multi_encounter/state_update.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020000b4": {
       "name": "SceneState_ApplyArgMode1AndReturnZero",
-      "source": "overlays/scene/actor/multi_encounter/state_update.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020033b8": {
       "name": "SceneState_FillTableDb70ByChecks",
-      "source": "overlays/scene/actor/multi_encounter/scene_state_interaction.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000948": {
       "name": "SceneData_GetTablecb64",
-      "source": "overlays/scene/actor/multi_encounter/scene_data.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02001d0c": {
       "name": "FieldScene_RunActorTwentyDialogueSequence",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_actor_twenty_dialogue.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003558": {
       "name": "SceneEffect_AdvanceSlotByValueBand",
-      "source": "overlays/scene/actor/multi_encounter/effect.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020035ec": {
       "name": "SceneEffect_SelectSlotValueAndPosition",
-      "source": "overlays/scene/actor/multi_encounter/effect.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003284": {
       "name": "SceneEffect_InitSlotsEightToNineteen",
-      "source": "overlays/scene/actor/multi_encounter/effect.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003380": {
       "name": "OverlayObject_ActivateSlotWithMode3",
-      "source": "overlays/scene/actor/multi_encounter/overlay_object.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02001db0": {
       "name": "RunEventScript01"
     },
     "resource_3af:02003a0c": {
       "name": "FieldScene_ConfigureFourActorPresentation",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_configure_four_actor_presentation.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003c88": {
       "name": "FieldScene_RunThreeActorEncounter",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_three_actor_encounter.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02003f30": {
       "name": "FieldScene_RunEncounterClosingSequence",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_encounter_closing_sequence.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000ca0": {
       "name": "FieldScene_RunActorAndEffectPresentationSetup",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02002c84": {
       "name": "FieldScene_RunPartyRosterScene"
@@ -14619,55 +14619,55 @@
     },
     "resource_3af:02000a48": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000bb8": {
       "name": "FieldScene_RunScene3af_02000bb8",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000bf0": {
       "name": "FieldScene_RunScene3af_02000bf0",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020010a0": {
       "name": "FieldScene_RunScene3af_020010a0",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020011c8": {
       "name": "FieldScene_RunScene3af_020011c8",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:020012f0": {
       "name": "FieldScene_RunScene3af_020012f0",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:0200185c": {
       "name": "FieldScene_RunScene3af_0200185c",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02001920": {
       "name": "FieldScene_RunScene3af_02001920",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02001a98": {
       "name": "FieldScene_RunScene3af_02001a98",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_3af_02001a98.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02001b58": {
       "name": "FieldScene_RunScene3af_02001b58",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_3af_02001b58.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02001c14": {
       "name": "FieldScene_RunScene3af_02001c14",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_3af_02001c14.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02004218": {
       "name": "FieldScene_RunScene3af_02004218",
-      "source": "overlays/scene/actor/multi_encounter/run_scene_3af_02004218.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3af:02000af0": {
       "name": "FieldScene_RunScene3afSequenceA",
-      "source": "overlays/scene/actor/multi_encounter/field_scene_head.c"
+      "source": "overlays/scene/actor/multi_encounter.c"
     },
     "resource_3ab:02000030": "overlays/scene/story/actor_sequence.c",
     "resource_3ab:0200013c": {

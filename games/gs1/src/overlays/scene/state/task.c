@@ -658,7 +658,7 @@ void Scene_RunSecondActorInteraction(s32 a0)
             State_unk17_3(0, 0x428, 216);
             State_unk72();
             State_unk73();
-            State_unk14_4(-1, -1, -1, 0);
+            ObjectDispatch_WaitForValue16(-1, -1, -1, 0);
             State_unk74(a0, 0);
             State_unk75(0);
             State_unk76(0, 0);
@@ -1677,7 +1677,7 @@ extern void State_unk41_3InitializeModeTask(s32 frames);        /* State_RunInit
 extern void State_unk42_3InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #5 */
 extern void State_unk43_3InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #6 */
 extern void State_unk44_3InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #8 */
-extern void State_unk45_3InitializeModeTask(void);              /* State_unk46_3InitializeModeTask veneer */
+extern void State_unk45_3InitializeModeTask(void);              /* Audio_PlayCueFromEventWork veneer */
 extern void State_unk47_3InitializeModeTask(void);              /* State_unk16_4InitializeModeTask veneer #2 */
 extern void State_unk48_3InitializeModeTask(s32 flag);          /* GameFlag_Set veneer */
 
@@ -2079,7 +2079,7 @@ void State_unk10_4();          /* veneer to UiText_DrawQuantity, site A */
 void State_unk11_4();          /* veneer to UiText_DrawQuantity, site B */
 void State_unk12_4();          /* shared veneer, selector refresh + 0x96a */
 
-void State_unk13_4();          /* veneer to State_unk14_4 */
+void State_unk13_4();          /* veneer to ObjectDispatch_WaitForValue16 */
 
 s32 position_active_actor(s32 handleA, s32 handleB)
 {

@@ -185,7 +185,7 @@ extern u8 Value_0000003a;
 
 extern u8 *Scene_GetRecord();
 
-extern u8 *Map_unk263_2();
+extern u8 *Battle_GetWorkObject1e0();
 
 /*
  * Loader-relocated ROM calls: each name spells the pre-relocation call word

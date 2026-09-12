@@ -98,8 +98,8 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     base = gIw;
     sel = FIELD(base, u16, 0x574);
     Sys_Do(base + 0x5A4);
-    Sys_unk2_2(base + 0x5B4);
-    Sys_unk2_2(base + 0x5C4);
+    ShopCursor_MoveTowardTarget(base + 0x5B4);
+    ShopCursor_MoveTowardTarget(base + 0x5C4);
 
     if (sel == 0) {
         src0 = (FIELD(base, u16, 0x57C) & 7) +

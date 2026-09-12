@@ -252,29 +252,29 @@ typedef struct ActiveSubjectSlot {
 extern void Map_unk23_4LogRollingStage(void);       /* site 0x20024e4 -> Map_unk24_4 veneer */
 extern void Map_unk25_4(void);       /* site 0x20024ea -> Map_unk26_4 veneer */
 extern s32 Map_unk27_4(s32 actor, s32 slot); /* site 0x20024f2 -> Colosso_RunStateInteraction veneer */
-extern void Map_unk28_4(s32 message);  /* site 0x20024fe -> Map_unk29_4 veneer (state==0 arm) */
-extern void Map_unk30_4(s32 x, s32 z); /* site 0x200250a -> Map_unk31_4 veneer */
-extern void Map_unk32_4(s32 x, s32 y, s32 z, s32 mode); /* site 0x200251c -> Map_unk33_4 veneer */
-extern void Map_unk34_4(void);         /* site 0x2002520 -> Map_unk35_4 veneer */
+extern void Map_unk28_4(s32 message);  /* site 0x20024fe -> Event_SetValue1d8 veneer (state==0 arm) */
+extern void Map_unk30_4(s32 x, s32 z); /* site 0x200250a -> ObjectTable_AllocateAndSetObjectSpeed veneer */
+extern void Map_unk32_4(s32 x, s32 y, s32 z, s32 mode); /* site 0x200251c -> Motion_CamBounds veneer */
+extern void Map_unk34_4(void);         /* site 0x2002520 -> BattleFx_CommitObjectPositionAndWait veneer */
 extern void Map_unk36_4(s32 frames);   /* site 0x2002526 -> Map_unk37_4 veneer #1 */
-extern void Map_unk38_4(s32 actor, s32 mode); /* site 0x200252e -> Map_unk39_4 veneer #1 */
+extern void Map_unk38_4(s32 actor, s32 mode); /* site 0x200252e -> BattleEv_RunWait veneer #1 */
 extern void Map_unk40_4(s32 x, s32 z, s32 mode); /* site 0x2002538 -> Colosso_StartPaletteTask veneer */
 extern void Map_unk41_4(s32 frames);   /* site 0x200253e -> Map_unk37_4 veneer #2 */
-extern void Map_unk42_4(s32 actor, s32 mode); /* site 0x2002546 -> Map_unk39_4 veneer #2 */
+extern void Map_unk42_4(s32 actor, s32 mode); /* site 0x2002546 -> BattleEv_RunWait veneer #2 */
 extern void Map_unk43_4(s32 x, s32 z, s32 mode); /* site 0x2002550 -> Colosso_StartPaletteTaskFromState veneer #1 */
 extern void Map_unk44_4(s32 frames);   /* site 0x2002556 -> Map_unk37_4 veneer #3 */
-extern void Map_unk45_4(s32 actor, s32 mode); /* site 0x200255e -> Map_unk39_4 veneer #3 */
+extern void Map_unk45_4(s32 actor, s32 mode); /* site 0x200255e -> BattleEv_RunWait veneer #3 */
 extern void Map_unk46_4(s32 x, s32 z, s32 mode); /* site 0x2002568 -> Colosso_StartPaletteTaskFromState veneer #2 */
 extern void Map_unk47_4(s32 frames);   /* site 0x200256e -> Map_unk37_4 veneer #4 */
-extern void Map_unk48_4(s32 actor, s32 mode); /* site 0x2002576 -> Map_unk39_4 veneer #4 */
+extern void Map_unk48_4(s32 actor, s32 mode); /* site 0x2002576 -> BattleEv_RunWait veneer #4 */
 extern void Map_unk49_4(void);         /* site 0x200257a -> Colosso_StopPaletteTask veneer */
 extern void Map_unk50_4(s32 frames);   /* site 0x2002580 -> Map_unk37_4 veneer #5 */
-extern void Map_unk51_4(s32 actor, s32 mode); /* site 0x2002588 -> Map_unk52_4 veneer */
+extern void Map_unk51_4(s32 actor, s32 mode); /* site 0x2002588 -> Object_AttachWorkTargetToObject veneer */
 extern void Map_unk53_4(s32 actor, s32 slot); /* site 0x2002590 -> Colosso_InitializeStateInteraction veneer */
-extern void Map_unk54_4(s32 message);  /* site 0x200259c -> Map_unk29_4 veneer (state==1 arm) */
-extern void Map_unk55_4(s32 actor, s32 mode); /* site 0x20025a4 -> Map_unk39_4 veneer #5 */
+extern void Map_unk54_4(s32 message);  /* site 0x200259c -> Event_SetValue1d8 veneer (state==1 arm) */
+extern void Map_unk55_4(s32 actor, s32 mode); /* site 0x20025a4 -> BattleEv_RunWait veneer #5 */
 extern s32 Map_unk56_4(s32 state, s32 actor, s32 slot); /* site 0x20025ae -> Scene_RunMiddleSequence veneer */
-extern void Map_unk57_4(void);         /* site 0x20025b2 -> Map_unk58_4 veneer */
+extern void Map_unk57_4(void);         /* site 0x20025b2 -> BattleFx_FinishAction veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
 extern u8 Value_00002076;
@@ -294,25 +294,25 @@ extern s32 gOv10;   /* handler for mode == 4 */
 extern s32 gOv11;   /* handler for mode == 3, parameter != 0 */
 extern s32 gOv12;   /* handler for mode == 3, parameter == 0 */
 extern void Map_unk59_4(void);              /* Map_unk26_4 veneer #1 (mode==0 arm) */
-extern void Map_unk60_4(void);              /* Map_unk61_4 veneer #1 */
-extern void Map_unk62_4(void);              /* Map_unk63_4 veneer #1 */
+extern void Map_unk60_4(void);              /* Event_SetStatus1c6 veneer #1 */
+extern void Map_unk62_4(void);              /* Event_WaitValue1c8Frames veneer #1 */
 extern void Map_unk64_4(s32 frames);        /* Map_unk37_4 veneer #1 */
 extern void Map_unk65_4(s32 cue);           /* Audio_PlayCue veneer #1 */
 extern void Map_unk66_4(s32 mode);          /* Map_unk67_4 veneer #1 */
 extern void Map_unk68_4(s32 style, s32 variant); /* Colosso_InitializeModeTask veneer #1 */
 extern void Map_unk69_4(s32 frames);        /* Map_unk37_4 veneer #2 */
-extern void Map_unk70_4(void);              /* Map_unk58_4 veneer #1 */
+extern void Map_unk70_4(void);              /* BattleFx_FinishAction veneer #1 */
 extern void Map_unk71_4(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
 extern void Map_unk72_4(void);              /* Map_unk26_4 veneer #2 */
-extern void Map_unk73_4(void);              /* Map_unk61_4 veneer #2 */
-extern void Map_unk74_4(void);              /* Map_unk63_4 veneer #2 */
+extern void Map_unk73_4(void);              /* Event_SetStatus1c6 veneer #2 */
+extern void Map_unk74_4(void);              /* Event_WaitValue1c8Frames veneer #2 */
 extern void Map_unk75_4(s32 frames);        /* Map_unk37_4 veneer #3 */
 extern void Map_unk76_4(s32 cue);           /* Audio_PlayCue veneer #3 */
 extern void Map_unk77_4(s32 mode);          /* Map_unk67_4 veneer #2 */
 extern void Map_unk78_4(s32 style, s32 variant); /* Colosso_InitializeModeTask veneer #2 */
 extern void Map_unk79_4(s32 frames);        /* Map_unk37_4 veneer #4 */
 extern void Map_unk80_4(s32 frames);        /* Map_unk81_4 veneer (loop body) */
-extern s32 Map_unk82_3(void);               /* Map_unk83_3 veneer (loop check) */
+extern s32 Map_unk82_3(void);               /* AudioCommand_GetStateByte veneer (loop check) */
 extern void Map_unk84_3(s32 cue);           /* Audio_PlayCue veneer #4 */
 extern void Map_unk85_3(s32 mode);          /* Map_unk67_4 veneer #3 */
 extern void Map_unk86_3(s32 style, s32 variant); /* Colosso_InitializeModeTask veneer #3 */
@@ -328,8 +328,8 @@ extern void Map_unk95_3(s32 frames);        /* Map_unk37_4 veneer #7 */
 extern void Map_unk96_3(s32 mode);          /* Map_unk67_4 veneer #5 */
 extern void Map_unk97_3(s32 style, s32 variant); /* Colosso_InitializeModeTask veneer #6 */
 extern void Map_unk98_3(s32 cue);           /* Audio_PlayCue veneer #8 */
-extern void Map_unk99_3(void);              /* Map_unk100_3 veneer */
-extern void Map_unk101_3(void);              /* Map_unk58_4 veneer #2 */
+extern void Map_unk99_3(void);              /* Audio_PlayCueFromEventWork veneer */
+extern void Map_unk101_3(void);              /* BattleFx_FinishAction veneer #2 */
 extern void Map_unk102_3(s32 flag);          /* GameFlag_Set veneer */
 extern s16 gOv13;
 extern u16 gOv14;
@@ -449,23 +449,23 @@ void Map_unk124_3();          /* unestablished, single argument */
 
 void Map_unk125_3();          /* established (record, mode) */
 
-s32 Map_unk126_3();           /* Map_unk127_3 veneer #1 */
+s32 Map_unk126_3();           /* GameFlag_GetByte veneer #1 */
 
-s32 Map_unk128_3();           /* Map_unk127_3 veneer #2 */
+s32 Map_unk128_3();           /* GameFlag_GetByte veneer #2 */
 
-void Map_unk129_3();          /* Map_unk130_3 veneer #1 */
+void Map_unk129_3();          /* Motion_SetHPosTerrain veneer #1 */
 
-s32 Map_unk131_3();           /* Map_unk127_3 veneer #3 */
+s32 Map_unk131_3();           /* GameFlag_GetByte veneer #3 */
 
-s32 Map_unk132_3();           /* Map_unk127_3 veneer #4 */
+s32 Map_unk132_3();           /* GameFlag_GetByte veneer #4 */
 
-void Map_unk133_3();          /* Map_unk130_3 veneer #2 */
+void Map_unk133_3();          /* Motion_SetHPosTerrain veneer #2 */
 
-s32 Map_unk134_3();           /* Map_unk127_3 veneer #5 */
+s32 Map_unk134_3();           /* GameFlag_GetByte veneer #5 */
 
-s32 Map_unk135_3();           /* Map_unk127_3 veneer #6 */
+s32 Map_unk135_3();           /* GameFlag_GetByte veneer #6 */
 
-void Map_unk136_3();          /* Map_unk130_3 veneer #3 */
+void Map_unk136_3();          /* Motion_SetHPosTerrain veneer #3 */
 
 u8 *Map_unk137_3();           /* veneer, item/party record by id, established */
 
@@ -477,7 +477,7 @@ u8 *Map_unk140_3();           /* scene-record accessor, established (veneer to S
 
 void Map_unk141_3();          /* unestablished */
 
-s32 Map_unk142_3(void);       /* established (veneer to Map_unk143_3) */
+s32 Map_unk142_3(void);       /* established (veneer to Resource_LoadFixedBlockBIntoFreeSlot) */
 
 void Map_unk144_3();          /* sibling item-28 owner, via per-site veneer */
 
@@ -505,7 +505,7 @@ void Map_unk156_3();          /* shared veneer, selector refresh + 0x96a */
 
 void Map_unk157_3();          /* shared veneer, selector refresh + 0x96a */
 
-void Map_unk158_3();          /* veneer to Map_unk159_3 */
+void Map_unk158_3();          /* veneer to ObjectDispatch_WaitForValue16 */
 
 void Colosso_PositionAndActivateActor(s32 selector, s32 x, s32 z)
 {

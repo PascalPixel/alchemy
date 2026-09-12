@@ -128799,47 +128799,7 @@
       "owners": [
         {
           "address": "0x08096c48",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096c80",
-          "extent": 92,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096cdc",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096d2c",
-          "extent": 88,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096d84",
-          "extent": 400,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096f14",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096f50",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08096f8c",
-          "extent": 364,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080970f8",
-          "extent": 124,
+          "extent": 54,
           "state": "exact-c"
         }
       ],

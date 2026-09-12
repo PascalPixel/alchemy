@@ -157333,42 +157333,7 @@
       "owners": [
         {
           "address": "0x0800f9cc",
-          "extent": 192,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800fa8c",
-          "extent": 1040,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800fe9c",
-          "extent": 184,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800ff54",
-          "extent": 2416,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080108c4",
-          "extent": 1156,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08010d48",
-          "extent": 920,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080110e0",
-          "extent": 132,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08011164",
-          "extent": 640,
+          "extent": 40,
           "state": "exact-c"
         }
       ],

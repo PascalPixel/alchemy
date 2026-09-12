@@ -118275,119 +118275,12 @@
       "game": "gs1",
       "source": "games/gs1/src/resource/initialize.c",
       "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {
-        "Data_03001a10": {
-          "address": "0x03001a10",
-          "kind": "data"
-        },
-        "Data_03001a20": {
-          "address": "0x03001a20",
-          "kind": "data"
-        },
-        "Data_03001d34": {
-          "address": "0x03001d34",
-          "kind": "data"
-        },
-        "Data_04000208": {
-          "address": "0x04000208",
-          "kind": "data"
-        }
-      },
+      "absolute_symbols": {},
       "local_symbols": [],
       "owners": [
         {
           "address": "0x0800403c",
           "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004080",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080040b4",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080040d0",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080040e8",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800412c",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004144",
-          "extent": 84,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004198",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080041d8",
-          "extent": 150,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004278",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080042c8",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800430c",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004358",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800439c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080043e0",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004458",
-          "extent": 120,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080044d0",
-          "extent": 212,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080045a4",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080045d4",
-          "extent": 20,
           "state": "exact-c"
         }
       ],

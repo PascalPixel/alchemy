@@ -118307,41 +118307,6 @@
           "address": "0x08005810",
           "extent": 88,
           "state": "exact-c"
-        },
-        {
-          "address": "0x08005868",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005904",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005ac0",
-          "extent": 30,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005ae0",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005b24",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005c08",
-          "extent": 34,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08005c2c",
-          "extent": 60,
-          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -118355,43 +118320,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x08006a78",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006abc",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006ac0",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006af8",
-          "extent": 300,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006c24",
-          "extent": 456,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006dec",
-          "extent": 348,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006f48",
+          "address": "0x080069a4",
           "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006f6c",
-          "extent": 2600,
           "state": "exact-c"
         }
       ],
@@ -118409,51 +118339,6 @@
           "address": "0x0800b798",
           "extent": 40,
           "state": "exact-c"
-        },
-        {
-          "address": "0x0800b7c0",
-          "extent": 168,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800b868",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800b8ac",
-          "extent": 144,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800b93c",
-          "extent": 104,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800b9a4",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800b9f4",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800ba30",
-          "extent": 156,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800bacc",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800baf8",
-          "extent": 336,
-          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -118467,18 +118352,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x08021ab0",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021af0",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021b30",
-          "extent": 80,
+          "address": "0x08021950",
+          "extent": 120,
           "state": "exact-c"
         }
       ],
@@ -118493,28 +118368,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x0808b02c",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b048",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b05c",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b074",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b090",
-          "extent": 200,
+          "address": "0x0808adf0",
+          "extent": 132,
           "state": "exact-c"
         }
       ],
@@ -118532,16 +118387,6 @@
           "address": "0x080b0070",
           "extent": 132,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080b00f4",
-          "extent": 272,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b0204",
-          "extent": 576,
-          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -118558,16 +118403,6 @@
           "address": "0x080cd418",
           "extent": 112,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080cd488",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cd4b4",
-          "extent": 84,
-          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -118581,13 +118416,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x080ecedc",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ecee8",
-          "extent": 13460,
+          "address": "0x080ece7c",
+          "extent": 48,
           "state": "exact-c"
         }
       ],
@@ -160216,37 +160046,6 @@
         {
           "address": "0x080e3a3c",
           "extent": 3452,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-effects-wait-then-set-field-080f037c",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/wait_then_set_field.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080f037c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f03c0",
-          "extent": 11000,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f2eb8",
-          "extent": 4,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f2ebc",
-          "extent": 2240,
           "state": "exact-c"
         }
       ],

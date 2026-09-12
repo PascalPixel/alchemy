@@ -52,7 +52,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 }
 
 /* map/shared/render_animated_tile_frames_for_object.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 
 void Map_RenderAnimatedTileFramesForObject(u8 *object)

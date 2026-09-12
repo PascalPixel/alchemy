@@ -209,7 +209,7 @@ extern u8 gWork[];
 
 /* A value-returning call sets r0 last of its arguments. */
 
-s32 Scene_RunScene39b(s32 a0)
+void Scene_RunScene39b(s32 a0)
 {
     s32 value;
     s32 magic;

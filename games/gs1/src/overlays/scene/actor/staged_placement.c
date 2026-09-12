@@ -367,7 +367,7 @@ void Scene_RunScene389(void)
     Actor_unk67_4();
 }
 
-s32 Scene_RunScene389(void)
+void Scene_RunScene389(void)
 {
     u8 *record;
     u8 *work;

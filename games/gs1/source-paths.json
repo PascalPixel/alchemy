@@ -2104,10 +2104,12 @@
       "name": "Summon_ClassValid"
     },
     "main:080e7320": {
-      "name": "BattleFx_InitializeDefaultMode"
+      "name": "BattleFx_InitializeDefaultMode",
+      "source": "battle/effects/runtime/initialize_default_mode.c"
     },
     "main:080e732c": {
-      "name": "BattleFx_InitializeMode1"
+      "name": "BattleFx_InitializeMode1",
+      "source": "battle/effects/runtime/initialize_default_mode.c"
     },
     "main:08091814": {
       "name": "Event_ValidatePackedId"

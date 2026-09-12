@@ -22,9 +22,9 @@ struct BattleUnitLevel *Runtime_GetObject(s32 unit_id);
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-void *Battle_Run(s32 id);
+struct BattleActorDefinition *Battle_Run(s32 actor_id);
 
-extern u16 gRom[];
+extern struct Entry gRom[];
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
@@ -126,7 +126,7 @@ struct Snd_080c1df4 {
     u8 num;         /* 0x40 */
 };
 
-extern struct Snd_080c1df4 *gBattleWork;
+extern struct SummonChargeState *gBattleWork;
 
 s32 Modulo(s32, s32);
 
@@ -187,9 +187,7 @@ struct BattleActorDefinition {
     u8 unavailable;
 };
 
-extern struct SummonChargeState *gBattleWork;
 
-struct BattleActorDefinition *Battle_Run(s32 actor_id);
 
 s32 Summon_ReleaseCharge(s32 actor_id)
 {
@@ -225,7 +223,6 @@ s32 Summon_ReleaseCharge(s32 actor_id)
 }
 
 /* battle/summon/reset_charge.c */
-u8 *Runtime_GetObject(s32);
 
 s32 Summon_ResetCharge(s32 class_id)
 {
@@ -263,7 +260,6 @@ next_object:
 }
 
 /* battle/formation/select_random_available_member.c */
-u32 Random16(void);
 
 s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
 {
@@ -320,7 +316,6 @@ struct Entry {
     u8 rest[6];
 };
 
-extern struct Entry gRom[];
 
 s32 Summon_GetEntryValue(s32 index)
 {
@@ -337,7 +332,6 @@ struct Entry {
     u8 rest[4];
 };
 
-extern struct Entry gRom[];
 
 s32 Summon_GetEntryFlag1Field(s32 index)
 {
@@ -354,7 +348,6 @@ struct Entry {
     u8 rest[4];
 };
 
-extern struct Entry gRom[];
 
 s32 Summon_IsEntryFlagged(s32 index)
 {
@@ -369,7 +362,6 @@ s32 Summon_IsEntryFlagged(s32 index)
 }
 
 /* battle/get_entry_field2_low_bits.c */
-extern u8 gRom[];
 
 u32 Battle_GetEntryField2LowBits(u32 no)
 {
@@ -397,7 +389,6 @@ u32 Battle_GetEntryField2LowBits(u32 no)
 }
 
 /* battle/get_entry_field2_high_bits.c */
-extern u8 gRom[];
 
 u32 Battle_GetEntryField2HighBits(u32 no)
 {
@@ -426,7 +417,6 @@ struct Entry {
     u8 rest[4];
 };
 
-extern struct Entry gRom[];
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
@@ -436,7 +426,6 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index)
 }
 
 /* battle/summon/get_entry_byte4.c */
-extern u8 gRom[];
 
 s32 Summon_GetEntryByte4(s32 index)
 {

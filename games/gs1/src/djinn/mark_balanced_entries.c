@@ -70,7 +70,6 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 /* djinn/count_turns.c */
 u8 *Runtime_GetObject(s32);
 
-extern u8 *gIw;
 
 void Djinn_CountTurns(u8 *counts)
 {

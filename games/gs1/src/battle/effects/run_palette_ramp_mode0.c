@@ -11,7 +11,6 @@ void BattleFx_RunPaletteRampMode0(s32 effect)
 }
 
 /* battle/effects/palette_ramp/fx_run_palette_ramp_mode1.c */
-s32 RunPaletteRampEffect(s32, s32);
 
 void BattleFx_RunPaletteRampMode1(s32 effect)
 {
@@ -19,7 +18,6 @@ void BattleFx_RunPaletteRampMode1(s32 effect)
 }
 
 /* battle/effects/palette_ramp/fx_run_palette_ramp_mode2.c */
-s32 RunPaletteRampEffect(s32, s32);
 
 void BattleFx_RunPaletteRampMode2(s32 effect)
 {
@@ -27,7 +25,6 @@ void BattleFx_RunPaletteRampMode2(s32 effect)
 }
 
 /* battle/effects/palette_ramp/fx_run_palette_ramp_mode3.c */
-s32 RunPaletteRampEffect(s32, s32);
 
 void BattleFx_RunPaletteRampMode3(s32 effect)
 {
@@ -252,7 +249,6 @@ void BattleFx_RunParticleFieldMode1(s32 effect)
 }
 
 /* battle/effects/particle_field/mode_0.c */
-s32 RunParticleFieldEffect(s32, s32);
 
 void BattleFx_RunParticleFieldMode0(s32 effect)
 {

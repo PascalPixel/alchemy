@@ -67,7 +67,7 @@ void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
 extern u8 gUnk[];
 
 extern s32 Resource_ResetEntry(u32 index);
-extern void UiWindow_Close(u32 arg0, u32 arg1);
+void UiWindow_Close(void *handle);
 
 void BattleFx_CleanupResourcesAndWindow(void)
 {
@@ -123,7 +123,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 }
 
 /* battle/effects/run/run_visibility_transition.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Battle_InitializeRenderObject(void);
@@ -197,7 +197,6 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 f
 }
 
 /* ui/window/close_if_open.c */
-void UiWindow_Close(void *handle);
 
 void UiWindow_CloseIfOpen(void **handle)
 {
@@ -305,8 +304,8 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
 
 /* ui/icon/create_with_resource.c */
 extern s32 Resource_FindFreeSlot(void);
-extern s32 Resource_CopyData();
-extern s32 UiIcon_DrawWithFlags();
+s32 Resource_CopyData(s32 entry_no, s32 mode, s32 data);
+s32 UiIcon_DrawWithFlags(s32 entry_no, s32 flags, s32 first, s32 second, s32 third);
 extern u8 gRom[];
 s32 UiIcon_CreateWithResource(s32 first, s32 unused, s32 second, s32 third)
 {
@@ -322,10 +321,6 @@ s32 UiIcon_CreateWithResource(s32 first, s32 unused, s32 second, s32 third)
 }
 
 /* ui/icon/create_with_resource_variant.c */
-s32 Resource_CopyData(s32 entry_no, s32 mode, s32 data);
-s32 Resource_FindFreeSlot(void);
-s32 UiIcon_DrawWithFlags(s32 entry_no, s32 flags, s32 first, s32 second, s32 third);
-extern u8 gRom[];
 s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
 {
   s32 slot;

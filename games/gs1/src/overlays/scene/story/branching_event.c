@@ -16,7 +16,7 @@ struct Obj {
     u16 f06;
 };
 
-extern u8 RuntimeSelectorTable[];
+extern s16 RuntimeSelectorTable[];
 
 struct Obj *Story_unk18_4();
 
@@ -967,7 +967,6 @@ void OvObj_WaitUntilIdle(s32 *obj)
 #define SecondaryRuntimeSelector Value_000000af
 #define TertiaryRuntimeSelector Value_000000ae
 
-extern s16 RuntimeSelectorTable[];
 extern u8 Value_000000b0;
 extern u8 gOv2[];
 

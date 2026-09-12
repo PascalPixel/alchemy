@@ -24,7 +24,7 @@ struct PlacementTable {
 
 struct BattleObjectSlot;
 
-struct PlacementTable *Battle_Run(s32 owner);
+struct BattleSummonState *Battle_Run(s32 side);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
@@ -91,7 +91,6 @@ struct PartyDjinnTotals {
     u8 by_element[4];
 };
 
-struct BattleSummonState *Battle_Run(s32 side);
 
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 {

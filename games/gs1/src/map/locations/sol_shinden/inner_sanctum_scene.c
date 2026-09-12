@@ -417,7 +417,6 @@ void Scene_RunActorPositionTransition(void)
 }
 
 /* map/locations/sol_shinden/inner_sanctum_scene/field_scene.c */
-extern u8 gWork[];
 extern s16 gOv, gOv3, gOv4, gOv5;
 extern s32 gOv2;
 
@@ -708,7 +707,6 @@ u8 *GetSolShindenEffectData(void)
 }
 
 /* map/locations/sol_shinden/inner_sanctum_scene/scene_primary_script.c */
-extern u8 gWork[];
 extern u8 gVal[];
 extern u8 gVal2[];
 
@@ -1340,7 +1338,6 @@ void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
 }
 
 /* map/locations/sol_shinden/inner_sanctum_scene/sol_shinden.c */
-extern u32 gWork;
 
 /* One import, four call sites, four distinct veneer addresses. */
 

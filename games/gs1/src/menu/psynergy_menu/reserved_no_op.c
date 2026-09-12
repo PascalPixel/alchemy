@@ -69,8 +69,6 @@ void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
 
 /* item_menu/item_menu_pos_owner.c */
 /* item_menu/pos_owner.c */
-s32 FixedPoint_Ratio(s32, s32);
-s32 Modulo(s32, s32);
 
 void ItemMenu_PosOwner(struct Object080a1c **slot, s32 index,
     s32 origin_x, s32 origin_y,

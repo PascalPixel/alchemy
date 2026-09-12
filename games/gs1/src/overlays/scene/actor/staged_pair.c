@@ -94,7 +94,7 @@ extern u8 gVal[];
 extern u8 gVal2[];
 extern u8 gVal3[];
 extern u8 gVal4[];
-extern u8 gCell[];
+extern s16 gCell[];
 extern u8 gOv[];
 extern u8 gOv2[];
 extern u8 gOv3[];
@@ -364,7 +364,6 @@ struct HeightTrackedObject {
 extern struct EffectDescriptor *gOv11[];
 extern s32 gOv12[];
 extern s32 gOv13[];
-extern s16 gCell[];
 extern u8 Value_00000098;
 extern u8 Value_0000009d;
 extern u8 Value_0000009e;

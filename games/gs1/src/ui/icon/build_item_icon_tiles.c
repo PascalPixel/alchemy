@@ -52,7 +52,6 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
 }
 
 /* ui/icon/copy_resource_to_slot.c */
-s32 Resource_CopyData(s32, s32, s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2)
@@ -67,8 +66,6 @@ s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2)
 }
 
 /* ui/render/build_pattern_to_slot.c */
-s32 Resource_CopyData(s32, s32, s32);
-s32 Runtime_AllocateHeapBlock(s32 no, s32 arg1);
 
 s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot)
 {

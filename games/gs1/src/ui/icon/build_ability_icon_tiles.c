@@ -63,7 +63,6 @@ struct State_0801a4c0 {
 };
 
 extern struct State_0801a4c0 *gIw;
-extern u32 gRom[];
 
 void Ui_PrepareTransferFromTableEntry(u32 index)
 {

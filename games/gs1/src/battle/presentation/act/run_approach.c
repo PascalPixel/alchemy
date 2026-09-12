@@ -29,7 +29,7 @@ struct ObjectSlot_080b8b48 {
 
 extern s32 *gIw;
 
-void WaitFrames(u32);
+void WaitFrames(s32);
 
 void Runtime_GetObject(s32);
 u32 Random16(void);

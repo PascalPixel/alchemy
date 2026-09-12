@@ -7,7 +7,7 @@
 /* battle/unit_lookup_weapon_value_by_class.c */
 /* battle/unit_lookup_weapon_value_by_class.c */
 /* battle/unit/lookup_weapon_value_by_class.c */
-u8 *Runtime_GetObject(s32);
+struct BattleActorDefinition *Runtime_GetObject(s32 actor_id);
 
 extern u16 gRom[];
 extern u16 gRom2[];
@@ -251,7 +251,6 @@ struct BattleActorDefinition {
     u8 class_id;
 };
 
-struct BattleActorDefinition *Runtime_GetObject(s32 actor_id);
 
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
 {
@@ -289,7 +288,6 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 
 /* battle/summon/find_available_slot.c */
 struct BattleActorDefinition;
-struct BattleActorDefinition *Runtime_GetObject(s32);
 
 s32 Summon_FindSlot(void)
 {
@@ -339,7 +337,6 @@ block_7:
 }
 
 /* battle/unit/build_status_flags.c */
-u8 *Runtime_GetObject(s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, u8 *output)
 {
@@ -497,8 +494,7 @@ done:
 }
 
 /* battle/presentation/actor/set_mode_act.c */
-u8 *Runtime_GetObject(s32);
-s32 *GetBattleObjectSlot(s32);
+void *GetBattleObjectSlot(s32 arg0);
 void Object_SetMode(s32, s32);
 void Object_SetAction(s32, s32);
 
@@ -627,7 +623,6 @@ s32 ActivateBattleObjectSlot(s32 object_id)
 
 /* battle/motion/destroy_all_slot_objects.c */
 s32 Object_Destroy(s32);
-void *GetBattleObjectSlot(s32 arg0);
 
 void *BattleMotion_DestroyAllSlotObjects(void)
 {

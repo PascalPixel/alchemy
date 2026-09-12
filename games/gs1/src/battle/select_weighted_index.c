@@ -88,7 +88,7 @@ s32 BattleEventRuntime_Reset(void)
 }
 
 /* battle/event_runtime/wait_for_ready.c */
-void WaitFrames(u32);
+void WaitFrames(s32);
 void ScheduleCallback(void *);
 s32 BattleEventRuntime_Reset(void);
 

@@ -133,7 +133,6 @@ s32 BattleFx_GetResourceId(u32 id)
 }
 
 /* battle/effects/runtime/misc/get_flags.c */
-struct BattleEffectEntry *BattleFx_FindDefinition(u32 id);
 s32 BattleFx_GetAnimationValue(void);
 
 u8 BattleFx_GetFlags(void)
@@ -165,7 +164,7 @@ void Battle_UpdateModeFromShoulderButtons(void)
 }
 
 /* battle/runtime/wait_if_mode_zero.c */
-void WaitFrames(void);
+void WaitFrames(s32);
 
 void Battle_WaitMode0(s32 should_wait)
 {
@@ -228,11 +227,10 @@ void Battle_Reset(void)
 }
 
 /* battle/effects/misc/finish_action.c */
-extern struct EventValueWork gCell;
+extern struct EventValidationWork gCell;
 
 void ScheduleCallback(u32);
 
-void Battle_UpdateModeFromShoulderButtons(void);
 
 void BattleFx_FinishAction(void)
 {
@@ -249,9 +247,7 @@ void Event_NoOpHook(void)
 }
 
 /* event/run_object_hook_and_wait.c */
-extern struct EventValueWork gCell;
 
-void WaitFrames(s32);
 
 void Event_RunObjectHookAndWait(s32 object_id)
 {
@@ -307,7 +303,6 @@ s32 Event_ValidatePackedId(u32 packed_id)
 }
 
 /* event/clear_invalid_packed_values.c */
-extern struct EventValidationWork gCell;
 
 s32 Event_ValidatePackedId(u32 packed_id);
 

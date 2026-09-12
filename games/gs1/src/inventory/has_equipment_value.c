@@ -42,7 +42,7 @@ struct State08078e28 {
     struct Slot08078e28 slots[32];
 };
 
-void *Owner_GetState(s32);
+void *Owner_GetState(s32 owner);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
@@ -118,7 +118,6 @@ struct State_08079008 {
     u8 enabled;
 };
 
-void *Owner_GetState(s32);
 extern u32 gRomNoOpB[];
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
@@ -164,7 +163,6 @@ struct State_080792fc {
     u8 count;
 };
 
-void *Owner_GetState(s32);
 
 void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
 {
@@ -428,9 +426,8 @@ struct State_0807987c {
     u8 record;
 };
 
-void *Owner_GetState(s32);
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
-s32 FixedPoint_Ratio(s32, s32);
+s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
+s32 FixedPoint_Ratio(s32 value, s32 divisor);
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
@@ -487,11 +484,8 @@ struct DigitOffsets {
 
 extern const struct DigitOffsets gRomBuildDigitTiles[16];
 
-void *Owner_GetState(s32 owner);
 const u8 *Owner_GetRecord(s32 record);
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 s32 Modulo(s32 value, s32 divisor);
-s32 FixedPoint_Ratio(s32 value, s32 divisor);
 
 u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
 {

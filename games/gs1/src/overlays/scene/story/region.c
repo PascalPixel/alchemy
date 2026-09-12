@@ -15,9 +15,6 @@ extern s32 gOv[]; /* Packed direction steps, 16 entries. */
 extern u8 SecondaryOverlayData[];
 extern u8 TertiaryOverlayData[];
 extern u8 DefaultOverlayData[];
-extern u8 SecondaryOverlayData[];
-extern u8 TertiaryOverlayData[];
-extern u8 DefaultOverlayData[];
 
 u8 *Story_Run(s32);
 
@@ -74,7 +71,6 @@ u8 *Story_unk16_4();
 
 extern u8 PrimaryOverlayData[];
 
-extern u8 PrimaryOverlayData[];
 
 s32 State_ApplyArgMode0AndReturnZero(s32 no)
 {

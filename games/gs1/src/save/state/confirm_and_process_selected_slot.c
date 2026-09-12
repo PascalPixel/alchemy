@@ -94,15 +94,10 @@ s32 SaveState_CopySlotPair(void)
 }
 
 /* save/state/delete_selected_slot.c */
-extern u8 Value_0000000a;
-extern u8 Value_0000000d;
 extern u8 Value_00000016;
 extern u8 Value_00000018;
 
-s32 UiWork_IsComplete(void);
-void WaitFrames(s32);
 
-void UiWork_FinalizePendingCore(void);
 
 s32 SaveState_DeleteSelectedSlot(void)
 {

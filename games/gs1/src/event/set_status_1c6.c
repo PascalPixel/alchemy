@@ -23,7 +23,7 @@ void Event_ClearStatus1c6(void)
 }
 
 /* event/wait_value_1c8_frames.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void Event_WaitValue1c8Frames(void)
 {
@@ -31,7 +31,7 @@ void Event_WaitValue1c8Frames(void)
 }
 
 /* event/set_pair_work_1c0.c */
-extern struct EventPairWork1c0 gCell;
+extern struct SharedData_08091f14 gCell;
 
 void Event_SetPairWork1c0(u16 first, u16 second)
 {
@@ -53,7 +53,6 @@ struct gRom {
 };
 
 extern struct State_08091e6c *volatile gWork;
-extern struct gRom gCell;
 
 void Event_SetPair1c4AndResetValue170(u16 first, u16 second)
 {
@@ -71,10 +70,9 @@ void Sys_Run(u16 value)
 
 /* battle/effects/set/fx_set_weighted_result.c */
 /* battle/effects/set/set_weighted_result.c */
-extern struct EventPairWork1d6 gCell;
 extern u8 Value_00000021;
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-s32 BattleFx_LookupResult(void *arg0);
+s32 BattleFx_LookupResult(void *object);
 
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 {
@@ -109,10 +107,8 @@ struct SharedData_08091f14 {
 };
 
 extern struct RuntimeState_08091f14 *gWork;
-extern struct SharedData_08091f14 gCell;
 
 s16 BattleFx_GetPhaseResult(s32 value);
-s32 BattleFx_LookupResult(void *object);
 void *ObjectTable_Get(u32 object);
 /* Object table: 192 pointers at gWork + 0x14 (object/table/get.c). */
 

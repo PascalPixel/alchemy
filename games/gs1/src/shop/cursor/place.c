@@ -1180,7 +1180,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
             if (Shop_CountUnits() == 0) {
                 Sys_DoServicePrice(message + 1);
             } else {
-                Sys_unk3_4();
+                Shop_SelectTreatmentMember();
             }
         }
         shop->party_action = 0;

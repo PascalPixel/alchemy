@@ -17298,291 +17298,297 @@
       "call_via": "0200363e",
       "source": "overlays/scene/actor/waypoint/move_and_redraw.c"
     },
-    "resource_3b4:02000030": "overlays/scene/actor/staged_step/measure_fixed_point_position_distance.c",
-    "resource_3b4:0200006c": "overlays/scene/actor/staged_step/find_actor_at_fixed_point_position.c",
-    "resource_3b4:02000244": "overlays/scene/actor/staged_step/fill_grid_attribute_rectangle.c",
-    "resource_3b4:020009ec": "overlays/scene/actor/staged_step/empty_hook_b.c",
-    "resource_3b4:02000aa4": "overlays/scene/actor/staged_step/empty_hook_c.c",
+    "resource_3b4:02000030": "overlays/scene/actor/staged_step.c",
+    "resource_3b4:0200006c": "overlays/scene/actor/staged_step.c",
+    "resource_3b4:02000244": "overlays/scene/actor/staged_step.c",
+    "resource_3b4:020009ec": {
+      "name": "Resource3b4_EmptyHookA",
+      "source": "overlays/scene/actor/staged_step.c"
+    },
+    "resource_3b4:02000aa4": {
+      "name": "Resource3b4_EmptyHookB",
+      "source": "overlays/scene/actor/staged_step.c"
+    },
     "resource_3b4:02000a44": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/actor/staged_step/scene_data_head.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020018e0": {
       "name": "FieldScene_DispatchBySlotZeroFacing",
-      "source": "overlays/scene/actor/staged_step/scene_state_interaction.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001ec0": {
       "name": "SceneActor_PassActorNinePositionWithId107",
-      "source": "overlays/scene/actor/staged_step/actor_position.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001204": {
       "name": "FieldScene_RunStep8ValueEe7",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020000c4": {
       "name": "StagedActor_AdvanceActorPair",
-      "source": "overlays/scene/actor/staged_step/staged_actor_pair.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000a50": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/actor/staged_step/select_data_by_runtime_selector.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001e54": {
       "name": "FieldScene_RunSingleStep",
-      "source": "overlays/scene/actor/staged_step/shared.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020018c0": {
       "name": "SetBlendAlphaCoefficients",
-      "source": "overlays/scene/actor/staged_step/display.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020018d0": {
       "name": "SceneEffect_SetBlendAlpha0607",
-      "source": "overlays/scene/actor/staged_step/display.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001198": {
       "name": "SceneState_ApplyRectAndPlaceSlot12",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001114": {
       "name": "FieldScene_RunIndexedStep1",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:0200115c": {
       "name": "SceneState_ResetCounter412OnHeading4000",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001ccc": {
       "name": "SceneState_ApplyRectAndClearActor10Byte85",
-      "source": "overlays/scene/actor/staged_step/state_update.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020015cc": {
       "name": "FieldScene_RunLateIndexedStep0",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001980": {
       "name": "FieldScene_NoOpCallback",
-      "source": "overlays/scene/actor/staged_step/no_op_callback.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000aa8": {
       "name": "SceneActor_FaceTowardActorZero",
-      "source": "overlays/scene/actor/staged_step/actor_facing.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020015d8": {
       "name": "FieldScene_RunLateIndexedStep1",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001984": {
       "name": "SceneActor_MarkSlot13AndSetFlag200",
-      "source": "overlays/scene/actor/staged_step/state_update.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001238": {
       "name": "FieldScene_RunStep9ValueEe8",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001c28": {
       "name": "SceneActor_RunWhenActor9AtTile45x43",
-      "source": "overlays/scene/actor/staged_step/actor_position.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020009dc": {
       "name": "SceneActor_SetActor15ModeZero",
-      "source": "overlays/scene/actor/staged_step/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001d78": {
       "name": "FieldScene_DispatchByActorZeroFacing",
-      "source": "overlays/scene/actor/staged_step/facing_target_scene.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020002a8": {
       "name": "SceneActor_CheckAheadTileAndStop",
-      "source": "overlays/scene/actor/staged_step/staged_actor_navigation.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001c5c": {
       "name": "FieldScene_RunTwoStepSequence",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:0200152c": {
       "name": "SceneActor_TrackOriginColumnForSlot",
-      "source": "overlays/scene/actor/staged_step/actor_position.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020019e8": {
       "name": "SceneState_ApplyFourRectsAndSetActor8Byte85",
-      "source": "overlays/scene/actor/staged_step/state_update.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000a48": {
       "name": "SceneData_GetTablea970",
-      "source": "overlays/scene/actor/staged_step/scene_data_head.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001edc": {
       "name": "SceneActor_PublishMarkerBySlotZeroHeight",
-      "source": "overlays/scene/actor/staged_step/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001108": {
       "name": "FieldScene_RunIndexedStep0",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001e80": {
       "name": "FieldScene_RunThreeStepSequence",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001c6c": {
       "name": "SceneState_ApplyTwoRectsAtRow56",
-      "source": "overlays/scene/actor/staged_step/state_update.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000ec8": {
       "name": "FieldScene_RunActor15ZeroStep",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001a48": {
       "name": "ActorPresentation_SetSceneCell58AndMarkActorEight",
-      "source": "overlays/scene/actor/staged_step/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001df8": {
       "name": "ActorPresentation_RepaintCellsAtActorsElevenAndTwelve",
-      "source": "overlays/scene/actor/staged_step/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:0200126c": {
       "name": "FieldScene_RunStep10ValueEe9",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020019cc": {
       "name": "SceneState_BranchOnActorZeroFacing",
-      "source": "overlays/scene/actor/staged_step/facing_target_scene.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001e94": {
       "name": "ActorPresentation_PlaceActorFourteenOnActorNine",
-      "source": "overlays/scene/actor/staged_step/actor_position.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020010b8": {
       "name": "SceneState_SetSelectorFlagWhenFacingC000",
-      "source": "overlays/scene/actor/staged_step/state_update.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001a70": {
       "name": "SceneState_ApplyRectAndSetActor8Byte35",
-      "source": "overlays/scene/actor/staged_step/scene_state_interaction.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001120": {
       "name": "SceneState_ResetCounter412OnHeading4000B",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020012a0": {
       "name": "FieldScene_RunStep11ValueEea",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001da0": {
       "name": "SceneState_ApplyFourRectsAt48_55",
-      "source": "overlays/scene/actor/staged_step/scene_state_interaction.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001e60": {
       "name": "FieldScene_RunThreeCallSequence",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020009f0": {
       "name": "SceneData_SelectTableA898ByRuntimeSelector",
-      "source": "overlays/scene/actor/staged_step/scene_data_head.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001d64": {
       "name": "FieldScene_RunThreeCallSequenceB",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000f34": {
       "name": "FieldScene_CallHelper3500",
-      "source": "overlays/scene/actor/staged_step/scene_wrapper.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001b60": {
       "name": "SceneActor_BranchOnSlotZeroAtTile38",
-      "source": "overlays/scene/actor/staged_step/facing_target_scene.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001e74": {
       "name": "FieldScene_CallHelper3c70",
-      "source": "overlays/scene/actor/staged_step/scene_wrapper.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001a9c": {
       "name": "SceneState_ApplyRectAndSetSlotEightByte35",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001ca0": {
       "name": "SceneState_ApplyRectAndClearSlotTenByte85",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020015e4": {
       "name": "FieldScene_RunLateIndexedStep2",
-      "source": "overlays/scene/actor/staged_step/scene_setup.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000ee0": {
       "name": "SceneData_SelectSecondaryByRuntimeSelector",
-      "source": "overlays/scene/actor/staged_step/select_secondary_by_runtime_selector.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020012d4": {
       "name": "FieldScene_RunStep12ValueEeb",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020011d8": {
       "name": "ConfigureAndPlaceActorTwelve",
-      "source": "overlays/scene/actor/staged_step/staged_actor.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:020015f0": {
       "name": "FieldScene_RunPrimarySequence",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:0200138c": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000b68": {
       "name": "FieldScene_RunScene3b4_02000b68",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000ccc": {
       "name": "FieldScene_RunScene3b4_02000ccc",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000fdc": {
       "name": "FieldScene_RunScene3b4_02000fdc",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001bc4": {
       "name": "FieldScene_RunScene3b4_02001bc4",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02002188": {
       "name": "FieldScene_RunScene3b4_02002188",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000ad0": {
       "name": "FieldScene_RunScene3b4_02000ad0",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02002334": {
       "name": "FieldScene_RunScene3b4_02002334",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02002290": {
       "name": "FieldScene_RunScene3b4_02002290",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:0200149c": {
       "name": "FieldScene_RunScene3b4SequenceA",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001838": {
       "name": "FieldScene_RunScene3b4SequenceB",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02001070": {
       "name": "FieldScene_RunScene3b4SequenceC",
-      "source": "overlays/scene/actor/staged_step/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000e50": {
       "name": "FieldScene_CopyActorPosition",
-      "source": "overlays/scene/actor/staged_step/actor_position.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3b4:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02002d8a",
-      "source": "overlays/scene/actor/staged_step/move_and_redraw.c"
+      "source": "overlays/scene/actor/staged_step.c"
     },
     "resource_3c5:02000030": "overlays/scene/story/branching_event/measure_fixed_point_position_distance.c",
     "resource_3c5:0200006c": "overlays/scene/story/branching_event/find_actor_at_fixed_point_position.c",

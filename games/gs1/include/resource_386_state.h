@@ -28,4 +28,9 @@ LAYOUT_OFFSET_GUARD(
 
 /* These names describe only the observed branch and return-value roles. */
 
+void Resource386_OnWindowMatch(s32);
+void Resource386_OnWindowMiss(s32);
+void *Resource386_GetFirstView(s32);
+void *Resource386_GetSecondView(s32);
+
 #endif

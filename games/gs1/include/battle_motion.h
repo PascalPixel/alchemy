@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+void BattleMotion_ApproachTarget(
     s32 actor_id,
     s32 target_id,
     s32 travel_divisor,

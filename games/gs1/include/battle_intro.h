@@ -9,4 +9,6 @@ enum BattleEncounterAdvantage {
     BATTLE_ENCOUNTER_ENEMIES_FIRST = 2
 };
 
+void BattleIntro_AnnounceEncounter(s32 enemy_count);
+
 #endif

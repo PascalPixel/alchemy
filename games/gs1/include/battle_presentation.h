@@ -3,4 +3,6 @@
 
 #include "types.h"
 
+s32 BattlePresentation_RunAction(s16 *action);
+
 #endif

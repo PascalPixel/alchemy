@@ -363,10 +363,6 @@ void BattleFx_RunSevenModeMode3(s32 arg0)
  * -- so each call is a genuine indirect call through a traced function
  * pointer, not a call to a real symbol at that address.
  */
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
-
 extern u8 Value_000000ab;
 extern u8 Value_000000ac;
 extern u8 *gBattleWork;

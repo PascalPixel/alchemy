@@ -1166,7 +1166,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     Shop_DrawMoney();
 
     for (;;) {
-        party_action = Sys_unk2ServicePrice(party_action);
+        party_action = Menu_SelectEntry19To1c(party_action);
         shop->party_action = party_action;
         if (party_action == -1)
             break;

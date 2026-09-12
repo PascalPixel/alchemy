@@ -116,12 +116,12 @@ extern const unsigned char gOv[];
 extern const unsigned char gOv2[];
 extern const unsigned char gOv3[];
 extern const u8 gOv4[];
-extern void Actor_unk5_4(s32 dialogue);                 /* Actor_unk6_4 */
+extern void Actor_unk5_4(s32 dialogue);                 /* Event_SetValue1d8 */
 extern struct Actor *Actor_unk7_4(s32 actor);  /* Scene_GetRecord */
 extern void Actor_unk8_4(s32 actor);                    /* ActorDraw_RunActorModeOneThenZero */
 extern struct Actor *Actor_unk9_4(s32 actor);  /* Scene_GetRecord */
 extern const u8 gOv5[];
-extern void Actor_unk10_4(s32 dialogue);                 /* Actor_unk6_4 */
+extern void Actor_unk10_4(s32 dialogue);                 /* Event_SetValue1d8 */
 extern struct Actor2 *Actor_unk11_4(s32 actor);  /* Scene_GetRecord */
 extern void Actor_unk12_4(s32 actor);                    /* ActorDraw_RunActorModeOneThenZero */
 extern struct Actor2 *Actor_unk13_4(s32 actor);  /* Scene_GetRecord */

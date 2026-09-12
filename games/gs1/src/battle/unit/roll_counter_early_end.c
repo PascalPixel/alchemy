@@ -4,7 +4,7 @@
 
 /* battle/unit/roll_counter_early_end.c */
 s32 FunctionHead_080771a0(void);
-struct CounterRuntime *Runtime_GetObject(void);
+struct CounterRuntime *Runtime_GetObject();
 s32 Battle_Run(s32 value, s32 count, s32 bias);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 object_id, s32 count, s32 bias)
@@ -166,7 +166,6 @@ s32 BattleUnit_TickCounter13c(s32 value)
 }
 
 /* battle/advance_counter_and_check_chance.c */
-void *Battle_GetObject(s32 id);
 s32 Battle_Place(s32 id, s32 arg1, s32 arg2);
 
 s32 Battle_AdvanceCounterAndCheckChance(s32 id)
@@ -178,7 +177,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     s32 cnt;
     void *obj;
 
-    obj = Battle_GetObject(id);
+    obj = Runtime_GetObject(id);
     cnt = FIELD_AT_OFFSET(obj, u8 *, 0x13D);
     t = cnt & 0xFF;
     if (t != 0) {

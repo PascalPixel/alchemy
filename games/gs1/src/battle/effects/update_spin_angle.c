@@ -126,7 +126,12 @@ struct EffectObject {
     void (*callback)(void);
 };
 
-extern s16 gCell[];
+struct BattleEffect16GlobalState {
+    u8 unknown_000[0x1F4];
+    u32 active_object_id;
+};
+
+extern struct BattleEffect16GlobalState gCell;
 
 void BattleFx_RunEffect15(void)
 {
@@ -212,7 +217,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(void *arg0)
     object = arg0;
     threshold = *(s32 *)(object + 0x14) + 0xA0000;
     source = *(u8 **)(object + 0x68);
-    if (gCell[237] == (s32)&Value_00000001)
+    if (((s16 *)&gCell)[237] == (s32)&Value_00000001)
         threshold = *(s32 *)(object + 0x14) + 0x40000;
 
     position = *(s32 *)(object + 0x0C);
@@ -246,7 +251,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(void *arg0)
     object = arg0;
     threshold = *(s32 *)(object + 0x14) + 0xA0000;
     source = *(u8 **)(object + 0x68);
-    if (gCell[237] == (s32)&Value_00000001)
+    if (((s16 *)&gCell)[237] == (s32)&Value_00000001)
         threshold = *(s32 *)(object + 0x14) + 0x40000;
 
     position = *(s32 *)(object + 0x0C);
@@ -267,11 +272,6 @@ void BattleFx_UpdateDescendingParticleNegativeArc(void *arg0)
 }
 
 /* battle/effects/misc/update_effect16_state.c */
-struct BattleEffect16GlobalState {
-    u8 unknown_000[0x1F4];
-    u32 active_object_id;
-};
-
 s32 UnsignedModulo(u32, s32);
 
 void BattleFx_UpdateEffect16State(void)
@@ -316,7 +316,7 @@ void BattleFx_UpdatePairedArcSpawner(void *arg0)
     field64 = *(s16 *)((u8 *)arg0 + 0x64);
     counter = (*(u16 *)((u8 *)arg0 + 0x66))++;
 
-    if (gCell[237] == (s32)&Value_00000001) {
+    if (((s16 *)&gCell)[237] == (s32)&Value_00000001) {
         if (Modulo(counter, 7) == 0)
             BattleFx_SpawnPairedArcObjects(arg0);
     } else if (Modulo(counter, 5) == 0) {

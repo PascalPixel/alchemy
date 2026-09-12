@@ -70,3 +70,12 @@ loop:
 #endif
     return ret;
 }
+
+/* ui/window/open_mode1_and_wait_frame.c */
+void Ui_Do(s32);
+
+void UiWindow_OpenMode1AndWaitFrame(void)
+{
+    Ui_Do(1);
+    WaitFrames(1);
+}

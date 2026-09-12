@@ -20,9 +20,11 @@ struct MapEventRuntime {
     s16 mode;
 };
 
-struct ObjectGlobals {
-    u8 padding000[0x1f4];
-    u32 active_object_id;
+struct Global_08099738 {
+    u8 pad_000[0x1F4];
+    u32 object_id;
+    u8 pad_1f8[0x54];
+    u16 field_24c;
 };
 
 extern struct Global_08099738 gCell;
@@ -39,7 +41,7 @@ void CheckObjectMapTile(void)
 
     runtime_slot_address = (u32)&gWork;
     runtime = gWork;
-    object = ObjectTable_Get(gCell.active_object_id);
+    object = ObjectTable_Get(gCell.object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
@@ -105,14 +107,6 @@ struct Object_08099738 {
     u8 pad_54[0x18];
     u32 field_6c;
 };
-
-struct Global_08099738 {
-    u8 pad_000[0x1F4];
-    u32 object_id;
-    u8 pad_1f8[0x54];
-    u16 field_24c;
-};
-
 
 void Audio_PlayCue(s32);
 s32 ScheduleCallback(void (*callback)(void));

@@ -48,7 +48,7 @@ loop:
             goto loop;
         break;
     case 2:
-        ret = Menu_unk5();
+        ret = ItemMenu_Open();
         if (ret != 0)
             goto loop;
         break;
@@ -58,7 +58,7 @@ loop:
             goto loop;
         break;
     case 4:
-        ret = Menu_unk7();
+        ret = Menu_OpenActionFlow();
         if (ret == -1)
             goto loop;
         break;

@@ -17,3 +17,14 @@ void Graphics_SetBg1Priority3(void)
     value |= 3;
     REG_BG1CNT = value;
 }
+
+/* graphics/registers/clear_bg1_control_bit2.c */
+void Graphics_ClearBg1ControlBit2(void)
+{
+    u32 mask = 4;
+    u32 value = REG_BG1CNT;
+
+    mask = -mask;
+    value &= mask;
+    REG_BG1CNT = value;
+}

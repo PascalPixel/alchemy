@@ -29,7 +29,7 @@ extern struct State_080173ac *gIw;
 
 void RenderOutput_ReleaseFree(u32 arg0)
 {
-    u8 *base = gIw;
+    u8 *base = (u8 *)gIw;
     /* 管理領域内の要素だけを空きリストへ戻す。 */
     if (arg0 >= (u32)(base + 0x698) && arg0 < (u32)(base + 0xd98)) {
         u32 old = *(u32 *)(base + 0xd9c);
@@ -48,7 +48,7 @@ void UiWork_InitFreeList(void)
     u8 *item;
     u8 *next;
 
-    base = gIw;
+    base = (u8 *)gIw;
     /* 0x1cバイト単位の空きリストを初期化する。 */
     item = base + 0x698;
     *(u8 **)(base + 0xd98) = item;
@@ -69,7 +69,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {
-    u8 *base = gIw;
+    u8 *base = (u8 *)gIw;
     u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
     s32 tile;
     u32 bottom;
@@ -247,8 +247,6 @@ void RenderOutput_PrepareForRedraw(void *arg0)
 }
 
 /* ui/render/output_list/redraw_saved_rect.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 void RenderOutput_RedrawSavedRect(void *arg0)
 {
     /* 保存済みの矩形を再描画する。 */
@@ -256,7 +254,7 @@ void RenderOutput_RedrawSavedRect(void *arg0)
 }
 
 /* ui/render/output_list/clear.c */
-void RenderOutput_Release(void *);
+void RenderOutput_Release();
 
 void RenderOutput_ClearList(void *arg0)
 {
@@ -278,8 +276,6 @@ void RenderOutput_ClearList(void *arg0)
 }
 
 /* ui/runtime/misc/update_list_tail.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 void UiWork_UpdateListTail(s32 *list)
 {
     s32 *prev;
@@ -308,8 +304,6 @@ void RenderOutput_AppendToList(void *arg0, s8 *arg1)
 }
 
 /* ui/render/output_list/release.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 void RenderOutput_ReleaseFree(u32 arg0);
 s32 Resource_ResetEntry(u32 index);
 
@@ -338,13 +332,13 @@ void RenderOutput_Release(struct Entry_08016594 *entry)
 }
 
 /* ui/render/activate_channel.c */
-struct Work {
+struct ChannelWork {
     u8 padding00[0x14];
     u16 state;
 };
 
 struct Slot {
-    struct Work *work;
+    struct ChannelWork *work;
     u16 field04;
     u16 field06;
     u16 values[4];
@@ -364,7 +358,7 @@ struct Slot {
 
 void UiWork_ResetChannelTransition(void *);
 
-struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
+struct Slot *UiWork_ActivateChannel(struct ChannelWork *work, s32 value, s32 preserve)
 {
     struct Slot *slot;
     struct Slot *selected;
@@ -373,7 +367,7 @@ struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
     u16 zero;
     u32 index;
 
-    slot = (struct Slot *)(gIw + RENDER_CHANNEL_OFS);
+    slot = (struct Slot *)((u8 *)gIw + RENDER_CHANNEL_OFS);
     selected = 0;
     for (index = 0; index != 3; slot++, index++) {
         if (slot->work == 0 || slot->work->state != 0) {
@@ -433,8 +427,6 @@ s32 Ui_ClearVramBlock(void)
 }
 
 /* ui/render/fill_vram_block_pattern.c */
-typedef s32 (*FillWordsFn)(void *dst, s32 size, s32 value);
-
 s32 Ui_FillVramBlockPattern(void)
 {
     FillWordsFn fill = (FillWordsFn)0x03000168;
@@ -464,7 +456,7 @@ struct EntrySlot {
 void UiWork_ResetFreeChannel(void)
 {
     struct EntrySlot *slot =
-        (struct EntrySlot *)(gIw + RENDER_CHANNEL_OFS);
+        (struct EntrySlot *)((u8 *)gIw + RENDER_CHANNEL_OFS);
     struct EntrySlot *sel = 0;
     s32 i;
 
@@ -574,32 +566,12 @@ void UiWork_ProcessRenderChannels(void)
 }
 
 /* ui/runtime/proc/process_direct_work.c */
-struct Work {
-    s32 unknown00;
-    s32 unknown04;
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-    u16 unknown10;
-    u16 unknown12;
-    u16 state;
-    u16 flags;
-    s16 frame;
-    s16 duration;
-    s16 previous_x;
-    s16 previous_y;
-    s16 previous_width;
-    s16 previous_height;
-};
-
-
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
 void UiWork_ProcessDirectWork(void)
 {
-    u8 *base = gIw;
+    u8 *base = (u8 *)gIw;
     struct Work *work = (struct Work *)(base + 0x500);
     s32 index = 0;
     u8 dirty;
@@ -725,13 +697,8 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 }
 
 /* ui/render/is_complete.c */
-struct Work {
-    u8 padding00[0x14];
-    u16 state;
-};
-
 struct WorkSlot {
-    struct Work *work;
+    struct ChannelWork *work;
     u8 padding04[0x24];
 };
 
@@ -740,7 +707,7 @@ s32 UiWork_IsComplete(void)
     s32 result;
     s32 channel_index;
     struct WorkSlot *channel;
-    struct Work *work;
+    struct ChannelWork *work;
 
     channel = (struct WorkSlot *)(*(u8 **)ADDR_03001E8C + 0x620);
     channel_index = 0;
@@ -895,12 +862,10 @@ struct UiTextMessageWorkGlobals {
     void *control;
 };
 
-extern volatile struct UiTextMessageWorkGlobals gIw;
-
 extern s32 UiText_BuildRenderEntries(s32, s32);
 struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
 
-struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
+struct Slot *UiWork_ActivateChannel(struct ChannelWork *, s32, s32);
 
 void UiText_PrepareMessageWork(s32 argument)
 {
@@ -912,9 +877,11 @@ void UiText_PrepareMessageWork(s32 argument)
     struct Work *work;
     void *state;
     void *control;
+    volatile struct UiTextMessageWorkGlobals *text_iw =
+        (volatile struct UiTextMessageWorkGlobals *)ADDR_03001E8C;
 
-    state = gIw.state;
-    control = gIw.control;
+    state = text_iw->state;
+    control = text_iw->control;
     result = 0;
     FIELD(state, s8, RENDER_MENU_STATE_OFS) = 2;
     index = UiText_BuildRenderEntries(argument, 1);
@@ -939,7 +906,7 @@ use_existing:
         work = existing;
 have_work:
         if (work != NULL) {
-            result = (s32)UiWork_ActivateChannel(work, index, FIELD(control, s32, 8));
+            result = (s32)UiWork_ActivateChannel((struct ChannelWork *)work, index, FIELD(control, s32, 8));
             FIELD(control, s32, 4) = result;
             FIELD(control, s32, 8) = 0;
             if (result == 0) {
@@ -991,8 +958,6 @@ void UiWork_ProcessAll(void)
 }
 
 /* ui/text/size/get_wide_string_width.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 s32 UiText_GetWideStringWidth(u16 *text)
 {
     s32 width;
@@ -1036,7 +1001,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
     s32 offset_x,
     s32 offset_y)
 {
-    u8 *base = gIw;
+    u8 *base = (u8 *)gIw;
     s32 index;
     u32 cell;
 
@@ -1143,7 +1108,7 @@ void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
     s32 over;
     s32 pos;
 
-    base = gIw;
+    base = (u8 *)gIw;
     x = *px;
     y = *py;
     limit = 30;

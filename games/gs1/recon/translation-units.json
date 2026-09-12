@@ -127065,6 +127065,11 @@
           "address": "0x0801ff14",
           "extent": 68,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0801ff58",
+          "extent": 128,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -127160,6 +127165,16 @@
         {
           "address": "0x08091dc8",
           "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091df4",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091e20",
+          "extent": 28,
           "state": "exact-c"
         }
       ],
@@ -127318,6 +127333,46 @@
         {
           "address": "0x080bf208",
           "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf250",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf2b4",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf318",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf37c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf3bc",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf400",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf440",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf484",
+          "extent": 64,
           "state": "exact-c"
         }
       ],
@@ -155827,6 +155882,16 @@
           "address": "0x08079c5c",
           "extent": 48,
           "state": "exact-c"
+        },
+        {
+          "address": "0x08079c8c",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079cbc",
+          "extent": 94,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -156149,6 +156214,11 @@
           "address": "0x0808b248",
           "extent": 20,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0808b25c",
+          "extent": 84,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -156164,6 +156234,11 @@
         {
           "address": "0x0801b398",
           "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801b424",
+          "extent": 200,
           "state": "exact-c"
         }
       ],

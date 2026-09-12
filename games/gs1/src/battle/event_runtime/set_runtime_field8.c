@@ -38,7 +38,6 @@ struct Runtime_080bb8e8 {
 s32 Object_Destroy(s32);
 struct Creature_080bb8e8 *Runtime_GetObject();
 
-struct Runtime_080bb8e8 *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
@@ -52,7 +51,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
         Actor_Apply(creature, 0);
         Actor_Check(arg0);
         ActivateBattleObjectSlot(arg0);
-        runtime = GetBattleObjectSlot(arg0);
+        runtime = (struct Runtime_080bb8e8 *)Actor_GetObject(arg0);
         result = Object_Destroy(runtime->field_00);
         runtime->field_00 = 0;
         runtime->field_28 = 0;
@@ -82,12 +81,22 @@ struct BattleEventRuntime {
     u32 actor_auxiliary;
 };
 
-extern u8 *gBattleWork;
 extern u8 *gIw;
+void Battle_Apply();
+
+extern s32 HitFalloff[];
+extern s32 PpLossFalloff[];
+extern s32 HpHealFalloff[];
+extern s32 PpDmgFalloff[];
+extern s32 HpDmgFalloff5[];
+extern s32 HpDmgFalloff8[];
+extern s32 HpDmgFalloff6[];
+extern s32 PpHealFalloff[];
+extern s32 HpDmgFalloff[];
 
 u32 BattleEv_DispatchQueued(void)
 {
-    struct BattleEventRuntime *runtime = (void *)(gBattleWork + 0x6b8);
+    struct BattleEventRuntime *runtime = (void *)((u8 *)gBattleWork + 0x6b8);
     struct BattleEventQueue *queue = &runtime->queue;
     s32 i;
 
@@ -124,9 +133,9 @@ u32 BattleEv_DispatchQueued(void)
             BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
             break;
         }
-        case 10: Sys_SetMode(gBattleWork[65]); break;
+        case 10: Sys_SetMode(((u8 *)gBattleWork)[65]); break;
         case 11:
-            Battle_Apply4(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));
+            Battle_Apply4(queue->operands[i], Actor_GetObject(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);
             break;
         }

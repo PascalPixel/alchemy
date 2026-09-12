@@ -551,7 +551,7 @@ struct LinkWork {
 #define LINK_STAT (*(u16 *)0x03001f64)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
-void FunctionHead_080b5864(void)
+void Battle_Run(void)
 {
     void **slot = (void **)ADDR_03001E80;
     struct SceneCameraState *state = slot[0];

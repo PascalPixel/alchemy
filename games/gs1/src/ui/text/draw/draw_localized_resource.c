@@ -45,7 +45,7 @@ s32 Resource_ResetEntry(u32 index);
 void WaitFrames(s32);
 extern u8 RomBytes_08028195[];
 
-void FunctionHead_0802851c(void)
+void Menu_EndResourceSelection(void)
 {
     struct Work *child;
     s32 i;

@@ -156,3 +156,17 @@ u32 BattleEv_Push(u32 opcode, u32 operand)
     *count = index + 1;
     return opcode;
 }
+
+/* battle/effects/calc/can_affect_defeated_unit.c */
+s32 BattleFx_CanAffectDefeatedUnit(s32 effect)
+{
+    switch (effect) {
+    case 31:
+    case 32:
+    case 60:
+    case 69:
+        return 1;
+    default:
+        return 0;
+    }
+}

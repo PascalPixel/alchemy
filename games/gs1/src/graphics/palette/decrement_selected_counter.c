@@ -130,13 +130,3 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     }
     FIELD(base, u16, 0x57C)++;
 }
-
-/* runtime/memory/schedule_callback_and_release_block_20_b.c */
-s32 ScheduleCallback(s32);
-extern u8 gRom;
-
-void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
-{
-    ScheduleCallback((s32)&gRom);
-    Sys_Check(0x14);
-}

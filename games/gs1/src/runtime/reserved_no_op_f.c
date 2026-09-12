@@ -320,8 +320,8 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
         s32 sine;
         s32 cosine;
 
-        sine = Sys_Check(angle);
-        cosine = Sys_unk2(angle);
+        sine = FixedSin(angle);
+        cosine = FixedCos(angle);
         *coefficient = FixedPoint_Ratio(cosine, x_scale);
         coefficient++;
         *coefficient = FixedPoint_Ratio(sine, x_scale);

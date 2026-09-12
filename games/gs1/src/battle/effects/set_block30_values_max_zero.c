@@ -119,7 +119,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 
             state->slots[slot] = 0;
             if (state->mode == 3)
-                Battle_unk3_4();
+                BattleFx_ClearAllObjects();
         }
 
         Battle_Place(selection, page, entries);
@@ -321,7 +321,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             }
             while (0);
             ObjectGroup_SetChildValueUnlessFifteen(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
-            value = (Battle_unk6_2(Random16(), 3) + 0x10000);
+            value = (Math_Mod(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;
             count = (count - 1);

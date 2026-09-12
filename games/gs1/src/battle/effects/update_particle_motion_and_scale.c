@@ -46,10 +46,10 @@ void BattleFx_SpawnRadialParticleRing(void *origin)
     velocity = &work;
     do {
         angle = particle_index << 0xC;
-        scaled_cosine = Battle_Check(angle)* 3;
+        scaled_cosine = FixedCos(angle)* 3;
         FIELD_AT_OFFSET(velocity, s32 *, 0) = (s32)((s32)(scaled_cosine + (scaled_cosine >> 0x1F)) >> 1);
         FIELD_AT_OFFSET(velocity, s32 *, 4) = 0;
-        sine = Battle_unk2(angle);
+        sine = FixedSin(angle);
         FIELD_AT_OFFSET(velocity, s32 *, 8) = sine;
         Battle_SetRect(FIELD_AT_OFFSET(origin, s32 *, 8), FIELD_AT_OFFSET(origin, s32 *, 0xC), FIELD_AT_OFFSET(origin, s32 *, 0x10), FIELD_AT_OFFSET(velocity, s32 *, 0), FIELD_AT_OFFSET(velocity, s32 *, 4), sine, 0x01090001, config);
         particle_index += 1;

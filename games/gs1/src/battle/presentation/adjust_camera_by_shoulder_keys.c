@@ -78,13 +78,13 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 2:
         WaitFrames(45);
-        Battle_unk2(action);
+        BattlePres_RunUnitAction(action);
         break;
     case 0:
     default: {
         struct BattlePresentationTransition *tr = gIw;
         tr->flag = 0;
-        Battle_unk2(action);
+        BattlePres_RunUnitAction(action);
         tr->flag = 0;
         break;
     }

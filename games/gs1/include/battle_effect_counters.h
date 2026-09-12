@@ -17,4 +17,6 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_SIZE_GUARD(
     BattleEffectCounterState_Size, struct BattleEffectCounterState, 0x184);
 
+extern struct BattleEffectCounterState *Data_03001ebc;
+
 #endif

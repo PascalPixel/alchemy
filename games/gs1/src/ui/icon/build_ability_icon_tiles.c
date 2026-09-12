@@ -17,8 +17,9 @@ typedef struct {
 } FontTransfer;
 
 extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+extern void Ui_Apply(FontTransfer *work, s32 slot);
 
-extern s32 Resource_FindFreeSlot(void);
+extern s32 Func_08004080(void);
 extern s32 Resource_CopyData(s32 index, s32 size, u8 *destination);
 
 extern s32 RomBytes_08029a10[];
@@ -50,7 +51,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
     Ui_Apply(work, slot);
 
     if (reuse == 0)
-        *src = Resource_FindFreeSlot();
+        *src = Func_08004080();
 
     *dst = Resource_CopyData(*src, 0x80, &work->f400);
     Ui_Do(0x11);

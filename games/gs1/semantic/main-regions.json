@@ -142,13 +142,13 @@
    "address": "0x0801c9be",
    "size": 2,
    "kind": "alignment_padding",
-   "evidence": "Two-byte alignment immediately before the independently adopted empty callback at 0x0801c9c0."
+   "evidence": "Internal two-byte alignment before 0x0801c9c0, emitted by the byte-exact graphics-palette-reserved C translation unit."
   },
   {
    "address": "0x0801c9c2",
    "size": 2,
    "kind": "alignment_padding",
-   "evidence": "Two-byte alignment between the independently adopted empty callbacks at 0x0801c9c0 and 0x0801c9c4."
+   "evidence": "Internal two-byte alignment before 0x0801c9c4, emitted by the byte-exact graphics-palette-reserved C translation unit."
   },
   {
    "address": "0x0801c9c6",

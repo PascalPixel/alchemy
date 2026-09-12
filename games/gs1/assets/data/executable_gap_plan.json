@@ -672,11 +672,6 @@
       "kind": "dedicated-veneer-island"
     },
     {
-      "address": "0x0808ec4c",
-      "end": "0x0808ec50",
-      "kind": "alignment"
-    },
-    {
       "address": "0x08091778",
       "end": "0x0809177c",
       "kind": "alignment"
@@ -689,11 +684,6 @@
     {
       "address": "0x08091c3e",
       "end": "0x08091c44",
-      "kind": "alignment"
-    },
-    {
-      "address": "0x0809255c",
-      "end": "0x08092560",
       "kind": "alignment"
     },
     {

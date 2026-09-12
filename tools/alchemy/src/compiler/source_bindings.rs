@@ -223,7 +223,8 @@ fn type_tags(text: &str) -> HashSet<String> {
         }
         for prefix in ["struct ", "union ", "enum "] {
             if let Some(rest) = line.strip_prefix(prefix) {
-                if let Some(name) = rest.split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                if let Some(name) = rest
+                    .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
                     .next()
                 {
                     if !name.is_empty() {
@@ -233,11 +234,7 @@ fn type_tags(text: &str) -> HashSet<String> {
             }
         }
         if line.starts_with("typedef ") {
-            if let Some(name) = line
-                .trim_end_matches(';')
-                .split_whitespace()
-                .last()
-            {
+            if let Some(name) = line.trim_end_matches(';').split_whitespace().last() {
                 let name = name.trim_start_matches('*').trim_end_matches(';');
                 if !name.is_empty() && name != "{" && name != "}" {
                     names.insert(name.to_string());
@@ -279,11 +276,10 @@ fn filter_reserved_defines(text: &str, reserved: &mut HashSet<String>) -> String
     out
 }
 
-/// Prototypes in the manifest mention `u8` / structs before `types.h` is
-/// visible to `-include`. Keep preprocessor names, comments, and `extern`
-/// data objects (rewritten to C89 builtins so `ADDR_*` macros still resolve).
+/// Preserve recovered declarations as well as aliases. Dropping prototypes
+/// loses callback declarations and changes C89 argument/return conversions.
 fn define_only_bindings(text: &str) -> String {
-    let mut out = String::with_capacity(text.len());
+    let mut out = String::from("#include \"types.h\"\n");
     let mut in_block_comment = false;
     for line in text.lines() {
         let trimmed = line.trim_start();
@@ -311,6 +307,9 @@ fn define_only_bindings(text: &str) -> String {
         if trimmed.starts_with("extern ") && !trimmed.contains('(') {
             out.push_str(&rewrite_extern_data_types(line));
             out.push('\n');
+        } else {
+            out.push_str(line);
+            out.push('\n');
         }
     }
     out
@@ -328,11 +327,11 @@ fn rewrite_extern_data_types(line: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        define_only_bindings, expand_binding_text, filter_reserved_defines,
-        lexical_join, quoted_c_includes, source_key, type_tags,
+        define_only_bindings, expand_binding_text, filter_reserved_defines, lexical_join,
+        quoted_c_includes, source_key, type_tags,
     };
-    use std::path::Path;
     use std::collections::HashSet;
+    use std::path::Path;
 
     #[test]
     fn expands_compact_func_and_data_tokens() {
@@ -347,16 +346,16 @@ mod tests {
         let text = "/* Shared names:\n   callers use these aliases. */\nextern s32 Func_08002f4c(u8 *p);\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n";
         assert_eq!(
             define_only_bindings(text),
-            "/* Shared names:\n   callers use these aliases. */\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n"
+            "#include \"types.h\"\n/* Shared names:\n   callers use these aliases. */\nextern s32 Func_08002f4c(u8 *p);\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n"
         );
     }
 
     #[test]
-    fn keeps_extern_data_and_drops_typed_prototypes() {
+    fn keeps_extern_data_and_typed_prototypes() {
         let text = "extern u8 Data_03001e70_a[];\nextern s32 Func_080072f0(s32 mode, u8 *destination);\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n";
         assert_eq!(
             define_only_bindings(text),
-            "extern unsigned char Data_03001e70_a[];\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n"
+            "#include \"types.h\"\nextern unsigned char Data_03001e70_a[];\nextern s32 Func_080072f0(s32 mode, u8 *destination);\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n"
         );
     }
 
@@ -372,7 +371,8 @@ mod tests {
 
     #[test]
     fn reserves_struct_and_typedef_tags() {
-        let tags = type_tags("struct gRom {\n    u8 x;\n};\ntypedef struct { u8 bytes[4]; } gVal;\n");
+        let tags =
+            type_tags("struct gRom {\n    u8 x;\n};\ntypedef struct { u8 bytes[4]; } gVal;\n");
         assert!(tags.contains("gRom"));
         assert!(tags.contains("gVal"));
     }

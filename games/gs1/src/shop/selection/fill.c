@@ -2,7 +2,7 @@
 #include "scene.h"
 #include "global_cells.h"
 
-extern u8 RomBytes_080b413c[];
+extern u16 RomBytes_080b413c[];
 
 /* shop/sel/fill.c */
 struct Record_080b06c0 {

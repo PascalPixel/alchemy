@@ -9,6 +9,11 @@
 u8 *FunctionHead_08077008(s32);
 void BattleUnit_Recalculate(u16 id);
 
+struct ActorState_080b90ac {
+    u8 padding_000[0x12b];
+    u8 field_12b;
+};
+
 void BattleUnit_ClearField12bForGroup(void)
 {
     u16 ids[14];
@@ -17,7 +22,10 @@ void BattleUnit_ClearField12bForGroup(void)
 
     count = Actor_Apply(3, ids);
     for (index = 0; index < count; index++) {
-        FunctionHead_08077008(ids[index])[0x12b] = 0;
+        struct ActorState_080b90ac *actor;
+
+        actor = (struct ActorState_080b90ac *)FunctionHead_08077008(ids[index]);
+        actor->field_12b = 0;
         BattleUnit_Recalculate(ids[index]);
     }
 }

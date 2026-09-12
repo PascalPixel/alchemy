@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunActorExchangeChoreography:
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorExchangeChoreography:
  * all 53 calls, the two-pass exchange, and fourteen actor/effect memory
  * operations across the complete actor-3/8 presentation owner. */
 
-#define Scene_RunActorExchangeChoreography Func_02001730
+#define FieldScene_RunActorExchangeChoreography Func_02001730
 
 void *Func_02003c18();
 void *Func_02003c2e();

@@ -13,9 +13,9 @@ s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 
 #if defined(GS1_EDITION_JA)
-
+void Ui_Place(s32, s16 *, s32);
 #else
-
+s32 Ui_Place(s32, s16 *, s32);
 #endif
 
 extern u8 gCell[];

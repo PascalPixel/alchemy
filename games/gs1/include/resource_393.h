@@ -22,4 +22,8 @@ struct Resource393Position {
     u32 z;
 };
 
+extern struct Resource393Work Data_02000240;
+extern struct Resource393Object *Func_02001a38(s32 object_id);
+extern void Func_0200168a(struct Resource393Position *position);
+
 #endif

@@ -4,9 +4,9 @@ Recover matching C, reuse what already works, and keep the build honest.
 
 Alchemy reconstructs _Golden Sun_ and _Golden Sun: The Lost Age_ as ordinary,
 readable C that reproduces the shipped games. Japanese releases are the source
-editions; localizations are measured differences. GS1 English currently has a
-complete byte-identical production build. That is not a claim that all code is C
-or that all twelve target ROMs have been rebuilt.
+editions; localizations are measured differences. The production gate requires
+a complete byte-identical GS1 English build. Passing that gate does not mean
+all code is C or that all twelve target ROMs have been rebuilt.
 
 ## The two directives
 
@@ -54,8 +54,8 @@ when many related matches make a useful batch.
 
 Record the starting owners, complete extents, sibling source, current residuals,
 expected gain and time budget before editing. Count Assembly-to-C conversions as
-new C at their full extent: no byte is credited as Assembly any more, so nothing
-is subtracted when forecasting DONE. Renames, merges, new drafts, better
+new C at their full extent, but subtract any existing retained-ASM credit when
+forecasting DONE. Renames, merges, new drafts, better
 similarity and tooling changes add no DONE credit. Do not favor overlays or
 main-image code merely because of layout.
 
@@ -200,20 +200,21 @@ owner or explained nonfunction role. Exact C means ordinary production C emits
 the complete linked extent with zero differences under the approved route.
 Names, plausible behavior, matching size and fuzzy scores are not proof.
 
-**No assembly is credited.** The previous standard for marking a region as
-Assembly did not establish handwritten or third-party origin, so it is
-withdrawn: every retained-assembly byte counts as Unknown, and DONE is exact C
-alone. Do not reintroduce Assembly credit, do not mark a region `proven` to
-retire it from the queue, and do not treat a withdrawn mark as a reason to skip
-an owner. Search exhaustion, register mismatches, compiler non-emission,
-repeated scripts and large functions were never evidence of origin and are not
-evidence now.
+**☀️ DONE = retained ASM + exact C**, divided by audited executable bytes.
+Use the coverage map's retained-ASM category, not every unresolved function
+temporarily assembled to make the ROM build. Drafts and unknown code earn no
+credit. Report exact-C share separately; converting already credited assembly
+to exact C improves that share without increasing DONE.
+
+Retained-ASM credit does not establish handwritten or third-party origin.
+Search exhaustion, register mismatches, compiler non-emission, repeated scripts
+and large functions are not evidence of authorship. Keep unresolved C candidates
+in the recovery queue rather than relabeling them merely to increase DONE.
 
 The classification records remain: main evidence is exposed by the assembly
 manifest, overlay evidence lives in
 `games/gs1/semantic/overlay-assembly.json`, and both are still parsed and
-validated so a replacement standard reads the same inputs. The coverage map
-publishes their total as `withdrawn_assembly_bytes`. Reconstructed scenes use
+validated from the same inputs. Reconstructed scenes use
 `structured_scene_module`, not the retired `generated_call_script_module`.
 Only Pascal may establish a replacement standard, and it requires positive
 evidence of real handwritten or third-party assembly, such as a verified match

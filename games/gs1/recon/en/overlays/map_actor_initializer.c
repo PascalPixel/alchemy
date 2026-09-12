@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define Scene_InitializeActorGroups Func_0200259c
+#define FieldScene_InitializeActorGroups Func_0200259c
 
 struct SceneWork {
     u8 unknown_000[448];
@@ -48,7 +48,7 @@ static __inline__ void Call3(void (*f)(), s32 a, s32 b, s32 c) { f(a, b, c); }
 static __inline__ void Call6(void (*f)(), s32 a, s32 b, s32 c, s32 d, s32 e, s32 g)
 { f(a, b, c, d, e, g); }
 
-s32 Scene_InitializeActorGroups(void)
+s32 FieldScene_InitializeActorGroups(void)
 {
     u8 *actor;
     s32 x;

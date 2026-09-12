@@ -80,6 +80,9 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             // source, admitted on the same reproduction evidence as the gas
             // entry above rather than on provenance.
             "f63ca1c50e35c74b4074195fc9dc7029a950ac04eeaece75b38ae407d342bf67",
+            // Pascal-approved rebuild of pinned, unmodified pret/agbcc
+            // da598c1 on 2026-09-12; matching checks remain mandatory.
+            "97d346e67ab2751e6d2d4aa81a4b85da69ec35f4b61ead9c310256618420dff7",
         ],
     ),
     ("darwin-x64", &[]),

@@ -41,6 +41,7 @@ struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
 void Object_SetAction(void *, s32);
 
 void Actor_ResetMotionAtAnchor(s32);
+void Battle_Do(struct Work_080b8b48 *);
 
 s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
 {

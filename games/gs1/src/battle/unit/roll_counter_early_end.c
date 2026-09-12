@@ -207,3 +207,16 @@ block_9:
     ret = 0;
     return ret;
 }
+
+/* battle/unit/tick_counter_13e.c */
+s32 BattleUnit_TickCounter13e(void)
+{
+    u8 *value = (u8 *)Runtime_GetObject() + 0x13E;
+    if (*value != 0) {
+        (*value)--;
+        if (*value == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}

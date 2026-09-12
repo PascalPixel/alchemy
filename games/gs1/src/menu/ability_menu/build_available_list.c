@@ -6,8 +6,6 @@
 /* ui/ability_menu/build_available_list.c */
 s32 Ability_GetMaximum(s32, s32);
 
-extern void *gIw;
-
 s32 AbilityMenu_BuildAvailableList(void)
 {
     u8 *state;
@@ -17,7 +15,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     s32 offset;
     s8 mode;
 
-    state = gIw;
+    state = (u8 *)gIw;
     count = 0;
     index = 0;
     output = (s16 *)(state + 0x26c);

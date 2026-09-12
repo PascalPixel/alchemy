@@ -1,0 +1,173 @@
+#include "audio_engine_symbols.h"
+#include "types.h"
+
+struct MusicPlayerState;
+struct MusicTrackState;
+
+typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
+typedef void (*CgbUpdateCallback)(void);
+typedef void (*CgbDisableCallback)(u8);
+typedef s32 (*KeyToFrequencyCallback)(s32, s32, s32);
+typedef void (*PlayerTrackCommand)(
+    struct MusicPlayerState *,
+    struct MusicTrackState *);
+typedef void (*WordAudioCommand)(u32);
+typedef void (*PlayerCommand)(struct MusicPlayerState *);
+
+union CgbDisableCallbackSlot {
+    CgbUpdateCallback placeholder;
+    CgbDisableCallback handler;
+};
+
+union KeyToFrequencyCallbackSlot {
+    CgbUpdateCallback placeholder;
+    KeyToFrequencyCallback handler;
+};
+
+union AudioCommandSlot {
+    PlayerTrackCommand player_track;
+    WordAudioCommand word;
+    PlayerCommand player;
+};
+
+struct CgbChannel {
+    u8 status_flags;
+    u8 type;
+    u8 right_volume;
+    u8 left_volume;
+    u8 attack;
+    u8 decay;
+    u8 sustain;
+    u8 release;
+    u8 key;
+    u8 envelope_volume;
+    u8 envelope_goal;
+    u8 envelope_counter;
+    u8 pseudo_echo_volume;
+    u8 pseudo_echo_length;
+    u8 dummy1[2];
+    u8 gate_time;
+    u8 midi_key;
+    u8 velocity;
+    u8 priority;
+    u8 rhythm_pan;
+    u8 dummy3[3];
+    u8 dummy5;
+    s8 sustain_goal;
+    u8 n4;
+    u8 pan;
+    u8 pan_mask;
+    u8 modify;
+    u8 length;
+    u8 sweep;
+    u32 frequency;
+    const u8 *wave_pointer;
+    const u8 *current_pointer;
+    struct MusicTrackState *track;
+    struct CgbChannel *previous_channel;
+    struct CgbChannel *next_channel;
+    u8 dummy4[8];
+};
+
+struct AudioEngineState {
+    u32 ident;
+    u8 pcm_dma_counter;
+    u8 reverb;
+    u8 max_pcm_channels;
+    u8 master_volume;
+    u8 pcm_rate;
+    u8 mode;
+    u8 c15_counter;
+    u8 pcm_dma_period;
+    u8 max_lines;
+    u8 gap[3];
+    u32 pcm_samples_per_vblank;
+    u32 pcm_freq;
+    u32 div_freq;
+    struct CgbChannel *cgb_channels;
+    PlayerMainCallback mplay_main_head;
+    struct MusicPlayerState *music_player_head;
+    CgbUpdateCallback cgb_sound;
+    union CgbDisableCallbackSlot cgb_osc_off;
+    union KeyToFrequencyCallbackSlot midi_key_to_cgb_freq;
+};
+
+void Func_08006864(const void *source, void *destination, u32 control);
+void MusicPlayer_ExecuteMemoryAccessCommand(
+    struct MusicPlayerState *,
+    struct MusicTrackState *);
+void MusicTrack_SetLfoSpeedFromCommand(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_SetModulationFromCommand(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_DispatchExtendedCommand(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_EndTie(struct MusicPlayerState *, struct MusicTrackState *);
+void AudioEngine_SetPcmRate(u32);
+void MusicTrack_Stop(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicPlayer_UpdateFade(struct MusicPlayerState *);
+void MusicTrack_UpdateVolumePitch(
+    struct MusicPlayerState *,
+    struct MusicTrackState *);
+void CgbAudio_Update(void);
+void Cgb_StopOscillator(u8);
+s32 Cgb_KeyToFrequency(s32, s32, s32);
+extern u8 Value_00000000;
+
+void CgbAudio_Initialize(struct CgbChannel *channels)
+{
+    u32 zero;
+    struct AudioEngineState *state;
+    union AudioCommandSlot *mplay_jump_table;
+    u32 ident;
+
+    *(volatile u16 *)0x04000084 = 143;
+    *(volatile u16 *)0x04000080 = 0;
+    *(volatile u8 *)0x04000063 = 8;
+    *(volatile u8 *)0x04000069 = 8;
+    *(volatile u8 *)0x04000079 = 8;
+    *(volatile u8 *)0x04000065 = 128;
+    *(volatile u8 *)0x0400006d = 128;
+    *(volatile u8 *)0x0400007d = 128;
+    *(volatile u8 *)0x04000070 = 0;
+    *(volatile u8 *)0x04000080 = 119;
+
+    state = *(struct AudioEngineState *volatile *)0x03007ff0;
+    ident = state->ident;
+    if (ident != 0x68736d53)
+        return;
+
+    state->ident = ident + 1;
+
+    mplay_jump_table = (union AudioCommandSlot *)0x02004000;
+    mplay_jump_table[8].player_track = MusicPlayer_ExecuteMemoryAccessCommand;
+    mplay_jump_table[17].player_track = MusicTrack_SetLfoSpeedFromCommand;
+    mplay_jump_table[19].player_track = MusicTrack_SetModulationFromCommand;
+    mplay_jump_table[28].player_track = MusicTrack_DispatchExtendedCommand;
+    mplay_jump_table[29].player_track = MusicTrack_EndTie;
+    mplay_jump_table[30].word = AudioEngine_SetPcmRate;
+    mplay_jump_table[31].player_track = MusicTrack_Stop;
+    mplay_jump_table[32].player = MusicPlayer_UpdateFade;
+    mplay_jump_table[33].player_track = MusicTrack_UpdateVolumePitch;
+
+    state->cgb_channels = channels;
+    state->cgb_sound = CgbAudio_Update;
+    state->cgb_osc_off.handler = Cgb_StopOscillator;
+    state->midi_key_to_cgb_freq.handler = Cgb_KeyToFrequency;
+    state->max_lines = (u32)&Value_00000000;
+
+    zero = 0;
+    Func_08006864(
+        &zero,
+        channels,
+        0x01000000 | 0x04000000 |
+            (sizeof(struct CgbChannel) * 4 / sizeof(u32)));
+
+    channels[0].type = 1;
+    channels[0].pan_mask = 0x11;
+    channels[1].type = 2;
+    channels[1].pan_mask = 0x22;
+    channels[2].type = 3;
+    channels[2].pan_mask = 0x44;
+    channels[3].type = 4;
+    channels[3].pan_mask = 0x88;
+
+    state->ident = ident;
+}

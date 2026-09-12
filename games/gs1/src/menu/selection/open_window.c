@@ -29,6 +29,9 @@ extern u8 gVal2[];
 struct UiWork *UiWindow_Create(s32, s32, s32, s32, s32);
 
 struct Node *NodeChain_GetNodeAtCount(struct Screen *, u32);
+void UiText_DrawCharacterAtOffset(s32, struct UiWork *, s32, s32);
+void UiWork_Finalize(struct UiWork *, s32);
+void RenderOutput_PrepareForRedraw(struct UiWork *);
 
 void Menu_OpenSelectionWindow(s32 mode, u32 count)
 {
@@ -62,14 +65,14 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
         RenderOutput_PrepareForRedraw(screen->window);
     }
     if (screen->f394 != 0) {
-        UiText_DrawCharacter(node->glyph, screen->window, 0, 0);
+        UiText_DrawCharacterAtOffset(node->glyph, screen->window, 0, 0);
     } else {
         switch (mode) {
         case 4:
-            UiText_DrawCharacter((s32)gVal2, screen->window, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)gVal2, screen->window, 0, 0);
             break;
         case 2:
-            UiText_DrawCharacter((s32)gVal, screen->window, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)gVal, screen->window, 0, 0);
             break;
         }
     }

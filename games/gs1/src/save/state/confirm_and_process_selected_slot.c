@@ -89,7 +89,7 @@ s32 SaveState_CopySlotPair(void)
         }
     }
 
-    FunctionHead_0801f704();
+    FunctionHead_08005cf8();
     return result;
 }
 

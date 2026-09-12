@@ -28,7 +28,7 @@ void Text_FormatHexToWork(u32 value)
 /* ui/text/format_signed_decimal_to_work.c */
 extern s32 FunctionHead_080022f4(u32, s32);
 extern u8 gRom[];
-extern u8 gWork[];
+extern u8 Data_03001f70[];
 
 void Text_FormatSignedDecimalToWork(s32 arg0) {
     u32 *tbl;
@@ -43,7 +43,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     val = result;
     tbl = (u32 *)gRom;
     sign = 0x20;
-    out = (s8 *)gWork;
+    out = (s8 *)Data_03001f70;
     if (val < 0) {
         val = -val;
         sign = 0x2D;

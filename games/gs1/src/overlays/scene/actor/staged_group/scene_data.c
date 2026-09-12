@@ -1,0 +1,115 @@
+#include "types.h"
+
+#define SceneData_SelectTableByWord224 Func_020000ec
+#define SceneData_ReturnZero Func_02000174
+#define SceneData_GetTablec6b8 Func_02000178
+#define SceneData_SelectTableByWord224B Func_02000180
+#define SceneData_SelectTableBySelector224 Func_02000240
+extern s16 Data_02000240[];
+extern u8 Value_00000063;
+extern u8 Value_00000066;
+extern u8 Value_00000099;
+extern u8 Value_0000009a;
+extern u8 Value_0000009b;
+extern u8 Value_0000009c;
+extern u8 Data_0200c2c8[];
+extern u8 Data_0200c448[];
+extern u8 Data_0200c4a8[];
+extern u8 Data_0200c520[];
+extern u8 Data_0200c580[];
+extern u8 Data_0200c628[];
+extern u8 Data_0200c298[];
+extern u8 Data_0200c6b8[];
+extern u8 Data_0200c768[];
+extern u8 Data_0200ca20[];
+extern u8 Data_0200ca80[];
+extern u8 Data_0200cb58[];
+extern u8 Data_0200c750[];
+extern u8 Data_0200cbf4[];
+extern u8 Data_0200ce88[];
+extern u8 Data_0200cedc[];
+extern u8 Data_0200cf24[];
+extern u8 Data_0200cf54[];
+extern u8 Data_0200cf9c[];
+extern u8 Data_0200cbe8[];
+
+/* Contiguous unnamed leaf-owner run for resource_3a8. */
+
+s32 SceneData_SelectTableByWord224(void)
+{
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_00000063) {
+        return (s32)Data_0200c2c8;
+    }
+    if (v == (s32)&Value_00000066) {
+        return (s32)Data_0200c448;
+    }
+    if (v == (s32)&Value_00000099) {
+        return (s32)Data_0200c4a8;
+    }
+    if (v == (s32)&Value_0000009a) {
+        return (s32)Data_0200c520;
+    }
+    if (v == (s32)&Value_0000009b) {
+        return (s32)Data_0200c580;
+    }
+    if (v == (s32)&Value_0000009c) {
+        return (s32)Data_0200c628;
+    }
+    return (s32)Data_0200c298;
+}
+
+s32 SceneData_ReturnZero(void)
+{
+    return 0;
+}
+
+u8 *SceneData_GetTablec6b8(void)
+{
+    return Data_0200c6b8;
+}
+
+s32 SceneData_SelectTableByWord224B(void)
+{
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_00000063) {
+        return (s32)Data_0200c768;
+    }
+    if (v == (s32)&Value_00000066) {
+        return (s32)Data_0200ca20;
+    }
+    if (v == (s32)&Value_00000099) {
+        return (s32)Data_0200ca80;
+    }
+    if (v == (s32)&Value_0000009c) {
+        return (s32)Data_0200cb58;
+    }
+    return (s32)Data_0200c750;
+}
+
+s32 SceneData_SelectTableBySelector224(void)
+{
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_00000063) {
+        return (s32)Data_0200cbf4;
+    }
+    if (v == (s32)&Value_00000066) {
+        return (s32)Data_0200ce88;
+    }
+    if (v == (s32)&Value_00000099) {
+        return (s32)Data_0200cedc;
+    }
+    if (v == (s32)&Value_0000009a) {
+        return (s32)Data_0200cf24;
+    }
+    if (v == (s32)&Value_0000009b) {
+        return (s32)Data_0200cf54;
+    }
+    if (v == (s32)&Value_0000009c) {
+        return (s32)Data_0200cf9c;
+    }
+    return (s32)Data_0200cbe8;
+}

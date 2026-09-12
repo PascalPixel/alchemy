@@ -7,7 +7,7 @@
 extern volatile u16 gOv;
 extern volatile u8 gOv2;
 extern volatile u8 gOv3;
-extern volatile u8 gOv4;
+extern volatile u16 *gOv4;
 
 /*
  * Count one tick down and raise the expiry flag on the way through zero.
@@ -28,4 +28,14 @@ void FlashTimerIntr(void)
             gOv2 = 1;
         }
     }
+}
+
+s32 SetFlashTimerIntr(u8 timer_index, void (**callback)(void))
+{
+    if (timer_index > 3)
+        return 1;
+    gOv3 = timer_index;
+    gOv4 = (volatile u16 *)(0x04000100 + gOv3 * 4);
+    *callback = FlashTimerIntr;
+    return 0;
 }

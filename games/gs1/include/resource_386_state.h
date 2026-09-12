@@ -27,7 +27,10 @@ LAYOUT_OFFSET_GUARD(
     0x10);
 
 /* These names describe only the observed branch and return-value roles. */
-
+#define Resource386_OnWindowMatch Func_02000676
+#define Resource386_OnWindowMiss Func_02000688
+#define Resource386_GetFirstView Func_0200069a
+#define Resource386_GetSecondView Func_020006a2
 void Resource386_OnWindowMatch(s32);
 void Resource386_OnWindowMiss(s32);
 void *Resource386_GetFirstView(s32);

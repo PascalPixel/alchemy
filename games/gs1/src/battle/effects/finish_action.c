@@ -1,0 +1,15 @@
+#include "event_runtime.h"
+
+extern struct EventValueWork Data_02000240;
+
+void ScheduleCallback(u32);
+void Func_080772f0(void);
+void Func_080915ec(void);
+void Func_0809335c(s32 value, s32 enabled);
+
+void BattleFx_FinishAction(void)
+{
+    ScheduleCallback((u32)Func_080915ec);
+    Func_0809335c(Data_02000240.value, 1);
+    Func_080772f0();
+}

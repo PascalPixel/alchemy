@@ -1,0 +1,14 @@
+#include "types.h"
+
+extern u8 *Func_02002786(s32);
+
+void OverlayObject_SetField54(s32 arg0, s32 arg1)
+{
+    u8 *entry = Func_02002786(arg0);
+
+    if (entry != 0) {
+        u8 *field = entry + 0x54;
+
+        *field = arg1;
+    }
+}

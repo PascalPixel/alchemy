@@ -54,7 +54,7 @@ static __inline__ void Facing(s32 slot, s32 angle, s32 mode)
  * spelling, nor the declaration order: the post-reload list scheduler ranks
  * the pool load above the call in every spelling tried. Not adopted.
  */
-void Scene_ConfigureFlaggedActors(void)
+void FieldScene_ConfigureFlaggedActors(void)
 {
     u8 *record;
     s32 none;

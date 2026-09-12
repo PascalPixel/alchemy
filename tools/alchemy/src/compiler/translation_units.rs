@@ -624,7 +624,10 @@ mod tests {
     #[test]
     fn loads_typed_main_and_overlay_units() {
         let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
-        assert!(manifest.unit("scheduler").unwrap().exact());
+        assert!(manifest
+            .unit("runtime-memory-schedule-callback-and-release-block-32-a")
+            .unwrap()
+            .exact());
         let overlay = manifest.unit("guarded-step-scene").unwrap();
         assert_eq!(
             overlay.source_owner(0x0200_0030).unwrap().id(),
@@ -634,7 +637,7 @@ mod tests {
             overlay.absolute_symbols["SceneEventRuntime_ScriptData"].kind,
             AbsoluteSymbolKind::Data
         );
-        let owner = SourceOwner::Main(0x0800_40e8);
+        let owner = SourceOwner::Main(0x080f_37ec);
         assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
         assert!(manifest.unit_for_game_owner("gs2", owner).is_none());
         let root = crate::compiler::routing::root();

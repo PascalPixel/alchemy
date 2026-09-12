@@ -74,10 +74,12 @@ fn compute() -> Result<Live, String> {
 }
 fn cached() -> Result<Live, String> {
     let report = root().join("out/gs1-en/reports/coverage-map.json");
-    let document = serde_json::from_slice(
-        &std::fs::read(&report).map_err(|error| format!("{}: {error}", report.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", report.display()))?;
+    // Published charts survive removal of disposable build reports. They are
+    // a fallback display, never proof of the current checkout's coverage.
+    let document = std::fs::read(&report)
+        .ok()
+        .and_then(|bytes| serde_json::from_slice(&bytes).ok())
+        .unwrap_or(Value::Null);
     let trees = BOX_TREES
         .iter()
         .map(|name| {
@@ -87,7 +89,21 @@ fn cached() -> Result<Live, String> {
                 .map_err(|error| format!("{}: {error}", path.display()))
         })
         .collect::<Result<Vec<_>, _>>()?;
-    live_from(document, trees)
+    let mut live = live_from(document, trees)?;
+    live.generated.clear();
+    Ok(live)
+}
+
+impl Live {
+    fn chart(&self, id: &str, width: Option<u16>) -> Option<String> {
+        if let (Some(map), Some(width)) = (&self.map, width) {
+            return Some(crate::coverage::boxtree::svg(id, map, f64::from(width)));
+        }
+        self.trees
+            .iter()
+            .find(|(key, _)| *key == id)
+            .map(|(_, svg)| svg.clone())
+    }
 }
 fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live, String> {
     let revision = trees
@@ -171,7 +187,12 @@ fn snapshot_from(state: &State) -> Value {
         object.insert("error".into(), json!(error));
     }
     if let Some(live) = &state.coverage {
-        object.insert("summary".into(), live.summary.clone());
+        object.insert("hasCharts".into(), json!(!live.trees.is_empty()));
+        let published = live.map.is_none() || state.error.is_some();
+        object.insert("published".into(), json!(published));
+        if !published {
+            object.insert("summary".into(), live.summary.clone());
+        }
     }
     document
 }
@@ -258,17 +279,7 @@ fn response(path: &str) -> Response {
             state(|s| {
                 s.coverage
                     .as_ref()
-                    .and_then(|c| match width {
-                        Some(width) => c
-                            .map
-                            .as_ref()
-                            .map(|map| crate::coverage::boxtree::svg(id, map, f64::from(width))),
-                        None => c
-                            .trees
-                            .iter()
-                            .find(|(k, _)| *k == id)
-                            .map(|(_, v)| v.clone()),
-                    })
+                    .and_then(|c| c.chart(id, width))
                     .ok_or_else(|| {
                         s.error
                             .clone()
@@ -407,6 +418,21 @@ mod tests {
     use super::*;
 
     #[test]
+    fn published_charts_survive_missing_reports_without_claiming_live_progress() {
+        let live = live_from(Value::Null, vec![("code", "<svg/>".into())]).unwrap();
+        assert_eq!(live.chart("code", Some(800)).as_deref(), Some("<svg/>"));
+        let snapshot = snapshot_from(&State {
+            coverage: Some(live),
+            error: Some("missing build manifest".into()),
+            scanning: false,
+        });
+        assert_eq!(snapshot["hasCharts"], true);
+        assert_eq!(snapshot["published"], true);
+        assert!(snapshot.get("summary").is_none());
+        assert_eq!(snapshot["error"], "missing build manifest");
+    }
+
+    #[test]
     fn summary_comes_only_from_coverage_document() {
         let live = live_from(
             json!({"executable_bytes":1000,"categories":{
@@ -417,6 +443,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(live.summary["donePercent"], 50);
+        assert_eq!(live.summary["doneBytes"], 500);
         assert_eq!(live.summary["provenCBytes"], 400);
         assert_eq!(live.summary["draftCBytes"], 200);
         assert!(live.summary.get("correspondenceAvailable").is_none());

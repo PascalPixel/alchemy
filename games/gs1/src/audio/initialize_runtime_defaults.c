@@ -6,7 +6,7 @@
 /* audio/init/initialize_runtime_defaults.c */
 void Audio_Initialize(void);
 extern u8 RomBytes_02003000;
-extern u16 RomBytes_02003004;
+extern u8 RomBytes_02003004;
 extern u16 gOv3;
 extern u16 gOv4;
 extern u16 gOv5;

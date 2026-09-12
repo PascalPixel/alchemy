@@ -22,10 +22,12 @@ LAYOUT_OFFSET_GUARD(
     0x11c);
 
 struct PartyState;
+extern struct PartyState Data_02000240;
+#define Data_02000240_asBytes ((u8 *)&Data_02000240)
 
 static inline struct GlobalProgressPartialView *GlobalProgress_Get(void)
 {
-    return (struct GlobalProgressPartialView *)gCellBytes;
+    return (struct GlobalProgressPartialView *)Data_02000240_asBytes;
 }
 
 #endif

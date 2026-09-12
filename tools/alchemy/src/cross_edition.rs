@@ -3279,9 +3279,21 @@ mod tests {
     }
     #[test]
     fn artifact_substitution_and_callee_inference_fail_closed() {
-        let unit = translation_unit("08003b70").unwrap().unwrap();
-        assert!(!complete_unit_symbols(unit, |name| name == "Func_08003b70"));
-        assert!(complete_unit_symbols(unit, |_| true));
+        let unit: TranslationUnit = serde_json::from_value(serde_json::json!({
+            "id": "complete-symbols-fixture",
+            "game": "gs1",
+            "source": "fixture.c",
+            "compiler_route": "canonical-gcc296",
+            "owners": [
+                {"address": "0x08001000", "extent": 16, "state": "exact-c"},
+                {"address": "0x08001010", "extent": 16, "state": "exact-c"}
+            ],
+            "local_symbols": [{"address": "0x08001020", "extent": 4}]
+        }))
+        .unwrap();
+        assert!(!complete_unit_symbols(&unit, |name| name == "Func_08001000"));
+        assert!(!complete_unit_symbols(&unit, |name| name != "Func_08001020"));
+        assert!(complete_unit_symbols(&unit, |_| true));
         let locations = EditionLocations::from([(
             "Func_0801e940".into(),
             BTreeMap::from([("fr".into(), 0x0801_d8ac)]),

@@ -66,8 +66,17 @@ fn run_case(case: &Case, directory: &Path) -> Result<(), String> {
     let exact = std::fs::read_to_string(root().join(case.source))
         .map_err(|error| format!("{}: {error}", case.source))?;
     let source = directory.join(format!("{:08x}.c", case.owner));
-    std::fs::write(&source, perturb(&exact, case.edits)?)
-        .map_err(|error| format!("{}: {error}", source.display()))?;
+    let bindings = crate::candidate::production_symbol_bindings(
+        &root(),
+        &format!("{:08x}.c", case.owner),
+        case.source,
+        crate::compiler::routing::CompilerTarget::Gs1,
+    )?;
+    std::fs::write(
+        &source,
+        format!("{bindings}\n{}", perturb(&exact, case.edits)?),
+    )
+    .map_err(|error| format!("{}: {error}", source.display()))?;
     let output = directory.join("search");
     let summary = super::runner::run(Options {
         candidate: source,
@@ -90,8 +99,8 @@ fn run_case(case: &Case, directory: &Path) -> Result<(), String> {
     Ok(())
 }
 
-pub fn run() -> Result<(), String> {
-    let cases = [
+fn cases() -> [Case<'static>; 5] {
+    [
         Case {
             owner: 0x080b362c,
             source: "games/gs1/src/shop/select_use_item.c",
@@ -126,7 +135,7 @@ pub fn run() -> Result<(), String> {
         },
         Case {
             owner: 0x0808f1c0,
-            source: "games/gs1/src/battle/effects/objects/start_effect_22.c",
+            source: "games/gs1/src/effect_runtime/prepare_rising_object.c",
             edits: &[(
                 "        s32 zero = 0;\n        visual->value_26 = zero;\n        visual->value_27 = zero;\n\n        visual->flags_a &= zero - 33;\n",
                 "        visual->value_26 = 0;\n        visual->value_27 = 0;\n\n        visual->flags_a &= ~0x20;\n",
@@ -163,7 +172,19 @@ pub fn run() -> Result<(), String> {
             edits: &[("if (result < count)", "if (count > result)", 1)],
             expected: "mirror_relational_guards",
         },
-    ];
+    ]
+}
+
+#[test]
+fn production_fixtures_retain_the_seeded_source_shapes() {
+    for case in cases() {
+        let source = std::fs::read_to_string(root().join(case.source)).unwrap();
+        assert!(perturb(&source, case.edits).is_ok(), "{}", case.source);
+    }
+}
+
+pub fn run() -> Result<(), String> {
+    let cases = cases();
     let temporary = tempfile::Builder::new()
         .prefix("alchemy-decoder-acceptance-")
         .tempdir()

@@ -104,17 +104,15 @@ const treeObserver = new ResizeObserver(entries => {
 function render(snapshot) {
   hideTooltip();
   treeObserver.disconnect();
-  const summary = snapshot.summary;
   const trees = Object.entries(snapshot.trees).map(([tree, title]) => panel(tree, title, snapshot.revision));
   root.replaceChildren(h("main", { className: "cards" }, ...trees));
   lastRevision = snapshot.revision;
   lastError = "";
-  document.title = `Alchemy — 12 targets · ${percent(summary.donePercent)} GS1 EN done`;
 }
-function showError(message) {
+function showError(message, prefix = "Dashboard update failed: ") {
   if (message === lastError) return;
   root.querySelector(".error")?.remove();
-  root.prepend(h("div", { className: "error", role: "alert" }, `Dashboard update failed: ${message}`));
+  root.prepend(h("div", { className: "error", role: "alert" }, `${prefix}${message}`));
   lastError = message;
 }
 function clearError() { root.querySelector(".error")?.remove(); lastError = ""; }
@@ -122,10 +120,16 @@ function accept(snapshot) {
   if (pageVersion !== "" && snapshot.page !== pageVersion) { location.reload(); return; }
   pageVersion = snapshot.page;
   root.setAttribute("aria-busy", String(snapshot.scanning));
-  if (snapshot.error !== undefined) showError(snapshot.error);
+  if (snapshot.hasCharts && snapshot.revision !== lastRevision) render(snapshot);
+  document.title = snapshot.summary
+    ? `Alchemy — 12 targets · ${percent(snapshot.summary.donePercent)} GS1 EN done`
+    : "Alchemy — published coverage";
+  if (snapshot.published) {
+    showError("Showing published charts. Live coverage is unavailable until the current build verifies.", "");
+    root.querySelector(".error")?.setAttribute("title", snapshot.error ?? "Coverage refresh pending");
+  } else if (snapshot.error !== undefined) showError(snapshot.error);
   else {
     clearError();
-    if (snapshot.summary && snapshot.revision !== lastRevision) render(snapshot);
   }
 }
 async function refresh() {

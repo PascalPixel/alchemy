@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_ConfigureActorGroup:
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_ConfigureActorGroup:
  * 86 calls, 0 loops, and all explicit object, workspace, and scene-data effects.
  * Recovered from the complete decoded owner and checked against the original assembly. */
 
-#define Scene_ConfigureActorGroup Func_02002618
+#define FieldScene_ConfigureActorGroup Func_02002618
 
 void Func_02003238();
 void Func_020060ba();

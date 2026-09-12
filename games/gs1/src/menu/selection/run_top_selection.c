@@ -12,6 +12,9 @@
 extern u8 *gWork;
 
 void WaitFrames(s32);
+s32 Func_0808a280(void);
+s32 Func_080a1008(void);
+s32 Func_080a1000(void);
 
 s32 Menu_RunTopSelection(void)
 {
@@ -36,13 +39,13 @@ loop:
 
     switch (sel) {
     case 0:
-        ret = Object_GetTriggerTileAheadOfCurrent();
+        ret = Func_0808a280();
         if (ret == 0)
             ret = 0xff;
         *(u16 *)(state + 0x17a) = ret;
         break;
     case 1:
-        ret = Menu_OpenConfirmPrompt();
+        ret = Func_080a1008();
         if (ret == -1)
             goto loop;
         break;
@@ -52,7 +55,7 @@ loop:
             goto loop;
         break;
     case 3:
-        ret = RunAssetSelectionScreen();
+        ret = Func_080a1000();
         if (ret == -1)
             goto loop;
         break;

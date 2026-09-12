@@ -1,18 +1,27 @@
 #include "types.h"
-#include "scene.h"
-#include "runtime_interfaces.h"
 
-/* save/write_selected_slot.c */
 extern u8 Value_0000000a[];
 extern u8 Value_0000000b[];
 extern u8 Value_00000014[];
 extern u8 Value_00000017[];
 extern u8 Value_0000001a[];
-extern s16 RomBytes_02002004;
-extern u8 RomBytes_02000000[];
-extern u8 *gIw;
+extern s16 Data_02002004;
+extern u8 Data_02000000[];
+extern u8 *Data_03001f1c;
 
-void WaitFrames(s32);
+s32 Func_080056cc(void);
+void Func_08005c68(void);
+s32 Func_08020244(s16 a, s32 b);
+void Func_0801776c(s32 msg, s32 mode);
+s32 Func_08017364(void);
+void WaitFrames(s32 frames);
+s32 Func_08028df4(s32 a, s32 b, s32 c, s32 d);
+void Func_08019a54(void);
+void Func_080f9010(u8 mode);
+void Func_0801f818(void);
+void Func_0808a5b0(void);
+s32 Func_08005920(s32 a, void *b);
+void Func_08005cf8(void);
 
 s32 Save_WriteSelectedSlot(void)
 {
@@ -22,102 +31,49 @@ s32 Save_WriteSelectedSlot(void)
     u8 *base;
 
     result = 0;
-    flag = Sys_Check();
+    flag = Func_080056cc();
     if (flag != 0) {
-        Sys_Apply((s32)Value_0000000a, 1);
+        Func_0801776c((s32)Value_0000000a, 1);
         result = -9;
     } else {
-        Sys_Run();
-        base = gIw;
-        slot = Sys_Apply2(RomBytes_02002004, 0);
+        Func_08005c68();
+        base = Data_03001f1c;
+        slot = Func_08020244(Data_02002004, 0);
         if (slot == -1) {
             result = slot;
         } else {
             s32 off = (slot << 6) + 0x105c;
             if (base[off] != 0) {
-                Sys_Apply((s32)Value_00000014, 13);
-                while (UiWork_IsComplete() == 0) {
+                Func_0801776c((s32)Value_00000014, 13);
+                while (Func_08017364() == 0) {
                     WaitFrames(1);
                 }
-                if (Sys_SetMode(1, 0, 0, 1) != 0) {
-                    UiWork_FinalizePendingCore();
+                if (Func_08028df4(1, 0, 0, 1) != 0) {
+                    Func_08019a54();
                     goto skip;
                 }
-                UiWork_FinalizePendingCore();
+                Func_08019a54();
             }
-            RomBytes_02002004 = slot;
-            Audio_PlayCue(85);
-            Sys_Apply((s32)Value_0000001a, 13);
-            while (UiWork_IsComplete() == 0) {
+            Data_02002004 = slot;
+            Func_080f9010(85);
+            Func_0801776c((s32)Value_0000001a, 13);
+            while (Func_08017364() == 0) {
                 WaitFrames(1);
             }
-            Save_CapturePartySnapshot();
-            Save_CaptureObjectTable();
-            flag = Sys_Apply3(slot, RomBytes_02000000);
-            flag |= Sys_Apply3(slot + 3, RomBytes_02000000 + 0x1000);
-            UiWork_FinalizePendingCore();
+            Func_0801f818();
+            Func_0808a5b0();
+            flag = Func_08005920(slot, Data_02000000);
+            flag |= Func_08005920(slot + 3, Data_02000000 + 0x1000);
+            Func_08019a54();
             if (flag != 0) {
-                Sys_Apply((s32)Value_0000000b, 1);
+                Func_0801776c((s32)Value_0000000b, 1);
                 result = -3;
             } else {
-                Sys_Apply((s32)Value_00000017, 9);
+                Func_0801776c((s32)Value_00000017, 9);
             }
         }
     }
 skip:
-    SaveState_ReleaseWorkspace();
+    Func_08005cf8();
     return result;
-}
-
-/* save/state/load_record_into_work.c */
-struct State_080208e4 {
-    u8 padding0[4];
-    s32 value;
-    u8 padding8[0x222];
-    u8 flag;
-};
-
-extern char Value_0000000c;
-extern volatile struct State_080208e4 gCell;
-extern volatile u8 gIw2;
-extern s16 gIw3;
-
-s32 SaveState_LoadRecordIntoWork(s32 arg)
-{
-    s32 ret = 0;
-    s32 err = State_Check();
-
-    if (err != 0) {
-        State_Apply((s32)Value_0000000a, 1);
-        ret = -9;
-    } else {
-        s32 value;
-
-        State_Run();
-        value = State_Apply2(RomBytes_02002004, arg);
-        if (value == -1) {
-            ret = value;
-        } else {
-            void *base = RomBytes_02000000;
-
-            err = State_Apply3(value, base);
-            base = (char *)base + 0x1000;
-            err |= State_Apply3(value + 3, base);
-            if (err != 0) {
-                State_Apply((s32)&Value_0000000c, 1);
-                ret = -2;
-            } else {
-                gIw = gCell.value;
-                {
-                    volatile u8 *state = (volatile u8 *)&gCell;
-
-                    gIw2 = state[0x22a];
-                }
-                gIw3 = 0;
-                RomBytes_02002004 = value;
-            }
-        }
-    }
-    SaveState_ReleaseWorkspace();
-    return ret;
 }

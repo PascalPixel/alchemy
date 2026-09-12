@@ -1,53 +1,480 @@
-#include "scene.h"
-#include "select_overlay_data_by_runtime_selector.h"
-#include "select_overlay_data_by_runtime_selector_body.inc"
 #include "types.h"
-#include "add_parts_record.h"
-#include "add_parts_body.inc"
 
-/* overlays/scene/state/interaction/scene_data_select_by_runtime_selector.c */
-/* overlays/scene/state/interaction/scene_data_select_by_runtime_selector.c */
-/* overlays/scene/state/interaction/select_by_runtime_selector.c */
-#define PrimaryRuntimeSelector Value_00000060
-#define SecondaryRuntimeSelector Value_00000061
-#define TertiaryRuntimeSelector Value_00000062
+#define SceneData_FindActiveSlotAtCell Func_02000134
+extern u8 *Data_03001ebc;
 
+#include "types.h"
+
+#define SceneState_ApplyFlag300 Func_020002bc
+#define SceneState_SetFlag953 Func_020002cc
+#define SceneState_ApplyRectAndMarkActor16 Func_0200050c
+#define SceneState_ApplyRectAndSetupActor19 Func_020005ec
+#define SceneActor_MarkSlot21AndSetFlag205 Func_02000690
+void Func_020013cc(s32);
+void Func_020013cc_a(s32, s32);
+u8 *Func_02001644(s32);
+void Func_020015fa(s32, s32, s32, s32, s32, s32);
+u8 *Func_02001664(s32);
+void Func_02001652(s32);
+u8 *Func_02001724(s32);
+void Func_020016da(s32, s32, s32, s32, s32, s32);
+void Func_020016f6(u8 *, s32);
+u8 *Func_0200174c(s32);
+void Func_02001738(s32);
+u8 *Func_020017c8(s32);
+void Func_0200177e(s32, s32, s32, s32, s32, s32);
+void Func_0200179a(u8 *, s32);
+u8 *Func_020017f0(s32);
+void Func_020017dc(s32);
+
+#include "types.h"
+
+#define GetActorPosition Func_0200146a
+#define IsActor9AtTile15x54 Func_02000334
+#define SceneActor_IsActor10AtTile16x12 Func_02000458
+#define SceneActor_TransformAndApplyRecordPosition Func_02000b54
+
+s32 *Func_0200146a(s32 actor);
+s32 *Func_0200158e(s32);
+void Func_02001bfc(s32, s32, s32 *);
+void Func_02001c38(s32 *, s32, s32, s32);
+
+#include "types.h"
+
+#define FieldScene_RunFlag9a9GuardedScene Func_02000368
+
+void Func_020004e6();
+s32 Func_020006ae();
+void Func_02000726();
+s32 Func_0200146e();
+void Func_0200148c();
+void Func_020014da();
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ s32 Value0(s32 (*f)())
+{
+    return f();
+}
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+static __inline__ void bump_step(s32 amount)
+{
+    u8 *work = Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
+#include "types.h"
+
+#define SceneState_ApplyThreeRects Func_02000398
+#define SceneState_ConfigureRegion26_30AndClearActor18Mode Func_020005a0
+#define SceneActor_SetupSlotTwenty Func_02000640
+#define SceneActor_InitSlots10To15AndStartTask Func_02000c08
+#define SceneActor_SetupActors11To14AndInstallTask Func_02000c50
+void Func_02001476(s32, s32, s32, s32, s32, s32);
+void Func_0200148a(s32, s32, s32, s32, s32, s32);
+void Func_020014a4(s32, s32, s32, s32, s32, s32);
+u8 *Func_020016d8(s32);
+void Func_0200168e(s32, s32, s32, s32, s32, s32);
+u8 *Func_020016f8(s32);
+void Func_020016e4(s32);
+u8 *Func_02001778(s32);
+void Func_0200172e(s32, s32, s32, s32, s32, s32);
+void Func_0200174a(u8 *, s32);
+u8 *Func_020017a0(s32);
+void Func_0200178e(s32);
+s32 *Func_02001d42();
+void Func_02001cf8();
+void Func_02001cb6();
+s32 *Func_02001d8a();
+void Func_02001d40();
+void Func_02001dc8();
+void Func_02001d08();
+
+#include "types.h"
+
+#define FieldScene_RunScene3a7SequenceA Func_020003e0
+#define FieldScene_RunGuardedStep9AAAfterSetup Func_0200048c
+#define FieldScene_RunGuardedStep9AA Func_020004d0
+#define FieldScene_RunSupplementalSequenceOne Func_02000754
+#define FieldScene_RunScene3a7SequenceB Func_020008a8
+#define FieldScene_RunOpeningAuxiliarySequence Func_020009c0
+extern u8 Data_0200a224[];
+extern u8 Data_0200a228[];
+extern u8 Data_0200a22c[];
+extern u8 Data_0200a230[];
+
+s32 Func_02000722();
+void Func_0200079a();
+s32 Func_020014e6();
+void Func_02001500();
+void Func_0200154e();
+void Func_02000600();
+void Func_020008c6();
+s32 Func_020008f6();
+s32 Func_02001596();
+s32 Func_020015a8();
+void Func_020015c4();
+void Func_02001602();
+void Func_02000906();
+s32 Func_02000936();
+s32 Func_020015d6();
+s32 Func_020015e8();
+void Func_02001604();
+void Func_02001642();
+s32 Func_02001836();
+void Func_02001882();
+void Func_0200188c();
+void Func_02001890();
+s32 Func_02001898();
+void Func_020018ba();
+void Func_020018fe();
+void Func_0200191a();
+void Func_02001920();
+void Func_02001926();
+void Func_02001948();
+void Func_0200195e();
+void Func_0200199a();
+void Func_020019b6();
+double Func_02001bd2();
+void Func_02001bde();
+double Func_02001c1c();
+double Func_02001c2a();
+s32 Func_02001cd6();
+void Func_02001084();
+void Func_020019a4();
+s32 Func_020019b0();
+void Func_020019b4();
+void Func_020019ba();
+void Func_020019ca();
+void Func_020019d8();
+void Func_020019ee();
+void Func_020019fa();
+void Func_02001a10();
+void Func_02001a18();
+void Func_02001a2e();
+void Func_02001a44();
+void Func_02001a4e();
+s32 Func_0200138a();
+s32 Func_020013ba();
+void Func_020015b0();
+s32 Func_02001af6();
+u8 *Func_02001b22();
+s32 Func_02001b36();
+s32 Func_02001b40();
+s32 Func_02001b48();
+s32 Func_02001b58();
+void Func_02001b6a();
+void Func_02001b8a_a();
+void Func_02001b92();
+void Func_02001bb8();
+void Func_02001bc0();
+void Func_02001bd0();
+s32 Func_02001bd6();
+s32 Func_02001bf6();
+u8 *Func_02001c06();
+u8 *Func_02001c1a();
+void Func_02001c66();
+void Func_02001c82();
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+
+
+
+
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_02000754(void (*f)(), s32 a0)
+{
+    double Func_02001b8a();
+
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    double Func_02001b8a();
+
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    double Func_02001b8a();
+
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    double Func_02001b8a();
+
+    f(a0, a1, a2);
+}
+
+static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    double Func_02001b8a();
+
+    return f(a0, a1, a2, a3);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    double Func_02001b8a();
+
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_020008a8(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_020009c0(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1_02000aa0(void (*f)(), s32 a0)
+{
+    void Func_02001b8a();
+
+    f(a0);
+}
+
+#include "types.h"
+
+#define Resource3a7_NoOpCallback Func_020004cc
+
+#define SceneData_SelectOverlayDataBySelector Func_020000e0
+
+extern s16 Data_02000240[];
+extern u8 Value_00000060;
+extern u8 Value_00000061;
+extern u8 Value_00000062;
+extern u8 Data_02009d34[];
+extern u8 Data_02009d4c[];
+extern u8 Data_02009ecc[];
+extern u8 Data_02009d1c[];
+
+#define SceneState_SetEntries16To21Byte35 Func_02000734
+
+#include "types.h"
+
+extern u8 *Func_02001870(s32);
+
+#define SceneData_SelectDataByRuntimeSelector Func_020002e0
+
+extern s16 Data_02000240[];
+extern u8 Value_00000060;
+extern u8 Value_00000061;
+extern u8 Value_00000062;
+extern u8 Data_02009f98[];
+extern u8 Data_0200a064[];
+extern u8 Data_0200a190[];
+extern u8 Data_02009f8c[];
+
+#define SceneState_DispatchByActorZeroDepth Func_020006e4
+
+#include "types.h"
+
+struct Actor {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+};
+
+extern struct Actor *Func_0200181a(s32);
+extern void Func_02000dfc(void);
+extern void Func_02000e32(void);
+
+#define SceneData_SelectSecondaryByRuntimeSelector Func_0200008c
+
+extern s16 Data_02000240[];
+extern u8 Value_00000060;
+extern u8 Value_00000061;
+extern u8 Value_00000062;
+extern u8 Data_02009c80[];
+extern u8 Data_02009cc0[];
+extern u8 Data_02009cfc[];
+extern u8 Data_02009c7c[];
+
+#define SceneData_SelectByRuntimeSelector Func_02000030
+
+extern s16 Data_02000240[];
+extern u8 Value_00000060;
+extern u8 Value_00000061;
+extern u8 Value_00000062;
+extern u8 Data_020098cc[];
+extern u8 Data_02009a34[];
+extern u8 Data_02009b9c[];
+extern u8 Data_0200989c[];
+
+#define SceneData_GetTable9C5C Func_02000084
+
+#include "types.h"
+
+#define FieldScene_NoOp Func_0200040c
+
+/* Deliberate no-op callback. */
+
+#define SceneState_ApplyThreeRectsRows9And10 Func_02000410
+
+#include "types.h"
+
+extern void Func_020014ee(s32, s32, s32, s32, s32, s32);
+extern void Func_02001502(s32, s32, s32, s32, s32, s32);
+extern void Func_0200151c(s32, s32, s32, s32, s32, s32);
+
+#define SceneState_ConfigureRegion26_30AndMarkActor17 Func_02000554
+
+#include "types.h"
+
+extern u8 *Func_0200168c(s32);
+extern void Func_02001642_scene(s32, s32, s32, s32, s32, s32);
+extern u8 *Func_020016ac(s32);
+extern void Func_02001698(s32);
 
 s32 SceneData_SelectByRuntimeSelector(void)
 {
+    s16 selector = Data_02000240[224];
+
+    if (selector == (s32)&Value_00000060) {
+        return (s32)Data_020098cc;
+    }
+    if (selector == (s32)&Value_00000061) {
+        return (s32)Data_02009a34;
+    }
+    if (selector == (s32)&Value_00000062) {
+        return (s32)Data_02009b9c;
+    }
+    return (s32)Data_0200989c;
+
 }
 
-/* overlays/scene/state/interaction/get_table_9c5c.c */
 u8 *SceneData_GetTable9C5C(void)
 {
     return (u8 *)0x02009c5c;
 }
 
-/* overlays/scene/state/interaction/select_secondary_by_runtime_selector.c */
-#define PrimaryRuntimeSelector Value_00000060
-#define SecondaryRuntimeSelector Value_00000061
-#define TertiaryRuntimeSelector Value_00000062
-
-
 s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 {
+    s16 selector = Data_02000240[224];
+
+    if (selector == (s32)&Value_00000060) {
+        return (s32)Data_02009c80;
+    }
+    if (selector == (s32)&Value_00000061) {
+        return (s32)Data_02009cc0;
+    }
+    if (selector == (s32)&Value_00000062) {
+        return (s32)Data_02009cfc;
+    }
+    return (s32)Data_02009c7c;
+
 }
-
-/* overlays/scene/state/interaction/select_overlay_data_by_runtime_selector.c */
-#define PrimaryRuntimeSelector Value_00000060
-#define SecondaryRuntimeSelector Value_00000061
-#define TertiaryRuntimeSelector Value_00000062
-
 
 s32 SceneData_SelectOverlayDataBySelector(void)
 {
+    s16 selector = Data_02000240[224];
+
+    if (selector == (s32)&Value_00000060) {
+        return (s32)Data_02009d34;
+    }
+    if (selector == (s32)&Value_00000061) {
+        return (s32)Data_02009d4c;
+    }
+    if (selector == (s32)&Value_00000062) {
+        return (s32)Data_02009ecc;
+    }
+    return (s32)Data_02009d1c;
+
 }
 
-/* overlays/scene/state/interaction/interaction.c */
-/* overlays/scene/state/interaction/actor_position.c */
+s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
+{
+    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    u32 i;
 
-s32 *GetActorPosition(s32 actor);
-s32 *State_unk7_4(s32);
+    for (i = 8; i <= 65; i++) {
+        s32 *p = slots[i];
+
+        if (cx == (p[2] >> 20) && cz == (p[4] >> 20) && *((u8 *)p + 0x59) != 0) {
+            return p;
+        }
+    }
+    return 0;
+}
+
+void SceneState_ApplyFlag300(void)
+{
+    Func_020013cc(0x300);
+}
+
+void SceneState_SetFlag953(void)
+{
+    Func_020013cc_a(0x953, 1);
+}
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+    s16 selector = Data_02000240[224];
+
+    if (selector == (s32)&Value_00000060) {
+        return (s32)Data_02009f98;
+    }
+    if (selector == (s32)&Value_00000061) {
+        return (s32)Data_0200a064;
+    }
+    if (selector == (s32)&Value_00000062) {
+        return (s32)Data_0200a190;
+    }
+    return (s32)Data_02009f8c;
+
+}
 
 s32 IsActor9AtTile15x54(void)
 {
@@ -72,9 +499,68 @@ s32 IsActor9AtTile15x54(void)
     return 0;
 }
 
-s32 Actor_IsActor10AtTile16x12(void)
+void FieldScene_RunFlag9a9GuardedScene(void)
 {
-    s32 *p = State_unk7_4(10);
+    u32 i;
+    s32 record;
+
+    if (Value1(Func_0200146e, 0x9a9) == 0) {
+        Func_020004e6();
+        if (Value0(Func_020006ae)!= 0) {
+            Call1(Func_0200148c, 0x9a9);
+            Func_020014da(80);
+            Func_02000726();
+        }
+    }
+}
+
+void SceneState_ApplyThreeRects(void)
+{
+    s32 strip = 16;
+
+    {
+        s32 fifth = 80;
+        s32 sixth = 50;
+
+        Func_02001476(87, 50, 2, 4, fifth, sixth);
+    }
+    Func_0200148a(23, 52, 1, 2, strip, 52);
+    Func_020014a4(16, 52, 1, 1, strip, 53);
+}
+
+void FieldScene_RunScene3a7SequenceA(void)
+{
+    u32 i;
+    s32 record;
+
+    if (Value1(Func_020014e6, 0x9a9) == 0) {
+        if (Value0(Func_02000722)!= 0) {
+            Call1(Func_02001500, 0x9a9);
+            Func_0200154e(80);
+            Func_0200079a();
+        }
+    }
+}
+
+void FieldScene_NoOp(void) {}
+
+void SceneState_ApplyThreeRectsRows9And10(void)
+{
+    s32 strip = 17;
+
+    {
+        s32 p5 = 80;
+        s32 p6 = 9;
+
+        Func_020014ee(90, 9, 2, 3, p5, p6);
+    }
+    Func_02001502(27, 10, 1, 2, strip, 10);
+    Func_0200151c(17, 10, 1, 1, strip, 11);
+}
+
+s32 SceneActor_IsActor10AtTile16x12(void)
+{
+    s32 *p = Func_0200158e(10);
     s32 z = p[4];
     s32 x;
     s32 cz;
@@ -95,121 +581,195 @@ s32 Actor_IsActor10AtTile16x12(void)
     return 0;
 }
 
-void Actor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
+void FieldScene_RunGuardedStep9AAAfterSetup(void)
 {
-    s32 pos[3];
-
-    if (rec == 0) {
-        return;
-    }
-    pos[0] = rec[2];
-    pos[1] = rec[3];
-    pos[2] = rec[4];
-    State_unk3_3(v0, v1, pos);
-    State_SetMode(rec, pos[0], pos[1], pos[2]);
-}
-
-/* overlays/scene/state/interaction/actor_search.c */
-extern u8 gWork[];
-
-s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
-{
-    s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
+    s32 record;
 
-    for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
-
-        if (cx == (p[2] >> 20) && cz == (p[4] >> 20) && *((u8 *)p + 0x59) != 0) {
-            return p;
+    Func_02000600();
+    if (Value1(Func_02001596, 0x9aa) == 0) {
+        if (Value0(Func_020008f6)!= 0) {
+            if (Value1(Func_020015a8, 0x207) == 0) {
+                Func_02001602(80);
+                Func_020008c6();
+                Call1(Func_020015c4, 0x9aa);
+            }
         }
     }
-    return 0;
 }
 
-/* overlays/scene/state/interaction/callbacks.c */
 void Resource3a7_NoOpCallback(void)
 {
 }
 
-/* overlays/scene/state/interaction/conditional_scene_setup.c */
-
-void Scene_RunFlag9a9GuardedScene(void)
+void FieldScene_RunGuardedStep9AA(void)
 {
     u32 i;
     s32 record;
 
-    if (State_Check(0x9a9) == 0) {
-        State_unk8_4();
-        if (State_Run()!= 0) {
-            State_Do(0x9a9);
-            State_unk9_4(80);
-            State_unk10_4();
-        }
-    }
-}
-
-/* overlays/scene/state/interaction/scene_primary_script.c */
-extern u8 gOvInteraction[];
-extern u8 gOv2[];
-extern u8 gOv3[];
-extern u8 gOv4[];
-
-u8 *State_unk11_4();
-
-u8 *State_unk12_4();
-u8 *State_unk13_4();
-
-void Scene_RunScene3a7SequenceA(void)
-{
-    u32 i;
-    s32 record;
-
-    if (State_unk2(0x9a9) == 0) {
-        if (State_unk2_4()!= 0) {
-            State_unk2_2(0x9a9);
-            State_unk14_4(80);
-            State_unk15_4();
-        }
-    }
-}
-
-void Scene_RunGuardedStep9AAAfterSetup(void)
-{
-    u32 i;
-    s32 record;
-
-    State_unk16_4();
-    if (State_unk3(0x9aa) == 0) {
-        if (State_unk3_4()!= 0) {
-            if (State_unk4(0x207) == 0) {
-                State_unk17_4(80);
-                State_unk18_4();
-                State_unk3_2(0x9aa);
+    if (Value1(Func_020015d6, 0x9aa) == 0) {
+        if (Value0(Func_02000936)!= 0) {
+            if (Value1(Func_020015e8, 0x207) == 0) {
+                Func_02001642(80);
+                Func_02000906();
+                Call1(Func_02001604, 0x9aa);
             }
         }
     }
 }
 
-void Scene_RunGuardedStep9AA(void)
+void SceneState_ApplyRectAndMarkActor16(void)
 {
-    u32 i;
-    s32 record;
+    u8 *rec = Func_02001644(16);
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 fifth = 23;
+    s32 sixth = 32;
 
-    if (State_unk5(0x9aa) == 0) {
-        if (State_unk4_4()!= 0) {
-            if (State_unk6(0x207) == 0) {
-                State_SetRectAndMarkActor17(80);
-                State_unk20_4();
-                State_unk4_2(0x9aa);
-            }
-        }
+    Func_020015fa(26, 30, 1, 1, fifth, sixth);
+
+    if (rec != 0) {
+        /* The rec is reloaded with the same selector before this store. */
+        Func_02001664(16)[85] = 0;
+        rec[35] = 1;
+    }
+
+    Func_02001652(0x200);
+}
+
+void SceneState_ConfigureRegion26_30AndMarkActor17(void)
+{
+    u8 *rec = Func_0200168c(17);
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 p5 = 23;
+    s32 p6 = 34;
+
+    Func_02001642_scene(26, 30, 1, 1, p5, p6);
+
+    if (rec != 0) {
+        /* The record is reloaded with the same selector before this store. */
+        Func_020016ac(17)[85] = 0;
+        rec[35] = 1;
+    }
+
+    Func_02001698(0x201);
+}
+
+void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
+{
+    u8 *record = Func_020016d8(18);
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 a = 24;
+    s32 b = 34;
+
+    Func_0200168e(26, 30, 1, 1, a, b);
+
+    if (record != 0) {
+        /* The record is reloaded with the same selector before this store. */
+        Func_020016f8(18)[85] = 0;
+        record[35] = 1;
+    }
+
+    Func_020016e4(0x202);
+}
+
+void SceneState_ApplyRectAndSetupActor19(void)
+{
+    u8 *p = Func_02001724(19);
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 a5 = 26;
+    s32 a6 = 32;
+
+    Func_020016da(26, 30, 1, 1, a5, a6);
+
+    if (p != 0) {
+        Func_020016f6(p, 0);
+        /* The record is reloaded with the same selector before this store. */
+        Func_0200174c(19)[85] = 0;
+        p[35] = 1;
+    }
+
+    Func_02001738(0x203);
+}
+
+void SceneActor_SetupSlotTwenty(void)
+{
+    u8 *rec = Func_02001778(20);
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 fifth = 26;
+    s32 sixth = 34;
+
+    Func_0200172e(26, 30, 1, 1, fifth, sixth);
+
+    if (rec != 0) {
+        Func_0200174a(rec, 0);
+        /* The rec is reloaded with the same selector before this store. */
+        Func_020017a0(20)[85] = 0;
+        rec[35] = 1;
+    }
+
+    Func_0200178e(0x204);
+}
+
+void SceneActor_MarkSlot21AndSetFlag205(void)
+{
+    u8 *record = Func_020017c8(21);
+    /* The two stack arguments each need their own local: the reference builds
+     * both into separate registers before storing either, and a literal pair
+     * lets the compiler reuse one register for both. */
+    s32 fifth = 28;
+    s32 sixth = 33;
+
+    Func_0200177e(26, 30, 1, 1, fifth, sixth);
+
+    if (record != 0) {
+        Func_0200179a(record, 0);
+        /* The record is reloaded with the same selector before this store. */
+        Func_020017f0(21)[85] = 0;
+        record[35] = 1;
+    }
+
+    Func_020017dc(0x205);
+}
+
+void SceneState_DispatchByActorZeroDepth(void)
+{
+    struct Actor *p = Func_0200181a(0);
+
+    if (p->f0c >= 0x100000) {
+        Func_02000dfc();
+    } else {
+        Func_02000e32();
     }
 }
 
-void Scene_RunSupplementalSequenceOne(void)
+void SceneState_SetEntries16To21Byte35(void)
 {
-    double State_unk21_4();
+    s32 index = 16;
+    s32 flag = 1;
+    s32 remaining = 5;
+
+    do {
+        u8 *entry = Func_02001870(index);
+
+        remaining--;
+        entry[35] = flag;
+        index++;
+    } while (remaining >= 0);
+}
+
+void FieldScene_RunSupplementalSequenceOne(void)
+{
+    double Func_02001b8a();
 
     s32 p10;
     s32 count;
@@ -223,7 +783,7 @@ void Scene_RunSupplementalSequenceOne(void)
     s32 mode;
 
     p10 = (0x164 + *(volatile s32 *)0x03001e70);
-    State_unk22_4();
+    Func_0200188c();
     if ((*(volatile s32 *)0x03001e40 & 1) != 0) {
         *(volatile s32 *)(p10 + 24) = 1;
         *(volatile s32 *)(p10 + 28) = 1;
@@ -231,23 +791,23 @@ void Scene_RunSupplementalSequenceOne(void)
         *(volatile s32 *)(p10 + 24) = -1;
         *(volatile s32 *)(p10 + 28) = -1;
     }
-    State_Place(0x30000, 0x30000, 0x10000);
-    State_unk2_3(-1, -1, 0xe666);
-    State_unk23_4(163);
+    Call3(Func_02001882, 0x30000, 0x30000, 0x10000);
+    Call3(Func_02001890, -1, -1, 0xe666);
+    Func_020018fe(163);
     bias = 4294967296.0;
     count = 0x1df;
     do {
-        rec7 = State_unk16();
-        held = State_unk24_4(*(volatile s32 *)(p10 + 36));
+        rec7 = Func_02001836();
+        held = Func_02001c1c(*(volatile s32 *)(p10 + 36));
         shown = (s32)((u32)(rec7 << 11) >> 16);
-        scaled = State_unk25_4(shown);
+        scaled = Func_02001c2a(shown);
         if (shown < 0) {
             bias = 4294967296.0;
-            scaled = State_unk21_4(scaled, bias);
+            scaled = Func_02001b8a(scaled, bias);
         }
-        State_unk26_4(held, State_unk27_4(4718.592, scaled));
-        *(volatile s32 *)(p10 + 36) = State_unk17();
-        State_unk28_4(1);
+        Func_02001bde(held, Func_02001bd2(4718.592, scaled));
+        *(volatile s32 *)(p10 + 36) = Func_02001cd6();
+        Func_02001920(1);
         count = (count + -1);
     } while (count >= 0);
     c5 = 6;
@@ -255,49 +815,49 @@ void Scene_RunSupplementalSequenceOne(void)
     count = 0;
     mode = (c5 << 10);
     do {
-        State_unk5_4(0x4000052, ((mode | (c5 << 5)) | c6));
-        State_unk29_4(1);
-        if (State_unk7(count, 20) == 0) {
+        Call2(Func_020018ba, 0x4000052, ((mode | (c5 << 5)) | c6));
+        Func_02001948(1);
+        if (Value2(Func_02001898, count, 20) == 0) {
             c6 = (c6 - 1);
             c5 = (c5 - 1);
         }
         count = (count + 1);
     } while (count <= 69);
-    State_SetRect(19, 83, 15, 8, 19, 91);
-    State_unk5_2(0x120);
-    State_unk30_4();
-    State_unk31_4();
-    State_unk32_4();
+    Call6(Func_02001926, 19, 83, 15, 8, 19, 91);
+    Call1_02000754(Func_020019b6, 0x120);
+    Func_0200191a();
+    Func_0200195e();
+    Func_0200199a();
 }
 
-void Scene_RunScene3a7SequenceB(void)
+void FieldScene_RunScene3a7SequenceB(void)
 {
     u32 i;
     s32 record;
     s32 v5;
     s32 v6;
 
-    if (State_unk8(0x9a8) == 0) {
-        State_unk6_4(0x1528, 1);
-        State_unk6_2(0x9a8);
+    if (Value1(Func_020019b0, 0x9a8) == 0) {
+        Call2(Func_020019b4, 0x1528, 1);
+        Call1_020008a8(Func_020019ca, 0x9a8);
         v5 = 27;
         v6 = 92;
-        State_unk33_4(155);
-        State_unk2_5(107, 27, 1, 1, v6, v5);
-        State_unk34_4(39);
-        State_unk3_5(108, 27, 1, 1, v6, v5);
-        State_unk35_4(50);
+        Func_02001a18(155);
+        Call6(Func_020019a4, 107, 27, 1, 1, v6, v5);
+        Func_020019fa(39);
+        Call6(Func_020019ba, 108, 27, 1, 1, v6, v5);
+        Func_02001a10(50);
         v6 = 25;
-        State_unk36_4(156);
-        State_unk4_5(1, 24, 1, 2, v6, v5);
-        State_unk37_4(40);
-        State_unk5_5(2, 24, 1, 2, v6, v5);
-        State_unk38_4(40);
-        State_unk39_4();
+        Func_02001a4e(156);
+        Call6(Func_020019d8, 1, 24, 1, 2, v6, v5);
+        Func_02001a2e(40);
+        Call6(Func_020019ee, 2, 24, 1, 2, v6, v5);
+        Func_02001a44(40);
+        Func_02001084();
     }
 }
 
-void Scene_RunOpeningAuxiliarySequence(void)
+void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 i;
     u8 *rec7;
@@ -308,19 +868,19 @@ void Scene_RunOpeningAuxiliarySequence(void)
     volatile s32 *slot;
     u8 *table;
 
-    flag = *(u8 *)(State_unk18(10) + 91);
+    flag = *(u8 *)(Func_02001af6(10) + 91);
     if (flag == 0) {
-        tick = (volatile s32 *)gOvInteraction;
+        tick = (volatile s32 *)Data_0200a224;
         count = *tick + 1;
         *tick = count;
         if (count > 190) {
             *tick = flag;
         }
-        slot = (volatile s32 *)gOv2;
+        slot = (volatile s32 *)Data_0200a228;
         index = *slot;
         table = (u8 *)0x0200a214;
         if (*(s32 *)(table + (index << 2)) == *tick) {
-            rec7 = State_unk11_4((index + 11));
+            rec7 = Func_02001b22((index + 11));
             *(volatile s32 *)((s32)rec7 + 72) = 0xa3d;
             count = *slot + 1;
             *slot = count;
@@ -329,32 +889,36 @@ void Scene_RunOpeningAuxiliarySequence(void)
             }
         }
         for (i = 0; i <= 3; i++) {
-            rec7 = State_unk9((i + 11));
+            rec7 = Value1(Func_02001b40, (i + 11));
             if (*(volatile s32 *)((s32)rec7 + 40) >= 0) {
                 if (*(volatile s32 *)((s32)rec7 + 12) <= 0xffff) {
-                    State_unk40_4();
+                    Func_020015b0();
                     *(volatile s32 *)((s32)rec7 + 12) = 0xff0000;
                     *(s32 *)((s32)rec7 + 72) = 0;
                     *(s32 *)((s32)rec7 + 40) = 0;
                     rec7[91] = 0;
-                    State_unk41_3(106);
+                    Func_02001b8a_a(106);
                 }
             }
         }
-        if (State_unk10(10) != 0) {
-            State_unk42_3(10, 1);
-            if (State_unk11(0x207) == 0) {
-                State_unk7_2(0x207);
-                State_unk43_3(204);
+        if (Value1(Func_0200138a, 10) != 0) {
+            Func_02001b92(10, 1);
+            if (Value1(Func_02001b58, 0x207) == 0) {
+                Call1_020009c0(Func_02001b6a, 0x207);
+                Func_02001bb8(204);
             } else {
-                State_unk44_3(106);
+                Func_02001bc0(106);
             }
         }
-        if (State_unk12(9) != 0) {
-            State_unk45_3(106);
+        if (Value1(Func_020013ba, 9) != 0) {
+            Func_02001bd0(106);
         }
     }
 }
+
+void Func_02000aa0(void)
+{
+    void Func_02001b8a();
 
     s32 i;
     u8 *rec7;
@@ -363,22 +927,22 @@ void Scene_RunOpeningAuxiliarySequence(void)
     volatile s32 *tick;
     s32 base5_200a230;
 
-    rec7 = (u8 *)State_unk13(10);
+    rec7 = (u8 *)Value1(Func_02001bd6, 10);
     if (rec7[91] == 0) {
-        tick = (volatile s32 *)gOv3;
+        tick = (volatile s32 *)Data_0200a22c;
         count = *tick + 1;
         *tick = count;
         if ((63 & count) == 0) {
-            base5_200a230 = (s32)gOv4;
-            record = State_unk19();
-            record = State_unk14(record, 6);
+            base5_200a230 = (s32)Data_0200a230;
+            record = Func_02001b48();
+            record = Value2(Func_02001b36, record, 6);
             *(volatile s32 *)base5_200a230 = record;
-            rec7 = State_unk12_4((record + 10));
+            rec7 = Func_02001c06((record + 10));
             *(volatile s32 *)((s32)rec7 + 72) = 0xa3d;
         }
         for (i = 0; i <= 5; i++) {
-            rec7 = State_unk13_4((i + 10));
-            record = State_unk15((i + 0x200));
+            rec7 = Func_02001c1a((i + 10));
+            record = Value1(Func_02001bf6, (i + 0x200));
             if (record != 0) {
                 if (*(volatile s32 *)((s32)rec7 + 40) <= 0) {
                     if (*(volatile s32 *)((s32)rec7 + 12) > 0x20ffff) {
@@ -388,7 +952,7 @@ void Scene_RunOpeningAuxiliarySequence(void)
                 *(volatile s32 *)((s32)rec7 + 12) = 0xff0000;
                 *(s32 *)((s32)rec7 + 72) = 0;
                 *(s32 *)((s32)rec7 + 40) = 0;
-                State_unk46_3(106);
+                Func_02001c66(106);
             } else {
                 if (*(volatile s32 *)((s32)rec7 + 40) <= 0) {
                     if (*(volatile s32 *)((s32)rec7 + 12) > 0xffff) {
@@ -398,82 +962,27 @@ void Scene_RunOpeningAuxiliarySequence(void)
                 *(s32 *)((s32)rec7 + 72) = record;
                 *(s32 *)((s32)rec7 + 40) = record;
                 *(volatile s32 *)((s32)rec7 + 12) = 0xff0000;
-                State_unk47_3(106);
+                Func_02001c82(106);
             }
         }
     }
 }
 
-/* overlays/scene/state/interaction/scene_setup.c */
-
-u8 *State_unk48_3(s32);
-
-u8 *State_unk49_3(s32);
-
-u8 *State_unk50_3(s32);
-
-u8 *State_unk51_3(s32);
-
-s32 *State_unk52_3();
-
-s32 *State_unk53_3();
-
-void State_ApplyThreeRects(void)
+void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
 {
-    s32 strip = 16;
+    s32 pos[3];
 
-    {
-        s32 fifth = 80;
-        s32 sixth = 50;
-
-        State_unk6_5(87, 50, 2, 4, fifth, sixth);
+    if (rec == 0) {
+        return;
     }
-    State_unk7_5(23, 52, 1, 2, strip, 52);
-    State_unk8_5(16, 52, 1, 1, strip, 53);
+    pos[0] = rec[2];
+    pos[1] = rec[3];
+    pos[2] = rec[4];
+    Func_02001bfc(v0, v1, pos);
+    Func_02001c38(rec, pos[0], pos[1], pos[2]);
 }
 
-void State_ConfigureRegion26_30AndClearActor18Mode(void)
-{
-    u8 *record = State_unk48_3(18);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
-    s32 a = 24;
-    s32 b = 34;
-
-    State_unk9_5(26, 30, 1, 1, a, b);
-
-    if (record != 0) {
-        /* The record is reloaded with the same selector before this store. */
-        State_unk49_3(18)[85] = 0;
-        record[35] = 1;
-    }
-
-    State_unk8_2(0x202);
-}
-
-void Actor_SetupSlotTwenty(void)
-{
-    u8 *rec = State_unk50_3(20);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
-    s32 fifth = 26;
-    s32 sixth = 34;
-
-    State_unk10_5(26, 30, 1, 1, fifth, sixth);
-
-    if (rec != 0) {
-        State_ApplyInteraction(rec, 0);
-        /* The rec is reloaded with the same selector before this store. */
-        State_unk51_3(20)[85] = 0;
-        rec[35] = 1;
-    }
-
-    State_unk9_2(0x204);
-}
-
-void Actor_InitSlots10To15AndStartTask(void)
+void SceneActor_InitSlots10To15AndStartTask(void)
 {
     s32 selector = 10;
     s32 remaining = 5;
@@ -481,8 +990,8 @@ void Actor_InitSlots10To15AndStartTask(void)
     do {
         s32 *record;
 
-        State_unk54_3(State_unk52_3(selector), 0);
-        record = State_unk55_3(selector);
+        Func_02001cf8(Func_02001d42(selector), 0);
+        record = Func_02001d4e(selector);
         record[17] = 0x1999;
         record[18] = 0;
         remaining--;
@@ -493,11 +1002,11 @@ void Actor_InitSlots10To15AndStartTask(void)
     {
         s32 rank = 0xc80;
 
-        State_unk56_2(0x02008aa1, rank);
+        Func_02001cb6(0x02008aa1, rank);
     }
 }
 
-void Actor_SetupActors11To14AndInstallTask(void)
+void SceneActor_SetupActors11To14AndInstallTask(void)
 {
     s32 no = 11;
     s32 i = 0;
@@ -505,12 +1014,12 @@ void Actor_SetupActors11To14AndInstallTask(void)
     do {
         s32 *rec;
 
-        State_unk57_2(State_unk53_3(no), 0);
-        rec = State_unk58_2(no);
+        Func_02001d40(Func_02001d8a(no), 0);
+        rec = Func_02001d96(no);
         rec[17] = 0x1999;
         rec[18] = 0;
         rec[3] = 0x00ff0000;
-        State_unk59(i + 11, 1);
+        Func_02001dc8(i + 11, 1);
         i++;
         no++;
     } while (i <= 3);
@@ -518,754 +1027,6 @@ void Actor_SetupActors11To14AndInstallTask(void)
     {
         s32 rate = 0xc80;
 
-        State_unk60(0x020089c1, rate);
-    }
-}
-
-/* overlays/scene/state/interaction/scene_state_interaction_tail.c */
-s32 State_IsStateAtMostOneB(u32 *state)
-{
-    return *state <= 1;
-}
-
-s32 State_IsStateAtMostOneBB(u32 *state)
-{
-    s32 ret = 0;
-
-    if (*state <= 1) {
-        ret = 1;
-    }
-    return ret;
-}
-
-/* overlays/scene/state/interaction/state_update_head.c */
-
-u8 *State_unk61(s32);
-
-u8 *State_unk62(s32);
-
-u8 *State_unk63(s32);
-
-u8 *State_unk64(s32);
-
-u8 *State_unk65(s32);
-
-u8 *State_unk66(s32);
-
-void State_ApplyFlag300(void)
-{
-    State_Apply2Interaction(0x300);
-}
-
-void State_SetFlag953(void)
-{
-    State_Apply2Interaction(0x953, 1);
-}
-
-void State_ApplyRectAndMarkActor16(void)
-{
-    u8 *rec = State_unk61(16);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
-    s32 fifth = 23;
-    s32 sixth = 32;
-
-    State_unk11_5(26, 30, 1, 1, fifth, sixth);
-
-    if (rec != 0) {
-        /* The rec is reloaded with the same selector before this store. */
-        State_unk62(16)[85] = 0;
-        rec[35] = 1;
-    }
-
-    State_unk11_2(0x200);
-}
-
-void State_ApplyRectAndSetupActor19(void)
-{
-    u8 *p = State_unk63(19);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
-    s32 a5 = 26;
-    s32 a6 = 32;
-
-    State_unk12_5(26, 30, 1, 1, a5, a6);
-
-    if (p != 0) {
-        State_Apply3(p, 0);
-        /* The record is reloaded with the same selector before this store. */
-        State_unk64(19)[85] = 0;
-        p[35] = 1;
-    }
-
-    State_unk12_2(0x203);
-}
-
-void Actor_MarkSlot21AndSetFlag205(void)
-{
-    u8 *record = State_unk65(21);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
-    s32 fifth = 28;
-    s32 sixth = 33;
-
-    State_unk13_5(26, 30, 1, 1, fifth, sixth);
-
-    if (record != 0) {
-        State_Apply4(record, 0);
-        /* The record is reloaded with the same selector before this store. */
-        State_unk66(21)[85] = 0;
-        record[35] = 1;
-    }
-
-    State_unk13_2(0x205);
-}
-
-/* overlays/scene/state/interaction/select_data_by_runtime_selector.c */
-#define PrimaryRuntimeSelector Value_00000060
-#define SecondaryRuntimeSelector Value_00000061
-#define TertiaryRuntimeSelector Value_00000062
-
-#include "select_overlay_data_by_runtime_selector.h"
-
-s32 SceneData_SelectDataByRuntimeSelector(void)
-{
-#include "select_overlay_data_by_runtime_selector_body.inc"
-}
-
-/* overlays/scene/state/interaction/scene_no_op.c */
-/* overlays/scene/state/interaction/no_op.c */
-/* Deliberate no-op callback. */
-void Scene_NoOp(void) {}
-
-/* overlays/scene/state/interaction/apply_three_rects_rows_9_and_10.c */
-void State_ApplyThreeRectsRows9And10(void)
-{
-    s32 strip = 17;
-
-    {
-        s32 p5 = 80;
-        s32 p6 = 9;
-
-        State_SetRectNoOp(90, 9, 2, 3, p5, p6);
-    }
-    State_unk2_5(27, 10, 1, 2, strip, 10);
-    State_unk3_5(17, 10, 1, 1, strip, 11);
-}
-
-/* overlays/scene/state/interaction/state_configure_region26_30_and_mark_actor17.c */
-extern u8 *State_RunAndMarkActor17(s32);
-
-extern u8 *State_unk2_4AndMarkActor17(s32);
-
-void State_ConfigureRegion26_30AndMarkActor17(void)
-{
-    u8 *rec = State_RunAndMarkActor17(17);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
-    s32 p5 = 23;
-    s32 p6 = 34;
-
-    State_SetRectAndMarkActor17(26, 30, 1, 1, p5, p6);
-
-    if (rec != 0) {
-        /* The record is reloaded with the same selector before this store. */
-        State_unk2_4AndMarkActor17(17)[85] = 0;
-        rec[35] = 1;
-    }
-
-    State_DoAndMarkActor17(0x201);
-}
-
-/* overlays/scene/state/interaction/state_dispatch_by_actor_zero_depth.c */
-/* overlays/scene/state/interaction/dispatch_by_actor_zero_depth.c */
-struct Actor {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-};
-
-extern struct Actor *FunctionHead_0200181a(s32);
-
-void State_DispatchByActorZeroDepth(void)
-{
-    struct Actor *p = FunctionHead_0200181a(0);
-
-    if (p->f0c >= 0x100000) {
-        State_unk2_4ActorZeroDepth();
-    } else {
-        State_unk3_4();
-    }
-}
-
-/* overlays/scene/state/interaction/set_entries_16_21_byte_35.c */
-
-void State_SetEntries16To21Byte35(void)
-{
-    s32 index = 16;
-    s32 flag = 1;
-    s32 remaining = 5;
-
-    do {
-        u8 *entry = FunctionHead_02001870(index);
-
-        remaining--;
-        entry[35] = flag;
-        index++;
-    } while (remaining >= 0);
-}
-
-/* overlays/scene/state/interaction/add_soft_float_parts.c */
-/* overlays/scene/state/interaction/add_parts.c */
-extern SoftFloatRecord *GetSoftFloatNaNRecord(void);
-
-SoftFloatRecord *AddSoftFloatParts(SoftFloatRecord *left,
-                                   SoftFloatRecord *right,
-                                   SoftFloatRecord *result)
-{
-}
-
-/* overlays/scene/state/interaction/add_soft_double.c */
-/*
- * Soft-float double addition for resource_3a7.  Both operands are unpacked into
- * records, added, and the result repacked.
- *
- * The frame is laid out in this order and no other: second operand, first
- * operand, result record, second record, first record.  A double is carried as
- * a high (sign and exponent) word followed by a low word, so the packed value
- * is a u64 whose low half is the high word, not a native double.  The record
- * layout beyond the sign word is not established here and is kept opaque.  The
- * two unpack calls reach one routine; each site keeps its own name.
- */
-typedef u64 SoftDouble;
-
-typedef struct SoftFloatRecord {
-    u32 word[5];
-} SoftFloatRecord;
-
-SoftFloatRecord *FunctionHead_02002530(SoftFloatRecord *left, SoftFloatRecord *right,
-                               SoftFloatRecord *result);
-
-SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
-{
-    struct {
-        SoftDouble packed_b;
-        SoftDouble packed_a;
-        SoftFloatRecord result;
-        SoftFloatRecord record_b;
-        SoftFloatRecord record_a;
-    } frame;
-    u32 *wa = (u32 *)&frame.packed_a;
-    volatile u32 *wb = (u32 *)&frame.packed_b;
-
-    wa[0] = a0;
-    wa[1] = a1;
-    wb[0] = b0;
-    wb[1] = b1;
-
-    FunctionHead_02002b34(&frame.packed_a, &frame.record_a);
-    FunctionHead_02002b3e(&frame.packed_b, &frame.record_b);
-
-    return FunctionHead_02002980(FunctionHead_02002530(&frame.record_a, &frame.record_b, &frame.result));
-}
-
-/* overlays/scene/state/interaction/subtract_soft_double.c */
-/*
- * Soft-float double subtraction for resource_3a7.  It shares the addition
- * core, reaching it with the second operand's sign toggled.
- *
- * The frame is laid out in this order and no other: second operand, first
- * operand, result record, second record, first record.  A double is carried as
- * a high (sign and exponent) word followed by a low word, so the packed value
- * is a u64 whose low half is the high word, not a native double.  The record
- * layout beyond the sign word is not established here and is kept opaque.  The
- * two unpack calls reach one routine; each site keeps its own name.
- */
-typedef u64 SoftDouble;
-
-typedef struct SoftFloatRecord {
-    u32 word[5];
-} SoftFloatRecord;
-
-SoftFloatRecord *FunctionHead_02002570(SoftFloatRecord *left, SoftFloatRecord *right,
-                               SoftFloatRecord *result);
-
-SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
-{
-    struct {
-        SoftDouble packed_b;
-        SoftDouble packed_a;
-        SoftFloatRecord result;
-        SoftFloatRecord record_b;
-        SoftFloatRecord record_a;
-    } frame;
-    u32 *wa = (u32 *)&frame.packed_a;
-    volatile u32 *wb = (u32 *)&frame.packed_b;
-
-    wa[0] = a0;
-    wa[1] = a1;
-    wb[0] = b0;
-    wb[1] = b1;
-
-    FunctionHead_02002b6c(&frame.packed_a, &frame.record_a);
-    {
-        SoftFloatRecord *rb = &frame.record_b;
-
-        FunctionHead_02002b76(&frame.packed_b, rb);
-
-        /*
-         * Toggling the sign word of the unpacked second operand is what turns
-         * the shared addition core into a subtraction, and is the only
-         * difference from the addition entry.
-         */
-        rb->word[1] ^= 1u;
-
-        return FunctionHead_020029c0(FunctionHead_02002570(&frame.record_a, rb, &frame.result));
-    }
-}
-
-/* overlays/scene/state/interaction/get_table_9888.c */
-extern u8 gOvSoftFloatParts[];
-
-u8 *SceneData_GetTable9888(void)
-{
-    return gOvSoftFloatParts;
-}
-
-/* overlays/scene/state/interaction/is_state_at_most_one.c */
-s32 State_IsStateAtMostOne(u32 *state)
-{
-    return *state <= 1;
-}
-
-/* overlays/scene/state/interaction/is_state_4.c */
-s32 State_IsState4(s32 *state)
-{
-    return *state == 4;
-}
-
-/* overlays/scene/state/interaction/is_state_two_c.c */
-s32 State_IsStateTwoC(s32 *state)
-{
-    return *state == 2;
-}
-
-/* overlays/scene/state/interaction/signed_int_to_soft_double.c */
-/*
- * Signed integer to soft-float conversion in resource_3a7: build the
- * library's unpacked record on the stack and hand it to the packer.
- */
-
-/*
- * The packed double is carried as a u64 whose low half is the r0 word,
- * because r0 holds the high word of the double here; a `double` would not
- * spell that.
- */
-typedef u64 SoftDouble;
-
-/*
- * The unpacked record is 20 bytes: class at +0 (2 = zero, 3 = finite),
- * sign at +4, exponent seed at +8, and the significand at +12 and +16.
- */
-typedef struct SoftFloatRecord {
-    u32 cls;
-    u32 sign;
-    s32 exponent;
-    u64 fraction;
-} SoftFloatRecord;
-
-/*
- * Zero takes class 2 straight to the pack call; 0x80000000 returns the
- * literal -2147483648.0 without packing. Otherwise normalisation loops on
- * an unsigned compare, so a significand already above the threshold is
- * left alone. The 124-byte owner includes its three pool words.
- */
-SoftDouble SignedIntToSoftDouble(s32 value)
-{
-    SoftFloatRecord record;
-    u32 sign;
-
-    record.cls = 3u;
-    sign = (u32)value >> 31;
-    record.sign = sign;
-
-    if (value == 0) {
-        record.cls = 2u;
-        goto pack;
-    }
-
-    record.exponent = 60;
-
-    if (sign != 0u) {
-        if ((u32)value == 0x80000000u) {
-            return (SoftDouble)0xC1E00000u;
-        }
-        record.fraction = (u64)(s64)(-value);
-    } else {
-        record.fraction = (u64)(s64)value;
-    }
-
-    while (record.fraction <= 0x0FFFFFFFFFFFFFFFu) {
-        record.fraction = record.fraction << 1;
-        record.exponent -= 1;
-    }
-
-pack:
-    return FunctionHead_02002a6a(&record);
-}
-
-/* overlays/scene/state/interaction/soft_double_to_signed_int.c */
-typedef u64 SoftDouble;
-
-typedef union FloUnion {
-    SoftDouble value;
-    struct {
-        u32 lo;
-        u32 hi;
-    } words;
-} FloUnion;
-
-typedef struct SoftFloatRecord {
-    u32 cls;
-    u32 sign;
-    s32 exp;
-    u64 fraction;
-} SoftFloatRecord;
-
-s32 Runtime_SoftDoubleToSignedInt(u32 high, u32 low)
-{
-    SoftFloatRecord rec;
-    volatile FloUnion u;
-    volatile FloUnion *p;
-    s32 exp;
-    u64 frac;
-
-    p = &u;
-    p->words.lo = high;
-    p->words.hi = low;
-    FunctionHead_02002c5a((FloUnion *)p, &rec);
-
-    if (FunctionHead_02002a54(&rec) != 0u) {
-        return 0;
-    }
-    if (State_unk2_2(&rec) != 0u) {
-        return 0;
-    }
-    if (State_unk3_2(&rec) == 0u) {
-        exp = rec.exp;
-        if (exp < 0) {
-            return 0;
-        }
-        if (exp <= 30) {
-            goto convert;
-        }
-    }
-    return 0x7fffffff + (s32)(rec.sign != 0u);
-
-convert:
-    frac = FunctionHead_02002aa6(rec.fraction, (u32)(60 - exp));
-    if (rec.sign != 0u) {
-        return -(s32)frac;
-    }
-    return (s32)frac;
-}
-
-/* overlays/scene/state/interaction/state_is_state_four.c */
-/* overlays/scene/state/interaction/is_state_four.c */
-s32 State_IsStateFour(s32 *state)
-{
-    s32 ret = 0;
-
-    if (*state == 4) {
-        ret = 1;
-    }
-    return ret;
-}
-
-/* overlays/scene/state/interaction/is_state_two.c */
-s32 State_IsStateTwo(s32 *state)
-{
-    return *state == 2;
-}
-
-/* overlays/scene/state/interaction/logical_shift_right_64.c */
-/*
- * resource_3a7 soft-float library: 64-bit logical right shift.  The overlay
- * carries its own copy of this library.
- */
-
-/*
- * r0/r1 hold the low and high words and r2 the count -- the ordinary pair
- * placement for an unsigned long long, so it is spelled that way here.  A
- * count of 32 or more takes the `32 - n <= 0' path with a shift distance of
- * zero, avoiding an undefined `>> 32'; counts of 64 and over are unmasked
- * here and undefined in the original too.  The else arm's statement order --
- * carry, shifted low, high, then the OR -- is load-bearing, as is zeroing the
- * high half first in the other arm.
- */
-typedef union {
-    u64 whole;
-    struct {
-        u32 lo;
-        u32 hi;
-    } parts;
-} SplitU64;
-u64 Runtime_LogicalShiftRight64(u64 value, u32 count)
-{
-    SplitU64 in;
-    SplitU64 out;
-    s32 spare;
-    u32 carry;
-    u32 shifted;
-
-    if (count == 0u) {
-        return value;
-    }
-    in.whole = value;
-    spare = 32 - (s32)count;
-    if (spare <= 0) {
-        spare = -spare;
-        out.parts.hi = 0u;
-        out.parts.lo = in.parts.hi >> spare;
-    } else {
-        carry = in.parts.hi << spare;
-        shifted = in.parts.lo >> count;
-        out.parts.hi = in.parts.hi >> count;
-        out.parts.lo = shifted | carry;
-    }
-    return out.whole;
-}
-
-/* overlays/scene/state/interaction/pack_soft_double.c */
-/*
- * Double-precision packer from the GCC soft-float runtime shape.  The overlay
- * copy uses the shared class predicates and 64-bit logical-right-shift helper.
- * Its packed-word order is reversed before return, matching the runtime's
- * FLOAT_WORD_ORDER_MISMATCH path and the independently observed callers.
- */
-typedef u64 SoftDouble;
-
-enum SoftFloatClass {
-    CLASS_SNAN,
-    CLASS_QNAN,
-    CLASS_ZERO,
-    CLASS_NUMBER,
-    CLASS_INFINITY
-};
-
-typedef struct SoftFloatRecord {
-    enum SoftFloatClass cls;
-    u32 sign;
-    s32 exponent;
-    union {
-        u64 ll;
-        u32 words[2];
-    } fraction;
-} SoftFloatRecord;
-
-typedef union SoftDoubleUnion {
-    SoftDouble value;
-    u64 raw;
-    u32 words[2];
-    struct {
-        u64 fraction : 52 __attribute__((packed));
-        u32 exponent : 11 __attribute__((packed));
-        u32 sign : 1 __attribute__((packed));
-    } bits;
-} SoftDoubleUnion;
-
-SoftDouble Runtime_PackSoftDouble(SoftFloatRecord *src)
-{
-    SoftDoubleUnion dst;
-    u64 fraction = src->fraction.ll;
-    s32 sign = (s32)src->sign;
-    s32 exp = 0;
-
-    if (State_Check(src)) {
-        exp = 0x7ff;
-        if (src->cls == CLASS_QNAN || 1) {
-            fraction |= 0x8000000000000ULL;
-        }
-    } else if (State_unk2(src)) {
-        exp = 0x7ff;
-        fraction = 0;
-    } else if (State_unk3(src)) {
-        exp = 0;
-        fraction = 0;
-    } else if (fraction == 0) {
-        exp = 0;
-    } else {
-        if (src->exponent < -1022) {
-            s32 shift = -1022 - src->exponent;
-
-            exp = 0;
-            if (shift > 56) {
-                fraction = 0;
-            } else {
-                s32 lowbit = (fraction & ((1 << shift) - 1)) ? 1 : 0;
-                fraction = State_ApplyIsStateFour(fraction, (u32)shift) | (u32)lowbit;
-            }
-            if ((fraction & 0xff) == 0x80) {
-                if (fraction & (1 << 8)) {
-                    fraction += 0x80;
-                }
-            } else {
-                fraction += 0x7f;
-            }
-            if (fraction >= (1ULL << 60)) {
-                exp += 1;
-            }
-            fraction >>= 8;
-        } else if (src->exponent > 1023) {
-            exp = 0x7ff;
-            fraction = 0;
-        } else {
-            exp = src->exponent + 1023;
-            if ((fraction & 0xff) == 0x80) {
-                if (fraction & (1 << 8)) {
-                    fraction += 0x80;
-                }
-            } else {
-                fraction += 0x7f;
-            }
-            if (fraction >= (1ULL << 61)) {
-                fraction >>= 1;
-                exp += 1;
-            }
-            fraction >>= 8;
-        }
-    }
-
-    dst.bits.fraction = fraction;
-    dst.bits.exponent = (u32)exp;
-    dst.bits.sign = (u32)sign;
-
-    {
-        u32 tmp = dst.words[0];
-        dst.words[0] = dst.words[1];
-        dst.words[1] = tmp;
-    }
-
-    return dst.value;
-}
-
-/* overlays/scene/state/interaction/state_is_state_four_direct.c */
-/* overlays/scene/state/interaction/is_state_four_direct.c */
-s32 State_IsStateFourDirect(s32 *state)
-{
-    return *state == 4;
-}
-
-/* overlays/scene/state/interaction/is_state_two_b.c */
-s32 State_IsStateTwoB(s32 *state)
-{
-    return *state == 2;
-}
-
-/* overlays/scene/state/interaction/unpack_soft_double.c */
-/*
- * Soft-float double unpack -- resource_3a7.  Splits a packed pair into the
- * class, sign, exponent and normalised significand record the rest of the
- * family works on.
- */
-typedef float DoubleType __attribute__((mode(DF)));
-typedef unsigned int HalfFractionType __attribute__((mode(SI)));
-typedef unsigned int FractionType __attribute__((mode(DI)));
-
-typedef enum FloatClass {
-    CLASS_SNAN,
-    CLASS_QNAN,
-    CLASS_ZERO,
-    CLASS_NUMBER,
-    CLASS_INFINITY
-} FloatClass;
-
-/*
- * Record layout: class (0 signalling NaN, 1 quiet NaN, 2 zero, 3 finite,
- * 4 infinity), sign taken from bit 31 of the high word, unbiased exponent,
- * then the significand normalised so that bit 28 of its high word is set.
- */
-typedef struct SoftFloatRecord {
-    FloatClass cls;
-    unsigned int sign;
-    int exponent;
-    union {
-        FractionType whole;
-        HalfFractionType halves[2];
-    } fraction;
-} SoftFloatRecord;
-
-/*
- * The packed value is a pair of words whose first word is the high word
- * carrying the sign and exponent, so it is copied into a local and read back
- * through the narrower bitfields below.
- */
-typedef union PackedDouble {
-    DoubleType value;
-    FractionType raw;
-    HalfFractionType words[2];
-    struct {
-        FractionType fraction : 52 __attribute__((packed));
-        unsigned int exponent : 11 __attribute__((packed));
-        unsigned int sign : 1 __attribute__((packed));
-    } bits;
-} PackedDouble;
-
-/*
- * The four cases are taken in this order: zero; a denormal, seeded to -1022
- * and normalised with an unsigned compare; exponent 0x7ff, which stores the
- * significand unshifted for both NaN classes; and the normal case, which
- * re-inserts the implicit leading bit.  One constant materialised in the
- * normal path is never used, so it is left unmodelled.
- */
-void Runtime_UnpackSoftDouble(PackedDouble *source, SoftFloatRecord *record)
-{
-    FractionType fraction;
-    int exponent;
-    int sign;
-    PackedDouble swapped;
-
-    swapped.words[0] = source->words[1];
-    swapped.words[1] = source->words[0];
-    source = &swapped;
-
-    fraction = source->bits.fraction;
-    exponent = source->bits.exponent;
-    sign = source->bits.sign;
-
-    record->sign = sign;
-    if (exponent == 0) {
-        if (fraction == 0) {
-            record->cls = CLASS_ZERO;
-        } else {
-            record->exponent = exponent - 1023 + 1;
-            fraction <<= 8;
-            record->cls = CLASS_NUMBER;
-            while (fraction < (((FractionType)1) << (52 + 8))) {
-                fraction <<= 1;
-                record->exponent--;
-            }
-            record->fraction.whole = fraction;
-        }
-    } else if (exponent == 0x7ff) {
-        if (fraction == 0) {
-            record->cls = CLASS_INFINITY;
-        } else {
-            if (fraction & 0x8000000000000LL) {
-                record->cls = CLASS_QNAN;
-            } else {
-                record->cls = CLASS_SNAN;
-            }
-            record->fraction.whole = fraction;
-        }
-    } else {
-        record->exponent = exponent - 1023;
-        record->cls = CLASS_NUMBER;
-        record->fraction.whole = (fraction << 8) | (((FractionType)1) << (52 + 8));
+        Func_02001d08(0x020089c1, rate);
     }
 }

@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_ArrangeFourActors:
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_ArrangeFourActors:
  * 47 calls, source-relative actor placement, three coordinate handoffs,
  * and the final scene positioning sequence. */
 
-#define Scene_ArrangeFourActors Func_02001a0c
+#define FieldScene_ArrangeFourActors Func_02001a0c
 
 void Func_0200642a();
 void *Func_02006432();

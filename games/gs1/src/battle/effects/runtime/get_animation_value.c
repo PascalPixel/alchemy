@@ -1,0 +1,13 @@
+#include "battle_effect_runtime.h"
+
+s32 BattleFx_GetAnimationValue(void)
+{
+    struct BattleRenderObject *object = ObjectTable_Get();
+
+    if (object->kind != 1 ||
+        object->animation == NULL ||
+        object->animation->value_28 == NULL) {
+        return 0;
+    }
+    return *object->animation->value_28;
+}

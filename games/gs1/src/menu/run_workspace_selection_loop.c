@@ -73,7 +73,7 @@ loop_6:
             do {
                 temp_r5_90 = ((void **)((u8 *)temp_sl_29 + 0x610))[i];
                 FIELD_AT_OFFSET(temp_r5_90, u8 *, 0xF) = 0xFB;
-                Menu_unk2_2(temp_r5_90);
+                UiIcon_PrepareObject(temp_r5_90);
                 temp_e = FIELD_AT_OFFSET(temp_r5_90, u8 *, 0xE);
                 var_r2_101 = 0;
                 if (i != FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574)) {

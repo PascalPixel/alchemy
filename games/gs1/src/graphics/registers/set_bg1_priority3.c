@@ -84,6 +84,6 @@ s32 Ui_CreateOutputFromResourceSlot(
     slot = Resource_FindFreeSlot();
     if (slot != 0x60) {
         Ui_Apply(resource, slot);
-        Ui_Run(slot, 0x40000000, input, arg1, arg2);
+        RenderOutput_Create(slot, 0x40000000, input, arg1, arg2);
     }
 }

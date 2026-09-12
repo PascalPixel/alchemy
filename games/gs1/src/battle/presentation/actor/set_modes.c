@@ -13,7 +13,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     volatile u16 *blend_y;
 
     if (mode == 0) {
-        Actor_Do(0x080c1085);
+        ScheduleCallback(0x080c1085);
         *(volatile u16 *)0x04000054 = mode;
         Actor_Run();
         WaitFrames(1);
@@ -53,6 +53,6 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         }
         WaitFrames(1);
         Actor_Apply(0x04000050, 0);
-        Actor_Apply4(0x080c1085, 0x480);
+        ScheduleCallbackAfterFrames(0x080c1085, 0x480);
     }
 }

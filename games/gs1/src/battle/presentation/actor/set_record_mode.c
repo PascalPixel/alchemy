@@ -23,11 +23,11 @@ struct EffectActorSlot {
     struct EffectActorObject *object;
 };
 
-struct EffectActorSlot *Actor_Run(s32);
+struct EffectActorSlot *Actor_GetObject(s32);
 
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 {
-    struct EffectActorSlot *slot = Actor_Run(actor_id);
+    struct EffectActorSlot *slot = Actor_GetObject(actor_id);
     struct EffectActorObject *object;
     struct EffectActorRecord *record;
     struct EffectActorRecord **records;

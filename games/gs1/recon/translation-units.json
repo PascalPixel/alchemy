@@ -159386,6 +159386,11 @@
           "address": "0x0800c598",
           "extent": 28,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0800c5b4",
+          "extent": 72,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -161209,6 +161214,11 @@
         {
           "address": "0x0801c17c",
           "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801c188",
+          "extent": 148,
           "state": "exact-c"
         }
       ],

@@ -26,7 +26,7 @@ void Ui_SetRenderResultFromObject(s32 arg0)
         FIELD(state, s16, RENDER_RESULT_OFS) = (value = 0);
         FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     } else {
-        ret = Ui_Check(ObjectTable_ReadActiveValue(arg0));
+        ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
         value = gRom[gCell[0x20C]];
         FIELD(state, s16, RENDER_RESULT_OFS) = ret;
         FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;

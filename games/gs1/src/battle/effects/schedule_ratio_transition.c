@@ -136,7 +136,7 @@ void BattleFx_SpawnLinked(
     struct BattleEffectResource *resource;
 
     if ((flags & 0xff) == 6) {
-        Battle_Do(110);
+        Audio_PlayCue(110);
     }
 
     resource = ObjectTable_Get(resource_id);
@@ -145,8 +145,8 @@ void BattleFx_SpawnLinked(
             Battle_Run(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
-            Battle_Apply(object, gRomLinkedObjectPosition);
-            Battle_Apply2(object, flags & 15);
+            ObjectDispatch_InitializeFar(object, gRomLinkedObjectPosition);
+            Object_SetMode(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;
             object->resource_id = resource_id;

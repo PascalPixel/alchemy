@@ -55,11 +55,11 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
     }
 
     work.primary_id = input->primary_id;
-    if (Battle_Check(work.primary_id) < 0)
+    if (BattleObject_IsValidId(work.primary_id) < 0)
         return -1;
 
     work.secondary_id = input->secondary_id;
-    if (Battle_Check(work.secondary_id) < 0)
+    if (BattleObject_IsValidId(work.secondary_id) < 0)
         return -1;
 
     Runtime_GetObject(work.primary_id);

@@ -31,9 +31,9 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
 {
     gCell.value10 = 0x30d40;
     gCell.value11c = 0x1c;
-    Battle_Apply(1, Battle_Apply2(1, 0x48d));
-    Battle_Apply(0, Battle_Apply2(0, 0x40b));
-    Battle_Apply2(2, 0xe7);
+    Battle_Apply(1, Inventory_AddForOwner(1, 0x48d));
+    Battle_Apply(0, Inventory_AddForOwner(0, 0x40b));
+    Inventory_AddForOwner(2, 0xe7);
     FIELD((void *)Runtime_GetObject(3), s8 *, 0x131) = 1;
     FIELD((void *)Runtime_GetObject(5), s8 *, 0x131) = 1;
     FIELD((void *)Runtime_GetObject(2), s8 *, 0x140) = 1;

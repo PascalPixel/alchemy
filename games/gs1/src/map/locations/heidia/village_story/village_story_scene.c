@@ -183,7 +183,7 @@ extern u8 Value_0000003a;
  * prototype for these calls; call sites vary in arity.
  */
 
-extern u8 *Map_unk262_2();
+extern u8 *Scene_GetRecord();
 
 extern u8 *Map_unk263_2();
 

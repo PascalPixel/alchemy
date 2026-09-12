@@ -24,8 +24,6 @@ void MusicTrack_ClearModulation(struct MusicTrackChannelState *channel)
 }
 
 /* audio/music/player/set_modulation_depth.c */
-void MusicTrack_ClearModulation(u8 *entry);
-
 void MusicPlayer_SetModulationDepth(u8 *player, s32 mask_arg, s32 value_arg)
 {
     register s32 mask = (u16)mask_arg;

@@ -75,14 +75,6 @@ void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
 }
 
 /* battle/effects/orbiting_particles/update_orbit_right.c */
-struct OrbitingParticleVector {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-
-
 void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
 {
     u8 *arg = (u8 *)particle;
@@ -143,12 +135,6 @@ void BattleFx_StartOrbitingParticles(void)
 }
 
 /* battle/effects/orbiting_particles/run.c */
-struct OrbitingParticleVector {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
 struct OrbitingParticle {
     u8 reserved_00[0x06];
     u16 rotation;

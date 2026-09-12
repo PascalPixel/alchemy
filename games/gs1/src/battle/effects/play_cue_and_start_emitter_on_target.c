@@ -193,13 +193,13 @@ s32 Object_CallSpawnRoutineAtOrigin(s32); void UiWork_FinalizePending(void);
  */
 
 void GameFlag_Set(s32); s32 BattleFx_SelectNearbyTargetObject(s32, s32); void BattleFx_ClearOutOfBoundsObjects(void);
-void Battle_unk14(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void initialize(void);
+void Battle_ApplyPackedAbilityEffect(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void initialize(void);
 /*
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
  */
 s32 BattleFx_RunEventAction(void *, s32, s32); void BattleFx_DispatchRequestKind(void); void BattleFx_Run(void);
-void stop_current_object(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleFx_CleanupSceneObjects(void); void Battle_unk23(void);
+void stop_current_object(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleFx_CleanupSceneObjects(void); void BattleFx_ClearAllObjects(void);
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
@@ -275,7 +275,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     } else GameFlag_Clear(0x141);
 
     if (runtime->battle_mode == 3) BattleFx_ClearOutOfBoundsObjects();
-    Battle_unk14(actionId, 0); runtime->resolving_action = 1;
+    Battle_ApplyPackedAbilityEffect(actionId, 0); runtime->resolving_action = 1;
     BattleFx_SetupObjectPair(gCell.object_id, targetId); initialize();
     BattleFx_RunEventAction(primary, actor, targetId);
     if (GameFlag_IsSet(0x140)) {
@@ -285,7 +285,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     if (GameFlag_IsSet(0x140)) BattleFx_ClearChildValueOnMismatch();
     GameFlag_Clear(0x140); GameFlag_Clear(0x141); runtime->resolving_action = 0;
     BattleFx_CleanupSceneObjects();
-    if (runtime->battle_mode == 3) Battle_unk23();
+    if (runtime->battle_mode == 3) BattleFx_ClearAllObjects();
     return 0;
 }
 

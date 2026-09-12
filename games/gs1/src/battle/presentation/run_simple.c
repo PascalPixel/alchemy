@@ -123,7 +123,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         WaitFrames(10);
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     } else {
-        Battle_unk2_2(&work);
+        BattleFx_DispatchByIdRange(&work);
         Battle_Run();
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     }

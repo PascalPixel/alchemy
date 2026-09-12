@@ -130,8 +130,8 @@ void ObjectGroup_ProbeKeysWhenField24High(void)
 void *Battle_Run(s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void *Battle_unk2_4(s32 *);
-void *Battle_unk3_4(s32 *);
+void *BattlePres_RunBeamScene(s32 *);
+void *BattlePres_RunRingAndSparkScene(s32 *);
 void *FunctionHead(s32 *);
 void BattleFx_DispatchByIdRange(s32 *arg0)
 {
@@ -150,10 +150,10 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
   } else
     if (no > 0xC7)
   {
-    Battle_unk3_4(arg0);
+    BattlePres_RunRingAndSparkScene(arg0);
   } else
   {
-    Battle_unk2_4(arg0);
+    BattlePres_RunBeamScene(arg0);
   }
   Battle_Run(0x28);
   Battle_Run(0x27);

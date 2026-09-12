@@ -116899,6 +116899,11 @@
           "address": "0x0800b7c0",
           "extent": 168,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0800b868",
+          "extent": 68,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -116919,6 +116924,11 @@
         {
           "address": "0x080219c8",
           "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08021a18",
+          "extent": 152,
           "state": "exact-c"
         }
       ],
@@ -127147,6 +127157,11 @@
           "address": "0x08077f70",
           "extent": 284,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0807808c",
+          "extent": 184,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -127448,6 +127463,11 @@
         {
           "address": "0x080bf4c4",
           "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf524",
+          "extent": 38,
           "state": "exact-c"
         }
       ],
@@ -156238,6 +156258,11 @@
         {
           "address": "0x080a8b8c",
           "extent": 160,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a8c2c",
+          "extent": 148,
           "state": "exact-c"
         }
       ],

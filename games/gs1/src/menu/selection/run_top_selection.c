@@ -74,8 +74,6 @@ loop:
 
 /* ui/window_open_mode1_and_wait_frame.c */
 /* ui/window/open_mode1_and_wait_frame.c */
-s32 WaitFrames(s32);
-
 void UiWindow_OpenMode1AndWaitFrame(void)
 {
     Ui_Do(1);
@@ -89,8 +87,6 @@ void UiWork_CloseAndRelease(void)
 }
 
 /* ui/runtime/misc/clear_work_state_and_wait_frame.c */
-s32 WaitFrames(s32);
-
 void Ui_ClearWorkStateAndWaitFrame(void)
 {
     Ui_Check();
@@ -121,7 +117,7 @@ u32 Menu_RunSelectionForValue(u32 value)
     state->value = value;
     state->active = 1;
     Menu_Do(value);
-    Menu_RunSelectionForValue();
+    Menu_SetupSelectionBothSides();
     Menu_Apply(0, 5);
     Resource_ScheduleOwnerResetDelayed();
     result = Menu_WaitForSelectionInput(1);
@@ -131,6 +127,7 @@ u32 Menu_RunSelectionForValue(u32 value)
 
 /* ui/timed_notice/timed_notice_tick.c */
 /* ui/timed_notice/tick.c */
+struct Work;
 s32 ScheduleCallback(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 void UiTimedNotice_Tick(void)
@@ -152,10 +149,6 @@ void UiTimedNotice_Tick(void)
 }
 
 /* ui/timed_notice/close_if_active.c */
-s32 ScheduleCallback(s32);
-void UiWork_Finalize(struct Work *work, s32 release);
-void UiTimedNotice_Tick(void);
-
 void UiTimedNotice_CloseIfActive(void)
 {
     void *work;

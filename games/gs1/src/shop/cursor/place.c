@@ -727,7 +727,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
         result = FunctionHead_080b1f4c(0, selection, effect);
         WaitFrames(1);
-        FunctionHead_080a1038(shop->cursor.anchor);
+        Shop_SelRepair(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);
     }
     return result;
@@ -761,7 +761,7 @@ extern u8 Value_00000cc2;
  * slot at a time, and hand a confirmed slot off to Sys_Apply before
  * showing the repair-result message.
  */
-s32 FunctionHead_080a1038(s32 unit_id)
+s32 Shop_SelRepair(s32 unit_id)
 {
     struct ShopRuntime *shop;
     s32 item_count;

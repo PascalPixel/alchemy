@@ -75,7 +75,7 @@ void Event_WaitForDisplayField358Clear(void)
 /* battle/effects/objects/copy_linked_object_position.c */
 s16 *FunctionHead_0808d394(s16);
 
-s32 FunctionHead_08185000(void *obj)
+s32 BattleFx_CopyLinkedObjectPosition(void *obj)
 {
     void *link;
 
@@ -83,7 +83,7 @@ s32 FunctionHead_08185000(void *obj)
     if (link != NULL) {
         FIELD_AT_OFFSET(obj, s8 *, 0x55) = 0;
         FIELD_AT_OFFSET(obj, s32 *, 8) = (s32)FIELD_AT_OFFSET(link, s32 *, 8);
-        FIELD_AT_OFFSET(obj, s32 *, 0xC) = (s32)(FIELD_AT_OFFSET(link, s32 *, 0xC) + (FIELD_AT_OFFSET(FunctionHead_08185000(*FunctionHead_0808d394(FIELD_AT_OFFSET(obj, s16 *, 0x66))), s8 *, 8) << 0x10) + 0x80000);
+        FIELD_AT_OFFSET(obj, s32 *, 0xC) = (s32)(FIELD_AT_OFFSET(link, s32 *, 0xC) + (FIELD_AT_OFFSET(BattleFx_CopyLinkedObjectPosition(*FunctionHead_0808d394(FIELD_AT_OFFSET(obj, s16 *, 0x66))), s8 *, 8) << 0x10) + 0x80000);
         FIELD_AT_OFFSET(obj, s32 *, 0x14) = (s32)FIELD_AT_OFFSET(link, s32 *, 0x14);
         FIELD_AT_OFFSET(obj, s32 *, 0x10) = (s32)FIELD_AT_OFFSET(link, s32 *, 0x10);
     }
@@ -149,7 +149,7 @@ void BattleFx_SpawnLinked(
             object->value_55 = 0;
             object->counter = 0;
             object->resource_id = resource_id;
-            object->callback = FunctionHead_0809376c;
+            object->callback = BattleFx_CopyLinkedObjectPosition;
             object->visual->value_26 = 0;
             object->resource = resource;
 
@@ -284,7 +284,6 @@ s32 Motion_TurnTowardLinkedTarget(void *object)
 }
 
 /* object/motion/act/set_action_callback.c */
-extern s16 gCell[];
 extern s32 Object_GetById(u32);
 extern void Object_SetCallback(void *, void *);
 extern const u8 gRomAndClearField59[];

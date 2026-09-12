@@ -44,7 +44,7 @@ void Map_ClearLayerEntryFlag(u32 no)
     *(u16 *)(entry + 0x22) = value;
 }
 
-void FunctionHead_080118c0(u32 no)
+void Map_Run(u32 no)
 {
     u8 *base = gCam;
     u8 *entry = base + no * 12;

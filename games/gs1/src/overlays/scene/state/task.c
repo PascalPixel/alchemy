@@ -1581,7 +1581,7 @@ extern s32 gOv12InitializeModeTask;   /* Handler for mode 3 with param zero. */
  * are typed as plain addresses.  The four stores that follow reset the rest of
  * the task's state block, three as halfwords and one as a word.
  */
-void FunctionHead_02002940(u32 mode, u32 param)
+void State_RunInitializeModeTask(u32 mode, u32 param)
 {
     s32 handler;
 
@@ -1774,7 +1774,7 @@ void Scene_RunLateSequence(s32 a0)
     FunctionHead_02006bfe();
 }
 
-void FunctionHead_02002ba8(s32 a0, s32 a1, s32 a2)
+void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
     s32 p10;
@@ -1881,7 +1881,7 @@ void FunctionHead_02002ba8(s32 a0, s32 a1, s32 a2)
     p9b = v5;
 }
 
-void FunctionHead_02002d84(s32 a0)
+void State_unk33_4InitializeModeTask(s32 a0)
 {
     u32 i;
     u8 *rec7;

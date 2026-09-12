@@ -59,12 +59,12 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
 
     ret = Sys_SetMode(flag, rt->value_cc2, rt->value_cc4, 0);
     if (ret != 0) {
-        Sys_Apply(id, 4);
+        Object_SetModeById(id, 4);
         Sys_Do(v);
         UiWork_FinalizePending();
         Sys_Apply2(id, 4);
     } else {
-        Sys_Apply(id, 3);
+        Object_SetModeById(id, 3);
         Sys_Do(v);
         UiWork_FinalizePending();
         Sys_Apply2(id, 3);

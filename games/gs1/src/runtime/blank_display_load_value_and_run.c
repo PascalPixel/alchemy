@@ -278,7 +278,7 @@ void Audio_Run(void)
         if ((((s16)gOv6 - (s16)gOv2) ^ delta) < 0) {
             gOv2 = gOv6;
         }
-        Audio_Place(gOv9, 255, gOv2);
+        MusicPlayer_SetVolume(gOv9, 255, gOv2);
     }
     if ((s16)gOv5 != (s16)gOv7) {
         delta = (s16)gOv5 - (s16)gOv7;
@@ -290,8 +290,8 @@ void Audio_Run(void)
         if ((((s16)gOv5 - (s16)gOv7) ^ delta) < 0) {
             gOv7 = gOv5;
         }
-        Audio_Apply(gOv9, gOv7);
-        Audio_unk2(gOv9, 255, (s16)((s16)gOv7 * 12 - 3072));
+        MusicPlayer_SetPitchAndUpdateFrequency(gOv9, gOv7);
+        MusicPlayer_SetPitch(gOv9, 255, (s16)((s16)gOv7 * 12 - 3072));
     }
     Audio_unk2_2();
 }

@@ -196,7 +196,7 @@ u8 *Battle_WaitMode0_88();
  *     0x898, its else arm bumps that counter again and sets flag 0x899.
  *
  * Both join arms share the tail at 0x02001cb4: Map_unk31_4(id, 0, 20) with
- * the id carried in r0, then Map_unk32_4(0x898).
+ * the id carried in r0, then GameFlag_Set(0x898).
  *
  * Midway the beat clears then sets bit 0 of byte +90 of record 16 around a
  * Map_unk33_4 reposition, plays sounds 158/159 with Map_unk34_4 text
@@ -787,11 +787,11 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_Run(16, 2);
     Map_unk4_2(20);
     Map_unk4_3(16, 192 << 9, 192 << 8);
-    rec = Record1(Map_unk79_4, 16);
+    rec = Record1(Scene_GetRecord, 16);
     rec[90] &= 0xfe;
     Map_unk5_3(16, 154 << 1, 136 << 1);
     Map_unk4_2(1);
-    rec = Record1(Map_unk79_4, 16);
+    rec = Record1(Scene_GetRecord, 16);
     {
         /*
          * A result temporary, not the compound or-assign the matching
@@ -952,13 +952,13 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_unk4_2(20);
     Map_unk8_3(19, 232 << 16, 168 << 16);
     Map_unk8_3(20, 232 << 16, 168 << 16);
-    rec = Record1(Map_unk79_4, 19);
+    rec = Record1(Scene_GetRecord, 19);
     *(s32 *)(rec + 12) = 0xc0000;
-    rec = Record1(Map_unk79_4, 19);
+    rec = Record1(Scene_GetRecord, 19);
     *(s32 *)(rec + 60) = -0x80000000;
-    rec = Record1(Map_unk79_4, 19);
+    rec = Record1(Scene_GetRecord, 19);
     *(s32 *)(rec + 24) = 0xcccc;
-    rec = Record1(Map_unk79_4, 19);
+    rec = Record1(Scene_GetRecord, 19);
     {
         u8 *target = *(u8 **)(rec + 80);
         s32 shown = 0x8000;

@@ -289,7 +289,7 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
             Ui_unk3(work, 44, 52, 1);
         }
     }
-    Ui_unk4((s32)gVal, work, 0, 64);
+    UiText_DrawAt((s32)gVal, work, 0, 64);
     UiText_DrawNumberAtOffsetFar(*(u16 *)(base + 64), 3, work, 16, 72);
     if (*(u16 *)(p + 64) != *(u16 *)(base + 64)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 64), 3, work, 64, 72);

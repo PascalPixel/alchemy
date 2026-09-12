@@ -64,7 +64,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
     for (i = 0; (u32)i <= 19; i++) {
         Battle_Run(gRom[i]);
-        Battle_unk3(gRom[i] + 1536);
+        GameFlag_Clear(gRom[i] + 1536);
     }
 
     for (i = 0; (u32)i <= 379; i++) {

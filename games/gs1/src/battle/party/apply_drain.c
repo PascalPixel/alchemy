@@ -143,7 +143,7 @@ struct Object {
 
 extern s32 gCell[];
 
-struct Object *Obj_Run(s32);
+struct Object *ObjectTable_Get(s32);
 
 s32 Object_GetTriggerTileAheadOfCurrent(void)
 {
@@ -158,14 +158,14 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
     s32 result;
 
     result = 0;
-    obj = Obj_Run(gCell[125]);
+    obj = ObjectTable_Get(gCell[125]);
     state = *(u8 **)0x03001ebc;
     map = *(u8 **)0x03001e70;
     if (obj != 0) {
         pos.x = obj->pos.x;
         pos.y = obj->pos.y;
         pos.z = obj->pos.z;
-        Obj_Place(0x100000, obj->angle, &pos);
+        RotateVectorByMagnitude(0x100000, obj->angle, &pos);
         if (*(s16 *)(state + 0x19e) == 3) {
             cell = (u8 *)0x02020000 + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
         } else {
@@ -395,7 +395,7 @@ run_descriptor:
     if (!special) {
         u8 *busy = &object->busy_5b;
         *busy = 1;
-        Battle_Apply2(object, 0);
+        Object_SetAction(object, 0);
         saved_value = object->value;
         shifted_mode = (u8)action->mode << 24;
         if (shifted_mode <= (1 << 24) || shifted_mode == (3 << 24)) {
@@ -409,7 +409,7 @@ run_descriptor:
             *(s32 *)((u8 *)linked + 36) = 0;
             *(s32 *)((u8 *)linked + 40) = 0;
             *(s32 *)((u8 *)linked + 44) = 0;
-            Battle_Place(id, *object_slot, 0);
+            Object_LinkPair(id, *object_slot, 0);
         }
     }
     if (descriptor->result < 0x10000) {
@@ -431,14 +431,14 @@ run_descriptor:
                     *(s32 *)((s16 *)&gCell + object_index);
                 object->linked_object = get_by_id(object_id);
                 object->flags_5a |= 1;
-                Battle_Apply3(object, (void *)0x0809ff40);
+                Motion_SetActionCallback(object, (void *)0x0809ff40);
             } else if (action->mode == 1) {
                 object->saved_value = saved_value;
-                Battle_Apply4(object, (void *)0x0809fc1c);
+                ObjectDispatch_InitializeFar(object, (void *)0x0809fc1c);
             }
         }
         object->busy_5b = 0;
-        Battle_Apply2(object, 16);
+        Object_SetAction(object, 16);
     }
     result = 0;
 finish:

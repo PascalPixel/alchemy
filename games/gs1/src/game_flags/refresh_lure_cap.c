@@ -3,6 +3,9 @@
 #include "game_flags.h"
 #include "types.h"
 #include "resource.h"
+#include "party_state.h"
+
+extern struct PartyState gCell;
 
 /* game_flags/refresh_lure_cap.c */
 void GameFlag_RefreshLureCap(void)

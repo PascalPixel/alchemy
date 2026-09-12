@@ -18,12 +18,11 @@ struct Work {
 };
 
 extern struct Work gCell;
-extern u8 gRom[];
 extern u8 gOv[];
 
 void BattleFx_LoadResourceGroup(void)
 {
-    u8 *table = gRom;
+    const u8 *table = gRom;
     s16 index = gCell.index;
     s16 value = *(s16 *)(table + index * 8);
     SceneData_Apply(value, gOv);

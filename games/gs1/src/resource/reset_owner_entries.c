@@ -15,7 +15,7 @@ extern u8 *gIw;
 
 void Resource_ScheduleOwnerReset(void);
 void UiWork_Finalize(struct Work *work, s32 release);
-void WaitFrames(u32 value);
+void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
 void Resource_ResetPendingTransfer(void);
 

@@ -27,11 +27,11 @@ struct Object_0808f0d8 {
     u8 field55;
 };
 
-extern struct State_0808f0d8 gCell;
+extern s32 gCell[];
 void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
 void WaitFrames(s32);
-void Object_SetMode(struct Entity_0808f0d8 *, s32);
-void Object_SetCallback(struct Object_0808f0d8 *, const void *);
+extern void Object_SetMode(struct Object_0808f28c *, s32);
+extern void Object_SetCallback(struct Object_0808f28c *, void *);
 extern const u8 gRom[];
 
 void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
@@ -55,17 +55,13 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
 /* effect_runtime/run_rising_object_sequence.c */
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Object_SetCallback(void *, s32);
-void WaitFrames(u32);
 void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object);
-void Object_SetMode(void *, s32);
 
 struct GlobalState {
     u8 padding_000[500];
     u32 selected_object;
 };
 
-extern struct GlobalState gCell;
 extern const u8 gRom[];
 extern u8 gRom2;
 
@@ -126,7 +122,6 @@ struct EffectObject_0808f1c0 {
     void (*callback)(void);
 };
 
-extern s32 gCell[];
 
 struct EffectObject_0808f1c0 *Battle_Run(s32 kind, s32 x, s32 y, s32 z);
 void *allocate_heap_block(s32 asset_id, s32 size);
@@ -200,8 +195,6 @@ struct Object_0808f28c {
 extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct Values_0808f28c *);
 extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
-extern void Object_SetCallback(struct Object_0808f28c *, void *);
-extern void Object_SetMode(struct Object_0808f28c *, s32);
 
 void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source)
 {

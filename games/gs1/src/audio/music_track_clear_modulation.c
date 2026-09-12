@@ -24,7 +24,7 @@ void MusicTrack_ClearModulation(struct MusicTrackChannelState *channel)
 }
 
 /* audio/music/player/set_modulation_depth.c */
-void MusicTrack_ClearModulation(void *);
+void MusicTrack_ClearModulation(u8 *entry);
 
 void MusicPlayer_SetModulationDepth(u8 *player, s32 mask_arg, s32 value_arg)
 {
@@ -58,7 +58,6 @@ void MusicPlayer_SetModulationDepth(u8 *player, s32 mask_arg, s32 value_arg)
 }
 
 /* audio/music/player/set_lfo_speed.c */
-void MusicTrack_ClearModulation(u8 *entry);
 
 void MusicPlayer_SetLfoSpeed(u8 *object, u32 selected, u32 value)
 {

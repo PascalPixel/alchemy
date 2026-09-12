@@ -279,10 +279,8 @@ s32 BattleFx_IsRevive(s32 effect_id)
 }
 
 /* battle/effects/calc/roll_success.c */
-s32 FixedPoint_Ratio(s32, s32);
-u8 *Owner_GetState(s32);
+struct OwnerTradeState *Owner_GetState(s32 owner);
 s32 Owner_GetResistanceValue(s32, s32);
-s32 BattleRandomPercent(void);
 
 s32 BattleFx_RollSuccess(
     s32 caster,
@@ -486,7 +484,6 @@ struct TradeOfferTable {
     s32 count;
 };
 
-struct OwnerTradeState *Owner_GetState(s32 owner);
 u8 *Trade_GetOfferState(s32 which);
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
@@ -554,7 +551,6 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 
 /* djinn/deactivate.c */
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
-void Owner_RefreshDerivedData(s32 owner);
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
@@ -584,7 +580,6 @@ struct TradeOfferTable {
     s32 count;
 };
 
-u8 *Trade_GetOfferState(s32 which);
 
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
 {
@@ -608,7 +603,6 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
 
 /* trade/add_offer.c */
 s32 Trade_RemoveOffer(s32 kind, s32 first, s32 second);
-s32 Trade_GetOfferState(s32 arg0);
 
 u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 {
@@ -636,12 +630,8 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 }
 
 /* djinn/transfer.c */
-u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
-s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit);
-s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
-u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
@@ -671,7 +661,6 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 }
 
 /* trade/count_pending_offers.c */
-u8 *Trade_GetOfferState(s32);
 
 s32 Trade_CountPendingOffers(u8 *counts)
 {

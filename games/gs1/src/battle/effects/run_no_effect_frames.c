@@ -82,7 +82,6 @@ void BattleFx_InitializeMode(s32 *arg0)
 /* battle/effects/runtime/misc/dispatch_mode.c */
 typedef void (*Callback)(s32 *);
 
-s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 
 extern Callback BattleFx_CallbackTable[];
 

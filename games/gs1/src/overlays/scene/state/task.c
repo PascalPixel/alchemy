@@ -134,8 +134,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 *gWork;
-extern s16 gCell[];
+extern u8 gWork[];
 
 u8 *State_unk22_4();
 
@@ -296,7 +295,6 @@ void RunPartyCountInteractionCopyA(s32 actorId)
 }
 
 /* overlays/scene/state/task/run_scene_middle_sequence.c */
-extern u8 gCell[];
 
 void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
@@ -479,10 +477,8 @@ void State_StartMarkerMove(u32 x, u32 y, u32 duration)
 }
 
 /* overlays/scene/state/task/scene_primary_script_head.c */
-extern u8 gCell[];
 extern u8 gOv10[];
 extern u8 gOv11[];
-extern u8 gWork[];
 
 void Scene_RunSupplementalSequenceOne(void)
 {
@@ -911,7 +907,6 @@ typedef struct Obj {
     u8 f54;
 } Obj;
 
-extern u8 *gWork;
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
 extern u8 Value_00002076;
@@ -1185,7 +1180,6 @@ typedef struct Position3 {
 } Position3;
 
 extern u32 gOv15[];
-extern s16 gCell[];
 
 SceneRecord *State_unk122(Position3 *, SceneRecord *);
 SceneRecord *State_unk123(Position3 *, SceneRecord *);
@@ -1316,11 +1310,9 @@ void StagedActor_PushActorAhead(void)
 
 /* overlays/scene/state/task/state_update.c */
 
-extern s16 gCell[];
 extern u8 Value_0000000a;
 extern volatile s32 gOv10;
 extern volatile s32 gOv11;
-extern s16 gOv;
 
 s32 *State_unk135(s32);
 
@@ -1476,8 +1468,6 @@ void Resource3bb_NoOpHandler(void)
 }
 
 /* overlays/scene/state/task/run_scene_scene_three_coordinator.c */
-extern u8 gCell[];
-extern u8 gWork[];
 extern s16 gCell2[][1];
 
 void Scene_RunSceneThreeCoordinator(s32 a0)
@@ -1536,12 +1526,6 @@ void Scene_RunSceneThreeCoordinator(s32 a0)
 }
 
 /* overlays/scene/state/task/initialize_state_interaction.c */
-extern s16 gCell[];
-extern u8 Value_0000008f;
-extern u8 Value_00000090;
-extern u8 Value_00002076;
-extern u8 Value_00002078;
-extern u8 Value_0000207a;
 
 void State_RunInitializeStateInteraction(s32 a, s32 b)
 {
@@ -1569,12 +1553,12 @@ void State_RunInitializeStateInteraction(s32 a, s32 b)
  * 144-byte owner includes its 15-word literal pool.
  */
 
-extern u16 gOvInitializeModeTask;
-extern u16 gOv2InitializeModeTask;
-extern u16 gOv3InitializeModeTask;
-extern s32 gOv4InitializeModeTask;
-extern u16 gOv5InitializeModeTask;
-extern u16 gOv6InitializeModeTask;
+extern struct ModeRecord gOvInitializeModeTask;
+extern struct ModeRecord gOv2InitializeModeTask;
+extern u8 gOv3InitializeModeTask[];
+extern u8 gOv4InitializeModeTask[];
+extern u8 gOv5InitializeModeTask[];
+extern u8 gOv6InitializeModeTask[];
 extern s32 gOv7InitializeModeTask;
 
 extern s32 gOv8InitializeModeTask;   /* Default handler. */
@@ -1742,14 +1726,6 @@ struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
-extern struct ModeRecord gOvInitializeModeTask;
-extern struct ModeRecord gOv2InitializeModeTask;
-extern u8 gCell[];
-extern u8 gOv3InitializeModeTask[];
-extern u8 gOv4InitializeModeTask[];
-extern u8 gOv5InitializeModeTask[];
-extern u8 gOv6InitializeModeTask[];
-extern u8 gWork[];
 extern u8 gCell2[][2];
 
 u8 *State_unk2_4();
@@ -2065,7 +2041,6 @@ extern Obj *State_Run(s16);
 #define SCENE_CALLBACK 0x0200cb9c
 #endif
 
-extern u8 gCell[];
 
 s32 State_RunPositionActiveActor();           /* veneer to GameFlag_IsSet */
 u8 *Scene_GetRecord();           /* veneer to Scene_GetRecord */

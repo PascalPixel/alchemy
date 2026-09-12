@@ -4,8 +4,8 @@
 #include "gs1_edition.h"
 
 /* ui/render/drain_pending.c */
-void UiWork_Finalize(void *work, s32 release);
-void WaitFrames(u32);
+extern void UiWork_Finalize(struct Work *work, s32 release);
+void WaitFrames(s32);
 
 extern u8 *gIw;
 
@@ -117,7 +117,6 @@ struct State_08019908 {
     u16 flags[8];
 };
 
-extern u8 *gIw;
 
 /* 上限値は式のまま保持し、探索中の評価順を変えない。 */
 #define SLOT_COUNT(seed) (((seed) | ~(seed)) + 9)
@@ -258,8 +257,6 @@ struct FinalizeWorkSlot {
     u8 padding04[0x24];
 };
 
-void UiWork_Finalize(void *work, s32 release);
-void WaitFrames(u32);
 
 void UiWork_FinalizePendingCore(void)
 {
@@ -344,8 +341,6 @@ s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y)
 }
 
 /* ui/runtime/misc/finalize_entity_matching_localized_id.c */
-extern s32 Localization_LookupEntryId();
-extern void UiWork_Finalize(struct Work *work, s32 release);
 
 void UiWork_FinalizeEntityMatchingLocalizedId(void)
 {
@@ -384,8 +379,8 @@ void UiWork_FinalizeEntityMatchingLocalizedId(void)
 }
 
 /* ui/icon/count_table_entries.c */
-extern u8 gRom[];
-extern u8 gRom2[];
+extern s32 gRom[];
+extern s32 gRom2[];
 
 /* 2つの境界アドレス間を4バイト単位で数える。 */
 s32 Ui_CountIconTableEntries(void)
@@ -394,8 +389,6 @@ s32 Ui_CountIconTableEntries(void)
 }
 
 /* ui/count_second_table_entries.c */
-extern u8 gRom[];
-extern u8 gRom2[];
 
 s32 Ui_CountSecondTableEntries(void)
 {
@@ -419,8 +412,6 @@ extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
 extern s32 Resource_FindFreeSlot(void);
 extern s32 Resource_CopyData(s32, s32, u8 *);
 
-extern s32 gRom[];
-extern s32 gRom2[];
 
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag)
 {

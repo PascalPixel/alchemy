@@ -5,7 +5,7 @@
 /* runtime/idle_forever.c */
 /* runtime/idle_forever.c */
 extern volatile u32 gIw;
-void WaitFrames(u32);
+void WaitFrames(s32);
 
 void Runtime_IdleForever(void)
 {

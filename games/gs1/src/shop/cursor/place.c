@@ -34,7 +34,7 @@ s32 Modulo(s32 value, s32 divisor);
 void UiWindow_Clear(s32 window);
 u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
-u8 *Sys_Run(s16 value, s32 window, s32 x, s32 y);
+struct BattleActorDefinition *Sys_Run(s32 actor_id);
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
@@ -98,7 +98,7 @@ void Shop_DrawStock(s32 window, s32 selected)
 }
 
 /* shop/draw/money.c */
-void UiText_DrawAt(s32, s32, s32, s32);
+void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 s32 UiNumber_DrawAt(s32, s32, s32, s32, s32);
 void Shop_DrawMoney(void)
 {
@@ -114,7 +114,6 @@ void Shop_DrawMoney(void)
 }
 
 /* shop/draw/msg.c */
-void UiText_DrawAt(s32, s32, s32, s32);
 
 void Shop_DrawMsg(s32 window, s32 message)
 {
@@ -127,7 +126,7 @@ void Shop_DrawMsg(s32 window, s32 message)
 /* shop/draw/party.c */
 void Object_InitializeMode(void *, s32);
 
-extern u8 *gIw;
+extern struct ShopMenuState_080b1868 *gIw;
 
 union ShopPartyMemberId {
     s32 word;
@@ -176,11 +175,8 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
 extern u8 Value_00000c90;
 extern u8 Value_00000c8f;
 
-void UiWindow_Clear(s32 window);
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
 void UiText_DrawQuantity(s32 kosuu, s32 style);
-void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
-u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
@@ -247,9 +243,8 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 
 extern u8 Value_00000ca0;
 
-extern s32 Item_FindSlot(s32, s32);
 
-extern s32 Ability_GetMaximum(s32, s32);
+s32 Ability_GetMaximum(s32 value, s32 enabled);
 
 s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 {
@@ -336,11 +331,9 @@ struct ShopMenuState_080b1868 {
     s32 value_20;
 };
 
-struct BattleActorDefinition *Sys_Run(s32 actor_id);
 
-void WaitFrames(s32 frames);
+void WaitFrames(s32);
 
-extern struct ShopMenuState_080b1868 *gIw;
 extern char Value_00000ca2;
 extern char Value_00000ca3;
 extern u8 Value_00000ad0[];
@@ -444,13 +437,10 @@ s32 Shop_SalePrice(s32 item_id)
 #define BASE_W 12
 #endif
 
-s32 Modulo(s32, s32);
-void WaitFrames(s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void UiWindow_Close(s32, s32);
-s32 Ability_GetAvailability(s32);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiWindow_Close(s32 window, s32 style);
+s32 Ability_GetAvailability(s32 unit_id);
 
-void Audio_PlayCue(s32);
 
 /*
  * Keep an actor-selection menu active while dispatching the chosen actor into
@@ -530,13 +520,7 @@ s32 Shop_PickUnit(void)
 }
 
 /* shop/sel/sell.c */
-s32 Modulo(s32, s32);
 s32 FixedPoint_Ratio(s32, s32);
-void WaitFrames(s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void UiWindow_Close(s32, s32);
-s32 Ability_GetAvailability(s32);
-void Audio_PlayCue(s32);
 void UiMessage_ShowAndWait(s32);
 
 extern u8 Value_00000075;
@@ -657,10 +641,7 @@ done:
 /* shop/draw/unit_grid.c */
 extern u8 Value_00000c91;
 
-void UiWindow_Clear(s32 window);
-s32 Ability_GetAvailability(s32 unit_id);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
-u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 {
@@ -713,7 +694,6 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 
 s32 Shop_GetSelectionState(s32, s32);
 
-void WaitFrames(u32);
 
 extern char Value_00000cad;
 
@@ -772,16 +752,7 @@ s32 Shop_SelUnit(void)
 }
 
 /* shop/sel/repair.c */
-s32 Modulo(s32, s32);
-s32 FixedPoint_Ratio(s32, s32);
-void WaitFrames(s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void UiWindow_Close(s32, s32);
-s32 Ability_GetAvailability(s32);
-void Audio_PlayCue(s32);
-void UiMessage_ShowAndWait(s32);
 
-extern u8 Value_00000075;
 extern u8 Value_00000cc2;
 
 /*
@@ -907,7 +878,6 @@ extern s16 gRom[][33];
 
 s32 GameFlag_IsSet(s32 flag_no);
 void GameFlag_Set(s32 flag_no);
-s32 Ability_GetMaximum(s32 value, s32 enabled);
 
 void EventTable_ApplyRowAbilities(s32 row_no)
 {
@@ -955,7 +925,7 @@ s32 EventTable_GetRowType(s32 index)
 /* shop/service_price_2.c */
 /* shop/service_price.c */
 /* shop/price/service.c */
-u8 *Runtime_GetObject(void);
+u8 *Runtime_GetObject(s32);
 
 s32 Shop_ServicePrice(s32 unused, s32 kind)
 {
@@ -975,7 +945,6 @@ s32 Shop_ServicePrice(s32 unused, s32 kind)
 }
 
 /* shop/unit/can_serve.c */
-u8 *Runtime_GetObject(s32);
 
 s32 Shop_CanServe(s32 entry_no, s32 kind)
 {
@@ -992,7 +961,6 @@ s32 Shop_CanServe(s32 entry_no, s32 kind)
 }
 
 /* shop/unit/count.c */
-extern u8 *gIw;
 
 s32 Shop_CountUnits(void)
 {
@@ -1023,7 +991,6 @@ struct Work_080b2884 {
     s8 mode;
 };
 
-extern struct Work_080b2884 *gIw;
 extern u8 Value_00000d24;
 extern u8 Value_00000d2e;
 extern u8 Value_00000d38;
@@ -1056,9 +1023,7 @@ void UiWork_FinalizePending(void);
 
 void UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-void WaitFrames(u32);
 
-extern struct Work_080b28d4 *gIw;
 
 void UiMessage_ShowResolvedAndWait(s32 value)
 {
@@ -1075,13 +1040,8 @@ void UiMessage_ShowResolvedAndWait(s32 value)
 }
 
 /* ui/message/show_resolved_and_restore_state.c */
-void UiWork_FinalizePending(void);
 
-void UiWork_Create(s32, s32, s32, s32);
-s32 UiWork_IsCompleteFar(void);
-void WaitFrames(u32);
 
-extern void *gIw;
 
 struct State080b2928 {
     u8 padding0[0x380];
@@ -1112,7 +1072,6 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
 }
 
 /* shop/sel/confirm.c */
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 struct ShopCursorAnchor *UiIcon_DrawWithFlags(
     u32 resource,
@@ -1121,7 +1080,6 @@ struct ShopCursorAnchor *UiIcon_DrawWithFlags(
     s32 x,
     s32 y);
 
-void UiWindow_Close(s32 window, s32 style);
 
 /* Run the shop's yes/no party-action confirmation prompt for one unit. */
 s32 Shop_ConfirmAct(s32 unit_id)

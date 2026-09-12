@@ -39,7 +39,6 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
 /* graphics/palette/adjust_selection_counter.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 gCell[];
 
 void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
 {

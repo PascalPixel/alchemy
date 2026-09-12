@@ -10,7 +10,7 @@ struct Fields_0808b248 {
     s16 value;
 };
 
-extern struct Fields_0808b248 gCell;
+extern s16 gCell[];
 
 s16 Event_GetSpecialValue(void)
 {
@@ -20,7 +20,6 @@ s16 Event_GetSpecialValue(void)
 
 /* battle/effects/fx_set_special_from_table.c */
 /* battle/effects/set/set_special_from_table.c */
-extern s16 gCell[];
 extern s32 gRom[];
 
 void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1)
@@ -42,7 +41,6 @@ void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1)
 }
 
 /* battle/effects/data/select_result_pointer.c */
-extern u16 gCell[];
 extern u8 Value_00000038;
 extern u8 Value_0000003a;
 extern u8 Value_0000003c;

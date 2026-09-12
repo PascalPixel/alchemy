@@ -14,7 +14,7 @@
 /* menu/character_menu/build_availability.c */
 /* character_menu/build_availability.c */
 /* character_menu/build_availability.c */
-u8 *Runtime_GetObject(s32);
+u8 *Runtime_GetObject(s32 owner);
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
@@ -62,8 +62,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 #define GROUP_LEN 5
 #endif
 
-extern u8 *gIw;
-s32 Runtime_GetObject(s32);
+extern u8 gIw[];
 s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
 
@@ -207,7 +206,6 @@ void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void PsynergyMenu_DrawRange(s32, s32, s32, s32, s32);
-u8 *Runtime_GetObject(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 
 s32 PsynergyMenu_DrawListPage(
@@ -299,7 +297,6 @@ void PsynergyMenu_PreparedIconsNoOp(void)
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 gVal[];
 extern u8 gVal2[];
-extern u8 gIw[];
 
 s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
 {
@@ -448,7 +445,7 @@ extern u8 Value_00000b24;
 
 extern void UiText_DrawAt(void *, s32, s32, s32);
 
-extern void WaitFrames(s32);
+void WaitFrames(s32);
 
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
@@ -494,8 +491,6 @@ void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
 }
 
 /* menu/entry/place_entry_object_in_grid.c */
-s32 FixedPoint_Ratio(s32, s32);
-s32 Modulo(s32, s32);
 
 void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {
@@ -530,7 +525,6 @@ LAYOUT_OFFSET_GUARD(
     State_080a9cbc_objects_offset, struct State_080a9cbc, objects, 72);
 LAYOUT_SIZE_GUARD(State_080a9cbc_size, struct State_080a9cbc, 200);
 
-extern struct State_080a9cbc *gIw;
 
 void ItemMenu_PosCategory(void)
 {
@@ -596,7 +590,6 @@ LAYOUT_OFFSET_GUARD(
     State_080a9d84_objects_offset, struct State_080a9d84, objects, 200);
 LAYOUT_SIZE_GUARD(State_080a9d84_size, struct State_080a9d84, 328);
 
-extern struct State_080a9d84 *gIw;
 
 void ItemMenu_ResetCategory(void)
 {
@@ -626,7 +619,6 @@ struct State_080a9dc4 {
     struct Entry_080a9dc4 *entries[5];
 };
 
-extern struct State_080a9dc4 *gIw;
 
 s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
 {
@@ -683,9 +675,7 @@ struct ItemUseWork {
     u8 entry_count;
 };
 
-extern struct ItemUseWork *gIw;
 
-struct ItemOwner *Runtime_GetObject(s32);
 struct ItemData *Item_GetData(s32);
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)

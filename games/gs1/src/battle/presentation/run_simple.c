@@ -49,9 +49,9 @@ extern s32 *gIw;
 
 struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
-void WaitFrames(s32 frames);
+void WaitFrames(s32);
 
-void Runtime_GetObject(s32 id);
+void *Runtime_GetObject(s32 id);
 struct MotionRecord *GetMotionRecord(
     struct PresentationObject *object, s32 entry_index);
 
@@ -143,12 +143,9 @@ struct Runtime_080babdc {
 
 extern struct Runtime_080babdc *gBattleWork;
 
-void *Runtime_GetObject(s32 id);
-struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
 void Object_SetMode(void *object, s32 mode);
 
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
-void WaitFrames(s32 frames);
 
 void BattleMotion_RunValueSequence(s32 id)
 {
@@ -181,11 +178,8 @@ void BattleMotion_RunValueSequence(s32 id)
 }
 
 /* battle/motion/initialize_actor_records.c */
-u8 *Runtime_GetObject(s32);
-s32 *GetBattleObjectSlot(s32);
 u8 *GetMotionRecord(s32, s32);
 void Object_InitializeMode(void *, s32);
-void WaitFrames(s32);
 
 void ActivateBattleObjectSlot(s32);
 

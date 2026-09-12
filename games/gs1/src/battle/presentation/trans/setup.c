@@ -82,7 +82,7 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
 
 /* graphics/blend/fade_alpha_out.c */
 /* graphics/blend/fade_alpha_out.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 void Graphics_FadeAlphaOut(void)
 {
   s32 alpha_step;
@@ -106,7 +106,6 @@ void Graphics_FadeAlphaOut(void)
 }
 
 /* graphics/blend/fade_alpha_in.c */
-s32 WaitFrames(s32);
 void Graphics_FadeAlphaIn(void)
 {
   unsigned long apply_step;

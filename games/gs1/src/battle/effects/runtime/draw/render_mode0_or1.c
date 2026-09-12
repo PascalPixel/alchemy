@@ -16,7 +16,6 @@ void BattleFx_RenderMode0Or1(void *effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_1.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode1(s32 effect)
 {
@@ -24,7 +23,6 @@ void BattleFx_RenderMode1(s32 effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_2.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode2(s32 effect)
 {
@@ -32,7 +30,6 @@ void BattleFx_RenderMode2(s32 effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_3.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode3(s32 effect)
 {
@@ -40,7 +37,6 @@ void BattleFx_RenderMode3(s32 effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_4.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode4(s32 effect)
 {
@@ -48,7 +44,6 @@ void BattleFx_RenderMode4(s32 effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_5.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode5(s32 effect)
 {
@@ -56,7 +51,6 @@ void BattleFx_RenderMode5(s32 effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_7.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode7(s32 effect)
 {
@@ -64,7 +58,6 @@ void BattleFx_RenderMode7(s32 effect)
 }
 
 /* battle/effects/runtime/draw/render_mode_6.c */
-s32 BattleFx_RenderMode(s32, s32);
 
 void BattleFx_RenderMode6(s32 effect)
 {

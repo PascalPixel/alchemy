@@ -172,7 +172,7 @@ extern struct MenuObjectControl *gIwOpenConfirmPrompt;
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
-void WaitFrames(s32 frames);
+void WaitFrames(s32);
 
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 

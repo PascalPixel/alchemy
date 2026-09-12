@@ -31,7 +31,6 @@ s16 FixedPoint_ScaleByRatio(s16 arg0, s16 arg1)
 }
 
 /* math/reciprocal_fixed.c */
-s32 FixedPoint_Ratio(s32, s16);
 
 s16 FixedPoint_Reciprocal(s16 arg0)
 {

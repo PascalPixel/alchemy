@@ -39,7 +39,7 @@ void Actor_SetActorZeroByte35Bit0(void)
 }
 
 /* overlays/scene/actor/staged_group/actor_search.c */
-extern u8 *gWork;
+extern u8 gWork[];
 
 s32 *Actor_FindAtTileXZ(s32 x, s32 z)
 {
@@ -1032,12 +1032,6 @@ void Effect_UpdateMotionWithDamping(struct Obj *p)
 
 /* overlays/scene/actor/staged_group/scene_primary_script.c */
 
-extern u8 Value_00000063;
-extern u8 Value_00000066;
-extern u8 Value_00000099;
-extern u8 Value_0000009b;
-extern u8 Value_0000009c;
-extern u8 gWork[];
 extern s16 gCell2[][1];
 extern volatile s32 gOv23[];
 
@@ -1726,11 +1720,9 @@ struct SceneWork {
     u16 step;
 };
 
-extern struct SceneWork *gWork;
 extern const u8 gOv24[];
 extern const u8 gOv25[];
 
-u8 *Actor_unk21_4();
 
 u8 *Actor_unk167_2();
 
@@ -2035,7 +2027,6 @@ typedef struct Effect {
     s8 state23;
 } Effect;
 
-extern u8 *gWork;
 
 struct Obj *Actor_unk173_2(s32);
 
@@ -2133,7 +2124,6 @@ void Scene_DrawTilesAndRaiseActor11(void)
 }
 
 /* overlays/scene/actor/staged_group/scene_state_interaction.c */
-extern u8 gWork[];
 
 void State_LinkRecordZeroWhenFlag200Clear(void)
 {
@@ -2156,7 +2146,6 @@ struct Obj {
     u16 f06;
 };
 
-extern s16 gCell[];
 
 struct Obj *Actor_unk196_2(s32);
 

@@ -73,8 +73,6 @@ void Map_RenderAnimatedTileFramesForObject(u8 *object)
 /* map/shared/render_all_animated_tile_frames.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Map_RenderAnimatedTileFrame(u8 *object, u32 pos);
-void WaitFrames(u32);
 
 void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
 {

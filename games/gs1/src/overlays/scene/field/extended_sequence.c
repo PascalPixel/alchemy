@@ -519,7 +519,6 @@ extern s32 gOv15;
 extern s32 gOv16;
 extern s32 gOv17;
 extern s32 gOv18;
-extern s32 gOv12;
 extern u8 gOv19[];
 extern u8 gOv20[];
 extern u8 gOv21[];

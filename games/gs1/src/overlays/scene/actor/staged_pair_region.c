@@ -134,7 +134,7 @@ void *OvObj_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 }
 
 /* overlays/scene/actor/staged_pair_region/scene_audio.c */
-extern u8 *gWork;
+extern u8 gWork[];
 
 /*
  * resource_3a6 owner at 0x02001748, complete 40-byte span through its one-word
@@ -206,8 +206,6 @@ s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 }
 
 /* overlays/scene/actor/staged_pair_region/scene_primary_script.c */
-extern u8 gWork[];
-extern u8 RuntimeSelectorTable[];
 
 /*
  * Camera-shift beat for overlay resource_3a6.  Each Func_ name spells the
@@ -481,7 +479,6 @@ typedef struct Obj {
 
 extern s32 gOv[];
 extern s32 Actor_Far[];
-extern s32 RuntimeSelectorTable[];
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);

@@ -12,7 +12,7 @@ extern s16 gOv;
 extern u8 gOv2[];
 extern u8 *gIw;
 
-void WaitFrames(s32 frames);
+void WaitFrames(s32);
 
 s32 Save_WriteSelectedSlot(void)
 {
@@ -80,9 +80,7 @@ struct State_080208e4 {
 extern char Value_0000000a;
 extern char Value_0000000c;
 extern char gOv;
-extern s16 gOv2;
 extern volatile struct State_080208e4 gCell;
-extern s32 gIw;
 extern volatile u8 gIw2;
 extern s16 gIw3;
 

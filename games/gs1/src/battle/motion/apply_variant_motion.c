@@ -4,7 +4,7 @@
 #include "battle_motion.h"
 
 /* battle/motion/apply_variant_motion.c */
-struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
+void **GetBattleObjectSlot();
 u8 *Runtime_GetObject(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
@@ -50,11 +50,6 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 }
 
 /* battle/motion/approach_target.c */
-struct BattleObjectSlot *GetBattleObjectSlot(s32);
-s32 FixedPoint_Ratio(s32, s32);
-void Object_ResetMotion(struct MotionObject *);
-void Object_SetPosition(struct MotionObject *, s32, s32, s32);
-void Object_SetMode(struct MotionObject *, s32);
 
 void BattleMotion_ApproachTarget(
     s32 actor_id,
@@ -97,9 +92,6 @@ void BattleMotion_ApproachTarget(
 }
 
 /* battle/motion/reset_slot_object_mode2.c */
-void Object_SetMode(s32, s32);
-void Object_ResetMotion(s32);
-s32 *GetBattleObjectSlot();
 
 void BattleMotion_ResetSlotObjectMode2(void)
 {
@@ -116,7 +108,6 @@ void BattleMotion_ReservedNoOp83B0(void)
 }
 
 /* battle/motion/apply_pair_midpoint.c */
-struct BattleObjectSlot *GetBattleObjectSlot(s32);
 void BattleMotion_ReservedNoOp83B0(void *, s32);
 
 void BattleMotion_ApplyPairMidpoint(s32 arg0, s32 arg1)
@@ -163,10 +154,9 @@ void BattleMotion_ApplyPairMidpoint(s32 arg0, s32 arg1)
 }
 
 /* battle/motion/spawn_slot_effect_and_wait.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 void *Battle_Run(s32, s32);
 
-void **GetBattleObjectSlot();
 
 void BattleMotion_SpawnSlotEffectAndWait(void)
 {

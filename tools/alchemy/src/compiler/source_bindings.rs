@@ -98,13 +98,13 @@ pub fn production_bindings(
     register_text: &str,
     source: Option<&Path>,
 ) -> Result<String, String> {
-    let reserved = define_names(register_text);
+    let mut reserved = define_names(register_text);
     let mut text = String::new();
     let manifest = load_gs1()?;
     if !manifest.common.is_empty() {
         text.push_str(&filter_reserved_defines(
             &expand_binding_text(&manifest.common),
-            &reserved,
+            &mut reserved,
         ));
         if !text.ends_with('\n') {
             text.push('\n');
@@ -115,7 +115,7 @@ pub fn production_bindings(
             if let Some(file) = manifest.files.get(&key) {
                 text.push_str(&filter_reserved_defines(
                     &expand_binding_text(file),
-                    &reserved,
+                    &mut reserved,
                 ));
                 if !text.ends_with('\n') {
                     text.push('\n');
@@ -150,17 +150,14 @@ fn define_names(text: &str) -> HashSet<String> {
     names
 }
 
-fn filter_reserved_defines(text: &str, reserved: &HashSet<String>) -> String {
-    if reserved.is_empty() {
-        return text.to_string();
-    }
+fn filter_reserved_defines(text: &str, reserved: &mut HashSet<String>) -> String {
     let mut out = String::with_capacity(text.len());
     for line in text.lines() {
         let trimmed = line.trim_start();
         if let Some(rest) = trimmed.strip_prefix("#define ") {
             if let Some(name) = rest.split_whitespace().next() {
                 let name = name.split('(').next().unwrap_or(name);
-                if reserved.contains(name) {
+                if !reserved.insert(name.to_string()) {
                     continue;
                 }
             }
@@ -219,7 +216,8 @@ fn rewrite_extern_data_types(line: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{define_only_bindings, expand_binding_text};
+    use super::{define_only_bindings, expand_binding_text, filter_reserved_defines};
+    use std::collections::HashSet;
 
     #[test]
     fn expands_compact_func_and_data_tokens() {
@@ -244,6 +242,16 @@ mod tests {
         assert_eq!(
             define_only_bindings(text),
             "extern unsigned char Data_03001e70_a[];\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n"
+        );
+    }
+
+    #[test]
+    fn first_define_wins_for_recovered_aliases() {
+        let mut reserved = HashSet::new();
+        let text = "#define gRom Data_08028195\n#define gRom Data_0803740f\n#define gVal Data_0000001f\n#define gVal Data_00000024\n";
+        assert_eq!(
+            filter_reserved_defines(text, &mut reserved),
+            "#define gRom Data_08028195\n#define gVal Data_0000001f\n"
         );
     }
 }

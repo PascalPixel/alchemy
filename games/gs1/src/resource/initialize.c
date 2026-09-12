@@ -86,8 +86,6 @@ s32 Resource_LoadIntoFreeSlot(s32 arg0)
 }
 
 /* resource/table/get_buffer.c */
-extern u16 ResourceTableEntries[];
-s32 Resource_CopyData(s32, u16, s32);
 
 s32 Resource_GetBuffer(s32 resource_index, s32 copy_value)
 {

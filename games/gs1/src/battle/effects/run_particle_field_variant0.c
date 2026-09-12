@@ -13,7 +13,6 @@ void BattleFx_RunParticleFieldVariant0(s32 effect)
 }
 
 /* battle/effects/particle_field/variant_1.c */
-s32 BattleFx_RunParticleFieldVariant(s32, s32);
 
 void BattleFx_RunParticleFieldVariant1(s32 effect)
 {
@@ -21,7 +20,6 @@ void BattleFx_RunParticleFieldVariant1(s32 effect)
 }
 
 /* battle/effects/particle_field/variant_2.c */
-s32 BattleFx_RunParticleFieldVariant(s32, s32);
 
 void BattleFx_RunParticleFieldVariant2(s32 effect)
 {
@@ -29,7 +27,6 @@ void BattleFx_RunParticleFieldVariant2(s32 effect)
 }
 
 /* battle/effects/particle_field/variant_3.c */
-s32 BattleFx_RunParticleFieldVariant(s32, s32);
 
 void BattleFx_RunParticleFieldVariant3(s32 effect)
 {

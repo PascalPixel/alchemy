@@ -5,8 +5,8 @@
 
 /* audio/init/initialize_runtime_defaults.c */
 void Audio_Initialize(void);
-extern u8 gOv;
-extern u8 gOv2;
+extern u8 gOv[];
+extern u16 gOv2;
 extern u16 gOv3;
 extern u16 gOv4;
 extern u16 gOv5;
@@ -70,8 +70,6 @@ void MusicCommand_SetPitch(s16 pitch)
 }
 
 /* audio/mix/set_work_pair_b.c */
-extern u16 gOv;
-extern u16 gOv2;
 
 void Audio_SetWorkPairB(u16 primary, u16 secondary)
 {
@@ -100,8 +98,6 @@ void MusicCommand_SetVolume(s16 volume)
 }
 
 /* audio/mix/set_work_pair_a.c */
-extern u16 gOv;
-extern u16 gOv2;
 
 void Audio_SetWorkPairA(u16 primary, u16 secondary)
 {
@@ -129,7 +125,6 @@ void AudioCommand_ResumeAllPlayers(void)
 }
 
 /* audio/command/update_toggle_mask.c */
-extern u8 gOv[];
 
 void AudioCommand_UpdateToggleMask(u32 command)
 {
@@ -150,7 +145,7 @@ u8 AudioCommand_GetSecondaryStateByte(void)
 }
 
 /* audio/command/wait_for_completion.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void AudioCommand_WaitForCompletion(void)
 {

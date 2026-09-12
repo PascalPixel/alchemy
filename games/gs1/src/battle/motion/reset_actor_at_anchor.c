@@ -4,7 +4,7 @@
 #include "motion_object.h"
 
 /* battle/motion/reset_actor_at_anchor.c */
-struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 s32 ArcTan2(s32, s32);
@@ -34,9 +34,6 @@ void Actor_ResetMotionAtAnchor(s32 slot_id)
 
 /* battle/motion/setup_escape_object.c */
 void Object_SetMode(void *, s32);
-void Object_ResetMotion(void *);
-void Object_SetPosition(void *, s32, s32, s32);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
 {
@@ -62,8 +59,6 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
 extern s8 gIw;
 
 s32 FixedPoint_Ratio(s32, s32);
-void Object_SetPosition(void *, s32, s32, s32);
-void Object_SetMode(s32, s32);
 
 void BattleMotion_InterpolatePosition(void **start_slot, void **end_slot, s32 progress)
 {
@@ -112,7 +107,6 @@ struct Wrapper_080b8144 {
     u32 fourth;
 };
 
-void Object_SetPosition(struct Target_080b8144 *, u32, u32, u32);
 
 void BattleMotion_SetObjectPosition(struct Wrapper_080b8144 *slot)
 {
@@ -127,9 +121,6 @@ void BattleMotion_SetObjectPosition(struct Wrapper_080b8144 *slot)
 }
 
 /* battle/motion/reset_object_at_scaled_anchor.c */
-void Object_ResetMotion(void *);
-void Object_SetPosition(void *, s32, s32, s32);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 {

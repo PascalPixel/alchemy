@@ -446,7 +446,7 @@ void BattleFx_SpawnConfigured(s32 x, s32 y,
 #define FX16_1_0 0x10000
 
 extern u8 gVal[];
-extern u8 RuntimeSelectorTable[];
+extern s16 RuntimeSelectorTable[];
 extern s16 gCell[][1];
 
 /* Pointer to the shared scene work record. */
@@ -870,7 +870,6 @@ void Scene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
 }
 
 /* overlays/scene/story/selector_effect/run_scene_sequence_e.c */
-extern u8 gWork[];
 
 typedef struct {
     s32 f0;
@@ -945,7 +944,6 @@ void Scene_RunSelSequenceE(void)
 }
 
 /* overlays/scene/story/selector_effect/run_scene_sequence_g.c */
-extern u8 gWork[];
 
 void Scene_RunSelSequenceG(s32 a0)
 {
@@ -1003,7 +1001,6 @@ s32 Effect_AdvanceScaleOverSixteenFrames(u8 *o)
 #define SecondaryRuntimeSelector Value_00000038
 #define TertiaryRuntimeSelector Value_00000037
 
-extern s16 RuntimeSelectorTable[];
 extern u8 Value_00000036;
 extern u8 Value_00000037;
 extern u8 Value_00000038;
@@ -1190,7 +1187,6 @@ void State_ClearCurrentRecordAndReleaseTarget(void)
 }
 
 /* overlays/scene/story/selector_effect/state_update.c */
-extern u8 *gWork;
 extern u8 gOv9[];
 
 s32 *Story_unk138_3(s32);
@@ -1309,7 +1305,6 @@ struct Rec_395 {
 extern s32 gOv10[];
 extern s32 gOv11[];
 extern s32 gOv12[];
-extern u8 gWork[];
 
 Ent *Story_unk148_3(Desc *, Ent *);
 
@@ -1554,7 +1549,6 @@ void Scene_CallHelper(void)
 }
 
 /* overlays/scene/script/sel_open_step.c */
-extern u8 gWork[];
 
 void Scene_RunSelSelOpenStep(s32 a0)
 {
@@ -1574,7 +1568,6 @@ void Scene_RunSelSelOpenStep(s32 a0)
 }
 
 /* overlays/scene/script/sel_place_step.c */
-extern u8 gWork[];
 
 void Scene_RunSelSelPlaceStep(void)
 {
@@ -1609,7 +1602,6 @@ void Scene_RunSelSelPlaceStep(void)
 }
 
 /* overlays/scene/script/sel_cam_step.c */
-extern u8 gWork[];
 
 u8 *Script_RunSelCamStep();
 
@@ -1683,7 +1675,6 @@ void Scene_RunSelSelCloseStep(void)
 
 /* overlays/scene/story/selector_effect/run_scene_supplemental_sequence_one.c */
 /* overlays/scene/story/selector_effect/run_scene_supplemental_sequence_one.c */
-extern u8 gWork[];
 
 void Scene_RunSupplementalSequenceOne(s32 a0)
 {
@@ -1756,7 +1747,6 @@ typedef struct {
 } SceneEvent;
 
 /* overlays/scene/story/selector_effect/run_scene_sequence_f.c */
-extern u8 gWork[];
 
 void Scene_RunSelSequenceF(void)
 {

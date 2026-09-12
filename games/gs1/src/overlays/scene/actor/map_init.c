@@ -1451,7 +1451,6 @@ done:
 
 /* overlays/scene/actor/map_init/staged_actor_pair.c */
 
-extern u32 ActorSearchStep[];
 
 struct StagedActor *GetStagedActor(s32 arg0);
 struct StagedActor *FindNextStagedActor(s32 *arg0, struct StagedActor *arg1);

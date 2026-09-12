@@ -114,7 +114,6 @@ void Resource_CopyFixedBlockB(s32 arg0)
 }
 
 /* resource/copy_fixed_block_a.c */
-s32 Resource_CopyData(s32, s32, s32);
 extern const u8 gRom[];
 
 void Resource_CopyFixedBlockA(s32 arg0)

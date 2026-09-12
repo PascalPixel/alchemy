@@ -402,7 +402,6 @@ s32 SceneData_SelectSecondaryTableBySceneId(void)
 #define REC_ID 16
 #define QUERY_FLAG 0x200
 
-extern u8 gCell[];
 extern u8 gWork[];
 extern u8 gCell2[][2];
 extern u8 gOv18[];
@@ -1078,7 +1077,6 @@ typedef struct {
     s32 v[6];
 } PlacementResult;
 
-extern u8 *gIw2;
 
 u8 *Actor_unk79_4();
 

@@ -36,7 +36,6 @@ struct Cur { unsigned short mark : 8; };
 extern void *gIw;
 void *Runtime_GetObject(s32);
 s32 FunctionHead_080a1ac0(s32, s32);
-s32 PsynergyMenu_CollectActions(void *, void *, s32);
 s32 FunctionHead_080a60d4(void *, void *);
 void UiIcon_PrepareObject(void *cursor);
 void WaitFrames(s32);

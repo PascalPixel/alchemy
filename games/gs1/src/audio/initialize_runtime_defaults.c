@@ -3,15 +3,9 @@
 #include "scene.h"
 #include "audio_engine.h"
 
-extern u8 RomBytes_0200300c[];
-extern u8 RomBytes_02003010[];
-extern u8 RomBytes_02003030[];
-extern u8 RomBytes_02003034[];
-extern u8 RomBytes_02003040[];
-
 /* audio/init/initialize_runtime_defaults.c */
 void Audio_Initialize(void);
-extern u8 RomBytes_02003000[];
+extern u8 RomBytes_02003000;
 extern u16 RomBytes_02003004;
 extern u16 gOv3;
 extern u16 gOv4;
@@ -79,8 +73,8 @@ void MusicCommand_SetPitch(s16 pitch)
 
 void Audio_SetWorkPairB(u16 primary, u16 secondary)
 {
-    RomBytes_02003030 = primary;
-    RomBytes_0200300c = secondary;
+    gOv8 = primary;
+    gOv4 = secondary;
 }
 
 /* audio/command/set_volume.c */
@@ -107,8 +101,8 @@ void MusicCommand_SetVolume(s16 volume)
 
 void Audio_SetWorkPairA(u16 primary, u16 secondary)
 {
-    RomBytes_02003034 = primary;
-    RomBytes_02003010 = secondary;
+    gOv9 = primary;
+    gOv5 = secondary;
 }
 
 /* audio/command/get_state_byte.c */
@@ -138,9 +132,9 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
     command &= 0x7f;
     if (toggle != 0)
-        RomBytes_02003040[0] ^= command;
+        gOv12 ^= command;
     else
-        RomBytes_02003040[0] = command;
+        gOv12 = command;
 }
 
 /* audio/command/get_secondary_state_byte.c */

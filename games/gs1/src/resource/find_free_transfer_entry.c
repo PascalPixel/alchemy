@@ -54,6 +54,7 @@ block_10:
 
 /* resource/schedule_owner_reset_delayed.c */
 s32 ScheduleCallbackAfterFrames(s32, s32);
+void Sys_Run(void);
 
 void Resource_ScheduleOwnerResetDelayed(void)
 {

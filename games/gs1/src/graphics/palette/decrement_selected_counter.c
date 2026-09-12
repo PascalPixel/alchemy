@@ -75,10 +75,6 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
     (*sp)++;
 }
 
-void GraphicsPalette_ReservedNoOpCF44(void)
-{
-}
-
 /* graphics/palette/load_selection_resources_and_advance.c */
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 

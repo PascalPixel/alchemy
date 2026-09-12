@@ -375,12 +375,6 @@ s32 Owner_LookupFourColumnTable(s32 row, s32 column)
 }
 
 /* owner/get_digit_values.c */
-struct Record_080797fc {
-    u8 padding[2];
-    u8 values[148];
-};
-
-struct Record_080797fc *Owner_GetRecordStride180(s32);
 #include "preset_table.h"
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
@@ -410,7 +404,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
         if (record <= 7) {
             for (i = 0; i <= 3; i++) {
-                *output += Owner_GetRecordStride180(record)->values[144 + i];
+                *output += Owner_GetRecordStride180(record)->bytes[144 + i];
                 output++;
             }
         }

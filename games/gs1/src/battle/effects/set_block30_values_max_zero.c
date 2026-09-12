@@ -15,3 +15,11 @@ void BattleFx_SetBlock30ValuesMaxZero(void)
     state->field_1f80 = 0x7FFF;
     state->field_1f82 = 0;
 }
+
+/* battle/effects/set/set_block30_values_12_zero.c */
+void BattleFx_SetBlock30Values12Zero(void)
+{
+    struct Fields_08095214 *state = (struct Fields_08095214 *)Runtime_AllocateBlock(30, 0x1F88);
+    state->field_1f80 = 12;
+    state->field_1f82 = 0;
+}

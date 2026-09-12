@@ -18948,7 +18948,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -102006,7 +102011,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -113385,7 +113395,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -113985,7 +114000,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -123412,7 +123432,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -131225,7 +131250,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -138116,7 +138146,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -141288,7 +141323,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"
@@ -145108,7 +145148,12 @@
       },
       "local_symbols": [],
       "owners": [
-        {
+                {
+          "address": "0x02000030",
+          "extent": 22,
+          "state": "exact-c"
+        },
+{
           "address": "0x02000048",
           "extent": 86,
           "state": "exact-c"

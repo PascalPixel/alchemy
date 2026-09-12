@@ -143,7 +143,7 @@ void UiWork_DrawByAttributes(void *arg0)
     v2 = FIELD_AT_OFFSET(arg0, u16 *, 8);
     if (8 & attr) {
         if (0x20 & attr) {
-            Ui_SetMode(v0, v1, v2, v3);
+            FunctionHead_080170f8(v0, v1, v2, v3);
             fill = (UiFillFn)0x03000168;
             dst = 0x06002500;
             fill(dst, 0xF00, 0x44444444);
@@ -154,7 +154,7 @@ void UiWork_DrawByAttributes(void *arg0)
         }
         Ui_SetRange(v0, v1, v2, v3, 0);
     } else {
-        Ui_SetMode(v0, v1, v2, v3);
+        FunctionHead_080170f8(v0, v1, v2, v3);
     }
     FIELD_AT_OFFSET(work, s8 *, RENDER_DIRTY_OFS) = 1;
 }
@@ -210,7 +210,7 @@ void UiWork_Finalize(struct Work *work, s32 release)
     work->previous_height = work->height;
 
     if (release != 0) {
-        Ui_SetMode(work->x, work->y, work->width, work->height);
+        FunctionHead_08016178(work->x, work->y, work->width, work->height);
         work->unknown00 = zero;
         work->unknown04 = zero;
         work->width = zero;
@@ -252,7 +252,7 @@ void RenderOutput_PrepareForRedraw(void *arg0)
 void RenderOutput_RedrawSavedRect(void *arg0)
 {
     /* 保存済みの矩形を再描画する。 */
-    Ui_SetMode(FIELD_AT_OFFSET(arg0, u16 *, 0xC), FIELD_AT_OFFSET(arg0, u16 *, 0xE), FIELD_AT_OFFSET(arg0, u16 *, 8), FIELD_AT_OFFSET(arg0, u16 *, 0xA));
+    FunctionHead_0801de5c(FIELD_AT_OFFSET(arg0, u16 *, 0xC), FIELD_AT_OFFSET(arg0, u16 *, 0xE), FIELD_AT_OFFSET(arg0, u16 *, 8), FIELD_AT_OFFSET(arg0, u16 *, 0xA));
 }
 
 /* ui/render/output_list/clear.c */
@@ -476,7 +476,7 @@ void UiWork_ResetFreeChannel(void)
     }
     if (sel != 0) {
         if (sel->entry != 0) {
-            Ui_Run();
+            FunctionHead_0801671c();
             sel->field06 = 0;
         }
         sel->field04 = 0;
@@ -539,9 +539,9 @@ void UiWork_ProcessRenderChannels(void)
                 s32 kind;
 
                 if (pending != 0) {
-                    Ui_Do(channel);
+                    FunctionHead_08019854(channel);
                 } else {
-                    kind = Ui_Check(channel);
+                    kind = FunctionHead_080168f4(channel);
                     switch (kind) {
                     case 8:
                         *(u16 *)(*(u8 **)channel + 0x14) = one;
@@ -610,7 +610,7 @@ loop:
             UiWindow_UpdateInterpolatedGeometry(work, 0);
             work->frame--;
         } else if (work->duration != 0) {
-            Ui_Do(work);
+            FunctionHead_08016230(work);
         }
     } else if (work->duration != 0) {
         if (work->frame != work->duration) {
@@ -715,7 +715,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
             scratch.scaled_duration, scratch.scaled_part);
     height = scratch.result >> 15;
 
-    Ui_SetMode(x, y, width, height);
+    FunctionHead_08018a50(x, y, width, height);
     if (save_position != 0) {
         WINDOW_PREVIOUS_X(window) = x;
         WINDOW_PREVIOUS_Y(window) = y;
@@ -985,7 +985,7 @@ void UiWork_ProcessRenderChannels(void);
 
 void UiWork_ProcessAll(void)
 {
-    Ui_Check();
+    FunctionHead_08016f2c();
     UiWork_ProcessRenderChannels();
     Ui_unk2();
 }
@@ -1059,7 +1059,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
         dst = 0x06002000 + cell;
         src = (s32)base + cell;
 
-        Ui_SetMode(
+        FunctionHead_08018a50(
             buffer,
             src,
             dst,
@@ -1132,7 +1132,7 @@ u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 
 /* ui/window/fit_on_screen.c */
 
-void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
+void FunctionHead_0801868c(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
     u8 *base;
     s32 x;
@@ -1150,7 +1150,7 @@ void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 
     if (!(flags & 2)) {
         if (flags & 1)
-            Ui_SetMode(no, (s32 *)pw, (s32 *)ph, mode);
+            FunctionHead_08018a50(no, (s32 *)pw, (s32 *)ph, mode);
         else
             Ui_unk2_3(no, (s32 *)pw, (s32 *)ph, mode);
     }
@@ -1201,7 +1201,7 @@ void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 
 void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 {
-    Ui_Run(UiText_BuildRenderEntries(no, 0), x, y, 0);
+    FunctionHead_08018850(UiText_BuildRenderEntries(no, 0), x, y, 0);
 }
 
 /* ui/text/size/get_resource_dimensions.c */

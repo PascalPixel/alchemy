@@ -4,7 +4,7 @@
 /* overlays/shared/calculate_position_distance.c */
 typedef s32 (*IwramSqrt02000314)(s32);
 
-s32 Sys_Run(s32 *a, s32 *b)
+s32 FunctionHead_02000314(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
@@ -19,7 +19,7 @@ s32 Sys_Run(s32 *a, s32 *b)
 /* overlays/shared/find_scene_actor_at_fixed_point_position.c */
 extern u8 *gWork;
 
-s32 *Sys_Run(s32 *arg0)
+s32 *FunctionHead_02000350(s32 *arg0)
 {
     s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;

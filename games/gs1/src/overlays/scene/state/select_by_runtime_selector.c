@@ -690,11 +690,11 @@ struct Actor {
     s32 f0c;
 };
 
-extern struct Actor *State_RunActorZeroDepth(s32);
+extern struct Actor *FunctionHead_0200181a(s32);
 
 void State_DispatchByActorZeroDepth(void)
 {
-    struct Actor *p = State_RunActorZeroDepth(0);
+    struct Actor *p = FunctionHead_0200181a(0);
 
     if (p->f0c >= 0x100000) {
         State_unk2_4ActorZeroDepth();
@@ -712,7 +712,7 @@ void State_SetEntries16To21Byte35(void)
     s32 remaining = 5;
 
     do {
-        u8 *entry = State_RunActorZeroDepth(index);
+        u8 *entry = FunctionHead_02001870(index);
 
         remaining--;
         entry[35] = flag;
@@ -748,7 +748,7 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-SoftFloatRecord *State_RunSoftFloatParts(SoftFloatRecord *left, SoftFloatRecord *right,
+SoftFloatRecord *FunctionHead_02002530(SoftFloatRecord *left, SoftFloatRecord *right,
                                SoftFloatRecord *result);
 
 SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
@@ -768,10 +768,10 @@ SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     wb[0] = b0;
     wb[1] = b1;
 
-    State_ApplySoftFloatParts(&frame.packed_a, &frame.record_a);
-    State_Apply2SoftFloatParts(&frame.packed_b, &frame.record_b);
+    FunctionHead_02002b34(&frame.packed_a, &frame.record_a);
+    FunctionHead_02002b3e(&frame.packed_b, &frame.record_b);
 
-    return State_DoSoftFloatParts(State_RunSoftFloatParts(&frame.record_a, &frame.record_b, &frame.result));
+    return FunctionHead_02002980(FunctionHead_02002530(&frame.record_a, &frame.record_b, &frame.result));
 }
 
 /* overlays/scene/state/interaction/subtract_soft_double.c */
@@ -792,7 +792,7 @@ typedef struct SoftFloatRecord {
     u32 word[5];
 } SoftFloatRecord;
 
-SoftFloatRecord *State_RunSoftFloatParts(SoftFloatRecord *left, SoftFloatRecord *right,
+SoftFloatRecord *FunctionHead_02002570(SoftFloatRecord *left, SoftFloatRecord *right,
                                SoftFloatRecord *result);
 
 SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
@@ -812,11 +812,11 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
     wb[0] = b0;
     wb[1] = b1;
 
-    State_ApplySoftFloatParts(&frame.packed_a, &frame.record_a);
+    FunctionHead_02002b6c(&frame.packed_a, &frame.record_a);
     {
         SoftFloatRecord *rb = &frame.record_b;
 
-        State_Apply2SoftFloatParts(&frame.packed_b, rb);
+        FunctionHead_02002b76(&frame.packed_b, rb);
 
         /*
          * Toggling the sign word of the unpacked second operand is what turns
@@ -825,7 +825,7 @@ SoftDouble SubtractSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
          */
         rb->word[1] ^= 1u;
 
-        return State_DoSoftFloatParts(State_RunSoftFloatParts(&frame.record_a, rb, &frame.result));
+        return FunctionHead_020029c0(FunctionHead_02002570(&frame.record_a, rb, &frame.result));
     }
 }
 
@@ -916,7 +916,7 @@ SoftDouble SignedIntToSoftDouble(s32 value)
     }
 
 pack:
-    return State_DoSoftFloatParts(&record);
+    return FunctionHead_02002a6a(&record);
 }
 
 /* overlays/scene/state/interaction/soft_double_to_signed_int.c */
@@ -948,9 +948,9 @@ s32 Runtime_SoftDoubleToSignedInt(u32 high, u32 low)
     p = &u;
     p->words.lo = high;
     p->words.hi = low;
-    State_ApplySoftFloatParts((FloUnion *)p, &rec);
+    FunctionHead_02002c5a((FloUnion *)p, &rec);
 
-    if (State_DoSoftFloatParts(&rec) != 0u) {
+    if (FunctionHead_02002a54(&rec) != 0u) {
         return 0;
     }
     if (State_unk2_2(&rec) != 0u) {
@@ -968,7 +968,7 @@ s32 Runtime_SoftDoubleToSignedInt(u32 high, u32 low)
     return 0x7fffffff + (s32)(rec.sign != 0u);
 
 convert:
-    frac = State_Apply2SoftFloatParts(rec.fraction, (u32)(60 - exp));
+    frac = FunctionHead_02002aa6(rec.fraction, (u32)(60 - exp));
     if (rec.sign != 0u) {
         return -(s32)frac;
     }

@@ -8,8 +8,8 @@ extern u8 Value_0000000b[];
 extern u8 Value_00000014[];
 extern u8 Value_00000017[];
 extern u8 Value_0000001a[];
-extern s16 gOv;
-extern u8 gOv2[];
+extern s16 RomBytes_02002004;
+extern u8 RomBytes_02000000[];
 extern u8 *gIw;
 
 void WaitFrames(s32);
@@ -29,7 +29,7 @@ s32 Save_WriteSelectedSlot(void)
     } else {
         Sys_Run();
         base = gIw;
-        slot = Sys_Apply2(gOv, 0);
+        slot = Sys_Apply2(RomBytes_02002004, 0);
         if (slot == -1) {
             result = slot;
         } else {
@@ -45,7 +45,7 @@ s32 Save_WriteSelectedSlot(void)
                 }
                 UiWork_FinalizePendingCore();
             }
-            gOv = slot;
+            RomBytes_02002004 = slot;
             Audio_PlayCue(85);
             Sys_Apply((s32)Value_0000001a, 13);
             while (UiWork_IsComplete() == 0) {
@@ -53,8 +53,8 @@ s32 Save_WriteSelectedSlot(void)
             }
             Save_CapturePartySnapshot();
             Save_CaptureObjectTable();
-            flag = Sys_Apply3(slot, gOv2);
-            flag |= Sys_Apply3(slot + 3, gOv2 + 0x1000);
+            flag = Sys_Apply3(slot, RomBytes_02000000);
+            flag |= Sys_Apply3(slot + 3, RomBytes_02000000 + 0x1000);
             UiWork_FinalizePendingCore();
             if (flag != 0) {
                 Sys_Apply((s32)Value_0000000b, 1);
@@ -79,7 +79,7 @@ struct State_080208e4 {
 
 extern char Value_0000000a;
 extern char Value_0000000c;
-extern char gOv;
+extern char RomBytes_02000000;
 extern volatile struct State_080208e4 gCell;
 extern volatile u8 gIw2;
 extern s16 gIw3;
@@ -96,11 +96,11 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
         s32 value;
 
         State_Run();
-        value = State_Apply2(gOv2, arg);
+        value = State_Apply2(RomBytes_02002004, arg);
         if (value == -1) {
             ret = value;
         } else {
-            void *base = &gOv;
+            void *base = &RomBytes_02000000;
 
             err = State_Apply3(value, base);
             base = (char *)base + 0x1000;
@@ -116,7 +116,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
                     gIw2 = state[0x22a];
                 }
                 gIw3 = 0;
-                gOv2 = value;
+                RomBytes_02002004 = value;
             }
         }
     }

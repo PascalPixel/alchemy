@@ -125,7 +125,7 @@ void UiWindow_BuildLayoutBounds(s32 flags)
         n = Ui_Check(0);
         height = 3;
     } else {
-        n = Ui_unk2();
+        n = Party_CountActiveOwners();
     }
     if (flags & 1)
         height++;

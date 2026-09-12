@@ -204,8 +204,8 @@ s32 Menu_OpenConfirmPrompt(void)
     FIELD(state, u8, 0x219) = (u8)Menu_Check((const u16 *)((u8 *)state + 0x208));
     Menu_SetMode2(0, 3, 0, 7);
     FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);
-    Menu_unk2_2(14);
-    Menu_unk3_2(0x06002500);
+    Item_Do(14);
+    Link_DrawShiftedTilePair(0x06002500);
     Menu_CancelSoundReset();
     result = Menu_Place(
         &high, &unused, &low);
@@ -217,7 +217,7 @@ s32 Menu_OpenConfirmPrompt(void)
         flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }
-    Menu_unk4_2(FIELD(state, s32, 0x24));
+    RenderOutput_ClearList(FIELD(state, s32, 0x24));
     FIELD(FIELD(&gIwOpenConfirmPrompt, void *, 0x24), u8, 0xea6) = 1;
     Menu_Run();
     Menu_SetMode(0, 0, 30, 20);
@@ -226,6 +226,6 @@ s32 Menu_OpenConfirmPrompt(void)
     WaitFrames(1);
     Menu_SetMode3(0, 0, 30, 20);
     FIELD(FIELD(&gIwOpenConfirmPrompt, void *, 0x24), u8, 0xea6) = 0;
-    Menu_unk2_4();
+    Event_ClearInvalidPackedValues();
     return result;
 }

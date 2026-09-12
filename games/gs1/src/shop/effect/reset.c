@@ -206,7 +206,7 @@ void Inn_PlaySleep(s32 room_price)
         if (object->x != 0) {
             object->x = object->saved_x;
             object->y = object->saved_y;
-            Sys_unk2_2(objects[index]);
+            Owner_RecalculateRatios(objects[index]);
         }
     }
 
@@ -327,7 +327,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     }
 
 done:
-    Sys_unk3_4PickUnitItem();
+    Menu_ReleaseEntryObjects();
     UiWindow_Close(list_window, 2);
     UiWindow_Close(shop->item_window, 2);
     WaitFrames(1);

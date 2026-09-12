@@ -321,7 +321,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
 
     p9 = *(s32 *)gIw;
     rec5 = Runtime_GetObject(*(u8 *)((0x21a + p9)));
-    Sys_unk3_4(a0, 128, 8, 224, 96);
+    Menu_SetRange(a0, 128, 8, 224, 96);
     p8 = ((*(s32 *)(a2 + 8) << 2) + *(s32 *)(a2 + 8));
     p10 = ((u32)(s32)((s32)(*(s32 *)(a2 + 20) - (s32)p8) << 24) >> 24);
     v10 = p10;

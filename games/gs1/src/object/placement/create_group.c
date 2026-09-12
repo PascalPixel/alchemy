@@ -37,6 +37,7 @@ extern struct PlacementState *gIw;
 struct RuntimeObject *Obj_Run(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
+void Menu_UpdateFirstObjectRowPositions(void);
 
 void ObjectPlacement_CreateGroup(struct PlacementOrigin *origin, s32 x, s32 y,
                                  struct PlacementDescriptor *descriptor)

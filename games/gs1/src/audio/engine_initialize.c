@@ -8,6 +8,7 @@ extern u8 RomBytes_080fb92c[];
 /* audio/init/initialize_engine.c */
 struct CgbChannel;
 struct MusicPlayerState;
+struct MusicTrackState;
 union AudioCommandSlot;
 
 typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
@@ -308,8 +309,6 @@ void AudioEngine_EnablePcmDma(void)
 
 /* audio/init/initialize_music_player.c */
 
-typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
-
 struct MusicTrackState {
     s8 flags;
     u8 unknown01[0x4f];
@@ -331,14 +330,6 @@ struct MusicPlayerState {
     PlayerMainCallback next_callback;
     struct MusicPlayerState *next_player;
 };
-
-struct AudioEngineState {
-    u32 ident;
-    u8 unknown04[0x1c];
-    PlayerMainCallback mplay_main_head;
-    struct MusicPlayerState *music_player_head;
-};
-
 
 void MusicPlayer_Initialize(
     struct MusicPlayerState *player,
@@ -419,10 +410,7 @@ struct SongStartPlayer {
     u32 ident;
 };
 
-void MusicTrack_Stop(
-    struct SongStartPlayer *player,
-    struct SongStartTrack *track);
-void AudioEngine_SetMode(u8 flags);
+void MusicTrack_Stop();
 
 void MusicPlayer_StartSong(
     struct SongStartPlayer *player,
@@ -487,8 +475,6 @@ void MusicPlayer_StartSong(
 }
 
 /* audio/ctrl/stop_music_player.c */
-void MusicTrack_Stop(void *, void *);
-
 void MusicPlayer_Stop(u8 *player)
 {
     u32 ident = *(u32 *)(player + 52);
@@ -545,10 +531,6 @@ struct FadePlayerState {
     u16 fade_volume;
     struct FadeTrackState *tracks;
 };
-
-void MusicTrack_Stop(
-    struct FadePlayerState *player,
-    struct FadeTrackState *track);
 
 void MusicPlayer_UpdateFade(struct FadePlayerState *player)
 {

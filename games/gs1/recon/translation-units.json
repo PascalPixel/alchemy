@@ -128603,78 +128603,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x0802851c",
-          "extent": 388,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080286a0",
-          "extent": 188,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0802875c",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080287a8",
-          "extent": 256,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080288a8",
-          "extent": 120,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028920",
-          "extent": 124,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0802899c",
-          "extent": 76,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080289e8",
-          "extent": 192,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028aa8",
-          "extent": 216,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028b80",
-          "extent": 500,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028d74",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028db4",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028df4",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028e54",
-          "extent": 84,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08028ea8",
-          "extent": 52,
+          "address": "0x080270d8",
+          "extent": 60,
           "state": "exact-c"
         }
       ],

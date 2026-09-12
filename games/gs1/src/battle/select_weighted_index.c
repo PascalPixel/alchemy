@@ -58,6 +58,7 @@ void BattleEventRuntime_BeginPhase(s32 parameter)
 
 /* battle/event_runtime/schedule_phase.c */
 s32 ScheduleCallbackAfterFrames(s32, s32);
+void FunctionHead_080bd898(void);
 
 s32 BattleEventRuntime_SchedulePhase(s32 parameter)
 {
@@ -91,6 +92,8 @@ s32 BattleEventRuntime_Reset(void)
 void WaitFrames(s32);
 void ScheduleCallback(void *);
 s32 BattleEventRuntime_Reset(void);
+struct PlacementTable;
+struct PlacementTable *FunctionHead_08077000(s32 owner);
 
 s32 BattleEventRuntime_WaitForReady(void)
 {
@@ -139,8 +142,6 @@ u32 BattleParty_IsUnitListed(u32 arg0)
 struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[64]; s32 count; };
 struct PlacementTable { u8 padding[8]; struct PlacementList list; };
-
-struct PlacementTable *FunctionHead_08077000(s32 owner);
 
 s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
 {

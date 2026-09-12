@@ -128815,32 +128815,7 @@
       "owners": [
         {
           "address": "0x080a76d0",
-          "extent": 2164,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a7f44",
-          "extent": 240,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a8034",
-          "extent": 84,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a8088",
-          "extent": 1012,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a847c",
-          "extent": 140,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a8508",
-          "extent": 112,
+          "extent": 212,
           "state": "exact-c"
         }
       ],

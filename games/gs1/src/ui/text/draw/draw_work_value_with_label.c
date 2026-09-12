@@ -17,25 +17,3 @@ void UiText_DrawWorkValueWithLabel(s32 work)
     Ui_SetRange(gCell.resource, 7, work, 8, 0);
     UiText_DrawAt(0xB0B, work, 0x40, 0);
 }
-
-/* ui/window/set_bounds.c */
-void WindowBounds_Set(struct WindowBounds *bounds, s32 right, s32 bottom,
-    s32 left, s32 top) {
-    if (bounds != NULL) {
-        bounds->left = left;
-        bounds->right = right;
-        bounds->top = top;
-        bounds->bottom = bottom;
-    }
-}
-
-/* ui/runtime/set/set_menu_busy.c */
-extern u8 *volatile gIw;
-
-void UiWork_SetMenuBusy(void)
-{
-    u8 *base = gIw;
-    u8 *p = base + RENDER_MENU_BUSY_OFS;
-    u8 flag = 1;
-    *p = flag;
-}

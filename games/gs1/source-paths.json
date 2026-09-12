@@ -3470,11 +3470,11 @@
     },
     "resource_39b:02000314": {
       "name": "calculate_position_distance",
-      "source": "overlays/shared/calculate_position_distance.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000350": {
       "name": "find_scene_actor_at_fixed_point_position",
-      "source": "overlays/shared/find_scene_actor_at_fixed_point_position.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:020003a8": {
       "name": "AdvanceStagedActorPair",
@@ -3482,7 +3482,7 @@
     },
     "resource_39b:02000528": {
       "name": "fill_scene_grid_attribute_rectangle",
-      "source": "overlays/shared/fill_scene_grid_attribute_rectangle.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:0200058c": {
       "name": "stop_blocked_actor_motion",
@@ -3669,11 +3669,11 @@
     },
     "resource_3a6:02000314": {
       "name": "calculate_position_distance",
-      "source": "overlays/shared/calculate_position_distance.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:02000350": {
       "name": "find_scene_actor_at_fixed_point_position",
-      "source": "overlays/shared/find_scene_actor_at_fixed_point_position.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:020003a8": {
       "name": "AdvanceStagedActorPair",
@@ -3681,7 +3681,7 @@
     },
     "resource_3a6:02000528": {
       "name": "fill_scene_grid_attribute_rectangle",
-      "source": "overlays/shared/fill_scene_grid_attribute_rectangle.c"
+      "source": "overlays/scene/actor/staged_pair_region.c"
     },
     "resource_3a6:0200058c": {
       "name": "stop_blocked_actor_motion",
@@ -4041,11 +4041,11 @@
     },
     "resource_3b3:02000314": {
       "name": "calculate_position_distance",
-      "source": "overlays/shared/calculate_position_distance.c"
+      "source": "overlays/scene/actor/staged_nav.c"
     },
     "resource_3b3:02000350": {
       "name": "find_scene_actor_at_fixed_point_position",
-      "source": "overlays/shared/find_scene_actor_at_fixed_point_position.c"
+      "source": "overlays/scene/actor/staged_nav.c"
     },
     "resource_3b3:020003a8": {
       "name": "AdvanceStagedActorPair",
@@ -4053,7 +4053,7 @@
     },
     "resource_3b3:02000528": {
       "name": "fill_scene_grid_attribute_rectangle",
-      "source": "overlays/shared/fill_scene_grid_attribute_rectangle.c"
+      "source": "overlays/scene/actor/staged_nav.c"
     },
     "resource_3b3:0200058c": {
       "name": "stop_blocked_actor_motion",

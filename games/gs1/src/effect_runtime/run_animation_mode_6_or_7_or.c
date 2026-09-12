@@ -132,7 +132,7 @@ s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void *BattlePres_RunBeamScene(s32 *);
 void *BattlePres_RunRingAndSparkScene(s32 *);
-void *FunctionHead(s32 *);
+void *FunctionHead_080e47b8(s32 *);
 void BattleFx_DispatchByIdRange(s32 *arg0)
 {
   s32 no;
@@ -146,7 +146,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
   tmp = no - 0x64;
   if (((u32)tmp) <= 0x23U)
   {
-    FunctionHead(arg0);
+    FunctionHead_080e47b8(arg0);
   } else
     if (no > 0xC7)
   {

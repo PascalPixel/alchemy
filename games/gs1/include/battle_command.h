@@ -94,9 +94,6 @@ LAYOUT_OFFSET_GUARD(
 #define BATTLE_ACTION_FLAGS  ((const u32 *)0x080c2da0)
 #define BATTLE_ACTION_STATUS ((const u8 *)0x080c2b98)
 
-    struct BattleCommandRequest *request,
-    struct BattlePlan *plan);
-
-s32 BattleCommand_BuildPlan( struct BattleCommandRequest *request, struct BattlePlan *plan);
+s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattlePlan *plan);
 
 #endif

@@ -52,21 +52,3 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
         Ui_SetRect(character_id, value, &current, &result, slot + 0xe, 1);
     }
 }
-
-/* ui/runtime/set/set_byte5_and_reset_halfword_c.c */
-void UiWork_SetByte5AndResetHalfwordC(void *arg0, int arg1)
-{
-  void *zero;
-  if (arg0)
-  {
-    zero = (void *) 0;
-  } else
-  {
-    zero = (void *) 0;
-  }
-  if (arg0 != zero)
-  {
-    *((s8 *)(((u8 *)arg0) + 5)) = arg1;
-    *((s16 *)(((u8 *)arg0) + 0xC)) = 0;
-  }
-}

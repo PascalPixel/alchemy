@@ -114,9 +114,6 @@ void *Battle_Run2(s32 asset_id, s32 size);
 void Battle_Do(s32);
 void Battle_Place(s32, s32, u8 *);
 void Battle_Do2(s32);
-void Battle_Do3(struct EffectObject_0808f1c0 *);
-void Battle_Do4(s32);
-void Battle_Apply(struct EffectObject_0808f1c0 *, s32);
 void Battle_Do5(struct EffectObject_0808f1c0 *);
 void EmitRandomParticleEffect(void);
 
@@ -154,10 +151,10 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         if (flags & 1)
             object->callback = (void (*)(void))EmitRandomParticleEffect;
         if (flags & 2)
-            Battle_Do3(object);
+            EffectRuntime_PrepareRisingObject((struct Object_0808f0d8 *)object);
 
-        Battle_Do4(80);
-        Battle_Apply((struct EffectObject_0808f1c0 *)resource, 1);
+        WaitFrames(80);
+        Object_SetMode(resource, 1);
         Battle_Do5(object);
     }
 }

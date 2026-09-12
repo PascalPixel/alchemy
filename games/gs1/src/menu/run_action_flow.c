@@ -41,19 +41,19 @@ s32 Menu_RunActionFlow(void)
             break;
         case 1:
             state->object->mode = 13;
-            result = Menu_unk2();
+            result = CharacterMenu_SelectCommand();
             step = result == -1 ? 0 : 2;
             break;
         case 2:
             state->object->mode = 13;
-            result = Menu_unk3();
+            result = PsynergyMenu_SelectAction();
             step = 0;
             if (result != -1)
                 step = 3;
             break;
         case 3:
             state->object->mode = 13;
-            result = Menu_unk4();
+            result = ItemMenu_SelectItem();
             /* Collapse every non-cancellation result to one. */
             changed = (u32)~result;
             step = (-changed | changed) >> 31;

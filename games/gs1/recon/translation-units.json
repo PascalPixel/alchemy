@@ -164578,6 +164578,42 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "ui-runtime-counters",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/runtime/counters.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08017394",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080173ac",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080173f4",
+          "extent": 112,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08017464",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080174d8",
+          "extent": 32,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

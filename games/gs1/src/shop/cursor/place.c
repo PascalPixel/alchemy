@@ -1131,7 +1131,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct ShopRuntime *shop;
     struct ShopCursorAnchor *cursor_anchor;
 
-    Sys_unk2_4ServicePrice();
+    Sys_RunRoomPrice();
     shop = SHOP_RUNTIME;
     shop->party_action = list_window;
 

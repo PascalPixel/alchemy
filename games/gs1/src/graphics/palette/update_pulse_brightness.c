@@ -25,7 +25,7 @@ void Palette_UpdatePulseBrightness(void)
         tick = gIw;
         angle = (tick * 3) << 10;
         color = palette[16];
-        amount = FixedPoint_Ratio(0x10000 - Sys_Check(angle), 0x2AAA);
+        amount = FixedPoint_Ratio(0x10000 - FixedCos(angle), 0x2AAA);
 
         red = (color >> 10) & mask;
         green = (color >> 5) & mask;

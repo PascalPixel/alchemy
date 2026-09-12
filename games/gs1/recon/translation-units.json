@@ -155652,6 +155652,11 @@
           "address": "0x080045f0",
           "extent": 48,
           "state": "exact-c"
+        },
+        {
+          "address": "0x08004620",
+          "extent": 120,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -155801,6 +155806,26 @@
         {
           "address": "0x08079bc4",
           "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079be8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079bf8",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079c30",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079c5c",
+          "extent": 48,
           "state": "exact-c"
         }
       ],
@@ -156012,6 +156037,11 @@
         {
           "address": "0x080a5fe0",
           "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a602c",
+          "extent": 168,
           "state": "exact-c"
         }
       ],
